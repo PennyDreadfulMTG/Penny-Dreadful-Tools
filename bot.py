@@ -39,4 +39,4 @@ async def on_ready():
     print(client.user.name)
     print(client.user.id)
     print('------')
-client.run('MjA5MDMzODQ1OTY0NTM3ODU3.Cn6VcA.3sw_-8FWPmLtMj8rJNrE0fPPVI8')
+client.run('token')

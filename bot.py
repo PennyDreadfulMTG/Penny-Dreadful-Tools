@@ -1,42 +1,24 @@
-import urllib.request, discord, json
-client = discord.Client()
-@client.event
-async def on_message(message):
-    # we do not want the bot to reply to itself
-    if message.author == client.user:
-        return
-    if message.content.startswith('!magic'):
-        msg_com = message.content.split('-')
-        msg_com.pop(0)
-        for com in msg_com:
-            if "help" in com.lower():
-                await client.send_message(message.channel,'Magic Card Bot \n -help : This message displaying \n -search : Followed by a int string will search that string \n -id : Searchs cards by number')
-                break
-            elif "id" in com.lower():
-                print(com.lower().replace('search ',''))
-                request = 'https://api.deckbrew.com/mtg/cards?multiverseid=' + com[3:]
-                data = urllib.request.urlopen(request).read().decode()
-                data = "".join(data.split('\\"'))
-                data = json.loads(data[1:-1])
-                data = json.loads(json.dumps(data['editions'][0]))
-                print(data['url'])
-                await client.send_message(message.channel, data['store_url'])
-                await client.send_message(message.channel, data['image_url'])
-            elif "search" in com.lower():
-                request = 'https://api.deckbrew.com/mtg/cards?name=' + com[7:].replace(" ","%20")
-                data = urllib.request.urlopen(request).read().decode()
-                data = "".join(data.split('\\"'))
-                data = json.loads(data[1:-1])
-                data = json.loads(json.dumps(data['editions'][0]))
-                await client.send_message(message.channel, data['store_url'])
-                await client.send_message(message.channel, data['image_url'])
-            else:
-                print('RIP something went wrong')
-                await client.send_message(message.channel, 'RIP something went wrong')
-@client.event
-async def on_ready():
-    print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
-    print('------')
-client.run('token')
+from mtgsdk import Card
+import json
+com = input(': ')
+def reduce(str_input):
+	return '-'.join(str_input.split(' ')).lower()
+def http_address(set,name):
+	return 'http://store.tcgplayer.com/magic/'+reduce(set)+'/'+reduce(name)
+def http_parse(str_input):
+	return '%20'.join(str_input.split(' '))
+if com.startswith('!magic'):
+	msg_com = com.split('-')
+	msg_com.pop(0)
+	for msg in msg_com:
+		if 'help' in msg.lower():
+			print('help')
+		elif 'm' in msg.lower():
+			print(msg[2:])
+			card_m = Card.find(msg[2:])
+			print(http_address(card_m.set_name,card_m.name))
+		elif 's' in msg.lower():
+			print(msg[2:])
+			card_s = Card.where(name=http_parse(msg[2:])).all()
+			for s_card in card_s:
+				print(s_card.name)

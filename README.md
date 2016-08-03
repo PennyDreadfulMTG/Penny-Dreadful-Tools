@@ -6,6 +6,6 @@ The projects used in this bot include the <a href='https://github.com/Rapptz/dis
 Special thanks to the developer Andrew Backes for helping me his project.
 
 
-Discord link: https://discordapp.com/oauth2/authorize?client_id=209526304859488256&scope=bot&permissions=0
-Discord.py Github: https://github.com/Rapptz/discord.py
-MTGSDK Github: https://github.com/MagicTheGathering/mtg-sdk-python/
+Discord link: https://discordapp.com/oauth2/authorize?client_id=209526304859488256&scope=bot&permissions=0<br />
+Discord.py Github: https://github.com/Rapptz/discord.py<br />
+MTGSDK Github: https://github.com/MagicTheGathering/mtg-sdk-python/<br />

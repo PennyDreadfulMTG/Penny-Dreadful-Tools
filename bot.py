@@ -1,5 +1,7 @@
 from mtgsdk import Card
-import json, discord
+import json, discord, os, string
+import urllib.request
+
 prop = {'name','multiverse_id','layout','names','mana_cost','cmc','colors','type','supertypes','subtypes','rarity','text','flavor','artist','number','power','toughness','loyalty','variations','watermark','border','timeshifted','hand','life','reserved','release_date','starter','rulings','foreign_names','printings','original_text','original_type','legalities','source','image_url','set','set_name','id'}
 run = 'card_adv = Card'
 def adv(str_input):
@@ -12,43 +14,50 @@ def http_address(set,name):
 	return 'http://store.tcgplayer.com/magic/'+reduce(set)+'/'+reduce(name)
 def http_parse(str_input):
 	return '%20'.join(str_input.split(' '))
+
+legalcards = urllib.request.urlopen('http://pdmtgo.com/legal_cards.txt').readlines() 
+
+print("Legal cards: " + str(len(legalcards)))
+
 client = discord.Client()
+
 @client.event
 async def on_message(message):
         # we do not want the bot to reply to itself
         if message.author == client.user:
                 return
-        if message.content.startswith('!magic'):
-                msg_com = message.content.split('-')
-                msg_com.pop(0)
-                for msg in msg_com:
-                        if '-help' in msg.lower():
-                                print('help')
-                                await client.send_message(message.channel,'Magic Card Bot \n --help : This message displaying \n -s_reg : Followed by a string will search that string \n -m_uid : Searchs cards by multivesrse id \n -s_adv : Not currently finished')
-                        elif 'm_uid' in  msg.lower():
-                                print(msg[6:])
-                                card_m = Card.find(msg[6:])
-                                print(http_address(card_m.set_name,card_m.name))
-                                await client.send_message(message.channel,http_address(card_m.set_name,card_m.name))
-                                print(http_image(card_m.multiverse_id))
-                                await client.send_message(message.channel,http_image(card_m.multiverse_id))
-                        elif 's_reg' in msg.lower():
-                                print(http_parse(msg[6:]))
-                                card_s = Card.where(name=msg[6:]).all()
-                                for s_card in card_s:
-                                        print(http_address(s_card.set_name,s_card.name))
-                                        await client.send_message(message.channel,http_address(s_card.set_name,s_card.name))
-                                        print(http_image(s_card.multiverse_id))
-                                        await client.send_message(message.channel,http_image(s_card.multiverse_id))
-                        elif 's_adv' in msg.lower():
-                                await client.send_message(message.channel,'This command is disabled')
-                        else:
-                                print('RIP something went wrong')
-                                await client.send_message(message.channel, 'RIP something went wrong')
+        print(message.content)
+        content = message.content
+        end = len(content)
+        start = content.find("[") + 1
+        while start > 0:
+          # ss1 = content[ouvert: end]
+          end = content.find("]", start)
+          search = content[start: end].strip('[ ')
+          print("Request : " + search)
+          if len(search) > 2:
+             cards = Card.where(name=search).all()
+             for card in cards:
+                 if card.type=="Vanguard":
+                   continue
+                 if not card.multiverse_id:
+                   continue
+                 resp = string.Template("$name $mana_cost \n$type \n$text \n").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text)
+                 await client.send_message(message.channel, resp)
+                 print(http_image(card.multiverse_id))
+                 await client.send_message(message.channel,http_image(card.multiverse_id))
+                 break
+                 if card.name in legalcards:
+                   await client.send_message(message.channel,"Legal in Penny Dreadful :white_check_mark:")
+                 else:
+                   await client.send_message(message.channel,"Illegal in Penny Dreadful :negative_squared_cross_mark:")
+          start = content.find("[", end) + 1
+
+
 @client.event
 async def on_ready():
 	print('Logged in as')
 	print(client.user.name)
 	print(client.user.id)
 	print('------')
-client.run('Bot Token')
+client.run(os.environ['TOKEN'])

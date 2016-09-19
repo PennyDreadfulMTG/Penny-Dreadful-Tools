@@ -15,9 +15,14 @@ def http_address(set,name):
 def http_parse(str_input):
 	return '%20'.join(str_input.split(' '))
 
-legalcards = urllib.request.urlopen('http://pdmtgo.com/legal_cards.txt').readlines() 
+legalcards = []
+for line in urllib.request.urlopen('http://pdmtgo.com/legal_cards.txt').readlines():
+  legalcards.append(line.decode('latin-1').lower().strip()) 
 
 print("Legal cards: " + str(len(legalcards)))
+for c in legalcards:
+  print(c)
+  break
 
 client = discord.Client()
 
@@ -26,7 +31,7 @@ async def post_card(card, channel):
   await client.send_message(channel, resp)
   print(http_image(card.multiverse_id))
   await client.send_message(channel,http_image(card.multiverse_id))
-  if card.name in legalcards:
+  if card.name.lower().strip() in legalcards:
     await client.send_message(channel,"Legal in Penny Dreadful :white_check_mark:")
   else:
     await client.send_message(channel,"Illegal in Penny Dreadful :negative_squared_cross_mark:")

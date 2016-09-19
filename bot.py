@@ -15,6 +15,7 @@ def http_address(set,name):
 def http_parse(str_input):
 	return '%20'.join(str_input.split(' '))
 
+
 legalcards = urllib.request.urlopen('http://pdmtgo.com/legal_cards.txt').readlines() 
 
 print("Legal cards: " + str(len(legalcards)))
@@ -42,7 +43,9 @@ async def on_message(message):
                    continue
                  if not card.multiverse_id:
                    continue
-                 resp = string.Template("$name $mana_cost \n$type \n$text \n").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text)
+                 if not card.name.startswith(search):
+                   continue
+                 resp = string.Template("$name $mana_cost — $type \n$text").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text)
                  await client.send_message(message.channel, resp)
                  print(http_image(card.multiverse_id))
                  await client.send_message(message.channel,http_image(card.multiverse_id))
@@ -51,6 +54,7 @@ async def on_message(message):
                  else:
                    await client.send_message(message.channel,"Illegal in Penny Dreadful :negative_squared_cross_mark:")
                  break
+
           start = content.find("[", end) + 1
 
 

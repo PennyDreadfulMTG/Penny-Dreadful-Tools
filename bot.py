@@ -46,11 +46,11 @@ async def on_message(message):
                  await client.send_message(message.channel, resp)
                  print(http_image(card.multiverse_id))
                  await client.send_message(message.channel,http_image(card.multiverse_id))
-                 break
                  if card.name in legalcards:
                    await client.send_message(message.channel,"Legal in Penny Dreadful :white_check_mark:")
                  else:
                    await client.send_message(message.channel,"Illegal in Penny Dreadful :negative_squared_cross_mark:")
+                 break
           start = content.find("[", end) + 1
 
 

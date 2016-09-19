@@ -20,9 +20,6 @@ for line in urllib.request.urlopen('http://pdmtgo.com/legal_cards.txt').readline
   legalcards.append(line.decode('latin-1').lower().strip()) 
 
 print("Legal cards: " + str(len(legalcards)))
-for c in legalcards:
-  print(c)
-  break
 
 client = discord.Client()
 

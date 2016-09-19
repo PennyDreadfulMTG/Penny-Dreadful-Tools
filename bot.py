@@ -15,12 +15,21 @@ def http_address(set,name):
 def http_parse(str_input):
 	return '%20'.join(str_input.split(' '))
 
-
 legalcards = urllib.request.urlopen('http://pdmtgo.com/legal_cards.txt').readlines() 
 
 print("Legal cards: " + str(len(legalcards)))
 
 client = discord.Client()
+
+async def post_card(card, channel):
+  resp = string.Template("$name $mana_cost — $type \n$text").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text)
+  await client.send_message(channel, resp)
+  print(http_image(card.multiverse_id))
+  await client.send_message(channel,http_image(card.multiverse_id))
+  if card.name in legalcards:
+    await client.send_message(channel,"Legal in Penny Dreadful :white_check_mark:")
+  else:
+    await client.send_message(channel,"Illegal in Penny Dreadful :negative_squared_cross_mark:")
 
 @client.event
 async def on_message(message):
@@ -34,27 +43,42 @@ async def on_message(message):
         while start > 0:
           # ss1 = content[ouvert: end]
           end = content.find("]", start)
-          search = content[start: end].strip('[ ')
+          search = content[start: end].strip('[ ').lower()
           print("Request : " + search)
           if len(search) > 2:
-             cards = Card.where(name=search).all()
+             cards = Card.where(name=search).all().reverse()
+             found = False
              for card in cards:
+                 if found:
+                   break
                  if card.type=="Vanguard":
                    continue
                  if not card.multiverse_id:
                    continue
-                 if not card.name.startswith(search):
+                 if not card.name.lower() == search:
                    continue
-                 resp = string.Template("$name $mana_cost — $type \n$text").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text)
-                 await client.send_message(message.channel, resp)
-                 print(http_image(card.multiverse_id))
-                 await client.send_message(message.channel,http_image(card.multiverse_id))
-                 if card.name in legalcards:
-                   await client.send_message(message.channel,"Legal in Penny Dreadful :white_check_mark:")
-                 else:
-                   await client.send_message(message.channel,"Illegal in Penny Dreadful :negative_squared_cross_mark:")
-                 break
-
+                 await post_card(card, message.channel)
+                 found = True
+             for card in cards:
+                 if found:
+                   break
+                 if card.type=="Vanguard":
+                   continue
+                 if not card.multiverse_id:
+                   continue
+                 if not card.name.lower().startswith(search):
+                   continue
+                 await post_card(card, message.channel)
+                 found = True
+             for card in cards:
+                 if found:
+                   break
+                 if card.type=="Vanguard":
+                   continue
+                 if not card.multiverse_id:
+                   continue
+                 await post_card(card, message.channel)
+                 found = True
           start = content.find("[", end) + 1
 
 

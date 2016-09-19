@@ -46,7 +46,8 @@ async def on_message(message):
           search = content[start: end].strip('[ ').lower()
           print("Request : " + search)
           if len(search) > 2:
-             cards = Card.where(name=search).all().reverse()
+             cards = Card.where(name=search).all()
+             cards.reverse()
              found = False
              for card in cards:
                  if found:

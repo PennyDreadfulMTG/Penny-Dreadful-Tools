@@ -24,14 +24,9 @@ print("Legal cards: " + str(len(legalcards)))
 client = discord.Client()
 
 async def post_card(card, channel):
-  resp = string.Template("$legal $name $mana_cost — $type \n$text").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text, legal=":white_check_mark:" if card.name.lower().strip() in legalcards else ":negative_squared_cross_mark:")
+  resp = string.Template("$legal $name $mana_cost — $type \n$text").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text, legal=":white_check_mark:" if card.name.lower().strip() in legalcards else ":no_entry:")
   await client.send_message(channel, resp)
   await client.send_message(channel,http_image(card.multiverse_id))
-  #print(http_image(card.multiverse_id))
-  #if card.name.lower().strip() in legalcards:
-  #  await client.send_message(channel,"Legal in Penny Dreadful :white_check_mark:")
-  #else:
-  #  await client.send_message(channel,"Illegal in Penny Dreadful :negative_squared_cross_mark:")
 
 @client.event
 async def on_message(message):

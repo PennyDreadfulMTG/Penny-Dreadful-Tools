@@ -24,7 +24,7 @@ print("Legal cards: " + str(len(legalcards)))
 client = discord.Client()
 
 async def post_card(card, channel):
-  resp = string.Template("$name $mana_cost — $type $legal \n$text").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text, legal=":white_check_mark: (Legal in PD)" if card.name.lower().strip() in legalcards else ":x: (Not legal in PD)")
+  resp = string.Template("$name $mana_cost — $type $legal \n$text").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text, legal=":white_check_mark: (Legal in PD)" if card.name.lower().strip() in legalcards else ":no_entry_sign: (Not legal in PD)")
   await client.send_message(channel, resp)
   await client.send_message(channel,http_image(card.multiverse_id))
 

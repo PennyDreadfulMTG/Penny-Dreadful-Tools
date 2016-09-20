@@ -24,14 +24,14 @@ print("Legal cards: " + str(len(legalcards)))
 client = discord.Client()
 
 async def post_card(card, channel):
-  resp = string.Template("$name $mana_cost — $type \n$text").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text)
+  resp = string.Template("$legal $name $mana_cost — $type \n$text").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text, legal=":white_check_mark:" if card.name.lower().strip() in legalcards else ":negative_squared_cross_mark:")
   await client.send_message(channel, resp)
-  print(http_image(card.multiverse_id))
   await client.send_message(channel,http_image(card.multiverse_id))
-  if card.name.lower().strip() in legalcards:
-    await client.send_message(channel,"Legal in Penny Dreadful :white_check_mark:")
-  else:
-    await client.send_message(channel,"Illegal in Penny Dreadful :negative_squared_cross_mark:")
+  #print(http_image(card.multiverse_id))
+  #if card.name.lower().strip() in legalcards:
+  #  await client.send_message(channel,"Legal in Penny Dreadful :white_check_mark:")
+  #else:
+  #  await client.send_message(channel,"Illegal in Penny Dreadful :negative_squared_cross_mark:")
 
 @client.event
 async def on_message(message):
@@ -42,6 +42,8 @@ async def on_message(message):
         content = message.content
         end = len(content)
         start = content.find("[") + 1
+		if "gatherer.wizards.com" in content.lower():
+		  return
         while start > 0:
           # ss1 = content[ouvert: end]
           end = content.find("]", start)

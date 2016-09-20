@@ -42,8 +42,8 @@ async def on_message(message):
         content = message.content
         end = len(content)
         start = content.find("[") + 1
-		if "gatherer.wizards.com" in content.lower():
-		  return
+        if "gatherer.wizards.com" in content.lower():
+          return
         while start > 0:
           # ss1 = content[ouvert: end]
           end = content.find("]", start)

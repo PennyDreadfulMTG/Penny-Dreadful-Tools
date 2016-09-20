@@ -8,8 +8,12 @@ def adv(str_input):
 	return '='.join(str_input.split(' ')).lower()
 def reduce(str_input):
 	return '-'.join(str_input.split(' ')).lower()
+def escape(str_input):
+	return '+'.join(str_input.split(' ')).lower()
+def better_image(cardname):
+  return "http://magic.bluebones.net/proxies/?c=" + escape(cardname)
 def http_image(uid):
-	return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(uid)  +'.jpg'
+  return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(uid)  +'.jpg'
 def http_address(set,name):
 	return 'http://store.tcgplayer.com/magic/'+reduce(set)+'/'+reduce(name)
 def http_parse(str_input):
@@ -26,9 +30,8 @@ client = discord.Client()
 async def post_card(card, channel):
   resp = string.Template("$name $mana_cost — $type — $legal").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text, legal=":white_check_mark:" if card.name.lower().strip() in legalcards else ":no_entry_sign: (not legal in PD)", pt=str(card.power)+ "/" + str(card.toughness) if "Creature" in card.type else '')
   await client.send_message(channel, resp)
-  #await client.send_message(channel,http_image(card.multiverse_id))
-  urllib.request.urlretrieve(http_image(card.multiverse_id), 'cardimage.jpg')
-  await client.send_file(channel, 'cardimage.jpg')
+  urllib.request.urlretrieve(better_image(card.name), reduce(card.name) + '.jpg')
+  await client.send_file(channel, reduce(card.name) + '.jpg')
   #if card.original_text != card.text:
   #  await client.send_message(channel, card.text)
 

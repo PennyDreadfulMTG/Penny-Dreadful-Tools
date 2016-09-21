@@ -86,41 +86,37 @@ async def on_message(message):
           return
         results = []
         while start > 0:
-          # ss1 = content[ouvert: end]
           end = content.find("]", start)
           search = content[start: end].strip('[ ').lower()
           print("Request : " + search)
           if len(search) > 2:
              cards = cardsearch(search)
              found = False
+             # Search for an exact match
              for card in cards:
                  if found:
                    break
                  if card.type=="Vanguard":
-                   continue
-                 if not card.multiverse_id:
                    continue
                  if not card.name.lower() == search:
                    continue
                  results.append(card)
                  found = True
+             # Search for something that starts with the query
              for card in cards:
                  if found:
                    break
                  if card.type=="Vanguard":
-                   continue
-                 if not card.multiverse_id:
                    continue
                  if not card.name.lower().startswith(search):
                    continue
                  results.append(card)
                  found = True
+             # Search for the query anywhere in the name whatsoever
              for card in cards:
                  if found:
                    break
                  if card.type=="Vanguard":
-                   continue
-                 if not card.multiverse_id:
                    continue
                  results.append(card)
                  found = True

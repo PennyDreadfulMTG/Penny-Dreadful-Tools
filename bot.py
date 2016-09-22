@@ -36,6 +36,7 @@ def downloadimage(cardname, uid):
 cache = {}
 def cardsearch(name):
   if name not in cache:
+    print("Requesting API for " + name)
     cache[name] = Card.where(name=name).all()
   return cache[name]
 
@@ -92,16 +93,17 @@ async def on_message(message):
           if len(search) > 2:
              found = False
              # Search for an exact match
-             cards = cardsearch('"' + search + '"')
+             #cards = cardsearch('"' + search + '"')
+             cards = cardsearch(search)
              for card in cards:
                  if found:
                    break
                  if card.type=="Vanguard":
                    continue
-                 results.append(card)
-                 found = True
+                 if card.name.lower() == search:
+                   results.append(card)
+                   found = True
              # Search for something that starts with the query
-             cards = cardsearch(search)
              for card in cards:
                  if found:
                    break

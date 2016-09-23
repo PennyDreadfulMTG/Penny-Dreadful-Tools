@@ -7,10 +7,14 @@ cache = {}
 legal_cards = []
 client = discord.Client()
 
-def init():
+def update_legality():
+  legal_cards.clear()
   for line in urllib.request.urlopen('http://pdmtgo.com/legal_cards.txt').readlines():
     legal_cards.append(line.decode('latin-1').lower().strip())
   print("Legal cards: " + str(len(legal_cards)))
+
+def init():
+  update_legality()
   client.run(os.environ['TOKEN'])
 
 def normalize_filename(str_input):
@@ -130,6 +134,9 @@ async def respond_to_command(message):
     name = random.choice(legal_cards)
     cards = cards_from_query(name)
     await post_card(cards[0], message.channel)
+  elif message.content.startswith("!reload"):
+    update_legality()
+    await client.send_message(message.channel, "Reloaded list of legal cards.")
 
 @client.event
 async def on_message(message):

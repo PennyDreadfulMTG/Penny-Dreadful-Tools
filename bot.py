@@ -45,10 +45,12 @@ def download_image(cardname, uid):
   filename = basename + '.jpg'
   if acceptable_file(filename):
     return filename
+  print("Trying to get first choice image for " + filename)
   urllib.request.urlretrieve(better_image(cardname), filename)
   if acceptable_file(filename):
     return filename
   if uid > 0:
+    print("Trying to get fallback image for " + filename)
     urllib.request.urlretrieve(http_image(uid), filename)
     if acceptable_file(filename):
       return filename
@@ -82,6 +84,10 @@ def cards_from_query(query):
   for card in cards:
     if card.name.lower() == query:
       return [card]
+  # If not found, use cards that start with the query and a punctuation char.
+  results = [card for card in cards if card.name.lower().startswith(query + " ") or card.name.lower().startswith(query + ",") ]
+  if len(results) > 0:
+    return uniqify_cards(results)
   # If not found, use cards that start with the query.
   results = [card for card in cards if card.name.lower().startswith(query)]
   if len(results) > 0:
@@ -102,10 +108,14 @@ async def post_cards(cards, channel):
   tmp = string.Template("$name $legal, ")
   text = ""
   images = ""
+  more_text = ""
+  if (len(cards) > 10):
+    more_text = " and " + str(len(cards) - 4) + " more."
+    cards = cards[:4]
   for card in cards:
     text = text + tmp.substitute(name=card.name, legal=":white_check_mark:" if card.name.lower().strip() in legal_cards else ":no_entry_sign:")
     images = images + "|" + escape(card.name)
-  await client.send_message(channel, text.strip(", "))
+  await client.send_message(channel, text.strip(", ") + more_text)
   filename = download_image(images, 0)
   if filename is None:
     await client.send_message(channel, "No image available")

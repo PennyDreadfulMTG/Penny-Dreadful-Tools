@@ -127,7 +127,7 @@ async def on_message(message):
   if len(results) > 1:
     await post_cards(results, message.channel)
   elif len(results) == 1:
-    await post_card(card, message.channel)
+    await post_card(results[0], message.channel)
 
 @client.event
 async def on_ready():

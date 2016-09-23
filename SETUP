@@ -1,0 +1,10 @@
+- Install python3
+- Install pip
+- python3 -m pip install -U discord.py
+- python3 -m pip install -U mtgsdk
+- Add a bot at https://discordapp.com/developers/applications/me
+- Add a bot user for the bot
+- Add the bot to your server with https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot
+- Click to reveal the token
+- Run from the commandline with TOKEN=<your token here> python3 bot.py
+

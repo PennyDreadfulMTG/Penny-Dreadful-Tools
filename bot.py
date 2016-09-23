@@ -5,20 +5,20 @@ import urllib.request
 prop = {'name','multiverse_id','layout','names','mana_cost','cmc','colors','type','supertypes','subtypes','rarity','text','flavor','artist','number','power','toughness','loyalty','variations','watermark','border','timeshifted','hand','life','reserved','release_date','starter','rulings','foreign_names','printings','original_text','original_type','legalities','source','image_url','set','set_name','id'}
 run = 'card_adv = Card'
 def adv(str_input):
-	return '='.join(str_input.split(' ')).lower()
+  return '='.join(str_input.split(' ')).lower()
 def reduce(str_input):
   str_input = '-'.join(str_input.split(' ')).lower()
   return '-'.join(str_input.split('|')).lower()
 def escape(str_input):
-	return '+'.join(str_input.split(' ')).lower()
+  return '+'.join(str_input.split(' ')).lower()
 def better_image(cardname):
   return "http://magic.bluebones.net/proxies/?c=" + escape(cardname)
 def http_image(uid):
   return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(uid)  +'.jpg'
 def http_address(set,name):
-	return 'http://store.tcgplayer.com/magic/'+reduce(set)+'/'+reduce(name)
+  return 'http://store.tcgplayer.com/magic/'+reduce(set)+'/'+reduce(name)
 def http_parse(str_input):
-	return '%20'.join(str_input.split(' '))
+  return '%20'.join(str_input.split(' '))
 
 def downloadimage(cardname, uid):
   filename = reduce(cardname) + '.jpg'
@@ -43,7 +43,7 @@ def cardsearch(name):
 
 legalcards = []
 for line in urllib.request.urlopen('http://pdmtgo.com/legal_cards.txt').readlines():
-  legalcards.append(line.decode('latin-1').lower().strip()) 
+  legalcards.append(line.decode('latin-1').lower().strip())
 
 print("Legal cards: " + str(len(legalcards)))
 
@@ -66,7 +66,7 @@ async def post_cards(cards, channel):
   images = ""
   for card in cards:
     text = text + tmp.substitute(name=card.name, legal=":white_check_mark:" if card.name.lower().strip() in legalcards else ":no_entry_sign:")
-    images = images + "|" + escape(card.name) 
+    images = images + "|" + escape(card.name)
   await client.send_message(channel, text.strip(", "))
   filename = downloadimage(images, 0)
   if filename is None:
@@ -131,8 +131,8 @@ async def on_message(message):
 
 @client.event
 async def on_ready():
-	print('Logged in as')
-	print(client.user.name)
-	print(client.user.id)
-	print('------')
+  print('Logged in as')
+  print(client.user.name)
+  print(client.user.id)
+  print('------')
 client.run(os.environ['TOKEN'])

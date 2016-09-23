@@ -1,133 +1,140 @@
 from mtgsdk import Card
-import json, discord, os, string
+import json, discord, os, string, re, random
 import urllib.request
 
-prop = {'name','multiverse_id','layout','names','mana_cost','cmc','colors','type','supertypes','subtypes','rarity','text','flavor','artist','number','power','toughness','loyalty','variations','watermark','border','timeshifted','hand','life','reserved','release_date','starter','rulings','foreign_names','printings','original_text','original_type','legalities','source','image_url','set','set_name','id'}
-run = 'card_adv = Card'
-def adv(str_input):
-  return '='.join(str_input.split(' ')).lower()
+# Globals
+cache = {}
+legal_cards = []
+client = discord.Client()
+
+def init():
+  for line in urllib.request.urlopen('http://pdmtgo.com/legal_cards.txt').readlines():
+    legal_cards.append(line.decode('latin-1').lower().strip())
+  print("Legal cards: " + str(len(legal_cards)))
+  client.run(os.environ['TOKEN'])
+
 def reduce(str_input):
   str_input = '-'.join(str_input.split(' ')).lower()
   return '-'.join(str_input.split('|')).lower()
+
 def escape(str_input):
   return '+'.join(str_input.split(' ')).lower()
+
 def better_image(cardname):
   return "http://magic.bluebones.net/proxies/?c=" + escape(cardname)
+
 def http_image(uid):
   return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(uid)  +'.jpg'
-def http_address(set,name):
-  return 'http://store.tcgplayer.com/magic/'+reduce(set)+'/'+reduce(name)
-def http_parse(str_input):
-  return '%20'.join(str_input.split(' '))
 
-def downloadimage(cardname, uid):
+# Given a list of cards return one (aribtrarily) for each unique name in the list.
+def uniqify_cards(cards):
+  # Remove multiple printings of the same card from the result set.
+  results = {}
+  for card in cards:
+    results[card.name.lower()] = card
+  return results.values()
+
+def acceptable_file(filename):
+  return os.path.isfile(filename) and os.path.getsize(filename) > 0
+
+def download_image(cardname, uid):
   filename = reduce(cardname) + '.jpg'
-  if os.path.isfile(filename):
-    if os.path.getsize(filename) > 0:
-      return filename
+  if acceptable_file(filename):
+    return filename
   urllib.request.urlretrieve(better_image(cardname), filename)
-  if os.path.getsize(filename) > 0:
+  if acceptable_file(filename):
     return filename
   if uid > 0:
     urllib.request.urlretrieve(http_image(uid), filename)
-    return filename
+    if acceptable_file(filename):
+      return filename
   return None
 
-cache = {}
-def cardsearch(name):
-  if name not in cache:
-    print("Requesting API for " + name)
-    cache[name] = Card.where(name=name).all()
-  return cache[name]
+def card_search(query):
+  if query not in cache:
+    print("Requesting API for " + query)
+    cache[query] = Card.where(name = query).all()
+  return cache[query]
 
+def parse_queries(content):
+  queries = re.findall('\[([^\]]*)\]', content)
+  return [query.lower() for query in queries]
 
-legalcards = []
-for line in urllib.request.urlopen('http://pdmtgo.com/legal_cards.txt').readlines():
-  legalcards.append(line.decode('latin-1').lower().strip())
+def cards_from_queries(queries, message):
+  all_cards = []
+  for query in queries:
+    cards = cards_from_query(query)
+    if len(cards) > 0:
+      all_cards.extend(cards)
+  return all_cards
 
-print("Legal cards: " + str(len(legalcards)))
-
-client = discord.Client()
+def cards_from_query(query):
+  # Skip searching if the request is too short.
+  if len(query) <= 2:
+      return []
+  cards = card_search(query)
+  cards = [card for card in cards if card.type != "Vanguard"]
+  # First look for an exact match.
+  for card in cards:
+    if card.name.lower() == query:
+      return [card]
+  # If not found, use cards that start with the query.
+  results = [card for card in cards if card.name.lower().startswith(query)]
+  if len(results) > 0:
+    return uniqify_cards(results)
+  # If we didn't find any of those then use all search results.
+  return uniqify_cards(cards)
 
 async def post_card(card, channel):
-  resp = string.Template("$name $mana_cost — $type — $legal").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text, legal=":white_check_mark:" if card.name.lower().strip() in legalcards else ":no_entry_sign: (not legal in PD)", pt=str(card.power)+ "/" + str(card.toughness) if "Creature" in card.type else '')
+  resp = string.Template("$name $mana_cost — $type — $legal").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text, legal=":white_check_mark:" if card.name.lower().strip() in legal_cards else ":no_entry_sign: (not legal in PD)", pt=str(card.power)+ "/" + str(card.toughness) if "Creature" in card.type else '')
   await client.send_message(channel, resp)
-  filename = downloadimage(card.name, card.multiverse_id)
+  filename = download_image(card.name, card.multiverse_id)
   if filename is None:
     await client.send_message(channel, card.text)
   else:
     await client.send_file(channel, filename)
-  #if card.original_text != card.text:
-  #  await client.send_message(channel, card.text)
 
 async def post_cards(cards, channel):
   tmp = string.Template("$name $legal, ")
   text = ""
   images = ""
   for card in cards:
-    text = text + tmp.substitute(name=card.name, legal=":white_check_mark:" if card.name.lower().strip() in legalcards else ":no_entry_sign:")
+    text = text + tmp.substitute(name=card.name, legal=":white_check_mark:" if card.name.lower().strip() in legal_cards else ":no_entry_sign:")
     images = images + "|" + escape(card.name)
   await client.send_message(channel, text.strip(", "))
-  filename = downloadimage(images, 0)
+  filename = download_image(images, 0)
   if filename is None:
     await client.send_message(channel, "No image available")
   else:
     await client.send_file(channel, filename)
 
+async def respond_to_card_names(message):
+  # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
+  if "gatherer.wizards.com" in message.content.lower():
+    return
+  queries = parse_queries(message.content)
+  if len(queries) == 0:
+    return
+  cards = cards_from_queries(queries, message)
+  if len(cards) > 1:
+    await post_cards(cards, message.channel)
+  elif len(cards) == 1:
+    await post_card(cards[0], message.channel)
+
+async def respond_to_command(message):
+  if message.content.startswith("!random"):
+    name = random.choice(legal_cards)
+    cards = cards_from_query(name)
+    await post_card(cards[0], message.channel)
+
 @client.event
 async def on_message(message):
-  # we do not want the bot to reply to itself
+  # We do not want the bot to reply to itself.
   if message.author == client.user:
     return
-  print(message.content)
-  content = message.content
-  end = len(content)
-  start = content.find("[") + 1
-  if "gatherer.wizards.com" in content.lower():
-    return
-  results = []
-  while start > 0:
-    end = content.find("]", start)
-    search = content[start: end].strip('[ ').lower()
-    print("Request : " + search)
-    # Skip searching if the request is too short.
-    if len(search) <= 2:
-      return
-    found = False
-    cards = cardsearch(search)
-    for card in cards:
-      if found:
-        break
-      if card.type=="Vanguard":
-        continue
-      print(card.name.lower())
-      if card.name.lower() == search:
-        results.append(card)
-        found = True
-    # Search for something that starts with the query
-    for card in cards:
-      if found:
-        break
-      if card.type=="Vanguard":
-        continue
-      if card.name.lower().startswith(search):
-        results.append(card)
-        found = True
-    # Search for the query anywhere in the name whatsoever
-    for card in cards:
-      if found:
-        break
-      if card.type=="Vanguard":
-        continue
-      results.append(card)
-      found = True
-    start = content.find("[", end) + 1
-  if not found:
-    return
-  if len(results) > 1:
-    await post_cards(results, message.channel)
-  elif len(results) == 1:
-    await post_card(results[0], message.channel)
+  if message.content.startswith("!"):
+    await respond_to_command(message)
+  await respond_to_card_names(message)
 
 @client.event
 async def on_ready():
@@ -135,4 +142,5 @@ async def on_ready():
   print(client.user.name)
   print(client.user.id)
   print('------')
-client.run(os.environ['TOKEN'])
+
+init()

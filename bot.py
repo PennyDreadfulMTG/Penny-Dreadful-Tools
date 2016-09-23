@@ -77,7 +77,7 @@ def cards_from_query(query):
   if len(query) <= 2:
       return []
   cards = card_search(query)
-  cards = [card for card in cards if card.type != "Vanguard"]
+  cards = [card for card in cards if card.type != "Vanguard" and card.layout != 'token']
   # First look for an exact match.
   for card in cards:
     if card.name.lower() == query:

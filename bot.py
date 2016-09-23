@@ -97,8 +97,8 @@ def cards_from_query(query):
 
 async def post_card(card, channel):
   resp = string.Template("$name $mana_cost — $type — $legal").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text, legal=":white_check_mark:" if card.name.lower().strip() in legal_cards else ":no_entry_sign: (not legal in PD)", pt=str(card.power)+ "/" + str(card.toughness) if "Creature" in card.type else '')
-  await client.send_message(channel, resp)
   filename = download_image(card.name, card.multiverse_id)
+  await client.send_message(channel, resp)
   if filename is None:
     await client.send_message(channel, card.text)
   else:

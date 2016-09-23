@@ -1,5 +1,5 @@
 from mtgsdk import Card
-import json, discord, os, string, re, random, unicodedata
+import json, discord, os, string, re, random, hashlib, unicodedata
 import urllib.request
 
 # Globals
@@ -42,13 +42,19 @@ def acceptable_file(filename):
   return os.path.isfile(filename) and os.path.getsize(filename) > 0
 
 def download_image(cardname, uid):
-  filename = normalize_filename(cardname) + '.jpg'
+  basename = normalize_filename(cardname)
+  # Hash the filename if it's otherwise going to be too large to use.
+  if len(basename) > 255:
+    basename = hashlib.md5(basename.encode('utf-8')).hexdigest()
+  filename = basename + '.jpg'
   if acceptable_file(filename):
     return filename
+  print("Trying to get first choice image for " + filename)
   urllib.request.urlretrieve(better_image(cardname), filename)
   if acceptable_file(filename):
     return filename
   if uid > 0:
+    print("Trying to get fallback image for " + filename)
     urllib.request.urlretrieve(http_image(uid), filename)
     if acceptable_file(filename):
       return filename
@@ -77,11 +83,15 @@ def cards_from_query(query):
   if len(query) <= 2:
       return []
   cards = card_search(query)
-  cards = [card for card in cards if card.type != "Vanguard"]
+  cards = [card for card in cards if card.type != "Vanguard" and card.layout != 'token']
   # First look for an exact match.
   for card in cards:
     if card.name.lower() == query:
       return [card]
+  # If not found, use cards that start with the query and a punctuation char.
+  results = [card for card in cards if card.name.lower().startswith(query + " ") or card.name.lower().startswith(query + ",") ]
+  if len(results) > 0:
+    return uniqify_cards(results)
   # If not found, use cards that start with the query.
   results = [card for card in cards if card.name.lower().startswith(query)]
   if len(results) > 0:
@@ -91,8 +101,8 @@ def cards_from_query(query):
 
 async def post_card(card, channel):
   resp = string.Template("$name $mana_cost — $type — $legal").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text, legal=":white_check_mark:" if card.name.lower().strip() in legal_cards else ":no_entry_sign: (not legal in PD)", pt=str(card.power)+ "/" + str(card.toughness) if "Creature" in card.type else '')
-  await client.send_message(channel, resp)
   filename = download_image(card.name, card.multiverse_id)
+  await client.send_message(channel, resp)
   if filename is None:
     await client.send_message(channel, card.text)
   else:
@@ -102,10 +112,14 @@ async def post_cards(cards, channel):
   tmp = string.Template("$name $legal, ")
   text = ""
   images = ""
+  more_text = ""
+  if (len(cards) > 10):
+    more_text = " and " + str(len(cards) - 4) + " more."
+    cards = cards[:4]
   for card in cards:
     text = text + tmp.substitute(name=card.name, legal=":white_check_mark:" if card.name.lower().strip() in legal_cards else ":no_entry_sign:")
     images = images + "|" + escape(card.name)
-  await client.send_message(channel, text.strip(", "))
+  await client.send_message(channel, text.strip(", ") + more_text)
   filename = download_image(images, 0)
   if filename is None:
     await client.send_message(channel, "No image available")

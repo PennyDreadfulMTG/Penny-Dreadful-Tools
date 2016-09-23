@@ -1,16 +1,16 @@
 from mtgsdk import Card
-import json, discord, os, string, re
+import json, discord, os, string, re, random
 import urllib.request
 
 # Globals
 cache = {}
-legalcards = []
+legal_cards = []
 client = discord.Client()
 
 def init():
   for line in urllib.request.urlopen('http://pdmtgo.com/legal_cards.txt').readlines():
-    legalcards.append(line.decode('latin-1').lower().strip())
-  print("Legal cards: " + str(len(legalcards)))
+    legal_cards.append(line.decode('latin-1').lower().strip())
+  print("Legal cards: " + str(len(legal_cards)))
   client.run(os.environ['TOKEN'])
 
 def reduce(str_input):
@@ -86,7 +86,7 @@ def cards_from_query(query):
   return uniqify_cards(cards)
 
 async def post_card(card, channel):
-  resp = string.Template("$name $mana_cost — $type — $legal").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text, legal=":white_check_mark:" if card.name.lower().strip() in legalcards else ":no_entry_sign: (not legal in PD)", pt=str(card.power)+ "/" + str(card.toughness) if "Creature" in card.type else '')
+  resp = string.Template("$name $mana_cost — $type — $legal").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text, legal=":white_check_mark:" if card.name.lower().strip() in legal_cards else ":no_entry_sign: (not legal in PD)", pt=str(card.power)+ "/" + str(card.toughness) if "Creature" in card.type else '')
   await client.send_message(channel, resp)
   filename = download_image(card.name, card.multiverse_id)
   if filename is None:
@@ -99,7 +99,7 @@ async def post_cards(cards, channel):
   text = ""
   images = ""
   for card in cards:
-    text = text + tmp.substitute(name=card.name, legal=":white_check_mark:" if card.name.lower().strip() in legalcards else ":no_entry_sign:")
+    text = text + tmp.substitute(name=card.name, legal=":white_check_mark:" if card.name.lower().strip() in legal_cards else ":no_entry_sign:")
     images = images + "|" + escape(card.name)
   await client.send_message(channel, text.strip(", "))
   filename = download_image(images, 0)
@@ -121,11 +121,19 @@ async def respond_to_card_names(message):
   elif len(cards) == 1:
     await post_card(cards[0], message.channel)
 
+async def respond_to_command(message):
+  if message.content.startswith("!random"):
+    name = random.choice(legal_cards)
+    cards = cards_from_query(name)
+    await post_card(cards[0], message.channel)
+
 @client.event
 async def on_message(message):
   # We do not want the bot to reply to itself.
   if message.author == client.user:
     return
+  if message.content.startswith("!"):
+    await respond_to_command(message)
   await respond_to_card_names(message)
 
 @client.event

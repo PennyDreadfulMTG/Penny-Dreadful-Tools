@@ -1,5 +1,5 @@
 from mtgsdk import Card
-import json, discord, os, string, re, random, hashlib
+import json, discord, os, string, re, random, hashlib, unicodedata
 import urllib.request
 
 # Globals
@@ -13,9 +13,13 @@ def init():
   print("Legal cards: " + str(len(legal_cards)))
   client.run(os.environ['TOKEN'])
 
-def reduce(str_input):
+def normalize_filename(str_input):
+  # Remove spaces
   str_input = '-'.join(str_input.split(' ')).lower()
-  return '-'.join(str_input.split('|')).lower()
+  # Remove Pipes
+  str_input = '-'.join(str_input.split('|')).lower()
+  # Remove nasty accented characters.
+  return ''.join((c for c in unicodedata.normalize('NFD', str_input) if unicodedata.category(c) != 'Mn'))
 
 def escape(str_input):
   return '+'.join(str_input.split(' ')).lower()
@@ -38,7 +42,7 @@ def acceptable_file(filename):
   return os.path.isfile(filename) and os.path.getsize(filename) > 0
 
 def download_image(cardname, uid):
-  basename = reduce(cardname)
+  basename = normalize_filename(cardname)
   # Hash the filename if it's otherwise going to be too large to use.
   if len(basename) > 255:
     basename = hashlib.md5(basename.encode('utf-8')).hexdigest()

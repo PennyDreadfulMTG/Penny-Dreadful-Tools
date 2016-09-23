@@ -1,3 +1,4 @@
 *.pyc
 Thumbs.db
 *.jpg
+.DS_Store

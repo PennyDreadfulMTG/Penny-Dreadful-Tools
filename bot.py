@@ -1,5 +1,5 @@
 from mtgsdk import Card
-import json, discord, os, string, re, random
+import json, discord, os, string, re, random, hashlib
 import urllib.request
 
 # Globals
@@ -38,7 +38,11 @@ def acceptable_file(filename):
   return os.path.isfile(filename) and os.path.getsize(filename) > 0
 
 def download_image(cardname, uid):
-  filename = reduce(cardname) + '.jpg'
+  basename = reduce(cardname)
+  # Hash the filename if it's otherwise going to be too large to use.
+  if len(basename) > 255:
+    basename = hashlib.md5(basename.encode('utf-8')).hexdigest()
+  filename = basename + '.jpg'
   if acceptable_file(filename):
     return filename
   urllib.request.urlretrieve(better_image(cardname), filename)

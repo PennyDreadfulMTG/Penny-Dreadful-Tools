@@ -76,58 +76,57 @@ async def post_cards(cards, channel):
 
 @client.event
 async def on_message(message):
-        # we do not want the bot to reply to itself
-        if message.author == client.user:
-                return
-        print(message.content)
-        content = message.content
-        end = len(content)
-        start = content.find("[") + 1
-        if "gatherer.wizards.com" in content.lower():
-          return
-        results = []
-        while start > 0:
-          end = content.find("]", start)
-          search = content[start: end].strip('[ ').lower()
-          print("Request : " + search)
-          if len(search) > 2:
-             found = False
-             # Search for an exact match
-             #cards = cardsearch('"' + search + '"')
-             cards = cardsearch(search)
-             for card in cards:
-                 if found:
-                   break
-                 if card.type=="Vanguard":
-                   continue
-                 if card.name.lower() == search:
-                   results.append(card)
-                   found = True
-             # Search for something that starts with the query
-             for card in cards:
-                 if found:
-                   break
-                 if card.type=="Vanguard":
-                   continue
-                 if card.name.lower().startswith(search):
-                   results.append(card)
-                   found = True
-             # Search for the query anywhere in the name whatsoever
-             for card in cards:
-                 if found:
-                   break
-                 if card.type=="Vanguard":
-                   continue
-                 results.append(card)
-                 found = True
-          start = content.find("[", end) + 1
-        if not found:
-          return
-        if len(results) > 1:
-          await post_cards(results, message.channel)
-        elif len(results) == 1:
-          await post_card(card, message.channel)
-
+  # we do not want the bot to reply to itself
+  if message.author == client.user:
+    return
+  print(message.content)
+  content = message.content
+  end = len(content)
+  start = content.find("[") + 1
+  if "gatherer.wizards.com" in content.lower():
+    return
+  results = []
+  while start > 0:
+    end = content.find("]", start)
+    search = content[start: end].strip('[ ').lower()
+    print("Request : " + search)
+    if len(search) > 2:
+      found = False
+      # Search for an exact match
+      #cards = cardsearch('"' + search + '"')
+      cards = cardsearch(search)
+      for card in cards:
+        if found:
+          break
+        if card.type=="Vanguard":
+          continue
+        if card.name.lower() == search:
+          results.append(card)
+          found = True
+      # Search for something that starts with the query
+      for card in cards:
+        if found:
+          break
+        if card.type=="Vanguard":
+          continue
+        if card.name.lower().startswith(search):
+          results.append(card)
+          found = True
+      # Search for the query anywhere in the name whatsoever
+      for card in cards:
+        if found:
+          break
+        if card.type=="Vanguard":
+          continue
+        results.append(card)
+        found = True
+    start = content.find("[", end) + 1
+  if not found:
+    return
+  if len(results) > 1:
+    await post_cards(results, message.channel)
+  elif len(results) == 1:
+    await post_card(card, message.channel)
 
 @client.event
 async def on_ready():

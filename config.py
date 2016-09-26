@@ -2,7 +2,7 @@ import json
 
 class Config:
   defaults = {
-    "database": "./db"
+    "database": "./db",
     "image_dir": "."
   }
 

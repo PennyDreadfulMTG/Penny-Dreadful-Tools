@@ -1,3 +1,4 @@
+from config import Config
 from mtgsdk import Card
 import json, discord, os, string, re, random, hashlib, unicodedata
 import urllib.request
@@ -6,6 +7,7 @@ import urllib.request
 cache = {}
 legal_cards = []
 client = discord.Client()
+config = Config()
 
 def update_legality():
   legal_cards.clear()
@@ -15,7 +17,7 @@ def update_legality():
 
 def init():
   update_legality()
-  client.run(os.environ['TOKEN'])
+  client.run(config.get("token"))
 
 def normalize_filename(str_input):
   # Remove spaces
@@ -42,26 +44,28 @@ def uniqify_cards(cards):
     results[card.name.lower()] = card
   return results.values()
 
-def acceptable_file(filename):
-  return os.path.isfile(filename) and os.path.getsize(filename) > 0
+def acceptable_file(filepath):
+  return os.path.isfile(filepath) and os.path.getsize(filepath) > 0
 
 def download_image(cardname, uid):
+  image_dir = config.get("image_dir")
   basename = normalize_filename(cardname)
   # Hash the filename if it's otherwise going to be too large to use.
   if len(basename) > 255:
     basename = hashlib.md5(basename.encode('utf-8')).hexdigest()
   filename = basename + '.jpg'
-  if acceptable_file(filename):
-    return filename
-  print("Trying to get first choice image for " + filename)
-  urllib.request.urlretrieve(better_image(cardname), filename)
-  if acceptable_file(filename):
-    return filename
+  filepath = config.get("image_dir") + "/" + filename
+  if acceptable_file(filepath):
+    return filepath
+  print("Trying to get first choice image for " + cardname)
+  urllib.request.urlretrieve(better_image(cardname), filepath)
+  if acceptable_file(filepath):
+    return filepath
   if uid > 0:
-    print("Trying to get fallback image for " + filename)
-    urllib.request.urlretrieve(http_image(uid), filename)
-    if acceptable_file(filename):
-      return filename
+    print("Trying to get fallback image for " + cardname)
+    urllib.request.urlretrieve(http_image(uid), filepath)
+    if acceptable_file(filepath):
+      return filepath
   return None
 
 def card_search(query):

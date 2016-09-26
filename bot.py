@@ -1,5 +1,5 @@
 import json, discord, os, string, re, random, hashlib, unicodedata, urllib.request
-import oracle, config
+import fetcher, oracle, config
 
 # Globals
 legal_cards = []
@@ -12,10 +12,7 @@ def init():
   client.run(config.get("token"))
 
 def update_legality():
-  legal_cards.clear()
-  for line in urllib.request.urlopen('http://pdmtgo.com/legal_cards.txt').readlines():
-    legal_cards.append(line.decode('latin-1').lower().strip())
-  print("Legal cards: " + str(len(legal_cards)))
+  legal_cards = fetcher.Fetcher().legal_cards()
 
 def normalize_filename(str_input):
   # Remove spaces

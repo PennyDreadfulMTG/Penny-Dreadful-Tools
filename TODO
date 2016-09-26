@@ -15,6 +15,5 @@
 - When storing card info have not accounted for 'variations' - an array of variant versions of a card by multiverse id (like Fallen Empires multiple arts). Also all the fields in "extras".
 - Standardize on import a, b, c; one line for libraries, one line for our code.
 - We don't convert date to seconds-since-epoch but we have release_date as an INTEGER type. sqlite will let us insert it anyway but that's hella broken.
-- Fetcher should do all URL grabbing (legal cards, too) and it should output before doing so.
 - Random should take a numeric argumnet and default to 1.
 - We probably want to make the rows returned from database into dicts instead of lists. If we do that we must change Card(*r) to Card(**r) in Oracle.

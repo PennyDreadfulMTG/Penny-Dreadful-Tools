@@ -3,3 +3,4 @@ Thumbs.db
 *.jpg
 .DS_Store
 config.json
+.cache/

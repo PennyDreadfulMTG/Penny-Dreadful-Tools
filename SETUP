@@ -6,5 +6,6 @@
 - Add a bot user for the bot
 - Add the bot to your server with https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot
 - Click to reveal the token
-- Run from the commandline with TOKEN=<your token here> python3 bot.py
+- Copy config.json.example to config.json and alter the value for "token"
+- Optionally alter the value for "image_dir" if you want downloaded images stored somewhere else.
 

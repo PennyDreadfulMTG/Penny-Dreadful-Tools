@@ -10,6 +10,6 @@ node {
     }
 
     stage('Unit Tests') {
-      sh 'pytest'
+      sh '~/.local/bin/pytest'
     }
 }

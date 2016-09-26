@@ -1,23 +1,21 @@
-from config import Config
-from mtgsdk import Card
-import json, discord, os, string, re, random, hashlib, unicodedata
-import urllib.request
+import json, discord, os, string, re, random, hashlib, unicodedata, urllib.request
+import oracle, config
 
 # Globals
-cache = {}
 legal_cards = []
 client = discord.Client()
-config = Config()
+config = config.Config()
+oracle = oracle.Oracle()
+
+def init():
+  update_legality()
+  client.run(config.get("token"))
 
 def update_legality():
   legal_cards.clear()
   for line in urllib.request.urlopen('http://pdmtgo.com/legal_cards.txt').readlines():
     legal_cards.append(line.decode('latin-1').lower().strip())
   print("Legal cards: " + str(len(legal_cards)))
-
-def init():
-  update_legality()
-  client.run(config.get("token"))
 
 def normalize_filename(str_input):
   # Remove spaces
@@ -74,12 +72,6 @@ def download_image(cardname, uid):
       return filepath
   return None
 
-def card_search(query):
-  if query not in cache:
-    print("Requesting API for " + query)
-    cache[query] = Card.where(name = query).all()
-  return cache[query]
-
 def parse_queries(content):
   queries = re.findall('\[([^\]]*)\]', content)
   return [query.lower() for query in queries]
@@ -96,7 +88,7 @@ def cards_from_query(query):
   # Skip searching if the request is too short.
   if len(query) <= 2:
       return []
-  cards = card_search(query)
+  cards = oracle.search(query)
   cards = [card for card in cards if card.type != "Vanguard" and card.layout != 'token']
   # First look for an exact match.
   for card in cards:

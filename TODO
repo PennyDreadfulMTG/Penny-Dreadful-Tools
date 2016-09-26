@@ -1,0 +1,20 @@
+- Image names shouldn't *start* with a dash, really.
+- Split cards. The bot expects one half [Fire] or the other [Ice] but the image server expects both. So either the bot doesn't respond or if it does it doens't get an image.  We should support: [Fire], [Fire / Ice] and [Fire // Ice] and variations ignoring whitespace.
+- EMN and other smaller images look stupid when joined. Normalize size before joining on the image server.
+- More than one image at once gives "no image available" when falling back to mtgsdk images because the SDK only supports single images. We could send each separately or only send the first rather than "no image available"?
+- Ability to search like magidex syntax
+- [bottle gomes|mrd] <-- support some syntax (possibly this) for getting the specific version of an image.
+- Max 255 chars for filename length is cutting it too fine given that we have to add an extension so cut off at a lower number.
+- Add --local commandline option that causes the bot to run locally and receive commands from commandline instead of (as well as?) connecting to discord.
+- As of Sep 26th we are still uploading zero byte files sometimes despite the checks we have -- what's going on?
+- Do all HTTP requests with Fetcher
+- Standardize on single quotes except where single quotes are contained within the string.
+- Use import not from x import y – http://effbot.org/zone/import-confusion.htm
+- Because of the way we create the card table every column ends up nullable but some (like name) should not be.
+- Card names have an order (the composite card is Fire / Ice not Ice / Fire) which we do not store currently.
+- When storing card info have not accounted for 'variations' - an array of variant versions of a card by multiverse id (like Fallen Empires multiple arts). Also all the fields in "extras".
+- Standardize on import a, b, c; one line for libraries, one line for our code.
+- We don't convert date to seconds-since-epoch but we have release_date as an INTEGER type. sqlite will let us insert it anyway but that's hella broken.
+- Fetcher should do all URL grabbing (legal cards, too) and it should output before doing so.
+- Random should take a numeric argumnet and default to 1.
+- We probably want to make the rows returned from database into dicts instead of lists. If we do that we must change Card(*r) to Card(**r) in Oracle.

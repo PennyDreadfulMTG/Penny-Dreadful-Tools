@@ -58,12 +58,18 @@ def download_image(cardname, uid):
   if acceptable_file(filepath):
     return filepath
   print("Trying to get first choice image for " + cardname)
-  urllib.request.urlretrieve(better_image(cardname), filepath)
+  try:
+    urllib.request.urlretrieve(better_image(cardname), filepath)
+  except urllib.error.HTTPError as error:
+    print("HTTP Error: {0}".format(error))
   if acceptable_file(filepath):
     return filepath
   if uid > 0:
     print("Trying to get fallback image for " + cardname)
-    urllib.request.urlretrieve(http_image(uid), filepath)
+    try:
+      urllib.request.urlretrieve(http_image(uid), filepath)
+    except urllib.error.HTTPError as error:
+      print("HTTP Error: {0}".format(error))
     if acceptable_file(filepath):
       return filepath
   return None

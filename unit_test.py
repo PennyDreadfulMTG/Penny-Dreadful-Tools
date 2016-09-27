@@ -17,6 +17,10 @@ def test_fallbackimagedownload():
   card = oracle.Card({'name': 'Avon Island', 'multiverse_id': 26301})
   assert bot.download_image([card]) != None
 
+# Check that we can succesfully fail at getting an image
+def test_noimageavailable():
+  assert bot.download_image("Barry's Land'", 0) == None    
+
 # Search for a single card via full name
 def test_solo_query():
   names = bot.parse_queries("[Gilder Bairn]")

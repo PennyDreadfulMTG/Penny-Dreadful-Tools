@@ -12,7 +12,9 @@ def init():
   client.run(config.get("token"))
 
 def update_legality():
+  global legal_cards
   legal_cards = fetcher.Fetcher().legal_cards()
+  print("Legal cards: {0}".format(str(len(legal_cards))))
 
 def normalize_filename(str_input):
   # Remove spaces

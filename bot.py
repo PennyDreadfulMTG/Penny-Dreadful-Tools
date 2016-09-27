@@ -1,4 +1,5 @@
-import json, discord, os, string, re, random, hashlib, unicodedata, urllib.request
+import hashlib, json, os, re, random, string, unicodedata, urllib.request
+import discord
 import fetcher, oracle, config
 
 # Globals

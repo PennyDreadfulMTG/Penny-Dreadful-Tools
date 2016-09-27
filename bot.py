@@ -104,32 +104,39 @@ def cards_from_query(query):
   # If we didn't find any of those then use all search results.
   return uniqify_cards(cards)
 
-async def post_card(card, channel):
-  resp = string.Template("$name $mana_cost — $type — $legal").substitute(name=card.name, mana_cost=card.mana_cost if card.mana_cost else '', type=card.type, text=card.text, legal=":white_check_mark:" if card.name.lower().strip() in legal_cards else ":no_entry_sign: (not legal in PD)", pt=str(card.power)+ "/" + str(card.toughness) if "Creature" in card.type else '')
-  filename = download_image(card.name, card.multiverse_id)
-  await client.send_message(channel, resp)
-  if filename is None:
-    await client.send_message(channel, card.text)
-  else:
-    await client.send_file(channel, filename)
+def legal_emoji(card, verbose = False):
+  if card.name.lower().strip() in legal_cards:
+    return ':white_check_mark:'
+  s = ':no_entry_sign:'
+  if verbose:
+    s += ' (not legal in PD)'
+  return s
 
 async def post_cards(cards, channel):
-  tmp = string.Template("$name $legal, ")
-  text = ""
-  images = ""
-  more_text = ""
-  if (len(cards) > 10):
-    more_text = " and " + str(len(cards) - 4) + " more."
+  if len(cards) == 0:
+    print("No cards to send")
+    return
+  multiverse_id = cards[0].multiverse_id
+  print("m id: " + str(multiverse_id)) # BAKERT
+  more_text = ''
+  if len(cards) > 10:
     cards = cards[:4]
-  for card in cards:
-    text = text + tmp.substitute(name=card.name, legal=":white_check_mark:" if card.name.lower().strip() in legal_cards else ":no_entry_sign:")
-    images = images + "|" + escape(card.name)
-  await client.send_message(channel, text.strip(", ") + more_text)
-  filename = download_image(images, 0)
-  if filename is None:
-    await client.send_message(channel, "No image available")
+    more_text = ' and ' + str(len(cards) - 4) + ' more.'
+  if len(cards) == 1:
+    card = cards[0]
+    mana_cost = card.mana_cost or ''
+    legal = legal_emoji(card, True)
+    pt = str(card.power) + '/' + str(card.toughness) if 'Creature' in card.type else ''
+    text = string.Template("$name $mana_cost — $type — $legal").substitute(name=card.name, mana_cost=mana_cost, type=card.type, text=card.text, legal=legal, pt=pt)
   else:
-    await client.send_file(channel, filename)
+    text = ', '.join(string.Template("$name $legal").substitute(name = card.name, legal = legal_emoji(card)) for card in cards)
+    text += more_text
+  image_file = download_image('|'.join(escape(card.name) for card in cards), multiverse_id)
+  await client.send_message(channel, text)
+  if image_file is None:
+    await client.send_message(channel, 'No image available')
+  else:
+    await client.send_file(channel, image_file)
 
 async def respond_to_card_names(message):
   # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -139,10 +146,7 @@ async def respond_to_card_names(message):
   if len(queries) == 0:
     return
   cards = cards_from_queries(queries)
-  if len(cards) > 1:
-    await post_cards(cards, message.channel)
-  elif len(cards) == 1:
-    await post_card(cards[0], message.channel)
+  await post_cards(cards, message.channel)
 
 async def respond_to_command(message):
   if message.content.startswith("!random"):

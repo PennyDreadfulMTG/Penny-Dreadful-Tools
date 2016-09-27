@@ -44,7 +44,7 @@ class Oracle():
       self.update_database(str(current_version))
 
   def search(self, query):
-    sql = 'SELECT ' + (', '.join(property for property in Oracle.properties())).rstrip(', ') \
+    sql = 'SELECT ' + (', '.join(property for property in Oracle.properties())) \
       + ' FROM card ' \
       + "WHERE name LIKE ?"
     rs = self.database.execute(sql, ['%' + query + '%'])
@@ -63,9 +63,9 @@ class Oracle():
 
   def insert_card(self, name, card):
     sql = 'INSERT INTO card ('
-    sql += ', '.join(property for property in Oracle.properties()).rstrip(', ')
+    sql += ', '.join(property for property in Oracle.properties())
     sql += ') VALUES ('
-    sql += ('?, ' * len(Oracle.properties())).rstrip(', ')
+    sql += ', '.join('?' for prop in Oracle.properties())
     sql += ')'
     values = [card.get(self.underscore2camel(property)) for property in Oracle.properties()]
     self.database.execute(sql, values)

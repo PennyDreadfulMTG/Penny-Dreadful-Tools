@@ -38,7 +38,7 @@ class Database():
   def setup(self):
     self.execute("CREATE TABLE version (version TEXT)")
     sql = 'CREATE TABLE card (id INTEGER PRIMARY KEY, '
-    sql += ', '.join(name + ' ' + type for name, type in oracle.Oracle.properties().items()).rstrip(', ')
+    sql += ', '.join(name + ' ' + type for name, type in oracle.Oracle.properties().items())
     sql += ')'
     self.execute(sql)
     self.execute("""CREATE TABLE card_name (

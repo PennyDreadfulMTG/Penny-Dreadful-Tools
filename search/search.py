@@ -13,7 +13,7 @@ class Search:
     self.query = query
 
   def fetchall(self):
-    sql = 'SELECT ' + (', '.join(property for property in oracle.Oracle.properties())).rstrip(', ') \
+    sql = 'SELECT ' + (', '.join(property for property in oracle.Oracle.properties())) \
       + ' FROM card ' \
       + 'WHERE ' + self.where_clause()
     print(sql)

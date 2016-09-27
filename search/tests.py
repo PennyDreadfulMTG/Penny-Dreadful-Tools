@@ -11,6 +11,8 @@ def tests():
   assert(not search.Key.match([' ']))
   assert(search.Criterion.match(['t', 'o', 'u', '>', '2']))
 
+  do_test('t:creature -t:artifact t:legendary', "(type LIKE '%creature%') AND NOT (type LIKE '%artifact%') AND (type LIKE '%legendary%')")
+  do_test('-cmc=2', "NOT (cmc IS NOT NULL AND cmc <> '' AND CAST(cmc AS REAL) = 2)")
   do_test('cmc>2', "(cmc IS NOT NULL AND cmc <> '' AND CAST(cmc AS REAL) > 2)")
   do_test('o:haste NOT o:deathtouch o:trample NOT o:"first strike" o:lifelink', "(text LIKE '%haste%') AND NOT (text LIKE '%deathtouch%') AND (text LIKE '%trample%') AND NOT (text LIKE '%first strike%') AND (text LIKE '%lifelink%')")
   do_test('c:b NOT c:r o:trample', "(id IN (SELECT card_id FROM card_color WHERE color_id = 3)) AND NOT (id IN (SELECT card_id FROM card_color WHERE color_id = 4)) AND (text LIKE '%trample%')")

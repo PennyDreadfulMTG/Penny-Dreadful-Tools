@@ -30,11 +30,11 @@ class Token:
 
 class BooleanOperator(Token):
   # Strict substrings of other operators must appear later in the list.
-  values = ['AND', 'OR', 'NOT']
+  values = ['AND', 'OR', 'NOT', '-']
 
   def value(self):
-    if (self.v == 'NOT'):
-      return 'AND NOT';
+    if (self.v == '-'):
+      return 'NOT';
     return self.v
 
 

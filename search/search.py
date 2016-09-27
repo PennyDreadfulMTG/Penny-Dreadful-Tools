@@ -98,29 +98,29 @@ class Search:
   def parse(self, expression):
     where = ''
     i = 0
-    active_boolean_operator = None
     tokens = expression.tokens()
     while i < len(tokens):
       token = tokens[i]
       cls = token.__class__
-      if cls != search.BooleanOperator:
-        where += (' %s ' % active_boolean_operator) if active_boolean_operator else ''
-        active_boolean_operator = None
       if cls == search.String:
         where += self.where(['name', 'type', 'text'], token.value())
       elif cls == search.Key:
         where += self.parse_criterion(token, tokens[i + 1], tokens[i + 2])
         i += 2
-      elif cls == search.BooleanOperator:
-        active_boolean_operator = token.value()
       elif cls == search.Expression:
         where += '(%s)' % self.parse(token)
+      elif cls == search.BooleanOperator:
+        pass
       else:
-          raise InvalidTokenException("Invalid token '%s' (%s) at %d" % (token, cls, i))
-      if not active_boolean_operator:
-        active_boolean_operator = 'AND'
+        raise InvalidTokenException("Invalid token '%s' (%s) at %d" % (token, cls, i))
+      next_token = tokens[i + 1] if len(tokens) > (i + 1) else None
+      next_cls = next_token.__class__
+      if cls == search.BooleanOperator:
+        where += ' %s ' % token.value()
+      elif next_cls != search.BooleanOperator or next_token.value() == 'NOT':
+        where += ' AND '
       i += 1
-    return where.strip()
+    return where[:-len(' AND ')].replace('  ', ' ').strip()
 
   def parse_criterion(self, key, operator, term):
     if key.value() == 'q':

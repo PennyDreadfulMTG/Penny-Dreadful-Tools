@@ -12,7 +12,9 @@ def init():
   client.run(config.get("token"))
 
 def update_legality():
+  global legal_cards
   legal_cards = fetcher.Fetcher().legal_cards()
+  print("Legal cards: {0}".format(str(len(legal_cards))))
 
 def normalize_filename(str_input):
   # Remove spaces
@@ -73,7 +75,7 @@ def parse_queries(content):
   queries = re.findall('\[([^\]]*)\]', content)
   return [query.lower() for query in queries]
 
-def cards_from_queries(queries, message):
+def cards_from_queries(queries):
   all_cards = []
   for query in queries:
     cards = cards_from_query(query)
@@ -143,7 +145,7 @@ async def respond_to_card_names(message):
   queries = parse_queries(message.content)
   if len(queries) == 0:
     return
-  cards = cards_from_queries(queries, message)
+  cards = cards_from_queries(queries)
   await post_cards(cards, message.channel)
 
 async def respond_to_command(message):

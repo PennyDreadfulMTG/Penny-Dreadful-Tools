@@ -1,5 +1,5 @@
 import json, discord, os, string, re, random, hashlib, unicodedata, urllib.request
-import fetcher, oracle, config
+import config, fetcher, oracle, search
 
 # Globals
 legal_cards = []
@@ -112,16 +112,19 @@ def legal_emoji(card, verbose = False):
     s += ' (not legal in PD)'
   return s
 
+def complex_search(query):
+  print("Searching for %s" % query)
+  return search.Search(query).fetchall()
+
 async def post_cards(cards, channel):
   if len(cards) == 0:
-    print("No cards to send")
+    await client.send_message(channel, 'No matches.')
     return
   multiverse_id = cards[0].multiverse_id
-  print("m id: " + str(multiverse_id)) # BAKERT
   more_text = ''
   if len(cards) > 10:
-    cards = cards[:4]
     more_text = ' and ' + str(len(cards) - 4) + ' more.'
+    cards = cards[:4]
   if len(cards) == 1:
     card = cards[0]
     mana_cost = card.mana_cost or ''
@@ -134,7 +137,7 @@ async def post_cards(cards, channel):
   image_file = download_image('|'.join(escape(card.name) for card in cards), multiverse_id)
   await client.send_message(channel, text)
   if image_file is None:
-    await client.send_message(channel, 'No image available')
+    await client.send_message(channel, 'No image available.')
   else:
     await client.send_file(channel, image_file)
 
@@ -156,6 +159,9 @@ async def respond_to_command(message):
   elif message.content.startswith("!reload"):
     update_legality()
     await client.send_message(message.channel, "Reloaded list of legal cards.")
+  elif message.content.startswith('!search '):
+    cards = complex_search(message.content[len('!search '):])
+    await post_cards(cards, message.channel)
 
 @client.event
 async def on_message(message):

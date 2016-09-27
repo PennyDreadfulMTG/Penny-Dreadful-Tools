@@ -31,11 +31,16 @@ class Oracle():
       'mci_number': 'TEXT'
     }
 
+  @staticmethod
+  def layouts():
+    return ['normal', 'meld', 'split', 'phenomenon', 'token', 'vanguard', 'double-faced', 'plane', 'flip', 'scheme', 'leveler']
+
   def __init__(self):
     self.database = database.Database()
     self.fetcher = fetcher.Fetcher()
     current_version = self.fetcher.version()
     if current_version > self.database.version():
+      print("Database update required")
       self.update_database(str(current_version))
 
   def search(self, query):
@@ -51,6 +56,9 @@ class Oracle():
     cards = self.fetcher.all_cards()
     for name, card in cards.items():
       self.insert_card(name, card)
+    # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
+    self.check_layouts() # Check that the hardcoded list of layouts we're about to use is still valid.
+    self.database.execute("UPDATE card SET cmc = 0 WHERE cmc IS NULL AND layout IN ('normal', 'double-faced', 'flip', 'leveler', 'token', 'split')")
     self.database.execute('INSERT INTO version (version) VALUES (?)', [new_version])
 
   def insert_card(self, name, card):
@@ -74,6 +82,11 @@ class Oracle():
       self.database.execute('INSERT INTO card_supertype (card_id, supertype) VALUES (?, ?)', [id, supertype])
     for subtype in card.get('subtypes', []):
       self.database.execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [id, subtype])
+
+  def check_layouts(self):
+    rs = self.database.execute('SELECT DISTINCT layout FROM card');
+    if sorted([x[0] for x in rs]) != sorted(Oracle.layouts()):
+      print("WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid.")
 
   def underscore2camel(self, s):
     return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)

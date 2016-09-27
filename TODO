@@ -17,3 +17,32 @@
 - We don't convert date to seconds-since-epoch but we have release_date as an INTEGER type. sqlite will let us insert it anyway but that's hella broken.
 - Random should take a numeric argumnet and default to 1.
 - We probably want to make the rows returned from database into dicts instead of lists. If we do that we must change Card(*r) to Card(**r) in Oracle.
+- Check the timestamp of legal_cards.txt and don't refetch if it's less than an hour old. Same for AllCards.json.
+- Use __ prefix on all private member variables.
+- Ad Nauseum should load Ad Nauseam. [all sun's dawn] and [all suns dawn] should load [all suns' dawn].
+- It would be nice to have the github link in the bot's description
+- mtggoldfish current low mtgo price for speculation
+- trim, ltrim and rtrim don't do what I thought they did - check all usages are sane.
+- multiverse_id = cards[0].multiverse_id is not working with cards retrieved from the db so fallback images will fail. Multiverse id doesn't seem to be populated in the db.
+- "No cards to send" should actually send output that there were 0 results else it feels like the bot broke.
+- Bug: "c:b NOT c:r o:trample" ignores trample
+- [Lambholt] gives you multiple copies of reverse sides but there's no immediately obvious way to make it ok.
+- Build server takes an hour to create the database so switch to an executeMany or even just big long INSERTs with many entries.
+- Convert from TODO to issues.
+- Fetch the zipped version of AllCards.json
+- We do the `'SELECT ' + (', '.join(property for property in oracle.Oracle.properties())).rstrip(', ')` thing in two places. Unify.
+- !search and [Elvish] should either be restricted to PD-legal or (better?) sort PD-legal-first favoring legal cards.
+- We raise a generic Exception in four places in search. We should raise something more specific (possibly custom).
+- We have both Template().substitute and "blah" + "foo" and %-based string interpolation. And we should probaby be using .format()!
+- Database.escape doesn't cope very well with floating point numbers (isdigit only works on positive integers).
+- Generalize color_where to all subtables (color identity, subtypes, etc.) and add support for those searches.
+- There is some kind of general problem with Aether.
+- The constants in color_replace and rarity_replace should be loaded from the db and cached not hardcoded.
+- We should be even more generous in what we accept in color_replace and rarity_replace. If we have half a clue what you meant we should do the right thing.
+- Rarity search does not work. (We use integers for rarity but try and search on first letter?)
+- support '-' for negation as well as 'NOT'. '-' is actually more important because that is what magidex uses.
+-  c!rug is not yet supported. do_test('(c!rug OR c:c)  "Beyond lies    the wub" o:trample', "((cost LIKE '%rug%') OR (cost LIKE '%c%')) AND (name LIKE '%Beyond lies    the wub%' OR type LIKE '%Beyond lies    the wub%' OR text LIKE '%Beyond lies    the wub%') AND (text LIKE '%trample%')");
+- There's a bug when the first part of a query is NOT. NOT in general is a little broken and could be replaced by '-' as per magidex. -- do_test('NOT c:g', 'NOT (id IN (SELECT card_id FROM card_color WHERE color_id = 5))')
+- > and < don't work as they should on power or toughness because they are TEXT columns (because of "*", "*+1", etc.) so 10 is not > 9 because 1 comes before 9 in the dictionary.
+- multiverse id is not getting populated correctly
+- !search should tack on a magidex URL when more_text is shown.

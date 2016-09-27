@@ -120,7 +120,6 @@ async def post_cards(cards, channel):
   if len(cards) == 0:
     await client.send_message(channel, 'No matches.')
     return
-  multiverse_id = cards[0].multiverse_id
   more_text = ''
   if len(cards) > 10:
     more_text = ' and ' + str(len(cards) - 4) + ' more.'
@@ -134,7 +133,7 @@ async def post_cards(cards, channel):
   else:
     text = ', '.join(string.Template("$name $legal").substitute(name = card.name, legal = legal_emoji(card)) for card in cards)
     text += more_text
-  image_file = download_image(cards, multiverse_id)
+  image_file = download_image(cards)
   await client.send_message(channel, text)
   if image_file is None:
     await client.send_message(channel, 'No image available.')

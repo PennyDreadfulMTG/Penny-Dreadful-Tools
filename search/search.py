@@ -59,14 +59,14 @@ class Search:
           string = [c]
           mode = UNQUOTED_STRING
         else:
-          raise Exception("Invalid input '%s' at %d" % (c, i))
+          raise InvalidTokenException("Expected expression, got '%s' at %d in %s" % (c, i, s))
       elif mode == EXPECT_OPERATOR:
         if search.Operator.match(rest):
           tokens[depth].append(search.Operator(rest))
           mode = EXPECT_TERM
           i += search.Operator.length(rest) - 1
         else:
-          raise Exception("Expected Operator got '" + c + "' at " + str(i))
+          raise InvalidTokenException("Expected operator, got '%s' at %d in %s" % (c, i, s))
       elif mode == EXPECT_TERM:
         if c == '"':
           string = []
@@ -91,7 +91,7 @@ class Search:
         else:
           string.append(c)
       else:
-        raise Exception("Bad mode: " + mode)
+        raise InvalidModeException("Bad mode '%s' at %d in %s" % (c, i, s))
       i += 1
     return search.Expression(tokens[0])
 
@@ -116,7 +116,7 @@ class Search:
       elif cls == search.Expression:
         where += '(%s)' % self.parse(token)
       else:
-          raise Exception("Invalid token: %s (%s) at %d" % (str(token), cls, i))
+          raise InvalidTokenException("Invalid token '%s' (%s) at %d" % (token, cls, i))
       if not active_boolean_operator:
         active_boolean_operator = 'AND'
       i += 1
@@ -193,3 +193,9 @@ class Search:
     if rarity.lower() in replacements:
       return replacements[rarity.lower()]
     return rarity
+
+class InvalidTokenException(Exception):
+  pass
+
+class InvalidModeException(Exception):
+  pass

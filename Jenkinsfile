@@ -9,6 +9,6 @@ node {
     }
 
     stage('Unit Tests') {
-      sh '~/.local/bin/pytest'
+      sh 'PATH=$PATH:~/.local/bin/; pytest'
     }
 }

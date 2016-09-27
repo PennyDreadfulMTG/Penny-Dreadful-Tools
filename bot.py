@@ -22,7 +22,8 @@ def normalize_filename(str_input):
   # Remove Pipes
   str_input = '-'.join(str_input.split('|')).lower()
   # Remove nasty accented characters.
-  return ''.join((c for c in unicodedata.normalize('NFD', str_input) if unicodedata.category(c) != 'Mn'))
+  str_input = ''.join((c for c in unicodedata.normalize('NFD', str_input) if unicodedata.category(c) != 'Mn'))
+  return str_input.strip('-')
 
 def escape(str_input):
   return '+'.join(str_input.split(' ')).lower()
@@ -48,7 +49,7 @@ def download_image(cardname, uid):
   image_dir = config.get("image_dir")
   basename = normalize_filename(cardname)
   # Hash the filename if it's otherwise going to be too large to use.
-  if len(basename) > 255:
+  if len(basename) > 240:
     basename = hashlib.md5(basename.encode('utf-8')).hexdigest()
   filename = basename + '.jpg'
   filepath = config.get("image_dir") + "/" + filename

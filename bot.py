@@ -13,9 +13,10 @@ def init():
   client.run(config.get("token"))
 
 def update_legality():
-  global legal_cards
+  global legal_cards, oracle
   legal_cards = fetcher.Fetcher().legal_cards()
   print("Legal cards: {0}".format(str(len(legal_cards))))
+  oracle.update_legality(legal_cards)
 
 def escape(str_input):
   return '+'.join(str_input.split(' ')).lower()

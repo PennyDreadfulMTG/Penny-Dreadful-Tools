@@ -48,7 +48,7 @@ def download_image(cardname, uid):
   image_dir = config.get("image_dir")
   basename = normalize_filename(cardname)
   # Hash the filename if it's otherwise going to be too large to use.
-  if len(basename) > 255:
+  if len(basename) > 240:
     basename = hashlib.md5(basename.encode('utf-8')).hexdigest()
   filename = basename + '.jpg'
   filepath = config.get("image_dir") + "/" + filename

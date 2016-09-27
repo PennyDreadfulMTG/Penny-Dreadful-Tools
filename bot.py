@@ -1,4 +1,4 @@
-import hashlib, json, os, re, random, string, sys, unicodedata, urllib.request
+import ast, hashlib, json, os, re, random, string, sys, unicodedata, urllib.request
 import discord
 import config, fetcher, oracle, search
 
@@ -153,8 +153,14 @@ async def respond_to_card_names(message):
 
 async def respond_to_command(message):
   if message.content.startswith("!random"):
-    name = random.choice(legal_cards)
-    cards = cards_from_query(name)
+    number = 1
+    if len(message.content) > 7:
+      try:
+        number = int(message.content[7:].strip())
+      except ValueError:
+        pass
+    cards = []
+    [cards.extend(cards_from_query(random.choice(legal_cards))) for n in range(0, number)]
     await post_cards(cards, message.channel)
   elif message.content.startswith("!reload"):
     update_legality()

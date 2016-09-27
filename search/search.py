@@ -162,7 +162,7 @@ class Search:
   def math_where(self, column, operator, term):
     if not operator in ['>', '<', '=', '<=', '>=']:
       return 'FALSE'
-    return "(%s IS NOT NULL AND %s <> '' AND %s %s %s)" % (column, column, column, operator, database.Database.escape(term))
+    return "(%s IS NOT NULL AND %s <> '' AND CAST(%s AS REAL) %s %s)" % (column, column, column, operator, database.Database.escape(term))
 
   def color_replace(self, color):
     replacements = {

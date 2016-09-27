@@ -43,6 +43,5 @@
 - support '-' for negation as well as 'NOT'. '-' is actually more important because that is what magidex uses.
 -  c!rug is not yet supported. do_test('(c!rug OR c:c)  "Beyond lies    the wub" o:trample', "((cost LIKE '%rug%') OR (cost LIKE '%c%')) AND (name LIKE '%Beyond lies    the wub%' OR type LIKE '%Beyond lies    the wub%' OR text LIKE '%Beyond lies    the wub%') AND (text LIKE '%trample%')");
 - There's a bug when the first part of a query is NOT. NOT in general is a little broken and could be replaced by '-' as per magidex. -- do_test('NOT c:g', 'NOT (id IN (SELECT card_id FROM card_color WHERE color_id = 5))')
-- > and < don't work as they should on power or toughness because they are TEXT columns (because of "*", "*+1", etc.) so 10 is not > 9 because 1 comes before 9 in the dictionary.
 - multiverse id is not getting populated correctly
 - !search should tack on a magidex URL when more_text is shown.

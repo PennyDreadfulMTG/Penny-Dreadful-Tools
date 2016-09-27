@@ -13,5 +13,5 @@ class Fetcher():
     return json.loads(self.open('https://mtgjson.com/json/AllCards.json'))
 
   def open(self, url, character_encoding = 'utf-8'):
-    print("Fetching " + url)
+    print("Fetching {0}".format(url))
     return urllib.request.urlopen(url).read().decode(character_encoding)

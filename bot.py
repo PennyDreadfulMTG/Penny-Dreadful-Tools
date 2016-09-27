@@ -168,8 +168,11 @@ async def respond_to_command(message):
   elif message.content.startswith("!restartbot"):
     sys.exit()
   elif message.content.startswith('!search '):
-    cards = complex_search(message.content[len('!search '):])
+    q = message.content[len('!search '):]
+    cards = complex_search(q)
     await post_cards(cards, message.channel)
+    if (len(cards) > 10):
+      await client.send_message(message.channel, 'http://magidex.com/search/?q=' + escape(q))
 
 @client.event
 async def on_message(message):

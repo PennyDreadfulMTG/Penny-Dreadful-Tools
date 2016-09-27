@@ -1,4 +1,4 @@
-import hashlib, json, os, re, random, string, unicodedata, urllib.request
+import hashlib, json, os, re, random, string, sys, unicodedata, urllib.request
 import discord
 import config, fetcher, oracle, search
 
@@ -159,6 +159,8 @@ async def respond_to_command(message):
   elif message.content.startswith("!reload"):
     update_legality()
     await client.send_message(message.channel, "Reloaded list of legal cards.")
+  elif message.content.startswith("!restartbot"):
+    sys.exit()
   elif message.content.startswith('!search '):
     cards = complex_search(message.content[len('!search '):])
     await post_cards(cards, message.channel)

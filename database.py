@@ -1,7 +1,16 @@
-import pkg_resources, re, sqlite3
+import codecs, pkg_resources, re, sqlite3
 import config
 
 class Database():
+  @staticmethod
+  def escape(s):
+    if s.isdigit():
+      return s
+    encodable = s.encode('utf-8', 'strict').decode('utf-8')
+    if encodable.find('\x00') >= 0:
+      raise Exception('NUL not allowed in SQL string.')
+    return "'" + encodable.replace("'", "''") + "'"
+
   def __init__(self):
     db = config.Config().get('database')
     self.database = sqlite3.connect(db)

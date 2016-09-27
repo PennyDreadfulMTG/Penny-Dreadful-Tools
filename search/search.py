@@ -15,7 +15,8 @@ class Search:
   def fetchall(self):
     sql = 'SELECT ' + (', '.join(property for property in oracle.Oracle.properties())) \
       + ' FROM card ' \
-      + 'WHERE ' + self.where_clause()
+      + 'WHERE ' + self.where_clause() \
+      + ' ORDER BY pd_legal DESC'
     print(sql)
     rs = database.Database().execute(sql)
     return [oracle.Card(r) for r in rs]

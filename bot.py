@@ -1,4 +1,4 @@
-import ast, hashlib, json, os, re, random, string, sys, unicodedata, urllib.request
+import ast, collections, hashlib, json, os, re, random, string, sys, unicodedata, urllib.request
 import discord
 import config, fetcher, oracle, search
 
@@ -31,7 +31,7 @@ def http_image(multiverse_id):
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):
   # Remove multiple printings of the same card from the result set.
-  results = {}
+  results = collections.OrderedDict()
   for card in cards:
     results[card.name.lower()] = card
   return results.values()

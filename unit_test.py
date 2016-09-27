@@ -1,19 +1,21 @@
 import os
-import bot
+import bot, oracle
 
 # Check that we can fetch card images.
 def test_imagedownload():
-  filepath = bot.config.get("image_dir") + "/" + "island.jpg" 
+  filepath = bot.config.get("image_dir") + "/" + "island.jpg"
   if (bot.acceptable_file(filepath)):
     os.remove(filepath)
-  assert bot.download_image("Island", 0) != None
+  card = oracle.Card({'name': 'Island'})
+  assert bot.download_image([card]) != None
 
 # Check that we can fall back to the Gatherer images if all else fails.
 def test_fallbackimagedownload():
-  filepath = bot.config.get("image_dir") + "/" + "avon_island.jpg" 
+  filepath = bot.config.get("image_dir") + "/" + "avon_island.jpg"
   if (bot.acceptable_file(filepath)):
     os.remove(filepath)
-  assert bot.download_image("Avon_Island", 26301) != None    
+  card = oracle.Card({'name': 'Avon Island', 'multiverse_id': 26301})
+  assert bot.download_image([card]) != None
 
 # Check that we can succesfully fail at getting an image
 def test_noimageavailable():
@@ -35,7 +37,7 @@ def test_double_query():
   assert len(cards) == 2
 
 # The following two sets assume that Kamahl is a long dead character, and is getting no new cards.
-# If wizards does an Onslaught/Odyssey throwback in some supplimental product, they may start failing. 
+# If wizards does an Onslaught/Odyssey throwback in some supplimental product, they may start failing.
 def test_legend_query():
   names = bot.parse_queries("[Kamahl]")
   assert len(names) == 1

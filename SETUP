@@ -6,5 +6,6 @@
 - Add the bot to your server with https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot
 - Click to reveal the token
 - Copy config.json.example to config.json and alter the value for "token"
-- Optionally alter the value for "image_dir" if you want downloaded images stored somewhere else.
+- Optionally alter the value for "image_dir" and "database" if you want downloaded images/sqlite database stored somewhere else.
+- Optionally install pytest - python3 -m pip install -U pytest to run the unit tests.
 

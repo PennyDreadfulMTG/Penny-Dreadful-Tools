@@ -16,23 +16,15 @@ def update_legality():
   legal_cards = fetcher.Fetcher().legal_cards()
   print("Legal cards: {0}".format(str(len(legal_cards))))
 
-def normalize_filename(str_input):
-  # Remove spaces
-  str_input = '-'.join(str_input.split(' ')).lower()
-  # Remove Pipes
-  str_input = '-'.join(str_input.split('|')).lower()
-  # Remove nasty accented characters.
-  str_input = ''.join((c for c in unicodedata.normalize('NFD', str_input) if unicodedata.category(c) != 'Mn'))
-  return str_input.strip('-')
-
 def escape(str_input):
   return '+'.join(str_input.split(' ')).lower()
 
-def better_image(cardname):
-  return "http://magic.bluebones.net/proxies/?c=" + escape(cardname)
+def better_image(cards):
+  c = '|'.join(card.name for card in cards)
+  return "http://magic.bluebones.net/proxies/?c=" + escape(c)
 
-def http_image(uid):
-  return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(uid)  +'.jpg'
+def http_image(multiverse_id):
+  return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(multiverse_id)  +'.jpg'
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):
@@ -45,27 +37,34 @@ def uniqify_cards(cards):
 def acceptable_file(filepath):
   return os.path.isfile(filepath) and os.path.getsize(filepath) > 0
 
-def download_image(cardname, uid):
+def basename(cards):
+  return '_'.join(re.sub('[^a-z-]', '-', unaccent(card.name).lower()) for card in cards)
+
+def unaccent(s):
+  return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
+
+def download_image(cards):
   image_dir = config.get("image_dir")
-  basename = normalize_filename(cardname)
+  imagename = basename(cards)
   # Hash the filename if it's otherwise going to be too large to use.
-  if len(basename) > 240:
-    basename = hashlib.md5(basename.encode('utf-8')).hexdigest()
-  filename = basename + '.jpg'
+  if len(imagename) > 240:
+    imagename = hashlib.md5(imagename.encode('utf-8')).hexdigest()
+  filename = imagename + '.jpg'
   filepath = config.get("image_dir") + "/" + filename
   if acceptable_file(filepath):
     return filepath
-  print("Trying to get first choice image for " + cardname)
+  print("Trying to get first choice image for " + ', '.join(card.name for card in cards))
   try:
-    urllib.request.urlretrieve(better_image(cardname), filepath)
+    urllib.request.urlretrieve(better_image(cards), filepath)
   except urllib.error.HTTPError as error:
     print("HTTP Error: {0}".format(error))
   if acceptable_file(filepath):
     return filepath
-  if uid > 0:
-    print("Trying to get fallback image for " + cardname)
+  multiverse_id = cards[0].multiverse_id
+  if multiverse_id > 0:
+    print("Trying to get fallback image for " + imagename)
     try:
-      urllib.request.urlretrieve(http_image(uid), filepath)
+      urllib.request.urlretrieve(http_image(multiverse_id), filepath)
     except urllib.error.HTTPError as error:
       print("HTTP Error: {0}".format(error))
     if acceptable_file(filepath):
@@ -135,7 +134,7 @@ async def post_cards(cards, channel):
   else:
     text = ', '.join(string.Template("$name $legal").substitute(name = card.name, legal = legal_emoji(card)) for card in cards)
     text += more_text
-  image_file = download_image('|'.join(escape(card.name) for card in cards), multiverse_id)
+  image_file = download_image(cards, multiverse_id)
   await client.send_message(channel, text)
   if image_file is None:
     await client.send_message(channel, 'No image available.')

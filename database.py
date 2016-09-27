@@ -4,7 +4,7 @@ import config
 class Database():
   @staticmethod
   def escape(s):
-    if s.isdigit():
+    if s.isdecimal():
       return s
     encodable = s.encode('utf-8', 'strict').decode('utf-8')
     if encodable.find('\x00') >= 0:

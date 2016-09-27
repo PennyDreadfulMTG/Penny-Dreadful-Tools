@@ -155,7 +155,7 @@ async def respond_to_command(message):
   if message.content.startswith("!random"):
     name = random.choice(legal_cards)
     cards = cards_from_query(name)
-    await post_card(cards[0], message.channel)
+    await post_cards(cards, message.channel)
   elif message.content.startswith("!reload"):
     update_legality()
     await client.send_message(message.channel, "Reloaded list of legal cards.")

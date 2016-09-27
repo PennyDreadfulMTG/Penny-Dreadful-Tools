@@ -166,7 +166,8 @@ async def on_message(message):
     return
   if message.content.startswith("!"):
     await respond_to_command(message)
-  await respond_to_card_names(message)
+  else:
+    await respond_to_card_names(message)
 
 @client.event
 async def on_ready():

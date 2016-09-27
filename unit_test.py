@@ -15,6 +15,10 @@ def test_fallbackimagedownload():
     os.remove(filepath)
   assert bot.download_image("Avon_Island", 26301) != None    
 
+# Check that we can succesfully fail at getting an image
+def test_noimageavailable():
+  assert bot.download_image("Barry's Land'", 0) == None    
+
 # Search for a single card via full name
 def test_solo_query():
   names = bot.parse_queries("[Gilder Bairn]")

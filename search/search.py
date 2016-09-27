@@ -125,22 +125,24 @@ class Search:
   def parse_criterion(self, key, operator, term):
     if key.value() == 'q':
       return self.where(['name', 'type', 'text'], term.value())
-    elif key.value() == 'c':
+    elif key.value() == 'color' or key.value() == 'c':
       return self.color_where(term.value())
-    elif key.value() == 'r':
+    elif key.value() == 'rarity' or key.value() == 'r':
       return self.where(['rarity'], self.rarity_replace(term.value()), True)
-    elif key.value() == 'o':
+    elif key.value() == 'text' or key.value() == 'o':
       return self.where(['text'], term.value())
-    elif key.value() == 't':
+    elif key.value() == 'type' or key.value() == 't':
       return self.where(['type'], term.value())
     elif key.value() == 'mana':
       return self.where(['cost'], term.value(), True)
-    elif key.value() == 'pow':
+    elif key.value() == 'power' or key.value() == 'pow':
       return self.math_where('power', operator.value(), term.value())
-    elif key.value() == 'tou':
+    elif key.value() == 'toughness' or key.value() == 'tou':
       return self.math_where('toughness', operator.value(), term.value())
     elif key.value() == 'cmc':
       return self.math_where('cmc', operator.value(), term.value())
+    elif key.value() == 'loyalty':
+      return self.math_where('loyalty', operator.value(), term.value())
 
   def where(self, keys, term, exact_match = False):
     q = term if exact_match else '%' + term + '%'

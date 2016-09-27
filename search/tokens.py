@@ -51,7 +51,7 @@ class Criterion(Token):
 
 class Key(Token):
   # Strict substrings of other operators must appear later in the list.
-  values = ['mana', 'cmc', 'pow', 'tou', 'c', 'r', 'o', 't']
+  values = ['toughness', 'loyalty', 'rarity', 'color', 'power', 'mana', 'text', 'type', 'cmc', 'pow', 'tou', 'c', 'r', 'o', 't']
 
 
 class Operator(Token):

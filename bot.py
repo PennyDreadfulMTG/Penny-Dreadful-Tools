@@ -114,7 +114,7 @@ def legal_emoji(card, verbose = False):
   return s
 
 def complex_search(query):
-  print("Searching for %s" % query)
+  print("Searching for {0}".format(query))
   return search.Search(query).fetchall()
 
 async def post_cards(cards, channel):

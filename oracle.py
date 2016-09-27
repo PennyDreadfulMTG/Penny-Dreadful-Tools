@@ -1,4 +1,4 @@
-import collections, re
+import re, types
 import database, fetcher
 
 class Oracle():
@@ -48,7 +48,7 @@ class Oracle():
       + ' FROM card ' \
       + "WHERE name LIKE ?"
     rs = self.database.execute(sql, ['%' + query + '%'])
-    return [Card(*r) for r in rs]
+    return [Card(r) for r in rs]
 
   def update_database(self, new_version):
     self.database.execute('DELETE FROM version')
@@ -91,4 +91,6 @@ class Oracle():
   def underscore2camel(self, s):
     return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)
 
-Card = collections.namedtuple('Card', Oracle.properties().keys())
+class Card(types.SimpleNamespace):
+  def __init__(self, params):
+    [setattr(self, k, params[k]) for k in params.keys()]

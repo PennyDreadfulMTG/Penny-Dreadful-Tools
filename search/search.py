@@ -18,7 +18,7 @@ class Search:
       + 'WHERE ' + self.where_clause()
     print(sql)
     rs = database.Database().execute(sql)
-    return [oracle.Card(*r) for r in rs]
+    return [oracle.Card(r) for r in rs]
 
   def where_clause(self):
     return self.parse(self.tokenize(self.query))

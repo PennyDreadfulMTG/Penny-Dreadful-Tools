@@ -14,6 +14,7 @@ class Database():
   def __init__(self):
     db = config.Config().get('database')
     self.database = sqlite3.connect(db)
+    self.database.row_factory = sqlite3.Row
     try:
       self.version()
     except sqlite3.OperationalError:

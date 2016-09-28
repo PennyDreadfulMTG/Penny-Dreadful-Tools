@@ -48,6 +48,13 @@ def basename(cards):
 def unaccent(s):
   return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
 
+def prettify_mana_cost(cost):
+  cost = re.sub(r'\{([0-9])\}', r':0\g<1>:', cost)
+  cost = re.sub(r'\{([1|2][0-9])\}', r':\g<1>:', cost)
+  cost = re.sub(r'\{([A-Z])\}', r':\g<1>\g<1>:', cost)
+  cost = re.sub(r'\{(2|[A-Z])/([A-Z])\}', r':\g<1>\g<2>:', cost)
+  return cost
+
 def download_image(cards):
   image_dir = config.get("image_dir")
   imagename = basename(cards)
@@ -131,7 +138,7 @@ async def post_cards(cards, channel):
     cards = cards[:4]
   if len(cards) == 1:
     card = cards[0]
-    mana_cost = card.mana_cost or ''
+    mana_cost = prettify_mana_cost(card.mana_cost or '')
     legal = legal_emoji(card, True)
     pt = str(card.power) + '/' + str(card.toughness) if 'Creature' in card.type else ''
     text = string.Template("$name $mana_cost — $type — $legal").substitute(name=card.name, mana_cost=mana_cost, type=card.type, text=card.text, legal=legal, pt=pt)

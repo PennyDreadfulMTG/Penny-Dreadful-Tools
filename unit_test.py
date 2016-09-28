@@ -84,4 +84,12 @@ def test_aether():
   assert len(cards) == 1
   #cards = bot.cards_from_query("aether Spellbomb")
   #assert len(cards) == 1
+
+def test_mana_emoji():
+  assert bot.prettify_mana_cost("{2}{U}{B}") == ':02::UU::BB:'
+  assert bot.prettify_mana_cost("{2/W}{2/U}, {T}") == ':2W::2U:, :TT:'
+  assert bot.prettify_mana_cost("{U/P}") == ':UP:'
+  assert bot.prettify_mana_cost("{15}") == ':15:'
+  assert bot.prettify_mana_cost("{20}") == ':20:'
+  assert bot.prettify_mana_cost("{T}, {Q}, {T}, {Q}, {T}: Tap all creatures with globe counters on them.") == ':TT:, :QQ:, :TT:, :QQ:, :TT:: Tap all creatures with globe counters on them.'
   

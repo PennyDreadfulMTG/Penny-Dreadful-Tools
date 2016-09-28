@@ -200,6 +200,9 @@ async def respond_to_command(message):
     except:
       status = 'UNKNOWN'
     await client.send_message(message.channel, 'MTGO is {status}'.format(status=status))
+  elif message.content.startswith('!echo'):
+    s = message.content[len('!echo '):]
+    await client.send_message(message.channel, s)
   elif message.content.startswith('!help'):
     msg = """Basic bot usage: Include [cardname] in your regular messages.
 The bot will search for any quoted cards, and respond with the card details.

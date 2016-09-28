@@ -134,9 +134,9 @@ def mana_emoji(jsonMana):
         each = each+each
     elif len(each) == 3:
       each = each.replace("/", "")
-    each = ":"+each+": "
+    each = ":"+each+":"
     toReturn += each
-  return toReturn
+  return toReturn+":grinning:"
 
 async def post_cards(cards, channel):
   if len(cards) == 0:

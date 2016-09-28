@@ -32,9 +32,9 @@ def tests():
   print()
 
 def do_test(input, expected):
-  z = search.Search(input);
-  if (z.where_clause() != expected):
-    print("\nInput: %s\nExpected: %s\nActual: %s" % (input, expected, z.where_clause()))
+  where_clause = search.Search(input).where_clause();
+  if (where_clause != expected):
+    print("\nInput: {input}\nExpected: {expected}\nActual: {actual}".format(input=input, expected=expected, actual=where_clause))
   else:
     print('.', end="")
 

@@ -134,9 +134,9 @@ async def post_cards(cards, channel):
     mana_cost = card.mana_cost or ''
     legal = legal_emoji(card, True)
     pt = str(card.power) + '/' + str(card.toughness) if 'Creature' in card.type else ''
-    text = string.Template("$name $mana_cost — $type — $legal").substitute(name=card.name, mana_cost=mana_cost, type=card.type, text=card.text, legal=legal, pt=pt)
+    text = "{name} {mana_cost} — {type} — {legal}".format(name=card.name, mana_cost=mana_cost, type=card.type, text=card.text, legal=legal, pt=pt)
   else:
-    text = ', '.join(string.Template("$name $legal").substitute(name = card.name, legal = legal_emoji(card)) for card in cards)
+    text = ', '.join("{name} {legal}".format(name = card.name, legal = legal_emoji(card)) for card in cards)
     text += more_text
   image_file = download_image(cards)
   await client.send_message(channel, text)

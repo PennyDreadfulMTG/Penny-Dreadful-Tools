@@ -60,14 +60,14 @@ class Search:
           string = [c]
           mode = UNQUOTED_STRING
         else:
-          raise InvalidTokenException("Expected expression, got '%s' at %d in %s" % (c, i, s))
+          raise InvalidTokenException("Expected expression, got '{c}' at {i} in {s}".format(c=c, i=i, s=s))
       elif mode == EXPECT_OPERATOR:
         if search.Operator.match(rest):
           tokens[depth].append(search.Operator(rest))
           mode = EXPECT_TERM
           i += search.Operator.length(rest) - 1
         else:
-          raise InvalidTokenException("Expected operator, got '%s' at %d in %s" % (c, i, s))
+          raise InvalidTokenException("Expected operator, got '{c}' at {i} in {s}".format(c=c, i=i, s=s))
       elif mode == EXPECT_TERM:
         if c == '"':
           string = []
@@ -92,7 +92,7 @@ class Search:
         else:
           string.append(c)
       else:
-        raise InvalidModeException("Bad mode '%s' at %d in %s" % (c, i, s))
+        raise InvalidModeException("Bad mode '{c}' at {i} in {s}".format(c=c, i=i, s=s))
       i += 1
     return search.Expression(tokens[0])
 
@@ -109,15 +109,15 @@ class Search:
         where += self.parse_criterion(token, tokens[i + 1], tokens[i + 2])
         i += 2
       elif cls == search.Expression:
-        where += '(%s)' % self.parse(token)
+        where += '({token})'.format(token=self.parse(token))
       elif cls == search.BooleanOperator:
         pass
       else:
-        raise InvalidTokenException("Invalid token '%s' (%s) at %d" % (token, cls, i))
+        raise InvalidTokenException("Invalid token '{token}' ({cls}) at {i}".format(token=token, cls=cls, i=i))
       next_token = tokens[i + 1] if len(tokens) > (i + 1) else None
       next_cls = next_token.__class__
       if cls == search.BooleanOperator:
-        where += ' %s ' % token.value()
+        where += ' {s} '.format(s=token.value())
       elif next_cls != search.BooleanOperator or next_token.value() == 'NOT':
         where += ' AND '
       i += 1
@@ -160,12 +160,12 @@ class Search:
   def color_where(self, value):
     if value == 'c':
       return '(id NOT IN (SELECT card_id FROM card_color))'
-    return '(id IN (SELECT card_id FROM card_color WHERE color_id = %s))' % self.color_replace(value)
+    return '(id IN (SELECT card_id FROM card_color WHERE color_id = {color_id}))'.format(color_id=self.color_replace(value))
 
   def math_where(self, column, operator, term):
     if not operator in ['>', '<', '=', '<=', '>=']:
       return 'FALSE'
-    return "(%s IS NOT NULL AND %s <> '' AND CAST(%s AS REAL) %s %s)" % (column, column, column, operator, database.Database.escape(term))
+    return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=database.Database.escape(term))
 
   def color_replace(self, color):
     replacements = {

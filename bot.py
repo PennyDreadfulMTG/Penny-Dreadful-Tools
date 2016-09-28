@@ -166,10 +166,10 @@ async def respond_to_command(message):
     cards = []
     [cards.extend(cards_from_query(random.choice(legal_cards))) for n in range(0, number)]
     await post_cards(cards, message.channel)
-  elif message.content.startswith("!reload"):
+  elif message.content.startswith('!reload'):
     update_legality()
-    await client.send_message(message.channel, "Reloaded list of legal cards.")
-  elif message.content.startswith("!restartbot"):
+    await client.send_message(message.channel, 'Reloaded list of legal cards.')
+  elif message.content.startswith('!restartbot'):
     sys.exit()
   elif message.content.startswith('!search '):
     q = message.content[len('!search '):]
@@ -177,6 +177,20 @@ async def respond_to_command(message):
     await post_cards(cards, message.channel)
     if (len(cards) > 10):
       await client.send_message(message.channel, 'http://magidex.com/search/?q=' + escape(q))
+  elif message.content.startswith('!help'):
+    msg = """Basic bot usage: Include [cardname] in your regular messages.
+The bot will search for any quoted cards, and respond with the card details.
+
+Addiional Commands:
+`!search query` Search for cards, using a magidex style query.
+`!random` Request a random PD legal card
+`!random X` Request X random PD legal cards.
+`!help` Get this message.
+
+Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues
+Want to contribute? Send a Pull Request."""
+    await client.send_message(message.channel, msg)
+
 
 @client.event
 async def on_message(message):

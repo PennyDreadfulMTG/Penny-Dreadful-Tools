@@ -148,7 +148,7 @@ class Search:
       return self.math_where('loyalty', operator.value(), term.value())
     elif key.value() == 'supertype' or key.value() == 'super':
       return self.subtable_where('supertype', term.value())
-    elif key.value() == 'subtype' or key.value == 'sub':
+    elif key.value() == 'subtype' or key.value() == 'sub':
       return self.subtable_where('subtype', term.value())
 
   def where(self, keys, term, exact_match = False):

@@ -18,7 +18,7 @@ class Fetcher():
     allcards_zip = zipfile.ZipFile('./ziptemp/AllCards.json.zip', 'r')
     allcards_zip.extractall('./ziptemp/unzip')
     allcards_zip.close()
-    allcards_json = json.load(open('./ziptemp/unzip/AllCards.json'))
+    allcards_json = json.load(open('./ziptemp/unzip/AllCards.json', encoding='utf-8'))
     shutil.rmtree('./ziptemp')
     return allcards_json
 

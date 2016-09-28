@@ -16,7 +16,7 @@ class Search:
     sql = 'SELECT ' + (', '.join(property for property in oracle.Oracle.properties())) \
       + ' FROM card ' \
       + 'WHERE ' + self.where_clause() \
-      + ' ORDER BY pd_legal DESC'
+      + ' ORDER BY pd_legal DESC, name'
     print(sql)
     rs = database.Database().execute(sql)
     return [oracle.Card(r) for r in rs]

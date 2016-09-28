@@ -47,7 +47,7 @@ class Oracle():
     sql = 'SELECT ' + (', '.join(property for property in Oracle.properties())) \
       + ' FROM card ' \
       + 'WHERE name LIKE ? ' \
-      + 'ORDER BY pd_legal DESC'
+      + 'ORDER BY pd_legal DESC, name'
     rs = self.database.execute(sql, ['%' + query + '%'])
     return [Card(r) for r in rs]
 

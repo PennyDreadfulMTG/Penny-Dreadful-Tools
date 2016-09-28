@@ -1,4 +1,4 @@
-import ast, collections, hashlib, json, os, re, random, string, sys, unicodedata, urllib.request
+import ast, collections, hashlib, json, os, re, random, string, sys, unicodedata, urllib.parse, urllib.request
 import discord
 import config, fetcher, oracle, search
 
@@ -19,7 +19,10 @@ def update_legality():
   oracle.update_legality(legal_cards)
 
 def escape(str_input):
-  return '+'.join(str_input.split(' ')).lower()
+  # Expand 'AE' into two characters. This matches the legal list and 
+  # WotC's naming scheme in Kaladesh, and is compatible with the
+  # image server and magidex.
+  return '+'.join(urllib.parse.quote(cardname.replace(u'Æ', 'AE')) for cardname in str_input.split(' ')).lower()
 
 def better_image(cards):
   c = '|'.join(card.name for card in cards)

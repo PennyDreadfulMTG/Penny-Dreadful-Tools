@@ -6,3 +6,4 @@ config.json
 .cache/
 db
 .coverage
+test_results.xml

@@ -5,3 +5,4 @@ Thumbs.db
 config.json
 .cache/
 db
+.coverage

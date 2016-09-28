@@ -55,3 +55,10 @@ def test_partial_query():
 def test_legality_list():
   bot.update_legality()
   assert len(bot.legal_cards) > 0
+
+def test_legality_emoji():
+  legal_card = bot.cards_from_query(bot.legal_cards[0])[0]
+  assert bot.legal_emoji(legal_card) == ':white_check_mark:'
+  illegal_card = bot.cards_from_query("black lotus")[0]
+  assert bot.legal_emoji(illegal_card) == ':no_entry_sign:'
+  assert bot.legal_emoji(illegal_card, True) == ':no_entry_sign: (not legal in PD)'

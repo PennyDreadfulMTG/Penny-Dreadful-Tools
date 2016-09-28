@@ -1,6 +1,8 @@
 # Magic-Discord-Bot
 Displays info about quoted cards in a discord channel
 
+[![Build Status](http://ci.katelyngigante.com/buildStatus/icon?job=Penny Dreadful/Penny-Dreadful-Discord-Bot/master)](http://ci.katelyngigante.com/job/Penny%20Dreadful/job/Penny-Dreadful-Discord-Bot/job/master/)
+
 #Usage
 Simply send a message to your including a card name within Square brackets.
 

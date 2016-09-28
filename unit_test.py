@@ -1,5 +1,8 @@
 import os
-import bot, oracle
+
+import bot
+import oracle
+
 
 # Check that we can fetch card images.
 def test_imagedownload():
@@ -62,3 +65,23 @@ def test_legality_emoji():
   illegal_card = bot.cards_from_query("black lotus")[0]
   assert bot.legal_emoji(illegal_card) == ':no_entry_sign:'
   assert bot.legal_emoji(illegal_card, True) == ':no_entry_sign: (not legal in PD)'
+
+def test_accents():
+  cards = bot.cards_from_query("Lim-Dûl the Necromancer")
+  assert len(cards) == 1
+  cards = bot.cards_from_query("Séance")
+  assert len(cards) == 1
+
+  # The following two don't currently work.  But should be turned on once they do.
+
+  #cards = bot.cards_from_query("Lim-Dul the Necromancer")
+  #assert len(cards) == 1
+  #cards = bot.cards_from_query("Seance")
+  #assert len(cards) == 1
+
+def test_aether():
+  cards = bot.cards_from_query("Æther Spellbomb")
+  assert len(cards) == 1
+  #cards = bot.cards_from_query("aether Spellbomb")
+  #assert len(cards) == 1
+  

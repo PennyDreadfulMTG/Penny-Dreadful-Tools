@@ -121,6 +121,23 @@ def complex_search(query):
   print("Searching for {0}".format(query))
   return search.Search(query).fetchall()
 
+def mana_emoji(jsonMana):
+  jsonMana = jsonMana.strip("{")
+  jsonMana = jsonMana.strip("}")
+  symbols = jsonMana.split("}{")
+  toReturn = ""
+  for each in symbols:
+    if len(each) == 1:
+      if each.isdigit():
+        each = "0"+each
+      else:
+        each = each+each
+    elif len(each) == 3:
+      each = each.replace("/", "")
+    each = ":"+each+":"
+    toReturn += each
+  return toReturn+":grinning:"
+
 async def post_cards(cards, channel):
   if len(cards) == 0:
     await client.send_message(channel, 'No matches.')
@@ -131,10 +148,10 @@ async def post_cards(cards, channel):
     cards = cards[:4]
   if len(cards) == 1:
     card = cards[0]
-    mana_cost = card.mana_cost or ''
+    mana = mana_emoji(card.mana_cost) or ''
     legal = legal_emoji(card, True)
     pt = str(card.power) + '/' + str(card.toughness) if 'Creature' in card.type else ''
-    text = "{name} {mana_cost} — {type} — {legal}".format(name=card.name, mana_cost=mana_cost, type=card.type, text=card.text, legal=legal, pt=pt)
+    text = "{name} {mana_cost} — {type} — {legal}".format(name=card.name, mana_cost=mana, type=card.type, text=card.text, legal=legal, pt=pt)
   else:
     text = ', '.join("{name} {legal}".format(name = card.name, legal = legal_emoji(card)) for card in cards)
     text += more_text

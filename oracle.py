@@ -61,7 +61,7 @@ class Oracle():
     cards = self.fetcher.all_cards()
     for name, card in cards.items():
       self.insert_card(name, card)
-      
+
     self.database.database.commit()
     # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
     self.check_layouts() # Check that the hardcoded list of layouts we're about to use is still valid.
@@ -75,7 +75,7 @@ class Oracle():
     sql += ', '.join('?' for prop in Oracle.properties())
     sql += ')'
     values = [card.get(self.underscore2camel(property)) for property in Oracle.properties()]
-    # self.database.execute commits after each statement, which we want to 
+    # self.database.execute commits after each statement, which we want to
     # avoid while inserting cards
     self.database.database.execute(sql, values)
     id = self.database.value('SELECT last_insert_rowid()')

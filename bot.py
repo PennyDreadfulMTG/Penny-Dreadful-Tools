@@ -19,7 +19,7 @@ def update_legality():
   oracle.update_legality(legal_cards)
 
 def escape(str_input):
-  # Expand 'AE' into two characters. This matches the legal list and 
+  # Expand 'AE' into two characters. This matches the legal list and
   # WotC's naming scheme in Kaladesh, and is compatible with the
   # image server and magidex.
   return '+'.join(urllib.parse.quote(cardname.replace(u'Æ', 'AE')) for cardname in str_input.split(' ')).lower()

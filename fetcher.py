@@ -9,10 +9,13 @@ class Fetcher():
   def version(self):
     return parse_version(json.loads(self.open('https://mtgjson.com/json/version.json')))
 
+  def mtgo_status(self):
+    return json.loads(self.open('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php'))['status']
+
   def all_cards(self):
     if os.path.isdir('./ziptemp'):
       shutil.rmtree('./ziptemp')
-      
+
     os.mkdir('./ziptemp')
     urllib.request.urlretrieve('https://mtgjson.com/json/AllCards.json.zip', './ziptemp/AllCards.json.zip')
     allcards_zip = zipfile.ZipFile('./ziptemp/AllCards.json.zip', 'r')

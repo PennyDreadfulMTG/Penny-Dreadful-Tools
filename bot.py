@@ -177,6 +177,12 @@ async def respond_to_command(message):
     await post_cards(cards, message.channel)
     if (len(cards) > 10):
       await client.send_message(message.channel, 'http://magidex.com/search/?q=' + escape(q))
+  elif message.content.startswith('!status'):
+    try:
+      status = fetcher.Fetcher().mtgo_status()
+    except:
+      status = 'UNKNOWN'
+    await client.send_message(message.channel, 'MTGO is {status}'.format(status=status))
   elif message.content.startswith('!help'):
     msg = """Basic bot usage: Include [cardname] in your regular messages.
 The bot will search for any quoted cards, and respond with the card details.

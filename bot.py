@@ -66,7 +66,7 @@ def download_image(cards):
   if acceptable_file(filepath):
     return filepath
   multiverse_id = cards[0].multiverse_id
-  if multiverse_id > 0:
+  if multiverse_id and multiverse_id > 0:
     print("Trying to get fallback image for " + imagename)
     try:
       urllib.request.urlretrieve(http_image(multiverse_id), filepath)

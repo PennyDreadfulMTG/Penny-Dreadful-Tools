@@ -127,7 +127,9 @@ class Search:
     if key.value() == 'q':
       return self.where(['name', 'type', 'text'], term.value())
     elif key.value() == 'color' or key.value() == 'c':
-      return self.color_where(term.value())
+      return self.subtable_where('color', term.value())
+    elif key.value() == 'coloridentity' or key.value() == 'identity' or key.value() == 'ci':
+      return self.subtable_where('color_identity', term.value())
     elif key.value() == 'rarity' or key.value() == 'r':
       return self.where(['rarity'], self.rarity_replace(term.value()), True)
     elif key.value() == 'text' or key.value() == 'o':
@@ -144,6 +146,10 @@ class Search:
       return self.math_where('cmc', operator.value(), term.value())
     elif key.value() == 'loyalty':
       return self.math_where('loyalty', operator.value(), term.value())
+    elif key.value() == 'supertype' or key.value() == 'super':
+      return self.subtable_where('supertype', term.value())
+    elif key.value() == 'subtype' or key.value == 'sub':
+      return self.subtable_where('subtype', term.value())
 
   def where(self, keys, term, exact_match = False):
     q = term if exact_match else '%' + term + '%'
@@ -157,18 +163,27 @@ class Search:
     where += ")"
     return where
 
-  def color_where(self, value):
-    if value == 'c':
+  def subtable_where(self, subtable, value):
+    # Specialcase colorless because it has no entry in the color table.
+    if subtable == 'color' and value == 'c':
       return '(id NOT IN (SELECT card_id FROM card_color))'
-    return '(id IN (SELECT card_id FROM card_color WHERE color_id = {color_id}))'.format(color_id=self.color_replace(value))
+    v = self.value_lookup(subtable, value)
+    if str(v).isdigit():
+      column = "{subtable}_id".format(subtable=subtable).replace('color_identity', 'color')
+      operator = '='
+    else:
+      column = subtable
+      v = database.Database.escape("%{v}%".format(v=v))
+      operator = 'LIKE'
+    return '(id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {value}))'.format(subtable=subtable, column=column, operator=operator, value=v)
 
   def math_where(self, column, operator, term):
     if not operator in ['>', '<', '=', '<=', '>=']:
       return 'FALSE'
     return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=database.Database.escape(term))
 
-  def color_replace(self, color):
-    replacements = {
+  def value_lookup(self, table, value):
+    colors = {
       'w': 1,
       'white': 1,
       'u': 2,
@@ -180,22 +195,21 @@ class Search:
       'g': 5,
       'green': 5
     }
-    if color.lower() in replacements:
-      return replacements[color.lower()]
-    return color
-
-  def rarity_replace(self, rarity):
     replacements = {
+      'color': colors,
+      'color_identity': colors,
+      'rarity': {
         'common': 'C',
         'uncommon': 'U',
         'rare': 'R',
         'mythic': 'M',
         'mythicrare': 'M',
         'mythic rare': 'M'
+      }
     }
-    if rarity.lower() in replacements:
-      return replacements[rarity.lower()]
-    return rarity
+    if table in replacements and value.lower() in replacements[table]:
+      return replacements[table][value.lower()]
+    return value
 
 class InvalidTokenException(Exception):
   pass

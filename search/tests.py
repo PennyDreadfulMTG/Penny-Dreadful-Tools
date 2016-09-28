@@ -11,6 +11,7 @@ def tests():
   assert(not search.Key.match([' ']))
   assert(search.Criterion.match(['t', 'o', 'u', '>', '2']))
 
+  do_test('subtype:warrior', "(id IN (SELECT card_id FROM card_subtype WHERE subtype LIKE '%warrior%'))")
   do_test('t:creature -t:artifact t:legendary', "(type LIKE '%creature%') AND NOT (type LIKE '%artifact%') AND (type LIKE '%legendary%')")
   do_test('-cmc=2', "NOT (cmc IS NOT NULL AND cmc <> '' AND CAST(cmc AS REAL) = 2)")
   do_test('cmc>2', "(cmc IS NOT NULL AND cmc <> '' AND CAST(cmc AS REAL) > 2)")

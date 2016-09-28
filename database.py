@@ -29,11 +29,13 @@ class Database():
     return r
 
   def value(self, sql, args = [], default = None):
-    rs = self.execute(sql, args)
-    try:
-      return rs[0][0]
-    except IndexError:
+    rs = self.database.execute(sql, args).fetchone()
+    if rs is None:
       return default
+    elif len(rs) <= 0:
+      return default
+    else:
+      return rs[0]
 
   def setup(self):
     self.execute("CREATE TABLE version (version TEXT)")
@@ -99,5 +101,5 @@ class Database():
       ('Special')
     """)
 
-# Import last to work around circular dependency â€” http://effbot.org/zone/import-confusion.htm
+# Import last to work around circular dependency — http://effbot.org/zone/import-confusion.htm
 import oracle

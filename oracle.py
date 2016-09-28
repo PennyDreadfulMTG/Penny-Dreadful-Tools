@@ -61,6 +61,8 @@ class Oracle():
     cards = self.fetcher.all_cards()
     for name, card in cards.items():
       self.insert_card(name, card)
+      
+    self.database.database.commit()
     # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
     self.check_layouts() # Check that the hardcoded list of layouts we're about to use is still valid.
     self.database.execute("UPDATE card SET cmc = 0 WHERE cmc IS NULL AND layout IN ('normal', 'double-faced', 'flip', 'leveler', 'token', 'split')")
@@ -73,20 +75,22 @@ class Oracle():
     sql += ', '.join('?' for prop in Oracle.properties())
     sql += ')'
     values = [card.get(self.underscore2camel(property)) for property in Oracle.properties()]
-    self.database.execute(sql, values)
+    # self.database.execute commits after each statement, which we want to 
+    # avoid while inserting cards
+    self.database.database.execute(sql, values)
     id = self.database.value('SELECT last_insert_rowid()')
     for name in card.get('names', []):
-      self.database.execute('INSERT INTO card_name (card_id, name) VALUES (?, ?)', [id, name])
+      self.database.database.execute('INSERT INTO card_name (card_id, name) VALUES (?, ?)', [id, name])
     for color in card.get('colors', []):
       color_id = self.database.value('SELECT id FROM color WHERE name = ?', [color])
-      self.database.execute('INSERT INTO card_color (card_id, color_id) VALUES (?, ?)', [id, color_id])
+      self.database.database.execute('INSERT INTO card_color (card_id, color_id) VALUES (?, ?)', [id, color_id])
     for symbol in card.get('colorIdentity', []):
       color_id = self.database.value('SELECT id FROM color WHERE symbol = ?', [symbol])
-      self.database.execute('INSERT INTO card_color_identity (card_id, color_id) VALUES (?, ?)', [id, color_id])
+      self.database.database.execute('INSERT INTO card_color_identity (card_id, color_id) VALUES (?, ?)', [id, color_id])
     for supertype in card.get('supertypes', []):
-      self.database.execute('INSERT INTO card_supertype (card_id, supertype) VALUES (?, ?)', [id, supertype])
+      self.database.database.execute('INSERT INTO card_supertype (card_id, supertype) VALUES (?, ?)', [id, supertype])
     for subtype in card.get('subtypes', []):
-      self.database.execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [id, subtype])
+      self.database.database.execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [id, subtype])
 
   def check_layouts(self):
     rs = self.database.execute('SELECT DISTINCT layout FROM card');

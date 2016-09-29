@@ -15,7 +15,7 @@ node{
     }
 
     stage('Pylint') {
-    sh 'pylint'
+    sh 'PATH=$PATH:~/.local/bin/; pylint'
     step([$class: 'WarningsPublisher', canResolveRelativePaths: false, consoleParsers: [[parserName: 'PyLint']], defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', messagesPattern: '', unHealthy: '', useStableBuildAsReference: true])
     }
 }

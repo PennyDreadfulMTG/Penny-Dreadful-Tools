@@ -1,4 +1,4 @@
-import ast, collections, hashlib, json, os, re, random, string, sys, unicodedata, urllib.parse, urllib.request
+import ast, collections, hashlib, json, os, re, random, string, sys, unicodedata, urllib.parse
 import discord
 import config, fetcher, oracle, search, emoji
 
@@ -60,17 +60,17 @@ def download_image(cards):
     return filepath
   print("Trying to get first choice image for " + ', '.join(card.name for card in cards))
   try:
-    urllib.request.urlretrieve(better_image(cards), filepath)
-  except urllib.error.HTTPError as error:
-    print("HTTP Error: {0}".format(error))
+    fetcher.Fetcher().store(better_image(cards), filepath)
+  except fetcher.FetchException as e:
+    print("Error: {0}".format(e))
   if acceptable_file(filepath):
     return filepath
   multiverse_id = cards[0].multiverse_id
   if multiverse_id and multiverse_id > 0:
     print("Trying to get fallback image for " + imagename)
     try:
-      urllib.request.urlretrieve(http_image(multiverse_id), filepath)
-    except urllib.error.HTTPError as error:
+      fetcher.Fetcher().store(http_image(multiverse_id), filepath)
+    except fetcher.FetchException as e:
       print("HTTP Error: {0}".format(error))
     if acceptable_file(filepath):
       return filepath

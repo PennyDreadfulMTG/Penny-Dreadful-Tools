@@ -1,6 +1,6 @@
 import re
 
-import oracle
+import card
 import database
 
 from find.expression import Expression
@@ -14,13 +14,13 @@ UNQUOTED_STRING = 'unquoted_string'
 
 def search(query):
     where_clause = parse(tokenize(query))
-    sql = 'SELECT ' + (', '.join(property for property in oracle.Oracle.properties())) \
+    sql = 'SELECT ' + (', '.join(property for property in card.properties())) \
         + ' FROM card ' \
         + 'WHERE ' + where_clause \
         + ' ORDER BY pd_legal DESC, name'
     print(sql)
     rs = database.Database().execute(sql)
-    return [oracle.Card(r) for r in rs]
+    return [card.Card(r) for r in rs]
 
 def tokenize(s):
     tokens = {0: []}

@@ -1,38 +1,10 @@
 import re
-import types
 
+import card
 import database
 import fetcher
 
 class Oracle:
-    @staticmethod
-    def properties():
-        return {
-            'system_id': 'TEXT',
-            'layout': 'TEXT',
-            'name': 'TEXT',
-            'mana_cost': 'TEXT',
-            'cmc': 'REAL',
-            'type': 'TEXT',
-            'text': 'TEXT',
-            'flavor': 'TEXT',
-            'artist': 'TEXT',
-            'number': 'TEXT',
-            'power': 'TEXT',
-            'toughness': 'TEXT',
-            'loyalty': 'TEXT',
-            'multiverse_id': 'INTEGER',
-            'image_name': 'TEXT',
-            'watermark': 'TEXT',
-            'border': 'TEXT',
-            'timeshifted': 'INTEGER',
-            'hand': 'INTEGER',
-            'life': 'INTEGER',
-            'reserved': 'INTEGER',
-            'release_date': 'INTEGER',
-            'starter': 'INTEGER',
-            'mci_number': 'TEXT'
-        }
 
     @staticmethod
     def layouts():
@@ -46,12 +18,12 @@ class Oracle:
             self.update_database(str(current_version))
 
     def search(self, query):
-        sql = 'SELECT ' + (', '.join(property for property in Oracle.properties())) \
+        sql = 'SELECT ' + (', '.join(property for property in card.properties())) \
             + ' FROM card ' \
             + 'WHERE name LIKE ? ' \
             + 'ORDER BY pd_legal DESC, name'
         rs = self.database.execute(sql, ['%' + query + '%'])
-        return [Card(r) for r in rs]
+        return [card.Card(r) for r in rs]
 
     def update_legality(self, legal_cards):
         self.database.execute('UPDATE card SET pd_legal = 0')
@@ -61,8 +33,8 @@ class Oracle:
         self.database.execute('DELETE FROM version')
         self.database.execute('DELETE FROM card')
         cards = fetcher.all_cards()
-        for name, card in cards.items():
-            self.insert_card(name, card)
+        for name, c in cards.items():
+            self.insert_card(name, c)
 
         self.database.database.commit()
         # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
@@ -70,28 +42,28 @@ class Oracle:
         self.database.execute("UPDATE card SET cmc = 0 WHERE cmc IS NULL AND layout IN ('normal', 'double-faced', 'flip', 'leveler', 'token', 'split')")
         self.database.execute('INSERT INTO version (version) VALUES (?)', [new_version])
 
-    def insert_card(self, name, card):
+    def insert_card(self, name, c):
         sql = 'INSERT INTO card ('
-        sql += ', '.join(property for property in Oracle.properties())
+        sql += ', '.join(property for property in card.properties())
         sql += ') VALUES ('
-        sql += ', '.join('?' for prop in Oracle.properties())
+        sql += ', '.join('?' for prop in card.properties())
         sql += ')'
-        values = [card.get(underscore2camel(property)) for property in Oracle.properties()]
+        values = [c.get(underscore2camel(property)) for property in card.properties()]
         # self.database.execute commits after each statement, which we want to
         # avoid while inserting cards
         self.database.database.execute(sql, values)
         card_id = self.database.value('SELECT last_insert_rowid()')
-        for name in card.get('names', []):
+        for name in c.get('names', []):
             self.database.database.execute('INSERT INTO card_name (card_id, name) VALUES (?, ?)', [card_id, name])
-        for color in card.get('colors', []):
+        for color in c.get('colors', []):
             color_id = self.database.value('SELECT id FROM color WHERE name = ?', [color])
             self.database.database.execute('INSERT INTO card_color (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
-        for symbol in card.get('colorIdentity', []):
+        for symbol in c.get('colorIdentity', []):
             color_id = self.database.value('SELECT id FROM color WHERE symbol = ?', [symbol])
             self.database.database.execute('INSERT INTO card_color_identity (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
-        for supertype in card.get('supertypes', []):
+        for supertype in c.get('supertypes', []):
             self.database.database.execute('INSERT INTO card_supertype (card_id, supertype) VALUES (?, ?)', [card_id, supertype])
-        for subtype in card.get('subtypes', []):
+        for subtype in c.get('subtypes', []):
             self.database.database.execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [card_id, subtype])
 
     def check_layouts(self):
@@ -101,9 +73,3 @@ class Oracle:
 
 def underscore2camel(s):
     return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)
-
-class Card(types.SimpleNamespace):
-    def __init__(self, params):
-        super().__init__()
-        for k in params.keys():
-            setattr(self, k, params[k])

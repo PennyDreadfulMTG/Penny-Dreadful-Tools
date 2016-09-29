@@ -1,29 +1,29 @@
 import os
 
 import bot
+import card
 import configuration
-import oracle
 
 # Check that we can fetch card images.
 def test_imagedownload():
     filepath = configuration.get("image_dir") + "/" + "island.jpg"
     if bot.acceptable_file(filepath):
         os.remove(filepath)
-    card = oracle.Card({'name': 'Island'})
-    assert bot.download_image([card]) is not None
+    c = card.Card({'name': 'Island'})
+    assert bot.download_image([c]) is not None
 
 # Check that we can fall back to the Gatherer images if all else fails.
 def test_fallbackimagedownload():
     filepath = configuration.get("image_dir") + "/" + "avon_island.jpg"
     if bot.acceptable_file(filepath):
         os.remove(filepath)
-    card = oracle.Card({'name': 'Avon Island', 'multiverse_id': 26301})
-    assert bot.download_image([card]) is not None
+    c = card.Card({'name': 'Avon Island', 'multiverse_id': 26301})
+    assert bot.download_image([c]) is not None
 
 # Check that we can succesfully fail at getting an image
 def test_noimageavailable():
-    card = oracle.Card({'name': "Barry's Land", 'multiverse_id': 0})
-    assert bot.download_image([card]) is None
+    c = card.Card({'name': "Barry's Land", 'multiverse_id': 0})
+    assert bot.download_image([c]) is None
 
 # Search for a single card via full name
 def test_solo_query():
@@ -57,10 +57,10 @@ def test_partial_query():
 # Check that the list of legal cards is being fetched correctly.
 def test_legality_list():
     bot.update_legality()
-    assert len(bot.LEGAL_CARDS) > 0
+    assert len(bot.STATE.legal_cards) > 0
 
 def test_legality_emoji():
-    legal_card = bot.cards_from_query(bot.LEGAL_CARDS[0])[0]
+    legal_card = bot.cards_from_query(bot.STATE.legal_cards[0])[0]
     assert bot.legal_emoji(legal_card) == ':white_check_mark:'
     illegal_card = bot.cards_from_query("black lotus")[0]
     assert bot.legal_emoji(illegal_card) == ':no_entry_sign:'

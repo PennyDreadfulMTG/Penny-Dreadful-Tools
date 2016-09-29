@@ -2,6 +2,7 @@ import sqlite3
 
 import pkg_resources
 
+import card
 import configuration
 
 class Database:
@@ -58,7 +59,7 @@ class Database:
         self.execute("INSERT INTO db_version (version) VALUES ({0})".format(self.schema_version))
         self.execute("CREATE TABLE IF NOT EXISTS version (version TEXT)")
         sql = 'CREATE TABLE card (id INTEGER PRIMARY KEY, pd_legal INTEGER, '
-        sql += ', '.join(name + ' ' + type for name, type in oracle.Oracle.properties().items())
+        sql += ', '.join(name + ' ' + type for name, type in card.properties().items())
         sql += ')'
         self.execute(sql)
         self.execute("""CREATE TABLE IF NOT EXISTS card_name (
@@ -134,6 +135,3 @@ class Database:
         self.execute("DROP TABLE IF EXISTS rarity")
         self.execute("DROP TABLE IF EXISTS version")
         self.execute("DROP TABLE IF EXISTS db_version")
-
-# Import last to work around circular dependency � http://effbot.org/zone/import-confusion.htm
-import oracle

@@ -18,11 +18,11 @@ def replace_emoji(text, channel):
         name = symbol
         name = name.replace('/', '')
         if len(name) == 1:
-            if re.fullmatch("[0-9]", name):
-                name = "0" + name
+            if re.fullmatch('[0-9]', name):
+                name = '0' + name
             else:
                 name = name + name
         emoji = find_emoji(name, channel)
         if emoji != None:
-            output = output.replace("{" + symbol + "}", str(emoji))
+            output = output.replace('{' + symbol + '}', str(emoji))
     return output

@@ -153,13 +153,13 @@ def parse_criterion(key, operator, term):
 def where(keys, term, exact_match=False):
     q = term if exact_match else '%' + term + '%'
     subsequent = False
-    s = "("
+    s = '('
     for column in keys:
         if subsequent:
             s += ' OR '
-        s += column + " LIKE " + database.Database.escape(q)
+        s += '{column} LIKE {q}'.format(column=column, q=database.Database.escape(q))
         subsequent = True
-    s += ")"
+    s += ')'
     return s
 
 def subtable_where(subtable, value):
@@ -168,11 +168,11 @@ def subtable_where(subtable, value):
         return '(id NOT IN (SELECT card_id FROM card_color))'
     v = value_lookup(subtable, value)
     if str(v).isdigit():
-        column = "{subtable}_id".format(subtable=subtable).replace('color_identity', 'color')
+        column = '{subtable}_id'.format(subtable=subtable).replace('color_identity', 'color')
         operator = '='
     else:
         column = subtable
-        v = database.Database.escape("%{v}%".format(v=v))
+        v = database.Database.escape('%{v}%'.format(v=v))
         operator = 'LIKE'
     return '(id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {value}))'.format(subtable=subtable, column=column, operator=operator, value=v)
 
@@ -183,7 +183,7 @@ def math_where(column, operator, term):
 
 def format_where(term):
     if term in ['pennydreadful', 'pd']:
-        return "(pd_legal = 1)"
+        return '(pd_legal = 1)'
     else:
         raise InvalidValueException('{term} is not supported in format queries', term=term)
 

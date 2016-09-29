@@ -6,7 +6,7 @@ import configuration
 
 # Check that we can fetch card images.
 def test_imagedownload():
-    filepath = configuration.get("image_dir") + "/" + "island.jpg"
+    filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='island.jpg')
     if bot.acceptable_file(filepath):
         os.remove(filepath)
     c = card.Card({'name': 'Island'})
@@ -14,7 +14,7 @@ def test_imagedownload():
 
 # Check that we can fall back to the Gatherer images if all else fails.
 def test_fallbackimagedownload():
-    filepath = configuration.get("image_dir") + "/" + "avon_island.jpg"
+    filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='avon_island.jpg')
     if bot.acceptable_file(filepath):
         os.remove(filepath)
     c = card.Card({'name': 'Avon Island', 'multiverse_id': 26301})
@@ -27,15 +27,15 @@ def test_noimageavailable():
 
 # Search for a single card via full name
 def test_solo_query():
-    names = bot.parse_queries("[Gilder Bairn]")
+    names = bot.parse_queries('[Gilder Bairn]')
     assert len(names) == 1
-    assert names[0] == "gilder bairn"
+    assert names[0] == 'gilder bairn'
     cards = bot.cards_from_queries(names)
     assert len(cards) == 1
 
 # Two cards, via full name
 def test_double_query():
-    names = bot.parse_queries("[Mother of Runes] [Ghostfire]")
+    names = bot.parse_queries('[Mother of Runes] [Ghostfire]')
     assert len(names) == 2
     cards = bot.cards_from_queries(names)
     assert len(cards) == 2
@@ -43,7 +43,7 @@ def test_double_query():
 # The following two sets assume that Kamahl is a long dead character, and is getting no new cards.
 # If wizards does an Onslaught/Odyssey throwback in some supplimental product, they may start failing.
 def test_legend_query():
-    names = bot.parse_queries("[Kamahl]")
+    names = bot.parse_queries('[Kamahl]')
     assert len(names) == 1
     cards = bot.cards_from_queries(names)
     assert len(cards) == 2
@@ -62,25 +62,25 @@ def test_legality_list():
 def test_legality_emoji():
     legal_card = bot.cards_from_query(bot.STATE.legal_cards[0])[0]
     assert bot.legal_emoji(legal_card) == ':white_check_mark:'
-    illegal_card = bot.cards_from_query("black lotus")[0]
+    illegal_card = bot.cards_from_query('black lotus')[0]
     assert bot.legal_emoji(illegal_card) == ':no_entry_sign:'
     assert bot.legal_emoji(illegal_card, True) == ':no_entry_sign: (not legal in PD)'
 
 def test_accents():
-    cards = bot.cards_from_query("Lim-Dûl the Necromancer")
+    cards = bot.cards_from_query('Lim-Dûl the Necromancer')
     assert len(cards) == 1
-    cards = bot.cards_from_query("Séance")
+    cards = bot.cards_from_query('Séance')
     assert len(cards) == 1
 
-    # The following two don't currently work.    But should be turned on once they do.
+    # The following two don't currently work. But should be turned on once they do.
 
-    #cards = bot.cards_from_query("Lim-Dul the Necromancer")
+    #cards = bot.cards_from_query('Lim-Dul the Necromancer')
     #assert len(cards) == 1
-    #cards = bot.cards_from_query("Seance")
+    #cards = bot.cards_from_query('Seance')
     #assert len(cards) == 1
 
 def test_aether():
-    cards = bot.cards_from_query("Æther Spellbomb")
+    cards = bot.cards_from_query('Æther Spellbomb')
     assert len(cards) == 1
-    #cards = bot.cards_from_query("aether Spellbomb")
+    #cards = bot.cards_from_query('aether Spellbomb')
     #assert len(cards) == 1

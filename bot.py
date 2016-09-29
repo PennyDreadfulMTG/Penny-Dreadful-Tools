@@ -151,14 +151,15 @@ async def post_cards(cards, channel):
         text = ', '.join('{name} {legal}'.format(name=card.name, legal=legal_emoji(card)) for card in cards)
         text += more_text
     image_file = download_image(cards)
-    await STATE.client.send_message(channel, text)
     if image_file is None:
+        text += '\n\n'
         if len(cards) == 1:
-            await STATE.client.send_message(channel, emoji.replace_emoji(cards[0].text, channel))
+            text += emoji.replace_emoji(cards[0].text, channel)
         else:
-            await STATE.client.send_message(channel, 'No image available.')
+            text += 'No image available.'
+        await STATE.client.send_message(channel, text)
     else:
-        await STATE.client.send_file(channel, image_file)
+        await STATE.client.send_file(channel, image_file, content=text)
 
 async def respond_to_card_names(message):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.

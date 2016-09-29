@@ -1,5 +1,8 @@
-import re, types
-import database, fetcher
+import re
+import types
+
+import database
+import fetcher
 
 class Oracle:
     @staticmethod

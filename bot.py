@@ -1,6 +1,19 @@
-import collections, hashlib, os, re, random, sys, unicodedata, urllib.parse
+import collections
+import hashlib
+import os
+import re
+import random
+import sys
+import unicodedata
+import urllib.parse
+
 import discord
-import config, fetcher, oracle, search, emoji
+
+import config
+import fetcher
+import oracle
+import search
+import emoji
 
 # Globals
 legal_cards = []

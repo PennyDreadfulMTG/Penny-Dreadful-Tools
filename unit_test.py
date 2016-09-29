@@ -1,5 +1,8 @@
 import os
-import bot, config, oracle
+
+import bot
+import config
+import oracle
 
 # Check that we can fetch card images.
 def test_imagedownload():

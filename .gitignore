@@ -7,3 +7,4 @@ config.json
 db
 .coverage
 test_results.xml
+.vscode

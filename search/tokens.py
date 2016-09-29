@@ -65,5 +65,5 @@ class Operator(Token):
 
 class String(Token):
     @classmethod
-    def find(self, chars):
+    def find(cls, chars):
         return chars

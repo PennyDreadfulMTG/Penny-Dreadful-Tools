@@ -20,7 +20,10 @@ def ReplaceEmoji(text, channel):
     name = symbol
     name.replace('/','')
     if len(name) == 1:
-      name = name + name
+      if re.fullmatch("[0-9]", name):
+        name = "0" + name
+      else:
+        name = name + name
     emoji = FindEmoji(name, channel)
     if emoji != None:
       output = output.replace("{" + symbol + "}", str(emoji))

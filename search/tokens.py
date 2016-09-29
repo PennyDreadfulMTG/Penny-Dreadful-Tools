@@ -34,7 +34,7 @@ class BooleanOperator(Token):
 
     def value(self):
         if (self.v == '-'):
-            return 'NOT';
+            return 'NOT'
         return self.v
 
 
@@ -46,7 +46,7 @@ class Criterion(Token):
         rest = chars[Key.length(chars):]
         if (not Operator.match(rest)):
             return False
-        return len(rest) > 0;
+        return len(rest) > 0
 
 
 class Key(Token):
@@ -58,9 +58,10 @@ class Key(Token):
 
 class Operator(Token):
     # Strict substrings of other operators must appear later in the list.
-    values = ['<=', '>=', ':', '!', '<', '>', '='];
+    values = ['<=', '>=', ':', '!', '<', '>', '=']
 
 
 class String(Token):
-    def __init__(self, string):
-        self.v = string
+    @classmethod
+    def find(self, chars):
+        return chars

@@ -35,14 +35,14 @@ class Database:
         return self.value("SELECT version FROM db_version", [], "0")
 
 
-    def execute(self, sql, args = None):
+    def execute(self, sql, args=None):
         if args is None:
             args = []
         r = self.database.execute(sql, args).fetchall()
         self.database.commit()
         return r
 
-    def value(self, sql, args = None, default = None):
+    def value(self, sql, args=None, default=None):
         if args is None:
             args = []
         rs = self.database.execute(sql, args).fetchone()

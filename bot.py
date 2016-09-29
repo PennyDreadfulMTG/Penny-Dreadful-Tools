@@ -111,7 +111,7 @@ def cards_from_query(query):
         if card.name.lower() == query:
             return [card]
     # If not found, use cards that start with the query and a punctuation char.
-    results = [card for card in cards if card.name.lower().startswith(query + " ") or card.name.lower().startswith(query + ",") ]
+    results = [card for card in cards if card.name.lower().startswith(query + " ") or card.name.lower().startswith(query + ",")]
     if len(results) > 0:
         return uniqify_cards(results)
     # If not found, use cards that start with the query.
@@ -121,7 +121,7 @@ def cards_from_query(query):
     # If we didn't find any of those then use all search results.
     return uniqify_cards(cards)
 
-def legal_emoji(card, verbose = False):
+def legal_emoji(card, verbose=False):
     if card.name.lower().strip() in legal_cards:
         return ':white_check_mark:'
     s = ':no_entry_sign:'

@@ -32,7 +32,7 @@ class Fetcher:
         shutil.rmtree('./ziptemp')
         return allcards_json
 
-    def open(self, url, character_encoding = 'utf-8'):
+    def open(self, url, character_encoding='utf-8'):
         print("Fetching {0}".format(url))
         try:
             return urllib.request.urlopen(url).read().decode(character_encoding)

@@ -153,7 +153,7 @@ class Search:
         elif key.value() == 'format' or key.value() == 'f':
             return self.format_where(term.value())
 
-    def where(self, keys, term, exact_match = False):
+    def where(self, keys, term, exact_match=False):
         q = term if exact_match else '%' + term + '%'
         subsequent = False
         where = "("

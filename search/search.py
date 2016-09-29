@@ -2,7 +2,9 @@ import re
 
 import oracle
 import database
-import search
+
+from . import Expression
+from .tokens import BooleanOperator, Criterion, Key, Operator, String
 
 EXPECT_EXPRESSION = 'expect_expression'
 EXPECT_OPERATOR = 'expect_operator'
@@ -41,18 +43,18 @@ def tokenize(s):
                 depth += 1
                 tokens[depth] = []
             elif c == ')':
-                expression = search.Expression(tokens[depth])
+                expression = Expression(tokens[depth])
                 del tokens[depth]
                 depth -= 1
                 tokens[depth].append(expression)
-            elif search.Criterion.match(rest):
-                tokens[depth].append(search.Key(rest))
+            elif Criterion.match(rest):
+                tokens[depth].append(Key(rest))
                 mode = EXPECT_OPERATOR
-                i += search.Key.length(rest) - 1
-            elif search.BooleanOperator.match(rest):
-                tokens[depth].append(search.BooleanOperator(rest))
+                i += Key.length(rest) - 1
+            elif BooleanOperator.match(rest):
+                tokens[depth].append(BooleanOperator(rest))
                 mode = EXPECT_EXPRESSION
-                i += search.BooleanOperator.length(rest) - 1
+                i += BooleanOperator.length(rest) - 1
             elif c == '"':
                 string = []
                 mode = QUOTED_STRING
@@ -64,10 +66,10 @@ def tokenize(s):
             else:
                 raise InvalidTokenException("Expected expression, got '{c}' at {i} in {s}".format(c=c, i=i, s=s))
         elif mode == EXPECT_OPERATOR:
-            if search.Operator.match(rest):
-                tokens[depth].append(search.Operator(rest))
+            if Operator.match(rest):
+                tokens[depth].append(Operator(rest))
                 mode = EXPECT_TERM
-                i += search.Operator.length(rest) - 1
+                i += Operator.length(rest) - 1
             else:
                 raise InvalidTokenException("Expected operator, got '{c}' at {i} in {s}".format(c=c, i=i, s=s))
         elif mode == EXPECT_TERM:
@@ -79,16 +81,16 @@ def tokenize(s):
                 mode = UNQUOTED_STRING
         elif mode == QUOTED_STRING:
             if c == '"':
-                tokens[depth].append(search.String(''.join(string)))
+                tokens[depth].append(String(''.join(string)))
                 mode = EXPECT_EXPRESSION
             else:
                 string.append(c)
         elif mode == UNQUOTED_STRING:
             if c == ' ':
-                tokens[depth].append(search.String(''.join(string)))
+                tokens[depth].append(String(''.join(string)))
                 mode = EXPECT_EXPRESSION
             elif c == ')':
-                tokens[depth].append(search.String(''.join(string)))
+                tokens[depth].append(String(''.join(string)))
                 mode = EXPECT_EXPRESSION
                 i -= 1
             else:
@@ -96,7 +98,7 @@ def tokenize(s):
         else:
             raise InvalidModeException("Bad mode '{c}' at {i} in {s}".format(c=c, i=i, s=s))
         i += 1
-    return search.Expression(tokens[0])
+    return Expression(tokens[0])
 
 def parse(expression):
     s = ''
@@ -105,22 +107,22 @@ def parse(expression):
     while i < len(tokens):
         token = tokens[i]
         cls = token.__class__
-        if cls == search.String:
+        if cls == String:
             s += where(['name', 'type', 'text'], token.value())
-        elif cls == search.Key:
+        elif cls == Key:
             s += parse_criterion(token, tokens[i + 1], tokens[i + 2])
             i += 2
-        elif cls == search.Expression:
+        elif cls == Expression:
             s += '({token})'.format(token=parse(token))
-        elif cls == search.BooleanOperator:
+        elif cls == BooleanOperator:
             pass
         else:
             raise InvalidTokenException("Invalid token '{token}' ({cls}) at {i}".format(token=token, cls=cls, i=i))
         next_token = tokens[i + 1] if len(tokens) > (i + 1) else None
         next_cls = next_token.__class__
-        if cls == search.BooleanOperator:
+        if cls == BooleanOperator:
             s += ' {s} '.format(s=token.value())
-        elif next_cls != search.BooleanOperator or next_token.value() == 'NOT':
+        elif next_cls != BooleanOperator or next_token.value() == 'NOT':
             s += ' AND '
         i += 1
     return s[:-len(' AND ')].replace('    ', ' ').strip()

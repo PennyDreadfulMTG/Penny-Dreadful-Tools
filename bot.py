@@ -154,7 +154,7 @@ async def post_cards(cards, channel):
     await STATE.client.send_message(channel, text)
     if image_file is None:
         if len(cards) == 1:
-            await STATE.client.send_message(channel, emoji.replace_emoji(cards[0].text))
+            await STATE.client.send_message(channel, emoji.replace_emoji(cards[0].text, channel))
         else:
             await STATE.client.send_message(channel, 'No image available.')
     else:

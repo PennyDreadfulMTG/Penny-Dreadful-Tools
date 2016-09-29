@@ -19,7 +19,6 @@ from find import search
 # Globals
 legal_cards = []
 client = discord.Client()
-config = config.Config()
 oracle = oracle.Oracle()
 
 def init():

@@ -18,7 +18,7 @@ class Database:
         return "'" + encodable.replace("'", "''") + "'"
 
     def __init__(self):
-        db = config.Config().get('database')
+        db = config.get('database')
         self.database = sqlite3.connect(db)
         self.database.row_factory = sqlite3.Row
         try:

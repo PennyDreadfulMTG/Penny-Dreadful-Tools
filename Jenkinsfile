@@ -15,8 +15,11 @@ node{
     }
 
     stage('Pylint') {
-    sh 'PATH=$PATH:~/.local/bin/; pylint --rcfile=pylintrc $(find . -maxdepth 1 -name "*.py" -print)'
-    step([$class: 'WarningsPublisher', canComputeNew: false, canResolveRelativePaths: false, consoleParsers: [[parserName: 'PyLint']], defaultEncoding: '', excludePattern: '', failedTotalAll: '0', healthy: '', includePattern: '', messagesPattern: '', unHealthy: ''])
-
+        sh 'PATH=$PATH:~/.local/bin/; pylint --rcfile=pylintrc $(find . -maxdepth 1 -name "*.py" -print)'
+        postBuild {
+            always {
+               step([$class: 'WarningsPublisher', canComputeNew: false, canResolveRelativePaths: false, canRunOnFailed: true, consoleParsers: [[parserName: 'PyLint']], defaultEncoding: '', excludePattern: '', failedTotalAll: '0', healthy: '', includePattern: '', messagesPattern: '', unHealthy: ''])
+            }
+        }
     }
 }

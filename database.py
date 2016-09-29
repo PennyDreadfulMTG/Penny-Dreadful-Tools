@@ -1,7 +1,7 @@
-import codecs, pkg_resources, re, sqlite3
+import pkg_resources, sqlite3
 import config
 
-class Database():
+class Database:
     # Bump this if you modify the schema.
     schema_version = 1
 
@@ -33,12 +33,14 @@ class Database():
         return self.value("SELECT version FROM db_version", [], "0")
 
 
-    def execute(self, sql, args = []):
+    def execute(self, sql, args = None):
+        if args is None:
+            args = []
         r = self.database.execute(sql, args).fetchall()
         self.database.commit()
         return r
 
-    def value(self, sql, args = [], default = None):
+    def value(self, sql, args = None, default = None):
         rs = self.database.execute(sql, args).fetchone()
         if rs is None:
             return default

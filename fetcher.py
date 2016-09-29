@@ -2,7 +2,7 @@ import json, os, shutil, urllib.request, zipfile
 
 from pkg_resources import parse_version
 
-class Fetcher():
+class Fetcher:
     def legal_cards(self):
         return [s.lower() for s in self.open('http://pdmtgo.com/legal_cards.txt', 'latin-1').split('\n')]
 

@@ -1,4 +1,3 @@
-import discord
 import database
 import re
 

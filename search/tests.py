@@ -32,10 +32,10 @@ def tests():
     do_test('c:u OR (c:g AND NOT tou>3)', "(id IN (SELECT card_id FROM card_color WHERE color_id = 2)) OR ((id IN (SELECT card_id FROM card_color WHERE color_id = 5)) AND NOT (toughness IS NOT NULL AND toughness <> '' AND CAST(toughness AS REAL) > 3))")
     print()
 
-def do_test(input, expected):
-    where_clause = search.Search(input).where_clause()
+def do_test(query, expected):
+    where_clause = search.Search(query).where_clause()
     if (where_clause != expected):
-        print("\nInput: {input}\nExpected: {expected}\nActual: {actual}".format(input=input, expected=expected, actual=where_clause))
+        print("\nQuery: {query}\nExpected: {expected}\n  Actual: {actual}".format(query=query, expected=expected, actual=where_clause))
     else:
         print('.', end="")
 

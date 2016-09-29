@@ -8,4 +8,5 @@
 - Copy config.json.example to config.json and alter the value for "token"
 - Optionally alter the value for "image_dir" and "database" if you want downloaded images/sqlite database stored somewhere else.
 - Optionally install pytest - python3 -m pip install -U pytest to run the unit tests.
+- If you want to do development install pylint - python3 -m pip install -U pylint
 

@@ -1,4 +1,3 @@
 import bot
 
 bot.init()
-

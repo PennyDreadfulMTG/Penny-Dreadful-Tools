@@ -150,6 +150,8 @@ class Search:
       return self.subtable_where('supertype', term.value())
     elif key.value() == 'subtype' or key.value() == 'sub':
       return self.subtable_where('subtype', term.value())
+    elif key.value() == 'format' or key.value() == 'f':
+      return self.format_where(term.value())
 
   def where(self, keys, term, exact_match = False):
     q = term if exact_match else '%' + term + '%'
@@ -182,6 +184,12 @@ class Search:
       return 'FALSE'
     return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=database.Database.escape(term))
 
+  def format_where(self, term):
+    if term in ['pennydreadful', 'pd']:
+      return "(pd_legal = 1)"
+    else:
+      raise InvalidValueException('{term} is not supported in format queries', term=term)
+
   def value_lookup(self, table, value):
     colors = {
       'w': 1,
@@ -211,8 +219,14 @@ class Search:
       return replacements[table][value.lower()]
     return value
 
-class InvalidTokenException(Exception):
+class InvalidSearchException(Exception):
   pass
 
-class InvalidModeException(Exception):
+class InvalidTokenException(InvalidSearchException):
+  pass
+
+class InvalidModeException(InvalidSearchException):
+  pass
+
+class InvalidValueException(InvalidSearchException):
   pass

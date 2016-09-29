@@ -47,4 +47,3 @@ def store(url, path):
 
 class FetchException(Exception):
     pass
-

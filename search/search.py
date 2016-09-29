@@ -129,8 +129,6 @@ class Search:
             return self.subtable_where('color', term.value())
         elif key.value() == 'coloridentity' or key.value() == 'identity' or key.value() == 'ci':
             return self.subtable_where('color_identity', term.value())
-        elif key.value() == 'rarity' or key.value() == 'r':
-            return self.where(['rarity'], self.rarity_replace(term.value()), True)
         elif key.value() == 'text' or key.value() == 'o':
             return self.where(['text'], term.value())
         elif key.value() == 'type' or key.value() == 't':
@@ -204,15 +202,7 @@ class Search:
         }
         replacements = {
             'color': colors,
-            'color_identity': colors,
-            'rarity': {
-                'common': 'C',
-                'uncommon': 'U',
-                'rare': 'R',
-                'mythic': 'M',
-                'mythicrare': 'M',
-                'mythic rare': 'M'
-            }
+            'color_identity': colors
         }
         if table in replacements and value.lower() in replacements[table]:
             return replacements[table][value.lower()]

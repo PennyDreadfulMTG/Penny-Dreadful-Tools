@@ -1,5 +1,6 @@
-import pkg_resources
 import sqlite3
+
+import pkg_resources
 
 import config
 

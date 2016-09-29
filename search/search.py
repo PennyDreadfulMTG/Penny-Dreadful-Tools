@@ -27,7 +27,7 @@ class Search:
         return self.parse(self.tokenize(self.query))
 
     def tokenize(self, s):
-        tokens = { 0: [] }
+        tokens = {0: []}
         chars = list(s)
         chars.append(' ')
         depth = 0

@@ -10,7 +10,10 @@ class Fetcher():
         return parse_version(json.loads(self.open('https://mtgjson.com/json/version.json')))
 
     def mtgo_status(self):
-        return json.loads(self.open('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php'))['status']
+        try:
+            return json.loads(self.open('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php'))['status']
+        except (FetchException, json.decoder.JSONDecodeError):
+            return 'UNKNOWN'
 
     def all_cards(self):
         if os.path.isdir('./ziptemp'):
@@ -27,7 +30,10 @@ class Fetcher():
 
     def open(self, url, character_encoding = 'utf-8'):
         print("Fetching {0}".format(url))
-        return urllib.request.urlopen(url).read().decode(character_encoding)
+        try:
+            return urllib.request.urlopen(url).read().decode(character_encoding)
+        except urllib.error.HTTPError as e:
+            return FetchException(e)
 
     def store(self, url, path):
         try:

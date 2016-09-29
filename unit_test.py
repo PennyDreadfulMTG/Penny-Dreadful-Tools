@@ -1,5 +1,8 @@
 import os
-import bot, config, oracle
+
+import bot
+import config
+import oracle
 
 # Check that we can fetch card images.
 def test_imagedownload():
@@ -7,7 +10,7 @@ def test_imagedownload():
     if bot.acceptable_file(filepath):
         os.remove(filepath)
     card = oracle.Card({'name': 'Island'})
-    assert bot.download_image([card]) != None
+    assert bot.download_image([card]) is not None
 
 # Check that we can fall back to the Gatherer images if all else fails.
 def test_fallbackimagedownload():
@@ -15,12 +18,12 @@ def test_fallbackimagedownload():
     if bot.acceptable_file(filepath):
         os.remove(filepath)
     card = oracle.Card({'name': 'Avon Island', 'multiverse_id': 26301})
-    assert bot.download_image([card]) != None
+    assert bot.download_image([card]) is not None
 
 # Check that we can succesfully fail at getting an image
 def test_noimageavailable():
     card = oracle.Card({'name': "Barry's Land", 'multiverse_id': 0})
-    assert bot.download_image([card]) == None
+    assert bot.download_image([card]) is None
 
 # Search for a single card via full name
 def test_solo_query():

@@ -1,13 +1,17 @@
-import json, os, shutil, urllib.request, zipfile
+import json
+import os
+import shutil
+import urllib.request
+import zipfile
 
-from pkg_resources import parse_version
+import pkg_resources
 
 class Fetcher:
     def legal_cards(self):
         return [s.lower() for s in self.open('http://pdmtgo.com/legal_cards.txt', 'latin-1').split('\n')]
 
     def version(self):
-        return parse_version(json.loads(self.open('https://mtgjson.com/json/version.json')))
+        return pkg_resources.parse_version(json.loads(self.open('https://mtgjson.com/json/version.json')))
 
     def mtgo_status(self):
         try:
@@ -28,12 +32,12 @@ class Fetcher:
         shutil.rmtree('./ziptemp')
         return allcards_json
 
-    def open(self, url, character_encoding = 'utf-8'):
+    def open(self, url, character_encoding='utf-8'):
         print("Fetching {0}".format(url))
         try:
             return urllib.request.urlopen(url).read().decode(character_encoding)
         except urllib.error.HTTPError as e:
-            return FetchException(e)
+            raise FetchException(e)
 
     def store(self, url, path):
         try:

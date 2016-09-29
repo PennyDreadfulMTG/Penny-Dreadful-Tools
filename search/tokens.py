@@ -1,4 +1,6 @@
 class Token:
+    values = []
+
     @classmethod
     def match(cls, chars):
         return cls.find(chars) != ''
@@ -16,10 +18,10 @@ class Token:
         return ''
 
     def __init__(self, chars):
-        self.v = self.find(chars)
+        self.val = self.find(chars)
 
     def value(self):
-        return self.v
+        return self.val
 
     def __str__(self):
         return self.value()
@@ -33,9 +35,9 @@ class BooleanOperator(Token):
     values = ['AND', 'OR', 'NOT', '-']
 
     def value(self):
-        if self.v == '-':
+        if self.val == '-':
             return 'NOT'
-        return self.v
+        return self.val
 
 
 class Criterion(Token):
@@ -63,5 +65,5 @@ class Operator(Token):
 
 class String(Token):
     @classmethod
-    def find(self, chars):
+    def find(cls, chars):
         return chars

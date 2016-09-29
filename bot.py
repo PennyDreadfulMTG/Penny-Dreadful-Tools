@@ -1,6 +1,19 @@
-import collections, hashlib, os, re, random, sys, unicodedata, urllib.parse
+import collections
+import hashlib
+import os
+import re
+import random
+import sys
+import unicodedata
+import urllib.parse
+
 import discord
-import config, fetcher, oracle, search, emoji
+
+import config
+import fetcher
+import oracle
+import search
+import emoji
 
 # Globals
 legal_cards = []
@@ -98,7 +111,7 @@ def cards_from_query(query):
         if card.name.lower() == query:
             return [card]
     # If not found, use cards that start with the query and a punctuation char.
-    results = [card for card in cards if card.name.lower().startswith(query + " ") or card.name.lower().startswith(query + ",") ]
+    results = [card for card in cards if card.name.lower().startswith(query + " ") or card.name.lower().startswith(query + ",")]
     if len(results) > 0:
         return uniqify_cards(results)
     # If not found, use cards that start with the query.
@@ -108,7 +121,7 @@ def cards_from_query(query):
     # If we didn't find any of those then use all search results.
     return uniqify_cards(cards)
 
-def legal_emoji(card, verbose = False):
+def legal_emoji(card, verbose=False):
     if card.name.lower().strip() in legal_cards:
         return ':white_check_mark:'
     s = ':no_entry_sign:'
@@ -130,7 +143,7 @@ async def post_cards(cards, channel):
         cards = cards[:4]
     if len(cards) == 1:
         card = cards[0]
-        mana = emoji.ReplaceEmoji(card.mana_cost, channel) or ''
+        mana = emoji.replace_emoji(card.mana_cost, channel) or ''
         legal = legal_emoji(card, True)
         text = "{name} {mana_cost} — {type} — {legal}".format(name=card.name, mana_cost=mana, type=card.type, legal=legal)
     else:
@@ -140,7 +153,7 @@ async def post_cards(cards, channel):
     await client.send_message(channel, text)
     if image_file is None:
         if len(cards) == 1:
-            await client.send_message(channel, emoji.ReplaceEmoji(cards[0].text))
+            await client.send_message(channel, emoji.replace_emoji(cards[0].text))
         else:
             await client.send_message(channel, 'No image available.')
     else:
@@ -182,7 +195,7 @@ async def respond_to_command(message):
         await client.send_message(message.channel, 'MTGO is {status}'.format(status=status))
     elif message.content.startswith('!echo'):
         s = message.content[len('!echo '):]
-        s = emoji.ReplaceEmoji(s, message.channel)
+        s = emoji.replace_emoji(s, message.channel)
         print("Echoing {0}".format(s))
         await client.send_message(message.channel, s)
     elif message.content.startswith('!help'):

@@ -3,7 +3,7 @@ import re
 
 db = database.Database()
 
-def FindEmoji(emoji, channel):
+def find_emoji(emoji, channel):
     if channel.is_private:
         return None
     try:
@@ -12,10 +12,9 @@ def FindEmoji(emoji, channel):
     except AttributeError:
         return None
 
-def ReplaceEmoji(text, channel):
+def replace_emoji(text, channel):
     if channel.is_private:
         return text
-
     output = text
     symbols = re.findall(r'\{([A-Z0-9/]{1,3})\}', text)
     for symbol in symbols:
@@ -26,7 +25,7 @@ def ReplaceEmoji(text, channel):
                 name = "0" + name
             else:
                 name = name + name
-        emoji = FindEmoji(name, channel)
+        emoji = find_emoji(name, channel)
         if emoji != None:
             output = output.replace("{" + symbol + "}", str(emoji))
     return output

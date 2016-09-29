@@ -57,10 +57,10 @@ def test_partial_query():
 # Check that the list of legal cards is being fetched correctly.
 def test_legality_list():
     bot.update_legality()
-    assert len(bot.LEGAL_CARDS) > 0
+    assert len(bot.STATE.legal_cards) > 0
 
 def test_legality_emoji():
-    legal_card = bot.cards_from_query(bot.LEGAL_CARDS[0])[0]
+    legal_card = bot.cards_from_query(bot.STATE.legal_cards[0])[0]
     assert bot.legal_emoji(legal_card) == ':white_check_mark:'
     illegal_card = bot.cards_from_query("black lotus")[0]
     assert bot.legal_emoji(illegal_card) == ':no_entry_sign:'

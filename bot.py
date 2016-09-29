@@ -1,4 +1,4 @@
-import ast, collections, hashlib, json, os, re, random, string, sys, unicodedata, urllib.parse
+import collections, hashlib, os, re, random, sys, unicodedata, urllib.parse
 import discord
 import config, fetcher, oracle, search, emoji
 
@@ -13,7 +13,7 @@ def init():
     client.run(config.get("token"))
 
 def update_legality():
-    global legal_cards, oracle
+    global legal_cards
     legal_cards = fetcher.Fetcher().legal_cards()
     print("Legal cards: {0}".format(str(len(legal_cards))))
     oracle.update_legality(legal_cards)
@@ -49,7 +49,6 @@ def unaccent(s):
     return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
 
 def download_image(cards):
-    image_dir = config.get("image_dir")
     imagename = basename(cards)
     # Hash the filename if it's otherwise going to be too large to use.
     if len(imagename) > 240:
@@ -77,7 +76,7 @@ def download_image(cards):
     return None
 
 def parse_queries(content):
-    queries = re.findall('\[([^\]]*)\]', content)
+    queries = re.findall(r'\[([^\]]*)\]', content)
     return [query.lower() for query in queries]
 
 def cards_from_queries(queries):
@@ -91,7 +90,7 @@ def cards_from_queries(queries):
 def cards_from_query(query):
     # Skip searching if the request is too short.
     if len(query) <= 2:
-            return []
+        return []
     cards = oracle.search(query)
     cards = [card for card in cards if card.type != "Vanguard" and card.layout != 'token']
     # First look for an exact match.
@@ -133,10 +132,9 @@ async def post_cards(cards, channel):
         card = cards[0]
         mana = emoji.ReplaceEmoji(card.mana_cost, channel) or ''
         legal = legal_emoji(card, True)
-        pt = str(card.power) + '/' + str(card.toughness) if 'Creature' in card.type else ''
-        text = "{name} {mana_cost} — {type} — {legal}".format(name=card.name, mana_cost=mana, type=card.type, text=card.text, legal=legal, pt=pt)
+        text = "{name} {mana_cost} — {type} — {legal}".format(name=card.name, mana_cost=mana, type=card.type, legal=legal)
     else:
-        text = ', '.join("{name} {legal}".format(name = card.name, legal = legal_emoji(card)) for card in cards)
+        text = ', '.join("{name} {legal}".format(name=card.name, legal=legal_emoji(card)) for card in cards)
         text += more_text
     image_file = download_image(cards)
     await client.send_message(channel, text)
@@ -166,8 +164,7 @@ async def respond_to_command(message):
                 number = int(message.content[7:].strip())
             except ValueError:
                 pass
-        cards = []
-        [cards.extend(cards_from_query(random.choice(legal_cards))) for n in range(0, number)]
+        cards = [oracle.search(random.choice(legal_cards))[0] for n in range(0, number)]
         await post_cards(cards, message.channel)
     elif message.content.startswith('!reload'):
         update_legality()
@@ -181,10 +178,7 @@ async def respond_to_command(message):
         if (len(cards) > 10):
             await client.send_message(message.channel, 'http://magidex.com/search/?q=' + escape(q))
     elif message.content.startswith('!status'):
-        try:
-            status = fetcher.Fetcher().mtgo_status()
-        except:
-            status = 'UNKNOWN'
+        status = fetcher.Fetcher().mtgo_status()
         await client.send_message(message.channel, 'MTGO is {status}'.format(status=status))
     elif message.content.startswith('!echo'):
         s = message.content[len('!echo '):]

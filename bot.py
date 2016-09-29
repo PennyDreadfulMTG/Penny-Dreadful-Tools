@@ -134,14 +134,17 @@ def complex_search(query):
     print("Searching for {0}".format(query))
     return search.search(query)
 
-async def post_cards(cards, channel):
+async def post_cards(cards, channel, multirow = False):
     if len(cards) == 0:
         await STATE.client.send_message(channel, 'No matches.')
         return
     more_text = ''
-    if len(cards) > 10:
+    if len(cards) > 10 and not multirow:
         more_text = ' and ' + str(len(cards) - 4) + ' more.'
         cards = cards[:4]
+    elif multirow and len(cards) > 15:
+        more_text = ' and ' + str(len(cards) - 15) + ' more.'
+        cards = cards[:15]
     if len(cards) == 1:
         card = cards[0]
         mana = emoji.replace_emoji(card.mana_cost, channel) or ''
@@ -150,15 +153,23 @@ async def post_cards(cards, channel):
     else:
         text = ', '.join("{name} {legal}".format(name=card.name, legal=legal_emoji(card)) for card in cards)
         text += more_text
-    image_file = download_image(cards)
-    await STATE.client.send_message(channel, text)
-    if image_file is None:
-        if len(cards) == 1:
-            await STATE.client.send_message(channel, emoji.replace_emoji(cards[0].text, channel))
-        else:
-            await STATE.client.send_message(channel, 'No image available.')
+    
+    images = []
+    if (multirow):
+        images.append(download_image(cards[:5]))
+        images.append(download_image(cards[5:10]))
+        images.append(download_image(cards[10:15]))
     else:
-        await STATE.client.send_file(channel, image_file)
+        images.append(download_image(cards))
+    await STATE.client.send_message(channel, text)
+    for image_file in images:
+        if image_file is None:
+            if len(cards) == 1:
+                await STATE.client.send_message(channel, emoji.replace_emoji(cards[0].text, channel))
+            else:
+                await STATE.client.send_message(channel, 'No image available.')
+        else:
+            await STATE.client.send_file(channel, image_file)
 
 async def respond_to_card_names(message):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -212,6 +223,11 @@ Addiional Commands:
 Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues
 Want to contribute? Send a Pull Request."""
         await STATE.client.send_message(message.channel, msg)
+    elif message.content.startswith('!p1p1'):
+        await STATE.client.send_message(message.channel, "Generating a 15 card booster")
+        cards = [STATE.oracle.search(random.choice(STATE.legal_cards))[0] for n in range(0, 15)]
+        await post_cards(cards, message.channel, True)
+        
     elif message.content.startswith('!'):
         cmd = message.content.split(' ')[0]
         await STATE.client.send_message(message.channel, 'Unknown command `{cmd}`. Try `!help`?'.format(cmd=cmd))

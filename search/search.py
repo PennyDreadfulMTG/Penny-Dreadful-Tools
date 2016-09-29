@@ -1,5 +1,4 @@
-import re, sys
-
+import re
 import oracle, database, search
 
 EXPECT_EXPRESSION = 'expect_expression'

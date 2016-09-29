@@ -74,7 +74,7 @@ class Search:
                 else:
                     string = [c]
                     mode = UNQUOTED_STRING
-            elif (mode == QUOTED_STRING):
+            elif mode == QUOTED_STRING:
                 if c == '"':
                     tokens[depth].append(search.String(''.join(string)))
                     mode = EXPECT_EXPRESSION

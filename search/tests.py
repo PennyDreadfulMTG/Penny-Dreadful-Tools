@@ -3,13 +3,13 @@ import search
 # Run these tests from the project root with python3 -m "search.tests" search/tests.py
 
 def tests():
-    assert(search.Key.match(['c']))
-    assert(search.Key.match(['mana']))
-    assert(not search.Key.match(['z']))
-    assert(not search.Key.match(['magic']))
-    assert(not search.Key.match(['']))
-    assert(not search.Key.match([' ']))
-    assert(search.Criterion.match(['t', 'o', 'u', '>', '2']))
+    assert search.Key.match(['c'])
+    assert search.Key.match(['mana'])
+    assert not search.Key.match(['z'])
+    assert not search.Key.match(['magic'])
+    assert not search.Key.match([''])
+    assert not search.Key.match([' '])
+    assert search.Criterion.match(['t', 'o', 'u', '>', '2'])
 
     do_test('subtype:warrior', "(id IN (SELECT card_id FROM card_subtype WHERE subtype LIKE '%warrior%'))")
     do_test('t:creature -t:artifact t:legendary', "(type LIKE '%creature%') AND NOT (type LIKE '%artifact%') AND (type LIKE '%legendary%')")
@@ -34,7 +34,7 @@ def tests():
 
 def do_test(query, expected):
     where_clause = search.Search(query).where_clause()
-    if (where_clause != expected):
+    if where_clause != expected:
         print("\nQuery: {query}\nExpected: {expected}\n  Actual: {actual}".format(query=query, expected=expected, actual=where_clause))
     else:
         print('.', end="")

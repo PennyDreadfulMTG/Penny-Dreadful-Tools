@@ -20,7 +20,7 @@ class Database:
         self.database.row_factory = sqlite3.Row
         try:
             self.version()
-            if (self.db_version() < self.schema_version):
+            if self.db_version() < self.schema_version:
                 self.droptables()
                 self.setup()
         except sqlite3.OperationalError:

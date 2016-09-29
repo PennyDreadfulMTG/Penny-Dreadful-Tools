@@ -175,7 +175,7 @@ async def respond_to_command(message):
         q = message.content[len('!search '):]
         cards = complex_search(q)
         await post_cards(cards, message.channel)
-        if (len(cards) > 10):
+        if len(cards) > 10:
             await client.send_message(message.channel, 'http://magidex.com/search/?q=' + escape(q))
     elif message.content.startswith('!status'):
         status = fetcher.Fetcher().mtgo_status()

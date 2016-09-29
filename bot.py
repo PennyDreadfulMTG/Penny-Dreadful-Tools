@@ -9,7 +9,7 @@ import urllib.parse
 
 import discord
 
-import config
+import configuration
 import fetcher
 import oracle
 import emoji
@@ -23,7 +23,7 @@ oracle = oracle.Oracle()
 
 def init():
     update_legality()
-    client.run(config.get("token"))
+    client.run(configuration.get("token"))
 
 def update_legality():
     global legal_cards
@@ -67,7 +67,7 @@ def download_image(cards):
     if len(imagename) > 240:
         imagename = hashlib.md5(imagename.encode('utf-8')).hexdigest()
     filename = imagename + '.jpg'
-    filepath = config.get("image_dir") + "/" + filename
+    filepath = configuration.get("image_dir") + "/" + filename
     if acceptable_file(filepath):
         return filepath
     print("Trying to get first choice image for " + ', '.join(card.name for card in cards))

@@ -2,7 +2,7 @@ import sqlite3
 
 import pkg_resources
 
-import config
+import configuration
 
 class Database:
     # Bump this if you modify the schema.
@@ -18,7 +18,7 @@ class Database:
         return "'" + encodable.replace("'", "''") + "'"
 
     def __init__(self):
-        db = config.get('database')
+        db = configuration.get('database')
         self.database = sqlite3.connect(db)
         self.database.row_factory = sqlite3.Row
         try:

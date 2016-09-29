@@ -1,12 +1,12 @@
 import os
 
 import bot
-import config
+import configuration
 import oracle
 
 # Check that we can fetch card images.
 def test_imagedownload():
-    filepath = config.get("image_dir") + "/" + "island.jpg"
+    filepath = configuration.get("image_dir") + "/" + "island.jpg"
     if bot.acceptable_file(filepath):
         os.remove(filepath)
     card = oracle.Card({'name': 'Island'})
@@ -14,7 +14,7 @@ def test_imagedownload():
 
 # Check that we can fall back to the Gatherer images if all else fails.
 def test_fallbackimagedownload():
-    filepath = config.get("image_dir") + "/" + "avon_island.jpg"
+    filepath = configuration.get("image_dir") + "/" + "avon_island.jpg"
     if bot.acceptable_file(filepath):
         os.remove(filepath)
     card = oracle.Card({'name': 'Avon Island', 'multiverse_id': 26301})

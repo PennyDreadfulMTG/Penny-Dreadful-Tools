@@ -1,4 +1,3 @@
-import database
 import re
 
 def find_emoji(emoji, channel):

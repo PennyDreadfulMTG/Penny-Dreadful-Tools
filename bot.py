@@ -216,7 +216,9 @@ Addiional Commands:
 Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues
 Want to contribute? Send a Pull Request."""
     await client.send_message(message.channel, msg)
-
+  elif message.content.startswith('!'):
+    cmd = message.content.split(' ')[0]
+    await client.send_message(message.channel, 'Unknown command `{cmd}`. Try `!help`?'.format(cmd=cmd))
 
 @client.event
 async def on_message(message):

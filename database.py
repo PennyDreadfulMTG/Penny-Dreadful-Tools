@@ -17,11 +17,17 @@ class Database():
     self.database.row_factory = sqlite3.Row
     try:
       self.version()
+      if (self.db_version() < 1):
+        self.upgradedb()
     except sqlite3.OperationalError:
       self.setup()
 
   def version(self):
     return pkg_resources.parse_version(self.value("SELECT version FROM version", [], "0"))
+
+  def db_version(self):
+    return self.value("SELECT version FROM db_version", [], "0")
+
 
   def execute(self, sql, args = []):
     r = self.database.execute(sql, args).fetchall()
@@ -38,6 +44,8 @@ class Database():
       return rs[0]
 
   def setup(self):
+    self.execute("CREATE TABLE db_version (version INTEGER)")
+    self.execute("INSERT INTO db_version (version) VALUES (1)")
     self.execute("CREATE TABLE version (version TEXT)")
     sql = 'CREATE TABLE card (id INTEGER PRIMARY KEY, pd_legal INTEGER, '
     sql += ', '.join(name + ' ' + type for name, type in oracle.Oracle.properties().items())
@@ -101,5 +109,13 @@ class Database():
       ('Special')
     """)
 
-# Import last to work around circular dependency — http://effbot.org/zone/import-confusion.htm
+  # This method should allow us to upgrade the database in place in the future.
+  def upgradedb(self):
+    version = self.db_version()
+    if version < 1:
+      pass
+    self.execute("DELETE FROM db_version")
+    self.execute("INSERT INTO db_version (version) VALUES (1)")
+
+# Import last to work around circular dependency ï¿½ http://effbot.org/zone/import-confusion.htm
 import oracle

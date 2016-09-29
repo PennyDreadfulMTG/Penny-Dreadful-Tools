@@ -15,7 +15,7 @@ node{
     }
 
     stage('Pylint') {
-    sh 'PATH=$PATH:~/.local/bin/; pylint'
+    sh 'PATH=$PATH:~/.local/bin/; pylint $(find . -maxdepth 1 -name "*.py" -print) || exit 0'
     step([$class: 'WarningsPublisher', canResolveRelativePaths: false, consoleParsers: [[parserName: 'PyLint']], defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', messagesPattern: '', unHealthy: '', useStableBuildAsReference: true])
     }
 }

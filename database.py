@@ -2,6 +2,9 @@ import codecs, pkg_resources, re, sqlite3
 import config
 
 class Database():
+  # Bump this if you modify the schema.
+  schema_version = 1
+  
   @staticmethod
   def escape(s):
     if s.isdecimal():
@@ -17,8 +20,9 @@ class Database():
     self.database.row_factory = sqlite3.Row
     try:
       self.version()
-      if (self.db_version() < 1):
-        self.upgradedb()
+      if (self.db_version() < self.schema_version):
+        self.droptables()
+        self.setup()
     except sqlite3.OperationalError:
       self.setup()
 
@@ -44,56 +48,57 @@ class Database():
       return rs[0]
 
   def setup(self):
-    self.execute("CREATE TABLE db_version (version INTEGER)")
-    self.execute("INSERT INTO db_version (version) VALUES (1)")
-    self.execute("CREATE TABLE version (version TEXT)")
+    self.execute("CREATE TABLE IF NOT EXISTS db_version (version INTEGER)")
+    self.execute("INSERT INTO db_version (version) VALUES ({0})".format(self.schema_version))
+    self.execute("CREATE TABLE IF NOT EXISTS version (version TEXT)")
     sql = 'CREATE TABLE card (id INTEGER PRIMARY KEY, pd_legal INTEGER, '
     sql += ', '.join(name + ' ' + type for name, type in oracle.Oracle.properties().items())
     sql += ')'
     self.execute(sql)
-    self.execute("""CREATE TABLE card_name (
+    self.execute("""CREATE TABLE IF NOT EXISTS card_name (
       id INTEGER PRIMARY KEY,
       card_id INTEGER NOT NULL,
       name TEXT NOT NULL,
       FOREIGN KEY(card_id) REFERENCES card(id)
     )""")
-    self.execute('CREATE TABLE color (id INTEGER PRIMARY KEY, name TEXT, symbol TEXT)')
-    self.execute("""CREATE TABLE card_color (
+    self.execute('CREATE TABLE IF NOT EXISTS color (id INTEGER PRIMARY KEY, name TEXT, symbol TEXT)')
+    self.execute("""CREATE TABLE IF NOT EXISTS card_color (
       id INTEGER PRIMARY KEY,
       card_id INTEGER NOT NULL,
       color_id INTEGER NOT NULL,
       FOREIGN KEY(card_id) REFERENCES card(id)
       FOREIGN KEY(color_id) REFERENCES color(id)
     )""")
-    self.execute("""CREATE TABLE card_color_identity (
+    self.execute("""CREATE TABLE IF NOT EXISTS card_color_identity (
       id INTEGER PRIMARY KEY,
       card_id INTEGER NOT NULL,
       color_id INTEGER NOT NULL,
       FOREIGN KEY(card_id) REFERENCES card(id)
       FOREIGN KEY(color_id) REFERENCES color(id)
     )""")
-    self.execute("""CREATE TABLE card_supertype (
+    self.execute("""CREATE TABLE IF NOT EXISTS card_supertype (
       id INTEGER PRIMARY KEY,
       card_id INTEGER NOT NULL,
       supertype TEXT NOT NULL,
       FOREIGN KEY(card_id) REFERENCES card(id)
     )""")
-    self.execute("""CREATE TABLE card_type (
+    self.execute("""CREATE TABLE IF NOT EXISTS card_type (
       id INTEGER PRIMARY KEY,
       card_id INTEGER NOT NULL,
       type TEXT NOT NULL,
       FOREIGN KEY(card_id) REFERENCES card(id)
     )""")
-    self.execute("""CREATE TABLE card_subtype (
+    self.execute("""CREATE TABLE IF NOT EXISTS card_subtype (
       id INTEGER PRIMARY KEY,
       card_id INTEGER NOT NULL,
       subtype TEXT NOT NULL,
       FOREIGN KEY(card_id) REFERENCES card(id)
     )""")
-    self.execute("""CREATE TABLE rarity (
+    self.execute("""CREATE TABLE IF NOT EXISTS rarity (
       id INTEGER PRIMARY KEY,
       name TEXT NOT NULL
     )""")
+    self.execute("DELETE FROM color")
     self.execute("""INSERT INTO color (name, symbol) VALUES
       ('White', 'W'),
       ('Blue', 'U'),
@@ -101,6 +106,7 @@ class Database():
       ('Red', 'R'),
       ('Green', 'G')
     """)
+    self.execute("DELETE FROM rarity")
     self.execute("""INSERT INTO rarity (name) VALUES
       ('Common'),
       ('Uncommon'),
@@ -108,14 +114,20 @@ class Database():
       ('Mythic Rare'),
       ('Special')
     """)
-
-  # This method should allow us to upgrade the database in place in the future.
-  def upgradedb(self):
-    version = self.db_version()
-    if version < 1:
-      pass
-    self.execute("DELETE FROM db_version")
-    self.execute("INSERT INTO db_version (version) VALUES (1)")
+  
+  # Drop All Tables, so we can reinit
+  def droptables(self):
+    self.execute("DROP TABLE IF EXISTS card")
+    self.execute("DROP TABLE IF EXISTS card_color")
+    self.execute("DROP TABLE IF EXISTS card_color_identity")
+    self.execute("DROP TABLE IF EXISTS card_name")
+    self.execute("DROP TABLE IF EXISTS card_subtype")
+    self.execute("DROP TABLE IF EXISTS card_supertype")
+    self.execute("DROP TABLE IF EXISTS card_type")
+    self.execute("DROP TABLE IF EXISTS color")
+    self.execute("DROP TABLE IF EXISTS rarity")
+    self.execute("DROP TABLE IF EXISTS version")
+    self.execute("DROP TABLE IF EXISTS db_version")
 
 # Import last to work around circular dependency � http://effbot.org/zone/import-confusion.htm
 import oracle

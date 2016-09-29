@@ -35,7 +35,6 @@ class Database:
     def db_version(self):
         return self.value("SELECT version FROM db_version", [], "0")
 
-
     def execute(self, sql, args=None):
         if args is None:
             args = []

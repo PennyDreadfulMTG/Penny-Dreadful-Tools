@@ -1,6 +1,6 @@
-import search
+from find import search
 
-# Run these tests from the project root with python3 -m "search.tests" search/tests.py
+# Run these tests from the project root with python3 -m "find.tests" find/tests.py
 
 def tests():
     assert search.Key.match(['c'])
@@ -33,7 +33,7 @@ def tests():
     print()
 
 def do_test(query, expected):
-    where_clause = search.Search(query).where_clause()
+    where_clause = search.parse(search.tokenize(query))
     if where_clause != expected:
         print("\nQuery: {query}\nExpected: {expected}\n  Actual: {actual}".format(query=query, expected=expected, actual=where_clause))
     else:

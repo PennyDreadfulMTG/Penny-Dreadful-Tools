@@ -41,6 +41,8 @@ class Database:
         return r
 
     def value(self, sql, args = None, default = None):
+        if args is None:
+            args = []
         rs = self.database.execute(sql, args).fetchone()
         if rs is None:
             return default

@@ -27,7 +27,7 @@ def init():
 
 def update_legality():
     global legal_cards
-    legal_cards = fetcher.Fetcher().legal_cards()
+    legal_cards = fetcher.legal_cards()
     print("Legal cards: {0}".format(str(len(legal_cards))))
     oracle.update_legality(legal_cards)
 
@@ -72,7 +72,7 @@ def download_image(cards):
         return filepath
     print("Trying to get first choice image for " + ', '.join(card.name for card in cards))
     try:
-        fetcher.Fetcher().store(better_image(cards), filepath)
+        fetcher.store(better_image(cards), filepath)
     except fetcher.FetchException as e:
         print("Error: {0}".format(e))
     if acceptable_file(filepath):
@@ -81,7 +81,7 @@ def download_image(cards):
     if multiverse_id and multiverse_id > 0:
         print("Trying to get fallback image for " + imagename)
         try:
-            fetcher.Fetcher().store(http_image(multiverse_id), filepath)
+            fetcher.store(http_image(multiverse_id), filepath)
         except fetcher.FetchException as e:
             print("HTTP Error: {0}".format(e))
         if acceptable_file(filepath):
@@ -191,7 +191,7 @@ async def respond_to_command(message):
         if len(cards) > 10:
             await client.send_message(message.channel, 'http://magidex.com/search/?q=' + escape(q))
     elif message.content.startswith('!status'):
-        status = fetcher.Fetcher().mtgo_status()
+        status = fetcher.mtgo_status()
         await client.send_message(message.channel, 'MTGO is {status}'.format(status=status))
     elif message.content.startswith('!echo'):
         s = message.content[len('!echo '):]

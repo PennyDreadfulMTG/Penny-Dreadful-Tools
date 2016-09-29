@@ -83,7 +83,7 @@ def download_image(cards):
         try:
             fetcher.Fetcher().store(http_image(multiverse_id), filepath)
         except fetcher.FetchException as e:
-            print("HTTP Error: {0}".format(error))
+            print("HTTP Error: {0}".format(e))
         if acceptable_file(filepath):
             return filepath
     return None

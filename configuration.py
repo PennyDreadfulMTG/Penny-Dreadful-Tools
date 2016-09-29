@@ -1,6 +1,6 @@
 import json
 
-defaults = {
+DEFAULTS = {
     "database": "./db",
     "image_dir": "."
 }
@@ -12,4 +12,4 @@ def get(key):
         cfg = {}
     if key in cfg:
         return cfg[key]
-    return defaults[key]
+    return DEFAULTS[key]

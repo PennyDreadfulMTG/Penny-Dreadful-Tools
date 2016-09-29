@@ -17,19 +17,19 @@ import emoji
 from find import search
 
 # Globals
-legal_cards = []
-client = discord.Client()
-oracle = oracle.Oracle()
+LEGAL_CARDS = []
+CLIENT = discord.Client()
+ORACLE = oracle.Oracle()
 
 def init():
     update_legality()
-    client.run(configuration.get("token"))
+    CLIENT.run(configuration.get("token"))
 
 def update_legality():
-    global legal_cards
-    legal_cards = fetcher.legal_cards()
-    print("Legal cards: {0}".format(str(len(legal_cards))))
-    oracle.update_legality(legal_cards)
+    global LEGAL_CARDS
+    LEGAL_CARDS = fetcher.legal_cards()
+    print("Legal cards: {0}".format(str(len(LEGAL_CARDS))))
+    ORACLE.update_legality(LEGAL_CARDS)
 
 def escape(str_input):
     # Expand 'AE' into two characters. This matches the legal list and
@@ -104,7 +104,7 @@ def cards_from_query(query):
     # Skip searching if the request is too short.
     if len(query) <= 2:
         return []
-    cards = oracle.search(query)
+    cards = ORACLE.search(query)
     cards = [card for card in cards if card.type != "Vanguard" and card.layout != 'token']
     # First look for an exact match.
     for card in cards:
@@ -122,7 +122,7 @@ def cards_from_query(query):
     return uniqify_cards(cards)
 
 def legal_emoji(card, verbose=False):
-    if card.name.lower().strip() in legal_cards:
+    if card.name.lower().strip() in LEGAL_CARDS:
         return ':white_check_mark:'
     s = ':no_entry_sign:'
     if verbose:
@@ -135,7 +135,7 @@ def complex_search(query):
 
 async def post_cards(cards, channel):
     if len(cards) == 0:
-        await client.send_message(channel, 'No matches.')
+        await CLIENT.send_message(channel, 'No matches.')
         return
     more_text = ''
     if len(cards) > 10:
@@ -150,14 +150,14 @@ async def post_cards(cards, channel):
         text = ', '.join("{name} {legal}".format(name=card.name, legal=legal_emoji(card)) for card in cards)
         text += more_text
     image_file = download_image(cards)
-    await client.send_message(channel, text)
+    await CLIENT.send_message(channel, text)
     if image_file is None:
         if len(cards) == 1:
-            await client.send_message(channel, emoji.replace_emoji(cards[0].text))
+            await CLIENT.send_message(channel, emoji.replace_emoji(cards[0].text))
         else:
-            await client.send_message(channel, 'No image available.')
+            await CLIENT.send_message(channel, 'No image available.')
     else:
-        await client.send_file(channel, image_file)
+        await CLIENT.send_file(channel, image_file)
 
 async def respond_to_card_names(message):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -177,11 +177,11 @@ async def respond_to_command(message):
                 number = int(message.content[7:].strip())
             except ValueError:
                 pass
-        cards = [oracle.search(random.choice(legal_cards))[0] for n in range(0, number)]
+        cards = [ORACLE.search(random.choice(LEGAL_CARDS))[0] for n in range(0, number)]
         await post_cards(cards, message.channel)
     elif message.content.startswith('!reload'):
         update_legality()
-        await client.send_message(message.channel, 'Reloaded list of legal cards.')
+        await CLIENT.send_message(message.channel, 'Reloaded list of legal cards.')
     elif message.content.startswith('!restartbot'):
         sys.exit()
     elif message.content.startswith('!search '):
@@ -189,15 +189,15 @@ async def respond_to_command(message):
         cards = complex_search(q)
         await post_cards(cards, message.channel)
         if len(cards) > 10:
-            await client.send_message(message.channel, 'http://magidex.com/search/?q=' + escape(q))
+            await CLIENT.send_message(message.channel, 'http://magidex.com/search/?q=' + escape(q))
     elif message.content.startswith('!status'):
         status = fetcher.mtgo_status()
-        await client.send_message(message.channel, 'MTGO is {status}'.format(status=status))
+        await CLIENT.send_message(message.channel, 'MTGO is {status}'.format(status=status))
     elif message.content.startswith('!echo'):
         s = message.content[len('!echo '):]
         s = emoji.replace_emoji(s, message.channel)
         print("Echoing {0}".format(s))
-        await client.send_message(message.channel, s)
+        await CLIENT.send_message(message.channel, s)
     elif message.content.startswith('!help'):
         msg = """Basic bot usage: Include [cardname] in your regular messages.
 The bot will search for any quoted cards, and respond with the card details.
@@ -210,24 +210,24 @@ Addiional Commands:
 
 Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues
 Want to contribute? Send a Pull Request."""
-        await client.send_message(message.channel, msg)
+        await CLIENT.send_message(message.channel, msg)
     elif message.content.startswith('!'):
         cmd = message.content.split(' ')[0]
-        await client.send_message(message.channel, 'Unknown command `{cmd}`. Try `!help`?'.format(cmd=cmd))
+        await CLIENT.send_message(message.channel, 'Unknown command `{cmd}`. Try `!help`?'.format(cmd=cmd))
 
-@client.event
+@CLIENT.event
 async def on_message(message):
     # We do not want the bot to reply to itself.
-    if message.author == client.user:
+    if message.author == CLIENT.user:
         return
     if message.content.startswith("!"):
         await respond_to_command(message)
     else:
         await respond_to_card_names(message)
 
-@client.event
+@CLIENT.event
 async def on_ready():
     print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
+    print(CLIENT.user.name)
+    print(CLIENT.user.id)
     print('------')

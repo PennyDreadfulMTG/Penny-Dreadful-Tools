@@ -1,4 +1,6 @@
 class Token:
+    values = []
+
     @classmethod
     def match(cls, chars):
         return cls.find(chars) != ''

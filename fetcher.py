@@ -6,44 +6,43 @@ import zipfile
 
 import pkg_resources
 
-class Fetcher:
-    def legal_cards(self):
-        return [s.lower() for s in self.open('http://pdmtgo.com/legal_cards.txt', 'latin-1').split('\n')]
+def legal_cards():
+    return [s.lower() for s in fetch('http://pdmtgo.com/legal_cards.txt', 'latin-1').split('\n')]
 
-    def version(self):
-        return pkg_resources.parse_version(json.loads(self.open('https://mtgjson.com/json/version.json')))
+def version():
+    return pkg_resources.parse_version(json.loads(fetch('https://mtgjson.com/json/version.json')))
 
-    def mtgo_status(self):
-        try:
-            return json.loads(self.open('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php'))['status']
-        except (FetchException, json.decoder.JSONDecodeError):
-            return 'UNKNOWN'
+def mtgo_status():
+    try:
+        return json.loads(fetch('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php'))['status']
+    except (FetchException, json.decoder.JSONDecodeError):
+        return 'UNKNOWN'
 
-    def all_cards(self):
-        if os.path.isdir('./ziptemp'):
-            shutil.rmtree('./ziptemp')
-
-        os.mkdir('./ziptemp')
-        urllib.request.urlretrieve('https://mtgjson.com/json/AllCards.json.zip', './ziptemp/AllCards.json.zip')
-        allcards_zip = zipfile.ZipFile('./ziptemp/AllCards.json.zip', 'r')
-        allcards_zip.extractall('./ziptemp/unzip')
-        allcards_zip.close()
-        allcards_json = json.load(open('./ziptemp/unzip/AllCards.json', encoding='utf-8'))
+def all_cards():
+    if os.path.isdir('./ziptemp'):
         shutil.rmtree('./ziptemp')
-        return allcards_json
+    os.mkdir('./ziptemp')
+    store('https://mtgjson.com/json/AllCards.json.zip', './ziptemp/AllCards.json.zip')
+    allcards_zip = zipfile.ZipFile('./ziptemp/AllCards.json.zip', 'r')
+    allcards_zip.extractall('./ziptemp/unzip')
+    allcards_zip.close()
+    allcards_json = json.load(open('./ziptemp/unzip/AllCards.json', encoding='utf-8'))
+    shutil.rmtree('./ziptemp')
+    return allcards_json
 
-    def open(self, url, character_encoding='utf-8'):
-        print("Fetching {0}".format(url))
-        try:
-            return urllib.request.urlopen(url).read().decode(character_encoding)
-        except urllib.error.HTTPError as e:
-            raise FetchException(e)
+def fetch(url, character_encoding='utf-8'):
+    print("Fetching {0}".format(url))
+    try:
+        return urllib.request.urlopen(url).read().decode(character_encoding)
+    except urllib.error.HTTPError as e:
+        raise FetchException(e)
 
-    def store(self, url, path):
-        try:
-            return urllib.request.urlretrieve(url, path)
-        except urllib.error.HTTPError as e:
-            raise FetchException(e)
+def store(url, path):
+    print("Storing {0} in {1}".format(url, path))
+    try:
+        return urllib.request.urlretrieve(url, path)
+    except urllib.error.HTTPError as e:
+        raise FetchException(e)
 
 
 class FetchException(Exception):

@@ -3,8 +3,8 @@ import re
 import oracle
 import database
 
-from . import Expression
-from .tokens import BooleanOperator, Criterion, Key, Operator, String
+from find.expression import Expression
+from find.tokens import BooleanOperator, Criterion, Key, Operator, String
 
 EXPECT_EXPRESSION = 'expect_expression'
 EXPECT_OPERATOR = 'expect_operator'
@@ -12,21 +12,15 @@ EXPECT_TERM = 'expect_term'
 QUOTED_STRING = 'quoted_string'
 UNQUOTED_STRING = 'unquoted_string'
 
-class Search:
-    def __init__(self, query):
-        self.query = query
-
-    def fetchall(self):
-        sql = 'SELECT ' + (', '.join(property for property in oracle.Oracle.properties())) \
-            + ' FROM card ' \
-            + 'WHERE ' + self.where_clause() \
-            + ' ORDER BY pd_legal DESC, name'
-        print(sql)
-        rs = database.Database().execute(sql)
-        return [oracle.Card(r) for r in rs]
-
-    def where_clause(self):
-        return parse(tokenize(self.query))
+def search(query):
+    where_clause = parse(tokenize(query))
+    sql = 'SELECT ' + (', '.join(property for property in oracle.Oracle.properties())) \
+        + ' FROM card ' \
+        + 'WHERE ' + where_clause \
+        + ' ORDER BY pd_legal DESC, name'
+    print(sql)
+    rs = database.Database().execute(sql)
+    return [oracle.Card(r) for r in rs]
 
 def tokenize(s):
     tokens = {0: []}
@@ -121,6 +115,7 @@ def parse(expression):
         next_token = tokens[i + 1] if len(tokens) > (i + 1) else None
         next_cls = next_token.__class__
         if cls == BooleanOperator:
+            s = s.rstrip(' ')
             s += ' {s} '.format(s=token.value())
         elif next_cls != BooleanOperator or next_token.value() == 'NOT':
             s += ' AND '

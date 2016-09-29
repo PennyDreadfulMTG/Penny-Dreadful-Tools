@@ -1,7 +1,8 @@
-import pkg_resources
 import sqlite3
 
-import config
+import pkg_resources
+
+import configuration
 
 class Database:
     # Bump this if you modify the schema.
@@ -17,7 +18,7 @@ class Database:
         return "'" + encodable.replace("'", "''") + "'"
 
     def __init__(self):
-        db = config.Config().get('database')
+        db = configuration.get('database')
         self.database = sqlite3.connect(db)
         self.database.row_factory = sqlite3.Row
         try:
@@ -33,7 +34,6 @@ class Database:
 
     def db_version(self):
         return self.value("SELECT version FROM db_version", [], "0")
-
 
     def execute(self, sql, args=None):
         if args is None:

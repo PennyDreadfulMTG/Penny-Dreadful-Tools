@@ -40,8 +40,7 @@ class Oracle:
 
     def __init__(self):
         self.database = database.Database()
-        self.fetcher = fetcher.Fetcher()
-        current_version = self.fetcher.version()
+        current_version = fetcher.version()
         if current_version > self.database.version():
             print("Database update required")
             self.update_database(str(current_version))
@@ -61,7 +60,7 @@ class Oracle:
     def update_database(self, new_version):
         self.database.execute('DELETE FROM version')
         self.database.execute('DELETE FROM card')
-        cards = self.fetcher.all_cards()
+        cards = fetcher.all_cards()
         for name, card in cards.items():
             self.insert_card(name, card)
 

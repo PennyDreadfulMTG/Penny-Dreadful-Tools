@@ -28,3 +28,13 @@ class Fetcher():
   def open(self, url, character_encoding = 'utf-8'):
     print("Fetching {0}".format(url))
     return urllib.request.urlopen(url).read().decode(character_encoding)
+
+  def store(self, url, path):
+    try:
+      return urllib.request.urlretrieve(url, path)
+    except urllib.error.HTTPError as e:
+      raise FetchException(e)
+
+
+class FetchException(Exception):
+  pass

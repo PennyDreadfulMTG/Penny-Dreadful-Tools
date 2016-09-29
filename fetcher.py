@@ -1,10 +1,10 @@
 import json
 import os
-import pkg_resources
 import shutil
 import urllib.request
 import zipfile
 
+import pkg_resources
 
 class Fetcher:
     def legal_cards(self):

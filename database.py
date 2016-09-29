@@ -16,7 +16,7 @@ class Database:
         encodable = s.encode('utf-8', 'strict').decode('utf-8')
         if encodable.find('\x00') >= 0:
             raise Exception('NUL not allowed in SQL string.')
-        return "'" + encodable.replace("'", "''") + "'"
+        return "'{escaped}'".format(escaped=encodable.replace("'", "''"))
 
     def __init__(self):
         db = configuration.get('database')
@@ -31,10 +31,10 @@ class Database:
             self.setup()
 
     def version(self):
-        return pkg_resources.parse_version(self.value("SELECT version FROM version", [], "0"))
+        return pkg_resources.parse_version(self.value('SELECT version FROM version', [], '0'))
 
     def db_version(self):
-        return self.value("SELECT version FROM db_version", [], "0")
+        return self.value('SELECT version FROM db_version', [], '0')
 
     def execute(self, sql, args=None):
         if args is None:
@@ -55,9 +55,9 @@ class Database:
             return rs[0]
 
     def setup(self):
-        self.execute("CREATE TABLE IF NOT EXISTS db_version (version INTEGER)")
-        self.execute("INSERT INTO db_version (version) VALUES ({0})".format(self.schema_version))
-        self.execute("CREATE TABLE IF NOT EXISTS version (version TEXT)")
+        self.execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER)')
+        self.execute('INSERT INTO db_version (version) VALUES ({0})'.format(self.schema_version))
+        self.execute('CREATE TABLE IF NOT EXISTS version (version TEXT)')
         sql = 'CREATE TABLE card (id INTEGER PRIMARY KEY, pd_legal INTEGER, '
         sql += ', '.join(name + ' ' + type for name, type in card.properties().items())
         sql += ')'
@@ -105,7 +105,7 @@ class Database:
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL
         )""")
-        self.execute("DELETE FROM color")
+        self.execute('DELETE FROM color')
         self.execute("""INSERT INTO color (name, symbol) VALUES
             ('White', 'W'),
             ('Blue', 'U'),
@@ -113,7 +113,7 @@ class Database:
             ('Red', 'R'),
             ('Green', 'G')
         """)
-        self.execute("DELETE FROM rarity")
+        self.execute('DELETE FROM rarity')
         self.execute("""INSERT INTO rarity (name) VALUES
             ('Common'),
             ('Uncommon'),
@@ -124,14 +124,14 @@ class Database:
 
     # Drop All Tables, so we can reinit
     def droptables(self):
-        self.execute("DROP TABLE IF EXISTS card")
-        self.execute("DROP TABLE IF EXISTS card_color")
-        self.execute("DROP TABLE IF EXISTS card_color_identity")
-        self.execute("DROP TABLE IF EXISTS card_name")
-        self.execute("DROP TABLE IF EXISTS card_subtype")
-        self.execute("DROP TABLE IF EXISTS card_supertype")
-        self.execute("DROP TABLE IF EXISTS card_type")
-        self.execute("DROP TABLE IF EXISTS color")
-        self.execute("DROP TABLE IF EXISTS rarity")
-        self.execute("DROP TABLE IF EXISTS version")
-        self.execute("DROP TABLE IF EXISTS db_version")
+        self.execute('DROP TABLE IF EXISTS card')
+        self.execute('DROP TABLE IF EXISTS card_color')
+        self.execute('DROP TABLE IF EXISTS card_color_identity')
+        self.execute('DROP TABLE IF EXISTS card_name')
+        self.execute('DROP TABLE IF EXISTS card_subtype')
+        self.execute('DROP TABLE IF EXISTS card_supertype')
+        self.execute('DROP TABLE IF EXISTS card_type')
+        self.execute('DROP TABLE IF EXISTS color')
+        self.execute('DROP TABLE IF EXISTS rarity')
+        self.execute('DROP TABLE IF EXISTS version')
+        self.execute('DROP TABLE IF EXISTS db_version')

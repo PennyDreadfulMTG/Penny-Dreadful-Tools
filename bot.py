@@ -25,11 +25,11 @@ STATE.oracle = oracle.Oracle()
 
 def init():
     update_legality()
-    STATE.client.run(configuration.get("token"))
+    STATE.client.run(configuration.get('token'))
 
 def update_legality():
     STATE.legal_cards = fetcher.legal_cards()
-    print("Legal cards: {0}".format(str(len(STATE.legal_cards))))
+    print('Legal cards: {0}'.format(str(len(STATE.legal_cards))))
     STATE.oracle.update_legality(STATE.legal_cards)
 
 def escape(str_input):
@@ -40,7 +40,7 @@ def escape(str_input):
 
 def better_image(cards):
     c = '|'.join(card.name for card in cards)
-    return "http://magic.bluebones.net/proxies/?c=" + escape(c)
+    return 'http://magic.bluebones.net/proxies/?c={c}'.format(c=escape(c))
 
 def http_image(multiverse_id):
     return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(multiverse_id)    +'.jpg'
@@ -68,23 +68,23 @@ def download_image(cards):
     if len(imagename) > 240:
         imagename = hashlib.md5(imagename.encode('utf-8')).hexdigest()
     filename = imagename + '.jpg'
-    filepath = configuration.get("image_dir") + "/" + filename
+    filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename=filename)
     if acceptable_file(filepath):
         return filepath
-    print("Trying to get first choice image for " + ', '.join(card.name for card in cards))
+    print('Trying to get first choice image for {cards}'.format(cards=', '.join(card.name for card in cards)))
     try:
         fetcher.store(better_image(cards), filepath)
     except fetcher.FetchException as e:
-        print("Error: {0}".format(e))
+        print('Error: {e}'.format(e=e))
     if acceptable_file(filepath):
         return filepath
     multiverse_id = cards[0].multiverse_id
     if multiverse_id and multiverse_id > 0:
-        print("Trying to get fallback image for " + imagename)
+        print('Trying to get fallback image for {imagename}'.format(imagename=imagename))
         try:
             fetcher.store(http_image(multiverse_id), filepath)
         except fetcher.FetchException as e:
-            print("HTTP Error: {0}".format(e))
+            print('Error: {e}'.format(e=e))
         if acceptable_file(filepath):
             return filepath
     return None
@@ -106,13 +106,13 @@ def cards_from_query(query):
     if len(query) <= 2:
         return []
     cards = STATE.oracle.search(query)
-    cards = [card for card in cards if card.type != "Vanguard" and card.layout != 'token']
+    cards = [card for card in cards if card.type != 'Vanguard' and card.layout != 'token']
     # First look for an exact match.
     for card in cards:
         if card.name.lower() == query:
             return [card]
     # If not found, use cards that start with the query and a punctuation char.
-    results = [card for card in cards if card.name.lower().startswith(query + " ") or card.name.lower().startswith(query + ",")]
+    results = [card for card in cards if card.name.lower().startswith('{query} '.format(query=query)) or card.name.lower().startswith('{query},'.format(query=query))]
     if len(results) > 0:
         return uniqify_cards(results)
     # If not found, use cards that start with the query.
@@ -131,7 +131,7 @@ def legal_emoji(card, verbose=False):
     return s
 
 def complex_search(query):
-    print("Searching for {0}".format(query))
+    print('Searching for {query}'.format(query=query))
     return search.search(query)
 
 async def post_cards(cards, channel):
@@ -146,9 +146,9 @@ async def post_cards(cards, channel):
         card = cards[0]
         mana = emoji.replace_emoji(card.mana_cost, channel) or ''
         legal = legal_emoji(card, True)
-        text = "{name} {mana_cost} — {type} — {legal}".format(name=card.name, mana_cost=mana, type=card.type, legal=legal)
+        text = '{name} {mana_cost} — {type} — {legal}'.format(name=card.name, mana_cost=mana, type=card.type, legal=legal)
     else:
-        text = ', '.join("{name} {legal}".format(name=card.name, legal=legal_emoji(card)) for card in cards)
+        text = ', '.join('{name} {legal}'.format(name=card.name, legal=legal_emoji(card)) for card in cards)
         text += more_text
     image_file = download_image(cards)
     await STATE.client.send_message(channel, text)
@@ -162,7 +162,7 @@ async def post_cards(cards, channel):
 
 async def respond_to_card_names(message):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
-    if "gatherer.wizards.com" in message.content.lower():
+    if 'gatherer.wizards.com' in message.content.lower():
         return
     queries = parse_queries(message.content)
     if len(queries) == 0:
@@ -171,7 +171,7 @@ async def respond_to_card_names(message):
     await post_cards(cards, message.channel)
 
 async def respond_to_command(message):
-    if message.content.startswith("!random"):
+    if message.content.startswith('!random'):
         number = 1
         if len(message.content) > 7:
             try:
@@ -197,7 +197,7 @@ async def respond_to_command(message):
     elif message.content.startswith('!echo'):
         s = message.content[len('!echo '):]
         s = emoji.replace_emoji(s, message.channel)
-        print("Echoing {0}".format(s))
+        print('Echoing {s}'.format(s=s))
         await STATE.client.send_message(message.channel, s)
     elif message.content.startswith('!help'):
         msg = """Basic bot usage: Include [cardname] in your regular messages.
@@ -221,7 +221,7 @@ async def on_message(message):
     # We do not want the bot to reply to itself.
     if message.author == STATE.client.user:
         return
-    if message.content.startswith("!"):
+    if message.content.startswith('!'):
         await respond_to_command(message)
     else:
         await respond_to_card_names(message)

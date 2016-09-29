@@ -31,14 +31,14 @@ def all_cards():
     return allcards_json
 
 def fetch(url, character_encoding='utf-8'):
-    print("Fetching {0}".format(url))
+    print('Fetching {url}'.format(url=url))
     try:
         return urllib.request.urlopen(url).read().decode(character_encoding)
     except urllib.error.HTTPError as e:
         raise FetchException(e)
 
 def store(url, path):
-    print("Storing {0} in {1}".format(url, path))
+    print('Storing {url} in {path}'.format(url=url, path=path))
     try:
         return urllib.request.urlretrieve(url, path)
     except urllib.error.HTTPError as e:

@@ -14,7 +14,7 @@ class Oracle:
         self.database = database.Database()
         current_version = fetcher.version()
         if current_version > self.database.version():
-            print("Database update required")
+            print('Database update required')
             self.update_database(str(current_version))
 
     def search(self, query):
@@ -69,7 +69,7 @@ class Oracle:
     def check_layouts(self):
         rs = self.database.execute('SELECT DISTINCT layout FROM card')
         if sorted([x[0] for x in rs]) != sorted(Oracle.layouts()):
-            print("WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid.")
+            print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid.')
 
 def underscore2camel(s):
     return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)

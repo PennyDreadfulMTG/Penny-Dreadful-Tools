@@ -130,7 +130,7 @@ async def post_cards(cards, channel):
         cards = cards[:4]
     if len(cards) == 1:
         card = cards[0]
-        mana = emoji.ReplaceEmoji(card.mana_cost, channel) or ''
+        mana = emoji.replace_emoji(card.mana_cost, channel) or ''
         legal = legal_emoji(card, True)
         text = "{name} {mana_cost} — {type} — {legal}".format(name=card.name, mana_cost=mana, type=card.type, legal=legal)
     else:
@@ -140,7 +140,7 @@ async def post_cards(cards, channel):
     await client.send_message(channel, text)
     if image_file is None:
         if len(cards) == 1:
-            await client.send_message(channel, emoji.ReplaceEmoji(cards[0].text))
+            await client.send_message(channel, emoji.replace_emoji(cards[0].text))
         else:
             await client.send_message(channel, 'No image available.')
     else:
@@ -182,7 +182,7 @@ async def respond_to_command(message):
         await client.send_message(message.channel, 'MTGO is {status}'.format(status=status))
     elif message.content.startswith('!echo'):
         s = message.content[len('!echo '):]
-        s = emoji.ReplaceEmoji(s, message.channel)
+        s = emoji.replace_emoji(s, message.channel)
         print("Echoing {0}".format(s))
         await client.send_message(message.channel, s)
     elif message.content.startswith('!help'):

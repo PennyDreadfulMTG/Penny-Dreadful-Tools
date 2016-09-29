@@ -33,7 +33,7 @@ class BooleanOperator(Token):
     values = ['AND', 'OR', 'NOT', '-']
 
     def value(self):
-        if (self.v == '-'):
+        if self.v == '-':
             return 'NOT'
         return self.v
 
@@ -41,10 +41,10 @@ class BooleanOperator(Token):
 class Criterion(Token):
     @classmethod
     def match(cls, chars):
-        if (not Key.match(chars)):
+        if not Key.match(chars):
             return False
         rest = chars[Key.length(chars):]
-        if (not Operator.match(rest)):
+        if not Operator.match(rest):
             return False
         return len(rest) > 0
 

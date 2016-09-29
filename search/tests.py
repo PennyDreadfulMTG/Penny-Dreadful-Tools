@@ -5,7 +5,7 @@ import search
 def tests():
     assert(search.Key.match(['c']))
     assert(search.Key.match(['mana']))
-    assert(not search.Key.match(['f']))
+    assert(not search.Key.match(['z']))
     assert(not search.Key.match(['magic']))
     assert(not search.Key.match(['']))
     assert(not search.Key.match([' ']))

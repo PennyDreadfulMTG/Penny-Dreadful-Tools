@@ -18,7 +18,7 @@ def ReplaceEmoji(text, channel):
   symbols = re.findall(r'\{([A-Z0-9/]{1,3})\}', text)
   for symbol in symbols:
     name = symbol
-    name.replace('/','')
+    name = name.replace('/','')
     if len(name) == 1:
       if re.fullmatch("[0-9]", name):
         name = "0" + name

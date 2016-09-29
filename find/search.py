@@ -3,8 +3,8 @@ import re
 import oracle
 import database
 
-from . import Expression
-from .tokens import BooleanOperator, Criterion, Key, Operator, String
+from find.expression import Expression
+from find.tokens import BooleanOperator, Criterion, Key, Operator, String
 
 EXPECT_EXPRESSION = 'expect_expression'
 EXPECT_OPERATOR = 'expect_operator'

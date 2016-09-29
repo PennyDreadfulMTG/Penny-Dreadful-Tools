@@ -11,9 +11,10 @@ import discord
 
 import config
 import fetcher
-import find
 import oracle
 import emoji
+
+from find import search
 
 # Globals
 legal_cards = []
@@ -131,7 +132,7 @@ def legal_emoji(card, verbose=False):
 
 def complex_search(query):
     print("Searching for {0}".format(query))
-    return find.search(query).fetchall()
+    return search.search(query)
 
 async def post_cards(cards, channel):
     if len(cards) == 0:

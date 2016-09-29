@@ -33,7 +33,7 @@ class Fetcher:
         try:
             return urllib.request.urlopen(url).read().decode(character_encoding)
         except urllib.error.HTTPError as e:
-            return FetchException(e)
+            raise FetchException(e)
 
     def store(self, url, path):
         try:

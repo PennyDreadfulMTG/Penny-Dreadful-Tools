@@ -1,7 +1,7 @@
 import re, types
 import database, fetcher
 
-class Oracle():
+class Oracle:
     @staticmethod
     def properties():
         return {
@@ -78,22 +78,22 @@ class Oracle():
         # self.database.execute commits after each statement, which we want to
         # avoid while inserting cards
         self.database.database.execute(sql, values)
-        id = self.database.value('SELECT last_insert_rowid()')
+        card_id = self.database.value('SELECT last_insert_rowid()')
         for name in card.get('names', []):
-            self.database.database.execute('INSERT INTO card_name (card_id, name) VALUES (?, ?)', [id, name])
+            self.database.database.execute('INSERT INTO card_name (card_id, name) VALUES (?, ?)', [card_id, name])
         for color in card.get('colors', []):
             color_id = self.database.value('SELECT id FROM color WHERE name = ?', [color])
-            self.database.database.execute('INSERT INTO card_color (card_id, color_id) VALUES (?, ?)', [id, color_id])
+            self.database.database.execute('INSERT INTO card_color (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
         for symbol in card.get('colorIdentity', []):
             color_id = self.database.value('SELECT id FROM color WHERE symbol = ?', [symbol])
-            self.database.database.execute('INSERT INTO card_color_identity (card_id, color_id) VALUES (?, ?)', [id, color_id])
+            self.database.database.execute('INSERT INTO card_color_identity (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
         for supertype in card.get('supertypes', []):
-            self.database.database.execute('INSERT INTO card_supertype (card_id, supertype) VALUES (?, ?)', [id, supertype])
+            self.database.database.execute('INSERT INTO card_supertype (card_id, supertype) VALUES (?, ?)', [card_id, supertype])
         for subtype in card.get('subtypes', []):
-            self.database.database.execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [id, subtype])
+            self.database.database.execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [card_id, subtype])
 
     def check_layouts(self):
-        rs = self.database.execute('SELECT DISTINCT layout FROM card');
+        rs = self.database.execute('SELECT DISTINCT layout FROM card')
         if sorted([x[0] for x in rs]) != sorted(Oracle.layouts()):
             print("WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid.")
 
@@ -102,4 +102,6 @@ class Oracle():
 
 class Card(types.SimpleNamespace):
     def __init__(self, params):
-        [setattr(self, k, params[k]) for k in params.keys()]
+        super().__init__()
+        for k in params.keys():
+            setattr(self, k, params[k])

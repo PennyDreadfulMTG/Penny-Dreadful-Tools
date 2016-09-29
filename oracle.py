@@ -77,7 +77,7 @@ class Oracle:
         sql += ') VALUES ('
         sql += ', '.join('?' for prop in Oracle.properties())
         sql += ')'
-        values = [card.get(self.underscore2camel(property)) for property in Oracle.properties()]
+        values = [card.get(underscore2camel(property)) for property in Oracle.properties()]
         # self.database.execute commits after each statement, which we want to
         # avoid while inserting cards
         self.database.database.execute(sql, values)
@@ -100,8 +100,8 @@ class Oracle:
         if sorted([x[0] for x in rs]) != sorted(Oracle.layouts()):
             print("WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid.")
 
-    def underscore2camel(self, s):
-        return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)
+def underscore2camel(s):
+    return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)
 
 class Card(types.SimpleNamespace):
     def __init__(self, params):

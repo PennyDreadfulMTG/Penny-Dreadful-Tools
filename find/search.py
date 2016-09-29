@@ -115,6 +115,7 @@ def parse(expression):
         next_token = tokens[i + 1] if len(tokens) > (i + 1) else None
         next_cls = next_token.__class__
         if cls == BooleanOperator:
+            s = s.rstrip(' ')
             s += ' {s} '.format(s=token.value())
         elif next_cls != BooleanOperator or next_token.value() == 'NOT':
             s += ' AND '

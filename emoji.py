@@ -1,8 +1,6 @@
 import database
 import re
 
-db = database.Database()
-
 def find_emoji(emoji, channel):
     if channel.is_private:
         return None

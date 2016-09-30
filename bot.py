@@ -216,8 +216,6 @@ Addiional Commands:
 `!help` Get this message.
 
 Developer Commands:
-`!reload` Reloads the list of legal cards.
-`!restartbot` Reboots the bot, allowing code changes to be implemented.
 `!echo X` Has the bot repeat X back to you.
 
 Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues

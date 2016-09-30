@@ -12,6 +12,8 @@ def find_emoji(emoji, channel):
 def replace_emoji(text, channel):
     if channel.is_private:
         return text
+    elif text is None:
+        return ''
     output = text
     symbols = re.findall(r'\{([A-Z0-9/]{1,3})\}', text)
     for symbol in symbols:

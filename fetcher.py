@@ -1,3 +1,4 @@
+import csv
 import json
 import os
 import shutil
@@ -5,6 +6,8 @@ import urllib.request
 import zipfile
 
 import pkg_resources
+
+import configuration
 
 def legal_cards():
     return [s.lower() for s in fetch('http://pdmtgo.com/legal_cards.txt', 'latin-1').split('\n')]
@@ -30,6 +33,10 @@ def all_cards():
     shutil.rmtree('./ziptemp')
     return allcards_json
 
+def card_aliases():
+    with open(configuration.get('card_alias_file'), newline='', encoding='utf-8') as f:
+        return list(csv.reader(f, dialect='excel-tab'))
+      
 def fetch(url, character_encoding='utf-8'):
     print('Fetching {url}'.format(url=url))
     try:

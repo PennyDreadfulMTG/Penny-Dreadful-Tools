@@ -101,6 +101,12 @@ class Database:
             subtype TEXT NOT NULL,
             FOREIGN KEY(card_id) REFERENCES card(id)
         )""")
+        self.execute("""CREATE TABLE card_alias (
+            id INTEGER PRIMARY KEY,
+            card_id INTEGER NOT NULL,
+            alias TEXT NOT NULL,
+            FOREIGN KEY(card_id) REFERENCES card(id)
+        )""")
         self.execute("""CREATE TABLE IF NOT EXISTS rarity (
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL

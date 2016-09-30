@@ -109,7 +109,7 @@ def cards_from_query(query):
     cards = [card for card in cards if card.type != 'Vanguard' and card.layout != 'token']
     # First look for an exact match.
     for card in cards:
-        if card.name.lower() == query:
+        if (card.name.lower() == query) or ((card.alias is not None) and (card.alias.lower() == query)):
             return [card]
     # If not found, use cards that start with the query and a punctuation char.
     results = [card for card in cards if card.name.lower().startswith('{query} '.format(query=query)) or card.name.lower().startswith('{query},'.format(query=query))]

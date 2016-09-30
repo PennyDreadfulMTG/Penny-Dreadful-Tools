@@ -11,16 +11,14 @@ push:
 test: unit lint
 
 # Run unit tests.
-# Run an individual test or directory with make unit FILE=path/to/test
 unit:
 	@echo
 	@echo "******************************** Unit Tests ***********************************"
 	@echo
-	@pytest $(FILE)
+	@pytest
 	@echo
 
 # Run lint on all python files.
-# Run on a single file with $ make lint FILE=greppattern
 lint:
 	@echo
 	@echo "******************************** Lint *****************************************"

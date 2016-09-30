@@ -201,7 +201,7 @@ async def respond_to_command(message):
         print('Echoing {s}'.format(s=s))
         await STATE.client.send_message(message.channel, s)
     elif message.content.startswith("!barbs"):
-        msg = 'Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face.'
+        msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
         await STATE.client.send_message(message.channel, msg)
     elif message.content.startswith('!help'):
         msg = """Basic bot usage: Include [cardname] in your regular messages.

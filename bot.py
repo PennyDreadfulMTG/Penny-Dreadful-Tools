@@ -200,6 +200,9 @@ async def respond_to_command(message):
         s = emoji.replace_emoji(s, message.channel)
         print('Echoing {s}'.format(s=s))
         await STATE.client.send_message(message.channel, s)
+    elif message.content.startswith("!barbs"):
+        msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
+        await STATE.client.send_message(message.channel, msg)
     elif message.content.startswith('!help'):
         msg = """Basic bot usage: Include [cardname] in your regular messages.
 The bot will search for any quoted cards, and respond with the card details.
@@ -208,7 +211,14 @@ Addiional Commands:
 `!search query` Search for cards, using a magidex style query.
 `!random` Request a random PD legal card
 `!random X` Request X random PD legal cards.
+`!status` Gives the status of MTGO, UP or DOWN.
+`!barbs` Gives Volvary's helpful advice for when to sideboard in Aura Barbs.
 `!help` Get this message.
+
+Developer Commands:
+`!reload` Reloads the list of legal cards.
+`!restartbot` Reboots the bot, allowing code changes to be implemented.
+`!echo X` Has the bot repeat X back to you.
 
 Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues
 Want to contribute? Send a Pull Request."""

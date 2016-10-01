@@ -19,10 +19,11 @@ class Oracle:
 
     def search(self, query):
         sql = 'SELECT ' + (', '.join(property for property in card.properties())) \
-            + ' FROM card ' \
-            + 'WHERE name LIKE ? ' \
+            + ', alias ' \
+            + ' FROM card LEFT OUTER JOIN card_alias on card.id = card_alias.card_id ' \
+            + 'WHERE name LIKE ? OR alias LIKE ? ' \
             + 'ORDER BY pd_legal DESC, name'
-        rs = self.database.execute(sql, ['%' + query + '%'])
+        rs = self.database.execute(sql, ['%' + query + '%', '%' + query + '%'])
         return [card.Card(r) for r in rs]
 
     def update_legality(self, legal_cards):
@@ -40,6 +41,14 @@ class Oracle:
         # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
         self.check_layouts() # Check that the hardcoded list of layouts we're about to use is still valid.
         self.database.execute("UPDATE card SET cmc = 0 WHERE cmc IS NULL AND layout IN ('normal', 'double-faced', 'flip', 'leveler', 'token', 'split')")
+        aliases = fetcher.card_aliases()
+        for alias, name in aliases:
+            card_id = self.database.value('SELECT id FROM card WHERE name = ?', [name])
+            if card_id is not None:
+                self.database.execute('INSERT INTO card_alias (card_id, alias) VALUES (?, ?)', [card_id, alias])
+            else:
+                print("no match for " + name)
+        
         self.database.execute('INSERT INTO version (version) VALUES (?)', [new_version])
 
     def insert_card(self, name, c):

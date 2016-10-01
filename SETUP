@@ -1,12 +1,9 @@
 - Install python3
 - Install pip
-- python3 -m pip install -U discord.py
+- pip install -r requirements.txt
 - Add a bot at https://discordapp.com/developers/applications/me
 - Add a bot user for the bot
 - Add the bot to your server with https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot
 - Click to reveal the token
 - Copy config.json.example to config.json and alter the value for "token"
 - Optionally alter the value for "image_dir" and "database" if you want downloaded images/sqlite database stored somewhere else.
-- Optionally install pytest - python3 -m pip install -U pytest to run the unit tests.
-- If you want to do development install pylint - python3 -m pip install -U pylint
-

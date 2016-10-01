@@ -7,7 +7,7 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 1
+    schema_version = 2
 
     @staticmethod
     def escape(s):
@@ -131,6 +131,7 @@ class Database:
     # Drop All Tables, so we can reinit
     def droptables(self):
         self.execute('DROP TABLE IF EXISTS card')
+        self.execute('DROP TABLE IF EXISTS card_alias')
         self.execute('DROP TABLE IF EXISTS card_color')
         self.execute('DROP TABLE IF EXISTS card_color_identity')
         self.execute('DROP TABLE IF EXISTS card_name')

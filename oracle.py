@@ -43,6 +43,9 @@ class Oracle:
         # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
         self.check_layouts() # Check that the hardcoded list of layouts we're about to use is still valid.
         self.database.execute("UPDATE card SET cmc = 0 WHERE cmc IS NULL AND layout IN ('normal', 'double-faced', 'flip', 'leveler', 'token', 'split')")
+        rs = self.database.execute('SELECT id, name FROM rarity')
+        for row in rs:
+            self.database.execute('UPDATE printing SET rarity_id = ? WHERE rarity = ?', [row['id'], row['name']])
         aliases = fetcher.card_aliases()
         for alias, name in aliases:
             card_id = self.database.value('SELECT id FROM card WHERE name = ?', [name])
@@ -50,7 +53,6 @@ class Oracle:
                 self.database.execute('INSERT INTO card_alias (card_id, alias) VALUES (?, ?)', [card_id, alias])
             else:
                 print("no match for " + name)
-
         self.database.execute('INSERT INTO version (version) VALUES (?)', [new_version])
 
     def insert_card(self, c):

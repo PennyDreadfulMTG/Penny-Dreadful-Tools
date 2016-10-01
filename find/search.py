@@ -147,8 +147,12 @@ def parse_criterion(key, operator, term):
         return subtable_where('supertype', term.value())
     elif key.value() == 'subtype' or key.value() == 'sub':
         return subtable_where('subtype', term.value())
+    elif key.value() == 'edition' or key.value() == 'set' or key.value() == 'e' or key.value() == 's':
+        return set_where(term.value())
     elif key.value() == 'format' or key.value() == 'f':
         return format_where(term.value())
+    elif key.value() == 'rarity' or key.value() == 'r':
+        return rarity_where(operator.value(), term.value())
 
 def where(keys, term, exact_match=False):
     q = term if exact_match else '%' + term + '%'
@@ -177,15 +181,29 @@ def subtable_where(subtable, value):
     return '(id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {value}))'.format(subtable=subtable, column=column, operator=operator, value=v)
 
 def math_where(column, operator, term):
-    if not operator in ['>', '<', '=', '<=', '>=']:
-        return 'FALSE'
+    if operator == ':':
+        operator = '='
+    if operator not in ['>', '<', '=', '<=', '>=']:
+        return '(FALSE)'
     return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=database.Database.escape(term))
+
+def set_where(name):
+    name_fuzzy = '%{name}%'.format(name=name)
+    return '(id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=database.Database.escape(name_fuzzy), name=database.Database.escape(name))
 
 def format_where(term):
     if term in ['pennydreadful', 'pd']:
         return '(pd_legal = 1)'
     else:
         raise InvalidValueException('{term} is not supported in format queries', term=term)
+
+def rarity_where(operator, term):
+    rarity_id = value_lookup('rarity', term)
+    if operator == ':':
+        operator = '='
+    if operator not in ['>', '<', '=', '<=', '>=']:
+        return '(FALSE)'
+    return "(id IN (SELECT card_id FROM printing WHERE rarity_id {operator} {rarity_id}))".format(operator=operator, rarity_id=rarity_id)
 
 def value_lookup(table, value):
     colors = {
@@ -202,7 +220,27 @@ def value_lookup(table, value):
     }
     replacements = {
         'color': colors,
-        'color_identity': colors
+        'color_identity': colors,
+        'rarity': {
+            'basic land': 1,
+            'basicland': 1,
+            'basic': 1,
+            'land': 1,
+            'bl': 1,
+            'b': 1,
+            'l': 1,
+            'common': 2,
+            'c': 2,
+            'uncommon': 3,
+            'u': 3,
+            'rare': 4,
+            'r': 4,
+            'mythic rare': 5,
+            'mythicrare': 5,
+            'mythic': 5,
+            'mr': 5,
+            'm': 5
+        }
     }
     if table in replacements and value.lower() in replacements[table]:
         return replacements[table][value.lower()]

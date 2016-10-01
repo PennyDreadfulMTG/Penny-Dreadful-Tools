@@ -8,11 +8,11 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 16
+    schema_version = 19
 
     @staticmethod
     def escape(s):
-        if s.isdecimal():
+        if str(s).isdecimal():
             return s
         encodable = s.encode('utf-8', 'strict').decode('utf-8')
         if encodable.find('\x00') >= 0:
@@ -80,6 +80,7 @@ class Database:
         sql += 'id INTEGER PRIMARY KEY,'
         sql += 'card_id INTEGER NOT NULL, '
         sql += 'set_id INTEGER NOT NULL, '
+        sql += 'rarity_id INTEGER, '
         sql += ', '.join('{name} {type}'.format(name=name, type=type) for name, type in card.printing_properties().items())
         sql += ', FOREIGN KEY(card_id) REFERENCES card(id), '
         sql += 'FOREIGN KEY(set_id) REFERENCES `set`(id))'
@@ -127,13 +128,19 @@ class Database:
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL
         )""")
-        self.execute('DELETE FROM color')
         self.execute("""INSERT INTO color (name, symbol) VALUES
             ('White', 'W'),
             ('Blue', 'U'),
             ('Black', 'B'),
             ('Red', 'R'),
             ('Green', 'G')
+        """)
+        self.execute("""INSERT INTO rarity (name) VALUES
+            ('Basic Land'),
+            ('Common'),
+            ('Uncommon'),
+            ('Rare'),
+            ('Mythic Rare')
         """)
 
     # Drop the database so we can recreate it.

@@ -27,12 +27,15 @@ class Oracle:
         rs = self.database.execute(sql, ['%' + query + '%', '%' + query + '%'])
         return [card.Card(r) for r in rs]
 
-    def update_legality(self, legal_cards):
-        self.database.execute('UPDATE card SET pd_legal = 0')
-        self.database.execute('UPDATE card SET pd_legal = 1 WHERE LOWER(name) IN (' + ', '.join(database.Database.escape(name) for name in legal_cards) + ')')
-
     def get_legal_cards(self):
-        return self.database.execute('SELECT name FROM card WHERE pd_legal = 1')
+        new_list = fetcher.legal_cards()
+        if new_list == ['']:
+            return [card.Card(r).name.lower() for r in self.database.execute('SELECT name FROM card WHERE pd_legal = 1')] 
+        else:
+            self.database.execute('UPDATE card SET pd_legal = 0')
+            self.database.execute('UPDATE card SET pd_legal = 1 WHERE LOWER(name) IN (' + ', '.join(database.Database.escape(name) for name in new_list) + ')')
+            return new_list
+        
 
     def update_database(self, new_version):
         self.database.execute('DELETE FROM version')

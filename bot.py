@@ -13,17 +13,9 @@ class Bot:
         self.oracle = oracle.Oracle()
 
     def init(self):
-        self.update_legality()
-        self.client.run(configuration.get('token'))
-
-    def update_legality(self):
-        new_list = fetcher.legal_cards()
-        if new_list == ['']:
-            self.legal_cards = self.oracle.get_legal_cards()
-        else:
-            self.legal_cards = new_list
-            self.oracle.update_legality(self.legal_cards)
+        self.legal_cards = self.oracle.get_legal_cards()
         print('Legal cards: {num_legal_cards}'.format(num_legal_cards=len(self.legal_cards)))
+        self.client.run(configuration.get('token'))
 
     async def on_ready(self):
         print('Logged in as {username} ({id})'.format(username=self.client.user.name, id=self.client.user.id))

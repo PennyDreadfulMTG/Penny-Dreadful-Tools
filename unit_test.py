@@ -9,7 +9,6 @@ import configuration
 import fetcher
 import oracle
 
-
 # Check that we can fetch card images.
 def test_imagedownload():
     filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='island.jpg')
@@ -67,17 +66,20 @@ def test_partial_query():
 #     assert len(command.STATE.legal_cards) > 0
 
 def test_legality_emoji():
-    legal_cards = fetcher.legal_cards()
-    legal_card = command.cards_from_query('island', oracle.Oracle())[0]
+    Oracle = oracle.Oracle()
+    legal_cards = Oracle.get_legal_cards()
+    assert len(legal_cards) > 0
+    legal_card = command.cards_from_query('island', Oracle)[0]
     assert command.legal_emoji(legal_card, legal_cards) == ':white_check_mark:'
-    illegal_card = command.cards_from_query('black lotus', oracle.Oracle())[0]
+    illegal_card = command.cards_from_query('black lotus', Oracle)[0]
     assert command.legal_emoji(illegal_card, legal_cards) == ':no_entry_sign:'
     assert command.legal_emoji(illegal_card, legal_cards, True) == ':no_entry_sign: (not legal in PD)'
 
 def test_accents():
-    cards = command.cards_from_query('Lim-Dûl the Necromancer', oracle.Oracle())
+    Oracle = oracle.Oracle()
+    cards = command.cards_from_query('Lim-Dûl the Necromancer', Oracle)
     assert len(cards) == 1
-    cards = command.cards_from_query('Séance', oracle.Oracle())
+    cards = command.cards_from_query('Séance', Oracle)
     assert len(cards) == 1
 
     # The following two don't currently work. But should be turned on once they do.

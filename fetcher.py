@@ -6,8 +6,10 @@ import urllib.request
 import zipfile
 
 import pkg_resources
+import requests
 
 import configuration
+
 
 def legal_cards():
     return [s.lower() for s in fetch('http://pdmtgo.com/legal_cards.txt', 'latin-1').split('\n')]
@@ -45,10 +47,16 @@ def card_aliases():
     with open(configuration.get('card_alias_file'), newline='', encoding='utf-8') as f:
         return list(csv.reader(f, dialect='excel-tab'))
 
-def fetch(url, character_encoding='utf-8'):
+def fetch(url, character_encoding=None, if_modified_since=None):
     print('Fetching {url}'.format(url=url))
     try:
-        return urllib.request.urlopen(url).read().decode(character_encoding)
+        headers = {}
+        if if_modified_since != None:
+            headers["If-Modified-Since"] = if_modified_since
+        response = requests.get(url, headers=headers)
+        if character_encoding != None:
+            response.encoding = character_encoding
+        return response.text
     except urllib.error.HTTPError as e:
         raise FetchException(e)
 

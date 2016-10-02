@@ -1,10 +1,14 @@
+import calendar
 import os
+import time
+from email.utils import formatdate
 
 import card
 import command
 import configuration
 import fetcher
 import oracle
+
 
 # Check that we can fetch card images.
 def test_imagedownload():
@@ -88,3 +92,10 @@ def test_aether():
     assert len(cards) == 1
     #cards = command.cards_from_query('aether Spellbomb')
     #assert len(cards) == 1
+
+
+def test_fetcher_mod_since():
+    lmtime = calendar.timegm(time.gmtime()) - 10
+    lmtime = formatdate(timeval=lmtime, localtime=False, usegmt=True)
+    val = fetcher.fetch("http://pdmtgo.com/legal_cards.txt", if_modified_since=lmtime)
+    assert val == ''

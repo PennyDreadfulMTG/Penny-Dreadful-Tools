@@ -4,7 +4,6 @@ import sys
 import bot
 import fetcher
 
-
 async def handle_command(message):
     global STATE
     STATE = bot.STATE
@@ -55,7 +54,7 @@ Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDread
 Want to contribute? Send a Pull Request."""
         await bot.STATE.client.send_message(channel, msg)
 
-    async def random(self,channel,args):
+    async def random(self, channel, args):
         """`!Random` Request a random PD legal card
 `!random X` Request X random PD legal cards."""
         number = 1
@@ -67,22 +66,23 @@ Want to contribute? Send a Pull Request."""
         cards = [STATE.oracle.search(random.choice(STATE.legal_cards))[0] for n in range(0, number)]
         await bot.post_cards(cards, channel)
 
-    async def reload(self,channel):
+    async def reload(self, channel):
         bot.update_legality()
         await STATE.client.send_message(channel, 'Reloaded list of legal cards.')
 
-    async def restartbot(self,channel):
+    async def restartbot(self, channel):
         await STATE.client.send_message(channel, 'Rebooting!')
         sys.exit()
 
-    async def search(self,channel,args):
+    async def search(self, channel, args):
         """`!search query` Search for cards, using a magidex style query."""
         cards = bot.complex_search(args)
-        await bot.post_cards(cards, channel)
+        additional_text = ''
         if len(cards) > 10:
-            await STATE.client.send_message(channel, 'http://magidex.com/search/?q=' + bot.escape(args))
+            additional_text = 'http://magidex.com/search/?q=' + bot.escape(args)
+        await bot.post_cards(cards, channel, additional_text)
 
-    async def showall(self,channel,args, author):
+    async def showall(self, channel, args, author):
         """`!showall` Show all the cards relating to a query.  Only available if you PM the bot."""
         cards = bot.complex_search(args)
         if len(cards) > 10 and not channel.is_private:
@@ -101,24 +101,24 @@ Want to contribute? Send a Pull Request."""
         else:
             await STATE.client.send_file(channel, image_file, content=text)
 
-    async def status(self,channel):
+    async def status(self, channel):
         """`!status` Gives the status of MTGO, UP or DOWN."""
         status = fetcher.mtgo_status()
         await STATE.client.send_message(channel, 'MTGO is {status}'.format(status=status))
 
 
-    async def echo(self,channel,args):
+    async def echo(self, channel, args):
         s = args
         s = bot.emoji.replace_emoji(s, channel)
         print('Echoing {s}'.format(s=s))
         await STATE.client.send_message(channel, s)
 
-    async def barbs(self,channel):
+    async def barbs(self, channel):
         """`!barbs` Gives Volvary's helpful advice for when to sideboard in Aura Barbs."""
         msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
         await STATE.client.send_message(channel, msg)
-    
-    async def quality(self,channel):
+
+    async def quality(self, channel):
         """A helpful reminder about everyone's favorite way to play digital Magic"""
         msg = "**Magic Online** is a Quality™ Program."
         await STATE.client.send_message(channel, msg)

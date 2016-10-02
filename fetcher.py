@@ -4,24 +4,13 @@ import os
 import shutil
 import urllib.request
 import zipfile
-from email.utils import formatdate
 
 import pkg_resources
-import requests
 
 import configuration
-import database
 
-
-DATABASE = database.Database()
-
-def legal_cards(force=False):
-    lm = last_modified('legal_cards')
-    if force:
-        lm = None
-    value = [s.lower() for s in fetch('http://pdmtgo.com/legal_cards.txt', 'latin-1', lm).split('\n')]
-    set_last_modified('legal_cards')
-    return value
+def legal_cards():
+    return [s.lower() for s in fetch('http://pdmtgo.com/legal_cards.txt', 'latin-1').split('\n')]
 
 def version():
     return pkg_resources.parse_version(json.loads(fetch('https://mtgjson.com/json/version.json')))
@@ -56,16 +45,10 @@ def card_aliases():
     with open(configuration.get('card_alias_file'), newline='', encoding='utf-8') as f:
         return list(csv.reader(f, dialect='excel-tab'))
 
-def fetch(url, character_encoding=None, if_modified_since=None):
+def fetch(url, character_encoding='utf-8'):
     print('Fetching {url}'.format(url=url))
     try:
-        headers = {}
-        if if_modified_since != None:
-            headers["If-Modified-Since"] = if_modified_since
-        response = requests.get(url, headers=headers)
-        if character_encoding != None:
-            response.encoding = character_encoding
-        return response.text
+        return urllib.request.urlopen(url).read().decode(character_encoding)
     except urllib.error.HTTPError as e:
         raise FetchException(e)
 
@@ -76,12 +59,6 @@ def store(url, path):
     except urllib.error.HTTPError as e:
         raise FetchException(e)
 
-def last_modified(resource):
-    return DATABASE.value("SELECT last_modified FROM fetcher WHERE resource = ?", [resource])
-
-def set_last_modified(resource):
-    httptime = formatdate(timeval=None, localtime=False, usegmt=True)
-    DATABASE.execute("INSERT INTO fetcher (resource, last_modified) VALUES (?, ?)", [resource, httptime])
 
 class FetchException(Exception):
     pass

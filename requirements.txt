@@ -1,4 +1,3 @@
 discord.py>=0.13.0
 pytest
 pylint
-requests

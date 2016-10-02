@@ -31,6 +31,9 @@ class Oracle:
         self.database.execute('UPDATE card SET pd_legal = 0')
         self.database.execute('UPDATE card SET pd_legal = 1 WHERE LOWER(name) IN (' + ', '.join(database.Database.escape(name) for name in legal_cards) + ')')
 
+    def get_legal_cards(self):
+        return self.database.execute('SELECT name FROM card WHERE pd_legal = 1')
+
     def update_database(self, new_version):
         self.database.execute('DELETE FROM version')
         cards = fetcher.all_cards()

@@ -4,15 +4,22 @@ import os
 import shutil
 import urllib.request
 import zipfile
+from email.utils import formatdate
 
 import pkg_resources
 import requests
 
 import configuration
+import database
 
+
+Database = database.Database()
 
 def legal_cards():
-    return [s.lower() for s in fetch('http://pdmtgo.com/legal_cards.txt', 'latin-1').split('\n')]
+    lm = last_modified('legal_cards')
+    value = [s.lower() for s in fetch('http://pdmtgo.com/legal_cards.txt', 'latin-1', lm).split('\n')]
+    set_last_modified('legal_cards')
+    return value
 
 def version():
     return pkg_resources.parse_version(json.loads(fetch('https://mtgjson.com/json/version.json')))
@@ -67,6 +74,12 @@ def store(url, path):
     except urllib.error.HTTPError as e:
         raise FetchException(e)
 
+def last_modified(resource):
+    return Database.value("SELECT last_modified FROM fetcher WHERE resource = ?", [resource])
+
+def set_last_modified(resource):
+    httptime = formatdate(timeval=None, localtime=False, usegmt=True)
+    Database.execute("INSERT INTO fetcher (resource, last_modified) VALUES (?, ?)", [resource, httptime])
 
 class FetchException(Exception):
     pass

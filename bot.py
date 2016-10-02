@@ -192,6 +192,19 @@ async def respond_to_command(message):
         await post_cards(cards, message.channel)
         if len(cards) > 10:
             await STATE.client.send_message(message.channel, 'http://magidex.com/search/?q=' + escape(q))
+    elif message.content.startswith("!showall"):
+        q = message.content[len('!search '):]
+        cards = complex_search(q)
+        more_text = ''
+        text = ', '.join('{name} {legal}'.format(name=card.name, legal=legal_emoji(card)) for card in cards)
+        text += more_text
+        image_file = download_image(cards)
+        if image_file is None:
+            text += '\n\n'
+            text += 'No image available.'
+            await STATE.client.send_message(message.channel, text)
+        else:
+            await STATE.client.send_file(message.channel, image_file, content=text)
     elif message.content.startswith('!status'):
         status = fetcher.mtgo_status()
         await STATE.client.send_message(message.channel, 'MTGO is {status}'.format(status=status))

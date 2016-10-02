@@ -82,8 +82,8 @@ Want to contribute? Send a Pull Request."""
             additional_text = 'http://magidex.com/search/?q=' + bot.escape(args)
         await bot.post_cards(cards, channel, additional_text)
 
-    async def showall(self, channel, args, author):
-        """`!showall` Show all the cards relating to a query.  Only available if you PM the bot."""
+    async def bigsearch(self, channel, args, author):
+        """`!bigsearch` Show all the cards relating to a query. Large searches will be returned to you via PM."""
         cards = bot.complex_search(args)
         if len(cards) > 10 and not channel.is_private:
             msg = "Search contains {n} cards.  Sending you the results through Private Message".format(n=len(cards))
@@ -92,10 +92,11 @@ Want to contribute? Send a Pull Request."""
         more_text = ''
         text = ', '.join('{name} {legal}'.format(name=card.name, legal=bot.legal_emoji(card)) for card in cards)
         text += more_text
-        image_file = bot.download_image(cards)
+        if len(cards) > 10:
+            image_file = None
+        else:
+            image_file = bot.download_image(cards)
         if image_file is None:
-            text += '\n\n'
-            text += 'No image available.'
             await STATE.client.send_message(channel, text)
         else:
             await STATE.client.send_file(channel, image_file, content=text)

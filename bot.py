@@ -10,6 +10,7 @@ import urllib.parse
 
 import discord
 
+import commands
 import configuration
 import fetcher
 import oracle
@@ -172,74 +173,7 @@ async def respond_to_card_names(message):
     await post_cards(cards, message.channel)
 
 async def respond_to_command(message):
-    if message.content.startswith('!random'):
-        number = 1
-        if len(message.content) > 7:
-            try:
-                number = int(message.content[7:].strip())
-            except ValueError:
-                pass
-        cards = [STATE.oracle.search(random.choice(STATE.legal_cards))[0] for n in range(0, number)]
-        await post_cards(cards, message.channel)
-    elif message.content.startswith('!reload'):
-        update_legality()
-        await STATE.client.send_message(message.channel, 'Reloaded list of legal cards.')
-    elif message.content.startswith('!restartbot'):
-        sys.exit()
-    elif message.content.startswith('!search '):
-        q = message.content[len('!search '):]
-        cards = complex_search(q)
-        await post_cards(cards, message.channel)
-        if len(cards) > 10:
-            await STATE.client.send_message(message.channel, 'http://magidex.com/search/?q=' + escape(q))
-    elif message.content.startswith("!showall"):
-        q = message.content[len('!search '):]
-        cards = complex_search(q)
-        more_text = ''
-        text = ', '.join('{name} {legal}'.format(name=card.name, legal=legal_emoji(card)) for card in cards)
-        text += more_text
-        image_file = download_image(cards)
-        if image_file is None:
-            text += '\n\n'
-            text += 'No image available.'
-            await STATE.client.send_message(message.channel, text)
-        else:
-            await STATE.client.send_file(message.channel, image_file, content=text)
-    elif message.content.startswith('!status'):
-        status = fetcher.mtgo_status()
-        await STATE.client.send_message(message.channel, 'MTGO is {status}'.format(status=status))
-    elif message.content.startswith('!echo'):
-        s = message.content[len('!echo '):]
-        s = emoji.replace_emoji(s, message.channel)
-        print('Echoing {s}'.format(s=s))
-        await STATE.client.send_message(message.channel, s)
-    elif message.content.startswith("!barbs"):
-        msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
-        await STATE.client.send_message(message.channel, msg)
-    elif message.content.startswith("!quality"):
-        msg = "**Magic Online** is a Quality™ Program."
-        await STATE.client.send_message(message.channel, msg)
-    elif message.content.startswith('!help'):
-        msg = """Basic bot usage: Include [cardname] in your regular messages.
-The bot will search for any quoted cards, and respond with the card details.
-
-Addiional Commands:
-`!search query` Search for cards, using a magidex style query.
-`!random` Request a random PD legal card
-`!random X` Request X random PD legal cards.
-`!status` Gives the status of MTGO, UP or DOWN.
-`!barbs` Gives Volvary's helpful advice for when to sideboard in Aura Barbs.
-`!help` Get this message.
-
-Developer Commands:
-`!echo X` Has the bot repeat X back to you.
-
-Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues
-Want to contribute? Send a Pull Request."""
-        await STATE.client.send_message(message.channel, msg)
-    elif message.content.startswith('!'):
-        cmd = message.content.split(' ')[0]
-        await STATE.client.send_message(message.channel, 'Unknown command `{cmd}`. Try `!help`?'.format(cmd=cmd))
+    commands.handle_command(message)
 
 @STATE.client.event
 async def on_message(message):

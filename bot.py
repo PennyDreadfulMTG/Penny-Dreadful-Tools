@@ -135,7 +135,7 @@ def complex_search(query):
     print('Searching for {query}'.format(query=query))
     return search.search(query)
 
-async def post_cards(cards, channel):
+async def post_cards(cards, channel, additional_text=''):
     if len(cards) == 0:
         await STATE.client.send_message(channel, 'No matches.')
         return
@@ -158,6 +158,8 @@ async def post_cards(cards, channel):
             text += emoji.replace_emoji(cards[0].text, channel)
         else:
             text += 'No image available.'
+    text += '\n' + additional_text
+    if image_file is None:
         await STATE.client.send_message(channel, text)
     else:
         await STATE.client.send_file(channel, image_file, content=text)

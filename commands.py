@@ -78,9 +78,10 @@ Want to contribute? Send a Pull Request."""
     async def search(self,channel,args):
         """`!search query` Search for cards, using a magidex style query."""
         cards = bot.complex_search(args)
-        await bot.post_cards(cards, channel)
+        additional_text = ''
         if len(cards) > 10:
-            await STATE.client.send_message(channel, 'http://magidex.com/search/?q=' + bot.escape(args))
+            additional_text = 'http://magidex.com/search/?q=' + bot.escape(args)
+        await bot.post_cards(cards, channel, additional_text)
 
     async def showall(self,channel,args, author):
         """`!showall` Show all the cards relating to a query.  Only available if you PM the bot."""

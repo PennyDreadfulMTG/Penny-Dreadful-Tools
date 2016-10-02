@@ -13,7 +13,7 @@ node{
     }
 
     stage('Pylint') {
-        sh 'PATH=$PATH:~/.local/bin/; pylint --rcfile=pylintrc $(find . -name "*.py" -print) | tee pylint.log'
-        step([$class: 'WarningsPublisher', canComputeNew: false, canResolveRelativePaths: false, canRunOnFailed: true, defaultEncoding: '', excludePattern: '', failedTotalAll: '0', failedTotalHigh: '0', failedTotalLow: '0', failedTotalNormal: '0', healthy: '0', includePattern: '', messagesPattern: '', parserConfigurations: [[parserName: 'PyLint', pattern: 'pylint.log']], unHealthy: '10'])
+        sh 'PATH=$PATH:~/.local/bin/; pylint -f parseable --rcfile=pylintrc $(find . -name "*.py" -print) | tee pylint.log'
+        step([$class: 'WarningsPublisher', canComputeNew: false, canResolveRelativePaths: false, canRunOnFailed: true, excludePattern: '', failedTotalAll: '0', failedTotalHigh: '0', failedTotalLow: '0', failedTotalNormal: '0', healthy: '0', includePattern: '', messagesPattern: '', parserConfigurations: [[parserName: 'PyLint', pattern: 'pylint.log']], unHealthy: '10'])
     }
 }

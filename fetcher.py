@@ -15,8 +15,10 @@ import database
 
 DATABASE = database.Database()
 
-def legal_cards():
+def legal_cards(force=False):
     lm = last_modified('legal_cards')
+    if force:
+        lm = None
     value = [s.lower() for s in fetch('http://pdmtgo.com/legal_cards.txt', 'latin-1', lm).split('\n')]
     set_last_modified('legal_cards')
     return value

@@ -7,7 +7,7 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 20
+    schema_version = 22
 
     @staticmethod
     def escape(s):
@@ -117,7 +117,7 @@ class Database:
             subtype TEXT NOT NULL,
             FOREIGN KEY(card_id) REFERENCES card(id)
         )""")
-        self.execute("""CREATE TABLE card_alias (
+        self.execute("""CREATE TABLE IF NOT EXISTS card_alias (
             id INTEGER PRIMARY KEY,
             card_id INTEGER NOT NULL,
             alias TEXT NOT NULL,
@@ -141,6 +141,12 @@ class Database:
             ('Rare'),
             ('Mythic Rare')
         """)
+        self.execute("""CREATE TABLE IF NOT EXISTS fetcher (
+            id INTEGER PRIMARY KEY,
+            resource TEXT UNIQUE ON CONFLICT REPLACE NOT NULL,
+            last_modified TEXT
+        )""")
+
 
     # Drop the database so we can recreate it.
     def delete(self):

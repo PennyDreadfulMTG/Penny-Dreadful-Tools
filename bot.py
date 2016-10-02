@@ -3,7 +3,6 @@ import discord
 import command
 import configuration
 import emoji
-import fetcher
 import oracle
 
 class Bot:
@@ -13,13 +12,9 @@ class Bot:
         self.oracle = oracle.Oracle()
 
     def init(self):
-        self.update_legality()
-        self.client.run(configuration.get('token'))
-
-    def update_legality(self):
-        self.legal_cards = fetcher.legal_cards()
+        self.legal_cards = self.oracle.get_legal_cards()
         print('Legal cards: {num_legal_cards}'.format(num_legal_cards=len(self.legal_cards)))
-        self.oracle.update_legality(self.legal_cards)
+        self.client.run(configuration.get('token'))
 
     async def on_ready(self):
         print('Logged in as {username} ({id})'.format(username=self.client.user.name, id=self.client.user.id))

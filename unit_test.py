@@ -1,4 +1,7 @@
+import calendar
 import os
+import time
+from email.utils import formatdate
 
 import card
 import command
@@ -63,7 +66,8 @@ def test_partial_query():
 #     assert len(command.STATE.legal_cards) > 0
 
 def test_legality_emoji():
-    legal_cards = fetcher.legal_cards()
+    legal_cards = oracle.Oracle().get_legal_cards()
+    assert len(legal_cards) > 0
     legal_card = command.cards_from_query('island', oracle.Oracle())[0]
     assert command.legal_emoji(legal_card, legal_cards) == ':white_check_mark:'
     illegal_card = command.cards_from_query('black lotus', oracle.Oracle())[0]
@@ -88,3 +92,10 @@ def test_aether():
     assert len(cards) == 1
     #cards = command.cards_from_query('aether Spellbomb')
     #assert len(cards) == 1
+
+
+def test_fetcher_mod_since():
+    lmtime = calendar.timegm(time.gmtime()) - 10
+    lmtime = formatdate(timeval=lmtime, localtime=False, usegmt=True)
+    val = fetcher.fetch("http://pdmtgo.com/legal_cards.txt", if_modified_since=lmtime)
+    assert val == ''

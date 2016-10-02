@@ -145,5 +145,8 @@ class Database:
 
     # Drop the database so we can recreate it.
     def delete(self):
-        os.remove(configuration.get('database'))
-        self.open()
+        self.execute("PRAGMA writable_schema = 1")
+        self.execute("delete from sqlite_master where type in ('table', 'index', 'trigger')")
+        self.execute("PRAGMA writable_schema = 0;")
+        self.execute("VACUUM")
+

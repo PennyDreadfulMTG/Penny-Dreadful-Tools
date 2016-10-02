@@ -4,9 +4,7 @@ node{
     }
 
     stage("pip") {
-        sh 'python3 -m pip install -U --user discord.py'
-        sh 'python3 -m pip install -U --user pytest'
-        sh 'python3 -m pip install -U --user pylint'
+        sh 'python3 -m pip install -U --user -r requirements.txt'
     }
 
     stage('Unit Tests') {

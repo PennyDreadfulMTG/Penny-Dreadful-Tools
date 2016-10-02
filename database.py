@@ -8,7 +8,7 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 19
+    schema_version = 20
 
     @staticmethod
     def escape(s):

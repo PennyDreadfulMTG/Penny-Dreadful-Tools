@@ -23,11 +23,11 @@ def mtgo_status():
 
 def all_cards():
     s = unzip('https://mtgjson.com/json/AllCards.json.zip', 'AllCards.json')
-    return json.load(s)
+    return json.loads(s)
 
 def all_sets():
     s = unzip('https://mtgjson.com/json/AllSets.json.zip', 'AllSets.json')
-    return json.load(s)
+    return json.loads(s)
 
 def unzip(url, path):
     if os.path.isdir('./ziptemp'):
@@ -37,7 +37,7 @@ def unzip(url, path):
     f = zipfile.ZipFile('./ziptemp/zip.zip', 'r')
     f.extractall('./ziptemp/unzip')
     f.close()
-    s = open('./ziptemp/unzip/{path}'.format(path=path), encoding='utf-8')
+    s = open('./ziptemp/unzip/{path}'.format(path=path), encoding='utf-8').read()
     shutil.rmtree('./ziptemp')
     return s
 

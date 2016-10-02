@@ -16,14 +16,28 @@ async def handle_command(message):
 
     method = [m for m in dir(Commands) if m == cmd]
     if len(method) > 0:
-        await getattr(Commands, method[0])(Commands, message.channel, args)
+        method = getattr(Commands, method[0])
+        if method.__code__.co_argcount == 4:
+            await method(Commands, message.channel, args, message.author)
+        elif method.__code__.co_argcount == 3:
+            await method(Commands, message.channel, args)
+        elif method.__code__.co_argcount == 2:
+            await method(Commands, message.channel)
+        elif method.__code__.co_argcount == 1:
+            await method(Commands)
     else:
         await STATE.client.send_message(message.channel, 'Unknown command `{cmd}`. Try `!help`?'.format(cmd=cmd))
-    
 
 class Commands:
-    
-    async def help(self, channel, args):
+    """To define a new command, simply add a new method to this class.
+    If you want !help to show the message, add a docstring to the method.
+    Method parameters should be in the format:
+    `async def commandname(self, channel, args, author)`
+    Where any argument after self is optional. (Although at least channel is usually needed)
+    """
+
+
+    async def help(self, channel):
         """`!help` Get this message."""
         msg = """Basic bot usage: Include [cardname] in your regular messages.
 The bot will search for any quoted cards, and respond with the card details.
@@ -53,11 +67,11 @@ Want to contribute? Send a Pull Request."""
         cards = [STATE.oracle.search(random.choice(STATE.legal_cards))[0] for n in range(0, number)]
         await bot.post_cards(cards, channel)
 
-    async def reload(self,channel,args):
+    async def reload(self,channel):
         bot.update_legality()
         await STATE.client.send_message(channel, 'Reloaded list of legal cards.')
 
-    async def restartbot(self,channel,args):
+    async def restartbot(self,channel):
         await STATE.client.send_message(channel, 'Rebooting!')
         sys.exit()
 
@@ -66,11 +80,15 @@ Want to contribute? Send a Pull Request."""
         cards = bot.complex_search(args)
         await bot.post_cards(cards, channel)
         if len(cards) > 10:
-            await STATE.client.send_message(channel, 'http://magidex.com/search/?q=' + bot.escape(q))
+            await STATE.client.send_message(channel, 'http://magidex.com/search/?q=' + bot.escape(args))
 
-    async def showall(self,channel,args):
+    async def showall(self,channel,args, author):
         """`!showall` Show all the cards relating to a query.  Only available if you PM the bot."""
         cards = bot.complex_search(args)
+        if len(cards) > 10 and not channel.is_private:
+            msg = "Search contains {n} cards.  Sending you the results through Private Message".format(n=len(cards))
+            await STATE.client.send_message(channel, msg)
+            channel = author
         more_text = ''
         text = ', '.join('{name} {legal}'.format(name=card.name, legal=bot.legal_emoji(card)) for card in cards)
         text += more_text
@@ -82,7 +100,7 @@ Want to contribute? Send a Pull Request."""
         else:
             await STATE.client.send_file(channel, image_file, content=text)
 
-    async def status(self,channel,args):
+    async def status(self,channel):
         """`!status` Gives the status of MTGO, UP or DOWN."""
         status = fetcher.mtgo_status()
         await STATE.client.send_message(channel, 'MTGO is {status}'.format(status=status))
@@ -94,12 +112,12 @@ Want to contribute? Send a Pull Request."""
         print('Echoing {s}'.format(s=s))
         await STATE.client.send_message(channel, s)
 
-    async def barbs(self,channel,args):
+    async def barbs(self,channel):
         """`!barbs` Gives Volvary's helpful advice for when to sideboard in Aura Barbs."""
         msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
         await STATE.client.send_message(channel, msg)
     
-    async def quality(self,channel,args):
+    async def quality(self,channel):
         """A helpful reminder about everyone's favorite way to play digital Magic"""
         msg = "**Magic Online** is a Quality™ Program."
         await STATE.client.send_message(channel, msg)

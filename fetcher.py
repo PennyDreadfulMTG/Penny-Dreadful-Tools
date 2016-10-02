@@ -12,7 +12,6 @@ import requests
 import configuration
 import database
 
-
 DATABASE = database.Database()
 
 def legal_cards(force=False):
@@ -67,6 +66,8 @@ def fetch(url, character_encoding=None, if_modified_since=None):
             response.encoding = character_encoding
         return response.text
     except urllib.error.HTTPError as e:
+        raise FetchException(e)
+    except requests.exceptions.ConnectionError as e:
         raise FetchException(e)
 
 def store(url, path):

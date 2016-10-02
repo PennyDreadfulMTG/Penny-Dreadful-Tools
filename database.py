@@ -1,4 +1,3 @@
-import os
 import sqlite3
 
 import pkg_resources
@@ -149,4 +148,3 @@ class Database:
         self.execute("delete from sqlite_master where type in ('table', 'index', 'trigger')")
         self.execute("PRAGMA writable_schema = 0;")
         self.execute("VACUUM")
-

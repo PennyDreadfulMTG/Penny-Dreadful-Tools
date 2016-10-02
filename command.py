@@ -4,7 +4,6 @@ import sys
 import bot
 import fetcher
 
-
 async def handle_command(message):
     global STATE
     STATE = bot.STATE

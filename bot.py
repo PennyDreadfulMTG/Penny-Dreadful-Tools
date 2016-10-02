@@ -2,15 +2,13 @@ import collections
 import hashlib
 import os
 import re
-import random
-import sys
 import types
 import unicodedata
 import urllib.parse
 
 import discord
 
-import commands
+import command
 import configuration
 import fetcher
 import oracle
@@ -175,7 +173,7 @@ async def respond_to_card_names(message):
     await post_cards(cards, message.channel)
 
 async def respond_to_command(message):
-    await commands.handle_command(message)
+    await command.handle_command(message)
 
 @STATE.client.event
 async def on_message(message):

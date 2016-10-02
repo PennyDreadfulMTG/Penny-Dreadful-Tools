@@ -2,15 +2,13 @@ import collections
 import hashlib
 import os
 import re
-import random
-import sys
 import types
 import unicodedata
 import urllib.parse
 
 import discord
 
-import commands
+import command
 import configuration
 import fetcher
 import oracle
@@ -135,7 +133,7 @@ def complex_search(query):
     print('Searching for {query}'.format(query=query))
     return search.search(query)
 
-async def post_cards(cards, channel):
+async def post_cards(cards, channel, additional_text=''):
     if len(cards) == 0:
         await STATE.client.send_message(channel, 'No matches.')
         return
@@ -158,6 +156,8 @@ async def post_cards(cards, channel):
             text += emoji.replace_emoji(cards[0].text, channel)
         else:
             text += 'No image available.'
+    text += '\n' + additional_text
+    if image_file is None:
         await STATE.client.send_message(channel, text)
     else:
         await STATE.client.send_file(channel, image_file, content=text)
@@ -173,7 +173,7 @@ async def respond_to_card_names(message):
     await post_cards(cards, message.channel)
 
 async def respond_to_command(message):
-    await commands.handle_command(message)
+    await command.handle_command(message)
 
 @STATE.client.event
 async def on_message(message):

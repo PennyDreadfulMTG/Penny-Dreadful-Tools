@@ -117,7 +117,7 @@ Want to contribute? Send a Pull Request."""
         """`!barbs` Gives Volvary's helpful advice for when to sideboard in Aura Barbs."""
         msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
         await STATE.client.send_message(channel, msg)
-    
+
     async def quality(self,channel):
         """A helpful reminder about everyone's favorite way to play digital Magic"""
         msg = "**Magic Online** is a Quality™ Program."

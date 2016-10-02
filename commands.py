@@ -16,7 +16,7 @@ async def handle_command(message):
 
     method = [m for m in dir(Commands) if m == cmd]
     if len(method) > 0:
-        getattr(Commands, method[0])(Commands, message.channel, args)
+        await getattr(Commands, method[0])(Commands, message.channel, args)
     else:
         await STATE.client.send_message(message.channel, 'Unknown command `{cmd}`. Try `!help`?'.format(cmd=cmd))
     

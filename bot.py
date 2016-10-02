@@ -173,7 +173,7 @@ async def respond_to_card_names(message):
     await post_cards(cards, message.channel)
 
 async def respond_to_command(message):
-    commands.handle_command(message)
+    await commands.handle_command(message)
 
 @STATE.client.event
 async def on_message(message):

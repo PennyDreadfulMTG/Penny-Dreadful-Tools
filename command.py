@@ -92,9 +92,12 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_message(channel, 'Rebooting!')
         sys.exit()
 
-    async def search(self, bot, channel, args):
+    async def search(self, bot, channel, args, author):
         """`!search query` Search for cards, using a magidex style query."""
         cards = complex_search(args)
+        if len(cards) == 0:
+            await bot.client.send_message(channel, '{0}: Not matches.'.format(author.mention))
+            return
         additional_text = ''
         if len(cards) > 10:
             additional_text = 'http://magidex.com/search/?q=' + escape(args)
@@ -103,6 +106,9 @@ Want to contribute? Send a Pull Request."""
     async def bigsearch(self, bot, channel, args, author):
         """`!bigsearch` Show all the cards relating to a query. Large searches will be returned to you via PM."""
         cards = bot.complex_search(args)
+        if len(cards) == 0:
+            await bot.client.send_message(channel, '{0}: Not matches.'.format(author.mention))
+            return
         if len(cards) > 10 and not channel.is_private:
             msg = "Search contains {n} cards.  Sending you the results through Private Message".format(n=len(cards))
             await bot.client.send_message(channel, msg)

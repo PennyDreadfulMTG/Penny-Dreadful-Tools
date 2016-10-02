@@ -66,20 +66,18 @@ def test_partial_query():
 #     assert len(command.STATE.legal_cards) > 0
 
 def test_legality_emoji():
-    Oracle = oracle.Oracle()
-    legal_cards = Oracle.get_legal_cards()
+    legal_cards = oracle.Oracle().get_legal_cards()
     assert len(legal_cards) > 0
-    legal_card = command.cards_from_query('island', Oracle)[0]
+    legal_card = command.cards_from_query('island', oracle.Oracle())[0]
     assert command.legal_emoji(legal_card, legal_cards) == ':white_check_mark:'
-    illegal_card = command.cards_from_query('black lotus', Oracle)[0]
+    illegal_card = command.cards_from_query('black lotus', oracle.Oracle())[0]
     assert command.legal_emoji(illegal_card, legal_cards) == ':no_entry_sign:'
     assert command.legal_emoji(illegal_card, legal_cards, True) == ':no_entry_sign: (not legal in PD)'
 
 def test_accents():
-    Oracle = oracle.Oracle()
-    cards = command.cards_from_query('Lim-Dûl the Necromancer', Oracle)
+    cards = command.cards_from_query('Lim-Dûl the Necromancer', oracle.Oracle())
     assert len(cards) == 1
-    cards = command.cards_from_query('Séance', Oracle)
+    cards = command.cards_from_query('Séance', oracle.Oracle())
     assert len(cards) == 1
 
     # The following two don't currently work. But should be turned on once they do.

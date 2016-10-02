@@ -13,7 +13,7 @@ import configuration
 import database
 
 
-Database = database.Database()
+DATABASE = database.Database()
 
 def legal_cards():
     lm = last_modified('legal_cards')
@@ -75,11 +75,11 @@ def store(url, path):
         raise FetchException(e)
 
 def last_modified(resource):
-    return Database.value("SELECT last_modified FROM fetcher WHERE resource = ?", [resource])
+    return DATABASE.value("SELECT last_modified FROM fetcher WHERE resource = ?", [resource])
 
 def set_last_modified(resource):
     httptime = formatdate(timeval=None, localtime=False, usegmt=True)
-    Database.execute("INSERT INTO fetcher (resource, last_modified) VALUES (?, ?)", [resource, httptime])
+    DATABASE.execute("INSERT INTO fetcher (resource, last_modified) VALUES (?, ?)", [resource, httptime])
 
 class FetchException(Exception):
     pass

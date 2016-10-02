@@ -7,11 +7,11 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 1
+    schema_version = 20
 
     @staticmethod
     def escape(s):
-        if s.isdecimal():
+        if str(s).isdecimal():
             return s
         encodable = s.encode('utf-8', 'strict').decode('utf-8')
         if encodable.find('\x00') >= 0:
@@ -19,16 +19,19 @@ class Database:
         return "'{escaped}'".format(escaped=encodable.replace("'", "''"))
 
     def __init__(self):
-        db = configuration.get('database')
-        self.database = sqlite3.connect(db)
-        self.database.row_factory = sqlite3.Row
+        self.open()
         try:
             self.version()
             if self.db_version() < self.schema_version:
-                self.droptables()
+                self.delete()
                 self.setup()
         except sqlite3.OperationalError:
             self.setup()
+
+    def open(self):
+        db = configuration.get('database')
+        self.database = sqlite3.connect(db)
+        self.database.row_factory = sqlite3.Row
 
     def version(self):
         return pkg_resources.parse_version(self.value('SELECT version FROM version', [], '0'))
@@ -58,8 +61,8 @@ class Database:
         self.execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER)')
         self.execute('INSERT INTO db_version (version) VALUES ({0})'.format(self.schema_version))
         self.execute('CREATE TABLE IF NOT EXISTS version (version TEXT)')
-        sql = 'CREATE TABLE card (id INTEGER PRIMARY KEY, pd_legal INTEGER, '
-        sql += ', '.join(name + ' ' + type for name, type in card.properties().items())
+        sql = 'CREATE TABLE IF NOT EXISTS card (id INTEGER PRIMARY KEY, pd_legal INTEGER, '
+        sql += ', '.join('{name} {type}'.format(name=name, type=type) for name, type in card.properties().items())
         sql += ')'
         self.execute(sql)
         self.execute("""CREATE TABLE IF NOT EXISTS card_name (
@@ -68,6 +71,19 @@ class Database:
             name TEXT NOT NULL,
             FOREIGN KEY(card_id) REFERENCES card(id)
         )""")
+        sql = 'CREATE TABLE IF NOT EXISTS `set` (id INTEGER PRIMARY KEY, '
+        sql += ', '.join('{name} {type}'.format(name=name, type=type) for name, type in card.set_properties().items())
+        sql += ')'
+        self.execute(sql)
+        sql = 'CREATE TABLE IF NOT EXISTS printing ('
+        sql += 'id INTEGER PRIMARY KEY,'
+        sql += 'card_id INTEGER NOT NULL, '
+        sql += 'set_id INTEGER NOT NULL, '
+        sql += 'rarity_id INTEGER, '
+        sql += ', '.join('{name} {type}'.format(name=name, type=type) for name, type in card.printing_properties().items())
+        sql += ', FOREIGN KEY(card_id) REFERENCES card(id), '
+        sql += 'FOREIGN KEY(set_id) REFERENCES `set`(id))'
+        self.execute(sql)
         self.execute('CREATE TABLE IF NOT EXISTS color (id INTEGER PRIMARY KEY, name TEXT, symbol TEXT)')
         self.execute("""CREATE TABLE IF NOT EXISTS card_color (
             id INTEGER PRIMARY KEY,
@@ -101,11 +117,16 @@ class Database:
             subtype TEXT NOT NULL,
             FOREIGN KEY(card_id) REFERENCES card(id)
         )""")
+        self.execute("""CREATE TABLE card_alias (
+            id INTEGER PRIMARY KEY,
+            card_id INTEGER NOT NULL,
+            alias TEXT NOT NULL,
+            FOREIGN KEY(card_id) REFERENCES card(id)
+        )""")
         self.execute("""CREATE TABLE IF NOT EXISTS rarity (
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL
         )""")
-        self.execute('DELETE FROM color')
         self.execute("""INSERT INTO color (name, symbol) VALUES
             ('White', 'W'),
             ('Blue', 'U'),
@@ -113,25 +134,17 @@ class Database:
             ('Red', 'R'),
             ('Green', 'G')
         """)
-        self.execute('DELETE FROM rarity')
         self.execute("""INSERT INTO rarity (name) VALUES
+            ('Basic Land'),
             ('Common'),
             ('Uncommon'),
             ('Rare'),
-            ('Mythic Rare'),
-            ('Special')
+            ('Mythic Rare')
         """)
 
-    # Drop All Tables, so we can reinit
-    def droptables(self):
-        self.execute('DROP TABLE IF EXISTS card')
-        self.execute('DROP TABLE IF EXISTS card_color')
-        self.execute('DROP TABLE IF EXISTS card_color_identity')
-        self.execute('DROP TABLE IF EXISTS card_name')
-        self.execute('DROP TABLE IF EXISTS card_subtype')
-        self.execute('DROP TABLE IF EXISTS card_supertype')
-        self.execute('DROP TABLE IF EXISTS card_type')
-        self.execute('DROP TABLE IF EXISTS color')
-        self.execute('DROP TABLE IF EXISTS rarity')
-        self.execute('DROP TABLE IF EXISTS version')
-        self.execute('DROP TABLE IF EXISTS db_version')
+    # Drop the database so we can recreate it.
+    def delete(self):
+        self.execute("PRAGMA writable_schema = 1")
+        self.execute("delete from sqlite_master where type in ('table', 'index', 'trigger')")
+        self.execute("PRAGMA writable_schema = 0;")
+        self.execute("VACUUM")

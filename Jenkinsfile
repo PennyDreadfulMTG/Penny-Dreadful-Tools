@@ -4,9 +4,7 @@ node{
     }
 
     stage("pip") {
-        sh 'python3 -m pip install -U --user discord.py'
-        sh 'python3 -m pip install -U --user pytest'
-        sh 'python3 -m pip install -U --user pylint'
+        sh 'python3 -m pip install -U --user -r requirements.txt'
     }
 
     stage('Unit Tests') {
@@ -15,11 +13,7 @@ node{
     }
 
     stage('Pylint') {
-        sh 'PATH=$PATH:~/.local/bin/; pylint --rcfile=pylintrc $(find . -maxdepth 1 -name "*.py" -print)'
-        postBuild {
-            always {
-               step([$class: 'WarningsPublisher', canComputeNew: false, canResolveRelativePaths: false, canRunOnFailed: true, consoleParsers: [[parserName: 'PyLint']], defaultEncoding: '', excludePattern: '', failedTotalAll: '0', healthy: '', includePattern: '', messagesPattern: '', unHealthy: ''])
-            }
-        }
+        sh 'PATH=$PATH:~/.local/bin/; pylint -f parseable --rcfile=pylintrc $(find . -name "*.py" -print) | tee pylint.log'
+        step([$class: 'WarningsPublisher', canComputeNew: false, canResolveRelativePaths: false, canRunOnFailed: true, excludePattern: '', failedTotalAll: '0', failedTotalHigh: '0', failedTotalLow: '0', failedTotalNormal: '0', healthy: '0', includePattern: '', messagesPattern: '', parserConfigurations: [[parserName: 'PyLint', pattern: 'pylint.log']], unHealthy: '10'])
     }
 }

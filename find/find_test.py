@@ -71,4 +71,3 @@ def test_complex():
 def do_test(query, expected):
     where_clause = search.parse(search.tokenize(query))
     assert where_clause == expected or print('\nQuery: {query}\nExpected: {expected}\n  Actual: {actual}'.format(query=query, expected=expected, actual=where_clause))
-

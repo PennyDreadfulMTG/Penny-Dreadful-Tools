@@ -25,3 +25,8 @@ lint:
 	@echo
 	@find . -name "*.py" | xargs pylint
 	@echo
+
+# Make a branch based off of current (remote) master with all your local changes preserved (but not added).
+branch:
+	@if test "$(BRANCH)" = ""; then echo 'Usage: make branch BRANCH=branchname'; exit 1; fi
+	@git stash -a && git checkout master && git pull && git checkout -b $(BRANCH) && git stash pop

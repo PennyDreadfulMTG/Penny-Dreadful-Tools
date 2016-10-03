@@ -11,6 +11,9 @@ def test_match():
     assert not search.Key.match([' '])
     assert search.Criterion.match(['t', 'o', 'u', '>', '2'])
 
+def test_uppercase():
+    do_test('F:pd', '(pd_legal = 1)')
+
 def test_subtype():
     do_test('subtype:warrior', "(id IN (SELECT card_id FROM card_subtype WHERE subtype LIKE '%warrior%'))")
 

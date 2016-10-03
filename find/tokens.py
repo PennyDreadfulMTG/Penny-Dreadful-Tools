@@ -13,7 +13,7 @@ class Token:
     def find(cls, chars):
         s = ''.join(chars)
         for value in cls.values:
-            if s.startswith(value):
+            if s.lower().startswith(value.lower()):
                 return value
         return ''
 

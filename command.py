@@ -96,7 +96,7 @@ Want to contribute? Send a Pull Request."""
         """`!search query` Search for cards, using a magidex style query."""
         cards = complex_search(args)
         if len(cards) == 0:
-            await bot.client.send_message(channel, '{0}: Not matches.'.format(author.mention))
+            await bot.client.send_message(channel, '{0}: No matches.'.format(author.mention))
             return
         additional_text = ''
         if len(cards) > 10:
@@ -107,7 +107,7 @@ Want to contribute? Send a Pull Request."""
         """`!bigsearch` Show all the cards relating to a query. Large searches will be returned to you via PM."""
         cards = bot.complex_search(args)
         if len(cards) == 0:
-            await bot.client.send_message(channel, '{0}: Not matches.'.format(author.mention))
+            await bot.client.send_message(channel, '{0}: No matches.'.format(author.mention))
             return
         if len(cards) > 10 and not channel.is_private:
             msg = "Search contains {n} cards.  Sending you the results through Private Message".format(n=len(cards))

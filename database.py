@@ -7,10 +7,10 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 22
+    schema_version = 24
 
     @staticmethod
-    def escape(s):
+    def escape(s) -> str:
         if str(s).isdecimal():
             return s
         encodable = s.encode('utf-8', 'strict').decode('utf-8')
@@ -33,10 +33,10 @@ class Database:
         self.database = sqlite3.connect(db)
         self.database.row_factory = sqlite3.Row
 
-    def version(self):
+    def version(self) -> str:
         return pkg_resources.parse_version(self.value('SELECT version FROM version', [], '0'))
 
-    def db_version(self):
+    def db_version(self) -> int:
         return self.value('SELECT version FROM db_version', [], '0')
 
     def execute(self, sql, args=None):

@@ -54,7 +54,7 @@ class Bot:
         if len(cards) > 10:
             image_file = None
         else:
-            image_file = command.download_image(cards)
+            image_file = command.download_image(cards, self.oracle)
         if image_file is None:
             text += '\n\n'
             if len(cards) == 1:

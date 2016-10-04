@@ -6,12 +6,14 @@ import re
 import sys
 import unicodedata
 import urllib.parse
+from typing import List
 
 import configuration
 import emoji
 import fetcher
-
+from card import Card
 from find import search
+from oracle import Oracle
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -88,7 +90,7 @@ Want to contribute? Send a Pull Request."""
         await bot.post_cards(cards, channel)
 
     async def update(self, bot, channel):
-        bot.legal_cards = bot.oracle.get_legal_cards()
+        bot.legal_cards = bot.oracle.get_legal_cards(True)
         await bot.client.send_message(channel, 'Reloaded list of legal cards.')
 
     async def restartbot(self, bot, channel):
@@ -152,17 +154,17 @@ Want to contribute? Send a Pull Request."""
         await bot.post_cards(rhinos, channel, msg)
 
 
-def escape(str_input):
+def escape(str_input) -> str:
     # Expand 'AE' into two characters. This matches the legal list and
     # WotC's naming scheme in Kaladesh, and is compatible with the
     # image server and magidex.
     return '+'.join(urllib.parse.quote(cardname.replace(u'Æ', 'AE')) for cardname in str_input.split(' ')).lower()
 
-def better_image(cards):
+def better_image(cards) -> str:
     c = '|'.join(card.name for card in cards)
     return 'http://magic.bluebones.net/proxies/?c={c}'.format(c=escape(c))
 
-def http_image(multiverse_id):
+def http_image(multiverse_id) -> str:
     return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(multiverse_id)    +'.jpg'
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
@@ -173,7 +175,7 @@ def uniqify_cards(cards):
         results[card.name.lower()] = card
     return results.values()
 
-def acceptable_file(filepath):
+def acceptable_file(filepath: str) -> bool:
     return os.path.isfile(filepath) and os.path.getsize(filepath) > 0
 
 def basename(cards):
@@ -182,7 +184,7 @@ def basename(cards):
 def unaccent(s):
     return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
 
-def download_image(cards):
+def download_image(cards: List[Card], oracle: Oracle) -> str:
     imagename = basename(cards)
     # Hash the filename if it's otherwise going to be too large to use.
     if len(imagename) > 240:
@@ -198,18 +200,20 @@ def download_image(cards):
         print('Error: {e}'.format(e=e))
     if acceptable_file(filepath):
         return filepath
-    multiverse_id = cards[0].multiverseid
-    if multiverse_id and multiverse_id > 0:
-        print('Trying to get fallback image for {imagename}'.format(imagename=imagename))
-        try:
-            fetcher.store(http_image(multiverse_id), filepath)
-        except fetcher.FetchException as e:
-            print('Error: {e}'.format(e=e))
-        if acceptable_file(filepath):
-            return filepath
+    printings = oracle.get_printings(cards[0])
+    if len(printings) > 0:
+        multiverse_id = printings[0].multiverseid
+        if multiverse_id and int(multiverse_id) > 0:
+            print('Trying to get fallback image for {imagename}'.format(imagename=imagename))
+            try:
+                fetcher.store(http_image(multiverse_id), filepath)
+            except fetcher.FetchException as e:
+                print('Error: {e}'.format(e=e))
+            if acceptable_file(filepath):
+                return filepath
     return None
 
-def parse_queries(content):
+def parse_queries(content: str) -> List[str]:
     queries = re.findall(r'\[([^\]]*)\]', content)
     return [query.lower() for query in queries]
 

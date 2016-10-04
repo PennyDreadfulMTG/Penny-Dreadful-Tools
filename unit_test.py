@@ -105,7 +105,7 @@ def test_split_cards():
     assert len(cards) == 1
     cards = command.cards_from_query('trouble', oracle.Oracle())
     assert len(cards) == 1
-    
+
     #cards = command.cards_from_query('Toil // Trouble', oracle.Oracle())
     #assert len(cards) == 1
 

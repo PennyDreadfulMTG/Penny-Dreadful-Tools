@@ -1,4 +1,5 @@
 import collections
+import datetime
 import hashlib
 import os
 import random
@@ -152,6 +153,16 @@ Want to contribute? Send a Pull Request."""
         msg += " Then there's {reanimate}. It can get back one of our rhinos, so that's a rhino.".format(reanimate=rhinos[2].name)
         msg += " And then we have {search}. It's a bit of a stretch, but that's a rhino too.".format(search=rhinos[3].name)
         await bot.post_cards(rhinos, channel, msg)
+
+    async def rotation(self, bot, channel):
+        standard = fetcher.whatsinstandard()
+        for release in standard:
+            reldate = datetime.datetime.strptime(release["enter_date"], "%Y-%m-%dT%H:%M:%S.%fZ")
+            if reldate > datetime.datetime.now():
+                diff = reldate - datetime.datetime.now()
+                msg = "The next rotation is in {diff}".format(diff=diff)
+                await bot.client.send_message(channel, msg)
+                return
 
 
 def escape(str_input) -> str:

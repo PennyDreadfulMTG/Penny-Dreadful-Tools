@@ -135,6 +135,19 @@ Want to contribute? Send a Pull Request."""
         msg = "**Magic Online** is a Quality™ Program."
         await bot.client.send_message(channel, msg)
 
+    async def rhinos(self, bot, channel):
+        """Anything can be a rhino if you try hard enough"""
+        rhinos = []
+        rhinos.extend(cards_from_query("Siege Rhino", bot.oracle))
+        rhinos.append(random.choice(complex_search('f:pd o:"copy of target creature"')))
+        rhinos.append(random.choice(complex_search('f:pd o:"return target creature card from your graveyard to the battlefield"')))
+        rhinos.append(random.choice(complex_search('f:pd o:"search your library for a creature"')))        
+        msg = "\nSo of course we have {rhino}.".format(rhino=rhinos[0].name)
+        msg += " And we have {copy}. It can become a rhino, so that's a rhino.".format(copy=rhinos[1].name)
+        msg += " Then there's {reanimate}. It can get back one of our rhinos, so that's a rhino.".format(reanimate=rhinos[2].name)
+        msg += " And then we have {search}. It's a bit of a stretch, but that's a rhino too.".format(search=rhinos[3].name)
+        await bot.post_cards(rhinos, channel, msg)
+
 
 def escape(str_input):
     # Expand 'AE' into two characters. This matches the legal list and

@@ -105,7 +105,7 @@ Want to contribute? Send a Pull Request."""
 
     async def bigsearch(self, bot, channel, args, author):
         """`!bigsearch` Show all the cards relating to a query. Large searches will be returned to you via PM."""
-        cards = bot.complex_search(args)
+        cards = complex_search(args)
         if len(cards) == 0:
             await bot.client.send_message(channel, '{0}: No matches.'.format(author.mention))
             return
@@ -113,27 +113,15 @@ Want to contribute? Send a Pull Request."""
             msg = "Search contains {n} cards.  Sending you the results through Private Message".format(n=len(cards))
             await bot.client.send_message(channel, msg)
             channel = author
-        more_text = ''
-        text = ', '.join('{name} {legal}'.format(name=card.name, legal=legal_emoji(card, bot.legal_cards)) for card in cards)
-        text += more_text
-        if len(cards) > 10:
-            image_file = None
-        else:
-            image_file = bot.download_image(cards)
-        if image_file is None:
-            await bot.client.send_message(channel, text)
-        else:
-            await bot.client.send_file(channel, image_file, content=text)
+        await bot.post_cards(cards, channel, verbose=True)
 
     async def status(self, bot, channel):
         """`!status` Gives the status of MTGO, UP or DOWN."""
         status = fetcher.mtgo_status()
         await bot.client.send_message(channel, 'MTGO is {status}'.format(status=status))
 
-
     async def echo(self, bot, channel, args):
-        s = args
-        s = emoji.replace_emoji(s, channel)
+        s = emoji.replace_emoji(args, channel)
         print('Echoing {s}'.format(s=s))
         await bot.client.send_message(channel, s)
 
@@ -194,7 +182,7 @@ def download_image(cards):
         print('Error: {e}'.format(e=e))
     if acceptable_file(filepath):
         return filepath
-    multiverse_id = cards[0].multiverse_id
+    multiverse_id = cards[0].multiverseid
     if multiverse_id and multiverse_id > 0:
         print('Trying to get fallback image for {imagename}'.format(imagename=imagename))
         try:
@@ -247,5 +235,7 @@ def legal_emoji(card, legal_cards, verbose=False):
     return s
 
 def complex_search(query):
+    if query == '':
+        return []
     print('Searching for {query}'.format(query=query))
     return search.search(query)

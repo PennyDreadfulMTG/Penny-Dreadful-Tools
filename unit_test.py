@@ -19,7 +19,7 @@ def test_imagedownload():
 
 # Check that we can fall back to the Gatherer images if all else fails.
 def test_fallbackimagedownload():
-    filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='avon_island.jpg')
+    filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='avon-island.jpg')
     if command.acceptable_file(filepath):
         os.remove(filepath)
     c = card.Card({'name': 'Avon Island', 'multiverseid': 26301})
@@ -61,9 +61,9 @@ def test_partial_query():
 
 # Check that the list of legal cards is being fetched correctly.
 # BAKERT this test now very problematic
-# def test_legality_list():
-#     command.update_legality()
-#     assert len(command.STATE.legal_cards) > 0
+def test_legality_list():
+    legal_cards = oracle.Oracle().get_legal_cards()
+    assert len(legal_cards) > 0
 
 def test_legality_emoji():
     legal_cards = oracle.Oracle().get_legal_cards()
@@ -82,10 +82,10 @@ def test_accents():
 
     # The following two don't currently work. But should be turned on once they do.
 
-    #cards = command.cards_from_query('Lim-Dul the Necromancer')
-    #assert len(cards) == 1
-    #cards = command.cards_from_query('Seance')
-    #assert len(cards) == 1
+    cards = command.cards_from_query('Lim-Dul the Necromancer', oracle.Oracle())
+    assert len(cards) == 1
+    cards = command.cards_from_query('Seance', oracle.Oracle())
+    assert len(cards) == 1
 
 def test_aether():
     cards = command.cards_from_query('Æther Spellbomb', oracle.Oracle())
@@ -99,3 +99,15 @@ def test_fetcher_mod_since():
     lmtime = formatdate(timeval=lmtime, localtime=False, usegmt=True)
     val = fetcher.fetch("http://pdmtgo.com/legal_cards.txt", if_modified_since=lmtime)
     assert val == ''
+
+def test_split_cards():
+    cards = command.cards_from_query('toil', oracle.Oracle())
+    assert len(cards) == 1
+    cards = command.cards_from_query('trouble', oracle.Oracle())
+    assert len(cards) == 1
+
+    #cards = command.cards_from_query('Toil // Trouble', oracle.Oracle())
+    #assert len(cards) == 1
+
+    #assert command.download_image(cards) != None
+    

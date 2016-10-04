@@ -65,7 +65,10 @@ Addiional Commands:"""
                 continue
             method = getattr(self, methodname)
             if method.__doc__:
-                msg += '\n{0}'.format(method.__doc__)
+                if not method.__doc__.startswith('`'):
+                    msg += '\n`!{0}` {1}'.format(methodname, method.__doc__)
+                else:
+                    msg += '\n{0}'.format(method.__doc__)
         msg += """
 
 Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues

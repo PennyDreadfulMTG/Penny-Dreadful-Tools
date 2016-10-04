@@ -8,7 +8,7 @@ node{
     }
 
     stage('Unit Tests') {
-        sh 'PATH=$PATH:~/.local/bin/; pytest --junitxml=test_results.xml'
+        sh 'PATH=$PATH:~/.local/bin/; pytest --junitxml=test_results.xml || exit 0'
         junit 'test_results.xml'
     }
 

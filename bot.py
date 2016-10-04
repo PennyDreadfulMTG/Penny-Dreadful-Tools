@@ -35,12 +35,12 @@ class Bot:
     async def respond_to_command(self, message):
         await command.handle_command(message, self)
 
-    async def post_cards(self, cards, channel, additional_text=''):
+    async def post_cards(self, cards, channel, additional_text='', verbose=False):
         if len(cards) == 0:
             await self.client.send_message(channel, 'No matches.')
             return
         more_text = ''
-        if len(cards) > 10:
+        if len(cards) > 10 and not verbose:
             more_text = ' and ' + str(len(cards) - 4) + ' more.'
             cards = cards[:4]
         if len(cards) == 1:
@@ -51,7 +51,10 @@ class Bot:
         else:
             text = ', '.join('{name} {legal}'.format(name=card.name, legal=command.legal_emoji(card, self.legal_cards)) for card in cards)
             text += more_text
-        image_file = command.download_image(cards)
+        if len(cards) > 10:
+            image_file = None
+        else:
+            image_file = command.download_image(cards)
         if image_file is None:
             text += '\n\n'
             if len(cards) == 1:

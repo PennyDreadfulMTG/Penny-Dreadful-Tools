@@ -22,12 +22,12 @@ def test_fallbackimagedownload():
     filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='avon_island.jpg')
     if command.acceptable_file(filepath):
         os.remove(filepath)
-    c = card.Card({'name': 'Avon Island', 'multiverse_id': 26301})
+    c = card.Card({'name': 'Avon Island', 'multiverseid': 26301})
     assert command.download_image([c]) is not None
 
 # Check that we can succesfully fail at getting an image
 def test_noimageavailable():
-    c = card.Card({'name': "Barry's Land", 'multiverse_id': 0})
+    c = card.Card({'name': "Barry's Land", 'multiverseid': 0})
     assert command.download_image([c]) is None
 
 # Search for a single card via full name

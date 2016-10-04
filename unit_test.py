@@ -1,11 +1,8 @@
-import asyncio
 import calendar
 import os
 import time
-import types
 from email.utils import formatdate
 
-import bot
 import card
 import command
 import configuration
@@ -110,51 +107,3 @@ def test_split_cards():
     #assert len(cards) == 1
 
     #assert command.download_image(cards) != None
-   
-def test_commands():
-    # Mock up assertions within the discord client.
-    # I love that Python lets us just ruin 3rd-party libraries like this.
-    async def fake_send_message(channel, text):
-        print('Responding with "{0}"'.format(text))
-        channel.calls += 1
-        assert channel != None 
-        assert text != None and text != ''
-    async def fake_send_file(channel, image_file, content=None):
-        print('Uploading "{0}", with additional text "{1}"'.format(image_file, content))
-        channel.calls += 1
-        assert channel != None
-        assert image_file != None and command.acceptable_file(image_file)
-        assert content != ''
-
-    fakebot = bot.Bot()
-    fakebot.client.send_message = fake_send_message
-    fakebot.client.send_file = fake_send_file
-
-    fakebot.legal_cards = ORACLE.get_legal_cards()
-
-    fakechannel = types.new_class('Channel')
-    fakechannel.is_private = True
-    fakechannel.calls = 0
-
-    loop = asyncio.get_event_loop()
-    for cmd in dir(command.Commands):
-        if cmd.startswith('_'):
-            continue
-        if cmd == "restartbot":
-            # Don't actually test whether we can call sys.exit().  That leads to problems
-            continue
-        calls = fakechannel.calls
-        
-        message = types.new_class('Message')
-        message.content = "!{0} args".format(cmd)
-        message.channel = fakechannel
-
-        message.author = types.new_class('User')
-        message.author.mention = "@nobody"
-
-        print("Calling {0}".format(message.content))
-        loop.run_until_complete(command.handle_command(message, fakebot))
-        assert fakechannel.calls > calls
-        calls = fakechannel.calls
-    
-    loop.close()

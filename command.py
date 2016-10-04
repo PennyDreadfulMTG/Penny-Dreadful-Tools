@@ -87,8 +87,8 @@ Want to contribute? Send a Pull Request."""
         cards = [bot.oracle.search(random.choice(bot.legal_cards))[0] for n in range(0, number)]
         await bot.post_cards(cards, channel)
 
-    async def reload(self, bot, channel):
-        bot.update_legality()
+    async def update(self, bot, channel):
+        bot.legal_cards = bot.oracle.get_legal_cards()
         await bot.client.send_message(channel, 'Reloaded list of legal cards.')
 
     async def restartbot(self, bot, channel):

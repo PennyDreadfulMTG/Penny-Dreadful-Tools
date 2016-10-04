@@ -16,20 +16,22 @@ def test_imagedownload():
     if command.acceptable_file(filepath):
         os.remove(filepath)
     c = card.Card({'name': 'Island'})
-    assert command.download_image([c]) is not None
+    assert command.download_image([c], ORACLE) is not None
 
 # Check that we can fall back to the Gatherer images if all else fails.
+# Note: Bluebones doesn't have Nalathni Dragon, while Gatherer does, which makes it slightly unique
 def test_fallbackimagedownload():
-    filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='avon-island.jpg')
+    filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='nalathni-dragon.jpg')
     if command.acceptable_file(filepath):
         os.remove(filepath)
-    c = card.Card({'name': 'Avon Island', 'multiverseid': 26301})
-    assert command.download_image([c]) is not None
+    c = []
+    c.extend(command.cards_from_query('Nalathni Dragon', ORACLE))
+    assert command.download_image(c, ORACLE) is not None
 
 # Check that we can succesfully fail at getting an image
 def test_noimageavailable():
-    c = card.Card({'name': "Barry's Land", 'multiverseid': 0})
-    assert command.download_image([c]) is None
+    c = card.Card({'name': "Barry's Land", 'id': 0, 'multiverseid': 0})
+    assert command.download_image([c], ORACLE) is None
 
 # Search for a single card via full name
 def test_solo_query():
@@ -103,7 +105,7 @@ def test_split_cards():
     cards = command.cards_from_query('trouble', ORACLE)
     assert len(cards) == 1
 
-    #cards = command.cards_from_query('Toil // Trouble', ORACLE)
-    #assert len(cards) == 1
+    assert command.download_image(cards, ORACLE) != None
 
-    #assert command.download_image(cards) != None
+    #cards = command.parse_queries('[Toil // Trouble]', ORACLE)
+    #assert len(cards) == 1

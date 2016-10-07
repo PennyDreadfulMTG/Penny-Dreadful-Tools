@@ -194,8 +194,8 @@ def set_where(name):
 def format_where(term):
     if term in ['pennydreadful', 'pd']:
         return '(pd_legal = 1)'
-    else:
-        raise InvalidValueException('{term} is not supported in format queries', term=term)
+    format_id = database.Database().value('SELECT id FROM format WHERE name LIKE ?', ['{term}%'.format(term=term)])
+    return "(id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))".format(format_id=format_id)
 
 def rarity_where(operator, term):
     rarity_id = value_lookup('rarity', term)

@@ -7,7 +7,7 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 27
+    schema_version = 31
 
     @staticmethod
     def escape(s) -> str:
@@ -125,6 +125,7 @@ class Database:
             id INTEGER PRIMARY KEY,
             card_id INTEGER NOT NULL,
             format_id INTEGER NOT NULL,
+            legality TEXT,
             FOREIGN KEY(card_id) REFERENCES card(id),
             FOREIGN KEY(format_id) REFERENCES format(id)
         )""")

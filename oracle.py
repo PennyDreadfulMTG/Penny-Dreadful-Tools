@@ -89,7 +89,7 @@ class Oracle:
             self.database.database.execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [card_id, subtype])
         for info in c.get('legalities', []):
             format_id = self.format_id(info['format'], True)
-            self.database.database.execute('INSERT INTO card_legality (card_id, format_id) VALUES (?, ?)', [card_id, format_id])
+            self.database.database.execute('INSERT INTO card_legality (card_id, format_id, legality) VALUES (?, ?, ?)', [card_id, format_id, info['legality']])
 
     def insert_set(self, s) -> None:
         sql = 'INSERT INTO `set` ('

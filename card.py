@@ -13,7 +13,6 @@ def properties():
         'toughness': 'TEXT',
         'loyalty': 'TEXT',
         'image_name': 'TEXT',
-        'border': 'TEXT',
         'hand': 'INTEGER',
         'life': 'INTEGER',
         'starter': 'INTEGER',
@@ -38,8 +37,9 @@ def printing_properties():
         'flavor': 'TEXT',
         'artist': 'TEXT',
         'number': 'TEXT',
-        'multiverseid': 'INTEGER',
+        'multiverseid': 'TEXT',
         'watermark': 'TEXT',
+        'border': 'TEXT',
         'timeshifted': 'INTEGER',
         'reserved': 'INTEGER',
         'release_date': 'INTEGER',
@@ -47,6 +47,12 @@ def printing_properties():
     }
 
 class Card(types.SimpleNamespace):
+    def __init__(self, params):
+        super().__init__()
+        for k in params.keys():
+            setattr(self, k, params[k])
+
+class Printing(types.SimpleNamespace):
     def __init__(self, params):
         super().__init__()
         for k in params.keys():

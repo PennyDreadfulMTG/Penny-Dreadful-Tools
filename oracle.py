@@ -23,7 +23,7 @@ class Oracle:
             self.update_card_aliases(aliases)
 
     def search(self, query):
-        sql = 'SELECT ' + (', '.join(property for property in card.properties())) \
+        sql = 'SELECT card.id, ' + (', '.join(property for property in card.properties())) \
             + ', alias ' \
             + ' FROM card LEFT OUTER JOIN card_alias on card.id = card_alias.card_id ' \
             + 'WHERE name LIKE ? OR alias LIKE ? ' \
@@ -31,8 +31,8 @@ class Oracle:
         rs = self.database.execute(sql, ['%' + query + '%', '%' + query + '%'])
         return [card.Card(r) for r in rs]
 
-    def get_legal_cards(self):
-        new_list = fetcher.legal_cards()
+    def get_legal_cards(self, force=False):
+        new_list = fetcher.legal_cards(force)
         if new_list == ['']:
             new_list = [card.Card(r).name.lower() for r in self.database.execute('SELECT name FROM card WHERE pd_legal = 1')]
             if len(new_list) == 0:
@@ -75,7 +75,7 @@ class Oracle:
         sql += ') VALUES ('
         sql += ', '.join('?' for prop in card.properties())
         sql += ')'
-        values = [c.get(underscore2camel(prop)) for prop in card.properties()]
+        values = [c.get(database2json(prop)) for prop in card.properties()]
         # self.database.execute commits after each statement, which we want to
         # avoid while inserting cards
         self.database.database.execute(sql, values)
@@ -94,7 +94,7 @@ class Oracle:
         for subtype in c.get('subtypes', []):
             self.database.database.execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [card_id, subtype])
 
-    def insert_set(self, s):
+    def insert_set(self, s) -> None:
         sql = 'INSERT INTO `set` ('
         sql += ', '.join(prop for prop in card.set_properties())
         sql += ') VALUES ('
@@ -119,6 +119,19 @@ class Oracle:
         rs = self.database.execute('SELECT DISTINCT layout FROM card')
         if sorted([x[0] for x in rs]) != sorted(Oracle.layouts()):
             print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid.')
+
+    def get_printings(self, generalized_card: card.Card):
+        sql = 'SELECT ' + (', '.join(property for property in card.printing_properties())) \
+            + ' FROM printing ' \
+            + ' WHERE card_id = ? ' \
+
+        rs = self.database.execute(sql, [generalized_card.id])
+        return [card.Printing(r) for r in rs]
+
+def database2json(propname: str) -> str:
+    #if propname == "system_id":
+    #    propname = "id"
+    return underscore2camel(propname)
 
 def underscore2camel(s):
     return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)

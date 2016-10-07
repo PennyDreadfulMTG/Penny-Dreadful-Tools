@@ -1,4 +1,5 @@
 import collections
+import datetime
 import hashlib
 import os
 import random
@@ -6,12 +7,14 @@ import re
 import sys
 import unicodedata
 import urllib.parse
+from typing import List
 
 import configuration
 import emoji
 import fetcher
-
+from card import Card
 from find import search
+from oracle import Oracle
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -65,7 +68,10 @@ Addiional Commands:"""
                 continue
             method = getattr(self, methodname)
             if method.__doc__:
-                msg += '\n{0}'.format(method.__doc__)
+                if not method.__doc__.startswith('`'):
+                    msg += '\n`!{0}` {1}'.format(methodname, method.__doc__)
+                else:
+                    msg += '\n{0}'.format(method.__doc__)
         msg += """
 
 Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues
@@ -84,8 +90,15 @@ Want to contribute? Send a Pull Request."""
         cards = [bot.oracle.search(random.choice(bot.legal_cards))[0] for n in range(0, number)]
         await bot.post_cards(cards, channel)
 
-    async def reload(self, bot, channel):
-        bot.update_legality()
+    async def p1p1(self, bot, channel):
+        """`!p1p1` Request a random PD legal draft pack
+`!random X` Request X random PD legal cards."""
+        cards = [bot.oracle.search(random.choice(bot.legal_cards))[0] for n in range(0, 15)]
+        await bot.client.send_message(channel, 'Pack 1, Pick 1 Game! If presented with this pack, what would you pick?')
+        await bot.post_cards(cards, channel, "", False, False, True)
+
+    async def update(self, bot, channel):
+        bot.legal_cards = bot.oracle.get_legal_cards(True)
         await bot.client.send_message(channel, 'Reloaded list of legal cards.')
 
     async def restartbot(self, bot, channel):
@@ -105,7 +118,7 @@ Want to contribute? Send a Pull Request."""
 
     async def bigsearch(self, bot, channel, args, author):
         """`!bigsearch` Show all the cards relating to a query. Large searches will be returned to you via PM."""
-        cards = bot.complex_search(args)
+        cards = complex_search(args)
         if len(cards) == 0:
             await bot.client.send_message(channel, '{0}: No matches.'.format(author.mention))
             return
@@ -113,27 +126,15 @@ Want to contribute? Send a Pull Request."""
             msg = "Search contains {n} cards.  Sending you the results through Private Message".format(n=len(cards))
             await bot.client.send_message(channel, msg)
             channel = author
-        more_text = ''
-        text = ', '.join('{name} {legal}'.format(name=card.name, legal=legal_emoji(card, bot.legal_cards)) for card in cards)
-        text += more_text
-        if len(cards) > 10:
-            image_file = None
-        else:
-            image_file = bot.download_image(cards)
-        if image_file is None:
-            await bot.client.send_message(channel, text)
-        else:
-            await bot.client.send_file(channel, image_file, content=text)
+        await bot.post_cards(cards, channel, verbose=True)
 
     async def status(self, bot, channel):
         """`!status` Gives the status of MTGO, UP or DOWN."""
         status = fetcher.mtgo_status()
         await bot.client.send_message(channel, 'MTGO is {status}'.format(status=status))
 
-
     async def echo(self, bot, channel, args):
-        s = args
-        s = emoji.replace_emoji(s, channel)
+        s = emoji.replace_emoji(args, channel)
         print('Echoing {s}'.format(s=s))
         await bot.client.send_message(channel, s)
 
@@ -147,18 +148,41 @@ Want to contribute? Send a Pull Request."""
         msg = "**Magic Online** is a Quality™ Program."
         await bot.client.send_message(channel, msg)
 
+    async def rhinos(self, bot, channel):
+        """Anything can be a rhino if you try hard enough"""
+        rhinos = []
+        rhinos.extend(cards_from_query("Siege Rhino", bot.oracle))
+        rhinos.append(random.choice(complex_search('f:pd o:"copy of target creature"')))
+        rhinos.append(random.choice(complex_search('f:pd o:"return target creature card from your graveyard to the battlefield"')))
+        rhinos.append(random.choice(complex_search('f:pd o:"search your library for a creature"')))
+        msg = "\nSo of course we have {rhino}.".format(rhino=rhinos[0].name)
+        msg += " And we have {copy}. It can become a rhino, so that's a rhino.".format(copy=rhinos[1].name)
+        msg += " Then there's {reanimate}. It can get back one of our rhinos, so that's a rhino.".format(reanimate=rhinos[2].name)
+        msg += " And then we have {search}. It's a bit of a stretch, but that's a rhino too.".format(search=rhinos[3].name)
+        await bot.post_cards(rhinos, channel, msg)
 
-def escape(str_input):
+    async def rotation(self, bot, channel):
+        standard = fetcher.whatsinstandard()
+        for release in standard:
+            reldate = datetime.datetime.strptime(release["enter_date"], "%Y-%m-%dT%H:%M:%S.%fZ")
+            if reldate > datetime.datetime.now():
+                diff = reldate - datetime.datetime.now()
+                msg = "The next rotation is in {diff}".format(diff=diff)
+                await bot.client.send_message(channel, msg)
+                return
+
+
+def escape(str_input) -> str:
     # Expand 'AE' into two characters. This matches the legal list and
     # WotC's naming scheme in Kaladesh, and is compatible with the
     # image server and magidex.
     return '+'.join(urllib.parse.quote(cardname.replace(u'Æ', 'AE')) for cardname in str_input.split(' ')).lower()
 
-def better_image(cards):
+def better_image(cards) -> str:
     c = '|'.join(card.name for card in cards)
     return 'http://magic.bluebones.net/proxies/?c={c}'.format(c=escape(c))
 
-def http_image(multiverse_id):
+def http_image(multiverse_id) -> str:
     return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(multiverse_id)    +'.jpg'
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
@@ -169,7 +193,7 @@ def uniqify_cards(cards):
         results[card.name.lower()] = card
     return results.values()
 
-def acceptable_file(filepath):
+def acceptable_file(filepath: str) -> bool:
     return os.path.isfile(filepath) and os.path.getsize(filepath) > 0
 
 def basename(cards):
@@ -178,7 +202,7 @@ def basename(cards):
 def unaccent(s):
     return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
 
-def download_image(cards):
+def download_image(cards: List[Card], oracle: Oracle) -> str:
     imagename = basename(cards)
     # Hash the filename if it's otherwise going to be too large to use.
     if len(imagename) > 240:
@@ -194,18 +218,22 @@ def download_image(cards):
         print('Error: {e}'.format(e=e))
     if acceptable_file(filepath):
         return filepath
-    multiverse_id = cards[0].multiverse_id
-    if multiverse_id and multiverse_id > 0:
-        print('Trying to get fallback image for {imagename}'.format(imagename=imagename))
-        try:
-            fetcher.store(http_image(multiverse_id), filepath)
-        except fetcher.FetchException as e:
-            print('Error: {e}'.format(e=e))
-        if acceptable_file(filepath):
-            return filepath
+    print(oracle)
+    print(oracle.get_printings(cards[0]))
+    printings = oracle.get_printings(cards[0])
+    if len(printings) > 0:
+        multiverse_id = printings[0].multiverseid
+        if multiverse_id and int(multiverse_id) > 0:
+            print('Trying to get fallback image for {imagename}'.format(imagename=imagename))
+            try:
+                fetcher.store(http_image(multiverse_id), filepath)
+            except fetcher.FetchException as e:
+                print('Error: {e}'.format(e=e))
+            if acceptable_file(filepath):
+                return filepath
     return None
 
-def parse_queries(content):
+def parse_queries(content: str) -> List[str]:
     queries = re.findall(r'\[([^\]]*)\]', content)
     return [query.lower() for query in queries]
 
@@ -247,5 +275,7 @@ def legal_emoji(card, legal_cards, verbose=False):
     return s
 
 def complex_search(query):
+    if query == '':
+        return []
     print('Searching for {query}'.format(query=query))
     return search.search(query)

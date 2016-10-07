@@ -87,10 +87,10 @@ def test_accents():
     assert len(cards) == 1
 
 def test_aether():
-    cards = command.cards_from_query('Æther Spellbomb', ORACLE)
-    assert len(cards) == 1
-    #cards = command.cards_from_query('aether Spellbomb')
+    #cards = command.cards_from_query('Æther Spellbomb', ORACLE)
     #assert len(cards) == 1
+    cards = command.cards_from_query('aether Spellbomb', ORACLE)
+    assert len(cards) == 1
 
 
 def test_fetcher_mod_since():

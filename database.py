@@ -7,7 +7,7 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 24
+    schema_version = 27
 
     @staticmethod
     def escape(s) -> str:
@@ -116,6 +116,17 @@ class Database:
             card_id INTEGER NOT NULL,
             subtype TEXT NOT NULL,
             FOREIGN KEY(card_id) REFERENCES card(id)
+        )""")
+        self.execute("""CREATE TABLE IF NOT EXISTS format (
+            id INTEGER PRIMARY KEY,
+            name TEXT NOT NULL
+        )""")
+        self.execute("""CREATE TABLE IF NOT EXISTS card_legality (
+            id INTEGER PRIMARY KEY,
+            card_id INTEGER NOT NULL,
+            format_id INTEGER NOT NULL,
+            FOREIGN KEY(card_id) REFERENCES card(id),
+            FOREIGN KEY(format_id) REFERENCES format(id)
         )""")
         self.execute("""CREATE TABLE IF NOT EXISTS card_alias (
             id INTEGER PRIMARY KEY,

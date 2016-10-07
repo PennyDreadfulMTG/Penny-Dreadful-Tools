@@ -12,6 +12,7 @@ class Oracle:
 
     def __init__(self):
         self.card_ids = {}
+        self.format_ids = {}
         self.database = database.Database()
         current_version = fetcher.version()
         if current_version > self.database.version():
@@ -86,6 +87,9 @@ class Oracle:
             self.database.database.execute('INSERT INTO card_supertype (card_id, supertype) VALUES (?, ?)', [card_id, supertype])
         for subtype in c.get('subtypes', []):
             self.database.database.execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [card_id, subtype])
+        for info in c.get('legalities', []):
+            format_id = self.format_id(info['format'], True)
+            self.database.database.execute('INSERT INTO card_legality (card_id, format_id) VALUES (?, ?)', [card_id, format_id])
 
     def insert_set(self, s) -> None:
         sql = 'INSERT INTO `set` ('
@@ -107,6 +111,18 @@ class Oracle:
             sql += ')'
             values = [card_id, set_id] + [c.get(underscore2camel(prop)) for prop in card.printing_properties()]
             self.database.database.execute(sql, values)
+
+    def format_id(self, name, allow_create=False):
+        if len(self.format_ids) == 0:
+            rs = self.database.execute('SELECT id, name FROM format')
+            for row in rs:
+                self.format_ids[row['name']] = row['id']
+        if name not in self.format_ids.keys() and allow_create:
+            self.database.execute('INSERT INTO format (name) VALUES (?)', [name])
+            self.format_ids[name] = self.database.value('SELECT last_insert_rowid()')
+        if name not in self.format_ids.keys():
+            return None
+        return self.format_ids[name]
 
     def check_layouts(self):
         rs = self.database.execute('SELECT DISTINCT layout FROM card')

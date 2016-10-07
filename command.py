@@ -225,7 +225,7 @@ def download_image(cards: List[Card], oracle: Oracle) -> str:
     return None
 
 def parse_queries(content: str) -> List[str]:
-    queries = re.findall(r'\[([^\]]*)\]', content)
+    queries = re.findall(r'\[?\[([^\]]*)\]\]?', content)
     return [query.lower() for query in queries]
 
 def cards_from_queries(queries, oracle):

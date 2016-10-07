@@ -84,5 +84,8 @@ def set_last_modified(resource):
     httptime = formatdate(timeval=None, localtime=False, usegmt=True)
     DATABASE.execute("INSERT INTO fetcher (resource, last_modified) VALUES (?, ?)", [resource, httptime])
 
+def whatsinstandard():
+    return json.loads(fetch('http://whatsinstandard.com/api/4/sets.json'))
+
 class FetchException(Exception):
     pass

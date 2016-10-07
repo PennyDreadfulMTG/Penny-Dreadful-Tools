@@ -32,7 +32,7 @@ def mtgo_status():
         return 'UNKNOWN'
 
 def all_cards():
-    s = unzip('https://mtgjson.com/json/AllCards.json.zip', 'AllCards.json')
+    s = unzip('https://mtgjson.com/json/AllCards-x.json.zip', 'AllCards-x.json')
     return json.loads(s)
 
 def all_sets():

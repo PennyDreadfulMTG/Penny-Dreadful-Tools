@@ -76,7 +76,7 @@ class Bot:
                 await self.client.send_message(channel, text)
             else:                
                 if text_written:
-                    await self.client.send_file(channel, image_file, content="")
+                    await self.client.send_file(channel, image_file, content=None)
                 else:
                     await self.client.send_file(channel, image_file, content=text)
                     text_written = True

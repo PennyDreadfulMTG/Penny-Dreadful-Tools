@@ -46,10 +46,10 @@ class Oracle:
     def update_database(self, new_version):
         self.database.execute('DELETE FROM version')
         cards = fetcher.all_cards()
-        for name, c in cards.items():
+        for _, c in cards.items():
             self.insert_card(c)
         sets = fetcher.all_sets()
-        for name, s in sets.items():
+        for _, s in sets.items():
             self.insert_set(s)
         self.database.database.commit()
         # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
@@ -69,7 +69,7 @@ class Oracle:
                 self.database.execute('INSERT INTO card_alias (card_id, alias) VALUES (?, ?)', [card_id, alias])
             else:
                 print("no card found named " + name + " for alias " + alias)
-    
+
     def insert_card(self, c):
         sql = 'INSERT INTO card ('
         sql += ', '.join(prop for prop in card.properties())

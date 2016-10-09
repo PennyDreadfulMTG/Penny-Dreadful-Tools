@@ -12,11 +12,16 @@ class Oracle:
 
     def __init__(self):
         self.card_ids = {}
+        self.format_ids = {}
         self.database = database.Database()
         current_version = fetcher.version()
         if current_version > self.database.version():
             print('Database update required')
             self.update_database(str(current_version))
+        aliases = fetcher.card_aliases()
+        if self.database.alias_count() != len(aliases):
+            print('Card alias update required')
+            self.update_card_aliases(aliases)
 
     def search(self, query):
         sql = 'SELECT card.id, ' + (', '.join(property for property in card.properties())) \
@@ -41,10 +46,10 @@ class Oracle:
     def update_database(self, new_version):
         self.database.execute('DELETE FROM version')
         cards = fetcher.all_cards()
-        for name, c in cards.items():
+        for _, c in cards.items():
             self.insert_card(c)
         sets = fetcher.all_sets()
-        for name, s in sets.items():
+        for _, s in sets.items():
             self.insert_set(s)
         self.database.database.commit()
         # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
@@ -53,14 +58,17 @@ class Oracle:
         rs = self.database.execute('SELECT id, name FROM rarity')
         for row in rs:
             self.database.execute('UPDATE printing SET rarity_id = ? WHERE rarity = ?', [row['id'], row['name']])
-        aliases = fetcher.card_aliases()
+        self.update_card_aliases(fetcher.card_aliases())
+        self.database.execute('INSERT INTO version (version) VALUES (?)', [new_version])
+
+    def update_card_aliases(self, aliases):
+        self.database.execute('DELETE FROM card_alias', [])
         for alias, name in aliases:
             card_id = self.database.value('SELECT id FROM card WHERE name = ?', [name])
             if card_id is not None:
                 self.database.execute('INSERT INTO card_alias (card_id, alias) VALUES (?, ?)', [card_id, alias])
             else:
-                print("no match for " + name)
-        self.database.execute('INSERT INTO version (version) VALUES (?)', [new_version])
+                print("no card found named " + name + " for alias " + alias)
 
     def insert_card(self, c):
         sql = 'INSERT INTO card ('
@@ -86,6 +94,9 @@ class Oracle:
             self.database.database.execute('INSERT INTO card_supertype (card_id, supertype) VALUES (?, ?)', [card_id, supertype])
         for subtype in c.get('subtypes', []):
             self.database.database.execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [card_id, subtype])
+        for info in c.get('legalities', []):
+            format_id = self.format_id(info['format'], True)
+            self.database.database.execute('INSERT INTO card_legality (card_id, format_id, legality) VALUES (?, ?, ?)', [card_id, format_id, info['legality']])
 
     def insert_set(self, s) -> None:
         sql = 'INSERT INTO `set` ('
@@ -107,6 +118,18 @@ class Oracle:
             sql += ')'
             values = [card_id, set_id] + [c.get(underscore2camel(prop)) for prop in card.printing_properties()]
             self.database.database.execute(sql, values)
+
+    def format_id(self, name, allow_create=False):
+        if len(self.format_ids) == 0:
+            rs = self.database.execute('SELECT id, name FROM format')
+            for row in rs:
+                self.format_ids[row['name']] = row['id']
+        if name not in self.format_ids.keys() and allow_create:
+            self.database.execute('INSERT INTO format (name) VALUES (?)', [name])
+            self.format_ids[name] = self.database.value('SELECT last_insert_rowid()')
+        if name not in self.format_ids.keys():
+            return None
+        return self.format_ids[name]
 
     def check_layouts(self):
         rs = self.database.execute('SELECT DISTINCT layout FROM card')

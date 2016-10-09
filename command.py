@@ -144,7 +144,10 @@ Want to contribute? Send a Pull Request."""
     async def rhinos(self, bot, channel):
         """`!rhinos` Anything can be a rhino if you try hard enough"""
         rhinos = []
-        rhinos.extend(cards_from_query("Siege Rhino", bot.oracle))
+        rhino_name = "Siege Rhino"
+        if random.random() < 0.1:
+            rhino_name = "Abundant Maw"
+        rhinos.extend(cards_from_query(rhino_name, bot.oracle))
         rhinos.append(random.choice(complex_search('f:pd o:"copy of target creature"')))
         rhinos.append(random.choice(complex_search('f:pd o:"return target creature card from your graveyard to the battlefield"')))
         rhinos.append(random.choice(complex_search('f:pd o:"search your library for a creature"')))
@@ -226,7 +229,7 @@ def download_image(cards: List[Card], oracle: Oracle) -> str:
     return None
 
 def parse_queries(content: str) -> List[str]:
-    queries = re.findall(r'\[([^\]]*)\]', content)
+    queries = re.findall(r'\[?\[([^\]]*)\]\]?', content)
     return [query.lower() for query in queries]
 
 def cards_from_queries(queries, oracle):

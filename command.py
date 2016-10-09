@@ -144,7 +144,10 @@ Want to contribute? Send a Pull Request."""
     async def rhinos(self, bot, channel):
         """Anything can be a rhino if you try hard enough"""
         rhinos = []
-        rhinos.extend(cards_from_query("Siege Rhino", bot.oracle))
+        rhino_name = "Siege Rhino"
+        if random.random() < 0.1:
+            rhino_name = "Abundant Maw"
+        rhinos.extend(cards_from_query(rhino_name, bot.oracle))
         rhinos.append(random.choice(complex_search('f:pd o:"copy of target creature"')))
         rhinos.append(random.choice(complex_search('f:pd o:"return target creature card from your graveyard to the battlefield"')))
         rhinos.append(random.choice(complex_search('f:pd o:"search your library for a creature"')))

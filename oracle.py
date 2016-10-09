@@ -18,6 +18,10 @@ class Oracle:
         if current_version > self.database.version():
             print('Database update required')
             self.update_database(str(current_version))
+        aliases = fetcher.card_aliases()
+        if self.database.alias_count() != len(aliases):
+            print('Card alias update required')
+            self.update_card_aliases(aliases)
 
     def search(self, query):
         sql = 'SELECT card.id, ' + (', '.join(property for property in card.properties())) \
@@ -42,10 +46,10 @@ class Oracle:
     def update_database(self, new_version):
         self.database.execute('DELETE FROM version')
         cards = fetcher.all_cards()
-        for name, c in cards.items():
+        for _, c in cards.items():
             self.insert_card(c)
         sets = fetcher.all_sets()
-        for name, s in sets.items():
+        for _, s in sets.items():
             self.insert_set(s)
         self.database.database.commit()
         # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
@@ -54,14 +58,17 @@ class Oracle:
         rs = self.database.execute('SELECT id, name FROM rarity')
         for row in rs:
             self.database.execute('UPDATE printing SET rarity_id = ? WHERE rarity = ?', [row['id'], row['name']])
-        aliases = fetcher.card_aliases()
+        self.update_card_aliases(fetcher.card_aliases())
+        self.database.execute('INSERT INTO version (version) VALUES (?)', [new_version])
+
+    def update_card_aliases(self, aliases):
+        self.database.execute('DELETE FROM card_alias', [])
         for alias, name in aliases:
             card_id = self.database.value('SELECT id FROM card WHERE name = ?', [name])
             if card_id is not None:
                 self.database.execute('INSERT INTO card_alias (card_id, alias) VALUES (?, ?)', [card_id, alias])
             else:
-                print("no match for " + name)
-        self.database.execute('INSERT INTO version (version) VALUES (?)', [new_version])
+                print("no card found named " + name + " for alias " + alias)
 
     def insert_card(self, c):
         sql = 'INSERT INTO card ('

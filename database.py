@@ -46,6 +46,9 @@ class Database:
         self.database.commit()
         return r
 
+    def alias_count(self):
+        return self.value('SELECT COUNT(*) FROM card_alias', [], 0)
+
     def value(self, sql, args=None, default=None):
         if args is None:
             args = []

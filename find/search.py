@@ -128,9 +128,9 @@ def parse_criterion(key, operator, term):
     if key.value() == 'q':
         return where(['name', 'type', 'text'], term.value())
     elif key.value() == 'color' or key.value() == 'c':
-        return subtable_where('color', term.value())
+        return color_where('color', term.value())
     elif key.value() == 'coloridentity' or key.value() == 'identity' or key.value() == 'ci':
-        return subtable_where('color_identity', term.value())
+        return color_where('color_identity', term.value())
     elif key.value() == 'text' or key.value() == 'o':
         return where(['text'], term.value())
     elif key.value() == 'type' or key.value() == 't':
@@ -188,6 +188,13 @@ def math_where(column, operator, term):
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(FALSE)'
     return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=database.escape(term))
+
+def color_where(subtable, term):
+    colors = list(term)
+    clause = ' OR '.join(subtable_where(subtable, color) for color in colors)
+    if len(colors) > 1:
+        clause = '({clause})'.format(clause=clause)
+    return clause
 
 def set_where(name):
     name_fuzzy = '%{name}%'.format(name=name)

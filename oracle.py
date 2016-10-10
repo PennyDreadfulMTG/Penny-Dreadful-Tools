@@ -1,3 +1,4 @@
+import datetime
 import re
 
 import card
@@ -104,7 +105,7 @@ class Oracle:
         sql += ') VALUES ('
         sql += ', '.join('?' for prop in card.set_properties())
         sql += ')'
-        values = [s.get(underscore2camel(prop)) for prop in card.set_properties()]
+        values = [date2int(s.get(underscore2camel(prop))) for prop in card.set_properties()]
         # self.database.execute commits after each statement, which we want to
         # avoid while inserting sets
         self.database.database.execute(sql, values)
@@ -151,3 +152,10 @@ def database2json(propname: str) -> str:
 
 def underscore2camel(s):
     return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)
+
+def date2int(s):
+    try:
+        dt = datetime.datetime.strptime(str(s), '%Y-%m-%d')
+        return dt.replace(tzinfo=datetime.timezone.utc).timestamp()
+    except ValueError:
+        return s

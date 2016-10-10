@@ -2,7 +2,6 @@ import types
 
 def properties():
     return {
-        'system_id': 'TEXT',
         'layout': 'TEXT',
         'name': 'TEXT',
         'mana_cost': 'TEXT',
@@ -33,6 +32,7 @@ def set_properties():
 
 def printing_properties():
     return {
+        'system_id': 'TEXT',
         'rarity': 'TEXT',
         'flavor': 'TEXT',
         'artist': 'TEXT',

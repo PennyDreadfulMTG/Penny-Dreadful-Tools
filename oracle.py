@@ -116,7 +116,7 @@ class Oracle:
             sql += ') VALUES (?, ?, '
             sql += ', '.join('?' for prop in card.printing_properties())
             sql += ')'
-            values = [card_id, set_id] + [c.get(underscore2camel(prop)) for prop in card.printing_properties()]
+            values = [card_id, set_id] + [c.get(database2json(prop)) for prop in card.printing_properties()]
             self.database.database.execute(sql, values)
 
     def format_id(self, name, allow_create=False):
@@ -145,8 +145,8 @@ class Oracle:
         return [card.Printing(r) for r in rs]
 
 def database2json(propname: str) -> str:
-    #if propname == "system_id":
-    #    propname = "id"
+    if propname == "system_id":
+       propname = "id"
     return underscore2camel(propname)
 
 def underscore2camel(s):

@@ -161,7 +161,7 @@ def where(keys, term, exact_match=False):
     for column in keys:
         if subsequent:
             s += ' OR '
-        s += '{column} LIKE {q}'.format(column=column, q=database.Database.escape(q))
+        s += '{column} LIKE {q}'.format(column=column, q=database.escape(q))
         subsequent = True
     s += ')'
     return s
@@ -176,7 +176,7 @@ def subtable_where(subtable, value):
         operator = '='
     else:
         column = subtable
-        v = database.Database.escape('%{v}%'.format(v=v))
+        v = database.escape('%{v}%'.format(v=v))
         operator = 'LIKE'
     return '(id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {value}))'.format(subtable=subtable, column=column, operator=operator, value=v)
 
@@ -185,11 +185,11 @@ def math_where(column, operator, term):
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(FALSE)'
-    return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=database.Database.escape(term))
+    return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=database.escape(term))
 
 def set_where(name):
     name_fuzzy = '%{name}%'.format(name=name)
-    return '(id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=database.Database.escape(name_fuzzy), name=database.Database.escape(name))
+    return '(id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=database.escape(name_fuzzy), name=database.escape(name))
 
 def format_where(term):
     if term in ['pennydreadful', 'pd']:

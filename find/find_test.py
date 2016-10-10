@@ -1,14 +1,13 @@
 from find import search
 
-# Run these tests from the project root with python3 -m "find.tests" find/tests.py
-
 def test_match():
     assert search.Key.match(['c'])
     assert search.Key.match(['mana'])
     assert not search.Key.match(['z'])
     assert not search.Key.match([''])
     assert not search.Key.match([' '])
-    assert search.Criterion.match(['t', 'o', 'u', '>', '2'])
+    assert not search.Criterion.match(list('magic:2uu'))
+    assert search.Criterion.match(list('tou>2'))
 
 def test_mana():
     do_test('mana=2WW', "(mana_cost = '{2}{W}{W}')")

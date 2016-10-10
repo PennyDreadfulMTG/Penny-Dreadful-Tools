@@ -115,6 +115,10 @@ Want to contribute? Send a Pull Request."""
         if len(cards) == 0:
             await bot.client.send_message(channel, '{0}: No matches.'.format(author.mention))
             return
+        if len(cards) > 100:
+            msg = "Search contains {n} cards.  Try magidex.com?".format(n=len(cards))
+            await bot.client.send_message(channel, msg)
+            return
         if len(cards) > 10 and not channel.is_private:
             msg = "Search contains {n} cards.  Sending you the results through Private Message".format(n=len(cards))
             await bot.client.send_message(channel, msg)

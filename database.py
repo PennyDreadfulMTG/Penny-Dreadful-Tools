@@ -7,7 +7,7 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 32
+    schema_version = 33
 
     def __init__(self):
         self.open()

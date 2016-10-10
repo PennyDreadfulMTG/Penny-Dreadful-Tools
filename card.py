@@ -42,7 +42,6 @@ def printing_properties():
         'border': 'TEXT',
         'timeshifted': 'INTEGER',
         'reserved': 'INTEGER',
-        'release_date': 'INTEGER',
         'mci_number': 'TEXT'
     }
 

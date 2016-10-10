@@ -146,7 +146,7 @@ class Oracle:
 
 def database2json(propname: str) -> str:
     if propname == "system_id":
-       propname = "id"
+        propname = "id"
     return underscore2camel(propname)
 
 def underscore2camel(s):

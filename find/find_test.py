@@ -9,6 +9,18 @@ def test_match():
     assert not search.Criterion.match(list('magic:2uu'))
     assert search.Criterion.match(list('tou>2'))
 
+def test_color_exclusively():
+    do_test('c!r', '((id IN (SELECT card_id FROM card_color WHERE color_id = 4)) AND (id NOT IN (SELECT card_id FROM card_color WHERE color_id <> 4)))')
+
+def test_color_exclusively2():
+    do_test('c!rg', '(((id IN (SELECT card_id FROM card_color WHERE color_id = 4)) OR (id IN (SELECT card_id FROM card_color WHERE color_id = 5))) AND (id NOT IN (SELECT card_id FROM card_color WHERE color_id <> 4 AND color_id <> 5)))')
+
+def test_colorless_exclusivity():
+    do_test('c!c', '(id NOT IN (SELECT card_id FROM card_color))')
+
+def test_colorless_exclusivity2():
+    do_test('c!cr', '(((id NOT IN (SELECT card_id FROM card_color)) OR (id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (id NOT IN (SELECT card_id FROM card_color WHERE color_id <> 4)))')
+
 def test_multiple_colors():
     do_test('c:rgw', "((id IN (SELECT card_id FROM card_color WHERE color_id = 4)) OR (id IN (SELECT card_id FROM card_color WHERE color_id = 5)) OR (id IN (SELECT card_id FROM card_color WHERE color_id = 1)))")
 

@@ -128,9 +128,9 @@ def parse_criterion(key, operator, term):
     if key.value() == 'q':
         return where(['name', 'type', 'text'], term.value())
     elif key.value() == 'color' or key.value() == 'c':
-        return color_where('color', term.value())
+        return color_where('color', operator.value(), term.value())
     elif key.value() == 'coloridentity' or key.value() == 'identity' or key.value() == 'ci':
-        return color_where('color_identity', term.value())
+        return color_where('color_identity', operator.value(), term.value())
     elif key.value() == 'text' or key.value() == 'o':
         return where(['text'], term.value())
     elif key.value() == 'type' or key.value() == 't':
@@ -168,18 +168,18 @@ def where(keys, term, exact_match=False):
     s += ')'
     return s
 
-def subtable_where(subtable, value):
+def subtable_where(subtable, value, operator=None):
     # Specialcase colorless because it has no entry in the color table.
     if subtable == 'color' and value == 'c':
         return '(id NOT IN (SELECT card_id FROM card_color))'
     v = value_lookup(subtable, value)
     if str(v).isdigit():
         column = '{subtable}_id'.format(subtable=subtable).replace('color_identity', 'color')
-        operator = '='
+        operator = '=' if not operator else operator
     else:
         column = subtable
         v = database.escape('%{v}%'.format(v=v))
-        operator = 'LIKE'
+        operator = 'LIKE' if not operator else operator
     return '(id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {value}))'.format(subtable=subtable, column=column, operator=operator, value=v)
 
 def math_where(column, operator, term):
@@ -189,11 +189,19 @@ def math_where(column, operator, term):
         return '(FALSE)'
     return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=database.escape(term))
 
-def color_where(subtable, term):
+def color_where(subtable, operator, term):
     colors = list(term)
     clause = ' OR '.join(subtable_where(subtable, color) for color in colors)
     if len(colors) > 1:
         clause = '({clause})'.format(clause=clause)
+    if operator != '!':
+        return clause
+    if 'c' in colors:
+        colors.remove('c')
+    if not colors:
+        return clause
+    color_ids_clause = ' AND '.join('color_id <> {color_id}'.format(color_id=value_lookup('color', color)) for color in colors)
+    clause = '({clause} AND (id NOT IN (SELECT card_id FROM card_{subtable} WHERE {color_ids_clause})))'.format(clause=clause, subtable=subtable, color_ids_clause=color_ids_clause)
     return clause
 
 def set_where(name):

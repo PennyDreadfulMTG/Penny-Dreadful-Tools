@@ -9,15 +9,6 @@ class Database:
     # Bump this if you modify the schema.
     schema_version = 31
 
-    @staticmethod
-    def escape(s) -> str:
-        if str(s).isdecimal():
-            return s
-        encodable = s.encode('utf-8', 'strict').decode('utf-8')
-        if encodable.find('\x00') >= 0:
-            raise Exception('NUL not allowed in SQL string.')
-        return "'{escaped}'".format(escaped=encodable.replace("'", "''"))
-
     def __init__(self):
         self.open()
         try:
@@ -169,3 +160,11 @@ class Database:
         self.execute("delete from sqlite_master where type in ('table', 'index', 'trigger')")
         self.execute("PRAGMA writable_schema = 0;")
         self.execute("VACUUM")
+
+def escape(s) -> str:
+    if str(s).isdecimal():
+        return s
+    encodable = s.encode('utf-8', 'strict').decode('utf-8')
+    if encodable.find('\x00') >= 0:
+        raise Exception('NUL not allowed in SQL string.')
+    return "'{escaped}'".format(escaped=encodable.replace("'", "''"))

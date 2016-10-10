@@ -40,7 +40,7 @@ class Oracle:
                 new_list = fetcher.legal_cards(force=True)
         else:
             self.database.execute('UPDATE card SET pd_legal = 0')
-            self.database.execute('UPDATE card SET pd_legal = 1 WHERE LOWER(name) IN (' + ', '.join(database.Database.escape(name) for name in new_list) + ')')
+            self.database.execute('UPDATE card SET pd_legal = 1 WHERE LOWER(name) IN (' + ', '.join(database.escape(name) for name in new_list) + ')')
         return new_list
 
     def update_database(self, new_version):

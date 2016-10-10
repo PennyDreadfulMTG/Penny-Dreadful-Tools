@@ -1,7 +1,9 @@
+import collections
 import re
 
 import card
 import database
+import mana
 
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String
@@ -133,8 +135,6 @@ def parse_criterion(key, operator, term):
         return where(['text'], term.value())
     elif key.value() == 'type' or key.value() == 't':
         return where(['type'], term.value())
-    elif key.value() == 'mana':
-        return where(['cost'], term.value(), True)
     elif key.value() == 'power' or key.value() == 'pow':
         return math_where('power', operator.value(), term.value())
     elif key.value() == 'toughness' or key.value() == 'tou':
@@ -153,6 +153,8 @@ def parse_criterion(key, operator, term):
         return format_where(term.value())
     elif key.value() == 'rarity' or key.value() == 'r':
         return rarity_where(operator.value(), term.value())
+    elif key.value() == 'mana' or key.value() == 'm':
+        return mana_where(operator.value(), term.value())
 
 def where(keys, term, exact_match=False):
     q = term if exact_match else '%' + term + '%'
@@ -161,7 +163,7 @@ def where(keys, term, exact_match=False):
     for column in keys:
         if subsequent:
             s += ' OR '
-        s += '{column} LIKE {q}'.format(column=column, q=database.Database.escape(q))
+        s += '{column} LIKE {q}'.format(column=column, q=database.escape(q))
         subsequent = True
     s += ')'
     return s
@@ -176,7 +178,7 @@ def subtable_where(subtable, value):
         operator = '='
     else:
         column = subtable
-        v = database.Database.escape('%{v}%'.format(v=v))
+        v = database.escape('%{v}%'.format(v=v))
         operator = 'LIKE'
     return '(id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {value}))'.format(subtable=subtable, column=column, operator=operator, value=v)
 
@@ -185,11 +187,11 @@ def math_where(column, operator, term):
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(FALSE)'
-    return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=database.Database.escape(term))
+    return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=database.escape(term))
 
 def set_where(name):
     name_fuzzy = '%{name}%'.format(name=name)
-    return '(id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=database.Database.escape(name_fuzzy), name=database.Database.escape(name))
+    return '(id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=database.escape(name_fuzzy), name=database.escape(name))
 
 def format_where(term):
     if term in ['pennydreadful', 'pd']:
@@ -204,6 +206,17 @@ def rarity_where(operator, term):
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(FALSE)'
     return "(id IN (SELECT card_id FROM printing WHERE rarity_id {operator} {rarity_id}))".format(operator=operator, rarity_id=rarity_id)
+
+def mana_where(operator, term):
+    symbols = mana.parse(term.upper()) # Uppercasing input means you can't search for 1/2 or 1/2 white mana but w should match W.
+    symbols = ['{{{symbol}}}'.format(symbol=symbol) for symbol in symbols]
+    if operator == ':':
+        d = collections.Counter(symbols) # Group identical symbols so that UU checks for {U}{U} not just {U} twice.
+        clause = ' AND '.join("mana_cost LIKE '%{symbol}%'".format(symbol=symbol * n) for symbol, n in d.items())
+    elif operator == '=':
+        joined = ''.join('{symbol}'.format(symbol=symbol) for symbol in symbols)
+        clause = "mana_cost = '{joined}'".format(joined=joined)
+    return '({clause})'.format(clause=clause)
 
 def value_lookup(table, value):
     colors = {

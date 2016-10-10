@@ -62,7 +62,7 @@ class Commands:
         msg = """Basic bot usage: Include [cardname] in your regular messages.
 The bot will search for any quoted cards, and respond with the card details.
 
-Addiional Commands:"""
+Additional Commands:"""
         for methodname in dir(Commands):
             if methodname.startswith("__"):
                 continue
@@ -79,7 +79,7 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_message(channel, msg)
 
     async def random(self, bot, channel, args):
-        """`!Random` Request a random PD legal card
+        """`!random` Request a random PD legal card
 `!random X` Request X random PD legal cards."""
         number = 1
         if len(args) > 0:
@@ -99,7 +99,7 @@ Want to contribute? Send a Pull Request."""
         sys.exit()
 
     async def search(self, bot, channel, args, author):
-        """`!search query` Search for cards, using a magidex style query."""
+        """`!search {query}` Search for cards, using a magidex style query."""
         cards = complex_search(args)
         if len(cards) == 0:
             await bot.client.send_message(channel, '{0}: No matches.'.format(author.mention))
@@ -110,7 +110,7 @@ Want to contribute? Send a Pull Request."""
         await bot.post_cards(cards, channel, additional_text)
 
     async def bigsearch(self, bot, channel, args, author):
-        """`!bigsearch` Show all the cards relating to a query. Large searches will be returned to you via PM."""
+        """`!bigsearch {query}` Show all the cards relating to a query. Large searches will be returned to you via PM."""
         cards = complex_search(args)
         if len(cards) == 0:
             await bot.client.send_message(channel, '{0}: No matches.'.format(author.mention))
@@ -137,12 +137,12 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_message(channel, msg)
 
     async def quality(self, bot, channel):
-        """A helpful reminder about everyone's favorite way to play digital Magic"""
+        """`!quality` A helpful reminder about everyone's favorite way to play digital Magic"""
         msg = "**Magic Online** is a Quality™ Program."
         await bot.client.send_message(channel, msg)
 
     async def rhinos(self, bot, channel):
-        """Anything can be a rhino if you try hard enough"""
+        """`!rhinos` Anything can be a rhino if you try hard enough"""
         rhinos = []
         rhino_name = "Siege Rhino"
         if random.random() < 0.1:
@@ -158,6 +158,7 @@ Want to contribute? Send a Pull Request."""
         await bot.post_cards(rhinos, channel, msg)
 
     async def rotation(self, bot, channel):
+        """`!rotation` Give the date of the next Penny Dreadful rotation."""
         standard = fetcher.whatsinstandard()
         for release in standard:
             reldate = datetime.datetime.strptime(release["enter_date"], "%Y-%m-%dT%H:%M:%S.%fZ")

@@ -6,10 +6,30 @@ def test_match():
     assert search.Key.match(['c'])
     assert search.Key.match(['mana'])
     assert not search.Key.match(['z'])
-    assert not search.Key.match(['magic'])
     assert not search.Key.match([''])
     assert not search.Key.match([' '])
     assert search.Criterion.match(['t', 'o', 'u', '>', '2'])
+
+def test_mana():
+    do_test('mana=2WW', "(mana_cost = '{2}{W}{W}')")
+
+def test_mana2():
+    do_test('mana=X2/W2/WRB', "(mana_cost = '{X}{2/W}{2/W}{R}{B}')")
+
+def test_mana3():
+    do_test('mana=XRB', "(mana_cost = '{X}{R}{B}')")
+
+def test_mana4():
+    do_test('mana=15', "(mana_cost = '{15}')")
+
+def test_mana5():
+    do_test('mana=UP', "(mana_cost = '{UP}')")
+
+def test_mana6():
+    do_test('mana:c', "(mana_cost LIKE '%{C}%')")
+
+def test_mana7():
+    do_test('mana:uu', "(mana_cost LIKE '%{U}{U}%')")
 
 def test_uppercase():
     do_test('F:pd', '(pd_legal = 1)')
@@ -57,13 +77,13 @@ def test_power():
     do_test('t:wizard pow<2', "(type LIKE '%wizard%') AND (power IS NOT NULL AND power <> '' AND CAST(power AS REAL) < 2)")
 
 def test_mana_with_other():
-    do_test('t:creature mana=WW o:lifelink', "(type LIKE '%creature%') AND (cost LIKE 'WW') AND (text LIKE '%lifelink%')")
+    do_test('t:creature mana=WW o:lifelink', "(type LIKE '%creature%') AND (mana_cost = '{W}{W}') AND (text LIKE '%lifelink%')")
 
-def test_mana():
-    do_test('mana=2uu', "(cost LIKE '2uu')")
+def test_mana_alone():
+    do_test('mana=2uu', "(mana_cost = '{2}{U}{U}')")
 
 def test_or_and_parentheses():
-    do_test('o:"target attacking" OR (mana=2uu AND (tou>2 OR pow>2))', "(text LIKE '%target attacking%') OR ((cost LIKE '2uu') AND ((toughness IS NOT NULL AND toughness <> '' AND CAST(toughness AS REAL) > 2) OR (power IS NOT NULL AND power <> '' AND CAST(power AS REAL) > 2)))")
+    do_test('o:"target attacking" OR (mana=2uu AND (tou>2 OR pow>2))', "(text LIKE '%target attacking%') OR ((mana_cost = '{2}{U}{U}') AND ((toughness IS NOT NULL AND toughness <> '' AND CAST(toughness AS REAL) > 2) OR (power IS NOT NULL AND power <> '' AND CAST(power AS REAL) > 2)))")
 
 def test_not_color():
     do_test('c:r NOT c:u', '(id IN (SELECT card_id FROM card_color WHERE color_id = 4)) AND NOT (id IN (SELECT card_id FROM card_color WHERE color_id = 2))')

@@ -28,7 +28,7 @@ def parse(s):
                 tmp = ''
                 mode = START
             else:
-                raise Exception('Symbol must start with {digit} or {color}, `{c}` found.'.format(digit=DIGIT, color=COLOR, c=c))
+                raise InvalidManaCostException('Symbol must start with {digit} or {color}, `{c}` found.'.format(digit=DIGIT, color=COLOR, c=c))
         elif mode == DIGIT:
             if re.match(DIGIT, c):
                 tmp += c
@@ -40,12 +40,12 @@ def parse(s):
                 tmp += c
                 mode = SLASH
             else:
-                raise Exception('Digit must be followed by {digit}, {color} or {slash}, `{c}` found.'.format(digit=DIGIT, color=COLOR, slash=SLASH, c=c))
+                raise InvalidManaCostException('Digit must be followed by {digit}, {color} or {slash}, `{c}` found.'.format(digit=DIGIT, color=COLOR, slash=SLASH, c=c))
         elif mode == COLOR:
             if re.match(COLOR, c):
                 tokens.append(tmp)
                 tmp = c
-                mode = COLOR                                
+                mode = COLOR
             elif re.match(SLASH, c):
                 tmp += c
             elif re.match(MODIFIER, c):
@@ -53,14 +53,17 @@ def parse(s):
                 tmp = ''
                 mode = START
             else:
-                raise Exception('Color must be followed by {color}, {slash} or {modifier}, `{c}` found.'.format(color=COLOR, slash=SLASH, modifier=MODIFIER, c=c))
+                raise InvalidManaCostException('Color must be followed by {color}, {slash} or {modifier}, `{c}` found.'.format(color=COLOR, slash=SLASH, modifier=MODIFIER, c=c))
         elif mode == SLASH:
             if re.match(COLOR, c):
                 tokens.append(tmp +c)
                 tmp = ''
                 mode = START
             else:
-                raise Exception('Slash must be followed by {color}, `{c}` found.'.format(color=COLOR, c=c))
+                raise InvalidManaCostException('Slash must be followed by {color}, `{c}` found.'.format(color=COLOR, c=c))
     if tmp:
         tokens.append(tmp)
     return tokens
+
+class InvalidManaCostException(Exception):
+    pass

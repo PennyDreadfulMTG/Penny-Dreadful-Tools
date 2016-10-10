@@ -9,6 +9,9 @@ def test_match():
     assert not search.Criterion.match(list('magic:2uu'))
     assert search.Criterion.match(list('tou>2'))
 
+def test_multiple_colors():
+    do_test('c:rgw', "((id IN (SELECT card_id FROM card_color WHERE color_id = 4)) OR (id IN (SELECT card_id FROM card_color WHERE color_id = 5)) OR (id IN (SELECT card_id FROM card_color WHERE color_id = 1)))")
+
 def test_mana():
     do_test('mana=2WW', "(mana_cost = '{2}{W}{W}')")
 

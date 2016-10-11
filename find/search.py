@@ -170,11 +170,11 @@ def where(keys, term, exact_match=False):
 
 def subtable_where(subtable, value, operator=None):
     # Specialcase colorless because it has no entry in the color table.
-    if subtable == 'color' and value == 'c':
-        return '(id NOT IN (SELECT card_id FROM card_color))'
+    if (subtable == 'color' or subtable == 'color_identity') and value == 'c':
+        return '(id NOT IN (SELECT card_id FROM card_{subtable}))'.format(subtable=subtable)
     v = value_lookup(subtable, value)
     if str(v).isdigit():
-        column = '{subtable}_id'.format(subtable=subtable).replace('color_identity', 'color')
+        column = '{subtable}_id'.format(subtable=subtable).replace('color_identity_id', 'color_id')
         operator = '=' if not operator else operator
     else:
         column = subtable
@@ -191,17 +191,24 @@ def math_where(column, operator, term):
 
 def color_where(subtable, operator, term):
     colors = list(term)
+    try:
+        colors.remove('m') # BAKERT case
+        multicolored = True
+    except ValueError:
+        multicolored = False
     clause = ' OR '.join(subtable_where(subtable, color) for color in colors)
     if len(colors) > 1:
         clause = '({clause})'.format(clause=clause)
-    if operator != '!':
-        return clause
-    if 'c' in colors:
-        colors.remove('c')
-    if not colors:
-        return clause
-    color_ids_clause = ' AND '.join('color_id <> {color_id}'.format(color_id=value_lookup('color', color)) for color in colors)
-    clause = '({clause} AND (id NOT IN (SELECT card_id FROM card_{subtable} WHERE {color_ids_clause})))'.format(clause=clause, subtable=subtable, color_ids_clause=color_ids_clause)
+    try:
+        colors.remove('c') # BAKERT case
+    except ValueError:
+        pass
+    if operator == '!':
+        if colors:
+            color_ids_clause = ' AND '.join('color_id <> {color_id}'.format(color_id=value_lookup('color', color)) for color in colors)
+            clause = '({clause} AND (id NOT IN (SELECT card_id FROM card_{subtable} WHERE {color_ids_clause})))'.format(clause=clause, subtable=subtable, color_ids_clause=color_ids_clause)
+    if multicolored:
+        clause = '({clause} AND (id IN (SELECT card_id FROM card_{subtable} GROUP BY card_id HAVING COUNT(card_id) > 1)))'.format(clause=clause, subtable=subtable)
     return clause
 
 def set_where(name):

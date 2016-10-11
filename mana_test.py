@@ -7,7 +7,7 @@ def  test_simple():
     try:
         do_test('Not a mana symbol sequence', None)
         assert False
-    except mana.InvalidManaCostException: # BAKERT catch the specific exception here
+    except mana.InvalidManaCostException:
         assert True
 
 def test_twobrid():

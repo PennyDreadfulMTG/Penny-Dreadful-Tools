@@ -25,6 +25,7 @@ def search(query):
     return [card.Card(r) for r in rs]
 
 def tokenize(s):
+    s = s.lower()
     tokens = {0: []}
     chars = list(s)
     chars.append(' ')
@@ -192,7 +193,7 @@ def math_where(column, operator, term):
 def color_where(subtable, operator, term):
     colors = list(term)
     try:
-        colors.remove('m') # BAKERT case
+        colors.remove('m')
         multicolored = True
     except ValueError:
         multicolored = False
@@ -200,7 +201,7 @@ def color_where(subtable, operator, term):
     if len(colors) > 1:
         clause = '({clause})'.format(clause=clause)
     try:
-        colors.remove('c') # BAKERT case
+        colors.remove('c')
     except ValueError:
         pass
     if operator == '!':
@@ -277,8 +278,8 @@ def value_lookup(table, value):
             'm': 5
         }
     }
-    if table in replacements and value.lower() in replacements[table]:
-        return replacements[table][value.lower()]
+    if table in replacements and value in replacements[table]:
+        return replacements[table][value]
     return value
 
 class InvalidSearchException(Exception):

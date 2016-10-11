@@ -12,8 +12,6 @@ import requests
 import configuration
 import database
 
-DATABASE = database.Database()
-
 def legal_cards(force=False):
     lm = last_modified('legal_cards')
     if force:
@@ -78,11 +76,11 @@ def store(url, path):
         raise FetchException(e)
 
 def last_modified(resource):
-    return DATABASE.value("SELECT last_modified FROM fetcher WHERE resource = ?", [resource])
+    return database.DATABASE.value("SELECT last_modified FROM fetcher WHERE resource = ?", [resource])
 
 def set_last_modified(resource):
     httptime = formatdate(timeval=None, localtime=False, usegmt=True)
-    DATABASE.execute("INSERT INTO fetcher (resource, last_modified) VALUES (?, ?)", [resource, httptime])
+    database.DATABASE.execute("INSERT INTO fetcher (resource, last_modified) VALUES (?, ?)", [resource, httptime])
 
 def whatsinstandard():
     return json.loads(fetch('http://whatsinstandard.com/api/4/sets.json'))

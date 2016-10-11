@@ -1,5 +1,6 @@
 import sqlite3
 
+import apsw
 import pkg_resources
 
 import card
@@ -7,7 +8,7 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 34
+    schema_version = 37
 
     def __init__(self):
         self.open()
@@ -16,13 +17,16 @@ class Database:
             if self.db_version() < self.schema_version:
                 self.delete()
                 self.setup()
-        except sqlite3.OperationalError:
+        except apsw.SQLError:
             self.setup()
 
     def open(self):
         db = configuration.get('database')
-        self.database = sqlite3.connect(db)
-        self.database.row_factory = sqlite3.Row
+        self.connection = apsw.Connection(db)
+        self.connection.setrowtrace(self.row_factory)
+        self.connection.enableloadextension(True)
+        self.connection.loadextension(configuration.get('spellfix'))
+        self.database = self.connection.cursor()
 
     def version(self) -> str:
         return pkg_resources.parse_version(self.value('SELECT version FROM version', [], '0'))
@@ -33,9 +37,7 @@ class Database:
     def execute(self, sql, args=None):
         if args is None:
             args = []
-        r = self.database.execute(sql, args).fetchall()
-        self.database.commit()
-        return r
+        return self.database.execute(sql, args).fetchall()
 
     def alias_count(self):
         return self.value('SELECT COUNT(*) FROM card_alias', [], 0)
@@ -49,7 +51,11 @@ class Database:
         elif len(rs) <= 0:
             return default
         else:
-            return rs[0]
+            return list(rs.values())[0]
+
+    def row_factory(self, cursor, row):
+        columns = [t[0] for t in cursor.getdescription()]
+        return dict(zip(columns, row))
 
     def setup(self):
         self.execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER)')
@@ -168,3 +174,5 @@ def escape(s) -> str:
     if encodable.find('\x00') >= 0:
         raise Exception('NUL not allowed in SQL string.')
     return "'{escaped}'".format(escaped=encodable.replace("'", "''"))
+
+DATABASE = Database()

@@ -21,7 +21,7 @@ def search(query):
         + 'WHERE ' + where_clause \
         + ' ORDER BY pd_legal DESC, name'
     print(sql)
-    rs = database.Database().execute(sql)
+    rs = database.DATABASE.execute(sql)
     return [card.Card(r) for r in rs]
 
 def tokenize(s):
@@ -218,7 +218,7 @@ def set_where(name):
 def format_where(term):
     if term in ['pennydreadful', 'pd']:
         return '(pd_legal = 1)'
-    format_id = database.Database().value('SELECT id FROM format WHERE name LIKE ?', ['{term}%'.format(term=term)])
+    format_id = database.DATABASE.value('SELECT id FROM format WHERE name LIKE ?', ['{term}%'.format(term=term)])
     return "(id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))".format(format_id=format_id)
 
 def rarity_where(operator, term):

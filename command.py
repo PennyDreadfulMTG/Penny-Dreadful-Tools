@@ -90,6 +90,12 @@ Want to contribute? Send a Pull Request."""
         cards = [bot.oracle.search(random.choice(bot.legal_cards))[0] for n in range(0, number)]
         await bot.post_cards(cards, channel)
 
+    async def p1p1(self, bot, channel):
+        """`!p1p1` Request a random PD legal draft pack"""
+        cards = [bot.oracle.search(random.choice(bot.legal_cards))[0] for n in range(0, 15)]
+        await bot.client.send_message(channel, 'Pack 1, Pick 1 Game! If presented with this pack, what would you pick?')
+        await bot.post_cards(cards, channel, "", False, False, True)
+
     async def update(self, bot, channel):
         bot.legal_cards = bot.oracle.get_legal_cards(True)
         await bot.client.send_message(channel, 'Reloaded list of legal cards.')

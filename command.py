@@ -172,6 +172,18 @@ Want to contribute? Send a Pull Request."""
                 await bot.client.send_message(channel, msg)
                 return
 
+    async def oracle(self, bot, channel, args, author):
+        """`!oracle {name}` Give the Oracle text of the named card."""
+        cards = list(cards_from_query(args, bot.oracle))
+        if len(cards) > 1:
+            await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
+        elif len(cards) == 1:
+            text = emoji.replace_emoji(cards[0].text, channel)
+            await bot.client.send_message(channel, '**{name}** {text}'.format(name=cards[0].name, text=text))
+        else:
+            await bot.client.send_message(channel, '{author}: No matches.'.format(author=author.mention))
+
+
 
 def escape(str_input) -> str:
     # Expand 'AE' into two characters. This matches the legal list and

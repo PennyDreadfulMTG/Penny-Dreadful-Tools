@@ -28,8 +28,6 @@ class Oracle:
     def search(self, query):
         sql = 'SELECT word, distance FROM fuzzy WHERE word MATCH ?'
         rs = self.database.execute(sql, ['*{query}*'.format(query=query)])
-        print(query)
-        print(rs)
         sql = 'SELECT card.id, ' + (', '.join(property for property in card.properties())) \
             + ', alias ' \
             + ' FROM card LEFT OUTER JOIN card_alias on card.id = card_alias.card_id ' \

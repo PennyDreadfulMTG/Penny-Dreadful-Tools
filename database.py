@@ -159,11 +159,10 @@ class Database:
             last_modified TEXT
         )""")
 
-
     # Drop the database so we can recreate it.
     def delete(self):
         self.execute("PRAGMA writable_schema = 1")
-        self.execute("delete from sqlite_master where type in ('table', 'index', 'trigger')")
+        self.execute("DELETE FROM sqlite_master WHERE type IN ('table', 'index', 'trigger')")
         self.execute("PRAGMA writable_schema = 0;")
         self.execute("VACUUM")
 

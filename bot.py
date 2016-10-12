@@ -9,7 +9,7 @@ class Bot:
     def __init__(self):
         self.legal_cards = []
         self.client = discord.Client()
-        self.oracle = oracle.Oracle()
+        self.oracle = oracle
 
     def init(self):
         self.legal_cards = self.oracle.get_legal_cards()

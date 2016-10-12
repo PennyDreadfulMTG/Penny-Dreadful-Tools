@@ -1,5 +1,3 @@
-import sqlite3
-
 import apsw
 import pkg_resources
 

@@ -9,7 +9,10 @@
 - Optionally alter the value for "image_dir" and "database" if you want downloaded images/sqlite database stored somewhere else.
 - The sqlite extension we use for fuzzy matching is not part of any string distribution so you must download and build it.
   - curl http://sqlite.org/cgi/src/raw/ext/misc/spellfix.c?name=a4723b6aff748a417b5091b68a46443265c40f0d -o spellfix.c
+  - curl http://sqlite.org/cgi/src/raw/src/sqlite3ext.h?name=8648034aa702469afb553231677306cc6492a1ae -o sqlite3ext.h
+  - curl http://sqlite.org/cgi/src/raw/src/sqlite.h.in?name=2683a291ed8db5228024267be6421f0de507b80e -o sqlite3.h
   - gcc -fPIC -shared spellfix1.c -o spellfix1.dylib
+    - Windows:   cl /LD spellfix.c
   - NOTE! You may need .dll or .so as the file extension instead of .dylib depending on your operating system.
   - If you don't want the spellfix library in the root of the app, copy the new spellfix1.dylib file and change the location in config.json
   - You can delete spellfix.c

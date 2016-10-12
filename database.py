@@ -23,7 +23,7 @@ class Database:
     def open(self):
         db = configuration.get('database')
         self.connection = apsw.Connection(db)
-        self.connection.setrowtrace(self.row_factory)
+        self.connection.setrowtrace(row_factory)
         self.connection.enableloadextension(True)
         self.connection.loadextension(configuration.get('spellfix'))
         self.database = self.connection.cursor()
@@ -53,9 +53,6 @@ class Database:
         else:
             return list(rs.values())[0]
 
-    def row_factory(self, cursor, row):
-        columns = [t[0] for t in cursor.getdescription()]
-        return dict(zip(columns, row))
 
     def setup(self):
         self.execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER)')
@@ -173,5 +170,9 @@ def escape(s) -> str:
     if encodable.find('\x00') >= 0:
         raise Exception('NUL not allowed in SQL string.')
     return "'{escaped}'".format(escaped=encodable.replace("'", "''"))
+
+def row_factory(cursor, row):
+    columns = [t[0] for t in cursor.getdescription()]
+    return dict(zip(columns, row))
 
 DATABASE = Database()

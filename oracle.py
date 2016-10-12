@@ -2,7 +2,6 @@ import datetime
 import re
 
 import card
-import configuration
 import database
 import fetcher
 

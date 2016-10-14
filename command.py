@@ -151,7 +151,7 @@ Want to contribute? Send a Pull Request."""
         rhino_name = "Siege Rhino"
         if random.random() < 0.1:
             rhino_name = "Abundant Maw"
-        rhinos.extend(cards_from_query(rhino_name, oracle))
+        rhinos.extend(cards_from_query(rhino_name))
         rhinos.append(random.choice(complex_search('f:pd o:"copy of target creature"')))
         rhinos.append(random.choice(complex_search('f:pd o:"return target creature card from your graveyard to the battlefield"')))
         rhinos.append(random.choice(complex_search('f:pd o:"search your library for a creature"')))
@@ -174,7 +174,7 @@ Want to contribute? Send a Pull Request."""
 
     async def oracle(self, bot, channel, args, author):
         """`!oracle {name}` Give the Oracle text of the named card."""
-        cards = list(cards_from_query(args, oracle))
+        cards = list(cards_from_query(args))
         if len(cards) > 1:
             await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
         elif len(cards) == 1:

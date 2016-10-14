@@ -9,10 +9,9 @@ class Bot:
     def __init__(self):
         self.legal_cards = []
         self.client = discord.Client()
-        self.oracle = oracle
 
     def init(self):
-        self.legal_cards = self.oracle.get_legal_cards()
+        self.legal_cards = oracle.get_legal_cards()
         print('Legal cards: {num_legal_cards}'.format(num_legal_cards=len(self.legal_cards)))
         self.client.run(configuration.get('token'))
 
@@ -54,7 +53,7 @@ class Bot:
         if len(cards) > 10:
             image_file = None
         else:
-            image_file = command.download_image(cards, self.oracle)
+            image_file = command.download_image(cards)
         if image_file is None:
             text += '\n\n'
             if len(cards) == 1:

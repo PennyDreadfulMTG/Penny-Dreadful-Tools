@@ -63,7 +63,7 @@ def test_partial_query():
 
 # Check that the list of legal cards is being fetched correctly.
 def test_legality_list():
-    legal_cards = oracle.get_legal_cards()
+    legal_cards = oracle.get_legal_cards(True)
     assert len(legal_cards) > 0
 
 def test_legality_emoji():

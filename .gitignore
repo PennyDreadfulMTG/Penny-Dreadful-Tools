@@ -11,3 +11,4 @@ test_results.xml
 spellfix.*
 sqlite3.h
 sqlite3ext.h
+prices.db

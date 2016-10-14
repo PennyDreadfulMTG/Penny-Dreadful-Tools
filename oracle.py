@@ -24,7 +24,6 @@ def initialize():
     if DATABASE.alias_count() != len(aliases):
         print('Card alias update required')
         update_card_aliases(aliases)
-initialize()
 
 def search(query):
     sql = 'SELECT word, distance FROM fuzzy WHERE word MATCH ?'
@@ -173,3 +172,5 @@ def date2int(s):
         return dt.replace(tzinfo=datetime.timezone.utc).timestamp()
     except ValueError:
         return s
+
+initialize()

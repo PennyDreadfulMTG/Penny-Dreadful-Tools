@@ -14,7 +14,7 @@ import emoji
 import fetcher
 from card import Card
 from find import search
-from oracle import Oracle
+import oracle
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -23,7 +23,7 @@ async def respond_to_card_names(message, bot):
     queries = parse_queries(message.content)
     if len(queries) == 0:
         return
-    cards = cards_from_queries(queries, bot.oracle)
+    cards = cards_from_queries(queries)
     await bot.post_cards(cards, message.channel)
 
 async def handle_command(message, bot):
@@ -33,7 +33,7 @@ async def handle_command(message, bot):
     if len(parts) > 1:
         args = parts[1]
 
-    method = [m for m in dir(Commands) if m == cmd]
+    method = [m for m in dir(Commands) if m == cmd or m == '_' + cmd]
     if len(method) > 0:
         method = getattr(Commands, method[0])
         if method.__code__.co_argcount == 5:
@@ -87,11 +87,11 @@ Want to contribute? Send a Pull Request."""
                 number = int(args.strip())
             except ValueError:
                 pass
-        cards = [bot.oracle.search(random.choice(bot.legal_cards))[0] for n in range(0, number)]
+        cards = [oracle.search(random.choice(bot.legal_cards))[0] for n in range(0, number)]
         await bot.post_cards(cards, channel)
 
     async def update(self, bot, channel):
-        bot.legal_cards = bot.oracle.get_legal_cards(True)
+        bot.legal_cards = oracle.get_legal_cards(True)
         await bot.client.send_message(channel, 'Reloaded list of legal cards.')
 
     async def restartbot(self, bot, channel):
@@ -151,7 +151,7 @@ Want to contribute? Send a Pull Request."""
         rhino_name = "Siege Rhino"
         if random.random() < 0.1:
             rhino_name = "Abundant Maw"
-        rhinos.extend(cards_from_query(rhino_name, bot.oracle))
+        rhinos.extend(cards_from_query(rhino_name))
         rhinos.append(random.choice(complex_search('f:pd o:"copy of target creature"')))
         rhinos.append(random.choice(complex_search('f:pd o:"return target creature card from your graveyard to the battlefield"')))
         rhinos.append(random.choice(complex_search('f:pd o:"search your library for a creature"')))
@@ -172,9 +172,9 @@ Want to contribute? Send a Pull Request."""
                 await bot.client.send_message(channel, msg)
                 return
 
-    async def oracle(self, bot, channel, args, author):
+    async def _oracle(self, bot, channel, args, author):
         """`!oracle {name}` Give the Oracle text of the named card."""
-        cards = list(cards_from_query(args, bot.oracle))
+        cards = list(cards_from_query(args))
         if len(cards) > 1:
             await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
         elif len(cards) == 1:
@@ -191,7 +191,7 @@ def escape(str_input) -> str:
     # image server and magidex.
     return '+'.join(urllib.parse.quote(cardname.replace(u'Æ', 'AE')) for cardname in str_input.split(' ')).lower()
 
-def better_image(cards) -> str:
+def better_image(cards: List[Card]) -> str:
     c = '|'.join(card.name for card in cards)
     return 'http://magic.bluebones.net/proxies/?c={c}'.format(c=escape(c))
 
@@ -215,7 +215,7 @@ def basename(cards):
 def unaccent(s):
     return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
 
-def download_image(cards: List[Card], oracle: Oracle) -> str:
+def download_image(cards: List[Card]) -> str:
     imagename = basename(cards)
     # Hash the filename if it's otherwise going to be too large to use.
     if len(imagename) > 240:
@@ -248,15 +248,15 @@ def parse_queries(content: str) -> List[str]:
     queries = re.findall(r'\[?\[([^\]]*)\]\]?', content)
     return [query.lower() for query in queries]
 
-def cards_from_queries(queries, oracle):
+def cards_from_queries(queries):
     all_cards = []
     for query in queries:
-        cards = cards_from_query(query, oracle)
+        cards = cards_from_query(query)
         if len(cards) > 0:
             all_cards.extend(cards)
     return all_cards
 
-def cards_from_query(query, oracle):
+def cards_from_query(query):
     # Skip searching if the request is too short.
     if len(query) <= 2:
         return []

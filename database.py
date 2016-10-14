@@ -30,7 +30,7 @@ class Database:
         return pkg_resources.parse_version(self.value('SELECT version FROM version', [], '0'))
 
     def db_version(self) -> int:
-        return self.value('SELECT version FROM db_version', [], '0')
+        return self.value('SELECT version FROM db_version', [], 0)
 
     def execute(self, sql, args=None):
         if args is None:

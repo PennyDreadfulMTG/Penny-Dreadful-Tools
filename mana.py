@@ -1,5 +1,3 @@
-# BAKERT better exception types
-
 import re
 
 START = ''

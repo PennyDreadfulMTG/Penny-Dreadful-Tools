@@ -1,9 +1,22 @@
-- Install python3
-- Install pip
-- pip install -r requirements.txt
+- Install python3.5+
+- Install pip3
+- pip3 install -r requirements.txt # If your default python is python2 try `python3 -m pip install -r requirements.txt` instead.
 - Add a bot at https://discordapp.com/developers/applications/me
 - Add a bot user for the bot
 - Add the bot to your server with https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot
 - Click to reveal the token
 - Copy config.json.example to config.json and alter the value for "token"
 - Optionally alter the value for "image_dir" and "database" if you want downloaded images/sqlite database stored somewhere else.
+- The sqlite extension we use for fuzzy matching is not part of any string distribution so you must download and build it.
+  - curl http://sqlite.org/cgi/src/raw/ext/misc/spellfix.c?name=a4723b6aff748a417b5091b68a46443265c40f0d -o spellfix.c
+  - curl http://sqlite.org/cgi/src/raw/src/sqlite3ext.h?name=8648034aa702469afb553231677306cc6492a1ae -o sqlite3ext.h
+  - curl http://sqlite.org/cgi/src/raw/src/sqlite.h.in?name=2683a291ed8db5228024267be6421f0de507b80e -o sqlite3.h
+  - gcc -fPIC -shared spellfix.c -o spellfix.dylib
+    - Windows:   cl /LD spellfix.c
+  - NOTE! You may need .dll or .so as the file extension instead of .dylib depending on your operating system.
+  - If you don't want the spellfix library in the root of the app, copy the new spellfix1.dylib file and change the location in config.json
+  - You can delete spellfix.c
+- To be able to load the spellfix1 extension we need load_extension which is not supported by the standard python sqlite3.
+  - pip install --user https://github.com/rogerbinns/apsw/releases/download/3.14.1-r1/apsw-3.14.1-r1.zip \
+--global-option=fetch --global-option=--version --global-option=3.14.1 --global-option=--all \
+--global-option=build --global-option=--enable-all-extensions

@@ -11,7 +11,7 @@ def layouts():
 
 CARD_IDS = {}
 FORMAT_IDS = {}
-DATABASE = database.Database()
+DATABASE = database.DATABASE
 def initialize():
     try:
         current_version = fetcher.version()
@@ -27,12 +27,14 @@ def initialize():
 initialize()
 
 def search(query):
+    sql = 'SELECT word, distance FROM fuzzy WHERE word MATCH ?'
+    rs = DATABASE.execute(sql, ['*{query}*'.format(query=query)])
     sql = 'SELECT card.id, ' + (', '.join(property for property in card.properties())) \
         + ', alias ' \
         + ' FROM card LEFT OUTER JOIN card_alias on card.id = card_alias.card_id ' \
-        + 'WHERE name LIKE ? OR alias LIKE ? ' \
+        + 'WHERE name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 200) ' \
         + 'ORDER BY pd_legal DESC, name'
-    rs = DATABASE.execute(sql, ['%' + query + '%', '%' + query + '%'])
+    rs = DATABASE.execute(sql, ['*{query}*'.format(query=query)])
     return [card.Card(r) for r in rs]
 
 def get_legal_cards(force=False):
@@ -51,6 +53,7 @@ def get_legal_cards(force=False):
     return new_list
 
 def update_database(new_version):
+    DATABASE.execute('BEGIN TRANSACTION')
     DATABASE.execute('DELETE FROM version')
     cards = fetcher.all_cards()
     for _, c in cards.items():
@@ -58,15 +61,15 @@ def update_database(new_version):
     sets = fetcher.all_sets()
     for _, s in sets.items():
         insert_set(s)
-    DATABASE.database.commit()
     # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
     check_layouts() # Check that the hardcoded list of layouts we're about to use is still valid.
     DATABASE.execute("UPDATE card SET cmc = 0 WHERE cmc IS NULL AND layout IN ('normal', 'double-faced', 'flip', 'leveler', 'token', 'split')")
     rs = DATABASE.execute('SELECT id, name FROM rarity')
     for row in rs:
         DATABASE.execute('UPDATE printing SET rarity_id = ? WHERE rarity = ?', [row['id'], row['name']])
-    update_card_aliases(fetcher.card_aliases())
+    update_fuzzy_matching()
     DATABASE.execute('INSERT INTO version (version) VALUES (?)', [new_version])
+    DATABASE.execute('COMMIT')
 
 def update_card_aliases(aliases):
     DATABASE.execute('DELETE FROM card_alias', [])
@@ -77,7 +80,12 @@ def update_card_aliases(aliases):
         else:
             print("no card found named " + name + " for alias " + alias)
 
-def insert_card( c):
+def update_fuzzy_matching():
+    DATABASE.execute('DROP TABLE IF EXISTS fuzzy')
+    DATABASE.execute('CREATE VIRTUAL TABLE IF NOT EXISTS fuzzy USING spellfix1')
+    DATABASE.execute('INSERT INTO fuzzy(word, rank) SELECT name, pd_legal FROM card')
+
+def insert_card(c):
     sql = 'INSERT INTO card ('
     sql += ', '.join(prop for prop in card.properties())
     sql += ') VALUES ('
@@ -140,7 +148,7 @@ def get_format_id(name, allow_create=False):
 
 def check_layouts():
     rs = DATABASE.execute('SELECT DISTINCT layout FROM card')
-    if sorted([x[0] for x in rs]) != sorted(layouts()):
+    if sorted([row['layout'] for row in rs]) != sorted(layouts()):
         print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid.')
 
 def get_printings(generalized_card: card.Card):

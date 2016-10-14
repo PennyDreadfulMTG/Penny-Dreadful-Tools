@@ -260,6 +260,9 @@ def cards_from_query(query):
     # Skip searching if the request is too short.
     if len(query) <= 2:
         return []
+    # If we're asked for a Split Card, just search for the first half of it.
+    if '//' in query:
+        query = query.split('//', 1)[0].strip()
     cards = oracle.search(query)
     cards = [card for card in cards if card.type != 'Vanguard' and card.layout != 'token']
     # First look for an exact match.

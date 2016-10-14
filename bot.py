@@ -64,4 +64,8 @@ class Bot:
         if image_file is None:
             await self.client.send_message(channel, text)
         else:
-            await self.client.send_file(channel, image_file, content=text)
+            message = await self.client.send_file(channel, image_file, content=text)
+            if message and message.attachments and message.attachments[0]['size'] == 0:
+                print('Message size is zero so resending')
+                await self.client.delete_message(message)
+                await self.client.send_file(channel, image_file, content=text)

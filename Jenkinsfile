@@ -12,7 +12,7 @@ node{
         sh 'curl http://sqlite.org/cgi/src/raw/ext/misc/spellfix.c?name=a4723b6aff748a417b5091b68a46443265c40f0d -o spellfix.c'
         sh 'curl http://sqlite.org/cgi/src/raw/src/sqlite3ext.h?name=8648034aa702469afb553231677306cc6492a1ae -o sqlite3ext.h'
         sh 'curl http://sqlite.org/cgi/src/raw/src/sqlite.h.in?name=2683a291ed8db5228024267be6421f0de507b80e -o sqlite3.h'
-        sh 'gcc -fPIC -shared spellfix.c -o spellfix.dylib'
+        sh 'gcc -fPIC -shared spellfix.c -o spellfix.so'
     }
 
     stage('Unit Tests') {

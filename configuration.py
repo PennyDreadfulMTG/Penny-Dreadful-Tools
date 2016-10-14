@@ -1,9 +1,10 @@
 import json
 
 DEFAULTS = {
+    'card_alias_file': './card_aliases.tsv',
     'database': './db',
     'image_dir': '.',
-    'card_alias_file': './card_aliases.tsv'
+    'spellfix': './spellfix'
 }
 
 def get(key):

@@ -14,7 +14,7 @@ class Oracle:
     def __init__(self):
         self.card_ids = {}
         self.format_ids = {}
-        self.database = database.Database()
+        self.database = database.DATABASE
         current_version = fetcher.version()
         if current_version > self.database.version():
             print('Database update required')
@@ -25,12 +25,14 @@ class Oracle:
             self.update_card_aliases(aliases)
 
     def search(self, query):
+        sql = 'SELECT word, distance FROM fuzzy WHERE word MATCH ?'
+        rs = self.database.execute(sql, ['*{query}*'.format(query=query)])
         sql = 'SELECT card.id, ' + (', '.join(property for property in card.properties())) \
             + ', alias ' \
             + ' FROM card LEFT OUTER JOIN card_alias on card.id = card_alias.card_id ' \
-            + 'WHERE name LIKE ? OR alias LIKE ? ' \
+            + 'WHERE name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 200) ' \
             + 'ORDER BY pd_legal DESC, name'
-        rs = self.database.execute(sql, ['%' + query + '%', '%' + query + '%'])
+        rs = self.database.execute(sql, ['*{query}*'.format(query=query)])
         return [card.Card(r) for r in rs]
 
     def get_legal_cards(self, force=False):
@@ -45,6 +47,7 @@ class Oracle:
         return new_list
 
     def update_database(self, new_version):
+        self.database.execute('BEGIN TRANSACTION')
         self.database.execute('DELETE FROM version')
         cards = fetcher.all_cards()
         for _, c in cards.items():
@@ -52,15 +55,16 @@ class Oracle:
         sets = fetcher.all_sets()
         for _, s in sets.items():
             self.insert_set(s)
-        self.database.database.commit()
         # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
         self.check_layouts() # Check that the hardcoded list of layouts we're about to use is still valid.
         self.database.execute("UPDATE card SET cmc = 0 WHERE cmc IS NULL AND layout IN ('normal', 'double-faced', 'flip', 'leveler', 'token', 'split')")
         rs = self.database.execute('SELECT id, name FROM rarity')
         for row in rs:
             self.database.execute('UPDATE printing SET rarity_id = ? WHERE rarity = ?', [row['id'], row['name']])
+        self.update_fuzzy_matching()
         self.update_card_aliases(fetcher.card_aliases())
         self.database.execute('INSERT INTO version (version) VALUES (?)', [new_version])
+        self.database.execute('COMMIT')
 
     def update_card_aliases(self, aliases):
         self.database.execute('DELETE FROM card_alias', [])
@@ -70,6 +74,11 @@ class Oracle:
                 self.database.execute('INSERT INTO card_alias (card_id, alias) VALUES (?, ?)', [card_id, alias])
             else:
                 print("no card found named " + name + " for alias " + alias)
+
+    def update_fuzzy_matching(self):
+        self.database.execute('DROP TABLE IF EXISTS fuzzy')
+        self.database.execute('CREATE VIRTUAL TABLE IF NOT EXISTS fuzzy USING spellfix1')
+        self.database.execute('INSERT INTO fuzzy(word, rank) SELECT name, pd_legal FROM card')
 
     def insert_card(self, c):
         sql = 'INSERT INTO card ('
@@ -134,7 +143,7 @@ class Oracle:
 
     def check_layouts(self):
         rs = self.database.execute('SELECT DISTINCT layout FROM card')
-        if sorted([x[0] for x in rs]) != sorted(Oracle.layouts()):
+        if sorted([row['layout'] for row in rs]) != sorted(Oracle.layouts()):
             print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid.')
 
     def get_printings(self, generalized_card: card.Card):

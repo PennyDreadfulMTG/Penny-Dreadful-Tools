@@ -21,10 +21,11 @@ def search(query):
         + 'WHERE ' + where_clause \
         + ' ORDER BY pd_legal DESC, name'
     print(sql)
-    rs = database.Database().execute(sql)
+    rs = database.DATABASE.execute(sql)
     return [card.Card(r) for r in rs]
 
 def tokenize(s):
+    s = s.lower()
     tokens = {0: []}
     chars = list(s)
     chars.append(' ')
@@ -192,7 +193,7 @@ def math_where(column, operator, term):
 def color_where(subtable, operator, term):
     colors = list(term)
     try:
-        colors.remove('m') # BAKERT case
+        colors.remove('m')
         multicolored = True
     except ValueError:
         multicolored = False
@@ -200,7 +201,7 @@ def color_where(subtable, operator, term):
     if len(colors) > 1:
         clause = '({clause})'.format(clause=clause)
     try:
-        colors.remove('c') # BAKERT case
+        colors.remove('c')
     except ValueError:
         pass
     if operator == '!':
@@ -218,7 +219,7 @@ def set_where(name):
 def format_where(term):
     if term in ['pennydreadful', 'pd']:
         return '(pd_legal = 1)'
-    format_id = database.Database().value('SELECT id FROM format WHERE name LIKE ?', ['{term}%'.format(term=term)])
+    format_id = database.DATABASE.value('SELECT id FROM format WHERE name LIKE ?', ['{term}%'.format(term=term)])
     return "(id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))".format(format_id=format_id)
 
 def rarity_where(operator, term):
@@ -277,8 +278,8 @@ def value_lookup(table, value):
             'm': 5
         }
     }
-    if table in replacements and value.lower() in replacements[table]:
-        return replacements[table][value.lower()]
+    if table in replacements and value in replacements[table]:
+        return replacements[table][value]
     return value
 
 class InvalidSearchException(Exception):

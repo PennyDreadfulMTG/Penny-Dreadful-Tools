@@ -7,7 +7,7 @@ def  test_simple():
     try:
         do_test('Not a mana symbol sequence', None)
         assert False
-    except mana.InvalidManaCostException: # BAKERT catch the specific exception here
+    except mana.InvalidManaCostException:
         assert True
 
 def test_twobrid():
@@ -32,7 +32,7 @@ def test_norns_annex():
     do_test('{3}{WP}{WP}', ['3', 'WP', 'WP'])
 
 def test_everything():
-    rs = database.Database().execute('SELECT mana_cost FROM card')
+    rs = database.DATABASE.execute('SELECT mana_cost FROM card')
     for row in rs:
         if row['mana_cost']:
             mana.parse(row['mana_cost'])

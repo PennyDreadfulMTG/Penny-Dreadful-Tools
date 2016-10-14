@@ -35,7 +35,6 @@ def parse_prices(s):
     return re.findall("""<td class='card'><a data-full-image="[^"]*" data-html="true" data-trigger="hover" href="[^#]*#online" rel="popover">([^<]*)</a></td>\n<td>[^<]*</td>\n<td>[^<]*</td>\n<td class='text-right'>\n(.*)\n</td>""", s)
 
 def store(timestamp, all_prices):
-    start = time.time()
     sql = 'INSERT INTO price (`time`, name, `set`, premium, price) VALUES (?, ?, ?, ?, ?)'
     for code in all_prices:
         prices = all_prices[code]
@@ -50,7 +49,7 @@ def store(timestamp, all_prices):
     commit()
 
 def execute(sql, values=None):
-    if values == None:
+    if values is None:
         values = []
     try:
         DATABASE.cursor().execute(sql, values)

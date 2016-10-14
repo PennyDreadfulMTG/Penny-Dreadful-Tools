@@ -106,7 +106,7 @@ def test_split_cards():
 
     assert command.download_image(cards) != None
 
-    # names = command.parse_queries('[Toil // Trouble]')
-    # assert len(names) == 1
-    # cards = command.cards_from_queries(names)
-    # assert len(names) == 1
+    names = command.parse_queries('[Toil // Trouble]')
+    assert len(names) == 1
+    cards = command.cards_from_queries(names)
+    assert len(cards) == 1

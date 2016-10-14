@@ -1,4 +1,6 @@
 node{
+    def FailedTests = false
+    
     stage('Clone') {
         checkout scm
     }
@@ -16,14 +18,18 @@ node{
             sh 'gcc -fPIC -shared spellfix.c -o spellfix.so'
         }
     }
-
+    
     stage('Unit Tests') {
-        sh 'PATH=$PATH:~/.local/bin/; pytest --junitxml=test_results.xml || exit 0'
+        FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; pytest --junitxml=test_results.xml')
         junit 'test_results.xml'
     }
 
     stage('Pylint') {
         sh 'PATH=$PATH:~/.local/bin/; pylint -f parseable --rcfile=pylintrc $(find . -name "*.py" -print) | tee pylint.log'
         step([$class: 'WarningsPublisher', canComputeNew: false, canResolveRelativePaths: false, canRunOnFailed: true, excludePattern: '', failedTotalHigh: '0', unstableTotalAll: '0', healthy: '0', includePattern: '', messagesPattern: '', parserConfigurations: [[parserName: 'PyLint', pattern: 'pylint.log']], unHealthy: '10'])
+    }
+
+    if (FailedTests) {
+        error 'Failed a test'
     }
 }

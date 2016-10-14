@@ -9,3 +9,5 @@ db
 test_results.xml
 .vscode
 spellfix.*
+sqlite3.h
+sqlite3ext.h

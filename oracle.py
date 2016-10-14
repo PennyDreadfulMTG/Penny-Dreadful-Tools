@@ -108,7 +108,7 @@ def insert_card(c):
         format_id = get_format_id(info['format'], True)
         DATABASE.database.execute('INSERT INTO card_legality (card_id, format_id, legality) VALUES (?, ?, ?)', [card_id, format_id, info['legality']])
 
-def insert_set( s) -> None:
+def insert_set(s) -> None:
     sql = 'INSERT INTO `set` ('
     sql += ', '.join(prop for prop in card.set_properties())
     sql += ') VALUES ('

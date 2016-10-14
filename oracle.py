@@ -13,13 +13,10 @@ CARD_IDS = {}
 FORMAT_IDS = {}
 DATABASE = database.DATABASE
 def initialize():
-    try:
-        current_version = fetcher.version()
-        if current_version > DATABASE.version():
-            print('Database update required')
-            update_database(str(current_version))
-    except fetcher.FetchException:
-        print("WARN: Unable to fetch new mtgjson")
+    current_version = fetcher.version()
+    if current_version > DATABASE.version():
+        print('Database update required')
+        update_database(str(current_version))
     aliases = fetcher.card_aliases()
     if DATABASE.alias_count() != len(aliases):
         print('Card alias update required')
@@ -38,14 +35,13 @@ def search(query):
 
 def get_legal_cards(force=False):
     new_list = ['']
-    try:
-        fetcher.legal_cards(force)
-    except fetcher.FetchException:
-        print("WARN: Unable to fetch updated legalities")
+    fetcher.legal_cards(force)
     if new_list == ['']:
         new_list = [card.Card(r).name.lower() for r in DATABASE.execute('SELECT name FROM card WHERE pd_legal = 1')]
         if len(new_list) == 0:
             new_list = fetcher.legal_cards(force=True)
+            DATABASE.execute('UPDATE card SET pd_legal = 0')
+            DATABASE.execute('UPDATE card SET pd_legal = 1 WHERE LOWER(name) IN (' + ', '.join(database.escape(name) for name in new_list) + ')')
     else:
         DATABASE.execute('UPDATE card SET pd_legal = 0')
         DATABASE.execute('UPDATE card SET pd_legal = 1 WHERE LOWER(name) IN (' + ', '.join(database.escape(name) for name in new_list) + ')')

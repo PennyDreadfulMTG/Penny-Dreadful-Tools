@@ -33,7 +33,7 @@ async def handle_command(message, bot):
     if len(parts) > 1:
         args = parts[1]
 
-    method = [m for m in dir(Commands) if m == cmd]
+    method = [m for m in dir(Commands) if m == cmd or m == '_' + cmd]
     if len(method) > 0:
         method = getattr(Commands, method[0])
         if method.__code__.co_argcount == 5:
@@ -172,7 +172,7 @@ Want to contribute? Send a Pull Request."""
                 await bot.client.send_message(channel, msg)
                 return
 
-    async def oracle(self, bot, channel, args, author):
+    async def _oracle(self, bot, channel, args, author):
         """`!oracle {name}` Give the Oracle text of the named card."""
         cards = list(cards_from_query(args))
         if len(cards) > 1:

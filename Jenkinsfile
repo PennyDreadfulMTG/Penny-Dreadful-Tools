@@ -1,4 +1,6 @@
 node{
+    def FailedTests = false
+    
     stage('Clone') {
         checkout scm
     }
@@ -16,9 +18,9 @@ node{
             sh 'gcc -fPIC -shared spellfix.c -o spellfix.so'
         }
     }
-
+    
     stage('Unit Tests') {
-        def FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; pytest --junitxml=test_results.xml')
+        FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; pytest --junitxml=test_results.xml')
         junit 'test_results.xml'
     }
 

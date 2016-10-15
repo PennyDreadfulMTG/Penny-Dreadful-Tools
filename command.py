@@ -15,6 +15,7 @@ import fetcher
 from card import Card
 from find import search
 import oracle
+import price
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -183,6 +184,16 @@ Want to contribute? Send a Pull Request."""
         else:
             await bot.client.send_message(channel, '{author}: No matches.'.format(author=author.mention))
 
+    async def price(self, bot, channel, args, author):
+        """`!price {name}` Get price information about the named card."""
+        cards = list(cards_from_query(args))
+        if len(cards) > 1:
+            await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
+        elif len(cards) == 1:
+            text = price_info(cards[0])
+            await bot.client.send_message(channel, '**{name}** {text}'.format(name=cards[0].name, text=text))
+        else:
+            await bot.client.send_message(channel, '{author}: No matches.'.format(author=author.mention))
 
 
 def escape(str_input) -> str:
@@ -293,3 +304,7 @@ def complex_search(query):
         return []
     print('Searching for {query}'.format(query=query))
     return search.search(query)
+
+def price_info(card):
+    p = price.price_info(card)
+    return '{price} ({week}% this week, {month}% this month)'.format(price=p['price'], week=round(p['week'] * 100.0), month=round(p['month'] * 100.0))

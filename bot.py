@@ -1,8 +1,12 @@
+import os
+import time
+
 import discord
 
 import command
 import configuration
 import emoji
+import fetcher
 import oracle
 
 class Bot:
@@ -13,6 +17,8 @@ class Bot:
     def init(self):
         self.legal_cards = oracle.get_legal_cards()
         print('Legal cards: {num_legal_cards}'.format(num_legal_cards=len(self.legal_cards)))
+        if not os.path.isfile('prices.db') or os.path.getmtime('prices.db') < time.time():
+            fetcher.fetch_prices()
         self.client.run(configuration.get('token'))
 
     async def on_ready(self):

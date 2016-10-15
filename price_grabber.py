@@ -1,6 +1,8 @@
+import html
 import re
 import sqlite3
 import time
+import urllib
 
 import fetcher
 
@@ -17,6 +19,8 @@ def fetch():
             url = set_url(code)
             s = fetcher.fetch(url)
             prices = parse_prices(s)
+            if not prices:
+                print('Found no prices for {code}'.format(code=code))
             all_prices[code] = prices
         if code == 'SOI_F':
             break
@@ -25,14 +29,15 @@ def fetch():
     store(timestamp, all_prices)
 
 def set_url(code):
-    return 'https://www.mtggoldfish.com/index/{code}#online'.format(code=code)
+    return 'https://www.mtggoldfish.com/index/{code}#online'.format(code=urllib.parse.quote(code))
 
 def parse_sets(s):
-    # Exclude codes with underscores, dashes and lowercase because they are pages for standard", modern, etc. and will gives us dupes.
+    # Exclude codes with underscores, dashes and lowercase because they are pages for standard, modern, etc. and will gives us dupes.
     return re.findall("'/index/([A-Z0-9]+)'", s)
 
 def parse_prices(s):
-    return re.findall("""<td class='card'><a data-full-image="[^"]*" data-html="true" data-trigger="hover" href="[^#]*#online" rel="popover">([^<]*)</a></td>\n<td>[^<]*</td>\n<td>[^<]*</td>\n<td class='text-right'>\n(.*)\n</td>""", s)
+    results = re.findall("""<td class='card'><a data-full-image="[^"]*" data-html="true" data-trigger="hover" href="[^#]*#online" rel="popover">([^<]*)</a></td>\n<td>[^<]*</td>\n<td>[^<]*</td>\n<td class='text-right'>\n(.*)\n</td>""", s)
+    return [(html.unescape(name), html.unescape(price)) for name, price in results]
 
 def store(timestamp, all_prices):
     sql = 'INSERT INTO price (`time`, name, `set`, premium, price) VALUES (?, ?, ?, ?, ?)'
@@ -64,6 +69,7 @@ def commit():
     DATABASE.close()
 
 def create_table():
+    print('Creating price table.')
     sql = """CREATE TABLE price (
         `time` INTEGER,
         name TEXT,

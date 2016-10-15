@@ -85,5 +85,8 @@ def set_last_modified(resource):
 def whatsinstandard():
     return json.loads(fetch('http://whatsinstandard.com/api/4/sets.json'))
 
+def fetch_prices():
+    store('http://magic.bluebones.net/prices.db', 'prices.db')
+
 class FetchException(Exception):
     pass

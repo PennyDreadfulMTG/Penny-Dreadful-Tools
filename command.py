@@ -30,6 +30,8 @@ async def respond_to_card_names(message, bot):
 async def handle_command(message, bot):
     parts = message.content.split(' ', 1)
     cmd = parts[0].lstrip('!').lower()
+    if len(cmd) == 0:
+        return
     args = ""
     if len(parts) > 1:
         args = parts[1]

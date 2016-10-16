@@ -29,7 +29,7 @@ class Bot:
         # We do not want the bot to reply to itself.
         if message.author == self.client.user:
             return
-        if message.content.startswith('!'):
+        if message.content.startswith('!') and len(message.content.replace('!', '')) > 0:
             await self.respond_to_command(message)
         else:
             await self.respond_to_card_names(message)

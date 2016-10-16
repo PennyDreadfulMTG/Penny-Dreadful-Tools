@@ -40,7 +40,7 @@ def get_legal_cards(force=False):
     except fetcher.FetchException:
         pass
     if new_list == ['']:
-        new_list = [r['name'] for r in DATABASE.execute('SELECT name FROM card WHERE pd_legal = 1')]
+        new_list = [r['name'].lower() for r in DATABASE.execute('SELECT name FROM card WHERE pd_legal = 1')]
         if len(new_list) == 0:
             new_list = fetcher.legal_cards(force=True)
             DATABASE.execute('UPDATE card SET pd_legal = 0')

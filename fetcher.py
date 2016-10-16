@@ -16,8 +16,7 @@ def legal_cards(force=False):
     resource_id = 'legal_cards'
     if force:
         resource_id = None
-    value = [s.lower() for s in fetch('http://pdmtgo.com/legal_cards.txt', 'latin-1', resource_id).split('\n')]
-    return value
+    return [s.lower() for s in fetch('http://pdmtgo.com/legal_cards.txt', 'latin-1', resource_id).split('\n')]
 
 def version():
     return pkg_resources.parse_version(json.loads(fetch('https://mtgjson.com/json/version.json')))
@@ -87,7 +86,7 @@ def store(url, path):
 def get_last_modified(resource):
     return database.DATABASE.value("SELECT last_modified FROM fetcher WHERE resource = ?", [resource])
 
-def set_last_modified(resource, httptime = None):
+def set_last_modified(resource, httptime=None):
     if httptime is None:
         httptime = formatdate(timeval=None, localtime=False, usegmt=True)
     database.DATABASE.execute("INSERT INTO fetcher (resource, last_modified) VALUES (?, ?)", [resource, httptime])

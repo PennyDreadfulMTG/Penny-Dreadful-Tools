@@ -1,7 +1,4 @@
-import calendar
 import os
-import time
-from email.utils import formatdate
 
 import card
 import command

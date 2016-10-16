@@ -1,5 +1,4 @@
 import collections
-import re
 
 import card
 import database
@@ -57,7 +56,7 @@ def tokenize(s):
                 mode = QUOTED_STRING
             elif c == ' ':
                 pass # noop
-            elif re.match('[A-Za-z0-9]', c):
+            elif String.match(c):
                 string = [c]
                 mode = UNQUOTED_STRING
             else:

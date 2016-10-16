@@ -83,10 +83,12 @@ def update_fuzzy_matching():
 def insert_card(c):
     sql = 'INSERT INTO card ('
     sql += ', '.join(prop for prop in card.properties())
+    sql += ', name_ascii'
     sql += ') VALUES ('
     sql += ', '.join('?' for prop in card.properties())
+    sql += ', ?'
     sql += ')'
-    values = [c.get(database2json(prop)) for prop in card.properties()]
+    values = [c.get(database2json(prop)) for prop in card.properties()] + [command.unaccent(c.get('name'))]
     # database.execute commits after each statement, which we want to
     # avoid while inserting cards
     DATABASE.database.execute(sql, values)

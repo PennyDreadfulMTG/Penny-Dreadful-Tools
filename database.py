@@ -1,3 +1,5 @@
+import unicodedata
+
 import apsw
 import pkg_resources
 
@@ -6,7 +8,7 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 37
+    schema_version = 40
 
     def __init__(self):
         self.open()
@@ -24,6 +26,7 @@ class Database:
         self.connection.setrowtrace(row_factory)
         self.connection.enableloadextension(True)
         self.connection.loadextension(configuration.get('spellfix'))
+        self.connection.createscalarfunction('unaccent', unaccent, 1)
         self.database = self.connection.cursor()
 
     def version(self) -> str:
@@ -58,7 +61,7 @@ class Database:
         self.execute('CREATE TABLE IF NOT EXISTS version (version TEXT)')
         sql = 'CREATE TABLE IF NOT EXISTS card (id INTEGER PRIMARY KEY, pd_legal INTEGER, '
         sql += ', '.join('{name} {type}'.format(name=name, type=type) for name, type in card.properties().items())
-        sql += ')'
+        sql += ', name_ascii TEXT NOT NULL)'
         self.execute(sql)
         self.execute("""CREATE TABLE IF NOT EXISTS card_name (
             id INTEGER PRIMARY KEY,
@@ -172,5 +175,8 @@ def escape(s) -> str:
 def row_factory(cursor, row):
     columns = [t[0] for t in cursor.getdescription()]
     return dict(zip(columns, row))
+
+def unaccent(s):
+    return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
 
 DATABASE = Database()

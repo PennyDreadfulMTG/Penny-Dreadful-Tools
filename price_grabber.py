@@ -22,8 +22,6 @@ def fetch():
             if not prices:
                 print('Found no prices for {code}'.format(code=code))
             all_prices[code] = prices
-        if code == 'SOI_F':
-            break
 
     timestamp = int(time.time())
     store(timestamp, all_prices)

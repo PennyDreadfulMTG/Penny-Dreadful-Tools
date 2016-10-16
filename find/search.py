@@ -1,5 +1,4 @@
 import collections
-import re
 
 import card
 import database
@@ -57,7 +56,7 @@ def tokenize(s):
                 mode = QUOTED_STRING
             elif c == ' ':
                 pass # noop
-            elif re.match('[A-Za-z0-9]', c):
+            elif String.match(c):
                 string = [c]
                 mode = UNQUOTED_STRING
             else:
@@ -191,6 +190,8 @@ def math_where(column, operator, term):
     return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=database.escape(term))
 
 def color_where(subtable, operator, term):
+    if operator == ':' and subtable == 'color_identity':
+        operator = '!' # "includes color x" doesn't really make sense in a color identity query and this matches magidex/magiccards behavior.
     colors = list(term)
     try:
         colors.remove('m')

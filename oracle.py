@@ -88,7 +88,7 @@ def insert_card(c):
     sql += ', '.join('?' for prop in card.properties())
     sql += ', ?'
     sql += ')'
-    values = [c.get(database2json(prop)) for prop in card.properties()] + [command.unaccent(c.get('name'))]
+    values = [c.get(database2json(prop)) for prop in card.properties()] + [database.unaccent(c.get('name'))]
     # database.execute commits after each statement, which we want to
     # avoid while inserting cards
     DATABASE.database.execute(sql, values)

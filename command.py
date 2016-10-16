@@ -308,5 +308,11 @@ def complex_search(query):
     return search.search(query)
 
 def price_info(card):
-    p = price.price_info(card)
-    return '{price} ({week}% this week, {month}% this month)'.format(price=p['price'], week=round(p['week'] * 100.0), month=round(p['month'] * 100.0))
+    p = price.info(card)
+    s = '{price}'.format(price=p['price'])
+    if p['low'] <= 0.05:
+        s += ' (low {low}, high {high}'.format(low=round(p['low'], 2), high=round(p['high'], 2))
+        if p['low'] <= 0.01:
+            s += ', {week}% this week, {month}% this month, {rotation}% this rotation'.format(week=round(p['week'] * 100.0), month=round(p['month'] * 100.0), rotation=round(p['rotation'] * 100.0))
+        s += ')'
+    return s

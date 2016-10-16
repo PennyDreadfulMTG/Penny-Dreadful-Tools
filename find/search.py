@@ -212,6 +212,8 @@ def color_where(subtable, operator, term):
         if colors:
             color_ids_clause = ' AND '.join('color_id <> {color_id}'.format(color_id=value_lookup('color', color)) for color in colors)
             clause = '({clause} AND (id NOT IN (SELECT card_id FROM card_{subtable} WHERE {color_ids_clause})))'.format(clause=clause, subtable=subtable, color_ids_clause=color_ids_clause)
+    if not clause:
+        clause = '(1 = 1)'
     if multicolored:
         clause = '({clause} AND (id IN (SELECT card_id FROM card_{subtable} GROUP BY card_id HAVING COUNT(card_id) > 1)))'.format(clause=clause, subtable=subtable)
     return clause

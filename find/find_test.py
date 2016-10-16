@@ -9,6 +9,9 @@ def test_match():
     assert not search.Criterion.match(list('magic:2uu'))
     assert search.Criterion.match(list('tou>2'))
 
+def test_only_multicolored():
+    do_test('c:m', '((1 = 1) AND (id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) > 1)))')
+
 def test_multicolored():
     do_test('c:bm', '((id IN (SELECT card_id FROM card_color WHERE color_id = 3)) AND (id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) > 1)))')
 

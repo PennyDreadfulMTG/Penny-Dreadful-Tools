@@ -63,6 +63,7 @@ def update_database(new_version):
     update_fuzzy_matching()
     DATABASE.execute('INSERT INTO version (version) VALUES (?)', [new_version])
     DATABASE.execute('COMMIT')
+    get_legal_cards(True)
 
 def update_card_aliases(aliases):
     DATABASE.execute('DELETE FROM card_alias', [])

@@ -16,6 +16,7 @@ from card import Card
 from find import search
 import oracle
 import price
+import rotation
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -171,14 +172,11 @@ Want to contribute? Send a Pull Request."""
 
     async def rotation(self, bot, channel):
         """`!rotation` Give the date of the next Penny Dreadful rotation."""
-        standard = fetcher.whatsinstandard()
-        for release in standard:
-            reldate = datetime.datetime.strptime(release["enter_date"], "%Y-%m-%dT%H:%M:%S.%fZ")
-            if reldate > datetime.datetime.now():
-                diff = reldate - datetime.datetime.now()
-                msg = "The next rotation is in {diff}".format(diff=diff)
-                await bot.client.send_message(channel, msg)
-                return
+        next_rotation = rotation.next_rotation()
+        if next_rotation > datetime.datetime.now():
+            diff = next_rotation - datetime.datetime.now()
+            msg = "The next rotation is in {diff}".format(diff=diff)
+            await bot.client.send_message(channel, msg)
 
     async def _oracle(self, bot, channel, args, author):
         """`!oracle {name}` Give the Oracle text of the named card."""
@@ -310,5 +308,11 @@ def complex_search(query):
     return search.search(query)
 
 def price_info(card):
-    p = price.price_info(card)
-    return '{price} ({week}% this week, {month}% this month)'.format(price=p['price'], week=round(p['week'] * 100.0), month=round(p['month'] * 100.0))
+    p = price.info(card)
+    s = '{price}'.format(price=p['price'])
+    if p['low'] <= 0.05:
+        s += ' (low {low}, high {high}'.format(low=round(p['low'], 2), high=round(p['high'], 2))
+        if p['low'] <= 0.01:
+            s += ', {week}% this week, {month}% this month, {rotation}% this rotation'.format(week=round(p['week'] * 100.0), month=round(p['month'] * 100.0), rotation=round(p['rotation'] * 100.0))
+        s += ')'
+    return s

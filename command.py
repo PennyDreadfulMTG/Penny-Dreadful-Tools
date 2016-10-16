@@ -5,11 +5,11 @@ import os
 import random
 import re
 import sys
-import unicodedata
 import urllib.parse
 from typing import List
 
 import configuration
+import database
 import emoji
 import fetcher
 from card import Card
@@ -228,10 +228,7 @@ def acceptable_file(filepath: str) -> bool:
     return os.path.isfile(filepath) and os.path.getsize(filepath) > 0
 
 def basename(cards):
-    return '_'.join(re.sub('[^a-z-]', '-', unaccent(card.name).lower()) for card in cards)
-
-def unaccent(s):
-    return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
+    return '_'.join(re.sub('[^a-z-]', '-', database.unaccent(card.name).lower()) for card in cards)
 
 def download_image(cards: List[Card]) -> str:
     imagename = basename(cards)

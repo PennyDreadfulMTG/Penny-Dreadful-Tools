@@ -161,6 +161,9 @@ def where(keys, term, exact_match=False):
     subsequent = False
     s = '('
     for column in keys:
+        if column == 'name':
+            column = 'name_ascii'
+            q = database.unaccent(q)
         if subsequent:
             s += ' OR '
         s += '{column} LIKE {q}'.format(column=column, q=database.escape(q))
@@ -220,7 +223,7 @@ def set_where(name):
 def format_where(term):
     if term in ['pennydreadful', 'pd']:
         return '(pd_legal = 1)'
-    format_id = database.DATABASE.value('SELECT id FROM format WHERE name LIKE ?', ['{term}%'.format(term=term)])
+    format_id = database.DATABASE.value('SELECT id FROM format WHERE name LIKE ?', ['{term}%'.format(term=database.unaccent(term))])
     return "(id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))".format(format_id=format_id)
 
 def rarity_where(operator, term):

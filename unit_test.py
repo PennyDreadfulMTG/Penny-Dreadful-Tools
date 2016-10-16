@@ -93,9 +93,8 @@ def test_aether():
 
 
 def test_fetcher_mod_since():
-    lmtime = calendar.timegm(time.gmtime()) - 10
-    lmtime = formatdate(timeval=lmtime, localtime=False, usegmt=True)
-    val = fetcher.fetch("http://pdmtgo.com/legal_cards.txt", if_modified_since=lmtime)
+    fetcher.fetch("http://pdmtgo.com/legal_cards.txt", resource_id='test_fetcher_mod_since')
+    val = fetcher.fetch("http://pdmtgo.com/legal_cards.txt", resource_id='test_fetcher_mod_since')
     assert val == ''
 
 def test_split_cards():

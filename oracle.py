@@ -35,9 +35,12 @@ def search(query):
 
 def get_legal_cards(force=False):
     new_list = ['']
-    fetcher.legal_cards(force)
+    try:
+        new_list = fetcher.legal_cards(force)
+    except fetcher.FetchException:
+        pass
     if new_list == ['']:
-        new_list = [card.Card(r).name.lower() for r in DATABASE.execute('SELECT name FROM card WHERE pd_legal = 1')]
+        new_list = [r['name'].lower() for r in DATABASE.execute('SELECT name FROM card WHERE pd_legal = 1')]
         if len(new_list) == 0:
             new_list = fetcher.legal_cards(force=True)
             DATABASE.execute('UPDATE card SET pd_legal = 0')

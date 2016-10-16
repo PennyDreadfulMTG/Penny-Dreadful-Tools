@@ -38,8 +38,10 @@ def get_legal_cards(force=False):
     fetcher.legal_cards(force)
     if new_list == ['']:
         new_list = [card.Card(r).name.lower() for r in DATABASE.execute('SELECT name FROM card WHERE pd_legal = 1')]
-        if len(new_list) < 2 and not force:
-            return get_legal_cards(True)
+        if len(new_list) == 0:
+            new_list = fetcher.legal_cards(force=True)
+            DATABASE.execute('UPDATE card SET pd_legal = 0')
+            DATABASE.execute('UPDATE card SET pd_legal = 1 WHERE LOWER(name) IN (' + ', '.join(database.escape(name) for name in new_list) + ')')
     else:
         DATABASE.execute('UPDATE card SET pd_legal = 0')
         DATABASE.execute('UPDATE card SET pd_legal = 1 WHERE LOWER(name) IN (' + ', '.join(database.escape(name) for name in new_list) + ')')
@@ -63,7 +65,6 @@ def update_database(new_version):
     update_fuzzy_matching()
     DATABASE.execute('INSERT INTO version (version) VALUES (?)', [new_version])
     DATABASE.execute('COMMIT')
-    get_legal_cards(True)
 
 def update_card_aliases(aliases):
     DATABASE.execute('DELETE FROM card_alias', [])

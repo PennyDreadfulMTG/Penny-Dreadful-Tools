@@ -11,11 +11,11 @@ def test_imagedownload():
     filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='island.jpg')
     if command.acceptable_file(filepath):
         os.remove(filepath)
-    c = card.Card({'name': 'Island'})
+    c = card.Card({'id': 0, 'name': 'Island', 'names': 'Island'})
     assert command.download_image([c]) is not None
 
 # Check that we can fall back to the Gatherer images if all else fails.
-# Note: Bluebones doesn't have Nalathni Dragon, while Gatherer does, which makes it slightly unique
+# Note: bluebones doesn't have Nalathni Dragon, while Gatherer does, which makes it slightly unique
 def test_fallbackimagedownload():
     filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='nalathni-dragon.jpg')
     if command.acceptable_file(filepath):
@@ -26,7 +26,7 @@ def test_fallbackimagedownload():
 
 # Check that we can succesfully fail at getting an image
 def test_noimageavailable():
-    c = card.Card({'name': "Barry's Land", 'id': 0, 'multiverseid': 0})
+    c = card.Card({'name': "Barry's Land", 'id': 0, 'multiverseid': 0, 'names': "Barry's Land"})
     assert command.download_image([c]) is None
 
 # Search for a single card via full name
@@ -95,9 +95,7 @@ def test_fetcher_mod_since():
     assert val == ''
 
 def test_split_cards():
-    cards = command.cards_from_query('toil')
-    assert len(cards) == 1
-    cards = command.cards_from_query('trouble')
+    cards = command.cards_from_query('Armed // Dangerous')
     assert len(cards) == 1
 
     assert command.download_image(cards) != None

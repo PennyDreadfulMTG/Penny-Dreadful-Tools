@@ -8,7 +8,7 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 41
+    schema_version = 50
 
     def __init__(self):
         self.open()
@@ -54,21 +54,19 @@ class Database:
         else:
             return list(rs.values())[0]
 
-
     def setup(self):
         self.execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER)')
         self.execute('INSERT INTO db_version (version) VALUES ({0})'.format(self.schema_version))
         self.execute('CREATE TABLE IF NOT EXISTS version (version TEXT)')
         sql = 'CREATE TABLE IF NOT EXISTS card (id INTEGER PRIMARY KEY, pd_legal INTEGER, '
-        sql += ', '.join('{name} {type}'.format(name=name, type=type) for name, type in card.properties().items())
-        sql += ', name_ascii TEXT NOT NULL)'
+        sql += ', '.join('{name} {type}'.format(name=name, type=type) for name, type in card.card_properties().items())
+        sql += ')'
         self.execute(sql)
-        self.execute("""CREATE TABLE IF NOT EXISTS card_name (
-            id INTEGER PRIMARY KEY,
-            card_id INTEGER NOT NULL,
-            name TEXT NOT NULL,
-            FOREIGN KEY(card_id) REFERENCES card(id)
-        )""")
+        sql = 'CREATE TABLE IF NOT EXISTS face (id INTEGER PRIMARY KEY, position INTEGER, '
+        sql += ', '.join('{name} {type}'.format(name=name, type=type) for name, type in card.face_properties().items())
+        sql += ', name_ascii TEXT NOT NULL, card_id INTEGER NOT NULL, '
+        sql += 'FOREIGN KEY(card_id) REFERENCES card(id))'
+        self.execute(sql)
         sql = 'CREATE TABLE IF NOT EXISTS `set` (id INTEGER PRIMARY KEY, '
         sql += ', '.join('{name} {type}'.format(name=name, type=type) for name, type in card.set_properties().items())
         sql += ')'

@@ -5,13 +5,13 @@ import card
 import database
 import fetcher
 
-def layouts():
-    return ['normal', 'meld', 'split', 'phenomenon', 'token', 'vanguard', 'double-faced', 'plane', 'flip', 'scheme', 'leveler']
-
-
 CARD_IDS = {}
 FORMAT_IDS = {}
 DATABASE = database.DATABASE
+
+def layouts():
+    return ['normal', 'meld', 'split', 'phenomenon', 'token', 'vanguard', 'double-faced', 'plane', 'flip', 'scheme', 'leveler']
+
 def initialize():
     current_version = fetcher.version()
     if current_version > DATABASE.version():
@@ -23,15 +23,58 @@ def initialize():
         update_card_aliases(aliases)
 
 def search(query):
-    sql = 'SELECT word, distance FROM fuzzy WHERE word MATCH ?'
-    rs = DATABASE.execute(sql, ['*{query}*'.format(query=query)])
-    sql = 'SELECT card.id, ' + (', '.join(property for property in card.properties())) \
-        + ', alias ' \
-        + ' FROM card LEFT OUTER JOIN card_alias on card.id = card_alias.card_id ' \
-        + 'WHERE name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 200) ' \
-        + 'ORDER BY pd_legal DESC, name'
-    rs = DATABASE.execute(sql, ['*{query}*'.format(query=query)])
+    sql = """
+        {base_select}
+        HAVING GROUP_CONCAT(face_name, ' // ') IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 200)
+            OR SUM(CASE WHEN face_name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 200) THEN 1 ELSE 0 END) > 0
+        ORDER BY pd_legal DESC, name
+    """.format(base_select=base_select())
+    print(sql)
+    query = '*{query}*'.format(query=query)
+    rs = DATABASE.execute(sql, [query, query])
     return [card.Card(r) for r in rs]
+
+def base_select(where_clause='(1 = 1)'):
+    return """SELECT
+        id,
+        layout,
+        CASE WHEN layout = 'meld' OR layout = 'double-faced' THEN
+            GROUP_CONCAT(CASE WHEN position = 1 THEN face_name ELSE '' END, '')
+        ELSE
+            GROUP_CONCAT(face_name , ' // ' )
+        END AS name,
+        GROUP_CONCAT(face_name, '|') AS names,
+        CASE
+            WHEN layout IN ('split') AND `text` LIKE '%Fuse (You may cast one or both halves of this card from your hand.)%' THEN
+                GROUP_CONCAT(mana_cost, '')
+            WHEN layout IN ('split') THEN
+                NULL
+            ELSE
+                GROUP_CONCAT(CASE WHEN position = 1 THEN mana_cost ELSE '' END, '')
+        END AS mana_cost,
+        SUM(cmc) AS cmc,
+        GROUP_CONCAT(CASE WHEN position = 1 THEN power ELSE '' END, '') AS power,
+        GROUP_CONCAT(CASE WHEN position = 1 THEN toughness ELSE '' END, '') AS toughness,
+        GROUP_CONCAT(CASE WHEN position = 1 THEN loyalty ELSE '' END, '') AS loyalty,
+        GROUP_CONCAT(CASE WHEN position = 1 THEN type ELSE '' END, '') AS type,
+        GROUP_CONCAT(CASE WHEN position = 1 THEN type ELSE '' END, '') AS type,
+        GROUP_CONCAT(`text`, '\n-----\n') AS `text`,
+        GROUP_CONCAT(CASE WHEN position = 1 THEN type ELSE '' END, '') AS type,
+        GROUP_CONCAT(CASE WHEN position = 1 THEN hand ELSE '' END, '') AS hand,
+        GROUP_CONCAT(CASE WHEN position = 1 THEN life ELSE '' END, '') AS life,
+        GROUP_CONCAT(CASE WHEN position = 1 THEN starter ELSE '' END, '') AS starter,
+        alias
+        FROM
+            (SELECT c.id, c.pd_legal, {card_props}, {face_props}, f.name AS face_name, f.position, f.name_ascii, ca.alias
+            FROM card AS c
+            INNER JOIN face AS f ON c.id = f.card_id
+            LEFT OUTER JOIN card_alias AS ca ON c.id = ca.card_id
+            ORDER BY f.card_id, f.position)
+        WHERE id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where_clause})
+        GROUP BY id
+        """.format(where_clause=where_clause,
+                   card_props=(', '.join(prop for prop in card.card_properties())),
+                   face_props=(', '.join(prop for prop in card.face_properties() if prop not in ['name'])))
 
 def get_legal_cards(force=False):
     new_list = ['']
@@ -40,14 +83,14 @@ def get_legal_cards(force=False):
     except fetcher.FetchException:
         pass
     if new_list == ['']:
-        new_list = [r['name'].lower() for r in DATABASE.execute('SELECT name FROM card WHERE pd_legal = 1')]
+        new_list = [r['name'].lower() for r in DATABASE.execute("SELECT GROUP_CONCAT(name, ' // ') AS name FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE pd_legal = 1 GROUP BY c.id")]
         if len(new_list) == 0:
             new_list = fetcher.legal_cards(force=True)
             DATABASE.execute('UPDATE card SET pd_legal = 0')
             DATABASE.execute('UPDATE card SET pd_legal = 1 WHERE LOWER(name) IN (' + ', '.join(database.escape(name) for name in new_list) + ')')
     else:
         DATABASE.execute('UPDATE card SET pd_legal = 0')
-        DATABASE.execute('UPDATE card SET pd_legal = 1 WHERE LOWER(name) IN (' + ', '.join(database.escape(name) for name in new_list) + ')')
+        DATABASE.execute('UPDATE card SET pd_legal = 1 WHERE id IN (SELECT card_id FROM face WHERE LOWER(name) IN (' + ', '.join(database.escape(name) for name in new_list) + '))')
     return new_list
 
 def update_database(new_version):
@@ -59,9 +102,9 @@ def update_database(new_version):
     sets = fetcher.all_sets()
     for _, s in sets.items():
         insert_set(s)
-    # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
     check_layouts() # Check that the hardcoded list of layouts we're about to use is still valid.
-    DATABASE.execute("UPDATE card SET cmc = 0 WHERE cmc IS NULL AND layout IN ('normal', 'double-faced', 'flip', 'leveler', 'token', 'split')")
+    # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
+    DATABASE.execute("UPDATE face SET cmc = 0 WHERE cmc IS NULL AND card_id IN (SELECT id FROM card WHERE layout IN ('normal', 'double-faced', 'flip', 'leveler', 'token', 'split'))")
     rs = DATABASE.execute('SELECT id, name FROM rarity')
     for row in rs:
         DATABASE.execute('UPDATE printing SET rarity_id = ? WHERE rarity = ?', [row['id'], row['name']])
@@ -72,7 +115,7 @@ def update_database(new_version):
 def update_card_aliases(aliases):
     DATABASE.execute('DELETE FROM card_alias', [])
     for alias, name in aliases:
-        card_id = DATABASE.value('SELECT id FROM card WHERE name = ?', [name])
+        card_id = DATABASE.value('SELECT card_id FROM face WHERE name = ?', [name])
         if card_id is not None:
             DATABASE.execute('INSERT INTO card_alias (card_id, alias) VALUES (?, ?)', [card_id, alias])
         else:
@@ -81,24 +124,39 @@ def update_card_aliases(aliases):
 def update_fuzzy_matching():
     DATABASE.execute('DROP TABLE IF EXISTS fuzzy')
     DATABASE.execute('CREATE VIRTUAL TABLE IF NOT EXISTS fuzzy USING spellfix1')
-    DATABASE.execute('INSERT INTO fuzzy(word, rank) SELECT name, pd_legal FROM card')
+    # BAKERT this does not order split card names correctly
+    DATABASE.execute("""INSERT INTO fuzzy (word, rank)
+        SELECT GROUP_CONCAT(name, ' // '), pd_legal
+        FROM (SELECT f.name, c.pd_legal, f.card_id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id ORDER BY card_id, position)
+        GROUP BY card_id
+    """)
+    DATABASE.execute('INSERT INTO fuzzy (word, rank) SELECT f.name, c.pd_legal FROM face AS f INNER JOIN card AS c ON f.card_id = c.id WHERE f.name NOT IN (SELECT word FROM fuzzy)')
 
 def insert_card(c):
-    sql = 'INSERT INTO card ('
-    sql += ', '.join(prop for prop in card.properties())
-    sql += ', name_ascii'
+    name = card_name(c)
+    try:
+        card_id = CARD_IDS[name]
+    except KeyError:
+        sql = 'INSERT INTO card ('
+        sql += ', '.join(prop for prop in card.card_properties())
+        sql += ') VALUES ('
+        sql += ', '.join('?' for prop in card.card_properties())
+        sql += ')'
+        values = [c.get(database2json(prop)) for prop in card.card_properties()]
+        # database.execute commits after each statement, which we want to avoid while inserting cards
+        DATABASE.database.execute(sql, values)
+        card_id = DATABASE.value('SELECT last_insert_rowid()')
+        CARD_IDS[name] = card_id
+    sql = 'INSERT INTO face ('
+    sql += ', '.join(prop for prop in card.face_properties())
+    sql += ', name_ascii, card_id, position'
     sql += ') VALUES ('
-    sql += ', '.join('?' for prop in card.properties())
-    sql += ', ?'
+    sql += ', '.join('?' for prop in card.face_properties())
+    sql += ', ?, ?, ?'
     sql += ')'
-    values = [c.get(database2json(prop)) for prop in card.properties()] + [database.unaccent(c.get('name'))]
-    # database.execute commits after each statement, which we want to
-    # avoid while inserting cards
+    position = 1 if not c.get('names') else c.get('names', [c.get('name')]).index(c.get('name')) + 1
+    values = [c.get(database2json(prop)) for prop in card.face_properties()] + [database.unaccent(c.get('name')), card_id, position]
     DATABASE.database.execute(sql, values)
-    card_id = DATABASE.value('SELECT last_insert_rowid()')
-    CARD_IDS[c.get('name')] = card_id
-    for name in c.get('names', []):
-        DATABASE.database.execute('INSERT INTO card_name (card_id, name) VALUES (?, ?)', [card_id, name])
     for color in c.get('colors', []):
         color_id = DATABASE.value('SELECT id FROM color WHERE name = ?', [color])
         DATABASE.database.execute('INSERT INTO card_color (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
@@ -125,7 +183,7 @@ def insert_set(s) -> None:
     DATABASE.database.execute(sql, values)
     set_id = DATABASE.value('SELECT last_insert_rowid()')
     for c in s.get('cards', []):
-        card_id = CARD_IDS[c.get('name')]
+        card_id = CARD_IDS[card_name(c)]
         sql = 'INSERT INTO printing (card_id, set_id, '
         sql += ', '.join(prop for prop in card.printing_properties())
         sql += ') VALUES (?, ?, '
@@ -154,8 +212,7 @@ def check_layouts():
 def get_printings(generalized_card: card.Card):
     sql = 'SELECT ' + (', '.join(property for property in card.printing_properties())) \
         + ' FROM printing ' \
-        + ' WHERE card_id = ? ' \
-
+        + ' WHERE card_id = ? '
     rs = DATABASE.execute(sql, [generalized_card.id])
     return [card.Printing(r) for r in rs]
 
@@ -173,5 +230,8 @@ def date2int(s):
         return dt.replace(tzinfo=datetime.timezone.utc).timestamp()
     except ValueError:
         return s
+
+def card_name(c):
+    return ' // '.join(c.get('names', [c.get('name')]))
 
 initialize()

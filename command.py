@@ -16,6 +16,7 @@ import fetcher
 import oracle
 import price
 import rotation
+
 from card import Card
 from find import search
 
@@ -247,7 +248,7 @@ def acceptable_file(filepath: str) -> bool:
     return os.path.isfile(filepath) and os.path.getsize(filepath) > 0
 
 def basename(cards):
-    return '_'.join(re.sub('[^a-z-]', '-', database.unaccent(card.name).lower()) for card in cards)
+    return '_'.join(re.sub('[^a-z-]', '-', canonicalize(card.name)) for card in cards)
 
 def download_image(cards: List[Card]) -> str:
     imagename = basename(cards)
@@ -294,23 +295,38 @@ def cards_from_query(query):
     # Skip searching if the request is too short.
     if len(query) <= 2:
         return []
-    # If we're asked for a Split Card, just search for the first half of it.
-    if '//' in query:
-        query = query.split('//', 1)[0].strip()
+
+    query = canonicalize(query)
+
     cards = oracle.search(query)
-    cards = [card for card in cards if card.type != 'Vanguard' and card.layout != 'token']
+    cards = [card for card in cards if card.layout != 'token' and card.type != 'Vanguard']
+
     # First look for an exact match.
     for card in cards:
-        if (card.name.lower() == query.lower()) or ((card.alias is not None) and (card.alias.lower() == query.lower())):
+        names = [canonicalize(name) for name in card.names]
+        if query in names:
             return [card]
+
+    results = []
+
     # If not found, use cards that start with the query and a punctuation char.
-    results = [card for card in cards if card.name.lower().startswith('{query} '.format(query=query)) or card.name.lower().startswith('{query},'.format(query=query))]
+    for card in cards:
+        names = [canonicalize(name) for name in card.names]
+        for name in names:
+            if name.startswith('{query} '.format(query=query)) or name.startswith('{query},'.format(query=query)):
+                results.append(card)
     if len(results) > 0:
         return uniqify_cards(results)
+
     # If not found, use cards that start with the query.
-    results = [card for card in cards if card.name.lower().startswith(query)]
-    if len(results) > 0:
-        return uniqify_cards(results)
+    for card in cards:
+        names = [canonicalize(name) for name in card.names]
+        for name in names:
+            if name.startswith(query):
+                results.append(card)
+        if len(results) > 0:
+            return uniqify_cards(results)
+
     # If we didn't find any of those then use all search results.
     return uniqify_cards(cards)
 
@@ -337,3 +353,6 @@ def price_info(card):
             s += ', {week}% this week, {month}% this month, {rotation}% this rotation'.format(week=round(p['week'] * 100.0), month=round(p['month'] * 100.0), rotation=round(p['rotation'] * 100.0))
         s += ')'
     return s
+
+def canonicalize(name):
+    return database.unaccent(name.lower())

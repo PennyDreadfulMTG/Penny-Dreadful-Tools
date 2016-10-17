@@ -1,20 +1,24 @@
 import types
 
-def properties():
+def card_properties():
     return {
-        'layout': 'TEXT',
+        'layout': 'TEXT'
+    }
+
+def face_properties():
+    return {
         'name': 'TEXT',
         'mana_cost': 'TEXT',
         'cmc': 'REAL',
-        'type': 'TEXT',
-        'text': 'TEXT',
         'power': 'TEXT',
         'toughness': 'TEXT',
         'loyalty': 'TEXT',
+        'type': 'TEXT',
+        'text': 'TEXT',
         'image_name': 'TEXT',
         'hand': 'INTEGER',
         'life': 'INTEGER',
-        'starter': 'INTEGER',
+        'starter': 'INTEGER'
     }
 
 def set_properties():
@@ -49,7 +53,12 @@ class Card(types.SimpleNamespace):
     def __init__(self, params):
         super().__init__()
         for k in params.keys():
-            setattr(self, k, params[k])
+            v = params[k]
+            if k == 'names':
+                v = v.split('|')
+            setattr(self, k, v)
+        if not self.names:
+            setattr(self, 'names', [self.name])
 
 class Printing(types.SimpleNamespace):
     def __init__(self, params):

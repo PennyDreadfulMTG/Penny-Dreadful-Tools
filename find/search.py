@@ -3,6 +3,7 @@ import collections
 import card
 import database
 import mana
+import oracle
 
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String
@@ -15,10 +16,9 @@ UNQUOTED_STRING = 'unquoted_string'
 
 def search(query):
     where_clause = parse(tokenize(query))
-    sql = 'SELECT ' + (', '.join(property for property in card.properties())) \
-        + ' FROM card ' \
-        + 'WHERE ' + where_clause \
-        + ' ORDER BY pd_legal DESC, name'
+    sql = """{base_select}
+        ORDER BY pd_legal DESC, name
+    """.format(base_select=oracle.base_select(where_clause))
     print(sql)
     rs = database.DATABASE.execute(sql)
     return [card.Card(r) for r in rs]
@@ -161,8 +161,8 @@ def where(keys, term, exact_match=False):
     subsequent = False
     s = '('
     for column in keys:
-        if column == 'name':
-            column = 'name_ascii'
+        if column.endswith('name'):
+            column = column.replace('name', 'name_ascii')
             q = database.unaccent(q)
         if subsequent:
             s += ' OR '
@@ -174,7 +174,7 @@ def where(keys, term, exact_match=False):
 def subtable_where(subtable, value, operator=None):
     # Specialcase colorless because it has no entry in the color table.
     if (subtable == 'color' or subtable == 'color_identity') and value == 'c':
-        return '(id NOT IN (SELECT card_id FROM card_{subtable}))'.format(subtable=subtable)
+        return '(c.id NOT IN (SELECT card_id FROM card_{subtable}))'.format(subtable=subtable)
     v = value_lookup(subtable, value)
     if str(v).isdigit():
         column = '{subtable}_id'.format(subtable=subtable).replace('color_identity_id', 'color_id')
@@ -183,7 +183,7 @@ def subtable_where(subtable, value, operator=None):
         column = subtable
         v = database.escape('%{v}%'.format(v=v))
         operator = 'LIKE' if not operator else operator
-    return '(id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {value}))'.format(subtable=subtable, column=column, operator=operator, value=v)
+    return '(c.id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {value}))'.format(subtable=subtable, column=column, operator=operator, value=v)
 
 def math_where(column, operator, term):
     if operator == ':':
@@ -211,22 +211,22 @@ def color_where(subtable, operator, term):
     if operator == '!':
         if colors:
             color_ids_clause = ' AND '.join('color_id <> {color_id}'.format(color_id=value_lookup('color', color)) for color in colors)
-            clause = '({clause} AND (id NOT IN (SELECT card_id FROM card_{subtable} WHERE {color_ids_clause})))'.format(clause=clause, subtable=subtable, color_ids_clause=color_ids_clause)
+            clause = '({clause} AND (c.id NOT IN (SELECT card_id FROM card_{subtable} WHERE {color_ids_clause})))'.format(clause=clause, subtable=subtable, color_ids_clause=color_ids_clause)
     if not clause:
         clause = '(1 = 1)'
     if multicolored:
-        clause = '({clause} AND (id IN (SELECT card_id FROM card_{subtable} GROUP BY card_id HAVING COUNT(card_id) > 1)))'.format(clause=clause, subtable=subtable)
+        clause = '({clause} AND (c.id IN (SELECT card_id FROM card_{subtable} GROUP BY card_id HAVING COUNT(card_id) > 1)))'.format(clause=clause, subtable=subtable)
     return clause
 
 def set_where(name):
     name_fuzzy = '%{name}%'.format(name=name)
-    return '(id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=database.escape(name_fuzzy), name=database.escape(name))
+    return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=database.escape(name_fuzzy), name=database.escape(name))
 
 def format_where(term):
     if term in ['pennydreadful', 'pd']:
         return '(pd_legal = 1)'
     format_id = database.DATABASE.value('SELECT id FROM format WHERE name LIKE ?', ['{term}%'.format(term=database.unaccent(term))])
-    return "(id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))".format(format_id=format_id)
+    return "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))".format(format_id=format_id)
 
 def rarity_where(operator, term):
     rarity_id = value_lookup('rarity', term)
@@ -234,7 +234,7 @@ def rarity_where(operator, term):
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(FALSE)'
-    return "(id IN (SELECT card_id FROM printing WHERE rarity_id {operator} {rarity_id}))".format(operator=operator, rarity_id=rarity_id)
+    return "(c.id IN (SELECT card_id FROM printing WHERE rarity_id {operator} {rarity_id}))".format(operator=operator, rarity_id=rarity_id)
 
 def mana_where(operator, term):
     symbols = mana.parse(term.upper()) # Uppercasing input means you can't search for 1/2 or 1/2 white mana but w should match W.

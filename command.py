@@ -241,8 +241,8 @@ def uniqify_cards(cards):
     # Remove multiple printings of the same card from the result set.
     results = collections.OrderedDict()
     for card in cards:
-        results[card.name.lower()] = card
-    return results.values()
+        results[canonicalize(card.name)] = card
+    return list(results.values())
 
 def acceptable_file(filepath: str) -> bool:
     return os.path.isfile(filepath) and os.path.getsize(filepath) > 0
@@ -316,7 +316,7 @@ def cards_from_query(query):
             if name.startswith('{query} '.format(query=query)) or name.startswith('{query},'.format(query=query)):
                 results.append(card)
     if len(results) > 0:
-        return uniqify_cards(results)
+        return results
 
     # If not found, use cards that start with the query.
     for card in cards:
@@ -325,10 +325,10 @@ def cards_from_query(query):
             if name.startswith(query):
                 results.append(card)
         if len(results) > 0:
-            return uniqify_cards(results)
+            return results
 
     # If we didn't find any of those then use all search results.
-    return uniqify_cards(cards)
+    return cards
 
 def legal_emoji(card, legal_cards, verbose=False):
     if card.name.lower().strip() in legal_cards:

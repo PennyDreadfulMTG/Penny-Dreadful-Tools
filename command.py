@@ -212,7 +212,7 @@ Want to contribute? Send a Pull Request."""
                 voice = await bot.client.join_voice_channel(voice_channel)
             elif voice.channel != voice_channel:
                 voice.move_to(voice_channel)
-            ding = voice.create_ffmpeg_player("ding.mp3")
+            ding = voice.create_ffmpeg_player("ding.ogg")
             ding.start()
         if time.time() > self.modofail.last_fail + 60 * 60:
             self.modofail.count = 0

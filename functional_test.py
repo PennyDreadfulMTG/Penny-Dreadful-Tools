@@ -52,6 +52,8 @@ def test_commands():
 
         message.author = types.new_class('User')
         message.author.mention = "@nobody"
+        message.author.voice = types.new_class('VoiceState')
+        message.author.voice.voice_channel = None
 
         print("Calling {0}".format(message.content))
         loop.run_until_complete(command.handle_command(message, fakebot))

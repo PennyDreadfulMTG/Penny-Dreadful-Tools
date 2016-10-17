@@ -13,4 +13,9 @@ async def on_message(message):
 async def on_ready():
     await BOT.on_ready()
 
+@BOT.client.event
+async def on_voice_state_update(before, after):
+    await BOT.on_voice_state_update(before, after)
+
+
 BOT.init()

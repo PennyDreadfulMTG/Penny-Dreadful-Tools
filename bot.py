@@ -14,6 +14,7 @@ class Bot:
     def __init__(self):
         self.legal_cards = []
         self.client = discord.Client()
+        self.voice = None
 
     def init(self):
         self.legal_cards = oracle.get_legal_cards()
@@ -35,6 +36,15 @@ class Bot:
             await self.respond_to_command(message)
         else:
             await self.respond_to_card_names(message)
+
+    async def on_voice_state_update(self, before, after):
+        #pylint: disable=unused-argument
+        # If we're the only one left in a voice chat, leave the channel
+        voice = after.server.voice_client
+        if voice is None or not voice.is_connected():
+            return
+        if len(voice.channel.voice_members) == 1:
+            await voice.disconnect()
 
     async def respond_to_card_names(self, message):
         await command.respond_to_card_names(message, self)

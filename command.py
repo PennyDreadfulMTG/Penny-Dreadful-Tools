@@ -5,6 +5,7 @@ import os
 import random
 import re
 import sys
+import time
 import urllib.parse
 from typing import List
 
@@ -12,11 +13,11 @@ import configuration
 import database
 import emoji
 import fetcher
-from card import Card
-from find import search
 import oracle
 import price
 import rotation
+from card import Card
+from find import search
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -199,6 +200,26 @@ Want to contribute? Send a Pull Request."""
             await bot.client.send_message(channel, '**{name}** {text}'.format(name=cards[0].name, text=text))
         else:
             await bot.client.send_message(channel, '{author}: No matches.'.format(author=author.mention))
+
+    async def modofail(self, bot, channel, args, author):
+        """Ding!"""
+        if args.lower() == "reset":
+            self.modofail.count = 0
+        voice_channel = author.voice.voice_channel
+        if voice_channel is not None:
+            voice = channel.server.voice_client
+            if voice is None:
+                voice = await bot.client.join_voice_channel(voice_channel)
+            elif voice.channel != voice_channel:
+                voice.move_to(voice_channel)
+            ding = voice.create_ffmpeg_player("ding.mp3")
+            ding.start()
+        if time.time() > self.modofail.last_fail + 60 * 60:
+            self.modofail.count = 0
+        self.modofail.count += 1
+        await bot.client.send_message(channel, ':bellhop: **MODO fail** {0}'.format(self.modofail.count))
+    modofail.count = 0
+    modofail.last_fail = time.time()
 
 
 def escape(str_input) -> str:

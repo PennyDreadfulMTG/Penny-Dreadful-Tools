@@ -117,7 +117,6 @@ def update_fuzzy_matching():
         FROM face AS f
         INNER JOIN card AS c ON f.card_id = c.id
         WHERE f.name NOT IN (SELECT word FROM fuzzy)"""
-    print(sql)
     DATABASE.execute(sql)
 
 def insert_card(c):

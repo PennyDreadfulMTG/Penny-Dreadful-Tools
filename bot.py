@@ -56,6 +56,7 @@ class Bot:
         if len(cards) == 0:
             await self.client.send_message(channel, 'No matches.')
             return
+        cards = command.uniqify_cards(cards)
         more_text = ''
         if len(cards) > 10 and not verbose:
             more_text = ' and ' + str(len(cards) - 4) + ' more.'

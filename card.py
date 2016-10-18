@@ -33,6 +33,7 @@ def card_properties():
     props['pd_legal']['type'] = BOOLEAN
     props['pd_legal']['nullable'] = False
     props['pd_legal']['default'] = FALSE
+    props['layout']['nullable'] = False
     return props
 
 def face_properties():
@@ -71,9 +72,10 @@ def set_properties():
     props = {}
     for k in ['id', 'name', 'code', 'gatherer_code', 'old_code', 'magiccardsinfo_code', 'release_date', 'border', 'type', 'online_only']:
         props[k] = copy.deepcopy(BASE)
+    for k in ['id', 'name', 'code', 'release_date', 'border', 'type']:
+        props[k]['nullable'] = False
     props['id']['primary_key'] = True
     props['id']['type'] = INTEGER
-    props['id']['nullable'] = False
     props['id']['mtgjson'] = False
     props['release_date']['type'] = DATE
     props['release_date']['online_only'] = BOOLEAN
@@ -83,6 +85,8 @@ def printing_properties():
     props = {}
     for k in ['id', 'system_id', 'rarity', 'flavor', 'artist', 'number', 'multiverseid', 'watermark', 'border', 'timeshifted', 'reserved', 'mci_number', 'card_id', 'set_id', 'rarity_id']:
         props[k] = copy.deepcopy(BASE)
+    for k in ['id', 'system_id', 'rarity', 'artist', 'card_id', 'set_id']:
+        props[k]['nullable'] = False
     for k in ['id', 'card_id', 'set_id', 'rarity_id']:
         props[k]['type'] = INTEGER
         props[k]['mtgjson'] = False

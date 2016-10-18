@@ -24,13 +24,13 @@ def initialize():
 
 def search(query):
     # 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold here.
+    fuzzy_threshold = 260
     sql = """
         {base_select}
-        HAVING GROUP_CONCAT(face_name, ' // ') IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 260)
-            OR SUM(CASE WHEN face_name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 260) THEN 1 ELSE 0 END) > 0
+        HAVING GROUP_CONCAT(face_name, ' // ') IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
+            OR SUM(CASE WHEN face_name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold}) THEN 1 ELSE 0 END) > 0
         ORDER BY pd_legal DESC, name
-    """.format(base_select=base_select())
-    print(sql)
+    """.format(base_select=base_select(), fuzzy_threshold=fuzzy_threshold)
     query = '*{query}*'.format(query=query)
     rs = DATABASE.execute(sql, [query, query])
     return [card.Card(r) for r in rs]

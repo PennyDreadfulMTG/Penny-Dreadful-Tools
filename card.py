@@ -1,20 +1,24 @@
 import copy
 import types
 
-"""Properties of the various aspects of cards with information about how to store and retrieve them from the database."""
+# Properties of the various aspects of cards with information about how to store and retrieve them from the database.
 
 BOOLEAN = 'INTEGER'
-DATE    = 'INTEGER'
+DATE = 'INTEGER'
 INTEGER = 'INTEGER'
-REAL    = 'REAL'
-TEXT    = 'TEXT'
+REAL = 'REAL'
+TEXT = 'TEXT'
+
+FALSE = 0
 
 BASE = {
     'type': TEXT,
     'nullable': True,
     'primary_key': False,
     'select': '`{table}`.`{column}`',
-    'mtgjson': True
+    'mtgjson': True,
+    'foreign_key': None,
+    'default': None
 }
 
 def card_properties():
@@ -28,19 +32,20 @@ def card_properties():
     props['id']['primary_key'] = True
     props['pd_legal']['type'] = BOOLEAN
     props['pd_legal']['nullable'] = False
+    props['pd_legal']['default'] = FALSE
     return props
 
 def face_properties():
     props = {}
     base = copy.deepcopy(BASE)
     base['select'] = "GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN `{table}`.`{column}` ELSE '' END, '') AS `{column}`"
-    for k in ['id', 'name', 'mana_cost', 'cmc', 'power', 'toughness', 'power', 'toughness', 'loyalty', 'type', 'text', 'image_name', 'hand', 'life', 'starter', 'position', 'name_ascii']:
+    for k in ['id', 'name', 'mana_cost', 'cmc', 'power', 'toughness', 'power', 'toughness', 'loyalty', 'type', 'text', 'image_name', 'hand', 'life', 'starter', 'position', 'name_ascii', 'card_id']:
         props[k] = copy.deepcopy(base)
-    for k in ['id', 'position', 'name_ascii']:
+    for k in ['id', 'position', 'name_ascii', 'card_id']:
         props[k]['mtgjson'] = False
-    for k in ['id', 'name', 'cmc', 'type', 'text']:
+    for k in ['id', 'name', 'type', 'text']:
         props[k]['nullable'] = False
-    for k in ['hand', 'life', 'starter']:
+    for k in ['id', 'card_id', 'hand', 'life', 'starter']:
         props[k]['type'] = INTEGER
     props['id']['primary_key'] = True
     props['cmc']['type'] = REAL
@@ -59,13 +64,15 @@ def face_properties():
         END AS {column}"""
     props['cmc']['select'] = 'SUM({column}) AS `{column}`'
     props['text']['select'] = "GROUP_CONCAT({table}.`{column}`, '\n-----\n') AS `{column}`"
+    props['card_id']['foreign_key'] = ('card', 'id')
     return props
 
 def set_properties():
     props = {}
-    for k in ['id', 'name', 'code' 'gatherer_code', 'old_code', 'magiccardsinfo_code', 'release_date', 'border', 'type', 'online_only']:
+    for k in ['id', 'name', 'code', 'gatherer_code', 'old_code', 'magiccardsinfo_code', 'release_date', 'border', 'type', 'online_only']:
         props[k] = copy.deepcopy(BASE)
     props['id']['primary_key'] = True
+    props['id']['type'] = INTEGER
     props['id']['nullable'] = False
     props['id']['mtgjson'] = False
     props['release_date']['type'] = DATE
@@ -74,13 +81,18 @@ def set_properties():
 
 def printing_properties():
     props = {}
-    for k in ['id', 'system_id', 'rarity', 'flavor', 'artist', 'number', 'multiverseid', 'watermark', 'border', 'timeshifted', 'reserved', 'mci_number']:
+    for k in ['id', 'system_id', 'rarity', 'flavor', 'artist', 'number', 'multiverseid', 'watermark', 'border', 'timeshifted', 'reserved', 'mci_number', 'card_id', 'set_id', 'rarity_id']:
         props[k] = copy.deepcopy(BASE)
+    for k in ['id', 'card_id', 'set_id', 'rarity_id']:
+        props[k]['type'] = INTEGER
+        props[k]['mtgjson'] = False
     props['id']['primary_key'] = True
     props['id']['nullable'] = False
-    props['id']['mtgjson'] = False
     props['timeshifted']['type'] = BOOLEAN
     props['reserved']['type'] = BOOLEAN
+    props['card_id']['foreign_key'] = ('card', 'id')
+    props['set_id']['foreign_key'] = ('set', 'id')
+    props['rarity_id']['foreign_key'] = ('rarity', 'id')
     return props
 
 class Card(types.SimpleNamespace):

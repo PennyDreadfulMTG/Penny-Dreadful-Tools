@@ -24,58 +24,40 @@ def initialize():
 
 def search(query):
     # 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold here.
+    fuzzy_threshold = 260
     sql = """
         {base_select}
-        HAVING GROUP_CONCAT(face_name, ' // ') IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 260)
-            OR SUM(CASE WHEN face_name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 260) THEN 1 ELSE 0 END) > 0
+        HAVING GROUP_CONCAT(face_name, ' // ') IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
+            OR SUM(CASE WHEN face_name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold}) THEN 1 ELSE 0 END) > 0
+            OR SUM(CASE WHEN alias = ? THEN 1 ELSE 0 END)
         ORDER BY pd_legal DESC, name
-    """.format(base_select=base_select())
-    print(sql)
-    query = '*{query}*'.format(query=query)
-    rs = DATABASE.execute(sql, [query, query])
+    """.format(base_select=base_select(), fuzzy_threshold=fuzzy_threshold)
+    fuzzy_query = '*{query}*'.format(query=query)
+    rs = DATABASE.execute(sql, [fuzzy_query, fuzzy_query, query])
     return [card.Card(r) for r in rs]
 
 def base_select(where_clause='(1 = 1)'):
-    return """SELECT
-        id,
-        layout,
-        CASE WHEN layout = 'meld' OR layout = 'double-faced' THEN
-            GROUP_CONCAT(CASE WHEN position = 1 THEN face_name ELSE '' END, '')
-        ELSE
-            GROUP_CONCAT(face_name , ' // ' )
-        END AS name,
-        GROUP_CONCAT(face_name, '|') AS names,
-        CASE
-            WHEN layout IN ('split') AND `text` LIKE '%Fuse (You may cast one or both halves of this card from your hand.)%' THEN
-                GROUP_CONCAT(mana_cost, '')
-            WHEN layout IN ('split') THEN
-                NULL
-            ELSE
-                GROUP_CONCAT(CASE WHEN position = 1 THEN mana_cost ELSE '' END, '')
-        END AS mana_cost,
-        SUM(cmc) AS cmc,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN power ELSE '' END, '') AS power,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN toughness ELSE '' END, '') AS toughness,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN loyalty ELSE '' END, '') AS loyalty,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN type ELSE '' END, '') AS type,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN type ELSE '' END, '') AS type,
-        GROUP_CONCAT(`text`, '\n-----\n') AS `text`,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN type ELSE '' END, '') AS type,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN hand ELSE '' END, '') AS hand,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN life ELSE '' END, '') AS life,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN starter ELSE '' END, '') AS starter,
-        alias
-        FROM
-            (SELECT c.id, c.pd_legal, {card_props}, {face_props}, f.name AS face_name, f.position, f.name_ascii, ca.alias
-            FROM card AS c
-            INNER JOIN face AS f ON c.id = f.card_id
-            LEFT OUTER JOIN card_alias AS ca ON c.id = ca.card_id
-            ORDER BY f.card_id, f.position)
-        WHERE id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where_clause})
-        GROUP BY id
-        """.format(where_clause=where_clause,
-                   card_props=(', '.join(prop for prop in card.card_properties())),
-                   face_props=(', '.join(prop for prop in card.face_properties() if prop not in ['name'])))
+    return """
+        SELECT
+            {card_selects},
+            {face_selects},
+            GROUP_CONCAT(face_name, '|') AS names,
+            GROUP_CONCAT(alias, '|') AS aliases
+            FROM
+                (SELECT {card_props}, {face_props}, f.name AS face_name, ca.alias
+                FROM card AS c
+                INNER JOIN face AS f ON c.id = f.card_id
+                LEFT OUTER JOIN card_alias AS ca ON c.id = ca.card_id
+                ORDER BY f.card_id, f.position)
+            AS u
+            WHERE id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where_clause})
+            GROUP BY id
+    """.format(
+        card_selects=', '.join(prop['select'].format(table='u', column=name) for name, prop in card.card_properties().items()),
+        face_selects=', '.join(prop['select'].format(table='u', column=name) for name, prop in card.face_properties().items()),
+        card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
+        face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),
+        where_clause=where_clause)
 
 def get_legal_cards(force=False):
     new_list = ['']
@@ -138,24 +120,27 @@ def insert_card(c):
         card_id = CARD_IDS[name]
     except KeyError:
         sql = 'INSERT INTO card ('
-        sql += ', '.join(prop for prop in card.card_properties())
+        sql += ', '.join(name for name, prop in card.card_properties().items() if prop['mtgjson'])
         sql += ') VALUES ('
-        sql += ', '.join('?' for prop in card.card_properties())
+        sql += ', '.join('?' for name, prop in card.card_properties().items() if prop['mtgjson'])
         sql += ')'
-        values = [c.get(database2json(prop)) for prop in card.card_properties()]
+        values = [c.get(database2json(name)) for name, prop in card.card_properties().items() if prop['mtgjson']]
         # database.execute commits after each statement, which we want to avoid while inserting cards
         DATABASE.database.execute(sql, values)
         card_id = DATABASE.value('SELECT last_insert_rowid()')
         CARD_IDS[name] = card_id
+    # mtgjson thinks the text of Jhessian Lookout is NULL not '' but that is clearly wrong.
+    if c.get('text', None) is None and c['layout'] in ['normal', 'token', 'double-faced', 'split']:
+        c['text'] = ''
     sql = 'INSERT INTO face ('
-    sql += ', '.join(prop for prop in card.face_properties())
-    sql += ', name_ascii, card_id, position'
+    sql += ', '.join(name for name, prop in card.face_properties().items() if prop['mtgjson'])
+    sql += ', name_ascii, card_id, position' # It's weird that these are in face_properties but we don't use that to get them out BAKERT
     sql += ') VALUES ('
-    sql += ', '.join('?' for prop in card.face_properties())
+    sql += ', '.join('?' for name, prop in card.face_properties().items() if prop['mtgjson'])
     sql += ', ?, ?, ?'
     sql += ')'
     position = 1 if not c.get('names') else c.get('names', [c.get('name')]).index(c.get('name')) + 1
-    values = [c.get(database2json(prop)) for prop in card.face_properties()] + [database.unaccent(c.get('name')), card_id, position]
+    values = [c.get(database2json(name)) for name, prop in card.face_properties().items() if prop['mtgjson']] + [database.unaccent(c.get('name')), card_id, position]
     DATABASE.database.execute(sql, values)
     for color in c.get('colors', []):
         color_id = DATABASE.value('SELECT id FROM color WHERE name = ?', [color])
@@ -173,11 +158,11 @@ def insert_card(c):
 
 def insert_set(s) -> None:
     sql = 'INSERT INTO `set` ('
-    sql += ', '.join(prop for prop in card.set_properties())
+    sql += ', '.join(name for name, prop in card.set_properties().items() if prop['mtgjson'])
     sql += ') VALUES ('
-    sql += ', '.join('?' for prop in card.set_properties())
+    sql += ', '.join('?' for name, prop in card.set_properties().items() if prop['mtgjson'])
     sql += ')'
-    values = [date2int(s.get(underscore2camel(prop))) for prop in card.set_properties()]
+    values = [date2int(s.get(database2json(name))) for name, prop in card.set_properties().items() if prop['mtgjson']]
     # database.execute commits after each statement, which we want to
     # avoid while inserting sets
     DATABASE.database.execute(sql, values)
@@ -185,11 +170,11 @@ def insert_set(s) -> None:
     for c in s.get('cards', []):
         card_id = CARD_IDS[card_name(c)]
         sql = 'INSERT INTO printing (card_id, set_id, '
-        sql += ', '.join(prop for prop in card.printing_properties())
+        sql += ', '.join(name for name, prop in card.printing_properties().items() if prop['mtgjson'])
         sql += ') VALUES (?, ?, '
-        sql += ', '.join('?' for prop in card.printing_properties())
+        sql += ', '.join('?' for name, prop in card.printing_properties().items() if prop['mtgjson'])
         sql += ')'
-        values = [card_id, set_id] + [c.get(database2json(prop)) for prop in card.printing_properties()]
+        values = [card_id, set_id] + [c.get(database2json(name)) for name, prop in card.printing_properties().items() if prop['mtgjson']]
         DATABASE.database.execute(sql, values)
 
 def get_format_id(name, allow_create=False):

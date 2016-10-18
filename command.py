@@ -303,7 +303,7 @@ def cards_from_query(query):
 
     # First look for an exact match.
     for card in cards:
-        names = [canonicalize(name) for name in card.names]
+        names = [canonicalize(name) for name in card.names + card.aliases]
         if query in names:
             return [card]
 

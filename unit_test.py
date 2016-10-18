@@ -11,7 +11,7 @@ def test_imagedownload():
     filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='island.jpg')
     if command.acceptable_file(filepath):
         os.remove(filepath)
-    c = card.Card({'id': 0, 'name': 'Island', 'names': 'Island'})
+    c = card.Card({'id': 0, 'name': 'Island', 'names': 'Island', 'aliases': ''})
     assert command.download_image([c]) is not None
 
 # Check that we can fall back to the Gatherer images if all else fails.
@@ -26,7 +26,7 @@ def test_fallbackimagedownload():
 
 # Check that we can succesfully fail at getting an image
 def test_noimageavailable():
-    c = card.Card({'name': "Barry's Land", 'id': 0, 'multiverseid': 0, 'names': "Barry's Land"})
+    c = card.Card({'name': "Barry's Land", 'id': 0, 'multiverseid': 0, 'names': "Barry's Land", 'aliases': ''})
     assert command.download_image([c]) is None
 
 # Search for a single card via full name

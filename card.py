@@ -1,53 +1,87 @@
+import copy
 import types
 
+"""Properties of the various aspects of cards with information about how to store and retrieve them from the database."""
+
+BOOLEAN = 'INTEGER'
+DATE    = 'INTEGER'
+INTEGER = 'INTEGER'
+REAL    = 'REAL'
+TEXT    = 'TEXT'
+
+BASE = {
+    'type': TEXT,
+    'nullable': True,
+    'primary_key': False,
+    'select': '`{table}`.`{column}`',
+    'mtgjson': True
+}
+
 def card_properties():
-    return {
-        'layout': 'TEXT'
-    }
+    props = {}
+    for k in ['id', 'pd_legal', 'layout']:
+        props[k] = copy.deepcopy(BASE)
+    for k in ['id', 'pd_legal']:
+        props[k]['mtgjson'] = False
+    props['id']['type'] = INTEGER
+    props['id']['nullable'] = False
+    props['id']['primary_key'] = True
+    props['pd_legal']['type'] = BOOLEAN
+    props['pd_legal']['nullable'] = False
+    return props
 
 def face_properties():
-    return {
-        'name': 'TEXT',
-        'mana_cost': 'TEXT',
-        'cmc': 'REAL',
-        'power': 'TEXT',
-        'toughness': 'TEXT',
-        'loyalty': 'TEXT',
-        'type': 'TEXT',
-        'text': 'TEXT',
-        'image_name': 'TEXT',
-        'hand': 'INTEGER',
-        'life': 'INTEGER',
-        'starter': 'INTEGER'
-    }
+    props = {}
+    base = copy.deepcopy(BASE)
+    base['select'] = "GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN `{table}`.`{column}` ELSE '' END, '') AS `{column}`"
+    for k in ['id', 'name', 'mana_cost', 'cmc', 'power', 'toughness', 'power', 'toughness', 'loyalty', 'type', 'text', 'image_name', 'hand', 'life', 'starter', 'position', 'name_ascii']:
+        props[k] = copy.deepcopy(base)
+    for k in ['id', 'position', 'name_ascii']:
+        props[k]['mtgjson'] = False
+    for k in ['id', 'name', 'cmc', 'type', 'text']:
+        props[k]['nullable'] = False
+    for k in ['hand', 'life', 'starter']:
+        props[k]['type'] = INTEGER
+    props['id']['primary_key'] = True
+    props['cmc']['type'] = REAL
+    props['name']['select'] = """CASE WHEN layout = 'meld' OR layout = 'double-faced' THEN
+            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN face_name ELSE '' END, '')
+        ELSE
+            GROUP_CONCAT(face_name , ' // ' )
+        END AS name"""
+    props['mana_cost']['select'] = """CASE
+            WHEN layout IN ('split') AND `{table}`.`text` LIKE '%Fuse (You may cast one or both halves of this card from your hand.)%' THEN
+                GROUP_CONCAT(`{table}`.`{column}`, '')
+            WHEN layout IN ('split') THEN
+                NULL
+            ELSE
+                GROUP_CONCAT(CASE WHEN position = 1 THEN `{table}`.`{column}` ELSE '' END, '')
+        END AS {column}"""
+    props['cmc']['select'] = 'SUM({column}) AS `{column}`'
+    props['text']['select'] = "GROUP_CONCAT({table}.`{column}`, '\n-----\n') AS `{column}`"
+    return props
 
 def set_properties():
-    return {
-        'name': 'TEXT',
-        'code': 'TEXT',
-        'gatherer_code': 'TEXT',
-        'old_code': 'TEXT',
-        'magiccardsinfo_code': 'TEXT',
-        'release_date': 'INT',
-        'border': 'TEXT',
-        'type': 'TEXT',
-        'online_only': 'INT'
-    }
+    props = {}
+    for k in ['id', 'name', 'code' 'gatherer_code', 'old_code', 'magiccardsinfo_code', 'release_date', 'border', 'type', 'online_only']:
+        props[k] = copy.deepcopy(BASE)
+    props['id']['primary_key'] = True
+    props['id']['nullable'] = False
+    props['id']['mtgjson'] = False
+    props['release_date']['type'] = DATE
+    props['release_date']['online_only'] = BOOLEAN
+    return props
 
 def printing_properties():
-    return {
-        'system_id': 'TEXT',
-        'rarity': 'TEXT',
-        'flavor': 'TEXT',
-        'artist': 'TEXT',
-        'number': 'TEXT',
-        'multiverseid': 'TEXT',
-        'watermark': 'TEXT',
-        'border': 'TEXT',
-        'timeshifted': 'INTEGER',
-        'reserved': 'INTEGER',
-        'mci_number': 'TEXT'
-    }
+    props = {}
+    for k in ['id', 'system_id', 'rarity', 'flavor', 'artist', 'number', 'multiverseid', 'watermark', 'border', 'timeshifted', 'reserved', 'mci_number']:
+        props[k] = copy.deepcopy(BASE)
+    props['id']['primary_key'] = True
+    props['id']['nullable'] = False
+    props['id']['mtgjson'] = False
+    props['timeshifted']['type'] = BOOLEAN
+    props['reserved']['type'] = BOOLEAN
+    return props
 
 class Card(types.SimpleNamespace):
     def __init__(self, params):

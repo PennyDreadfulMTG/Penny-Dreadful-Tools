@@ -36,46 +36,27 @@ def search(query):
     return [card.Card(r) for r in rs]
 
 def base_select(where_clause='(1 = 1)'):
-    return """SELECT
-        id,
-        layout,
-        CASE WHEN layout = 'meld' OR layout = 'double-faced' THEN
-            GROUP_CONCAT(CASE WHEN position = 1 THEN face_name ELSE '' END, '')
-        ELSE
-            GROUP_CONCAT(face_name , ' // ' )
-        END AS name,
-        GROUP_CONCAT(face_name, '|') AS names,
-        CASE
-            WHEN layout IN ('split') AND `text` LIKE '%Fuse (You may cast one or both halves of this card from your hand.)%' THEN
-                GROUP_CONCAT(mana_cost, '')
-            WHEN layout IN ('split') THEN
-                NULL
-            ELSE
-                GROUP_CONCAT(CASE WHEN position = 1 THEN mana_cost ELSE '' END, '')
-        END AS mana_cost,
-        SUM(cmc) AS cmc,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN power ELSE '' END, '') AS power,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN toughness ELSE '' END, '') AS toughness,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN loyalty ELSE '' END, '') AS loyalty,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN type ELSE '' END, '') AS type,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN type ELSE '' END, '') AS type,
-        GROUP_CONCAT(`text`, '\n-----\n') AS `text`,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN type ELSE '' END, '') AS type,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN hand ELSE '' END, '') AS hand,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN life ELSE '' END, '') AS life,
-        GROUP_CONCAT(CASE WHEN position = 1 THEN starter ELSE '' END, '') AS starter,
-        alias
-        FROM
-            (SELECT c.id, c.pd_legal, {card_props}, {face_props}, f.name AS face_name, f.position, f.name_ascii, ca.alias
-            FROM card AS c
-            INNER JOIN face AS f ON c.id = f.card_id
-            LEFT OUTER JOIN card_alias AS ca ON c.id = ca.card_id
-            ORDER BY f.card_id, f.position)
-        WHERE id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where_clause})
-        GROUP BY id
-        """.format(where_clause=where_clause,
-                   card_props=(', '.join(prop for prop in card.card_properties())),
-                   face_props=(', '.join(prop for prop in card.face_properties() if prop not in ['name'])))
+    return """
+        SELECT
+            {card_selects},
+            {face_selects},
+            GROUP_CONCAT(face_name, '|') AS names,
+            alias
+            FROM
+                (SELECT {card_props}, {face_props}, f.name AS face_name, ca.alias
+                FROM card AS c
+                INNER JOIN face AS f ON c.id = f.card_id
+                LEFT OUTER JOIN card_alias AS ca ON c.id = ca.card_id
+                ORDER BY f.card_id, f.position)
+            AS u
+            WHERE id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where_clause})
+            GROUP BY id
+    """.format(
+        card_selects=', '.join(prop['select'].format(table='u', column=name) for name, prop in card.card_properties().items()),
+        face_selects=', '.join(prop['select'].format(table='u', column=name) for name, prop in card.face_properties().items()),
+        card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
+        face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),
+        where_clause=where_clause)
 
 def get_legal_cards(force=False):
     new_list = ['']

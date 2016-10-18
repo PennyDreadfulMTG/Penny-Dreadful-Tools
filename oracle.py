@@ -29,10 +29,11 @@ def search(query):
         {base_select}
         HAVING GROUP_CONCAT(face_name, ' // ') IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
             OR SUM(CASE WHEN face_name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold}) THEN 1 ELSE 0 END) > 0
+            OR SUM(CASE WHEN alias = ? THEN 1 ELSE 0 END)
         ORDER BY pd_legal DESC, name
     """.format(base_select=base_select(), fuzzy_threshold=fuzzy_threshold)
-    query = '*{query}*'.format(query=query)
-    rs = DATABASE.execute(sql, [query, query])
+    fuzzy_query = '*{query}*'.format(query=query)
+    rs = DATABASE.execute(sql, [fuzzy_query, fuzzy_query, query])
     return [card.Card(r) for r in rs]
 
 def base_select(where_clause='(1 = 1)'):
@@ -41,7 +42,7 @@ def base_select(where_clause='(1 = 1)'):
             {card_selects},
             {face_selects},
             GROUP_CONCAT(face_name, '|') AS names,
-            alias
+            GROUP_CONCAT(alias, '|') AS aliases
             FROM
                 (SELECT {card_props}, {face_props}, f.name AS face_name, ca.alias
                 FROM card AS c

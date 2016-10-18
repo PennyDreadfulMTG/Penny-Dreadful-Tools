@@ -100,11 +100,14 @@ class Card(types.SimpleNamespace):
         super().__init__()
         for k in params.keys():
             v = params[k]
-            if k == 'names':
-                v = v.split('|')
+            if k == 'names' or k == 'aliases':
+                if v is not None:
+                    v = v.split('|')
             setattr(self, k, v)
         if not self.names:
             setattr(self, 'names', [self.name])
+        if not self.aliases:
+            setattr(self, 'aliases', [])
 
 class Printing(types.SimpleNamespace):
     def __init__(self, params):

@@ -324,8 +324,8 @@ def cards_from_query(query):
         for name in names:
             if name.startswith(query):
                 results.append(card)
-        if len(results) > 0:
-            return results
+    if len(results) > 0:
+        return results
 
     # If we didn't find any of those then use all search results.
     return cards

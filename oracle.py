@@ -107,12 +107,18 @@ def update_card_aliases(aliases):
 def update_fuzzy_matching():
     DATABASE.execute('DROP TABLE IF EXISTS fuzzy')
     DATABASE.execute('CREATE VIRTUAL TABLE IF NOT EXISTS fuzzy USING spellfix1')
-    DATABASE.execute("""INSERT INTO fuzzy (word, rank)
-        SELECT GROUP_CONCAT(name, ' // '), pd_legal
-        FROM (SELECT f.name, c.pd_legal, f.card_id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id ORDER BY card_id, position)
-        GROUP BY card_id
-    """)
-    DATABASE.execute('INSERT INTO fuzzy (word, rank) SELECT f.name, c.pd_legal FROM face AS f INNER JOIN card AS c ON f.card_id = c.id WHERE f.name NOT IN (SELECT word FROM fuzzy)')
+    sql = """INSERT INTO fuzzy (word, rank)
+        SELECT name, pd_legal
+        FROM ({base_select})
+    """.format(base_select=base_select())
+    DATABASE.execute(sql)
+    sql = """INSERT INTO fuzzy (word, rank)
+        SELECT f.name, c.pd_legal
+        FROM face AS f
+        INNER JOIN card AS c ON f.card_id = c.id
+        WHERE f.name NOT IN (SELECT word FROM fuzzy)"""
+    print(sql)
+    DATABASE.execute(sql)
 
 def insert_card(c):
     name = card_name(c)

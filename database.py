@@ -8,7 +8,7 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 53
+    schema_version = 54
 
     def __init__(self):
         self.open()
@@ -179,7 +179,6 @@ def create_table_def(name, props):
     if fk:
         sql += ', ' + fk
     sql += ')'
-    print(sql.format(name=name))
     return sql.format(name=name)
 
 DATABASE = Database()

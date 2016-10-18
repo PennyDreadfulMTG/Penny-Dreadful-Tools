@@ -23,10 +23,11 @@ def initialize():
         update_card_aliases(aliases)
 
 def search(query):
+    # 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold here.
     sql = """
         {base_select}
-        HAVING GROUP_CONCAT(face_name, ' // ') IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 200)
-            OR SUM(CASE WHEN face_name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 200) THEN 1 ELSE 0 END) > 0
+        HAVING GROUP_CONCAT(face_name, ' // ') IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 260)
+            OR SUM(CASE WHEN face_name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 260) THEN 1 ELSE 0 END) > 0
         ORDER BY pd_legal DESC, name
     """.format(base_select=base_select())
     print(sql)
@@ -124,7 +125,6 @@ def update_card_aliases(aliases):
 def update_fuzzy_matching():
     DATABASE.execute('DROP TABLE IF EXISTS fuzzy')
     DATABASE.execute('CREATE VIRTUAL TABLE IF NOT EXISTS fuzzy USING spellfix1')
-    # BAKERT this does not order split card names correctly
     DATABASE.execute("""INSERT INTO fuzzy (word, rank)
         SELECT GROUP_CONCAT(name, ' // '), pd_legal
         FROM (SELECT f.name, c.pd_legal, f.card_id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id ORDER BY card_id, position)

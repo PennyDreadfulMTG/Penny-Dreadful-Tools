@@ -23,10 +23,11 @@ def initialize():
         update_card_aliases(aliases)
 
 def search(query):
+    # 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold here.
     sql = """
         {base_select}
-        HAVING GROUP_CONCAT(face_name, ' // ') IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 200)
-            OR SUM(CASE WHEN face_name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 200) THEN 1 ELSE 0 END) > 0
+        HAVING GROUP_CONCAT(face_name, ' // ') IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 260)
+            OR SUM(CASE WHEN face_name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= 260) THEN 1 ELSE 0 END) > 0
         ORDER BY pd_legal DESC, name
     """.format(base_select=base_select())
     print(sql)

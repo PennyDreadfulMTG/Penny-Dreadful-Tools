@@ -148,15 +148,15 @@ def insert_card(c):
     # mtgjson thinks the text of Jhessian Lookout is NULL not '' but that is clearly wrong.
     if c.get('text', None) is None and c['layout'] in ['normal', 'token', 'double-faced', 'split']:
         c['text'] = ''
+    c['nameAscii'] = database.unaccent(c.get('name'))
+    c['cardId'] = card_id
+    c['position'] = 1 if not c.get('names') else c.get('names', [c.get('name')]).index(c.get('name')) + 1
     sql = 'INSERT INTO face ('
-    sql += ', '.join(name for name, prop in card.face_properties().items() if prop['mtgjson'])
-    sql += ', name_ascii, card_id, position'
+    sql += ', '.join(name for name, prop in card.face_properties().items() if not prop['primary_key'])
     sql += ') VALUES ('
-    sql += ', '.join('?' for name, prop in card.face_properties().items() if prop['mtgjson'])
-    sql += ', ?, ?, ?'
+    sql += ', '.join('?' for name, prop in card.face_properties().items() if not prop['primary_key'])
     sql += ')'
-    position = 1 if not c.get('names') else c.get('names', [c.get('name')]).index(c.get('name')) + 1
-    values = [c.get(database2json(name)) for name, prop in card.face_properties().items() if prop['mtgjson']] + [database.unaccent(c.get('name')), card_id, position]
+    values = [c.get(database2json(name)) for name, prop in card.face_properties().items() if not prop['primary_key']]
     DATABASE.database.execute(sql, values)
     for color in c.get('colors', []):
         color_id = DATABASE.value('SELECT id FROM color WHERE name = ?', [color])

@@ -69,8 +69,9 @@ def test_mana6():
 def test_mana7():
     do_test('mana:uu', "(mana_cost LIKE '%{U}{U}%')")
 
+# BAKERT
 def test_uppercase():
-    do_test('F:pd', '(pd_legal = 1)')
+    do_test('F:pd', "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = 37 AND legality <> 'Banned'))")
 
 def test_subtype():
     do_test('subtype:warrior', "(c.id IN (SELECT card_id FROM card_subtype WHERE subtype LIKE '%warrior%'))")

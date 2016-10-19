@@ -75,16 +75,6 @@ def get_legal_cards(force=False):
             new_list = fetcher.legal_cards(force=True)
     format_id = get_format_id('Penny Dreadful')
     DATABASE.execute('DELETE FROM card_legality WHERE format_id = ?', [format_id])
-
-    # BAKERT
-    efreet = ['Ifh-Bíff Efreet']
-    sql = """INSERT INTO card_legality (format_id, card_id, legality)
-        SELECT {format_id}, id, 'Legal'
-        FROM ({base_select})
-        WHERE name IN ({names})
-    """.format(format_id=format_id, base_select=base_select(), names=', '.join(database.escape(name) for name in efreet))
-    print(sql)
-
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
         SELECT {format_id}, id, 'Legal'
         FROM ({base_select})

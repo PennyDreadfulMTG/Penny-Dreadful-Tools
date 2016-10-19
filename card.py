@@ -92,12 +92,13 @@ def printing_properties():
     return props
 
 def name_select():
-    return """CASE WHEN layout = 'meld' OR layout = 'double-faced' THEN
+    return """
+        CASE WHEN layout = 'meld' OR layout = 'double-faced' THEN
             GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN face_name ELSE '' END, '')
         ELSE
             GROUP_CONCAT(face_name , ' // ' )
-        END"""
-
+        END
+    """
 class Card(types.SimpleNamespace):
     def __init__(self, params):
         super().__init__()

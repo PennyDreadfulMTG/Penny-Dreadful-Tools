@@ -8,7 +8,7 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 58
+    schema_version = 59
 
     def __init__(self):
         self.open()
@@ -164,7 +164,8 @@ def column_def(name, prop):
     nullable = 'NOT NULL' if not prop['nullable'] else ''
     primary_key = 'PRIMARY KEY' if prop['primary_key'] else ''
     default = 'DEFAULT {default}'.format(default=prop['default']) if prop['default'] is not None else ''
-    return '`{name}` {type} {primary_key} {nullable} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, default=default)
+    unique = 'UNIQUE' if prop['unique'] else ''
+    return '`{name}` {type} {primary_key} {nullable} {unique} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, unique=unique, default=default)
 
 def foreign_key_def(name, fk):
     return 'FOREIGN KEY(`{name}`) REFERENCES `{table}`(`{column}`)'.format(name=name, table=fk[0], column=fk[1])

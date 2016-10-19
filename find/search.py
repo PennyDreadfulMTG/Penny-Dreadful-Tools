@@ -19,7 +19,6 @@ def search(query):
     sql = """{base_select}
         ORDER BY pd_legal DESC, name
     """.format(base_select=oracle.base_select(where_clause))
-    print(sql)
     rs = database.DATABASE.execute(sql)
     return [card.Card(r) for r in rs]
 

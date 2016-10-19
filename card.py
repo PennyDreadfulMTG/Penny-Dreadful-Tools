@@ -54,9 +54,9 @@ def face_properties():
                 NULL
             ELSE
                 GROUP_CONCAT(CASE WHEN position = 1 THEN `{table}`.`{column}` ELSE '' END, '')
-        END AS {column}"""
-    props['cmc']['select'] = 'SUM({column}) AS `{column}`'
-    props['text']['select'] = "GROUP_CONCAT({table}.`{column}`, '\n-----\n') AS `{column}`"
+        END AS `{column}`"""
+    props['cmc']['select'] = "GROUP_CONCAT(`{table}`.`{column}`, '|') AS `{column}`"
+    props['text']['select'] = "GROUP_CONCAT(`{table}`.`{column}`, '\n-----\n') AS `{column}`"
     props['card_id']['foreign_key'] = ('card', 'id')
     return props
 
@@ -103,7 +103,7 @@ class Card(types.SimpleNamespace):
         super().__init__()
         for k in params.keys():
             v = params[k]
-            if k == 'names' or k == 'aliases':
+            if k == 'names' or k == 'aliases' or k == 'cmc':
                 if v is not None:
                     v = v.split('|')
             setattr(self, k, v)

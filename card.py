@@ -18,7 +18,8 @@ BASE = {
     'select': '`{table}`.`{column}`',
     'mtgjson': True,
     'foreign_key': None,
-    'default': None
+    'default': None,
+    'unique': False
 }
 
 def card_properties():
@@ -58,6 +59,7 @@ def face_properties():
     props['cmc']['select'] = "GROUP_CONCAT(`{table}`.`{column}`, '|') AS `{column}`"
     props['text']['select'] = "GROUP_CONCAT(`{table}`.`{column}`, '\n-----\n') AS `{column}`"
     props['card_id']['foreign_key'] = ('card', 'id')
+    props['name']['unique'] = True
     return props
 
 def set_properties():
@@ -71,6 +73,11 @@ def set_properties():
     props['id']['mtgjson'] = False
     props['release_date']['type'] = DATE
     props['online_only']['type'] = BOOLEAN
+    props['name']['unique'] = True
+    props['code']['unique'] = True
+    props['gatherer_code']['unique'] = True
+    props['old_code']['unique'] = True
+    props['magiccardsinfo_code']['unique'] = True
     return props
 
 def printing_properties():

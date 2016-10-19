@@ -27,11 +27,11 @@ def search(query):
     fuzzy_threshold = 260
     sql = """
         {base_select}
-        HAVING GROUP_CONCAT(face_name, ' // ') IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
+        HAVING {name_select} IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
             OR SUM(CASE WHEN face_name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold}) THEN 1 ELSE 0 END) > 0
             OR SUM(CASE WHEN alias = ? THEN 1 ELSE 0 END)
         ORDER BY pd_legal DESC, name
-    """.format(base_select=base_select(), fuzzy_threshold=fuzzy_threshold)
+    """.format(base_select=base_select(), name_select=card.name_select().format(table='u'), fuzzy_threshold=fuzzy_threshold)
     fuzzy_query = '*{query}*'.format(query=query)
     rs = DATABASE.execute(sql, [fuzzy_query, fuzzy_query, query])
     return [card.Card(r) for r in rs]
@@ -75,12 +75,29 @@ def get_legal_cards(force=False):
             new_list = fetcher.legal_cards(force=True)
     format_id = get_format_id('Penny Dreadful')
     DATABASE.execute('DELETE FROM card_legality WHERE format_id = ?', [format_id])
+
+    # BAKERT
+    efreet = ['Ifh-Bíff Efreet']
+    sql = """INSERT INTO card_legality (format_id, card_id, legality)
+        SELECT {format_id}, id, 'Legal'
+        FROM ({base_select})
+        WHERE name IN ({names})
+    """.format(format_id=format_id, base_select=base_select(), names=', '.join(database.escape(name) for name in efreet))
+    print(sql)
+
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
         SELECT {format_id}, id, 'Legal'
         FROM ({base_select})
         WHERE name IN ({names})
     """.format(format_id=format_id, base_select=base_select(), names=', '.join(database.escape(name) for name in new_list))
     DATABASE.execute(sql)
+    # Check we got the right number of legal cards.
+    n = DATABASE.value('SELECT COUNT(*) FROM card_legality WHERE format_id = ?', [format_id])
+    if n != len(new_list):
+        print("Found {n} pd legal cards in the database but the list was {len} long".format(n=n, len=len(new_list)))
+        sql = 'SELECT name FROM ({base_select}) WHERE id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_select=base_select(), format_id=format_id)
+        db_legal_list = [row['name'] for row in DATABASE.execute(sql)]
+        print(set(new_list).symmetric_difference(set(db_legal_list)))
     return new_list
 
 def update_database(new_version):
@@ -148,15 +165,15 @@ def insert_card(c):
     # mtgjson thinks the text of Jhessian Lookout is NULL not '' but that is clearly wrong.
     if c.get('text', None) is None and c['layout'] in ['normal', 'token', 'double-faced', 'split']:
         c['text'] = ''
+    c['nameAscii'] = database.unaccent(c.get('name'))
+    c['cardId'] = card_id
+    c['position'] = 1 if not c.get('names') else c.get('names', [c.get('name')]).index(c.get('name')) + 1
     sql = 'INSERT INTO face ('
-    sql += ', '.join(name for name, prop in card.face_properties().items() if prop['mtgjson'])
-    sql += ', name_ascii, card_id, position'
+    sql += ', '.join(name for name, prop in card.face_properties().items() if not prop['primary_key'])
     sql += ') VALUES ('
-    sql += ', '.join('?' for name, prop in card.face_properties().items() if prop['mtgjson'])
-    sql += ', ?, ?, ?'
+    sql += ', '.join('?' for name, prop in card.face_properties().items() if not prop['primary_key'])
     sql += ')'
-    position = 1 if not c.get('names') else c.get('names', [c.get('name')]).index(c.get('name')) + 1
-    values = [c.get(database2json(name)) for name, prop in card.face_properties().items() if prop['mtgjson']] + [database.unaccent(c.get('name')), card_id, position]
+    values = [c.get(database2json(name)) for name, prop in card.face_properties().items() if not prop['primary_key']]
     DATABASE.database.execute(sql, values)
     for color in c.get('colors', []):
         color_id = DATABASE.value('SELECT id FROM color WHERE name = ?', [color])

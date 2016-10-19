@@ -46,11 +46,7 @@ def face_properties():
         props[k]['type'] = INTEGER
     props['id']['primary_key'] = True
     props['cmc']['type'] = REAL
-    props['name']['select'] = """CASE WHEN layout = 'meld' OR layout = 'double-faced' THEN
-            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN face_name ELSE '' END, '')
-        ELSE
-            GROUP_CONCAT(face_name , ' // ' )
-        END AS name"""
+    props['name']['select'] = """{name_select} AS name""".format(name_select=name_select())
     props['mana_cost']['select'] = """CASE
             WHEN layout IN ('split') AND `{table}`.`text` LIKE '%Fuse (You may cast one or both halves of this card from your hand.)%' THEN
                 GROUP_CONCAT(`{table}`.`{column}`, '')
@@ -94,6 +90,13 @@ def printing_properties():
     props['set_id']['foreign_key'] = ('set', 'id')
     props['rarity_id']['foreign_key'] = ('rarity', 'id')
     return props
+
+def name_select():
+    return """CASE WHEN layout = 'meld' OR layout = 'double-faced' THEN
+            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN face_name ELSE '' END, '')
+        ELSE
+            GROUP_CONCAT(face_name , ' // ' )
+        END"""
 
 class Card(types.SimpleNamespace):
     def __init__(self, params):

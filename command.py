@@ -331,7 +331,7 @@ def cards_from_query(query):
     return cards
 
 def legal_emoji(card, legal_cards, verbose=False):
-    if card.name.lower().strip() in legal_cards:
+    if card.name in legal_cards:
         return ':white_check_mark:'
     s = ':no_entry_sign:'
     if verbose:

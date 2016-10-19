@@ -42,12 +42,14 @@ def base_select(where_clause='(1 = 1)'):
             {card_selects},
             {face_selects},
             GROUP_CONCAT(face_name, '|') AS names,
-            GROUP_CONCAT(alias, '|') AS aliases
+            GROUP_CONCAT(alias, '|') AS aliases,
+            SUM(CASE WHEN format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal
             FROM
-                (SELECT {card_props}, {face_props}, f.name AS face_name, ca.alias
+                (SELECT {card_props}, {face_props}, f.name AS face_name, ca.alias, cl.format_id
                 FROM card AS c
                 INNER JOIN face AS f ON c.id = f.card_id
                 LEFT OUTER JOIN card_alias AS ca ON c.id = ca.card_id
+                LEFT OUTER JOIN card_legality AS cl ON c.id = cl.card_id AND cl.format_id = {format_id}
                 ORDER BY f.card_id, f.position)
             AS u
             WHERE id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where_clause})
@@ -55,6 +57,7 @@ def base_select(where_clause='(1 = 1)'):
     """.format(
         card_selects=', '.join(prop['select'].format(table='u', column=name) for name, prop in card.card_properties().items()),
         face_selects=', '.join(prop['select'].format(table='u', column=name) for name, prop in card.face_properties().items()),
+        format_id=get_format_id('Penny Dreadful'),
         card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
         face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),
         where_clause=where_clause)
@@ -66,14 +69,18 @@ def get_legal_cards(force=False):
     except fetcher.FetchException:
         pass
     if new_list == ['']:
-        new_list = [r['name'].lower() for r in DATABASE.execute("SELECT GROUP_CONCAT(name, ' // ') AS name FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE pd_legal = 1 GROUP BY c.id")]
+        sql = '{base_select} HAVING pd_legal = 1'.format(base_select=base_select())
+        new_list = [r['name'] for r in DATABASE.execute(sql)]
         if len(new_list) == 0:
             new_list = fetcher.legal_cards(force=True)
-            DATABASE.execute('UPDATE card SET pd_legal = 0')
-            DATABASE.execute('UPDATE card SET pd_legal = 1 WHERE LOWER(name) IN (' + ', '.join(database.escape(name) for name in new_list) + ')')
-    else:
-        DATABASE.execute('UPDATE card SET pd_legal = 0')
-        DATABASE.execute('UPDATE card SET pd_legal = 1 WHERE id IN (SELECT card_id FROM face WHERE LOWER(name) IN (' + ', '.join(database.escape(name) for name in new_list) + '))')
+    format_id = get_format_id('Penny Dreadful')
+    DATABASE.execute('DELETE FROM card_legality WHERE format_id = ?', [format_id])
+    sql = """INSERT INTO card_legality (format_id, card_id, legality)
+        SELECT {format_id}, id, 'Legal'
+        FROM ({base_select})
+        WHERE name IN ({names})
+    """.format(format_id=format_id, base_select=base_select(), names=', '.join(database.escape(name) for name in new_list))
+    DATABASE.execute(sql)
     return new_list
 
 def update_database(new_version):
@@ -105,6 +112,7 @@ def update_card_aliases(aliases):
             print("no card found named " + name + " for alias " + alias)
 
 def update_fuzzy_matching():
+    format_id = get_format_id('Penny Dreadful', True)
     DATABASE.execute('DROP TABLE IF EXISTS fuzzy')
     DATABASE.execute('CREATE VIRTUAL TABLE IF NOT EXISTS fuzzy USING spellfix1')
     sql = """INSERT INTO fuzzy (word, rank)
@@ -113,10 +121,13 @@ def update_fuzzy_matching():
     """.format(base_select=base_select())
     DATABASE.execute(sql)
     sql = """INSERT INTO fuzzy (word, rank)
-        SELECT f.name, c.pd_legal
+        SELECT f.name, SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0
         FROM face AS f
         INNER JOIN card AS c ON f.card_id = c.id
-        WHERE f.name NOT IN (SELECT word FROM fuzzy)"""
+        LEFT OUTER JOIN card_legality AS cl ON cl.card_id = c.id AND cl.format_id = {format_id}
+        WHERE f.name NOT IN (SELECT word FROM fuzzy)
+        GROUP BY f.id
+    """.format(format_id=format_id)
     DATABASE.execute(sql)
 
 def insert_card(c):

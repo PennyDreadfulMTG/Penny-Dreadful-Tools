@@ -23,16 +23,12 @@ BASE = {
 
 def card_properties():
     props = {}
-    for k in ['id', 'pd_legal', 'layout']:
+    for k in ['id', 'layout']:
         props[k] = copy.deepcopy(BASE)
-    for k in ['id', 'pd_legal']:
-        props[k]['mtgjson'] = False
     props['id']['type'] = INTEGER
     props['id']['nullable'] = False
     props['id']['primary_key'] = True
-    props['pd_legal']['type'] = BOOLEAN
-    props['pd_legal']['nullable'] = False
-    props['pd_legal']['default'] = FALSE
+    props['id']['mtgjson'] = False
     props['layout']['nullable'] = False
     return props
 
@@ -78,7 +74,7 @@ def set_properties():
     props['id']['type'] = INTEGER
     props['id']['mtgjson'] = False
     props['release_date']['type'] = DATE
-    props['release_date']['online_only'] = BOOLEAN
+    props['online_only']['type'] = BOOLEAN
     return props
 
 def printing_properties():

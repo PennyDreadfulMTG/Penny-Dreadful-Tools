@@ -223,8 +223,8 @@ def set_where(name):
     return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=database.escape(name_fuzzy), name=database.escape(name))
 
 def format_where(term):
-    if term in ['pennydreadful', 'pd']:
-        return '(pd_legal = 1)'
+    if term == 'pd':
+        term = 'Penny Dreadful'
     format_id = database.DATABASE.value('SELECT id FROM format WHERE name LIKE ?', ['{term}%'.format(term=database.unaccent(term))])
     return "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))".format(format_id=format_id)
 

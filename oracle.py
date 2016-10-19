@@ -150,7 +150,7 @@ def insert_card(c):
         c['text'] = ''
     sql = 'INSERT INTO face ('
     sql += ', '.join(name for name, prop in card.face_properties().items() if prop['mtgjson'])
-    sql += ', name_ascii, card_id, position' # It's weird that these are in face_properties but we don't use that to get them out BAKERT
+    sql += ', name_ascii, card_id, position'
     sql += ') VALUES ('
     sql += ', '.join('?' for name, prop in card.face_properties().items() if prop['mtgjson'])
     sql += ', ?, ?, ?'

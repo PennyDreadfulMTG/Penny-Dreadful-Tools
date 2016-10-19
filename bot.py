@@ -52,13 +52,17 @@ class Bot:
     async def respond_to_command(self, message):
         await command.handle_command(message, self)
 
-    async def post_cards(self, cards, channel, additional_text='', verbose=False):
+    async def post_cards(self, cards, channel, replying_to=None, additional_text=''):
         if len(cards) == 0:
-            await self.client.send_message(channel, 'No matches.')
+            if replying_to is not None:
+                text = '{author}: No matches.'.format(author=replying_to.mention)
+            else:
+                text = 'No matches.'
+            await self.client.send_message(channel, text)
             return
         cards = command.uniqify_cards(cards)
         more_text = ''
-        if len(cards) > 10 and not verbose:
+        if len(cards) > 10:
             more_text = ' and ' + str(len(cards) - 4) + ' more.'
             cards = cards[:4]
         if len(cards) == 1:

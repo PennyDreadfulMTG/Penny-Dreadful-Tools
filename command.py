@@ -28,7 +28,7 @@ async def respond_to_card_names(message, bot):
     if len(queries) == 0:
         return
     cards = cards_from_queries(queries)
-    await bot.post_cards(cards, message.channel)
+    await bot.post_cards(cards, message.channel, message.author)
 
 async def handle_command(message, bot):
     parts = message.content.split(' ', 1)
@@ -107,29 +107,10 @@ Want to contribute? Send a Pull Request."""
     async def search(self, bot, channel, args, author):
         """`!search {query}` Search for cards, using a magidex style query."""
         cards = complex_search(args)
-        if len(cards) == 0:
-            await bot.client.send_message(channel, '{0}: No matches.'.format(author.mention))
-            return
         additional_text = ''
         if len(cards) > 10:
             additional_text = 'http://magidex.com/search/?q=' + escape(args)
-        await bot.post_cards(cards, channel, additional_text)
-
-    async def bigsearch(self, bot, channel, args, author):
-        """`!bigsearch {query}` Show all the cards relating to a query. Large searches will be returned to you via PM."""
-        cards = complex_search(args)
-        if len(cards) == 0:
-            await bot.client.send_message(channel, '{0}: No matches.'.format(author.mention))
-            return
-        if len(cards) > 100:
-            msg = "Search contains {n} cards.  Try magidex.com?".format(n=len(cards))
-            await bot.client.send_message(channel, msg)
-            return
-        if len(cards) > 10 and not channel.is_private:
-            msg = "Search contains {n} cards.  Sending you the results through Private Message".format(n=len(cards))
-            await bot.client.send_message(channel, msg)
-            channel = author
-        await bot.post_cards(cards, channel, verbose=True)
+        await bot.post_cards(cards, channel, author, additional_text)
 
     async def status(self, bot, channel):
         """`!status` Gives the status of MTGO, UP or DOWN."""

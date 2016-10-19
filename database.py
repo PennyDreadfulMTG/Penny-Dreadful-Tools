@@ -8,7 +8,7 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 57
+    schema_version = 58
 
     def __init__(self):
         self.open()
@@ -39,9 +39,6 @@ class Database:
         if args is None:
             args = []
         return self.database.execute(sql, args).fetchall()
-
-    def alias_count(self):
-        return self.value('SELECT COUNT(*) FROM card_alias', [], 0)
 
     def value(self, sql, args=None, default=None):
         if args is None:

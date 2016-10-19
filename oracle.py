@@ -17,10 +17,6 @@ def initialize():
     if current_version > DATABASE.version():
         print('Database update required')
         update_database(str(current_version))
-    aliases = fetcher.card_aliases()
-    if DATABASE.alias_count() != len(aliases):
-        print('Card alias update required')
-        update_card_aliases(aliases)
 
 def search(query):
     # 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold here.
@@ -29,11 +25,10 @@ def search(query):
         {base_select}
         HAVING {name_select} IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
             OR SUM(CASE WHEN face_name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold}) THEN 1 ELSE 0 END) > 0
-            OR SUM(CASE WHEN alias = ? THEN 1 ELSE 0 END)
         ORDER BY pd_legal DESC, name
     """.format(base_select=base_select(), name_select=card.name_select().format(table='u'), fuzzy_threshold=fuzzy_threshold)
     fuzzy_query = '*{query}*'.format(query=query)
-    rs = DATABASE.execute(sql, [fuzzy_query, fuzzy_query, query])
+    rs = DATABASE.execute(sql, [fuzzy_query, fuzzy_query])
     return [card.Card(r) for r in rs]
 
 def base_select(where_clause='(1 = 1)'):
@@ -42,13 +37,11 @@ def base_select(where_clause='(1 = 1)'):
             {card_selects},
             {face_selects},
             GROUP_CONCAT(face_name, '|') AS names,
-            GROUP_CONCAT(alias, '|') AS aliases,
             SUM(CASE WHEN format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal
             FROM
-                (SELECT {card_props}, {face_props}, f.name AS face_name, ca.alias, cl.format_id
+                (SELECT {card_props}, {face_props}, f.name AS face_name, cl.format_id
                 FROM card AS c
                 INNER JOIN face AS f ON c.id = f.card_id
-                LEFT OUTER JOIN card_alias AS ca ON c.id = ca.card_id
                 LEFT OUTER JOIN card_legality AS cl ON c.id = cl.card_id AND cl.format_id = {format_id}
                 ORDER BY f.card_id, f.position)
             AS u
@@ -75,16 +68,6 @@ def get_legal_cards(force=False):
             new_list = fetcher.legal_cards(force=True)
     format_id = get_format_id('Penny Dreadful')
     DATABASE.execute('DELETE FROM card_legality WHERE format_id = ?', [format_id])
-
-    # BAKERT
-    efreet = ['Ifh-Bíff Efreet']
-    sql = """INSERT INTO card_legality (format_id, card_id, legality)
-        SELECT {format_id}, id, 'Legal'
-        FROM ({base_select})
-        WHERE name IN ({names})
-    """.format(format_id=format_id, base_select=base_select(), names=', '.join(database.escape(name) for name in efreet))
-    print(sql)
-
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
         SELECT {format_id}, id, 'Legal'
         FROM ({base_select})
@@ -119,15 +102,6 @@ def update_database(new_version):
     DATABASE.execute('INSERT INTO version (version) VALUES (?)', [new_version])
     DATABASE.execute('COMMIT')
 
-def update_card_aliases(aliases):
-    DATABASE.execute('DELETE FROM card_alias', [])
-    for alias, name in aliases:
-        card_id = DATABASE.value('SELECT card_id FROM face WHERE name = ?', [name])
-        if card_id is not None:
-            DATABASE.execute('INSERT INTO card_alias (card_id, alias) VALUES (?, ?)', [card_id, alias])
-        else:
-            print("no card found named " + name + " for alias " + alias)
-
 def update_fuzzy_matching():
     format_id = get_format_id('Penny Dreadful', True)
     DATABASE.execute('DROP TABLE IF EXISTS fuzzy')
@@ -146,6 +120,9 @@ def update_fuzzy_matching():
         GROUP BY f.id
     """.format(format_id=format_id)
     DATABASE.execute(sql)
+    aliases = fetcher.card_aliases()
+    for alias, name in aliases:
+        DATABASE.execute('INSERT INTO fuzzy (word, soundslike) VALUES (?, ?)', [name, alias])
 
 def insert_card(c):
     name = card_name(c)

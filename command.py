@@ -298,12 +298,17 @@ def cards_from_query(query):
 
     query = canonicalize(query)
 
+    # If we searched for an alias, change query so we can find the card in the results.
+    for alias, name in fetcher.card_aliases():
+        if query == canonicalize(alias):
+            query = canonicalize(name)
+
     cards = oracle.search(query)
     cards = [card for card in cards if card.layout != 'token' and card.type != 'Vanguard']
 
     # First look for an exact match.
     for card in cards:
-        names = [canonicalize(name) for name in card.names + card.aliases]
+        names = [canonicalize(name) for name in card.names]
         if query in names:
             return [card]
 
@@ -355,4 +360,4 @@ def price_info(card):
     return s
 
 def canonicalize(name):
-    return database.unaccent(name.lower())
+    return database.unaccent(name.strip().lower())

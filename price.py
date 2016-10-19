@@ -50,3 +50,4 @@ def cache():
             GROUP BY name;
     """
     conn.cursor().execute(sql, [latest, week, week, month, month, last_rotation, last_rotation, last_rotation])
+    conn.commit()

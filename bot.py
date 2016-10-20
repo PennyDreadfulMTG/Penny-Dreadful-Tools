@@ -8,7 +8,6 @@ import configuration
 import emoji
 import fetcher
 import oracle
-import rotation
 
 class Bot:
     def __init__(self):

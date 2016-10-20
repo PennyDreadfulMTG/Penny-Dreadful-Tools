@@ -1,7 +1,9 @@
-import sqlite3
 import time
 
+import apsw
+
 import configuration
+import database
 import rotation
 
 def info(card, force=False):
@@ -14,12 +16,12 @@ def info(card, force=False):
 
 def info_cached(card):
     sql = 'SELECT `time`, low / 100.0 AS low, high / 100.0 aS high, price / 100.0 AS price, week, month, season FROM cache WHERE name = ?'
-    conn = sqlite3.connect(configuration.get('pricesdb'))
-    conn.row_factory = sqlite3.Row
-    return conn.execute(sql, [card.name]).fetchone()
+    conn = apsw.Connection(configuration.get('pricesdb'))
+    conn.setrowtrace(database.row_factory)
+    return conn.cursor().execute(sql, [card.name]).fetchone()
 
 def cache():
-    conn = sqlite3.connect(configuration.get('pricesdb'))
+    conn = apsw.Connection(configuration.get('pricesdb'))
 
     now = time.time()
     week = now - 60 * 60 * 24 * 7
@@ -28,6 +30,7 @@ def cache():
 
     sql = 'SELECT MAX(`time`) FROM price'
     latest = conn.cursor().execute(sql).fetchone()[0]
+    conn.cursor().execute('BEGIN TRANSACTION')
     conn.cursor().execute('DELETE FROM cache')
     sql = """
         INSERT INTO cache (`time`, name, price, low, high, week, month, season)
@@ -51,4 +54,4 @@ def cache():
             GROUP BY name;
     """
     conn.cursor().execute(sql, [latest, week, week, month, month, last_rotation, last_rotation, last_rotation])
-    conn.commit()
+    conn.cursor().execute('COMMIT')

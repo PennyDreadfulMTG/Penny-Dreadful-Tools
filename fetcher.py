@@ -95,7 +95,7 @@ def whatsinstandard():
     return json.loads(fetch('http://whatsinstandard.com/api/4/sets.json'))
 
 def fetch_prices():
-    store('http://magic.bluebones.net/prices.db', 'prices.db')
+    store('http://magic.bluebones.net/prices.db', configuration.get('pricesdb'))
 
 class FetchException(Exception):
     pass

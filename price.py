@@ -1,6 +1,7 @@
 import sqlite3
 import time
 
+import configuration
 import rotation
 
 def info(card, force=False):
@@ -13,12 +14,12 @@ def info(card, force=False):
 
 def info_cached(card):
     sql = 'SELECT `time`, low / 100.0 AS low, high / 100.0 aS high, price / 100.0 AS price, week, month, season FROM cache WHERE name = ?'
-    conn = sqlite3.connect('prices.db')
+    conn = sqlite3.connect(configuration.get('pricesdb'))
     conn.row_factory = sqlite3.Row
     return conn.execute(sql, [card.name]).fetchone()
 
 def cache():
-    conn = sqlite3.connect('prices.db')
+    conn = sqlite3.connect(configuration.get('pricesdb'))
 
     now = time.time()
     week = now - 60 * 60 * 24 * 7

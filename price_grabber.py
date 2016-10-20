@@ -4,10 +4,15 @@ import sqlite3
 import time
 import urllib
 
+import command
+import configuration
+import database
 import fetcher
+import oracle
 import price
 
-DATABASE = sqlite3.connect('prices.db')
+DATABASE = sqlite3.connect(configuration.get('pricesdb'))
+CARDS = {}
 
 def fetch():
     all_prices = {}
@@ -36,7 +41,7 @@ def parse_sets(s):
 
 def parse_prices(s):
     results = re.findall("""<td class='card'><a data-full-image="[^"]*" data-html="true" data-trigger="hover" href="[^#]*#online" rel="popover">([^<]*)</a></td>\n<td>[^<]*</td>\n<td>[^<]*</td>\n<td class='text-right'>\n(.*)\n</td>""", s)
-    return [(html.unescape(name), html.unescape(price)) for name, price in results]
+    return [(name_lookup(html.unescape(name)), html.unescape(price)) for name, price in results]
 
 def store(timestamp, all_prices):
     sql = 'INSERT INTO price (`time`, name, `set`, premium, price) VALUES (?, ?, ?, ?, ?)'
@@ -88,6 +93,17 @@ def create_tables():
         season REAL
     )"""
     execute(sql)
+
+def name_lookup(name):
+    if not CARDS:
+        rs = database.DATABASE.execute(oracle.base_select())
+        for row in rs:
+            CARDS[command.canonicalize(row['name'])] = row['name']
+    canonical = command.canonicalize(name)
+    if canonical not in CARDS:
+        print("Bogus name {name} ({canonical}) found.".format(name=name, canonical=canonical))
+        return name
+    return CARDS[canonical]
 
 fetch()
 price.cache()

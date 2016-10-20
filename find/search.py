@@ -103,7 +103,7 @@ def parse(expression):
         token = tokens[i]
         cls = token.__class__
         if cls == String:
-            s += where(['name', 'type', 'text'], token.value())
+            s += text_where('name', token.value())
         elif cls == Key:
             s += parse_criterion(token, tokens[i + 1], tokens[i + 2])
             i += 2
@@ -125,15 +125,15 @@ def parse(expression):
 
 def parse_criterion(key, operator, term):
     if key.value() == 'q':
-        return where(['name', 'type', 'text'], term.value())
+        return text_where('name', term.value())
     elif key.value() == 'color' or key.value() == 'c':
         return color_where('color', operator.value(), term.value())
     elif key.value() == 'coloridentity' or key.value() == 'identity' or key.value() == 'ci':
         return color_where('color_identity', operator.value(), term.value())
     elif key.value() == 'text' or key.value() == 'o':
-        return where(['text'], term.value())
+        return text_where('text', term.value())
     elif key.value() == 'type' or key.value() == 't':
-        return where(['type'], term.value())
+        return text_where('type', term.value())
     elif key.value() == 'power' or key.value() == 'pow':
         return math_where('power', operator.value(), term.value())
     elif key.value() == 'toughness' or key.value() == 'tou':
@@ -155,20 +155,12 @@ def parse_criterion(key, operator, term):
     elif key.value() == 'mana' or key.value() == 'm':
         return mana_where(operator.value(), term.value())
 
-def where(keys, term, exact_match=False):
-    q = term if exact_match else '%' + term + '%'
-    subsequent = False
-    s = '('
-    for column in keys:
-        if column.endswith('name'):
-            column = column.replace('name', 'name_ascii')
-            q = database.unaccent(q)
-        if subsequent:
-            s += ' OR '
-        s += '{column} LIKE {q}'.format(column=column, q=database.escape(q))
-        subsequent = True
-    s += ')'
-    return s
+def text_where(column, term):
+    q = '%{term}%'.format(term=term)
+    if column.endswith('name'):
+        column = column.replace('name', 'name_ascii')
+        q = database.unaccent(q)
+    return '({column} LIKE {q})'.format(column=column, q=database.escape(q))
 
 def subtable_where(subtable, value, operator=None):
     # Specialcase colorless because it has no entry in the color table.

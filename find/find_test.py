@@ -94,16 +94,16 @@ def test_color():
     do_test('c:g', '(c.id IN (SELECT card_id FROM card_color WHERE color_id = 5))')
 
 def test_or():
-    do_test('a OR b', "(name_ascii LIKE '%a%' OR type LIKE '%a%' OR text LIKE '%a%') OR (name_ascii LIKE '%b%' OR type LIKE '%b%' OR text LIKE '%b%')")
+    do_test('a OR b', "(name_ascii LIKE '%a%') OR (name_ascii LIKE '%b%')")
 
 def test_text():
     do_test('o:"target attacking"', "(text LIKE '%target attacking%')")
 
 def test_name():
-    do_test('tension turtle', "(name_ascii LIKE '%tension%' OR type LIKE '%tension%' OR text LIKE '%tension%') AND (name_ascii LIKE '%turtle%' OR type LIKE '%turtle%' OR text LIKE '%turtle%')")
+    do_test('tension turtle', "(name_ascii LIKE '%tension%') AND (name_ascii LIKE '%turtle%')")
 
 def test_parentheses():
-    do_test('x OR (a OR (b AND c))', "(name_ascii LIKE '%x%' OR type LIKE '%x%' OR text LIKE '%x%') OR ((name_ascii LIKE '%a%' OR type LIKE '%a%' OR text LIKE '%a%') OR ((name_ascii LIKE '%b%' OR type LIKE '%b%' OR text LIKE '%b%') AND (name_ascii LIKE '%c%' OR type LIKE '%c%' OR text LIKE '%c%')))")
+    do_test('x OR (a OR (b AND c))', "(name_ascii LIKE '%x%') OR ((name_ascii LIKE '%a%') OR ((name_ascii LIKE '%b%') AND (name_ascii LIKE '%c%')))")
 
 def test_toughness():
     do_test('c:r tou>2', "(c.id IN (SELECT card_id FROM card_color WHERE color_id = 4)) AND (toughness IS NOT NULL AND toughness <> '' AND CAST(toughness AS REAL) > 2)")

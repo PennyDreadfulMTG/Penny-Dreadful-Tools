@@ -218,6 +218,7 @@ Want to contribute? Send a Pull Request."""
         if time.time() > self.modofail.last_fail + 60 * 60:
             self.modofail.count = 0
         self.modofail.count += 1
+        self.modofail.last_fail = time.time()
         await bot.client.send_message(channel, ':bellhop: **MODO fail** {0}'.format(self.modofail.count))
     modofail.count = 0
     modofail.last_fail = time.time()

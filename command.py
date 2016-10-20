@@ -111,7 +111,11 @@ Want to contribute? Send a Pull Request."""
 
     async def search(self, bot, channel, args, author):
         """`!search {query}` Search for cards, using a magidex style query."""
-        cards = complex_search(args)
+        try:
+            cards = complex_search(args)
+        except search.InvalidSearchException as e:
+            await bot.client.send_message(channel, '{author}: {e}'.format(author=author.mention, e=e))
+            return
         additional_text = ''
         if len(cards) > 10:
             additional_text = 'http://magidex.com/search/?q=' + escape(args)

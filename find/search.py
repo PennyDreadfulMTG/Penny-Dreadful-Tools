@@ -59,14 +59,14 @@ def tokenize(s):
                 string = [c]
                 mode = UNQUOTED_STRING
             else:
-                raise InvalidTokenException("Expected expression, got '{c}' at {i} in {s}".format(c=c, i=i, s=s))
+                raise InvalidTokenException("Expected expression, got '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
         elif mode == EXPECT_OPERATOR:
             if Operator.match(rest):
                 tokens[depth].append(Operator(rest))
                 mode = EXPECT_TERM
                 i += Operator.length(rest) - 1
             else:
-                raise InvalidTokenException("Expected operator, got '{c}' at {i} in {s}".format(c=c, i=i, s=s))
+                raise InvalidTokenException("Expected operator, got '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
         elif mode == EXPECT_TERM:
             if c == '"':
                 string = []
@@ -91,7 +91,7 @@ def tokenize(s):
             else:
                 string.append(c)
         else:
-            raise InvalidModeException("Bad mode '{c}' at {i} in {s}".format(c=c, i=i, s=s))
+            raise InvalidModeException("Bad mode '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
         i += 1
     return Expression(tokens[0])
 
@@ -112,7 +112,7 @@ def parse(expression):
         elif cls == BooleanOperator:
             pass
         else:
-            raise InvalidTokenException("Invalid token '{token}' ({cls}) at {i}".format(token=token, cls=cls, i=i))
+            raise InvalidTokenException("Invalid token '{token}' ({cls}) at character {i}".format(token=token, cls=cls, i=i))
         next_token = tokens[i + 1] if len(tokens) > (i + 1) else None
         next_cls = next_token.__class__
         if cls == BooleanOperator:
@@ -217,6 +217,8 @@ def format_where(term):
     if term == 'pd':
         term = 'Penny Dreadful'
     format_id = database.DATABASE.value('SELECT id FROM format WHERE name LIKE ?', ['{term}%'.format(term=database.unaccent(term))])
+    if format_id is None:
+        raise InvalidValueException("Invalid format '{term}'".format(term=term))
     return "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))".format(format_id=format_id)
 
 def rarity_where(operator, term):
@@ -277,6 +279,8 @@ def value_lookup(table, value):
     }
     if table in replacements and value in replacements[table]:
         return replacements[table][value]
+    if table in replacements:
+        raise InvalidValueException("Invalid value '{value}' for {table}".format(value=value, table=table))
     return value
 
 class InvalidSearchException(Exception):

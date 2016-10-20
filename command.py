@@ -100,6 +100,11 @@ Want to contribute? Send a Pull Request."""
         bot.legal_cards = oracle.get_legal_cards(True)
         await bot.client.send_message(channel, 'Reloaded list of legal cards.')
 
+    async def updateprices(self, bot, channel):
+        await bot.client.send_message(channel, 'Updating prices, this could be slow.')
+        fetcher.fetch_prices()
+        await bot.client.send_message(channel, 'Reloaded prices.')
+
     async def restartbot(self, bot, channel):
         await bot.client.send_message(channel, 'Rebooting!')
         sys.exit()

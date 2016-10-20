@@ -69,7 +69,7 @@ def commit():
 
 def create_tables():
     print('Creating price tables.')
-    sql = """CREATE TABLE price (
+    sql = """CREATE TABLE IF NOT EXISTS price (
         `time` INTEGER,
         name TEXT,
         `set` TEXT,
@@ -77,7 +77,7 @@ def create_tables():
         price INTEGER
     )"""
     execute(sql)
-    sql = """CREATE TABLE cache (
+    sql = """CREATE TABLE IF NOT EXISTS cache (
         `time` INTEGER,
         name TEXT,
         high INTEGER,

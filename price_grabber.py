@@ -4,10 +4,11 @@ import sqlite3
 import time
 import urllib
 
+import configuration
 import fetcher
 import price
 
-DATABASE = sqlite3.connect('prices.db')
+DATABASE = sqlite3.connect(configuration.get('pricesdb'))
 
 def fetch():
     all_prices = {}

@@ -4,6 +4,7 @@ DEFAULTS = {
     'card_alias_file': './card_aliases.tsv',
     'database': './db',
     'image_dir': '.',
+    'pricesdb': './prices.db',
     'spellfix': './spellfix'
 }
 

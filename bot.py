@@ -18,7 +18,7 @@ class Bot:
     def init(self):
         self.legal_cards = oracle.get_legal_cards()
         print('Legal cards: {num_legal_cards}'.format(num_legal_cards=len(self.legal_cards)))
-        if not os.path.isfile('prices.db') or os.path.getmtime('prices.db') < time.time() - 60 * 60 * 24:
+        if not os.path.isfile(configuration.get('pricesdb')) or os.path.getmtime(configuration.get('pricesdb')) < time.time() - 60 * 60 * 24:
             fetcher.fetch_prices()
         self.client.run(configuration.get('token'))
 

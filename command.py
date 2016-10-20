@@ -209,6 +209,9 @@ Want to contribute? Send a Pull Request."""
     modofail.count = 0
     modofail.last_fail = time.time()
 
+    async def resources(self, bot, channel):
+        """`!resources` Link to page of all Penny Dreadful resources."""
+        await bot.client.send_message(channel, 'PD resources: http://magic.bluebones.net/pd/')
 
 def escape(str_input) -> str:
     # Expand 'AE' into two characters. This matches the legal list and

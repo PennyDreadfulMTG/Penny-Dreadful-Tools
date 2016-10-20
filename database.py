@@ -8,7 +8,7 @@ import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 50
+    schema_version = 59
 
     def __init__(self):
         self.open()
@@ -40,9 +40,6 @@ class Database:
             args = []
         return self.database.execute(sql, args).fetchall()
 
-    def alias_count(self):
-        return self.value('SELECT COUNT(*) FROM card_alias', [], 0)
-
     def value(self, sql, args=None, default=None):
         if args is None:
             args = []
@@ -58,27 +55,11 @@ class Database:
         self.execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER)')
         self.execute('INSERT INTO db_version (version) VALUES ({0})'.format(self.schema_version))
         self.execute('CREATE TABLE IF NOT EXISTS version (version TEXT)')
-        sql = 'CREATE TABLE IF NOT EXISTS card (id INTEGER PRIMARY KEY, pd_legal INTEGER, '
-        sql += ', '.join('{name} {type}'.format(name=name, type=type) for name, type in card.card_properties().items())
-        sql += ')'
+        sql = create_table_def('card', card.card_properties())
         self.execute(sql)
-        sql = 'CREATE TABLE IF NOT EXISTS face (id INTEGER PRIMARY KEY, position INTEGER, '
-        sql += ', '.join('{name} {type}'.format(name=name, type=type) for name, type in card.face_properties().items())
-        sql += ', name_ascii TEXT NOT NULL, card_id INTEGER NOT NULL, '
-        sql += 'FOREIGN KEY(card_id) REFERENCES card(id))'
+        sql = create_table_def('face', card.face_properties())
         self.execute(sql)
-        sql = 'CREATE TABLE IF NOT EXISTS `set` (id INTEGER PRIMARY KEY, '
-        sql += ', '.join('{name} {type}'.format(name=name, type=type) for name, type in card.set_properties().items())
-        sql += ')'
-        self.execute(sql)
-        sql = 'CREATE TABLE IF NOT EXISTS printing ('
-        sql += 'id INTEGER PRIMARY KEY,'
-        sql += 'card_id INTEGER NOT NULL, '
-        sql += 'set_id INTEGER NOT NULL, '
-        sql += 'rarity_id INTEGER, '
-        sql += ', '.join('{name} {type}'.format(name=name, type=type) for name, type in card.printing_properties().items())
-        sql += ', FOREIGN KEY(card_id) REFERENCES card(id), '
-        sql += 'FOREIGN KEY(set_id) REFERENCES `set`(id))'
+        sql = create_table_def('set', card.set_properties())
         self.execute(sql)
         self.execute('CREATE TABLE IF NOT EXISTS color (id INTEGER PRIMARY KEY, name TEXT, symbol TEXT)')
         self.execute("""CREATE TABLE IF NOT EXISTS card_color (
@@ -149,6 +130,8 @@ class Database:
             ('Rare'),
             ('Mythic Rare')
         """)
+        sql = create_table_def('printing', card.printing_properties())
+        self.execute(sql)
         self.execute("""CREATE TABLE IF NOT EXISTS fetcher (
             id INTEGER PRIMARY KEY,
             resource TEXT UNIQUE ON CONFLICT REPLACE NOT NULL,
@@ -176,5 +159,24 @@ def row_factory(cursor, row):
 
 def unaccent(s):
     return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
+
+def column_def(name, prop):
+    nullable = 'NOT NULL' if not prop['nullable'] else ''
+    primary_key = 'PRIMARY KEY' if prop['primary_key'] else ''
+    default = 'DEFAULT {default}'.format(default=prop['default']) if prop['default'] is not None else ''
+    unique = 'UNIQUE' if prop['unique'] else ''
+    return '`{name}` {type} {primary_key} {nullable} {unique} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, unique=unique, default=default)
+
+def foreign_key_def(name, fk):
+    return 'FOREIGN KEY(`{name}`) REFERENCES `{table}`(`{column}`)'.format(name=name, table=fk[0], column=fk[1])
+
+def create_table_def(name, props):
+    sql = 'CREATE TABLE IF NOT EXISTS `{name}` ('
+    sql += ', '.join(column_def(name, prop) for name, prop in props.items())
+    fk = ', '.join(foreign_key_def(name, prop['foreign_key']) for name, prop in props.items() if prop['foreign_key'])
+    if fk:
+        sql += ', ' + fk
+    sql += ')'
+    return sql.format(name=name)
 
 DATABASE = Database()

@@ -16,7 +16,7 @@ def legal_cards(force=False):
     resource_id = 'legal_cards'
     if force:
         resource_id = None
-    return [s.lower() for s in fetch('http://pdmtgo.com/legal_cards.txt', 'latin-1', resource_id).split('\n')]
+    return fetch('http://pdmtgo.com/legal_cards.txt', 'utf-8', resource_id).strip().split('\n')
 
 def version():
     return pkg_resources.parse_version(json.loads(fetch('https://mtgjson.com/json/version.json')))

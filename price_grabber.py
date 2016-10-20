@@ -5,6 +5,7 @@ import time
 import urllib
 
 import fetcher
+import price
 
 DATABASE = sqlite3.connect('prices.db')
 
@@ -46,8 +47,8 @@ def store(timestamp, all_prices):
             premium = True
         except ValueError:
             premium = False
-        for name, price in prices:
-            cents = int(float(price) * 100)
+        for name, p in prices:
+            cents = int(float(p) * 100)
             execute(sql, [timestamp, name, code, premium, cents])
     commit()
 
@@ -59,16 +60,16 @@ def execute(sql, values=None):
     except sqlite3.OperationalError as e:
         print(e)
         # If you wish to make an apple pie from scratch, you must first invent the universe.
-        create_table()
+        create_tables()
         execute(sql, values)
 
 def commit():
     DATABASE.commit()
     DATABASE.close()
 
-def create_table():
-    print('Creating price table.')
-    sql = """CREATE TABLE price (
+def create_tables():
+    print('Creating price tables.')
+    sql = """CREATE TABLE IF NOT EXISTS price (
         `time` INTEGER,
         name TEXT,
         `set` TEXT,
@@ -76,5 +77,17 @@ def create_table():
         price INTEGER
     )"""
     execute(sql)
+    sql = """CREATE TABLE IF NOT EXISTS cache (
+        `time` INTEGER,
+        name TEXT,
+        high INTEGER,
+        low INTEGER,
+        price INTEGER,
+        week REAL,
+        month REAL,
+        season REAL
+    )"""
+    execute(sql)
 
 fetch()
+price.cache()

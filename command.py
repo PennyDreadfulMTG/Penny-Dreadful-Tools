@@ -28,7 +28,7 @@ async def respond_to_card_names(message, bot):
     if len(queries) == 0:
         return
     cards = cards_from_queries(queries)
-    await bot.post_cards(cards, message.channel)
+    await bot.post_cards(cards, message.channel, message.author)
 
 async def handle_command(message, bot):
     parts = message.content.split(' ', 1)
@@ -100,6 +100,11 @@ Want to contribute? Send a Pull Request."""
         bot.legal_cards = oracle.get_legal_cards(True)
         await bot.client.send_message(channel, 'Reloaded list of legal cards.')
 
+    async def updateprices(self, bot, channel):
+        await bot.client.send_message(channel, 'Updating prices, this could be slow.')
+        fetcher.fetch_prices()
+        await bot.client.send_message(channel, 'Reloaded prices.')
+
     async def restartbot(self, bot, channel):
         await bot.client.send_message(channel, 'Rebooting!')
         sys.exit()
@@ -107,29 +112,10 @@ Want to contribute? Send a Pull Request."""
     async def search(self, bot, channel, args, author):
         """`!search {query}` Search for cards, using a magidex style query."""
         cards = complex_search(args)
-        if len(cards) == 0:
-            await bot.client.send_message(channel, '{0}: No matches.'.format(author.mention))
-            return
         additional_text = ''
         if len(cards) > 10:
             additional_text = 'http://magidex.com/search/?q=' + escape(args)
-        await bot.post_cards(cards, channel, additional_text)
-
-    async def bigsearch(self, bot, channel, args, author):
-        """`!bigsearch {query}` Show all the cards relating to a query. Large searches will be returned to you via PM."""
-        cards = complex_search(args)
-        if len(cards) == 0:
-            await bot.client.send_message(channel, '{0}: No matches.'.format(author.mention))
-            return
-        if len(cards) > 100:
-            msg = "Search contains {n} cards.  Try magidex.com?".format(n=len(cards))
-            await bot.client.send_message(channel, msg)
-            return
-        if len(cards) > 10 and not channel.is_private:
-            msg = "Search contains {n} cards.  Sending you the results through Private Message".format(n=len(cards))
-            await bot.client.send_message(channel, msg)
-            channel = author
-        await bot.post_cards(cards, channel, verbose=True)
+        await bot.post_cards(cards, channel, author, additional_text)
 
     async def status(self, bot, channel):
         """`!status` Gives the status of MTGO, UP or DOWN."""
@@ -242,8 +228,8 @@ def uniqify_cards(cards):
     # Remove multiple printings of the same card from the result set.
     results = collections.OrderedDict()
     for card in cards:
-        results[card.name.lower()] = card
-    return results.values()
+        results[canonicalize(card.name)] = card
+    return list(results.values())
 
 def acceptable_file(filepath: str) -> bool:
     return os.path.isfile(filepath) and os.path.getsize(filepath) > 0
@@ -299,6 +285,11 @@ def cards_from_query(query):
 
     query = canonicalize(query)
 
+    # If we searched for an alias, change query so we can find the card in the results.
+    for alias, name in fetcher.card_aliases():
+        if query == canonicalize(alias):
+            query = canonicalize(name)
+
     cards = oracle.search(query)
     cards = [card for card in cards if card.layout != 'token' and card.type != 'Vanguard']
 
@@ -317,7 +308,7 @@ def cards_from_query(query):
             if name.startswith('{query} '.format(query=query)) or name.startswith('{query},'.format(query=query)):
                 results.append(card)
     if len(results) > 0:
-        return uniqify_cards(results)
+        return results
 
     # If not found, use cards that start with the query.
     for card in cards:
@@ -325,14 +316,14 @@ def cards_from_query(query):
         for name in names:
             if name.startswith(query):
                 results.append(card)
-        if len(results) > 0:
-            return uniqify_cards(results)
+    if len(results) > 0:
+        return results
 
     # If we didn't find any of those then use all search results.
-    return uniqify_cards(cards)
+    return cards
 
 def legal_emoji(card, legal_cards, verbose=False):
-    if card.name.lower().strip() in legal_cards:
+    if card.name in legal_cards:
         return ':white_check_mark:'
     s = ':no_entry_sign:'
     if verbose:
@@ -351,9 +342,9 @@ def price_info(card):
     if p['low'] <= 0.05:
         s += ' (low {low}, high {high}'.format(low=round(p['low'], 2), high=round(p['high'], 2))
         if p['low'] <= 0.01:
-            s += ', {week}% this week, {month}% this month, {rotation}% this rotation'.format(week=round(p['week'] * 100.0), month=round(p['month'] * 100.0), rotation=round(p['rotation'] * 100.0))
+            s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(p['week'] * 100.0), month=round(p['month'] * 100.0), season=round(p['season'] * 100.0))
         s += ')'
     return s
 
 def canonicalize(name):
-    return database.unaccent(name.lower())
+    return database.unaccent(name.strip().lower())

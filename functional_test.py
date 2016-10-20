@@ -42,6 +42,9 @@ def test_commands():
         if cmd == "restartbot":
             # Don't actually test whether we can call sys.exit().  That leads to problems
             continue
+        if cmd == 'updateprices':
+            # This is just too slow to include in a test suite for now.
+            continue
 
         channel = generate_fakechannel()
         calls = channel.calls

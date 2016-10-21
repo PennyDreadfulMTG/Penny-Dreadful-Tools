@@ -242,10 +242,8 @@ def card_name(c):
     if c.get('layout') == 'meld':
         if c.get('name') != c.get('names')[2]:
             return c.get('name')
-        if c.get('type', None) is not None:
-            return c.get('names')[0]
         else:
-            return c.get('names')[1]
+            return c.get('names')[0]
     return ' // '.join(c.get('names', [c.get('name')]))
 
 initialize()

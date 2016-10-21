@@ -302,12 +302,14 @@ def cards_from_query(query):
     cards = [card for card in cards if card.layout != 'token' and card.type != 'Vanguard']
 
     # First look for an exact match.
+    results = []
     for card in cards:
         names = [canonicalize(name) for name in card.names]
         if query in names:
-            return [card]
+            results.append(card)
+    if len(results) > 0:
+        return results
 
-    results = []
 
     # If not found, use cards that start with the query and a punctuation char.
     for card in cards:

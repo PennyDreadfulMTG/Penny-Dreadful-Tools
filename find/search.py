@@ -160,7 +160,10 @@ def text_where(column, term):
     if column.endswith('name'):
         column = column.replace('name', 'name_ascii')
         q = database.unaccent(q)
-    return '({column} LIKE {q})'.format(column=column, q=database.escape(q))
+    escaped = database.escape(q)
+    if column == 'text':
+        escaped = escaped.replace('~', "' || name || '")
+    return '({column} LIKE {q})'.format(column=column, q=escaped)
 
 def subtable_where(subtable, value, operator=None):
     # Specialcase colorless because it has no entry in the color table.

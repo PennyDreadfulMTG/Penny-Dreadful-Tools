@@ -40,11 +40,11 @@ def parse_sets(s):
     return re.findall("'/index/([A-Z0-9]+)'", s)
 
 def parse_prices(s):
-    results = re.findall("""<td class='card'><a data-full-image="[^"]*" data-html="true" data-trigger="hover" href="[^#]*#online" rel="popover">([^<]*)</a></td>\n<td>[^<]*</td>\n<td>[^<]*</td>\n<td class='text-right'>\n(.*)\n</td>""", s)
-    return [(name_lookup(html.unescape(name)), html.unescape(price)) for name, price in results]
+    results = re.findall(r"""<td class='card'><a data-full-image="[^"]*" data-html="true" data-trigger="hover" href="[^#]*#online" rel="popover">([^\(<]*)(?:\(([^\)]*)\))?</a></td>\n<td>[^<]*</td>\n<td>[^<]*</td>\n<td class='text-right'>\n(.*)\n</td>""", s)
+    return [(name_lookup(html.unescape(name.strip())), html.unescape(version.strip()), html.unescape(price.strip())) for name, version, price in results]
 
 def store(timestamp, all_prices):
-    sql = 'INSERT INTO price (`time`, name, `set`, premium, price) VALUES (?, ?, ?, ?, ?)'
+    sql = 'INSERT INTO price (`time`, name, `set`, version, premium, price) VALUES (?, ?, ?, ?, ?, ?)'
     for code in all_prices:
         prices = all_prices[code]
         try:
@@ -52,9 +52,9 @@ def store(timestamp, all_prices):
             premium = True
         except ValueError:
             premium = False
-        for name, p in prices:
+        for name, version, p in prices:
             cents = int(float(p) * 100)
-            execute(sql, [timestamp, name, code, premium, cents])
+            execute(sql, [timestamp, name, code, version, premium, cents])
     commit()
 
 def execute(sql, values=None):

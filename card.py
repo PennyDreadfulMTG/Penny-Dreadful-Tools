@@ -59,7 +59,6 @@ def face_properties():
     props['cmc']['select'] = "GROUP_CONCAT(`{table}`.`{column}`, '|') AS `{column}`"
     props['text']['select'] = "GROUP_CONCAT(`{table}`.`{column}`, '\n-----\n') AS `{column}`"
     props['card_id']['foreign_key'] = ('card', 'id')
-    props['name']['unique'] = True
     return props
 
 def set_properties():
@@ -100,8 +99,11 @@ def printing_properties():
 
 def name_select():
     return """
-        CASE WHEN layout = 'meld' OR layout = 'double-faced' THEN
+        CASE
+        WHEN layout = 'double-faced' THEN
             GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN face_name ELSE '' END, '')
+        WHEN layout = 'meld' THEN
+            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 OR `{table}`.position = 2 THEN face_name ELSE '' END, '')
         ELSE
             GROUP_CONCAT(face_name , ' // ' )
         END

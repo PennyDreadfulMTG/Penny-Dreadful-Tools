@@ -89,8 +89,18 @@ def update_database(new_version):
     DATABASE.execute('BEGIN TRANSACTION')
     DATABASE.execute('DELETE FROM version')
     cards = fetcher.all_cards()
+    melded_faces = []
     for _, c in cards.items():
-        insert_card(c)
+        if c.get('layout') == 'meld' and c.get('name') == c.get('names')[2]:
+            melded_faces.append(c)
+        else:
+            insert_card(c)
+    for face in melded_faces:
+        insert_card(face)
+        first, second = face['names'][0:2]
+        face['names'][0] = second
+        face['names'][1] = first
+        insert_card(face)
     sets = fetcher.all_sets()
     for _, s in sets.items():
         insert_set(s)
@@ -229,6 +239,13 @@ def date2int(s):
         return s
 
 def card_name(c):
+    if c.get('layout') == 'meld':
+        if c.get('name') != c.get('names')[2]:
+            return c.get('name')
+        if c.get('type', None) is not None:
+            return c.get('names')[0]
+        else:
+            return c.get('names')[1]
     return ' // '.join(c.get('names', [c.get('name')]))
 
 initialize()

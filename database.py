@@ -27,7 +27,7 @@ class Database:
         self.connection.enableloadextension(True)
         self.connection.loadextension(configuration.get('spellfix'))
         self.connection.createscalarfunction('unaccent', unaccent, 1)
-        self.database = self.connection.cursor()
+        self.cursor = self.connection.cursor()
 
     def version(self) -> str:
         return pkg_resources.parse_version(self.value('SELECT version FROM version', [], '0'))
@@ -38,12 +38,12 @@ class Database:
     def execute(self, sql, args=None):
         if args is None:
             args = []
-        return self.database.execute(sql, args).fetchall()
+        return self.cursor.execute(sql, args).fetchall()
 
     def value(self, sql, args=None, default=None):
         if args is None:
             args = []
-        rs = self.database.execute(sql, args).fetchone()
+        rs = self.cursor.execute(sql, args).fetchone()
         if rs is None:
             return default
         elif len(rs) <= 0:

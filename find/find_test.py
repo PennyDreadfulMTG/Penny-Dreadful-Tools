@@ -9,6 +9,9 @@ def test_match():
     assert not search.Criterion.match(list('magic:2uu'))
     assert search.Criterion.match(list('tou>2'))
 
+def test_tilde():
+    do_test('o:"sacrifice ~"', "(text LIKE '%sacrifice ' || name || '%')")
+
 def test_only_multicolored():
     do_test('c:m', '((1 = 1) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) > 1)))')
 

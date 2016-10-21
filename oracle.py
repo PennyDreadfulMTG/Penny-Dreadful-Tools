@@ -136,7 +136,7 @@ def insert_card(c):
         sql += ')'
         values = [c.get(database2json(name)) for name, prop in card.card_properties().items() if prop['mtgjson']]
         # database.execute commits after each statement, which we want to avoid while inserting cards
-        DATABASE.execute(sql, values)
+        DATABASE.database.execute(sql, values)
         card_id = DATABASE.value('SELECT last_insert_rowid()')
         CARD_IDS[name] = card_id
     # mtgjson thinks the text of Jhessian Lookout is NULL not '' but that is clearly wrong.
@@ -151,20 +151,20 @@ def insert_card(c):
     sql += ', '.join('?' for name, prop in card.face_properties().items() if not prop['primary_key'])
     sql += ')'
     values = [c.get(database2json(name)) for name, prop in card.face_properties().items() if not prop['primary_key']]
-    DATABASE.execute(sql, values)
+    DATABASE.database.execute(sql, values)
     for color in c.get('colors', []):
         color_id = DATABASE.value('SELECT id FROM color WHERE name = ?', [color])
-        DATABASE.execute('INSERT INTO card_color (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
+        DATABASE.database.execute('INSERT INTO card_color (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
     for symbol in c.get('colorIdentity', []):
         color_id = DATABASE.value('SELECT id FROM color WHERE symbol = ?', [symbol])
-        DATABASE.execute('INSERT INTO card_color_identity (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
+        DATABASE.database.execute('INSERT INTO card_color_identity (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
     for supertype in c.get('supertypes', []):
-        DATABASE.execute('INSERT INTO card_supertype (card_id, supertype) VALUES (?, ?)', [card_id, supertype])
+        DATABASE.database.execute('INSERT INTO card_supertype (card_id, supertype) VALUES (?, ?)', [card_id, supertype])
     for subtype in c.get('subtypes', []):
-        DATABASE.execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [card_id, subtype])
+        DATABASE.database.execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [card_id, subtype])
     for info in c.get('legalities', []):
         format_id = get_format_id(info['format'], True)
-        DATABASE.execute('INSERT INTO card_legality (card_id, format_id, legality) VALUES (?, ?, ?)', [card_id, format_id, info['legality']])
+        DATABASE.database.execute('INSERT INTO card_legality (card_id, format_id, legality) VALUES (?, ?, ?)', [card_id, format_id, info['legality']])
 
 def insert_set(s) -> None:
     sql = 'INSERT INTO `set` ('
@@ -175,7 +175,7 @@ def insert_set(s) -> None:
     values = [date2int(s.get(database2json(name))) for name, prop in card.set_properties().items() if prop['mtgjson']]
     # database.execute commits after each statement, which we want to
     # avoid while inserting sets
-    DATABASE.execute(sql, values)
+    DATABASE.database.execute(sql, values)
     set_id = DATABASE.value('SELECT last_insert_rowid()')
     for c in s.get('cards', []):
         card_id = CARD_IDS[card_name(c)]
@@ -185,7 +185,7 @@ def insert_set(s) -> None:
         sql += ', '.join('?' for name, prop in card.printing_properties().items() if prop['mtgjson'])
         sql += ')'
         values = [card_id, set_id] + [c.get(database2json(name)) for name, prop in card.printing_properties().items() if prop['mtgjson']]
-        DATABASE.execute(sql, values)
+        DATABASE.database.execute(sql, values)
 
 def get_format_id(name, allow_create=False):
     if len(FORMAT_IDS) == 0:

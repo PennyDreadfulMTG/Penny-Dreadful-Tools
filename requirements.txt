@@ -1,5 +1,4 @@
 discord.py[voice]>=0.13.0
 pytest
 pylint
-python-dateutil
 requests

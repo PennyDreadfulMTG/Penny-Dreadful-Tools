@@ -1,21 +1,14 @@
 import datetime
-from dateutil import tz
 import fetcher
 
 def init():
     standard = fetcher.whatsinstandard()
-    return [parse_rotation_date(release["enter_date"]) for release in standard]
+    return [datetime.datetime.strptime(release["enter_date"], "%Y-%m-%dT%H:%M:%S.%fZ") for release in standard]
 
 def last_rotation():
-    return max(d for d in  DATES if d < now())
+    return max(d for d in  DATES if d < datetime.datetime.now())
 
 def next_rotation():
-    return min(d for d in DATES if d > now())
-
-def parse_rotation_date(s):
-    return datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=tz.gettz('America/Los_Angeles'))
-
-def now():
-    return datetime.datetime.now().replace(tzinfo=tz.tzlocal())
+    return min(d for d in DATES if d > datetime.datetime.now())
 
 DATES = init()

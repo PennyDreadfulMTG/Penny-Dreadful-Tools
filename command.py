@@ -1,4 +1,5 @@
 import collections
+import datetime
 import hashlib
 import os
 import random
@@ -6,7 +7,6 @@ import re
 import sys
 import time
 import urllib.parse
-
 from typing import List
 
 import configuration
@@ -111,11 +111,7 @@ Want to contribute? Send a Pull Request."""
 
     async def search(self, bot, channel, args, author):
         """`!search {query}` Search for cards, using a magidex style query."""
-        try:
-            cards = complex_search(args)
-        except search.InvalidSearchException as e:
-            await bot.client.send_message(channel, '{author}: {e}'.format(author=author.mention, e=e))
-            return
+        cards = complex_search(args)
         additional_text = ''
         if len(cards) > 10:
             additional_text = 'http://magidex.com/search/?q=' + escape(args)
@@ -165,10 +161,9 @@ Want to contribute? Send a Pull Request."""
     async def rotation(self, bot, channel):
         """`!rotation` Give the date of the next Penny Dreadful rotation."""
         next_rotation = rotation.next_rotation()
-        now = rotation.now()
-        if next_rotation > now:
-            diff = next_rotation - now
-            msg = "The next rotation is in {diff}".format(diff=display_time(diff.total_seconds()))
+        if next_rotation > datetime.datetime.now():
+            diff = next_rotation - datetime.datetime.now()
+            msg = "The next rotation is in {diff}".format(diff=diff)
             await bot.client.send_message(channel, msg)
 
     async def _oracle(self, bot, channel, args, author):
@@ -360,25 +355,3 @@ def format_price(p):
 
 def canonicalize(name):
     return database.unaccent(name.strip().lower())
-
-def display_time(seconds, granularity=2):
-    intervals = (
-        ('weeks', 60 * 60 * 24 * 7),
-        ('days', 60 * 60 * 24),
-        ('hours', 60 * 60),
-        ('minutes', 60),
-        ('seconds', 1)
-    )
-    result = []
-    for name, count in intervals:
-        value = seconds // count
-        if value:
-            seconds -= value * count
-            if value == 1:
-                name = name.rstrip('s')
-            result.append("{} {}".format(round(value), name))
-        else:
-            # Add a blank if we're in the middle of other values
-            if len(result) > 0:
-                result.append(None)
-    return ', '.join([x for x in result[:granularity] if x is not None])

@@ -14,6 +14,8 @@ EXPECT_TERM = 'expect_term'
 QUOTED_STRING = 'quoted_string'
 UNQUOTED_STRING = 'unquoted_string'
 
+VALUE_LOOKUP = {}
+
 def search(query):
     where_clause = parse(tokenize(query))
     sql = """{base_select}
@@ -244,47 +246,44 @@ def mana_where(operator, term):
     return '({clause})'.format(clause=clause)
 
 def value_lookup(table, value):
-    colors = {
-        'w': 1,
-        'white': 1,
-        'u': 2,
-        'blue': 2,
-        'b': 3,
-        'black': 3,
-        'r': 4,
-        'red': 4,
-        'g': 5,
-        'green': 5
-    }
-    replacements = {
-        'color': colors,
-        'color_identity': colors,
-        'rarity': {
-            'basic land': 1,
-            'basicland': 1,
-            'basic': 1,
-            'land': 1,
-            'bl': 1,
-            'b': 1,
-            'l': 1,
-            'common': 2,
-            'c': 2,
-            'uncommon': 3,
-            'u': 3,
-            'rare': 4,
-            'r': 4,
-            'mythic rare': 5,
-            'mythicrare': 5,
-            'mythic': 5,
-            'mr': 5,
-            'm': 5
-        }
-    }
-    if table in replacements and value in replacements[table]:
-        return replacements[table][value]
-    if table in replacements:
+    if not VALUE_LOOKUP:
+        init_value_lookup()
+    if table in VALUE_LOOKUP and value in VALUE_LOOKUP[table]:
+        return VALUE_LOOKUP[table][value]
+    if table in VALUE_LOOKUP:
         raise InvalidValueException("Invalid value '{value}' for {table}".format(value=value, table=table))
     return value
+
+def init_value_lookup():
+    sql = """SELECT
+        id,
+        LOWER(name) AS name,
+        LOWER(SUBSTR(name, 1, 1)) AS initial,
+        LOWER(SUBSTR(TRIM(name), 1, INSTR(TRIM(name) || ' ', ' ') - 1)) AS first_word,
+        LOWER(REPLACE(name, ' ', '')) AS spaceless,
+        LOWER(SUBSTR(name, 1, 1) ||   CASE WHEN INSTR(name, ' ') > 0 THEN
+                                    SUBSTR(name, INSTR(name, ' ') + 1, 1)
+                                ELSE
+                                    ''
+                                END)
+        AS initials
+    FROM {table}"""
+    for table in ['color', 'rarity']:
+        rs = database.DATABASE.execute(sql.format(table=table))
+        d = {}
+        for row in rs:
+            d[row['name']] = row['id']
+            d[row['first_word']] = row['id']
+            d[row['spaceless']] = row['id']
+            # Special case because 'b' is black and 'u' is blue in colors.
+            if table != 'color' or row['name'] != 'blue':
+                d[row['initial']] = row['id']
+                d[row['initials']] = row['id']
+            else:
+                d['u'] = row['id']
+        VALUE_LOOKUP[table] = d
+        if table == 'color':
+            VALUE_LOOKUP['color_identity'] = d
 
 class InvalidSearchException(Exception):
     pass

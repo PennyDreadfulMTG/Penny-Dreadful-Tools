@@ -214,9 +214,29 @@ Want to contribute? Send a Pull Request."""
     modofail.count = 0
     modofail.last_fail = time.time()
 
-    async def resources(self, bot, channel):
-        """`!resources` Link to page of all Penny Dreadful resources."""
-        await bot.client.send_message(channel, 'PD resources: http://magic.bluebones.net/pd/')
+    async def resources(self, bot, channel, args):
+        """`!resources` Link to page of all Penny Dreadful resources.
+           `!resources {section}` Link to Penny Dreadful resources section.
+           `!resources {section} {link}` Link to Penny Dreadful resource.
+        """
+        args = args.split()
+        results = []
+        if len(args) > 0:
+            resources = fetcher.resources()
+            for title, items in resources.items():
+                for text, url in items.items():
+                    asked_for_this_section_only = len(args) == 1 and roughly_matches(title, args[0])
+                    asked_for_this_section_and_item = len(args) == 2 and roughly_matches(title, args[0]) and roughly_matches(text, args[1])
+                    asked_for_this_item_only = len(args) == 1 and roughly_matches(text, args[0])
+                    if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only:
+                        results.append((text, url))
+        s = ''
+        if len(results) == 0:
+            s = 'PD resources: http://magic.bluebones.net/pd/'
+        else:
+            for (text, url) in results:
+                s += '{text}: <{url}>\n'.format(text=text, url=url)
+        await bot.client.send_message(channel, s)
 
 def escape(str_input) -> str:
     # Expand 'AE' into two characters. This matches the legal list and
@@ -389,3 +409,6 @@ def display_time(seconds, granularity=2):
             if len(result) > 0:
                 result.append(None)
     return ', '.join([x for x in result[:granularity] if x is not None])
+
+def roughly_matches(s1, s2):
+    return re.match('.*{s2}.*'.format(s2="".join(s2.split())), "".join(s1.split()), re.IGNORECASE)

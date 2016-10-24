@@ -100,5 +100,8 @@ def fetch_prices():
 def card_price(cardname):
     return json.loads(fetch('http://magic.bluebones.net:5800/{0}/'.format(cardname)))
 
+def resources():
+    return json.loads(fetch('http://magic.bluebones.net/pd/resources.json'))
+
 class FetchException(Exception):
     pass

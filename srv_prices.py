@@ -10,4 +10,4 @@ SRV = Flask(__name__)
 def cardprice(card):
     return json.dumps(price.info_cached(name=card))
 
-SRV.run(port=5800)
+SRV.run(port=5800, host= '0.0.0.0')

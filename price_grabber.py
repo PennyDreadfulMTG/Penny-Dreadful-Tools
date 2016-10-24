@@ -106,5 +106,6 @@ def name_lookup(name):
         return name
     return CARDS[canonical]
 
-fetch()
-price.cache()
+if __name__ == "__main__":
+    fetch()
+    price.cache()

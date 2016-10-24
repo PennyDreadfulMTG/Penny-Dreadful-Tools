@@ -1,10 +1,12 @@
+import os
 import time
 
 import apsw
-
 import configuration
 import database
+import fetcher
 import rotation
+
 
 def info(card, force=False):
     if not force:

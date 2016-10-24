@@ -1,12 +1,8 @@
-import os
-import time
-
 import discord
 
 import command
 import configuration
 import emoji
-import fetcher
 import oracle
 
 class Bot:

@@ -347,7 +347,12 @@ def complex_search(query):
     return search.search(query)
 
 def price_info(card):
-    p = price.info(card)
+    try:
+        p = fetcher.card_price(card.name)
+    except fetcher.FetchException:
+        # We don't want to do this
+        price.download_full_db()
+        p = price.info(card)
     s = '{price}'.format(price=format_price(p['price']))
     if p['low'] <= 0.05:
         s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))

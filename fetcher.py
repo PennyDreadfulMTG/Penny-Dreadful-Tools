@@ -97,5 +97,8 @@ def whatsinstandard():
 def fetch_prices():
     store('http://magic.bluebones.net/prices.db', configuration.get('pricesdb'))
 
+def card_price(cardname):
+    return json.loads(fetch('http://magic.bluebones.net:5800/{0}/'.format(cardname)))
+
 class FetchException(Exception):
     pass

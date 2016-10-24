@@ -1,3 +1,4 @@
+import asyncio
 import os
 import time
 
@@ -8,7 +9,7 @@ import configuration
 import emoji
 import fetcher
 import oracle
-import asyncio
+
 
 class Bot:
     def __init__(self):

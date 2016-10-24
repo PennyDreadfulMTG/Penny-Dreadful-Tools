@@ -1,3 +1,4 @@
+import asyncio
 import os
 import time
 
@@ -9,22 +10,25 @@ import emoji
 import fetcher
 import oracle
 
+
 class Bot:
     def __init__(self):
         self.legal_cards = []
         self.client = discord.Client()
-        self.voice = None
 
     def init(self):
         self.legal_cards = oracle.get_legal_cards()
         print('Legal cards: {num_legal_cards}'.format(num_legal_cards=len(self.legal_cards)))
-        if not os.path.isfile(configuration.get('pricesdb')) or os.path.getmtime(configuration.get('pricesdb')) < time.time() - 60 * 60 * 24:
-            fetcher.fetch_prices()
         self.client.run(configuration.get('token'))
 
     async def on_ready(self):
         print('Logged in as {username} ({id})'.format(username=self.client.user.name, id=self.client.user.id))
         print('--------')
+        if not os.path.isfile(configuration.get('pricesdb')):
+            await fetcher.fetch_prices()
+        elif os.path.getmtime(configuration.get('pricesdb')) < time.time() - 60 * 60 * 24:
+            # We're updating the database.  No rush.
+            asyncio.ensure_future(fetcher.fetch_prices())
 
     async def on_message(self, message):
         # We do not want the bot to reply to itself.

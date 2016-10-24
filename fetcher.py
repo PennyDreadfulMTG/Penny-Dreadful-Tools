@@ -94,8 +94,11 @@ def set_last_modified(resource, httptime=None):
 def whatsinstandard():
     return json.loads(fetch('http://whatsinstandard.com/api/4/sets.json'))
 
-def fetch_prices():
-    store('http://magic.bluebones.net/prices.db', configuration.get('pricesdb'))
+async def fetch_prices():
+    store('http://magic.bluebones.net/prices.db', configuration.get('pricesdb') + ".tmp")
+    if os.path.isfile(configuration.get('pricesdb')):
+        os.remove(configuration.get('pricesdb'))
+    os.rename(configuration.get('pricesdb') + ".tmp", configuration.get('pricesdb'))
 
 class FetchException(Exception):
     pass

@@ -24,10 +24,10 @@ def search(query):
     sql = """
         {base_select}
         HAVING {name_select} IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
-            OR {name_select} LIKE ?
+            OR {name_ascii_select} LIKE ?
             OR SUM(CASE WHEN face_name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold}) THEN 1 ELSE 0 END) > 0
         ORDER BY pd_legal DESC, name
-    """.format(base_select=base_select(), name_select=card.name_select().format(table='u'), fuzzy_threshold=fuzzy_threshold)
+    """.format(base_select=base_select(), name_select=card.name_select().format(table='u'), name_ascii_select=card.name_select('name_ascii').format(table='u'), fuzzy_threshold=fuzzy_threshold)
     fuzzy_query = '*{query}*'.format(query=query)
     like_query = '%{query}%'.format(query=query)
     rs = DATABASE.execute(sql, [fuzzy_query, like_query, fuzzy_query])
@@ -89,8 +89,18 @@ def update_database(new_version):
     DATABASE.execute('BEGIN TRANSACTION')
     DATABASE.execute('DELETE FROM version')
     cards = fetcher.all_cards()
+    melded_faces = []
     for _, c in cards.items():
-        insert_card(c)
+        if c.get('layout') == 'meld' and c.get('name') == c.get('names')[2]:
+            melded_faces.append(c)
+        else:
+            insert_card(c)
+    for face in melded_faces:
+        insert_card(face)
+        first, second = face['names'][0:2]
+        face['names'][0] = second
+        face['names'][1] = first
+        insert_card(face)
     sets = fetcher.all_sets()
     for _, s in sets.items():
         insert_set(s)
@@ -229,6 +239,11 @@ def date2int(s):
         return s
 
 def card_name(c):
+    if c.get('layout') == 'meld':
+        if c.get('name') != c.get('names')[2]:
+            return c.get('name')
+        else:
+            return c.get('names')[0]
     return ' // '.join(c.get('names', [c.get('name')]))
 
 initialize()

@@ -48,6 +48,7 @@ def face_properties():
     props['id']['primary_key'] = True
     props['cmc']['type'] = REAL
     props['name']['select'] = """{name_select} AS name""".format(name_select=name_select())
+    props['name_ascii']['select'] = """{name_select} AS name_ascii""".format(name_select=name_select('name_ascii'))
     props['mana_cost']['select'] = """CASE
             WHEN layout IN ('split') AND `{table}`.`text` LIKE '%Fuse (You may cast one or both halves of this card from your hand.)%' THEN
                 GROUP_CONCAT(`{table}`.`{column}`, '')
@@ -59,7 +60,6 @@ def face_properties():
     props['cmc']['select'] = "GROUP_CONCAT(`{table}`.`{column}`, '|') AS `{column}`"
     props['text']['select'] = "GROUP_CONCAT(`{table}`.`{column}`, '\n-----\n') AS `{column}`"
     props['card_id']['foreign_key'] = ('card', 'id')
-    props['name']['unique'] = True
     return props
 
 def set_properties():
@@ -98,14 +98,17 @@ def printing_properties():
     props['rarity_id']['foreign_key'] = ('rarity', 'id')
     return props
 
-def name_select():
+def name_select(column='face_name'):
     return """
-        CASE WHEN layout = 'meld' OR layout = 'double-faced' THEN
-            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN face_name ELSE '' END, '')
+        CASE
+        WHEN layout = 'double-faced' THEN
+            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END, '')
+        WHEN layout = 'meld' THEN
+            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 OR `{table}`.position = 2 THEN {column} ELSE '' END, '')
         ELSE
-            GROUP_CONCAT(face_name , ' // ' )
+            GROUP_CONCAT({column}, ' // ' )
         END
-    """
+    """.format(column=column, table='{table}')
 class Card(types.SimpleNamespace):
     def __init__(self, params):
         super().__init__()

@@ -14,7 +14,7 @@ def legal_cards(force=False):
     return fetch('http://pdmtgo.com/legal_cards.txt', 'utf-8', resource_id).strip().split('\n')
 
 def version():
-    return pkg_resources.parse_version(fetch_json('https://mtgjson.com/json/version.json'))
+    return pkg_resources.parse_version(fetch_json('https://mtgjson.com/json/version.json', resource_id='mtg_json_version'))
 
 def mtgo_status():
     try:
@@ -35,7 +35,7 @@ def card_aliases():
         return list(csv.reader(f, dialect='excel-tab'))
 
 def whatsinstandard():
-    return fetch_json('http://whatsinstandard.com/api/4/sets.json')
+    return fetch_json('http://whatsinstandard.com/api/4/sets.json', resource_id='whatsinstandard')
 
 def fetch_prices():
     store('http://magic.bluebones.net/prices.db', configuration.get('pricesdb'))
@@ -44,4 +44,4 @@ def card_price(cardname):
     return fetch_json('http://magic.bluebones.net:5800/{0}/'.format(cardname))
 
 def resources():
-    return fetch_json('http://magic.bluebones.net/pd/resources.json')
+    return fetch_json('http://magic.bluebones.net/pd/resources.json', resource_id='pd_resources')

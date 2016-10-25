@@ -1,4 +1,5 @@
 import collections
+import glob
 import hashlib
 import os
 import random
@@ -233,6 +234,15 @@ Want to contribute? Send a Pull Request."""
             for text, url in results.items():
                 s += '{text}: <{url}>\n'.format(text=text, url=url)
         await bot.client.send_message(channel, s)
+
+    async def clearimagecache(self, bot, channel):
+        image_dir = configuration.get('image_dir')
+        if not image_dir:
+            return await bot.client.send_message(channel, 'Cowardly refusing to delete from unknown image_dir.')
+        files = glob.glob('{dir}/*.jpg'.format(dir=image_dir))
+        for file in files:
+            os.remove(file)
+        await bot.client.send_message(channel, '{n} cleared.'.format(n=len(files)))
 
 def escape(str_input) -> str:
     # Expand 'AE' into two characters. This matches the legal list and

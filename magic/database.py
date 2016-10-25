@@ -6,7 +6,7 @@ from magic import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 61
+    schema_version = 62
 
     def __init__(self):
         self.open()

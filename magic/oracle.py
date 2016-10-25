@@ -13,7 +13,7 @@ def layouts():
     return ['normal', 'meld', 'split', 'phenomenon', 'token', 'vanguard', 'double-faced', 'plane', 'flip', 'scheme', 'leveler']
 
 def initialize():
-    current_version = fetcher.version()
+    current_version = fetcher.mtgjson_version()
     if current_version > DATABASE.version():
         print('Database update required')
         update_database(str(current_version))

@@ -13,7 +13,7 @@ def legal_cards(force=False):
         resource_id = None
     return fetch('http://pdmtgo.com/legal_cards.txt', 'utf-8', resource_id).strip().split('\n')
 
-def version():
+def mtgjson_version():
     return pkg_resources.parse_version(fetch_json('https://mtgjson.com/json/version.json', resource_id='mtg_json_version'))
 
 def mtgo_status():

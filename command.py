@@ -216,7 +216,7 @@ Want to contribute? Send a Pull Request."""
            `!resources {section} {link}` Link to Penny Dreadful resource.
         """
         args = args.split()
-        results = []
+        results = {}
         if len(args) > 0:
             resources = fetcher.resources()
             for title, items in resources.items():
@@ -225,12 +225,12 @@ Want to contribute? Send a Pull Request."""
                     asked_for_this_section_and_item = len(args) == 2 and roughly_matches(title, args[0]) and roughly_matches(text, args[1])
                     asked_for_this_item_only = len(args) == 1 and roughly_matches(text, args[0])
                     if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only:
-                        results.append((text, url))
+                        results[text] = url
         s = ''
         if len(results) == 0:
             s = 'PD resources: http://magic.bluebones.net/pd/'
         else:
-            for (text, url) in results:
+            for text, url in results.items():
                 s += '{text}: <{url}>\n'.format(text=text, url=url)
         await bot.client.send_message(channel, s)
 

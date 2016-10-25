@@ -1,9 +1,9 @@
 import datetime
 import re
 
-import card
-import database
-import fetcher
+from magic import card
+from magic import database
+from magic import fetcher
 
 CARD_IDS = {}
 FORMAT_IDS = {}

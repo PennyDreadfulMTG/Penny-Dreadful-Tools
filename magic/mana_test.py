@@ -1,5 +1,5 @@
-import database
-import mana
+from magic import database
+from magic import mana
 
 def  test_simple():
     do_test('U', ['U'])

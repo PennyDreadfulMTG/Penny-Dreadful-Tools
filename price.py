@@ -2,10 +2,7 @@ import os
 import time
 
 import apsw
-import configuration
-import database
-import fetcher
-import rotation
+from magic import configuration, database, fetcher, rotation
 
 
 def info(card, force=False):

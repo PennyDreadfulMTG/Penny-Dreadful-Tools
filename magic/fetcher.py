@@ -9,8 +9,8 @@ from email.utils import formatdate
 import pkg_resources
 import requests
 
-import configuration
-import database
+from magic import configuration
+from magic import database
 
 def legal_cards(force=False):
     resource_id = 'legal_cards'

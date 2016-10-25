@@ -3,7 +3,7 @@ import types
 
 import bot
 import command
-import oracle
+from magic import oracle
 
 # Mock up assertions within the discord client.
 # I love that Python lets us just ruin 3rd-party libraries like this.

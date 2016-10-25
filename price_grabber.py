@@ -5,11 +5,8 @@ import time
 import urllib
 
 import command
-import configuration
-import database
-import fetcher
-import oracle
 import price
+from magic import configuration, database, fetcher, oracle
 
 DATABASE = sqlite3.connect(configuration.get('pricesdb'))
 CARDS = {}

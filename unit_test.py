@@ -1,10 +1,8 @@
 import os
 
-import card
 import command
-import configuration
-import fetcher
-import oracle
+from magic import card, configuration, fetcher, oracle
+
 
 # Check that we can fetch card images.
 def test_imagedownload():

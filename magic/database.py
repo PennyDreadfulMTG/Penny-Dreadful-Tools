@@ -3,8 +3,8 @@ import unicodedata
 import apsw
 import pkg_resources
 
-import card
-import configuration
+from magic import card
+from magic import configuration
 
 class Database:
     # Bump this if you modify the schema.

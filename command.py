@@ -9,15 +9,10 @@ import urllib.parse
 
 from typing import List
 
-import configuration
-import database
 import emoji
-import fetcher
-import oracle
 import price
-import rotation
 
-from card import Card
+from magic import Card, configuration, database, oracle, fetcher, rotation
 from find import search
 
 async def respond_to_card_names(message, bot):

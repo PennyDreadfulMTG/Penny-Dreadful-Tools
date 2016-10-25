@@ -1,9 +1,9 @@
 import discord
 
 import command
-import configuration
 import emoji
-import oracle
+from magic import configuration, oracle
+
 
 class Bot:
     def __init__(self):

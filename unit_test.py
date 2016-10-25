@@ -104,3 +104,22 @@ def test_split_cards():
     assert len(names) == 1
     cards = command.cards_from_queries(names)
     assert len(cards) == 1
+
+def test_some_names():
+    cards = oracle.search(' of the Reliquary')
+    assert('Knight of the Reliquary' in [c.name for c in cards])
+    cards = oracle.search('Séance')
+    assert('Séance' in [c.name for c in cards])
+    cards = oracle.search('Seance')
+    assert('Séance' in [c.name for c in cards])
+    cards = oracle.search('sean')
+    assert('Séance' in [c.name for c in cards])
+    cards = oracle.search('Jötun Grunt')
+    assert('Jötun Grunt' in [c.name for c in cards])
+    cards = oracle.search('Jotun Grunt')
+    assert('Jötun Grunt' in [c.name for c in cards])
+    cards = oracle.search('Chittering Host')
+    assert('Graf Rats' in [c.name for c in cards])
+    assert('Midnight Scavengers' in [c.name for c in cards])
+    cards = oracle.search('Wastes')
+    assert('Wastes' in [c.name for c in cards])

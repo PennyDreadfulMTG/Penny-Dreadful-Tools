@@ -14,7 +14,7 @@
   - gcc -fPIC -shared spellfix.c -o spellfix.dylib
     - Windows:   cl /LD spellfix.c
   - NOTE! You may need .dll or .so as the file extension instead of .dylib depending on your operating system.
-  - If you don't want the spellfix library in the root of the app, copy the new spellfix1.dylib file and change the location in config.json
+  - If you don't want the spellfix library in the root of the app, copy the new spellfix.dylib file and change the location in config.json
   - You can delete the .c files once the compilation completes.
 - To be able to load the spellfix1 extension we need load_extension which is not supported by the standard python sqlite3.
 	- PLEASE NOTE: your system may have a python-apsw package which probably makes more sense than installing with pip. If you do need pip you can use the following command.

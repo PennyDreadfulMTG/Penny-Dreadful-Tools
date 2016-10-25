@@ -1,5 +1,6 @@
 import copy
 import types
+import unicodedata
 
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
 
@@ -109,6 +110,13 @@ def name_select(column='face_name'):
             GROUP_CONCAT({column}, ' // ' )
         END
     """.format(column=column, table='{table}')
+
+def unaccent(s):
+    return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
+
+def canonicalize(name):
+    return unaccent(name.strip().lower())
+
 class Card(types.SimpleNamespace):
     def __init__(self, params):
         super().__init__()

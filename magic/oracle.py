@@ -19,16 +19,17 @@ def initialize():
         update_database(str(current_version))
 
 def search(query):
+    query = card.canonicalize(query)
     # 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold here.
     fuzzy_threshold = 260
     sql = """
         {base_select}
-        HAVING {name_select} IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
+        HAVING LOWER({name_select}) IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
             OR {name_ascii_select} LIKE ?
-            OR SUM(CASE WHEN face_name IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold}) THEN 1 ELSE 0 END) > 0
+            OR SUM(CASE WHEN LOWER(face_name) IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold}) THEN 1 ELSE 0 END) > 0
         ORDER BY pd_legal DESC, name
     """.format(base_select=base_select(), name_select=card.name_select().format(table='u'), name_ascii_select=card.name_select('name_ascii').format(table='u'), fuzzy_threshold=fuzzy_threshold)
-    fuzzy_query = '*{query}*'.format(query=query)
+    fuzzy_query = '{query}*'.format(query=query)
     like_query = '%{query}%'.format(query=query)
     rs = DATABASE.execute(sql, [fuzzy_query, like_query, fuzzy_query])
     return [card.Card(r) for r in rs]
@@ -119,22 +120,22 @@ def update_fuzzy_matching():
     DATABASE.execute('DROP TABLE IF EXISTS fuzzy')
     DATABASE.execute('CREATE VIRTUAL TABLE IF NOT EXISTS fuzzy USING spellfix1')
     sql = """INSERT INTO fuzzy (word, rank)
-        SELECT name, pd_legal
+        SELECT LOWER(name), pd_legal
         FROM ({base_select})
     """.format(base_select=base_select())
     DATABASE.execute(sql)
     sql = """INSERT INTO fuzzy (word, rank)
-        SELECT f.name, SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0
+        SELECT LOWER(f.name), SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0
         FROM face AS f
         INNER JOIN card AS c ON f.card_id = c.id
         LEFT OUTER JOIN card_legality AS cl ON cl.card_id = c.id AND cl.format_id = {format_id}
-        WHERE f.name NOT IN (SELECT word FROM fuzzy)
+        WHERE LOWER(f.name) NOT IN (SELECT word FROM fuzzy)
         GROUP BY f.id
     """.format(format_id=format_id)
     DATABASE.execute(sql)
     aliases = fetcher.card_aliases()
     for alias, name in aliases:
-        DATABASE.execute('INSERT INTO fuzzy (word, soundslike) VALUES (?, ?)', [name, alias])
+        DATABASE.execute('INSERT INTO fuzzy (word, soundslike) VALUES (LOWER(?), ?)', [name, alias])
 
 def insert_card(c):
     name = card_name(c)
@@ -154,7 +155,7 @@ def insert_card(c):
     # mtgjson thinks the text of Jhessian Lookout is NULL not '' but that is clearly wrong.
     if c.get('text', None) is None and c['layout'] in ['normal', 'token', 'double-faced', 'split']:
         c['text'] = ''
-    c['nameAscii'] = database.unaccent(c.get('name'))
+    c['nameAscii'] = card.unaccent(c.get('name'))
     c['cardId'] = card_id
     c['position'] = 1 if not c.get('names') else c.get('names', [c.get('name')]).index(c.get('name')) + 1
     sql = 'INSERT INTO face ('

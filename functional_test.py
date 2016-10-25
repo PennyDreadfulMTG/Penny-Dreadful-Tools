@@ -3,6 +3,7 @@ import types
 
 import bot
 import command
+
 from magic import oracle
 
 # Mock up assertions within the discord client.

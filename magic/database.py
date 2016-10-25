@@ -1,5 +1,3 @@
-import unicodedata
-
 import apsw
 import pkg_resources
 
@@ -26,7 +24,7 @@ class Database:
         self.connection.setrowtrace(row_factory)
         self.connection.enableloadextension(True)
         self.connection.loadextension(configuration.get('spellfix'))
-        self.connection.createscalarfunction('unaccent', unaccent, 1)
+        self.connection.createscalarfunction('unaccent', card.unaccent, 1)
         self.cursor = self.connection.cursor()
 
     def version(self) -> str:
@@ -157,9 +155,6 @@ def escape(s) -> str:
 def row_factory(cursor, row):
     columns = [t[0] for t in cursor.getdescription()]
     return dict(zip(columns, row))
-
-def unaccent(s):
-    return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
 
 def column_def(name, prop):
     nullable = 'NOT NULL' if not prop['nullable'] else ''

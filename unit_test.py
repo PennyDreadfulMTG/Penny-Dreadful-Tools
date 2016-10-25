@@ -1,8 +1,8 @@
 import os
 
 import command
-from magic import card, configuration, fetcher, oracle, fetcher_internal
 
+from magic import card, configuration, fetcher, oracle, fetcher_internal
 
 # Check that we can fetch card images.
 def test_imagedownload():
@@ -123,3 +123,7 @@ def test_some_names():
     assert('Midnight Scavengers' in [c.name for c in cards])
     cards = oracle.search('Wastes')
     assert('Wastes' in [c.name for c in cards])
+    cards = oracle.search('Cancle')
+    assert('Cancel' in [c.name for c in cards])
+    cards = oracle.search('Knight of the White Rohcid')
+    assert('Knight of the White Orchid' in [c.name for c in cards])

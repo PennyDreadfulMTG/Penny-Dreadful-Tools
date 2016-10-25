@@ -1,12 +1,8 @@
 import collections
 
-import card
-import database
-import mana
-import oracle
-
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String
+from magic import card, database, mana, oracle
 
 EXPECT_EXPRESSION = 'expect_expression'
 EXPECT_OPERATOR = 'expect_operator'

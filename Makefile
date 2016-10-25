@@ -23,7 +23,7 @@ lint:
 	@echo
 	@echo "******************************** Lint *****************************************"
 	@echo
-	@find . -name "*.py" | xargs pylint
+	@find . -name "*.py" | xargs pylint -f parseable
 	@echo
 
 # Make a branch based off of current (remote) master with all your local changes preserved (but not added).

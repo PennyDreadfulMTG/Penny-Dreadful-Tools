@@ -1,6 +1,6 @@
 import datetime
 from dateutil import tz
-import fetcher
+from magic import fetcher
 
 def init():
     standard = fetcher.whatsinstandard()

@@ -12,7 +12,8 @@ from typing import List
 import emoji
 import price
 
-from magic import Card, configuration, database, oracle, fetcher, rotation
+from magic import configuration, database, oracle, fetcher, rotation
+from magic.card import Card
 from find import search
 
 async def respond_to_card_names(message, bot):

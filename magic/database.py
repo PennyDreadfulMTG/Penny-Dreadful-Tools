@@ -8,7 +8,7 @@ from magic import configuration
 
 class Database:
     # Bump this if you modify the schema.
-    schema_version = 59
+    schema_version = 60
 
     def __init__(self):
         self.open()
@@ -135,7 +135,8 @@ class Database:
         self.execute("""CREATE TABLE IF NOT EXISTS fetcher (
             id INTEGER PRIMARY KEY,
             resource TEXT UNIQUE ON CONFLICT REPLACE NOT NULL,
-            last_modified TEXT
+            last_modified TEXT,
+            content TEXT
         )""")
 
     # Drop the database so we can recreate it.

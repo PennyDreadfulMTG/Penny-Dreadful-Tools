@@ -67,6 +67,10 @@ def set_last_modified(resource, httptime=None, content=None):
         httptime = formatdate(timeval=None, localtime=False, usegmt=True)
     database.DATABASE.execute("INSERT INTO fetcher (resource, last_modified, content) VALUES (?, ?, ?)", [resource, httptime, content])
 
+def remove_last_modified(resource):
+    database.DATABASE.execute("DELETE FROM fetcher WHERE resource = ?", [resource])
+
+
 def get_cached_text(resource):
     return database.DATABASE.value("SELECT content FROM fetcher WHERE resource = ?", [resource])
 

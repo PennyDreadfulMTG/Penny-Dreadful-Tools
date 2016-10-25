@@ -1,7 +1,7 @@
 import os
 
 import command
-from magic import card, configuration, fetcher, oracle
+from magic import card, configuration, fetcher, oracle, fetcher_internal
 
 
 # Check that we can fetch card images.
@@ -88,9 +88,11 @@ def test_aether():
 
 
 def test_fetcher_mod_since():
-    fetcher.fetch("http://pdmtgo.com/legal_cards.txt", resource_id='test_fetcher_mod_since')
-    val = fetcher.fetch("http://pdmtgo.com/legal_cards.txt", resource_id='test_fetcher_mod_since')
-    assert val == ''
+    resource_id = 'test_fetcher_mod_since'
+    fetcher_internal.remove_last_modified(resource_id)
+    fetcher.fetch("http://pdmtgo.com/legal_cards.txt", resource_id=resource_id)
+    assert fetcher_internal.get_last_modified(resource_id) is not None
+    assert fetcher_internal.get_cached_text(resource_id) is not None
 
 def test_split_cards():
     cards = command.cards_from_query('Armed // Dangerous')

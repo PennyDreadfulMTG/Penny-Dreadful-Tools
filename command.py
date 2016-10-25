@@ -89,7 +89,7 @@ Want to contribute? Send a Pull Request."""
                 number = int(args.strip())
             except ValueError:
                 pass
-        cards = [oracle.search(random.choice(bot.legal_cards))[0] for n in range(0, number)]
+        cards = [cards_from_query(name)[0] for name in random.sample(bot.legal_cards, number)]
         await bot.post_cards(cards, channel)
 
     async def update(self, bot, channel):

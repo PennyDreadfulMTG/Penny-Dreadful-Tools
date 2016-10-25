@@ -12,9 +12,9 @@ from typing import List
 import emoji
 import price
 
-from magic import configuration, database, oracle, fetcher, rotation
-from magic.card import Card
 from find import search
+from magic import card, configuration, oracle, fetcher, rotation
+from magic.card import Card
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -89,7 +89,7 @@ Want to contribute? Send a Pull Request."""
                 number = int(args.strip())
             except ValueError:
                 pass
-        cards = [oracle.search(random.choice(bot.legal_cards))[0] for n in range(0, number)]
+        cards = [cards_from_query(name)[0] for name in random.sample(bot.legal_cards, number)]
         await bot.post_cards(cards, channel)
 
     async def update(self, bot, channel):
@@ -216,7 +216,7 @@ Want to contribute? Send a Pull Request."""
            `!resources {section} {link}` Link to Penny Dreadful resource.
         """
         args = args.split()
-        results = []
+        results = {}
         if len(args) > 0:
             resources = fetcher.resources()
             for title, items in resources.items():
@@ -225,12 +225,12 @@ Want to contribute? Send a Pull Request."""
                     asked_for_this_section_and_item = len(args) == 2 and roughly_matches(title, args[0]) and roughly_matches(text, args[1])
                     asked_for_this_item_only = len(args) == 1 and roughly_matches(text, args[0])
                     if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only:
-                        results.append((text, url))
+                        results[text] = url
         s = ''
         if len(results) == 0:
             s = 'PD resources: http://magic.bluebones.net/pd/'
         else:
-            for (text, url) in results:
+            for text, url in results.items():
                 s += '{text}: <{url}>\n'.format(text=text, url=url)
         await bot.client.send_message(channel, s)
 
@@ -251,15 +251,15 @@ def http_image(multiverse_id) -> str:
 def uniqify_cards(cards):
     # Remove multiple printings of the same card from the result set.
     results = collections.OrderedDict()
-    for card in cards:
-        results[canonicalize(card.name)] = card
+    for c in cards:
+        results[card.canonicalize(c.name)] = c
     return list(results.values())
 
 def acceptable_file(filepath: str) -> bool:
     return os.path.isfile(filepath) and os.path.getsize(filepath) > 0
 
 def basename(cards):
-    return '_'.join(re.sub('[^a-z-]', '-', canonicalize(card.name)) for card in cards)
+    return '_'.join(re.sub('[^a-z-]', '-', card.canonicalize(c.name)) for c in cards)
 
 def download_image(cards: List[Card]) -> str:
     imagename = basename(cards)
@@ -307,49 +307,49 @@ def cards_from_query(query):
     if len(query) <= 2:
         return []
 
-    query = canonicalize(query)
+    query = card.canonicalize(query)
 
     # If we searched for an alias, change query so we can find the card in the results.
     for alias, name in fetcher.card_aliases():
-        if query == canonicalize(alias):
-            query = canonicalize(name)
+        if query == card.canonicalize(alias):
+            query = card.canonicalize(name)
 
     cards = oracle.search(query)
-    cards = [card for card in cards if card.layout != 'token' and card.type != 'Vanguard']
+    cards = [c for c in cards if c.layout != 'token' and c.type != 'Vanguard']
 
     # First look for an exact match.
     results = []
-    for card in cards:
-        names = [canonicalize(name) for name in card.names]
+    for c in cards:
+        names = [card.canonicalize(name) for name in c.names]
         if query in names:
-            results.append(card)
+            results.append(c)
     if len(results) > 0:
         return results
 
 
     # If not found, use cards that start with the query and a punctuation char.
-    for card in cards:
-        names = [canonicalize(name) for name in card.names]
+    for c in cards:
+        names = [card.canonicalize(name) for name in c.names]
         for name in names:
             if name.startswith('{query} '.format(query=query)) or name.startswith('{query},'.format(query=query)):
-                results.append(card)
+                results.append(c)
     if len(results) > 0:
         return results
 
     # If not found, use cards that start with the query.
-    for card in cards:
-        names = [canonicalize(name) for name in card.names]
+    for c in cards:
+        names = [card.canonicalize(name) for name in c.names]
         for name in names:
             if name.startswith(query):
-                results.append(card)
+                results.append(c)
     if len(results) > 0:
         return results
 
     # If we didn't find any of those then use all search results.
     return cards
 
-def legal_emoji(card, legal_cards, verbose=False):
-    if card.name in legal_cards:
+def legal_emoji(c, legal_cards, verbose=False):
+    if c.name in legal_cards:
         return ':white_check_mark:'
     s = ':no_entry_sign:'
     if verbose:
@@ -362,13 +362,13 @@ def complex_search(query):
     print('Searching for {query}'.format(query=query))
     return search.search(query)
 
-def price_info(card):
+def price_info(c):
     try:
-        p = fetcher.card_price(card.name)
+        p = fetcher.card_price(c.name)
     except fetcher.FetchException:
         # We don't want to do this
         price.download_full_db()
-        p = price.info(card)
+        p = price.info(c)
     s = '{price}'.format(price=format_price(p['price']))
     if p['low'] <= 0.05:
         s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))
@@ -380,9 +380,6 @@ def price_info(card):
 def format_price(p):
     dollars, cents = str(round(p, 2)).split('.')
     return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
-
-def canonicalize(name):
-    return database.unaccent(name.strip().lower())
 
 def display_time(seconds, granularity=2):
     intervals = (

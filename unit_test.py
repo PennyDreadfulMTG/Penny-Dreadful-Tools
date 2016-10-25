@@ -1,8 +1,8 @@
 import os
 
 import command
-from magic import card, configuration, fetcher, oracle, fetcher_internal
 
+from magic import card, configuration, fetcher, oracle, fetcher_internal
 
 # Check that we can fetch card images.
 def test_imagedownload():
@@ -104,3 +104,26 @@ def test_split_cards():
     assert len(names) == 1
     cards = command.cards_from_queries(names)
     assert len(cards) == 1
+
+def test_some_names():
+    cards = oracle.search(' of the Reliquary')
+    assert('Knight of the Reliquary' in [c.name for c in cards])
+    cards = oracle.search('Séance')
+    assert('Séance' in [c.name for c in cards])
+    cards = oracle.search('Seance')
+    assert('Séance' in [c.name for c in cards])
+    cards = oracle.search('sean')
+    assert('Séance' in [c.name for c in cards])
+    cards = oracle.search('Jötun Grunt')
+    assert('Jötun Grunt' in [c.name for c in cards])
+    cards = oracle.search('Jotun Grunt')
+    assert('Jötun Grunt' in [c.name for c in cards])
+    cards = oracle.search('Chittering Host')
+    assert('Graf Rats' in [c.name for c in cards])
+    assert('Midnight Scavengers' in [c.name for c in cards])
+    cards = oracle.search('Wastes')
+    assert('Wastes' in [c.name for c in cards])
+    cards = oracle.search('Cancle')
+    assert('Cancel' in [c.name for c in cards])
+    cards = oracle.search('Knight of the White Rohcid')
+    assert('Knight of the White Orchid' in [c.name for c in cards])

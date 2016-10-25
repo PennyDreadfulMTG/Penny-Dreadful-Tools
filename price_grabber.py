@@ -4,9 +4,9 @@ import sqlite3
 import time
 import urllib
 
-import command
 import price
-from magic import configuration, database, fetcher, oracle
+
+from magic import card, configuration, database, fetcher, oracle
 
 DATABASE = sqlite3.connect(configuration.get('pricesdb'))
 CARDS = {}
@@ -96,8 +96,8 @@ def name_lookup(name):
     if not CARDS:
         rs = database.DATABASE.execute(oracle.base_select())
         for row in rs:
-            CARDS[command.canonicalize(row['name'])] = row['name']
-    canonical = command.canonicalize(name)
+            CARDS[card.canonicalize(row['name'])] = row['name']
+    canonical = card.canonicalize(name)
     if canonical not in CARDS:
         print("Bogus name {name} ({canonical}) found.".format(name=name, canonical=canonical))
         return name

@@ -40,11 +40,7 @@ def test_commands():
     for cmd in dir(command.Commands):
         if cmd.startswith('_'):
             continue
-        if cmd == "restartbot":
-            # Don't actually test whether we can call sys.exit().  That leads to problems
-            continue
-        if cmd == 'updateprices':
-            # This is just too slow to include in a test suite for now.
+        if cmd in ['restartbot', 'updateprices', 'clearimagecache']:
             continue
 
         channel = generate_fakechannel()

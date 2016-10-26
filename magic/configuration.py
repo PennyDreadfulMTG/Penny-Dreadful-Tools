@@ -3,6 +3,7 @@ import json
 DEFAULTS = {
     'card_alias_file': './card_aliases.tsv',
     'database': './db',
+    'decksite_database': './decksite.db',
     'image_dir': '.',
     'pricesdb': './prices.db',
     'spellfix': './spellfix'

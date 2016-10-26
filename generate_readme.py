@@ -41,11 +41,11 @@ def generate_readme():
     fh.close()
 
     if readme != old_readme:
-        print("Readme has needs updating.")
         fh = open("README.md", mode='w')
         fh.write(readme)
         fh.close()
-        git_commit()
+        print("Readme updated.")
+        # git_commit()
 
 def git_commit():
     subprocess.call(["git", "add", "README.md"])

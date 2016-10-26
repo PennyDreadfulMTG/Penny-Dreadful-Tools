@@ -2,7 +2,7 @@ from decksite.view import View
 
 class Home(View):
     def __init__(self, decks):
-        self.decks = decks
+        self._decks = decks
 
     def decks(self):
-        return self.decks
+        return self._decks

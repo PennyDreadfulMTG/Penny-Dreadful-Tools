@@ -34,8 +34,9 @@ node{
     }
 
     stage('Update Readme') {
-        dir('discordbot') {
-            sh 'python3 generate_readme.py'
+        readme = sh(returnStatus: true, script: 'python3 generate_readme.py')
+        if (readme) {
+            error "The readme is out of date."
         }
     }
 }

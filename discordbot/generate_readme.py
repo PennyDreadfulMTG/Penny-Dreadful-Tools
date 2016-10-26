@@ -1,9 +1,9 @@
-import subprocess
+import os
 
 from discordbot import command
 
 HEADER = """
-# Magic-Discord-Bot
+# Penny-Dreadful-Discord-Bot
 Displays info about quoted cards in a discord channel
 
 [![Build Status](http://ci.katelyngigante.com/buildStatus/icon?job=Penny Dreadful/Penny-Dreadful-Discord-Bot/master)](http://ci.katelyngigante.com/job/Penny%20Dreadful/job/Penny-Dreadful-Discord-Bot/job/master/)
@@ -37,20 +37,14 @@ def generate_readme():
     readme += '\n'
     readme += FOOTER
 
-    fh = open("README.md")
+    fh = open(os.path.join("discordbot", "README.md"))
     old_readme = fh.read()
     fh.close()
 
     if readme != old_readme:
-        fh = open("README.md", mode='w')
+        fh = open(os.path.join("discordbot", "README.md"), mode='w')
         fh.write(readme)
         fh.close()
         print("Readme updated.")
-        # git_commit()
-
-def git_commit():
-    subprocess.call(["git", "add", "README.md"])
-    subprocess.call(["git", "commit", "-m", "Updated README.md"])
-    subprocess.call(["git", "push"])
-
-generate_readme()
+        return 1
+    return 0

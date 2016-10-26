@@ -5,9 +5,6 @@ def run():
         print("No entry point specified.")
         exit(1)
 
-    app = sys.argv[0]
-    print(app)
-
     if "discordbot" in sys.argv:
         from discordbot import bot
         bot.init()

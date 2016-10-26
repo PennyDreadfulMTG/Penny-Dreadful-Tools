@@ -32,4 +32,8 @@ node{
     if (FailedTests) {
         error 'Failed a test'
     }
+
+    stage('Update Readme') {
+        sh 'python3 generate_readme.py'
+    }
 }

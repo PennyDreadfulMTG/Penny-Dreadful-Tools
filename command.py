@@ -61,20 +61,12 @@ class Commands:
     """
 
     async def help(self, bot, channel):
-        """`!help` Get this message."""
+        """`!help` Provides information on how to operate the bot."""
         msg = """Basic bot usage: Include [cardname] in your regular messages.
 The bot will search for any quoted cards, and respond with the card details.
 
 Additional Commands:"""
-        for methodname in dir(Commands):
-            if methodname.startswith("__"):
-                continue
-            method = getattr(self, methodname)
-            if method.__doc__:
-                if not method.__doc__.startswith('`'):
-                    msg += '\n`!{0}` {1}'.format(methodname, method.__doc__)
-                else:
-                    msg += '\n{0}'.format(method.__doc__)
+        msg += build_help()
         msg += """
 
 Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues
@@ -415,3 +407,16 @@ def display_time(seconds, granularity=2):
 
 def roughly_matches(s1, s2):
     return re.match('.*{s2}.*'.format(s2="".join(s2.split())), "".join(s1.split()), re.IGNORECASE)
+
+def build_help():
+    msg = ''
+    for methodname in dir(Commands):
+        if methodname.startswith("__"):
+            continue
+        method = getattr(Commands, methodname)
+        if method.__doc__:
+            if not method.__doc__.startswith('`'):
+                msg += '\n`!{0}` {1}'.format(methodname, method.__doc__)
+            else:
+                msg += '\n{0}'.format(method.__doc__)
+    return msg

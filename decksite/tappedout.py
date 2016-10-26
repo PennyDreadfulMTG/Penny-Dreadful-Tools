@@ -84,5 +84,3 @@ def login(user, password):
         'password': password,
     }
     response = session.post(url, data=data)
-    print(session.cookies)
-    print(response)

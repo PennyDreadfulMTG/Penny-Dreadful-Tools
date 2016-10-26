@@ -2,4 +2,4 @@
 cd `dirname $0`
 git pull
 pip install -U --user -r requirements.txt
-python3 run.py
+python3 runbot.py

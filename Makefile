@@ -26,6 +26,13 @@ lint:
 	@find . -name "*.py" | xargs pylint -f parseable
 	@echo
 
+readme:
+	@echo
+	@echo "******************************** Lint *****************************************"
+	@echo
+	@python3 generate_readme.py
+	@echo
+
 # Make a branch based off of current (remote) master with all your local changes preserved (but not added).
 branch:
 	@if test "$(BRANCH)" = ""; then echo 'Usage: make branch BRANCH=branchname'; exit 1; fi

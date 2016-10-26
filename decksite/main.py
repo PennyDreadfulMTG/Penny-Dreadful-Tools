@@ -23,5 +23,5 @@ def display_deck(slug):
     deck = tappedout.fetch_deck(slug)
     return render_template("deck.html", deck=deck)
 
-if __name__ == "__main__":
+def init():
     APP.run(debug=True)

@@ -1,7 +1,8 @@
 import asyncio
 import types
 
-from discordbot import bot, command
+import bot
+import command
 
 from magic import oracle
 

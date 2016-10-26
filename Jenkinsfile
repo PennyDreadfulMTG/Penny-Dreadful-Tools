@@ -34,10 +34,6 @@ node{
     }
 
     stage('Update Readme') {
-        readme = sh(returnStatus: true, script: 'python3 generate_readme.py')
-        if (readme) {
-            echo 'The readme files are out of date.  Run generate_readme.py'
-            error 'The readme is out of date.'
-        }
+        sh 'python3 generate_readme.py'
     }
 }

@@ -2,7 +2,7 @@ import json
 
 from flask import Flask
 
-from price_grabber import price
+import price
 
 SRV = Flask(__name__)
 

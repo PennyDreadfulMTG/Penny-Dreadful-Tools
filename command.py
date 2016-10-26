@@ -10,7 +10,9 @@ import urllib.parse
 
 from typing import List
 
-from discordbot import emoji
+import emoji
+import price
+
 from find import search
 from magic import card, configuration, oracle, fetcher, rotation
 from magic.card import Card
@@ -366,7 +368,9 @@ def price_info(c):
     try:
         p = fetcher.card_price(c.name)
     except fetcher.FetchException:
-        return "Price unavailable"
+        # We don't want to do this
+        price.download_full_db()
+        p = price.info(c)
     s = '{price}'.format(price=format_price(p['price']))
     if p['low'] <= 0.05:
         s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))

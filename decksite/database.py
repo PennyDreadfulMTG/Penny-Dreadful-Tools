@@ -51,8 +51,8 @@ class Database:
         self.verbose = True
         if version is None:
             version = self.db_version()
-        for fn in os.listdir('sql'):
-            path = os.path.join("sql", fn)
+        for fn in os.listdir('decksite/sql'):
+            path = os.path.join('decksite/sql', fn)
             n = int(fn.split('.')[0])
             if version < n:
                 print("Patching database to v{0}".format(n))

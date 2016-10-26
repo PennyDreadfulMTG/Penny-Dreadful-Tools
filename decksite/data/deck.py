@@ -1,3 +1,5 @@
+def add_deck(params):
+    pass
 
 class Deck(dict):
     def __init__(self, params):

@@ -5,10 +5,9 @@ from flask import g
 
 from magic import configuration
 
-
 class Database:
     # Bump this if you modify the schema.
-    database = None
+    database = 1
 
     def __init__(self):
         self.verbose = False
@@ -58,7 +57,8 @@ class Database:
                 print("Patching database to v{0}".format(n))
                 fh = open(path, 'r')
                 sql = fh.read()
-                self.execute(sql)
+                for stmt in sql.split(';'):
+                    self.execute(stmt)
                 fh.close()
                 self.execute("INSERT INTO db_version (version) VALUES (?)", [n])
 

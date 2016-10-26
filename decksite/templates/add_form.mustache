@@ -1,0 +1,60 @@
+<section>
+    <h2>Add Deck</h2>
+    <form method="post" action="{{add_deck_url}}">
+        <div class="field">
+            <label for="date">Date</label>
+            <input type="text" name="date">
+        </div>
+        <div class="field">
+            <label for="name">Name</label>
+            <input type="text" name="name">
+        </div>
+        <div class="field">
+            <label for="player">Player</label>
+            <input type="text" name="player">
+        </div>
+        <div class="field">
+            <label for="competition">Competition</label>
+            <select name="competition">
+            </select>
+        </div>
+        <div class="field multiple">
+            <label>Wins – Losses</label>
+            <input type="number" name="Wins">
+            –
+            <input type="number" name="losses">
+        </div>
+        <div class="field">
+            <label for="Deck">Deck</label>
+            <textarea name="deck"></textarea>
+        </div>
+        <input type="submit" value="Add Deck">
+    </form>
+</section>
+
+<section>
+    <h2>Add Competition</h2>
+
+    <form method="post" action="{{add_competition_url}}">
+        <div class="field">
+            <label for="date">Date</label>
+            <input type="text" name="date">
+        </div>
+        <div class="field">
+            <label for="name">Name</label>
+            <input type="text" name="name">
+        </div>
+        <div class="field">
+            <label for="url">URL</label>
+            <input type="text" name="url">
+        </div>
+        <div class="field">
+            <label for="type">Type</label>
+            <select name="type">
+                <option value="league">League</option>
+                <option value="tournament">Tournament</option>
+            </select>
+        </div>
+        <input type="submit" value="Add Competition">
+    </form>
+</section>

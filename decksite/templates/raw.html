@@ -1,8 +1,0 @@
-<table>
-<tr></tr>
-{% for deck in decks %}
-    <tr><td> <img src="{{deck.small_thumbnail_url}}" /></td><td><a href="{{ url_for('display_deck', slug=deck.slug) }}"> {{ deck.name }}</a></td><td>{{ deck.user_display | safe }}</td></tr>
-  {% else %}
-    <li><em>Error: No decks found</em>
-{% endfor %}
-</table>

@@ -1,9 +1,10 @@
 import re
 
-from decksite.data import Deck
-from decksite.database import escape, get_db
 from magic import configuration, fetcher, fetcher_internal
 
+from decksite import translation
+from decksite.data import Deck
+from decksite.database import escape, get_db
 
 def fetch_decks(hub: str):
     deckcycle = fetcher.fetch_json("http://tappedout.net/api/deck/latest/{0}/".format(hub))
@@ -12,13 +13,11 @@ def fetch_decks(hub: str):
 def fetch_deck(slug: str):
     deckinfo = fetcher.fetch_json("http://tappedout.net/api/collection/collection:deck/{0}/".format(slug))
     store_deck(deckinfo)
-
     return Deck(get_db().execute("SELECT * FROM decks WHERE slug == ?", [slug])[0])
-
 
 def mergedeck(blob):
     slug = blob.get('slug')
-    store_deck(blob)
+    store_deck(translation.translate(translation.TAPPED_OUT, blob))
     rs = get_db().execute("SELECT * FROM decks WHERE slug == ?", [slug])[0]
     date_updated = rs['date_updated']
     if date_updated is None and is_authorised():
@@ -27,7 +26,7 @@ def mergedeck(blob):
     return rs
 
 def store_deck(blob):
-    keylist = ["slug", "name", "user", "user_display", "url", "resource_uri", "featured_card", "date_updated", "score", "thumbnail_url", "small_thumbnail_url"]
+    keylist = ["slug", "name", "person", "user_display", "url", "resource_uri", "featured_card", "date_updated", "score", "thumbnail_url", "small_thumbnail_url"]
     keylist = [key for key in keylist if key in blob.keys()]
     keys = ', '.join(key for key in keylist)
     values = ', '.join(str(escape(blob.get(key))) if blob.get(key) is not None else "NULL" for key in keylist)

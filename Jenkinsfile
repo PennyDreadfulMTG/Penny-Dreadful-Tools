@@ -34,6 +34,8 @@ node{
     }
 
     stage('Update Readme') {
-        sh 'python3 generate_readme.py'
+        dir('discordbot') {
+            sh 'python3 generate_readme.py'
+        }
     }
 }

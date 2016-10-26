@@ -32,18 +32,20 @@ class Database:
             args = []
         r = self.database.execute(sql, args).fetchall()
         self.database.commit()
-        return r
+        return [dict(row) for row in r]
 
     def value(self, sql, args=None, default=None):
         if args is None:
             args = []
         rs = self.database.execute(sql, args).fetchone()
-        if rs is None:
-            return default
-        elif len(rs) <= 0:
+        if not rs:
             return default
         else:
             return rs[0]
+
+    def insert(self, sql, args=None):
+        self.execute(sql, args)
+        return self.value('SELECT last_insert_rowid()')
 
     def setup(self, version=None):
         self.execute("CREATE TABLE IF NOT EXISTS db_version (version INTEGER UNIQUE ON CONFLICT REPLACE NOT NULL)")

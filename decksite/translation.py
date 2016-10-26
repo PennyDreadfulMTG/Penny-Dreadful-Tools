@@ -1,5 +1,6 @@
-TAPPED_OUT = {
-    'user': 'person'
+TAPPEDOUT = {
+    'date_updated': 'updated_date',
+    'user': 'tappedout_username',
 }
 
 def translate(mappings, data):

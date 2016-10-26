@@ -3,44 +3,53 @@ import re
 from magic import configuration, fetcher, fetcher_internal
 
 from decksite import translation
-from decksite.data import Deck
-from decksite.database import escape, get_db
+from decksite.data import deck, Deck
+from decksite.database import get_db
 
 def fetch_decks(hub: str):
     deckcycle = fetcher.fetch_json("http://tappedout.net/api/deck/latest/{0}/".format(hub))
-    return [Deck(mergedeck(d)) for d in deckcycle]
+    return [Deck(merge_deck(d)) for d in deckcycle]
 
 def fetch_deck(slug: str):
     deckinfo = fetcher.fetch_json("http://tappedout.net/api/collection/collection:deck/{0}/".format(slug))
-    store_deck(deckinfo)
-    return Deck(get_db().execute("SELECT * FROM decks WHERE slug == ?", [slug])[0])
+    deck_id = store_deck(deckinfo)
+    return deck.load_deck(deck_id)
 
-def mergedeck(blob):
-    slug = blob.get('slug')
-    store_deck(translation.translate(translation.TAPPED_OUT, blob))
-    rs = get_db().execute("SELECT * FROM decks WHERE slug == ?", [slug])[0]
-    date_updated = rs['date_updated']
-    if date_updated is None and is_authorised():
-        fetch_deck(rs['slug'])
-        rs = get_db().execute("SELECT * FROM decks WHERE slug == ?", [slug])[0]
-    return rs
+def merge_deck(blob):
+    deck_id = store_deck(translation.translate(translation.TAPPEDOUT, blob))
+    d = deck.load_deck(deck_id)
+    # this will never fire
+    # updated_date = d['updated_date']
+    # if updated_date is None and is_authorised():
+    #     deck_id = fetch_deck(blog.get('slug'))
+    #     d = load_deck(deck_id)
+    return d
 
 def store_deck(blob):
-    keylist = ["slug", "name", "person", "user_display", "url", "resource_uri", "featured_card", "date_updated", "score", "thumbnail_url", "small_thumbnail_url"]
-    keylist = [key for key in keylist if key in blob.keys()]
-    keys = ', '.join(key for key in keylist)
-    values = ', '.join(str(escape(blob.get(key))) if blob.get(key) is not None else "NULL" for key in keylist)
-    get_db().execute("INSERT OR IGNORE INTO decks (" + keys + ") VALUES (" + values + ")")
+    keys = ['slug', 'name', 'tappedout_username', 'url', 'resource_uri', 'featured_card', 'date_updated', 'score', 'thumbnail_url', 'small_thumbnail_url']
+    d = {key: blob.get(key) for key in keys if key in blob.keys()}
+    decklist = fetcher.fetch('{base_url}?fmt=txt'.format(base_url=blob['url']))
+    d['cards'] = parse_decklist(decklist)
+    d['source'] = 'Tapped Out'
+    d['identifier'] = d['url']
+    return deck.add_deck(d)
 
-    updates = ', '.join('{name} = {value}'.format(name=name, value=escape(blob.get(name))) for name in keylist)
-    get_db().execute("UPDATE decks SET " + updates + " WHERE slug = ?", [blob.get('slug')])
-    if blob.get("inventory") is not None:
-        insert_inventory(blob['slug'], blob['inventory'])
+def parse_decklist(s):
+    d = {'maindeck': {}, 'sideboard': {}}
+    part = 'maindeck'
+    for line in s.split('\n'):
+        if line.startswith('Sideboard'):
+            part = 'sideboard'
+        elif line == '':
+            pass
+        else:
+            n, card = line.split('\t')
+            d[part][card] = n
+    return d
 
 def insert_inventory(slug, inventory):
     assert inventory is not None
     db = get_db()
-
     deck_id = db.value("SELECT id from decks WHERE slug = ?", [slug])
     rs = db.execute("SELECT * from decklists WHERE deckid = ?", [deck_id])
     if len(rs) > 0:

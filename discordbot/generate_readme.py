@@ -1,5 +1,6 @@
 import subprocess
-import command
+
+from discordbot import command
 
 HEADER = """
 # Magic-Discord-Bot

@@ -4,7 +4,7 @@ import sqlite3
 import time
 import urllib
 
-import price
+from price_grabber import price
 
 from magic import card, configuration, database, fetcher, oracle
 

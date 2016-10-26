@@ -1,6 +1,6 @@
 import os
 
-import command
+from discordbot import command
 
 from magic import card, configuration, fetcher, oracle, fetcher_internal
 

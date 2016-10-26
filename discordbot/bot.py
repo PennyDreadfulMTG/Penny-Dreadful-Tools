@@ -1,7 +1,6 @@
 import discord
 
-import command
-import emoji
+from discordbot import command, emoji
 from magic import configuration, oracle
 
 

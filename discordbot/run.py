@@ -1,4 +1,4 @@
-import bot
+from discordbot import bot
 
 BOT = bot.Bot()
 

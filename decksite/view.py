@@ -2,14 +2,19 @@ from flask import url_for
 
 from decksite import template
 
+# pylint: disable=no-self-use
 class View:
     def template(self):
         return self.__class__.__name__.lower()
 
+    def content(self):
+        return template.render(self)
+
     def page(self):
-        context = {
-            'home_url': url_for('home'),
-            'css_url': url_for('static', filename='css/pd.css'),
-            'content': template.render(self)
-        }
-        return template.render_name('page', self, context)
+        return template.render_name('page', self)
+
+    def home_url(self):
+        return url_for('home')
+
+    def css_url(self):
+        return url_for('static', filename='css/pd.css')

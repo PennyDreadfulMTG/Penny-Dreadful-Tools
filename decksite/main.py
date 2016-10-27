@@ -16,10 +16,10 @@ def close_db(error):
 @APP.route('/')
 def home():
     # Uncomment this to get data for testing. It's slow, though, so probably turn it off against after that.
-    #from magic import configuration
-    #if not tappedout.is_authorised():
-        #tappedout.login(configuration.get('to_username'), configuration.get('to_password'))
-    #tappedout.fetch_decks('penny-dreadful')
+    from magic import configuration
+    if not tappedout.is_authorised():
+        tappedout.login(configuration.get('to_username'), configuration.get('to_password'))
+    tappedout.fetch_decks('penny-dreadful')
     view = Home(deck.latest_decks())
     return view.page()
 

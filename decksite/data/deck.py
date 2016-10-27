@@ -1,6 +1,3 @@
-import magic.database
-import magic.oracle
-
 from decksite.database import get_db
 
 def latest_decks():
@@ -66,21 +63,9 @@ def get_deck_id(url, identifier):
     sql = 'SELECT id FROM deck WHERE url = ? AND identifier = ?'
     return get_db().value(sql, [url, identifier])
 
-def insert_deck_card(deck_id, name, n, in_sideboard):
-    card_id = lookup_card_id(name)
-    sql = 'INSERT INTO deck_card (deck_id, card_id, n, sideboard) VALUES (?, ?, ?, ?)'
-    return get_db().execute(sql, [deck_id, card_id, n, in_sideboard])
-
-def lookup_card_id(name):
-    try:
-        return CARD_IDS[name]
-    except KeyError:
-        # BUG should fuzzy match (?) and refuse if not matched
-        return 1
-
-def load_card_ids():
-    rs = magic.database.DATABASE.execute(magic.oracle.base_select())
-    return {row['name']: row['id'] for row in rs}
+def insert_deck_card(deck_id, card, n, in_sideboard):
+    sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (?, ?, ?, ?)'
+    return get_db().execute(sql, [deck_id, card, n, in_sideboard])
 
 def get_or_insert_person_id(mtgo_username, tappedout_username):
     sql = 'SELECT id FROM person WHERE mtgo_username = ? OR tappedout_username = ?'
@@ -102,5 +87,3 @@ class Deck(dict):
         super().__init__()
         for k in params.keys():
             self[k] = params[k]
-
-CARD_IDS = load_card_ids()

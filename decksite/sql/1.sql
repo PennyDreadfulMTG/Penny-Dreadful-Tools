@@ -42,12 +42,11 @@ CREATE TABLE IF NOT EXISTS deck (
 CREATE TABLE IF NOT EXISTS deck_card (
     id INTEGER PRIMARY KEY,
     deck_id INTEGER NOT NULL,
-    card_id INTEGER NOT NULL,
+    card TEXT NOT NULL,
     n INTEGER NOT NULL,
     sideboard INTEGER NOT NULL,
     FOREIGN KEY(deck_id) REFERENCES deck(id),
-    CONSTRAINT deck_card_deck_id_card_id_sideboard UNIQUE (deck_id, card_id, sideboard)
-    -- No FK for card_id because it is in another database.
+    CONSTRAINT deck_card_deck_id_card_sideboard UNIQUE (deck_id, card, sideboard)
 );
 
 -- Types for competitions. 'League', 'Gatherling Thursdays', etc.

@@ -19,8 +19,7 @@ def merge_deck(blob):
     deck_id = store_deck(translation.translate(translation.TAPPEDOUT, blob))
     d = deck.load_deck(deck_id)
     # this will never fire
-    # updated_date = d['updated_date']
-    # if updated_date is None and is_authorised():
+    # if d.updated_date is None and is_authorised():
     #     deck_id = fetch_deck(blog.get('slug'))
     #     d = load_deck(deck_id)
     return d
@@ -29,9 +28,9 @@ def store_deck(blob):
     keys = ['slug', 'name', 'tappedout_username', 'url', 'resource_uri', 'featured_card', 'date_updated', 'score', 'thumbnail_url', 'small_thumbnail_url']
     d = {key: blob.get(key) for key in keys if key in blob.keys()}
     decklist = fetcher.fetch('{base_url}?fmt=txt'.format(base_url=blob['url']))
-    d['cards'] = parse_decklist(decklist)
-    d['source'] = 'Tapped Out'
-    d['identifier'] = d['url']
+    d.cards = parse_decklist(decklist)
+    d.source = 'Tapped Out'
+    d.identifier = d.url
     return deck.add_deck(d)
 
 def parse_decklist(s):

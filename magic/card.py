@@ -1,6 +1,7 @@
 import copy
-import types
 import unicodedata
+
+from bunch import Bunch
 
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
 
@@ -117,7 +118,7 @@ def unaccent(s):
 def canonicalize(name):
     return unaccent(name.strip().lower())
 
-class Card(types.SimpleNamespace):
+class Card(Bunch):
     def __init__(self, params):
         super().__init__()
         for k in params.keys():
@@ -129,7 +130,7 @@ class Card(types.SimpleNamespace):
         if not self.names:
             setattr(self, 'names', [self.name])
 
-class Printing(types.SimpleNamespace):
+class Printing(Bunch):
     def __init__(self, params):
         super().__init__()
         for k in params.keys():

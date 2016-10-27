@@ -9,4 +9,4 @@ class Deck(View):
         return self._deck
 
     def subtitle(self):
-        return self._deck['name']
+        return self._deck.name

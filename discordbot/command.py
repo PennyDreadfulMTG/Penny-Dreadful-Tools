@@ -160,25 +160,14 @@ Want to contribute? Send a Pull Request."""
 
     async def _oracle(self, bot, channel, args, author):
         """`!oracle {name}` Give the Oracle text of the named card."""
-        cards = list(cards_from_query(args))
-        if len(cards) > 1:
-            await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
-        elif len(cards) == 1:
-            text = emoji.replace_emoji(cards[0].text, channel)
-            await bot.client.send_message(channel, '**{name}** {text}'.format(name=cards[0].name, text=text))
-        else:
-            await bot.client.send_message(channel, '{author}: No matches.'.format(author=author.mention))
+        await single_card_text(bot, channel, args, author, oracle_text)
 
     async def price(self, bot, channel, args, author):
         """`!price {name}` Get price information about the named card."""
-        cards = list(cards_from_query(args))
-        if len(cards) > 1:
-            await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
-        elif len(cards) == 1:
-            text = price_info(cards[0])
-            await bot.client.send_message(channel, '**{name}** {text}'.format(name=cards[0].name, text=text))
-        else:
-            await bot.client.send_message(channel, '{author}: No matches.'.format(author=author.mention))
+        await single_card_text(bot, channel, args, author, price_info)
+
+    async def legal(self, bot, channel, args, author):
+        await single_card_text(bot, channel, args, author, lambda c: '')
 
     async def modofail(self, bot, channel, args, author):
         """Ding!"""
@@ -416,3 +405,18 @@ def build_help():
             else:
                 msg += '\n{0}'.format(method.__doc__)
     return msg
+
+async def single_card_text(bot, channel, args, author, f):
+    cards = list(cards_from_query(args))
+    if len(cards) > 1:
+        await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
+    elif len(cards) == 1:
+        legal_emjoi = legal_emoji(cards[0], bot.legal_cards)
+        text = emoji.replace_emoji(f(cards[0]), channel)
+        message = '{legal_emjoi} **{name}** {text}'.format(name=cards[0].name, legal_emjoi=legal_emjoi, text=text)
+        await bot.client.send_message(channel, message)
+    else:
+        await bot.client.send_message(channel, '{author}: No matches.'.format(author=author.mention))
+
+def oracle_text(c):
+    return c.text

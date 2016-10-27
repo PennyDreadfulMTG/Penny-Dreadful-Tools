@@ -34,6 +34,14 @@ def search(query):
     rs = DATABASE.execute(sql, [fuzzy_query, like_query, fuzzy_query])
     return [card.Card(r) for r in rs]
 
+def load_cards(names):
+    sql = """
+        {base_select}
+        HAVING LOWER({name_select}) IN ({names})
+    """.format(base_select=base_select(), name_select=card.name_select().format(table='u'), names=', '.join(database.escape(name).lower() for name in names))
+    rs = DATABASE.execute(sql)
+    return [card.Card(r) for r in rs]
+
 def base_select(where_clause='(1 = 1)'):
     return """
         SELECT

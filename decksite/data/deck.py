@@ -1,6 +1,8 @@
 from flask import url_for
 
+from magic import mana, oracle
 from pd_exception import InvalidDataException
+
 from decksite.database import escape, get_db
 
 def latest_decks():
@@ -21,23 +23,39 @@ def load_decks(where='1 = 1', order_by='updated_date DESC', limit=''):
     """.format(where=where, order_by=order_by, limit=limit)
     decks = [Deck(d) for d in get_db().execute(sql)]
     load_cards(decks)
+    for d in decks:
+        set_colors(d)
     return decks
 
 def load_cards(decks):
-    d = {deck['id']: deck for deck in decks}
     sql = """
         SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN (?)
     """
     deck_ids = ', '.join(str(deck['id']) for deck in decks)
-    print(deck_ids)
     rs = get_db().execute(sql, [deck_ids])
+    names = {row['card'] for row in rs}
+    cards = {card.name: card for card in oracle.load_cards(names)}
+    ds = {deck['id']: deck for deck in decks}
+    for d in decks:
+        d['maindeck'] = []
+        d['sideboard'] = []
     for row in rs:
         location = 'sideboard' if row['sideboard'] else 'maindeck'
-        try:
-            d[row['deck_id']][location]
-        except KeyError:
-            d[row['deck_id']][location] = []
-        d[row['deck_id']][location].append({'n': row['n'], 'name': row['card']})
+        ds[row['deck_id']][location].append({'n': row['n'], 'name': row['card'], 'card': cards[row['card']]})
+
+# We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks
+# we will claim your deck is neither W nor G which is not true. But this should cover most cases.
+def set_colors(d):
+    required = set()
+    also_count = {}
+    for card in [c['card'] for c in d['maindeck'] + d['sideboard']]:
+        if not card.mana_cost:
+            print(card)
+        else:
+            print(card)
+            colors = mana.colors(mana.parse(card.mana_cost))
+            required.update(colors['required'])
+    d['colors'] = required
 
 # Expects:
 #

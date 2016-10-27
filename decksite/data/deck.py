@@ -1,3 +1,4 @@
+from pd_exception import InvalidDataException
 from decksite.database import get_db
 
 def latest_decks():
@@ -44,7 +45,7 @@ def load_deck(deck_id):
 # url + identifier must be unique for each decklist.
 def add_deck(params):
     if not params.get('mtgo_username') and not params.get('tappedout_username'):
-        raise Exception(params)
+        raise InvalidDataException('Did not find a username in {params}'.format(params=params))
     person_id = get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'))
     deck_id = get_deck_id(params['url'], params['identifier'])
     if deck_id:
@@ -79,7 +80,7 @@ def get_source_id(source):
     sql = 'SELECT id FROM source WHERE name = ?'
     source_id = get_db().value(sql, [source])
     if not source_id:
-        raise Exception('Unkown source: `{source}`'.format(source=source))
+        raise InvalidDataException('Unkown source: `{source}`'.format(source=source))
     return source_id
 
 class Deck(dict):

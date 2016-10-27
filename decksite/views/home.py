@@ -10,9 +10,3 @@ class Home(View):
 
     def subtitle(self):
         return None
-
-    def title(self):
-        if not self.subtitle():
-            return 'Penny Dreadful Decks'
-        else:
-            return '{subtitle} – Penny Dreadful Decks'.format(subtitle=self.subtitle())

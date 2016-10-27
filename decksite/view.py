@@ -18,3 +18,9 @@ class View:
 
     def css_url(self):
         return url_for('static', filename='css/pd.css')
+
+    def title(self):
+        if not self.subtitle():
+            return 'Penny Dreadful Decks'
+        else:
+            return '{subtitle} – Penny Dreadful Decks'.format(subtitle=self.subtitle())

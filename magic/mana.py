@@ -1,5 +1,7 @@
 import re
 
+from pd_exception import ParseException
+
 START = ''
 DIGIT = '[0-9]'
 COLOR = '[WURBGC]'
@@ -63,5 +65,5 @@ def parse(s):
         tokens.append(tmp)
     return tokens
 
-class InvalidManaCostException(Exception):
+class InvalidManaCostException(ParseException):
     pass

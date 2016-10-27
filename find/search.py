@@ -1,5 +1,7 @@
 import collections
 
+from pd_exception import ParseException
+
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String
 from magic import card, database, mana, oracle
@@ -281,7 +283,7 @@ def init_value_lookup():
         if table == 'color':
             VALUE_LOOKUP['color_identity'] = d
 
-class InvalidSearchException(Exception):
+class InvalidSearchException(ParseException):
     pass
 
 class InvalidTokenException(InvalidSearchException):

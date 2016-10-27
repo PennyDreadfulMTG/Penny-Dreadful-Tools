@@ -64,7 +64,7 @@ def test_mana4():
     do_test('mana=15', "(mana_cost = '{15}')")
 
 def test_mana5():
-    do_test('mana=UP', "(mana_cost = '{UP}')")
+    do_test('mana=U/P', "(mana_cost = '{U/P}')")
 
 def test_mana6():
     do_test('mana:c', "(mana_cost LIKE '%{C}%')")

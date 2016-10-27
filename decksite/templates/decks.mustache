@@ -1,0 +1,12 @@
+<table>
+    {{#decks}}
+        <tr>
+            <td><span class="marginnote">{{stars}}</span><a href="{{url}}">{{name}}</a></td>
+            <td><a href="{{person_url}}">{{person}}</a></td>
+            <td>{{#wins}}{{wins}}–{{losses}}{{/wins}}</td>
+            <td>{{#competition_url}}<a href="{{competition_url}}">{{competition_type}}</a>{{/competition_url}}</td>
+            <td>{{position}}</td>
+            <td>{{players}}</td>
+        </tr>
+    {{/decks}}
+</table>

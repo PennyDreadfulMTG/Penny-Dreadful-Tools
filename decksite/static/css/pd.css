@@ -1,0 +1,176 @@
+/* http://meyerweb.com/eric/tools/css/reset/
+     v2.0 | 20110126
+     License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+body {
+    line-height: 1;
+}
+ol, ul {
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* Our CSS, using Golden Ratio from http://type-scale.com/ */
+
+body {
+    background: #f9f9f9;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 0.9em;
+    line-height: 1.618em;
+    margin: 4.236em 12.5%;
+    color: #502828;
+}
+
+b {
+    font-weight: bold;
+}
+
+section {
+    border-top: 2px #502828 solid;
+    float: left;
+    margin: 1em 4.236em 1em 0;
+}
+
+/* Headings */
+
+h1, h2, h3 {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    padding-top: 1em;
+    margin-bottom: 1em;
+}
+
+h1 {
+    font-size: 2.618em;
+}
+
+h1 a {
+    text-decoration: none;
+}
+
+h2 {
+    font-size: 1.618em;
+}
+
+h3 {
+    font-size: 1.2em;
+}
+
+/* Links */
+
+.main a {
+    color: #502828;
+    text-transform: lowercase;
+    text-decoration: none;
+
+    /* Underline that respect descenders. */
+    text-shadow: 0.1em 0 0 #fff, -0.1em 0 0 #fff;
+    background-image: linear-gradient( to right, currentColor 0%, currentColor 100% );
+    background-repeat: repeat-x;
+    background-position: 0 96%;
+    -webkit-background-size: 100% 0.1em;
+    background-size: 100% 0.1em;
+}
+
+.main table a {
+    text-shadow: none;
+    background-image: none;
+}
+
+a:visited {
+    color: #505050;
+}
+
+/* Lists */
+
+ul {
+    list-style: square;
+}
+
+ul.decklist {
+    list-style: none;
+}
+
+/* Tables */
+
+td {
+    padding-right: 1em;
+}
+
+.marginnote {
+    float: left;
+    clear: left;
+    margin-left: -50%;
+    width: 45%;
+    margin-top: 0;
+    margin-bottom: 0;
+    vertical-align: baseline;
+    position: relative;
+    text-align: right;
+}
+
+/* Forms */
+
+form, input, select, textarea {
+    font-size: inherit;
+}
+
+input, select, textarea {
+    width: 20em;
+}
+
+input, label, select, textarea {
+    margin-top: 1em;
+}
+
+input[type=number] {
+    width: 2em;
+}
+
+label {
+    display: block;
+    float: left;
+    margin-right: 1em;
+    text-align: right;
+    width: 10em;
+}
+
+textarea {
+    height: 20em;
+}

@@ -1,4 +1,3 @@
-
 import json
 import os
 import shutil
@@ -9,6 +8,7 @@ from email.utils import formatdate
 import requests
 
 from magic import database
+from pd_exception import OperationalException
 
 SESSION = requests.Session()
 
@@ -74,5 +74,5 @@ def remove_last_modified(resource):
 def get_cached_text(resource):
     return database.DATABASE.value("SELECT content FROM fetcher WHERE resource = ?", [resource])
 
-class FetchException(Exception):
+class FetchException(OperationalException):
     pass

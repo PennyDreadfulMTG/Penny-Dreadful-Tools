@@ -2,13 +2,12 @@ from pd_exception import InvalidDataException
 from decksite.database import escape, get_db
 
 def latest_decks():
-    return load_decks(limit=20)
+    return load_decks(limit='LIMIT 20')
 
 def load_deck(deck_id):
     return load_decks('d.id = {deck_id}'.format(deck_id=escape(deck_id)))[0]
 
-def load_decks(where='1 = 1', order_by='updated_date DESC', limit=None):
-    limit_escaped = 'LIMIT {limit}'.format(limit=escape(limit)) if limit else ''
+def load_decks(where='1 = 1', order_by='updated_date DESC', limit=''):
     sql = """
         SELECT d.id, IFNULL(IFNULL(p.name, p.mtgo_username), p.tappedout_username) AS person, d.name,
             d.created_date, d.updated_date
@@ -17,7 +16,8 @@ def load_decks(where='1 = 1', order_by='updated_date DESC', limit=None):
         WHERE {where}
         ORDER BY {order_by}
         {limit}
-    """.format(where=escape(where), order_by=escape(order_by), limit=limit_escaped)
+    """.format(where=where, order_by=order_by, limit=limit)
+    print(sql)
     return [Deck(d) for d in get_db().execute(sql)]
 
 # Expects:

@@ -43,14 +43,14 @@ def load_cards(names):
     return [card.Card(r) for r in rs]
 
 # Does not check for 4-ofs nor 1 max restricted, yet.
-def legal(cards, format='Penny Dreadful'):
+def legal(cards, format_name='Penny Dreadful'):
     sql = """
         SELECT id
         FROM card
         WHERE id IN ({card_ids})
         AND id NOT IN (SELECT card_id FROM card_legality WHERE format_id = (SELECT id FROM format WHERE name = ?) AND legality <> 'Banned')
         """.format(card_ids=', '.join(c.id for c in cards))
-    return len(DATABASE.execute(sql, [format])) == 0
+    return len(DATABASE.execute(sql, [format_name])) == 0
 
 def base_select(where_clause='(1 = 1)'):
     return """

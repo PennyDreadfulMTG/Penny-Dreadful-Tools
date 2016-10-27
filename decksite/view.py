@@ -24,3 +24,6 @@ class View:
             return 'Penny Dreadful Decks'
         else:
             return '{subtitle} – Penny Dreadful Decks'.format(subtitle=self.subtitle())
+
+    def subtitle(self):
+        return None

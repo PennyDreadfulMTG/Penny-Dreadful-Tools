@@ -47,7 +47,6 @@ def load_cards(decks):
 # we will claim your deck is neither W nor G which is not true. But this should cover most cases.
 def set_colors(d):
     required = set()
-    also_count = {}
     for card in [c['card'] for c in d['maindeck'] + d['sideboard']]:
         if not card.mana_cost:
             print(card)
@@ -124,4 +123,4 @@ class Deck(dict):
         super().__init__()
         for k in params.keys():
             self[k] = params[k]
-        self['url'] = url_for('decks', id=self['id'])
+        self['url'] = url_for('decks', deck_id=self['id'])

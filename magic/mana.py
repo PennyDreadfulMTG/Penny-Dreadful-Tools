@@ -57,30 +57,30 @@ def parse(s):
                 tmp = ''
                 mode = START
             else:
-                raise InvalidManaCostException('Slash must be followed by {color} or {modifier}, `{c}` found.'.format(color=COLOR, modifier=modifier, c=c))
+                raise InvalidManaCostException('Slash must be followed by {color} or {modifier}, `{c}` found.'.format(color=COLOR, modifier=MODIFIER, c=c))
     if tmp:
         tokens.append(tmp)
     return tokens
 
 def colors(symbols):
-    colors = {'required': set(), 'also': set()}
+    cs = {'required': set(), 'also': set()}
     for symbol in symbols:
         if generic(symbol):
             pass
         elif phyrexian(symbol):
-            colors['also'].add(symbol[0])
+            cs['also'].add(symbol[0])
         elif hybrid(symbol):
             parts = symbol.split(SLASH)
-            colors['also'].add(parts[0])
-            colors['also'].add(parts[1])
+            cs['also'].add(parts[0])
+            cs['also'].add(parts[1])
         elif twobrid(symbol):
             parts = symbol.split(SLASH)
-            colors['also'].add(parts[1])
+            cs['also'].add(parts[1])
         elif colored(symbol):
-            colors['required'].add(symbol)
+            cs['required'].add(symbol)
         else:
             raise InvalidManaCostException('Unrecognized symbol type: `{symbol}` in `{symbols}`'.format(symbol=symbol, symbols=symbols))
-    return colors
+    return cs
 
 def generic(symbol):
     return re.match('^({digit}*{x}*)$'.format(digit=DIGIT, x=X), symbol)

@@ -23,9 +23,9 @@ def home():
     view = Home(deck.latest_decks())
     return view.page()
 
-@APP.route("/decks/<id>")
-def decks(id):
-    view = Deck(deck.load_deck(id))
+@APP.route("/decks/<deck_id>")
+def decks(deck_id):
+    view = Deck(deck.load_deck(deck_id))
     return view.page()
 
 @APP.route('/add')

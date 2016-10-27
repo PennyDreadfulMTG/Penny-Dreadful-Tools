@@ -1,8 +1,8 @@
-from flask import Flask, g, render_template, request
+from flask import Flask, g, request
 
 from decksite import tappedout
 from decksite.data import deck
-from decksite.views import AddForm, Home
+from decksite.views import AddForm, Deck, Home
 
 APP = Flask(__name__)
 
@@ -23,10 +23,10 @@ def home():
     view = Home(deck.latest_decks())
     return view.page()
 
-@APP.route("/decks/<slug>")
-def decks(slug):
-    d = tappedout.fetch_deck(slug)
-    return render_template("deck.html", deck=d)
+@APP.route("/decks/<id>")
+def decks(id):
+    view = Deck(deck.load_deck(id))
+    return view.page()
 
 @APP.route('/add')
 def add_form():

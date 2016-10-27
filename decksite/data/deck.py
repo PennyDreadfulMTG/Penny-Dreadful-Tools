@@ -1,3 +1,5 @@
+from flask import url_for
+
 from pd_exception import InvalidDataException
 from decksite.database import escape, get_db
 
@@ -87,3 +89,4 @@ class Deck(dict):
         super().__init__()
         for k in params.keys():
             self[k] = params[k]
+        self['url'] = url_for('decks', id=self['id'])

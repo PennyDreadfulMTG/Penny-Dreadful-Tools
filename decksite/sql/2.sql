@@ -1,5 +1,0 @@
-CREATE TABLE IF NOT EXISTS fetcher (
-    id INTEGER PRIMARY KEY,
-    resource TEXT UNIQUE ON CONFLICT REPLACE NOT NULL,
-    last_modified TEXT
-)

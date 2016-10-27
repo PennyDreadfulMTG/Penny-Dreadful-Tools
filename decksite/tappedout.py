@@ -65,7 +65,14 @@ def get_auth():
     token = configuration.get("tapped_API_key")
     return fetcher.fetch("http://tappedout.net/api/v1/cookie/{0}/?access_token={1}".format(cookie, token))
 
-def login(user, password):
+def login(user=None, password=None):
+    if user is None:
+        user = configuration.get('to_username')
+    if password is None:
+        password = configuration.get('to_password')
+    if user == '' or password == '':
+        print('No TappedOut credentials provided')
+        return
     url = "http://tappedout.net/accounts/login/"
     session = fetcher_internal.SESSION
     response = session.get(url)

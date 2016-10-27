@@ -6,7 +6,9 @@ DEFAULTS = {
     'decksite_database': './decksite.db',
     'image_dir': '.',
     'pricesdb': './prices.db',
-    'spellfix': './spellfix'
+    'spellfix': './spellfix',
+    'to_username': '',
+    'to_password': ''
 }
 
 def get(key):

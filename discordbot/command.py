@@ -147,7 +147,7 @@ Want to contribute? Send a Pull Request."""
         msg += " And we have {copy}. It can become a rhino, so that's a rhino.".format(copy=rhinos[1].name)
         msg += " Then there's {reanimate}. It can get back one of our rhinos, so that's a rhino.".format(reanimate=rhinos[2].name)
         msg += " And then we have {search}. It's a bit of a stretch, but that's a rhino too.".format(search=rhinos[3].name)
-        await bot.post_cards(rhinos, channel, msg)
+        await bot.post_cards(rhinos, channel, additional_text=msg)
 
     async def rotation(self, bot, channel):
         """`!rotation` Give the date of the next Penny Dreadful rotation."""

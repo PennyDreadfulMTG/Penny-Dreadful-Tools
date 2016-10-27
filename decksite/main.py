@@ -16,9 +16,8 @@ def close_db(error):
 def home():
     # Uncomment this to get data for testing. It's slow, though, so probably turn it off against after that.
     # from decksite import tappedout
-    # from magic import configuration
     # if not tappedout.is_authorised():
-    #     tappedout.login(configuration.get('to_username'), configuration.get('to_password'))
+    #    tappedout.login()
     # tappedout.fetch_decks('penny-dreadful')
     view = Home(deck.latest_decks())
     return view.page()
@@ -38,5 +37,13 @@ def add_deck():
     decks.add_deck(request.form)
     return add_form()
 
+@APP.route('/querytappedout')
+def deckcycle_tappedout():
+    from decksite import tappedout
+    if not tappedout.is_authorised():
+        tappedout.login()
+    tappedout.fetch_decks('penny-dreadful')
+    return home()
+
 def init():
-    APP.run(debug=True)
+    APP.run(host='0.0.0.0', debug=True)

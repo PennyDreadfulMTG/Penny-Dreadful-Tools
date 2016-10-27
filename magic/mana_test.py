@@ -37,6 +37,13 @@ def test_everything():
         if row['mana_cost']:
             mana.parse(row['mana_cost'])
 
+def test_colors():
+    assert mana.colors(['9', 'W', 'W', 'R']) == {'required': {'W', 'R'}, 'also': set()}
+    assert mana.colors(['2/W', 'G', 'X']) == {'required': {'G'}, 'also': {'W'}}
+    assert mana.colors(['UP', 'RP']) == {'required': set(), 'also': {'U', 'R'}}
+    assert mana.colors(['X']) == {'required': set(), 'also': set()}
+    assert mana.colors(['B/R']) == {'required': set(), 'also': {'B', 'R'}}
+
 def do_test(s, expected):
     symbols = mana.parse(s)
     assert symbols == expected or print('\nInput: {s}\nExpected: {expected}\n  Actual: {actual}'.format(s=s, expected=expected, actual=symbols))

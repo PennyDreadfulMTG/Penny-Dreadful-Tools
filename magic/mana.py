@@ -56,7 +56,7 @@ def parse(s):
                 raise InvalidManaCostException('Color must be followed by {color}, {slash} or {modifier}, `{c}` found.'.format(color=COLOR, slash=SLASH, modifier=MODIFIER, c=c))
         elif mode == SLASH:
             if re.match(COLOR, c):
-                tokens.append(tmp +c)
+                tokens.append(tmp + c)
                 tmp = ''
                 mode = START
             else:
@@ -64,6 +64,41 @@ def parse(s):
     if tmp:
         tokens.append(tmp)
     return tokens
+
+def colors(symbols):
+    colors = {'required': set(), 'also': set()}
+    for symbol in symbols:
+        if generic(symbol):
+            pass
+        elif phyrexian(symbol):
+            colors['also'].add(symbol[0])
+        elif hybrid(symbol):
+            parts = symbol.split(SLASH)
+            colors['also'].add(parts[0])
+            colors['also'].add(parts[1])
+        elif twobrid(symbol):
+            parts = symbol.split(SLASH)
+            colors['also'].add(parts[1])
+        elif colored(symbol):
+            colors['required'].add(symbol)
+        else:
+            raise InvalidManaCostException('Unrecognized symbol type: `{symbol}`'.format(symbol=symbol))
+    return colors
+
+def generic(symbol):
+    return re.match('^({digit}*{x}*)$'.format(digit=DIGIT, x=X), symbol)
+
+def phyrexian(symbol):
+    return re.match('^{color}{modifier}$'.format(color=COLOR, modifier=MODIFIER), symbol)
+
+def hybrid(symbol):
+    return re.match('^{color}/{color}$'.format(color=COLOR), symbol)
+
+def twobrid(symbol):
+    return re.match('^2/{color}$'.format(color=COLOR), symbol)
+
+def colored(symbol):
+    return re.match('^{color}$'.format(color=COLOR), symbol)
 
 class InvalidManaCostException(ParseException):
     pass

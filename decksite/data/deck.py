@@ -1,3 +1,4 @@
+from bunch import Bunch
 from flask import url_for
 
 from magic import mana, oracle
@@ -32,14 +33,14 @@ def load_cards(decks):
     sql = """
         SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN (?)
     """
-    deck_ids = ', '.join(str(deck['id']) for deck in decks)
+    deck_ids = ', '.join(str(deck.id) for deck in decks)
     rs = get_db().execute(sql, [deck_ids])
     names = {row['card'] for row in rs}
     cards = {card.name: card for card in oracle.load_cards(names)}
-    ds = {deck['id']: deck for deck in decks}
+    ds = {deck.id: deck for deck in decks}
     for d in decks:
-        d['maindeck'] = []
-        d['sideboard'] = []
+        d.maindeck = []
+        d.sideboard = []
     for row in rs:
         location = 'sideboard' if row['sideboard'] else 'maindeck'
         ds[row['deck_id']][location].append({'n': row['n'], 'name': row['card'], 'card': cards[row['card']]})
@@ -48,17 +49,14 @@ def load_cards(decks):
 # we will claim your deck is neither W nor G which is not true. But this should cover most cases.
 def set_colors(d):
     required = set()
-    for card in [c['card'] for c in d['maindeck'] + d['sideboard']]:
-        if not card.mana_cost:
-            print(card)
-        else:
-            print(card)
+    for card in [c['card'] for c in d.maindeck + d.sideboard]:
+        if card.mana_cost:
             colors = mana.colors(mana.parse(card.mana_cost))
             required.update(colors['required'])
-    d['colors'] = required
+    d.colors = required
 
 def set_legality(d):
-    d['pd_legal'] = oracle.legal([c['card'] for c in d.cards()])
+    d.pd_legal = oracle.legal([c['card'] for c in d.cards()])
 
 # Expects:
 #
@@ -122,12 +120,12 @@ def get_source_id(source):
         raise InvalidDataException('Unkown source: `{source}`'.format(source=source))
     return source_id
 
-class Deck(dict):
+class Deck(Bunch):
     def __init__(self, params):
         super().__init__()
         for k in params.keys():
             self[k] = params[k]
-        self['url'] = url_for('decks', deck_id=self['id'])
+        self.url = url_for('decks', deck_id=self.id)
 
     def cards(self):
-        return self['maindeck'] + self['sideboard']
+        return self.maindeck + self.sideboard

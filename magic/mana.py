@@ -65,7 +65,7 @@ def parse(s):
 def colors(symbols):
     cs = {'required': set(), 'also': set()}
     for symbol in symbols:
-        if generic(symbol) or x(symbol):
+        if generic(symbol) or variable(symbol):
             pass
         elif phyrexian(symbol):
             cs['also'].add(symbol[0])
@@ -85,7 +85,7 @@ def colors(symbols):
 def generic(symbol):
     return re.match('^{digit}$'.format(digit=DIGIT), symbol)
 
-def x(symbol):
+def variable(symbol):
     return re.match('^{x}$'.format(x=X), symbol)
 
 def phyrexian(symbol):
@@ -101,7 +101,7 @@ def colored(symbol):
     return re.match('^{color}$'.format(color=COLOR), symbol)
 
 def has_x(mana_cost):
-    return len([symbol for symbol in parse(mana_cost) if x(symbol)]) > 0
+    return len([symbol for symbol in parse(mana_cost) if variable(symbol)]) > 0
 
 class InvalidManaCostException(ParseException):
     pass

@@ -263,20 +263,20 @@ def card_name(c):
             return c.get('names')[0]
     return ' // '.join(c.get('names', [c.get('name')]))
 
-def deck_sort(card):
+def deck_sort(c):
     s = ''
-    if card.is_creature():
+    if c.is_creature():
         s += 'A'
-    elif card.is_land():
+    elif c.is_land():
         s += 'C'
     else:
         s += 'B'
-    if card.mana_cost and mana.x(card.mana_cost):
+    if c.mana_cost and mana.variable(c.mana_cost):
         s += 'X'
     else:
         s += 'A'
-    s += str(card.cmc).zfill(10)
-    s += card.name
+    s += str(c.cmc).zfill(10)
+    s += c.name
     return s
 
 initialize()

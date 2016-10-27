@@ -1,1 +1,0 @@
-ALTER TABLE decklists ADD COLUMN board TEXT

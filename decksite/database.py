@@ -6,8 +6,9 @@ from flask import g
 from magic import configuration
 
 class Database:
-    # Bump this if you modify the schema.
-    database = 1
+
+    # We don't have an internal notion of schema for this one
+    # Creating a new <n>.sql file is enough to trigger the upgrade
 
     def __init__(self):
         self.verbose = False

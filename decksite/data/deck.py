@@ -25,6 +25,7 @@ def load_decks(where='1 = 1', order_by='updated_date DESC', limit=''):
     load_cards(decks)
     for d in decks:
         set_colors(d)
+        set_legality(d)
     return decks
 
 def load_cards(decks):
@@ -55,6 +56,9 @@ def set_colors(d):
             colors = mana.colors(mana.parse(card.mana_cost))
             required.update(colors['required'])
     d['colors'] = required
+
+def set_legality(d):
+    d['pd_legal'] = oracle.legal(d.cards())
 
 # Expects:
 #
@@ -124,3 +128,6 @@ class Deck(dict):
         for k in params.keys():
             self[k] = params[k]
         self['url'] = url_for('decks', deck_id=self['id'])
+
+    def cards(self):
+        return self['maindeck'] + self['sideboard']

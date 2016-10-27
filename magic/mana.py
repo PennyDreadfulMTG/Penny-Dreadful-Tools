@@ -65,7 +65,7 @@ def parse(s):
 def colors(symbols):
     cs = {'required': set(), 'also': set()}
     for symbol in symbols:
-        if generic(symbol):
+        if generic(symbol) or x(symbol):
             pass
         elif phyrexian(symbol):
             cs['also'].add(symbol[0])
@@ -83,7 +83,10 @@ def colors(symbols):
     return cs
 
 def generic(symbol):
-    return re.match('^({digit}*{x}*)$'.format(digit=DIGIT, x=X), symbol)
+    return re.match('^{digit}$'.format(digit=DIGIT), symbol)
+
+def x(symbol):
+    return re.match('^{x}$'.format(x=X), symbol)
 
 def phyrexian(symbol):
     return re.match('^{color}/{modifier}$'.format(color=COLOR, modifier=MODIFIER), symbol)

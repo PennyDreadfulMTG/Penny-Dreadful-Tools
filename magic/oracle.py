@@ -1,9 +1,7 @@
 import datetime
 import re
 
-from magic import card
-from magic import database
-from magic import fetcher
+from magic import card, database, fetcher, mana
 
 CARD_IDS = {}
 FORMAT_IDS = {}
@@ -264,5 +262,21 @@ def card_name(c):
         else:
             return c.get('names')[0]
     return ' // '.join(c.get('names', [c.get('name')]))
+
+def deck_sort(card):
+    s = ''
+    if card.is_creature():
+        s += 'A'
+    elif card.is_land():
+        s += 'C'
+    else:
+        s += 'B'
+    if card.mana_cost and mana.x(card.mana_cost):
+        s += 'X'
+    else:
+        s += 'A'
+    s += str(card.cmc).zfill(10)
+    s += card.name
+    return s
 
 initialize()

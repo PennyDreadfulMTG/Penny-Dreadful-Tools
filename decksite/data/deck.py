@@ -1,4 +1,4 @@
-from bunch import Bunch
+from munch import Munch
 from flask import url_for
 
 from magic import mana, oracle
@@ -120,7 +120,7 @@ def get_source_id(source):
         raise InvalidDataException('Unkown source: `{source}`'.format(source=source))
     return source_id
 
-class Deck(Bunch):
+class Deck(Munch):
     def __init__(self, params):
         super().__init__()
         for k in params.keys():

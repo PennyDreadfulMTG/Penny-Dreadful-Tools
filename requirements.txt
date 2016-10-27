@@ -1,5 +1,5 @@
-bunch
 discord.py[voice]>=0.13.0
+munch
 pystache
 pytest
 pylint

@@ -58,14 +58,19 @@ body {
     color: #502828;
 }
 
+b {
+    font-weight: bold;
+}
+
 section {
     border-top: 2px #502828 solid;
     float: left;
     margin: 1em 4.236em 1em 0;
-    /*width: 20%;*/
 }
 
-h1, h2 {
+/* Headings */
+
+h1, h2, h3 {
     font-family: Georgia, "Times New Roman", Times, serif;
     padding-top: 1em;
     margin-bottom: 1em;
@@ -83,10 +88,18 @@ h2 {
     font-size: 1.618em;
 }
 
+h3 {
+    font-size: 1.2em;
+}
+
+/* Links */
+
 .main a {
     color: #502828;
     text-transform: lowercase;
     text-decoration: none;
+
+    /* Underline that respect descenders. */
     text-shadow: 0.1em 0 0 #fff, -0.1em 0 0 #fff;
     background-image: linear-gradient( to right, currentColor 0%, currentColor 100% );
     background-repeat: repeat-x;
@@ -95,13 +108,26 @@ h2 {
     background-size: 100% 0.1em;
 }
 
+.main table a {
+    text-shadow: none;
+    background-image: none;
+}
+
 a:visited {
     color: #505050;
 }
 
+/* Lists */
+
 ul {
     list-style: square;
 }
+
+ul.decklist {
+    list-style: none;
+}
+
+/* Tables */
 
 td {
     padding-right: 1em;
@@ -119,13 +145,7 @@ td {
     text-align: right;
 }
 
-div::before, div::after {
-    content: "";
-    display: table;
-}
-div::after {
-    clear: both;
-}
+/* Forms */
 
 form, input, select, textarea {
     font-size: inherit;

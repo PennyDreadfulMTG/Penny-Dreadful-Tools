@@ -19,8 +19,25 @@ def load_decks(where='1 = 1', order_by='updated_date DESC', limit=''):
         ORDER BY {order_by}
         {limit}
     """.format(where=where, order_by=order_by, limit=limit)
-    print(sql)
-    return [Deck(d) for d in get_db().execute(sql)]
+    decks = [Deck(d) for d in get_db().execute(sql)]
+    load_cards(decks)
+    return decks
+
+def load_cards(decks):
+    d = {deck['id']: deck for deck in decks}
+    sql = """
+        SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN (?)
+    """
+    deck_ids = ', '.join(str(deck['id']) for deck in decks)
+    print(deck_ids)
+    rs = get_db().execute(sql, [deck_ids])
+    for row in rs:
+        location = 'sideboard' if row['sideboard'] else 'maindeck'
+        try:
+            d[row['deck_id']][location]
+        except KeyError:
+            d[row['deck_id']][location] = []
+        d[row['deck_id']][location].append({'n': row['n'], 'name': row['card']})
 
 # Expects:
 #

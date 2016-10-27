@@ -100,5 +100,8 @@ def twobrid(symbol):
 def colored(symbol):
     return re.match('^{color}$'.format(color=COLOR), symbol)
 
+def has_x(mana_cost):
+    return len([symbol for symbol in parse(mana_cost) if x(symbol)]) > 0
+
 class InvalidManaCostException(ParseException):
     pass

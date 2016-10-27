@@ -48,19 +48,16 @@ def parse(s):
                 mode = COLOR
             elif re.match(SLASH, c):
                 tmp += c
-            elif re.match(MODIFIER, c):
-                tokens.append(tmp + c)
-                tmp = ''
-                mode = START
+                mode = SLASH
             else:
-                raise InvalidManaCostException('Color must be followed by {color}, {slash} or {modifier}, `{c}` found.'.format(color=COLOR, slash=SLASH, modifier=MODIFIER, c=c))
+                raise InvalidManaCostException('Color must be followed by {color} or {slash}, `{c}` found.'.format(color=COLOR, slash=SLASH, c=c))
         elif mode == SLASH:
-            if re.match(COLOR, c):
+            if re.match(COLOR, c) or re.match(MODIFIER, c):
                 tokens.append(tmp + c)
                 tmp = ''
                 mode = START
             else:
-                raise InvalidManaCostException('Slash must be followed by {color}, `{c}` found.'.format(color=COLOR, c=c))
+                raise InvalidManaCostException('Slash must be followed by {color} or {modifier}, `{c}` found.'.format(color=COLOR, modifier=modifier, c=c))
     if tmp:
         tokens.append(tmp)
     return tokens
@@ -82,14 +79,14 @@ def colors(symbols):
         elif colored(symbol):
             colors['required'].add(symbol)
         else:
-            raise InvalidManaCostException('Unrecognized symbol type: `{symbol}`'.format(symbol=symbol))
+            raise InvalidManaCostException('Unrecognized symbol type: `{symbol}` in `{symbols}`'.format(symbol=symbol, symbols=symbols))
     return colors
 
 def generic(symbol):
     return re.match('^({digit}*{x}*)$'.format(digit=DIGIT, x=X), symbol)
 
 def phyrexian(symbol):
-    return re.match('^{color}{modifier}$'.format(color=COLOR, modifier=MODIFIER), symbol)
+    return re.match('^{color}/{modifier}$'.format(color=COLOR, modifier=MODIFIER), symbol)
 
 def hybrid(symbol):
     return re.match('^{color}/{color}$'.format(color=COLOR), symbol)

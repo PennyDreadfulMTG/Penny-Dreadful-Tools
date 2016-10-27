@@ -39,4 +39,4 @@ def add_deck():
     return add_form()
 
 def init():
-    APP.run(debug=True)
+    APP.run(host='0.0.0.0', debug=True)

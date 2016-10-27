@@ -1,25 +1,24 @@
 from pd_exception import InvalidDataException
-from decksite.database import get_db
+from decksite.database import escape, get_db
 
 def latest_decks():
-    sql = """
-        SELECT d.id, IFNULL(IFNULL(p.name, p.mtgo_username), p.tappedout_username) AS person, d.name
-        FROM deck AS d
-        INNER JOIN person AS p ON d.person_id = p.id
-        ORDER BY updated_date DESC
-        LIMIT 20
-    """
-    return get_db().execute(sql)
+    return load_decks(limit=20)
 
 def load_deck(deck_id):
+    return load_decks('d.id = {deck_id}'.format(deck_id=escape(deck_id)))[0]
+
+def load_decks(where='1 = 1', order_by='updated_date DESC', limit=None):
+    limit_escaped = 'LIMIT {limit}'.format(limit=escape(limit)) if limit else ''
     sql = """
         SELECT d.id, IFNULL(IFNULL(p.name, p.mtgo_username), p.tappedout_username) AS person, d.name,
             d.created_date, d.updated_date
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id
-        WHERE d.id = ?
-    """
-    return get_db().execute(sql, [deck_id])[0]
+        WHERE {where}
+        ORDER BY {order_by}
+        {limit}
+    """.format(where=escape(where), order_by=escape(order_by), limit=limit_escaped)
+    return [Deck(d) for d in get_db().execute(sql)]
 
 # Expects:
 #

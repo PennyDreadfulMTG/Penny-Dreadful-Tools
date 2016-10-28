@@ -1,5 +1,11 @@
 #!/bin/bash
+APP=$1
+if [ $# -lt "1" ]
+then
+    APP="discordbot"
+fi
+echo $APP
 cd `dirname $0`
 git pull
 pip install -U --user -r requirements.txt
-python3 run.py discordbot
+python3 run.py $APP

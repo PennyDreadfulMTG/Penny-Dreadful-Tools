@@ -13,18 +13,18 @@ class Database:
             self.connection.loadextension(configuration.get('spellfix'))
             self.connection.createscalarfunction('unaccent', card.unaccent, 1)
             self.cursor = self.connection.cursor()
-        except apsw.SQLError as e:
+        except apsw.Error as e:
             raise DatabaseException('Failed to initialized database in `{location}`'.format(location=location)) from e
 
     def close(self):
-        pass # BAKERT implement this if decksite needs it.
+        self.connection.close()
 
     def execute(self, sql, args=None):
         if args is None:
             args = []
         try:
             return self.cursor.execute(sql, args).fetchall()
-        except apsw.SQLError as e:
+        except apsw.Error as e:
             raise DatabaseException('Failed to execute `{sql}` because of `{e}`'.format(sql=sql, e=e))from e
 
     def value(self, sql, args=None, default=None, fail_on_missing=False):

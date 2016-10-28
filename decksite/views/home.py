@@ -14,7 +14,7 @@ class Home(View):
             elif d.finish == 5:
                 d.top8 = '⑧'
             else:
-                top8 = ''
+                d.top8 = ''
 
     def decks(self):
         return self._decks

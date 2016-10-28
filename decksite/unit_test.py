@@ -1,4 +1,5 @@
-# from decksite import main, tappedout
+# from decksite import main
+# from decksite.scrapers import tappedout
 
 # This test is broken:  RuntimeError: Application was not able to create a URL adapter for request independent URL generation. You might be able to fix this by setting the SERVER_NAME config variable.
 # def test_hub():

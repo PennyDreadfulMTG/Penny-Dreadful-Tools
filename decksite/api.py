@@ -1,9 +1,9 @@
 import json
 
-from decksite import tappedout
-from decksite.main import APP
 from magic import configuration
 
+from decksite.main import APP
+from decksite.scrapers import tappedout
 
 def auth():
     if not tappedout.is_authorised():

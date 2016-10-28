@@ -37,7 +37,7 @@ def add_deck():
 
 @APP.route('/querytappedout')
 def deckcycle_tappedout():
-    from decksite import tappedout
+    from decksite.scrapers import tappedout
     if not tappedout.is_authorised():
         tappedout.login()
     tappedout.fetch_decks('penny-dreadful')

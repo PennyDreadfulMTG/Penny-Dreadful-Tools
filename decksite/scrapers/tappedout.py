@@ -5,8 +5,7 @@ from magic import configuration, fetcher, fetcher_internal
 from decksite import translation
 from decksite.data import deck, Deck
 from decksite.database import get_db
-
-import parser
+from decksite.scrapers import decklist
 
 def fetch_decks(hub: str):
     deckcycle = fetcher.fetch_json("http://tappedout.net/api/deck/latest/{0}/".format(hub))

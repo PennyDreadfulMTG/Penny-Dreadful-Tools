@@ -25,5 +25,5 @@ def get_or_insert_competition_entry(deck_id, competition_id, wins, losses, finis
     entry_id = database.Database().value(sql, [deck_id, competition_id])
     if entry_id:
         return entry_id
-    sql = 'INSERT INTO competition_entry (deck_id, competition_id, wins, losses, finish) VALUES (?, ?, ?, ?, ?)';
+    sql = 'INSERT INTO competition_entry (deck_id, competition_id, wins, losses, finish) VALUES (?, ?, ?, ?, ?)'
     return database.Database().insert(sql, [deck_id, competition_id, wins, losses, finish])

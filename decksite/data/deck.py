@@ -95,7 +95,6 @@ def add_deck(params):
     sql = "INSERT INTO deck (person_id, source_id, url, identifier, name, created_date, updated_date, archetype, resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url) VALUES (?, ?, ?, ?, ?, datetime('now', 'unixepoch'), datetime('now', 'unixepoch'), ?, ?, ?, ?, ?, ?)"
     values = [person_id, source_id, params['url'], params['identifier'], params['name'], params.get('archetype'), params.get('resource_uri'), params.get('featured_card'), params.get('score'), params.get('thumbnail_url'), params.get('small_thumbnail_url')]
     deck_id = Database().insert(sql, values)
-    all_card_names = [c.name for c in oracle.load_cards()]
     for name, n in params['cards']['maindeck'].items():
         insert_deck_card(deck_id, name, n, False)
     for name, n in params['cards']['sideboard'].items():

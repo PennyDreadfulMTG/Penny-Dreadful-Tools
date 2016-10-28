@@ -80,7 +80,7 @@ Want to contribute? Send a Pull Request."""
                 number = int(args.strip())
             except ValueError:
                 pass
-        cards = [cards_from_query(name)[0] for name in random.sample(bot.legal_cards, number)]
+        cards = [oracle.cards_from_query(name)[0] for name in random.sample(bot.legal_cards, number)]
         await bot.post_cards(cards, channel)
 
     async def update(self, bot, channel):
@@ -134,7 +134,7 @@ Want to contribute? Send a Pull Request."""
         rhino_name = "Siege Rhino"
         if random.random() < 0.1:
             rhino_name = "Abundant Maw"
-        rhinos.extend(cards_from_query(rhino_name))
+        rhinos.extend(oracle.cards_from_query(rhino_name))
         def find_rhino(query):
             cards = complex_search('f:pd {0}'.format(query))
             if len(cards) == 0:
@@ -286,56 +286,10 @@ def parse_queries(content: str) -> List[str]:
 def cards_from_queries(queries):
     all_cards = []
     for query in queries:
-        cards = cards_from_query(query)
+        cards = oracle.cards_from_query(query)
         if len(cards) > 0:
             all_cards.extend(cards)
     return all_cards
-
-def cards_from_query(query):
-    # Skip searching if the request is too short.
-    if len(query) <= 2:
-        return []
-
-    query = card.canonicalize(query)
-
-    # If we searched for an alias, change query so we can find the card in the results.
-    for alias, name in fetcher.card_aliases():
-        if query == card.canonicalize(alias):
-            query = card.canonicalize(name)
-
-    cards = oracle.search(query)
-    cards = [c for c in cards if c.layout != 'token' and c.type != 'Vanguard']
-
-    # First look for an exact match.
-    results = []
-    for c in cards:
-        names = [card.canonicalize(name) for name in c.names]
-        if query in names:
-            results.append(c)
-    if len(results) > 0:
-        return results
-
-
-    # If not found, use cards that start with the query and a punctuation char.
-    for c in cards:
-        names = [card.canonicalize(name) for name in c.names]
-        for name in names:
-            if name.startswith('{query} '.format(query=query)) or name.startswith('{query},'.format(query=query)):
-                results.append(c)
-    if len(results) > 0:
-        return results
-
-    # If not found, use cards that start with the query.
-    for c in cards:
-        names = [card.canonicalize(name) for name in c.names]
-        for name in names:
-            if name.startswith(query):
-                results.append(c)
-    if len(results) > 0:
-        return results
-
-    # If we didn't find any of those then use all search results.
-    return cards
 
 def legal_emoji(c, legal_cards, verbose=False):
     if c.name in legal_cards:
@@ -407,7 +361,7 @@ def build_help():
     return msg
 
 async def single_card_text(bot, channel, args, author, f):
-    cards = list(cards_from_query(args))
+    cards = list(oracle.cards_from_query(args))
     if len(cards) > 1:
         await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
     elif len(cards) == 1:

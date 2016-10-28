@@ -1,6 +1,8 @@
 import datetime
 import re
 
+from pd_exception import InvalidDataException
+
 from magic import card, database, fetcher, mana
 
 CARD_IDS = {}
@@ -16,10 +18,9 @@ def initialize():
         print('Database update required')
         update_database(str(current_version))
 
-def search(query):
+# 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold default.
+def search(query, fuzzy_threshold=260):
     query = card.canonicalize(query)
-    # 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold here.
-    fuzzy_threshold = 260
     sql = """
         {base_select}
         HAVING LOWER({name_select}) IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
@@ -32,11 +33,27 @@ def search(query):
     rs = DATABASE.execute(sql, [fuzzy_query, like_query, fuzzy_query])
     return [card.Card(r) for r in rs]
 
-def load_cards(names):
+def valid_name(name):
+    if name in CARDS_BY_NAME:
+        return name
+    else:
+        try:
+            cards = cards_from_query(name, 20)
+            if len(cards) > 1:
+                raise InvalidDataException('Found more than one card looking for {name}'.format(name=name))
+            return cards[0].name
+        except IndexError:
+            raise InvalidDataException('Did not find any cards looking for {name}'.format(name=name))
+
+def load_cards(names=None):
+    if names:
+        names_clause = 'HAVING LOWER({name_select}) IN ({names})'.format(name_select=card.name_select().format(table='u'), names=', '.join(database.escape(name).lower() for name in names))
+    else:
+        names_clause = ''
     sql = """
         {base_select}
-        HAVING LOWER({name_select}) IN ({names})
-    """.format(base_select=base_select(), name_select=card.name_select().format(table='u'), names=', '.join(database.escape(name).lower() for name in names))
+        {names_clause}
+    """.format(base_select=base_select(), names_clause=names_clause)
     rs = DATABASE.execute(sql)
     return [card.Card(r) for r in rs]
 
@@ -279,4 +296,51 @@ def deck_sort(c):
     s += c.name
     return s
 
+def cards_from_query(query, fuzziness_threshold=260):
+    # Skip searching if the request is too short.
+    if len(query) <= 2:
+        return []
+
+    query = card.canonicalize(query)
+
+    # If we searched for an alias, change query so we can find the card in the results.
+    for alias, name in fetcher.card_aliases():
+        if query == card.canonicalize(alias):
+            query = card.canonicalize(name)
+
+    cards = search(query, fuzziness_threshold)
+    cards = [c for c in cards if c.layout != 'token' and c.type != 'Vanguard']
+
+    # First look for an exact match.
+    results = []
+    for c in cards:
+        names = [card.canonicalize(name) for name in c.names]
+        if query in names:
+            results.append(c)
+    if len(results) > 0:
+        return results
+
+
+    # If not found, use cards that start with the query and a punctuation char.
+    for c in cards:
+        names = [card.canonicalize(name) for name in c.names]
+        for name in names:
+            if name.startswith('{query} '.format(query=query)) or name.startswith('{query},'.format(query=query)):
+                results.append(c)
+    if len(results) > 0:
+        return results
+
+    # If not found, use cards that start with the query.
+    for c in cards:
+        names = [card.canonicalize(name) for name in c.names]
+        for name in names:
+            if name.startswith(query):
+                results.append(c)
+    if len(results) > 0:
+        return results
+
+    # If we didn't find any of those then use all search results.
+    return cards
+
 initialize()
+CARDS_BY_NAME = {c.name: c for c in load_cards()}

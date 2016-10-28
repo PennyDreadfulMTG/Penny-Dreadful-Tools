@@ -1,3 +1,4 @@
+import importlib
 import sys
 
 def run():
@@ -18,5 +19,11 @@ def run():
     elif "srv_price" in sys.argv:
         from price_grabber import srv_prices
         srv_prices.init()
+    elif "scraper" in sys.argv:
+        name = sys.argv.pop()
+        m = importlib.import_module('decksite.scrapers.{name}'.format(name=name))
+        m.scrape()
+    else:
+        print("You didn't tell me what to run or I don't recognize that name")
 
 run()

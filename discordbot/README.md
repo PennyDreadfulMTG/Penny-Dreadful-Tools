@@ -2,10 +2,11 @@
 # Penny-Dreadful-Discord-Bot
 Displays info about quoted cards in a discord channel
 
-[![Build Status](http://ci.katelyngigante.com/buildStatus/icon?job=Penny Dreadful/Penny-Dreadful-Discord-Bot/master)](http://ci.katelyngigante.com/job/Penny%20Dreadful/job/Penny-Dreadful-Discord-Bot/job/master/)
+[![Build Status](http://ci.katelyngigante.com/buildStatus/icon?job=Penny Dreadful/Penny-Dreadful-Tools/master)](http://ci.katelyngigante.com/job/Penny%20Dreadful/job/Penny-Dreadful-Tools/job/master/)
 
 #Usage
 Basic bot usage: Include [cardname] in your regular messages.
+
 The bot will search for any quoted cards, and respond with the card details.
 
 #Commands
@@ -26,6 +27,7 @@ The bot will search for any quoted cards, and respond with the card details.
 `!rotation` Give the date of the next Penny Dreadful rotation.
 `!search {query}` Search for cards, using a magidex style query.
 `!status` Gives the status of MTGO, UP or DOWN.
+
 
 #Installation
 To add this bot to your servers use this <a href='https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=0'>link</a>

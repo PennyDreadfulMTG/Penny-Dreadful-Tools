@@ -52,6 +52,12 @@ def test_colors():
     assert mana.colors(['X']) == {'required': set(), 'also': set()}
     assert mana.colors(['B/R']) == {'required': set(), 'also': {'B', 'R'}}
 
+def test_has_x():
+    assert mana.has_x('{9}{X}')
+    assert not mana.has_x('{1}{W}{W}')
+    assert mana.has_x('{X}{Y}{R}')
+    assert not mana.has_x('{C}')
+
 def do_test(s, expected):
     symbols = mana.parse(s)
     assert symbols == expected or print('\nInput: {s}\nExpected: {expected}\n  Actual: {actual}'.format(s=s, expected=expected, actual=symbols))

@@ -1,7 +1,7 @@
 import copy
 import unicodedata
 
-from bunch import Bunch
+from munch import Munch
 
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
 
@@ -118,7 +118,7 @@ def unaccent(s):
 def canonicalize(name):
     return unaccent(name.strip().lower())
 
-class Card(Bunch):
+class Card(Munch):
     def __init__(self, params):
         super().__init__()
         for k in params.keys():
@@ -130,7 +130,16 @@ class Card(Bunch):
         if not self.names:
             setattr(self, 'names', [self.name])
 
-class Printing(Bunch):
+    def is_creature(self):
+        return 'Creature' in self.type
+
+    def is_land(self):
+        return 'Land' in self.type
+
+    def is_spell(self):
+        return not self.is_creature() and not self.is_land()
+
+class Printing(Munch):
     def __init__(self, params):
         super().__init__()
         for k in params.keys():

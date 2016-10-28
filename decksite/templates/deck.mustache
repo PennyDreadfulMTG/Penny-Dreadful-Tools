@@ -1,24 +1,9 @@
 <section>
-<h2>{{deck.name}} by {{deck.person}} {{#deck.colors}}{{.}}{{/deck.colors}}</h2>
-
-<section>
-<h3>Maindeck</h3>
-  <ul class="decklist">
-    {{#deck.maindeck}}
-      <li>{{n}} {{name}}</li>
-    {{/deck.maindeck}}
-  </ul>
+    <h2>{{name}} by {{person}} {{#colors}}{{.}}{{/colors}}</h2>
+    {{#sections}}
+        {{> section}}
+    {{/sections}}
 </section>
 
-<section>
-<h3>Sideboard</h3>
-  <ul class="decklist">
-    {{#deck.sideboard}}
-      <li>{{n}} {{name}}</li>
-    {{/deck.sideboard}}
-  </ul>
-</section>
-</section>
-<p>This deck is {{^deck.pd_legal}}<b>not</b> {{/deck.pd_legal}}currently Penny Dreadful legal.</p>
-
-<p><a href="{{deck.source_url}}">{{deck.source_name}}</a></p>
+<p>This deck is {{^pd_legal}}<b>not</b> {{/pd_legal}}currently Penny Dreadful legal.</p>
+<p><a href="{{source_url}}">{{source_name}}</a></p>

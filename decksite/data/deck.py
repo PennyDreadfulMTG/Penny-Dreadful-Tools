@@ -1,4 +1,4 @@
-from bunch import Bunch
+from munch import Munch
 from flask import url_for
 
 from magic import mana, oracle
@@ -44,6 +44,11 @@ def load_cards(decks):
     for row in rs:
         location = 'sideboard' if row['sideboard'] else 'maindeck'
         ds[row['deck_id']][location].append({'n': row['n'], 'name': row['card'], 'card': cards[row['card']]})
+    for d in decks:
+        print([card['card'].name for card in d['maindeck']])
+        d['maindeck'].sort(key=lambda x: oracle.deck_sort(x['card']))
+        print([card['card'].name for card in d['maindeck']])
+        d['sideboard'].sort(key=lambda x: oracle.deck_sort(x['card']))
 
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks
 # we will claim your deck is neither W nor G which is not true. But this should cover most cases.
@@ -120,7 +125,7 @@ def get_source_id(source):
         raise InvalidDataException('Unkown source: `{source}`'.format(source=source))
     return source_id
 
-class Deck(Bunch):
+class Deck(Munch):
     def __init__(self, params):
         super().__init__()
         for k in params.keys():

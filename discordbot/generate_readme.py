@@ -34,8 +34,8 @@ def generate_readme():
     readme += """
 #Commands
 """
-    readme += command.build_help()
-    readme += '\n\n'
+    readme += command.build_help().replace('\n', '\n\n')
+    readme += '\n'
     readme += FOOTER
 
     fh = open(os.path.join("discordbot", "README.md"))

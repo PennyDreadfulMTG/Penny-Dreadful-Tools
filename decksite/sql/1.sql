@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS deck (
     name TEXT NOT NULL,
     created_date INTEGER NOT NULL,
     updated_date INTEGER NOT NULL,
+    competition_id INTEGER,
     url TEXT,
     archetype TEXT,
     resource_uri TEXT,
@@ -34,8 +35,12 @@ CREATE TABLE IF NOT EXISTS deck (
     score INT,
     thumbnail_url TEXT,
     small_thumbnail_url TEXT,
+    wins INTEGER NOT NULL,
+    losses INTEGER NOT NULL,
+    finish INTEGER,
     FOREIGN KEY(person_id) REFERENCES person(id),
     FOREIGN KEY(source_id) REFERENCES source(id),
+    FOREIGN KEY(competition_id) REFERENCES competition(id),
     CONSTRAINT deck_url_identifier UNIQUE (url, identifier)
 );
 
@@ -66,16 +71,4 @@ CREATE TABLE IF NOT EXISTS competition (
     name TEXT NOT NULL,
     competition_type_id INTEGER NOT NULL,
     FOREIGN KEY(competition_type_id) REFERENCES competition_type(id)
-);
-
--- One person's entry into a specific competition.
-CREATE TABLE IF NOT EXISTS competition_entry (
-    id INTEGER PRIMARY KEY,
-    deck_id INTEGER NOT NULL,
-    competition_id INTEGER NOT NULL,
-    wins INTEGER NOT NULL,
-    losses INTEGER NOT NULL,
-    finish INTEGER,
-    FOREIGN KEY(deck_id) REFERENCES deck(id),
-    FOREIGN KEY(competition_id) REFERENCES competition(id)
 );

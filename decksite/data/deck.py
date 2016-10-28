@@ -92,8 +92,8 @@ def add_deck(params):
     if deck_id:
         return deck_id
     source_id = get_source_id(params['source'])
-    sql = "INSERT INTO deck (person_id, source_id, url, identifier, name, created_date, updated_date, archetype, resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url) VALUES (?, ?, ?, ?, ?, datetime('now', 'unixepoch'), datetime('now', 'unixepoch'), ?, ?, ?, ?, ?, ?)"
-    values = [person_id, source_id, params['url'], params['identifier'], params['name'], params.get('archetype'), params.get('resource_uri'), params.get('featured_card'), params.get('score'), params.get('thumbnail_url'), params.get('small_thumbnail_url')]
+    sql = "INSERT INTO deck (person_id, source_id, url, identifier, name, created_date, updated_date, competition_id, archetype, resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url, wins, losses, finish) VALUES (?, ?, ?, ?, ?, datetime('now', 'unixepoch'), datetime('now', 'unixepoch'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    values = [person_id, source_id, params['url'], params['identifier'], params['name'], params.get('competition_id'), params.get('archetype'), params.get('resource_uri'), params.get('featured_card'), params.get('score'), params.get('thumbnail_url'), params.get('small_thumbnail_url'), params.get('wins'), params.get('losses'), params.get('finish')]
     deck_id = Database().insert(sql, values)
     for name, n in params['cards']['maindeck'].items():
         insert_deck_card(deck_id, name, n, False)

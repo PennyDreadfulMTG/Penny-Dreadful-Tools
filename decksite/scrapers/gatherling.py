@@ -38,10 +38,10 @@ def tournament(url, name):
         tournament_deck(cells, competition_id)
 
 def tournament_deck(cells, competition_id):
-    d = {'source': 'Gatherling'}
+    d = {'source': 'Gatherling', 'competition_id': competition_id}
     player = cells[2]
     d['mtgo_username'] = player.a.contents[0]
-    wins, losses = cells[3].string.split('-')
+    d['wins'], d['losses'] = cells[3].string.split('-')
     link = cells[4].a
     d['url'] = link['href']
     d['name'] = link.string
@@ -52,8 +52,7 @@ def tournament_deck(cells, competition_id):
     gatherling_id = urllib.parse.parse_qs(urllib.parse.urlparse(d['url']).query)['id'][0]
     d['identifier'] = gatherling_id
     d['cards'] = decklist.parse(fetcher.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
-    deck_id = deck.add_deck(d)
-    competition.get_or_insert_competition_entry(deck_id, competition_id, wins, losses, None)
+    deck.add_deck(d)
 
 def gatherling_url(href):
     if href.startswith('http'):

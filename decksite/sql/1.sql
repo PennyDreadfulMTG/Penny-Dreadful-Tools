@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS deck (
     created_date INTEGER NOT NULL,
     updated_date INTEGER NOT NULL,
     url TEXT,
+    archetype TEXT,
     resource_uri TEXT,
     featured_card TEXT,
     score INT,

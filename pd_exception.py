@@ -9,3 +9,6 @@ class ParseException(PDException):
 
 class InvalidDataException(PDException):
     pass
+
+class DatabaseException(PDException):
+    pass

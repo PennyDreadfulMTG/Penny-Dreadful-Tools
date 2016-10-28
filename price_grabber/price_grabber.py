@@ -4,9 +4,10 @@ import sqlite3
 import time
 import urllib
 
-from price_grabber import price
+from magic import card, database, fetcher, oracle
+from shared import configuration
 
-from magic import card, configuration, database, fetcher, oracle
+from price_grabber import price
 
 DATABASE = sqlite3.connect(configuration.get('pricesdb'))
 CARDS = {}

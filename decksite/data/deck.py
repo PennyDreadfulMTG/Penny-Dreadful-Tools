@@ -3,14 +3,15 @@ from flask import url_for
 
 from magic import mana, oracle
 from pd_exception import InvalidDataException
+from shared.database import sqlescape
 
-from decksite.database import Database, escape
+from decksite.database import db
 
 def latest_decks():
     return load_decks(limit='LIMIT 100')
 
 def load_deck(deck_id):
-    return load_decks('d.id = {deck_id}'.format(deck_id=escape(deck_id)))[0]
+    return load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id)))[0]
 
 def load_decks(where='1 = 1', order_by='updated_date DESC', limit=''):
     sql = """
@@ -22,7 +23,7 @@ def load_decks(where='1 = 1', order_by='updated_date DESC', limit=''):
         ORDER BY {order_by}
         {limit}
     """.format(where=where, order_by=order_by, limit=limit)
-    decks = [Deck(d) for d in Database().execute(sql)]
+    decks = [Deck(d) for d in db().execute(sql)]
     load_cards(decks)
     for d in decks:
         set_colors(d)
@@ -34,7 +35,7 @@ def load_cards(decks):
         SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN (?)
     """
     deck_ids = ', '.join(str(deck.id) for deck in decks)
-    rs = Database().execute(sql, [deck_ids])
+    rs = db().execute(sql, [deck_ids])
     names = {row['card'] for row in rs}
     cards = {card.name: card for card in oracle.load_cards(names)}
     ds = {deck.id: deck for deck in decks}
@@ -115,7 +116,7 @@ def add_deck(params):
         datetime('now', 'unixepoch'), datetime('now', 'unixepoch'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
     )"""
     values = [person_id, source_id, params['url'], params['identifier'], params['name'], params.get('competition_id'), archetype_id, params.get('resource_uri'), params.get('featured_card'), params.get('score'), params.get('thumbnail_url'), params.get('small_thumbnail_url'), params.get('wins'), params.get('losses'), params.get('finish')]
-    deck_id = Database().insert(sql, values)
+    deck_id = db().insert(sql, values)
     for name, n in params['cards']['maindeck'].items():
         insert_deck_card(deck_id, name, n, False)
     for name, n in params['cards']['sideboard'].items():
@@ -124,31 +125,31 @@ def add_deck(params):
 
 def get_deck_id(url, identifier):
     sql = 'SELECT id FROM deck WHERE url = ? AND identifier = ?'
-    return Database().value(sql, [url, identifier])
+    return db().value(sql, [url, identifier])
 
 def insert_deck_card(deck_id, name, n, in_sideboard):
     card = oracle.valid_name(name)
     sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (?, ?, ?, ?)'
-    return Database().execute(sql, [deck_id, card, n, in_sideboard])
+    return db().execute(sql, [deck_id, card, n, in_sideboard])
 
 def get_or_insert_person_id(mtgo_username, tappedout_username):
     sql = 'SELECT id FROM person WHERE mtgo_username = ? OR tappedout_username = ?'
-    person_id = Database().value(sql, [mtgo_username, tappedout_username])
+    person_id = db().value(sql, [mtgo_username, tappedout_username])
     if person_id:
         return person_id
     sql = 'INSERT INTO person (mtgo_username, tappedout_username) VALUES (?, ?)'
-    return Database().insert(sql, [mtgo_username, tappedout_username])
+    return db().insert(sql, [mtgo_username, tappedout_username])
 
 def get_source_id(source):
     sql = 'SELECT id FROM source WHERE name = ?'
-    source_id = Database().value(sql, [source])
+    source_id = db().value(sql, [source])
     if not source_id:
         raise InvalidDataException('Unkown source: `{source}`'.format(source=source))
     return source_id
 
 def get_archetype_id(archetype):
     sql = 'SELECT id FROM archetype WHERE name = ?'
-    return Database().value(sql, [archetype])
+    return db().value(sql, [archetype])
 
 class Deck(Munch):
     def __init__(self, params):

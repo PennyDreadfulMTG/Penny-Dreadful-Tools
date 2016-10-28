@@ -92,8 +92,29 @@ def add_deck(params):
     if deck_id:
         return deck_id
     source_id = get_source_id(params['source'])
-    sql = "INSERT INTO deck (person_id, source_id, url, identifier, name, created_date, updated_date, archetype, resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url) VALUES (?, ?, ?, ?, ?, datetime('now', 'unixepoch'), datetime('now', 'unixepoch'), ?, ?, ?, ?, ?, ?)"
-    values = [person_id, source_id, params['url'], params['identifier'], params['name'], params.get('archetype'), params.get('resource_uri'), params.get('featured_card'), params.get('score'), params.get('thumbnail_url'), params.get('small_thumbnail_url')]
+    archetype_id = get_archetype_id(params['archetype'])
+    sql = """INSERT INTO deck (
+        created_date,
+        updated_date,
+        person_id,
+        source_id,
+        url,
+        identifier,
+        name,
+        competition_id,
+        archetype_id,
+        resource_uri,
+        featured_card,
+        score,
+        thumbnail_url,
+        small_thumbnail_url,
+        wins,
+        losses,
+        finish
+    ) VALUES (
+        datetime('now', 'unixepoch'), datetime('now', 'unixepoch'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+    )"""
+    values = [person_id, source_id, params['url'], params['identifier'], params['name'], params.get('competition_id'), archetype_id, params.get('resource_uri'), params.get('featured_card'), params.get('score'), params.get('thumbnail_url'), params.get('small_thumbnail_url'), params.get('wins'), params.get('losses'), params.get('finish')]
     deck_id = Database().insert(sql, values)
     for name, n in params['cards']['maindeck'].items():
         insert_deck_card(deck_id, name, n, False)
@@ -124,6 +145,10 @@ def get_source_id(source):
     if not source_id:
         raise InvalidDataException('Unkown source: `{source}`'.format(source=source))
     return source_id
+
+def get_archetype_id(archetype):
+    sql = 'SELECT id FROM archetype WHERE name = ?'
+    return Database().value(sql, [archetype])
 
 class Deck(Munch):
     def __init__(self, params):

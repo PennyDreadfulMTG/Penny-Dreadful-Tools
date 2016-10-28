@@ -7,7 +7,7 @@ from pd_exception import InvalidDataException
 from decksite.database import escape, get_db
 
 def latest_decks():
-    return load_decks(limit='LIMIT 20')
+    return load_decks(limit='LIMIT 100')
 
 def load_deck(deck_id):
     return load_decks('d.id = {deck_id}'.format(deck_id=escape(deck_id)))[0]

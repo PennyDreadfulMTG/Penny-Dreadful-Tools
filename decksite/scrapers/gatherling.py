@@ -34,26 +34,26 @@ def tournament(url, name):
     # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.
     rows = re.findall('<tr style=">(.*?)</tr>', s, re.MULTILINE | re.DOTALL)
     for row in rows:
-        d = {'source': 'Gatherling'}
         cells = BeautifulSoup(row, 'html.parser').find_all('td')
-        top_8_position = False
-        player = cells[2]
-        if player.find('img'):
-            top_8_position = re.sub(r'styles/Chandra/images/(.*?)\.png', '\1', player.img['src'])
-        d['mtgo_username'] = player.a.contents[0]
-        wins, losses = cells[3].string.split('-')
-        link = cells[4].a
-        d['url'] = link['href']
-        d['name'] = link.string
-        if cells[5].find('a'):
-            d['archetype'] = cells[5].a.string
-        else:
-            d['archetype'] = cells[5].string
-        gatherling_id = urllib.parse.parse_qs(urllib.parse.urlparse(d['url']).query)['id'][0]
-        d['identifier'] = gatherling_id
-        d['cards'] = decklist.parse(fetcher.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
-        deck_id = deck.add_deck(d)
-        competition.get_or_insert_competition_entry(deck_id, competition_id, wins, losses, None)
+        tournament_deck(cells, competition_id)
+
+def tournament_deck(cells, competition_id):
+    d = {'source': 'Gatherling'}
+    player = cells[2]
+    d['mtgo_username'] = player.a.contents[0]
+    wins, losses = cells[3].string.split('-')
+    link = cells[4].a
+    d['url'] = link['href']
+    d['name'] = link.string
+    if cells[5].find('a'):
+        d['archetype'] = cells[5].a.string
+    else:
+        d['archetype'] = cells[5].string
+    gatherling_id = urllib.parse.parse_qs(urllib.parse.urlparse(d['url']).query)['id'][0]
+    d['identifier'] = gatherling_id
+    d['cards'] = decklist.parse(fetcher.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
+    deck_id = deck.add_deck(d)
+    competition.get_or_insert_competition_entry(deck_id, competition_id, wins, losses, None)
 
 def gatherling_url(href):
     if href.startswith('http'):

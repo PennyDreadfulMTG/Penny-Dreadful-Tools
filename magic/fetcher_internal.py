@@ -52,6 +52,14 @@ def fetch(url, character_encoding=None, resource_id=None):
 def fetch_json(url, character_encoding=None, resource_id=None):
     return json.loads(fetch(url, character_encoding, resource_id))
 
+def post(url, data):
+    print('POSTing to {url} with {data}'.format(url=url, data=data))
+    try:
+        response = SESSION.post(url, data=data)
+        return response.text
+    except requests.exceptions.ConnectionError as e:
+        raise FetchException(e)
+
 def store(url, path):
     print('Storing {url} in {path}'.format(url=url, path=path))
     try:

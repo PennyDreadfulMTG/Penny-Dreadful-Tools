@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS deck (
     created_date INTEGER NOT NULL,
     updated_date INTEGER NOT NULL,
     url TEXT,
+    archetype TEXT,
     resource_uri TEXT,
     featured_card TEXT,
     score INT,
@@ -55,6 +56,8 @@ CREATE TABLE IF NOT EXISTS competition_type (
     name TEXT NOT NULL UNIQUE
 );
 
+INSERT INTO competition_type (name) VALUES ('League'), ('Gatherling');
+
 -- A specific competition. A particular league month or Gatherling tournament.
 CREATE TABLE IF NOT EXISTS competition (
     id INTEGER PRIMARY KEY,
@@ -67,14 +70,12 @@ CREATE TABLE IF NOT EXISTS competition (
 
 -- One person's entry into a specific competition.
 CREATE TABLE IF NOT EXISTS competition_entry (
-    id INTEGER NOT NULL,
+    id INTEGER PRIMARY KEY,
     deck_id INTEGER NOT NULL,
-    person_id INTEGER NOT NULL,
     competition_id INTEGER NOT NULL,
     wins INTEGER NOT NULL,
     losses INTEGER NOT NULL,
     finish INTEGER,
     FOREIGN KEY(deck_id) REFERENCES deck(id),
-    FOREIGN KEY(person_id) REFERENCES person(id),
     FOREIGN KEY(competition_id) REFERENCES competition(id)
 );

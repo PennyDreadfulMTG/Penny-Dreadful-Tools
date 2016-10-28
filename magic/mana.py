@@ -28,7 +28,7 @@ def parse(s):
                 tmp = ''
                 mode = START
             else:
-                raise InvalidManaCostException('Symbol must start with {digit} or {color}, `{c}` found.'.format(digit=DIGIT, color=COLOR, c=c))
+                raise InvalidManaCostException('Symbol must start with {digit} or {color}, `{c}` found in `{s}`.'.format(digit=DIGIT, color=COLOR, c=c, s=s))
         elif mode == DIGIT:
             if re.match(DIGIT, c):
                 tmp += c
@@ -40,7 +40,7 @@ def parse(s):
                 tmp += c
                 mode = SLASH
             else:
-                raise InvalidManaCostException('Digit must be followed by {digit}, {color} or {slash}, `{c}` found.'.format(digit=DIGIT, color=COLOR, slash=SLASH, c=c))
+                raise InvalidManaCostException('Digit must be followed by {digit}, {color} or {slash}, `{c}` found in `{s}`.'.format(digit=DIGIT, color=COLOR, slash=SLASH, c=c, s=s))
         elif mode == COLOR:
             if re.match(COLOR, c):
                 tokens.append(tmp)
@@ -50,14 +50,14 @@ def parse(s):
                 tmp += c
                 mode = SLASH
             else:
-                raise InvalidManaCostException('Color must be followed by {color} or {slash}, `{c}` found.'.format(color=COLOR, slash=SLASH, c=c))
+                raise InvalidManaCostException('Color must be followed by {color} or {slash}, `{c}` found in `{s}`.'.format(color=COLOR, slash=SLASH, c=c, s=s))
         elif mode == SLASH:
             if re.match(COLOR, c) or re.match(MODIFIER, c):
                 tokens.append(tmp + c)
                 tmp = ''
                 mode = START
             else:
-                raise InvalidManaCostException('Slash must be followed by {color} or {modifier}, `{c}` found.'.format(color=COLOR, modifier=MODIFIER, c=c))
+                raise InvalidManaCostException('Slash must be followed by {color} or {modifier}, `{c}` found in `{s}`.'.format(color=COLOR, modifier=MODIFIER, c=c, s=s))
     if tmp:
         tokens.append(tmp)
     return tokens
@@ -83,7 +83,7 @@ def colors(symbols):
     return cs
 
 def generic(symbol):
-    return re.match('^{digit}$'.format(digit=DIGIT), symbol)
+    return re.match('^{digit}+$'.format(digit=DIGIT), symbol)
 
 def variable(symbol):
     return re.match('^{x}$'.format(x=X), symbol)

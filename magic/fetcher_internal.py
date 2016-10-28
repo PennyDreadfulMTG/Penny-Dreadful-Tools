@@ -8,7 +8,7 @@ from email.utils import formatdate
 import requests
 
 from magic import database
-from pd_exception import OperationalException
+from shared.pd_exception import OperationalException
 
 SESSION = requests.Session()
 

@@ -1,8 +1,8 @@
 import apsw
 
-from pd_exception import DatabaseException
-from shared import configuration
 from magic import card
+from shared import configuration
+from shared.pd_exception import DatabaseException
 
 class Database:
     def __init__(self, location):

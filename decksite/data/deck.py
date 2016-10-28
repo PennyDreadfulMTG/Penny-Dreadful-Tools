@@ -2,8 +2,8 @@ from munch import Munch
 from flask import url_for
 
 from magic import mana, oracle
-from pd_exception import InvalidDataException
 from shared.database import sqlescape
+from shared.pd_exception import InvalidDataException
 
 from decksite.database import db
 

@@ -1,6 +1,6 @@
 import re
 
-from pd_exception import InvalidDataException
+from shared.pd_exception import InvalidDataException
 
 def parse(s):
     d = {'maindeck': {}, 'sideboard': {}}

@@ -1,12 +1,12 @@
 import collections
 
-from pd_exception import ParseException
 
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String
 from magic import card, mana, oracle
 from magic.database import db
 from shared.database import sqlescape
+from shared.pd_exception import ParseException
 
 EXPECT_EXPRESSION = 'expect_expression'
 EXPECT_OPERATOR = 'expect_operator'

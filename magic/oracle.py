@@ -1,11 +1,10 @@
 import datetime
 import re
 
-from pd_exception import InvalidDataException
-
 from magic import card, database, fetcher, mana
 from magic.database import db
 from shared.database import sqlescape
+from shared.pd_exception import InvalidDataException
 
 CARD_IDS = {}
 FORMAT_IDS = {}

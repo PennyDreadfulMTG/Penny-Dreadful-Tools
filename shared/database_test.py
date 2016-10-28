@@ -1,9 +1,8 @@
 import os
 
-from pd_exception import DatabaseException
-
 from shared import configuration
 from shared.database import Database
+from shared.pd_exception import DatabaseException
 
 def location():
     return '{scratch_dir}/tmp.db'.format(scratch_dir=configuration.get('scratch_dir'))

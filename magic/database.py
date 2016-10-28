@@ -1,9 +1,9 @@
 import pkg_resources
 
 from magic import card
-from pd_exception import DatabaseException
 from shared import configuration
 from shared.database import Database
+from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
 SCHEMA_VERSION = 62

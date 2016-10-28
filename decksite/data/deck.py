@@ -45,9 +45,7 @@ def load_cards(decks):
         location = 'sideboard' if row['sideboard'] else 'maindeck'
         ds[row['deck_id']][location].append({'n': row['n'], 'name': row['card'], 'card': cards[row['card']]})
     for d in decks:
-        print([card['card'].name for card in d['maindeck']])
         d['maindeck'].sort(key=lambda x: oracle.deck_sort(x['card']))
-        print([card['card'].name for card in d['maindeck']])
         d['sideboard'].sort(key=lambda x: oracle.deck_sort(x['card']))
 
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks

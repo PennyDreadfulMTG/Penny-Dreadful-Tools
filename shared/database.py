@@ -48,7 +48,7 @@ def row_factory(cursor, row):
     columns = [t[0] for t in cursor.getdescription()]
     return dict(zip(columns, row))
 
-def escape(s) -> str:
+def sqlescape(s) -> str:
     if str(s).isdecimal():
         return s
     encodable = s.encode('utf-8', 'strict').decode('utf-8')

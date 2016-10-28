@@ -6,7 +6,7 @@ from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String
 from magic import card, mana, oracle
 from magic.database import db
-from shared.database import escape
+from shared.database import sqlescape
 
 EXPECT_EXPRESSION = 'expect_expression'
 EXPECT_OPERATOR = 'expect_operator'
@@ -162,7 +162,7 @@ def text_where(column, term):
     if column.endswith('name'):
         column = column.replace('name', 'name_ascii')
         q = card.unaccent(q)
-    escaped = escape(q)
+    escaped = sqlescape(q)
     if column == 'text':
         escaped = escaped.replace('~', "' || name || '")
     return '({column} LIKE {q})'.format(column=column, q=escaped)
@@ -177,7 +177,7 @@ def subtable_where(subtable, value, operator=None):
         operator = '=' if not operator else operator
     else:
         column = subtable
-        v = escape('%{v}%'.format(v=v))
+        v = sqlescape('%{v}%'.format(v=v))
         operator = 'LIKE' if not operator else operator
     return '(c.id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {value}))'.format(subtable=subtable, column=column, operator=operator, value=v)
 
@@ -186,7 +186,7 @@ def math_where(column, operator, term):
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(FALSE)'
-    return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=escape(term))
+    return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=sqlescape(term))
 
 def color_where(subtable, operator, term):
     if operator == ':' and subtable == 'color_identity':
@@ -216,7 +216,7 @@ def color_where(subtable, operator, term):
 
 def set_where(name):
     name_fuzzy = '%{name}%'.format(name=name)
-    return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=escape(name_fuzzy), name=escape(name))
+    return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=sqlescape(name_fuzzy), name=sqlescape(name))
 
 def format_where(term):
     if term == 'pd':

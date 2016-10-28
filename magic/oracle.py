@@ -5,7 +5,7 @@ from pd_exception import InvalidDataException
 
 from magic import card, database, fetcher, mana
 from magic.database import db
-from shared.database import escape
+from shared.database import sqlescape
 
 CARD_IDS = {}
 FORMAT_IDS = {}
@@ -48,7 +48,7 @@ def valid_name(name):
 
 def load_cards(names=None):
     if names:
-        names_clause = 'HAVING LOWER({name_select}) IN ({names})'.format(name_select=card.name_select().format(table='u'), names=', '.join(escape(name).lower() for name in names))
+        names_clause = 'HAVING LOWER({name_select}) IN ({names})'.format(name_select=card.name_select().format(table='u'), names=', '.join(sqlescape(name).lower() for name in names))
     else:
         names_clause = ''
     sql = """
@@ -109,7 +109,7 @@ def get_legal_cards(force=False):
         SELECT {format_id}, id, 'Legal'
         FROM ({base_select})
         WHERE name IN ({names})
-    """.format(format_id=format_id, base_select=base_select(), names=', '.join(escape(name) for name in new_list))
+    """.format(format_id=format_id, base_select=base_select(), names=', '.join(sqlescape(name) for name in new_list))
     db().execute(sql)
     # Check we got the right number of legal cards.
     n = db().value('SELECT COUNT(*) FROM card_legality WHERE format_id = ?', [format_id])

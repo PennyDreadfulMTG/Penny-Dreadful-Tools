@@ -3,7 +3,7 @@ from flask import url_for
 
 from magic import mana, oracle
 from pd_exception import InvalidDataException
-from shared.database import escape
+from shared.database import sqlescape
 
 from decksite.database import db
 
@@ -11,7 +11,7 @@ def latest_decks():
     return load_decks(limit='LIMIT 100')
 
 def load_deck(deck_id):
-    return load_decks('d.id = {deck_id}'.format(deck_id=escape(deck_id)))[0]
+    return load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id)))[0]
 
 def load_decks(where='1 = 1', order_by='updated_date DESC', limit=''):
     sql = """

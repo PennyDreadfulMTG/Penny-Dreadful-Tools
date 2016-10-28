@@ -31,11 +31,27 @@ def search(query, fuzzy_threshold=260):
     rs = DATABASE.execute(sql, [fuzzy_query, like_query, fuzzy_query])
     return [card.Card(r) for r in rs]
 
-def load_cards(names):
+def valid_name(name):
+    if name in CARDS_BY_NAME:
+        return name
+    else:
+        try:
+            cards = cards_from_query(name, 20)
+            if len(cards) > 1:
+                raise InvalidDataException('Found more than one card looking for {name}'.format(name=name))
+            return cards[0].name
+        except IndexError:
+            raise InvalidDataException('Did not find any cards looking for {name}'.format(name=name))
+
+def load_cards(names=None):
+    if names:
+        names_clause = 'HAVING LOWER({name_select}) IN ({names})'.format(name_select=card.name_select().format(table='u'), names=', '.join(database.escape(name).lower() for name in names))
+    else:
+        names_clause = ''
     sql = """
         {base_select}
-        HAVING LOWER({name_select}) IN ({names})
-    """.format(base_select=base_select(), name_select=card.name_select().format(table='u'), names=', '.join(database.escape(name).lower() for name in names))
+        {names_clause}
+    """.format(base_select=base_select(), names_clause=names_clause)
     rs = DATABASE.execute(sql)
     return [card.Card(r) for r in rs]
 
@@ -325,3 +341,4 @@ def cards_from_query(query, fuzziness_threshold=260):
     return cards
 
 initialize()
+CARDS_BY_NAME = {c.name: c for c in load_cards()}

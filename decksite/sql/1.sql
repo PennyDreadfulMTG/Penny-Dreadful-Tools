@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS deck (
     updated_date INTEGER NOT NULL,
     competition_id INTEGER,
     url TEXT,
-    archetype TEXT,
+    archetype_id INT,
     resource_uri TEXT,
     featured_card TEXT,
     score INT,
@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS deck (
     FOREIGN KEY(person_id) REFERENCES person(id),
     FOREIGN KEY(source_id) REFERENCES source(id),
     FOREIGN KEY(competition_id) REFERENCES competition(id),
+    FOREIGN KEY(archetype_id) REFERENCES archetype(id),
     CONSTRAINT deck_url_identifier UNIQUE (url, identifier)
 );
 
@@ -73,3 +74,12 @@ CREATE TABLE IF NOT EXISTS competition (
     url TEXT NOT NULL,
     FOREIGN KEY(competition_type_id) REFERENCES competition_type(id)
 );
+
+-- Broad archetypes to slot decks into.
+CREATE TABLE IF NOT EXISTS archetype (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+-- Poppulate archetype
+INSERT INTO archetype (name) VALUES ('Aggro'), ('Combo'), ('Control'), ('Aggro-Combo'), ('Aggro-Control'), ('Combo-Control'), ('Midrange'), ('Ramp'), ('Unclassified');

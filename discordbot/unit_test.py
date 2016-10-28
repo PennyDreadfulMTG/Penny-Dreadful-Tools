@@ -2,7 +2,8 @@ import os
 
 from discordbot import command
 
-from magic import card, configuration, fetcher, oracle, fetcher_internal
+from magic import card, fetcher, oracle, fetcher_internal
+from shared import configuration
 
 # Check that we can fetch card images.
 def test_imagedownload():

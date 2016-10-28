@@ -12,8 +12,9 @@ from typing import List
 
 from discordbot import emoji
 from find import search
-from magic import card, configuration, oracle, fetcher, rotation
+from magic import card, oracle, fetcher, rotation
 from magic.card import Card
+from shared import configuration
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.

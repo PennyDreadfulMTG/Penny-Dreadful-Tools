@@ -1,6 +1,6 @@
 import json
 
-from magic import configuration
+from shared import configuration
 
 from decksite.main import APP
 from decksite.scrapers import tappedout

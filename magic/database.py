@@ -175,4 +175,5 @@ def create_table_def(name, props):
     sql += ')'
     return sql.format(name=name)
 
-DATABASE = Database()
+DATABASE = Database(configuration.get('magic_database'))
+init()

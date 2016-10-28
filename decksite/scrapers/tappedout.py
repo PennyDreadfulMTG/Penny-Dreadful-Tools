@@ -1,6 +1,7 @@
 import re
 
-from magic import configuration, fetcher, fetcher_internal
+from shared import configuration
+from magic import fetcher, fetcher_internal
 
 from decksite import translation
 from decksite.data import deck, Deck

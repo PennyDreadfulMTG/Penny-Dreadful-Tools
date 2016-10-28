@@ -107,9 +107,16 @@ def get_deck_id(url, identifier):
     sql = 'SELECT id FROM deck WHERE url = ? AND identifier = ?'
     return get_db().value(sql, [url, identifier])
 
-def insert_deck_card(deck_id, card, n, in_sideboard):
+def insert_deck_card(deck_id, name, n, in_sideboard):
+    try:
+        cards = oracle.cards_from_query(name, 20)
+        if len(cards) > 1:
+            raise InvalidDataException('Found more than one card looking for {name}'.format(name=name))
+        card = cards[0]
+    except KeyError as e:
+        raise InvalidDataException('Did not find any cards looking for {name}'.format(name=name))
     sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (?, ?, ?, ?)'
-    return get_db().execute(sql, [deck_id, card, n, in_sideboard])
+    return get_db().execute(sql, [deck_id, card.name, n, in_sideboard])
 
 def get_or_insert_person_id(mtgo_username, tappedout_username):
     sql = 'SELECT id FROM person WHERE mtgo_username = ? OR tappedout_username = ?'

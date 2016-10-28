@@ -16,10 +16,9 @@ def initialize():
         print('Database update required')
         update_database(str(current_version))
 
-def search(query):
+# 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold default.
+def search(query, fuzzy_threshold=260):
     query = card.canonicalize(query)
-    # 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold here.
-    fuzzy_threshold = 260
     sql = """
         {base_select}
         HAVING LOWER({name_select}) IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
@@ -278,5 +277,51 @@ def deck_sort(c):
     s += str(c.cmc).zfill(10)
     s += c.name
     return s
+
+def cards_from_query(query, fuzziness_threshold=260):
+    # Skip searching if the request is too short.
+    if len(query) <= 2:
+        return []
+
+    query = card.canonicalize(query)
+
+    # If we searched for an alias, change query so we can find the card in the results.
+    for alias, name in fetcher.card_aliases():
+        if query == card.canonicalize(alias):
+            query = card.canonicalize(name)
+
+    cards = search(query, fuzziness_threshold)
+    cards = [c for c in cards if c.layout != 'token' and c.type != 'Vanguard']
+
+    # First look for an exact match.
+    results = []
+    for c in cards:
+        names = [card.canonicalize(name) for name in c.names]
+        if query in names:
+            results.append(c)
+    if len(results) > 0:
+        return results
+
+
+    # If not found, use cards that start with the query and a punctuation char.
+    for c in cards:
+        names = [card.canonicalize(name) for name in c.names]
+        for name in names:
+            if name.startswith('{query} '.format(query=query)) or name.startswith('{query},'.format(query=query)):
+                results.append(c)
+    if len(results) > 0:
+        return results
+
+    # If not found, use cards that start with the query.
+    for c in cards:
+        names = [card.canonicalize(name) for name in c.names]
+        for name in names:
+            if name.startswith(query):
+                results.append(c)
+    if len(results) > 0:
+        return results
+
+    # If we didn't find any of those then use all search results.
+    return cards
 
 initialize()

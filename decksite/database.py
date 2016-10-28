@@ -8,8 +8,6 @@ def db():
 
 def setup():
     db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER UNIQUE ON CONFLICT REPLACE NOT NULL)')
-    # BAKERT are we support verbose or not? And if so, how?
-    db().verbose = True
     version = db_version()
     for fn in os.listdir('decksite/sql'):
         path = os.path.join('decksite/sql', fn)
@@ -22,7 +20,6 @@ def setup():
                 db().execute(stmt)
             fh.close()
             db().execute("INSERT INTO db_version (version) VALUES (?)", [n])
-    db().verbose = False
 
 def db_version() -> int:
     return db().value('SELECT version FROM db_version ORDER BY version DESC LIMIT 1', [], 0)

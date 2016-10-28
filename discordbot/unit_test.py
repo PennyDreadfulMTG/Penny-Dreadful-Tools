@@ -19,7 +19,7 @@ def test_fallbackimagedownload():
     if command.acceptable_file(filepath):
         os.remove(filepath)
     c = []
-    c.extend(command.cards_from_query('Nalathni Dragon'))
+    c.extend(oracle.cards_from_query('Nalathni Dragon'))
     assert command.download_image(c) is not None
 
 # Check that we can succesfully fail at getting an image
@@ -64,26 +64,26 @@ def test_legality_list():
 def test_legality_emoji():
     legal_cards = oracle.get_legal_cards()
     assert len(legal_cards) > 0
-    legal_card = command.cards_from_query('island')[0]
+    legal_card = oracle.cards_from_query('island')[0]
     assert command.legal_emoji(legal_card, legal_cards) == ':white_check_mark:'
-    illegal_card = command.cards_from_query('black lotus')[0]
+    illegal_card = oracle.cards_from_query('black lotus')[0]
     assert command.legal_emoji(illegal_card, legal_cards) == ':no_entry_sign:'
     assert command.legal_emoji(illegal_card, legal_cards, True) == ':no_entry_sign: (not legal in PD)'
 
 def test_accents():
-    cards = command.cards_from_query('Lim-Dûl the Necromancer')
+    cards = oracle.cards_from_query('Lim-Dûl the Necromancer')
     assert len(cards) == 1
-    cards = command.cards_from_query('Séance')
+    cards = oracle.cards_from_query('Séance')
     assert len(cards) == 1
-    cards = command.cards_from_query('Lim-Dul the Necromancer')
+    cards = oracle.cards_from_query('Lim-Dul the Necromancer')
     assert len(cards) == 1
-    cards = command.cards_from_query('Seance')
+    cards = oracle.cards_from_query('Seance')
     assert len(cards) == 1
 
 def test_aether():
-    #cards = command.cards_from_query('Æther Spellbomb')
+    #cards = oracle.cards_from_query('Æther Spellbomb')
     #assert len(cards) == 1
-    cards = command.cards_from_query('aether Spellbomb')
+    cards = oracle.cards_from_query('aether Spellbomb')
     assert len(cards) == 1
 
 
@@ -95,7 +95,7 @@ def test_fetcher_mod_since():
     assert fetcher_internal.get_cached_text(resource_id) is not None
 
 def test_split_cards():
-    cards = command.cards_from_query('Armed // Dangerous')
+    cards = oracle.cards_from_query('Armed // Dangerous')
     assert len(cards) == 1
 
     assert command.download_image(cards) != None

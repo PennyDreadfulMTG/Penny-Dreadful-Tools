@@ -116,6 +116,10 @@ def unaccent(s):
     return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
 
 def canonicalize(name):
+    if name.find('/') >= 0 and name.find('//') == -1:
+        name = name.replace('/', '//')
+    if name.find('//') >= 0 and name.find(' // ') == -1:
+        name = name.replace('//', ' // ')
     return unaccent(name.strip().lower())
 
 class Card(Munch):

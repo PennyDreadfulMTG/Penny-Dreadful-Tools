@@ -56,6 +56,8 @@ CREATE TABLE IF NOT EXISTS competition_type (
     name TEXT NOT NULL UNIQUE
 );
 
+INSERT INTO competition_type (name) VALUES ('League'), ('Gatherling');
+
 -- A specific competition. A particular league month or Gatherling tournament.
 CREATE TABLE IF NOT EXISTS competition (
     id INTEGER PRIMARY KEY,

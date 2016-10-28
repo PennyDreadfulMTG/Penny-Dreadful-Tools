@@ -1,5 +1,4 @@
 import json
-import os
 
 DEFAULTS = {
     'card_alias_file': './card_aliases.tsv',

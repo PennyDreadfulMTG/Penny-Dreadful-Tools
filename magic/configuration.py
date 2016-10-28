@@ -1,4 +1,5 @@
 import json
+import os
 
 DEFAULTS = {
     'card_alias_file': './card_aliases.tsv',
@@ -18,4 +19,9 @@ def get(key):
         cfg = {}
     if key in cfg:
         return cfg[key]
+    else:
+        # Lock in the default value if we use it.
+        cfg[key] = DEFAULTS[key]
+        fh = open('config.json', 'w')
+        fh.write(json.dumps(cfg, indent=4))
     return DEFAULTS[key]

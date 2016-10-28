@@ -43,7 +43,7 @@ def tournament_deck(cells, competition_id):
     d['mtgo_username'] = player.a.contents[0]
     d['wins'], d['losses'] = cells[3].string.split('-')
     link = cells[4].a
-    d['url'] = link['href']
+    d['url'] = gatherling_url(link['href'])
     d['name'] = link.string
     if cells[5].find('a'):
         d['archetype'] = cells[5].a.string

@@ -29,7 +29,7 @@ def tournament(url, name):
     cell = report.find_all('td')[1]
     date_s = cell.find('br').next.strip()
     dt = datetime.datetime.strptime(date_s, '%d %B %Y')
-    competition_id = competition.get_or_insert_competition(dt, dt, name, 'Gatherling')
+    competition_id = competition.get_or_insert_competition(dt, dt, name, 'Gatherling', url)
 
     # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.
     rows = re.findall('<tr style=">(.*?)</tr>', s, re.MULTILINE | re.DOTALL)

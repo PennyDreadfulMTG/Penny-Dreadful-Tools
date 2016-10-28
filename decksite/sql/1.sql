@@ -70,5 +70,6 @@ CREATE TABLE IF NOT EXISTS competition (
     end_date INTEGER NOT NULL,
     name TEXT NOT NULL,
     competition_type_id INTEGER NOT NULL,
+    url TEXT NOT NULL,
     FOREIGN KEY(competition_type_id) REFERENCES competition_type(id)
 );

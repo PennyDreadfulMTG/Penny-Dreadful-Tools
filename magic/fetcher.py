@@ -4,8 +4,7 @@ import json
 import pkg_resources
 
 from magic import configuration
-from magic.fetcher_internal import (FetchException, fetch, fetch_json, store,
-                                    unzip)
+from magic.fetcher_internal import FetchException, fetch, fetch_json, post, store, unzip
 
 def legal_cards(force=False):
     resource_id = 'legal_cards'

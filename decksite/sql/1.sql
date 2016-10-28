@@ -70,14 +70,12 @@ CREATE TABLE IF NOT EXISTS competition (
 
 -- One person's entry into a specific competition.
 CREATE TABLE IF NOT EXISTS competition_entry (
-    id INTEGER NOT NULL,
+    id INTEGER PRIMARY KEY,
     deck_id INTEGER NOT NULL,
-    person_id INTEGER NOT NULL,
     competition_id INTEGER NOT NULL,
     wins INTEGER NOT NULL,
     losses INTEGER NOT NULL,
     finish INTEGER,
     FOREIGN KEY(deck_id) REFERENCES deck(id),
-    FOREIGN KEY(person_id) REFERENCES person(id),
     FOREIGN KEY(competition_id) REFERENCES competition(id)
 );

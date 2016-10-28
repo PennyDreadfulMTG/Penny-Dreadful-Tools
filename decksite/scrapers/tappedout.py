@@ -6,6 +6,8 @@ from decksite import translation
 from decksite.data import deck, Deck
 from decksite.database import get_db
 
+import parser
+
 def fetch_decks(hub: str):
     deckcycle = fetcher.fetch_json("http://tappedout.net/api/deck/latest/{0}/".format(hub))
     return [Deck(merge_deck(d)) for d in deckcycle]
@@ -28,23 +30,10 @@ def store_deck(blob):
     keys = ['slug', 'name', 'tappedout_username', 'url', 'resource_uri', 'featured_card', 'date_updated', 'score', 'thumbnail_url', 'small_thumbnail_url']
     d = {key: blob.get(key) for key in keys if key in blob.keys()}
     decklist = fetcher.fetch('{base_url}?fmt=txt'.format(base_url=blob['url']))
-    d['cards'] = parse_decklist(decklist)
+    d['cards'] = parser.parse_text_decklist(decklist)
     d['source'] = 'Tapped Out'
     d['identifier'] = d['url']
     return deck.add_deck(d)
-
-def parse_decklist(s):
-    d = {'maindeck': {}, 'sideboard': {}}
-    part = 'maindeck'
-    for line in s.split('\n'):
-        if line.startswith('Sideboard'):
-            part = 'sideboard'
-        elif line == '':
-            pass
-        else:
-            n, card = line.split('\t')
-            d[part][card] = n
-    return d
 
 def insert_inventory(slug, inventory):
     assert inventory is not None

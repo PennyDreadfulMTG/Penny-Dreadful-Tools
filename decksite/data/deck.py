@@ -111,7 +111,7 @@ def insert_deck_card(deck_id, name, n, in_sideboard):
         if len(cards) > 1:
             raise InvalidDataException('Found more than one card looking for {name}'.format(name=name))
         card = cards[0]
-    except KeyError:
+    except IndexError:
         raise InvalidDataException('Did not find any cards looking for {name}'.format(name=name))
     sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (?, ?, ?, ?)'
     return get_db().execute(sql, [deck_id, card.name, n, in_sideboard])

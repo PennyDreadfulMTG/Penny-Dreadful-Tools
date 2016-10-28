@@ -28,8 +28,8 @@ def merge_deck(blob):
 def store_deck(blob):
     keys = ['slug', 'name', 'tappedout_username', 'url', 'resource_uri', 'featured_card', 'date_updated', 'score', 'thumbnail_url', 'small_thumbnail_url']
     d = {key: blob.get(key) for key in keys if key in blob.keys()}
-    decklist = fetcher.fetch('{base_url}?fmt=txt'.format(base_url=blob['url']))
-    d['cards'] = parser.parse_text_decklist(decklist)
+    raw_decklist = fetcher.fetch('{base_url}?fmt=txt'.format(base_url=blob['url']))
+    d['cards'] = decklist.parse(raw_decklist)
     d['source'] = 'Tapped Out'
     d['identifier'] = d['url']
     return deck.add_deck(d)

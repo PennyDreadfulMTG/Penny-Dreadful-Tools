@@ -3,16 +3,9 @@ import os
 from flask import Flask, request, send_from_directory
 
 from decksite.data import deck
-from decksite.database import db
 from decksite.views import AddForm, Deck, Home
 
 APP = Flask(__name__)
-
-@APP.teardown_appcontext
-def close_db(error):
-    # pylint: disable=unused-argument
-    """Closes the database again at the end of the request."""
-    db().close()
 
 @APP.route('/')
 def home():

@@ -16,7 +16,7 @@ def load_deck(deck_id):
 def load_decks(where='1 = 1', order_by='updated_date DESC', limit=''):
     sql = """
         SELECT d.id, IFNULL(IFNULL(p.name, p.mtgo_username), p.tappedout_username) AS person, d.name,
-            d.created_date, d.updated_date
+            d.created_date, d.updated_date, d.wins, d.losses, d.finish
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id
         WHERE {where}

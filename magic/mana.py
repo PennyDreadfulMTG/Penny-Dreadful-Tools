@@ -83,7 +83,7 @@ def colors(symbols):
     return cs
 
 def generic(symbol):
-    return re.match('^{digit}$'.format(digit=DIGIT), symbol)
+    return re.match('^{digit}+$'.format(digit=DIGIT), symbol)
 
 def variable(symbol):
     return re.match('^{x}$'.format(x=X), symbol)

@@ -47,6 +47,10 @@ def fetch(url, character_encoding=None, resource_id=None):
     except urllib.error.HTTPError as e:
         raise FetchException(e)
     except requests.exceptions.ConnectionError as e:
+        if resource_id is not None and get_last_modified(resource_id) is not None:
+            print("Connection error: {}".format(e))
+            print("Used cached value")
+            return get_cached_text(resource_id)
         raise FetchException(e)
 
 def fetch_json(url, character_encoding=None, resource_id=None):

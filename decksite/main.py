@@ -16,11 +16,6 @@ def close_db(error):
 
 @APP.route('/')
 def home():
-    # Uncomment this to get data for testing. It's slow, though, so probably turn it off against after that.
-    # from decksite import tappedout
-    # if not tappedout.is_authorised():
-    #    tappedout.login()
-    # tappedout.fetch_decks('penny-dreadful')
     view = Home(deck.latest_decks())
     return view.page()
 

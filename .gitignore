@@ -14,3 +14,4 @@ sqlite3ext.h
 prices.db
 ffmpeg.exe
 meta.sqlite
+*.sqlite

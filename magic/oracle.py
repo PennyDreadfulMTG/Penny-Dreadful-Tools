@@ -4,17 +4,18 @@ import re
 from pd_exception import InvalidDataException
 
 from magic import card, database, fetcher, mana
+from magic.database import db
+from shared.database import escape
 
 CARD_IDS = {}
 FORMAT_IDS = {}
-DATABASE = database.DATABASE
 
 def layouts():
     return ['normal', 'meld', 'split', 'phenomenon', 'token', 'vanguard', 'double-faced', 'plane', 'flip', 'scheme', 'leveler']
 
 def initialize():
     current_version = fetcher.mtgjson_version()
-    if current_version > DATABASE.version():
+    if current_version > database.version():
         print('Database update required')
         update_database(str(current_version))
 
@@ -30,7 +31,7 @@ def search(query, fuzzy_threshold=260):
     """.format(base_select=base_select(), name_select=card.name_select().format(table='u'), name_ascii_select=card.name_select('name_ascii').format(table='u'), fuzzy_threshold=fuzzy_threshold)
     fuzzy_query = '{query}*'.format(query=query)
     like_query = '%{query}%'.format(query=query)
-    rs = DATABASE.execute(sql, [fuzzy_query, like_query, fuzzy_query])
+    rs = db().execute(sql, [fuzzy_query, like_query, fuzzy_query])
     return [card.Card(r) for r in rs]
 
 def valid_name(name):
@@ -47,14 +48,14 @@ def valid_name(name):
 
 def load_cards(names=None):
     if names:
-        names_clause = 'HAVING LOWER({name_select}) IN ({names})'.format(name_select=card.name_select().format(table='u'), names=', '.join(database.escape(name).lower() for name in names))
+        names_clause = 'HAVING LOWER({name_select}) IN ({names})'.format(name_select=card.name_select().format(table='u'), names=', '.join(escape(name).lower() for name in names))
     else:
         names_clause = ''
     sql = """
         {base_select}
         {names_clause}
     """.format(base_select=base_select(), names_clause=names_clause)
-    rs = DATABASE.execute(sql)
+    rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 
 # Does not check for 4-ofs nor 1 max restricted, yet.
@@ -65,7 +66,7 @@ def legal(cards, format_name='Penny Dreadful'):
         WHERE id IN ({card_ids})
         AND id NOT IN (SELECT card_id FROM card_legality WHERE format_id = (SELECT id FROM format WHERE name = ?) AND legality <> 'Banned')
         """.format(card_ids=', '.join(c.id for c in cards))
-    return len(DATABASE.execute(sql, [format_name])) == 0
+    return len(db().execute(sql, [format_name])) == 0
 
 def base_select(where_clause='(1 = 1)'):
     return """
@@ -99,29 +100,29 @@ def get_legal_cards(force=False):
         pass
     if new_list == ['']:
         sql = '{base_select} HAVING pd_legal = 1'.format(base_select=base_select())
-        new_list = [r['name'] for r in DATABASE.execute(sql)]
+        new_list = [r['name'] for r in db().execute(sql)]
         if len(new_list) == 0:
             new_list = fetcher.legal_cards(force=True)
     format_id = get_format_id('Penny Dreadful')
-    DATABASE.execute('DELETE FROM card_legality WHERE format_id = ?', [format_id])
+    db().execute('DELETE FROM card_legality WHERE format_id = ?', [format_id])
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
         SELECT {format_id}, id, 'Legal'
         FROM ({base_select})
         WHERE name IN ({names})
-    """.format(format_id=format_id, base_select=base_select(), names=', '.join(database.escape(name) for name in new_list))
-    DATABASE.execute(sql)
+    """.format(format_id=format_id, base_select=base_select(), names=', '.join(escape(name) for name in new_list))
+    db().execute(sql)
     # Check we got the right number of legal cards.
-    n = DATABASE.value('SELECT COUNT(*) FROM card_legality WHERE format_id = ?', [format_id])
+    n = db().value('SELECT COUNT(*) FROM card_legality WHERE format_id = ?', [format_id])
     if n != len(new_list):
         print("Found {n} pd legal cards in the database but the list was {len} long".format(n=n, len=len(new_list)))
         sql = 'SELECT name FROM ({base_select}) WHERE id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_select=base_select(), format_id=format_id)
-        db_legal_list = [row['name'] for row in DATABASE.execute(sql)]
+        db_legal_list = [row['name'] for row in db().execute(sql)]
         print(set(new_list).symmetric_difference(set(db_legal_list)))
     return new_list
 
 def update_database(new_version):
-    DATABASE.execute('BEGIN TRANSACTION')
-    DATABASE.execute('DELETE FROM version')
+    db().execute('BEGIN TRANSACTION')
+    db().execute('DELETE FROM version')
     cards = fetcher.all_cards()
     melded_faces = []
     for _, c in cards.items():
@@ -140,23 +141,23 @@ def update_database(new_version):
         insert_set(s)
     check_layouts() # Check that the hardcoded list of layouts we're about to use is still valid.
     # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
-    DATABASE.execute("UPDATE face SET cmc = 0 WHERE cmc IS NULL AND card_id IN (SELECT id FROM card WHERE layout IN ('normal', 'double-faced', 'flip', 'leveler', 'token', 'split'))")
-    rs = DATABASE.execute('SELECT id, name FROM rarity')
+    db().execute("UPDATE face SET cmc = 0 WHERE cmc IS NULL AND card_id IN (SELECT id FROM card WHERE layout IN ('normal', 'double-faced', 'flip', 'leveler', 'token', 'split'))")
+    rs = db().execute('SELECT id, name FROM rarity')
     for row in rs:
-        DATABASE.execute('UPDATE printing SET rarity_id = ? WHERE rarity = ?', [row['id'], row['name']])
+        db().execute('UPDATE printing SET rarity_id = ? WHERE rarity = ?', [row['id'], row['name']])
     update_fuzzy_matching()
-    DATABASE.execute('INSERT INTO version (version) VALUES (?)', [new_version])
-    DATABASE.execute('COMMIT')
+    db().execute('INSERT INTO version (version) VALUES (?)', [new_version])
+    db().execute('COMMIT')
 
 def update_fuzzy_matching():
     format_id = get_format_id('Penny Dreadful', True)
-    DATABASE.execute('DROP TABLE IF EXISTS fuzzy')
-    DATABASE.execute('CREATE VIRTUAL TABLE IF NOT EXISTS fuzzy USING spellfix1')
+    db().execute('DROP TABLE IF EXISTS fuzzy')
+    db().execute('CREATE VIRTUAL TABLE IF NOT EXISTS fuzzy USING spellfix1')
     sql = """INSERT INTO fuzzy (word, rank)
         SELECT LOWER(name), pd_legal
         FROM ({base_select})
     """.format(base_select=base_select())
-    DATABASE.execute(sql)
+    db().execute(sql)
     sql = """INSERT INTO fuzzy (word, rank)
         SELECT LOWER(f.name), SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0
         FROM face AS f
@@ -165,10 +166,10 @@ def update_fuzzy_matching():
         WHERE LOWER(f.name) NOT IN (SELECT word FROM fuzzy)
         GROUP BY f.id
     """.format(format_id=format_id)
-    DATABASE.execute(sql)
+    db().execute(sql)
     aliases = fetcher.card_aliases()
     for alias, name in aliases:
-        DATABASE.execute('INSERT INTO fuzzy (word, soundslike) VALUES (LOWER(?), ?)', [name, alias])
+        db().execute('INSERT INTO fuzzy (word, soundslike) VALUES (LOWER(?), ?)', [name, alias])
 
 def insert_card(c):
     name = card_name(c)
@@ -182,8 +183,8 @@ def insert_card(c):
         sql += ')'
         values = [c.get(database2json(name)) for name, prop in card.card_properties().items() if prop['mtgjson']]
         # database.execute commits after each statement, which we want to avoid while inserting cards
-        DATABASE.execute(sql, values)
-        card_id = DATABASE.value('SELECT last_insert_rowid()')
+        db().execute(sql, values)
+        card_id = db().value('SELECT last_insert_rowid()')
         CARD_IDS[name] = card_id
     # mtgjson thinks the text of Jhessian Lookout is NULL not '' but that is clearly wrong.
     if c.get('text', None) is None and c['layout'] in ['normal', 'token', 'double-faced', 'split']:
@@ -197,20 +198,20 @@ def insert_card(c):
     sql += ', '.join('?' for name, prop in card.face_properties().items() if not prop['primary_key'])
     sql += ')'
     values = [c.get(database2json(name)) for name, prop in card.face_properties().items() if not prop['primary_key']]
-    DATABASE.execute(sql, values)
+    db().execute(sql, values)
     for color in c.get('colors', []):
-        color_id = DATABASE.value('SELECT id FROM color WHERE name = ?', [color])
-        DATABASE.execute('INSERT INTO card_color (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
+        color_id = db().value('SELECT id FROM color WHERE name = ?', [color])
+        db().execute('INSERT INTO card_color (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
     for symbol in c.get('colorIdentity', []):
-        color_id = DATABASE.value('SELECT id FROM color WHERE symbol = ?', [symbol])
-        DATABASE.execute('INSERT INTO card_color_identity (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
+        color_id = db().value('SELECT id FROM color WHERE symbol = ?', [symbol])
+        db().execute('INSERT INTO card_color_identity (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
     for supertype in c.get('supertypes', []):
-        DATABASE.execute('INSERT INTO card_supertype (card_id, supertype) VALUES (?, ?)', [card_id, supertype])
+        db().execute('INSERT INTO card_supertype (card_id, supertype) VALUES (?, ?)', [card_id, supertype])
     for subtype in c.get('subtypes', []):
-        DATABASE.execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [card_id, subtype])
+        db().execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [card_id, subtype])
     for info in c.get('legalities', []):
         format_id = get_format_id(info['format'], True)
-        DATABASE.execute('INSERT INTO card_legality (card_id, format_id, legality) VALUES (?, ?, ?)', [card_id, format_id, info['legality']])
+        db().execute('INSERT INTO card_legality (card_id, format_id, legality) VALUES (?, ?, ?)', [card_id, format_id, info['legality']])
 
 def insert_set(s) -> None:
     sql = 'INSERT INTO `set` ('
@@ -221,8 +222,8 @@ def insert_set(s) -> None:
     values = [date2int(s.get(database2json(name))) for name, prop in card.set_properties().items() if prop['mtgjson']]
     # database.execute commits after each statement, which we want to
     # avoid while inserting sets
-    DATABASE.execute(sql, values)
-    set_id = DATABASE.value('SELECT last_insert_rowid()')
+    db().execute(sql, values)
+    set_id = db().value('SELECT last_insert_rowid()')
     for c in s.get('cards', []):
         card_id = CARD_IDS[card_name(c)]
         sql = 'INSERT INTO printing (card_id, set_id, '
@@ -231,22 +232,22 @@ def insert_set(s) -> None:
         sql += ', '.join('?' for name, prop in card.printing_properties().items() if prop['mtgjson'])
         sql += ')'
         values = [card_id, set_id] + [c.get(database2json(name)) for name, prop in card.printing_properties().items() if prop['mtgjson']]
-        DATABASE.execute(sql, values)
+        db().execute(sql, values)
 
 def get_format_id(name, allow_create=False):
     if len(FORMAT_IDS) == 0:
-        rs = DATABASE.execute('SELECT id, name FROM format')
+        rs = db().execute('SELECT id, name FROM format')
         for row in rs:
             FORMAT_IDS[row['name']] = row['id']
     if name not in FORMAT_IDS.keys() and allow_create:
-        DATABASE.execute('INSERT INTO format (name) VALUES (?)', [name])
-        FORMAT_IDS[name] = DATABASE.value('SELECT last_insert_rowid()')
+        db().execute('INSERT INTO format (name) VALUES (?)', [name])
+        FORMAT_IDS[name] = db().value('SELECT last_insert_rowid()')
     if name not in FORMAT_IDS.keys():
         return None
     return FORMAT_IDS[name]
 
 def check_layouts():
-    rs = DATABASE.execute('SELECT DISTINCT layout FROM card')
+    rs = db().execute('SELECT DISTINCT layout FROM card')
     if sorted([row['layout'] for row in rs]) != sorted(layouts()):
         print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid.')
 
@@ -254,7 +255,7 @@ def get_printings(generalized_card: card.Card):
     sql = 'SELECT ' + (', '.join(property for property in card.printing_properties())) \
         + ' FROM printing ' \
         + ' WHERE card_id = ? '
-    rs = DATABASE.execute(sql, [generalized_card.id])
+    rs = db().execute(sql, [generalized_card.id])
     return [card.Printing(r) for r in rs]
 
 def database2json(propname: str) -> str:

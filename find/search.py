@@ -4,7 +4,9 @@ from pd_exception import ParseException
 
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String
-from magic import card, database, mana, oracle
+from magic import card, mana, oracle
+from magic.database import db
+from shared.database import escape
 
 EXPECT_EXPRESSION = 'expect_expression'
 EXPECT_OPERATOR = 'expect_operator'
@@ -19,7 +21,7 @@ def search(query):
     sql = """{base_select}
         ORDER BY pd_legal DESC, name
     """.format(base_select=oracle.base_select(where_clause))
-    rs = database.DATABASE.execute(sql)
+    rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 
 def tokenize(s):
@@ -160,7 +162,7 @@ def text_where(column, term):
     if column.endswith('name'):
         column = column.replace('name', 'name_ascii')
         q = card.unaccent(q)
-    escaped = database.escape(q)
+    escaped = escape(q)
     if column == 'text':
         escaped = escaped.replace('~', "' || name || '")
     return '({column} LIKE {q})'.format(column=column, q=escaped)
@@ -175,7 +177,7 @@ def subtable_where(subtable, value, operator=None):
         operator = '=' if not operator else operator
     else:
         column = subtable
-        v = database.escape('%{v}%'.format(v=v))
+        v = escape('%{v}%'.format(v=v))
         operator = 'LIKE' if not operator else operator
     return '(c.id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {value}))'.format(subtable=subtable, column=column, operator=operator, value=v)
 
@@ -184,7 +186,7 @@ def math_where(column, operator, term):
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(FALSE)'
-    return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=database.escape(term))
+    return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=escape(term))
 
 def color_where(subtable, operator, term):
     if operator == ':' and subtable == 'color_identity':
@@ -214,12 +216,12 @@ def color_where(subtable, operator, term):
 
 def set_where(name):
     name_fuzzy = '%{name}%'.format(name=name)
-    return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=database.escape(name_fuzzy), name=database.escape(name))
+    return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=escape(name_fuzzy), name=escape(name))
 
 def format_where(term):
     if term == 'pd':
         term = 'Penny Dreadful'
-    format_id = database.DATABASE.value('SELECT id FROM format WHERE name LIKE ?', ['{term}%'.format(term=card.unaccent(term))])
+    format_id = db().value('SELECT id FROM format WHERE name LIKE ?', ['{term}%'.format(term=card.unaccent(term))])
     if format_id is None:
         raise InvalidValueException("Invalid format '{term}'".format(term=term))
     return "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))".format(format_id=format_id)
@@ -267,7 +269,7 @@ def init_value_lookup():
         AS initials
     FROM {table}"""
     for table in ['color', 'rarity']:
-        rs = database.DATABASE.execute(sql.format(table=table))
+        rs = db().execute(sql.format(table=table))
         d = {}
         for row in rs:
             d[row['name']] = row['id']

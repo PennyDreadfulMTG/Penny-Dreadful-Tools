@@ -10,7 +10,7 @@ def get_or_insert_competition(start_date, end_date, name, competition_type, url)
         FROM competition
         WHERE start_date = ? AND end_date = ? AND name = ? AND competition_type_id = ? AND url = ?
     """
-    competition_id = db().execute(sql, values)
+    competition_id = db().value(sql, values)
     if competition_id:
         return competition_id
     sql = 'INSERT INTO competition (start_date, end_date, name, competition_type_id, url) VALUES (?, ?, ?, ?, ?)'

@@ -9,6 +9,9 @@ def test_match():
     assert not search.Criterion.match(list('magic:2uu'))
     assert search.Criterion.match(list('tou>2'))
 
+def test_special_chars():
+    do_test('o:a_c%', "(text LIKE '%a\\_c\\%%')")
+
 def test_tilde():
     do_test('o:"sacrifice ~"', "(text LIKE '%sacrifice ' || name || '%')")
 

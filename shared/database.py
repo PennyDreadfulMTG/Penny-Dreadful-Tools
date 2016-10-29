@@ -16,9 +16,6 @@ class Database:
         except apsw.Error as e:
             raise DatabaseException('Failed to initialized database in `{location}`'.format(location=location)) from e
 
-    def close(self):
-        self.connection.close()
-
     def execute(self, sql, args=None):
         if args is None:
             args = []
@@ -55,3 +52,7 @@ def sqlescape(s) -> str:
     if encodable.find('\x00') >= 0:
         raise Exception('NUL not allowed in SQL string.')
     return "'{escaped}'".format(escaped=encodable.replace("'", "''"))
+
+def sqllikeescape(s):
+    s = s.replace('%', '\\%').replace('_', '\\_')
+    return sqlescape('%{s}%'.format(s=s))

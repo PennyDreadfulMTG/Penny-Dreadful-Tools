@@ -89,3 +89,12 @@ def get_cached_text(resource):
 
 class FetchException(OperationalException):
     pass
+
+def acceptable_file(filepath: str) -> bool:
+    return os.path.isfile(filepath) and os.path.getsize(filepath) > 0
+
+def escape(str_input) -> str:
+    # Expand 'AE' into two characters. This matches the legal list and
+    # WotC's naming scheme in Kaladesh, and is compatible with the
+    # image server and magidex.
+    return '+'.join(urllib.parse.quote(cardname.replace(u'Æ', 'AE')) for cardname in str_input.split(' ')).lower()

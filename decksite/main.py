@@ -27,7 +27,6 @@ def add_deck():
     decks.add_deck(request.form)
     return add_form()
 
-
 @APP.route('/querytappedout')
 def deckcycle_tappedout():
     from decksite.scrapers import tappedout

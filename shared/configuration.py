@@ -5,10 +5,13 @@ DEFAULTS = {
     'database': './db',
     'decksite_database': './decksite.db',
     'image_dir': '.',
+    'magic_database': './db',
+    'prices_database': './prices.db',
     'pricesdb': './prices.db',
+    'scratch_dir': '.',
     'spellfix': './spellfix',
-    'to_username': '',
-    'to_password': ''
+    'to_password': '',
+    'to_username': ''
 }
 
 def get(key):

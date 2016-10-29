@@ -27,15 +27,21 @@ CREATE TABLE IF NOT EXISTS deck (
     name TEXT NOT NULL,
     created_date INTEGER NOT NULL,
     updated_date INTEGER NOT NULL,
+    competition_id INTEGER,
     url TEXT,
-    archetype TEXT,
+    archetype_id INT,
     resource_uri TEXT,
     featured_card TEXT,
     score INT,
     thumbnail_url TEXT,
     small_thumbnail_url TEXT,
+    wins INTEGER NOT NULL,
+    losses INTEGER NOT NULL,
+    finish INTEGER,
     FOREIGN KEY(person_id) REFERENCES person(id),
     FOREIGN KEY(source_id) REFERENCES source(id),
+    FOREIGN KEY(competition_id) REFERENCES competition(id),
+    FOREIGN KEY(archetype_id) REFERENCES archetype(id),
     CONSTRAINT deck_url_identifier UNIQUE (url, identifier)
 );
 
@@ -65,17 +71,15 @@ CREATE TABLE IF NOT EXISTS competition (
     end_date INTEGER NOT NULL,
     name TEXT NOT NULL,
     competition_type_id INTEGER NOT NULL,
+    url TEXT NOT NULL,
     FOREIGN KEY(competition_type_id) REFERENCES competition_type(id)
 );
 
--- One person's entry into a specific competition.
-CREATE TABLE IF NOT EXISTS competition_entry (
+-- Broad archetypes to slot decks into.
+CREATE TABLE IF NOT EXISTS archetype (
     id INTEGER PRIMARY KEY,
-    deck_id INTEGER NOT NULL,
-    competition_id INTEGER NOT NULL,
-    wins INTEGER NOT NULL,
-    losses INTEGER NOT NULL,
-    finish INTEGER,
-    FOREIGN KEY(deck_id) REFERENCES deck(id),
-    FOREIGN KEY(competition_id) REFERENCES competition(id)
+    name TEXT NOT NULL
 );
+
+-- Poppulate archetype
+INSERT INTO archetype (name) VALUES ('Aggro'), ('Combo'), ('Control'), ('Aggro-Combo'), ('Aggro-Control'), ('Combo-Control'), ('Midrange'), ('Ramp'), ('Unclassified');

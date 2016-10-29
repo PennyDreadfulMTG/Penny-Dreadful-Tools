@@ -8,20 +8,21 @@ from email.utils import formatdate
 import requests
 
 from magic import database
-from pd_exception import OperationalException
+from shared import configuration
+from shared.pd_exception import OperationalException
 
 SESSION = requests.Session()
 
 def unzip(url, path):
-    if os.path.isdir('./ziptemp'):
-        shutil.rmtree('./ziptemp')
-    os.mkdir('./ziptemp')
-    store(url, './ziptemp/zip.zip')
-    f = zipfile.ZipFile('./ziptemp/zip.zip', 'r')
-    f.extractall('./ziptemp/unzip')
+    location = '{scratch_dir}/zip'.format(scratch_dir=configuration.get('scratch_dir'))
+    shutil.rmtree(location, True)
+    os.mkdir(location)
+    store(url, '{location}/zip.zip'.format(location=location))
+    f = zipfile.ZipFile('{location}/zip.zip'.format(location=location), 'r')
+    f.extractall('{location}/unzip'.format(location=location))
     f.close()
-    s = open('./ziptemp/unzip/{path}'.format(path=path), encoding='utf-8').read()
-    shutil.rmtree('./ziptemp')
+    s = open('{location}/unzip/{path}'.format(location=location, path=path), encoding='utf-8').read()
+    shutil.rmtree(location)
     return s
 
 def fetch(url, character_encoding=None, resource_id=None):

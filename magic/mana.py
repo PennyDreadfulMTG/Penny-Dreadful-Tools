@@ -1,6 +1,6 @@
 import re
 
-from pd_exception import ParseException
+from shared.pd_exception import ParseException
 
 START = ''
 DIGIT = '[0-9]'

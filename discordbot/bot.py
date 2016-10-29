@@ -1,7 +1,8 @@
 import discord
 
 from discordbot import command, emoji
-from magic import configuration, oracle
+from magic import oracle
+from shared import configuration
 
 
 class Bot:

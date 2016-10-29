@@ -1,19 +1,17 @@
 import collections
 import glob
-import hashlib
 import os
 import random
 import re
 import sys
 import time
-import urllib.parse
+
 
 from typing import List
 
 from discordbot import emoji
 from find import search
 from magic import card, oracle, fetcher, rotation
-from magic.card import Card
 from shared import configuration
 
 async def respond_to_card_names(message, bot):
@@ -106,7 +104,7 @@ Want to contribute? Send a Pull Request."""
             return
         additional_text = ''
         if len(cards) > 10:
-            additional_text = 'http://magidex.com/search/?q=' + escape(args)
+            additional_text = 'http://magidex.com/search/?q=' + fetcher.internal.escape(args)
         await bot.post_cards(cards, channel, author, additional_text)
 
     async def status(self, bot, channel):
@@ -224,19 +222,6 @@ Want to contribute? Send a Pull Request."""
             os.remove(file)
         await bot.client.send_message(channel, '{n} cleared.'.format(n=len(files)))
 
-def escape(str_input) -> str:
-    # Expand 'AE' into two characters. This matches the legal list and
-    # WotC's naming scheme in Kaladesh, and is compatible with the
-    # image server and magidex.
-    return '+'.join(urllib.parse.quote(cardname.replace(u'Æ', 'AE')) for cardname in str_input.split(' ')).lower()
-
-def better_image(cards: List[Card]) -> str:
-    c = '|'.join(card.name for card in cards)
-    return 'http://magic.bluebones.net/proxies/?c={c}'.format(c=escape(c))
-
-def http_image(multiverse_id) -> str:
-    return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(multiverse_id)    +'.jpg'
-
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):
     # Remove multiple printings of the same card from the result set.
@@ -244,41 +229,6 @@ def uniqify_cards(cards):
     for c in cards:
         results[card.canonicalize(c.name)] = c
     return list(results.values())
-
-def acceptable_file(filepath: str) -> bool:
-    return os.path.isfile(filepath) and os.path.getsize(filepath) > 0
-
-def basename(cards):
-    return '_'.join(re.sub('[^a-z-]', '-', card.canonicalize(c.name)) for c in cards)
-
-def download_image(cards: List[Card]) -> str:
-    imagename = basename(cards)
-    # Hash the filename if it's otherwise going to be too large to use.
-    if len(imagename) > 240:
-        imagename = hashlib.md5(imagename.encode('utf-8')).hexdigest()
-    filename = imagename + '.jpg'
-    filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename=filename)
-    if acceptable_file(filepath):
-        return filepath
-    print('Trying to get first choice image for {cards}'.format(cards=', '.join(card.name for card in cards)))
-    try:
-        fetcher.store(better_image(cards), filepath)
-    except fetcher.FetchException as e:
-        print('Error: {e}'.format(e=e))
-    if acceptable_file(filepath):
-        return filepath
-    printings = oracle.get_printings(cards[0])
-    if len(printings) > 0:
-        multiverse_id = printings[0].multiverseid
-        if multiverse_id and int(multiverse_id) > 0:
-            print('Trying to get fallback image for {imagename}'.format(imagename=imagename))
-            try:
-                fetcher.store(http_image(multiverse_id), filepath)
-            except fetcher.FetchException as e:
-                print('Error: {e}'.format(e=e))
-            if acceptable_file(filepath):
-                return filepath
-    return None
 
 def parse_queries(content: str) -> List[str]:
     queries = re.findall(r'\[?\[([^\]]*)\]\]?', content)

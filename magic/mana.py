@@ -1,3 +1,4 @@
+import itertools
 import re
 
 from shared.pd_exception import ParseException
@@ -102,6 +103,22 @@ def colored(symbol):
 
 def has_x(mana_cost):
     return len([symbol for symbol in parse(mana_cost) if variable(symbol)]) > 0
+
+def order(symbols):
+    permutations = itertools.permutations(symbols)
+    return list(sorted(permutations, key=order_score)[0])
+
+def order_score(symbols):
+    score = 0
+    positions = ['W', 'U', 'B', 'R', 'G']
+    current = positions.index(symbols[0])
+    for symbol in symbols[1:]:
+        position = positions.index(symbol)
+        score += position - current
+        if position < current:
+            score += len(positions)
+        current = position
+    return score * 10 + positions.index(symbols[0])
 
 class InvalidManaCostException(ParseException):
     pass

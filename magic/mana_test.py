@@ -56,6 +56,19 @@ def test_has_x():
     assert mana.has_x('{X}{Y}{R}')
     assert not mana.has_x('{C}')
 
+def test_order():
+    assert mana.order(['U']) == ['U']
+    assert mana.order(['W', 'U', 'B']) == ['W', 'U', 'B']
+    assert mana.order(['B', 'W', 'U']) == ['W', 'U', 'B']
+    assert mana.order(['R', 'G']) == ['R', 'G']
+    assert mana.order(['G', 'R']) == ['R', 'G']
+    assert mana.order(['G', 'U']) == ['G', 'U']
+    assert mana.order(['U', 'G']) == ['G', 'U']
+    assert mana.order(['W', 'G']) == ['G', 'W']
+    assert mana.order(['W', 'G', 'B']) == ['B', 'G', 'W']
+    assert mana.order(['G', 'R', 'B']) == ['B', 'R', 'G']
+    assert mana.order(['W', 'G', 'R', 'B']) == ['B', 'R', 'G', 'W']
+
 def do_test(s, expected):
     symbols = mana.parse(s)
     assert symbols == expected or print('\nInput: {s}\nExpected: {expected}\n  Actual: {actual}'.format(s=s, expected=expected, actual=symbols))

@@ -5,7 +5,6 @@ from magic import fetcher, fetcher_internal
 
 from decksite import translation
 from decksite.data import deck, Deck
-from decksite.database import db
 from decksite.scrapers import decklist
 
 def fetch_decks(hub: str):

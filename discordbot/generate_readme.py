@@ -6,12 +6,13 @@ HEADER = """
 # Penny-Dreadful-Discord-Bot
 Displays info about quoted cards in a discord channel
 
-[![Build Status](http://ci.katelyngigante.com/buildStatus/icon?job=Penny Dreadful/Penny-Dreadful-Discord-Bot/master)](http://ci.katelyngigante.com/job/Penny%20Dreadful/job/Penny-Dreadful-Discord-Bot/job/master/)
+[![Build Status](http://ci.katelyngigante.com/buildStatus/icon?job=Penny Dreadful/Penny-Dreadful-Tools/master)](http://ci.katelyngigante.com/job/Penny%20Dreadful/job/Penny-Dreadful-Tools/job/master/)
 """
 
 USAGE = """
 #Usage
 Basic bot usage: Include [cardname] in your regular messages.
+
 The bot will search for any quoted cards, and respond with the card details.
 """
 
@@ -33,7 +34,7 @@ def generate_readme():
     readme += """
 #Commands
 """
-    readme += command.build_help()
+    readme += command.build_help().replace('\n', '\n\n')
     readme += '\n'
     readme += FOOTER
 

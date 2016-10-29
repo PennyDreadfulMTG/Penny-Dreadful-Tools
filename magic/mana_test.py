@@ -41,8 +41,6 @@ def test_everything():
     rs = database.DATABASE.execute('SELECT name, mana_cost FROM face')
     for row in rs:
         if row['mana_cost']:
-            print(row['name'])
-            print(row['mana_cost'])
             mana.parse(row['mana_cost'])
 
 def test_colors():

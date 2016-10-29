@@ -3,10 +3,11 @@ import json
 
 import pkg_resources
 
-import magic.fetcher_internal
-
-from magic.fetcher_internal import FetchException, fetch, fetch_json, store, unzip
+import magic.fetcher_internal as internal
+from magic.fetcher_internal import (FetchException, fetch, fetch_json, store,
+                                    unzip)
 from shared import configuration
+
 
 def legal_cards(force=False):
     resource_id = 'legal_cards'
@@ -48,4 +49,5 @@ def resources():
     return fetch_json('http://magic.bluebones.net/pd/resources.json', resource_id='pd_resources')
 
 def post(url, data):
-    return magic.fetcher_internal.post(url, data)
+    return internal.post(url, data)
+

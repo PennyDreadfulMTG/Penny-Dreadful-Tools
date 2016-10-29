@@ -80,13 +80,3 @@ def test_insert():
     assert db.insert("INSERT INTO x (v) VALUES ('B')") == 2
     assert db.insert("INSERT INTO x (v) VALUES ('C')") == 3
     teardown()
-
-def test_close():
-    db = setup()
-    db.close()
-    exception_occurred = False
-    try:
-        db.execute('SELECT * FROM x')
-    except DatabaseException:
-        exception_occurred = True
-    assert exception_occurred

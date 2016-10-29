@@ -16,9 +16,6 @@ class Database:
         except apsw.Error as e:
             raise DatabaseException('Failed to initialized database in `{location}`'.format(location=location)) from e
 
-    def close(self):
-        self.connection.close()
-
     def execute(self, sql, args=None):
         if args is None:
             args = []

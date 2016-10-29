@@ -93,7 +93,7 @@ def add_deck(params):
     if deck_id:
         return deck_id
     source_id = get_source_id(params['source'])
-    archetype_id = get_archetype_id(params['archetype'])
+    archetype_id = get_archetype_id(params.get('archetype'))
     sql = """INSERT INTO deck (
         created_date,
         updated_date,

@@ -1,5 +1,7 @@
 import re
 
+import titlecase
+
 from magic import mana
 
 COLOR_COMBINATIONS = {
@@ -29,10 +31,10 @@ COLOR_COMBINATIONS = {
     'Jeskai': ['W', 'U', 'R'],
     'Sultai': ['U', 'B', 'G'],
     'Yore-Tiller': ['W', 'U', 'B', 'R'],
-    'Glint-Eye': ['U', 'B', 'R', 'G'],
-    'Dune-Brood': ['B', 'R', 'G', 'W'],
-    'Ink-Treader': ['R', 'G', 'W', 'U'],
-    'Witch-Maw': ['G', 'W', 'U', 'B'],
+    'UBRG': ['U', 'B', 'R', 'G'],
+    'BRGW': ['B', 'R', 'G', 'W'],
+    'RGWU': ['R', 'G', 'W', 'U'],
+    'GWUB': ['G', 'W', 'U', 'B'],
     'Five Color': ['W', 'U', 'B', 'R', 'G']
 }
 
@@ -40,16 +42,15 @@ def normalize(d):
     name = d.name
     name = remove_pd(name)
     name = remove_colors(name)
-    if name == '' and d.archetype:
+    if name == '' and d.get('archetype'):
         name = d.archetype
-    elif name == '':
-        name = name_from_colors(d.colors)
     name = prepend_colors(name, d.colors)
-    return name.title()
+    return titlecase.titlecase(name)
 
 def remove_pd(name):
-    name = re.sub('(^| )pd( |$)', '', name, flags=re.IGNORECASE).strip()
-    name = re.sub('(^| )penny ?dreadful( |$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(]?pd[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(]?penny ?dreadful[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(]?penny[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
     return name
 
 def remove_colors(name):
@@ -59,12 +60,13 @@ def remove_colors(name):
     return name
 
 def prepend_colors(s, colors):
-    color_s = ''.join('{{{color}}}'.format(color=color) for color in mana.order(colors))
-    return '{color_s} {s}'.format(color_s=color_s, s=s)
+    prefix = name_from_colors(colors)
+    return '{prefix} {s}'.format(prefix=prefix, s=s)
 
 def name_from_colors(colors):
     ordered = mana.order(colors)
     for name, symbols in COLOR_COMBINATIONS.items():
-        print('Comparing {symbols} and {colors}'.format(symbols=mana.order(symbols), colors=ordered))
         if mana.order(symbols) == ordered:
+            if len(symbols) == 1:
+                return 'Mono {name}'.format(name=name)
             return name

@@ -1,3 +1,4 @@
+from decksite import deck_name
 from decksite.view import View
 
 # pylint: disable=no-self-use
@@ -15,6 +16,7 @@ class Home(View):
                 d.top8 = '⑧'
             else:
                 d.top8 = ''
+            d.name = deck_name.normalize(d)
 
     def decks(self):
         return self._decks

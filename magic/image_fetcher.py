@@ -1,12 +1,13 @@
 import hashlib
 import re
-import urllib.parse
+import os
 
 import magic.fetcher_internal as internal
 from magic import oracle
 from magic.fetcher_internal import FetchException, escape
 from shared import configuration
 
+os.mkdir(configuration.get('image_dir'))
 
 def download_image(cards) -> str:
     # helper functions:

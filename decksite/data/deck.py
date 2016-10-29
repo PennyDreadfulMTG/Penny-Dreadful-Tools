@@ -31,11 +31,11 @@ def load_decks(where='1 = 1', order_by='updated_date DESC', limit=''):
     return decks
 
 def load_cards(decks):
+    deck_ids = ', '.join(str(sqlescape(deck.id)) for deck in decks)
     sql = """
-        SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN (?)
-    """
-    deck_ids = ', '.join(str(deck.id) for deck in decks)
-    rs = db().execute(sql, [deck_ids])
+        SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN ({deck_ids})
+    """.format(deck_ids=deck_ids)
+    rs = db().execute(sql)
     names = {row['card'] for row in rs}
     cards = {card.name: card for card in oracle.load_cards(names)}
     ds = {deck.id: deck for deck in decks}

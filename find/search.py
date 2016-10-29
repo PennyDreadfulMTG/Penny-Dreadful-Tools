@@ -5,7 +5,7 @@ from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String
 from magic import card, mana, oracle
 from magic.database import db
-from shared.database import sqlescape
+from shared.database import sqlescape, sqllikeescape
 from shared.pd_exception import ParseException
 
 EXPECT_EXPRESSION = 'expect_expression'
@@ -158,11 +158,11 @@ def parse_criterion(key, operator, term):
         return mana_where(operator.value(), term.value())
 
 def text_where(column, term):
-    q = '%{term}%'.format(term=term)
+    q = term
     if column.endswith('name'):
         column = column.replace('name', 'name_ascii')
         q = card.unaccent(q)
-    escaped = sqlescape(q)
+    escaped = sqllikeescape(q)
     if column == 'text':
         escaped = escaped.replace('~', "' || name || '")
     return '({column} LIKE {q})'.format(column=column, q=escaped)
@@ -177,7 +177,7 @@ def subtable_where(subtable, value, operator=None):
         operator = '=' if not operator else operator
     else:
         column = subtable
-        v = sqlescape('%{v}%'.format(v=v))
+        v = sqllikeescape(v)
         operator = 'LIKE' if not operator else operator
     return '(c.id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {value}))'.format(subtable=subtable, column=column, operator=operator, value=v)
 
@@ -215,8 +215,7 @@ def color_where(subtable, operator, term):
     return clause
 
 def set_where(name):
-    name_fuzzy = '%{name}%'.format(name=name)
-    return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=sqlescape(name_fuzzy), name=sqlescape(name))
+    return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=sqlescape(name_fuzzy), name=sqllikeescape(name))
 
 def format_where(term):
     if term == 'pd':
@@ -239,7 +238,7 @@ def mana_where(operator, term):
     symbols = ['{{{symbol}}}'.format(symbol=symbol) for symbol in symbols]
     if operator == ':':
         d = collections.Counter(symbols) # Group identical symbols so that UU checks for {U}{U} not just {U} twice.
-        clause = ' AND '.join("mana_cost LIKE '%{symbol}%'".format(symbol=symbol * n) for symbol, n in d.items())
+        clause = ' AND '.join("mana_cost LIKE {symbol}".format(symbol=sqllikeescape(symbol * n)) for symbol, n in d.items())
     elif operator == '=':
         joined = ''.join('{symbol}'.format(symbol=symbol) for symbol in symbols)
         clause = "mana_cost = '{joined}'".format(joined=joined)

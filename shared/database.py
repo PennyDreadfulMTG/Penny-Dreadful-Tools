@@ -52,3 +52,7 @@ def sqlescape(s) -> str:
     if encodable.find('\x00') >= 0:
         raise Exception('NUL not allowed in SQL string.')
     return "'{escaped}'".format(escaped=encodable.replace("'", "''"))
+
+def sqllikeescape(s):
+    s = s.replace('%', '\\%').replace('_', '\\_')
+    return sqlescape('%{s}%'.format(s=s))

@@ -3,7 +3,7 @@ import re
 
 from magic import card, database, fetcher, mana
 from magic.database import db
-from shared.database import sqlescape
+from shared.database import sqlescape, sqllikeescape
 from shared.pd_exception import InvalidDataException
 
 CARD_IDS = {}
@@ -29,7 +29,7 @@ def search(query, fuzzy_threshold=260):
         ORDER BY pd_legal DESC, name
     """.format(base_select=base_select(), name_select=card.name_select().format(table='u'), name_ascii_select=card.name_select('name_ascii').format(table='u'), fuzzy_threshold=fuzzy_threshold)
     fuzzy_query = '{query}*'.format(query=query)
-    like_query = '%{query}%'.format(query=query)
+    like_query = sqllikeescape(query)
     rs = db().execute(sql, [fuzzy_query, like_query, fuzzy_query])
     return [card.Card(r) for r in rs]
 

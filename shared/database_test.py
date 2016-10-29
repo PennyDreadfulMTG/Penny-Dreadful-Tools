@@ -1,7 +1,7 @@
 import os
 
 from shared import configuration
-from shared.database import Database
+from shared.database import Database, sqlescape, sqllikeescape
 from shared.pd_exception import DatabaseException
 
 def location():
@@ -80,3 +80,11 @@ def test_insert():
     assert db.insert("INSERT INTO x (v) VALUES ('B')") == 2
     assert db.insert("INSERT INTO x (v) VALUES ('C')") == 3
     teardown()
+
+def test_sqlescape():
+    assert sqlescape('Hello') == "'Hello'"
+    assert sqlescape("O'Leary") == "'O''Leary'"
+    assert sqlescape("100%") == "'100%'"
+
+def test_sqllikeescape():
+    assert sqllikeescape("100%") == "'%100\\%%'"

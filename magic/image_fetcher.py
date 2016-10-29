@@ -7,7 +7,8 @@ from magic import oracle
 from magic.fetcher_internal import FetchException, escape
 from shared import configuration
 
-os.mkdir(configuration.get('image_dir'))
+if not os.path.exists(configuration.get('image_dir')):
+    os.mkdir(configuration.get('image_dir'))
 
 def download_image(cards) -> str:
     # helper functions:

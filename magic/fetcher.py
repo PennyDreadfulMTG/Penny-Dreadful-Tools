@@ -50,4 +50,3 @@ def resources():
 
 def post(url, data):
     return internal.post(url, data)
-

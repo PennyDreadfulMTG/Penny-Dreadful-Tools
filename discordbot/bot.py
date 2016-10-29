@@ -1,9 +1,8 @@
 import discord
 
 from discordbot import command, emoji
-from magic import fetcher, image_fetcher, oracle
+from magic import image_fetcher, oracle
 from shared import configuration
-
 
 class Bot:
     def __init__(self):

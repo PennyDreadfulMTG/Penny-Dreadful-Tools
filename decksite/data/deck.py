@@ -82,7 +82,7 @@ def set_legality(d):
 #     }
 # }
 # Plus one of: mtgo_username OR tappedout_username
-# Optionally: resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url
+# Optionally: resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url, wins, losses, finish
 #
 # url + identifier must be unique for each decklist.
 def add_deck(params):
@@ -115,7 +115,23 @@ def add_deck(params):
     ) VALUES (
         datetime('now', 'unixepoch'), datetime('now', 'unixepoch'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
     )"""
-    values = [person_id, source_id, params['url'], params['identifier'], params['name'], params.get('competition_id'), archetype_id, params.get('resource_uri'), params.get('featured_card'), params.get('score'), params.get('thumbnail_url'), params.get('small_thumbnail_url'), params.get('wins'), params.get('losses'), params.get('finish')]
+    values = [
+        person_id,
+        source_id,
+        params['url'],
+        params['identifier'],
+        params['name'],
+        params.get('competition_id'),
+        archetype_id,
+        params.get('resource_uri'),
+        params.get('featured_card'),
+        params.get('score'),
+        params.get('thumbnail_url'),
+        params.get('small_thumbnail_url'),
+        params.get('wins'),
+        params.get('losses'),
+        params.get('finish')
+    ]
     deck_id = db().insert(sql, values)
     for name, n in params['cards']['maindeck'].items():
         insert_deck_card(deck_id, name, n, False)

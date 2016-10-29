@@ -1,8 +1,8 @@
 {
-    "decksite_database": "./decksite.db",
-    "image_dir": ".",
-    "magic_database": "./magic.db",
-    "prices_database": "./prices.db",
+    "decksite_database": "./decksite.sqlite",
+    "image_dir": "./images",
+    "magic_database": "./magic.sqlite",
+    "prices_database": "./prices.sqlite",
     "scratch_dir": "."
     "spellfix": "./spellfix",
     "token": "MjI4Abc3OFM4MjI9NTIzMjY1.DsZ8ew.ygPY0HJZriPVD-jFRtp12lF6_d5"

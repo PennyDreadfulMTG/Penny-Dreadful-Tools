@@ -15,7 +15,7 @@ unit:
 	@echo
 	@echo "******************************** Unit Tests ***********************************"
 	@echo
-	@pytest
+	@pytest --junitxml=test_results.xml
 	@echo
 
 # Run lint on all python files.

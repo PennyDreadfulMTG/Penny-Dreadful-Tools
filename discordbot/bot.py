@@ -1,9 +1,8 @@
 import discord
 
 from discordbot import command, emoji
-from magic import oracle
+from magic import image_fetcher, oracle
 from shared import configuration
-
 
 class Bot:
     def __init__(self):
@@ -68,7 +67,7 @@ class Bot:
         if len(cards) > 10:
             image_file = None
         else:
-            image_file = command.download_image(cards)
+            image_file = image_fetcher.download_image(cards)
         if image_file is None:
             text += '\n\n'
             if len(cards) == 1:

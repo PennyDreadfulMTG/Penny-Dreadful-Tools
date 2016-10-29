@@ -2,10 +2,10 @@ import json
 
 DEFAULTS = {
     'card_alias_file': './card_aliases.tsv',
-    'database': './db',
-    'decksite_database': './decksite.db',
-    'image_dir': '.',
-    'magic_database': './db',
+    'database': './cards.sqlite',
+    'decksite_database': './decksite.sqlite',
+    'image_dir': './images',
+    'magic_database': './cards.sqlite',
     'prices_database': './prices.db',
     'pricesdb': './prices.db',
     'scratch_dir': '.',

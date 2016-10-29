@@ -35,16 +35,6 @@ def store_deck(blob):
     d['identifier'] = d['url']
     return deck.add_deck(d)
 
-def insert_inventory(slug, inventory):
-    assert inventory is not None
-    deck_id = db().value("SELECT id from decks WHERE slug = ?", [slug])
-    rs = db().execute("SELECT * from decklists WHERE deckid = ?", [deck_id])
-    if len(rs) > 0:
-        # Make this better
-        db().execute("DELETE from decklists WHERE deckid = ?", [deck_id])
-    for name, board in inventory:
-        db().execute("INSERT INTO decklists (deckid, name, count, board) VALUES (?,?,?,?)", [deck_id, name, board['qty'], board['b']])
-
 def is_authorised():
     return fetcher_internal.SESSION.cookies.get('tapped') is not None
 

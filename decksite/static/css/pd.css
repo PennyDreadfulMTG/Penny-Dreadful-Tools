@@ -147,6 +147,10 @@ td:first-child, td:last-child {
     width: 4em;
 }
 
+.n {
+    text-align: right;
+}
+
 /* Forms */
 
 form, input, select, textarea {
@@ -263,7 +267,7 @@ ul.menu {
 }
 
 
-/* Responsive Tables */
+/* Responsive tables */
 
 @media only screen and (max-width: 60rem) {
     table, thead, tbody, th, td, tr {

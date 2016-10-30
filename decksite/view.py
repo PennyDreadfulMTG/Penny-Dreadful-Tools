@@ -52,6 +52,7 @@ class View:
 
     def prepare(self):
         self.prepare_decks()
+        self.prepare_cards()
 
     def prepare_decks(self):
         for d in getattr(self, 'decks', []):
@@ -80,6 +81,10 @@ class View:
             d.name = name[0:NAME_MAX_LEN - 1] + '…' if len(name) > NAME_MAX_LEN else name
             d.person_url = url_for('person', person_id=d.person_id)
             d.date = dtutil.display_date(d.date)
+
+    def prepare_cards(self):
+        for c in getattr(self, 'cards', []):
+            c.url = url_for('card', name=c.name)
 
 def colors_html(colors):
     s = ''.join(mana.order(colors))

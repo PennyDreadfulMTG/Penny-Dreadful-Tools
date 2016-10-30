@@ -2,9 +2,7 @@ import os
 
 from flask import Flask, request, send_from_directory
 
-from magic import oracle
-
-from decksite.data import deck, person as ps
+from decksite.data import card as cs, deck, person as ps
 from decksite.views import AddForm, Card, Cards, Deck, Home, People, Person
 
 APP = Flask(__name__)
@@ -31,12 +29,12 @@ def person(person_id):
 
 @APP.route('/cards')
 def cards():
-    view = Cards(oracle.load_cards())
+    view = Cards(cs.played_cards())
     return view.page()
 
 @APP.route('/cards/<name>')
 def card(name):
-    view = Card(oracle.load_cards([name])[0])
+    view = Card(cs.load_card(name))
     return view.page()
 
 @APP.route('/add')

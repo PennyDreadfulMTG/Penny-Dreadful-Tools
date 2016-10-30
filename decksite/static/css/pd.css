@@ -81,6 +81,7 @@ h1 {
 }
 
 h1 a {
+    color: #502828;
     text-decoration: none;
 }
 
@@ -96,7 +97,6 @@ h3 {
 
 .main a {
     color: #502828;
-    text-transform: lowercase;
     text-decoration: none;
 
     /* Underline that respect descenders. */
@@ -113,10 +113,6 @@ h3 {
     background-image: none;
 }
 
-a:visited {
-    color: #505050;
-}
-
 /* Lists */
 
 ul {
@@ -130,19 +126,22 @@ ul.decklist {
 /* Tables */
 
 td {
-    padding-right: 1em;
+    padding: 0 0.5em;
+}
+
+td:first-child, td:last-child {
+    padding: 0;
 }
 
 .marginnote {
-    float: left;
     clear: left;
-    margin-left: -50%;
-    width: 45%;
-    margin-top: 0;
-    margin-bottom: 0;
-    vertical-align: baseline;
+    float: left;
+    margin-left: -4.5em;
+    margin-right: 0.5em;
     position: relative;
     text-align: right;
+    vertical-align: baseline;
+    width: 4em;
 }
 
 /* Forms */
@@ -174,3 +173,57 @@ label {
 textarea {
     height: 20em;
 }
+
+.mana:nth-child(2) {
+    border-left: 1px #999 solid;
+}
+
+.mana {
+    display: inline-block;
+    height: 1em;
+    vertical-align: middle;
+    border-bottom: 0.1em #999 solid;
+    border-top: 0.1em #999 solid;
+    border-right: 0.1em #999 solid;
+}
+
+.mana-1 {
+    width: 2.9em;
+}
+
+.mana-2 {
+    width: 1.4em;
+}
+
+.mana-3 {
+    width: .9em;
+}
+
+.mana-4 {
+    width: .65em;
+}
+
+.mana-5 {
+    width: .5em;
+}
+
+.mana-W {
+    background-color: #fffcda;
+}
+
+.mana-U {
+    background-color: #ace2fa
+}
+
+.mana-B {
+    background-color: #ccc2c0;
+}
+
+.mana-R {
+    background-color: #f8aa92;
+}
+
+.mana-G {
+    background-color: #9dd2af;
+}
+

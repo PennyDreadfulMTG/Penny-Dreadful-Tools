@@ -31,11 +31,11 @@ def load_decks(where='1 = 1', order_by='updated_date DESC', limit=''):
     return decks
 
 def load_cards(decks):
+    deck_ids = ', '.join(str(sqlescape(deck.id)) for deck in decks)
     sql = """
-        SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN (?)
-    """
-    deck_ids = ', '.join(str(deck.id) for deck in decks)
-    rs = db().execute(sql, [deck_ids])
+        SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN ({deck_ids})
+    """.format(deck_ids=deck_ids)
+    rs = db().execute(sql)
     names = {row['card'] for row in rs}
     cards = {card.name: card for card in oracle.load_cards(names)}
     ds = {deck.id: deck for deck in decks}
@@ -82,7 +82,7 @@ def set_legality(d):
 #     }
 # }
 # Plus one of: mtgo_username OR tappedout_username
-# Optionally: resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url
+# Optionally: resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url, wins, losses, finish
 #
 # url + identifier must be unique for each decklist.
 def add_deck(params):
@@ -115,7 +115,23 @@ def add_deck(params):
     ) VALUES (
         datetime('now', 'unixepoch'), datetime('now', 'unixepoch'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
     )"""
-    values = [person_id, source_id, params['url'], params['identifier'], params['name'], params.get('competition_id'), archetype_id, params.get('resource_uri'), params.get('featured_card'), params.get('score'), params.get('thumbnail_url'), params.get('small_thumbnail_url'), params.get('wins'), params.get('losses'), params.get('finish')]
+    values = [
+        person_id,
+        source_id,
+        params['url'],
+        params['identifier'],
+        params['name'],
+        params.get('competition_id'),
+        archetype_id,
+        params.get('resource_uri'),
+        params.get('featured_card'),
+        params.get('score'),
+        params.get('thumbnail_url'),
+        params.get('small_thumbnail_url'),
+        params.get('wins'),
+        params.get('losses'),
+        params.get('finish')
+    ]
     deck_id = db().insert(sql, values)
     for name, n in params['cards']['maindeck'].items():
         insert_deck_card(deck_id, name, n, False)

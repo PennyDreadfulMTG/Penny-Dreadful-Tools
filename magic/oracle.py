@@ -266,7 +266,12 @@ def underscore2camel(s):
     return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)
 
 def date2int(s):
-    return dtutil.parse(s, '%Y-%m-%d', dtuil.WOTC_TZ)
+    try:
+        return dtutil.parse_to_ts(s, '%Y-%m-%d', dtutil.WOTC_TZ)
+    except TypeError:
+        return s
+    except ValueError:
+        return s
 
 def card_name(c):
     if c.get('layout') == 'meld':

@@ -8,7 +8,7 @@ from decksite.data import deck, Deck
 from decksite.scrapers import decklist
 
 def scrape():
-    fetch_decks('tapped-out')
+    fetch_decks('penny-dreadful')
 
 def fetch_decks(hub: str):
     deckcycle = fetcher.fetch_json("http://tappedout.net/api/deck/latest/{0}/".format(hub))

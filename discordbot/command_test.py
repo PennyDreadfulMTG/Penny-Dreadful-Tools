@@ -5,4 +5,3 @@ def test_roughly_matches():
     assert command.roughly_matches('signup', 'Sign Up')
     assert not command.roughly_matches('elephant', 'Tuba')
     assert command.roughly_matches('jmeka', 'j_meka')
-

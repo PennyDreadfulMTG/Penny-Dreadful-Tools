@@ -81,6 +81,7 @@ class View:
             d.name = name[0:NAME_MAX_LEN - 1] + '…' if len(name) > NAME_MAX_LEN else name
             d.person_url = url_for('person', person_id=d.person_id)
             d.date = dtutil.display_date(d.date)
+            d.show_record = d.wins or d.losses
 
     def prepare_cards(self):
         for c in getattr(self, 'cards', []):

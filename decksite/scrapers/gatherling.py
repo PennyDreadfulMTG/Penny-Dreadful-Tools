@@ -29,7 +29,7 @@ def tournament(url, name):
     report = soup.find('div', {'id': 'EventReport'})
     cell = report.find_all('td')[1]
     date_s = cell.find('br').next.strip() + ' 17:00' # Hack in the known start time because it's not in the page.
-    dt = dtutil.parse(date_s, '%d %B %Y', dtutil.GATHERLING_TZ)
+    dt = dtutil.parse(date_s, '%d %B %Y %H:%M', dtutil.GATHERLING_TZ)
     competition_id = competition.get_or_insert_competition(dt, dt, name, 'Gatherling', url)
 
     table = soup.find(text='Current Standings').find_parent('table')

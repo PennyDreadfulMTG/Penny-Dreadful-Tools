@@ -6,6 +6,9 @@ from magic import mana
 from decksite import deck_name
 from decksite.view import View
 
+NAME_MAX_LEN = 35
+
+
 # pylint: disable=no-self-use
 class Home(View):
     def __init__(self, decks):
@@ -32,9 +35,8 @@ class Home(View):
                 else:
                     d.stars = ''
             d.colors_safe = colors_html(d.colors)
-            MAX_LEN = 35
             name = deck_name.normalize(d)
-            d.name = name[0:MAX_LEN - 1] + '…' if len(name) > MAX_LEN else name
+            d.name = name[0:NAME_MAX_LEN - 1] + '…' if len(name) > NAME_MAX_LEN else name
             d.person = d.person.lower()
 
     def decks(self):

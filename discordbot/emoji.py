@@ -28,3 +28,11 @@ def replace_emoji(text, channel):
         if emoji != None:
             output = output.replace('{' + symbol + '}', str(emoji))
     return output
+
+def legal_emoji(c, legal_cards, verbose=False):
+    if c.name in legal_cards:
+        return ':white_check_mark:'
+    s = ':no_entry_sign:'
+    if verbose:
+        s += ' (not legal in PD)'
+    return s

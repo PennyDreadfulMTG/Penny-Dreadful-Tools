@@ -19,9 +19,12 @@ def generate_fakebot():
         assert channel != None
         assert image_file != None and fetcher_internal.acceptable_file(image_file)
         assert content != ''
+    async def fake_send_typing(channel):
+        assert channel != None
     fakebot = bot.Bot()
     fakebot.client.send_message = fake_send_message
     fakebot.client.send_file = fake_send_file
+    fakebot.client.send_typing = fake_send_typing
 
     fakebot.legal_cards = oracle.get_legal_cards()
     return fakebot

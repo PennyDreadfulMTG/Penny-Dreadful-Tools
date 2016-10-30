@@ -1,6 +1,6 @@
 import os
 
-from discordbot import command
+from discordbot import command, emoji
 
 from magic import card, fetcher, oracle, fetcher_internal, image_fetcher
 from shared import configuration
@@ -66,10 +66,10 @@ def test_legality_emoji():
     legal_cards = oracle.get_legal_cards()
     assert len(legal_cards) > 0
     legal_card = oracle.cards_from_query('island')[0]
-    assert command.legal_emoji(legal_card, legal_cards) == ':white_check_mark:'
+    assert emoji.legal_emoji(legal_card, legal_cards) == ':white_check_mark:'
     illegal_card = oracle.cards_from_query('black lotus')[0]
-    assert command.legal_emoji(illegal_card, legal_cards) == ':no_entry_sign:'
-    assert command.legal_emoji(illegal_card, legal_cards, True) == ':no_entry_sign: (not legal in PD)'
+    assert emoji.legal_emoji(illegal_card, legal_cards) == ':no_entry_sign:'
+    assert emoji.legal_emoji(illegal_card, legal_cards, True) == ':no_entry_sign: (not legal in PD)'
 
 def test_accents():
     cards = oracle.cards_from_query('Lim-Dûl the Necromancer')

@@ -3,6 +3,8 @@
 Displays info about quoted cards in a discord channel
 
 [![Build Status](http://ci.katelyngigante.com/buildStatus/icon?job=Penny Dreadful/Penny-Dreadful-Tools/master)](http://ci.katelyngigante.com/job/Penny%20Dreadful/job/Penny-Dreadful-Tools/job/master/)
+[![Bot Issues](https://badge.waffle.io/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot.svg?label=bot&title=Issues)](http://waffle.io/PennyDreadfulMTG/Penny-Dreadful-Tools)
+
 
 #Usage
 Basic bot usage: Include [cardname] in your regular messages.
@@ -43,6 +45,16 @@ The bot will search for any quoted cards, and respond with the card details.
 `!search {query}` Search for cards, using a magidex style query.
 
 `!status` Gives the status of MTGO, UP or DOWN.
+
+# Developer Commands
+
+`!clearimagecache` Deletes all the cached images.  Use sparingly
+
+`!echo` Repeat after me...
+
+`!restartbot` Restarts the bot.
+
+`!update` Forces an update to the legal card list
 
 #Installation
 To add this bot to your servers use this <a href='https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=0'>link</a>

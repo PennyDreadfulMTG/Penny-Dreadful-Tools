@@ -5,18 +5,27 @@ from shared.database import Database, sqlescape, sqllikeescape
 from shared.pd_exception import DatabaseException
 
 def location():
-    return '{scratch_dir}/tmp.db'.format(scratch_dir=configuration.get('scratch_dir'))
+    return '{scratch_dir}/tmp.sqlite'.format(scratch_dir=configuration.get('scratch_dir'))
 
 def setup():
-    db = Database(location())
+    db = getattr(setup, "db", None)
+    if db is not None:
+        db.execute("DROP TABLE IF EXISTS x")
+    else:
+        db = Database(location())
     db.execute('CREATE TABLE IF NOT EXISTS x (id INTEGER PRIMARY KEY, v TEXT)')
     return db
 
-def teardown():
+def teardown_function():
     try:
         os.remove(location())
+        setattr(setup, "db", None)
+        print("Teardown removed tmp.sqlite")
     except FileNotFoundError:
         pass
+    except PermissionError:
+        # Windows Lock
+        print("Teardown was unable to remove tmp.sqlite")
 
 def test_db():
     db = setup()
@@ -28,7 +37,6 @@ def test_db():
     rs = db.execute('SELECT v FROM x')
     assert len(rs) == 1
     assert rs[0]['v'] == 'A'
-    teardown()
 
 def test_transaction():
     db = setup()
@@ -50,13 +58,11 @@ def test_transaction():
     rs = db.execute('SELECT v FROM x')
     assert len(rs) == 1
     assert rs[0]['v'] == 'A'
-    teardown()
 
 def test_value():
     db = setup()
     db.execute("INSERT INTO x (v) VALUES ('A'), ('B'), ('C')")
     assert db.value('SELECT id FROM x WHERE v = ?', ['B']) == 2
-    teardown()
     db = setup()
     assert db.value('SELECT id FROM x WHERE v = 999', default='Z') == 'Z'
     exception_occurred = False
@@ -65,21 +71,18 @@ def test_value():
     except DatabaseException:
         exception_occurred = True
     assert exception_occurred
-    teardown()
 
 def test_values():
     db = setup()
     db.execute("INSERT INTO x (v) VALUES ('A'), ('B'), ('C')")
     assert db.values('SELECT id FROM x ORDER BY id') == [1, 2, 3]
     assert db.values('SELECT v FROM x ORDER BY id') == ['A', 'B', 'C']
-    teardown()
 
 def test_insert():
     db = setup()
     assert db.insert("INSERT INTO x (v) VALUES ('A')") == 1
     assert db.insert("INSERT INTO x (v) VALUES ('B')") == 2
     assert db.insert("INSERT INTO x (v) VALUES ('C')") == 3
-    teardown()
 
 def test_sqlescape():
     assert sqlescape('Hello') == "'Hello'"

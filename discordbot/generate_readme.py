@@ -34,7 +34,7 @@ def generate_readme():
     readme += """
 #Commands
 """
-    readme += command.build_help().replace('\n', '\n\n')
+    readme += command.build_help(True).replace('\n', '\n\n')
     readme += '\n'
     readme += FOOTER
 

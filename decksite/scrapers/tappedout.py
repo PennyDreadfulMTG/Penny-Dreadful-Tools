@@ -7,6 +7,9 @@ from decksite import translation
 from decksite.data import deck, Deck
 from decksite.scrapers import decklist
 
+def scrape():
+    fetch_decks('tapped-out')
+
 def fetch_decks(hub: str):
     deckcycle = fetcher.fetch_json("http://tappedout.net/api/deck/latest/{0}/".format(hub))
     return [Deck(merge_deck(d)) for d in deckcycle]

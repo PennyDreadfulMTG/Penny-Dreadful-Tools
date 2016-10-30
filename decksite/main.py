@@ -2,8 +2,8 @@ import os
 
 from flask import Flask, request, send_from_directory
 
-from decksite.data import deck
-from decksite.views import AddForm, Deck, Home
+from decksite.data import deck, people as ps
+from decksite.views import AddForm, Deck, Home, People, Person
 
 APP = Flask(__name__)
 
@@ -15,6 +15,17 @@ def home():
 @APP.route('/decks/<deck_id>')
 def decks(deck_id):
     view = Deck(deck.load_deck(deck_id))
+    return view.page()
+
+@APP.route('/people')
+def people():
+    view = People(ps.load_people())
+    return view.page()
+
+@APP.route('/people/<person_id>')
+def person(person_id):
+    print(ps.load_person(person_id))
+    view = Person(ps.load_person(person_id))
     return view.page()
 
 @APP.route('/add')

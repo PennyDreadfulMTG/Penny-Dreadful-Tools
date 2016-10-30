@@ -8,7 +8,6 @@ from decksite.view import View
 
 NAME_MAX_LEN = 35
 
-
 # pylint: disable=no-self-use
 class Home(View):
     def __init__(self, decks):

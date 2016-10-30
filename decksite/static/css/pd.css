@@ -144,7 +144,6 @@ td:first-child, td:last-child {
     margin-right: 0.5em;
     position: relative;
     text-align: right;
-    vertical-align: baseline;
     width: 4em;
 }
 

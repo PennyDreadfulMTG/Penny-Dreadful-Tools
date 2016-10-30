@@ -2,9 +2,9 @@ import datetime
 
 def display_date(dt, granularity=1):
     if (datetime.datetime.utcnow() - dt) > datetime.timedelta(365):
-        '{%d %M %YYYY}'.format(dt)
+        return '{:%b %d, %Y}'.format(dt)
     if (datetime.datetime.utcnow() - dt) > datetime.timedelta(28):
-        '{%d %M}'.format(dt)
+        return '{:%b %d}'.format(dt)
     else:
         diff = datetime.datetime.utcnow() - dt
         return '{duration} ago'.format(duration=display_time(diff.total_seconds(), granularity))

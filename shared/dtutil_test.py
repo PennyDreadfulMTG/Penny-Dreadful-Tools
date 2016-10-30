@@ -46,7 +46,9 @@ def test_now():
     assert (now - then).total_seconds() > 0
 
 def test_display_date():
-    dt = dtutil.parse('2008-03-29', '%Y-%m-%d', tz.tzlocal())
+    dt = dtutil.parse('2008-03-29', '%Y-%m-%d', dtutil.WOTC_TZ)
     assert dtutil.display_date(dt) == 'Mar 29, 2008'
+    dt = dtutil.parse('2008-03-29 02:00', '%Y-%m-%d %H:%M', tz.tzutc())
+    assert dtutil.display_date(dt) == 'Mar 28, 2008'
     dt = datetime.datetime.now().replace(tzinfo=tz.tzlocal()) - datetime.timedelta(seconds=10)
     assert dtutil.display_date(dt).find('seconds') >= 0

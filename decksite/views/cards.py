@@ -1,5 +1,3 @@
-from flask import url_for
-
 from decksite.view import View
 
 # pylint: disable=no-self-use

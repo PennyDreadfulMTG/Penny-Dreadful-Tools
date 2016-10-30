@@ -1,3 +1,5 @@
+import datetime
+
 from munch import Munch
 from flask import url_for
 
@@ -14,19 +16,26 @@ def latest_decks():
 def load_deck(deck_id):
     return load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id)))[0]
 
-def load_decks(where='1 = 1', order_by='updated_date DESC', limit=''):
+def load_decks(where='1 = 1', order_by=None, limit=''):
+    if order_by is None:
+        order_by = '{date_query} DESC, IFNULL(finish, 9999999999)'.format(date_query=date_query())
     sql = """
         SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.finish,
-            {person_query} AS person, p.id AS person_id
+            {person_query} AS person, p.id AS person_id,
+            {date_query} AS `date`
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id
+        LEFT JOIN competition AS c ON d.competition_id = c.id
         WHERE {where}
         ORDER BY {order_by}
         {limit}
-    """.format(person_query=people.person_query(), where=where, order_by=order_by, limit=limit)
+    """.format(person_query=people.person_query(), date_query=date_query(), where=where, order_by=order_by, limit=limit)
     decks = [Deck(d) for d in db().execute(sql)]
     load_cards(decks)
     for d in decks:
+        d.created_date = datetime.datetime.utcfromtimestamp(d.created_date)
+        d.updated_date = datetime.datetime.utcfromtimestamp(d.updated_date)
+        d.date = datetime.datetime.utcfromtimestamp(d.date)
         set_colors(d)
         set_legality(d)
     return decks
@@ -167,6 +176,9 @@ def get_source_id(source):
 def get_archetype_id(archetype):
     sql = 'SELECT id FROM archetype WHERE name = ?'
     return db().value(sql, [archetype])
+
+def date_query():
+    return 'IFNULL(c.end_date, d.created_date)'
 
 class Deck(Munch):
     def __init__(self, params):

@@ -81,6 +81,7 @@ h1 {
 }
 
 h1 a {
+    color: #502828;
     text-decoration: none;
 }
 
@@ -111,10 +112,6 @@ h3 {
 .main table a {
     text-shadow: none;
     background-image: none;
-}
-
-a:visited {
-    color: #505050;
 }
 
 /* Lists */

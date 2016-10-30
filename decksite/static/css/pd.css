@@ -262,3 +262,20 @@ ul.menu {
     background-color: #9dd2af;
 }
 
+
+/* Responsive Tables */
+
+@media only screen and (max-width: 60rem) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    tr {
+        border-bottom: 0.1rem solid #999;
+        padding: 1rem 0;
+    }
+
+    td {
+        padding-left: 0;
+    }
+}

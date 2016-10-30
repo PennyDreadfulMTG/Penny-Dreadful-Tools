@@ -174,3 +174,57 @@ label {
 textarea {
     height: 20em;
 }
+
+.mana:nth-child(2) {
+    border-left: 1px #999 solid;
+}
+
+.mana {
+    display: inline-block;
+    height: 1em;
+    vertical-align: middle;
+    border-bottom: 0.1em #999 solid;
+    border-top: 0.1em #999 solid;
+    border-right: 0.1em #999 solid;
+}
+
+.mana-1 {
+    width: 2.9em;
+}
+
+.mana-2 {
+    width: 1.4em;
+}
+
+.mana-3 {
+    width: .9em;
+}
+
+.mana-4 {
+    width: .65em;
+}
+
+.mana-5 {
+    width: .5em;
+}
+
+.mana-W {
+    background-color: #fffcda;
+}
+
+.mana-U {
+    background-color: #ace2fa
+}
+
+.mana-B {
+    background-color: #ccc2c0;
+}
+
+.mana-R {
+    background-color: #f8aa92;
+}
+
+.mana-G {
+    background-color: #9dd2af;
+}
+

@@ -70,7 +70,7 @@ def set_colors(d):
     d.colors = required
 
 def set_legality(d):
-    d.pd_legal = oracle.legal([c['card'] for c in d.cards()])
+    d.pd_legal = oracle.legal([c['card'] for c in d.all_cards()])
 
 # Expects:
 #
@@ -183,5 +183,5 @@ class Deck(Munch):
             self[k] = params[k]
         self.url = url_for('decks', deck_id=self.id)
 
-    def cards(self):
+    def all_cards(self):
         return self.maindeck + self.sideboard

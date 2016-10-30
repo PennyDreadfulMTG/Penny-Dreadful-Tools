@@ -68,7 +68,7 @@ class View:
             elif d.finish == 5:
                 d.top8 = '⑧'
                 d.stars = '★'
-            else:
+            elif d.wins is not None:
                 d.top8 = ''
                 if d.wins - 5 >= d.losses:
                     d.stars = '★★'
@@ -76,6 +76,9 @@ class View:
                     d.stars = '★'
                 else:
                     d.stars = ''
+            else:
+                d.top8 = ''
+                d.stars = ''
             d.colors_safe = colors_html(d.colors)
             name = deck_name.normalize(d)
             d.name = name[0:NAME_MAX_LEN - 1] + '…' if len(name) > NAME_MAX_LEN else name

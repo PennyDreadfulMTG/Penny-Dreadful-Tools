@@ -163,6 +163,21 @@ Want to contribute? Send a Pull Request."""
 
     async def price(self, bot, channel, args, author):
         """`!price {name}` Get price information about the named card."""
+        def price_info(c):
+            try:
+                p = fetcher.card_price(c.name)
+            except fetcher.FetchException:
+                return "Price unavailable"
+            s = '{price}'.format(price=format_price(p['price']))
+            if p['low'] <= 0.05:
+                s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))
+                if p['low'] <= 0.01:
+                    s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(p['week'] * 100.0), month=round(p['month'] * 100.0), season=round(p['season'] * 100.0))
+                s += ')'
+            return s
+        def format_price(p):
+            dollars, cents = str(round(p, 2)).split('.')
+            return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
         await single_card_text(bot, channel, args, author, price_info)
 
     async def legal(self, bot, channel, args, author):
@@ -248,22 +263,6 @@ def complex_search(query):
     print('Searching for {query}'.format(query=query))
     return search.search(query)
 
-def price_info(c):
-    try:
-        p = fetcher.card_price(c.name)
-    except fetcher.FetchException:
-        return "Price unavailable"
-    s = '{price}'.format(price=format_price(p['price']))
-    if p['low'] <= 0.05:
-        s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))
-        if p['low'] <= 0.01:
-            s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(p['week'] * 100.0), month=round(p['month'] * 100.0), season=round(p['season'] * 100.0))
-        s += ')'
-    return s
-
-def format_price(p):
-    dollars, cents = str(round(p, 2)).split('.')
-    return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
 
 def display_time(seconds, granularity=2):
     intervals = (

@@ -17,7 +17,7 @@ BASE = {
     'type': TEXT,
     'nullable': True,
     'primary_key': False,
-    'select': '`{table}`.`{column}`',
+    'query': '`{table}`.`{column}`',
     'mtgjson': True,
     'foreign_key': None,
     'default': None,
@@ -38,7 +38,7 @@ def card_properties():
 def face_properties():
     props = {}
     base = copy.deepcopy(BASE)
-    base['select'] = "GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN `{table}`.`{column}` ELSE '' END, '') AS `{column}`"
+    base['query'] = "GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN `{table}`.`{column}` ELSE '' END, '') AS `{column}`"
     for k in ['id', 'name', 'mana_cost', 'cmc', 'power', 'toughness', 'power', 'toughness', 'loyalty', 'type', 'text', 'image_name', 'hand', 'life', 'starter', 'position', 'name_ascii', 'card_id']:
         props[k] = copy.deepcopy(base)
     for k in ['id', 'position', 'name_ascii', 'card_id']:
@@ -49,9 +49,9 @@ def face_properties():
         props[k]['type'] = INTEGER
     props['id']['primary_key'] = True
     props['cmc']['type'] = REAL
-    props['name']['select'] = """{name_select} AS name""".format(name_select=name_select())
-    props['name_ascii']['select'] = """{name_select} AS name_ascii""".format(name_select=name_select('name_ascii'))
-    props['mana_cost']['select'] = """CASE
+    props['name']['query'] = """{name_query} AS name""".format(name_query=name_query())
+    props['name_ascii']['query'] = """{name_query} AS name_ascii""".format(name_query=name_query('name_ascii'))
+    props['mana_cost']['query'] = """CASE
             WHEN layout IN ('split') AND `{table}`.`text` LIKE '%Fuse (You may cast one or both halves of this card from your hand.)%' THEN
                 GROUP_CONCAT(`{table}`.`{column}`, '')
             WHEN layout IN ('split') THEN
@@ -59,8 +59,8 @@ def face_properties():
             ELSE
                 GROUP_CONCAT(CASE WHEN position = 1 THEN `{table}`.`{column}` ELSE '' END, '')
         END AS `{column}`"""
-    props['cmc']['select'] = "GROUP_CONCAT(`{table}`.`{column}`, '|') AS `{column}`"
-    props['text']['select'] = "GROUP_CONCAT(`{table}`.`{column}`, '\n-----\n') AS `{column}`"
+    props['cmc']['query'] = "GROUP_CONCAT(`{table}`.`{column}`, '|') AS `{column}`"
+    props['text']['query'] = "GROUP_CONCAT(`{table}`.`{column}`, '\n-----\n') AS `{column}`"
     props['card_id']['foreign_key'] = ('card', 'id')
     return props
 
@@ -100,7 +100,7 @@ def printing_properties():
     props['rarity_id']['foreign_key'] = ('rarity', 'id')
     return props
 
-def name_select(column='face_name'):
+def name_query(column='face_name'):
     return """
         CASE
         WHEN layout = 'double-faced' THEN

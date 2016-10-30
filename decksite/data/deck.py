@@ -6,7 +6,7 @@ from shared import dtutil
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
-from decksite.data import people
+from decksite.data import query
 from decksite.database import db
 
 def latest_decks():
@@ -17,7 +17,7 @@ def load_deck(deck_id):
 
 def load_decks(where='1 = 1', order_by=None, limit=''):
     if order_by is None:
-        order_by = '{date_query} DESC, IFNULL(finish, 9999999999)'.format(date_query=date_query())
+        order_by = '{date_query} DESC, IFNULL(finish, 9999999999)'.format(date_query=query.date_query())
     sql = """
         SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.finish,
             {person_query} AS person, p.id AS person_id,
@@ -28,7 +28,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         WHERE {where}
         ORDER BY {order_by}
         {limit}
-    """.format(person_query=people.person_query(), date_query=date_query(), where=where, order_by=order_by, limit=limit)
+    """.format(person_query=query.person_query(), date_query=query.date_query(), where=where, order_by=order_by, limit=limit)
     decks = [Deck(d) for d in db().execute(sql)]
     load_cards(decks)
     for d in decks:
@@ -70,7 +70,7 @@ def set_colors(d):
     d.colors = required
 
 def set_legality(d):
-    d.pd_legal = oracle.legal([c['card'] for c in d.cards()])
+    d.pd_legal = oracle.legal([c['card'] for c in d.all_cards()])
 
 # Expects:
 #
@@ -176,9 +176,6 @@ def get_archetype_id(archetype):
     sql = 'SELECT id FROM archetype WHERE name = ?'
     return db().value(sql, [archetype])
 
-def date_query():
-    return 'IFNULL(c.end_date, d.created_date)'
-
 class Deck(Munch):
     def __init__(self, params):
         super().__init__()
@@ -186,5 +183,5 @@ class Deck(Munch):
             self[k] = params[k]
         self.url = url_for('decks', deck_id=self.id)
 
-    def cards(self):
+    def all_cards(self):
         return self.maindeck + self.sideboard

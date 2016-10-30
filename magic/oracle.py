@@ -22,12 +22,12 @@ def initialize():
 def search(query, fuzzy_threshold=260):
     query = card.canonicalize(query)
     sql = """
-        {base_select}
-        HAVING LOWER({name_select}) IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
-            OR {name_ascii_select} LIKE ?
+        {base_query}
+        HAVING LOWER({name_query}) IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
+            OR {namename_ascii_query} LIKE ?
             OR SUM(CASE WHEN LOWER(face_name) IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold}) THEN 1 ELSE 0 END) > 0
         ORDER BY pd_legal DESC, name
-    """.format(base_select=base_select(), name_select=card.name_select().format(table='u'), name_ascii_select=card.name_select('name_ascii').format(table='u'), fuzzy_threshold=fuzzy_threshold)
+    """.format(base_query=base_query(), name_query=card.name_query().format(table='u'), namename_ascii_query=card.name_query('name_ascii').format(table='u'), fuzzy_threshold=fuzzy_threshold)
     fuzzy_query = '{query}*'.format(query=query)
     like_query = '%{query}%'.format(query=query)
     rs = db().execute(sql, [fuzzy_query, like_query, fuzzy_query])
@@ -47,13 +47,13 @@ def valid_name(name):
 
 def load_cards(names=None):
     if names:
-        names_clause = 'HAVING LOWER({name_select}) IN ({names})'.format(name_select=card.name_select().format(table='u'), names=', '.join(sqlescape(name).lower() for name in names))
+        names_clause = 'HAVING LOWER({name_query}) IN ({names})'.format(name_query=card.name_query().format(table='u'), names=', '.join(sqlescape(name).lower() for name in names))
     else:
         names_clause = ''
     sql = """
-        {base_select}
+        {base_query}
         {names_clause}
-    """.format(base_select=base_select(), names_clause=names_clause)
+    """.format(base_query=base_query(), names_clause=names_clause)
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 
@@ -67,11 +67,11 @@ def legal(cards, format_name='Penny Dreadful'):
         """.format(card_ids=', '.join(c.id for c in cards))
     return len(db().execute(sql, [format_name])) == 0
 
-def base_select(where_clause='(1 = 1)'):
+def base_query(where_clause='(1 = 1)'):
     return """
         SELECT
-            {card_selects},
-            {face_selects},
+            {card_queries},
+            {face_queries},
             GROUP_CONCAT(face_name, '|') AS names,
             SUM(CASE WHEN format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal
             FROM
@@ -84,8 +84,8 @@ def base_select(where_clause='(1 = 1)'):
             WHERE id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where_clause})
             GROUP BY id
     """.format(
-        card_selects=', '.join(prop['select'].format(table='u', column=name) for name, prop in card.card_properties().items()),
-        face_selects=', '.join(prop['select'].format(table='u', column=name) for name, prop in card.face_properties().items()),
+        card_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.card_properties().items()),
+        face_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.face_properties().items()),
         format_id=get_format_id('Penny Dreadful'),
         card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
         face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),
@@ -98,7 +98,7 @@ def get_legal_cards(force=False):
     except fetcher.FetchException:
         pass
     if new_list == ['']:
-        sql = '{base_select} HAVING pd_legal = 1'.format(base_select=base_select())
+        sql = '{base_query} HAVING pd_legal = 1'.format(base_query=base_query())
         new_list = [r['name'] for r in db().execute(sql)]
         if len(new_list) == 0:
             new_list = fetcher.legal_cards(force=True)
@@ -106,15 +106,15 @@ def get_legal_cards(force=False):
     db().execute('DELETE FROM card_legality WHERE format_id = ?', [format_id])
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
         SELECT {format_id}, id, 'Legal'
-        FROM ({base_select})
+        FROM ({base_query})
         WHERE name IN ({names})
-    """.format(format_id=format_id, base_select=base_select(), names=', '.join(sqlescape(name) for name in new_list))
+    """.format(format_id=format_id, base_query=base_query(), names=', '.join(sqlescape(name) for name in new_list))
     db().execute(sql)
     # Check we got the right number of legal cards.
     n = db().value('SELECT COUNT(*) FROM card_legality WHERE format_id = ?', [format_id])
     if n != len(new_list):
         print("Found {n} pd legal cards in the database but the list was {len} long".format(n=n, len=len(new_list)))
-        sql = 'SELECT name FROM ({base_select}) WHERE id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_select=base_select(), format_id=format_id)
+        sql = 'SELECT name FROM ({base_query}) WHERE id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=base_query(), format_id=format_id)
         db_legal_list = [row['name'] for row in db().execute(sql)]
         print(set(new_list).symmetric_difference(set(db_legal_list)))
     return new_list
@@ -154,8 +154,8 @@ def update_fuzzy_matching():
     db().execute('CREATE VIRTUAL TABLE IF NOT EXISTS fuzzy USING spellfix1')
     sql = """INSERT INTO fuzzy (word, rank)
         SELECT LOWER(name), pd_legal
-        FROM ({base_select})
-    """.format(base_select=base_select())
+        FROM ({base_query})
+    """.format(base_query=base_query())
     db().execute(sql)
     sql = """INSERT INTO fuzzy (word, rank)
         SELECT LOWER(f.name), SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0

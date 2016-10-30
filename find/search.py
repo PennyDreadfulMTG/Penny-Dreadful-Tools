@@ -18,9 +18,9 @@ VALUE_LOOKUP = {}
 
 def search(query):
     where_clause = parse(tokenize(query))
-    sql = """{base_select}
+    sql = """{base_query}
         ORDER BY pd_legal DESC, name
-    """.format(base_select=oracle.base_select(where_clause))
+    """.format(base_query=oracle.base_query(where_clause))
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 

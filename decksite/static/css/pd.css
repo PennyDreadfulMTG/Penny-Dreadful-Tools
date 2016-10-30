@@ -98,23 +98,10 @@ h3 {
 .main a {
     color: #502828;
     text-decoration: none;
-
-    /* Underline that respect descenders. */
-    text-shadow: 0.1em 0 0 #fff, -0.1em 0 0 #fff;
-    background-image: linear-gradient( to right, currentColor 0%, currentColor 100% );
-    background-repeat: repeat-x;
-    background-position: 0 96%;
-    -webkit-background-size: 100% 0.1em;
-    background-size: 100% 0.1em;
 }
 
 .main a:visited {
     color: #7F7373;
-}
-
-.main table a {
-    text-shadow: none;
-    background-image: none;
 }
 
 /* Lists */
@@ -145,6 +132,10 @@ td:first-child, td:last-child {
     position: relative;
     text-align: right;
     width: 4em;
+}
+
+.n {
+    text-align: right;
 }
 
 /* Forms */
@@ -262,3 +253,20 @@ ul.menu {
     background-color: #9dd2af;
 }
 
+
+/* Responsive tables */
+
+@media only screen and (max-width: 60rem) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    tr {
+        border-bottom: 0.1rem solid #999;
+        padding: 1rem 0;
+    }
+
+    td {
+        padding-left: 0;
+    }
+}

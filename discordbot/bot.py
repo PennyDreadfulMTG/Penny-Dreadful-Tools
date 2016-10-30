@@ -44,6 +44,7 @@ class Bot:
         await command.handle_command(message, self)
 
     async def post_cards(self, cards, channel, replying_to=None, additional_text=''):
+        await self.client.send_typing(channel)
         if len(cards) == 0:
             if replying_to is not None:
                 text = '{author}: No matches.'.format(author=replying_to.mention)

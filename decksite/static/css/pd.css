@@ -126,7 +126,11 @@ ul.decklist {
 /* Tables */
 
 td {
-    padding-right: 1em;
+    padding: 0 0.5em;
+}
+
+td:first-child, td:last-child {
+    padding: 0;
 }
 
 .marginnote {

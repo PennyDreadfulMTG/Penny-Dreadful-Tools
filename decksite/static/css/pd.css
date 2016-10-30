@@ -117,11 +117,18 @@ ul.decklist {
 
 /* Tables */
 
-td {
+th {
+    cursor: pointer;
+    font-size: 0.8em;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+td, th {
     padding: 0 0.5em;
 }
 
-td:first-child, td:last-child {
+td:first-child, td:last-child, th:first-child, th:last-child {
     padding: 0;
 }
 
@@ -260,6 +267,10 @@ ul.menu {
 @media only screen and (max-width: 60rem) {
     table, thead, tbody, th, td, tr {
         display: block;
+    }
+
+    thead {
+        display: none;
     }
 
     tr {

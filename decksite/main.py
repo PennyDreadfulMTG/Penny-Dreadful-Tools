@@ -26,7 +26,6 @@ def people():
 
 @APP.route('/people/<person_id>')
 def person(person_id):
-    print(ps.load_person(person_id))
     view = Person(ps.load_person(person_id))
     return view.page()
 

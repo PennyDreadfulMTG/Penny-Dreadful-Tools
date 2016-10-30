@@ -1,13 +1,14 @@
 import html
 import re
 
+from flask import url_for
+
 from magic import mana
 
 from decksite import deck_name
 from decksite.view import View
 
 NAME_MAX_LEN = 35
-
 
 # pylint: disable=no-self-use
 class Home(View):
@@ -37,7 +38,7 @@ class Home(View):
             d.colors_safe = colors_html(d.colors)
             name = deck_name.normalize(d)
             d.name = name[0:NAME_MAX_LEN - 1] + '…' if len(name) > NAME_MAX_LEN else name
-            d.person = d.person.lower()
+            d.person_url = url_for('person', person_id=d.person_id)
 
     def decks(self):
         return self._decks

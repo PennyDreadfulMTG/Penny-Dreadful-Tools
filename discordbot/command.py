@@ -296,7 +296,11 @@ def display_time(seconds, granularity=2):
     return ', '.join([x for x in result[:granularity] if x is not None])
 
 def roughly_matches(s1, s2):
-    return re.match('.*{s2}.*'.format(s2="".join(s2.split())), "".join(s1.split()), flags=re.IGNORECASE)
+    return simplify_string(s1).find(simplify_string(s2)) >= 0
+
+def simplify_string(s):
+    s = ''.join(s.split())
+    return re.sub(r'[\W_]+', '', s).lower()
 
 def build_help():
     msg = ''

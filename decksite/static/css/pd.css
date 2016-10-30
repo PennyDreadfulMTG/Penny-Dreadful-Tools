@@ -63,7 +63,7 @@ b {
 }
 
 section {
-    border-top: 2px #502828 solid;
+    border-top: 0.2rem #502828 solid;
     float: left;
     margin: 1em 4.236em 1em 0;
 }
@@ -108,6 +108,10 @@ h3 {
     background-size: 100% 0.1em;
 }
 
+.main a:visited {
+    color: #7F7373;
+}
+
 .main table a {
     text-shadow: none;
     background-image: none;
@@ -140,7 +144,6 @@ td:first-child, td:last-child {
     margin-right: 0.5em;
     position: relative;
     text-align: right;
-    vertical-align: baseline;
     width: 4em;
 }
 
@@ -175,7 +178,7 @@ textarea {
 }
 
 .mana:nth-child(2) {
-    border-left: 1px #999 solid;
+    border-left: 0.1em #999 solid;
 }
 
 .mana {

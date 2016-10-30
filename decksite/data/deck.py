@@ -5,6 +5,7 @@ from magic import mana, oracle
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
+from decksite.data import people
 from decksite.database import db
 
 def latest_decks():
@@ -15,14 +16,14 @@ def load_deck(deck_id):
 
 def load_decks(where='1 = 1', order_by='updated_date DESC', limit=''):
     sql = """
-        SELECT d.id, IFNULL(IFNULL(p.name, p.mtgo_username), p.tappedout_username) AS person, d.name,
-            d.created_date, d.updated_date, d.wins, d.losses, d.finish
+        SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.finish,
+            {person_query} AS person, p.id AS person_id
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id
         WHERE {where}
         ORDER BY {order_by}
         {limit}
-    """.format(where=where, order_by=order_by, limit=limit)
+    """.format(person_query=people.person_query(), where=where, order_by=order_by, limit=limit)
     decks = [Deck(d) for d in db().execute(sql)]
     load_cards(decks)
     for d in decks:

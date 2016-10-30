@@ -4,7 +4,7 @@ from flask import Flask, request, send_from_directory
 
 from magic import oracle
 
-from decksite.data import deck, people as ps
+from decksite.data import deck, person as ps
 from decksite.views import AddForm, Card, Cards, Deck, Home, People, Person
 
 APP = Flask(__name__)

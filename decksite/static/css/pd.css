@@ -134,15 +134,14 @@ td:first-child, td:last-child {
 }
 
 .marginnote {
-    position: relative;
+    clear: left;
+    float: left;
     margin-left: -4.5em;
     margin-right: 0.5em;
-    width: 4em;
-    float: left;
-    clear: left;
-    vertical-align: baseline;
     position: relative;
     text-align: right;
+    vertical-align: baseline;
+    width: 4em;
 }
 
 /* Forms */

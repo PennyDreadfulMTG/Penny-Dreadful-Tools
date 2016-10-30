@@ -132,6 +132,18 @@ td:first-child, td:last-child, th:first-child, th:last-child {
     padding: 0;
 }
 
+td.c {
+    text-align: center;
+}
+
+td.n {
+    text-align: right;
+}
+
+td.pale {
+    color: #999;
+}
+
 .marginnote {
     clear: left;
     float: left;
@@ -140,10 +152,6 @@ td:first-child, td:last-child, th:first-child, th:last-child {
     position: relative;
     text-align: right;
     width: 4em;
-}
-
-.n {
-    text-align: right;
 }
 
 /* Forms */

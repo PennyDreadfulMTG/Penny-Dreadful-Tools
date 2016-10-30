@@ -28,6 +28,9 @@ class View:
     def css_url(self):
         return url_for('static', filename='css/pd.css')
 
+    def js_url(self):
+        return url_for('static', filename='js/pd.js')
+
     def menu(self):
         return [
             {'name': 'Home', 'url': url_for('home')},

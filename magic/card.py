@@ -144,7 +144,4 @@ class Card(Munch):
         return not self.is_creature() and not self.is_land()
 
 class Printing(Munch):
-    def __init__(self, params):
-        super().__init__()
-        for k in params.keys():
-            setattr(self, k, params[k])
+    pass

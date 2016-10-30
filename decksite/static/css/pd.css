@@ -97,7 +97,6 @@ h3 {
 
 .main a {
     color: #502828;
-    text-transform: lowercase;
     text-decoration: none;
 
     /* Underline that respect descenders. */

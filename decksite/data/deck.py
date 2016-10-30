@@ -19,12 +19,16 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
     if order_by is None:
         order_by = '{date_query} DESC, IFNULL(finish, 9999999999)'.format(date_query=query.date_query())
     sql = """
-        SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.finish,
+        SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.finish, d.url AS source_url,
+            (SELECT COUNT(id) FROM deck WHERE competition_id IS NOT NULL AND competition_id = d.competition_id) AS players,
+            d.competition_id, c.name AS competition_name,
             {person_query} AS person, p.id AS person_id,
-            {date_query} AS `date`
+            {date_query} AS `date`,
+            s.name AS source_name
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id
         LEFT JOIN competition AS c ON d.competition_id = c.id
+        INNER JOIN source AS s ON d.source_id = s.id
         WHERE {where}
         ORDER BY {order_by}
         {limit}

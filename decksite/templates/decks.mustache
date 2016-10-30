@@ -1,14 +1,42 @@
 <table>
-    {{#decks}}
+    <thead>
         <tr>
-            <td><span class="marginnote">{{stars}}</span>{{{colors_safe}}}</td>
-            <td><a href="{{url}}">{{{name}}}</a></td>
-            <td><a href="{{person_url}}">{{person}}</a></td>
-            <td>{{#wins}}{{wins}}–{{losses}}{{/wins}}</td>
-            <td>{{#competition_url}}<a href="{{competition_url}}">{{competition_type}}</a>{{/competition_url}}</td>
-            <td>{{top8}}</td>
-            <td>{{players}}</td>
-            <td>{{date}}</td>
+            <th>Colors</th>
+            <th>Name</th>
+            <th>Person</th>
+            <th data-empty="bottom">Record</th>
+            <th class="c">Top 8</th>
+            <th>Players</th>
+            <th>Date</th>
         </tr>
-    {{/decks}}
+    </thead>
+    <tbody>
+        {{#decks}}
+            <tr>
+                <td><span class="marginnote">{{stars}}</span>{{{colors_safe}}}</td>
+                <td><a href="{{url}}">{{{name}}}</a></td>
+                <td><a href="{{person_url}}">{{person}}</a></td>
+                <td class="n">
+                    {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
+                    {{#show_record}}{{wins}}–{{losses}}{{/show_record}}
+                    {{#competition_url}}</a>{{/competition_url}}
+                </td>
+                <td class="c">
+                    {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
+                    {{top8}}
+                    {{#competition_url}}</a>{{/competition_url}}
+                </td>
+                <td class="n">
+                    {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
+                    {{players}}
+                    {{#competition_url}}</a>{{/competition_url}}
+                </td>
+                <td class="n pale">
+                    {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
+                    {{date}}
+                    {{#competition_url}}</a>{{/competition_url}}
+                </td>
+            </tr>
+        {{/decks}}
+    </tbody>
 </table>

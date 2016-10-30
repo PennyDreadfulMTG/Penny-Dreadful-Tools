@@ -11,7 +11,7 @@ from typing import List
 from discordbot import emoji
 from find import search
 from magic import card, oracle, fetcher, rotation
-from shared import configuration, human_time
+from shared import configuration, dtutil
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -150,10 +150,10 @@ Want to contribute? Send a Pull Request."""
     async def rotation(self, bot, channel):
         """`!rotation` Give the date of the next Penny Dreadful rotation."""
         next_rotation = rotation.next_rotation()
-        now = rotation.now()
+        now = dtutil.now()
         if next_rotation > now:
             diff = next_rotation - now
-            msg = "The next rotation is in {diff}".format(diff=human_time.display_time(diff.total_seconds()))
+            msg = "The next rotation is in {diff}".format(diff=dtutil.display_time(diff.total_seconds()))
             await bot.client.send_message(channel, msg)
 
     async def _oracle(self, bot, channel, args, author):

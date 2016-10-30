@@ -1,5 +1,3 @@
-import datetime
-
 from munch import Munch
 from flask import url_for
 
@@ -33,9 +31,9 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
     decks = [Deck(d) for d in db().execute(sql)]
     load_cards(decks)
     for d in decks:
-        d.created_date = datetime.datetime.utcfromtimestamp(d.created_date)
-        d.updated_date = datetime.datetime.utcfromtimestamp(d.updated_date)
-        d.date = datetime.datetime.utcfromtimestamp(d.date)
+        d.created_date = dtutil.ts2dt(d.created_date)
+        d.updated_date = dtutil.ts2dt(d.updated_date)
+        d.date = dtutil.ts2dt(d.date)
         set_colors(d)
         set_legality(d)
     return decks

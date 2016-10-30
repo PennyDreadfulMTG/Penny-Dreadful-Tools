@@ -44,6 +44,7 @@ class Bot:
         await command.handle_command(message, self)
 
     async def post_cards(self, cards, channel, replying_to=None, additional_text=''):
+        await self.client.send_typing(channel)
         if len(cards) == 0:
             if replying_to is not None:
                 text = '{author}: No matches.'.format(author=replying_to.mention)
@@ -59,10 +60,10 @@ class Bot:
         if len(cards) == 1:
             card = cards[0]
             mana = emoji.replace_emoji(card.mana_cost, channel) or ''
-            legal = command.legal_emoji(card, self.legal_cards, True)
+            legal = emoji.legal_emoji(card, self.legal_cards, True)
             text = '{name} {mana_cost} — {type} — {legal}'.format(name=card.name, mana_cost=mana, type=card.type, legal=legal)
         else:
-            text = ', '.join('{name} {legal}'.format(name=card.name, legal=command.legal_emoji(card, self.legal_cards)) for card in cards)
+            text = ', '.join('{name} {legal}'.format(name=card.name, legal=emoji.legal_emoji(card, self.legal_cards)) for card in cards)
             text += more_text
         if len(cards) > 10:
             image_file = None

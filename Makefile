@@ -26,6 +26,13 @@ lint:
 	@find . -name "*.py" | xargs pylint -f parseable
 	@echo
 
+shortlint:
+	@echo
+	@echo "******************************** Lint *****************************************"
+	@echo
+	@find . -name "*.py" | xargs pylint -f parseable -E
+	@echo
+
 readme:
 	@echo
 	@echo "******************************** Lint *****************************************"

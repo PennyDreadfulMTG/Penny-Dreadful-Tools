@@ -49,6 +49,34 @@ async def handle_command(message, bot):
     else:
         await bot.client.send_message(message.channel, 'Unknown command `{cmd}`. Try `!help`?'.format(cmd=cmd))
 
+def build_help(readme=False):
+    def print_group(group):
+        msg = ''
+        for methodname in dir(Commands):
+            if methodname.startswith("__"):
+                continue
+            method = getattr(Commands, methodname)
+            if getattr(method, "group", None) != group:
+                continue
+            if method.__doc__:
+                if not method.__doc__.startswith('`'):
+                    msg += '\n`!{0}` {1}'.format(methodname, method.__doc__)
+                else:
+                    msg += '\n{0}'.format(method.__doc__)
+        return msg
+
+    msg = print_group("Commands")
+    if readme:
+        msg += "\n# Developer Commands"
+        msg += print_group("Developer")
+    return msg
+
+def cmd_header(group):
+    def decorator(func):
+        setattr(func, "group", group)
+        return func
+    return decorator
+
 class Commands:
     """To define a new command, simply add a new method to this class.
     If you want !help to show the message, add a docstring to the method.
@@ -57,6 +85,7 @@ class Commands:
     Where any argument after self is optional. (Although at least channel is usually needed)
     """
 
+    @cmd_header("Commands")
     async def help(self, bot, channel):
         """`!help` Provides information on how to operate the bot."""
         msg = """Basic bot usage: Include [cardname] in your regular messages.
@@ -70,6 +99,7 @@ Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDread
 Want to contribute? Send a Pull Request."""
         await bot.client.send_message(channel, msg)
 
+    @cmd_header("Commands")
     async def random(self, bot, channel, args):
         """`!random` Request a random PD legal card
 `!random X` Request X random PD legal cards."""
@@ -82,19 +112,26 @@ Want to contribute? Send a Pull Request."""
         cards = [oracle.cards_from_query(name)[0] for name in random.sample(bot.legal_cards, number)]
         await bot.post_cards(cards, channel)
 
+    @cmd_header("Developer")
     async def update(self, bot, channel):
+        """Forces an update to the legal card list"""
         bot.legal_cards = oracle.get_legal_cards(True)
         await bot.client.send_message(channel, 'Reloaded list of legal cards.')
 
-    async def updateprices(self, bot, channel):
-        await bot.client.send_message(channel, 'Updating prices, this could be slow.')
-        fetcher.fetch_prices()
-        await bot.client.send_message(channel, 'Reloaded prices.')
+    # @cmd_header("Developer")
+    # async def updateprices(self, bot, channel):
+    #     """Downloads the prices database. """
+    #     await bot.client.send_message(channel, 'Updating prices, this could be slow.')
+    #     fetcher.fetch_prices()
+    #     await bot.client.send_message(channel, 'Reloaded prices.')
 
+    @cmd_header("Developer")
     async def restartbot(self, bot, channel):
+        """Restarts the bot."""
         await bot.client.send_message(channel, 'Rebooting!')
         sys.exit()
 
+    @cmd_header("Commands")
     async def search(self, bot, channel, args, author):
         """`!search {query}` Search for cards, using a magidex style query."""
         try:
@@ -107,26 +144,32 @@ Want to contribute? Send a Pull Request."""
             additional_text = 'http://magidex.com/search/?q=' + fetcher.internal.escape(args)
         await bot.post_cards(cards, channel, author, additional_text)
 
+    @cmd_header("Commands")
     async def status(self, bot, channel):
         """`!status` Gives the status of MTGO, UP or DOWN."""
         status = fetcher.mtgo_status()
         await bot.client.send_message(channel, 'MTGO is {status}'.format(status=status))
 
+    @cmd_header("Developer")
     async def echo(self, bot, channel, args):
+        """Repeat after me..."""
         s = emoji.replace_emoji(args, channel)
         print('Echoing {s}'.format(s=s))
         await bot.client.send_message(channel, s)
 
+    @cmd_header("Commands")
     async def barbs(self, bot, channel):
         """`!barbs` Gives Volvary's helpful advice for when to sideboard in Aura Barbs."""
         msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
         await bot.client.send_message(channel, msg)
 
+    @cmd_header("Commands")
     async def quality(self, bot, channel):
         """`!quality` A helpful reminder about everyone's favorite way to play digital Magic"""
         msg = "**Magic Online** is a Quality™ Program."
         await bot.client.send_message(channel, msg)
 
+    @cmd_header("Commands")
     async def rhinos(self, bot, channel):
         """`!rhinos` Anything can be a rhino if you try hard enough"""
         rhinos = []
@@ -148,6 +191,7 @@ Want to contribute? Send a Pull Request."""
         msg += " And then we have {search}. It's a bit of a stretch, but that's a rhino too.".format(search=rhinos[3].name)
         await bot.post_cards(rhinos, channel, additional_text=msg)
 
+    @cmd_header("Commands")
     async def rotation(self, bot, channel):
         """`!rotation` Give the date of the next Penny Dreadful rotation."""
         next_rotation = rotation.next_rotation()
@@ -157,17 +201,36 @@ Want to contribute? Send a Pull Request."""
             msg = "The next rotation is in {diff}".format(diff=display_time(diff.total_seconds()))
             await bot.client.send_message(channel, msg)
 
+    @cmd_header("Commands")
     async def _oracle(self, bot, channel, args, author):
         """`!oracle {name}` Give the Oracle text of the named card."""
         await single_card_text(bot, channel, args, author, oracle_text)
 
+    @cmd_header("Commands")
     async def price(self, bot, channel, args, author):
         """`!price {name}` Get price information about the named card."""
+        def price_info(c):
+            try:
+                p = fetcher.card_price(c.name)
+            except fetcher.FetchException:
+                return "Price unavailable"
+            s = '{price}'.format(price=format_price(p['price']))
+            if p['low'] <= 0.05:
+                s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))
+                if p['low'] <= 0.01:
+                    s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(p['week'] * 100.0), month=round(p['month'] * 100.0), season=round(p['season'] * 100.0))
+                s += ')'
+            return s
+        def format_price(p):
+            dollars, cents = str(round(p, 2)).split('.')
+            return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
         await single_card_text(bot, channel, args, author, price_info)
 
+    @cmd_header("Commands")
     async def legal(self, bot, channel, args, author):
         await single_card_text(bot, channel, args, author, lambda c: '')
 
+    @cmd_header("Commands")
     async def modofail(self, bot, channel, args, author):
         """Ding!"""
         if args.lower() == "reset":
@@ -189,6 +252,7 @@ Want to contribute? Send a Pull Request."""
     modofail.count = 0
     modofail.last_fail = time.time()
 
+    @cmd_header("Commands")
     async def resources(self, bot, channel, args):
         """`!resources` Link to page of all Penny Dreadful resources.
            `!resources {section}` Link to Penny Dreadful resources section.
@@ -213,7 +277,9 @@ Want to contribute? Send a Pull Request."""
                 s += '{text}: <{url}>\n'.format(text=text, url=url)
         await bot.client.send_message(channel, s)
 
+    @cmd_header("Developer")
     async def clearimagecache(self, bot, channel):
+        """Deletes all the cached images.  Use sparingly"""
         image_dir = configuration.get('image_dir')
         if not image_dir:
             return await bot.client.send_message(channel, 'Cowardly refusing to delete from unknown image_dir.')
@@ -242,36 +308,12 @@ def cards_from_queries(queries):
             all_cards.extend(cards)
     return all_cards
 
-def legal_emoji(c, legal_cards, verbose=False):
-    if c.name in legal_cards:
-        return ':white_check_mark:'
-    s = ':no_entry_sign:'
-    if verbose:
-        s += ' (not legal in PD)'
-    return s
-
 def complex_search(query):
     if query == '':
         return []
     print('Searching for {query}'.format(query=query))
     return search.search(query)
 
-def price_info(c):
-    try:
-        p = fetcher.card_price(c.name)
-    except fetcher.FetchException:
-        return "Price unavailable"
-    s = '{price}'.format(price=format_price(p['price']))
-    if p['low'] <= 0.05:
-        s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))
-        if p['low'] <= 0.01:
-            s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(p['week'] * 100.0), month=round(p['month'] * 100.0), season=round(p['season'] * 100.0))
-        s += ')'
-    return s
-
-def format_price(p):
-    dollars, cents = str(round(p, 2)).split('.')
-    return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
 
 def display_time(seconds, granularity=2):
     intervals = (
@@ -302,25 +344,12 @@ def simplify_string(s):
     s = ''.join(s.split())
     return re.sub(r'[\W_]+', '', s).lower()
 
-def build_help():
-    msg = ''
-    for methodname in dir(Commands):
-        if methodname.startswith("__"):
-            continue
-        method = getattr(Commands, methodname)
-        if method.__doc__:
-            if not method.__doc__.startswith('`'):
-                msg += '\n`!{0}` {1}'.format(methodname, method.__doc__)
-            else:
-                msg += '\n{0}'.format(method.__doc__)
-    return msg
-
 async def single_card_text(bot, channel, args, author, f):
     cards = list(oracle.cards_from_query(args))
     if len(cards) > 1:
         await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
     elif len(cards) == 1:
-        legal_emjoi = legal_emoji(cards[0], bot.legal_cards)
+        legal_emjoi = emoji.legal_emoji(cards[0], bot.legal_cards)
         text = emoji.replace_emoji(f(cards[0]), channel)
         message = '{legal_emjoi} **{name}** {text}'.format(name=cards[0].name, legal_emjoi=legal_emjoi, text=text)
         await bot.client.send_message(channel, message)

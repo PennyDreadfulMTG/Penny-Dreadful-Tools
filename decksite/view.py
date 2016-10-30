@@ -61,26 +61,7 @@ class View:
 
     def prepare_decks(self):
         for d in getattr(self, 'decks', []):
-            if d.finish == 1:
-                d.top8 = '①'
-                d.stars = '★★★'
-            elif d.finish == 2:
-                d.top8 = '②'
-                d.stars = '★★'
-            elif d.finish == 3:
-                d.top8 = '④'
-                d.stars = '★★'
-            elif d.finish == 5:
-                d.top8 = '⑧'
-                d.stars = '★'
-            else:
-                d.top8 = ''
-                if d.wins - 5 >= d.losses:
-                    d.stars = '★★'
-                elif d.wins - 3 >= d.losses:
-                    d.stars = '★'
-                else:
-                    d.stars = ''
+            set_stars_and_top8(d)
             d.colors_safe = colors_html(d.colors)
             name = deck_name.normalize(d)
             d.name = name[0:NAME_MAX_LEN - 1] + '…' if len(name) > NAME_MAX_LEN else name
@@ -103,3 +84,28 @@ def colors_html(colors):
     s = ''.join(mana.order(colors))
     n = len(colors)
     return re.sub('([WUBRG])', r'<span class="mana mana-{n} mana-\1"></span>'.format(n=n), html.escape(s))
+
+def set_stars_and_top8(d):
+    if d.finish == 1:
+        d.top8 = '①'
+        d.stars = '★★★'
+    elif d.finish == 2:
+        d.top8 = '②'
+        d.stars = '★★'
+    elif d.finish == 3:
+        d.top8 = '④'
+        d.stars = '★★'
+    elif d.finish == 5:
+        d.top8 = '⑧'
+        d.stars = '★'
+    else:
+        d.top8 = ''
+        if d.get('wins') and d.get('losses'):
+            if d.wins - 5 >= d.losses:
+                d.stars = '★★'
+            elif d.wins - 3 >= d.losses:
+                d.stars = '★'
+            else:
+                d.stars = ''
+        else:
+            d.stars = ''

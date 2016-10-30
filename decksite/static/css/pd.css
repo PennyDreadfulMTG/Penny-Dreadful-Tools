@@ -108,6 +108,10 @@ h3 {
     background-size: 100% 0.1em;
 }
 
+.main a:visited {
+    color: #7F7373;
+}
+
 .main table a {
     text-shadow: none;
     background-image: none;

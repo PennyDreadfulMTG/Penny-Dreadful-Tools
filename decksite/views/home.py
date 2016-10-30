@@ -4,6 +4,7 @@ import re
 from flask import url_for
 
 from magic import mana
+from shared import dtutil
 
 from decksite import deck_name
 from decksite.view import View
@@ -39,6 +40,7 @@ class Home(View):
             name = deck_name.normalize(d)
             d.name = name[0:NAME_MAX_LEN - 1] + '…' if len(name) > NAME_MAX_LEN else name
             d.person_url = url_for('person', person_id=d.person_id)
+            d.date = dtutil.display_date(d.date)
 
     def decks(self):
         return self._decks

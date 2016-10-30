@@ -51,11 +51,11 @@ table {
 
 body {
     background: #f9f9f9;
+    color: #502828;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.9em;
     line-height: 1.618em;
-    margin: 4.236em 12.5%;
-    color: #502828;
+    margin: 0 12.5%;
 }
 
 b {
@@ -176,6 +176,38 @@ label {
 textarea {
     height: 20em;
 }
+
+/* Menu */
+
+ul.menu {
+    list-style: none;
+    margin-left: -2rem;
+}
+
+.menu li {
+    float: left;
+}
+
+.menu a {
+    color: #502828;
+    display: block;
+    font-size: 0.8em;
+    padding: 2rem;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.menu a:hover {
+    color: red;
+}
+
+.menu:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Mana horizontal bar. */
 
 .mana:nth-child(2) {
     border-left: 0.1em #999 solid;

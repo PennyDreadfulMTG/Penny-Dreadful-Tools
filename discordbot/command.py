@@ -6,13 +6,12 @@ import re
 import sys
 import time
 
-
 from typing import List
 
 from discordbot import emoji
 from find import search
 from magic import card, oracle, fetcher, rotation
-from shared import configuration
+from shared import configuration, dtutil
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -195,10 +194,10 @@ Want to contribute? Send a Pull Request."""
     async def rotation(self, bot, channel):
         """`!rotation` Give the date of the next Penny Dreadful rotation."""
         next_rotation = rotation.next_rotation()
-        now = rotation.now()
+        now = dtutil.now()
         if next_rotation > now:
             diff = next_rotation - now
-            msg = "The next rotation is in {diff}".format(diff=display_time(diff.total_seconds()))
+            msg = "The next rotation is in {diff}".format(diff=dtutil.display_time(diff.total_seconds()))
             await bot.client.send_message(channel, msg)
 
     @cmd_header("Commands")
@@ -314,28 +313,6 @@ def complex_search(query):
     print('Searching for {query}'.format(query=query))
     return search.search(query)
 
-
-def display_time(seconds, granularity=2):
-    intervals = (
-        ('weeks', 60 * 60 * 24 * 7),
-        ('days', 60 * 60 * 24),
-        ('hours', 60 * 60),
-        ('minutes', 60),
-        ('seconds', 1)
-    )
-    result = []
-    for name, count in intervals:
-        value = seconds // count
-        if value:
-            seconds -= value * count
-            if value == 1:
-                name = name.rstrip('s')
-            result.append("{} {}".format(round(value), name))
-        else:
-            # Add a blank if we're in the middle of other values
-            if len(result) > 0:
-                result.append(None)
-    return ', '.join([x for x in result[:granularity] if x is not None])
 
 def roughly_matches(s1, s2):
     return simplify_string(s1).find(simplify_string(s2)) >= 0

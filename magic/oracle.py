@@ -1,8 +1,8 @@
-import datetime
 import re
 
 from magic import card, database, fetcher, mana
 from magic.database import db
+from shared import dtutil
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
@@ -267,8 +267,9 @@ def underscore2camel(s):
 
 def date2int(s):
     try:
-        dt = datetime.datetime.strptime(str(s), '%Y-%m-%d')
-        return dt.replace(tzinfo=datetime.timezone.utc).timestamp()
+        return dtutil.parse_to_ts(s, '%Y-%m-%d', dtutil.WOTC_TZ)
+    except TypeError:
+        return s
     except ValueError:
         return s
 

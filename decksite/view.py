@@ -19,6 +19,12 @@ class View:
     def css_url(self):
         return url_for('static', filename='css/pd.css')
 
+    def menu(self):
+        return [
+            {'name': 'Home', 'url': url_for('home')},
+            {'name': 'People', 'url': url_for('people')}
+        ]
+
     def favicon_url(self):
         return url_for('favicon', rest='.ico')
 

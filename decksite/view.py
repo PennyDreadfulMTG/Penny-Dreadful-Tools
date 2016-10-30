@@ -21,8 +21,8 @@ class View:
 
     def menu(self):
         return [
-            { 'name': 'Home', 'url': url_for('home') },
-            { 'name': 'People', 'url': url_for('people') }
+            {'name': 'Home', 'url': url_for('home')},
+            {'name': 'People', 'url': url_for('people')}
         ]
 
     def favicon_url(self):

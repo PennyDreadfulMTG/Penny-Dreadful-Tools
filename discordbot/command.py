@@ -242,14 +242,6 @@ def cards_from_queries(queries):
             all_cards.extend(cards)
     return all_cards
 
-def legal_emoji(c, legal_cards, verbose=False):
-    if c.name in legal_cards:
-        return ':white_check_mark:'
-    s = ':no_entry_sign:'
-    if verbose:
-        s += ' (not legal in PD)'
-    return s
-
 def complex_search(query):
     if query == '':
         return []
@@ -320,7 +312,7 @@ async def single_card_text(bot, channel, args, author, f):
     if len(cards) > 1:
         await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
     elif len(cards) == 1:
-        legal_emjoi = legal_emoji(cards[0], bot.legal_cards)
+        legal_emjoi = emoji.legal_emoji(cards[0], bot.legal_cards)
         text = emoji.replace_emoji(f(cards[0]), channel)
         message = '{legal_emjoi} **{name}** {text}'.format(name=cards[0].name, legal_emjoi=legal_emjoi, text=text)
         await bot.client.send_message(channel, message)

@@ -59,10 +59,10 @@ class Bot:
         if len(cards) == 1:
             card = cards[0]
             mana = emoji.replace_emoji(card.mana_cost, channel) or ''
-            legal = command.legal_emoji(card, self.legal_cards, True)
+            legal = emoji.legal_emoji(card, self.legal_cards, True)
             text = '{name} {mana_cost} — {type} — {legal}'.format(name=card.name, mana_cost=mana, type=card.type, legal=legal)
         else:
-            text = ', '.join('{name} {legal}'.format(name=card.name, legal=command.legal_emoji(card, self.legal_cards)) for card in cards)
+            text = ', '.join('{name} {legal}'.format(name=card.name, legal=emoji.legal_emoji(card, self.legal_cards)) for card in cards)
             text += more_text
         if len(cards) > 10:
             image_file = None

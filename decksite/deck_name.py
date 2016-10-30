@@ -20,8 +20,8 @@ COLOR_COMBINATIONS = {
     'Rakdos': ['B', 'R'],
     'Golgari': ['B', 'G'],
     'Gruul': ['R', 'G'],
-    'Bant': ['W', 'U', 'B'],
-    'Esper': ['W', 'U', 'G'],
+    'Esper': ['W', 'U', 'B'],
+    'Bant': ['W', 'U', 'G'],
     'Grixis': ['U', 'B', 'R'],
     'Jund': ['B', 'R', 'G'],
     'Naya': ['W', 'R', 'G'],
@@ -61,7 +61,7 @@ def remove_colors(name):
 
 def prepend_colors(s, colors):
     prefix = name_from_colors(colors)
-    return '{prefix} {s}'.format(prefix=prefix, s=s)
+    return '{prefix} {s}'.format(prefix=prefix, s=s).strip()
 
 def name_from_colors(colors):
     ordered = mana.order(colors)

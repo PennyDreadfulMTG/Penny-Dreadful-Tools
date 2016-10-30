@@ -33,7 +33,8 @@ class View:
 
     def menu(self):
         return [
-            {'name': 'Home', 'url': url_for('home')},
+            {'name': 'Decks', 'url': url_for('home')},
+            {'name': 'Competitions', 'url': url_for('competitions')},
             {'name': 'People', 'url': url_for('people')},
             {'name': 'Cards', 'url': url_for('cards')}
         ]
@@ -56,6 +57,7 @@ class View:
     def prepare(self):
         self.prepare_decks()
         self.prepare_cards()
+        self.prepare_competitions()
 
     def prepare_decks(self):
         for d in getattr(self, 'decks', []):
@@ -85,10 +87,17 @@ class View:
             d.person_url = url_for('person', person_id=d.person_id)
             d.date = dtutil.display_date(d.date)
             d.show_record = d.wins or d.losses
+            d.players = d.players if d.players > 0 else ''
+            if d.competition_id:
+                d.competition_url = url_for('competition', competition_id=d.competition_id)
 
     def prepare_cards(self):
         for c in getattr(self, 'cards', []):
             c.url = url_for('card', name=c.name)
+
+    def prepare_competitions(self):
+        for c in getattr(self, 'competitions', []):
+            c.url = url_for('competition', competition_id=c.id)
 
 def colors_html(colors):
     s = ''.join(mana.order(colors))

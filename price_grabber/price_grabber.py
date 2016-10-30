@@ -95,7 +95,7 @@ def create_tables():
 
 def name_lookup(name):
     if not CARDS:
-        rs = database.DATABASE.execute(oracle.base_select())
+        rs = database.DATABASE.execute(oracle.base_query())
         for row in rs:
             CARDS[card.canonicalize(row['name'])] = row['name']
     canonical = card.canonicalize(name)

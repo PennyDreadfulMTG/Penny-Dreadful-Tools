@@ -1,14 +1,28 @@
 <table>
-    {{#decks}}
+    <thead>
         <tr>
-            <td><span class="marginnote">{{stars}}</span>{{{colors_safe}}}</td>
-            <td><a href="{{url}}">{{{name}}}</a></td>
-            <td><a href="{{person_url}}">{{person}}</a></td>
-            <td>{{#show_record}}{{wins}}–{{losses}}{{/show_record}}</td>
-            <td>{{#competition_url}}<a href="{{competition_url}}">{{competition_type}}</a>{{/competition_url}}</td>
-            <td>{{top8}}</td>
-            <td>{{players}}</td>
-            <td>{{date}}</td>
+            <th>Colors</th>
+            <th>Name</th>
+            <th>Person</th>
+            <th>Record</th>
+            <th>Competition</th>
+            <th>Top 8</th>
+            <th>Players</th>
+            <th>Date</th>
         </tr>
-    {{/decks}}
+    </thead>
+    <tbody>
+        {{#decks}}
+            <tr>
+                <td><span class="marginnote">{{stars}}</span>{{{colors_safe}}}</td>
+                <td><a href="{{url}}">{{{name}}}</a></td>
+                <td><a href="{{person_url}}">{{person}}</a></td>
+                <td>{{#show_record}}{{wins}}–{{losses}}{{/show_record}}</td>
+                <td>{{#competition_url}}<a href="{{competition_url}}">{{competition_type}}</a>{{/competition_url}}</td>
+                <td>{{top8}}</td>
+                <td>{{players}}</td>
+                <td>{{date}}</td>
+            </tr>
+        {{/decks}}
+    </tbody>
 </table>

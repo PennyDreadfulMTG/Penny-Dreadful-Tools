@@ -15,7 +15,7 @@ def test_ts2dt():
 
 def test_dt2ts():
     dt = datetime.datetime.utcfromtimestamp(0).replace(tzinfo=tz.tzutc())
-    assert 0 == dtutil.dt2ts(dt)
+    assert dtutil.dt2ts(dt) == 0
     now = datetime.datetime.utcnow().replace(tzinfo=tz.tzutc())
     now_ts = now.timestamp()
     assert dtutil.dt2ts(now) == now_ts

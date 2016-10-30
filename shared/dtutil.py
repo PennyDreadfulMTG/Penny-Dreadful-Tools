@@ -18,7 +18,7 @@ def ts2dt(ts):
 
 # Converts a timezone-aware UTC datetime into a UTC timestamp (seconds).
 def dt2ts(dt):
-  return dt.replace(tzinfo=tz.tzutc()).timestamp()
+    return dt.replace(tzinfo=tz.tzutc()).timestamp()
 
 # Converts the given string in the format `format` to a timezone-aware UTC datetime assuming the original string is in timezone `tz`.
 def parse(s, date_format, timezone):

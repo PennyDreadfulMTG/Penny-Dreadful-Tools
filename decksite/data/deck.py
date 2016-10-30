@@ -114,7 +114,7 @@ def add_deck(params):
         losses,
         finish
     ) VALUES (
-        datetime('now', 'unixepoch'), datetime('now', 'unixepoch'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+         strftime('%s','now'),  strftime('%s','now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
     )"""
     values = [
         person_id,

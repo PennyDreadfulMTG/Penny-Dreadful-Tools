@@ -4,38 +4,32 @@ from shared import configuration
 from magic import fetcher, fetcher_internal
 
 from decksite import translation
-from decksite.data import deck, Deck
+from decksite.data import deck
 from decksite.scrapers import decklist
 
 def scrape():
-    fetch_decks('penny-dreadful')
-
-def fetch_decks(hub: str):
     login()
-    print("Logged in to TappedOut: {0}".format(is_authorised()))
-    deckcycle = fetcher.fetch_json("http://tappedout.net/api/deck/latest/{0}/".format(hub))
-    return [Deck(merge_deck(d)) for d in deckcycle]
+    print('Logged in to TappedOut: {is_authorised}'.format(is_authorised=is_authorised()))
+    raw_decks = fetch_decks()
+    for raw_deck in raw_decks:
+        raw_deck.update(fetch_deck_details(raw_deck))
+        raw_deck = set_values(raw_deck)
+        deck.add_deck(raw_deck)
 
-def fetch_deck(slug: str):
-    deckinfo = fetcher.fetch_json("http://tappedout.net/api/collection/collection:deck/{0}/".format(slug))
-    deck_id = store_deck(deckinfo)
-    return deck.load_deck(deck_id)
+def fetch_decks():
+    return fetcher.fetch_json('https://tappedout.net/api/deck/latest/penny-dreadful/')
 
-def merge_deck(blob):
-    deck_id = store_deck(translation.translate(translation.TAPPEDOUT, blob))
-    d = deck.load_deck(deck_id)
-    if is_authorised():
-        return fetch_deck(blob.get('slug'))
-    return d
+def fetch_deck_details(raw_deck):
+    return fetcher.fetch_json("https://tappedout.net/api/collection/collection:deck/{slug}/".format(slug=raw_deck['slug']))
 
-def store_deck(blob):
-    keys = ['slug', 'name', 'tappedout_username', 'url', 'resource_uri', 'date_updated']
-    d = {key: blob.get(key) for key in keys if key in blob.keys()}
-    raw_decklist = fetcher.fetch('{base_url}?fmt=txt'.format(base_url=blob['url']))
-    d['cards'] = decklist.parse(raw_decklist)
-    d['source'] = 'Tapped Out'
-    d['identifier'] = d['url']
-    return deck.add_deck(d)
+def set_values(raw_deck):
+    raw_deck = translation.translate(translation.TAPPEDOUT, raw_deck)
+    # Decklist is already in raw_deck so we could parse that instead of making another call here ...
+    raw_decklist = fetcher.fetch('{base_url}?fmt=txt'.format(base_url=raw_deck['url']))
+    raw_deck['cards'] = decklist.parse(raw_decklist)
+    raw_deck['source'] = 'Tapped Out'
+    raw_deck['identifier'] = raw_deck['url']
+    return raw_deck
 
 def is_authorised():
     return fetcher_internal.SESSION.cookies.get('tapped') is not None
@@ -43,7 +37,7 @@ def is_authorised():
 def get_auth():
     cookie = fetcher_internal.SESSION.cookies.get('tapped')
     token = configuration.get("tapped_API_key")
-    return fetcher.fetch("http://tappedout.net/api/v1/cookie/{0}/?access_token={1}".format(cookie, token))
+    return fetcher.fetch("https://tappedout.net/api/v1/cookie/{0}/?access_token={1}".format(cookie, token))
 
 def login(user=None, password=None):
     if user is None:
@@ -53,7 +47,7 @@ def login(user=None, password=None):
     if user == '' or password == '':
         print('No TappedOut credentials provided')
         return
-    url = "http://tappedout.net/accounts/login/"
+    url = "https://tappedout.net/accounts/login/"
     session = fetcher_internal.SESSION
     response = session.get(url)
 

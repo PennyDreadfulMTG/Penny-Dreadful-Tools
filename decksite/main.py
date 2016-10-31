@@ -67,7 +67,7 @@ def deckcycle_tappedout():
     from decksite.scrapers import tappedout
     if not tappedout.is_authorised():
         tappedout.login()
-    tappedout.fetch_decks('penny-dreadful')
+    tappedout.fetch_decks()
     return home()
 
 @APP.route('/favicon<rest>')

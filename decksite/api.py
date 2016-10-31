@@ -12,7 +12,7 @@ def auth():
 @APP.route("/api/tappedout/")
 def tappedout_recent():
     auth()
-    return json.dumps(tappedout.fetch_decks('penny-dreadful'))
+    return json.dumps(tappedout.fetch_decks())
 
 @APP.route("/api/deck/<slug>")
 def deck_api(slug):

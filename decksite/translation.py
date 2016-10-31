@@ -1,5 +1,5 @@
 TAPPEDOUT = {
-    'date_updated': 'updated_date',
+    'date_updated': 'created_date', # We'll store this the first time as the closest appromxiation we have to the created date.
     'user': 'tappedout_username',
 }
 

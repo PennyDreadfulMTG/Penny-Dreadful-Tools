@@ -10,9 +10,12 @@ def load_person(person_id):
 
 def load_people(where_clause='1 = 1'):
     sql = """
-        SELECT id, {person_query} AS name
+        SELECT p.id, {person_query} AS name, COUNT(d.id) AS num_decks,
+        SUM(d.wins) AS wins, SUM(d.losses) AS losses, SUM(CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS num_competitions
         FROM person AS p
+        LEFT JOIN deck AS d ON p.id = d.person_id
         WHERE {where_clause}
+        GROUP BY p.id
         ORDER BY name
     """.format(person_query=query.person_query(), where_clause=where_clause)
     people = [Person(r) for r in db().execute(sql)]

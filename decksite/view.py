@@ -61,6 +61,7 @@ class View:
         self.prepare_decks()
         self.prepare_cards()
         self.prepare_competitions()
+        self.prepare_people()
 
     def prepare_decks(self):
         for d in getattr(self, 'decks', []):
@@ -83,6 +84,11 @@ class View:
     def prepare_competitions(self):
         for c in getattr(self, 'competitions', []):
             c.url = url_for('competition', competition_id=c.id)
+
+    def prepare_people(self):
+        for p in getattr(self, 'people', []):
+            p.url = url_for('person', person_id=p.id)
+            p.show_record = p.wins or p.losses
 
 def colors_html(colors):
     s = ''.join(mana.order(colors))

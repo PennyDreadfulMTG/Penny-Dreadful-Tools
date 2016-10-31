@@ -103,7 +103,7 @@ def printing_properties():
 def name_query(column='face_name'):
     return """
         CASE
-        WHEN layout = 'double-faced' THEN
+        WHEN layout = 'double-faced' OR layout = 'flip' THEN
             GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END, '')
         WHEN layout = 'meld' THEN
             GROUP_CONCAT(CASE WHEN `{table}`.position = 1 OR `{table}`.position = 2 THEN {column} ELSE '' END, '')

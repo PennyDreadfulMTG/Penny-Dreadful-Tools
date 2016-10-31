@@ -6,5 +6,6 @@ pylint
 pystache
 pytest
 python-dateutil
+pytz
 requests
 titlecase

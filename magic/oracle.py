@@ -218,7 +218,7 @@ def insert_set(s) -> None:
     sql += ') VALUES ('
     sql += ', '.join('?' for name, prop in card.set_properties().items() if prop['mtgjson'])
     sql += ')'
-    values = [date2int(s.get(database2json(name))) for name, prop in card.set_properties().items() if prop['mtgjson']]
+    values = [date2int(s.get(database2json(name)), name) for name, prop in card.set_properties().items() if prop['mtgjson']]
     # database.execute commits after each statement, which we want to
     # avoid while inserting sets
     db().execute(sql, values)
@@ -265,13 +265,10 @@ def database2json(propname: str) -> str:
 def underscore2camel(s):
     return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)
 
-def date2int(s):
-    try:
+def date2int(s, name):
+    if name == 'release_date':
         return dtutil.parse_to_ts(s, '%Y-%m-%d', dtutil.WOTC_TZ)
-    except TypeError:
-        return s
-    except ValueError:
-        return s
+    return s
 
 def card_name(c):
     if c.get('layout') == 'meld':

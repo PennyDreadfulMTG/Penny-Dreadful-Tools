@@ -107,6 +107,8 @@ def add_deck(params):
         return deck_id
     source_id = get_source_id(params['source'])
     archetype_id = get_archetype_id(params.get('archetype'))
+    sql = 'BEGIN TRANSACTION';
+    db().execute(sql)
     sql = """INSERT INTO deck (
         created_date,
         updated_date,
@@ -150,6 +152,8 @@ def add_deck(params):
         insert_deck_card(deck_id, name, n, False)
     for name, n in params['cards']['sideboard'].items():
         insert_deck_card(deck_id, name, n, True)
+    sql = 'COMMIT';
+    db().execute(sql)
     return deck_id
 
 def get_deck_id(url, identifier):

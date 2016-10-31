@@ -1,8 +1,9 @@
 from munch import Munch
 
-from shared.database import sqlescape
 from shared import dtutil
+from shared.database import sqlescape
 
+from decksite.data import deck
 from decksite.database import db
 
 def get_or_insert_competition(start_date, end_date, name, competition_type, url):
@@ -34,4 +35,14 @@ def load_competitions(where_clause='1 = 1'):
     for c in competitions:
         c.start_date = dtutil.ts2dt(c.start_date)
         c.end_date = dtutil.ts2dt(c.end_date)
+    set_decks(competitions)
     return competitions
+
+def set_decks(competitions):
+    competitions_by_id = {c.id: c for c in competitions}
+    where_clause = 'competition_id IN ({ids})'.format(ids=', '.join(str(k) for k in competitions_by_id.keys()))
+    decks = deck.load_decks(where_clause)
+    for c in competitions:
+        c.decks = []
+    for d in decks:
+        competitions_by_id[d.competition_id].decks.append(d)

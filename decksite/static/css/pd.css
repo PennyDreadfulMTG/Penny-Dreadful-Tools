@@ -140,8 +140,16 @@ td.n {
     text-align: right;
 }
 
+td.divider {
+    border-right: 0.07rem #ccc solid;
+}
+
 td.pale {
     color: #999;
+}
+
+th.legend {
+    text-align: center;
 }
 
 .marginnote {
@@ -268,7 +276,6 @@ ul.menu {
 .mana-G {
     background-color: #9dd2af;
 }
-
 
 /* Responsive tables */
 

@@ -1,10 +1,20 @@
 <section>
     <h2>Competitions</h2>
     <table>
-        {{#competitions}}
-            <tr>
-                <td><a href="{{url}}">{{{name}}}</a></td>
-            </tr>
-        {{/competitions}}
+
+        <thead>
+            <th>Competition</th>
+            <th>Players</th>
+            <th>Date</th>
+        </thead>
+        <tbody>
+                {{#competitions}}
+                <tr>
+                    <td><a href="{{url}}">{{{name}}}</a></td>
+                    <td class="n"><a href="{{url}}">{{{num_decks}}}</a></td>
+                    <td><a href="{{url}}">{{{date}}}</a></td>
+                </tr>
+            {{/competitions}}
+        </tbody>
     </table>
 </section>

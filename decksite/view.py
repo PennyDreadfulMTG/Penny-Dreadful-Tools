@@ -84,6 +84,7 @@ class View:
     def prepare_competitions(self):
         for c in getattr(self, 'competitions', []):
             c.url = url_for('competition', competition_id=c.id)
+            c.date = dtutil.display_date(c.start_date)
 
     def prepare_people(self):
         for p in getattr(self, 'people', []):

@@ -27,10 +27,17 @@ def type_id(competition_type):
     return db().value(sql, [competition_type])
 
 def load_competition(competition_id):
-    return load_competitions('id = {competition_id}'.format(competition_id=sqlescape(competition_id)))[0]
+    return load_competitions('c.id = {competition_id}'.format(competition_id=sqlescape(competition_id)))[0]
 
 def load_competitions(where_clause='1 = 1'):
-    sql = 'SELECT id, name, start_date, end_date FROM competition WHERE {where_clause}'.format(where_clause=where_clause)
+    sql = """
+        SELECT c.id, c.name, c.start_date, c.end_date,
+        COUNT(d.id) AS num_decks
+        FROM competition AS c
+        INNER JOIN deck AS d ON c.id = d.competition_id
+        WHERE {where_clause}
+        GROUP BY c.id
+    """.format(where_clause=where_clause)
     competitions = [Munch(r) for r in db().execute(sql)]
     for c in competitions:
         c.start_date = dtutil.ts2dt(c.start_date)

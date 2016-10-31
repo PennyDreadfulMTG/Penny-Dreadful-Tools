@@ -12,6 +12,7 @@ def scrape():
 
 def fetch_decks(hub: str):
     login()
+    print("Logged in to TappedOut: {0}".format(is_authorised()))
     deckcycle = fetcher.fetch_json("http://tappedout.net/api/deck/latest/{0}/".format(hub))
     return [Deck(merge_deck(d)) for d in deckcycle]
 
@@ -23,13 +24,12 @@ def fetch_deck(slug: str):
 def merge_deck(blob):
     deck_id = store_deck(translation.translate(translation.TAPPEDOUT, blob))
     d = deck.load_deck(deck_id)
-    # this will never fire
     if is_authorised():
         return fetch_deck(blob.get('slug'))
     return d
 
 def store_deck(blob):
-    keys = ['slug', 'name', 'tappedout_username', 'url', 'resource_uri', 'featured_card', 'date_updated', 'score', 'thumbnail_url', 'small_thumbnail_url']
+    keys = ['slug', 'name', 'tappedout_username', 'url', 'resource_uri', 'date_updated']
     d = {key: blob.get(key) for key in keys if key in blob.keys()}
     raw_decklist = fetcher.fetch('{base_url}?fmt=txt'.format(base_url=blob['url']))
     d['cards'] = decklist.parse(raw_decklist)

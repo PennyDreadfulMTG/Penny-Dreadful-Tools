@@ -25,8 +25,8 @@ def parse(s, date_format, tz):
     dt = datetime.datetime.strptime(s, date_format)
     return tz.localize(dt).astimezone(timezone('UTC'))
 
-def parse_to_ts(s, date_format, timezone):
-    dt = parse(s, date_format, timezone)
+def parse_to_ts(s, date_format, tz):
+    dt = parse(s, date_format, tz)
     return dt2ts(dt)
 
 def now():

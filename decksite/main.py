@@ -59,7 +59,7 @@ def add_deck():
 
 @APP.route('/about')
 def about():
-    view = About();
+    view = About()
     return view.page()
 
 @APP.route('/querytappedout')

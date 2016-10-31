@@ -123,6 +123,7 @@ def update_database(new_version):
     db().execute('BEGIN TRANSACTION')
     db().execute('DELETE FROM version')
     cards = fetcher.all_cards()
+    cards = fake_flip_cards(cards)
     melded_faces = []
     for _, c in cards.items():
         if c.get('layout') == 'meld' and c.get('name') == c.get('names')[2]:
@@ -218,7 +219,7 @@ def insert_set(s) -> None:
     sql += ') VALUES ('
     sql += ', '.join('?' for name, prop in card.set_properties().items() if prop['mtgjson'])
     sql += ')'
-    values = [date2int(s.get(database2json(name))) for name, prop in card.set_properties().items() if prop['mtgjson']]
+    values = [date2int(s.get(database2json(name)), name) for name, prop in card.set_properties().items() if prop['mtgjson']]
     # database.execute commits after each statement, which we want to
     # avoid while inserting sets
     db().execute(sql, values)
@@ -265,13 +266,10 @@ def database2json(propname: str) -> str:
 def underscore2camel(s):
     return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)
 
-def date2int(s):
-    try:
+def date2int(s, name):
+    if name == 'release_date':
         return dtutil.parse_to_ts(s, '%Y-%m-%d', dtutil.WOTC_TZ)
-    except TypeError:
-        return s
-    except ValueError:
-        return s
+    return s
 
 def card_name(c):
     if c.get('layout') == 'meld':
@@ -341,6 +339,217 @@ def cards_from_query(query, fuzziness_threshold=260):
         return results
 
     # If we didn't find any of those then use all search results.
+    return cards
+
+# Workaround mtgjson bug until they fix it by hardcoding the missing flip cards that we care about.
+def fake_flip_cards(cards):
+    cards['Student of Elements'] = {
+        'text': 'When Student of Elements has flying, flip it.',
+        'manaCost': '{1}{U}',
+        'type': 'Creature — Human Wizard',
+        'power': '1',
+        'layout': 'flip',
+        'names': ['Student of Elements', 'Tobita, Master of Winds'],
+        'types': ['Creature'],
+        'colorIdentity': ['U'],
+        'toughness': '1',
+        'cmc': 2,
+        'imageName': 'student of elements',
+        'legalities': [
+            {'format': 'Commander', 'legality': 'Legal'},
+            {'format': 'Kamigawa Block', 'legality': 'Legal'},
+            {'format': 'Legacy', 'legality': 'Legal'},
+            {'format': 'Modern', 'legality': 'Legal'},
+            {'format': 'Vintage', 'legality': 'Legal'}],
+        'name': 'Student of Elements',
+        'subtypes': ['Human', 'Wizard'],
+        'printings': ['COK'],
+        'colors': ['Blue']
+    }
+    cards['Cunning Bandit'] = {
+        'text': 'Whenever you cast a Spirit or Arcane spell, you may put a ki counter on Cunning Bandit.\nAt the beginning of the end step, if there are two or more ki counters on Cunning Bandit, you may flip it.',
+        'manaCost': '{1}{R}{R}',
+        'type': 'Creature — Human Warrior',
+        'power': '2',
+        'layout': 'flip',
+        'names': ['Cunning Bandit', 'Azamuki, Treachery Incarnate'],
+        'types': ['Creature'],
+        'colorIdentity': ['R'],
+        'toughness': '2',
+        'cmc': 3,
+        'imageName': 'cunning bandit',
+        'legalities': [
+            {'format': 'Commander', 'legality': 'Legal'},
+            {'format': 'Kamigawa Block', 'legality': 'Legal'},
+            {'format': 'Legacy', 'legality': 'Legal'},
+            {'format': 'Modern', 'legality': 'Legal'},
+            {'format': 'Vintage', 'legality': 'Legal'}],
+        'name': 'Cunning Bandit',
+        'subtypes': ['Human', 'Warrior'],
+        'printings': ['BOK'],
+        'colors': ['Red']
+    }
+    cards['Nezumi Graverobber'] = {
+        'text': '{1}{B}: Exile target card from an opponent\'s graveyard. If no cards are in that graveyard, flip Nezumi Graverobber.',
+        'manaCost': '{1}{B}',
+        'type': 'Creature — Rat Rogue',
+        'power': '2',
+        'layout': 'flip',
+        'names': ['Nezumi Graverobber', 'Nighteyes the Desecrator'],
+        'types': ['Creature'],
+        'colorIdentity': ['B'],
+        'toughness': '1',
+        'cmc': 2,
+        'imageName': 'nezumi graverobber',
+        'legalities': [
+            {'format': 'Commander', 'legality': 'Legal'},
+            {'format': 'Kamigawa Block', 'legality': 'Legal'},
+            {'format': 'Legacy', 'legality': 'Legal'},
+            {'format': 'Modern', 'legality': 'Legal'},
+            {'format': 'Vintage', 'legality': 'Legal'}],
+        'name': 'Nezumi Graverobber',
+        'subtypes': ['Rat', 'Rogue'],
+        'printings': ['COK'], # Also Commander
+        'colors': ['Black']
+    }
+    cards['Hired Muscle'] = {
+        'text': 'Whenever you cast a Spirit or Arcane spell, you may put a ki counter on Hired Muscle.\nAt the beginning of the end step, if there are two or more ki counters on Hired Muscle, you may flip it.',
+        'manaCost': '{1}{B}{B}',
+        'type': 'Creature — Human Warrior',
+        'power': '2',
+        'layout': 'flip',
+        'names': ['Hired Muscle', 'Scarmaker'],
+        'types': ['Creature'],
+        'colorIdentity': ['B'],
+        'toughness': '2',
+        'cmc': 3,
+        'imageName': 'hired muscle',
+        'legalities': [
+            {'format': 'Commander', 'legality': 'Legal'},
+            {'format': 'Kamigawa Block', 'legality': 'Legal'},
+            {'format': 'Legacy', 'legality': 'Legal'},
+            {'format': 'Modern', 'legality': 'Legal'},
+            {'format': 'Vintage', 'legality': 'Legal'}],
+        'name': 'Hired Muscle',
+        'subtypes': ['Human', 'Warrior'],
+        'printings': ['BOK'],
+        'colors': ['Black']
+    }
+    cards['Orochi Eggwatcher'] = {
+        'text': '{2}{G}, {T}: Put a 1/1 green Snake creature token onto the battlefield. If you control ten or more creatures, flip Orochi Eggwatcher.',
+        'manaCost': '{2}{G}',
+        'type': 'Creature — Snake Shaman',
+        'power': '1',
+        'layout': 'flip',
+        'names': ['Orochi Eggwatcher', 'Shidako, Broodmistress'],
+        'types': ['Creature'],
+        'colorIdentity': ['G'],
+        'toughness': '1',
+        'cmc': 3,
+        'imageName': 'orochi eggwatcher',
+        'legalities': [
+            {'format': 'Commander', 'legality': 'Legal'},
+            {'format': 'Kamigawa Block', 'legality': 'Legal'},
+            {'format': 'Legacy', 'legality': 'Legal'},
+            {'format': 'Modern', 'legality': 'Legal'},
+            {'format': 'Vintage', 'legality': 'Legal'}],
+        'name': 'Orochi Eggwatcher',
+        'subtypes': ['Snake', 'Shaman'],
+        'printings': ['COK'],
+        'colors': ['Green']
+    }
+    cards['Kitsune Mystic'] = {
+        'text': 'At the beginning of the end step, if Kitsune Mystic is enchanted by two or more Auras, flip it.',
+        'manaCost': '{3}{W}',
+        'type': 'Creature — Fox Wizard',
+        'power': '2',
+        'layout': 'flip',
+        'names': ['Kitsune Mystic', 'Autumn-Tail, Kitsune Sage'],
+        'types': ['Creature'],
+        'colorIdentity': ['W'],
+        'toughness': '3',
+        'cmc': 4,
+        'imageName': 'kitsune mystic',
+        'legalities': [
+            {'format': 'Commander', 'legality': 'Legal'},
+            {'format': 'Kamigawa Block', 'legality': 'Legal'},
+            {'format': 'Legacy', 'legality': 'Legal'},
+            {'format': 'Modern', 'legality': 'Legal'},
+            {'format': 'Vintage', 'legality': 'Legal'}],
+        'name': 'Kitsune Mystic',
+        'subtypes': ['Fox', 'Wizard'],
+        'printings': ['COK'],
+        'colors': ['White']
+    }
+    cards['Bushi Tenderfoot'] = {
+        'text': 'When a creature dealt damage by Bushi Tenderfoot this turn dies, flip Bushi Tenderfoot.',
+        'manaCost': '{W}',
+        'type': 'Creature — Human Soldier',
+        'power': '1',
+        'layout': 'flip',
+        'names': ['Bushi Tenderfoot', 'Kenzo the Hardhearted'],
+        'types': ['Creature'],
+        'colorIdentity': ['W'],
+        'toughness': '1',
+        'cmc': 1,
+        'imageName': 'bushi tenderfoot',
+        'legalities': [
+            {'format': 'Commander', 'legality': 'Legal'},
+            {'format': 'Kamigawa Block', 'legality': 'Legal'},
+            {'format': 'Legacy', 'legality': 'Legal'},
+            {'format': 'Modern', 'legality': 'Legal'},
+            {'format': 'Vintage', 'legality': 'Legal'}],
+        'name': 'Bushi Tenderfoot',
+        'subtypes': ['Human', 'Soldier'],
+        'printings': ['COK'],
+        'colors': ['White']
+    }
+    cards['Faithful Squire'] = {
+        'text': 'Whenever you cast a Spirit or Arcane spell, you may put a ki counter on Faithful Squire.\nAt the beginning of the end step, if there are two or more ki counters on Faithful Squire, you may flip it.',
+        'manaCost': '{1}{W}{W}',
+        'type': 'Creature — Human Soldier',
+        'power': '2',
+        'layout': 'flip',
+        'names': ['Faithful Squire', 'Kaiso, Memory of Loyalty'],
+        'types': ['Creature'],
+        'colorIdentity': ['W'],
+        'toughness': '2',
+        'cmc': 3,
+        'imageName': 'faithful squire',
+        'legalities': [
+            {'format': 'Commander', 'legality': 'Legal'},
+            {'format': 'Kamigawa Block', 'legality': 'Legal'},
+            {'format': 'Legacy', 'legality': 'Legal'},
+            {'format': 'Modern', 'legality': 'Legal'},
+            {'format': 'Vintage', 'legality': 'Legal'}],
+        'name': 'Faithful Squire',
+        'subtypes': ['Human', 'Soldier'],
+        'printings': ['BOK'],
+        'colors': ['White']
+    }
+    cards['Initiate of Blood'] = {
+        'text': '{T}: Initiate of Blood deals 1 damage to target creature that was dealt damage this turn. When that creature dies this turn, flip Initiate of Blood.',
+        'manaCost': '{3}{R}',
+        'type': 'Creature — Ogre Shaman',
+        'power': '2',
+        'layout': 'flip',
+        'names': ['Initiate of Blood', 'Goka the Unjust'],
+        'types': ['Creature'],
+        'colorIdentity': ['R'],
+        'toughness': '2',
+        'cmc': 4,
+        'imageName': 'intitiate of blood',
+        'legalities': [
+            {'format': 'Commander', 'legality': 'Legal'},
+            {'format': 'Kamigawa Block', 'legality': 'Legal'},
+            {'format': 'Legacy', 'legality': 'Legal'},
+            {'format': 'Modern', 'legality': 'Legal'},
+            {'format': 'Vintage', 'legality': 'Legal'}],
+        'name': 'Initiate of Blood',
+        'subtypes': ['Ogre', 'Shaman'],
+        'printings': ['COK'],
+        'colors': ['Red']
+    }
     return cards
 
 initialize()

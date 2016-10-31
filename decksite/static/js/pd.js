@@ -35,7 +35,7 @@ PD.init = function () {
         },
         'type': 'numeric'
     });
-    $('table').tablesorter({'debug': true});
+    $('table').tablesorter();
 };
 $(document).ready(function () {
     PD.init();

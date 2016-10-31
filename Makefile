@@ -11,11 +11,12 @@ push:
 test: unit lint
 
 # Run unit tests.
+TEST=.
 unit:
 	@echo
 	@echo "******************************** Unit Tests ***********************************"
 	@echo
-	@pytest --junitxml=test_results.xml
+	@pytest --junitxml=test_results.xml -k $(TEST)
 	@echo
 
 # Run lint on all python files.

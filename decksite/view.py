@@ -28,6 +28,9 @@ class View:
     def css_url(self):
         return url_for('static', filename='css/pd.css')
 
+    def tooltips_url(self):
+        return url_for('static', filename='js/tooltips.js')
+
     def js_url(self):
         return url_for('static', filename='js/pd.js')
 

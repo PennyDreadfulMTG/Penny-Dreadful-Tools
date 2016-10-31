@@ -39,7 +39,8 @@ class View:
             {'name': 'Decks', 'url': url_for('home')},
             {'name': 'Competitions', 'url': url_for('competitions')},
             {'name': 'People', 'url': url_for('people')},
-            {'name': 'Cards', 'url': url_for('cards')}
+            {'name': 'Cards', 'url': url_for('cards')},
+            {'name': 'About', 'url': url_for('about')},
         ]
 
     def favicon_url(self):

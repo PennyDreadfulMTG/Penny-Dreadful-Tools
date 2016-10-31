@@ -1,3 +1,4 @@
+from .about import About
 from .add_form import AddForm
 from .card import Card
 from .cards import Cards

@@ -3,7 +3,7 @@ import os
 from flask import Flask, request, send_from_directory
 
 from decksite.data import card as cs, competition as comp, deck, person as ps
-from decksite.views import AddForm, Card, Cards, Competition, Competitions, Deck, Home, People, Person
+from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, People, Person
 
 APP = Flask(__name__)
 
@@ -56,6 +56,11 @@ def add_form():
 def add_deck():
     decks.add_deck(request.form)
     return add_form()
+
+@APP.route('/about')
+def about():
+    view = About();
+    return view.page()
 
 @APP.route('/querytappedout')
 def deckcycle_tappedout():

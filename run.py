@@ -21,8 +21,11 @@ def run():
         srv_prices.init()
     elif "scraper" in sys.argv:
         name = sys.argv.pop()
-        m = importlib.import_module('decksite.scrapers.{name}'.format(name=name))
-        m.scrape()
+        from decksite.main import APP
+        APP.config["SERVER_NAME"] = "127:0.0.1:5000"
+        with APP.app_context():
+            m = importlib.import_module('decksite.scrapers.{name}'.format(name=name))
+            m.scrape()
     else:
         print("You didn't tell me what to run or I don't recognize that name")
 

@@ -1,12 +1,10 @@
 from magic import oracle
 
-def test_legal():
+def test_legal_deck():
     cards = oracle.load_cards(['Black Lotus', 'Armed // Dangerous', 'Séance'])
-    assert not oracle.legal(cards)
-    assert oracle.legal(cards, 'Vintage')
+    assert not oracle.legal_deck(cards)
     cards = oracle.load_cards(['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'])
-    assert oracle.legal(cards)
-    assert oracle.legal(cards, 'Modern')
+    assert oracle.legal_deck(cards)
 
 def test_cards_from_query():
     cards = oracle.cards_from_query('Far/Away')

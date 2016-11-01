@@ -74,7 +74,7 @@ def set_colors(d):
     d.colors = required
 
 def set_legality(d):
-    d.pd_legal = oracle.legal([c['card'] for c in d.all_cards()])
+    d.pd_legal = oracle.legal_deck([c['card'] for c in d.all_cards()])
 
 # Expects:
 #

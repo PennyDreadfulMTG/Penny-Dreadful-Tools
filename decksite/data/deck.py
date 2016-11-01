@@ -128,10 +128,10 @@ def add_deck(params):
         losses,
         finish
     ) VALUES (
-         ?,  strftime('%s', 'now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+         IFNULL(?, strftime('%s', 'now')),  strftime('%s', 'now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
     )"""
     values = [
-        params.get('created_date', "strftime('%s', 'now')"),
+        params.get('created_date'),
         person_id,
         source_id,
         params['url'],

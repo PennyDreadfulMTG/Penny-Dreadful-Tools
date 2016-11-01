@@ -25,12 +25,23 @@ def fetch_deck_details(raw_deck):
 
 def set_values(raw_deck):
     raw_deck = translation.translate(translation.TAPPEDOUT, raw_deck)
-    # Decklist is already in raw_deck so we could parse that instead of making another call here ...
-    raw_decklist = fetcher.fetch('{base_url}?fmt=txt'.format(base_url=raw_deck['url']))
-    raw_deck['cards'] = decklist.parse(raw_decklist)
+    if 'inventory' in raw_deck:
+        raw_deck['cards'] = parse_inventory(raw_deck['inventory'])
+    else:
+        raw_decklist = fetcher.fetch('{base_url}?fmt=txt'.format(base_url=raw_deck['url']))
+        raw_deck['cards'] = decklist.parse(raw_decklist)
     raw_deck['source'] = 'Tapped Out'
     raw_deck['identifier'] = raw_deck['url']
     return raw_deck
+
+def parse_inventory(inventory):
+    d = {'maindeck': {}, 'sideboard': {}}
+    for name, board in inventory:
+        if board['b'] == 'main':
+            d['maindeck'][name] = board['qty']
+        elif  board['b'] == 'side':
+            d['sideboard'][name] = board['qty']
+    return d
 
 def is_authorised():
     return fetcher_internal.SESSION.cookies.get('tapped') is not None

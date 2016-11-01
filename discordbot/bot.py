@@ -1,7 +1,7 @@
 import discord
 
 from discordbot import command, emoji
-from magic import image_fetcher, oracle
+from magic import image_fetcher
 from shared import configuration
 
 class Bot:

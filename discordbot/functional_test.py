@@ -3,7 +3,7 @@ import types
 
 from discordbot import bot, command
 
-from magic import oracle, fetcher_internal
+from magic import fetcher_internal
 
 # Mock up assertions within the discord client.
 # I love that Python lets us just ruin 3rd-party libraries like this.

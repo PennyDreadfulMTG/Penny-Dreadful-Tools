@@ -318,3 +318,9 @@ ul.menu {
         padding-left: 0;
     }
 }
+
+/* Card */
+
+.card-img {
+    width: 20em;
+}

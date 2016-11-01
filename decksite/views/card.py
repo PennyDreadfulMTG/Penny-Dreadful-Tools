@@ -4,6 +4,7 @@ from decksite.view import View
 class Card(View):
     def __init__(self, card):
         self.card = card
+        self.cards = [card]
         self.decks = card.decks
 
     def __getattr__(self, attr):

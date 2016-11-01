@@ -1,5 +1,6 @@
 import html
 import re
+import urllib
 
 from flask import url_for
 
@@ -81,6 +82,7 @@ class View:
     def prepare_cards(self):
         for c in getattr(self, 'cards', []):
             c.url = url_for('card', name=c.name)
+            c.img_url = 'http://magic.bluebones.net/proxies/?c={name}'.format(name=urllib.parse.quote(c.name))
 
     def prepare_competitions(self):
         for c in getattr(self, 'competitions', []):

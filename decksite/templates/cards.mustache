@@ -20,7 +20,7 @@
         <tbody>
             {{#cards}}
                 <tr>
-                    <td><a href="{{url}}" class="card">{{{name}}}</a></td>
+                    <td><a href="{{url}}" class="{{^pd_legal}}illegal{{/pd_legal}} card">{{{name}}}</a></td>
                     <td class="n">{{n_decks}}</td>
                     <td class="n">{{n_maindecks}}</td>
                     <td class="n divider">{{n_sideboards}}</td>

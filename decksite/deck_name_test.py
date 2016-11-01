@@ -41,6 +41,16 @@ def test_normalize():
     assert deck_name.normalize(d) == 'Selesnya Aggro'
     d.archetype = None
     assert deck_name.normalize(d) == 'Selesnya'
+    d.colors = ['R']
+    d.name = 'RDW'
+    assert deck_name.normalize(d) == 'Red Deck Wins'
+    d.name = 'Red Deck Wins'
+    assert deck_name.normalize(d) == 'Red Deck Wins'
+    d.colors = ['W']
+    d.name = 'WW'
+    assert deck_name.normalize(d) == 'White Weenie'
+    d.name = 'White Weenie'
+    assert deck_name.normalize(d) == 'White Weenie'
 
     # Undefined cases
     # d.name = 'U/B Aggro' when d.archetype = 'Control'

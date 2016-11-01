@@ -35,9 +35,9 @@ def now():
 def display_date(dt, granularity=1):
     start = now()
     if (start - dt) > datetime.timedelta(365):
-        return '{:%b %d, %Y}'.format(dt.astimezone(WOTC_TZ))
+        return '{:%b %-d, %Y}'.format(dt.astimezone(WOTC_TZ))
     if (start - dt) > datetime.timedelta(28):
-        return '{:%b %d}'.format(dt.astimezone(WOTC_TZ))
+        return '{:%b %-d}'.format(dt.astimezone(WOTC_TZ))
     else:
         diff = start - dt
         return '{duration} ago'.format(duration=display_time(diff.total_seconds(), granularity))

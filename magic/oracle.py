@@ -17,7 +17,6 @@ def initialize():
     if current_version > database.version():
         print('Database update required')
         update_database(str(current_version))
-        get_legal_cards(force=True)
 
 # 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold default.
 def search(query, fuzzy_threshold=260):
@@ -60,14 +59,15 @@ def load_cards(names=None):
 
 # Does not check for 4-ofs nor 1 max restricted, yet.
 def legal_deck(cards):
-    return len(cards) == len(legal(cards))
+    cs = legal_cards()
+    return len([c for c in cards if c.name not in cs]) == 0
 
-def legal(cards):
-    legality = {}
-    legal_cards = get_legal_cards()
+def legality(cards):
+    l = {}
+    cs = legal_cards()
     for c in cards:
-        legality[c.id] = c.name in legal_cards
-    return legality
+        l[c.id] = c.name in cs
+    return l
 
 def base_query(where_clause='(1 = 1)'):
     return """
@@ -93,7 +93,12 @@ def base_query(where_clause='(1 = 1)'):
         face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),
         where_clause=where_clause)
 
-def get_legal_cards(force=False):
+def legal_cards(force=False):
+    if len(LEGAL_CARDS) == 0 or force:
+        set_legal_cards(force)
+    return LEGAL_CARDS
+
+def set_legal_cards(force=False):
     new_list = ['']
     try:
         new_list = fetcher.legal_cards(force)
@@ -119,7 +124,9 @@ def get_legal_cards(force=False):
         sql = 'SELECT name FROM ({base_query}) WHERE id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=base_query(), format_id=format_id)
         db_legal_list = [row['name'] for row in db().execute(sql)]
         print(set(new_list).symmetric_difference(set(db_legal_list)))
-    return new_list
+    LEGAL_CARDS.clear()
+    for name in new_list:
+        LEGAL_CARDS.append(name)
 
 def update_database(new_version):
     db().execute('BEGIN TRANSACTION')
@@ -554,5 +561,6 @@ def fake_flip_cards(cards):
     }
     return cards
 
+LEGAL_CARDS = []
 initialize()
 CARDS_BY_NAME = {c.name: c for c in load_cards()}

@@ -81,7 +81,7 @@ class View:
 
     def prepare_cards(self):
         cards = getattr(self, 'cards', [])
-        legality = oracle.legal(cards)
+        legality = oracle.legality(cards)
         for c in cards:
             c.url = url_for('card', name=c.name)
             c.img_url = 'http://magic.bluebones.net/proxies/?c={name}'.format(name=urllib.parse.quote(c.name))

@@ -1,5 +1,7 @@
 import re
 
+from magic import oracle
+
 def find_emoji(emoji, channel):
     if channel.is_private:
         return None
@@ -29,8 +31,8 @@ def replace_emoji(text, channel):
             output = output.replace('{' + symbol + '}', str(emoji))
     return output
 
-def legal_emoji(c, legal_cards, verbose=False):
-    if c.name in legal_cards:
+def legal_emoji(c, verbose=False):
+    if c.name in oracle.legal_cards():
         return ':white_check_mark:'
     s = ':no_entry_sign:'
     if verbose:

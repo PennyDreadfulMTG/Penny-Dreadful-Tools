@@ -57,7 +57,7 @@ def remove_pd(name):
 def remove_colors(name):
     patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*', 'Mono'] + list(COLOR_COMBINATIONS.keys())
     for pattern in patterns:
-        name = re.sub('(^| ){pattern}( |$)'.format(pattern=pattern), '', name, flags=re.IGNORECASE).strip()
+        name = re.sub('(^| ){pattern}( |$)'.format(pattern=pattern), ' ', name, flags=re.IGNORECASE).strip()
     return name
 
 def expand_common_abbreviations(name):

@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS deck (
     FOREIGN KEY(source_id) REFERENCES source(id),
     FOREIGN KEY(competition_id) REFERENCES competition(id),
     FOREIGN KEY(archetype_id) REFERENCES archetype(id),
-    CONSTRAINT deck_url_identifier UNIQUE (url, identifier)
+    CONSTRAINT deck_source_id_identifier UNIQUE (source_id, identifier)
 );
 
 -- Mapping between deck and the cards it contains.

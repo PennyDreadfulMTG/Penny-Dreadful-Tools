@@ -41,6 +41,7 @@ COLOR_COMBINATIONS = {
 def normalize(d):
     name = d.name
     name = remove_pd(name)
+    name = expand_common_abbreviations(name)
     name = remove_colors(name)
     if name == '' and d.get('archetype'):
         name = d.archetype
@@ -56,17 +57,22 @@ def remove_pd(name):
 def remove_colors(name):
     patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*', 'Mono'] + list(COLOR_COMBINATIONS.keys())
     for pattern in patterns:
-        name = re.sub('(^| ){pattern}( |$)'.format(pattern=pattern), '', name, flags=re.IGNORECASE).strip()
+        name = re.sub('(^| ){pattern}( |$)'.format(pattern=pattern), ' ', name, flags=re.IGNORECASE).strip()
     return name
 
+def expand_common_abbreviations(name):
+    return name.replace('RDW', 'Red Deck Wins').replace('WW', 'White Weenie')
+
 def prepend_colors(s, colors):
-    prefix = name_from_colors(colors)
+    prefix = name_from_colors(colors, s)
     return '{prefix} {s}'.format(prefix=prefix, s=s).strip()
 
-def name_from_colors(colors):
+def name_from_colors(colors, s=''):
     ordered = mana.order(colors)
     for name, symbols in COLOR_COMBINATIONS.items():
         if mana.order(symbols) == ordered:
             if len(symbols) == 1:
+                if s == 'Deck Wins' or s == 'Weenie':
+                    return name
                 return 'Mono {name}'.format(name=name)
             return name

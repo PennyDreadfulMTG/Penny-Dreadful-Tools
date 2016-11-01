@@ -108,13 +108,13 @@ Want to contribute? Send a Pull Request."""
                 number = int(args.strip())
             except ValueError:
                 pass
-        cards = [oracle.cards_from_query(name)[0] for name in random.sample(bot.legal_cards, number)]
+        cards = [oracle.cards_from_query(name)[0] for name in random.sample(oracle.legal_cards(), number)]
         await bot.post_cards(cards, channel)
 
     @cmd_header("Developer")
     async def update(self, bot, channel):
         """Forces an update to the legal card list"""
-        bot.legal_cards = oracle.get_legal_cards(True)
+        oracle.legal_cards(force=True)
         await bot.client.send_message(channel, 'Reloaded list of legal cards.')
 
     # @cmd_header("Developer")
@@ -326,7 +326,7 @@ async def single_card_text(bot, channel, args, author, f):
     if len(cards) > 1:
         await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
     elif len(cards) == 1:
-        legal_emjoi = emoji.legal_emoji(cards[0], bot.legal_cards)
+        legal_emjoi = emoji.legal_emoji(cards[0])
         text = emoji.replace_emoji(f(cards[0]), channel)
         message = '{legal_emjoi} **{name}** {text}'.format(name=cards[0].name, legal_emjoi=legal_emjoi, text=text)
         await bot.client.send_message(channel, message)

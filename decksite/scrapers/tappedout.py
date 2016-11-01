@@ -12,7 +12,8 @@ def scrape():
     print('Logged in to TappedOut: {is_authorised}'.format(is_authorised=is_authorised()))
     raw_decks = fetch_decks()
     for raw_deck in raw_decks:
-        raw_deck.update(fetch_deck_details(raw_deck))
+        if is_authorised():
+            raw_deck.update(fetch_deck_details(raw_deck))
         raw_deck = set_values(raw_deck)
         deck.add_deck(raw_deck)
 

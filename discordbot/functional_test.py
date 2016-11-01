@@ -3,7 +3,7 @@ import types
 
 from discordbot import bot, command
 
-from magic import oracle, fetcher_internal
+from magic import fetcher_internal
 
 # Mock up assertions within the discord client.
 # I love that Python lets us just ruin 3rd-party libraries like this.
@@ -25,8 +25,6 @@ def generate_fakebot():
     fakebot.client.send_message = fake_send_message
     fakebot.client.send_file = fake_send_file
     fakebot.client.send_typing = fake_send_typing
-
-    fakebot.legal_cards = oracle.get_legal_cards()
     return fakebot
 
 def generate_fakechannel():

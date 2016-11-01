@@ -1,18 +1,15 @@
 import discord
 
 from discordbot import command, emoji
-from magic import image_fetcher, oracle
+from magic import image_fetcher
 from shared import configuration
 
 class Bot:
     def __init__(self):
-        self.legal_cards = []
         self.client = discord.Client()
         self.voice = None
 
     def init(self):
-        self.legal_cards = oracle.get_legal_cards()
-        print('Legal cards: {num_legal_cards}'.format(num_legal_cards=len(self.legal_cards)))
         self.client.run(configuration.get('token'))
 
     async def on_ready(self):
@@ -60,10 +57,10 @@ class Bot:
         if len(cards) == 1:
             card = cards[0]
             mana = emoji.replace_emoji(card.mana_cost, channel) or ''
-            legal = emoji.legal_emoji(card, self.legal_cards, True)
+            legal = emoji.legal_emoji(card, True)
             text = '{name} {mana_cost} — {type} — {legal}'.format(name=card.name, mana_cost=mana, type=card.type, legal=legal)
         else:
-            text = ', '.join('{name} {legal}'.format(name=card.name, legal=emoji.legal_emoji(card, self.legal_cards)) for card in cards)
+            text = ', '.join('{name} {legal}'.format(name=card.name, legal=emoji.legal_emoji(card)) for card in cards)
             text += more_text
         if len(cards) > 10:
             image_file = None

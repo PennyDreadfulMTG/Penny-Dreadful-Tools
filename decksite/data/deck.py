@@ -102,10 +102,10 @@ def add_deck(params):
     if not params.get('mtgo_username') and not params.get('tappedout_username'):
         raise InvalidDataException('Did not find a username in {params}'.format(params=params))
     person_id = get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'))
-    deck_id = get_deck_id(params['url'], params['identifier'])
+    source_id = get_source_id(params['source'])
+    deck_id = get_deck_id(source_id, params['identifier'])
     if deck_id:
         return deck_id
-    source_id = get_source_id(params['source'])
     archetype_id = get_archetype_id(params.get('archetype'))
     sql = 'BEGIN TRANSACTION'
     db().execute(sql)
@@ -157,9 +157,9 @@ def add_deck(params):
     db().execute(sql)
     return deck_id
 
-def get_deck_id(url, identifier):
-    sql = 'SELECT id FROM deck WHERE url = ? AND identifier = ?'
-    return db().value(sql, [url, identifier])
+def get_deck_id(source_id, identifier):
+    sql = 'SELECT id FROM deck WHERE source_id = ? AND identifier = ?'
+    return db().value(sql, [source_id, identifier])
 
 def insert_deck_card(deck_id, name, n, in_sideboard):
     card = oracle.valid_name(name)

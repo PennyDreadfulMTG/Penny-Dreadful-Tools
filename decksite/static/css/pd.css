@@ -62,6 +62,14 @@ b {
     font-weight: bold;
 }
 
+img {
+    padding-top: 1em;
+}
+
+p {
+    margin: 0.5em 0;
+}
+
 section {
     border-top: 0.2rem #502828 solid;
     float: left;
@@ -99,6 +107,14 @@ h3 {
 .main a {
     color: #502828;
     text-decoration: none;
+    /* Underline that respect descenders. */
+    text-shadow: 0.1em 0 0 #fff, -0.1em 0 0 #fff;
+    background-image: linear-gradient( to right, currentColor 0%, currentColor 100% );
+    background-repeat: repeat-x;
+    background-position: 0 96%;
+    -webkit-background-size: 100% 0.1em;
+    background-size: 100% 0.1em;
+
 }
 
 .main a:visited {
@@ -130,6 +146,11 @@ td, th {
 
 td:first-child, td:last-child, th:first-child, th:last-child {
     padding: 0;
+}
+
+.main table a {
+    text-shadow: none;
+    background-image: none;
 }
 
 td.c {

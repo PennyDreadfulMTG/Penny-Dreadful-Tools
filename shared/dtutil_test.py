@@ -1,7 +1,7 @@
 import datetime
 import time
 
-from dateutil import tz
+from pytz import timezone
 
 from shared import dtutil
 
@@ -11,12 +11,12 @@ def test_ts2dt():
     assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '1970-01-01 00:00:00 +0000'
     now_seconds = time.time()
     dt = dtutil.ts2dt(now_seconds)
-    assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '{:%Y-%m-%d %H:%M:%S %z}'.format(datetime.datetime.utcnow().replace(tzinfo=tz.tzutc()))
+    assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '{:%Y-%m-%d %H:%M:%S %z}'.format(datetime.datetime.now(datetime.timezone.utc))
 
 def test_dt2ts():
-    dt = datetime.datetime.utcfromtimestamp(0).replace(tzinfo=tz.tzutc())
+    dt = timezone('UTC').localize(datetime.datetime.utcfromtimestamp(0))
     assert dtutil.dt2ts(dt) == 0
-    now = datetime.datetime.utcnow().replace(tzinfo=tz.tzutc())
+    now = datetime.datetime.now(datetime.timezone.utc)
     now_ts = now.timestamp()
     assert dtutil.dt2ts(now) == now_ts
 
@@ -27,18 +27,17 @@ def test_end_to_end():
 
 def test_parse():
     s = '1970-01-01 00:00:00'
-    dt = dtutil.parse(s, '%Y-%m-%d %H:%M:%S', tz.tzutc())
-    print(dt)
+    dt = dtutil.parse(s, '%Y-%m-%d %H:%M:%S', timezone('UTC'))
     assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '1970-01-01 00:00:00 +0000'
     s = '2016-01-01 00:00:00'
-    dt = dtutil.parse(s, '%Y-%m-%d %H:%M:%S', tz.tzutc())
+    dt = dtutil.parse(s, '%Y-%m-%d %H:%M:%S', timezone('UTC'))
     assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '2016-01-01 00:00:00 +0000'
-    dt = dtutil.parse(s, '%Y-%m-%d %H:%M:%S', tz.gettz('America/Los_Angeles'))
+    dt = dtutil.parse(s, '%Y-%m-%d %H:%M:%S', timezone('America/Los_Angeles'))
     assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '2016-01-01 08:00:00 +0000'
 
 def test_parse_to_ts():
     s = '1970-01-01 00:00:00'
-    assert dtutil.parse_to_ts(s, '%Y-%m-%d %H:%M:%S', tz.tzutc()) == 0
+    assert dtutil.parse_to_ts(s, '%Y-%m-%d %H:%M:%S', timezone('UTC')) == 0
 
 def test_now():
     then = dtutil.parse('2016-01-01', '%Y-%m-%d', dtutil.WOTC_TZ)
@@ -48,7 +47,7 @@ def test_now():
 def test_display_date():
     dt = dtutil.parse('2008-03-29', '%Y-%m-%d', dtutil.WOTC_TZ)
     assert dtutil.display_date(dt) == 'Mar 29, 2008'
-    dt = dtutil.parse('2008-03-29 02:00', '%Y-%m-%d %H:%M', tz.tzutc())
+    dt = dtutil.parse('2008-03-29 02:00', '%Y-%m-%d %H:%M', timezone('UTC'))
     assert dtutil.display_date(dt) == 'Mar 28, 2008'
-    dt = datetime.datetime.now().replace(tzinfo=tz.tzlocal()) - datetime.timedelta(seconds=10)
+    dt = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(seconds=10)
     assert dtutil.display_date(dt).find('seconds') >= 0

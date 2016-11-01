@@ -39,7 +39,8 @@ class View:
             {'name': 'Decks', 'url': url_for('home')},
             {'name': 'Competitions', 'url': url_for('competitions')},
             {'name': 'People', 'url': url_for('people')},
-            {'name': 'Cards', 'url': url_for('cards')}
+            {'name': 'Cards', 'url': url_for('cards')},
+            {'name': 'About', 'url': url_for('about')},
         ]
 
     def favicon_url(self):
@@ -61,6 +62,7 @@ class View:
         self.prepare_decks()
         self.prepare_cards()
         self.prepare_competitions()
+        self.prepare_people()
 
     def prepare_decks(self):
         for d in getattr(self, 'decks', []):
@@ -69,6 +71,7 @@ class View:
             name = deck_name.normalize(d)
             d.name = name[0:NAME_MAX_LEN - 1] + '…' if len(name) > NAME_MAX_LEN else name
             d.person_url = url_for('person', person_id=d.person_id)
+            d.date_sort = dtutil.dt2ts(d.date)
             d.date = dtutil.display_date(d.date)
             d.show_record = d.wins or d.losses
             d.players = d.players if d.players > 0 else ''
@@ -82,6 +85,12 @@ class View:
     def prepare_competitions(self):
         for c in getattr(self, 'competitions', []):
             c.url = url_for('competition', competition_id=c.id)
+            c.date = dtutil.display_date(c.start_date)
+
+    def prepare_people(self):
+        for p in getattr(self, 'people', []):
+            p.url = url_for('person', person_id=p.id)
+            p.show_record = p.wins or p.losses
 
 def colors_html(colors):
     s = ''.join(mana.order(colors))

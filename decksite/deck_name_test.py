@@ -49,3 +49,4 @@ def test_normalize():
 def test_remove_pd():
     assert deck_name.remove_pd('Penny Dreadful Knights') == 'Knights'
     assert deck_name.remove_pd('biovisionary pd') == 'biovisionary'
+    assert deck_name.remove_pd('[PD] Mono Black Control') == 'Mono Black Control'

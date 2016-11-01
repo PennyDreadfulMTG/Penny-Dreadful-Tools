@@ -4,6 +4,7 @@ from decksite.view import View
 class Competition(View):
     def __init__(self, competition):
         self.competition = competition
+        self.decks = competition.decks
 
     def __getattr__(self, attr):
         return getattr(self.competition, attr)

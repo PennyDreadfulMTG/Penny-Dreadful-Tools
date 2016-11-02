@@ -6,7 +6,6 @@
             <th>Person</th>
             <th data-empty="bottom" data-sortInitialOrder="desc">Record</th>
             <th class="c">Top 8</th>
-            <th data-sortInitialOrder="desc">Players</th>
             <th>Date</th>
         </tr>
     </thead>
@@ -24,11 +23,6 @@
                 <td class="c">
                     {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
                     {{top8}}
-                    {{#competition_url}}</a>{{/competition_url}}
-                </td>
-                <td class="n">
-                    {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
-                    {{players}}
                     {{#competition_url}}</a>{{/competition_url}}
                 </td>
                 <td class="n pale" data-text="{{date_sort}}">

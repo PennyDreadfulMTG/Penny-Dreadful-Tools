@@ -9,11 +9,18 @@ from magic.fetcher_internal import (FetchException, fetch, fetch_json, store,
 from shared import configuration
 
 
-def legal_cards(force=False):
+def legal_cards(force=False, season=None):
+    url = 'http://pdmtgo.com/legal_cards.txt'
     resource_id = 'legal_cards'
+    if season is not None:
+        resource_id = "{season}_legal_cards".format(season=season)
+        url = 'http://pdmtgo.com/{season}_legal_cards.txt'.format(season=season)
+        if season == "EMN":
+            # EMN was encoded weirdly.
+            return fetch(url, 'latin-1', resource_id).strip().split('\n')
     if force:
         resource_id = None
-    return fetch('http://pdmtgo.com/legal_cards.txt', 'utf-8', resource_id).strip().split('\n')
+    return fetch(url, 'utf-8', resource_id).strip().split('\n')
 
 def mtgjson_version():
     return pkg_resources.parse_version(fetch_json('https://mtgjson.com/json/version.json', resource_id='mtg_json_version'))

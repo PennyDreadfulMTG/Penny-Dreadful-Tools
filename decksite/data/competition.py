@@ -3,7 +3,7 @@ from munch import Munch
 from shared import dtutil
 from shared.database import sqlescape
 
-from decksite.data import deck
+from decksite.data import deck, guarantee
 from decksite.database import db
 
 def get_or_insert_competition(start_date, end_date, name, competition_type, url):
@@ -27,7 +27,7 @@ def type_id(competition_type):
     return db().value(sql, [competition_type])
 
 def load_competition(competition_id):
-    return load_competitions('c.id = {competition_id}'.format(competition_id=sqlescape(competition_id)))[0]
+    return guarantee.exactly_one(load_competitions('c.id = {competition_id}'.format(competition_id=sqlescape(competition_id))))
 
 def load_competitions(where_clause='1 = 1'):
     sql = """

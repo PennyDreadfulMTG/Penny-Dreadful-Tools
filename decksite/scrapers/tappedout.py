@@ -37,6 +37,11 @@ def set_values(raw_deck):
 def parse_inventory(inventory):
     d = {'maindeck': {}, 'sideboard': {}}
     for name, board in inventory:
+        # Decklists can contain editions. eg: Island (INV)
+        # We can't handle these right now.
+        removeset = re.match(r'([^\(]+)(\(\w\w\w\))?', name)
+        if removeset is not None:
+            name = removeset.group(1)
         if board['b'] == 'main':
             d['maindeck'][name] = board['qty']
         elif  board['b'] == 'side':

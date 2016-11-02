@@ -1,5 +1,5 @@
 #!/bin/bash
-APP=$1
+APP="$@"
 if [ $# -lt "1" ]
 then
     APP="discordbot"

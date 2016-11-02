@@ -3,7 +3,7 @@ from munch import Munch
 from magic import oracle
 from shared.database import sqlescape
 
-from decksite.data import deck
+from decksite.data import deck, guarantee
 from decksite.database import db
 
 def played_cards():
@@ -27,6 +27,6 @@ def played_cards():
     return cs
 
 def load_card(name):
-    c = oracle.load_cards([name])[0]
+    c = guarantee.exactly_one(oracle.load_cards([name]))
     c.decks = deck.load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name)))
     return c

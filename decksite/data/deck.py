@@ -6,14 +6,14 @@ from shared import dtutil
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
-from decksite.data import query
+from decksite.data import guarantee, query
 from decksite.database import db
 
 def latest_decks():
     return load_decks(limit='LIMIT 100')
 
 def load_deck(deck_id):
-    return load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id)))[0]
+    return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))
 
 def load_decks(where='1 = 1', order_by=None, limit=''):
     if order_by is None:

@@ -52,9 +52,9 @@ class View:
 
     def title(self):
         if not self.subtitle():
-            return 'Penny Dreadful Decks'
+            return 'pennydreadfulmagic.com'
         else:
-            return '{subtitle} – Penny Dreadful Decks'.format(subtitle=self.subtitle())
+            return '{subtitle} – pennydreadfulmagic.com'.format(subtitle=self.subtitle())
 
     def subtitle(self):
         return None

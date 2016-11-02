@@ -97,7 +97,7 @@ def set_legality(d):
 # Plus one of: mtgo_username OR tappedout_username
 # Optionally: created_date (defaults to now), resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url, wins, losses, finish
 #
-# url + identifier must be unique for each decklist.
+# source + identifier must be unique for each decklist.
 def add_deck(params):
     if not params.get('mtgo_username') and not params.get('tappedout_username'):
         raise InvalidDataException('Did not find a username in {params}'.format(params=params))
@@ -178,7 +178,7 @@ def get_source_id(source):
     sql = 'SELECT id FROM source WHERE name = ?'
     source_id = db().value(sql, [source])
     if not source_id:
-        raise InvalidDataException('Unkown source: `{source}`'.format(source=source))
+        raise InvalidDataException('Unknown source: `{source}`'.format(source=source))
     return source_id
 
 def get_archetype_id(archetype):

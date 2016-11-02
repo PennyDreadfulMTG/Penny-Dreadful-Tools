@@ -62,13 +62,11 @@ b {
     font-weight: bold;
 }
 
-img {
-    padding-top: 1rem;
-}
-
 p {
     margin: 0.5rem 0;
 }
+
+/* Layout */
 
 section {
     border-top: 0.2rem #502828 solid;
@@ -82,7 +80,7 @@ h1, h2, h3 {
     font-family: Georgia, "Times New Roman", Times, serif;
     line-height: 1.2;
     padding-top: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.618rem;
 }
 
 h1 {
@@ -212,7 +210,7 @@ label {
 }
 
 textarea {
-    height: 20rem;
+    height: 10rem;
 }
 
 /* Menu */
@@ -324,10 +322,34 @@ ul.menu {
 /* Card */
 
 .card-img {
+    padding-top: 1rem;
     width: 16rem;
 }
 
 .illegal::after {
     content: "﻿🚫";
     margin-left: 0.2em;
+}
+
+/* Forms */
+
+label {
+    width: 10em;
+    margin-right: 1em;
+}
+
+input, textarea {
+    margin-left: 1em;
+}
+
+input[type=submit], div.error  {
+    margin-left: 12em;
+}
+
+div.error {
+    color: red;
+}
+
+input.error {
+    border: 0.1rem solid red;
 }

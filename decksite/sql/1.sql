@@ -81,5 +81,5 @@ CREATE TABLE IF NOT EXISTS archetype (
     name TEXT NOT NULL
 );
 
--- Poppulate archetype
+-- Populate archetype
 INSERT INTO archetype (name) VALUES ('Aggro'), ('Combo'), ('Control'), ('Aggro-Combo'), ('Aggro-Control'), ('Combo-Control'), ('Midrange'), ('Ramp'), ('Unclassified');

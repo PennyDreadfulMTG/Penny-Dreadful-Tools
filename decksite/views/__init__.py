@@ -10,3 +10,4 @@ from .internal_server_error import InternalServerError
 from .not_found import NotFound
 from .people import People
 from .person import Person
+from .signup import SignUp

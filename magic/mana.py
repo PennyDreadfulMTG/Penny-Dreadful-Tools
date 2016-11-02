@@ -109,6 +109,8 @@ def order(symbols):
     return list(sorted(permutations, key=order_score)[0])
 
 def order_score(symbols):
+    if not symbols:
+        return 0
     score = 0
     positions = ['W', 'U', 'B', 'R', 'G']
     current = positions.index(symbols[0])

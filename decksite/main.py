@@ -5,10 +5,14 @@ from werkzeug import exceptions
 
 from shared.pd_exception import DoesNotExistException
 
+from decksite import league as lg
 from decksite.data import card as cs, competition as comp, deck, person as ps
-from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person
+from decksite.league import SignUpForm
+from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, SignUp
 
 APP = Flask(__name__)
+
+# Decks
 
 @APP.route('/')
 def home():
@@ -65,6 +69,35 @@ def about():
     view = About()
     return view.page()
 
+# League
+
+@APP.route('/signup')
+def signup(form=None):
+    if form is None:
+        form = SignUpForm(request.form)
+    view = SignUp(form)
+    return view.page()
+
+@APP.route('/signup', methods=['POST'])
+def add_signup():
+    form = SignUpForm(request.form)
+    if form.validate():
+        deck_id = lg.signup(form)
+        return decks(deck_id)
+    else:
+        view = SignUp(form)
+        return view.page()
+
+@APP.route('/report')
+def report():
+    pass
+
+@APP.route('/report', methods=['POST'])
+def add_report():
+    pass
+
+# Admin
+
 @APP.route('/querytappedout')
 def deckcycle_tappedout():
     from decksite.scrapers import tappedout
@@ -72,6 +105,8 @@ def deckcycle_tappedout():
         tappedout.login()
     tappedout.fetch_decks()
     return home()
+
+# Infra
 
 @APP.route('/favicon<rest>')
 def favicon(rest):

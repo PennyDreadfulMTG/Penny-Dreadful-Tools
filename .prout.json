@@ -1,0 +1,8 @@
+{
+  "checkpoints": {
+    "PROD": {
+      "url": "http://pennydreadfulmagic.com/about",
+      "overdue": "1H"
+    }
+  }
+}

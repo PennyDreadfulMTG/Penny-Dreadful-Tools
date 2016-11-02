@@ -20,7 +20,11 @@ def played_cards():
         GROUP BY card
         ORDER BY n_decks DESC, count_decks DESC, n_maindecks DESC, count_maindecks DESC
     """
-    return [Munch(r) for r in db().execute(sql)]
+    cs = [Munch(r) for r in db().execute(sql)]
+    cards = {c.name: c for c in oracle.load_cards()}
+    for c in cs:
+        c.update(cards[c.name])
+    return cs
 
 def load_card(name):
     c = oracle.load_cards([name])[0]

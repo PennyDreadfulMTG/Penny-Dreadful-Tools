@@ -326,3 +326,8 @@ ul.menu {
 .card-img {
     width: 16rem;
 }
+
+.illegal::after {
+    content: "﻿🚫";
+    margin-left: 0.2em;
+}

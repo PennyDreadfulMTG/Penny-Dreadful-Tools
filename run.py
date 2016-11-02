@@ -1,4 +1,5 @@
 import importlib
+import pkgutil
 import sys
 
 def run():
@@ -24,8 +25,16 @@ def run():
         from decksite.main import APP
         APP.config["SERVER_NAME"] = "127:0.0.1:5000"
         with APP.app_context():
-            m = importlib.import_module('decksite.scrapers.{name}'.format(name=name))
-            m.scrape()
+            if name == "all":
+                m = importlib.import_module('decksite.scrapers')
+                #pylint: disable=unused-variable
+                for importer, modname, ispkg in pkgutil.iter_modules(m.__path__):
+                    s = importlib.import_module('decksite.scrapers.{name}'.format(name=modname))
+                    if getattr(s, "scrape", None) is not None:
+                        s.scrape()
+            else:
+                m = importlib.import_module('decksite.scrapers.{name}'.format(name=name))
+                m.scrape()
     else:
         print("You didn't tell me what to run or I don't recognize that name")
 

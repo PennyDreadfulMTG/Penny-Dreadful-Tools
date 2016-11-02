@@ -16,7 +16,7 @@ def test_normalize():
     assert deck_name.normalize(d) == 'Mono Black Lifegain'
     d.colors = ['G', 'U']
     d.name = 'biovisionary pd'
-    assert deck_name.normalize(d) == 'Simic Biovisionary'
+    assert deck_name.normalize(d) == 'Biovisionary'
     d.colors = ['R']
     d.archetype = 'Aggro'
     d.name = 'mono red ashling aggro'

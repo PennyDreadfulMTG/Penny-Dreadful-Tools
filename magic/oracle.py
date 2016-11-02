@@ -57,18 +57,6 @@ def load_cards(names=None):
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 
-# Does not check for 4-ofs nor 1 max restricted, yet.
-def legal_deck(cards):
-    cs = legal_cards()
-    return len([c for c in cards if c.name not in cs]) == 0
-
-def legality(cards):
-    l = {}
-    cs = legal_cards()
-    for c in cards:
-        l[c.id] = c.name in cs
-    return l
-
 def base_query(where_clause='(1 = 1)'):
     return """
         SELECT

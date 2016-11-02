@@ -4,7 +4,7 @@ import urllib
 
 from flask import url_for
 
-from magic import mana, oracle
+from magic import mana, oracle, legality
 from shared import dtutil
 
 from decksite import deck_name
@@ -81,11 +81,11 @@ class View:
 
     def prepare_cards(self):
         cards = getattr(self, 'cards', [])
-        legality = oracle.legality(cards)
+        legal = legality.legality(cards)
         for c in cards:
             c.url = url_for('card', name=c.name)
             c.img_url = 'http://magic.bluebones.net/proxies/?c={name}'.format(name=urllib.parse.quote(c.name))
-            c.pd_legal = legality[c.id]
+            c.pd_legal = legal[c.id]
 
     def prepare_competitions(self):
         for c in getattr(self, 'competitions', []):

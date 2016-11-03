@@ -1,5 +1,4 @@
 from munch import Munch
-from flask import url_for
 
 from magic import mana, oracle, legality
 from shared import dtutil

@@ -78,7 +78,7 @@ class View:
             d.players = d.players if d.players > 0 else ''
             if d.competition_id:
                 d.competition_url = url_for('competition', competition_id=d.competition_id)
-            d.url = url_for('decks', deck_id=self.id)
+            d.url = url_for('decks', deck_id=d.id)
 
     def prepare_cards(self):
         cards = getattr(self, 'cards', [])

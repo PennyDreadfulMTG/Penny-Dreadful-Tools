@@ -1,5 +1,21 @@
 from magic import oracle, legality
 
+def test_legality():
+    cards = oracle.cards_from_query('Swamp')
+    assert len(cards) == 1
+    assert cards[0].legalities['Standard'] == 'Legal'
+    assert cards[0].legalities['Modern'] == 'Legal'
+    assert cards[0].legalities['Legacy'] == 'Legal'
+    assert cards[0].legalities['Vintage'] == 'Legal'
+    assert cards[0].legalities['Penny Dreadful'] == 'Legal'
+    cards = oracle.cards_from_query('Black Lotus')
+    assert len(cards) == 1
+    assert 'Standard' not in cards[0].legalities.keys()
+    assert 'Modern' not in cards[0].legalities.keys()
+    assert cards[0].legalities['Legacy'] == 'Banned'
+    assert cards[0].legalities['Vintage'] == 'Restricted'
+    assert 'Penny Dreadful' not in cards[0].legalities.keys()
+
 def test_legal_deck():
     # Consider changing these to other cards.  We don't want our test cases rotating in without warning.
     cards = oracle.load_cards(['Black Lotus', 'Armed // Dangerous', 'Séance'])

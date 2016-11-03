@@ -130,6 +130,14 @@ class Card(Munch):
             if k == 'names' or k == 'cmc':
                 if v is not None:
                     v = v.split('|')
+            if k == 'legalities':
+                if v is not None:
+                    formats = v.split(',')
+                    v = {}
+                    for f in formats:
+                        parts = f.split(':')
+                        v[parts[0]] = parts[2]
+                        v[parts[1]] = parts[2]
             setattr(self, k, v)
         if not self.names:
             setattr(self, 'names', [self.name])

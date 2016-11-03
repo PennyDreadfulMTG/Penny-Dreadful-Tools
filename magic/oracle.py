@@ -63,12 +63,17 @@ def base_query(where_clause='(1 = 1)'):
             {card_queries},
             {face_queries},
             GROUP_CONCAT(face_name, '|') AS names,
-            SUM(CASE WHEN format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal
+            legalities,
+            pd_legal
             FROM
-                (SELECT {card_props}, {face_props}, f.name AS face_name, cl.format_id
+                (SELECT {card_props}, {face_props}, f.name AS face_name,
+                SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal,
+                GROUP_CONCAT(fo.name || ':' || cl.id || ':' || cl.legality) AS legalities
                 FROM card AS c
                 INNER JOIN face AS f ON c.id = f.card_id
-                LEFT OUTER JOIN card_legality AS cl ON c.id = cl.card_id AND cl.format_id = {format_id}
+                LEFT OUTER JOIN card_legality AS cl ON c.id = cl.card_id
+                INNER JOIN format AS fo ON cl.format_id = fo.id
+                GROUP BY f.id
                 ORDER BY f.card_id, f.position)
             AS u
             WHERE id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where_clause})

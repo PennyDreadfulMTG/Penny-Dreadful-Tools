@@ -44,8 +44,6 @@ def normalize(d):
     name = expand_common_abbreviations(name)
     removed_colors = False
     without_colors = remove_colors(name)
-    print(name)
-    print(without_colors)
     if name != without_colors:
         removed_colors = True
     name = without_colors

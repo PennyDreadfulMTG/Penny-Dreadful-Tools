@@ -1,10 +1,20 @@
 from magic import oracle
 
-def test_legal_deck():
-    cards = oracle.load_cards(['Black Lotus', 'Armed // Dangerous', 'Séance'])
-    assert not oracle.legal_deck(cards)
-    cards = oracle.load_cards(['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'])
-    assert oracle.legal_deck(cards)
+def test_legality():
+    cards = oracle.cards_from_query('Swamp')
+    assert len(cards) == 1
+    assert cards[0].legalities['Standard'] == 'Legal'
+    assert cards[0].legalities['Modern'] == 'Legal'
+    assert cards[0].legalities['Legacy'] == 'Legal'
+    assert cards[0].legalities['Vintage'] == 'Legal'
+    assert cards[0].legalities['Penny Dreadful'] == 'Legal'
+    cards = oracle.cards_from_query('Black Lotus')
+    assert len(cards) == 1
+    assert 'Standard' not in cards[0].legalities.keys()
+    assert 'Modern' not in cards[0].legalities.keys()
+    assert cards[0].legalities['Legacy'] == 'Banned'
+    assert cards[0].legalities['Vintage'] == 'Restricted'
+    assert 'Penny Dreadful' not in cards[0].legalities.keys()
 
 def test_cards_from_query():
     cards = oracle.cards_from_query('Far/Away')

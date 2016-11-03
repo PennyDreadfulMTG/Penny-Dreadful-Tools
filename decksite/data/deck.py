@@ -1,7 +1,6 @@
 from munch import Munch
-from flask import url_for
 
-from magic import mana, oracle
+from magic import mana, oracle, legality
 from shared import dtutil
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
@@ -74,7 +73,8 @@ def set_colors(d):
     d.colors = required
 
 def set_legality(d):
-    d.pd_legal = oracle.legal_deck([c['card'] for c in d.all_cards()])
+    d.legal_formats = legality.legal_formats(d)
+    d.pd_legal = "Penny Dreadful" in d.legal_formats
 
 # Expects:
 #
@@ -190,7 +190,9 @@ class Deck(Munch):
         super().__init__()
         for k in params.keys():
             self[k] = params[k]
-        self.url = url_for('decks', deck_id=self.id)
 
     def all_cards(self):
-        return self.maindeck + self.sideboard
+        cards = []
+        for entry in self.maindeck + self.sideboard:
+            cards += [entry['card']] * entry['n']
+        return cards

@@ -17,6 +17,10 @@ def initialize():
     if current_version > database.version():
         print('Database update required')
         update_database(str(current_version))
+    set_legal_cards()
+    # Don't hardcode this!
+    set_legal_cards(season='EMN')
+
 
 # 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold default.
 def search(query, fuzzy_threshold=260):
@@ -45,6 +49,9 @@ def valid_name(name):
         except IndexError:
             raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
 
+def load_card(name):
+    return load_cards([name])[0]
+
 def load_cards(names=None):
     if names:
         names_clause = 'HAVING LOWER({name_query}) IN ({names})'.format(name_query=card.name_query().format(table='u'), names=', '.join(sqlescape(name).lower() for name in names))
@@ -57,30 +64,23 @@ def load_cards(names=None):
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 
-# Does not check for 4-ofs nor 1 max restricted, yet.
-def legal_deck(cards):
-    cs = legal_cards()
-    return len([c for c in cards if c.name not in cs]) == 0
-
-def legality(cards):
-    l = {}
-    cs = legal_cards()
-    for c in cards:
-        l[c.id] = c.name in cs
-    return l
-
 def base_query(where_clause='(1 = 1)'):
     return """
         SELECT
             {card_queries},
             {face_queries},
             GROUP_CONCAT(face_name, '|') AS names,
-            SUM(CASE WHEN format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal
+            legalities,
+            pd_legal
             FROM
-                (SELECT {card_props}, {face_props}, f.name AS face_name, cl.format_id
+                (SELECT {card_props}, {face_props}, f.name AS face_name,
+                SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal,
+                GROUP_CONCAT(fo.name || ':' || cl.legality) AS legalities
                 FROM card AS c
                 INNER JOIN face AS f ON c.id = f.card_id
-                LEFT OUTER JOIN card_legality AS cl ON c.id = cl.card_id AND cl.format_id = {format_id}
+                LEFT OUTER JOIN card_legality AS cl ON c.id = cl.card_id
+                INNER JOIN format AS fo ON cl.format_id = fo.id
+                GROUP BY f.id
                 ORDER BY f.card_id, f.position)
             AS u
             WHERE id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where_clause})
@@ -98,18 +98,22 @@ def legal_cards(force=False):
         set_legal_cards(force)
     return LEGAL_CARDS
 
-def set_legal_cards(force=False):
+def set_legal_cards(force=False, season=None):
     new_list = ['']
     try:
-        new_list = fetcher.legal_cards(force)
+        new_list = fetcher.legal_cards(force, season)
     except fetcher.FetchException:
         pass
-    if new_list == ['']:
-        sql = '{base_query} HAVING pd_legal = 1'.format(base_query=base_query())
-        new_list = [r['name'] for r in db().execute(sql)]
-        if len(new_list) == 0:
-            new_list = fetcher.legal_cards(force=True)
-    format_id = get_format_id('Penny Dreadful')
+    # This was a workaround when fetcher didn't store content.  It's never going to trigger anymore.
+    # if new_list == ['']:
+    #     sql = '{base_query} HAVING pd_legal = 1'.format(base_query=base_query())
+    #     new_list = [r['name'] for r in db().execute(sql)]
+    #     if len(new_list) == 0:
+    #         new_list = fetcher.legal_cards(force=True)
+    if season is None:
+        format_id = get_format_id('Penny Dreadful')
+    else:
+        format_id = get_format_id('Penny Dreadful {season}'.format(season=season), True)
     db().execute('DELETE FROM card_legality WHERE format_id = ?', [format_id])
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
         SELECT {format_id}, id, 'Legal'

@@ -73,8 +73,8 @@ def set_colors(d):
     d.colors = required
 
 def set_legality(d):
-    d.legalities = legality.deck_legalities([c['card'] for c in d.all_cards()])
-    d.pd_legal = "Penny Dreadful" in d.legalities
+    d.legal_formats = legality.legal_formats(d)
+    d.pd_legal = "Penny Dreadful" in d.legal_formats
 
 # Expects:
 #
@@ -192,4 +192,7 @@ class Deck(Munch):
             self[k] = params[k]
 
     def all_cards(self):
-        return self.maindeck + self.sideboard
+        cards = []
+        for entry in self.maindeck + self.sideboard:
+            cards += [entry['card']] * entry['n']
+        return cards

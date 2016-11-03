@@ -8,8 +8,6 @@ from shared.pd_exception import DoesNotExistException
 from decksite.data import card as cs, competition as comp, deck, person as ps
 from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person
 
-from magic import legality
-
 APP = Flask(__name__)
 
 @APP.route('/')
@@ -91,5 +89,4 @@ def internal_server_error(e):
     return view.page(), 500
 
 def init():
-    legality.init()
     APP.run(host='0.0.0.0', debug=True)

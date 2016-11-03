@@ -17,6 +17,10 @@ def initialize():
     if current_version > database.version():
         print('Database update required')
         update_database(str(current_version))
+    set_legal_cards()
+    # Don't hardcode this!
+    set_legal_cards(season='EMN')
+
 
 # 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold default.
 def search(query, fuzzy_threshold=260):
@@ -45,6 +49,9 @@ def valid_name(name):
         except IndexError:
             raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
 
+def load_card(name):
+    return load_cards([name])[0]
+
 def load_cards(names=None):
     if names:
         names_clause = 'HAVING LOWER({name_query}) IN ({names})'.format(name_query=card.name_query().format(table='u'), names=', '.join(sqlescape(name).lower() for name in names))
@@ -63,12 +70,17 @@ def base_query(where_clause='(1 = 1)'):
             {card_queries},
             {face_queries},
             GROUP_CONCAT(face_name, '|') AS names,
-            SUM(CASE WHEN format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal
+            legalities,
+            pd_legal
             FROM
-                (SELECT {card_props}, {face_props}, f.name AS face_name, cl.format_id
+                (SELECT {card_props}, {face_props}, f.name AS face_name,
+                SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal,
+                GROUP_CONCAT(fo.name || ':' || cl.legality) AS legalities
                 FROM card AS c
                 INNER JOIN face AS f ON c.id = f.card_id
-                LEFT OUTER JOIN card_legality AS cl ON c.id = cl.card_id AND cl.format_id = {format_id}
+                LEFT OUTER JOIN card_legality AS cl ON c.id = cl.card_id
+                INNER JOIN format AS fo ON cl.format_id = fo.id
+                GROUP BY f.id
                 ORDER BY f.card_id, f.position)
             AS u
             WHERE id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where_clause})

@@ -2,11 +2,11 @@ from munch import Munch
 
 from shared.database import sqlescape
 
-from decksite.data import deck, query
+from decksite.data import deck, guarantee, query
 from decksite.database import db
 
 def load_person(person_id):
-    return load_people('p.id = {id}'.format(id=sqlescape(person_id)))[0]
+    return guarantee.exactly_one(load_people('p.id = {id}'.format(id=sqlescape(person_id))))
 
 def load_people(where_clause='1 = 1'):
     sql = """

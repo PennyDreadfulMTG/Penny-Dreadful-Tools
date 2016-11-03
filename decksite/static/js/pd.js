@@ -28,7 +28,7 @@ PD.init = function () {
                 symbols = ['_', 'W', 'U', 'B', 'R', 'G'];
             for (i = 0; i < symbols.length; i++) {
                 if ($(td).find('span.mana-' + symbols[i]).length > 0) {
-                    score += i ** 10;
+                    score += Math.pow(i, 10);
                 }
             }
             return score;

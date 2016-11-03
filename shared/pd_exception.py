@@ -12,3 +12,9 @@ class InvalidDataException(PDException):
 
 class DatabaseException(PDException):
     pass
+
+class DoesNotExistException(PDException):
+    pass
+
+class TooManyItemsException(PDException):
+    pass

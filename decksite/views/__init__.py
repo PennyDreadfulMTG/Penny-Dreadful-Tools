@@ -6,5 +6,7 @@ from .competition import Competition
 from .competitions import Competitions
 from .deck import Deck
 from .home import Home
+from .internal_server_error import InternalServerError
+from .not_found import NotFound
 from .people import People
 from .person import Person

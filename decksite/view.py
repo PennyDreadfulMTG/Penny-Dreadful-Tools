@@ -73,7 +73,7 @@ class View:
             d.name = name[0:NAME_MAX_LEN - 1] + '…' if len(name) > NAME_MAX_LEN else name
             d.person_url = url_for('person', person_id=d.person_id)
             d.date_sort = dtutil.dt2ts(d.date)
-            d.date = dtutil.display_date(d.date)
+            d.display_date = dtutil.display_date(d.date)
             d.show_record = d.wins or d.losses
             d.players = d.players if d.players > 0 else ''
             if d.competition_id:
@@ -90,7 +90,7 @@ class View:
     def prepare_competitions(self):
         for c in getattr(self, 'competitions', []):
             c.url = url_for('competition', competition_id=c.id)
-            c.date = dtutil.display_date(c.start_date)
+            c.display_date = dtutil.display_date(c.start_date)
 
     def prepare_people(self):
         for p in getattr(self, 'people', []):

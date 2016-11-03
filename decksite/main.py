@@ -1,9 +1,12 @@
 import os
 
 from flask import Flask, request, send_from_directory
+from werkzeug import exceptions
+
+from shared.pd_exception import DoesNotExistException
 
 from decksite.data import card as cs, competition as comp, deck, person as ps
-from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, People, Person
+from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person
 
 from magic import legality
 
@@ -75,6 +78,17 @@ def deckcycle_tappedout():
 @APP.route('/favicon<rest>')
 def favicon(rest):
     return send_from_directory(os.path.join(APP.root_path, 'static/images/favicon'), 'favicon{rest}'.format(rest=rest))
+
+@APP.errorhandler(DoesNotExistException)
+@APP.errorhandler(exceptions.NotFound)
+def not_found(e):
+    view = NotFound(e)
+    return view.page(), 404
+
+@APP.errorhandler(exceptions.InternalServerError)
+def internal_server_error(e):
+    view = InternalServerError(e)
+    return view.page(), 500
 
 def init():
     legality.init()

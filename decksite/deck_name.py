@@ -42,10 +42,17 @@ def normalize(d):
     name = d.name
     name = remove_pd(name)
     name = expand_common_abbreviations(name)
-    name = remove_colors(name)
+    removed_colors = False
+    without_colors = remove_colors(name)
+    print(name)
+    print(without_colors)
+    if name != without_colors:
+        removed_colors = True
+    name = without_colors
     if name == '' and d.get('archetype'):
         name = d.archetype
-    name = prepend_colors(name, d.colors)
+    if removed_colors or name == '':
+        name = prepend_colors(name, d.colors)
     return titlecase.titlecase(name)
 
 def remove_pd(name):

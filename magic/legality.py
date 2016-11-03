@@ -1,9 +1,11 @@
+from shared.pd_exception import InvalidArgumentException
+
 from magic import oracle
 from magic.database import db
 
 LEGAL_CARDS = dict()
 
-def legal_deck(cards, format_name=None):
+def legal_deck(cards, format_name='Penny Dreadful'):
     legal = legality(cards, format_name=format_name)
     for c in legal:
         if not legal[c]:
@@ -26,11 +28,13 @@ def deck_legalities(cards):
 
 
 def legality(cards, format_name='Penny Dreadful'):
+    if format_name is None:
+        raise InvalidArgumentException('Got None when expecting a format name in legality.legality')
     format_id = oracle.get_format_id(format_name)
     l = {}
     cs = LEGAL_CARDS.get(format_id)
     if cs is None:
-        print("Building legality list for {0}".format(format_name))
+        print("Building legality list for {format_name}".format(format_name=format_name))
         sql = "{base_select} HAVING id IN (SELECT card_id FROM card_legality WHERE format_id = ? AND legality <> 'Banned')".format(base_select=oracle.base_query())
         cs = [r['name'] for r in db().execute(sql, [format_id])]
         LEGAL_CARDS[format_id] = cs

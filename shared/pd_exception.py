@@ -18,3 +18,6 @@ class DoesNotExistException(PDException):
 
 class TooManyItemsException(PDException):
     pass
+
+class InvalidArgumentException(PDException):
+    pass

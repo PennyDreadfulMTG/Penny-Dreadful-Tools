@@ -5,6 +5,8 @@ from flask import Flask, request, send_from_directory
 from decksite.data import card as cs, competition as comp, deck, person as ps
 from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, People, Person
 
+from magic import legality
+
 APP = Flask(__name__)
 
 @APP.route('/')
@@ -67,7 +69,7 @@ def deckcycle_tappedout():
     from decksite.scrapers import tappedout
     if not tappedout.is_authorised():
         tappedout.login()
-    tappedout.fetch_decks()
+    tappedout.scrape()
     return home()
 
 @APP.route('/favicon<rest>')
@@ -75,4 +77,5 @@ def favicon(rest):
     return send_from_directory(os.path.join(APP.root_path, 'static/images/favicon'), 'favicon{rest}'.format(rest=rest))
 
 def init():
+    legality.init()
     APP.run(host='0.0.0.0', debug=True)

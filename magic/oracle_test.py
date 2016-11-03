@@ -1,4 +1,4 @@
-from magic import oracle, legality
+from magic import oracle
 
 def test_legality():
     cards = oracle.cards_from_query('Swamp')
@@ -15,13 +15,6 @@ def test_legality():
     assert cards[0].legalities['Legacy'] == 'Banned'
     assert cards[0].legalities['Vintage'] == 'Restricted'
     assert 'Penny Dreadful' not in cards[0].legalities.keys()
-
-def test_legal_deck():
-    # Consider changing these to other cards.  We don't want our test cases rotating in without warning.
-    cards = oracle.load_cards(['Black Lotus', 'Armed // Dangerous', 'Séance'])
-    assert not legality.legal_deck(cards)
-    cards = oracle.load_cards(['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'])
-    assert legality.legal_deck(cards)
 
 def test_cards_from_query():
     cards = oracle.cards_from_query('Far/Away')

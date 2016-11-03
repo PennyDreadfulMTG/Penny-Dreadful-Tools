@@ -5,7 +5,7 @@ class Deck(View):
     def __init__(self, deck):
         self._deck = deck
         self.decks = [deck]
-        self.cards = [entry['card'] for entry in deck.all_cards()]
+        self.cards = deck.all_cards()
 
     def __getattr__(self, attr):
         return getattr(self._deck, attr)

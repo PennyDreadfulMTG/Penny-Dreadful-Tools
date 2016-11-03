@@ -136,8 +136,7 @@ class Card(Munch):
                     v = {}
                     for f in formats:
                         parts = f.split(':')
-                        v[parts[0]] = parts[2]
-                        v[parts[1]] = parts[2]
+                        v[parts[0]] = parts[1]
             setattr(self, k, v)
         if not self.names:
             setattr(self, 'names', [self.name])

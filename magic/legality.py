@@ -1,4 +1,3 @@
-from magic import oracle
 from magic.database import db
 
 FORMATS = set()

@@ -193,6 +193,6 @@ class Deck(Munch):
 
     def all_cards(self):
         cards = []
-        for entry in (self.maindeck + self.sideboard):
+        for entry in self.maindeck + self.sideboard:
             cards += [entry['card']] * entry['n']
         return cards

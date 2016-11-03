@@ -36,13 +36,12 @@ class SignUpForm(Form):
             self.errors['decklist'] = 'Decklist is required'
         else:
             try:
-                d = decklist.parse_and_vivify(self.decklist)
-                if 'Penny Dreadful' not in legality.legal_formats(d):
+                self.cards = decklist.parse(self.decklist)
+                vivified = decklist.vivify(self.cards)
+                if 'Penny Dreadful' not in legality.legal_formats(vivified):
                     self.errors['decklist'] = 'Deck is not legal in Penny Dreadful'
             except InvalidDataException:
                 self.errors['decklist'] = 'Unable to parse decklist. Try exporting from MTGO as Text and pasting the result.'
 
 def signup(form):
-    params = form
-    params['cards'] = decklist.parse(form.decklist)
-    return deck.add_deck(params)
+    return deck.add_deck(form)

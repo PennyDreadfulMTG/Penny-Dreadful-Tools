@@ -19,6 +19,11 @@ def test_legal_formats():
     assert 'Penny Dreadful' in formats
     assert 'Legacy' in formats
 
+    formats = legality.legal_formats(d, {'Penny Dreadful'})
+    assert len(formats) == 1
+    assert 'Penny Dreadful' in formats
+    assert 'Legacy' not in formats
+
     d.maindeck = [{'n': 55, 'card': swamp}, {'n': 5, 'card': think_twice}]
     formats = legality.legal_formats(d)
     assert len(d.all_cards()) == 60

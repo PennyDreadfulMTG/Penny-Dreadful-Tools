@@ -2,7 +2,12 @@ from magic.database import db
 
 FORMATS = set()
 
-def legal_formats(d):
+def legal_in_format(d, f):
+    return f in legal_formats(d, [f])
+
+def legal_formats(d, formats=None):
+    if formats is None:
+        formats = FORMATS
     if sum(e['n'] for e in d.maindeck) < 60:
         return set()
     if sum(e['n'] for e in d.sideboard) > 15:
@@ -13,8 +18,6 @@ def legal_formats(d):
             card_count[c.name] = card_count.get(c.name, 0) + 1
     if card_count.values() and max(card_count.values()) > 4:
         return set()
-    formats = FORMATS.copy()
-    assert len(formats) > 0
     formats.discard('Commander')
     for c in d.all_cards():
         for f in formats.copy():

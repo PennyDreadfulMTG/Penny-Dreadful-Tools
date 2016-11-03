@@ -2,6 +2,7 @@ import json
 
 from munch import Munch
 
+from magic import legality
 from shared.pd_exception import InvalidDataException
 
 from decksite.data import deck
@@ -35,9 +36,13 @@ class SignUpForm(Form):
             self.errors['decklist'] = 'Decklist is required'
         else:
             try:
-                self.cards = decklist.parse(self.decklist)
+                d = decklist.parse_and_vivify(self.decklist)
+                if 'Penny Dreadful' not in legality.legal_formats(d):
+                    self.errors['decklist'] = 'Deck is not legal in Penny Dreadful'
             except InvalidDataException:
                 self.errors['decklist'] = 'Unable to parse decklist. Try exporting from MTGO as Text and pasting the result.'
 
 def signup(form):
-    return deck.add_deck(form)
+    params = form
+    params['cards'] = decklist.parse(form.decklist)
+    return deck.add_deck(params)

@@ -6,5 +6,10 @@
 </section>
 <section>
 <p>This deck is {{^pd_legal}}<b>not</b> {{/pd_legal}}currently Penny Dreadful legal.</p>
+<p>Legal in:
+{{#legalities}}
+<li>{{.}}</li>
+{{/legalities}}
+</p>
 <p>Source: <a href="{{source_url}}">{{source_name}}</a></p>
 </section>

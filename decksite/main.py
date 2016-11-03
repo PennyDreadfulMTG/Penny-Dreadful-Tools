@@ -8,6 +8,8 @@ from shared.pd_exception import DoesNotExistException
 from decksite.data import card as cs, competition as comp, deck, person as ps
 from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person
 
+from magic import legality
+
 APP = Flask(__name__)
 
 @APP.route('/')
@@ -70,7 +72,7 @@ def deckcycle_tappedout():
     from decksite.scrapers import tappedout
     if not tappedout.is_authorised():
         tappedout.login()
-    tappedout.fetch_decks()
+    tappedout.scrape()
     return home()
 
 @APP.route('/favicon<rest>')
@@ -89,4 +91,5 @@ def internal_server_error(e):
     return view.page(), 500
 
 def init():
+    legality.init()
     APP.run(host='0.0.0.0', debug=True)

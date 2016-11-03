@@ -57,18 +57,6 @@ def load_cards(names=None):
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 
-# Does not check for 4-ofs nor 1 max restricted, yet.
-def legal_deck(cards):
-    cs = legal_cards()
-    return len([c for c in cards if c.name not in cs]) == 0
-
-def legality(cards):
-    l = {}
-    cs = legal_cards()
-    for c in cards:
-        l[c.id] = c.name in cs
-    return l
-
 def base_query(where_clause='(1 = 1)'):
     return """
         SELECT
@@ -98,18 +86,22 @@ def legal_cards(force=False):
         set_legal_cards(force)
     return LEGAL_CARDS
 
-def set_legal_cards(force=False):
+def set_legal_cards(force=False, season=None):
     new_list = ['']
     try:
-        new_list = fetcher.legal_cards(force)
+        new_list = fetcher.legal_cards(force, season)
     except fetcher.FetchException:
         pass
-    if new_list == ['']:
-        sql = '{base_query} HAVING pd_legal = 1'.format(base_query=base_query())
-        new_list = [r['name'] for r in db().execute(sql)]
-        if len(new_list) == 0:
-            new_list = fetcher.legal_cards(force=True)
-    format_id = get_format_id('Penny Dreadful')
+    # This was a workaround when fetcher didn't store content.  It's never going to trigger anymore.
+    # if new_list == ['']:
+    #     sql = '{base_query} HAVING pd_legal = 1'.format(base_query=base_query())
+    #     new_list = [r['name'] for r in db().execute(sql)]
+    #     if len(new_list) == 0:
+    #         new_list = fetcher.legal_cards(force=True)
+    if season is None:
+        format_id = get_format_id('Penny Dreadful')
+    else:
+        format_id = get_format_id('Penny Dreadful {season}'.format(season=season), True)
     db().execute('DELETE FROM card_legality WHERE format_id = ?', [format_id])
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
         SELECT {format_id}, id, 'Legal'

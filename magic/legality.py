@@ -47,4 +47,3 @@ def init():
     # Don't hardcode this!
     oracle.set_legal_cards(season="EMN")
     deck_legalities([])
-

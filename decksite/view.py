@@ -4,7 +4,7 @@ import urllib
 
 from flask import url_for
 
-from magic import mana, oracle, legality
+from magic import mana, legality
 from shared import dtutil
 
 from decksite import deck_name
@@ -78,6 +78,7 @@ class View:
             d.players = d.players if d.players > 0 else ''
             if d.competition_id:
                 d.competition_url = url_for('competition', competition_id=d.competition_id)
+            d.url = url_for('decks', deck_id=self.id)
 
     def prepare_cards(self):
         cards = getattr(self, 'cards', [])

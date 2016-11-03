@@ -191,7 +191,6 @@ class Deck(Munch):
         super().__init__()
         for k in params.keys():
             self[k] = params[k]
-        self.url = url_for('decks', deck_id=self.id)
 
     def all_cards(self):
         return self.maindeck + self.sideboard

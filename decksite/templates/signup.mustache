@@ -8,12 +8,12 @@
         </div>
         <div class="field required">
             <label for="name">Deck Name</label>
-            <input {{#form.errors.name}}class="error"{{/form.errors.name}}type="text" name="name" id="name" value="{{form.name}}">
+            <input {{#form.errors.name}}class="error"{{/form.errors.name}} type="text" name="name" id="name" value="{{form.name}}">
             <div class="error">{{form.errors.name}}</div>
         </div>
         <div class="field required">
             <label for="decklist">Decklist</label>
-            <textarea name="decklist" id="decklist">{{form.decklist}}</textarea>
+            <textarea {{#form.errors.decklist}}class="error"{{/form.errors.decklist}} name="decklist" id="decklist">{{form.decklist}}</textarea>
             <div class="error">{{form.errors.decklist}}</div>
         </div>
         <input type="submit" value="Sign Up">

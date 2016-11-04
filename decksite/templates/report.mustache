@@ -3,7 +3,7 @@
     <form method="post">
         <div>
             <label for="entry">Your Deck</label>
-            <select name="entry" id="entry">
+            <select {{#form.errors.entry}}class="error" {{/form.errors.entry}}name="entry" id="entry">
                 <option value="">Choose …</option>
                 {{#form.entry_options}}
                     <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{text}}</option>
@@ -13,7 +13,7 @@
         </div>
         <div>
             <label for="opponent">Opponent</label>
-            <select name="opponent" id="opponent">
+            <select {{#form.errors.opponent}}class="error" {{/form.errors.opponent}}name="opponent" id="opponent">
                 <option value="">Choose …</option>
                 {{#form.opponent_options}}
                     <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{text}}</option>
@@ -23,7 +23,7 @@
         </div>
         <div>
             <label for="result">Result</label>
-            <select name="result" id="result">
+            <select {{#form.errors.result}}class="error" {{/form.errors.result}}name="result" id="result">
                 <option value="">Choose …</option>
                 {{#form.result_options}}
                     <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{text}}</option>

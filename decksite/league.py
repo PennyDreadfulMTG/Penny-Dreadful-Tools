@@ -30,7 +30,8 @@ class SignUpForm(Form):
             self.errors['name'] = 'Deck Name is required'
         else:
             self.source = 'League'
-            self.identifier = json.dumps([self.mtgo_username, self.name, '2-2'])
+            self.competition_id = db().value(active_competition_id_query())
+            self.identifier = identifier(self)
             self.url = 'http://pennydreadfulmagic.com/'
             if deck.get_deck_id(deck.get_source_id(self.source), self.identifier):
                 self.errors['name'] = 'You have already entered the league this season with a deck called {name}'.format(name=self.name)
@@ -74,11 +75,10 @@ class ReportForm(Form):
             self.errors['result'] = 'This match was reported as {p1} {p1games}–{p2games} {p2} {date}'.format(p1=match['p1name'], p1games=match['p1games'], p2games=match['p2games'], p2=match['p2name'], date=dtutil.display_date(match['date']))
 
 def signup(form):
-    form.competition_id = db().value(active_competition_id_query())
     return deck.add_deck(form)
 
-def league_deck_identifier(form):
-    return json.dumps([form.mtgo_username, form.name, '2-2'])
+def identifier(params):
+    return json.dumps([params['mtgo_username'], params['name'], params['competition_id']])
 
 def deck_options(decks, v):
     return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id)} for d in decks]

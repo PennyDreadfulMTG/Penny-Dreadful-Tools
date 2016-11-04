@@ -43,3 +43,12 @@ def test_legal_formats():
     formats = legality.legal_formats(d)
     assert 'Legacy' in formats
     assert 'Modern' not in formats
+
+    d.maindeck = [{'n': 60, 'card': swamp}]
+    d.sideboard = [{'n': 15, 'card': swamp}]
+    formats = legality.legal_formats(d)
+    assert 'Standard' in formats
+    assert 'Modern' in formats
+    assert 'Legacy' in formats
+    assert 'Vintage' in formats
+    assert 'Penny Dreadful' in formats

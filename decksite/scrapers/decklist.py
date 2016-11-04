@@ -1,6 +1,6 @@
 import re
 
-from magic import card, oracle
+from magic import oracle
 from shared.pd_exception import InvalidDataException
 
 from decksite.data.deck import Deck
@@ -14,12 +14,12 @@ def parse(s):
             part = 'sideboard'
         elif line.strip() == '':
             pass
-        elif not re.match('\d', line):
+        elif not re.match(r'\d', line):
             raise InvalidDataException('No number specified with `{line}`'.format(line=line))
         else:
             try:
-                n, card = re.search(r'(\d+)\s+(.*)', line).groups()
-                d[part][card] = int(n)
+                n, name = re.search(r'(\d+)\s+(.*)', line).groups()
+                d[part][name] = int(n)
             except AttributeError:
                 raise InvalidDataException('Unable to parse `{line}`'.format(line=line))
     return d

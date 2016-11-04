@@ -7,8 +7,8 @@ from shared.pd_exception import DoesNotExistException
 
 from decksite import league as lg
 from decksite.data import card as cs, competition as comp, deck, person as ps
-from decksite.league import SignUpForm
-from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, SignUp
+from decksite.league import ReportForm, SignUpForm
+from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, Report, SignUp
 
 APP = Flask(__name__)
 
@@ -85,16 +85,23 @@ def add_signup():
         deck_id = lg.signup(form)
         return decks(deck_id)
     else:
-        view = SignUp(form)
-        return view.page()
+        return signup(form)
 
 @APP.route('/report/')
-def report():
-    pass
+def report(form=None):
+    if form is None:
+        form = ReportForm(request.form)
+    view = Report(form)
+    return view.page()
 
 @APP.route('/report/', methods=['POST'])
 def add_report():
-    pass
+    form = ReportForm(request.form)
+    if form.validate():
+        lg.report(form)
+        return decks(form.entry)
+    else:
+        return report(form)
 
 # Admin
 

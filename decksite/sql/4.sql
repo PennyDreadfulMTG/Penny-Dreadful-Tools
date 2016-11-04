@@ -1,0 +1,3 @@
+INSERT INTO competition (name, url, start_date, end_date, competition_type_id) VALUES ('League September 2016', 'http://pennydreadfulmagic.com/league/', 1470034800, 1475305200, (SELECT id FROM competition_type WHERE name = 'League'));
+INSERT INTO competition (name, url, start_date, end_date, competition_type_id) VALUES ('League October 2016', 'http://pennydreadfulmagic.com/league/', 1475305200, 1477983600, (SELECT id FROM competition_type WHERE name = 'League'));
+INSERT INTO competition (name, url, start_date, end_date, competition_type_id) VALUES ('League November 2016', 'http://pennydreadfulmagic.com/league/', 1477983600, 1480579200, (SELECT id FROM competition_type WHERE name = 'League'));

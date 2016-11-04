@@ -564,6 +564,29 @@ def fake_flip_cards(cards):
         'printings': ['COK'],
         'colors': ['Red']
     }
+    cards['Akki Lavarunner'] = {
+        'text': 'Haste\nWhenever Akki Lavarunner deals damage to an opponent, flip it.',
+        'manaCost': '{3}{R}',
+        'type': 'Creature — Goblin Warrior',
+        'power': '1',
+        'layout': 'flip',
+        'names': ['Akki Lavarunner', 'Tok-Tok, Volcano Born'],
+        'types': ['Creature'],
+        'colorIdentity': ['R'],
+        'toughness': '1',
+        'cmc': 4,
+        'imageName': 'akki lavarunner',
+        'legalities': [
+            {'format': 'Commander', 'legality': 'Legal'},
+            {'format': 'Kamigawa Block', 'legality': 'Legal'},
+            {'format': 'Legacy', 'legality': 'Legal'},
+            {'format': 'Modern', 'legality': 'Legal'},
+            {'format': 'Vintage', 'legality': 'Legal'}],
+        'name': 'Akki Lavarunner',
+        'subtypes': ['Ogre', 'Shaman'],
+        'printings': ['COK'],
+        'colors': ['Red']
+    }
     return cards
 
 LEGAL_CARDS = []

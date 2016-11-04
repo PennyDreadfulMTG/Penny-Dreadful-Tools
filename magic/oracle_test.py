@@ -33,3 +33,9 @@ def test_cards_from_query():
 def test_valid_name():
     assert oracle.valid_name('Dark Ritual') == 'Dark Ritual'
     assert oracle.valid_name('Far/Away') == 'Far // Away'
+
+def test_load_cards():
+    cards = oracle.load_cards(['Think Twice', 'Swamp'])
+    assert len(cards) == 2
+    assert cards[0].name == 'Think Twice'
+    assert cards[1].name == 'Swamp'

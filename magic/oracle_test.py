@@ -39,3 +39,9 @@ def test_load_cards():
     assert len(cards) == 2
     assert cards[0].name == 'Think Twice'
     assert cards[1].name == 'Swamp'
+
+def test_deck_sort_x_last():
+    cards = oracle.load_cards(['Ghitu Fire', 'Flash of Insight', 'Frantic Search'])
+    assert len(cards) == 3
+    assert oracle.deck_sort(cards[0]) < oracle.deck_sort(cards[1])
+    assert oracle.deck_sort(cards[0]) > oracle.deck_sort(cards[2])

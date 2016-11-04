@@ -301,11 +301,11 @@ def deck_sort(c):
         s += 'C'
     else:
         s += 'B'
-    if c.mana_cost and mana.variable(c.mana_cost):
+    if c.mana_cost and mana.has_x(c.mana_cost):
         s += 'X'
     else:
         s += 'A'
-    s += str(c.cmc).zfill(10)
+    s += str(sum(float(cmc) for cmc in c.cmc)).zfill(10)
     s += c.name
     return s
 

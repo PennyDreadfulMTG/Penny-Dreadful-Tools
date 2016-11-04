@@ -201,3 +201,12 @@ class Deck(Munch):
         for entry in self.maindeck + self.sideboard:
             cards += [entry['card']] * entry['n']
         return cards
+
+    def __str__(self):
+        s = ''
+        for entry in self.maindeck:
+            s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
+        s += '\n'
+        for entry in self.sideboard:
+            s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
+        return s

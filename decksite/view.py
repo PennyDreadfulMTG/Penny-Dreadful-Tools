@@ -79,6 +79,7 @@ class View:
             if d.competition_id:
                 d.competition_url = url_for('competition', competition_id=d.competition_id)
             d.url = url_for('decks', deck_id=d.id)
+            d.export_url = url_for('export', deck_id=d.id)
 
     def prepare_cards(self):
         cards = getattr(self, 'cards', [])

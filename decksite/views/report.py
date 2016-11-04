@@ -8,4 +8,4 @@ class Report(View):
         self.league = league.active_league()
 
     def subtitle(self):
-        return '{league} Result Report'.format(league = self.league['name'])
+        return '{league} Result Report'.format(league=self.league['name'])

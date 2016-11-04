@@ -37,11 +37,12 @@ def test_valid_name():
 def test_load_cards():
     cards = oracle.load_cards(['Think Twice', 'Swamp'])
     assert len(cards) == 2
-    assert cards[0].name == 'Think Twice'
-    assert cards[1].name == 'Swamp'
+    assert 'Think Twice' in [c.name for c in cards]
+    assert 'Swamp' in [c.name for c in cards]
 
 def test_deck_sort_x_last():
     cards = oracle.load_cards(['Ghitu Fire', 'Flash of Insight', 'Frantic Search'])
     assert len(cards) == 3
-    assert oracle.deck_sort(cards[0]) < oracle.deck_sort(cards[1])
-    assert oracle.deck_sort(cards[0]) > oracle.deck_sort(cards[2])
+    cards = {c.name: c for c in cards}
+    assert oracle.deck_sort(cards.get('Ghitu Fire')) < oracle.deck_sort(cards.get('Flash of Insight'))
+    assert oracle.deck_sort(cards.get('Ghitu Fire')) > oracle.deck_sort(cards.get('Frantic Search'))

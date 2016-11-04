@@ -17,7 +17,7 @@
                 <td><a href="{{person_url}}">{{person}}</a></td>
                 <td class="n">
                     {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
-                    {{#show_record}}{{wins}}–{{losses}}{{/show_record}}
+                    {{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}
                     {{#competition_url}}</a>{{/competition_url}}
                 </td>
                 <td class="c">

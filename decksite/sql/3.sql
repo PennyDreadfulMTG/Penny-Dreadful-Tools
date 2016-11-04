@@ -1,0 +1,3 @@
+ALTER TABLE deck ADD COLUMN draws INTEGER;
+UPDATE deck SET draws = 0 WHERE wins IS NOT NULL;
+

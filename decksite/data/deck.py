@@ -18,7 +18,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
     if order_by is None:
         order_by = '{date_query} DESC, IFNULL(finish, 9999999999)'.format(date_query=query.date_query())
     sql = """
-        SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.finish, d.url AS source_url,
+        SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.draws, d.finish, d.url AS source_url,
             (SELECT COUNT(id) FROM deck WHERE competition_id IS NOT NULL AND competition_id = d.competition_id) AS players,
             d.competition_id, c.name AS competition_name,
             {person_query} AS person, p.id AS person_id,
@@ -95,7 +95,7 @@ def set_legality(d):
 #     }
 # }
 # Plus one of: mtgo_username OR tappedout_username
-# Optionally: created_date (defaults to now), resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url, wins, losses, finish
+# Optionally: created_date (defaults to now), resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url, wins, losses, draws, finish
 #
 # source + identifier must be unique for each decklist.
 def add_deck(params):
@@ -126,9 +126,10 @@ def add_deck(params):
         small_thumbnail_url,
         wins,
         losses,
+        draws,
         finish
     ) VALUES (
-         IFNULL(?, strftime('%s', 'now')),  strftime('%s', 'now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+         IFNULL(?, strftime('%s', 'now')),  strftime('%s', 'now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
     )"""
     values = [
         params.get('created_date'),
@@ -146,6 +147,7 @@ def add_deck(params):
         params.get('small_thumbnail_url'),
         params.get('wins'),
         params.get('losses'),
+        params.get('draws'),
         params.get('finish')
     ]
     deck_id = db().insert(sql, values)

@@ -11,7 +11,7 @@ PD.init = function () {
                 return '';
             }
             parts = s.split('–');
-            wins= parseInt(parts[0]);
+            wins = parseInt(parts[0]);
             losses = parseInt(parts[1]);
             return ((wins - losses) * 1000 + wins).toString();
         },

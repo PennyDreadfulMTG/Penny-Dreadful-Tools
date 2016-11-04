@@ -24,8 +24,12 @@ def legal_formats(d, formats_to_check=None):
         for f in formats.copy():
             if f not in c.legalities.keys() or c.legalities[f] == 'Banned':
                 formats.discard(f)
-                if not formats:
-                    return formats
+            elif c.legalities[f] == 'Restricted':
+                if card_count[c.name] > 1:
+                    formats.discard(f)
+            if not formats:
+                return formats
+
     return formats
 
 def init():

@@ -8,10 +8,13 @@ from decksite.data.deck import Deck
 # Read a text decklist into an intermediate dict form.
 def parse(s):
     d = {'maindeck': {}, 'sideboard': {}}
-    part = 'maindeck'
+    last_chunk = {}
+    section = 'maindeck'
     for line in s.splitlines():
-        if line.startswith('Sideboard'):
-            part = 'sideboard'
+        if line.strip() == '':
+            last_chunk = {}
+        if line.startswith('Sideboard') or (line.strip() == '' and s.count('\n\n') == 1 and len(d['maindeck']) > 0):
+            section = 'sideboard'
         elif line.strip() == '':
             pass
         elif not re.match(r'\d', line):
@@ -19,9 +22,19 @@ def parse(s):
         else:
             try:
                 n, name = re.search(r'(\d+)\s+(.*)', line).groups()
-                d[part][name] = int(n)
+                # Although it seems nonsensical to add cards here because that must mean we are in a sideboard
+                # our backtracking sideboard finder will deal with it momentarily.
+                d[section][name] = int(n) + d[section].get(name, 0)
+                last_chunk[name] = int(n)
             except AttributeError:
                 raise InvalidDataException('Unable to parse `{line}`'.format(line=line))
+    # Heuristic to find a sideboard. Could very well be broken with Battle of Wits and similar.
+    if not d['sideboard'] and sum(d['maindeck'].values()) > 60 and sum(last_chunk.values()) <= 15:
+        d['sideboard'] = last_chunk
+        for name, count in last_chunk.items():
+            d['maindeck'][name] -= count
+            if d['maindeck'][name] == 0:
+                del d['maindeck'][name]
     return d
 
 # Load the cards in the intermediate dict form.

@@ -81,3 +81,4 @@ def name_from_colors(colors, s=''):
                     return name
                 return 'Mono {name}'.format(name=name)
             return name
+    return 'Colorless'

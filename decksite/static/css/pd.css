@@ -69,7 +69,7 @@ p {
 /* Layout */
 
 section {
-    border-top: 0.2rem #502828 solid;
+    border-top: 0.1rem #502828 solid;
     float: left;
     margin: 1rem 4.236rem 1rem 0;
 }
@@ -348,7 +348,7 @@ div.error {
     color: red;
 }
 
-input.error {
+input.error, select.error, textarea.error {
     border: 0.1rem solid red;
 }
 

@@ -8,27 +8,50 @@ from decksite.data.deck import Deck
 # Read a text decklist into an intermediate dict form.
 def parse(s):
     d = {'maindeck': {}, 'sideboard': {}}
-    part = 'maindeck'
+    last_chunk = {}
+    section = 'maindeck'
     for line in s.splitlines():
-        if line.startswith('Sideboard'):
-            part = 'sideboard'
+        if line.strip() == '':
+            last_chunk = {}
+        if line.startswith('Sideboard') or (line.strip() == '' and s.count('\n\n') == 1 and len(d['maindeck']) > 0):
+            section = 'sideboard'
         elif line.strip() == '':
             pass
+        elif not re.match(r'\d', line):
+            raise InvalidDataException('No number specified with `{line}`'.format(line=line))
         else:
             try:
-                n, card = re.search(r'(\d+)\s+(.*)', line).groups()
-                d[part][card] = int(n)
+                n, name = re.search(r'(\d+)\s+(.*)', line).groups()
+                # Although it seems nonsensical to add cards here because that must mean we are in a sideboard
+                # our backtracking sideboard finder will deal with it momentarily.
+                d[section][name] = int(n) + d[section].get(name, 0)
+                last_chunk[name] = int(n)
             except AttributeError:
-                raise InvalidDataException('Unable to parse {line}'.format(line=line))
+                raise InvalidDataException('Unable to parse `{line}`'.format(line=line))
+    # Heuristic to find a sideboard. Could very well be broken with Battle of Wits and similar.
+    if not d['sideboard'] and sum(d['maindeck'].values()) > 60 and sum(last_chunk.values()) <= 15:
+        d['sideboard'] = last_chunk
+        for name, count in last_chunk.items():
+            d['maindeck'][name] -= count
+            if d['maindeck'][name] == 0:
+                del d['maindeck'][name]
     return d
 
 # Load the cards in the intermediate dict form.
 def vivify(decklist):
-    names = [name for name in decklist['maindeck'].keys()] + [name for name in decklist['sideboard'].keys()]
-    cards = {card.name: card for card in oracle.load_cards(names)}
+    validated, invalid_names = {'maindeck': {}, 'sideboard': {}}, set()
+    for section in ['maindeck', 'sideboard']:
+        for name, n in decklist[section].items():
+            try:
+                validated[section][oracle.valid_name(name)] = n
+            except InvalidDataException:
+                invalid_names.add(name)
+    if invalid_names:
+        raise InvalidDataException('Invalid cards: {invalid_names}'.format(invalid_names='; '.join(invalid_names)))
+    validated_names = list(validated['maindeck'].keys()) + list(validated['sideboard'].keys())
+    cards = {c.name: c for c in oracle.load_cards(validated_names)}
     d = Deck({'maindeck': [], 'sideboard': []})
-    for name, n in decklist['maindeck'].items():
-        d.maindeck.append({'n': n, 'name': name, 'card': cards[name]})
-    for name, n in decklist['sideboard'].items():
-        d.sideboard.append({'n': n, 'name': name, 'card': cards[name]})
+    for section in ['maindeck', 'sideboard']:
+        for name, n in validated[section].items():
+            d[section].append({'n': n, 'name': name, 'card': cards[name]})
     return d

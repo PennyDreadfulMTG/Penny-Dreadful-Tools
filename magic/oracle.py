@@ -28,10 +28,10 @@ def search(query, fuzzy_threshold=260):
     sql = """
         {base_query}
         HAVING LOWER({name_query}) IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
-            OR {namename_ascii_query} LIKE ?
+            OR {name_ascii_query} LIKE ?
             OR SUM(CASE WHEN LOWER(face_name) IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold}) THEN 1 ELSE 0 END) > 0
         ORDER BY pd_legal DESC, name
-    """.format(base_query=base_query(), name_query=card.name_query().format(table='u'), namename_ascii_query=card.name_query('name_ascii').format(table='u'), fuzzy_threshold=fuzzy_threshold)
+    """.format(base_query=base_query(), name_query=card.name_query().format(table='u'), name_ascii_query=card.name_query('name_ascii').format(table='u'), fuzzy_threshold=fuzzy_threshold)
     fuzzy_query = '{query}*'.format(query=query)
     like_query = '%{query}%'.format(query=query)
     rs = db().execute(sql, [fuzzy_query, like_query, fuzzy_query])
@@ -301,11 +301,12 @@ def deck_sort(c):
         s += 'C'
     else:
         s += 'B'
-    if c.mana_cost and mana.variable(c.mana_cost):
+    # BUG: we skip split cards here because they have "illegal" mana costs. See #538.
+    if c.mana_cost and not c.is_split() and mana.has_x(c.mana_cost):
         s += 'X'
     else:
         s += 'A'
-    s += str(c.cmc).zfill(10)
+    s += str(sum(float(cmc) for cmc in c.cmc)).zfill(10)
     s += c.name
     return s
 
@@ -560,6 +561,29 @@ def fake_flip_cards(cards):
             {'format': 'Modern', 'legality': 'Legal'},
             {'format': 'Vintage', 'legality': 'Legal'}],
         'name': 'Initiate of Blood',
+        'subtypes': ['Ogre', 'Shaman'],
+        'printings': ['COK'],
+        'colors': ['Red']
+    }
+    cards['Akki Lavarunner'] = {
+        'text': 'Haste\nWhenever Akki Lavarunner deals damage to an opponent, flip it.',
+        'manaCost': '{3}{R}',
+        'type': 'Creature — Goblin Warrior',
+        'power': '1',
+        'layout': 'flip',
+        'names': ['Akki Lavarunner', 'Tok-Tok, Volcano Born'],
+        'types': ['Creature'],
+        'colorIdentity': ['R'],
+        'toughness': '1',
+        'cmc': 4,
+        'imageName': 'akki lavarunner',
+        'legalities': [
+            {'format': 'Commander', 'legality': 'Legal'},
+            {'format': 'Kamigawa Block', 'legality': 'Legal'},
+            {'format': 'Legacy', 'legality': 'Legal'},
+            {'format': 'Modern', 'legality': 'Legal'},
+            {'format': 'Vintage', 'legality': 'Legal'}],
+        'name': 'Akki Lavarunner',
         'subtypes': ['Ogre', 'Shaman'],
         'printings': ['COK'],
         'colors': ['Red']

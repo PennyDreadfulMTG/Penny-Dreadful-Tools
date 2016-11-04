@@ -79,6 +79,7 @@ class View:
             if d.competition_id:
                 d.competition_url = url_for('competition', competition_id=d.competition_id)
             d.url = url_for('decks', deck_id=d.id)
+            d.export_url = url_for('export', deck_id=d.id)
 
     def prepare_cards(self):
         cards = getattr(self, 'cards', [])
@@ -91,6 +92,7 @@ class View:
         for c in getattr(self, 'competitions', []):
             c.url = url_for('competition', competition_id=c.id)
             c.display_date = dtutil.display_date(c.start_date)
+            c.date_sort = dtutil.dt2ts(c.start_date)
 
     def prepare_people(self):
         for p in getattr(self, 'people', []):
@@ -117,7 +119,7 @@ def set_stars_and_top8(d):
         d.stars = '★'
     else:
         d.top8 = ''
-        if d.get('wins') and d.get('losses'):
+        if d.get('wins') is not None and d.get('losses') is not None:
             if d.wins - 5 >= d.losses:
                 d.stars = '★★'
             elif d.wins - 3 >= d.losses:

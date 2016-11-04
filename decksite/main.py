@@ -1,4 +1,5 @@
 import os
+import re
 
 from flask import Flask, request, send_from_directory
 from werkzeug import exceptions
@@ -68,6 +69,12 @@ def add_deck():
 def about():
     view = About()
     return view.page()
+
+@APP.route('/export/<deck_id>/')
+def export(deck_id):
+    d = deck.load_deck(deck_id)
+    safe_name = re.sub('[^a-z-]', '-', d.name, flags=re.IGNORECASE)
+    return (str(d), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 
 # League
 

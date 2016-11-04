@@ -3,11 +3,11 @@
     <form method="post" action="{{add_deck_url}}">
         <div class="field">
             <label for="date">Date</label>
-            <input type="text" name="date">
+            <input type="text" name="date" id="date">
         </div>
         <div class="field">
             <label for="name">Name</label>
-            <input type="text" name="name">
+            <input type="text" name="name" id="name">
         </div>
         <div class="field">
             <label for="player">Player</label>
@@ -15,18 +15,18 @@
         </div>
         <div class="field">
             <label for="competition">Competition</label>
-            <select name="competition">
+            <select name="competition" id="competition">
             </select>
         </div>
         <div class="field multiple">
             <label>Wins – Losses</label>
-            <input type="number" name="Wins">
+            <input type="number" name="wins" id="wins">
             –
-            <input type="number" name="losses">
+            <input type="number" name="losses" id="losses">
         </div>
         <div class="field">
             <label for="Deck">Deck</label>
-            <textarea name="deck"></textarea>
+            <textarea name="deck" id="deck"></textarea>
         </div>
         <input type="submit" value="Add Deck">
     </form>
@@ -38,19 +38,19 @@
     <form method="post" action="{{add_competition_url}}">
         <div class="field">
             <label for="date">Date</label>
-            <input type="text" name="date">
+            <input type="text" name="date" id="date">
         </div>
         <div class="field">
             <label for="name">Name</label>
-            <input type="text" name="name">
+            <input type="text" name="name" id="name">
         </div>
         <div class="field">
             <label for="url">URL</label>
-            <input type="text" name="url">
+            <input type="text" name="url" id="url">
         </div>
         <div class="field">
             <label for="type">Type</label>
-            <select name="type">
+            <select name="type" id="type">
                 <option value="league">League</option>
                 <option value="tournament">Tournament</option>
             </select>

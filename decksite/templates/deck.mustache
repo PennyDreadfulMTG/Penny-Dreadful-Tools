@@ -4,12 +4,19 @@
         {{> section}}
     {{/sections}}
 </section>
+{{#competition_id}}
+    <section>
+        <h2>Competition</h2>
+        <a href="{{competition_url}}">{{competition_name}}</a>
+        <a href="{{competition_url}}">{{wins}}–{{losses}}–{{draws}}</a>
+    </section>
+{{/competition_id}}
 <section>
-<p>This deck is {{^pd_legal}}<b>not</b> {{/pd_legal}}currently Penny Dreadful legal.</p>
-<p>Legal in:
-{{#legal_formats}}
-<li>{{.}}</li>
-{{/legal_formats}}
-</p>
-<p>Source: <a href="{{source_url}}">{{source_name}}</a></p>
+    <p>This deck is {{^pd_legal}}<b>not</b> {{/pd_legal}}currently Penny Dreadful legal.</p>
+    <p>Legal in:
+        {{#legal_formats}}
+            <li>{{.}}</li>
+        {{/legal_formats}}
+    </p>
+    <p>Source: <a href="{{source_url}}">{{source_name}}</a></p>
 </section>

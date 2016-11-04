@@ -119,7 +119,7 @@ def set_stars_and_top8(d):
         d.stars = '★'
     else:
         d.top8 = ''
-        if d.get('wins') and d.get('losses'):
+        if d.get('wins') is not None and d.get('losses') is not None:
             if d.wins - 5 >= d.losses:
                 d.stars = '★★'
             elif d.wins - 3 >= d.losses:

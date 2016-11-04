@@ -1,6 +1,6 @@
 import re
 
-from magic import oracle
+from magic import card, oracle
 from shared.pd_exception import InvalidDataException
 
 from decksite.data.deck import Deck
@@ -14,21 +14,31 @@ def parse(s):
             part = 'sideboard'
         elif line.strip() == '':
             pass
+        elif not re.match('\d', line):
+            raise InvalidDataException('No number specified with `{line}`'.format(line=line))
         else:
             try:
                 n, card = re.search(r'(\d+)\s+(.*)', line).groups()
                 d[part][card] = int(n)
             except AttributeError:
-                raise InvalidDataException('Unable to parse {line}'.format(line=line))
+                raise InvalidDataException('Unable to parse `{line}`'.format(line=line))
     return d
 
 # Load the cards in the intermediate dict form.
 def vivify(decklist):
-    names = [name for name in decklist['maindeck'].keys()] + [name for name in decklist['sideboard'].keys()]
-    cards = {card.name: card for card in oracle.load_cards(names)}
+    validated, invalid_names = {'maindeck': {}, 'sideboard': {}}, set()
+    for section in ['maindeck', 'sideboard']:
+        for name, n in decklist[section].items():
+            try:
+                validated[section][oracle.valid_name(name)] = n
+            except InvalidDataException:
+                invalid_names.add(name)
+    if invalid_names:
+        raise InvalidDataException('Invalid cards: {invalid_names}'.format(invalid_names='; '.join(invalid_names)))
+    validated_names = list(validated['maindeck'].keys()) + list(validated['sideboard'].keys())
+    cards = {c.name: c for c in oracle.load_cards(validated_names)}
     d = Deck({'maindeck': [], 'sideboard': []})
-    for name, n in decklist['maindeck'].items():
-        d.maindeck.append({'n': n, 'name': name, 'card': cards[name]})
-    for name, n in decklist['sideboard'].items():
-        d.sideboard.append({'n': n, 'name': name, 'card': cards[name]})
+    for section in ['maindeck', 'sideboard']:
+        for name, n in validated[section].items():
+            d[section].append({'n': n, 'name': name, 'card': cards[name]})
     return d

@@ -107,6 +107,9 @@ def add_deck(params):
     if deck_id:
         return deck_id
     archetype_id = get_archetype_id(params.get('archetype'))
+    for result in ['wins', 'losses', 'draws']:
+        if params.get('competition_id') and not params.get(result):
+            params[result] = 0
     sql = 'BEGIN TRANSACTION'
     db().execute(sql)
     sql = """INSERT INTO deck (

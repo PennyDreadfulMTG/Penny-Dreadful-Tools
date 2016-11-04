@@ -7,8 +7,8 @@ from shared.pd_exception import DoesNotExistException
 
 from decksite import league as lg
 from decksite.data import card as cs, competition as comp, deck, person as ps
-from decksite.league import SignUpForm
-from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, SignUp
+from decksite.league import ReportForm, SignUpForm
+from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, Report, SignUp
 
 APP = Flask(__name__)
 
@@ -19,86 +19,93 @@ def home():
     view = Home(deck.latest_decks())
     return view.page()
 
-@APP.route('/decks/<deck_id>')
+@APP.route('/decks/<deck_id>/')
 def decks(deck_id):
     view = Deck(deck.load_deck(deck_id))
     return view.page()
 
-@APP.route('/people')
+@APP.route('/people/')
 def people():
     view = People(ps.load_people())
     return view.page()
 
-@APP.route('/people/<person_id>')
+@APP.route('/people/<person_id>/')
 def person(person_id):
     view = Person(ps.load_person(person_id))
     return view.page()
 
-@APP.route('/cards')
+@APP.route('/cards/')
 def cards():
     view = Cards(cs.played_cards())
     return view.page()
 
-@APP.route('/cards/<name>')
+@APP.route('/cards/<name>/')
 def card(name):
     view = Card(cs.load_card(name))
     return view.page()
 
-@APP.route('/competitions')
+@APP.route('/competitions/')
 def competitions():
     view = Competitions(comp.load_competitions())
     return view.page()
 
-@APP.route('/competitons/<competition_id>')
+@APP.route('/competitons/<competition_id>/')
 def competition(competition_id):
     view = Competition(comp.load_competition(competition_id))
     return view.page()
 
-@APP.route('/add')
+@APP.route('/add/')
 def add_form():
     view = AddForm()
     return view.page()
 
-@APP.route('/add', methods=['POST'])
+@APP.route('/add/', methods=['POST'])
 def add_deck():
     decks.add_deck(request.form)
     return add_form()
 
-@APP.route('/about')
+@APP.route('/about/')
 def about():
     view = About()
     return view.page()
 
 # League
 
-@APP.route('/signup')
+@APP.route('/signup/')
 def signup(form=None):
     if form is None:
         form = SignUpForm(request.form)
     view = SignUp(form)
     return view.page()
 
-@APP.route('/signup', methods=['POST'])
+@APP.route('/signup/', methods=['POST'])
 def add_signup():
     form = SignUpForm(request.form)
     if form.validate():
         deck_id = lg.signup(form)
         return decks(deck_id)
     else:
-        view = SignUp(form)
-        return view.page()
+        return signup(form)
 
-@APP.route('/report')
-def report():
-    pass
+@APP.route('/report/')
+def report(form=None):
+    if form is None:
+        form = ReportForm(request.form)
+    view = Report(form)
+    return view.page()
 
-@APP.route('/report', methods=['POST'])
+@APP.route('/report/', methods=['POST'])
 def add_report():
-    pass
+    form = ReportForm(request.form)
+    if form.validate():
+        lg.report(form)
+        return decks(form.entry)
+    else:
+        return report(form)
 
 # Admin
 
-@APP.route('/querytappedout')
+@APP.route('/querytappedout/')
 def deckcycle_tappedout():
     from decksite.scrapers import tappedout
     if not tappedout.is_authorised():
@@ -108,7 +115,7 @@ def deckcycle_tappedout():
 
 # Infra
 
-@APP.route('/favicon<rest>')
+@APP.route('/favicon<rest>/')
 def favicon(rest):
     return send_from_directory(os.path.join(APP.root_path, 'static/images/favicon'), 'favicon{rest}'.format(rest=rest))
 

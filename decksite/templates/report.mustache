@@ -1,0 +1,36 @@
+<section>
+    <h2>{{subtitle}}</h2>
+    <form method="post">
+        <div>
+            <label for="entry">Your Deck</label>
+            <select name="entry" id="entry">
+                <option value="">Choose …</option>
+                {{#form.entry_options}}
+                    <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{text}}</option>
+                {{/form.entry_options}}
+            </select>
+            <div class="error">{{form.errors.entry}}</div>
+        </div>
+        <div>
+            <label for="opponent">Opponent</label>
+            <select name="opponent" id="opponent">
+                <option value="">Choose …</option>
+                {{#form.opponent_options}}
+                    <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{text}}</option>
+                {{/form.opponent_options}}
+            </select>
+            <div class="error">{{form.errors.opponent}}</div>
+        </div>
+        <div>
+            <label for="result">Result</label>
+            <select name="result" id="result">
+                <option value="">Choose …</option>
+                {{#form.result_options}}
+                    <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{text}}</option>
+                {{/form.result_options}}
+            </select>
+            <div class="error">{{form.errors.result}}</div>
+        </div>
+        <input type="submit" value="Report">
+    </form>
+</section>

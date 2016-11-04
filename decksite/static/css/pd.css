@@ -183,36 +183,6 @@ th.legend {
     width: 4rem;
 }
 
-/* Forms */
-
-form, input, select, textarea {
-    font-size: inherit;
-}
-
-input, select, textarea {
-    width: 20rem;
-}
-
-input, label, select, textarea {
-    margin-top: 1rem;
-}
-
-input[type=number] {
-    width: 2rem;
-}
-
-label {
-    display: block;
-    float: left;
-    margin-right: 1rem;
-    text-align: right;
-    width: 10rem;
-}
-
-textarea {
-    height: 10rem;
-}
-
 /* Menu */
 
 ul.menu {
@@ -333,12 +303,40 @@ ul.menu {
 
 /* Forms */
 
+form, input, select, textarea {
+    font-size: inherit;
+}
+
+input, select, textarea {
+    width: 20rem;
+}
+
+input, label, select, textarea {
+    margin-top: 1rem;
+}
+
+input[type=number] {
+    width: 2rem;
+}
+
+label {
+    display: block;
+    float: left;
+    margin-right: 1rem;
+    text-align: right;
+    width: 10rem;
+}
+
+textarea {
+    height: 10rem;
+}
+
 label {
     width: 10em;
     margin-right: 1em;
 }
 
-input, textarea {
+input, select, textarea {
     margin-left: 1em;
 }
 
@@ -352,4 +350,10 @@ div.error {
 
 input.error {
     border: 0.1rem solid red;
+}
+
+div:after {
+  content: "";
+  display: table;
+  clear: both;
 }

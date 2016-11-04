@@ -37,6 +37,7 @@ def load_competitions(where_clause='1 = 1'):
         INNER JOIN deck AS d ON c.id = d.competition_id
         WHERE {where_clause}
         GROUP BY c.id
+        ORDER BY c.start_date DESC, c.name
     """.format(where_clause=where_clause)
     competitions = [Munch(r) for r in db().execute(sql)]
     for c in competitions:

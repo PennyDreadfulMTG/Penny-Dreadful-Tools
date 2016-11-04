@@ -9,7 +9,7 @@ from decksite.data import guarantee, query
 from decksite.database import db
 
 def latest_decks():
-    return load_decks(limit='LIMIT 100')
+    return load_decks(limit='LIMIT 1000')
 
 def load_deck(deck_id):
     return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))

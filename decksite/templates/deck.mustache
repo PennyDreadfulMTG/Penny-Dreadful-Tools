@@ -7,8 +7,13 @@
 {{#competition_id}}
     <section>
         <h2>Competition</h2>
-        <a href="{{competition_url}}">{{competition_name}}</a>
-        <a href="{{competition_url}}">{{wins}}–{{losses}}–{{draws}}</a>
+        <a href="{{competition_url}}">
+            {{stars}}
+            {{competition_name}}
+            {{wins}}–{{losses}}–{{draws}}
+            {{#finish}}{{finish}}/{{players}}{{/finish}}
+            {{top8}}
+        </a>
     </section>
 {{/competition_id}}
 <section>

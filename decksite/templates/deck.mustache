@@ -10,7 +10,7 @@
         <a href="{{competition_url}}">
             {{stars}}
             {{competition_name}}
-            {{wins}}–{{losses}}–{{draws}}
+            {{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}
             {{#finish}}{{finish}}/{{players}}{{/finish}}
             {{top8}}
         </a>

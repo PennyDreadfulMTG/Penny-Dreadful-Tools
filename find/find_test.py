@@ -9,6 +9,9 @@ def test_match():
     assert not search.Criterion.match(list('magic:2uu'))
     assert search.Criterion.match(list('tou>2'))
 
+def test_edition():
+    do_test('e:ktk', "(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE '%ktk%' OR code = 'ktk' COLLATE NOCASE)))")
+
 def test_special_chars():
     do_test('o:a_c%', "(text LIKE '%a\\_c\\%%')")
 

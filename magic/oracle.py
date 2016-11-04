@@ -301,7 +301,8 @@ def deck_sort(c):
         s += 'C'
     else:
         s += 'B'
-    if c.mana_cost and mana.has_x(c.mana_cost):
+    # BUG: we skip split cards here because they have "illegal" mana costs. See #538.
+    if c.mana_cost and not c.is_split() and mana.has_x(c.mana_cost):
         s += 'X'
     else:
         s += 'A'

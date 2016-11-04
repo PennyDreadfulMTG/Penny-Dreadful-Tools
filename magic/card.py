@@ -150,5 +150,8 @@ class Card(Munch):
     def is_spell(self):
         return not self.is_creature() and not self.is_land()
 
+    def is_split(self):
+        return self.name.find('//') >= 0
+
 class Printing(Munch):
     pass

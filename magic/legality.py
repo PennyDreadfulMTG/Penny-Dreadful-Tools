@@ -5,9 +5,10 @@ FORMATS = set()
 def legal_in_format(d, f):
     return f in legal_formats(d, [f])
 
-def legal_formats(d, formats=None):
-    if formats is None:
-        formats = FORMATS
+def legal_formats(d, formats_to_check=None):
+    if formats_to_check is None:
+        formats_to_check = FORMATS
+    formats = formats_to_check.copy()
     if sum(e['n'] for e in d.maindeck) < 60:
         return set()
     if sum(e['n'] for e in d.sideboard) > 15:

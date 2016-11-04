@@ -128,9 +128,10 @@ def set_legal_cards(force=False, season=None):
         sql = 'SELECT name FROM ({base_query}) WHERE id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=base_query(), format_id=format_id)
         db_legal_list = [row['name'] for row in db().execute(sql)]
         print(set(new_list).symmetric_difference(set(db_legal_list)))
-    LEGAL_CARDS.clear()
-    for name in new_list:
-        LEGAL_CARDS.append(name)
+    if season is None:
+        LEGAL_CARDS.clear()
+        for name in new_list:
+            LEGAL_CARDS.append(name)
 
 def update_database(new_version):
     db().execute('BEGIN TRANSACTION')

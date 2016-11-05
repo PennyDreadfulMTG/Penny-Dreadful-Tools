@@ -141,7 +141,17 @@ th {
 }
 
 td, th {
+    max-width: 13rem;
+    overflow: hidden;
     padding: 0 0.5rem;
+    white-space: nowrap;
+    word-wrap: none;
+    text-overflow: ellipsis;
+}
+
+/* Allow the stars in the margin to show. */
+td:first-child {
+    overflow: visible;
 }
 
 td:first-child, td:last-child, th:first-child, th:last-child {

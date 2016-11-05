@@ -10,8 +10,6 @@ from shared import dtutil
 from decksite import deck_name
 from decksite import template
 
-NAME_MAX_LEN = 35
-
 # pylint: disable=no-self-use
 class View:
     def template(self):
@@ -71,8 +69,7 @@ class View:
         for d in getattr(self, 'decks', []):
             set_stars_and_top8(d)
             d.colors_safe = colors_html(d.colors)
-            name = deck_name.normalize(d)
-            d.name = name[0:NAME_MAX_LEN - 1] + '…' if len(name) > NAME_MAX_LEN else name
+            d.name = deck_name.normalize(d)
             d.person_url = url_for('person', person_id=d.person_id)
             d.date_sort = dtutil.dt2ts(d.date)
             d.display_date = dtutil.display_date(d.date)

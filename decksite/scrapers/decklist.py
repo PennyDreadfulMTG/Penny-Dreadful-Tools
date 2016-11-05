@@ -13,7 +13,7 @@ def parse(s):
     for line in s.splitlines():
         if line.strip() == '':
             last_chunk = {}
-        if line.startswith('Sideboard') or (line.strip() == '' and s.count('\n\n') == 1 and len(d['maindeck']) > 0):
+        if line.lower().startswith('sideboard') or (line.strip() == '' and s.count('\n\n') == 1 and len(d['maindeck']) > 0):
             section = 'sideboard'
         elif line.strip() == '':
             pass

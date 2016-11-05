@@ -1,6 +1,4 @@
 import csv
-import random
-import string
 
 from pytz import timezone
 

@@ -50,7 +50,7 @@ def competitions():
     view = Competitions(comp.load_competitions())
     return view.page()
 
-@APP.route('/competitons/<competition_id>/')
+@APP.route('/competitions/<competition_id>/')
 def competition(competition_id):
     view = Competition(comp.load_competition(competition_id))
     return view.page()

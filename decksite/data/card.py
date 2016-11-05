@@ -29,4 +29,8 @@ def played_cards():
 def load_card(name):
     c = guarantee.exactly_one(oracle.load_cards([name]))
     c.decks = deck.load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name)))
+    c.wins = sum(filter(None, [d.wins for d in c.decks]))
+    c.losses = sum(filter(None, [d.losses for d in c.decks]))
+    c.draws = sum(filter(None, [d.draws for d in c.decks]))
+    c.played_competitively = c.wins or c.losses or c.draws
     return c

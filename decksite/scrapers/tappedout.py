@@ -42,6 +42,10 @@ def parse_inventory(inventory):
         removeset = re.match(r'([^\(]+)(\(\w\w\w\))?', name)
         if removeset is not None:
             name = removeset.group(1)
+        # Same with comments
+        removecomments = re.match(r'(.*?)#', name)
+        if removecomments is not None:
+            name = removecomments.group(1)
         if board['b'] == 'main':
             d['maindeck'][name] = board['qty']
         elif  board['b'] == 'side':

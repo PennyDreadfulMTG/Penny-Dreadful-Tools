@@ -23,6 +23,7 @@ def scrape():
             print('Skipping {n} because not found.'.format(n=n))
 
 def import_file(file):
+    count = {}
     with open(file, newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='"')
         header_line = next(reader)
@@ -31,11 +32,12 @@ def import_file(file):
             date_s = row[0]
             date = dtutil.parse(date_s, '%m/%d/%Y %H:%M:%S', timezone('America/New_York'))
             mtgo_username = row[1]
+            count[mtgo_username] = count.get(mtgo_username, 0) + 1
             decklist_s = row[2]
             if has_deck_names:
                 name = row[3]
             else:
-                name = 'Unnamed League Deck {code}'.format(code=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6)))
+                name = '{mtgo_username} League Deck {count}'.format(mtgo_username=mtgo_username, count=count[mtgo_username])
             d = {}
             d['mtgo_username'] = mtgo_username
             d['name'] = name
@@ -50,7 +52,7 @@ def import_file(file):
             if file == 'league3.csv':
                 d['competition_id'] = db().value("SELECT id FROM competition WHERE name = 'League November 2016'")
             d['identifier'] = league.identifier(d)
-            return deck.add_deck(d)
+            deck.add_deck(d)
 
 # pylint: disable=too-many-locals
 def update_results(file):

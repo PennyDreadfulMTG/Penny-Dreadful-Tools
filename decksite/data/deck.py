@@ -104,8 +104,7 @@ def add_deck(params):
     if not params.get('mtgo_username') and not params.get('tappedout_username'):
         raise InvalidDataException('Did not find a username in {params}'.format(params=params))
     person_id = get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'))
-    source_id = get_source_id(params['source'])
-    deck_id = get_deck_id(source_id, params['identifier'])
+    deck_id = get_deck_id(params['source'], params['identifier'])
     if deck_id:
         return deck_id
     archetype_id = get_archetype_id(params.get('archetype'))
@@ -164,7 +163,8 @@ def add_deck(params):
     db().execute(sql)
     return deck_id
 
-def get_deck_id(source_id, identifier):
+def get_deck_id(source_name, identifier):
+    source_id = deck.get_source_id(source)
     sql = 'SELECT id FROM deck WHERE source_id = ? AND identifier = ?'
     return db().value(sql, [source_id, identifier])
 

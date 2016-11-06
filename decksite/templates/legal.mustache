@@ -1,6 +1,9 @@
 <section>
     <h2>Legality</h2>
-    <ul>
-        {{#legal_formats}}<li>{{.}}</li>{{/legal_formats}}
-    </ul>
+    <p>{{name}} is {{^pd_legal}}<b>not</b> {{/pd_legal}} currently Penny Dreadul legal.</p>
+    {{#has_legal_format}}
+        <ul>
+            {{#legal_formats}}<li>{{.}}</li>{{/legal_formats}}
+        </ul>
+    {{/has_legal_format}}
 </section>

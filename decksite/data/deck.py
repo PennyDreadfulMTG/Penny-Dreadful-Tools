@@ -75,6 +75,7 @@ def set_colors(d):
 
 def set_legality(d):
     d.legal_formats = legality.legal_formats(d)
+    d.has_legal_format = len(d.legal_formats) > 0
     d.pd_legal = "Penny Dreadful" in d.legal_formats
 
 # Expects:

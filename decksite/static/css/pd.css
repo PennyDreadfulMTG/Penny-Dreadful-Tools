@@ -319,8 +319,9 @@ ul.menu {
 /* Card */
 
 .card-img {
+    height: 22.25rem;
+    width: 15.6rem;
     padding-top: 1rem;
-    width: 16rem;
 }
 
 .illegal::after {

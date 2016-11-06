@@ -330,15 +330,15 @@ ul.menu {
 
 /* Forms */
 
-form, input, select, textarea {
+button, form, input, select, textarea {
     font-size: inherit;
 }
 
-input, select, textarea {
+button, input, select, textarea {
     width: 20rem;
 }
 
-input, label, select, textarea {
+button, input, label, select, textarea {
     margin-top: 1rem;
 }
 
@@ -367,7 +367,13 @@ input, select, textarea {
     margin-left: 1em;
 }
 
-input[type=submit], div.error {
+button {
+    appearance: button;
+    -moz-appearance: button;
+    -webkit-appearance: button;
+}
+
+button, div.error {
     margin-left: 12em;
 }
 

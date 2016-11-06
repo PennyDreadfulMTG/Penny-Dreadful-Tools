@@ -41,6 +41,7 @@ COLOR_COMBINATIONS = {
 def normalize(d):
     name = d.name
     name = remove_pd(name)
+    name = remove_hashtags(name)
     name = expand_common_abbreviations(name)
     removed_colors = False
     without_colors = remove_colors(name)
@@ -51,12 +52,16 @@ def normalize(d):
         name = d.archetype
     if removed_colors or name == '':
         name = prepend_colors(name, d.colors)
-    return titlecase.titlecase(name)
+    return titlecase.titlecase(name.lower())
 
 def remove_pd(name):
     name = re.sub(r'(^| )[\[\(]?pd[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny ?dreadful[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
+    return name
+
+def remove_hashtags(name):
+    name = re.sub(r'#[^ ]*', '', name).strip()
     return name
 
 def remove_colors(name):

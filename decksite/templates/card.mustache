@@ -8,3 +8,10 @@
     {{> decks}}
     <p>{{#played_competitively}}Competitive record of decks with this card in is {{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/played_competitively}}</p>
 </section>
+<section>
+    <h2>Legality</h2>
+    <p>Legal in:</p>
+    <ul>
+        {{#legal_formats}}<li>{{.}}</li>{{/legal_formats}}
+    </ul>
+</section>

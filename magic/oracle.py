@@ -12,7 +12,7 @@ FORMAT_IDS = {}
 def layouts():
     return ['normal', 'meld', 'split', 'phenomenon', 'token', 'vanguard', 'double-faced', 'plane', 'flip', 'scheme', 'leveler']
 
-def initialize():
+def init():
     current_version = fetcher.mtgjson_version()
     if current_version > database.version():
         print('Database update required')
@@ -593,5 +593,5 @@ def fake_flip_cards(cards):
     return cards
 
 LEGAL_CARDS = []
-initialize()
+init()
 CARDS_BY_NAME = {c.name: c for c in load_cards()}

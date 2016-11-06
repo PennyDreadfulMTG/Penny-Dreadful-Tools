@@ -66,12 +66,17 @@ def load_cards(decks):
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks
 # we will claim your deck is neither W nor G which is not true. But this should cover most cases.
 def set_colors(d):
-    required = set()
+    deck_colors = set()
+    deck_colored_symbols = []
     for card in [c['card'] for c in d.maindeck + d.sideboard]:
         for cost in card.get('mana_cost') or ():
-            colors = mana.colors(mana.parse(cost))
-            required.update(colors['required'])
-    d.colors = required
+            card_symbols = mana.parse(cost)
+            card_colors = mana.colors(card_symbols)
+            deck_colors.update(card_colors['required'])
+            card_colored_symbols = mana.colored_symbols(card_symbols)
+            deck_colored_symbols += card_colored_symbols['required']
+    d.colors = mana.order(deck_colors)
+    d.colored_symbols = deck_colored_symbols
 
 def set_legality(d):
     d.legal_formats = legality.legal_formats(d)

@@ -50,6 +50,14 @@ def test_colors():
     assert mana.colors(['X']) == {'required': set(), 'also': set()}
     assert mana.colors(['B/R']) == {'required': set(), 'also': {'B', 'R'}}
 
+def test_colored_symbols():
+    assert mana.colored_symbols(['9', 'W', 'W', 'R']) == {'required': ['W', 'W', 'R'], 'also': []}
+    assert mana.colored_symbols(['2/W', 'G', 'X']) == {'required': ['G'], 'also': ['W']}
+    assert mana.colored_symbols(['U/P', 'R/P']) == {'required': [], 'also': ['U', 'R']}
+    assert mana.colored_symbols(['X']) == {'required': [], 'also': []}
+    assert mana.colored_symbols(['B/R']) == {'required': [], 'also': ['B', 'R']}
+    assert mana.colored_symbols(['3', 'U', 'U']) == {'required': ['U', 'U'], 'also': []}
+
 def test_has_x():
     assert mana.has_x('{9}{X}')
     assert not mana.has_x('{1}{W}{W}')

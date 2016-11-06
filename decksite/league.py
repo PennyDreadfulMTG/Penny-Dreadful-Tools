@@ -6,7 +6,7 @@ from magic import legality
 from shared import dtutil
 from shared.pd_exception import InvalidDataException
 
-from decksite.data import deck
+from decksite.data import deck, guarantee
 from decksite.database import db
 from decksite.scrapers import decklist
 
@@ -116,7 +116,7 @@ def active_league():
         FROM competition
         WHERE id = ({active_competition_id_query})
     """.format(active_competition_id_query=active_competition_id_query())
-    return db().execute(sql)[0]
+    return guarantee.exactly_one(db().execute(sql))
 
 def insert_match(params):
     match_id = db().insert("INSERT INTO match (`date`) VALUES (strftime('%s', 'now'))")

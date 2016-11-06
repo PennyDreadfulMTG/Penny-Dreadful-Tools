@@ -96,7 +96,7 @@ def set_legality(d):
 #     }
 # }
 # Plus one of: mtgo_username OR tappedout_username
-# Optionally: created_date (defaults to now), resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url, wins, losses, draws, finish
+# Optionally: created_date (unix timestamp, defaults to now), resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url, wins, losses, draws, finish
 #
 # source + identifier must be unique for each decklist.
 def add_deck(params):

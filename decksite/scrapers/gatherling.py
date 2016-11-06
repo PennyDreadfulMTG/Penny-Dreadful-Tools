@@ -39,7 +39,7 @@ def tournament(url, name):
     rows = re.findall('<tr style=">(.*?)</tr>', s, re.MULTILINE | re.DOTALL)
     for row in rows:
         cells = BeautifulSoup(row, 'html.parser').find_all('td')
-        tournament_deck(cells, competition_id, ranks)
+        tournament_deck(cells, competition_id, dt, ranks)
 
 def rankings(table):
     rows = table.find_all('tr')
@@ -63,8 +63,8 @@ def rankings(table):
         ranks[mtgo_username] = rank
     return ranks
 
-def tournament_deck(cells, competition_id, ranks):
-    d = {'source': 'Gatherling', 'competition_id': competition_id}
+def tournament_deck(cells, competition_id, date, ranks):
+    d = {'source': 'Gatherling', 'competition_id': competition_id, 'created_date': dtutil.dt2ts(date)}
     player = cells[2]
     d['mtgo_username'] = player.a.contents[0]
     if player.find('img'):

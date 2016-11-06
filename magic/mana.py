@@ -66,8 +66,8 @@ def parse(s):
 def colors(symbols):
     return colors_from_colored_symbols(colored_symbols(symbols))
 
-def colors_from_colored_symbols(colored_symbols):
-    return {'required': set(colored_symbols['required']), 'also': set(colored_symbols['also'])}
+def colors_from_colored_symbols(all_colored_symbols):
+    return {'required': set(all_colored_symbols['required']), 'also': set(all_colored_symbols['also'])}
 
 def colored_symbols(symbols):
     cs = {'required': [], 'also': []}

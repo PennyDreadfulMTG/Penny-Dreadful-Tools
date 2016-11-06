@@ -68,9 +68,8 @@ def load_cards(decks):
 def set_colors(d):
     required = set()
     for card in [c['card'] for c in d.maindeck + d.sideboard]:
-        # BUG: We're ignoring split cards here because they are hard.
-        if card.mana_cost and '//' not in card.name:
-            colors = mana.colors(mana.parse(card.mana_cost))
+        for cost in card.get('mana_cost') or ():
+            colors = mana.colors(mana.parse(cost))
             required.update(colors['required'])
     d.colors = required
 

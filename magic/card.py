@@ -51,15 +51,8 @@ def face_properties():
     props['cmc']['type'] = REAL
     props['name']['query'] = """{name_query} AS name""".format(name_query=name_query())
     props['name_ascii']['query'] = """{name_query} AS name_ascii""".format(name_query=name_query('name_ascii'))
-    props['mana_cost']['query'] = """CASE
-            WHEN layout IN ('split') AND `{table}`.`text` LIKE '%Fuse (You may cast one or both halves of this card from your hand.)%' THEN
-                GROUP_CONCAT(`{table}`.`{column}`, '')
-            WHEN layout IN ('split') THEN
-                NULL
-            ELSE
-                GROUP_CONCAT(CASE WHEN position = 1 THEN `{table}`.`{column}` ELSE '' END, '')
-        END AS `{column}`"""
     props['cmc']['query'] = "GROUP_CONCAT(`{table}`.`{column}`, '|') AS `{column}`"
+    props['mana_cost']['query'] = "GROUP_CONCAT(`{table}`.`{column}`, '|') AS `{column}`"
     props['text']['query'] = "GROUP_CONCAT(`{table}`.`{column}`, '\n-----\n') AS `{column}`"
     props['card_id']['foreign_key'] = ('card', 'id')
     return props
@@ -127,7 +120,7 @@ class Card(Munch):
         super().__init__()
         for k in params.keys():
             v = params[k]
-            if k == 'names' or k == 'cmc':
+            if k == 'names' or k == 'cmc' or k == 'mana_cost':
                 if v is not None:
                     v = v.split('|')
             if k == 'legalities':

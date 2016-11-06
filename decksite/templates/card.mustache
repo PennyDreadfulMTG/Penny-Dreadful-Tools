@@ -1,10 +1,10 @@
 <section>
     <h2>{{name}}</h2>
     <img src="{{img_url}}" alt="{{name}}" class="card-img">
-    <p>{{name}} is {{^pd_legal}}<b>not</b> {{/pd_legal}} currently Penny Dreadul legal.</p>
 </section>
 <section>
     <h2>Decks containing {{name}}</h2>
     {{> decks}}
     <p>{{#played_competitively}}Competitive record of decks with this card in is {{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/played_competitively}}</p>
 </section>
+{{> legal}}

@@ -6,7 +6,7 @@ from magic import legality
 from shared import dtutil
 from shared.pd_exception import InvalidDataException
 
-from decksite.data import deck
+from decksite.data import deck, guarantee
 from decksite.database import db
 from decksite.scrapers import decklist
 
@@ -33,7 +33,7 @@ class SignUpForm(Form):
             self.competition_id = db().value(active_competition_id_query())
             self.identifier = identifier(self)
             self.url = 'http://pennydreadfulmagic.com/competitions/{competition_id}/'.format(competition_id=self.competition_id)
-            if deck.get_deck_id(deck.get_source_id(self.source), self.identifier):
+            if deck.get_deck_id(self.source, self.identifier):
                 self.errors['name'] = 'You have already entered the league this season with a deck called {name}'.format(name=self.name)
         if len(self.decklist) == 0:
             self.errors['decklist'] = 'Decklist is required'
@@ -47,10 +47,11 @@ class SignUpForm(Form):
                 self.errors['decklist'] = '{specific}. Try exporting from MTGO as Text and pasting the result.'.format(specific=str(e))
 
 class ReportForm(Form):
-    def __init__(self, form):
+    def __init__(self, form, deck_id=None):
         super().__init__(form)
         decks = active_decks()
-        self.entry_options = deck_options(decks, self.get('entry', None))
+        print(self.get('entry', deck_id))
+        self.entry_options = deck_options(decks, self.get('entry', deck_id))
         self.opponent_options = deck_options(decks, self.get('opponent', None))
         self.result_options = [
             {'text': 'Win 2–0', 'value': '2–0', 'selected': self.get('result', None) == '2–0'},
@@ -116,7 +117,7 @@ def active_league():
         FROM competition
         WHERE id = ({active_competition_id_query})
     """.format(active_competition_id_query=active_competition_id_query())
-    return db().execute(sql)[0]
+    return guarantee.exactly_one(db().execute(sql))
 
 def insert_match(params):
     match_id = db().insert("INSERT INTO match (`date`) VALUES (strftime('%s', 'now'))")

@@ -1,7 +1,7 @@
 import os
 import re
 
-from flask import Flask, redirect, request, send_from_directory, url_for
+from flask import Flask, make_response, redirect, request, send_from_directory, url_for
 from werkzeug import exceptions
 
 from shared.pd_exception import DoesNotExistException
@@ -94,14 +94,17 @@ def add_signup():
     form = SignUpForm(request.form)
     if form.validate():
         deck_id = lg.signup(form)
-        return redirect(url_for('decks', deck_id=deck_id))
+        response = make_response(redirect(url_for('decks', deck_id=deck_id)))
+        print(deck_id)
+        response.set_cookie('deck_id', str(deck_id))
+        return response
     else:
         return signup(form)
 
 @APP.route('/report/')
 def report(form=None):
     if form is None:
-        form = ReportForm(request.form)
+        form = ReportForm(request.form, request.cookies.get('deck_id', ''))
     view = Report(form)
     return view.page()
 
@@ -110,7 +113,9 @@ def add_report():
     form = ReportForm(request.form)
     if form.validate():
         lg.report(form)
-        return redirect(url_for('decks', deck_id=form.entry))
+        response = make_response(redirect(url_for('decks', deck_id=form.entry)))
+        response.set_cookie('deck_id', form.entry)
+        return response
     else:
         return report(form)
 

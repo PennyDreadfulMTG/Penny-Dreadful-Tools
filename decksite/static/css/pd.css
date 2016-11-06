@@ -68,6 +68,12 @@ p {
 
 /* Layout */
 
+div:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 section {
     border-top: 0.1rem #502828 solid;
     float: left;
@@ -319,8 +325,9 @@ ul.menu {
 /* Card */
 
 .card-img {
+    height: 22.25rem;
+    width: 15.6rem;
     padding-top: 1rem;
-    width: 16rem;
 }
 
 .illegal::after {
@@ -330,11 +337,15 @@ ul.menu {
 
 /* Forms */
 
+form {
+    margin: 2rem 0;
+}
+
 button, form, input, select, textarea {
     font-size: inherit;
 }
 
-button, input, select, textarea {
+button, input, select, textarea, .uploader-label {
     width: 20rem;
 }
 
@@ -373,7 +384,7 @@ button {
     -webkit-appearance: button;
 }
 
-button, div.error {
+button, div.error, .uploader-label {
     margin-left: 12em;
 }
 
@@ -385,8 +396,13 @@ input.error, select.error, textarea.error {
     border: 0.1rem solid red;
 }
 
-div:after {
-  content: "";
-  display: table;
-  clear: both;
+.uploader {
+    display: none;
+}
+
+.uploader-label {
+    cursor: pointer;
+    float: none;
+    margin-top: 0;
+    text-align: left;
 }

@@ -16,13 +16,13 @@ def load_deck(deck_id):
 
 def load_decks(where='1 = 1', order_by=None, limit=''):
     if order_by is None:
-        order_by = '{date_query} DESC, IFNULL(finish, 9999999999)'.format(date_query=query.date_query())
+        order_by = 'd.created_date DESC, IFNULL(finish, 9999999999)'
     sql = """
         SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.draws, d.finish, d.url AS source_url,
             (SELECT COUNT(id) FROM deck WHERE competition_id IS NOT NULL AND competition_id = d.competition_id) AS players,
             d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date,
             {person_query} AS person, p.id AS person_id,
-            {date_query} AS `date`,
+            d.created_date AS `date`,
             s.name AS source_name
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id
@@ -31,7 +31,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         WHERE {where}
         ORDER BY {order_by}
         {limit}
-    """.format(person_query=query.person_query(), date_query=query.date_query(), where=where, order_by=order_by, limit=limit)
+    """.format(person_query=query.person_query(), where=where, order_by=order_by, limit=limit)
     decks = [Deck(d) for d in db().execute(sql)]
     load_cards(decks)
     for d in decks:
@@ -75,6 +75,7 @@ def set_colors(d):
 
 def set_legality(d):
     d.legal_formats = legality.legal_formats(d)
+    d.has_legal_format = len(d.legal_formats) > 0
     d.pd_legal = "Penny Dreadful" in d.legal_formats
 
 # Expects:
@@ -103,8 +104,7 @@ def add_deck(params):
     if not params.get('mtgo_username') and not params.get('tappedout_username'):
         raise InvalidDataException('Did not find a username in {params}'.format(params=params))
     person_id = get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'))
-    source_id = get_source_id(params['source'])
-    deck_id = get_deck_id(source_id, params['identifier'])
+    deck_id = get_deck_id(params['source'], params['identifier'])
     if deck_id:
         return deck_id
     archetype_id = get_archetype_id(params.get('archetype'))
@@ -138,7 +138,7 @@ def add_deck(params):
     values = [
         params.get('created_date'),
         person_id,
-        source_id,
+        get_source_id(params['source']),
         params['url'],
         params['identifier'],
         params['name'],
@@ -163,7 +163,8 @@ def add_deck(params):
     db().execute(sql)
     return deck_id
 
-def get_deck_id(source_id, identifier):
+def get_deck_id(source_name, identifier):
+    source_id = get_source_id(source_name)
     sql = 'SELECT id FROM deck WHERE source_id = ? AND identifier = ?'
     return db().value(sql, [source_id, identifier])
 

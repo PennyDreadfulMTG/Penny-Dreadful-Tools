@@ -95,6 +95,8 @@ class View:
             c.url = url_for('card', name=c.name)
             c.img_url = 'http://magic.bluebones.net/proxies/?c={name}'.format(name=urllib.parse.quote(c.name))
             c.pd_legal = c.legalities.get('Penny Dreadful', False)
+            c.legal_formats = c.legalities.keys()
+            c.has_legal_format = len(c.legal_formats) > 0
 
     def prepare_competitions(self):
         for c in getattr(self, 'competitions', []):

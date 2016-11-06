@@ -206,6 +206,10 @@ th.legend {
     width: 4rem;
 }
 
+.repeat:not(span), td .repeat {
+    color: #eee;
+}
+
 /* Menu */
 
 ul.menu {

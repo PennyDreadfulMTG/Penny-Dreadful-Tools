@@ -40,6 +40,7 @@ COLOR_COMBINATIONS = {
 
 def normalize(d):
     name = d.name
+    name = name.lower()
     name = remove_pd(name)
     name = remove_hashtags(name)
     name = expand_common_abbreviations(name)
@@ -52,7 +53,7 @@ def normalize(d):
         name = d.archetype
     if removed_colors or name == '':
         name = prepend_colors(name, d.colors)
-    return titlecase.titlecase(name.lower())
+    return titlecase.titlecase(name)
 
 def remove_pd(name):
     name = re.sub(r'(^| )[\[\(]?pd[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
@@ -71,7 +72,7 @@ def remove_colors(name):
     return name
 
 def expand_common_abbreviations(name):
-    return name.replace('RDW', 'Red Deck Wins').replace('WW', 'White Weenie')
+    return name.replace('rdw', 'red deck wins').replace('ww', 'white weenie')
 
 def prepend_colors(s, colors):
     prefix = name_from_colors(colors, s)
@@ -82,8 +83,8 @@ def name_from_colors(colors, s=''):
     for name, symbols in COLOR_COMBINATIONS.items():
         if mana.order(symbols) == ordered:
             if len(symbols) == 1:
-                if s == 'Deck Wins' or s == 'Weenie':
+                if s == 'deck wins' or s == 'weenie':
                     return name
-                return 'Mono {name}'.format(name=name)
+                return 'mono {name}'.format(name=name)
             return name
-    return 'Colorless'
+    return 'colorless'

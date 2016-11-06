@@ -7,12 +7,12 @@
             <input {{#form.errors.mtgo_username}}class="error"{{/form.errors.mtgo_username}} type="text" name="mtgo_username" id="mtgo_username" value="{{form.mtgo_username}}">
             <div class="error">{{form.errors.mtgo_username}}</div>
         </div>
-        <div class="field required">
+        <div class="field">
             <label for="name">Deck Name</label>
             <input {{#form.errors.name}}class="error"{{/form.errors.name}} type="text" name="name" id="name" value="{{form.name}}">
             <div class="error">{{form.errors.name}}</div>
         </div>
-        <div class="field required">
+        <div class="field">
             <label for="decklist">Decklist</label>
             <textarea {{#form.errors.decklist}}class="error"{{/form.errors.decklist}} name="decklist" id="decklist">{{form.decklist}}</textarea>
             <div class="error">{{form.errors.decklist}}</div>

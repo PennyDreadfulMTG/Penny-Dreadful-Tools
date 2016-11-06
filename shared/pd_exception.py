@@ -19,5 +19,8 @@ class DoesNotExistException(PDException):
 class TooManyItemsException(PDException):
     pass
 
+class TooFewItemsException(PDException):
+    pass
+
 class InvalidArgumentException(PDException):
     pass

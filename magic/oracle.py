@@ -4,7 +4,7 @@ from magic import card, database, fetcher, mana
 from magic.database import db
 from shared import dtutil
 from shared.database import sqlescape
-from shared.pd_exception import InvalidDataException
+from shared.pd_exception import InvalidDataException, TooFewItemsException
 
 CARD_IDS = {}
 FORMAT_IDS = {}
@@ -62,6 +62,8 @@ def load_cards(names=None):
         {names_clause}
     """.format(base_query=base_query(), names_clause=names_clause)
     rs = db().execute(sql)
+    if names and len(names) != len(rs):
+        raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`'.format(namelen=len(names), rslen=len(rs), names=names))
     return [card.Card(r) for r in rs]
 
 def base_query(where_clause='(1 = 1)'):

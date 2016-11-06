@@ -1,10 +1,7 @@
-import html
-import re
 import urllib
 
 from flask import url_for
 
-from magic import mana
 from shared import dtutil
 
 from decksite import deck_name
@@ -68,7 +65,7 @@ class View:
     def prepare_decks(self):
         for d in getattr(self, 'decks', []):
             set_stars_and_top8(d)
-            d.colors_safe = colors_html(d.colors)
+            d.colors_safe = colors_html(d.colors, d.colored_symbols)
             d.name = deck_name.normalize(d)
             d.person_url = url_for('person', person_id=d.person_id)
             d.date_sort = dtutil.dt2ts(d.date)
@@ -109,10 +106,15 @@ class View:
             p.url = url_for('person', person_id=p.id)
             p.show_record = p.wins or p.losses
 
-def colors_html(colors):
-    s = ''.join(mana.order(colors))
-    n = len(colors)
-    return re.sub('([WUBRG])', r'<span class="mana mana-{n} mana-\1"></span>'.format(n=n), html.escape(s))
+def colors_html(colors, colored_symbols):
+    s = ''
+    total = len(colored_symbols)
+    for color in colors:
+        n = colored_symbols.count(color)
+        width = (3.0 - 0.1 * len(colors)) / total * n
+        s += '<span class="mana mana-{color}" style="width: {width}rem"></span>'.format(color=color, width=width)
+    return s
+
 
 def set_stars_and_top8(d):
     if d.finish == 1:

@@ -142,6 +142,8 @@ ul.decklist {
 table {
     border-collapse: separate;
     border-spacing: 0.25rem 0;
+    margin-left: -4.5rem;
+    margin-right: 0.5rem;
 }
 
 table.fade-repeats {
@@ -164,7 +166,7 @@ td, th {
 }
 
 /* Allow the stars in the margin to show. */
-td:first-child {
+td:first-child, th:first-child {
     overflow: visible;
 }
 
@@ -202,12 +204,7 @@ th.legend {
     text-align: center;
 }
 
-.marginnote {
-    clear: left;
-    float: left;
-    margin-left: -4.5rem;
-    margin-right: 0.5rem;
-    position: relative;
+.marginalia {
     text-align: right;
     width: 4rem;
 }
@@ -248,7 +245,7 @@ ul.menu {
 
 /* Mana horizontal bar. */
 
-.mana:nth-child(2) {
+.mana:nth-child(1) {
     border-left: 0.1rem #999 solid;
 }
 
@@ -259,26 +256,6 @@ ul.menu {
     border-bottom: 0.1rem #999 solid;
     border-top: 0.1rem #999 solid;
     border-right: 0.1rem #999 solid;
-}
-
-.mana-1 {
-    width: 2.9rem;
-}
-
-.mana-2 {
-    width: 1.4rem;
-}
-
-.mana-3 {
-    width: .9rem;
-}
-
-.mana-4 {
-    width: .65rem;
-}
-
-.mana-5 {
-    width: .5rem;
 }
 
 .mana-W {

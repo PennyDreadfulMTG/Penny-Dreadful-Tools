@@ -64,21 +64,27 @@ def parse(s):
     return tokens
 
 def colors(symbols):
-    cs = {'required': set(), 'also': set()}
+    return colors_from_colored_symbols(colored_symbols(symbols))
+
+def colors_from_colored_symbols(all_colored_symbols):
+    return {'required': set(all_colored_symbols['required']), 'also': set(all_colored_symbols['also'])}
+
+def colored_symbols(symbols):
+    cs = {'required': [], 'also': []}
     for symbol in symbols:
         if generic(symbol) or variable(symbol):
             pass
         elif phyrexian(symbol):
-            cs['also'].add(symbol[0])
+            cs['also'].append(symbol[0])
         elif hybrid(symbol):
             parts = symbol.split(SLASH)
-            cs['also'].add(parts[0])
-            cs['also'].add(parts[1])
+            cs['also'].append(parts[0])
+            cs['also'].append(parts[1])
         elif twobrid(symbol):
             parts = symbol.split(SLASH)
-            cs['also'].add(parts[1])
+            cs['also'].append(parts[1])
         elif colored(symbol):
-            cs['required'].add(symbol)
+            cs['required'].append(symbol)
         else:
             raise InvalidManaCostException('Unrecognized symbol type: `{symbol}` in `{symbols}`'.format(symbol=symbol, symbols=symbols))
     return cs

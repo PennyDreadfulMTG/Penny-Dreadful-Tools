@@ -52,7 +52,7 @@ PD.fadeRepeats = function () {
         }
         if (previous) {
             for (i = 0; i < current.length; i++) {
-                if ($(current[i]).text().trim() == $(previous[i]).text().trim()) {
+                if ($(current[i]).text().trim() == $(previous[i]).text().trim() && $(current[i]).html().indexOf('mana-') === -1) {
                     if ($(current[i]).text().indexOf('⊕') === -1 && $(current[i]).text().indexOf('★') === -1) {
                         $(current[i]).find('*').addBack().addClass('repeat');
                     }

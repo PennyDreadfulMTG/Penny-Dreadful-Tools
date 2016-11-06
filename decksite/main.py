@@ -32,7 +32,11 @@ def people():
 
 @APP.route('/people/<person_id>/')
 def person(person_id):
-    view = Person(ps.load_person(person_id))
+    try:
+        person = ps.load_person(person_id)
+    except DoesNotExistException:
+        person = ps.load_person_by_username(person_id)
+    view = Person(person)
     return view.page()
 
 @APP.route('/cards/')

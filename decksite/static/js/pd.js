@@ -39,6 +39,7 @@ PD.init = function () {
     });
     $('table').tablesorter()
     $('.fade-repeats').bind('sortEnd', PD.fadeRepeats);
+    $('input[type=file]').on('change', PD.loadDeck);
 };
 PD.fadeRepeats = function () {
     var current, previous, differs;
@@ -69,6 +70,14 @@ PD.fadeRepeats = function () {
         }
     }
 };
+PD.loadDeck = function () {
+    var file = this.files[0],
+        reader = new FileReader();
+    reader.onload = function (e) {
+        $('textarea').val(e.target.result);
+    };
+    reader.readAsText(file);
+}
 $(document).ready(function () {
     PD.init();
 });

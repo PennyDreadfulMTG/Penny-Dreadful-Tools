@@ -84,7 +84,7 @@ def deck_options(decks, v):
     return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id)} for d in decks]
 
 def active_decks():
-    decks = deck.load_decks("d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query}))".format(active_competition_id_query=active_competition_id_query()))
+    decks = deck.load_decks("d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND wins + losses < 5".format(active_competition_id_query=active_competition_id_query()))
     return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
 
 def report(form):

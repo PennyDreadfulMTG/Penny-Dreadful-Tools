@@ -19,10 +19,7 @@
 <section>
     <h2>Notes</h2>
     <p>This deck is {{^pd_legal}}<b>not</b> {{/pd_legal}}currently Penny Dreadful legal.</p>
-    <p>Legal in:</p>
-    <ul>
-        {{#legal_formats}}<li>{{.}}</li>{{/legal_formats}}
-    </ul>
     <p>Source: <a href="{{source_url}}">{{source_name}}</a></p>
     <p>Export: <a href="{{export_url}}">MTGO (txt)</a></p>
 </section>
+{{> legal}}

@@ -1,6 +1,7 @@
 <table class="fade-repeats">
     <thead>
         <tr>
+            <th class="marginalia" data-sortInitialOrder="desc">↕</th>
             <th>Colors</th>
             <th>Name</th>
             <th>Person</th>
@@ -13,7 +14,8 @@
     <tbody>
         {{#decks}}
             <tr>
-                <td><span class="marginnote">{{stars}}</span>{{{colors_safe}}}</td>
+                <td class="marginalia">{{stars}}</td>
+                <td>{{{colors_safe}}}</td>
                 <td><a href="{{url}}">{{{name}}}</a></td>
                 <td><a href="{{person_url}}">{{person}}</a></td>
                 <td {{#source_sort}}data-text="{{source_sort}}"{{/source_sort}}>

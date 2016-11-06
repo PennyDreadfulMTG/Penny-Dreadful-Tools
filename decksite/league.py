@@ -47,10 +47,11 @@ class SignUpForm(Form):
                 self.errors['decklist'] = '{specific}. Try exporting from MTGO as Text and pasting the result.'.format(specific=str(e))
 
 class ReportForm(Form):
-    def __init__(self, form):
+    def __init__(self, form, deck_id=None):
         super().__init__(form)
         decks = active_decks()
-        self.entry_options = deck_options(decks, self.get('entry', None))
+        print(self.get('entry', deck_id))
+        self.entry_options = deck_options(decks, self.get('entry', deck_id))
         self.opponent_options = deck_options(decks, self.get('opponent', None))
         self.result_options = [
             {'text': 'Win 2–0', 'value': '2–0', 'selected': self.get('result', None) == '2–0'},

@@ -1,12 +1,13 @@
-<table>
+<table class="fade-repeats">
     <thead>
         <tr>
             <th>Colors</th>
             <th>Name</th>
             <th>Person</th>
+            <th>Source</th>
             <th data-empty="bottom" data-sortInitialOrder="desc">Record</th>
             <th class="c">Top 8</th>
-            <th>Date</th>
+            <th data-sortInitialOrder="desc">Date</th>
         </tr>
     </thead>
     <tbody>
@@ -15,20 +16,23 @@
                 <td><span class="marginnote">{{stars}}</span>{{{colors_safe}}}</td>
                 <td><a href="{{url}}">{{{name}}}</a></td>
                 <td><a href="{{person_url}}">{{person}}</a></td>
+                <td {{#source_sort}}data-text="{{source_sort}}"{{/source_sort}}>
+                    {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
+                    {{{source_indicator}}}
+                    {{#competition_url}}</a>{{/competition_url}}
+                </td>
                 <td class="n">
                     {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
                     {{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}
                     {{#competition_url}}</a>{{/competition_url}}
                 </td>
                 <td class="c">
-                    {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
+                    {{#top8}}<a href="{{competition_url}}">{{/top8}}
                     {{top8}}
-                    {{#competition_url}}</a>{{/competition_url}}
+                    {{#top8}}</a>{{/top8}}
                 </td>
                 <td class="n pale" data-text="{{date_sort}}">
-                    {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
                     {{display_date}}
-                    {{#competition_url}}</a>{{/competition_url}}
                 </td>
             </tr>
         {{/decks}}

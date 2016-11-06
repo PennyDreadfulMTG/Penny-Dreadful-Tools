@@ -20,7 +20,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
     sql = """
         SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.draws, d.finish, d.url AS source_url,
             (SELECT COUNT(id) FROM deck WHERE competition_id IS NOT NULL AND competition_id = d.competition_id) AS players,
-            d.competition_id, c.name AS competition_name,
+            d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date,
             {person_query} AS person, p.id AS person_id,
             {date_query} AS `date`,
             s.name AS source_name
@@ -37,6 +37,8 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
     for d in decks:
         d.created_date = dtutil.ts2dt(d.created_date)
         d.updated_date = dtutil.ts2dt(d.updated_date)
+        if d.competition_end_date:
+            d.competition_end_date = dtutil.ts2dt(d.competition_end_date)
         d.date = dtutil.ts2dt(d.date)
         set_colors(d)
         set_legality(d)

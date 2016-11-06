@@ -133,6 +133,15 @@ ul.decklist {
 
 /* Tables */
 
+table {
+    border-collapse: separate;
+    border-spacing: 0.25rem 0;
+}
+
+table.fade-repeats {
+    visibility: hidden;
+}
+
 th {
     cursor: pointer;
     font-size: 0.8rem;
@@ -143,9 +152,8 @@ th {
 td, th {
     max-width: 13rem;
     overflow: hidden;
-    padding: 0 0.5rem;
+    padding: 0 0.25rem;
     white-space: nowrap;
-    word-wrap: none;
     text-overflow: ellipsis;
 }
 
@@ -154,7 +162,16 @@ td:first-child {
     overflow: visible;
 }
 
+td:first-child, th:first-child {
+    margin-left: -0.25rem; /* remove border-spacing */
+}
+
+td:last-child, th:last-child {
+    margin-right: -0.25rem; /* remove border-spacing */
+}
+
 td:first-child, td:last-child, th:first-child, th:last-child {
+    margin: 0;
     padding: 0;
 }
 

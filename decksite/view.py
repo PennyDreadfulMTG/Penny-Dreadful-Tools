@@ -79,6 +79,15 @@ class View:
                 d.competition_url = url_for('competition', competition_id=d.competition_id)
             d.url = url_for('decks', deck_id=d.id)
             d.export_url = url_for('export', deck_id=d.id)
+            if d.source_name == 'League':
+                d.source_indicator = 'League'
+                if d.wins + d.losses < 5 and d.competition_end_date > dtutil.now():
+                    d.stars = '⊕ {stars}'.format(stars=d.stars).strip()
+                    d.source_sort = '1'
+            elif d.source_name == 'Gatherling':
+                d.source_indicator = 'Gatherling'
+            elif d.source_name == 'Tapped Out':
+                d.source_indicator = 'Tapped Out'
 
     def prepare_cards(self):
         cards = getattr(self, 'cards', [])

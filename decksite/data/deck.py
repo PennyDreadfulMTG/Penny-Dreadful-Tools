@@ -20,7 +20,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
     sql = """
         SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.draws, d.finish, d.url AS source_url,
             (SELECT COUNT(id) FROM deck WHERE competition_id IS NOT NULL AND competition_id = d.competition_id) AS players,
-            d.competition_id, c.name AS competition_name,
+            d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date,
             {person_query} AS person, p.id AS person_id,
             {date_query} AS `date`,
             s.name AS source_name
@@ -37,6 +37,8 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
     for d in decks:
         d.created_date = dtutil.ts2dt(d.created_date)
         d.updated_date = dtutil.ts2dt(d.updated_date)
+        if d.competition_end_date:
+            d.competition_end_date = dtutil.ts2dt(d.competition_end_date)
         d.date = dtutil.ts2dt(d.date)
         set_colors(d)
         set_legality(d)
@@ -66,9 +68,8 @@ def load_cards(decks):
 def set_colors(d):
     required = set()
     for card in [c['card'] for c in d.maindeck + d.sideboard]:
-        # BUG: We're ignoring split cards here because they are hard.
-        if card.mana_cost and '//' not in card.name:
-            colors = mana.colors(mana.parse(card.mana_cost))
+        for cost in card.get('mana_cost') or ():
+            colors = mana.colors(mana.parse(cost))
             required.update(colors['required'])
     d.colors = required
 
@@ -95,7 +96,7 @@ def set_legality(d):
 #     }
 # }
 # Plus one of: mtgo_username OR tappedout_username
-# Optionally: created_date (defaults to now), resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url, wins, losses, draws, finish
+# Optionally: created_date (unix timestamp, defaults to now), resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url, wins, losses, draws, finish
 #
 # source + identifier must be unique for each decklist.
 def add_deck(params):

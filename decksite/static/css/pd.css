@@ -133,6 +133,15 @@ ul.decklist {
 
 /* Tables */
 
+table {
+    border-collapse: separate;
+    border-spacing: 0.25rem 0;
+}
+
+table.fade-repeats {
+    visibility: hidden;
+}
+
 th {
     cursor: pointer;
     font-size: 0.8rem;
@@ -143,9 +152,8 @@ th {
 td, th {
     max-width: 13rem;
     overflow: hidden;
-    padding: 0 0.5rem;
+    padding: 0 0.25rem;
     white-space: nowrap;
-    word-wrap: none;
     text-overflow: ellipsis;
 }
 
@@ -154,7 +162,16 @@ td:first-child {
     overflow: visible;
 }
 
+td:first-child, th:first-child {
+    margin-left: -0.25rem; /* remove border-spacing */
+}
+
+td:last-child, th:last-child {
+    margin-right: -0.25rem; /* remove border-spacing */
+}
+
 td:first-child, td:last-child, th:first-child, th:last-child {
+    margin: 0;
     padding: 0;
 }
 
@@ -175,10 +192,6 @@ td.divider {
     border-right: 0.07rem #ccc solid;
 }
 
-td.pale {
-    color: #999;
-}
-
 th.legend {
     text-align: center;
 }
@@ -191,6 +204,10 @@ th.legend {
     position: relative;
     text-align: right;
     width: 4rem;
+}
+
+.repeat:not(span), td .repeat {
+    color: #eee;
 }
 
 /* Menu */
@@ -313,15 +330,15 @@ ul.menu {
 
 /* Forms */
 
-form, input, select, textarea {
+button, form, input, select, textarea {
     font-size: inherit;
 }
 
-input, select, textarea {
+button, input, select, textarea {
     width: 20rem;
 }
 
-input, label, select, textarea {
+button, input, label, select, textarea {
     margin-top: 1rem;
 }
 
@@ -350,7 +367,13 @@ input, select, textarea {
     margin-left: 1em;
 }
 
-input[type=submit], div.error {
+button {
+    appearance: button;
+    -moz-appearance: button;
+    -webkit-appearance: button;
+}
+
+button, div.error {
     margin-left: 12em;
 }
 

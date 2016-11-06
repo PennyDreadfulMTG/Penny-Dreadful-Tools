@@ -56,9 +56,9 @@ class Bot:
             cards = cards[:4]
         if len(cards) == 1:
             card = cards[0]
-            mana = emoji.replace_emoji(card.mana_cost, channel) or ''
+            mana = emoji.replace_emoji(''.join(card.mana_cost), channel) or ''
             legal = emoji.legal_emoji(card, True)
-            text = '{name} {mana_cost} — {type} — {legal}'.format(name=card.name, mana_cost=mana, type=card.type, legal=legal)
+            text = '{name} {mana} — {type} — {legal}'.format(name=card.name, mana=mana, type=card.type, legal=legal)
         else:
             text = ', '.join('{name} {legal}'.format(name=card.name, legal=emoji.legal_emoji(card)) for card in cards)
             text += more_text

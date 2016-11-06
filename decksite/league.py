@@ -32,7 +32,7 @@ class SignUpForm(Form):
             self.source = 'League'
             self.competition_id = db().value(active_competition_id_query())
             self.identifier = identifier(self)
-            self.url = 'http://pennydreadfulmagic.com/'
+            self.url = 'http://pennydreadfulmagic.com/competitions/{competition_id}/'.format(competition_id=self.competition_id)
             if deck.get_deck_id(deck.get_source_id(self.source), self.identifier):
                 self.errors['name'] = 'You have already entered the league this season with a deck called {name}'.format(name=self.name)
         if len(self.decklist) == 0:
@@ -84,7 +84,7 @@ def deck_options(decks, v):
     return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id)} for d in decks]
 
 def active_decks():
-    decks = deck.load_decks("d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query}))".format(active_competition_id_query=active_competition_id_query()))
+    decks = deck.load_decks("d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND wins + losses < 5".format(active_competition_id_query=active_competition_id_query()))
     return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
 
 def report(form):

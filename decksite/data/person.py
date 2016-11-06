@@ -8,6 +8,9 @@ from decksite.database import db
 def load_person(person_id):
     return guarantee.exactly_one(load_people('p.id = {id}'.format(id=sqlescape(person_id))))
 
+def load_person_by_username(username):
+    return guarantee.exactly_one(load_people('p.mtgo_username = {username}'.format(username=sqlescape(username))))
+
 def load_people(where_clause='1 = 1'):
     sql = """
         SELECT p.id, {person_query} AS name, COUNT(d.id) AS num_decks,

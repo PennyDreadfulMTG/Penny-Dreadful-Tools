@@ -328,7 +328,7 @@ async def single_card_text(bot, channel, args, author, f):
     elif len(cards) == 1:
         legal_emjoi = emoji.legal_emoji(cards[0])
         text = emoji.replace_emoji(f(cards[0]), channel)
-        message = '{legal_emjoi} **{name}** {text}'.format(name=cards[0].name, legal_emjoi=legal_emjoi, text=text)
+        message = '**{name}** {legal_emjoi} {text}'.format(name=cards[0].name, legal_emjoi=legal_emjoi, text=text)
         await bot.client.send_message(channel, message)
     else:
         await bot.client.send_message(channel, '{author}: No matches.'.format(author=author.mention))

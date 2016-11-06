@@ -1,7 +1,7 @@
 import os
 import re
 
-from flask import Flask, request, send_from_directory
+from flask import Flask, redirect, request, send_from_directory, url_for
 from werkzeug import exceptions
 
 from shared.pd_exception import DoesNotExistException
@@ -32,7 +32,11 @@ def people():
 
 @APP.route('/people/<person_id>/')
 def person(person_id):
-    view = Person(ps.load_person(person_id))
+    try:
+        p = ps.load_person(person_id)
+    except DoesNotExistException:
+        p = ps.load_person_by_username(person_id)
+    view = Person(p)
     return view.page()
 
 @APP.route('/cards/')
@@ -63,7 +67,7 @@ def add_form():
 @APP.route('/add/', methods=['POST'])
 def add_deck():
     decks.add_deck(request.form)
-    return add_form()
+    return redirect(url_for('add'))
 
 @APP.route('/about/')
 def about():
@@ -73,7 +77,7 @@ def about():
 @APP.route('/export/<deck_id>/')
 def export(deck_id):
     d = deck.load_deck(deck_id)
-    safe_name = re.sub('[^a-z-]', '-', d.name, flags=re.IGNORECASE)
+    safe_name = re.sub('[^0-9a-z-]', '-', d.name, flags=re.IGNORECASE)
     return (str(d), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 
 # League
@@ -90,7 +94,7 @@ def add_signup():
     form = SignUpForm(request.form)
     if form.validate():
         deck_id = lg.signup(form)
-        return decks(deck_id)
+        return redirect(url_for('decks', deck_id=deck_id))
     else:
         return signup(form)
 
@@ -106,7 +110,7 @@ def add_report():
     form = ReportForm(request.form)
     if form.validate():
         lg.report(form)
-        return decks(form.entry)
+        return redirect(url_for('decks', deck_id=form.entry))
     else:
         return report(form)
 

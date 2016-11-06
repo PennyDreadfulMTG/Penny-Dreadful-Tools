@@ -138,7 +138,7 @@ def add_deck(params):
     values = [
         params.get('created_date'),
         person_id,
-        source_id,
+        get_source_id(params['source']),
         params['url'],
         params['identifier'],
         params['name'],
@@ -164,7 +164,7 @@ def add_deck(params):
     return deck_id
 
 def get_deck_id(source_name, identifier):
-    source_id = deck.get_source_id(source)
+    source_id = get_source_id(source_name)
     sql = 'SELECT id FROM deck WHERE source_id = ? AND identifier = ?'
     return db().value(sql, [source_id, identifier])
 

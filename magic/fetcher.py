@@ -57,9 +57,6 @@ def resources():
     with open('decksite/resources.json') as resources_file:
         return json.load(resources_file, object_pairs_hook=OrderedDict)
 
-def post(url, data):
-    return internal.post(url, data)
-
 def create_github_issue(title, author):
     if configuration.get("github_user") is None or configuration.get("github_password") is None:
         return None

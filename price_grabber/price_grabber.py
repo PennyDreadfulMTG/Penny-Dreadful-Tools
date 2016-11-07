@@ -4,7 +4,7 @@ import sqlite3
 import time
 import urllib
 
-from magic import card, database, fetcher, oracle
+from magic import card, database, fetcher_internal, oracle
 from shared import configuration
 
 from price_grabber import price
@@ -15,13 +15,13 @@ CARDS = {}
 def fetch():
     all_prices = {}
     url = 'https://www.mtggoldfish.com/prices/select'
-    s = fetcher.fetch(url)
+    s = fetcher_internal.fetch(url)
     sets = parse_sets(s)
     for code in sets:
         for suffix in ['', '_F']:
             code = '{code}{suffix}'.format(code=code, suffix=suffix)
             url = set_url(code)
-            s = fetcher.fetch(url)
+            s = fetcher_internal.fetch(url)
             prices = parse_prices(s)
             if not prices:
                 print('Found no prices for {code}'.format(code=code))

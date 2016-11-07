@@ -2,7 +2,7 @@ import os
 
 from discordbot import command, emoji
 
-from magic import card, fetcher, oracle, fetcher_internal, image_fetcher
+from magic import card, oracle, fetcher_internal, image_fetcher
 from shared import configuration
 
 # Check that we can fetch card images.
@@ -91,7 +91,7 @@ def test_aether():
 def test_fetcher_mod_since():
     resource_id = 'test_fetcher_mod_since'
     fetcher_internal.remove_last_modified(resource_id)
-    fetcher.fetch("http://pdmtgo.com/legal_cards.txt", resource_id=resource_id)
+    fetcher_internal.fetch("http://pdmtgo.com/legal_cards.txt", resource_id=resource_id)
     assert fetcher_internal.get_last_modified(resource_id) is not None
     assert fetcher_internal.get_cached_text(resource_id) is not None
 

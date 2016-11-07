@@ -18,17 +18,17 @@ def scrape():
         deck.add_deck(raw_deck)
 
 def fetch_decks():
-    return fetcher.fetch_json('https://tappedout.net/api/deck/latest/penny-dreadful/')
+    return fetcher_internal.fetch_json('https://tappedout.net/api/deck/latest/penny-dreadful/')
 
 def fetch_deck_details(raw_deck):
-    return fetcher.fetch_json("https://tappedout.net/api/collection/collection:deck/{slug}/".format(slug=raw_deck['slug']))
+    return fetcher_internal.fetch_json("https://tappedout.net/api/collection/collection:deck/{slug}/".format(slug=raw_deck['slug']))
 
 def set_values(raw_deck):
     raw_deck = translation.translate(translation.TAPPEDOUT, raw_deck)
     if 'inventory' in raw_deck:
         raw_deck['cards'] = parse_inventory(raw_deck['inventory'])
     else:
-        raw_decklist = fetcher.fetch('{base_url}?fmt=txt'.format(base_url=raw_deck['url']))
+        raw_decklist = fetcher_internal.fetch('{base_url}?fmt=txt'.format(base_url=raw_deck['url']))
         raw_deck['cards'] = decklist.parse(raw_decklist)
     raw_deck['source'] = 'Tapped Out'
     raw_deck['identifier'] = raw_deck['url']
@@ -58,7 +58,7 @@ def is_authorised():
 def get_auth():
     cookie = fetcher_internal.SESSION.cookies.get('tapped')
     token = configuration.get("tapped_API_key")
-    return fetcher.fetch("https://tappedout.net/api/v1/cookie/{0}/?access_token={1}".format(cookie, token))
+    return fetcher_internal.fetch("https://tappedout.net/api/v1/cookie/{0}/?access_token={1}".format(cookie, token))
 
 def login(user=None, password=None):
     if user is None:

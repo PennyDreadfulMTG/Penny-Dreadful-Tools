@@ -62,6 +62,8 @@ def build_help(readme=False):
                     msg += '\n`!{0}` {1}'.format(methodname, method.__doc__)
                 else:
                     msg += '\n{0}'.format(method.__doc__)
+            elif readme:
+                msg += '\n`!{0}` Undocumented Command'
         return msg
 
     msg = print_group("Commands")

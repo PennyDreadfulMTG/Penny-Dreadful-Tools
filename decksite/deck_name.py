@@ -72,7 +72,7 @@ def remove_colors(name):
     return name
 
 def expand_common_abbreviations(name):
-    return name.replace('rdw', 'red deck wins').replace('ww', 'white weenie')
+    return name.replace('rdw', 'red deck wins').replace('ww', 'white weenie').replace('muc', 'mono blue control').replace('mbc', 'mono black control')
 
 def prepend_colors(s, colors):
     prefix = name_from_colors(colors, s)

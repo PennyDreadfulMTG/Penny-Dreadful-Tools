@@ -9,6 +9,7 @@
             <th data-empty="bottom" data-sortInitialOrder="desc">Record</th>
             <th class="c">Top 8</th>
             <th data-sortInitialOrder="desc">Date</th>
+            <th>Season</th>
         </tr>
     </thead>
     <tbody>
@@ -35,6 +36,11 @@
                 </td>
                 <td class="n" data-text="{{date_sort}}">
                     {{display_date}}
+                </td>
+                <td>
+                    {{#has_legal_format}}
+                        {{{legal_icons}}}
+                    {{/has_legal_format}}
                 </td>
             </tr>
         {{/decks}}

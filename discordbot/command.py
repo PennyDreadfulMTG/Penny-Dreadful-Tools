@@ -270,7 +270,7 @@ Want to contribute? Send a Pull Request."""
                         results[text] = url
         s = ''
         if len(results) == 0:
-            s = 'PD resources: http://magic.bluebones.net/pd/'
+            s = 'PD resources: http://pennydreadfulmagic.com/resources/'
         else:
             for text, url in results.items():
                 s += '{text}: <{url}>\n'.format(text=text, url=url)

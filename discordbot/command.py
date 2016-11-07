@@ -63,7 +63,7 @@ def build_help(readme=False):
                 else:
                     msg += '\n{0}'.format(method.__doc__)
             elif readme:
-                msg += '\n`!{0}` Undocumented Command'
+                msg += '\n`!{0}` Undocumented Command'.format(methodname)
         return msg
 
     msg = print_group("Commands")
@@ -284,6 +284,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header("Commands")
     async def bug(self, bot, channel, args, author):
+        """Report a bug"""
         bot.client.send_typing(channel)
         issue = fetcher.create_github_issue(args, author)
         if issue is None:

@@ -1,5 +1,3 @@
-import json
-
 from magic import fetcher
 
 from decksite.view import View

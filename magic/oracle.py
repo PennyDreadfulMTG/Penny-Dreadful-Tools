@@ -54,6 +54,8 @@ def load_card(name):
 
 def load_cards(names=None):
     if names:
+        names = set(names)
+    if names:
         names_clause = 'HAVING LOWER({name_query}) IN ({names})'.format(name_query=card.name_query().format(table='u'), names=', '.join(sqlescape(name).lower() for name in names))
     else:
         names_clause = ''
@@ -106,12 +108,6 @@ def set_legal_cards(force=False, season=None):
         new_list = fetcher.legal_cards(force, season)
     except fetcher.FetchException:
         pass
-    # This was a workaround when fetcher didn't store content.  It's never going to trigger anymore.
-    # if new_list == ['']:
-    #     sql = '{base_query} HAVING pd_legal = 1'.format(base_query=base_query())
-    #     new_list = [r['name'] for r in db().execute(sql)]
-    #     if len(new_list) == 0:
-    #         new_list = fetcher.legal_cards(force=True)
     if season is None:
         format_id = get_format_id('Penny Dreadful')
     else:

@@ -117,13 +117,6 @@ Want to contribute? Send a Pull Request."""
         oracle.legal_cards(force=True)
         await bot.client.send_message(channel, 'Reloaded list of legal cards.')
 
-    # @cmd_header("Developer")
-    # async def updateprices(self, bot, channel):
-    #     """Downloads the prices database. """
-    #     await bot.client.send_message(channel, 'Updating prices, this could be slow.')
-    #     fetcher.fetch_prices()
-    #     await bot.client.send_message(channel, 'Reloaded prices.')
-
     @cmd_header("Developer")
     async def restartbot(self, bot, channel):
         """Restarts the bot."""
@@ -286,6 +279,12 @@ Want to contribute? Send a Pull Request."""
         for file in files:
             os.remove(file)
         await bot.client.send_message(channel, '{n} cleared.'.format(n=len(files)))
+
+    @cmd_header("Commands")
+    async def bug(self, bot, channel, args, author):
+        bot.client.send_typing(channel)
+        issue = fetcher.create_github_issue(args, author)
+        await bot.client.send_message(channel, "Issue has been reported at {url}".format(url=issue.html_url))
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):

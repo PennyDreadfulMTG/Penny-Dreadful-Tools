@@ -11,7 +11,9 @@ DEFAULTS = {
     'scratch_dir': '.',
     'spellfix': './spellfix',
     'to_password': '',
-    'to_username': ''
+    'to_username': '',
+    'github_user': '',
+    'github_password': ''
 }
 
 def get(key):

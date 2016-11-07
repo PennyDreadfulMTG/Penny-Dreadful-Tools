@@ -9,3 +9,4 @@ python-dateutil
 pytz
 requests
 titlecase
+pygithub

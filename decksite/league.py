@@ -6,7 +6,7 @@ from magic import legality
 from shared import dtutil
 from shared.pd_exception import InvalidDataException
 
-from decksite.data import deck, guarantee
+from decksite.data import competition, deck, guarantee
 from decksite.database import db
 from decksite.scrapers import decklist
 
@@ -111,12 +111,8 @@ def active_competition_id_query():
     return "SELECT id FROM competition WHERE start_date < {now} AND end_date > {now} AND competition_type_id = (SELECT id FROM competition_type WHERE name = 'League')".format(now=dtutil.dt2ts(dtutil.now()))
 
 def active_league():
-    sql = """
-        SELECT id, name, start_date, end_date
-        FROM competition
-        WHERE id = ({active_competition_id_query})
-    """.format(active_competition_id_query=active_competition_id_query())
-    return guarantee.exactly_one(db().execute(sql))
+    where_clause = 'c.id = ({id_query})'.format(id_query=active_competition_id_query())
+    return guarantee.exactly_one(competition.load_competitions(where_clause))
 
 def insert_match(params):
     match_id = db().insert("INSERT INTO match (`date`) VALUES (strftime('%s', 'now'))")

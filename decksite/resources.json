@@ -1,0 +1,57 @@
+{
+    "Essentials": {
+        "Official site": "http://pdmtgo.com/",
+        "Legal cards list": "http://pdmtgo.com/legal_cards.txt",
+        "Chat": "https://discord.gg/H6EHdHu",
+        "Reddit": "http://reddit.com/r/PennyDreadfulMTG/",
+        "Card search": "http://magidex.com/search/?q=f:pd"
+    },
+    "Deckbuilding": {
+        "Decklists": "http://pennydreadfulmagic.com/",
+        "Legal cards list": "http://pdmtgo.com/legal_cards.txt",
+        "Card search": "http://magidex.com/search/?q=f:pd",
+        "Deck checker": "http://pdmtgo.com/deck_check.html",
+        "Deck builder": "http://tappedout.net/mtg-deck-builder/penny-dreadful/",
+        "Staples": "http://tappedout.net/mtg-decks/penny-dreadful-staplesseason-two/"
+    },
+    "Tournaments": {
+        "League": "https://www.reddit.com/r/PennyDreadfulMTG/comments/5ah58c/penny_dreadful_league_season_3/",
+        "Gatherling": "https://www.reddit.com/r/PennyDreadfulMTG/comments/56w62y/penny_dreadful_weekly_tournament_at_gatherlingcom/",
+        "Penny Dreadful Thursdays": "http://pennydreadfulthursdays.weebly.com/"
+    },
+    "Blogs": {
+        "pdmgto.com": "http://blog.pdmtgo.com/",
+        "deckbrewing.com": "http://www.deckbrewing.com/",
+        "testingpennydreadful": "http://testingpennydreadful.tumblr.com/"
+    },
+    "League": {
+        "Sign up": "http://pennydreadfulmagic.com/signup/",
+        "Results reporter": "http://pennydreadfulmagic.com/report/",
+        "Records": "http://pennydreadfulmagic.com/competitions/7/",
+        "Season 2-2": "https://www.reddit.com/r/PennyDreadfulMTG/comments/5ah58c/penny_dreadful_league_season_3/",
+        "Season 2-1": "https://www.reddit.com/r/PennyDreadfulMTG/comments/55caky/penny_dreadful_league_season_2/",
+        "Season 1": "https://www.reddit.com/r/PennyDreadfulMTG/comments/50dyzz/penny_dreadful_league/"
+    },
+    "Gatherling": {
+        "Announcement": "https://www.reddit.com/r/PennyDreadfulMTG/comments/56w62y/penny_dreadful_weekly_tournament_at_gatherlingcom/",
+        "Tournament 2-3": "http://gatherling.com/eventreport.php?event=Penny%20Dreadful%20Thursdays%201.03",
+        "Tournament 2-2": "http://gatherling.com/eventreport.php?event=Penny%20Dreadful%20Thursdays%201.02",
+        "Tournament 2-1": "http://gatherling.com/eventreport.php?event=Penny%20Dreadful%20Thursdays%201.01"
+    },
+    "Video": {
+        "j_meka": "http://twitch.tv/j_meka",
+        "Mrs. Mulligan": "https://www.twitch.tv/mrs_mulligan",
+        "Dragonas77": "https://www.twitch.tv/dragonas77/",
+        "silasary": "http://twitch.tv/silasary",
+        "crazybaloth": "http://twitch.tv/the_dark_hand",
+        "testingpennydreadful": "https://www.youtube.com/channel/UCNMDcnME6vo8YOFnW4dRskQ",
+        "Commeradicore": "https://www.twitch.tv/commeradicore"
+    },
+    "Articles": {
+          "Mrs. Mulligan SCG": "http://www.starcitygames.com/article/33860_Penny-Dreadful.html"
+        },
+    "Code": {
+          "Penny Dreadful Tools": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/",
+          "Legality checker": "https://github.com/binarySwordsman/LegalityListCreator"
+    }
+}

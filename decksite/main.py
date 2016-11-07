@@ -9,7 +9,7 @@ from shared.pd_exception import DoesNotExistException
 from decksite import league as lg
 from decksite.data import card as cs, competition as comp, deck, person as ps
 from decksite.league import ReportForm, SignUpForm
-from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, Report, SignUp
+from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, Report, Resources, SignUp
 
 APP = Flask(__name__)
 
@@ -79,6 +79,11 @@ def export(deck_id):
     d = deck.load_deck(deck_id)
     safe_name = re.sub('[^0-9a-z-]', '-', d.name, flags=re.IGNORECASE)
     return (str(d), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
+
+@APP.route('/resources/')
+def resources():
+    view = Resources()
+    return view.page()
 
 # League
 

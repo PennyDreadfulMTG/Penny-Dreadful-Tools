@@ -11,4 +11,5 @@ from .not_found import NotFound
 from .people import People
 from .person import Person
 from .report import Report
+from .resources import Resources
 from .signup import SignUp

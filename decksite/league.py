@@ -97,7 +97,6 @@ def report(form):
         db().execute('UPDATE deck SET losses = losses + 1 WHERE id = ?', [loser])
     else:
         db().execute('UPDATE deck SET draws = draws + 1 WHERE id = ? OR id = ?', [form.entry, form.opponent])
-    print('Committing with winner {winner}'.format(winner=winner))
     db().execute('COMMIT')
     return match_id
 

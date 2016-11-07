@@ -36,6 +36,7 @@ class View:
             {'name': 'Competitions', 'url': url_for('competitions')},
             {'name': 'People', 'url': url_for('people')},
             {'name': 'Cards', 'url': url_for('cards')},
+            {'name': 'Resources', 'url': url_for('resources')},
             {'name': 'Sign Up', 'url': url_for('signup')},
             {'name': 'Report', 'url': url_for('report')},
             {'name': 'About', 'url': url_for('about')}

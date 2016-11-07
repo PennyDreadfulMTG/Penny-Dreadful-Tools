@@ -55,7 +55,7 @@ body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.9em;
     line-height: 1.618;
-    margin: 0 12.5%;
+    margin: 0 12.5% 10rem 12.5%;
 }
 
 b {
@@ -64,6 +64,10 @@ b {
 
 p {
     margin: 0.5rem 0;
+}
+
+.resource {
+    width: 10em;
 }
 
 /* Layout */
@@ -142,6 +146,9 @@ ul.decklist {
 table {
     border-collapse: separate;
     border-spacing: 0.25rem 0;
+}
+
+table.with-marginalia {
     margin-left: -4.5rem;
     margin-right: 0.5rem;
 }

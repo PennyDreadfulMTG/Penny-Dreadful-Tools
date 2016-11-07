@@ -1,6 +1,8 @@
 import csv
 import json
 
+from collections import OrderedDict
+
 import pkg_resources
 
 import magic.fetcher_internal as internal
@@ -53,7 +55,8 @@ def card_price(cardname):
     return fetch_json('http://magic.bluebones.net:5800/{0}/'.format(cardname))
 
 def resources():
-    return fetch_json('http://magic.bluebones.net/pd/resources.json', resource_id='pd_resources')
+    with open('decksite/resources.json') as resources_file:
+        return json.load(resources_file, object_pairs_hook=OrderedDict)
 
 def post(url, data):
     return internal.post(url, data)

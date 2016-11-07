@@ -83,7 +83,7 @@ def name_from_colors(colors, s=''):
     for name, symbols in COLOR_COMBINATIONS.items():
         if mana.order(symbols) == ordered:
             if len(symbols) == 1:
-                if s == 'deck wins' or s == 'weenie':
+                if s.startswith('deck wins') or s.startswith('weenie'):
                     return name
                 return 'mono {name}'.format(name=name)
             return name

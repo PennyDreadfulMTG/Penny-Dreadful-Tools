@@ -4,8 +4,12 @@
             <th class="marginalia" data-sortInitialOrder="desc">↕</th>
             <th>Colors</th>
             <th>Name</th>
-            <th>Person</th>
-            <th>Source</th>
+            {{^hide_person}}
+                <th>Person</th>
+            {{/hide_person}}
+            {{^hide_source}}
+                <th>Source</th>
+            {{/hide_source}}
             <th data-empty="bottom" data-sortInitialOrder="desc">Record</th>
             <th class="c">Top 8</th>
             <th data-sortInitialOrder="desc">Date</th>
@@ -18,12 +22,16 @@
                 <td class="marginalia">{{stars}}</td>
                 <td>{{{colors_safe}}}</td>
                 <td><a href="{{url}}">{{{name}}}</a></td>
-                <td><a href="{{person_url}}">{{person}}</a></td>
-                <td {{#source_sort}}data-text="{{source_sort}}"{{/source_sort}}>
-                    {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
-                    {{{source_indicator}}}
-                    {{#competition_url}}</a>{{/competition_url}}
-                </td>
+                {{^hide_person}}
+                    <td><a href="{{person_url}}">{{person}}</a></td>
+                {{/hide_person}}
+                {{^hide_source}}
+                    <td {{#source_sort}}data-text="{{source_sort}}"{{/source_sort}}>
+                        {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
+                        {{{source_indicator}}}
+                        {{#competition_url}}</a>{{/competition_url}}
+                    </td>
+                {{/hide_source}}
                 <td class="n">
                     {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
                     {{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}

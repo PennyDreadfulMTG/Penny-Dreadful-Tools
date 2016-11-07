@@ -61,6 +61,11 @@ def post(url, data):
     return internal.post(url, data)
 
 def create_github_issue(title, author):
+    if configuration.get("github_user") is None or configuration.get("github_password") is None:
+        return None
+    print(title)
+    if title is None or title == "":
+        return None
     g = Github(configuration.get("github_user"), configuration.get("github_password"))
     repo = g.get_repo("PennyDreadfulMTG/Penny-Dreadful-Tools")
     issue = repo.create_issue(title=title, body="Reported on Discord by {author}".format(author=author))

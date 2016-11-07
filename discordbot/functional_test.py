@@ -40,7 +40,7 @@ def test_commands():
     for cmd in dir(command.Commands):
         if cmd.startswith('_'):
             continue
-        if cmd in ['restartbot', 'updateprices', 'clearimagecache']:
+        if cmd in ['restartbot', 'updateprices', 'clearimagecache', 'bug']:
             continue
 
         channel = generate_fakechannel()

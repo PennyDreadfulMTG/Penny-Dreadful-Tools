@@ -16,7 +16,7 @@ unit:
 	@echo
 	@echo "******************************** Unit Tests ***********************************"
 	@echo
-	@pytest --junitxml=test_results.xml -k $(TEST)
+	@pytest --junitxml=test_results.xml -k $(TEST) -m "not slowtest"
 	@echo
 
 # Run lint on all python files.

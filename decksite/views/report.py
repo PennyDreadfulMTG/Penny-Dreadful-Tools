@@ -1,11 +1,6 @@
-from decksite import league
-from decksite.view import View
+from decksite.views import LeagueForm
 
 # pylint: disable=no-self-use
-class Report(View):
-    def __init__(self, form):
-        self.form = form
-        self.league = league.active_league()
-
+class Report(LeagueForm):
     def subtitle(self):
         return '{league} Result Report'.format(league=self.league['name'])

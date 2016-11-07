@@ -142,6 +142,9 @@ ul.decklist {
 table {
     border-collapse: separate;
     border-spacing: 0.25rem 0;
+}
+
+table.with-marginalia {
     margin-left: -4.5rem;
     margin-right: 0.5rem;
 }

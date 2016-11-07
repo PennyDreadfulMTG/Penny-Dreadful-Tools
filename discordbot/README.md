@@ -18,7 +18,11 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!barbs` Gives Volvary's helpful advice for when to sideboard in Aura Barbs.
 
+`!bug` Report a bug
+
 `!help` Provides information on how to operate the bot.
+
+`!legal` Undocumented Command
 
 `!modofail` Ding!
 

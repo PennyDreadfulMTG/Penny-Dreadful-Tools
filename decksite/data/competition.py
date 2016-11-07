@@ -31,7 +31,7 @@ def load_competition(competition_id):
 
 def load_competitions(where_clause='1 = 1'):
     sql = """
-        SELECT c.id, c.name, c.start_date, c.end_date,
+        SELECT c.id, c.name, c.start_date, c.end_date, c.url,
         COUNT(d.id) AS num_decks
         FROM competition AS c
         INNER JOIN deck AS d ON c.id = d.competition_id

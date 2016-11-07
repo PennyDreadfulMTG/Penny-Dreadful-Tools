@@ -116,9 +116,11 @@ a {
     text-decoration: none;
 }
 
+/* The current visited style was too similar to the .repeat style.  Removing it for now.
 a:visited {
     color: #7F7373;
 }
+*/
 
 p a {
     /* Underline that respect descenders. */
@@ -217,7 +219,8 @@ th.legend {
 }
 
 .repeat:not(span), td .repeat {
-    color: #eee;
+    /*color: #eee; */
+    opacity: 0.8;
 }
 
 /* Menu */

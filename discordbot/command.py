@@ -25,16 +25,13 @@ async def respond_to_card_names(message, bot):
 
 async def handle_command(message, bot):
     parts = message.content.split(' ', 1)
-    cmd = parts[0].lstrip('!').lower()
-    if len(cmd) == 0:
-        return
+    method = find_method(parts[0])
+
     args = ""
     if len(parts) > 1:
         args = parts[1]
 
-    method = [m for m in dir(Commands) if m == cmd or m == '_' + cmd]
-    if len(method) > 0:
-        method = getattr(Commands, method[0])
+    if method is not None:
         if method.__code__.co_argcount == 5:
             await method(Commands, bot, message.channel, args, message.author)
         elif method.__code__.co_argcount == 4:
@@ -46,9 +43,19 @@ async def handle_command(message, bot):
         elif method.__code__.co_argcount == 1:
             await method(Commands)
     else:
-        await bot.client.send_message(message.channel, 'Unknown command `{cmd}`. Try `!help`?'.format(cmd=cmd))
+        await bot.client.send_message(message.channel, 'Unknown command `{cmd}`. Try `!help`?'.format(cmd=parts[0]))
 
-def build_help(readme=False):
+def find_method(name):
+    cmd = name.lstrip('!').lower()
+    if len(cmd) == 0:
+        return
+    method = [m for m in dir(Commands) if m == cmd or m == '_' + cmd]
+    if len(method) > 0:
+        return getattr(Commands, method[0])
+    else:
+        return None
+
+def build_help(readme=False, cmd=None):
     def print_group(group):
         msg = ''
         for methodname in dir(Commands):
@@ -57,14 +64,24 @@ def build_help(readme=False):
             method = getattr(Commands, methodname)
             if getattr(method, "group", None) != group:
                 continue
-            if method.__doc__:
-                if not method.__doc__.startswith('`'):
-                    msg += '\n`!{0}` {1}'.format(methodname, method.__doc__)
-                else:
-                    msg += '\n{0}'.format(method.__doc__)
-            elif readme:
-                msg += '\n`!{0}` Undocumented Command'.format(methodname)
+            msg += '\n' + print_cmd(method, readme)
         return msg
+
+    def print_cmd(method, verbose):
+        if method.__doc__:
+            if not method.__doc__.startswith('`'):
+                return '`!{0}` {1}'.format(method.__name__, method.__doc__)
+            else:
+                return '{0}'.format(method.__doc__)
+        elif verbose:
+            return '`!{0}` No Help Available'.format(method.__name__)
+
+    if cmd:
+        method = find_method(cmd)
+        if method:
+            return print_cmd(method, True)
+        else:
+            return "`{cmd}` is not a valid command.".format(cmd=cmd)
 
     msg = print_group("Commands")
     if readme:
@@ -87,17 +104,20 @@ class Commands:
     """
 
     @cmd_header("Commands")
-    async def help(self, bot, channel):
+    async def help(self, bot, channel, args):
         """`!help` Provides information on how to operate the bot."""
-        msg = """Basic bot usage: Include [cardname] in your regular messages.
-The bot will search for any quoted cards, and respond with the card details.
+        if args:
+            msg = build_help(cmd=args)
+        else:
+            msg = """Basic bot usage: Include [cardname] in your regular messages.
+    The bot will search for any quoted cards, and respond with the card details.
 
-Additional Commands:"""
-        msg += build_help()
-        msg += """
+    Additional Commands:"""
+            msg += build_help()
+            msg += """
 
-Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues
-Want to contribute? Send a Pull Request."""
+    Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues
+    Want to contribute? Send a Pull Request."""
         await bot.client.send_message(channel, msg)
 
     @cmd_header("Commands")

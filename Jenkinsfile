@@ -26,6 +26,7 @@ node{
         }
         FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; coverage run run.py tests --junitxml=test_results.xml')
         junit 'test_results.xml'
+        sh 'PATH=$PATH:~/.local/bin/; coverage xml'
         sh 'PATH=$PATH:~/.local/bin/; python-codacy-coverage -r coverage.xml'
     }
 

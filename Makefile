@@ -41,6 +41,16 @@ readme:
 	@python3 generate_readme.py
 	@echo
 
+
+coverage:
+	@echo
+	@echo "******************************** Test Coverage ********************************"
+	@echo
+	@coverage run run.py tests
+#	@coverage annotate
+	@coverage xml
+	@coverage report
+
 # Make a branch based off of current (remote) master with all your local changes preserved (but not added).
 branch:
 	@if test "$(BRANCH)" = ""; then echo 'Usage: make branch BRANCH=branchname'; exit 1; fi

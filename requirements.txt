@@ -10,3 +10,4 @@ pytz
 requests
 titlecase
 pygithub
+coverage

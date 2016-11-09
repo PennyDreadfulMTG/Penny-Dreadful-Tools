@@ -35,6 +35,11 @@ def run():
             else:
                 m = importlib.import_module('decksite.scrapers.{name}'.format(name=name))
                 m.scrape()
+    elif "tests" in sys.argv:
+        import pytest
+        sys.argv.remove("tests")
+        code = pytest.main()
+        sys.exit(code)
     else:
         print("You didn't tell me what to run or I don't recognize that name")
 

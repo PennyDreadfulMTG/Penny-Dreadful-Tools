@@ -21,7 +21,7 @@ node{
     }
     
     stage('Unit Tests') {
-        withCredentials([file(credentialsId: 'PD_TOOLS_CODACY_TOKEN', variable: 'CODACY_PROJECT_TOKEN')]) {
+        withCredentials([string(credentialsId: 'PD_TOOLS_CODACY_TOKEN', variable: 'CODACY_PROJECT_TOKEN')]) {
             env.CODACY_PROJECT_TOKEN = CODACY_PROJECT_TOKEN
         }
         FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; coverage run run.py tests --junitxml=test_results.xml')

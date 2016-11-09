@@ -7,6 +7,7 @@ node{
 
     stage("pip") {
         sh 'python3 -m pip install -U --user -r requirements.txt'
+        sh 'python3 -m pip install -U --user codacy-coverage'
     }
 
     stage("Spellfix1") {
@@ -20,8 +21,12 @@ node{
     }
     
     stage('Unit Tests') {
-        FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; pytest --junitxml=test_results.xml')
+        withCredentials([file(credentialsId: 'PD_TOOLS_CODACY_TOKEN', variable: 'CODACY_PROJECT_TOKEN')]) {
+            env.CODACY_PROJECT_TOKEN = CODACY_PROJECT_TOKEN
+        }
+        FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; coverage run run.py tests --junitxml=test_results.xml')
         junit 'test_results.xml'
+        sh 'python-codacy-coverage -r coverage.xml'
     }
 
     stage('Pylint') {

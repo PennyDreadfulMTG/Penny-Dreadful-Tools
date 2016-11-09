@@ -78,7 +78,10 @@ def build_help(readme=False, cmd=None):
 
     if cmd:
         method = find_method(cmd)
-        return print_cmd(method, True)
+        if method:
+            return print_cmd(method, True)
+        else:
+            return "`{cmd}` is not a valid command.".format(cmd=cmd)
 
     msg = print_group("Commands")
     if readme:

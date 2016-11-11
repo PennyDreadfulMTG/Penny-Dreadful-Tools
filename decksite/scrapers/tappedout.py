@@ -3,7 +3,6 @@ import urllib
 
 from bs4 import BeautifulSoup
 
-
 from shared import configuration
 from magic import fetcher_internal
 
@@ -107,9 +106,11 @@ def scrape_url(url):
     else:
         raw_deck.update(parse_printable(raw_deck))
     raw_deck = set_values(raw_deck)
-    deck.add_deck(raw_deck)
+    return deck.add_deck(raw_deck)
 
 def parse_printable(raw_deck):
+    """If we're not authorized for the TappedOut API, this method will collect name and author of a deck.
+    It could also grab a date, but I haven't implemented that yet."""
     s = fetcher_internal.fetch(raw_deck['url'] + '?fmt=printable')
     soup = BeautifulSoup(s, 'html.parser')
     raw_deck['name'] = soup.find('h2').string.strip('"')

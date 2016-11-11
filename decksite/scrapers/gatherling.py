@@ -32,6 +32,10 @@ def tournament(url, name):
     dt = dtutil.parse(date_s, '%d %B %Y %H:%M', dtutil.GATHERLING_TZ)
     competition_id = competition.get_or_insert_competition(dt, dt, name, 'Gatherling', url)
 
+    existing = competition.load_competitions('c.id = {competition_id}'.format(competition_id=competition_id))
+    if len(existing) > 0 and existing[0].decks != []:
+        return # We've already done this one.
+
     table = soup.find(text='Current Standings').find_parent('table')
     ranks = rankings(table)
 

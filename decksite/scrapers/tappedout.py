@@ -1,4 +1,7 @@
 import re
+import urllib
+
+from bs4 import BeautifulSoup
 
 from shared import configuration
 from magic import fetcher_internal
@@ -91,3 +94,27 @@ def login(user=None, password=None):
     response = session.post(url, data=data, headers=headers)
     if response.status_code == 403:
         print("Failed to log in")
+
+def scrape_url(url):
+    path = urllib.parse.urlparse(url).path
+    slug = path.split('/')[2]
+    raw_deck = dict()
+    raw_deck['slug'] = slug
+    raw_deck['url'] = url
+    if is_authorised():
+        raw_deck.update(fetch_deck_details(raw_deck))
+    else:
+        raw_deck.update(parse_printable(raw_deck))
+    raw_deck = set_values(raw_deck)
+    return deck.add_deck(raw_deck)
+
+def parse_printable(raw_deck):
+    """If we're not authorized for the TappedOut API, this method will collect name and author of a deck.
+    It could also grab a date, but I haven't implemented that yet."""
+    s = fetcher_internal.fetch(raw_deck['url'] + '?fmt=printable')
+    soup = BeautifulSoup(s, 'html.parser')
+    raw_deck['name'] = soup.find('h2').string.strip('"')
+    infobox = soup.find('table', {'id': 'info_box'})
+    user = infobox.find('td', string="User")
+    raw_deck['user'] = user.find_next_sibling('td').string
+    return raw_deck

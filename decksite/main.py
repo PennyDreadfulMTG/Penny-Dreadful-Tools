@@ -66,8 +66,15 @@ def add_form():
 
 @APP.route('/add/', methods=['POST'])
 def add_deck():
-    decks.add_deck(request.form)
-    return redirect(url_for('add'))
+    url = request.form['url']
+    print(url)
+    if "tappedout" in url:
+        import decksite.scrapers.tappedout
+        deck_id = decksite.scrapers.tappedout.scrape_url(url)
+    else:
+        # This is terrible flow.  Good thing this page isn't accessible anywhere.
+        return internal_server_error("Deck host is not supported.")
+    return redirect(url_for('decks', deck_id=deck_id))
 
 @APP.route('/about/')
 def about():

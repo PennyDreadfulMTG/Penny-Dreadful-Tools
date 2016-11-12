@@ -5,7 +5,7 @@ PD.init = function () {
     $.tablesorter.addParser({
         'id': 'record',
         'is': function(s) {
-            return s.match(/^\d+–\d+$/);
+            return s.match(/^\d+–\d+(–\d+)?$/);
         },
         'format': function(s) {
             var parts, wins, losses;

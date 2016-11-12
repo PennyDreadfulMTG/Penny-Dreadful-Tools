@@ -71,7 +71,7 @@ class View:
             d.person_url = url_for('person', person_id=d.person_id)
             d.date_sort = dtutil.dt2ts(d.date)
             d.display_date = dtutil.display_date(d.date)
-            d.show_record = d.wins or d.losses
+            d.show_record = d.wins or d.losses or d.draws
             d.players = d.players if d.players > 0 else ''
             if d.competition_id:
                 d.competition_url = url_for('competition', competition_id=d.competition_id)
@@ -95,6 +95,7 @@ class View:
             c.pd_legal = c.legalities.get('Penny Dreadful', False)
             c.legal_formats = c.legalities.keys()
             c.has_legal_format = len(c.legal_formats) > 0
+            c.show_record = c.wins or c.losses or c.draws
 
     def prepare_competitions(self):
         for c in getattr(self, 'competitions', []):
@@ -105,7 +106,7 @@ class View:
     def prepare_people(self):
         for p in getattr(self, 'people', []):
             p.url = url_for('person', person_id=p.id)
-            p.show_record = p.wins or p.losses
+            p.show_record = p.wins or p.losses or p.draws
 
 def colors_html(colors, colored_symbols):
     s = ''

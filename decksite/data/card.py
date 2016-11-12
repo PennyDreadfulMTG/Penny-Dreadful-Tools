@@ -15,8 +15,10 @@ def played_cards():
             SUM(CASE WHEN sideboard THEN 1 ELSE 0 END) AS n_sideboards,
             SUM(n) AS count_decks,
             SUM(CASE WHEN sideboard THEN 0 ELSE n END) AS count_maindecks,
-            SUM(CASE WHEN sideboard THEN n ELSE 0 END) AS count_sideboards
-        FROM deck_card
+            SUM(CASE WHEN sideboard THEN n ELSE 0 END) AS count_sideboards,
+            SUM(d.wins) AS wins, SUM(d.losses) AS losses, SUM(d.draws) AS draws
+        FROM deck_card AS dc
+        INNER JOIN deck AS d ON dc.deck_id = d.id
         GROUP BY card
         ORDER BY n_decks DESC, count_decks DESC, n_maindecks DESC, count_maindecks DESC
     """

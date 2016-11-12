@@ -116,14 +116,8 @@ a {
     text-decoration: none;
 }
 
-/* The current visited style was too similar to the .repeat style.  Removing it for now.
-a:visited {
-    color: #7F7373;
-}
-*/
-
 p a {
-    /* Underline that respect descenders. */
+    /* Underline that respects descenders. */
     text-shadow: 0.1rem 0 0 #fff, -0.1rem 0 0 #fff;
     background-image: linear-gradient( to right, currentColor 0%, currentColor 100% );
     background-repeat: repeat-x;
@@ -219,7 +213,6 @@ th.legend {
 }
 
 .repeat:not(span), td .repeat {
-    /*color: #eee; */
     opacity: 0.8;
 }
 

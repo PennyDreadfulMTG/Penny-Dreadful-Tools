@@ -20,7 +20,7 @@ def run():
     elif "srv_price" in sys.argv:
         from price_grabber import srv_prices
         srv_prices.init()
-    elif sys.argv[1] in ["scraper", "scrapers", "maintanance"]:
+    elif sys.argv[1] in ["scraper", "scrapers", "maintenance"]:
         module = sys.argv[1]
         if module == "scraper":
             module = "scrapers"

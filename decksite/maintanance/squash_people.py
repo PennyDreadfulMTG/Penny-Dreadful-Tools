@@ -42,4 +42,4 @@ def squash(old, new):
         END TRANSACTION;
     """.format(new=new, old=old)
     db().execute(sql)
-    return db().value('last_insert_rowid()')
+    return db().value('SELECT last_insert_rowid()')

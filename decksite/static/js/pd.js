@@ -1,4 +1,4 @@
-window.PD = {}
+window.PD = {};
 PD.init = function () {
     $('.fade-repeats').each(PD.fadeRepeats);
     $('.fade-repeats').css('visibility', 'visible').hide().fadeIn('slow');
@@ -9,7 +9,7 @@ PD.init = function () {
         },
         'format': function(s) {
             var parts, wins, losses;
-            if (s == '') {
+            if (s == "") {
                 return '';
             }
             parts = s.split('–');
@@ -17,7 +17,7 @@ PD.init = function () {
             losses = parseInt(parts[1]);
             return ((wins - losses) * 1000 + wins).toString();
         },
-        'type': 'numeric'
+        'type': "numeric"
     });
     $.tablesorter.addParser({
         'id': 'colors',
@@ -37,7 +37,7 @@ PD.init = function () {
         },
         'type': 'numeric'
     });
-    $('table').tablesorter()
+    $('table').tablesorter();
     $('.fade-repeats').bind('sortEnd', PD.fadeRepeats);
     $('input[type=file]').on('change', PD.loadDeck);
 };

@@ -4,7 +4,7 @@ import re
 from flask import Flask, make_response, redirect, request, send_from_directory, url_for
 from werkzeug import exceptions
 
-from shared.pd_exception import DoesNotExistException
+from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 from decksite import league as lg
 from decksite.data import card as cs, competition as comp, deck, person as ps
@@ -68,12 +68,19 @@ def add_form():
 def add_deck():
     url = request.form['url']
     print(url)
+    error = None
     if "tappedout" in url:
         import decksite.scrapers.tappedout
-        deck_id = decksite.scrapers.tappedout.scrape_url(url)
+        try:
+            deck_id = decksite.scrapers.tappedout.scrape_url(url)
+        except InvalidDataException as e:
+            error = e.args[0]
     else:
-        # This is terrible flow.  Good thing this page isn't accessible anywhere.
-        return internal_server_error("Deck host is not supported.")
+        error = "Deck host is not supported."
+    if error is not None:
+        view = AddForm()
+        view.error = error
+        return view.page(), 409
     return redirect(url_for('decks', deck_id=deck_id))
 
 @APP.route('/about/')

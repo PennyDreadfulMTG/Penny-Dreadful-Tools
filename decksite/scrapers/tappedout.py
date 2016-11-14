@@ -3,12 +3,13 @@ import urllib
 
 from bs4 import BeautifulSoup
 
-from shared import configuration
-from magic import fetcher_internal
-
 from decksite import translation
 from decksite.data import deck
 from decksite.scrapers import decklist
+from magic import fetcher_internal, legality
+from shared import configuration
+from shared.pd_exception import InvalidDataException
+
 
 def scrape():
     login()
@@ -106,7 +107,11 @@ def scrape_url(url):
     else:
         raw_deck.update(parse_printable(raw_deck))
     raw_deck = set_values(raw_deck)
-    return deck.add_deck(raw_deck)
+    vivified = decklist.vivify(raw_deck['cards'])
+    if 'Penny Dreadful' not in legality.legal_formats(vivified):
+        raise InvalidDataException('Deck is not legal in Penny Dreadful')
+    else:
+        return deck.add_deck(raw_deck)
 
 def parse_printable(raw_deck):
     """If we're not authorized for the TappedOut API, this method will collect name and author of a deck.

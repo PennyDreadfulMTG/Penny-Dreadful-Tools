@@ -74,10 +74,10 @@ def add_deck():
         try:
             deck_id = decksite.scrapers.tappedout.scrape_url(url)
         except InvalidDataException as e:
-            error = e
+            error = e.args[0]
     else:
         error = "Deck host is not supported."
-    if error:
+    if error is not None:
         view = AddForm()
         view.error = error
         return view.page(), 409

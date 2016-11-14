@@ -134,6 +134,21 @@ def set_legal_cards(force=False, season=None):
 def update_database(new_version):
     db().execute('BEGIN TRANSACTION')
     db().execute('DELETE FROM version')
+    db().execute("""
+    DELETE FROM card;
+    DELETE FROM card_alias;
+    DELETE FROM card_color;
+    DELETE FROM card_color_identity;
+    DELETE FROM card_legality;
+    DELETE FROM card_subtype;
+    DELETE FROM card_supertype;
+    DELETE FROM card_type;
+    DELETE FROM face;
+    DELETE FROM fuzzy;
+    DELETE FROM fuzzy_vocab;
+    DELETE FROM printing;
+    DELETE FROM `set`;
+    """)
     cards = fetcher.all_cards()
     cards = fake_flip_cards(cards)
     melded_faces = []

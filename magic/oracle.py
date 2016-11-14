@@ -144,8 +144,6 @@ def update_database(new_version):
     DELETE FROM card_supertype;
     DELETE FROM card_type;
     DELETE FROM face;
-    DELETE FROM fuzzy;
-    DELETE FROM fuzzy_vocab;
     DELETE FROM printing;
     DELETE FROM `set`;
     """)

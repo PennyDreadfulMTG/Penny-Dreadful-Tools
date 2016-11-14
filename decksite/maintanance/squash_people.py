@@ -1,5 +1,6 @@
 from decksite.data import guarantee, person
 from decksite.database import db
+from decksite.scrapers import tappedout
 
 def run():
     partials = person.load_people('mtgo_username is NULL')
@@ -9,12 +10,14 @@ def run():
         tapped_username = p.name
         guess = person.load_people('mtgo_username = "{0}"'.format(tapped_username))
         print("{0}: {1}".format(tapped_username, len(guess)))
+        if len(guess) == 0 and source == "Tapped Out":
+            raw_data = tappedout.scrape_user(tapped_username)
+            if raw_data['mtgo_username'] is not None:
+                guess = person.load_people('mtgo_username = "{0}"'.format(raw_data['mtgo_username']))
+
         if len(guess) > 0:
             print(guess[0].name)
             squash(guarantee.exactly_one(guess), p)
-
-        if source == "Tapped Out":
-            pass
 
 
 def squash(old, new):

@@ -118,3 +118,15 @@ def parse_printable(raw_deck):
     user = infobox.find('td', string="User")
     raw_deck['user'] = user.find_next_sibling('td').string
     return raw_deck
+
+def scrape_user(username):
+    parsed = {}
+    parsed['username'] = username
+    s = fetcher_internal.fetch('http://tappedout.net/users/{0}/'.format(username))
+    soup = BeautifulSoup(s, 'html.parser')
+    mtgo = soup.find('td', string="MTGO Username")
+    if mtgo is not None:
+        parsed['mtgo_username'] = mtgo.find_next_sibling('td').string
+    else:
+        parsed['mtgo_username'] = None
+    return parsed

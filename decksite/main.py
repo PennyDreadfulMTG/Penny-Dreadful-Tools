@@ -76,7 +76,6 @@ def add_deck():
         except InvalidDataException as e:
             error = e
     else:
-        # This is terrible flow.  Good thing this page isn't accessible anywhere.
         error = "Deck host is not supported."
     if error:
         view = AddForm()

@@ -18,10 +18,15 @@ async def respond_to_card_names(message, bot):
     if 'gatherer.wizards.com' in message.content.lower():
         return
     queries = parse_queries(message.content)
-    if len(queries) == 0:
-        return
-    cards = cards_from_queries(queries)
-    await bot.post_cards(cards, message.channel, message.author)
+    if len(queries) > 0:
+        cards = cards_from_queries(queries)
+        await bot.post_cards(cards, message.channel, message.author)
+
+    matches = re.findall(r'https?://(?:www.)?tappedout.net/mtg-decks/(?P<slug>[\w-]+)/?', message.content, flags=re.IGNORECASE)
+    for match in matches:
+        data = {"url": "http://tappedout.net/mtg-decks/{slug}".format(slug=match)}
+        fetcher.internal.post("http://pennydreadfulmagic.com/add/", data)
+
 
 async def handle_command(message, bot):
     parts = message.content.split(' ', 1)

@@ -42,7 +42,15 @@ def squash(old, new):
         UPDATE deck 
             SET person_id = last_insert_rowid() 
             WHERE person_id IN ({old.id}, {new.id});
+        DELETE FROM deck
+            WHERE person_id IN ({old.id}, {new.id});
         END TRANSACTION;
     """.format(new=new, old=old)
     db().execute(sql)
     return db().value('SELECT last_insert_rowid()')
+
+def squash_ids(old, new):
+    """To simplify the manual merging of people, call this with two person_ids."""
+    old = person.load_person(old)
+    new = person.load_person(new)
+    return squash(old, new)

@@ -97,6 +97,8 @@ def login(user=None, password=None):
         print("Failed to log in")
 
 def scrape_url(url):
+    if not url.endswith('/'):
+        url += '/'
     path = urllib.parse.urlparse(url).path
     slug = path.split('/')[2]
     raw_deck = dict()

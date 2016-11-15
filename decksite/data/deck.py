@@ -189,7 +189,7 @@ def insert_deck_card(deck_id, name, n, in_sideboard):
     return db().execute(sql, [deck_id, card, n, in_sideboard])
 
 def get_or_insert_person_id(mtgo_username, tappedout_username):
-    sql = 'SELECT id FROM person WHERE mtgo_username = ? OR tappedout_username = ?'
+    sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(?) OR LOWER(tappedout_username) = LOWER(?)'
     person_id = db().value(sql, [mtgo_username, tappedout_username])
     if person_id:
         return person_id

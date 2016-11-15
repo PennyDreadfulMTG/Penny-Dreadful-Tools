@@ -65,7 +65,8 @@ def load_cards(names=None):
     """.format(base_query=base_query(), names_clause=names_clause)
     rs = db().execute(sql)
     if names and len(names) != len(rs):
-        raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`'.format(namelen=len(names), rslen=len(rs), names=names))
+        missing = names.symmetric_difference([r['name'] for r in rs])
+        raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`.  missing=`{missing}`'.format(namelen=len(names), rslen=len(rs), names=names, missing=missing))
     return [card.Card(r) for r in rs]
 
 def base_query(where_clause='(1 = 1)'):
@@ -134,6 +135,19 @@ def set_legal_cards(force=False, season=None):
 def update_database(new_version):
     db().execute('BEGIN TRANSACTION')
     db().execute('DELETE FROM version')
+    db().execute("""
+    DELETE FROM card;
+    DELETE FROM card_alias;
+    DELETE FROM card_color;
+    DELETE FROM card_color_identity;
+    DELETE FROM card_legality;
+    DELETE FROM card_subtype;
+    DELETE FROM card_supertype;
+    DELETE FROM card_type;
+    DELETE FROM face;
+    DELETE FROM printing;
+    DELETE FROM `set`;
+    """)
     cards = fetcher.all_cards()
     cards = fake_flip_cards(cards)
     melded_faces = []
@@ -585,6 +599,30 @@ def fake_flip_cards(cards):
         'subtypes': ['Ogre', 'Shaman'],
         'printings': ['COK'],
         'colors': ['Red']
+    }
+    cards["Budoka Gardener"] = {
+        "text": "{T}: You may put a land card from your hand onto the battlefield. If you control ten or more lands, flip Budoka Gardener.",
+        "manacost": "{1}{G}",
+        "type": "Creature — Human Monk",
+        "power": "2",
+        "layout": "flip",
+        "names": ["Budoka Gardener", "Dokai, Weaver of Life"],
+        "types": ["Creature"],
+        'colorIdentity': ['G'],
+        "toughness": "1",
+        "cmc": 2,
+        'imageName': 'budoka gardener',
+        "legalities": [
+            {"format": "Modern", "legality": "Legal"},
+            {"format": "Kamigawa Block", "legality": "Legal"},
+            {"format": "Legacy", "legality": "Legal"},
+            {"format": "Vintage", "legality": "Legal"},
+            {"format": "Commander", "legality": "Legal"}],
+        "name": "Budoka Gardener",
+        "subTypes": ["Human", "Monk"],
+        "printings": ["CHK"],
+        "colors": ["Green"],
+        "rarity": "Rare"
     }
     return cards
 

@@ -3,12 +3,13 @@ import urllib
 
 from bs4 import BeautifulSoup
 
-from shared import configuration
-from magic import fetcher_internal
-
 from decksite import translation
 from decksite.data import deck
 from decksite.scrapers import decklist
+from magic import fetcher_internal, legality
+from shared import configuration
+from shared.pd_exception import InvalidDataException
+
 
 def scrape():
     login()
@@ -96,6 +97,8 @@ def login(user=None, password=None):
         print("Failed to log in")
 
 def scrape_url(url):
+    if not url.endswith('/'):
+        url += '/'
     path = urllib.parse.urlparse(url).path
     slug = path.split('/')[2]
     raw_deck = dict()
@@ -106,7 +109,11 @@ def scrape_url(url):
     else:
         raw_deck.update(parse_printable(raw_deck))
     raw_deck = set_values(raw_deck)
-    return deck.add_deck(raw_deck)
+    vivified = decklist.vivify(raw_deck['cards'])
+    if 'Penny Dreadful' not in legality.legal_formats(vivified):
+        raise InvalidDataException('Deck is not legal in Penny Dreadful')
+    else:
+        return deck.add_deck(raw_deck)
 
 def parse_printable(raw_deck):
     """If we're not authorized for the TappedOut API, this method will collect name and author of a deck.
@@ -118,3 +125,15 @@ def parse_printable(raw_deck):
     user = infobox.find('td', string="User")
     raw_deck['user'] = user.find_next_sibling('td').string
     return raw_deck
+
+def scrape_user(username):
+    parsed = {}
+    parsed['username'] = username
+    s = fetcher_internal.fetch('http://tappedout.net/users/{0}/'.format(username))
+    soup = BeautifulSoup(s, 'html.parser')
+    mtgo = soup.find('td', string="MTGO Username")
+    if mtgo is not None:
+        parsed['mtgo_username'] = mtgo.find_next_sibling('td').string
+    else:
+        parsed['mtgo_username'] = None
+    return parsed

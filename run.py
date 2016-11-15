@@ -20,21 +20,29 @@ def run():
     elif "srv_price" in sys.argv:
         from price_grabber import srv_prices
         srv_prices.init()
-    elif "scraper" in sys.argv:
+    elif sys.argv[1] in ["scraper", "scrapers", "maintenance"]:
+        module = sys.argv[1]
+        if module == "scraper":
+            module = "scrapers"
         name = sys.argv.pop()
         from decksite.main import APP
         APP.config["SERVER_NAME"] = "127:0.0.1:5000"
         with APP.app_context():
             if name == "all":
-                m = importlib.import_module('decksite.scrapers')
+                m = importlib.import_module('decksite.{module}'.format(module=module))
                 #pylint: disable=unused-variable
                 for importer, modname, ispkg in pkgutil.iter_modules(m.__path__):
-                    s = importlib.import_module('decksite.scrapers.{name}'.format(name=modname))
+                    s = importlib.import_module('decksite.{module}.{name}'.format(name=modname, module=module))
                     if getattr(s, "scrape", None) is not None:
                         s.scrape()
+                    elif getattr(s, "run", None) is not None:
+                        s.run()
             else:
-                m = importlib.import_module('decksite.scrapers.{name}'.format(name=name))
-                m.scrape()
+                s = importlib.import_module('decksite.{module}.{name}'.format(name=name, module=module))
+                if getattr(s, "scrape", None) is not None:
+                    s.scrape()
+                elif getattr(s, "run", None) is not None:
+                    s.run()
     elif "tests" in sys.argv:
         import pytest
         sys.argv.remove("tests")

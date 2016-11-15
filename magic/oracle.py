@@ -65,7 +65,8 @@ def load_cards(names=None):
     """.format(base_query=base_query(), names_clause=names_clause)
     rs = db().execute(sql)
     if names and len(names) != len(rs):
-        raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`'.format(namelen=len(names), rslen=len(rs), names=names))
+        missing = names.symmetric_difference([r['name'] for r in rs])
+        raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`.  missing=`{missing}`'.format(namelen=len(names), rslen=len(rs), names=names, missing=missing))
     return [card.Card(r) for r in rs]
 
 def base_query(where_clause='(1 = 1)'):

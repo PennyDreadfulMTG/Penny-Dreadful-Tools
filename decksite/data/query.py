@@ -1,2 +1,2 @@
 def person_query(table='p'):
-    return 'IFNULL(IFNULL({table}.name, LOWER({table}.mtgo_username)), LOWER({table}.tappedout_username))'.format(table=table)
+    return 'LOWER(IFNULL(IFNULL({table}.name, {table}.mtgo_username), {table}.tappedout_username))'.format(table=table)

@@ -1,3 +1,5 @@
+import hashlib
+
 from munch import Munch
 
 from magic import mana, oracle, legality
@@ -22,7 +24,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
             (SELECT COUNT(id) FROM deck WHERE competition_id IS NOT NULL AND competition_id = d.competition_id) AS players,
             d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date,
             {person_query} AS person, p.id AS person_id,
-            d.created_date AS `date`,
+            d.created_date AS `date`, d.decklist_hash,
             s.name AS source_name
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id
@@ -121,6 +123,7 @@ def add_deck(params):
     person_id = get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'))
     deck_id = get_deck_id(params['source'], params['identifier'])
     if deck_id:
+        add_cards(deck_id, params['cards'])
         return deck_id
     archetype_id = get_archetype_id(params.get('archetype'))
     for result in ['wins', 'losses', 'draws']:
@@ -170,13 +173,21 @@ def add_deck(params):
         params.get('finish')
     ]
     deck_id = db().insert(sql, values)
-    for name, n in params['cards']['maindeck'].items():
-        insert_deck_card(deck_id, name, n, False)
-    for name, n in params['cards']['sideboard'].items():
-        insert_deck_card(deck_id, name, n, True)
     sql = 'COMMIT'
     db().execute(sql)
+    add_cards(deck_id, params['cards'])
     return deck_id
+
+def add_cards(deck_id, cards):
+    db().execute("BEGIN TRANSACTION")
+    deckhash = hashlib.sha1(repr(cards).encode('utf-8')).hexdigest()
+    db().execute("UPDATE deck SET decklist_hash = ? WHERE id = ?", [deckhash, deck_id])
+    db().execute("DELETE FROM deck_card WHERE deck_id = ?", [deck_id])
+    for name, n in cards['maindeck'].items():
+        insert_deck_card(deck_id, name, n, False)
+    for name, n in cards['sideboard'].items():
+        insert_deck_card(deck_id, name, n, True)
+    db().execute("COMMIT")
 
 def get_deck_id(source_name, identifier):
     source_id = get_source_id(source_name)

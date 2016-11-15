@@ -602,13 +602,16 @@ def fake_flip_cards(cards):
     }
     cards["Budoka Gardener"] = {
         "text": "{T}: You may put a land card from your hand onto the battlefield. If you control ten or more lands, flip Budoka Gardener.",
-        "subTypes": ["Human", "Monk"],
-        "toughness": "1",
-        "types": ["Creature"],
-        "power": "2",
-        "rarity": "rare",
-        "layout": "flip",
         "manacost": "{1}{G}",
+        "type": "Creature — Human Monk",
+        "power": "2",
+        "layout": "flip",
+        "names": ["Budoka Gardener", "Dokai, Weaver of Life"],
+        "types": ["Creature"],
+        'colorIdentity': ['G'],
+        "toughness": "1",
+        "cmc": 2,
+        'imageName': 'budoka gardener',
         "legalities": [
             {"format": "Modern", "legality": "Legal"},
             {"format": "Kamigawa Block", "legality": "Legal"},
@@ -616,10 +619,10 @@ def fake_flip_cards(cards):
             {"format": "Vintage", "legality": "Legal"},
             {"format": "Commander", "legality": "Legal"}],
         "name": "Budoka Gardener",
-        "names": ["Budoka Gardener", "Dokai, Weaver of Life"],
+        "subTypes": ["Human", "Monk"],
         "printings": ["CHK"],
-        "cmc": 2,
-        "colors": ["green"]
+        "colors": ["Green"],
+        "rarity": "Rare"
     }
     return cards
 

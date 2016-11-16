@@ -9,7 +9,9 @@ def db():
 def setup():
     db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER UNIQUE ON CONFLICT REPLACE NOT NULL)')
     version = db_version()
-    for fn in os.listdir('decksite/sql'):
+    patches = os.listdir('decksite/sql')
+    patches.sort(key=lambda n: int(n.split('.')[0]))
+    for fn in patches:
         path = os.path.join('decksite/sql', fn)
         n = int(fn.split('.')[0])
         if version < n:

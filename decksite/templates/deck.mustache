@@ -4,18 +4,33 @@
         {{> section}}
     {{/sections}}
 </section>
-{{#competition_id}}
+{{#has_record}}
     <section>
         <h2>Competition</h2>
-        <a href="{{competition_url}}">
-            {{stars}}
-            {{competition_name}}
-            {{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}
-            {{#finish}}{{finish}}/{{players}}{{/finish}}
-            {{top8}}
-        </a>
+        <table style="width: 40em">
+            {{#competition_id}}
+                <tr><td class="marginalia">{{stars}}</td>
+                <td style="width: {{row_len}};"><a href="{{competition_url}}">
+                    {{competition_name}}
+                    (Piloted by {{person}})
+                    {{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}
+                    {{top8}}
+                </a></td></tr>
+            {{/competition_id}}
+            {{#twins}}
+                {{#competition_id}}
+                    <tr><td class="marginalia">{{stars}}</td>
+                    <td><a href="{{competition_url}}">
+                        {{competition_name}}
+                        (Piloted by {{person}})
+                        {{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}
+                        {{top8}}
+                    </a></td></tr>
+                {{/competition_id}}
+            {{/twins}}
+        </table>
     </section>
-{{/competition_id}}
+{{/has_record}}
 <section>
     <h2>Notes</h2>
     <p>Source: <a href="{{source_url}}">{{source_name}}</a></p>

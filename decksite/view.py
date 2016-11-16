@@ -65,27 +65,36 @@ class View:
 
     def prepare_decks(self):
         for d in getattr(self, 'decks', []):
-            set_stars_and_top8(d)
+            self.prepare_deck(d)
+
+    def prepare_deck(self, d):
+        set_stars_and_top8(d)
+        if d.get('colors', None):
+            # This is a twin - There's probably a neater way to do this.
             d.colors_safe = colors_html(d.colors, d.colored_symbols)
             d.name = deck_name.normalize(d)
-            d.person_url = url_for('person', person_id=d.person_id)
-            d.date_sort = dtutil.dt2ts(d.date)
-            d.display_date = dtutil.display_date(d.date)
-            d.show_record = d.wins or d.losses or d.draws
-            d.players = d.players if d.players > 0 else ''
-            if d.competition_id:
-                d.competition_url = url_for('competition', competition_id=d.competition_id)
-            d.url = url_for('decks', deck_id=d.id)
-            d.export_url = url_for('export', deck_id=d.id)
-            if d.source_name == 'League':
-                d.source_indicator = 'League'
-                if d.wins + d.losses < 5 and d.competition_end_date > dtutil.now():
-                    d.stars = '⊕ {stars}'.format(stars=d.stars).strip()
-                    d.source_sort = '1'
-            elif d.source_name == 'Gatherling':
-                d.source_indicator = 'Gatherling'
-            elif d.source_name == 'Tapped Out':
-                d.source_indicator = 'Tapped Out'
+        d.person_url = url_for('person', person_id=d.person_id)
+        d.date_sort = dtutil.dt2ts(d.date)
+        d.display_date = dtutil.display_date(d.date)
+        d.show_record = d.wins or d.losses or d.draws
+        d.players = d.players if d.players > 0 else ''
+        if d.competition_id:
+            d.competition_url = url_for('competition', competition_id=d.competition_id)
+        d.url = url_for('decks', deck_id=d.id)
+        d.export_url = url_for('export', deck_id=d.id)
+        if d.source_name == 'League':
+            d.source_indicator = 'League'
+            if d.wins + d.losses < 5 and d.competition_end_date > dtutil.now():
+                d.stars = '⊕ {stars}'.format(stars=d.stars).strip()
+                d.source_sort = '1'
+        elif d.source_name == 'Gatherling':
+            d.source_indicator = 'Gatherling'
+        elif d.source_name == 'Tapped Out':
+            d.source_indicator = 'Tapped Out'
+        d.comp_row_len = len("{comp_name} (Piloted by {person}".format(comp_name=d.competition_name, person=d.person))
+        if d.get('twins', None):
+            for t in d.twins:
+                self.prepare_deck(t)
 
     def prepare_cards(self):
         cards = getattr(self, 'cards', [])

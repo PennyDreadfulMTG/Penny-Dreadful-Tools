@@ -7,26 +7,28 @@
 {{#has_record}}
     <section>
         <h2>Competition</h2>
-        {{#competition_id}}
-            <ul><a href="{{competition_url}}">
-                {{stars}}
-                {{competition_name}}
-                (Piloted by {{person}})
-                {{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}
-                {{top8}}
-            </a></ul>
-        {{/competition_id}}
-        {{#twins}}
+        <table style="width: 40em">
             {{#competition_id}}
-                <ul><a href="{{competition_url}}">
-                    {{stars}}
+                <tr><td class="marginalia">{{stars}}</td>
+                <td style="width: {{row_len}};"><a href="{{competition_url}}">
                     {{competition_name}}
                     (Piloted by {{person}})
                     {{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}
                     {{top8}}
-                </a></ul>
+                </a></td></tr>
             {{/competition_id}}
-        {{/twins}}
+            {{#twins}}
+                {{#competition_id}}
+                    <tr><td class="marginalia">{{stars}}</td>
+                    <td><a href="{{competition_url}}">
+                        {{competition_name}}
+                        (Piloted by {{person}})
+                        {{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}
+                        {{top8}}
+                    </a></td></tr>
+                {{/competition_id}}
+            {{/twins}}
+        </table>
     </section>
 {{/has_record}}
 <section>

@@ -44,6 +44,8 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         d.date = dtutil.ts2dt(d.date)
         set_colors(d)
         set_legality(d)
+        set_twins(d)
+        d.has_record = d.competition_id is not None or True in [True for x in d.twins if x.competition_id is not None]
     return decks
 
 def load_cards(decks):
@@ -94,6 +96,29 @@ def set_legality(d):
             d.legal_icons += '<i class="ss ss-{set} ss-common ss-grad">S1</i>'.format(set=fmt[15:].lower())
     # if "Modern" in d.legal_formats:
     #     d.legal_icons += '<i class="ss ss-8ed ss-uncommon ss-grad icon-modern">MDN</i>'
+
+def set_twins(deck):
+    sql = """
+        SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.draws, d.finish, d.url AS source_url,
+            (SELECT COUNT(id) FROM deck WHERE competition_id IS NOT NULL AND competition_id = d.competition_id) AS players,
+            d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date,
+            {person_query} AS person, p.id AS person_id,
+            d.created_date AS `date`, d.decklist_hash,
+            s.name AS source_name
+        FROM deck AS d
+        INNER JOIN person AS p ON d.person_id = p.id
+        LEFT JOIN competition AS c ON d.competition_id = c.id
+        INNER JOIN source AS s ON d.source_id = s.id
+        WHERE decklist_hash = "{hash}" AND d.id <> {id}
+        """.format(person_query=query.person_query(), hash=deck.decklist_hash, id=deck.id)
+    decks = [Deck(d) for d in db().execute(sql)]
+    for d in decks:
+        d.created_date = dtutil.ts2dt(d.created_date)
+        d.updated_date = dtutil.ts2dt(d.updated_date)
+        if d.competition_end_date:
+            d.competition_end_date = dtutil.ts2dt(d.competition_end_date)
+        d.date = dtutil.ts2dt(d.date)
+    deck.twins = decks
 
 # Expects:
 #

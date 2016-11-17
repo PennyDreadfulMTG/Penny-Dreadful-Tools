@@ -115,7 +115,7 @@ class View:
     def prepare_people(self):
         for p in getattr(self, 'people', []):
             p.url = url_for('person', person_id=p.id)
-            p.show_record = p.wins or p.losses or p.draws
+            p.show_record = p.wins or p.losses or p.get('draws', None)
 
 def colors_html(colors, colored_symbols):
     s = ''

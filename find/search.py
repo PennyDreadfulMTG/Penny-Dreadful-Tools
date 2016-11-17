@@ -156,6 +156,8 @@ def parse_criterion(key, operator, term):
         return rarity_where(operator.value(), term.value())
     elif key.value() == 'mana' or key.value() == 'm':
         return mana_where(operator.value(), term.value())
+    elif  key.value() == 'is':
+        return is_subquery(term.value())
 
 def text_where(column, term):
     q = term
@@ -283,6 +285,22 @@ def init_value_lookup():
         VALUE_LOOKUP[table] = d
         if table == 'color':
             VALUE_LOOKUP['color_identity'] = d
+
+def is_subquery(subquery_name):
+    subqueries = {
+        'gainland': 't:land o:"When ~ enters the battlefield, gain 1 life"',
+        'painland': 't:land o:"~ deals 1 damage to you."',
+        'fetchland': 't:land o:"Search your library for a " (o:"land card" or o:"plains card" or o:"island card" or o:"swamp card" or o:"mountain card" or o:"forest card" or o:"gate card")',
+        'slowland': """t:land o:"~ doesn't untap during your next untap step." """,
+        'storageland': 'o:"storage counter"'
+    }
+    subqueries['fetch'] = subqueries['fetchland']
+    subqueries['refuge'] = subqueries['gainland']
+    query = subqueries.get(subquery_name, '')
+    query = parse(tokenize(query))
+    query = "({0})".format(query)
+    return query
+
 
 class InvalidSearchException(ParseException):
     pass

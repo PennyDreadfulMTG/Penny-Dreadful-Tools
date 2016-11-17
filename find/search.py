@@ -292,13 +292,14 @@ def is_subquery(subquery_name):
         'painland': 't:land o:"~ deals 1 damage to you."',
         'fetchland': 't:land o:"Search your library for a " (o:"land card" or o:"plains card" or o:"island card" or o:"swamp card" or o:"mountain card" or o:"forest card" or o:"gate card")',
         'slowland': """t:land o:"~ doesn't untap during your next untap step." """,
-        'storageland': 'o:"storage counter"',
-        'fetch': 'is:fetchland',
-        'refuge': 'is:gainland'
+        'storageland': 'o:"storage counter"'
     }
-
+    subqueries['fetch'] = subqueries['fetchland']
+    subqueries['refuge'] = subqueries['gainland']
     query = subqueries.get(subquery_name, '')
-    return parse(tokenize(query))
+    query = parse(tokenize(query))
+    query = "({0})".format(query)
+    return query
 
 
 class InvalidSearchException(ParseException):

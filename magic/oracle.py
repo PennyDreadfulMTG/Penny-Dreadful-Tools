@@ -20,6 +20,7 @@ def init():
     set_legal_cards()
     # Don't hardcode this!
     set_legal_cards(season='EMN')
+    update_bugged_cards()
 
 
 # 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold default.
@@ -76,15 +77,18 @@ def base_query(where_clause='(1 = 1)'):
             {face_queries},
             GROUP_CONCAT(face_name, '|') AS names,
             legalities,
-            pd_legal
+            pd_legal,
+            bug_desc
             FROM
                 (SELECT {card_props}, {face_props}, f.name AS face_name,
                 SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal,
-                GROUP_CONCAT(fo.name || ':' || cl.legality) AS legalities
+                GROUP_CONCAT(fo.name || ':' || cl.legality) AS legalities, 
+                bugs.description AS bug_desc
                 FROM card AS c
                 INNER JOIN face AS f ON c.id = f.card_id
                 LEFT OUTER JOIN card_legality AS cl ON c.id = cl.card_id
                 INNER JOIN format AS fo ON cl.format_id = fo.id
+                LEFT OUTER JOIN card_bugs AS bugs ON c.id = bugs.card_id
                 GROUP BY f.id
                 ORDER BY f.card_id, f.position)
             AS u
@@ -172,6 +176,7 @@ def update_database(new_version):
     for row in rs:
         db().execute('UPDATE printing SET rarity_id = ? WHERE rarity = ?', [row['id'], row['name']])
     update_fuzzy_matching()
+    update_bugged_cards()
     db().execute('INSERT INTO version (version) VALUES (?)', [new_version])
     db().execute('COMMIT')
 
@@ -196,6 +201,15 @@ def update_fuzzy_matching():
     aliases = fetcher.card_aliases()
     for alias, name in aliases:
         db().execute('INSERT INTO fuzzy (word, soundslike) VALUES (LOWER(?), ?)', [name, alias])
+
+def update_bugged_cards():
+    db().execute("DELETE FROM card_bugs")
+    for name, bug, _ in fetcher.bugged_cards():
+        card_id = db().value("SELECT card_id FROM face WHERE name = ?", [name])
+        if card_id is None:
+            print("UNKNOWN BUGGED CARD: {card}".format(card=name))
+            continue
+        db().execute("INSERT INTO card_bugs (card_id, description) VALUES (?, ?)", [card_id, bug])
 
 def insert_card(c):
     name = card_name(c)

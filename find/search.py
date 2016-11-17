@@ -299,6 +299,7 @@ def is_subquery(subquery_name):
     query = subqueries.get(subquery_name, '')
     query = parse(tokenize(query))
     query = "({0})".format(query)
+    # print("is:{0} => {1}".format(subquery_name, query))
     return query
 
 

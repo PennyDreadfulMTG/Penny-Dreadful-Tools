@@ -59,6 +59,8 @@ class Bot:
             mana = emoji.replace_emoji(''.join(card.mana_cost or []), channel)
             legal = emoji.legal_emoji(card, True)
             text = '{name} {mana} — {type} — {legal}'.format(name=card.name, mana=mana, type=card.type, legal=legal)
+            if card.bug_desc is not None:
+                text += '\n:beetle:Buggy card: {bug}'.format(bug=card.bug_desc)
         else:
             text = ', '.join('{name} {legal}'.format(name=card.name, legal=emoji.legal_emoji(card)) for card in cards)
             text += more_text

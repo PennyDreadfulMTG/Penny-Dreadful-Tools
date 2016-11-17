@@ -33,8 +33,13 @@ def replace_emoji(text, channel):
 
 def legal_emoji(c, verbose=False):
     if c.name in oracle.legal_cards():
-        return ':white_check_mark:'
-    s = ':no_entry_sign:'
-    if verbose:
-        s += ' (not legal in PD)'
+        s = ':white_check_mark:'
+        if c.bug_desc is not None:
+            s += ":beetle:"
+    else:
+        s = ':no_entry_sign:'
+        if verbose:
+            s += ' (not legal in PD)'
+
+
     return s

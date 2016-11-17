@@ -56,7 +56,7 @@ class Key(Token):
     values = ['coloridentity', 'supertype', 'toughness', 'identity', 'edition', \
         'subtype', 'loyalty', 'format', 'rarity', 'color', 'power', 'super', 'mana', \
         'text', 'type', 'cmc', 'pow', 'set', 'sub', 'tou', 'ci', 'c', 'e', 'f', 'm', \
-        'r', 's', 'o', 't']
+        'r', 's', 'o', 't', 'is']
 
 
 class Operator(Token):

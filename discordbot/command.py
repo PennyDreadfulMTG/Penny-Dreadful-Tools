@@ -201,9 +201,9 @@ class Commands:
             if len(cards) == 0:
                 cards = complex_search(query)
             return random.choice(cards)
-        rhinos.append(find_rhino('f:pd o:"copy of target creature"'))
-        rhinos.append(find_rhino('f:pd o:"return target creature card from your graveyard to the battlefield"'))
-        rhinos.append(find_rhino('f:pd o:"search your library for a creature"'))
+        rhinos.append(find_rhino('o:"copy of target creature"'))
+        rhinos.append(find_rhino('o:"return target creature card from your graveyard to the battlefield"'))
+        rhinos.append(find_rhino('o:"search your library for a creature"'))
         msg = "\nSo of course we have {rhino}.".format(rhino=rhinos[0].name)
         msg += " And we have {copy}. It can become a rhino, so that's a rhino.".format(copy=rhinos[1].name)
         msg += " Then there's {reanimate}. It can get back one of our rhinos, so that's a rhino.".format(reanimate=rhinos[2].name)

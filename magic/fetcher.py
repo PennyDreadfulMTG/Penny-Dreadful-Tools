@@ -69,6 +69,6 @@ def create_github_issue(title, author):
     return issue
 
 def bugged_cards():
-    text = internal.fetch("https://docs.google.com/spreadsheets/d/16mTUqfEaL7NxVD8Sp7CnJ7uTvlk5PudAUQvVssU_HkE/export?format=tsv&id=16mTUqfEaL7NxVD8Sp7CnJ7uTvlk5PudAUQvVssU_HkE&gid=0")
+    text = internal.fetch("https://docs.google.com/spreadsheets/d/16mTUqfEaL7NxVD8Sp7CnJ7uTvlk5PudAUQvVssU_HkE/export?format=tsv&id=16mTUqfEaL7NxVD8Sp7CnJ7uTvlk5PudAUQvVssU_HkE&gid=0", resource_id="bugged_cards_csv")
     lines = [l.split('\t') for l in text.split('\n')]
     return lines[1:]

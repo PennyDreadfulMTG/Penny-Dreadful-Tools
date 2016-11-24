@@ -8,3 +8,17 @@ View individual subdirectories for details
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b4e068a91bd048e9a8e803e8bde29c9d)](https://www.codacy.com/app/clockwork-singularity/Penny-Dreadful-Tools?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PennyDreadfulMTG/Penny-Dreadful-Tools&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/b4e068a91bd048e9a8e803e8bde29c9d)](https://www.codacy.com/app/clockwork-singularity/Penny-Dreadful-Tools?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PennyDreadfulMTG/Penny-Dreadful-Tools&amp;utm_campaign=Badge_Coverage)
 
+# Modules:
+
+**discordbot** is the Discord chatbot.
+
+**decksite** is the code for [http://pennydreadfulmagic.com].
+
+**find** is the code powering our card search syntax.
+
+**magic** is a mess. It handles any shared code that is magic related.
+
+**price-grabber** builds a database of historic prices.
+
+**shared** contains a bunch of general purpose helper classes.
+

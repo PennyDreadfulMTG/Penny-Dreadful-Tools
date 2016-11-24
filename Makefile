@@ -24,19 +24,19 @@ lint:
 	@echo
 	@echo "******************************** Lint *****************************************"
 	@echo
-	@find . -name "*.py" | xargs pylint -f parseable
+	@find . -name "*.py" | grep -v .git | xargs pylint -f parseable
 	@echo
 
 shortlint:
 	@echo
 	@echo "******************************** Lint *****************************************"
 	@echo
-	@find . -name "*.py" | xargs pylint -f parseable -E
+	@find . -name "*.py" | grep -v .git | xargs pylint -f parseable -E
 	@echo
 
 readme:
 	@echo
-	@echo "******************************** Lint *****************************************"
+	@echo "******************************** Generating README ****************************"
 	@echo
 	@python3 generate_readme.py
 	@echo

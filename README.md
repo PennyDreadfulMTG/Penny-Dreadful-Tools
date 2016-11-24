@@ -10,15 +10,15 @@ View individual subdirectories for details
 
 # Modules:
 
-(discordbot)[./tree/master/discordbot#penny-dreadful-discord-bot] is the Discord chatbot.
+**discordbot** is the Discord chatbot.
 
-(decksite)[./tree/master/decksite] is the code for [http://pennydreadfulmagic.com].
+**decksite** is the code for [http://pennydreadfulmagic.com].
 
-(find)[./tree/master/find] is the code powering our card search syntax.
+**find** is the code powering our card search syntax.
 
-(magic)[./tree/master/magic] is a mess. It handles any shared code that is magic related.
+**magic** is a mess. It handles any shared code that is magic related.
 
-(price-grabber)[./tree/master/price-grabber] builds a database of historic prices.
+**price-grabber** builds a database of historic prices.
 
-(shared)[./tree/master/shared] contains a bunch of general purpose helper classes.
+**shared** contains a bunch of general purpose helper classes.
 

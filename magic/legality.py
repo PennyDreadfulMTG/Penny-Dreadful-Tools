@@ -1,4 +1,5 @@
 from magic.database import db
+from magic import oracle
 
 FORMATS = set()
 
@@ -33,6 +34,7 @@ def legal_formats(d, formats_to_check=None):
     return formats
 
 def init():
+    assert len(oracle.legal_cards()) > 0
     FORMATS.clear()
     for v in db().values('SELECT name FROM format'):
         FORMATS.add(v)

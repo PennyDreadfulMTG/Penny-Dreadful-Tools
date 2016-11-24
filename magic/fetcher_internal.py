@@ -28,10 +28,9 @@ def unzip(url, path):
 def fetch(url, character_encoding=None, resource_id=None):
     if_modified_since = None
     if resource_id is None:
-        print('Fetching {url}'.format(url=url))
-    else:
-        if_modified_since = get_last_modified(resource_id)
-        print('Fetching {url} (Last Modified={when})'.format(url=url, when=if_modified_since))
+        resource_id = url
+    if_modified_since = get_last_modified(resource_id)
+    print('Fetching {url} (Last Modified={when})'.format(url=url, when=if_modified_since))
     try:
         headers = {}
         if if_modified_since != None:
@@ -42,16 +41,16 @@ def fetch(url, character_encoding=None, resource_id=None):
         if response.status_code == 304:
             return get_cached_text(resource_id)
         last_modified = response.headers.get("Last-Modified")
-        if resource_id is not None and last_modified is not None:
-            set_last_modified(resource_id, last_modified, response.text)
+        set_last_modified(resource_id, last_modified, response.text)
         return response.text
     except urllib.error.HTTPError as e:
         raise FetchException(e)
     except requests.exceptions.ConnectionError as e:
-        if resource_id is not None and get_last_modified(resource_id) is not None:
+        cache = get_cached_text(resource_id)
+        if cache is not None:
             print("Connection error: {}".format(e))
             print("Used cached value")
-            return get_cached_text(resource_id)
+            return cache
         raise FetchException(e)
 
 def fetch_json(url, character_encoding=None, resource_id=None):

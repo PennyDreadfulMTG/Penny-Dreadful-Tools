@@ -1,5 +1,6 @@
 import os
 import re
+import traceback
 
 from flask import Flask, make_response, redirect, request, send_from_directory, url_for
 from werkzeug import exceptions
@@ -157,11 +158,13 @@ def favicon(rest):
 @APP.errorhandler(DoesNotExistException)
 @APP.errorhandler(exceptions.NotFound)
 def not_found(e):
+    traceback.print_exception(e, e, None)
     view = NotFound(e)
     return view.page(), 404
 
 @APP.errorhandler(exceptions.InternalServerError)
 def internal_server_error(e):
+    traceback.print_exception(e, e, None)
     view = InternalServerError(e)
     return view.page(), 500
 

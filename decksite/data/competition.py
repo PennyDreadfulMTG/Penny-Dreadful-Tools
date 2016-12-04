@@ -34,7 +34,7 @@ def load_competitions(where_clause='1 = 1'):
         SELECT c.id, c.name, c.start_date, c.end_date, c.url,
         COUNT(d.id) AS num_decks
         FROM competition AS c
-        INNER JOIN deck AS d ON c.id = d.competition_id
+        OUTER LEFT JOIN deck AS d ON c.id = d.competition_id
         WHERE {where_clause}
         GROUP BY c.id
         ORDER BY c.start_date DESC, c.name

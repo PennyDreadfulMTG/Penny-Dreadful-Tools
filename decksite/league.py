@@ -1,8 +1,10 @@
 import json
+import datetime
+import calendar
 
 from munch import Munch
 
-from magic import legality
+from magic import legality, rotation
 from shared import dtutil
 from shared.pd_exception import InvalidDataException
 
@@ -112,7 +114,14 @@ def active_competition_id_query():
 
 def active_league():
     where_clause = 'c.id = ({id_query})'.format(id_query=active_competition_id_query())
-    return guarantee.exactly_one(competition.load_competitions(where_clause))
+    leagues = competition.load_competitions(where_clause)
+    if len(leagues) == 0:
+        start_date = datetime.datetime.combine(dtutil.now().date(), datetime.time(tzinfo=datetime.timezone.utc))
+        end_date = determine_end_of_league(start_date)
+        name = "League {MM} {YYYY}".format(MM=calendar.month_name[end_date.month], YYYY=end_date.year)
+        comp_id = competition.get_or_insert_competition(start_date, end_date, name, "League", 'http://pennydreadfulmagic.com/league/')
+        leagues = [competition.load_competition(comp_id)]
+    return guarantee.exactly_one(leagues)
 
 def insert_match(params):
     match_id = db().insert("INSERT INTO match (`date`) VALUES (strftime('%s', 'now'))")
@@ -138,3 +147,16 @@ def get_match(params):
         return rs[0]
     else:
         raise InvalidDataException('Got more than one match from `{params}`'.format(params=params))
+
+def determine_end_of_league(start_date):
+    if start_date.day < 15:
+        month = start_date.month + 1
+    else:
+        month = start_date.month + 2
+    if month > 12:
+        end_date = datetime.datetime(start_date.year + 1, month - 12, 1, tzinfo=datetime.timezone.utc)
+    else:
+        end_date = datetime.datetime(start_date.year, month, 1, tzinfo=datetime.timezone.utc)
+    if end_date > rotation.next_rotation():
+        end_date = rotation.next_rotation()
+    return end_date - datetime.timedelta(seconds=1)

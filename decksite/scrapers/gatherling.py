@@ -33,8 +33,6 @@ def tournament(url, name):
     competition_id = competition.get_or_insert_competition(dt, dt, name, 'Gatherling', url)
 
     existing = competition.load_competitions('c.id = {competition_id}'.format(competition_id=competition_id))
-    if len(existing) > 0 and existing[0].decks != []:
-        return # We've already done this one.
 
     table = soup.find(text='Current Standings').find_parent('table')
     ranks = rankings(table)
@@ -100,6 +98,8 @@ def tournament_deck(cells, competition_id, date, ranks):
         d['archetype'] = cells[5].string
     gatherling_id = urllib.parse.parse_qs(urllib.parse.urlparse(d['url']).query)['id'][0]
     d['identifier'] = gatherling_id
+    if deck.get_deck_id(d['source'], d['identifier']) is not None:
+        return
     d['cards'] = decklist.parse(fetcher.internal.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
     deck.add_deck(d)
 

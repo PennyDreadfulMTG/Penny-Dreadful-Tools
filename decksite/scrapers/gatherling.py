@@ -84,7 +84,7 @@ def tournament_deck(cells, competition_id, date, ranks):
         else:
             raise InvalidDataException('Unknown player image `{img}`'.format(img=img))
     else:
-        d['finish'] = ranks[d['mtgo_username']]
+        d['finish'] = ranks.get(d['mtgo_username'], None)
     parts = cells[3].string.split('-')
     d['wins'] = parts[0]
     d['losses'] = parts[1]

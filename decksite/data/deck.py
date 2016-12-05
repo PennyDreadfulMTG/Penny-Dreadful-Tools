@@ -46,6 +46,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         set_legality(d)
         set_twins(d)
         d.has_record = d.competition_id is not None or True in [True for x in d.twins if x.competition_id is not None]
+        d.can_draw = "Divine Intervention" in [card.name for card in d.all_cards()]
     return decks
 
 def load_cards(decks):

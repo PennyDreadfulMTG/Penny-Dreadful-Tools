@@ -40,6 +40,7 @@ PD.init = function () {
     $('table').tablesorter();
     $('.fade-repeats').bind('sortEnd', PD.fadeRepeats);
     $('input[type=file]').on('change', PD.loadDeck);
+    $('.deckselect').on('change', PD.toggleDrawDropdown);
 };
 PD.fadeRepeats = function () {
     var current, previous;
@@ -65,6 +66,20 @@ PD.loadDeck = function () {
         $('textarea').val(e.target.result);
     };
     reader.readAsText(file);
+}
+PD.toggleDrawDropdown = function () {
+    var can_draw = false;
+    $(document).find(".deckselect").each(function(_, select) {
+        can_draw = can_draw || select.selectedOptions[0].classList.contains("deck-can-draw");
+    });
+    if (can_draw) {
+        $(".draw-report").css('visibility', 'visible');
+    }
+    else {
+        $(".draw-report").css('visibility', 'hidden');
+        $("#draws").val(0);
+    }
+    return can_draw;
 }
 $(document).ready(function () {
     PD.init();

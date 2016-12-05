@@ -385,3 +385,7 @@ input.error, select.error, textarea.error {
     margin-top: 0;
     text-align: left;
 }
+
+.draw-report {
+    visibility: hidden;
+}

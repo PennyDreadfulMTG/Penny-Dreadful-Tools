@@ -84,7 +84,7 @@ def identifier(params):
     return json.dumps([params['mtgo_username'], params['name'], params['competition_id']])
 
 def deck_options(decks, v):
-    return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id)} for d in decks]
+    return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
 
 def active_decks():
     decks = deck.load_decks("d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND wins + losses < 5".format(active_competition_id_query=active_competition_id_query()))
@@ -116,7 +116,7 @@ def active_league():
     where_clause = 'c.id = ({id_query})'.format(id_query=active_competition_id_query())
     leagues = competition.load_competitions(where_clause)
     if len(leagues) == 0:
-        start_date = datetime.datetime.combine(dtutil.now().date(), datetime.time(tzinfo=datetime.timezone.utc))
+        start_date = datetime.datetime.combine(dtutil.now().date(), datetime.time(tzinfo=dtutil.WOTC_TZ))
         end_date = determine_end_of_league(start_date)
         name = "League {MM} {YYYY}".format(MM=calendar.month_name[end_date.month], YYYY=end_date.year)
         comp_id = competition.get_or_insert_competition(start_date, end_date, name, "League", 'http://pennydreadfulmagic.com/league/')
@@ -154,9 +154,9 @@ def determine_end_of_league(start_date):
     else:
         month = start_date.month + 2
     if month > 12:
-        end_date = datetime.datetime(start_date.year + 1, month - 12, 1, tzinfo=datetime.timezone.utc)
+        end_date = datetime.datetime(start_date.year + 1, month - 12, 1, tzinfo=dtutil.WOTC_TZ)
     else:
-        end_date = datetime.datetime(start_date.year, month, 1, tzinfo=datetime.timezone.utc)
+        end_date = datetime.datetime(start_date.year, month, 1, tzinfo=dtutil.WOTC_TZ)
     if end_date > rotation.next_rotation():
         end_date = rotation.next_rotation()
     return end_date - datetime.timedelta(seconds=1)

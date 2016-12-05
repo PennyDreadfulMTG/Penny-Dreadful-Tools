@@ -4,20 +4,20 @@
     <form method="post">
         <div>
             <label for="entry">Your Deck</label>
-            <select {{#form.errors.entry}}class="error" {{/form.errors.entry}}name="entry" id="entry">
+            <select class="{{#form.errors.entry}}error {{/form.errors.entry}}deckselect" name="entry" id="entry">
                 <option value="">Choose …</option>
                 {{#form.entry_options}}
-                    <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{text}}</option>
+                    <option value="{{value}}" {{#selected}}selected="selected"{{/selected}} {{#can_draw}} class="deck-can-draw" {{/can_draw}} >{{text}}</option>
                 {{/form.entry_options}}
             </select>
             <div class="error">{{form.errors.entry}}</div>
         </div>
         <div>
             <label for="opponent">Opponent</label>
-            <select {{#form.errors.opponent}}class="error" {{/form.errors.opponent}}name="opponent" id="opponent">
+            <select class="{{#form.errors.opponent}}error {{/form.errors.opponent}} deckselect" name="opponent" id="opponent">
                 <option value="">Choose …</option>
                 {{#form.opponent_options}}
-                    <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{text}}</option>
+                    <option value="{{value}}" {{#selected}}selected="selected"{{/selected}} {{#can_draw}} class="deck-can-draw" {{/can_draw}}>{{text}}</option>
                 {{/form.opponent_options}}
             </select>
             <div class="error">{{form.errors.opponent}}</div>
@@ -30,6 +30,9 @@
                     <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{text}}</option>
                 {{/form.result_options}}
             </select>
+            <span class="draw-report">
+                -<input name="draws" id="draws" type="number" value="0" min="0">
+            </span>
             <div class="error">{{form.errors.result}}</div>
         </div>
         <button type="submit">Report</button>

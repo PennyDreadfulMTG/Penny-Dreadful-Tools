@@ -22,7 +22,12 @@ class Database:
         try:
             return self.cursor.execute(sql, args).fetchall()
         except apsw.Error as e:
-            raise DatabaseException('Failed to execute `{sql}` because of `{e}`'.format(sql=sql, e=e))from e
+            # Quick fix for league bugs
+            if "cannot start a transaction within a transaction" in str(e):
+                self.execute("ROLLBACK")
+                if sql == "BEGIN TRANSACTION":
+                    return self.cursor.execute(sql, args).fetchall()
+            raise DatabaseException('Failed to execute `{sql}` because of `{e}`'.format(sql=sql, e=e)) from e
 
     def value(self, sql, args=None, default=None, fail_on_missing=False):
         try:

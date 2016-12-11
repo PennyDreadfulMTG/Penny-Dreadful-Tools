@@ -25,8 +25,9 @@ def mci_image(printing) -> str:
     return "http://magiccards.info/scans/en/{code}/{number}.jpg".format(code=printing.set_code.lower(), number=printing.number)
 
 def gatherer_image(printing) -> str:
-    if printing.multiverse_id and int(printing.multiverse_id) > 0:
-        return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(printing.multiverse_id) + '.jpg'
+    multiverse_id = printing.multiverseid
+    if multiverse_id and int(multiverse_id) > 0:
+        return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(multiverse_id) + '.jpg'
 
 def download_image(cards) -> str:
     # helper functions:
@@ -57,7 +58,7 @@ def download_image(cards) -> str:
 
     printings = oracle.get_printings(cards[0])
     for p in printings:
-        print("Trying to get MCI image for {imagename}")
+        print("Trying to get MCI image for {imagename}".format(imagename=imagename))
         try:
             internal.store(mci_image(p), filepath)
             if internal.acceptable_file(filepath):
@@ -66,7 +67,7 @@ def download_image(cards) -> str:
             print('Error: {e}'.format(e=e))
         print('Trying to get fallback image for {imagename}'.format(imagename=imagename))
         try:
-            internal.store(gatherer_image(printing), filepath)
+            internal.store(gatherer_image(p), filepath)
             if internal.acceptable_file(filepath):
                 return filepath
         except FetchException as e:

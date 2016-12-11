@@ -2,7 +2,6 @@ import urllib
 
 from flask import url_for
 
-from magic import image_fetcher
 from shared import dtutil
 
 from decksite import deck_name
@@ -101,7 +100,7 @@ class View:
         cards = getattr(self, 'cards', [])
         for c in cards:
             c.url = url_for('card', name=c.name)
-            # c.img_url = 'http://magic.bluebones.net/proxies/?c={name}'.format(name=urllib.parse.quote(c.name))
+            c.img_url = 'http://magic.bluebones.net/proxies/?c={name}'.format(name=urllib.parse.quote(c.name))
             c.img_url = 'https://deckbox.org/mtg/' + c.name + '/tooltip'
             c.pd_legal = c.legalities.get('Penny Dreadful', False)
             c.legal_formats = c.legalities.keys()

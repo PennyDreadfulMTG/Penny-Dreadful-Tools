@@ -10,7 +10,7 @@ def test_imagedownload():
     filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='island.jpg')
     if fetcher_internal.acceptable_file(filepath):
         os.remove(filepath)
-    c = card.Card({'id': 0, 'name': 'Island', 'names': 'Island'})
+    c = card.Card({'id': 26302, 'name': 'Island', 'names': 'Island'})
     assert image_fetcher.download_image([c]) is not None
 
 # Check that we can fall back to the Gatherer images if all else fails.

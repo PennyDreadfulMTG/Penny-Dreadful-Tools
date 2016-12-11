@@ -10,8 +10,9 @@ def test_imagedownload():
     filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='island.jpg')
     if fetcher_internal.acceptable_file(filepath):
         os.remove(filepath)
-    c = card.Card({'id': 26302, 'name': 'Island', 'names': 'Island'})
-    assert image_fetcher.download_image([c]) is not None
+    c = []
+    c.extend(oracle.cards_from_query('Island'))
+    assert image_fetcher.download_image(c) is not None
 
 # Check that we can fall back to the Gatherer images if all else fails.
 # Note: bluebones doesn't have Nalathni Dragon, while Gatherer does, which makes it slightly unique

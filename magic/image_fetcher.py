@@ -10,16 +10,26 @@ from shared import configuration
 if not os.path.exists(configuration.get('image_dir')):
     os.mkdir(configuration.get('image_dir'))
 
+def basename(cards):
+    from magic import card
+    return '_'.join(re.sub('[^a-z-]', '-', card.canonicalize(c.name)) for c in cards)
+def bluebones_image(cards) -> str:
+    c = '|'.join(card.name for card in cards)
+    return 'http://magic.bluebones.net/proxies/?c={c}'.format(c=escape(c))
+
+def bluebones_alt_image(cards) -> str:
+    c = '|'.join(card.name for card in cards)
+    return 'http://magic.bluebones.net/proxies/index2.php?c={c}'.format(c=escape(c))
+
+def mci_image(printing) -> str:
+    return "http://magiccards.info/scans/en/{code}/{number}.jpg".format(code=printing.set_code.lower(), number=printing.number)
+
+def gatherer_image(printing) -> str:
+    if printing.multiverse_id and int(printing.multiverse_id) > 0:
+        return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(printing.multiverse_id) + '.jpg'
+
 def download_image(cards) -> str:
     # helper functions:
-    def basename(cards):
-        from magic import card
-        return '_'.join(re.sub('[^a-z-]', '-', card.canonicalize(c.name)) for c in cards)
-    def better_image(cards) -> str:
-        c = '|'.join(card.name for card in cards)
-        return 'http://magic.bluebones.net/proxies/?c={c}'.format(c=escape(c))
-    def http_image(multiverse_id) -> str:
-        return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(multiverse_id)    +'.jpg'
 
     imagename = basename(cards)
     # Hash the filename if it's otherwise going to be too large to use.
@@ -31,21 +41,34 @@ def download_image(cards) -> str:
         return filepath
     print('Trying to get first choice image for {cards}'.format(cards=', '.join(card.name for card in cards)))
     try:
-        internal.store(better_image(cards), filepath)
+        internal.store(bluebones_image(cards), filepath)
+    except FetchException as e:
+        print('Error: {e}'.format(e=e))
+    if internal.acceptable_file(filepath):
+        return filepath
+
+    print('Trying to get second choice image for {cards}'.format(cards=', '.join(card.name for card in cards)))
+    try:
+        internal.store(bluebones_alt_image(cards), filepath)
     except FetchException as e:
         print('Error: {e}'.format(e=e))
     if internal.acceptable_file(filepath):
         return filepath
 
     printings = oracle.get_printings(cards[0])
-    if len(printings) > 0:
-        multiverse_id = printings[0].multiverseid
-        if multiverse_id and int(multiverse_id) > 0:
-            print('Trying to get fallback image for {imagename}'.format(imagename=imagename))
-            try:
-                internal.store(http_image(multiverse_id), filepath)
-            except FetchException as e:
-                print('Error: {e}'.format(e=e))
+    for p in printings:
+        print("Trying to get MCI image for {imagename}")
+        try:
+            internal.store(mci_image(p), filepath)
             if internal.acceptable_file(filepath):
                 return filepath
+        except FetchException as e:
+            print('Error: {e}'.format(e=e))
+        print('Trying to get fallback image for {imagename}'.format(imagename=imagename))
+        try:
+            internal.store(gatherer_image(printing), filepath)
+            if internal.acceptable_file(filepath):
+                return filepath
+        except FetchException as e:
+            print('Error: {e}'.format(e=e))
     return None

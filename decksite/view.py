@@ -101,6 +101,7 @@ class View:
         for c in cards:
             c.url = url_for('card', name=c.name)
             c.img_url = 'http://magic.bluebones.net/proxies/?c={name}'.format(name=urllib.parse.quote(c.name))
+            c.img_url = 'https://deckbox.org/mtg/' + c.name + '/tooltip'
             c.pd_legal = c.legalities.get('Penny Dreadful', False)
             c.legal_formats = c.legalities.keys()
             c.has_legal_format = len(c.legal_formats) > 0

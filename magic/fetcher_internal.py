@@ -90,8 +90,7 @@ class FetchException(OperationalException):
     pass
 
 def acceptable_file(filepath: str) -> bool:
-    # "This site is temporarily down because Wizards of the Coast sent me a DMCA notice." is 83 bytes.
-    return os.path.isfile(filepath) and os.path.getsize(filepath) > 85
+    return os.path.isfile(filepath) and os.path.getsize(filepath) > 1000
 
 def escape(str_input) -> str:
     # Expand 'AE' into two characters. This matches the legal list and

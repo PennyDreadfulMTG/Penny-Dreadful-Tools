@@ -61,8 +61,9 @@ def legal_cards(force=False):
     return LEGAL_CARDS
 
 def get_printings(generalized_card: card.Card):
-    sql = 'SELECT ' + (', '.join(property for property in card.printing_properties())) \
-        + ' FROM printing ' \
+    sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code' \
+        + ' FROM printing AS p' \
+        + ' OUTER LEFT JOIN `set` AS s ON p.set_id = s.id' \
         + ' WHERE card_id = ? '
     rs = db().execute(sql, [generalized_card.id])
     return [card.Printing(r) for r in rs]

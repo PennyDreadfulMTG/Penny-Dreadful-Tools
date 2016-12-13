@@ -19,3 +19,4 @@ test_results.xml
 Thumbs.db
 coverage.xml
 *.py,cover
+.vs/

@@ -129,7 +129,7 @@ def update_bugged_cards():
     # This may or may not be within a TRANSACTION. Use a SAVEPOINT.
     db().execute("SAVEPOINT bugs")
     db().execute("DELETE FROM card_bugs")
-    for name, bug, _ in fetcher.bugged_cards():
+    for name, bug, _, __ in fetcher.bugged_cards():
         card_id = db().value("SELECT card_id FROM face WHERE name = ?", [name])
         if card_id is None:
             print("UNKNOWN BUGGED CARD: {card}".format(card=name))

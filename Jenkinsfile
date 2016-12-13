@@ -26,6 +26,9 @@ node{
         }
         FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; coverage run run.py tests --junitxml=test_results.xml')
         junit 'test_results.xml'
+        if (FailedTests) {
+            error 'Failed a test'
+        }
         sh 'PATH=$PATH:~/.local/bin/; coverage xml'
         sh 'PATH=$PATH:~/.local/bin/; python-codacy-coverage -r coverage.xml'
     }
@@ -33,10 +36,6 @@ node{
     stage('Pylint') {
         sh 'PATH=$PATH:~/.local/bin/; make lint | tee pylint.log'
         step([$class: 'WarningsPublisher', canComputeNew: false, canResolveRelativePaths: false, canRunOnFailed: true, excludePattern: '', failedTotalHigh: '0', unstableTotalAll: '0', healthy: '0', includePattern: '', messagesPattern: '', parserConfigurations: [[parserName: 'PyLint', pattern: 'pylint.log']], unHealthy: '10'])
-    }
-
-    if (FailedTests) {
-        error 'Failed a test'
     }
 
     stage('Update Readme') {

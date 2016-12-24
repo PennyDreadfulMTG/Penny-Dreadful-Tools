@@ -14,6 +14,7 @@ class Bot:
 
     async def on_ready(self):
         print('Logged in as {username} ({id})'.format(username=self.client.user.name, id=self.client.user.id))
+        print('Connected to {0}'.format(', '.join([server.name for server in self.client.servers])))
         print('--------')
 
     async def on_message(self, message):

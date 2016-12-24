@@ -233,6 +233,8 @@ class Commands:
                 p = fetcher.card_price(c.name)
             except fetcher.FetchException:
                 return "Price unavailable"
+            if p is None:
+                return "Not available online"
             s = '{price}'.format(price=format_price(p['price']))
             if p['low'] <= 0.05:
                 s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))

@@ -14,16 +14,16 @@ def get_or_insert_competition(start_date, end_date, name, competition_type, url)
     sql = """
         SELECT id
         FROM competition
-        WHERE start_date = ? AND end_date = ? AND name = ? AND competition_type_id = ? AND url = ?
+        WHERE start_date = %s AND end_date = %s AND name = %s AND competition_type_id = %s AND url = %s
     """
     competition_id = db().value(sql, values)
     if competition_id:
         return competition_id
-    sql = 'INSERT INTO competition (start_date, end_date, name, competition_type_id, url) VALUES (?, ?, ?, ?, ?)'
+    sql = 'INSERT INTO competition (start_date, end_date, name, competition_type_id, url) VALUES (%s, %s, %s, %s, %s)'
     return db().insert(sql, values)
 
 def type_id(competition_type):
-    sql = 'SELECT id FROM competition_type WHERE name = ?'
+    sql = 'SELECT id FROM competition_type WHERE name = %s'
     return db().value(sql, [competition_type])
 
 def load_competition(competition_id):
@@ -34,7 +34,7 @@ def load_competitions(where_clause='1 = 1'):
         SELECT c.id, c.name, c.start_date, c.end_date, c.url,
         COUNT(d.id) AS num_decks
         FROM competition AS c
-        OUTER LEFT JOIN deck AS d ON c.id = d.competition_id
+        LEFT OUTER JOIN deck AS d ON c.id = d.competition_id
         WHERE {where_clause}
         GROUP BY c.id
         ORDER BY c.start_date DESC, c.name
@@ -47,6 +47,8 @@ def load_competitions(where_clause='1 = 1'):
     return competitions
 
 def set_decks(competitions):
+    if competitions == []:
+        return
     competitions_by_id = {c.id: c for c in competitions}
     where_clause = 'competition_id IN ({ids})'.format(ids=', '.join(str(k) for k in competitions_by_id.keys()))
     decks = deck.load_decks(where_clause)

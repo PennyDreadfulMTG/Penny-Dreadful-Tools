@@ -4,6 +4,7 @@ from shared import configuration
 from shared.database import Database, sqlescape, sqllikeescape
 from shared.pd_exception import DatabaseException
 
+
 def location():
     return '{scratch_dir}/tmp.sqlite'.format(scratch_dir=configuration.get('scratch_dir'))
 

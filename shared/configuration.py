@@ -13,7 +13,11 @@ DEFAULTS = {
     'to_password': '',
     'to_username': '',
     'github_user': '',
-    'github_password': ''
+    'github_password': '',
+    'mysql_host': 'localhost',
+    'mysql_port': 3306,
+    'mysql_user': 'pennydreadful',
+    'mysql_passwd': '',
 }
 
 def get(key):

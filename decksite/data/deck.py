@@ -50,6 +50,8 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
     return decks
 
 def load_cards(decks):
+    if decks == []:
+        return
     deck_ids = ', '.join(str(sqlescape(deck.id)) for deck in decks)
     sql = """
         SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN ({deck_ids})
@@ -155,8 +157,7 @@ def add_deck(params):
     for result in ['wins', 'losses', 'draws']:
         if params.get('competition_id') and not params.get(result):
             params[result] = 0
-    sql = 'BEGIN TRANSACTION'
-    db().execute(sql)
+    db().begin()
     sql = """INSERT INTO deck (
         created_date,
         updated_date,
@@ -177,7 +178,7 @@ def add_deck(params):
         draws,
         finish
     ) VALUES (
-         IFNULL(?, strftime('%s', 'now')),  strftime('%s', 'now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+         IFNULL(%s, DATE_FORMAT(now(), '%%s')),  DATE_FORMAT(now(), '%%s'), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
     )"""
     values = [
         params.get('created_date'),
@@ -199,16 +200,15 @@ def add_deck(params):
         params.get('finish')
     ]
     deck_id = db().insert(sql, values)
-    sql = 'COMMIT'
-    db().execute(sql)
+    db().commit()
     add_cards(deck_id, params['cards'])
     return deck_id
 
 def add_cards(deck_id, cards):
-    db().execute("BEGIN TRANSACTION")
+    db().begin()
     deckhash = hashlib.sha1(repr(cards).encode('utf-8')).hexdigest()
-    db().execute("UPDATE deck SET decklist_hash = ? WHERE id = ?", [deckhash, deck_id])
-    db().execute("DELETE FROM deck_card WHERE deck_id = ?", [deck_id])
+    db().execute("UPDATE deck SET decklist_hash = %s WHERE id = %s", [deckhash, deck_id])
+    db().execute("DELETE FROM deck_card WHERE deck_id = %s", [deck_id])
     for name, n in cards['maindeck'].items():
         insert_deck_card(deck_id, name, n, False)
     for name, n in cards['sideboard'].items():
@@ -217,31 +217,31 @@ def add_cards(deck_id, cards):
 
 def get_deck_id(source_name, identifier):
     source_id = get_source_id(source_name)
-    sql = 'SELECT id FROM deck WHERE source_id = ? AND identifier = ?'
+    sql = 'SELECT id FROM deck WHERE source_id = %s AND identifier = %s'
     return db().value(sql, [source_id, identifier])
 
 def insert_deck_card(deck_id, name, n, in_sideboard):
     card = oracle.valid_name(name)
-    sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (?, ?, ?, ?)'
+    sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (%s, %s, %s, %s)'
     return db().execute(sql, [deck_id, card, n, in_sideboard])
 
 def get_or_insert_person_id(mtgo_username, tappedout_username):
-    sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(?) OR LOWER(tappedout_username) = LOWER(?)'
+    sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s)'
     person_id = db().value(sql, [mtgo_username, tappedout_username])
     if person_id:
         return person_id
-    sql = 'INSERT INTO person (mtgo_username, tappedout_username) VALUES (?, ?)'
+    sql = 'INSERT INTO person (mtgo_username, tappedout_username) VALUES (%s, %s)'
     return db().insert(sql, [mtgo_username, tappedout_username])
 
 def get_source_id(source):
-    sql = 'SELECT id FROM source WHERE name = ?'
+    sql = 'SELECT id FROM source WHERE name = %s'
     source_id = db().value(sql, [source])
     if not source_id:
         raise InvalidDataException('Unknown source: `{source}`'.format(source=source))
     return source_id
 
 def get_archetype_id(archetype):
-    sql = 'SELECT id FROM archetype WHERE name = ?'
+    sql = 'SELECT id FROM archetype WHERE name = %s'
     return db().value(sql, [archetype])
 
 class Deck(Munch):

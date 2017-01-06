@@ -19,12 +19,15 @@ node{
             sh 'gcc -fPIC -shared spellfix.c -o spellfix.so'
         }
     }
-    
+
     stage('Unit Tests') {
         withCredentials([string(credentialsId: 'PD_TOOLS_CODACY_TOKEN', variable: 'CODACY_PROJECT_TOKEN')]) {
             env.CODACY_PROJECT_TOKEN = CODACY_PROJECT_TOKEN
         }
-        FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; coverage run run.py tests --junitxml=test_results.xml')
+        docker.image('mysql').withRun('-P -e MYSQL_RANDOM_ROOT_PASSWORD=yes -e MYSQL_USER=pennydreadful -e MYSQL_DATABASE=decksite ') { c ->
+            env.mysql_port = c.port(3306)
+            FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; coverage run run.py tests --junitxml=test_results.xml')
+        }
         junit 'test_results.xml'
         if (FailedTests) {
             error 'Failed a test'

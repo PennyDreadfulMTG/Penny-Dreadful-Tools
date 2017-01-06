@@ -29,6 +29,7 @@ node{
             env.mysql_port = c.port(3306)
             FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; coverage run run.py tests --junitxml=test_results.xml')
         }
+        sh 'docker volume ls -qf dangling=true | xargs -r docker volume rm'
         junit 'test_results.xml'
         if (FailedTests) {
             error 'Failed a test'

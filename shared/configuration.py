@@ -4,7 +4,7 @@ import os
 DEFAULTS = {
     'card_alias_file': './card_aliases.tsv',
     'database': './cards.sqlite',
-    'decksite_database': './decksite',
+    'decksite_database': 'decksite',
     'image_dir': './images',
     'magic_database': './cards.sqlite',
     'prices_database': './prices.db',

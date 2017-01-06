@@ -21,6 +21,7 @@ node{
     }
 
     stage('Unit Tests') {
+        sh(returnStatus: true, script: 'rm config.json')
         withCredentials([string(credentialsId: 'PD_TOOLS_CODACY_TOKEN', variable: 'CODACY_PROJECT_TOKEN')]) {
             env.CODACY_PROJECT_TOKEN = CODACY_PROJECT_TOKEN
         }

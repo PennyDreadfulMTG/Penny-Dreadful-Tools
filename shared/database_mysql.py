@@ -1,6 +1,5 @@
 import MySQLdb
 
-from magic import card
 from shared import configuration
 from shared.pd_exception import DatabaseException
 
@@ -9,6 +8,9 @@ class Database:
         try:
             host = configuration.get('mysql_host')
             port = configuration.get('mysql_port')
+            if str(port).startswith('0.0.0.0:'):
+                # Thanks Docker :/
+                port = int(port[8:])
             user = configuration.get('mysql_user')
             passwd = configuration.get('mysql_passwd')
             self.connection = MySQLdb.connect(host=host, port=port, user=user, passwd=passwd)

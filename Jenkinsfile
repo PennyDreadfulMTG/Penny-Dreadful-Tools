@@ -25,8 +25,10 @@ node{
         withCredentials([string(credentialsId: 'PD_TOOLS_CODACY_TOKEN', variable: 'CODACY_PROJECT_TOKEN')]) {
             env.CODACY_PROJECT_TOKEN = CODACY_PROJECT_TOKEN
         }
-        docker.image('mysql').withRun('-P -e MYSQL_RANDOM_ROOT_PASSWORD=yes -e MYSQL_USER=pennydreadful -e MYSQL_DATABASE=decksite ') { c ->
+        docker.image('mysql').withRun('-P -e MYSQL_ROOT_PASSWORD=password ') { c ->
             env.mysql_port = c.port(3306)
+            env.mysql_user = 'root'
+            env.mysql_passwd = 'password'
             FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; coverage run run.py tests --junitxml=test_results.xml')
         }
         sh 'docker volume ls -qf dangling=true | xargs -r docker volume rm'

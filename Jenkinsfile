@@ -28,7 +28,7 @@ node{
         container = docker.image('mysql')
         container.run('-P -e MYSQL_ALLOW_EMPTY_PASSWORD=yes ')
         container.inside() {
-            sh 'echo "create user 'pennydreadful'@'%'; create database decksite;  grant all on decksite.* to pennydreadful;" | mysql -u root'
+            sh 'echo "create user \'pennydreadful\'@\'%\'; create database decksite;  grant all on decksite.* to pennydreadful;" | mysql -u root'
         }
         env.mysql_port = c.port(3306)
         env.mysql_user = 'root'

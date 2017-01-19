@@ -89,12 +89,15 @@ def set_legality(d):
     d.pd_legal = "Penny Dreadful" in d.legal_formats
     d.legal_icons = ""
 
+    sets = ["EMN", "KLD", "AER"]
+
+    # We can still do better
     if "Penny Dreadful" in d.legal_formats:
-        d.legal_icons += '<i class="ss ss-kld ss-rare ss-grad">S2</i>'
-    # We need to make this better. Something to be done before AER is released.
+        d.legal_icons += '<i class="ss ss-aer ss-rare ss-grad">S3</i>'
+    
     for fmt in d.legal_formats:
         if fmt.startswith("Penny Dreadful "):
-            d.legal_icons += '<i class="ss ss-{set} ss-common ss-grad">S1</i>'.format(set=fmt[15:].lower())
+            d.legal_icons += '<i class="ss ss-{set} ss-common ss-grad">S{n}</i>'.format(set=fmt[15:].lower(), n=sets.index(fmt[15:].upper()) + 1)
     # if "Modern" in d.legal_formats:
     #     d.legal_icons += '<i class="ss ss-8ed ss-uncommon ss-grad icon-modern">MDN</i>'
 

@@ -1,5 +1,5 @@
 from magic.database import db
-from magic import oracle
+from magic import oracle, multiverse
 
 FORMATS = set()
 
@@ -35,6 +35,12 @@ def legal_formats(d, formats_to_check=None):
 
 def init():
     assert len(oracle.legal_cards()) > 0
+    all_known = oracle.load_card('island').legalities
+    if not 'Penny Dreadful EMN' in all_known:
+        multiverse.set_legal_cards(season='EMN')
+    if not 'Penny Dreadful KLD' in all_known:
+        multiverse.set_legal_cards(season='KLD')
+    
     FORMATS.clear()
     for v in db().values('SELECT name FROM format'):
         FORMATS.add(v)

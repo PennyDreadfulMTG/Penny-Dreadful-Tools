@@ -40,7 +40,7 @@ def init():
         multiverse.set_legal_cards(season='EMN')
     if not 'Penny Dreadful KLD' in all_known:
         multiverse.set_legal_cards(season='KLD')
-    
+
     FORMATS.clear()
     for v in db().values('SELECT name FROM format'):
         FORMATS.add(v)

@@ -14,8 +14,6 @@ def init():
         print('Database update required')
         update_database(str(current_version))
     set_legal_cards()
-    # Don't hardcode this!
-    set_legal_cards(season='EMN')
     update_bugged_cards()
 
 def layouts():

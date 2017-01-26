@@ -36,7 +36,7 @@ def base_query(where_clause='(1 = 1)'):
                 FROM card AS c
                 INNER JOIN face AS f ON c.id = f.card_id
                 LEFT OUTER JOIN card_legality AS cl ON c.id = cl.card_id
-                INNER JOIN format AS fo ON cl.format_id = fo.id
+                LEFT OUTER JOIN format AS fo ON cl.format_id = fo.id
                 LEFT OUTER JOIN card_bugs AS bugs ON c.id = bugs.card_id
                 GROUP BY f.id
                 ORDER BY f.card_id, f.position)

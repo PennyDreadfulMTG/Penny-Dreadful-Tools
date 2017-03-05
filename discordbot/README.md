@@ -22,7 +22,7 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!help` Provides information on how to operate the bot.
 
-`!legal` No Help Available
+`!legal` Announce whether the specified card is legal or not.
 
 `!modofail` Ding!
 

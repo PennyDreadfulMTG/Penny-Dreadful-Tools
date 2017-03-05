@@ -240,16 +240,16 @@ class Commands:
             # Currently disabled
             return "Price unavailable"
             # We can re-enable this when we fix the price scraper.
-            # s = '{price}'.format(price=format_price(p['price']))
-            # if p['low'] <= 0.05:
-            #     s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))
-            #     if p['low'] <= 0.01:
-            #         s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(p['week'] * 100.0), month=round(p['month'] * 100.0), season=round(p['season'] * 100.0))
-            #     s += ')'
-            # return s
-        def format_price(p):
-            dollars, cents = str(round(p, 2)).split('.')
-            return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
+        #     s = '{price}'.format(price=format_price(p['price']))
+        #     if p['low'] <= 0.05:
+        #         s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))
+        #         if p['low'] <= 0.01:
+        #             s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(p['week'] * 100.0), month=round(p['month'] * 100.0), season=round(p['season'] * 100.0))
+        #         s += ')'
+        #     return s
+        # def format_price(p):
+        #     dollars, cents = str(round(p, 2)).split('.')
+        #     return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
         await single_card_text(bot, channel, args, author, price_info)
 
     @cmd_header("Commands")

@@ -17,7 +17,8 @@
     "Tournaments": {
         "League": "https://www.reddit.com/r/PennyDreadfulMTG/comments/5ah58c/penny_dreadful_league_season_3/",
         "Gatherling": "https://www.reddit.com/r/PennyDreadfulMTG/comments/56w62y/penny_dreadful_weekly_tournament_at_gatherlingcom/",
-        "Penny Dreadful Thursdays": "http://pennydreadfulthursdays.weebly.com/"
+        "Penny Dreadful Thursdays": "http://pennydreadfulthursdays.weebly.com/",
+        "Penny Paradise": "http://pennyparadisemtgo.weebly.com"
     },
     "Blogs": {
         "pdmgto.com": "http://blog.pdmtgo.com/",
@@ -28,9 +29,13 @@
         "Sign up": "http://pennydreadfulmagic.com/signup/",
         "Results reporter": "http://pennydreadfulmagic.com/report/",
         "Records": "http://pennydreadfulmagic.com/competitions/7/",
-        "Season 2-2": "https://www.reddit.com/r/PennyDreadfulMTG/comments/5ah58c/penny_dreadful_league_season_3/",
-        "Season 2-1": "https://www.reddit.com/r/PennyDreadfulMTG/comments/55caky/penny_dreadful_league_season_2/",
-        "Season 1": "https://www.reddit.com/r/PennyDreadfulMTG/comments/50dyzz/penny_dreadful_league/"
+        "S3-1 Feburary League": "https://www.reddit.com/r/PennyDreadfulMTG/comments/5plqzm/february_league_begins_early/"
+    },
+    "Archived Leagues": {
+        "S2-3 January League": "https://www.reddit.com/r/PennyDreadfulMTG/comments/5m47as/january_league_has_started/",
+        "S2-2 November 2016": "https://www.reddit.com/r/PennyDreadfulMTG/comments/5ah58c/penny_dreadful_league_season_3/",
+        "S2-1 October 2016": "https://www.reddit.com/r/PennyDreadfulMTG/comments/55caky/penny_dreadful_league_season_2/",
+        "S1-1 September 2016": "https://www.reddit.com/r/PennyDreadfulMTG/comments/50dyzz/penny_dreadful_league/"
     },
     "Gatherling": {
         "Announcement": "https://www.reddit.com/r/PennyDreadfulMTG/comments/56w62y/penny_dreadful_weekly_tournament_at_gatherlingcom/",
@@ -40,12 +45,13 @@
     },
     "Video": {
         "j_meka": "http://twitch.tv/j_meka",
-        "Mrs. Mulligan": "https://www.twitch.tv/mrs_mulligan",
-        "Dragonas77": "https://www.twitch.tv/dragonas77/",
+        "Mrs. Mulligan": "https://twitch.tv/mrs_mulligan",
+        "Dragonas77": "https://twitch.tv/dragonas77",
         "silasary": "http://twitch.tv/silasary",
         "crazybaloth": "http://twitch.tv/the_dark_hand",
         "testingpennydreadful": "https://www.youtube.com/channel/UCNMDcnME6vo8YOFnW4dRskQ",
-        "Commeradicore": "https://www.twitch.tv/commeradicore"
+        "Commeradicore": "https://twitch.tv/commeradicore",
+        "TinyTim123mtgo": "https://twitch.tv/tinytim123mtgo"
     },
     "Articles": {
           "Mrs. Mulligan SCG": "http://www.starcitygames.com/article/33860_Penny-Dreadful.html"

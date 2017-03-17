@@ -80,6 +80,8 @@ def build_help(readme=False, cmd=None):
                 return '{0}'.format(method.__doc__)
         elif verbose:
             return '`!{0}` No Help Available'.format(method.__name__)
+        else:
+            return "`!{0}`".format(method.__name__)
 
     if cmd:
         method = find_method(cmd)
@@ -235,20 +237,24 @@ class Commands:
                 return "Price unavailable"
             if p is None:
                 return "Not available online"
-            s = '{price}'.format(price=format_price(p['price']))
-            if p['low'] <= 0.05:
-                s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))
-                if p['low'] <= 0.01:
-                    s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(p['week'] * 100.0), month=round(p['month'] * 100.0), season=round(p['season'] * 100.0))
-                s += ')'
-            return s
-        def format_price(p):
-            dollars, cents = str(round(p, 2)).split('.')
-            return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
+            # Currently disabled
+            return "Price unavailable"
+            # We can re-enable this when we fix the price scraper.
+        #     s = '{price}'.format(price=format_price(p['price']))
+        #     if p['low'] <= 0.05:
+        #         s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))
+        #         if p['low'] <= 0.01:
+        #             s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(p['week'] * 100.0), month=round(p['month'] * 100.0), season=round(p['season'] * 100.0))
+        #         s += ')'
+        #     return s
+        # def format_price(p):
+        #     dollars, cents = str(round(p, 2)).split('.')
+        #     return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
         await single_card_text(bot, channel, args, author, price_info)
 
     @cmd_header("Commands")
     async def legal(self, bot, channel, args, author):
+        """Announce whether the specified card is legal or not."""
         await single_card_text(bot, channel, args, author, lambda c: '')
 
     @cmd_header("Commands")

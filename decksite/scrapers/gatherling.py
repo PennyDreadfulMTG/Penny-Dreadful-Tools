@@ -80,7 +80,7 @@ def tournament_deck(cells, competition_id, date, ranks):
         elif img == TOP_8:
             d['finish'] = 5
         elif img == 'verified':
-            d['finish'] = ranks[d['mtgo_username']]
+            d['finish'] = ranks.get(d['mtgo_username'], None)
         else:
             raise InvalidDataException('Unknown player image `{img}`'.format(img=img))
     else:

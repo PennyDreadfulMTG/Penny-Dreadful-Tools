@@ -1,5 +1,5 @@
-import MySQLdb
 #pylint: disable=import-error, duplicate-code
+import MySQLdb
 
 from shared import configuration
 from shared.pd_exception import DatabaseException

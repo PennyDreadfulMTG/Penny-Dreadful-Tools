@@ -25,16 +25,7 @@ node{
         withCredentials([string(credentialsId: 'PD_TOOLS_CODACY_TOKEN', variable: 'CODACY_PROJECT_TOKEN')]) {
             env.CODACY_PROJECT_TOKEN = CODACY_PROJECT_TOKEN
         }
-        container = docker.image('mysql')
-        container.run('-P -e MYSQL_ALLOW_EMPTY_PASSWORD=yes ')
-        container.inside() {
-            sh 'echo "create user \'pennydreadful\'@\'%\'; create database decksite;  grant all on decksite.* to pennydreadful;" | mysql -u root'
-        }
-        env.mysql_port = c.port(3306)
-        env.mysql_user = 'root'
         FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; coverage run run.py tests --junitxml=test_results.xml')
-        container.stop()
-        sh 'docker volume ls -qf dangling=true | xargs -r docker volume rm'
         junit 'test_results.xml'
         if (FailedTests) {
             error 'Failed a test'

@@ -1,4 +1,5 @@
 import MySQLdb
+#pylint: disable=import-error
 
 from shared import configuration
 from shared.pd_exception import DatabaseException
@@ -62,7 +63,3 @@ class Database:
 
     def commit(self):
         self.connection.commit()
-
-def row_factory(cursor, row):
-    columns = [t[0] for t in cursor.getdescription()]
-    return dict(zip(columns, row))

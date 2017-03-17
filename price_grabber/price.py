@@ -20,7 +20,7 @@ def info_cached(card=None, name=None):
         name = card.name
     sql = 'SELECT `time`, low / 100.0 AS low, high / 100.0 aS high, price / 100.0 AS price, week, month, season FROM cache WHERE name = ?'
     conn = apsw.Connection(configuration.get('pricesdb'))
-    conn.setrowtrace(database.row_factory)
+    conn.setrowtrace(database.database_sqlite.row_factory)
     return conn.cursor().execute(sql, [name]).fetchone()
 
 def cache():

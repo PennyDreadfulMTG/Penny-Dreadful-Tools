@@ -19,18 +19,20 @@ node{
             sh 'gcc -fPIC -shared spellfix.c -o spellfix.so'
         }
     }
-    
+
     stage('Unit Tests') {
-        withCredentials([string(credentialsId: 'PD_TOOLS_CODACY_TOKEN', variable: 'CODACY_PROJECT_TOKEN')]) {
-            env.CODACY_PROJECT_TOKEN = CODACY_PROJECT_TOKEN
-        }
-        FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; coverage run run.py tests --junitxml=test_results.xml')
-        junit 'test_results.xml'
-        if (FailedTests) {
-            error 'Failed a test'
-        }
-        sh 'PATH=$PATH:~/.local/bin/; coverage xml'
-        sh 'PATH=$PATH:~/.local/bin/; python-codacy-coverage -r coverage.xml'
+        echo 'Unit tests run on travis now.'
+//        sh(returnStatus: true, script: 'rm config.json')
+//        withCredentials([string(credentialsId: 'PD_TOOLS_CODACY_TOKEN', variable: 'CODACY_PROJECT_TOKEN')]) {
+//            env.CODACY_PROJECT_TOKEN = CODACY_PROJECT_TOKEN
+//        }
+//        FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; coverage run run.py tests --junitxml=test_results.xml')
+//        junit 'test_results.xml'
+//        if (FailedTests) {
+//            error 'Failed a test'
+//        }
+//        sh 'PATH=$PATH:~/.local/bin/; coverage xml'
+//        sh 'PATH=$PATH:~/.local/bin/; python-codacy-coverage -r coverage.xml'
     }
 
     stage('Pylint') {

@@ -1,8 +1,9 @@
 import os
 
 from shared import configuration
-from shared.database import Database, sqlescape, sqllikeescape
+from shared.database import get_database, sqlescape, sqllikeescape
 from shared.pd_exception import DatabaseException
+
 
 def location():
     return '{scratch_dir}/tmp.sqlite'.format(scratch_dir=configuration.get('scratch_dir'))
@@ -12,7 +13,7 @@ def setup():
     if db is not None:
         db.execute("DROP TABLE IF EXISTS x")
     else:
-        db = Database(location())
+        db = get_database(location())
     db.execute('CREATE TABLE IF NOT EXISTS x (id INTEGER PRIMARY KEY, v TEXT)')
     return db
 

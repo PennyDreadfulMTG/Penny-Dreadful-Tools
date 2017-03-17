@@ -2,7 +2,7 @@ import pkg_resources
 
 from magic import card
 from shared import configuration
-from shared.database import Database
+from shared.database import get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
@@ -145,5 +145,5 @@ def create_table_def(name, props):
     sql += ')'
     return sql.format(name=name)
 
-DATABASE = Database(configuration.get('magic_database'))
+DATABASE = get_database(configuration.get('magic_database'))
 init()

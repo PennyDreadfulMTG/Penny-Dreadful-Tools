@@ -91,15 +91,15 @@ def active_decks():
     return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
 
 def report(form):
-    db().execute('BEGIN TRANSACTION')
+    db().begin()
     match_id = insert_match(form)
     winner, loser = winner_and_loser(form)
     if winner:
-        db().execute('UPDATE deck SET wins = wins + 1 WHERE id = ?', [winner])
-        db().execute('UPDATE deck SET losses = losses + 1 WHERE id = ?', [loser])
+        db().execute('UPDATE deck SET wins = wins + 1 WHERE id = %s', [winner])
+        db().execute('UPDATE deck SET losses = losses + 1 WHERE id = %s', [loser])
     else:
-        db().execute('UPDATE deck SET draws = draws + 1 WHERE id = ? OR id = ?', [form.entry, form.opponent])
-    db().execute('COMMIT')
+        db().execute('UPDATE deck SET draws = draws + 1 WHERE id = %s OR id = %s', [form.entry, form.opponent])
+    db().commit()
     return match_id
 
 def winner_and_loser(params):
@@ -124,8 +124,8 @@ def active_league():
     return guarantee.exactly_one(leagues)
 
 def insert_match(params):
-    match_id = db().insert("INSERT INTO match (`date`) VALUES (strftime('%s', 'now'))")
-    sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (?, ?, ?)'
+    match_id = db().insert("INSERT INTO `match` (`date`) VALUES (DATE_FORMAT(now(), '%%s'))")
+    sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
     db().execute(sql, [params.entry, match_id, params.entry_games])
     db().execute(sql, [params.opponent, match_id, params.opponent_games])
     return match_id
@@ -133,9 +133,9 @@ def insert_match(params):
 def get_match(params):
     sql = """
         SELECT m.`date`, m.id, dm1.games AS p1games, dm2.games AS p2games, d1.name AS p1name, d2.name AS p2name
-        FROM match AS m
-        INNER JOIN deck_match AS dm1 ON m.id = dm1.match_id AND dm1.deck_id = ?
-        INNER JOIN deck_match AS dm2 ON m.id = dm2.match_id AND dm2.deck_id = ?
+        FROM `match` AS m
+        INNER JOIN deck_match AS dm1 ON m.id = dm1.match_id AND dm1.deck_id = %s
+        INNER JOIN deck_match AS dm2 ON m.id = dm2.match_id AND dm2.deck_id = %s
         INNER JOIN deck AS d1 ON dm1.deck_id = d1.id
         INNER JOIN deck AS d2 ON dm2.deck_id = d2.id
     """

@@ -11,3 +11,4 @@ requests
 titlecase
 pygithub
 coverage
+mysqlclient==1.3.9

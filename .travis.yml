@@ -1,0 +1,9 @@
+language: python
+python:
+  - "3.5"
+services:
+  - mysql
+env:
+  - mysql_user=travis
+install: pip install -r requirements.txt && ./setup_spellfix.sh
+script: pytest

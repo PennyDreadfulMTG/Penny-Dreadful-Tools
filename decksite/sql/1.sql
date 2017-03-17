@@ -2,16 +2,16 @@
 -- We may end up double or treble logging people from different sources but the goal is one entry per unique human.
 -- Site usernames are our most useful proxy for 'unique human'.
 CREATE TABLE IF NOT EXISTS person (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
     name TEXT,
-    tappedout_username TEXT UNIQUE,
-    mtgo_username TEXT UNIQUE
+    tappedout_username VARCHAR(50) UNIQUE,
+    mtgo_username VARCHAR(50) UNIQUE
 );
 
 -- The source of a deck. Tapped Out, Manual Entry, Gatherling, etc.
 CREATE TABLE IF NOT EXISTS source (
-    id INTEGER PRIMARY KEY,
-    name TEXT UNIQUE NOT NULL
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) UNIQUE NOT NULL
 );
 
 INSERT INTO source (name) VALUES ('Tapped Out');
@@ -20,10 +20,10 @@ INSERT INTO source (name) VALUES ('Gatherling');
 -- A deck in the wild. Used or published by a particular person on a particular date at a particular place.
 -- If the same person enters the same 75 into several different competitions there will be several entries in this table.
 CREATE TABLE IF NOT EXISTS deck (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
     person_id INTEGER NOT NULL,
     source_id INTEGER NOT NULL,
-    identifier TEXT NOT NULL,
+    identifier VARCHAR(200) NOT NULL,
     name TEXT NOT NULL,
     created_date INTEGER NOT NULL,
     updated_date INTEGER NOT NULL,
@@ -40,16 +40,14 @@ CREATE TABLE IF NOT EXISTS deck (
     finish INTEGER,
     FOREIGN KEY(person_id) REFERENCES person(id),
     FOREIGN KEY(source_id) REFERENCES source(id),
-    FOREIGN KEY(competition_id) REFERENCES competition(id),
-    FOREIGN KEY(archetype_id) REFERENCES archetype(id),
     CONSTRAINT deck_source_id_identifier UNIQUE (source_id, identifier)
 );
 
 -- Mapping between deck and the cards it contains.
 CREATE TABLE IF NOT EXISTS deck_card (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
     deck_id INTEGER NOT NULL,
-    card TEXT NOT NULL,
+    card VARCHAR(100) NOT NULL,
     n INTEGER NOT NULL,
     sideboard INTEGER NOT NULL,
     FOREIGN KEY(deck_id) REFERENCES deck(id),
@@ -58,15 +56,15 @@ CREATE TABLE IF NOT EXISTS deck_card (
 
 -- Types for competitions. 'League', 'Gatherling Thursdays', etc.
 CREATE TABLE IF NOT EXISTS competition_type (
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL UNIQUE
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL UNIQUE
 );
 
 INSERT INTO competition_type (name) VALUES ('League'), ('Gatherling');
 
 -- A specific competition. A particular league month or Gatherling tournament.
 CREATE TABLE IF NOT EXISTS competition (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
     start_date INTEGER NOT NULL,
     end_date INTEGER NOT NULL,
     name TEXT NOT NULL,
@@ -75,11 +73,13 @@ CREATE TABLE IF NOT EXISTS competition (
     FOREIGN KEY(competition_type_id) REFERENCES competition_type(id)
 );
 
+ALTER TABLE deck ADD CONSTRAINT FOREIGN KEY(competition_id) REFERENCES competition(id);
+
 -- Broad archetypes to slot decks into.
 CREATE TABLE IF NOT EXISTS archetype (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
     name TEXT NOT NULL
 );
-
+ALTER TABLE deck ADD CONSTRAINT FOREIGN KEY(archetype_id) REFERENCES archetype(id);
 -- Populate archetype
 INSERT INTO archetype (name) VALUES ('Aggro'), ('Combo'), ('Control'), ('Aggro-Combo'), ('Aggro-Control'), ('Combo-Control'), ('Midrange'), ('Ramp'), ('Unclassified');

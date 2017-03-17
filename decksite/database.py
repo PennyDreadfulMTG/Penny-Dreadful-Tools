@@ -1,7 +1,7 @@
 import os
 
 from shared import configuration
-from shared.database import Database
+from shared.database import get_database
 
 def db():
     return DATABASE
@@ -28,5 +28,5 @@ def setup():
 def db_version() -> int:
     return db().value('SELECT version FROM db_version ORDER BY version DESC LIMIT 1', [], 0)
 
-DATABASE = Database(configuration.get('decksite_database'))
+DATABASE = get_database(configuration.get('decksite_database'))
 setup()

@@ -1,6 +1,6 @@
 from shared import database_mysql, database_sqlite
 
-def Database(location):
+def get_database(location):
     if location.lower().endswith('.sqlite'):
         return database_sqlite.Database(location)
     else:

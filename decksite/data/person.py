@@ -22,7 +22,8 @@ def load_people(where_clause='1 = 1'):
         ORDER BY name
     """.format(person_query=query.person_query(), where_clause=where_clause)
     people = [Person(r) for r in db().execute(sql)]
-    set_decks(people)
+    if len(people) > 0:
+        set_decks(people)
     return people
 
 def set_decks(people):

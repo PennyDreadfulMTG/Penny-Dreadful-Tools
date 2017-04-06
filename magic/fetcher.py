@@ -51,7 +51,7 @@ def fetch_prices():
     internal.store('http://magic.bluebones.net/prices.db', configuration.get('pricesdb'))
 
 def card_price(cardname):
-    return internal.fetch_json('http://magic.bluebones.net:5800/{0}/'.format(cardname))
+    return internal.fetch_json('http://katelyngigante.com:5800/{0}/'.format(cardname))
 
 def resources():
     with open('decksite/resources.json') as resources_file:

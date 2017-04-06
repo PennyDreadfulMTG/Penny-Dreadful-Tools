@@ -3,6 +3,9 @@ from decksite.database import db
 from decksite.scrapers import tappedout
 
 def run():
+    print('Squashing people is currently disabled.')
+    #TODO: FIXME: Rewrite SQL for squash
+    return
     partials = person.load_people('mtgo_username is NULL')
 
     for p in partials:
@@ -23,18 +26,18 @@ def run():
 def squash(old, new):
     assert old.id != new.id
     print("Squashing {new.name} ({new.id}) into {old.name} ({old.id})".format(old=old, new=new))
+
     sql = """
-        BEGIN TRANSACTION;
-        WITH 
-            old as (
-                SELECT * FROM person 
-                WHERE id = {old.id}  
-            ), 
-            new as (
-                SELECT * FROM person 
-                WHERE id = {new.id}  
-            )
-            INSERT OR REPLACE INTO person (tappedout_username, mtgo_username)
+            WITH 
+                old as (
+                    SELECT * FROM person 
+                    WHERE id = {old.id}  
+                ), 
+                new as (
+                    SELECT * FROM person 
+                    WHERE id = {new.id}  
+                )
+                INSERT OR REPLACE INTO person (tappedout_username, mtgo_username)
                 SELECT 
                     IFNULL(old.tappedout_username, new.tappedout_username) as tappedout_username,
                     IFNULL(old.mtgo_username, new.mtgo_username) as mtgo_username 
@@ -44,7 +47,6 @@ def squash(old, new):
             WHERE person_id IN ({old.id}, {new.id});
         DELETE FROM deck
             WHERE person_id IN ({old.id}, {new.id});
-        END TRANSACTION;
     """.format(new=new, old=old)
     db().execute(sql)
     return db().value('SELECT last_insert_rowid()')

@@ -54,7 +54,12 @@ def fetch(url, character_encoding=None, resource_id=None):
         raise FetchException(e)
 
 def fetch_json(url, character_encoding=None, resource_id=None):
-    return json.loads(fetch(url, character_encoding, resource_id))
+    try:
+        blob = fetch(url, character_encoding, resource_id)
+        return json.loads(blob)
+    except json.decoder.JSONDecodeError:
+        print('Failed to load JSON:\n{0}'.format(blob))
+        raise
 
 def post(url, data):
     print('POSTing to {url} with {data}'.format(url=url, data=data))

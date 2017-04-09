@@ -48,6 +48,8 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!search {query}` Search for cards, using a magidex style query.
 
+`!spoiler` !spoiler {cardname}: Request a card from an upcoming set
+
 `!status` Gives the status of MTGO, UP or DOWN.
 
 # Developer Commands

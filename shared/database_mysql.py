@@ -38,6 +38,10 @@ class Database(GenericDatabase):
         except MySQLdb.Error as e:
             raise DatabaseException('Failed to execute `{sql}` because of `{e}`'.format(sql=sql, e=e)) from e
 
+    def insert(self, sql, args=None):
+        self.execute(sql, args)
+        return self.value('SELECT LAST_INSERT_ID()')
+
     def begin(self):
         self.connection.begin()
 

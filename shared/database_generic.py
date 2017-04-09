@@ -19,5 +19,4 @@ class GenericDatabase:
         return [list(row.values())[0] for row in rs]
 
     def insert(self, sql, args=None):
-        self.execute(sql, args)
-        return self.value('SELECT last_insert_rowid()')
+        raise NotImplementedError()

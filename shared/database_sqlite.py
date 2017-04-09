@@ -30,6 +30,10 @@ class Database(GenericDatabase):
                     return self.cursor.execute(sql, args).fetchall()
             raise DatabaseException('Failed to execute `{sql}` because of `{e}`'.format(sql=sql, e=e)) from e
 
+    def insert(self, sql, args=None):
+        self.execute(sql, args)
+        return self.value('SELECT last_insert_rowid()')
+
 def row_factory(cursor, row):
     columns = [t[0] for t in cursor.getdescription()]
     return dict(zip(columns, row))

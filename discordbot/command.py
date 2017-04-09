@@ -323,6 +323,22 @@ class Commands:
         else:
             await bot.client.send_message(channel, "Issue has been reported at {url}".format(url=issue.html_url))
 
+    @cmd_header("Commands")
+    async def spoiler(self, bot, channel, args, author):
+        """!spoiler {cardname}: Request a card from an upcoming set"""
+        if len(args) == 0:
+            await bot.client.send_message(channel, '{author}: Please specify a card name.'.format(author=author.mention))
+            return
+
+        sfcard = fetcher.internal.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=args))
+        if sfcard['object'] == 'error':
+            await bot.client.send_message(channel, '{author}: {details}'.format(author=author.mention, details=sfcard['details']))
+            return
+        sfimgname = '{0}/{1}_{2}.jpg'.format(configuration.get('image_dir'), sfcard['set'], sfcard['collector_number'])
+        fetcher.internal.store(sfcard['image_uri'], sfimgname)
+        text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=sfcard['mana_cost']), channel)
+        await bot.client.send_file(channel, sfimgname, content=text)
+
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):
     # Remove multiple printings of the same card from the result set.

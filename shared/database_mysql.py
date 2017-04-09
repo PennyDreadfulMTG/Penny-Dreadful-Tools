@@ -36,21 +36,7 @@ class Database(GenericDatabase):
             self.cursor.execute(sql, args)
             return self.cursor.fetchall()
         except MySQLdb.Error as e:
-            # Quick fix for league bugs
-            if "cannot start a transaction within a transaction" in str(e):
-                self.execute("ROLLBACK")
-                if sql == "BEGIN TRANSACTION":
-                    return self.cursor.execute(sql, args).fetchall()
             raise DatabaseException('Failed to execute `{sql}` because of `{e}`'.format(sql=sql, e=e)) from e
-
-    def value(self, sql, args=None, default=None, fail_on_missing=False):
-        try:
-            return self.values(sql, args)[0]
-        except IndexError as e:
-            if fail_on_missing:
-                raise DatabaseException('Failed to get a value from `{sql}`'.format(sql=sql)) from e
-            else:
-                return default
 
     def begin(self):
         self.connection.begin()

@@ -30,16 +30,6 @@ class Database(GenericDatabase):
                     return self.cursor.execute(sql, args).fetchall()
             raise DatabaseException('Failed to execute `{sql}` because of `{e}`'.format(sql=sql, e=e)) from e
 
-    def value(self, sql, args=None, default=None, fail_on_missing=False):
-        try:
-            return self.values(sql, args)[0]
-        except IndexError as e:
-            if fail_on_missing:
-                raise DatabaseException('Failed to get a value from `{sql}`'.format(sql=sql)) from e
-            else:
-                return default
-
-
 def row_factory(cursor, row):
     columns = [t[0] for t in cursor.getdescription()]
     return dict(zip(columns, row))

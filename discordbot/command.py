@@ -331,6 +331,9 @@ class Commands:
             return
 
         sfcard = fetcher.internal.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=args))
+        if sfcard['object'] == 'error':
+            await bot.client.send_message(channel, '{author}: {details}'.format(author=author.mention, details=sfcard['details']))
+            return
         sfimgname = '{0}/{1}_{2}.jpg'.format(configuration.get('image_dir'), sfcard['set'], sfcard['collector_number'])
         fetcher.internal.store(sfcard['image_uri'], sfimgname)
         text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=sfcard['mana_cost']), channel)

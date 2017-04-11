@@ -9,7 +9,7 @@ import requests
 
 from magic import database
 from shared import configuration
-from shared.pd_exception import OperationalException
+from shared.pd_exception import OperationalException, DatabaseException
 
 SESSION = requests.Session()
 
@@ -82,7 +82,10 @@ def get_last_modified(resource):
 def set_last_modified(resource, httptime=None, content=None):
     if httptime is None:
         httptime = formatdate(timeval=None, localtime=False, usegmt=True)
-    database.DATABASE.execute("INSERT INTO fetcher (resource, last_modified, content) VALUES (?, ?, ?)", [resource, httptime, content])
+    try:
+        database.DATABASE.execute("INSERT INTO fetcher (resource, last_modified, content) VALUES (?, ?, ?)", [resource, httptime, content])
+    except DatabaseException:
+        pass
 
 def remove_last_modified(resource):
     database.DATABASE.execute("DELETE FROM fetcher WHERE resource = ?", [resource])

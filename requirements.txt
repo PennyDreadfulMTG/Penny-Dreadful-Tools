@@ -2,7 +2,7 @@ bs4
 discord.py[voice]>=0.13.0
 flask
 munch
-pylint
+pylint>=1.7
 pystache
 pytest
 python-dateutil

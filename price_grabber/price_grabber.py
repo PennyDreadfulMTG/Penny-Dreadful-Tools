@@ -38,7 +38,7 @@ def parse_sets(s):
     return re.findall("'/index/([A-Z0-9]+)'", s)
 
 def parse_prices(s):
-    results = re.findall(r"""<td class='card'><a.*?href="[^#]*#online" rel="popover">([^\(<]*)(?:\(([^\)]*)\))?</a></td>\n<td>[^<]*</td>\n<td>[^<]*</td>\n<td class='text-right'>\n(.*)\n</td>""", s)
+    results = re.findall(r"""<td class='card'><a.*?href="[^#]*#online".*?>([^\(<]*)(?:\(([^\)]*)\))?</a></td>\n<td>[^<]*</td>\n<td>[^<]*</td>\n<td class='text-right'>\n(.*)\n</td>""", s)
     return [(name_lookup(html.unescape(name.strip())), html.unescape(version.strip()), html.unescape(price.strip())) for name, version, price in results]
 
 def store(timestamp, all_prices):

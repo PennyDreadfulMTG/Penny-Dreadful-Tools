@@ -155,6 +155,13 @@ def deckcycle_tappedout():
 def favicon(rest):
     return send_from_directory(os.path.join(APP.root_path, 'static/images/favicon'), 'favicon{rest}'.format(rest=rest))
 
+@APP.route('/legal_cards.txt')
+def legal_cards():
+    if os.path.exists('legal_cards.txt'):
+        return send_from_directory('.', 'legal_cards.txt')
+
+    return "Not supported yet", 404
+
 @APP.errorhandler(DoesNotExistException)
 @APP.errorhandler(exceptions.NotFound)
 def not_found(e):

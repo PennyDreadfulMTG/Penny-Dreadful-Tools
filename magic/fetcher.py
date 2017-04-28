@@ -1,3 +1,4 @@
+import os
 import csv
 import json
 from collections import OrderedDict
@@ -11,6 +12,12 @@ from shared import configuration
 
 
 def legal_cards(force=False, season=None):
+    if season is None and os.path.exists('legal_cards.txt'):
+        print("HACK: Using local legal_cards override.")
+        h = open('legal_cards.txt')
+        legal = h.readlines()
+        h.close()
+        return [l.strip() for l in legal]
     url = 'http://pdmtgo.com/legal_cards.txt'
     resource_id = 'legal_cards'
     if season is not None:

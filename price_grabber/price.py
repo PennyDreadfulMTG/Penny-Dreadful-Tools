@@ -1,9 +1,8 @@
-import os
 import time
 
 import apsw
 
-from magic import fetcher, rotation
+from magic import rotation
 from shared import configuration, database
 
 

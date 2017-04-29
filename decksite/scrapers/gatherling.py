@@ -28,7 +28,11 @@ def tournament(url, name):
     soup = BeautifulSoup(s, 'html.parser')
     report = soup.find('div', {'id': 'EventReport'})
     cell = report.find_all('td')[1]
-    date_s = cell.find('br').next.strip() + ' 17:00' # Hack in the known start time because it's not in the page.
+    date_s = cell.find('br').next.strip() + ' 19:00' # Hack in the known start time because it's not in the page.
+    if '-0001' in date_s:
+        # Tournament has been incorrectly configured.
+        return
+
     dt = dtutil.parse(date_s, '%d %B %Y %H:%M', dtutil.GATHERLING_TZ)
     competition_id = competition.get_or_insert_competition(dt, dt, name, 'Gatherling', url)
 

@@ -54,9 +54,6 @@ def card_aliases():
 def whatsinstandard():
     return internal.fetch_json('http://whatsinstandard.com/api/4/sets.json', resource_id='whatsinstandard')
 
-def fetch_prices():
-    internal.store('http://magic.bluebones.net/prices.db', configuration.get('pricesdb'))
-
 def card_price(cardname):
     return internal.fetch_json('http://katelyngigante.com:5800/{0}/'.format(cardname))
 

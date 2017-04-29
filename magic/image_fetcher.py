@@ -21,6 +21,9 @@ def bluebones_alt_image(cards) -> str:
     c = '|'.join(card.name for card in cards)
     return 'http://magic.bluebones.net/proxies/index2.php?c={c}'.format(c=escape(c))
 
+def scryfall_image(card) -> str:
+    return "http://api.scryfall.com/cards/named?exact={c}&format=image".format(c=card.name)
+
 def mci_image(printing) -> str:
     return "http://magiccards.info/scans/en/{code}/{number}.jpg".format(code=printing.set_code.lower(), number=printing.number)
 
@@ -51,6 +54,13 @@ def download_image(cards) -> str:
     print('Trying to get second choice image for {cards}'.format(cards=', '.join(card.name for card in cards)))
     try:
         internal.store(bluebones_alt_image(cards), filepath)
+    except FetchException as e:
+        print('Error: {e}'.format(e=e))
+    if internal.acceptable_file(filepath):
+        return filepath
+
+    try:
+        internal.store(scryfall_image(cards[0]), filepath)
     except FetchException as e:
         print('Error: {e}'.format(e=e))
     if internal.acceptable_file(filepath):

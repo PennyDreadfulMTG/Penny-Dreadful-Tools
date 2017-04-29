@@ -50,5 +50,3 @@ def init():
     FORMATS.clear()
     for v in db().values('SELECT name FROM format'):
         FORMATS.add(v)
-
-

@@ -1,4 +1,5 @@
 from find import search
+from magic.database import db
 
 def test_match():
     assert search.Key.match(['c'])
@@ -79,7 +80,8 @@ def test_mana7():
     do_test('mana:uu', "(mana_cost LIKE '%{U}{U}%')")
 
 def test_uppercase():
-    do_test('F:pd', "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = 35 AND legality <> 'Banned'))")
+    pd_id = db().value('SELECT id FROM format WHERE name LIKE ?', ['{term}%'.format(term='Penny Dreadful')])
+    do_test('F:pd', "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {pd_id} AND legality <> 'Banned'))".format(pd_id=pd_id))
 
 def test_subtype():
     do_test('subtype:warrior', "(c.id IN (SELECT card_id FROM card_subtype WHERE subtype LIKE '%warrior%'))")

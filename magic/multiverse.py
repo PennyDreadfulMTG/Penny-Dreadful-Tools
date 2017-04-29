@@ -514,4 +514,17 @@ def fake_flip_cards(cards):
         "colors": ["Green"],
         "rarity": "Rare"
     }
+    cards["Gleemox"] = {
+        "text": "{T}: Add one mana of any color to your mana pool.\nThis card is banned.",
+        "manacost": "{0}",
+        "type": "Artifact",
+        "layout": "normal",
+        "types": ["Artifact"],
+        "cmc": 0,
+        'imageName': 'gleemox',
+        "legalities": [],
+        "name": "Gleemox",
+        "printings": ["PRM"],
+        "rarity": "Rare"
+    }
     return cards

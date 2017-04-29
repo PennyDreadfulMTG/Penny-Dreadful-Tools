@@ -58,7 +58,3 @@ def cache():
     """
     conn.cursor().execute(sql, [latest, week, week, month, month, last_rotation, last_rotation, last_rotation])
     conn.cursor().execute('COMMIT')
-
-def download_full_db():
-    if not os.path.isfile(configuration.get('pricesdb')) or os.path.getmtime(configuration.get('pricesdb')) < time.time() - 60 * 60 * 24:
-        fetcher.fetch_prices()

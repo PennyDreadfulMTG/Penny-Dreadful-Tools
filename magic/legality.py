@@ -7,6 +7,7 @@ def legal_in_format(d, f):
     return f in legal_formats(d, [f])
 
 def legal_formats(d, formats_to_check=None):
+    init()
     if formats_to_check is None:
         formats_to_check = FORMATS
     formats = formats_to_check.copy()
@@ -34,15 +35,18 @@ def legal_formats(d, formats_to_check=None):
     return formats
 
 def init():
+    if FORMATS:
+        return
+    print('Updating Legalities...')
     assert len(oracle.legal_cards()) > 0
     all_known = oracle.load_card('island').legalities
     if not 'Penny Dreadful EMN' in all_known:
         multiverse.set_legal_cards(season='EMN')
     if not 'Penny Dreadful KLD' in all_known:
         multiverse.set_legal_cards(season='KLD')
+    if not 'Penny Dreadful AER' in all_known:
+        multiverse.set_legal_cards(season='AER')
 
     FORMATS.clear()
     for v in db().values('SELECT name FROM format'):
         FORMATS.add(v)
-
-init()

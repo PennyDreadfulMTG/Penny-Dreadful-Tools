@@ -91,11 +91,11 @@ def set_legality(d):
     d.pd_legal = "Penny Dreadful" in d.legal_formats
     d.legal_icons = ""
 
-    sets = ["EMN", "KLD", "AER"]
+    sets = ["EMN", "KLD", "AER", "AKH", "HOU"]
 
     # We can still do better
     if "Penny Dreadful" in d.legal_formats:
-        d.legal_icons += '<i class="ss ss-aer ss-rare ss-grad">S3</i>'
+        d.legal_icons += '<i class="ss ss-aer ss-rare ss-grad">S4</i>'
 
     for fmt in d.legal_formats:
         if fmt.startswith("Penny Dreadful "):

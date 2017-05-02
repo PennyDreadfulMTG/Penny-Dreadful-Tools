@@ -28,6 +28,8 @@ class SignUpForm(Form):
     def do_validation(self):
         if len(self.mtgo_username) == 0:
             self.errors['mtgo_username'] = "MTGO Username is required"
+        elif active_decks_by(self.mtgo_username):
+            self.errors['mtgo_username'] = "You already have an active league run."
         if len(self.name) == 0:
             self.errors['name'] = 'Deck Name is required'
         else:
@@ -89,6 +91,12 @@ def deck_options(decks, v):
 def active_decks():
     decks = deck.load_decks("d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND wins + losses < 5".format(active_competition_id_query=active_competition_id_query()))
     return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
+
+def active_decks_by(mtgo_username):
+    person_id = deck.get_or_insert_person_id(mtgo_username, None)
+    decks = deck.load_decks("d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND wins + losses < 5 AND person_id = {person_id}".format(active_competition_id_query=active_competition_id_query(), person_id=person_id))
+    return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
+
 
 def report(form):
     db().begin()

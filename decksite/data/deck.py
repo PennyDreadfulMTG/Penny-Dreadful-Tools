@@ -1,4 +1,5 @@
-import hashlib, time
+import hashlib
+import time
 
 from munch import Munch
 

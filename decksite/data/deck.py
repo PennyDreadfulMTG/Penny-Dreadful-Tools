@@ -1,4 +1,4 @@
-import hashlib
+import hashlib, time
 
 from munch import Munch
 
@@ -156,6 +156,9 @@ def add_deck(params):
     if deck_id:
         add_cards(deck_id, params['cards'])
         return deck_id
+    created_date = params.get('created_date')
+    if not created_date:
+        created_date = time.time()
     archetype_id = get_archetype_id(params.get('archetype'))
     for result in ['wins', 'losses', 'draws']:
         if params.get('competition_id') and not params.get(result):
@@ -184,7 +187,7 @@ def add_deck(params):
          IFNULL(%s, DATE_FORMAT(now(), '%%s')),  DATE_FORMAT(now(), '%%s'), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
     )"""
     values = [
-        params.get('created_date'),
+        created_date,
         person_id,
         get_source_id(params['source']),
         params['url'],

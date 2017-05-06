@@ -6,7 +6,7 @@ from shared.database import get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
-SCHEMA_VERSION = 66
+SCHEMA_VERSION = 67
 
 def db():
     return DATABASE
@@ -90,7 +90,8 @@ def setup():
     db().execute("""CREATE TABLE IF NOT EXISTS card_bugs (
         id INTEGER PRIMARY KEY,
         card_id INTEGER NOT NULL,
-        description TEXT NOT NULL
+        description TEXT NOT NULL,
+        classification TEXT NOT NULL
         )""")
     db().execute("""CREATE TABLE IF NOT EXISTS rarity (
         id INTEGER PRIMARY KEY,

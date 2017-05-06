@@ -31,7 +31,7 @@ def base_query(where_clause='(1 = 1)'):
             FROM
                 (SELECT {card_props}, {face_props}, f.name AS face_name,
                 SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal,
-                GROUP_CONCAT(fo.name || ':' || cl.legality) AS legalities, 
+                GROUP_CONCAT(fo.name || ':' || cl.legality) AS legalities,
                 bugs.description AS bug_desc
                 FROM card AS c
                 INNER JOIN face AS f ON c.id = f.card_id

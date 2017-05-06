@@ -7,7 +7,7 @@ from decksite.view import View
 # pylint: disable=no-self-use
 class NotFound(View):
     def __init__(self, exception):
-        self.exception = exception
+        self.exception = str(exception)
         self.card = random.choice(oracle.cards_from_query('Lost'))
         self.cards = [self.card]
 

@@ -7,7 +7,7 @@ from decksite.view import View
 # pylint: disable=no-self-use
 class InternalServerError(View):
     def __init__(self, exception):
-        self.exception = exception
+        self.exception = str(exception)
         self.card = random.choice(oracle.load_cards(['Erratic Explosion', 'Curse of Chaos', 'Anarchy']))
         self.cards = [self.card]
 

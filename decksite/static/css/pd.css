@@ -169,7 +169,7 @@ td, th {
 }
 
 /* Allow the stars in the margin to show. */
-td:first-child, th:first-child {
+td.marginalia:first-child, th.marginalia:first-child {
     overflow: visible;
 }
 

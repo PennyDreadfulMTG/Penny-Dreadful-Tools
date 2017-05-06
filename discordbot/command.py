@@ -244,6 +244,9 @@ class Commands:
                 if p['low'] <= 0.01:
                     s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(p['week'] * 100.0), month=round(p['month'] * 100.0), season=round(p['season'] * 100.0))
                 s += ')'
+            age = dtutil.dt2ts(dtutil.now()) - p['time']
+            if age > 60 * 60 * 2:
+                s += '\nWARNING: price information is {display} old'.format(display=dtutil.display_time(age, 1))
             return s
         def format_price(p):
             dollars, cents = str(round(p, 2)).split('.')

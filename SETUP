@@ -1,5 +1,5 @@
 - Install python3.5+
- -- if you're running OSX, install python and openssl via brew.
+  -- if you're running OSX, install python and openssl via brew.
 - Install pip3
 - pip3 install -r requirements.txt # If your default python is python2 try `python3 -m pip install -r requirements.txt` instead.
 - Add a bot at https://discordapp.com/developers/applications/me
@@ -8,6 +8,12 @@
 - Click to reveal the token
 - Copy config.json.example to config.json and alter the value for "token"
 - Optionally alter the various _dir and _database values in there if you want image files, scratch files and databases stored somewhere else. If you want to collect decks from tappedout.net with valid dates update to_username and to_password.
+- Install MySQL.
+- Using the values from your config.json issue the following commands in MySQL:
+  -- CREATE DATABASE <decksite_database>;
+  -- CREATE USER '<mysql_user>'@'<mysql_host>' IDENTIFIED BY '<mysql_password>';
+  -- GRANT ALL ON <decksite_database>.* TO '<mysql_user>'@'<mysql_host>';
+  -- Use can test this worked from the commandline with `mysql <decksite_database> -u <mysql_user> -p<mysql_password>
 - The sqlite extension we use for fuzzy matching is not part of any string distribution so you must download and build it.
   - curl http://sqlite.org/cgi/src/raw/ext/misc/spellfix.c?name=a4723b6aff748a417b5091b68a46443265c40f0d -o spellfix.c
   - curl http://sqlite.org/cgi/src/raw/src/sqlite3ext.h?name=8648034aa702469afb553231677306cc6492a1ae -o sqlite3ext.h

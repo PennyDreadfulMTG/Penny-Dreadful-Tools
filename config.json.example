@@ -1,7 +1,11 @@
 {
-    "decksite_database": "./decksite.sqlite",
+    "decksite_database": "decksite",
     "image_dir": "./images",
     "magic_database": "./magic.sqlite",
+    "mysql_host": "localhost",
+    "mysql_password": "",
+    "mysql_port": 3306,
+    "mysql_user": "pd_magic",
     "prices_database": "./prices.sqlite",
     "scratch_dir": "."
     "spellfix": "./spellfix",

@@ -50,6 +50,10 @@ def parse_inventory(inventory):
         removecomments = re.match(r'(.*?)#', name)
         if removecomments is not None:
             name = removecomments.group(1)
+        # Same with foil indicators
+        removefoil = re.match(r'(.*?) \*F\*', name)
+        if removefoil is not None:
+            name = removefoil.group(1)
         if board['b'] == 'main':
             d['maindeck'][name] = board['qty']
         elif  board['b'] == 'side':

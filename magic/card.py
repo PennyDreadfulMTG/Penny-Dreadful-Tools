@@ -113,6 +113,7 @@ def canonicalize(name):
         name = name.replace('/', '//')
     if name.find('//') >= 0 and name.find(' // ') == -1:
         name = name.replace('//', ' // ')
+    name = name.replace('Æ', 'Ae')
     return unaccent(name.strip().lower())
 
 class Card(Munch):

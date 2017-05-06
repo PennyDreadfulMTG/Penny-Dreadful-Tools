@@ -185,7 +185,7 @@ def add_deck(params):
         draws,
         finish
     ) VALUES (
-         IFNULL(%s, DATE_FORMAT(now(), '%%s')),  DATE_FORMAT(now(), '%%s'), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+         IFNULL(%s, UNIX_TIMESTAMP()),  UNIX_TIMESTAMP(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
     )"""
     values = [
         created_date,

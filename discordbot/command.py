@@ -154,7 +154,7 @@ class Commands:
 
     @cmd_header("Commands")
     async def search(self, bot, channel, args, author):
-        """`!search {query}` Search for cards, using a magidex style query."""
+        """`!search {query}` Search for cards, using a scryfall-style query."""
         try:
             cards = complex_search(args)
         except search.InvalidSearchException as e:
@@ -162,7 +162,7 @@ class Commands:
             return
         additional_text = ''
         if len(cards) > 10:
-            additional_text = 'http://magidex.com/search/?q=' + fetcher.internal.escape(args)
+            additional_text = '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'
         await bot.post_cards(cards, channel, author, additional_text)
 
     @cmd_header("Commands")

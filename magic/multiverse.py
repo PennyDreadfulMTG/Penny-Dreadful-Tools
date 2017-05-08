@@ -27,12 +27,14 @@ def base_query(where_clause='(1 = 1)'):
             GROUP_CONCAT(face_name, '|') AS names,
             legalities,
             pd_legal,
-            bug_desc
+            bug_desc,
+            bug_class
             FROM
                 (SELECT {card_props}, {face_props}, f.name AS face_name,
                 SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal,
                 GROUP_CONCAT(fo.name || ':' || cl.legality) AS legalities, 
-                bugs.description AS bug_desc
+                bugs.description AS bug_desc,
+                bugs.classification AS bug_class
                 FROM card AS c
                 INNER JOIN face AS f ON c.id = f.card_id
                 LEFT OUTER JOIN card_legality AS cl ON c.id = cl.card_id

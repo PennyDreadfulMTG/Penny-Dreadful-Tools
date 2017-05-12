@@ -284,8 +284,7 @@ class Commands:
     async def resources(self, bot, channel, args):
         """`!resources` Link to page of all Penny Dreadful resources.
            `!resources {section}` Link to Penny Dreadful resources section.
-           `!resources {section} {link}` Link to Penny Dreadful resource.
-        """
+           `!resources {section} {link}` Link to Penny Dreadful resource."""
         args = args.split()
         results = {}
         if len(args) > 0:

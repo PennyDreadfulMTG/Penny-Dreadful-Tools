@@ -40,8 +40,6 @@ The bot will search for any quoted cards, and respond with the card details.
 
            `!resources {section} {link}` Link to Penny Dreadful resource.
 
-
-
 `!rhinos` Anything can be a rhino if you try hard enough
 
 `!rotation` Give the date of the next Penny Dreadful rotation.

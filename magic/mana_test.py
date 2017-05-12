@@ -77,6 +77,9 @@ def test_order():
     assert mana.order(['G', 'R', 'B']) == ['B', 'R', 'G']
     assert mana.order(['W', 'G', 'R', 'B']) == ['B', 'R', 'G', 'W']
 
+def test_colorless():
+    assert mana.colored_symbols(['C']) == {'required': ['C'], 'also': []}
+
 def do_test(s, expected):
     symbols = mana.parse(s)
     assert symbols == expected or print('\nInput: {s}\nExpected: {expected}\n  Actual: {actual}'.format(s=s, expected=expected, actual=symbols))

@@ -48,7 +48,7 @@ async def handle_command(message, bot):
                 await method(Commands, bot)
             elif method.__code__.co_argcount == 1:
                 await method(Commands)
-        except Exception as e:
+        except Exception as e: # pylint: disable=broad-except
             print('Caught exception processing command `{cmd}`'.format(cmd=message.content))
             print(e)
             await bot.client.send_message(message.channel, 'I know the command `{cmd}` but I could not do that.'.format(cmd=parts[0]))

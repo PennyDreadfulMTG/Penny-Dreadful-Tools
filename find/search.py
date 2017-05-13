@@ -297,6 +297,8 @@ def is_subquery(subquery_name):
     subqueries['fetch'] = subqueries['fetchland']
     subqueries['refuge'] = subqueries['gainland']
     query = subqueries.get(subquery_name, '')
+    if query == '':
+        raise InvalidSearchException('Did not recognize `{subquery_name}` as a value for `is:`'.format(subquery_name=subquery_name))
     query = parse(tokenize(query))
     query = "({0})".format(query)
     # print("is:{0} => {1}".format(subquery_name, query))

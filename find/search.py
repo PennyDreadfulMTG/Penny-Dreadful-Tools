@@ -130,7 +130,7 @@ def parse_criterion(key, operator, term):
         return text_where('name', term.value())
     elif key.value() == 'color' or key.value() == 'c':
         return color_where('color', operator.value(), term.value())
-    elif key.value() == 'coloridentity' or key.value() == 'identity' or key.value() == 'ci':
+    elif key.value() == 'coloridentity' or key.value() == 'identity' or key.value() == 'ci' or key.value() == 'id':
         return color_where('color_identity', operator.value(), term.value())
     elif key.value() == 'text' or key.value() == 'o':
         return text_where('text', term.value())

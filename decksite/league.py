@@ -89,12 +89,12 @@ def deck_options(decks, v):
     return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
 
 def active_decks():
-    decks = deck.load_decks("d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND wins + losses < 5".format(active_competition_id_query=active_competition_id_query()))
+    decks = deck.load_decks("d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND wins + losses + draws < 5".format(active_competition_id_query=active_competition_id_query()))
     return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
 
 def active_decks_by(mtgo_username):
     person_id = deck.get_or_insert_person_id(mtgo_username, None)
-    decks = deck.load_decks("d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND wins + losses < 5 AND person_id = {person_id}".format(active_competition_id_query=active_competition_id_query(), person_id=person_id))
+    decks = deck.load_decks("d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND wins + losses + draws < 5 AND person_id = {person_id}".format(active_competition_id_query=active_competition_id_query(), person_id=person_id))
     return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
 
 

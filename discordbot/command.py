@@ -37,16 +37,22 @@ async def handle_command(message, bot):
         args = parts[1]
 
     if method is not None:
-        if method.__code__.co_argcount == 5:
-            await method(Commands, bot, message.channel, args, message.author)
-        elif method.__code__.co_argcount == 4:
-            await method(Commands, bot, message.channel, args)
-        elif method.__code__.co_argcount == 3:
-            await method(Commands, bot, message.channel)
-        elif method.__code__.co_argcount == 2:
-            await method(Commands, bot)
-        elif method.__code__.co_argcount == 1:
-            await method(Commands)
+        try:
+            if method.__code__.co_argcount == 5:
+                await method(Commands, bot, message.channel, args, message.author)
+            elif method.__code__.co_argcount == 4:
+                await method(Commands, bot, message.channel, args)
+            elif method.__code__.co_argcount == 3:
+                await method(Commands, bot, message.channel)
+            elif method.__code__.co_argcount == 2:
+                await method(Commands, bot)
+            elif method.__code__.co_argcount == 1:
+                await method(Commands)
+        except Exception as e: # pylint: disable=broad-except
+            print('Caught exception processing command `{cmd}`'.format(cmd=message.content))
+            print(e)
+            await bot.client.send_message(message.channel, 'I know the command `{cmd}` but I could not do that.'.format(cmd=parts[0]))
+            await getattr(Commands, 'bug')(Commands, bot, message.channel, 'Command failed with {c}: {cmd}'.format(c=e.__class__.__name__, cmd=message.content), message.author)
     else:
         await bot.client.send_message(message.channel, 'Unknown command `{cmd}`. Try `!help`?'.format(cmd=parts[0]))
 
@@ -154,7 +160,7 @@ class Commands:
 
     @cmd_header("Commands")
     async def search(self, bot, channel, args, author):
-        """`!search {query}` Search for cards, using a magidex style query."""
+        """`!search {query}` Search for cards, using a scryfall-style query."""
         try:
             cards = complex_search(args)
         except search.InvalidSearchException as e:
@@ -162,7 +168,7 @@ class Commands:
             return
         additional_text = ''
         if len(cards) > 10:
-            additional_text = 'http://magidex.com/search/?q=' + fetcher.internal.escape(args)
+            additional_text = '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'
         await bot.post_cards(cards, channel, author, additional_text)
 
     @cmd_header("Commands")
@@ -284,8 +290,7 @@ class Commands:
     async def resources(self, bot, channel, args):
         """`!resources` Link to page of all Penny Dreadful resources.
            `!resources {section}` Link to Penny Dreadful resources section.
-           `!resources {section} {link}` Link to Penny Dreadful resource.
-        """
+           `!resources {section} {link}` Link to Penny Dreadful resource."""
         args = args.split()
         results = {}
         if len(args) > 0:

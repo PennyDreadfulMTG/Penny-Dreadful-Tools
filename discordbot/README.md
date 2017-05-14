@@ -40,13 +40,11 @@ The bot will search for any quoted cards, and respond with the card details.
 
            `!resources {section} {link}` Link to Penny Dreadful resource.
 
-        
-
 `!rhinos` Anything can be a rhino if you try hard enough
 
 `!rotation` Give the date of the next Penny Dreadful rotation.
 
-`!search {query}` Search for cards, using a magidex style query.
+`!search {query}` Search for cards, using a scryfall-style query.
 
 `!spoiler` !spoiler {cardname}: Request a card from an upcoming set
 

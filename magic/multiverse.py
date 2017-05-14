@@ -17,7 +17,7 @@ def init():
     update_bugged_cards()
 
 def layouts():
-    return ['normal', 'meld', 'split', 'phenomenon', 'token', 'vanguard', 'double-faced', 'plane', 'flip', 'scheme', 'leveler']
+    return ['normal', 'meld', 'split', 'phenomenon', 'token', 'vanguard', 'double-faced', 'plane', 'flip', 'scheme', 'leveler', 'aftermath']
 
 def base_query(where_clause='(1 = 1)'):
     return """
@@ -32,7 +32,7 @@ def base_query(where_clause='(1 = 1)'):
             FROM
                 (SELECT {card_props}, {face_props}, f.name AS face_name,
                 SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal,
-                GROUP_CONCAT(fo.name || ':' || cl.legality) AS legalities, 
+                GROUP_CONCAT(fo.name || ':' || cl.legality) AS legalities,
                 bugs.description AS bug_desc,
                 bugs.classification AS bug_class
                 FROM card AS c

@@ -1,5 +1,7 @@
 {
     "decksite_database": "decksite",
+    "github_user": "",
+    "github_password": "",
     "image_dir": "./images",
     "magic_database": "./magic.sqlite",
     "mysql_host": "localhost",

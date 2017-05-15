@@ -2,7 +2,7 @@ import json
 import datetime
 
 from flask import Response
-from munch import Munch
+import munch
 
 from decksite import APP, league
 from decksite.data import deck, competition as comp, guarantee
@@ -41,7 +41,7 @@ def league_run_api(person):
     run = guarantee.exactly_one(decks)
 
     decks = league.active_decks()
-    run.can_play = [d.person for d in decks if d.person != person and not league.get_match(Munch({'entry':person, 'opponent':d.person}))]
+    run.can_play = [d.person for d in decks if d.person != person and not league.get_match(munch.munchify({'entry':person, 'opponent':d.person}))]
 
     return return_json(run)
 

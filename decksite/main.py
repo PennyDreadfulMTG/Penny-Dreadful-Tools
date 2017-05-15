@@ -2,17 +2,16 @@ import os
 import re
 import traceback
 
-from flask import Flask, make_response, redirect, request, send_from_directory, url_for
+from flask import make_response, redirect, request, send_from_directory, url_for
 from werkzeug import exceptions
 
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 from decksite import league as lg
+from decksite import APP
 from decksite.data import card as cs, competition as comp, deck, person as ps
 from decksite.league import ReportForm, SignUpForm
 from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, Report, Resources, SignUp
-
-APP = Flask(__name__)
 
 # Decks
 
@@ -176,4 +175,7 @@ def internal_server_error(e):
     return view.page(), 500
 
 def init():
+    # This makes sure that the method decorators are called.
+    import decksite.api as _ # pylint: disable=unused-import
+
     APP.run(host='0.0.0.0', debug=True)

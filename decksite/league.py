@@ -1,4 +1,5 @@
 import json
+import time
 import datetime
 import calendar
 
@@ -132,7 +133,7 @@ def active_league():
     return guarantee.exactly_one(leagues)
 
 def insert_match(params):
-    match_id = db().insert("INSERT INTO `match` (`date`) VALUES (DATE_FORMAT(now(), '%%s'))")
+    match_id = db().insert("INSERT INTO `match` (`date`) VALUES (%s)", [time.time()])
     sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
     db().execute(sql, [params.entry, match_id, params.entry_games])
     db().execute(sql, [params.opponent, match_id, params.opponent_games])

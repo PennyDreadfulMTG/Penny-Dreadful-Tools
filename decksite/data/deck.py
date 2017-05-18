@@ -251,6 +251,25 @@ def get_archetype_id(archetype):
     sql = 'SELECT id FROM archetype WHERE name = %s'
     return db().value(sql, [archetype])
 
+def get_similar_decks(deck):
+    THRESHOLD = 20
+    print('checking')
+    cards_escaped = ', '.join(sqlescape(c['name']) for c in deck.maindeck if c['name'] not in ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'])
+    decks = load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card IN ({cards_escaped}))'.format(cards_escaped=cards_escaped))
+    for d in decks:
+        d.similarity_score = round(similarity_score(deck, d) * 100)
+    decks = [d for d in decks if d.similarity_score >= THRESHOLD and d.id != deck.id]
+    decks.sort(key=lambda d: -(d.similarity_score))
+    return decks
+
+# Dead simple for now, may get more sophisticated. 1 point for each differently named card shared in maindeck. Count irrelevant.
+def similarity_score(a, b):
+    score = 0
+    for card in a.maindeck:
+        if card in b.maindeck:
+            score += 1
+    return float(score) / float(len(b.maindeck))
+
 class Deck(Munch):
     def __init__(self, params):
         super().__init__()

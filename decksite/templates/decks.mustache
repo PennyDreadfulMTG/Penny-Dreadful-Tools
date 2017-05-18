@@ -18,39 +18,7 @@
     </thead>
     <tbody>
         {{#decks}}
-            <tr>
-                <td class="marginalia">{{stars}}</td>
-                <td>{{{colors_safe}}}</td>
-                <td><a href="{{url}}">{{{name}}}</a></td>
-                {{^hide_person}}
-                    <td><a href="{{person_url}}">{{person}}</a></td>
-                {{/hide_person}}
-                {{^hide_source}}
-                    <td {{#source_sort}}data-text="{{source_sort}}"{{/source_sort}}>
-                        {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
-                        {{{source_indicator}}}
-                        {{#competition_url}}</a>{{/competition_url}}
-                    </td>
-                {{/hide_source}}
-                <td class="n">
-                    {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
-                    {{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}
-                    {{#competition_url}}</a>{{/competition_url}}
-                </td>
-                <td class="c">
-                    {{#top8}}<a href="{{competition_url}}">{{/top8}}
-                    {{top8}}
-                    {{#top8}}</a>{{/top8}}
-                </td>
-                <td class="n" data-text="{{date_sort}}">
-                    {{display_date}}
-                </td>
-                <td>
-                    {{#has_legal_format}}
-                        {{{legal_icons}}}
-                    {{/has_legal_format}}
-                </td>
-            </tr>
+            {{> deckrow}}
         {{/decks}}
     </tbody>
 </table>

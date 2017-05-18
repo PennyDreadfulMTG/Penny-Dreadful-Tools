@@ -31,6 +31,17 @@
         </table>
     </section>
 {{/has_record}}
+{{#has_similar}}
+    <section>
+        <h2>Similar Decks</h2>
+        <table class="with-marginalia">
+            <!-- BAKERT header row? new subtemplate for the whole table? -->
+            {{#similar}}
+                {{> deckrow}}
+            {{/similar}}
+        </table>
+    </section>
+{{/has_similar}}
 <section>
     <h2>Notes</h2>
     <p>Source: <a href="{{source_url}}">{{source_name}}</a></p>

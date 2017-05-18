@@ -103,6 +103,12 @@ def cards_from_query(query, fuzziness_threshold=260):
     # First look for an exact match.
     results = []
     for c in cards:
+        if query == card.canonicalize(c.name):
+            results.append(c)
+    if len(results) > 0:
+        return results
+
+    for c in cards:
         names = [card.canonicalize(name) for name in c.names]
         if query in names:
             results.append(c)

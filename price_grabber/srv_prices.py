@@ -8,6 +8,7 @@ SRV = Flask(__name__)
 
 @SRV.route("/<card>/")
 def cardprice(card):
+    card = card.replace('-split-', '//')
     return json.dumps(price.info_cached(name=card))
 
 def init():

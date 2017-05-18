@@ -116,6 +116,10 @@ a {
     text-decoration: none;
 }
 
+a.link {
+    text-decoration: underline;
+}
+
 p a {
     /* Underline that respects descenders. */
     text-shadow: 0.1rem 0 0 #fff, -0.1rem 0 0 #fff;

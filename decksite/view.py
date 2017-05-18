@@ -66,6 +66,9 @@ class View:
     def prepare_decks(self):
         for d in getattr(self, 'decks', []):
             self.prepare_deck(d)
+        for d in getattr(self, 'similar', []):
+            self.prepare_deck(d)
+
 
     def prepare_deck(self, d):
         set_stars_and_top8(d)
@@ -126,7 +129,6 @@ def colors_html(colors, colored_symbols):
         width = (3.0 - 0.1 * len(colors)) / total * n
         s += '<span class="mana mana-{color}" style="width: {width}rem"></span>'.format(color=color, width=width)
     return s
-
 
 def set_stars_and_top8(d):
     if d.finish == 1:

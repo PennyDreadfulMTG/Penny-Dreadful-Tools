@@ -7,7 +7,7 @@
 {{#has_record}}
     <section>
         <h2>Competition</h2>
-        <table style="width: 40em">
+        <table class="with-marginalia" style="width: 40em">
             {{#competition_id}}
                 <tr><td class="marginalia">{{stars}}</td>
                 <td style="width: {{row_len}};"><a href="{{competition_url}}">
@@ -31,6 +31,17 @@
         </table>
     </section>
 {{/has_record}}
+{{#has_similar}}
+    <section>
+        <h2>Similar Decks</h2>
+        <table class="with-marginalia">
+            <!-- BAKERT header row? new subtemplate for the whole table? -->
+            {{#similar}}
+                {{> deckrow}}
+            {{/similar}}
+        </table>
+    </section>
+{{/has_similar}}
 <section>
     <h2>Notes</h2>
     <p>Source: <a href="{{source_url}}">{{source_name}}</a></p>

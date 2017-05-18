@@ -1,11 +1,14 @@
+from decksite.data import deck
 from decksite.view import View
 
 # pylint: disable=no-self-use
 class Deck(View):
-    def __init__(self, deck):
-        self._deck = deck
-        self.decks = [deck]
-        self.cards = deck.all_cards()
+    def __init__(self, d):
+        self._deck = d
+        self.decks = [d]
+        self.cards = d.all_cards()
+        self.similar = deck.get_similar_decks(d)
+        self.has_similar = len(self.similar) > 0
 
     def __getattr__(self, attr):
         return getattr(self._deck, attr)

@@ -71,6 +71,7 @@ def update_database(new_version):
     DELETE FROM `set`;
     """)
     cards = fetcher.all_cards()
+    cards = add_hardcoded_cards(cards)
     melded_faces = []
     for _, c in cards.items():
         if c.get('layout') == 'meld' and c.get('name') == c.get('names')[2]:
@@ -258,3 +259,19 @@ def card_name(c):
         else:
             return c.get('names')[0]
     return ' // '.join(c.get('names', [c.get('name')]))
+
+def add_hardcoded_cards(cards):
+    cards['Gleemox'] = {
+        "text": "{T}: Add one mana of any color to your mana pool.\nThis card is banned.",
+        "manacost": "{0}",
+        "type": "Artifact",
+        "layout": "normal",
+        "types": ["Artifact"],
+        "cmc": 0,
+        'imageName': 'gleemox',
+        "legalities": [],
+        "name": "Gleemox",
+        "printings": ["PRM"],
+        "rarity": "Rare"
+    }
+    return cards

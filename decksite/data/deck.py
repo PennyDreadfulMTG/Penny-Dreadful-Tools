@@ -252,13 +252,13 @@ def get_archetype_id(archetype):
     return db().value(sql, [archetype])
 
 def get_similar_decks(deck):
-    THRESHOLD = 20
+    threshold = 20
     print('checking')
     cards_escaped = ', '.join(sqlescape(c['name']) for c in deck.maindeck if c['name'] not in ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'])
     decks = load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card IN ({cards_escaped}))'.format(cards_escaped=cards_escaped))
     for d in decks:
         d.similarity_score = round(similarity_score(deck, d) * 100)
-    decks = [d for d in decks if d.similarity_score >= THRESHOLD and d.id != deck.id]
+    decks = [d for d in decks if d.similarity_score >= threshold and d.id != deck.id]
     decks.sort(key=lambda d: -(d.similarity_score))
     return decks
 

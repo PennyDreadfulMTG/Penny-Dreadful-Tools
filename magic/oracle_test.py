@@ -29,6 +29,9 @@ def test_cards_from_query():
     cards = oracle.cards_from_query('Ready / Willing')
     assert len(cards) == 1
     assert cards[0].name == 'Ready // Willing'
+    cards = oracle.cards_from_query('Fire // Ice')
+    assert len(cards) == 1
+    assert cards[0].name == 'Fire // Ice'
 
 def test_valid_name():
     assert oracle.valid_name('Dark Ritual') == 'Dark Ritual'

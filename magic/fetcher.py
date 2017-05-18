@@ -55,7 +55,7 @@ def whatsinstandard():
     return internal.fetch_json('http://whatsinstandard.com/api/4/sets.json', resource_id='whatsinstandard')
 
 def card_price(cardname):
-    return internal.fetch_json('http://katelyngigante.com:5800/{0}/'.format(cardname))
+    return internal.fetch_json('http://katelyngigante.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
 
 def resources():
     with open('decksite/resources.json') as resources_file:

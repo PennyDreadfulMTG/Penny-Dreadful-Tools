@@ -303,6 +303,18 @@ ul.menu {
 
     td {
         padding-left: 0;
+        text-align: left;
+    }
+
+    table.with-marginalia {
+        margin-left: 0;
+    }
+    td.marginalia {
+        margin: 0;
+        text-align: left;
+    }
+    td.c, td.n {
+        text-align: left;
     }
 }
 

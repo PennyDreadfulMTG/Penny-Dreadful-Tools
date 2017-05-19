@@ -1,3 +1,5 @@
+from flask import url_for
+
 from decksite import league
 from decksite.data import deck
 from decksite.view import View
@@ -14,6 +16,8 @@ class Deck(View):
         self.matches = league.get_matches(d)
         for m in self.matches:
             m.display_date = dtutil.display_date(m.date)
+            m.opponent_url = url_for('person', person_id=m.opponent)
+            m.opponent_deck_url = url_for('decks', deck_id=m.opponent_deck_id)
         self.has_matches = len(self.matches) > 0
 
     def __getattr__(self, attr):

@@ -69,7 +69,6 @@ class View:
         for d in getattr(self, 'similar', []):
             self.prepare_deck(d)
 
-
     def prepare_deck(self, d):
         set_stars_and_top8(d)
         if d.get('colors', None):

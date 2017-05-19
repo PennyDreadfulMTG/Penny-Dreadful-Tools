@@ -1,5 +1,7 @@
+from decksite import league
 from decksite.data import deck
 from decksite.view import View
+from shared import dtutil
 
 # pylint: disable=no-self-use
 class Deck(View):
@@ -9,6 +11,10 @@ class Deck(View):
         self.cards = d.all_cards()
         self.similar = deck.get_similar_decks(d)
         self.has_similar = len(self.similar) > 0
+        self.matches = league.get_matches(d)
+        for m in self.matches:
+            m.display_date = dtutil.display_date(m.date)
+        self.has_matches = len(self.matches) > 0
 
     def __getattr__(self, attr):
         return getattr(self._deck, attr)

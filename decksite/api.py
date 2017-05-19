@@ -2,7 +2,6 @@ import json
 import datetime
 
 from flask import Response
-import munch
 
 from decksite import APP, league
 from decksite.data import deck, competition as comp, guarantee

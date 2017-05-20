@@ -7,6 +7,7 @@ from munch import Munch
 
 from magic import legality, rotation
 from shared import dtutil
+from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
 from decksite.data import competition, deck, guarantee
@@ -90,14 +91,13 @@ def identifier(params):
 def deck_options(decks, v):
     return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
 
-def active_decks():
-    decks = deck.load_decks("d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND wins + losses + draws < 5".format(active_competition_id_query=active_competition_id_query()))
+def active_decks(additional_where='1 = 1'):
+    where_clause = "d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND (wins + losses + draws < 5) AND NOT retired AND ({additional_where})".format(active_competition_id_query=active_competition_id_query(), additional_where=additional_where)
+    decks = deck.load_decks(where_clause)
     return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
 
 def active_decks_by(mtgo_username):
-    person_id = deck.get_or_insert_person_id(mtgo_username, None)
-    decks = deck.load_decks("d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND wins + losses + draws < 5 AND person_id = {person_id}".format(active_competition_id_query=active_competition_id_query(), person_id=person_id))
-    return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
+    return active_decks('p.mtgo_username = {mtgo_username}'.format(mtgo_username=sqlescape(mtgo_username)))
 
 def report(form):
     db().begin()

@@ -7,6 +7,7 @@ from munch import Munch
 
 from magic import legality, rotation
 from shared import dtutil
+from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
 from decksite.data import competition, deck, guarantee
@@ -66,6 +67,7 @@ class ReportForm(Form):
         ]
 
     def do_validation(self):
+        self.id = self.entry
         if len(self.entry) == 0:
             self.errors['entry'] = 'Please select your deck'
         if len(self.opponent) == 0:
@@ -76,9 +78,9 @@ class ReportForm(Form):
             self.entry_games, self.opponent_games = self.result.split('–')
         if self.entry == self.opponent:
             self.errors['opponent'] = "You can't play yourself"
-        match = get_match(self)
-        if match:
-            self.errors['result'] = 'This match was reported as {p1} {p1games}–{p2games} {p2} {date}'.format(p1=match['p1name'], p1games=match['p1games'], p2games=match['p2games'], p2=match['p2name'], date=dtutil.display_date(match['date']))
+        for match in get_matches(self):
+            if int(self.opponent) == match.opponent_deck_id:
+                self.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=match.game_wins, game_losses=match.game_losses, opponent=match.opponent, date=dtutil.display_date(match.date))
 
 def signup(form):
     return deck.add_deck(form)
@@ -89,15 +91,13 @@ def identifier(params):
 def deck_options(decks, v):
     return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
 
-def active_decks():
-    decks = deck.load_decks("d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND wins + losses + draws < 5".format(active_competition_id_query=active_competition_id_query()))
+def active_decks(additional_where='1 = 1'):
+    where_clause = "d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND (wins + losses + draws < 5) AND NOT retired AND ({additional_where})".format(active_competition_id_query=active_competition_id_query(), additional_where=additional_where)
+    decks = deck.load_decks(where_clause)
     return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
 
 def active_decks_by(mtgo_username):
-    person_id = deck.get_or_insert_person_id(mtgo_username, None)
-    decks = deck.load_decks("d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND wins + losses + draws < 5 AND person_id = {person_id}".format(active_competition_id_query=active_competition_id_query(), person_id=person_id))
-    return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
-
+    return active_decks('p.mtgo_username = {mtgo_username}'.format(mtgo_username=sqlescape(mtgo_username)))
 
 def report(form):
     db().begin()
@@ -139,23 +139,20 @@ def insert_match(params):
     db().execute(sql, [params.opponent, match_id, params.opponent_games])
     return match_id
 
-def get_match(params):
+def get_matches(d):
     sql = """
-        SELECT m.`date`, m.id, dm1.games AS p1games, dm2.games AS p2games, d1.name AS p1name, d2.name AS p2name
+        SELECT m.`date`, m.id, dm2.deck_id AS opponent_deck_id, dm1.games AS game_wins, dm2.games AS game_losses, d2.name AS opponent_deck_name, p.mtgo_username AS opponent
         FROM `match` AS m
         INNER JOIN deck_match AS dm1 ON m.id = dm1.match_id AND dm1.deck_id = %s
-        INNER JOIN deck_match AS dm2 ON m.id = dm2.match_id AND dm2.deck_id = %s
+        INNER JOIN deck_match AS dm2 ON m.id = dm2.match_id AND dm2.deck_id <> %s
         INNER JOIN deck AS d1 ON dm1.deck_id = d1.id
         INNER JOIN deck AS d2 ON dm2.deck_id = d2.id
+        INNER JOIN person AS p ON p.id = d2.person_id
     """
-    rs = db().execute(sql, [params.entry, params.opponent])
-    if len(rs) == 0:
-        return None
-    elif len(rs) == 1:
-        rs[0]['date'] = dtutil.ts2dt(rs[0]['date'])
-        return rs[0]
-    else:
-        raise InvalidDataException('Got more than one match from `{params}`'.format(params=params))
+    matches = [Munch(m) for m in db().execute(sql, [d.id, d.id])]
+    for m in matches:
+        m.date = dtutil.ts2dt(m.date)
+    return matches
 
 def determine_end_of_league(start_date):
     if start_date.day < 15:

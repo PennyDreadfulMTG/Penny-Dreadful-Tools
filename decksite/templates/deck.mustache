@@ -4,6 +4,16 @@
         {{> section}}
     {{/sections}}
 </section>
+{{#has_matches}}
+    <section>
+        <h2>League</h2>
+        <ul>
+            {{#matches}}
+                <li>{{game_wins}}–{{game_losses}} vs <a href="{{opponent_deck_url}}">{{opponent_deck_name}}</a> (<a href="{{opponent_url}}">{{opponent}}</a>) {{display_date}}</li>
+            {{/matches}}
+        </ul>
+    </section>
+{{/has_matches}}
 {{#has_record}}
     <section>
         <h2>Competition</h2>

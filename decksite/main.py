@@ -11,7 +11,7 @@ from decksite import league as lg
 from decksite import APP
 from decksite.data import card as cs, competition as comp, deck, person as ps
 from decksite.league import ReportForm, SignUpForm
-from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, Report, Resources, SignUp
+from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, Report, Resources, SignUp, LeagueInfo
 
 # Decks
 
@@ -100,6 +100,11 @@ def resources():
     return view.page()
 
 # League
+
+@APP.route('/league/')
+def league():
+    view = LeagueInfo()
+    return view.page()
 
 @APP.route('/signup/')
 def signup(form=None):

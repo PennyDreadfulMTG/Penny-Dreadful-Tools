@@ -86,7 +86,7 @@ class View:
         d.export_url = url_for('export', deck_id=d.id)
         if d.source_name == 'League':
             d.source_indicator = 'League'
-            if d.wins + d.losses < 5 and d.competition_end_date > dtutil.now():
+            if d.wins + d.losses < 5 and d.competition_end_date > dtutil.now() and not d.retired:
                 d.stars = '⊕ {stars}'.format(stars=d.stars).strip()
                 d.source_sort = '1'
         elif d.source_name == 'Gatherling':

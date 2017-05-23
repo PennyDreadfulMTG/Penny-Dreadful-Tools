@@ -37,6 +37,7 @@ def legal_formats(d, formats_to_check=None):
 def init():
     if FORMATS:
         return
+    multiverse.set_legal_cards()
     print('Updating Legalities...')
     assert len(oracle.legal_cards()) > 0
     all_known = oracle.load_card('island').legalities

@@ -13,7 +13,7 @@ def init():
     if current_version > database.version():
         print('Database update required')
         update_database(str(current_version))
-    set_legal_cards()
+        set_legal_cards()
     update_bugged_cards()
 
 def layouts():

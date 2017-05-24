@@ -16,7 +16,7 @@ class Database(GenericDatabase):
                 port = int(port[8:])
             user = configuration.get('mysql_user')
             passwd = configuration.get('mysql_passwd')
-            self.connection = MySQLdb.connect(host=host, port=port, user=user, passwd=passwd)
+            self.connection = MySQLdb.connect(host=host, port=port, user=user, passwd=passwd, use_unicode=True, charset='utf8')
             # self.connection.createscalarfunction('unaccent', card.unaccent, 1)
             self.cursor = self.connection.cursor(MySQLdb.cursors.DictCursor)
             try:

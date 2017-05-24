@@ -23,7 +23,6 @@ def scrape():
 
 def tournament(url, name):
     s = fetcher.internal.fetch(url, character_encoding='utf-8')
-    print(s)
 
     # Tournament details
     soup = BeautifulSoup(s, 'html.parser')

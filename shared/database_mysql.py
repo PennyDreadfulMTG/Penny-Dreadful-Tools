@@ -6,7 +6,7 @@ from shared.database_generic import GenericDatabase
 from shared.pd_exception import DatabaseException
 
 
-class Database(GenericDatabase):
+class MysqlDatabase(GenericDatabase):
     def __init__(self, db):
         try:
             host = configuration.get('mysql_host')

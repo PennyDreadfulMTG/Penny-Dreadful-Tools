@@ -16,13 +16,13 @@ TOP_4 = 't4'
 TOP_8 = 't8'
 
 def scrape():
-    soup = BeautifulSoup(fetcher.internal.fetch('http://gatherling.com/eventreport.php?format=Penny+Dreadful&series=&season=&mode=Filter+Events'), 'html.parser')
+    soup = BeautifulSoup(fetcher.internal.fetch('http://gatherling.com/eventreport.php?format=Penny+Dreadful&series=&season=&mode=Filter+Events', character_encoding='utf-8'), 'html.parser')
     tournaments = [(gatherling_url(link['href']), link.string) for link in soup.find_all('a') if link['href'].find('eventreport.php?') >= 0]
     for (url, name) in tournaments:
         tournament(url, name)
 
 def tournament(url, name):
-    s = fetcher.internal.fetch(url)
+    s = fetcher.internal.fetch(url, character_encoding='utf-8')
 
     # Tournament details
     soup = BeautifulSoup(s, 'html.parser')

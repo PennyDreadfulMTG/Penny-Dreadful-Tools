@@ -56,7 +56,6 @@ class ReportForm(Form):
     def __init__(self, form, deck_id=None):
         super().__init__(form)
         decks = active_decks()
-        print(self.get('entry', deck_id))
         self.entry_options = deck_options(decks, self.get('entry', deck_id))
         self.opponent_options = deck_options(decks, self.get('opponent', None))
         self.result_options = [

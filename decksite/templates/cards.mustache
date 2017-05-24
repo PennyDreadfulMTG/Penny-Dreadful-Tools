@@ -1,37 +1,4 @@
 <section>
     <h2>Cards</h2>
-    <table>
-        <thead>
-            <tr>
-                <td></td>
-                <th class="legend" colspan="3" data-sortInitialOrder="desc"># Decks</th>
-                <th class="legend" colspan="3" data-sortInitialOrder="desc"># Cards</th>
-                <td></td>
-            <tr>
-            <tr>
-                <th>Card</th>
-                <th data-sortInitialOrder="desc">Total</th>
-                <th data-sortInitialOrder="desc">Main</th>
-                <th data-sortInitialOrder="desc">Side</th>
-                <th data-sortInitialOrder="desc">Total</th>
-                <th data-sortInitialOrder="desc">Main</th>
-                <th data-sortInitialOrder="desc">Side</th>
-                <th data-sortInitialOrder="desc">Record</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#cards}}
-                <tr>
-                    <td><a href="{{url}}" class="{{^pd_legal}}illegal{{/pd_legal}} card">{{{name}}}</a></td>
-                    <td class="n">{{n_decks}}</td>
-                    <td class="n">{{n_maindecks}}</td>
-                    <td class="n divider">{{n_sideboards}}</td>
-                    <td class="n">{{count_decks}}</td>
-                    <td class="n">{{count_maindecks}}</td>
-                    <td class="n divider">{{count_sideboards}}</td>
-                    <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
-                </tr>
-            {{/cards}}
-        </tbody>
-    </table>
+    {{> cardstable}}
 </section>

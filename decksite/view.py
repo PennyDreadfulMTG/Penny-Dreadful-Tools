@@ -99,15 +99,19 @@ class View:
                 self.prepare_deck(t)
 
     def prepare_cards(self):
-        cards = getattr(self, 'cards', [])
-        for c in cards:
-            c.url = url_for('card', name=c.name)
-            c.img_url = 'http://magic.bluebones.net/proxies/?c={name}'.format(name=urllib.parse.quote(c.name))
-            c.img_url = 'https://deckbox.org/mtg/' + c.name + '/tooltip'
-            c.pd_legal = c.legalities.get('Penny Dreadful', False)
-            c.legal_formats = c.legalities.keys()
-            c.has_legal_format = len(c.legal_formats) > 0
-            c.show_record = c.get('wins') or c.get('losses') or c.get('draws')
+        for c in getattr(self, 'cards', []):
+            self.prepare_card(c)
+        for c in getattr(self, 'only_played_cards', []):
+            self.prepare_card(c)
+
+    def prepare_card(self, c):
+        c.url = url_for('card', name=c.name)
+        c.img_url = 'http://magic.bluebones.net/proxies/?c={name}'.format(name=urllib.parse.quote(c.name))
+        c.img_url = 'https://deckbox.org/mtg/' + c.name + '/tooltip'
+        c.pd_legal = c.legalities.get('Penny Dreadful', False)
+        c.legal_formats = c.legalities.keys()
+        c.has_legal_format = len(c.legal_formats) > 0
+        c.show_record = c.get('wins') or c.get('losses') or c.get('draws')
 
     def prepare_competitions(self):
         for c in getattr(self, 'competitions', []):

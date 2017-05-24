@@ -25,7 +25,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
             (SELECT COUNT(id) FROM deck WHERE competition_id IS NOT NULL AND competition_id = d.competition_id) AS players,
             d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date,
             {person_query} AS person, p.id AS person_id,
-            d.created_date AS `date`, d.decklist_hash,
+            d.created_date AS `date`, d.decklist_hash, d.retired,
             s.name AS source_name
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id

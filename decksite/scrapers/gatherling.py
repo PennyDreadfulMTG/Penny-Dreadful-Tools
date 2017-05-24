@@ -28,7 +28,11 @@ def tournament(url, name):
     soup = BeautifulSoup(s, 'html.parser')
     report = soup.find('div', {'id': 'EventReport'})
     cell = report.find_all('td')[1]
-    date_s = cell.find('br').next.strip() + ' 19:00' # Hack in the known start time because it's not in the page.
+    # Hack in the known start time because it's not in the page.
+    start_time = '19:00'
+    if 'Sunday' in cell.find('a').string.strip() or 'PDS' in cell.find('a').string.strip():
+        start_time = '13:30'
+    date_s = cell.find('br').next.strip() + ' {start_time}'.format(start_time=start_time)
     if '-0001' in date_s:
         # Tournament has been incorrectly configured.
         return

@@ -29,7 +29,7 @@ def legal_cards(force=False, season=None):
     if force:
         resource_id = None
     legal_txt = internal.fetch(url, 'utf-8', resource_id, can_304=True)
-    if legal_cards is None:
+    if legal_txt is None:
         return None
     return legal_txt.strip().split('\n')
 

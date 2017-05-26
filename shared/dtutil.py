@@ -11,6 +11,7 @@ from pytz import timezone
 
 GATHERLING_TZ = timezone('America/New_York')
 WOTC_TZ = timezone('America/Los_Angeles')
+UTC_TZ = timezone('UTC')
 
 # Converts a UTC timestamp (seconds) into a timezone-aware UTC datetime.
 def ts2dt(ts):

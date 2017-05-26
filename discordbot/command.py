@@ -269,8 +269,8 @@ class Commands:
         """Ding!"""
         if args.lower() == "reset":
             self.modofail.count = 0
-        voice_channel = author.voice.voice_channel
-        if voice_channel is not None:
+        if hasattr(author, 'voice') and author.voice is not None and author.voice.voice_channel is not None:
+            voice_channel = author.voice.voice_channel
             voice = channel.server.voice_client
             if voice is None:
                 voice = await bot.client.join_voice_channel(voice_channel)

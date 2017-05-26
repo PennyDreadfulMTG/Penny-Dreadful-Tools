@@ -28,13 +28,15 @@ def base_query(where_clause='(1 = 1)'):
             legalities,
             pd_legal,
             bug_desc,
-            bug_class
+            bug_class,
+            bug_last_confirmed
             FROM
                 (SELECT {card_props}, {face_props}, f.name AS face_name,
                 SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal,
                 GROUP_CONCAT(fo.name || ':' || cl.legality) AS legalities,
                 bugs.description AS bug_desc,
-                bugs.classification AS bug_class
+                bugs.classification AS bug_class,
+                bugs.last_confirmed AS bug_last_confirmed
                 FROM card AS c
                 INNER JOIN face AS f ON c.id = f.card_id
                 LEFT OUTER JOIN card_legality AS cl ON c.id = cl.card_id
@@ -130,12 +132,13 @@ def update_bugged_cards():
     # This may or may not be within a TRANSACTION. Use a SAVEPOINT.
     db().execute("SAVEPOINT bugs")
     db().execute("DELETE FROM card_bugs")
-    for name, bug, classification, _ in fetcher.bugged_cards():
+    for name, bug, classification, last_confirmed in fetcher.bugged_cards():
+        last_confirmed_ts = dtutil.parse_to_ts(last_confirmed, '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
         card_id = db().value("SELECT card_id FROM face WHERE name = ?", [name])
         if card_id is None:
             print("UNKNOWN BUGGED CARD: {card}".format(card=name))
             continue
-        db().execute("INSERT INTO card_bugs (card_id, description, classification) VALUES (?, ?, ?)", [card_id, bug, classification])
+        db().execute("INSERT INTO card_bugs (card_id, description, classification, last_confirmed) VALUES (?, ?, ?, ?)", [card_id, bug, classification, last_confirmed_ts])
     db().execute("RELEASE bugs")
 
 def insert_card(c):

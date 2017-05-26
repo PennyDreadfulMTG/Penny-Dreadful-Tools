@@ -6,7 +6,7 @@ from shared.database import sqlescape
 from decksite.data import deck, guarantee
 from decksite.database import db
 
-def played_cards():
+def played_cards(where_clause='1 = 1'):
     sql = """
         SELECT
             card AS name,
@@ -19,9 +19,10 @@ def played_cards():
             SUM(d.wins) AS wins, SUM(d.losses) AS losses, SUM(d.draws) AS draws
         FROM deck_card AS dc
         INNER JOIN deck AS d ON dc.deck_id = d.id
+        WHERE {where_clause}
         GROUP BY card
         ORDER BY n_decks DESC, count_decks DESC, n_maindecks DESC, count_maindecks DESC
-    """
+    """.format(where_clause=where_clause)
     cs = [Munch(r) for r in db().execute(sql)]
     cards = {c.name: c for c in oracle.load_cards()}
     for c in cs:
@@ -36,3 +37,18 @@ def load_card(name):
     c.draws = sum(filter(None, [d.draws for d in c.decks]))
     c.played_competitively = c.wins or c.losses or c.draws
     return c
+
+def only_played_by(person_id):
+    sql = """
+        SELECT card AS name, p.id
+        FROM deck_card AS dc
+        INNER JOIN deck AS d ON d.id = dc.deck_id
+        INNER JOIN person AS p ON p.id = d.person_id
+        GROUP BY card
+        HAVING COUNT(DISTINCT p.id) = 1 AND p.id = {person_id}
+    """.format(person_id=sqlescape(person_id))
+    cs = [Munch(r) for r in db().execute(sql)]
+    cards = {c.name: c for c in oracle.load_cards()}
+    for c in cs:
+        c.update(cards[c.name])
+    return cs

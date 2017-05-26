@@ -13,7 +13,7 @@ def init():
     if current_version > database.version():
         print('Database update required')
         update_database(str(current_version))
-    set_legal_cards()
+        set_legal_cards()
     update_bugged_cards()
 
 def layouts():
@@ -107,25 +107,26 @@ def check_layouts():
 
 def update_fuzzy_matching():
     format_id = get_format_id('Penny Dreadful', True)
-    db().execute('DROP TABLE IF EXISTS fuzzy')
-    db().execute('CREATE VIRTUAL TABLE IF NOT EXISTS fuzzy USING spellfix1')
-    sql = """INSERT INTO fuzzy (word, rank)
-        SELECT LOWER(name), pd_legal
-        FROM ({base_query})
-    """.format(base_query=base_query())
-    db().execute(sql)
-    sql = """INSERT INTO fuzzy (word, rank)
-        SELECT LOWER(f.name), SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0
-        FROM face AS f
-        INNER JOIN card AS c ON f.card_id = c.id
-        LEFT OUTER JOIN card_legality AS cl ON cl.card_id = c.id AND cl.format_id = {format_id}
-        WHERE LOWER(f.name) NOT IN (SELECT word FROM fuzzy)
-        GROUP BY f.id
-    """.format(format_id=format_id)
-    db().execute(sql)
-    aliases = fetcher.card_aliases()
-    for alias, name in aliases:
-        db().execute('INSERT INTO fuzzy (word, soundslike) VALUES (LOWER(?), ?)', [name, alias])
+    if type(db()).__name__ == 'SqliteDatabase':
+        db().execute('DROP TABLE IF EXISTS fuzzy')
+        db().execute('CREATE VIRTUAL TABLE IF NOT EXISTS fuzzy USING spellfix1')
+        sql = """INSERT INTO fuzzy (word, rank)
+            SELECT LOWER(name), pd_legal
+            FROM ({base_query})
+        """.format(base_query=base_query())
+        db().execute(sql)
+        sql = """INSERT INTO fuzzy (word, rank)
+            SELECT LOWER(f.name), SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0
+            FROM face AS f
+            INNER JOIN card AS c ON f.card_id = c.id
+            LEFT OUTER JOIN card_legality AS cl ON cl.card_id = c.id AND cl.format_id = {format_id}
+            WHERE LOWER(f.name) NOT IN (SELECT word FROM fuzzy)
+            GROUP BY f.id
+        """.format(format_id=format_id)
+        db().execute(sql)
+        aliases = fetcher.card_aliases()
+        for alias, name in aliases:
+            db().execute('INSERT INTO fuzzy (word, soundslike) VALUES (LOWER(?), ?)', [name, alias])
 
 def update_bugged_cards():
     # This may or may not be within a TRANSACTION. Use a SAVEPOINT.
@@ -213,6 +214,10 @@ def set_legal_cards(force=False, season=None):
         format_id = get_format_id('Penny Dreadful')
     else:
         format_id = get_format_id('Penny Dreadful {season}'.format(season=season), True)
+
+    if new_list == [''] or new_list is None:
+        return None
+
     db().execute('DELETE FROM card_legality WHERE format_id = ?', [format_id])
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
         SELECT {format_id}, id, 'Legal'

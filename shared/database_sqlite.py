@@ -5,7 +5,7 @@ from shared import configuration
 from shared.database_generic import GenericDatabase
 from shared.pd_exception import DatabaseException
 
-class Database(GenericDatabase):
+class SqliteDatabase(GenericDatabase):
     def __init__(self, location):
         try:
             self.connection = apsw.Connection(location)

@@ -55,6 +55,9 @@ def load_cards(names=None):
 def legal_cards(force=False):
     if len(LEGAL_CARDS) == 0 or force:
         new_list = multiverse.set_legal_cards(force)
+        if new_list is None:
+            sql = 'SELECT name FROM ({base_query}) WHERE id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=base_query(), format_id=format_id)
+            new_list = [row['name'] for row in db().execute(sql)]
         LEGAL_CARDS.clear()
         for name in new_list:
             LEGAL_CARDS.append(name)

@@ -25,7 +25,7 @@ def unzip(url, path):
     shutil.rmtree(location)
     return s
 
-def fetch(url, character_encoding=None, resource_id=None):
+def fetch(url, character_encoding=None, resource_id=None, can_304=False):
     if_modified_since = None
     if resource_id is None:
         resource_id = url

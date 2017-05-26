@@ -211,6 +211,10 @@ def set_legal_cards(force=False, season=None):
         format_id = get_format_id('Penny Dreadful')
     else:
         format_id = get_format_id('Penny Dreadful {season}'.format(season=season), True)
+
+    if new_list == [''] or new_list is None:
+        return None
+
     db().execute('DELETE FROM card_legality WHERE format_id = ?', [format_id])
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
         SELECT {format_id}, id, 'Legal'

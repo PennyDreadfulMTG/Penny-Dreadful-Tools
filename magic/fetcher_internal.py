@@ -39,7 +39,10 @@ def fetch(url, character_encoding=None, resource_id=None, can_304=False):
         if character_encoding != None:
             response.encoding = character_encoding
         if response.status_code == 304:
-            return get_cached_text(resource_id)
+            if can_304:
+                return None
+            else:
+                return get_cached_text(resource_id)
         last_modified = response.headers.get("Last-Modified")
         set_last_modified(resource_id, last_modified, response.text)
         return response.text

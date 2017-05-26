@@ -28,7 +28,10 @@ def legal_cards(force=False, season=None):
             return internal.fetch(url, 'latin-1', resource_id).strip().split('\n')
     if force:
         resource_id = None
-    return internal.fetch(url, 'utf-8', resource_id).strip().split('\n')
+    legal_txt = internal.fetch(url, 'utf-8', resource_id, can_304=True)
+    if legal_txt is None:
+        return None
+    return legal_txt.strip().split('\n')
 
 def mtgjson_version():
     return pkg_resources.parse_version(internal.fetch_json('https://mtgjson.com/json/version.json', resource_id='mtg_json_version'))

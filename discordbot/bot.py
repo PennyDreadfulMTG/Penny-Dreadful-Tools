@@ -2,6 +2,7 @@ import discord
 
 from discordbot import command, emoji
 from magic import image_fetcher
+from magic import multiverse
 from shared import configuration, dtutil
 
 class Bot:
@@ -10,6 +11,7 @@ class Bot:
         self.voice = None
 
     def init(self):
+        multiverse.set_legal_cards()
         self.client.run(configuration.get('token'))
 
     async def on_ready(self):

@@ -19,6 +19,8 @@ class Deck(View):
             m.opponent_url = url_for('person', person_id=m.opponent)
             m.opponent_deck_url = url_for('decks', deck_id=m.opponent_deck_id)
         self.has_matches = len(self.matches) > 0
+        self.og_title = d.name
+        self.og_url = 'https://pennydreadfulmagic.com' + url_for('decks', deck_id=d.id)
 
     def __getattr__(self, attr):
         return getattr(self._deck, attr)

@@ -165,3 +165,7 @@ def determine_end_of_league(start_date):
     if end_date > rotation.next_rotation():
         end_date = rotation.next_rotation()
     return end_date - datetime.timedelta(seconds=1)
+
+def retire_deck(d):
+    sql = """UPDATE `deck` SET `retired`=1 WHERE id=%s"""
+    db().execute(sql, [d.id])

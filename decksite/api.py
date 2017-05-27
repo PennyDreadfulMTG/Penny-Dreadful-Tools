@@ -1,10 +1,12 @@
 import json
 import datetime
 
-from flask import Response
+from flask import Response, request
 
 from decksite import APP, league
 from decksite.data import deck, competition as comp, guarantee
+
+from shared import configuration
 
 # from shared import configuration
 # from decksite.scrapers import tappedout
@@ -45,9 +47,34 @@ def league_run_api(person):
 
     return return_json(run)
 
-def return_json(content):
+@APP.route('/api/league/drop/<person>', methods=['POST'])
+def drop(person):
+    error = validate_api_key()
+    if error:
+        return error
+
+    decks = league.active_decks_by(person)
+    if len(decks) == 0:
+        return return_json(generate_error('NO_ACTIVE_RUN', 'That person does not have an active run'))
+
+    run = guarantee.exactly_one(decks)
+
+    league.retire_deck(run)
+    result = {'success':True, 'deck':run}
+    return return_json(result)
+
+def validate_api_key():
+    if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):
+        return None
+
+    return return_json(generate_error('UNAUTHORIZED', 'Invalid API key'), status=403)
+
+def generate_error(code, msg):
+    return {'error':True, 'code':code, 'msg':msg}
+
+def return_json(content, status=200):
     content = json.dumps(content, default=extra_serializer)
-    r = Response(response=content, status=200, mimetype="application/json")
+    r = Response(response=content, status=status, mimetype="application/json")
     return r
 
 def extra_serializer(obj):

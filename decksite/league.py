@@ -169,3 +169,4 @@ def determine_end_of_league(start_date):
 def retire_deck(d):
     sql = """UPDATE `deck` SET `retired`=1 WHERE id=%s"""
     db().execute(sql, [d.id])
+    db().commit()

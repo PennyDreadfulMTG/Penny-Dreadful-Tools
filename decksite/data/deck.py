@@ -3,7 +3,7 @@ import time
 
 from munch import Munch
 
-from magic import mana, oracle, legality
+from magic import mana, oracle, legality, rotation
 from shared import dtutil
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
@@ -94,15 +94,19 @@ def set_legality(d):
 
     sets = ["EMN", "KLD", "AER", "AKH", "HOU"]
 
-    # We can still do better
     if "Penny Dreadful" in d.legal_formats:
-        d.legal_icons += '<i class="ss ss-akh ss-rare ss-grad">S4</i>'
+        icon = rotation.last_rotation_ex()['code'].lower()
+        n = sets.index(icon.upper()) + 1
+        d.legal_icons += '<i class="ss ss-{code} ss-rare ss-grad">S{n}</i>'.format(code=icon, n=n)
 
     for fmt in d.legal_formats:
         if fmt.startswith("Penny Dreadful "):
-            d.legal_icons += '<i class="ss ss-{set} ss-common ss-grad">S{n}</i>'.format(set=fmt[15:].lower(), n=sets.index(fmt[15:].upper()) + 1)
+            n = sets.index(fmt[15:].upper()) + 1
+            d.legal_icons += '<i class="ss ss-{set} ss-common ss-grad">S{n}</i>'.format(set=fmt[15:].lower(), n=n)
     # if "Modern" in d.legal_formats:
     #     d.legal_icons += '<i class="ss ss-8ed ss-uncommon ss-grad icon-modern">MDN</i>'
+    if "Commander" in d.legal_formats: #I think C16 looks the nicest.
+        d.legal_icons += '<i class="ss ss-c16 ss-uncommon ss-grad">CMDR</i>'
 
 def set_twins(deck):
     sql = """

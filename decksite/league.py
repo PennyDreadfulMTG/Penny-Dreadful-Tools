@@ -103,8 +103,8 @@ def report(form):
     match_id = insert_match(form)
     winner, loser = winner_and_loser(form)
     if winner:
-        db().execute('UPDATE deck SET wins = wins + 1 WHERE id = %s', [winner])
-        db().execute('UPDATE deck SET losses = losses + 1 WHERE id = %s', [loser])
+        db().execute('UPDATE deck SET wins = (SELECT COUNT(*) FROM decksite.deck_match WHERE `deck_id` = %s AND `games` = 2)', [winner])
+        db().execute('UPDATE deck SET losses = (SELECT COUNT(*) FROM decksite.deck_match WHERE `deck_id` = %s AND `games` < 2)', [loser])
     else:
         db().execute('UPDATE deck SET draws = draws + 1 WHERE id = %s OR id = %s', [form.entry, form.opponent])
     db().commit()

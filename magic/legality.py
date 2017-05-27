@@ -15,13 +15,16 @@ def legal_formats(d, formats_to_check=None):
         return set()
     if sum(e['n'] for e in d.sideboard) > 15:
         return set()
+    if (sum(e['n'] for e in d.maindeck) + sum(e['n'] for e in d.sideboard)) != 100:
+        formats.discard('Commander')
     card_count = {}
     for c in d.all_cards():
         if not c.type.startswith('Basic Land'):
             card_count[c.name] = card_count.get(c.name, 0) + 1
     if card_count.values() and max(card_count.values()) > 4:
         return set()
-    formats.discard('Commander')
+    elif card_count.values() and max(card_count.values()) > 1:
+        formats.discard('Commander')
     for c in d.all_cards():
         for f in formats.copy():
             if f not in c.legalities.keys() or c.legalities[f] == 'Banned':

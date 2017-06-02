@@ -120,6 +120,9 @@ def winner_and_loser(params):
 def active_competition_id_query():
     return "SELECT id FROM competition WHERE start_date < {now} AND end_date > {now} AND competition_type_id = (SELECT id FROM competition_type WHERE name = 'League')".format(now=dtutil.dt2ts(dtutil.now()))
 
+def get_active_competition_id():
+    return db().execute(active_competition_id_query())[0]['id']
+
 def active_league():
     where_clause = 'c.id = ({id_query})'.format(id_query=active_competition_id_query())
     leagues = competition.load_competitions(where_clause)

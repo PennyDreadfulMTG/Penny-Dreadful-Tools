@@ -6,6 +6,7 @@ from shared import dtutil
 
 from decksite import deck_name
 from decksite import template
+from decksite import league
 
 # pylint: disable=no-self-use
 class View:
@@ -30,17 +31,34 @@ class View:
     def js_url(self):
         return url_for('static', filename='js/pd.js')
 
+    def is_league(self):
+        return False
+
     def menu(self):
-        return [
-            {'name': 'Decks', 'url': url_for('home')},
-            {'name': 'Competitions', 'url': url_for('competitions')},
-            {'name': 'People', 'url': url_for('people')},
-            {'name': 'Cards', 'url': url_for('cards')},
-            {'name': 'Resources', 'url': url_for('resources')},
-            {'name': 'Sign Up', 'url': url_for('signup')},
-            {'name': 'Report', 'url': url_for('report')},
-            {'name': 'About', 'url': url_for('about')}
-        ]
+        if self.is_league():
+            return [
+                {'name': 'Home', 'url': url_for('home')},
+                # {'name': 'People', 'url': url_for('people')},
+                # {'name': 'Cards', 'url': url_for('cards')},
+                # {'name': 'Resources', 'url': url_for('resources')},
+                {'name': 'League', 'url': url_for('league')},
+                {'name': 'Records', 'url': url_for('competition', competition_id=league.get_active_competition_id())},
+                {'name': 'Sign Up', 'url': url_for('signup')},
+                {'name': 'Report', 'url': url_for('report')},
+                {'name': 'About', 'url': url_for('about')}
+            ]
+        else:
+            return [
+                {'name': 'Decks', 'url': url_for('home')},
+                {'name': 'Competitions', 'url': url_for('competitions')},
+                {'name': 'People', 'url': url_for('people')},
+                {'name': 'Cards', 'url': url_for('cards')},
+                {'name': 'Resources', 'url': url_for('resources')},
+                {'name': 'League', 'url': url_for('league')},
+                {'name': 'Sign Up', 'url': url_for('signup')},
+                # {'name': 'Report', 'url': url_for('report')},
+                {'name': 'About', 'url': url_for('about')}
+            ]
 
     def favicon_url(self):
         return url_for('favicon', rest='.ico')

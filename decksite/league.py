@@ -31,7 +31,7 @@ class SignUpForm(Form):
         if len(self.mtgo_username) == 0:
             self.errors['mtgo_username'] = "MTGO Username is required"
         elif active_decks_by(self.mtgo_username):
-            self.errors['mtgo_username'] = "You already have an active league run."
+            self.errors['mtgo_username'] = "You already have an active league run.  If you wish to retire your run early, private message '!retire' to PDBot"
         if len(self.name) == 0:
             self.errors['name'] = 'Deck Name is required'
         else:
@@ -120,6 +120,9 @@ def winner_and_loser(params):
 def active_competition_id_query():
     return "SELECT id FROM competition WHERE start_date < {now} AND end_date > {now} AND competition_type_id = (SELECT id FROM competition_type WHERE name = 'League')".format(now=dtutil.dt2ts(dtutil.now()))
 
+def get_active_competition_id():
+    return db().execute(active_competition_id_query())[0]['id']
+
 def active_league():
     where_clause = 'c.id = ({id_query})'.format(id_query=active_competition_id_query())
     leagues = competition.load_competitions(where_clause)
@@ -129,6 +132,7 @@ def active_league():
         name = "League {MM} {YYYY}".format(MM=calendar.month_name[end_date.month], YYYY=end_date.year)
         comp_id = competition.get_or_insert_competition(start_date, end_date, name, "League", 'http://pennydreadfulmagic.com/league/')
         leagues = [competition.load_competition(comp_id)]
+        db().commit()
     return guarantee.exactly_one(leagues)
 
 def insert_match(params):

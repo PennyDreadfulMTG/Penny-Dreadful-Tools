@@ -32,9 +32,11 @@ def load_competition(competition_id):
 def load_competitions(where_clause='1 = 1'):
     sql = """
         SELECT c.id, c.name, c.start_date, c.end_date, c.url,
-        COUNT(d.id) AS num_decks
+        COUNT(d.id) AS num_decks,
+        t.name AS type
         FROM competition AS c
         LEFT OUTER JOIN deck AS d ON c.id = d.competition_id
+        LEFT OUTER JOIN competition_type as t ON t.id = c.competition_type_id
         WHERE {where_clause}
         GROUP BY c.id
         ORDER BY c.start_date DESC, c.name

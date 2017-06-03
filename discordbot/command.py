@@ -10,7 +10,7 @@ from typing import List
 
 from discordbot import emoji
 from find import search
-from magic import card, oracle, fetcher, rotation
+from magic import card, oracle, fetcher, rotation, multiverse
 from shared import configuration, dtutil
 
 async def respond_to_card_names(message, bot):
@@ -346,6 +346,22 @@ class Commands:
         fetcher.internal.store(sfcard['image_uri'], sfimgname)
         text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=sfcard['mana_cost']), channel)
         await bot.client.send_file(channel, sfimgname, content=text)
+        if not oracle.valid_name(sfcard['name']):
+            c = {
+                "text": sfcard.get('oracle_text', ''),
+                "manacost": sfcard.get('mana_cost', None),
+                "type": sfcard['type_line'],
+                "layout": sfcard['layout'],
+                "types": [], # This is wrong.  But whatever.
+                "cmc": int(float(sfcard['cmc'])),
+                'imageName': sfimgname,
+                "legalities": [],
+                "name": sfcard['name'],
+                "printings": [sfcard['set']],
+                "rarity": sfcard['rarity']
+            }
+            multiverse.insert_card(c)
+
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):

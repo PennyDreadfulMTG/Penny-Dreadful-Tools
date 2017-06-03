@@ -29,7 +29,8 @@ def valid_name(name):
                 raise InvalidDataException('Found more than one card looking for `{name}`'.format(name=name))
             return cards[0].name
         except IndexError:
-            raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
+            # raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
+            return False
 
 def load_card(name):
     return load_cards([name])[0]

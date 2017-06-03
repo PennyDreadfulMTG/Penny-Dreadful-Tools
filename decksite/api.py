@@ -60,7 +60,7 @@ def drop(person):
     run = guarantee.exactly_one(decks)
 
     league.retire_deck(run)
-    result = {'success':True, 'deck':run}
+    result = {'success':True}
     return return_json(result)
 
 def validate_api_key():

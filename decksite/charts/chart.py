@@ -6,19 +6,24 @@ import seaborn as sns
 from decksite.data import deck
 from shared import configuration
 
+IMG_DIR = os.path.join('decksite', configuration.get('image_dir'))
+if not os.path.exists(IMG_DIR):
+    os.mkdir(IMG_DIR)
+
 def cmc(deck_id):
     name = str(deck_id) + '-cmc.png'
-    path = configuration.get('image_dir') + '/' + name
+    path = os.path.join(IMG_DIR, name)
+    flask_path = os.path.join(configuration.get('image_dir'), name)
     if os.path.exists(path):
-        return path
+        return flask_path
     d = deck.load_deck(deck_id)
     costs = {}
     for ci in d.maindeck:
         if not ci.get('card').is_land():
-            # The 0 here is a bit of a hack because it's wrong for split cards. But we should convert CMC to be a single value not a list from now on.
-            cost = int(float(ci.get('card').cmc[0])) # Invalid for Unglued half costs.
+            cost = int(float(ci.get('card').cmc)) # Invalid for Unglued half costs.
             costs[cost] = ci.get('n') + costs.get(cost, 0)
-    return image(path, costs)
+    image(path, costs)
+    return flask_path
 
 def image(path, costs):
     x_low = min(costs.keys())

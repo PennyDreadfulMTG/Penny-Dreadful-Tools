@@ -20,3 +20,4 @@ Thumbs.db
 coverage.xml
 *.py,cover
 .vs/
+decksite/images/*-cmc.png

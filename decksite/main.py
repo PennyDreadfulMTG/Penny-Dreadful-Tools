@@ -161,7 +161,7 @@ def favicon(rest):
     return send_from_directory(os.path.join(APP.root_path, 'static/images/favicon'), 'favicon{rest}'.format(rest=rest))
 
 @APP.route('/charts/cmc/<deck_id>-cmc.png')
-def charts(deck_id):
+def cmc_chart(deck_id):
     return send_file(Chart().cmc(int(deck_id)))
 
 @APP.route('/legal_cards.txt')

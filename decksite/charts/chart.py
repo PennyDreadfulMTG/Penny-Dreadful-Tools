@@ -33,5 +33,5 @@ class Chart:
         g.axes.yaxis.set_ticklabels([])
         g.margins(y=0, x=0)
         sns.despine(left=True, bottom=True)
-        plt.savefig(path)
+        plt.savefig(path, transparent=True, pad_inches=0, bbox_inches='tight')
         return path

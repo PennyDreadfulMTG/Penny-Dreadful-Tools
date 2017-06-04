@@ -10,7 +10,7 @@ from shared.pd_exception import DoesNotExistException, InvalidDataException
 from decksite import league as lg
 from decksite import APP
 from decksite.data import card as cs, competition as comp, deck, person as ps
-from decksite.charts.chart import Chart
+from decksite.charts import chart
 from decksite.league import ReportForm, SignUpForm
 from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, Report, Resources, SignUp, LeagueInfo
 
@@ -162,7 +162,7 @@ def favicon(rest):
 
 @APP.route('/charts/cmc/<deck_id>-cmc.png')
 def cmc_chart(deck_id):
-    return send_file(Chart().cmc(int(deck_id)))
+    return send_file(chart.cmc(int(deck_id)))
 
 @APP.route('/legal_cards.txt')
 def legal_cards():

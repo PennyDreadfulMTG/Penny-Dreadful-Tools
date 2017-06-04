@@ -1,5 +1,9 @@
 import os.path
 
+import matplotlib as mpl
+# This has to happen before pyplot is imported to avoid needing an X server to draw the graphs.
+# pylint: disable=wrong-import-position
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 

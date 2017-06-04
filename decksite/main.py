@@ -2,7 +2,7 @@ import os
 import re
 import traceback
 
-from flask import make_response, redirect, request, send_from_directory, url_for
+from flask import make_response, redirect, request, send_file, send_from_directory, url_for
 from werkzeug import exceptions
 
 from shared.pd_exception import DoesNotExistException, InvalidDataException
@@ -10,6 +10,7 @@ from shared.pd_exception import DoesNotExistException, InvalidDataException
 from decksite import league as lg
 from decksite import APP
 from decksite.data import card as cs, competition as comp, deck, person as ps
+from decksite.charts import chart
 from decksite.league import ReportForm, SignUpForm
 from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, Report, Resources, SignUp, LeagueInfo
 
@@ -158,6 +159,10 @@ def deckcycle_tappedout():
 @APP.route('/favicon<rest>/')
 def favicon(rest):
     return send_from_directory(os.path.join(APP.root_path, 'static/images/favicon'), 'favicon{rest}'.format(rest=rest))
+
+@APP.route('/charts/cmc/<deck_id>-cmc.png')
+def cmc_chart(deck_id):
+    return send_file(chart.cmc(int(deck_id)))
 
 @APP.route('/legal_cards.txt')
 def legal_cards():

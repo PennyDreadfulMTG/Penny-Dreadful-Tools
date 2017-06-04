@@ -51,7 +51,7 @@ def face_properties():
     props['cmc']['type'] = REAL
     props['name']['query'] = """{name_query} AS name""".format(name_query=name_query())
     props['name_ascii']['query'] = """{name_query} AS name_ascii""".format(name_query=name_query('name_ascii'))
-    props['cmc']['query'] = "GROUP_CONCAT(`{table}`.`{column}`, '|') AS `{column}`"
+    props['cmc']['query'] = "SUM(`{table}`.`{column}`) AS `{column}`"
     props['mana_cost']['query'] = "GROUP_CONCAT(`{table}`.`{column}`, '|') AS `{column}`"
     props['text']['query'] = "GROUP_CONCAT(`{table}`.`{column}`, '\n-----\n') AS `{column}`"
     props['card_id']['foreign_key'] = ('card', 'id')
@@ -121,7 +121,7 @@ class Card(Munch):
         super().__init__()
         for k in params.keys():
             v = params[k]
-            if k == 'names' or k == 'cmc' or k == 'mana_cost':
+            if k == 'names' or k == 'mana_cost':
                 if v is not None:
                     v = v.split('|')
             if k == 'legalities':

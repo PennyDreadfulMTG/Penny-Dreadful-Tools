@@ -1,4 +1,5 @@
 {
+    "charts_dir": "./images/charts",
     "decksite_database": "decksite",
     "github_user": "",
     "github_password": "",

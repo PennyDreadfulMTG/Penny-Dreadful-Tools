@@ -9,10 +9,13 @@ import seaborn as sns
 
 from decksite.data import deck
 from shared import configuration
+from shared.pd_exception import DoesNotExistException
 
 def cmc(deck_id):
     name = str(deck_id) + '-cmc.png'
-    path = os.path.join(configuration.get('image_dir'), name)
+    if not os.path.exists(configuration.get('charts_dir')):
+        raise DoesNotExistException('Cannot store graph images because {dir} does not exist.'.format(dir=configuration.get('charts_dir')))
+    path = os.path.join(configuration.get('charts_dir'), name)
     if os.path.exists(path):
         return path
     d = deck.load_deck(deck_id)
@@ -20,7 +23,9 @@ def cmc(deck_id):
     for ci in d.maindeck:
         c = ci.get('card')
         if not c.is_land():
-            if next((s for s in c.mana_cost if '{X}' in s), None) is not None:
+            if c.mana_cost is None:
+                cost = '0'
+            elif next((s for s in c.mana_cost if '{X}' in s), None) is not None:
                 cost = 'X'
             else:
                 cost = int(float(c.cmc))

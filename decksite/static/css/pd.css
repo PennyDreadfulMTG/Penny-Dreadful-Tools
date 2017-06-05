@@ -240,6 +240,29 @@ ul.menu {
     text-transform: uppercase;
 }
 
+.menu li.has-submenu > a {
+    padding-bottom: 0;
+}
+
+.submenu li {
+    list-style: none;
+}
+
+.submenu a {
+    font-size: 0.7rem;
+    line-height: 1.33333;
+    margin: 0;
+    padding: 0.1rem 1rem 0.93rem 1rem;
+}
+
+.submenu li:first-child a {
+    padding-left: 2rem;
+}
+
+.submenu li:last-child a {
+    padding-right: 2rem;
+}
+
 .menu a:hover {
     color: red;
 }

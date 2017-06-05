@@ -107,5 +107,18 @@ async def on_ready():
 async def on_voice_state_update(before, after):
     await BOT.on_voice_state_update(before, after)
 
+@BOT.client.event
+async def on_member_update(before, after):
+    streaming_role = [r for r in before.server.roles if r.name == "Currently Streaming"]
+    if not streaming_role:
+        return
+    streaming_role = streaming_role[0]
+    if (not after.game or after.game.type == 0) and streaming_role in before.roles:
+        print('{user} no longer streaming'.format(user=after.name))
+        await BOT.client.remove_roles(after, streaming_role)
+    if (after.game and after.game.type == 1) and not streaming_role in before.roles:
+        print('{user} started streaming'.format(user=after.name))
+        await BOT.client.add_roles(after, streaming_role)
+
 def init():
     BOT.init()

@@ -22,17 +22,18 @@ def cmc(deck_id):
     costs = {}
     for ci in d.maindeck:
         c = ci.get('card')
-        if not c.is_land():
-            if c.mana_cost is None:
-                cost = '0'
-            elif next((s for s in c.mana_cost if '{X}' in s), None) is not None:
-                cost = 'X'
-            else:
-                cost = int(float(c.cmc))
-                if cost > 7:
-                    cost = '7+'
-                cost = str(cost)
-            costs[cost] = ci.get('n') + costs.get(cost, 0)
+        if c.is_land():
+            continue
+        if c.mana_cost is None:
+            cost = '0'
+        elif next((s for s in c.mana_cost if '{X}' in s), None) is not None:
+            cost = 'X'
+        else:
+            cost = int(float(c.cmc))
+            if cost > 7:
+                cost = '7+'
+            cost = str(cost)
+        costs[cost] = ci.get('n') + costs.get(cost, 0)
     return image(path, costs)
 
 def image(path, costs):

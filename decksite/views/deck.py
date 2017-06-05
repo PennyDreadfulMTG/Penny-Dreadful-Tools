@@ -1,6 +1,6 @@
 from flask import url_for
 
-from decksite import league
+from decksite import deck_name, league
 from decksite.data import deck
 from decksite.view import View
 from shared import dtutil
@@ -32,7 +32,7 @@ class Deck(View):
         return getattr(self._deck, attr)
 
     def subtitle(self):
-        return self._deck.name
+        return deck_name.normalize(self._deck)
 
     def sections(self):
         sections = []

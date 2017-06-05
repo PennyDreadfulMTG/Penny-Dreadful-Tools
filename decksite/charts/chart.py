@@ -9,36 +9,49 @@ import seaborn as sns
 
 from decksite.data import deck
 from shared import configuration
-
-IMG_DIR = os.path.join('decksite', configuration.get('image_dir'))
-if not os.path.exists(IMG_DIR):
-    os.mkdir(IMG_DIR)
+from shared.pd_exception import DoesNotExistException
 
 def cmc(deck_id):
     name = str(deck_id) + '-cmc.png'
-    path = os.path.join(IMG_DIR, name)
-    flask_path = os.path.join(configuration.get('image_dir'), name)
+    if not os.path.exists(configuration.get('charts_dir')):
+        raise DoesNotExistException('Cannot store graph images because {dir} does not exist.'.format(dir=configuration.get('charts_dir')))
+    path = os.path.join(configuration.get('charts_dir'), name)
     if os.path.exists(path):
-        return flask_path
+        return path
     d = deck.load_deck(deck_id)
     costs = {}
     for ci in d.maindeck:
-        if not ci.get('card').is_land():
-            cost = int(float(ci.get('card').cmc)) # Invalid for Unglued half costs.
-            costs[cost] = ci.get('n') + costs.get(cost, 0)
-    image(path, costs)
-    return flask_path
+        c = ci.get('card')
+        if c.is_land():
+            continue
+        if c.mana_cost is None:
+            cost = '0'
+        elif next((s for s in c.mana_cost if '{X}' in s), None) is not None:
+            cost = 'X'
+        else:
+            cost = int(float(c.cmc))
+            if cost > 7:
+                cost = '7+'
+            cost = str(cost)
+        costs[cost] = ci.get('n') + costs.get(cost, 0)
+    return image(path, costs)
 
 def image(path, costs):
-    x_low = min(costs.keys())
-    x_high = max(costs.keys())
-    xs = [costs.get(i) for i in range(x_low, x_high + 1)]
-    ys = [i for i in range(x_low, x_high + 1)]
+    ys = ['0', '1', '2', '3', '4', '5', '6', '7+', 'X']
+    xs = [costs.get(k, 0) for k in ys]
     sns.set(font_scale=3)
     sns.set_style('white')
-    g = sns.barplot(ys, xs, palette=['grey'] * x_high)
+    g = sns.barplot(ys, xs, palette=['grey'] * len(ys))
     g.axes.yaxis.set_ticklabels([])
+    rects = g.patches
+    sns.set(font_scale=2)
+    for rect, label in zip(rects, xs):
+        if label == 0:
+            continue
+        height = rect.get_height()
+        g.text(rect.get_x() + rect.get_width()/2, height + 0.5, label, ha='center', va='bottom')
     g.margins(y=0, x=0)
     sns.despine(left=True, bottom=True)
-    plt.savefig(path, transparent=True, pad_inches=0, bbox_inches='tight')
+    g.get_figure().savefig(path, transparent=True, pad_inches=0, bbox_inches='tight')
+    plt.clf() # Clear all data from matplotlib so it does not persist across requests.
     return path

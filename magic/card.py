@@ -51,7 +51,7 @@ def face_properties():
     props['cmc']['type'] = REAL
     props['name']['query'] = """{name_query} AS name""".format(name_query=name_query())
     props['name_ascii']['query'] = """{name_query} AS name_ascii""".format(name_query=name_query('name_ascii'))
-    props['cmc']['query'] = "SUM(`{table}`.`{column}`) AS `{column}`"
+    props['cmc']['query'] = """{cmc_query} AS cmc""".format(cmc_query=cmc_query())
     props['mana_cost']['query'] = "GROUP_CONCAT(`{table}`.`{column}`, '|') AS `{column}`"
     props['text']['query'] = "GROUP_CONCAT(`{table}`.`{column}`, '\n-----\n') AS `{column}`"
     props['card_id']['foreign_key'] = ('card', 'id')
@@ -104,6 +104,16 @@ def name_query(column='face_name'):
             GROUP_CONCAT({column}, ' // ' )
         END
     """.format(column=column, table='{table}')
+
+def cmc_query():
+    return """
+        CASE
+        WHEN layout = 'split' THEN
+            SUM(`{table}`.cmc)
+        ELSE
+            SUM(CASE WHEN `{table}`.position = 1 THEN `{table}`.cmc ELSE 0 END)
+        END
+    """
 
 def unaccent(s):
     return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))

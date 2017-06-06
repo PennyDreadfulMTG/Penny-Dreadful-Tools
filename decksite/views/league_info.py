@@ -14,6 +14,3 @@ class LeagueInfo(View):
 
     def subtitle(self):
         return 'League'
-
-    def is_league(self):
-        return True

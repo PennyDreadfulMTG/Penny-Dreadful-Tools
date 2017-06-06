@@ -57,6 +57,3 @@ class Deck(View):
 
     def sideboard(self):
         return self._deck.sideboard
-
-    def is_league(self):
-        return self._deck.competition_id == league.get_active_competition_id()

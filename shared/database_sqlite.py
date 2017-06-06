@@ -8,6 +8,7 @@ from shared.pd_exception import DatabaseException
 class SqliteDatabase(GenericDatabase):
     def __init__(self, location):
         try:
+            self.name = location
             self.connection = apsw.Connection(location)
             self.connection.setrowtrace(row_factory)
             self.connection.enableloadextension(True)
@@ -32,6 +33,15 @@ class SqliteDatabase(GenericDatabase):
 
     def insert(self, sql, args=None):
         self.execute(sql, args)
+        return self.value('SELECT last_insert_rowid()')
+
+    def begin(self):
+        self.execute("BEGIN TRANSACTION")
+
+    def commit(self):
+        self.execute("COMMIT")
+
+    def last_insert_rowid(self):
         return self.value('SELECT last_insert_rowid()')
 
 def row_factory(cursor, row):

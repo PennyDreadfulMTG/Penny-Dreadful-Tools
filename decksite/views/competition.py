@@ -1,7 +1,6 @@
 from flask import url_for
 
 from decksite.view import View
-from decksite import league
 
 # pylint: disable=no-self-use
 class Competition(View):
@@ -28,4 +27,3 @@ class Competition(View):
 
     def subtitle(self):
         return self.competition.name
-

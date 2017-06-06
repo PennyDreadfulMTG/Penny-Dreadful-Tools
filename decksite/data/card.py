@@ -22,10 +22,10 @@ def played_cards(where_clause='1 = 1'):
             ROUND((SUM(d.wins) / SUM(d.wins + d.losses)) * 100, 1) AS win_percent_all,
 
             SUM(CASE WHEN created_date >= %s THEN 1 ELSE 0 END) AS n_decks_season,
-            SUM(CASE WHEN sideboard AND created_date >= %s THEN 0 ELSE 1 END) AS n_maindecks_season,
+            SUM(CASE WHEN NOT sideboard AND created_date >= %s THEN 1 ELSE 0 END) AS n_maindecks_season,
             SUM(CASE WHEN sideboard AND created_date >= %s THEN 1 ELSE 0 END) AS n_sideboards_season,
             SUM(CASE WHEN created_date >= %s THEN n ELSE 0 END) AS count_decks_season,
-            SUM(CASE WHEN sideboard AND created_date >= %s THEN 0 ELSE n END) AS count_maindecks_season,
+            SUM(CASE WHEN NOT sideboard AND created_date >= %s THEN n ELSE 0 END) AS count_maindecks_season,
             SUM(CASE WHEN sideboard AND created_date >= %s THEN n ELSE 0 END) AS count_sideboards_season,
             SUM(CASE WHEN created_date >= %s THEN d.wins ELSE 0 END) AS wins_season,
             SUM(CASE WHEN created_date >= %s THEN d.losses ELSE 0 END) AS losses_season,

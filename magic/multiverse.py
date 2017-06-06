@@ -98,7 +98,6 @@ def update_database(new_version):
     update_fuzzy_matching()
     update_bugged_cards()
     db().execute('INSERT INTO version (version) VALUES (?)', [new_version])
-    db().execute('COMMIT')
     db().commit()
 
 def check_layouts():

@@ -182,7 +182,7 @@ def insert_card(c):
         db().execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [card_id, subtype])
     for info in c.get('legalities', []):
         format_id = get_format_id(info['format'], True)
-        db().execute('INSERT INTO card_legality (card_id, format_id, legality) VALUES (%s, %s, %s)', [card_id, format_id, info['legality']])
+        db().execute('INSERT INTO card_legality (card_id, format_id, legality) VALUES (?, ?, ?)', [card_id, format_id, info['legality']])
 
 def insert_set(s) -> None:
     sql = 'INSERT INTO `set` ('
@@ -219,7 +219,7 @@ def set_legal_cards(force=False, season=None):
     if new_list == [''] or new_list is None:
         return None
 
-    db().execute('DELETE FROM card_legality WHERE format_id = %s', [format_id])
+    db().execute('DELETE FROM card_legality WHERE format_id = ?', [format_id])
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
         SELECT {format_id}, id, 'Legal'
         FROM ({base_query})

@@ -15,6 +15,7 @@
             <th data-sortInitialOrder="desc">Main</th>
             <th data-sortInitialOrder="desc">Side</th>
             <th data-sortInitialOrder="desc">Record</th>
+            <th data-sortInitialOrder="desc">Win %</th>
         </tr>
     </thead>
     <tbody>
@@ -28,6 +29,7 @@
                 <td class="n">{{count_maindecks}}</td>
                 <td class="n divider">{{count_sideboards}}</td>
                 <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
+                <td class="n">{{#show_record}}<a href="{{url}}">{{win_percent}}</a>{{/show_record}}</td>
             </tr>
         {{/cards}}
     </tbody>

@@ -34,6 +34,7 @@ class View:
     def menu(self):
         return [
             {'name': 'Decks', 'url': url_for('home')},
+            {'name': 'Competitions', 'url': url_for('competitions')},
             {'name': 'People', 'url': url_for('people')},
             {'name': 'Cards', 'url': url_for('cards')},
             {'name': 'Resources', 'url': url_for('resources')},

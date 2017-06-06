@@ -35,30 +35,18 @@ class View:
         return False
 
     def menu(self):
-        if self.is_league():
-            return [
-                {'name': 'Home', 'url': url_for('home')},
-                # {'name': 'People', 'url': url_for('people')},
-                # {'name': 'Cards', 'url': url_for('cards')},
-                # {'name': 'Resources', 'url': url_for('resources')},
-                {'name': 'League', 'url': url_for('league')},
-                {'name': 'Records', 'url': url_for('competition', competition_id=league.get_active_competition_id())},
+        return [
+            {'name': 'Decks', 'url': url_for('home')},
+            {'name': 'People', 'url': url_for('people')},
+            {'name': 'Cards', 'url': url_for('cards')},
+            {'name': 'Resources', 'url': url_for('resources')},
+            {'name': 'About', 'url': url_for('about')},
+            {'name': 'League', 'url': url_for('league'), 'has_submenu': True, 'submenu': [
                 {'name': 'Sign Up', 'url': url_for('signup')},
                 {'name': 'Report', 'url': url_for('report')},
-                {'name': 'About', 'url': url_for('about')}
-            ]
-        else:
-            return [
-                {'name': 'Decks', 'url': url_for('home')},
-                {'name': 'Competitions', 'url': url_for('competitions')},
-                {'name': 'People', 'url': url_for('people')},
-                {'name': 'Cards', 'url': url_for('cards')},
-                {'name': 'Resources', 'url': url_for('resources')},
-                {'name': 'League', 'url': url_for('league')},
-                {'name': 'Sign Up', 'url': url_for('signup')},
-                # {'name': 'Report', 'url': url_for('report')},
-                {'name': 'About', 'url': url_for('about')}
-            ]
+                {'name': 'Records', 'url': url_for('competition', competition_id=league.get_active_competition_id())},
+            ]}
+        ]
 
     def favicon_url(self):
         return url_for('favicon', rest='.ico')

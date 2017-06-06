@@ -31,9 +31,6 @@ class View:
     def js_url(self):
         return url_for('static', filename='js/pd.js')
 
-    def is_league(self):
-        return False
-
     def menu(self):
         return [
             {'name': 'Decks', 'url': url_for('home')},

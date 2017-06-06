@@ -29,6 +29,3 @@ class Competition(View):
     def subtitle(self):
         return self.competition.name
 
-    def is_league(self):
-        return self.competition.id == league.get_active_competition_id()
-        # return self.competition.type == "League"

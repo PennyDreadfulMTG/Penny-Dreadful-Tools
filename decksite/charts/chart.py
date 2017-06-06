@@ -30,7 +30,7 @@ def cmc(deck_id):
             cost = 'X'
         else:
             cost = int(float(c.cmc))
-            if cost > 7:
+            if cost >= 7:
                 cost = '7+'
             cost = str(cost)
         costs[cost] = ci.get('n') + costs.get(cost, 0)

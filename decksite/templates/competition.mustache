@@ -1,2 +1,25 @@
-<h2>{{name}}</h2>
-{{> decks}}
+<section>
+    <h2>{{name}}</h2>
+    {{> decks}}
+</section>
+{{#has_leaderboard}}
+    <section>
+        <h2>Leaderboard</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Person</th>
+                    <th>Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#leaderboard}}
+                    <tr>
+                        <td><a href="{{url}}">{{person}}</a></td>
+                        <td class="n">{{points}}</td>
+                    </tr>
+                {{/leaderboard}}
+            </tbody>
+        </table>
+    </section>
+{{/has_leaderboard}}

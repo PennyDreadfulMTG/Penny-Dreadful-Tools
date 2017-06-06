@@ -2,12 +2,30 @@
     <thead>
         <tr>
             <td></td>
+            <th class="legend" colspan="8" data-sortInitialOrder="desc">This Season</th>
+            <th class="legend" colspan="8" data-sortInitialOrder="desc">All Time</th>
+        </tr>
+        <tr>
+            <td></td>
             <th class="legend" colspan="3" data-sortInitialOrder="desc"># Decks</th>
             <th class="legend" colspan="3" data-sortInitialOrder="desc"># Cards</th>
+            <td></td>
+            <td class="divider"></td>
+            <th class="legend" colspan="3" data-sortInitialOrder="desc"># Decks</th>
+            <th class="legend" colspan="3" data-sortInitialOrder="desc"># Cards</th>
+            <td></td>
             <td></td>
         <tr>
         <tr>
             <th>Card</th>
+            <th data-sortInitialOrder="desc">Total</th>
+            <th data-sortInitialOrder="desc">Main</th>
+            <th data-sortInitialOrder="desc">Side</th>
+            <th data-sortInitialOrder="desc">Total</th>
+            <th data-sortInitialOrder="desc">Main</th>
+            <th data-sortInitialOrder="desc">Side</th>
+            <th data-sortInitialOrder="desc">Record</th>
+            <th class="divider" data-sortInitialOrder="desc">Win %</th>
             <th data-sortInitialOrder="desc">Total</th>
             <th data-sortInitialOrder="desc">Main</th>
             <th data-sortInitialOrder="desc">Side</th>
@@ -22,15 +40,22 @@
         {{#cards}}
             <tr>
                 <td><a href="{{url}}" class="{{^pd_legal}}illegal{{/pd_legal}} card">{{{name}}}</a></td>
-                <td class="n">{{n_decks}}</td>
-                <td class="n">{{n_maindecks}}</td>
-                <td class="n divider">{{n_sideboards}}</td>
-                <td class="n">{{count_decks}}</td>
-                <td class="n">{{count_maindecks}}</td>
-                <td class="n divider">{{count_sideboards}}</td>
-                <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
-                <td class="n">{{#show_record}}<a href="{{url}}">{{win_percent}}</a>{{/show_record}}</td>
-            </tr>
+                <td class="n">{{n_decks_season}}</td>
+                <td class="n">{{n_maindecks_season}}</td>
+                <td class="n divider">{{n_sideboards_season}}</td>
+                <td class="n">{{count_decks_season}}</td>
+                <td class="n">{{count_maindecks_season}}</td>
+                <td class="n divider">{{count_sideboards_season}}</td>
+                <td class="n">{{#show_record_season}}{{wins_season}}–{{losses_season}}{{#draws_season}}–{{draws_season}}{{/draws_season}}{{/show_record_season}}</td>
+                <td class="n divider">{{#show_record_season}}<a href="{{url}}">{{win_percent_season}}</a>{{/show_record_season}}</td>
+                <td class="n">{{n_decks_all}}</td>
+                <td class="n">{{n_maindecks_all}}</td>
+                <td class="n divider">{{n_sideboards_all}}</td>
+                <td class="n">{{count_decks_all}}</td>
+                <td class="n">{{count_maindecks_all}}</td>
+                <td class="n divider">{{count_sideboards_all}}</td>
+                <td class="n">{{#show_record_all}}{{wins_all}}–{{losses_all}}{{#draws_all}}–{{draws_all}}{{/draws_all}}{{/show_record_all}}</td>
+                <td class="n">{{#show_record_all}}<a href="{{url}}">{{win_percent_all}}</a>{{/show_record_all}}</td>            </tr>
         {{/cards}}
     </tbody>
 </table>

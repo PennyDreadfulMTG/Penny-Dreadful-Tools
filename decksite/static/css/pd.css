@@ -203,7 +203,7 @@ td.n {
     text-align: right;
 }
 
-td.divider {
+td.divider, th.divider {
     border-right: 0.07rem #ccc solid;
 }
 

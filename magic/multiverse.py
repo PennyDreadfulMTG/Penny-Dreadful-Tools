@@ -57,7 +57,7 @@ def base_query(where_clause='(1 = 1)'):
 
 
 def update_database(new_version):
-    db().execute('BEGIN TRANSACTION')
+    db().begin()
     db().execute('DELETE FROM version')
     db().execute("""
     DELETE FROM card;
@@ -98,7 +98,7 @@ def update_database(new_version):
     update_fuzzy_matching()
     update_bugged_cards()
     db().execute('INSERT INTO version (version) VALUES (?)', [new_version])
-    db().execute('COMMIT')
+    db().commit()
 
 def check_layouts():
     rs = db().execute('SELECT DISTINCT layout FROM card')
@@ -154,7 +154,7 @@ def insert_card(c):
         values = [c.get(database2json(name)) for name, prop in card.card_properties().items() if prop['mtgjson']]
         # database.execute commits after each statement, which we want to avoid while inserting cards
         db().execute(sql, values)
-        card_id = db().value('SELECT last_insert_rowid()')
+        card_id = db().last_insert_rowid()
         CARD_IDS[name] = card_id
     # mtgjson thinks the text of Jhessian Lookout is NULL not '' but that is clearly wrong.
     if c.get('text', None) is None and c['layout'] in ['normal', 'token', 'double-faced', 'split']:
@@ -193,7 +193,7 @@ def insert_set(s) -> None:
     # database.execute commits after each statement, which we want to
     # avoid while inserting sets
     db().execute(sql, values)
-    set_id = db().value('SELECT last_insert_rowid()')
+    set_id = db().last_insert_rowid()
     for c in s.get('cards', []):
         card_id = CARD_IDS[card_name(c)]
         sql = 'INSERT INTO printing (card_id, set_id, '
@@ -255,7 +255,7 @@ def get_format_id(name, allow_create=False):
             FORMAT_IDS[row['name']] = row['id']
     if name not in FORMAT_IDS.keys() and allow_create:
         db().execute('INSERT INTO format (name) VALUES (?)', [name])
-        FORMAT_IDS[name] = db().value('SELECT last_insert_rowid()')
+        FORMAT_IDS[name] = db().last_insert_rowid()
     if name not in FORMAT_IDS.keys():
         return None
     return FORMAT_IDS[name]

@@ -93,6 +93,96 @@ def printing_properties():
     props['rarity_id']['foreign_key'] = ('rarity', 'id')
     return props
 
+def color_properties():
+    props = {}
+    for k in ['id', 'name', 'symbol']:
+        props[k] = copy.deepcopy(BASE)
+        props[k]['nullable'] = False
+    props['id']['type'] = INTEGER
+    props['id']['primary_key'] = True
+    props['name']['type'] = TEXT
+    props['symbol']['type'] = TEXT
+    return props
+
+def card_color_properties():
+    props = {}
+    for k in ['id', 'card_id', 'color_id']:
+        props[k] = copy.deepcopy(BASE)
+        props[k]['type'] = INTEGER
+        props[k]['nullable'] = False
+    props['id']['primary_key'] = True
+    props['card_id']['foreign_key'] = ('card', 'id')
+    props['color_id']['foreign_key'] = ('color', 'id')
+    return props
+
+def card_type_properties(typetype):
+    props = {}
+    for k in ['id', 'card_id', typetype]:
+        props[k] = copy.deepcopy(BASE)
+        props[k]['nullable'] = False
+    props['id']['type'] = INTEGER
+    props['id']['primary_key'] = True
+    props['card_id']['type'] = INTEGER
+    props['card_id']['foreign_key'] = ('card', 'id')
+    return props
+
+def format_properties():
+    props = {}
+    for k in ['id', 'name']:
+        props[k] = copy.deepcopy(BASE)
+        props[k]['nullable'] = False
+    props['id']['type'] = INTEGER
+    props['id']['primary_key'] = True
+    return props
+
+def card_legality_properties():
+    props = {}
+    for k in ['id', 'card_id', 'format_id', 'legality']:
+        props[k] = copy.deepcopy(BASE)
+        props[k]['nullable'] = False
+    props['id']['type'] = INTEGER
+    props['id']['primary_key'] = True
+    props['card_id']['type'] = INTEGER
+    props['card_id']['foreign_key'] = ('card', 'id')
+    props['format_id']['type'] = INTEGER
+    props['format_id']['foreign_key'] = ('format', 'id')
+    props['legality']['nullable'] = True
+    return props
+
+def card_alias_properties():
+    props = {}
+    for k in ['id', 'card_id', 'alias']:
+        props[k] = copy.deepcopy(BASE)
+        props[k]['nullable'] = False
+    props['id']['type'] = INTEGER
+    props['id']['primary_key'] = True
+    props['card_id']['type'] = INTEGER
+    props['card_id']['foreign_key'] = ('card', 'id')
+    return props
+
+def card_bugs_properties():
+    props = {}
+    for k in ['id', 'card_id', 'description', 'classification', 'last_confirmed']:
+        props[k] = copy.deepcopy(BASE)
+        props[k]['nullable'] = False
+    props['id']['type'] = INTEGER
+    props['id']['primary_key'] = True
+    props['card_id']['type'] = INTEGER
+    props['card_id']['foreign_key'] = ('card', 'id')
+    props['last_confirmed']['type'] = INTEGER
+    return props
+
+def fetcher_properties():
+    # Technically, this doesn't belong here.  But all the other table definitions are here, so it is too.
+    props = {}
+    for k in ['id', 'resource', 'last_modified', 'content']:
+        props[k] = copy.deepcopy(BASE)
+    props['id']['type'] = INTEGER
+    props['id']['primary_key'] = True
+    props['resource']['nullable'] = False
+    props['resource']['unique'] = True
+    return props
+
 def name_query(column='face_name'):
     return """
         CASE

@@ -9,6 +9,7 @@ from shared.pd_exception import DatabaseException
 class MysqlDatabase(GenericDatabase):
     def __init__(self, db):
         try:
+            self.name = db
             host = configuration.get('mysql_host')
             port = configuration.get('mysql_port')
             if str(port).startswith('0.0.0.0:'):
@@ -32,6 +33,9 @@ class MysqlDatabase(GenericDatabase):
         # print(sql)
         if args is None:
             args = []
+        if args:
+            # eww
+            sql = sql.replace('?', '%s')
         try:
             self.cursor.execute(sql, args)
             return self.cursor.fetchall()
@@ -47,3 +51,6 @@ class MysqlDatabase(GenericDatabase):
 
     def commit(self):
         self.connection.commit()
+
+    def last_insert_rowid(self):
+        return self.value('SELECT LAST_INSERT_ID()')

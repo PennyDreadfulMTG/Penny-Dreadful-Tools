@@ -14,7 +14,11 @@ def load_person_by_username(username):
 def load_people(where_clause='1 = 1'):
     sql = """
         SELECT p.id, {person_query} AS name, COUNT(d.id) AS num_decks,
-        SUM(d.wins) AS wins, SUM(d.losses) AS losses, SUM(CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS num_competitions
+        SUM(d.wins) AS wins,
+        SUM(d.losses) AS losses,
+        SUM(d.draws) AS draws,
+        ROUND((SUM(d.wins) / SUM(d.wins + d.losses)) * 100, 1) AS win_percent,
+        SUM(CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS num_competitions
         FROM person AS p
         LEFT JOIN deck AS d ON p.id = d.person_id
         WHERE {where_clause}

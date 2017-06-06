@@ -5,12 +5,14 @@
             <th>Name</th>
             <th data-sortInitialOrder="desc">Decks</th>
             <th data-sortInitialOrder="desc">Record</th>
+            <th data-sortInitialOrder="desc">Win %</th>
         </thead>
         {{#people}}
             <tr>
                 <td><a href="{{url}}">{{name}}</a></td>
                 <td class="n"><a href="{{url}}">{{num_decks}}</a></td>
-                <td class="n">{{#show_record}}<a href="{{url}}">{{wins}}–{{losses}}</a>{{/show_record}}</td>
+                <td class="n">{{#show_record}}<a href="{{url}}">{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}</a>{{/show_record}}</td>
+                <td class="n">{{#show_record}}<a href="{{url}}">{{win_percent}}</a>{{/show_record}}</td>
             </tr>
         {{/people}}
     </table>

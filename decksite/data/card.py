@@ -16,7 +16,8 @@ def played_cards(where_clause='1 = 1'):
             SUM(n) AS count_decks,
             SUM(CASE WHEN sideboard THEN 0 ELSE n END) AS count_maindecks,
             SUM(CASE WHEN sideboard THEN n ELSE 0 END) AS count_sideboards,
-            SUM(d.wins) AS wins, SUM(d.losses) AS losses, SUM(d.draws) AS draws
+            SUM(d.wins) AS wins, SUM(d.losses) AS losses, SUM(d.draws) AS draws,
+            ROUND((SUM(d.wins) / SUM(d.wins + d.losses)) * 100, 1) AS win_percent
         FROM deck_card AS dc
         INNER JOIN deck AS d ON dc.deck_id = d.id
         WHERE {where_clause}

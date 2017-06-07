@@ -9,6 +9,7 @@ from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 from decksite import league as lg
 from decksite import APP
+from decksite.cache import cached
 from decksite.data import card as cs, competition as comp, deck, person as ps
 from decksite.charts import chart
 from decksite.league import ReportForm, SignUpForm
@@ -17,21 +18,25 @@ from decksite.views import About, AddForm, Card, Cards, Competition, Competition
 # Decks
 
 @APP.route('/')
+@cached()
 def home():
     view = Home(deck.latest_decks())
     return view.page()
 
 @APP.route('/decks/<deck_id>/')
+@cached()
 def decks(deck_id):
     view = Deck(deck.load_deck(deck_id))
     return view.page()
 
 @APP.route('/people/')
+@cached()
 def people():
     view = People(ps.load_people())
     return view.page()
 
 @APP.route('/people/<person_id>/')
+@cached()
 def person(person_id):
     try:
         p = ps.load_person(person_id)
@@ -41,21 +46,25 @@ def person(person_id):
     return view.page()
 
 @APP.route('/cards/')
+@cached()
 def cards():
     view = Cards(cs.played_cards())
     return view.page()
 
 @APP.route('/cards/<name>/')
+@cached()
 def card(name):
     view = Card(cs.load_card(name))
     return view.page()
 
 @APP.route('/competitions/')
+@cached()
 def competitions():
     view = Competitions(comp.load_competitions())
     return view.page()
 
 @APP.route('/competitions/<competition_id>/')
+@cached()
 def competition(competition_id):
     view = Competition(comp.load_competition(competition_id))
     return view.page()
@@ -66,6 +75,7 @@ def add_form():
     return view.page()
 
 @APP.route('/add/', methods=['POST'])
+@cached()
 def add_deck():
     url = request.form['url']
     print(url)
@@ -85,6 +95,7 @@ def add_deck():
     return redirect(url_for('decks', deck_id=deck_id))
 
 @APP.route('/about/')
+@cached()
 def about():
     view = About()
     return view.page()
@@ -96,6 +107,7 @@ def export(deck_id):
     return (str(d), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 
 @APP.route('/resources/')
+@cached()
 def resources():
     view = Resources()
     return view.page()
@@ -115,6 +127,7 @@ def signup(form=None):
     return view.page()
 
 @APP.route('/signup/', methods=['POST'])
+@cached()
 def add_signup():
     form = SignUpForm(request.form)
     if form.validate():

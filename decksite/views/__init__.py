@@ -8,10 +8,11 @@ from .deck import Deck
 from .home import Home
 from .internal_server_error import InternalServerError
 from .league_form import LeagueForm
+from .league_info import LeagueInfo
 from .not_found import NotFound
 from .people import People
 from .person import Person
 from .report import Report
 from .resources import Resources
+from .rotation import Rotation
 from .signup import SignUp
-from .league_info import LeagueInfo

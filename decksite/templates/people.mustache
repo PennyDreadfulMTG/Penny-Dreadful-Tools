@@ -2,14 +2,27 @@
     <h2>People</h2>
     <table>
         <thead>
-            <th>Name</th>
-            <th data-sortInitialOrder="desc">Decks</th>
-            <th data-sortInitialOrder="desc">Record</th>
-            <th data-sortInitialOrder="desc">Win %</th>
+            <tr>
+                <td></td>
+                <th class="legend" colspan="3" data-sortInitialOrder="desc">This Season</th>
+                <th class="legend" colspan="3" data-sortInitialOrder="desc">All Time</th>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <th data-sortInitialOrder="desc">Decks</th>
+                <th data-sortInitialOrder="desc">Record</th>
+                <th data-sortInitialOrder="desc">Win %</th>
+                <th data-sortInitialOrder="desc">Decks</th>
+                <th data-sortInitialOrder="desc">Record</th>
+                <th data-sortInitialOrder="desc">Win %</th>
+            </tr>
         </thead>
         {{#people}}
             <tr>
                 <td><a href="{{url}}">{{name}}</a></td>
+                <td class="n"><a href="{{url}}">{{num_decks_season}}</a></td>
+                <td class="n">{{#show_record_season}}<a href="{{url}}">{{wins_season}}–{{losses_season}}{{#draws_season}}–{{draws_season}}{{/draws_season}}</a>{{/show_record_season}}</td>
+                <td class="n">{{#show_record_season}}<a href="{{url}}">{{win_percent_season}}</a>{{/show_record_season}}</td>
                 <td class="n"><a href="{{url}}">{{num_decks}}</a></td>
                 <td class="n">{{#show_record}}<a href="{{url}}">{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}</a>{{/show_record}}</td>
                 <td class="n">{{#show_record}}<a href="{{url}}">{{win_percent}}</a>{{/show_record}}</td>

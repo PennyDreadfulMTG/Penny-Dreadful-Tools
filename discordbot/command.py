@@ -346,7 +346,9 @@ class Commands:
         fetcher.internal.store(sfcard['image_uri'], sfimgname)
         text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=sfcard['mana_cost']), channel)
         await bot.client.send_file(channel, sfimgname, content=text)
-        if not oracle.valid_name(sfcard['name']):
+        try:
+            oracle.valid_name(sfcard['name'])
+        except InvalidDataException:
             c = {
                 "text": sfcard.get('oracle_text', ''),
                 "manacost": sfcard.get('mana_cost', None),

@@ -23,6 +23,7 @@ DEFAULTS = {
     'mysql_port': 3306,
     'mysql_user': 'pennydreadful',
     'mysql_passwd': '',
+    'legality_dir': '~/legality/Legality Checker/',
     'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32))
 }
 

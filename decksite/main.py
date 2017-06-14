@@ -13,7 +13,7 @@ from decksite.cache import cached
 from decksite.data import card as cs, competition as comp, deck, person as ps
 from decksite.charts import chart
 from decksite.league import ReportForm, SignUpForm
-from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, Report, Resources, SignUp, LeagueInfo
+from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, Report, Resources, Rotation, SignUp, LeagueInfo
 
 # Decks
 
@@ -51,7 +51,7 @@ def cards():
     view = Cards(cs.played_cards())
     return view.page()
 
-@APP.route('/cards/<name>/')
+@APP.route('/cards/<path:name>/')
 @cached()
 def card(name):
     view = Card(cs.load_card(name))
@@ -98,6 +98,12 @@ def add_deck():
 @cached()
 def about():
     view = About()
+    return view.page()
+
+@APP.route('/rotation/')
+@cached()
+def rotation():
+    view = Rotation()
     return view.page()
 
 @APP.route('/export/<deck_id>/')

@@ -55,3 +55,8 @@ coverage:
 branch:
 	@if test "$(BRANCH)" = ""; then echo 'Usage: make branch BRANCH=branchname'; exit 1; fi
 	@git stash -a && git clean -fxd && git checkout master && git pull && git checkout -b $(BRANCH) && git stash pop
+
+# If you try and git stash and then git stash pop when decksite is running locally you get in a mess.
+# This cleans up for you.
+popclean:
+	@git stash pop 2>&1 | grep already | cut -d' ' -f1 | xargs rm && git stash pop

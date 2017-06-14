@@ -1,6 +1,6 @@
 from flask import url_for
 
-from decksite import league
+from decksite import deck_name, league
 from decksite.data import deck
 from decksite.view import View
 from shared import dtutil
@@ -18,13 +18,21 @@ class Deck(View):
             m.display_date = dtutil.display_date(m.date)
             m.opponent_url = url_for('person', person_id=m.opponent)
             m.opponent_deck_url = url_for('decks', deck_id=m.opponent_deck_id)
-        self.has_matches = len(self.matches) > 0
+
+    def has_matches(self):
+        return len(self.matches) > 0
+
+    def og_title(self):
+        return self._deck.name
+
+    def og_url(self):
+        return 'https://pennydreadfulmagic.com' + url_for('decks', deck_id=self._deck.id)
 
     def __getattr__(self, attr):
         return getattr(self._deck, attr)
 
     def subtitle(self):
-        return self._deck.name
+        return deck_name.normalize(self._deck)
 
     def sections(self):
         sections = []

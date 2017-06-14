@@ -56,7 +56,7 @@ def normalize(d):
     return titlecase.titlecase(name)
 
 def remove_pd(name):
-    name = re.sub(r'(^| )[\[\(]?pd[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(]?pdh?[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny ?dreadful[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
     return name

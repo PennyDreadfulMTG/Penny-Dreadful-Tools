@@ -1,8 +1,10 @@
 {
+    "charts_dir": "./images/charts",
     "decksite_database": "decksite",
     "github_user": "",
     "github_password": "",
     "image_dir": "./images",
+    "legality_dir": "~/legality/Legality Checker/",
     "magic_database": "./magic.sqlite",
     "mysql_host": "localhost",
     "mysql_password": "",

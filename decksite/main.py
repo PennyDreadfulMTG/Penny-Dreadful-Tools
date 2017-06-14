@@ -2,35 +2,41 @@ import os
 import re
 import traceback
 
-from flask import make_response, redirect, request, send_from_directory, url_for
+from flask import make_response, redirect, request, send_file, send_from_directory, url_for
 from werkzeug import exceptions
 
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 from decksite import league as lg
 from decksite import APP
+from decksite.cache import cached
 from decksite.data import card as cs, competition as comp, deck, person as ps
+from decksite.charts import chart
 from decksite.league import ReportForm, SignUpForm
-from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, Report, Resources, SignUp, LeagueInfo
+from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, Report, Resources, Rotation, SignUp, LeagueInfo
 
 # Decks
 
 @APP.route('/')
+@cached()
 def home():
     view = Home(deck.latest_decks())
     return view.page()
 
 @APP.route('/decks/<deck_id>/')
+@cached()
 def decks(deck_id):
     view = Deck(deck.load_deck(deck_id))
     return view.page()
 
 @APP.route('/people/')
+@cached()
 def people():
     view = People(ps.load_people())
     return view.page()
 
 @APP.route('/people/<person_id>/')
+@cached()
 def person(person_id):
     try:
         p = ps.load_person(person_id)
@@ -40,21 +46,25 @@ def person(person_id):
     return view.page()
 
 @APP.route('/cards/')
+@cached()
 def cards():
     view = Cards(cs.played_cards())
     return view.page()
 
-@APP.route('/cards/<name>/')
+@APP.route('/cards/<path:name>/')
+@cached()
 def card(name):
     view = Card(cs.load_card(name))
     return view.page()
 
 @APP.route('/competitions/')
+@cached()
 def competitions():
     view = Competitions(comp.load_competitions())
     return view.page()
 
 @APP.route('/competitions/<competition_id>/')
+@cached()
 def competition(competition_id):
     view = Competition(comp.load_competition(competition_id))
     return view.page()
@@ -65,6 +75,7 @@ def add_form():
     return view.page()
 
 @APP.route('/add/', methods=['POST'])
+@cached()
 def add_deck():
     url = request.form['url']
     print(url)
@@ -84,8 +95,15 @@ def add_deck():
     return redirect(url_for('decks', deck_id=deck_id))
 
 @APP.route('/about/')
+@cached()
 def about():
     view = About()
+    return view.page()
+
+@APP.route('/rotation/')
+@cached()
+def rotation():
+    view = Rotation()
     return view.page()
 
 @APP.route('/export/<deck_id>/')
@@ -95,6 +113,7 @@ def export(deck_id):
     return (str(d), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 
 @APP.route('/resources/')
+@cached()
 def resources():
     view = Resources()
     return view.page()
@@ -114,6 +133,7 @@ def signup(form=None):
     return view.page()
 
 @APP.route('/signup/', methods=['POST'])
+@cached()
 def add_signup():
     form = SignUpForm(request.form)
     if form.validate():
@@ -158,6 +178,10 @@ def deckcycle_tappedout():
 @APP.route('/favicon<rest>/')
 def favicon(rest):
     return send_from_directory(os.path.join(APP.root_path, 'static/images/favicon'), 'favicon{rest}'.format(rest=rest))
+
+@APP.route('/charts/cmc/<deck_id>-cmc.png')
+def cmc_chart(deck_id):
+    return send_file(chart.cmc(int(deck_id)))
 
 @APP.route('/legal_cards.txt')
 def legal_cards():

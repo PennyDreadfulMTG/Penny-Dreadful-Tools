@@ -14,15 +14,10 @@
         "Deck builder": "http://tappedout.net/mtg-deck-builder/penny-dreadful/"
     },
     "Tournaments": {
-        "League": "https://www.reddit.com/r/PennyDreadfulMTG/comments/5ah58c/penny_dreadful_league_season_3/",
-        "Gatherling": "https://www.reddit.com/r/PennyDreadfulMTG/comments/56w62y/penny_dreadful_weekly_tournament_at_gatherlingcom/",
+        "League": "http://pennydreadfulmagic.com/league/",
+        "Gatherling": "http://gatherling.com/",
         "Penny Dreadful Thursdays": "http://pennydreadfulthursdays.weebly.com/",
         "Penny Paradise": "http://pennyparadisemtgo.weebly.com"
-    },
-    "Blogs": {
-        "pdmgto.com": "http://blog.pdmtgo.com/",
-        "deckbrewing.com": "http://www.deckbrewing.com/",
-        "testingpennydreadful": "http://testingpennydreadful.tumblr.com/"
     },
     "League": {
         "Sign up": "http://pennydreadfulmagic.com/signup/",
@@ -31,12 +26,18 @@
     "Articles": {
           "Mrs. Mulligan SCG": "http://www.starcitygames.com/article/33860_Penny-Dreadful.html"
     },
+    "Blogs": {
+        "pdmgto.com": "http://blog.pdmtgo.com/",
+        "testingpennydreadful": "http://testingpennydreadful.tumblr.com/"
+    },
     "Code": {
           "Penny Dreadful Tools": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/",
-          "Legality checker": "https://github.com/binarySwordsman/LegalityListCreator"
+          "Legality checker": "https://github.com/binarySwordsman/LegalityListCreator",
+          "Modo Bugs": "https://github.com/PennyDreadfulMTG/modo-bugs/issues/"
     },
     "Video": {
-        "j_meka": "http://twitch.tv/j_meka",
+        "j_meka (Twitch)": "http://twitch.tv/j_meka",
+        "j_meka (YouTube)": "https://www.youtube.com/channel/UC8F23LLimd4FVs3QLwjmtnQ",
         "Mrs. Mulligan": "https://twitch.tv/mrs_mulligan",
         "Dragonas77": "https://twitch.tv/dragonas77",
         "silasary": "http://twitch.tv/silasary",

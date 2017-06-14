@@ -84,7 +84,7 @@ def deck_sort(c):
         if mana.has_x(cost):
             m = 'X'
     s += m
-    s += str(sum(float(cmc) for cmc in c.cmc)).zfill(10)
+    s += str(c.cmc).zfill(10)
     s += c.name
     return s
 

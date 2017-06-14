@@ -6,6 +6,7 @@ from shared import dtutil
 
 from decksite import deck_name
 from decksite import template
+from decksite import league
 
 # pylint: disable=no-self-use
 class View:
@@ -37,9 +38,12 @@ class View:
             {'name': 'People', 'url': url_for('people')},
             {'name': 'Cards', 'url': url_for('cards')},
             {'name': 'Resources', 'url': url_for('resources')},
-            {'name': 'Sign Up', 'url': url_for('signup')},
-            {'name': 'Report', 'url': url_for('report')},
-            {'name': 'About', 'url': url_for('about')}
+            {'name': 'About', 'url': url_for('about')},
+            {'name': 'League', 'url': url_for('league'), 'has_submenu': True, 'submenu': [
+                {'name': 'Sign Up', 'url': url_for('signup')},
+                {'name': 'Report', 'url': url_for('report')},
+                {'name': 'Records', 'url': url_for('competition', competition_id=league.get_active_competition_id())},
+            ]}
         ]
 
     def favicon_url(self):
@@ -84,9 +88,10 @@ class View:
             d.competition_url = url_for('competition', competition_id=d.competition_id)
         d.url = url_for('decks', deck_id=d.id)
         d.export_url = url_for('export', deck_id=d.id)
+        d.cmc_chart_url = url_for('cmc_chart', deck_id=d.id)
         if d.source_name == 'League':
             d.source_indicator = 'League'
-            if d.wins + d.losses < 5 and d.competition_end_date > dtutil.now() and not d.retired:
+            if d.wins + d.losses < 5 and d.competition_end_date > dtutil.now() and not d.get('retired', False):
                 d.stars = '⊕ {stars}'.format(stars=d.stars).strip()
                 d.source_sort = '1'
         elif d.source_name == 'Gatherling':
@@ -111,7 +116,8 @@ class View:
         c.pd_legal = c.legalities.get('Penny Dreadful', False)
         c.legal_formats = c.legalities.keys()
         c.has_legal_format = len(c.legal_formats) > 0
-        c.show_record = c.get('wins') or c.get('losses') or c.get('draws')
+        c.show_record_season = c.get('wins_season') or c.get('losses_season') or c.get('draws_season')
+        c.show_record_all = c.get('wins_all') or c.get('losses_all') or c.get('draws_all')
 
     def prepare_competitions(self):
         for c in getattr(self, 'competitions', []):
@@ -122,6 +128,7 @@ class View:
     def prepare_people(self):
         for p in getattr(self, 'people', []):
             p.url = url_for('person', person_id=p.id)
+            p.show_record_season = p.wins_season or p.losses_season or p.get('draws_season', None)
             p.show_record = p.wins or p.losses or p.get('draws', None)
 
 def colors_html(colors, colored_symbols):

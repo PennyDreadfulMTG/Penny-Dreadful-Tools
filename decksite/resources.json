@@ -19,11 +19,6 @@
         "Penny Dreadful Thursdays": "http://pennydreadfulthursdays.weebly.com/",
         "Penny Paradise": "http://pennyparadisemtgo.weebly.com"
     },
-    "Blogs": {
-        "pdmgto.com": "http://blog.pdmtgo.com/",
-        "deckbrewing.com": "http://www.deckbrewing.com/",
-        "testingpennydreadful": "http://testingpennydreadful.tumblr.com/"
-    },
     "League": {
         "Sign up": "http://pennydreadfulmagic.com/signup/",
         "Results reporter": "http://pennydreadfulmagic.com/report/"
@@ -31,9 +26,14 @@
     "Articles": {
           "Mrs. Mulligan SCG": "http://www.starcitygames.com/article/33860_Penny-Dreadful.html"
     },
+    "Blogs": {
+        "pdmgto.com": "http://blog.pdmtgo.com/",
+        "testingpennydreadful": "http://testingpennydreadful.tumblr.com/"
+    },
     "Code": {
           "Penny Dreadful Tools": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/",
-          "Legality checker": "https://github.com/binarySwordsman/LegalityListCreator"
+          "Legality checker": "https://github.com/binarySwordsman/LegalityListCreator",
+          "Modo Bugs": "https://github.com/PennyDreadfulMTG/modo-bugs/issues/"
     },
     "Video": {
         "j_meka (Twitch)": "http://twitch.tv/j_meka",

@@ -51,7 +51,7 @@ def cards():
     view = Cards(cs.played_cards())
     return view.page()
 
-@APP.route('/cards/<name>/')
+@APP.route('/cards/<path:name>/')
 @cached()
 def card(name):
     view = Card(cs.load_card(name))

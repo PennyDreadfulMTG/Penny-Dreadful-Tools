@@ -37,6 +37,7 @@ class View:
             {'name': 'Competitions', 'url': url_for('competitions')},
             {'name': 'People', 'url': url_for('people')},
             {'name': 'Cards', 'url': url_for('cards')},
+            {'name': 'Archetypes', 'url': url_for('archetypes')},
             {'name': 'Resources', 'url': url_for('resources')},
             {'name': 'About', 'url': url_for('about')},
             {'name': 'League', 'url': url_for('league'), 'has_submenu': True, 'submenu': [
@@ -66,6 +67,7 @@ class View:
         self.prepare_cards()
         self.prepare_competitions()
         self.prepare_people()
+        self.prepare_archetypes()
 
     def prepare_decks(self):
         for d in getattr(self, 'decks', []):
@@ -102,6 +104,8 @@ class View:
         if d.get('twins', None):
             for t in d.twins:
                 self.prepare_deck(t)
+        if d.get('archetype_id', None):
+            d.archetype_url = url_for('archetype', archetype_id=d.archetype_id)
 
     def prepare_cards(self):
         for c in getattr(self, 'cards', []):
@@ -130,6 +134,10 @@ class View:
             p.url = url_for('person', person_id=p.id)
             p.show_record_season = p.wins_season or p.losses_season or p.get('draws_season', None)
             p.show_record = p.wins or p.losses or p.get('draws', None)
+
+    def prepare_archetypes(self):
+        for a in getattr(self, 'archetypes', []):
+            a.url = url_for('archetype', archetype_id=a.id)
 
 def colors_html(colors, colored_symbols):
     s = ''

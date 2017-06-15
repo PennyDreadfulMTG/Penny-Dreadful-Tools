@@ -18,3 +18,4 @@ from .report import Report
 from .resources import Resources
 from .rotation import Rotation
 from .signup import SignUp
+from .tournaments import Tournaments

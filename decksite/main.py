@@ -10,10 +10,10 @@ from shared.pd_exception import DoesNotExistException, InvalidDataException
 from decksite import league as lg
 from decksite import APP
 from decksite.cache import cached
-from decksite.data import card as cs, competition as comp, deck, person as ps
+from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
 from decksite.charts import chart
 from decksite.league import ReportForm, SignUpForm
-from decksite.views import About, AddForm, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, Report, Resources, Rotation, SignUp, LeagueInfo
+from decksite.views import About, AddForm, Archetype, Archetypes, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, NotFound, People, Person, Report, Resources, Rotation, SignUp, LeagueInfo
 
 # Decks
 
@@ -67,6 +67,18 @@ def competitions():
 @cached()
 def competition(competition_id):
     view = Competition(comp.load_competition(competition_id))
+    return view.page()
+
+@APP.route('/archetypes/')
+@cached()
+def archetypes():
+    view = Archetypes(archs.load_archetypes())
+    return view.page()
+
+@APP.route('/archetypes/<archetype_id>/')
+@cached()
+def archetype(archetype_id):
+    view = Archetype(archs.load_archetype(archetype_id))
     return view.page()
 
 @APP.route('/add/')

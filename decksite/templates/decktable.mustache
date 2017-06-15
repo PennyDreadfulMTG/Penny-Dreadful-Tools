@@ -1,0 +1,24 @@
+<table class="fade-repeats with-marginalia">
+    <thead>
+        <tr>
+            <th class="marginalia" data-sortInitialOrder="desc">↕</th>
+            <th>Colors</th>
+            <th>Name</th>
+            {{^hide_person}}
+                <th>Person</th>
+            {{/hide_person}}
+            {{^hide_source}}
+                <th>Source</th>
+            {{/hide_source}}
+            <th data-empty="bottom" data-sortInitialOrder="desc">Record</th>
+            <th class="c">Top 8</th>
+            <th data-sortInitialOrder="desc">Date</th>
+            <th>Season</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#decks}}
+            {{> deckrow}}
+        {{/decks}}
+    </tbody>
+</table>

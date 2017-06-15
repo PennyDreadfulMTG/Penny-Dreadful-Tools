@@ -1,10 +1,8 @@
 from munch import Munch
 
-from magic import oracle, rotation
 from shared.database import sqlescape
 
 from decksite.data import deck, guarantee
-from decksite.database import db
 
 def load_archetype(archetype_id):
     return guarantee.exactly_one(load_archetypes('d.archetype_id = {archetype_id}'.format(archetype_id=sqlescape(archetype_id))))

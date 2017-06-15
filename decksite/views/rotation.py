@@ -12,7 +12,13 @@ from decksite.view import View
 class Rotation(View):
     def __init__(self):
         lines = []
-        for line in fileinput.input(glob.glob(os.path.join(configuration.get('legality_dir'), "Run_*.txt"))):
+        files = glob.glob(os.path.join(configuration.get('legality_dir'), "Run_*.txt"))
+        if len(files) == 0:
+            self.runs = 0
+            self.runs_percent = 0
+            self.cards = []
+            return
+        for line in fileinput.input(files):
             lines.append(line.strip())
         scores = Counter(lines).most_common()
         self.runs = scores[0][1]

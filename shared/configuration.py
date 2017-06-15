@@ -25,7 +25,7 @@ DEFAULTS = {
     'mysql_passwd': '',
     'legality_dir': '~/legality/Legality Checker/',
     'not_pd': '',
-    'otherbot_commands': '!s',
+    'otherbot_commands': '!s,!card,!ipg,!mtr,!cr,!define',
     'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32))
 }
 

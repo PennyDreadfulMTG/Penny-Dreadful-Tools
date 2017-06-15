@@ -69,7 +69,6 @@ def cached_impl(cacheable=False, must_revalidate=True, client_only=True, client_
                     # - If you can find any faster random algorithm go for it.
                     response.headers.add('ETag', binascii.hexlify(os.urandom(4)))
                     response.headers.add('X-Last-Modified', str(now))
-                    print(cache_key)
                     CACHE.set(cache_key, response, timeout=server_timeout)
 
             response.headers.extend(headers)

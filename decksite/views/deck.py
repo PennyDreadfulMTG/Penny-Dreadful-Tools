@@ -9,10 +9,11 @@ from shared import dtutil
 class Deck(View):
     def __init__(self, d):
         self._deck = d
-        self.decks = [d]
+        self.prepare_deck(self._deck)
         self.cards = d.all_cards()
-        self.similar = deck.get_similar_decks(d)
-        self.has_similar = len(self.similar) > 0
+        # This is called 'decks' and not something more sane because of limitations of Mustache and our desire to use a partial for decktable.
+        self.decks = deck.get_similar_decks(d)
+        self.has_similar = len(self.decks) > 0
         self.matches = league.get_matches(d)
         for m in self.matches:
             m.display_date = dtutil.display_date(m.date)

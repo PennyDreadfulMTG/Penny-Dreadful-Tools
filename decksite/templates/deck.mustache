@@ -48,12 +48,7 @@
 {{#has_similar}}
     <section>
         <h2>Similar Decks</h2>
-        <table class="with-marginalia">
-            <!-- BAKERT header row? new subtemplate for the whole table? -->
-            {{#similar}}
-                {{> deckrow}}
-            {{/similar}}
-        </table>
+        {{> decktable}}
     </section>
 {{/has_similar}}
 <section>

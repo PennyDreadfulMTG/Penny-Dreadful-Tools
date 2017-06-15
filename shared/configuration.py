@@ -24,6 +24,8 @@ DEFAULTS = {
     'mysql_user': 'pennydreadful',
     'mysql_passwd': '',
     'legality_dir': '~/legality/Legality Checker/',
+    'not_pd': '',
+    'otherbot_commands': '!s,!card,!ipg,!mtr,!cr,!define',
     'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32))
 }
 
@@ -42,6 +44,19 @@ def get(key):
 
         if inspect.isfunction(cfg[key]): # If default value is a function, call it.
             cfg[key] = cfg[key]()
+
+    print("CONFIG: {0}={1}".format(key, cfg[key]))
+    fh = open('config.json', 'w')
+    fh.write(json.dumps(cfg, indent=4))
+    return cfg[key]
+
+def write(key, value):
+    try:
+        cfg = json.load(open('config.json'))
+    except FileNotFoundError:
+        cfg = {}
+
+    cfg[key] = value
 
     print("CONFIG: {0}={1}".format(key, cfg[key]))
     fh = open('config.json', 'w')

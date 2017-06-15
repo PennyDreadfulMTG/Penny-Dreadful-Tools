@@ -33,6 +33,9 @@ async def handle_command(message, bot):
     parts = message.content.split(' ', 1)
     method = find_method(parts[0])
 
+    if parts[0] in configuration.get('otherbot_commands').split(','):
+        return
+
     args = ""
     if len(parts) > 1:
         args = parts[1]
@@ -321,6 +324,18 @@ class Commands:
         for file in files:
             os.remove(file)
         await bot.client.send_message(channel, '{n} cleared.'.format(n=len(files)))
+
+    @cmd_header("Developer")
+    async def notpenny(self, bot, channel, args):
+        """Don't show PD Legality in this channel"""
+        existing = configuration.get('not_pd')
+        if args and args[0] == "server":
+            cid = channel.server.id
+        else:
+            cid = channel.id
+        configuration.write('not_pd', "{0},{1}".format(existing, cid))
+
+        await bot.client.send_message(channel, 'Disable PD marks')
 
     @cmd_header("Commands")
     async def bug(self, bot, channel, args, author):

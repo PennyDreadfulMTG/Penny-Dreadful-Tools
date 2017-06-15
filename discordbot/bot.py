@@ -45,6 +45,12 @@ class Bot:
 
     async def post_cards(self, cards, channel, replying_to=None, additional_text=''):
         await self.client.send_typing(channel)
+
+        not_pd = configuration.get('not_pd').split(',')
+        disable_emoji = False
+        if channel.id in not_pd: # or (channel.server and channel.server.id in not_pd):
+            disable_emoji = True
+
         if len(cards) == 0:
             if replying_to is not None:
                 text = '{author}: No matches.'.format(author=replying_to.mention)
@@ -60,15 +66,17 @@ class Bot:
         if len(cards) == 1:
             card = cards[0]
             mana = emoji.replace_emoji(''.join(card.mana_cost or []), channel)
-            legal = emoji.legal_emoji(card, True)
-            text = '{name} {mana} — {type} — {legal}'.format(name=card.name, mana=mana, type=card.type, legal=legal)
+            legal = ' — ' + emoji.legal_emoji(card, True)
+            if disable_emoji:
+                legal = ''
+            text = '{name} {mana} — {type}{legal}'.format(name=card.name, mana=mana, type=card.type, legal=legal)
             if card.bug_desc is not None:
                 text += '\n:beetle:{rank} bug: {bug}'.format(bug=card.bug_desc, rank=card.bug_class)
                 now_ts = dtutil.dt2ts(dtutil.now())
                 if card.bug_last_confirmed < now_ts - 60 * 60 * 24 * 60:
                     text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(now_ts - card.bug_last_confirmed, 1))
         else:
-            text = ', '.join('{name} {legal}'.format(name=card.name, legal=emoji.legal_emoji(card)) for card in cards)
+            text = ', '.join('{name} {legal}'.format(name=card.name, legal=(emoji.legal_emoji(card)) if not disable_emoji else '') for card in cards)
             text += more_text
         if len(cards) > 10:
             image_file = None

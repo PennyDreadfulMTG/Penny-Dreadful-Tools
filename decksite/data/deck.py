@@ -19,20 +19,23 @@ def load_deck(deck_id):
 
 def load_decks(where='1 = 1', order_by=None, limit=''):
     if order_by is None:
-        order_by = 'd.created_date DESC, IFNULL(finish, 9999999999)'
+        order_by = 'd.created_date DESC, IFNULL(d.finish, 9999999999)'
     sql = """
         SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.draws, d.finish, d.archetype_id, d.url AS source_url,
             (SELECT COUNT(id) FROM deck WHERE competition_id IS NOT NULL AND competition_id = d.competition_id) AS players,
             d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date,
             {person_query} AS person, p.id AS person_id,
             d.created_date AS `date`, d.decklist_hash, d.retired,
-            s.name AS source_name, IFNULL(a.name, '') AS archetype_name
+            s.name AS source_name, IFNULL(a.name, '') AS archetype_name,
+            SUM(opp.wins) AS opp_wins, SUM(opp.losses) AS opp_losses, ROUND(SUM(opp.wins) / (SUM(opp.wins) + SUM(opp.losses)), 2) * 100 AS omw
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id
         LEFT JOIN competition AS c ON d.competition_id = c.id
         INNER JOIN source AS s ON d.source_id = s.id
         LEFT JOIN archetype AS a ON d.archetype_id = a.id
+        LEFT JOIN deck AS opp ON opp.id IN (SELECT deck_id FROM deck_match WHERE deck_id <> d.id AND match_id IN (SELECT match_id FROM deck_match WHERE deck_id = d.id))
         WHERE {where}
+        GROUP BY d.id
         ORDER BY {order_by}
         {limit}
     """.format(person_query=query.person_query(), where=where, order_by=order_by, limit=limit)
@@ -116,7 +119,7 @@ def set_twins(deck):
             d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date,
             {person_query} AS person, p.id AS person_id,
             d.created_date AS `date`, d.decklist_hash,
-            s.name AS source_name
+            s.name AS source_name, 0 AS omw
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id
         LEFT JOIN competition AS c ON d.competition_id = c.id

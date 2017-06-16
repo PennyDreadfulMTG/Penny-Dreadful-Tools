@@ -106,6 +106,8 @@ class View:
                 self.prepare_deck(t)
         if d.get('archetype_id', None):
             d.archetype_url = url_for('archetype', archetype_id=d.archetype_id)
+        if d.omw is not None:
+            d.omw = str(int(d.omw)) + '%'
 
     def prepare_cards(self):
         for c in getattr(self, 'cards', []):

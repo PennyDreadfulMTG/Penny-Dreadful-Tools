@@ -91,7 +91,7 @@ def deck_options(decks, v):
     return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
 
 def active_decks(additional_where='1 = 1'):
-    where_clause = "d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND (wins + losses + draws < 5) AND NOT retired AND ({additional_where})".format(active_competition_id_query=active_competition_id_query(), additional_where=additional_where)
+    where_clause = "d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND (d.wins + d.losses + d.draws < 5) AND NOT d.retired AND ({additional_where})".format(active_competition_id_query=active_competition_id_query(), additional_where=additional_where)
     decks = deck.load_decks(where_clause)
     return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
 

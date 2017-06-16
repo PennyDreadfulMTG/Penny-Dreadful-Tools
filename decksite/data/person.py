@@ -44,7 +44,7 @@ def load_people(where_clause='1 = 1'):
 
 def set_decks(people):
     people_by_id = {person.id: person for person in people}
-    where_clause = 'person_id IN ({ids})'.format(ids=', '.join(str(k) for k in people_by_id.keys()))
+    where_clause = 'd.person_id IN ({ids})'.format(ids=', '.join(str(k) for k in people_by_id.keys()))
     decks = deck.load_decks(where_clause)
     for p in people:
         p.decks = []

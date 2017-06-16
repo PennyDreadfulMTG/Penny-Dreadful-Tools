@@ -52,7 +52,7 @@ def set_decks(competitions):
     if competitions == []:
         return
     competitions_by_id = {c.id: c for c in competitions}
-    where_clause = 'competition_id IN ({ids})'.format(ids=', '.join(str(k) for k in competitions_by_id.keys()))
+    where_clause = 'd.competition_id IN ({ids})'.format(ids=', '.join(str(k) for k in competitions_by_id.keys()))
     decks = deck.load_decks(where_clause)
     for c in competitions:
         c.decks = []

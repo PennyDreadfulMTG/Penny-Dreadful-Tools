@@ -31,6 +31,7 @@ def generate_fakechannel():
     fakechannel = types.new_class('Channel')
     fakechannel.is_private = True
     fakechannel.calls = 0
+    fakechannel.id = 0
     return fakechannel
 
 def test_commands():

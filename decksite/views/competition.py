@@ -9,6 +9,7 @@ class Competition(View):
         self.decks = competition.decks
         self.hide_source = True
         if competition.type == 'League':
+            self.show_omw = True
             leaderboard = {}
             for d in competition.decks:
                 bonus = 0

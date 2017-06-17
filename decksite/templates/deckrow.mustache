@@ -17,6 +17,9 @@
         {{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}
         {{#competition_url}}</a>{{/competition_url}}
     </td>
+    {{#show_omw}}
+        <td class="n">{{omw}}</td>
+    {{/show_omw}}
     <td class="c">
         {{#top8}}<a href="{{competition_url}}">{{/top8}}
         {{top8}}

@@ -1,5 +1,6 @@
 import json
 import datetime
+import decimal
 
 from flask import Response, request
 
@@ -84,6 +85,8 @@ def extra_serializer(obj):
         return obj.isoformat()
     elif isinstance(obj, bytes):
         return obj.decode('utf-8')
+    elif isinstance(obj, decimal.Decimal):
+        return obj.to_eng_string()
     elif isinstance(obj, set):
         return list(obj)
 

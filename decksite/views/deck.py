@@ -19,6 +19,8 @@ class Deck(View):
             m.display_date = dtutil.display_date(m.date)
             m.opponent_url = url_for('person', person_id=m.opponent)
             m.opponent_deck_url = url_for('decks', deck_id=m.opponent_deck_id)
+        if d.competition_type_name == 'League':
+            d.show_omw = True
 
     def has_matches(self):
         return len(self.matches) > 0

@@ -11,29 +11,53 @@
 {{#has_matches}}
     <section>
         <h2>League</h2>
-        <ul>
-            {{#matches}}
-                <li>{{game_wins}}–{{game_losses}} vs <a href="{{opponent_deck_url}}">{{opponent_deck_name}}</a> (<a href="{{opponent_url}}">{{opponent}}</a>) {{display_date}}</li>
-            {{/matches}}
-        </ul>
-    </section>
-{{/has_matches}}
-{{#has_record}}
-    <section>
-        <h2>Competition</h2>
-        <table class="with-marginalia" style="width: 40em">
-            {{#competition_id}}
-                <tr><td class="marginalia">{{stars}}</td>
-                <td style="width: {{row_len}};"><a href="{{competition_url}}">
-                    {{competition_name}}
-                    (Piloted by {{person}})
-                    {{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}
-                    {{top8}} {{#omw}}OMW {{omw}}{{/omw}}
-                </a></td></tr>
-            {{/competition_id}}
+        <table>
+            <thead>
+                <tr>
+                    <th data-sortInitialOrder="desc">Result</th>
+                    <th>Versus</th>
+                    <th>Opponent</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#matches}}
+                    <tr>
+                        <td class="n">{{game_wins}}–{{game_losses}}</td>
+                        <td><a href="{{opponent_deck_url}}">{{opponent_deck_name}}</a></td>
+                        <td><a href="{{opponent_url}}">{{opponent}}</a></td>
+                        <td>{{display_date}}</td>
+                    </tr>
+                {{/matches}}
+            </tbody>
         </table>
     </section>
-{{/has_record}}
+{{/has_matches}}
+{{#competition_id}}
+    <section>
+        <h2>Competition</h2>
+        <table class="with-marginalia">
+            <thead>
+                <tr>
+                    <td></td>
+                    <th>Competition</th>
+                    <th>Record</th>
+                    <th class="c">Top 8</th>
+                    {{#show_omw}}<th>OMW</th>{{/show_omw}}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="marginalia">{{stars}}</td>
+                    <td><a href="{{competition_url}}">{{competition_name}}</a></td>
+                    <td class="n" ><ahref="{{competition_url}}">{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}</a></td>
+                    <td class="c"><a href="{{competition_url}}">{{top8}}</a></td>
+                    {{#show_omw}}<td class="n"><a href="{{competition_url}}">{{omw}}</a></td>{{/show_omw}}
+                </tr>
+            </tbody>
+        </table>
+    </section>
+{{/competition_id}}
 {{#has_similar}}
     <section>
         <h2>Similar Decks</h2>

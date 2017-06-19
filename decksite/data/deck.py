@@ -23,7 +23,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
     sql = """
         SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.draws, d.finish, d.archetype_id, d.url AS source_url,
             (SELECT COUNT(id) FROM deck WHERE competition_id IS NOT NULL AND competition_id = d.competition_id) AS players,
-            d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date,
+            d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date, ct.name AS competition_type_name,
             {person_query} AS person, p.id AS person_id,
             d.created_date AS `date`, d.decklist_hash, d.retired,
             s.name AS source_name, IFNULL(a.name, '') AS archetype_name,
@@ -34,6 +34,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         INNER JOIN source AS s ON d.source_id = s.id
         LEFT JOIN archetype AS a ON d.archetype_id = a.id
         LEFT JOIN deck AS opp ON opp.id IN (SELECT deck_id FROM deck_match WHERE deck_id <> d.id AND match_id IN (SELECT match_id FROM deck_match WHERE deck_id = d.id))
+        INNER JOIN competition_type AS ct ON ct.id = c.competition_type_id
         WHERE {where}
         GROUP BY d.id
         ORDER BY {order_by}
@@ -49,7 +50,6 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         d.date = dtutil.ts2dt(d.date)
         set_colors(d)
         set_legality(d)
-        d.has_record = d.competition_id is not None
         d.can_draw = "Divine Intervention" in [card.name for card in d.all_cards()]
     return decks
 

@@ -78,7 +78,6 @@ class View:
     def prepare_deck(self, d):
         set_stars_and_top8(d)
         if d.get('colors', None):
-            # This is a twin - There's probably a neater way to do this.
             d.colors_safe = colors_html(d.colors, d.colored_symbols)
             d.name = deck_name.normalize(d)
         d.person_url = url_for('person', person_id=d.person_id)
@@ -101,9 +100,6 @@ class View:
         elif d.source_name == 'Tapped Out':
             d.source_indicator = 'Tapped Out'
         d.comp_row_len = len("{comp_name} (Piloted by {person}".format(comp_name=d.competition_name, person=d.person))
-        if d.get('twins', None):
-            for t in d.twins:
-                self.prepare_deck(t)
         if d.get('archetype_id', None):
             d.archetype_url = url_for('archetype', archetype_id=d.archetype_id)
         if d.omw is not None:

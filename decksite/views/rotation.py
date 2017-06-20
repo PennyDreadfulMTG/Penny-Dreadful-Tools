@@ -35,15 +35,14 @@ class Rotation(View):
                 status = 'Legal'
             else:
                 status = 'Undecided'
-            if card is not None: # BAKERT
-                card.update({
-                    'hits': hits,
-                    'hits_needed': hits_needed,
-                    'percent': round(round(hits / self.runs, 2) * 100),
-                    'percent_hits_needed': round(round(hits_needed / remaining_runs, 2) * 100),
-                    'status': status
-                })
-                self.cards.append(card)
+            card.update({
+                'hits': hits,
+                'hits_needed': hits_needed,
+                'percent': round(round(hits / self.runs, 2) * 100),
+                'percent_hits_needed': round(round(hits_needed / remaining_runs, 2) * 100),
+                'status': status
+            })
+            self.cards.append(card)
 
     def subtitle(self):
         return 'Rotation'

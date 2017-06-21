@@ -1,3 +1,5 @@
+.PHONY: default push test unit lint shortlint readme coverage branch popclean
+
 # This is the first thing in the makefile so it is the default when just "make" is run
 # and something else doesn't get run by accident.
 default:
@@ -54,9 +56,10 @@ coverage:
 # Make a branch based off of current (remote) master with all your local changes preserved (but not added).
 branch:
 	@if test "$(BRANCH)" = ""; then echo 'Usage: make branch BRANCH=branchname'; exit 1; fi
-	@git stash -a && git clean -fxd && git checkout master && git pull && git checkout -b $(BRANCH) && git stash pop
+	@git stash -a && git clean -fxd && git checkout master && git pull && git checkout -b $(BRANCH) && git stash pop || ${MAKE} popclean
 
 # If you try and git stash and then git stash pop when decksite is running locally you get in a mess.
 # This cleans up for you.
 popclean:
 	@git stash pop 2>&1 | grep already | cut -d' ' -f1 | xargs rm && git stash pop
+

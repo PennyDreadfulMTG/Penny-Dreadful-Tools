@@ -56,6 +56,8 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!echo` Repeat after me...
 
+`!notpenny` Don't show PD Legality in this channel
+
 `!restartbot` Restarts the bot.
 
 `!update` Forces an update to the legal card list

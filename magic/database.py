@@ -104,14 +104,14 @@ def column_def(name, prop):
         primary_key = 'PRIMARY KEY' if prop['primary_key'] else ''
         default = 'DEFAULT {default}'.format(default=prop['default']) if prop['default'] is not None else ''
         unique = 'UNIQUE' if prop['unique'] else ''
+        if prop['type'].startswith('VARCHAR'):
+            prop['type'] = 'TEXT'
         return '`{name}` {type} {primary_key} {nullable} {unique} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, unique=unique, default=default)
     elif type(db()).__name__ == 'MysqlDatabase':
         nullable = 'NOT NULL' if not prop['nullable'] else ''
         primary_key = 'PRIMARY KEY AUTO_INCREMENT' if prop['primary_key'] else ''
         default = 'DEFAULT {default}'.format(default=prop['default']) if prop['default'] is not None else ''
         unique = 'UNIQUE' if prop['unique'] else ''
-        if prop['type'] == 'TEXT':
-            prop['type'] = 'VARCHAR(255)'
         return '`{name}` {type} {nullable} {primary_key} {unique} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, unique=unique, default=default)
 
 def foreign_key_def(name, fk):

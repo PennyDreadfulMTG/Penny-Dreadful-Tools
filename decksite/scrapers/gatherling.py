@@ -15,11 +15,15 @@ SECOND = '2nd'
 TOP_4 = 't4'
 TOP_8 = 't8'
 
-def scrape():
+def scrape(limit=50):
     soup = BeautifulSoup(fetcher.internal.fetch('http://gatherling.com/eventreport.php?format=Penny+Dreadful&series=&season=&mode=Filter+Events', character_encoding='utf-8'), 'html.parser')
     tournaments = [(gatherling_url(link['href']), link.string) for link in soup.find_all('a') if link['href'].find('eventreport.php?') >= 0]
+    n = 0
     for (url, name) in tournaments:
-        tournament(url, name)
+        i = tournament(url, name)
+        n = n + i
+        if i > limit:
+            return
 
 def tournament(url, name):
     s = fetcher.internal.fetch(url, character_encoding='utf-8')
@@ -35,7 +39,7 @@ def tournament(url, name):
     date_s = cell.find('br').next.strip() + ' {start_time}'.format(start_time=start_time)
     if '-0001' in date_s:
         # Tournament has been incorrectly configured.
-        return
+        return 0
 
     dt = dtutil.parse(date_s, '%d %B %Y %H:%M', dtutil.GATHERLING_TZ)
     competition_id = competition.get_or_insert_competition(dt, dt, name, 'Gatherling', url)
@@ -47,9 +51,13 @@ def tournament(url, name):
 
     # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.
     rows = re.findall('<tr style=">(.*?)</tr>', s, re.MULTILINE | re.DOTALL)
+    i = 0
     for row in rows:
         cells = BeautifulSoup(row, 'html.parser').find_all('td')
-        tournament_deck(cells, competition_id, dt, ranks)
+        success = tournament_deck(cells, competition_id, dt, ranks)
+        if success:
+            i = i + 1
+    return i
 
 def rankings(table):
     rows = table.find_all('tr')
@@ -110,6 +118,7 @@ def tournament_deck(cells, competition_id, date, ranks):
         return
     d['cards'] = decklist.parse(fetcher.internal.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
     deck.add_deck(d)
+    return True
 
 def gatherling_url(href):
     if href.startswith('http'):

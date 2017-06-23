@@ -168,7 +168,11 @@ def insert_card(c):
     sql += ', '.join('?' for name, prop in card.face_properties().items() if not prop['primary_key'])
     sql += ')'
     values = [c.get(database2json(name)) for name, prop in card.face_properties().items() if not prop['primary_key']]
-    db().execute(sql, values)
+    try:
+        db().execute(sql, values)
+    except database.DatabaseException:
+        print(c)
+        raise
     for color in c.get('colors', []):
         color_id = db().value('SELECT id FROM color WHERE name = ?', [color])
         db().execute('INSERT INTO card_color (card_id, color_id) VALUES (?, ?)', [card_id, color_id])

@@ -10,11 +10,13 @@ DATE = 'INTEGER'
 INTEGER = 'INTEGER'
 REAL = 'REAL'
 TEXT = 'TEXT'
+MEDIUMTEXT = 'LONGTEXT'
+VARCHAR = 'VARCHAR(255)'
 
 FALSE = 0
 
 BASE = {
-    'type': TEXT,
+    'type': VARCHAR,
     'nullable': True,
     'primary_key': False,
     'query': '`{table}`.`{column}`',
@@ -54,6 +56,7 @@ def face_properties():
     props['cmc']['query'] = """{cmc_query} AS cmc""".format(cmc_query=cmc_query())
     props['mana_cost']['query'] = "GROUP_CONCAT(`{table}`.`{column}`, '|') AS `{column}`"
     props['text']['query'] = "GROUP_CONCAT(`{table}`.`{column}`, '\n-----\n') AS `{column}`"
+    props['text']['type'] = TEXT
     props['card_id']['foreign_key'] = ('card', 'id')
     return props
 

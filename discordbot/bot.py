@@ -100,6 +100,14 @@ class Bot:
                 await self.client.delete_message(message)
                 await self.client.send_file(channel, image_file, content=text)
 
+    async def on_member_join(self, member):
+        print('{0} joined {1} ({2})'.format(member.mention, member.server.name, member.server.id))
+        is_pd_server = member.server.id == "207281932214599682"
+        # is_test_server = member.server.id == "226920619302715392"
+        if is_pd_server: # or is_test_server:
+            greeting = "Hey there {mention}, Welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <https://pennydreadfulmagic.com> and <https://pdmtgo.com> if you haven't already.".format(mention=member.mention)
+            await self.client.send_message(member.server.default_channel, greeting)
+
 BOT = Bot()
 
 # Because of the way discord.py works I can't work out how to decorate instance methods.
@@ -129,6 +137,10 @@ async def on_member_update(before, after):
     if (after.game and after.game.type == 1) and not streaming_role in before.roles:
         print('{user} started streaming'.format(user=after.name))
         await BOT.client.add_roles(after, streaming_role)
+
+@BOT.client.event
+async def on_member_join(member):
+    await BOT.on_member_join(member)
 
 def init():
     BOT.init()

@@ -1,6 +1,4 @@
 import json
-import datetime
-import decimal
 
 from flask import Response, request
 
@@ -8,6 +6,7 @@ from decksite import APP, league
 from decksite.data import deck, competition as comp, guarantee
 
 from shared import configuration
+from shared.serialization import extra_serializer
 
 # from shared import configuration
 # from decksite.scrapers import tappedout
@@ -77,17 +76,3 @@ def return_json(content, status=200):
     content = json.dumps(content, default=extra_serializer)
     r = Response(response=content, status=status, mimetype="application/json")
     return r
-
-def extra_serializer(obj):
-    """JSON serializer for objects not serializable by default json code"""
-
-    if isinstance(obj, datetime.datetime):
-        return obj.isoformat()
-    elif isinstance(obj, bytes):
-        return obj.decode('utf-8')
-    elif isinstance(obj, decimal.Decimal):
-        return obj.to_eng_string()
-    elif isinstance(obj, set):
-        return list(obj)
-
-    raise TypeError("Type {t} not serializable".format(t=type(obj)))

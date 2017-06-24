@@ -1,10 +1,7 @@
 import time
 
-import apsw
-
 from magic import rotation
 from shared import configuration, database
-
 
 def info(card, force=False):
     if not force:
@@ -17,13 +14,12 @@ def info(card, force=False):
 def info_cached(card=None, name=None):
     if name is None and card is not None:
         name = card.name
-    sql = 'SELECT `time`, low / 100.0 AS low, high / 100.0 aS high, price / 100.0 AS price, week, month, season FROM cache WHERE name = ?'
-    conn = apsw.Connection(configuration.get('pricesdb'))
-    conn.setrowtrace(database.database_sqlite.row_factory)
-    return conn.cursor().execute(sql, [name]).fetchone()
+    sql = 'SELECT `time`, low / 100.0 AS low, high / 100.0 AS high, price / 100.0 AS price, week, month, season FROM cache WHERE name = %s'
+    db = database.get_database(configuration.get('prices_database'))
+    return db.execute(sql, [name])[0]
 
 def cache():
-    conn = apsw.Connection(configuration.get('pricesdb'))
+    db = database.get_database(configuration.get('prices_database'))
 
     now = time.time()
     week = now - 60 * 60 * 24 * 7
@@ -31,9 +27,9 @@ def cache():
     last_rotation = rotation.last_rotation().timestamp()
 
     sql = 'SELECT MAX(`time`) FROM price'
-    latest = conn.cursor().execute(sql).fetchone()[0]
-    conn.cursor().execute('BEGIN TRANSACTION')
-    conn.cursor().execute('DELETE FROM cache')
+    latest = db.value(sql)
+    db.begin()
+    db.execute('DELETE FROM cache')
     sql = """
         INSERT INTO cache (`time`, name, price, low, high, week, month, season)
             SELECT
@@ -42,9 +38,9 @@ def cache():
                 MIN(CASE WHEN `time` = ? THEN price ELSE 999999 END) AS price,
                 MIN(price) AS low,
                 MAX(price) AS high,
-                CAST(SUM(CASE WHEN `time` > ? AND price = 1 THEN 1 ELSE 0 END) AS REAL) / CAST(SUM(CASE WHEN `time` > ? THEN 1 ELSE 0 END) AS REAL) AS week,
-                CAST(SUM(CASE WHEN `time` > ? AND price = 1 THEN 1 ELSE 0 END) AS REAL) / CAST(SUM(CASE WHEN `time` > ? THEN 1 ELSE 0 END) AS REAL) AS month,
-                CAST(SUM(CASE WHEN `time` > ? AND price = 1 THEN 1 ELSE 0 END) AS REAL) / CAST(SUM(CASE WHEN `time` > ? THEN 1 ELSE 0 END) AS REAL) AS season
+                SUM(CASE WHEN `time` > ? AND price = 1 THEN 1 ELSE 0 END) / SUM(CASE WHEN `time` > ? THEN 1 ELSE 0 END) AS week,
+                SUM(CASE WHEN `time` > ? AND price = 1 THEN 1 ELSE 0 END) / SUM(CASE WHEN `time` > ? THEN 1 ELSE 0 END) AS month,
+                SUM(CASE WHEN `time` > ? AND price = 1 THEN 1 ELSE 0 END) / SUM(CASE WHEN `time` > ? THEN 1 ELSE 0 END) AS season
             FROM
                 (SELECT
                     `time`,
@@ -52,8 +48,8 @@ def cache():
                     MIN(price) AS price
                 FROM price
                 WHERE `time` > ?
-                GROUP BY `time`, name)
+                GROUP BY `time`, name) AS tmp
             GROUP BY name;
     """
-    conn.cursor().execute(sql, [latest, week, week, month, month, last_rotation, last_rotation, last_rotation])
-    conn.cursor().execute('COMMIT')
+    db.execute(sql, [latest, week, week, month, month, last_rotation, last_rotation, last_rotation])
+    db.commit()

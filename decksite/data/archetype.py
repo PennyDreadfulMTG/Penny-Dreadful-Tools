@@ -66,12 +66,12 @@ def load_tree(archetype):
     return root
 
 def add(name, parent):
-    id = db().insert('INSERT INTO archetype (name) VALUES (?)', [name])
+    archetype_id = db().insert('INSERT INTO archetype (name) VALUES (?)', [name])
     ancestors = db().execute('SELECT ancestor, depth FROM archetype_closure WHERE descendant = ?', [sqlescape(parent)])
     sql = 'INSERT INTO archetype_closure (ancestor, descendant, depth) VALUES '
     for a in ancestors:
-        sql += '({ancestor}, {descendant}, {depth}), '.format(ancestor=sqlescape(a['ancestor']), descendant=id, depth=int(a['depth']) + 1)
-    sql += '({ancestor}, {descendant}, {depth})'.format(ancestor=id, descendant=id, depth=0)
+        sql += '({ancestor}, {descendant}, {depth}), '.format(ancestor=sqlescape(a['ancestor']), descendant=archetype_id, depth=int(a['depth']) + 1)
+    sql += '({ancestor}, {descendant}, {depth})'.format(ancestor=archetype_id, descendant=archetype_id, depth=0)
     return db().execute(sql)
 
 def assign(deck_id, archetype_id):

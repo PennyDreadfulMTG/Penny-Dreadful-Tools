@@ -1,4 +1,25 @@
+<h2>{{name}}</h2>
 <section>
-    <h2>{{name}}</h2>
+   <h3>Record</h3>
+    <p>All Time: {{> record}}</p>
+</section>
+<section>
+    <h3>Most Common Cards</h3>
+    <ul>
+        {{#most_common_cards}}<li>{{> singlecard}}</li>{{/most_common_cards}}
+    </ul>
+</section>
+<section>
+    <h3>Archetypes</h3>
+    {{#archetype_tree}}
+        <p>{{{padding}}}{{^pos}}►{{/pos}}{{#pos}}↳{{/pos}} <a href="{{url}}">{{name}}</a></p>
+    {{/archetype_tree}}
+</section>
+<section>
+    <h3>Top Decks</h3>
+    {{#best_decks}}{{> decktable}}{{/best_decks}}
+</section>
+<section>
+    <h3>All Decks</h3>
     {{> decktable}}
 </section>

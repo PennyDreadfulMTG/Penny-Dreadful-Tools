@@ -12,6 +12,7 @@ class Bot:
 
     def init(self):
         multiverse.set_legal_cards()
+        multiverse.update_bugged_cards()
         self.client.run(configuration.get('token'))
 
     async def on_ready(self):

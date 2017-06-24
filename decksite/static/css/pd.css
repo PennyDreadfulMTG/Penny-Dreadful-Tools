@@ -134,11 +134,23 @@ p a {
 /* Lists */
 
 ul {
-    list-style: square;
+    list-style-type: square;
 }
 
 ul.decklist {
-    list-style: none;
+    list-style-type: none;
+}
+
+ul.archetypes, .archetypes ul {
+    list-style-type: circle;
+}
+
+.archetypes li li {
+    margin-left: 2rem;
+}
+
+.archetypes li.current {
+    list-style-type: square;
 }
 
 /* Tables */
@@ -427,4 +439,8 @@ input.error, select.error, textarea.error {
 
 .draw-report {
     visibility: hidden;
+}
+
+form.inline, .inline input, .inline select, .inline textarea {
+    margin: 0;
 }

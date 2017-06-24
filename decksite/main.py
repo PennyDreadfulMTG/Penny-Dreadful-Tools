@@ -13,7 +13,7 @@ from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
 from decksite.charts import chart
 from decksite.league import ReportForm, SignUpForm
-from decksite.views import About, AddForm, Archetype, Archetypes, Card, Cards, Competition, Competitions, Deck, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Report, Resources, Rotation, SignUp, Tournaments
+from decksite.views import About, AddForm, Archetype, Archetypes, Card, Cards, Competition, Competitions, Deck, EditArchetypes, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Report, Resources, Rotation, SignUp, Tournaments
 
 # Decks
 
@@ -96,7 +96,6 @@ def add_form():
 @cached()
 def add_deck():
     url = request.form['url']
-    print(url)
     error = None
     if "tappedout" in url:
         import decksite.scrapers.tappedout
@@ -157,7 +156,6 @@ def add_signup():
     if form.validate():
         deck_id = lg.signup(form)
         response = make_response(redirect(url_for('decks', deck_id=deck_id)))
-        print(deck_id)
         response.set_cookie('deck_id', str(deck_id))
         return response
     else:
@@ -190,6 +188,19 @@ def deckcycle_tappedout():
         tappedout.login()
     tappedout.scrape()
     return home()
+
+@APP.route('/admin/archetypes/')
+def edit_archetypes():
+    view = EditArchetypes(archs.load_archetypes_without_decks(), deck.load_decks())
+    return view.page()
+
+@APP.route('/admin/archetypes/', methods=['POST'])
+def post_archetypes():
+    if request.form.get('deck_id') is not None:
+        archs.assign(request.form.get('deck_id'), request.form.get('archetype_id'))
+    else:
+        archs.add(request.form.get('name'), request.form.get('parent'))
+    return edit_archetypes()
 
 # Infra
 

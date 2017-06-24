@@ -1,7 +1,10 @@
 import urllib
+from collections import Counter
 
 from flask import url_for
+from munch import Munch
 
+from magic import oracle
 from shared import dtutil
 
 from decksite import deck_name
@@ -136,8 +139,40 @@ class View:
             p.show_record = p.wins or p.losses or p.get('draws', None)
 
     def prepare_archetypes(self):
+        num_most_common_cards_to_list = 10
         for a in getattr(self, 'archetypes', []):
             a.url = url_for('archetype', archetype_id=a.id)
+            a.best_decks = Munch({'decks': []})
+            n = 3
+            while len(a.best_decks.decks) == 0 and n >= 0:
+                for d in a.decks:
+                    if len(d.get('stars', '')) >= n:
+                        a.best_decks.decks.append(d)
+                n -= 1
+            counter = Counter()
+            a.cards = []
+            a.most_common_cards = []
+            for d in a.decks:
+                a.cards += d.maindeck + d.sideboard
+                for c in d.maindeck:
+                    if not c['card'].type.startswith('Basic Land'):
+                        counter[c['name']] += c['n']
+            most_common_cards = counter.most_common(num_most_common_cards_to_list)
+            cs = {c.name: c for c in oracle.load_cards()}
+            for v in most_common_cards:
+                a.most_common_cards.append(cs[v[0]])
+            a.archetype_tree = preorder(a.tree)
+            lowest = a.tree['pos']
+            for r in a.archetype_tree:
+                r['url'] = url_for('archetype', archetype_id=r['id'])
+                r['padding'] = '&nbsp;' * 4 * (r['pos'] - lowest)
+
+def preorder(node):
+    result = []
+    result.append(node)
+    for child in node.get('children', []):
+        result += preorder(child)
+    return result
 
 def colors_html(colors, colored_symbols):
     s = ''

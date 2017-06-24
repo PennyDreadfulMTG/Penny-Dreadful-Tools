@@ -1,0 +1,32 @@
+{{#archetypes}}
+    {{#archetype_tree}}
+        <p>{{{padding}}}↳ <a href="{{url}}">{{name}}</a></p>
+        <form method="post" class="inline">
+            <input type="hidden" name="parent" value="{{id}}">
+            <div class="field">
+                {{{padding}}}&nbsp;&nbsp;<input type="text" name="name">
+                <input type="submit" value="Add">
+            </div>
+        </form>
+    {{/archetype_tree}}
+{{/archetypes}}
+<form method="post">
+    <div class="field">
+        <select name="deck_id">
+            {{#decks}}
+                <option value="{{id}}">{{name}}</option>
+            {{/decks}}
+        </select>
+    </div>
+    <div class="field">
+        <select name="archetype_id">
+            {{! BAKERT Archetypes with no decks assigned will not appear}}
+            {{#archetypes}}
+                <option value="{{id}}">{{name}}</option>
+            {{/archetypes}}
+        </select>
+    </div>
+    <div class="field">
+        <input type="submit" value="Assign">
+    </div>
+</form>

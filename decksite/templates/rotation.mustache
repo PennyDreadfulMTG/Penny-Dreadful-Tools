@@ -12,7 +12,7 @@
         <tbody>
             {{#cards}}
                 <tr>
-                    <td><a href="{{url}}" class="{{^pd_legal}}illegal{{/pd_legal}} card">{{name}}</a></td>
+                    <td>{{> singlecard}}</td>
                     <td class="n">{{hits}} ({{percent}}%)</td>
                     <td class="n">{{hits_needed}} ({{percent_hits_needed}}%)</td>
                     <td>{{status}}</td>

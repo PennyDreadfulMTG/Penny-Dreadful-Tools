@@ -12,7 +12,7 @@
         <h2>Unique Cards Played</h2>
         <ul>
             {{#only_played_cards}}
-                <li><a href="{{url}}" class="{{^pd_legal}}illegal{{/pd_legal}} card">{{name}}</a></li>
+                <li>{{> singlecard}}</li>
             {{/only_played_cards}}
         </ul>
     </section>

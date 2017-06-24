@@ -39,7 +39,7 @@
     <tbody>
         {{#cards}}
             <tr>
-                <td><a href="{{url}}" class="{{^pd_legal}}illegal{{/pd_legal}} card">{{{name}}}</a></td>
+                <td>{{> singlecard}}</td>
                 <td class="n">{{n_decks_season}}</td>
                 <td class="n">{{n_maindecks_season}}</td>
                 <td class="n divider">{{n_sideboards_season}}</td>

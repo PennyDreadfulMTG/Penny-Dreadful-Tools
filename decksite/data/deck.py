@@ -148,7 +148,6 @@ def add_deck(params):
     for result in ['wins', 'losses', 'draws']:
         if params.get('competition_id') and not params.get(result):
             params[result] = 0
-    db().begin()
     sql = """INSERT INTO deck (
         created_date,
         updated_date,
@@ -191,7 +190,6 @@ def add_deck(params):
         params.get('finish')
     ]
     deck_id = db().insert(sql, values)
-    db().commit()
     add_cards(deck_id, params['cards'])
     return deck_id
 

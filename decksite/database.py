@@ -23,7 +23,6 @@ def setup():
                     db().execute(stmt)
             fh.close()
             db().execute("INSERT INTO db_version (version) VALUES ({n})".format(n=n))
-            db().commit()
 
 def db_version() -> int:
     return db().value('SELECT version FROM db_version ORDER BY version DESC LIMIT 1', [], 0)

@@ -132,7 +132,6 @@ def active_league():
         name = "League {MM} {YYYY}".format(MM=calendar.month_name[end_date.month], YYYY=end_date.year)
         comp_id = competition.get_or_insert_competition(start_date, end_date, name, "League", 'http://pennydreadfulmagic.com/league/')
         leagues = [competition.load_competition(comp_id)]
-        db().commit()
     return guarantee.exactly_one(leagues)
 
 def insert_match(params):
@@ -171,6 +170,5 @@ def determine_end_of_league(start_date):
     return end_date - datetime.timedelta(seconds=1)
 
 def retire_deck(d):
-    sql = """UPDATE `deck` SET `retired`=1 WHERE id=%s"""
+    sql = 'UPDATE `deck` SET `retired` = 1 WHERE id = %s'
     db().execute(sql, [d.id])
-    db().commit()

@@ -14,7 +14,6 @@ def init():
         print('Database update required')
         update_database(str(current_version))
         set_legal_cards()
-    update_bugged_cards()
 
 def layouts():
     return ['normal', 'meld', 'split', 'phenomenon', 'token', 'vanguard', 'double-faced', 'plane', 'flip', 'scheme', 'leveler', 'aftermath']

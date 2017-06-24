@@ -30,8 +30,7 @@ def tournament(url, name):
 
     # Tournament details
     soup = BeautifulSoup(s, 'html.parser')
-    report = soup.find('div', {'id': 'EventReport'})
-    cell = report.find_all('td')[1]
+    cell = soup.find('div', {'id': 'EventReport'}).find_all('td')[1]
     # Hack in the known start time because it's not in the page.
     start_time = '19:00'
     if 'Sunday' in cell.find('a').string.strip() or 'PDS' in cell.find('a').string.strip():
@@ -44,20 +43,16 @@ def tournament(url, name):
     dt = dtutil.parse(date_s, '%d %B %Y %H:%M', dtutil.GATHERLING_TZ)
     competition_id = competition.get_or_insert_competition(dt, dt, name, 'Gatherling', url)
 
-    competition.load_competitions('c.id = {competition_id}'.format(competition_id=competition_id))
-
     table = soup.find(text='Current Standings').find_parent('table')
     ranks = rankings(table)
 
     # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.
     rows = re.findall('<tr style=">(.*?)</tr>', s, re.MULTILINE | re.DOTALL)
-    i = 0
+    decks_added = 0
     for row in rows:
         cells = BeautifulSoup(row, 'html.parser').find_all('td')
-        success = tournament_deck(cells, competition_id, dt, ranks)
-        if success:
-            i = i + 1
-    return i
+        decks_added += tournament_deck(cells, competition_id, dt, ranks)
+    return decks_added
 
 def rankings(table):
     rows = table.find_all('tr')
@@ -115,10 +110,10 @@ def tournament_deck(cells, competition_id, date, ranks):
     gatherling_id = urllib.parse.parse_qs(urllib.parse.urlparse(d['url']).query)['id'][0]
     d['identifier'] = gatherling_id
     if deck.get_deck_id(d['source'], d['identifier']) is not None:
-        return
+        return 0
     d['cards'] = decklist.parse(fetcher.internal.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
     deck.add_deck(d)
-    return True
+    return 1
 
 def gatherling_url(href):
     if href.startswith('http'):

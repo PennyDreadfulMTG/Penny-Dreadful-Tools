@@ -139,7 +139,7 @@ class View:
             p.show_record = p.wins or p.losses or p.get('draws', None)
 
     def prepare_archetypes(self):
-        NUM_MOST_COMMON_CARDS_TO_LIST = 10
+        num_most_common_cards_to_list = 10
         for a in getattr(self, 'archetypes', []):
             a.url = url_for('archetype', archetype_id=a.id)
             a.best_decks = Munch({'decks': []})
@@ -157,7 +157,7 @@ class View:
                 for c in d.maindeck:
                     if not c['card'].type.startswith('Basic Land'):
                         counter[c['name']] += c['n']
-            most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
+            most_common_cards = counter.most_common(num_most_common_cards_to_list)
             cs = {c.name: c for c in oracle.load_cards()}
             for v in most_common_cards:
                 a.most_common_cards.append(cs[v[0]])

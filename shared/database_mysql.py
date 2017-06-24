@@ -5,7 +5,6 @@ from shared import configuration
 from shared.database_generic import GenericDatabase
 from shared.pd_exception import DatabaseException
 
-
 class MysqlDatabase(GenericDatabase):
     def __init__(self, db):
         try:

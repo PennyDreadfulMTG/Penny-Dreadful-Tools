@@ -1,15 +1,16 @@
 import html
 import re
-import sqlite3
 import time
 import urllib
 
 from magic import card, database, fetcher_internal, oracle
 from shared import configuration
+from shared.database import get_database
+from shared.pd_exception import DatabaseException
 
 from price_grabber import price
 
-DATABASE = sqlite3.connect(configuration.get('pricesdb'))
+DATABASE = get_database(configuration.get('prices_database'))
 CARDS = {}
 
 def fetch():
@@ -42,6 +43,7 @@ def parse_prices(s):
     return [(name_lookup(html.unescape(name.strip())), html.unescape(version.strip()), html.unescape(price.strip())) for name, version, price in results]
 
 def store(timestamp, all_prices):
+    DATABASE.begin()
     sql = 'INSERT INTO price (`time`, name, `set`, version, premium, price) VALUES (?, ?, ?, ?, ?, ?)'
     for code in all_prices:
         prices = all_prices[code]
@@ -53,22 +55,18 @@ def store(timestamp, all_prices):
         for name, version, p in prices:
             cents = int(float(p) * 100)
             execute(sql, [timestamp, name, code, version, premium, cents])
-    commit()
+    DATABASE.commit()
 
 def execute(sql, values=None):
     if values is None:
         values = []
     try:
-        DATABASE.cursor().execute(sql, values)
-    except sqlite3.OperationalError as e:
+        DATABASE.execute(sql, values)
+    except DatabaseException as e:
         print(e)
         # If you wish to make an apple pie from scratch, you must first invent the universe.
         create_tables()
         execute(sql, values)
-
-def commit():
-    DATABASE.commit()
-    DATABASE.close()
 
 def create_tables():
     print('Creating price tables.')

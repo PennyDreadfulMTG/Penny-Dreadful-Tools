@@ -16,7 +16,7 @@ class SqliteDatabase(GenericDatabase):
             self.connection.createscalarfunction('unaccent', card.unaccent, 1)
             self.cursor = self.connection.cursor()
         except apsw.Error as e:
-            raise DatabaseException('Failed to initialized database in `{location}`'.format(location=location)) from e
+            raise DatabaseException('Failed to initialize database in `{location}`'.format(location=location)) from e
 
     def execute(self, sql, args=None):
         if args is None:

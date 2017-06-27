@@ -38,6 +38,9 @@ def test_parse():
 def test_parse_to_ts():
     s = '1970-01-01 00:00:00'
     assert dtutil.parse_to_ts(s, '%Y-%m-%d %H:%M:%S', timezone('UTC')) == 0
+    s = '1970-01-01 00:01:59'
+    assert dtutil.parse_to_ts(s, '%Y-%m-%d %H:%M:%S', timezone('UTC')) == 119
+    assert str(dtutil.parse_to_ts(s, '%Y-%m-%d %H:%M:%S', timezone('UTC'))) == '119.0'
 
 def test_now():
     then = dtutil.parse('2016-01-01', '%Y-%m-%d', dtutil.WOTC_TZ)

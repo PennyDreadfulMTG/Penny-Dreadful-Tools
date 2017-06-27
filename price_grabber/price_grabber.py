@@ -1,5 +1,6 @@
 import html
 import re
+import sys
 import time
 import urllib
 
@@ -27,7 +28,6 @@ def fetch():
             if not prices:
                 print('Found no prices for {code}'.format(code=code))
             all_prices[code] = prices
-
     timestamp = int(time.time())
     store(timestamp, all_prices)
 
@@ -44,6 +44,7 @@ def parse_prices(s):
 
 def store(timestamp, all_prices):
     DATABASE.begin()
+    lows = {}
     sql = 'INSERT INTO price (`time`, name, `set`, version, premium, price) VALUES (?, ?, ?, ?, ?, ?)'
     for code in all_prices:
         prices = all_prices[code]
@@ -55,6 +56,14 @@ def store(timestamp, all_prices):
         for name, version, p in prices:
             cents = int(float(p) * 100)
             execute(sql, [timestamp, name, code, version, premium, cents])
+            if cents < lows.get(name, sys.maxsize):
+                lows[name] = cents
+    sql = 'INSERT INTO low_price (`time`, name, price) VALUES '
+    sql += ", ".join(['(?, ?, ?)'] * len(lows))
+    values = []
+    for name, cents in lows.items():
+        values.extend([timestamp, name, cents])
+    execute(sql, values)
     DATABASE.commit()
 
 def execute(sql, values=None):
@@ -72,22 +81,30 @@ def create_tables():
     print('Creating price tables.')
     sql = """CREATE TABLE IF NOT EXISTS price (
         `time` INTEGER,
-        name TEXT,
-        `set` TEXT,
-        version TEXT,
-        premium INTEGER,
-        price INTEGER
+        name VARCHAR(150),
+        `set` VARCHAR(10),
+        version VARCHAR(30),
+        premium BOOLEAN,
+        price INTEGER,
+        INDEX idx_time (`time`)
     )"""
     execute(sql)
     sql = """CREATE TABLE IF NOT EXISTS cache (
         `time` INTEGER,
-        name TEXT,
+        name VARCHAR(150),
         high INTEGER,
         low INTEGER,
         price INTEGER,
         week REAL,
         month REAL,
         season REAL
+    )"""
+    execute(sql)
+    sql = """CREATE TABLE IF NOT EXISTS low_price (
+        `time` INTEGER,
+        name VARCHAR(150),
+        price INTEGER,
+        INDEX idx_name (name)
     )"""
     execute(sql)
 

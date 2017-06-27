@@ -5,6 +5,7 @@ from collections import Counter
 
 from magic import oracle
 from shared import configuration
+from shared.pd_exception import DoesNotExistException
 
 from decksite.view import View
 
@@ -14,6 +15,9 @@ class Rotation(View):
         lines = []
         files = glob.glob(os.path.join(configuration.get('legality_dir'), "Run_*.txt"))
         if len(files) == 0:
+            files = glob.glob(os.path.join(configuration.get('legality_dir'), "*.jar"))
+            if len(files) == 0:
+                raise DoesNotExistException('Invalid configuration.  Could not find Legality Checker')
             self.runs = 0
             self.runs_percent = 0
             self.cards = []
@@ -29,6 +33,8 @@ class Rotation(View):
         for name, hits in scores:
             hits_needed = max(84 - hits, 0)
             card = cs.get(name)
+            if card is None:
+                raise DoesNotExistException("Legality list contains unknown card '{card}'".format(card=name))
             if remaining_runs + hits < 84:
                 status = 'Not Legal'
             elif hits >= 84:

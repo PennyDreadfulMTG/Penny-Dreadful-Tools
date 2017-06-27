@@ -129,9 +129,12 @@ def update_fuzzy_matching():
 
 def update_bugged_cards():
     # This may or may not be within a TRANSACTION. Use a SAVEPOINT.
+    bugs = fetcher.bugged_cards()
+    if bugs is None:
+        return
     db().execute("SAVEPOINT bugs")
     db().execute("DELETE FROM card_bugs")
-    for name, bug, classification, last_confirmed in fetcher.bugged_cards():
+    for name, bug, classification, last_confirmed in bugs:
         last_confirmed_ts = dtutil.parse_to_ts(last_confirmed, '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
         card_id = db().value("SELECT card_id FROM face WHERE name = ?", [name])
         if card_id is None:

@@ -75,6 +75,8 @@ def create_github_issue(title, author):
     return issue
 
 def bugged_cards():
-    text = internal.fetch("https://pennydreadfulmtg.github.io/modo-bugs/bugs.tsv", resource_id="bugged_cards_csv")
+    text = internal.fetch("https://pennydreadfulmtg.github.io/modo-bugs/bugs.tsv", resource_id="bugged_cards_csv", can_304=True)
+    if text is None:
+        return None
     lines = [l.split('\t') for l in text.split('\n')]
     return lines[1:-1]

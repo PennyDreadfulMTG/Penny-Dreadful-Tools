@@ -26,7 +26,7 @@ class MysqlDatabase(GenericDatabase):
                 self.execute("CREATE DATABASE {db}".format(db=db))
                 self.execute("USE {db}".format(db=db))
         except MySQLdb.Error as e:
-            raise DatabaseException('Failed to initialized database in `{location}`'.format(location=db)) from e
+            raise DatabaseException('Failed to initialize database in `{location}`'.format(location=db)) from e
 
     def execute(self, sql, args=None):
         # print(sql)

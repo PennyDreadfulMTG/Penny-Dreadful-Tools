@@ -41,6 +41,7 @@ class SignUpForm(Form):
             self.url = 'http://pennydreadfulmagic.com/competitions/{competition_id}/'.format(competition_id=self.competition_id)
             if deck.get_deck_id(self.source, self.identifier):
                 self.errors['name'] = 'You have already entered the league this season with a deck called {name}'.format(name=self.name)
+        self.decklist = self.decklist.strip()
         if len(self.decklist) == 0:
             self.errors['decklist'] = 'Decklist is required'
         else:

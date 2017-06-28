@@ -21,13 +21,14 @@ def info_cached(card=None, name=None):
 def cache():
     db = database.get_database(configuration.get('prices_database'))
 
-    now = time.time()
+    now = int(time.time())
     week = now - 60 * 60 * 24 * 7
     month = now - 60 * 60 * 24 * 7 * 30
-    last_rotation = rotation.last_rotation().timestamp()
+    last_rotation = int(rotation.last_rotation().timestamp())
 
-    sql = 'SELECT MAX(`time`) FROM price'
+    sql = 'SELECT MAX(`time`) FROM low_price'
     latest = db.value(sql)
+
     db.begin()
     db.execute('DELETE FROM cache')
     sql = """
@@ -41,15 +42,8 @@ def cache():
                 SUM(CASE WHEN `time` > ? AND price = 1 THEN 1 ELSE 0 END) / SUM(CASE WHEN `time` > ? THEN 1 ELSE 0 END) AS week,
                 SUM(CASE WHEN `time` > ? AND price = 1 THEN 1 ELSE 0 END) / SUM(CASE WHEN `time` > ? THEN 1 ELSE 0 END) AS month,
                 SUM(CASE WHEN `time` > ? AND price = 1 THEN 1 ELSE 0 END) / SUM(CASE WHEN `time` > ? THEN 1 ELSE 0 END) AS season
-            FROM
-                (SELECT
-                    `time`,
-                    name,
-                    MIN(price) AS price
-                FROM price
-                WHERE `time` > ?
-                GROUP BY `time`, name) AS tmp
+            FROM low_price
             GROUP BY name;
     """
-    db.execute(sql, [latest, week, week, month, month, last_rotation, last_rotation, last_rotation])
+    db.execute(sql, [latest, week, week, month, month, last_rotation, last_rotation])
     db.commit()

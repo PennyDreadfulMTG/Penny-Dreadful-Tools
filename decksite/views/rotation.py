@@ -1,5 +1,6 @@
 import fileinput
 import glob
+import html
 import os
 from collections import Counter
 
@@ -31,6 +32,7 @@ class Rotation(View):
         cs = {c.name: c for c in oracle.load_cards()}
         remaining_runs = (168 - self.runs)
         for name, hits in scores:
+            name = html.unescape(name.encode('latin-1').decode('utf-8'))
             hits_needed = max(84 - hits, 0)
             card = cs.get(name)
             if card is None:

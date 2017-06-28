@@ -22,6 +22,8 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!help` Provides information on how to operate the bot.
 
+`!invite` Invite me to your server
+
 `!legal` Announce whether the specified card is legal or not.
 
 `!modofail` Ding!
@@ -46,7 +48,7 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!search {query}` Search for cards, using a scryfall-style query.
 
-`!spoiler` !spoiler {cardname}: Request a card from an upcoming set
+`!spoiler {cardname}`: Request a card from an upcoming set
 
 `!status` Gives the status of MTGO, UP or DOWN.
 

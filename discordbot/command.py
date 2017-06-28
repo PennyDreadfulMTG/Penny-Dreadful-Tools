@@ -348,8 +348,13 @@ class Commands:
             await bot.client.send_message(channel, "Issue has been reported at {url}".format(url=issue.html_url))
 
     @cmd_header("Commands")
+    async def invite(self, bot, channel):
+        """Invite me to your server"""
+        await bot.client.send_message(channel, "Invite me to your discord server by clicking this link: <https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=0>")
+
+    @cmd_header("Commands")
     async def spoiler(self, bot, channel, args, author):
-        """!spoiler {cardname}: Request a card from an upcoming set"""
+        """`!spoiler {cardname}`: Request a card from an upcoming set"""
         if len(args) == 0:
             await bot.client.send_message(channel, '{author}: Please specify a card name.'.format(author=author.mention))
             return

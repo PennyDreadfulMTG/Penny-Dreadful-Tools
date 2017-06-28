@@ -143,5 +143,10 @@ async def on_member_update(before, after):
 async def on_member_join(member):
     await BOT.on_member_join(member)
 
+@BOT.client.event
+async def on_server_join(server):
+    BOT.client.send_message(server.default_channel, "Hi, I'm mtgbot.  To look up cards, just mention them in square brackets. (eg `[Llanowar Elves] is better than [Elvish Mystic]`).")
+    BOT.client.send_message(server.default_channel, "By default, I display Penny Dreadful legality. If you don't want or need that, just type `!notpenny`.")
+
 def init():
     BOT.init()

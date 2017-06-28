@@ -135,7 +135,8 @@ def parse_criterion(key, operator, term):
     elif key.value() == 'text' or key.value() == 'o':
         return text_where('text', term.value())
     elif key.value() == 'type' or key.value() == 't':
-        return text_where('type', term.value())
+        v = 'planeswalker' if term.value() == 'pw' else term.value()
+        return text_where('type', v)
     elif key.value() == 'power' or key.value() == 'pow':
         return math_where('power', operator.value(), term.value())
     elif key.value() == 'toughness' or key.value() == 'tou':

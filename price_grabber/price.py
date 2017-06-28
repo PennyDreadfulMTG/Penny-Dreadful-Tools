@@ -16,7 +16,10 @@ def info_cached(card=None, name=None):
         name = card.name
     sql = 'SELECT `time`, low / 100.0 AS low, high / 100.0 AS high, price / 100.0 AS price, week, month, season FROM cache WHERE name = %s'
     db = database.get_database(configuration.get('prices_database'))
-    return db.execute(sql, [name])[0]
+    try:
+        return db.execute(sql, [name])[0]
+    except IndexError:
+        return None
 
 def cache():
     db = database.get_database(configuration.get('prices_database'))

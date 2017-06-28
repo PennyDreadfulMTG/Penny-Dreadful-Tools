@@ -345,7 +345,7 @@ class Commands:
         if issue is None:
             await bot.client.send_message(channel, "Report issues at https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new")
         else:
-            await bot.client.send_message(channel, "Issue has been reported at {url}".format(url=issue.html_url))
+            await bot.client.send_message(channel, "Issue has been reported at <{url}>".format(url=issue.html_url))
 
     @cmd_header("Commands")
     async def invite(self, bot, channel):

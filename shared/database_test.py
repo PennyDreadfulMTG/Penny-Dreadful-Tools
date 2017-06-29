@@ -88,7 +88,7 @@ def test_insert():
 def test_sqlescape():
     assert sqlescape('Hello') == "'Hello'"
     assert sqlescape("O'Leary") == "'O''Leary'"
-    assert sqlescape("100%") == "'100%'"
+    assert sqlescape("100%") == "'100%%'"
 
 def test_sqllikeescape():
-    assert sqllikeescape("100%") == "'%100\\%%'"
+    assert sqllikeescape("100%") == "'%%100\\%%%%'"

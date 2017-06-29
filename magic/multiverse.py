@@ -23,7 +23,7 @@ def base_query(where_clause='(1 = 1)'):
         SELECT
             {card_queries},
             {face_queries},
-            GROUP_CONCAT(face_name, '|') AS names,
+            GROUP_CONCAT(face_name SEPARATOR '|') AS names,
             legalities,
             pd_legal,
             bug_desc,
@@ -32,7 +32,7 @@ def base_query(where_clause='(1 = 1)'):
             FROM
                 (SELECT {card_props}, {face_props}, f.name AS face_name,
                 SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal,
-                GROUP_CONCAT(fo.name || ':' || cl.legality) AS legalities,
+                GROUP_CONCAT({legality_code}) AS legalities,
                 bugs.description AS bug_desc,
                 bugs.classification AS bug_class,
                 bugs.last_confirmed AS bug_last_confirmed
@@ -44,12 +44,13 @@ def base_query(where_clause='(1 = 1)'):
                 GROUP BY f.id
                 ORDER BY f.card_id, f.position)
             AS u
-            WHERE id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where_clause})
-            GROUP BY id
+            WHERE u.id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where_clause})
+            GROUP BY u.id
     """.format(
         card_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.card_properties().items()),
         face_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.face_properties().items()),
         format_id=get_format_id('Penny Dreadful'),
+        legality_code=db().concat(['fo.name', "':'", 'cl.legality']),
         card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
         face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),
         where_clause=where_clause)
@@ -95,23 +96,24 @@ def update_database(new_version):
     for row in rs:
         db().execute('UPDATE printing SET rarity_id = ? WHERE rarity = ?', [row['id'], row['name']])
     update_fuzzy_matching()
-    update_bugged_cards()
+    update_bugged_cards(False)
     db().execute('INSERT INTO version (version) VALUES (?)', [new_version])
     db().commit()
 
 def check_layouts():
     rs = db().execute('SELECT DISTINCT layout FROM card')
     if sorted([row['layout'] for row in rs]) != sorted(layouts()):
-        print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid.')
+        print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid. Comparing {old} with {new}.'.format(old=sorted(layouts()), new=sorted([row['layout'] for row in rs])))
 
+# BAKERT what is this doing? why isn't it erroring?
 def update_fuzzy_matching():
     format_id = get_format_id('Penny Dreadful', True)
     if type(db()).__name__ == 'SqliteDatabase':
         db().execute('DROP TABLE IF EXISTS fuzzy')
         db().execute('CREATE VIRTUAL TABLE IF NOT EXISTS fuzzy USING spellfix1')
         sql = """INSERT INTO fuzzy (word, rank)
-            SELECT LOWER(name), pd_legal
-            FROM ({base_query})
+            SELECT LOWER(bq.name), bq.pd_legal
+            FROM ({base_query}) AS bq
         """.format(base_query=base_query())
         db().execute(sql)
         sql = """INSERT INTO fuzzy (word, rank)
@@ -127,12 +129,12 @@ def update_fuzzy_matching():
         for alias, name in aliases:
             db().execute('INSERT INTO fuzzy (word, soundslike) VALUES (LOWER(?), ?)', [name, alias])
 
-def update_bugged_cards():
-    # This may or may not be within a TRANSACTION. Use a SAVEPOINT.
+def update_bugged_cards(use_transaction=True):
     bugs = fetcher.bugged_cards()
     if bugs is None:
         return
-    db().execute("SAVEPOINT bugs")
+    if use_transaction:
+        db().begin()
     db().execute("DELETE FROM card_bugs")
     for name, bug, classification, last_confirmed in bugs:
         last_confirmed_ts = dtutil.parse_to_ts(last_confirmed, '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
@@ -141,7 +143,8 @@ def update_bugged_cards():
             print("UNKNOWN BUGGED CARD: {card}".format(card=name))
             continue
         db().execute("INSERT INTO card_bugs (card_id, description, classification, last_confirmed) VALUES (?, ?, ?, ?)", [card_id, bug, classification, last_confirmed_ts])
-    db().execute("RELEASE bugs")
+    if use_transaction:
+        db().commit()
 
 def insert_card(c):
     name = card_name(c)
@@ -226,8 +229,8 @@ def set_legal_cards(force=False, season=None):
 
     db().execute('DELETE FROM card_legality WHERE format_id = ?', [format_id])
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
-        SELECT {format_id}, id, 'Legal'
-        FROM ({base_query})
+        SELECT {format_id}, bq.id, 'Legal'
+        FROM ({base_query}) AS bq
         WHERE name IN ({names})
     """.format(format_id=format_id, base_query=base_query(), names=', '.join(sqlescape(name) for name in new_list))
     db().execute(sql)
@@ -235,7 +238,7 @@ def set_legal_cards(force=False, season=None):
     n = db().value('SELECT COUNT(*) FROM card_legality WHERE format_id = ?', [format_id])
     if n != len(new_list):
         print("Found {n} pd legal cards in the database but the list was {len} long".format(n=n, len=len(new_list)))
-        sql = 'SELECT name FROM ({base_query}) WHERE id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=base_query(), format_id=format_id)
+        sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=base_query(), format_id=format_id)
         db_legal_list = [row['name'] for row in db().execute(sql)]
         print(set(new_list).symmetric_difference(set(db_legal_list)))
     return new_list

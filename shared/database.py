@@ -12,7 +12,7 @@ def sqlescape(s) -> str:
     encodable = s.encode('utf-8', 'strict').decode('utf-8')
     if encodable.find('\x00') >= 0:
         raise Exception('NUL not allowed in SQL string.')
-    return "'{escaped}'".format(escaped=encodable.replace("'", "''"))
+    return "'{escaped}'".format(escaped=encodable.replace("'", "''").replace('%', '%%'))
 
 def sqllikeescape(s):
     s = s.replace('%', '\\%').replace('_', '\\_')

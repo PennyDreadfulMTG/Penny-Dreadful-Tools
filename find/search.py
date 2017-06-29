@@ -166,8 +166,9 @@ def text_where(column, term):
         column = column.replace('name', 'name_ascii')
         q = card.unaccent(q)
     escaped = sqllikeescape(q)
-    if column == 'text':
-        escaped = escaped.replace('~', "' || name || '")
+    if column == 'text' and '~' in escaped:
+        parts = ["'{text}'".format(text=text) for text in escaped.strip("'").split('~')]
+        escaped = db().concat(intersperse(parts, 'name'))
     return '({column} LIKE {q})'.format(column=column, q=escaped)
 
 def subtable_where(subtable, value, operator=None):
@@ -223,7 +224,7 @@ def set_where(name):
 def format_where(term):
     if term == 'pd':
         term = 'Penny Dreadful'
-    format_id = db().value('SELECT id FROM format WHERE name LIKE ?', ['{term}%'.format(term=card.unaccent(term))])
+    format_id = db().value('SELECT id FROM format WHERE name LIKE ?', ['{term}%%'.format(term=card.unaccent(term))])
     if format_id is None:
         raise InvalidValueException("Invalid format '{term}'".format(term=term))
     return "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))".format(format_id=format_id)
@@ -261,17 +262,19 @@ def init_value_lookup():
         id,
         LOWER(name) AS name,
         LOWER(SUBSTR(name, 1, 1)) AS initial,
-        LOWER(SUBSTR(TRIM(name), 1, INSTR(TRIM(name) || ' ', ' ') - 1)) AS first_word,
+        LOWER(SUBSTR(TRIM(name), 1, INSTR({nameandspace}, ' ') - 1)) AS first_word,
         LOWER(REPLACE(name, ' ', '')) AS spaceless,
-        LOWER(SUBSTR(name, 1, 1) ||   CASE WHEN INSTR(name, ' ') > 0 THEN
-                                    SUBSTR(name, INSTR(name, ' ') + 1, 1)
-                                ELSE
-                                    ''
-                                END)
-        AS initials
+        LOWER({initials}) AS initials
     FROM {table}"""
+    nameandspace = db().concat(['TRIM(name)', "' '"])
+    second_initial = """CASE WHEN INSTR(name, ' ') > 0 THEN
+                SUBSTR(name, INSTR(name, ' ') + 1, 1)
+            ELSE
+                ''
+            END"""
+    initials = db().concat(['SUBSTR(name, 1, 1)', second_initial])
     for table in ['color', 'rarity']:
-        rs = db().execute(sql.format(table=table))
+        rs = db().execute(sql.format(nameandspace=nameandspace, initials=initials, table=table))
         d = {}
         for row in rs:
             d[row['name']] = row['id']
@@ -305,6 +308,12 @@ def is_subquery(subquery_name):
     # print("is:{0} => {1}".format(subquery_name, query))
     return query
 
+def intersperse(iterable, delimiter):
+    it = iter(iterable)
+    yield next(it)
+    for x in it:
+        yield delimiter
+        yield x
 
 class InvalidSearchException(ParseException):
     pass

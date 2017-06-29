@@ -29,7 +29,6 @@ class MysqlDatabase(GenericDatabase):
             raise DatabaseException('Failed to initialize database in `{location}`'.format(location=db)) from e
 
     def execute(self, sql, args=None):
-        # print(sql)
         if args is None:
             args = []
         if args:
@@ -53,3 +52,11 @@ class MysqlDatabase(GenericDatabase):
 
     def last_insert_rowid(self):
         return self.value('SELECT LAST_INSERT_ID()')
+
+    # pylint: disable=no-self-use
+    def concat(self, parts):
+        return 'CONCAT(' + ', '.join(parts) + ')'
+
+    # pylint: disable=no-self-use
+    def is_mysql(self):
+        return True

@@ -20,3 +20,4 @@ from .resources import Resources
 from .rotation import Rotation
 from .signup import SignUp
 from .tournaments import Tournaments
+from .bugs import Bugs

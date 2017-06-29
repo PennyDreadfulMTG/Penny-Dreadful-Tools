@@ -387,6 +387,10 @@ button, input, select, textarea, .uploader-label {
     width: 20rem;
 }
 
+input[type=checkbox].toggleIllegal {
+    width: 1rem;
+}
+
 button, input, label, select, textarea {
     margin-top: 1rem;
 }

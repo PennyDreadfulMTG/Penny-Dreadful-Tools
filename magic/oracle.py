@@ -51,6 +51,10 @@ def load_cards(names=None):
         raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`.  missing=`{missing}`'.format(namelen=len(names), rslen=len(rs), names=names, missing=missing))
     return [card.Card(r) for r in rs]
 
+def bugged_cards():
+    sql = base_query() + "HAVING bug_desc NOT NULL"
+    rs = db().execute(sql)
+    return [card.Card(r) for r in rs]
 
 def legal_cards(force=False):
     if len(LEGAL_CARDS) == 0 or force:

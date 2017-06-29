@@ -215,12 +215,20 @@ td.n {
     text-align: right;
 }
 
+td.wide {
+    max-width: 50%;
+}
+
 td.divider, th.divider {
     border-right: 0.07rem #ccc solid;
 }
 
 th.legend {
     text-align: center;
+}
+
+.odd-stripe {
+    background-color: #f4f4f4;
 }
 
 .marginalia {

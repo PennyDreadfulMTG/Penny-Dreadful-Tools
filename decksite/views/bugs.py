@@ -1,6 +1,5 @@
 from magic import oracle
 from decksite.view import View
-from flask import url_for
 
 # pylint: disable=no-self-use
 class Bugs(View):

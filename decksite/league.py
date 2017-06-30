@@ -48,8 +48,9 @@ class SignUpForm(Form):
             try:
                 self.cards = decklist.parse(self.decklist)
                 vivified = decklist.vivify(self.cards)
-                if 'Penny Dreadful' not in legality.legal_formats(vivified):
-                    self.errors['decklist'] = 'Deck is not legal in Penny Dreadful'
+                errors = {}
+                if 'Penny Dreadful' not in legality.legal_formats(vivified, None, errors):
+                    self.errors['decklist'] = 'Deck is not legal in Penny Dreadful - {error}'.format(error=errors.get('Penny Dreadful'))
             except InvalidDataException as e:
                 self.errors['decklist'] = '{specific}. Try exporting from MTGO as Text and pasting the result.'.format(specific=str(e))
 

@@ -4,7 +4,7 @@ python:
 services:
   - mysql
 env:
-  - mysql_user=travis database=cards.sqlite
-  - mysql_user=travis database=cards
+  - mysql_user=travis magic_database=cards.sqlite
+  - mysql_user=travis magic_database=cards
 install: pip install -r requirements.txt && ./setup_spellfix.sh
 script: pytest

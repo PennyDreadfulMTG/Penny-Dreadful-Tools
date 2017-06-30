@@ -8,7 +8,7 @@ from decksite.data import deck, competition as comp, guarantee
 from shared import configuration, dtutil
 from shared.serialization import extra_serializer
 
-from magic import rotation
+from magic import rotation, oracle
 
 # from shared import configuration
 # from decksite.scrapers import tappedout
@@ -76,6 +76,10 @@ def rotation_api():
         "friendly_diff": dtutil.display_time(diff.total_seconds())
     }
     return return_json(result)
+
+@APP.route('/api/card/<card>')
+def card_api(card):
+    return return_json(oracle.load_card(card))
 
 def validate_api_key():
     if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):

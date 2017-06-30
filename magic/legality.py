@@ -6,10 +6,12 @@ FORMATS = set()
 def legal_in_format(d, f):
     return f in legal_formats(d, [f])
 
-def legal_formats(d, formats_to_check=None, errors={}):
+def legal_formats(d, formats_to_check=None, errors=None):
     init()
     if formats_to_check is None:
         formats_to_check = FORMATS
+    if errors is None:
+        errors = {}
     formats = formats_to_check.copy()
     if sum(e['n'] for e in d.maindeck) < 60:
         for f in formats_to_check:

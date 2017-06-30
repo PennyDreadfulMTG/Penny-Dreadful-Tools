@@ -216,7 +216,8 @@ td.n {
 }
 
 td.wide {
-    max-width: 50%;
+    max-width: 50em;
+    white-space: pre-line;
 }
 
 td.divider, th.divider {

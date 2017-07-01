@@ -40,8 +40,9 @@ def display_date(dt, granularity=1):
     if (start - dt) > datetime.timedelta(28):
         return '{:%b %d}'.format(dt.astimezone(WOTC_TZ))
     else:
-        diff = start - dt
-        return '{duration} ago'.format(duration=display_time(diff.total_seconds(), granularity))
+        suffix = 'ago' if start > dt else 'from now'
+        diff = abs(start - dt)
+        return '{duration} {suffix}'.format(duration=display_time(diff.total_seconds(), granularity), suffix=suffix)
 
 def display_time(seconds, granularity=2):
     intervals = (

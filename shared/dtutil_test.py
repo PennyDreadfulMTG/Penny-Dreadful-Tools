@@ -53,4 +53,9 @@ def test_display_date():
     dt = dtutil.parse('2008-03-29 02:00', '%Y-%m-%d %H:%M', timezone('UTC'))
     assert dtutil.display_date(dt) == 'Mar 28, 2008'
     dt = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(seconds=10)
-    assert dtutil.display_date(dt).find('seconds') >= 0
+    assert dtutil.display_date(dt).find('seconds ago') >= 0
+    dt = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=72)
+    print(dtutil.display_date(dt))
+    assert dtutil.display_date(dt).find('days') >= 0
+    assert dtutil.display_date(dt).find('from now') >= 0
+    assert dtutil.display_date(dt).find('ago') == -1

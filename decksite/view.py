@@ -130,6 +130,7 @@ class View:
         for c in getattr(self, 'competitions', []):
             c.competition_url = url_for('competition', competition_id=c.id)
             c.display_date = dtutil.display_date(c.start_date)
+            c.ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
             c.date_sort = dtutil.dt2ts(c.start_date)
 
     def prepare_people(self):

@@ -279,7 +279,7 @@ def card_name(c):
 def add_hardcoded_cards(cards):
     cards['Gleemox'] = {
         "text": "{T}: Add one mana of any color to your mana pool.\nThis card is banned.",
-        "manacost": "{0}",
+        "manaCost": "{0}",
         "type": "Artifact",
         "layout": "normal",
         "types": ["Artifact"],

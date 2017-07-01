@@ -363,27 +363,35 @@ class Commands:
         if sfcard['object'] == 'error':
             await bot.client.send_message(channel, '{author}: {details}'.format(author=author.mention, details=sfcard['details']))
             return
-        sfimgname = '{0}/{1}_{2}.jpg'.format(configuration.get('image_dir'), sfcard['set'], sfcard['collector_number'])
-        fetcher.internal.store(sfcard['image_uri'], sfimgname)
+        imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
+        imagepath = '{image_dir}/{imagename}.jpg'.format(image_dir=configuration.get('image_dir'), imagename=imagename)
+        fetcher.internal.store(sfcard['image_uri'], imagepath)
         text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=sfcard['mana_cost']), channel)
-        await bot.client.send_file(channel, sfimgname, content=text)
+        await bot.client.send_file(channel, imagepath, content=text)
         try:
             oracle.valid_name(sfcard['name'])
         except InvalidDataException:
             c = {
-                "text": sfcard.get('oracle_text', ''),
-                "manacost": sfcard.get('mana_cost', None),
-                "type": sfcard['type_line'],
-                "layout": sfcard['layout'],
-                "types": [], # This is wrong.  But whatever.
-                "cmc": int(float(sfcard['cmc'])),
-                'imageName': sfimgname,
-                "legalities": [],
-                "name": sfcard['name'],
-                "printings": [sfcard['set']],
-                "rarity": sfcard['rarity']
+                'layout': sfcard['layout'],
+                'types': [], # This is wrong.  But whatever.
+                'cmc': int(float(sfcard['cmc'])),
+                'imageName': imagename,
+                'legalities': [],
+                'printings': [sfcard['set']],
+                'rarity': sfcard['rarity'],
+                'names': []
             }
-            multiverse.insert_card(c)
+            faces = sfcard.get('card_faces', [sfcard])
+            names = [face['name'] for face in faces]
+            for face in faces:
+                c.update({
+                    'name': face['name'],
+                    'type': face['type_line'],
+                    'text': face.get('oracle_text', ''),
+                    'manaCost': face.get('mana_cost', None)
+                })
+                c['names'] = names
+                multiverse.insert_card(c)
 
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.

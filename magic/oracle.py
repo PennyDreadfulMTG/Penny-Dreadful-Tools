@@ -59,7 +59,7 @@ def load_cards(names=None):
     return [card.Card(r) for r in rs]
 
 def bugged_cards():
-    sql = base_query() + "HAVING bug_desc NOT NULL"
+    sql = base_query() + "HAVING bug_desc IS NOT NULL"
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 

@@ -106,7 +106,7 @@ def column_def(name, prop):
         unique = 'UNIQUE' if prop['unique'] else ''
         if prop['type'].startswith('VARCHAR'):
             prop['type'] = 'TEXT'
-        if prop['type'] = 'BOOLEAN':
+        if prop['type'] == 'BOOLEAN':
             prop['type'] = 'INTEGER'
         return '`{name}` {type} {primary_key} {nullable} {unique} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, unique=unique, default=default)
     elif db().is_mysql():

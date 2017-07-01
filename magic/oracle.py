@@ -9,7 +9,7 @@ def search(query, fuzzy_threshold=260):
     query = card.canonicalize(query)
     like_query = '%{query}%'.format(query=query)
     if db().is_mysql():
-        having = 'name_ascii LIKE ? OR names LIKE ?' # BAKERT does this introduce a bug not using the name query? fixes Chittering Host issue.
+        having = 'name_ascii LIKE ? OR names LIKE ?'
         args = [like_query, like_query]
     else:
         having = """LOWER({name_query}) IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})

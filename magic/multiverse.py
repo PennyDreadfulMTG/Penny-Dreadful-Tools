@@ -105,10 +105,9 @@ def check_layouts():
     if sorted([row['layout'] for row in rs]) != sorted(layouts()):
         print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid. Comparing {old} with {new}.'.format(old=sorted(layouts()), new=sorted([row['layout'] for row in rs])))
 
-# BAKERT what is this doing? why isn't it erroring?
 def update_fuzzy_matching():
     format_id = get_format_id('Penny Dreadful', True)
-    if type(db()).__name__ == 'SqliteDatabase':
+    if db().is_sqlite():
         db().execute('DROP TABLE IF EXISTS fuzzy')
         db().execute('CREATE VIRTUAL TABLE IF NOT EXISTS fuzzy USING spellfix1')
         sql = """INSERT INTO fuzzy (word, rank)

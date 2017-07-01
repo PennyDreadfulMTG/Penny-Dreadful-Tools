@@ -20,3 +20,11 @@ class GenericDatabase:
 
     def insert(self, sql, args=None):
         raise NotImplementedError()
+
+    # pylint: disable=no-self-use
+    def is_mysql(self):
+        return False
+
+    # pylint: disable=no-self-use
+    def is_sqlite(self):
+        return False

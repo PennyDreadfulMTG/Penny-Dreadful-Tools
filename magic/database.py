@@ -6,7 +6,7 @@ from shared.database import get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
-SCHEMA_VERSION = 68
+SCHEMA_VERSION = 69
 
 def db():
     return DATABASE
@@ -81,7 +81,7 @@ def setup():
 
 # Drop the database so we can recreate it.
 def delete():
-    if type(db()).__name__ == 'SqliteDatabase':
+    if db().is_sqlite():
         db().execute("PRAGMA writable_schema = 1")
         db().execute("DELETE FROM sqlite_master WHERE type IN ('table', 'index', 'trigger')")
         db().execute("PRAGMA writable_schema = 0;")
@@ -99,15 +99,17 @@ def delete():
         db().commit()
 
 def column_def(name, prop):
-    if type(db()).__name__ == 'SqliteDatabase':
+    if db().is_sqlite():
         nullable = 'NOT NULL' if not prop['nullable'] else ''
         primary_key = 'PRIMARY KEY' if prop['primary_key'] else ''
         default = 'DEFAULT {default}'.format(default=prop['default']) if prop['default'] is not None else ''
         unique = 'UNIQUE' if prop['unique'] else ''
         if prop['type'].startswith('VARCHAR'):
             prop['type'] = 'TEXT'
+        if prop['type'] == 'BOOLEAN':
+            prop['type'] = 'INTEGER'
         return '`{name}` {type} {primary_key} {nullable} {unique} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, unique=unique, default=default)
-    elif type(db()).__name__ == 'MysqlDatabase':
+    elif db().is_mysql():
         nullable = 'NOT NULL' if not prop['nullable'] else ''
         primary_key = 'PRIMARY KEY AUTO_INCREMENT' if prop['primary_key'] else ''
         default = 'DEFAULT {default}'.format(default=prop['default']) if prop['default'] is not None else ''

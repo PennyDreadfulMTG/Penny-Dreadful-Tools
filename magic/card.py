@@ -5,13 +5,12 @@ from munch import Munch
 
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
 
-BOOLEAN = 'INTEGER'
+BOOLEAN = 'BOOLEAN'
 DATE = 'INTEGER'
 INTEGER = 'INTEGER'
 REAL = 'REAL'
 TEXT = 'TEXT'
-MEDIUMTEXT = 'LONGTEXT'
-VARCHAR = 'VARCHAR(255)'
+VARCHAR = 'VARCHAR(191)'
 
 FALSE = 0
 
@@ -40,7 +39,7 @@ def card_properties():
 def face_properties():
     props = {}
     base = copy.deepcopy(BASE)
-    base['query'] = "GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN `{table}`.`{column}` ELSE '' END, '') AS `{column}`"
+    base['query'] = "GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN `{table}`.`{column}` ELSE '' END SEPARATOR '') AS `{column}`"
     for k in ['id', 'name', 'mana_cost', 'cmc', 'power', 'toughness', 'power', 'toughness', 'loyalty', 'type', 'text', 'image_name', 'hand', 'life', 'starter', 'position', 'name_ascii', 'card_id']:
         props[k] = copy.deepcopy(base)
     for k in ['id', 'position', 'name_ascii', 'card_id']:
@@ -50,12 +49,14 @@ def face_properties():
     for k in ['id', 'card_id', 'hand', 'life', 'starter']:
         props[k]['type'] = INTEGER
     props['id']['primary_key'] = True
+    props['id']['query'] = "`{table}`.`{column}` AS face_id"
     props['cmc']['type'] = REAL
     props['name']['query'] = """{name_query} AS name""".format(name_query=name_query())
     props['name_ascii']['query'] = """{name_query} AS name_ascii""".format(name_query=name_query('name_ascii'))
+    props['name_ascii']['fulltext'] = True
     props['cmc']['query'] = """{cmc_query} AS cmc""".format(cmc_query=cmc_query())
-    props['mana_cost']['query'] = "GROUP_CONCAT(`{table}`.`{column}`, '|') AS `{column}`"
-    props['text']['query'] = "GROUP_CONCAT(`{table}`.`{column}`, '\n-----\n') AS `{column}`"
+    props['mana_cost']['query'] = "GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '|') AS `{column}`"
+    props['text']['query'] = "GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '\n-----\n') AS `{column}`"
     props['text']['type'] = TEXT
     props['card_id']['foreign_key'] = ('card', 'id')
     return props
@@ -94,6 +95,7 @@ def printing_properties():
     props['card_id']['foreign_key'] = ('card', 'id')
     props['set_id']['foreign_key'] = ('set', 'id')
     props['rarity_id']['foreign_key'] = ('rarity', 'id')
+    props['flavor']['type'] = TEXT
     return props
 
 def color_properties():
@@ -103,8 +105,6 @@ def color_properties():
         props[k]['nullable'] = False
     props['id']['type'] = INTEGER
     props['id']['primary_key'] = True
-    props['name']['type'] = TEXT
-    props['symbol']['type'] = TEXT
     return props
 
 def card_color_properties():
@@ -184,17 +184,18 @@ def fetcher_properties():
     props['id']['primary_key'] = True
     props['resource']['nullable'] = False
     props['resource']['unique'] = True
+    props['content']['type'] = TEXT
     return props
 
 def name_query(column='face_name'):
     return """
         CASE
         WHEN layout = 'double-faced' OR layout = 'flip' THEN
-            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END, '')
+            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END SEPARATOR '')
         WHEN layout = 'meld' THEN
-            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 OR `{table}`.position = 2 THEN {column} ELSE '' END, '')
+            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 OR `{table}`.position = 2 THEN {column} ELSE '' END SEPARATOR '')
         ELSE
-            GROUP_CONCAT({column}, ' // ' )
+            GROUP_CONCAT({column} SEPARATOR ' // ' )
         END
     """.format(column=column, table='{table}')
 

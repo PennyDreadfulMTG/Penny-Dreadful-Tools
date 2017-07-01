@@ -11,13 +11,24 @@ def test_match():
     assert search.Criterion.match(list('tou>2'))
 
 def test_edition():
-    do_test('e:ktk', "(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE '%ktk%' OR code = 'ktk' COLLATE NOCASE)))")
+    do_test('e:ktk', "(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE '%%ktk%%' OR code = 'ktk' COLLATE NOCASE)))")
 
 def test_special_chars():
-    do_test('o:a_c%', "(text LIKE '%a\\_c\\%%')")
+    do_test('o:a_c%', "(text LIKE '%%a\\_c\\%%%%')")
 
 def test_tilde():
-    do_test('o:"sacrifice ~"', "(text LIKE '%sacrifice ' || name || '%')")
+    if db().is_mysql():
+        expected = "(text LIKE CONCAT('%%sacrifice ', name, '%%'))"
+    else:
+        expected = "(text LIKE '%%sacrifice ' || name || '%%')"
+    do_test('o:"sacrifice ~"', expected)
+
+def test_double_tilde():
+    if db().is_mysql():
+        expected = "(text LIKE CONCAT('%%sacrifice ', name, ': ', name, ' deals 2 damage to target creature%%'))"
+    else:
+        expected = "(text LIKE '%%sacrifice ' || name || ': ' || name || ' deals 2 damage to target creature%%')"
+    do_test('o:"sacrifice ~: ~ deals 2 damage to target creature"', expected)
 
 def test_only_multicolored():
     do_test('c:m', '((1 = 1) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) > 1)))')
@@ -74,20 +85,20 @@ def test_mana5():
     do_test('mana=U/P', "(mana_cost = '{U/P}')")
 
 def test_mana6():
-    do_test('mana:c', "(mana_cost LIKE '%{C}%')")
+    do_test('mana:c', "(mana_cost LIKE '%%{C}%%')")
 
 def test_mana7():
-    do_test('mana:uu', "(mana_cost LIKE '%{U}{U}%')")
+    do_test('mana:uu', "(mana_cost LIKE '%%{U}{U}%%')")
 
 def test_uppercase():
-    pd_id = db().value('SELECT id FROM format WHERE name LIKE ?', ['{term}%'.format(term='Penny Dreadful')])
+    pd_id = db().value('SELECT id FROM format WHERE name LIKE ?', ['{term}%%'.format(term='Penny Dreadful')])
     do_test('F:pd', "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {pd_id} AND legality <> 'Banned'))".format(pd_id=pd_id))
 
 def test_subtype():
-    do_test('subtype:warrior', "(c.id IN (SELECT card_id FROM card_subtype WHERE subtype LIKE '%warrior%'))")
+    do_test('subtype:warrior', "(c.id IN (SELECT card_id FROM card_subtype WHERE subtype LIKE '%%warrior%%'))")
 
 def test_not():
-    do_test('t:creature -t:artifact t:legendary', "(type LIKE '%creature%') AND NOT (type LIKE '%artifact%') AND (type LIKE '%legendary%')")
+    do_test('t:creature -t:artifact t:legendary', "(type LIKE '%%creature%%') AND NOT (type LIKE '%%artifact%%') AND (type LIKE '%%legendary%%')")
 
 def test_not_cmc():
     do_test('-cmc=2', "NOT (cmc IS NOT NULL AND cmc <> '' AND CAST(cmc AS REAL) = 2)")
@@ -96,43 +107,43 @@ def test_cmc():
     do_test('cmc>2', "(cmc IS NOT NULL AND cmc <> '' AND CAST(cmc AS REAL) > 2)")
 
 def test_not_text():
-    do_test('o:haste NOT o:deathtouch o:trample NOT o:"first strike" o:lifelink', "(text LIKE '%haste%') AND NOT (text LIKE '%deathtouch%') AND (text LIKE '%trample%') AND NOT (text LIKE '%first strike%') AND (text LIKE '%lifelink%')")
+    do_test('o:haste NOT o:deathtouch o:trample NOT o:"first strike" o:lifelink', "(text LIKE '%%haste%%') AND NOT (text LIKE '%%deathtouch%%') AND (text LIKE '%%trample%%') AND NOT (text LIKE '%%first strike%%') AND (text LIKE '%%lifelink%%')")
 
 def test_color_not_text():
-    do_test('c:b NOT c:r o:trample', "(c.id IN (SELECT card_id FROM card_color WHERE color_id = 3)) AND NOT (c.id IN (SELECT card_id FROM card_color WHERE color_id = 4)) AND (text LIKE '%trample%')")
+    do_test('c:b NOT c:r o:trample', "(c.id IN (SELECT card_id FROM card_color WHERE color_id = 3)) AND NOT (c.id IN (SELECT card_id FROM card_color WHERE color_id = 4)) AND (text LIKE '%%trample%%')")
 
 def test_color():
     do_test('c:g', '(c.id IN (SELECT card_id FROM card_color WHERE color_id = 5))')
 
 def test_or():
-    do_test('a OR b', "(name_ascii LIKE '%a%') OR (name_ascii LIKE '%b%')")
+    do_test('a OR b', "(name_ascii LIKE '%%a%%') OR (name_ascii LIKE '%%b%%')")
 
 def test_text():
-    do_test('o:"target attacking"', "(text LIKE '%target attacking%')")
+    do_test('o:"target attacking"', "(text LIKE '%%target attacking%%')")
 
 def test_name():
-    do_test('tension turtle', "(name_ascii LIKE '%tension%') AND (name_ascii LIKE '%turtle%')")
+    do_test('tension turtle', "(name_ascii LIKE '%%tension%%') AND (name_ascii LIKE '%%turtle%%')")
 
 def test_parentheses():
-    do_test('x OR (a OR (b AND c))', "(name_ascii LIKE '%x%') OR ((name_ascii LIKE '%a%') OR ((name_ascii LIKE '%b%') AND (name_ascii LIKE '%c%')))")
+    do_test('x OR (a OR (b AND c))', "(name_ascii LIKE '%%x%%') OR ((name_ascii LIKE '%%a%%') OR ((name_ascii LIKE '%%b%%') AND (name_ascii LIKE '%%c%%')))")
 
 def test_toughness():
     do_test('c:r tou>2', "(c.id IN (SELECT card_id FROM card_color WHERE color_id = 4)) AND (toughness IS NOT NULL AND toughness <> '' AND CAST(toughness AS REAL) > 2)")
 
 def test_type():
-    do_test('t:"human wizard"', "(type LIKE '%human wizard%')")
+    do_test('t:"human wizard"', "(type LIKE '%%human wizard%%')")
 
 def test_power():
-    do_test('t:wizard pow<2', "(type LIKE '%wizard%') AND (power IS NOT NULL AND power <> '' AND CAST(power AS REAL) < 2)")
+    do_test('t:wizard pow<2', "(type LIKE '%%wizard%%') AND (power IS NOT NULL AND power <> '' AND CAST(power AS REAL) < 2)")
 
 def test_mana_with_other():
-    do_test('t:creature mana=WW o:lifelink', "(type LIKE '%creature%') AND (mana_cost = '{W}{W}') AND (text LIKE '%lifelink%')")
+    do_test('t:creature mana=WW o:lifelink', "(type LIKE '%%creature%%') AND (mana_cost = '{W}{W}') AND (text LIKE '%%lifelink%%')")
 
 def test_mana_alone():
     do_test('mana=2uu', "(mana_cost = '{2}{U}{U}')")
 
 def test_or_and_parentheses():
-    do_test('o:"target attacking" OR (mana=2uu AND (tou>2 OR pow>2))', "(text LIKE '%target attacking%') OR ((mana_cost = '{2}{U}{U}') AND ((toughness IS NOT NULL AND toughness <> '' AND CAST(toughness AS REAL) > 2) OR (power IS NOT NULL AND power <> '' AND CAST(power AS REAL) > 2)))")
+    do_test('o:"target attacking" OR (mana=2uu AND (tou>2 OR pow>2))', "(text LIKE '%%target attacking%%') OR ((mana_cost = '{2}{U}{U}') AND ((toughness IS NOT NULL AND toughness <> '' AND CAST(toughness AS REAL) > 2) OR (power IS NOT NULL AND power <> '' AND CAST(power AS REAL) > 2)))")
 
 def test_not_color():
     do_test('c:r NOT c:u', '(c.id IN (SELECT card_id FROM card_color WHERE color_id = 4)) AND NOT (c.id IN (SELECT card_id FROM card_color WHERE color_id = 2))')

@@ -12,7 +12,7 @@ def cached():
     return cached_impl(cacheable=True, must_revalidate=True, client_only=False, client_timeout=1 * 60 * 60, server_timeout=5 * 60)
 
 # pylint: disable=too-many-arguments
-def cached_impl(cacheable=False, must_revalidate=True, client_only=True, client_timeout=0, server_timeout=5 * 60, key='view%s'):
+def cached_impl(cacheable=False, must_revalidate=True, client_only=True, client_timeout=0, server_timeout=5 * 60, key='view{id}'):
     """
 
     @see https://jakearchibald.com/2016/caching-best-practices/
@@ -21,7 +21,7 @@ def cached_impl(cacheable=False, must_revalidate=True, client_only=True, client_
     def decorator(f):
         @functools.wraps(f)
         def decorated_function(*args, **kwargs):
-            cache_key = key % request.full_path # include querystring
+            cache_key = key.format(id=request.full_path) # include querystring
             cache_policy = ''
             if not cacheable:
                 cache_policy += ', no-store' # tells the browser not to cache at all
@@ -42,7 +42,7 @@ def cached_impl(cacheable=False, must_revalidate=True, client_only=True, client_
                 else:
                     cache_policy += ', public'
 
-                cache_policy += ', max-age=%d' % (client_timeout)
+                cache_policy += ', max-age={client_timeout}'.format(client_timeout=client_timeout)
 
             headers = {}
             cache_policy = cache_policy.strip(',')

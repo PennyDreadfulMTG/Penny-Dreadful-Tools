@@ -7,16 +7,23 @@ from shared.pd_exception import InvalidDataException, TooFewItemsException
 # 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold default.
 def search(query, fuzzy_threshold=260):
     query = card.canonicalize(query)
-    sql = """
-        {base_query}
-        HAVING LOWER({name_query}) IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
+    like_query = '%{query}%'.format(query=query)
+    if db().is_mysql():
+        having = 'name_ascii LIKE ? OR names LIKE ?' # BAKERT does this introduce a bug not using the name query? fixes Chittering Host issue.
+        args = [like_query, like_query]
+    else:
+        having = """LOWER({name_query}) IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
             OR {name_ascii_query} LIKE ?
             OR SUM(CASE WHEN LOWER(face_name) IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold}) THEN 1 ELSE 0 END) > 0
+        """.format(name_query=card.name_query().format(table='u'), name_ascii_query=card.name_query('name_ascii').format(table='u'), fuzzy_threshold=fuzzy_threshold)
+        fuzzy_query = '{query}*'.format(query=query)
+        args = [fuzzy_query, like_query, fuzzy_query]
+    sql = """
+        {base_query}
+        HAVING {having}
         ORDER BY pd_legal DESC, name
-    """.format(base_query=base_query(), name_query=card.name_query().format(table='u'), name_ascii_query=card.name_query('name_ascii').format(table='u'), fuzzy_threshold=fuzzy_threshold)
-    fuzzy_query = '{query}*'.format(query=query)
-    like_query = '%{query}%'.format(query=query)
-    rs = db().execute(sql, [fuzzy_query, like_query, fuzzy_query])
+    """.format(base_query=base_query(), having=having)
+    rs = db().execute(sql, args)
     return [card.Card(r) for r in rs]
 
 def valid_name(name):
@@ -60,7 +67,7 @@ def legal_cards(force=False):
     if len(LEGAL_CARDS) == 0 or force:
         new_list = multiverse.set_legal_cards(force)
         if new_list is None:
-            sql = 'SELECT name FROM ({base_query}) WHERE id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=base_query(), format_id=multiverse.get_format_id('Penny Dreadful'))
+            sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=base_query(), format_id=multiverse.get_format_id('Penny Dreadful'))
             new_list = [row['name'] for row in db().execute(sql)]
         LEGAL_CARDS.clear()
         for name in new_list:
@@ -70,7 +77,7 @@ def legal_cards(force=False):
 def get_printings(generalized_card: card.Card):
     sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code' \
         + ' FROM printing AS p' \
-        + ' OUTER LEFT JOIN `set` AS s ON p.set_id = s.id' \
+        + ' LEFT OUTER JOIN `set` AS s ON p.set_id = s.id' \
         + ' WHERE card_id = ? '
     rs = db().execute(sql, [generalized_card.id])
     return [card.Printing(r) for r in rs]

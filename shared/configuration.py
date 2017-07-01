@@ -7,10 +7,9 @@ import string
 DEFAULTS = {
     'card_alias_file': './card_aliases.tsv',
     'charts_dir': './images/charts',
-    'database': './cards.sqlite',
     'decksite_database': 'decksite',
     'image_dir': './images',
-    'magic_database': './cards.sqlite',
+    'magic_database': 'cards',
     'prices_database': 'prices',
     'scratch_dir': '.',
     'spellfix': './spellfix',

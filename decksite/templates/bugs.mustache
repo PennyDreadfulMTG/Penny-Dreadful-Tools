@@ -1,0 +1,27 @@
+<section>
+    <h2>Filter</h2>
+    <div>
+        <label for="onlyPD">Hide Illegal Cards</label>
+        <input type="checkbox" id="onlyPD" class="toggleIllegal"/>
+    </div>
+</section>
+<section>
+    <h2>Cards</h2>
+    <table class="bugtable">
+    <thead>
+        <tr>
+            <th data-sortInitialOrder="desc">Card</th>
+            <th data-sortInitialOrder="desc">Bug Description</th>
+            <th data-sortInitialOrder="desc">Severity</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#cards}}
+            <tr class="striped">
+                <td>{{> singlecard}}</td>
+                <td class="wide">{{bug_desc}}</td>
+                <td class="{sorter: 'bugseverity'}">{{bug_class}}</td>
+        {{/cards}}
+    </tbody>
+</table>
+</section>

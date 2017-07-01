@@ -13,7 +13,7 @@ from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
 from decksite.charts import chart
 from decksite.league import ReportForm, SignUpForm
-from decksite.views import About, AddForm, Archetype, Archetypes, Card, Cards, Competition, Competitions, Deck, EditArchetypes, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Report, Resources, Rotation, SignUp, Tournaments
+from decksite.views import About, AddForm, Archetype, Archetypes, Card, Cards, Competition, Competitions, Deck, EditArchetypes, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Report, Resources, Rotation, SignUp, Tournaments, Bugs
 
 # Decks
 
@@ -133,6 +133,11 @@ def export(deck_id):
 @cached()
 def resources():
     view = Resources()
+    return view.page()
+
+@APP.route('/bugs/')
+def bugs():
+    view = Bugs()
     return view.page()
 
 # League

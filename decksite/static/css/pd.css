@@ -215,12 +215,21 @@ td.n {
     text-align: right;
 }
 
+td.wide {
+    max-width: 50em;
+    white-space: pre-line;
+}
+
 td.divider, th.divider {
     border-right: 0.07rem #ccc solid;
 }
 
 th.legend {
     text-align: center;
+}
+
+.odd-stripe {
+    background-color: #f4f4f4;
 }
 
 .marginalia {
@@ -377,6 +386,10 @@ button, form, input, select, textarea {
 
 button, input, select, textarea, .uploader-label {
     width: 20rem;
+}
+
+input[type=checkbox].toggleIllegal {
+    width: 1rem;
 }
 
 button, input, label, select, textarea {

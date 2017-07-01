@@ -37,10 +37,24 @@ PD.init = function () {
         },
         'type': 'numeric'
     });
+    $.tablesorter.addParser({ 
+        id: 'bugseverity', 
+        is: function(s) {
+            return ["Game Breaking", "Advantageous", "Disadvantageous", "Graphical", "Non-Functional ability", "Unclassified"].indexOf(s) > -1;
+        }, 
+        format: function(s) { 
+            return ["Game Breaking", "Advantageous", "Disadvantageous", "Graphical", "Non-Functional ability", "Unclassified"].indexOf(s)
+        }, 
+        // set type, either numeric or text 
+        type: 'numeric' 
+    }); 
     $('table').tablesorter();
     $('.fade-repeats').bind('sortEnd', PD.fadeRepeats);
     $('input[type=file]').on('change', PD.loadDeck);
     $('.deckselect').on('change', PD.toggleDrawDropdown);
+    $('.bugtable').trigger('sorton', [[[2,0],[0,0]]]);
+    $('input[type=checkbox].toggleIllegal').on('change', PD.toggleIllegalCards)
+    PD.updateStriped()
 };
 PD.fadeRepeats = function () {
     var current, previous;
@@ -80,6 +94,18 @@ PD.toggleDrawDropdown = function () {
         $("#draws").val(0);
     }
     return can_draw;
+}
+PD.toggleIllegalCards = function(){
+    var hidden = this.checked
+    if (hidden)
+        $("tr").find(".illegal").closest('tr').hide();
+    else
+        $("tr").find(".illegal").closest('tr').show();
+    PD.updateStriped()
+}
+PD.updateStriped = function() {
+    $('.odd-stripe').removeClass('odd-stripe');
+    $('.striped:visible:odd').addClass('odd-stripe');
 }
 $(document).ready(function () {
     PD.init();

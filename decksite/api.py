@@ -5,8 +5,10 @@ from flask import Response, request
 from decksite import APP, league
 from decksite.data import deck, competition as comp, guarantee
 
-from shared import configuration
+from shared import configuration, dtutil
 from shared.serialization import extra_serializer
+
+from magic import rotation, oracle
 
 # from shared import configuration
 # from decksite.scrapers import tappedout
@@ -62,6 +64,22 @@ def drop(person):
     league.retire_deck(run)
     result = {'success':True}
     return return_json(result)
+
+@APP.route('/api/rotation')
+def rotation_api():
+    now = dtutil.now()
+    diff = rotation.next_rotation() - now
+    result = {
+        "last": rotation.last_rotation_ex(),
+        "next": rotation.next_rotation_ex(),
+        "diff": diff.total_seconds(),
+        "friendly_diff": dtutil.display_time(diff.total_seconds())
+    }
+    return return_json(result)
+
+@APP.route('/api/card/<card>')
+def card_api(card):
+    return return_json(oracle.load_card(card))
 
 def validate_api_key():
     if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):

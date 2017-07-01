@@ -52,7 +52,7 @@ class SqliteDatabase(GenericDatabase):
 
     # pylint: disable=no-self-use
     def is_sqlite(self):
-        return False
+        return True
 
 
 def row_factory(cursor, row):

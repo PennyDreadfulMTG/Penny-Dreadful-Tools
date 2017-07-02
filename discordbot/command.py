@@ -112,6 +112,7 @@ def cmd_header(group):
         return func
     return decorator
 
+# pylint: disable=too-many-public-methods
 class Commands:
     """To define a new command, simply add a new method to this class.
     If you want !help to show the message, add a docstring to the method.

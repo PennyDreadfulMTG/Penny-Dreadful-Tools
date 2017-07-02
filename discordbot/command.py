@@ -396,8 +396,8 @@ class Commands:
     @cmd_header("Commands")
     async def time(self, bot, channel, args, author):
         """`!time {location}` Show the current time in the specified location."""
-        time = fetcher.time(args.strip())
-        await bot.client.send_message(channel, '{author}: {time}'.format(author=author.mention, time=time))
+        t = fetcher.time(args.strip())
+        await bot.client.send_message(channel, '{author}: {time}'.format(author=author.mention, time=t))
 
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.

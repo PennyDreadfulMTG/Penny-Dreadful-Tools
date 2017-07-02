@@ -393,6 +393,12 @@ class Commands:
                 c['names'] = names
                 multiverse.insert_card(c)
 
+    @cmd_header("Commands")
+    async def time(self, bot, channel, args, author):
+        """`!time {location}` Show the current time in the specified location."""
+        time = fetcher.time(args.strip())
+        await bot.client.send_message(channel, '{author}: {time}'.format(author=author.mention, time=time))
+
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):

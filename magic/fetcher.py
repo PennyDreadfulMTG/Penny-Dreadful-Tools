@@ -1,15 +1,17 @@
-import os
 import csv
 import json
+import os
+import re
 from collections import OrderedDict
+from datetime import datetime
 
 import pkg_resources
 from github import Github
+from pytz import timezone
 
 import magic.fetcher_internal as internal
 from magic.fetcher_internal import FetchException
-from shared import configuration
-
+from shared import configuration, dtutil
 
 def legal_cards(force=False, season=None):
     if season is None and os.path.exists('legal_cards.txt'):
@@ -80,3 +82,15 @@ def bugged_cards():
         return None
     lines = [l.split('\t') for l in text.split('\n')]
     return lines[1:-1]
+
+def time(q):
+    url = 'http://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false'.format(q=internal.escape(q))
+    info = internal.fetch_json(url)
+    try:
+        location = info['results'][0]['geometry']['location']
+    except IndexError:
+        return 'Location unknown.'
+    url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&sensor=false'.format(lat=internal.escape(str(location['lat'])), lng=internal.escape(str(location['lng'])), timestamp=internal.escape(str(dtutil.dt2ts(dtutil.now()))))
+    timezone_info = internal.fetch_json(url)
+    tz = timezone(timezone_info['timeZoneId'])
+    return datetime.now(tz).strftime('%l:%M %p')

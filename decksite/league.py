@@ -38,9 +38,8 @@ class SignUpForm(Form):
             self.source = 'League'
             self.competition_id = db().value(active_competition_id_query())
             self.identifier = identifier(self)
+            print(self.identifier)
             self.url = 'http://pennydreadfulmagic.com/competitions/{competition_id}/'.format(competition_id=self.competition_id)
-            if deck.get_deck_id(self.source, self.identifier):
-                self.errors['name'] = 'You have already entered the league this season with a deck called {name}'.format(name=self.name)
         self.decklist = self.decklist.strip()
         if len(self.decklist) == 0:
             self.errors['decklist'] = 'Decklist is required'
@@ -88,7 +87,8 @@ def signup(form):
     return deck.add_deck(form)
 
 def identifier(params):
-    return json.dumps([params['mtgo_username'], params['name'], params['competition_id']])
+    # Current timestamp is part of identifier here because we don't need to defend against dupes in league – it's fine to enter the same league with the same deck, later.
+    return json.dumps([params['mtgo_username'], params['name'], params['competition_id'], str(int(time.time()))])
 
 def deck_options(decks, v):
     return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
@@ -144,7 +144,7 @@ def insert_match(params):
     db().execute(sql, [params.opponent, match_id, params.opponent_games])
     return match_id
 
-def get_matches(d):
+def get_matches(d, load_decks=False):
     sql = """
         SELECT m.`date`, m.id, dm2.deck_id AS opponent_deck_id, dm1.games AS game_wins, dm2.games AS game_losses, d2.name AS opponent_deck_name, p.mtgo_username AS opponent
         FROM `match` AS m
@@ -155,8 +155,13 @@ def get_matches(d):
         INNER JOIN person AS p ON p.id = d2.person_id
     """
     matches = [Munch(m) for m in db().execute(sql, [d.id, d.id])]
+    if load_decks:
+        decks = deck.load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(m.opponent_deck_id)) for m in matches])))
+        decks_by_id = {d.id: d for d in decks}
     for m in matches:
         m.date = dtutil.ts2dt(m.date)
+        if load_decks:
+            m.opponent_deck = decks_by_id[m.opponent_deck_id]
     return matches
 
 def determine_end_of_league(start_date):

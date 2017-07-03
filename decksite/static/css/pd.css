@@ -256,13 +256,24 @@ ul.menu {
     float: left;
 }
 
+.menu li.search {
+    float: right;
+}
+
 .menu a {
     color: #502828;
     display: block;
     font-size: 0.8rem;
-    padding: 2rem;
     text-decoration: none;
     text-transform: uppercase;
+}
+
+.menuitem {
+    padding: 2rem;
+}
+
+.search {
+    padding: 2rem 0 0 0;
 }
 
 .menu li.has-submenu > a {
@@ -460,4 +471,69 @@ input.error, select.error, textarea.error {
 
 form.inline, .inline input, .inline select, .inline textarea {
     margin: 0;
+}
+
+/* Search. We're overriding Google's inline styles here hence a lot of !important. */
+
+.gsc-control-cse {
+    background: transparent !important; /* csslint allow: important */
+    border: 0 !important; /* csslint allow: important */
+    color: #502828 !important; /* csslint allow: important */
+    width: 20rem !important; /* csslint allow: important */
+}
+
+.gsc-input {
+    background: none !important; /* csslint allow: important */
+    font-size: inherit !important; /* csslint allow: important */
+    font-family: inherit !important; /* csslint allow: important */
+}
+
+.gsc-wrapper, .gsc-results-wrapper-overlay, .gsc-results-root {
+    background: #f9f9f9 !important; /* csslint allow: important */
+    color: #502828 !important; /* csslint allow: important */
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important; /* csslint allow: important */
+    font-size: 0.9em !important; /* csslint allow: important */
+    line-height: 1.618 !important; /* csslint allow: important */
+}
+
+.gsc-wrapper a {
+    text-decoration: none !important; /* csslint allow: important */
+    text-transform: none;
+}
+
+.gsc-cursor-page:hover {
+    text-decoration: none !important; /* csslint allow: important */
+}
+
+.gs-title, .gs-title b {
+    height: inherit !important; /* csslint allow: important */
+    text-decoration: none !important; /* csslint allow: important */
+}
+
+.gsc-orderby-container {
+    display: none;
+}
+
+.gsc-wrapper div:after {
+  display: inherit;
+}
+
+.gsc-control-cse {
+    padding: 0 !important; /* csslint allow: important */
+}
+
+.gsst_a {
+    padding-top: 0.45rem !important; /* csslint allow: important */
+}
+
+.gsc-search-button {
+    margin-top: 5px !important; /* csslint allow: important */
+}
+
+td.gsc-search-button {
+    width: inherit !important; /* csslint allow: important */
+}
+
+.search tr {
+    border-bottom: 0;
 }

@@ -46,6 +46,8 @@ def display_date(dt, granularity=1):
     else:
         suffix = 'ago' if start > dt else 'from now'
         diff = abs(start - dt)
+        if diff == 0:
+            return 'just now'
         return '{duration} {suffix}'.format(duration=display_time(diff.total_seconds(), granularity), suffix=suffix)
 
 def display_time(seconds, granularity=2):

@@ -1,3 +1,4 @@
+import subprocess
 import urllib
 from collections import Counter
 
@@ -26,13 +27,13 @@ class View:
         return url_for('home')
 
     def css_url(self):
-        return url_for('static', filename='css/pd.css')
+        return url_for('static', filename='css/pd.css', v=self.commit_id())
 
     def tooltips_url(self):
-        return url_for('static', filename='js/tooltips.js')
+        return url_for('static', filename='js/tooltips.js', v=self.commit_id())
 
     def js_url(self):
-        return url_for('static', filename='js/pd.js')
+        return url_for('static', filename='js/pd.js', v=self.commit_id())
 
     def menu(self):
         return [
@@ -168,6 +169,10 @@ class View:
             for r in a.archetype_tree:
                 r['url'] = url_for('archetype', archetype_id=r['id'])
                 r['padding'] = '&nbsp;' * 4 * (r['pos'] - lowest)
+
+    def commit_id(self):
+        return subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+
 
 def preorder(node):
     result = []

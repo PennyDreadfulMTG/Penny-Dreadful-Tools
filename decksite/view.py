@@ -12,7 +12,7 @@ from decksite import deck_name
 from decksite import template
 from decksite import league
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, too-many-public-methods
 class View:
     def template(self):
         return self.__class__.__name__.lower()

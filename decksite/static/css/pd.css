@@ -475,7 +475,6 @@ form.inline, .inline input, .inline select, .inline textarea {
 
 /* Search */
 
-
 .gsc-control-cse {
     background: transparent !important;
     border: 0 !important;
@@ -497,7 +496,6 @@ form.inline, .inline input, .inline select, .inline textarea {
     line-height: 1.618 !important;
 }
 
-/* BAKERT hover underline */
 .gsc-wrapper a {
     text-decoration: none !important;
     text-transform: none;

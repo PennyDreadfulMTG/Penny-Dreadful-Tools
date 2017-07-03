@@ -88,7 +88,6 @@ class View:
         d.date_sort = dtutil.dt2ts(d.date)
         d.display_date = dtutil.display_date(d.date)
         d.show_record = d.wins or d.losses or d.draws
-        d.players = d.players if d.players > 0 else ''
         if d.competition_id:
             d.competition_url = url_for('competition', competition_id=d.competition_id)
         d.url = url_for('decks', deck_id=d.id)

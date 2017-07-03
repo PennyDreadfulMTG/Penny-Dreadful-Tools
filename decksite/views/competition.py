@@ -6,6 +6,7 @@ from decksite.view import View
 class Competition(View):
     def __init__(self, competition):
         self.competition = competition
+        self.competitions = [self.competition]
         self.decks = competition.decks
         self.hide_source = True
         if competition.type == 'League':

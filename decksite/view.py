@@ -125,11 +125,13 @@ class View:
         c.has_legal_format = len(c.legal_formats) > 0
         c.show_record_season = c.get('wins_season') or c.get('losses_season') or c.get('draws_season')
         c.show_record_all = c.get('wins_all') or c.get('losses_all') or c.get('draws_all')
+        c.has_decks = len(c.get('decks', [])) > 0
 
     def prepare_competitions(self):
         for c in getattr(self, 'competitions', []):
             c.competition_url = url_for('competition', competition_id=c.id)
             c.display_date = dtutil.display_date(c.start_date)
+            c.ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
             c.date_sort = dtutil.dt2ts(c.start_date)
 
     def prepare_people(self):

@@ -34,7 +34,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         INNER JOIN source AS s ON d.source_id = s.id
         LEFT JOIN archetype AS a ON d.archetype_id = a.id
         LEFT JOIN deck AS opp ON opp.id IN (SELECT deck_id FROM deck_match WHERE deck_id <> d.id AND match_id IN (SELECT match_id FROM deck_match WHERE deck_id = d.id))
-        INNER JOIN competition_type AS ct ON ct.id = c.competition_type_id
+        LEFT JOIN competition_type AS ct ON ct.id = c.competition_type_id
         WHERE {where}
         GROUP BY d.id
         ORDER BY {order_by}

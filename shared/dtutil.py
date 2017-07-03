@@ -30,8 +30,12 @@ def parse_to_ts(s, date_format, tz):
     dt = parse(s, date_format, tz)
     return dt2ts(dt)
 
-def now():
-    return datetime.datetime.now(datetime.timezone.utc)
+def now(tzid=None):
+    if tzid is not None:
+        tz = timezone(tzid)
+    else:
+        tz = datetime.timezone.utc
+    return datetime.datetime.now(tz)
 
 def display_date(dt, granularity=1):
     start = now()
@@ -40,8 +44,11 @@ def display_date(dt, granularity=1):
     if (start - dt) > datetime.timedelta(28):
         return '{:%b %d}'.format(dt.astimezone(WOTC_TZ))
     else:
-        diff = start - dt
-        return '{duration} ago'.format(duration=display_time(diff.total_seconds(), granularity))
+        suffix = 'ago' if start > dt else 'from now'
+        diff = abs(start - dt)
+        if diff == 0:
+            return 'just now'
+        return '{duration} {suffix}'.format(duration=display_time(diff.total_seconds(), granularity), suffix=suffix)
 
 def display_time(seconds, granularity=2):
     intervals = (

@@ -400,6 +400,16 @@ class Commands:
         t = fetcher.time(args.strip())
         await bot.client.send_message(channel, '{author}: {time}'.format(author=author.mention, time=t))
 
+    async def pdm(self, bot, channel, args, author):
+        """`!pdm {area} {detail}` Show the specified page on pennydreadfulmagic.com. Example: `!pdm card Hymn to Tourach`."""
+        if ' ' in args.strip():
+            area, detail = args.strip().split(' ', 1)
+        else:
+            area, detail = args.strip(), ''
+        if area == 'card':
+            area = 'cards'
+        url = 'http://pennydreadfulmagic.com/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail))
+        await bot.client.send_message(channel, '{author}: <{url}>'.format(author=author.mention, url=url))
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):

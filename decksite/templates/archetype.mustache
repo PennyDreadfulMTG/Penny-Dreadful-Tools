@@ -11,9 +11,7 @@
 </section>
 <section>
     <h3>Archetypes</h3>
-    {{#archetype_tree}}
-        <p>{{{padding}}}{{^pos}}►{{/pos}}{{#pos}}↳{{/pos}} <a href="{{url}}">{{name}}</a></p>
-    {{/archetype_tree}}
+    {{> archetypetree}}
 </section>
 <section>
     <h3>Top Decks</h3>

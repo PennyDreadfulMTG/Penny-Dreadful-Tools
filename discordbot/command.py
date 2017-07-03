@@ -112,6 +112,7 @@ def cmd_header(group):
         return func
     return decorator
 
+# pylint: disable=too-many-public-methods
 class Commands:
     """To define a new command, simply add a new method to this class.
     If you want !help to show the message, add a docstring to the method.
@@ -392,6 +393,12 @@ class Commands:
                 })
                 c['names'] = names
                 multiverse.insert_card(c)
+
+    @cmd_header("Commands")
+    async def time(self, bot, channel, args, author):
+        """`!time {location}` Show the current time in the specified location."""
+        t = fetcher.time(args.strip())
+        await bot.client.send_message(channel, '{author}: {time}'.format(author=author.mention, time=t))
 
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.

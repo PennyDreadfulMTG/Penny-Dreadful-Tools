@@ -1,4 +1,4 @@
-{{#archetypes}}
+{{#roots}}
     {{#archetype_tree}}
         <p>{{{padding}}}↳ <a href="{{url}}">{{name}}</a></p>
         <form method="post" class="inline">
@@ -9,18 +9,17 @@
             </div>
         </form>
     {{/archetype_tree}}
-{{/archetypes}}
+{{/roots}}
 <form method="post">
     <div class="field">
         <select name="deck_id">
             {{#decks}}
-                <option value="{{id}}">{{name}}</option>
+                <option value="{{id}}">{{name}} ({{archetype_name}})</option>
             {{/decks}}
         </select>
     </div>
     <div class="field">
         <select name="archetype_id">
-            {{! BAKERT Archetypes with no decks assigned will not appear}}
             {{#archetypes}}
                 <option value="{{id}}">{{name}}</option>
             {{/archetypes}}

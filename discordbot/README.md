@@ -52,6 +52,8 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!status` Gives the status of MTGO, UP or DOWN.
 
+`!time {location}` Show the current time in the specified location.
+
 # Developer Commands
 
 `!clearimagecache` Deletes all the cached images.  Use sparingly

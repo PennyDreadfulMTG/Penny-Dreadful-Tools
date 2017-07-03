@@ -20,7 +20,7 @@ View individual subdirectories for details
 
 **find** is the code powering our card search syntax.
 
-**magic** is a mess. It handles any shared code that is magic related.
+**magic** knows everything about all magic cards and how to fetch that information from the internet.
 
 **price-grabber** builds a database of historic prices.
 

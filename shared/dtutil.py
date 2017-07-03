@@ -30,8 +30,12 @@ def parse_to_ts(s, date_format, tz):
     dt = parse(s, date_format, tz)
     return dt2ts(dt)
 
-def now():
-    return datetime.datetime.now(datetime.timezone.utc)
+def now(tzid=None):
+    if tzid is not None:
+        tz = timezone(tzid)
+    else:
+        tz = datetime.timezone.utc
+    return datetime.datetime.now(tz)
 
 def display_date(dt, granularity=1):
     start = now()

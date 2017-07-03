@@ -2,11 +2,9 @@ import csv
 import json
 import os
 from collections import OrderedDict
-from datetime import datetime
 
 import pkg_resources
 from github import Github
-import pytz
 
 import magic.fetcher_internal as internal
 from magic.fetcher_internal import FetchException
@@ -91,5 +89,4 @@ def time(q):
         return 'Location unknown.'
     url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&sensor=false'.format(lat=internal.escape(str(location['lat'])), lng=internal.escape(str(location['lng'])), timestamp=internal.escape(str(dtutil.dt2ts(dtutil.now()))))
     timezone_info = internal.fetch_json(url)
-    tz = pytz.timezone(timezone_info['timeZoneId'])
-    return datetime.now(tz).strftime('%l:%M %p')
+    return dtutil.now(timezone_info['timeZoneId']).strftime('%l:%M %p')

@@ -408,7 +408,7 @@ class Commands:
             area, detail = args.strip(), ''
         if area == 'card':
             area = 'cards'
-        url = 'http://pennydreadfulmagic.com/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail = fetcher.internal.escape(detail))
+        url = 'http://pennydreadfulmagic.com/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail))
         await bot.client.send_message(channel, '{author}: <{url}>'.format(author=author.mention, url=url))
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.

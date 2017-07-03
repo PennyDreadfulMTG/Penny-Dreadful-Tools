@@ -38,9 +38,8 @@ class SignUpForm(Form):
             self.source = 'League'
             self.competition_id = db().value(active_competition_id_query())
             self.identifier = identifier(self)
+            print(self.identifier)
             self.url = 'http://pennydreadfulmagic.com/competitions/{competition_id}/'.format(competition_id=self.competition_id)
-            if deck.get_deck_id(self.source, self.identifier):
-                self.errors['name'] = 'You have already entered the league this season with a deck called {name}'.format(name=self.name)
         self.decklist = self.decklist.strip()
         if len(self.decklist) == 0:
             self.errors['decklist'] = 'Decklist is required'
@@ -88,7 +87,8 @@ def signup(form):
     return deck.add_deck(form)
 
 def identifier(params):
-    return json.dumps([params['mtgo_username'], params['name'], params['competition_id']])
+    # Current timestamp is part of identifier here because we don't need to defend against dupes in league – it's fine to enter the same league with the same deck, later.
+    return json.dumps([params['mtgo_username'], params['name'], params['competition_id'], str(int(time.time()))])
 
 def deck_options(decks, v):
     return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]

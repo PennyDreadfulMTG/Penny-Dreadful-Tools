@@ -256,13 +256,24 @@ ul.menu {
     float: left;
 }
 
+.menu li.search {
+    float: right;
+}
+
 .menu a {
     color: #502828;
     display: block;
     font-size: 0.8rem;
-    padding: 2rem;
     text-decoration: none;
     text-transform: uppercase;
+}
+
+.menuitem {
+    padding: 2rem;
+}
+
+.search {
+    padding: 2rem 0 0 0;
 }
 
 .menu li.has-submenu > a {
@@ -460,4 +471,63 @@ input.error, select.error, textarea.error {
 
 form.inline, .inline input, .inline select, .inline textarea {
     margin: 0;
+}
+
+/* Search */
+
+
+.gsc-control-cse {
+    background: transparent !important;
+    border: 0 !important;
+    color: #502828 !important;
+    width: 20rem !important;
+}
+
+.gsc-input {
+    background: none !important;
+    font-size: inherit !important;
+    font-family: inherit !important;
+}
+
+.gsc-wrapper, .gsc-results-wrapper-overlay, .gsc-results-root {
+    background: #f9f9f9 !important;
+    color: #502828 !important;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: 0.9em !important;
+    line-height: 1.618 !important;
+}
+
+/* BAKERT hover underline */
+.gsc-wrapper a {
+    text-decoration: none !important;
+    text-transform: none;
+}
+
+.gsc-cursor-page:hover {
+    text-decoration: none !important;
+}
+
+.gs-title, .gs-title b {
+    height: inherit !important;
+    text-decoration: none !important;
+}
+
+.gsc-orderby-container {
+    display: none;
+}
+
+.gsc-wrapper div:after {
+  display: inherit;
+}
+
+.gsc-control-cse {
+    padding: 0 !important;
+}
+
+.gsst_a {
+    padding-top: 0.45rem !important;
+}
+
+.gsc-search-button {
+    margin-top: 5px !important;
 }

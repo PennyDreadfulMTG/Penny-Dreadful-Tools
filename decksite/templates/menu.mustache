@@ -1,14 +1,17 @@
 <ul class="menu">
     {{#menu}}
         <li {{#has_submenu}}class="has-submenu"{{/has_submenu}}>
-            <a href="{{url}}">{{name}}</a>
+            <a class="menuitem" href="{{url}}">{{name}}</a>
             {{#has_submenu}}
                 <ul class="submenu">
                     {{#submenu}}
-                            <li><a href="{{url}}">{{name}}</a></li>
+                         <li><a href="{{url}}">{{name}}</a></li>
                     {{/submenu}}
                 </ul>
             {{/has_submenu}}
         </li>
     {{/menu}}
+        <li class="menuitem search">
+            {{> search}}
+        </li>
 </ul>

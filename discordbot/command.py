@@ -33,7 +33,7 @@ async def handle_command(message, bot):
     parts = message.content.split(' ', 1)
     method = find_method(parts[0])
 
-    if parts[0] in configuration.get('otherbot_commands').split(','):
+    if parts[0].lower() in configuration.get('otherbot_commands').split(','):
         return
 
     args = ""

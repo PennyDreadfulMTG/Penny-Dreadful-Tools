@@ -136,6 +136,7 @@ def resources():
     return view.page()
 
 @APP.route('/bugs/')
+@cached()
 def bugs():
     view = Bugs()
     return view.page()

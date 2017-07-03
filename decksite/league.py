@@ -155,7 +155,7 @@ def get_matches(d, load_decks=False):
         INNER JOIN person AS p ON p.id = d2.person_id
     """
     matches = [Munch(m) for m in db().execute(sql, [d.id, d.id])]
-    if load_decks:
+    if load_decks and len(matches) > 0:
         decks = deck.load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(m.opponent_deck_id)) for m in matches])))
         decks_by_id = {d.id: d for d in decks}
     for m in matches:

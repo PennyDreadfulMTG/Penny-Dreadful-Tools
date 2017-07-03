@@ -531,3 +531,11 @@ form.inline, .inline input, .inline select, .inline textarea {
 .gsc-search-button {
     margin-top: 5px !important;
 }
+
+td.gsc-search-button {
+    width: inherit !important;
+}
+
+.search tr {
+    border-bottom: 0;
+}

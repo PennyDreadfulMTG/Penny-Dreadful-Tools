@@ -73,15 +73,16 @@ class ReportForm(Form):
             self.errors['entry'] = 'Please select your deck'
         if len(self.opponent) == 0:
             self.errors['opponent'] = "Please select your opponent's deck"
+        else:
+            for match in get_matches(self):
+                if int(self.opponent) == match.opponent_deck_id:
+                    self.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=match.game_wins, game_losses=match.game_losses, opponent=match.opponent, date=dtutil.display_date(match.date))
         if len(self.result) == 0:
             self.errors['result'] = 'Please select a result'
         else:
             self.entry_games, self.opponent_games = self.result.split('–')
         if self.entry == self.opponent:
             self.errors['opponent'] = "You can't play yourself"
-        for match in get_matches(self):
-            if int(self.opponent) == match.opponent_deck_id:
-                self.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=match.game_wins, game_losses=match.game_losses, opponent=match.opponent, date=dtutil.display_date(match.date))
 
 def signup(form):
     return deck.add_deck(form)

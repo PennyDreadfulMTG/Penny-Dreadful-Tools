@@ -5,7 +5,7 @@
     "github_password": "",
     "image_dir": "./images",
     "legality_dir": "~/legality/Legality Checker/",
-    "magic_database": "./magic.sqlite",
+    "magic_database": "magic",
     "mysql_host": "localhost",
     "mysql_password": "",
     "mysql_port": 3306,

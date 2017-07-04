@@ -167,9 +167,9 @@ def add_deck(params):
         params.get('finish')
     ]
     deck_id = db().insert(sql, values)
+    add_cards(deck_id, params['cards'])
     d = load_deck(deck_id)
     prime_cache(d)
-    add_cards(deck_id, params['cards'])
     return deck_id
 
 def prime_cache(d):

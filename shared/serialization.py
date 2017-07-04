@@ -13,4 +13,4 @@ def extra_serializer(obj):
     elif isinstance(obj, set):
         return list(obj)
 
-    raise TypeError("Type {t} not serializable".format(t=type(obj)))
+    raise TypeError("Type {t} not serializable - {obj}".format(t=type(obj), obj=obj))

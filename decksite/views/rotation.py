@@ -29,7 +29,7 @@ class Rotation(View):
         self.runs = scores[0][1]
         self.runs_percent = round(round(self.runs / 168, 2) * 100)
         self.cards = []
-        cs = {c.name: c for c in oracle.load_cards()}
+        cs = oracle.cards_by_name()
         remaining_runs = (168 - self.runs)
         for name, hits in scores:
             name = html.unescape(name.encode('latin-1').decode('utf-8'))

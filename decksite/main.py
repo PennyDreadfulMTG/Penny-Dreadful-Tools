@@ -208,6 +208,13 @@ def post_archetypes():
         archs.add(request.form.get('name'), request.form.get('parent'))
     return edit_archetypes()
 
+@APP.route('/admin/cache/')
+def renew_cache():
+    ds = deck.load_decks()
+    for d in ds:
+        deck.prime_cache(d)
+    return 'Done'
+
 # Infra
 
 @APP.route('/favicon<rest>/')

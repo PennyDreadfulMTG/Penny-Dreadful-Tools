@@ -52,7 +52,7 @@ def played_cards(where_clause='1 = 1'):
         ORDER BY n_decks_season DESC, count_decks_season DESC, n_maindecks_season DESC, count_maindecks_season DESC
     """.format(where_clause=where_clause)
     cs = [Munch(r) for r in db().execute(sql, [rotation.last_rotation().timestamp()] * 12)]
-    cards = {c.name: c for c in oracle.load_cards()}
+    cards = oracle.cards_by_name()
     for c in cs:
         c.update(cards[c.name])
     return cs

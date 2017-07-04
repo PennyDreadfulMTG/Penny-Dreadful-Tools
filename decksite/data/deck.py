@@ -1,9 +1,10 @@
 import hashlib
+import json
 import time
 
 from munch import Munch
 
-from magic import mana, oracle, legality, rotation
+from magic import mana, oracle, legality
 from shared import dtutil
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
@@ -17,17 +18,19 @@ def latest_decks():
 def load_deck(deck_id):
     return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))
 
+# pylint: disable=attribute-defined-outside-init
 def load_decks(where='1 = 1', order_by=None, limit=''):
     if order_by is None:
         order_by = 'd.created_date DESC, IFNULL(d.finish, 9999999999)'
     sql = """
         SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.draws, d.finish, d.archetype_id, d.url AS source_url,
-            (SELECT COUNT(id) FROM deck WHERE competition_id IS NOT NULL AND competition_id = d.competition_id) AS players,
             d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date, ct.name AS competition_type_name,
             {person_query} AS person, p.id AS person_id,
             d.created_date AS `date`, d.decklist_hash, d.retired,
             s.name AS source_name, IFNULL(a.name, '') AS archetype_name,
-            SUM(opp.wins) AS opp_wins, SUM(opp.losses) AS opp_losses, ROUND(SUM(opp.wins) / (SUM(opp.wins) + SUM(opp.losses)), 2) * 100 AS omw
+            SUM(opp.wins) AS opp_wins, SUM(opp.losses) AS opp_losses, ROUND(SUM(opp.wins) / (SUM(opp.wins) + SUM(opp.losses)), 2) * 100 AS omw,
+            GROUP_CONCAT(DISTINCT CONCAT(dc.card, '|', dc.n, '|', dc.sideboard) SEPARATOR '█') AS cards,
+            cache.colors, cache.colored_symbols, cache.legal_formats
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id
         LEFT JOIN competition AS c ON d.competition_id = c.id
@@ -35,44 +38,37 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         LEFT JOIN archetype AS a ON d.archetype_id = a.id
         LEFT JOIN deck AS opp ON opp.id IN (SELECT deck_id FROM deck_match WHERE deck_id <> d.id AND match_id IN (SELECT match_id FROM deck_match WHERE deck_id = d.id))
         LEFT JOIN competition_type AS ct ON ct.id = c.competition_type_id
+        LEFT JOIN deck_card AS dc ON d.id = dc.deck_id
+        LEFT JOIN deck_cache AS cache ON d.id = cache.deck_id
         WHERE {where}
         GROUP BY d.id
         ORDER BY {order_by}
         {limit}
     """.format(person_query=query.person_query(), where=where, order_by=order_by, limit=limit)
-    decks = [Deck(d) for d in db().execute(sql)]
-    load_cards(decks)
-    for d in decks:
+    db().execute('SET group_concat_max_len=100000')
+    rows = db().execute(sql)
+    cards = oracle.cards_by_name()
+    decks = []
+    for row in rows:
+        d = Deck(row)
+        d.maindeck = []
+        d.sideboard = []
+        cards_s = (row['cards'] or '')
+        for entry in filter(None, cards_s.split('█')):
+            name, n, is_sideboard = entry.split('|')
+            location = 'sideboard' if bool(int(is_sideboard)) else 'maindeck'
+            d[location].append({'n': int(n), 'name': name, 'card': cards[name]})
+        d.colored_symbols = json.loads(d.colored_symbols or '[]')
+        d.colors = json.loads(d.colors or '[]')
+        d.legal_formats = set(json.loads(d.legal_formats or '[]'))
         d.created_date = dtutil.ts2dt(d.created_date)
         d.updated_date = dtutil.ts2dt(d.updated_date)
         if d.competition_end_date:
             d.competition_end_date = dtutil.ts2dt(d.competition_end_date)
         d.date = dtutil.ts2dt(d.date)
-        set_colors(d)
-        set_legality(d)
-        d.can_draw = "Divine Intervention" in [card.name for card in d.all_cards()]
+        d.can_draw = 'Divine Intervention' in [card.name for card in d.all_cards()]
+        decks.append(d)
     return decks
-
-def load_cards(decks):
-    if decks == []:
-        return
-    deck_ids = ', '.join(str(sqlescape(deck.id)) for deck in decks)
-    sql = """
-        SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN ({deck_ids})
-    """.format(deck_ids=deck_ids)
-    rs = db().execute(sql)
-    names = {row['card'] for row in rs}
-    cards = {card.name: card for card in oracle.load_cards(names)}
-    ds = {deck.id: deck for deck in decks}
-    for d in decks:
-        d.maindeck = []
-        d.sideboard = []
-    for row in rs:
-        location = 'sideboard' if row['sideboard'] else 'maindeck'
-        ds[row['deck_id']][location].append({'n': row['n'], 'name': row['card'], 'card': cards[row['card']]})
-    for d in decks:
-        d['maindeck'].sort(key=lambda x: oracle.deck_sort(x['card']))
-        d['sideboard'].sort(key=lambda x: oracle.deck_sort(x['card']))
 
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks
 # we will claim your deck is neither W nor G which is not true. But this should cover most cases.
@@ -91,25 +87,6 @@ def set_colors(d):
 
 def set_legality(d):
     d.legal_formats = legality.legal_formats(d)
-    d.has_legal_format = len(d.legal_formats) > 0
-    d.pd_legal = "Penny Dreadful" in d.legal_formats
-    d.legal_icons = ""
-
-    sets = ["EMN", "KLD", "AER", "AKH", "HOU"]
-
-    if "Penny Dreadful" in d.legal_formats:
-        icon = rotation.last_rotation_ex()['code'].lower()
-        n = sets.index(icon.upper()) + 1
-        d.legal_icons += '<i class="ss ss-{code} ss-rare ss-grad">S{n}</i>'.format(code=icon, n=n)
-
-    for fmt in d.legal_formats:
-        if fmt.startswith("Penny Dreadful "):
-            n = sets.index(fmt[15:].upper()) + 1
-            d.legal_icons += '<i class="ss ss-{set} ss-common ss-grad">S{n}</i>'.format(set=fmt[15:].lower(), n=n)
-    # if "Modern" in d.legal_formats:
-    #     d.legal_icons += '<i class="ss ss-8ed ss-uncommon ss-grad icon-modern">MDN</i>'
-    if "Commander" in d.legal_formats: #I think C16 looks the nicest.
-        d.legal_icons += '<i class="ss ss-c16 ss-uncommon ss-grad">CMDR</i>'
 
 # Expects:
 #
@@ -190,8 +167,21 @@ def add_deck(params):
         params.get('finish')
     ]
     deck_id = db().insert(sql, values)
+    d = load_deck(deck_id)
+    prime_cache(d)
     add_cards(deck_id, params['cards'])
     return deck_id
+
+def prime_cache(d):
+    set_colors(d)
+    colors_s = json.dumps(d.colors)
+    colored_symbols_s = json.dumps(d.colored_symbols)
+    set_legality(d)
+    legal_formats_s = json.dumps(list(d.legal_formats))
+    db().begin()
+    db().execute('DELETE FROM deck_cache WHERE deck_id = ?', [d.id])
+    db().execute('INSERT INTO deck_cache (deck_id, colors, colored_symbols, legal_formats) VALUES (?, ?, ?, ?)', [d.id, colors_s, colored_symbols_s, legal_formats_s])
+    db().commit()
 
 def add_cards(deck_id, cards):
     db().begin()
@@ -202,7 +192,7 @@ def add_cards(deck_id, cards):
         insert_deck_card(deck_id, name, n, False)
     for name, n in cards['sideboard'].items():
         insert_deck_card(deck_id, name, n, True)
-    db().execute("COMMIT")
+    db().commit()
 
 def get_deck_id(source_name, identifier):
     source_id = get_source_id(source_name)
@@ -253,6 +243,7 @@ def similarity_score(a, b):
             score += 1
     return float(score) / float(len(b.maindeck))
 
+# pylint: disable=too-many-instance-attributes
 class Deck(Munch):
     def __init__(self, params):
         super().__init__()

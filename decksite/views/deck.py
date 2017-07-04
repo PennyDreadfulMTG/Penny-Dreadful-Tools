@@ -3,6 +3,7 @@ from flask import url_for
 from decksite import deck_name, league
 from decksite.data import deck
 from decksite.view import View
+from magic import oracle
 from shared import dtutil
 
 # pylint: disable=no-self-use
@@ -22,6 +23,8 @@ class Deck(View):
             m.opponent_deck_name = deck_name.normalize(m.opponent_deck)
         if d.competition_type_name == 'League':
             d.show_omw = True
+        self._deck['maindeck'].sort(key=lambda x: oracle.deck_sort(x['card']))
+        self._deck['sideboard'].sort(key=lambda x: oracle.deck_sort(x['card']))
 
     def has_matches(self):
         return len(self.matches) > 0

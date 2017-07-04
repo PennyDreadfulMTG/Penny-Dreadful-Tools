@@ -1,3 +1,4 @@
+import subprocess
 import urllib
 from collections import Counter
 
@@ -11,7 +12,7 @@ from decksite import deck_name
 from decksite import template
 from decksite import league
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, too-many-public-methods
 class View:
     def template(self):
         return self.__class__.__name__.lower()
@@ -26,13 +27,13 @@ class View:
         return url_for('home')
 
     def css_url(self):
-        return url_for('static', filename='css/pd.css')
+        return url_for('static', filename='css/pd.css', v=self.commit_id())
 
     def tooltips_url(self):
-        return url_for('static', filename='js/tooltips.js')
+        return url_for('static', filename='js/tooltips.js', v=self.commit_id())
 
     def js_url(self):
-        return url_for('static', filename='js/pd.js')
+        return url_for('static', filename='js/pd.js', v=self.commit_id())
 
     def menu(self):
         return [
@@ -87,7 +88,6 @@ class View:
         d.date_sort = dtutil.dt2ts(d.date)
         d.display_date = dtutil.display_date(d.date)
         d.show_record = d.wins or d.losses or d.draws
-        d.players = d.players if d.players > 0 else ''
         if d.competition_id:
             d.competition_url = url_for('competition', competition_id=d.competition_id)
         d.url = url_for('decks', deck_id=d.id)
@@ -168,6 +168,10 @@ class View:
             for r in a.archetype_tree:
                 r['url'] = url_for('archetype', archetype_id=r['id'])
                 r['padding'] = '&nbsp;' * 4 * (r['pos'] - lowest)
+
+    def commit_id(self):
+        return subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+
 
 def preorder(node):
     result = []

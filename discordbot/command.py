@@ -65,6 +65,8 @@ def find_method(name):
     if len(cmd) == 0:
         return
     method = [m for m in dir(Commands) if m == cmd or m == '_' + cmd]
+    if len(method) == 0:
+        method = [m for m in dir(Commands) if m.startswith(cmd) or m.startswith('_{cmd}'.format(cmd=cmd))]
     if len(method) > 0:
         return getattr(Commands, method[0])
     else:

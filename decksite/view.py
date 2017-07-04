@@ -177,7 +177,7 @@ class View:
                     if not c['card'].type.startswith('Basic Land'):
                         counter[c['name']] += c['n']
             most_common_cards = counter.most_common(num_most_common_cards_to_list)
-            cs = {c.name: c for c in oracle.load_cards()}
+            cs = oracle.cards_by_name()
             for v in most_common_cards:
                 a.most_common_cards.append(cs[v[0]])
             a.archetype_tree = preorder(a.tree)

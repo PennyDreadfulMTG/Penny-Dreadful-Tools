@@ -30,9 +30,9 @@ def load_archetypes(where_clause='1 = 1', merge=False):
         archetype.id = d.archetype_id
         archetype.name = d.archetype_name
         archetype.decks = archetype.get('decks', []) + [d]
-        archetype.wins = archetype.get('wins', 0) + d.get('wins', 0)
-        archetype.losses = archetype.get('losses', 0) + d.get('losses', 0)
-        archetype.draws = archetype.get('draws', 0) + d.get('draws', 0)
+        archetype.wins = archetype.get('wins', 0) or 0 + d.get('wins', 0)
+        archetype.losses = archetype.get('losses', 0) or 0 + d.get('losses', 0)
+        archetype.draws = archetype.get('draws', 0) or 0 + d.get('draws', 0)
         archetypes[key] = archetype
     archetypes = list(archetypes.values())
     for a in archetypes:

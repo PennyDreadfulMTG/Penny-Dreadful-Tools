@@ -5,7 +5,7 @@ from collections import Counter
 from flask import url_for
 from munch import Munch
 
-from magic import oracle
+from magic import oracle, rotation
 from shared import dtutil
 
 from decksite import deck_name
@@ -109,6 +109,23 @@ class View:
             d.omw = str(int(d.omw)) + '%'
         else:
             d.omw = ''
+        d.has_legal_format = len(d.legal_formats) > 0
+        d.pd_legal = 'Penny Dreadful' in d.legal_formats
+        d.legal_icons = ''
+        sets = ['EMN', 'KLD', 'AER', 'AKH', 'HOU']
+        if 'Penny Dreadful' in d.legal_formats:
+            icon = rotation.last_rotation_ex()['code'].lower()
+            n = sets.index(icon.upper()) + 1
+            d.legal_icons += '<i class="ss ss-{code} ss-rare ss-grad">S{n}</i>'.format(code=icon, n=n)
+        for fmt in d.legal_formats:
+            if fmt.startswith('Penny Dreadful '):
+                n = sets.index(fmt[15:].upper()) + 1
+                d.legal_icons += '<i class="ss ss-{set} ss-common ss-grad">S{n}</i>'.format(set=fmt[15:].lower(), n=n)
+        # if "Modern" in d.legal_formats:
+        #     d.legal_icons += '<i class="ss ss-8ed ss-uncommon ss-grad icon-modern">MDN</i>'
+        if 'Commander' in d.legal_formats: #I think C16 looks the nicest.
+            d.legal_icons += '<i class="ss ss-c16 ss-uncommon ss-grad">CMDR</i>'
+
 
     def prepare_cards(self):
         for c in getattr(self, 'cards', []):

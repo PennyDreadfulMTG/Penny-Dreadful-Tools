@@ -10,7 +10,7 @@ def extra_serializer(obj):
         return obj.decode('utf-8')
     elif isinstance(obj, decimal.Decimal):
         return obj.to_eng_string()
-    elif isinstance(obj, set) or type(obj) == 'dict_keys':
+    elif isinstance(obj, set) or type(obj) == 'dict_keys': #pylint: disable=unidiomatic-typecheck
         return list(obj)
 
     raise TypeError("Type {t} not serializable - {obj}".format(t=type(obj), obj=obj))

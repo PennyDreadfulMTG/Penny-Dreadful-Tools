@@ -112,6 +112,9 @@ def tournament_deck(cells, competition_id, date, ranks):
     if deck.get_deck_id(d['source'], d['identifier']) is not None:
         return 0
     d['cards'] = decklist.parse(fetcher.internal.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
+    if len(d['cards']) == 0:
+        print('Rejecting deck with id {id} because it has no cards.'.format(id=gatherling_id))
+        return 0
     deck.add_deck(d)
     return 1
 

@@ -203,7 +203,11 @@ def edit_archetypes():
 @APP.route('/admin/archetypes/', methods=['POST'])
 def post_archetypes():
     if request.form.get('deck_id') is not None:
-        archs.assign(request.form.get('deck_id'), request.form.get('archetype_id'))
+        archetype_ids = request.form.getlist('archetype_id')
+        for deck_id in request.form.getlist('deck_id'):
+            archetype_id = archetype_ids.pop(0)
+            if archetype_id:
+                archs.assign(deck_id, archetype_id)
     else:
         archs.add(request.form.get('name'), request.form.get('parent'))
     return edit_archetypes()

@@ -138,7 +138,7 @@ class View:
         c.img_url = 'http://magic.bluebones.net/proxies/?c={name}'.format(name=urllib.parse.quote(c.name))
         c.img_url = 'https://deckbox.org/mtg/' + c.name + '/tooltip'
         c.pd_legal = c.legalities.get('Penny Dreadful', False)
-        c.legal_formats = c.legalities.keys()
+        c.legal_formats = set(c.legalities.keys())
         c.has_legal_format = len(c.legal_formats) > 0
         c.show_record_season = c.get('wins_season') or c.get('losses_season') or c.get('draws_season')
         c.show_record_all = c.get('wins_all') or c.get('losses_all') or c.get('draws_all')

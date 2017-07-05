@@ -3,7 +3,7 @@ import json
 from flask import Response, request
 
 from decksite import APP, league
-from decksite.data import deck, competition as comp, guarantee
+from decksite.data import deck, competition as comp, guarantee, card as cs
 
 from shared import configuration, dtutil
 from shared.serialization import extra_serializer
@@ -76,6 +76,10 @@ def rotation_api():
         "friendly_diff": dtutil.display_time(diff.total_seconds())
     }
     return return_json(result)
+
+@APP.route('/api/cards')
+def cards_api():
+    return return_json(cs.played_cards())
 
 @APP.route('/api/card/<card>')
 def card_api(card):

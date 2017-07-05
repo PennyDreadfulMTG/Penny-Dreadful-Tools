@@ -1,15 +1,34 @@
-{{#roots}}
-    {{#archetype_tree}}
-        <p>{{{padding}}}↳ <a href="{{url}}">{{name}}</a></p>
-        <form method="post" class="inline">
-            <input type="hidden" name="parent" value="{{id}}">
-            <div class="field">
-                {{{padding}}}&nbsp;&nbsp;<input type="text" name="name">
-                <input type="submit" value="Add">
-            </div>
-        </form>
-    {{/archetype_tree}}
-{{/roots}}
+<section>
+<h2>Queue</h2>
+    <form method="post" class="inline">
+        <table>
+            {{#queue}}
+                <tr>
+                    <td><a href="{{url}}">{{name}} ({{id}})</a></td>
+                    <td>
+                        {{#suggestion}}<a href="{{url}}">{{name}} ({{id}})</a>{{/suggestion}}
+                    </td>
+                    <td>
+                        {{#suggestion}}<a href="{{archetype_url}}">{{archetype_name}} ({{archetype_id}})</a>{{/suggestion}}
+                        {{^suggestion}}No suggestion{{/suggestion}}
+                    </td>
+                    <td>
+                        <input type="hidden" name="deck_id" value="{{id}}">
+                        <select name="archetype_id">
+                            <option value="">[Select]</option>
+                            {{#archetypes}}
+                                <option value="{{id}}">{{name}}</option>
+                            {{/archetypes}}
+                        </select>
+                    </td>
+                </tr>
+            {{/queue}}
+        </table>
+        <input type="submit" value="Assign">
+</form>
+
+<h2>Assign Decks</h2>
+
 <form method="post">
     <div class="field">
         <select name="deck_id">
@@ -29,3 +48,16 @@
         <input type="submit" value="Assign">
     </div>
 </form>
+
+{{#roots}}
+    {{#archetype_tree}}
+        <p>{{{padding}}}↳ <a href="{{url}}">{{name}}</a></p>
+        <form method="post" class="inline">
+            <input type="hidden" name="parent" value="{{id}}">
+            <div class="field">
+                {{{padding}}}&nbsp;&nbsp;<input type="text" name="name">
+                <input type="submit" value="Add">
+            </div>
+        </form>
+    {{/archetype_tree}}
+{{/roots}}

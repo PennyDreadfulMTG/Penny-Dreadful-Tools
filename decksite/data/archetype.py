@@ -40,7 +40,7 @@ def load_archetypes(where_clause='1 = 1', merge=False):
     return archetypes
 
 def load_archetypes_without_decks():
-    archetypes = [Munch(a) for a in db().execute('SELECT id, name FROM archetype')]
+    archetypes = [Munch(a) for a in db().execute('SELECT id, name FROM archetype ORDER BY name')]
     for a in archetypes:
         a.decks = []
         a.tree = load_tree(a)

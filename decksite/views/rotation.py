@@ -35,6 +35,8 @@ class Rotation(View):
             name = html.unescape(name.encode('latin-1').decode('utf-8'))
             hits_needed = max(84 - hits, 0)
             card = cs.get(name)
+            percent = round(round(hits / self.runs, 2) * 100)
+            percent_needed = round(round(hits_needed / remaining_runs, 2) * 100)
             if card is None:
                 raise DoesNotExistException("Legality list contains unknown card '{card}'".format(card=name))
             if remaining_runs + hits < 84:
@@ -43,11 +45,15 @@ class Rotation(View):
                 status = 'Legal'
             else:
                 status = 'Undecided'
+                hits = ''
+                hits_needed = ''
+                percent = ''
+                percent_needed = ''
             card.update({
                 'hits': hits,
                 'hits_needed': hits_needed,
-                'percent': round(round(hits / self.runs, 2) * 100),
-                'percent_hits_needed': round(round(hits_needed / remaining_runs, 2) * 100),
+                'percent': percent,
+                'percent_hits_needed': percent_needed,
                 'status': status
             })
             self.cards.append(card)

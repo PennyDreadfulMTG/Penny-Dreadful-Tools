@@ -14,7 +14,7 @@ from decksite.scrapers import tappedout, gatherling
 def test_gatherling():
     APP.config["SERVER_NAME"] = "127:0.0.1:5000"
     with APP.app_context():
-        gatherling.scrape()
+        gatherling.scrape(5)
 
 def test_manual_tappedout():
     APP.config["SERVER_NAME"] = "127:0.0.1:5000"

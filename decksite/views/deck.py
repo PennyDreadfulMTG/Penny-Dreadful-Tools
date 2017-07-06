@@ -35,6 +35,10 @@ class Deck(View):
     def og_url(self):
         return 'https://pennydreadfulmagic.com' + url_for('decks', deck_id=self._deck.id)
 
+    def og_description(self):
+        description = 'A {archetype_name} deck by {author}'.format(archetype_name=self.archetype_name, author=str(self.person))
+        return description
+
     def __getattr__(self, attr):
         return getattr(self._deck, attr)
 

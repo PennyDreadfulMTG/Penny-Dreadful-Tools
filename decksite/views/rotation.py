@@ -45,10 +45,10 @@ class Rotation(View):
                 status = 'Legal'
             else:
                 status = 'Undecided'
-                hits = ''
-                hits_needed = ''
-                percent = ''
-                percent_needed = ''
+                hits = redact(hits)
+                hits_needed = redact(hits_needed)
+                percent = redact(percent)
+                percent_needed = redact(percent_needed)
             card.update({
                 'hits': hits,
                 'hits_needed': hits_needed,
@@ -60,3 +60,6 @@ class Rotation(View):
 
     def subtitle(self):
         return 'Rotation'
+
+def redact(num):
+    return ''.join(['█' for _ in str(num)])

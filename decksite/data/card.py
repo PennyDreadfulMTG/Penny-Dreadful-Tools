@@ -65,13 +65,19 @@ def load_card(name):
     c.all.wins = sum(filter(None, [d.wins for d in c.decks]))
     c.all.losses = sum(filter(None, [d.losses for d in c.decks]))
     c.all.draws = sum(filter(None, [d.draws for d in c.decks]))
-    c.all.win_percent = round((c.all.wins / (c.all.wins + c.all.losses)) * 100, 1)
+    if c.all.wins or c.all.losses or c.all.draws:
+        c.all.win_percent = round((c.all.wins / (c.all.wins + c.all.losses)) * 100, 1)
+    else:
+        c.all.win_percent = ''
     c.all.num_decks = len(c.decks)
     season_decks = [d for d in c.decks if d.created_date > rotation.last_rotation()]
     c.season.wins = sum(filter(None, [d.wins for d in season_decks]))
     c.season.losses = sum(filter(None, [d.losses for d in season_decks]))
     c.season.draws = sum(filter(None, [d.draws for d in season_decks]))
-    c.season.win_percent = round((c.season.wins / (c.season.wins + c.season.losses)) * 100, 1)
+    if c.season.wins or c.season.losses or c.season.draws:
+        c.season.win_percent = round((c.season.wins / (c.season.wins + c.season.losses)) * 100, 1)
+    else:
+        c.season.win_percent = ''
     c.season.num_decks = len(season_decks)
     c.played_competitively = c.all.wins or c.all.losses or c.all.draws
     return c

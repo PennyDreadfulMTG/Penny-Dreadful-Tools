@@ -1,7 +1,7 @@
 import copy
 import unicodedata
 
-from munch import Munch
+from shared.container import Container
 
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
 
@@ -220,7 +220,7 @@ def canonicalize(name):
     name = name.replace('Æ', 'Ae')
     return unaccent(name.strip().lower())
 
-class Card(Munch):
+class Card(Container):
     def __init__(self, params):
         super().__init__()
         for k in params.keys():
@@ -253,5 +253,5 @@ class Card(Munch):
     def is_split(self):
         return self.name.find('//') >= 0
 
-class Printing(Munch):
+class Printing(Container):
     pass

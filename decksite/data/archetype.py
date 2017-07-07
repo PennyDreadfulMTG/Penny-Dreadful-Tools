@@ -1,5 +1,4 @@
-from munch import Munch
-
+from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import TooManyItemsException
 
@@ -10,7 +9,7 @@ def load_archetype(archetype_id):
     archetypes = load_archetypes('d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'.format(archetype_id=sqlescape(archetype_id)), True)
     if len(archetypes) > 1:
         raise TooManyItemsException('Found {n} archetypes when expecting 1 at most'.format(n=len(archetypes)))
-    archetype = archetypes[0] if len(archetypes) == 1 else Munch()
+    archetype = archetypes[0] if len(archetypes) == 1 else Container()
     # Because load_archetypes loads the root archetype and all below merged the id and name might not be those of the root archetype. Overwrite.
     archetype.id = int(archetype_id)
     archetype.name = db().value('SELECT name FROM archetype WHERE id = ?', [archetype_id])
@@ -26,7 +25,7 @@ def load_archetypes(where_clause='1 = 1', merge=False):
         if d.archetype_id is None:
             continue
         key = 'merge' if merge else d.archetype_id
-        archetype = archetypes.get(key, Munch())
+        archetype = archetypes.get(key, Container())
         archetype.id = d.archetype_id
         archetype.name = d.archetype_name
         archetype.decks = archetype.get('decks', []) + [d]
@@ -40,7 +39,7 @@ def load_archetypes(where_clause='1 = 1', merge=False):
     return archetypes
 
 def load_archetypes_without_decks():
-    archetypes = [Munch(a) for a in db().execute('SELECT id, name FROM archetype ORDER BY name')]
+    archetypes = [Container(a) for a in db().execute('SELECT id, name FROM archetype ORDER BY name')]
     for a in archetypes:
         a.decks = []
         a.tree = load_tree(a)

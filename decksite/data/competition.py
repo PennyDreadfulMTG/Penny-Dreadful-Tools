@@ -1,6 +1,5 @@
-from munch import Munch
-
 from shared import dtutil
+from shared.container import Container
 from shared.database import sqlescape
 
 from decksite.data import deck, guarantee
@@ -41,7 +40,7 @@ def load_competitions(where_clause='1 = 1'):
         GROUP BY c.id
         ORDER BY c.start_date DESC, c.name
     """.format(where_clause=where_clause)
-    competitions = [Munch(r) for r in db().execute(sql)]
+    competitions = [Container(r) for r in db().execute(sql)]
     for c in competitions:
         c.start_date = dtutil.ts2dt(c.start_date)
         c.end_date = dtutil.ts2dt(c.end_date)

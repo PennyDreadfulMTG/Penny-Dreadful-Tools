@@ -3,10 +3,10 @@ import urllib
 from collections import Counter
 
 from flask import url_for
-from munch import Munch
 
 from magic import oracle, rotation
 from shared import dtutil
+from shared.container import Container
 
 from decksite import deck_name
 from decksite import template
@@ -126,7 +126,6 @@ class View:
         if 'Commander' in d.legal_formats: #I think C16 looks the nicest.
             d.legal_icons += '<i class="ss ss-c16 ss-uncommon ss-grad">CMDR</i>'
 
-
     def prepare_cards(self):
         for c in getattr(self, 'cards', []):
             self.prepare_card(c)
@@ -140,8 +139,9 @@ class View:
         c.pd_legal = c.legalities.get('Penny Dreadful', False)
         c.legal_formats = set(c.legalities.keys())
         c.has_legal_format = len(c.legal_formats) > 0
-        c.show_record_season = c.get('wins_season') or c.get('losses_season') or c.get('draws_season')
-        c.show_record_all = c.get('wins_all') or c.get('losses_all') or c.get('draws_all')
+        if c.get('season') and c.get('all'):
+            c.season.show_record = c.season.get('wins') or c.season.get('losses') or c.season.get('draws')
+            c.all.show_record = c.all.get('wins') or c.all.get('losses') or c.all.get('draws')
         c.has_decks = len(c.get('decks', [])) > 0
 
     def prepare_competitions(self):
@@ -154,14 +154,15 @@ class View:
     def prepare_people(self):
         for p in getattr(self, 'people', []):
             p.url = url_for('person', person_id=p.id)
-            p.show_record_season = p.wins_season or p.losses_season or p.get('draws_season', None)
-            p.show_record = p.wins or p.losses or p.get('draws', None)
+            if p.get('season') and p.get('all'):
+                p.season.show_record = p.season.wins or p.season.losses or p.season.get('draws', None)
+                p.all.show_record = p.all.wins or p.all.losses or p.all.get('draws', None)
 
     def prepare_archetypes(self):
         num_most_common_cards_to_list = 10
         for a in getattr(self, 'archetypes', []):
             a.url = url_for('archetype', archetype_id=a.id)
-            a.best_decks = Munch({'decks': []})
+            a.best_decks = Container({'decks': []})
             n = 3
             while len(a.best_decks.decks) == 0 and n >= 0:
                 for d in a.decks:
@@ -179,6 +180,7 @@ class View:
             most_common_cards = counter.most_common(num_most_common_cards_to_list)
             cs = oracle.cards_by_name()
             for v in most_common_cards:
+                self.prepare_card(cs[v[0]])
                 a.most_common_cards.append(cs[v[0]])
             a.archetype_tree = preorder(a.tree)
             lowest = a.tree['pos']

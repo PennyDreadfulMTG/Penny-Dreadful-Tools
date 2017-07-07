@@ -3,10 +3,9 @@ import time
 import datetime
 import calendar
 
-from munch import Munch
-
 from magic import legality, rotation
 from shared import dtutil
+from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
@@ -14,7 +13,7 @@ from decksite.data import competition, deck, guarantee
 from decksite.database import db
 from decksite.scrapers import decklist
 
-class Form(Munch):
+class Form(Container):
     def __init__(self, form):
         super().__init__()
         form = form.to_dict()
@@ -154,7 +153,7 @@ def get_matches(d, load_decks=False):
         INNER JOIN deck AS d2 ON dm2.deck_id = d2.id
         INNER JOIN person AS p ON p.id = d2.person_id
     """
-    matches = [Munch(m) for m in db().execute(sql, [d.id, d.id])]
+    matches = [Container(m) for m in db().execute(sql, [d.id, d.id])]
     if load_decks and len(matches) > 0:
         decks = deck.load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(m.opponent_deck_id)) for m in matches])))
         decks_by_id = {d.id: d for d in decks}

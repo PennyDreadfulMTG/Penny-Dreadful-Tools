@@ -2,10 +2,9 @@ import hashlib
 import json
 import time
 
-from munch import Munch
-
 from magic import mana, oracle, legality
 from shared import dtutil
+from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
@@ -244,7 +243,7 @@ def similarity_score(a, b):
     return float(score) / float(len(b.maindeck))
 
 # pylint: disable=too-many-instance-attributes
-class Deck(Munch):
+class Deck(Container):
     def __init__(self, params):
         super().__init__()
         for k in params.keys():

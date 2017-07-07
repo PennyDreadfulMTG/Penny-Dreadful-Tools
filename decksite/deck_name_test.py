@@ -1,9 +1,9 @@
-from munch import Munch
-
 from decksite import deck_name
 
+from shared.container import Container
+
 def test_normalize():
-    d = Munch({'name': 'Dimir Control', 'archetype': 'Control', 'colors': ['U', 'B']})
+    d = Container({'name': 'Dimir Control', 'archetype': 'Control', 'colors': ['U', 'B']})
     assert deck_name.normalize(d) == 'Dimir Control'
     d.name = 'U/B Control'
     assert deck_name.normalize(d) == 'Dimir Control'

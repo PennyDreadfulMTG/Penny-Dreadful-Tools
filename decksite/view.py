@@ -126,7 +126,6 @@ class View:
         if 'Commander' in d.legal_formats: #I think C16 looks the nicest.
             d.legal_icons += '<i class="ss ss-c16 ss-uncommon ss-grad">CMDR</i>'
 
-
     def prepare_cards(self):
         for c in getattr(self, 'cards', []):
             self.prepare_card(c)
@@ -179,6 +178,7 @@ class View:
             most_common_cards = counter.most_common(num_most_common_cards_to_list)
             cs = oracle.cards_by_name()
             for v in most_common_cards:
+                self.prepare_card(cs[v[0]])
                 a.most_common_cards.append(cs[v[0]])
             a.archetype_tree = preorder(a.tree)
             lowest = a.tree['pos']

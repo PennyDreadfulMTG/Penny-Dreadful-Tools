@@ -19,6 +19,7 @@ class MysqlDatabase(GenericDatabase):
             self.connection = MySQLdb.connect(host=host, port=port, user=user, passwd=passwd, use_unicode=True, charset='utf8', autocommit=True)
             # self.connection.createscalarfunction('unaccent', card.unaccent, 1)
             self.cursor = self.connection.cursor(MySQLdb.cursors.DictCursor)
+            self.execute('SET NAMES utf8mb4')
             try:
                 self.execute("USE {db}".format(db=db))
             except DatabaseException:

@@ -49,6 +49,8 @@ def load_archetypes_without_decks(where='1 = 1'):
     sql = """
         SELECT
             a.id,
+            a.name,
+
             COUNT(DISTINCT d.id) AS `all.num_decks`,
             SUM(d.wins) AS `all.wins`,
             SUM(d.losses) AS `all.losses`,
@@ -66,6 +68,7 @@ def load_archetypes_without_decks(where='1 = 1'):
         LEFT JOIN deck AS d ON ac.descendant = d.archetype_id
         WHERE {where}
         GROUP BY a.id
+        ORDER BY a.name
     """.format(where=where)
     archetypes = [Container(a) for a in db().execute(sql, [rotation.last_rotation().timestamp()] * 7)]
     for a in archetypes:

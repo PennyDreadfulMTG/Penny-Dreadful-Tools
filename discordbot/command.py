@@ -410,6 +410,8 @@ class Commands:
             area, detail = args.strip(), ''
         if area == 'card':
             area = 'cards'
+        if area == 'person':
+            area = 'people'
         url = 'http://pennydreadfulmagic.com/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail))
         await bot.client.send_message(channel, '{author}: <{url}>'.format(author=author.mention, url=url))
 

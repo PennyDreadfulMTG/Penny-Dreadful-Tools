@@ -49,15 +49,21 @@
     </div>
 </form>
 
-{{#roots}}
-    {{#archetype_tree}}
-        <p>{{{padding}}}↳ <a href="{{url}}">{{name}}</a></p>
-        <form method="post" class="inline">
-            <input type="hidden" name="parent" value="{{id}}">
-            <div class="field">
-                {{{padding}}}&nbsp;&nbsp;<input type="text" name="name">
-                <input type="submit" value="Add">
-            </div>
-        </form>
-    {{/archetype_tree}}
-{{/roots}}
+<table>
+    {{#roots}}
+        {{#archetype_tree}}
+            <tr class="archetype archetype-{{pos}}">
+                <td class="initial primary"><a href="{{url}}">{{name}}</a></td>
+                <td>
+                    <form method="post" class="inline">
+                        <input type="hidden" name="parent" value="{{id}}">
+                        <div class="field">
+                            <input type="text" name="name">
+                            <input type="submit" value="Add">
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        {{/archetype_tree}}
+    {{/roots}}
+</table>

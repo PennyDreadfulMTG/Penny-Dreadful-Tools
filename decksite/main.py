@@ -72,7 +72,7 @@ def competition(competition_id):
 @APP.route('/archetypes/')
 @cached()
 def archetypes():
-    view = Archetypes(archs.load_archetypes())
+    view = Archetypes(archs.load_archetypes_without_decks())
     return view.page()
 
 @APP.route('/archetypes/<archetype_id>/')

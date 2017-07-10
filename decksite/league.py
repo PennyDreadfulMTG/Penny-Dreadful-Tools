@@ -37,7 +37,6 @@ class SignUpForm(Form):
             self.source = 'League'
             self.competition_id = db().value(active_competition_id_query())
             self.identifier = identifier(self)
-            print(self.identifier)
             self.url = 'http://pennydreadfulmagic.com/competitions/{competition_id}/'.format(competition_id=self.competition_id)
         self.decklist = self.decklist.strip()
         if len(self.decklist) == 0:

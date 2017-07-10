@@ -42,12 +42,18 @@ def mtgo_status():
         return 'UNKNOWN'
 
 def all_cards():
-    s = internal.unzip('https://mtgjson.com/json/AllCards-x.json.zip', 'AllCards-x.json')
-    return json.loads(s)
+    try:
+        return json.load(open('AllCards-x.json'))
+    except FileNotFoundError:
+        s = internal.unzip('https://mtgjson.com/json/AllCards-x.json.zip', 'AllCards-x.json')
+        return json.loads(s)
 
 def all_sets():
-    s = internal.unzip('https://mtgjson.com/json/AllSets.json.zip', 'AllSets.json')
-    return json.loads(s)
+    try:
+        return json.load(open('AllSets.json'))
+    except FileNotFoundError:
+        s = internal.unzip('https://mtgjson.com/json/AllSets.json.zip', 'AllSets.json')
+        return json.loads(s)
 
 def card_aliases():
     with open(configuration.get('card_alias_file'), newline='', encoding='utf-8') as f:

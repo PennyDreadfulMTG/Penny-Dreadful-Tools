@@ -544,6 +544,9 @@ td.gsc-search-button {
     font-size: 0.9rem;
     padding: 0.5rem 1rem;
 }
+.archetype input {
+    width: 45%;
+}
 tr.archetype-0 > .primary.initial {
     font-size: 120%;
 }

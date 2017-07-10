@@ -189,14 +189,13 @@ class View:
                 self.prepare_card(cs[v[0]])
                 a.most_common_cards.append(cs[v[0]])
             a.archetype_tree = preorder(a.tree)
-            lowest = a.tree['pos']
             for r in a.archetype_tree:
                 r['url'] = url_for('archetype', archetype_id=r['id'])
         # Don't try and set up archetype trees if we're just on the archetype detail page, for now.
         # We won't have loaded the other archetypes to make looking them up by id work.
         archetypes_by_id = {a.id: a for a in archetypes}
         if len(archetypes) > 1:
-            self.roots = []
+            self.roots = [] # pylint: disable=attribute-defined-outside-init
             for a in archetypes:
                 a.low = 10
                 for entry in a.archetype_tree:

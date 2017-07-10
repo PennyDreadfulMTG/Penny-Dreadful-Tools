@@ -44,14 +44,14 @@ def mtgo_status():
 def all_cards():
     try:
         return json.load(open('AllCards-x.json'))
-    except:
+    except FileNotFoundError:
         s = internal.unzip('https://mtgjson.com/json/AllCards-x.json.zip', 'AllCards-x.json')
         return json.loads(s)
 
 def all_sets():
     try:
         return json.load(open('AllSets.json'))
-    except:
+    except FileNotFoundError:
         s = internal.unzip('https://mtgjson.com/json/AllSets.json.zip', 'AllSets.json')
         return json.loads(s)
 

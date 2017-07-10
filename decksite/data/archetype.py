@@ -1,3 +1,4 @@
+from magic import rotation
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import TooManyItemsException
@@ -29,17 +30,44 @@ def load_archetypes(where_clause='1 = 1', merge=False):
         archetype.id = d.archetype_id
         archetype.name = d.archetype_name
         archetype.decks = archetype.get('decks', []) + [d]
-        archetype.wins = archetype.get('wins', 0) + (d.get('wins') or 0)
-        archetype.losses = archetype.get('losses', 0) + (d.get('losses') or 0)
-        archetype.draws = archetype.get('draws', 0) + (d.get('draws') or 0)
+        archetype.all = archetype.get('all', Container())
+        archetype.season = archetype.all.get('season', Container())
+        archetype.all.wins = archetype.all.get('wins', 0) + (d.get('wins') or 0)
+        archetype.all.losses = archetype.all.get('losses', 0) + (d.get('losses') or 0)
+        archetype.all.draws = archetype.all.get('draws', 0) + (d.get('draws') or 0)
+        if d.created_date >= rotation.last_rotation():
+            archetype.season.wins = archetype.season.get('wins', 0) + (d.get('wins') or 0)
+            archetype.season.losses = archetype.season.get('losses', 0) + (d.get('losses') or 0)
+            archetype.season.draws = archetype.season.get('draws', 0) + (d.get('draws') or 0)
         archetypes[key] = archetype
     archetypes = list(archetypes.values())
     for a in archetypes:
         a.tree = load_tree(a)
     return archetypes
 
-def load_archetypes_without_decks():
-    archetypes = [Container(a) for a in db().execute('SELECT id, name FROM archetype ORDER BY name')]
+def load_archetypes_without_decks(where='1 = 1'):
+    sql = """
+        SELECT
+            a.id,
+            COUNT(DISTINCT d.id) AS `all.num_decks`,
+            SUM(d.wins) AS `all.wins`,
+            SUM(d.losses) AS `all.losses`,
+            SUM(d.draws) AS `all.draws`,
+            IFNULL(ROUND((SUM(wins) / SUM(wins + losses)) * 100, 1), '') AS `all.win_percent`,
+
+            SUM(CASE WHEN d.created_date >= %s THEN 1 ELSE 0 END) AS `season.num_decks`,
+            SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) AS `season.wins`,
+            SUM(CASE WHEN d.created_date >= %s THEN losses ELSE 0 END) AS `season.losses`,
+            SUM(CASE WHEN d.created_date >= %s THEN draws ELSE 0 END) AS `season.draws`,
+            IFNULL(ROUND((SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) / SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END + CASE WHEN d.created_date >= %s THEN losses ELSE 0 END)) * 100, 1), '') AS `season.win_percent`
+
+        FROM archetype AS a
+        LEFT JOIN archetype_closure AS ac ON a.id = ac.ancestor
+        LEFT JOIN deck AS d ON ac.descendant = d.archetype_id
+        WHERE {where}
+        GROUP BY a.id
+    """.format(where=where)
+    archetypes = [Container(a) for a in db().execute(sql, [rotation.last_rotation().timestamp()] * 7)]
     for a in archetypes:
         a.decks = []
         a.tree = load_tree(a)

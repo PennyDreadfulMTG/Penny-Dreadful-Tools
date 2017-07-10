@@ -1,17 +1,9 @@
 <h2>{{name}}</h2>
 <section>
-   <h3>Record</h3>
-    <p>All Time: {{> record}}</p>
-</section>
-<section>
     <h3>Most Common Cards</h3>
     <ul>
         {{#most_common_cards}}<li>{{> singlecard}}</li>{{/most_common_cards}}
     </ul>
-</section>
-<section>
-    <h3>Archetypes</h3>
-    {{> archetypetree}}
 </section>
 <section>
     <h3>Top Decks</h3>

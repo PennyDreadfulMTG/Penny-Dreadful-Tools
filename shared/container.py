@@ -18,5 +18,4 @@ class Container(Munch):
                 new_args[k1][k2] = v
             else:
                 new_args[k] = v
-        print(new_args)
         super().__init__(new_args)

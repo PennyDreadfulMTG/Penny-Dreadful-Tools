@@ -537,3 +537,25 @@ td.gsc-search-button {
 .search tr {
     border-bottom: 0;
 }
+
+/* Archetypes */
+
+.archetype {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+tr.archetype-0 > .primary.initial {
+    font-size: 120%;
+}
+tr.archetype-1 > .primary.initial {
+    font-size: 100%;
+    padding-left: 1rem;
+}
+tr.archetype-2 > .primary.initial {
+    font-size: 80%;
+    padding-left: 2rem;
+}
+tr.archetype-3 > .primary.initial {
+    font-size: 60%;
+    padding-left: 3rem;
+}

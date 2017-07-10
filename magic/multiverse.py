@@ -60,7 +60,6 @@ def update_database(new_version):
     db().begin()
     db().execute('DELETE FROM version')
     db().execute("""
-    DELETE FROM card;
     DELETE FROM card_alias;
     DELETE FROM card_color;
     DELETE FROM card_color_identity;
@@ -68,8 +67,10 @@ def update_database(new_version):
     DELETE FROM card_subtype;
     DELETE FROM card_supertype;
     DELETE FROM card_type;
+    DELETE FROM card_bugs;
     DELETE FROM face;
     DELETE FROM printing;
+    DELETE FROM card;
     DELETE FROM `set`;
     """)
     cards = fetcher.all_cards()

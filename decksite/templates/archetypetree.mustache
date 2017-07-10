@@ -1,5 +1,37 @@
-{{#roots}}
-    {{#archetype_tree}}
-        <p>{{{padding}}}{{^pos}}►{{/pos}}{{#pos}}↳{{/pos}} <a href="{{url}}">{{name}}</a></p>
-    {{/archetype_tree}}
-{{/roots}}
+<table class="archetypes">
+    <thead>
+        <tr>
+            <td></td>
+            <th class="legend" colspan="3" data-sortInitialOrder="desc">This Season</th>
+            <th class="legend" colspan="3" data-sortInitialOrder="desc">All Time</th>
+        </tr>
+        <tr>
+            <th data-lockedorder="asc">Archetype</th>
+            <th data-sortInitialOrder="desc"># Decks</th>
+            <th data-sortInitialOrder="desc">Record</th>
+            <th class="divider" data-sortInitialOrder="desc">Win %</th>
+            <th data-sortInitialOrder="desc"># Decks</th>
+            <th data-sortInitialOrder="desc">Record</th>
+            <th data-sortInitialOrder="desc">Win %</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#roots}}
+            {{#archetype_tree}}
+                <tr class="archetype archetype-{{pos}}">
+                    <td data-sort="{{sort}}"class="primary initial"><a href="{{url}}">{{name}}</a></td>
+                    {{#season}}
+                        <td class="n">{{num_decks}}</td>
+                        <td class="n">{{> record}}</td>
+                        <td class="n divider">{{#show_record}}{{win_percent}}{{/show_record}}</td>
+                    {{/season}}
+                    {{#all}}
+                        <td class="n">{{num_decks}}</td>
+                        <td class="n">{{> record}}</td>
+                        <td class="n">{{#show_record}}{{win_percent}}{{/show_record}}</td>
+                    {{/all}}
+                </tr>
+            {{/archetype_tree}}
+        {{/roots}}
+    </tbody>
+</table>

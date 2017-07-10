@@ -37,18 +37,33 @@ PD.init = function () {
         },
         'type': 'numeric'
     });
-    $.tablesorter.addParser({ 
-        id: 'bugseverity', 
+    $.tablesorter.addParser({
+        id: 'bugseverity',
         is: function(s) {
             return ["Game Breaking", "Advantageous", "Disadvantageous", "Graphical", "Non-Functional ability", "Unclassified"].indexOf(s) > -1;
-        }, 
-        format: function(s) { 
+        },
+        format: function(s) {
             return ["Game Breaking", "Advantageous", "Disadvantageous", "Graphical", "Non-Functional ability", "Unclassified"].indexOf(s)
-        }, 
-        // set type, either numeric or text 
-        type: 'numeric' 
-    }); 
-    $('table').tablesorter();
+        },
+        // set type, either numeric or text
+        type: 'numeric'
+    });
+    $.tablesorter.addParser({
+        'id': 'archetype',
+        is: function (_s, _table, _td, $td) {
+            return $td.hasClass('initial');
+        },
+        'format': function(s, table, td, $td) {
+            return $(td).data('sort');
+        },
+        'type': 'numeric'
+    })
+    $('table.archetypes').tablesorter({
+        'sortList': [[0, 0]],
+        'widgets': ['columns'],
+        'widgetOptions': {'columns' : ['primary', 'secondary']}
+    });
+    $('table').tablesorter({});
     $('.fade-repeats').bind('sortEnd', PD.fadeRepeats);
     $('input[type=file]').on('change', PD.loadDeck);
     $('.deckselect').on('change', PD.toggleDrawDropdown);

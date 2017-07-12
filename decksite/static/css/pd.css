@@ -562,3 +562,7 @@ tr.archetype-3 > .primary.initial {
     font-size: 60%;
     padding-left: 3rem;
 }
+tr.current td:first-child a {
+    background-color: #eee;
+    padding: 0.5em;
+}

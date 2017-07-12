@@ -1,3 +1,4 @@
+anytree
 bs4
 coverage
 discord.py[voice]>=0.13.0

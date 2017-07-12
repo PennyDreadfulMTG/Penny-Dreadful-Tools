@@ -18,8 +18,8 @@
     <tbody>
         {{#roots}}
             {{#archetype_tree}}
-                <tr class="archetype archetype-{{pos}}">
-                    <td data-sort="{{sort}}"class="primary initial"><a href="{{url}}">{{name}}</a></td>
+                <tr class="archetype archetype-{{depth}}{{#current}} current{{/current}}">
+                    <td data-sort="{{sort}}" class="primary initial"><a href="{{url}}">{{name}}</a></td>
                     {{#season}}
                         <td class="n">{{num_decks}}</td>
                         <td class="n">{{> record}}</td>

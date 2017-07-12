@@ -78,7 +78,7 @@ def archetypes():
 @APP.route('/archetypes/<archetype_id>/')
 @cached()
 def archetype(archetype_id):
-    view = Archetype(archs.load_archetype(archetype_id))
+    view = Archetype(archs.load_archetype(archetype_id), archs.load_archetypes_without_decks_with_root(archetype_id))
     return view.page()
 
 @APP.route('/tournaments/')
@@ -197,7 +197,7 @@ def deckcycle_tappedout():
 
 @APP.route('/admin/archetypes/')
 def edit_archetypes():
-    view = EditArchetypes(archs.load_archetypes_without_decks(), deck.load_decks())
+    view = EditArchetypes(archs.load_archetypes_without_decks(order_by='a.name'), deck.load_decks())
     return view.page()
 
 @APP.route('/admin/archetypes/', methods=['POST'])

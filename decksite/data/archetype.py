@@ -44,7 +44,7 @@ def load_archetypes(where_clause='1 = 1', merge=False):
     archetypes = list(archetypes.values())
     return archetypes
 
-def load_archetypes_without_decks(where='1 = 1', order_by='`season.num_decks` DESC, `all.num_decks` DESC, `season.wins` DESC, `all.wins` DESC'):
+def load_archetypes_deckless(where='1 = 1', order_by='`season.num_decks` DESC, `all.num_decks` DESC, `season.wins` DESC, `all.wins` DESC'):
     sql = """
         SELECT
             a.id,
@@ -78,8 +78,8 @@ def load_archetypes_without_decks(where='1 = 1', order_by='`season.num_decks` DE
         a.parent = archetypes_by_id.get(a.parent_id, None)
     return archetypes
 
-def load_archetypes_without_decks_with_root(archetype_id):
-    archetypes = load_archetypes_without_decks()
+def load_archetypes_deckless_for(archetype_id):
+    archetypes = load_archetypes_deckless()
     for a in archetypes:
         if int(a.id) == int(archetype_id):
             return list(a.ancestors) + [a] + list(a.descendants)

@@ -4,6 +4,7 @@ import traceback
 from flask import make_response, redirect, request, send_file, send_from_directory, url_for
 from werkzeug import exceptions
 
+from magic import oracle
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 from decksite import deck_name, league as lg
@@ -53,8 +54,12 @@ def cards():
 @APP.route('/cards/<path:name>/')
 @cached()
 def card(name):
-    view = Card(cs.load_card(name))
-    return view.page()
+    try:
+        c = cs.load_card(oracle.valid_name(name))
+        view = Card(c)
+        return view.page()
+    except InvalidDataException as e:
+        raise DoesNotExistException(e)
 
 @APP.route('/competitions/')
 @cached()

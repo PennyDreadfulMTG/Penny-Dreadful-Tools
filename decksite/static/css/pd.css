@@ -515,7 +515,7 @@ form.inline, .inline input, .inline select, .inline textarea {
 }
 
 .gsc-wrapper div:after {
-  display: inherit;
+    display: inherit;
 }
 
 .gsc-control-cse {
@@ -528,10 +528,6 @@ form.inline, .inline input, .inline select, .inline textarea {
 
 .gsc-search-button {
     margin-top: 5px !important; /* csslint allow: important */
-}
-
-td.gsc-search-button {
-    width: inherit !important; /* csslint allow: important */
 }
 
 .search tr {

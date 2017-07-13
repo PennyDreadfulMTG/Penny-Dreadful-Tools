@@ -347,7 +347,7 @@ ul.menu {
 /* Responsive tables */
 
 @media only screen and (max-width: 60rem) {
-    table, thead, tbody, th, td, tr {
+    table, tbody, th, td, tr {
         display: block;
     }
 
@@ -375,6 +375,21 @@ ul.menu {
     td.c, td.n {
         text-align: left;
     }
+
+    /* But don't screw up Google's HTML/CSS for the search box in the menu. */
+    .gsc-search-box table {
+        display: table;
+    }
+    .gsc-search-box tbody {
+        display: table-row-group;
+    }
+    .gsc-search-box tr {
+        display: table-row;
+    }
+    .gsc-search-box td, th {
+        display: table-cell;
+    }
+
 }
 
 /* Card */

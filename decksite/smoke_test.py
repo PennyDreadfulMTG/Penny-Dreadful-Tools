@@ -2,8 +2,6 @@ import unittest
 
 import pytest
 
-from flask import Flask
-
 from decksite.main import APP
 
 class SmokeTest(unittest.TestCase):

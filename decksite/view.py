@@ -1,3 +1,4 @@
+import datetime
 import subprocess
 import urllib
 from collections import Counter
@@ -37,20 +38,25 @@ class View:
         return url_for('static', filename='js/pd.js', v=self.commit_id())
 
     def menu(self):
-        return [
+        menu = [
             {'name': 'Decks', 'url': url_for('home')},
             {'name': 'Competitions', 'url': url_for('competitions')},
             {'name': 'People', 'url': url_for('people')},
             {'name': 'Cards', 'url': url_for('cards')},
             {'name': 'Archetypes', 'url': url_for('archetypes')},
-            {'name': 'Resources', 'url': url_for('resources')},
+            {'name': 'Resources', 'url': url_for('resources')}
+        ]
+        if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7):
+            menu += [{'name': 'Rotation', 'url': url_for('rotation')}]
+        menu += [
             {'name': 'About', 'url': url_for('about')},
             {'name': 'League', 'url': url_for('league'), 'has_submenu': True, 'submenu': [
                 {'name': 'Sign Up', 'url': url_for('signup')},
                 {'name': 'Report', 'url': url_for('report')},
-                {'name': 'Records', 'url': url_for('competition', competition_id=league.get_active_competition_id())},
+                {'name': 'Records', 'url': url_for('competition', competition_id=league.get_active_competition_id())}
             ]}
         ]
+        return menu
 
     def favicon_url(self):
         return url_for('favicon', rest='.ico')

@@ -53,7 +53,14 @@ def normalize(d):
         name = d.archetype
     if removed_colors or name == '':
         name = prepend_colors(name, d.colors)
+    name = ucase_trailing_roman_numerals(name)
     return titlecase.titlecase(name)
+
+def file_name(d):
+    safe_name = normalize(d).replace(' ', '-')
+    safe_name = re.sub('--+', '-', safe_name, flags=re.IGNORECASE)
+    safe_name = re.sub('[^0-9a-z-]', '', safe_name, flags=re.IGNORECASE)
+    return safe_name.strip('-')
 
 def remove_pd(name):
     name = re.sub(r'(^| )[\[\(]?pdh?[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
@@ -88,3 +95,9 @@ def name_from_colors(colors, s=''):
                 return 'mono {name}'.format(name=name)
             return name
     return 'colorless'
+
+def ucase_trailing_roman_numerals(name):
+    last_word = name.split()[-1]
+    if re.search('^[ivx]+$', last_word):
+        name = re.sub('{last_word}$'.format(last_word=last_word), last_word.upper(), name)
+    return name

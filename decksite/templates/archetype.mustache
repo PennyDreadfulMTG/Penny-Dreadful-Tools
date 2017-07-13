@@ -1,5 +1,9 @@
 <h2>{{name}}</h2>
 <section>
+    <h3>Archetype Tree</h3>
+    {{> archetypetree}}
+</section>
+<section>
     <h3>Most Common Cards</h3>
     <ul>
         {{#most_common_cards}}<li>{{> singlecard}}</li>{{/most_common_cards}}

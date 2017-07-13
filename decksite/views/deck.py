@@ -1,4 +1,5 @@
 from flask import url_for
+import inflect
 
 from decksite import deck_name, league
 from decksite.data import deck
@@ -36,7 +37,12 @@ class Deck(View):
         return 'https://pennydreadfulmagic.com' + url_for('decks', deck_id=self._deck.id)
 
     def og_description(self):
-        description = 'A {archetype_name} deck by {author}'.format(archetype_name=self.archetype_name, author=str(self.person))
+        if self.archetype_name:
+            p = inflect.engine()
+            archetype_s = p.a(self.archetype_name).title()
+        else:
+            archetype_s = 'A'
+        description = '{archetype_s} deck by {author}'.format(archetype_s=archetype_s, author=self.person.decode('utf-8'))
         return description
 
     def __getattr__(self, attr):

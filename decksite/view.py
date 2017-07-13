@@ -1,7 +1,9 @@
+import datetime
 import subprocess
 import urllib
 from collections import Counter
 
+from anytree.iterators import PreOrderIter
 from flask import url_for
 
 from magic import oracle, rotation
@@ -36,20 +38,25 @@ class View:
         return url_for('static', filename='js/pd.js', v=self.commit_id())
 
     def menu(self):
-        return [
+        menu = [
             {'name': 'Decks', 'url': url_for('home')},
             {'name': 'Competitions', 'url': url_for('competitions')},
             {'name': 'People', 'url': url_for('people')},
             {'name': 'Cards', 'url': url_for('cards')},
             {'name': 'Archetypes', 'url': url_for('archetypes')},
-            {'name': 'Resources', 'url': url_for('resources')},
+            {'name': 'Resources', 'url': url_for('resources')}
+        ]
+        if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7):
+            menu += [{'name': 'Rotation', 'url': url_for('rotation')}]
+        menu += [
             {'name': 'About', 'url': url_for('about')},
             {'name': 'League', 'url': url_for('league'), 'has_submenu': True, 'submenu': [
                 {'name': 'Sign Up', 'url': url_for('signup')},
                 {'name': 'Report', 'url': url_for('report')},
-                {'name': 'Records', 'url': url_for('competition', competition_id=league.get_active_competition_id())},
+                {'name': 'Records', 'url': url_for('competition', competition_id=league.get_active_competition_id())}
             ]}
         ]
+        return menu
 
     def favicon_url(self):
         return url_for('favicon', rest='.ico')
@@ -159,11 +166,9 @@ class View:
                 p.all.show_record = p.all.wins or p.all.losses or p.all.get('draws', None)
 
     def prepare_archetypes(self):
-        archetypes = getattr(self, 'archetypes', [])
-        if len(archetypes) == 0:
-            return
         num_most_common_cards_to_list = 10
-        for a in archetypes:
+        for a in getattr(self, 'archetypes', []):
+            a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
             if a.get('all') and a.get('season'):
                 a.all.show_record = a.all.get('wins') or a.all.get('draws') or a.all.get('losses')
                 a.season.show_record = a.season.get('wins') or a.season.get('draws') or a.season.get('losses')
@@ -188,40 +193,18 @@ class View:
             for v in most_common_cards:
                 self.prepare_card(cs[v[0]])
                 a.most_common_cards.append(cs[v[0]])
-            a.archetype_tree = preorder(a.tree)
+            a.archetype_tree = PreOrderIter(a)
             for r in a.archetype_tree:
+                # Prune branches we don't want to show
+                if r.id not in [a.id for a in getattr(self, 'archetypes', [])]:
+                    r.parent = None
                 r['url'] = url_for('archetype', archetype_id=r['id'])
-        # Don't try and set up archetype trees if we're just on the archetype detail page, for now.
-        # We won't have loaded the other archetypes to make looking them up by id work.
-        archetypes_by_id = {a.id: a for a in archetypes}
-        if len(archetypes) > 1:
-            self.roots = [] # pylint: disable=attribute-defined-outside-init
-            for a in archetypes:
-                a.low = 10
-                for entry in a.archetype_tree:
-                    a.low = min(a.low, entry['pos'])
-                    entry.update(archetypes_by_id[entry['id']])
-                if a.is_root:
-                    self.roots.append(a)
-            for a in archetypes:
-                for entry in a.archetype_tree:
-                    entry['pos'] += abs(a.low)
-            sort = 0
-            for r in self.roots:
-                for a in r.archetype_tree:
-                    a['sort'] = sort
-                    sort += 1
+                # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
+                r['depth'] = r.depth
 
     def commit_id(self):
         return subprocess.check_output(['git', 'rev-parse', 'HEAD'])
 
-
-def preorder(node):
-    result = []
-    result.append(node)
-    for child in node.get('children', []):
-        result += preorder(child)
-    return result
 
 def colors_html(colors, colored_symbols):
     s = ''

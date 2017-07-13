@@ -176,5 +176,8 @@ def determine_end_of_league(start_date):
     return end_date - datetime.timedelta(seconds=1)
 
 def retire_deck(d):
-    sql = 'UPDATE `deck` SET `retired` = 1 WHERE id = %s'
+    if d.wins == 0 and d.losses == 0 and d.draws == 0:
+        sql = 'DELETE FROM deck WHERE id = %s'
+    else:
+        sql = 'UPDATE `deck` SET `retired` = 1 WHERE id = %s'
     db().execute(sql, [d.id])

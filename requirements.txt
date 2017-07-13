@@ -3,6 +3,7 @@ bs4
 coverage
 discord.py[voice]>=0.13.0
 flask
+inflect
 matplotlib
 munch
 mysqlclient==1.3.9

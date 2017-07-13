@@ -56,6 +56,12 @@ def normalize(d):
     name = ucase_trailing_roman_numerals(name)
     return titlecase.titlecase(name)
 
+def file_name(d):
+    safe_name = normalize(d).replace(' ', '-')
+    safe_name = re.sub('--+', '-', safe_name, flags=re.IGNORECASE)
+    safe_name = re.sub('[^0-9a-z-]', '', safe_name, flags=re.IGNORECASE)
+    return safe_name.strip('-')
+
 def remove_pd(name):
     name = re.sub(r'(^| )[\[\(]?pdh?[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny ?dreadful[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()

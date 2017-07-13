@@ -1,5 +1,4 @@
 import os
-import re
 import traceback
 
 from flask import make_response, redirect, request, send_file, send_from_directory, url_for
@@ -7,7 +6,7 @@ from werkzeug import exceptions
 
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
-from decksite import league as lg
+from decksite import deck_name, league as lg
 from decksite import APP
 from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
@@ -126,7 +125,7 @@ def rotation():
 @APP.route('/export/<deck_id>/')
 def export(deck_id):
     d = deck.load_deck(deck_id)
-    safe_name = re.sub('[^0-9a-z-]', '-', d.name, flags=re.IGNORECASE)
+    safe_name = deck_name.file_name(d)
     return (str(d), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 
 @APP.route('/resources/')

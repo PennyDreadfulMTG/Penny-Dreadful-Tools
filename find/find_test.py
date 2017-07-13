@@ -151,6 +151,9 @@ def test_not_color():
 def test_complex():
     do_test('c:u OR (c:g AND NOT tou>3)', "(c.id IN (SELECT card_id FROM card_color WHERE color_id = 2)) OR ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 5)) AND NOT (toughness IS NOT NULL AND toughness <> '' AND CAST(toughness AS REAL) > 3))")
 
+def test_is_hybrid():
+    do_test('is:hybrid', "((mana_cost LIKE '%%/2%%') OR (mana_cost LIKE '%%/W%%') OR (mana_cost LIKE '%%/U%%') OR (mana_cost LIKE '%%/B%%') OR (mana_cost LIKE '%%/R%%') OR (mana_cost LIKE '%%/G%%'))")
+
 def do_test(query, expected):
     where_clause = search.parse(search.tokenize(query))
     assert where_clause == expected or print('\nQuery: {query}\nExpected: {expected}\n  Actual: {actual}'.format(query=query, expected=expected, actual=where_clause))

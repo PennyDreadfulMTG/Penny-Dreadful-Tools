@@ -238,8 +238,12 @@ def rarity_where(operator, term):
     return "(c.id IN (SELECT card_id FROM printing WHERE rarity_id {operator} {rarity_id}))".format(operator=operator, rarity_id=rarity_id)
 
 def mana_where(operator, term):
-    symbols = mana.parse(term.upper()) # Uppercasing input means you can't search for 1/2 or 1/2 white mana but w should match W.
-    symbols = ['{{{symbol}}}'.format(symbol=symbol) for symbol in symbols]
+    term = term.upper()
+    try:
+        symbols = mana.parse(term) # Uppercasing input means you can't search for 1/2 or 1/2 white mana but w should match W.
+        symbols = ['{{{symbol}}}'.format(symbol=symbol) for symbol in symbols]
+    except mana.InvalidManaCostException:
+        symbols = [term]
     if operator == ':':
         d = collections.Counter(symbols) # Group identical symbols so that UU checks for {U}{U} not just {U} twice.
         clause = ' AND '.join("mana_cost LIKE {symbol}".format(symbol=sqllikeescape(symbol * n)) for symbol, n in d.items())
@@ -296,7 +300,8 @@ def is_subquery(subquery_name):
         'painland': 't:land o:"~ deals 1 damage to you."',
         'fetchland': 't:land o:"Search your library for a " (o:"land card" or o:"plains card" or o:"island card" or o:"swamp card" or o:"mountain card" or o:"forest card" or o:"gate card")',
         'slowland': """t:land o:"~ doesn't untap during your next untap step." """,
-        'storageland': 'o:"storage counter"'
+        'storageland': 'o:"storage counter"',
+        'hybrid': 'mana:/2 OR mana:/W OR mana:/U OR mana:/B OR mana:/R OR mana:/G'
     }
     subqueries['fetch'] = subqueries['fetchland']
     subqueries['refuge'] = subqueries['gainland']

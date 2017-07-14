@@ -2,27 +2,38 @@
 <h2>Queue</h2>
     <form method="post" class="inline">
         <table>
-            {{#queue}}
+            <thead>
                 <tr>
-                    <td><a href="{{url}}">{{name}} ({{id}})</a></td>
-                    <td>
-                        {{#suggestion}}<a href="{{url}}">{{name}} ({{id}})</a>{{/suggestion}}
-                    </td>
-                    <td>
-                        {{#suggestion}}<a href="{{archetype_url}}">{{archetype_name}} ({{archetype_id}})</a>{{/suggestion}}
-                        {{^suggestion}}No suggestion{{/suggestion}}
-                    </td>
-                    <td>
-                        <input type="hidden" name="deck_id" value="{{id}}">
-                        <select name="archetype_id">
-                            <option value="">[Select]</option>
-                            {{#archetypes}}
-                                <option value="{{id}}">{{name}}</option>
-                            {{/archetypes}}
-                        </select>
-                    </td>
-                </tr>
-            {{/queue}}
+                    <th>Deck Name</th>
+                    <th>Current</th>
+                    <th>Similar Deck</th>
+                    <th>Suggested</th>
+                    <th>Assign To</th>
+            </thead>
+            <tbody>
+                {{#queue}}
+                    <tr>
+                        <td><a href="{{url}}">{{name}} ({{id}})</a></td>
+                        <td>{{archetype_name}}</td>
+                        <td>
+                            {{#suggestion}}<a href="{{url}}">{{name}} ({{id}})</a>{{/suggestion}}
+                        </td>
+                        <td>
+                            {{#suggestion}}<a href="{{archetype_url}}">{{archetype_name}} ({{archetype_id}})</a>{{/suggestion}}
+                            {{^suggestion}}No suggestion{{/suggestion}}
+                        </td>
+                        <td>
+                            <input type="hidden" name="deck_id" value="{{id}}">
+                            <select name="archetype_id">
+                                <option value="">[Select]</option>
+                                {{#archetypes}}
+                                    <option value="{{id}}">{{name}}</option>
+                                {{/archetypes}}
+                            </select>
+                        </td>
+                    </tr>
+                {{/queue}}
+            </tbody>
         </table>
         <input type="submit" value="Assign">
 </form>

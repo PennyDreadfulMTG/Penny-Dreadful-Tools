@@ -7,7 +7,7 @@ class EditArchetypes(View):
         self.archetypes = archetypes
         self.decks = decks
         self.roots = [a for a in self.archetypes if a.is_root]
-        self.queue = deck.load_decks(where='d.archetype_id = 9 OR d.archetype_id IS NULL', order_by='updated_date DESC', limit='LIMIT 10')
+        self.queue = deck.load_decks(where='NOT d.reviewed', order_by='updated_date DESC', limit='LIMIT 10')
         for d in self.queue:
             similar_decks = deck.get_similar_decks(d)
             if len(similar_decks) > 0:

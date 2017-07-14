@@ -94,7 +94,7 @@ def add(name, parent):
     return db().execute(sql)
 
 def assign(deck_id, archetype_id):
-    return db().execute('UPDATE deck SET archetype_id = ? WHERE id = ?', [archetype_id, deck_id])
+    return db().execute('UPDATE deck SET reviewed = TRUE AND archetype_id = ? WHERE id = ?', [archetype_id, deck_id])
 
 class Archetype(Container, NodeMixin):
     pass

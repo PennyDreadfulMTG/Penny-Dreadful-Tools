@@ -25,6 +25,12 @@
         "Sign up": "http://pennydreadfulmagic.com/signup/",
         "Results reporter": "http://pennydreadfulmagic.com/report/"
     },
+    "Search Engines": {
+        "Scryfall": "http://scryfall.com/search/?q=f:pd",
+        "Magidex": "https://magidex.com/search?q=f:pd",
+        "mtg.wtf": "http://mtg.wtf/card?q=f%3Apd",
+        "combodeck.net": "http://combodeck.net/"
+    },
     "Articles": {
           "Mrs. Mulligan SCG": "http://www.starcitygames.com/article/33860_Penny-Dreadful.html"
     },

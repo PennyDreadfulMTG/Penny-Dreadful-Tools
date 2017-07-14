@@ -36,7 +36,7 @@ class Rotation(View):
             hits_needed = max(84 - hits, 0)
             card = cs.get(name)
             percent = round(round(hits / self.runs, 2) * 100)
-            if remaining_runs = 0:
+            if remaining_runs == 0:
                 percent_needed = 0
             else:
                 percent_needed = round(round(hits_needed / remaining_runs, 2) * 100)

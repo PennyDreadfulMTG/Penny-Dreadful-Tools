@@ -104,7 +104,7 @@ def column_def(name, prop):
         primary_key = 'PRIMARY KEY' if prop['primary_key'] else ''
         default = 'DEFAULT {default}'.format(default=prop['default']) if prop['default'] is not None else ''
         unique = 'UNIQUE' if prop['unique'] else ''
-        if prop['type'].startswith('VARCHAR'):
+        if prop['type'].startswith('VARCHAR') or prop['type'] == 'LONGTEXT':
             prop['type'] = 'TEXT'
         if prop['type'] == 'BOOLEAN':
             prop['type'] = 'INTEGER'

@@ -48,7 +48,7 @@ def played_cards(where_clause='1 = 1'):
                 deck_id, card) AS deck_card_agg
         WHERE {where_clause}
         GROUP BY card
-        ORDER BY `season.n_decks` DESC, `season.count_decks` DESC, `season.n_maindecks` DESC, `season.count_maindecks` DESC
+        ORDER BY `season.n_decks` DESC, `season.count_decks` DESC, `season.n_maindecks` DESC, `season.count_maindecks` DESC, `all.n_decks` DESC, `all.count_decks` DESC, `all.n_maindecks` DESC, `all.count_maindecks` DESC
     """.format(where_clause=where_clause)
     cs = [Container(r) for r in db().execute(sql, [rotation.last_rotation().timestamp()] * 12)]
     cards = oracle.cards_by_name()

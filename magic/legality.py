@@ -58,6 +58,7 @@ def init():
     print('Updating Legalities...')
     assert len(oracle.legal_cards()) > 0
     all_known = oracle.load_card('island').legalities
+
     for s in SEASONS:
         if s == rotation.last_rotation_ex()['code']:
             break

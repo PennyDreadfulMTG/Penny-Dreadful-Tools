@@ -577,3 +577,13 @@ tr.current td:first-child a {
     background-color: #eee;
     padding: 0.5em;
 }
+
+/* Season Symbols */
+
+.ss:before {
+    margin-right: 0.1rem;
+    vertical-align: -0.1rem; /* None of the standard values line up the text and the image center. */
+}
+.ss {
+    margin-right: 0.35rem;
+}

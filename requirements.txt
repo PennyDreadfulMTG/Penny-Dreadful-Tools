@@ -16,3 +16,4 @@ pytz
 requests
 seaborn
 titlecase
+cachecontrol[filecache]

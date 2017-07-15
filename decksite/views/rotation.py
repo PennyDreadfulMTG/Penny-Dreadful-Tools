@@ -64,5 +64,9 @@ class Rotation(View):
     def subtitle(self):
         return 'Rotation'
 
+    # Don't preload 10,000 images.
+    def tooltips_url(self):
+        return None
+
 def redact(num):
     return ''.join(['█' for _ in str(num)])

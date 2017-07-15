@@ -6,7 +6,7 @@ from shared.database import get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
-SCHEMA_VERSION = 69
+SCHEMA_VERSION = 70
 
 def db():
     return DATABASE

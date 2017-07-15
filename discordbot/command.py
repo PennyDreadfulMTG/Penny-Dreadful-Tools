@@ -369,7 +369,7 @@ class Commands:
         imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
         imagepath = '{image_dir}/{imagename}.jpg'.format(image_dir=configuration.get('image_dir'), imagename=imagename)
         fetcher.internal.store(sfcard['image_uri'], imagepath)
-        text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=sfcard['mana_cost']), channel)
+        text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=sfcard['mana_cost']), bot.client)
         await bot.client.send_file(channel, imagepath, content=text)
         try:
             oracle.valid_name(sfcard['name'])
@@ -455,7 +455,7 @@ async def single_card_text(bot, channel, args, author, f):
         await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
     elif len(cards) == 1:
         legal_emjoi = emoji.legal_emoji(cards[0])
-        text = emoji.replace_emoji(f(cards[0]), channel)
+        text = emoji.replace_emoji(f(cards[0]), bot.client)
         message = '**{name}** {legal_emjoi} {text}'.format(name=cards[0].name, legal_emjoi=legal_emjoi, text=text)
         await bot.client.send_message(channel, message)
     else:

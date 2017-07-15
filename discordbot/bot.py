@@ -68,7 +68,7 @@ class Bot:
             cards = cards[:4]
         if len(cards) == 1:
             card = cards[0]
-            mana = emoji.replace_emoji(''.join(card.mana_cost or []), channel)
+            mana = emoji.replace_emoji(''.join(card.mana_cost or []), client)
             legal = ' — ' + emoji.legal_emoji(card, True)
             if disable_emoji:
                 legal = ''
@@ -88,7 +88,7 @@ class Bot:
         if image_file is None:
             text += '\n\n'
             if len(cards) == 1:
-                text += emoji.replace_emoji(cards[0].text, channel)
+                text += emoji.replace_emoji(cards[0].text, client)
             else:
                 text += 'No image available.'
         text += '\n' + additional_text

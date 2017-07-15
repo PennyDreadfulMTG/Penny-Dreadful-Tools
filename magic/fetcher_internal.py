@@ -7,11 +7,16 @@ from email.utils import formatdate
 
 import requests
 
+from cachecontrol import CacheControl
+from cachecontrol.caches.file_cache import FileCache
+
 from magic import database
 from shared import configuration
 from shared.pd_exception import OperationalException, DatabaseException
 
-SESSION = requests.Session()
+
+SESSION = CacheControl(requests.Session(),
+                       cache=FileCache('.web_cache'))
 
 def unzip(url, path):
     location = '{scratch_dir}/zip'.format(scratch_dir=configuration.get('scratch_dir'))
@@ -33,8 +38,8 @@ def fetch(url, character_encoding=None, resource_id=None, can_304=False):
     print('Fetching {url} (Last Modified={when})'.format(url=url, when=if_modified_since))
     try:
         headers = {}
-        if if_modified_since != None:
-            headers["If-Modified-Since"] = if_modified_since
+        # if if_modified_since != None:
+        #     headers["If-Modified-Since"] = if_modified_since
         response = SESSION.get(url, headers=headers)
         if character_encoding != None:
             response.encoding = character_encoding
@@ -44,7 +49,7 @@ def fetch(url, character_encoding=None, resource_id=None, can_304=False):
             else:
                 return get_cached_text(resource_id)
         last_modified = response.headers.get("Last-Modified")
-        set_last_modified(resource_id, last_modified, response.text)
+        set_last_modified(resource_id, last_modified)
         return response.text
     except urllib.error.HTTPError as e:
         raise FetchException(e)
@@ -75,7 +80,11 @@ def post(url, data):
 def store(url, path):
     print('Storing {url} in {path}'.format(url=url, path=path))
     try:
-        return urllib.request.urlretrieve(url, path)
+        response = requests.get(url, stream=True)
+        with open(path, 'wb') as fout:
+            for chunk in response.iter_content(1024):
+                fout.write(chunk)
+        return response
     except urllib.error.HTTPError as e:
         raise FetchException(e)
 

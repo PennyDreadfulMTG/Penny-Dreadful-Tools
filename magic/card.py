@@ -12,8 +12,6 @@ REAL = 'REAL'
 TEXT = 'LONGTEXT'
 VARCHAR = 'VARCHAR(191)'
 
-FALSE = 0
-
 BASE = {
     'type': VARCHAR,
     'nullable': True,

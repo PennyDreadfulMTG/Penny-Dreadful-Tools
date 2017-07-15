@@ -2,8 +2,11 @@ from magic import fetcher
 from shared import dtutil
 
 def init():
-    standard = fetcher.whatsinstandard()
-    return [parse_rotation_date(release) for release in standard]
+    info = fetcher.whatsinstandard()
+    if info['deprecated']:
+        print('Current whatsinstandard API version is DEPRECATED.')
+    sets = info['sets']
+    return [parse_rotation_date(release) for release in sets]
 
 def last_rotation():
     return last_rotation_ex()["enter_date"]

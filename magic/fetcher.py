@@ -60,7 +60,7 @@ def card_aliases():
         return list(csv.reader(f, dialect='excel-tab'))
 
 def whatsinstandard():
-    return internal.fetch_json('http://whatsinstandard.com/api/4/sets.json', resource_id='whatsinstandard')
+    return internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json', resource_id='whatsinstandard')
 
 def card_price(cardname):
     return internal.fetch_json('http://katelyngigante.com:5800/{0}/'.format(cardname.replace('//', '-split-')))

@@ -16,7 +16,7 @@ def test_imagedownload():
     assert image_fetcher.download_image(c) is not None
 
 # Check that we can fall back to the Gatherer images if all else fails.
-# Note: bluebones doesn't have Nalathni Dragon, while Gatherer does, which makes it slightly unique
+# Note: bluebones doesn't have Nalathni Dragon, while Gatherer does, which makes it useful here.
 def test_fallbackimagedownload():
     filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='nalathni-dragon.jpg')
     if fetcher_internal.acceptable_file(filepath):
@@ -25,12 +25,12 @@ def test_fallbackimagedownload():
     c.extend(oracle.cards_from_query('Nalathni Dragon'))
     assert image_fetcher.download_image(c) is not None
 
-# Check that we can succesfully fail at getting an image
+# Check that we can succesfully fail at getting an image.
 def test_noimageavailable():
     c = card.Card({'name': "Barry's Land", 'id': 0, 'multiverseid': 0, 'names': "Barry's Land"})
     assert image_fetcher.download_image([c]) is None
 
-# Search for a single card via full name
+# Search for a single card via full name,
 def test_solo_query():
     names = command.parse_queries('[Gilder Bairn]')
     assert len(names) == 1
@@ -84,25 +84,13 @@ def test_accents():
     assert len(cards) == 1
 
 def test_aether():
-    #cards = oracle.cards_from_query('Æther Spellbomb')
-    #assert len(cards) == 1
     cards = oracle.cards_from_query('aether Spellbomb')
     assert len(cards) == 1
-
-
-def test_fetcher_mod_since():
-    resource_id = 'test_fetcher_mod_since'
-    fetcher_internal.remove_last_modified(resource_id)
-    fetcher_internal.fetch("http://pdmtgo.com/legal_cards.txt", resource_id=resource_id)
-    assert fetcher_internal.get_last_modified(resource_id) is not None
-    assert fetcher_internal.get_cached_text(resource_id) is not None
 
 def test_split_cards():
     cards = oracle.cards_from_query('Armed // Dangerous')
     assert len(cards) == 1
-
     assert image_fetcher.download_image(cards) != None
-
     names = command.parse_queries('[Toil // Trouble]')
     assert len(names) == 1
     cards = command.cards_from_queries(names)

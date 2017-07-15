@@ -124,13 +124,12 @@ class View:
             icon = rotation.last_rotation_ex()['code'].lower()
             n = sets.index(icon.upper()) + 1
             d.legal_icons += '<i class="ss ss-{code} ss-rare ss-grad">S{n}</i>'.format(code=icon, n=n)
-        for fmt in d.legal_formats:
-            if fmt.startswith('Penny Dreadful '):
-                n = sets.index(fmt[15:].upper()) + 1
-                d.legal_icons += '<i class="ss ss-{set} ss-common ss-grad">S{n}</i>'.format(set=fmt[15:].lower(), n=n)
-        # if "Modern" in d.legal_formats:
-        #     d.legal_icons += '<i class="ss ss-8ed ss-uncommon ss-grad icon-modern">MDN</i>'
-        if 'Commander' in d.legal_formats: #I think C16 looks the nicest.
+        past_pd_formats = [fmt.replace('Penny Dreadful ', '') for fmt in d.legal_formats if 'Penny Dreadful ' in fmt]
+        past_pd_formats.sort(key=lambda code: -sets.index(code))
+        for code in past_pd_formats:
+            n = sets.index(code.upper()) + 1
+            d.legal_icons += '<i class="ss ss-{set} ss-common ss-grad">S{n}</i>'.format(set=code.lower(), n=n)
+        if 'Commander' in d.legal_formats: # I think C16 looks the nicest.
             d.legal_icons += '<i class="ss ss-c16 ss-uncommon ss-grad">CMDR</i>'
 
     def prepare_cards(self):
@@ -142,7 +141,6 @@ class View:
     def prepare_card(self, c):
         c.url = url_for('card', name=c.name)
         c.img_url = 'http://magic.bluebones.net/proxies/?c={name}'.format(name=urllib.parse.quote(c.name))
-        c.img_url = 'https://deckbox.org/mtg/' + c.name + '/tooltip'
         c.pd_legal = c.legalities.get('Penny Dreadful', False)
         c.legal_formats = set(c.legalities.keys())
         c.has_legal_format = len(c.legal_formats) > 0

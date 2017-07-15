@@ -187,7 +187,7 @@ class Commands:
     @cmd_header("Developer")
     async def echo(self, bot, channel, args):
         """Repeat after me..."""
-        s = emoji.replace_emoji(args, channel)
+        s = emoji.replace_emoji(args, bot.client)
         print('Echoing {s}'.format(s=s))
         await bot.client.send_message(channel, s)
 

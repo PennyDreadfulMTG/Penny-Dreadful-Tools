@@ -189,7 +189,7 @@ def math_where(column, operator, term):
     if operator == ':':
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
-        return '(FALSE)'
+        return '(1 <> 1)'
     return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=sqlescape(term))
 
 def color_where(subtable, operator, term):
@@ -234,7 +234,7 @@ def rarity_where(operator, term):
     if operator == ':':
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
-        return '(FALSE)'
+        return '(1 <> 1)'
     return "(c.id IN (SELECT card_id FROM printing WHERE rarity_id {operator} {rarity_id}))".format(operator=operator, rarity_id=rarity_id)
 
 def mana_where(operator, term):

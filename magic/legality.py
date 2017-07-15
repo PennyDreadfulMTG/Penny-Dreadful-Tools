@@ -1,7 +1,9 @@
 from magic.database import db
-from magic import oracle, multiverse
+from magic import oracle, multiverse, rotation
 
 FORMATS = set()
+
+SEASONS = ['EMN', 'KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX']
 
 def legal_in_format(d, f):
     return f in legal_formats(d, [f])
@@ -56,12 +58,11 @@ def init():
     print('Updating Legalities...')
     assert len(oracle.legal_cards()) > 0
     all_known = oracle.load_card('island').legalities
-    if not 'Penny Dreadful EMN' in all_known:
-        multiverse.set_legal_cards(season='EMN')
-    if not 'Penny Dreadful KLD' in all_known:
-        multiverse.set_legal_cards(season='KLD')
-    if not 'Penny Dreadful AER' in all_known:
-        multiverse.set_legal_cards(season='AER')
+    for s in SEASONS:
+        if s == rotation.last_rotation_ex()['code']:
+            break
+        if not 'Penny Dreadful {s}'.format(s=s) in all_known:
+            multiverse.set_legal_cards(season=s)
 
     FORMATS.clear()
     for v in db().values('SELECT name FROM format'):

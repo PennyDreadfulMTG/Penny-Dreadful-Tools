@@ -21,9 +21,6 @@ def fetch():
     sets = parse_sets(s)
     for code in sets:
         for suffix in ['', '_F']:
-            if code == 'PZ' and suffix == '_F':
-                print('Explicitly skipping PZ_F because it is a lie.')
-                continue
             code = '{code}{suffix}'.format(code=code, suffix=suffix)
             url = set_url(code)
             s = fetcher_internal.fetch(url)

@@ -142,9 +142,10 @@ def add_deck(params):
         wins,
         losses,
         draws,
-        finish
+        finish,
+        reviewed
     ) VALUES (
-         IFNULL(%s, UNIX_TIMESTAMP()),  UNIX_TIMESTAMP(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+         IFNULL(%s, UNIX_TIMESTAMP()),  UNIX_TIMESTAMP(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, FALSE
     )"""
     values = [
         created_date,

@@ -201,7 +201,7 @@ def deckcycle_tappedout():
 
 @APP.route('/admin/archetypes/')
 def edit_archetypes():
-    view = EditArchetypes(archs.load_archetypes_deckless(order_by='a.name'), deck.load_decks())
+    view = EditArchetypes(archs.load_archetypes_deckless(order_by='a.name'))
     return view.page()
 
 @APP.route('/admin/archetypes/', methods=['POST'])

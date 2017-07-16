@@ -71,6 +71,8 @@ def test_normalize():
     assert deck_name.normalize(d) == 'Mono Black Aristocrats III'
     d.name = 'Mono B Aristocrats VI'
     assert deck_name.normalize(d) == 'Mono Black Aristocrats VI'
+    d.name = 'Suicide Black'
+    assert deck_name.normalize(d) == 'Suicide Black'
 
     # Undefined cases
     # d.name = 'U/B Aggro' when d.archetype = 'Control'

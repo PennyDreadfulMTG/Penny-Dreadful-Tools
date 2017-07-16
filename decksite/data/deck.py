@@ -71,11 +71,15 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
 
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks
 # we will claim your deck is neither W nor G which is not true. But this should cover most cases.
+# We also ignore split cards so if you are genuinely using a color in a split card but have no other cards of that color
+# we won't claim it as one of the deck's colors.
 def set_colors(d):
     deck_colors = set()
     deck_colored_symbols = []
     for card in [c['card'] for c in d.maindeck + d.sideboard]:
         for cost in card.get('mana_cost') or ():
+            if card.layout == 'split':
+                continue # They might only be using one half so ignore it.
             card_symbols = mana.parse(cost)
             card_colors = mana.colors(card_symbols)
             deck_colors.update(card_colors['required'])

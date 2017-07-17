@@ -162,6 +162,7 @@ ul.archetypes, .archetypes ul {
 table {
     border-collapse: separate;
     border-spacing: 0.25rem 0;
+    margin-bottom: 1rem;
 }
 
 table.with-marginalia {

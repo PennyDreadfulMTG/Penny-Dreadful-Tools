@@ -10,31 +10,6 @@
 </section>
 {{#has_matches}}
     <section>
-        <h2>League</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th data-sortInitialOrder="desc">Result</th>
-                    <th>Versus</th>
-                    <th>Opponent</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#matches}}
-                    <tr>
-                        <td class="n">{{game_wins}}–{{game_losses}}</td>
-                        <td><a href="{{opponent_deck_url}}">{{opponent_deck_name}}</a></td>
-                        <td><a href="{{opponent_url}}">{{opponent}}</a></td>
-                        <td>{{display_date}}</td>
-                    </tr>
-                {{/matches}}
-            </tbody>
-        </table>
-    </section>
-{{/has_matches}}
-{{#competition_id}}
-    <section>
         <h2>Competition</h2>
         <table class="with-marginalia">
             <thead>
@@ -52,12 +27,42 @@
                     <td><a href="{{competition_url}}">{{competition_name}}</a></td>
                     <td class="n" ><ahref="{{competition_url}}">{{> record}}</a></td>
                     <td class="c"><a href="{{competition_url}}">{{top8}}</a></td>
-                    {{#show_omw}}<td class="n"><a href="{{competition_url}}">{{omw}}</a></td>{{/show_omw}}
+                    <td class="n"><a href="{{competition_url}}">{{omw}}</a></td>
                 </tr>
             </tbody>
         </table>
+        <table>
+            <thead>
+                <tr>
+                    {{#has_rounds}}
+                        <th>Round</th>
+                    {{/has_rounds}}
+                    <th data-sortInitialOrder="desc">Result</th>
+                    <th>Versus</th>
+                    <th>Opponent</th>
+                    {{^has_rounds}}
+                        <th>Date</th>
+                    {{/has_rounds}}
+                </tr>
+            </thead>
+            <tbody>
+                {{#matches}}
+                    <tr>
+                        {{#has_rounds}}
+                            <td class="n">{{display_round}}</td>
+                        {{/has_rounds}}
+                        <td class="n">{{game_wins}}–{{game_losses}}</td>
+                        <td><a href="{{opponent_deck_url}}">{{opponent_deck_name}}</a></td>
+                        <td><a href="{{opponent_url}}">{{opponent}}</a></td>
+                        {{^has_rounds}}
+                            <td>{{display_date}}</td>
+                        {{/has_rounds}}
+                    </tr>
+                {{/matches}}
+            </tbody>
+        </table>
     </section>
-{{/competition_id}}
+{{/has_matches}}
 {{#has_similar}}
     <section>
         <h2>Similar Decks</h2>

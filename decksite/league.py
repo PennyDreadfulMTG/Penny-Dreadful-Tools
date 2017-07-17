@@ -71,7 +71,7 @@ class ReportForm(Form):
         if len(self.opponent) == 0:
             self.errors['opponent'] = "Please select your opponent's deck"
         else:
-            for match in get_matches(self):
+            for match in deck.get_matches(self):
                 if int(self.opponent) == match.opponent_deck_id:
                     self.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=match.game_wins, game_losses=match.game_losses, opponent=match.opponent, date=dtutil.display_date(match.date))
         if len(self.result) == 0:
@@ -101,7 +101,7 @@ def active_decks_by(mtgo_username):
 
 def report(form):
     db().begin()
-    match_id = insert_match(form)
+    match_id = deck.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games)
     winner, loser = winner_and_loser(form)
     if winner:
         db().execute('UPDATE deck SET wins = (SELECT COUNT(*) FROM decksite.deck_match WHERE `deck_id` = %s AND `games` = 2) WHERE `id` = %s', [winner, winner])
@@ -134,33 +134,6 @@ def active_league():
         comp_id = competition.get_or_insert_competition(start_date, end_date, name, "League", 'http://pennydreadfulmagic.com/league/')
         leagues = [competition.load_competition(comp_id)]
     return guarantee.exactly_one(leagues)
-
-def insert_match(params):
-    match_id = db().insert("INSERT INTO `match` (`date`) VALUES (%s)", [time.time()])
-    sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
-    db().execute(sql, [params.entry, match_id, params.entry_games])
-    db().execute(sql, [params.opponent, match_id, params.opponent_games])
-    return match_id
-
-def get_matches(d, load_decks=False):
-    sql = """
-        SELECT m.`date`, m.id, dm2.deck_id AS opponent_deck_id, dm1.games AS game_wins, dm2.games AS game_losses, d2.name AS opponent_deck_name, p.mtgo_username AS opponent
-        FROM `match` AS m
-        INNER JOIN deck_match AS dm1 ON m.id = dm1.match_id AND dm1.deck_id = %s
-        INNER JOIN deck_match AS dm2 ON m.id = dm2.match_id AND dm2.deck_id <> %s
-        INNER JOIN deck AS d1 ON dm1.deck_id = d1.id
-        INNER JOIN deck AS d2 ON dm2.deck_id = d2.id
-        INNER JOIN person AS p ON p.id = d2.person_id
-    """
-    matches = [Container(m) for m in db().execute(sql, [d.id, d.id])]
-    if load_decks and len(matches) > 0:
-        decks = deck.load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(m.opponent_deck_id)) for m in matches])))
-        decks_by_id = {d.id: d for d in decks}
-    for m in matches:
-        m.date = dtutil.ts2dt(m.date)
-        if load_decks:
-            m.opponent_deck = decks_by_id[m.opponent_deck_id]
-    return matches
 
 def determine_end_of_league(start_date):
     if start_date.day < 15:

@@ -16,7 +16,7 @@ class Deck(View):
         # This is called 'decks' and not something more sane because of limitations of Mustache and our desire to use a partial for decktable.
         self.decks = deck.get_similar_decks(d)
         self.has_similar = len(self.decks) > 0
-        self.matches = league.get_matches(d, True)
+        self.matches = deck.get_matches(d, True)
         for m in self.matches:
             m.display_date = dtutil.display_date(m.date)
             m.opponent_url = url_for('person', person_id=m.opponent)

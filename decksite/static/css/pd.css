@@ -162,6 +162,7 @@ ul.archetypes, .archetypes ul {
 table {
     border-collapse: separate;
     border-spacing: 0.25rem 0;
+    margin-bottom: 1rem;
 }
 
 table.with-marginalia {
@@ -191,14 +192,6 @@ td, th {
 /* Allow the stars in the margin to show. */
 td.marginalia:first-child, th.marginalia:first-child {
     overflow: visible;
-}
-
-td:first-child, th:first-child {
-    margin-left: -0.25rem; /* remove border-spacing */
-}
-
-td:last-child, th:last-child {
-    margin-right: -0.25rem; /* remove border-spacing */
 }
 
 td:first-child, td:last-child, th:first-child, th:last-child {

@@ -5,7 +5,7 @@ import sys
 def run():
     if len(sys.argv) == 0:
         print("No entry point specified.")
-        exit(1)
+        sys.exit(1)
 
     if "discordbot" in sys.argv:
         from discordbot import bot
@@ -50,5 +50,7 @@ def run():
         sys.exit(code)
     else:
         print("You didn't tell me what to run or I don't recognize that name")
+        sys.exit(1)
+    sys.exit(0)
 
 run()

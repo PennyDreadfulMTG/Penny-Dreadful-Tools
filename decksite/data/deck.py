@@ -23,7 +23,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         order_by = 'd.created_date DESC, IFNULL(d.finish, 9999999999)'
     sql = """
         SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.draws, d.finish, d.archetype_id, d.url AS source_url,
-            d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date, ct.name AS competition_type_name,
+            d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date, ct.name AS competition_type_name, d.identifier,
             {person_query} AS person, p.id AS person_id,
             d.created_date AS `date`, d.decklist_hash, d.retired,
             s.name AS source_name, IFNULL(a.name, '') AS archetype_name,
@@ -174,7 +174,7 @@ def add_deck(params):
     add_cards(deck_id, params['cards'])
     d = load_deck(deck_id)
     prime_cache(d)
-    return deck_id
+    return d
 
 def prime_cache(d):
     set_colors(d)
@@ -246,6 +246,41 @@ def similarity_score(a, b):
         if card in b.maindeck:
             score += 1
     return float(score) / float(len(b.maindeck))
+
+# pylint: disable=too-many-arguments
+def insert_match(dt, left_id, left_games, right_id, right_games, round_num=None, elimination=False):
+    match_id = db().insert("INSERT INTO `match` (`date`, `round`, elimination) VALUES (%s, %s, %s)", [dtutil.dt2ts(dt), round_num, elimination])
+    sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
+    db().execute(sql, [left_id, match_id, left_games])
+    if right_id is not None: # Don't insert matches for the bye.
+        db().execute(sql, [right_id, match_id, right_games])
+    return match_id
+
+def get_matches(d, should_load_decks=False):
+    sql = """
+        SELECT
+            m.`date`, m.id, m.round, m.elimination,
+            dm1.games AS game_wins,
+            dm2.deck_id AS opponent_deck_id, dm2.games AS game_losses,
+            d2.name AS opponent_deck_name,
+            p.mtgo_username AS opponent
+        FROM `match` AS m
+        INNER JOIN deck_match AS dm1 ON m.id = dm1.match_id AND dm1.deck_id = %s
+        INNER JOIN deck_match AS dm2 ON m.id = dm2.match_id AND dm2.deck_id <> %s
+        INNER JOIN deck AS d1 ON dm1.deck_id = d1.id
+        INNER JOIN deck AS d2 ON dm2.deck_id = d2.id
+        INNER JOIN person AS p ON p.id = d2.person_id
+        ORDER BY round
+    """
+    matches = [Container(m) for m in db().execute(sql, [d.id, d.id])]
+    if should_load_decks and len(matches) > 0:
+        decks = load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(m.opponent_deck_id)) for m in matches])))
+        decks_by_id = {d.id: d for d in decks}
+    for m in matches:
+        m.date = dtutil.ts2dt(m.date)
+        if should_load_decks:
+            m.opponent_deck = decks_by_id[m.opponent_deck_id]
+    return matches
 
 # pylint: disable=too-many-instance-attributes
 class Deck(Container):

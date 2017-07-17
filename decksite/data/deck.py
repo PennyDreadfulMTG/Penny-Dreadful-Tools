@@ -255,7 +255,7 @@ def insert_match(dt, left_id, left_games, right_id, right_games, round_num=None,
         db().execute(sql, [right_id, match_id, right_games])
     return match_id
 
-def get_matches(d, load_decks=False):
+def get_matches(d, should_load_decks=False):
     sql = """
         SELECT
             m.`date`, m.id, m.round, m.elimination,
@@ -272,12 +272,12 @@ def get_matches(d, load_decks=False):
         ORDER BY round
     """
     matches = [Container(m) for m in db().execute(sql, [d.id, d.id])]
-    if load_decks and len(matches) > 0:
-        decks = deck.load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(m.opponent_deck_id)) for m in matches])))
+    if should_load_decks and len(matches) > 0:
+        decks = load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(m.opponent_deck_id)) for m in matches])))
         decks_by_id = {d.id: d for d in decks}
     for m in matches:
         m.date = dtutil.ts2dt(m.date)
-        if load_decks:
+        if should_load_decks:
             m.opponent_deck = decks_by_id[m.opponent_deck_id]
     return matches
 

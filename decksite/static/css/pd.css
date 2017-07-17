@@ -194,14 +194,6 @@ td.marginalia:first-child, th.marginalia:first-child {
     overflow: visible;
 }
 
-td:first-child, th:first-child {
-    margin-left: -0.25rem; /* remove border-spacing */
-}
-
-td:last-child, th:last-child {
-    margin-right: -0.25rem; /* remove border-spacing */
-}
-
 td:first-child, td:last-child, th:first-child, th:last-child {
     margin: 0;
     padding: 0;

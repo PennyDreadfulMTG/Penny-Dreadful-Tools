@@ -104,7 +104,7 @@ def add_deck():
     if "tappedout" in url:
         import decksite.scrapers.tappedout
         try:
-            deck_id = decksite.scrapers.tappedout.scrape_url(url)
+            deck_id = decksite.scrapers.tappedout.scrape_url(url).id
         except InvalidDataException as e:
             error = e.args[0]
     else:
@@ -164,9 +164,9 @@ def signup(form=None):
 def add_signup():
     form = SignUpForm(request.form)
     if form.validate():
-        deck_id = lg.signup(form)
-        response = make_response(redirect(url_for('decks', deck_id=deck_id)))
-        response.set_cookie('deck_id', str(deck_id))
+        d = lg.signup(form)
+        response = make_response(redirect(url_for('decks', deck_id=d.id)))
+        response.set_cookie('deck_id', str(d.id))
         return response
     else:
         return signup(form)

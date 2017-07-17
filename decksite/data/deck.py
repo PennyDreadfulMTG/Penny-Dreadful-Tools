@@ -174,7 +174,7 @@ def add_deck(params):
     add_cards(deck_id, params['cards'])
     d = load_deck(deck_id)
     prime_cache(d)
-    return deck_id
+    return d
 
 def prime_cache(d):
     set_colors(d)

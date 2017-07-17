@@ -23,7 +23,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         order_by = 'd.created_date DESC, IFNULL(d.finish, 9999999999)'
     sql = """
         SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.draws, d.finish, d.archetype_id, d.url AS source_url,
-            d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date, ct.name AS competition_type_name,
+            d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date, ct.name AS competition_type_name, d.identifier,
             {person_query} AS person, p.id AS person_id,
             d.created_date AS `date`, d.decklist_hash, d.retired,
             s.name AS source_name, IFNULL(a.name, '') AS archetype_name,

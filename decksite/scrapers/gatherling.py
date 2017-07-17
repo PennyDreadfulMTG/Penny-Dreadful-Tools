@@ -43,10 +43,12 @@ def tournament(url, name):
 
     dt = dtutil.parse(date_s, '%d %B %Y %H:%M', dtutil.GATHERLING_TZ)
     competition_id = competition.get_or_insert_competition(dt, dt, name, 'Gatherling', url)
-
     table = soup.find(text='Current Standings').find_parent('table')
     ranks = rankings(table)
 
+    return add_decks(dt, competition_id, ranks, s)
+
+def add_decks(dt, competition_id, ranks, s):
     # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.
     rows = re.findall('<tr style=">(.*?)</tr>', s, re.MULTILINE | re.DOTALL)
     decks_added, matches, ds = 0, [], []
@@ -57,7 +59,6 @@ def tournament(url, name):
             decks_added += 1
             ds.append(d)
             matches += tournament_matches(d)
-            print(matches)
     add_ids(matches, ds)
     insert_matches_without_dupes(dt, matches)
     return decks_added
@@ -137,6 +138,9 @@ def tournament_matches(d):
     rows = table.find_all('tr')
     rows.pop(0) # skip header
     rows.pop() # skip empty last row
+    return find_matches(d, rows)
+
+def find_matches(d, rows):
     matches = []
     for row in rows:
         tds = row.find_all('td')
@@ -153,13 +157,12 @@ def tournament_matches(d):
             round_num += 1
         else:
             raise InvalidDataException('Round was neither Swiss (R) nor Top 4/8 (T) in {round_type} for {id}'.format(round_type=round_type, id=d.id))
-        print(round_num)
         if 'Bye' in tds[1].renderContents().decode('utf-8') or 'No Deck Found' in tds[5].renderContents().decode('utf-8'):
             left_games, right_games, right_identifier = 2, 0, None
         else:
             left_games, right_games = tds[2].string.split(' - ')
             href = tds[5].find('a')['href']
-            right_identifier = re.findall('id=(\d+)', href)[0]
+            right_identifier = re.findall(r'id=(\d+)', href)[0]
         matches.append({
             'round': round_num,
             'elimination': elimination,

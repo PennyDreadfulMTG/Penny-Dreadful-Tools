@@ -247,6 +247,7 @@ def similarity_score(a, b):
             score += 1
     return float(score) / float(len(b.maindeck))
 
+# pylint: disable=too-many-arguments
 def insert_match(dt, left_id, left_games, right_id, right_games, round_num=None, elimination=False):
     match_id = db().insert("INSERT INTO `match` (`date`, `round`, elimination) VALUES (%s, %s, %s)", [dtutil.dt2ts(dt), round_num, elimination])
     sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'

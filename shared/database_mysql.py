@@ -23,7 +23,7 @@ class MysqlDatabase(GenericDatabase):
             try:
                 self.execute("USE {db}".format(db=db))
             except DatabaseException:
-                print('creating Database {db}'.format(db=db))
+                print('Creating database {db}'.format(db=db))
                 self.execute("CREATE DATABASE {db}".format(db=db))
                 self.execute("USE {db}".format(db=db))
         except MySQLdb.Error as e:

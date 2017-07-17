@@ -1,11 +1,12 @@
 from flask import url_for
 import inflect
 
-from decksite import deck_name, league
+from decksite import deck_name
 from decksite.data import deck
 from decksite.view import View
 from magic import oracle
 from shared import dtutil
+from shared.pd_exception import InvalidDataException
 
 # pylint: disable=no-self-use
 class Deck(View):

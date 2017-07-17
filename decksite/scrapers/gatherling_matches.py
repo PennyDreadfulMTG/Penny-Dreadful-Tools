@@ -3,7 +3,9 @@ from decksite.scrapers import gatherling
 
 # Script to scrape match results without scraping decklists so we can backfill all Gatherling results without rescraping decks.
 
-def scrape(ignore_competition_ids=[]):
+def scrape(ignore_competition_ids=None):
+    if ignore_competition_ids is None:
+        ignore_competition_ids = []
     where = "d.id NOT IN (SELECT deck_id FROM deck_match) AND d.source_id = (SELECT id FROM source WHERE name = 'Gatherling')"
     if ignore_competition_ids:
         where += ' AND d.competition_id NOT IN ({ids})'.format(ids=', '.join([str(id) for id in ignore_competition_ids]))

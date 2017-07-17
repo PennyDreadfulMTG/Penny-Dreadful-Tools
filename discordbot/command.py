@@ -129,15 +129,14 @@ class Commands:
         if args:
             msg = build_help(cmd=args)
         else:
-            msg = """Basic bot usage: Include [cardname] in your regular messages.
-    The bot will search for any quoted cards, and respond with the card details.
-
-    Additional Commands:"""
+            msg = """[cardname] to get card details.
+"""
             msg += build_help()
             msg += """
 
-    Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues
-    Want to contribute? Send a Pull Request."""
+Suggestions/bug reports: <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues/>
+
+Want to contribute? Send a Pull Request."""
         await bot.client.send_message(channel, msg)
 
     @cmd_header("Commands")

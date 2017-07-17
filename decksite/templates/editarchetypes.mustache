@@ -40,26 +40,6 @@
 
 <h2>Assign Decks</h2>
 
-<form method="post">
-    <div class="field">
-        <select name="deck_id">
-            {{#decks}}
-                <option value="{{id}}">{{name}} ({{archetype_name}})</option>
-            {{/decks}}
-        </select>
-    </div>
-    <div class="field">
-        <select name="archetype_id">
-            {{#archetypes}}
-                <option value="{{id}}">{{name}}</option>
-            {{/archetypes}}
-        </select>
-    </div>
-    <div class="field">
-        <input type="submit" value="Assign">
-    </div>
-</form>
-
 <table>
     {{#roots}}
         {{#archetype_tree}}

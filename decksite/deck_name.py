@@ -82,15 +82,17 @@ def expand_common_abbreviations(name):
     return name.replace('rdw', 'red deck wins').replace('ww', 'white weenie').replace('muc', 'mono blue control').replace('mbc', 'mono black control')
 
 def prepend_colors(s, colors):
-    prefix = name_from_colors(colors, s)
-    return '{prefix} {s}'.format(prefix=prefix, s=s).strip()
+    colors_part = name_from_colors(colors, s)
+    if s == 'suicide':
+        return '{s} {colors_part}'.format(colors_part=colors_part, s=s)
+    return '{colors_part} {s}'.format(colors_part=colors_part, s=s).strip()
 
 def name_from_colors(colors, s=''):
     ordered = mana.order(colors)
     for name, symbols in COLOR_COMBINATIONS.items():
         if mana.order(symbols) == ordered:
             if len(symbols) == 1:
-                if s.startswith('deck wins') or s.startswith('weenie'):
+                if s.startswith('deck wins') or s.startswith('weenie') or s.startswith('suicide'):
                     return name
                 return 'mono {name}'.format(name=name)
             return name

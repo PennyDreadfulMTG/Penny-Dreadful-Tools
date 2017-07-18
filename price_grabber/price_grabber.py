@@ -18,7 +18,7 @@ def fetch():
     all_prices = {}
     url = 'https://www.mtggoldfish.com/prices/select'
     s = fetcher_internal.fetch(url)
-    sets = parse_sets(s)
+    sets = parse_sets(s) + ['TD0', 'TD2'] # Theme decks pages not linked from /prices/select
     for code in sets:
         for suffix in ['', '_F']:
             code = '{code}{suffix}'.format(code=code, suffix=suffix)

@@ -20,9 +20,19 @@ class Deck(View):
         self.matches = deck.get_matches(d, True)
         for m in self.matches:
             m.display_date = dtutil.display_date(m.date)
-            m.opponent_url = url_for('person', person_id=m.opponent)
-            m.opponent_deck_url = url_for('decks', deck_id=m.opponent_deck_id)
-            m.opponent_deck_name = deck_name.normalize(m.opponent_deck)
+            if m.opponent:
+                m.opponent_url = url_for('person', person_id=m.opponent)
+            else:
+                m.opponent = 'BYE'
+                m.opponent_url = False
+            if m.opponent_deck_id:
+                m.opponent_deck_url = url_for('decks', deck_id=m.opponent_deck_id)
+            else:
+                m.opponent_deck_url = False
+            if m.opponent_deck:
+                m.opponent_deck_name = deck_name.normalize(m.opponent_deck)
+            else:
+                m.opponent_deck_name = '-'
             if self.has_rounds():
                 m.display_round = display_round(m)
         self._deck['maindeck'].sort(key=lambda x: oracle.deck_sort(x['card']))

@@ -261,15 +261,15 @@ def get_matches(d, should_load_decks=False):
         SELECT
             m.`date`, m.id, m.round, m.elimination,
             dm1.games AS game_wins,
-            dm2.deck_id AS opponent_deck_id, dm2.games AS game_losses,
+            dm2.deck_id AS opponent_deck_id, IFNULL(dm2.games, 0) AS game_losses,
             d2.name AS opponent_deck_name,
             p.mtgo_username AS opponent
         FROM `match` AS m
         INNER JOIN deck_match AS dm1 ON m.id = dm1.match_id AND dm1.deck_id = %s
-        INNER JOIN deck_match AS dm2 ON m.id = dm2.match_id AND dm2.deck_id <> %s
+        LEFT JOIN deck_match AS dm2 ON m.id = dm2.match_id AND dm2.deck_id <> %s
         INNER JOIN deck AS d1 ON dm1.deck_id = d1.id
-        INNER JOIN deck AS d2 ON dm2.deck_id = d2.id
-        INNER JOIN person AS p ON p.id = d2.person_id
+        LEFT JOIN deck AS d2 ON dm2.deck_id = d2.id
+        LEFT JOIN person AS p ON p.id = d2.person_id
         ORDER BY round
     """
     matches = [Container(m) for m in db().execute(sql, [d.id, d.id])]
@@ -278,8 +278,10 @@ def get_matches(d, should_load_decks=False):
         decks_by_id = {d.id: d for d in decks}
     for m in matches:
         m.date = dtutil.ts2dt(m.date)
-        if should_load_decks:
+        if should_load_decks and m.opponent_deck_id is not None:
             m.opponent_deck = decks_by_id[m.opponent_deck_id]
+        elif should_load_decks:
+            m.opponent_deck = None
     return matches
 
 # pylint: disable=too-many-instance-attributes

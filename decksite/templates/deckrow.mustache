@@ -28,12 +28,12 @@
     <td class="n" data-text="{{date_sort}}">
         {{display_date}}
     </td>
+    {{#similarity_score}}
+        <td class="n">{{similarity_score}}%</td>
+    {{/similarity_score}}
     <td>
         {{#has_legal_format}}
             {{{legal_icons}}}
         {{/has_legal_format}}
     </td>
-    {{#similarity_score}}
-        <td class="n">{{similarity_score}}%</td>
-    {{/similarity_score}}
 </tr>

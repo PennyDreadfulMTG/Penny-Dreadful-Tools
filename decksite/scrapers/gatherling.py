@@ -8,6 +8,7 @@ from shared import dtutil
 from shared.pd_exception import InvalidDataException
 
 from decksite.data import competition, deck
+from decksite.database import db
 from decksite.scrapers import decklist
 
 WINNER = '1st'
@@ -42,16 +43,24 @@ def tournament(url, name):
 
     dt = dtutil.parse(date_s, '%d %B %Y %H:%M', dtutil.GATHERLING_TZ)
     competition_id = competition.get_or_insert_competition(dt, dt, name, 'Gatherling', url)
-
     table = soup.find(text='Current Standings').find_parent('table')
     ranks = rankings(table)
 
+    return add_decks(dt, competition_id, ranks, s)
+
+def add_decks(dt, competition_id, ranks, s):
     # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.
     rows = re.findall('<tr style=">(.*?)</tr>', s, re.MULTILINE | re.DOTALL)
-    decks_added = 0
+    decks_added, matches, ds = 0, [], []
     for row in rows:
         cells = BeautifulSoup(row, 'html.parser').find_all('td')
-        decks_added += tournament_deck(cells, competition_id, dt, ranks)
+        d = tournament_deck(cells, competition_id, dt, ranks)
+        if d is not None:
+            decks_added += 1
+            ds.append(d)
+            matches += tournament_matches(d)
+    add_ids(matches, ds)
+    insert_matches_without_dupes(dt, matches)
     return decks_added
 
 def rankings(table):
@@ -110,13 +119,77 @@ def tournament_deck(cells, competition_id, date, ranks):
     gatherling_id = urllib.parse.parse_qs(urllib.parse.urlparse(d['url']).query)['id'][0]
     d['identifier'] = gatherling_id
     if deck.get_deck_id(d['source'], d['identifier']) is not None:
-        return 0
+        return None
     d['cards'] = decklist.parse(fetcher.internal.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
     if len(d['cards']) == 0:
         print('Rejecting deck with id {id} because it has no cards.'.format(id=gatherling_id))
-        return 0
-    deck.add_deck(d)
-    return 1
+        return None
+    return deck.add_deck(d)
+
+def tournament_matches(d):
+    url = 'http://gatherling.com/deck.php?mode=view&id={identifier}'.format(identifier=d.identifier)
+    s = fetcher.internal.fetch(url, character_encoding='utf-8')
+    soup = BeautifulSoup(s, 'html.parser')
+    anchor = soup.find(string='MATCHUPS')
+    if anchor is None:
+        print('Skipping {id} because it has no MATCHUPS.'.format(id=d.id))
+        return []
+    table = anchor.findParents('table')[0]
+    rows = table.find_all('tr')
+    rows.pop(0) # skip header
+    rows.pop() # skip empty last row
+    return find_matches(d, rows)
+
+def find_matches(d, rows):
+    matches = []
+    for row in rows:
+        tds = row.find_all('td')
+        if 'No matches were found for this deck' in tds[0].renderContents().decode('utf-8'):
+            print('Skipping {identifier} because it played no matches.'.format(identifier=d.identifier))
+            break
+        round_type, num = re.findall(r'([TR])(\d+)', tds[0].string)[0]
+        num = int(num)
+        if round_type == 'R':
+            elimination = 0
+            round_num = num
+        elif round_type == 'T':
+            elimination = num
+            round_num += 1
+        else:
+            raise InvalidDataException('Round was neither Swiss (R) nor Top 4/8 (T) in {round_type} for {id}'.format(round_type=round_type, id=d.id))
+        if 'Bye' in tds[1].renderContents().decode('utf-8') or 'No Deck Found' in tds[5].renderContents().decode('utf-8'):
+            left_games, right_games, right_identifier = 2, 0, None
+        else:
+            left_games, right_games = tds[2].string.split(' - ')
+            href = tds[5].find('a')['href']
+            right_identifier = re.findall(r'id=(\d+)', href)[0]
+        matches.append({
+            'round': round_num,
+            'elimination': elimination,
+            'left_games': left_games,
+            'left_identifier': d.identifier,
+            'right_games': right_games,
+            'right_identifier': right_identifier
+        })
+    return matches
+
+def insert_matches_without_dupes(dt, matches):
+    db().begin()
+    inserted = {}
+    for m in matches:
+        reverse_key = str(m['round']) + '|' + str(m['right_id']) + '|' + str(m['left_id'])
+        if inserted.get(reverse_key):
+            continue
+        deck.insert_match(dt, m['left_id'], m['left_games'], m['right_id'], m['right_games'], m['round'], m['elimination'])
+        key = str(m['round']) + '|' + str(m['left_id']) + '|' + str(m['right_id'])
+        inserted[key] = True
+    db().commit()
+
+def add_ids(matches, ds):
+    decks_by_identifier = {d.identifier: d for d in ds}
+    for m in matches:
+        m['left_id'] = decks_by_identifier[m['left_identifier']].id
+        m['right_id'] = decks_by_identifier[m['right_identifier']].id if m['right_identifier'] else None
 
 def gatherling_url(href):
     if href.startswith('http'):

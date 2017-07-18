@@ -104,7 +104,7 @@ def create_tables():
         `time` INTEGER,
         name VARCHAR(150),
         price INTEGER,
-        INDEX idx_name (name)
+        INDEX idx_name_time_price (name, `time`, price)
     )"""
     execute(sql)
 

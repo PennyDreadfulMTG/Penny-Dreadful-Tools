@@ -249,7 +249,7 @@ def similarity_score(a, b):
     for card in a.maindeck:
         if card in b.maindeck:
             score += 1
-    return float(score) / float(len(b.maindeck))
+    return float(score) / float(max(len(a.maindeck), len(b.maindeck)))
 
 # pylint: disable=too-many-arguments
 def insert_match(dt, left_id, left_games, right_id, right_games, round_num=None, elimination=False):

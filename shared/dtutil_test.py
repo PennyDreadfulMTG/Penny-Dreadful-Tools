@@ -58,3 +58,6 @@ def test_display_date():
     assert dtutil.display_date(dt).find('days') >= 0
     assert dtutil.display_date(dt).find('from now') >= 0
     assert dtutil.display_date(dt).find('ago') == -1
+    dt = datetime.datetime.now(datetime.timezone.utc)
+    assert dtutil.display_date(dt).find('just now') >= 0
+    assert dtutil.display_date(dt).find('from now') == -1

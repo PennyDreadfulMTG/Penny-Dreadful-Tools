@@ -45,10 +45,10 @@ def display_date(dt, granularity=1):
         return '{:%b %d}'.format(dt.astimezone(WOTC_TZ))
     else:
         suffix = 'ago' if start > dt else 'from now'
-        diff = abs(start - dt)
+        diff = round(abs(start - dt).total_seconds())
         if diff == 0:
             return 'just now'
-        return '{duration} {suffix}'.format(duration=display_time(diff.total_seconds(), granularity), suffix=suffix)
+        return '{duration} {suffix}'.format(duration=display_time(diff, granularity), suffix=suffix)
 
 def display_time(seconds, granularity=2):
     intervals = (

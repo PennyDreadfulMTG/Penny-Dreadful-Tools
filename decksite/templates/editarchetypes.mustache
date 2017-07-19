@@ -38,7 +38,36 @@
         <input type="submit" value="Assign">
 </form>
 
-<h2>Assign Decks</h2>
+<h2>By Card</h2>
+
+<form method="post">
+    <input type="text" name="q">
+    <input type="submit" value="Search">
+</form>
+
+{{#has_search_results}}
+    <form method="post">
+        <table>
+            {{#search_results}}
+                <tr>
+                    <td><a href="{{url}}">{{name}}</a></td>
+                    <td><a href="{{archetype_url}}">{{archetype_name}}</a></td>
+                    <td><input type="checkbox" name="deck_id" value="{{id}}"></td>
+                </tr>
+            {{/search_results}}
+        </table>
+        <label for="archetype_id">Archetype:</label>
+        <select name="archetype_id">
+            <option value="">[Select]</option>
+            {{#archetypes}}
+                <option value="{{id}}">{{name}}</option>
+            {{/archetypes}}
+        </select>
+        <input type="submit" value="Reassign">
+    </form>
+{{/has_search_results}}
+
+<h2>Add Archetype</h2>
 
 <table>
     {{#roots}}

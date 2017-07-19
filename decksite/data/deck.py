@@ -288,6 +288,9 @@ def get_matches(d, should_load_decks=False):
             m.opponent_deck = None
     return matches
 
+def load_decks_by_card(name):
+    return load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name)))
+
 # pylint: disable=too-many-instance-attributes
 class Deck(Container):
     def __init__(self, params):

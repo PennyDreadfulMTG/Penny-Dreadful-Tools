@@ -141,3 +141,27 @@ def test_parse4():
     d = decklist.parse(s)
     assert len(d['maindeck']) == 15
     assert len(d['sideboard']) == 7
+
+def test_parse5():
+    s = """
+        4 Animist's Awakening
+        4 Copperhorn Scout
+        14 Forest
+        4 Harvest Season
+        4 Jaddi Offshoot
+        4 Krosan Wayfarer
+        4 Loam Dryad
+        4 Nantuko Monastery
+        4 Nest Invader
+        4 Quest for Renewal
+        4 Rofellos, Llanowar Emissary
+        2 Sky Skiff
+        4 Throne of the God-Pharaoh
+
+        0 Villainous Wealth
+    """
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    print(d)
+    assert len(d['maindeck']) == 13
+    assert len(d['sideboard']) == 1

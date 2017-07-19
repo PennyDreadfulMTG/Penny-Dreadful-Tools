@@ -5,7 +5,7 @@ from flask import make_response, redirect, request, send_file, send_from_directo
 from werkzeug import exceptions
 
 from magic import oracle
-from shared.pd_exception import DoesNotExistException, InvalidDataException
+from shared.pd_exception import DoesNotExistException, InvalidArgumentException, InvalidDataException
 
 from decksite import deck_name, league as lg
 from decksite import APP
@@ -200,21 +200,35 @@ def deckcycle_tappedout():
     return home()
 
 @APP.route('/admin/archetypes/')
-def edit_archetypes():
-    view = EditArchetypes(archs.load_archetypes_deckless(order_by='a.name'))
+def edit_archetypes(search_results=None):
+    if search_results is None:
+        search_results = []
+    view = EditArchetypes(archs.load_archetypes_deckless(order_by='a.name'), search_results)
     return view.page()
 
 @APP.route('/admin/archetypes/', methods=['POST'])
 def post_archetypes():
+    search_results = []
+    print(request.form)
     if request.form.get('deck_id') is not None:
         archetype_ids = request.form.getlist('archetype_id')
+        # Adjust archetype_ids if we're assigning multiple decks to the same archetype.
+        if len(archetype_ids) == 1 and len(request.form.getlist('deck_id')) > 1:
+            archetype_ids = archetype_ids * len(request.form.getlist('deck_id'))
         for deck_id in request.form.getlist('deck_id'):
             archetype_id = archetype_ids.pop(0)
             if archetype_id:
                 archs.assign(deck_id, archetype_id)
-    else:
+    elif request.form.get('q') is not None:
+        search_results = deck.load_decks_by_card(request.form.get('q'))
+    elif request.form.get('something about assigning is not None'):
+        for deck_id in request.form.getlist('deck_id'):
+            archs.assign(deck_id, request.form.get('archetype_id'))
+    elif request.form.get('parent') is not None:
         archs.add(request.form.get('name'), request.form.get('parent'))
-    return edit_archetypes()
+    else:
+        raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/archetypes: {f}'.format(f=request.form))
+    return edit_archetypes(search_results)
 
 # Infra
 

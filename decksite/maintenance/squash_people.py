@@ -28,22 +28,23 @@ def squash(old, new):
     print("Squashing {new.name} ({new.id}) into {old.name} ({old.id})".format(old=old, new=new))
 
     sql = """
-            WITH 
+            WITH
                 old as (
-                    SELECT * FROM person 
-                    WHERE id = {old.id}  
-                ), 
+                    SELECT * FROM person
+                    WHERE id = {old.id}
+                ),
                 new as (
-                    SELECT * FROM person 
-                    WHERE id = {new.id}  
+                    SELECT * FROM person
+                    WHERE id = {new.id}
                 )
-                INSERT OR REPLACE INTO person (tappedout_username, mtgo_username)
-                SELECT 
+                INSERT OR REPLACE INTO person (tappedout_username, mtggoldfish_username, mtgo_username)
+                SELECT
                     IFNULL(old.tappedout_username, new.tappedout_username) as tappedout_username,
-                    IFNULL(old.mtgo_username, new.mtgo_username) as mtgo_username 
+                    IFNULL(old.mtggoldfish_username, new.mtggoldfish_username) as mtggoldfish_username,
+                    IFNULL(old.mtgo_username, new.mtgo_username) as mtgo_username
                 FROM old JOIN new;
-        UPDATE deck 
-            SET person_id = last_insert_rowid() 
+        UPDATE deck
+            SET person_id = last_insert_rowid()
             WHERE person_id IN ({old.id}, {new.id});
         DELETE FROM deck
             WHERE person_id IN ({old.id}, {new.id});

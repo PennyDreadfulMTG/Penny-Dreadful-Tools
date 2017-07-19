@@ -11,7 +11,7 @@ def load_person(person_id):
 def load_person_by_username(username):
     return guarantee.exactly_one(load_people('p.mtgo_username = {username}'.format(username=sqlescape(username))))
 
-def load_people(where_clause='1 = 1'):
+def load_people(where='1 = 1'):
     sql = """
         SELECT p.id, {person_query} AS name,
 
@@ -31,10 +31,10 @@ def load_people(where_clause='1 = 1'):
 
         FROM person AS p
         LEFT JOIN deck AS d ON p.id = d.person_id
-        WHERE {where_clause}
+        WHERE {where}
         GROUP BY p.id
         ORDER BY `season.num_decks` DESC, `all.num_decks` DESC, name
-    """.format(person_query=query.person_query(), where_clause=where_clause)
+    """.format(person_query=query.person_query(), where=where)
     people = [Person(r) for r in db().execute(sql, [rotation.last_rotation().timestamp()] * 8)]
     if len(people) > 0:
         set_decks(people)
@@ -42,8 +42,8 @@ def load_people(where_clause='1 = 1'):
 
 def set_decks(people):
     people_by_id = {person.id: person for person in people}
-    where_clause = 'd.person_id IN ({ids})'.format(ids=', '.join(str(k) for k in people_by_id.keys()))
-    decks = deck.load_decks(where_clause)
+    where = 'd.person_id IN ({ids})'.format(ids=', '.join(str(k) for k in people_by_id.keys()))
+    decks = deck.load_decks(where)
     for p in people:
         p.decks = []
     for d in decks:

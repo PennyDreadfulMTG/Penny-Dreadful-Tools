@@ -5,7 +5,7 @@ from shared.database import sqlescape
 from decksite.data import deck, guarantee
 from decksite.database import db
 
-def played_cards(where_clause='1 = 1'):
+def played_cards(where='1 = 1'):
     sql = """
         SELECT
             card AS name,
@@ -46,10 +46,10 @@ def played_cards(where_clause='1 = 1'):
                 deck AS d ON d.id = dc.deck_id
             GROUP BY
                 deck_id, card) AS deck_card_agg
-        WHERE {where_clause}
+        WHERE {where}
         GROUP BY card
         ORDER BY `season.n_decks` DESC, `season.count_decks` DESC, `season.n_maindecks` DESC, `season.count_maindecks` DESC, `all.n_decks` DESC, `all.count_decks` DESC, `all.n_maindecks` DESC, `all.count_maindecks` DESC
-    """.format(where_clause=where_clause)
+    """.format(where=where)
     cs = [Container(r) for r in db().execute(sql, [rotation.last_rotation().timestamp()] * 12)]
     cards = oracle.cards_by_name()
     for c in cs:

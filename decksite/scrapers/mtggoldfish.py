@@ -1,0 +1,55 @@
+import re
+
+from bs4 import BeautifulSoup
+
+from magic import fetcher, legality
+from shared import dtutil
+from shared.container import Container
+from shared.pd_exception import InvalidDataException
+
+from decksite.data import deck
+from decksite.scrapers import decklist
+
+def scrape():
+    page = 1
+    while True:
+        url = 'https://www.mtggoldfish.com/deck/custom/penny_dreadful?page={n}#online'.format(n=page)
+        soup = BeautifulSoup(fetcher.internal.fetch(url, character_encoding='utf-8'), 'html.parser')
+        raw_decks = soup.find_all('div', {'class': 'deck-tile'})
+        if len(raw_decks) == 0:
+            print('No decks found in {url} so stopping.'.format(url=url))
+            break
+        for raw_deck in raw_decks:
+            d = Container({'source': 'MTG Goldfish'})
+            a = raw_deck.select_one('h2 > span.deck-price-online > a')
+            d.identifier = re.findall(r'/deck/(\d+)#online', a.get('href'))[0]
+            d.url = 'https://www.mtggoldfish.com/deck/{identifier}#online'.format(identifier=d.identifier)
+            d.name = a.contents[0].strip()
+            d.mtggoldfish_username = raw_deck.select_one('div.deck-author').contents[0].strip()
+            d.created_date = scrape_created_date(d)
+            d.cards = scrape_decklist(d)
+            try:
+                vivified = decklist.vivify(d.cards)
+            # MTGG doesn't do any validation of cards so some decks with fail here with card names like 'Stroke of Genuineness'.
+            except InvalidDataException as e:
+                print('Rejecting decklist of deck with identifier {identifier} because of {e}'.format(identifier=d.identifier, e=e))
+                continue
+            if 'Penny Dreadful' not in legality.legal_formats(vivified):
+                print('Rejecting deck with identifier {identifier} becuase it is not legal in any PD formats.'.format(identifier=d.identifier))
+                continue
+            if len(d.cards) == 0:
+                print('Rejecting deck with identifier {identifier} because it has no cards.'.format(identifier=d.identifier))
+                continue
+            print(d)
+            deck.add_deck(d)
+        page += 1
+
+def scrape_created_date(d):
+    soup = BeautifulSoup(fetcher.internal.fetch(d.url, character_encoding='utf-8'), 'html.parser')
+    description = soup.select_one('div.deck-view-description').renderContents().decode('utf-8')
+    date_s = re.findall(r'<br>\n([A-Z][a-z][a-z] \d+, \d\d\d\d)', description)[0]
+    return dtutil.parse_to_ts(date_s, '%b %d, %Y', dtutil.WOTC_TZ)
+
+def scrape_decklist(d):
+    url = 'https://www.mtggoldfish.com/deck/download/{identifier}'.format(identifier=d.identifier)
+    return decklist.parse(fetcher.internal.fetch(url))

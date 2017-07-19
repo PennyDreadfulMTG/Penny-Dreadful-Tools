@@ -18,7 +18,7 @@ def init():
 def layouts():
     return ['normal', 'meld', 'split', 'phenomenon', 'token', 'vanguard', 'double-faced', 'plane', 'flip', 'scheme', 'leveler', 'aftermath']
 
-def base_query(where_clause='(1 = 1)'):
+def base_query(where='(1 = 1)'):
     return """
         SELECT
             {card_queries},
@@ -44,7 +44,7 @@ def base_query(where_clause='(1 = 1)'):
                 GROUP BY f.id
                 ORDER BY f.card_id, f.position)
             AS u
-            WHERE u.id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where_clause})
+            WHERE u.id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where})
             GROUP BY u.id
     """.format(
         card_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.card_properties().items()),
@@ -53,7 +53,7 @@ def base_query(where_clause='(1 = 1)'):
         legality_code=db().concat(['fo.name', "':'", 'cl.legality']),
         card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
         face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),
-        where_clause=where_clause)
+        where=where)
 
 
 def update_database(new_version):

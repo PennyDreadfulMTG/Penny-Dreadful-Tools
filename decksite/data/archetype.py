@@ -20,8 +20,8 @@ def load_archetype(archetype_id):
         archetype.decks = []
     return archetype
 
-def load_archetypes(where_clause='1 = 1', merge=False):
-    decks = deck.load_decks(where_clause)
+def load_archetypes(where='1 = 1', merge=False):
+    decks = deck.load_decks(where)
     archetypes = {}
     for d in decks:
         if d.archetype_id is None:

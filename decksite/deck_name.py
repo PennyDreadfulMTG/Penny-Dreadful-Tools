@@ -43,6 +43,7 @@ def normalize(d):
     name = name.lower()
     name = remove_pd(name)
     name = remove_hashtags(name)
+    name = remove_brackets(name)
     name = expand_common_abbreviations(name)
     removed_colors = False
     without_colors = remove_colors(name)
@@ -72,6 +73,9 @@ def remove_pd(name):
 def remove_hashtags(name):
     name = re.sub(r'#[^ ]*', '', name).strip()
     return name
+
+def remove_brackets(name):
+    return re.sub(r'\[[^\]]*\]', '', name).strip()
 
 def remove_colors(name):
     patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*', 'Mono'] + list(COLOR_COMBINATIONS.keys())

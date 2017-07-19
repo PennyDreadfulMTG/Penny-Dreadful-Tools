@@ -17,10 +17,10 @@ UNQUOTED_STRING = 'unquoted_string'
 VALUE_LOOKUP = {}
 
 def search(query):
-    where_clause = parse(tokenize(query))
+    where = parse(tokenize(query))
     sql = """{base_query}
         ORDER BY pd_legal DESC, name
-    """.format(base_query=oracle.base_query(where_clause))
+    """.format(base_query=oracle.base_query(where))
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 

@@ -76,6 +76,8 @@ def test_normalize():
     d.colors = ['R']
     d.name = 'Penny Dreadful Sunday RDW'
     assert deck_name.normalize(d) == 'Red Deck Wins'
+    d.name = '[Pd][hou] Harvest Quest'
+    assert deck_name.normalize(d) == 'Harvest Quest'
 
     # Undefined cases
     # d.name = 'U/B Aggro' when d.archetype = 'Control'

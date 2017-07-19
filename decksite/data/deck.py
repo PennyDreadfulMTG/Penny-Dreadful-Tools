@@ -29,7 +29,9 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
             s.name AS source_name, IFNULL(a.name, '') AS archetype_name,
             SUM(opp.wins) AS opp_wins, SUM(opp.losses) AS opp_losses, ROUND(SUM(opp.wins) / (SUM(opp.wins) + SUM(opp.losses)), 2) * 100 AS omw,
             GROUP_CONCAT(DISTINCT CONCAT(dc.card, '|', dc.n, '|', dc.sideboard) SEPARATOR '█') AS cards,
-            cache.colors, cache.colored_symbols, cache.legal_formats
+            cache.colors, cache.colored_symbols, cache.legal_formats,
+            IFNULL(MIN(CASE WHEN m.elimination > 0 THEN m.elimination END), 0) AS stage_reached,
+            GROUP_CONCAT(m.elimination) AS elim
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id
         LEFT JOIN competition AS c ON d.competition_id = c.id
@@ -39,6 +41,8 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         LEFT JOIN competition_type AS ct ON ct.id = c.competition_type_id
         LEFT JOIN deck_card AS dc ON d.id = dc.deck_id
         LEFT JOIN deck_cache AS cache ON d.id = cache.deck_id
+        LEFT JOIN deck_match AS dm ON d.id = dm.deck_id
+        LEFT JOIN `match` AS m ON m.id = dm.match_id
         WHERE {where}
         GROUP BY d.id
         ORDER BY {order_by}

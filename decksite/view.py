@@ -223,7 +223,7 @@ def set_stars_and_top8(d):
     elif d.finish == 3:
         d.top8 = '④'
         d.stars = '★★'
-    elif d.finish == 5:
+    elif d.finish == 5 and d.stage_reached > 0: # Don't show ⑧ for fifth place in a top 4 tournament.
         d.top8 = '⑧'
         d.stars = '★'
     else:

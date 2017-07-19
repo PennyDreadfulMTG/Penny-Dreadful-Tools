@@ -73,6 +73,9 @@ def test_normalize():
     assert deck_name.normalize(d) == 'Mono Black Aristocrats VI'
     d.name = 'Suicide Black'
     assert deck_name.normalize(d) == 'Suicide Black'
+    d.colors = ['R']
+    d.name = 'Penny Dreadful Sunday RDW'
+    assert deck_name.normalize(d) == 'Red Deck Wins'
 
     # Undefined cases
     # d.name = 'U/B Aggro' when d.archetype = 'Control'

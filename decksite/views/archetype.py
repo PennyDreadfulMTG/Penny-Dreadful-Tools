@@ -2,7 +2,7 @@ from decksite.view import View
 
 # pylint: disable=no-self-use
 class Archetype(View):
-    def __init__(self, archetype, archetypes, matchups):
+    def __init__(self, archetype, archetypes):
         self.archetype = next(a for a in archetypes if a.id == archetype.id)
         self.archetype.decks = archetype.decks
         # Load the deck information from archetype into skinny archetype loaded by load_archetypes_deckless_for with tree information.

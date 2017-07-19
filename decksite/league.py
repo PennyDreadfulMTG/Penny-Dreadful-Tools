@@ -92,8 +92,8 @@ def deck_options(decks, v):
     return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
 
 def active_decks(additional_where='1 = 1'):
-    where_clause = "d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND (d.wins + d.losses + d.draws < 5) AND NOT d.retired AND ({additional_where})".format(active_competition_id_query=active_competition_id_query(), additional_where=additional_where)
-    decks = deck.load_decks(where_clause)
+    where = "d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND (d.wins + d.losses + d.draws < 5) AND NOT d.retired AND ({additional_where})".format(active_competition_id_query=active_competition_id_query(), additional_where=additional_where)
+    decks = deck.load_decks(where)
     return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
 
 def active_decks_by(mtgo_username):
@@ -125,8 +125,8 @@ def get_active_competition_id():
     return db().execute(active_competition_id_query())[0]['id']
 
 def active_league():
-    where_clause = 'c.id = ({id_query})'.format(id_query=active_competition_id_query())
-    leagues = competition.load_competitions(where_clause)
+    where = 'c.id = ({id_query})'.format(id_query=active_competition_id_query())
+    leagues = competition.load_competitions(where)
     if len(leagues) == 0:
         start_date = datetime.datetime.combine(dtutil.now().date(), datetime.time(tzinfo=dtutil.WOTC_TZ))
         end_date = determine_end_of_league(start_date)

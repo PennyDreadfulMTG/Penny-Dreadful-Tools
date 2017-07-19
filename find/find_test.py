@@ -155,5 +155,5 @@ def test_is_hybrid():
     do_test('is:hybrid', "((mana_cost LIKE '%%/2%%') OR (mana_cost LIKE '%%/W%%') OR (mana_cost LIKE '%%/U%%') OR (mana_cost LIKE '%%/B%%') OR (mana_cost LIKE '%%/R%%') OR (mana_cost LIKE '%%/G%%'))")
 
 def do_test(query, expected):
-    where_clause = search.parse(search.tokenize(query))
-    assert where_clause == expected or print('\nQuery: {query}\nExpected: {expected}\n  Actual: {actual}'.format(query=query, expected=expected, actual=where_clause))
+    where = search.parse(search.tokenize(query))
+    assert where == expected or print('\nQuery: {query}\nExpected: {expected}\n  Actual: {actual}'.format(query=query, expected=expected, actual=where))

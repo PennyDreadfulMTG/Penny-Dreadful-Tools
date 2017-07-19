@@ -1,5 +1,6 @@
 from flask import url_for
 import inflect
+import titlecase
 
 from decksite import deck_name
 from decksite.data import deck
@@ -53,7 +54,7 @@ class Deck(View):
     def og_description(self):
         if self.archetype_name:
             p = inflect.engine()
-            archetype_s = p.a(self.archetype_name).title()
+            archetype_s = titlecase.titlecase(p.a(self.archetype_name))
         else:
             archetype_s = 'A'
         description = '{archetype_s} deck by {author}'.format(archetype_s=archetype_s, author=self.person.decode('utf-8'))

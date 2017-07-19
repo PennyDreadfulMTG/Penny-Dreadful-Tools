@@ -57,7 +57,6 @@ def played_cards(where_clause='1 = 1'):
     return cs
 
 def load_card(name):
-    name = name.replace('+', ' ')
     c = guarantee.exactly_one(oracle.load_cards([name]))
     c.decks = deck.load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name)))
     c.season = Container()

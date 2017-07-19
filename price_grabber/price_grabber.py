@@ -21,6 +21,9 @@ def fetch():
     sets = parse_sets(s) + ['TD0', 'TD2'] # Theme decks pages not linked from /prices/select
     for code in sets:
         for suffix in ['', '_F']:
+            if code == 'PZ2' and suffix == '_F':
+                print('Explicitly skipping PZ2_F because it is a lie.')
+                continue
             code = '{code}{suffix}'.format(code=code, suffix=suffix)
             url = set_url(code)
             s = fetcher_internal.fetch(url)
@@ -104,7 +107,7 @@ def create_tables():
         `time` INTEGER,
         name VARCHAR(150),
         price INTEGER,
-        INDEX idx_name (name)
+        INDEX idx_name_time_price (name, `time`, price)
     )"""
     execute(sql)
 

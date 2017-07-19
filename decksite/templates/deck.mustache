@@ -52,8 +52,16 @@
                             <td class="n">{{display_round}}</td>
                         {{/has_rounds}}
                         <td class="n">{{game_wins}}–{{game_losses}}</td>
-                        <td><a href="{{opponent_deck_url}}">{{opponent_deck_name}}</a></td>
-                        <td><a href="{{opponent_url}}">{{opponent}}</a></td>
+                        <td>
+                            {{#opponent_deck_url}}<a href="{{opponent_deck_url}}">{{/opponent_deck_url}}
+                                {{opponent_deck_name}}
+                            {{#opponent_deck_url}}</a>{{/opponent_deck_url}}</td>
+                        <td>
+                            {{#opponent_url}}<a href="{{opponent_url}}">{{/opponent_url}}
+                            {{^opponent_url}}<span class="bye">{{/opponent_url}}
+                                {{opponent}}
+                            {{^opponent_url}}</span>{{/opponent_url}}
+                            {{#opponent_url}}</a>{{/opponent_url}}</td>
                         {{^has_rounds}}
                             <td>{{display_date}}</td>
                         {{/has_rounds}}

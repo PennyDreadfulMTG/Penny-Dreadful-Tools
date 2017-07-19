@@ -55,7 +55,7 @@ def cards():
 @cached()
 def card(name):
     try:
-        c = cs.load_card(oracle.valid_name(name))
+        c = cs.load_card(oracle.valid_name(name.replace('+', ' ')))
         view = Card(c)
         return view.page()
     except InvalidDataException as e:

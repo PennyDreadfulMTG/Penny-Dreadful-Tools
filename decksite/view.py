@@ -105,10 +105,8 @@ class View:
             if d.wins + d.losses < 5 and d.competition_end_date > dtutil.now() and not d.get('retired', False):
                 d.stars = '⊕ {stars}'.format(stars=d.stars).strip()
                 d.source_sort = '1'
-        elif d.source_name == 'Gatherling':
-            d.source_indicator = 'Gatherling'
-        elif d.source_name == 'Tapped Out':
-            d.source_indicator = 'Tapped Out'
+        else:
+            d.source_indicator = d.source_name
         d.comp_row_len = len("{comp_name} (Piloted by {person}".format(comp_name=d.competition_name, person=d.person))
         if d.get('archetype_id', None):
             d.archetype_url = url_for('archetype', archetype_id=d.archetype_id)

@@ -113,14 +113,14 @@ def set_legality(d):
 #         }
 #     }
 # }
-# Plus one of: mtgo_username OR tappedout_username
+# Plus one of: mtgo_username OR tappedout_username OR mtggoldfish_username
 # Optionally: created_date (unix timestamp, defaults to now), resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url, wins, losses, draws, finish
 #
 # source + identifier must be unique for each decklist.
 def add_deck(params):
-    if not params.get('mtgo_username') and not params.get('tappedout_username'):
+    if not params.get('mtgo_username') and not params.get('tappedout_username') and not params.get('mtggoldfish_username'):
         raise InvalidDataException('Did not find a username in {params}'.format(params=params))
-    person_id = get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'))
+    person_id = get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'), params.get('mtggoldfish_username'))
     deck_id = get_deck_id(params['source'], params['identifier'])
     if deck_id:
         add_cards(deck_id, params['cards'])
@@ -210,15 +210,18 @@ def get_deck_id(source_name, identifier):
 def insert_deck_card(deck_id, name, n, in_sideboard):
     card = oracle.valid_name(name)
     sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (%s, %s, %s, %s)'
+    if card == 'Villainous Wealth' and int(n) == 0:
+        print(sql)
+        print([deck_id, card, n, in_sideboard])
     return db().execute(sql, [deck_id, card, n, in_sideboard])
 
-def get_or_insert_person_id(mtgo_username, tappedout_username):
-    sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s)'
-    person_id = db().value(sql, [mtgo_username, tappedout_username])
+def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username):
+    sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
+    person_id = db().value(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
     if person_id:
         return person_id
-    sql = 'INSERT INTO person (mtgo_username, tappedout_username) VALUES (%s, %s)'
-    return db().insert(sql, [mtgo_username, tappedout_username])
+    sql = 'INSERT INTO person (mtgo_username, tappedout_username, mtggoldfish_username) VALUES (%s, %s, %s)'
+    return db().insert(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
 
 def get_source_id(source):
     sql = 'SELECT id FROM source WHERE name = %s'

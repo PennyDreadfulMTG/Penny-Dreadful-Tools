@@ -47,7 +47,7 @@ def scrape():
 def scrape_created_date(d):
     soup = BeautifulSoup(fetcher.internal.fetch(d.url, character_encoding='utf-8'), 'html.parser')
     description = soup.select_one('div.deck-view-description').renderContents().decode('utf-8')
-    date_s = re.findall(r'<br>\n([A-Z][a-z][a-z] \d+, \d\d\d\d)', description)[0]
+    date_s = re.findall(r'([A-Z][a-z][a-z] \d+, \d\d\d\d)', description)[0]
     return dtutil.parse_to_ts(date_s, '%b %d, %Y', dtutil.WOTC_TZ)
 
 def scrape_decklist(d):

@@ -8,7 +8,6 @@ from shared.container import Container
 from shared.pd_exception import InvalidDataException
 
 from decksite.data import deck
-from decksite.database import db
 from decksite.scrapers import decklist
 
 def scrape():

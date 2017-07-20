@@ -31,6 +31,9 @@
     {{#similarity_score}}
         <td class="n">{{similarity_score}}%</td>
     {{/similarity_score}}
+    {{#show_checkbox}}
+        <td><input type="checkbox" name="deck_id" value="{{id}}"></td>
+    {{/show_checkbox}}
     <td>
         {{#has_legal_format}}
             {{{legal_icons}}}

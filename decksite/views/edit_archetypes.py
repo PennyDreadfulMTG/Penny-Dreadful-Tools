@@ -15,9 +15,9 @@ class EditArchetypes(View):
         for d in self.queue:
             self.prepare_deck(d)
         self.has_search_results = len(search_results) > 0
-        self.decks = search_results
-        for d in self.decks:
-            self.show_checkbox = True
+        self.search_results = search_results
+        for d in self.search_results:
+            self.prepare_deck(d)
 
     def subtitle(self):
         return 'Edit Archetypes'

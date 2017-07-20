@@ -39,7 +39,7 @@ def cache():
             SELECT
                 MAX(`time`) AS `time`,
                 name,
-                MIN(CASE WHEN `time` = ? THEN price ELSE 999999 END) AS price,
+                MIN(CASE WHEN `time` = ? THEN price END) AS price,
                 MIN(price) AS low,
                 MAX(price) AS high,
                 AVG(CASE WHEN `time` > ? AND price = 1 THEN 1 WHEN `time` > ? THEN 0 END) AS week,

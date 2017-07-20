@@ -17,4 +17,4 @@ class Person(View):
         return getattr(self.person, attr)
 
     def subtitle(self):
-        return self.person.name.decode('utf-8')
+        return self.person.name

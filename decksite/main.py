@@ -45,10 +45,7 @@ def people():
 @APP.route('/people/<person_id>/')
 @cached()
 def person(person_id):
-    try:
-        p = ps.load_person(person_id)
-    except DoesNotExistException:
-        p = ps.load_person_by_username(person_id)
+    p = ps.load_person(person_id)
     view = Person(p)
     return view.page()
 

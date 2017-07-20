@@ -6,6 +6,9 @@ from munch import Munch
 #
 # This is useful for giving depth to an object selected in a flat fashion out of the database.
 # This in turn is useful for looping over similar subsets of the data in Mustache templates.
+
+# Pylint goes a bit crazy with this magic so help it out.
+# pylint: disable=too-many-instance-attributes
 class Container(Munch):
     def __init__(self, args=None):
         if args is None:

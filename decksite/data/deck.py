@@ -17,6 +17,24 @@ def latest_decks():
 def load_deck(deck_id):
     return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))
 
+def load_season(season=None):
+    if season is None:
+        where = 'start. start_date <= UNIX_TIMESTAMP() AND `end`.start_date > UNIX_TIMESTAMP()'
+    else:
+        where = 'start.`number` = {season} OR start.`code` = {season}'.format(season=sqlescape(season))
+    sql = """
+        SELECT start.`number`, start.`code`, `start`.start_date, `end`.start_date AS end_date
+        FROM season AS `start`
+        LEFT JOIN season AS `end`
+        ON `start`.`number` + 1 = `end`.`number`
+        WHERE {where}
+    """.format(where=where)
+    season = Container(guarantee.exactly_one(db().execute(sql)))
+    season.decks = load_decks('d.created_date >= {start_ts} AND d.created_date < IFNULL({end_ts}, 999999999999)'.format(start_ts=season.start_date, end_ts=season.end_date))
+    season.start_date = dtutil.ts2dt(season.start_date)
+    season.end_date = dtutil.ts2dt(season.end_date)
+    return season
+
 # pylint: disable=attribute-defined-outside-init
 def load_decks(where='1 = 1', order_by=None, limit=''):
     if order_by is None:

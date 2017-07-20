@@ -54,7 +54,31 @@
 
     {{#has_search_results}}
         <form method="post" class="inline">
-            {{> decktable}}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Colors</th>
+                        <th>Name</th>
+                        <th>Archetype</th>
+                        <th>Select</th>
+                        <th>Season</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#search_results}}
+                        <tr>
+                            <td>{{{colors_safe}}}</td>
+                            <td><a href="{{url}}">{{name}}</a></td>
+                            <td><a href="{{archetype_url}}">{{archetype_name}}</a></td>
+                            <td><input type="checkbox" name="deck_id" value="{{id}}"></td>
+                            <td>
+                                {{#has_legal_format}}
+                                    {{{legal_icons}}}
+                                {{/has_legal_format}}
+                            </td>
+                        </tr>
+                    {{/search_results}}
+            </table>
             <label for="archetype_id">Archetype:</label>
             <select name="archetype_id">
                 <option value="">[Select]</option>

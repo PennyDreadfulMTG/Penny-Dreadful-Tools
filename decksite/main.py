@@ -13,7 +13,7 @@ from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
 from decksite.charts import chart
 from decksite.league import ReportForm, SignUpForm
-from decksite.views import About, AddForm, Archetype, Archetypes, Card, Cards, Competition, Competitions, Deck, EditArchetypes, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Report, Resources, Rotation, SignUp, Tournaments, Bugs
+from decksite.views import About, AddForm, Archetype, Archetypes, Card, Cards, Competition, Competitions, Deck, EditArchetypes, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Report, Resources, Rotation, Season, SignUp, Tournaments, Bugs
 
 # Decks
 
@@ -29,6 +29,13 @@ def decks(deck_id):
     view = Deck(deck.load_deck(deck_id))
     return view.page()
 
+@APP.route('/season/')
+@APP.route('/season/<season_id>')
+@cached()
+def season(season_id=None):
+    view = Season(deck.load_season(season_id))
+    return view.page()
+
 @APP.route('/people/')
 @cached()
 def people():
@@ -38,10 +45,7 @@ def people():
 @APP.route('/people/<person_id>/')
 @cached()
 def person(person_id):
-    try:
-        p = ps.load_person(person_id)
-    except DoesNotExistException:
-        p = ps.load_person_by_username(person_id)
+    p = ps.load_person(person_id)
     view = Person(p)
     return view.page()
 

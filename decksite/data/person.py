@@ -5,11 +5,14 @@ from shared.database import sqlescape
 from decksite.data import deck, guarantee, query
 from decksite.database import db
 
-def load_person(person_id):
-    return guarantee.exactly_one(load_people('p.id = {id}'.format(id=sqlescape(person_id))))
-
-def load_person_by_username(username):
-    return guarantee.exactly_one(load_people('p.mtgo_username = {username}'.format(username=sqlescape(username))))
+def load_person(person):
+    try:
+        person_id = int(person)
+        username = "'{person}'".format(person=person)
+    except ValueError:
+        person_id = 0
+        username = sqlescape(person)
+    return guarantee.exactly_one(load_people('p.id = {person_id} OR p.mtgo_username = {username}'.format(person_id=person_id, username=username)))
 
 def load_people(where='1 = 1'):
     sql = """

@@ -78,6 +78,8 @@ def test_normalize():
     assert deck_name.normalize(d) == 'Red Deck Wins'
     d.name = '[Pd][hou] Harvest Quest'
     assert deck_name.normalize(d) == 'Harvest Quest'
+    d.name = 'Pd_Vehicles'
+    assert deck_name.normalize(d) == 'Vehicles'
 
     # Undefined cases
     # d.name = 'U/B Aggro' when d.archetype = 'Control'

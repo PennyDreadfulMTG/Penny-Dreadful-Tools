@@ -173,7 +173,7 @@ class View:
             n = 3
             while len(a.best_decks.decks) == 0 and n >= 0:
                 for d in a.decks:
-                    if len(d.get('stars', '')) >= n:
+                    if d.get('stars', '').count('★') >= n:
                         a.best_decks.decks.append(d)
                 n -= 1
             counter = Counter()

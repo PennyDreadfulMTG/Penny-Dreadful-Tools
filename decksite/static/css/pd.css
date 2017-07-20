@@ -483,8 +483,9 @@ input.error, select.error, textarea.error {
     visibility: hidden;
 }
 
-form.inline, .inline input, .inline select, .inline textarea {
+form.inline, .inline input, .inline select, .inline textarea, .inlne label {
     margin: 0;
+    width: inherit;
 }
 
 /* Search. We're overriding Google's inline styles here hence a lot of !important. */

@@ -41,6 +41,7 @@ COLOR_COMBINATIONS = {
 def normalize(d):
     name = d.name
     name = name.lower()
+    name = replace_underscores(name)
     name = remove_pd(name)
     name = remove_hashtags(name)
     name = remove_brackets(name)
@@ -62,6 +63,9 @@ def file_name(d):
     safe_name = re.sub('--+', '-', safe_name, flags=re.IGNORECASE)
     safe_name = re.sub('[^0-9a-z-]', '', safe_name, flags=re.IGNORECASE)
     return safe_name.strip('-')
+
+def replace_underscores(name):
+    return name.replace('_', ' ')
 
 def remove_pd(name):
     name = re.sub(r'(^| )[\[\(]?pd[hmst]?[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()

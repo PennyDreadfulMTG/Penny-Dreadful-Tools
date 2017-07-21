@@ -1,5 +1,6 @@
 anytree
 bs4
+cachecontrol[filecache]
 coverage
 discord.py[voice]>=0.13.0
 flask
@@ -14,6 +15,6 @@ pytest
 python-dateutil
 pytz
 requests
+requests_oauthlib
 seaborn
 titlecase
-cachecontrol[filecache]

@@ -51,7 +51,6 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get('admin') is None:
-            print('setting target to {t}'.format(t=request.url))
             return redirect(url_for('authenticate', target=request.url))
         elif session.get('admin') is False:
             return redirect(url_for('home'))

@@ -261,6 +261,8 @@ Want to contribute? Send a Pull Request."""
                 s += '\nWARNING: price information is {display} old'.format(display=dtutil.display_time(age, 1))
             return s
         def format_price(p):
+            if p is None:
+                return 'Unknown'
             dollars, cents = str(round(float(p), 2)).split('.')
             return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
         await single_card_text(bot, channel, args, author, price_info)

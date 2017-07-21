@@ -34,7 +34,7 @@ def scrape():
             except InvalidDataException as e:
                 print('Rejecting decklist of deck with identifier {identifier} because of {e}'.format(identifier=d.identifier, e=e))
                 continue
-            if 'Penny Dreadful' not in legality.legal_formats(vivified):
+            if len([f for f in legality.legal_formats(vivified) if 'Penny Dreadful' in f]):
                 print('Rejecting deck with identifier {identifier} becuase it is not legal in any PD formats.'.format(identifier=d.identifier))
                 continue
             if len(d.cards) == 0:

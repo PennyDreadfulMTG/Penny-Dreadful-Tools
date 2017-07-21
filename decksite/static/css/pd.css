@@ -579,16 +579,17 @@ tr.current td {
     background-color: #eee;
 }
 tr.current td {
-    padding-left: 10px;
+    padding-left: 1rem;
 }
 tr.current td:first-child {
-    left: -10px;
+    left: -1rem;
     position: relative;
-    padding-right: 10px;
 }
-tr td:last-child {
+tr.current td:last-child {
+    left: 1rem;
+    padding-left: 0;
+    padding-right: 1rem;
     position: relative;
-    padding-right: 10px;
 }
 
 /* Season Symbols */

@@ -24,7 +24,10 @@ DEFAULTS = {
     'legality_dir': '~/legality/Legality Checker/',
     'not_pd': '',
     'otherbot_commands': '!s,!card,!ipg,!mtr,!cr,!define',
-    'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32))
+    'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32)),
+    'oauth2_client_id': '',
+    'oauth2_client_secret': '',
+    'guild_id': ''
 }
 
 def get(key):

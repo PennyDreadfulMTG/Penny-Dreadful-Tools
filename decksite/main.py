@@ -1,13 +1,14 @@
 import os
 import traceback
 
-from flask import make_response, redirect, request, send_file, send_from_directory, url_for
+from flask import make_response, redirect, request, send_file, send_from_directory, session, url_for
 from werkzeug import exceptions
 
 from magic import oracle
+from shared import configuration
 from shared.pd_exception import DoesNotExistException, InvalidArgumentException, InvalidDataException
 
-from decksite import deck_name, league as lg
+from decksite import auth, deck_name, league as lg
 from decksite import APP
 from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
@@ -30,7 +31,7 @@ def decks(deck_id):
     return view.page()
 
 @APP.route('/season/')
-@APP.route('/season/<season_id>')
+@APP.route('/season/<season_id>/')
 @cached()
 def season(season_id=None):
     view = Season(deck.load_season(season_id))
@@ -91,7 +92,7 @@ def archetype(archetype_id):
 
 @APP.route('/tournaments/')
 @cached()
-def touranments():
+def tournaments():
     view = Tournaments()
     return view.page()
 
@@ -204,6 +205,7 @@ def deckcycle_tappedout():
     return home()
 
 @APP.route('/admin/archetypes/')
+@auth.admin_required
 def edit_archetypes(search_results=None):
     if search_results is None:
         search_results = []
@@ -211,9 +213,9 @@ def edit_archetypes(search_results=None):
     return view.page()
 
 @APP.route('/admin/archetypes/', methods=['POST'])
+@auth.admin_required
 def post_archetypes():
     search_results = []
-    print(request.form)
     if request.form.get('deck_id') is not None:
         archetype_ids = request.form.getlist('archetype_id')
         # Adjust archetype_ids if we're assigning multiple decks to the same archetype.
@@ -224,15 +226,37 @@ def post_archetypes():
             if archetype_id:
                 archs.assign(deck_id, archetype_id)
     elif request.form.get('q') is not None:
-        search_results = deck.load_decks_by_card(request.form.get('q'))
-    elif request.form.get('something about assigning is not None'):
-        for deck_id in request.form.getlist('deck_id'):
-            archs.assign(deck_id, request.form.get('archetype_id'))
+        search_results = deck.load_decks_by_cards(request.form.get('q').splitlines())
     elif request.form.get('parent') is not None:
         archs.add(request.form.get('name'), request.form.get('parent'))
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/archetypes: {f}'.format(f=request.form))
     return edit_archetypes(search_results)
+
+# OAuth
+
+@APP.route('/authenticate/')
+def authenticate():
+    target = request.args.get('target')
+    authorization_url, state = auth.setup_authentication()
+    session['oauth2_state'] = state
+    if target:
+        session['target'] = target
+    return redirect(authorization_url)
+
+@APP.route('/authenticate/callback/')
+def authenticate_callback():
+    if request.values.get('error'):
+        return request.values['error']
+    auth.setup_session(request.url)
+    url = session.get('target', url_for('home'))
+    session['target'] = None
+    return redirect(url)
+
+@APP.route('/logout/')
+def authenticate_logout():
+    auth.logout()
+    return redirect(url_for('home'))
 
 # Infra
 
@@ -248,7 +272,6 @@ def cmc_chart(deck_id):
 def legal_cards():
     if os.path.exists('legal_cards.txt'):
         return send_from_directory('.', 'legal_cards.txt')
-
     return "Not supported yet", 404
 
 @APP.errorhandler(DoesNotExistException)
@@ -267,5 +290,5 @@ def internal_server_error(e):
 def init():
     # This makes sure that the method decorators are called.
     import decksite.api as _ # pylint: disable=unused-import
-
+    APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
     APP.run(host='0.0.0.0', debug=True)

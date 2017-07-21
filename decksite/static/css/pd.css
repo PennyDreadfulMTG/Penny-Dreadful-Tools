@@ -160,7 +160,6 @@ ul.archetypes, .archetypes ul {
 /* Tables */
 
 table {
-    border-collapse: separate;
     border-spacing: 0.25rem 0;
     margin-bottom: 1rem;
 }
@@ -483,8 +482,9 @@ input.error, select.error, textarea.error {
     visibility: hidden;
 }
 
-form.inline, .inline input, .inline select, .inline textarea, .inlne label {
+form.inline, .inline input, .inline select, .inline textarea, .inline label, .inline button {
     margin: 0;
+    max-width: 100%;
     width: inherit;
 }
 
@@ -573,9 +573,24 @@ tr.archetype-3 > .primary.initial {
     font-size: 60%;
     padding-left: 3rem;
 }
-tr.current td:first-child a {
+tr.current {
     background-color: #eee;
-    padding: 0.5em;
+}
+tr.current td {
+    background-color: #eee;
+}
+tr.current td {
+    padding-left: 1rem;
+}
+tr.current td:first-child {
+    left: -1rem;
+    position: relative;
+}
+tr.current td:last-child {
+    left: 1rem;
+    padding-left: 0;
+    padding-right: 1rem;
+    position: relative;
 }
 
 /* Season Symbols */

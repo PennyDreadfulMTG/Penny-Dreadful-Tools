@@ -96,5 +96,51 @@ def add(name, parent):
 def assign(deck_id, archetype_id):
     return db().execute('UPDATE deck SET reviewed = TRUE, archetype_id = ? WHERE id = ?', [archetype_id, deck_id])
 
+def load_matchups(archetype_id):
+    sql = """
+        SELECT
+            oa.id, oa.name,
+
+            SUM(CASE WHEN d.created_date < ? THEN 0 WHEN dm.games = 2 THEN 1 ELSE 0 END) AS `season.wins`,
+            SUM(CASE WHEN d.created_date < ? THEN 0 WHEN odm.games = 2 THEN 1 ELSE 0 END) AS `season.losses`,
+            SUM(CASE WHEN d.created_date < ? THEN 0 WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS `season.draws`,
+            ROUND(AVG(CASE WHEN d.created_date < ? THEN NULL WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1) AS `season.win_percent`,
+
+            SUM(CASE WHEN dm.games = 2 THEN 1 ELSE 0 END) AS `all.wins`,
+            SUM(CASE WHEN odm.games = 2 THEN 1 ELSE 0 END) AS `all.losses`,
+            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS `all.draws`,
+            ROUND(AVG(CASE WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1) AS `all.win_percent`
+        FROM
+            archetype AS a
+        INNER JOIN
+            deck AS d
+        ON
+            d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = a.id)
+        INNER JOIN
+            deck_match AS dm
+        ON
+            d.id = dm.deck_id
+        INNER JOIN
+            deck_match AS odm
+        ON
+            dm.match_id = odm.match_id
+            AND odm.deck_id <> d.id
+        INNER JOIN
+            deck AS od
+        ON
+            od.id = odm.deck_id
+        INNER JOIN
+            archetype AS oa
+        ON
+            od.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = oa.id)
+        WHERE
+            a.id = ?
+        GROUP BY
+            oa.id
+        ORDER BY
+            `season.wins` DESC, `all.wins` DESC
+    """
+    return [Container(m) for m in db().execute(sql, [rotation.last_rotation().timestamp()] * 4 + [archetype_id])]
+
 class Archetype(Container, NodeMixin):
     pass

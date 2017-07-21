@@ -87,7 +87,7 @@ def archetypes():
 @APP.route('/archetypes/<archetype_id>/')
 @cached()
 def archetype(archetype_id):
-    view = Archetype(archs.load_archetype(archetype_id), archs.load_archetypes_deckless_for(archetype_id))
+    view = Archetype(archs.load_archetype(archetype_id), archs.load_archetypes_deckless_for(archetype_id), archs.load_matchups(archetype_id))
     return view.page()
 
 @APP.route('/tournaments/')

@@ -31,7 +31,7 @@ def decks(deck_id):
     return view.page()
 
 @APP.route('/season/')
-@APP.route('/season/<season_id>')
+@APP.route('/season/<season_id>/')
 @cached()
 def season(season_id=None):
     view = Season(deck.load_season(season_id))

@@ -9,7 +9,7 @@ from magic import oracle
 from shared import dtutil
 from shared.pd_exception import InvalidDataException
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, too-many-instance-attributes
 class Deck(View):
     def __init__(self, d):
         self._deck = d

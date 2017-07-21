@@ -160,7 +160,6 @@ ul.archetypes, .archetypes ul {
 /* Tables */
 
 table {
-    border-collapse: separate;
     border-spacing: 0.25rem 0;
     margin-bottom: 1rem;
 }
@@ -573,9 +572,23 @@ tr.archetype-3 > .primary.initial {
     font-size: 60%;
     padding-left: 3rem;
 }
-tr.current td:first-child a {
+tr.current {
     background-color: #eee;
-    padding: 0.5em;
+}
+tr.current td {
+    background-color: #eee;
+}
+tr.current td {
+    padding-left: 10px;
+}
+tr.current td:first-child {
+    left: -10px;
+    position: relative;
+    padding-right: 10px;
+}
+tr td:last-child {
+    position: relative;
+    padding-right: 10px;
 }
 
 /* Season Symbols */

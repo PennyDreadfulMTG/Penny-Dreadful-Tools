@@ -100,13 +100,9 @@ class View:
         d.url = url_for('decks', deck_id=d.id)
         d.export_url = url_for('export', deck_id=d.id)
         d.cmc_chart_url = url_for('cmc_chart', deck_id=d.id)
-        if d.source_name == 'League':
-            d.source_indicator = 'League'
-            if d.wins + d.losses < 5 and d.competition_end_date > dtutil.now() and not d.get('retired', False):
-                d.stars = '⊕ {stars}'.format(stars=d.stars).strip()
-                d.source_sort = '1'
-        else:
-            d.source_indicator = d.source_name
+        if d.source_name == 'League' and d.wins + d.losses < 5 and d.competition_end_date > dtutil.now() and not d.get('retired', False):
+            d.stars = '⊕ {stars}'.format(stars=d.stars).strip()
+            d.source_sort = '1'
         d.comp_row_len = len("{comp_name} (Piloted by {person}".format(comp_name=d.competition_name, person=d.person))
         if d.get('archetype_id', None):
             d.archetype_url = url_for('archetype', archetype_id=d.archetype_id)

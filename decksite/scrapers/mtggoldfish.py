@@ -40,7 +40,6 @@ def scrape():
             if len(d.cards) == 0:
                 print('Rejecting deck with identifier {identifier} because it has no cards.'.format(identifier=d.identifier))
                 continue
-            print(d)
             deck.add_deck(d)
         page += 1
 

@@ -159,11 +159,9 @@ class View:
 
     def prepare_archetypes(self):
         for a in getattr(self, 'archetypes', []):
-            self.prepare_archetype(a, self.archetypes)
+            self.prepare_archetype(a, self.get('archetypes', []))
 
-    def prepare_archetype(self, a, archetypes=None):
-        if archetypes == None:
-            archetypes = []
+    def prepare_archetype(self, a, archetypes):
         num_most_common_cards_to_list = 10
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
         if a.get('all') and a.get('season'):

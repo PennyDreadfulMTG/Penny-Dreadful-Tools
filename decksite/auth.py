@@ -17,7 +17,7 @@ def setup_authentication():
     discord = make_session(scope=scope)
     return discord.authorization_url(AUTHORIZATION_BASE_URL)
 
-def setup_session(state, url):
+def setup_session(url):
     discord = make_session(state=session.get('oauth2_state'))
     token = discord.fetch_token(
         TOKEN_URL,
@@ -25,7 +25,6 @@ def setup_session(state, url):
         authorization_response=url)
     session['oauth2_token'] = token
     discord = make_session(token=session.get('oauth2_token'))
-    user = discord.get(API_BASE_URL + '/users/@me').json()
     guilds = discord.get(API_BASE_URL + '/users/@me/guilds').json()
     for guild in guilds:
         if guild['id'] == configuration.get('guild_id'):

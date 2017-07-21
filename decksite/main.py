@@ -251,7 +251,7 @@ def authenticate():
 def authenticate_callback():
     if request.values.get('error'):
         return request.values['error']
-    auth.setup_session(session.get('oauth2_state'), request.url)
+    auth.setup_session(request.url)
     url = session.get('target', url_for('home'))
     session['target'] = None
     return redirect(url)

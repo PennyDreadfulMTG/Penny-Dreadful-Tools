@@ -1,9 +1,9 @@
-from flask import url_for
+from flask import session, url_for
 import inflect
 import titlecase
 
 from decksite import deck_name
-from decksite.data import deck
+from decksite.data import archetype, deck
 from decksite.view import View
 from magic import oracle
 from shared import dtutil
@@ -38,6 +38,10 @@ class Deck(View):
                 m.display_round = display_round(m)
         self._deck['maindeck'].sort(key=lambda x: oracle.deck_sort(x['card']))
         self._deck['sideboard'].sort(key=lambda x: oracle.deck_sort(x['card']))
+        self.admin = session['admin']
+        if self.admin:
+            self.archetypes = archetype.load_archetypes_deckless(order_by='a.name')
+            self.edit_archetype_url = url_for('edit_archetypes')
 
     def has_matches(self):
         return len(self.matches) > 0

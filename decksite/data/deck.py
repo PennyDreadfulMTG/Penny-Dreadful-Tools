@@ -228,9 +228,6 @@ def get_deck_id(source_name, identifier):
 def insert_deck_card(deck_id, name, n, in_sideboard):
     card = oracle.valid_name(name)
     sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (%s, %s, %s, %s)'
-    if card == 'Villainous Wealth' and int(n) == 0:
-        print(sql)
-        print([deck_id, card, n, in_sideboard])
     return db().execute(sql, [deck_id, card, n, in_sideboard])
 
 def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username):

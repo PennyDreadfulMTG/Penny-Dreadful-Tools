@@ -21,7 +21,13 @@ def load_season(season=None):
     if season is None:
         where = 'start. start_date <= UNIX_TIMESTAMP() AND `end`.start_date > UNIX_TIMESTAMP()'
     else:
-        where = 'start.`number` = {season} OR start.`code` = {season}'.format(season=sqlescape(season))
+        try:
+            number = int(season)
+            code = "'{season}'".format(season=season)
+        except ValueError:
+            number = 0
+            code = sqlescape(season)
+        where = 'start.`number` = {number} OR start.`code` = {code}'.format(number=number, code=code)
     sql = """
         SELECT start.`number`, start.`code`, `start`.start_date, `end`.start_date AS end_date
         FROM season AS `start`

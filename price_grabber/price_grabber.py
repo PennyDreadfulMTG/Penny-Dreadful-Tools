@@ -88,25 +88,25 @@ def create_tables():
         `set` VARCHAR(10),
         version VARCHAR(30),
         premium BOOLEAN,
-        price INTEGER,
+        price MEDIUMINT UNSIGNED,
         INDEX idx_time (`time`)
     )"""
     execute(sql)
     sql = """CREATE TABLE IF NOT EXISTS cache (
         `time` INTEGER,
         name VARCHAR(150),
-        high INTEGER,
-        low INTEGER,
-        price INTEGER,
-        week REAL,
-        month REAL,
-        season REAL
+        high MEDIUMINT UNSIGNED,
+        low MEDIUMINT UNSIGNED,
+        price MEDIUMINT UNSIGNED,
+        week FLOAT,
+        month FLOAT,
+        season FLOAT
     )"""
     execute(sql)
     sql = """CREATE TABLE IF NOT EXISTS low_price (
         `time` INTEGER,
         name VARCHAR(150),
-        price INTEGER,
+        price MEDIUMINT UNSIGNED,
         INDEX idx_name_time_price (name, `time`, price)
     )"""
     execute(sql)

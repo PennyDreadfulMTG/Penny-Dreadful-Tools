@@ -226,10 +226,7 @@ def post_archetypes():
             if archetype_id:
                 archs.assign(deck_id, archetype_id)
     elif request.form.get('q') is not None:
-        search_results = deck.load_decks_by_card(request.form.get('q'))
-    elif request.form.get('something about assigning is not None'):
-        for deck_id in request.form.getlist('deck_id'):
-            archs.assign(deck_id, request.form.get('archetype_id'))
+        search_results = deck.load_decks_by_cards(request.form.get('q').splitlines())
     elif request.form.get('parent') is not None:
         archs.add(request.form.get('name'), request.form.get('parent'))
     else:

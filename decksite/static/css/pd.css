@@ -482,8 +482,9 @@ input.error, select.error, textarea.error {
     visibility: hidden;
 }
 
-form.inline, .inline input, .inline select, .inline textarea, .inlne label, .inline button {
+form.inline, .inline input, .inline select, .inline textarea, .inline label, .inline button {
     margin: 0;
+    max-width: 100%;
     width: inherit;
 }
 

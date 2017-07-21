@@ -46,8 +46,8 @@
 
     <form method="post">
         <div>
-            <label for="q">Card</label>
-            <input type="text" name="q">
+            <label for="q">Cards (separated by newlines)</label>
+            <textarea name="q"></textarea>
         </div>
         <button type="submit">Search</button>
     </form>
@@ -79,14 +79,13 @@
                         </tr>
                     {{/search_results}}
             </table>
-            <label for="archetype_id">Archetype:</label>
             <select name="archetype_id">
                 <option value="">[Select]</option>
                 {{#archetypes}}
                     <option value="{{id}}">{{name}}</option>
                 {{/archetypes}}
             </select>
-            <input type="submit" value="Reassign">
+            <button type="submit">Reassign</button>
         </form>
     {{/has_search_results}}
 </section>
@@ -103,7 +102,7 @@
                             <input type="hidden" name="parent" value="{{id}}">
                             <div class="field">
                                 <input type="text" name="name">
-                                <input type="submit" value="Add">
+                                <button type="submit">Add</button>
                             </div>
                         </form>
                     </td>

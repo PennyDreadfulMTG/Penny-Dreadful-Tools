@@ -573,6 +573,18 @@ tr.archetype-3 > .primary.initial {
     font-size: 60%;
     padding-left: 3rem;
 }
+tr.archetype-0.current > .primary.initial {
+    padding-left: 1rem;
+}
+tr.archetype-1.current > .primary.initial {
+    padding-left: 2rem;
+}
+tr.archetype-2.current > .primary.initial {
+    padding-left: 3rem;
+}
+tr.archetype-3.current > .primary.initial {
+    padding-left: 4rem;
+}
 tr.current {
     background-color: #eee;
 }
@@ -584,6 +596,7 @@ tr.current td {
 }
 tr.current td:first-child {
     left: -1rem;
+    padding-right: 0;
     position: relative;
 }
 tr.current td:last-child {

@@ -26,12 +26,7 @@
                         </td>
                         <td>
                             <input type="hidden" name="deck_id" value="{{id}}">
-                            <select name="archetype_id">
-                                <option value="">[Select]</option>
-                                {{#archetypes}}
-                                    <option value="{{id}}">{{name}}</option>
-                                {{/archetypes}}
-                            </select>
+                            {{> archetypedropdown}}
                         </td>
                     </tr>
                 {{/queue}}
@@ -40,7 +35,6 @@
         <button type="submit">Assign</button>
     </form>
 </section>
-
 <section>
     <h2>Search By Card</h2>
 
@@ -79,17 +73,21 @@
                         </tr>
                     {{/search_results}}
             </table>
-            <select name="archetype_id">
-                <option value="">[Select]</option>
-                {{#archetypes}}
-                    <option value="{{id}}">{{name}}</option>
-                {{/archetypes}}
-            </select>
+            {{> archetypedropdown}}
             <button type="submit">Reassign</button>
         </form>
     {{/has_search_results}}
 </section>
-
+<section>
+    <h2>Move</h2>
+    <form method="post" class="inline">
+        <p>Move</p>
+        {{> archetypedropdown}}
+        <p>New parent</p>
+        {{> archetypedropdown}}
+        <button type="submit">Move</button>
+    </form>
+</section>
 <section>
     <h2>Add Archetype</h2>
     <table>

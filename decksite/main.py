@@ -14,7 +14,7 @@ from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
 from decksite.charts import chart
 from decksite.league import ReportForm, SignUpForm
-from decksite.views import About, AddForm, Archetype, Archetypes, Card, Cards, Competition, Competitions, Deck, EditArchetypes, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Report, Resources, Rotation, Season, SignUp, Tournaments, Bugs
+from decksite.views import About, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, EditArchetypes, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Report, Resources, Rotation, Season, SignUp, Tournaments, Unauthorized
 
 # Decks
 
@@ -247,13 +247,18 @@ def authenticate():
 @APP.route('/authenticate/callback/')
 def authenticate_callback():
     if request.values.get('error'):
-        return request.values['error']
+        return redirect(url_for('unauthorized', error=request.values['error']))
     auth.setup_session(request.url)
     url = session.get('target')
     if url is None:
         url = url_for('home')
     session['target'] = None
     return redirect(url)
+
+@APP.route('/unauthorized/')
+def unauthorized(error=None):
+    view = Unauthorized(error)
+    return view.page()
 
 @APP.route('/logout/')
 def authenticate_logout():

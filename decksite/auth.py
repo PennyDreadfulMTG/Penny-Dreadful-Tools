@@ -53,7 +53,7 @@ def admin_required(f):
         if session.get('admin') is None:
             return redirect(url_for('authenticate', target=request.url))
         elif session.get('admin') is False:
-            return redirect(url_for('home'))
+            return redirect(url_for('unauthorized'))
         return f(*args, **kwargs)
     return decorated_function
 

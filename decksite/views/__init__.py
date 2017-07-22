@@ -22,3 +22,4 @@ from .rotation import Rotation
 from .season import Season
 from .signup import SignUp
 from .tournaments import Tournaments
+from .unauthorized import Unauthorized

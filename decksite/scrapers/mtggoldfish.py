@@ -1,4 +1,5 @@
 import re
+import time
 
 from bs4 import BeautifulSoup
 
@@ -13,6 +14,7 @@ from decksite.scrapers import decklist
 def scrape():
     page = 1
     while True:
+        time.sleep(0.1)
         url = 'https://www.mtggoldfish.com/deck/custom/penny_dreadful?page={n}#online'.format(n=page)
         soup = BeautifulSoup(fetcher.internal.fetch(url, character_encoding='utf-8'), 'html.parser')
         raw_decks = soup.find_all('div', {'class': 'deck-tile'})
@@ -34,7 +36,7 @@ def scrape():
             except InvalidDataException as e:
                 print('Rejecting decklist of deck with identifier {identifier} because of {e}'.format(identifier=d.identifier, e=e))
                 continue
-            if len([f for f in legality.legal_formats(vivified) if 'Penny Dreadful' in f]):
+            if len([f for f in legality.legal_formats(vivified) if 'Penny Dreadful' in f]) == 0:
                 print('Rejecting deck with identifier {identifier} becuase it is not legal in any PD formats.'.format(identifier=d.identifier))
                 continue
             if len(d.cards) == 0:
@@ -47,7 +49,7 @@ def scrape_created_date(d):
     soup = BeautifulSoup(fetcher.internal.fetch(d.url, character_encoding='utf-8'), 'html.parser')
     description = soup.select_one('div.deck-view-description').renderContents().decode('utf-8')
     date_s = re.findall(r'([A-Z][a-z][a-z] \d+, \d\d\d\d)', description)[0]
-    return dtutil.parse_to_ts(date_s, '%b %d, %Y', dtutil.WOTC_TZ)
+    return dtutil.parse_to_ts(date_s, '%b %d, %Y', dtutil.MTGGOLDFISH_TZ)
 
 def scrape_decklist(d):
     url = 'https://www.mtggoldfish.com/deck/download/{identifier}'.format(identifier=d.identifier)

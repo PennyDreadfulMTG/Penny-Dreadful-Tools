@@ -10,6 +10,7 @@ from pytz import timezone
 # Parse any dates you get as strings using parse.
 
 GATHERLING_TZ = timezone('America/New_York')
+MTGGOLDFISH_TZ = GATHERLING_TZ
 WOTC_TZ = timezone('America/Los_Angeles')
 UTC_TZ = timezone('UTC')
 

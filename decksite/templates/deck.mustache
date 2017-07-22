@@ -84,11 +84,7 @@
         <p>
             <form class="inline" method="post" action="{{edit_archetype_url}}">
                 <input type="hidden" name="deck_id" value="{{id}}">
-                <select name="archetype_id">
-                    {{#archetypes}}
-                        <option value="{{id}}">{{name}}</option>
-                    {{/archetypes}}
-                </select>
+                {{> archetypedropdown}}
                 <button type="submit">Assign</button>
             </form>
         </p>

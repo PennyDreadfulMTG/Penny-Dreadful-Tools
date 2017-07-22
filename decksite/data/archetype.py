@@ -104,12 +104,12 @@ def load_matchups(archetype_id):
             SUM(CASE WHEN d.created_date < ? THEN 0 WHEN dm.games = 2 THEN 1 ELSE 0 END) AS `season.wins`,
             SUM(CASE WHEN d.created_date < ? THEN 0 WHEN odm.games = 2 THEN 1 ELSE 0 END) AS `season.losses`,
             SUM(CASE WHEN d.created_date < ? THEN 0 WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS `season.draws`,
-            ROUND(AVG(CASE WHEN d.created_date < ? THEN NULL WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1) AS `season.win_percent`,
+            IFNULL(ROUND(AVG(CASE WHEN d.created_date < ? THEN NULL WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1), '') AS `season.win_percent`,
 
             SUM(CASE WHEN dm.games = 2 THEN 1 ELSE 0 END) AS `all.wins`,
             SUM(CASE WHEN odm.games = 2 THEN 1 ELSE 0 END) AS `all.losses`,
             SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS `all.draws`,
-            ROUND(AVG(CASE WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1) AS `all.win_percent`
+            IFNULL(ROUND(AVG(CASE WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1), '') AS `all.win_percent`
         FROM
             archetype AS a
         INNER JOIN
@@ -141,6 +141,28 @@ def load_matchups(archetype_id):
             `season.wins` DESC, `all.wins` DESC
     """
     return [Container(m) for m in db().execute(sql, [rotation.last_rotation().timestamp()] * 4 + [archetype_id])]
+
+def move(archetype_id, parent_id):
+    db().begin()
+    remove_sql = """
+        DELETE a
+        FROM archetype_closure AS a
+        INNER JOIN archetype_closure AS d
+            ON a.descendant = d.descendant
+        LEFT JOIN archetype_closure AS x
+            ON x.ancestor = d.ancestor AND x.descendant = a.ancestor
+        WHERE d.ancestor = ? AND x.ancestor IS NULL
+    """
+    db().execute(remove_sql, [archetype_id])
+    add_sql = """
+        INSERT INTO archetype_closure (ancestor, descendant, depth)
+            SELECT supertree.ancestor, subtree.descendant, supertree.depth + subtree.depth + 1
+            FROM archetype_closure AS supertree JOIN archetype_closure AS subtree
+            WHERE subtree.ancestor = ?
+            AND supertree.descendant = ?
+    """
+    db().execute(add_sql, [archetype_id, parent_id])
+    db().commit()
 
 class Archetype(Container, NodeMixin):
     pass

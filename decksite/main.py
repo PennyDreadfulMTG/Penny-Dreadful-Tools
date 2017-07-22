@@ -14,7 +14,7 @@ from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
 from decksite.charts import chart
 from decksite.league import ReportForm, SignUpForm
-from decksite.views import About, AddForm, Archetype, Archetypes, Card, Cards, Competition, Competitions, Deck, EditArchetypes, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Report, Resources, Rotation, Season, SignUp, Tournaments, Bugs
+from decksite.views import About, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, EditArchetypes, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Report, Resources, Rotation, Season, SignUp, Tournaments, Unauthorized
 
 # Decks
 
@@ -227,6 +227,8 @@ def post_archetypes():
                 archs.assign(deck_id, archetype_id)
     elif request.form.get('q') is not None:
         search_results = deck.load_decks_by_cards(request.form.get('q').splitlines())
+    elif request.form.getlist('archetype_id') is not None and len(request.form.getlist('archetype_id')) == 2:
+        archs.move(request.form.getlist('archetype_id')[0], request.form.getlist('archetype_id')[1])
     elif request.form.get('parent') is not None:
         archs.add(request.form.get('name'), request.form.get('parent'))
     else:
@@ -247,13 +249,18 @@ def authenticate():
 @APP.route('/authenticate/callback/')
 def authenticate_callback():
     if request.values.get('error'):
-        return request.values['error']
+        return redirect(url_for('unauthorized', error=request.values['error']))
     auth.setup_session(request.url)
     url = session.get('target')
     if url is None:
         url = url_for('home')
     session['target'] = None
     return redirect(url)
+
+@APP.route('/unauthorized/')
+def unauthorized(error=None):
+    view = Unauthorized(error)
+    return view.page()
 
 @APP.route('/logout/')
 def authenticate_logout():

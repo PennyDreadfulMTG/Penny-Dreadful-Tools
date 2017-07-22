@@ -13,9 +13,9 @@ class Archetype(View):
         matchup_archetypes = archs.load_archetypes_deckless()
         matchups_by_id = {m.id: m for m in matchups}
         for m in matchup_archetypes:
-            n = matchups_by_id.get(m.id)
-            if n is not None:
-                m.update(n)
+            # Overwite totals with vs-archetype specific details. Wipe out if there are none.
+            m.update(matchups_by_id.get(m.id, {'hide_archetype': True}))
+        for m in matchup_archetypes:
             self.prepare_archetype(m, matchup_archetypes)
         # Storing this in matchups_container like this lets us include two different archetype trees on the same page without collision.
         self.matchups_container = [{

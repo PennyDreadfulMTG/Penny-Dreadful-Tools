@@ -104,12 +104,12 @@ def load_matchups(archetype_id):
             SUM(CASE WHEN d.created_date < ? THEN 0 WHEN dm.games = 2 THEN 1 ELSE 0 END) AS `season.wins`,
             SUM(CASE WHEN d.created_date < ? THEN 0 WHEN odm.games = 2 THEN 1 ELSE 0 END) AS `season.losses`,
             SUM(CASE WHEN d.created_date < ? THEN 0 WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS `season.draws`,
-            ROUND(AVG(CASE WHEN d.created_date < ? THEN NULL WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1) AS `season.win_percent`,
+            IFNULL(ROUND(AVG(CASE WHEN d.created_date < ? THEN NULL WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1), '') AS `season.win_percent`,
 
             SUM(CASE WHEN dm.games = 2 THEN 1 ELSE 0 END) AS `all.wins`,
             SUM(CASE WHEN odm.games = 2 THEN 1 ELSE 0 END) AS `all.losses`,
             SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS `all.draws`,
-            ROUND(AVG(CASE WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1) AS `all.win_percent`
+            IFNULL(ROUND(AVG(CASE WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1), '') AS `all.win_percent`
         FROM
             archetype AS a
         INNER JOIN

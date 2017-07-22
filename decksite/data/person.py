@@ -22,14 +22,14 @@ def load_people(where='1 = 1'):
         SUM(d.wins) AS `all.wins`,
         SUM(d.losses) AS `all.losses`,
         SUM(d.draws) AS `all.draws`,
-        ROUND((SUM(d.wins) / SUM(d.wins + d.losses)) * 100, 1) AS `all.win_percent`,
+        IFNULL(ROUND((SUM(d.wins) / SUM(d.wins + d.losses)) * 100, 1), '') AS `all.win_percent`,
         SUM(CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `all.num_competitions`,
 
         SUM(CASE WHEN d.created_date >= %s THEN 1 ELSE 0 END) AS `season.num_decks`,
         SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) AS `season.wins`,
         SUM(CASE WHEN d.created_date >= %s THEN losses ELSE 0 END) AS `season.losses`,
         SUM(CASE WHEN d.created_date >= %s THEN draws ELSE 0 END) AS `season.draws`,
-        ROUND((SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) / SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END + CASE WHEN d.created_date >= %s THEN losses ELSE 0 END)) * 100, 1) AS `season.win_percent`,
+        IFNULL(ROUND((SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) / SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END + CASE WHEN d.created_date >= %s THEN losses ELSE 0 END)) * 100, 1), '') AS `season.win_percent`,
         SUM(CASE WHEN d.created_date >= %s AND d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `season.num_competitions`
 
         FROM person AS p

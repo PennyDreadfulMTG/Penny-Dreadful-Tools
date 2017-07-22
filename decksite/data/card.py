@@ -18,7 +18,7 @@ def played_cards(where='1 = 1'):
             SUM(wins) AS `all.wins`,
             SUM(losses) AS `all.losses`,
             SUM(draws) AS `all.draws`,
-            ROUND((SUM(wins) / SUM(wins + losses)) * 100, 1) AS `all.win_percent`,
+            IFNULL(ROUND((SUM(wins) / SUM(wins + losses)) * 100, 1), '') AS `all.win_percent`,
 
             SUM(CASE WHEN created_date >= %s THEN 1 ELSE 0 END) AS `season.n_decks`,
             SUM(CASE WHEN created_date >= %s AND maindeck_n > 0 THEN 1 ELSE 0 END) AS `season.n_maindecks`,

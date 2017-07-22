@@ -19,6 +19,7 @@ class SqliteDatabase(GenericDatabase):
             raise DatabaseException('Failed to initialize database in `{location}`'.format(location=location)) from e
 
     def execute(self, sql, args=None):
+        sql = sql.replace('MEDIUMINT UNSIGNED', 'INTEGER') # Column type difference.
         sql = sql.replace(' SEPARATOR ', ', ') # MySQL/SQLite GROUP_CONCAT syntax difference.
         sql = sql.replace('%%', '%') # MySQLDB and apsw escaping difference.
         if args is None:

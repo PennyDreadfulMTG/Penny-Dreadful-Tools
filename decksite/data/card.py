@@ -88,7 +88,7 @@ def only_played_by(person_id):
         INNER JOIN deck AS d ON d.id = dc.deck_id
         INNER JOIN person AS p ON p.id = d.person_id
         GROUP BY card
-        HAVING COUNT(DISTINCT p.id) = 1 AND p.id = {person_id}
+        HAVING COUNT(DISTINCT p.id) = 1 AND p.id = {person_id} AND SUM(d.wins + d.draws + d.losses) > 0
     """.format(person_id=sqlescape(person_id))
     cs = [Container(r) for r in db().execute(sql)]
     cards = {c.name: c for c in oracle.load_cards()}

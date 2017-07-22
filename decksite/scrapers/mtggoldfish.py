@@ -49,7 +49,7 @@ def scrape_created_date(d):
     soup = BeautifulSoup(fetcher.internal.fetch(d.url, character_encoding='utf-8'), 'html.parser')
     description = soup.select_one('div.deck-view-description').renderContents().decode('utf-8')
     date_s = re.findall(r'([A-Z][a-z][a-z] \d+, \d\d\d\d)', description)[0]
-    return dtutil.parse_to_ts(date_s, '%b %d, %Y', dtutil.WOTC_TZ)
+    return dtutil.parse_to_ts(date_s, '%b %d, %Y', dtutil.MTGGOLDFISH_TZ)
 
 def scrape_decklist(d):
     url = 'https://www.mtggoldfish.com/deck/download/{identifier}'.format(identifier=d.identifier)

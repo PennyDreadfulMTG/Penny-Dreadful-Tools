@@ -159,7 +159,7 @@ class View:
 
     def prepare_archetypes(self):
         for a in getattr(self, 'archetypes', []):
-            self.prepare_archetype(a, self.get('archetypes', []))
+            self.prepare_archetype(a, getattr(self, 'archetypes', []))
 
     def prepare_archetype(self, a, archetypes):
         num_most_common_cards_to_list = 10

@@ -87,7 +87,7 @@ def archetypes():
 @APP.route('/archetypes/<archetype_id>/')
 @cached()
 def archetype(archetype_id):
-    view = Archetype(archs.load_archetype(archetype_id), archs.load_archetypes_deckless_for(archetype_id))
+    view = Archetype(archs.load_archetype(archetype_id), archs.load_archetypes_deckless_for(archetype_id), archs.load_matchups(archetype_id))
     return view.page()
 
 @APP.route('/tournaments/')
@@ -240,7 +240,7 @@ def authenticate():
     target = request.args.get('target')
     authorization_url, state = auth.setup_authentication()
     session['oauth2_state'] = state
-    if target:
+    if target is not None:
         session['target'] = target
     return redirect(authorization_url)
 
@@ -249,7 +249,9 @@ def authenticate_callback():
     if request.values.get('error'):
         return request.values['error']
     auth.setup_session(request.url)
-    url = session.get('target', url_for('home'))
+    url = session.get('target')
+    if url is None:
+        url = url_for('home')
     session['target'] = None
     return redirect(url)
 

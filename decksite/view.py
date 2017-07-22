@@ -100,13 +100,9 @@ class View:
         d.url = url_for('decks', deck_id=d.id)
         d.export_url = url_for('export', deck_id=d.id)
         d.cmc_chart_url = url_for('cmc_chart', deck_id=d.id)
-        if d.source_name == 'League':
-            d.source_indicator = 'League'
-            if d.wins + d.losses < 5 and d.competition_end_date > dtutil.now() and not d.get('retired', False):
-                d.stars = '⊕ {stars}'.format(stars=d.stars).strip()
-                d.source_sort = '1'
-        else:
-            d.source_indicator = d.source_name
+        if d.source_name == 'League' and d.wins + d.losses < 5 and d.competition_end_date > dtutil.now() and not d.get('retired', False):
+            d.stars = '⊕ {stars}'.format(stars=d.stars).strip()
+            d.source_sort = '1'
         d.comp_row_len = len("{comp_name} (Piloted by {person}".format(comp_name=d.competition_name, person=d.person))
         if d.get('archetype_id', None):
             d.archetype_url = url_for('archetype', archetype_id=d.archetype_id)
@@ -162,41 +158,44 @@ class View:
                 p.all.show_record = p.all.wins or p.all.losses or p.all.get('draws', None)
 
     def prepare_archetypes(self):
-        num_most_common_cards_to_list = 10
         for a in getattr(self, 'archetypes', []):
-            a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
-            if a.get('all') and a.get('season'):
-                a.all.show_record = a.all.get('wins') or a.all.get('draws') or a.all.get('losses')
-                a.season.show_record = a.season.get('wins') or a.season.get('draws') or a.season.get('losses')
-            a.url = url_for('archetype', archetype_id=a.id)
-            a.best_decks = Container({'decks': []})
-            n = 3
-            while len(a.best_decks.decks) == 0 and n >= 0:
-                for d in a.decks:
-                    if d.get('stars', '').count('★') >= n:
-                        a.best_decks.decks.append(d)
-                n -= 1
-            counter = Counter()
-            a.cards = []
-            a.most_common_cards = []
-            for d in a.decks:
-                a.cards += d.maindeck + d.sideboard
-                for c in d.maindeck:
-                    if not c['card'].type.startswith('Basic Land'):
-                        counter[c['name']] += c['n']
-            most_common_cards = counter.most_common(num_most_common_cards_to_list)
-            cs = oracle.cards_by_name()
-            for v in most_common_cards:
-                self.prepare_card(cs[v[0]])
-                a.most_common_cards.append(cs[v[0]])
-            a.archetype_tree = PreOrderIter(a)
-            for r in a.archetype_tree:
-                # Prune branches we don't want to show
-                if r.id not in [a.id for a in getattr(self, 'archetypes', [])]:
-                    r.parent = None
-                r['url'] = url_for('archetype', archetype_id=r['id'])
-                # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
-                r['depth'] = r.depth
+            self.prepare_archetype(a, getattr(self, 'archetypes', []))
+
+    def prepare_archetype(self, a, archetypes):
+        num_most_common_cards_to_list = 10
+        a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
+        if a.get('all') and a.get('season'):
+            a.all.show_record = a.all.get('wins') or a.all.get('draws') or a.all.get('losses')
+            a.season.show_record = a.season.get('wins') or a.season.get('draws') or a.season.get('losses')
+        a.url = url_for('archetype', archetype_id=a.id)
+        a.best_decks = Container({'decks': []})
+        n = 3
+        while len(a.best_decks.decks) == 0 and n >= 0:
+            for d in a.get('decks', []):
+                if d.get('stars', '').count('★') >= n:
+                    a.best_decks.decks.append(d)
+            n -= 1
+        counter = Counter()
+        a.cards = []
+        a.most_common_cards = []
+        for d in a.get('decks', []):
+            a.cards += d.maindeck + d.sideboard
+            for c in d.maindeck:
+                if not c['card'].type.startswith('Basic Land'):
+                    counter[c['name']] += c['n']
+        most_common_cards = counter.most_common(num_most_common_cards_to_list)
+        cs = oracle.cards_by_name()
+        for v in most_common_cards:
+            self.prepare_card(cs[v[0]])
+            a.most_common_cards.append(cs[v[0]])
+        a.archetype_tree = PreOrderIter(a)
+        for r in a.archetype_tree:
+            # Prune branches we don't want to show
+            if r.id not in [a.id for a in archetypes]:
+                r.parent = None
+            r['url'] = url_for('archetype', archetype_id=r['id'])
+            # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
+            r['depth'] = r.depth
 
     def commit_id(self):
         return subprocess.check_output(['git', 'rev-parse', 'HEAD'])

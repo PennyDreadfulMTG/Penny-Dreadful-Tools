@@ -520,7 +520,7 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
 }
 
 td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
-    padding-left: 8px !important;
+    padding-left: 8px !important; /* csslint allow: important */
 }
 
 .gsc-cursor-page:hover {
@@ -558,8 +558,8 @@ td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
 
 /* Ideally this should be the underline from p a above but this is better than nothing. */
 .gs-title {
-    text-decoration: underline !important;
-}
+    text-decoration: underline !important; /* csslint: allow important */;
+ }
 
 .search tr {
     border-bottom: 0;

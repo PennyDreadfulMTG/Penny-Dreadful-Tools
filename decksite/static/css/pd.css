@@ -132,7 +132,6 @@ p a {
     background-position: 0 96%;
     -webkit-background-size: 100% 0.1rem;
     background-size: 100% 0.1rem;
-
 }
 
 /* Lists */
@@ -516,6 +515,14 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
     text-transform: none;
 }
 
+.gsc-snippet {
+    white-space: normal !important; /* csslint allow: important */
+}
+
+td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
+    padding-left: 8px !important; /* csslint allow: important */
+}
+
 .gsc-cursor-page:hover {
     text-decoration: none !important; /* csslint allow: important */
 }
@@ -544,6 +551,15 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
 .gsc-search-button {
     margin-top: 5px !important; /* csslint allow: important */
 }
+
+.gsc-webResult.gsc-result {
+    border-bottom: 0.1rem solid #eee !important; /* csslint allow: important */
+}
+
+/* Ideally this should be the underline from p a above but this is better than nothing. */
+.gs-title {
+    text-decoration: underline !important; /* csslint allow: important */
+ }
 
 .search tr {
     border-bottom: 0;

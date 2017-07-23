@@ -68,8 +68,9 @@ PD.init = function () {
     $('input[type=file]').on('change', PD.loadDeck);
     $('.deckselect').on('change', PD.toggleDrawDropdown);
     $('.bugtable').trigger('sorton', [[[2,0],[0,0]]]);
-    $('input[type=checkbox].toggleIllegal').on('change', PD.toggleIllegalCards)
-    PD.updateStriped()
+    $('input[type=checkbox].toggleIllegal').on('change', PD.toggleIllegalCards);
+    PD.updateStriped();
+    Tipped.create('[title]', {'showDelay': 1000});
 };
 PD.fadeRepeats = function () {
     var current, previous;

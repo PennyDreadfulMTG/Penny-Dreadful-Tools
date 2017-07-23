@@ -6,6 +6,7 @@
                 <tr>
                     <th>Colors</th>
                     <th>Deck Name</th>
+                    <th>Source</th>
                     <th>Current</th>
                     <th>Similar Deck</th>
                     <th>Suggested</th>
@@ -15,7 +16,8 @@
                 {{#queue}}
                     <tr>
                         <td>{{{colors_safe}}}</td>
-                        <td><a href="{{url}}">{{name}} ({{id}})</a></td>
+                        <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
+                        <td><a href="{{source_url}}">{{source_name}}</a></td>
                         <td>{{archetype_name}}</td>
                         <td>
                             {{#suggestion}}<a href="{{url}}">{{name}} ({{id}})</a>{{/suggestion}}

@@ -19,6 +19,7 @@ class EditArchetypes(View):
         self.search_results = search_results
         for d in self.search_results:
             self.prepare_deck(d)
+            d.decklist = str(d).replace('\n', '<br>')
 
     def subtitle(self):
         return 'Edit Archetypes'

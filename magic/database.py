@@ -89,7 +89,7 @@ def delete():
     else:
         db().begin()
         query = db().values("""
-        SELECT concat('DROP TABLE IF EXISTS ', table_name, ';')
+        SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;')
         FROM information_schema.tables
         WHERE table_schema = %s;
         """, [db().name])

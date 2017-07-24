@@ -204,7 +204,7 @@ class View:
 def colors_html(colors, colored_symbols):
     total = len(colored_symbols)
     if total == 0:
-        return '<span class="mana" style="width: 3rem"></span>';
+        return '<span class="mana" style="width: 3rem"></span>'
     s = ''
     for color in colors:
         n = colored_symbols.count(color)

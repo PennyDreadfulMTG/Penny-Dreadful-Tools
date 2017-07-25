@@ -1,44 +1,44 @@
 window.PD = {};
 PD.init = function () {
-    $('.fade-repeats').each(PD.fadeRepeats);
-    $('.fade-repeats').css('visibility', 'visible').hide().fadeIn('slow');
+    $(".fade-repeats").each(PD.fadeRepeats);
+    $(".fade-repeats").css("visibility", "visible").hide().fadeIn("slow");
     $.tablesorter.addParser({
-        'id': 'record',
-        'is': function(s) {
+        "id": "record",
+        "is": function(s) {
             return s.match(/^\d+–\d+(–\d+)?$/);
         },
-        'format': function(s) {
+        "format": function(s) {
             var parts, wins, losses;
             if (s == "") {
-                return '';
+                return "";
             }
-            parts = s.split('–');
+            parts = s.split("–");
             wins = parseInt(parts[0]);
             losses = parseInt(parts[1]);
             return ((wins - losses) * 1000 + wins).toString();
         },
-        'type': "numeric"
+        "type": "numeric"
     });
     $.tablesorter.addParser({
-        'id': 'colors',
-        'is': function(_s, _table, _td, $td) {
-            return $td.find('span.mana').length > 0;
+        "id": "colors",
+        "is": function(_s, _table, _td, $td) {
+            return $td.find("span.mana").length > 0;
         },
-        'format': function(_s, _table, td) {
+        "format": function(_s, _table, td) {
             var i,
                 score = 0,
-                symbols = ['_', 'W', 'U', 'B', 'R', 'G'];
+                symbols = ["_", "W", "U", "B", "R", "G"];
             for (i = 0; i < symbols.length; i++) {
-                if ($(td).find('span.mana-' + symbols[i]).length > 0) {
+                if ($(td).find("span.mana-" + symbols[i]).length > 0) {
                     score += Math.pow(i, 10);
                 }
             }
             return score;
         },
-        'type': 'numeric'
+        "type": "numeric"
     });
     $.tablesorter.addParser({
-        id: 'bugseverity',
+        id: "bugseverity",
         is: function(s) {
             return ["Game Breaking", "Advantageous", "Disadvantageous", "Graphical", "Non-Functional ability", "Unclassified"].indexOf(s) > -1;
         },
@@ -46,42 +46,42 @@ PD.init = function () {
             return ["Game Breaking", "Advantageous", "Disadvantageous", "Graphical", "Non-Functional ability", "Unclassified"].indexOf(s)
         },
         // set type, either numeric or text
-        type: 'numeric'
+        type: "numeric"
     });
     $.tablesorter.addParser({
-        'id': 'archetype',
+        "id": "archetype",
         is: function (_s, _table, _td, $td) {
-            return $td.hasClass('initial');
+            return $td.hasClass("initial");
         },
-        'format': function(s, table, td, $td) {
-            return $(td).data('sort');
+        "format": function(s, table, td, $td) {
+            return $(td).data("sort");
         },
-        'type': 'numeric'
+        "type": "numeric"
     })
-    $('table.archetypes').tablesorter({
-        'sortList': [[0, 0]],
-        'widgets': ['columns'],
-        'widgetOptions': {'columns' : ['primary', 'secondary']}
+    $("table.archetypes").tablesorter({
+        "sortList": [[0, 0]],
+        "widgets": ["columns"],
+        "widgetOptions": {"columns" : ["primary", "secondary"]}
     });
-    $('table').tablesorter({});
-    $('.fade-repeats').bind('sortEnd', PD.fadeRepeats);
-    $('input[type=file]').on('change', PD.loadDeck);
-    $('.deckselect').on('change', PD.toggleDrawDropdown);
-    $('.bugtable').trigger('sorton', [[[2,0],[0,0]]]);
-    $('input[type=checkbox].toggleIllegal').on('change', PD.toggleIllegalCards);
+    $("table").tablesorter({});
+    $(".fade-repeats").bind("sortEnd", PD.fadeRepeats);
+    $("input[type=file]").on("change", PD.loadDeck);
+    $(".deckselect").on("change", PD.toggleDrawDropdown);
+    $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
+    $("input[type=checkbox].toggleIllegal").on("change", PD.toggleIllegalCards);
     PD.updateStriped();
-    Tipped.create('[title]', {'showDelay': 1000});
+    Tipped.create("[title]", {"showDelay": 1000});
 };
 PD.fadeRepeats = function () {
     var current, previous;
-    $(this).find('td').find('*').addBack().removeClass('repeat');
-    $(this).find('tr').each(function() {
-        current = $(this).find('td').toArray();
+    $(this).find("td").find("*").addBack().removeClass("repeat");
+    $(this).find("tr").each(function() {
+        current = $(this).find("td").toArray();
         if (previous) {
             for (i = 0; i < current.length; i++) {
-                if ($(current[i]).text().trim() == $(previous[i]).text().trim() && $(current[i]).html().indexOf('mana-') === -1) {
-                    if ($(current[i]).text().indexOf('⊕') === -1 && $(current[i]).text().indexOf('★') === -1) {
-                        $(current[i]).find('*').addBack().addClass('repeat');
+                if ($(current[i]).text().trim() == $(previous[i]).text().trim() && $(current[i]).html().indexOf("mana-") === -1) {
+                    if ($(current[i]).text().indexOf("⊕") === -1 && $(current[i]).text().indexOf("★") === -1) {
+                        $(current[i]).find("*").addBack().addClass("repeat");
                     }
                 }
             }
@@ -93,7 +93,7 @@ PD.loadDeck = function () {
     var file = this.files[0],
         reader = new FileReader();
     reader.onload = function (e) {
-        $('textarea').val(e.target.result);
+        $("textarea").val(e.target.result);
     };
     reader.readAsText(file);
 }
@@ -103,10 +103,10 @@ PD.toggleDrawDropdown = function () {
         can_draw = can_draw || select.selectedOptions[0].classList.contains("deck-can-draw");
     });
     if (can_draw) {
-        $(".draw-report").css('visibility', 'visible');
+        $(".draw-report").css("visibility", "visible");
     }
     else {
-        $(".draw-report").css('visibility', 'hidden');
+        $(".draw-report").css("visibility", "hidden");
         $("#draws").val(0);
     }
     return can_draw;
@@ -114,14 +114,14 @@ PD.toggleDrawDropdown = function () {
 PD.toggleIllegalCards = function(){
     var hidden = this.checked
     if (hidden)
-        $("tr").find(".illegal").closest('tr').hide();
+        $("tr").find(".illegal").closest("tr").hide();
     else
-        $("tr").find(".illegal").closest('tr').show();
+        $("tr").find(".illegal").closest("tr").show();
     PD.updateStriped()
 }
 PD.updateStriped = function() {
-    $('.odd-stripe').removeClass('odd-stripe');
-    $('.striped:visible:odd').addClass('odd-stripe');
+    $(".odd-stripe").removeClass("odd-stripe");
+    $(".striped:visible:odd").addClass("odd-stripe");
 }
 $(document).ready(function () {
     PD.init();

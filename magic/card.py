@@ -38,11 +38,11 @@ def face_properties():
     props = {}
     base = copy.deepcopy(BASE)
     base['query'] = "GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN `{table}`.`{column}` ELSE '' END SEPARATOR '') AS `{column}`"
-    for k in ['id', 'name', 'mana_cost', 'cmc', 'power', 'toughness', 'power', 'toughness', 'loyalty', 'type', 'text', 'image_name', 'hand', 'life', 'starter', 'position', 'name_ascii', 'card_id']:
+    for k in ['id', 'name', 'mana_cost', 'cmc', 'power', 'toughness', 'power', 'toughness', 'loyalty', 'type', 'text', 'search_text', 'image_name', 'hand', 'life', 'starter', 'position', 'name_ascii', 'card_id']:
         props[k] = copy.deepcopy(base)
-    for k in ['id', 'position', 'name_ascii', 'card_id']:
+    for k in ['id', 'position', 'name_ascii', 'card_id', 'search_text']:
         props[k]['mtgjson'] = False
-    for k in ['id', 'name', 'type', 'text']:
+    for k in ['id', 'name', 'type', 'text', 'search_text']:
         props[k]['nullable'] = False
     for k in ['id', 'card_id', 'hand', 'life', 'starter']:
         props[k]['type'] = INTEGER
@@ -51,11 +51,11 @@ def face_properties():
     props['cmc']['type'] = REAL
     props['name']['query'] = """{name_query} AS name""".format(name_query=name_query())
     props['name_ascii']['query'] = """{name_query} AS name_ascii""".format(name_query=name_query('name_ascii'))
-    props['name_ascii']['fulltext'] = True
     props['cmc']['query'] = """{cmc_query} AS cmc""".format(cmc_query=cmc_query())
     props['mana_cost']['query'] = "GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '|') AS `{column}`"
-    props['text']['query'] = "GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '\n-----\n') AS `{column}`"
-    props['text']['type'] = TEXT
+    for k in ['text', 'search_text']:
+        props[k]['query'] = "GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '\n-----\n') AS `{column}`"
+        props[k]['type'] = TEXT
     props['card_id']['foreign_key'] = ('card', 'id')
     return props
 

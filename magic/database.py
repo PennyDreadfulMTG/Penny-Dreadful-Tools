@@ -6,7 +6,7 @@ from shared.database import get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
-SCHEMA_VERSION = 70
+SCHEMA_VERSION = 80
 
 def db():
     return DATABASE
@@ -89,7 +89,7 @@ def delete():
     else:
         db().begin()
         query = db().values("""
-        SELECT concat('DROP TABLE IF EXISTS ', table_name, ';')
+        SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;')
         FROM information_schema.tables
         WHERE table_schema = %s;
         """, [db().name])

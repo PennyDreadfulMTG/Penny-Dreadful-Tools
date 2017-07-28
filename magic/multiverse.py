@@ -165,6 +165,7 @@ def insert_card(c):
     if c.get('text', None) is None and c['layout'] in ['normal', 'token', 'double-faced', 'split']:
         c['text'] = ''
     c['nameAscii'] = card.unaccent(c.get('name'))
+    c['searchText'] = re.sub(r'\([^\)]+\)', '', c['text'])
     c['cardId'] = card_id
     c['position'] = 1 if not c.get('names') else c.get('names', [c.get('name')]).index(c.get('name')) + 1
     sql = 'INSERT INTO face ('

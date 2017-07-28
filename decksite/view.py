@@ -88,7 +88,7 @@ class View:
 
     def prepare_deck(self, d):
         set_stars_and_top8(d)
-        if d.get('colors', None):
+        if d.get('colors') is not None:
             d.colors_safe = colors_html(d.colors, d.colored_symbols)
             d.name = deck_name.normalize(d)
         d.person_url = url_for('person', person_id=d.person_id)
@@ -202,8 +202,10 @@ class View:
 
 
 def colors_html(colors, colored_symbols):
-    s = ''
     total = len(colored_symbols)
+    if total == 0:
+        return '<span class="mana" style="width: 3rem"></span>'
+    s = ''
     for color in colors:
         n = colored_symbols.count(color)
         width = (3.0 - 0.1 * len(colors)) / total * n

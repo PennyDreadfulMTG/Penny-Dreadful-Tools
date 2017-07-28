@@ -165,8 +165,10 @@ def text_where(column, term):
     if column.endswith('name'):
         column = column.replace('name', 'name_ascii')
         q = card.unaccent(q)
+    if column == 'text':
+        column = 'search_text'
     escaped = sqllikeescape(q)
-    if column == 'text' and '~' in escaped:
+    if column == 'search_text' and '~' in escaped:
         parts = ["'{text}'".format(text=text) for text in escaped.strip("'").split('~')]
         escaped = db().concat(intersperse(parts, 'name'))
     return '({column} LIKE {q})'.format(column=column, q=escaped)

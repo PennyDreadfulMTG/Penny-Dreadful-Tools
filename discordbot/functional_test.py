@@ -51,6 +51,9 @@ def test_commands():
         message.content = "!{0} args".format(cmd)
         message.channel = channel
 
+        if cmd == 'time':
+            message.content = '!time Melbourne'
+
         message.author = types.new_class('User')
         message.author.mention = "@nobody"
         message.author.voice = types.new_class('VoiceState')

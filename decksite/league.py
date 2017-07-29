@@ -29,9 +29,9 @@ class SignUpForm(Form):
     def do_validation(self):
         if len(self.mtgo_username) == 0:
             self.errors['mtgo_username'] = "MTGO Username is required"
-        elif active_decks_by(self.mtgo_username):
+        elif active_decks_by(self.mtgo_username.strip()):
             self.errors['mtgo_username'] = "You already have an active league run.  If you wish to retire your run early, private message '!retire' to PDBot"
-        if len(self.name) == 0:
+        if len(self.name.strip()) == 0:
             self.errors['name'] = 'Deck Name is required'
         else:
             self.source = 'League'
@@ -82,6 +82,8 @@ class ReportForm(Form):
             self.errors['opponent'] = "You can't play yourself"
 
 def signup(form):
+    form.mtgo_username = form.mtgo_username.strip()
+    form.name = form.name.strip()
     return deck.add_deck(form)
 
 def identifier(params):

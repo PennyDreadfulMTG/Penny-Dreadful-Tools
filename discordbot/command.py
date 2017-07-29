@@ -344,7 +344,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header("Commands")
     async def bug(self, bot, channel, args, author):
         """Report a bug"""
-        bot.client.send_typing(channel)
+        await bot.client.send_typing(channel)
         issue = fetcher.create_github_issue(args, author)
         if issue is None:
             await bot.client.send_message(channel, "Report issues at https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new")

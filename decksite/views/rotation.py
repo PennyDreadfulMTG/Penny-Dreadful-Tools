@@ -66,7 +66,10 @@ class Rotation(View):
 
     # Don't preload 10,000 images.
     def tooltips_url(self):
-        return None
+        if len(self.cards) > 500:
+            return None
+        else:
+            return super().tooltips_url()
 
 def redact(num):
     return ''.join(['█' for _ in str(num)])

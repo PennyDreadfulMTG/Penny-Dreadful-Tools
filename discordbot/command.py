@@ -347,7 +347,7 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_typing(channel)
         issue = fetcher.create_github_issue(args, author)
         if issue is None:
-            await bot.client.send_message(channel, "Report issues at https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new")
+            await bot.client.send_message(channel, "Report issues at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>")
         else:
             await bot.client.send_message(channel, "Issue has been reported at <{url}>".format(url=issue.html_url))
 

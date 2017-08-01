@@ -27,8 +27,6 @@ class SmokeTest(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
         result = self.app.get('/people/')
         self.assertEqual(result.status_code, 200)
-        result = self.app.get('/people/bakert99/')
-        self.assertEqual(result.status_code, 200)
         result = self.app.get('/cards/')
         self.assertEqual(result.status_code, 200)
         result = self.app.get('/cards/Unsummon/')

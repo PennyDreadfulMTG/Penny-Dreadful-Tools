@@ -45,7 +45,7 @@ class MysqlDatabase(GenericDatabase):
             if e.args[0] == 1050:
                 pass # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning.
             else:
-                raise e
+                raise
         except MySQLdb.Error as e:
             raise DatabaseException('Failed to execute `{sql}` because of `{e}`'.format(sql=sql, e=e)) from e
 

@@ -304,7 +304,7 @@ Want to contribute? Send a Pull Request."""
                `!resources card Hymn to Tourach`
                `!resources deck check`
                `!resources league`
-               `!resources resources`
+               `!resources`
             """
         if ' ' in args.strip():
             area, detail = args.strip().split(' ', 1)
@@ -422,8 +422,10 @@ Want to contribute? Send a Pull Request."""
         t = fetcher.time(args.strip())
         await bot.client.send_message(channel, '{author}: {time}'.format(author=author.mention, time=t))
 
-    async def pdm(self, bot, channel, args, author):
-        return await self.resources(bot, channel, args, author)
+    @cmd_header("Commands")
+    async def pdm(self, bot, channel, args):
+        """Alias for `!resources`."""
+        return await self.resources(self, bot, channel, args) # BAKERT why do i need self here?
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):
@@ -450,7 +452,6 @@ def complex_search(query):
         return []
     print('Searching for {query}'.format(query=query))
     return search.search(query)
-
 
 def roughly_matches(s1, s2):
     return simplify_string(s1).find(simplify_string(s2)) >= 0

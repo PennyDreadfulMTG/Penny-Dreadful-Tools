@@ -18,3 +18,4 @@ requests
 requests_oauthlib
 seaborn
 titlecase
+untangle

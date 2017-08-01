@@ -306,29 +306,10 @@ Want to contribute? Send a Pull Request."""
                `!resources league`
                `!resources`
             """
-        if ' ' in args.strip():
-            area, detail = args.strip().split(' ', 1)
-        else:
-            area, detail = args.strip(), ''
-        if area == 'card':
-            area = 'cards'
-        if area == 'person':
-            area = 'people'
         results = {}
         if len(args) > 0:
-            sitemap = fetcher.sitemap()
-            matches = [endpoint for endpoint in sitemap if endpoint.startswith('/{area}/'.format(area=area))]
-            if len(matches) > 0:
-                results[args] = 'https://pennydreadfulmagic.com/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail))
-            args = [args] + detail.split()
-            resources = fetcher.resources()
-            for title, items in resources.items():
-                for text, url in items.items():
-                    asked_for_this_section_only = len(args) == 1 and roughly_matches(title, area)
-                    asked_for_this_section_and_item = len(args) == 2 and roughly_matches(title, area) and roughly_matches(text, args[1])
-                    asked_for_this_item_only = len(args) == 1 and roughly_matches(text, area)
-                    if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only:
-                        results[text] = url
+            results.update(site_resources(args))
+            results.update(resources_resources(args))
         s = ''
         if len(results) == 0:
             s = 'PD resources: <https://pennydreadfulmagic.com/resources/>'
@@ -425,7 +406,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header("Commands")
     async def pdm(self, bot, channel, args):
         """Alias for `!resources`."""
-        return await self.resources(self, bot, channel, args) # BAKERT why do i need self here?
+        return await self.resources(self, bot, channel, args)
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):
@@ -474,3 +455,32 @@ async def single_card_text(bot, channel, args, author, f):
 
 def oracle_text(c):
     return c.text
+
+def site_resources(args):
+    results = {}
+    if ' ' in args.strip():
+        area, detail = args.strip().split(' ', 1)
+    else:
+        area, detail = args.strip(), ''
+    if area == 'card':
+        area = 'cards'
+    if area == 'person':
+        area = 'people'
+    sitemap = fetcher.sitemap()
+    matches = [endpoint for endpoint in sitemap if endpoint.startswith('/{area}/'.format(area=area))]
+    if len(matches) > 0:
+        results[args] = 'https://pennydreadfulmagic.com/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail))
+    return results
+
+def resources_resources(args):
+    results = {}
+    words = args.split()
+    resources = fetcher.resources()
+    for title, items in resources.items():
+        for text, url in items.items():
+            asked_for_this_section_only = len(words) == 1 and roughly_matches(title, words[0])
+            asked_for_this_section_and_item = len(words) == 2 and roughly_matches(title, words[0]) and roughly_matches(text, words[1])
+            asked_for_this_item_only = len(words) == 1 and roughly_matches(text, words[0])
+            if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only:
+                results[text] = url
+    return results

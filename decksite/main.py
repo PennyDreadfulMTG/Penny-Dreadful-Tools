@@ -14,7 +14,7 @@ from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
 from decksite.charts import chart
 from decksite.league import ReportForm, SignUpForm
-from decksite.views import About, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, EditArchetypes, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Report, Resources, Rotation, Season, SignUp, Tournaments, Unauthorized
+from decksite.views import About, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Report, Resources, Rotation, Season, SignUp, Tournaments, Unauthorized
 
 # Decks
 
@@ -234,6 +234,19 @@ def post_archetypes():
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/archetypes: {f}'.format(f=request.form))
     return edit_archetypes(search_results)
+
+@APP.route('/admin/matches/')
+@auth.admin_required
+def edit_matches():
+    view = EditMatches(lg.load_latest_league_matches())
+    return view.page()
+
+@APP.route('/admin/matches/', methods=['POST'])
+@auth.admin_required
+def post_matches():
+    if request.form.get('match_id') is not None:
+        lg.delete_match(request.form.get('match_id'))
+    return edit_matches()
 
 # OAuth
 

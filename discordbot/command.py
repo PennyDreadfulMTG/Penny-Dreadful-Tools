@@ -406,6 +406,8 @@ Want to contribute? Send a Pull Request."""
     @cmd_header("Commands")
     async def pdm(self, bot, channel, args):
         """Alias for `!resources`."""
+        # Because of the weird way we call and use methods on Commands we need ...
+        # pylint: disable=too-many-function-args
         return await self.resources(self, bot, channel, args)
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.

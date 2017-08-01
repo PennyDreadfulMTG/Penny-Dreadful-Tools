@@ -296,23 +296,42 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header("Commands")
     async def resources(self, bot, channel, args):
-        """`!resources` Link to page of all Penny Dreadful resources.
-           `!resources {section}` Link to Penny Dreadful resources section.
-           `!resources {section} {link}` Link to Penny Dreadful resource."""
-        args = args.split()
+        """`!resources {args}` Link to useful pages related to `args`.
+           Specifically – look for a section of pennydreadfulmagic.com that fits the description in {args}
+           and links that match in /resources/.
+           Examples:
+               `!resources tournaments`
+               `!resources card Hymn to Tourach`
+               `!resources deck check`
+               `!resources league`
+               `!resources resources`
+            """
+        if ' ' in args.strip():
+            area, detail = args.strip().split(' ', 1)
+        else:
+            area, detail = args.strip(), ''
+        if area == 'card':
+            area = 'cards'
+        if area == 'person':
+            area = 'people'
         results = {}
         if len(args) > 0:
+            sitemap = fetcher.sitemap()
+            matches = [endpoint for endpoint in sitemap if endpoint.startswith('/{area}/'.format(area=area))]
+            if len(matches) > 0:
+                results[args] = 'https://pennydreadfulmagic.com/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail))
+            args = [args] + detail.split()
             resources = fetcher.resources()
             for title, items in resources.items():
                 for text, url in items.items():
-                    asked_for_this_section_only = len(args) == 1 and roughly_matches(title, args[0])
-                    asked_for_this_section_and_item = len(args) == 2 and roughly_matches(title, args[0]) and roughly_matches(text, args[1])
-                    asked_for_this_item_only = len(args) == 1 and roughly_matches(text, args[0])
+                    asked_for_this_section_only = len(args) == 1 and roughly_matches(title, area)
+                    asked_for_this_section_and_item = len(args) == 2 and roughly_matches(title, area) and roughly_matches(text, args[1])
+                    asked_for_this_item_only = len(args) == 1 and roughly_matches(text, area)
                     if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only:
                         results[text] = url
         s = ''
         if len(results) == 0:
-            s = 'PD resources: http://pennydreadfulmagic.com/resources/'
+            s = 'PD resources: <https://pennydreadfulmagic.com/resources/>'
         else:
             for text, url in results.items():
                 s += '{text}: <{url}>\n'.format(text=text, url=url)
@@ -404,17 +423,7 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_message(channel, '{author}: {time}'.format(author=author.mention, time=t))
 
     async def pdm(self, bot, channel, args, author):
-        """`!pdm {area} {detail}` Show the specified page on pennydreadfulmagic.com. Example: `!pdm card Hymn to Tourach`."""
-        if ' ' in args.strip():
-            area, detail = args.strip().split(' ', 1)
-        else:
-            area, detail = args.strip(), ''
-        if area == 'card':
-            area = 'cards'
-        if area == 'person':
-            area = 'people'
-        url = 'http://pennydreadfulmagic.com/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail))
-        await bot.client.send_message(channel, '{author}: <{url}>'.format(author=author.mention, url=url))
+        return await self.resources(bot, channel, args, author)
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):

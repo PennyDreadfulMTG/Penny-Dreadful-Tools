@@ -154,9 +154,9 @@ def determine_end_of_league(start_date):
     else:
         month = start_date.month + 2
     if month > 12:
-        end_date = datetime.datetime(start_date.year + 1, month - 12, 1, tzinfo=dtutil.WOTC_TZ)
+        end_date = datetime.datetime(start_date.year + 1, month - 12, 0, tzinfo=dtutil.WOTC_TZ)
     else:
-        end_date = datetime.datetime(start_date.year, month, 1, tzinfo=dtutil.WOTC_TZ)
+        end_date = datetime.datetime(start_date.year, month, 0, tzinfo=dtutil.WOTC_TZ)
     if end_date > rotation.next_rotation():
         end_date = rotation.next_rotation()
     return end_date - datetime.timedelta(seconds=1)

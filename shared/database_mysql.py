@@ -33,6 +33,7 @@ class MysqlDatabase(GenericDatabase):
             raise DatabaseException('Failed to initialize database in `{location}`'.format(location=db)) from e
 
     def execute(self, sql, args=None):
+        sql = sql.replace('COLLATE NOCASE', '') # Needed for case insensitivity in SQLite which is default in MySQL.
         if args is None:
             args = []
         if args:
@@ -47,7 +48,7 @@ class MysqlDatabase(GenericDatabase):
             else:
                 raise
         except MySQLdb.Error as e:
-            raise DatabaseException('Failed to execute `{sql}` because of `{e}`'.format(sql=sql, e=e)) from e
+            raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e)) from e
 
     def insert(self, sql, args=None):
         self.execute(sql, args)

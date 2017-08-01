@@ -9,6 +9,7 @@ from .competition import Competition
 from .competitions import Competitions
 from .deck import Deck
 from .edit_archetypes import EditArchetypes
+from .edit_matches import EditMatches
 from .home import Home
 from .internal_server_error import InternalServerError
 from .league_form import LeagueForm

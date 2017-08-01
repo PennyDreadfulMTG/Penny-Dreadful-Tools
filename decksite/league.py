@@ -154,9 +154,9 @@ def determine_end_of_league(start_date):
     else:
         month = start_date.month + 2
     if month > 12:
-        end_date = datetime.datetime(start_date.year + 1, month - 12, 0, tzinfo=dtutil.WOTC_TZ)
+        end_date = datetime.datetime(start_date.year + 1, month - 12, 1, tzinfo=dtutil.WOTC_TZ)
     else:
-        end_date = datetime.datetime(start_date.year, month, 0, tzinfo=dtutil.WOTC_TZ)
+        end_date = datetime.datetime(start_date.year, month, 1, tzinfo=dtutil.WOTC_TZ)
     if end_date > rotation.next_rotation():
         end_date = rotation.next_rotation()
     return end_date - datetime.timedelta(seconds=1)
@@ -167,3 +167,57 @@ def retire_deck(d):
     else:
         sql = 'UPDATE `deck` SET `retired` = 1 WHERE id = %s'
     db().execute(sql, [d.id])
+
+def load_latest_league_matches():
+    competition_id = active_league().id
+    where = 'dm.deck_id IN (SELECT id FROM deck WHERE competition_id = {competition_id})'.format(competition_id=competition_id)
+    return load_matches(where)
+
+def load_matches(where='1 = 1'):
+    sql = """
+        SELECT m.id, GROUP_CONCAT(dm.deck_id) AS deck_ids, GROUP_CONCAT(dm.games) AS games
+        FROM `match` AS m
+        INNER JOIN deck_match AS dm ON m.id = dm.match_id
+        WHERE {where}
+        GROUP BY m.id
+    """.format(where=where)
+    print(sql)
+    matches = [Container(m) for m in db().execute(sql)]
+    for m in matches:
+        deck_ids = m.deck_ids.split(',')
+        games = m.games.split(',')
+        m.left_id = deck_ids[0]
+        m.left_games = int(games[0])
+        try:
+            m.right_id = deck_ids[1]
+            m.right_games = int(games[1])
+        except IndexError:
+            m.right_id = None
+            m.right_games = 0
+        if m.left_games > m.right_games:
+            m.winner = m.left_id
+            m.loser = m.right_id
+        elif m.right_games > m.left_games:
+            m.winner = m.right_id
+            m.loser = m.left_id
+        else:
+            m.winner = None
+            m.loser = None
+    return matches
+
+def delete_match(match_id):
+    m = guarantee.exactly_one(load_matches('m.id = {match_id}'.format(match_id=sqlescape(match_id))))
+    db().begin()
+    sql = 'DELETE FROM deck_match WHERE match_id = ?'
+    db().execute(sql, [m.id])
+    sql = 'DELETE FROM `match` WHERE id = ?'
+    db().execute(sql, [m.id])
+    if m.winner:
+        sql = 'UPDATE deck SET wins = wins - 1 WHERE id = ?'
+        db().execute(sql, [m.winner])
+        sql = 'UPDATE deck SET losses = losses - 1 WHERE id = ?'
+        db().execute(sql, [m.loser])
+    else:
+        sql = 'UPDATE deck SET draws = draws - 1 WHERE id IN (?, ?)'
+        db().execute(sql, [m.left_id, m.right_id])
+    db().commit()

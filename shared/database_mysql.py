@@ -48,7 +48,7 @@ class MysqlDatabase(GenericDatabase):
             else:
                 raise
         except MySQLdb.Error as e:
-            raise DatabaseException('Failed to execute `{sql}` because of `{e}`'.format(sql=sql, e=e)) from e
+            raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e)) from e
 
     def insert(self, sql, args=None):
         self.execute(sql, args)

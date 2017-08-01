@@ -32,7 +32,7 @@ class SqliteDatabase(GenericDatabase):
                 self.execute("ROLLBACK")
                 if sql == "BEGIN TRANSACTION":
                     return self.cursor.execute(sql, args).fetchall()
-            raise DatabaseException('Failed to execute `{sql}` because of `{e}`'.format(sql=sql, e=e)) from e
+            raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, e=e)) from e
 
     def insert(self, sql, args=None):
         self.execute(sql, args)

@@ -296,23 +296,23 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header("Commands")
     async def resources(self, bot, channel, args):
-        """`!resources` Link to page of all Penny Dreadful resources.
-           `!resources {section}` Link to Penny Dreadful resources section.
-           `!resources {section} {link}` Link to Penny Dreadful resource."""
-        args = args.split()
+        """`!resources {args}` Link to useful pages related to `args`.
+           Specifically – look for a section of pennydreadfulmagic.com that fits the description in {args}
+           and links that match in /resources/.
+           Examples:
+               `!resources tournaments`
+               `!resources card Hymn to Tourach`
+               `!resources deck check`
+               `!resources league`
+               `!resources`
+            """
         results = {}
         if len(args) > 0:
-            resources = fetcher.resources()
-            for title, items in resources.items():
-                for text, url in items.items():
-                    asked_for_this_section_only = len(args) == 1 and roughly_matches(title, args[0])
-                    asked_for_this_section_and_item = len(args) == 2 and roughly_matches(title, args[0]) and roughly_matches(text, args[1])
-                    asked_for_this_item_only = len(args) == 1 and roughly_matches(text, args[0])
-                    if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only:
-                        results[text] = url
+            results.update(site_resources(args))
+            results.update(resources_resources(args))
         s = ''
         if len(results) == 0:
-            s = 'PD resources: http://pennydreadfulmagic.com/resources/'
+            s = 'PD resources: <https://pennydreadfulmagic.com/resources/>'
         else:
             for text, url in results.items():
                 s += '{text}: <{url}>\n'.format(text=text, url=url)
@@ -347,7 +347,7 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_typing(channel)
         issue = fetcher.create_github_issue(args, author)
         if issue is None:
-            await bot.client.send_message(channel, "Report issues at https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new")
+            await bot.client.send_message(channel, "Report issues at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>")
         else:
             await bot.client.send_message(channel, "Issue has been reported at <{url}>".format(url=issue.html_url))
 
@@ -403,18 +403,12 @@ Want to contribute? Send a Pull Request."""
         t = fetcher.time(args.strip())
         await bot.client.send_message(channel, '{author}: {time}'.format(author=author.mention, time=t))
 
-    async def pdm(self, bot, channel, args, author):
-        """`!pdm {area} {detail}` Show the specified page on pennydreadfulmagic.com. Example: `!pdm card Hymn to Tourach`."""
-        if ' ' in args.strip():
-            area, detail = args.strip().split(' ', 1)
-        else:
-            area, detail = args.strip(), ''
-        if area == 'card':
-            area = 'cards'
-        if area == 'person':
-            area = 'people'
-        url = 'http://pennydreadfulmagic.com/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail))
-        await bot.client.send_message(channel, '{author}: <{url}>'.format(author=author.mention, url=url))
+    @cmd_header("Commands")
+    async def pdm(self, bot, channel, args):
+        """Alias for `!resources`."""
+        # Because of the weird way we call and use methods on Commands we need ...
+        # pylint: disable=too-many-function-args
+        return await self.resources(self, bot, channel, args)
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):
@@ -442,7 +436,6 @@ def complex_search(query):
     print('Searching for {query}'.format(query=query))
     return search.search(query)
 
-
 def roughly_matches(s1, s2):
     return simplify_string(s1).find(simplify_string(s2)) >= 0
 
@@ -464,3 +457,32 @@ async def single_card_text(bot, channel, args, author, f):
 
 def oracle_text(c):
     return c.text
+
+def site_resources(args):
+    results = {}
+    if ' ' in args.strip():
+        area, detail = args.strip().split(' ', 1)
+    else:
+        area, detail = args.strip(), ''
+    if area == 'card':
+        area = 'cards'
+    if area == 'person':
+        area = 'people'
+    sitemap = fetcher.sitemap()
+    matches = [endpoint for endpoint in sitemap if endpoint.startswith('/{area}/'.format(area=area))]
+    if len(matches) > 0:
+        results[args] = 'https://pennydreadfulmagic.com/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail))
+    return results
+
+def resources_resources(args):
+    results = {}
+    words = args.split()
+    resources = fetcher.resources()
+    for title, items in resources.items():
+        for text, url in items.items():
+            asked_for_this_section_only = len(words) == 1 and roughly_matches(title, words[0])
+            asked_for_this_section_and_item = len(words) == 2 and roughly_matches(title, words[0]) and roughly_matches(text, words[1])
+            asked_for_this_item_only = len(words) == 1 and roughly_matches(text, words[0])
+            if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only:
+                results[text] = url
+    return results

@@ -1,6 +1,6 @@
 import json
 
-from flask import Response, request
+from flask import Response, request, url_for
 
 from decksite import APP, league
 from decksite.data import deck, competition as comp, guarantee, card as cs
@@ -84,6 +84,11 @@ def cards_api():
 @APP.route('/api/card/<card>')
 def card_api(card):
     return return_json(oracle.load_card(card))
+
+@APP.route('/api/sitemap/')
+def sitemap():
+    urls = [url_for(rule.endpoint) for rule in APP.url_map.iter_rules() if 'GET' in rule.methods and len(rule.arguments) == 0]
+    return (json.dumps(urls), 200, {'Content-type': 'text/plain; charset=utf-8'})
 
 def validate_api_key():
     if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):

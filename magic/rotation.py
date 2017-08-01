@@ -23,7 +23,6 @@ def next_rotation_ex():
 
 def parse_rotation_date(setinfo):
     setinfo["enter_date"] = dtutil.parse(setinfo["enter_date"], "%Y-%m-%dT%H:%M:%S.%fZ", dtutil.WOTC_TZ)
-    # setinfo["exit_date"] = dtutil.parse(setinfo["exit_date"], "%Y-%m-%dT%H:%M:%S.%fZ", dtutil.WOTC_TZ)
     return setinfo
 
 SETS = init()

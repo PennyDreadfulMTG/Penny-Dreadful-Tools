@@ -42,14 +42,25 @@ class SignUpForm(Form):
         if len(self.decklist) == 0:
             self.errors['decklist'] = 'Decklist is required'
         else:
-            try:
-                self.cards = decklist.parse(self.decklist)
-                vivified = decklist.vivify(self.cards)
-                errors = {}
-                if 'Penny Dreadful' not in legality.legal_formats(vivified, None, errors):
-                    self.errors['decklist'] = 'Deck is not legal in Penny Dreadful - {error}'.format(error=errors.get('Penny Dreadful'))
-            except InvalidDataException as e:
-                self.errors['decklist'] = '{specific}. Try exporting from MTGO as Text and pasting the result.'.format(specific=str(e))
+            self.cards = None
+            if self.decklist.startswith('<?xml'):
+                try:
+                    self.cards = decklist.parse_xml(self.decklist)
+                except InvalidDataException as e:
+                    self.errors['decklist'] = 'Unable to read .dek decklist. Try exporting from MTGO as Text and pasting the result.'.format(specific=str(e))
+            else:
+                try:
+                    self.cards = decklist.parse(self.decklist)
+                except InvalidDataException as e:
+                    self.errors['decklist'] = '{specific}. Try exporting from MTGO as Text and pasting the result.'.format(specific=str(e))
+            if self.cards is not None:
+                try:
+                    vivified = decklist.vivify(self.cards)
+                    errors = {}
+                    if 'Penny Dreadful' not in legality.legal_formats(vivified, None, errors):
+                        self.errors['decklist'] = 'Deck is not legal in Penny Dreadful - {error}'.format(error=errors.get('Penny Dreadful'))
+                except InvalidDataException as e:
+                    self.errors['decklist'] = str(e)
 
 class ReportForm(Form):
     def __init__(self, form, deck_id=None):
@@ -143,9 +154,9 @@ def determine_end_of_league(start_date):
     else:
         month = start_date.month + 2
     if month > 12:
-        end_date = datetime.datetime(start_date.year + 1, month - 12, 1, tzinfo=dtutil.WOTC_TZ)
+        end_date = datetime.datetime(start_date.year + 1, month - 12, 0, tzinfo=dtutil.WOTC_TZ)
     else:
-        end_date = datetime.datetime(start_date.year, month, 1, tzinfo=dtutil.WOTC_TZ)
+        end_date = datetime.datetime(start_date.year, month, 0, tzinfo=dtutil.WOTC_TZ)
     if end_date > rotation.next_rotation():
         end_date = rotation.next_rotation()
     return end_date - datetime.timedelta(seconds=1)

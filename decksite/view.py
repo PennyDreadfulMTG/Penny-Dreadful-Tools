@@ -4,15 +4,14 @@ import urllib
 from collections import Counter
 
 from anytree.iterators import PreOrderIter
-from flask import url_for
+from flask import session, url_for
 
 from magic import oracle, rotation, legality
 from shared import dtutil
 from shared.container import Container
 
-from decksite import deck_name
-from decksite import template
-from decksite import league
+from decksite import deck_name, league, template
+from decksite.data import deck
 
 # pylint: disable=no-self-use, too-many-public-methods
 class View:
@@ -38,12 +37,17 @@ class View:
         return url_for('static', filename='js/pd.js', v=self.commit_id())
 
     def menu(self):
+        archetypes_badge = None
+        if session.get('admin') is True:
+            n = len(deck.load_decks('NOT d.reviewed'))
+            if n > 0:
+                archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
         menu = [
             {'name': 'Decks', 'url': url_for('home')},
             {'name': 'Competitions', 'url': url_for('competitions')},
             {'name': 'People', 'url': url_for('people')},
             {'name': 'Cards', 'url': url_for('cards')},
-            {'name': 'Archetypes', 'url': url_for('archetypes')},
+            {'name': 'Archetypes', 'url': url_for('archetypes'), 'badge': archetypes_badge},
             {'name': 'Resources', 'url': url_for('resources')}
         ]
         if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7):

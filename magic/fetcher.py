@@ -86,6 +86,9 @@ def bugged_cards():
     lines = [l.split('\t') for l in text.split('\n')]
     return lines[1:-1]
 
+def sitemap():
+    return internal.fetch_json('https://pennydreadfulmagic.com/api/sitemap/', resource_id='sitemap')
+
 def time(q):
     url = 'http://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false'.format(q=internal.escape(q))
     info = internal.fetch_json(url)

@@ -1,4 +1,6 @@
 #pylint: disable=import-error, duplicate-code
+import warnings
+
 import MySQLdb
 
 from shared import configuration
@@ -7,6 +9,7 @@ from shared.pd_exception import DatabaseException
 
 class MysqlDatabase(GenericDatabase):
     def __init__(self, db):
+        warnings.filterwarnings('error', category=MySQLdb.Warning)
         try:
             self.name = db
             host = configuration.get('mysql_host')
@@ -38,6 +41,11 @@ class MysqlDatabase(GenericDatabase):
         try:
             self.cursor.execute(sql, args)
             return self.cursor.fetchall()
+        except MySQLdb.Warning as e:
+            if e.args[0] == 1050:
+                pass # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning.
+            else:
+                raise
         except MySQLdb.Error as e:
             raise DatabaseException('Failed to execute `{sql}` because of `{e}`'.format(sql=sql, e=e)) from e
 

@@ -6,7 +6,7 @@ from shared.database import get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
-SCHEMA_VERSION = 82
+SCHEMA_VERSION = 83
 
 def db():
     return DATABASE
@@ -28,7 +28,6 @@ def db_version() -> int:
 
 def setup():
     db().begin()
-    db().execute('SET NAMES utf8mb4')
     db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER)')
     db().execute('CREATE TABLE IF NOT EXISTS version (version TEXT)')
     sql = create_table_def('card', card.card_properties())
@@ -127,6 +126,8 @@ def create_table_def(name, props):
     if fk:
         sql += ', ' + fk
     sql += ')'
+    if db().is_mysql():
+        sql += ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
     return sql.format(name=name)
 
 DATABASE = get_database(configuration.get('magic_database'))

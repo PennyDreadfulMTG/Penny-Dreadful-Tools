@@ -17,23 +17,16 @@ def legal_cards(force=False, season=None):
         legal = h.readlines()
         h.close()
         return [l.strip() for l in legal]
-    url = 'http://pdmtgo.com/legal_cards.txt'
-    resource_id = 'legal_cards'
-    if season is not None:
-        resource_id = "{season}_legal_cards".format(season=season)
+    if season is None:
+        url = 'http://pdmtgo.com/legal_cards.txt'
+    else:
         url = 'http://pdmtgo.com/{season}_legal_cards.txt'.format(season=season)
-        if season == "EMN":
-            # EMN was encoded weirdly.
-            return internal.fetch(url, 'latin-1', resource_id).strip().split('\n')
-    if force:
-        resource_id = None
-    legal_txt = internal.fetch(url, 'utf-8', resource_id, can_304=True)
-    if legal_txt is None:
-        return None
+    encoding = 'utf-8' if season != 'EMN' else 'latin-1' # EMN was encoded weirdly.
+    legal_txt = internal.fetch(url, encoding, force=force)
     return legal_txt.strip().split('\n')
 
 def mtgjson_version():
-    return pkg_resources.parse_version(internal.fetch_json('https://mtgjson.com/json/version.json', resource_id='mtg_json_version'))
+    return pkg_resources.parse_version(internal.fetch_json('https://mtgjson.com/json/version.json'))
 
 def mtgo_status():
     try:
@@ -60,7 +53,7 @@ def card_aliases():
         return list(csv.reader(f, dialect='excel-tab'))
 
 def whatsinstandard():
-    return internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json', resource_id='whatsinstandard')
+    return internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json')
 
 def card_price(cardname):
     return internal.fetch_json('http://katelyngigante.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
@@ -80,14 +73,14 @@ def create_github_issue(title, author):
     return issue
 
 def bugged_cards():
-    text = internal.fetch("https://pennydreadfulmtg.github.io/modo-bugs/bugs.tsv", resource_id="bugged_cards_csv", can_304=True)
+    text = internal.fetch('https://pennydreadfulmtg.github.io/modo-bugs/bugs.tsv')
     if text is None:
         return None
     lines = [l.split('\t') for l in text.split('\n')]
     return lines[1:-1]
 
 def sitemap():
-    return internal.fetch_json('https://pennydreadfulmagic.com/api/sitemap/', resource_id='sitemap')
+    return internal.fetch_json('https://pennydreadfulmagic.com/api/sitemap/')
 
 def time(q):
     url = 'http://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false'.format(q=internal.escape(q))

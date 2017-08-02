@@ -6,7 +6,7 @@ from shared.database import get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
-SCHEMA_VERSION = 83
+SCHEMA_VERSION = 84
 
 def db():
     return DATABASE
@@ -73,8 +73,6 @@ def setup():
         ('Mythic Rare')
     """)
     sql = create_table_def('printing', card.printing_properties())
-    db().execute(sql)
-    sql = create_table_def('fetcher', card.fetcher_properties())
     db().execute(sql)
     db().execute('INSERT INTO db_version (version) VALUES ({0})'.format(SCHEMA_VERSION))
     db().commit()

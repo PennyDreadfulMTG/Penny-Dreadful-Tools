@@ -1,5 +1,4 @@
 #pylint: disable=import-error, duplicate-code
-import warnings
 
 import MySQLdb
 
@@ -9,7 +8,6 @@ from shared.pd_exception import DatabaseException
 
 class MysqlDatabase(GenericDatabase):
     def __init__(self, db):
-        warnings.filterwarnings('error', category=MySQLdb.Warning)
         try:
             self.name = db
             host = configuration.get('mysql_host')

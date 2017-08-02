@@ -1,8 +1,12 @@
 {
     "charts_dir": "./images/charts",
     "decksite_database": "decksite",
-    "github_user": "",
+    "decksite_hostname": "pennydreadfulmagic.com",
+    "decksite_port": 80,
+    "decksite_protocol": "https",
     "github_password": "",
+    "github_user": "",
+    "guild_id": "ID of Discord channel you want to use to authenticate users.",
     "image_dir": "./images",
     "legality_dir": "~/legality/Legality Checker/",
     "magic_database": "magic",
@@ -10,13 +14,12 @@
     "mysql_password": "",
     "mysql_port": 3306,
     "mysql_user": "pd_magic",
+    "oauth2_client_id": "Discord bot client id.",
+    "oauth2_client_secret": "Discord bot client secret.",
     "prices_database": "./prices.sqlite",
-    "scratch_dir": "."
+    "scratch_dir": ".",
     "spellfix": "./spellfix",
     "to_password": "my-tappedout-password",
     "to_username": "my-tappedout-username",
-    "token": "MjI4Abc3OFM4MjI9NTIzMjY1.DsZ8ew.ygPY0HJZriPVD-jFRtp12lF6_d5",
-    "oauth2_client_id": "Discord bot client id.",
-    "oauth2_client_secret": "Discord bot client secret.",
-    "guild_id": "ID of Discord channel you want to use to authenticate users."
+    "token": "MjI4Abc3OFM4MjI9NTIzMjY1.DsZ8ew.ygPY0HJZriPVD-jFRtp12lF6_d5"
 }

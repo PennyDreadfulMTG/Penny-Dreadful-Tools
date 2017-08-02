@@ -2,6 +2,7 @@ import csv
 import json
 import os
 from collections import OrderedDict
+from urllib import parse
 
 import pkg_resources
 from github import Github
@@ -80,7 +81,7 @@ def bugged_cards():
     return lines[1:-1]
 
 def sitemap():
-    return internal.fetch_json('https://pennydreadfulmagic.com/api/sitemap/')
+    return internal.fetch_json(decksite_url('/api/sitemap/'))
 
 def time(q):
     url = 'http://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false'.format(q=internal.escape(q))
@@ -92,3 +93,10 @@ def time(q):
     url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&sensor=false'.format(lat=internal.escape(str(location['lat'])), lng=internal.escape(str(location['lng'])), timestamp=internal.escape(str(dtutil.dt2ts(dtutil.now()))))
     timezone_info = internal.fetch_json(url)
     return dtutil.now(timezone_info['timeZoneId']).strftime('%l:%M %p')
+
+def decksite_url(path='/'):
+    hostname = configuration.get('decksite_hostname')
+    port = configuration.get('decksite_port')
+    if port != 80:
+        hostname = '{hostname}:{port}'.format(hostname=hostname, port=port)
+    return parse.urlunparse((configuration.get('decksite_protocol'), hostname, path, None, None, None))

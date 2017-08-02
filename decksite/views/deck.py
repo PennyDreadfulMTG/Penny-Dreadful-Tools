@@ -53,7 +53,7 @@ class Deck(View):
         return self._deck.name
 
     def og_url(self):
-        return 'https://pennydreadfulmagic.com' + url_for('decks', deck_id=self._deck.id)
+        return url_for('decks', deck_id=self._deck.id, _external=True)
 
     def og_description(self):
         if self.archetype_name:

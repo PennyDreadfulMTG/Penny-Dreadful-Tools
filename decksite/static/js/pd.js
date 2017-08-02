@@ -71,7 +71,7 @@ PD.init = function () {
     $("input[type=checkbox].toggleIllegal").on("change", PD.toggleIllegalCards);
     PD.updateStriped();
     Tipped.create("[title]", {"showDelay": 1000});
-    $.get('/api/admin', PD.showBadge);
+    $.get("/api/admin", PD.showBadge);
 };
 PD.fadeRepeats = function () {
     var current, previous;
@@ -126,7 +126,7 @@ PD.updateStriped = function () {
 }
 PD.showBadge = function (show) {
     if (show) {
-        $('.badge').show();
+        $(".badge").show();
     }
 }
 $(document).ready(function () {

@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS deck_card (
 -- Types for competitions. 'League', 'Gatherling Thursdays', etc.
 CREATE TABLE IF NOT EXISTS competition_type (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL UNIQUE
+    name VARCHAR(190) NOT NULL UNIQUE
 );
 
 INSERT INTO competition_type (name) VALUES ('League'), ('Gatherling');

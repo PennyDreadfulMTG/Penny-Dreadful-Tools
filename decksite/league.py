@@ -186,7 +186,6 @@ def load_matches(where='1 = 1'):
         WHERE {where}
         GROUP BY m.id
     """.format(where=where)
-    print(sql)
     matches = [Container(m) for m in db().execute(sql)]
     for m in matches:
         deck_ids = m.deck_ids.split(',')

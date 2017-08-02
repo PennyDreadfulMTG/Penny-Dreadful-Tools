@@ -13,7 +13,7 @@ from shared import configuration
 from shared.pd_exception import OperationalException
 
 SESSION = CacheControl(requests.Session(),
-                       cache=FileCache('.web_cache'))
+                       cache=FileCache(configuration.get('web_cache')))
 
 def unzip(url, path):
     location = '{scratch_dir}/zip'.format(scratch_dir=configuration.get('scratch_dir'))

@@ -30,7 +30,8 @@ DEFAULTS = {
     'scratch_dir': '.',
     'spellfix': './spellfix',
     'to_password': '',
-    'to_username': ''
+    'to_username': '',
+    'web_cache': '.web_cache'
 }
 
 def get(key):

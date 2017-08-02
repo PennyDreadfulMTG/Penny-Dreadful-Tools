@@ -21,5 +21,6 @@
     "spellfix": "./spellfix",
     "to_password": "my-tappedout-password",
     "to_username": "my-tappedout-username",
-    "token": "MjI4Abc3OFM4MjI9NTIzMjY1.DsZ8ew.ygPY0HJZriPVD-jFRtp12lF6_d5"
+    "token": "MjI4Abc3OFM4MjI9NTIzMjY1.DsZ8ew.ygPY0HJZriPVD-jFRtp12lF6_d5",
+    "web_cache": ".web_cache"
 }

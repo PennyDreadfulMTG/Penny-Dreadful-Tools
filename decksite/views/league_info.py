@@ -10,7 +10,7 @@ class LeagueInfo(View):
         self.end_date = custom_strftime('%B {S}', self.current.end_date)
         self.signup_url = url_for('signup')
         self.report_url = url_for('report')
-        self.records_url = url_for('competitions', competition_id=self.current.id)
+        self.records_url = url_for('current_league')
 
     def subtitle(self):
         return 'League'

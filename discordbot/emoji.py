@@ -40,6 +40,4 @@ def legal_emoji(c, verbose=False):
         s = ':no_entry_sign:'
         if verbose:
             s += ' (not legal in PD)'
-
-
     return s

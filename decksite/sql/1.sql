@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS deck (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     person_id INTEGER NOT NULL,
     source_id INTEGER NOT NULL,
-    identifier VARCHAR(200) NOT NULL,
+    identifier VARCHAR(190) NOT NULL,
     name TEXT NOT NULL,
     created_date INTEGER NOT NULL,
     updated_date INTEGER NOT NULL,

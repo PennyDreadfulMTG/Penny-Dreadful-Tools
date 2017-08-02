@@ -1,6 +1,5 @@
 import apsw
 
-from magic import card
 from shared import configuration
 from shared.database_generic import GenericDatabase
 from shared.pd_exception import DatabaseException
@@ -13,7 +12,6 @@ class SqliteDatabase(GenericDatabase):
             self.connection.setrowtrace(row_factory)
             self.connection.enableloadextension(True)
             self.connection.loadextension(configuration.get('spellfix'))
-            self.connection.createscalarfunction('unaccent', card.unaccent, 1)
             self.cursor = self.connection.cursor()
         except apsw.Error as e:
             raise DatabaseException('Failed to initialize database in `{location}`'.format(location=location)) from e

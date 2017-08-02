@@ -10,18 +10,6 @@ from shared.serialization import extra_serializer
 
 from magic import rotation, oracle
 
-# from shared import configuration
-# from decksite.scrapers import tappedout
-
-# def auth():
-#     if not tappedout.is_authorised():
-#         tappedout.login(configuration.get('to_username'), configuration.get('to_password'))
-
-# @APP.route("/api/scrape/tappedout/")
-# def tappedout_recent():
-#     auth()
-#     return return_json(tappedout.fetch_decks())
-
 @APP.route("/api/decks/<deck_id>")
 def deck_api(deck_id):
     blob = deck.load_deck(deck_id)

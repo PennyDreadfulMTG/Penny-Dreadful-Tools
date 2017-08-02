@@ -12,7 +12,7 @@ View individual subdirectories for details
 
 **discordbot** is the Discord chatbot.
 
-**decksite** is the code for [pennydreadfulmagic.com](http://pennydreadfulmagic.com/).
+**decksite** is the code for [pennydreadfulmagic.com](https://pennydreadfulmagic.com/).
 
 **find** is the code powering our card search syntax.
 

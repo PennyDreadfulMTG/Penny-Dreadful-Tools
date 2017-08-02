@@ -100,3 +100,7 @@ def decksite_url(path='/'):
     if port != 80:
         hostname = '{hostname}:{port}'.format(hostname=hostname, port=port)
     return parse.urlunparse((configuration.get('decksite_protocol'), hostname, path, None, None, None))
+
+def cardhoarder_url(d):
+    deck_s = '||'.join([str(entry['n']) + ' ' + entry['card'].name.replace(' // ', '/').replace('"', '') for entry in d.maindeck + d.sideboard])
+    return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=internal.escape(deck_s))

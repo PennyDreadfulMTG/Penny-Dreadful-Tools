@@ -5,7 +5,7 @@ import titlecase
 from decksite import deck_name
 from decksite.data import archetype, deck
 from decksite.view import View
-from magic import oracle
+from magic import fetcher, oracle
 from shared import dtutil
 from shared.pd_exception import InvalidDataException
 
@@ -42,6 +42,7 @@ class Deck(View):
         if self.admin:
             self.archetypes = archetype.load_archetypes_deckless(order_by='a.name')
             self.edit_archetype_url = url_for('edit_archetypes')
+        self.cardhoarder_url = fetcher.cardhoarder_url(d)
 
     def has_matches(self):
         return len(self.matches) > 0

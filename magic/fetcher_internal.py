@@ -31,8 +31,8 @@ def fetch(url, character_encoding=None, force=False):
     headers = {}
     if force:
         headers['Cache-Control'] = 'no-cache'
+    print('Fetching {url} ({cache})'.format(url=url, cache='no cache' if force else 'cache ok'))
     try:
-        print('Fetching {url}{additional}'.format(url=url, additional=' (no-cache)' if force else ' (cache ok)'))
         response = SESSION.get(url, headers=headers)
         if character_encoding is not None:
             response.encoding = character_encoding

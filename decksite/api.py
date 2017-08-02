@@ -88,11 +88,11 @@ def card_api(card):
 @APP.route('/api/sitemap/')
 def sitemap():
     urls = [url_for(rule.endpoint) for rule in APP.url_map.iter_rules() if 'GET' in rule.methods and len(rule.arguments) == 0]
-    return (json.dumps(urls), 200, {'Content-type': 'application/json; charset=utf-8'})
+    return json.dumps(urls), 200, {'Content-type': 'application/json; charset=utf-8'}
 
 @APP.route('/api/admin/')
 def admin():
-    return (json.dumps(session.get('admin'), 200, {'Content-type': 'application/json; charset=utf-8'}))
+    return json.dumps(session.get('admin'), 200, {'Content-type': 'application/json; charset=utf-8'})
 
 def validate_api_key():
     if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):

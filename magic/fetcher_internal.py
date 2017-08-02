@@ -7,13 +7,18 @@ import zipfile
 import requests
 
 from cachecontrol import CacheControl
+from cachecontrol import CacheControlAdapter
 from cachecontrol.caches.file_cache import FileCache
+from cachecontrol.heuristics import ExpiresAfter
 
 from shared import configuration
 from shared.pd_exception import OperationalException
 
 SESSION = CacheControl(requests.Session(),
                        cache=FileCache(configuration.get('web_cache')))
+SESSION.mount(
+    'http://whatsinstandard.com',
+    CacheControlAdapter(heuristic=ExpiresAfter(days=14)))
 
 def unzip(url, path):
     location = '{scratch_dir}/zip'.format(scratch_dir=configuration.get('scratch_dir'))

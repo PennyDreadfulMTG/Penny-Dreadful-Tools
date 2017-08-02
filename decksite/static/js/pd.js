@@ -1,4 +1,4 @@
-window.PD = {};
+PD = {};
 PD.init = function () {
     $(".fade-repeats").each(PD.fadeRepeats);
     $(".fade-repeats").css("visibility", "visible").hide().fadeIn("slow");

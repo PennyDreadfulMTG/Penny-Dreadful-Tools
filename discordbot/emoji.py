@@ -27,7 +27,7 @@ def replace_emoji(text, client):
             else:
                 name = name + name
         emoji = find_emoji(name, client)
-        if emoji != None:
+        if emoji is not None:
             output = output.replace('{' + symbol + '}', str(emoji))
     return output
 

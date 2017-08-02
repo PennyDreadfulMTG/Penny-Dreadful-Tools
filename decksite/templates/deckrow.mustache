@@ -1,7 +1,7 @@
 <tr>
     <td class="marginalia">{{{stars_safe}}}</td>
     <td>{{{colors_safe}}}</td>
-    <td><a href="{{url}}">{{{name}}}</a></td>
+    <td><a {{#decklist}}title="{{decklist}}"{{/decklist}}href="{{url}}">{{{name}}}</a></td>
     {{^hide_person}}
         <td><a href="{{person_url}}">{{person}}</a></td>
     {{/hide_person}}

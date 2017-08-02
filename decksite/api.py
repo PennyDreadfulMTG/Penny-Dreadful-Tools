@@ -1,6 +1,6 @@
 import json
 
-from flask import Response, request, url_for
+from flask import Response, request, session, url_for
 
 from decksite import APP, league
 from decksite.data import deck, competition as comp, guarantee, card as cs
@@ -88,12 +88,15 @@ def card_api(card):
 @APP.route('/api/sitemap/')
 def sitemap():
     urls = [url_for(rule.endpoint) for rule in APP.url_map.iter_rules() if 'GET' in rule.methods and len(rule.arguments) == 0]
-    return (json.dumps(urls), 200, {'Content-type': 'text/plain; charset=utf-8'})
+    return (json.dumps(urls), 200, {'Content-type': 'application/json; charset=utf-8'})
+
+@APP.route('/api/admin/')
+def admin():
+    return (json.dumps(session.get('admin'), 200, {'Content-type': 'application/json; charset=utf-8'}))
 
 def validate_api_key():
     if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):
         return None
-
     return return_json(generate_error('UNAUTHORIZED', 'Invalid API key'), status=403)
 
 def generate_error(code, msg):

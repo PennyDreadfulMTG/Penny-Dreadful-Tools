@@ -157,7 +157,6 @@ def insert_card(c):
         sql += ', '.join('?' for name, prop in card.card_properties().items() if prop['mtgjson'])
         sql += ')'
         values = [c.get(database2json(name)) for name, prop in card.card_properties().items() if prop['mtgjson']]
-        # database.execute commits after each statement, which we want to avoid while inserting cards
         db().execute(sql, values)
         card_id = db().last_insert_rowid()
         CARD_IDS[name] = card_id

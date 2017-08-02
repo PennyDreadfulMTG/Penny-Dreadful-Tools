@@ -12,7 +12,7 @@ from cachecontrol.caches.file_cache import FileCache
 
 from magic import database
 from shared import configuration
-from shared.pd_exception import OperationalException, DatabaseException
+from shared.pd_exception import OperationalException
 
 
 SESSION = CacheControl(requests.Session(),

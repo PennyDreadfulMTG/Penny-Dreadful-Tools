@@ -26,7 +26,7 @@ def fetch():
                 continue
             code = '{code}{suffix}'.format(code=code, suffix=suffix)
             url = set_url(code)
-            time.sleep(0.1)
+            time.sleep(1)
             s = fetcher_internal.fetch(url)
             prices = parse_prices(s)
             if not prices:

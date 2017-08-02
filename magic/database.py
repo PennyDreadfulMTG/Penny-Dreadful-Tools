@@ -6,7 +6,7 @@ from shared.database import get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
-SCHEMA_VERSION = 80
+SCHEMA_VERSION = 82
 
 def db():
     return DATABASE
@@ -28,6 +28,7 @@ def db_version() -> int:
 
 def setup():
     db().begin()
+    db().execute('SET NAMES utf8mb4')
     db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER)')
     db().execute('CREATE TABLE IF NOT EXISTS version (version TEXT)')
     sql = create_table_def('card', card.card_properties())

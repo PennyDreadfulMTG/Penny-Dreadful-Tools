@@ -71,6 +71,7 @@ PD.init = function () {
     $("input[type=checkbox].toggleIllegal").on("change", PD.toggleIllegalCards);
     PD.updateStriped();
     Tipped.create("[title]", {"showDelay": 1000});
+    $.get("/api/admin", PD.showBadge);
 };
 PD.fadeRepeats = function () {
     var current, previous;
@@ -111,7 +112,7 @@ PD.toggleDrawDropdown = function () {
     }
     return can_draw;
 }
-PD.toggleIllegalCards = function(){
+PD.toggleIllegalCards = function () {
     var hidden = this.checked
     if (hidden)
         $("tr").find(".illegal").closest("tr").hide();
@@ -119,9 +120,14 @@ PD.toggleIllegalCards = function(){
         $("tr").find(".illegal").closest("tr").show();
     PD.updateStriped()
 }
-PD.updateStriped = function() {
+PD.updateStriped = function () {
     $(".odd-stripe").removeClass("odd-stripe");
     $(".striped:visible:odd").addClass("odd-stripe");
+}
+PD.showBadge = function (show) {
+    if (show) {
+        $(".badge").show();
+    }
 }
 $(document).ready(function () {
     PD.init();

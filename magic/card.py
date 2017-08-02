@@ -173,18 +173,6 @@ def card_bugs_properties():
     props['last_confirmed']['type'] = INTEGER
     return props
 
-def fetcher_properties():
-    # Technically, this doesn't belong here.  But all the other table definitions are here, so it is too.
-    props = {}
-    for k in ['id', 'resource', 'last_modified', 'content']:
-        props[k] = copy.deepcopy(BASE)
-    props['id']['type'] = INTEGER
-    props['id']['primary_key'] = True
-    props['resource']['nullable'] = False
-    props['resource']['unique'] = True
-    props['content']['type'] = TEXT
-    return props
-
 def name_query(column='face_name'):
     return """
         CASE

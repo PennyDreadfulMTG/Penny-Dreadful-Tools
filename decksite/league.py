@@ -3,6 +3,8 @@ import time
 import datetime
 import calendar
 
+from flask import url_for
+
 from magic import legality, rotation
 from shared import dtutil
 from shared.container import Container
@@ -37,7 +39,7 @@ class SignUpForm(Form):
             self.source = 'League'
             self.competition_id = db().value(active_competition_id_query())
             self.identifier = identifier(self)
-            self.url = 'http://pennydreadfulmagic.com/competitions/{competition_id}/'.format(competition_id=self.competition_id)
+            self.url = url_for('competitions', competition_id=self.competition_id)
         self.decklist = self.decklist.strip()
         if len(self.decklist) == 0:
             self.errors['decklist'] = 'Decklist is required'
@@ -144,7 +146,7 @@ def active_league():
         start_date = datetime.datetime.combine(dtutil.now().date(), datetime.time(tzinfo=dtutil.WOTC_TZ))
         end_date = determine_end_of_league(start_date)
         name = "League {MM} {YYYY}".format(MM=calendar.month_name[end_date.month], YYYY=end_date.year)
-        comp_id = competition.get_or_insert_competition(start_date, end_date, name, "League", 'http://pennydreadfulmagic.com/league/')
+        comp_id = competition.get_or_insert_competition(start_date, end_date, name, "League", url_for('league'))
         leagues = [competition.load_competition(comp_id)]
     return guarantee.exactly_one(leagues)
 
@@ -154,9 +156,12 @@ def determine_end_of_league(start_date):
     else:
         month = start_date.month + 2
     if month > 12:
-        end_date = datetime.datetime(start_date.year + 1, month - 12, 1, tzinfo=dtutil.WOTC_TZ)
+        year = start_date.year + 1
+        month = month - 12
     else:
-        end_date = datetime.datetime(start_date.year, month, 1, tzinfo=dtutil.WOTC_TZ)
+        year = start_date.year
+    end_date_s = '{year}-{month}-01 00:00:00'.format(year=year, month=month)
+    end_date = dtutil.parse(end_date_s, '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ)
     if end_date > rotation.next_rotation():
         end_date = rotation.next_rotation()
     return end_date - datetime.timedelta(seconds=1)
@@ -181,7 +186,6 @@ def load_matches(where='1 = 1'):
         WHERE {where}
         GROUP BY m.id
     """.format(where=where)
-    print(sql)
     matches = [Container(m) for m in db().execute(sql)]
     for m in matches:
         deck_ids = m.deck_ids.split(',')

@@ -26,8 +26,7 @@ async def respond_to_card_names(message, bot):
     matches = re.findall(r'https?://(?:www.)?tappedout.net/mtg-decks/(?P<slug>[\w-]+)/?', message.content, flags=re.IGNORECASE)
     for match in matches:
         data = {"url": "http://tappedout.net/mtg-decks/{slug}".format(slug=match)}
-        fetcher.internal.post("http://pennydreadfulmagic.com/add/", data)
-
+        fetcher.internal.post(fetcher.decksite_url('add'), data)
 
 async def handle_command(message, bot):
     parts = message.content.split(' ', 1)
@@ -312,7 +311,7 @@ Want to contribute? Send a Pull Request."""
             results.update(resources_resources(args))
         s = ''
         if len(results) == 0:
-            s = 'PD resources: <https://pennydreadfulmagic.com/resources/>'
+            s = 'PD resources: <{url}>'.format(url=fetcher.decksite_url('/resources/'))
         else:
             for text, url in results.items():
                 s += '{text}: <{url}>\n'.format(text=text, url=url)
@@ -471,7 +470,7 @@ def site_resources(args):
     sitemap = fetcher.sitemap()
     matches = [endpoint for endpoint in sitemap if endpoint.startswith('/{area}/'.format(area=area))]
     if len(matches) > 0:
-        results[args] = 'https://pennydreadfulmagic.com/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail))
+        results[args] = fetcher.decksite_url('/{area}/{detail}'.format(area=area, detail=detail))
     return results
 
 def resources_resources(args):

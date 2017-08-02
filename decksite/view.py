@@ -10,7 +10,7 @@ from magic import oracle, rotation, legality
 from shared import dtutil
 from shared.container import Container
 
-from decksite import deck_name, league, template
+from decksite import deck_name, template
 from decksite.data import deck
 
 # pylint: disable=no-self-use, too-many-public-methods
@@ -57,7 +57,7 @@ class View:
             {'name': 'League', 'url': url_for('league'), 'has_submenu': True, 'submenu': [
                 {'name': 'Sign Up', 'url': url_for('signup')},
                 {'name': 'Report', 'url': url_for('report')},
-                {'name': 'Records', 'url': url_for('competition', competition_id=league.get_active_competition_id())}
+                {'name': 'Records', 'url': url_for('current_league')}
             ]}
         ]
         return menu

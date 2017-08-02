@@ -90,7 +90,7 @@ def test_aether():
 def test_split_cards():
     cards = oracle.cards_from_query('Armed // Dangerous')
     assert len(cards) == 1
-    assert image_fetcher.download_image(cards) != None
+    assert image_fetcher.download_image(cards) is not None
     names = command.parse_queries('[Toil // Trouble]')
     assert len(names) == 1
     cards = command.cards_from_queries(names)

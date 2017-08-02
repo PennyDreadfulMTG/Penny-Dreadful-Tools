@@ -157,6 +157,11 @@ def league():
     view = LeagueInfo()
     return view.page()
 
+@APP.route('/league/current/')
+@cached()
+def current_league():
+    return competition(lg.get_active_competition_id())
+
 @APP.route('/signup/')
 def signup(form=None):
     if form is None:

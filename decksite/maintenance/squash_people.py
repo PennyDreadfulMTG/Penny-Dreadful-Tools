@@ -1,7 +1,5 @@
 from shared.container import Container
-from shared.database import sqlescape
 
-from decksite.data import person
 from decksite.database import db
 
 USERNAME_COLUMNS = ['mtgo_username', 'tappedout_username', 'mtggoldfish_username']

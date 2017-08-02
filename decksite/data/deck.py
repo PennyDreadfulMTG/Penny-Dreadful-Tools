@@ -302,7 +302,7 @@ def get_matches(d, should_load_decks=False):
     """.format(person_query=query.person_query())
     matches = [Container(m) for m in db().execute(sql, [d.id, d.id])]
     if should_load_decks and len(matches) > 0:
-        decks = load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(m.opponent_deck_id)) for m in matches])))
+        decks = load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(m.opponent_deck_id)) for m in matches if m.opponent_deck_id is not None])))
         decks_by_id = {d.id: d for d in decks}
     for m in matches:
         m.date = dtutil.ts2dt(m.date)

@@ -105,7 +105,7 @@ class View:
         d.export_url = url_for('export', deck_id=d.id)
         d.cmc_chart_url = url_for('cmc_chart', deck_id=d.id)
         if d.source_name == 'League' and d.wins + d.losses < 5 and d.competition_end_date > dtutil.now() and not d.get('retired', False):
-            d.stars = '⊕ {stars}'.format(stars=d.stars).strip()
+            d.stars_safe = '<span title="Active in the current league">⊕</span> {stars}'.format(stars=d.stars_safe).strip()
             d.source_sort = '1'
         d.comp_row_len = len("{comp_name} (Piloted by {person}".format(comp_name=d.competition_name, person=d.person))
         if d.get('archetype_id', None):
@@ -129,6 +129,7 @@ class View:
             d.legal_icons += '<a href="{url}"><i class="ss ss-{set} ss-common ss-grad">S{n}</i></a>'.format(url=url_for('season', season_id=n), set=code.lower(), n=n)
         if 'Commander' in d.legal_formats: # I think C16 looks the nicest.
             d.legal_icons += '<i class="ss ss-c16 ss-uncommon ss-grad">CMDR</i>'
+        d.decklist = str(d).replace('\n', '<br>')
 
     def prepare_cards(self):
         for c in getattr(self, 'cards', []):
@@ -218,25 +219,28 @@ def colors_html(colors, colored_symbols):
 
 def set_stars_and_top8(d):
     if d.finish == 1:
-        d.top8 = '①'
-        d.stars = '★★★'
+        d.top8_safe = '<span title="Winner">①</span>'
+        d.stars_safe = '★★★'
     elif d.finish == 2:
-        d.top8 = '②'
-        d.stars = '★★'
+        d.top8_safe = '<span title="Losing Finalist">②</span>'
+        d.stars_safe = '★★'
     elif d.finish == 3:
-        d.top8 = '④'
-        d.stars = '★★'
+        d.top8_safe = '<span title="Losing Semifinalist">④</span>'
+        d.stars_safe = '★★'
     elif d.finish == 5 and d.stage_reached > 0: # Don't show ⑧ for fifth place in a top 4 tournament.
-        d.top8 = '⑧'
-        d.stars = '★'
+        d.top8_safe = '<span title="Losing Quarterfinalist">⑧</span>'
+        d.stars_safe = '★'
     else:
-        d.top8 = ''
+        d.top8_safe = ''
         if d.get('wins') is not None and d.get('losses') is not None:
             if d.wins - 5 >= d.losses:
-                d.stars = '★★'
+                d.stars_safe = '★★'
             elif d.wins - 3 >= d.losses:
-                d.stars = '★'
+                d.stars_safe = '★'
             else:
-                d.stars = ''
+                d.stars_safe = ''
         else:
-            d.stars = ''
+            d.stars_safe = ''
+
+    if len(d.stars_safe) > 0:
+        d.stars_safe = '<span title="Success Rating">{stars}</span>'.format(stars=d.stars_safe)

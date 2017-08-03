@@ -1,7 +1,7 @@
 <tr>
-    <td class="marginalia">{{stars}}</td>
+    <td class="marginalia">{{{stars_safe}}}</td>
     <td>{{{colors_safe}}}</td>
-    <td><a href="{{url}}">{{{name}}}</a></td>
+    <td><a {{#decklist}}title="{{decklist}}"{{/decklist}}href="{{url}}">{{{name}}}</a></td>
     {{^hide_person}}
         <td><a href="{{person_url}}">{{person}}</a></td>
     {{/hide_person}}
@@ -21,9 +21,9 @@
         <td class="n">{{omw}}</td>
     {{/show_omw}}
     <td class="c">
-        {{#top8}}<a href="{{competition_url}}">{{/top8}}
-        {{top8}}
-        {{#top8}}</a>{{/top8}}
+        {{#top8_safe}}<a href="{{competition_url}}">{{/top8_safe}}
+        {{{top8_safe}}}
+        {{#top8_safe}}</a>{{/top8_safe}}
     </td>
     <td class="n" data-text="{{date_sort}}">
         {{display_date}}

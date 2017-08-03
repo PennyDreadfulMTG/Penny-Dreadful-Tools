@@ -336,7 +336,8 @@ Want to contribute? Send a Pull Request."""
             cid = channel.server.id
         else:
             cid = channel.id
-        configuration.write('not_pd', "{0},{1}".format(existing, cid))
+        if str(cid) not in existing.split(','):
+            configuration.write('not_pd', "{0},{1}".format(existing, cid))
 
         await bot.client.send_message(channel, 'Disable PD marks')
 

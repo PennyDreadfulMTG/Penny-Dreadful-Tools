@@ -307,13 +307,13 @@ Want to contribute? Send a Pull Request."""
             """
         results = {}
         if len(args) > 0:
-            results.update(site_resources(args))
             results.update(resources_resources(args))
+            results.update(site_resources(args))
         s = ''
         if len(results) == 0:
             s = 'PD resources: <{url}>'.format(url=fetcher.decksite_url('/resources/'))
         else:
-            for text, url in results.items():
+            for url, text in results.items():
                 s += '{text}: <{url}>\n'.format(text=text, url=url)
         await bot.client.send_message(channel, s)
 
@@ -470,7 +470,8 @@ def site_resources(args):
     sitemap = fetcher.sitemap()
     matches = [endpoint for endpoint in sitemap if endpoint.startswith('/{area}/'.format(area=area))]
     if len(matches) > 0:
-        results[args] = fetcher.decksite_url('/{area}/{detail}'.format(area=area, detail=detail))
+        url = fetcher.decksite_url('/{area}/{detail}'.format(area=area, detail=detail))
+        results[url] = args
     return results
 
 def resources_resources(args):
@@ -483,5 +484,5 @@ def resources_resources(args):
             asked_for_this_section_and_item = len(words) == 2 and roughly_matches(title, words[0]) and roughly_matches(text, words[1])
             asked_for_this_item_only = len(words) == 1 and roughly_matches(text, words[0])
             if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only:
-                results[text] = url
+                results[url] = text
     return results

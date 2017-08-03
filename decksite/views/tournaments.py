@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from dateutil import rrule
 
 from shared import dtutil

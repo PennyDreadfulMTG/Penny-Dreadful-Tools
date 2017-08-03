@@ -1,3 +1,5 @@
+from flask import url_for
+
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
@@ -18,8 +20,14 @@ def get_or_insert_competition(start_date, end_date, name, competition_type, url)
     competition_id = db().value(sql, values)
     if competition_id:
         return competition_id
+    db().begin()
     sql = 'INSERT INTO competition (start_date, end_date, name, competition_type_id, url) VALUES (%s, %s, %s, %s, %s)'
-    return db().insert(sql, values)
+    competition_id = db().insert(sql, values)
+    if url is None:
+        sql = 'UPDATE competition SET url = ? WHERE id = ?'
+        db().execute(sql, [url_for('competition', competition_id=competition_id, _external=True), competition_id])
+    db().commit()
+    return competition_id
 
 def type_id(competition_type):
     sql = 'SELECT id FROM competition_type WHERE name = %s'

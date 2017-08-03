@@ -92,7 +92,7 @@ def time(q):
         return 'Location unknown.'
     url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&sensor=false'.format(lat=internal.escape(str(location['lat'])), lng=internal.escape(str(location['lng'])), timestamp=internal.escape(str(dtutil.dt2ts(dtutil.now()))))
     timezone_info = internal.fetch_json(url)
-    return dtutil.now(timezone_info['timeZoneId']).strftime('%l:%M %p')
+    return dtutil.now(dtutil.timezone(timezone_info['timeZoneId'])).strftime('%l:%M %p')
 
 def decksite_url(path='/'):
     hostname = configuration.get('decksite_hostname')

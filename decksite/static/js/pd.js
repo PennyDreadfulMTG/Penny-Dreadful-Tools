@@ -71,6 +71,7 @@ PD.init = function () {
     $("input[type=checkbox].toggleIllegal").on("change", PD.toggleIllegalCards);
     PD.updateStriped();
     Tipped.create("[title]", {"showDelay": 1000});
+    PD.showLocalTimes();
     $.get("/api/admin/", PD.showBadge);
 };
 PD.fadeRepeats = function () {
@@ -128,6 +129,12 @@ PD.showBadge = function (show) {
     if (show) {
         $(".badge").show();
     }
+}
+PD.showLocalTimes = function () {
+    $('.time').each(function () {
+        var t = moment($(this).data('time'));
+        $(this).html(t.tz(moment.tz.guess()).format('dddd h:mma z')).parent('.local').show();
+    });
 }
 $(document).ready(function () {
     PD.init();

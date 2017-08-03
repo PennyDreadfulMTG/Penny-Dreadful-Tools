@@ -1,22 +1,22 @@
 import datetime
 
-from pytz import timezone
+import pytz
 
 # All dates should be stored as a UTC timestamp (seconds).
 # All dates should be manipulated in memory as a timezone-aware UTC datetime.
-# This lib means you don't have to know how to do that in pyton.
+# This lib means you don't have to know how to do that in python.
 # Call ts2dt on anything you pull out of the database immediately after you retrieve it.
 # Call dt2ts on anything you put into the database immediately before putting it in.
 # Parse any dates you get as strings using parse.
 
-GATHERLING_TZ = timezone('America/New_York')
+GATHERLING_TZ = pytz.timezone('America/New_York')
 MTGGOLDFISH_TZ = GATHERLING_TZ
-WOTC_TZ = timezone('America/Los_Angeles')
-UTC_TZ = timezone('UTC')
+WOTC_TZ = pytz.timezone('America/Los_Angeles')
+UTC_TZ = pytz.timezone('UTC')
 
 # Converts a UTC timestamp (seconds) into a timezone-aware UTC datetime.
 def ts2dt(ts):
-    return timezone('UTC').localize(datetime.datetime.utcfromtimestamp(ts))
+    return pytz.timezone('UTC').localize(datetime.datetime.utcfromtimestamp(ts))
 
 # Converts a timezone-aware UTC datetime into a UTC timestamp (seconds).
 def dt2ts(dt):
@@ -25,16 +25,17 @@ def dt2ts(dt):
 # Converts the given string in the format `format` to a timezone-aware UTC datetime assuming the original string is in timezone `tz`.
 def parse(s, date_format, tz):
     dt = datetime.datetime.strptime(s, date_format)
-    return tz.localize(dt).astimezone(timezone('UTC'))
+    return tz.localize(dt).astimezone(pytz.timezone('UTC'))
 
 def parse_to_ts(s, date_format, tz):
     dt = parse(s, date_format, tz)
     return dt2ts(dt)
 
-def now(tzid=None):
-    if tzid is not None:
-        tz = timezone(tzid)
-    else:
+def timezone(tzid):
+    return pytz.timezone(tzid)
+
+def now(tz=None):
+    if tz is None:
         tz = datetime.timezone.utc
     return datetime.datetime.now(tz)
 

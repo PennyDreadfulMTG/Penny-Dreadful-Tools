@@ -652,3 +652,8 @@ tr.current td:last-child {
 .badge a, .badge a:hover {
     color: white;
 }
+
+/* Tournaments */
+.local {
+    display: none; /* Will be revealed by js when we have a localized time. */
+}

@@ -3,26 +3,17 @@
     <p>There are currently three weekly Penny Dreadful tournaments sponsored by <a href="http://cardhoarder.com/">cardhoarder.com</a> and hosted on <a class="link" href="http://gatherling.com/">gatherling.com</a>. They are all free to enter and offer prizes. Be sure to also check out the <a class="link">league</a> for a play-when-you-like competition.</p>
 </section>
 <section>
-    <h3>Penny Dreadful Thursdays</h3>
-    <p>Host: <a href="/people/silasary/">silasary</a></p>
-    <p>Prizes: 4/3/2/2/1/1/1/1 bot credit with Cardhoarder and 1 tik door prize.</p>
-    <p>Time: 4pm Pacific, 7pm Eastern, Midnight UK, 1am Europe</p>
-    <p>Sign Up: <a href="http://gatherling.com/">gatherling.com</a>
-    <p>MTGO Chat Room: #PDT</p>
+    <h3>Next Tournament</h3>
+    <p>{{next_tournament_name}} in {{next_tournament_time}}.</p>
+    <p><a href="http://gatherling.com/">Sign up on gatherling.com</a> via 'Player CP'.</p>
 </section>
-<section>
-    <h3>Penny Dreadful Sundays</h3>
-    <p>Host: <a href="/people/bakert99/">bakert99</a></p>
-    <p>Prizes: 4/3/2/2/1/1/1/1 bot credit with Cardhoarder and 1 tik door prize.</p>
-    <p>Time: 10.30am Pacific, 1.30pm Eastern, 6.30pm UK, 7.30pm Europe</p>
-    <p>Sign Up: <a href="http://gatherling.com/">gatherling.com</a>
-    <p>MTGO Chat Room: #PDS</p>
-</section>
-<section>
-    <h3>Penny Dreadful Mondays</h3>
-    <p>Host: <a href="/people/stash86/">stash86</a></p>
-    <p>Prizes: 4/3/2/2/1/1/1/1 bot credit with Cardhoarder and 1 tik door prize.</p>
-    <p>Time: 4pm Pacific, 7pm Eastern, Midnight UK, 1am Europe</p>
-    <p>Sign Up: <a href="http://gatherling.com/">gatherling.com</a>
-    <p>MTGO Chat Room: #PDM</p>
-</section>
+{{#tournaments}}
+    <section>
+        <h3>{{name}}</h3>
+        <p>Host: <a href="/people/{{host}}/">{{host}}</a></p>
+        <p>Prizes: 4/3/2/2/1/1/1/1 bot credit with Cardhoarder and 1 tik door prize.</p>
+        <p>Time: {{display_time}} <span class="local">(<span class="time" data-time="{{time}}"></span>)</span></p>
+        <p>Sign Up: <a href="http://gatherling.com/">gatherling.com</a>
+        <p>MTGO Chat Room: {{chat_room}}</p>
+    </section>
+{{/tournaments}}

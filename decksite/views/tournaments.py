@@ -21,7 +21,7 @@ class Tournaments(View):
         else:
             self.next_tournament_name = 'Penny Dreadful Sunday'
             next_time = pds_time
-        self.next_tournament_time = dtutil.display_time(dtutil.dt2ts(next_time) - now_ts)
+        self.next_tournament_time = dtutil.display_time(dtutil.dt2ts(next_time) - now_ts, granularity=1)
         self.tournaments = [
             {
                 'name': 'Penny Dreadful Mondays',

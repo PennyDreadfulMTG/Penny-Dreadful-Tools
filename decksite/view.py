@@ -71,8 +71,7 @@ class View:
     def title(self):
         if not self.subtitle():
             return 'pennydreadfulmagic.com'
-        else:
-            return '{subtitle} – pennydreadfulmagic.com'.format(subtitle=self.subtitle())
+        return '{subtitle} – pennydreadfulmagic.com'.format(subtitle=self.subtitle())
 
     def subtitle(self):
         return None
@@ -177,7 +176,7 @@ class View:
         n = 3
         while len(a.best_decks.decks) == 0 and n >= 0:
             for d in a.get('decks', []):
-                if d.get('stars', '').count('★') >= n:
+                if d.get('stars_safe', '').count('★') >= n:
                     a.best_decks.decks.append(d)
             n -= 1
         counter = Counter()

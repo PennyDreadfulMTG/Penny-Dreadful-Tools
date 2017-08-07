@@ -68,8 +68,7 @@ class Rotation(View):
     def tooltips_url(self):
         if len(self.cards) > 500:
             return None
-        else:
-            return super().tooltips_url()
+        return super().tooltips_url()
 
 def redact(num):
     return ''.join(['█' for _ in str(num)])

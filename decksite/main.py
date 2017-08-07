@@ -178,8 +178,7 @@ def add_signup():
         response = make_response(redirect(url_for('decks', deck_id=d.id)))
         response.set_cookie('deck_id', str(d.id))
         return response
-    else:
-        return signup(form)
+    return signup(form)
 
 @APP.route('/report/')
 def report(form=None):
@@ -196,8 +195,7 @@ def add_report():
         response = make_response(redirect(url_for('decks', deck_id=form.entry)))
         response.set_cookie('deck_id', form.entry)
         return response
-    else:
-        return report(form)
+    return report(form)
 
 # Admin
 

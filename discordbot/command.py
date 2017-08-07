@@ -68,8 +68,7 @@ def find_method(name):
         method = [m for m in dir(Commands) if m.startswith(cmd) or m.startswith('_{cmd}'.format(cmd=cmd))]
     if len(method) > 0:
         return getattr(Commands, method[0])
-    else:
-        return None
+    return None
 
 def build_help(readme=False, cmd=None):
     def print_group(group):
@@ -87,19 +86,16 @@ def build_help(readme=False, cmd=None):
         if method.__doc__:
             if not method.__doc__.startswith('`'):
                 return '`!{0}` {1}'.format(method.__name__, method.__doc__)
-            else:
-                return '{0}'.format(method.__doc__)
+            return '{0}'.format(method.__doc__)
         elif verbose:
             return '`!{0}` No Help Available'.format(method.__name__)
-        else:
-            return "`!{0}`".format(method.__name__)
+        return "`!{0}`".format(method.__name__)
 
     if cmd:
         method = find_method(cmd)
         if method:
             return print_cmd(method, True)
-        else:
-            return "`{cmd}` is not a valid command.".format(cmd=cmd)
+        return "`{cmd}` is not a valid command.".format(cmd=cmd)
 
     msg = print_group("Commands")
     if readme:

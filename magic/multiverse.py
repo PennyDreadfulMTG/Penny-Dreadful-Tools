@@ -273,8 +273,7 @@ def card_name(c):
     if c.get('layout') == 'meld':
         if c.get('name') != c.get('names')[2]:
             return c.get('name')
-        else:
-            return c.get('names')[0]
+        return c.get('names')[0]
     return ' // '.join(c.get('names', [c.get('name')]))
 
 def add_hardcoded_cards(cards):

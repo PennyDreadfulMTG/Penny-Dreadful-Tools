@@ -17,10 +17,10 @@ UNQUOTED_STRING = 'unquoted_string'
 VALUE_LOOKUP = {}
 
 def search(query):
-    where_clause = parse(tokenize(query))
+    where = parse(tokenize(query))
     sql = """{base_query}
         ORDER BY pd_legal DESC, name
-    """.format(base_query=oracle.base_query(where_clause))
+    """.format(base_query=oracle.base_query(where))
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 
@@ -165,8 +165,10 @@ def text_where(column, term):
     if column.endswith('name'):
         column = column.replace('name', 'name_ascii')
         q = card.unaccent(q)
+    if column == 'text':
+        column = 'search_text'
     escaped = sqllikeescape(q)
-    if column == 'text' and '~' in escaped:
+    if column == 'search_text' and '~' in escaped:
         parts = ["'{text}'".format(text=text) for text in escaped.strip("'").split('~')]
         escaped = db().concat(intersperse(parts, 'name'))
     return '({column} LIKE {q})'.format(column=column, q=escaped)
@@ -189,7 +191,7 @@ def math_where(column, operator, term):
     if operator == ':':
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
-        return '(FALSE)'
+        return '(1 <> 1)'
     return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=sqlescape(term))
 
 def color_where(subtable, operator, term):
@@ -234,12 +236,16 @@ def rarity_where(operator, term):
     if operator == ':':
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
-        return '(FALSE)'
+        return '(1 <> 1)'
     return "(c.id IN (SELECT card_id FROM printing WHERE rarity_id {operator} {rarity_id}))".format(operator=operator, rarity_id=rarity_id)
 
 def mana_where(operator, term):
-    symbols = mana.parse(term.upper()) # Uppercasing input means you can't search for 1/2 or 1/2 white mana but w should match W.
-    symbols = ['{{{symbol}}}'.format(symbol=symbol) for symbol in symbols]
+    term = term.upper()
+    try:
+        symbols = mana.parse(term) # Uppercasing input means you can't search for 1/2 or 1/2 white mana but w should match W.
+        symbols = ['{{{symbol}}}'.format(symbol=symbol) for symbol in symbols]
+    except mana.InvalidManaCostException:
+        symbols = [term]
     if operator == ':':
         d = collections.Counter(symbols) # Group identical symbols so that UU checks for {U}{U} not just {U} twice.
         clause = ' AND '.join("mana_cost LIKE {symbol}".format(symbol=sqllikeescape(symbol * n)) for symbol, n in d.items())
@@ -296,16 +302,18 @@ def is_subquery(subquery_name):
         'painland': 't:land o:"~ deals 1 damage to you."',
         'fetchland': 't:land o:"Search your library for a " (o:"land card" or o:"plains card" or o:"island card" or o:"swamp card" or o:"mountain card" or o:"forest card" or o:"gate card")',
         'slowland': """t:land o:"~ doesn't untap during your next untap step." """,
-        'storageland': 'o:"storage counter"'
+        'storageland': 'o:"storage counter"',
+        'hybrid': 'mana:/2 OR mana:/W OR mana:/U OR mana:/B OR mana:/R OR mana:/G',
+        'creatureland': 't:land o:"becomes a"'
     }
     subqueries['fetch'] = subqueries['fetchland']
     subqueries['refuge'] = subqueries['gainland']
+    subqueries['manland'] = subqueries['creatureland']
     query = subqueries.get(subquery_name, '')
     if query == '':
         raise InvalidSearchException('Did not recognize `{subquery_name}` as a value for `is:`'.format(subquery_name=subquery_name))
     query = parse(tokenize(query))
     query = "({0})".format(query)
-    # print("is:{0} => {1}".format(subquery_name, query))
     return query
 
 def intersperse(iterable, delimiter):

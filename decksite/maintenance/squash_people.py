@@ -1,58 +1,29 @@
-from decksite.data import person #, guarantee
+from shared.container import Container
+
 from decksite.database import db
-# from decksite.scrapers import tappedout
 
+USERNAME_COLUMNS = ['mtgo_username', 'tappedout_username', 'mtggoldfish_username']
+
+# Find people with identical usernames across systems and squash them together.
 def run():
-    print('Squashing people is currently disabled.')
-    #TODO: Rewrite SQL for squash to work on MySQL
-    return
-    # partials = person.load_people('mtgo_username is NULL')
+    for i in range(0, len(USERNAME_COLUMNS)):
+        for j in range(i + 1, len(USERNAME_COLUMNS)):
+            sql = """
+                SELECT p1.id AS p1_id, p2.id AS p2_id, '{col1}' AS col1, '{col2}' AS col2
+                FROM person AS p1
+                LEFT JOIN person AS p2
+                ON p1.{col1} = p2.{col2} AND p1.id <> p2.id
+                WHERE p1.id IS NOT NULL AND p2.id IS NOT NULL
+            """.format(col1=USERNAME_COLUMNS[i], col2=USERNAME_COLUMNS[j])
+            pairs = [Container(row) for row in db().execute(sql)]
+            for pair in pairs:
+                squash(pair.p1_id, pair.p2_id, pair.col1, pair.col2)
 
-    # for p in partials:
-    #     source = p.decks[0].source_name
-    #     tapped_username = p.name
-    #     guess = person.load_people('LOWER(mtgo_username) = "{0}"'.format(tapped_username))
-    #     print("{0}: {1}".format(tapped_username, len(guess)))
-    #     if len(guess) == 0 and source == "Tapped Out":
-    #         raw_data = tappedout.scrape_user(tapped_username)
-    #         if raw_data['mtgo_username'] is not None:
-    #             guess = person.load_people('LOWER(mtgo_username) = "{0}"'.format(raw_data['mtgo_username']))
-
-    #     if len(guess) > 0:
-    #         print(guess[0].name)
-    #         squash(guarantee.exactly_one(guess), p)
-
-
-def squash(old, new):
-    assert old.id != new.id
-    print("Squashing {new.name} ({new.id}) into {old.name} ({old.id})".format(old=old, new=new))
-
-    sql = """
-            WITH 
-                old as (
-                    SELECT * FROM person 
-                    WHERE id = {old.id}  
-                ), 
-                new as (
-                    SELECT * FROM person 
-                    WHERE id = {new.id}  
-                )
-                INSERT OR REPLACE INTO person (tappedout_username, mtgo_username)
-                SELECT 
-                    IFNULL(old.tappedout_username, new.tappedout_username) as tappedout_username,
-                    IFNULL(old.mtgo_username, new.mtgo_username) as mtgo_username 
-                FROM old JOIN new;
-        UPDATE deck 
-            SET person_id = last_insert_rowid() 
-            WHERE person_id IN ({old.id}, {new.id});
-        DELETE FROM deck
-            WHERE person_id IN ({old.id}, {new.id});
-    """.format(new=new, old=old)
-    db().execute(sql)
-    return db().value('SELECT last_insert_rowid()')
-
-def squash_ids(old, new):
-    """To simplify the manual merging of people, call this with two person_ids."""
-    old = person.load_person(old)
-    new = person.load_person(new)
-    return squash(old, new)
+def squash(p1id, p2id, col1, col2):
+    print('Squashing {p1id} and {p2id} on {col1} and {col2}'.format(p1id=p1id, p2id=p2id, col1=col1, col2=col2))
+    db().begin()
+    new_value = db().value('SELECT {col2} FROM person WHERE id = ?'.format(col2=col2), [p2id])
+    db().execute('UPDATE deck SET person_id = ? WHERE person_id = ?', [p1id, p2id])
+    db().execute('DELETE FROM person WHERE id = ?', [p2id])
+    db().execute('UPDATE person SET {col2} = ? WHERE id = ?'.format(col2=col2), [new_value, p1id])
+    db().commit()

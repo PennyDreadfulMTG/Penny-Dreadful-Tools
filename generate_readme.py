@@ -16,11 +16,11 @@ View individual subdirectories for details
 
 **discordbot** is the Discord chatbot.
 
-**decksite** is the code for [pennydreadfulmagic.com](http://pennydreadfulmagic.com/).
+**decksite** is the code for [pennydreadfulmagic.com](https://pennydreadfulmagic.com/).
 
 **find** is the code powering our card search syntax.
 
-**magic** is a mess. It handles any shared code that is magic related.
+**magic** knows everything about all magic cards and how to fetch that information from the internet.
 
 **price-grabber** builds a database of historic prices.
 

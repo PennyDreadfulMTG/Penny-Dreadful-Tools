@@ -18,7 +18,7 @@ def init():
 def layouts():
     return ['normal', 'meld', 'split', 'phenomenon', 'token', 'vanguard', 'double-faced', 'plane', 'flip', 'scheme', 'leveler', 'aftermath']
 
-def base_query(where_clause='(1 = 1)'):
+def base_query(where='(1 = 1)'):
     return """
         SELECT
             {card_queries},
@@ -44,7 +44,7 @@ def base_query(where_clause='(1 = 1)'):
                 GROUP BY f.id
                 ORDER BY f.card_id, f.position)
             AS u
-            WHERE u.id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where_clause})
+            WHERE u.id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where})
             GROUP BY u.id
     """.format(
         card_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.card_properties().items()),
@@ -53,14 +53,13 @@ def base_query(where_clause='(1 = 1)'):
         legality_code=db().concat(['fo.name', "':'", 'cl.legality']),
         card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
         face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),
-        where_clause=where_clause)
+        where=where)
 
 
 def update_database(new_version):
     db().begin()
     db().execute('DELETE FROM version')
     db().execute("""
-    DELETE FROM card;
     DELETE FROM card_alias;
     DELETE FROM card_color;
     DELETE FROM card_color_identity;
@@ -68,8 +67,10 @@ def update_database(new_version):
     DELETE FROM card_subtype;
     DELETE FROM card_supertype;
     DELETE FROM card_type;
+    DELETE FROM card_bugs;
     DELETE FROM face;
     DELETE FROM printing;
+    DELETE FROM card;
     DELETE FROM `set`;
     """)
     cards = fetcher.all_cards()
@@ -156,7 +157,6 @@ def insert_card(c):
         sql += ', '.join('?' for name, prop in card.card_properties().items() if prop['mtgjson'])
         sql += ')'
         values = [c.get(database2json(name)) for name, prop in card.card_properties().items() if prop['mtgjson']]
-        # database.execute commits after each statement, which we want to avoid while inserting cards
         db().execute(sql, values)
         card_id = db().last_insert_rowid()
         CARD_IDS[name] = card_id
@@ -164,6 +164,7 @@ def insert_card(c):
     if c.get('text', None) is None and c['layout'] in ['normal', 'token', 'double-faced', 'split']:
         c['text'] = ''
     c['nameAscii'] = card.unaccent(c.get('name'))
+    c['searchText'] = re.sub(r'\([^\)]+\)', '', c['text'])
     c['cardId'] = card_id
     c['position'] = 1 if not c.get('names') else c.get('names', [c.get('name')]).index(c.get('name')) + 1
     sql = 'INSERT INTO face ('
@@ -272,14 +273,13 @@ def card_name(c):
     if c.get('layout') == 'meld':
         if c.get('name') != c.get('names')[2]:
             return c.get('name')
-        else:
-            return c.get('names')[0]
+        return c.get('names')[0]
     return ' // '.join(c.get('names', [c.get('name')]))
 
 def add_hardcoded_cards(cards):
     cards['Gleemox'] = {
         "text": "{T}: Add one mana of any color to your mana pool.\nThis card is banned.",
-        "manacost": "{0}",
+        "manaCost": "{0}",
         "type": "Artifact",
         "layout": "normal",
         "types": ["Artifact"],

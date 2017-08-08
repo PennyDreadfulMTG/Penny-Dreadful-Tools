@@ -3,15 +3,22 @@ import os
 import shutil
 import urllib.request
 import zipfile
-from email.utils import formatdate
 
 import requests
 
-from magic import database
-from shared import configuration
-from shared.pd_exception import OperationalException, DatabaseException
+from cachecontrol import CacheControl
+from cachecontrol import CacheControlAdapter
+from cachecontrol.caches.file_cache import FileCache
+from cachecontrol.heuristics import ExpiresAfter
 
-SESSION = requests.Session()
+from shared import configuration
+from shared.pd_exception import OperationalException
+
+SESSION = CacheControl(requests.Session(),
+                       cache=FileCache(configuration.get('web_cache')))
+SESSION.mount(
+    'http://whatsinstandard.com',
+    CacheControlAdapter(heuristic=ExpiresAfter(days=14)))
 
 def unzip(url, path):
     location = '{scratch_dir}/zip'.format(scratch_dir=configuration.get('scratch_dir'))
@@ -25,40 +32,22 @@ def unzip(url, path):
     shutil.rmtree(location)
     return s
 
-def fetch(url, character_encoding=None, resource_id=None, can_304=False):
-    if_modified_since = None
-    if resource_id is None:
-        resource_id = url
-    if_modified_since = get_last_modified(resource_id)
-    print('Fetching {url} (Last Modified={when})'.format(url=url, when=if_modified_since))
+def fetch(url, character_encoding=None, force=False):
+    headers = {}
+    if force:
+        headers['Cache-Control'] = 'no-cache'
+    print('Fetching {url} ({cache})'.format(url=url, cache='no cache' if force else 'cache ok'))
     try:
-        headers = {}
-        if if_modified_since != None:
-            headers["If-Modified-Since"] = if_modified_since
         response = SESSION.get(url, headers=headers)
-        if character_encoding != None:
+        if character_encoding is not None:
             response.encoding = character_encoding
-        if response.status_code == 304:
-            if can_304:
-                return None
-            else:
-                return get_cached_text(resource_id)
-        last_modified = response.headers.get("Last-Modified")
-        set_last_modified(resource_id, last_modified, response.text)
         return response.text
-    except urllib.error.HTTPError as e:
-        raise FetchException(e)
-    except requests.exceptions.ConnectionError as e:
-        cache = get_cached_text(resource_id)
-        if cache is not None:
-            print("Connection error: {}".format(e))
-            print("Used cached value")
-            return cache
+    except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e:
         raise FetchException(e)
 
-def fetch_json(url, character_encoding=None, resource_id=None):
+def fetch_json(url, character_encoding=None):
     try:
-        blob = fetch(url, character_encoding, resource_id)
+        blob = fetch(url, character_encoding)
         return json.loads(blob)
     except json.decoder.JSONDecodeError:
         print('Failed to load JSON:\n{0}'.format(blob))
@@ -75,27 +64,13 @@ def post(url, data):
 def store(url, path):
     print('Storing {url} in {path}'.format(url=url, path=path))
     try:
-        return urllib.request.urlretrieve(url, path)
+        response = requests.get(url, stream=True)
+        with open(path, 'wb') as fout:
+            for chunk in response.iter_content(1024):
+                fout.write(chunk)
+        return response
     except urllib.error.HTTPError as e:
         raise FetchException(e)
-
-def get_last_modified(resource):
-    return database.DATABASE.value("SELECT last_modified FROM fetcher WHERE resource = ?", [resource])
-
-def set_last_modified(resource, httptime=None, content=None):
-    if httptime is None:
-        httptime = formatdate(timeval=None, localtime=False, usegmt=True)
-    try:
-        database.DATABASE.execute("INSERT INTO fetcher (resource, last_modified, content) VALUES (?, ?, ?)", [resource, httptime, content])
-    except DatabaseException:
-        pass
-
-def remove_last_modified(resource):
-    database.DATABASE.execute("DELETE FROM fetcher WHERE resource = ?", [resource])
-
-
-def get_cached_text(resource):
-    return database.DATABASE.value("SELECT content FROM fetcher WHERE resource = ?", [resource])
 
 class FetchException(OperationalException):
     pass

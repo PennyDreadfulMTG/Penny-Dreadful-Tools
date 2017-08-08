@@ -2,19 +2,19 @@ import re
 
 from magic import oracle
 
-def find_emoji(emoji, channel):
-    if channel.is_private:
-        return None
+def find_emoji(emoji, client):
     try:
-        emojis = channel.server.emojis
-        return next((x for x in emojis if x.name == emoji), None)
+        for server in client.servers:
+            emojis = server.emojis
+            res = next((x for x in emojis if x.name == emoji), None)
+            if res is not None:
+                return res
+        return None
     except AttributeError:
         return None
 
-def replace_emoji(text, channel):
-    if channel.is_private:
-        return text
-    elif text is None:
+def replace_emoji(text, client):
+    if text is None:
         return ''
     output = text
     symbols = re.findall(r'\{([A-Z0-9/]{1,3})\}', text)
@@ -26,8 +26,8 @@ def replace_emoji(text, channel):
                 name = '0' + name
             else:
                 name = name + name
-        emoji = find_emoji(name, channel)
-        if emoji != None:
+        emoji = find_emoji(name, client)
+        if emoji is not None:
             output = output.replace('{' + symbol + '}', str(emoji))
     return output
 
@@ -40,6 +40,4 @@ def legal_emoji(c, verbose=False):
         s = ':no_entry_sign:'
         if verbose:
             s += ' (not legal in PD)'
-
-
     return s

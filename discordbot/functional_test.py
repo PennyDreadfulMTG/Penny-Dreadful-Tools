@@ -11,16 +11,16 @@ def generate_fakebot():
     async def fake_send_message(channel, text):
         print('Responding with "{0}"'.format(text))
         channel.calls += 1
-        assert channel != None
-        assert text != None and text != ''
+        assert channel is not None
+        assert text is not None and text != ''
     async def fake_send_file(channel, image_file, content=None):
         print('Uploading "{0}", with additional text "{1}"'.format(image_file, content))
         channel.calls += 1
-        assert channel != None
-        assert image_file != None and fetcher_internal.acceptable_file(image_file)
+        assert channel is not None
+        assert image_file is not None and fetcher_internal.acceptable_file(image_file)
         assert content != ''
     async def fake_send_typing(channel):
-        assert channel != None
+        assert channel is not None
     fakebot = bot.Bot()
     fakebot.client.send_message = fake_send_message
     fakebot.client.send_file = fake_send_file
@@ -50,6 +50,9 @@ def test_commands():
         message = types.new_class('Message')
         message.content = "!{0} args".format(cmd)
         message.channel = channel
+
+        if cmd == 'time':
+            message.content = '!time Melbourne'
 
         message.author = types.new_class('User')
         message.author.mention = "@nobody"

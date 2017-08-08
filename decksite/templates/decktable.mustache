@@ -10,12 +10,15 @@
             {{^hide_source}}
                 <th>Source</th>
             {{/hide_source}}
-            <th data-empty="bottom" data-sortInitialOrder="desc">Record</th>
+            <th data-sortInitialOrder="desc">Record</th>
             {{#show_omw}}
-                <th data-empty="bottom" data-sortInitialOrder="desc">OMW</th>
+                <th title="Opponent's Match Win" data-sortInitialOrder="desc">OMW</th>
             {{/show_omw}}
             <th class="c">Top 8</th>
             <th data-sortInitialOrder="desc">Date</th>
+            {{#has_similar}}
+                <th>Similarity</th>
+            {{/has_similar}}
             <th>Season</th>
         </tr>
     </thead>

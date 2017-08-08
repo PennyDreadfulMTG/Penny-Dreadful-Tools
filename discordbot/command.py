@@ -26,14 +26,13 @@ async def respond_to_card_names(message, bot):
     matches = re.findall(r'https?://(?:www.)?tappedout.net/mtg-decks/(?P<slug>[\w-]+)/?', message.content, flags=re.IGNORECASE)
     for match in matches:
         data = {"url": "http://tappedout.net/mtg-decks/{slug}".format(slug=match)}
-        fetcher.internal.post("http://pennydreadfulmagic.com/add/", data)
-
+        fetcher.internal.post(fetcher.decksite_url('add'), data)
 
 async def handle_command(message, bot):
     parts = message.content.split(' ', 1)
     method = find_method(parts[0])
 
-    if parts[0] in configuration.get('otherbot_commands').split(','):
+    if parts[0].lower() in configuration.get('otherbot_commands').split(','):
         return
 
     args = ""
@@ -65,10 +64,11 @@ def find_method(name):
     if len(cmd) == 0:
         return
     method = [m for m in dir(Commands) if m == cmd or m == '_' + cmd]
+    if len(method) == 0:
+        method = [m for m in dir(Commands) if m.startswith(cmd) or m.startswith('_{cmd}'.format(cmd=cmd))]
     if len(method) > 0:
         return getattr(Commands, method[0])
-    else:
-        return None
+    return None
 
 def build_help(readme=False, cmd=None):
     def print_group(group):
@@ -86,19 +86,16 @@ def build_help(readme=False, cmd=None):
         if method.__doc__:
             if not method.__doc__.startswith('`'):
                 return '`!{0}` {1}'.format(method.__name__, method.__doc__)
-            else:
-                return '{0}'.format(method.__doc__)
+            return '{0}'.format(method.__doc__)
         elif verbose:
             return '`!{0}` No Help Available'.format(method.__name__)
-        else:
-            return "`!{0}`".format(method.__name__)
+        return "`!{0}`".format(method.__name__)
 
     if cmd:
         method = find_method(cmd)
         if method:
             return print_cmd(method, True)
-        else:
-            return "`{cmd}` is not a valid command.".format(cmd=cmd)
+        return "`{cmd}` is not a valid command.".format(cmd=cmd)
 
     msg = print_group("Commands")
     if readme:
@@ -112,6 +109,7 @@ def cmd_header(group):
         return func
     return decorator
 
+# pylint: disable=too-many-public-methods
 class Commands:
     """To define a new command, simply add a new method to this class.
     If you want !help to show the message, add a docstring to the method.
@@ -126,15 +124,14 @@ class Commands:
         if args:
             msg = build_help(cmd=args)
         else:
-            msg = """Basic bot usage: Include [cardname] in your regular messages.
-    The bot will search for any quoted cards, and respond with the card details.
-
-    Additional Commands:"""
+            msg = """[cardname] to get card details.
+"""
             msg += build_help()
             msg += """
 
-    Have any Suggesions/Bug Reports? Submit them here: https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues
-    Want to contribute? Send a Pull Request."""
+Suggestions/bug reports: <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues/>
+
+Want to contribute? Send a Pull Request."""
         await bot.client.send_message(channel, msg)
 
     @cmd_header("Commands")
@@ -184,7 +181,7 @@ class Commands:
     @cmd_header("Developer")
     async def echo(self, bot, channel, args):
         """Repeat after me..."""
-        s = emoji.replace_emoji(args, channel)
+        s = emoji.replace_emoji(args, bot.client)
         print('Echoing {s}'.format(s=s))
         await bot.client.send_message(channel, s)
 
@@ -259,6 +256,8 @@ class Commands:
                 s += '\nWARNING: price information is {display} old'.format(display=dtutil.display_time(age, 1))
             return s
         def format_price(p):
+            if p is None:
+                return 'Unknown'
             dollars, cents = str(round(float(p), 2)).split('.')
             return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
         await single_card_text(bot, channel, args, author, price_info)
@@ -292,25 +291,25 @@ class Commands:
 
     @cmd_header("Commands")
     async def resources(self, bot, channel, args):
-        """`!resources` Link to page of all Penny Dreadful resources.
-           `!resources {section}` Link to Penny Dreadful resources section.
-           `!resources {section} {link}` Link to Penny Dreadful resource."""
-        args = args.split()
+        """`!resources {args}` Link to useful pages related to `args`.
+           Specifically – look for a section of pennydreadfulmagic.com that fits the description in {args}
+           and links that match in /resources/.
+           Examples:
+               `!resources tournaments`
+               `!resources card Hymn to Tourach`
+               `!resources deck check`
+               `!resources league`
+               `!resources`
+            """
         results = {}
         if len(args) > 0:
-            resources = fetcher.resources()
-            for title, items in resources.items():
-                for text, url in items.items():
-                    asked_for_this_section_only = len(args) == 1 and roughly_matches(title, args[0])
-                    asked_for_this_section_and_item = len(args) == 2 and roughly_matches(title, args[0]) and roughly_matches(text, args[1])
-                    asked_for_this_item_only = len(args) == 1 and roughly_matches(text, args[0])
-                    if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only:
-                        results[text] = url
+            results.update(resources_resources(args))
+            results.update(site_resources(args))
         s = ''
         if len(results) == 0:
-            s = 'PD resources: http://pennydreadfulmagic.com/resources/'
+            s = 'PD resources: <{url}>'.format(url=fetcher.decksite_url('/resources/'))
         else:
-            for text, url in results.items():
+            for url, text in results.items():
                 s += '{text}: <{url}>\n'.format(text=text, url=url)
         await bot.client.send_message(channel, s)
 
@@ -333,17 +332,18 @@ class Commands:
             cid = channel.server.id
         else:
             cid = channel.id
-        configuration.write('not_pd', "{0},{1}".format(existing, cid))
+        if str(cid) not in existing.split(','):
+            configuration.write('not_pd', "{0},{1}".format(existing, cid))
 
         await bot.client.send_message(channel, 'Disable PD marks')
 
     @cmd_header("Commands")
     async def bug(self, bot, channel, args, author):
         """Report a bug"""
-        bot.client.send_typing(channel)
+        await bot.client.send_typing(channel)
         issue = fetcher.create_github_issue(args, author)
         if issue is None:
-            await bot.client.send_message(channel, "Report issues at https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new")
+            await bot.client.send_message(channel, "Report issues at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>")
         else:
             await bot.client.send_message(channel, "Issue has been reported at <{url}>".format(url=issue.html_url))
 
@@ -363,28 +363,48 @@ class Commands:
         if sfcard['object'] == 'error':
             await bot.client.send_message(channel, '{author}: {details}'.format(author=author.mention, details=sfcard['details']))
             return
-        sfimgname = '{0}/{1}_{2}.jpg'.format(configuration.get('image_dir'), sfcard['set'], sfcard['collector_number'])
-        fetcher.internal.store(sfcard['image_uri'], sfimgname)
-        text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=sfcard['mana_cost']), channel)
-        await bot.client.send_file(channel, sfimgname, content=text)
+        imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
+        imagepath = '{image_dir}/{imagename}.jpg'.format(image_dir=configuration.get('image_dir'), imagename=imagename)
+        fetcher.internal.store(sfcard['image_uri'], imagepath)
+        text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=sfcard['mana_cost']), bot.client)
+        await bot.client.send_file(channel, imagepath, content=text)
         try:
             oracle.valid_name(sfcard['name'])
         except InvalidDataException:
             c = {
-                "text": sfcard.get('oracle_text', ''),
-                "manacost": sfcard.get('mana_cost', None),
-                "type": sfcard['type_line'],
-                "layout": sfcard['layout'],
-                "types": [], # This is wrong.  But whatever.
-                "cmc": int(float(sfcard['cmc'])),
-                'imageName': sfimgname,
-                "legalities": [],
-                "name": sfcard['name'],
-                "printings": [sfcard['set']],
-                "rarity": sfcard['rarity']
+                'layout': sfcard['layout'],
+                'types': [], # This is wrong.  But whatever.
+                'cmc': int(float(sfcard['cmc'])),
+                'imageName': imagename,
+                'legalities': [],
+                'printings': [sfcard['set']],
+                'rarity': sfcard['rarity'],
+                'names': []
             }
-            multiverse.insert_card(c)
+            faces = sfcard.get('card_faces', [sfcard])
+            names = [face['name'] for face in faces]
+            for face in faces:
+                c.update({
+                    'name': face['name'],
+                    'type': face['type_line'],
+                    'text': face.get('oracle_text', ''),
+                    'manaCost': face.get('mana_cost', None)
+                })
+                c['names'] = names
+                multiverse.insert_card(c)
 
+    @cmd_header("Commands")
+    async def time(self, bot, channel, args, author):
+        """`!time {location}` Show the current time in the specified location."""
+        t = fetcher.time(args.strip())
+        await bot.client.send_message(channel, '{author}: {time}'.format(author=author.mention, time=t))
+
+    @cmd_header("Commands")
+    async def pdm(self, bot, channel, args):
+        """Alias for `!resources`."""
+        # Because of the weird way we call and use methods on Commands we need ...
+        # pylint: disable=too-many-function-args
+        return await self.resources(self, bot, channel, args)
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):
@@ -412,7 +432,6 @@ def complex_search(query):
     print('Searching for {query}'.format(query=query))
     return search.search(query)
 
-
 def roughly_matches(s1, s2):
     return simplify_string(s1).find(simplify_string(s2)) >= 0
 
@@ -426,7 +445,7 @@ async def single_card_text(bot, channel, args, author, f):
         await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
     elif len(cards) == 1:
         legal_emjoi = emoji.legal_emoji(cards[0])
-        text = emoji.replace_emoji(f(cards[0]), channel)
+        text = emoji.replace_emoji(f(cards[0]), bot.client)
         message = '**{name}** {legal_emjoi} {text}'.format(name=cards[0].name, legal_emjoi=legal_emjoi, text=text)
         await bot.client.send_message(channel, message)
     else:
@@ -434,3 +453,33 @@ async def single_card_text(bot, channel, args, author, f):
 
 def oracle_text(c):
     return c.text
+
+def site_resources(args):
+    results = {}
+    if ' ' in args.strip():
+        area, detail = args.strip().split(' ', 1)
+    else:
+        area, detail = args.strip(), ''
+    if area == 'card':
+        area = 'cards'
+    if area == 'person':
+        area = 'people'
+    sitemap = fetcher.sitemap()
+    matches = [endpoint for endpoint in sitemap if endpoint.startswith('/{area}/'.format(area=area))]
+    if len(matches) > 0:
+        url = fetcher.decksite_url('/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail)))
+        results[url] = args
+    return results
+
+def resources_resources(args):
+    results = {}
+    words = args.split()
+    resources = fetcher.resources()
+    for title, items in resources.items():
+        for text, url in items.items():
+            asked_for_this_section_only = len(words) == 1 and roughly_matches(title, words[0])
+            asked_for_this_section_and_item = len(words) == 2 and roughly_matches(title, words[0]) and roughly_matches(text, words[1])
+            asked_for_this_item_only = len(words) == 1 and roughly_matches(text, words[0])
+            if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only:
+                results[url] = text
+    return results

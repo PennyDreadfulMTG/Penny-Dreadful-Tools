@@ -41,8 +41,10 @@ COLOR_COMBINATIONS = {
 def normalize(d):
     name = d.name
     name = name.lower()
+    name = replace_underscores(name)
     name = remove_pd(name)
     name = remove_hashtags(name)
+    name = remove_brackets(name)
     name = expand_common_abbreviations(name)
     removed_colors = False
     without_colors = remove_colors(name)
@@ -53,10 +55,21 @@ def normalize(d):
         name = d.archetype
     if removed_colors or name == '':
         name = prepend_colors(name, d.colors)
+    name = ucase_trailing_roman_numerals(name)
     return titlecase.titlecase(name)
 
+def file_name(d):
+    safe_name = normalize(d).replace(' ', '-')
+    safe_name = re.sub('--+', '-', safe_name, flags=re.IGNORECASE)
+    safe_name = re.sub('[^0-9a-z-]', '', safe_name, flags=re.IGNORECASE)
+    return safe_name.strip('-')
+
+def replace_underscores(name):
+    return name.replace('_', ' ')
+
 def remove_pd(name):
-    name = re.sub(r'(^| )[\[\(]?pdh?[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(]?pd[hmst]?[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(]?penny ?dreadful (sunday|monday|thursday)[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny ?dreadful[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
     return name
@@ -64,6 +77,9 @@ def remove_pd(name):
 def remove_hashtags(name):
     name = re.sub(r'#[^ ]*', '', name).strip()
     return name
+
+def remove_brackets(name):
+    return re.sub(r'\[[^\]]*\]', '', name).strip()
 
 def remove_colors(name):
     patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*', 'Mono'] + list(COLOR_COMBINATIONS.keys())
@@ -75,16 +91,24 @@ def expand_common_abbreviations(name):
     return name.replace('rdw', 'red deck wins').replace('ww', 'white weenie').replace('muc', 'mono blue control').replace('mbc', 'mono black control')
 
 def prepend_colors(s, colors):
-    prefix = name_from_colors(colors, s)
-    return '{prefix} {s}'.format(prefix=prefix, s=s).strip()
+    colors_part = name_from_colors(colors, s)
+    if s == 'suicide':
+        return '{s} {colors_part}'.format(colors_part=colors_part, s=s)
+    return '{colors_part} {s}'.format(colors_part=colors_part, s=s).strip()
 
 def name_from_colors(colors, s=''):
     ordered = mana.order(colors)
     for name, symbols in COLOR_COMBINATIONS.items():
         if mana.order(symbols) == ordered:
             if len(symbols) == 1:
-                if s.startswith('deck wins') or s.startswith('weenie'):
+                if s.startswith('deck wins') or s.startswith('weenie') or s.startswith('suicide'):
                     return name
                 return 'mono {name}'.format(name=name)
             return name
     return 'colorless'
+
+def ucase_trailing_roman_numerals(name):
+    last_word = name.split()[-1]
+    if re.search('^[ivx]+$', last_word):
+        name = re.sub('{last_word}$'.format(last_word=last_word), last_word.upper(), name)
+    return name

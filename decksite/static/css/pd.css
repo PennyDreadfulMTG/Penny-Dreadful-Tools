@@ -62,6 +62,10 @@ b {
     font-weight: bold;
 }
 
+i {
+    font-style: italic;
+}
+
 p {
     margin: 0.5rem 0;
 }
@@ -128,7 +132,6 @@ p a {
     background-position: 0 96%;
     -webkit-background-size: 100% 0.1rem;
     background-size: 100% 0.1rem;
-
 }
 
 /* Lists */
@@ -156,8 +159,8 @@ ul.archetypes, .archetypes ul {
 /* Tables */
 
 table {
-    border-collapse: separate;
     border-spacing: 0.25rem 0;
+    margin-bottom: 1rem;
 }
 
 table.with-marginalia {
@@ -187,14 +190,6 @@ td, th {
 /* Allow the stars in the margin to show. */
 td.marginalia:first-child, th.marginalia:first-child {
     overflow: visible;
-}
-
-td:first-child, th:first-child {
-    margin-left: -0.25rem; /* remove border-spacing */
-}
-
-td:last-child, th:last-child {
-    margin-right: -0.25rem; /* remove border-spacing */
 }
 
 td:first-child, td:last-child, th:first-child, th:last-child {
@@ -250,15 +245,27 @@ ul.menu {
 
 .menu li {
     float: left;
+    position: relative;
+}
+
+.menu li.search {
+    float: right;
 }
 
 .menu a {
     color: #502828;
     display: block;
     font-size: 0.8rem;
-    padding: 2rem;
     text-decoration: none;
     text-transform: uppercase;
+}
+
+.menuitem {
+    padding: 2rem;
+}
+
+.search {
+    padding: 2rem 0 0 0;
 }
 
 .menu li.has-submenu > a {
@@ -332,7 +339,7 @@ ul.menu {
 /* Responsive tables */
 
 @media only screen and (max-width: 60rem) {
-    table, thead, tbody, th, td, tr {
+    table, tbody, th, td, tr {
         display: block;
     }
 
@@ -360,6 +367,27 @@ ul.menu {
     td.c, td.n {
         text-align: left;
     }
+
+    /* But don't screw up Google's HTML/CSS for the search box in the menu. */
+    .gsc-search-box table {
+        display: table;
+    }
+    .gsc-search-box tbody {
+        display: table-row-group;
+    }
+    .gsc-search-box tr {
+        display: table-row;
+    }
+    .gsc-search-box td, th {
+        display: table-cell;
+    }
+
+}
+
+/* Deck */
+
+.bye {
+    font-size: 0.8rem;
 }
 
 /* Card */
@@ -454,6 +482,178 @@ input.error, select.error, textarea.error {
     visibility: hidden;
 }
 
-form.inline, .inline input, .inline select, .inline textarea {
+form.inline, .inline input, .inline select, .inline textarea, .inline label, .inline button {
     margin: 0;
+    max-width: 100%;
+    width: inherit;
+}
+
+/* Search. We're overriding Google's inline styles here hence a lot of !important. */
+
+.gsc-control-cse {
+    background: transparent !important; /* csslint allow: important */
+    border: 0 !important; /* csslint allow: important */
+    color: #502828 !important; /* csslint allow: important */
+    width: 20rem !important; /* csslint allow: important */
+}
+
+.gsc-input {
+    background: none !important; /* csslint allow: important */
+    font-size: inherit !important; /* csslint allow: important */
+    font-family: inherit !important; /* csslint allow: important */
+}
+
+.gsc-wrapper, .gsc-results-wrapper-overlay, .gsc-results-root {
+    background: #f9f9f9 !important; /* csslint allow: important */
+    color: #502828 !important; /* csslint allow: important */
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important; /* csslint allow: important */
+    font-size: 0.9em !important; /* csslint allow: important */
+    line-height: 1.618 !important; /* csslint allow: important */
+}
+
+.gsc-wrapper a {
+    text-decoration: none !important; /* csslint allow: important */
+    text-transform: none;
+}
+
+.gsc-snippet {
+    white-space: normal !important; /* csslint allow: important */
+}
+
+td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
+    padding-left: 8px !important; /* csslint allow: important */
+}
+
+.gsc-cursor-page:hover {
+    text-decoration: none !important; /* csslint allow: important */
+}
+
+.gs-title, .gs-title b {
+    height: inherit !important; /* csslint allow: important */
+    text-decoration: none !important; /* csslint allow: important */
+}
+
+.gsc-orderby-container {
+    display: none;
+}
+
+.gsc-wrapper div:after {
+    display: inherit;
+}
+
+.gsc-control-cse {
+    padding: 0 !important; /* csslint allow: important */
+}
+
+.gsst_a {
+    padding-top: 0.45rem !important; /* csslint allow: important */
+}
+
+.gsc-search-button {
+    margin-top: 5px !important; /* csslint allow: important */
+}
+
+.gsc-webResult.gsc-result {
+    border-bottom: 0.1rem solid #eee !important; /* csslint allow: important */
+}
+
+/* Ideally this should be the underline from p a above but this is better than nothing. */
+.gs-title {
+    text-decoration: underline !important; /* csslint allow: important */
+ }
+
+.search tr {
+    border-bottom: 0;
+}
+
+/* Archetypes */
+
+.archetype {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+.archetype input {
+    width: 45%;
+}
+tr.archetype-0 > .primary.initial {
+    font-size: 120%;
+}
+tr.archetype-1 > .primary.initial {
+    font-size: 100%;
+    padding-left: 1rem;
+}
+tr.archetype-2 > .primary.initial {
+    font-size: 80%;
+    padding-left: 2rem;
+}
+tr.archetype-3 > .primary.initial {
+    font-size: 60%;
+    padding-left: 3rem;
+}
+tr.archetype-0.current > .primary.initial {
+    padding-left: 1rem;
+}
+tr.archetype-1.current > .primary.initial {
+    padding-left: 2rem;
+}
+tr.archetype-2.current > .primary.initial {
+    padding-left: 3rem;
+}
+tr.archetype-3.current > .primary.initial {
+    padding-left: 4rem;
+}
+tr.current {
+    background-color: #eee;
+}
+tr.current td {
+    background-color: #eee;
+}
+tr.current td {
+    padding-left: 1rem;
+}
+tr.current td:first-child {
+    left: -1rem;
+    padding-right: 0;
+    position: relative;
+}
+tr.current td:last-child {
+    left: 1rem;
+    padding-left: 0;
+    padding-right: 1rem;
+    position: relative;
+}
+
+/* Season Symbols */
+
+.ss:before {
+    margin-right: 0.1rem;
+    vertical-align: -0.1rem; /* None of the standard values line up the text and the image center. */
+}
+.ss {
+    margin-right: 0.35rem;
+}
+
+/* Notification Badges */
+
+.badge {
+    display: none; /* Will be shown with javascript if admin is viewing. */
+    position: absolute;
+    top: 1.1rem;
+    right: 1.1rem;
+    background-color: #9dd2af;
+    border-radius: 0.6rem; /* one half of ( (border * 2) + height + padding ) */
+    height: 1.2rem;
+    padding: 0;
+    text-align: center;
+    min-width: 1.2rem;
+    line-height: 1.2rem;
+}
+
+.badge a, .badge a:hover {
+    color: white;
+}
+
+/* Tournaments */
+.local {
+    display: none; /* Will be revealed by js when we have a localized time. */
 }

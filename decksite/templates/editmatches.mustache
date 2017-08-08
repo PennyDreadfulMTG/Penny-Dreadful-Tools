@@ -1,0 +1,18 @@
+<section>
+    <h2>Matches</h2>
+            <tbody>
+                {{#matches}}
+                    <tr>
+                        <td><a href="{{left_url}}">{{left_id}}</a> v <a href="{{right_url}}">{{right_id}}</a></td>
+                        <td>
+                            <form method="post" class="inline">
+                                <input type="hidden" name="match_id" value="{{id}}">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {{/matches}}
+            </tbody>
+        </table>
+    </form>
+</section>

@@ -1,19 +1,20 @@
 import os
-import re
 import traceback
 
-from flask import make_response, redirect, request, send_file, send_from_directory, url_for
+from flask import make_response, redirect, request, send_file, send_from_directory, session, url_for
 from werkzeug import exceptions
 
-from shared.pd_exception import DoesNotExistException, InvalidDataException
+from magic import oracle
+from shared import configuration
+from shared.pd_exception import DoesNotExistException, InvalidArgumentException, InvalidDataException
 
-from decksite import league as lg
+from decksite import auth, deck_name, league as lg
 from decksite import APP
 from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
 from decksite.charts import chart
 from decksite.league import ReportForm, SignUpForm
-from decksite.views import About, AddForm, Archetype, Archetypes, Card, Cards, Competition, Competitions, Deck, EditArchetypes, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Report, Resources, Rotation, SignUp, Tournaments, Bugs
+from decksite.views import About, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Report, Resources, Rotation, Season, SignUp, Tournaments, Unauthorized
 
 # Decks
 
@@ -29,6 +30,13 @@ def decks(deck_id):
     view = Deck(deck.load_deck(deck_id))
     return view.page()
 
+@APP.route('/season/')
+@APP.route('/season/<season_id>/')
+@cached()
+def season(season_id=None):
+    view = Season(deck.load_season(season_id))
+    return view.page()
+
 @APP.route('/people/')
 @cached()
 def people():
@@ -38,10 +46,7 @@ def people():
 @APP.route('/people/<person_id>/')
 @cached()
 def person(person_id):
-    try:
-        p = ps.load_person(person_id)
-    except DoesNotExistException:
-        p = ps.load_person_by_username(person_id)
+    p = ps.load_person(person_id)
     view = Person(p)
     return view.page()
 
@@ -54,8 +59,12 @@ def cards():
 @APP.route('/cards/<path:name>/')
 @cached()
 def card(name):
-    view = Card(cs.load_card(name))
-    return view.page()
+    try:
+        c = cs.load_card(oracle.valid_name(name.replace('+', ' ')))
+        view = Card(c)
+        return view.page()
+    except InvalidDataException as e:
+        raise DoesNotExistException(e)
 
 @APP.route('/competitions/')
 @cached()
@@ -72,18 +81,18 @@ def competition(competition_id):
 @APP.route('/archetypes/')
 @cached()
 def archetypes():
-    view = Archetypes(archs.load_archetypes())
+    view = Archetypes(archs.load_archetypes_deckless())
     return view.page()
 
 @APP.route('/archetypes/<archetype_id>/')
 @cached()
 def archetype(archetype_id):
-    view = Archetype(archs.load_archetype(archetype_id))
+    view = Archetype(archs.load_archetype(archetype_id), archs.load_archetypes_deckless_for(archetype_id), archs.load_matchups(archetype_id))
     return view.page()
 
 @APP.route('/tournaments/')
 @cached()
-def touranments():
+def tournaments():
     view = Tournaments()
     return view.page()
 
@@ -100,7 +109,7 @@ def add_deck():
     if "tappedout" in url:
         import decksite.scrapers.tappedout
         try:
-            deck_id = decksite.scrapers.tappedout.scrape_url(url)
+            deck_id = decksite.scrapers.tappedout.scrape_url(url).id
         except InvalidDataException as e:
             error = e.args[0]
     else:
@@ -126,7 +135,7 @@ def rotation():
 @APP.route('/export/<deck_id>/')
 def export(deck_id):
     d = deck.load_deck(deck_id)
-    safe_name = re.sub('[^0-9a-z-]', '-', d.name, flags=re.IGNORECASE)
+    safe_name = deck_name.file_name(d)
     return (str(d), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 
 @APP.route('/resources/')
@@ -136,6 +145,7 @@ def resources():
     return view.page()
 
 @APP.route('/bugs/')
+@cached()
 def bugs():
     view = Bugs()
     return view.page()
@@ -146,6 +156,11 @@ def bugs():
 def league():
     view = LeagueInfo()
     return view.page()
+
+@APP.route('/league/current/')
+@cached()
+def current_league():
+    return competition(lg.active_league().id)
 
 @APP.route('/signup/')
 def signup(form=None):
@@ -159,12 +174,11 @@ def signup(form=None):
 def add_signup():
     form = SignUpForm(request.form)
     if form.validate():
-        deck_id = lg.signup(form)
-        response = make_response(redirect(url_for('decks', deck_id=deck_id)))
-        response.set_cookie('deck_id', str(deck_id))
+        d = lg.signup(form)
+        response = make_response(redirect(url_for('decks', deck_id=d.id)))
+        response.set_cookie('deck_id', str(d.id))
         return response
-    else:
-        return signup(form)
+    return signup(form)
 
 @APP.route('/report/')
 def report(form=None):
@@ -181,8 +195,7 @@ def add_report():
         response = make_response(redirect(url_for('decks', deck_id=form.entry)))
         response.set_cookie('deck_id', form.entry)
         return response
-    else:
-        return report(form)
+    return report(form)
 
 # Admin
 
@@ -195,17 +208,80 @@ def deckcycle_tappedout():
     return home()
 
 @APP.route('/admin/archetypes/')
-def edit_archetypes():
-    view = EditArchetypes(archs.load_archetypes_without_decks(), deck.load_decks())
+@auth.admin_required
+def edit_archetypes(search_results=None):
+    if search_results is None:
+        search_results = []
+    view = EditArchetypes(archs.load_archetypes_deckless(order_by='a.name'), search_results)
     return view.page()
 
 @APP.route('/admin/archetypes/', methods=['POST'])
+@auth.admin_required
 def post_archetypes():
+    search_results = []
     if request.form.get('deck_id') is not None:
-        archs.assign(request.form.get('deck_id'), request.form.get('archetype_id'))
-    else:
+        archetype_ids = request.form.getlist('archetype_id')
+        # Adjust archetype_ids if we're assigning multiple decks to the same archetype.
+        if len(archetype_ids) == 1 and len(request.form.getlist('deck_id')) > 1:
+            archetype_ids = archetype_ids * len(request.form.getlist('deck_id'))
+        for deck_id in request.form.getlist('deck_id'):
+            archetype_id = archetype_ids.pop(0)
+            if archetype_id:
+                archs.assign(deck_id, archetype_id)
+    elif request.form.get('q') is not None:
+        search_results = deck.load_decks_by_cards(request.form.get('q').splitlines())
+    elif request.form.getlist('archetype_id') is not None and len(request.form.getlist('archetype_id')) == 2:
+        archs.move(request.form.getlist('archetype_id')[0], request.form.getlist('archetype_id')[1])
+    elif request.form.get('parent') is not None:
         archs.add(request.form.get('name'), request.form.get('parent'))
-    return edit_archetypes()
+    else:
+        raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/archetypes: {f}'.format(f=request.form))
+    return edit_archetypes(search_results)
+
+@APP.route('/admin/matches/')
+@auth.admin_required
+def edit_matches():
+    view = EditMatches(lg.load_latest_league_matches())
+    return view.page()
+
+@APP.route('/admin/matches/', methods=['POST'])
+@auth.admin_required
+def post_matches():
+    if request.form.get('match_id') is not None:
+        lg.delete_match(request.form.get('match_id'))
+    return edit_matches()
+
+# OAuth
+
+@APP.route('/authenticate/')
+def authenticate():
+    target = request.args.get('target')
+    authorization_url, state = auth.setup_authentication()
+    session['oauth2_state'] = state
+    if target is not None:
+        session['target'] = target
+    return redirect(authorization_url)
+
+@APP.route('/authenticate/callback/')
+def authenticate_callback():
+    if request.values.get('error'):
+        return redirect(url_for('unauthorized', error=request.values['error']))
+    auth.setup_session(request.url)
+    url = session.get('target')
+    if url is None:
+        url = url_for('home')
+    session['target'] = None
+    return redirect(url)
+
+@APP.route('/unauthorized/')
+def unauthorized(error=None):
+    view = Unauthorized(error)
+    return view.page()
+
+@APP.route('/logout/')
+def authenticate_logout():
+    auth.logout()
+    return redirect(url_for('home'))
 
 # Infra
 
@@ -221,7 +297,6 @@ def cmc_chart(deck_id):
 def legal_cards():
     if os.path.exists('legal_cards.txt'):
         return send_from_directory('.', 'legal_cards.txt')
-
     return "Not supported yet", 404
 
 @APP.errorhandler(DoesNotExistException)
@@ -240,5 +315,5 @@ def internal_server_error(e):
 def init():
     # This makes sure that the method decorators are called.
     import decksite.api as _ # pylint: disable=unused-import
-
+    APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
     APP.run(host='0.0.0.0', debug=True)

@@ -1,7 +1,7 @@
 <h2>{{name}}</h2>
 <section>
-   <h3>Record</h3>
-    <p>All Time: {{> record}}</p>
+    <h3>Archetype Tree</h3>
+    {{> archetypetree}}
 </section>
 <section>
     <h3>Most Common Cards</h3>
@@ -10,14 +10,14 @@
     </ul>
 </section>
 <section>
-    <h3>Archetypes</h3>
-    {{#archetype_tree}}
-        <p>{{{padding}}}{{^pos}}►{{/pos}}{{#pos}}↳{{/pos}} <a href="{{url}}">{{name}}</a></p>
-    {{/archetype_tree}}
-</section>
-<section>
     <h3>Top Decks</h3>
     {{#best_decks}}{{> decktable}}{{/best_decks}}
+</section>
+<section>
+    <h3>Matchups</h3>
+    {{#matchups_container}}
+        {{> archetypetree}}
+    {{/matchups_container}}
 </section>
 <section>
     <h3>All Decks</h3>

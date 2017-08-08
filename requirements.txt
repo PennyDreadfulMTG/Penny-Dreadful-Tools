@@ -1,7 +1,10 @@
+anytree
 bs4
+cachecontrol[filecache]
 coverage
 discord.py[voice]>=0.13.0
 flask
+inflect
 matplotlib
 munch
 mysqlclient==1.3.9
@@ -12,5 +15,7 @@ pytest
 python-dateutil
 pytz
 requests
+requests_oauthlib
 seaborn
 titlecase
+untangle

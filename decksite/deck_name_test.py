@@ -1,9 +1,9 @@
-from munch import Munch
-
 from decksite import deck_name
 
+from shared.container import Container
+
 def test_normalize():
-    d = Munch({'name': 'Dimir Control', 'archetype': 'Control', 'colors': ['U', 'B']})
+    d = Container({'name': 'Dimir Control', 'archetype': 'Control', 'colors': ['U', 'B']})
     assert deck_name.normalize(d) == 'Dimir Control'
     d.name = 'U/B Control'
     assert deck_name.normalize(d) == 'Dimir Control'
@@ -66,6 +66,20 @@ def test_normalize():
     d.colors = ['R']
     d.name = 'RDW23'
     assert deck_name.normalize(d) == 'Red Deck Wins23'
+    d.colors = ['B']
+    d.name = 'Mono B Aristocrats III'
+    assert deck_name.normalize(d) == 'Mono Black Aristocrats III'
+    d.name = 'Mono B Aristocrats VI'
+    assert deck_name.normalize(d) == 'Mono Black Aristocrats VI'
+    d.name = 'Suicide Black'
+    assert deck_name.normalize(d) == 'Suicide Black'
+    d.colors = ['R']
+    d.name = 'Penny Dreadful Sunday RDW'
+    assert deck_name.normalize(d) == 'Red Deck Wins'
+    d.name = '[Pd][hou] Harvest Quest'
+    assert deck_name.normalize(d) == 'Harvest Quest'
+    d.name = 'Pd_Vehicles'
+    assert deck_name.normalize(d) == 'Vehicles'
 
     # Undefined cases
     # d.name = 'U/B Aggro' when d.archetype = 'Control'

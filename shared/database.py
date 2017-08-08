@@ -3,8 +3,7 @@ from shared import database_mysql, database_sqlite
 def get_database(location):
     if location.lower().endswith('.sqlite'):
         return database_sqlite.SqliteDatabase(location)
-    else:
-        return database_mysql.MysqlDatabase(location)
+    return database_mysql.MysqlDatabase(location)
 
 def sqlescape(s) -> str:
     if str(s).isdecimal():

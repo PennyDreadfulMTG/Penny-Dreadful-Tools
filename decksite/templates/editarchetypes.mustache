@@ -1,32 +1,113 @@
-{{#archetypes}}
-    {{#archetype_tree}}
-        <p>{{{padding}}}↳ <a href="{{url}}">{{name}}</a></p>
+<section>
+    <h2>Queue</h2>
+    <form method="post" class="inline">
+        <table>
+            <thead>
+                <tr>
+                    <th>Colors</th>
+                    <th>Deck Name</th>
+                    <th>Source</th>
+                    <th>Current</th>
+                    <th>Similar Deck</th>
+                    <th>Suggested</th>
+                    <th>Assign To</th>
+            </thead>
+            <tbody>
+                {{#queue}}
+                    <tr>
+                        <td>{{{colors_safe}}}</td>
+                        <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
+                        <td><a href="{{source_url}}">{{source_name}}</a></td>
+                        <td>{{archetype_name}}</td>
+                        <td>
+                            {{#suggestion}}<a href="{{url}}">{{name}} ({{id}})</a>{{/suggestion}}
+                        </td>
+                        <td>
+                            {{#suggestion}}<a href="{{archetype_url}}">{{archetype_name}} ({{archetype_id}})</a>{{/suggestion}}
+                            {{^suggestion}}No suggestion{{/suggestion}}
+                        </td>
+                        <td>
+                            <input type="hidden" name="deck_id" value="{{id}}">
+                            {{> archetypedropdown}}
+                        </td>
+                    </tr>
+                {{/queue}}
+            </tbody>
+        </table>
+        <button type="submit">Assign</button>
+    </form>
+</section>
+<section>
+    <h2>Search By Card</h2>
+
+    <form method="post">
+        <div>
+            <label for="q">Cards (separated by newlines)</label>
+            <textarea name="q"></textarea>
+        </div>
+        <button type="submit">Search</button>
+    </form>
+
+    {{#has_search_results}}
         <form method="post" class="inline">
-            <input type="hidden" name="parent" value="{{id}}">
-            <div class="field">
-                {{{padding}}}&nbsp;&nbsp;<input type="text" name="name">
-                <input type="submit" value="Add">
-            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Colors</th>
+                        <th>Name</th>
+                        <th>Archetype</th>
+                        <th>Select</th>
+                        <th>Season</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#search_results}}
+                        <tr>
+                            <td>{{{colors_safe}}}</td>
+                            <td title="{{decklist}}"><a href="{{url}}">{{name}}</a></td>
+                            <td><a href="{{archetype_url}}">{{archetype_name}}</a></td>
+                            <td><input type="checkbox" name="deck_id" value="{{id}}"></td>
+                            <td>
+                                {{#has_legal_format}}
+                                    {{{legal_icons}}}
+                                {{/has_legal_format}}
+                            </td>
+                        </tr>
+                    {{/search_results}}
+            </table>
+            {{> archetypedropdown}}
+            <button type="submit">Reassign</button>
         </form>
-    {{/archetype_tree}}
-{{/archetypes}}
-<form method="post">
-    <div class="field">
-        <select name="deck_id">
-            {{#decks}}
-                <option value="{{id}}">{{name}}</option>
-            {{/decks}}
-        </select>
-    </div>
-    <div class="field">
-        <select name="archetype_id">
-            {{! BAKERT Archetypes with no decks assigned will not appear}}
-            {{#archetypes}}
-                <option value="{{id}}">{{name}}</option>
-            {{/archetypes}}
-        </select>
-    </div>
-    <div class="field">
-        <input type="submit" value="Assign">
-    </div>
-</form>
+    {{/has_search_results}}
+</section>
+<section>
+    <h2>Move</h2>
+    <form method="post" class="inline">
+        <p>Move</p>
+        {{> archetypedropdown}}
+        <p>New parent</p>
+        {{> archetypedropdown}}
+        <button type="submit">Move</button>
+    </form>
+</section>
+<section>
+    <h2>Add Archetype</h2>
+    <table>
+        {{#roots}}
+            {{#archetype_tree}}
+                <tr class="archetype archetype-{{depth}}">
+                    <td class="initial primary"><a href="{{url}}">{{name}}</a></td>
+                    <td>
+                        <form method="post" class="inline">
+                            <input type="hidden" name="parent" value="{{id}}">
+                            <div class="field">
+                                <input type="text" name="name">
+                                <button type="submit">Add</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            {{/archetype_tree}}
+        {{/roots}}
+    </table>
+</section>

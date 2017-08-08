@@ -1,6 +1,5 @@
 import apsw
 
-from magic import card
 from shared import configuration
 from shared.database_generic import GenericDatabase
 from shared.pd_exception import DatabaseException
@@ -13,12 +12,12 @@ class SqliteDatabase(GenericDatabase):
             self.connection.setrowtrace(row_factory)
             self.connection.enableloadextension(True)
             self.connection.loadextension(configuration.get('spellfix'))
-            self.connection.createscalarfunction('unaccent', card.unaccent, 1)
             self.cursor = self.connection.cursor()
         except apsw.Error as e:
             raise DatabaseException('Failed to initialize database in `{location}`'.format(location=location)) from e
 
     def execute(self, sql, args=None):
+        sql = sql.replace('MEDIUMINT UNSIGNED', 'INTEGER') # Column type difference.
         sql = sql.replace(' SEPARATOR ', ', ') # MySQL/SQLite GROUP_CONCAT syntax difference.
         sql = sql.replace('%%', '%') # MySQLDB and apsw escaping difference.
         if args is None:
@@ -31,7 +30,7 @@ class SqliteDatabase(GenericDatabase):
                 self.execute("ROLLBACK")
                 if sql == "BEGIN TRANSACTION":
                     return self.cursor.execute(sql, args).fetchall()
-            raise DatabaseException('Failed to execute `{sql}` because of `{e}`'.format(sql=sql, e=e)) from e
+            raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e)) from e
 
     def insert(self, sql, args=None):
         self.execute(sql, args)

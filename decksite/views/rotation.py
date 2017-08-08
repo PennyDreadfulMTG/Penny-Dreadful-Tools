@@ -29,12 +29,17 @@ class Rotation(View):
         self.runs = scores[0][1]
         self.runs_percent = round(round(self.runs / 168, 2) * 100)
         self.cards = []
-        cs = {c.name: c for c in oracle.load_cards()}
+        cs = oracle.cards_by_name()
         remaining_runs = (168 - self.runs)
         for name, hits in scores:
             name = html.unescape(name.encode('latin-1').decode('utf-8'))
             hits_needed = max(84 - hits, 0)
             card = cs.get(name)
+            percent = round(round(hits / self.runs, 2) * 100)
+            if remaining_runs == 0:
+                percent_needed = 0
+            else:
+                percent_needed = round(round(hits_needed / remaining_runs, 2) * 100)
             if card is None:
                 raise DoesNotExistException("Legality list contains unknown card '{card}'".format(card=name))
             if remaining_runs + hits < 84:
@@ -43,14 +48,27 @@ class Rotation(View):
                 status = 'Legal'
             else:
                 status = 'Undecided'
+                hits = redact(hits)
+                hits_needed = redact(hits_needed)
+                percent = redact(percent)
+                percent_needed = redact(percent_needed)
             card.update({
                 'hits': hits,
                 'hits_needed': hits_needed,
-                'percent': round(round(hits / self.runs, 2) * 100),
-                'percent_hits_needed': round(round(hits_needed / remaining_runs, 2) * 100),
+                'percent': percent,
+                'percent_hits_needed': percent_needed,
                 'status': status
             })
             self.cards.append(card)
 
     def subtitle(self):
         return 'Rotation'
+
+    # Don't preload 10,000 images.
+    def tooltips_url(self):
+        if len(self.cards) > 500:
+            return None
+        return super().tooltips_url()
+
+def redact(num):
+    return ''.join(['█' for _ in str(num)])

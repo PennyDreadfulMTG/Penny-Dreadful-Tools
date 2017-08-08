@@ -39,12 +39,12 @@ def cache():
             SELECT
                 MAX(`time`) AS `time`,
                 name,
-                MIN(CASE WHEN `time` = ? THEN price ELSE 999999 END) AS price,
+                MIN(CASE WHEN `time` = ? THEN price END) AS price,
                 MIN(price) AS low,
                 MAX(price) AS high,
-                SUM(CASE WHEN `time` > ? AND price = 1 THEN 1 ELSE 0 END) / SUM(CASE WHEN `time` > ? THEN 1 ELSE 0 END) AS week,
-                SUM(CASE WHEN `time` > ? AND price = 1 THEN 1 ELSE 0 END) / SUM(CASE WHEN `time` > ? THEN 1 ELSE 0 END) AS month,
-                SUM(CASE WHEN `time` > ? AND price = 1 THEN 1 ELSE 0 END) / SUM(CASE WHEN `time` > ? THEN 1 ELSE 0 END) AS season
+                AVG(CASE WHEN `time` > ? AND price = 1 THEN 1 WHEN `time` > ? THEN 0 END) AS week,
+                AVG(CASE WHEN `time` > ? AND price = 1 THEN 1 WHEN `time` > ? THEN 0 END) AS month,
+                AVG(CASE WHEN `time` > ? AND price = 1 THEN 1 WHEN `time` > ? THEN 0 END) AS season
             FROM low_price
             GROUP BY name;
     """

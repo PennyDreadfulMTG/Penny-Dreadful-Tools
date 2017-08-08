@@ -1,10 +1,10 @@
 import hashlib
+import json
 import time
 
-from munch import Munch
-
-from magic import mana, oracle, legality, rotation
+from magic import mana, oracle, legality
 from shared import dtutil
+from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
@@ -17,70 +17,97 @@ def latest_decks():
 def load_deck(deck_id):
     return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))
 
+def load_season(season=None):
+    if season is None:
+        where = 'start. start_date <= UNIX_TIMESTAMP() AND `end`.start_date > UNIX_TIMESTAMP()'
+    else:
+        try:
+            number = int(season)
+            code = "'{season}'".format(season=season)
+        except ValueError:
+            number = 0
+            code = sqlescape(season)
+        where = 'start.`number` = {number} OR start.`code` = {code}'.format(number=number, code=code)
+    sql = """
+        SELECT start.`number`, start.`code`, `start`.start_date, `end`.start_date AS end_date
+        FROM season AS `start`
+        LEFT JOIN season AS `end`
+        ON `start`.`number` + 1 = `end`.`number`
+        WHERE {where}
+    """.format(where=where)
+    season = Container(guarantee.exactly_one(db().execute(sql)))
+    season.decks = load_decks('d.created_date >= {start_ts} AND d.created_date < IFNULL({end_ts}, 999999999999)'.format(start_ts=season.start_date, end_ts=season.end_date))
+    season.start_date = dtutil.ts2dt(season.start_date)
+    season.end_date = dtutil.ts2dt(season.end_date)
+    return season
+
+# pylint: disable=attribute-defined-outside-init
 def load_decks(where='1 = 1', order_by=None, limit=''):
     if order_by is None:
         order_by = 'd.created_date DESC, IFNULL(d.finish, 9999999999)'
     sql = """
         SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.draws, d.finish, d.archetype_id, d.url AS source_url,
-            (SELECT COUNT(id) FROM deck WHERE competition_id IS NOT NULL AND competition_id = d.competition_id) AS players,
-            d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date, ct.name AS competition_type_name,
+            d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date, ct.name AS competition_type_name, d.identifier,
             {person_query} AS person, p.id AS person_id,
             d.created_date AS `date`, d.decklist_hash, d.retired,
             s.name AS source_name, IFNULL(a.name, '') AS archetype_name,
-            SUM(opp.wins) AS opp_wins, SUM(opp.losses) AS opp_losses, ROUND(SUM(opp.wins) / (SUM(opp.wins) + SUM(opp.losses)), 2) * 100 AS omw
+            SUM(opp.wins) AS opp_wins, SUM(opp.losses) AS opp_losses, ROUND(SUM(opp.wins) / (SUM(opp.wins) + SUM(opp.losses)), 2) * 100 AS omw,
+            GROUP_CONCAT(DISTINCT CONCAT(dc.card, '|', dc.n, '|', dc.sideboard) SEPARATOR '█') AS cards,
+            cache.colors, cache.colored_symbols, cache.legal_formats,
+            IFNULL(MIN(CASE WHEN m.elimination > 0 THEN m.elimination END), 0) AS stage_reached,
+            GROUP_CONCAT(m.elimination) AS elim
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id
         LEFT JOIN competition AS c ON d.competition_id = c.id
         INNER JOIN source AS s ON d.source_id = s.id
         LEFT JOIN archetype AS a ON d.archetype_id = a.id
         LEFT JOIN deck AS opp ON opp.id IN (SELECT deck_id FROM deck_match WHERE deck_id <> d.id AND match_id IN (SELECT match_id FROM deck_match WHERE deck_id = d.id))
-        INNER JOIN competition_type AS ct ON ct.id = c.competition_type_id
+        LEFT JOIN competition_type AS ct ON ct.id = c.competition_type_id
+        LEFT JOIN deck_card AS dc ON d.id = dc.deck_id
+        LEFT JOIN deck_cache AS cache ON d.id = cache.deck_id
+        LEFT JOIN deck_match AS dm ON d.id = dm.deck_id
+        LEFT JOIN `match` AS m ON m.id = dm.match_id
         WHERE {where}
         GROUP BY d.id
         ORDER BY {order_by}
         {limit}
     """.format(person_query=query.person_query(), where=where, order_by=order_by, limit=limit)
-    decks = [Deck(d) for d in db().execute(sql)]
-    load_cards(decks)
-    for d in decks:
+    db().execute('SET group_concat_max_len=100000')
+    rows = db().execute(sql)
+    cards = oracle.cards_by_name()
+    decks = []
+    for row in rows:
+        d = Deck(row)
+        d.maindeck = []
+        d.sideboard = []
+        cards_s = (row['cards'] or '')
+        for entry in filter(None, cards_s.split('█')):
+            name, n, is_sideboard = entry.split('|')
+            location = 'sideboard' if bool(int(is_sideboard)) else 'maindeck'
+            d[location].append({'n': int(n), 'name': name, 'card': cards[name]})
+        d.colored_symbols = json.loads(d.colored_symbols or '[]')
+        d.colors = json.loads(d.colors or '[]')
+        d.legal_formats = set(json.loads(d.legal_formats or '[]'))
         d.created_date = dtutil.ts2dt(d.created_date)
         d.updated_date = dtutil.ts2dt(d.updated_date)
         if d.competition_end_date:
             d.competition_end_date = dtutil.ts2dt(d.competition_end_date)
         d.date = dtutil.ts2dt(d.date)
-        set_colors(d)
-        set_legality(d)
-        d.can_draw = "Divine Intervention" in [card.name for card in d.all_cards()]
+        d.can_draw = 'Divine Intervention' in [card.name for card in d.all_cards()]
+        decks.append(d)
     return decks
-
-def load_cards(decks):
-    if decks == []:
-        return
-    deck_ids = ', '.join(str(sqlescape(deck.id)) for deck in decks)
-    sql = """
-        SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN ({deck_ids})
-    """.format(deck_ids=deck_ids)
-    rs = db().execute(sql)
-    names = {row['card'] for row in rs}
-    cards = {card.name: card for card in oracle.load_cards(names)}
-    ds = {deck.id: deck for deck in decks}
-    for d in decks:
-        d.maindeck = []
-        d.sideboard = []
-    for row in rs:
-        location = 'sideboard' if row['sideboard'] else 'maindeck'
-        ds[row['deck_id']][location].append({'n': row['n'], 'name': row['card'], 'card': cards[row['card']]})
-    for d in decks:
-        d['maindeck'].sort(key=lambda x: oracle.deck_sort(x['card']))
-        d['sideboard'].sort(key=lambda x: oracle.deck_sort(x['card']))
 
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks
 # we will claim your deck is neither W nor G which is not true. But this should cover most cases.
+# We also ignore split cards so if you are genuinely using a color in a split card but have no other cards of that color
+# we won't claim it as one of the deck's colors.
 def set_colors(d):
     deck_colors = set()
     deck_colored_symbols = []
     for card in [c['card'] for c in d.maindeck + d.sideboard]:
         for cost in card.get('mana_cost') or ():
+            if card.layout == 'split':
+                continue # They might only be using one half so ignore it.
             card_symbols = mana.parse(cost)
             card_colors = mana.colors(card_symbols)
             deck_colors.update(card_colors['required'])
@@ -91,25 +118,6 @@ def set_colors(d):
 
 def set_legality(d):
     d.legal_formats = legality.legal_formats(d)
-    d.has_legal_format = len(d.legal_formats) > 0
-    d.pd_legal = "Penny Dreadful" in d.legal_formats
-    d.legal_icons = ""
-
-    sets = ["EMN", "KLD", "AER", "AKH", "HOU"]
-
-    if "Penny Dreadful" in d.legal_formats:
-        icon = rotation.last_rotation_ex()['code'].lower()
-        n = sets.index(icon.upper()) + 1
-        d.legal_icons += '<i class="ss ss-{code} ss-rare ss-grad">S{n}</i>'.format(code=icon, n=n)
-
-    for fmt in d.legal_formats:
-        if fmt.startswith("Penny Dreadful "):
-            n = sets.index(fmt[15:].upper()) + 1
-            d.legal_icons += '<i class="ss ss-{set} ss-common ss-grad">S{n}</i>'.format(set=fmt[15:].lower(), n=n)
-    # if "Modern" in d.legal_formats:
-    #     d.legal_icons += '<i class="ss ss-8ed ss-uncommon ss-grad icon-modern">MDN</i>'
-    if "Commander" in d.legal_formats: #I think C16 looks the nicest.
-        d.legal_icons += '<i class="ss ss-c16 ss-uncommon ss-grad">CMDR</i>'
 
 # Expects:
 #
@@ -129,14 +137,14 @@ def set_legality(d):
 #         }
 #     }
 # }
-# Plus one of: mtgo_username OR tappedout_username
+# Plus one of: mtgo_username OR tappedout_username OR mtggoldfish_username
 # Optionally: created_date (unix timestamp, defaults to now), resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url, wins, losses, draws, finish
 #
 # source + identifier must be unique for each decklist.
 def add_deck(params):
-    if not params.get('mtgo_username') and not params.get('tappedout_username'):
+    if not params.get('mtgo_username') and not params.get('tappedout_username') and not params.get('mtggoldfish_username'):
         raise InvalidDataException('Did not find a username in {params}'.format(params=params))
-    person_id = get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'))
+    person_id = get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'), params.get('mtggoldfish_username'))
     deck_id = get_deck_id(params['source'], params['identifier'])
     if deck_id:
         add_cards(deck_id, params['cards'])
@@ -166,9 +174,10 @@ def add_deck(params):
         wins,
         losses,
         draws,
-        finish
+        finish,
+        reviewed
     ) VALUES (
-         IFNULL(%s, UNIX_TIMESTAMP()),  UNIX_TIMESTAMP(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+         IFNULL(%s, UNIX_TIMESTAMP()),  UNIX_TIMESTAMP(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, FALSE
     )"""
     values = [
         created_date,
@@ -191,7 +200,20 @@ def add_deck(params):
     ]
     deck_id = db().insert(sql, values)
     add_cards(deck_id, params['cards'])
-    return deck_id
+    d = load_deck(deck_id)
+    prime_cache(d)
+    return d
+
+def prime_cache(d):
+    set_colors(d)
+    colors_s = json.dumps(d.colors)
+    colored_symbols_s = json.dumps(d.colored_symbols)
+    set_legality(d)
+    legal_formats_s = json.dumps(list(d.legal_formats))
+    db().begin()
+    db().execute('DELETE FROM deck_cache WHERE deck_id = ?', [d.id])
+    db().execute('INSERT INTO deck_cache (deck_id, colors, colored_symbols, legal_formats) VALUES (?, ?, ?, ?)', [d.id, colors_s, colored_symbols_s, legal_formats_s])
+    db().commit()
 
 def add_cards(deck_id, cards):
     db().begin()
@@ -202,7 +224,7 @@ def add_cards(deck_id, cards):
         insert_deck_card(deck_id, name, n, False)
     for name, n in cards['sideboard'].items():
         insert_deck_card(deck_id, name, n, True)
-    db().execute("COMMIT")
+    db().commit()
 
 def get_deck_id(source_name, identifier):
     source_id = get_source_id(source_name)
@@ -214,13 +236,13 @@ def insert_deck_card(deck_id, name, n, in_sideboard):
     sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (%s, %s, %s, %s)'
     return db().execute(sql, [deck_id, card, n, in_sideboard])
 
-def get_or_insert_person_id(mtgo_username, tappedout_username):
-    sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s)'
-    person_id = db().value(sql, [mtgo_username, tappedout_username])
+def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username):
+    sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
+    person_id = db().value(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
     if person_id:
         return person_id
-    sql = 'INSERT INTO person (mtgo_username, tappedout_username) VALUES (%s, %s)'
-    return db().insert(sql, [mtgo_username, tappedout_username])
+    sql = 'INSERT INTO person (mtgo_username, tappedout_username, mtggoldfish_username) VALUES (%s, %s, %s)'
+    return db().insert(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
 
 def get_source_id(source):
     sql = 'SELECT id FROM source WHERE name = %s'
@@ -251,9 +273,58 @@ def similarity_score(a, b):
     for card in a.maindeck:
         if card in b.maindeck:
             score += 1
-    return float(score) / float(len(b.maindeck))
+    return float(score) / float(max(len(a.maindeck), len(b.maindeck)))
 
-class Deck(Munch):
+# pylint: disable=too-many-arguments
+def insert_match(dt, left_id, left_games, right_id, right_games, round_num=None, elimination=False):
+    match_id = db().insert("INSERT INTO `match` (`date`, `round`, elimination) VALUES (%s, %s, %s)", [dtutil.dt2ts(dt), round_num, elimination])
+    sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
+    db().execute(sql, [left_id, match_id, left_games])
+    if right_id is not None: # Don't insert matches for the bye.
+        db().execute(sql, [right_id, match_id, right_games])
+    return match_id
+
+def get_matches(d, should_load_decks=False):
+    sql = """
+        SELECT
+            m.`date`, m.id, m.round, m.elimination,
+            dm1.games AS game_wins,
+            dm2.deck_id AS opponent_deck_id, IFNULL(dm2.games, 0) AS game_losses,
+            d2.name AS opponent_deck_name,
+            {person_query} AS opponent
+        FROM `match` AS m
+        INNER JOIN deck_match AS dm1 ON m.id = dm1.match_id AND dm1.deck_id = %s
+        LEFT JOIN deck_match AS dm2 ON m.id = dm2.match_id AND dm2.deck_id <> %s
+        INNER JOIN deck AS d1 ON dm1.deck_id = d1.id
+        LEFT JOIN deck AS d2 ON dm2.deck_id = d2.id
+        LEFT JOIN person AS p ON p.id = d2.person_id
+        ORDER BY round
+    """.format(person_query=query.person_query())
+    matches = [Container(m) for m in db().execute(sql, [d.id, d.id])]
+    if should_load_decks and len(matches) > 0:
+        decks = load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(m.opponent_deck_id)) for m in matches if m.opponent_deck_id is not None])))
+        decks_by_id = {d.id: d for d in decks}
+    for m in matches:
+        m.date = dtutil.ts2dt(m.date)
+        if should_load_decks and m.opponent_deck_id is not None:
+            m.opponent_deck = decks_by_id[m.opponent_deck_id]
+        elif should_load_decks:
+            m.opponent_deck = None
+    return matches
+
+def load_decks_by_cards(names):
+    sql = """
+        d.id IN (
+            SELECT deck_id
+            FROM deck_card
+            WHERE card IN ({names})
+            GROUP BY deck_id
+            HAVING COUNT(card) = {n})
+        """.format(n=len(names), names=', '.join(map(sqlescape, names)))
+    return load_decks(sql)
+
+# pylint: disable=too-many-instance-attributes
+class Deck(Container):
     def __init__(self, params):
         super().__init__()
         for k in params.keys():

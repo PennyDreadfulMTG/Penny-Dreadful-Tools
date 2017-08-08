@@ -1,7 +1,7 @@
 import copy
 import unicodedata
 
-from munch import Munch
+from shared.container import Container
 
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
 
@@ -9,10 +9,8 @@ BOOLEAN = 'BOOLEAN'
 DATE = 'INTEGER'
 INTEGER = 'INTEGER'
 REAL = 'REAL'
-TEXT = 'TEXT'
+TEXT = 'LONGTEXT'
 VARCHAR = 'VARCHAR(191)'
-
-FALSE = 0
 
 BASE = {
     'type': VARCHAR,
@@ -40,11 +38,11 @@ def face_properties():
     props = {}
     base = copy.deepcopy(BASE)
     base['query'] = "GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN `{table}`.`{column}` ELSE '' END SEPARATOR '') AS `{column}`"
-    for k in ['id', 'name', 'mana_cost', 'cmc', 'power', 'toughness', 'power', 'toughness', 'loyalty', 'type', 'text', 'image_name', 'hand', 'life', 'starter', 'position', 'name_ascii', 'card_id']:
+    for k in ['id', 'name', 'mana_cost', 'cmc', 'power', 'toughness', 'power', 'toughness', 'loyalty', 'type', 'text', 'search_text', 'image_name', 'hand', 'life', 'starter', 'position', 'name_ascii', 'card_id']:
         props[k] = copy.deepcopy(base)
-    for k in ['id', 'position', 'name_ascii', 'card_id']:
+    for k in ['id', 'position', 'name_ascii', 'card_id', 'search_text']:
         props[k]['mtgjson'] = False
-    for k in ['id', 'name', 'type', 'text']:
+    for k in ['id', 'name', 'type', 'text', 'search_text']:
         props[k]['nullable'] = False
     for k in ['id', 'card_id', 'hand', 'life', 'starter']:
         props[k]['type'] = INTEGER
@@ -53,11 +51,11 @@ def face_properties():
     props['cmc']['type'] = REAL
     props['name']['query'] = """{name_query} AS name""".format(name_query=name_query())
     props['name_ascii']['query'] = """{name_query} AS name_ascii""".format(name_query=name_query('name_ascii'))
-    props['name_ascii']['fulltext'] = True
     props['cmc']['query'] = """{cmc_query} AS cmc""".format(cmc_query=cmc_query())
     props['mana_cost']['query'] = "GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '|') AS `{column}`"
-    props['text']['query'] = "GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '\n-----\n') AS `{column}`"
-    props['text']['type'] = TEXT
+    for k in ['text', 'search_text']:
+        props[k]['query'] = "GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '\n-----\n') AS `{column}`"
+        props[k]['type'] = TEXT
     props['card_id']['foreign_key'] = ('card', 'id')
     return props
 
@@ -175,18 +173,6 @@ def card_bugs_properties():
     props['last_confirmed']['type'] = INTEGER
     return props
 
-def fetcher_properties():
-    # Technically, this doesn't belong here.  But all the other table definitions are here, so it is too.
-    props = {}
-    for k in ['id', 'resource', 'last_modified', 'content']:
-        props[k] = copy.deepcopy(BASE)
-    props['id']['type'] = INTEGER
-    props['id']['primary_key'] = True
-    props['resource']['nullable'] = False
-    props['resource']['unique'] = True
-    props['content']['type'] = TEXT
-    return props
-
 def name_query(column='face_name'):
     return """
         CASE
@@ -220,7 +206,7 @@ def canonicalize(name):
     name = name.replace('Æ', 'Ae')
     return unaccent(name.strip().lower())
 
-class Card(Munch):
+class Card(Container):
     def __init__(self, params):
         super().__init__()
         for k in params.keys():
@@ -253,5 +239,5 @@ class Card(Munch):
     def is_split(self):
         return self.name.find('//') >= 0
 
-class Printing(Munch):
+class Printing(Container):
     pass

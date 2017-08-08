@@ -1,4 +1,7 @@
 import re
+import xml
+
+import untangle
 
 from magic import oracle
 from shared.pd_exception import InvalidDataException
@@ -36,6 +39,18 @@ def parse(s):
             if d['maindeck'][name] == 0:
                 del d['maindeck'][name]
     return d
+
+# Parse a deck in the MTGO XML .dek format or raise an InvalidDataException.
+def parse_xml(s):
+    d = {'maindeck': {}, 'sideboard': {}}
+    try:
+        doc = untangle.parse(s)
+        for c in doc.Deck.Cards:
+            section = 'sideboard' if c['Sideboard'] == 'true' else 'maindeck'
+            d[section][c['Name']] = int(c['Quantity'])
+        return d
+    except xml.sax.SAXException as e:
+        raise InvalidDataException(e)
 
 # Load the cards in the intermediate dict form.
 def vivify(decklist):

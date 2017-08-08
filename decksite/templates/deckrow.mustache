@@ -1,14 +1,14 @@
 <tr>
-    <td class="marginalia">{{stars}}</td>
+    <td class="marginalia">{{{stars_safe}}}</td>
     <td>{{{colors_safe}}}</td>
-    <td><a href="{{url}}">{{{name}}}</a></td>
+    <td><a {{#decklist}}title="{{decklist}}"{{/decklist}}href="{{url}}">{{{name}}}</a></td>
     {{^hide_person}}
         <td><a href="{{person_url}}">{{person}}</a></td>
     {{/hide_person}}
     {{^hide_source}}
         <td {{#source_sort}}data-text="{{source_sort}}"{{/source_sort}}>
             {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}
-            {{{source_indicator}}}
+            {{{source_name}}}
             {{#competition_url}}</a>{{/competition_url}}
         </td>
     {{/hide_source}}
@@ -21,19 +21,19 @@
         <td class="n">{{omw}}</td>
     {{/show_omw}}
     <td class="c">
-        {{#top8}}<a href="{{competition_url}}">{{/top8}}
-        {{top8}}
-        {{#top8}}</a>{{/top8}}
+        {{#top8_safe}}<a href="{{competition_url}}">{{/top8_safe}}
+        {{{top8_safe}}}
+        {{#top8_safe}}</a>{{/top8_safe}}
     </td>
     <td class="n" data-text="{{date_sort}}">
         {{display_date}}
     </td>
+    {{#similarity_score}}
+        <td class="n">{{similarity_score}}%</td>
+    {{/similarity_score}}
     <td>
         {{#has_legal_format}}
             {{{legal_icons}}}
         {{/has_legal_format}}
     </td>
-    {{#similarity_score}}
-        <td class="n">{{similarity_score}}%</td>
-    {{/similarity_score}}
 </tr>

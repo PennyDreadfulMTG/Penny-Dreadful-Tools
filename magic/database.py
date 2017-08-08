@@ -6,7 +6,7 @@ from shared.database import get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
-SCHEMA_VERSION = 69
+SCHEMA_VERSION = 84
 
 def db():
     return DATABASE
@@ -74,8 +74,6 @@ def setup():
     """)
     sql = create_table_def('printing', card.printing_properties())
     db().execute(sql)
-    sql = create_table_def('fetcher', card.fetcher_properties())
-    db().execute(sql)
     db().execute('INSERT INTO db_version (version) VALUES ({0})'.format(SCHEMA_VERSION))
     db().commit()
 
@@ -89,7 +87,7 @@ def delete():
     else:
         db().begin()
         query = db().values("""
-        SELECT concat('DROP TABLE IF EXISTS ', table_name, ';')
+        SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;')
         FROM information_schema.tables
         WHERE table_schema = %s;
         """, [db().name])
@@ -104,7 +102,7 @@ def column_def(name, prop):
         primary_key = 'PRIMARY KEY' if prop['primary_key'] else ''
         default = 'DEFAULT {default}'.format(default=prop['default']) if prop['default'] is not None else ''
         unique = 'UNIQUE' if prop['unique'] else ''
-        if prop['type'].startswith('VARCHAR'):
+        if prop['type'].startswith('VARCHAR') or prop['type'] == 'LONGTEXT':
             prop['type'] = 'TEXT'
         if prop['type'] == 'BOOLEAN':
             prop['type'] = 'INTEGER'
@@ -126,6 +124,8 @@ def create_table_def(name, props):
     if fk:
         sql += ', ' + fk
     sql += ')'
+    if db().is_mysql():
+        sql += ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
     return sql.format(name=name)
 
 DATABASE = get_database(configuration.get('magic_database'))

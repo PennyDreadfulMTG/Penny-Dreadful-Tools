@@ -7,22 +7,29 @@
         "Card search": "http://scryfall.com/search/?q=f:pd"
     },
     "Deckbuilding": {
-        "Decklists": "http://pennydreadfulmagic.com/",
+        "Decklists": "https://pennydreadfulmagic.com/",
         "Legal cards list": "http://pdmtgo.com/legal_cards.txt",
         "Card search": "http://scryfall.com/search/?q=f:pd",
         "Deck checker": "http://pdmtgo.com/deck_check.html",
-        "Deck builder": "http://tappedout.net/mtg-deck-builder/penny-dreadful/"
+        "Deck builder": "http://tappedout.net/mtg-deck-builder/penny-dreadful/",
+        "Current bugs": "https://pennydreadfulmagic.com/bugs/"
     },
     "Tournaments": {
-        "League": "http://pennydreadfulmagic.com/league/",
+        "League": "https://pennydreadfulmagic.com/league/",
         "Gatherling": "http://gatherling.com/",
-        "Penny Dreadful Thursdays": "http://pennydreadfulthursdays.weebly.com/",
-        "Penny Dreadful Sundays": "http://pennydreadfulmagic.com/tournaments/",
-        "Penny Dreadful Mondays": "http://pennydreadfulmagic.com/tournaments/"
+        "Weekly Tournaments": "https://pennydreadfulmagic.com/tournaments/"
     },
     "League": {
-        "Sign up": "http://pennydreadfulmagic.com/signup/",
-        "Results reporter": "http://pennydreadfulmagic.com/report/"
+        "League Info": "https://pennydreadfulmagic.com/league/",
+        "Sign up": "https://pennydreadfulmagic.com/signup/",
+        "Results reporter": "https://pennydreadfulmagic.com/report/",
+        "Current league": "https://pennydreadfulmagic.com/league/current/"
+    },
+    "Search Engines": {
+        "Scryfall": "http://scryfall.com/search/?q=f:pd",
+        "Magidex": "https://magidex.com/search?q=f:pd",
+        "mtg.wtf": "http://mtg.wtf/card?q=f%3Apd",
+        "combodeck.net": "http://combodeck.net/"
     },
     "Articles": {
           "Mrs. Mulligan SCG": "http://www.starcitygames.com/article/33860_Penny-Dreadful.html"

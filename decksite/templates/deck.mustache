@@ -6,34 +6,9 @@
 </section>
 <section>
     <h2>Mana Costs</h2>
-    <img src="{{cmc_chart_url}}" width="150" height="103">
+    <img src="{{cmc_chart_url}}" width="200">
 </section>
 {{#has_matches}}
-    <section>
-        <h2>League</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th data-sortInitialOrder="desc">Result</th>
-                    <th>Versus</th>
-                    <th>Opponent</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#matches}}
-                    <tr>
-                        <td class="n">{{game_wins}}–{{game_losses}}</td>
-                        <td><a href="{{opponent_deck_url}}">{{opponent_deck_name}}</a></td>
-                        <td><a href="{{opponent_url}}">{{opponent}}</a></td>
-                        <td>{{display_date}}</td>
-                    </tr>
-                {{/matches}}
-            </tbody>
-        </table>
-    </section>
-{{/has_matches}}
-{{#competition_id}}
     <section>
         <h2>Competition</h2>
         <table class="with-marginalia">
@@ -43,21 +18,59 @@
                     <th>Competition</th>
                     <th>Record</th>
                     <th class="c">Top 8</th>
-                    {{#show_omw}}<th>OMW</th>{{/show_omw}}
+                    <th title="Opponent's Match Win">OMW</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td class="marginalia">{{stars}}</td>
+                    <td class="marginalia">{{{stars_safe}}}</td>
                     <td><a href="{{competition_url}}">{{competition_name}}</a></td>
                     <td class="n" ><ahref="{{competition_url}}">{{> record}}</a></td>
-                    <td class="c"><a href="{{competition_url}}">{{top8}}</a></td>
-                    {{#show_omw}}<td class="n"><a href="{{competition_url}}">{{omw}}</a></td>{{/show_omw}}
+                    <td class="c"><a href="{{competition_url}}">{{{top8_safe}}}</a></td>
+                    <td class="n"><a href="{{competition_url}}">{{omw}}</a></td>
                 </tr>
             </tbody>
         </table>
+        <table>
+            <thead>
+                <tr>
+                    {{#has_rounds}}
+                        <th>Round</th>
+                    {{/has_rounds}}
+                    <th data-sortInitialOrder="desc">Result</th>
+                    <th>Versus</th>
+                    <th>Opponent</th>
+                    {{^has_rounds}}
+                        <th>Date</th>
+                    {{/has_rounds}}
+                </tr>
+            </thead>
+            <tbody>
+                {{#matches}}
+                    <tr>
+                        {{#has_rounds}}
+                            <td class="n">{{display_round}}</td>
+                        {{/has_rounds}}
+                        <td class="n">{{game_wins}}–{{game_losses}}</td>
+                        <td>
+                            {{#opponent_deck_url}}<a href="{{opponent_deck_url}}">{{/opponent_deck_url}}
+                                {{opponent_deck_name}}
+                            {{#opponent_deck_url}}</a>{{/opponent_deck_url}}</td>
+                        <td>
+                            {{#opponent_url}}<a href="{{opponent_url}}">{{/opponent_url}}
+                            {{^opponent_url}}<span class="bye">{{/opponent_url}}
+                                {{opponent}}
+                            {{^opponent_url}}</span>{{/opponent_url}}
+                            {{#opponent_url}}</a>{{/opponent_url}}</td>
+                        {{^has_rounds}}
+                            <td>{{display_date}}</td>
+                        {{/has_rounds}}
+                    </tr>
+                {{/matches}}
+            </tbody>
+        </table>
     </section>
-{{/competition_id}}
+{{/has_matches}}
 {{#has_similar}}
     <section>
         <h2>Similar Decks</h2>
@@ -67,7 +80,17 @@
 <section>
     <h2>Notes</h2>
     {{#archetype_id}}<p>Archetype: <a href="{{archetype_url}}">{{archetype_name}}</a></p>{{/archetype_id}}
+    {{#admin}}
+        <p>
+            <form class="inline" method="post" action="{{edit_archetype_url}}">
+                <input type="hidden" name="deck_id" value="{{id}}">
+                {{> archetypedropdown}}
+                <button type="submit">Assign</button>
+            </form>
+        </p>
+    {{/admin}}
     <p>Source: <a href="{{source_url}}">{{source_name}}</a></p>
     <p>Export: <a href="{{export_url}}">MTGO (txt)</a></p>
+    <p><a href="{{cardhoarder_url}}">Buy on Cardhoarder</a></p>
 </section>
 {{> legal}}

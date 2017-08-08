@@ -13,11 +13,8 @@ if not os.path.exists(configuration.get('image_dir')):
 def basename(cards):
     from magic import card
     return '_'.join(re.sub('[^a-z-]', '-', card.canonicalize(c.name)) for c in cards)
-def bluebones_image(cards) -> str:
-    c = '|'.join(card.name for card in cards)
-    return 'http://magic.bluebones.net/proxies/?c={c}'.format(c=escape(c))
 
-def bluebones_alt_image(cards) -> str:
+def bluebones_image(cards) -> str:
     c = '|'.join(card.name for card in cards)
     return 'http://magic.bluebones.net/proxies/index2.php?c={c}'.format(c=escape(c))
 
@@ -43,7 +40,8 @@ def download_image(cards) -> str:
     filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename=filename)
     if internal.acceptable_file(filepath):
         return filepath
-    print('Trying to get first choice image for {cards}'.format(cards=', '.join(card.name for card in cards)))
+
+    print('Trying to get image for {cards}'.format(cards=', '.join(card.name for card in cards)))
     try:
         internal.store(bluebones_image(cards), filepath)
     except FetchException as e:
@@ -51,14 +49,7 @@ def download_image(cards) -> str:
     if internal.acceptable_file(filepath):
         return filepath
 
-    print('Trying to get second choice image for {cards}'.format(cards=', '.join(card.name for card in cards)))
-    try:
-        internal.store(bluebones_alt_image(cards), filepath)
-    except FetchException as e:
-        print('Error: {e}'.format(e=e))
-    if internal.acceptable_file(filepath):
-        return filepath
-
+    print('Trying to get scryfall image for {card}'.format(card=cards[0]))
     try:
         internal.store(scryfall_image(cards[0]), filepath)
     except FetchException as e:

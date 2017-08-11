@@ -151,9 +151,10 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header("Developer")
     async def update(self, bot, channel):
-        """Forces an update to the legal card list"""
+        """Forces an update to legal cards and bugs."""
         oracle.legal_cards(force=True)
-        await bot.client.send_message(channel, 'Reloaded list of legal cards.')
+        multiverse.update_bugged_cards()
+        await bot.client.send_message(channel, 'Reloaded legal cards and bugs.')
 
     @cmd_header("Developer")
     async def restartbot(self, bot, channel):

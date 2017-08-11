@@ -1,8 +1,10 @@
 import collections
 import glob
+import json
 import os
 import random
 import re
+import subprocess
 import sys
 import time
 
@@ -53,7 +55,7 @@ async def handle_command(message, bot):
                 await method(Commands)
         except Exception as e: # pylint: disable=broad-except
             print('Caught exception processing command `{cmd}`'.format(cmd=message.content))
-            print(e)
+            print('{type} {e}'.format(type=type(e), e=e))
             await bot.client.send_message(message.channel, 'I know the command `{cmd}` but I could not do that.'.format(cmd=parts[0]))
             await getattr(Commands, 'bug')(Commands, bot, message.channel, 'Command failed with {c}: {cmd}'.format(c=e.__class__.__name__, cmd=message.content), message.author)
     else:
@@ -165,8 +167,7 @@ Want to contribute? Send a Pull Request."""
         try:
             cards = complex_search(args)
         except search.InvalidSearchException as e:
-            await bot.client.send_message(channel, '{author}: {e}'.format(author=author.mention, e=e))
-            return
+            return await bot.client.send_message(channel, '{author}: {e}'.format(author=author.mention, e=e))
         additional_text = ''
         if len(cards) > 10:
             additional_text = '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'
@@ -334,7 +335,6 @@ Want to contribute? Send a Pull Request."""
             cid = channel.id
         if str(cid) not in existing.split(','):
             configuration.write('not_pd', "{0},{1}".format(existing, cid))
-
         await bot.client.send_message(channel, 'Disable PD marks')
 
     @cmd_header("Commands")
@@ -356,13 +356,10 @@ Want to contribute? Send a Pull Request."""
     async def spoiler(self, bot, channel, args, author):
         """`!spoiler {cardname}`: Request a card from an upcoming set"""
         if len(args) == 0:
-            await bot.client.send_message(channel, '{author}: Please specify a card name.'.format(author=author.mention))
-            return
-
+            return await bot.client.send_message(channel, '{author}: Please specify a card name.'.format(author=author.mention))
         sfcard = fetcher.internal.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=args))
         if sfcard['object'] == 'error':
-            await bot.client.send_message(channel, '{author}: {details}'.format(author=author.mention, details=sfcard['details']))
-            return
+            return await bot.client.send_message(channel, '{author}: {details}'.format(author=author.mention, details=sfcard['details']))
         imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
         imagepath = '{image_dir}/{imagename}.jpg'.format(image_dir=configuration.get('image_dir'), imagename=imagename)
         fetcher.internal.store(sfcard['image_uri'], imagepath)
@@ -404,7 +401,30 @@ Want to contribute? Send a Pull Request."""
         """Alias for `!resources`."""
         # Because of the weird way we call and use methods on Commands we need ...
         # pylint: disable=too-many-function-args
-        return await self.resources(self, bot, channel, args)
+        await self.resources(self, bot, channel, args)
+
+    @cmd_header("Commands")
+    async def google(self, bot, channel, args):
+        """`!google {args}` Search google for `{args}`."""
+        await bot.client.send_typing(channel)
+        if len(args.strip()) == 0:
+            return await bot.client.send_message(channel, 'Please let me know what you want to search on Google.')
+        try:
+            # We set TERM here because of some weirdness around readline and shell commands. Stops `ESC[?1034h` appearing on the end of STDOUT when TERM=xterm. See https://bugzilla.redhat.com/show_bug.cgi?id=304181 or google the escape sequence if you are super curious.
+            env = {**os.environ, 'TERM': 'vt100'}
+            result = subprocess.run(['googler', '--json', '-n1'] + args.split(), stdout=subprocess.PIPE, check=True, env=env, universal_newlines=True)
+            r = json.loads(result.stdout.strip())[0]
+            s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['url'], abstract=r['abstract'])
+            await bot.client.send_message(channel, s)
+        except IndexError:
+            await bot.client.send_message(channel, 'Nothing found on Google.')
+        except FileNotFoundError as e:
+            await bot.client.send_message(channel, 'Optional command `google` not set up.')
+        except subprocess.CalledProcessError as e:
+            if e.returncode == 127:
+                await bot.client.send_message(channel, 'Optional command `google` not set up.')
+            else:
+                await bot.client.send_message(channel, 'Problem searching google.')
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):

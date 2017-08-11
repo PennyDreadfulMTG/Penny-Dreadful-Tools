@@ -4,6 +4,7 @@ cachecontrol[filecache]
 coverage
 discord.py[voice]>=0.13.0
 flask
+googler
 inflect
 matplotlib
 munch

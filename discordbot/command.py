@@ -6,6 +6,7 @@ import random
 import re
 import subprocess
 import sys
+import textwrap
 import time
 import traceback
 
@@ -100,10 +101,10 @@ def build_help(readme=False, cmd=None):
             return print_cmd(method, True)
         return "`{cmd}` is not a valid command.".format(cmd=cmd)
 
-    msg = print_group("Commands")
+    msg = print_group('Commands')
     if readme:
         msg += "\n# Developer Commands"
-        msg += print_group("Developer")
+        msg += print_group('Developer')
     return msg
 
 def cmd_header(group):
@@ -121,7 +122,7 @@ class Commands:
     Where any argument after self is optional. (Although at least channel is usually needed)
     """
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def help(self, bot, channel, args):
         """`!help` Provides information on how to operate the bot."""
         if args:
@@ -137,7 +138,7 @@ Suggestions/bug reports: <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Dis
 Want to contribute? Send a Pull Request."""
         await bot.client.send_message(channel, msg)
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def random(self, bot, channel, args):
         """`!random` Request a random PD legal card
 `!random X` Request X random PD legal cards."""
@@ -150,20 +151,20 @@ Want to contribute? Send a Pull Request."""
         cards = [oracle.cards_from_query(name)[0] for name in random.sample(oracle.legal_cards(), number)]
         await bot.post_cards(cards, channel)
 
-    @cmd_header("Developer")
+    @cmd_header('Developer')
     async def update(self, bot, channel):
         """Forces an update to legal cards and bugs."""
         oracle.legal_cards(force=True)
         multiverse.update_bugged_cards()
         await bot.client.send_message(channel, 'Reloaded legal cards and bugs.')
 
-    @cmd_header("Developer")
+    @cmd_header('Developer')
     async def restartbot(self, bot, channel):
         """Restarts the bot."""
         await bot.client.send_message(channel, 'Rebooting!')
         sys.exit()
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def search(self, bot, channel, args, author):
         """`!search {query}` Search for cards, using a scryfall-style query."""
         try:
@@ -175,32 +176,32 @@ Want to contribute? Send a Pull Request."""
             additional_text = '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'
         await bot.post_cards(cards, channel, author, additional_text)
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def status(self, bot, channel):
         """`!status` Gives the status of MTGO, UP or DOWN."""
         status = fetcher.mtgo_status()
         await bot.client.send_message(channel, 'MTGO is {status}'.format(status=status))
 
-    @cmd_header("Developer")
+    @cmd_header('Developer')
     async def echo(self, bot, channel, args):
         """Repeat after me..."""
         s = emoji.replace_emoji(args, bot.client)
         print('Echoing {s}'.format(s=s))
         await bot.client.send_message(channel, s)
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def barbs(self, bot, channel):
         """`!barbs` Gives Volvary's helpful advice for when to sideboard in Aura Barbs."""
         msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
         await bot.client.send_message(channel, msg)
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def quality(self, bot, channel):
         """`!quality` A helpful reminder about everyone's favorite way to play digital Magic"""
         msg = "**Magic Online** is a Quality™ Program."
         await bot.client.send_message(channel, msg)
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def rhinos(self, bot, channel):
         """`!rhinos` Anything can be a rhino if you try hard enough"""
         rhinos = []
@@ -222,7 +223,7 @@ Want to contribute? Send a Pull Request."""
         msg += " And then we have {search}. It's a bit of a stretch, but that's a rhino too.".format(search=rhinos[3].name)
         await bot.post_cards(rhinos, channel, additional_text=msg)
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def rotation(self, bot, channel):
         """`!rotation` Give the date of the next Penny Dreadful rotation."""
         next_rotation = rotation.next_rotation()
@@ -232,12 +233,12 @@ Want to contribute? Send a Pull Request."""
             msg = "The next rotation is in {diff}".format(diff=dtutil.display_time(diff.total_seconds()))
             await bot.client.send_message(channel, msg)
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def _oracle(self, bot, channel, args, author):
         """`!oracle {name}` Give the Oracle text of the named card."""
         await single_card_text(bot, channel, args, author, oracle_text)
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def price(self, bot, channel, args, author):
         """`!price {name}` Get price information about the named card."""
         def price_info(c):
@@ -265,12 +266,12 @@ Want to contribute? Send a Pull Request."""
             return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
         await single_card_text(bot, channel, args, author, price_info)
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def legal(self, bot, channel, args, author):
         """Announce whether the specified card is legal or not."""
         await single_card_text(bot, channel, args, author, lambda c: '')
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def modofail(self, bot, channel, args, author):
         """Ding!"""
         if args.lower() == "reset":
@@ -292,7 +293,7 @@ Want to contribute? Send a Pull Request."""
     modofail.count = 0
     modofail.last_fail = time.time()
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def resources(self, bot, channel, args):
         """`!resources {args}` Link to useful pages related to `args`.
            Specifically – look for a section of pennydreadfulmagic.com that fits the description in {args}
@@ -316,7 +317,7 @@ Want to contribute? Send a Pull Request."""
                 s += '{text}: <{url}>\n'.format(text=text, url=url)
         await bot.client.send_message(channel, s)
 
-    @cmd_header("Developer")
+    @cmd_header('Developer')
     async def clearimagecache(self, bot, channel):
         """Deletes all the cached images.  Use sparingly"""
         image_dir = configuration.get('image_dir')
@@ -327,7 +328,7 @@ Want to contribute? Send a Pull Request."""
             os.remove(file)
         await bot.client.send_message(channel, '{n} cleared.'.format(n=len(files)))
 
-    @cmd_header("Developer")
+    @cmd_header('Developer')
     async def notpenny(self, bot, channel, args):
         """Don't show PD Legality in this channel"""
         existing = configuration.get('not_pd')
@@ -339,7 +340,7 @@ Want to contribute? Send a Pull Request."""
             configuration.write('not_pd', "{0},{1}".format(existing, cid))
         await bot.client.send_message(channel, 'Disable PD marks')
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def bug(self, bot, channel, args, author):
         """Report a bug"""
         await bot.client.send_typing(channel)
@@ -349,12 +350,12 @@ Want to contribute? Send a Pull Request."""
         else:
             await bot.client.send_message(channel, "Issue has been reported at <{url}>".format(url=issue.html_url))
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def invite(self, bot, channel):
         """Invite me to your server"""
         await bot.client.send_message(channel, "Invite me to your discord server by clicking this link: <https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=0>")
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def spoiler(self, bot, channel, args, author):
         """`!spoiler {cardname}`: Request a card from an upcoming set"""
         if len(args) == 0:
@@ -392,20 +393,20 @@ Want to contribute? Send a Pull Request."""
                 c['names'] = names
                 multiverse.insert_card(c)
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def time(self, bot, channel, args, author):
         """`!time {location}` Show the current time in the specified location."""
         t = fetcher.time(args.strip())
         await bot.client.send_message(channel, '{author}: {time}'.format(author=author.mention, time=t))
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def pdm(self, bot, channel, args):
         """Alias for `!resources`."""
         # Because of the weird way we call and use methods on Commands we need ...
         # pylint: disable=too-many-function-args
         await self.resources(self, bot, channel, args)
 
-    @cmd_header("Commands")
+    @cmd_header('Commands')
     async def google(self, bot, channel, args):
         """`!google {args}` Search google for `{args}`."""
         await bot.client.send_typing(channel)
@@ -427,6 +428,79 @@ Want to contribute? Send a Pull Request."""
                 await bot.client.send_message(channel, 'Optional command `google` not set up.')
             else:
                 await bot.client.send_message(channel, 'Problem searching google.')
+
+    @cmd_header('Commands')
+    async def explain(self, bot, channel, args):
+        """
+            `!explain`. Get a list of things the bot knows how to explain.
+            `!explain {thing}`. Print commonly needed explanation for 'thing'.
+        """
+        explanations = {
+            'decklists': [
+                """
+                You can find Penny Dreadful decklists from tournaments, leagues and elsewhere at pennydreadfulmagic.com
+                """,
+                {
+                    'Latest Decks': fetcher.decksite_url('/')
+                }
+            ],
+            'league': [
+                """
+                Leagues last for roughly a month. You may enter any number of times but only one deck at a time.
+                You play 5 matches per run. You can join the league at any time.
+                The league pays prizes in tix for top players and (some) 5-0 runs.
+                To find a game sign up and then create a game in Just for Fun with "Penny Dreadful League" as the comment.
+                """,
+                {
+                    'More Info': fetcher.decksite_url('/league/'),
+                    'Sign Up': fetcher.decksite_url('/signup/'),
+                    'Current League': fetcher.decksite_url('/league/current/')
+                }
+            ],
+            'legality': [
+                """
+                Legality is determined at the release of a Standard-legal set on MTGO.
+                Prices are checked very hour for a week and anything found to be 1c 50%+ will be legal for the season.
+                Cards from the just-released set are added (nothing removed) a couple of weeks later via a supplemental rotation after prices have settled a little.
+                """,
+                {
+                    'Deck Checker': 'http://pdmtgo.com/deck_check.html'
+                }
+            ],
+            'playing': [
+                """
+                To get a match go to Constructed Open Play, Just for Fun on MTGO and create a Freeform game with "Penny Dreadful" in the comments.
+                """,
+                {}
+            ],
+            'retire': [
+                'To retire from a league run message PDBot on MTGO with !retire.',
+                {}
+            ],
+            'tournament': [
+                """
+                We have three free-to-enter weekly tournaments with prizes from cardhoarder.com.
+                They are hosted on gatherling.com along with a lot of other player-run MTGO events.
+                """,
+                {
+                    'More Info': fetcher.decksite_url('/tournaments/'),
+                    'Sign Up': 'http://gatherling.com/',
+                }
+            ]
+        }
+        explanations['drop'] = explanations['retire']
+        explanations['rotation'] = explanations['legality']
+        explanations['tournaments'] = explanations['tournament']
+        word = args.strip()
+        try:
+            s = '{text}\n'.format(text=textwrap.dedent(explanations[word][0]))
+        except KeyError:
+            usage = 'I can explain any of these things: {things}'.format(things=', '.join(sorted(explanations.keys())))
+            return await bot.client.send_message(channel, usage)
+        for k in sorted(explanations[word][1].keys()):
+            s += '{k}: {v}\n'.format(k=k, v=explanations[word][1][k])
+        await bot.client.send_message(channel, s)
+
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):

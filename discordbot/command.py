@@ -7,6 +7,7 @@ import re
 import subprocess
 import sys
 import time
+import traceback
 
 from typing import List
 
@@ -55,7 +56,7 @@ async def handle_command(message, bot):
                 await method(Commands)
         except Exception as e: # pylint: disable=broad-except
             print('Caught exception processing command `{cmd}`'.format(cmd=message.content))
-            print('{type} {e}'.format(type=type(e), e=e))
+            print(traceback.format_exc())
             await bot.client.send_message(message.channel, 'I know the command `{cmd}` but I could not do that.'.format(cmd=parts[0]))
             await getattr(Commands, 'bug')(Commands, bot, message.channel, 'Command failed with {c}: {cmd}'.format(c=e.__class__.__name__, cmd=message.content), message.author)
     else:
@@ -151,9 +152,10 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header("Developer")
     async def update(self, bot, channel):
-        """Forces an update to the legal card list"""
+        """Forces an update to legal cards and bugs."""
         oracle.legal_cards(force=True)
-        await bot.client.send_message(channel, 'Reloaded list of legal cards.')
+        multiverse.update_bugged_cards()
+        await bot.client.send_message(channel, 'Reloaded legal cards and bugs.')
 
     @cmd_header("Developer")
     async def restartbot(self, bot, channel):

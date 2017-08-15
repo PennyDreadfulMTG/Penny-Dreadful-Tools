@@ -368,30 +368,7 @@ Want to contribute? Send a Pull Request."""
         fetcher.internal.store(sfcard['image_uri'], imagepath)
         text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=sfcard['mana_cost']), bot.client)
         await bot.client.send_file(channel, imagepath, content=text)
-        try:
-            oracle.valid_name(sfcard['name'])
-        except InvalidDataException:
-            c = {
-                'layout': sfcard['layout'],
-                'types': [], # This is wrong.  But whatever.
-                'cmc': int(float(sfcard['cmc'])),
-                'imageName': imagename,
-                'legalities': [],
-                'printings': [sfcard['set']],
-                'rarity': sfcard['rarity'],
-                'names': []
-            }
-            faces = sfcard.get('card_faces', [sfcard])
-            names = [face['name'] for face in faces]
-            for face in faces:
-                c.update({
-                    'name': face['name'],
-                    'type': face['type_line'],
-                    'text': face.get('oracle_text', ''),
-                    'manaCost': face.get('mana_cost', None)
-                })
-                c['names'] = names
-                multiverse.insert_card(c)
+        oracle.scryfall_import(sfcard['name'])
 
     @cmd_header('Commands')
     async def time(self, bot, channel, args, author):

@@ -61,6 +61,43 @@ def load_cards(names=None):
 def cards_by_name():
     return CARDS_BY_NAME
 
+
+def scryfall_import(name):
+    sfcard = fetcher.internal.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=name))
+    if sfcard['object'] == 'error':
+        raise Exception() # TODO: Use a better exception
+    try:
+        valid_name(sfcard['name'])
+        return CARDS_BY_NAME[name]
+    except InvalidDataException:
+        imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
+        c = {
+            'layout': sfcard['layout'],
+            'cmc': int(float(sfcard['cmc'])),
+            'imageName': imagename,
+            'legalities': [],
+            'printings': [sfcard['set']],
+            'rarity': sfcard['rarity'],
+            'names': []
+        }
+        faces = sfcard.get('card_faces', [sfcard])
+        names = [face['name'] for face in faces]
+        for face in faces:
+            tl = face['type_line'].split('—')
+            types = tl[0]
+            subtypes = tl[1] if len(tl) > 1 else []
+
+            c.update({
+                'name': face['name'],
+                'type': face['type_line'],
+                'types': types, # This technically includes supertypes.
+                'subtypes': subtypes,
+                'text': face.get('oracle_text', ''),
+                'manaCost': face.get('mana_cost', None)
+            })
+            c['names'] = names
+            multiverse.insert_card(c)
+
 def bugged_cards():
     sql = base_query() + "HAVING bug_desc IS NOT NULL"
     rs = db().execute(sql)

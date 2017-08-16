@@ -4,6 +4,7 @@ import sys
 
 def run():
     if len(sys.argv) == 0:
+        print(len(sys.argv), flush=True)
         print("No entry point specified.")
         sys.exit(1)
 

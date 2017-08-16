@@ -7,6 +7,7 @@ import sys
 import time
 
 from typing import List
+from functools import wraps
 
 from discordbot import emoji
 from find import search
@@ -109,6 +110,8 @@ def cmd_header(group):
         return func
     return decorator
 
+
+
 # pylint: disable=too-many-public-methods
 class Commands:
     """To define a new command, simply add a new method to this class.
@@ -171,6 +174,14 @@ Want to contribute? Send a Pull Request."""
         if len(cards) > 10:
             additional_text = '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'
         await bot.post_cards(cards, channel, author, additional_text)
+
+
+
+    @cmd_header("Commands")
+    async def scryfall(self, bot, channel, args): #mything
+        """`!scryfall {query}` search scryfall for the query."""
+        for i in range(5):
+            await bot.client.send_message(channel, search_scryfall(args))
 
     @cmd_header("Commands")
     async def status(self, bot, channel):
@@ -483,3 +494,19 @@ def resources_resources(args):
             if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only:
                 results[url] = text
     return results
+
+def stagger(delay=0.1):
+    def decorator(func):
+        @wraps(func)
+        def f(*args, **kwargs):
+            if (time.time() - f.last_call < delay):
+                time.sleep(delay - (time.time() - f.last_call))
+            f.last_call = time.time()
+            return func(*args, **kwargs)
+        f.last_call = float("-inf")
+        return f
+    return decorator
+
+@stagger(3)
+def search_scryfall(args):
+    return f"modified args: {args}"

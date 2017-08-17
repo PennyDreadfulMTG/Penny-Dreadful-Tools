@@ -178,10 +178,13 @@ Want to contribute? Send a Pull Request."""
 
 
     @cmd_header("Commands")
-    async def scryfall(self, bot, channel, args): #mything
+    async def scryfall(self, bot, channel, args, author): #mything
         """`!scryfall {query}` search scryfall for the query."""
-        for i in range(5):
-            await bot.client.send_message(channel, search_scryfall(args))
+        too_many, cards = fetcher.search_scryfall(args)
+        additional_text = 'Too many cards, only the first portion is shown.\n' if too_many else ''
+        if len(cards) > 10:
+            additional_text += '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'
+        await bot.post_cards(cards, channel, author, additional_text)
 
     @cmd_header("Commands")
     async def status(self, bot, channel):
@@ -494,19 +497,3 @@ def resources_resources(args):
             if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only:
                 results[url] = text
     return results
-
-def stagger(delay=0.1):
-    def decorator(func):
-        @wraps(func)
-        def f(*args, **kwargs):
-            if (time.time() - f.last_call < delay):
-                time.sleep(delay - (time.time() - f.last_call))
-            f.last_call = time.time()
-            return func(*args, **kwargs)
-        f.last_call = float("-inf")
-        return f
-    return decorator
-
-@stagger(3)
-def search_scryfall(args):
-    return f"modified args: {args}"

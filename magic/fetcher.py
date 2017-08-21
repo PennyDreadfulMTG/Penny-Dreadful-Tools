@@ -3,25 +3,25 @@ import json
 import os
 from collections import OrderedDict
 from urllib import parse
+from functools import wraps
+import time as py_time
 
 import pkg_resources
 from github import Github
 
 import magic.fetcher_internal as internal
 from magic.fetcher_internal import FetchException
+from magic import oracle #for card-by-name for scryfall
 from shared import configuration, dtutil
 
-from functools import wraps
-from magic import oracle #for card-by-name for scryfall
-import time as py_time #for stagger
 
 def stagger(delay=0.1):
     def decorator(func):
         @wraps(func)
         def f(*args, **kwargs):
-            if (py_time.time() - f.last_call < delay):
+            if py_time.time() - f.last_call < delay:
+                f.last_call = py_time.time() + delay
                 py_time.sleep(delay - (py_time.time() - f.last_call))
-            f.last_call = py_time.time()
             return func(*args, **kwargs)
         f.last_call = float("-inf")
         return f
@@ -42,18 +42,18 @@ def search_scryfall(query):
             return False, []
         print('Error fetching scryfall data:\n', result_json)
         return False, []
-    for warning in result_json.get('warnings', []):
+    for warning in result_json.get('warnings', []): #scryfall-provided human-readable warnings
         print(warning)
-    too_many_cards = result_json['total_cards'] > max_n_queries * 60:
+    too_many_cards = result_json['total_cards'] > max_n_queries * 60
     result_data = result_json['data']
-    for i in range(max_n_queries - 1): #fetch the remaining pages
+    for _ in range(max_n_queries - 1): #fetch the remaining pages
         if not result_json['has_more']:
             break
         result_json = internal.fetch_json(result_json['next_page'])
         result_data.extend(result_json.get('data', []))
 
-    result_data.sort(key = lambda x: x['legalities']['penny'])
-    
+    result_data.sort(key=lambda x: x['legalities']['penny'])
+
     def get_frontside(scr_card):
         """If card is transform, returns first name. Otherwise, returns name.
         This is to make sure cards are later found in the database"""
@@ -64,7 +64,8 @@ def search_scryfall(query):
             return scr_card['card_faces'][0]['name']
         return scr_card['name']
     result_cardnames = [get_frontside(obj) for obj in result_data]
-    return too_many_cards, [oracle.cards_by_name()[name] for name in result_cardnames]
+    cbn = oracle.cards_by_name()
+    return too_many_cards, [cbn[name] for name in result_cardnames]
 
 def legal_cards(force=False, season=None):
     if season is None and os.path.exists('legal_cards.txt'):

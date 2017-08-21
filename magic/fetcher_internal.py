@@ -83,4 +83,3 @@ def escape(str_input) -> str:
     # WotC's naming scheme in Kaladesh, and is compatible with the
     # image server and scryfall.
     return urllib.parse.quote_plus(str_input.replace(u'Æ', 'AE')).lower()
-    #return '+'.join(urllib.parse.quote(cardname.replace(u'Æ', 'AE')) for cardname in str_input.split(' ')).lower()

@@ -181,7 +181,7 @@ Want to contribute? Send a Pull Request."""
     async def scryfall(self, bot, channel, args, author): #mything
         """`!scryfall {query}` search scryfall for the query."""
         too_many, cards = fetcher.search_scryfall(args)
-        additional_text = 'Too many cards, only the first portion is shown.\n' if too_many else ''
+        additional_text = 'There are too many cards, only a few are shown.\n' if too_many else ''
         if len(cards) > 10:
             additional_text += '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'
         await bot.post_cards(cards, channel, author, additional_text)

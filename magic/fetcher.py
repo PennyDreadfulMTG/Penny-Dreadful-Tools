@@ -94,6 +94,10 @@ def time(q):
     timezone_info = internal.fetch_json(url)
     return dtutil.now(dtutil.timezone(timezone_info['timeZoneId'])).strftime('%l:%M %p')
 
+def scryfall_cards():
+    url = 'https://api.scryfall.com/cards'
+    return internal.fetch_json(url)
+
 def decksite_url(path='/'):
     hostname = configuration.get('decksite_hostname')
     port = configuration.get('decksite_port')

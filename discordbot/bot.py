@@ -6,9 +6,9 @@ from discordbot import command, emoji
 from magic import image_fetcher, fetcher
 from magic import oracle
 from magic import multiverse
+from magic import tournaments
 from shared import configuration, dtutil
 from shared.pd_exception import InvalidDataException
-from decksite.views import Tournaments
 
 class Bot:
     def __init__(self):
@@ -169,24 +169,25 @@ async def background_task_tournaments():
     channel = discord.Object(id='207281932214599682')
     # channel = discord.Object(id='226920619302715392')
     while not BOT.client.is_closed:
-        view = Tournaments()
-        if view.next_tournament_time_precise <= 14400:
-            embed = discord.Embed(title=view.next_tournament_name, description='Starting in {0}.'.format(view.next_tournament_time), colour=0xDEADBF)
+        info = tournaments.next_tournament_info()
+        diff = info['next_tournament_time_precise']
+        if diff <= 14400:
+            embed = discord.Embed(title=info['next_tournament_name'], description='Starting in {0}.'.format(info['next_tournament_time']), colour=0xDEADBF)
             embed.set_image(url='https://pennydreadfulmagic.com/favicon-152.png')
             await BOT.client.send_message(channel, embed=embed)
 
-        if view.next_tournament_time_precise <= 300:
+        if diff <= 300:
             # Five minutes, final warning.  Sleep until the tournament has started.
             timer = 301
-        elif view.next_tournament_time_precise <= 1800:
+        elif diff <= 1800:
             # Half an hour. Sleep until 5 minute warning.
-            timer = view.next_tournament_time_precise - 300
-        elif view.next_tournament_time_precise <= 3600:
+            timer = diff - 300
+        elif diff <= 3600:
             # One hour.  Sleep until half-hour warning.
-            timer = view.next_tournament_time_precise - 1800
+            timer = diff - 1800
         else:
             # Wait until four hours before tournament.
-            timer = min(3600, view.next_tournament_time_precise - 14400)
+            timer = min(3600, diff - 14400)
         await asyncio.sleep(timer)
 
 def init():

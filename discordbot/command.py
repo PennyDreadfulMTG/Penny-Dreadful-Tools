@@ -437,7 +437,7 @@ Want to contribute? Send a Pull Request."""
             'legality': [
                 """
                 Legality is determined at the release of a Standard-legal set on MTGO.
-                Prices are checked very hour for a week and anything found to be 1c 50%+ will be legal for the season.
+                Prices are checked every hour for a week. Anything 1c or less for half or more of all checks is legal for the season.
                 Cards from the just-released set are added (nothing removed) a couple of weeks later via a supplemental rotation after prices have settled a little.
                 """,
                 {

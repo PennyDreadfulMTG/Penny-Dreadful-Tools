@@ -441,7 +441,8 @@ Want to contribute? Send a Pull Request."""
                 Cards from the just-released set are added (nothing removed) a couple of weeks later via a supplemental rotation after prices have settled a little.
                 """,
                 {
-                    'Deck Checker': 'http://pdmtgo.com/deck_check.html'
+                    'Deck Checker': 'http://pdmtgo.com/deck_check.html',
+                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt'
                 }
             ],
             'playing': [

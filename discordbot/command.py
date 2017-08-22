@@ -451,6 +451,14 @@ Want to contribute? Send a Pull Request."""
                 """,
                 {}
             ],
+            'price': [
+                """
+                The price output contains current price.
+                If the price is low enough it will show season-low and season-high also.
+                If the card has been 1c at any point this season it will also include the amount of time (as a percentage) the card has spent at 1c or below this week, month and season.
+                """,
+                {}
+            ],
             'report': [
                 """
                 For gatherling.com tournaments PDBot is information-only, *both* players must report at the bottom of Player CP.

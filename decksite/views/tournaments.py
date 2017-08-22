@@ -6,7 +6,7 @@ from decksite.view import View
 class Tournaments(View):
     def __init__(self):
         
-        info = = tournaments.next_tournament_info()
+        info = tournaments.next_tournament_info()
         self.next_tournament_name = info['next_tournament_name']
         self.next_tournament_time = info['next_tournament_time']
         

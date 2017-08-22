@@ -106,5 +106,9 @@ def decksite_url(path='/'):
     return parse.urlunparse((configuration.get('decksite_protocol'), hostname, path, None, None, None))
 
 def cardhoarder_url(d):
-    deck_s = '||'.join([str(entry['n']) + ' ' + entry['card'].name.replace(' // ', '/').replace('"', '') for entry in d.maindeck + d.sideboard])
+    cs = {}
+    for entry in d.maindeck + d.sideboard:
+        name = entry['card'].name
+        cs[name] = cs.get(name, 0) + entry['n']
+    deck_s = '||'.join([str(v) + ' ' + k.replace(' // ', '/').replace('"', '') for k, v in cs.items()])
     return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=internal.escape(deck_s))

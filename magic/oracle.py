@@ -157,7 +157,7 @@ def cards_from_query(query, fuzziness_threshold=260):
 def scryfall_import(name):
     sfcard = fetcher.internal.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=name))
     if sfcard['object'] == 'error':
-        raise Exception() # TODO: Use a better exception
+        raise Exception()
     try:
         valid_name(sfcard['name'])
         return False

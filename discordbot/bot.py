@@ -156,16 +156,13 @@ async def on_server_join(server):
 async def background_task_spoiler_season():
     "Poll Scryfall for the latest 250 cards, and add them to our db if missing"
     await BOT.client.wait_until_ready()
-    while not BOT.client.is_closed:
-        new_cards = fetcher.scryfall_cards()
-        for c in new_cards['data']:
-            try:
-                oracle.valid_name(c['name'])
-            except InvalidDataException:
-                oracle.insert_scryfall_card(c)
-                print('Imported {0} from Scryfall'.format(c['name']))
-                break
-        await asyncio.sleep(3600)
+    new_cards = fetcher.scryfall_cards()
+    for c in new_cards['data']:
+        try:
+            oracle.valid_name(c['name'])
+        except InvalidDataException:
+            oracle.insert_scryfall_card(c)
+            print('Imported {0} from Scryfall'.format(c['name']))
 
 async def background_task_tournaments():
     await BOT.client.wait_until_ready()
@@ -177,7 +174,7 @@ async def background_task_tournaments():
             embed = discord.Embed(title=view.next_tournament_name, description='Starting in {0}.'.format(view.next_tournament_time), colour=0xDEADBF)
             embed.set_image(url='https://pennydreadfulmagic.com/favicon-152.png')
             await BOT.client.send_message(channel, embed=embed)
-        
+
         if view.next_tournament_time_precise <= 300:
             # Five minutes, final warning.  Sleep until the tournament has started.
             timer = 301

@@ -154,6 +154,46 @@ def cards_from_query(query, fuzziness_threshold=260):
     # If we didn't find any of those then use all search results.
     return cards
 
+def scryfall_import(name):
+    sfcard = fetcher.internal.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=name))
+    if sfcard['object'] == 'error':
+        raise Exception()
+    try:
+        valid_name(sfcard['name'])
+        return False
+    except InvalidDataException:
+        insert_scryfall_card(sfcard)
+        return True
+
+def insert_scryfall_card(sfcard):
+    imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
+    c = {
+        'layout': sfcard['layout'],
+        'cmc': int(float(sfcard['cmc'])),
+        'imageName': imagename,
+        'legalities': [],
+        'printings': [sfcard['set']],
+        'rarity': sfcard['rarity'],
+        'names': []
+    }
+    faces = sfcard.get('card_faces', [sfcard])
+    names = [face['name'] for face in faces]
+    for face in faces:
+        tl = face['type_line'].split('—')
+        types = tl[0]
+        subtypes = tl[1] if len(tl) > 1 else []
+
+        c.update({
+            'name': face['name'],
+            'type': face['type_line'],
+            'types': types, # This technically includes supertypes.
+            'subtypes': subtypes,
+            'text': face.get('oracle_text', ''),
+            'manaCost': face.get('mana_cost', None)
+        })
+        c['names'] = names
+        multiverse.insert_card(c)
+
 LEGAL_CARDS = []
 multiverse.init()
 CARDS_BY_NAME = {c.name: c for c in load_cards()}

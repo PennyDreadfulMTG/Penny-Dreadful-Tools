@@ -111,7 +111,7 @@ class Bot:
         is_pd_server = member.server.id == "207281932214599682"
         # is_test_server = member.server.id == "226920619302715392"
         if is_pd_server: # or is_test_server:
-            greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <https://pennydreadfulmagic.com> and <http://pdmtgo.com> if you haven't already.".format(mention=member.mention)
+            greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> and <http://pdmtgo.com> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
             await self.client.send_message(member.server.default_channel, greeting)
 
 BOT = Bot()
@@ -166,14 +166,16 @@ async def background_task_spoiler_season():
 
 async def background_task_tournaments():
     await BOT.client.wait_until_ready()
-    channel = discord.Object(id='207281932214599682')
-    # channel = discord.Object(id='226920619302715392')
+    tournament_channel_id = configuration.get('tournament_channel_id')
+    if not tournament_channel_id:
+        return
+    channel = discord.Object(id=tournament_channel_id)
     while not BOT.client.is_closed:
         info = tournaments.next_tournament_info()
         diff = info['next_tournament_time_precise']
         if diff <= 14400:
             embed = discord.Embed(title=info['next_tournament_name'], description='Starting in {0}.'.format(info['next_tournament_time']), colour=0xDEADBF)
-            embed.set_image(url='https://pennydreadfulmagic.com/favicon-152.png')
+            embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
             await BOT.client.send_message(channel, embed=embed)
 
         if diff <= 300:

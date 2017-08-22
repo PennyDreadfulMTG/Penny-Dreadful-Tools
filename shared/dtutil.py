@@ -1,5 +1,7 @@
 import datetime
+import re
 
+import inflect
 import pytz
 
 # All dates should be stored as a UTC timestamp (seconds).
@@ -42,15 +44,24 @@ def now(tz=None):
 def display_date(dt, granularity=1):
     start = now()
     if (start - dt) > datetime.timedelta(365):
-        return '{:%b %d, %Y}'.format(dt.astimezone(WOTC_TZ))
+        s = '{:%b _%d_, %Y}'.format(dt.astimezone(WOTC_TZ))
+        return replace_day_with_ordinal(s)
     if (start - dt) > datetime.timedelta(28):
-        return '{:%b %d}'.format(dt.astimezone(WOTC_TZ))
+        s = '{:%b _%d_}'.format(dt.astimezone(WOTC_TZ))
+        return replace_day_with_ordinal(s)
     else:
         suffix = 'ago' if start > dt else 'from now'
         diff = round(abs(start - dt).total_seconds())
         if diff == 0:
             return 'just now'
         return '{duration} {suffix}'.format(duration=display_time(diff, granularity), suffix=suffix)
+
+def replace_day_with_ordinal(s):
+    return re.sub(r'_(.*)_', day2ordinal, s)
+
+def day2ordinal(m):
+    p = inflect.engine()
+    return p.ordinal(int(m.group(1)))
 
 def display_time(seconds, granularity=2):
     intervals = (

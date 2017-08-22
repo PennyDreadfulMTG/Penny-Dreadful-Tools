@@ -29,7 +29,7 @@ async def respond_to_card_names(message, bot):
     matches = re.findall(r'https?://(?:www.)?tappedout.net/mtg-decks/(?P<slug>[\w-]+)/?', message.content, flags=re.IGNORECASE)
     for match in matches:
         data = {"url": "http://tappedout.net/mtg-decks/{slug}".format(slug=match)}
-        fetcher.internal.post(fetcher.decksite_url('add'), data)
+        fetcher.internal.post(fetcher.decksite_url('/add/'), data)
 
 async def handle_command(message, bot):
     parts = message.content.split(' ', 1)
@@ -539,7 +539,7 @@ def site_resources(args):
     sitemap = fetcher.sitemap()
     matches = [endpoint for endpoint in sitemap if endpoint.startswith('/{area}/'.format(area=area))]
     if len(matches) > 0:
-        url = fetcher.decksite_url('/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail)))
+        url = fetcher.decksite_url('/{area}/{detail}/'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail)))
         results[url] = args
     return results
 

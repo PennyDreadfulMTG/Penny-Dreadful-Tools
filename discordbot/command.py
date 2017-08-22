@@ -466,6 +466,7 @@ Want to contribute? Send a Pull Request."""
                 }
             ]
         }
+        keys = sorted(explanations.keys())
         explanations['drop'] = explanations['retire']
         explanations['rotation'] = explanations['legality']
         explanations['tournaments'] = explanations['tournament']
@@ -473,7 +474,7 @@ Want to contribute? Send a Pull Request."""
         try:
             s = '{text}\n'.format(text=textwrap.dedent(explanations[word][0]))
         except KeyError:
-            usage = 'I can explain any of these things: {things}'.format(things=', '.join(sorted(explanations.keys())))
+            usage = 'I can explain any of these things: {things}'.format(things=', '.join(sorted(keys)))
             return await bot.client.send_message(channel, usage)
         for k in sorted(explanations[word][1].keys()):
             s += '{k}: {v}\n'.format(k=k, v=explanations[word][1][k])

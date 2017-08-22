@@ -436,11 +436,12 @@ Want to contribute? Send a Pull Request."""
             'legality': [
                 """
                 Legality is determined at the release of a Standard-legal set on MTGO.
-                Prices are checked very hour for a week and anything found to be 1c 50%+ will be legal for the season.
+                Prices are checked every hour for a week. Anything 1c or less for half or more of all checks is legal for the season.
                 Cards from the just-released set are added (nothing removed) a couple of weeks later via a supplemental rotation after prices have settled a little.
                 """,
                 {
-                    'Deck Checker': 'http://pdmtgo.com/deck_check.html'
+                    'Deck Checker': 'http://pdmtgo.com/deck_check.html',
+                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt'
                 }
             ],
             'playing': [
@@ -448,6 +449,24 @@ Want to contribute? Send a Pull Request."""
                 To get a match go to Constructed Open Play, Just for Fun on MTGO and create a Freeform game with "Penny Dreadful" in the comments.
                 """,
                 {}
+            ],
+            'price': [
+                """
+                The price output contains current price.
+                If the price is low enough it will show season-low and season-high also.
+                If the card has been 1c at any point this season it will also include the amount of time (as a percentage) the card has spent at 1c or below this week, month and season.
+                """,
+                {}
+            ],
+            'report': [
+                """
+                For gatherling.com tournaments PDBot is information-only, *both* players must report at the bottom of Player CP.
+                If PDBot reports your match in Discord you don't need to do anything. If not, either player can report.
+                """,
+                {
+                    'Gatherling': 'http://gatherling.com/player.php',
+                    'League Report': fetcher.decksite_url('/report/')
+                }
             ],
             'retire': [
                 'To retire from a league run message PDBot on MTGO with !retire.',
@@ -464,6 +483,7 @@ Want to contribute? Send a Pull Request."""
                 }
             ]
         }
+        keys = sorted(explanations.keys())
         explanations['drop'] = explanations['retire']
         explanations['rotation'] = explanations['legality']
         explanations['tournaments'] = explanations['tournament']
@@ -471,7 +491,7 @@ Want to contribute? Send a Pull Request."""
         try:
             s = '{text}\n'.format(text=textwrap.dedent(explanations[word][0]))
         except KeyError:
-            usage = 'I can explain any of these things: {things}'.format(things=', '.join(sorted(explanations.keys())))
+            usage = 'I can explain any of these things: {things}'.format(things=', '.join(sorted(keys)))
             return await bot.client.send_message(channel, usage)
         for k in sorted(explanations[word][1].keys()):
             s += '{k}: {v}\n'.format(k=k, v=explanations[word][1][k])

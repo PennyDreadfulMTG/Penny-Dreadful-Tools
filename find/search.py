@@ -95,6 +95,10 @@ def tokenize(s):
         else:
             raise InvalidModeException("Bad mode '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
         i += 1
+    if mode == QUOTED_STRING:
+        raise InvalidSearchException('Reached end of expression without finding the end of a quoted string in {s}'.format(s=s))
+    if depth != 0:
+        raise InvalidSearchException('Reached end of expression without finding enough closing parentheses in {s}'.format(s=s))
     return Expression(tokens[0])
 
 def parse(expression):

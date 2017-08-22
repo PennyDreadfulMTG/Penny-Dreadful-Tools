@@ -16,7 +16,6 @@ from discordbot import emoji
 from find import search
 from magic import card, oracle, fetcher, rotation, multiverse
 from shared import configuration, dtutil
-from shared.pd_exception import InvalidDataException
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.

@@ -11,7 +11,7 @@
     "legality_dir": "~/legality/Legality Checker/",
     "magic_database": "magic",
     "mysql_host": "localhost",
-    "mysql_password": "",
+    "mysql_passwd": "",
     "mysql_port": 3306,
     "mysql_user": "pd_magic",
     "oauth2_client_id": "Discord bot client id.",

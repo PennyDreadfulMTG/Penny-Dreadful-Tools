@@ -16,7 +16,7 @@
     "mysql_user": "pd_magic",
     "oauth2_client_id": "Discord bot client id.",
     "oauth2_client_secret": "Discord bot client secret.",
-    "prices_database": "./prices.sqlite",
+    "prices_database": "prices",
     "scratch_dir": ".",
     "spellfix": "./spellfix",
     "to_password": "my-tappedout-password",

@@ -7,7 +7,7 @@ default:
 
 # Push your commits (safely) to the remote branch.
 push:
-	git pull origin master && make test && git push --set-upstream origin `git rev-parse --abbrev-ref HEAD`
+	git stash -a && git pull origin master && make test && git push --set-upstream origin `git rev-parse --abbrev-ref HEAD` && git stash pop || ${MAKE} popclean
 
 # Run all unit and syntax tests.
 test: unit lint

@@ -169,8 +169,8 @@ async def background_task_spoiler_season():
 
 async def background_task_tournaments():
     await BOT.client.wait_until_ready()
-    # channel = discord.Object(id='207281932214599682')
-    channel = discord.Object(id='226920619302715392')
+    channel = discord.Object(id='207281932214599682')
+    # channel = discord.Object(id='226920619302715392')
     while not BOT.client.is_closed:
         view = Tournaments()
         if view.next_tournament_time_precise <= 14400:
@@ -193,6 +193,6 @@ async def background_task_tournaments():
         await asyncio.sleep(timer)
 
 def init():
-    # BOT.client.loop.create_task(background_task_spoiler_season())
-    BOT.client.loop.create_task(background_task_tournaments())
+    asyncio.ensure_future(background_task_spoiler_season())
+    asyncio.ensure_future(background_task_tournaments())
     BOT.init()

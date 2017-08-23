@@ -22,3 +22,4 @@ coverage.xml
 .vs/
 decksite/images/*-cmc.png
 .web_cache/
+my_doodle.py

@@ -3,13 +3,69 @@ import json
 import os
 from collections import OrderedDict
 from urllib import parse
+from functools import wraps
+import time as py_time
 
 import pkg_resources
 from github import Github
 
 import magic.fetcher_internal as internal
 from magic.fetcher_internal import FetchException
+from magic import oracle #for card-by-name for scryfall
 from shared import configuration, dtutil
+
+
+def stagger(delay=0.1):
+    def decorator(func_in):
+        @wraps(func_in)
+        def func_out(*args, **kwargs):
+            if py_time.time() - func_out.last_call < delay:
+                func_out.last_call = py_time.time() + delay
+                py_time.sleep(delay - (py_time.time() - func_out.last_call))
+            return func_in(*args, **kwargs)
+        func_out.last_call = float("-inf")
+        return func_out
+    return decorator
+
+
+@stagger(0.1)
+def search_scryfall(query):
+    """Returns a tuple. First member is bool indicating whether there were too many cards to search,
+    second member is a list of card names."""
+    max_n_queries = 2 #API returns 60 cards at once. Indicate how many pages max should be shown.
+    if query == '':
+        return False, []
+    result_json = internal.fetch_json('https://api.scryfall.com/cards/search?q=' + internal.escape(query), character_encoding='utf-8')
+    if 'code' in result_json.keys(): #the API returned an error
+        if result_json['status'] == 404: #no cards found
+            print('Scryfall search yielded 0 results.')
+            return False, []
+        print('Error fetching scryfall data:\n', result_json)
+        return False, []
+    for warning in result_json.get('warnings', []): #scryfall-provided human-readable warnings
+        print(warning)
+    too_many_cards = result_json['total_cards'] > max_n_queries * 60
+    result_data = result_json['data']
+    for _ in range(max_n_queries - 1): #fetch the remaining pages
+        if not result_json['has_more']:
+            break
+        result_json = internal.fetch_json(result_json['next_page'])
+        result_data.extend(result_json.get('data', []))
+
+    result_data.sort(key=lambda x: x['legalities']['penny'])
+
+    def get_frontside(scr_card):
+        """If card is transform, returns first name. Otherwise, returns name.
+        This is to make sure cards are later found in the database"""
+        #not sure how to handle meld cards
+        if scr_card['layout'] == 'transform':
+            return scr_card['all_parts'][0]['name']
+        if scr_card['layout'] == 'flip':
+            return scr_card['card_faces'][0]['name']
+        return scr_card['name']
+    result_cardnames = [get_frontside(obj) for obj in result_data]
+    cbn = oracle.cards_by_name()
+    return too_many_cards, [cbn[name] for name in result_cardnames]
 
 def legal_cards(force=False, season=None):
     if season is None and os.path.exists('legal_cards.txt'):

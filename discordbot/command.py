@@ -112,6 +112,8 @@ def cmd_header(group):
         return func
     return decorator
 
+
+
 # pylint: disable=too-many-public-methods
 class Commands:
     """To define a new command, simply add a new method to this class.
@@ -173,6 +175,15 @@ Want to contribute? Send a Pull Request."""
         additional_text = ''
         if len(cards) > 10:
             additional_text = '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'
+        await bot.post_cards(cards, channel, author, additional_text)
+
+    @cmd_header('Commands')
+    async def scryfall(self, bot, channel, args, author): #mything
+        """`!scryfall {query}` search scryfall for the query."""
+        too_many, cards = fetcher.search_scryfall(args)
+        additional_text = 'There are too many cards, only a few are shown.\n' if too_many else ''
+        if len(cards) > 10:
+            additional_text += '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'
         await bot.post_cards(cards, channel, author, additional_text)
 
     @cmd_header('Commands')

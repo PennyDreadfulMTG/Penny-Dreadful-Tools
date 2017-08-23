@@ -1,9 +1,14 @@
+import asyncio
+
 import discord
 
 from discordbot import command, emoji
-from magic import image_fetcher
+from magic import image_fetcher, fetcher
+from magic import oracle
 from magic import multiverse
+from magic import tournaments
 from shared import configuration, dtutil
+from shared.pd_exception import InvalidDataException
 
 class Bot:
     def __init__(self):
@@ -106,7 +111,7 @@ class Bot:
         is_pd_server = member.server.id == "207281932214599682"
         # is_test_server = member.server.id == "226920619302715392"
         if is_pd_server: # or is_test_server:
-            greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <https://pennydreadfulmagic.com> and <http://pdmtgo.com> if you haven't already.".format(mention=member.mention)
+            greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> and <http://pdmtgo.com> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
             await self.client.send_message(member.server.default_channel, greeting)
 
 BOT = Bot()
@@ -145,8 +150,49 @@ async def on_member_join(member):
 
 @BOT.client.event
 async def on_server_join(server):
-    BOT.client.send_message(server.default_channel, "Hi, I'm mtgbot.  To look up cards, just mention them in square brackets. (eg `[Llanowar Elves] is better than [Elvish Mystic]`).")
-    BOT.client.send_message(server.default_channel, "By default, I display Penny Dreadful legality. If you don't want or need that, just type `!notpenny`.")
+    await BOT.client.send_message(server.default_channel, "Hi, I'm mtgbot.  To look up cards, just mention them in square brackets. (eg `[Llanowar Elves] is better than [Elvish Mystic]`).")
+    await BOT.client.send_message(server.default_channel, "By default, I display Penny Dreadful legality. If you don't want or need that, just type `!notpenny`.")
+
+async def background_task_spoiler_season():
+    "Poll Scryfall for the latest 250 cards, and add them to our db if missing"
+    await BOT.client.wait_until_ready()
+    new_cards = fetcher.scryfall_cards()
+    for c in new_cards['data']:
+        try:
+            oracle.valid_name(c['name'])
+        except InvalidDataException:
+            oracle.insert_scryfall_card(c)
+            print('Imported {0} from Scryfall'.format(c['name']))
+
+async def background_task_tournaments():
+    await BOT.client.wait_until_ready()
+    tournament_channel_id = configuration.get('tournament_channel_id')
+    if not tournament_channel_id:
+        return
+    channel = discord.Object(id=tournament_channel_id)
+    while not BOT.client.is_closed:
+        info = tournaments.next_tournament_info()
+        diff = info['next_tournament_time_precise']
+        if diff <= 14400:
+            embed = discord.Embed(title=info['next_tournament_name'], description='Starting in {0}.'.format(info['next_tournament_time']), colour=0xDEADBF)
+            embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
+            await BOT.client.send_message(channel, embed=embed)
+
+        if diff <= 300:
+            # Five minutes, final warning.  Sleep until the tournament has started.
+            timer = 301
+        elif diff <= 1800:
+            # Half an hour. Sleep until 5 minute warning.
+            timer = diff - 300
+        elif diff <= 3600:
+            # One hour.  Sleep until half-hour warning.
+            timer = diff - 1800
+        else:
+            # Wait until four hours before tournament.
+            timer = min(3600, diff - 14400)
+        await asyncio.sleep(timer)
 
 def init():
+    asyncio.ensure_future(background_task_spoiler_season())
+    asyncio.ensure_future(background_task_tournaments())
     BOT.init()

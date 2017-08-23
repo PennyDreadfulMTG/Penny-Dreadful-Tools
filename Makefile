@@ -49,7 +49,6 @@ coverage:
 	@echo "******************************** Test Coverage ********************************"
 	@echo
 	@coverage run run.py tests
-#	@coverage annotate
 	@coverage xml
 	@coverage report
 

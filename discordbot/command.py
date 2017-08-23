@@ -7,7 +7,6 @@ import sys
 import time
 
 from typing import List
-from functools import wraps
 
 from discordbot import emoji
 from find import search

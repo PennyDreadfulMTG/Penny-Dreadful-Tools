@@ -16,15 +16,15 @@ from shared import configuration, dtutil
 
 
 def stagger(delay=0.1):
-    def decorator(func):
-        @wraps(func)
-        def f(*args, **kwargs):
-            if py_time.time() - f.last_call < delay:
-                f.last_call = py_time.time() + delay
-                py_time.sleep(delay - (py_time.time() - f.last_call))
-            return func(*args, **kwargs)
-        f.last_call = float("-inf")
-        return f
+    def decorator(func_in):
+        @wraps(func_in)
+        def func_out(*args, **kwargs):
+            if py_time.time() - func_out.last_call < delay:
+                func_out.last_call = py_time.time() + delay
+                py_time.sleep(delay - (py_time.time() - func_out.last_call))
+            return func_in(*args, **kwargs)
+        func_out.last_call = float("-inf")
+        return func_out
     return decorator
 
 
@@ -35,7 +35,7 @@ def search_scryfall(query):
     max_n_queries = 2 #API returns 60 cards at once. Indicate how many pages max should be shown.
     if query == '':
         return False, []
-    result_json = internal.fetch_json('https://api.scryfall.com/cards/search?q=' + internal.escape(query))
+    result_json = internal.fetch_json('https://api.scryfall.com/cards/search?q=' + internal.escape(query), character_encoding='utf-8')
     if 'code' in result_json.keys(): #the API returned an error
         if result_json['status'] == 404: #no cards found
             print('Scryfall search yielded 0 results.')

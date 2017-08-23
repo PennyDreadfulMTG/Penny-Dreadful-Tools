@@ -140,15 +140,22 @@ def sitemap():
     return internal.fetch_json(decksite_url('/api/sitemap/'))
 
 def time(q):
+    no_results_msg = 'Location unknown.'
     url = 'http://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false'.format(q=internal.escape(q))
     info = internal.fetch_json(url)
     try:
         location = info['results'][0]['geometry']['location']
     except IndexError:
-        return 'Location unknown.'
+        return no_results_msg
     url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&sensor=false'.format(lat=internal.escape(str(location['lat'])), lng=internal.escape(str(location['lng'])), timestamp=internal.escape(str(dtutil.dt2ts(dtutil.now()))))
     timezone_info = internal.fetch_json(url)
+    if timezone_info['status'] == 'ZERO_RESULTS':
+        return no_results_msg
     return dtutil.now(dtutil.timezone(timezone_info['timeZoneId'])).strftime('%l:%M %p')
+
+def scryfall_cards():
+    url = 'https://api.scryfall.com/cards'
+    return internal.fetch_json(url)
 
 def decksite_url(path='/'):
     hostname = configuration.get('decksite_hostname')
@@ -158,5 +165,9 @@ def decksite_url(path='/'):
     return parse.urlunparse((configuration.get('decksite_protocol'), hostname, path, None, None, None))
 
 def cardhoarder_url(d):
-    deck_s = '||'.join([str(entry['n']) + ' ' + entry['card'].name.replace(' // ', '/').replace('"', '') for entry in d.maindeck + d.sideboard])
+    cs = {}
+    for entry in d.maindeck + d.sideboard:
+        name = entry['card'].name
+        cs[name] = cs.get(name, 0) + entry['n']
+    deck_s = '||'.join([str(v) + ' ' + k.replace(' // ', '/').replace('"', '') for k, v in cs.items()])
     return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=internal.escape(deck_s))

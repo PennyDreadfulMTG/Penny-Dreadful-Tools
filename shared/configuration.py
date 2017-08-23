@@ -31,6 +31,7 @@ DEFAULTS = {
     'spellfix': './spellfix',
     'to_password': '',
     'to_username': '',
+    'tournament_channel_id': '207281932214599682',
     'web_cache': '.web_cache'
 }
 

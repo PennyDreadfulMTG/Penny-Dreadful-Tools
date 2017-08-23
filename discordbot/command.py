@@ -17,7 +17,6 @@ from discordbot import emoji
 from find import search
 from magic import card, oracle, fetcher, rotation, multiverse
 from shared import configuration, dtutil
-from shared.pd_exception import InvalidDataException
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -31,7 +30,7 @@ async def respond_to_card_names(message, bot):
     matches = re.findall(r'https?://(?:www.)?tappedout.net/mtg-decks/(?P<slug>[\w-]+)/?', message.content, flags=re.IGNORECASE)
     for match in matches:
         data = {"url": "http://tappedout.net/mtg-decks/{slug}".format(slug=match)}
-        fetcher.internal.post(fetcher.decksite_url('add'), data)
+        fetcher.internal.post(fetcher.decksite_url('/add/'), data)
 
 async def handle_command(message, bot):
     parts = message.content.split(' ', 1)
@@ -380,30 +379,7 @@ Want to contribute? Send a Pull Request."""
         fetcher.internal.store(sfcard['image_uri'], imagepath)
         text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=sfcard['mana_cost']), bot.client)
         await bot.client.send_file(channel, imagepath, content=text)
-        try:
-            oracle.valid_name(sfcard['name'])
-        except InvalidDataException:
-            c = {
-                'layout': sfcard['layout'],
-                'types': [], # This is wrong.  But whatever.
-                'cmc': int(float(sfcard['cmc'])),
-                'imageName': imagename,
-                'legalities': [],
-                'printings': [sfcard['set']],
-                'rarity': sfcard['rarity'],
-                'names': []
-            }
-            faces = sfcard.get('card_faces', [sfcard])
-            names = [face['name'] for face in faces]
-            for face in faces:
-                c.update({
-                    'name': face['name'],
-                    'type': face['type_line'],
-                    'text': face.get('oracle_text', ''),
-                    'manaCost': face.get('mana_cost', None)
-                })
-                c['names'] = names
-                multiverse.insert_card(c)
+        oracle.scryfall_import(sfcard['name'])
 
     @cmd_header('Commands')
     async def time(self, bot, channel, args, author):
@@ -472,11 +448,12 @@ Want to contribute? Send a Pull Request."""
             'legality': [
                 """
                 Legality is determined at the release of a Standard-legal set on MTGO.
-                Prices are checked very hour for a week and anything found to be 1c 50%+ will be legal for the season.
+                Prices are checked every hour for a week. Anything 1c or less for half or more of all checks is legal for the season.
                 Cards from the just-released set are added (nothing removed) a couple of weeks later via a supplemental rotation after prices have settled a little.
                 """,
                 {
-                    'Deck Checker': 'http://pdmtgo.com/deck_check.html'
+                    'Deck Checker': 'http://pdmtgo.com/deck_check.html',
+                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt'
                 }
             ],
             'playing': [
@@ -484,6 +461,24 @@ Want to contribute? Send a Pull Request."""
                 To get a match go to Constructed Open Play, Just for Fun on MTGO and create a Freeform game with "Penny Dreadful" in the comments.
                 """,
                 {}
+            ],
+            'price': [
+                """
+                The price output contains current price.
+                If the price is low enough it will show season-low and season-high also.
+                If the card has been 1c at any point this season it will also include the amount of time (as a percentage) the card has spent at 1c or below this week, month and season.
+                """,
+                {}
+            ],
+            'report': [
+                """
+                For gatherling.com tournaments PDBot is information-only, *both* players must report at the bottom of Player CP.
+                If PDBot reports your match in Discord you don't need to do anything. If not, either player can report.
+                """,
+                {
+                    'Gatherling': 'http://gatherling.com/player.php',
+                    'League Report': fetcher.decksite_url('/report/')
+                }
             ],
             'retire': [
                 'To retire from a league run message PDBot on MTGO with !retire.',
@@ -500,6 +495,7 @@ Want to contribute? Send a Pull Request."""
                 }
             ]
         }
+        keys = sorted(explanations.keys())
         explanations['drop'] = explanations['retire']
         explanations['rotation'] = explanations['legality']
         explanations['tournaments'] = explanations['tournament']
@@ -507,7 +503,7 @@ Want to contribute? Send a Pull Request."""
         try:
             s = '{text}\n'.format(text=textwrap.dedent(explanations[word][0]))
         except KeyError:
-            usage = 'I can explain any of these things: {things}'.format(things=', '.join(sorted(explanations.keys())))
+            usage = 'I can explain any of these things: {things}'.format(things=', '.join(sorted(keys)))
             return await bot.client.send_message(channel, usage)
         for k in sorted(explanations[word][1].keys()):
             s += '{k}: {v}\n'.format(k=k, v=explanations[word][1][k])
@@ -575,7 +571,7 @@ def site_resources(args):
     sitemap = fetcher.sitemap()
     matches = [endpoint for endpoint in sitemap if endpoint.startswith('/{area}/'.format(area=area))]
     if len(matches) > 0:
-        url = fetcher.decksite_url('/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail)))
+        url = fetcher.decksite_url('/{area}/{detail}/'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail)))
         results[url] = args
     return results
 

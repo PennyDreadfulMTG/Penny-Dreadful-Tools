@@ -5,6 +5,7 @@ from collections import Counter
 
 from anytree.iterators import PreOrderIter
 from flask import session, url_for
+import titlecase
 
 from magic import oracle, rotation, legality
 from shared import dtutil

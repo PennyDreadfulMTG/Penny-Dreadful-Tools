@@ -2,7 +2,7 @@ anytree
 bs4
 cachecontrol[filecache]
 coverage
-discord.py[voice]>=0.13.0
+discord.py[voice]>=0.15.0
 flask
 googler
 inflect

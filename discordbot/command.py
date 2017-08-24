@@ -352,13 +352,24 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def bug(self, bot, channel, args, author):
-        """Report a bug"""
+        """Report a bug/task for the Penny Dreadful Tools team.
+        For MTGO bugs see `!modobug`."""
         await bot.client.send_typing(channel)
         issue = fetcher.create_github_issue(args, author)
         if issue is None:
             await bot.client.send_message(channel, "Report issues at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>")
         else:
             await bot.client.send_message(channel, "Issue has been reported at <{url}>".format(url=issue.html_url))
+
+    @cmd_header('Commands')
+    async def modobug(self, bot, channel, args, author):
+        """Report an MTGO bug."""
+        await bot.client.send_typing(channel)
+        issue = fetcher.create_github_issue(args, author, 'PennyDreadfulMTG/modo-bugs')
+        if issue is None:
+            await bot.client.send_message(channel, 'Report MTGO issues at <https://github.com/PennyDreadfulMTG/modo-bugs/issues/new>')
+        else:
+            await bot.client.send_message(channel, 'Issue has been reported at <{url}>. Please add square brackets and screenshot as explained here: <https://github.com/PennyDreadfulMTG/modo-bugs/blob/master/README.md>'.format(url=issue.html_url))
 
     @cmd_header('Commands')
     async def invite(self, bot, channel):

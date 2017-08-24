@@ -12,8 +12,8 @@ import pytz
 # Parse any dates you get as strings using parse.
 
 GATHERLING_TZ = pytz.timezone('America/New_York')
-MTGGOLDFISH_TZ = GATHERLING_TZ
 WOTC_TZ = pytz.timezone('America/Los_Angeles')
+MTGGOLDFISH_TZ = WOTC_TZ
 UTC_TZ = pytz.timezone('UTC')
 
 # Converts a UTC timestamp (seconds) into a timezone-aware UTC datetime.

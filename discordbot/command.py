@@ -14,7 +14,7 @@ from typing import List
 
 from discordbot import emoji
 from find import search
-from magic import card, oracle, fetcher, rotation, multiverse
+from magic import card, oracle, fetcher, rotation, multiverse, tournaments
 from shared import configuration, dtutil
 
 async def respond_to_card_names(message, bot):
@@ -427,6 +427,12 @@ Want to contribute? Send a Pull Request."""
                 await bot.client.send_message(channel, '{author}: Optional command `google` not set up.'.format(author=author.mention))
             else:
                 await bot.client.send_message(channel, '{author}: Problem searching google.'.format(author=author.mention))
+
+    @cmd_header('Commands')
+    async def tournament(self, bot, channel):
+        """!tournament` Get information about the next tournament."""
+        t = tournaments.next_tournament_info()
+        await bot.client.send_message(channel, 'The next tournament is {name} in {time}.\nSign up on <http://gatherling.com/>.\nMore information: {url}'.format(name=t['next_tournament_name'], time=t['next_tournament_time'], url=fetcher.decksite_url('/tournaments/')))
 
     @cmd_header('Commands')
     async def explain(self, bot, channel, args):

@@ -57,10 +57,10 @@ async def handle_command(message, bot):
         except Exception as e: # pylint: disable=broad-except
             print('Caught exception processing command `{cmd}`'.format(cmd=message.content))
             print(traceback.format_exc())
-            await bot.client.send_message(message.channel, 'I know the command `{cmd}` but I could not do that.'.format(cmd=parts[0]))
+            await bot.client.send_message(message.channel, '{author}: I know the command `{cmd}` but I could not do that.'.format(cmd=parts[0], author=message.author.mention))
             await getattr(Commands, 'bug')(Commands, bot, message.channel, 'Command failed with {c}: {cmd}'.format(c=e.__class__.__name__, cmd=message.content), message.author)
     else:
-        await bot.client.send_message(message.channel, 'Unknown command `{cmd}`. Try `!help`?'.format(cmd=parts[0]))
+        await bot.client.send_message(message.channel, '{author}: Unknown command `{cmd}`. Try `!help`?'.format(cmd=parts[0], author=message.author.mention))
 
 def find_method(name):
     cmd = name.lstrip('!').lower()
@@ -196,7 +196,6 @@ Want to contribute? Send a Pull Request."""
     async def echo(self, bot, channel, args):
         """Repeat after me..."""
         s = emoji.replace_emoji(args, bot.client)
-        print('Echoing {s}'.format(s=s))
         await bot.client.send_message(channel, s)
 
     @cmd_header('Commands')
@@ -328,11 +327,11 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_message(channel, s)
 
     @cmd_header('Developer')
-    async def clearimagecache(self, bot, channel):
+    async def clearimagecache(self, bot, channel, args, author):
         """Deletes all the cached images.  Use sparingly"""
         image_dir = configuration.get('image_dir')
         if not image_dir:
-            return await bot.client.send_message(channel, 'Cowardly refusing to delete from unknown image_dir.')
+            return await bot.client.send_message(channel, '{author}: Cowardly refusing to delete from unknown image_dir.'.format(author=author.mention))
         files = glob.glob('{dir}/*.jpg'.format(dir=image_dir))
         for file in files:
             os.remove(file)
@@ -395,7 +394,7 @@ Want to contribute? Send a Pull Request."""
     async def time(self, bot, channel, args, author):
         """`!time {location}` Show the current time in the specified location."""
         t = fetcher.time(args.strip())
-        await bot.client.send_message(channel, '{author}: {time}'.format(author=author.mention, time=t))
+        await bot.client.send_message(channel, '{args}: {time}'.format(args=args, time=t))
 
     @cmd_header('Commands')
     async def pdm(self, bot, channel, args):
@@ -405,27 +404,29 @@ Want to contribute? Send a Pull Request."""
         await self.resources(self, bot, channel, args)
 
     @cmd_header('Commands')
-    async def google(self, bot, channel, args):
+    async def google(self, bot, channel, args, author):
         """`!google {args}` Search google for `{args}`."""
         await bot.client.send_typing(channel)
         if len(args.strip()) == 0:
-            return await bot.client.send_message(channel, 'Please let me know what you want to search on Google.')
+            return await bot.client.send_message(channel, '{author}: Please let me know what you want to search on Google.'.format(author=author.mention))
         try:
             # We set TERM here because of some weirdness around readline and shell commands. Stops `ESC[?1034h` appearing on the end of STDOUT when TERM=xterm. See https://bugzilla.redhat.com/show_bug.cgi?id=304181 or google the escape sequence if you are super curious.
             env = {**os.environ, 'TERM': 'vt100'}
             result = subprocess.run(['googler', '--json', '-n1'] + args.split(), stdout=subprocess.PIPE, check=True, env=env, universal_newlines=True)
+            print(result)
             r = json.loads(result.stdout.strip())[0]
+            print(r)
             s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['url'], abstract=r['abstract'])
             await bot.client.send_message(channel, s)
-        except IndexError:
-            await bot.client.send_message(channel, 'Nothing found on Google.')
+        except IndexError as e:
+            await bot.client.send_message(channel, '{author}: Nothing found on Google.'.format(author=author.mention))
         except FileNotFoundError as e:
-            await bot.client.send_message(channel, 'Optional command `google` not set up.')
+            await bot.client.send_message(channel, '{author}:  Optional command `google` not set up.'.format(author=author.mention))
         except subprocess.CalledProcessError as e:
             if e.returncode == 127:
-                await bot.client.send_message(channel, 'Optional command `google` not set up.')
+                await bot.client.send_message(channel, '{author}: Optional command `google` not set up.'.format(author=author.mention))
             else:
-                await bot.client.send_message(channel, 'Problem searching google.')
+                await bot.client.send_message(channel, '{author}: Problem searching google.'.format(author=author.mention))
 
     @cmd_header('Commands')
     async def explain(self, bot, channel, args):

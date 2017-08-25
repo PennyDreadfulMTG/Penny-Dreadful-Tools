@@ -581,7 +581,8 @@ def site_resources(args):
     sitemap = fetcher.sitemap()
     matches = [endpoint for endpoint in sitemap if endpoint.startswith('/{area}/'.format(area=area))]
     if len(matches) > 0:
-        url = fetcher.decksite_url('/{area}/{detail}/'.format(area=fetcher.internal.escape(area), detail=fetcher.internal.escape(detail)))
+        detail = '{detail}/'.format(detail=fetcher.internal.escape(detail)) if detail else ''
+        url = fetcher.decksite_url('/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=detail))
         results[url] = args
     return results
 

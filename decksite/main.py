@@ -30,11 +30,12 @@ def decks(deck_id):
     view = Deck(deck.load_deck(deck_id))
     return view.page()
 
-@APP.route('/season/')
-@APP.route('/season/<season_id>/')
+@APP.route('/seasons/<season_id>/')
+@APP.route('/seasons/<season_id>/<deck_type>/')
 @cached()
-def season(season_id=None):
-    view = Season(deck.load_season(season_id))
+def season(season_id=None, deck_type=None):
+    league_only = deck_type == 'league'
+    view = Season(deck.load_season(season_id, league_only), league_only)
     return view.page()
 
 @APP.route('/people/')

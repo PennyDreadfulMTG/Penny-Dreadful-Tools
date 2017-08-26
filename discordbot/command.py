@@ -327,11 +327,11 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_message(channel, s)
 
     @cmd_header('Developer')
-    async def clearimagecache(self, bot, channel, args, author):
+    async def clearimagecache(self, bot, channel):
         """Deletes all the cached images.  Use sparingly"""
         image_dir = configuration.get('image_dir')
         if not image_dir:
-            return await bot.client.send_message(channel, '{author}: Cowardly refusing to delete from unknown image_dir.'.format(author=author.mention))
+            return await bot.client.send_message(channel, 'Cowardly refusing to delete from unknown image_dir.')
         files = glob.glob('{dir}/*.jpg'.format(dir=image_dir))
         for file in files:
             os.remove(file)

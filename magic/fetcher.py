@@ -119,14 +119,14 @@ def resources():
     with open('decksite/resources.json') as resources_file:
         return json.load(resources_file, object_pairs_hook=OrderedDict)
 
-def create_github_issue(title, author):
-    if configuration.get("github_user") is None or configuration.get("github_password") is None:
+def create_github_issue(title, author, repo='PennyDreadfulMTG/Penny-Dreadful-Tools'):
+    if configuration.get('github_user') is None or configuration.get('github_password') is None:
         return None
-    if title is None or title == "":
+    if title is None or title == '':
         return None
-    g = Github(configuration.get("github_user"), configuration.get("github_password"))
-    repo = g.get_repo("PennyDreadfulMTG/Penny-Dreadful-Tools")
-    issue = repo.create_issue(title=title, body="Reported on Discord by {author}".format(author=author))
+    g = Github(configuration.get('github_user'), configuration.get('github_password'))
+    repo = g.get_repo(repo)
+    issue = repo.create_issue(title=title, body='Reported on Discord by {author}'.format(author=author))
     return issue
 
 def bugged_cards():

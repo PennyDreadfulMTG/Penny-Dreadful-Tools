@@ -30,11 +30,12 @@ def decks(deck_id):
     view = Deck(deck.load_deck(deck_id))
     return view.page()
 
-@APP.route('/season/')
-@APP.route('/season/<season_id>/')
+@APP.route('/seasons/<season_id>/')
+@APP.route('/seasons/<season_id>/<deck_type>/')
 @cached()
-def season(season_id=None):
-    view = Season(deck.load_season(season_id))
+def season(season_id=None, deck_type=None):
+    league_only = deck_type == 'league'
+    view = Season(deck.load_season(season_id, league_only), league_only)
     return view.page()
 
 @APP.route('/people/')
@@ -87,7 +88,8 @@ def archetypes():
 @APP.route('/archetypes/<archetype_id>/')
 @cached()
 def archetype(archetype_id):
-    view = Archetype(archs.load_archetype(archetype_id), archs.load_archetypes_deckless_for(archetype_id), archs.load_matchups(archetype_id))
+    a = archs.load_archetype(archetype_id)
+    view = Archetype(a, archs.load_archetypes_deckless_for(a.id), archs.load_matchups(a.id))
     return view.page()
 
 @APP.route('/tournaments/')

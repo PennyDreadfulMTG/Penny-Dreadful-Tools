@@ -1,14 +1,22 @@
 from anytree import NodeMixin
+import titlecase
 
 from magic import rotation
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import TooManyItemsException
+from shared.pd_exception import DoesNotExistException, TooManyItemsException
 
 from decksite.data import deck
 from decksite.database import db
 
-def load_archetype(archetype_id):
+def load_archetype(archetype):
+    try:
+        archetype_id = int(archetype)
+    except ValueError:
+        name = titlecase.titlecase(archetype.replace('-', ' '))
+        archetype_id = db().value('SELECT id FROM archetype WHERE name = ?', [name])
+        if not archetype_id:
+            raise DoesNotExistException('Did not find archetype with name of `{name}`'.format(name=name))
     archetypes = load_archetypes('d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'.format(archetype_id=sqlescape(archetype_id)), True)
     if len(archetypes) > 1:
         raise TooManyItemsException('Found {n} archetypes when expecting 1 at most'.format(n=len(archetypes)))

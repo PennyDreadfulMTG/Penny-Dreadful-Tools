@@ -17,7 +17,7 @@ def latest_decks():
 def load_deck(deck_id):
     return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))
 
-def load_season(season=None):
+def load_season(season=None, league_only=False):
     if season is None:
         where = 'start. start_date <= UNIX_TIMESTAMP() AND `end`.start_date > UNIX_TIMESTAMP()'
     else:
@@ -36,7 +36,10 @@ def load_season(season=None):
         WHERE {where}
     """.format(where=where)
     season = Container(guarantee.exactly_one(db().execute(sql)))
-    season.decks = load_decks('d.created_date >= {start_ts} AND d.created_date < IFNULL({end_ts}, 999999999999)'.format(start_ts=season.start_date, end_ts=season.end_date))
+    where = 'd.created_date >= {start_ts} AND d.created_date < IFNULL({end_ts}, 999999999999)'.format(start_ts=season.start_date, end_ts=season.end_date)
+    if league_only:
+        where = "{where} AND d.competition_id IN (SELECT id FROM competition WHERE competition_type_id IN (SELECT id FROM competition_type WHERE name = 'League'))".format(where=where)
+    season.decks = load_decks(where)
     season.start_date = dtutil.ts2dt(season.start_date)
     season.end_date = dtutil.ts2dt(season.end_date)
     return season

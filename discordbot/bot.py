@@ -194,5 +194,5 @@ async def background_task_tournaments():
 
 def init():
     asyncio.ensure_future(background_task_spoiler_season())
-    asyncio.ensure_future(background_task_tournaments())
+    # asyncio.ensure_future(background_task_tournaments())
     BOT.init()

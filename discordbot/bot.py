@@ -183,16 +183,16 @@ async def background_task_tournaments():
             timer = 301
         elif diff <= 1800:
             # Half an hour. Sleep until 5 minute warning.
-            timer = diff - 300
+            timer = 300 - diff
         elif diff <= 3600:
             # One hour.  Sleep until half-hour warning.
-            timer = diff - 1800
+            timer = 1800 - diff
         else:
             # Wait until four hours before tournament.
-            timer = min(3600, diff - 14400)
+            timer = min(3600, 14400 - diff)
         await asyncio.sleep(timer)
 
 def init():
     asyncio.ensure_future(background_task_spoiler_season())
-    # asyncio.ensure_future(background_task_tournaments())
+    asyncio.ensure_future(background_task_tournaments())
     BOT.init()

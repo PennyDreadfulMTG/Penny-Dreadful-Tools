@@ -183,13 +183,21 @@ async def background_task_tournaments():
             timer = 301
         elif diff <= 1800:
             # Half an hour. Sleep until 5 minute warning.
-            timer = 300 - diff
+            timer = diff - 300
         elif diff <= 3600:
             # One hour.  Sleep until half-hour warning.
-            timer = 1800 - diff
+            timer = diff - 1800
         else:
             # Wait until four hours before tournament.
-            timer = min(3600, 14400 - diff)
+            timer = 3600 + diff % 3600
+            if diff > 3600 * 6:
+                # The timer can afford to get off-balance by doing other background work.
+                await background_task_spoiler_season()
+                multiverse.update_bugged_cards()
+
+        if timer < 300:
+            timer = 300
+        print('diff={0}, timer={1}'.format(diff, timer))
         await asyncio.sleep(timer)
 
 def init():

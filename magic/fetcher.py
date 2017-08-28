@@ -11,7 +11,6 @@ from github import Github
 
 import magic.fetcher_internal as internal
 from magic.fetcher_internal import FetchException
-from magic import oracle #for card-by-name for scryfall
 from shared import configuration, dtutil
 
 
@@ -27,6 +26,92 @@ def stagger(delay=0.1):
         return func_out
     return decorator
 
+
+def all_cards():
+    try:
+        return json.load(open('AllCards-x.json'))
+    except FileNotFoundError:
+        s = internal.unzip('https://mtgjson.com/json/AllCards-x.json.zip', 'AllCards-x.json')
+        return json.loads(s)
+
+def all_sets():
+    try:
+        return json.load(open('AllSets.json'))
+    except FileNotFoundError:
+        s = internal.unzip('https://mtgjson.com/json/AllSets.json.zip', 'AllSets.json')
+        return json.loads(s)
+
+def bugged_cards():
+    text = internal.fetch('https://pennydreadfulmtg.github.io/modo-bugs/bugs.tsv')
+    if text is None:
+        return None
+    lines = [l.split('\t') for l in text.split('\n')]
+    return lines[1:-1]
+
+def card_aliases():
+    with open(configuration.get('card_alias_file'), newline='', encoding='utf-8') as f:
+        return list(csv.reader(f, dialect='excel-tab'))
+
+
+def card_price(cardname):
+    return internal.fetch_json('http://katelyngigante.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
+
+def cardhoarder_url(d):
+    cs = {}
+    for entry in d.maindeck + d.sideboard:
+        name = entry['card'].name
+        cs[name] = cs.get(name, 0) + entry['n']
+    deck_s = '||'.join([str(v) + ' ' + k.replace(' // ', '/').replace('"', '') for k, v in cs.items()])
+    return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=internal.escape(deck_s))
+
+def create_github_issue(title, author, repo='PennyDreadfulMTG/Penny-Dreadful-Tools'):
+    if configuration.get('github_user') is None or configuration.get('github_password') is None:
+        return None
+    if title is None or title == '':
+        return None
+    g = Github(configuration.get('github_user'), configuration.get('github_password'))
+    repo = g.get_repo(repo)
+    issue = repo.create_issue(title=title, body='Reported on Discord by {author}'.format(author=author))
+    return issue
+
+def decksite_url(path='/'):
+    hostname = configuration.get('decksite_hostname')
+    port = configuration.get('decksite_port')
+    if port != 80:
+        hostname = '{hostname}:{port}'.format(hostname=hostname, port=port)
+    return parse.urlunparse((configuration.get('decksite_protocol'), hostname, path, None, None, None))
+
+def legal_cards(force=False, season=None):
+    if season is None and os.path.exists('legal_cards.txt'):
+        print("HACK: Using local legal_cards override.")
+        h = open('legal_cards.txt')
+        legal = h.readlines()
+        h.close()
+        return [l.strip() for l in legal]
+    if season is None:
+        url = 'http://pdmtgo.com/legal_cards.txt'
+    else:
+        url = 'http://pdmtgo.com/{season}_legal_cards.txt'.format(season=season)
+    encoding = 'utf-8' if season != 'EMN' else 'latin-1' # EMN was encoded weirdly.
+    legal_txt = internal.fetch(url, encoding, force=force)
+    return legal_txt.strip().split('\n')
+
+def mtgjson_version():
+    return pkg_resources.parse_version(internal.fetch_json('https://mtgjson.com/json/version.json'))
+
+def mtgo_status():
+    try:
+        return internal.fetch_json('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php')['status']
+    except (FetchException, json.decoder.JSONDecodeError):
+        return 'UNKNOWN'
+
+def resources():
+    with open('decksite/resources.json') as resources_file:
+        return json.load(resources_file, object_pairs_hook=OrderedDict)
+
+def scryfall_cards():
+    url = 'https://api.scryfall.com/cards'
+    return internal.fetch_json(url)
 
 @stagger(0.1)
 def search_scryfall(query):
@@ -64,77 +149,7 @@ def search_scryfall(query):
             return scr_card['card_faces'][0]['name']
         return scr_card['name']
     result_cardnames = [get_frontside(obj) for obj in result_data]
-    cbn = oracle.cards_by_name()
-    return too_many_cards, [cbn[name] for name in result_cardnames]
-
-def legal_cards(force=False, season=None):
-    if season is None and os.path.exists('legal_cards.txt'):
-        print("HACK: Using local legal_cards override.")
-        h = open('legal_cards.txt')
-        legal = h.readlines()
-        h.close()
-        return [l.strip() for l in legal]
-    if season is None:
-        url = 'http://pdmtgo.com/legal_cards.txt'
-    else:
-        url = 'http://pdmtgo.com/{season}_legal_cards.txt'.format(season=season)
-    encoding = 'utf-8' if season != 'EMN' else 'latin-1' # EMN was encoded weirdly.
-    legal_txt = internal.fetch(url, encoding, force=force)
-    return legal_txt.strip().split('\n')
-
-def mtgjson_version():
-    return pkg_resources.parse_version(internal.fetch_json('https://mtgjson.com/json/version.json'))
-
-def mtgo_status():
-    try:
-        return internal.fetch_json('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php')['status']
-    except (FetchException, json.decoder.JSONDecodeError):
-        return 'UNKNOWN'
-
-def all_cards():
-    try:
-        return json.load(open('AllCards-x.json'))
-    except FileNotFoundError:
-        s = internal.unzip('https://mtgjson.com/json/AllCards-x.json.zip', 'AllCards-x.json')
-        return json.loads(s)
-
-def all_sets():
-    try:
-        return json.load(open('AllSets.json'))
-    except FileNotFoundError:
-        s = internal.unzip('https://mtgjson.com/json/AllSets.json.zip', 'AllSets.json')
-        return json.loads(s)
-
-def card_aliases():
-    with open(configuration.get('card_alias_file'), newline='', encoding='utf-8') as f:
-        return list(csv.reader(f, dialect='excel-tab'))
-
-def whatsinstandard():
-    return internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json')
-
-def card_price(cardname):
-    return internal.fetch_json('http://katelyngigante.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
-
-def resources():
-    with open('decksite/resources.json') as resources_file:
-        return json.load(resources_file, object_pairs_hook=OrderedDict)
-
-def create_github_issue(title, author, repo='PennyDreadfulMTG/Penny-Dreadful-Tools'):
-    if configuration.get('github_user') is None or configuration.get('github_password') is None:
-        return None
-    if title is None or title == '':
-        return None
-    g = Github(configuration.get('github_user'), configuration.get('github_password'))
-    repo = g.get_repo(repo)
-    issue = repo.create_issue(title=title, body='Reported on Discord by {author}'.format(author=author))
-    return issue
-
-def bugged_cards():
-    text = internal.fetch('https://pennydreadfulmtg.github.io/modo-bugs/bugs.tsv')
-    if text is None:
-        return None
-    lines = [l.split('\t') for l in text.split('\n')]
-    return lines[1:-1]
+    return too_many_cards, result_cardnames
 
 def sitemap():
     return internal.fetch_json(decksite_url('/api/sitemap/'))
@@ -153,21 +168,5 @@ def time(q):
         return no_results_msg
     return dtutil.now(dtutil.timezone(timezone_info['timeZoneId'])).strftime('%l:%M %p')
 
-def scryfall_cards():
-    url = 'https://api.scryfall.com/cards'
-    return internal.fetch_json(url)
-
-def decksite_url(path='/'):
-    hostname = configuration.get('decksite_hostname')
-    port = configuration.get('decksite_port')
-    if port != 80:
-        hostname = '{hostname}:{port}'.format(hostname=hostname, port=port)
-    return parse.urlunparse((configuration.get('decksite_protocol'), hostname, path, None, None, None))
-
-def cardhoarder_url(d):
-    cs = {}
-    for entry in d.maindeck + d.sideboard:
-        name = entry['card'].name
-        cs[name] = cs.get(name, 0) + entry['n']
-    deck_s = '||'.join([str(v) + ' ' + k.replace(' // ', '/').replace('"', '') for k, v in cs.items()])
-    return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=internal.escape(deck_s))
+def whatsinstandard():
+    return internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json')

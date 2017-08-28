@@ -11,7 +11,6 @@ from github import Github
 
 import magic.fetcher_internal as internal
 from magic.fetcher_internal import FetchException
-from magic import oracle #for card-by-name for scryfall
 from shared import configuration, dtutil
 
 
@@ -64,8 +63,7 @@ def search_scryfall(query):
             return scr_card['card_faces'][0]['name']
         return scr_card['name']
     result_cardnames = [get_frontside(obj) for obj in result_data]
-    cbn = oracle.cards_by_name()
-    return too_many_cards, [cbn[name] for name in result_cardnames]
+    return too_many_cards, result_cardnames
 
 def legal_cards(force=False, season=None):
     if season is None and os.path.exists('legal_cards.txt'):

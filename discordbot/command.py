@@ -178,9 +178,11 @@ Want to contribute? Send a Pull Request."""
         await bot.post_cards(cards, channel, author, additional_text)
 
     @cmd_header('Commands')
-    async def scryfall(self, bot, channel, args, author): #mything
+    async def scryfall(self, bot, channel, args, author):
         """`!scryfall {query}` search scryfall for the query."""
-        too_many, cards = fetcher.search_scryfall(args)
+        too_many, cardnames = fetcher.search_scryfall(args)
+        cbn = oracle.cards_by_name()
+        cards = [cbn[name] for name in cardnames]
         additional_text = 'There are too many cards, only a few are shown.\n' if too_many else ''
         if len(cards) > 10:
             additional_text += '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'

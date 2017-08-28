@@ -193,6 +193,7 @@ async def background_task_tournaments():
             if diff > 3600 * 6:
                 # The timer can afford to get off-balance by doing other background work.
                 await background_task_spoiler_season()
+                multiverse.update_bugged_cards()
 
         if timer < 300:
             timer = 300

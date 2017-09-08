@@ -393,7 +393,7 @@ Want to contribute? Send a Pull Request."""
         oracle.scryfall_import(sfcard['name'])
 
     @cmd_header('Commands')
-    async def time(self, bot, channel, args, author):
+    async def time(self, bot, channel, args):
         """`!time {location}` Show the current time in the specified location."""
         t = fetcher.time(args.strip())
         await bot.client.send_message(channel, '{args}: {time}'.format(args=args, time=t))

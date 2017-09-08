@@ -14,7 +14,7 @@ from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
 from decksite.charts import chart
 from decksite.league import ReportForm, SignUpForm
-from decksite.views import About, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Report, Resources, Rotation, Season, SignUp, Tournaments, Unauthorized
+from decksite.views import About, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Rotation, Season, SignUp, Tournaments, Unauthorized
 
 # Decks
 
@@ -252,6 +252,12 @@ def post_matches():
     if request.form.get('match_id') is not None:
         lg.delete_match(request.form.get('match_id'))
     return edit_matches()
+
+@APP.route('/admin/prizes/')
+def prizes():
+    comps = comp.load_competitions("c.competition_type_id IN (SELECT id FROM competition_type WHERE name = 'Gatherling') AND c.start_date > UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK)")
+    view = Prizes(comps)
+    return view.page()
 
 # OAuth
 

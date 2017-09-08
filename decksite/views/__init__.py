@@ -17,6 +17,7 @@ from .league_info import LeagueInfo
 from .not_found import NotFound
 from .people import People
 from .person import Person
+from .prizes import Prizes
 from .report import Report
 from .resources import Resources
 from .rotation import Rotation

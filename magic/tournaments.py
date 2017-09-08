@@ -1,3 +1,5 @@
+import sys
+
 from dateutil import rrule
 
 from shared import dtutil
@@ -26,4 +28,16 @@ def next_tournament_info():
         'pdm_time': pdm_time,
         'pds_time': pds_time,
         'pdt_time': pdt_time
-        }
+    }
+
+def prize(d):
+    f = d.get('finish') or sys.maxsize
+    if f == 1:
+        return 4
+    elif f == 2:
+        return 3
+    elif f <= 4:
+        return 2
+    elif f <= 8:
+        return 1
+    return 0

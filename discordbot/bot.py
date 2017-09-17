@@ -174,7 +174,7 @@ async def background_task_tournaments():
         info = tournaments.next_tournament_info()
         diff = info['next_tournament_time_precise']
         if diff <= 14400:
-            embed = discord.Embed(title=info['next_tournament_name'], description='Starting in {0}.'.format(info['next_tournament_time']), colour=0xDEADBF)
+            embed = discord.Embed(title=info['next_tournament_name'], description='Starting in {0}.'.format(dtutil.display_time(diff, 2)), colour=0xDEADBF)
             embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
             await BOT.client.send_message(channel, embed=embed)
 

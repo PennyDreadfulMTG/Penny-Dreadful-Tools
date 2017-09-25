@@ -137,11 +137,14 @@ class Commands:
 Suggestions/bug reports: <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues/>
 
 Want to contribute? Send a Pull Request."""
-        await bot.client.send_message(channel, msg)
+        if len(msg) > 2000:
+            await bot.client.send_message(channel, msg[0:1999] + '…')
+        else:
+            await bot.client.send_message(channel, msg)
 
     @cmd_header('Commands')
     async def random(self, bot, channel, args):
-        """`!random` Request a random PD legal card
+        """`!random` Request a random PD legal card.
 `!random X` Request X random PD legal cards."""
         number = 1
         if len(args) > 0:
@@ -306,16 +309,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def resources(self, bot, channel, args):
-        """`!resources {args}` Link to useful pages related to `args`.
-           Specifically – look for a section of pennydreadfulmagic.com that fits the description in {args}
-           and links that match in /resources/.
-           Examples:
-               `!resources tournaments`
-               `!resources card Hymn to Tourach`
-               `!resources deck check`
-               `!resources league`
-               `!resources`
-            """
+        """`!resources {args}` Link to useful pages related to `args`. Examples: 'tournaments', 'card Hymn to Tourach', 'deck check', 'league'."""
         results = {}
         if len(args) > 0:
             results.update(resources_resources(args))
@@ -353,8 +347,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def bug(self, bot, channel, args, author):
-        """Report a bug/task for the Penny Dreadful Tools team.
-        For MTGO bugs see `!modobug`."""
+        """Report a bug/task for the Penny Dreadful Tools team. For MTGO bugs see `!modobug`."""
         await bot.client.send_typing(channel)
         issue = fetcher.create_github_issue(args, author)
         if issue is None:
@@ -374,12 +367,12 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def invite(self, bot, channel):
-        """Invite me to your server"""
+        """Invite me to your server."""
         await bot.client.send_message(channel, "Invite me to your discord server by clicking this link: <https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=0>")
 
     @cmd_header('Commands')
     async def spoiler(self, bot, channel, args, author):
-        """`!spoiler {cardname}`: Request a card from an upcoming set"""
+        """`!spoiler {cardname}`: Request a card from an upcoming set."""
         if len(args) == 0:
             return await bot.client.send_message(channel, '{author}: Please specify a card name.'.format(author=author.mention))
         sfcard = fetcher.internal.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=args))
@@ -407,7 +400,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def google(self, bot, channel, args, author):
-        """`!google {args}` Search google for `{args}`."""
+        """`!google {args}` Search google for `args`."""
         await bot.client.send_typing(channel)
         if len(args.strip()) == 0:
             return await bot.client.send_message(channel, '{author}: Please let me know what you want to search on Google.'.format(author=author.mention))
@@ -415,9 +408,7 @@ Want to contribute? Send a Pull Request."""
             # We set TERM here because of some weirdness around readline and shell commands. Stops `ESC[?1034h` appearing on the end of STDOUT when TERM=xterm. See https://bugzilla.redhat.com/show_bug.cgi?id=304181 or google the escape sequence if you are super curious.
             env = {**os.environ, 'TERM': 'vt100'}
             result = subprocess.run(['googler', '--json', '-n1'] + args.split(), stdout=subprocess.PIPE, check=True, env=env, universal_newlines=True)
-            print(result)
             r = json.loads(result.stdout.strip())[0]
-            print(r)
             s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['url'], abstract=r['abstract'])
             await bot.client.send_message(channel, s)
         except IndexError as e:
@@ -432,16 +423,14 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def tournament(self, bot, channel):
-        """!tournament` Get information about the next tournament."""
+        """`!tournament` Get information about the next tournament."""
         t = tournaments.next_tournament_info()
         await bot.client.send_message(channel, 'The next tournament is {name} in {time}.\nSign up on <http://gatherling.com/>.\nMore information: {url}'.format(name=t['next_tournament_name'], time=t['next_tournament_time'], url=fetcher.decksite_url('/tournaments/')))
 
     @cmd_header('Commands')
     async def explain(self, bot, channel, args):
-        """
-            `!explain`. Get a list of things the bot knows how to explain.
-            `!explain {thing}`. Print commonly needed explanation for 'thing'.
-        """
+        """`!explain`. Get a list of things the bot knows how to explain.
+`!explain {thing}`. Print commonly needed explanation for 'thing'."""
         explanations = {
             'decklists': [
                 """

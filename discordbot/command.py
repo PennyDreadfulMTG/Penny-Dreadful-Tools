@@ -255,30 +255,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def price(self, bot, channel, args, author):
         """`!price {name}` Get price information about the named card."""
-        def price_info(c):
-            try:
-                p = fetcher.card_price(c.name)
-            except fetcher.FetchException:
-                return "Price unavailable"
-            if p is None:
-                return "Not available online"
-            # Currently disabled
-            s = '{price}'.format(price=format_price(p['price']))
-            if float(p['low']) <= 0.05:
-                s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))
-                if float(p['low']) <= 0.01:
-                    s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(float(p['week']) * 100.0), month=round(float(p['month']) * 100.0), season=round(float(p['season']) * 100.0))
-                s += ')'
-            age = dtutil.dt2ts(dtutil.now()) - p['time']
-            if age > 60 * 60 * 2:
-                s += '\nWARNING: price information is {display} old'.format(display=dtutil.display_time(age, 1))
-            return s
-        def format_price(p):
-            if p is None:
-                return 'Unknown'
-            dollars, cents = str(round(float(p), 2)).split('.')
-            return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
-        await single_card_text(bot, channel, args, author, price_info)
+        await single_card_text(bot, channel, args, author, fetcher.card_price_string)
 
     @cmd_header('Commands')
     async def legal(self, bot, channel, args, author):

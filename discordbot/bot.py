@@ -78,7 +78,7 @@ class Bot:
             if disable_emoji:
                 legal = ''
             if card.mode == '$':
-                text = '{name} — {legal}{price}'.format(name=card.name, price=fetcher.card_price_string(card), legal=legal)
+                text = '{name} {legal} — {price}'.format(name=card.name, price=fetcher.card_price_string(card), legal=legal)
             else:
                 text = '{name} {mana} — {type}{legal}'.format(name=card.name, mana=mana, type=card.type, legal=legal)
             if card.bug_desc is not None:

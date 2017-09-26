@@ -77,7 +77,7 @@ class Bot:
             legal = ' — ' + emoji.legal_emoji(card, True)
             if disable_emoji:
                 legal = ''
-            if card.mode == '$':
+            if card.get('mode', None) == '$':
                 text = '{name} {legal} — {price}'.format(name=card.name, price=fetcher.card_price_string(card), legal=legal)
             else:
                 text = '{name} {mana} — {type}{legal}'.format(name=card.name, mana=mana, type=card.type, legal=legal)
@@ -87,7 +87,7 @@ class Bot:
                 if card.bug_last_confirmed < now_ts - 60 * 60 * 24 * 60:
                     text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(now_ts - card.bug_last_confirmed, 1))
         else:
-            text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.legal_emoji(card)) if not disable_emoji else ''), price=((fetcher.card_price_string(card, True)) if card.mode == '$' else '')) for card in cards)
+            text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.legal_emoji(card)) if not disable_emoji else ''), price=((fetcher.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
             text += more_text
         if len(cards) > 10:
             image_file = None

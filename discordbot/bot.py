@@ -77,14 +77,17 @@ class Bot:
             legal = ' — ' + emoji.legal_emoji(card, True)
             if disable_emoji:
                 legal = ''
-            text = '{name} {mana} — {type}{legal}'.format(name=card.name, mana=mana, type=card.type, legal=legal)
+            if card.mode == '$':
+                text = '{name} — {legal}{price}'.format(name=card.name, price=fetcher.card_price_string(card), legal=legal)
+            else:
+                text = '{name} {mana} — {type}{legal}'.format(name=card.name, mana=mana, type=card.type, legal=legal)
             if card.bug_desc is not None:
                 text += '\n:beetle:{rank} bug: {bug}'.format(bug=card.bug_desc, rank=card.bug_class)
                 now_ts = dtutil.dt2ts(dtutil.now())
                 if card.bug_last_confirmed < now_ts - 60 * 60 * 24 * 60:
                     text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(now_ts - card.bug_last_confirmed, 1))
         else:
-            text = ', '.join('{name} {legal}'.format(name=card.name, legal=(emoji.legal_emoji(card)) if not disable_emoji else '') for card in cards)
+            text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.legal_emoji(card)) if not disable_emoji else ''), price=((fetcher.card_price_string(card, True)) if card.mode == '$' else '')) for card in cards)
             text += more_text
         if len(cards) > 10:
             image_file = None

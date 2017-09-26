@@ -56,6 +56,32 @@ def card_aliases():
 def card_price(cardname):
     return internal.fetch_json('http://katelyngigante.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
 
+def card_price_string(card, short=False):
+    def price_info(c):
+        try:
+            p = card_price(c.name)
+        except FetchException:
+            return "Price unavailable"
+        if p is None:
+            return "Not available online"
+        # Currently disabled
+        s = '{price}'.format(price=format_price(p['price']))
+        if float(p['low']) <= 0.05:
+            s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))
+            if float(p['low']) <= 0.01 and not short:
+                s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(float(p['week']) * 100.0), month=round(float(p['month']) * 100.0), season=round(float(p['season']) * 100.0))
+            s += ')'
+        age = dtutil.dt2ts(dtutil.now()) - p['time']
+        if age > 60 * 60 * 2:
+            s += '\nWARNING: price information is {display} old'.format(display=dtutil.display_time(age, 1))
+        return s
+    def format_price(p):
+        if p is None:
+            return 'Unknown'
+        dollars, cents = str(round(float(p), 2)).split('.')
+        return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
+    return price_info(card)
+
 def cardhoarder_url(d):
     cs = {}
     for entry in d.maindeck + d.sideboard:

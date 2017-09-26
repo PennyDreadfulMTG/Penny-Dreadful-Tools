@@ -107,6 +107,11 @@ def cards_from_query(query, fuzziness_threshold=260):
     if len(query) <= 2:
         return []
 
+    mode = 0
+    if query.startswith('$'):
+        mode = '$'
+        query = query[1:]
+
     query = card.canonicalize(query)
 
     # If we searched for an alias, change query so we can find the card in the results.
@@ -120,6 +125,7 @@ def cards_from_query(query, fuzziness_threshold=260):
     # First look for an exact match.
     results = []
     for c in cards:
+        c.mode = mode
         if query == card.canonicalize(c.name):
             results.append(c)
     if len(results) > 0:

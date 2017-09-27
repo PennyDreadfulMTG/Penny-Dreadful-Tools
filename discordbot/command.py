@@ -14,7 +14,7 @@ from typing import List
 
 from discordbot import emoji
 from find import search
-from magic import card, oracle, fetcher, rotation, multiverse, tournaments
+from magic import card, database, oracle, fetcher, rotation, multiverse, tournaments
 from shared import configuration, dtutil
 
 async def respond_to_card_names(message, bot):
@@ -494,6 +494,13 @@ Want to contribute? Send a Pull Request."""
             s += '{k}: {v}\n'.format(k=k, v=explanations[word][1][k])
         await bot.client.send_message(channel, s)
 
+    @cmd_header('Developer')
+    async def version(self, bot, channel):
+        """Display the current version numbers"""
+        await bot.client.send_typing(channel)
+        commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+        mtgjson = database.version()
+        return await bot.client.send_message(channel, "I am currently running mtgbot version `{commit}`, and mtgjson version `{mtgjson}`".format(commit=commit, mtgjson=mtgjson))
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards):

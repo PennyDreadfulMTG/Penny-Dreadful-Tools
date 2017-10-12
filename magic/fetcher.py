@@ -169,9 +169,7 @@ def search_scryfall(query):
         """If card is transform, returns first name. Otherwise, returns name.
         This is to make sure cards are later found in the database"""
         #not sure how to handle meld cards
-        if scr_card['layout'] == 'transform':
-            return scr_card['card_faces'][0]['name']
-        if scr_card['layout'] == 'flip':
+        if scr_card['layout'] in ['transform', 'flip']:
             return scr_card['card_faces'][0]['name']
         return scr_card['name']
     result_cardnames = [get_frontside(obj) for obj in result_data]

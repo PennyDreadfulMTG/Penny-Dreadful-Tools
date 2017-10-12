@@ -154,7 +154,7 @@ def search_scryfall(query):
         print('Error fetching scryfall data:\n', result_json)
         return False, []
     for warning in result_json.get('warnings', []): #scryfall-provided human-readable warnings
-        print(warning)
+        print(warning) # Why aren't we displaying these to the user?
     too_many_cards = result_json['total_cards'] > max_n_queries * 60
     result_data = result_json['data']
     for _ in range(max_n_queries - 1): #fetch the remaining pages
@@ -170,7 +170,7 @@ def search_scryfall(query):
         This is to make sure cards are later found in the database"""
         #not sure how to handle meld cards
         if scr_card['layout'] == 'transform':
-            return scr_card['all_parts'][0]['name']
+            return scr_card['card_faces'][0]['name']
         if scr_card['layout'] == 'flip':
             return scr_card['card_faces'][0]['name']
         return scr_card['name']

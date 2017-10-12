@@ -56,9 +56,10 @@ async def handle_command(message, bot):
                 await method(Commands)
         except Exception as e: # pylint: disable=broad-except
             print('Caught exception processing command `{cmd}`'.format(cmd=message.content))
-            print(traceback.format_exc())
+            tb = traceback.format_exc()
+            print(tb)
             await bot.client.send_message(message.channel, '{author}: I know the command `{cmd}` but I could not do that.'.format(cmd=parts[0], author=message.author.mention))
-            await getattr(Commands, 'bug')(Commands, bot, message.channel, 'Command failed with {c}: {cmd}'.format(c=e.__class__.__name__, cmd=message.content), message.author)
+            await getattr(Commands, 'bug')(Commands, bot, message.channel, 'Command failed with {c}: {cmd}\n\n```\n{tb}\n```'.format(c=e.__class__.__name__, cmd=message.content, tb=tb), message.author)
     else:
         await bot.client.send_message(message.channel, '{author}: Unknown command `{cmd}`. Try `!help`?'.format(cmd=parts[0], author=message.author.mention))
 

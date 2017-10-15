@@ -1,3 +1,5 @@
+import datetime
+
 from magic import fetcher
 from shared import dtutil
 
@@ -20,6 +22,11 @@ def last_rotation_ex():
 def next_rotation_ex():
     return min([s for s in SETS if s['enter_date'] > dtutil.now()], key=lambda s: s['enter_date'])
 
+def next_supplemental():
+    last = last_rotation() + datetime.timedelta(weeks=3)
+    if last > dtutil.now():
+        return last
+    return next_rotation() + datetime.timedelta(weeks=3)
 
 def parse_rotation_date(setinfo):
     setinfo['enter_date'] = dtutil.parse(setinfo['enter_date'], '%Y-%m-%dT%H:%M:%S.%fZ', dtutil.WOTC_TZ)

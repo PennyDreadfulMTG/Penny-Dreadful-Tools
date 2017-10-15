@@ -25,6 +25,8 @@ def setup_session(url):
         authorization_response=url)
     session['oauth2_token'] = token
     discord = make_session(token=session.get('oauth2_token'))
+    user = discord.get(API_BASE_URL + '/users/@me').json()
+    session['id'] = user['id']
     guilds = discord.get(API_BASE_URL + '/users/@me/guilds').json()
     for guild in guilds:
         if guild['id'] == configuration.get('guild_id'):
@@ -47,6 +49,14 @@ def make_session(token=None, state=None, scope=None):
 def token_updater(token):
     session['oauth2_token'] = token
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get('id') is None:
+            return redirect(url_for('authenticate', target=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
+
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -59,6 +69,7 @@ def admin_required(f):
 
 def logout():
     session['admin'] = None
+    session['id'] = None
 
 def redirect_uri():
     uri = url_for('authenticate_callback', _external=True)

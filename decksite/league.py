@@ -94,6 +94,17 @@ class ReportForm(Form):
         if self.entry == self.opponent:
             self.errors['opponent'] = "You can't play yourself"
 
+class RetireForm(Form):
+    def __init__(self, form, deck_id=None):
+        super().__init__(form)
+        decks = active_decks()
+        self.entry_options = deck_options(decks, self.get('entry', deck_id))
+
+    def do_validation(self):
+        if len(self.entry) == 0:
+            self.errors['entry'] = 'Please select your deck'
+        print(self.errors)
+
 def signup(form):
     form.mtgo_username = form.mtgo_username.strip()
     form.name = form.name.strip()

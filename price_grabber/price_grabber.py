@@ -19,6 +19,9 @@ def fetch():
     url = 'https://www.mtggoldfish.com/prices/select'
     s = fetcher_internal.fetch(url)
     sets = parse_sets(s) + ['TD0', 'TD2'] # Theme decks pages not linked from /prices/select
+    for s in ['PD2', 'PD3']: # Fake sets that appear in the index
+        sets.remove(s)
+
     for code in sets:
         for suffix in ['', '_F']:
             if code == 'PZ2' and suffix == '_F':

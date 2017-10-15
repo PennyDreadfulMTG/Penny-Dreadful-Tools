@@ -52,6 +52,8 @@ class View:
         ]
         if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7):
             menu += [{'name': 'Rotation', 'url': url_for('rotation')}]
+        elif (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
+            menu += [{'name': 'Supplemental Rotation', 'url': url_for('rotation')}]            
         menu += [
             {'name': 'About', 'url': url_for('about')},
             {'name': 'League', 'url': url_for('league'), 'has_submenu': True, 'submenu': [

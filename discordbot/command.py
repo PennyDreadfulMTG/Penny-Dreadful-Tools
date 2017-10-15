@@ -242,11 +242,11 @@ Want to contribute? Send a Pull Request."""
     async def rotation(self, bot, channel):
         """`!rotation` Give the date of the next Penny Dreadful rotation."""
         next_rotation = rotation.next_rotation()
+        next_supplemental = rotation.next_supplemental()
         now = dtutil.now()
-        if next_rotation > now:
-            diff = next_rotation - now
-            msg = "The next rotation is in {diff}".format(diff=dtutil.display_time(diff.total_seconds()))
-            await bot.client.send_message(channel, msg)
+        diff = min(next_rotation - now, next_supplemental - now)
+        msg = "The next rotation is in {diff}".format(diff=dtutil.display_time(diff.total_seconds()))
+        await bot.client.send_message(channel, msg)
 
     @cmd_header('Commands')
     async def _oracle(self, bot, channel, args, author):

@@ -52,5 +52,10 @@ def set_decks(people):
     for d in decks:
         people_by_id[d.person_id].decks.append(d)
 
+def associate(d, discord_id):
+    person = guarantee.exactly_one(load_people('d.id = {deck_id}'.format(deck_id=sqlescape(d.id))))
+    sql = 'UPDATE person SET discord_id = ? WHERE id = ?'
+    return db().execute(sql, [discord_id, person.id])
+
 class Person(Container):
     pass

@@ -20,6 +20,7 @@ from .person import Person
 from .prizes import Prizes
 from .report import Report
 from .resources import Resources
+from .retire import Retire
 from .rotation import Rotation
 from .season import Season
 from .signup import SignUp

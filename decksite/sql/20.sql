@@ -1,0 +1,1 @@
+ALTER TABLE person ADD COLUMN discord_id NVARCHAR(25) UNIQUE;

@@ -1,0 +1,18 @@
+<section>
+    <h2>{{subtitle}}</h2>
+    {{> league_header}}
+    <form method="post">
+        <div>
+            <label for="entry">Deck to Retire</label>
+            <select class="{{#form.errors.entry}}error {{/form.errors.entry}}deckselect" name="entry" id="entry">
+                <option value="">Choose …</option>
+                {{#form.entry_options}}
+                    <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{text}}</option>
+                {{/form.entry_options}}
+            </select>
+            <div class="error">{{form.errors.entry}}</div>
+        </div>
+        <button type="submit">Retire</button>
+    </form>
+    {{> contact}}
+</section>

@@ -13,8 +13,8 @@ from decksite import APP
 from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
 from decksite.charts import chart
-from decksite.league import ReportForm, SignUpForm
-from decksite.views import About, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Rotation, Season, SignUp, Tournaments, Unauthorized
+from decksite.league import ReportForm, RetireForm, SignUpForm
+from decksite.views import About, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, Season, SignUp, Tournaments, Unauthorized
 
 # Decks
 
@@ -199,6 +199,25 @@ def add_report():
         return response
     return report(form)
 
+@APP.route('/retire/')
+@auth.login_required
+def retire(form=None):
+    if form is None:
+        form = RetireForm(request.form, request.cookies.get('deck_id', ''))
+    view = Retire(form)
+    return view.page()
+
+@APP.route('/retire/', methods=['POST'])
+@auth.login_required
+def do_claim():
+    form = RetireForm(request.form)
+    if form.validate():
+        d = deck.load_deck(form.entry)
+        ps.associate(d, session['id'])
+        lg.retire_deck(d)
+        return redirect(url_for('decks', deck_id=form.entry))
+    return retire(form)
+
 # Admin
 
 @APP.route('/querytappedout/')
@@ -287,7 +306,7 @@ def unauthorized(error=None):
     return view.page()
 
 @APP.route('/logout/')
-def authenticate_logout():
+def logout():
     auth.logout()
     return redirect(url_for('home'))
 

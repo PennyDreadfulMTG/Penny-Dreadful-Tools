@@ -251,7 +251,7 @@ Want to contribute? Send a Pull Request."""
         sdiff = next_supplemental - now
         diff = next_rotation - now
         if sdiff < diff:
-            msg = "The next supplemental rotation is in {sdiff} (The next full rotation is in {diff})".format(diff=dtutil.display_time(diff.total_seconds()), sdiff=dtutil.display_time(sdiff.total_seconds()))
+            msg = "The supplemental rotation is in {sdiff} (The next full rotation is in {diff})".format(diff=dtutil.display_time(diff.total_seconds()), sdiff=dtutil.display_time(sdiff.total_seconds()))
         else:
             msg = "The next rotation is in {diff}".format(diff=dtutil.display_time(diff.total_seconds()))
         await bot.client.send_message(channel, msg)

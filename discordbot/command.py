@@ -184,9 +184,13 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def scryfall(self, bot, channel, args, author):
         """`!scryfall {query}` search scryfall for the query."""
+        await bot.client.send_typing(channel)
         too_many, cardnames = fetcher.search_scryfall(args)
         cbn = oracle.cards_by_name()
-        cards = [cbn[name] for name in cardnames]
+        def import_sf(name):
+            if oracle.scryfall_import(name):
+                return oracle.load_card(name)
+        cards = [cbn.get(name, import_sf(name)) for name in cardnames]
         additional_text = 'There are too many cards, only a few are shown.\n' if too_many else ''
         if len(cards) > 10:
             additional_text += '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'
@@ -247,7 +251,7 @@ Want to contribute? Send a Pull Request."""
         sdiff = next_supplemental - now
         diff = next_rotation - now
         if sdiff < diff:
-            msg = "The next supplemental rotation is in {sdiff} (The next full rotation is in {diff})".format(diff=dtutil.display_time(diff.total_seconds()), sdiff=dtutil.display_time(sdiff.total_seconds()))
+            msg = "The supplemental rotation is in {sdiff} (The next full rotation is in {diff})".format(diff=dtutil.display_time(diff.total_seconds()), sdiff=dtutil.display_time(sdiff.total_seconds()))
         else:
             msg = "The next rotation is in {diff}".format(diff=dtutil.display_time(diff.total_seconds()))
         await bot.client.send_message(channel, msg)

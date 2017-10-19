@@ -97,7 +97,12 @@ def create_github_issue(title, author, repo='PennyDreadfulMTG/Penny-Dreadful-Too
         return None
     g = Github(configuration.get('github_user'), configuration.get('github_password'))
     repo = g.get_repo(repo)
-    issue = repo.create_issue(title=title, body='Reported on Discord by {author}'.format(author=author))
+    body = ''
+    if '\n' in title:
+        title, body = title.split('\n', 1)
+        body += '\n\n'
+    body += 'Reported on Discord by {author}'.format(author=author)
+    issue = repo.create_issue(title=title, body=body)
     return issue
 
 def decksite_url(path='/'):

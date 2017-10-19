@@ -221,7 +221,7 @@ Want to contribute? Send a Pull Request."""
         """`!rhinos` Anything can be a rhino if you try hard enough"""
         rhinos = []
         rhino_name = "Siege Rhino"
-        if random.random() < 0.1:
+        if random.random() < 0.05:
             rhino_name = "Abundant Maw"
         rhinos.extend(oracle.cards_from_query(rhino_name))
         def find_rhino(query):
@@ -244,8 +244,12 @@ Want to contribute? Send a Pull Request."""
         next_rotation = rotation.next_rotation()
         next_supplemental = rotation.next_supplemental()
         now = dtutil.now()
-        diff = min(next_rotation - now, next_supplemental - now)
-        msg = "The next rotation is in {diff}".format(diff=dtutil.display_time(diff.total_seconds()))
+        sdiff = next_supplemental - now
+        diff = next_rotation - now
+        if sdiff < diff:
+            msg = "The next supplemental rotation is in {sdiff} (The next full rotation is in {diff})".format(diff=dtutil.display_time(diff.total_seconds()), sdiff=dtutil.display_time(sdiff.total_seconds()))
+        else:
+            msg = "The next rotation is in {diff}".format(diff=dtutil.display_time(diff.total_seconds()))
         await bot.client.send_message(channel, msg)
 
     @cmd_header('Commands')

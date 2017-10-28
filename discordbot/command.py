@@ -510,6 +510,13 @@ Want to contribute? Send a Pull Request."""
                     'More Info': fetcher.decksite_url('/tournaments/'),
                     'Sign Up': 'http://gatherling.com/',
                 }
+            ],
+            'username': [
+                """
+                Please change your Discord username to include your MTGO username so we can know who you are.
+                To change, right-click your username.
+                This will not affect any other Discord channel.
+                """
             ]
         }
         keys = sorted(explanations.keys())

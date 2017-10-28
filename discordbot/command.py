@@ -436,6 +436,7 @@ Want to contribute? Send a Pull Request."""
                 Legality is determined at the release of a Standard-legal set on MTGO.
                 Prices are checked every hour for a week. Anything 1c or less for half or more of all checks is legal for the season.
                 Cards from the just-released set are added (nothing removed) a couple of weeks later via a supplemental rotation after prices have settled a little.
+                Any version of a card on the legal cards list is legal.
                 """,
                 {
                     'Deck Checker': 'http://pdmtgo.com/deck_check.html',

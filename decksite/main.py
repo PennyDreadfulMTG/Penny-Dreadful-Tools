@@ -85,10 +85,10 @@ def archetypes():
     view = Archetypes(archs.load_archetypes_deckless())
     return view.page()
 
-@APP.route('/archetypes/<archetype_id>/')
+@APP.route('/archetypes/<archetype>/')
 @cached()
-def archetype(archetype_id):
-    a = archs.load_archetype(archetype_id)
+def archetype(archetype):
+    a = archs.load_archetype(archetype.replace('+', ' '))
     view = Archetype(a, archs.load_archetypes_deckless_for(a.id), archs.load_matchups(a.id))
     return view.page()
 

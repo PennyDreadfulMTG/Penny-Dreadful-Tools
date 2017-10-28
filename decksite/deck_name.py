@@ -4,6 +4,19 @@ import titlecase
 
 from magic import mana
 
+WHITELIST = [
+    'a red deck but not a net deck',
+    'better red than dead',
+    "is it izzet or isn't it?"
+]
+
+ABBREVIATIONS = {
+    'rdw': 'red deck wins',
+    'ww': 'white weenie',
+    'muc': 'mono blue control',
+    'mbc': 'mono black control',
+}
+
 COLOR_COMBINATIONS = {
     'White': ['W'],
     'Blue': ['U'],
@@ -41,20 +54,25 @@ COLOR_COMBINATIONS = {
 def normalize(d):
     name = d.name
     name = name.lower()
-    name = replace_underscores(name)
+    name = replace_space_alternatives(name)
     name = remove_pd(name)
     name = remove_hashtags(name)
     name = remove_brackets(name)
-    name = expand_common_abbreviations(name)
-    removed_colors = False
-    without_colors = remove_colors(name)
-    if name != without_colors:
-        removed_colors = True
-    name = without_colors
-    if name == '' and d.get('archetype'):
-        name = d.archetype
-    if removed_colors or name == '':
-        name = prepend_colors(name, d.colors)
+    unabbreviated = expand_common_abbreviations(name)
+    if unabbreviated != name:
+        name = unabbreviated
+    elif name in WHITELIST:
+        pass
+    else:
+        removed_colors = False
+        without_colors = remove_colors(name)
+        if name != without_colors:
+            removed_colors = True
+        name = without_colors
+        if name == '' and d.get('archetype'):
+            name = d.archetype
+        if removed_colors or name == '':
+            name = prepend_colors(name, d.colors)
     name = ucase_trailing_roman_numerals(name)
     return titlecase.titlecase(name)
 
@@ -64,14 +82,16 @@ def file_name(d):
     safe_name = re.sub('[^0-9a-z-]', '', safe_name, flags=re.IGNORECASE)
     return safe_name.strip('-')
 
-def replace_underscores(name):
-    return name.replace('_', ' ')
+def replace_space_alternatives(name):
+    return name.replace('_', ' ').replace('.', ' ')
 
 def remove_pd(name):
     name = re.sub(r'(^| )[\[\(]?pd[hmst]?[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny ?dreadful (sunday|monday|thursday)[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny ?dreadful[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(]?season ?[0-9]+[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(]?S[0-9]+[\[\(]?', '', name, flags=re.IGNORECASE).strip()
     return name
 
 def remove_hashtags(name):
@@ -82,13 +102,15 @@ def remove_brackets(name):
     return re.sub(r'\[[^\]]*\]', '', name).strip()
 
 def remove_colors(name):
-    patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*', 'Mono'] + list(COLOR_COMBINATIONS.keys())
+    patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*', 'Mono', 'Mono-?[WURBRG]', 'Mono-?(White|Blue|Black|Red|Green)'] + list(COLOR_COMBINATIONS.keys())
     for pattern in patterns:
         name = re.sub('(^| ){pattern}( |$)'.format(pattern=pattern), ' ', name, flags=re.IGNORECASE).strip()
     return name
 
 def expand_common_abbreviations(name):
-    return name.replace('rdw', 'red deck wins').replace('ww', 'white weenie').replace('muc', 'mono blue control').replace('mbc', 'mono black control')
+    for abbreviation, expansion in ABBREVIATIONS.items():
+        name = name.replace(abbreviation, expansion)
+    return name
 
 def prepend_colors(s, colors):
     colors_part = name_from_colors(colors, s)

@@ -364,9 +364,12 @@ Want to contribute? Send a Pull Request."""
         oracle.scryfall_import(sfcard['name'])
 
     @cmd_header('Commands')
-    async def time(self, bot, channel, args):
+    async def time(self, bot, channel, args, author):
         """`!time {location}` Show the current time in the specified location."""
-        t = fetcher.time(args.strip())
+        try:
+            t = fetcher.time(args.strip())
+        except TooFewItemsException:
+            return await bot.client.send_mesage(channel, '{author}: Location not found.')
         await bot.client.send_message(channel, '{args}: {time}'.format(args=args, time=t))
 
     @cmd_header('Commands')

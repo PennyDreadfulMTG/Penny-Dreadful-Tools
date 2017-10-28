@@ -588,6 +588,8 @@ def site_resources(args):
         area, detail = args.strip().split(' ', 1)
     else:
         area, detail = args.strip(), ''
+    if area == 'archetype':
+        area = 'archetypes'
     if area == 'card':
         area = 'cards'
     if area == 'person':

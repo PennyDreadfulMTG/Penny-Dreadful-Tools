@@ -1,6 +1,6 @@
 from decksite.data import deck
 
-from magic import legality, oracle
+from magic import legality, oracle, rotation
 
 def test_legal_formats():
     swamp = oracle.load_card('Swamp')
@@ -52,3 +52,8 @@ def test_legal_formats():
     assert 'Legacy' in formats
     assert 'Vintage' in formats
     assert 'Penny Dreadful' in formats
+
+def test_seasons_enum_uptodate():
+    """If this is failing, go append new set codes to legality.SEASONS.
+       This needs to be done every few months."""
+    assert rotation.next_rotation_ex()['code'] in legality.SEASONS

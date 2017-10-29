@@ -155,6 +155,7 @@ class View:
             c.display_date = dtutil.display_date(c.start_date)
             c.ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
             c.date_sort = dtutil.dt2ts(c.start_date)
+            c.league = True if c.type == 'League' else False
 
     def prepare_people(self):
         for p in getattr(self, 'people', []):

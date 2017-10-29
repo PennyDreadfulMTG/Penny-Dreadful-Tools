@@ -1,5 +1,9 @@
 <section>
     <h2>{{name}}</h2>
+    {{#league}}
+    <p>Sponsored by <a href="http:///mtgotraders.com/">MTGO Traders</a></p>
+    <p>If you complete a five match league run for the first time you will get 1 tik credit with MTGO Traders.</p>
+    {{/league}}
     {{#ends}}<p><i>Ends {{ends}}.</i></p>{{/ends}}
     {{> decks}}
 </section>

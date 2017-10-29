@@ -22,6 +22,7 @@ from .report import Report
 from .resources import Resources
 from .retire import Retire
 from .rotation import Rotation
+from .rotation_checklist import RotationChecklist
 from .season import Season
 from .signup import SignUp
 from .tournament_hosting import TournamentHosting

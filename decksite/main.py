@@ -284,6 +284,11 @@ def prizes():
     view = Prizes(comps)
     return view.page()
 
+@APP.route('/admin/rotation/')
+def rotation_checklist():
+    view = RotationChecklist()
+    return view.page()
+
 # OAuth
 
 @APP.route('/authenticate/')

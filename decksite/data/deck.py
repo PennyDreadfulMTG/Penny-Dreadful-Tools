@@ -322,7 +322,7 @@ def load_decks_by_cards(names):
             FROM deck_card
             WHERE card IN ({names})
             GROUP BY deck_id
-            HAVING COUNT(card) = {n})
+            HAVING COUNT(DISTINCT card) = {n})
         """.format(n=len(names), names=', '.join(map(sqlescape, names)))
     return load_decks(sql)
 

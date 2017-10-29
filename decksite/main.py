@@ -14,7 +14,7 @@ from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
 from decksite.charts import chart
 from decksite.league import ReportForm, RetireForm, SignUpForm
-from decksite.views import About, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, Season, SignUp, TournamentHosting, Tournaments, Unauthorized
+from decksite.views import About, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChecklist, Season, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
 
 # Decks
 
@@ -102,6 +102,12 @@ def tournaments():
 @cached()
 def hosting():
     view = TournamentHosting()
+    return view.page()
+
+@APP.route('/tournaments/leaderboards/')
+@cached()
+def tournament_leaderboards():
+    view = TournamentLeaderboards()
     return view.page()
 
 @APP.route('/add/')

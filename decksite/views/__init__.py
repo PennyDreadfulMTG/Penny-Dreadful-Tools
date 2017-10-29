@@ -26,5 +26,6 @@ from .rotation_checklist import RotationChecklist
 from .season import Season
 from .signup import SignUp
 from .tournament_hosting import TournamentHosting
+from .tournament_leaderboards import TournamentLeaderboards
 from .tournaments import Tournaments
 from .unauthorized import Unauthorized

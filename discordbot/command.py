@@ -447,7 +447,7 @@ Want to contribute? Send a Pull Request."""
                 You play 5 matches per run. You can join the league at any time.
                 The league pays prizes in tix for top players and (some) 5-0 runs.
                 To find a game sign up and then create a game in Just for Fun with "Penny Dreadful League" as the comment.
-                If you complete a five match league run for the first time you will get 1 tik credit with MTGO Traders.
+                When you complete a five match league run for the first time ever you will get 1 tik credit with MTGO Traders.
                 """,
                 {
                     'More Info': fetcher.decksite_url('/league/'),

@@ -65,7 +65,7 @@ def test_normalize():
     assert deck_name.normalize(d) == 'Mono Blue Control'
     d.colors = ['R']
     d.name = 'RDW23'
-    assert deck_name.normalize(d) == 'Red Deck Wins23'
+    assert deck_name.normalize(d) == 'Rdw23' # This isn't ideal but see BWWave for why it's probably right.
     d.colors = ['B']
     d.name = 'Mono B Aristocrats III'
     assert deck_name.normalize(d) == 'Mono Black Aristocrats III'
@@ -102,6 +102,8 @@ def test_normalize():
     d.colors = ['W']
     d.name = 'Mono-W Soldiers'
     assert deck_name.normalize(d) == 'Mono White Soldiers'
+    d.name = 'BWWave'
+    assert deck_name.normalize(d) == 'Bwwave' # Not ideal but ok.
 
     # Undefined cases
     # d.name = 'U/B Aggro' when d.archetype = 'Control'

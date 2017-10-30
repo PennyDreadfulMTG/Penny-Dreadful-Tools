@@ -9,16 +9,20 @@
         {{#most_common_cards}}<li>{{> singlecard}}</li>{{/most_common_cards}}
     </ul>
 </section>
-<section>
-    <h3>Top Decks</h3>
-    {{#best_decks}}{{> decktable}}{{/best_decks}}
-</section>
-<section>
-    <h3>Matchups</h3>
-    {{#matchups_container}}
-        {{> archetypetree}}
-    {{/matchups_container}}
-</section>
+{{#show_best_decks}}
+    <section>
+        <h3>Top Decks</h3>
+        {{#best_decks}}{{> decktable}}{{/best_decks}}
+    </section>
+{{/show_best_decks}}
+{{#show_matchups}}
+    <section>
+        <h3>Matchups</h3>
+        {{#matchups_container}}
+            {{> archetypetree}}
+        {{/matchups_container}}
+    </section>
+{{/show_matchups}}
 <section>
     <h3>All Decks</h3>
     {{> decktable}}

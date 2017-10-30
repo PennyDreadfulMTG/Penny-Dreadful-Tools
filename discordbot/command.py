@@ -16,6 +16,7 @@ from discordbot import emoji
 from find import search
 from magic import card, database, oracle, fetcher, rotation, multiverse, tournaments
 from shared import configuration, dtutil
+from shared.pd_exception import TooFewItemsException
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -187,10 +188,7 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_typing(channel)
         too_many, cardnames = fetcher.search_scryfall(args)
         cbn = oracle.cards_by_name()
-        def import_sf(name):
-            if oracle.scryfall_import(name):
-                return oracle.load_card(name)
-        cards = [cbn.get(name, import_sf(name)) for name in cardnames]
+        cards = [cbn[name] for name in cardnames]
         additional_text = 'There are too many cards, only a few are shown.\n' if too_many else ''
         if len(cards) > 10:
             additional_text += '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'
@@ -372,9 +370,12 @@ Want to contribute? Send a Pull Request."""
         oracle.scryfall_import(sfcard['name'])
 
     @cmd_header('Commands')
-    async def time(self, bot, channel, args):
+    async def time(self, bot, channel, args, author):
         """`!time {location}` Show the current time in the specified location."""
-        t = fetcher.time(args.strip())
+        try:
+            t = fetcher.time(args.strip())
+        except TooFewItemsException:
+            return await bot.client.send_mesage(channel, '{author}: Location not found.'.format(author=author))
         await bot.client.send_message(channel, '{args}: {time}'.format(args=args, time=t))
 
     @cmd_header('Commands')
@@ -418,6 +419,26 @@ Want to contribute? Send a Pull Request."""
         """`!explain`. Get a list of things the bot knows how to explain.
 `!explain {thing}`. Print commonly needed explanation for 'thing'."""
         explanations = {
+            'bugs': [
+                """
+                We do allow the playing of cards with known bugs in Penny Dreadful with specific conditions.
+                Cards with game-breaking bugs should not be played.
+                Cards with disadvantageous bugs can be played and no extra rules apply. The opposing player is under no obligation to treat the card as if it worked properly.
+                Cards with advantageous bugs can be played but accruing advantage intentionally will result in disqualification.
+                Accruing advantage any other way with a card with an advantageous bug is a game loss for the owner of the bugged card.
+                Example of Game Loss: Playing Living Lore with two cards in graveyard and opponent removes one at instant speed with a card from their hand forcing the Living Lore player to imprint a split card.
+                Second example of Game Loss: Playing Profane Command using the mode that targets an opponent. Opponent plays Gilded Light in response.
+                Example of Disqualification: Playing Living Lore and intentionally choosing a split card from a stocked graveyard to get an oversized Living Lore.
+                In the case where a bugged interaction only becomes known to a player during a competitive match, at the TO's discretion, a game loss or match loss may be imposed rather than a disqualification.
+                The game loss should be enacted by the bugged cards controller conceding the game.
+                Any confusion should be discussed with the Tournament Organizer before conceding the game or ending the match, on the bugged card player's clock.
+                For all these matters the Tournament Organizer has the flexibility to rule as they see fit and their decision is final.
+                """,
+                {
+                    'Bugged Cards List': 'https://github.com/PennyDreadfulMTG/modo-bugs/issues/'
+                }
+
+            ],
             'decklists': [
                 """
                 You can find Penny Dreadful decklists from tournaments, leagues and elsewhere at pennydreadfulmagic.com
@@ -432,6 +453,7 @@ Want to contribute? Send a Pull Request."""
                 You play 5 matches per run. You can join the league at any time.
                 The league pays prizes in tix for top players and (some) 5-0 runs.
                 To find a game sign up and then create a game in Just for Fun with "Penny Dreadful League" as the comment.
+                When you complete a five match league run for the first time ever you will get 1 tik credit with MTGO Traders.
                 """,
                 {
                     'More Info': fetcher.decksite_url('/league/'),
@@ -444,6 +466,7 @@ Want to contribute? Send a Pull Request."""
                 Legality is determined at the release of a Standard-legal set on MTGO.
                 Prices are checked every hour for a week. Anything 1c or less for half or more of all checks is legal for the season.
                 Cards from the just-released set are added (nothing removed) a couple of weeks later via a supplemental rotation after prices have settled a little.
+                Any version of a card on the legal cards list is legal.
                 """,
                 {
                     'Deck Checker': 'http://pdmtgo.com/deck_check.html',
@@ -477,7 +500,7 @@ Want to contribute? Send a Pull Request."""
             'report': [
                 """
                 For gatherling.com tournaments PDBot is information-only, *both* players must report at the bottom of Player CP.
-                If PDBot reports your match in Discord you don't need to do anything. If not, either player can report.
+                If PDBot reports your league match in Discord you don't need to do anything (only league matches, tournament matches must still be reported). If not, either player can report.
                 """,
                 {
                     'Gatherling': 'http://gatherling.com/player.php',
@@ -497,6 +520,13 @@ Want to contribute? Send a Pull Request."""
                     'More Info': fetcher.decksite_url('/tournaments/'),
                     'Sign Up': 'http://gatherling.com/',
                 }
+            ],
+            'username': [
+                """
+                Please change your Discord username to include your MTGO username so we can know who you are.
+                To change, right-click your username.
+                This will not affect any other Discord channel.
+                """
             ]
         }
         keys = sorted(explanations.keys())
@@ -575,6 +605,8 @@ def site_resources(args):
         area, detail = args.strip().split(' ', 1)
     else:
         area, detail = args.strip(), ''
+    if area == 'archetype':
+        area = 'archetypes'
     if area == 'card':
         area = 'cards'
     if area == 'person':

@@ -23,6 +23,10 @@ class Competition(View):
             if len(leaderboard) > 0:
                 self.has_leaderboard = True
                 self.leaderboard = sorted(leaderboard.values(), key=lambda k: k['points'], reverse=True)
+                pos = 1
+                for p in self.leaderboard:
+                    p['pos'] = pos
+                    pos += 1
 
     def __getattr__(self, attr):
         return getattr(self.competition, attr)

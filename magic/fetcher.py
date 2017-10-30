@@ -12,7 +12,7 @@ from github import Github
 import magic.fetcher_internal as internal
 from magic.fetcher_internal import FetchException
 from shared import configuration, dtutil
-
+from shared.pd_exception import TooFewItemsException
 
 def stagger(delay=0.1):
     def decorator(func_in):
@@ -184,17 +184,17 @@ def sitemap():
     return internal.fetch_json(decksite_url('/api/sitemap/'))
 
 def time(q):
-    no_results_msg = 'Location unknown.'
+    no_results_msg = 'ZERO_RESULTS'
     url = 'http://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false'.format(q=internal.escape(q))
     info = internal.fetch_json(url)
     try:
         location = info['results'][0]['geometry']['location']
-    except IndexError:
-        return no_results_msg
+    except IndexError as e:
+        raise TooFewItemsException(e)
     url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&sensor=false'.format(lat=internal.escape(str(location['lat'])), lng=internal.escape(str(location['lng'])), timestamp=internal.escape(str(dtutil.dt2ts(dtutil.now()))))
     timezone_info = internal.fetch_json(url)
-    if timezone_info['status'] == 'ZERO_RESULTS':
-        return no_results_msg
+    if timezone_info['status'] == no_results_msg:
+        raise TooFewItemsException(no_results_msg)
     return dtutil.now(dtutil.timezone(timezone_info['timeZoneId'])).strftime('%l:%M %p')
 
 def whatsinstandard():

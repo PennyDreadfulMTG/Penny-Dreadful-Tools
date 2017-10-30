@@ -123,7 +123,7 @@ def active_decks(additional_where='1 = 1'):
     return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
 
 def active_decks_by(mtgo_username):
-    return active_decks('p.mtgo_username = {mtgo_username}'.format(mtgo_username=sqlescape(mtgo_username)))
+    return active_decks('p.mtgo_username = {mtgo_username}'.format(mtgo_username=sqlescape(mtgo_username, force_string=True)))
 
 def report(form):
     db().begin()

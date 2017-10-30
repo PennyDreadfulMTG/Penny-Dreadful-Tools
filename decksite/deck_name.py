@@ -109,7 +109,7 @@ def remove_colors(name):
 
 def expand_common_abbreviations(name):
     for abbreviation, expansion in ABBREVIATIONS.items():
-        name = name.replace(abbreviation, expansion)
+        name = re.sub('(^| ){abbrev}( |$)'.format(abbrev=abbreviation), '\\1{expansion}\\2'.format(expansion=expansion), name, flags=re.IGNORECASE).strip()
     return name
 
 def prepend_colors(s, colors):

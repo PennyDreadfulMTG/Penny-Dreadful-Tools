@@ -375,7 +375,7 @@ Want to contribute? Send a Pull Request."""
         try:
             t = fetcher.time(args.strip())
         except TooFewItemsException:
-            return await bot.client.send_mesage(channel, '{author}: Location not found.'.format(author=author))
+            return await bot.client.send_message(channel, '{author}: Location not found.'.format(author=author.mention))
         await bot.client.send_message(channel, '{args}: {time}'.format(args=args, time=t))
 
     @cmd_header('Commands')

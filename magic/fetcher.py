@@ -7,6 +7,7 @@ from functools import wraps
 import time as py_time
 
 import pkg_resources
+import pytz
 from github import Github
 
 import magic.fetcher_internal as internal
@@ -184,18 +185,24 @@ def sitemap():
     return internal.fetch_json(decksite_url('/api/sitemap/'))
 
 def time(q):
-    no_results_msg = 'ZERO_RESULTS'
-    url = 'http://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false'.format(q=internal.escape(q))
-    info = internal.fetch_json(url)
-    try:
-        location = info['results'][0]['geometry']['location']
-    except IndexError as e:
-        raise TooFewItemsException(e)
-    url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&sensor=false'.format(lat=internal.escape(str(location['lat'])), lng=internal.escape(str(location['lng'])), timestamp=internal.escape(str(dtutil.dt2ts(dtutil.now()))))
-    timezone_info = internal.fetch_json(url)
-    if timezone_info['status'] == no_results_msg:
-        raise TooFewItemsException(no_results_msg)
-    return dtutil.now(dtutil.timezone(timezone_info['timeZoneId'])).strftime('%l:%M %p')
+    if len(q) > 3:
+        url = 'http://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false'.format(q=internal.escape(q))
+        info = internal.fetch_json(url)
+        try:
+            location = info['results'][0]['geometry']['location']
+        except IndexError as e:
+            raise TooFewItemsException(e)
+        url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&sensor=false'.format(lat=internal.escape(str(location['lat'])), lng=internal.escape(str(location['lng'])), timestamp=internal.escape(str(dtutil.dt2ts(dtutil.now()))))
+        timezone_info = internal.fetch_json(url)
+        if timezone_info['status'] == 'ZERO_RESULTS':
+            raise TooFewItemsException(timezone_info['status'])
+        timezone = dtutil.timezone(timezone_info['timeZoneId'])
+    else:
+        try:
+            timezone = dtutil.timezone(q.upper())
+        except pytz.exceptions.UnknownTimeZoneError:
+            raise TooFewItemsException('Not a recognized timezone: {q}'.format(q=q))
+    return dtutil.now(timezone).strftime('%l:%M %p')
 
 def whatsinstandard():
     return internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json')

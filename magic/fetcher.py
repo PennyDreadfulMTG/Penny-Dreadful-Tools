@@ -184,7 +184,7 @@ def sitemap():
     return internal.fetch_json(decksite_url('/api/sitemap/'))
 
 def time(q):
-    NO_RESULTS_MSG = 'ZERO_RESULTS'
+    no_results_msg = 'ZERO_RESULTS'
     url = 'http://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false'.format(q=internal.escape(q))
     info = internal.fetch_json(url)
     try:
@@ -193,8 +193,8 @@ def time(q):
         raise TooFewItemsException(e)
     url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&sensor=false'.format(lat=internal.escape(str(location['lat'])), lng=internal.escape(str(location['lng'])), timestamp=internal.escape(str(dtutil.dt2ts(dtutil.now()))))
     timezone_info = internal.fetch_json(url)
-    if timezone_info['status'] == NO_RESULTS_MSG:
-        raise TooFewItemsException(NO_RESULTS_MSG)
+    if timezone_info['status'] == no_results_msg:
+        raise TooFewItemsException(no_results_msg)
     return dtutil.now(dtutil.timezone(timezone_info['timeZoneId'])).strftime('%l:%M %p')
 
 def whatsinstandard():

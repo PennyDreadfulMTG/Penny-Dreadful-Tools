@@ -110,7 +110,7 @@ class View:
             d.source_sort = '1'
         d.comp_row_len = len("{comp_name} (Piloted by {person}".format(comp_name=d.competition_name, person=d.person))
         if d.get('archetype_id', None):
-            d.archetype_url = url_for('archetype', archetype=d.archetype_id)
+            d.archetype_url = url_for('archetype', archetype_id=d.archetype_id)
         if d.omw is not None:
             d.omw = str(int(d.omw)) + '%'
         else:
@@ -175,7 +175,7 @@ class View:
             a.all.show_record = a.all.get('wins') or a.all.get('draws') or a.all.get('losses')
             a.season.show_record = a.season.get('wins') or a.season.get('draws') or a.season.get('losses')
             a.show_matchups = a.all.show_record
-        a.url = url_for('archetype', archetype=a.id)
+        a.url = url_for('archetype', archetype_id=a.id)
         a.best_decks = Container({'decks': []})
         n = 3
         while len(a.best_decks.decks) == 0 and n >= 0:
@@ -202,7 +202,7 @@ class View:
             # Prune branches we don't want to show
             if r.id not in [a.id for a in archetypes]:
                 r.parent = None
-            r['url'] = url_for('archetype', archetype=r['id'])
+            r['url'] = url_for('archetype', archetype_id=r['id'])
             # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
             r['depth'] = r.depth
 

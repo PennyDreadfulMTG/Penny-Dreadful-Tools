@@ -16,6 +16,7 @@ from discordbot import emoji
 from find import search
 from magic import card, database, oracle, fetcher, rotation, multiverse, tournaments
 from shared import configuration, dtutil
+from shared.pd_exception import TooFewItemsException
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -374,7 +375,7 @@ Want to contribute? Send a Pull Request."""
         try:
             t = fetcher.time(args.strip())
         except TooFewItemsException:
-            return await bot.client.send_mesage(channel, '{author}: Location not found.')
+            return await bot.client.send_mesage(channel, '{author}: Location not found.'.format(author=author))
         await bot.client.send_message(channel, '{args}: {time}'.format(args=args, time=t))
 
     @cmd_header('Commands')

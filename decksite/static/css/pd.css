@@ -401,6 +401,15 @@ ul.menu {
     padding-top: 1rem;
 }
 
+p.bugged {
+    width: 15rem;
+}
+
+.bugged::after {
+    content: "🐞 ";
+    margin-left: 0.2em;
+}
+
 .illegal::after {
     content: "﻿🚫";
     margin-left: 0.2em;

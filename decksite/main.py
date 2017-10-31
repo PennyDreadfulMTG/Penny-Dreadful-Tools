@@ -4,7 +4,7 @@ import traceback
 from flask import make_response, redirect, request, send_file, send_from_directory, session, url_for
 from werkzeug import exceptions
 
-from magic import oracle
+from magic import card as mc, oracle
 from shared import configuration
 from shared.pd_exception import DoesNotExistException, InvalidArgumentException, InvalidDataException
 
@@ -150,7 +150,7 @@ def rotation():
 def export(deck_id):
     d = deck.load_deck(deck_id)
     safe_name = deck_name.file_name(d)
-    return (str(d), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
+    return (mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 
 @APP.route('/resources/')
 @cached()

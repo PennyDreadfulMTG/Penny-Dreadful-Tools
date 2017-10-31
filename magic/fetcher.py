@@ -12,6 +12,7 @@ from github import Github
 
 import magic.fetcher_internal as internal
 from magic.fetcher_internal import FetchException
+from magic import card as mc
 from shared import configuration, dtutil
 from shared.pd_exception import TooFewItemsException
 
@@ -88,7 +89,7 @@ def cardhoarder_url(d):
     for entry in d.maindeck + d.sideboard:
         name = entry['card'].name
         cs[name] = cs.get(name, 0) + entry['n']
-    deck_s = '||'.join([str(v) + ' ' + k.replace(' // ', '/').replace('"', '') for k, v in cs.items()])
+    deck_s = '||'.join([str(v) + ' ' + mc.to_mtgo_format(k).replace('"', '') for k, v in cs.items()])
     return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=internal.escape(deck_s))
 
 def create_github_issue(title, author, repo='PennyDreadfulMTG/Penny-Dreadful-Tools'):

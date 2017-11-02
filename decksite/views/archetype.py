@@ -1,3 +1,5 @@
+from flask import url_for
+
 from decksite.data import archetype as archs
 from decksite.view import View
 
@@ -22,6 +24,15 @@ class Archetype(View):
             'hide_num_decks': True,
             'roots': [m for m in matchup_archetypes if m.is_root],
         }]
+
+    def og_title(self):
+        return self.archetype.name
+
+    def og_url(self):
+        return url_for('archetype', archetype_id=self.archetype.id, _external=True)
+
+    def og_description(self):
+        return "" # Probably maybe write something here?
 
     def __getattr__(self, attr):
         return getattr(self.archetype, attr)

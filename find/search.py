@@ -256,6 +256,8 @@ def mana_where(operator, term):
     elif operator == '=':
         joined = ''.join('{symbol}'.format(symbol=symbol) for symbol in symbols)
         clause = "mana_cost = '{joined}'".format(joined=joined)
+    else:
+        raise InvalidTokenException('mana expects `:` or `=` not `{operator}`. Did you want cmc?'.format(operator=operator))
     return '({clause})'.format(clause=clause)
 
 def value_lookup(table, value):

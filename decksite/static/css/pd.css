@@ -70,6 +70,10 @@ p {
     margin: 0.5rem 0;
 }
 
+.error {
+    color: red;
+}
+
 .resource {
     width: 10em;
 }
@@ -397,6 +401,15 @@ ul.menu {
     padding-top: 1rem;
 }
 
+p.bugged {
+    width: 15rem;
+}
+
+.bugged::after {
+    content: "🐞 ";
+    margin-left: 0.2em;
+}
+
 .illegal::after {
     content: "﻿🚫";
     margin-left: 0.2em;
@@ -654,6 +667,23 @@ tr.current td:last-child {
 }
 
 /* Tournaments */
+
 .local {
     display: none; /* Will be revealed by js when we have a localized time. */
+}
+
+.pos-1 {
+    background-color: rgba(0, 255, 0, 0.4);
+}
+
+.pos-2 {
+    background-color: rgba(0, 255, 0, 0.3);
+}
+
+.pos-3, .pos-4 {
+    background-color: rgba(0, 255, 0, 0.2);
+}
+
+.pos-5, .pos-6, .pos-7, .pos-8 {
+    background-color: rgba(0, 255, 0, 0.1);
 }

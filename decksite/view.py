@@ -53,7 +53,7 @@ class View:
         if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7):
             menu += [{'name': 'Rotation', 'url': url_for('rotation')}]
         elif (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
-            menu += [{'name': 'Supplemental Rotation', 'url': url_for('rotation')}]            
+            menu += [{'name': 'Supplemental Rotation', 'url': url_for('rotation')}]
         menu += [
             {'name': 'About', 'url': url_for('about')},
             {'name': 'League', 'url': url_for('league'), 'has_submenu': True, 'submenu': [
@@ -155,6 +155,7 @@ class View:
             c.display_date = dtutil.display_date(c.start_date)
             c.ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
             c.date_sort = dtutil.dt2ts(c.start_date)
+            c.league = True if c.type == 'League' else False
 
     def prepare_people(self):
         for p in getattr(self, 'people', []):
@@ -173,6 +174,7 @@ class View:
         if a.get('all') and a.get('season'):
             a.all.show_record = a.all.get('wins') or a.all.get('draws') or a.all.get('losses')
             a.season.show_record = a.season.get('wins') or a.season.get('draws') or a.season.get('losses')
+            a.show_matchups = a.all.show_record
         a.url = url_for('archetype', archetype_id=a.id)
         a.best_decks = Container({'decks': []})
         n = 3
@@ -181,6 +183,7 @@ class View:
                 if d.get('stars_safe', '').count('★') >= n:
                     a.best_decks.decks.append(d)
             n -= 1
+        a.show_best_decks = len(a.decks) != len(a.best_decks.decks)
         counter = Counter()
         a.cards = []
         a.most_common_cards = []

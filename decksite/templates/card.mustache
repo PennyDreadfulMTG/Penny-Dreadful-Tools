@@ -1,6 +1,9 @@
 <section>
     <h2>{{name}}</h2>
     <img src="{{img_url}}" alt="{{name}}" class="card-img">
+    {{#bug_desc}}
+        <p class="bugged"><b>{{bug_class}} bug</b> {{bug_desc}}</p>
+    {{/bug_desc}}
 </section>
 {{#played_competitively}}
     <section>

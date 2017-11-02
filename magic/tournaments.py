@@ -20,7 +20,7 @@ def next_tournament_info():
         next_tournament_name = 'Penny Dreadful Sunday'
         next_time = pds_time
     next_tournament_time_precise = dtutil.dt2ts(next_time) - now_ts
-    next_tournament_time = dtutil.display_time(next_tournament_time_precise, granularity=1)
+    next_tournament_time = dtutil.display_time(next_tournament_time_precise)
     return {
         'next_tournament_name': next_tournament_name,
         'next_tournament_time': next_tournament_time,

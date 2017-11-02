@@ -156,6 +156,12 @@ async def on_server_join(server):
     await BOT.client.send_message(server.default_channel, "Hi, I'm mtgbot.  To look up cards, just mention them in square brackets. (eg `[Llanowar Elves] is better than [Elvish Mystic]`).")
     await BOT.client.send_message(server.default_channel, "By default, I display Penny Dreadful legality. If you don't want or need that, just type `!notpenny`.")
 
+@BOT.client.event
+async def on_reaction_add(reaction, _):
+    if reaction.message.author == BOT.client.user:
+        if not reaction.custom_emoji and reaction.emoji == "❎":
+            await BOT.client.delete_message(reaction.message)
+
 async def background_task_spoiler_season():
     "Poll Scryfall for the latest 250 cards, and add them to our db if missing"
     await BOT.client.wait_until_ready()

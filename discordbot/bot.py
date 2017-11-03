@@ -64,7 +64,8 @@ class Bot:
                 text = '{author}: No matches.'.format(author=replying_to.mention)
             else:
                 text = 'No matches.'
-            await self.client.send_message(channel, text)
+            message = await self.client.send_message(channel, text)
+            await self.client.add_reaction(message, '❎')
             return
         cards = command.uniqify_cards(cards)
         more_text = ''
@@ -159,7 +160,10 @@ async def on_server_join(server):
 @BOT.client.event
 async def on_reaction_add(reaction, _):
     if reaction.message.author == BOT.client.user:
-        if not reaction.custom_emoji and reaction.emoji == "❎":
+        c = reaction.count
+        if reaction.me:
+            c = c - 1
+        if c > 0 and not reaction.custom_emoji and reaction.emoji == "❎":
             await BOT.client.delete_message(reaction.message)
 
 async def background_task_spoiler_season():

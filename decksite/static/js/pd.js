@@ -9,6 +9,7 @@ PD.init = function () {
     Tipped.create("[title]", {"showDelay": 1000});
     PD.showLocalTimes();
     $.get("/api/admin/", PD.showBadge);
+    $('a[href^="http"').addClass('external');
 };
 PD.initMenu = function () {
     $(".has-submenu").hoverIntent({

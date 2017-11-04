@@ -184,18 +184,26 @@ a {
 
 /* Underline that respects descenders. */
 .main a {
-    background-image: linear-gradient( to right, currentColor 0%, currentColor 100% );
-    background-position: 0 96%;
-    background-repeat: repeat-x;
-    background-size: 100% 0.1rem;
-    -webkit-background-size: 100% 0.1rem;
-    text-shadow: 0.1rem 0 0 #f9f9f9, -0.1rem 0 0 #f9f9f9;
+    text-decoration: underline;
+    text-decoration-skip: ink;
 }
 
 /* There are a lot of places we want undecorated links, though, even in the main content area. */
 .main table a, .main h2 a, .main h3 a, .decklist a {
+    text-decoration: none;
+}
+
+/* Mark links that go off-site. */
+a.external:after {
+    position: relative;
+    content: "﻿↑";
+    font-size: 80%;
+    font-weight: bold;
+    top: -0.6em;
     background: none;
     text-shadow: none;
+    display: inline-block;
+    white-space: pre-wrap;
 }
 
 /*

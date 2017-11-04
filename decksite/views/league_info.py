@@ -11,6 +11,7 @@ class LeagueInfo(View):
         self.signup_url = url_for('signup')
         self.report_url = url_for('report')
         self.records_url = url_for('current_league')
+        self.retire_url = url_for('retire')
 
     def subtitle(self):
         return 'League'

@@ -1,28 +1,28 @@
 <section>
-    <h2>Filter</h2>
-    <div>
-        <label for="onlyPD">Hide Illegal Cards</label>
-        <input type="checkbox" id="onlyPD" class="toggleIllegal"/>
-    </div>
-    <p><a class="link" href="https://github.com/PennyDreadfulMTG/modo-bugs/issues/">Report an MTGO Bug</a></p>
-</section>
-<section>
-    <h2>Cards</h2>
+    <h2>Bugs</h2>
+    <p><a href="https://github.com/PennyDreadfulMTG/modo-bugs/issues/">Report an MTGO Bug</a></p>
+    <p>
+        <span class="inline">
+            <input type="checkbox" class="toggle-illegal" name="toggle_illegal">
+            <label for="toggle_illegal">Hide cards not legal in Penny Dreadful</label>
+        </span>
+    </p>
     <table class="bugtable">
-    <thead>
-        <tr>
-            <th>Card</th>
-            <th>Bug Description</th>
-            <th data-sortInitialOrder="desc">Severity</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#cards}}
-            <tr class="striped">
-                <td>{{> singlecard}}</td>
-                <td class="wide">{{bug_desc}}</td>
-                <td class="{sorter: 'bugseverity'}">{{bug_class}}</td>
-        {{/cards}}
-    </tbody>
-</table>
+        <thead>
+            <tr class="wide">
+                <th>Card</th>
+                <th>Bug</th>
+                <th data-sortInitialOrder="desc">Severity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#cards}}
+                <tr class="wide">
+                    <td>{{> singlecard}}</td>
+                    <td class="wide">{{bug_desc}}</td>
+                    <td class="{sorter: 'bugseverity'}">{{bug_class}}</td>
+            {{/cards}}
+        </tbody>
+    </table>
+    <p><a href="https://github.com/PennyDreadfulMTG/modo-bugs/issues/">Report an MTGO Bug</a></p>
 </section>

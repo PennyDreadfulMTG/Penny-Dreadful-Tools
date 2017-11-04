@@ -1,21 +1,21 @@
-                <script src="//code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
-                <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.27.8/js/jquery.tablesorter.min.js" type="text/javascript"></script>
-                <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.27.8/js/jquery.tablesorter.widgets.min.js" type="text/javascript"></script>
-                {{#tooltips_url}}
-                    <script src="{{tooltips_url}}" type="text/javascript"></script>
-                {{/tooltips_url}}
-                <script src="//cdn.jsdelivr.net/g/tipped@4.0.10(js/tipped/tipped.js+js/imagesloaded/imagesloaded.pkgd.min.js)"></script>
-                <script src="{{js_url}}" type="text/javascript"></script>
-                <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js" type="text/javascript"></script>
-                <script src="//cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.13/moment-timezone-with-data.min.js" type="text/javascript"></script>
-                <script async src="https://www.googletagmanager.com/gtag/js?id=UA-109131120-1"></script>
-                <script>
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag(){dataLayer.push(arguments);}
-                    gtag('js', new Date());
-                    gtag('config', 'UA-109131120-1');
-                </script>
-            </div> {{! .main}}
-        </div> {{! .content}}
+        </div> <!-- .main -->
+        <script defer src="//code.jquery.com/jquery-latest.min.js"></script>
+        {{#tooltips_url}}
+            <script defer src="{{tooltips_url}}"></script>
+        {{/tooltips_url}}
+        <script defer src="//cdnjs.cloudflare.com/ajax/libs/jquery.hoverintent/1.9.0/jquery.hoverIntent.min.js"></script>
+        <script defer src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.27.8/js/jquery.tablesorter.min.js"></script>
+        <script defer src="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.27.8/js/jquery.tablesorter.widgets.min.js"></script>
+        <script defer src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+        <script defer src="//cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.13/moment-timezone-with-data.min.js"></script>
+        <script defer src="//cdn.jsdelivr.net/g/tipped@4.0.10(js/tipped/tipped.js+js/imagesloaded/imagesloaded.pkgd.min.js)"></script>
+        <script defer src="{{js_url}}"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-109131120-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'UA-109131120-1');
+        </script>
     </body>
 </html>

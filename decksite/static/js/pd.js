@@ -1,5 +1,32 @@
 window.PD = {};
 PD.init = function () {
+    PD.initMenu();
+    PD.initTables();
+    $("input[type=file]").on("change", PD.loadDeck);
+    $(".deckselect").on("change", PD.toggleDrawDropdown);
+    $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
+    $(".toggle-illegal").on("change", PD.toggleIllegalCards);
+    Tipped.create("[title]", {"showDelay": 1000});
+    PD.showLocalTimes();
+    $.get("/api/admin/", PD.showBadge);
+};
+PD.initMenu = function () {
+    $(".has-submenu").hoverIntent({
+        over: PD.onDropdownHover,
+        out: PD.onDropdownLeave,
+        interval: 50,
+        timeout: 250
+    });
+};
+PD.onDropdownHover = function () {
+    $(this).addClass("hovering");
+    $(this).find(".submenu-container").slideDown("fast");
+};
+PD.onDropdownLeave = function () {
+    $(this).removeClass("hovering");
+    $(this).find(".submenu-container").slideUp("fast");
+};
+PD.initTables = function () {
     $(".fade-repeats").each(PD.fadeRepeats);
     $(".fade-repeats").css("visibility", "visible").hide().fadeIn("slow");
     $.tablesorter.addParser({
@@ -38,15 +65,14 @@ PD.init = function () {
         "type": "numeric"
     });
     $.tablesorter.addParser({
-        id: "bugseverity",
-        is: function(s) {
+        "id": "bugseverity",
+        "is": function(s) {
             return ["Game Breaking", "Advantageous", "Disadvantageous", "Graphical", "Non-Functional ability", "Unclassified"].indexOf(s) > -1;
         },
-        format: function(s) {
+        "format": function(s) {
             return ["Game Breaking", "Advantageous", "Disadvantageous", "Graphical", "Non-Functional ability", "Unclassified"].indexOf(s)
         },
-        // set type, either numeric or text
-        type: "numeric"
+        "type": "numeric"
     });
     $.tablesorter.addParser({
         "id": "archetype",
@@ -65,14 +91,6 @@ PD.init = function () {
     });
     $("table").tablesorter({});
     $(".fade-repeats").bind("sortEnd", PD.fadeRepeats);
-    $("input[type=file]").on("change", PD.loadDeck);
-    $(".deckselect").on("change", PD.toggleDrawDropdown);
-    $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
-    $("input[type=checkbox].toggleIllegal").on("change", PD.toggleIllegalCards);
-    PD.updateStriped();
-    Tipped.create("[title]", {"showDelay": 1000});
-    PD.showLocalTimes();
-    $.get("/api/admin/", PD.showBadge);
 };
 PD.fadeRepeats = function () {
     var current, previous;
@@ -114,16 +132,11 @@ PD.toggleDrawDropdown = function () {
     return can_draw;
 }
 PD.toggleIllegalCards = function () {
-    var hidden = this.checked
-    if (hidden)
-        $("tr").find(".illegal").closest("tr").hide();
-    else
-        $("tr").find(".illegal").closest("tr").show();
-    PD.updateStriped()
-}
-PD.updateStriped = function () {
-    $(".odd-stripe").removeClass("odd-stripe");
-    $(".striped:visible:odd").addClass("odd-stripe");
+    // Fix the width of the table columns so that it doesn't 'jump' when rows are added or removed.
+    $('.bugtable tr td').each(function() {
+        $(this).css({'width': $(this).width() + "px"});
+    });
+    $("tr").find(".illegal").closest("tr").toggle(!this.checked);
 }
 PD.showBadge = function (show) {
     if (show) {
@@ -131,9 +144,9 @@ PD.showBadge = function (show) {
     }
 }
 PD.showLocalTimes = function () {
-    $('.time').each(function () {
-        var t = moment($(this).data('time'));
-        $(this).html(t.tz(moment.tz.guess()).format('dddd h:mma z')).parent('.local').show();
+    $(".time").each(function () {
+        var t = moment($(this).data("time"));
+        $(this).html(t.tz(moment.tz.guess()).format("dddd h:mma z")).parent(".local").show();
     });
 }
 $(document).ready(function () {

@@ -15,6 +15,20 @@ class Tournaments(View):
 
         self.tournaments = [
             {
+                'name': 'Penny Dreadful Saturdays',
+                'host': 'Back_Alley_G',
+                'display_time': '1:30pm Eastern',
+                'time': info['pdsat_time'],
+                'chat_room': '#PDS'
+            },
+            {
+                'name': 'Penny Dreadful Sundays',
+                'host': 'bakert99',
+                'display_time': '1:30pm Eastern',
+                'time': info['pds_time'],
+                'chat_room': '#PDS'
+            },
+            {
                 'name': 'Penny Dreadful Mondays',
                 'host': 'stash86',
                 'display_time': '7pm Eastern',
@@ -27,13 +41,6 @@ class Tournaments(View):
                 'display_time': '7pm Eastern',
                 'time': info['pdt_time'],
                 'chat_room': '#PDT'
-            },
-            {
-                'name': 'Penny Dreadful Sundays',
-                'host': 'bakert99',
-                'display_time': '1:30pm Eastern',
-                'time': info['pds_time'],
-                'chat_room': '#PDS'
             }
         ]
 

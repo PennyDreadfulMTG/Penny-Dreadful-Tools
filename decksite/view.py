@@ -48,12 +48,13 @@ class View:
                 {'name': 'League Info', 'url': url_for('league')},
                 {'name': 'Sign Up', 'url': url_for('signup')},
                 {'name': 'Report', 'url': url_for('report')},
-                {'name': 'Records', 'url': url_for('current_league')}
+                {'name': 'Records', 'url': url_for('current_league')},
+                {'name': 'Instructions', 'url': url_for('league')}
             ]},
             {'name': 'Competitions', 'url': url_for('competitions'), 'has_submenu': True, 'submenu': [
                 {'name': 'Tournament Info', 'url': url_for('tournaments')},
                 {'name': 'Leaderboards', 'url': url_for('tournament_leaderboards')},
-                {'name': 'Gatherling', 'url': 'http://gatherling.com/', 'external': True},
+                {'name': 'Gatherling', 'url': 'http://gatherling.com/'},
                 {'name': 'Hosting', 'url': url_for('hosting')},
             ]},
             {'name': 'People', 'url': url_for('people')},

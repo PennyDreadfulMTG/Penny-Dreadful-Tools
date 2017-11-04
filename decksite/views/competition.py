@@ -2,7 +2,7 @@ from flask import url_for
 
 from decksite.view import View
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, too-many-instance-attributes
 class Competition(View):
     def __init__(self, competition):
         self.competition = competition

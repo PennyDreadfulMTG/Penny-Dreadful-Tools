@@ -44,6 +44,11 @@ class View:
                 archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
         menu = [
             {'name': 'Decks', 'url': url_for('home')},
+            {'name': 'League', 'url': url_for('league'), 'has_submenu': True, 'submenu': [
+                {'name': 'Sign Up', 'url': url_for('signup')},
+                {'name': 'Report', 'url': url_for('report')},
+                {'name': 'Records', 'url': url_for('current_league')}
+            ]},
             {'name': 'Competitions', 'url': url_for('competitions')},
             {'name': 'People', 'url': url_for('people')},
             {'name': 'Cards', 'url': url_for('cards')},
@@ -55,12 +60,7 @@ class View:
         elif (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
             menu += [{'name': 'Supplemental Rotation', 'url': url_for('rotation')}]
         menu += [
-            {'name': 'About', 'url': url_for('about')},
-            {'name': 'League', 'url': url_for('league'), 'has_submenu': True, 'submenu': [
-                {'name': 'Sign Up', 'url': url_for('signup')},
-                {'name': 'Report', 'url': url_for('report')},
-                {'name': 'Records', 'url': url_for('current_league')}
-            ]}
+            {'name': 'About', 'url': url_for('about')}
         ]
         return menu
 

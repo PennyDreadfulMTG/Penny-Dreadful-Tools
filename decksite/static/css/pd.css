@@ -1,53 +1,93 @@
-/* http://meyerweb.com/eric/tools/css/reset/
-     v2.0 | 20110126
-     License: none (public domain)
+/*
+
+Reset
+
+http://meyerweb.com/eric/tools/css/reset/
+v2.0 | 20110126
+License: none (public domain)
+
 */
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-    margin: 0;
-    padding: 0;
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
     border: 0;
     font-size: 100%;
     font: inherit;
+    margin: 0;
+    padding: 0;
     vertical-align: baseline;
 }
+
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
     display: block;
 }
+
 body {
     line-height: 1;
 }
+
 ol, ul {
     list-style: none;
 }
+
 blockquote, q {
     quotes: none;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-    content: '';
+
+blockquote:before, blockquote:after, q:before, q:after {
+    content: "";
     content: none;
 }
+
 table {
     border-collapse: collapse;
     border-spacing: 0;
 }
 
-/* Our CSS, using Golden Ratio from http://type-scale.com/ */
+/*
+
+Our CSS
+
+In general our CSS aims to be minimal, reusable and as consistent as possible but aesthetics will trump a slavish devotion to consistency.
+We don't use any CSS features that aren't 99% green for all non-proxy browsers (Opera Mini, UC Browser) on caniuse.com when shown by usage.
+
+Typography
+
+The base font size is 0.9em or 14.4px.
+
+We use the Golden Ratio (1.618) as the basis of our typography. We use 4.236 (section margin), 2.618 (h1) and 1.618 (h2, heading bottom margin, body text line height).
+We also use 1.2 from outside the scale for h3 and heading line height.
+http://type-scale.com/ will show you bigger and smaller options using the Golden Ratio and other scales.
+
+Colors
+
+(Names from http://coolors.co/)
+
+Base colors:;
+
+f9f9f9 "snow" – main page background color, text on submenus
+502828 "acajou" – text, links, visited links, menu links, section top border, background of submenus
+
+Grays:
+
+eee "isabelline" – highlight for table rows
+999 "spanish gray" - mana box borders, menu text color on hover
+ccc "pastel gray" - dividing lines in tables
+
+A couple of dubious inclusions:
+
+f00 "red" – error, menu link hover
+0f0 "lime" – at 0.4, 0.3, 0.2 and 0.1 opacity for leaderboard positions
+
+Colors of Magic (avoid using these to represent anything else):
+
+fffcda "cornsilk" – W mana
+ace2fa "blue lagoon" – U mana
+ccc2c0 "pale silver" – B mana
+f8aa92 "vivid tangerine" – R mana
+9dd2af "turquoise green" – G mana; currently also in use for the archetypes badge for admins, which should be changed.
+
+*/
 
 body {
     background: #f9f9f9;
@@ -78,13 +118,14 @@ p {
     width: 10em;
 }
 
-/* Layout */
+/*
 
-div:after {
-  content: "";
-  display: table;
-  clear: both;
-}
+Layout
+
+Main page content is a series of <section/> elements which float to use available space.
+There is currently no grid in place.
+
+*/
 
 section {
     border-top: 0.1rem #502828 solid;
@@ -92,13 +133,23 @@ section {
     margin: 1rem 4.236rem 1rem 0;
 }
 
-/* Headings */
+div:after {
+    clear: both;
+    content: "";
+    display: table;
+}
+
+/*
+
+Headings
+
+*/
 
 h1, h2, h3 {
     font-family: Georgia, "Times New Roman", Times, serif;
     line-height: 1.2;
-    padding-top: 1rem;
     margin-bottom: 1.618rem;
+    padding-top: 1rem;
 }
 
 h1 {
@@ -117,28 +168,44 @@ h3 {
     font-size: 1.2rem;
 }
 
-/* Links */
+/*
+
+Links
+
+Links in tables and the menu are not underlined (although menu highlights on hover).
+Links in text are underlined in such a way as to break on descenders like those found in lowercase g and y.
+
+*/
 
 a {
-    color: #502828;
+    color: inherit;
     text-decoration: none;
 }
 
-a.link {
-    text-decoration: underline;
-}
-
-p a {
-    /* Underline that respects descenders. */
-    text-shadow: 0.1rem 0 0 #fff, -0.1rem 0 0 #fff;
+/* Underline that respects descenders. */
+.main a {
     background-image: linear-gradient( to right, currentColor 0%, currentColor 100% );
-    background-repeat: repeat-x;
     background-position: 0 96%;
-    -webkit-background-size: 100% 0.1rem;
+    background-repeat: repeat-x;
     background-size: 100% 0.1rem;
+    -webkit-background-size: 100% 0.1rem;
+    text-shadow: 0.1rem 0 0 #f9f9f9, -0.1rem 0 0 #f9f9f9;
 }
 
-/* Lists */
+/* There are a lot of places we want undecorated links, though, even in the main content area. */
+.main table a, .main h2 a, .main h3 a, .decklist a {
+    background: none;
+    text-shadow: none;
+}
+
+/*
+
+Lists
+
+Our standard lists use a square in the left margin.
+Text continues to line up with text above/below.
+
+*/
 
 ul {
     list-style-type: square;
@@ -148,19 +215,15 @@ ul.decklist {
     list-style-type: none;
 }
 
-ul.archetypes, .archetypes ul {
-    list-style-type: circle;
-}
+/*
 
-.archetypes li li {
-    margin-left: 2rem;
-}
+Tables
 
-.archetypes li.current {
-    list-style-type: square;
-}
+Our tables are constrained to a single line, allow no column to become very large and will clip overflow with an elipsis.
+We make occasional use of space in the margin to the left. This is called 'marginalia'.
+We fade values that repeat from one row to the next. Tables that do this are hidden until it is complete with the fade-repeats class.
 
-/* Tables */
+*/
 
 table {
     border-spacing: 0.25rem 0;
@@ -187,11 +250,11 @@ td, th {
     max-width: 13rem;
     overflow: hidden;
     padding: 0 0.25rem;
-    white-space: nowrap;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-/* Allow the stars in the margin to show. */
+/* Allow elements in the margin to show. */
 td.marginalia:first-child, th.marginalia:first-child {
     overflow: visible;
 }
@@ -199,11 +262,6 @@ td.marginalia:first-child, th.marginalia:first-child {
 td:first-child, td:last-child, th:first-child, th:last-child {
     margin: 0;
     padding: 0;
-}
-
-.main table a {
-    text-shadow: none;
-    background-image: none;
 }
 
 td.c {
@@ -214,8 +272,18 @@ td.n {
     text-align: right;
 }
 
-td.wide {
-    max-width: 50em;
+tr.wide td, tr.wide th {
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+}
+
+tr.wide td {
+    border-top: 0.1rem solid #ccc;
+}
+
+tr.wide td.wide {
+    padding-right: 1rem;
+    max-width: 50rem;
     white-space: pre-line;
 }
 
@@ -227,10 +295,6 @@ th.legend {
     text-align: center;
 }
 
-.odd-stripe {
-    background-color: #f4f4f4;
-}
-
 .marginalia {
     text-align: right;
     width: 4rem;
@@ -240,84 +304,116 @@ th.legend {
     opacity: 0.8;
 }
 
-/* Menu */
+/*
 
-ul.menu {
+Menu
+
+The main menu consists of a handful of top-level items.
+Ideally the number of top-level items will never exceed five.
+Menu items can have submenus. These are "mega menus" that stretch across the whole screen and might contain more than just links.
+
+*/
+
+nav ul {
     list-style: none;
     margin-left: -2rem;
 }
 
 .menu li {
     float: left;
-    position: relative;
 }
 
-.menu li.search {
-    float: right;
-}
-
-.menu a {
-    color: #502828;
+.menu li > a {
     display: block;
     font-size: 0.8rem;
+    padding: 2rem;
     text-decoration: none;
     text-transform: uppercase;
 }
 
-.menuitem {
-    padding: 2rem;
-}
-
-.search {
+.menu > li.search {
+    float: right;
     padding: 2rem 0 0 0;
 }
 
-.menu li.has-submenu > a {
-    padding-bottom: 0;
-}
-
-.submenu li {
-    list-style: none;
-}
-
-.submenu a {
-    font-size: 0.7rem;
-    line-height: 1.33333;
-    margin: 0;
-    padding: 0.1rem 1rem 0.93rem 1rem;
-}
-
-.submenu li:first-child a {
-    padding-left: 2rem;
-}
-
-.submenu li:last-child a {
-    padding-right: 2rem;
-}
-
 .menu a:hover {
-    color: red;
+    color: #999;
 }
 
 .menu:after {
-  content: "";
-  display: table;
-  clear: both;
+    clear: both;
+    content: "";
+    display: table;
 }
 
-/* Mana horizontal bar. */
+/* Submenu. */
+
+.submenu-container {
+    background: #502828;
+    color: #f9f9f9;
+    display: none;
+    left: 0;
+    padding: 2rem 12.5%;
+    position: absolute;
+    width: 100%;
+}
+
+/* Slide-out caret at top of submenu dropdown. */
+
+/* The caret makes its containing menuitem have a weird outline shape when tabbing so hide outlines in the menu. */
+a.menuitem {
+    outline: none;
+}
+
+.has-submenu > a {
+    position: relative; /* So we can position the caret relative to its menuitem. */
+}
+
+/* Create the caret as a border with opacity zero to hide it initially. */
+.has-submenu > a:after {
+    border-bottom: 1rem solid #502828;
+    border-left: 1.25rem solid transparent;
+    border-right: 1.25rem solid transparent;
+    content: "";
+    display: block;
+    height: 0;
+    left: 50%;
+    margin-left: -1.25rem; /* Equal to border-left/border-right, to compenstate for *starting* at left 50% instead of centering there. */
+    opacity: 0;
+    position: absolute; /* Take the caret out of the flow so it doesn't push content below down. */
+    top: 4.2944rem; /* menuitem[padding-top] + menuitem[padding-top] + (menuitem[line-height] * menuitem[font-size]) - translateY/border-bottom */
+    transform: translateY(1.5rem); /* [border-bottom] – In the hidden state the caret is pushed down by the height of the caret. */
+    transition: all 0.1s ease-out; /* When we transition back to this state hide the caret quite quickly so you don't see the caret when the dropdown has gone. */
+    width: 0;
+    z-index: 1;
+}
+
+/* Show the caret on hover. */
+.hovering > a:after {
+    opacity: 1;
+    transform: translateY(0); /* In the revealed state the caret is sitting inside the menuitem's padding. */
+    transition: all 0.3s ease-out; /* Ease up when we transition to visible position in .hovering > a:after on hover. */
+}
+
+/*
+
+Mana bar
+
+We show the color composition of a deck with a horizontal bar made up of the colors of Magic as printed on cards in their mana symbols.
+
+*/
 
 .mana:nth-child(1) {
     border-left: 0.1rem #999 solid;
 }
 
 .mana {
+    border-bottom: 0.1rem #999 solid;
+    border-right: 0.1rem #999 solid;
+    border-top: 0.1rem #999 solid;
     display: inline-block;
     height: 1rem;
     vertical-align: middle;
-    border-bottom: 0.1rem #999 solid;
-    border-top: 0.1rem #999 solid;
-    border-right: 0.1rem #999 solid;
 }
 
 .mana-W {
@@ -340,7 +436,14 @@ ul.menu {
     background-color: #9dd2af;
 }
 
-/* Responsive tables */
+/*
+
+Responsive tables
+
+We stack our table rows on smaller screen sizes instead of stretching off the side of the screen.
+This is of dubious value and should probably be revisited.
+
+*/
 
 @media only screen and (max-width: 60rem) {
     table, tbody, th, td, tr {
@@ -385,24 +488,34 @@ ul.menu {
     .gsc-search-box td, th {
         display: table-cell;
     }
-
 }
 
-/* Deck */
+/*
+
+Deck
+
+*/
 
 .bye {
     font-size: 0.8rem;
 }
 
-/* Card */
+/*
+
+Card
+
+Cards are 445px tall images that are usually 312px wide but may be wider if they represent something special like a meld card.
+
+*/
 
 .card-img {
     height: 22.25rem;
     padding-top: 1rem;
 }
 
+/* Constrain the width of the bug description so it doesn't prevent wrapping of other interesting content alongside the card image. */
 p.bugged {
-    width: 15rem;
+    width: 14.02247191rem; /* The width of a card when the height is 22.25rem (as above) */
 }
 
 .bugged::after {
@@ -415,7 +528,11 @@ p.bugged {
     margin-left: 0.2em;
 }
 
-/* Forms */
+/*
+
+Forms
+
+*/
 
 form {
     margin: 2rem 0;
@@ -429,7 +546,7 @@ button, input, select, textarea, .uploader-label {
     width: 20rem;
 }
 
-input[type=checkbox].toggleIllegal {
+input[type=checkbox].toggle-illegal {
     width: 1rem;
 }
 
@@ -454,8 +571,8 @@ textarea {
 }
 
 label {
-    width: 10em;
     margin-right: 1em;
+    width: 10em;
 }
 
 input, select, textarea {
@@ -496,12 +613,21 @@ input.error, select.error, textarea.error {
 }
 
 form.inline, .inline input, .inline select, .inline textarea, .inline label, .inline button {
+    display: inline-block;
+    float: none;
     margin: 0;
     max-width: 100%;
     width: inherit;
 }
 
-/* Search. We're overriding Google's inline styles here hence a lot of !important. */
+/*
+
+Search
+
+Styles for the Google search box.
+We need to override a lot of Google's inline styles hence a lot of !important.
+
+*/
 
 .gsc-control-cse {
     background: transparent !important; /* csslint allow: important */
@@ -512,8 +638,8 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
 
 .gsc-input {
     background: none !important; /* csslint allow: important */
-    font-size: inherit !important; /* csslint allow: important */
     font-family: inherit !important; /* csslint allow: important */
+    font-size: inherit !important; /* csslint allow: important */
 }
 
 .gsc-wrapper, .gsc-results-wrapper-overlay, .gsc-results-root {
@@ -579,7 +705,11 @@ td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
     border-bottom: 0;
 }
 
-/* Archetypes */
+/*
+
+Archetypes
+
+ */
 
 .archetype {
     font-size: 0.9rem;
@@ -636,41 +766,64 @@ tr.current td:last-child {
     position: relative;
 }
 
-/* Season Symbols */
+/*
+
+Season Symbols
+
+*/
 
 .ss:before {
     margin-right: 0.1rem;
-    vertical-align: -0.1rem; /* None of the standard values line up the text and the image center. */
+    vertical-align: -0.1rem; /* None of the standard keyword values for vertical-align successfully line up the text and the image center. */
 }
 .ss {
     margin-right: 0.35rem;
 }
 
-/* Notification Badges */
+/*
+
+Notification Badges
+
+*/
+
+/* Menu items needed to be positioned statically for dropdowns to work, but the badge needs a relatively-positioned parent in the menu item. */
+.badge-holder {
+    position: relative;
+}
 
 .badge {
-    display: none; /* Will be shown with javascript if admin is viewing. */
-    position: absolute;
-    top: 1.1rem;
-    right: 1.1rem;
     background-color: #9dd2af;
-    border-radius: 0.6rem; /* one half of ( (border * 2) + height + padding ) */
+    border-radius: 0.6rem; /* 0.5 * ( (border * 2) + height + padding ) */
+    display: none; /* Will be shown with javascript if admin is viewing. */
     height: 1.2rem;
-    padding: 0;
-    text-align: center;
-    min-width: 1.2rem;
     line-height: 1.2rem;
+    min-width: 1.2rem;
+    padding: 0;
+    position: absolute;
+    right: 1.1rem;
+    text-align: center;
+    top: 1.1rem;
 }
 
 .badge a, .badge a:hover {
-    color: white;
+    color: #f9f9f9;
 }
 
-/* Tournaments */
+/*
+
+Tournaments
+
+*/
 
 .local {
     display: none; /* Will be revealed by js when we have a localized time. */
 }
+
+/*
+
+Leaderboard
+
+*/
 
 .pos-1 {
     background-color: rgba(0, 255, 0, 0.4);

@@ -11,14 +11,17 @@ class TournamentLeaderboards(View):
 
         self.tournaments = [
             {
+                'name': 'Penny Dreadful Saturdays',
+            },
+            {
+                'name': 'Penny Dreadful Sundays',
+            },
+            {
                 'name': 'Penny Dreadful Mondays',
             },
             {
                 'name': 'Penny Dreadful Thursdays',
             },
-            {
-                'name': 'Penny Dreadful Sundays',
-            }
         ]
 
     def subtitle(self):

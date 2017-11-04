@@ -1,3 +1,4 @@
+import inflect
 from flask import url_for
 
 from magic import tournaments
@@ -43,6 +44,8 @@ class Tournaments(View):
                 'chat_room': '#PDT'
             }
         ]
+        p = inflect.engine()
+        self.num_tournaments = p.number_to_words(len(self.tournaments))
 
     def subtitle(self):
         return 'Tournaments'

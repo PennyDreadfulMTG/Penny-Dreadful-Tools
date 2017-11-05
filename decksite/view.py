@@ -48,8 +48,7 @@ class View:
                 {'name': 'League Info', 'url': url_for('league')},
                 {'name': 'Sign Up', 'url': url_for('signup')},
                 {'name': 'Report', 'url': url_for('report')},
-                {'name': 'Records', 'url': url_for('current_league')},
-                {'name': 'Instructions', 'url': url_for('league')}
+                {'name': 'Records', 'url': url_for('current_league')}
             ]},
             {'name': 'Competitions', 'url': url_for('competitions'), 'has_submenu': True, 'submenu': [
                 {'name': 'Tournament Info', 'url': url_for('tournaments')},

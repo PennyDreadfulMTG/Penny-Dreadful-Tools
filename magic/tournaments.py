@@ -44,3 +44,36 @@ def prize(d):
     elif f <= 8:
         return 1
     return 0
+
+def all_series_info():
+    info = next_tournament_info()
+    return [
+        {
+            'name': 'Penny Dreadful Saturdays',
+            'hosts': ['back_alley_g', 'bigm'],
+            'display_time': '1:30pm Eastern',
+            'time': info['pdsat_time'],
+            'chat_room': '#PDS'
+        },
+        {
+            'name': 'Penny Dreadful Sundays',
+            'hosts': ['bakert99', 'littlefield'],
+            'display_time': '1:30pm Eastern',
+            'time': info['pds_time'],
+            'chat_room': '#PDS'
+        },
+        {
+            'name': 'Penny Dreadful Mondays',
+            'hosts': ['stash86', 'silasary'],
+            'display_time': '7pm Eastern',
+            'time': info['pdm_time'],
+            'chat_room': '#PDM'
+        },
+        {
+            'name': 'Penny Dreadful Thursdays',
+            'hosts': ['silasary', 'stash86'],
+            'display_time': '7pm Eastern',
+            'time': info['pdt_time'],
+            'chat_room': '#PDT'
+        }
+    ]

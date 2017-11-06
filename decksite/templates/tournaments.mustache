@@ -11,7 +11,7 @@
 {{#tournaments}}
     <section>
         <h3>{{name}}</h3>
-        <p>Host: <a href="/people/{{host}}/">{{host}}</a></p>
+        <p>Hosts: {{#hosts}}<a href="/people/{{.}}/">{{.}}</a> {{/hosts}}</p>
         <p>Prizes: 4/3/2/2/1/1/1/1 bot credit with Cardhoarder and 1 tik door prize.</p>
         <p>Time: {{display_time}} <span class="local">(<span class="time" data-time="{{time}}"></span>)</span></p>
         <p>Sign Up: <a href="http://gatherling.com/">gatherling.com</a>

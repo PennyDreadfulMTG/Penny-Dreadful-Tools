@@ -1,4 +1,14 @@
-        </div> <!-- .main -->
+        </main>
+        <footer>
+            {{#menu}}
+                <section>
+                    <p><b><a class="menuitem" href="{{url}}">{{name}}</a></b></p>
+                    {{#submenu}}
+                        <p><a href="{{url}}">{{name}}</a></p>
+                    {{/submenu}}
+                </section>
+            {{/menu}}
+        </footer>
         <script defer src="//code.jquery.com/jquery-latest.min.js"></script>
         {{#tooltips_url}}
             <script defer src="{{tooltips_url}}"></script>

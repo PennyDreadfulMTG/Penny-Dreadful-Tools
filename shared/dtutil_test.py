@@ -61,3 +61,10 @@ def test_display_date():
     dt = datetime.datetime.now(datetime.timezone.utc)
     assert dtutil.display_date(dt).find('just now') >= 0
     assert dtutil.display_date(dt).find('from now') == -1
+
+def test_rounding():
+    assert dtutil.display_time(121, granularity=1) == '2 minutes'
+    assert dtutil.display_time(121, granularity=2) == '2 minutes, 1 second'
+    assert dtutil.display_time(121, granularity=3) == '2 minutes, 1 second'
+    assert dtutil.display_time(159, granularity=1) == '3 minutes'
+    assert dtutil.display_time(91, granularity=1) == '2 minutes'

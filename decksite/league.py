@@ -5,13 +5,13 @@ import calendar
 
 from flask import url_for
 
-from decksite import deck_name
 from magic import legality, rotation
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
+from decksite import deck_name
 from decksite.data import competition, deck, guarantee
 from decksite.database import db
 from decksite.scrapers import decklist

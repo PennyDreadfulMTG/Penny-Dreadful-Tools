@@ -223,7 +223,6 @@ Grays:
 
 eee "isabelline" – highlight for table rows
 999 "spanish gray" - mana box borders, menu text color on hover
-ccc "pastel gray" - dividing lines in tables
 
 A couple of dubious inclusions:
 
@@ -369,7 +368,7 @@ tr.wide td, tr.wide th {
 }
 
 tr.wide td {
-    border-top: 0.1em #ccc solid;
+    border-top: 0.1em #999 solid;
 }
 
 tr.wide td.wide {
@@ -379,7 +378,7 @@ tr.wide td.wide {
 }
 
 td.divider, th.divider {
-    border-right: 0.07em solid #ccc;
+    border-right: 0.07em solid #999;
 }
 
 th.legend {

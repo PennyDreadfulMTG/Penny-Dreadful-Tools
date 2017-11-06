@@ -34,7 +34,8 @@ def tournament(url, name):
     cell = soup.find('div', {'id': 'EventReport'}).find_all('td')[1]
     # Hack in the known start time because it's not in the page.
     start_time = '19:00'
-    if 'Sunday' in cell.find('a').string.strip() or 'PDS' in cell.find('a').string.strip():
+    name = cell.find('a').string.strip()
+    if 'Saturday' in name or 'Sunday' in name or 'PDS' in name:
         start_time = '13:30'
     date_s = cell.find('br').next.strip() + ' {start_time}'.format(start_time=start_time)
     if '-0001' in date_s:

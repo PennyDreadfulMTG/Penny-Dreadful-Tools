@@ -393,7 +393,7 @@ Want to contribute? Send a Pull Request."""
             return await bot.client.send_message(channel, '{author}: Please let me know what you want to search on Google.'.format(author=author.mention))
         try:
             # We set TERM here because of some weirdness around readline and shell commands. Stops `ESC[?1034h` appearing on the end of STDOUT when TERM=xterm. See https://bugzilla.redhat.com/show_bug.cgi?id=304181 or google the escape sequence if you are super curious.
-            env = {**os.environ, 'TERM': 'vt100'}
+            env = {**os.environ, 'TERM': 'vt100', 'PYTHONIOENCODING': 'utf-8'}
             result = subprocess.run(['googler', '--json', '-n1'] + args.split(), stdout=subprocess.PIPE, check=True, env=env, universal_newlines=True)
             r = json.loads(result.stdout.strip())[0]
             s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['url'], abstract=r['abstract'])

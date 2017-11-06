@@ -412,7 +412,7 @@ Want to contribute? Send a Pull Request."""
     async def tournament(self, bot, channel):
         """`!tournament` Get information about the next tournament."""
         t = tournaments.next_tournament_info()
-        await bot.client.send_message(channel, 'The next tournament is {name} in {time}.\nSign up on <http://gatherling.com/>.\nMore information: {url}'.format(name=t['next_tournament_name'], time=t['next_tournament_time'], url=fetcher.decksite_url('/tournaments/')))
+        await bot.client.send_message(channel, 'The next tournament is {name} in {time}.\nSign up on <http://gatherling.com/>\nMore information: {url}'.format(name=t['next_tournament_name'], time=t['next_tournament_time'], url=fetcher.decksite_url('/tournaments/')))
 
     @cmd_header('Commands')
     async def explain(self, bot, channel, args):

@@ -1,22 +1,20 @@
-<section>
-    <h2>Competitions</h2>
-    <table>
+<h1>Competitions</h1>
+<table>
 
-        <thead>
-            <th>Competition</th>
-            <th>Entries</th>
-            <th>Date</th>
-        </thead>
-        <tbody>
-                {{#competitions}}
-                {{#num_decks}}
-                    <tr>
-                        <td><a href="{{competition_url}}">{{{name}}}</a></td>
-                        <td class="n"><a href="{{competition_url}}">{{{num_decks}}}</a></td>
-                        <td class="n" data-text="{{date_sort}}"><a href="{{competition_url}}">{{{display_date}}}</a></td>
-                    </tr>
-                {{/num_decks}}
-            {{/competitions}}
-        </tbody>
-    </table>
-</section>
+    <thead>
+        <th>Competition</th>
+        <th>Entries</th>
+        <th>Date</th>
+    </thead>
+    <tbody>
+            {{#competitions}}
+            {{#num_decks}}
+                <tr>
+                    <td><a href="{{competition_url}}">{{{name}}}</a></td>
+                    <td class="n"><a href="{{competition_url}}">{{{num_decks}}}</a></td>
+                    <td class="n" data-text="{{date_sort}}"><a href="{{competition_url}}">{{{display_date}}}</a></td>
+                </tr>
+            {{/num_decks}}
+        {{/competitions}}
+    </tbody>
+</table>

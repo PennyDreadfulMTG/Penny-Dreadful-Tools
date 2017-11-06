@@ -539,8 +539,9 @@ Want to contribute? Send a Pull Request."""
         except KeyError:
             usage = 'I can explain any of these things: {things}'.format(things=', '.join(sorted(keys)))
             return await bot.client.send_message(channel, usage)
-        for k in sorted(explanations[word][1].keys()):
-            s += '{k}: {v}\n'.format(k=k, v=explanations[word][1][k])
+        if len(explanations[word]) >= 2:
+            for k in sorted(explanations[word][1].keys()):
+                s += '{k}: {v}\n'.format(k=k, v=explanations[word][1][k])
         await bot.client.send_message(channel, s)
 
     @cmd_header('Developer')

@@ -170,7 +170,7 @@ def card_bugs_properties():
     props['id']['primary_key'] = True
     props['card_id']['type'] = INTEGER
     props['card_id']['foreign_key'] = ('card', 'id')
-    props['description']['description'] = TEXT
+    props['description']['type'] = TEXT
     props['last_confirmed']['type'] = INTEGER
     return props
 

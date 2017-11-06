@@ -406,7 +406,7 @@ Want to contribute? Send a Pull Request."""
             if e.returncode == 127:
                 await bot.client.send_message(channel, '{author}: Optional command `google` not set up.'.format(author=author.mention))
             else:
-                await bot.client.send_message(channel, '{author}: Problem searching google.'.format(author=author.mention))
+                await bot.client.send_message(channel, '{author}: Problem searching google. ({e})'.format(author=author.mention, e=e))
 
     @cmd_header('Commands')
     async def tournament(self, bot, channel):

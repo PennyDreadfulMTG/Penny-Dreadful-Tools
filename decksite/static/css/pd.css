@@ -339,7 +339,7 @@ th {
 td, th {
     max-width: 13em;
     overflow: hidden;
-    padding: 0 0.25em;
+    padding: 0 0.5em;
     text-overflow: ellipsis;
     white-space: nowrap;
 }

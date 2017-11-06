@@ -20,9 +20,11 @@
 
     <p>Then tell everyone:</p>
 
-    <blockquote><i>Welcome to the tournament sponsored by Cardhoarder. We have <b>{XX}</b> players. We will play four rounds of Swiss followed by cut to top 8. There are prizes for Top 8 and a door prize for one randomly-selected player completing all four rounds. Prizes will be credited to your cardhoarder account automatically some time at the end of this week. Please make your games in Getting Serious with 'Penny Dreadful' and your opponent's name in the comments with watchers allowed. If your opponent doesn't show up please ping them on MTGO and if they are not there at <b>:{YY}</b> contact me for your free 2-0 win. Good luck everyone!</i></blockquote>
+    <blockquote><i>Welcome to the tournament sponsored by Cardhoarder. We have <b>{PLAYERS}</b> players. We will play {ROUNDS} rounds of Swiss followed by cut to top {KNOCKOUT}. There are prizes for the Top 8 finishes and a door prize for one other randomly-selected player completing all Swiss rounds. Prizes will be credited to your cardhoarder account automatically some time at the end of this week. Please make your games in Getting Serious with 'Penny Dreadful' and your opponent's name in the comments with watchers allowed. If your opponent doesn't show up please ping them on MTGO and if they are not there at <b>:{MINUTES}</b> contact me for your free 2-0 win. Good luck everyone!</i></blockquote>
 
-    <p>or something similar. Replace {XX} with the number of players in the tournament and :{YY} with the current minutes past the hour + 10.</p>
+    <p>or something similar. Replace {PLAYERS} with the number of players, {ROUNDS} with the number of rounds, {KNOCKOUT} with either 4 or 8. See the chart below for the right values. And replace {MINUTES} with the current minutes past the hour + 10 (we don't state the hour to avoid timezone confusion).</p>
+
+    <p>Note: tournaments are usually initially set up with four rounds of Swiss and a Top 8. If that's not what you need (see chart below) you can change it on the Event Settings page after clicking the tournament name on Host CP.</p>
 
     <h2>Starting the Tournament</h2>
 
@@ -35,10 +37,76 @@
     <p>When results for the round start coming in it's nice to check that both parts of a match report and nudge people who don't. It's better to get people to report their own results because often people that don't report have lost and may want to drop if they report themselves rather than you putting it in and pairing it and them for the next round and then they no-show. But you can enter a result if you need to, and also drop people, from the Match Listing and Registration sections. You can also un-drop.</p>
 
     <p>Top 8 will happen automatically (annoyingly called "Round 5" and on) but may need you to keep an eye because the loser may not report. Here it's less bad if you report because the loser will obviously be out anyway.</p>
+
     <h2>After the Tournament</h2>
+
     <p>Make sure the results of the semifinals and final are reported on the Match Listing subsection. This will reveal all decklists to the public (and makes them available to pennydreadfulmagic.com).</p>
 
     <h2>Further Help</h2>
 
     <p>If it goes horribly wrong: message on discord for one of {{hosts}} – all of whom know what's up. Usually.</p>
+
+    <h2>Number of Rounds</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th class="legend" colspan="2">Rounds</th>
+                <th></th>
+            <tr>
+                <th class="n">Players</th>
+                <th class="n">Swiss</th>
+                <th class="n">Knockout</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="n">2</td>
+                <td class="n">0</td>
+                <td class="n">1</td>
+                <td>(single elim)</td>
+            </tr>
+            <tr>
+                <td class="n">3-4</td>
+                <td class="n">0</td>
+                <td class="n">2</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="n">5-7</td>
+                <td class="n">0</td>
+                <td class="n">3</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="n">8</td>
+                <td class="n">3</td>
+                <td class="n">2</td>
+                <td>(top 4)</td>
+            </tr>
+            <tr>
+                <td class="n">9-15</td>
+                <td class="n">4</td>
+                <td class="n">2</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="n">16-31</td>
+                <td class="n">4</td>
+                <td class="n">3</td>
+                <td>(top 8)</td>
+            </tr>
+            <tr>
+                <td class="n">32+</td>
+                <td class="n">5</td>
+                <td class="n">3</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>Prizes will be paid out to the players that make the knockout rounds first and any remaining prizes will be paid out down the swiss standings. The door prize will always be paid to someone not getting any other prize. No player will ever receive more than one prize even if this means some prizes go unawarded.</p>
+
 </section>

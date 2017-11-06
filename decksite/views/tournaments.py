@@ -14,7 +14,7 @@ class Tournaments(View):
         self.next_tournament_time = info['next_tournament_time']
         self.leaderboards_url = url_for('tournament_leaderboards')
 
-        self.tournaments = touranments.all_series_info()
+        self.tournaments = tournaments.all_series_info()
         p = inflect.engine()
         self.num_tournaments = p.number_to_words(len(self.tournaments))
 

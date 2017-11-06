@@ -73,7 +73,7 @@ def display_time(seconds, granularity=2):
     )
     result = []
     for name, count in intervals:
-        value = seconds // count
+        value = round(seconds / count)
         if value:
             seconds -= value * count
             if value == 1:

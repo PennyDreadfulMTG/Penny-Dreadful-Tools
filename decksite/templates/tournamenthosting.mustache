@@ -1,55 +1,112 @@
-<h2>Hosting Tournaments</h2>
-
+<h1>Hosting Tournaments</h1>
 <section>
-    <h3>New Hosts</h3>
+    <h2>New Hosts</h2>
+
     <p>If you want to host or help to host Penny Dreadful tournaments be sure to make yourself known on the <a href="https://discord.gg/H6EHdHu">Discord</a>. We always need hosts.</p>
-</section>
 
-<section>
-    <h3>Gatherling</h3>
+    <h2>Gatherling</h2>
+
     <p>We run our tournaments on <a href="http://gatherling.com">Gatherling</a>.</p>
-    <p>Being a host gives you a new tab Host CP (only when logged in, obviously). Under there you will find the event(s) you are hosting.</p>
-</section>
 
-<section>
-    <h3>During Registration</h3>
+    <p>Being a host gives you a new tab Host CP (only when logged in, obviously). Under there you will find the event(s) you are hosting.</p>
+
+    <h2>During Registration</h2>
 
     <p>Before the tournament check the Registration section and bother players whose decks are either empty or not legal (highlighted) - the system will auto-drop them if you start the tournament like that. If something goes completely crazy they can always enter a basic land they aren't playing as a missing card and put what they are really playing in the comments. This should rarely if ever be necessary and it's more likely they are making a mistake. Gatherling wants split cards in this style: "Far/Away".</p>
-</section>
 
-<section>
-    <h3>Before the Tournament</h3>
+    <h2>Before the Tournament</h2>
+
     <p>After tournament start time before starting the tournament: check if anyone wants to join late (you can add them manually on Registration in the input box there). That's also how you add people in rounds after round 1 (they will get no credit for the previous rounds).</p>
 
     <p>Then tell everyone:</p>
 
-    <blockquote><i>Welcome to the tournament sponsored by Cardhoarder. We have <b>{XX}</b> players. We will play four rounds of Swiss followed by cut to top 8. There are prizes for Top 8 and a door prize for one randomly-selected player completing all four rounds. Prizes will be credited to your cardhoarder account automatically some time at the end of this week. Please make your games in Getting Serious with 'Penny Dreadful' and your opponent's name in the comments with watchers allowed. If your opponent doesn't show up please ping them on MTGO and if they are not there at <b>:{YY}</b> contact me for your free 2-0 win. Good luck everyone!</i></blockquote>
+    <blockquote><i>Welcome to the tournament sponsored by Cardhoarder. We have <b>{PLAYERS}</b> players. We will play {ROUNDS} rounds of Swiss followed by cut to top {KNOCKOUT}. There are prizes for the Top 8 finishes and a door prize for one other randomly-selected player completing all Swiss rounds. Prizes will be credited to your cardhoarder account automatically some time at the end of this week. Please make your games in Getting Serious with 'Penny Dreadful' and your opponent's name in the comments with watchers allowed. If your opponent doesn't show up please ping them on MTGO and if they are not there at <b>:{MINUTES}</b> contact me for your free 2-0 win. Good luck everyone!</i></blockquote>
 
-    <p>or something similar. Replace {XX} with the number of players in the tournament and :{YY} with the current minutes past the hour + 10.</p>
-</section>
+    <p>or something similar. Replace {PLAYERS} with the number of players, {ROUNDS} with the number of rounds, {KNOCKOUT} with either 4 or 8. See the chart below for the right values. And replace {MINUTES} with the current minutes past the hour + 10 (we don't state the hour to avoid timezone confusion).</p>
 
-<section>
-    <h3>Starting the Tournament</h3>
+    <p>Note: tournaments are usually initially set up with four rounds of Swiss and a Top 8. If that's not what you need (see chart below) you can change it on the Event Settings page after clicking the tournament name on Host CP.</p>
+
+    <h2>Starting the Tournament</h2>
+
     <p>To start the tournament: Go to the home page of the event linked off Host CP and click 'Start Event'.</p>
-</section>
 
-<section>
-    <h3>During the Tournament</h3>
+    <h2>During the Tournament</h2>
+
     <p>During the tournament: Tell people when the round starts. You can do this on MTGO (in #PDX where X is the first letter of the day of your tournament), Discord (in #tournament-room) or both as you see fit. Some players will only join the MTGO chat room so that's probably the basic place to post. If PDBot is active you can post into #tournament-room preceded with #{name of room} You can post all the match details or just tell everyone to check their Player CP for their pairing.</p>
 
     <p>When results for the round start coming in it's nice to check that both parts of a match report and nudge people who don't. It's better to get people to report their own results because often people that don't report have lost and may want to drop if they report themselves rather than you putting it in and pairing it and them for the next round and then they no-show. But you can enter a result if you need to, and also drop people, from the Match Listing and Registration sections. You can also un-drop.</p>
 
     <p>Top 8 will happen automatically (annoyingly called "Round 5" and on) but may need you to keep an eye because the loser may not report. Here it's less bad if you report because the loser will obviously be out anyway.</p>
-</section>
 
-<section>
-    <h3>After the Tournament</h3>
+    <h2>After the Tournament</h2>
+
     <p>Make sure the results of the semifinals and final are reported on the Match Listing subsection. This will reveal all decklists to the public (and makes them available to pennydreadfulmagic.com).</p>
-</section>
 
-</section>
+    <h2>Further Help</h2>
 
-<section>
-    <h3>Further Help</h3>
     <p>If it goes horribly wrong: message on discord for one of {{hosts}} – all of whom know what's up. Usually.</p>
+
+    <h2>Number of Rounds</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th class="legend" colspan="2">Rounds</th>
+                <th></th>
+            <tr>
+                <th class="n">Players</th>
+                <th class="n">Swiss</th>
+                <th class="n">Knockout</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="n">2</td>
+                <td class="n">0</td>
+                <td class="n">1</td>
+                <td>(single elim)</td>
+            </tr>
+            <tr>
+                <td class="n">3-4</td>
+                <td class="n">0</td>
+                <td class="n">2</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="n">5-7</td>
+                <td class="n">0</td>
+                <td class="n">3</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="n">8</td>
+                <td class="n">3</td>
+                <td class="n">2</td>
+                <td>(top 4)</td>
+            </tr>
+            <tr>
+                <td class="n">9-15</td>
+                <td class="n">4</td>
+                <td class="n">2</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="n">16-31</td>
+                <td class="n">4</td>
+                <td class="n">3</td>
+                <td>(top 8)</td>
+            </tr>
+            <tr>
+                <td class="n">32+</td>
+                <td class="n">5</td>
+                <td class="n">3</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>Prizes will be paid out to the players that make the knockout rounds first and any remaining prizes will be paid out down the swiss standings. The door prize will always be paid to someone not getting any other prize. No player will ever receive more than one prize even if this means some prizes go unawarded.</p>
+
 </section>

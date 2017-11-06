@@ -5,8 +5,8 @@
 - Add a bot at https://discordapp.com/developers/applications/me
 - Add a bot user for the bot
 - Add the bot to your server with https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot
-- Click to reveal the token
-- Copy config.json.example to config.json and alter the value for "token"
+- Click to reveal the token (not secret) on https://discordapp.com/developers/applications/me
+- Copy config.json.example to config.json and alter the value for "token" to this value
 - Optionally alter the various _dir and _database values in there if you want image files, scratch files and databases stored somewhere else. If you want to collect decks from tappedout.net with valid dates update to_username and to_password.
 - Install MySQL.
 - Using the values from your config.json issue the following commands in MySQL:
@@ -15,9 +15,9 @@
   -- GRANT ALL ON <prices_database>.* TO '<mysql_user>'@'<mysql_host>';
   -- GRANT ALL ON <magic_database>.* TO '<mysql_user>'@'<mysql_host>';
 - The sqlite extension we use for fuzzy matching is not part of any string distribution so you must download and build it.
-  - curl http://sqlite.org/cgi/src/raw/ext/misc/spellfix.c?name=a4723b6aff748a417b5091b68a46443265c40f0d -o spellfix.c
-  - curl http://sqlite.org/cgi/src/raw/src/sqlite3ext.h?name=8648034aa702469afb553231677306cc6492a1ae -o sqlite3ext.h
-  - curl http://sqlite.org/cgi/src/raw/src/sqlite.h.in?name=2683a291ed8db5228024267be6421f0de507b80e -o sqlite3.h
+  - curl https://sqlite.org/cgi/src/raw/ext/misc/spellfix.c?name=a4723b6aff748a417b5091b68a46443265c40f0d -o spellfix.c
+  - curl https://sqlite.org/cgi/src/raw/src/sqlite3ext.h?name=8648034aa702469afb553231677306cc6492a1ae -o sqlite3ext.h
+  - curl https://sqlite.org/cgi/src/raw/src/sqlite.h.in?name=2683a291ed8db5228024267be6421f0de507b80e -o sqlite3.h
   - gcc -fPIC -shared spellfix.c -o spellfix.dylib
     - Windows:   cl /LD spellfix.c
   - NOTE! You may need .dll or .so as the file extension instead of .dylib depending on your operating system.
@@ -29,4 +29,6 @@
 --global-option=fetch --global-option=--version --global-option=3.14.1 --global-option=--all \
 --global-option=build --global-option=--enable-all-extensions
 - Optionally add SELECT LOAD_EXTENSION('<path to spellfix.dylib>'); to your ~/.sqliterc
-- Optionally (for the `!google` bot command): $ git clone https://github.com/jarun/googler/ && cd googler && sudo make install
+- Optionally (for the `!google` bot command):
+	- git clone https://github.com/jarun/googler/ && cd googler && sudo make install
+

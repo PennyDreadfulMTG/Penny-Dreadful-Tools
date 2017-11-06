@@ -71,8 +71,7 @@ Typography
 
 The base font size is 0.75em or 12.8px/9.6pt.
 
-We use the Golden Ratio (1.618) as the basis of our typography. We use 4.236 (section margin), 2.618 (h1) and 1.618 (h2, heading bottom margin, body text line height).
-We also use 1.2 from outside the scale for h3 and heading line height.
+We use the Golden Ratio (1.618) as the basis of our typography. We use 4.236 (section margin), 2.618 (h1) and 1.618 (h2, heading bottom margin, body text line height) and 1 (body text, .
 http://type-scale.com/ will show you bigger and smaller options using the Golden Ratio and other scales.
 
 */
@@ -101,7 +100,21 @@ footer a {
 
 Layout
 
-Main page content is a series of <section/> elements which float to use available space.
+html
+    head
+    body
+        header
+        nav
+        main
+            h1
+            section (0+)
+                h2
+                (content)
+        footer
+        (javascript)
+
+Main page does not have to use sections if it concerns only one subject.
+Where multiple areas exist or wrapping is desired content is a series of <section> elements which float to use available space.
 There is currently no grid in place.
 
 Sizes are in rems because the layout doesn't care what size text is in it, it relates to the whole page.
@@ -123,15 +136,17 @@ header {
 }
 
 nav {
-    margin-left: -2rem; /* Match padding in menu to stop wrapping item. */
+    margin-left: -2rem; /* Match the padding on each menu item to avoid an indent (including when menu items wrap under). */
 }
 
 footer {
     border-top: 1px solid #502828;
+    margin-top: 2rem;
+    padding-bottom: 4rem;
+    padding-top: 2rem;
 }
 
 section {
-    border-top: 0.1rem solid;
     float: left;
     margin: 1rem 4.236rem 1rem 0;
 }
@@ -150,9 +165,26 @@ div:after, header:after, nav:after, main:after, footer:after, section:after {
 
 Headings
 
+The site heading is the h1 of the header element with special formatting.
+Each page should have one h1 at the top of the template. This should be the only h1 in the main element.
+Each <section> will usually begin with an h2 (otherwise why is it a section?)
+Currently there is no h3 and nesting that deeply should be pondered but it may be necessary to add one.
+
 */
 
-h2, h3 {
+/* The site title is an h1 for the body just as the page title is an h1 for the main.
+   See: https://webdesign.tutsplus.com/articles/the-truth-about-multiple-h1-tags-in-the-html5-era--webdesign-16824 */
+header h1 {
+    border: 0;
+    float: left; /* To accommodate search bar on right. */
+    font-family: heading-caps;
+    font-size: 1.618rem;
+    margin-bottom: 0;
+    padding: 3rem 0 1rem 0;
+    text-transform: lowercase;
+}
+
+h1, h2 {
     color: inherit;
     font-family: Georgia, "Times New Roman", Times, serif;
     line-height: 1.618;
@@ -160,25 +192,20 @@ h2, h3 {
     padding-top: 1rem;
 }
 
-h1 {
-    float: left; /* To accommodate search bar on right. */
-    font-family: heading-caps;
-    font-size: 1.618rem;
-    padding: 3rem 0 1rem 0;
-    text-transform: lowercase;
+h1, h2 {
+    border-top: 0.1rem solid;
 }
 
-h1 a:visited, h2 a:visited, h3 a:visited {
-    color: inherit;
+h1 {
+    font-size: 2.618rem;
 }
 
 h2 {
-    font-size: 2.618rem;
-    width: 100%;
+    font-size: 1.618rem;
 }
 
-h3 {
-    font-size: 1.618rem;
+h1 a:visited, h2 a:visited {
+    color: inherit;
 }
 
 /*
@@ -196,7 +223,6 @@ Grays:
 
 eee "isabelline" – highlight for table rows
 999 "spanish gray" - mana box borders, menu text color on hover
-ccc "pastel gray" - dividing lines in tables
 
 A couple of dubious inclusions:
 
@@ -240,7 +266,7 @@ main a {
 }
 
 /* There are a lot of places we want undecorated links, though, even in the main content area. */
-main table a, main h2 a, main h3 a, .decklist a {
+main table a, main h1 a, main h2 a, main h3 a, main li a, .decklist a {
     text-decoration: none;
 }
 
@@ -294,7 +320,7 @@ table {
 }
 
 table.with-marginalia {
-    margin-left: -4.5em; /* Width of .marginalia + any spacing. */
+    margin-left: -4em; /* Width of .marginalia */
     margin-right: 0.5em;
 }
 
@@ -313,7 +339,7 @@ th {
 td, th {
     max-width: 13em;
     overflow: hidden;
-    padding: 0 0.25em;
+    padding: 0 0.5em;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -342,7 +368,7 @@ tr.wide td, tr.wide th {
 }
 
 tr.wide td {
-    border-top: 0.1em #ccc solid;
+    border-top: 0.1em #999 solid;
 }
 
 tr.wide td.wide {
@@ -352,7 +378,7 @@ tr.wide td.wide {
 }
 
 td.divider, th.divider {
-    border-right: 0.07em solid #ccc;
+    border-right: 0.07em solid #999;
 }
 
 th.legend {

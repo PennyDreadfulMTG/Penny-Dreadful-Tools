@@ -1,29 +1,29 @@
-<h2>{{name}}</h2>
+<h1>{{name}}</h1>
 <section>
-    <h3>Archetype Tree</h3>
+    <h2>Archetype Tree</h2>
     {{> archetypetree}}
 </section>
 <section>
-    <h3>Most Common Cards</h3>
+    <h2>Most Common Cards</h2>
     <ul>
         {{#most_common_cards}}<li>{{> singlecard}}</li>{{/most_common_cards}}
     </ul>
 </section>
 {{#show_best_decks}}
     <section>
-        <h3>Top Decks</h3>
+        <h2>Top Decks</h2>
         {{#best_decks}}{{> decktable}}{{/best_decks}}
     </section>
 {{/show_best_decks}}
 {{#show_matchups}}
     <section>
-        <h3>Matchups</h3>
+        <h2>Matchups</h2>
         {{#matchups_container}}
             {{> archetypetree}}
         {{/matchups_container}}
     </section>
 {{/show_matchups}}
 <section>
-    <h3>All Decks</h3>
+    <h2>All Decks</h2>
     {{> decktable}}
 </section>

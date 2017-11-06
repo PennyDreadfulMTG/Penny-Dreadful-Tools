@@ -11,6 +11,7 @@ from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
+from decksite import deck_name
 from decksite.data import competition, deck, guarantee
 from decksite.database import db
 from decksite.scrapers import decklist
@@ -115,7 +116,7 @@ def identifier(params):
     return json.dumps([params['mtgo_username'], params['name'], params['competition_id'], str(int(time.time()))])
 
 def deck_options(decks, v):
-    return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
+    return [{'text': '{person} - {deck}'.format(person=d.person, deck=deck_name.normalize(d.name)), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
 
 def active_decks(additional_where='1 = 1'):
     where = "d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND (d.wins + d.losses + d.draws < 5) AND NOT d.retired AND ({additional_where})".format(active_competition_id_query=active_competition_id_query(), additional_where=additional_where)

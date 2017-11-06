@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title>{{title}}</title>
+        <link href="https://fonts.googleapis.com/css?family=Lato:400" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="{{css_url}}">
         <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/keyrune@latest/css/keyrune.css">
         <link rel="stylesheet" href="//cdn.jsdelivr.net/tipped/4.0.10/css/tipped/tipped.css">
@@ -20,7 +21,12 @@
     </head>
     <body>
         <header>
-            {{> menu}}
             <h1><a href="{{home_url}}">Penny Dreadful Magic</a></h1>
+            <div class="search">
+                {{> search}}
+            </div>
         </header>
-        <div class="main">
+        <nav>
+            {{> menu}}
+        </nav>
+        <main>

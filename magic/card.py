@@ -189,7 +189,7 @@ def name_query(column='face_name'):
 def cmc_query():
     return """
         CASE
-        WHEN layout = 'split' THEN
+        WHEN layout = 'split' OR layout = 'aftermath' THEN
             SUM(`{table}`.cmc)
         ELSE
             SUM(CASE WHEN `{table}`.position = 1 THEN `{table}`.cmc ELSE 0 END)

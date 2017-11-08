@@ -92,7 +92,7 @@ def update_database(new_version):
         insert_set(s)
     check_layouts() # Check that the hardcoded list of layouts we're about to use is still valid.
     # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
-    db().execute("UPDATE face SET cmc = 0 WHERE cmc IS NULL AND card_id IN (SELECT id FROM card WHERE layout IN ('normal', 'double-faced', 'flip', 'leveler', 'token', 'split'))")
+    db().execute("UPDATE face SET cmc = 0 WHERE cmc IS NULL AND card_id IN (SELECT id FROM card WHERE layout IN ('normal', 'double-faced', 'flip', 'leveler', 'token', 'split', 'aftermath'))")
     rs = db().execute('SELECT id, name FROM rarity')
     for row in rs:
         db().execute('UPDATE printing SET rarity_id = ? WHERE rarity = ?', [row['id'], row['name']])
@@ -161,7 +161,7 @@ def insert_card(c):
         card_id = db().last_insert_rowid()
         CARD_IDS[name] = card_id
     # mtgjson thinks the text of Jhessian Lookout is NULL not '' but that is clearly wrong.
-    if c.get('text', None) is None and c['layout'] in ['normal', 'token', 'double-faced', 'split']:
+    if c.get('text', None) is None and c['layout'] in ['normal', 'token', 'double-faced', 'split', 'aftermath']:
         c['text'] = ''
     c['nameAscii'] = card.unaccent(c.get('name'))
     c['searchText'] = re.sub(r'\([^\)]+\)', '', c['text'])

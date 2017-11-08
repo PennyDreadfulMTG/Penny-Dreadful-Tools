@@ -73,14 +73,12 @@ def display_time(seconds, granularity=2):
     )
     result = []
     for name, count in intervals:
-        value = round(seconds / count)
-        if value:
-            seconds -= value * count
-            if value == 1:
-                name = name.rstrip('s')
-            result.append("{} {}".format(round(value), name))
+        if len(result) < granularity - 1:
+            value = seconds // count # floor preceeding units
         else:
-            # Add a blank if we're in the middle of other values
-            if len(result) > 0:
-                result.append(None)
-    return ', '.join([x for x in result[:granularity] if x is not None])
+            value = round(seconds / count) # round off last unit
+        if value > 0 or len(result):
+            unit = name.rstrip('s') if value == 1 else name
+            result.append((value, unit))
+            seconds -= value * count
+    return ', '.join(['{} {}'.format(value, unit) for (value, unit) in result[:granularity] if value > 0])

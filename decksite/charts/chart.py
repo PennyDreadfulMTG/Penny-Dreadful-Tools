@@ -1,4 +1,5 @@
 import os.path
+import pathlib
 
 import matplotlib as mpl
 # This has to happen before pyplot is imported to avoid needing an X server to draw the graphs.
@@ -13,6 +14,7 @@ from shared.pd_exception import DoesNotExistException
 
 def cmc(deck_id):
     name = str(deck_id) + '-cmc.png'
+    pathlib.Path(configuration.get('charts_dir')).mkdir(parents=True, exist_ok=True)
     if not os.path.exists(configuration.get('charts_dir')):
         raise DoesNotExistException('Cannot store graph images because {dir} does not exist.'.format(dir=configuration.get('charts_dir')))
     path = os.path.join(configuration.get('charts_dir'), name)

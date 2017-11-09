@@ -2,6 +2,7 @@ import inflect
 from flask import url_for
 
 from magic import tournaments
+from shared import rules
 
 from decksite.view import View
 
@@ -17,6 +18,8 @@ class Tournaments(View):
         self.tournaments = tournaments.all_series_info()
         p = inflect.engine()
         self.num_tournaments = p.number_to_words(len(self.tournaments))
+
+        self.bugs_rules = rules.bugs(fmt=rules.HTML)
 
     def subtitle(self):
         return 'Tournaments'

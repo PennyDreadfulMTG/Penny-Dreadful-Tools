@@ -91,8 +91,6 @@ def update_database(new_version):
     for _, s in sets.items():
         insert_set(s)
     check_layouts() # Check that the hardcoded list of layouts we're about to use is still valid.
-    # mtgjson thinks that lands have a CMC of NULL so we'll work around that here.
-    db().execute("UPDATE face SET cmc = 0 WHERE cmc IS NULL AND card_id IN (SELECT id FROM card WHERE layout IN ('normal', 'double-faced', 'flip', 'leveler', 'token', 'split', 'aftermath'))")
     rs = db().execute('SELECT id, name FROM rarity')
     for row in rs:
         db().execute('UPDATE printing SET rarity_id = ? WHERE rarity = ?', [row['id'], row['name']])

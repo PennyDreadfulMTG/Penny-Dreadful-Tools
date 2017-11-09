@@ -13,6 +13,8 @@ from shared.container import Container
 from decksite import deck_name, template
 from decksite.data import deck
 
+NUM_MOST_COMMON_CARDS_TO_LIST = 10
+
 # pylint: disable=no-self-use, too-many-public-methods
 class View:
     def template(self):
@@ -154,6 +156,17 @@ class View:
             c.season.show_record = c.season.get('wins') or c.season.get('losses') or c.season.get('draws')
             c.all.show_record = c.all.get('wins') or c.all.get('losses') or c.all.get('draws')
         c.has_decks = len(c.get('decks', [])) > 0
+        counter = Counter()
+        for d in c.get('decks', []):
+            for c2 in d.maindeck:
+                if not c2['card'].type.startswith('Basic Land') and not c2['name'] == c.name:
+                    counter[c2['name']] += c2['n']
+        most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
+        c.most_common_cards = []
+        cs = oracle.cards_by_name()
+        for v in most_common_cards:
+            self.prepare_card(cs[v[0]])
+            c.most_common_cards.append(cs[v[0]])
 
     def prepare_competitions(self):
         for c in getattr(self, 'competitions', []):
@@ -175,7 +188,6 @@ class View:
             self.prepare_archetype(a, getattr(self, 'archetypes', []))
 
     def prepare_archetype(self, a, archetypes):
-        num_most_common_cards_to_list = 10
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
         if a.get('all') and a.get('season'):
             a.all.show_record = a.all.get('wins') or a.all.get('draws') or a.all.get('losses')
@@ -198,7 +210,7 @@ class View:
             for c in d.maindeck:
                 if not c['card'].type.startswith('Basic Land'):
                     counter[c['name']] += c['n']
-        most_common_cards = counter.most_common(num_most_common_cards_to_list)
+        most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
         cs = oracle.cards_by_name()
         for v in most_common_cards:
             self.prepare_card(cs[v[0]])

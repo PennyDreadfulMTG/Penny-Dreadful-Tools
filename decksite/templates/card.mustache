@@ -38,6 +38,12 @@
         </table>
     </section>
 {{/played_competitively}}
+<section>
+    <h2>Most Commonly Played With</h2>
+    <ul>
+        {{#most_common_cards}}<li>{{> singlecard}}</li>{{/most_common_cards}}
+    </ul>
+</section>
 {{> legal}}
 {{#has_decks}}
     <section>

@@ -74,7 +74,7 @@ def display_time(seconds, granularity=2):
     result = []
     for name, count in intervals:
         if len(result) < granularity - 1:
-            value = seconds // count # floor preceeding units
+            value = (seconds // count) # floor preceeding units and get them as ints not floats
         else:
             value = round(seconds / count) # round off last unit
         if value > 0 or len(result):

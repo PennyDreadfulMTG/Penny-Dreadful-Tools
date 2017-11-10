@@ -6,6 +6,7 @@ discord.py[voice]>=0.15.0
 flask
 googler
 inflect
+markdown
 matplotlib
 munch
 mysqlclient==1.3.9

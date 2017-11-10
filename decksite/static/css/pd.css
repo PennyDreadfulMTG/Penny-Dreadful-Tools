@@ -53,11 +53,11 @@ We don't use any CSS features that aren't 99% green for all non-proxy browsers (
 
 */
 
-b {
+b, strong /* strong markdown */ {
     font-weight: bold;
 }
 
-i {
+i, em /* em for markdown */ {
     font-style: italic;
 }
 

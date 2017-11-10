@@ -71,3 +71,4 @@ def test_rounding():
     assert dtutil.display_time(6900, granularity=2) == '1 hour, 55 minutes'
     assert dtutil.display_time(345610, granularity=4) == '4 days, 10 seconds'
     assert dtutil.display_time(4860) == '1 hour, 21 minutes'
+    assert dtutil.display_time(86400.0) == '1 day'

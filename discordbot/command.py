@@ -188,7 +188,7 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_typing(channel)
         too_many, cardnames = fetcher.search_scryfall(args)
         cbn = oracle.cards_by_name()
-        cards = [cbn[name] for name in cardnames]
+        cards = [cbn.get(name) for name in cardnames if cbn.get(name) is not None]
         additional_text = 'There are too many cards, only a few are shown.\n' if too_many else ''
         if len(cards) > 10:
             additional_text += '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'

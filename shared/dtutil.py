@@ -13,7 +13,7 @@ import pytz
 
 GATHERLING_TZ = pytz.timezone('America/New_York')
 WOTC_TZ = pytz.timezone('America/Los_Angeles')
-MTGGOLDFISH_TZ = WOTC_TZ
+MTGGOLDFISH_TZ = pytz.timezone('America/Denver')
 UTC_TZ = pytz.timezone('UTC')
 
 # Converts a UTC timestamp (seconds) into a timezone-aware UTC datetime.
@@ -72,9 +72,10 @@ def display_time(seconds, granularity=2):
         ('seconds', 1)
     )
     result = []
+    seconds = round(seconds) # in case we've been handed a decimal not an int
     for name, count in intervals:
         if len(result) < granularity - 1:
-            value = (seconds // count) # floor preceeding units and get them as ints not floats
+            value = seconds // count # floor preceeding units
         else:
             value = round(seconds / count) # round off last unit
         if value > 0 or len(result):

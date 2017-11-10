@@ -47,7 +47,7 @@ def parse_xml(s):
         doc = untangle.parse(s)
         for c in doc.Deck.Cards:
             section = 'sideboard' if c['Sideboard'] == 'true' else 'maindeck'
-            d[section][c['Name']] = int(c['Quantity'])
+            d[section][c['Name']] = d[section].get(c['Name'], 0) + int(c['Quantity'])
         return d
     except xml.sax.SAXException as e:
         raise InvalidDataException(e)

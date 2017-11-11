@@ -497,7 +497,7 @@ Want to contribute? Send a Pull Request."""
             'retire': [
                 'To retire from a league run message PDBot on MTGO with !retire. Alternatively retire via pennydreadfulmagic.com (requires Discord authentication)',
                 {
-                    'Retire', fetcher.decksite_url('/retire/')
+                    'Retire': fetcher.decksite_url('/retire/')
                 }
             ],
             'tournament': [

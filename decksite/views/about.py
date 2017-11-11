@@ -21,6 +21,7 @@ FANCY_CARDS = legality.cards_legal_in_format(oracle.load_cards([
     'High Tide',
     "Nevinyrral's Disk",
     'Lake of the Dead',
+    'Braids, Cabal Minion',
     ]), "Penny Dreadful")
 
 # pylint: disable=no-self-use

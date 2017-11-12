@@ -228,13 +228,13 @@ Colors
 
 Base colors:
 
-f9f9f9 "snow" – White. Main background color. Swapped with acajouo to become foreground color in tertiary areas.
+f9f9f9 "snow" – White. Main background color. Foreground color in secondary and tertiary background areas.
 502828 "acajou" – Black. Text, links, tertiary background color.
 
 Grays:
 
 eee "isabelline" – Highlight. Used to call attention to part of a table or text.
-999 "spanish gray" - mana box borders, menu text color on hover
+999 "spanish gray" - Mana box borders, menu text color on hover, secondary background color.
 
 A couple of dubious inclusions:
 
@@ -263,7 +263,7 @@ Headings
 
 The site heading is the h1 of the header element with special formatting.
 Each page should have one h1 at the top of the template. This should be the only h1 in the main element.
-Each <section> will usually begin with an h2 (otherwise why is it a section?)
+Each <section> may begin with an h2 but if the content is complete without a heading it can be elided.
 Currently there is no h3 and nesting that deeply should be pondered but it may be necessary to add one.
 
 */
@@ -694,13 +694,13 @@ Cards are 445px tall images that are usually 312px wide but may be wider if they
 */
 
 .card-img {
-    height: 300px;
+    height: 15rem;
     padding-top: 1rem;
 }
 
 /* Constrain the width of the bug description so it doesn't prevent wrapping of other interesting content alongside the card image. */
 p.bugged {
-    width: 14.02247191rem; /* The width of a card when the height is 22.25rem (as above) */
+    width: 10.516853933rem; /* The width of a card when the height is card-img above. */
 }
 
 .bugged::after {

@@ -254,6 +254,11 @@ Want to contribute? Send a Pull Request."""
             msg = "The next rotation is in {diff}".format(diff=dtutil.display_time(diff.total_seconds()))
         await bot.client.send_message(channel, msg)
 
+    # @cmd_header('Commands')
+    # async def rulings(self, bot, channel, args, author):
+    #     """Display rulings for a card."""
+    ### We don't actually have any api we can ask, so we need to store this in our DB if we want it.
+
     @cmd_header('Commands')
     async def _oracle(self, bot, channel, args, author):
         """`!oracle {name}` Give the Oracle text of the named card."""

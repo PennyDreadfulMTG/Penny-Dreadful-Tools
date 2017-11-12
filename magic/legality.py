@@ -52,6 +52,14 @@ def legal_formats(d, formats_to_check=None, errors=None):
 
     return formats
 
+def cards_legal_in_format(cardlist, f):
+    init()
+    results = []
+    for c in cardlist:
+        if f in c.legalities.keys() and c.legalities[f] != 'Banned':
+            results.append(c)
+    return results
+
 def init():
     if FORMATS:
         return

@@ -525,7 +525,7 @@ Menu items can have submenus. These are "mega menus" that stretch across the who
     color: #f9f9f9;
     display: none;
     left: 0;
-    padding: 2rem 10%; /* Left and right same as nav padding. */
+    padding: 0 10%; /* Left and right padding same as nav padding because this is position absolutely under the menu. */
     position: absolute;
     width: 80%; /* 100% - padding-left - padding-right */
 }

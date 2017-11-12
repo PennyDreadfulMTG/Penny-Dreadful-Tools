@@ -1,4 +1,5 @@
 from .about import About
+from .about_pdm import AboutPdm
 from .add_form import AddForm
 from .archetype import Archetype
 from .archetypes import Archetypes

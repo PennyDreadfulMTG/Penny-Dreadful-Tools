@@ -345,7 +345,7 @@ class Deck(Container):
             s += '\n'
             s += '({competition_name}, {wins}–{losses}'.format(competition_name=self.competition_name, wins=self.wins, losses=self.losses)
             if self.get('draws', 0) > 0:
-                s += '–{draws}'.format(draws = self.draws)
+                s += '–{draws}'.format(draws=self.draws)
             s += ')'
         s += '\n\n'
         for entry in self.maindeck:

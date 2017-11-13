@@ -208,7 +208,7 @@ def canonicalize(name):
     return unaccent(name.strip().lower())
 
 def to_mtgo_format(s):
-    return s.replace(' // ', '/')
+    return s.replace(' // ', '/').replace('\n', '\r\n')
 
 class Card(Container):
     def __init__(self, params):

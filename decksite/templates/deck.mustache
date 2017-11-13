@@ -90,8 +90,8 @@
             </form>
         </p>
     {{/admin}}
-    <p>Source: <a href="{{source_url}}">{{source_name}}</a></p>
-    <p>Export: <a href="{{export_url}}">MTGO (txt)</a></p>
-    <p><a href="{{cardhoarder_url}}">Buy on Cardhoarder</a></p>
+    <p>Source: <a {{source_is_external}}class="external" {{/source_is_external}}href="{{source_url}}">{{source_name}}</a></p>
+    <p>Export: <a href="{{export_url}}">Magic Online (txt)</a></p>
+    <p><a class="external" href="{{cardhoarder_url}}">Buy on Cardhoarder</a></p>
 </section>
 {{> legal}}

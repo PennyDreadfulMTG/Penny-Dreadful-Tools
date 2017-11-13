@@ -31,7 +31,7 @@ class Form(Container):
 class SignUpForm(Form):
     def do_validation(self):
         if len(self.mtgo_username) == 0:
-            self.errors['mtgo_username'] = "MTGO Username is required"
+            self.errors['mtgo_username'] = "Magic Online Username is required"
         elif active_decks_by(self.mtgo_username.strip()):
             self.errors['mtgo_username'] = "You already have an active league run.  If you wish to retire your run early, private message '!retire' to PDBot"
         if len(self.name.strip()) == 0:
@@ -50,12 +50,12 @@ class SignUpForm(Form):
                 try:
                     self.cards = decklist.parse_xml(self.decklist)
                 except InvalidDataException as e:
-                    self.errors['decklist'] = 'Unable to read .dek decklist. Try exporting from MTGO as Text and pasting the result.'.format(specific=str(e))
+                    self.errors['decklist'] = 'Unable to read .dek decklist. Try exporting from Magic Online as Text and pasting the result.'.format(specific=str(e))
             else:
                 try:
                     self.cards = decklist.parse(self.decklist)
                 except InvalidDataException as e:
-                    self.errors['decklist'] = '{specific}. Try exporting from MTGO as Text and pasting the result.'.format(specific=str(e))
+                    self.errors['decklist'] = '{specific}. Try exporting from Magic Online as Text and pasting the result.'.format(specific=str(e))
             if self.cards is not None:
                 try:
                     vivified = decklist.vivify(self.cards)

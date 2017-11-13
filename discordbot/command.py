@@ -513,8 +513,8 @@ Want to contribute? Send a Pull Request."""
             ],
             'tournament': [
                 """
-                We have three free-to-enter weekly tournaments with prizes from cardhoarder.com.
-                They are hosted on gatherling.com along with a lot of other player-run MTGO events.
+                We have three free-to-enter weekly tournaments with prizes from Card Hoarder.
+                They are hosted on gatherling.com along with a lot of other player-run Magic Online events.
                 """,
                 {
                     'More Info': fetcher.decksite_url('/tournaments/'),

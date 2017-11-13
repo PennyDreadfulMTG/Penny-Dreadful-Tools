@@ -1,11 +1,11 @@
 <article>
     <h1>Cardhoarder Tournaments</h1>
-    <p>There are {{num_tournaments}} weekly Penny Dreadful tournaments sponsored by <a href="http://cardhoarder.com/">cardhoarder.com</a> and hosted on <a href="http://gatherling.com/">gatherling.com</a>. They are all free to enter and offer prizes. Be sure to also check out the <a href="/league/">league</a> for a play-when-you-like competition.</p>
+    <p>There are {{num_tournaments}} weekly Penny Dreadful tournaments sponsored by <a class="external" href="http://www.cardhoarder.com/">Card Hoarder</a> and hosted on <a class="external" href="http://gatherling.com/">gatherling.com</a>. They are all free to enter and offer prizes. Be sure to also check out the <a href="/league/">league</a> for a play-when-you-like competition.</p>
     <p>Each tournament series has a <a href="{{leaderboards_url}}">leaderboard</a> for the season with prizes for Top 8 finishers.</p>
     <section>
         <h2>Next Tournament</h2>
         <p>{{next_tournament_name}} in {{next_tournament_time}}.</p>
-        <p><a href="http://gatherling.com/">Sign up on gatherling.com</a> via 'Player CP'.</p>
+        <p><a class="external" href="http://gatherling.com/">Sign up on gatherling.com</a> via 'Player CP'.</p>
     </section>
     {{#tournaments}}
         <section>
@@ -21,7 +21,8 @@
             <p>Hosts: {{#hosts}}<a href="/people/{{.}}/">{{.}}</a> {{/hosts}}</p>
             <p>Prizes: 4/3/2/2/1/1/1/1 + 1 Cardhoarder credit.</p>
             <p>Time: {{display_time}} <span class="local">(<span class="time" data-time="{{time}}"></span>)</span></p>
-            <p>Sign Up: <a href="http://gatherling.com/">gatherling.com</a>
+            <p>Sign Up: <a class="external" href="http://gatherling.com/">gatherling.com</a>
+            <p>Discord Chat Room: <a class="external" class="external" href="https://discord.gg/KK866Pe">#tournament-room</a></p>
             <p>MTGO Chat Room: {{chat_room}}</p>
         </section>
     {{/tournaments}}

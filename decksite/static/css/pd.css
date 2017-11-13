@@ -123,6 +123,10 @@ footer a {
     text-transform: lowercase;
 }
 
+footer a:hover {
+    color: #502828;
+}
+
 /* Fonts */
 
 @font-face {
@@ -409,7 +413,7 @@ table a:hover {
 }
 
 table.with-marginalia {
-    margin-left: -4em; /* Width of .marginalia */
+    margin-left: -5.126em; /* Width of .marginalia + left-padding + right-padding */
     margin-right: 0.5em;
 }
 
@@ -438,10 +442,12 @@ td.marginalia:first-child, th.marginalia:first-child {
     overflow: visible;
 }
 
-td:first-child, td:last-child, th:first-child, th:last-child {
+/* Align beginning and end of rows with left and right edges of the content area. */
+table:not(.with-marginalia) td:first-child, td:last-child, table:not(.with-marginalia) th:first-child, th:last-child, table.with-marginalia th:nth-child(2), table.with-marginalia td:nth-child(2) {
     margin: 0;
     padding: 0;
 }
+
 
 td.c {
     text-align: center;
@@ -456,7 +462,7 @@ tr.wide td, tr.wide th {
     padding-top: 0.5em;
 }
 
-tr.wide td {
+tr.wide+tr td {
     border-top: 0.05rem #999 solid;
 }
 
@@ -574,7 +580,6 @@ a.menuitem {
     transform: translateY(1em); /* [border-bottom] – In the hidden state the caret is pushed down by the height of the caret. */
     transition: all 0.1s ease-out; /* When we transition back to this state hide the caret quite quickly so you don't see the caret when the dropdown has gone. */
     width: 0;
-    z-index: 1;
 }
 
 /* Show the caret on hover. */
@@ -582,6 +587,28 @@ a.menuitem {
     opacity: 1;
     transform: translateY(0); /* In the revealed state the caret is sitting inside the menuitem's padding. */
     transition: all 0.3s ease-out; /* Ease up when we transition to visible position in .hovering > a:after on hover. */
+}
+
+/*
+
+z-index
+
+    100 page
+    200 badge
+    300 dropdown menu
+
+*/
+
+.badge-holder {
+    z-index: 200;
+}
+
+.has-submenu > a:after {
+    z-index: 300;
+}
+
+.submenu-container {
+    z-index: 300;
 }
 
 /*
@@ -717,6 +744,12 @@ p.bugged {
     margin-left: 0.2em;
 }
 
+.bugged.illegal:after {
+    content: "﻿🐞 🚫";
+    margin-left: 0.2em;
+
+}
+
 /*
 
 Forms
@@ -820,7 +853,11 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 
 .search {
     float: right;
-    padding: 3rem 0 1rem 0; /* matches h1 as it floats alongside the logo */
+    padding: 3rem 0 0; /* matches h1 as it floats alongside the logo */
+}
+
+.search input {
+    margin-bottom: 0 !important; /* csslint allow: important */;
 }
 
 .gsc-control-cse {

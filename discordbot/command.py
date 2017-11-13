@@ -465,6 +465,13 @@ Want to contribute? Send a Pull Request."""
                     'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt'
                 }
             ],
+            'noshow': [
+                """
+                If your opponent does not join your game please @-message them on Discord and contact them on MTGO.
+                If you haven't heard from them by 10 minutes after the start of the round let the Tournament Organizer know.
+                You will receive a 2-0 win and your opponent will be dropped from the competition.
+                """
+            ],
             'playing': [
                 """
                 To get a match go to Constructed Open Play, Just for Fun on MTGO and create a Freeform game with "Penny Dreadful" in the comments.
@@ -507,8 +514,8 @@ Want to contribute? Send a Pull Request."""
             ],
             'tournament': [
                 """
-                We have three free-to-enter weekly tournaments with prizes from cardhoarder.com.
-                They are hosted on gatherling.com along with a lot of other player-run MTGO events.
+                We have three free-to-enter weekly tournaments with prizes from Card Hoarder.
+                They are hosted on gatherling.com along with a lot of other player-run Magic Online events.
                 """,
                 {
                     'More Info': fetcher.decksite_url('/tournaments/'),
@@ -535,7 +542,7 @@ Want to contribute? Send a Pull Request."""
             return await bot.client.send_message(channel, usage)
         if len(explanations[word]) >= 2:
             for k in sorted(explanations[word][1].keys()):
-                s += '{k}: {v}\n'.format(k=k, v=explanations[word][1][k])
+                s += '{k}: <{v}>\n'.format(k=k, v=explanations[word][1][k])
         await bot.client.send_message(channel, s)
 
     @cmd_header('Developer')

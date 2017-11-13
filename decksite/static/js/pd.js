@@ -9,7 +9,6 @@ PD.init = function () {
     Tipped.create("[title]", {"showDelay": 1000, "size": "large"});
     PD.showLocalTimes();
     $.get("/api/admin/", PD.showBadge);
-    $("a[href^=http").addClass("external");
 };
 PD.initMenu = function () {
     $(".has-submenu").hoverIntent({
@@ -85,6 +84,7 @@ PD.initTables = function () {
         },
         "type": "numeric"
     })
+    /* Give archetype columns the classes primary and secondary so that we can nest when sorted by first column but not otherwise. */
     $("table.archetypes").tablesorter({
         "sortList": [[0, 0]],
         "widgets": ["columns"],

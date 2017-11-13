@@ -44,7 +44,7 @@ def now(tz=None):
 def display_date(dt, granularity=1):
     start = now()
     if (start - dt) > datetime.timedelta(365):
-        s = '{:%b _%d_, %Y}'.format(dt.astimezone(WOTC_TZ))
+        s = '{:%b %Y}'.format(dt.astimezone(WOTC_TZ))
         return replace_day_with_ordinal(s)
     if (start - dt) > datetime.timedelta(28):
         s = '{:%b _%d_}'.format(dt.astimezone(WOTC_TZ))

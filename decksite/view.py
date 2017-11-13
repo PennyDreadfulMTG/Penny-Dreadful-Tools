@@ -122,6 +122,7 @@ class View:
         if d.source_name == 'League' and d.wins + d.losses < 5 and d.competition_end_date > dtutil.now() and not d.get('retired', False):
             d.stars_safe = '<span title="Active in the current league">⊕</span> {stars}'.format(stars=d.stars_safe).strip()
             d.source_sort = '1'
+        d.source_is_external = True if d.source_name == 'League' else False
         d.comp_row_len = len("{comp_name} (Piloted by {person}".format(comp_name=d.competition_name, person=d.person))
         if d.get('archetype_id', None):
             d.archetype_url = url_for('archetype', archetype_id=d.archetype_id)
@@ -173,6 +174,7 @@ class View:
         for v in most_common_cards:
             self.prepare_card(cs[v[0]])
             c.most_common_cards.append(cs[v[0]])
+        c.has_most_common_cards = len(c.most_common_cards) > 0
 
     def prepare_competitions(self):
         for c in getattr(self, 'competitions', []):
@@ -221,6 +223,7 @@ class View:
         for v in most_common_cards:
             self.prepare_card(cs[v[0]])
             a.most_common_cards.append(cs[v[0]])
+        a.has_most_common_cards = len(a.most_common_cards) > 0
         a.archetype_tree = PreOrderIter(a)
         for r in a.archetype_tree:
             # Prune branches we don't want to show

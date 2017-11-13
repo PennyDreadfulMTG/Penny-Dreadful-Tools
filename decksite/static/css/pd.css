@@ -822,7 +822,11 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 
 .search {
     float: right;
-    padding: 3rem 0 1rem 0; /* matches h1 as it floats alongside the logo */
+    padding: 3rem 0 0; /* matches h1 as it floats alongside the logo */
+}
+
+.search input {
+    margin-bottom: 0 !important; /* csslint allow: important */;
 }
 
 .gsc-control-cse {
@@ -882,6 +886,10 @@ td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
 
 .gsst_a {
     padding-top: 0.45rem !important; /* csslint allow: important */
+}
+
+.gsc-search-box {
+    margin-bottom: 0 !important;
 }
 
 .gsc-search-button {

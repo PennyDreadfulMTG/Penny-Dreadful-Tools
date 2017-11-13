@@ -576,7 +576,6 @@ a.menuitem {
     transform: translateY(1em); /* [border-bottom] – In the hidden state the caret is pushed down by the height of the caret. */
     transition: all 0.1s ease-out; /* When we transition back to this state hide the caret quite quickly so you don't see the caret when the dropdown has gone. */
     width: 0;
-    z-index: 1;
 }
 
 /* Show the caret on hover. */
@@ -584,6 +583,28 @@ a.menuitem {
     opacity: 1;
     transform: translateY(0); /* In the revealed state the caret is sitting inside the menuitem's padding. */
     transition: all 0.3s ease-out; /* Ease up when we transition to visible position in .hovering > a:after on hover. */
+}
+
+/*
+
+z-index
+
+    100 page
+    200 badge
+    300 dropdown menu
+
+*/
+
+.badge-holder {
+    z-index: 200;
+}
+
+.has-submenu > a:after {
+    z-index: 300;
+}
+
+.submenu-container {
+    z-index: 300;
 }
 
 /*

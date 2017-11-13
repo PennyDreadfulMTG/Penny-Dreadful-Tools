@@ -54,11 +54,8 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
             {person_query} AS person, p.id AS person_id,
             d.created_date AS `date`, d.decklist_hash, d.retired,
             s.name AS source_name, IFNULL(a.name, '') AS archetype_name,
-            SUM(opp.wins) AS opp_wins, SUM(opp.losses) AS opp_losses, ROUND(SUM(opp.wins) / (SUM(opp.wins) + SUM(opp.losses)), 2) * 100 AS omw,
             GROUP_CONCAT(DISTINCT CONCAT(dc.card, '|', dc.n, '|', dc.sideboard) SEPARATOR '█') AS cards,
-            cache.colors, cache.colored_symbols, cache.legal_formats,
-            IFNULL(MIN(CASE WHEN m.elimination > 0 THEN m.elimination END), 0) AS stage_reached,
-            GROUP_CONCAT(m.elimination) AS elim
+            cache.colors, cache.colored_symbols, cache.legal_formats
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id
         LEFT JOIN competition AS c ON d.competition_id = c.id
@@ -68,8 +65,6 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         LEFT JOIN competition_type AS ct ON ct.id = c.competition_type_id
         LEFT JOIN deck_card AS dc ON d.id = dc.deck_id
         LEFT JOIN deck_cache AS cache ON d.id = cache.deck_id
-        LEFT JOIN deck_match AS dm ON d.id = dm.deck_id
-        LEFT JOIN `match` AS m ON m.id = dm.match_id
         WHERE {where}
         GROUP BY d.id
         ORDER BY {order_by}
@@ -98,6 +93,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         d.date = dtutil.ts2dt(d.date)
         d.can_draw = 'Divine Intervention' in [card.name for card in d.all_cards()]
         decks.append(d)
+    add_opponent_stats(decks)
     return decks
 
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks we will claim your deck is neither W nor G which is not true. But this should cover most cases.
@@ -323,6 +319,29 @@ def load_decks_by_cards(names):
             HAVING COUNT(DISTINCT card) = {n})
         """.format(n=len(names), names=', '.join(map(sqlescape, names)))
     return load_decks(sql)
+
+# It makes the main query about 5x faster to do this as a separate query (which is trivial and done only once for all decks).
+def add_opponent_stats(decks):
+    if len(decks) == 0:
+        return
+    decks_by_id = {d.id: d for d in decks}
+    sql = """
+        SELECT d.id,
+            SUM(opp.wins) AS opp_wins, SUM(opp.losses) AS opp_losses, ROUND(SUM(opp.wins) / (SUM(opp.wins) + SUM(opp.losses)), 2) * 100 AS omw,
+            IFNULL(MIN(CASE WHEN m.elimination > 0 THEN m.elimination END), 0) AS stage_reached, GROUP_CONCAT(m.elimination) AS elim
+        FROM deck AS d
+        LEFT JOIN deck AS opp ON opp.id IN (SELECT deck_id FROM deck_match WHERE deck_id <> d.id AND match_id IN (SELECT match_id FROM deck_match WHERE deck_id = d.id))
+        LEFT JOIN deck_match AS dm ON d.id = dm.deck_id
+        LEFT JOIN `match` AS m ON m.id = dm.match_id
+        WHERE d.id IN ({deck_ids})
+        GROUP BY d.id
+    """.format(deck_ids=', '.join(map(sqlescape, map(str, decks_by_id.keys()))))
+    for row in db().execute(sql):
+        decks_by_id[row['id']].opp_wins = row['opp_wins']
+        decks_by_id[row['id']].opp_losses = row['opp_losses']
+        decks_by_id[row['id']].omw = row['omw']
+        decks_by_id[row['id']].stage_reached = row['stage_reached']
+        decks_by_id[row['id']].elim = row['elim'] # This property is never used? and is always a bunch of zeroes?
 
 # pylint: disable=too-many-instance-attributes
 class Deck(Container):

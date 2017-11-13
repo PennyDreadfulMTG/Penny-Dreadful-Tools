@@ -9,9 +9,9 @@ import sys
 import textwrap
 import time
 import traceback
+from typing import List
 
 import inflect
-from typing import List
 
 from discordbot import emoji
 from find import search

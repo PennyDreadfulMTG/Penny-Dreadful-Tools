@@ -84,6 +84,7 @@ PD.initTables = function () {
         },
         "type": "numeric"
     })
+    /* Give archetype columns the classes primary and secondary so that we can nest when sorted by first column but not otherwise. */
     $("table.archetypes").tablesorter({
         "sortList": [[0, 0]],
         "widgets": ["columns"],

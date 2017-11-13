@@ -123,6 +123,10 @@ footer a {
     text-transform: lowercase;
 }
 
+footer a:hover {
+    color: #502828;
+}
+
 /* Fonts */
 
 @font-face {

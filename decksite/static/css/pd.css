@@ -247,9 +247,9 @@ Grays:
 eee "isabelline" – Highlight. Used to call attention to part of a table or text.  Foreground color in tertiary areas.
 999 "spanish gray" - Mana box borders, menu text color on hover, secondary background color.
 
-A couple of dubious inclusions:
+Other:
 
-f00 "red" – error, menu link hover
+f00 "red" – Errors.
 
 Colors of Magic (avoid using these to represent anything else):
 
@@ -257,7 +257,7 @@ fffcda "cornsilk" – W mana
 ace2fa "blue lagoon" – U mana
 ccc2c0 "pale silver" – B mana
 f8aa92 "vivid tangerine" – R mana
-9dd2af "turquoise green" – G mana; currently also in use for the archetypes badge for admins, which should be changed.
+9dd2af "turquoise green" – G mana
 
 Color attributes are mostly found with their related structural elements in this file.
 
@@ -1027,21 +1027,20 @@ Notification Badges
 }
 
 .badge {
-    background-color: #9dd2af;
-    border-radius: 0.6rem; /* 0.5 * ( (border * 2) + height + padding ) */
     display: none; /* Will be shown with javascript if admin is viewing. */
-    height: 1.2rem;
-    line-height: 1.2;
-    min-width: 1.2rem;
+    font-size: 0.75rem;
+    height: 1.333em;
+    line-height: 1.333;
+    min-width: 1.333em;
     padding: 0;
     position: absolute;
-    right: 1.1rem;
+    right: 1.333rem;
     text-align: center;
-    top: 1.1rem;
+    top: 1.777rem;
 }
 
 .badge a, .badge a:hover {
-    color: #f9f9f9;
+    color: #502828;
 }
 
 /*

@@ -465,6 +465,12 @@ Want to contribute? Send a Pull Request."""
                     'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt'
                 }
             ],
+            'noshow': [
+                """
+                If your opponent does not join your game please @-message them on Discord and contact them on MTGO.
+                If you haven't heard from them by 10 minutes after the start of the round let the Tournament Organizer know.
+                You will receive a 2-0 win and your opponent will be dropped from the competition.
+            ],
             'playing': [
                 """
                 To get a match go to Constructed Open Play, Just for Fun on MTGO and create a Freeform game with "Penny Dreadful" in the comments.

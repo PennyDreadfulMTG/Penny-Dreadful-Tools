@@ -10,9 +10,10 @@
 {{#has_leaderboard}}
     <section>
         <h2>Leaderboard</h2>
-        <table>
+        <table class="fade-repeats with-marginalia">
             <thead>
                 <tr>
+                    <td></td>
                     <th>Person</th>
                     <th data-sortInitialOrder="desc">Points</th>
                 </tr>
@@ -20,6 +21,9 @@
             <tbody>
                 {{#leaderboard}}
                     <tr class="pos-{{pos}}">
+                        <td class="n marginalia">
+                            {{{top8_safe}}}
+                        </td>
                         <td><a href="{{url}}">{{person}}</a></td>
                         <td class="n">{{points}}</td>
                     </tr>

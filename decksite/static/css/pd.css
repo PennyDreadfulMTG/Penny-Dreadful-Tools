@@ -247,10 +247,9 @@ Grays:
 eee "isabelline" – Highlight. Used to call attention to part of a table or text.  Foreground color in tertiary areas.
 999 "spanish gray" - Mana box borders, menu text color on hover, secondary background color.
 
-A couple of dubious inclusions:
+Other:
 
-f00 "red" – error, menu link hover
-0f0 "lime" – at 0.4, 0.3, 0.2 and 0.1 opacity for leaderboard positions
+f00 "red" – Errors.
 
 Colors of Magic (avoid using these to represent anything else):
 
@@ -258,7 +257,7 @@ fffcda "cornsilk" – W mana
 ace2fa "blue lagoon" – U mana
 ccc2c0 "pale silver" – B mana
 f8aa92 "vivid tangerine" – R mana
-9dd2af "turquoise green" – G mana; currently also in use for the archetypes badge for admins, which should be changed.
+9dd2af "turquoise green" – G mana
 
 Color attributes are mostly found with their related structural elements in this file.
 
@@ -444,10 +443,15 @@ td.marginalia:first-child, th.marginalia:first-child {
     overflow: visible;
 }
 
-/* Align beginning and end of rows with left and right edges of the content area. */
-table:not(.with-marginalia) td:first-child, td:last-child, table:not(.with-marginalia) th:first-child, th:last-child, table.with-marginalia th:nth-child(2), table.with-marginalia td:nth-child(2) {
-    margin: 0;
-    padding: 0;
+/* Align beginning of rows with left and right edges of the content area. */
+table:not(.with-marginalia) td:first-child, table:not(.with-marginalia) th:first-child, table.with-marginalia th:nth-child(2), table.with-marginalia td:nth-child(2) {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+/* Align end of rows with left and right edges of the content area. */
+td:last-child, th:last-child {
+    margin-right: 0;
 }
 
 
@@ -492,6 +496,7 @@ th.legend {
 
 .stars {
     font-size: 1.333rem; /* The stars are a bit small in our chosen font but the targets are not. */
+    line-height: 0; /* Don't mess up row spacing because the star is big. */
 }
 
 td.repeat {
@@ -1023,21 +1028,20 @@ Notification Badges
 }
 
 .badge {
-    background-color: #9dd2af;
-    border-radius: 0.6rem; /* 0.5 * ( (border * 2) + height + padding ) */
     display: none; /* Will be shown with javascript if admin is viewing. */
-    height: 1.2rem;
-    line-height: 1.2;
-    min-width: 1.2rem;
+    font-size: 0.75rem;
+    height: 1.333em;
+    line-height: 1.333;
+    min-width: 1.333em;
     padding: 0;
     position: absolute;
-    right: 1.1rem;
+    right: 1.333rem;
     text-align: center;
-    top: 1.1rem;
+    top: 1.777rem;
 }
 
 .badge a, .badge a:hover {
-    color: #f9f9f9;
+    color: #502828;
 }
 
 /*
@@ -1050,24 +1054,3 @@ Tournaments
     display: none; /* Will be revealed by js when we have a localized time. */
 }
 
-/*
-
-Leaderboard
-
-*/
-
-.pos-1 {
-    background-color: rgba(0, 255, 0, 0.4);
-}
-
-.pos-2 {
-    background-color: rgba(0, 255, 0, 0.3);
-}
-
-.pos-3, .pos-4 {
-    background-color: rgba(0, 255, 0, 0.2);
-}
-
-.pos-5, .pos-6, .pos-7, .pos-8 {
-    background-color: rgba(0, 255, 0, 0.1);
-}

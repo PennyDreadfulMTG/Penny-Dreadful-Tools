@@ -632,6 +632,7 @@ def resources_resources(args):
             asked_for_this_section_only = len(words) == 1 and roughly_matches(title, words[0])
             asked_for_this_section_and_item = len(words) == 2 and roughly_matches(title, words[0]) and roughly_matches(text, words[1])
             asked_for_this_item_only = len(words) == 1 and roughly_matches(text, words[0])
-            if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only:
+            the_whole_thing_sounds_right = roughly_matches(text, ' '.join(words))
+            if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only or the_whole_thing_sounds_right:
                 results[url] = text
     return results

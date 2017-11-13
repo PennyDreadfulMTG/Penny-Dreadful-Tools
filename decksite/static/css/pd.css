@@ -496,6 +496,7 @@ th.legend {
 
 .stars {
     font-size: 1.333rem; /* The stars are a bit small in our chosen font but the targets are not. */
+    line-height: 0; /* Don't mess up row spacing because the star is big. */
 }
 
 td.repeat {

@@ -98,7 +98,7 @@ nav {
     border-bottom: 0.05rem solid #999;
 }
 
-main p, main li {
+article p, article li {
     /*
         Aim for an av­er­age line length of 45–90 char­ac­ters, in­clud­ing spaces.
         https://practicaltypography.com/line-length.html
@@ -210,6 +210,11 @@ section {
     margin: 1rem 2.369rem 1rem 0;
 }
 
+section section {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 div:after, header:after, nav:after, main:after, footer:after, section:after {
     clear: both;
     content: "";
@@ -292,17 +297,15 @@ main h1 {
 }
 
 main h2 {
+    border-top: 0.05rem solid #502828;
     font-size: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     margin-top: 1rem;
+    padding-top: 1rem;
 }
 
 main h1 a:visited, main h2 a:visited {
     color: inherit;
-}
-
-.resource {
-    border-top: 0.05rem solid;
 }
 
 /*
@@ -357,17 +360,22 @@ a.external:after {
 
 Lists
 
-Our standard lists use a square in the left margin.
+Our standard lists use a bullet in the left margin.
 Text continues to line up with text above/below.
 
 */
 
 main ul {
-    list-style-type: square;
+    list-style-type: disc;
+    padding-left: 2em;
 }
 
 ul.decklist {
     list-style-type: none;
+    margin: 0;
+    padding-left: 0;
+    line-height: 1;
+    font-size: 0.75rem;
 }
 
 /*
@@ -567,10 +575,6 @@ a.menuitem {
     transition: all 0.1s ease-out; /* When we transition back to this state hide the caret quite quickly so you don't see the caret when the dropdown has gone. */
     width: 0;
     z-index: 1;
-}
-
-li.has-submenu:last-child > a:after {
-    margin-left: -0.333em; /* We need to account for the fact that the last menuitem has no padding-right. */
 }
 
 /* Show the caret on hover. */

@@ -6,7 +6,7 @@ PD.init = function () {
     $(".deckselect").on("change", PD.toggleDrawDropdown);
     $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
-    Tipped.create("[title]", {"showDelay": 1000});
+    Tipped.create("[title]", {"showDelay": 1000, "size": "large"});
     PD.showLocalTimes();
     $.get("/api/admin/", PD.showBadge);
     $("a[href^=http").addClass("external");

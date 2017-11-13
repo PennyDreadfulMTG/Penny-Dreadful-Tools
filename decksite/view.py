@@ -58,7 +58,7 @@ class View:
                 {'name': 'Records', 'url': url_for('current_league')}
             ]},
             {'name': 'Competitions', 'url': url_for('competitions'), 'has_submenu': True, 'submenu': [
-                {'name': 'Past Competitions', 'url': url_for('tournaments')},
+                {'name': 'Competition Results', 'url': url_for('competitions')},
                 {'name': 'Tournament Info', 'url': url_for('tournaments')},
                 {'name': 'Leaderboards', 'url': url_for('tournament_leaderboards')},
                 {'name': 'Gatherling', 'url': 'http://gatherling.com/'},

@@ -7,7 +7,8 @@ from magic import mana
 WHITELIST = [
     'a red deck but not a net deck',
     'better red than dead',
-    "is it izzet or isn't it?"
+    "is it izzet or isn't it?",
+    'rise like a golgari'
 ]
 
 ABBREVIATIONS = {

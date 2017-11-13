@@ -125,6 +125,8 @@ footer a {
 
 footer a:hover {
     color: #502828;
+    transition-property: color;
+    transition-duration: 1s;
 }
 
 /* Fonts */
@@ -333,7 +335,7 @@ a {
 main a:hover {
     background-color: #eee;
     border-radius: 0.317em;
-    transition-duration: 0.2s;
+    transition-duration: 1s;
     transition-property: background;
 }
 
@@ -524,6 +526,8 @@ Menu items can have submenus. These are "mega menus" that stretch across the who
 
 .menu a:hover {
     color: #999;
+    transition-duration: 1s;
+    transition-property: color;
 }
 
 .menu:after {

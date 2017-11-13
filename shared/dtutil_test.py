@@ -49,9 +49,9 @@ def test_now():
 
 def test_display_date():
     dt = dtutil.parse('2008-03-29', '%Y-%m-%d', dtutil.WOTC_TZ)
-    assert dtutil.display_date(dt) == 'Mar 29th, 2008'
+    assert dtutil.display_date(dt) == 'Mar 2008'
     dt = dtutil.parse('2008-03-29 02:00', '%Y-%m-%d %H:%M', timezone('UTC'))
-    assert dtutil.display_date(dt) == 'Mar 28th, 2008'
+    assert dtutil.display_date(dt) == 'Mar 2008'
     dt = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(seconds=10)
     assert dtutil.display_date(dt).find('seconds ago') >= 0
     dt = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=72)

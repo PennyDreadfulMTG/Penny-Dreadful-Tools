@@ -494,8 +494,8 @@ th.legend {
     font-size: 1.333rem; /* The stars are a bit small in our chosen font but the targets are not. */
 }
 
-.repeat:not(span), td .repeat {
-    opacity: 0.8;
+td.repeat {
+    opacity: 0.4;
 }
 
 /*

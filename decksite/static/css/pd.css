@@ -409,7 +409,7 @@ table a:hover {
 }
 
 table.with-marginalia {
-    margin-left: -4em; /* Width of .marginalia */
+    margin-left: -5.126em; /* Width of .marginalia + left-padding + right-padding */
     margin-right: 0.5em;
 }
 
@@ -438,10 +438,12 @@ td.marginalia:first-child, th.marginalia:first-child {
     overflow: visible;
 }
 
-td:first-child, td:last-child, th:first-child, th:last-child {
+/* Align beginning and end of rows with left and right edges of the content area. */
+table:not(.with-marginalia) td:first-child, td:last-child, table:not(.with-marginalia) th:first-child, th:last-child, table.with-marginalia th:nth-child(2), table.with-marginalia td:nth-child(2) {
     margin: 0;
     padding: 0;
 }
+
 
 td.c {
     text-align: center;

@@ -3,12 +3,14 @@
     <h2>Archetype Tree</h2>
     {{> archetypetree}}
 </section>
-<section>
-    <h2>Most Common Cards</h2>
-    <ul>
-        {{#most_common_cards}}<li>{{> singlecard}}</li>{{/most_common_cards}}
-    </ul>
-</section>
+{{#has_most_common_cards}}
+    <section>
+        <h2>Most Common Cards</h2>
+        <ul>
+            {{#most_common_cards}}<li>{{> singlecard}}</li>{{/most_common_cards}}
+        </ul>
+    </section>
+{{/has_most_common_cards}}
 {{#show_best_decks}}
     <section>
         <h2>Top Decks</h2>

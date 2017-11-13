@@ -174,6 +174,7 @@ class View:
         for v in most_common_cards:
             self.prepare_card(cs[v[0]])
             c.most_common_cards.append(cs[v[0]])
+        c.has_most_common_cards = len(c.most_common_cards) > 0
 
     def prepare_competitions(self):
         for c in getattr(self, 'competitions', []):
@@ -222,6 +223,7 @@ class View:
         for v in most_common_cards:
             self.prepare_card(cs[v[0]])
             a.most_common_cards.append(cs[v[0]])
+        a.has_most_common_cards = len(a.most_common_cards) > 0
         a.archetype_tree = PreOrderIter(a)
         for r in a.archetype_tree:
             # Prune branches we don't want to show

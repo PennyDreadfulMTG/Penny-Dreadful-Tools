@@ -77,7 +77,7 @@ body {
         See main for the main content colors.
     */
     background: #999;
-    color: #f9f9f9;
+    color: #eee;
     /*
         For most text, the op­ti­mal line spac­ing is be­tween 120% and 145% of the point size.
         https://practicaltypography.com/line-spacing.html
@@ -228,12 +228,12 @@ Colors
 
 Base colors:
 
-f9f9f9 "snow" – White. Main background color. Foreground color in secondary and tertiary background areas.
+f9f9f9 "snow" – White. Main background color. Foreground color in secondary areas.
 502828 "acajou" – Black. Text, links, tertiary background color.
 
 Grays:
 
-eee "isabelline" – Highlight. Used to call attention to part of a table or text.
+eee "isabelline" – Highlight. Used to call attention to part of a table or text.  Foreground color in tertiary areas.
 999 "spanish gray" - Mana box borders, menu text color on hover, secondary background color.
 
 A couple of dubious inclusions:

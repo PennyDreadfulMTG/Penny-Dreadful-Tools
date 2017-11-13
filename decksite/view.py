@@ -45,19 +45,19 @@ class View:
             if n > 0:
                 archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
         menu = [
-            {'name': 'Metagame', 'url': url_for('home'), 'badge': archetypes_badge, 'has_submenu': True, 'submenu': [
+            {'name': 'Metagame', 'url': url_for('home'), 'badge': archetypes_badge, 'submenu': [
                 {'name': 'Latest Decks', 'url': url_for('home')},
                 {'name': 'Archetypes', 'url': url_for('archetypes'), 'badge': archetypes_badge},
                 {'name': 'People', 'url': url_for('people')},
                 {'name': 'Cards', 'url': url_for('cards')},
             ]},
-            {'name': 'League', 'url': url_for('league'), 'has_submenu': True, 'submenu': [
+            {'name': 'League', 'url': url_for('league'), 'submenu': [
                 {'name': 'League Info', 'url': url_for('league')},
                 {'name': 'Sign Up', 'url': url_for('signup')},
                 {'name': 'Report', 'url': url_for('report')},
                 {'name': 'Records', 'url': url_for('current_league')}
             ]},
-            {'name': 'Competitions', 'url': url_for('competitions'), 'has_submenu': True, 'submenu': [
+            {'name': 'Competitions', 'url': url_for('competitions'), 'submenu': [
                 {'name': 'Competition Results', 'url': url_for('competitions')},
                 {'name': 'Tournament Info', 'url': url_for('tournaments')},
                 {'name': 'Leaderboards', 'url': url_for('tournament_leaderboards')},
@@ -71,11 +71,13 @@ class View:
         elif (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
             menu += [{'name': 'Supplemental Rotation', 'url': url_for('rotation')}]
         menu += [
-            {'name': 'About', 'url': url_for('about'), 'has_submenu': True, 'submenu': [
+            {'name': 'About', 'url': url_for('about'), 'submenu': [
                 {'name': 'What is Penny Dreadful?', 'url': url_for('about')},
                 {'name': 'About pennydreadfulmagic.com', 'url': url_for('about_pdm')}
             ]}
         ]
+        for item in menu:
+            item['has_submenu'] = item.get('submenu') is not None
         return menu
 
     def favicon_url(self):

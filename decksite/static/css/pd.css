@@ -456,7 +456,7 @@ tr.wide td, tr.wide th {
     padding-top: 0.5em;
 }
 
-tr.wide td {
+tr.wide+tr td {
     border-top: 0.05rem #999 solid;
 }
 

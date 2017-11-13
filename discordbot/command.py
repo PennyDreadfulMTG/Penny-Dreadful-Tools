@@ -470,6 +470,7 @@ Want to contribute? Send a Pull Request."""
                 If your opponent does not join your game please @-message them on Discord and contact them on MTGO.
                 If you haven't heard from them by 10 minutes after the start of the round let the Tournament Organizer know.
                 You will receive a 2-0 win and your opponent will be dropped from the competition.
+                """
             ],
             'playing': [
                 """

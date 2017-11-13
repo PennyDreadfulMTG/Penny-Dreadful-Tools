@@ -250,7 +250,6 @@ eee "isabelline" – Highlight. Used to call attention to part of a table or tex
 A couple of dubious inclusions:
 
 f00 "red" – error, menu link hover
-0f0 "lime" – at 0.4, 0.3, 0.2 and 0.1 opacity for leaderboard positions
 
 Colors of Magic (avoid using these to represent anything else):
 
@@ -1050,24 +1049,3 @@ Tournaments
     display: none; /* Will be revealed by js when we have a localized time. */
 }
 
-/*
-
-Leaderboard
-
-*/
-
-.pos-1 {
-    background-color: rgba(0, 255, 0, 0.4);
-}
-
-.pos-2 {
-    background-color: rgba(0, 255, 0, 0.3);
-}
-
-.pos-3, .pos-4 {
-    background-color: rgba(0, 255, 0, 0.2);
-}
-
-.pos-5, .pos-6, .pos-7, .pos-8 {
-    background-color: rgba(0, 255, 0, 0.1);
-}

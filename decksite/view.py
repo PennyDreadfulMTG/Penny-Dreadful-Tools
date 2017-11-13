@@ -238,7 +238,6 @@ class View:
     def commit_id(self):
         return subprocess.check_output(['git', 'rev-parse', 'HEAD'])
 
-
 def colors_html(colors, colored_symbols):
     total = len(colored_symbols)
     if total == 0:

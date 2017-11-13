@@ -45,7 +45,12 @@ class View:
             if n > 0:
                 archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
         menu = [
-            {'name': 'Decks', 'url': url_for('home')},
+            {'name': 'Metagame', 'url': url_for('home'), 'badge': archetypes_badge, 'has_submenu': True, 'submenu': [
+                {'name': 'Latest Decks', 'url': url_for('home')},
+                {'name': 'Archetypes', 'url': url_for('archetypes'), 'badge': archetypes_badge},
+                {'name': 'People', 'url': url_for('people')},
+                {'name': 'Cards', 'url': url_for('cards')},
+            ]},
             {'name': 'League', 'url': url_for('league'), 'has_submenu': True, 'submenu': [
                 {'name': 'League Info', 'url': url_for('league')},
                 {'name': 'Sign Up', 'url': url_for('signup')},
@@ -53,14 +58,12 @@ class View:
                 {'name': 'Records', 'url': url_for('current_league')}
             ]},
             {'name': 'Competitions', 'url': url_for('competitions'), 'has_submenu': True, 'submenu': [
+                {'name': 'Competition Results', 'url': url_for('competitions')},
                 {'name': 'Tournament Info', 'url': url_for('tournaments')},
                 {'name': 'Leaderboards', 'url': url_for('tournament_leaderboards')},
                 {'name': 'Gatherling', 'url': 'http://gatherling.com/'},
-                {'name': 'Hosting', 'url': url_for('hosting')},
+                {'name': 'Hosting', 'url': url_for('hosting')}
             ]},
-            {'name': 'People', 'url': url_for('people')},
-            {'name': 'Cards', 'url': url_for('cards')},
-            {'name': 'Archetypes', 'url': url_for('archetypes'), 'badge': archetypes_badge},
             {'name': 'Resources', 'url': url_for('resources')}
         ]
         if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7):
@@ -68,7 +71,10 @@ class View:
         elif (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
             menu += [{'name': 'Supplemental Rotation', 'url': url_for('rotation')}]
         menu += [
-            {'name': 'About', 'url': url_for('about')}
+            {'name': 'About', 'url': url_for('about'), 'has_submenu': True, 'submenu': [
+                {'name': 'What is Penny Dreadful?', 'url': url_for('about')},
+                {'name': 'About pennydreadfulmagic.com', 'url': url_for('about_pdm')}
+            ]}
         ]
         return menu
 
@@ -235,7 +241,8 @@ def colors_html(colors, colored_symbols):
     s = ''
     for color in colors:
         n = colored_symbols.count(color)
-        width = (3.0 - 0.1 * len(colors)) / total * n
+        one_pixel_in_rem = 0.05 # See pd.css base font size for the derivation of this value.
+        width = (3.0 - one_pixel_in_rem * len(colors)) / total * n
         s += '<span class="mana mana-{color}" style="width: {width}rem"></span>'.format(color=color, width=width)
     return s
 
@@ -265,4 +272,4 @@ def set_stars_and_top8(d):
             d.stars_safe = ''
 
     if len(d.stars_safe) > 0:
-        d.stars_safe = '<span title="Success Rating">{stars}</span>'.format(stars=d.stars_safe)
+        d.stars_safe = '<span class="stars" title="Success Rating">{stars}</span>'.format(stars=d.stars_safe)

@@ -338,16 +338,7 @@ class Deck(Container):
         return cards
 
     def __str__(self):
-        self.maindeck.sort(key=lambda x: oracle.deck_sort(x['card']))
-        self.sideboard.sort(key=lambda x: oracle.deck_sort(x['card']))
-        s = '{name} by {person}'.format(name=self.name, person=self.person)
-        if self.get('competition_name') is not None:
-            s += '\n'
-            s += '({competition_name}, {wins}–{losses}'.format(competition_name=self.competition_name, wins=self.wins, losses=self.losses)
-            if self.get('draws', 0) > 0:
-                s += '–{draws}'.format(draws = self.draws)
-            s += ')'
-        s += '\n\n'
+        s = ''
         for entry in self.maindeck:
             s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
         s += '\n'

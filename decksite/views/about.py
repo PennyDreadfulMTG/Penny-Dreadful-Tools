@@ -22,16 +22,26 @@ FANCY_CARDS = legality.cards_legal_in_format(oracle.load_cards([
     "Nevinyrral's Disk",
     'Lake of the Dead',
     'Braids, Cabal Minion',
-    ]), "Penny Dreadful")
+    'Channel',
+    'Chain Lightning',
+    'Brain Freeze',
+    'Dragonstorm',
+    'Day of Judgment',
+    'Cruel Ultimatum',
+    'Rofellos, Llanowar Emissary',
+    'Mana Leak',
+    'Burning of Xinye',
+    'Psychatog',
+    'Smokestack',
+    'Llanowar Elves',
+    'Isamaru, Hound of Konda'
+]), 'Penny Dreadful')
 
 # pylint: disable=no-self-use
 class About(View):
     def subtitle(self):
-        return 'About'
+        return 'About Penny Dreadful'
 
     def exciting_cards(self):
         random.shuffle(FANCY_CARDS)
-        return FANCY_CARDS[:2]
-
-    def third_exciting_card(self):
-        return FANCY_CARDS[3].name
+        return FANCY_CARDS[:3]

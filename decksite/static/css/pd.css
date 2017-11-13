@@ -443,10 +443,15 @@ td.marginalia:first-child, th.marginalia:first-child {
     overflow: visible;
 }
 
-/* Align beginning and end of rows with left and right edges of the content area. */
-table:not(.with-marginalia) td:first-child, td:last-child, table:not(.with-marginalia) th:first-child, th:last-child, table.with-marginalia th:nth-child(2), table.with-marginalia td:nth-child(2) {
-    margin: 0;
-    padding: 0;
+/* Align beginning of rows with left and right edges of the content area. */
+table:not(.with-marginalia) td:first-child, table:not(.with-marginalia) th:first-child, table.with-marginalia th:nth-child(2), table.with-marginalia td:nth-child(2) {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+/* Align end of rows with left and right edges of the content area. */
+td:last-child, th:last-child {
+    margin-right: 0;
 }
 
 

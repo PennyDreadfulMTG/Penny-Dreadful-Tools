@@ -744,6 +744,12 @@ p.bugged {
     margin-left: 0.2em;
 }
 
+.bugged.illegal:after {
+    content: "﻿🐞 🚫";
+    margin-left: 0.2em;
+
+}
+
 /*
 
 Forms

@@ -10,6 +10,7 @@ import textwrap
 import time
 import traceback
 
+import inflect
 from typing import List
 
 from discordbot import emoji
@@ -423,6 +424,7 @@ Want to contribute? Send a Pull Request."""
     async def explain(self, bot, channel, args):
         """`!explain`. Get a list of things the bot knows how to explain.
 `!explain {thing}`. Print commonly needed explanation for 'thing'."""
+        num_tournaments = inflect.engine().number_to_words(len(tournaments.all_series_info()))
         explanations = {
             'bugs': [
                 rules.bugs(version=rules.SHORT),
@@ -514,9 +516,9 @@ Want to contribute? Send a Pull Request."""
             ],
             'tournament': [
                 """
-                We have three free-to-enter weekly tournaments with prizes from Card Hoarder.
+                We have {num_tournaments} free-to-enter weekly tournaments with prizes from Card Hoarder.
                 They are hosted on gatherling.com along with a lot of other player-run Magic Online events.
-                """,
+                """.format(num_tournaments=num_tournaments),
                 {
                     'More Info': fetcher.decksite_url('/tournaments/'),
                     'Sign Up': 'http://gatherling.com/',

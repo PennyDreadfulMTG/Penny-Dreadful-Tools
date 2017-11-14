@@ -321,7 +321,6 @@ def load_cards(decks):
     sql = """
         SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN ({deck_ids})
     """.format(deck_ids=', '.join(map(sqlescape, map(str, decks_by_id.keys()))))
-    print(sql)
     rs = db().execute(sql)
     for row in rs:
         location = 'sideboard' if row['sideboard'] else 'maindeck'

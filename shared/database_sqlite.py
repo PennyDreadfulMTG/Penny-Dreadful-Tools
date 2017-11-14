@@ -1,6 +1,7 @@
 import apsw
+import time
 
-from shared import configuration
+from shared import configuration, perf
 from shared.database_generic import GenericDatabase
 from shared.pd_exception import DatabaseException
 
@@ -23,7 +24,12 @@ class SqliteDatabase(GenericDatabase):
         if args is None:
             args = []
         try:
-            return self.cursor.execute(sql, args).fetchall()
+            start_time = time.perf_counter()
+            result = self.cursor.execute(sql, args)
+            run_time = time.perf_counter() - start_time
+            if run_time > 2:
+                perf.slow('sqlite query', run_time, '{sql} {args}'.format(sql=sql, args=args))
+            return result.fetchall()
         except apsw.Error as e:
             # Quick fix for league bugs
             if "cannot start a transaction within a transaction" in str(e):

@@ -48,6 +48,12 @@ def run():
         sys.argv.remove("tests")
         code = pytest.main()
         sys.exit(code)
+    elif "decksite-profiler" in sys.argv:
+        from werkzeug.contrib.profiler import ProfilerMiddleware
+        from decksite.main import APP
+        APP.config['PROFILE'] = True
+        APP.wsgi_app = ProfilerMiddleware(APP.wsgi_app, restrictions=[30])
+        APP.run(debug=True)
     else:
         print("You didn't tell me what to run or I don't recognize that name")
         sys.exit(1)

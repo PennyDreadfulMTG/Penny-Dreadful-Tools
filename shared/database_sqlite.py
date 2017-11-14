@@ -27,7 +27,7 @@ class SqliteDatabase(GenericDatabase):
             start_time = time.perf_counter()
             result = self.cursor.execute(sql, args)
             run_time = time.perf_counter() - start_time
-            if run_time > 2:
+            if run_time > configuration.get('slow_query'):
                 perf.slow('sqlite query', run_time, '{sql} {args}'.format(sql=sql, args=args))
             return result.fetchall()
         except apsw.Error as e:

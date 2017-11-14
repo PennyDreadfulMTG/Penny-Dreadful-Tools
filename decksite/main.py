@@ -1,11 +1,12 @@
 import os
+import time
 import traceback
 
-from flask import make_response, redirect, request, send_file, send_from_directory, session, url_for
+from flask import g, make_response, redirect, request, send_file, send_from_directory, session, url_for
 from werkzeug import exceptions
 
 from magic import card as mc, oracle
-from shared import configuration
+from shared import configuration, perf
 from shared.pd_exception import DoesNotExistException, InvalidArgumentException, InvalidDataException
 
 from decksite import auth, deck_name, league as lg
@@ -361,6 +362,18 @@ def internal_server_error(e):
     traceback.print_exception(e, e, None)
     view = InternalServerError(e)
     return view.page(), 500
+
+@APP.before_request
+def before_request():
+    g.start_time = time.perf_counter()
+
+@APP.after_request
+def teardown_request(response):
+    run_time = time.perf_counter() - g.start_time
+    if run_time > 5:
+        perf.slow('page', run_time, request.path)
+    return response
+
 
 def init():
     # This makes sure that the method decorators are called.

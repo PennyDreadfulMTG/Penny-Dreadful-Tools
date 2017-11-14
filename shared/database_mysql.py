@@ -1,4 +1,5 @@
 #pylint: disable=import-error, duplicate-code
+import time
 import warnings
 
 import MySQLdb
@@ -6,6 +7,7 @@ import MySQLdb
 from shared import configuration
 from shared.database_generic import GenericDatabase
 from shared.pd_exception import DatabaseException
+from shared import perf
 
 class MysqlDatabase(GenericDatabase):
     def __init__(self, db):
@@ -39,7 +41,11 @@ class MysqlDatabase(GenericDatabase):
             # eww
             sql = sql.replace('?', '%s')
         try:
+            start_time = time.perf_counter()
             self.cursor.execute(sql, args)
+            run_time = time.perf_counter() - start_time
+            if run_time > 2:
+                perf.slow('mysql query', run_time, '{sql} {args}'.format(sql=sql, args=args))
             return self.cursor.fetchall()
         except MySQLdb.Warning as e:
             if e.args[0] == 1050:

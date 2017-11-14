@@ -92,7 +92,7 @@ def cardhoarder_url(d):
     deck_s = '||'.join([str(v) + ' ' + mc.to_mtgo_format(k).replace('"', '') for k, v in cs.items()])
     return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=internal.escape(deck_s))
 
-def create_github_issue(title, author, repo='PennyDreadfulMTG/Penny-Dreadful-Tools'):
+def create_github_issue(title, author, location='Discord', repo='PennyDreadfulMTG/Penny-Dreadful-Tools'):
     if configuration.get('github_user') is None or configuration.get('github_password') is None:
         return None
     if title is None or title == '':
@@ -103,7 +103,7 @@ def create_github_issue(title, author, repo='PennyDreadfulMTG/Penny-Dreadful-Too
     if '\n' in title:
         title, body = title.split('\n', 1)
         body += '\n\n'
-    body += 'Reported on Discord by {author}'.format(author=author)
+    body += 'Reported on {location} by {author}'.format(location=location, author=author)
     issue = repo.create_issue(title=title, body=body)
     return issue
 

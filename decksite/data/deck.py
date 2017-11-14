@@ -54,7 +54,6 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
             {person_query} AS person, p.id AS person_id,
             d.created_date AS `date`, d.decklist_hash, d.retired,
             s.name AS source_name, IFNULL(a.name, '') AS archetype_name,
-            GROUP_CONCAT(DISTINCT CONCAT(dc.card, '|', dc.n, '|', dc.sideboard) SEPARATOR '█') AS cards,
             cache.colors, cache.colored_symbols, cache.legal_formats
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id
@@ -63,7 +62,6 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         LEFT JOIN archetype AS a ON d.archetype_id = a.id
         LEFT JOIN deck AS opp ON opp.id IN (SELECT deck_id FROM deck_match WHERE deck_id <> d.id AND match_id IN (SELECT match_id FROM deck_match WHERE deck_id = d.id))
         LEFT JOIN competition_type AS ct ON ct.id = c.competition_type_id
-        LEFT JOIN deck_card AS dc ON d.id = dc.deck_id
         LEFT JOIN deck_cache AS cache ON d.id = cache.deck_id
         WHERE {where}
         GROUP BY d.id
@@ -72,17 +70,11 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
     """.format(person_query=query.person_query(), where=where, order_by=order_by, limit=limit)
     db().execute('SET group_concat_max_len=100000')
     rows = db().execute(sql)
-    cards = oracle.cards_by_name()
     decks = []
     for row in rows:
         d = Deck(row)
         d.maindeck = []
         d.sideboard = []
-        cards_s = (row['cards'] or '')
-        for entry in filter(None, cards_s.split('█')):
-            name, n, is_sideboard = entry.split('|')
-            location = 'sideboard' if bool(int(is_sideboard)) else 'maindeck'
-            d[location].append({'n': int(n), 'name': name, 'card': cards[name]})
         d.colored_symbols = json.loads(d.colored_symbols or '[]')
         d.colors = json.loads(d.colors or '[]')
         d.legal_formats = set(json.loads(d.legal_formats or '[]'))
@@ -93,7 +85,8 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         d.date = dtutil.ts2dt(d.date)
         d.can_draw = 'Divine Intervention' in [card.name for card in d.all_cards()]
         decks.append(d)
-    add_opponent_stats(decks)
+    load_cards(decks)
+    load_opponent_stats(decks)
     return decks
 
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks we will claim your deck is neither W nor G which is not true. But this should cover most cases.
@@ -320,8 +313,25 @@ def load_decks_by_cards(names):
         """.format(n=len(names), names=', '.join(map(sqlescape, names)))
     return load_decks(sql)
 
+def load_cards(decks):
+    if len(decks) == 0:
+        return
+    decks_by_id = {d.id: d for d in decks}
+    cards = oracle.cards_by_name()
+    sql = """
+        SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN ({deck_ids})
+    """.format(deck_ids=', '.join(map(sqlescape, map(str, decks_by_id.keys()))))
+    print(sql)
+    rs = db().execute(sql)
+    for row in rs:
+        location = 'sideboard' if row['sideboard'] else 'maindeck'
+        name = row['card']
+        d = decks_by_id[row['deck_id']]
+        d[location] = d.get(location, [])
+        d[location].append({'n': row['n'], 'name': name, 'card': cards[name]})
+
 # It makes the main query about 5x faster to do this as a separate query (which is trivial and done only once for all decks).
-def add_opponent_stats(decks):
+def load_opponent_stats(decks):
     if len(decks) == 0:
         return
     decks_by_id = {d.id: d for d in decks}

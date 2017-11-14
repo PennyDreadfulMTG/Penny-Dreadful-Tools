@@ -88,7 +88,7 @@ def validate_api_key():
     return return_json(generate_error('UNAUTHORIZED', 'Invalid API key'), status=403)
 
 def generate_error(code, msg):
-    return {'error':True, 'code':code, 'msg':msg}
+    return {'error': True, 'code': code, 'msg': msg}
 
 def return_json(content, status=200):
     content = json.dumps(content, default=extra_serializer)

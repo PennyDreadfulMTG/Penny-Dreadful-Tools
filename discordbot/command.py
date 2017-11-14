@@ -349,7 +349,7 @@ Want to contribute? Send a Pull Request."""
     async def modobug(self, bot, channel, args, author):
         """Report an MTGO bug."""
         await bot.client.send_typing(channel)
-        issue = fetcher.create_github_issue(args, author, 'PennyDreadfulMTG/modo-bugs')
+        issue = fetcher.create_github_issue(args, author, 'Discord', 'PennyDreadfulMTG/modo-bugs')
         if issue is None:
             await bot.client.send_message(channel, 'Report MTGO issues at <https://github.com/PennyDreadfulMTG/modo-bugs/issues/new>')
         else:

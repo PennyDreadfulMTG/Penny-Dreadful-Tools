@@ -44,7 +44,7 @@ class MysqlDatabase(GenericDatabase):
             start_time = time.perf_counter()
             self.cursor.execute(sql, args)
             run_time = time.perf_counter() - start_time
-            if run_time > 2:
+            if run_time > configuration.get('slow_query', 5):
                 perf.slow('mysql query', run_time, '{sql} {args}'.format(sql=sql, args=args))
             return self.cursor.fetchall()
         except MySQLdb.Warning as e:

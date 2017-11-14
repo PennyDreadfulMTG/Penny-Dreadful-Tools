@@ -370,7 +370,7 @@ def before_request():
 @APP.after_request
 def teardown_request(response):
     run_time = time.perf_counter() - g.start_time
-    if run_time > configuration.get('slow_page', 10):
+    if run_time > configuration.get('slow_page'):
         perf.slow('page', run_time, request.path)
     return response
 

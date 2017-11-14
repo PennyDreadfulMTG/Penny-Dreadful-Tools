@@ -161,6 +161,8 @@ def insert_card(c):
     # mtgjson thinks the text of Jhessian Lookout is NULL not '' but that is clearly wrong.
     if c.get('text', None) is None and c['layout'] in ['normal', 'token', 'double-faced', 'split', 'aftermath']:
         c['text'] = ''
+    if c.get('name') == "Homura's Essence":
+        c['text'] = 'Creatures you control get +2/+2 and have flying and "{R}: This creature gets +1/+0 until end of turn."'
     c['nameAscii'] = card.unaccent(c.get('name'))
     c['searchText'] = re.sub(r'\([^\)]+\)', '', c['text'])
     c['cardId'] = card_id

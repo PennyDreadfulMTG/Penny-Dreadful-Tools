@@ -25,7 +25,7 @@ class SqliteDatabase(GenericDatabase):
         try:
             p = perf.start()
             result = self.cursor.execute(sql, args)
-            perf.check(p, 'sqlite query', (sql, args))
+            perf.check(p, 'sqlite query', (sql, args), 'sqlite')
             return result.fetchall()
         except apsw.Error as e:
             # Quick fix for league bugs

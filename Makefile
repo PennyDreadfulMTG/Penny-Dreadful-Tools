@@ -43,7 +43,6 @@ readme:
 	@python3 generate_readme.py
 	@echo
 
-
 coverage:
 	@echo
 	@echo "******************************** Test Coverage ********************************"

@@ -1,5 +1,4 @@
 import os
-import time
 import traceback
 
 from flask import g, make_response, redirect, request, send_file, send_from_directory, session, url_for
@@ -365,13 +364,11 @@ def internal_server_error(e):
 
 @APP.before_request
 def before_request():
-    g.start_time = time.perf_counter()
+    g.p = perf.start()
 
 @APP.after_request
 def teardown_request(response):
-    run_time = time.perf_counter() - g.start_time
-    if run_time > configuration.get('slow_page'):
-        perf.slow('page', run_time, request.path)
+    perf.check(g.p, 'slow_page', request.path, 'fetch')
     return response
 
 

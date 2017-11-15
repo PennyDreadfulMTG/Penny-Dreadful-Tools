@@ -1,5 +1,4 @@
 import apsw
-import time
 
 from shared import configuration, perf
 from shared.database_generic import GenericDatabase
@@ -24,11 +23,9 @@ class SqliteDatabase(GenericDatabase):
         if args is None:
             args = []
         try:
-            start_time = time.perf_counter()
+            p = perf.start()
             result = self.cursor.execute(sql, args)
-            run_time = time.perf_counter() - start_time
-            if run_time > configuration.get('slow_query'):
-                perf.slow('sqlite query', run_time, '{sql} {args}'.format(sql=sql, args=args))
+            perf.check(p, 'slow_query', (sql, args), 'sqlite')
             return result.fetchall()
         except apsw.Error as e:
             # Quick fix for league bugs

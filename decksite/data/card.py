@@ -50,6 +50,7 @@ def played_cards(where='1 = 1'):
                     GROUP BY deck_id, card
             ) AS dc
             LEFT JOIN deck AS d ON d.id = dc.deck_id
+            WHERE {where}
         ) AS deck_card_agg
         GROUP BY card
         ORDER BY `season.n_decks` DESC, `season.count_decks` DESC, `season.n_maindecks` DESC, `season.count_maindecks` DESC, `all.n_decks` DESC, `all.count_decks` DESC, `all.n_maindecks` DESC, `all.count_maindecks` DESC

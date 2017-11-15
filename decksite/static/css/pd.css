@@ -62,18 +62,17 @@ http://www.modularscale.com/?1&em&1.333 will show you bigger and smaller options
 
 html {
     /*
-        On the web, the op­ti­mal size is 15–25 pixels.
+        On the web, the optimal size is 15–25 pixels.
         https://practicaltypography.com/point-size.html
+
+        With this base font size 1px is 0.05rem. If you change the base font size change the 1px width throughout and in calculations including the mana-bar outside of CSS.
     */
-        font: 400 20px main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-        /*
-            With this base font size 1px is 0.05rem. If you change the base font size change the 1px width throughout and in calculations including the mana-bar outside of CSS.
-        */
-    }
+    font: 400 20px main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 
 body {
     /*
-        These colors are what we want in the header/footer for the pratical reason that if the page is particularly short we want this color to show to the bottom of the browser and on elastic scroll at top/bottom of the browser.
+        These colors are what we want in the header/footer for the practical reason that if the page is particularly short we want this color to show to the bottom of the browser and on elastic scroll at top/bottom of the browser.
         See main for the main content colors.
     */
     background: #999;
@@ -686,7 +685,7 @@ Cards are 445px tall images that are usually 312px wide but may be wider if they
 
 /* Constrain the width of the bug description so it doesn't prevent wrapping of other interesting content alongside the card image. */
 p.bugged {
-    width: 10.516853933rem; /* The width of a card when the height is card-img above. */
+    width: 10.517rem; /* The width of a card when the height is card-img above. */
 }
 
 .bugged::after {

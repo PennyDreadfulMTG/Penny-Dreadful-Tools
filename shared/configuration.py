@@ -28,6 +28,7 @@ DEFAULTS = {
     'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32)),
     'prices_database': 'prices',
     'scratch_dir': '.',
+    'slow_fetch': 10,
     'slow_page': 10,
     'slow_query': 5,
     'spellfix': './spellfix',

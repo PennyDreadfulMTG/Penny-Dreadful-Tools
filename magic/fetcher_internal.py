@@ -11,7 +11,7 @@ from cachecontrol import CacheControlAdapter
 from cachecontrol.caches.file_cache import FileCache
 from cachecontrol.heuristics import ExpiresAfter
 
-from shared import configuration
+from shared import configuration, perf
 from shared.pd_exception import OperationalException
 
 SESSION = CacheControl(requests.Session(),
@@ -38,7 +38,9 @@ def fetch(url, character_encoding=None, force=False):
         headers['Cache-Control'] = 'no-cache'
     print('Fetching {url} ({cache})'.format(url=url, cache='no cache' if force else 'cache ok'))
     try:
+        p = perf.start()
         response = SESSION.get(url, headers=headers)
+        perf.check(p, 'slow_fetch', (url, headers), 'fetch')
         if character_encoding is not None:
             response.encoding = character_encoding
         return response.text

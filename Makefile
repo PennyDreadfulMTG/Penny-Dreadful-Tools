@@ -26,7 +26,7 @@ lint:
 	@echo
 	@echo "******************************** Lint *****************************************"
 	@echo
-	@find . -name "*.py" | grep -v .git | xargs pylint -f parseable
+	@find . -name "*.py" | grep -v .git | xargs pylint --reports=n -f parseable
 	@echo
 
 shortlint:
@@ -42,7 +42,6 @@ readme:
 	@echo
 	@python3 generate_readme.py
 	@echo
-
 
 coverage:
 	@echo

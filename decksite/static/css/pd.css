@@ -663,60 +663,6 @@ We show the color composition of a deck with a horizontal bar made up of the col
 
 /*
 
-Responsive tables
-
-We stack our table rows on smaller screen sizes instead of stretching off the side of the screen.
-This is of dubious value and should probably be revisited.
-
-*/
-
-@media only screen and (max-width: 60rem) {
-    table, tbody, th, td, tr {
-        display: block;
-    }
-
-    thead {
-        display: none;
-    }
-
-    tr {
-        border-bottom: 0.05rem solid #999;
-        padding: 1rem 0;
-    }
-
-    td {
-        padding-left: 0;
-        text-align: left;
-    }
-
-    table.with-marginalia {
-        margin-left: 0;
-    }
-    td.marginalia {
-        margin: 0;
-        text-align: left;
-    }
-    td.c, td.n {
-        text-align: left;
-    }
-
-    /* But don't screw up Google's HTML/CSS for the search box in the menu. */
-    .gsc-search-box table {
-        display: table;
-    }
-    .gsc-search-box tbody {
-        display: table-row-group;
-    }
-    .gsc-search-box tr {
-        display: table-row;
-    }
-    .gsc-search-box td, th {
-        display: table-cell;
-    }
-}
-
-/*
-
 Deck
 
 */

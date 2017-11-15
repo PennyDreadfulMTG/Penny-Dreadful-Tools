@@ -30,24 +30,27 @@ def played_cards(where='1 = 1'):
             SUM(CASE WHEN created_date >= %s THEN losses ELSE 0 END) AS `season.losses`,
             SUM(CASE WHEN created_date >= %s THEN draws ELSE 0 END) AS `season.draws`,
             ROUND((SUM(CASE WHEN created_date >= %s THEN wins ELSE 0 END) / SUM(CASE WHEN created_date >= %s THEN wins ELSE 0 END + CASE WHEN created_date >= %s THEN losses ELSE 0 END)) * 100, 1) AS `season.win_percent`
-        FROM
-            (SELECT
+        FROM (
+            SELECT
                 d.created_date,
                 d.person_id,
-                dc.card,
-                SUM(CASE WHEN NOT dc.sideboard THEN n ELSE 0 END) AS maindeck_n,
-                SUM(CASE WHEN dc.sideboard THEN n ELSE 0 END) AS sideboard_n,
                 d.wins,
                 d.draws,
-                d.losses
-            FROM
-                deck_card AS dc
-            INNER JOIN
-                deck AS d ON d.id = dc.deck_id
-            WHERE
-                {where}
-            GROUP BY
-                deck_id, card) AS deck_card_agg
+                d.losses,
+                card,
+                maindeck_n,
+                sideboard_n
+            FROM (
+                    SELECT
+                        card,
+                        deck_id,
+                        SUM(CASE WHEN NOT sideboard THEN n ELSE 0 END) AS maindeck_n,
+                        SUM(CASE WHEN sideboard THEN n ELSE 0 END) AS sideboard_n
+                    FROM deck_card
+                    GROUP BY deck_id, card
+            ) AS dc
+            LEFT JOIN deck AS d ON d.id = dc.deck_id
+        ) AS deck_card_agg
         GROUP BY card
         ORDER BY `season.n_decks` DESC, `season.count_decks` DESC, `season.n_maindecks` DESC, `season.count_maindecks` DESC, `all.n_decks` DESC, `all.count_decks` DESC, `all.n_maindecks` DESC, `all.count_maindecks` DESC
     """.format(where=where)

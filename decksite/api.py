@@ -10,7 +10,7 @@ from shared.serialization import extra_serializer
 
 from magic import rotation, oracle
 
-@APP.route("/api/decks/<deck_id>")
+@APP.route('/api/decks/<deck_id>')
 def deck_api(deck_id):
     blob = deck.load_deck(deck_id)
     return return_json(blob)

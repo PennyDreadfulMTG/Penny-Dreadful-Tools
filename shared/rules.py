@@ -60,11 +60,8 @@ def prep(fmt, s):
     if fmt == TEXT:
         s = s.replace('\n\n', '\n')
     elif fmt == HTML:
-        print(s)
         s = textwrap.dedent(s).strip()
-        print(s)
         s = markdown.markdown(s)
-        print(s)
     else:
         raise InvalidArgumentException('Unrecognized format {fmt}'.format(fmt=fmt))
     return s

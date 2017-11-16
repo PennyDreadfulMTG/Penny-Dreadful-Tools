@@ -368,7 +368,7 @@ def before_request():
 
 @APP.after_request
 def teardown_request(response):
-    perf.check(g.p, 'slow_page', request.path, 'fetch')
+    perf.check(g.p, 'slow_page', request.path, 'decksite')
     return response
 
 

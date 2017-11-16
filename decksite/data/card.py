@@ -90,8 +90,8 @@ def only_played_by(person_id):
     sql = """
         SELECT card AS name, p.id
         FROM deck_card AS dc
-        INNER JOIN deck AS d ON d.id = dc.deck_id
-        INNER JOIN person AS p ON p.id = d.person_id
+        LEFT JOIN deck AS d ON d.id = dc.deck_id
+        LEFT JOIN person AS p ON p.id = d.person_id
         GROUP BY card
         HAVING COUNT(DISTINCT p.id) = 1 AND p.id = {person_id} AND SUM(d.wins + d.draws + d.losses) > 0
     """.format(person_id=sqlescape(person_id))

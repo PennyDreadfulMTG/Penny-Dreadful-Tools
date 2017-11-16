@@ -8,7 +8,6 @@ import time as py_time
 
 import pkg_resources
 import pytz
-from github import Github
 
 import magic.fetcher_internal as internal
 from magic.fetcher_internal import FetchException
@@ -91,21 +90,6 @@ def cardhoarder_url(d):
         cs[name] = cs.get(name, 0) + entry['n']
     deck_s = '||'.join([str(v) + ' ' + mc.to_mtgo_format(k).replace('"', '') for k, v in cs.items()])
     return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=internal.escape(deck_s))
-
-def create_github_issue(title, author, location='Discord', repo='PennyDreadfulMTG/Penny-Dreadful-Tools'):
-    if configuration.get('github_user') is None or configuration.get('github_password') is None:
-        return None
-    if title is None or title == '':
-        return None
-    g = Github(configuration.get('github_user'), configuration.get('github_password'))
-    repo = g.get_repo(repo)
-    body = ''
-    if '\n' in title:
-        title, body = title.split('\n', 1)
-        body += '\n\n'
-    body += 'Reported on {location} by {author}'.format(location=location, author=author)
-    issue = repo.create_issue(title=title, body=body)
-    return issue
 
 def decksite_url(path='/'):
     hostname = configuration.get('decksite_hostname')

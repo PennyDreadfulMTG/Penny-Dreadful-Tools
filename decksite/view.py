@@ -33,6 +33,10 @@ class View:
         return url_for('static', filename='css/pd.css', v=self.commit_id())
 
     def tooltips_url(self):
+        # Don't preload 10,000 images.
+        # pylint: disable=no-member
+        if not hasattr(self, 'cards') or len(self.cards) > 500:
+            return None
         return url_for('static', filename='js/tooltips.js', v=self.commit_id())
 
     def js_url(self):

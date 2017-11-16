@@ -1,7 +1,6 @@
 import time
 
-from magic import fetcher
-from shared import configuration
+from shared import configuration, repo
 
 def start():
     return time.perf_counter()
@@ -13,4 +12,4 @@ def check(start_time, kind, detail, location):
     if limit is not None and run_time > limit:
         msg = 'Exceeded {kind} limit ({run_time} > {limit}) in {location}: {detail_s} ({kind}, {run_time}, {location})'.format(kind=kind, run_time=round(run_time, 1), limit=limit, detail_s=detail_s, location=location)
         print(msg)
-        fetcher.create_github_issue(msg, 'perf', location)
+        repo.create_issue(msg, 'perf', location)

@@ -16,7 +16,7 @@ import inflect
 from discordbot import emoji
 from find import search
 from magic import card, database, oracle, fetcher, rotation, multiverse, tournaments
-from shared import configuration, dtutil, rules
+from shared import configuration, dtutil, repo, rules
 from shared.pd_exception import TooFewItemsException
 
 async def respond_to_card_names(message, bot):
@@ -339,7 +339,7 @@ Want to contribute? Send a Pull Request."""
     async def bug(self, bot, channel, args, author):
         """Report a bug/task for the Penny Dreadful Tools team. For MTGO bugs see `!modobug`."""
         await bot.client.send_typing(channel)
-        issue = fetcher.create_github_issue(args, author)
+        issue = repo.create_issue(args, author)
         if issue is None:
             await bot.client.send_message(channel, "Report issues at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>")
         else:
@@ -349,7 +349,7 @@ Want to contribute? Send a Pull Request."""
     async def modobug(self, bot, channel, args, author):
         """Report an MTGO bug."""
         await bot.client.send_typing(channel)
-        issue = fetcher.create_github_issue(args, author, 'Discord', 'PennyDreadfulMTG/modo-bugs')
+        issue = repo.create_issue(args, author, 'Discord', 'PennyDreadfulMTG/modo-bugs')
         if issue is None:
             await bot.client.send_message(channel, 'Report MTGO issues at <https://github.com/PennyDreadfulMTG/modo-bugs/issues/new>')
         else:

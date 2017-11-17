@@ -29,21 +29,36 @@ def base_query(where='(1 = 1)'):
             bug_desc,
             bug_class,
             bug_last_confirmed
-            FROM
-                (SELECT {card_props}, {face_props}, f.name AS face_name,
-                SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal,
-                GROUP_CONCAT({legality_code}) AS legalities,
-                bugs.description AS bug_desc,
-                bugs.classification AS bug_class,
-                bugs.last_confirmed AS bug_last_confirmed
-                FROM card AS c
-                INNER JOIN face AS f ON c.id = f.card_id
-                LEFT OUTER JOIN card_legality AS cl ON c.id = cl.card_id
-                LEFT OUTER JOIN format AS fo ON cl.format_id = fo.id
-                LEFT OUTER JOIN card_bugs AS bugs ON c.id = bugs.card_id
-                GROUP BY f.id
-                ORDER BY f.card_id, f.position)
-            AS u
+            FROM (
+                SELECT {card_props}, {face_props}, f.name AS face_name,
+                    cb.description AS bug_desc,
+                    cb.classification AS bug_class,
+                    cb.last_confirmed AS bug_last_confirmed,
+                    pd_legal,
+                    legalities
+                FROM
+                    card AS c
+                INNER JOIN
+                    face AS f ON c.id = f.card_id
+                LEFT JOIN
+                    card_bugs AS cb ON c.id = cb.card_id
+                LEFT JOIN (
+                    SELECT
+                        cl.card_id,
+                        SUM(CASE WHEN cl.format_id = 34 THEN 1 ELSE 0 END) > 0 AS pd_legal,
+                        GROUP_CONCAT(CONCAT(fo.name, ':', cl.legality)) AS legalities
+                    FROM
+                        card_legality AS cl
+                    LEFT JOIN
+                        format AS fo ON cl.format_id = fo.id
+                    GROUP BY
+                        cl.card_id
+                ) AS cl ON cl.card_id = c.id
+                GROUP BY
+                    f.id
+                ORDER BY
+                    f.card_id, f.position
+            ) AS u
             WHERE u.id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where})
             GROUP BY u.id
     """.format(

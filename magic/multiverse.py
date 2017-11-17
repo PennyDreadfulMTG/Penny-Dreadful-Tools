@@ -45,8 +45,8 @@ def base_query(where='(1 = 1)'):
                 LEFT JOIN (
                     SELECT
                         cl.card_id,
-                        SUM(CASE WHEN cl.format_id = 34 THEN 1 ELSE 0 END) > 0 AS pd_legal,
-                        GROUP_CONCAT(CONCAT(fo.name, ':', cl.legality)) AS legalities
+                        SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal,
+                        GROUP_CONCAT({legality_code}) AS legalities
                     FROM
                         card_legality AS cl
                     LEFT JOIN

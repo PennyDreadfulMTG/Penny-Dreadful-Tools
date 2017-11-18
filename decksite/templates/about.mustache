@@ -1,6 +1,10 @@
 <article>
     <h1>Penny Dreadful</h1>
 
+    {{#show_gp_card}}
+        <p><img src="{{gp_card_url}}"></p>
+    {{/show_gp_card}}
+
     <p><b>A Magic Online format</b> featuring cards like {{#exciting_cards}}<b class="card">{{name}}</b>, {{/exciting_cards}} and over 10,000 more.</p>
 
     <p><b>The cheapest format ever played</b>. Every deck in the format costs less than a dollar</b>.</p>

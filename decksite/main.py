@@ -93,7 +93,6 @@ def archetype(archetype_id):
     return view.page()
 
 @APP.route('/tournaments/')
-@cached()
 def tournaments():
     view = Tournaments()
     return view.page()
@@ -140,10 +139,15 @@ def about_pdm():
     view = AboutPdm()
     return view.page()
 
+@APP.route('/gp/')
+@cached()
+def about_gp():
+    return make_response(redirect(url_for('about', src='gp')))
+
 @APP.route('/about/pd/')
 @cached()
 def about():
-    view = About()
+    view = About(request.args.get('src'))
     return view.page()
 
 @APP.route('/rotation/')

@@ -1,5 +1,7 @@
 import random
 
+from flask import url_for
+
 from decksite.view import View
 from magic import legality, oracle
 
@@ -34,11 +36,17 @@ FANCY_CARDS = legality.cards_legal_in_format(oracle.load_cards([
     'Psychatog',
     'Smokestack',
     'Llanowar Elves',
-    'Isamaru, Hound of Konda'
+    'Isamaru, Hound of Konda',
+    'Animate Dead'
 ]), 'Penny Dreadful')
 
 # pylint: disable=no-self-use
 class About(View):
+    def __init__(self,  src):
+        if src == 'gp':
+            self.show_gp_card = True
+            self.gp_card_url = url_for('static', filename='images/gp_card.png')
+
     def subtitle(self):
         return 'About Penny Dreadful'
 

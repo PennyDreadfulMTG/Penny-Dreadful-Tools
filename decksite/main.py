@@ -93,7 +93,6 @@ def archetype(archetype_id):
     return view.page()
 
 @APP.route('/tournaments/')
-@cached()
 def tournaments():
     view = Tournaments()
     return view.page()

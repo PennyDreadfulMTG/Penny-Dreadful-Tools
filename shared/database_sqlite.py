@@ -52,9 +52,6 @@ class SqliteDatabase(GenericDatabase):
     def concat(self, parts):
         return ' || '.join(parts)
 
-    def index(self, table, columns):
-        return 'CREATE INDEX ON {table} ({columns})'.format(table=table, columns=', '.join(columns))
-
     # pylint: disable=no-self-use
     def is_sqlite(self):
         return True

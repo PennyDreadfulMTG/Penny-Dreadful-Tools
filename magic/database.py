@@ -75,7 +75,7 @@ def setup():
     sql = create_table_def('printing', card.printing_properties())
     db().execute(sql)
     # Speed up innermost subselect in base_query.
-    db().execute(db().index('card_legality', ['card_id', 'format_id', 'legality']))
+    db().execute('CREATE INDEX idx_card_id_format_id ON card_legality (card_id, format_id, legality)')
     db().execute('INSERT INTO db_version (version) VALUES ({0})'.format(SCHEMA_VERSION))
     db().commit()
 

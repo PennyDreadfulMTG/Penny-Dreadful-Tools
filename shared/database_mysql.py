@@ -69,10 +69,6 @@ class MysqlDatabase(GenericDatabase):
     def concat(self, parts):
         return 'CONCAT(' + ', '.join(parts) + ')'
 
-    def index(self, table, columns):
-        return 'ALTER TABLE {table} ADD INDEX {name} ({columns})'.format(table=table, name='idx_' + '_'.join(columns), columns=', '.join(columns))
-
-
     # pylint: disable=no-self-use
     def is_mysql(self):
         return True

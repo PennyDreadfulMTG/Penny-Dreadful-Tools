@@ -1,9 +1,8 @@
 import collections
 
-
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String
-from magic import card, mana, oracle
+from magic import card, mana, multiverse
 from magic.database import db
 from shared.database import sqlescape, sqllikeescape
 from shared.pd_exception import ParseException
@@ -20,7 +19,7 @@ def search(query):
     where = parse(tokenize(query))
     sql = """{base_query}
         ORDER BY pd_legal DESC, name
-    """.format(base_query=oracle.base_query(where))
+    """.format(base_query=multiverse.base_query(where))
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 

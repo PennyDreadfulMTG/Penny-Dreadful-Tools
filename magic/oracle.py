@@ -45,7 +45,7 @@ def load_cards(names=None):
     if names:
         names = set(names)
     if names:
-        names_clause = 'WHERE c.name IN ({names})'.format(names=', '.join(sqlescape(name).lower() for name in names))
+        names_clause = 'WHERE LOWER(c.name) IN ({names})'.format(names=', '.join(sqlescape(name).lower() for name in names))
     else:
         names_clause = ''
     sql = """

@@ -7,7 +7,7 @@ from magic import legality, oracle
 
 # pylint: disable=no-self-use
 class About(View):
-    def __init__(self,  src):
+    def __init__(self, src):
         if src == 'gp':
             self.show_gp_card = True
             self.gp_card_url = url_for('static', filename='images/gp_card.png')

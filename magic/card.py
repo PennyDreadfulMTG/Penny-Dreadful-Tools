@@ -16,7 +16,7 @@ BASE = {
     'type': VARCHAR,
     'nullable': True,
     'primary_key': False,
-    'query': '`{table}`.`{column}`',
+    'query': '`{table}`.`{column}` AS `{column}`',
     'mtgjson': True,
     'foreign_key': None,
     'default': None,

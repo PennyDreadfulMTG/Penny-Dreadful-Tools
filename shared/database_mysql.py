@@ -45,8 +45,8 @@ class MysqlDatabase(GenericDatabase):
             perf.check(p, 'slow_query', (sql, args), 'mysql')
             return self.cursor.fetchall()
         except MySQLdb.Warning as e:
-            if e.args[0] == 1050:
-                pass # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning.
+            if e.args[0] == 1050 or e.args[0] == 1051:
+                pass # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or an "unknown table" warning.
             else:
                 raise
         except MySQLdb.Error as e:

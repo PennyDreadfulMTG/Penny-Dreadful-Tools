@@ -4,7 +4,7 @@ import sys
 import time
 import urllib
 
-from magic import card, database, fetcher_internal, oracle
+from magic import card, database, fetcher_internal, multiverse
 from shared import configuration
 from shared.database import get_database
 from shared.pd_exception import DatabaseException
@@ -117,7 +117,7 @@ def create_tables():
 
 def name_lookup(name):
     if not CARDS:
-        rs = database.DATABASE.execute(oracle.base_query())
+        rs = database.DATABASE.execute(multiverse.base_query())
         for row in rs:
             CARDS[card.canonicalize(row['name'])] = row['name']
     canonical = card.canonicalize(name)

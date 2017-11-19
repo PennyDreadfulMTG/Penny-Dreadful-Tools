@@ -1,6 +1,6 @@
 from magic import card, fetcher, mana, multiverse
 from magic.database import db
-from magic.multiverse import base_query
+from magic.multiverse import base_query, cached_base_query
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException, TooFewItemsException
 
@@ -45,13 +45,13 @@ def load_cards(names=None):
     if names:
         names = set(names)
     if names:
-        names_clause = 'HAVING LOWER({name_query}) IN ({names})'.format(name_query=card.name_query().format(table='u'), names=', '.join(sqlescape(name).lower() for name in names))
+        names_clause = 'WHERE LOWER(c.name) IN ({names})'.format(names=', '.join(sqlescape(name).lower() for name in names))
     else:
         names_clause = ''
     sql = """
         {base_query}
         {names_clause}
-    """.format(base_query=base_query(), names_clause=names_clause)
+    """.format(base_query=cached_base_query(), names_clause=names_clause)
     rs = db().execute(sql)
     if names and len(names) != len(rs):
         missing = names.symmetric_difference([r['name'] for r in rs])

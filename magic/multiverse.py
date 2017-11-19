@@ -14,9 +14,13 @@ def init():
         print('Database update required')
         update_database(str(current_version))
         set_legal_cards()
+        update_cache()
 
 def layouts():
     return ['normal', 'meld', 'split', 'phenomenon', 'token', 'vanguard', 'double-faced', 'plane', 'flip', 'scheme', 'leveler', 'aftermath']
+
+def cached_base_query():
+    return 'SELECT * FROM _cache_card AS c'
 
 def base_query(where='(1 = 1)'):
     return """
@@ -257,6 +261,12 @@ def set_legal_cards(force=False, season=None):
         db_legal_list = [row['name'] for row in db().execute(sql)]
         print(set(new_list).symmetric_difference(set(db_legal_list)))
     return new_list
+
+def update_cache():
+    db().begin()
+    db().execute('DROP TABLE IF EXISTS _cache_card')
+    db().execute('CREATE TABLE _cache_card AS {base_query}'.format(base_query=base_query()))
+    db().commit()
 
 def database2json(propname: str) -> str:
     if propname == "system_id":

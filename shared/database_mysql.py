@@ -46,7 +46,7 @@ class MysqlDatabase(GenericDatabase):
             return self.cursor.fetchall()
         except MySQLdb.Warning as e:
             if e.args[0] == 1050 or e.args[0] == 1051:
-                pass # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or an "unknown table" warning.
+                pass # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or DROP TABLE IF NOT EXISTS raises an "unknown table" warning.
             else:
                 raise
         except MySQLdb.Error as e:
@@ -54,7 +54,7 @@ class MysqlDatabase(GenericDatabase):
 
     def insert(self, sql, args=None):
         self.execute(sql, args)
-        return self.value('SELECT LAST_INSERT_ID()')
+        return self.last_insert_rowid()
 
     def begin(self):
         self.connection.begin()

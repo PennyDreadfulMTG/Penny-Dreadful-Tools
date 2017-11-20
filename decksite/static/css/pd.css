@@ -97,12 +97,18 @@ nav {
     border-bottom: 0.05rem solid #999;
 }
 
-article p, article li {
+article {
     /*
         Aim for an av­er­age line length of 45–90 char­ac­ters, in­clud­ing spaces.
         https://practicaltypography.com/line-length.html
     */
     max-width: 30em;
+}
+
+blockquote {
+    font-size: 0.75rem;
+    margin-left: 2.369rem;
+    margin-bottom: 1rem;
 }
 
 main p, footer p {

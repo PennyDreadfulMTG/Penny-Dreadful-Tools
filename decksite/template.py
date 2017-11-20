@@ -32,6 +32,7 @@ class CachedLoader(pystache.loader.Loader):
 
 # If you have already parsed a template, don't parse it again.
 class CachedRenderEngine(pystache.renderengine.RenderEngine):
+    # pylint: disable=too-many-arguments
     def __init__(self, literal=None, escape=None, resolve_context=None, resolve_partial=None, to_str=None):
         super().__init__(literal, escape, resolve_context, resolve_partial, to_str)
         self.parsed_templates = {}

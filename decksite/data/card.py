@@ -55,7 +55,7 @@ def played_cards(where='1 = 1'):
         GROUP BY card
         ORDER BY `season_num_decks` DESC, `season_count_decks` DESC, `season_n_maindecks` DESC, `season_count_maindecks` DESC, `all_num_decks` DESC, `all_count_decks` DESC, `all_n_maindecks` DESC, `all_count_maindecks` DESC
     """.format(where=where)
-    cs = [Container(r) for r in db().execute(sql, [rotation.last_rotation().timestamp()] * 12)]
+    cs = [Container(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())] * 12)]
     cards = oracle.cards_by_name()
     for c in cs:
         c.update(cards[c.name])

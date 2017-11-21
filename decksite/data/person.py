@@ -38,7 +38,7 @@ def load_people(where='1 = 1'):
         GROUP BY p.id
         ORDER BY `season_num_decks` DESC, `all_num_decks` DESC, name
     """.format(person_query=query.person_query(), where=where)
-    people = [Person(r) for r in db().execute(sql, [rotation.last_rotation().timestamp()] * 8)]
+    people = [Person(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())] * 8)]
     if len(people) > 0:
         set_decks(people)
     return people

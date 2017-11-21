@@ -77,7 +77,7 @@ def load_archetypes_deckless(where='1 = 1', order_by='`season_num_decks` DESC, `
         GROUP BY a.id
         ORDER BY {order_by}
     """.format(where=where, order_by=order_by)
-    archetypes = [Archetype(a) for a in db().execute(sql, [rotation.last_rotation().timestamp()] * 7)]
+    archetypes = [Archetype(a) for a in db().execute(sql, [int(rotation.last_rotation().timestamp())] * 7)]
     archetypes_by_id = {a.id: a for a in archetypes}
     for a in archetypes:
         a.decks = []

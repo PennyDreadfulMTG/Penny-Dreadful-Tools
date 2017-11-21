@@ -18,6 +18,7 @@ def test_legal_formats():
     formats = legality.legal_formats(d)
     assert 'Penny Dreadful' in formats
     assert 'Legacy' in formats
+    assert 'Penny Dreadful EMN' in formats
 
     formats = legality.legal_formats(d, {'Penny Dreadful'})
     assert len(formats) == 1
@@ -52,6 +53,7 @@ def test_legal_formats():
     assert 'Legacy' in formats
     assert 'Vintage' in formats
     assert 'Penny Dreadful' in formats
+    assert 'Penny Dreadful EMN' in formats
 
 def test_seasons_enum_uptodate():
     """If this is failing, go append new set codes to legality.SEASONS.

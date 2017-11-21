@@ -1,6 +1,6 @@
 import re
 
-from magic import card, database, fetcher
+from magic import card, database, fetcher, legality
 from magic.database import db
 from shared import dtutil
 from shared.database import sqlescape
@@ -263,6 +263,7 @@ def set_legal_cards(force=False, season=None):
     return new_list
 
 def update_cache():
+    legality.init()
     db().begin()
     db().execute('DROP TABLE IF EXISTS _cache_card')
     db().execute('CREATE TABLE _cache_card AS {base_query}'.format(base_query=base_query()))

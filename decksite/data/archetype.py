@@ -39,7 +39,6 @@ def load_archetypes(where='1 = 1', merge=False):
         archetype.id = d.archetype_id
         archetype.name = d.archetype_name
         archetype.decks = archetype.get('decks', []) + [d]
-        # BAKERT have really broken this.
         archetype.all_wins = archetype.get('all_wins', 0) + (d.get('all_wins') or 0)
         archetype.all_losses = archetype.get('all_losses', 0) + (d.get('all_losses') or 0)
         archetype.all_draws = archetype.get('all_draws', 0) + (d.get('all_draws') or 0)

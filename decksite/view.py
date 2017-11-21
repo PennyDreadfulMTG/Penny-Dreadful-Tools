@@ -123,7 +123,7 @@ class View:
             d.competition_url = '/competitions/{id}/'.format(id=d.competition_id)
         d.url = '/decks/{id}/'.format(id=d.id)
         d.export_url = '/export/{id}/'.format(id=d.id)
-        d.cmc_chart_url = '/charts/cmc/{id}/'.format(id=d.id)
+        d.cmc_chart_url = '/charts/cmc/{id}-cmc.png'.format(id=d.id)
         if d.source_name == 'League' and d.wins + d.losses < 5 and d.competition_end_date > dtutil.now() and not d.get('retired', False):
             d.stars_safe = '<span title="Active in the current league">⊕</span> {stars}'.format(stars=d.stars_safe).strip()
             d.source_sort = '1'

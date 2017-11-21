@@ -370,7 +370,7 @@ def internal_server_error(e):
 def before_request():
     g.p = perf.start()
 
-@APP.after_request
+@APP.teardown_request
 def teardown_request(response):
     perf.check(g.p, 'slow_page', request.path, 'decksite')
     return response

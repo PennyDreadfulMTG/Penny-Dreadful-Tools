@@ -19,16 +19,12 @@
     {{#people}}
         <tr>
             <td><a href="{{url}}">{{name}}</a></td>
-            {{#season}}
-                <td class="n"><a href="{{url}}">{{num_decks}}</a></td>
-                <td class="n">{{> record}}</td>
-                <td class="n divider">{{#show_record}}<a href="{{url}}">{{win_percent}}</a>{{/show_record}}</td>
-            {{/season}}
-            {{#all}}
-                <td class="n"><a href="{{url}}">{{num_decks}}</a></td>
-                <td class="n">{{> record}}</td>
-                <td class="n">{{#show_record}}<a href="{{url}}">{{win_percent}}</a>{{/show_record}}</td>
-            {{/all}}
+                <td class="n"><a href="{{url}}">{{season_num_decks}}</a></td>
+                <td class="n">{{#season_show_record}}{{season_wins}}–{{season_losses}}{{#season_draws}}–{{season_draws}}{{/season_draws}}{{/season_show_record}}</td>
+                <td class="n divider">{{#season_show_record}}<a href="{{url}}">{{season_win_percent}}</a>{{/season_show_record}}</td>
+                <td class="n"><a href="{{url}}">{{all_num_decks}}</a></td>
+                <td class="n">{{#all_show_record}}{{all_wins}}–{{all_losses}}{{#all_draws}}–{{all_draws}}{{/all_draws}}{{/all_show_record}}</td>
+                <td class="n">{{#all_show_record}}<a href="{{url}}">{{all_win_percent}}</a>{{/all_show_record}}</td>
         </tr>
     {{/people}}
 </table>

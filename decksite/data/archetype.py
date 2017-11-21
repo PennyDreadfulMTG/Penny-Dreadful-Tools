@@ -39,37 +39,36 @@ def load_archetypes(where='1 = 1', merge=False):
         archetype.id = d.archetype_id
         archetype.name = d.archetype_name
         archetype.decks = archetype.get('decks', []) + [d]
-        archetype.all = archetype.get('all', Archetype())
-        archetype.season = archetype.all.get('season', Archetype())
-        archetype.all.wins = archetype.all.get('wins', 0) + (d.get('wins') or 0)
-        archetype.all.losses = archetype.all.get('losses', 0) + (d.get('losses') or 0)
-        archetype.all.draws = archetype.all.get('draws', 0) + (d.get('draws') or 0)
+        # BAKERT have really broken this.
+        archetype.all_wins = archetype.get('all_wins', 0) + (d.get('all_wins') or 0)
+        archetype.all_losses = archetype.get('all_losses', 0) + (d.get('all_losses') or 0)
+        archetype.all_draws = archetype.get('all_draws', 0) + (d.get('all_draws') or 0)
         if d.created_date >= rotation.last_rotation():
-            archetype.season.wins = archetype.season.get('wins', 0) + (d.get('wins') or 0)
-            archetype.season.losses = archetype.season.get('losses', 0) + (d.get('losses') or 0)
-            archetype.season.draws = archetype.season.get('draws', 0) + (d.get('draws') or 0)
+            archetype.season_wins = archetype.get('season_wins', 0) + (d.get('season_wins') or 0)
+            archetype.season_losses = archetype.get('season_losses', 0) + (d.get('season_losses') or 0)
+            archetype.season_draws = archetype.get('season_draws', 0) + (d.get('season_draws') or 0)
         archetypes[key] = archetype
     archetypes = list(archetypes.values())
     return archetypes
 
-def load_archetypes_deckless(where='1 = 1', order_by='`season.num_decks` DESC, `all.num_decks` DESC, `season.wins` DESC, `all.wins` DESC'):
+def load_archetypes_deckless(where='1 = 1', order_by='`season_num_decks` DESC, `all_num_decks` DESC, `season_wins` DESC, `all_wins` DESC'):
     sql = """
         SELECT
             a.id,
             a.name,
             aca.ancestor AS parent_id,
 
-            COUNT(DISTINCT d.id) AS `all.num_decks`,
-            SUM(d.wins) AS `all.wins`,
-            SUM(d.losses) AS `all.losses`,
-            SUM(d.draws) AS `all.draws`,
-            IFNULL(ROUND((SUM(wins) / SUM(wins + losses)) * 100, 1), '') AS `all.win_percent`,
+            COUNT(DISTINCT d.id) AS `all_num_decks`,
+            SUM(d.wins) AS `all_wins`,
+            SUM(d.losses) AS `all_losses`,
+            SUM(d.draws) AS `all_draws`,
+            IFNULL(ROUND((SUM(wins) / SUM(wins + losses)) * 100, 1), '') AS `all_win_percent`,
 
-            SUM(CASE WHEN d.created_date >= %s THEN 1 ELSE 0 END) AS `season.num_decks`,
-            SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) AS `season.wins`,
-            SUM(CASE WHEN d.created_date >= %s THEN losses ELSE 0 END) AS `season.losses`,
-            SUM(CASE WHEN d.created_date >= %s THEN draws ELSE 0 END) AS `season.draws`,
-            IFNULL(ROUND((SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) / SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END + CASE WHEN d.created_date >= %s THEN losses ELSE 0 END)) * 100, 1), '') AS `season.win_percent`
+            SUM(CASE WHEN d.created_date >= %s THEN 1 ELSE 0 END) AS `season_num_decks`,
+            SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) AS `season_wins`,
+            SUM(CASE WHEN d.created_date >= %s THEN losses ELSE 0 END) AS `season_losses`,
+            SUM(CASE WHEN d.created_date >= %s THEN draws ELSE 0 END) AS `season_draws`,
+            IFNULL(ROUND((SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) / SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END + CASE WHEN d.created_date >= %s THEN losses ELSE 0 END)) * 100, 1), '') AS `season_win_percent`
 
         FROM archetype AS a
         LEFT JOIN archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
@@ -109,15 +108,15 @@ def load_matchups(archetype_id):
         SELECT
             oa.id, oa.name,
 
-            SUM(CASE WHEN d.created_date < ? THEN 0 WHEN dm.games = 2 THEN 1 ELSE 0 END) AS `season.wins`,
-            SUM(CASE WHEN d.created_date < ? THEN 0 WHEN odm.games = 2 THEN 1 ELSE 0 END) AS `season.losses`,
-            SUM(CASE WHEN d.created_date < ? THEN 0 WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS `season.draws`,
-            IFNULL(ROUND(AVG(CASE WHEN d.created_date < ? THEN NULL WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1), '') AS `season.win_percent`,
+            SUM(CASE WHEN d.created_date < ? THEN 0 WHEN dm.games = 2 THEN 1 ELSE 0 END) AS `season_wins`,
+            SUM(CASE WHEN d.created_date < ? THEN 0 WHEN odm.games = 2 THEN 1 ELSE 0 END) AS `season_losses`,
+            SUM(CASE WHEN d.created_date < ? THEN 0 WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS `season_draws`,
+            IFNULL(ROUND(AVG(CASE WHEN d.created_date < ? THEN NULL WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1), '') AS `season_win_percent`,
 
-            SUM(CASE WHEN dm.games = 2 THEN 1 ELSE 0 END) AS `all.wins`,
-            SUM(CASE WHEN odm.games = 2 THEN 1 ELSE 0 END) AS `all.losses`,
-            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS `all.draws`,
-            IFNULL(ROUND(AVG(CASE WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1), '') AS `all.win_percent`
+            SUM(CASE WHEN dm.games = 2 THEN 1 ELSE 0 END) AS `all_wins`,
+            SUM(CASE WHEN odm.games = 2 THEN 1 ELSE 0 END) AS `all_losses`,
+            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS `all_draws`,
+            IFNULL(ROUND(AVG(CASE WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1), '') AS `all_win_percent`
         FROM
             archetype AS a
         INNER JOIN
@@ -146,7 +145,7 @@ def load_matchups(archetype_id):
         GROUP BY
             oa.id
         ORDER BY
-            `season.wins` DESC, `all.wins` DESC
+            `season_wins` DESC, `all_wins` DESC
     """
     return [Container(m) for m in db().execute(sql, [rotation.last_rotation().timestamp()] * 4 + [archetype_id])]
 

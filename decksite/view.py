@@ -165,9 +165,9 @@ class View:
         c.pd_legal = c.legalities.get('Penny Dreadful', False)
         c.legal_formats = set(c.legalities.keys())
         c.has_legal_format = len(c.legal_formats) > 0
-        if c.get('season') and c.get('all'):
-            c.season.show_record = c.season.get('wins') or c.season.get('losses') or c.season.get('draws')
-            c.all.show_record = c.all.get('wins') or c.all.get('losses') or c.all.get('draws')
+        if c.get('season_num_decks') is not None and c.get('all_num_decks') is not None:
+            c.season_show_record = c.get('season_wins') or c.get('season_losses') or c.get('season_draws')
+            c.all_show_record = c.get('all_wins') or c.get('all_losses') or c.get('all_draws')
         c.has_decks = len(c.get('decks', [])) > 0
         counter = Counter()
         for d in c.get('decks', []):
@@ -193,9 +193,9 @@ class View:
     def prepare_people(self):
         for p in getattr(self, 'people', []):
             p.url = url_for('person', person_id=p.id)
-            if p.get('season') and p.get('all'):
-                p.season.show_record = p.season.wins or p.season.losses or p.season.get('draws', None)
-                p.all.show_record = p.all.wins or p.all.losses or p.all.get('draws', None)
+            if p.get('season_num_decks') is not None and p.get('all_num_decks') is not None:
+                p.season_show_record = p.season_wins or p.season_losses or p.get('season_draws', None)
+                p.all_show_record = p.all_wins or p.all_losses or p.get('all_draws', None)
 
     def prepare_archetypes(self):
         for a in getattr(self, 'archetypes', []):
@@ -203,10 +203,10 @@ class View:
 
     def prepare_archetype(self, a, archetypes):
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
-        if a.get('all') and a.get('season'):
-            a.all.show_record = a.all.get('wins') or a.all.get('draws') or a.all.get('losses')
-            a.season.show_record = a.season.get('wins') or a.season.get('draws') or a.season.get('losses')
-            a.show_matchups = a.all.show_record
+        if a.get('all_num_decks') is not None and a.get('season_num_decks') is not None:
+            a.all_show_record = a.get('all_wins') or a.get('all_draws') or a.get('all_losses')
+            a.season_show_record = a.get('season_wins') or a.get('season_draws') or a.get('season_losses')
+            a.show_matchups = a.all_show_record
         a.url = url_for('archetype', archetype_id=a.id)
         a.best_decks = Container({'decks': []})
         n = 3

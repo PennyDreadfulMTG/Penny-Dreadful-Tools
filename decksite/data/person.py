@@ -18,25 +18,25 @@ def load_people(where='1 = 1'):
     sql = """
         SELECT p.id, {person_query} AS name,
 
-        COUNT(d.id) AS `all.num_decks`,
-        SUM(d.wins) AS `all.wins`,
-        SUM(d.losses) AS `all.losses`,
-        SUM(d.draws) AS `all.draws`,
-        IFNULL(ROUND((SUM(d.wins) / SUM(d.wins + d.losses)) * 100, 1), '') AS `all.win_percent`,
-        SUM(CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `all.num_competitions`,
+        COUNT(d.id) AS `all_num_decks`,
+        SUM(d.wins) AS `all_wins`,
+        SUM(d.losses) AS `all_losses`,
+        SUM(d.draws) AS `all_draws`,
+        IFNULL(ROUND((SUM(d.wins) / SUM(d.wins + d.losses)) * 100, 1), '') AS `all_win_percent`,
+        SUM(CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `all_num_competitions`,
 
-        SUM(CASE WHEN d.created_date >= %s THEN 1 ELSE 0 END) AS `season.num_decks`,
-        SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) AS `season.wins`,
-        SUM(CASE WHEN d.created_date >= %s THEN losses ELSE 0 END) AS `season.losses`,
-        SUM(CASE WHEN d.created_date >= %s THEN draws ELSE 0 END) AS `season.draws`,
-        IFNULL(ROUND((SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) / SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END + CASE WHEN d.created_date >= %s THEN losses ELSE 0 END)) * 100, 1), '') AS `season.win_percent`,
-        SUM(CASE WHEN d.created_date >= %s AND d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `season.num_competitions`
+        SUM(CASE WHEN d.created_date >= %s THEN 1 ELSE 0 END) AS `season_num_decks`,
+        SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) AS `season_wins`,
+        SUM(CASE WHEN d.created_date >= %s THEN losses ELSE 0 END) AS `season_losses`,
+        SUM(CASE WHEN d.created_date >= %s THEN draws ELSE 0 END) AS `season_draws`,
+        IFNULL(ROUND((SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) / SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END + CASE WHEN d.created_date >= %s THEN losses ELSE 0 END)) * 100, 1), '') AS `season_win_percent`,
+        SUM(CASE WHEN d.created_date >= %s AND d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `season_num_competitions`
 
         FROM person AS p
         LEFT JOIN deck AS d ON p.id = d.person_id
         WHERE {where}
         GROUP BY p.id
-        ORDER BY `season.num_decks` DESC, `all.num_decks` DESC, name
+        ORDER BY `season_num_decks` DESC, `all_num_decks` DESC, name
     """.format(person_query=query.person_query(), where=where)
     people = [Person(r) for r in db().execute(sql, [rotation.last_rotation().timestamp()] * 8)]
     if len(people) > 0:

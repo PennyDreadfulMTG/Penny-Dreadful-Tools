@@ -115,7 +115,6 @@ class View:
         set_stars_and_top8(d)
         if d.get('colors') is not None:
             d.colors_safe = colors_html(d.colors, d.colored_symbols)
-            d.name = deck_name.normalize(d)
         d.person_url = '/people/{id}/'.format(id=d.person_id)
         d.date_sort = dtutil.dt2ts(d.date)
         d.display_date = dtutil.display_date(d.date)

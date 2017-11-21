@@ -31,9 +31,9 @@ def valid_name(name):
         return name
     else:
         canonicalized = card.canonicalize(name)
-        for name in CARDS_BY_NAME.keys():
-            if canonicalized == card.canonicalize(name):
-                return name
+        for k in CARDS_BY_NAME.keys():
+            if canonicalized == card.canonicalize(k):
+                return k
         try:
             cards = cards_from_query(name, 20)
             if len(cards) > 1:

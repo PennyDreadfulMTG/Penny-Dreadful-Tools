@@ -32,7 +32,7 @@ def played_cards(where='1 = 1'):
             ROUND((SUM(CASE WHEN created_date >= %s THEN wins ELSE 0 END) / SUM(CASE WHEN created_date >= %s THEN wins ELSE 0 END + CASE WHEN created_date >= %s THEN losses ELSE 0 END)) * 100, 1) AS `season_win_percent`
         FROM deck_card AS dc
         LEFT JOIN deck AS d ON d.id = dc.deck_id
-        WHERE 1 = 1
+        WHERE {where}
         GROUP BY dc.card
         ORDER BY `season_num_decks` DESC, `season_count_decks` DESC, `season_n_maindecks` DESC, `season_count_maindecks` DESC, `all_num_decks` DESC, `all_count_decks` DESC, `all_n_maindecks` DESC, `all_count_maindecks` DESC
     """.format(where=where)

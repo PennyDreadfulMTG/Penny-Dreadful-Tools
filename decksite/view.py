@@ -116,22 +116,22 @@ class View:
         if d.get('colors') is not None:
             d.colors_safe = colors_html(d.colors, d.colored_symbols)
             d.name = deck_name.normalize(d)
-        d.person_url = url_for('person', person_id=d.person_id)
+        d.person_url = '/people/{id}/'.format(id=d.person_id)
         d.date_sort = dtutil.dt2ts(d.date)
         d.display_date = dtutil.display_date(d.date)
         d.show_record = d.wins or d.losses or d.draws
         if d.competition_id:
-            d.competition_url = url_for('competition', competition_id=d.competition_id)
-        d.url = url_for('decks', deck_id=d.id)
-        d.export_url = url_for('export', deck_id=d.id)
-        d.cmc_chart_url = url_for('cmc_chart', deck_id=d.id)
+            d.competition_url = '/competitions/{id}/'.format(id=d.competition_id)
+        d.url = '/decks/{id}/'.format(id=d.id)
+        d.export_url = '/export/{id}/'.format(id=d.id)
+        d.cmc_chart_url = '/cmc_chart/{id}/'.format(id=d.id)
         if d.source_name == 'League' and d.wins + d.losses < 5 and d.competition_end_date > dtutil.now() and not d.get('retired', False):
             d.stars_safe = '<span title="Active in the current league">⊕</span> {stars}'.format(stars=d.stars_safe).strip()
             d.source_sort = '1'
         d.source_is_external = True if d.source_name == 'League' else False
         d.comp_row_len = len("{comp_name} (Piloted by {person}".format(comp_name=d.competition_name, person=d.person))
         if d.get('archetype_id', None):
-            d.archetype_url = url_for('archetype', archetype_id=d.archetype_id)
+            d.archetype_url = '/archetypes/{id}/'.format(id=d.archetype_id)
         if d.omw is not None:
             d.omw = str(int(d.omw)) + '%'
         else:
@@ -143,12 +143,12 @@ class View:
         if 'Penny Dreadful' in d.legal_formats:
             icon = rotation.last_rotation_ex()['code'].lower()
             n = sets.index(icon.upper()) + 1
-            d.legal_icons += '<a href="{url}"><i class="ss ss-{code} ss-rare ss-grad">S{n}</i></a>'.format(url=url_for('season', season_id=n), code=icon, n=n)
+            d.legal_icons += '<a href="{url}"><i class="ss ss-{code} ss-rare ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), code=icon, n=n)
         past_pd_formats = [fmt.replace('Penny Dreadful ', '') for fmt in d.legal_formats if 'Penny Dreadful ' in fmt]
         past_pd_formats.sort(key=lambda code: -sets.index(code))
         for code in past_pd_formats:
             n = sets.index(code.upper()) + 1
-            d.legal_icons += '<a href="{url}"><i class="ss ss-{set} ss-common ss-grad">S{n}</i></a>'.format(url=url_for('season', season_id=n), set=code.lower(), n=n)
+            d.legal_icons += '<a href="{url}"><i class="ss ss-{set} ss-common ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), set=code.lower(), n=n)
         if 'Commander' in d.legal_formats: # I think C16 looks the nicest.
             d.legal_icons += '<i class="ss ss-c16 ss-uncommon ss-grad">CMDR</i>'
         d.decklist = str(d).replace('\n', '<br>')
@@ -160,7 +160,7 @@ class View:
             self.prepare_card(c)
 
     def prepare_card(self, c):
-        c.url = url_for('card', name=c.name)
+        c.url = '/cards/{id}/'.format(id=c.name)
         c.img_url = 'http://magic.bluebones.net/proxies/index2.php?c={name}'.format(name=urllib.parse.quote(c.name))
         c.pd_legal = c.legalities.get('Penny Dreadful', False)
         c.legal_formats = set(c.legalities.keys())
@@ -184,7 +184,7 @@ class View:
 
     def prepare_competitions(self):
         for c in getattr(self, 'competitions', []):
-            c.competition_url = url_for('competition', competition_id=c.id)
+            c.competition_url = '/competitions/{id}/'.format(id=c.id)
             c.display_date = dtutil.display_date(c.start_date)
             c.ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
             c.date_sort = dtutil.dt2ts(c.start_date)
@@ -192,7 +192,7 @@ class View:
 
     def prepare_people(self):
         for p in getattr(self, 'people', []):
-            p.url = url_for('person', person_id=p.id)
+            p.url = '/people/{id}/'.format(id=p.id)
             if p.get('season_num_decks') is not None and p.get('all_num_decks') is not None:
                 p.season_show_record = p.season_wins or p.season_losses or p.get('season_draws', None)
                 p.all_show_record = p.all_wins or p.all_losses or p.get('all_draws', None)
@@ -207,7 +207,7 @@ class View:
             a.all_show_record = a.get('all_wins') or a.get('all_draws') or a.get('all_losses')
             a.season_show_record = a.get('season_wins') or a.get('season_draws') or a.get('season_losses')
             a.show_matchups = a.all_show_record
-        a.url = url_for('archetype', archetype_id=a.id)
+        a.url = '/archetypes/{id}/'.format(id=a.id)
         a.best_decks = Container({'decks': []})
         n = 3
         while len(a.best_decks.decks) == 0 and n >= 0:
@@ -235,7 +235,7 @@ class View:
             # Prune branches we don't want to show
             if r.id not in [a.id for a in archetypes]:
                 r.parent = None
-            r['url'] = url_for('archetype', archetype_id=r['id'])
+            r['url'] = '/archetypes/{id}/'.format(id=r['id'])
             # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
             r['depth'] = r.depth
 

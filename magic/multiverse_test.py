@@ -1,4 +1,4 @@
-from magic import multiverse
+from magic import multiverse, rotation
 from magic.database import db
 
 def test_base_query_legalities():
@@ -8,3 +8,8 @@ def test_base_query_legalities():
     legalities = rs[0]['legalities']
     assert 'Penny Dreadful EMN:Legal' in legalities
     assert 'Penny Dreadful AKH:Legal' not in legalities
+
+def test_seasons_enum_uptodate():
+    """If this is failing, go append new set codes to multiverse.SEASONS.
+       This needs to be done every few months."""
+    assert rotation.next_rotation_ex()['code'] in multiverse.SEASONS

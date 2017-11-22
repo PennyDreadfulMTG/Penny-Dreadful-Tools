@@ -1,12 +1,14 @@
 import re
 
-from magic import card, database, fetcher, legality
+from magic import card, database, fetcher, legality, rotation
 from magic.database import db
 from shared import dtutil
 from shared.database import sqlescape
 
 FORMAT_IDS = {}
 CARD_IDS = {}
+
+SEASONS = ['EMN', 'KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX']
 
 def init():
     current_version = fetcher.mtgjson_version()
@@ -115,6 +117,7 @@ def update_database(new_version):
         db().execute('UPDATE printing SET rarity_id = ? WHERE rarity = ?', [row['id'], row['name']])
     update_fuzzy_matching()
     update_bugged_cards(False)
+    update_pd_legality()
     db().execute('INSERT INTO version (version) VALUES (?)', [new_version])
     db().commit()
 
@@ -162,6 +165,12 @@ def update_bugged_cards(use_transaction=True):
         db().execute("INSERT INTO card_bugs (card_id, description, classification, last_confirmed) VALUES (?, ?, ?, ?)", [card_id, bug, classification, last_confirmed_ts])
     if use_transaction:
         db().commit()
+
+def update_pd_legality():
+    for s in SEASONS:
+        if s == rotation.last_rotation_ex()['code']:
+            break
+        set_legal_cards(season=s)
 
 def insert_card(c):
     name = card_name(c)
@@ -263,7 +272,6 @@ def set_legal_cards(force=False, season=None):
     return new_list
 
 def update_cache():
-    legality.init()
     db().begin()
     db().execute('DROP TABLE IF EXISTS _cache_card')
     db().execute('CREATE TABLE _cache_card AS {base_query}'.format(base_query=base_query()))

@@ -54,8 +54,3 @@ def test_legal_formats():
     assert 'Vintage' in formats
     assert 'Penny Dreadful' in formats
     assert 'Penny Dreadful EMN' in formats
-
-def test_seasons_enum_uptodate():
-    """If this is failing, go append new set codes to legality.SEASONS.
-       This needs to be done every few months."""
-    assert rotation.next_rotation_ex()['code'] in legality.SEASONS

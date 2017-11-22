@@ -6,7 +6,7 @@ from collections import Counter
 from anytree.iterators import PreOrderIter
 from flask import session, url_for
 
-from magic import oracle, rotation, legality
+from magic import multiverse, oracle, rotation, legality
 from shared import dtutil
 from shared.container import Container
 
@@ -138,7 +138,7 @@ class View:
         d.has_legal_format = len(d.legal_formats) > 0
         d.pd_legal = 'Penny Dreadful' in d.legal_formats
         d.legal_icons = ''
-        sets = legality.SEASONS
+        sets = multiverse.SEASONS
         if 'Penny Dreadful' in d.legal_formats:
             icon = rotation.last_rotation_ex()['code'].lower()
             n = sets.index(icon.upper()) + 1

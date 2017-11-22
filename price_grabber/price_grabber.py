@@ -14,6 +14,11 @@ from price_grabber import price
 DATABASE = get_database(configuration.get('prices_database'))
 CARDS = {}
 
+def run():
+    multiverse.init()
+    fetch()
+    price.cache()
+
 def fetch():
     all_prices = {}
     url = 'https://www.mtggoldfish.com/prices/select'
@@ -125,7 +130,3 @@ def name_lookup(name):
         print("Bogus name {name} ({canonical}) found.".format(name=name, canonical=canonical))
         return name
     return CARDS[canonical]
-
-if __name__ == "__main__":
-    fetch()
-    price.cache()

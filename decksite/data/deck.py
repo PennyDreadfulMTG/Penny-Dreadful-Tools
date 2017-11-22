@@ -293,8 +293,12 @@ def get_matches(d, should_load_decks=False):
         ORDER BY round
     """.format(person_query=query.person_query())
     matches = [Container(m) for m in db().execute(sql, [d.id, d.id])]
-    if should_load_decks and len(matches) > 0:
-        decks = load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(m.opponent_deck_id)) for m in matches if m.opponent_deck_id is not None])))
+    if should_load_decks:
+        opponents = [m.opponent_deck_id for m in matches if m.opponent_deck_id is not None]
+        if len(opponents) > 0:
+            decks = load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(deck_id)) for deck_id in opponents])))
+        else:
+            decks = []
         decks_by_id = {d.id: d for d in decks}
     for m in matches:
         m.date = dtutil.ts2dt(m.date)

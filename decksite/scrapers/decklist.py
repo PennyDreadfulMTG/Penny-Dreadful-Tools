@@ -8,37 +8,53 @@ from shared.pd_exception import InvalidDataException
 
 from decksite.data.deck import Deck
 
+def parse_line(line):
+    match = re.match(r'(\d+)\s+(.*)', line)
+    if match is None:
+        raise InvalidDataException('No number specified with `{line}`'.format(line=line))
+    else:
+        n, name = re.search(r'(\d+)\s+(.*)', line).groups()
+        return (int(n),name)
+
+def parse_chunk(chunk,section):
+    for line in chunk.splitlines():
+        n, name = parse_line(line)
+        section[name] = int(n) + section.get(name, 0)
+
 # Read a text decklist into an intermediate dict form.
 def parse(s):
-    d = {'maindeck': {}, 'sideboard': {}}
-    last_chunk = {}
-    section = 'maindeck'
-    for line in s.splitlines():
-        if line.strip() == '':
-            last_chunk = {}
-        if line.lower().startswith('sideboard') or (line.strip() == '' and s.count('\n\n') == 1 and len(d['maindeck']) > 0):
-            section = 'sideboard'
-        elif line.strip() == '':
-            pass
-        elif not re.match(r'\d', line):
-            raise InvalidDataException('No number specified with `{line}`'.format(line=line))
-        else:
-            try:
-                n, name = re.search(r'(\d+)\s+(.*)', line).groups()
-                # Although it seems nonsensical to add cards here because that must mean we are in a sideboard
-                # our backtracking sideboard finder will deal with it momentarily.
-                d[section][name] = int(n) + d[section].get(name, 0)
-                last_chunk[name] = int(n)
-            except AttributeError:
-                raise InvalidDataException('Unable to parse `{line}`'.format(line=line))
-    # Heuristic to find a sideboard. Could very well be broken with Battle of Wits and similar.
-    if not d['sideboard'] and sum(d['maindeck'].values()) > 60 and sum(last_chunk.values()) <= 15:
-        d['sideboard'] = last_chunk
-        for name, count in last_chunk.items():
-            d['maindeck'][name] -= count
-            if d['maindeck'][name] == 0:
-                del d['maindeck'][name]
-    return d
+    s = s.lstrip().rstrip()
+    maindeck = {}
+    sideboard = {}
+    chunks = re.split(r'\r?\n\r?\n|^\s*sideboard.*?\n', s, flags=re.IGNORECASE|re.MULTILINE)
+    if len(chunks) > 1:
+        for chunk in chunks[:-1]:
+            parse_chunk(chunk,maindeck)
+        parse_chunk(chunks[-1],sideboard)
+    else:
+        # No empty lines or explicit "sideboard" section: gather 60 cards for maindeck from the beginning,
+        # then gather 15 cards for sideboard starting from the end, then the rest to maindeck
+        lines = s.splitlines()
+        while sum(maindeck.values()) < 60 and len(lines) > 0:
+            n,name = parse_line(lines.pop(0))
+            maindeck[name] = n + maindeck.get(name, 0)
+
+        while len(lines) > 0:
+            n,name = parse_line(lines.pop(-1))
+            if sum(sideboard.values()) + n <= 15:
+                sideboard[name] = n + sideboard.get(name, 0)
+                if sum(sideboard.values()) == 15:
+                    break
+            else:
+                maindeck[name] = n + maindeck.get(name, 0)
+                break
+
+        while len(lines) > 0:
+            n,name = parse_line(lines.pop(0))
+            maindeck[name] = n + maindeck.get(name, 0)
+
+    return {'maindeck':maindeck, 'sideboard':sideboard}
+
 
 # Parse a deck in the MTGO XML .dek format or raise an InvalidDataException.
 def parse_xml(s):
@@ -70,3 +86,4 @@ def vivify(decklist):
         for name, n in validated[section].items():
             d[section].append({'n': n, 'name': name, 'card': cards[name]})
     return d
+    

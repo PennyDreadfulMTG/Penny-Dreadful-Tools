@@ -1,5 +1,5 @@
 from magic.database import db
-from magic import oracle, multiverse
+from magic import oracle
 
 FORMATS = set()
 

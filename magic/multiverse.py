@@ -1,6 +1,6 @@
 import re
 
-from magic import card, database, fetcher, legality, rotation
+from magic import card, database, fetcher, rotation
 from magic.database import db
 from shared import dtutil
 from shared.database import sqlescape

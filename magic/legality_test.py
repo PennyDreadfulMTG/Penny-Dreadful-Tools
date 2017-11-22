@@ -1,6 +1,6 @@
 from decksite.data import deck
 
-from magic import legality, oracle, rotation
+from magic import legality, oracle
 
 def test_legal_formats():
     swamp = oracle.load_card('Swamp')

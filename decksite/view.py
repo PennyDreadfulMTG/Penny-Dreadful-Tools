@@ -6,11 +6,11 @@ from collections import Counter
 from anytree.iterators import PreOrderIter
 from flask import session, url_for
 
-from magic import multiverse, oracle, rotation, legality
+from magic import multiverse, oracle, rotation
 from shared import dtutil
 from shared.container import Container
 
-from decksite import deck_name, template
+from decksite import template
 from decksite.data import deck
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10

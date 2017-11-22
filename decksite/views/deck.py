@@ -2,7 +2,6 @@ from flask import session, url_for
 import inflect
 import titlecase
 
-from decksite import deck_name
 from decksite.data import archetype, deck
 from decksite.view import View
 from magic import fetcher, oracle

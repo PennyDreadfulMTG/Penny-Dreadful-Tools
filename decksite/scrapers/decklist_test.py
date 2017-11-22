@@ -229,7 +229,7 @@ def test_parse7():
     assert len(d['sideboard']) == 5
 
 # Test a 61 card deck + 15 sideboard with one-offs around the cut
-def test_parse7():
+def test_parse8():
     s = """
         24 Island
         4 Curious Homunculus

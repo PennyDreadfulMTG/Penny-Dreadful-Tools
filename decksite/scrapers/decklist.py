@@ -26,7 +26,7 @@ def parse(s):
     s = s.lstrip().rstrip()
     maindeck = {}
     sideboard = {}
-    chunks = re.split('\r?\n\r?\n|^\s*sideboard.*?\n', s, flags=re.IGNORECASE|re.MULTILINE)
+    chunks = re.split(r'\r?\n\r?\n|^\s*sideboard.*?\n', s, flags=re.IGNORECASE|re.MULTILINE)
     if len(chunks) > 1:
         for chunk in chunks[:-1]:
             parse_chunk(chunk,maindeck)

@@ -51,7 +51,7 @@ def load_cards(names=None):
         names_clause = 'LOWER(c.name) IN ({names})'.format(names=', '.join(sqlescape(name).lower() for name in names))
     else:
         names_clause = '(1 = 1)'
-    sql = cached_base_query(names_clause)
+    sql = multiverse.cached_base_query(names_clause)
     rs = db().execute(sql)
     if names and len(names) != len(rs):
         missing = names.symmetric_difference([r['name'] for r in rs])
@@ -70,7 +70,7 @@ def legal_cards(force=False):
     if len(LEGAL_CARDS) == 0 or force:
         new_list = multiverse.set_legal_cards(force)
         if new_list is None:
-            sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=base_query(), format_id=multiverse.get_format_id('Penny Dreadful'))
+            sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=multiverse.base_query(), format_id=multiverse.get_format_id('Penny Dreadful'))
             new_list = [row['name'] for row in db().execute(sql)]
         LEGAL_CARDS.clear()
         for name in new_list:

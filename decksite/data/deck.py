@@ -364,6 +364,7 @@ class Deck(Container):
         super().__init__()
         for k in params.keys():
             self[k] = params[k]
+        self.sorted = False
 
     def all_cards(self):
         cards = []
@@ -371,7 +372,14 @@ class Deck(Container):
             cards += [entry['card']] * entry['n']
         return cards
 
+    def sort(self):
+        if not self.sorted and (len(self.maindeck) > 0 or len(self.sideboard) > 0):
+            self.maindeck.sort(key=lambda x: oracle.deck_sort(x['card']))
+            self.sideboard.sort(key=lambda x: oracle.deck_sort(x['card']))
+            self.sorted = True
+
     def __str__(self):
+        self.sort()
         s = ''
         for entry in self.maindeck:
             s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])

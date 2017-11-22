@@ -49,13 +49,10 @@ def load_cards(names=None):
     if names:
         names = set(names)
     if names:
-        names_clause = 'WHERE LOWER(c.name) IN ({names})'.format(names=', '.join(sqlescape(name).lower() for name in names))
+        names_clause = 'LOWER(c.name) IN ({names})'.format(names=', '.join(sqlescape(name).lower() for name in names))
     else:
-        names_clause = ''
-    sql = """
-        {base_query}
-        {names_clause}
-    """.format(base_query=cached_base_query(), names_clause=names_clause)
+        names_clause = '(1 = 1)'
+    sql = cached_base_query(names_clause)
     rs = db().execute(sql)
     if names and len(names) != len(rs):
         missing = names.symmetric_difference([r['name'] for r in rs])

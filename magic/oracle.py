@@ -200,7 +200,7 @@ def insert_scryfall_card(sfcard):
         c['names'] = names
         multiverse.insert_card(c)
     multiverse.update_cache()
-    CARDS_BY_NAME[sfcard['name']] = load_card(name)
+    CARDS_BY_NAME[sfcard['name']] = load_card(sfcard['name'])
 
 LEGAL_CARDS = []
 multiverse.init()

@@ -1,6 +1,5 @@
 from magic import card, fetcher, mana, multiverse
 from magic.database import db
-from magic.multiverse import base_query, cached_base_query
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException, TooFewItemsException
 
@@ -22,7 +21,7 @@ def search(query, fuzzy_threshold=260):
         {base_query}
         HAVING {having}
         ORDER BY pd_legal DESC, name
-    """.format(base_query=base_query(), having=having)
+    """.format(base_query=multiverse.base_query(), having=having)
     rs = db().execute(sql, args)
     return [card.Card(r) for r in rs]
 
@@ -63,7 +62,7 @@ def cards_by_name():
     return CARDS_BY_NAME
 
 def bugged_cards():
-    sql = cached_base_query() + 'HAVING bug_desc IS NOT NULL'
+    sql = multiverse.cached_base_query('bug_desc IS NOT NULL')
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 

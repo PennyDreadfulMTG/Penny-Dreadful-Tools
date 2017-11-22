@@ -2,7 +2,6 @@ from flask import session, url_for
 import inflect
 import titlecase
 
-from decksite import deck_name
 from decksite.data import archetype, deck
 from decksite.view import View
 from magic import fetcher, oracle
@@ -31,7 +30,7 @@ class Deck(View):
             else:
                 m.opponent_deck_url = False
             if m.opponent_deck:
-                m.opponent_deck_name = deck_name.normalize(m.opponent_deck)
+                m.opponent_deck_name = m.opponent_deck.name
             else:
                 m.opponent_deck_name = '-'
             if self.has_rounds():
@@ -69,7 +68,7 @@ class Deck(View):
         return getattr(self._deck, attr)
 
     def subtitle(self):
-        return deck_name.normalize(self._deck)
+        return self._deck.name
 
     def sections(self):
         sections = []

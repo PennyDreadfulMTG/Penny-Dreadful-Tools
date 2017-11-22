@@ -53,7 +53,7 @@ COLOR_COMBINATIONS = {
 }
 
 def normalize(d):
-    name = d.name
+    name = d.original_name
     name = name.lower()
     name = replace_space_alternatives(name)
     name = remove_pd(name)

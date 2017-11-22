@@ -24,16 +24,12 @@
                 </tr>
             </thead>
             <tbody>
-                {{#season}}
-                    <td class="n">{{num_decks}}</td>
-                    <td class="n">{{> record}}</td>
-                    <td class="n divider">{{win_percent}}</td>
-                {{/season}}
-                {{#all}}
-                    <td class="n">{{num_decks}}</td>
-                    <td class="n">{{> record}}</td>
-                    <td class="n">{{win_percent}}</td>
-                {{/all}}
+                <td class="n">{{season_num_decks}}</td>
+                <td class="n">{{#season_show_record}}{{season_wins}}–{{season_losses}}{{#season_draws}}–{{season_draws}}{{/season_draws}}{{/season_show_record}}</td>
+                <td class="n divider">{{season_win_percent}}</td>
+                <td class="n">{{all_num_decks}}</td>
+                <td class="n">{{#all_show_record}}{{all_wins}}–{{all_losses}}{{#all_draws}}–{{all_draws}}{{/all_draws}}{{/all_show_record}}</td>
+                <td class="n">{{all_win_percent}}</td>
             </tbody>
         </table>
     </section>

@@ -14,9 +14,9 @@ def parse_line(line):
         raise InvalidDataException('No number specified with `{line}`'.format(line=line))
     else:
         n, name = re.search(r'(\d+)\s+(.*)', line).groups()
-        return (int(n),name)
+        return (int(n), name)
 
-def parse_chunk(chunk,section):
+def parse_chunk(chunk, section):
     for line in chunk.splitlines():
         n, name = parse_line(line)
         section[name] = int(n) + section.get(name, 0)
@@ -29,18 +29,18 @@ def parse(s):
     chunks = re.split(r'\r?\n\r?\n|^\s*sideboard.*?\n', s, flags=re.IGNORECASE|re.MULTILINE)
     if len(chunks) > 1:
         for chunk in chunks[:-1]:
-            parse_chunk(chunk,maindeck)
-        parse_chunk(chunks[-1],sideboard)
+            parse_chunk(chunk, maindeck)
+        parse_chunk(chunks[-1], sideboard)
     else:
         # No empty lines or explicit "sideboard" section: gather 60 cards for maindeck from the beginning,
         # then gather 15 cards for sideboard starting from the end, then the rest to maindeck
         lines = s.splitlines()
         while sum(maindeck.values()) < 60 and len(lines) > 0:
-            n,name = parse_line(lines.pop(0))
+            n, name = parse_line(lines.pop(0))
             maindeck[name] = n + maindeck.get(name, 0)
 
         while len(lines) > 0:
-            n,name = parse_line(lines.pop(-1))
+            n, name = parse_line(lines.pop(-1))
             if sum(sideboard.values()) + n <= 15:
                 sideboard[name] = n + sideboard.get(name, 0)
                 if sum(sideboard.values()) == 15:
@@ -50,7 +50,7 @@ def parse(s):
                 break
 
         while len(lines) > 0:
-            n,name = parse_line(lines.pop(0))
+            n, name = parse_line(lines.pop(0))
             maindeck[name] = n + maindeck.get(name, 0)
 
     return {'maindeck':maindeck, 'sideboard':sideboard}
@@ -86,4 +86,3 @@ def vivify(decklist):
         for name, n in validated[section].items():
             d[section].append({'n': n, 'name': name, 'card': cards[name]})
     return d
-    

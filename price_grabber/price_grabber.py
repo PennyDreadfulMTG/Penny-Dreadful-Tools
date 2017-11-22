@@ -117,7 +117,7 @@ def create_tables():
 
 def name_lookup(name):
     if not CARDS:
-        rs = database.DATABASE.execute(multiverse.base_query())
+        rs = database.DATABASE.execute(multiverse.cached_base_query())
         for row in rs:
             CARDS[card.canonicalize(row['name'])] = row['name']
     canonical = card.canonicalize(name)

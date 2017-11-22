@@ -63,7 +63,7 @@ def cards_by_name():
     return CARDS_BY_NAME
 
 def bugged_cards():
-    sql = base_query() + "HAVING bug_desc IS NOT NULL"
+    sql = cached_base_query() + 'HAVING bug_desc IS NOT NULL'
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 

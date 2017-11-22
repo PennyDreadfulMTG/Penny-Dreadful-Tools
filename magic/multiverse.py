@@ -21,8 +21,8 @@ def init():
 def layouts():
     return ['normal', 'meld', 'split', 'phenomenon', 'token', 'vanguard', 'double-faced', 'plane', 'flip', 'scheme', 'leveler', 'aftermath']
 
-def cached_base_query():
-    return 'SELECT * FROM _cache_card AS c'
+def cached_base_query(where='(1 = 1)'):
+    return 'SELECT * FROM _cache_card AS c WHERE {where}'.format(where=where)
 
 def base_query(where='(1 = 1)'):
     return """

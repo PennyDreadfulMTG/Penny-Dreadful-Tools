@@ -64,7 +64,7 @@ def init():
     print('Updating Legalities...')
     assert len(oracle.legal_cards()) > 0
     all_known = oracle.load_card('island').legalities
-    assert 'Penny Dreadful EMN' in all_known
+    # assert 'Penny Dreadful EMN' in all_known
     assert 'Penny Dreadful' in all_known
     assert 'Vintage' in all_known
 

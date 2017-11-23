@@ -386,4 +386,4 @@ class Deck(Container):
         s += '\n'
         for entry in self.sideboard:
             s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
-        return s
+        return s.strip()

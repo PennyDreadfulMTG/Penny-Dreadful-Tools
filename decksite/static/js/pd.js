@@ -1,3 +1,4 @@
+/*global PD:true Deckbox:false */
 window.PD = {};
 PD.init = function () {
     PD.initMenu();

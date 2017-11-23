@@ -8,7 +8,7 @@ from decksite.view import View
 class NotFound(View):
     def __init__(self, exception):
         self.exception = str(exception)
-        self.card = random.choice(oracle.cards_from_query('Lost'))
+        self.card = random.choice(oracle.load_cards(where="c.name LIKE '%%Lost%%'"))
         self.cards = [self.card]
 
     def message(self):

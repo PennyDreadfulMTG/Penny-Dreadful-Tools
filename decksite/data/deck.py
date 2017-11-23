@@ -358,6 +358,13 @@ def load_opponent_stats(decks):
         decks_by_id[row['id']].stage_reached = row['stage_reached']
         decks_by_id[row['id']].elim = row['elim'] # This property is never used? and is always a bunch of zeroes?
 
+def count_matches(deck_id, opponent_deck_id):
+    sql = 'SELECT deck_id, count(id) as count FROM deck_match WHERE deck_id in (%s, %s) group by deck_id'
+    result = {int(deck_id): 0, int(opponent_deck_id): 0}
+    for row in db().execute(sql, [deck_id, opponent_deck_id]):
+        result[row['deck_id']] = row['count']
+    return result
+
 # pylint: disable=too-many-instance-attributes
 class Deck(Container):
     def __init__(self, params):

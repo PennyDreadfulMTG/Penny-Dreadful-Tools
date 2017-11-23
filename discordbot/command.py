@@ -62,8 +62,6 @@ async def handle_command(message, bot):
             print(tb)
             await bot.client.send_message(message.channel, '{author}: I know the command `{cmd}` but I could not do that.'.format(cmd=parts[0], author=message.author.mention))
             await getattr(Commands, 'bug')(Commands, bot, message.channel, 'Command failed with {c}: {cmd}\n\n```\n{tb}\n```'.format(c=e.__class__.__name__, cmd=message.content, tb=tb), message.author)
-    else:
-        await bot.client.send_message(message.channel, '{author}: Unknown command `{cmd}`. Try `!help`?'.format(cmd=parts[0], author=message.author.mention))
 
 def find_method(name):
     cmd = name.lstrip('!').lower()
@@ -255,10 +253,11 @@ Want to contribute? Send a Pull Request."""
             msg = "The next rotation is in {diff}".format(diff=dtutil.display_time(diff.total_seconds()))
         await bot.client.send_message(channel, msg)
 
-    # @cmd_header('Commands')
-    # async def rulings(self, bot, channel, args, author):
-    #     """Display rulings for a card."""
-    ### We don't actually have any api we can ask, so we need to store this in our DB if we want it.
+    @cmd_header('Commands')
+    async def rulings(self, bot, channel, args, author):
+        """Display rulings for a card."""
+        await bot.client.send_typing(channel)
+        await single_card_text(bot, channel, args, author, card_rulings)
 
     @cmd_header('Commands')
     async def _oracle(self, bot, channel, args, author):
@@ -602,6 +601,15 @@ async def single_card_text(bot, channel, args, author, f):
 
 def oracle_text(c):
     return c.text
+
+def card_rulings(c):
+    rulings = fetcher.rulings(c.name)
+    rulings = [r['comment'] for r in rulings]
+    if len(rulings) > 3:
+        n = len(rulings) - 2
+        rulings = rulings[:2]
+        rulings.append("And {n} others.  See <https://scryfall.com/search?q=%21%22{cardname}%22>".format(n=n, cardname=c.name))
+    return "\n".join(rulings) or "No rulings available."
 
 def site_resources(args):
     results = {}

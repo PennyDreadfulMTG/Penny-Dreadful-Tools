@@ -1,9 +1,11 @@
 import json
+import subprocess
 
 from flask import Response, request, session, url_for
 
 from decksite import APP, league
 from decksite.data import deck, competition as comp, guarantee, card as cs
+from decksite.views import AboutPdm
 
 from shared import configuration, dtutil
 from shared.serialization import extra_serializer
@@ -81,6 +83,17 @@ def sitemap():
 @APP.route('/api/admin/')
 def admin():
     return return_json(session.get('admin'))
+
+@APP.route('/api/gitpull', methods=['GET', 'POST'])
+def gitpull():
+    try:
+        subprocess.check_output(['git', 'pull'])
+        import uwsgi
+        uwsgi.reload()
+    except ImportError:
+        pass
+    view = AboutPdm()
+    return view.page()
 
 def validate_api_key():
     if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):

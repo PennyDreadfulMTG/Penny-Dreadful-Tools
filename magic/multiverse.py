@@ -13,9 +13,7 @@ SEASONS = ['EMN', 'KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX']
 
 def init():
     current_version = fetcher.mtgjson_version()
-    print(current_version)
     database_version = database.version()
-    print(database_version)
     if pkg_resources.parse_version(current_version) > pkg_resources.parse_version(database.version()):
         print('Database update required')
         update_database(current_version)

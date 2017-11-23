@@ -114,7 +114,7 @@ def legal_cards(force=False, season=None):
     return legal_txt.strip().split('\n')
 
 def mtgjson_version():
-    return pkg_resources.parse_version(internal.fetch_json('https://mtgjson.com/json/version.json'))
+    return internal.fetch_json('https://mtgjson.com/json/version.json')
 
 def mtgo_status():
     try:

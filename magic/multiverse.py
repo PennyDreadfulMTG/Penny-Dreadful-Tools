@@ -1,4 +1,5 @@
 import re
+import pkg_resources
 
 from magic import card, database, fetcher, rotation
 from magic.database import db
@@ -12,9 +13,12 @@ SEASONS = ['EMN', 'KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX']
 
 def init():
     current_version = fetcher.mtgjson_version()
-    if current_version > database.version():
+    print(current_version)
+    database_version = database.version()
+    print(database_version)
+    if pkg_resources.parse_version(current_version) > pkg_resources.parse_version(database.version()):
         print('Database update required')
-        update_database(str(current_version))
+        update_database(current_version)
         set_legal_cards()
         update_cache()
 

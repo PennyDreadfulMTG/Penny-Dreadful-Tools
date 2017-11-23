@@ -24,3 +24,6 @@ class TooFewItemsException(PDException):
 
 class InvalidArgumentException(PDException):
     pass
+
+class LockNotAcquiredException(DatabaseException):
+	pass

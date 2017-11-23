@@ -44,14 +44,16 @@ def valid_name(name):
 def load_card(name):
     return load_cards([name])[0]
 
-def load_cards(names=None):
+def load_cards(names=None, where=None):
     if names:
         names = set(names)
     if names:
         names_clause = 'LOWER(c.name) IN ({names})'.format(names=', '.join(sqlescape(name).lower() for name in names))
     else:
         names_clause = '(1 = 1)'
-    sql = multiverse.cached_base_query(names_clause)
+    if where is None:
+        where = '(1 = 1)'
+    sql = multiverse.cached_base_query('({where} AND {names})'.format(where=where, names=names_clause))
     rs = db().execute(sql)
     if names and len(names) != len(rs):
         missing = names.symmetric_difference([r['name'] for r in rs])

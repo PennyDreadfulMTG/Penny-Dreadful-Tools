@@ -166,6 +166,10 @@ def search_scryfall(query):
     result_cardnames = [get_frontside(obj) for obj in result_data]
     return too_many_cards, result_cardnames
 
+def rulings(cardname):
+    card = internal.fetch_json('https://api.scryfall.com/cards/named?exact={name}'.format(name=cardname))
+    return internal.fetch_json(card['uri'] + '/rulings')['data']
+
 def sitemap():
     return internal.fetch_json(decksite_url('/api/sitemap/'))
 

@@ -93,6 +93,15 @@ PD.initTables = function () {
     });
     $("table").tablesorter({});
     $(".fade-repeats").bind("sortEnd", PD.fadeRepeats);
+    $("table").footable({
+        "toggleColumn": "last",
+        "breakpoints": {
+            "xs": 359,
+            "sm": 639,
+            "md": 799,
+            "lg": 999
+        }
+    });
 };
 PD.fadeRepeats = function () {
     var current, previous;

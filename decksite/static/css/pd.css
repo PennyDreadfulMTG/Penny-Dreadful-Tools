@@ -198,6 +198,20 @@ header, nav, main, footer {
     padding: 0 10%; /* padding not margin because we want colors to bleed all the way to the edge of the window. */
 }
 
+/* Minimal spacing around the content on extra-small displays. */
+@media only screen and (max-width : 640px) {
+    header, nav, main, footer {
+        padding: 0 1rem;
+    }
+}
+
+/* Ensure the margin is big enough to contain .marginalia on small displays, but no bigger. */
+@media only screen and (min-width: 641px) and (max-width : 800px) {
+    header, nav, main, footer {
+        padding: 0 3.845rem; /* (width of .marginalia (4em) + padding-left + padding-right) * font-size (0.75) */
+    }
+}
+
 main, nav {
     background: #f9f9f9;
     color: #502828;
@@ -464,7 +478,7 @@ td.c {
     text-align: center;
 }
 
-td.n {
+td.n, th.n {
     text-align: right;
 }
 
@@ -506,6 +520,85 @@ th.legend {
 
 td.repeat {
     opacity: 0.4;
+}
+
+/*
+
+Shrink tables when the viewport is not wide enough for their full glory using footable.
+
+v ------  0 ------ v    0
+name       211
+record      68  279
+^ ------ xs ------ ^    18rem (360px)
+date        91  370
+person     132  502
+margin      76  578
+^ ------ sm ------ ^    32rem (640px)
+colors      70  648
+top 8       55  703
+(similarity)
+^ ------ md ------ ^    40rem (800px)
+source     101  804
+season      68  872
+(omw)
+...
+^ ------ lg ------ ^    45(r)em (1000px)
+
+See also breakpoints for footable in pd.js.
+
+ */
+
+.footable-toggle {
+    cursor: pointer;
+}
+
+table.footable {
+    /* Override footable's meddling. */
+    width: inherit !important; /* csslint allow: important */
+}
+
+table.footable-details {
+    margin-left: 4rem;
+    visibility: visible;
+}
+
+/* Don't fade details that are only shown on expand. */
+.footable-details td.repeat {
+    opacity: 1;
+}
+
+.footable-details th {
+    cursor: inherit;
+}
+
+/* Always left align the key when displaying as key-value pairs rather than tabular. */
+.footable-details th.c, .footable-details th.n {
+    text-align: right;
+}
+
+/* Always left align the value when displaying as key-value pairs rather than tabular. */
+.footable-details td.c, .footable-details td.n {
+    text-align: left;
+}
+
+.footable-details .tablesorter-header-inner {
+    text-align: right;
+    margin-right: 0.1rem;
+}
+
+/* When we aren't showing marginalia, don't have the unshown column mess display up. */
+@media only screen and (max-width : 640px) {
+    table.with-marginalia {
+        margin: 0;
+    }
+    td.marginalia {
+        /* Override the inline style `display: table-cell` added by footable */;
+        display: none !important; /* csslint allow: important */
+        margin: 0;
+    }
+    table.with-marginalia tr:first-child th {
+        display: none;
+    }
 }
 
 /*
@@ -1004,4 +1097,3 @@ Tournaments
 .local {
     display: none; /* Will be revealed by js when we have a localized time. */
 }
-

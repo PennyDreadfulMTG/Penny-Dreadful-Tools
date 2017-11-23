@@ -8,6 +8,7 @@ from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
+from decksite import deck_name
 from decksite.data import guarantee, query
 from decksite.database import db
 
@@ -49,12 +50,12 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
     if order_by is None:
         order_by = 'd.created_date DESC, IFNULL(d.finish, 9999999999)'
     sql = """
-        SELECT d.id, d.name, d.created_date, d.updated_date, d.wins, d.losses, d.draws, d.finish, d.archetype_id, d.url AS source_url,
+        SELECT d.id, d.name AS original_name, d.created_date, d.updated_date, d.wins, d.losses, d.draws, d.finish, d.archetype_id, d.url AS source_url,
             d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date, ct.name AS competition_type_name, d.identifier,
             {person_query} AS person, p.id AS person_id,
             d.created_date AS `date`, d.decklist_hash, d.retired,
             s.name AS source_name, IFNULL(a.name, '') AS archetype_name,
-            cache.colors, cache.colored_symbols, cache.legal_formats
+            cache.normalized_name AS name, cache.colors, cache.colored_symbols, cache.legal_formats
         FROM deck AS d
         INNER JOIN person AS p ON d.person_id = p.id
         LEFT JOIN competition AS c ON d.competition_id = c.id
@@ -200,9 +201,10 @@ def prime_cache(d):
     colored_symbols_s = json.dumps(d.colored_symbols)
     set_legality(d)
     legal_formats_s = json.dumps(list(d.legal_formats))
+    normalized_name = deck_name.normalize(d)
     db().begin()
     db().execute('DELETE FROM deck_cache WHERE deck_id = ?', [d.id])
-    db().execute('INSERT INTO deck_cache (deck_id, colors, colored_symbols, legal_formats) VALUES (?, ?, ?, ?)', [d.id, colors_s, colored_symbols_s, legal_formats_s])
+    db().execute('INSERT INTO deck_cache (deck_id, normalized_name, colors, colored_symbols, legal_formats) VALUES (?, ?, ?, ?, ?)', [d.id, normalized_name, colors_s, colored_symbols_s, legal_formats_s])
     db().commit()
 
 def add_cards(deck_id, cards):
@@ -291,8 +293,12 @@ def get_matches(d, should_load_decks=False):
         ORDER BY round
     """.format(person_query=query.person_query())
     matches = [Container(m) for m in db().execute(sql, [d.id, d.id])]
-    if should_load_decks and len(matches) > 0:
-        decks = load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(m.opponent_deck_id)) for m in matches if m.opponent_deck_id is not None])))
+    if should_load_decks:
+        opponents = [m.opponent_deck_id for m in matches if m.opponent_deck_id is not None]
+        if len(opponents) > 0:
+            decks = load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(deck_id)) for deck_id in opponents])))
+        else:
+            decks = []
         decks_by_id = {d.id: d for d in decks}
     for m in matches:
         m.date = dtutil.ts2dt(m.date)
@@ -358,6 +364,7 @@ class Deck(Container):
         super().__init__()
         for k in params.keys():
             self[k] = params[k]
+        self.sorted = False
 
     def all_cards(self):
         cards = []
@@ -365,11 +372,18 @@ class Deck(Container):
             cards += [entry['card']] * entry['n']
         return cards
 
+    def sort(self):
+        if not self.sorted and (len(self.maindeck) > 0 or len(self.sideboard) > 0):
+            self.maindeck.sort(key=lambda x: oracle.deck_sort(x['card']))
+            self.sideboard.sort(key=lambda x: oracle.deck_sort(x['card']))
+            self.sorted = True
+
     def __str__(self):
+        self.sort()
         s = ''
         for entry in self.maindeck:
             s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
         s += '\n'
         for entry in self.sideboard:
             s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
-        return s
+        return s.strip()

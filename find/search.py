@@ -19,7 +19,7 @@ def search(query):
     where = parse(tokenize(query))
     sql = """{base_query}
         ORDER BY pd_legal DESC, name
-    """.format(base_query=multiverse.base_query(where))
+    """.format(base_query=multiverse.cached_base_query(where))
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 

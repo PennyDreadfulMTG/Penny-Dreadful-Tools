@@ -1,6 +1,5 @@
 from magic import card, fetcher, mana, multiverse
 from magic.database import db
-from magic.multiverse import base_query, cached_base_query
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException, TooFewItemsException
 
@@ -22,7 +21,7 @@ def search(query, fuzzy_threshold=260):
         {base_query}
         HAVING {having}
         ORDER BY pd_legal DESC, name
-    """.format(base_query=base_query(), having=having)
+    """.format(base_query=multiverse.base_query(), having=having)
     rs = db().execute(sql, args)
     return [card.Card(r) for r in rs]
 
@@ -30,6 +29,10 @@ def valid_name(name):
     if name in CARDS_BY_NAME:
         return name
     else:
+        canonicalized = card.canonicalize(name)
+        for k in CARDS_BY_NAME.keys():
+            if canonicalized == card.canonicalize(k):
+                return k
         try:
             cards = cards_from_query(name, 20)
             if len(cards) > 1:
@@ -45,13 +48,10 @@ def load_cards(names=None):
     if names:
         names = set(names)
     if names:
-        names_clause = 'WHERE LOWER(c.name) IN ({names})'.format(names=', '.join(sqlescape(name).lower() for name in names))
+        names_clause = 'LOWER(c.name) IN ({names})'.format(names=', '.join(sqlescape(name).lower() for name in names))
     else:
-        names_clause = ''
-    sql = """
-        {base_query}
-        {names_clause}
-    """.format(base_query=cached_base_query(), names_clause=names_clause)
+        names_clause = '(1 = 1)'
+    sql = multiverse.cached_base_query(names_clause)
     rs = db().execute(sql)
     if names and len(names) != len(rs):
         missing = names.symmetric_difference([r['name'] for r in rs])
@@ -62,7 +62,7 @@ def cards_by_name():
     return CARDS_BY_NAME
 
 def bugged_cards():
-    sql = base_query() + "HAVING bug_desc IS NOT NULL"
+    sql = multiverse.cached_base_query('bug_desc IS NOT NULL')
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 
@@ -70,7 +70,7 @@ def legal_cards(force=False):
     if len(LEGAL_CARDS) == 0 or force:
         new_list = multiverse.set_legal_cards(force)
         if new_list is None:
-            sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=base_query(), format_id=multiverse.get_format_id('Penny Dreadful'))
+            sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=multiverse.base_query(), format_id=multiverse.get_format_id('Penny Dreadful'))
             new_list = [row['name'] for row in db().execute(sql)]
         LEGAL_CARDS.clear()
         for name in new_list:
@@ -199,8 +199,8 @@ def insert_scryfall_card(sfcard):
         })
         c['names'] = names
         multiverse.insert_card(c)
-    for name in names:
-        CARDS_BY_NAME[name] = load_card(name)
+    multiverse.update_cache()
+    CARDS_BY_NAME[sfcard['name']] = load_card(sfcard['name'])
 
 LEGAL_CARDS = []
 multiverse.init()

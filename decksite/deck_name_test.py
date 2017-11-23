@@ -3,111 +3,111 @@ from decksite import deck_name
 from shared.container import Container
 
 def test_normalize():
-    d = Container({'name': 'Dimir Control', 'archetype': 'Control', 'colors': ['U', 'B']})
+    d = Container({'original_name': 'Dimir Control', 'archetype': 'Control', 'colors': ['U', 'B']})
     assert deck_name.normalize(d) == 'Dimir Control'
-    d.name = 'U/B Control'
+    d.original_name = 'U/B Control'
     assert deck_name.normalize(d) == 'Dimir Control'
-    d.name = 'dimir control'
+    d.original_name = 'dimir control'
     assert deck_name.normalize(d) == 'Dimir Control'
-    d.name = 'U/B Reanimator'
+    d.original_name = 'U/B Reanimator'
     assert deck_name.normalize(d) == 'Dimir Reanimator'
     d.colors = ['B']
-    d.name = 'penny dreadful black lifegain'
+    d.original_name = 'penny dreadful black lifegain'
     assert deck_name.normalize(d) == 'Mono Black Lifegain'
     d.colors = ['G', 'U']
-    d.name = 'biovisionary pd'
+    d.original_name = 'biovisionary pd'
     assert deck_name.normalize(d) == 'Biovisionary'
     d.colors = ['R']
     d.archetype = 'Aggro'
-    d.name = 'mono red ashling aggro'
+    d.original_name = 'mono red ashling aggro'
     assert deck_name.normalize(d) == 'Mono Red Ashling Aggro'
     d.colors = ['W', 'U', 'B']
     d.archetype = 'Unclassified'
-    d.name = 'penny dreadful esper mill'
+    d.original_name = 'penny dreadful esper mill'
     assert deck_name.normalize(d) == 'Esper Mill'
     d.colors = ['W', 'G']
     d.archetype = 'Aggro-Combo'
-    d.name = 'penny dreadful gw tokens'
+    d.original_name = 'penny dreadful gw tokens'
     assert deck_name.normalize(d) == 'Selesnya Tokens'
     d.colors = ['R', 'G', 'B']
     d.archetype = 'Control'
-    d.name = 'Jund'
+    d.original_name = 'Jund'
     assert deck_name.normalize(d) == 'Jund Control'
     d.archetype = None
     assert deck_name.normalize(d) == 'Jund'
     d.colors = ['W', 'G']
-    d.name = 'White Green'
+    d.original_name = 'White Green'
     d.archetype = 'Aggro'
     assert deck_name.normalize(d) == 'Selesnya Aggro'
     d.archetype = None
     assert deck_name.normalize(d) == 'Selesnya'
     d.colors = ['R']
-    d.name = 'RDW'
+    d.original_name = 'RDW'
     assert deck_name.normalize(d) == 'Red Deck Wins'
-    d.name = 'Red Deck Wins'
+    d.original_name = 'Red Deck Wins'
     assert deck_name.normalize(d) == 'Red Deck Wins'
     d.colors = ['W']
-    d.name = 'WW'
+    d.original_name = 'WW'
     assert deck_name.normalize(d) == 'White Weenie'
-    d.name = 'White Weenie'
+    d.original_name = 'White Weenie'
     assert deck_name.normalize(d) == 'White Weenie'
     d.colors = ['B']
-    d.name = '[pd] Mono B Control'
+    d.original_name = '[pd] Mono B Control'
     assert deck_name.normalize(d) == 'Mono Black Control'
     d.colors = ['B', 'R']
-    d.name = 'BR Control'
+    d.original_name = 'BR Control'
     assert deck_name.normalize(d) == 'Rakdos Control'
     d.colors = ['B']
-    d.name = 'b '
+    d.original_name = 'b '
     assert deck_name.normalize(d) == 'Mono Black'
     d.colors = ['U']
-    d.name = 'muc'
+    d.original_name = 'muc'
     assert deck_name.normalize(d) == 'Mono Blue Control'
     d.colors = ['R']
-    d.name = 'RDW23'
+    d.original_name = 'RDW23'
     assert deck_name.normalize(d) == 'Rdw23' # This isn't ideal but see BWWave for why it's probably right.
     d.colors = ['B']
-    d.name = 'Mono B Aristocrats III'
+    d.original_name = 'Mono B Aristocrats III'
     assert deck_name.normalize(d) == 'Mono Black Aristocrats III'
-    d.name = 'Mono B Aristocrats VI'
+    d.original_name = 'Mono B Aristocrats VI'
     assert deck_name.normalize(d) == 'Mono Black Aristocrats VI'
-    d.name = 'Suicide Black'
+    d.original_name = 'Suicide Black'
     assert deck_name.normalize(d) == 'Suicide Black'
     d.colors = ['R']
-    d.name = 'Penny Dreadful Sunday RDW'
+    d.original_name = 'Penny Dreadful Sunday RDW'
     assert deck_name.normalize(d) == 'Red Deck Wins'
-    d.name = '[Pd][hou] Harvest Quest'
+    d.original_name = '[Pd][hou] Harvest Quest'
     assert deck_name.normalize(d) == 'Harvest Quest'
-    d.name = 'Pd_Vehicles'
+    d.original_name = 'Pd_Vehicles'
     assert deck_name.normalize(d) == 'Vehicles'
-    d.name = 'better red than dead'
+    d.original_name = 'better red than dead'
     assert deck_name.normalize(d) == 'Better Red Than Dead'
-    d.name = 'week one rdw'
+    d.original_name = 'week one rdw'
     assert deck_name.normalize(d) == 'Week One Red Deck Wins'
     d.colors = ['U', 'R']
-    d.name = '.ur control'
+    d.original_name = '.ur control'
     assert deck_name.normalize(d) == 'Izzet Control'
     d.colors = ['G']
-    d.name = 'mono g aggro'
+    d.original_name = 'mono g aggro'
     assert deck_name.normalize(d) == 'Mono Green Aggro'
-    d.name = 'monog ramp'
+    d.original_name = 'monog ramp'
     assert deck_name.normalize(d) == 'Mono Green Ramp'
-    d.name = 'Monogreen Creatures'
+    d.original_name = 'Monogreen Creatures'
     assert deck_name.normalize(d) == 'Mono Green Creatures'
     d.colors = ['R']
-    d.name = 'S6 red Deck Wins'
+    d.original_name = 'S6 red Deck Wins'
     assert deck_name.normalize(d) == 'Red Deck Wins'
-    d.name = 'S6red Deck Wins'
+    d.original_name = 'S6red Deck Wins'
     assert deck_name.normalize(d) == 'Red Deck Wins'
     d.colors = ['W']
-    d.name = 'Mono-W Soldiers'
+    d.original_name = 'Mono-W Soldiers'
     assert deck_name.normalize(d) == 'Mono White Soldiers'
-    d.name = 'BWWave'
+    d.original_name = 'BWWave'
     assert deck_name.normalize(d) == 'Bwwave' # Not ideal but ok.
 
     # Undefined cases
-    # d.name = 'U/B Aggro' when d.archetype = 'Control'
-    # d.name = 'UB Control' when d.colors = ['U', 'B', 'R']
+    # d.original_name = 'U/B Aggro' when d.archetype = 'Control'
+    # d.original_name = 'UB Control' when d.colors = ['U', 'B', 'R']
 
 def test_remove_pd():
     assert deck_name.remove_pd('Penny Dreadful Knights') == 'Knights'

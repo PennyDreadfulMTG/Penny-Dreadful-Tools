@@ -1,24 +1,13 @@
 from munch import Munch
 
-# Slight variation on Munch that will put keys containing periods into a nested structure.
-#
-#     Container({'x.y': 7}) -> {'x': {'y': 7}}
-#
-# This is useful for giving depth to an object selected in a flat fashion out of the database.
-# This in turn is useful for looping over similar subsets of the data in Mustache templates.
-
-# Pylint goes a bit crazy with this magic so help it out.
-# pylint: disable=too-many-instance-attributes
+#pylint: disable=too-many-instance-attributes
 class Container(Munch):
-    def __init__(self, args=None):
-        if args is None:
-            args = {}
-        new_args = {}
-        for k, v in args.items():
-            if '.' in k:
-                k1, k2 = k.split('.')
-                new_args[k1] = new_args.get(k1, Container())
-                new_args[k1][k2] = v
-            else:
-                new_args[k] = v
-        super().__init__(new_args)
+    # Reverse the order of operations from Munch because it gives us a speedup when we access hundreds of thousands of properties in a request.
+    def __getattr__(self, k):
+        try:
+            return self[k]
+        except KeyError:
+            try:
+                return object.__getattribute__(self, k)
+            except AttributeError:
+                raise AttributeError(k)

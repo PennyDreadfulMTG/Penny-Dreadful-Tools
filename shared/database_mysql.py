@@ -85,3 +85,4 @@ class MysqlDatabase(GenericDatabase):
 
     def release_lock(self, lock_id):
         self.execute('select release_lock(%s)', [lock_id])
+        

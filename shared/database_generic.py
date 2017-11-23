@@ -32,4 +32,3 @@ class GenericDatabase:
     # pylint: disable=no-self-use
     def supports_lock(self):
         return False
-

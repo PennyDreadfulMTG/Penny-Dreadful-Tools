@@ -128,7 +128,7 @@ def active_decks_by(mtgo_username):
 
 def report(form):
     try:
-        if (db().supports_lock()):
+        if db().supports_lock():
             db().get_lock('deck_id:{id}'.format(id=form.entry))
             db().get_lock('deck_id:{id}'.format(id=form.opponent))
         counts = deck.count_matches(form.entry, form.opponent)
@@ -140,7 +140,7 @@ def report(form):
             return False
 
         db().begin()
-        match_id = deck.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games)
+        deck.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games)
         winner, loser = winner_and_loser(form)
         if winner:
             db().execute('UPDATE deck SET wins = (SELECT COUNT(*) FROM decksite.deck_match WHERE `deck_id` = %s AND `games` = 2) WHERE `id` = %s', [winner, winner])
@@ -153,7 +153,7 @@ def report(form):
         form.errors['entry'] = "Cannot report right now, somebody else is reporting a match for you or your opponent. Try again a bit later"
         return False
     finally:
-        if (db().supports_lock()):
+        if db().supports_lock():
             db().release_lock('deck_id:{id}'.format(id=form.opponent))
             db().release_lock('deck_id:{id}'.format(id=form.entry))
 

@@ -212,14 +212,9 @@ Deckbox._ = {
         /* check if target is a textnode (safari) */
         if (target.nodeType == 3) target = target.parentNode;
         return target;
-    }
-};
+    },
 
-/**
- * Bind the listeners.
- */
-(function() {
-    function onmouseover(event) {
+    onmouseover: function(event) {
         var el = Deckbox._.target(event);
         if (Deckbox._.needsTooltip(el)) {
             var no = el.getAttribute("data-nott"), url, img,
@@ -227,13 +222,13 @@ Deckbox._ = {
             if (!no) {
                 el._shown = true;
                 if (url = $(el).data("tt")) {
-                    showImage(el, url, posX, posY);
+                    Deckbox._.showImage(el, url, posX, posY);
                 }
             }
         }
-    }
+    },
 
-    function showImage(el, url, posX, posY) {
+    showImage: function(el, url, posX, posY) {
         var img = document.createElement("img");
         url = url.replace(/\?/g, ""); /* Problematic with routes on server. */
         img.src = url;
@@ -242,32 +237,39 @@ Deckbox._ = {
         setTimeout(function() {
             if (el._shown) Deckbox._.tooltip("image").showImage(posX, posY, img);
         }, 200);
-    }
+    },
 
-    function onmousemove(event) {
+    onmousemove: function(event) {
         var el = Deckbox._.target(event), posX = Deckbox._.pointerX(event), posY = Deckbox._.pointerY(event);
         if (Deckbox._.needsTooltip(el)) {
             Deckbox._.tooltip("image").move(posX, posY);
         }
-    }
+    },
 
-    function onmouseout(event) {
+    onmouseout: function(event) {
         var el = Deckbox._.target(event);
         if (Deckbox._.needsTooltip(el)) {
             el._shown = false;
             Deckbox._.tooltip("image").hide();
         }
-    }
+    },
 
-    function click(event) {
+    click: function(event) {
         Deckbox._.tooltip("image").hide();
+    },
+
+    enable: function() {
+        Deckbox._.addEvent(document, "mouseover", Deckbox._.onmouseover);
+        Deckbox._.addEvent(document, "mousemove", Deckbox._.onmousemove);
+        Deckbox._.addEvent(document, "mouseout", Deckbox._.onmouseout);
+        Deckbox._.addEvent(document, "click", Deckbox._.click);
     }
+};
 
-    Deckbox._.addEvent(document, "mouseover", onmouseover);
-    Deckbox._.addEvent(document, "mousemove", onmousemove);
-    Deckbox._.addEvent(document, "mouseout", onmouseout);
-    Deckbox._.addEvent(document, "click", click);
-
+/**
+ * Preload images and CSS for maximum responsiveness even though this does unnecessary work on touch devices.
+ */
+(function() {
     var protocol = (document.location.protocol == "https:") ? "https:" : "http:";
     Deckbox._.loadCSS(protocol + "//deckbox.org/assets/external/deckbox_tooltip.css");
     /* IE needs more shit */

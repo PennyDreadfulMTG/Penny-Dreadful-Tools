@@ -2,11 +2,11 @@ window.PD = {};
 PD.init = function () {
     PD.initMenu();
     PD.initTables();
+    PD.initTooltips();
     $("input[type=file]").on("change", PD.loadDeck);
     $(".deckselect").on("change", PD.toggleDrawDropdown);
     $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
-    Tipped.create("[title]", {"showDelay": 1000, "size": "large"});
     PD.showLocalTimes();
     $.get("/api/admin/", PD.showBadge);
 };
@@ -110,6 +110,17 @@ PD.fadeRepeats = function () {
         previous = current;
     })
 };
+// Disable tooltips on touch devices where they are awkward but enable on others where they are useful.
+PD.initTooltips = function () {
+    $('body').on('touchstart', function() {
+        $('body').off();
+    });
+    $('body').on('mouseover', function() {
+        Deckbox._.enable();
+        Tipped.create("[title]", {"showDelay": 1000, "size": "large"});
+        $('body').off();
+    });
+}
 PD.loadDeck = function () {
     var file = this.files[0],
         reader = new FileReader();

@@ -122,13 +122,15 @@ PD.fadeRepeats = function () {
 };
 // Disable tooltips on touch devices where they are awkward but enable on others where they are useful.
 PD.initTooltips = function () {
-    $('body').on('touchstart', function() {
-        $('body').off();
+    $("body").on("touchstart", function() {
+        $("body").off();
     });
-    $('body').on('mouseover', function() {
-        Deckbox._.enable();
+    $("body").on("mouseover", function() {
+        if (typeof Deckbox != "undefined") {
+            Deckbox._.enable();
+        }
         Tipped.create("[title]", {"showDelay": 1000, "size": "large"});
-        $('body').off();
+        $("body").off();
     });
 }
 PD.loadDeck = function () {

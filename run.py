@@ -15,8 +15,7 @@ def run():
         main.init()
     elif "price_grabber" in sys.argv:
         from price_grabber import price_grabber
-        price_grabber.fetch()
-        price_grabber.price.cache()
+        price_grabber.run()
     elif "srv_price" in sys.argv:
         from price_grabber import srv_prices
         srv_prices.init()

@@ -293,8 +293,12 @@ def get_matches(d, should_load_decks=False):
         ORDER BY round
     """.format(person_query=query.person_query())
     matches = [Container(m) for m in db().execute(sql, [d.id, d.id])]
-    if should_load_decks and len(matches) > 0:
-        decks = load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(m.opponent_deck_id)) for m in matches if m.opponent_deck_id is not None])))
+    if should_load_decks:
+        opponents = [m.opponent_deck_id for m in matches if m.opponent_deck_id is not None]
+        if len(opponents) > 0:
+            decks = load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(deck_id)) for deck_id in opponents])))
+        else:
+            decks = []
         decks_by_id = {d.id: d for d in decks}
     for m in matches:
         m.date = dtutil.ts2dt(m.date)
@@ -367,6 +371,7 @@ class Deck(Container):
         super().__init__()
         for k in params.keys():
             self[k] = params[k]
+        self.sorted = False
 
     def all_cards(self):
         cards = []
@@ -374,11 +379,18 @@ class Deck(Container):
             cards += [entry['card']] * entry['n']
         return cards
 
+    def sort(self):
+        if not self.sorted and (len(self.maindeck) > 0 or len(self.sideboard) > 0):
+            self.maindeck.sort(key=lambda x: oracle.deck_sort(x['card']))
+            self.sideboard.sort(key=lambda x: oracle.deck_sort(x['card']))
+            self.sorted = True
+
     def __str__(self):
+        self.sort()
         s = ''
         for entry in self.maindeck:
             s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
         s += '\n'
         for entry in self.sideboard:
             s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
-        return s
+        return s.strip()

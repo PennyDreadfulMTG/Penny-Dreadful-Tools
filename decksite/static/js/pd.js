@@ -1,12 +1,13 @@
+/*global PD:true Deckbox:false */
 window.PD = {};
 PD.init = function () {
     PD.initMenu();
     PD.initTables();
+    PD.initTooltips();
     $("input[type=file]").on("change", PD.loadDeck);
     $(".deckselect").on("change", PD.toggleDrawDropdown);
     $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
-    Tipped.create("[title]", {"showDelay": 1000, "size": "large"});
     PD.showLocalTimes();
     $.get("/api/admin/", PD.showBadge);
 };
@@ -92,6 +93,15 @@ PD.initTables = function () {
     });
     $("table").tablesorter({});
     $(".fade-repeats").bind("sortEnd", PD.fadeRepeats);
+    $("table").footable({
+        "toggleColumn": "last",
+        "breakpoints": {
+            "xs": 359,
+            "sm": 639,
+            "md": 799,
+            "lg": 999
+        }
+    });
 };
 PD.fadeRepeats = function () {
     var current, previous;
@@ -110,6 +120,19 @@ PD.fadeRepeats = function () {
         previous = current;
     })
 };
+// Disable tooltips on touch devices where they are awkward but enable on others where they are useful.
+PD.initTooltips = function () {
+    $("body").on("touchstart", function() {
+        $("body").off();
+    });
+    $("body").on("mouseover", function() {
+        if (typeof Deckbox != "undefined") {
+            Deckbox._.enable();
+        }
+        Tipped.create("[title]", {"showDelay": 1000, "size": "large"});
+        $("body").off();
+    });
+}
 PD.loadDeck = function () {
     var file = this.files[0],
         reader = new FileReader();

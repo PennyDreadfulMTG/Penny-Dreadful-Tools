@@ -522,7 +522,31 @@ td.repeat {
     opacity: 0.4;
 }
 
-/* Shrink tables when the viewport is not wide enough for their full glory using footable. */
+/*
+
+Shrink tables when the viewport is not wide enough for their full glory using footable.
+
+v ------  0 ------ v    0
+name       211
+record      68  279
+^ ------ xs ------ ^    18rem (360px)
+date        91  370
+person     132  502
+margin      76  578
+^ ------ sm ------ ^    32rem (640px)
+colors      70  648
+top 8       55  703
+(similarity)
+^ ------ md ------ ^    40rem (800px)
+source     101  804
+season      68  872
+(omw)
+...
+^ ------ lg ------ ^    45(r)em (1000px)
+
+See also breakpoints for footable in pd.js.
+
+ */
 
 .footable-toggle {
     cursor: pointer;

@@ -92,6 +92,10 @@ PD.initTables = function () {
         "widgetOptions": {"columns" : ["primary", "secondary"]}
     });
     $("table").tablesorter({});
+    // Prevent expanded information from sorting first and not staying with parent row by collapsing all expanded rows before sorting.
+    $("table").bind("sortStart", function () {
+        FooTable.get(this).rows.collapse();
+    })
     $(".fade-repeats").bind("sortEnd", PD.fadeRepeats);
     $("table").footable({
         "toggleColumn": "last",

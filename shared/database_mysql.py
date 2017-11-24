@@ -6,6 +6,7 @@ import MySQLdb
 from shared import configuration
 from shared.database_generic import GenericDatabase
 from shared.pd_exception import DatabaseException
+from shared.pd_exception import LockNotAcquiredException
 from shared import perf
 
 class MysqlDatabase(GenericDatabase):
@@ -72,3 +73,16 @@ class MysqlDatabase(GenericDatabase):
     # pylint: disable=no-self-use
     def is_mysql(self):
         return True
+
+    # pylint: disable=no-self-use
+    def supports_lock(self):
+        return True
+
+    def get_lock(self, lock_id, timeout=4):
+        result = self.value('select get_lock(%s, %s)', [lock_id, timeout])
+        if result != 1:
+            raise LockNotAcquiredException
+
+    def release_lock(self, lock_id):
+        self.execute('select release_lock(%s)', [lock_id])
+        

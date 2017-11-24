@@ -10,6 +10,7 @@ from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
+from shared.pd_exception import LockNotAcquiredException
 
 from decksite.data import competition, deck, guarantee
 from decksite.database import db
@@ -126,16 +127,35 @@ def active_decks_by(mtgo_username):
     return active_decks('p.mtgo_username = {mtgo_username}'.format(mtgo_username=sqlescape(mtgo_username, force_string=True)))
 
 def report(form):
-    db().begin()
-    match_id = deck.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games)
-    winner, loser = winner_and_loser(form)
-    if winner:
-        db().execute('UPDATE deck SET wins = (SELECT COUNT(*) FROM decksite.deck_match WHERE `deck_id` = %s AND `games` = 2) WHERE `id` = %s', [winner, winner])
-        db().execute('UPDATE deck SET losses = (SELECT COUNT(*) FROM decksite.deck_match WHERE `deck_id` = %s AND `games` < 2) WHERE `id` = %s', [loser, loser])
-    else:
-        db().execute('UPDATE deck SET draws = draws + 1 WHERE id = %s OR id = %s', [form.entry, form.opponent])
-    db().commit()
-    return match_id
+    try:
+        if db().supports_lock():
+            db().get_lock('deck_id:{id}'.format(id=form.entry))
+            db().get_lock('deck_id:{id}'.format(id=form.opponent))
+        counts = deck.count_matches(form.entry, form.opponent)
+        if counts[int(form.entry)] >= 5:
+            form.errors['entry'] = "You already have 5 matches reported"
+            return False
+        if counts[int(form.opponent)] >= 5:
+            form.errors['opponent'] = "Your opponent already has 5 matches reported"
+            return False
+
+        db().begin()
+        deck.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games)
+        winner, loser = winner_and_loser(form)
+        if winner:
+            db().execute('UPDATE deck SET wins = (SELECT COUNT(*) FROM decksite.deck_match WHERE `deck_id` = %s AND `games` = 2) WHERE `id` = %s', [winner, winner])
+            db().execute('UPDATE deck SET losses = (SELECT COUNT(*) FROM decksite.deck_match WHERE `deck_id` = %s AND `games` < 2) WHERE `id` = %s', [loser, loser])
+        else:
+            db().execute('UPDATE deck SET draws = draws + 1 WHERE id = %s OR id = %s', [form.entry, form.opponent])
+        db().commit()
+        return True
+    except LockNotAcquiredException:
+        form.errors['entry'] = "Cannot report right now, somebody else is reporting a match for you or your opponent. Try again a bit later"
+        return False
+    finally:
+        if db().supports_lock():
+            db().release_lock('deck_id:{id}'.format(id=form.opponent))
+            db().release_lock('deck_id:{id}'.format(id=form.entry))
 
 def winner_and_loser(params):
     if params.entry_games > params.opponent_games:

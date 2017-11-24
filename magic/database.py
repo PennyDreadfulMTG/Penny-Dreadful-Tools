@@ -1,5 +1,3 @@
-import pkg_resources
-
 from magic import card
 from shared import configuration
 from shared.database import get_database

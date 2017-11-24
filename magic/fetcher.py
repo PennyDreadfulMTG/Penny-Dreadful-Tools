@@ -6,7 +6,6 @@ from urllib import parse
 from functools import wraps
 import time as py_time
 
-import pkg_resources
 import pytz
 
 import magic.fetcher_internal as internal

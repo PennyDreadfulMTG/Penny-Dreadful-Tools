@@ -6,7 +6,6 @@ from urllib import parse
 from functools import wraps
 import time as py_time
 
-import pkg_resources
 import pytz
 
 import magic.fetcher_internal as internal
@@ -114,7 +113,7 @@ def legal_cards(force=False, season=None):
     return legal_txt.strip().split('\n')
 
 def mtgjson_version():
-    return pkg_resources.parse_version(internal.fetch_json('https://mtgjson.com/json/version.json'))
+    return internal.fetch_json('https://mtgjson.com/json/version.json')
 
 def mtgo_status():
     try:

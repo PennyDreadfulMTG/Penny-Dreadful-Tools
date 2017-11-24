@@ -1,5 +1,3 @@
-import pkg_resources
-
 from magic import card
 from shared import configuration
 from shared.database import get_database
@@ -21,7 +19,7 @@ def init():
         setup()
 
 def version() -> str:
-    return pkg_resources.parse_version(db().value('SELECT version FROM version', [], '0'))
+    return db().value('SELECT version FROM version', [], '0')
 
 def db_version() -> int:
     return db().value('SELECT version FROM db_version', [], 0)

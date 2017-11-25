@@ -12,6 +12,7 @@ from shared.container import Container
 
 from decksite import template
 from decksite.data import deck
+from decksite import APP
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10
 
@@ -239,7 +240,7 @@ class View:
             r['depth'] = r.depth
 
     def commit_id(self):
-        return subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+        return APP.config['commit-id']
 
 def colors_html(colors, colored_symbols):
     total = len(colored_symbols)

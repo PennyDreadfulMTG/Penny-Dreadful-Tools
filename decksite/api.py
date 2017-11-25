@@ -84,16 +84,19 @@ def sitemap():
 def admin():
     return return_json(session.get('admin'))
 
-@APP.route('/api/gitpull', methods=['GET', 'POST'])
+@APP.route('/api/gitpull', methods=['POST'])
 def gitpull():
-    try:
-        subprocess.check_output(['git', 'pull'])
-        import uwsgi
-        uwsgi.reload()
-    except ImportError:
-        pass
-    view = AboutPdm()
-    return view.page()
+    if request.headers.get('X-GitHub-Event') == "push":
+         payload = json.loads(request.data)
+         if payload['ref'] == "refs/heads/master":
+            try:
+                subprocess.check_output(['git', 'pull'])
+                import uwsgi
+                uwsgi.reload()
+                return return_json({'rebooting': True})
+            except ImportError:
+                pass
+    return return_json('rebooting': False, 'commit-id': APP.config['commit-id'])
 
 def validate_api_key():
     if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):

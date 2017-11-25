@@ -96,7 +96,7 @@ def gitpull():
                 return return_json({'rebooting': True})
             except ImportError:
                 pass
-    return return_json('rebooting': False, 'commit-id': APP.config['commit-id'])
+    return return_json({'rebooting': False, 'commit-id': APP.config['commit-id']})
 
 def validate_api_key():
     if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):

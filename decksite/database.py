@@ -1,10 +1,16 @@
 import os
 
+from flask import g
+
+from decksite import APP
+
 from shared import configuration
 from shared.database import get_database
 
 def db():
-    return DATABASE
+    if not hasattr(g, 'database'):
+        g.database = get_database(configuration.get('decksite_database'))
+    return g.database
 
 def setup():
     db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER UNIQUE NOT NULL)')
@@ -27,5 +33,5 @@ def setup():
 def db_version() -> int:
     return db().value('SELECT version FROM db_version ORDER BY version DESC LIMIT 1', [], 0)
 
-DATABASE = get_database(configuration.get('decksite_database'))
-setup()
+with APP.app_context():
+    setup()

@@ -357,7 +357,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def invite(self, bot, channel):
         """Invite me to your server."""
-        await bot.client.send_message(channel, "Invite me to your discord server by clicking this link: <https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=0>")
+        await bot.client.send_message(channel, "Invite me to your discord server by clicking this link: <https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=268757056>")
 
     @cmd_header('Commands')
     async def spoiler(self, bot, channel, args, author):

@@ -199,14 +199,14 @@ header, nav, main, footer {
 }
 
 /* Minimal spacing around the content on extra-small displays. */
-@media only screen and (max-width : 640px) {
+@media only screen and (max-width: 640px) {
     header, nav, main, footer {
         padding: 0 1rem;
     }
 }
 
 /* Ensure the margin is big enough to contain .marginalia on small displays, but no bigger. */
-@media only screen and (min-width: 641px) and (max-width : 800px) {
+@media only screen and (min-width: 641px) and (max-width: 800px) {
     header, nav, main, footer {
         padding: 0 3.845rem; /* (width of .marginalia (4em) + padding-left + padding-right) * font-size (0.75) */
     }

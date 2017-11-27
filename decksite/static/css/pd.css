@@ -235,6 +235,14 @@ section {
     margin: 1rem 2.369rem 1rem 0;
 }
 
+/* Enable right-scroll-in-place to work by not floating things that might need right-scroll-in-place.
+   Floating takes them out-of-flow and stops overflow-x doing its job.  */
+@media screen and (max-width: 640px) {
+    section {
+        float: none;
+    }
+}
+
 section section {
     margin-top: 0;
     margin-bottom: 0;
@@ -436,7 +444,7 @@ main table a:hover {
     background-color: transparent;
 }
 
-main table.with-marginalia {
+table.with-marginalia {
     margin-left: -5.126em; /* Width of .marginalia + left-padding + right-padding */
     margin-right: 0.5em;
 }
@@ -606,9 +614,8 @@ table.with-marginalia.footable-details {
     td.marginalia {
         /* Override the inline style `display: table-cell` added by footable */;
         display: none !important; /* csslint allow: important */
-        margin: 0;
     }
-    table.with-marginalia tr:first-child th {
+    table.with-marginalia tr:first-child th:first-child {
         display: none;
     }
     /* Don't show the additional header row for "Season" and "All Time" at this size - we'll be hiding the all time stats. */

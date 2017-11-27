@@ -10,22 +10,12 @@ def played_cards(where='1 = 1'):
         SELECT
             card AS name,
             COUNT(card) AS `all_num_decks`,
-            SUM(CASE WHEN NOT sideboard THEN 1 ELSE 0 END) AS `all_n_maindecks`,
-            SUM(CASE WHEN sideboard THEN 1 ELSE 0 END) AS `all_n_sideboards`,
-            SUM(n) AS `all_count_decks`,
-            SUM(CASE WHEN NOT sideboard THEN n ELSE 0 END) AS `all_count_maindecks`,
-            SUM(CASE WHEN sideboard THEN n ELSE 0 END) AS `all_count_sideboards`,
             SUM(wins) AS `all_wins`,
             SUM(losses) AS `all_losses`,
             SUM(draws) AS `all_draws`,
             IFNULL(ROUND((SUM(wins) / SUM(wins + losses)) * 100, 1), '') AS `all_win_percent`,
 
             SUM(CASE WHEN created_date >= %s THEN 1 ELSE 0 END) AS `season_num_decks`,
-            SUM(CASE WHEN created_date >= %s AND NOT sideboard THEN 1 ELSE 0 END) AS `season_n_maindecks`,
-            SUM(CASE WHEN created_date >= %s AND sideboard THEN 1 ELSE 0 END) AS `season_n_sideboards`,
-            SUM(CASE WHEN created_date >= %s THEN n ELSE 0 END) AS `season_count_decks`,
-            SUM(CASE WHEN created_date >= %s AND NOT sideboard THEN n ELSE 0 END) AS `season_count_maindecks`,
-            SUM(CASE WHEN created_date >= %s AND sideboard THEN n ELSE 0 END) AS `season_count_sideboards`,
             SUM(CASE WHEN created_date >= %s THEN wins ELSE 0 END) AS `season_wins`,
             SUM(CASE WHEN created_date >= %s THEN losses ELSE 0 END) AS `season_losses`,
             SUM(CASE WHEN created_date >= %s THEN draws ELSE 0 END) AS `season_draws`,
@@ -34,9 +24,9 @@ def played_cards(where='1 = 1'):
         LEFT JOIN deck AS d ON d.id = dc.deck_id
         WHERE {where}
         GROUP BY dc.card
-        ORDER BY `season_num_decks` DESC, `season_count_decks` DESC, `season_n_maindecks` DESC, `season_count_maindecks` DESC, `all_num_decks` DESC, `all_count_decks` DESC, `all_n_maindecks` DESC, `all_count_maindecks` DESC
+        ORDER BY `season_num_decks` DESC, SUM(wins) - SUM(losses), name
     """.format(where=where)
-    cs = [Container(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())] * 12)]
+    cs = [Container(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())] * 7)]
     cards = oracle.cards_by_name()
     for c in cs:
         c.update(cards[c.name])

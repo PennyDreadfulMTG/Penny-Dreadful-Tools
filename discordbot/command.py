@@ -551,7 +551,7 @@ Want to contribute? Send a Pull Request."""
         """Display the current version numbers"""
         await bot.client.send_typing(channel)
         commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
-        mtgjson = database.version()
+        mtgjson = database.mtgjson_version()
         return await bot.client.send_message(channel, "I am currently running mtgbot version `{commit}`, and mtgjson version `{mtgjson}`".format(commit=commit, mtgjson=mtgjson))
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.

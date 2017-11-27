@@ -1,5 +1,4 @@
 import datetime
-import subprocess
 import urllib
 from collections import Counter
 

@@ -5,7 +5,6 @@ from flask import Response, request, session, url_for
 
 from decksite import APP, league
 from decksite.data import deck, competition as comp, guarantee, card as cs
-from decksite.views import AboutPdm
 
 from shared import configuration, dtutil
 from shared.serialization import extra_serializer
@@ -87,8 +86,8 @@ def admin():
 @APP.route('/api/gitpull', methods=['POST'])
 def gitpull():
     if request.headers.get('X-GitHub-Event') == "push":
-         payload = json.loads(request.data)
-         if payload['ref'] == "refs/heads/master":
+        payload = json.loads(request.data)
+        if payload['ref'] == "refs/heads/master":
             try:
                 subprocess.check_output(['git', 'pull'])
                 import uwsgi

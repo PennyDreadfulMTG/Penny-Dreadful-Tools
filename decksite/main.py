@@ -375,9 +375,9 @@ def teardown_request(response):
     perf.check(g.p, 'slow_page', request.path, 'decksite')
     return response
 
-
 def init():
     # This makes sure that the method decorators are called.
     import decksite.api as _ # pylint: disable=unused-import
     APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
+    oracle.init()
     APP.run(host='0.0.0.0', debug=True)

@@ -3,6 +3,14 @@ from magic.database import db
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException, TooFewItemsException
 
+LEGAL_CARDS = []
+CARDS_BY_NAME = {}
+
+def init():
+    multiverse.init()
+    for c in load_cards():
+        CARDS_BY_NAME[c.name] = c
+
 # 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold default.
 def search(query, fuzzy_threshold=260):
     query = card.canonicalize(query)
@@ -30,7 +38,7 @@ def valid_name(name):
         return name
     else:
         canonicalized = card.canonicalize(name)
-        for k in CARDS_BY_NAME.keys():
+        for k in CARDS_BY_NAME:
             if canonicalized == card.canonicalize(k):
                 return k
         try:
@@ -203,7 +211,3 @@ def insert_scryfall_card(sfcard):
         multiverse.insert_card(c)
     multiverse.update_cache()
     CARDS_BY_NAME[sfcard['name']] = load_card(sfcard['name'])
-
-LEGAL_CARDS = []
-multiverse.init()
-CARDS_BY_NAME = {c.name: c for c in load_cards()}

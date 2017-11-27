@@ -1,4 +1,5 @@
-<table class="fade-repeats with-marginalia">
+{{> spinner}}
+<table class="with-marginalia">
     <thead>
         <tr>
             <th data-breakpoints="xs" class="marginalia" data-sortInitialOrder="desc">↕</th>
@@ -20,7 +21,7 @@
                 <th data-breakpoints="xs sm">Similarity</th>
             {{/has_similar}}
             <th data-breakpoints="xs sm md">Season</th>
-            {{! Empty column to hold the + symbol when footable kicks in. }}
+            {{! Empty column to hold the toggle when footable kicks in. }}
             <td></td>
         </tr>
     </thead>

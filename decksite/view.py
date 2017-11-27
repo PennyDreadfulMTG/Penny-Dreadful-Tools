@@ -1,9 +1,8 @@
 import datetime
-import subprocess
 import urllib
 from collections import Counter
 
-from anytree.iterators import PreOrderIter
+from anytree import PreOrderIter
 from flask import session, url_for
 
 from magic import multiverse, oracle, rotation

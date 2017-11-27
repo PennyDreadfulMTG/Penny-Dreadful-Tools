@@ -419,6 +419,11 @@ table {
     font-size: 0.75rem;
     font-weight: 400;
     margin-bottom: 1em;
+    visibility: hidden;
+
+    /* Tables horizontal-scroll by default but if they are not huge we override that with footable in js. */
+    display: block;
+    overflow-x: auto;
 }
 
 /* Turn off small caps link style in tables. */
@@ -435,10 +440,6 @@ table a:hover {
 table.with-marginalia {
     margin-left: -5.126em; /* Width of .marginalia + left-padding + right-padding */
     margin-right: 0.5em;
-}
-
-table.fade-repeats {
-    visibility: hidden;
 }
 
 th {
@@ -473,7 +474,6 @@ td:last-child, th:last-child {
     margin-right: 0;
 }
 
-
 td.c {
     text-align: center;
 }
@@ -501,6 +501,13 @@ td.divider, th.divider {
     border-right: 0.07em solid #999;
 }
 
+/* Hide dividing line when it would appear in hidden content not in the main table. */
+@media screen and (max-width: 640px) {
+    td.divider, th.divider {
+        border-right: 0;
+    }
+}
+
 th.legend {
     text-align: center;
 }
@@ -526,27 +533,50 @@ td.repeat {
 
 Shrink tables when the viewport is not wide enough for their full glory using footable.
 
+Deck tables:
+
 v ------  0 ------ v    0
 name       211
 record      68  279
+(toggle)    44  323
 ^ ------ xs ------ ^    18rem (360px)
-date        91  370
-person     132  502
-margin      76  578
+date        91  414
+person     132  546
+margin      76  622
 ^ ------ sm ------ ^    32rem (640px)
-colors      70  648
-top 8       55  703
+colors      70  692
+top 8       55  747
 (similarity)
 ^ ------ md ------ ^    40rem (800px)
-source     101  804
-season      68  872
+source     101  848
+season      68  916
 (omw)
+-(toggle)  -44  872
 ...
-^ ------ lg ------ ^    45(r)em (1000px)
+^ ------ lg ------ ^    46rem (920px)
+
+Card tables:
+
+v ------  0 ------ v    0
+name                211
+season - # decks     70  281
+(toggle)             44  325
+^ ------ xs ------ ^    18rem (360px)
+season - record      68  393
+season - win %       58  451
+all time - # decks   70  521
+all time - record    68  589
+all time - win %     58  647
+-(toggle)           -44  603
+^ ------ sm ------ ^    32rem (640px)
+(same)
+^ ------ md ------ ^    40rem (800px)
+(same)
+^ ------ lg ------ ^    45rem (900px)
 
 See also breakpoints for footable in pd.js.
 
- */
+*/
 
 .footable-toggle {
     cursor: pointer;
@@ -597,6 +627,9 @@ table.footable-details {
         margin: 0;
     }
     table.with-marginalia tr:first-child th {
+        display: none;
+    }
+    .timespan {
         display: none;
     }
 }
@@ -893,6 +926,32 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
     margin: 0;
     max-width: 100%;
     width: inherit;
+}
+
+/*
+
+Spinner
+
+<div class="loading"><span class="spinner fa fa-spinner fa-pulse"></span><span class="text">Loading…</span></div>
+
+*/
+
+.loading {
+    color: #999;
+    font-size: 0.75rem;
+    margin-left: -1rem;
+}
+
+.loading .spinner, .loading .text {
+    display: inline-block;
+}
+
+.loading .spinner {
+    width: 0.75rem;
+}
+
+.loading.loaded {
+    display: none;
 }
 
 /*

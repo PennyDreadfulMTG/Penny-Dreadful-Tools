@@ -28,8 +28,24 @@ PD.onDropdownLeave = function () {
     $(this).find(".submenu-container").slideUp("fast");
 };
 PD.initTables = function () {
-    $(".fade-repeats").each(PD.fadeRepeats);
-    $(".fade-repeats").css("visibility", "visible").hide().fadeIn("slow");
+    var selector = "main table";
+
+    // Apply footable to all reasonably-sized tables for a nice mobile layout.
+    $(selector).filter(function () { return $(this).find('> tbody > tr').length <= 1000; }).footable({
+        "toggleColumn": "last",
+        "breakpoints": {
+            "xs": 359,
+            "sm": 639,
+            "md": 799,
+            "lg": 919
+        }
+    }).bind("sortStart", function () {
+        // Prevent expanded information from sorting first and not staying with parent row by collapsing all expanded rows before sorting.
+        FooTable.get(this).rows.collapse();
+    }).css({ 'display': 'table' });
+    $(".loading").addClass("loaded");
+    $(selector).css({ 'visibility': 'visible' })
+
     $.tablesorter.addParser({
         "id": "record",
         "is": function(s) {
@@ -91,38 +107,7 @@ PD.initTables = function () {
         "widgets": ["columns"],
         "widgetOptions": {"columns" : ["primary", "secondary"]}
     });
-    $("table").tablesorter({});
-    // Prevent expanded information from sorting first and not staying with parent row by collapsing all expanded rows before sorting.
-    $("table").bind("sortStart", function () {
-        FooTable.get(this).rows.collapse();
-    })
-    $(".fade-repeats").bind("sortEnd", PD.fadeRepeats);
-    $("table").footable({
-        "toggleColumn": "last",
-        "breakpoints": {
-            "xs": 359,
-            "sm": 639,
-            "md": 799,
-            "lg": 999
-        }
-    });
-};
-PD.fadeRepeats = function () {
-    var current, previous;
-    $(this).find("td").find("*").addBack().removeClass("repeat");
-    $(this).find("tr").each(function() {
-        current = $(this).find("td").toArray();
-        if (previous) {
-            for (i = 0; i < current.length; i++) {
-                if ($(current[i]).text().trim() == $(previous[i]).text().trim() && $(current[i]).html().indexOf("mana-") === -1) {
-                    if ($(current[i]).text().indexOf("⊕") === -1 && $(current[i]).text().indexOf("★") === -1) {
-                        $(current[i]).find("*").addBack().addClass("repeat");
-                    }
-                }
-            }
-        }
-        previous = current;
-    })
+    $(selector).tablesorter({});
 };
 // Disable tooltips on touch devices where they are awkward but enable on others where they are useful.
 PD.initTooltips = function () {

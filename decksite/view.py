@@ -2,7 +2,7 @@ import datetime
 import urllib
 from collections import Counter
 
-from anytree import PreOrderIter
+from anytree.iterators import PreOrderIter
 from flask import session, url_for
 
 from magic import multiverse, oracle, rotation

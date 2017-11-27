@@ -31,7 +31,7 @@ PD.initTables = function () {
     var selector = "main table";
 
     // Apply footable to all reasonably-sized tables for a nice mobile layout.
-    $(selector).filter(function () { return $(this).find('> tbody > tr').length <= 1000; }).footable({
+    $(selector).filter(function () { return $(this).find("> tbody > tr").length <= 1000; }).footable({
         "toggleColumn": "last",
         "breakpoints": {
             "xs": 359,
@@ -42,9 +42,9 @@ PD.initTables = function () {
     }).bind("sortStart", function () {
         // Prevent expanded information from sorting first and not staying with parent row by collapsing all expanded rows before sorting.
         FooTable.get(this).rows.collapse();
-    }).css({ 'display': 'table' });
+    }).css({ "display": "table" });
     $(".loading").addClass("loaded");
-    $(selector).css({ 'visibility': 'visible' })
+    $(selector).css({ "visibility": "visible" })
 
     $.tablesorter.addParser({
         "id": "record",
@@ -145,9 +145,9 @@ PD.toggleDrawDropdown = function () {
     return can_draw;
 }
 PD.toggleIllegalCards = function () {
-    // Fix the width of the table columns so that it doesn't 'jump' when rows are added or removed.
-    $('.bugtable tr td').each(function() {
-        $(this).css({'width': $(this).width() + "px"});
+    // Fix the width of the table columns so that it doesn't "jump" when rows are added or removed.
+    $(".bugtable tr td").each(function() {
+        $(this).css({"width": $(this).width() + "px"});
     });
     $("tr").find(".illegal").closest("tr").toggle(!this.checked);
 }

@@ -2,7 +2,6 @@ from flask import url_for
 
 from shared.container import Container
 
-from decksite import view
 from decksite.view import View
 
 # pylint: disable=no-self-use, too-many-instance-attributes
@@ -29,15 +28,12 @@ class Competition(View):
                 self.leaderboard = sorted(leaderboard.values(), key=lambda k: k['points'], reverse=True)
                 pos = 1
                 for p in self.leaderboard:
-                    if pos == 4:
-                        p.finish = 3
-                    elif pos >= 6 and pos <= 8:
-                        p.finish = 5
-                    else:
-                        p.finish = pos
+                    p.finish = pos
                     p.stage_reached = 1
-                    view.set_stars_and_top8(p)
+                    p.position = chr(9311 + pos) # ①, ②, ③, …
                     pos += 1
+                    if pos > 8:
+                        break
 
     def __getattr__(self, attr):
         return getattr(self.competition, attr)

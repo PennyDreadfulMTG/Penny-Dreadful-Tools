@@ -1288,9 +1288,9 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
     color: #fff;
 }
 
-.tpd-has-inner-close .tpd-content-relative .tpd-content { padding-right: 0 !important; }
+.tpd-has-inner-close .tpd-content-relative .tpd-content { padding-right: 0 !important; /* csslint allow: important */ }
 
-.tpd-tooltip .tpd-content-no-padding { padding: 0 !important; }
+.tpd-tooltip .tpd-content-no-padding { padding: 0 !important; /* csslint allow: important */ }
 
 /* Skin */
 .tpd-skin {
@@ -1329,7 +1329,7 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
     background-color: transparent;
     pointer-events: none;
 }
-.tpd-no-shadow .tpd-skin .tpd-background-shadow { box-shadow: none !important; }
+.tpd-no-shadow .tpd-skin .tpd-background-shadow { box-shadow: none !important; /* csslint allow: important */ }
 
 .tpd-background-box {
     position: absolute;
@@ -1416,7 +1416,7 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 }
 
 /* remove margins once we're done measuring */
-.tpd-tooltip .tpd-skin .tpd-frames .tpd-frame .tpd-shift-stem .tpd-stem-reset { margin: 0 !important; }
+.tpd-tooltip .tpd-skin .tpd-frames .tpd-frame .tpd-shift-stem .tpd-stem-reset { margin: 0 !important; /* csslint allow: important */ }
 
 .tpd-stem-spacer {
     float: left;

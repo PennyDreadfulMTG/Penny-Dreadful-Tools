@@ -5,7 +5,6 @@ from flask import Response, request, session, url_for
 
 from decksite import APP, league
 from decksite.data import deck, competition as comp, guarantee, card as cs
-from decksite.views import AboutPdm
 
 from shared import configuration, dtutil
 from shared.serialization import extra_serializer

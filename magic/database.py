@@ -17,10 +17,9 @@ def db():
         context = DATABASE
     if hasattr(context, 'magic_database'):
         return context.get('magic_database')
-    else:
-        context.magic_database = get_database(configuration.get('magic_database'))
-        init()
-        return context.get('magic_database')
+    context.magic_database = get_database(configuration.get('magic_database'))
+    init()
+    return context.get('magic_database')
 
 def init():
     try:

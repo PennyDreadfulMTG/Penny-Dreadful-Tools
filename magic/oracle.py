@@ -38,7 +38,7 @@ def valid_name(name):
         return name
     else:
         canonicalized = card.canonicalize(name)
-        for k in CARDS_BY_NAME.keys():
+        for k in CARDS_BY_NAME:
             if canonicalized == card.canonicalize(k):
                 return k
         try:

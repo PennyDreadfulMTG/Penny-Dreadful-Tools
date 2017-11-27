@@ -408,7 +408,6 @@ Tables
 
 Our tables are constrained to a single line, allow no column to become very large and will clip overflow with an elipsis.
 We make occasional use of space in the margin to the left. This is called 'marginalia'.
-We fade values that repeat from one row to the next. Tables that do this are hidden until it is complete with the fade-repeats class.
 
 Sizes in the table are in ems because they should relate to the size of table text not the page base.
 
@@ -525,10 +524,6 @@ th.legend {
     line-height: 0; /* Don't mess up row spacing because the star is big. */
 }
 
-td.repeat {
-    opacity: 0.4;
-}
-
 /*
 
 Shrink tables when the viewport is not wide enough for their full glory using footable.
@@ -582,33 +577,15 @@ See also breakpoints for footable in pd.js.
     cursor: pointer;
 }
 
-table.footable {
-    /* Override footable's meddling. */
-    width: inherit !important; /* csslint allow: important */
-}
-
 table.footable-details {
-    margin-left: 4rem;
+    margin-top: 0.75em;
+    margin-bottom: 2em;
     visibility: visible;
 }
 
-/* Don't fade details that are only shown on expand. */
-.footable-details td.repeat {
-    opacity: 1;
-}
-
+/* Always right align the key when displaying as key-value pairs rather than tabular. */
 .footable-details th {
-    cursor: inherit;
-}
-
-/* Always left align the key when displaying as key-value pairs rather than tabular. */
-.footable-details th.c, .footable-details th.n {
     text-align: right;
-}
-
-/* Always left align the value when displaying as key-value pairs rather than tabular. */
-.footable-details td.c, .footable-details td.n {
-    text-align: left;
 }
 
 .footable-details .tablesorter-header-inner {
@@ -616,9 +593,14 @@ table.footable-details {
     margin-right: 0.1rem;
 }
 
+table.with-marginalia.footable-details {
+    margin-left: 7.126em; /* Width of .marginalia + left-padding + right-padding + desired margin to show subordinate relationship to parent row. */
+}
+
+
 /* When we aren't showing marginalia, don't have the unshown column mess display up. */
-@media only screen and (max-width : 640px) {
-    table.with-marginalia {
+@media only screen and (max-width: 640px) {
+    table.with-marginalia, table.with-marginalia.footable-details {
         margin: 0;
     }
     td.marginalia {
@@ -629,9 +611,58 @@ table.footable-details {
     table.with-marginalia tr:first-child th {
         display: none;
     }
+    /* Don't show the additional header row for "Season" and "All Time" at this size - we'll be hiding the all time stats. */
     .timespan {
         display: none;
     }
+    .cards-table .footable-details {
+        position: relative;
+    }
+    /* … but showing them inline so prepend the first all time item with "All Time". */
+    .cards-table .footable-details tr:nth-child(1) th:before, .cards-table .footable-details tr:nth-child(2) th:before {
+        display: inline-block;
+        margin-right: 2rem;
+        text-align: left;
+    }
+    .cards-table .footable-details tr:nth-child(2) th, .cards-table .footable-details tr:nth-child(2) td {
+        border-top: 0.05rem solid #999;
+    }
+    .cards-table .footable-details tr:nth-child(1) th:before {
+        content: "This Season ";
+    }
+    .cards-table .footable-details tr:nth-child(2) th:before {
+        content: "All Time ";
+    }
+}
+
+/* From footable.css (adjusted) */
+
+.fooicon {
+    color: #999;
+    display: inline-block;
+    font-size: 1rem;
+    font-family: FontAwesome !important; /* csslint allow: important */
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transform: translate(0, 0);
+}
+
+.fooicon:before, .fooicon:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.fooicon-minus:before {
+    content: "–";
+}
+
+.fooicon-plus:before {
+    content: "+";
 }
 
 /*

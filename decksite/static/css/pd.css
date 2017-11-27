@@ -615,8 +615,9 @@ table.with-marginalia.footable-details {
         /* Override the inline style `display: table-cell` added by footable */;
         display: none !important; /* csslint allow: important */
     }
-    table.with-marginalia tr:first-child th:first-child {
-        display: none;
+    table.with-marginalia thead th:first-child, table.with-marginalia thead td:first-child {
+        /* Override the inline style `display: table-cell` added by footable */;
+        display: none !important; /* csslint allow: important */
     }
     /* Don't show the additional header row for "Season" and "All Time" at this size - we'll be hiding the all time stats. */
     .timespan {

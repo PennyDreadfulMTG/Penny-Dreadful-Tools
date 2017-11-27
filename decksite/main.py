@@ -362,7 +362,8 @@ def not_found(e):
 @APP.errorhandler(exceptions.InternalServerError)
 def internal_server_error(e):
     traceback.print_exception(e, e, None)
-    repo.create_issue('500 error {e}'.format(e=e), session.get('id', 'logged_out'), 'decksite')
+    path = request.path
+    repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite')
     view = InternalServerError(e)
     return view.page(), 500
 

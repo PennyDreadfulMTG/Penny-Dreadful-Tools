@@ -161,6 +161,7 @@ class View:
     def prepare_card(self, c):
         c.url = '/cards/{id}/'.format(id=c.name)
         c.img_url = 'http://magic.bluebones.net/proxies/index2.php?c={name}'.format(name=urllib.parse.quote(c.name))
+        c.card_img_class = 'two-faces' if c.layout in ['double-faced', 'meld'] else ''
         c.pd_legal = c.legalities.get('Penny Dreadful', False)
         c.legal_formats = set(c.legalities.keys())
         c.has_legal_format = len(c.legal_formats) > 0

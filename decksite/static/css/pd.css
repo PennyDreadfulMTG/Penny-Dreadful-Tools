@@ -642,26 +642,8 @@ table.with-marginalia.footable-details {
     }
 }
 
-/* From footable.css (adjusted) */
-
 .fooicon {
     color: #999;
-    display: inline-block;
-    font-size: 1rem;
-    font-family: FontAwesome !important; /* csslint allow: important */
-    font-style: normal;
-    font-weight: 400;
-    line-height: 1;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    transform: translate(0, 0);
-}
-
-.fooicon:before, .fooicon:after {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
 }
 
 .fooicon-minus:before {
@@ -977,7 +959,7 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
 
 Spinner
 
-<div class="loading"><span class="spinner fa fa-spinner fa-pulse"></span><span class="text">Loading…</span></div>
+<div class="loading"><span class="spinner"></span> <span class="text">Loading…</span></div>
 
 */
 
@@ -991,12 +973,60 @@ Spinner
     display: inline-block;
 }
 
-.loading .spinner {
-    width: 0.75rem;
-}
-
 .loading.loaded {
     display: none;
+}
+
+.spinner {
+  height: 0.75em;
+  width: 0.75em;
+  margin: 1rem auto 0 auto;
+  position: relative;
+  -webkit-animation: rotation .6s infinite linear;
+  -moz-animation: rotation .6s infinite linear;
+  -o-animation: rotation .6s infinite linear;
+  animation: rotation .6s infinite linear;
+  border-left: 0.05rem solid #999;
+  border-right: 0.05rem;
+  border-bottom: 0.05rem;
+  border-top: 0.05rem;
+  border-radius: 100%;
+}
+
+@-webkit-keyframes rotation {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(359deg);
+  }
+}
+
+@-moz-keyframes rotation {
+  from {
+    -moz-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(359deg);
+  }
+}
+
+@-o-keyframes rotation {
+  from {
+    -o-transform: rotate(0deg);
+  }
+  to {
+    -o-transform: rotate(359deg);
+  }
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
 }
 
 /*

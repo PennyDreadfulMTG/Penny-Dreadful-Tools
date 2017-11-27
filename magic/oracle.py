@@ -3,6 +3,8 @@ from magic.database import db
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException, TooFewItemsException
 
+# Primary public interface to the magic package. Call `oracle.init()` after setting up application context and before using any methods.
+
 LEGAL_CARDS = []
 CARDS_BY_NAME = {}
 

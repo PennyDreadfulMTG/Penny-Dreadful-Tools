@@ -641,7 +641,7 @@ table.with-marginalia.footable-details {
     color: #999;
     display: inline-block;
     font-size: 1rem;
-    font-family: FontAwesome !important;
+    font-family: FontAwesome !important; /* csslint allow: important */
     font-style: normal;
     font-weight: 400;
     line-height: 1;

@@ -44,7 +44,7 @@ PD.initTables = function () {
         FooTable.get(this).rows.collapse();
     }).css({ "display": "table" });
     $(".loading").addClass("loaded");
-    $(selector).css({ "visibility": "visible" })
+    $(selector).css({ "visibility": "visible" });
 
     $.tablesorter.addParser({
         "id": "record",

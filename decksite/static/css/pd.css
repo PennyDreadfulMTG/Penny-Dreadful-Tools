@@ -1055,9 +1055,14 @@ We need to override a lot of Google's inline styles hence a lot of !important.
     margin-bottom: 0 !important; /* csslint allow: important */;
 }
 
-/* Override from 100% to make wrap-under happen later and look right when it does. */
 .gsc-search-box {
+    /* Make wrap-under happen at narrower widths, and look right when it does. */
     width: 80% !important; /* csslint allow: important */
+}
+
+.gsc-search-box td {
+    /* Stop the input box text hugging the bottom. */
+    vertical-align: top !important; /* ccslint allow: important */
 }
 
 .gsc-control-cse {
@@ -1071,6 +1076,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
     background: none !important; /* csslint allow: important */
     font-family: inherit !important; /* csslint allow: important */
     font-size: inherit !important; /* csslint allow: important */
+    margin-bottom: 6px !important; /* csslint allow: important */
 }
 
 .gsc-wrapper, .gsc-results-wrapper-overlay, .gsc-results-root {
@@ -1115,12 +1121,8 @@ td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
     padding: 0 !important; /* csslint allow: important */
 }
 
-.gsst_a {
-    padding-top: 0.45rem !important; /* csslint allow: important */
-}
-
 .gsc-search-button {
-    margin-top: 5px !important; /* csslint allow: important */
+    margin-top: 0 !important; /* csslint allow: important */
 }
 
 .gsc-webResult.gsc-result {

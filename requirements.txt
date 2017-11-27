@@ -1,4 +1,4 @@
-anytree==2.2.2
+anytree
 bs4
 cachecontrol[filecache]
 coverage

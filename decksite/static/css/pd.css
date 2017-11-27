@@ -314,6 +314,7 @@ header h1 {
     font-weight: normal;
     font-size: 1.333rem;
     margin-bottom: 0;
+    margin-right: 1rem;
     padding: 3rem 0 1rem 0;
     text-transform: lowercase;
 }
@@ -676,11 +677,6 @@ Menu items can have submenus. These are "mega menus" that stretch across the who
     text-transform: lowercase;
 }
 
-.menu > li.search {
-    float: right;
-    padding: 1rem 0 0 0;
-}
-
 .menu a:hover {
     color: #999;
     transition-duration: 1s;
@@ -1041,11 +1037,27 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 
 .search {
     float: right;
+    margin-left: 1rem;
     padding: 3rem 0 0; /* matches h1 as it floats alongside the logo */
+}
+
+/* When search wraps under the logo it needs different behavior. */
+@media screen and (max-width: 920px) {
+    .search {
+        float: none;
+        margin-bottom: 1rem;
+        margin-left: 0;
+        padding-top: 1rem;
+    }
 }
 
 .search input {
     margin-bottom: 0 !important; /* csslint allow: important */;
+}
+
+/* Override from 100% to make wrap-under happen later and look right when it does. */
+.gsc-search-box {
+    width: 80% !important; /* csslint allow: important */
 }
 
 .gsc-control-cse {

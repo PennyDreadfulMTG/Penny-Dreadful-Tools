@@ -87,8 +87,8 @@ def admin():
 @APP.route('/api/gitpull', methods=['POST'])
 def gitpull():
     if request.headers.get('X-GitHub-Event') == "push":
-         payload = json.loads(request.data)
-         if payload['ref'] == "refs/heads/master":
+        payload = json.loads(request.data)
+        if payload['ref'] == "refs/heads/master":
             try:
                 subprocess.check_output(['git', 'pull'])
                 import uwsgi

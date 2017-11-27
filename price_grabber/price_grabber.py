@@ -4,7 +4,7 @@ import sys
 import time
 import urllib
 
-from magic import card, database, fetcher_internal, multiverse
+from magic import card, database, fetcher_internal, multiverse, oracle
 from shared import configuration
 from shared.database import get_database
 from shared.pd_exception import DatabaseException
@@ -15,7 +15,7 @@ DATABASE = get_database(configuration.get('prices_database'))
 CARDS = {}
 
 def run():
-    multiverse.init()
+    oracle.init()
     fetch()
     price.cache()
 

@@ -27,6 +27,8 @@ def run():
         from decksite.main import APP
         APP.config["SERVER_NAME"] = "127:0.0.1:5000"
         with APP.app_context():
+            from magic import oracle
+            oracle.init()
             if name == "all":
                 m = importlib.import_module('decksite.{module}'.format(module=module))
                 #pylint: disable=unused-variable

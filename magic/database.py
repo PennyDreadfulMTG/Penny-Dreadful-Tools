@@ -1,24 +1,37 @@
+import flask
+
 from magic import card
 from shared import configuration
+from shared.container import Container
 from shared.database import get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
 SCHEMA_VERSION = 91
+DATABASE = Container()
 
 def db():
-    return DATABASE
+    if flask.current_app:
+        context = flask.g
+    else:
+        context = DATABASE
+    if hasattr(context, 'magic_database'):
+        return context.get('magic_database')
+    else:
+        context.magic_database = get_database(configuration.get('magic_database'))
+        init()
+        return context.get('magic_database')
 
 def init():
     try:
-        version()
+        mtgjson_version()
         if db_version() < SCHEMA_VERSION:
             delete()
             setup()
     except DatabaseException:
         setup()
 
-def version() -> str:
+def mtgjson_version() -> str:
     return db().value('SELECT version FROM version', [], '0')
 
 def db_version() -> int:
@@ -127,6 +140,3 @@ def create_table_def(name, props):
     if db().is_mysql():
         sql += ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
     return sql.format(name=name)
-
-DATABASE = get_database(configuration.get('magic_database'))
-init()

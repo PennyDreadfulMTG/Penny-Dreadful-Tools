@@ -408,7 +408,6 @@ Tables
 
 Our tables are constrained to a single line, allow no column to become very large and will clip overflow with an elipsis.
 We make occasional use of space in the margin to the left. This is called 'marginalia'.
-We fade values that repeat from one row to the next. Tables that do this are hidden until it is complete with the fade-repeats class.
 
 Sizes in the table are in ems because they should relate to the size of table text not the page base.
 
@@ -523,10 +522,6 @@ th.legend {
 .stars {
     font-size: 1.333rem; /* The stars are a bit small in our chosen font but the targets are not. */
     line-height: 0; /* Don't mess up row spacing because the star is big. */
-}
-
-td.repeat {
-    opacity: 0.4;
 }
 
 /*

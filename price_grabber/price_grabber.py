@@ -4,7 +4,8 @@ import sys
 import time
 import urllib
 
-from magic import card, database, fetcher_internal, multiverse, oracle
+from magic import card, fetcher_internal, multiverse, oracle
+from magic.database import db
 from shared import configuration
 from shared.database import get_database
 from shared.pd_exception import DatabaseException
@@ -52,7 +53,7 @@ def parse_sets(s):
 
 def parse_prices(s):
     results = re.findall(r"""<td class='card'><a.*?href="[^#]*#online".*?>([^\(<]*)(?:\(([^\)]*)\))?</a></td>\n<td>[^<]*</td>\n<td>[^<]*</td>\n<td class='text-right'>\n(.*)\n</td>""", s)
-    return [(name_lookup(html.unescape(name.strip())), html.unescape(version.strip()), html.unescape(price.strip())) for name, version, price in results]
+    return [(name_lookup(html.unescape(name.strip())), html.unescape(version.strip()), html.unescape(price.strip())) for name, version, price in results if name_lookup(html.unescape(name.strip())) is not None]
 
 def store(timestamp, all_prices):
     DATABASE.begin()
@@ -122,11 +123,11 @@ def create_tables():
 
 def name_lookup(name):
     if not CARDS:
-        rs = database.DATABASE.execute(multiverse.base_query())
+        rs = db().execute(multiverse.base_query())
         for row in rs:
             CARDS[card.canonicalize(row['name'])] = row['name']
     canonical = card.canonicalize(name)
     if canonical not in CARDS:
         print("Bogus name {name} ({canonical}) found.".format(name=name, canonical=canonical))
-        return name
+        return None
     return CARDS[canonical]

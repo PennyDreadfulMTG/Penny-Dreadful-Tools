@@ -1,37 +1,52 @@
 import sys
 
+from datetime import timedelta
+from enum import Enum
 from dateutil import rrule
 
 from shared import dtutil
 
+class TimeDirection(Enum):
+    BEFORE = 1
+    AFTER = 2
+
 def next_tournament_info():
-    now = dtutil.now(dtutil.GATHERLING_TZ)
-    now_ts = dtutil.dt2ts(dtutil.now())
-    pdsat_time = rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=now, byweekday=rrule.SA)[0]
-    pds_time = rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=now, byweekday=rrule.SU)[0]
-    pdm_time = rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=now, byweekday=rrule.MO)[0]
-    pdt_time = rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=now, byweekday=rrule.TH)[0]
-    next_time = min([pdsat_time, pds_time, pdm_time, pdt_time])
-    if next_time == pdsat_time:
-        day = 'Saturday'
-    elif next_time == pds_time:
-        day = 'Sunday'
-    elif next_time == pdm_time:
-        day = 'Monday'
-    else:
-        day = 'Thursday'
-    next_tournament_name = 'Penny Dreadful {day}'.format(day=day)
-    next_tournament_time_precise = dtutil.dt2ts(next_time) - now_ts
-    next_tournament_time = dtutil.display_time(next_tournament_time_precise)
+    return tournament_info(TimeDirection.AFTER)
+
+def previous_tournament_info():
+    return tournament_info(TimeDirection.BEFORE, units=1)
+
+def tournament_info(time_direction, units=2):
+    day, time = get_nearest_tournament(time_direction)
+    next_tournament_time_precise = abs(dtutil.dt2ts(time) - dtutil.dt2ts(dtutil.now()))
+    near = next_tournament_time_precise < 18000 # Threshold for near: 5 hours in seconds
+    next_tournament_time = dtutil.display_time(next_tournament_time_precise, units)
     return {
-        'next_tournament_name': next_tournament_name,
+        'next_tournament_name': 'Penny Dreadful {day}'.format(day=day),
         'next_tournament_time': next_tournament_time,
         'next_tournament_time_precise': next_tournament_time_precise,
-        'pdsat_time': pdsat_time,
-        'pds_time': pds_time,
-        'pdm_time': pdm_time,
-        'pdt_time': pdt_time
+        'near': near
     }
+
+def get_nearest_tournament(time_direction=TimeDirection.AFTER):
+    start = dtutil.now(dtutil.GATHERLING_TZ)
+    if time_direction == TimeDirection.AFTER:
+        index = 0
+    else:
+        index = -1
+        start = start - timedelta(days=7)
+
+    dates = get_all_next_tournament_dates(start, index=index)
+    return sorted(dates, key=lambda t: t[1])[index]
+
+def get_all_next_tournament_dates(start, index=0):
+    until = start + timedelta(days=7)
+    pdsat_time = ['Saturday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index]]
+    pds_time = ['Sunday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index]]
+    pdm_time = ['Monday', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index]]
+    pdt_time = ['Thursday', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index]]
+    return [pdsat_time, pds_time, pdm_time, pdt_time]
+
 
 def prize(d):
     f = d.get('finish') or sys.maxsize
@@ -46,34 +61,35 @@ def prize(d):
     return 0
 
 def all_series_info():
-    info = next_tournament_info()
+    info = get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))
+    info_sorted = sorted(info, key=lambda x: x[0]) #sort by day name to retrieve them
     return [
         {
             'name': 'Penny Dreadful Saturdays',
             'hosts': ['back_alley_g', 'bigm'],
             'display_time': '1:30pm Eastern',
-            'time': info['pdsat_time'],
+            'time': info_sorted[1][1],
             'chat_room': '#PDS'
         },
         {
             'name': 'Penny Dreadful Sundays',
             'hosts': ['bakert99', 'littlefield'],
             'display_time': '1:30pm Eastern',
-            'time': info['pds_time'],
+            'time': info_sorted[2][1],
             'chat_room': '#PDS'
         },
         {
             'name': 'Penny Dreadful Mondays',
             'hosts': ['stash86', 'silasary'],
             'display_time': '7pm Eastern',
-            'time': info['pdm_time'],
+            'time': info_sorted[0][1],
             'chat_room': '#PDM'
         },
         {
             'name': 'Penny Dreadful Thursdays',
             'hosts': ['silasary', 'stash86'],
             'display_time': '7pm Eastern',
-            'time': info['pdt_time'],
+            'time': info_sorted[3][1],
             'chat_room': '#PDT'
         }
     ]

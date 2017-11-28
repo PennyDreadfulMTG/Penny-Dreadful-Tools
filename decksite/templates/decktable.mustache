@@ -15,7 +15,9 @@
             {{#show_omw}}
                 <th data-breakpoints="xs sm md" title="Opponent's Match Win" data-sortInitialOrder="desc">OMW</th>
             {{/show_omw}}
-            <th class="c" data-breakpoints="xs sm">Top 8</th>
+            {{^hide_top8}}
+                <th class="c" data-breakpoints="xs sm">Top 8</th>
+            {{/hide_top8}}
             <th data-breakpoints="xs" data-sortInitialOrder="desc">Date</th>
             {{#has_similar}}
                 <th data-breakpoints="xs sm">Similarity</th>

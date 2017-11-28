@@ -73,13 +73,13 @@ class Deck(View):
     def sections(self):
         sections = []
         if self.creatures():
-            sections.append({'name': 'Creatures', 'entries': self.creatures()})
+            sections.append({'name': 'Creatures', 'entries': self.creatures(), 'num_entries': sum([c['n'] for c in self.creatures()])})
         if self.spells():
-            sections.append({'name': 'Spells', 'entries': self.spells()})
+            sections.append({'name': 'Spells', 'entries': self.spells(), 'num_entries': sum([c['n'] for c in self.spells()])})
         if self.lands():
-            sections.append({'name': 'Lands', 'entries': self.lands()})
+            sections.append({'name': 'Lands', 'entries': self.lands(), 'num_entries': sum([c['n'] for c in self.lands()])})
         if self.sideboard():
-            sections.append({'name': 'Sideboard', 'entries': self.sideboard()})
+            sections.append({'name': 'Sideboard', 'entries': self.sideboard(), 'num_entries': sum([c['n'] for c in self.sideboard()])})
         return sections
 
     def creatures(self):

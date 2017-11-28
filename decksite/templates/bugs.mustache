@@ -12,8 +12,10 @@
         <thead>
             <tr class="wide">
                 <th>Card</th>
-                <th>Bug</th>
-                <th data-sortInitialOrder="desc">Severity</th>
+                <th data-breakpoints="xs sm md">Bug</th>
+                <th data-breakpoints="xs" data-sortInitialOrder="desc">Severity</th>
+                {{! Empty column to hold the toggle when footable kicks in.}}
+                <td></td>
             </tr>
         </thead>
         <tbody>
@@ -22,6 +24,8 @@
                     <td>{{> singlecard}}</td>
                     <td class="wide">{{bug_desc}}</td>
                     <td class="{sorter: 'bugseverity'}">{{bug_class}}</td>
+                    {{! Empty column to hold the toggle when footable kicks in.}}
+                    <td></td>
             {{/cards}}
         </tbody>
     </table>

@@ -208,7 +208,7 @@ header, nav, main, footer {
 /* Ensure the margin is big enough to contain .marginalia on small displays, but no bigger. */
 @media only screen and (min-width: 641px) and (max-width: 800px) {
     header, nav, main, footer {
-        padding: 0 0 0 3.845rem ; /* (width of .marginalia (4em) + padding-left + padding-right) * font-size (0.75) */
+        padding: 0 1rem 0 3.845rem; /* (width of .marginalia (4em) + padding-left + padding-right) * font-size (0.75) */
     }
 }
 
@@ -232,7 +232,8 @@ footer {
 
 section {
     float: left;
-    margin: 1rem 2.369rem 1rem 0;
+    margin: 0 2.369rem 1rem 0;
+    padding-top: 1rem;
 }
 
 /* Enable right-scroll-in-place to work by not floating things that might need right-scroll-in-place.
@@ -429,8 +430,11 @@ main table {
     margin-bottom: 1em;
     visibility: hidden;
 
-    /* Tables horizontal-scroll by default but if they are not huge we override that with footable in js. */
-    display: block;
+    /*
+    Tables horizontal-scroll by default but if they are not huge we override that with footable in js.
+    Important to override the inline style that footble adds.
+    */
+    display: block !important; /* csslint allow: important */;
     overflow-x: auto;
 }
 
@@ -497,6 +501,10 @@ tr.wide td, tr.wide th {
 
 tr.wide+tr td {
     border-top: 0.05rem #999 solid;
+}
+
+.footable-details tr.wide td {
+    border-top: 0;
 }
 
 tr.wide td.wide {
@@ -910,7 +918,7 @@ label {
     float: left;
     margin-right: 1rem;
     text-align: right;
-    width: 10rem;
+    width: 8rem;
 }
 
 textarea {
@@ -965,6 +973,22 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
     margin: 0;
     max-width: 100%;
     width: inherit;
+}
+
+@media screen and (max-width: 800px) {
+    label {
+        float: none;
+        text-align: left;
+    }
+    button, input, select, textarea {
+        margin-bottom: 1rem;
+        margin-left: 0;
+        margin-top: 0.5625rem;
+        max-width: 80%;
+    }
+    button, div.error, .uploader-label {
+        margin-left: 0;
+    }
 }
 
 /*

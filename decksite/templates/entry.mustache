@@ -1,1 +1,1 @@
-<li><a href="{{card.url}}" class="{{^card.pd_legal}}illegal{{/card.pd_legal}} {{#card.bug_desc}}bugged{{/card.bug_desc}} card">{{n}} {{name}}</a></li>
+<li><a href="{{card.url}}" class="{{^card.pd_legal}}illegal{{/card.pd_legal}} {{#card.bug_desc}}bugged{{/card.bug_desc}} card" {{#card.bug_desc}}data-bug-desc="{{card.bug_class}}: {{card.bug_desc}}"{{/card.bug_desc}}>{{n}} {{name}}</a></li>

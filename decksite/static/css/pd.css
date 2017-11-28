@@ -411,6 +411,10 @@ ul.decklist {
     font-size: 0.75rem;
 }
 
+ul.decklist li a {
+    float:left;
+}
+
 /*
 
 Tables
@@ -859,9 +863,8 @@ p.bugged {
 }
 
 
-.bugged::after {
-    content: "🐞 ";
-    margin-left: 0.2em;
+.bugicon {
+    float:left;
 }
 
 .illegal::after {

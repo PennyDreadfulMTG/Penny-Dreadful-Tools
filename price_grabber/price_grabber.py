@@ -52,20 +52,15 @@ def parse_sets(s):
     return re.findall("'/index/([A-Z0-9]+)'", s)
 
 def parse_prices(s):
-    results = re.findall(r"""<td class='card'><a.*?href="[^#]*#online".*?>([^\(<]*)(?:\(([^\)]*)\))?</a></td>\n<td>[^<]*</td>\n<td>[^<]*</td>\n<td class='text-right'>\n(.*)\n</td>""", s)
-    return [(name_lookup(html.unescape(name.strip())), html.unescape(version.strip()), html.unescape(price.strip())) for name, version, price in results if name_lookup(html.unescape(name.strip())) is not None]
+    results = re.findall(r"""<td class='card'><a.*?href="[^#]*#online".*?>([^\(<]*)(?:\([^\)]*\))?</a></td>\n<td>[^<]*</td>\n<td>[^<]*</td>\n<td class='text-right'>\n(.*)\n</td>""", s)
+    return [(name_lookup(html.unescape(name.strip())), html.unescape(price.strip())) for name, price in results if name_lookup(html.unescape(name.strip())) is not None]
 
 def store(timestamp, all_prices):
     DATABASE.begin()
     lows = {}
     for code in all_prices:
         prices = all_prices[code]
-        try:
-            code, premium = code.split('_')
-            premium = True
-        except ValueError:
-            premium = False
-        for name, version, p in prices:
+        for name, p in prices:
             cents = int(float(p) * 100)
             if cents < lows.get(name, sys.maxsize):
                 lows[name] = cents

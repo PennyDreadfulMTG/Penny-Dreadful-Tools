@@ -208,7 +208,7 @@ header, nav, main, footer {
 /* Ensure the margin is big enough to contain .marginalia on small displays, but no bigger. */
 @media only screen and (min-width: 641px) and (max-width: 800px) {
     header, nav, main, footer {
-        padding: 0 3.845rem; /* (width of .marginalia (4em) + padding-left + padding-right) * font-size (0.75) */
+        padding: 0 0 0 3.845rem ; /* (width of .marginalia (4em) + padding-left + padding-right) * font-size (0.75) */
     }
 }
 
@@ -233,6 +233,14 @@ footer {
 section {
     float: left;
     margin: 1rem 2.369rem 1rem 0;
+}
+
+/* Enable right-scroll-in-place to work by not floating things that might need right-scroll-in-place.
+   Floating takes them out-of-flow and stops overflow-x doing its job.  */
+@media screen and (max-width: 640px) {
+    section {
+        float: none;
+    }
 }
 
 section section {
@@ -306,6 +314,7 @@ header h1 {
     font-weight: normal;
     font-size: 1.333rem;
     margin-bottom: 0;
+    margin-right: 1rem;
     padding: 3rem 0 1rem 0;
     text-transform: lowercase;
 }
@@ -436,7 +445,7 @@ main table a:hover {
     background-color: transparent;
 }
 
-main table.with-marginalia {
+table.with-marginalia {
     margin-left: -5.126em; /* Width of .marginalia + left-padding + right-padding */
     margin-right: 0.5em;
 }
@@ -606,10 +615,10 @@ table.with-marginalia.footable-details {
     td.marginalia {
         /* Override the inline style `display: table-cell` added by footable */;
         display: none !important; /* csslint allow: important */
-        margin: 0;
     }
-    table.with-marginalia tr:first-child th {
-        display: none;
+    table.with-marginalia thead th:first-child, table.with-marginalia thead td:first-child {
+        /* Override the inline style `display: table-cell` added by footable */;
+        display: none !important; /* csslint allow: important */
     }
     /* Don't show the additional header row for "Season" and "All Time" at this size - we'll be hiding the all time stats. */
     .timespan {
@@ -635,26 +644,8 @@ table.with-marginalia.footable-details {
     }
 }
 
-/* From footable.css (adjusted) */
-
 .fooicon {
     color: #999;
-    display: inline-block;
-    font-size: 1rem;
-    font-family: FontAwesome !important; /* csslint allow: important */
-    font-style: normal;
-    font-weight: 400;
-    line-height: 1;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    transform: translate(0, 0);
-}
-
-.fooicon:before, .fooicon:after {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
 }
 
 .fooicon-minus:before {
@@ -684,11 +675,6 @@ Menu items can have submenus. These are "mega menus" that stretch across the who
     padding: 2em; /* Matches negative margin of nav so when it aligns left (even wrapped under). */
     text-decoration: none;
     text-transform: lowercase;
-}
-
-.menu > li.search {
-    float: right;
-    padding: 1rem 0 0 0;
 }
 
 .menu a:hover {
@@ -970,7 +956,7 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
 
 Spinner
 
-<div class="loading"><span class="spinner fa fa-spinner fa-pulse"></span><span class="text">Loading…</span></div>
+<div class="loading"><span class="spinner"></span> <span class="text">Loading…</span></div>
 
 */
 
@@ -984,12 +970,60 @@ Spinner
     display: inline-block;
 }
 
-.loading .spinner {
-    width: 0.75rem;
-}
-
 .loading.loaded {
     display: none;
+}
+
+.spinner {
+    height: 0.75em;
+    width: 0.75em;
+    margin: 1rem auto 0 auto;
+    position: relative;
+    -webkit-animation: rotation .6s infinite linear;
+    -moz-animation: rotation .6s infinite linear;
+    -o-animation: rotation .6s infinite linear;
+    animation: rotation .6s infinite linear;
+    border-left: 0.05rem solid #999;
+    border-right: 0.05rem;
+    border-bottom: 0.05rem;
+    border-top: 0.05rem;
+    border-radius: 100%;
+}
+
+@-webkit-keyframes rotation {
+    from {
+    -webkit-transform: rotate(0deg);
+    }
+    to {
+    -webkit-transform: rotate(359deg);
+    }
+}
+
+@-moz-keyframes rotation {
+    from {
+    -moz-transform: rotate(0deg);
+    }
+    to {
+    -moz-transform: rotate(359deg);
+    }
+}
+
+@-o-keyframes rotation {
+    from {
+    -o-transform: rotate(0deg);
+    }
+    to {
+    -o-transform: rotate(359deg);
+    }
+}
+
+@keyframes rotation {
+    from {
+    transform: rotate(0deg);
+    }
+    to {
+    transform: rotate(359deg);
+    }
 }
 
 /*
@@ -1003,11 +1037,32 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 
 .search {
     float: right;
+    margin-left: 1rem;
     padding: 3rem 0 0; /* matches h1 as it floats alongside the logo */
+}
+
+/* When search wraps under the logo it needs different behavior. */
+@media screen and (max-width: 920px) {
+    .search {
+        float: none;
+        margin-bottom: 1rem;
+        margin-left: 0;
+        padding-top: 1rem;
+    }
 }
 
 .search input {
     margin-bottom: 0 !important; /* csslint allow: important */;
+}
+
+.gsc-search-box {
+    /* Make wrap-under happen at narrower widths, and look right when it does. */
+    width: 80% !important; /* csslint allow: important */
+}
+
+.gsc-search-box td {
+    /* Stop the input box text hugging the bottom. */
+    vertical-align: top !important; /* ccslint allow: important */
 }
 
 .gsc-control-cse {
@@ -1021,6 +1076,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
     background: none !important; /* csslint allow: important */
     font-family: inherit !important; /* csslint allow: important */
     font-size: inherit !important; /* csslint allow: important */
+    margin-bottom: 6px !important; /* csslint allow: important */
 }
 
 .gsc-wrapper, .gsc-results-wrapper-overlay, .gsc-results-root {
@@ -1065,12 +1121,8 @@ td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
     padding: 0 !important; /* csslint allow: important */
 }
 
-.gsst_a {
-    padding-top: 0.45rem !important; /* csslint allow: important */
-}
-
 .gsc-search-button {
-    margin-top: 5px !important; /* csslint allow: important */
+    margin-top: 0 !important; /* csslint allow: important */
 }
 
 .gsc-webResult.gsc-result {
@@ -1194,3 +1246,353 @@ Tournaments
 .local {
     display: none; /* Will be revealed by js when we have a localized time. */
 }
+
+/*
+
+Tooltips
+
+We used tippedjs for tooltips but we don't want to load their CSS separately so here are the parts we need.
+Taken from: https://cdn.jsdelivr.net/tipped/4.0.10/css/tipped/tipped.css.
+A reasonable amount has been cut which we'll need to restore if we ever want different sizes, titles, close icons, etc.
+
+*/
+
+.tpd-tooltip {
+    position: absolute;
+}
+
+/* Fix for CSS frameworks that don't keep the use of box-sizing: border-box
+     within their own namespace */
+.tpd-tooltip,
+.tpd-tooltip [class^="tpd-"] {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+/* Content */
+.tpd-content-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    float: left;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.tpd-content-spacer,
+.tpd-content-relative,
+.tpd-content-relative-padder {
+    float: left;
+    position: relative;
+}
+
+.tpd-content-relative {
+    width: 100%;
+}
+
+.tpd-content {
+    float: left;
+    clear: both;
+    position: relative;
+    padding: 10px;
+    font-size: 11px;
+    line-height: 16px;
+    color: #fff;
+}
+
+.tpd-has-inner-close .tpd-content-relative .tpd-content { padding-right: 0 !important; /* csslint allow: important */ }
+
+.tpd-tooltip .tpd-content-no-padding { padding: 0 !important; /* csslint allow: important */ }
+
+/* Skin */
+.tpd-skin {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.tpd-frames {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.tpd-frames .tpd-frame {
+    float: left;
+    width: 100%;
+    height: 100%;
+    clear: both;
+}
+
+.tpd-backgrounds {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-transform-origin: 0% 0%;
+    transform-origin: 0% 0%;
+}
+.tpd-background-shadow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    pointer-events: none;
+}
+.tpd-no-shadow .tpd-skin .tpd-background-shadow { box-shadow: none !important; /* csslint allow: important */ }
+
+.tpd-background-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+.tpd-background-box-shift,
+.tpd-background-box-shift-further {
+    position: relative;
+    float: left;
+    width: 100%;
+    height: 100%;
+}
+.tpd-background {
+    border-radius: 10px;
+    float: left;
+    clear: both;
+    background: none;
+    border-style: solid;
+    border-width: 0px;
+    border-color: #fff; /* for browsers that don't support rgba */
+    border-color: rgba(255,255,255, 1);
+    -webkit-background-clip: padding-box; /* Safari */
+    background-clip: padding-box; /* IE9+, Firefox 4+, Opera, Chrome */
+
+    border-width: 1px;
+    border-color: #808080;
+    border-color: rgba(0,0,0,.4); /* opacity here bugs out in firefox, .tpd-background-content should have no opacity if this opacity is less than 1 */
+}
+
+/* no radius */
+.tpd-no-radius .tpd-skin .tpd-frames .tpd-frame .tpd-backgrounds .tpd-background { border-radius: 0; }
+
+.tpd-background-content {
+    float: left;
+    clear: both;
+    width: 100%;
+    background-color: #101010;
+    background-color: rgba(16,16,16,.9);
+}
+
+.tpd-background-border-hack {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-style: solid;
+}
+
+.tpd-background-box-top { top: 0; }
+.tpd-background-box-bottom { bottom: 0; }
+.tpd-background-box-left { left: 0; }
+.tpd-background-box-right { right: 0; }
+
+.tpd-shift-stem {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+.tpd-shift-stem-side {
+    position: absolute;
+}
+.tpd-frame-top .tpd-shift-stem-side,
+.tpd-frame-bottom .tpd-shift-stem-side { width: 100%; }
+.tpd-frame-left .tpd-shift-stem-side,
+.tpd-frame-right .tpd-shift-stem-side { height: 100%; }
+
+.tpd-stem {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden; /* shows possible invalid subpx rendering */
+    width: 16px; /* best cross browser stem: width = 2 x height (90deg angle) */
+    height: 8px;
+    margin-left: 3px; /* space from the side */
+    margin-top: 3px; /* space between target and stem */
+    -webkit-transform-origin: 0% 0%;
+    transform-origin: 0% 0%;
+}
+
+/* remove margins once we're done measuring */
+.tpd-tooltip .tpd-skin .tpd-frames .tpd-frame .tpd-shift-stem .tpd-stem-reset { margin: 0 !important; /* csslint allow: important */ }
+
+.tpd-stem-spacer {
+    float: left;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.tpd-stem-reset .tpd-stem-spacer { margin-top: 0; }
+
+.tpd-stem-point {
+    width: 100px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+}
+
+.tpd-stem-downscale,
+.tpd-stem-transform {
+    float: left;
+    width: 100%;
+    height: 100%;
+    -webkit-transform-origin: 0% 0%;
+    transform-origin: 0% 0%;
+    position: relative;
+}
+
+.tpd-stem-side {
+    width: 50%;
+    height: 100%;
+    float: left;
+    position: relative;
+    overflow: hidden;
+}
+.tpd-stem-side-inversed {
+    -webkit-transform: scale(-1,1);
+    transform: scale(-1,1);
+}
+.tpd-stem-triangle {
+    width: 0;
+    height: 0;
+    border-bottom-style: solid;
+    border-left-color: transparent;
+    border-left-style: solid;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.tpd-stem-border {
+    width: 20px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    background-color: #fff; /* will become transparent */
+    border-right-color: #fff;
+    border-right-style: solid;
+    border-right-width: 0;
+}
+
+.tpd-stem-border-corner {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    height: 100%;
+    border-right-style: solid;
+    border-right-width: 0;
+}
+
+/* fixes rendering issue in IE */
+.tpd-stem * { z-index: 0; zoom: 1; }
+
+/* used by IE < 9 */
+.tpd-stem-border-center-offset,
+.tpd-stem-border-center-offset-inverse {
+    float: left;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+.tpd-stem-notransform {
+    float: left;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.tpd-stem-notransform .tpd-stem-border {
+    height: 100%;
+    position: relative;
+    float: left;
+    top: 0;
+    left: 0;
+    margin: 0;
+}
+.tpd-stem-notransform .tpd-stem-border-center {
+    position: absolute;
+}
+.tpd-stem-notransform .tpd-stem-border-corner {
+    background: #fff;
+    border: 0;
+    top: auto;
+    left: auto;
+}
+.tpd-stem-notransform .tpd-stem-border-center,
+.tpd-stem-notransform .tpd-stem-triangle {
+    height: 0;
+    border: 0;
+    left: 50%;
+}
+
+/* transformations for left/right/bottom */
+.tpd-stem-transform-left {
+    -webkit-transform: rotate(-90deg) scale(-1,1);
+    transform: rotate(-90deg) scale(-1,1);
+}
+.tpd-stem-transform-right {
+    -webkit-transform: rotate(90deg) translate(0, -100%);
+    transform: rotate(90deg) translate(0, -100%);
+}
+.tpd-stem-transform-bottom {
+    -webkit-transform: scale(1,-1) translate(0, -100%);
+    transform: scale(1,-1) translate(0, -100%);
+}
+
+.tpd-size-large .tpd-content,
+.tpd-size-large .tpd-title {
+    padding: 10px;
+    font-size: 13px;
+    line-height: 18px;
+}
+.tpd-size-large .tpd-background { border-radius: 8px; }
+.tpd-size-large .tpd-stem {
+    width: 18px;
+    height: 9px;
+    margin-left: 7px;
+    margin-top: 2px;
+}
+.tpd-size-large.tpd-no-radius .tpd-stem { margin-left: 10px; }
+.tpd-size-large .tpd-loading-icon { width: 50px; height: 50px; }
+.tpd-size-large .tpd-loading-line {
+    z-index: 12;        /* amount of lines */
+    margin-bottom: 5px; /* radius of the inner circle */
+    height: 5px;        /* length of a line */
+    width: 2px;         /* width of a line */
+}
+.tpd-size-large .tpd-close { margin: 5px 2px 5px 2px; }
+
+.tpd-skin-dark .tpd-content,
+.tpd-skin-dark .tpd-title,
+.tpd-skin-dark .tpd-close { color: #fff; }
+.tpd-skin-dark .tpd-background-content,
+.tpd-skin-dark .tpd-background-title {
+    background-color: #282828;
+}
+.tpd-skin-dark .tpd-background {
+    border-width: 1px;
+    border-color: #282828;
+    border-color: rgba(255,255,255,.1);
+}
+/* line below the title */
+.tpd-skin-dark .tpd-title-wrapper { border-bottom: 1px solid #404040; }
+/* links */
+.tpd-skin-dark a,
+.tpd-skin-dark a:hover { color: #ccc; }

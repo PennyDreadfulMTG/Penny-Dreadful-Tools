@@ -6,6 +6,8 @@ from magic.database import db
 from shared import dtutil
 from shared.database import sqlescape
 
+# Database setup for the magic package. Mostly internal. To interface with what the package knows about magic cards use the `oracle` module.
+
 FORMAT_IDS = {}
 CARD_IDS = {}
 

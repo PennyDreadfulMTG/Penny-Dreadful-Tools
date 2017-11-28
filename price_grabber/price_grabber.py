@@ -58,7 +58,6 @@ def parse_prices(s):
 def store(timestamp, all_prices):
     DATABASE.begin()
     lows = {}
-    sql = 'INSERT INTO price (`time`, name, `set`, version, premium, price) VALUES (?, ?, ?, ?, ?, ?)'
     for code in all_prices:
         prices = all_prices[code]
         try:
@@ -68,7 +67,6 @@ def store(timestamp, all_prices):
             premium = False
         for name, version, p in prices:
             cents = int(float(p) * 100)
-            execute(sql, [timestamp, name, code, version, premium, cents])
             if cents < lows.get(name, sys.maxsize):
                 lows[name] = cents
     sql = 'INSERT INTO low_price (`time`, name, price) VALUES '
@@ -92,16 +90,6 @@ def execute(sql, values=None):
 
 def create_tables():
     print('Creating price tables.')
-    sql = """CREATE TABLE IF NOT EXISTS price (
-        `time` INTEGER,
-        name VARCHAR(150),
-        `set` VARCHAR(10),
-        version VARCHAR(30),
-        premium BOOLEAN,
-        price MEDIUMINT UNSIGNED,
-        INDEX idx_time (`time`)
-    )"""
-    execute(sql)
     sql = """CREATE TABLE IF NOT EXISTS cache (
         `time` INTEGER,
         name VARCHAR(150),

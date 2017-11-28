@@ -232,7 +232,8 @@ footer {
 
 section {
     float: left;
-    margin: 1rem 2.369rem 1rem 0;
+    margin: 0 2.369rem 1rem 0;
+    padding-top: 1rem;
 }
 
 /* Enable right-scroll-in-place to work by not floating things that might need right-scroll-in-place.

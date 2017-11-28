@@ -208,7 +208,7 @@ header, nav, main, footer {
 /* Ensure the margin is big enough to contain .marginalia on small displays, but no bigger. */
 @media only screen and (min-width: 641px) and (max-width: 800px) {
     header, nav, main, footer {
-        padding: 0 0 0 3.845rem ; /* (width of .marginalia (4em) + padding-left + padding-right) * font-size (0.75) */
+        padding: 0 1rem 0 3.845rem; /* (width of .marginalia (4em) + padding-left + padding-right) * font-size (0.75) */
     }
 }
 
@@ -910,7 +910,7 @@ label {
     float: left;
     margin-right: 1rem;
     text-align: right;
-    width: 10rem;
+    width: 8rem;
 }
 
 textarea {
@@ -965,6 +965,22 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
     margin: 0;
     max-width: 100%;
     width: inherit;
+}
+
+@media screen and (max-width: 800px) {
+    label {
+        float: none;
+        text-align: left;
+    }
+    button, input, textarea {
+        margin-bottom: 1rem;
+        margin-left: 0;
+        margin-top: 0.5625rem;
+        max-width: 80%;
+    }
+    button, div.error, .uploader-label {
+        margin-left: 0;
+    }
 }
 
 /*

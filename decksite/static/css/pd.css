@@ -430,8 +430,11 @@ main table {
     margin-bottom: 1em;
     visibility: hidden;
 
-    /* Tables horizontal-scroll by default but if they are not huge we override that with footable in js. */
-    display: block;
+    /*
+    Tables horizontal-scroll by default but if they are not huge we override that with footable in js.
+    Important to override the inline style that footble adds.
+    */
+    display: block !important; /* csslint allow: important */;
     overflow-x: auto;
 }
 
@@ -498,6 +501,10 @@ tr.wide td, tr.wide th {
 
 tr.wide+tr td {
     border-top: 0.05rem #999 solid;
+}
+
+.footable-details tr.wide td {
+    border-top: 0;
 }
 
 tr.wide td.wide {

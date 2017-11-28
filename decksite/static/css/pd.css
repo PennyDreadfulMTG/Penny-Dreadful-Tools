@@ -830,6 +830,7 @@ h2.section {
     font-size: 0.75rem;
     /* Compensate for difference between this font-size and the font-size of the h2. */
     line-height: 1;
+    margin-left: 1rem;
     margin-top: 0.333rem;
 }
 

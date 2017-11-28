@@ -232,7 +232,7 @@ footer {
 
 section {
     float: left;
-    margin: 0 2.369rem 1rem 0;
+    margin: 0 3.8445rem /* Width of .marginalia + left-padding + right-padding * font-size */ 1rem 0;
     padding-top: 1rem;
 }
 

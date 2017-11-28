@@ -131,7 +131,7 @@ def foreign_key_def(name, fk):
 
 def unique_constraint_def(name, cols):
     cols = [name] + cols
-    return 'UNIQUE KEY `{name}` ({cols})'.format(name='_'.join(cols), cols=', '.join('`{col}`'.format(col=col) for col in cols))
+    return 'CONSTRAINT `{name}` UNIQUE ({cols})'.format(name='_'.join(cols), cols=', '.join('`{col}`'.format(col=col) for col in cols))
 
 def create_table_def(name, props):
     sql = 'CREATE TABLE IF NOT EXISTS `{name}` ('

@@ -129,12 +129,19 @@ def column_def(name, prop):
 def foreign_key_def(name, fk):
     return 'FOREIGN KEY(`{name}`) REFERENCES `{table}`(`{column}`)'.format(name=name, table=fk[0], column=fk[1])
 
+def unique_constraint_def(name, cols):
+    cols = [name] + cols
+    return 'UNIQUE KEY `{name}` ({cols})'.format(name='_'.join(cols), cols=', '.join('`{col}`'.format(col=col) for col in cols))
+
 def create_table_def(name, props):
     sql = 'CREATE TABLE IF NOT EXISTS `{name}` ('
     sql += ', '.join(column_def(name, prop) for name, prop in props.items())
     fk = ', '.join(foreign_key_def(name, prop['foreign_key']) for name, prop in props.items() if prop['foreign_key'])
+    uc = ', '.join(unique_constraint_def(name, prop['unique_with']) for name, prop in props.items() if prop['unique_with'])
     if fk:
         sql += ', ' + fk
+    if uc:
+        sql += ', ' + uc
     sql += ')'
     if db().is_mysql():
         sql += ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'

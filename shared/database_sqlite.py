@@ -19,6 +19,7 @@ class SqliteDatabase(GenericDatabase):
     def execute(self, sql, args=None):
         sql = sql.replace('MEDIUMINT UNSIGNED', 'INTEGER') # Column type difference.
         sql = sql.replace(' SEPARATOR ', ', ') # MySQL/SQLite GROUP_CONCAT syntax difference.
+        sql = sql.replace('INSERT IGNORE', 'INSERT ON CONFLICT IGNORE') # MySQL/SQLite difference.
         sql = sql.replace('%%', '%') # MySQLDB and apsw escaping difference.
         if args is None:
             args = []

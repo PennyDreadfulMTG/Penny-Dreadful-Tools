@@ -980,7 +980,7 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
         float: none;
         text-align: left;
     }
-    button, input, textarea {
+    button, input, select, textarea {
         margin-bottom: 1rem;
         margin-left: 0;
         margin-top: 0.5625rem;

@@ -248,7 +248,7 @@ section section {
     margin-bottom: 0;
 }
 
-div:after, header:after, nav:after, main:after, footer:after, section:after {
+div:after, header:after, nav:after, main:after, footer:after, section:after, .decklist {
     clear: both;
     content: "";
     display: table;
@@ -817,6 +817,20 @@ Deck
 
 .bye {
     font-size: 0.8rem;
+}
+
+h2.section {
+    float: left;
+    width: 100%;
+}
+
+.total {
+    color: #999;
+    float: right;
+    font-size: 0.75rem;
+    /* Compensate for difference between this font-size and the font-size of the h2. */
+    line-height: 1;
+    margin-top: 0.333rem;
 }
 
 /*

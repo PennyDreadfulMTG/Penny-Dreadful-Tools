@@ -587,7 +587,6 @@ def cards_from_queries(queries):
 def complex_search(query):
     if query == '':
         return []
-    print('Searching for {query}'.format(query=query))
     return search.search(query)
 
 def roughly_matches(s1, s2):

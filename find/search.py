@@ -162,6 +162,8 @@ def parse_criterion(key, operator, term):
         return mana_where(operator.value(), term.value())
     elif key.value() == 'is':
         return is_subquery(term.value())
+    elif key.value() == 'playable' or key.value() == 'p':
+        return playable_where(term.value())
 
 def text_where(column, term):
     q = term
@@ -258,6 +260,29 @@ def mana_where(operator, term):
     else:
         raise InvalidTokenException('mana expects `:` or `=` not `{operator}`. Did you want cmc?'.format(operator=operator))
     return '({clause})'.format(clause=clause)
+
+def playable_where(term):
+    term = term.upper()
+    try:
+        colors = set(mana.parse(term))
+    except mana.InvalidManaCostException as e:
+        raise InvalidTokenException(e)
+    symbols_without_curlies = colors.copy()
+    # Colorless
+    symbols_without_curlies.add('C')
+    all_colors = ['W', 'U', 'B', 'R', 'G']
+    # Phyrexian
+    symbols_without_curlies.update(['{c}/P'.format(c=c) for c in all_colors])
+    # Twobrid
+    symbols_without_curlies.update(['2/{c}'.format(c=c) for c in all_colors])
+    for color in colors:
+        # Hybrid
+        symbols_without_curlies.update(['{color}/{other}'.format(color=color, other=other) for other in all_colors if other != color])
+        symbols_without_curlies.update(['{other}/{color}'.format(color=color, other=other) for other in all_colors if other != color])
+    where = "mana_cost"
+    for symbol in symbols_without_curlies:
+        where = "REPLACE({where}, '{{{symbol}}}', '')".format(where=where, symbol=symbol)
+    return "{where} = ''".format(where=where)
 
 def value_lookup(table, value):
     if not VALUE_LOOKUP:

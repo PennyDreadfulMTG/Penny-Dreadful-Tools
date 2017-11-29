@@ -160,7 +160,7 @@ def parse_criterion(key, operator, term):
         return rarity_where(operator.value(), term.value())
     elif key.value() == 'mana' or key.value() == 'm':
         return mana_where(operator.value(), term.value())
-    elif  key.value() == 'is':
+    elif key.value() == 'is':
         return is_subquery(term.value())
 
 def text_where(column, term):
@@ -302,6 +302,10 @@ def init_value_lookup():
             VALUE_LOOKUP['color_identity'] = d
 
 def is_subquery(subquery_name):
+    if subquery_name == 'split':
+        return "(c.layout = 'split' OR c.layout = 'aftermath')"
+    if subquery_name in multiverse.layouts():
+        return '(c.layout = {layout})'.format(layout=sqlescape(subquery_name))
     subqueries = {
         'gainland': 't:land o:"When ~ enters the battlefield, you gain 1 life"',
         'painland': 't:land o:"~ deals 1 damage to you."',

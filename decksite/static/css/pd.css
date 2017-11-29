@@ -470,6 +470,13 @@ main th, main td {
     white-space: nowrap;
 }
 
+/* Drop max-width of a column on x-small viewports to fit more columns in. */
+@media screen and (max-width: 640px) {
+    main th, main td {
+        max-width: 10em;
+    }
+}
+
 /* Allow elements in the margin to show. */
 td.marginalia:first-child, th.marginalia:first-child {
     overflow: visible;

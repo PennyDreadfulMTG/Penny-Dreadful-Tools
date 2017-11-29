@@ -54,6 +54,7 @@ def face_properties():
     props['name_ascii']['query'] = """{name_query} AS name_ascii""".format(name_query=name_query('name_ascii'))
     props['cmc']['query'] = """{cmc_query} AS cmc""".format(cmc_query=cmc_query())
     props['mana_cost']['query'] = "GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '|') AS `{column}`"
+    props['type']['query'] = """{type_query} AS type""".format(type_query=type_query())
     for k in ['text', 'search_text']:
         props[k]['query'] = "GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '\n-----\n') AS `{column}`"
         props[k]['type'] = TEXT
@@ -195,6 +196,16 @@ def cmc_query():
             SUM(`{table}`.cmc)
         ELSE
             SUM(CASE WHEN `{table}`.position = 1 THEN `{table}`.cmc ELSE 0 END)
+        END
+    """
+
+def type_query():
+    return """
+        CASE
+        WHEN layout = 'meld' THEN
+            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 OR `{table}`.position = 2 THEN {column} ELSE '' END SEPARATOR '')
+        ELSE
+            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END SEPARATOR '')
         END
     """
 

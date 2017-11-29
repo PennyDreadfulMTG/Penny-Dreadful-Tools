@@ -20,7 +20,8 @@ BASE = {
     'mtgjson': True,
     'foreign_key': None,
     'default': None,
-    'unique': False
+    'unique': False,
+    'unique_with': None
 }
 
 def card_properties():
@@ -112,6 +113,7 @@ def card_color_properties():
         props[k]['type'] = INTEGER
         props[k]['nullable'] = False
     props['id']['primary_key'] = True
+    props['card_id']['unique_with'] = ['color_id']
     props['card_id']['foreign_key'] = ('card', 'id')
     props['color_id']['foreign_key'] = ('color', 'id')
     return props

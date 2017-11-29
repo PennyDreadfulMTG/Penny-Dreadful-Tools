@@ -54,6 +54,7 @@ class View:
                 {'name': 'Archetypes', 'url': url_for('archetypes'), 'badge': archetypes_badge},
                 {'name': 'People', 'url': url_for('people')},
                 {'name': 'Cards', 'url': url_for('cards')},
+                {'name': 'Past Seasons', 'url': url_for('seasons')}
             ]},
             {'name': 'League', 'url': url_for('league'), 'submenu': [
                 {'name': 'League Info', 'url': url_for('league')},
@@ -82,6 +83,9 @@ class View:
         ]
         for item in menu:
             item['has_submenu'] = item.get('submenu') is not None
+            item['is_external'] = item.get('url', '').startswith('http') and '://pennydreadfulmagic.com/' not in item['url']
+            for subitem in item.get('submenu', []):
+                subitem['is_external'] = subitem.get('url', '').startswith('http') and '://pennydreadfulmagic.com/' not in subitem['url']
         return menu
 
     def favicon_url(self):

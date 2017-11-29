@@ -14,7 +14,7 @@ from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
 from decksite.charts import chart
 from decksite.league import ReportForm, RetireForm, SignUpForm
-from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChecklist, Season, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
+from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
 
 # Decks
 
@@ -30,10 +30,16 @@ def decks(deck_id):
     view = Deck(deck.load_deck(deck_id))
     return view.page()
 
+@APP.route('/seasons/')
+@cached()
+def seasons():
+    view = Seasons()
+    return view.page()
+
 @APP.route('/seasons/<season_id>/')
 @APP.route('/seasons/<season_id>/<deck_type>/')
 @cached()
-def season(season_id=None, deck_type=None):
+def season(season_id, deck_type=None):
     league_only = deck_type == 'league'
     view = Season(deck.load_season(season_id, league_only), league_only)
     return view.page()

@@ -208,7 +208,7 @@ header, nav, main, footer {
 /* Ensure the margin is big enough to contain .marginalia on small displays, but no bigger. */
 @media only screen and (min-width: 641px) and (max-width: 800px) {
     header, nav, main, footer {
-        padding: 0 0 0 3.845rem ; /* (width of .marginalia (4em) + padding-left + padding-right) * font-size (0.75) */
+        padding: 0 1rem 0 3.845rem; /* (width of .marginalia (4em) + padding-left + padding-right) * font-size (0.75) */
     }
 }
 
@@ -232,7 +232,8 @@ footer {
 
 section {
     float: left;
-    margin: 1rem 2.369rem 1rem 0;
+    margin: 0 3.8445rem /* Width of .marginalia + left-padding + right-padding * font-size */ 1rem 0;
+    padding-top: 1rem;
 }
 
 /* Enable right-scroll-in-place to work by not floating things that might need right-scroll-in-place.
@@ -433,8 +434,11 @@ main table {
     margin-bottom: 1em;
     visibility: hidden;
 
-    /* Tables horizontal-scroll by default but if they are not huge we override that with footable in js. */
-    display: block;
+    /*
+    Tables horizontal-scroll by default but if they are not huge we override that with footable in js.
+    Important to override the inline style that footble adds.
+    */
+    display: block !important; /* csslint allow: important */;
     overflow-x: auto;
 }
 
@@ -470,6 +474,13 @@ main th, main td {
     white-space: nowrap;
 }
 
+/* Drop max-width of a column on x-small viewports to fit more columns in. */
+@media screen and (max-width: 640px) {
+    main th, main td {
+        max-width: 10em;
+    }
+}
+
 /* Allow elements in the margin to show. */
 td.marginalia:first-child, th.marginalia:first-child {
     overflow: visible;
@@ -501,6 +512,10 @@ tr.wide td, tr.wide th {
 
 tr.wide+tr td {
     border-top: 0.05rem #999 solid;
+}
+
+.footable-details tr.wide td {
+    border-top: 0;
 }
 
 tr.wide td.wide {
@@ -620,7 +635,7 @@ table.with-marginalia.footable-details {
         /* Override the inline style `display: table-cell` added by footable */;
         display: none !important; /* csslint allow: important */
     }
-    table.with-marginalia thead th:first-child, table.with-marginalia thead td:first-child {
+    table.footable-details.with-marginalia tbody tr:first-child th:first-child {
         /* Override the inline style `display: table-cell` added by footable */;
         display: none !important; /* csslint allow: important */
     }
@@ -917,7 +932,7 @@ label {
     float: left;
     margin-right: 1rem;
     text-align: right;
-    width: 10rem;
+    width: 8rem;
 }
 
 textarea {
@@ -972,6 +987,22 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
     margin: 0;
     max-width: 100%;
     width: inherit;
+}
+
+@media screen and (max-width: 800px) {
+    label {
+        float: none;
+        text-align: left;
+    }
+    button, input, select, textarea {
+        margin-bottom: 1rem;
+        margin-left: 0;
+        margin-top: 0.5625rem;
+        max-width: 80%;
+    }
+    button, div.error, .uploader-label {
+        margin-left: 0;
+    }
 }
 
 /*
@@ -1091,7 +1122,8 @@ We need to override a lot of Google's inline styles hence a lot of !important.
     background: transparent !important; /* csslint allow: important */
     border: 0 !important; /* csslint allow: important */
     color: #502828 !important; /* csslint allow: important */
-    width: 20rem !important; /* csslint allow: important */
+    max-width: 20rem !important; /* csslint allow: important */
+    width: 100% !important; /* csslint allow: important */
 }
 
 .gsc-input {

@@ -10,7 +10,6 @@ PD.init = function () {
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
     PD.showLocalTimes();
     $.get("/api/admin/", PD.showBadge);
-    PD.initBugIcons();
 };
 PD.initMenu = function () {
     $(".has-submenu").hoverIntent({
@@ -119,7 +118,7 @@ PD.initTooltips = function () {
         if (typeof Deckbox != "undefined") {
             Deckbox._.enable();
         }
-        Tipped.create("main [title]", {"showDelay": 1000, "size": "large"});
+        Tipped.create("main [title]", {"showDelay": 1000, "size": "large", maxWidth: "200"});
         $("body").off();
     });
 }
@@ -161,13 +160,6 @@ PD.showLocalTimes = function () {
     $(".time").each(function () {
         var t = moment($(this).data("time"));
         $(this).html(t.tz(moment.tz.guess()).format("dddd h:mma z")).parent(".local").show();
-    });
-}
-PD.initBugIcons = function() {
-    $(".card.bugged").each(function() {
-        var element = $("<div class=\"bugicon\"> 🐞 </div>")
-        element.insertAfter($(this));
-        Tipped.create(element, $(this).attr("data-bug-desc"), {maxWidth: "200"});
     });
 }
 

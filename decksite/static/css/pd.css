@@ -862,9 +862,13 @@ p.bugged {
     width: 21.034rem;
 }
 
+.decklist li {
+    clear: both;
+}
 
 .bugicon {
     float:left;
+    margin-left: 0.2em;
 }
 
 .illegal::after {

@@ -82,6 +82,9 @@ class View:
         ]
         for item in menu:
             item['has_submenu'] = item.get('submenu') is not None
+            item['is_external'] = item.get('url', '').startswith('http') and '://pennydreadfulmagic.com/' not in item['url']
+            for subitem in item.get('submenu', []):
+                subitem['is_external'] = subitem.get('url', '').startswith('http') and '://pennydreadfulmagic.com/' not in subitem['url']
         return menu
 
     def favicon_url(self):

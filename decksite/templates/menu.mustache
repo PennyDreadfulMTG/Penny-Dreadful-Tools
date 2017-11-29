@@ -11,7 +11,7 @@
                 <div class="submenu-container">
                     <ul>
                         {{#submenu}}
-                             <li><a href="{{url}}">{{name}}</a></li>
+                             <li><a {{#is_external}}class="external"{{/is_external}} href="{{url}}">{{name}}</a></li>
                         {{/submenu}}
                     </ul>
                 </div>

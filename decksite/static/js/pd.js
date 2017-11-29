@@ -1,4 +1,4 @@
-/*global PD:true Deckbox:false */
+/*global PD:true Deckbox:false FooTable:false */
 window.PD = {};
 PD.init = function () {
     PD.initMenu();
@@ -150,6 +150,7 @@ PD.toggleIllegalCards = function () {
     $(".bugtable tr td").each(function() {
         $(this).css({"width": $(this).width() + "px"});
     });
+    $(".bugtable").not(".footable-details").each(function () { FooTable.get(this).rows.collapse(); });
     $("tr").find(".illegal").closest("tr").toggle(!this.checked);
 }
 PD.showBadge = function (show) {

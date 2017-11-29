@@ -380,8 +380,8 @@ main table a:hover, main h1 a:hover, main h2 a:hover, main h3 a:hover, main li a
 /* Mark links that go off-site. */
 a.external:after {
     background: none;
-    content: "﻿↑";
-    font-size: 0.75rem;
+    content: "↑";
+    font-size: 0.563em; /* em because it should be relative to the text size it is attached to. */
     position: relative;
     text-decoration: none; /* Although this is a link we don't want the external indicator underlined. */
     text-indent: 0; /* Don't inherit from parent and apply again. */

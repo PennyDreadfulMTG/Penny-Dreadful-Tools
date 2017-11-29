@@ -131,7 +131,7 @@ class View:
         if d.source_name == 'League' and d.wins + d.losses < 5 and d.competition_end_date > dtutil.now() and not d.get('retired', False):
             d.stars_safe = '<span title="Active in the current league">⊕</span> {stars}'.format(stars=d.stars_safe).strip()
             d.source_sort = '1'
-        d.source_is_external = True if d.source_name == 'League' else False
+        d.source_is_external = False if d.source_name == 'League' else True
         d.comp_row_len = len("{comp_name} (Piloted by {person}".format(comp_name=d.competition_name, person=d.person))
         if d.get('archetype_id', None):
             d.archetype_url = '/archetypes/{id}/'.format(id=d.archetype_id)

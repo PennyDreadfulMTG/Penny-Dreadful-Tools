@@ -470,6 +470,13 @@ main th, main td {
     white-space: nowrap;
 }
 
+/* Drop max-width of a column on x-small viewports to fit more columns in. */
+@media screen and (max-width: 640px) {
+    main th, main td {
+        max-width: 10em;
+    }
+}
+
 /* Allow elements in the margin to show. */
 td.marginalia:first-child, th.marginalia:first-child {
     overflow: visible;
@@ -624,7 +631,7 @@ table.with-marginalia.footable-details {
         /* Override the inline style `display: table-cell` added by footable */;
         display: none !important; /* csslint allow: important */
     }
-    table.with-marginalia thead th:first-child, table.with-marginalia thead td:first-child {
+    table.footable-details.with-marginalia tbody tr:first-child th:first-child {
         /* Override the inline style `display: table-cell` added by footable */;
         display: none !important; /* csslint allow: important */
     }
@@ -1108,7 +1115,8 @@ We need to override a lot of Google's inline styles hence a lot of !important.
     background: transparent !important; /* csslint allow: important */
     border: 0 !important; /* csslint allow: important */
     color: #502828 !important; /* csslint allow: important */
-    width: 20rem !important; /* csslint allow: important */
+    max-width: 20rem !important; /* csslint allow: important */
+    width: 100% !important; /* csslint allow: important */
 }
 
 .gsc-input {

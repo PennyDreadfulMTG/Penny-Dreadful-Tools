@@ -54,6 +54,7 @@ class View:
                 {'name': 'Archetypes', 'url': url_for('archetypes'), 'badge': archetypes_badge},
                 {'name': 'People', 'url': url_for('people')},
                 {'name': 'Cards', 'url': url_for('cards')},
+                {'name': 'Past Seasons', 'url': url_for('seasons')}
             ]},
             {'name': 'League', 'url': url_for('league'), 'submenu': [
                 {'name': 'League Info', 'url': url_for('league')},

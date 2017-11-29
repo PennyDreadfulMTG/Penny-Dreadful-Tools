@@ -171,7 +171,7 @@ def active_league():
     where = 'c.id = ({id_query})'.format(id_query=active_competition_id_query())
     leagues = competition.load_competitions(where)
     if len(leagues) == 0:
-        start_date = datetime.datetime.combine(dtutil.now().date(), datetime.time(tzinfo=dtutil.WOTC_TZ))
+        start_date = dtutil.now(tz=dtutil.WOTC_TZ)
         end_date = determine_end_of_league(start_date)
         name = "League {MM} {YYYY}".format(MM=calendar.month_name[end_date.month], YYYY=end_date.year)
         comp_id = competition.get_or_insert_competition(start_date, end_date, name, 'League', None)

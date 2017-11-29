@@ -839,6 +839,20 @@ h2.section {
     width: 100%;
 }
 
+main .banner h1 {
+    margin-bottom: 0; /* This is in case the button bar wraps under. We don't want it too far from the title. */
+}
+
+.title {
+    float: left;
+    margin-bottom: 0;
+}
+
+.subtitle {
+    color: #999;
+    font-size: 0.75rem;
+}
+
 .total {
     color: #999;
     float: right;
@@ -847,6 +861,34 @@ h2.section {
     line-height: 1;
     margin-left: 1rem;
     margin-top: 0.333rem;
+}
+
+/* Button bar at top-right of deck page */
+
+ul.export {
+    float: right;
+    padding-left: 0; /* For when we wrap under the title. We'll use the title's right-margin to stay far enough away until wrapping. */
+    margin-top: 2rem; /* Line up with the h1 of the title when not wrapped under. */
+}
+
+ul.export li {
+    float: left;
+    list-style-type: none;
+    margin-left: 0.75rem;
+}
+
+ul.export li a {
+    color: #999;
+    border: 0.05rem solid #eee;
+    border-radius: 0.563em;
+    display: block;
+    font-size: 0.75rem;
+    padding: 0.422em 1em;
+    text-align: center;
+}
+
+ul.export li a:hover {
+    background: #eee;
 }
 
 /*

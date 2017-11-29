@@ -370,11 +370,11 @@ Want to contribute? Send a Pull Request."""
         imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
         imagepath = '{image_dir}/{imagename}.jpg'.format(image_dir=configuration.get('image_dir'), imagename=imagename)
         if sfcard.get('card_faces'):
-            card = sfcard['card_faces'][0]
+            c = sfcard['card_faces'][0]
         else:
-            card = sfcard
-        fetcher.internal.store(card['image_uris']['normal'], imagepath)
-        text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=card['mana_cost']), bot.client)
+            c = sfcard
+        fetcher.internal.store(c['image_uris']['normal'], imagepath)
+        text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=c['mana_cost']), bot.client)
         await bot.client.send_file(channel, imagepath, content=text)
         oracle.scryfall_import(sfcard['name'])
 

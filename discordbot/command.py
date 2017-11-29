@@ -369,8 +369,12 @@ Want to contribute? Send a Pull Request."""
             return await bot.client.send_message(channel, '{author}: {details}'.format(author=author.mention, details=sfcard['details']))
         imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
         imagepath = '{image_dir}/{imagename}.jpg'.format(image_dir=configuration.get('image_dir'), imagename=imagename)
-        fetcher.internal.store(sfcard['image_uris']['normal'], imagepath)
-        text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=sfcard['mana_cost']), bot.client)
+        if sfcard.get('card_faces'):
+            c = sfcard['card_faces'][0]
+        else:
+            c = sfcard
+        fetcher.internal.store(c['image_uris']['normal'], imagepath)
+        text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=c['mana_cost']), bot.client)
         await bot.client.send_file(channel, imagepath, content=text)
         oracle.scryfall_import(sfcard['name'])
 
@@ -570,7 +574,7 @@ def uniqify_cards(cards):
 
 def parse_queries(content: str) -> List[str]:
     queries = re.findall(r'\[?\[([^\]]*)\]\]?', content)
-    return [query.lower() for query in queries]
+    return [query.lower() for query in queries if len(query) > 2]
 
 def cards_from_queries(queries):
     all_cards = []

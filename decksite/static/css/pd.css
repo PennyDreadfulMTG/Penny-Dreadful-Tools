@@ -864,30 +864,18 @@ Cards are 445px tall images that are usually 312px wide but may be wider if they
 }
 
 /* Constrain the width of the bug description so it doesn't prevent wrapping of other interesting content alongside the card image. */
-p.bugged {
+p.bug-desc {
     width: 10.517rem; /* The width of a card when the height is card-img above. */
 }
 
 /* When we have a DFC or a Meld card and show two images side-by-side allow them (and bug text below) to be twice the width of a normal card image. */
-.card-img.two-faces, p.bugged.two-faces {
+.card-img.two-faces, p.bug-desc.two-faces {
     width: 21.034rem;
-}
-
-
-.bugged::after {
-    content: "🐞 ";
-    margin-left: 0.2em;
 }
 
 .illegal::after {
     content: "﻿🚫";
     margin-left: 0.2em;
-}
-
-.bugged.illegal:after {
-    content: "﻿🐞 🚫";
-    margin-left: 0.2em;
-
 }
 
 /*

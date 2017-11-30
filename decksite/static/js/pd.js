@@ -118,7 +118,7 @@ PD.initTooltips = function () {
         if (typeof Deckbox != "undefined") {
             Deckbox._.enable();
         }
-        Tipped.create("main [title]", {"showDelay": 1000, "size": "large"});
+        Tipped.create("main [title]", {"showDelay": 1000, "size": "large", maxWidth: "200"});
         $("body").off();
     });
 }
@@ -163,6 +163,7 @@ PD.showLocalTimes = function () {
         $(this).html(t.tz(moment.tz.guess()).format("dddd h:mma z")).parent(".local").show();
     });
 }
+
 $(document).ready(function () {
     PD.init();
 });

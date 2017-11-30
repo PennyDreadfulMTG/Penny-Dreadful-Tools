@@ -245,8 +245,8 @@ section {
 }
 
 section section {
-    margin-top: 0;
-    margin-bottom: 0;
+    margin: 0 2rem 0 0;
+    padding-top: 0;
 }
 
 div:after, header:after, nav:after, main:after, footer:after, section:after, .total:after {

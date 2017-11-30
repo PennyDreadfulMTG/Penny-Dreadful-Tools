@@ -1,1 +1,6 @@
-<li><a href="{{card.url}}" class="{{^card.pd_legal}}illegal{{/card.pd_legal}} {{#card.bug_desc}}bugged{{/card.bug_desc}} card">{{n}} {{name}}</a></li>
+<li>
+    <a href="{{card.url}}" class="{{^card.pd_legal}}illegal{{/card.pd_legal}} card">{{n}} {{name}}</a>
+    {{#card.bug_desc}}
+        <a href="{{card.url}}" class="bug" title="{{card.bug_class}}: {{card.bug_desc}}">🐞</a>
+    {{/card.bug_desc}}
+</li>

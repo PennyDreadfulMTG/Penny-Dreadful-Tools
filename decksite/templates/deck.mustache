@@ -1,4 +1,24 @@
-<h1>{{name}} by <a href="{{person_url}}">{{person}}</a></h1>
+<div class="banner">
+    <div class="title">
+        <h1>{{name}}</h1>
+        <div class="subtitle">
+            {{#archetype_id}}<a href="{{archetype_url}}">{{archetype_name}}</a>{{/archetype_id}}
+            deck
+            by <a href="{{person_url}}">{{person}}</a>
+        </div>
+        <div class="subtitle">
+            {{display_date}}
+        </div>
+        <div class="subtitle">
+            <a href="{{competition_url}}">{{source_name}} {{> record}}</a>
+        </div>
+    </div>
+    <ul class="export">
+        <li><a title="Magic Online Download (txt)" href="{{export_url}}">Download</a></li>
+        <li><a title="Buy on Cardhoarder" class="external" href="{{cardhoarder_url}}">Buy</a></li>
+         <li><a title="View decklist source ({{source_name}})" {{#source_is_external}}class="external"{{/source_is_external}} href="{{source_url}}">Source</a></li>
+    </ul>
+</div>
 <section>
     {{#sections}}
         {{> section}}
@@ -77,21 +97,16 @@
         {{> decktable}}
     </section>
 {{/has_similar}}
-<section>
-    <h2>Notes</h2>
-    <p>Created: {{display_date}}</p>
-    {{#archetype_id}}<p>Archetype: <a href="{{archetype_url}}">{{archetype_name}}</a></p>{{/archetype_id}}
-    {{#admin}}
-        <p>
-            <form class="inline" method="post" action="{{edit_archetype_url}}">
-                <input type="hidden" name="deck_id" value="{{id}}">
-                {{> archetypedropdown}}
-                <button type="submit">Assign</button>
-            </form>
-        </p>
-    {{/admin}}
-    <p>Source: <a {{#source_is_external}}class="external" {{/source_is_external}}href="{{source_url}}">{{source_name}}</a></p>
-    <p>Export: <a href="{{export_url}}">Magic Online (txt)</a></p>
-    <p><a class="external" href="{{cardhoarder_url}}">Buy on Cardhoarder</a></p>
-</section>
 {{> legal}}
+{{#admin}}
+    <section>
+        <h2>Admin</h2>
+            <p>
+                <form class="inline" method="post" action="{{edit_archetype_url}}">
+                    <input type="hidden" name="deck_id" value="{{id}}">
+                    {{> archetypedropdown}}
+                    <button type="submit">Assign</button>
+                </form>
+            </p>
+    </section>
+{{/admin}}

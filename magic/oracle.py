@@ -1,3 +1,5 @@
+import sys
+
 from magic import card, fetcher, mana, multiverse
 from magic.database import db
 from shared.database import sqlescape
@@ -166,6 +168,22 @@ def cards_from_query(query, fuzziness_threshold=260):
         names = [card.canonicalize(name) for name in c.names]
         for name in names:
             if name.startswith(query):
+                results.append(c)
+    if len(results) > 0:
+        return results
+
+    # If we have fuzzy matching then chop off the bad matches if we have good matches.
+    if db().is_sqlite():
+        sql = 'SELECT word, score FROM fuzzy WHERE word MATCH ? ORDER BY score ASC'
+        fuzzy_query = '{query}*'.format(query=query)
+        rs = db().execute(sql, [fuzzy_query])
+        if len(rs) == 0:
+            return cards
+        threshold = rs[0]['score'] * 2
+        scores = {row['word']: row['score'] for row in rs}
+        for c in cards:
+            names = [card.canonicalize(name) for name in c.names]
+            if min([scores.get(name, sys.maxsize) for name in names]) <= threshold:
                 results.append(c)
     if len(results) > 0:
         return results

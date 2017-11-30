@@ -1145,7 +1145,6 @@ We need to override a lot of Google's inline styles hence a lot of !important.
     background: transparent !important; /* csslint allow: important */
     border: 0 !important; /* csslint allow: important */
     color: #502828 !important; /* csslint allow: important */
-    max-width: 20rem !important; /* csslint allow: important */
     width: 100% !important; /* csslint allow: important */
 }
 
@@ -1159,14 +1158,20 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 .gsc-wrapper, .gsc-results-wrapper-overlay, .gsc-results-root {
     background: #f9f9f9 !important; /* csslint allow: important */
     color: #502828 !important; /* csslint allow: important */
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important; /* csslint allow: important */
     font-size: 1em !important; /* csslint allow: important */
     line-height: 1.333 !important; /* csslint allow: important */
 }
 
-.gsc-wrapper a {
+.gsc-results-wrapper-overlay {
+    max-width: 30em !important; /* csslint allow: important */
+}
+
+.gsc-results-wrapper-overlay * {
+    color: #502828;
+}
+
+.gsc-wrapper a, .gs-title {
     text-decoration: none !important; /* csslint allow: important */
-    text-transform: none;
 }
 
 .gsc-snippet {
@@ -1206,13 +1211,26 @@ td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
     border-bottom: 0.05rem solid #eee !important; /* csslint allow: important */
 }
 
-/* Ideally this should be the underline from p a above but this is better than nothing. */
-.gs-title {
-    text-decoration: underline !important; /* csslint allow: important */
- }
-
 .search tr {
     border-bottom: 0;
+}
+
+.gsc-result-info-container, .gs-snippet {
+    /* Not sure why it doesn't pick up the definiton on HTML but it doesn't. */
+    font: 400 20px main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.gsc-control-cse .gs-result .gs-title, .gsc-control-cse .gs-result .gs-title * {
+    font-size: 1rem !important; /* csslint allow: important */
+}
+
+.gsc-result-info, .gs-snippet {
+    font-size: 0.75rem !important; /* csslint allow: important */
+}
+
+.gs-no-results-result .gs-snippet, .gs-error-result .gs-snippet {
+    background-color: #eee !important; /* csslint allow: important */
+    border-color: #999 !important; /* csslint allow: important */
 }
 
 /*

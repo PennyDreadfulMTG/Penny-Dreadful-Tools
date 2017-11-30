@@ -1111,6 +1111,8 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 
 */
 
+/* Search Box */
+
 .search {
     float: right;
     margin-left: 1rem;
@@ -1145,6 +1147,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
     background: transparent !important; /* csslint allow: important */
     border: 0 !important; /* csslint allow: important */
     color: #502828 !important; /* csslint allow: important */
+    max-width: 20rem !important; /* csslint allow: important */
     width: 100% !important; /* csslint allow: important */
 }
 
@@ -1155,6 +1158,8 @@ We need to override a lot of Google's inline styles hence a lot of !important.
     margin-bottom: 6px !important; /* csslint allow: important */
 }
 
+/* Search Results */
+
 .gsc-wrapper, .gsc-results-wrapper-overlay, .gsc-results-root {
     background: #f9f9f9 !important; /* csslint allow: important */
     color: #502828 !important; /* csslint allow: important */
@@ -1163,15 +1168,26 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 }
 
 .gsc-results-wrapper-overlay {
-    max-width: 30em !important; /* csslint allow: important */
+    max-width: 30rem !important; /* csslint allow: important */
 }
 
 .gsc-results-wrapper-overlay * {
-    color: #502828;
+    color: #502828 !important; /* csslint allow: important */
+    font: 400 20px main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 0.75rem !important; /* csslint allow: important */
 }
 
-.gsc-wrapper a, .gs-title {
+.gs-visibleUrl {
+    display: none !important; /* csslint allow: important */
+}
+
+.gsc-wrapper a, .gs-title, .gs-title * {
+    font-family: heading-caps;
     text-decoration: none !important; /* csslint allow: important */
+}
+
+.gs-title {
+    margin-bottom: 1rem;
 }
 
 .gsc-snippet {
@@ -1186,8 +1202,9 @@ td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
     text-decoration: none !important; /* csslint allow: important */
 }
 
-.gs-title, .gs-title b {
+.gs-title, .gs-title * {
     height: inherit !important; /* csslint allow: important */
+    line-height: 1 !important; /* csslint allow: important */
     text-decoration: none !important; /* csslint allow: important */
 }
 
@@ -1220,12 +1237,14 @@ td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
     font: 400 20px main-text, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-.gsc-control-cse .gs-result .gs-title, .gsc-control-cse .gs-result .gs-title * {
-    font-size: 1rem !important; /* csslint allow: important */
+.gs-snippet, .gsc-result-info {
+    color: #999 !important; /* csslint allow: important */
+    margin-bottom: 1rem;
+    margin-top: 1rem;
 }
 
-.gsc-result-info, .gs-snippet {
-    font-size: 0.75rem !important; /* csslint allow: important */
+.gsc-control-cse .gs-result .gs-title, .gsc-control-cse .gs-result .gs-title * {
+    font-size: 1rem !important; /* csslint allow: important */
 }
 
 .gs-no-results-result .gs-snippet, .gs-error-result .gs-snippet {

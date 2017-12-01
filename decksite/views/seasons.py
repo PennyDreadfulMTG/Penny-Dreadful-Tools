@@ -1,6 +1,6 @@
 from flask import url_for
 
-from magic import multiverse
+from magic import multiverse, rotation
 
 from decksite.view import View
 
@@ -9,7 +9,10 @@ class Seasons(View):
     def __init__(self):
         self.seasons = []
         num = 1
+        next_rotation_set_code = rotation.next_rotation_ex()['code']
         for code in multiverse.SEASONS:
+            if code == next_rotation_set_code:
+                break
             self.seasons.append({
                 'code': code,
                 'num': num,

@@ -173,7 +173,7 @@ def active_league():
     if len(leagues) == 0:
         start_date = dtutil.now(tz=dtutil.WOTC_TZ)
         end_date = determine_end_of_league(start_date)
-        name = "League {MM} {YYYY}".format(MM=calendar.month_name[end_date.month], YYYY=end_date.year)
+        name = determine_league_name(end_date)
         comp_id = competition.get_or_insert_competition(start_date, end_date, name, 'League', None)
         leagues = [competition.load_competition(comp_id)]
     return guarantee.exactly_one(leagues)
@@ -189,10 +189,14 @@ def determine_end_of_league(start_date):
     else:
         year = start_date.year
     end_date_s = '{year}-{month}-01 00:00:00'.format(year=year, month=month)
-    end_date = dtutil.parse(end_date_s, '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ)
+    end_date = dtutil.parse(end_date_s, '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ).astimezone(dtutil.WOTC_TZ)
     if end_date > rotation.next_rotation():
         end_date = rotation.next_rotation()
-    return end_date - datetime.timedelta(seconds=1)
+    end_date = end_date - datetime.timedelta(seconds=1)
+    return end_date
+
+def determine_league_name(end_date):
+    return "League {MM} {YYYY}".format(MM=calendar.month_name[end_date.month], YYYY=end_date.year)
 
 def retire_deck(d):
     if d.wins == 0 and d.losses == 0 and d.draws == 0:

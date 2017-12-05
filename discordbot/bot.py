@@ -190,7 +190,7 @@ async def background_task_tournaments():
         if diff <= 0:
             message = 'Tournament starting!'
         elif diff <= 14400:
-            message = 'Starting in {0}.'.format(dtutil.display_time(diff, 2))
+            message = 'Starting: {0}.'.format(dtutil.display_time(diff, 2))
 
         if diff <= 14400:
             embed = discord.Embed(title=info['next_tournament_name'], description=message)

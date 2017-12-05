@@ -410,8 +410,12 @@ Want to contribute? Send a Pull Request."""
 
         service = build("customsearch", "v1", developerKey=api_key)
         res = service.cse().list(q=args, cx=cse_id, num=1).execute()
-        r = res['items'][0]
-        s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['link'], abstract=r['snippet'])
+        if 'items' in res:
+            r = res['items'][0]
+            s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['link'], abstract=r['snippet'])
+        else:
+            s = '{author}: Nothing found on Google.'.format(author=author.mention)
+
         await bot.client.send_message(channel, s)
 
     @cmd_header('Commands')

@@ -257,3 +257,16 @@ def delete_match(match_id):
         sql = 'UPDATE deck SET draws = draws - 1 WHERE id IN (?, ?)'
         db().execute(sql, [m.left_id, m.right_id])
     db().commit()
+
+def first_runs():
+    sql = """
+        SELECT d.competition_id, MIN(c.start_date) AS `date`, c.name AS competition_name, p.mtgo_username
+        FROM deck AS d
+        INNER JOIN person AS p ON d.person_id = p.id
+        INNER JOIN competition AS c ON d.competition_id = c.id
+        WHERE c.competition_type_id IN (SELECT id FROM competition_type WHERE name = 'League')
+            AND (wins + draws + losses) >= 5
+        GROUP BY p.id
+        ORDER BY c.start_date DESC, p.mtgo_username
+    """
+    return [Container(r) for r in db().execute(sql)]

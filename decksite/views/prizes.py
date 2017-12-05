@@ -9,22 +9,29 @@ from decksite.view import View
 
 # pylint: disable=no-self-use
 class Prizes(View):
-    def __init__(self, competitions):
+    def __init__(self, competitions, first_runs):
         self.weeks = []
         weeks = split_by_week(competitions)
         for week in weeks:
             prizes = {}
             if week.end_date > dtutil.now(dtutil.WOTC_TZ):
                 pass
-            for c in week.competitions:
+            for c in week.get('competitions', []):
                 for d in c.decks:
                     prizes[d.person] = prizes.get(d.person, 0) + tournaments.prize(d)
             subject = 'Penny Dreadful Prizes for Week Ending {date}'.format(date=week.end_date.strftime('%b %-d'))
             body = '\n'.join(['{username} {prize}'.format(username=k, prize=prizes[k]) for k in sorted(prizes) if prizes[k] > 0])
-            self.weeks.append({'subject': subject, 'body': body, 'n': len(week.competitions)})
+            self.weeks.append({'subject': subject, 'body': body, 'n': len(week.get('competitions', []))})
+        self.months = []
+        current_competition_id = None
+        for p in first_runs:
+            if current_competition_id != p.competition_id:
+                self.months.append({'competition_name': p.competition_name, 'people': []})
+                current_competition_id = p.competition_id
+            self.months[-1]['people'].append(p)
 
     def subtitle(self):
-        'Weekly Prizes'
+        'Prizes'
 
 def split_by_week(competitions):
     dt = (dtutil.now(dtutil.WOTC_TZ) + relativedelta(weekday=FR(-1))).replace(hour=0, minute=0, second=0)

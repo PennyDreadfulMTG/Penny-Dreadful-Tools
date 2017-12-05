@@ -1,6 +1,5 @@
 import collections
 import glob
-import json
 import os
 import random
 import re
@@ -18,6 +17,8 @@ from find import search
 from magic import card, database, oracle, fetcher, rotation, multiverse, tournaments
 from shared import configuration, dtutil, repo, rules
 from shared.pd_exception import TooFewItemsException
+from googleapiclient.discovery import build
+
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -398,24 +399,20 @@ Want to contribute? Send a Pull Request."""
     async def google(self, bot, channel, args, author):
         """`!google {args}` Search google for `args`."""
         await bot.client.send_typing(channel)
+
+        api_key = configuration.get('cse_api_key')
+        cse_id = configuration.get('cse_engine_id')
+        if api_key is None or cse_id is None:
+            return await bot.client.send_message(channel, 'The google command has not been configured.')
+
         if len(args.strip()) == 0:
-            return await bot.client.send_message(channel, '{author}: Please let me know what you want to search on Google.'.format(author=author.mention))
-        try:
-            # We set TERM here because of some weirdness around readline and shell commands. Stops `ESC[?1034h` appearing on the end of STDOUT when TERM=xterm. See https://bugzilla.redhat.com/show_bug.cgi?id=304181 or google the escape sequence if you are super curious.
-            env = {**os.environ, 'TERM': 'vt100', 'PYTHONIOENCODING': 'utf-8'}
-            result = subprocess.run(['googler', '--json', '-n1'] + args.split(), stdout=subprocess.PIPE, check=True, env=env, universal_newlines=True)
-            r = json.loads(result.stdout.strip())[0]
-            s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['url'], abstract=r['abstract'])
-            await bot.client.send_message(channel, s)
-        except IndexError as e:
-            await bot.client.send_message(channel, '{author}: Nothing found on Google.'.format(author=author.mention))
-        except FileNotFoundError as e:
-            await bot.client.send_message(channel, '{author}:  Optional command `google` not set up.'.format(author=author.mention))
-        except subprocess.CalledProcessError as e:
-            if e.returncode == 127:
-                await bot.client.send_message(channel, '{author}: Optional command `google` not set up.'.format(author=author.mention))
-            else:
-                await bot.client.send_message(channel, '{author}: Problem searching google. ({e})'.format(author=author.mention, e=e))
+            return await bot.client.send_message(channel, '{author}: No search term provided. Please type !google followed by what you would like to search'.format(author=author.mention))
+
+        service = build("customsearch", "v1", developerKey=api_key)
+        res = service.cse().list(q=args, cx=cse_id, num=1).execute()
+        r = res['items'][0]
+        s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['link'], abstract=r['snippet'])
+        await bot.client.send_message(channel, s)
 
     @cmd_header('Commands')
     async def tournament(self, bot, channel):

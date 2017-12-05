@@ -18,6 +18,7 @@ from magic import card, database, oracle, fetcher, rotation, multiverse, tournam
 from shared import configuration, dtutil, repo, rules
 from shared.pd_exception import TooFewItemsException
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
 
 async def respond_to_card_names(message, bot):
@@ -408,13 +409,19 @@ Want to contribute? Send a Pull Request."""
         if len(args.strip()) == 0:
             return await bot.client.send_message(channel, '{author}: No search term provided. Please type !google followed by what you would like to search'.format(author=author.mention))
 
-        service = build("customsearch", "v1", developerKey=api_key)
-        res = service.cse().list(q=args, cx=cse_id, num=1).execute()
-        if 'items' in res:
-            r = res['items'][0]
-            s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['link'], abstract=r['snippet'])
-        else:
-            s = '{author}: Nothing found on Google.'.format(author=author.mention)
+        try:
+            service = build("customsearch", "v1", developerKey=api_key)
+            res = service.cse().list(q=args, cx=cse_id, num=1).execute()
+            if 'items' in res:
+                r = res['items'][0]
+                s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['link'], abstract=r['snippet'])
+            else:
+                s = '{author}: Nothing found on Google.'.format(author=author.mention)
+        except HttpError as e:
+            if e.resp['status'] == "403":
+                s = 'We have reached the allowed limits of Google API'
+            else:
+                raise e
 
         await bot.client.send_message(channel, s)
 

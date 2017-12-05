@@ -4,7 +4,7 @@
         <h2>{{title}}</h2>
         <ul>
             {{#items}}
-                <li><a href="{{url}}">{{text}}</a></li>
+                <li><a {{#is_external}}class="external"{{/is_external}} href="{{url}}">{{text}}</a></li>
             {{/items}}
         </ul>
     </section>

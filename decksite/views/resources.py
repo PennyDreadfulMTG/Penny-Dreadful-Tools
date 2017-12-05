@@ -11,7 +11,7 @@ class Resources(View):
             section = {'title': title, 'items': []}
             sections.append(section)
             for text, url in raw_section.items():
-                item = {'text': text, 'url': url}
+                item = {'text': text, 'url': url, 'is_external': url.startswith('http') and '://pennydreadfulmagic.com/' not in url}
                 section['items'].append(item)
         return sections
 

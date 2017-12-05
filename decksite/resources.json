@@ -4,7 +4,8 @@
         "Legal cards list": "http://pdmtgo.com/legal_cards.txt",
         "Chat": "https://discord.gg/H6EHdHu",
         "Reddit": "http://reddit.com/r/PennyDreadfulMTG/",
-        "Card search": "http://scryfall.com/search/?q=f:pd"
+        "Card search": "http://scryfall.com/search/?q=f:pd",
+        "Magic Online guide": "https://docs.google.com/document/d/1GGvhaISyESrrvPAkauP5LWKAixh6rcH1Q2jfbfpUOoA/edit"
     },
     "Deckbuilding": {
         "Decklists": "https://pennydreadfulmagic.com/",
@@ -12,8 +13,7 @@
         "Card search": "http://scryfall.com/search/?q=f:pd",
         "Deck checker": "http://pdmtgo.com/deck_check.html",
         "Deck builder": "http://tappedout.net/mtg-deck-builder/penny-dreadful/",
-        "Current bugs": "https://pennydreadfulmagic.com/bugs/",
-        "Trading guide": "https://docs.google.com/document/d/1GGvhaISyESrrvPAkauP5LWKAixh6rcH1Q2jfbfpUOoA/edit"
+        "Current bugs": "https://pennydreadfulmagic.com/bugs/"
     },
     "Tournaments": {
         "League": "https://pennydreadfulmagic.com/league/",

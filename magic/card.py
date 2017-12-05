@@ -194,6 +194,8 @@ def cmc_query():
         CASE
         WHEN layout = 'split' OR layout = 'aftermath' THEN
             SUM(`{table}`.cmc)
+        WHEN layout = 'meld' THEN
+            SUM(CASE WHEN `{table}`.position = 1 OR `{table}`.position = 2 THEN {column} ELSE 0 END)
         ELSE
             SUM(CASE WHEN `{table}`.position = 1 THEN `{table}`.cmc ELSE 0 END)
         END

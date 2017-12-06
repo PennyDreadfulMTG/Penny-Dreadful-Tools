@@ -52,12 +52,12 @@ class Bot:
     async def respond_to_command(self, message):
         await command.handle_command(message, self)
 
-    async def post_cards(self, cards, channel, replying_to=None, additional_text=''):
+    async def post_cards(self, cards, channel, replying_to=None, additional_text='', n_additional_cards=0):
         await self.client.send_typing(channel)
 
         not_pd = configuration.get('not_pd').split(',')
         disable_emoji = False
-        if channel.id in not_pd: # or (channel.server and channel.server.id in not_pd):
+        if channel.id in not_pd:
             disable_emoji = True
 
         if len(cards) == 0:
@@ -71,7 +71,8 @@ class Bot:
         cards = command.uniqify_cards(cards)
         more_text = ''
         if len(cards) > 10:
-            more_text = ' and ' + str(len(cards) - 4) + ' more.'
+            n_additional_cards += len(cards) - 4
+            more_text = ' and {n_additional_cards} more.'.format(n_additional_cards=n_additional_cards)
             cards = cards[:4]
         if len(cards) == 1:
             card = cards[0]

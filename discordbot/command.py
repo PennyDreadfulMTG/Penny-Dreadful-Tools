@@ -183,15 +183,14 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def scryfall(self, bot, channel, args, author):
-        """`!scryfall {query}` search scryfall for the query."""
+        """`!scryfall {query}` Search for cards using Scryfall."""
         await bot.client.send_typing(channel)
-        too_many, cardnames = fetcher.search_scryfall(args)
+        how_many, cardnames = fetcher.search_scryfall(args)
         cbn = oracle.cards_by_name()
         cards = [cbn.get(name) for name in cardnames if cbn.get(name) is not None]
-        additional_text = 'There are too many cards, only a few are shown.\n' if too_many else ''
-        if len(cards) > 10:
-            additional_text += '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'
-        await bot.post_cards(cards, channel, author, additional_text)
+        n_additional_cards = how_many - len(cards)
+        additional_text = '' if len(cards) <= 10 else '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'
+        await bot.post_cards(cards, channel, author, additional_text, n_additional_cards)
 
     @cmd_header('Commands')
     async def status(self, bot, channel):

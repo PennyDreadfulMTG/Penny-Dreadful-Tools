@@ -1339,7 +1339,6 @@ Notification Badges
 }
 
 .badge {
-    display: none; /* Will be shown with javascript if admin is viewing. */
     font-size: 0.75rem;
     height: 1.333em;
     line-height: 1.333;
@@ -1377,6 +1376,18 @@ Outlines
 
 *:focus {
     opacity: 0.5;
+}
+
+/*
+
+Admin
+
+Admin items are always loaded but shown with javascript only to admins (because of full page caching).
+
+*/
+
+.admin {
+    display: none; /* Will be shown with javascript if admin is viewing. */
 }
 
 /*

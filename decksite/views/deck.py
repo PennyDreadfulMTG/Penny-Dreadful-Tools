@@ -37,10 +37,8 @@ class Deck(View):
                 m.display_round = display_round(m)
         self._deck['maindeck'].sort(key=lambda x: oracle.deck_sort(x['card']))
         self._deck['sideboard'].sort(key=lambda x: oracle.deck_sort(x['card']))
-        self.admin = session.get('admin', False)
-        if self.admin:
-            self.archetypes = archetype.load_archetypes_deckless(order_by='a.name')
-            self.edit_archetype_url = url_for('edit_archetypes')
+        self.archetypes = archetype.load_archetypes_deckless(order_by='a.name')
+        self.edit_archetype_url = url_for('edit_archetypes')
         self.cardhoarder_url = fetcher.cardhoarder_url(d)
 
     def has_matches(self):

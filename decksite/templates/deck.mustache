@@ -98,15 +98,13 @@
     </section>
 {{/has_similar}}
 {{> legal}}
-{{#admin}}
-    <section>
-        <h2>Admin</h2>
-            <p>
-                <form class="inline" method="post" action="{{edit_archetype_url}}">
-                    <input type="hidden" name="deck_id" value="{{id}}">
-                    {{> archetypedropdown}}
-                    <button type="submit">Assign</button>
-                </form>
-            </p>
-    </section>
-{{/admin}}
+<section class="admin">
+    <h2>Admin</h2>
+        <p>
+            <form class="inline" method="post" action="{{edit_archetype_url}}">
+                <input type="hidden" name="deck_id" value="{{id}}">
+                {{> archetypedropdown}}
+                <button type="submit">Assign</button>
+            </form>
+        </p>
+</section>

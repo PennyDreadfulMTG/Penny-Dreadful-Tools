@@ -1262,55 +1262,48 @@ Archetypes
 
  */
 
+/* Styling for the admin archetype updater on the deck page. */
+
 .archetype {
-    padding: 0.5rem 1rem;
+    padding: 0.563rem 1rem;
 }
+
 .archetype input {
     width: 45%;
 }
-tr.archetype-0 > .primary.initial {
-}
-tr.archetype-1 > .primary.initial {
-    font-size: 100%;
-    padding-left: 1.333rem;
-}
-tr.archetype-2 > .primary.initial {
-    padding-left: 2.666rem;
-}
-tr.archetype-3 > .primary.initial {
-    padding-left: 4rem;
-}
-tr.archetype-0.current > .primary.initial {
-    padding-left: 1.333rem;
-}
-tr.archetype-1.current > .primary.initial {
-    padding-left: 2.666rem;
-}
-tr.archetype-2.current > .primary.initial {
-    padding-left: 4rem;
-}
-tr.archetype-3.current > .primary.initial {
-    padding-left: 5.333rem;
-}
+
+/* Highlight the currently selected row. */
+
 tr.current {
     background-color: #eee;
 }
+
 tr.current td {
     background-color: #eee;
+
 }
-tr.current td {
-    padding-left: 1rem;
+
+/* Pad to the left of the archetype name based on its depth in the hierarchy.
+   1.333em for each level.
+   Any less and the extra padding on level 0 makes level 1 look too close when a level 0 is selected. */
+
+tr.archetype-0 > .primary.initial {
 }
-tr.current td:first-child {
-    left: -1rem;
-    padding-right: 0;
-    position: relative;
+
+tr.archetype-1 > .primary.initial {
+    padding-left: 1.333em;
 }
-tr.current td:last-child {
-    left: 1rem;
-    padding-left: 0;
-    padding-right: 1rem;
-    position: relative;
+
+tr.archetype-2 > .primary.initial {
+    padding-left: 2.666em;
+}
+
+tr.archetype-3 > .primary.initial {
+    padding-left: 4em;
+}
+
+tr.archetype-0.current > .primary.initial {
+    padding-left: 0.563em; /* This looks weird hugging the exact left of the highlight so indent a little. */
 }
 
 /*

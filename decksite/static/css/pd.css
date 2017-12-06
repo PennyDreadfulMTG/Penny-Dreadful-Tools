@@ -241,6 +241,7 @@ section {
 @media screen and (max-width: 640px) {
     section {
         float: none;
+        margin: 0 0 1rem 0;
     }
 }
 
@@ -626,8 +627,14 @@ table.with-marginalia.footable-details {
 }
 
 
-/* When we aren't showing marginalia, don't have the unshown column mess display up. */
 @media only screen and (max-width: 640px) {
+    main table {
+        max-width: 100%;
+    }
+    main table th, main table td {
+        max-width: inherit;
+    }
+    /* When we aren't showing marginalia, don't have the unshown column mess display up. */
     table.with-marginalia, table.with-marginalia.footable-details {
         margin: 0;
     }
@@ -640,25 +647,27 @@ table.with-marginalia.footable-details {
         display: none !important; /* csslint allow: important */
     }
     /* Don't show the additional header row for "Season" and "All Time" at this size - we'll be hiding the all time stats. */
-    .timespan {
+    .timespan-table > thead > tr:first-child {
         display: none;
     }
-    .cards-table .footable-details {
+    .timespan-table .footable-details {
         position: relative;
     }
     /* … but showing them inline so prepend the first all time item with "All Time". */
-    .cards-table .footable-details tr:nth-child(1) th:before, .cards-table .footable-details tr:nth-child(2) th:before {
+    .timespan-table .footable-details tr:nth-child(1) th:before, .timespan-table .footable-details tr:nth-child(2) th:before {
         display: inline-block;
-        margin-right: 2rem;
+        margin-right: 1em;
+        margin-left: 0.563em;
         text-align: left;
     }
-    .cards-table .footable-details tr:nth-child(2) th, .cards-table .footable-details tr:nth-child(2) td {
+    /* Separate This Season from All Time with a border. */
+    .timespan-table .footable-details tr:nth-child(2) th, .timespan-table .footable-details tr:nth-child(2) td {
         border-top: 0.05rem solid #999;
     }
-    .cards-table .footable-details tr:nth-child(1) th:before {
+    .timespan-table .footable-details tr:nth-child(1) th:before {
         content: "This Season ";
     }
-    .cards-table .footable-details tr:nth-child(2) th:before {
+    .timespan-table .footable-details tr:nth-child(2) th:before {
         content: "All Time ";
     }
 }

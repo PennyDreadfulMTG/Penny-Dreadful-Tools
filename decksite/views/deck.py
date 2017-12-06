@@ -1,4 +1,4 @@
-from flask import session, url_for
+from flask import url_for
 import inflect
 import titlecase
 

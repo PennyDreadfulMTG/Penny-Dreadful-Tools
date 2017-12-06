@@ -10,16 +10,18 @@ from magic import fetcher_internal, legality
 from shared import configuration
 from shared.pd_exception import InvalidDataException
 
-
 def scrape():
     login()
     print('Logged in to TappedOut: {is_authorised}'.format(is_authorised=is_authorised()))
     raw_decks = fetch_decks()
     for raw_deck in raw_decks:
-        if is_authorised():
-            raw_deck.update(fetch_deck_details(raw_deck))
-        raw_deck = set_values(raw_deck)
-        deck.add_deck(raw_deck)
+        try:
+            if is_authorised():
+                raw_deck.update(fetch_deck_details(raw_deck))
+            raw_deck = set_values(raw_deck)
+            deck.add_deck(raw_deck)
+        except InvalidDataException as e:
+            print('Skipping {slug} because of {e}'.format(slug=raw_deck.get('slug', '-no slug-'), e=e))
 
 def fetch_decks():
     return fetcher_internal.fetch_json('https://tappedout.net/api/deck/latest/penny-dreadful/')

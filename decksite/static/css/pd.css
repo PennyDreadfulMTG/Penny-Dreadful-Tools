@@ -1363,6 +1363,20 @@ Tournaments
 
 /*
 
+Outlines
+
+*/
+
+* {
+    outline-width: 0 !important;
+}
+
+*:focus {
+    opacity: 0.5;
+}
+
+/*
+
 Tooltips
 
 We used tippedjs for tooltips but we don't want to load their CSS separately so here are the parts we need.

@@ -118,7 +118,7 @@ PD.initTooltips = function () {
         if (typeof Deckbox != "undefined") {
             Deckbox._.enable();
         }
-        Tipped.create("main [title]", {"showDelay": 1000, "size": "large", maxWidth: "200"});
+        Tipped.create("main [title]", {"showDelay": 500, "size": "large", maxWidth: "200"});
         $("body").off();
     });
 }

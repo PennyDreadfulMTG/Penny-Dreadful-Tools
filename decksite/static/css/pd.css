@@ -1401,6 +1401,10 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 
 */
 
+.active, .stars {
+    cursor: help;
+}
+
 .tpd-tooltip {
     position: absolute;
 }

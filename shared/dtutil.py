@@ -73,6 +73,8 @@ def display_time(seconds, granularity=2):
     )
     result = []
     seconds = round(seconds) # in case we've been handed a decimal not an int
+    if seconds == 0:
+        return 'now'
     for name, count in intervals:
         if len(result) < granularity - 1:
             value = seconds // count # floor preceeding units

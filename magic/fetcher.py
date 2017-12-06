@@ -3,8 +3,6 @@ import json
 import os
 from collections import OrderedDict
 from urllib import parse
-from functools import wraps
-import time as py_time
 
 import pytz
 
@@ -13,19 +11,6 @@ from magic.fetcher_internal import FetchException
 from magic import card as mc
 from shared import configuration, dtutil
 from shared.pd_exception import TooFewItemsException
-
-def stagger(delay=0.1):
-    def decorator(func_in):
-        @wraps(func_in)
-        def func_out(*args, **kwargs):
-            if py_time.time() - func_out.last_call < delay:
-                func_out.last_call = py_time.time() + delay
-                py_time.sleep(delay - (py_time.time() - func_out.last_call))
-            return func_in(*args, **kwargs)
-        func_out.last_call = float("-inf")
-        return func_out
-    return decorator
-
 
 def all_cards():
     try:
@@ -129,30 +114,20 @@ def scryfall_cards():
     url = 'https://api.scryfall.com/cards'
     return internal.fetch_json(url)
 
-@stagger(0.1)
 def search_scryfall(query):
-    """Returns a tuple. First member is bool indicating whether there were too many cards to search,
-    second member is a list of card names."""
-    max_n_queries = 2 #API returns 60 cards at once. Indicate how many pages max should be shown.
+    """Returns a tuple. First member is an integer indicating how many cards match the query total,
+       second member is a list of card names up to the maximum that could be fetched in a timely fashion."""
     if query == '':
         return False, []
     result_json = internal.fetch_json('https://api.scryfall.com/cards/search?q=' + internal.escape(query), character_encoding='utf-8')
-    if 'code' in result_json.keys(): #the API returned an error
-        if result_json['status'] == 404: #no cards found
-            print('Scryfall search yielded 0 results.')
+    if 'code' in result_json.keys(): # The API returned an error
+        if result_json['status'] == 404: # No cards found
             return False, []
         print('Error fetching scryfall data:\n', result_json)
         return False, []
     for warning in result_json.get('warnings', []): #scryfall-provided human-readable warnings
         print(warning) # Why aren't we displaying these to the user?
-    too_many_cards = result_json['total_cards'] > max_n_queries * 60
     result_data = result_json['data']
-    for _ in range(max_n_queries - 1): #fetch the remaining pages
-        if not result_json['has_more']:
-            break
-        result_json = internal.fetch_json(result_json['next_page'])
-        result_data.extend(result_json.get('data', []))
-
     result_data.sort(key=lambda x: x['legalities']['penny'])
 
     def get_frontside(scr_card):
@@ -163,7 +138,7 @@ def search_scryfall(query):
             return scr_card['card_faces'][0]['name']
         return scr_card['name']
     result_cardnames = [get_frontside(obj) for obj in result_data]
-    return too_many_cards, result_cardnames
+    return result_json['total_cards'], result_cardnames
 
 def rulings(cardname):
     card = internal.fetch_json('https://api.scryfall.com/cards/named?exact={name}'.format(name=cardname))

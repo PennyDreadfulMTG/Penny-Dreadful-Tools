@@ -37,7 +37,7 @@ PD.initTables = function () {
             "xs": 359,
             "sm": 639,
             "md": 799,
-            "lg": 919
+            "lg": 1119
         }
     }).bind("sortStart", function () {
         // Prevent expanded information from sorting first and not staying with parent row by collapsing all expanded rows before sorting.

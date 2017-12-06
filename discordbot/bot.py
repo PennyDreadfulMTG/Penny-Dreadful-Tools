@@ -57,7 +57,7 @@ class Bot:
 
         not_pd = configuration.get('not_pd').split(',')
         disable_emoji = False
-        if channel.id in not_pd: # or (channel.server and channel.server.id in not_pd):
+        if channel.id in not_pd:
             disable_emoji = True
 
         if len(cards) == 0:
@@ -69,10 +69,8 @@ class Bot:
             await self.client.add_reaction(message, '❎')
             return
         cards = command.uniqify_cards(cards)
-        more_text = ''
-        if len(cards) > 10:
-            more_text = ' and ' + str(len(cards) - 4) + ' more.'
-            cards = cards[:4]
+        if len(cards) > command.MAX_CARDS_SHOWN:
+            cards = cards[:command.DEFAULT_CARDS_SHOWN]
         if len(cards) == 1:
             card = cards[0]
             mana = emoji.replace_emoji(''.join(card.mana_cost or []), self.client)
@@ -90,8 +88,7 @@ class Bot:
                     text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(now_ts - card.bug_last_confirmed, 1))
         else:
             text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.legal_emoji(card)) if not disable_emoji else ''), price=((fetcher.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
-            text += more_text
-        if len(cards) > 10:
+        if len(cards) > command.MAX_CARDS_SHOWN:
             image_file = None
         else:
             image_file = image_fetcher.download_image(cards)
@@ -101,7 +98,7 @@ class Bot:
                 text += emoji.replace_emoji(cards[0].text, self.client)
             else:
                 text += 'No image available.'
-        text += '\n' + additional_text
+        text += additional_text
         if image_file is None:
             await self.client.send_message(channel, text)
         else:
@@ -190,7 +187,7 @@ async def background_task_tournaments():
         if diff <= 0:
             message = 'Tournament starting!'
         elif diff <= 14400:
-            message = 'Starting in {0}.'.format(dtutil.display_time(diff, 2))
+            message = 'Starting: {0}.'.format(dtutil.display_time(diff, 2))
 
         if diff <= 14400:
             embed = discord.Embed(title=info['next_tournament_name'], description=message)

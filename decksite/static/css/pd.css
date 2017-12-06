@@ -555,24 +555,28 @@ Shrink tables when the viewport is not wide enough for their full glory using fo
 Deck tables:
 
 v ------  0 ------ v    0
-name       211
-record      68  279
-(toggle)    44  323
+left-margin  40
+name        150  190 (columns have a max-width of 10em at smallest size)
+record       68  258
+(toggle)     44  302
 ^ ------ xs ------ ^    18rem (360px)
-date        91  414
-person     132  546
-margin      76  622
+margin(2)   +37  339 (here and above we expand the left margin to accomodate marginalia)
+date         91  430
+person      132  562
 ^ ------ sm ------ ^    32rem (640px)
-colors      70  692
-top 8       55  747
+margin(3)  +51+  613 (here and above margins are 10% of viewport width)
+name(2)     +50  663 (columns have a max-widht of 13em at this size and above)
+colors       70  733
+top 8        55  788
 (similarity)
 ^ ------ md ------ ^    40rem (800px)
-source     101  848
-season      68  916
+margin(3)  +32+  820 (margins are still 10% of viewport width)
+source      130  950
+season      212 1162
 (omw)
--(toggle)  -44  872
+-(toggle)   -44 1118
 ...
-^ ------ lg ------ ^    46rem (920px)
+^ ------ lg ------ ^    56rem (1120px)
 
 Card tables:
 
@@ -591,7 +595,7 @@ all time - win %     58  647
 (same)
 ^ ------ md ------ ^    40rem (800px)
 (same)
-^ ------ lg ------ ^    45rem (900px)
+^ ------ lg ------ ^    53rem (1120px)
 
 See also breakpoints for footable in pd.js.
 
@@ -1120,7 +1124,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 }
 
 /* When search wraps under the logo it needs different behavior. */
-@media screen and (max-width: 920px) {
+@media screen and (max-width: 1120px) {
     .search {
         float: none;
         margin-bottom: 1rem;
@@ -1359,6 +1363,20 @@ Tournaments
 
 .local {
     display: none; /* Will be revealed by js when we have a localized time. */
+}
+
+/*
+
+Outlines
+
+*/
+
+* {
+    outline-width: 0;
+}
+
+*:focus {
+    opacity: 0.5;
 }
 
 /*

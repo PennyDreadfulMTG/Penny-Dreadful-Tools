@@ -1368,7 +1368,7 @@ Outlines
 */
 
 * {
-    outline-width: 0 !important;
+    outline-width: 0;
 }
 
 *:focus {

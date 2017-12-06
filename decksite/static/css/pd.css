@@ -1284,26 +1284,25 @@ tr.current td {
 }
 
 /* Pad to the left of the archetype name based on its depth in the hierarchy.
-   1.333em for each level.
-   Any less and the extra padding on level 0 makes level 1 look too close when a level 0 is selected. */
+   Significant indent for each level because otherwise the extra padding on level 0 makes level 1 look too close when a level 0 is selected. */
 
 tr.archetype-0 > .primary.initial {
 }
 
 tr.archetype-1 > .primary.initial {
-    padding-left: 1.333em;
+    padding-left: 1.777em;
 }
 
 tr.archetype-2 > .primary.initial {
-    padding-left: 2.666em;
+    padding-left: 3.554em;
 }
 
 tr.archetype-3 > .primary.initial {
-    padding-left: 4em;
+    padding-left: 5.331em;
 }
 
 tr.archetype-0.current > .primary.initial {
-    padding-left: 0.563em; /* This looks weird hugging the exact left of the highlight so indent a little. */
+    padding-left: 0.422em; /* This looks weird hugging the exact left of the highlight so indent a little. */
 }
 
 /*

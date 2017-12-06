@@ -52,7 +52,7 @@ class Bot:
     async def respond_to_command(self, message):
         await command.handle_command(message, self)
 
-    async def post_cards(self, cards, channel, replying_to=None, additional_text='', n_additional_cards=0):
+    async def post_cards(self, cards, channel, replying_to=None, additional_text=''):
         await self.client.send_typing(channel)
 
         not_pd = configuration.get('not_pd').split(',')
@@ -69,11 +69,8 @@ class Bot:
             await self.client.add_reaction(message, '❎')
             return
         cards = command.uniqify_cards(cards)
-        more_text = ''
-        if len(cards) > 10:
-            n_additional_cards += len(cards) - 4
-            more_text = ' and {n_additional_cards} more.'.format(n_additional_cards=n_additional_cards)
-            cards = cards[:4]
+        if len(cards) > command.MAX_CARDS_SHOWN:
+            cards = cards[:command.DEFAULT_CARDS_SHOWN]
         if len(cards) == 1:
             card = cards[0]
             mana = emoji.replace_emoji(''.join(card.mana_cost or []), self.client)
@@ -91,8 +88,7 @@ class Bot:
                     text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(now_ts - card.bug_last_confirmed, 1))
         else:
             text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.legal_emoji(card)) if not disable_emoji else ''), price=((fetcher.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
-            text += more_text
-        if len(cards) > 10:
+        if len(cards) > command.MAX_CARDS_SHOWN:
             image_file = None
         else:
             image_file = image_fetcher.download_image(cards)
@@ -102,7 +98,7 @@ class Bot:
                 text += emoji.replace_emoji(cards[0].text, self.client)
             else:
                 text += 'No image available.'
-        text += '\n' + additional_text
+        text += additional_text
         if image_file is None:
             await self.client.send_message(channel, text)
         else:

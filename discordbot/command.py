@@ -19,6 +19,9 @@ from magic import card, database, oracle, fetcher, rotation, multiverse, tournam
 from shared import configuration, dtutil, repo, rules
 from shared.pd_exception import TooFewItemsException
 
+DEFAULT_CARDS_SHOWN = 4
+MAX_CARDS_SHOWN = 10
+
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
     if 'gatherer.wizards.com' in message.content.lower():
@@ -176,10 +179,7 @@ Want to contribute? Send a Pull Request."""
             cards = complex_search(args)
         except search.InvalidSearchException as e:
             return await bot.client.send_message(channel, '{author}: {e}'.format(author=author.mention, e=e))
-        additional_text = ''
-        if len(cards) > 10:
-            additional_text = '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'
-        await bot.post_cards(cards, channel, author, additional_text)
+        await bot.post_cards(cards, channel, author, more_results_link(args, len(cards)))
 
     @cmd_header('Commands')
     async def scryfall(self, bot, channel, args, author):
@@ -188,9 +188,7 @@ Want to contribute? Send a Pull Request."""
         how_many, cardnames = fetcher.search_scryfall(args)
         cbn = oracle.cards_by_name()
         cards = [cbn.get(name) for name in cardnames if cbn.get(name) is not None]
-        n_additional_cards = how_many - len(cards)
-        additional_text = '' if len(cards) <= 10 else '<http://scryfall.com/search/?q=' + fetcher.internal.escape(args) + '>'
-        await bot.post_cards(cards, channel, author, additional_text, n_additional_cards)
+        await bot.post_cards(cards, channel, author, more_results_link(args, how_many))
 
     @cmd_header('Commands')
     async def status(self, bot, channel):
@@ -652,3 +650,6 @@ def resources_resources(args):
             if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only or the_whole_thing_sounds_right:
                 results[url] = text
     return results
+
+def more_results_link(args, total):
+    return 'and {n} more.\n<http://scryfall.com/search/?q={q}>'.format(n=total - 4, q=fetcher.internal.escape(args)) if total > MAX_CARDS_SHOWN else ''

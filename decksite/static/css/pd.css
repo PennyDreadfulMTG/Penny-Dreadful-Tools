@@ -876,21 +876,15 @@ main .banner h1 {
     margin-top: 0.333rem;
 }
 
-/* Button bar at top-right of deck page */
+/*
 
-ul.export {
-    float: right;
-    padding-left: 0; /* For when we wrap under the title. We'll use the title's right-margin to stay far enough away until wrapping. */
-    margin-top: 2rem; /* Line up with the h1 of the title when not wrapped under. */
-}
+Button bars.
 
-ul.export li {
-    float: left;
+*/
+
+ul.buttons li {
     list-style-type: none;
     margin-left: 0.75rem;
-}
-
-ul.export li a {
     color: #999;
     border: 0.05rem solid #eee;
     border-radius: 0.563em;
@@ -900,7 +894,26 @@ ul.export li a {
     text-align: center;
 }
 
-ul.export li a:hover {
+/* We only want to float the buttons alongside the h1. Other buttons should just appear in the flow. */
+.banner ul.buttons {
+    float: right;
+    padding-left: 0; /* For when we wrap under the title. We'll use the title's right-margin to stay far enough away until wrapping. */
+    margin-top: 2rem; /* Line up with the h1 of the title when not wrapped under. */
+}
+
+/* When the buttons are links we want the whole button to be the link. */
+
+.banner ul.buttons li {
+    float: left;
+    padding: 0;
+}
+
+.banner ul.buttons li a {
+    display: block;
+    padding: 0.422em 1em;
+}
+
+ul.buttons li a:hover {
     background: #eee;
 }
 

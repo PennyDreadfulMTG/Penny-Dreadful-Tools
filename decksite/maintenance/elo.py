@@ -26,7 +26,6 @@ def run():
 
 def match(m):
     if ',' not in m['games']:
-        # BAKERT should ELO be affect by a bye
         return
     elif int(m['games'].split(',')[0]) == 2:
         winner = m['people'].split(',')[0]
@@ -35,7 +34,6 @@ def match(m):
         winner = m['people'].split(',')[1]
         loser = m['people'].split(',')[0]
     else:
-        # BAKERT should ELO be affect by a draw
         return
     adjust(winner, loser)
 

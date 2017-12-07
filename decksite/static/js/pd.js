@@ -9,7 +9,7 @@ PD.init = function () {
     $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
     PD.showLocalTimes();
-    $.get("/api/admin/", PD.showBadge);
+    $.get("/api/admin/", PD.showAdmin);
 };
 PD.initMenu = function () {
     $(".has-submenu").hoverIntent({
@@ -118,7 +118,7 @@ PD.initTooltips = function () {
         if (typeof Deckbox != "undefined") {
             Deckbox._.enable();
         }
-        Tipped.create("main [title]", {"showDelay": 1000, "size": "large", maxWidth: "200"});
+        Tipped.create("main [title]", {"showDelay": 500, "size": "large", maxWidth: "200"});
         $("body").off();
     });
 }
@@ -152,9 +152,9 @@ PD.toggleIllegalCards = function () {
     $(".bugtable").not(".footable-details").each(function () { FooTable.get(this).rows.collapse(); });
     $("tr").find(".illegal").closest("tr").toggle(!this.checked);
 }
-PD.showBadge = function (show) {
+PD.showAdmin = function (show) {
     if (show) {
-        $(".badge").show();
+        $(".admin").show();
     }
 }
 PD.showLocalTimes = function () {

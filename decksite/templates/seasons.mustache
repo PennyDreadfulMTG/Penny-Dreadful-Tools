@@ -1,6 +1,10 @@
 <h1>Past Seasons</h1>
-<ul>
-    {{#seasons}}
-        <li><a href="{{url}}">Season {{num}} ({{code}})</a></li>
-    {{/seasons}}
-</ul>
+{{#seasons}}
+    <section>
+        <h2>Season {{num}} ({{code}})</h2>
+        <ul>
+            <li><a href="{{decks_url}}">All Decks</a></li>
+            <li><a href="{{league_decks_url}}">League Decks</a></li>
+        </ul>
+    </section>
+{{/seasons}}

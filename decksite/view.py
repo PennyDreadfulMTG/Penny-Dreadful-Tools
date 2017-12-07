@@ -129,7 +129,8 @@ class View:
         d.export_url = '/export/{id}/'.format(id=d.id)
         d.cmc_chart_url = '/charts/cmc/{id}-cmc.png'.format(id=d.id)
         if d.source_name == 'League' and d.wins + d.losses < 5 and d.competition_end_date > dtutil.now() and not d.get('retired', False):
-            d.stars_safe = '<span title="Active in the current league">⊕</span> {stars}'.format(stars=d.stars_safe).strip()
+            d.active_safe = '<span class="active" title="Active in the current league">⊕</span>'
+            d.stars_safe = '{active} {stars}'.format(active=d.active_safe, stars=d.stars_safe).strip()
             d.source_sort = '1'
         d.source_is_external = False if d.source_name == 'League' else True
         d.comp_row_len = len("{comp_name} (Piloted by {person}".format(comp_name=d.competition_name, person=d.person))

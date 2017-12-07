@@ -241,6 +241,7 @@ section {
 @media screen and (max-width: 640px) {
     section {
         float: none;
+        margin: 0 0 1rem 0;
     }
 }
 
@@ -626,8 +627,14 @@ table.with-marginalia.footable-details {
 }
 
 
-/* When we aren't showing marginalia, don't have the unshown column mess display up. */
 @media only screen and (max-width: 640px) {
+    main table {
+        max-width: 100%;
+    }
+    main table th, main table td {
+        max-width: inherit;
+    }
+    /* When we aren't showing marginalia, don't have the unshown column mess display up. */
     table.with-marginalia, table.with-marginalia.footable-details {
         margin: 0;
     }
@@ -640,25 +647,27 @@ table.with-marginalia.footable-details {
         display: none !important; /* csslint allow: important */
     }
     /* Don't show the additional header row for "Season" and "All Time" at this size - we'll be hiding the all time stats. */
-    .timespan {
+    .timespan-table > thead > tr:first-child {
         display: none;
     }
-    .cards-table .footable-details {
+    .timespan-table .footable-details {
         position: relative;
     }
     /* … but showing them inline so prepend the first all time item with "All Time". */
-    .cards-table .footable-details tr:nth-child(1) th:before, .cards-table .footable-details tr:nth-child(2) th:before {
+    .timespan-table .footable-details tr:nth-child(1) th:before, .timespan-table .footable-details tr:nth-child(2) th:before {
         display: inline-block;
-        margin-right: 2rem;
+        margin-right: 1em;
+        margin-left: 0.563em;
         text-align: left;
     }
-    .cards-table .footable-details tr:nth-child(2) th, .cards-table .footable-details tr:nth-child(2) td {
+    /* Separate This Season from All Time with a border. */
+    .timespan-table .footable-details tr:nth-child(2) th, .timespan-table .footable-details tr:nth-child(2) td {
         border-top: 0.05rem solid #999;
     }
-    .cards-table .footable-details tr:nth-child(1) th:before {
+    .timespan-table .footable-details tr:nth-child(1) th:before {
         content: "This Season ";
     }
-    .cards-table .footable-details tr:nth-child(2) th:before {
+    .timespan-table .footable-details tr:nth-child(2) th:before {
         content: "All Time ";
     }
 }
@@ -1262,55 +1271,47 @@ Archetypes
 
  */
 
+/* Styling for the admin archetype updater on the deck page. */
+
 .archetype {
-    padding: 0.5rem 1rem;
+    padding: 0.563rem 1rem;
 }
+
 .archetype input {
     width: 45%;
 }
-tr.archetype-0 > .primary.initial {
-}
-tr.archetype-1 > .primary.initial {
-    font-size: 100%;
-    padding-left: 1.333rem;
-}
-tr.archetype-2 > .primary.initial {
-    padding-left: 2.666rem;
-}
-tr.archetype-3 > .primary.initial {
-    padding-left: 4rem;
-}
-tr.archetype-0.current > .primary.initial {
-    padding-left: 1.333rem;
-}
-tr.archetype-1.current > .primary.initial {
-    padding-left: 2.666rem;
-}
-tr.archetype-2.current > .primary.initial {
-    padding-left: 4rem;
-}
-tr.archetype-3.current > .primary.initial {
-    padding-left: 5.333rem;
-}
+
+/* Highlight the currently selected row. */
+
 tr.current {
     background-color: #eee;
 }
+
 tr.current td {
     background-color: #eee;
+
 }
-tr.current td {
-    padding-left: 1rem;
+
+/* Pad to the left of the archetype name based on its depth in the hierarchy.
+   Significant indent for each level because otherwise the extra padding on level 0 makes level 1 look too close when a level 0 is selected. */
+
+tr.archetype-0 > .primary.initial {
 }
-tr.current td:first-child {
-    left: -1rem;
-    padding-right: 0;
-    position: relative;
+
+tr.archetype-1 > .primary.initial {
+    padding-left: 1.777em;
 }
-tr.current td:last-child {
-    left: 1rem;
-    padding-left: 0;
-    padding-right: 1rem;
-    position: relative;
+
+tr.archetype-2 > .primary.initial {
+    padding-left: 3.554em;
+}
+
+tr.archetype-3 > .primary.initial {
+    padding-left: 5.331em;
+}
+
+tr.archetype-0.current > .primary.initial {
+    padding-left: 0.422em; /* This looks weird hugging the exact left of the highlight so indent a little. */
 }
 
 /*
@@ -1339,7 +1340,6 @@ Notification Badges
 }
 
 .badge {
-    display: none; /* Will be shown with javascript if admin is viewing. */
     font-size: 0.75rem;
     height: 1.333em;
     line-height: 1.333;
@@ -1381,6 +1381,18 @@ Outlines
 
 /*
 
+Admin
+
+Admin items are always loaded but shown with javascript only to admins (because of full page caching).
+
+*/
+
+.admin {
+    display: none; /* Will be shown with javascript if admin is viewing. */
+}
+
+/*
+
 Tooltips
 
 We used tippedjs for tooltips but we don't want to load their CSS separately so here are the parts we need.
@@ -1388,6 +1400,10 @@ Taken from: https://cdn.jsdelivr.net/tipped/4.0.10/css/tipped/tipped.css.
 A reasonable amount has been cut which we'll need to restore if we ever want different sizes, titles, close icons, etc.
 
 */
+
+.active, .stars {
+    cursor: help;
+}
 
 .tpd-tooltip {
     position: absolute;

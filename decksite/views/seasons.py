@@ -16,7 +16,8 @@ class Seasons(View):
             self.seasons.append({
                 'code': code,
                 'num': num,
-                'url': url_for('season', season_id=code),
+                'decks_url': url_for('season', season_id=code),
+                'league_decks_url': url_for('season', season_id=code, deck_type='league'),
             })
             num += 1
 

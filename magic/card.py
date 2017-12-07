@@ -164,7 +164,7 @@ def card_alias_properties():
     props['card_id']['foreign_key'] = ('card', 'id')
     return props
 
-def card_bugs_properties():
+def card_bug_properties():
     props = {}
     for k in ['id', 'card_id', 'description', 'classification', 'last_confirmed']:
         props[k] = copy.deepcopy(BASE)

@@ -50,7 +50,7 @@ def base_query(where='(1 = 1)'):
                 INNER JOIN
                     face AS f ON c.id = f.card_id
                 LEFT JOIN
-                    card_bugs AS cb ON c.id = cb.card_id
+                    card_bug AS cb ON c.id = cb.card_id
                 LEFT JOIN (
                     SELECT
                         cl.card_id,
@@ -91,7 +91,7 @@ def update_database(new_version):
     DELETE FROM card_subtype;
     DELETE FROM card_supertype;
     DELETE FROM card_type;
-    DELETE FROM card_bugs;
+    DELETE FROM card_bug;
     DELETE FROM face;
     DELETE FROM printing;
     DELETE FROM card;
@@ -158,14 +158,14 @@ def update_bugged_cards(use_transaction=True):
         return
     if use_transaction:
         db().begin()
-    db().execute("DELETE FROM card_bugs")
+    db().execute("DELETE FROM card_bug")
     for name, bug, classification, last_confirmed in bugs:
         last_confirmed_ts = dtutil.parse_to_ts(last_confirmed, '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
         card_id = db().value("SELECT card_id FROM face WHERE name = ?", [name])
         if card_id is None:
             print("UNKNOWN BUGGED CARD: {card}".format(card=name))
             continue
-        db().execute("INSERT INTO card_bugs (card_id, description, classification, last_confirmed) VALUES (?, ?, ?, ?)", [card_id, bug, classification, last_confirmed_ts])
+        db().execute("INSERT INTO card_bug (card_id, description, classification, last_confirmed) VALUES (?, ?, ?, ?)", [card_id, bug, classification, last_confirmed_ts])
     if use_transaction:
         db().commit()
 

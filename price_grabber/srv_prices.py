@@ -2,7 +2,7 @@ import json
 
 from flask import Flask
 
-from magic import oracle
+from magic import oracle, multiverse
 from shared.serialization import extra_serializer
 
 from price_grabber import price

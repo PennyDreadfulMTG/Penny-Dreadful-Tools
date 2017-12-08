@@ -41,6 +41,7 @@ def load_people(where='1 = 1'):
     people = [Person(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())] * 8)]
     if len(people) > 0:
         set_decks(people)
+        set_achievements(people)
     return people
 
 def set_decks(people):
@@ -51,6 +52,34 @@ def set_decks(people):
         p.decks = []
     for d in decks:
         people_by_id[d.person_id].decks.append(d)
+
+def set_achievements(people):
+    people_by_id = {person.id: person for person in people}
+    sql = """
+        SELECT
+            p.id,
+            SUM(CASE WHEN ct.name = 'Gatherling' THEN 1 ELSE 0 END) AS tournament_entries,
+            SUM(CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN 1 ELSE 0 END) AS tournament_wins,
+            SUM(CASE WHEN ct.name = 'League' THEN 1 ELSE 0 END) AS league_entries,
+            SUM(CASE WHEN d.wins >= 5 AND d.losses = 0 AND ct.name = 'League' THEN 1 ELSE 0 END) AS perfect_runs
+        FROM
+            person AS p
+        LEFT JOIN
+            deck AS d ON d.person_id = p.id
+        LEFT JOIN
+            competition AS c ON c.id = d.competition_id
+        LEFT JOIN
+            competition_type AS ct ON ct.id = c.competition_type_id
+        WHERE
+            p.id IN ({ids})
+        GROUP BY
+            p.id
+    """.format(ids=', '.join(str(k) for k in people_by_id.keys()))
+    results = [Container(r) for r in db().execute(sql)]
+    for result in results:
+        print(result)
+        people_by_id[result['id']].update(result)
+        people_by_id[result['id']].achievements = len([k for k, v in result.items() if k != 'id' and v > 0])
 
 def associate(d, discord_id):
     person = guarantee.exactly_one(load_people('d.id = {deck_id}'.format(deck_id=sqlescape(d.id))))

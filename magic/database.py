@@ -7,7 +7,7 @@ from shared.database import get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
-SCHEMA_VERSION = 91
+SCHEMA_VERSION = 92
 DATABASE = Container()
 
 def db():
@@ -64,7 +64,7 @@ def setup():
     db().execute(sql)
     sql = create_table_def('card_alias', card.card_alias_properties())
     db().execute(sql)
-    sql = create_table_def('card_bugs', card.card_bugs_properties())
+    sql = create_table_def('card_bug', card.card_bug_properties())
     db().execute(sql)
     sql = create_table_def('rarity', card.format_properties()) # This has the same profile as `format` (`id`, `name`)
     db().execute(sql)

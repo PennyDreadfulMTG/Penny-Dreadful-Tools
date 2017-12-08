@@ -17,5 +17,6 @@ def cardprice(card):
     return json.dumps(price.info_cached(name=card), default=extra_serializer)
 
 def init():
+    multiverse.init()
     oracle.init()
     SRV.run(port=5800, host='0.0.0.0')

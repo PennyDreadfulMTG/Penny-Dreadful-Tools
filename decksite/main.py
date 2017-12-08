@@ -369,7 +369,7 @@ def not_found(e):
 def internal_server_error(e):
     traceback.print_exception(e, e, None)
     path = request.path
-    repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite')
+    repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports')
     view = InternalServerError(e)
     return view.page(), 500
 

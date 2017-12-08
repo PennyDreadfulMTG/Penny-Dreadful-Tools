@@ -9,7 +9,6 @@ LEGAL_CARDS = []
 CARDS_BY_NAME = {}
 
 def init():
-    multiverse.init()
     if len(CARDS_BY_NAME) == 0:
         for c in load_cards():
             CARDS_BY_NAME[c.name] = c

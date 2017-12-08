@@ -16,9 +16,9 @@ class Bot:
         self.voice = None
 
     def init(self):
-        oracle.init()
-        multiverse.set_legal_cards()
+        multiverse.init()
         multiverse.update_bugged_cards()
+        oracle.init()
         self.client.run(configuration.get('token'))
 
     async def on_ready(self):

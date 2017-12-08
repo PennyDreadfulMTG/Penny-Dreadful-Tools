@@ -16,6 +16,7 @@ DATABASE = get_database(configuration.get('prices_database'))
 CARDS = {}
 
 def run():
+    multiverse.init()
     oracle.init()
     fetch()
     price.cache()

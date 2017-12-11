@@ -12,7 +12,7 @@ from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 from shared.pd_exception import LockNotAcquiredException
 
-from decksite.data import competition, deck, guarantee
+from decksite.data import competition, deck, guarantee, person
 from decksite.database import db
 from decksite.scrapers import decklist
 
@@ -96,14 +96,17 @@ class ReportForm(Form):
             self.errors['opponent'] = "You can't play yourself"
 
 class RetireForm(Form):
-    def __init__(self, form, deck_id=None):
+    def __init__(self, form, deck_id=None, discord_user=None):
         super().__init__(form)
         decks = active_decks()
         self.entry_options = deck_options(decks, self.get('entry', deck_id))
+        self.discord_user=discord_user
 
     def do_validation(self):
         if len(self.entry) == 0:
             self.errors['entry'] = 'Please select your deck'
+        if not person.is_allowed_to_retire(self.entry, self.discord_user):
+            self.errors['entry'] = 'You cannot retire this deck. This discord user is already assigned to another mtgo user'
         print(self.errors)
 
 def signup(form):

@@ -58,25 +58,24 @@ def cards_legal_in_format(cardlist, f):
             results.append(c)
     return results
 
-def order_score(format):
-    if format == 'Penny Dreadful':
+def order_score(fmt):
+    if fmt == 'Penny Dreadful':
         return 1
-    elif 'Penny Dreadful' in format:
-        return 10 + multiverse.SEASONS.index(format.replace('Penny Dreadful ', ''))
-    elif format == 'Vintage':
+    elif 'Penny Dreadful' in fmt:
+        return 10 + multiverse.SEASONS.index(fmt.replace('Penny Dreadful ', ''))
+    elif fmt == 'Vintage':
         return 100
-    elif format == 'Legacy':
+    elif fmt == 'Legacy':
         return 1000
-    elif format == 'Modern':
+    elif fmt == 'Modern':
         return 10000
-    elif format == 'Standard':
+    elif fmt == 'Standard':
         return 100000
-    elif 'Block' in format:
+    elif 'Block' in fmt:
         return 1000000
-    elif format == 'Commander':
+    elif fmt == 'Commander':
         return 10000000
-    else:
-        return 100000000
+    return 100000000
 
 def init():
     if FORMATS:

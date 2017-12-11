@@ -45,7 +45,8 @@ def task(args):
     from decksite.main import APP
     APP.config["SERVER_NAME"] = "127:0.0.1:5000"
     with APP.app_context():
-        from magic import oracle
+        from magic import oracle, multiverse
+        multiverse.init()
         oracle.init()
         if name == "all":
             m = importlib.import_module('decksite.{module}'.format(module=module))

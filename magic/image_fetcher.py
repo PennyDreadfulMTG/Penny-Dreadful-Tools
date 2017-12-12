@@ -77,7 +77,7 @@ def determine_filepath(cards) -> str:
     return '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename=filename)
 
 def download_image(cards) -> str:
-    fp = determine_filepath(cards)
+    filepath = determine_filepath(cards)
     if internal.acceptable_file(filepath):
         return filepath
     if download_bluebones_image(cards, filepath):

@@ -439,7 +439,7 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_typing(channel)
         card = await single_card_or_send_error(bot, channel, args, author)
         if card is not None:
-            image_file = image_fetcher.download_scryfall_image([card], image_fetcher.filepath([card]) + 'art_crop.jpg', version='art_crop')
+            image_file = image_fetcher.download_scryfall_image([card], image_fetcher.determine_filepath([card]) + 'art_crop.jpg', version='art_crop')
             await bot.send_image_with_retry(channel, image_file)
 
     @cmd_header('Commands')

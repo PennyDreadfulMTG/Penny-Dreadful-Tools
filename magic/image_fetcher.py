@@ -53,14 +53,14 @@ def download_scryfall_image(cards, filepath, version='') -> str:
 def download_mci_image(cards, filepath) -> str:
     printings = oracle.get_printings(cards[0])
     for p in printings:
-        print("Trying to get MCI image for {imagename}".format(imagename=imagename))
+        print("Trying to get MCI image for {imagename}".format(imagename=os.path.basename(filepath)))
         try:
             internal.store(mci_image(p), filepath)
             if internal.acceptable_file(filepath):
                 return filepath
         except FetchException as e:
             print('Error: {e}'.format(e=e))
-        print('Trying to get fallback image for {imagename}'.format(imagename=imagename))
+        print('Trying to get fallback image for {imagename}'.format(imagename=os.path.basename(filepath)))
         try:
             internal.store(gatherer_image(p), filepath)
             if internal.acceptable_file(filepath):
@@ -68,7 +68,7 @@ def download_mci_image(cards, filepath) -> str:
         except FetchException as e:
             print('Error: {e}'.format(e=e))
 
-def filepath(cards) -> str:
+def determine_filepath(cards) -> str:
     imagename = basename(cards)
     # Hash the filename if it's otherwise going to be too large to use.
     if len(imagename) > 240:
@@ -77,13 +77,13 @@ def filepath(cards) -> str:
     return '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename=filename)
 
 def download_image(cards) -> str:
-    fp = filepath(cards)
-    if internal.acceptable_file(fp):
-        return fp
-    if download_bluebones_image(cards, fp):
-        return fp
-    if download_scryfall_image(cards, fp):
-        return fp
-    if download_mci_image(cards, fp):
-        return fp
+    fp = determine_filepath(cards)
+    if internal.acceptable_file(filepath):
+        return filepath
+    if download_bluebones_image(cards, filepath):
+        return filepath
+    if download_scryfall_image(cards, filepath):
+        return filepath
+    if download_mci_image(cards, filepath):
+        return filepath
     return None

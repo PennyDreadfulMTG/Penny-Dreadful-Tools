@@ -230,14 +230,14 @@ def add_report():
 @auth.login_required
 def retire(form=None):
     if form is None:
-        form = RetireForm(request.form, request.cookies.get('deck_id', ''))
+        form = RetireForm(request.form, request.cookies.get('deck_id', ''), session.get('id'))
     view = Retire(form)
     return view.page()
 
 @APP.route('/retire/', methods=['POST'])
 @auth.login_required
 def do_claim():
-    form = RetireForm(request.form)
+    form = RetireForm(request.form, discord_user=session.get('id'))
     if form.validate():
         d = deck.load_deck(form.entry)
         ps.associate(d, session['id'])

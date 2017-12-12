@@ -86,5 +86,11 @@ def associate(d, discord_id):
     sql = 'UPDATE person SET discord_id = ? WHERE id = ?'
     return db().execute(sql, [discord_id, person.id])
 
+def is_allowed_to_retire(deck_id, discord_id):
+    people = load_people('p.discord_id = {discord_id}'.format(discord_id=sqlescape(discord_id)))
+    if len(people) == 0:
+        return True
+    return any(int(deck_id) == deck.id for deck in people[0].decks)
+
 class Person(Container):
     pass

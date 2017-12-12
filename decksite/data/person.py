@@ -77,7 +77,6 @@ def set_achievements(people):
     """.format(ids=', '.join(str(k) for k in people_by_id.keys()))
     results = [Container(r) for r in db().execute(sql)]
     for result in results:
-        print(result)
         people_by_id[result['id']].update(result)
         people_by_id[result['id']].achievements = len([k for k, v in result.items() if k != 'id' and v > 0])
 

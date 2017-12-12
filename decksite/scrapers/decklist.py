@@ -18,6 +18,8 @@ def parse_line(line):
 
 def parse_chunk(chunk, section):
     for line in chunk.splitlines():
+        if line.lower().strip() == 'sideboard':
+            continue
         n, name = parse_line(line)
         section[name] = int(n) + section.get(name, 0)
 
@@ -27,7 +29,7 @@ def parse(s):
     maindeck = {}
     sideboard = {}
     chunks = re.split(r'\r?\n\r?\n|^\s*sideboard.*?\n', s, flags=re.IGNORECASE|re.MULTILINE)
-    if len(chunks) > 1:
+    if len(chunks) > 1 and (len(chunks[-1]) > 1 or len(chunks[-1][0]) > 0):
         for chunk in chunks[:-1]:
             parse_chunk(chunk, maindeck)
         parse_chunk(chunks[-1], sideboard)

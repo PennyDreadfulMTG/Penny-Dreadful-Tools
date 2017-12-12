@@ -1,5 +1,5 @@
 from magic.database import db
-from magic import oracle
+from magic import multiverse, oracle
 
 FORMATS = set()
 
@@ -57,6 +57,25 @@ def cards_legal_in_format(cardlist, f):
         if f in c.legalities.keys() and c.legalities[f] != 'Banned':
             results.append(c)
     return results
+
+def order_score(fmt):
+    if fmt == 'Penny Dreadful':
+        return 1
+    elif 'Penny Dreadful' in fmt:
+        return 10 + multiverse.SEASONS.index(fmt.replace('Penny Dreadful ', ''))
+    elif fmt == 'Vintage':
+        return 100
+    elif fmt == 'Legacy':
+        return 1000
+    elif fmt == 'Modern':
+        return 10000
+    elif fmt == 'Standard':
+        return 100000
+    elif 'Block' in fmt:
+        return 1000000
+    elif fmt == 'Commander':
+        return 10000000
+    return 100000000
 
 def init():
     if FORMATS:

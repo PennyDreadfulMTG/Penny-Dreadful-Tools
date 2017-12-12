@@ -4,7 +4,7 @@ import titlecase
 
 from decksite.data import archetype, deck
 from decksite.view import View
-from magic import fetcher, oracle
+from magic import fetcher, legality, oracle
 from shared import dtutil
 from shared.pd_exception import InvalidDataException
 
@@ -40,6 +40,7 @@ class Deck(View):
         self.archetypes = archetype.load_archetypes_deckless(order_by='a.name')
         self.edit_archetype_url = url_for('edit_archetypes')
         self.cardhoarder_url = fetcher.cardhoarder_url(d)
+        self.legal_formats = list(sorted(d.legal_formats, key=legality.order_score))
 
     def has_matches(self):
         return len(self.matches) > 0

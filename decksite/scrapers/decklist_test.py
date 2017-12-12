@@ -163,7 +163,6 @@ def test_parse5():
     """
     s = textwrap.dedent(s)
     d = decklist.parse(s)
-    print(d)
     assert len(d['maindeck']) == 13
     assert len(d['sideboard']) == 1
 
@@ -193,7 +192,6 @@ def test_parse6():
     """
     s = textwrap.dedent(s)
     d = decklist.parse(s)
-    print(d)
     assert sum(d['maindeck'].values()) == 61
     assert len(d['maindeck']) == 13
     assert len(d['sideboard']) == 7
@@ -222,7 +220,6 @@ def test_parse7():
     """
     s = textwrap.dedent(s)
     d = decklist.parse(s)
-    print(d)
     assert sum(d['maindeck'].values()) == 64
     assert sum(d['sideboard'].values()) == 12
     assert len(d['maindeck']) == 13
@@ -255,8 +252,39 @@ def test_parse8():
     """
     s = textwrap.dedent(s)
     d = decklist.parse(s)
-    print(d)
     assert sum(d['maindeck'].values()) == 61
     assert sum(d['sideboard'].values()) == 15
     assert d['maindeck']['Cryptic Serpent'] == 1
     assert d['sideboard']['Convolute'] == 1
+
+# Test a Gatherling deck with
+def test_parse9():
+    s = """
+        2 Bonded Horncrest
+        4 Boros Guildgate
+        2 Charging Monstrosaur
+        2 Frenzied Raptor
+        3 Imperial Lancer
+        8 Mountain
+        2 Nest Robber
+        2 Pious Interdiction
+        9 Plains
+        1 Pterodon Knight
+        2 Rallying Roar
+        2 Shining Aerosaur
+        3 Sky Terror
+        2 Slash of Talons
+        4 Stone Quarry
+        2 Sure Strike
+        2 Swashbuckling
+        3 Territorial Hammerskull
+        2 Thrash of Raptors
+        1 Tilonalli's Skinshifter
+        2 Unfriendly Fire
+
+        Sideboard"""
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    assert sum(d['maindeck'].values()) == 60
+    assert sum(d['sideboard'].values()) == 0
+    assert d['maindeck']['Shining Aerosaur'] == 2

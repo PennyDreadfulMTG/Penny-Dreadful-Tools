@@ -18,6 +18,8 @@ def parse_line(line):
 
 def parse_chunk(chunk, section):
     for line in chunk.splitlines():
+        if line.lower().strip() == 'sideboard':
+            continue
         n, name = parse_line(line)
         section[name] = int(n) + section.get(name, 0)
 

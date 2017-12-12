@@ -100,7 +100,7 @@ class RetireForm(Form):
         super().__init__(form)
         decks = active_decks()
         self.entry_options = deck_options(decks, self.get('entry', deck_id))
-        self.discord_user=discord_user
+        self.discord_user = discord_user
 
     def do_validation(self):
         if len(self.entry) == 0:

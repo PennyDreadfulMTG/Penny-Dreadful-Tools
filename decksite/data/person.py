@@ -42,6 +42,7 @@ def load_people(where='1 = 1'):
     if len(people) > 0:
         set_decks(people)
         set_achievements(people)
+        set_head_to_head(people)
     return people
 
 def set_decks(people):
@@ -79,6 +80,40 @@ def set_achievements(people):
     for result in results:
         people_by_id[result['id']].update(result)
         people_by_id[result['id']].achievements = len([k for k, v in result.items() if k != 'id' and v > 0])
+
+def set_head_to_head(people):
+    people_by_id = {person.id: person for person in people}
+    sql = """
+        SELECT
+            p.id,
+            COUNT(p.id) AS num_matches,
+            {person_query} AS opp_mtgo_username,
+            SUM(CASE WHEN dm.games > opp.games THEN 1 ELSE 0 END) AS wins,
+            SUM(CASE WHEN dm.games < opp.games THEN 1 ELSE 0 END) AS losses,
+            SUM(CASE WHEN dm.games = opp.games THEN 1 ELSE 0 END) AS draws,
+            IFNULL(ROUND((SUM(CASE WHEN dm.games > opp.games THEN 1 ELSE 0 END) / SUM(CASE WHEN dm.games <> opp.games THEN 1 ELSE 0 END)) * 100, 1), '') AS win_percent
+        FROM
+            person AS p
+        INNER JOIN
+            deck AS d ON p.id = d.person_id
+        INNER JOIN
+            deck_match AS dm ON dm.deck_id = d.id
+        INNER JOIN
+            deck_match AS opp ON dm.match_id = opp.match_id AND dm.deck_id <> opp.deck_id
+        INNER JOIN
+            deck AS opp_deck ON opp.deck_id = opp_deck.id
+        INNER JOIN
+            person AS opp_person ON opp_deck.person_id = opp_person.id
+        WHERE
+            p.id IN ({ids})
+        GROUP BY
+            p.id, opp_person.id
+        ORDER BY
+            p.id, num_matches DESC, SUM(d.wins) - SUM(d.losses) DESC, win_percent DESC, SUM(d.wins) DESC
+    """.format(person_query=query.person_query('opp_person'), ids=', '.join(str(k) for k in people_by_id.keys()))
+    results = [Container(r) for r in db().execute(sql)]
+    for result in results:
+        people_by_id[result.id].head_to_head = people_by_id[result.id].get('head_to_head', []) + [result]
 
 def associate(d, discord_id):
     person = guarantee.exactly_one(load_people('d.id = {deck_id}'.format(deck_id=sqlescape(d.id))))

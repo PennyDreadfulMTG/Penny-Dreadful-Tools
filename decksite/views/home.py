@@ -1,9 +1,7 @@
 import datetime
-import math
 
 from flask import url_for
 
-from decksite.data import card
 from decksite.view import View
 from shared import dtutil
 
@@ -16,7 +14,7 @@ class Home(View):
         display_decks = week_decks
         if len(display_decks) < min_decks:
             one_week_ago_ts = dtutil.now() - datetime.timedelta(weeks=1)
-            display_decks = [d for d in deck if d.created_date > one_week_ago_ts]
+            display_decks = [d for d in decks if d.created_date > one_week_ago_ts]
             if len(display_decks) < min_decks:
                 display_decks = decks
         self.decks = display_decks

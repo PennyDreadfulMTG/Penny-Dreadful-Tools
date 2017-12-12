@@ -29,6 +29,9 @@ def run():
         task(sys.argv)
     elif "tests" in sys.argv:
         import pytest
+        from magic import multiverse, oracle
+        multiverse.init()
+        oracle.init()
         sys.argv.remove("tests")
         code = pytest.main()
         sys.exit(code)

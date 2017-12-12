@@ -2,16 +2,12 @@ import unittest
 
 import pytest
 
-from magic import multiverse, oracle
-
 from decksite.main import APP
 
 class SmokeTest(unittest.TestCase):
     def setUp(self):
         # creates a test client
         self.app = APP.test_client()
-        multiverse.init()
-        oracle.init()
         # propagate the exceptions to the test client
         self.app.testing = True
 

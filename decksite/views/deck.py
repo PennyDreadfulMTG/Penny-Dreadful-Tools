@@ -41,6 +41,7 @@ class Deck(View):
         self.edit_archetype_url = url_for('edit_archetypes')
         self.cardhoarder_url = fetcher.cardhoarder_url(d)
         self.legal_formats = list(sorted(d.legal_formats, key=legality.order_score))
+        self.is_in_current_run = d.is_in_current_run
 
     def has_matches(self):
         return len(self.matches) > 0

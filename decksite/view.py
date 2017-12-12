@@ -50,7 +50,7 @@ class View:
                 archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
         menu = [
             {'name': 'Metagame', 'url': url_for('home'), 'badge': archetypes_badge, 'submenu': [
-                {'name': 'Latest Decks', 'url': url_for('home')},
+                {'name': 'Latest Decks', 'url': url_for('decks')},
                 {'name': 'Archetypes', 'url': url_for('archetypes'), 'badge': archetypes_badge},
                 {'name': 'People', 'url': url_for('people')},
                 {'name': 'Cards', 'url': url_for('cards')},

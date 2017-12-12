@@ -9,6 +9,7 @@ from .cards import Cards
 from .competition import Competition
 from .competitions import Competitions
 from .deck import Deck
+from .decks import Decks
 from .edit_archetypes import EditArchetypes
 from .edit_matches import EditMatches
 from .home import Home

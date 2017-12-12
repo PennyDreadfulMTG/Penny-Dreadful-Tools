@@ -26,7 +26,7 @@ class Deck(View):
                 m.opponent = 'BYE'
                 m.opponent_url = False
             if m.opponent_deck_id:
-                m.opponent_deck_url = url_for('decks', deck_id=m.opponent_deck_id)
+                m.opponent_deck_url = url_for('deck', deck_id=m.opponent_deck_id)
             else:
                 m.opponent_deck_url = False
             if m.opponent_deck:
@@ -52,7 +52,7 @@ class Deck(View):
         return self._deck.name
 
     def og_url(self):
-        return url_for('decks', deck_id=self._deck.id, _external=True)
+        return url_for('deck', deck_id=self._deck.id, _external=True)
 
     def og_description(self):
         if self.archetype_name:

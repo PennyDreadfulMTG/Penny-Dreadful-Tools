@@ -11,23 +11,29 @@ from shared.pd_exception import DoesNotExistException, InvalidArgumentException,
 from decksite import auth, deck_name, league as lg
 from decksite import APP
 from decksite.cache import cached
-from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
+from decksite.data import archetype as archs, card as cs, competition as comp, deck as ds, person as ps
 from decksite.charts import chart
 from decksite.league import ReportForm, RetireForm, SignUpForm
-from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
+from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
 
 # Decks
 
 @APP.route('/')
 @cached()
 def home():
-    view = Home(deck.latest_decks())
+    view = Home(ds.load_decks(limit='LIMIT 50'), cs.played_cards())
+    return view.page()
+
+@APP.route('/decks/')
+@cached()
+def decks():
+    view = Decks(ds.load_decks(limit='LIMIT 500'))
     return view.page()
 
 @APP.route('/decks/<deck_id>/')
 @cached()
-def decks(deck_id):
-    view = Deck(deck.load_deck(deck_id))
+def deck(deck_id):
+    view = Deck(ds.load_deck(deck_id))
     return view.page()
 
 @APP.route('/seasons/')
@@ -41,7 +47,7 @@ def seasons():
 @cached()
 def season(season_id, deck_type=None):
     league_only = deck_type == 'league'
-    view = Season(deck.load_season(season_id, league_only), league_only)
+    view = Season(ds.load_season(season_id, league_only), league_only)
     return view.page()
 
 @APP.route('/people/')
@@ -137,7 +143,7 @@ def add_deck():
         view = AddForm()
         view.error = error
         return view.page(), 409
-    return redirect(url_for('decks', deck_id=deck_id))
+    return redirect(url_for('deck', deck_id=deck_id))
 
 @APP.route('/about/')
 @cached()
@@ -164,7 +170,7 @@ def rotation():
 
 @APP.route('/export/<deck_id>/')
 def export(deck_id):
-    d = deck.load_deck(deck_id)
+    d = ds.load_deck(deck_id)
     safe_name = deck_name.file_name(d)
     return (mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 
@@ -205,7 +211,7 @@ def add_signup():
     form = SignUpForm(request.form)
     if form.validate():
         d = lg.signup(form)
-        response = make_response(redirect(url_for('decks', deck_id=d.id)))
+        response = make_response(redirect(url_for('deck', deck_id=d.id)))
         response.set_cookie('deck_id', str(d.id))
         return response
     return signup(form)
@@ -221,7 +227,7 @@ def report(form=None):
 def add_report():
     form = ReportForm(request.form)
     if form.validate() and lg.report(form):
-        response = make_response(redirect(url_for('decks', deck_id=form.entry)))
+        response = make_response(redirect(url_for('deck', deck_id=form.entry)))
         response.set_cookie('deck_id', form.entry)
         return response
     return report(form)
@@ -239,10 +245,10 @@ def retire(form=None):
 def do_claim():
     form = RetireForm(request.form)
     if form.validate():
-        d = deck.load_deck(form.entry)
+        d = ds.load_deck(form.entry)
         ps.associate(d, session['id'])
         lg.retire_deck(d)
-        return redirect(url_for('decks', deck_id=form.entry))
+        return redirect(url_for('deck', deck_id=form.entry))
     return retire(form)
 
 # Admin
@@ -277,7 +283,7 @@ def post_archetypes():
             if archetype_id:
                 archs.assign(deck_id, archetype_id)
     elif request.form.get('q') is not None:
-        search_results = deck.load_decks_by_cards(request.form.get('q').splitlines())
+        search_results = ds.load_decks_by_cards(request.form.get('q').splitlines())
     elif request.form.getlist('archetype_id') is not None and len(request.form.getlist('archetype_id')) == 2:
         archs.move(request.form.getlist('archetype_id')[0], request.form.getlist('archetype_id')[1])
     elif request.form.get('parent') is not None:

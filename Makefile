@@ -18,8 +18,7 @@ unit:
 	@echo
 	@echo "******************************** Unit Tests ***********************************"
 	@echo
-	@python3 run.py tests `find . -name "*$(TEST)*" | grep -v pyc`
-	@echo
+	@find . -name "*$(TEST)*" | grep _test.py$ | xargs python3 run.py tests
 
 # Run lint on all python files.
 lint:

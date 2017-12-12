@@ -437,9 +437,9 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def art(self, bot, channel, args, author):
         await bot.client.send_typing(channel)
-        card = await single_card_or_send_error(bot, channel, args, author)
-        if card is not None:
-            image_file = image_fetcher.download_scryfall_image([card], image_fetcher.determine_filepath([card]) + 'art_crop.jpg', version='art_crop')
+        c = await single_card_or_send_error(bot, channel, args, author)
+        if c is not None:
+            image_file = image_fetcher.download_scryfall_image([c], image_fetcher.determine_filepath([c]) + 'art_crop.jpg', version='art_crop')
             await bot.send_image_with_retry(channel, image_file)
 
     @cmd_header('Commands')
@@ -619,11 +619,11 @@ async def single_card_or_send_error(bot, channel, args, author):
         await bot.client.send_message(channel, '{author}: No matches.'.format(author=author.mention))
 
 async def single_card_text(bot, channel, args, author, f):
-    card = single_card_or_send_error(bot, channel, args, author)
+    c = single_card_or_send_error(bot, channel, args, author)
     if card is not None:
-        legal_emjoi = emoji.legal_emoji(cards[0])
-        text = emoji.replace_emoji(f(cards[0]), bot.client)
-        message = '**{name}** {legal_emjoi} {text}'.format(name=cards[0].name, legal_emjoi=legal_emjoi, text=text)
+        legal_emjoi = emoji.legal_emoji(c)
+        text = emoji.replace_emoji(f(c), bot.client)
+        message = '**{name}** {legal_emjoi} {text}'.format(name=c.name, legal_emjoi=legal_emjoi, text=text)
         await bot.client.send_message(channel, message)
 
 def oracle_text(c):

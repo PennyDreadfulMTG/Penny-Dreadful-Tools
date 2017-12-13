@@ -12,8 +12,10 @@
             <thead>
                 <th>Card</th>
                 <th># Decks</th>
-                <th>Record</th>
-                <th>Win %</th>
+                <th data-breakpoints="xs">Record</th>
+                <th data-breakpoints="xs">Win %</th>
+                {{! Empty column to hold the toggle when footable kicks in.}}
+                <td></td>
             </thead>
             <tbody>
                 {{#top_cards}}
@@ -22,6 +24,8 @@
                         <td class="n">{{season_num_decks}}</td>
                         <td class="n">{{season_wins}}–{{season_losses}}{{#season_draws}}–{{season_draws}}{{/season_draws}}</td>
                         <td class="n">{{season_win_percent}}</td>
+                        {{! Empty column to hold the toggle when footable kicks in.}}
+                        <td></td>
                     </tr>
                 {{/top_cards}}
             </tbody>
@@ -34,17 +38,21 @@
         <table>
             <thead>
                 <th>Card</th>
-                <th># Decks</th>
+                <th data-breakpoints="xs"># Decks</th>
                 <th>Record</th>
-                <th>Win %</th>
+                <th data-breakpoints="xs">Win %</th>
+                {{! Empty column to hold the toggle when footable kicks in.}}
+                <td></td>
             </thead>
             <tbody>
                 {{#week_cards}}
                     <tr>
                         <td>{{> singlecard}}</td>
-                        <td class="n">{{week_num_decks}}</td>
+                        <td class="n" data-breakpoints="xs">{{week_num_decks}}</td>
                         <td class="n">{{week_wins}}–{{week_losses}}{{#week_draws}}–{{week_draws}}{{/week_draws}}</td>
-                        <td class="n">{{week_win_percent}}</td>
+                        <td class="n" data-breakpoints="xs">{{week_win_percent}}</td>
+                        {{! Empty column to hold the toggle when footable kicks in.}}
+                        <td></td>
                     </tr>
                 {{/week_cards}}
             </tbody>
@@ -57,8 +65,10 @@
             <thead>
                 <th>Card</th>
                 <th># Decks</th>
-                <th>Record</th>
-                <th>Win %</th>
+                <th data-breakpoints="xs">Record</th>
+                <th data-breakpoints="xs">Win %</th>
+                {{! Empty column to hold the toggle when footable kicks in.}}
+                <td></td>
             </thead>
             <tbody>
                 {{#rising_cards}}
@@ -67,6 +77,8 @@
                         <td class="n">{{week_num_decks}}</td>
                         <td class="n">{{week_wins}}–{{week_losses}}{{#week_draws}}–{{week_draws}}{{/week_draws}}</td>
                         <td class="n">{{week_win_percent}}</td>
+                        {{! Empty column to hold the toggle when footable kicks in.}}
+                        <td></td>
                     </tr>
                 {{/rising_cards}}
             </tbody>

@@ -347,7 +347,8 @@ def unauthorized(error=None):
 @APP.route('/logout/')
 def logout():
     auth.logout()
-    return redirect(url_for('home'))
+    target = request.args.get('target', 'home')
+    return redirect(url_for(target))
 
 # Infra
 

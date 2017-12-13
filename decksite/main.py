@@ -248,7 +248,7 @@ def do_claim():
         d = ds.load_deck(form.entry)
         ps.associate(d, session['id'])
         lg.retire_deck(d)
-        return redirect(url_for('deck', deck_id=form.entry))
+        return redirect(url_for('signup'))
     return retire(form)
 
 # Admin

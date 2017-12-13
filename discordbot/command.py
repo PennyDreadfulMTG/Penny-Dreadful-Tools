@@ -619,7 +619,7 @@ async def single_card_or_send_error(bot, channel, args, author):
         await bot.client.send_message(channel, '{author}: No matches.'.format(author=author.mention))
 
 async def single_card_text(bot, channel, args, author, f):
-    c = single_card_or_send_error(bot, channel, args, author)
+    c = await single_card_or_send_error(bot, channel, args, author)
     if c is not None:
         legal_emoji = emoji.legal_emoji(c)
         text = emoji.replace_emoji(f(c), bot.client)

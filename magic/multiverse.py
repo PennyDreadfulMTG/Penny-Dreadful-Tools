@@ -209,11 +209,11 @@ def insert_card(c):
         raise
     for color in c.get('colors', []):
         color_id = db().value('SELECT id FROM color WHERE name = ?', [color])
-        # INSERT INTO IGNORE because some cards have multiple faces with the same color. See DFCs and What // When // Where // Who // Why.
+        # INSERT IGNORE INTO because some cards have multiple faces with the same color. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT IGNORE INTO card_color (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
     for symbol in c.get('colorIdentity', []):
         color_id = db().value('SELECT id FROM color WHERE symbol = ?', [symbol])
-        # INSERT INTO IGNORE because some cards have multiple faces with the same color identity. See DFCs and What // When // Where // Who // Why.
+        # INSERT IGNORE INTO because some cards have multiple faces with the same color identity. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT IGNORE INTO card_color_identity (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
     for supertype in c.get('supertypes', []):
         db().execute('INSERT INTO card_supertype (card_id, supertype) VALUES (?, ?)', [card_id, supertype])

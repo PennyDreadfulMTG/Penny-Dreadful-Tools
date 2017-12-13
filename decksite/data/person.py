@@ -109,7 +109,7 @@ def set_head_to_head(people):
         GROUP BY
             p.id, opp_person.id
         ORDER BY
-            p.id, num_matches DESC, SUM(d.wins) - SUM(d.losses) DESC, win_percent DESC, SUM(d.wins) DESC
+            p.id, num_matches DESC, (wins - losses) DESC, win_percent DESC, wins DESC
     """.format(person_query=query.person_query('opp_person'), ids=', '.join(str(k) for k in people_by_id.keys()))
     results = [Container(r) for r in db().execute(sql)]
     for result in results:

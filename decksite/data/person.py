@@ -87,7 +87,7 @@ def set_head_to_head(people):
         SELECT
             p.id,
             COUNT(p.id) AS num_matches,
-            {person_query} AS opp_mtgo_username,
+            LOWER(opp_person.mtgo_username) AS opp_mtgo_username,
             SUM(CASE WHEN dm.games > opp.games THEN 1 ELSE 0 END) AS wins,
             SUM(CASE WHEN dm.games < opp.games THEN 1 ELSE 0 END) AS losses,
             SUM(CASE WHEN dm.games = opp.games THEN 1 ELSE 0 END) AS draws,
@@ -109,8 +109,8 @@ def set_head_to_head(people):
         GROUP BY
             p.id, opp_person.id
         ORDER BY
-            p.id, num_matches DESC, (wins - losses) DESC, win_percent DESC, wins DESC
-    """.format(person_query=query.person_query('opp_person'), ids=', '.join(str(k) for k in people_by_id.keys()))
+            p.id, num_matches DESC, SUM(CASE WHEN dm.games > opp.games THEN 1 ELSE 0 END) - SUM(CASE WHEN dm.games < opp.games THEN 1 ELSE 0 END) DESC, win_percent DESC, SUM(CASE WHEN dm.games > opp.games THEN 1 ELSE 0 END) DESC;
+    """.format(ids=', '.join(str(k) for k in people_by_id.keys()))
     results = [Container(r) for r in db().execute(sql)]
     for result in results:
         people_by_id[result.id].head_to_head = people_by_id[result.id].get('head_to_head', []) + [result]

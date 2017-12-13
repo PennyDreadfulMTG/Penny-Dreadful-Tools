@@ -14,7 +14,7 @@ import inflect
 
 from discordbot import emoji
 from find import search
-from magic import card, database, oracle, fetcher, rotation, multiverse, tournaments
+from magic import card, database, image_fetcher, fetcher, multiverse, oracle, rotation, tournaments
 from shared import configuration, dtutil, repo, rules
 from shared.pd_exception import TooFewItemsException
 from googleapiclient.discovery import build
@@ -435,6 +435,14 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_message(channel, 'The next tournament is {name} in {time}.\nSign up on <http://gatherling.com/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], time=t['next_tournament_time'], prev_message=prev_message, url=fetcher.decksite_url('/tournaments/')))
 
     @cmd_header('Commands')
+    async def art(self, bot, channel, args, author):
+        await bot.client.send_typing(channel)
+        c = await single_card_or_send_error(bot, channel, args, author)
+        if c is not None:
+            image_file = image_fetcher.download_scryfall_image([c], image_fetcher.determine_filepath([c]) + 'art_crop.jpg', version='art_crop')
+            await bot.send_image_with_retry(channel, image_file)
+
+    @cmd_header('Commands')
     async def explain(self, bot, channel, args):
         """`!explain`. Get a list of things the bot knows how to explain.
 `!explain {thing}`. Print commonly needed explanation for 'thing'."""
@@ -601,17 +609,22 @@ def simplify_string(s):
     s = ''.join(s.split())
     return re.sub(r'[\W_]+', '', s).lower()
 
-async def single_card_text(bot, channel, args, author, f):
+async def single_card_or_send_error(bot, channel, args, author):
     cards = list(oracle.cards_from_query(args))
     if len(cards) > 1:
         await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
     elif len(cards) == 1:
-        legal_emjoi = emoji.legal_emoji(cards[0])
-        text = emoji.replace_emoji(f(cards[0]), bot.client)
-        message = '**{name}** {legal_emjoi} {text}'.format(name=cards[0].name, legal_emjoi=legal_emjoi, text=text)
-        await bot.client.send_message(channel, message)
+        return cards[0]
     else:
         await bot.client.send_message(channel, '{author}: No matches.'.format(author=author.mention))
+
+async def single_card_text(bot, channel, args, author, f):
+    c = single_card_or_send_error(bot, channel, args, author)
+    if card is not None:
+        legal_emjoi = emoji.legal_emoji(c)
+        text = emoji.replace_emoji(f(c), bot.client)
+        message = '**{name}** {legal_emjoi} {text}'.format(name=c.name, legal_emjoi=legal_emjoi, text=text)
+        await bot.client.send_message(channel, message)
 
 def oracle_text(c):
     return c.text

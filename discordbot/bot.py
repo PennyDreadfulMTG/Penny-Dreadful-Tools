@@ -102,11 +102,14 @@ class Bot:
         if image_file is None:
             await self.client.send_message(channel, text)
         else:
-            message = await self.client.send_file(channel, image_file, content=text)
-            if message and message.attachments and message.attachments[0]['size'] == 0:
-                print('Message size is zero so resending')
-                await self.client.delete_message(message)
-                await self.client.send_file(channel, image_file, content=text)
+            await self.send_image_with_retry(channel, image_file, text)
+
+    async def send_image_with_retry(self, channel, image_file, text=''):
+        message = await self.client.send_file(channel, image_file, content=text)
+        if message and message.attachments and message.attachments[0]['size'] == 0:
+            print('Message size is zero so resending')
+            await self.client.delete_message(message)
+            await self.client.send_file(channel, image_file, content=text)
 
     async def on_member_join(self, member):
         print('{0} joined {1} ({2})'.format(member.mention, member.server.name, member.server.id))

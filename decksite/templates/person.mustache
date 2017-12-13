@@ -32,6 +32,29 @@
         </ul>
     </section>
 {{/achievements}}
+{{#show_head_to_head}}
+    <section>
+        <h2>Head to Head</h2>
+        <table>
+            <thead>
+                <th>Opponent</th>
+                <th class="n"># Matches</th>
+                <th class="n" data-sortInitialOrder="desc">Record</th>
+                <th class="n" data-sortInitialOrder="desc">Win %</th>
+            </thead>
+            <tbody>
+                {{#head_to_head}}
+                    <tr>
+                        <td><a href="{{opp_url}}">{{opp_mtgo_username}}</a></td>
+                        <td class="n">{{num_matches}}</td>
+                        <td class="n">{{> record}}</td>
+                        <td class="n">{{win_percent}}</td>
+                    </tr>
+                {{/head_to_head}}
+            </tbody>
+        </table>
+    </section>
+{{/show_head_to_head}}
 <section>
     <h2>Cards</h2>
     {{> cardstable}}

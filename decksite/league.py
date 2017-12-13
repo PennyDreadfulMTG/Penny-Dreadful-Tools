@@ -98,9 +98,17 @@ class ReportForm(Form):
 class RetireForm(Form):
     def __init__(self, form, deck_id=None, discord_user=None):
         super().__init__(form)
-        decks = active_decks()
+        person_object = None
+        if discord_user is not None:
+            person_object = person.load_person_by_discord_id(discord_user)
+        if person_object:
+            decks = active_decks_by_person(person_object.id)
+        else:
+            decks = active_decks()
         self.entry_options = deck_options(decks, self.get('entry', deck_id))
         self.discord_user = discord_user
+        if len(decks) == 0:
+            self.errors['entry'] = "You don't have any decks to retire"
 
     def do_validation(self):
         if len(self.entry) == 0:
@@ -128,6 +136,9 @@ def active_decks(additional_where='1 = 1'):
 
 def active_decks_by(mtgo_username):
     return active_decks('p.mtgo_username = {mtgo_username}'.format(mtgo_username=sqlescape(mtgo_username, force_string=True)))
+
+def active_decks_by_person(person_id):
+    return active_decks('p.id = {id}'.format(id=person_id))
 
 def report(form):
     try:

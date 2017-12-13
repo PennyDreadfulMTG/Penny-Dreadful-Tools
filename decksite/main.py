@@ -248,7 +248,7 @@ def do_claim():
         d = ds.load_deck(form.entry)
         ps.associate(d, session['id'])
         lg.retire_deck(d)
-        return redirect(url_for('deck', deck_id=form.entry))
+        return redirect(url_for('signup'))
     return retire(form)
 
 # Admin
@@ -347,7 +347,8 @@ def unauthorized(error=None):
 @APP.route('/logout/')
 def logout():
     auth.logout()
-    return redirect(url_for('home'))
+    target = request.args.get('target', 'home')
+    return redirect(url_for(target))
 
 # Infra
 

@@ -620,10 +620,10 @@ async def single_card_or_send_error(bot, channel, args, author):
 
 async def single_card_text(bot, channel, args, author, f):
     c = single_card_or_send_error(bot, channel, args, author)
-    if card is not None:
-        legal_emjoi = emoji.legal_emoji(c)
+    if c is not None:
+        legal_emoji = emoji.legal_emoji(c)
         text = emoji.replace_emoji(f(c), bot.client)
-        message = '**{name}** {legal_emjoi} {text}'.format(name=c.name, legal_emjoi=legal_emjoi, text=text)
+        message = '**{name}** {legal_emoji} {text}'.format(name=c.name, legal_emoji=legal_emoji, text=text)
         await bot.client.send_message(channel, message)
 
 def oracle_text(c):

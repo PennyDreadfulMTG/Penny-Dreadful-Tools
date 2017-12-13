@@ -1,5 +1,6 @@
 import os
 import traceback
+import urllib.parse
 
 from flask import g, make_response, redirect, request, send_file, send_from_directory, session, url_for
 from werkzeug import exceptions
@@ -73,7 +74,7 @@ def cards():
 @cached()
 def card(name):
     try:
-        c = cs.load_card(oracle.valid_name(name.replace('+', ' ')))
+        c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)))
         view = Card(c)
         return view.page()
     except InvalidDataException as e:

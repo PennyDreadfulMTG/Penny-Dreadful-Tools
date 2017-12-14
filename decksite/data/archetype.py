@@ -61,13 +61,13 @@ def load_archetypes_deckless(where='1 = 1', order_by='`season_num_decks` DESC, `
             SUM(d.wins) AS `all_wins`,
             SUM(d.losses) AS `all_losses`,
             SUM(d.draws) AS `all_draws`,
-            IFNULL(ROUND((SUM(wins) / SUM(wins + losses)) * 100, 1), '') AS `all_win_percent`,
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS `all_win_percent`,
 
             SUM(CASE WHEN d.created_date >= %s THEN 1 ELSE 0 END) AS `season_num_decks`,
             SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) AS `season_wins`,
             SUM(CASE WHEN d.created_date >= %s THEN losses ELSE 0 END) AS `season_losses`,
             SUM(CASE WHEN d.created_date >= %s THEN draws ELSE 0 END) AS `season_draws`,
-            IFNULL(ROUND((SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) / SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END + CASE WHEN d.created_date >= %s THEN losses ELSE 0 END)) * 100, 1), '') AS `season_win_percent`
+            IFNULL(ROUND((SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END + CASE WHEN d.created_date >= %s THEN losses ELSE 0 END), 0)) * 100, 1), '') AS `season_win_percent`
 
         FROM archetype AS a
         LEFT JOIN archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1

@@ -339,7 +339,7 @@ def load_opponent_stats(decks):
     decks_by_id = {d.id: d for d in decks}
     sql = """
         SELECT d.id,
-            SUM(opp.wins) AS opp_wins, SUM(opp.losses) AS opp_losses, ROUND(SUM(opp.wins) / (SUM(opp.wins) + SUM(opp.losses)), 2) * 100 AS omw,
+            SUM(opp.wins) AS opp_wins, SUM(opp.losses) AS opp_losses, ROUND(SUM(opp.wins) / NULLIF((SUM(opp.wins) + SUM(opp.losses)), 0), 2) * 100 AS omw,
             IFNULL(MIN(CASE WHEN m.elimination > 0 THEN m.elimination END), 0) AS stage_reached, GROUP_CONCAT(m.elimination) AS elim
         FROM deck AS d
         LEFT JOIN deck AS opp ON opp.id IN (SELECT deck_id FROM deck_match WHERE deck_id <> d.id AND match_id IN (SELECT match_id FROM deck_match WHERE deck_id = d.id))

@@ -13,25 +13,26 @@ def played_cards(where='1 = 1'):
             SUM(wins) AS `all_wins`,
             SUM(losses) AS `all_losses`,
             SUM(draws) AS `all_draws`,
-            IFNULL(ROUND((SUM(wins) / SUM(wins + losses)) * 100, 1), '') AS `all_win_percent`,
+            IFNULL(ROUND(SUM(wins) / NULLIF(SUM(wins + losses), 0) * 100, 1), '') AS `all_win_percent`,
 
             SUM(CASE WHEN created_date >= %s THEN 1 ELSE 0 END) AS `season_num_decks`,
             SUM(CASE WHEN created_date >= %s THEN wins ELSE 0 END) AS `season_wins`,
             SUM(CASE WHEN created_date >= %s THEN losses ELSE 0 END) AS `season_losses`,
             SUM(CASE WHEN created_date >= %s THEN draws ELSE 0 END) AS `season_draws`,
-            ROUND((SUM(CASE WHEN created_date >= %s THEN wins ELSE 0 END) / SUM(CASE WHEN created_date >= %s THEN wins ELSE 0 END + CASE WHEN created_date >= %s THEN losses ELSE 0 END)) * 100, 1) AS `season_win_percent`,
+            ROUND(SUM(CASE WHEN created_date >= %s THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN created_date >= %s THEN wins ELSE 0 END + CASE WHEN created_date >= %s THEN losses ELSE 0 END), 0) * 100, 1) AS `season_win_percent`,
 
             SUM(CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN 1 ELSE 0 END) AS `week_num_decks`,
             SUM(CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins ELSE 0 END) AS `week_wins`,
             SUM(CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN losses ELSE 0 END) AS `week_losses`,
             SUM(CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN draws ELSE 0 END) AS `week_draws`,
-            ROUND((SUM(CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins ELSE 0 END) / SUM(CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins ELSE 0 END + CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN losses ELSE 0 END)) * 100, 1) AS `week_win_percent`
+            ROUND(SUM(CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins ELSE 0 END + CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN losses ELSE 0 END), 0) * 100, 1) AS `week_win_percent`
         FROM deck_card AS dc
         LEFT JOIN deck AS d ON d.id = dc.deck_id
         WHERE {where}
         GROUP BY dc.card
         ORDER BY `season_num_decks` DESC, SUM(wins) - SUM(losses), name
     """.format(where=where)
+
     cs = [Container(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())] * 7)]
     cards = oracle.cards_by_name()
     for c in cs:

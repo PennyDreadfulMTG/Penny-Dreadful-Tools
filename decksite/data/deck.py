@@ -117,11 +117,11 @@ def set_legality(d):
 #     'cards' {
 #         'maindeck': {
 #             '<canonical card name>': <int>,
-#             ...
+#             …
 #         },
 #         'sideboard': {
 #             '<canonical card name>': <int>,
-#             ...
+#             …
 #         }
 #     }
 # }

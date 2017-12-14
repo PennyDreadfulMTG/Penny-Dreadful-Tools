@@ -62,20 +62,20 @@ def order_score(fmt):
     if fmt == 'Penny Dreadful':
         return 1
     elif 'Penny Dreadful' in fmt:
-        return 10 + multiverse.SEASONS.index(fmt.replace('Penny Dreadful ', ''))
+        return 1000 - multiverse.SEASONS.index(fmt.replace('Penny Dreadful ', ''))
     elif fmt == 'Vintage':
-        return 100
-    elif fmt == 'Legacy':
-        return 1000
-    elif fmt == 'Modern':
         return 10000
-    elif fmt == 'Standard':
+    elif fmt == 'Legacy':
         return 100000
-    elif 'Block' in fmt:
+    elif fmt == 'Modern':
         return 1000000
-    elif fmt == 'Commander':
+    elif fmt == 'Standard':
         return 10000000
-    return 100000000
+    elif 'Block' in fmt:
+        return 100000000
+    elif fmt == 'Commander':
+        return 1000000000
+    return 10000000000
 
 def init():
     if FORMATS:

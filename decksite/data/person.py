@@ -114,6 +114,9 @@ def set_head_to_head(people):
     results = [Container(r) for r in db().execute(sql)]
     for result in results:
         people_by_id[result.id].head_to_head = people_by_id[result.id].get('head_to_head', []) + [result]
+    for person in people:
+        if person.get('head_to_head') is None:
+            person.head_to_head = []
 
 def associate(d, discord_id):
     person = guarantee.exactly_one(load_people('d.id = {deck_id}'.format(deck_id=sqlescape(d.id))))

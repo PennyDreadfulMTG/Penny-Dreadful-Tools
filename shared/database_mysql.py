@@ -1,4 +1,4 @@
-#pylint: disable=import-error, duplicate-code
+# pylint: disable=import-error, duplicate-code
 import warnings
 
 import MySQLdb

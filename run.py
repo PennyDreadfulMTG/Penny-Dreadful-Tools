@@ -53,7 +53,7 @@ def task(args):
         oracle.init()
         if name == "all":
             m = importlib.import_module('decksite.{module}'.format(module=module))
-            #pylint: disable=unused-variable
+            # pylint: disable=unused-variable
             for importer, modname, ispkg in pkgutil.iter_modules(m.__path__):
                 s = importlib.import_module('decksite.{module}.{name}'.format(name=modname, module=module))
                 if getattr(s, "scrape", None) is not None:

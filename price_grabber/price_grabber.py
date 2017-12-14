@@ -1,4 +1,5 @@
 import html
+import re
 import sys
 
 from magic import card, fetcher_internal, multiverse, oracle
@@ -32,9 +33,8 @@ def parse_prices(s):
         if line.count('\t') != 6:
             print('Bad line: {line}'.format(line=line))
         else:
-            # pylint: disable=unused-variable
-            _mtgo_id, mtgo_set, _mtgjson_set, set_number, name, p, quantity = line.split('\t')
-            if int(quantity) > 0 and set_number != '0' and not mtgo_set.startswith('CH-') and mtgo_set != 'VAN' and mtgo_set != 'EVENT':
+            _mtgo_id, mtgo_set, _mtgjson_set, set_number, name, p, quantity = line.split('\t')  # pylint: disable=unused-variable
+            if int(quantity) > 0 and not mtgo_set.startswith('CH-') and mtgo_set != 'VAN' and mtgo_set != 'EVENT' and not re.search(r'(Booster|Commander Deck|Commander:|Theme Deck|Draft Pack|Duel Decks|Reward Pack|Intro Pack|Tournament Pack|Premium Deck Series:|From the Vault)', name):
                 details.append((name, p))
     return [(name_lookup(html.unescape(name.strip())), html.unescape(p.strip())) for name, p in details if name_lookup(html.unescape(name.strip())) is not None]
 
@@ -90,6 +90,8 @@ def create_tables():
 def name_lookup(name):
     if name == 'Kongming, Sleeping Dragon':
         name = 'Kongming, "Sleeping Dragon"'
+    elif name == 'Pang Tong, Young Phoenix':
+        name = 'Pang Tong, "Young Phoenix"'
     if not CARDS:
         rs = db().execute(multiverse.base_query())
         for row in rs:

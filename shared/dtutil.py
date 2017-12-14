@@ -13,8 +13,9 @@ import pytz
 
 GATHERLING_TZ = pytz.timezone('America/New_York')
 WOTC_TZ = pytz.timezone('America/Los_Angeles')
-MTGGOLDFISH_TZ = pytz.timezone('UTC')
 UTC_TZ = pytz.timezone('UTC')
+MTGGOLDFISH_TZ = UTC_TZ
+CARDHOARDER_TZ = UTC_TZ
 
 # Converts a UTC timestamp (seconds) into a timezone-aware UTC datetime.
 def ts2dt(ts):

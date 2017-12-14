@@ -40,9 +40,9 @@ def base_query(where='(1 = 1)'):
             bug_last_confirmed
             FROM (
                 SELECT {card_props}, {face_props}, f.name AS face_name,
-                    cb.description AS bug_desc,
-                    cb.classification AS bug_class,
-                    cb.last_confirmed AS bug_last_confirmed,
+                    ANY_VALUE(cb.description) AS bug_desc,
+                    ANY_VALUE(cb.classification) AS bug_class,
+                    ANY_VALUE(cb.last_confirmed) AS bug_last_confirmed,
                     pd_legal,
                     legalities
                 FROM

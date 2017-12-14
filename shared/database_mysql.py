@@ -48,6 +48,8 @@ class MysqlDatabase(GenericDatabase):
         except MySQLdb.Warning as e:
             if e.args[0] == 1050 or e.args[0] == 1051:
                 pass # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or DROP TABLE IF NOT EXISTS raises an "unknown table" warning.
+            elif e.args[0] == 1062:
+                pass # We don't care if an INSERT IGNORE INTO didn't do anything.
             else:
                 raise
         except MySQLdb.Error as e:

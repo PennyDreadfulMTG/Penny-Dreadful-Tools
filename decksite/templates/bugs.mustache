@@ -20,12 +20,15 @@
         </thead>
         <tbody>
             {{#cards}}
-                <tr class="wide">
-                    <td>{{> singlecard}}</td>
-                    <td class="wide">{{bug_desc}}</td>
-                    <td class="{sorter: 'bugseverity'}">{{bug_class}}</td>
-                    {{! Empty column to hold the toggle when footable kicks in.}}
-                    <td></td>
+                {{#bugs}}
+                    <tr class="wide">
+                        <td>{{> singlecard}}</td>
+                        <td class="wide">{{description}}</td>
+                        <td class="{sorter: 'bugseverity'}">{{classification}}</td>
+                        {{! Empty column to hold the toggle when footable kicks in.}}
+                        <td></td>
+                    </tr>
+                {{/bugs}}
             {{/cards}}
         </tbody>
     </table>

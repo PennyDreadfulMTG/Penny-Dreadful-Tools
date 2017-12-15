@@ -1,6 +1,7 @@
 import copy
 import unicodedata
 
+from shared import dtutil
 from shared.container import Container
 
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
@@ -242,6 +243,13 @@ class Card(Container):
                         v[parts[0]] = parts[1]
                 else:
                     v = {}
+            if k == 'bugs':
+                if v is not None:
+                    bugs = v.split('_SEPARATOR_')
+                    v = []
+                    for b in bugs:
+                        description, classification, last_confirmed = b.split('|')
+                        v.append({'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(float(last_confirmed))})
             setattr(self, k, v)
         if not self.names:
             setattr(self, 'names', [self.name])

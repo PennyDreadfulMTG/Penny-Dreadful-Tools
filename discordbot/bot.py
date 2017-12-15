@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 
 import discord
 
@@ -38,7 +39,7 @@ class Bot:
             await self.respond_to_card_names(message)
 
     async def on_voice_state_update(self, before, after):
-        #pylint: disable=unused-argument
+        # pylint: disable=unused-argument
         # If we're the only one left in a voice chat, leave the channel
         voice = after.server.voice_client
         if voice is None or not voice.is_connected():
@@ -81,11 +82,12 @@ class Bot:
                 text = '{name} {legal} — {price}'.format(name=card.name, price=fetcher.card_price_string(card), legal=legal)
             else:
                 text = '{name} {mana} — {type}{legal}'.format(name=card.name, mana=mana, type=card.type, legal=legal)
-            if card.bug_desc is not None:
-                text += '\n:beetle:{rank} bug: {bug}'.format(bug=card.bug_desc, rank=card.bug_class)
-                now_ts = dtutil.dt2ts(dtutil.now())
-                if card.bug_last_confirmed < now_ts - 60 * 60 * 24 * 60:
-                    text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(now_ts - card.bug_last_confirmed, 1))
+            if card.bugs:
+                for bug in card.bugs:
+                    text += '\n:beetle:{rank} bug: {bug}'.format(bug=bug['description'], rank=bug['classification'])
+                    if bug['last_confirmed'] < (dtutil.now() - datetime.timedelta(days=60)):
+                        time_since_confirmed = (dtutil.now() - bug['last_confirmed']).seconds
+                        text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(time_since_confirmed, 1))
         else:
             text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.legal_emoji(card)) if not disable_emoji else ''), price=((fetcher.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
         if len(cards) > command.MAX_CARDS_SHOWN:

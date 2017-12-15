@@ -34,7 +34,7 @@ def replace_emoji(text, client):
 def legal_emoji(c, verbose=False):
     if c.name in oracle.legal_cards():
         s = ':white_check_mark:'
-        if c.bug_desc is not None:
+        if c.bugs:
             s += ":beetle:"
     else:
         s = ':no_entry_sign:'

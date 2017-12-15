@@ -22,14 +22,14 @@ def load_people(where='1 = 1'):
         SUM(d.wins) AS `all_wins`,
         SUM(d.losses) AS `all_losses`,
         SUM(d.draws) AS `all_draws`,
-        IFNULL(ROUND((SUM(d.wins) / SUM(d.wins + d.losses)) * 100, 1), '') AS `all_win_percent`,
+        IFNULL(ROUND((SUM(d.wins) / NULLIF(SUM(d.wins + d.losses), 0)) * 100, 1), '') AS `all_win_percent`,
         SUM(CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `all_num_competitions`,
 
         SUM(CASE WHEN d.created_date >= %s THEN 1 ELSE 0 END) AS `season_num_decks`,
         SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) AS `season_wins`,
         SUM(CASE WHEN d.created_date >= %s THEN losses ELSE 0 END) AS `season_losses`,
         SUM(CASE WHEN d.created_date >= %s THEN draws ELSE 0 END) AS `season_draws`,
-        IFNULL(ROUND((SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) / SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END + CASE WHEN d.created_date >= %s THEN losses ELSE 0 END)) * 100, 1), '') AS `season_win_percent`,
+        IFNULL(ROUND((SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END + CASE WHEN d.created_date >= %s THEN losses ELSE 0 END), 0)) * 100, 1), '') AS `season_win_percent`,
         SUM(CASE WHEN d.created_date >= %s AND d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `season_num_competitions`
 
         FROM person AS p
@@ -91,7 +91,7 @@ def set_head_to_head(people):
             SUM(CASE WHEN dm.games > opp.games THEN 1 ELSE 0 END) AS wins,
             SUM(CASE WHEN dm.games < opp.games THEN 1 ELSE 0 END) AS losses,
             SUM(CASE WHEN dm.games = opp.games THEN 1 ELSE 0 END) AS draws,
-            IFNULL(ROUND((SUM(CASE WHEN dm.games > opp.games THEN 1 ELSE 0 END) / SUM(CASE WHEN dm.games <> opp.games THEN 1 ELSE 0 END)) * 100, 1), '') AS win_percent
+            IFNULL(ROUND((SUM(CASE WHEN dm.games > opp.games THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN dm.games <> opp.games THEN 1 ELSE 0 END), 0)) * 100, 1), '') AS win_percent
         FROM
             person AS p
         INNER JOIN
@@ -114,6 +114,9 @@ def set_head_to_head(people):
     results = [Container(r) for r in db().execute(sql)]
     for result in results:
         people_by_id[result.id].head_to_head = people_by_id[result.id].get('head_to_head', []) + [result]
+    for person in people:
+        if person.get('head_to_head') is None:
+            person.head_to_head = []
 
 def associate(d, discord_id):
     person = guarantee.exactly_one(load_people('d.id = {deck_id}'.format(deck_id=sqlescape(d.id))))

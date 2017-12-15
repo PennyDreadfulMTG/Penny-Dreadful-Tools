@@ -1,9 +1,9 @@
 <h1>{{name}}</h1>
 <section>
     <img src="{{img_url}}" alt="{{name}}" class="card-img {{card_img_class}}">
-    {{#bug_desc}}
-        <p class="bug-desc {{card_img_class}}"><b>{{bug_class}} bug</b> {{bug_desc}}</p>
-    {{/bug_desc}}
+    {{#bugs}}
+        <p class="bug-desc {{card_img_class}}"><b>{{classification}} bug</b> {{description}}</p>
+    {{/bugs}}
 </section>
 {{#played_competitively}}
     <section>

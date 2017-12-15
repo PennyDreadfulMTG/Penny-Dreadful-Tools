@@ -76,7 +76,7 @@ def cards_by_name():
     return CARDS_BY_NAME
 
 def bugged_cards():
-    sql = multiverse.cached_base_query('bug_desc IS NOT NULL')
+    sql = multiverse.cached_base_query('bugs IS NOT NULL')
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 

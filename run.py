@@ -66,6 +66,8 @@ def task(args):
                 s.scrape()
             elif getattr(s, "run", None) is not None:
                 s.run()
-
+            # Only when called directly, not in 'all'
+            elif getattr(s, 'ad_hoc', None) is not None:
+                s.ad_hoc()
 
 run()

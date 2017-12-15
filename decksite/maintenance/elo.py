@@ -7,7 +7,7 @@ STARTING_ELO = 1500
 ELO_WIDTH = 1600
 K_FACTOR = 12
 
-def run():
+def ad_hoc():
     sql = """
     SELECT
         GROUP_CONCAT(d.person_id) AS people,

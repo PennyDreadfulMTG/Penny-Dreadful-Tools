@@ -66,12 +66,18 @@ def load_card(name):
 
 def only_played_by(person_id):
     sql = """
-        SELECT card AS name, p.id
-        FROM deck_card AS dc
-        LEFT JOIN deck AS d ON d.id = dc.deck_id
-        LEFT JOIN person AS p ON p.id = d.person_id
-        GROUP BY card, p.id
-        HAVING COUNT(DISTINCT p.id) = 1 AND p.id = {person_id} AND SUM(d.wins + d.draws + d.losses) > 0
+        SELECT
+            card AS name, MAX(p.id) AS person_id -- In MySQL 5.7+ this could/should be ANY_VALUE not MAX but this works with any version. The COUNT(DISTINCT  p.id) ensures this only has one possible value but MySQL can't work that out.
+        FROM
+            deck_card AS dc
+        LEFT JOIN
+            deck AS d ON d.id = dc.deck_id
+        LEFT JOIN
+            person AS p ON p.id = d.person_id
+        GROUP BY
+            card
+        HAVING
+            COUNT(DISTINCT p.id) = 1 AND person_id = {person_id} AND SUM(d.wins + d.draws + d.losses) > 0
     """.format(person_id=sqlescape(person_id))
     cards = {c.name: c for c in oracle.load_cards()}
     return [cards[r['name']] for r in db().execute(sql)]

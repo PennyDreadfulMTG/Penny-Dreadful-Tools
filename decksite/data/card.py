@@ -9,31 +9,24 @@ def played_cards(where='1 = 1'):
     sql = """
         SELECT
             card AS name,
-            COUNT(card) AS `all_num_decks`,
-            SUM(wins) AS `all_wins`,
-            SUM(losses) AS `all_losses`,
-            SUM(draws) AS `all_draws`,
-            IFNULL(ROUND(SUM(wins) / NULLIF(SUM(wins + losses), 0) * 100, 1), '') AS `all_win_percent`,
-
-            SUM(CASE WHEN created_date >= %s THEN 1 ELSE 0 END) AS `season_num_decks`,
-            SUM(CASE WHEN created_date >= %s THEN wins ELSE 0 END) AS `season_wins`,
-            SUM(CASE WHEN created_date >= %s THEN losses ELSE 0 END) AS `season_losses`,
-            SUM(CASE WHEN created_date >= %s THEN draws ELSE 0 END) AS `season_draws`,
-            ROUND(SUM(CASE WHEN created_date >= %s THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN created_date >= %s THEN wins ELSE 0 END + CASE WHEN created_date >= %s THEN losses ELSE 0 END), 0) * 100, 1) AS `season_win_percent`,
-
-            SUM(CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN 1 ELSE 0 END) AS `week_num_decks`,
-            SUM(CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins ELSE 0 END) AS `week_wins`,
-            SUM(CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN losses ELSE 0 END) AS `week_losses`,
-            SUM(CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN draws ELSE 0 END) AS `week_draws`,
-            ROUND(SUM(CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins ELSE 0 END + CASE WHEN created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN losses ELSE 0 END), 0) * 100, 1) AS `week_win_percent`
-        FROM deck_card AS dc
-        LEFT JOIN deck AS d ON d.id = dc.deck_id
-        WHERE {where}
-        GROUP BY dc.card
-        ORDER BY `season_num_decks` DESC, SUM(wins) - SUM(losses), name
-    """.format(where=where)
-
-    cs = [Container(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())] * 7)]
+            {all_select},
+            {season_select},
+            {week_select}
+        FROM
+            deck_card AS dc
+        LEFT JOIN
+            deck AS d ON d.id = dc.deck_id
+        {nwdl_join}
+        WHERE
+            {where}
+        GROUP BY
+            dc.card
+        ORDER BY
+            season_num_decks DESC,
+            SUM(CASE WHEN d.created_date >= %s AND dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) - SUM(CASE WHEN d.created_date >= %s AND dm.games < odm.games THEN 1 ELSE 0 END) DESC,
+            name
+    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), week_select=deck.nwdl_week_select(), nwdl_join=deck.nwdl_join(), where=where)
+    cs = [Container(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())] * 2)]
     cards = oracle.cards_by_name()
     for c in cs:
         c.update(cards[c.name])
@@ -67,17 +60,24 @@ def load_card(name):
 def only_played_by(person_id):
     sql = """
         SELECT
-            card AS name, MAX(p.id) AS person_id -- In MySQL 5.7+ this could/should be ANY_VALUE not MAX but this works with any version. The COUNT(DISTINCT  p.id) ensures this only has one possible value but MySQL can't work that out.
+            card AS name,
+            MAX(p.id) AS person_id -- In MySQL 5.7+ this could/should be ANY_VALUE not MAX but this works with any version. The COUNT(DISTINCT  p.id) ensures this only has one possible value but MySQL can't work that out.
         FROM
             deck_card AS dc
         LEFT JOIN
             deck AS d ON d.id = dc.deck_id
         LEFT JOIN
             person AS p ON p.id = d.person_id
+        INNER JOIN
+            deck_match AS dm ON dm.deck_id = d.id
         GROUP BY
             card
         HAVING
-            COUNT(DISTINCT p.id) = 1 AND person_id = {person_id} AND SUM(d.wins + d.draws + d.losses) > 0
+            COUNT(DISTINCT p.id) = 1
+        AND
+            person_id = {person_id}
+        AND
+            COUNT(dm.id) > 0 -- Only include cards that actually got played competitively rather than just posted to Goldfish as "new cards this season" or similar.
     """.format(person_id=sqlescape(person_id))
     cards = {c.name: c for c in oracle.load_cards()}
     return [cards[r['name']] for r in db().execute(sql)]

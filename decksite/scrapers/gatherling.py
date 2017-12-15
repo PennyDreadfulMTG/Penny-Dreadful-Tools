@@ -106,10 +106,6 @@ def tournament_deck(cells, competition_id, date, ranks):
             raise InvalidDataException('Unknown player image `{img}`'.format(img=img))
     else:
         d['finish'] = ranks.get(d['mtgo_username'], None)
-    parts = cells[3].string.split('-')
-    d['wins'] = parts[0]
-    d['losses'] = parts[1]
-    d['draws'] = 0 if len(parts) < 3 else parts[2]
     link = cells[4].a
     d['url'] = gatherling_url(link['href'])
     d['name'] = link.string

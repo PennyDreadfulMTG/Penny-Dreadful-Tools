@@ -130,7 +130,27 @@ def deck_options(decks, v):
     return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
 
 def active_decks(additional_where='1 = 1'):
-    where = "d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND (d.wins + d.losses + d.draws < 5) AND NOT d.retired AND ({additional_where})".format(active_competition_id_query=active_competition_id_query(), additional_where=additional_where)
+    where = """
+        d.id IN (
+            SELECT
+                id
+            FROM
+                deck
+            WHERE
+                competition_id = ({active_competition_id_query})
+        ) AND (
+                SELECT
+                    COUNT(id)
+                FROM
+                    deck_match AS dm
+                WHERE
+                    dm.deck_id = d.id
+            ) <= 4
+        AND
+            NOT d.retired
+        AND
+            ({additional_where})
+    """.format(active_competition_id_query=active_competition_id_query(), additional_where=additional_where)
     decks = deck.load_decks(where)
     return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
 
@@ -155,12 +175,6 @@ def report(form):
 
         db().begin()
         deck.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games)
-        winner, loser = winner_and_loser(form)
-        if winner:
-            db().execute('UPDATE deck SET wins = (SELECT COUNT(*) FROM decksite.deck_match WHERE `deck_id` = %s AND `games` = 2) WHERE `id` = %s', [winner, winner])
-            db().execute('UPDATE deck SET losses = (SELECT COUNT(*) FROM decksite.deck_match WHERE `deck_id` = %s AND `games` < 2) WHERE `id` = %s', [loser, loser])
-        else:
-            db().execute('UPDATE deck SET draws = draws + 1 WHERE id = %s OR id = %s', [form.entry, form.opponent])
         db().commit()
         return True
     except LockNotAcquiredException:
@@ -256,31 +270,38 @@ def load_matches(where='1 = 1'):
     return matches
 
 def delete_match(match_id):
-    m = guarantee.exactly_one(load_matches('m.id = {match_id}'.format(match_id=sqlescape(match_id))))
-    db().begin()
-    sql = 'DELETE FROM deck_match WHERE match_id = ?'
-    db().execute(sql, [m.id])
     sql = 'DELETE FROM `match` WHERE id = ?'
-    db().execute(sql, [m.id])
-    if m.winner:
-        sql = 'UPDATE deck SET wins = wins - 1 WHERE id = ?'
-        db().execute(sql, [m.winner])
-        sql = 'UPDATE deck SET losses = losses - 1 WHERE id = ?'
-        db().execute(sql, [m.loser])
-    else:
-        sql = 'UPDATE deck SET draws = draws - 1 WHERE id IN (?, ?)'
-        db().execute(sql, [m.left_id, m.right_id])
-    db().commit()
+    db().execute(sql, sqlescape(match_id))
 
 def first_runs():
     sql = """
-        SELECT d.competition_id, MIN(c.start_date) AS `date`, c.name AS competition_name, p.mtgo_username
-        FROM deck AS d
-        INNER JOIN person AS p ON d.person_id = p.id
-        INNER JOIN competition AS c ON d.competition_id = c.id
-        WHERE c.competition_type_id IN (SELECT id FROM competition_type WHERE name = 'League')
-            AND (wins + draws + losses) >= 5
-        GROUP BY p.id
-        ORDER BY c.start_date DESC, p.mtgo_username
+        SELECT
+            d.competition_id,
+            MIN(c.start_date) AS `date`,
+            c.name AS competition_name,
+            p.mtgo_username
+        FROM
+            deck AS d
+        INNER JOIN
+            person AS p ON d.person_id = p.id
+        INNER JOIN
+            competition AS c ON d.competition_id = c.id
+        INNER JOIN
+            deck_match AS dm ON dm.deck_id = d.id
+        WHERE
+            c.competition_type_id IN (
+                SELECT
+                    id
+                FROM
+                    competition_type
+                WHERE
+                    name = 'League'
+            ) AND
+                COUNT(DISTINCT dm.match_id) >= 5
+        GROUP BY
+            p.id
+        ORDER BY
+            c.start_date DESC,
+            p.mtgo_username
     """
     return [Container(r) for r in db().execute(sql)]

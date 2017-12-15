@@ -86,7 +86,8 @@ class Bot:
                 for bug in card.bugs:
                     text += '\n:beetle:{rank} bug: {bug}'.format(bug=bug['description'], rank=bug['classification'])
                     if bug['last_confirmed'] < (dtutil.now() - datetime.timedelta(days=60)):
-                        text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(now_ts - bug['last_confirmed'], 1))
+                        time_since_confirmed = (dtutil.now() - bug['last_confirmed']).seconds
+                        text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(time_since_confirmed, 1))
         else:
             text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.legal_emoji(card)) if not disable_emoji else ''), price=((fetcher.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
         if len(cards) > command.MAX_CARDS_SHOWN:

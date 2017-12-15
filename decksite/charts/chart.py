@@ -41,12 +41,12 @@ def cmc(deck_id):
 def image(path, costs):
     ys = ['0', '1', '2', '3', '4', '5', '6', '7+', 'X']
     xs = [costs.get(k, 0) for k in ys]
-    sns.set(font_scale=3)
     sns.set_style('white')
+    sns.set(font='Concourse C3', font_scale=3)
     g = sns.barplot(ys, xs, palette=['grey'] * len(ys))
     g.axes.yaxis.set_ticklabels([])
     rects = g.patches
-    sns.set(font_scale=2)
+    sns.set(font='Concourse C3', font_scale=2)
     for rect, label in zip(rects, xs):
         if label == 0:
             continue

@@ -50,8 +50,9 @@ def task(args):
     with APP.app_context():
         from magic import oracle, multiverse
         multiverse.init()
-        oracle.init()
-        if name == "all":
+        if name != 'reprime_cache':
+            oracle.init()
+        if name == 'all':
             m = importlib.import_module('decksite.{module}'.format(module=module))
             # pylint: disable=unused-variable
             for importer, modname, ispkg in pkgutil.iter_modules(m.__path__):

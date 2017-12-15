@@ -35,22 +35,15 @@ def base_query(where='(1 = 1)'):
             GROUP_CONCAT(face_name SEPARATOR '|') AS names,
             legalities,
             pd_legal,
-            bug_desc,
-            bug_class,
-            bug_last_confirmed
+            bugs
             FROM (
                 SELECT {card_props}, {face_props}, f.name AS face_name,
-                    ANY_VALUE(cb.description) AS bug_desc,
-                    ANY_VALUE(cb.classification) AS bug_class,
-                    ANY_VALUE(cb.last_confirmed) AS bug_last_confirmed,
                     pd_legal,
                     legalities
                 FROM
                     card AS c
                 INNER JOIN
                     face AS f ON c.id = f.card_id
-                LEFT JOIN
-                    card_bug AS cb ON c.id = cb.card_id
                 LEFT JOIN (
                     SELECT
                         cl.card_id,
@@ -68,11 +61,21 @@ def base_query(where='(1 = 1)'):
                 ORDER BY
                     f.card_id, f.position
             ) AS u
+            LEFT JOIN (
+                SELECT
+                    cb.card_id,
+                    GROUP_CONCAT({bug_repr} SEPARATOR '_SEPARATOR_') AS bugs
+                FROM
+                    card_bug AS cb
+                GROUP BY
+                    cb.card_id
+            ) AS bugs ON u.id = bugs.card_id
             WHERE u.id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where})
             GROUP BY u.id
     """.format(
         card_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.card_properties().items()),
         face_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.face_properties().items()),
+        bug_repr=db().concat(['cb.description', "'|'", 'cb.classification', "'|'", 'cb.last_confirmed']),
         format_id=get_format_id('Penny Dreadful'),
         legality_code=db().concat(['fo.name', "':'", 'cl.legality']),
         card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),

@@ -65,3 +65,13 @@ def set_decks(competitions):
         c.decks = []
     for d in decks:
         competitions_by_id[d.competition_id].decks.append(d)
+
+def league_type_id_select():
+    return """
+        SELECT
+            id
+        FROM
+            competition_type
+        WHERE
+                name = 'League'
+    """

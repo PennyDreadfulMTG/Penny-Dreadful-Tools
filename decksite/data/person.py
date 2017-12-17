@@ -2,7 +2,7 @@ from magic import rotation
 from shared.container import Container
 from shared.database import sqlescape
 
-from decksite.data import deck, guarantee, query
+from decksite.data import competition, deck, guarantee, query
 from decksite.database import db
 
 def load_person(person):
@@ -103,20 +103,14 @@ def set_achievements(people):
                         ON
                             dm.match_id = odm.match_id AND odm.deck_id <> d.id
                         WHERE
-                            d.competition_id IN (
+                            d.competition_id IN
+                            (
                                 SELECT
                                     id
                                 FROM
                                     competition
                                 WHERE
-                                    competition_type_id IN (
-                                        SELECT
-                                            id
-                                        FROM
-                                            competition_type
-                                        WHERE
-                                            name = 'League'
-                                )
+                                    competition_type_id = ({league_competition_type_id})
                             )
                         GROUP BY d.id
                         HAVING
@@ -125,7 +119,7 @@ def set_achievements(people):
                             SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) = 1
                         AND
                             SUM(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN 1 ELSE 0 END) = 1
-                    )
+                )
                 THEN 1 ELSE 0 END
             ) AS perfect_run_crushes
         FROM
@@ -140,7 +134,7 @@ def set_achievements(people):
             p.id IN ({ids})
         GROUP BY
             p.id
-    """.format(ids=', '.join(str(k) for k in people_by_id.keys()))
+    """.format(league_competition_type_id=competition.league_type_id_select(), ids=', '.join(str(k) for k in people_by_id.keys()))
     results = [Container(r) for r in db().execute(sql)]
     for result in results:
         people_by_id[result['id']].update(result)

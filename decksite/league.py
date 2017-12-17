@@ -289,19 +289,13 @@ def first_runs():
         INNER JOIN
             deck_match AS dm ON dm.deck_id = d.id
         WHERE
-            c.competition_type_id IN (
-                SELECT
-                    id
-                FROM
-                    competition_type
-                WHERE
-                    name = 'League'
-            ) AND
-                COUNT(DISTINCT dm.match_id) >= 5
+            c.competition_type_id IN ({league_competition_type_id})
+        AND
+            COUNT(DISTINCT dm.match_id) >= 5
         GROUP BY
             p.id
         ORDER BY
             c.start_date DESC,
             p.mtgo_username
-    """
+    """.format(league_competition_type_id=competition.league_type_id_select())
     return [Container(r) for r in db().execute(sql)]

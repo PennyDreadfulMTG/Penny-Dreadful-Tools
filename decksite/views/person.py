@@ -11,7 +11,7 @@ class Person(View):
         self.person = person
         self.decks = person.decks
         self.hide_person = True
-        self.cards = card.played_cards('person_id = {person_id}'.format(person_id=sqlescape(person.id)))
+        self.cards = card.played_cards('d.person_id = {person_id}'.format(person_id=sqlescape(person.id)))
         self.only_played_cards = card.only_played_by(person.id)
         self.has_only_played_cards = len(self.only_played_cards) > 0
         for record in person.head_to_head:

@@ -60,28 +60,74 @@ def set_achievements(people):
             COUNT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END) AS tournament_entries,
             COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END) AS tournament_wins,
             COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END) AS league_entries,
-            SUM(CASE WHEN d.id IN (
-                SELECT
-                    d.id
-                FROM
-                    deck AS d
-                LEFT JOIN
-                    competition AS c ON c.id = d.competition_id
-                LEFT JOIN
-                    competition_type AS ct ON ct.id = c.competition_type_id
-                LEFT JOIN
-                    deck_match AS dm ON dm.deck_id = d.id
-                LEFT JOIN
-                    deck_match AS odm ON odm.match_id = dm.match_id AND odm.deck_id <> d.id
-                WHERE
-                    ct.name = 'League'
-                GROUP BY
-                    d.id
-                HAVING
-                    SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) >= 5
-                AND
-                    SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) = 0
-            ) THEN 1 ELSE 0 END) AS perfect_runs
+            SUM(
+                CASE WHEN d.id IN
+                    (
+                        SELECT
+                            d.id
+                        FROM
+                            deck AS d
+                        LEFT JOIN
+                            competition AS c ON c.id = d.competition_id
+                        LEFT JOIN
+                            competition_type AS ct ON ct.id = c.competition_type_id
+                        LEFT JOIN
+                            deck_match AS dm ON dm.deck_id = d.id
+                        LEFT JOIN
+                            deck_match AS odm ON odm.match_id = dm.match_id AND odm.deck_id <> d.id
+                        WHERE
+                            ct.name = 'League'
+                        GROUP BY
+                            d.id
+                        HAVING
+                            SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) >= 5
+                        AND
+                            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) = 0
+                    )
+                THEN 1 ELSE 0 END
+            ) AS perfect_runs,
+            SUM(
+                CASE WHEN d.id IN
+                    (
+                        SELECT
+                            -- MAX here is just to fool MySQL to give us the id of the deck that crushed the perfect run from an aggregate function. There is only one value to MAX.
+                            MAX(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN odm.deck_id ELSE NULL END) AS deck_id
+                        FROM
+                            deck AS d
+                        INNER JOIN
+                            deck_match AS dm
+                        ON
+                            dm.deck_id = d.id
+                        INNER JOIN
+                            deck_match AS odm
+                        ON
+                            dm.match_id = odm.match_id AND odm.deck_id <> d.id
+                        WHERE
+                            d.competition_id IN (
+                                SELECT
+                                    id
+                                FROM
+                                    competition
+                                WHERE
+                                    competition_type_id IN (
+                                        SELECT
+                                            id
+                                        FROM
+                                            competition_type
+                                        WHERE
+                                            name = 'League'
+                                )
+                            )
+                        GROUP BY d.id
+                        HAVING
+                            SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) >=4
+                        AND
+                            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) = 1
+                        AND
+                            SUM(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN 1 ELSE 0 END) = 1
+                    )
+                THEN 1 ELSE 0 END
+            ) AS perfect_run_crushes
         FROM
             person AS p
         LEFT JOIN

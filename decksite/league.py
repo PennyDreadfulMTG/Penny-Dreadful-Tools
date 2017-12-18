@@ -277,23 +277,34 @@ def first_runs():
     sql = """
         SELECT
             d.competition_id,
-            MIN(c.start_date) AS `date`,
+            c.start_date AS `date`,
             c.name AS competition_name,
             p.mtgo_username
         FROM
-            deck AS d
+            person AS p
         INNER JOIN
-            person AS p ON d.person_id = p.id
+            deck AS d ON d.person_id = p.id
         INNER JOIN
-            competition AS c ON d.competition_id = c.id
-        INNER JOIN
-            deck_match AS dm ON dm.deck_id = d.id
-        WHERE
-            c.competition_type_id IN ({league_competition_type_id})
-        AND
-            COUNT(DISTINCT dm.match_id) >= 5
+            competition AS c ON c.id = d.competition_id
+        INNER JOIN (
+            SELECT
+                d.person_id,
+                MIN(c.start_date) AS start_date
+            FROM
+                deck AS d
+            INNER JOIN
+                competition AS c ON d.competition_id = c.id
+            INNER JOIN
+                deck_match AS dm ON dm.deck_id = d.id
+            WHERE
+                c.competition_type_id IN ({league_competition_type_id})
+            GROUP BY
+                d.person_id
+            HAVING
+                COUNT(DISTINCT dm.match_id) >= 5
+        ) AS fr ON fr.person_id = p.id AND c.start_date = fr.start_date
         GROUP BY
-            p.id
+            d.competition_id, p.id
         ORDER BY
             c.start_date DESC,
             p.mtgo_username

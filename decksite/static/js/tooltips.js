@@ -27,7 +27,7 @@ Deckbox.ui.Tooltip.prototype = {
             this.el.innerHTML = "";
             this.el.appendChild(image);
         } else {
-            this.el.innerHTML = "Loading…";
+            this.el.innerHTML = "Loading...";
             image.onload = function() {
                 var self = Deckbox._.tooltip("image");
                 self.el.innerHTML = "";

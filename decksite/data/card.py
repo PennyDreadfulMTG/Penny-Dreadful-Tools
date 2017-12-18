@@ -60,24 +60,25 @@ def load_card(name):
 def only_played_by(person_id):
     sql = """
         SELECT
-            card AS name,
-            MAX(p.id) AS person_id -- In MySQL 5.7+ this could/should be ANY_VALUE not MAX but this works with any version. The COUNT(DISTINCT  p.id) ensures this only has one possible value but MySQL can't work that out.
+            card AS name
         FROM
             deck_card AS dc
-        LEFT JOIN
-            deck AS d ON d.id = dc.deck_id
-        LEFT JOIN
-            person AS p ON p.id = d.person_id
         INNER JOIN
-            deck_match AS dm ON dm.deck_id = d.id
+            deck AS d ON dc.deck_id = d.id
+        WHERE
+            deck_id
+        IN (
+            SELECT
+                DISTINCT deck_id
+            FROM
+                deck_match
+        ) -- Only include cards that actually got played competitively rather than just posted to Goldfish as "new cards this season" or similar.-- Only include cards that actually got played competitively rather than just posted to Goldfish as "new cards this season" or similar.
         GROUP BY
             card
         HAVING
-            COUNT(DISTINCT p.id) = 1
+            COUNT(DISTINCT d.person_id) = 1
         AND
-            person_id = {person_id}
-        AND
-            COUNT(dm.id) > 0 -- Only include cards that actually got played competitively rather than just posted to Goldfish as "new cards this season" or similar.
+            MAX(d.person_id) = {person_id} -- In MySQL 5.7+ this could/should be ANY_VALUE not MAX but this works with any version. The COUNT(DISTINCT  p.id) ensures this only has one possible value but MySQL can't work that out.-- In MySQL 5.7+ this could/should be ANY_VALUE not MAX but this works with any version. The COUNT(DISTINCT  p.id) ensures this only has one possible value but MySQL can't work that out.
     """.format(person_id=sqlescape(person_id))
     cards = {c.name: c for c in oracle.load_cards()}
     return [cards[r['name']] for r in db().execute(sql)]

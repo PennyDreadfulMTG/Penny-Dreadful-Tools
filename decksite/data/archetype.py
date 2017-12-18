@@ -111,8 +111,7 @@ def load_matchups(archetype_id):
             archetype AS a
         INNER JOIN
             deck AS d ON d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = a.id)
-        LEFT JOIN
-            ({nwdl_table}) AS dsum ON d.id = dsum.id
+        {nwdl_join}
         INNER JOIN
             deck_match AS dm ON d.id = dm.deck_id
         INNER JOIN
@@ -127,7 +126,7 @@ def load_matchups(archetype_id):
             oa.id
         ORDER BY
             `season_wins` DESC, `all_wins` DESC
-    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_table=deck.nwdl_table())
+    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_join=deck.nwdl_join())
     return [Container(m) for m in db().execute(sql, [archetype_id])]
 
 def move(archetype_id, parent_id):

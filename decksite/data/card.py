@@ -14,8 +14,8 @@ def played_cards(where='1 = 1'):
             {week_select}
         FROM
             deck_card AS dc
-        LEFT JOIN
-            deck AS d ON d.id = dc.deck_id
+        INNER JOIN
+            deck AS d ON dc.deck_id = d.id
         {nwdl_join}
         WHERE
             {where}
@@ -23,10 +23,10 @@ def played_cards(where='1 = 1'):
             dc.card
         ORDER BY
             season_num_decks DESC,
-            SUM(CASE WHEN d.created_date >= %s AND dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) - SUM(CASE WHEN d.created_date >= %s AND dm.games < odm.games THEN 1 ELSE 0 END) DESC,
+            SUM(CASE WHEN dsum.created_date >= %s THEN dsum.wins - dsum.losses ELSE 0 END) DESC,
             name
     """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), week_select=deck.nwdl_week_select(), nwdl_join=deck.nwdl_join(), where=where)
-    cs = [Container(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())] * 2)]
+    cs = [Container(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())])]
     cards = oracle.cards_by_name()
     for c in cs:
         c.update(cards[c.name])

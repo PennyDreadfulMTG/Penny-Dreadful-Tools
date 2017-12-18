@@ -424,37 +424,41 @@ def count_matches(deck_id, opponent_deck_id):
 
 def nwdl_select(prefix='', additional_clause='TRUE'):
     return """
-        COUNT(DISTINCT CASE WHEN {additional_clause} THEN d.id ELSE NULL END) AS `{prefix}num_decks`, -- IFNULL so we still count byes as wins.
-        SUM(CASE WHEN {additional_clause} AND dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS `{prefix}wins`,
-        SUM(CASE WHEN {additional_clause} AND dm.games < odm.games THEN 1 ELSE 0 END) AS `{prefix}losses`,
-        SUM(CASE WHEN {additional_clause} AND dm.games = odm.games THEN 1 ELSE 0 END) AS `{prefix}draws`,
-        IFNULL(ROUND((SUM(CASE WHEN {additional_clause} AND dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN {additional_clause} AND dm.games <> IFNULL(odm.games, 0) THEN 1 ELSE 0 END), 0)) * 100, 1), '') AS `{prefix}win_percent`
+        SUM(CASE WHEN {additional_clause} THEN 1 ELSE 0 END) AS `{prefix}num_decks`,
+        SUM(CASE WHEN {additional_clause} THEN wins ELSE 0 END) AS `{prefix}wins`,
+        SUM(CASE WHEN {additional_clause} THEN losses ELSE 0 END) AS `{prefix}losses`,
+        SUM(CASE WHEN {additional_clause} THEN draws ELSE 0 END) AS `{prefix}draws`,
+        IFNULL(ROUND((SUM(CASE WHEN {additional_clause} THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN {additional_clause} THEN wins + losses ELSE 0 END), 0)) * 100, 1), '') AS `{prefix}win_percent`
     """.format(prefix=prefix, additional_clause=additional_clause)
 
 def nwdl_all_select():
     return nwdl_select('all_')
 
 def nwdl_season_select():
-    return nwdl_select('season_', 'd.created_date >= {season_start}'.format(season_start=int(rotation.last_rotation().timestamp())))
+    return nwdl_select('season_', 'dsum.created_date >= {season_start}'.format(season_start=int(rotation.last_rotation().timestamp())))
 
 def nwdl_week_select():
-    return nwdl_select('week_', 'd.created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK)')
+    return nwdl_select('week_', 'dsum.created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK)')
 
 def nwdl_join():
     return """
-        INNER JOIN
-            deck_match AS dm
-        ON
-            d.id = dm.deck_id
-        INNER JOIN
-            deck_match AS odm
-        ON
-            dm.match_id = odm.match_id
-            AND odm.deck_id <> d.id
-        INNER JOIN
-            deck AS od
-        ON
-            od.id = odm.deck_id
+        LEFT JOIN
+            (
+                SELECT
+                    d.id,
+                    d.created_date,
+                    SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins, -- IFNULL so we still count byes as wins.
+                    SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
+                    SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws
+                FROM
+                    deck_match AS dm
+                INNER JOIN
+                    deck_match AS odm ON dm.match_id = odm.match_id AND dm.deck_id <> odm.deck_id
+                INNER JOIN
+                    deck AS d ON d.id = dm.deck_id
+                GROUP BY
+                    d.id
+            ) AS dsum ON d.id = dsum.id
     """
 
 # pylint: disable=too-many-instance-attributes

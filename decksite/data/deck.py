@@ -2,7 +2,7 @@ import hashlib
 import json
 import time
 
-from magic import mana, oracle, legality
+from magic import mana, oracle, legality, rotation
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
@@ -47,23 +47,57 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
     if order_by is None:
         order_by = 'd.created_date DESC, IFNULL(d.finish, 9999999999)'
     sql = """
-        SELECT d.id, d.name AS original_name, d.created_date, d.updated_date, d.wins, d.losses, d.draws, d.finish, d.archetype_id, d.url AS source_url,
-            d.competition_id, c.name AS competition_name, c.end_date AS competition_end_date, ct.name AS competition_type_name, d.identifier,
-            {person_query} AS person, p.id AS person_id,
-            d.created_date AS `date`, d.decklist_hash, d.retired,
-            s.name AS source_name, IFNULL(a.name, '') AS archetype_name,
-            cache.normalized_name AS name, cache.colors, cache.colored_symbols, cache.legal_formats
-        FROM deck AS d
-        LEFT JOIN person AS p ON d.person_id = p.id
-        LEFT JOIN competition AS c ON d.competition_id = c.id
-        LEFT JOIN source AS s ON d.source_id = s.id
-        LEFT JOIN archetype AS a ON d.archetype_id = a.id
-        LEFT JOIN deck AS opp ON opp.id IN (SELECT deck_id FROM deck_match WHERE deck_id <> d.id AND match_id IN (SELECT match_id FROM deck_match WHERE deck_id = d.id))
-        LEFT JOIN competition_type AS ct ON ct.id = c.competition_type_id
-        LEFT JOIN deck_cache AS cache ON d.id = cache.deck_id
-        WHERE {where}
-        GROUP BY d.id
-        ORDER BY {order_by}
+        SELECT
+            d.id,
+            d.name AS original_name,
+            d.created_date,
+            d.updated_date,
+            SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins,
+            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
+            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws,
+            d.finish,
+            d.archetype_id,
+            d.url AS source_url,
+            d.competition_id,
+            c.name AS competition_name,
+            c.end_date AS competition_end_date,
+            ct.name AS competition_type_name,
+            d.identifier,
+            {person_query} AS person,
+            p.id AS person_id,
+            d.created_date AS `date`,
+            d.decklist_hash,
+            d.retired,
+            s.name AS source_name,
+            IFNULL(a.name, '') AS archetype_name,
+            cache.normalized_name AS name,
+            cache.colors,
+            cache.colored_symbols,
+            cache.legal_formats
+        FROM
+            deck AS d
+        LEFT JOIN
+            person AS p ON d.person_id = p.id
+        LEFT JOIN
+            competition AS c ON d.competition_id = c.id
+        LEFT JOIN
+            source AS s ON d.source_id = s.id
+        LEFT JOIN
+            archetype AS a ON d.archetype_id = a.id
+        LEFT JOIN
+            competition_type AS ct ON ct.id = c.competition_type_id
+        LEFT JOIN
+            deck_cache AS cache ON d.id = cache.deck_id
+        LEFT JOIN
+            deck_match AS dm ON d.id = dm.deck_id
+        LEFT JOIN
+            deck_match AS odm ON odm.deck_id <> d.id AND dm.match_id = odm.match_id
+        WHERE
+            {where}
+        GROUP BY
+            d.id
+        ORDER BY
+            {order_by}
         {limit}
     """.format(person_query=query.person_query(), where=where, order_by=order_by, limit=limit)
     db().execute('SET group_concat_max_len=100000')
@@ -159,13 +193,10 @@ def add_deck(params):
         score,
         thumbnail_url,
         small_thumbnail_url,
-        wins,
-        losses,
-        draws,
         finish,
         reviewed
     ) VALUES (
-         IFNULL(%s, UNIX_TIMESTAMP()),  UNIX_TIMESTAMP(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, FALSE
+         IFNULL(%s, UNIX_TIMESTAMP()),  UNIX_TIMESTAMP(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, FALSE
     )"""
     values = [
         created_date,
@@ -181,9 +212,6 @@ def add_deck(params):
         params.get('score'),
         params.get('thumbnail_url'),
         params.get('small_thumbnail_url'),
-        params.get('wins'),
-        params.get('losses'),
-        params.get('draws'),
         params.get('finish')
     ]
     deck_id = db().insert(sql, values)
@@ -338,15 +366,45 @@ def load_opponent_stats(decks):
         return
     decks_by_id = {d.id: d for d in decks}
     sql = """
-        SELECT d.id,
-            SUM(opp.wins) AS opp_wins, SUM(opp.losses) AS opp_losses, ROUND(SUM(opp.wins) / NULLIF((SUM(opp.wins) + SUM(opp.losses)), 0), 2) * 100 AS omw,
-            IFNULL(MIN(CASE WHEN m.elimination > 0 THEN m.elimination END), 0) AS stage_reached, GROUP_CONCAT(m.elimination) AS elim
-        FROM deck AS d
-        LEFT JOIN deck AS opp ON opp.id IN (SELECT deck_id FROM deck_match WHERE deck_id <> d.id AND match_id IN (SELECT match_id FROM deck_match WHERE deck_id = d.id))
-        LEFT JOIN deck_match AS dm ON d.id = dm.deck_id
-        LEFT JOIN `match` AS m ON m.id = dm.match_id
-        WHERE d.id IN ({deck_ids})
-        GROUP BY d.id
+        SELECT
+            d.id,
+            SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) AS opp_wins,
+            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS opp_losses,
+            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS opp_draws,
+            ROUND(SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) / NULLIF((SUM(CASE WHEN dm.games <> odm.games THEN 1 ELSE 0 END)), 0), 2) * 100 AS omw,
+            IFNULL(MIN(CASE WHEN m.elimination > 0 THEN m.elimination END), 0) AS stage_reached,
+            GROUP_CONCAT(m.elimination) AS elim
+        FROM
+            deck AS d
+        LEFT JOIN
+            deck AS od
+        ON od.id IN (
+            SELECT
+                deck_id
+            FROM
+                deck_match
+            WHERE
+                deck_id <> d.id
+            AND
+                match_id IN (
+                    SELECT
+                        match_id
+                    FROM
+                        deck_match
+                    WHERE
+                        deck_id = d.id
+                )
+            )
+        LEFT JOIN
+            deck_match AS dm ON od.id = dm.deck_id
+        LEFT JOIN
+            deck_match AS odm ON odm.match_id = dm.match_id AND odm.deck_id <> od.id
+        LEFT JOIN
+            `match` AS m ON m.id = dm.match_id
+        WHERE
+            d.id IN ({deck_ids})
+        GROUP BY
+            d.id
     """.format(deck_ids=', '.join(map(sqlescape, map(str, decks_by_id.keys()))))
     for row in db().execute(sql):
         decks_by_id[row['id']].opp_wins = row['opp_wins']
@@ -361,6 +419,43 @@ def count_matches(deck_id, opponent_deck_id):
     for row in db().execute(sql, [deck_id, opponent_deck_id]):
         result[row['deck_id']] = row['count']
     return result
+
+# Query Helpers for number of decks, wins, draws and losses.
+
+def nwdl_select(prefix='', additional_clause='TRUE'):
+    return """
+        COUNT(DISTINCT CASE WHEN {additional_clause} THEN d.id ELSE NULL END) AS `{prefix}num_decks`, -- IFNULL so we still count byes as wins.
+        SUM(CASE WHEN {additional_clause} AND dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS `{prefix}wins`,
+        SUM(CASE WHEN {additional_clause} AND dm.games < odm.games THEN 1 ELSE 0 END) AS `{prefix}losses`,
+        SUM(CASE WHEN {additional_clause} AND dm.games = odm.games THEN 1 ELSE 0 END) AS `{prefix}draws`,
+        IFNULL(ROUND((SUM(CASE WHEN {additional_clause} AND dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN {additional_clause} AND dm.games <> IFNULL(odm.games, 0) THEN 1 ELSE 0 END), 0)) * 100, 1), '') AS `{prefix}win_percent`
+    """.format(prefix=prefix, additional_clause=additional_clause)
+
+def nwdl_all_select():
+    return nwdl_select('all_')
+
+def nwdl_season_select():
+    return nwdl_select('season_', 'd.created_date >= {season_start}'.format(season_start=int(rotation.last_rotation().timestamp())))
+
+def nwdl_week_select():
+    return nwdl_select('week_', 'd.created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK)')
+
+def nwdl_join():
+    return """
+        INNER JOIN
+            deck_match AS dm
+        ON
+            d.id = dm.deck_id
+        INNER JOIN
+            deck_match AS odm
+        ON
+            dm.match_id = odm.match_id
+            AND odm.deck_id <> d.id
+        INNER JOIN
+            deck AS od
+        ON
+            od.id = odm.deck_id
+    """
 
 # pylint: disable=too-many-instance-attributes
 class Deck(Container):

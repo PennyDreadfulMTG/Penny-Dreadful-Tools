@@ -3,7 +3,6 @@ import os
 from flask import g
 
 from decksite import APP
-
 from shared import configuration
 from shared.database import get_database
 

@@ -2,7 +2,7 @@ from magic import rotation
 from shared.container import Container
 from shared.database import sqlescape
 
-from decksite.data import deck, guarantee, query
+from decksite.data import competition, deck, guarantee, query
 from decksite.database import db
 
 def load_person(person):
@@ -16,29 +16,27 @@ def load_person(person):
 
 def load_people(where='1 = 1'):
     sql = """
-        SELECT p.id, {person_query} AS name,
-
-        COUNT(d.id) AS `all_num_decks`,
-        SUM(d.wins) AS `all_wins`,
-        SUM(d.losses) AS `all_losses`,
-        SUM(d.draws) AS `all_draws`,
-        IFNULL(ROUND((SUM(d.wins) / NULLIF(SUM(d.wins + d.losses), 0)) * 100, 1), '') AS `all_win_percent`,
-        SUM(CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `all_num_competitions`,
-
-        SUM(CASE WHEN d.created_date >= %s THEN 1 ELSE 0 END) AS `season_num_decks`,
-        SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) AS `season_wins`,
-        SUM(CASE WHEN d.created_date >= %s THEN losses ELSE 0 END) AS `season_losses`,
-        SUM(CASE WHEN d.created_date >= %s THEN draws ELSE 0 END) AS `season_draws`,
-        IFNULL(ROUND((SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END + CASE WHEN d.created_date >= %s THEN losses ELSE 0 END), 0)) * 100, 1), '') AS `season_win_percent`,
-        SUM(CASE WHEN d.created_date >= %s AND d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `season_num_competitions`
-
-        FROM person AS p
-        LEFT JOIN deck AS d ON p.id = d.person_id
-        WHERE {where}
-        GROUP BY p.id
-        ORDER BY `season_num_decks` DESC, `all_num_decks` DESC, name
-    """.format(person_query=query.person_query(), where=where)
-    people = [Person(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())] * 8)]
+        SELECT
+            p.id,
+            {person_query} AS name,
+            {all_select},
+            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `all_num_competitions`,
+            {season_select},
+            SUM(DISTINCT CASE WHEN d.created_date >= %s AND d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `season_num_competitions`
+        FROM
+            person AS p
+        LEFT JOIN
+            deck AS d ON p.id = d.person_id
+        {nwdl_join}
+        WHERE
+            {where}
+        GROUP BY
+            p.id
+        ORDER BY
+            `season_num_decks` DESC,
+            `all_num_decks` DESC, name
+    """.format(person_query=query.person_query(), all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_join=deck.nwdl_join(), where=where)
+    people = [Person(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())])]
     if len(people) > 0:
         set_decks(people)
         set_achievements(people)
@@ -59,10 +57,71 @@ def set_achievements(people):
     sql = """
         SELECT
             p.id,
-            SUM(CASE WHEN ct.name = 'Gatherling' THEN 1 ELSE 0 END) AS tournament_entries,
-            SUM(CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN 1 ELSE 0 END) AS tournament_wins,
-            SUM(CASE WHEN ct.name = 'League' THEN 1 ELSE 0 END) AS league_entries,
-            SUM(CASE WHEN d.wins >= 5 AND d.losses = 0 AND ct.name = 'League' THEN 1 ELSE 0 END) AS perfect_runs
+            COUNT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END) AS tournament_entries,
+            COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END) AS tournament_wins,
+            COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END) AS league_entries,
+            SUM(
+                CASE WHEN d.id IN
+                    (
+                        SELECT
+                            d.id
+                        FROM
+                            deck AS d
+                        LEFT JOIN
+                            competition AS c ON c.id = d.competition_id
+                        LEFT JOIN
+                            competition_type AS ct ON ct.id = c.competition_type_id
+                        LEFT JOIN
+                            deck_match AS dm ON dm.deck_id = d.id
+                        LEFT JOIN
+                            deck_match AS odm ON odm.match_id = dm.match_id AND odm.deck_id <> d.id
+                        WHERE
+                            ct.name = 'League'
+                        GROUP BY
+                            d.id
+                        HAVING
+                            SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) >= 5
+                        AND
+                            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) = 0
+                    )
+                THEN 1 ELSE 0 END
+            ) AS perfect_runs,
+            SUM(
+                CASE WHEN d.id IN
+                    (
+                        SELECT
+                            -- MAX here is just to fool MySQL to give us the id of the deck that crushed the perfect run from an aggregate function. There is only one value to MAX.
+                            MAX(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN odm.deck_id ELSE NULL END) AS deck_id
+                        FROM
+                            deck AS d
+                        INNER JOIN
+                            deck_match AS dm
+                        ON
+                            dm.deck_id = d.id
+                        INNER JOIN
+                            deck_match AS odm
+                        ON
+                            dm.match_id = odm.match_id AND odm.deck_id <> d.id
+                        WHERE
+                            d.competition_id IN
+                            (
+                                SELECT
+                                    id
+                                FROM
+                                    competition
+                                WHERE
+                                    competition_type_id = ({league_competition_type_id})
+                            )
+                        GROUP BY d.id
+                        HAVING
+                            SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) >=4
+                        AND
+                            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) = 1
+                        AND
+                            SUM(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN 1 ELSE 0 END) = 1
+                )
+                THEN 1 ELSE 0 END
+            ) AS perfect_run_crushes
         FROM
             person AS p
         LEFT JOIN
@@ -75,7 +134,7 @@ def set_achievements(people):
             p.id IN ({ids})
         GROUP BY
             p.id
-    """.format(ids=', '.join(str(k) for k in people_by_id.keys()))
+    """.format(league_competition_type_id=competition.league_type_id_select(), ids=', '.join(str(k) for k in people_by_id.keys()))
     results = [Container(r) for r in db().execute(sql)]
     for result in results:
         people_by_id[result['id']].update(result)
@@ -87,11 +146,11 @@ def set_head_to_head(people):
         SELECT
             p.id,
             COUNT(p.id) AS num_matches,
-            LOWER(opp_person.mtgo_username) AS opp_mtgo_username,
-            SUM(CASE WHEN dm.games > opp.games THEN 1 ELSE 0 END) AS wins,
-            SUM(CASE WHEN dm.games < opp.games THEN 1 ELSE 0 END) AS losses,
-            SUM(CASE WHEN dm.games = opp.games THEN 1 ELSE 0 END) AS draws,
-            IFNULL(ROUND((SUM(CASE WHEN dm.games > opp.games THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN dm.games <> opp.games THEN 1 ELSE 0 END), 0)) * 100, 1), '') AS win_percent
+            LOWER(opp.mtgo_username) AS opp_mtgo_username,
+            SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) AS wins,
+            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
+            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws,
+            IFNULL(ROUND((SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN dm.games <> IFNULL(odm.games, 0) THEN 1 ELSE 0 END), 0)) * 100, 1), '') AS win_percent
         FROM
             person AS p
         INNER JOIN
@@ -99,17 +158,22 @@ def set_head_to_head(people):
         INNER JOIN
             deck_match AS dm ON dm.deck_id = d.id
         INNER JOIN
-            deck_match AS opp ON dm.match_id = opp.match_id AND dm.deck_id <> opp.deck_id
+            deck_match AS odm ON dm.match_id = odm.match_id AND dm.deck_id <> IFNULL(odm.deck_id, 0)
         INNER JOIN
-            deck AS opp_deck ON opp.deck_id = opp_deck.id
+            deck AS od ON odm.deck_id = od.id
         INNER JOIN
-            person AS opp_person ON opp_deck.person_id = opp_person.id
+            person AS opp ON od.person_id = opp.id
         WHERE
             p.id IN ({ids})
         GROUP BY
-            p.id, opp_person.id
+            p.id, opp.id
         ORDER BY
-            p.id, num_matches DESC, SUM(CASE WHEN dm.games > opp.games THEN 1 ELSE 0 END) - SUM(CASE WHEN dm.games < opp.games THEN 1 ELSE 0 END) DESC, win_percent DESC, SUM(CASE WHEN dm.games > opp.games THEN 1 ELSE 0 END) DESC;
+            p.id,
+            num_matches DESC,
+            SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) - SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) DESC,
+            win_percent DESC,
+            SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) DESC,
+            opp_mtgo_username
     """.format(ids=', '.join(str(k) for k in people_by_id.keys()))
     results = [Container(r) for r in db().execute(sql)]
     for result in results:

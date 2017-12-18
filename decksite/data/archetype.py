@@ -56,8 +56,8 @@ def load_archetypes_deckless(where='1 = 1', order_by='`season_num_decks` DESC, `
             a.id,
             a.name,
             aca.ancestor AS parent_id,
-            {all_decks},
-            {season_decks}
+            {all_select},
+            {season_select}
         FROM
             archetype AS a
         LEFT JOIN
@@ -66,7 +66,8 @@ def load_archetypes_deckless(where='1 = 1', order_by='`season_num_decks` DESC, `
             archetype_closure AS acd ON a.id = acd.ancestor
         LEFT JOIN
             deck AS d ON acd.descendant = d.archetype_id
-        {nwdl_join}
+        LEFT JOIN
+            ({nwdl_table}) AS dsum ON d.id = dsum.id
         WHERE
             {where}
         GROUP BY
@@ -74,7 +75,7 @@ def load_archetypes_deckless(where='1 = 1', order_by='`season_num_decks` DESC, `
             aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
         ORDER BY
             {order_by}
-    """.format(all_decks=deck.nwdl_all_select(), season_decks=deck.nwdl_season_select(), nwdl_join=deck.nwdl_join(), where=where, order_by=order_by)
+    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_table=deck.nwdl_table(), where=where, order_by=order_by)
     archetypes = [Archetype(a) for a in db().execute(sql)]
     archetypes_by_id = {a.id: a for a in archetypes}
     for a in archetypes:
@@ -110,21 +111,24 @@ def load_matchups(archetype_id):
         FROM
             archetype AS a
         INNER JOIN
-            deck AS d
-        ON
-            d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = a.id)
-        {nwdl_join}
+            deck AS d ON d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = a.id)
+        LEFT JOIN
+            ({nwdl_table}) AS dsum ON d.id = dsum.id
         INNER JOIN
-            archetype AS oa
-        ON
-            od.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = oa.id)
+            deck_match AS dm ON d.id = dm.deck_id
+        INNER JOIN
+            deck_match AS odm ON dm.match_id = odm.match_id AND odm.deck_id <> d.id
+        INNER JOIN
+            deck AS od ON od.id = odm.deck_id
+        INNER JOIN
+            archetype AS oa ON od.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = oa.id)
         WHERE
             a.id = %s
         GROUP BY
             oa.id
         ORDER BY
             `season_wins` DESC, `all_wins` DESC
-    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_join=deck.nwdl_join())
+    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_table=deck.nwdl_table())
     return [Container(m) for m in db().execute(sql, [archetype_id])]
 
 def move(archetype_id, parent_id):

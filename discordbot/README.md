@@ -68,7 +68,7 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!clearimagecache` Deletes all the cached images.  Use sparingly
 
-`!echo` Repeat after me…
+`!echo` Repeat after me...
 
 `!notpenny` Don't show PD Legality in this channel
 

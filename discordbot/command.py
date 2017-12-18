@@ -200,7 +200,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Developer')
     async def echo(self, bot, channel, args):
-        """Repeat after me…"""
+        """Repeat after me..."""
         s = emoji.replace_emoji(args, bot.client)
         await bot.client.send_message(channel, s)
 
@@ -389,7 +389,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def pdm(self, bot, channel, args):
         """Alias for `!resources`."""
-        # Because of the weird way we call and use methods on Commands we need …
+        # Because of the weird way we call and use methods on Commands we need ...
         # pylint: disable=too-many-function-args
         await self.resources(self, bot, channel, args)
 

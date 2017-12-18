@@ -440,22 +440,25 @@ def nwdl_season_select():
 def nwdl_week_select():
     return nwdl_select('week_', 'dsum.created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK)')
 
-def nwdl_table():
+def nwdl_join():
     return """
-        SELECT
-            d.id,
-            d.created_date,
-            SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins, -- IFNULL so we still count byes as wins.
-            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
-            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws
-        FROM
-            deck_match AS dm
-        INNER JOIN
-            deck_match AS odm ON dm.match_id = odm.match_id AND dm.deck_id <> odm.deck_id
-        INNER JOIN
-            deck AS d ON d.id = dm.deck_id
-        GROUP BY
-            d.id
+        LEFT JOIN
+            (
+                SELECT
+                    d.id,
+                    d.created_date,
+                    SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins, -- IFNULL so we still count byes as wins.
+                    SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
+                    SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws
+                FROM
+                    deck_match AS dm
+                INNER JOIN
+                    deck_match AS odm ON dm.match_id = odm.match_id AND dm.deck_id <> odm.deck_id
+                INNER JOIN
+                    deck AS d ON d.id = dm.deck_id
+                GROUP BY
+                    d.id
+            ) AS dsum ON d.id = dsum.id
     """
 
 # pylint: disable=too-many-instance-attributes

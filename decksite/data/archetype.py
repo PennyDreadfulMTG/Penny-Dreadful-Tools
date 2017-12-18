@@ -66,8 +66,7 @@ def load_archetypes_deckless(where='1 = 1', order_by='`season_num_decks` DESC, `
             archetype_closure AS acd ON a.id = acd.ancestor
         LEFT JOIN
             deck AS d ON acd.descendant = d.archetype_id
-        LEFT JOIN
-            ({nwdl_table}) AS dsum ON d.id = dsum.id
+        {nwdl_join}
         WHERE
             {where}
         GROUP BY
@@ -75,7 +74,7 @@ def load_archetypes_deckless(where='1 = 1', order_by='`season_num_decks` DESC, `
             aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
         ORDER BY
             {order_by}
-    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_table=deck.nwdl_table(), where=where, order_by=order_by)
+    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_join=deck.nwdl_join(), where=where, order_by=order_by)
     archetypes = [Archetype(a) for a in db().execute(sql)]
     archetypes_by_id = {a.id: a for a in archetypes}
     for a in archetypes:

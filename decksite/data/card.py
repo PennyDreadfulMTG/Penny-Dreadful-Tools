@@ -16,8 +16,7 @@ def played_cards(where='1 = 1'):
             deck_card AS dc
         INNER JOIN
             deck AS d ON dc.deck_id = d.id
-        LEFT JOIN
-            ({nwdl_table}) AS dsum ON dsum.id = d.id
+        {nwdl_join}
         WHERE
             {where}
         GROUP BY
@@ -26,7 +25,7 @@ def played_cards(where='1 = 1'):
             season_num_decks DESC,
             SUM(CASE WHEN dsum.created_date >= %s THEN dsum.wins - dsum.losses ELSE 0 END) DESC,
             name
-    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), week_select=deck.nwdl_week_select(), nwdl_table=deck.nwdl_table(), where=where)
+    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), week_select=deck.nwdl_week_select(), nwdl_join=deck.nwdl_join(), where=where)
     cs = [Container(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())])]
     cards = oracle.cards_by_name()
     for c in cs:

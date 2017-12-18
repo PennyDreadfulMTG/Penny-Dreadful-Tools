@@ -27,8 +27,7 @@ def load_people(where='1 = 1'):
             person AS p
         LEFT JOIN
             deck AS d ON p.id = d.person_id
-        LEFT JOIN
-            ({nwdl_table}) AS dsum ON dsum.id = d.id
+        {nwdl_join}
         WHERE
             {where}
         GROUP BY
@@ -36,7 +35,7 @@ def load_people(where='1 = 1'):
         ORDER BY
             `season_num_decks` DESC,
             `all_num_decks` DESC, name
-    """.format(person_query=query.person_query(), all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_table=deck.nwdl_table(), where=where)
+    """.format(person_query=query.person_query(), all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_join=deck.nwdl_join(), where=where)
     people = [Person(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())])]
     if len(people) > 0:
         set_decks(people)

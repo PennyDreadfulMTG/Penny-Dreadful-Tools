@@ -79,12 +79,9 @@ def display_time(seconds, granularity=2):
     for unit, count in intervals:
         if len(result) < granularity - 1:
             value = seconds // count # floor preceeding units
-            print(seconds, unit, count, value, 'floored')
         else:
             value = round(seconds / count) # round off last unit
-            print(seconds, unit, count, value, 'rounded')
             if value == count and unit != 'seconds': # rounding off bumped us up to one of the *preceeding* unit.
-                print('we hit the special case')
                 prev_value, prev_unit = result[-1]
                 result[-1] = (prev_value + 1, prev_unit)
                 seconds -= value * count

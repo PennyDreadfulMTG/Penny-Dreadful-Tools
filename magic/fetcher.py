@@ -39,7 +39,7 @@ def card_aliases():
 
 
 def card_price(cardname):
-    return internal.fetch_json('http://katelyngigante.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
+    return internal.fetch_json('http://vorpald20.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
 
 def card_price_string(card, short=False):
     def price_info(c):

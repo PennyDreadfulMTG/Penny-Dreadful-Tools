@@ -76,13 +76,17 @@ def display_time(seconds, granularity=2):
     seconds = round(seconds) # in case we've been handed a decimal not an int
     if seconds == 0:
         return 'now'
-    for name, count in intervals:
+    for unit, count in intervals:
         if len(result) < granularity - 1:
             value = seconds // count # floor preceeding units
         else:
             value = round(seconds / count) # round off last unit
+            if value == count and unit != 'seconds': # rounding off bumped us up to one of the *preceeding* unit.
+                prev_value, prev_unit = result[-1]
+                result[-1] = (prev_value + 1, prev_unit)
+                seconds -= value * count
+                value = 0
         if value > 0 or len(result):
-            unit = name.rstrip('s') if value == 1 else name
             result.append((value, unit))
             seconds -= value * count
-    return ', '.join(['{} {}'.format(value, unit) for (value, unit) in result[:granularity] if value > 0])
+    return ', '.join(['{} {}'.format(value, unit.rstrip('s') if value == 1 else unit) for (value, unit) in result[:granularity] if value > 0])

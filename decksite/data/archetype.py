@@ -105,13 +105,18 @@ def load_matchups(archetype_id):
         SELECT
             oa.id,
             oa.name,
-            {all_select},
-            {season_select}
+            SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS all_wins, -- IFNULL so we still count byes as wins.
+            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS all_losses,
+            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS all_draws,
+            IFNULL(ROUND((SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN dm.games <> IFNULL(odm.games, 0) THEN 1 ELSE 0 END), 0)) * 100, 1), '') AS all_win_percent,
+            SUM(CASE WHEN d.created_date > %s AND dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS season_wins, -- IFNULL so we still count byes as wins.
+            SUM(CASE WHEN d.created_date > %s AND dm.games < odm.games THEN 1 ELSE 0 END) AS season_losses,
+            SUM(CASE WHEN d.created_date > %s AND dm.games = odm.games THEN 1 ELSE 0 END) AS season_draws,
+            IFNULL(ROUND((SUM(CASE WHEN d.created_date > %s AND dm.games > odm.games THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN d.created_date > %s AND dm.games <> IFNULL(odm.games, 0) THEN 1 ELSE 0 END), 0)) * 100, 1), '') AS season_win_percent
         FROM
             archetype AS a
         INNER JOIN
             deck AS d ON d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = a.id)
-        {nwdl_join}
         INNER JOIN
             deck_match AS dm ON d.id = dm.deck_id
         INNER JOIN
@@ -127,7 +132,7 @@ def load_matchups(archetype_id):
         ORDER BY
             `season_wins` DESC, `all_wins` DESC
     """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_join=deck.nwdl_join())
-    return [Container(m) for m in db().execute(sql, [archetype_id])]
+    return [Container(m) for m in db().execute(sql, [int(rotation.last_rotation().timestamp())] * 5 + [archetype_id])]
 
 def move(archetype_id, parent_id):
     db().begin()

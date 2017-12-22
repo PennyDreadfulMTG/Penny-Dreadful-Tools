@@ -26,7 +26,10 @@ lint:
 	@echo
 	@echo "******************************** Lint *****************************************"
 	@echo
-	@find . -name "*.py" | grep -v .git | xargs pylint --reports=n -f parseable
+	@pylint  --generate-rcfile | grep -v "ignored-modules=" >.pylintrc.tmp
+# - to continue on error so we cleanup the .pylintrc.tmp file we created.
+	-@find . -name "*.py" | grep -v .git | xargs pylint --ignored-modules=MySQLdb --rcfile=.pylintrc.tmp --reports=n -f parseable
+	@rm .pylintrc.tmp
 	@echo
 
 shortlint:

@@ -6,7 +6,7 @@ import calendar
 from flask import url_for
 
 from magic import legality, rotation
-from shared import dtutil
+from shared import configuration, dtutil
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
@@ -172,9 +172,14 @@ def report(form):
         if counts[int(form.opponent)] >= 5:
             form.errors['opponent'] = "Your opponent already has 5 matches reported"
             return False
+        pdbot = form.get('api_token', None) == configuration.get('pdbot_api_token')
+        if pdbot:
+            match_id = form.get('matchID', None)
+        else:
+            match_id = None
 
         db().begin()
-        deck.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games)
+        deck.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games, None, None, match_id)
         db().commit()
         return True
     except LockNotAcquiredException:

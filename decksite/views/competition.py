@@ -17,8 +17,10 @@ class Competition(View):
             self.league_info_url = url_for('league')
             leaderboard = {}
             for d in competition.decks:
+                if d.banned:
+                    continue
                 bonus = 0
-                if d.wins == 5:
+                if d.wins >= 5:
                     bonus = 1
                 points = d.wins + bonus
                 if d.person_id not in leaderboard:

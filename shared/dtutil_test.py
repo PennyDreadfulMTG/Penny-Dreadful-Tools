@@ -61,6 +61,8 @@ def test_display_date():
     dt = datetime.datetime.now(datetime.timezone.utc)
     assert dtutil.display_date(dt).find('just now') >= 0
     assert dtutil.display_date(dt).find('from now') == -1
+    dt = datetime.datetime.now(dtutil.WOTC_TZ) + datetime.timedelta(days=28, hours=15, minutes=35)
+    assert dtutil.display_date(dt) == '4 weeks from now'
 
 def test_rounding():
     assert dtutil.display_time(121, granularity=1) == '2 minutes'
@@ -81,3 +83,4 @@ def test_display_time():
     assert dtutil.display_time(60 * 60 * 2 + 1) == '2 hours'
     assert dtutil.display_time((24 * 60 * 60 * 3) + (60 * 60 * 2) + (60 * 59)) == '3 days, 3 hours'
     assert dtutil.display_time((24 * 60 * 60 * 3) + (60 * 60 * 2) + (60 * 29)) == '3 days, 2 hours'
+    assert dtutil.display_time(2417366.810318) == '4 weeks'

@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import datetime
 import re
 
@@ -65,28 +66,32 @@ def day2ordinal(m):
     return p.ordinal(int(m.group(1)))
 
 def display_time(seconds, granularity=2):
-    intervals = (
-        ('weeks', 60 * 60 * 24 * 7),
-        ('days', 60 * 60 * 24),
-        ('hours', 60 * 60),
-        ('minutes', 60),
-        ('seconds', 1)
-    )
+    intervals = OrderedDict()
+    intervals['weeks'] = (None, 60 * 60 * 24 * 7)
+    intervals['days'] = (7, 60 * 60 * 24)
+    intervals['hours'] = (24, 60 * 60)
+    intervals['minutes'] = (60, 60)
+    intervals['seconds'] = (60, 1)
     result = []
     seconds = round(seconds) # in case we've been handed a decimal not an int
     if seconds == 0:
         return 'now'
-    for unit, count in intervals:
+    for unit, details in intervals.items():
+        max_units, seconds_per_unit = details
         if len(result) < granularity - 1:
-            value = seconds // count # floor preceeding units
+            value = seconds // seconds_per_unit # floor preceeding units
         else:
-            value = round(seconds / count) # round off last unit
-            if value == count and unit != 'seconds': # rounding off bumped us up to one of the *preceeding* unit.
-                prev_value, prev_unit = result[-1]
-                result[-1] = (prev_value + 1, prev_unit)
-                seconds -= value * count
+            value = round(seconds / seconds_per_unit) # round off last unit
+            if value == max_units and seconds < (value * seconds_per_unit) and unit != 'seconds': # rounding off bumped us up to one of the *preceeding* unit.
+                # Send the rounding up back up the chain until we find a value that does not need the previous value rounding up.
+                for i in range(0, len(result)):
+                    prev_value, prev_unit = result[-i]
+                    result[-i] = (prev_value + 1, prev_unit)
+                    if result[-i][0] < intervals[prev_unit][1]:
+                        break
+                seconds -= value * seconds_per_unit
                 value = 0
         if value > 0 or len(result):
             result.append((value, unit))
-            seconds -= value * count
+            seconds -= value * seconds_per_unit
     return ', '.join(['{} {}'.format(value, unit.rstrip('s') if value == 1 else unit) for (value, unit) in result[:granularity] if value > 0])

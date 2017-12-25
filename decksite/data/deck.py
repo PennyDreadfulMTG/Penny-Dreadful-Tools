@@ -36,7 +36,7 @@ def load_season(season=None, league_only=False):
     season = Container(guarantee.exactly_one(db().execute(sql)))
     where = 'd.created_date >= {start_ts} AND d.created_date < IFNULL({end_ts}, 999999999999)'.format(start_ts=season.start_date, end_ts=season.end_date)
     if league_only:
-        where = "{where} AND d.competition_id IN (SELECT id FROM competition WHERE competition_type_id IN (SELECT id FROM competition_type WHERE name = 'League'))".format(where=where)
+        where = "{where} AND d.competition_id IN (SELECT id FROM competition WHERE competition_series_id IN (SELECT id FROM competition_series WHERE competition_type_id IN (SELECT id FROM competition_type WHERE name = 'League'))))".format(where=where)
     season.decks = load_decks(where)
     season.start_date = dtutil.ts2dt(season.start_date)
     season.end_date = dtutil.ts2dt(season.end_date)
@@ -86,7 +86,9 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         LEFT JOIN
             archetype AS a ON d.archetype_id = a.id
         LEFT JOIN
-            competition_type AS ct ON ct.id = c.competition_type_id
+            competition_series AS cs ON cs.id = c.competition_series_id
+        LEFT JOIN
+            competition_type AS ct ON ct.id = cs.competition_type_id
         LEFT JOIN
             deck_cache AS cache ON d.id = cache.deck_id
         LEFT JOIN

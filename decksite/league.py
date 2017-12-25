@@ -198,7 +198,35 @@ def winner_and_loser(params):
     return (None, None)
 
 def active_competition_id_query():
-    return "SELECT id FROM competition WHERE start_date < {now} AND end_date > {now} AND competition_type_id = (SELECT id FROM competition_type WHERE name = 'League')".format(now=dtutil.dt2ts(dtutil.now()))
+    return """
+        SELECT
+            id
+        FROM
+            competition
+        WHERE
+            start_date < {now}
+        AND
+            end_date > {now}
+        AND
+            competition_series_id IN
+                (
+                    SELECT
+                        id
+                    FROM
+                        competition_series
+                    WHERE
+                        competition_type_id
+                    IN
+                        (
+                            SELECT
+                                id
+                            FROM
+                                competition_type
+                            WHERE
+                                name = 'League'
+                        )
+                )
+        """.format(now=dtutil.dt2ts(dtutil.now()))
 
 def active_league():
     where = 'c.id = ({id_query})'.format(id_query=active_competition_id_query())
@@ -291,6 +319,8 @@ def first_runs():
             deck AS d ON d.person_id = p.id
         INNER JOIN
             competition AS c ON c.id = d.competition_id
+        INNER JOIN
+            competition_series AS cs ON cs.id = c.competition_series_id
         INNER JOIN (
             SELECT
                 d.person_id,
@@ -302,7 +332,7 @@ def first_runs():
             INNER JOIN
                 deck_match AS dm ON dm.deck_id = d.id
             WHERE
-                c.competition_type_id IN ({league_competition_type_id})
+                cs.competition_type_id IN ({league_competition_type_id})
             GROUP BY
                 d.person_id
             HAVING

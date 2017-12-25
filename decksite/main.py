@@ -308,7 +308,21 @@ def post_matches():
 
 @APP.route('/admin/prizes/')
 def prizes():
-    comps = comp.load_competitions("c.competition_type_id IN (SELECT id FROM competition_type WHERE name = 'Gatherling') AND c.start_date > UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK)")
+    where = """
+            cs.competition_type_id
+        IN
+            (
+                SELECT
+                    id
+                FROM
+                    competition_type
+                WHERE
+                    name = 'Gatherling'
+            )
+        AND
+            c.start_date > (UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK)
+        """
+    comps = comp.load_competitions(where)
     first_runs = lg.first_runs()
     view = Prizes(comps, first_runs)
     return view.page()

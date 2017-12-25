@@ -70,7 +70,9 @@ def set_achievements(people):
                         LEFT JOIN
                             competition AS c ON c.id = d.competition_id
                         LEFT JOIN
-                            competition_type AS ct ON ct.id = c.competition_type_id
+                            competition_series AS cs ON cs.id = c.competition_series_id
+                        LEFT JOIN
+                            competition_type AS ct ON ct.id = cs.competition_type_id
                         LEFT JOIN
                             deck_match AS dm ON dm.deck_id = d.id
                         LEFT JOIN
@@ -110,7 +112,16 @@ def set_achievements(people):
                                 FROM
                                     competition
                                 WHERE
-                                    competition_type_id = ({league_competition_type_id})
+                                    competition_series_id IN
+                                        (
+                                            SELECT
+                                                id
+                                            FROM
+                                                competition_series
+                                            WHERE
+                                                competition_type_id
+                                            IN ({league_competition_type_id})
+                                        )
                             )
                         GROUP BY d.id
                         HAVING
@@ -119,7 +130,7 @@ def set_achievements(people):
                             SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) = 1
                         AND
                             SUM(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN 1 ELSE 0 END) = 1
-                )
+                    )
                 THEN 1 ELSE 0 END
             ) AS perfect_run_crushes
         FROM
@@ -129,7 +140,9 @@ def set_achievements(people):
         LEFT JOIN
             competition AS c ON c.id = d.competition_id
         LEFT JOIN
-            competition_type AS ct ON ct.id = c.competition_type_id
+            competition_series AS cs ON cs.id = c.competition_series_id
+        LEFT JOIN
+            competition_type AS ct ON ct.id = cs.competition_type_id
         WHERE
             p.id IN ({ids})
         GROUP BY

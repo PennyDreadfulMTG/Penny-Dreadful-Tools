@@ -80,15 +80,10 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         LEFT JOIN
             person AS p ON d.person_id = p.id
         LEFT JOIN
-            competition AS c ON d.competition_id = c.id
-        LEFT JOIN
             source AS s ON d.source_id = s.id
         LEFT JOIN
             archetype AS a ON d.archetype_id = a.id
-        LEFT JOIN
-            competition_series AS cs ON cs.id = c.competition_series_id
-        LEFT JOIN
-            competition_type AS ct ON ct.id = cs.competition_type_id
+        {competition_join}
         LEFT JOIN
             deck_cache AS cache ON d.id = cache.deck_id
         LEFT JOIN
@@ -102,7 +97,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         ORDER BY
             {order_by}
         {limit}
-    """.format(person_query=query.person_query(), where=where, order_by=order_by, limit=limit)
+    """.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit)
     db().execute('SET group_concat_max_len=100000')
     rows = db().execute(sql)
     decks = []

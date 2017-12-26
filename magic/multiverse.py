@@ -75,7 +75,7 @@ def base_query(where='(1 = 1)'):
     """.format(
         card_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.card_properties().items()),
         face_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.face_properties().items()),
-        bug_repr=db().concat(['cb.description', "'|'", 'cb.classification', "'|'", 'cb.last_confirmed']),
+        bug_repr=db().concat(['cb.description', "'|'", 'cb.classification', "'|'", 'cb.last_confirmed', "'|'", 'cb.url']),
         format_id=get_format_id('Penny Dreadful'),
         legality_code=db().concat(['fo.name', "':'", 'cl.legality']),
         card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
@@ -162,13 +162,13 @@ def update_bugged_cards(use_transaction=True):
     if use_transaction:
         db().begin()
     db().execute("DELETE FROM card_bug")
-    for name, bug, classification, last_confirmed in bugs:
-        last_confirmed_ts = dtutil.parse_to_ts(last_confirmed, '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
-        card_id = db().value("SELECT card_id FROM face WHERE name = ?", [name])
+    for bug in bugs:
+        last_confirmed_ts = dtutil.parse_to_ts(bug['last_updated'], '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
+        card_id = db().value("SELECT card_id FROM face WHERE name = ?", [bug['card']])
         if card_id is None:
-            print("UNKNOWN BUGGED CARD: {card}".format(card=name))
+            print("UNKNOWN BUGGED CARD: {card}".format(card=bug['card']))
             continue
-        db().execute("INSERT INTO card_bug (card_id, description, classification, last_confirmed) VALUES (?, ?, ?, ?)", [card_id, bug, classification, last_confirmed_ts])
+        db().execute("INSERT INTO card_bug (card_id, description, classification, last_confirmed, url) VALUES (?, ?, ?, ?, ?)", [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url']])
     if use_transaction:
         db().commit()
 

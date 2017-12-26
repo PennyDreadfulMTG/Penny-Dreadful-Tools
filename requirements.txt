@@ -9,7 +9,7 @@ inflect
 markdown
 matplotlib
 munch
-mysqlclient==1.3.9
+mysqlclient==1.3.12
 pygithub
 pylint>=1.7
 pystache

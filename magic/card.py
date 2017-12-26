@@ -167,7 +167,7 @@ def card_alias_properties():
 
 def card_bug_properties():
     props = {}
-    for k in ['id', 'card_id', 'description', 'classification', 'last_confirmed']:
+    for k in ['id', 'card_id', 'description', 'classification', 'last_confirmed', 'url']:
         props[k] = copy.deepcopy(BASE)
         props[k]['nullable'] = False
     props['id']['type'] = INTEGER
@@ -176,6 +176,7 @@ def card_bug_properties():
     props['card_id']['foreign_key'] = ('card', 'id')
     props['description']['type'] = TEXT
     props['last_confirmed']['type'] = INTEGER
+    props['url']['type'] = TEXT
     return props
 
 def name_query(column='face_name'):
@@ -248,8 +249,8 @@ class Card(Container):
                     bugs = v.split('_SEPARATOR_')
                     v = []
                     for b in bugs:
-                        description, classification, last_confirmed = b.split('|')
-                        v.append({'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(float(last_confirmed))})
+                        description, classification, last_confirmed, url = b.split('|')
+                        v.append({'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(float(last_confirmed)), 'url': url})
             setattr(self, k, v)
         if not self.names:
             setattr(self, 'names', [self.name])

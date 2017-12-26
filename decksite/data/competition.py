@@ -8,17 +8,13 @@ from decksite.data import deck, guarantee
 from decksite.database import db
 
 def get_or_insert_competition(start_date, end_date, name, competition_series, url):
-    competition_series_id = db().value('SELECT id FROM competition_series WHERE name = %s', [competition_series])
-    print(competition_series)
-    print(competition_series_id)
+    competition_series_id = db().value('SELECT id FROM competition_series WHERE name = %s', [competition_series], fail_on_missing=True)
     start = start_date.timestamp()
     end = end_date.timestamp()
     values = [start, end, name, competition_series_id, url]
     sql = """
-        SELECT
-            id
-        FROM
-            competition
+        SELECT id
+        FROM competition
         WHERE
             start_date = %s
         AND
@@ -75,13 +71,3 @@ def set_decks(competitions):
         c.decks = []
     for d in decks:
         competitions_by_id[d.competition_id].decks.append(d)
-
-def league_type_id_select():
-    return """
-        SELECT
-            id
-        FROM
-            competition_type
-        WHERE
-            name = 'League'
-    """

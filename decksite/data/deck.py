@@ -36,7 +36,7 @@ def load_season(season=None, league_only=False):
     season = Container(guarantee.exactly_one(db().execute(sql)))
     where = 'd.created_date >= {start_ts} AND d.created_date < IFNULL({end_ts}, 999999999999)'.format(start_ts=season.start_date, end_ts=season.end_date)
     if league_only:
-        where = "{where} AND d.competition_id IN (SELECT id FROM competition WHERE competition_series_id IN (SELECT id FROM competition_series WHERE competition_type_id IN (SELECT id FROM competition_type WHERE name = 'League'))))".format(where=where)
+        where = "{where} AND d.competition_id IN ({competition_ids_by_type_select})".format(where=where, competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
     season.decks = load_decks(where)
     season.start_date = dtutil.ts2dt(season.start_date)
     season.end_date = dtutil.ts2dt(season.end_date)

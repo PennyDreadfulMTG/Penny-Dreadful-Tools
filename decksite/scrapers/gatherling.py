@@ -43,7 +43,7 @@ def tournament(url, name):
         return 0
 
     dt = dtutil.parse(date_s, '%d %B %Y %H:%M', dtutil.GATHERLING_TZ)
-    competition_id = competition.get_or_insert_competition(dt, dt, name, 'Penny Dreadful {day}s'.format(day=dt.strftime("%A")), url)
+    competition_id = competition.get_or_insert_competition(dt, dt, name, 'Penny Dreadful {day}s'.format(day=dtutil.day_of_week(dt, dtutil.GATHERLING_TZ)), url)
     table = soup.find(text='Current Standings').find_parent('table')
     ranks = rankings(table)
 

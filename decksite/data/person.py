@@ -2,7 +2,7 @@ from magic import rotation
 from shared.container import Container
 from shared.database import sqlescape
 
-from decksite.data import competition, deck, guarantee, query
+from decksite.data import deck, guarantee, query
 from decksite.database import db
 
 def load_person(person):
@@ -67,12 +67,7 @@ def set_achievements(people):
                             d.id
                         FROM
                             deck AS d
-                        LEFT JOIN
-                            competition AS c ON c.id = d.competition_id
-                        LEFT JOIN
-                            competition_series AS cs ON cs.id = c.competition_series_id
-                        LEFT JOIN
-                            competition_type AS ct ON ct.id = cs.competition_type_id
+                        {competition_join}
                         LEFT JOIN
                             deck_match AS dm ON dm.deck_id = d.id
                         LEFT JOIN
@@ -105,24 +100,7 @@ def set_achievements(people):
                         ON
                             dm.match_id = odm.match_id AND odm.deck_id <> d.id
                         WHERE
-                            d.competition_id IN
-                            (
-                                SELECT
-                                    id
-                                FROM
-                                    competition
-                                WHERE
-                                    competition_series_id IN
-                                        (
-                                            SELECT
-                                                id
-                                            FROM
-                                                competition_series
-                                            WHERE
-                                                competition_type_id
-                                            IN ({league_competition_type_id})
-                                        )
-                            )
+                            d.competition_id IN ({competition_ids_by_type_select})
                         GROUP BY d.id
                         HAVING
                             SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) >=4
@@ -137,17 +115,12 @@ def set_achievements(people):
             person AS p
         LEFT JOIN
             deck AS d ON d.person_id = p.id
-        LEFT JOIN
-            competition AS c ON c.id = d.competition_id
-        LEFT JOIN
-            competition_series AS cs ON cs.id = c.competition_series_id
-        LEFT JOIN
-            competition_type AS ct ON ct.id = cs.competition_type_id
+        {competition_join}
         WHERE
             p.id IN ({ids})
         GROUP BY
             p.id
-    """.format(league_competition_type_id=competition.league_type_id_select(), ids=', '.join(str(k) for k in people_by_id.keys()))
+    """.format(competition_join=query.competition_join(), competition_ids_by_type_select=query.competition_ids_by_type_select('League'), ids=', '.join(str(k) for k in people_by_id.keys()))
     results = [Container(r) for r in db().execute(sql)]
     for result in results:
         people_by_id[result['id']].update(result)

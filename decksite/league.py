@@ -12,7 +12,7 @@ from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 from shared.pd_exception import LockNotAcquiredException
 
-from decksite.data import competition, deck, guarantee, person
+from decksite.data import competition, deck, guarantee, person, query
 from decksite.database import db
 from decksite.scrapers import decklist
 
@@ -199,34 +199,14 @@ def winner_and_loser(params):
 
 def active_competition_id_query():
     return """
-        SELECT
-            id
-        FROM
-            competition
+        SELECT id FROM competition
         WHERE
             start_date < {now}
         AND
             end_date > {now}
         AND
-            competition_series_id IN
-                (
-                    SELECT
-                        id
-                    FROM
-                        competition_series
-                    WHERE
-                        competition_type_id
-                    IN
-                        (
-                            SELECT
-                                id
-                            FROM
-                                competition_type
-                            WHERE
-                                name = 'League'
-                        )
-                )
-        """.format(now=dtutil.dt2ts(dtutil.now()))
+            id IN ({competition_ids_by_type_select})
+        """.format(now=dtutil.dt2ts(dtutil.now()), competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
 def active_league():
     where = 'c.id = ({id_query})'.format(id_query=active_competition_id_query())
@@ -343,5 +323,5 @@ def first_runs():
         ORDER BY
             c.start_date DESC,
             p.mtgo_username
-    """.format(league_competition_type_id=competition.league_type_id_select())
+    """.format(league_competition_type_id=query.competition_type_id_select('League'))
     return [Container(r) for r in db().execute(sql)]

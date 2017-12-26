@@ -43,6 +43,9 @@ def now(tz=None):
         tz = datetime.timezone.utc
     return datetime.datetime.now(tz)
 
+def day_of_week(dt, tz):
+    return dt.astimezone(tz).strftime("%A")
+
 def display_date(dt, granularity=1):
     start = now()
     if (start - dt) > datetime.timedelta(365):

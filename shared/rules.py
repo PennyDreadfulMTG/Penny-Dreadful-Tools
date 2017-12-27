@@ -51,6 +51,7 @@ def bugs(version=LONG, fmt=TEXT):
 
             For all these matters the Tournament Organizer has the flexibility to rule as they see fit and their decision is final.
 
+            **List of all known bugged cards**: <https://pennydreadfulmagic.com/bugs/>
         """
     else:
         raise InvalidArgumentException('Unknown version: {version}'.format(version=version))

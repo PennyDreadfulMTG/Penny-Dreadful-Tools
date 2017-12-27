@@ -1,7 +1,6 @@
 import json
 import os
 import shutil
-import tempfile
 import urllib.request
 import zipfile
 
@@ -22,15 +21,19 @@ SESSION.mount(
     CacheControlAdapter(heuristic=ExpiresAfter(days=14)))
 
 def unzip(url, path):
-    with tempfile.TemporaryDirectory() as location:
-        shutil.rmtree(location, True)
-        os.mkdir(location)
-        store(url, '{location}/zip.zip'.format(location=location))
-        f = zipfile.ZipFile('{location}/zip.zip'.format(location=location), 'r')
-        f.extractall('{location}/unzip'.format(location=location))
-        f.close()
-        s = open('{location}/unzip/{path}'.format(location=location, path=path), encoding='utf-8').read()
-        return s
+    location = '{scratch_dir}/zip'.format(scratch_dir=configuration.get('scratch_dir'))
+    def remove_readonly(func, path, _):
+        os.chmod(path, stat.S_IWRITE)
+        func(path)
+    shutil.rmtree(location, True, remove_readonly)
+    os.mkdir(location)
+    store(url, '{location}/zip.zip'.format(location=location))
+    f = zipfile.ZipFile('{location}/zip.zip'.format(location=location), 'r')
+    f.extractall('{location}/unzip'.format(location=location))
+    f.close()
+    s = open('{location}/unzip/{path}'.format(location=location, path=path), encoding='utf-8').read()
+    shutil.rmtree(location)
+    return s
 
 def fetch(url, character_encoding=None, force=False):
     headers = {}

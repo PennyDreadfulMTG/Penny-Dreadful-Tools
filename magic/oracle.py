@@ -3,7 +3,7 @@ import sys
 from magic import card, fetcher, mana, multiverse
 from magic.database import db
 from shared.database import sqlescape
-from shared.pd_exception import InvalidDataException, TooFewItemsException, DatabaseException
+from shared.pd_exception import InvalidDataException, TooFewItemsException
 
 # Primary public interface to the magic package. Call `oracle.init()` after setting up application context and before using any methods.
 
@@ -66,11 +66,7 @@ def load_cards(names=None, where=None):
     if where is None:
         where = '(1 = 1)'
     sql = multiverse.cached_base_query('({where} AND {names})'.format(where=where, names=names_clause))
-    try:
-        rs = db().execute(sql)
-    except DatabaseException:
-        multiverse.init()
-        rs = db().execute(sql)
+    rs = db().execute(sql)
     if names and len(names) != len(rs):
         missing = names.symmetric_difference([r['name'] for r in rs])
         raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`.  missing=`{missing}`'.format(namelen=len(names), rslen=len(rs), names=names, missing=missing))

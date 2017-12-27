@@ -36,7 +36,7 @@ def load_season(season=None, league_only=False):
     season = Container(guarantee.exactly_one(db().execute(sql)))
     where = 'd.created_date >= {start_ts} AND d.created_date < IFNULL({end_ts}, 999999999999)'.format(start_ts=season.start_date, end_ts=season.end_date)
     if league_only:
-        where = "{where} AND d.competition_id IN (SELECT id FROM competition WHERE competition_type_id IN (SELECT id FROM competition_type WHERE name = 'League'))".format(where=where)
+        where = "{where} AND d.competition_id IN ({competition_ids_by_type_select})".format(where=where, competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
     season.decks = load_decks(where)
     season.start_date = dtutil.ts2dt(season.start_date)
     season.end_date = dtutil.ts2dt(season.end_date)
@@ -80,13 +80,10 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         LEFT JOIN
             person AS p ON d.person_id = p.id
         LEFT JOIN
-            competition AS c ON d.competition_id = c.id
-        LEFT JOIN
             source AS s ON d.source_id = s.id
         LEFT JOIN
             archetype AS a ON d.archetype_id = a.id
-        LEFT JOIN
-            competition_type AS ct ON ct.id = c.competition_type_id
+        {competition_join}
         LEFT JOIN
             deck_cache AS cache ON d.id = cache.deck_id
         LEFT JOIN
@@ -100,7 +97,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
         ORDER BY
             {order_by}
         {limit}
-    """.format(person_query=query.person_query(), where=where, order_by=order_by, limit=limit)
+    """.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit)
     db().execute('SET group_concat_max_len=100000')
     rows = db().execute(sql)
     decks = []

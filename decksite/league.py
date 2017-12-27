@@ -12,7 +12,7 @@ from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 from shared.pd_exception import LockNotAcquiredException
 
-from decksite.data import competition, deck, guarantee, person
+from decksite.data import competition, deck, guarantee, person, query
 from decksite.database import db
 from decksite.scrapers import decklist
 
@@ -198,7 +198,15 @@ def winner_and_loser(params):
     return (None, None)
 
 def active_competition_id_query():
-    return "SELECT id FROM competition WHERE start_date < {now} AND end_date > {now} AND competition_type_id = (SELECT id FROM competition_type WHERE name = 'League')".format(now=dtutil.dt2ts(dtutil.now()))
+    return """
+        SELECT id FROM competition
+        WHERE
+            start_date < {now}
+        AND
+            end_date > {now}
+        AND
+            id IN ({competition_ids_by_type_select})
+        """.format(now=dtutil.dt2ts(dtutil.now()), competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
 def active_league():
     where = 'c.id = ({id_query})'.format(id_query=active_competition_id_query())
@@ -291,6 +299,8 @@ def first_runs():
             deck AS d ON d.person_id = p.id
         INNER JOIN
             competition AS c ON c.id = d.competition_id
+        INNER JOIN
+            competition_series AS cs ON cs.id = c.competition_series_id
         INNER JOIN (
             SELECT
                 d.person_id,
@@ -302,7 +312,7 @@ def first_runs():
             INNER JOIN
                 deck_match AS dm ON dm.deck_id = d.id
             WHERE
-                c.competition_type_id IN ({league_competition_type_id})
+                cs.competition_type_id IN ({league_competition_type_id})
             GROUP BY
                 d.person_id
             HAVING
@@ -313,5 +323,5 @@ def first_runs():
         ORDER BY
             c.start_date DESC,
             p.mtgo_username
-    """.format(league_competition_type_id=competition.league_type_id_select())
+    """.format(league_competition_type_id=query.competition_type_id_select('League'))
     return [Container(r) for r in db().execute(sql)]

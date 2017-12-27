@@ -12,7 +12,7 @@ from shared.pd_exception import DoesNotExistException, InvalidArgumentException,
 from decksite import auth, deck_name, league as lg
 from decksite import APP
 from decksite.cache import cached
-from decksite.data import archetype as archs, card as cs, competition as comp, deck as ds, person as ps
+from decksite.data import archetype as archs, card as cs, competition as comp, deck as ds, person as ps, query
 from decksite.charts import chart
 from decksite.league import ReportForm, RetireForm, SignUpForm
 from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
@@ -308,7 +308,14 @@ def post_matches():
 
 @APP.route('/admin/prizes/')
 def prizes():
-    comps = comp.load_competitions("c.competition_type_id IN (SELECT id FROM competition_type WHERE name = 'Gatherling') AND c.start_date > UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK)")
+    where = """
+            cs.competition_type_id
+        IN
+            ({competition_type_id_select})
+        AND
+            c.start_date > (UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK)
+        """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
+    comps = comp.load_competitions(where)
     first_runs = lg.first_runs()
     view = Prizes(comps, first_runs)
     return view.page()

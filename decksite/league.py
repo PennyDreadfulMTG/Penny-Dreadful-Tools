@@ -12,7 +12,7 @@ from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 from shared.pd_exception import LockNotAcquiredException
 
-from decksite.data import competition, deck, guarantee, person, query
+from decksite.data import competition, deck, guarantee, match, person, query
 from decksite.database import db
 from decksite.scrapers import decklist
 
@@ -85,9 +85,9 @@ class ReportForm(Form):
         if len(self.opponent) == 0:
             self.errors['opponent'] = "Please select your opponent's deck"
         else:
-            for match in deck.get_matches(self):
-                if int(self.opponent) == match.opponent_deck_id:
-                    self.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=match.game_wins, game_losses=match.game_losses, opponent=match.opponent, date=dtutil.display_date(match.date))
+            for m in match.get_matches(self):
+                if int(self.opponent) == m.opponent_deck_id:
+                    self.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=m.game_wins, game_losses=m.game_losses, opponent=m.opponent, date=dtutil.display_date(m.date))
         if len(self.result) == 0:
             self.errors['result'] = 'Please select a result'
         else:
@@ -179,7 +179,7 @@ def report(form):
             match_id = None
 
         db().begin()
-        deck.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games, None, None, match_id)
+        match.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games, None, None, match_id)
         db().commit()
         return True
     except LockNotAcquiredException:

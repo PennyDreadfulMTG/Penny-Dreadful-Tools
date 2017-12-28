@@ -16,6 +16,8 @@ def run():
                 WHERE p1.id IS NOT NULL AND p2.id IS NOT NULL
             """.format(col1=USERNAME_COLUMNS[i], col2=USERNAME_COLUMNS[j])
             pairs = [Container(row) for row in db().execute(sql)]
+            if len(pairs) > 0:
+                print('You will want to run maintenance task "elo" after this to correct all Elo ratings.')
             for pair in pairs:
                 squash(pair.p1_id, pair.p2_id, pair.col1, pair.col2)
 

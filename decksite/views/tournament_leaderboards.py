@@ -1,5 +1,3 @@
-from magic import tournaments
-
 from decksite.view import View
 
 # pylint: disable=no-self-use

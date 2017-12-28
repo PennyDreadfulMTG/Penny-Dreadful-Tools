@@ -24,7 +24,7 @@ def ad_hoc():
     for m in matches:
         match(m)
     current = person.load_people()
-    people_by_id = { p.id: p for p in current }
+    people_by_id = {p.id: p for p in current}
     sql = 'UPDATE person SET elo = %s WHERE id = %s'
     for person_id, new_elo in sorted(PEOPLE.items(), key=lambda x: -x[1]):
         p = people_by_id[int(person_id)]
@@ -50,5 +50,5 @@ def adjust(winner, loser):
     PEOPLE[winner] = get_elo(winner) + change
     PEOPLE[loser] = get_elo(loser) - change
 
-def get_elo(person):
-    return PEOPLE.get(person, elo.STARTING_ELO)
+def get_elo(person_id):
+    return PEOPLE.get(person_id, elo.STARTING_ELO)

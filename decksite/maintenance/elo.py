@@ -1,28 +1,36 @@
-
+from decksite.data import elo, person
 from decksite.database import db
 
-# Elo values from http://www.mtgeloproject.net/faq.php.
 PEOPLE = {}
-STARTING_ELO = 1500
-ELO_WIDTH = 1600
-K_FACTOR = 12
 
 def ad_hoc():
     sql = """
-    SELECT
-        GROUP_CONCAT(d.person_id) AS people,
-        GROUP_CONCAT(dm.games) AS games
-    FROM `match` AS m
-    INNER JOIN deck_match AS dm ON dm.match_id = m.id
-    INNER JOIN deck AS d ON dm.deck_id = d.id
-    GROUP BY m.id
-    ORDER BY m.date, `round`
+        SELECT
+            GROUP_CONCAT(d.person_id) AS people,
+            GROUP_CONCAT(dm.games) AS games
+        FROM
+            `match` AS m
+        INNER JOIN
+            deck_match AS dm ON dm.match_id = m.id
+        INNER JOIN
+            deck AS d ON dm.deck_id = d.id
+        GROUP BY
+            m.id
+        ORDER BY
+            m.date,
+            `round`
     """
     matches = db().execute(sql)
     for m in matches:
         match(m)
-    for p in sorted(PEOPLE.items(), key=lambda x: -x[1]):
-        print(p)
+    current = person.load_people()
+    people_by_id = { p.id: p for p in current }
+    sql = 'UPDATE person SET elo = %s WHERE id = %s'
+    for person_id, new_elo in sorted(PEOPLE.items(), key=lambda x: -x[1]):
+        p = people_by_id[int(person_id)]
+        if p.elo != new_elo:
+            print('{id} currently has Elo of {current_elo} and we are setting it to {new_elo}'.format(id=p.id, current_elo=p.elo, new_elo=new_elo))
+            db().execute(sql, [new_elo, p.id])
 
 def match(m):
     if ',' not in m['games']:
@@ -38,13 +46,9 @@ def match(m):
     adjust(winner, loser)
 
 def adjust(winner, loser):
-    e = expected(elo(winner), elo(loser))
-    change = K_FACTOR * (1 - e)
-    PEOPLE[winner] = elo(winner) + change
-    PEOPLE[loser] = elo(loser) - change
+    change = elo.adjustment(get_elo(winner), get_elo(loser))
+    PEOPLE[winner] = get_elo(winner) + change
+    PEOPLE[loser] = get_elo(loser) - change
 
-def expected(p1, p2):
-    return 1.0 / (1 + 10**((p2 - p1) / ELO_WIDTH))
-
-def elo(person):
-    return PEOPLE.get(person, STARTING_ELO)
+def get_elo(person):
+    return PEOPLE.get(person, elo.STARTING_ELO)

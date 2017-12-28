@@ -9,7 +9,7 @@ from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
 from decksite import deck_name
-from decksite.data import guarantee, query
+from decksite.data import elo, guarantee, person, query
 from decksite.database import db
 
 def load_deck(deck_id):
@@ -297,6 +297,8 @@ def insert_match(dt, left_id, left_games, right_id, right_games, round_num=None,
     db().execute(sql, [left_id, match_id, left_games])
     if right_id is not None: # Don't insert matches for the bye.
         db().execute(sql, [right_id, match_id, right_games])
+    if (left_games != right_games): # Our rating ignores draws because on Magic Online they always represent intentional draws not a match actually played.
+        adjust_elo(left_id if left_games > right_games else right_id, left_id if left_games < right_games else right_id)
     return match_id
 
 def get_matches(d, should_load_decks=False):
@@ -458,6 +460,16 @@ def nwdl_join():
                     d.id
             ) AS dsum ON d.id = dsum.id
     """
+
+def adjust_elo(winning_deck_id, losing_deck_id):
+    if not losing_deck_id:
+        return # Intentional draws do not affect Elo.
+    winner = guarantee.exactly_one(person.load_people('p.id IN (SELECT person_id FROM deck WHERE id = {winning_deck_id})'.format(winning_deck_id=sqlescape(winning_deck_id))))
+    loser = guarantee.exactly_one(person.load_people('p.id IN (SELECT person_id FROM deck WHERE id = {losing_deck_id})'.format(losing_deck_id=sqlescape(losing_deck_id))))
+    adjustment = elo.adjustment(winner.elo, loser.elo)
+    sql = 'UPDATE person SET elo = elo + %s WHERE id = %s';
+    db().execute(sql, [adjustment, winner.id])
+    db().execute(sql, [-adjustment, loser.id])
 
 # pylint: disable=too-many-instance-attributes
 class Deck(Container):

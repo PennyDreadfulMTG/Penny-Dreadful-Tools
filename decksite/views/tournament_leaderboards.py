@@ -5,10 +5,9 @@ from decksite.view import View
 # pylint: disable=no-self-use
 class TournamentLeaderboards(View):
     def __init__(self):
-        info = tournaments.next_tournament_info()
-        self.next_tournament_name = info['next_tournament_name']
-        self.next_tournament_time = info['next_tournament_time']
-
+        # get all the Gatherling series leaderboards out of db.
+        # per-person, per-series, decks only in the dates of this season, point per win, point for showing up.
+        # Use leaderboard code in views/competition, probably
         self.tournaments = [
             {
                 'name': 'Penny Dreadful Saturdays',

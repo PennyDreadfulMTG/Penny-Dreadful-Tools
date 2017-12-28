@@ -7,7 +7,7 @@ from magic import fetcher
 from shared import dtutil
 from shared.pd_exception import InvalidDataException
 
-from decksite.data import competition, deck
+from decksite.data import competition, deck, match
 from decksite.database import db
 from decksite.scrapers import decklist
 
@@ -177,7 +177,7 @@ def insert_matches_without_dupes(dt, matches):
         reverse_key = str(m['round']) + '|' + str(m['right_id']) + '|' + str(m['left_id'])
         if inserted.get(reverse_key):
             continue
-        deck.insert_match(dt, m['left_id'], m['left_games'], m['right_id'], m['right_games'], m['round'], m['elimination'])
+        match.insert_match(dt, m['left_id'], m['left_games'], m['right_id'], m['right_games'], m['round'], m['elimination'])
         key = str(m['round']) + '|' + str(m['left_id']) + '|' + str(m['right_id'])
         inserted[key] = True
     db().commit()

@@ -4,7 +4,7 @@ import subprocess
 from flask import Response, request, session, url_for
 
 from decksite import APP, league
-from decksite.data import deck, competition as comp, guarantee, card as cs
+from decksite.data import card as cs, competition as comp, deck, guarantee, match
 
 from shared import configuration, dtutil
 from shared.serialization import extra_serializer
@@ -33,7 +33,7 @@ def league_run_api(person):
     run = guarantee.exactly_one(decks)
 
     decks = league.active_decks()
-    already_played = [m.opponent_deck_id for m in deck.get_matches(run)]
+    already_played = [m.opponent_deck_id for m in match.get_matches(run)]
     run.can_play = [d.person for d in decks if d.person != person and d.id not in already_played]
 
     return return_json(run)

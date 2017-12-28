@@ -26,7 +26,12 @@
                         <td>{{> singlecard}}</td>
                         <td class="wide">{{description}}</td>
                         <td class="{sorter: 'bugseverity'}">{{classification}}</td>
-                        <td><a href="{{url}}"><img class="tiny-icon" src={{github_icon}} /></a></td>
+                        <td>
+                            <a href="{{url}}"><img class="tiny-icon" src={{github_icon}} /></a>
+                            {{#from_bug_blog}}
+                                <a href="{{bug_blog_url}}"><i class="ss ss-pmei ss-2x" title="Bug Blog"></i></a>
+                            {{/from_bug_blog}}
+                        </td>
                         {{! Empty column to hold the toggle when footable kicks in.}}
                         <td></td>
                     </tr>

@@ -266,7 +266,7 @@ div:after, header:after, nav:after, main:after, footer:after, section:after, .to
     width: 10rem;
 }
 
-img.tiny-icon {
+.tiny-icon {
     width: 1rem;
     height: 1rem;
 }

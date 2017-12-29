@@ -29,14 +29,7 @@ class Competition(View):
             if len(leaderboard) > 0:
                 self.has_leaderboard = True
                 self.leaderboard = sorted(leaderboard.values(), key=lambda k: k['points'], reverse=True)
-                pos = 1
-                for p in self.leaderboard:
-                    p.finish = pos
-                    p.stage_reached = 1
-                    p.position = chr(9311 + pos) # ①, ②, ③, …
-                    pos += 1
-                    if pos > 8:
-                        break
+                self.leaderboards = [self.leaderboard] # Will be prepared in View.
 
     def __getattr__(self, attr):
         return getattr(self.competition, attr)

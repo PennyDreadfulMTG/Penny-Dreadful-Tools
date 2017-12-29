@@ -32,3 +32,4 @@ from .tournament_hosting import TournamentHosting
 from .tournament_leaderboards import TournamentLeaderboards
 from .tournaments import Tournaments
 from .unauthorized import Unauthorized
+from .rotation_changes import RotationChanges

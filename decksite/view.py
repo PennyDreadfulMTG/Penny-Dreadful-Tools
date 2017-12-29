@@ -108,6 +108,7 @@ class View:
         self.prepare_competitions()
         self.prepare_people()
         self.prepare_archetypes()
+        self.prepare_leaderboards()
 
     def prepare_decks(self):
         for d in getattr(self, 'decks', []):
@@ -243,6 +244,20 @@ class View:
             r['url'] = '/archetypes/{id}/'.format(id=r['id'])
             # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
             r['depth'] = r.depth
+
+    def prepare_leaderboards(self):
+        for l in getattr(self, 'leaderboards', []):
+            self.prepare_leaderboard(l)
+
+    def prepare_leaderboard(self, leaderboard):
+        pos = 1
+        for p in leaderboard:
+            p.finish = pos
+            p.stage_reached = 1
+            p.position = chr(9311 + pos) # ①, ②, ③, …
+            pos += 1
+            if pos > 8:
+                break
 
     def commit_id(self):
         return APP.config['commit-id']

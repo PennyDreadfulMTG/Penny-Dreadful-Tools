@@ -4,7 +4,7 @@ from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
 
-from decksite.data import deck, guarantee
+from decksite.data import deck, guarantee, query
 from decksite.database import db
 
 def get_or_insert_competition(start_date, end_date, name, competition_series, url):
@@ -71,3 +71,73 @@ def set_decks(competitions):
         c.decks = []
     for d in decks:
         competitions_by_id[d.competition_id].decks.append(d)
+
+def leaderboards(where="ct.name = 'Gatherling' AND season.id = (SELECT id FROM season WHERE start_date = (SELECT MAX(start_date) FROM season WHERE start_date < UNIX_TIMESTAMP(NOW())))"):
+    sql = """
+        SELECT
+            p.id AS person_id,
+            season.code AS season_code,
+            {person_query} AS person,
+            cs.name AS competition_series_name,
+            COUNT(DISTINCT d.id) AS tournaments,
+            SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins,
+            COUNT(DISTINCT d.id) + SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS points
+        FROM
+            competition AS c
+        INNER JOIN
+            competition_series AS cs ON cs.id = c.competition_series_id
+        INNER JOIN
+            competition_type AS ct ON ct.id = cs.competition_type_id
+        INNER JOIN
+            deck AS d ON d.competition_id = c.id
+        INNER JOIN
+            person AS p ON d.person_id = p.id
+        LEFT JOIN
+            deck_match AS dm ON dm.deck_id = d.id
+        LEFT JOIN
+            deck_match AS odm ON odm.match_id = dm.match_id AND odm.deck_id <> d.id
+        INNER JOIN
+            (
+                SELECT
+                    s.id,
+                    s.code,
+                    s.start_date AS start_date,
+                    s2.start_date AS end_date
+                FROM
+                    season AS s
+                INNER JOIN
+                    season AS s2
+                ON
+                    s2.start_date = (SELECT MIN(start_date) FROM season WHERE start_date > s.start_date)
+            ) AS season ON c.start_date >= season.start_date AND c.start_date < season.end_date
+        WHERE
+            {where}
+        GROUP BY
+            cs.id,
+            p.id,
+            season.id
+        ORDER BY
+            cs.id,
+            points DESC,
+            wins DESC,
+            tournaments DESC,
+            person
+    """.format(person_query=query.person_query(), where=where)
+    results = []
+    current = {}
+    for row in db().execute(sql):
+        k = (row['competition_series_name'], row['season_code'])
+        if (current.get('competition_series_name', None), current.get('season_code', None)) != k:
+            if len(current) > 0:
+                results.append(current)
+            current = {
+                'competition_series_name': row['competition_series_name'],
+                'season_code': row['season_code'],
+                'entries': []
+            }
+        row.pop('competition_series_name')
+        row.pop('season_code')
+        current['entries'] = current['entries'] + [Container(row)]
+    if len(current) > 0:
+        results.append(current)
+    return results

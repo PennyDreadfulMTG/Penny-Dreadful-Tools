@@ -119,7 +119,8 @@ def hosting():
 @APP.route('/tournaments/leaderboards/')
 @cached()
 def tournament_leaderboards():
-    view = TournamentLeaderboards()
+    leaderboards = comp.leaderboards()
+    view = TournamentLeaderboards(leaderboards)
     return view.page()
 
 @APP.route('/add/')

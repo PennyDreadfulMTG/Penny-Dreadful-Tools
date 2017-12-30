@@ -32,7 +32,6 @@ def decks():
     return view.page()
 
 @APP.route('/decks/<deck_id>/')
-#@cached()
 def deck(deck_id):
     d = ds.load_deck(deck_id)
     person_from_discord = None

@@ -243,12 +243,14 @@ def changes_between_formats(f1, f2):
     return [query_diff_formats(f2, f1), query_diff_formats(f1, f2)]
 
 def query_diff_formats(f1, f2):
-    query = 'c.id IN (SELECT card_id FROM card_legality WHERE format_id = {format1}) AND c.id NOT IN (SELECT card_id FROM card_legality WHERE format_id = {format2})'
-    removals_query = multiverse.base_query(where=query.format(format1=f1, format2=f2))
+    where = '''
+    c.id IN 
+        (SELECT card_id FROM card_legality 
+            WHERE format_id = {format1}) 
+    AND c.id NOT IN 
+        (SELECT card_id FROM card_legality WHERE format_id = {format2})
+    '''.format(format1=f1, format2=f2)
 
-    sql = """
-        {base_query}
-    """.format(base_query=removals_query)
-    rs = db().execute(sql)
+    rs = db().execute(multiverse.cached_base_query(where=where))
     out = [card.Card(r) for r in rs]
     return sorted(out, key=lambda card: card['name'])

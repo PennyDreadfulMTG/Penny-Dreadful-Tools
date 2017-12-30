@@ -15,7 +15,7 @@ from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck as ds, person as ps, query
 from decksite.charts import chart
 from decksite.league import ReportForm, RetireForm, SignUpForm
-from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized, RotationChanges
+from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChanges, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
 
 # Decks
 

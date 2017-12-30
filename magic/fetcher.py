@@ -27,11 +27,10 @@ def all_sets():
         return json.loads(s)
 
 def bugged_cards():
-    text = internal.fetch('https://pennydreadfulmtg.github.io/modo-bugs/bugs.tsv')
-    if text is None:
+    bugs = internal.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
+    if bugs is None:
         return None
-    lines = [l.split('\t') for l in text.split('\n')]
-    return lines[1:-1]
+    return bugs
 
 def card_aliases():
     with open(configuration.get('card_alias_file'), newline='', encoding='utf-8') as f:
@@ -39,7 +38,7 @@ def card_aliases():
 
 
 def card_price(cardname):
-    return internal.fetch_json('http://katelyngigante.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
+    return internal.fetch_json('http://vorpald20.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
 
 def card_price_string(card, short=False):
     def price_info(c):

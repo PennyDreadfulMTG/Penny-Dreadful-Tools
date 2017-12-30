@@ -2,7 +2,7 @@ from flask import url_for
 import inflect
 import titlecase
 
-from decksite.data import archetype, deck
+from decksite.data import archetype, deck, match
 from decksite.view import View
 from magic import fetcher, legality, oracle
 from shared import dtutil
@@ -17,7 +17,7 @@ class Deck(View):
         # This is called 'decks' and not something more sane because of limitations of Mustache and our desire to use a partial for decktable.
         self.decks = deck.get_similar_decks(d)
         self.has_similar = len(self.decks) > 0
-        self.matches = deck.get_matches(d, True)
+        self.matches = match.get_matches(d, True)
         for m in self.matches:
             m.display_date = dtutil.display_date(m.date)
             if m.opponent:
@@ -26,7 +26,7 @@ class Deck(View):
                 m.opponent = 'BYE'
                 m.opponent_url = False
             if m.opponent_deck_id:
-                m.opponent_deck_url = url_for('decks', deck_id=m.opponent_deck_id)
+                m.opponent_deck_url = url_for('deck', deck_id=m.opponent_deck_id)
             else:
                 m.opponent_deck_url = False
             if m.opponent_deck:
@@ -53,7 +53,7 @@ class Deck(View):
         return self._deck.name
 
     def og_url(self):
-        return url_for('decks', deck_id=self._deck.id, _external=True)
+        return url_for('deck', deck_id=self._deck.id, _external=True)
 
     def og_description(self):
         if self.archetype_name:

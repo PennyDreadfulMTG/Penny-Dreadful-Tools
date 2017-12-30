@@ -17,7 +17,7 @@ class SmokeTest(unittest.TestCase):
 
     def test_home_data(self):
         result = self.app.get('/')
-        self.assertIn('Latest Decks', result.data.decode('utf-8'))
+        self.assertIn('<h1>Latest Decks</h1>', result.data.decode('utf-8'))
 
     @pytest.mark.slowtest
     def test_some_pages(self):

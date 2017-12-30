@@ -35,7 +35,9 @@ DEFAULTS = {
     'to_password': '',
     'to_username': '',
     'tournament_channel_id': '207281932214599682',
-    'web_cache': '.web_cache'
+    'web_cache': '.web_cache',
+    'cse_api_key': None,
+    'cse_engine_id': None
 }
 
 def get(key):

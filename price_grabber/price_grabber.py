@@ -1,12 +1,10 @@
 import html
 import re
 import sys
-import time
-import urllib
 
 from magic import card, fetcher_internal, multiverse, oracle
 from magic.database import db
-from shared import configuration
+from shared import configuration, dtutil
 from shared.database import get_database
 from shared.pd_exception import DatabaseException
 
@@ -22,39 +20,23 @@ def run():
     price.cache()
 
 def fetch():
-    all_prices = {}
-    url = 'https://www.mtggoldfish.com/prices/select'
-    s = fetcher_internal.fetch(url)
-    sets = parse_sets(s) + ['TD0', 'TD2'] # Theme decks pages not linked from /prices/select
-    for s in ['PD2', 'PD3']: # Fake sets that appear in the index
-        sets.remove(s)
-
-    for code in sets:
-        for suffix in ['', '_F']:
-            if code == 'PZ2' and suffix == '_F':
-                print('Explicitly skipping PZ2_F because it is a lie.')
-                continue
-            code = '{code}{suffix}'.format(code=code, suffix=suffix)
-            url = set_url(code)
-            time.sleep(1)
-            s = fetcher_internal.fetch(url, force=True)
-            prices = parse_prices(s)
-            if not prices:
-                print('Found no prices for {code}'.format(code=code))
-            all_prices[code] = prices
-    timestamp = int(time.time())
-    store(timestamp, all_prices)
-
-def set_url(code):
-    return 'https://www.mtggoldfish.com/index/{code}#online'.format(code=urllib.parse.quote(code))
-
-def parse_sets(s):
-    # Exclude codes with underscores, dashes and lowercase because they are pages for standard, modern, etc. and will gives us dupes.
-    return re.findall("'/index/([A-Z0-9]+)'", s)
+    all_prices, timestamps = {}, []
+    for i, url in enumerate(configuration.get('cardhoarder_urls')):
+        s = fetcher_internal.fetch(url)
+        timestamps.append(dtutil.parse_to_ts(s.split('\n', 1)[0].replace('UPDATED ', ''), '%Y-%m-%dT%H:%M:%S+00:00', dtutil.CARDHOARDER_TZ))
+        all_prices[i] = parse_prices(s)
+    store(min(timestamps), all_prices)
 
 def parse_prices(s):
-    results = re.findall(r"""<td class='card'><a.*?href="[^#]*#online".*?>([^\(<]*)(?:\([^\)]*\))?</a></td>\n<td>[^<]*</td>\n<td>[^<]*</td>\n<td class='text-right'>\n(.*)\n</td>""", s)
-    return [(name_lookup(html.unescape(name.strip())), html.unescape(price.strip())) for name, price in results if name_lookup(html.unescape(name.strip())) is not None]
+    details = []
+    for line in s.splitlines()[2:]: # Skipping date and header line.
+        if line.count('\t') != 6:
+            print('Bad line: {line}'.format(line=line))
+        else:
+            _mtgo_id, mtgo_set, _mtgjson_set, set_number, name, p, quantity = line.split('\t')  # pylint: disable=unused-variable
+            if int(quantity) > 0 and not mtgo_set.startswith('CH-') and mtgo_set != 'VAN' and mtgo_set != 'EVENT' and not re.search(r'(Booster|Commander Deck|Commander:|Theme Deck|Draft Pack|Duel Decks|Reward Pack|Intro Pack|Tournament Pack|Premium Deck Series:|From the Vault)', name):
+                details.append((name, p))
+    return [(name_lookup(html.unescape(name.strip())), html.unescape(p.strip())) for name, p in details if name_lookup(html.unescape(name.strip())) is not None]
 
 def store(timestamp, all_prices):
     DATABASE.begin()
@@ -106,6 +88,10 @@ def create_tables():
     execute(sql)
 
 def name_lookup(name):
+    if name == 'Kongming, Sleeping Dragon':
+        name = 'Kongming, "Sleeping Dragon"'
+    elif name == 'Pang Tong, Young Phoenix':
+        name = 'Pang Tong, "Young Phoenix"'
     if not CARDS:
         rs = db().execute(multiverse.base_query())
         for row in rs:

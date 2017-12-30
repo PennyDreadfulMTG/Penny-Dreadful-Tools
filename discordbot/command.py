@@ -1,6 +1,5 @@
 import collections
 import glob
-import json
 import os
 import random
 import re
@@ -15,9 +14,12 @@ import inflect
 
 from discordbot import emoji
 from find import search
-from magic import card, database, oracle, fetcher, rotation, multiverse, tournaments
+from magic import card, database, image_fetcher, fetcher, multiverse, oracle, rotation, tournaments
 from shared import configuration, dtutil, repo, rules
 from shared.pd_exception import TooFewItemsException
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
 
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10
@@ -395,24 +397,30 @@ Want to contribute? Send a Pull Request."""
     async def google(self, bot, channel, args, author):
         """`!google {args}` Search google for `args`."""
         await bot.client.send_typing(channel)
+
+        api_key = configuration.get('cse_api_key')
+        cse_id = configuration.get('cse_engine_id')
+        if api_key is None or cse_id is None:
+            return await bot.client.send_message(channel, 'The google command has not been configured.')
+
         if len(args.strip()) == 0:
-            return await bot.client.send_message(channel, '{author}: Please let me know what you want to search on Google.'.format(author=author.mention))
+            return await bot.client.send_message(channel, '{author}: No search term provided. Please type !google followed by what you would like to search'.format(author=author.mention))
+
         try:
-            # We set TERM here because of some weirdness around readline and shell commands. Stops `ESC[?1034h` appearing on the end of STDOUT when TERM=xterm. See https://bugzilla.redhat.com/show_bug.cgi?id=304181 or google the escape sequence if you are super curious.
-            env = {**os.environ, 'TERM': 'vt100', 'PYTHONIOENCODING': 'utf-8'}
-            result = subprocess.run(['googler', '--json', '-n1'] + args.split(), stdout=subprocess.PIPE, check=True, env=env, universal_newlines=True)
-            r = json.loads(result.stdout.strip())[0]
-            s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['url'], abstract=r['abstract'])
-            await bot.client.send_message(channel, s)
-        except IndexError as e:
-            await bot.client.send_message(channel, '{author}: Nothing found on Google.'.format(author=author.mention))
-        except FileNotFoundError as e:
-            await bot.client.send_message(channel, '{author}:  Optional command `google` not set up.'.format(author=author.mention))
-        except subprocess.CalledProcessError as e:
-            if e.returncode == 127:
-                await bot.client.send_message(channel, '{author}: Optional command `google` not set up.'.format(author=author.mention))
+            service = build("customsearch", "v1", developerKey=api_key)
+            res = service.cse().list(q=args, cx=cse_id, num=1).execute()
+            if 'items' in res:
+                r = res['items'][0]
+                s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['link'], abstract=r['snippet'])
             else:
-                await bot.client.send_message(channel, '{author}: Problem searching google. ({e})'.format(author=author.mention, e=e))
+                s = '{author}: Nothing found on Google.'.format(author=author.mention)
+        except HttpError as e:
+            if e.resp['status'] == "403":
+                s = 'We have reached the allowed limits of Google API'
+            else:
+                raise e
+
+        await bot.client.send_message(channel, s)
 
     @cmd_header('Commands')
     async def tournament(self, bot, channel):
@@ -425,6 +433,14 @@ Want to contribute? Send a Pull Request."""
             started = ""
         prev_message = "The last tournament was {name}, {started}{time} ago".format(name=prev['next_tournament_name'], started=started, time=prev['next_tournament_time'])
         await bot.client.send_message(channel, 'The next tournament is {name} in {time}.\nSign up on <http://gatherling.com/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], time=t['next_tournament_time'], prev_message=prev_message, url=fetcher.decksite_url('/tournaments/')))
+
+    @cmd_header('Commands')
+    async def art(self, bot, channel, args, author):
+        await bot.client.send_typing(channel)
+        c = await single_card_or_send_error(bot, channel, args, author)
+        if c is not None:
+            image_file = image_fetcher.download_scryfall_image([c], image_fetcher.determine_filepath([c]) + '.art_crop.jpg', version='art_crop')
+            await bot.send_image_with_retry(channel, image_file)
 
     @cmd_header('Commands')
     async def explain(self, bot, channel, args):
@@ -593,17 +609,22 @@ def simplify_string(s):
     s = ''.join(s.split())
     return re.sub(r'[\W_]+', '', s).lower()
 
-async def single_card_text(bot, channel, args, author, f):
+async def single_card_or_send_error(bot, channel, args, author):
     cards = list(oracle.cards_from_query(args))
     if len(cards) > 1:
         await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
     elif len(cards) == 1:
-        legal_emjoi = emoji.legal_emoji(cards[0])
-        text = emoji.replace_emoji(f(cards[0]), bot.client)
-        message = '**{name}** {legal_emjoi} {text}'.format(name=cards[0].name, legal_emjoi=legal_emjoi, text=text)
-        await bot.client.send_message(channel, message)
+        return cards[0]
     else:
         await bot.client.send_message(channel, '{author}: No matches.'.format(author=author.mention))
+
+async def single_card_text(bot, channel, args, author, f):
+    c = await single_card_or_send_error(bot, channel, args, author)
+    if c is not None:
+        legal_emoji = emoji.legal_emoji(c)
+        text = emoji.replace_emoji(f(c), bot.client)
+        message = '**{name}** {legal_emoji} {text}'.format(name=c.name, legal_emoji=legal_emoji, text=text)
+        await bot.client.send_message(channel, message)
 
 def oracle_text(c):
     return c.text

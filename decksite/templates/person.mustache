@@ -29,9 +29,39 @@
             {{#league_entries}}
                 <li title="{{league_entries}} Entries">League Player</li>
             {{/league_entries}}
+            {{#perfect_run_crushes}}
+                <li title="{{perfect_run_crushes}} Crushes">Perfect Run Crusher</li>
+            {{/perfect_run_crushes}}
         </ul>
     </section>
 {{/achievements}}
+{{#show_head_to_head}}
+    <section>
+        <h2>Head to Head</h2>
+        <table>
+            <thead>
+                <th>Opponent</th>
+                <th class="n" data-breakpoints="xs"># Matches</th>
+                <th class="n" data-sortInitialOrder="desc">Record</th>
+                <th class="n" data-breakpoints="xs"data-sortInitialOrder="desc">Win %</th>
+                {{! Empty column to hold the toggle when footable kicks in.}}
+                <td></td>
+            </thead>
+            <tbody>
+                {{#head_to_head}}
+                    <tr>
+                        <td><a href="{{opp_url}}">{{opp_mtgo_username}}</a></td>
+                        <td class="n">{{num_matches}}</td>
+                        <td class="n">{{> record}}</td>
+                        <td class="n">{{win_percent}}</td>
+                        {{! Empty column to hold the toggle when footable kicks in.}}
+                        <td></td>
+                    </tr>
+                {{/head_to_head}}
+            </tbody>
+        </table>
+    </section>
+{{/show_head_to_head}}
 <section>
     <h2>Cards</h2>
     {{> cardstable}}

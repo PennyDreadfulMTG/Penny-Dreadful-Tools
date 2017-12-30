@@ -56,28 +56,26 @@ def load_archetypes_deckless(where='1 = 1', order_by='`season_num_decks` DESC, `
             a.id,
             a.name,
             aca.ancestor AS parent_id,
-
-            COUNT(DISTINCT d.id) AS `all_num_decks`,
-            SUM(d.wins) AS `all_wins`,
-            SUM(d.losses) AS `all_losses`,
-            SUM(d.draws) AS `all_draws`,
-            IFNULL(ROUND((SUM(wins) / SUM(wins + losses)) * 100, 1), '') AS `all_win_percent`,
-
-            SUM(CASE WHEN d.created_date >= %s THEN 1 ELSE 0 END) AS `season_num_decks`,
-            SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) AS `season_wins`,
-            SUM(CASE WHEN d.created_date >= %s THEN losses ELSE 0 END) AS `season_losses`,
-            SUM(CASE WHEN d.created_date >= %s THEN draws ELSE 0 END) AS `season_draws`,
-            IFNULL(ROUND((SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END) / SUM(CASE WHEN d.created_date >= %s THEN wins ELSE 0 END + CASE WHEN d.created_date >= %s THEN losses ELSE 0 END)) * 100, 1), '') AS `season_win_percent`
-
-        FROM archetype AS a
-        LEFT JOIN archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
-        LEFT JOIN archetype_closure AS acd ON a.id = acd.ancestor
-        LEFT JOIN deck AS d ON acd.descendant = d.archetype_id
-        WHERE {where}
-        GROUP BY a.id
-        ORDER BY {order_by}
-    """.format(where=where, order_by=order_by)
-    archetypes = [Archetype(a) for a in db().execute(sql, [int(rotation.last_rotation().timestamp())] * 7)]
+            {all_select},
+            {season_select}
+        FROM
+            archetype AS a
+        LEFT JOIN
+            archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
+        LEFT JOIN
+            archetype_closure AS acd ON a.id = acd.ancestor
+        LEFT JOIN
+            deck AS d ON acd.descendant = d.archetype_id
+        {nwdl_join}
+        WHERE
+            {where}
+        GROUP BY
+            a.id,
+            aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
+        ORDER BY
+            {order_by}
+    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_join=deck.nwdl_join(), where=where, order_by=order_by)
+    archetypes = [Archetype(a) for a in db().execute(sql)]
     archetypes_by_id = {a.id: a for a in archetypes}
     for a in archetypes:
         a.decks = []
@@ -105,48 +103,36 @@ def assign(deck_id, archetype_id):
 def load_matchups(archetype_id):
     sql = """
         SELECT
-            oa.id, oa.name,
-
-            SUM(CASE WHEN d.created_date < ? THEN 0 WHEN dm.games = 2 THEN 1 ELSE 0 END) AS `season_wins`,
-            SUM(CASE WHEN d.created_date < ? THEN 0 WHEN odm.games = 2 THEN 1 ELSE 0 END) AS `season_losses`,
-            SUM(CASE WHEN d.created_date < ? THEN 0 WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS `season_draws`,
-            IFNULL(ROUND(AVG(CASE WHEN d.created_date < ? THEN NULL WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1), '') AS `season_win_percent`,
-
-            SUM(CASE WHEN dm.games = 2 THEN 1 ELSE 0 END) AS `all_wins`,
-            SUM(CASE WHEN odm.games = 2 THEN 1 ELSE 0 END) AS `all_losses`,
-            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS `all_draws`,
-            IFNULL(ROUND(AVG(CASE WHEN dm.games = 2 THEN 1 WHEN odm.games = 2 THEN 0 END) * 100, 1), '') AS `all_win_percent`
+            oa.id,
+            oa.name,
+            SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS all_wins, -- IFNULL so we still count byes as wins.
+            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS all_losses,
+            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS all_draws,
+            IFNULL(ROUND((SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN dm.games <> IFNULL(odm.games, 0) THEN 1 ELSE 0 END), 0)) * 100, 1), '') AS all_win_percent,
+            SUM(CASE WHEN d.created_date > %s AND dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS season_wins, -- IFNULL so we still count byes as wins.
+            SUM(CASE WHEN d.created_date > %s AND dm.games < odm.games THEN 1 ELSE 0 END) AS season_losses,
+            SUM(CASE WHEN d.created_date > %s AND dm.games = odm.games THEN 1 ELSE 0 END) AS season_draws,
+            IFNULL(ROUND((SUM(CASE WHEN d.created_date > %s AND dm.games > odm.games THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN d.created_date > %s AND dm.games <> IFNULL(odm.games, 0) THEN 1 ELSE 0 END), 0)) * 100, 1), '') AS season_win_percent
         FROM
             archetype AS a
         INNER JOIN
-            deck AS d
-        ON
-            d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = a.id)
+            deck AS d ON d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = a.id)
         INNER JOIN
-            deck_match AS dm
-        ON
-            d.id = dm.deck_id
+            deck_match AS dm ON d.id = dm.deck_id
         INNER JOIN
-            deck_match AS odm
-        ON
-            dm.match_id = odm.match_id
-            AND odm.deck_id <> d.id
+            deck_match AS odm ON dm.match_id = odm.match_id AND odm.deck_id <> d.id
         INNER JOIN
-            deck AS od
-        ON
-            od.id = odm.deck_id
+            deck AS od ON od.id = odm.deck_id
         INNER JOIN
-            archetype AS oa
-        ON
-            od.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = oa.id)
+            archetype AS oa ON od.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = oa.id)
         WHERE
-            a.id = ?
+            a.id = %s
         GROUP BY
             oa.id
         ORDER BY
             `season_wins` DESC, `all_wins` DESC
-    """
-    return [Container(m) for m in db().execute(sql, [rotation.last_rotation().timestamp()] * 4 + [archetype_id])]
+    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_join=deck.nwdl_join())
+    return [Container(m) for m in db().execute(sql, [int(rotation.last_rotation().timestamp())] * 5 + [archetype_id])]
 
 def move(archetype_id, parent_id):
     db().begin()

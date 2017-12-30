@@ -9,12 +9,13 @@
         </tr>
         <tr>
             <th>Name</th>
-            <th data-sortInitialOrder="desc">Decks</th>
-            <th data-sortInitialOrder="desc">Record</th>
-            <th class="divider" data-sortInitialOrder="desc">Win %</th>
-            <th data-sortInitialOrder="desc">Decks</th>
-            <th data-sortInitialOrder="desc">Record</th>
-            <th data-sortInitialOrder="desc">Win %</th>
+            <th class="n" data-sortInitialOrder="desc">Decks</th>
+            <th class="n" data-sortInitialOrder="desc">Record</th>
+            <th class="n" class="divider" data-sortInitialOrder="desc">Win %</th>
+            <th class="n" data-sortInitialOrder="desc">Decks</th>
+            <th class="n" data-sortInitialOrder="desc">Record</th>
+            <th class="n" data-sortInitialOrder="desc">Win %</th>
+            <th class="n" data-sortInitialOrder="desc">Elo</th>
         </tr>
     </thead>
     {{#people}}
@@ -26,6 +27,7 @@
                 <td class="n"><a href="{{url}}">{{all_num_decks}}</a></td>
                 <td class="n">{{#all_show_record}}{{all_wins}}–{{all_losses}}{{#all_draws}}–{{all_draws}}{{/all_draws}}{{/all_show_record}}</td>
                 <td class="n">{{#all_show_record}}<a href="{{url}}">{{all_win_percent}}</a>{{/all_show_record}}</td>
+                <td class="n">{{#all_show_record}}<a href="{{url}}">{{elo}}</a>{{/all_show_record}}</td>
         </tr>
     {{/people}}
 </table>

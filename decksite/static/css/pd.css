@@ -221,7 +221,7 @@ nav {
     margin-left: -2rem; /* Match the padding on each menu item to avoid an indent (including when menu items wrap under). */
 }
 
-@media screen and (max-width: 640px) {
+@media only screen and (max-width: 640px) {
     nav {
         margin-left: -0.563rem;
     }
@@ -244,7 +244,7 @@ section {
 
 /* Enable right-scroll-in-place to work by not floating things that might need right-scroll-in-place.
    Floating takes them out-of-flow and stops overflow-x doing its job.  */
-@media screen and (max-width: 640px) {
+@media only screen and (max-width: 640px) {
     section {
         float: none;
         margin: 0 0 1rem 0;
@@ -264,6 +264,11 @@ div:after, header:after, nav:after, main:after, footer:after, section:after, .to
 
 .resource {
     width: 10rem;
+}
+
+.tiny-icon {
+    width: 1rem;
+    height: 1rem;
 }
 
 /*
@@ -478,7 +483,7 @@ main th, main td {
 }
 
 /* Drop max-width of a column on x-small viewports to fit more columns in. */
-@media screen and (max-width: 640px) {
+@media only screen and (max-width: 640px) {
     main th, main td {
         max-width: 10em;
     }
@@ -532,7 +537,7 @@ td.divider, th.divider {
 }
 
 /* Hide dividing line when it would appear in hidden content not in the main table. */
-@media screen and (max-width: 640px) {
+@media only screen and (max-width: 640px) {
     td.divider, th.divider {
         border-right: 0;
     }
@@ -634,12 +639,6 @@ table.with-marginalia.footable-details {
 
 
 @media only screen and (max-width: 640px) {
-    main table {
-        max-width: 100%;
-    }
-    main table th, main table td {
-        max-width: inherit;
-    }
     /* When we aren't showing marginalia, don't have the unshown column mess display up. */
     table.with-marginalia, table.with-marginalia.footable-details {
         margin: 0;
@@ -711,7 +710,7 @@ Menu items can have submenus. These are "mega menus" that stretch across the who
     text-transform: lowercase;
 }
 
-@media screen and (max-width: 640px) {
+@media only screen and (max-width: 640px) {
     .menu li > a {
         padding: 0.563em;
     }
@@ -751,7 +750,7 @@ Menu items can have submenus. These are "mega menus" that stretch across the who
 }
 
 /* Accomodate less padding on menu items at narrower widths. */
-@media screen and (max-width: 640px) {
+@media only screen and (max-width: 640px) {
     .submenu-container > ul {
         margin-left: -0.563rem; /* So that first item text lines up with the left edge of the page. */
     }
@@ -787,7 +786,7 @@ a.menuitem:focus {
 }
 
 /* Accomodate the smaller padding on menu items in xs and sm view. */
-@media screen and (max-width: 640px) {
+@media only screen and (max-width: 640px) {
     .has-submenu > a:after {
         top: 1.459em; /* menuitem[padding-top] + menuitem[padding-bottom] + (menuitem[line-height] * menuitem[font-size]) - translateY/border-bottom */
     }
@@ -1064,7 +1063,7 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
     width: inherit;
 }
 
-@media screen and (max-width: 800px) {
+@media only screen and (max-width: 800px) {
     label {
         float: none;
         text-align: left;
@@ -1172,7 +1171,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 }
 
 /* When search wraps under the logo it needs different behavior. */
-@media screen and (max-width: 1120px) {
+@media only screen and (max-width: 1120px) {
     .search {
         float: none;
         margin-bottom: 1rem;
@@ -1351,6 +1350,17 @@ tr.archetype-3 > .primary.initial {
 
 tr.archetype-0.current > .primary.initial {
     padding-left: 0.422em; /* This looks weird hugging the exact left of the highlight so indent a little. */
+}
+
+/* max-width on table columns does not include padding so account for that here. */
+
+tr > .primary.initial {
+    max-width: 9.446em; /* 13em - 3.554em; */
+}
+@media only screen and (max-width: 640px) {
+    tr > .primary.initial {
+        max-width: 6.446em; /* 10em - 3.554em; */
+    }
 }
 
 /*

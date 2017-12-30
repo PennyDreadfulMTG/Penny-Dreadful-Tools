@@ -1,6 +1,6 @@
 import sys
 
-from magic import card, fetcher, mana, multiverse
+from magic import card, fetcher, mana, multiverse, rotation
 from magic.database import db
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException, TooFewItemsException
@@ -76,7 +76,7 @@ def cards_by_name():
     return CARDS_BY_NAME
 
 def bugged_cards():
-    sql = multiverse.cached_base_query('bug_desc IS NOT NULL')
+    sql = multiverse.cached_base_query('bugs IS NOT NULL')
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 
@@ -231,3 +231,24 @@ def insert_scryfall_card(sfcard):
         multiverse.insert_card(c)
     multiverse.update_cache()
     CARDS_BY_NAME[sfcard['name']] = load_card(sfcard['name'])
+
+def last_pd_rotation_changes():
+    current_code = rotation.last_rotation_ex()['code']
+    previous = multiverse.SEASONS[multiverse.SEASONS.index(current_code) - 1]
+    previous_id = multiverse.get_format_id("Penny Dreadful {f}".format(f=previous))
+    current_id = multiverse.get_format_id("Penny Dreadful")
+    return changes_between_formats(previous_id, current_id)
+
+def changes_between_formats(f1, f2):
+    return [query_diff_formats(f2, f1), query_diff_formats(f1, f2)]
+
+def query_diff_formats(f1, f2):
+    query = 'c.id IN (SELECT card_id FROM card_legality WHERE format_id = {format1}) AND c.id NOT IN (SELECT card_id FROM card_legality WHERE format_id = {format2})'
+    removals_query = multiverse.base_query(where=query.format(format1=f1, format2=f2))
+
+    sql = """
+        {base_query}
+    """.format(base_query=removals_query)
+    rs = db().execute(sql)
+    out = [card.Card(r) for r in rs]
+    return sorted(out, key=lambda card: card['name'])

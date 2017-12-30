@@ -1,12 +1,31 @@
-<h1>MTGO Traders League Leaderboards</h1>
-{{#tournaments}}
+<h1>Card Hoarder Tournament Series Leaderboards</h1>
+{{#series}}
     <section>
-        <h2>{{name}}</h2>
-        <p>Leaderboards are not ready yet. Coming soon.</p>
+        <h2>{{competition_series_name}}</h2>
+        {{> spinner}}
+        <table class="with-marginalia">
+            <thead>
+                <tr>
+                    <td></td>
+                    <th>Person</th>
+                    <th class="n" data-sortInitialOrder="desc">#</th>
+                    <th class="n" data-sortInitialOrder="desc">Wins</th>
+                    <th class="n" data-sortInitialOrder="desc">Pts</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#entries}}
+                    <tr class="pos-{{pos}}">
+                        <td class="n marginalia">
+                            {{position}}
+                        </td>
+                        <td><a href="{{url}}">{{person}}</a></td>
+                        <td class="n">{{tournaments}}</td>
+                        <td class="n">{{wins}}</td>
+                        <td class="n">{{points}}</td>
+                    </tr>
+                {{/entries}}
+            </tbody>
+        </table>
     </section>
-{{/tournaments}}
-<section>
-    <h2>First Run Prize</h2>
-    <p>Regardless of results when you complete your first ever complete run of five matches you will earn 1 tik credit with MTGO Traders.</p>
-</section>
-
+{{/series}}

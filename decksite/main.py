@@ -1,5 +1,6 @@
 import os
 import traceback
+import urllib.parse
 
 from flask import g, make_response, redirect, request, send_file, send_from_directory, session, url_for
 from werkzeug import exceptions
@@ -11,23 +12,29 @@ from shared.pd_exception import DoesNotExistException, InvalidArgumentException,
 from decksite import auth, deck_name, league as lg
 from decksite import APP
 from decksite.cache import cached
-from decksite.data import archetype as archs, card as cs, competition as comp, deck, person as ps
+from decksite.data import archetype as archs, card as cs, competition as comp, deck as ds, person as ps, query
 from decksite.charts import chart
 from decksite.league import ReportForm, RetireForm, SignUpForm
-from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
+from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized, RotationChanges
 
 # Decks
 
 @APP.route('/')
 @cached()
 def home():
-    view = Home(deck.latest_decks())
+    view = Home(ds.load_decks(limit='LIMIT 50'), cs.played_cards())
+    return view.page()
+
+@APP.route('/decks/')
+@cached()
+def decks():
+    view = Decks(ds.load_decks(limit='LIMIT 500'))
     return view.page()
 
 @APP.route('/decks/<deck_id>/')
 @cached()
-def decks(deck_id):
-    view = Deck(deck.load_deck(deck_id))
+def deck(deck_id):
+    view = Deck(ds.load_deck(deck_id))
     return view.page()
 
 @APP.route('/seasons/')
@@ -41,7 +48,7 @@ def seasons():
 @cached()
 def season(season_id, deck_type=None):
     league_only = deck_type == 'league'
-    view = Season(deck.load_season(season_id, league_only), league_only)
+    view = Season(ds.load_season(season_id, league_only), league_only)
     return view.page()
 
 @APP.route('/people/')
@@ -67,7 +74,7 @@ def cards():
 @cached()
 def card(name):
     try:
-        c = cs.load_card(oracle.valid_name(name.replace('+', ' ')))
+        c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)))
         view = Card(c)
         return view.page()
     except InvalidDataException as e:
@@ -112,7 +119,8 @@ def hosting():
 @APP.route('/tournaments/leaderboards/')
 @cached()
 def tournament_leaderboards():
-    view = TournamentLeaderboards()
+    leaderboards = comp.leaderboards()
+    view = TournamentLeaderboards(leaderboards)
     return view.page()
 
 @APP.route('/add/')
@@ -137,7 +145,7 @@ def add_deck():
         view = AddForm()
         view.error = error
         return view.page(), 409
-    return redirect(url_for('decks', deck_id=deck_id))
+    return redirect(url_for('deck', deck_id=deck_id))
 
 @APP.route('/about/')
 @cached()
@@ -164,7 +172,7 @@ def rotation():
 
 @APP.route('/export/<deck_id>/')
 def export(deck_id):
-    d = deck.load_deck(deck_id)
+    d = ds.load_deck(deck_id)
     safe_name = deck_name.file_name(d)
     return (mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 
@@ -205,7 +213,7 @@ def add_signup():
     form = SignUpForm(request.form)
     if form.validate():
         d = lg.signup(form)
-        response = make_response(redirect(url_for('decks', deck_id=d.id)))
+        response = make_response(redirect(url_for('deck', deck_id=d.id)))
         response.set_cookie('deck_id', str(d.id))
         return response
     return signup(form)
@@ -221,7 +229,7 @@ def report(form=None):
 def add_report():
     form = ReportForm(request.form)
     if form.validate() and lg.report(form):
-        response = make_response(redirect(url_for('decks', deck_id=form.entry)))
+        response = make_response(redirect(url_for('deck', deck_id=form.entry)))
         response.set_cookie('deck_id', form.entry)
         return response
     return report(form)
@@ -230,20 +238,27 @@ def add_report():
 @auth.login_required
 def retire(form=None):
     if form is None:
-        form = RetireForm(request.form, request.cookies.get('deck_id', ''))
+        form = RetireForm(request.form, request.cookies.get('deck_id', ''), session.get('id'))
     view = Retire(form)
     return view.page()
 
 @APP.route('/retire/', methods=['POST'])
 @auth.login_required
 def do_claim():
-    form = RetireForm(request.form)
+    form = RetireForm(request.form, discord_user=session.get('id'))
     if form.validate():
-        d = deck.load_deck(form.entry)
+        d = ds.load_deck(form.entry)
         ps.associate(d, session['id'])
         lg.retire_deck(d)
-        return redirect(url_for('decks', deck_id=form.entry))
+        return redirect(url_for('signup'))
     return retire(form)
+
+
+@APP.route('/rotationchanges')
+def rotation_changes():
+    view = RotationChanges(*oracle.last_pd_rotation_changes())
+    return view.page()
+
 
 # Admin
 
@@ -277,7 +292,7 @@ def post_archetypes():
             if archetype_id:
                 archs.assign(deck_id, archetype_id)
     elif request.form.get('q') is not None:
-        search_results = deck.load_decks_by_cards(request.form.get('q').splitlines())
+        search_results = ds.load_decks_by_cards(request.form.get('q').splitlines())
     elif request.form.getlist('archetype_id') is not None and len(request.form.getlist('archetype_id')) == 2:
         archs.move(request.form.getlist('archetype_id')[0], request.form.getlist('archetype_id')[1])
     elif request.form.get('parent') is not None:
@@ -301,7 +316,14 @@ def post_matches():
 
 @APP.route('/admin/prizes/')
 def prizes():
-    comps = comp.load_competitions("c.competition_type_id IN (SELECT id FROM competition_type WHERE name = 'Gatherling') AND c.start_date > UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK)")
+    where = """
+            cs.competition_type_id
+        IN
+            ({competition_type_id_select})
+        AND
+            c.start_date > (UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK)
+        """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
+    comps = comp.load_competitions(where)
     first_runs = lg.first_runs()
     view = Prizes(comps, first_runs)
     return view.page()
@@ -341,9 +363,14 @@ def unauthorized(error=None):
 @APP.route('/logout/')
 def logout():
     auth.logout()
-    return redirect(url_for('home'))
+    target = request.args.get('target', 'home')
+    return redirect(url_for(target))
 
 # Infra
+
+@APP.route('/robots.txt')
+def robots():
+    return send_from_directory(os.path.join(APP.root_path, 'static'), 'robots.txt')
 
 @APP.route('/favicon<rest>/')
 def favicon(rest):

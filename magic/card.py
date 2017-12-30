@@ -1,6 +1,7 @@
 import copy
 import unicodedata
 
+from shared import dtutil
 from shared.container import Container
 
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
@@ -166,7 +167,7 @@ def card_alias_properties():
 
 def card_bug_properties():
     props = {}
-    for k in ['id', 'card_id', 'description', 'classification', 'last_confirmed']:
+    for k in ['id', 'card_id', 'description', 'classification', 'last_confirmed', 'url', 'from_bug_blog']:
         props[k] = copy.deepcopy(BASE)
         props[k]['nullable'] = False
     props['id']['type'] = INTEGER
@@ -175,6 +176,8 @@ def card_bug_properties():
     props['card_id']['foreign_key'] = ('card', 'id')
     props['description']['type'] = TEXT
     props['last_confirmed']['type'] = INTEGER
+    props['url']['type'] = TEXT
+    props['from_bug_blog']['type'] = BOOLEAN
     return props
 
 def name_query(column='face_name'):
@@ -242,6 +245,14 @@ class Card(Container):
                         v[parts[0]] = parts[1]
                 else:
                     v = {}
+            if k == 'bugs':
+                if v is not None:
+                    bugs = v.split('_SEPARATOR_')
+                    v = []
+                    for b in bugs:
+                        description, classification, last_confirmed, url, from_bug_blog = b.split('|')
+                        bb = from_bug_blog == "1"
+                        v.append({'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(float(last_confirmed)), 'url': url, 'from_bug_blog': bb})
             setattr(self, k, v)
         if not self.names:
             setattr(self, 'names', [self.name])

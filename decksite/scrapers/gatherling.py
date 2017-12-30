@@ -7,7 +7,7 @@ from magic import fetcher
 from shared import dtutil
 from shared.pd_exception import InvalidDataException
 
-from decksite.data import competition, deck
+from decksite.data import competition, deck, match
 from decksite.database import db
 from decksite.scrapers import decklist
 
@@ -43,7 +43,7 @@ def tournament(url, name):
         return 0
 
     dt = dtutil.parse(date_s, '%d %B %Y %H:%M', dtutil.GATHERLING_TZ)
-    competition_id = competition.get_or_insert_competition(dt, dt, name, 'Gatherling', url)
+    competition_id = competition.get_or_insert_competition(dt, dt, name, 'Penny Dreadful {day}s'.format(day=dtutil.day_of_week(dt, dtutil.GATHERLING_TZ)), url)
     table = soup.find(text='Current Standings').find_parent('table')
     ranks = rankings(table)
 
@@ -106,10 +106,6 @@ def tournament_deck(cells, competition_id, date, ranks):
             raise InvalidDataException('Unknown player image `{img}`'.format(img=img))
     else:
         d['finish'] = ranks.get(d['mtgo_username'], None)
-    parts = cells[3].string.split('-')
-    d['wins'] = parts[0]
-    d['losses'] = parts[1]
-    d['draws'] = 0 if len(parts) < 3 else parts[2]
     link = cells[4].a
     d['url'] = gatherling_url(link['href'])
     d['name'] = link.string
@@ -181,7 +177,7 @@ def insert_matches_without_dupes(dt, matches):
         reverse_key = str(m['round']) + '|' + str(m['right_id']) + '|' + str(m['left_id'])
         if inserted.get(reverse_key):
             continue
-        deck.insert_match(dt, m['left_id'], m['left_games'], m['right_id'], m['right_games'], m['round'], m['elimination'])
+        match.insert_match(dt, m['left_id'], m['left_games'], m['right_id'], m['right_games'], m['round'], m['elimination'])
         key = str(m['round']) + '|' + str(m['left_id']) + '|' + str(m['right_id'])
         inserted[key] = True
     db().commit()

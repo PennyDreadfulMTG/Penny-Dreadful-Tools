@@ -1,6 +1,7 @@
 import json
 import os
 import shutil
+import stat
 import urllib.request
 import zipfile
 
@@ -22,7 +23,10 @@ SESSION.mount(
 
 def unzip(url, path):
     location = '{scratch_dir}/zip'.format(scratch_dir=configuration.get('scratch_dir'))
-    shutil.rmtree(location, True)
+    def remove_readonly(func, path, _):
+        os.chmod(path, stat.S_IWRITE)
+        func(path)
+    shutil.rmtree(location, True, remove_readonly)
     os.mkdir(location)
     store(url, '{location}/zip.zip'.format(location=location))
     f = zipfile.ZipFile('{location}/zip.zip'.format(location=location), 'r')

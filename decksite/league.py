@@ -6,13 +6,13 @@ import calendar
 from flask import url_for
 
 from magic import legality, rotation
-from shared import dtutil
+from shared import configuration, dtutil
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 from shared.pd_exception import LockNotAcquiredException
 
-from decksite.data import competition, deck, guarantee
+from decksite.data import competition, deck, guarantee, match, person, query
 from decksite.database import db
 from decksite.scrapers import decklist
 
@@ -85,9 +85,9 @@ class ReportForm(Form):
         if len(self.opponent) == 0:
             self.errors['opponent'] = "Please select your opponent's deck"
         else:
-            for match in deck.get_matches(self):
-                if int(self.opponent) == match.opponent_deck_id:
-                    self.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=match.game_wins, game_losses=match.game_losses, opponent=match.opponent, date=dtutil.display_date(match.date))
+            for m in match.get_matches(self):
+                if int(self.opponent) == m.opponent_deck_id:
+                    self.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=m.game_wins, game_losses=m.game_losses, opponent=m.opponent, date=dtutil.display_date(m.date))
         if len(self.result) == 0:
             self.errors['result'] = 'Please select a result'
         else:
@@ -96,14 +96,25 @@ class ReportForm(Form):
             self.errors['opponent'] = "You can't play yourself"
 
 class RetireForm(Form):
-    def __init__(self, form, deck_id=None):
+    def __init__(self, form, deck_id=None, discord_user=None):
         super().__init__(form)
-        decks = active_decks()
+        person_object = None
+        if discord_user is not None:
+            person_object = person.load_person_by_discord_id(discord_user)
+        if person_object:
+            decks = active_decks_by_person(person_object.id)
+        else:
+            decks = active_decks()
         self.entry_options = deck_options(decks, self.get('entry', deck_id))
+        self.discord_user = discord_user
+        if len(decks) == 0:
+            self.errors['entry'] = "You don't have any decks to retire"
 
     def do_validation(self):
         if len(self.entry) == 0:
             self.errors['entry'] = 'Please select your deck'
+        if not person.is_allowed_to_retire(self.entry, self.discord_user):
+            self.errors['entry'] = 'You cannot retire this deck. This discord user is already assigned to another mtgo user'
         print(self.errors)
 
 def signup(form):
@@ -119,12 +130,35 @@ def deck_options(decks, v):
     return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
 
 def active_decks(additional_where='1 = 1'):
-    where = "d.id IN (SELECT id FROM deck WHERE competition_id = ({active_competition_id_query})) AND (d.wins + d.losses + d.draws < 5) AND NOT d.retired AND ({additional_where})".format(active_competition_id_query=active_competition_id_query(), additional_where=additional_where)
+    where = """
+        d.id IN (
+            SELECT
+                id
+            FROM
+                deck
+            WHERE
+                competition_id = ({active_competition_id_query})
+        ) AND (
+                SELECT
+                    COUNT(id)
+                FROM
+                    deck_match AS dm
+                WHERE
+                    dm.deck_id = d.id
+            ) <= 4
+        AND
+            NOT d.retired
+        AND
+            ({additional_where})
+    """.format(active_competition_id_query=active_competition_id_query(), additional_where=additional_where)
     decks = deck.load_decks(where)
     return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
 
 def active_decks_by(mtgo_username):
     return active_decks('p.mtgo_username = {mtgo_username}'.format(mtgo_username=sqlescape(mtgo_username, force_string=True)))
+
+def active_decks_by_person(person_id):
+    return active_decks('p.id = {id}'.format(id=person_id))
 
 def report(form):
     try:
@@ -138,15 +172,14 @@ def report(form):
         if counts[int(form.opponent)] >= 5:
             form.errors['opponent'] = "Your opponent already has 5 matches reported"
             return False
+        pdbot = form.get('api_token', None) == configuration.get('pdbot_api_token')
+        if pdbot:
+            match_id = form.get('matchID', None)
+        else:
+            match_id = None
 
         db().begin()
-        deck.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games)
-        winner, loser = winner_and_loser(form)
-        if winner:
-            db().execute('UPDATE deck SET wins = (SELECT COUNT(*) FROM decksite.deck_match WHERE `deck_id` = %s AND `games` = 2) WHERE `id` = %s', [winner, winner])
-            db().execute('UPDATE deck SET losses = (SELECT COUNT(*) FROM decksite.deck_match WHERE `deck_id` = %s AND `games` < 2) WHERE `id` = %s', [loser, loser])
-        else:
-            db().execute('UPDATE deck SET draws = draws + 1 WHERE id = %s OR id = %s', [form.entry, form.opponent])
+        match.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games, None, None, match_id)
         db().commit()
         return True
     except LockNotAcquiredException:
@@ -165,7 +198,15 @@ def winner_and_loser(params):
     return (None, None)
 
 def active_competition_id_query():
-    return "SELECT id FROM competition WHERE start_date < {now} AND end_date > {now} AND competition_type_id = (SELECT id FROM competition_type WHERE name = 'League')".format(now=dtutil.dt2ts(dtutil.now()))
+    return """
+        SELECT id FROM competition
+        WHERE
+            start_date < {now}
+        AND
+            end_date > {now}
+        AND
+            id IN ({competition_ids_by_type_select})
+        """.format(now=dtutil.dt2ts(dtutil.now()), competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
 def active_league():
     where = 'c.id = ({id_query})'.format(id_query=active_competition_id_query())
@@ -242,31 +283,45 @@ def load_matches(where='1 = 1'):
     return matches
 
 def delete_match(match_id):
-    m = guarantee.exactly_one(load_matches('m.id = {match_id}'.format(match_id=sqlescape(match_id))))
-    db().begin()
-    sql = 'DELETE FROM deck_match WHERE match_id = ?'
-    db().execute(sql, [m.id])
     sql = 'DELETE FROM `match` WHERE id = ?'
-    db().execute(sql, [m.id])
-    if m.winner:
-        sql = 'UPDATE deck SET wins = wins - 1 WHERE id = ?'
-        db().execute(sql, [m.winner])
-        sql = 'UPDATE deck SET losses = losses - 1 WHERE id = ?'
-        db().execute(sql, [m.loser])
-    else:
-        sql = 'UPDATE deck SET draws = draws - 1 WHERE id IN (?, ?)'
-        db().execute(sql, [m.left_id, m.right_id])
-    db().commit()
+    db().execute(sql, sqlescape(match_id))
 
 def first_runs():
     sql = """
-        SELECT d.competition_id, MIN(c.start_date) AS `date`, c.name AS competition_name, p.mtgo_username
-        FROM deck AS d
-        INNER JOIN person AS p ON d.person_id = p.id
-        INNER JOIN competition AS c ON d.competition_id = c.id
-        WHERE c.competition_type_id IN (SELECT id FROM competition_type WHERE name = 'League')
-            AND (wins + draws + losses) >= 5
-        GROUP BY p.id
-        ORDER BY c.start_date DESC, p.mtgo_username
-    """
+        SELECT
+            d.competition_id,
+            c.start_date AS `date`,
+            c.name AS competition_name,
+            p.mtgo_username
+        FROM
+            person AS p
+        INNER JOIN
+            deck AS d ON d.person_id = p.id
+        INNER JOIN
+            competition AS c ON c.id = d.competition_id
+        INNER JOIN
+            competition_series AS cs ON cs.id = c.competition_series_id
+        INNER JOIN (
+            SELECT
+                d.person_id,
+                MIN(c.start_date) AS start_date
+            FROM
+                deck AS d
+            INNER JOIN
+                competition AS c ON d.competition_id = c.id
+            INNER JOIN
+                deck_match AS dm ON dm.deck_id = d.id
+            WHERE
+                cs.competition_type_id IN ({league_competition_type_id})
+            GROUP BY
+                d.person_id
+            HAVING
+                COUNT(DISTINCT dm.match_id) >= 5
+        ) AS fr ON fr.person_id = p.id AND c.start_date = fr.start_date
+        GROUP BY
+            d.competition_id, p.id
+        ORDER BY
+            c.start_date DESC,
+            p.mtgo_username
+    """.format(league_competition_type_id=query.competition_type_id_select('League'))
     return [Container(r) for r in db().execute(sql)]

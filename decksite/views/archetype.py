@@ -36,7 +36,7 @@ class Archetype(View):
         return url_for('archetype', archetype_id=self.archetype.id, _external=True)
 
     def og_description(self):
-        return "" # Probably maybe write something here?
+        return "Penny Dreadful {name} archetype".format(name=self.archetype.name)
 
     def __getattr__(self, attr):
         return getattr(self.archetype, attr)

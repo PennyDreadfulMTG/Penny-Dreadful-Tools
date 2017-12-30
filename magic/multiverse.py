@@ -35,22 +35,15 @@ def base_query(where='(1 = 1)'):
             GROUP_CONCAT(face_name SEPARATOR '|') AS names,
             legalities,
             pd_legal,
-            bug_desc,
-            bug_class,
-            bug_last_confirmed
+            bugs
             FROM (
                 SELECT {card_props}, {face_props}, f.name AS face_name,
-                    cb.description AS bug_desc,
-                    cb.classification AS bug_class,
-                    cb.last_confirmed AS bug_last_confirmed,
                     pd_legal,
                     legalities
                 FROM
                     card AS c
                 INNER JOIN
                     face AS f ON c.id = f.card_id
-                LEFT JOIN
-                    card_bug AS cb ON c.id = cb.card_id
                 LEFT JOIN (
                     SELECT
                         cl.card_id,
@@ -68,11 +61,21 @@ def base_query(where='(1 = 1)'):
                 ORDER BY
                     f.card_id, f.position
             ) AS u
+            LEFT JOIN (
+                SELECT
+                    cb.card_id,
+                    GROUP_CONCAT({bug_repr} SEPARATOR '_SEPARATOR_') AS bugs
+                FROM
+                    card_bug AS cb
+                GROUP BY
+                    cb.card_id
+            ) AS bugs ON u.id = bugs.card_id
             WHERE u.id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where})
             GROUP BY u.id
     """.format(
         card_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.card_properties().items()),
         face_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.face_properties().items()),
+        bug_repr=db().concat(['cb.description', "'|'", 'cb.classification', "'|'", 'cb.last_confirmed', "'|'", 'cb.url', "'|'", 'cb.from_bug_blog']),
         format_id=get_format_id('Penny Dreadful'),
         legality_code=db().concat(['fo.name', "':'", 'cl.legality']),
         card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
@@ -159,13 +162,13 @@ def update_bugged_cards(use_transaction=True):
     if use_transaction:
         db().begin()
     db().execute("DELETE FROM card_bug")
-    for name, bug, classification, last_confirmed in bugs:
-        last_confirmed_ts = dtutil.parse_to_ts(last_confirmed, '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
-        card_id = db().value("SELECT card_id FROM face WHERE name = ?", [name])
+    for bug in bugs:
+        last_confirmed_ts = dtutil.parse_to_ts(bug['last_updated'], '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
+        card_id = db().value("SELECT card_id FROM face WHERE name = ?", [bug['card']])
         if card_id is None:
-            print("UNKNOWN BUGGED CARD: {card}".format(card=name))
+            print("UNKNOWN BUGGED CARD: {card}".format(card=bug['card']))
             continue
-        db().execute("INSERT INTO card_bug (card_id, description, classification, last_confirmed) VALUES (?, ?, ?, ?)", [card_id, bug, classification, last_confirmed_ts])
+        db().execute("INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog) VALUES (?, ?, ?, ?, ?, ?)", [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog']])
     if use_transaction:
         db().commit()
 
@@ -209,11 +212,11 @@ def insert_card(c):
         raise
     for color in c.get('colors', []):
         color_id = db().value('SELECT id FROM color WHERE name = ?', [color])
-        # INSERT INTO IGNORE because some cards have multiple faces with the same color. See DFCs and What // When // Where // Who // Why.
+        # INSERT IGNORE INTO because some cards have multiple faces with the same color. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT IGNORE INTO card_color (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
     for symbol in c.get('colorIdentity', []):
         color_id = db().value('SELECT id FROM color WHERE symbol = ?', [symbol])
-        # INSERT INTO IGNORE because some cards have multiple faces with the same color identity. See DFCs and What // When // Where // Who // Why.
+        # INSERT IGNORE INTO because some cards have multiple faces with the same color identity. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT IGNORE INTO card_color_identity (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
     for supertype in c.get('supertypes', []):
         db().execute('INSERT INTO card_supertype (card_id, supertype) VALUES (?, ?)', [card_id, supertype])

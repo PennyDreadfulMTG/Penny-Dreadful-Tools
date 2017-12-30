@@ -445,8 +445,7 @@ class Deck(Container):
             return False
         elif self.competition_end_date < dtutil.now():
             return False
-        else:
-            return True
+        return True
 
     def __str__(self):
         self.sort()

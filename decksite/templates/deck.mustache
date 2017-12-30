@@ -13,12 +13,15 @@
             <a href="{{competition_url}}">{{source_name}} {{> record}}</a> {{{active_safe}}}
         </div>
     </div>
+    {{#public}}
     <ul class="buttons">
         <li><a title="Magic Online Download (txt)" href="{{export_url}}">Download</a></li>
         <li><a title="Buy on Cardhoarder" class="external" href="{{cardhoarder_url}}">Buy</a></li>
         <li><a title="View decklist source ({{source_name}})" {{#source_is_external}}class="external"{{/source_is_external}} href="{{source_url}}">Source</a></li>
     </ul>
+    {{/public}}
 </div>
+{{#public}}
 <section>
     {{#sections}}
         {{> section}}
@@ -28,6 +31,12 @@
     <h2>Mana Costs</h2>
     <img src="{{cmc_chart_url}}" width="200">
 </section>
+{{/public}}
+{{^public}}
+<div>
+This deck is in a current run. {{^logged_person}}If it's your deck <a href="{{authenticate_url}}">login with discord</a>{{/logged_person}}{{#logged_person}}You are logged in but this deck is another person's. <a href="{{logout_url}}">Logout and log in with the correct discord user.</a>{{/logged_person}}
+</div>
+{{/public}}
 {{#has_matches}}
     <section>
         <h2>Competition</h2>
@@ -92,12 +101,14 @@
         </table>
     </section>
 {{/has_matches}}
+{{#public}}
 {{#has_similar}}
     <section>
         <h2>Similar Decks</h2>
         {{> decktable}}
     </section>
 {{/has_similar}}
+{{/public}}
 {{> legal}}
 <section class="admin">
     <h2>Admin</h2>

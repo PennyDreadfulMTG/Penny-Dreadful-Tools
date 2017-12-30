@@ -32,9 +32,18 @@ def decks():
     return view.page()
 
 @APP.route('/decks/<deck_id>/')
-@cached()
+#@cached()
 def deck(deck_id):
-    view = Deck(ds.load_deck(deck_id))
+    d = ds.load_deck(deck_id)
+    person_from_discord = None
+    discord_user = session.get('id')
+    if discord_user is not None:
+        person_from_discord = ps.load_person_by_discord_id(discord_user)
+        if person_from_discord is None:
+            ps.associate(d, discord_user)
+            person_from_discord = ps.load_person_by_discord_id(discord_user)
+
+    view = Deck(d, person_from_discord)
     return view.page()
 
 @APP.route('/seasons/')
@@ -364,6 +373,8 @@ def unauthorized(error=None):
 def logout():
     auth.logout()
     target = request.args.get('target', 'home')
+    if bool(urllib.parse.urlparse(target).netloc):
+        return redirect(target)
     return redirect(url_for(target))
 
 # Infra

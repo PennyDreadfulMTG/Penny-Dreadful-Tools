@@ -10,7 +10,7 @@ from shared.pd_exception import InvalidDataException
 
 # pylint: disable=no-self-use, too-many-instance-attributes
 class Deck(View):
-    def __init__(self, d):
+    def __init__(self, d, logged_person=None):
         self._deck = d
         self.prepare_deck(self._deck)
         self.cards = d.all_cards()
@@ -41,7 +41,8 @@ class Deck(View):
         self.edit_archetype_url = url_for('edit_archetypes')
         self.cardhoarder_url = fetcher.cardhoarder_url(d)
         self.legal_formats = list(sorted(d.legal_formats, key=legality.order_score))
-        self.is_in_current_run = d.is_in_current_run
+        self.is_in_current_run = d.is_in_current_run()
+        self.logged_person = logged_person
 
     def has_matches(self):
         return len(self.matches) > 0
@@ -54,6 +55,12 @@ class Deck(View):
 
     def og_url(self):
         return url_for('deck', deck_id=self._deck.id, _external=True)
+
+    def authenticate_url(self):
+        return url_for('authenticate', target=self.og_url())
+
+    def logout_url(self):
+        return url_for('logout', target=self.og_url())
 
     def og_description(self):
         if self.archetype_name:
@@ -93,6 +100,15 @@ class Deck(View):
 
     def sideboard(self):
         return self._deck.sideboard
+
+    def public(self):
+        if not self.is_in_current_run:
+            return True
+        if self.logged_person is None:
+            return False
+        if self.logged_person.id != self._deck.person_id:
+            return False
+        return True
 
 def display_round(m):
     if not m.get('elimination'):

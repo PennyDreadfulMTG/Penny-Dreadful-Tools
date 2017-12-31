@@ -441,7 +441,7 @@ class Deck(Container):
     def is_in_current_run(self):
         if ((self.wins or 0) + (self.draws or 0) + (self.losses or 0) >= 5) or self.retired:
             return False
-        elif self.competition_type_name != "League":
+        elif self.competition_type_name != 'League':
             return False
         elif self.competition_end_date < dtutil.now():
             return False

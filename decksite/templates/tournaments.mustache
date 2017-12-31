@@ -1,31 +1,40 @@
+<h1>Cardhoarder Tournaments</h2>
 <article>
-    <h1>Cardhoarder Tournaments</h1>
-    <p>There are {{num_tournaments}} weekly Penny Dreadful tournaments sponsored by <a class="external" href="http://www.cardhoarder.com/">Card Hoarder</a> and hosted on <a class="external" href="http://gatherling.com/">gatherling.com</a>. They are all free to enter and offer prizes. Be sure to also check out the <a href="/league/">league</a> for a play-when-you-like competition.</p>
-    <p>Each tournament series has a <a href="{{leaderboards_url}}">leaderboard</a> for the season with prizes for Top 8 finishers.</p>
     <section>
-        <h2>Next Tournament</h2>
-        <p>{{next_tournament_name}} in {{next_tournament_time}}.</p>
-        <p><a class="external" href="http://gatherling.com/">Sign up on gatherling.com</a> via 'Player CP'.</p>
+        <p><a class="external" href="http://gatherling.com/player.php">{{next_tournament_name}}</a> is in {{next_tournament_time}}.</p>
+        {{> spinner}}
+        <table class="calendar">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Tournaments</th>
+                    <th>League</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#tournaments}}
+                    <tr>
+                        <td class="date"><span class="month">{{month}}</span><big>{{date}}</big> </td>
+                        <td>
+                            <p>{{name}}</p>
+                            <p class="local"><span class="time" data-time="{{time}}">{{display_time}}</span></p>
+                            <p><a href="http://gatherling.com/player.php">Sign Up</a></p>
+                        </td>
+                        {{#league}}
+                            <td class="league {{class}}">
+                                {{#display}}
+                                    <p>{{name}}</p>
+                                    <p><a href="/signup/">Sign Up</a></p>
+                                {{/display}}
+                            </td>
+                        {{/league}}
+                    </tr>
+                {{/tournaments}}
+            </tbody>
+        </table>
+        <p>There are {{num_tournaments}} weekly Penny Dreadful tournaments sponsored by <a class="external" href="http://www.cardhoarder.com/">Cardhoarder</a> and hosted on <a class="external" href="http://gatherling.com/">gatherling.com</a>. They are all free to enter and offer prizes. Be sure to also check out the <a href="/league/">league</a> for a play-when-you-like competition.</p>
+        <p>Each tournament series has a <a href="{{leaderboards_url}}">leaderboard</a> for the season with prizes for Top 8 finishers.</p>
     </section>
-    {{#tournaments}}
-        <section>
-            <h2>{{name}}</h2>
-            <div class="calendar">
-                <div class="day">
-                    Mon
-                </div>
-                <div class="event">
-
-                </div>
-            </div>
-            <p>Hosts: {{#hosts}}<a href="/people/{{.}}/">{{.}}</a> {{/hosts}}</p>
-            <p>Prizes: 4/3/2/2/1/1/1/1 + 1 Cardhoarder credit.</p>
-            <p>Time: {{display_time}} <span class="local">(<span class="time" data-time="{{time}}"></span>)</span></p>
-            <p>Sign Up: <a class="external" href="http://gatherling.com/">gatherling.com</a>
-            <p>Discord Chat Room: <a class="external" class="external" href="https://discord.gg/KK866Pe">#tournament-room</a></p>
-            <p>MTGO Chat Room: {{chat_room}}</p>
-        </section>
-    {{/tournaments}}
     <section>
         <h2>Joining a Tournament</h2>
         <ul>

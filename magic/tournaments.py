@@ -5,6 +5,7 @@ from enum import Enum
 from dateutil import rrule
 
 from shared import dtutil
+from shared.container import Container
 
 class TimeDirection(Enum):
     BEFORE = 1
@@ -47,7 +48,6 @@ def get_all_next_tournament_dates(start, index=0):
     pdt_time = ['Thursday', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index]]
     return [pdsat_time, pds_time, pdm_time, pdt_time]
 
-
 def prize(d):
     f = d.get('finish') or sys.maxsize
     if f == 1:
@@ -64,32 +64,32 @@ def all_series_info():
     info = get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))
     info_sorted = sorted(info, key=lambda x: x[0]) #sort by day name to retrieve them
     return [
-        {
+        Container({
             'name': 'Penny Dreadful Saturdays',
             'hosts': ['back_alley_g', 'bigm'],
             'display_time': '1:30pm Eastern',
             'time': info_sorted[1][1],
             'chat_room': '#PDS'
-        },
-        {
+        }),
+        Container({
             'name': 'Penny Dreadful Sundays',
             'hosts': ['bakert99', 'littlefield'],
             'display_time': '1:30pm Eastern',
             'time': info_sorted[2][1],
             'chat_room': '#PDS'
-        },
-        {
+        }),
+        Container({
             'name': 'Penny Dreadful Mondays',
             'hosts': ['stash86', 'silasary'],
             'display_time': '7pm Eastern',
             'time': info_sorted[0][1],
             'chat_room': '#PDM'
-        },
-        {
+        }),
+        Container({
             'name': 'Penny Dreadful Thursdays',
             'hosts': ['silasary', 'stash86'],
             'display_time': '7pm Eastern',
             'time': info_sorted[3][1],
             'chat_room': '#PDT'
-        }
+        })
     ]

@@ -363,16 +363,14 @@ Links in text are underlined in such a way as to break on descenders like those 
 
 */
 
-/* We actually want the heading-caps and lowercase behavior exactly where we want the reduced max width
-   so somehow combine those things. And highlight on hover too I expect.  Then get rid of exception list below probs. */
-a {
+a, main table.calendar a {
     color: inherit;
     font-family: heading-caps;
     text-decoration: none;
     text-transform: lowercase;
 }
 
-main a:hover {
+main a:hover, main table.calendar a:hover {
     background-color: #eee;
     border-radius: 0.317em;
     transition-duration: 1s;
@@ -819,6 +817,80 @@ z-index
 
 .submenu-container {
     z-index: 300;
+}
+
+/*
+
+Calendar
+
+*/
+
+.calendar {
+    border-collapse: separate; /* Otherwise the top-border on begin is hidden by the bottom-border on the cell above. */
+    font-size: 0.75rem;
+}
+
+.calendar td, .calendar th {
+    border-bottom: 0.05rem solid #eee;
+    padding: 0.563rem 1rem 0.563rem 0;
+}
+
+.calendar th {
+    padding-bottom: 1rem;
+}
+
+.calendar .future td {
+    padding: 0.563em 1rem 0.563em 0;
+}
+
+.calendar .future td.league {
+    padding-left: 1rem;
+}
+
+.calendar td p {
+    line-height: 1.777;
+}
+
+.calendar p {
+    margin: 0;
+    padding: 0;
+}
+
+.calendar .date {
+    font-size: 1rem;
+    text-align: right;
+    vertical-align: top;
+}
+
+.calendar .future .date {
+    font-size: 0.75rem;
+    vertical-align: inherit;
+}
+
+.date .month {
+    display: block;
+    font-family: heading-caps;
+    text-align: left;
+    text-transform: lowercase;
+}
+
+.calendar .date big {
+    font-size: 1.777rem;
+    line-height: 1;
+    vertical-align: top;
+}
+
+.calendar .league {
+    background: #eee;
+    padding-left: 1rem;
+}
+
+.calendar .league.ongoing {
+    border: 0;
+}
+
+.calendar .league.begin {
+    border-top: 0.05rem solid #999;
 }
 
 /*

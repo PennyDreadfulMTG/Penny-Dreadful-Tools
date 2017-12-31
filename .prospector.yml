@@ -1,0 +1,9 @@
+
+pep8:
+  run: false
+
+vulture:
+  run: false
+
+uses:
+  - flask

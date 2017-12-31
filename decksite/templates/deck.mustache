@@ -22,20 +22,27 @@
     {{/public}}
 </div>
 {{#public}}
-<section>
-    {{#sections}}
-        {{> section}}
-    {{/sections}}
-</section>
-<section>
-    <h2>Mana Costs</h2>
-    <img src="{{cmc_chart_url}}" width="200">
-</section>
+    <section>
+        {{#sections}}
+            {{> section}}
+        {{/sections}}
+    </section>
+    <section>
+        <h2>Mana Costs</h2>
+        <img src="{{cmc_chart_url}}" width="200">
+    </section>
 {{/public}}
 {{^public}}
-<div>
-This deck is in a current run. {{^logged_person}}If it's your deck <a href="{{authenticate_url}}">login with discord</a>{{/logged_person}}{{#logged_person}}You are logged in but this deck is another person's. <a href="{{logout_url}}">Logout and log in with the correct discord user.</a>{{/logged_person}}
-</div>
+    <section>
+        <h2>Decklist</h2>
+        <p>This deck is hidden because it is active in the league.</p>
+        {{^logged_person}}
+            <p>If it's your deck <a href="{{authenticate_url}}">login with discord</a> to see it.</p>
+        {{/logged_person}}
+        {{#logged_person}}
+            <p>You are logged in but this deck is not yours. <a href="{{logout_url}}">Logout</a>{{/logged_person}}</p>
+        </logged_person>
+    </section>
 {{/public}}
 {{#has_matches}}
     <section>

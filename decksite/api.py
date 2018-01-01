@@ -4,7 +4,7 @@ import subprocess
 from flask import Response, request, session, url_for
 
 from decksite import APP, league
-from decksite.data import card as cs, competition as comp, deck, guarantee, match
+from decksite.data import card as cs, competition as comp, deck, guarantee, match, person as ps
 
 from shared import configuration, dtutil
 from shared.serialization import extra_serializer
@@ -23,6 +23,10 @@ def competition_api(competition_id):
 @APP.route('/api/league')
 def league_api():
     return return_json(league.active_league())
+
+@APP.route('/api/person/<person>')
+def person_api(person):
+    return return_json(ps.load_person(person))
 
 @APP.route('/api/league/run/<person>')
 def league_run_api(person):

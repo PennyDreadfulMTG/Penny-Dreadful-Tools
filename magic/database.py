@@ -125,6 +125,8 @@ def column_def(name, prop):
         default = 'DEFAULT {default}'.format(default=prop['default']) if prop['default'] is not None else ''
         unique = 'UNIQUE' if prop['unique'] else ''
         return '`{name}` {type} {nullable} {primary_key} {unique} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, unique=unique, default=default)
+    else:
+        raise DatabaseException('Unknown Database type')
 
 def foreign_key_def(name, fk):
     return 'FOREIGN KEY(`{name}`) REFERENCES `{table}`(`{column}`)'.format(name=name, table=fk[0], column=fk[1])

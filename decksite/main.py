@@ -6,7 +6,7 @@ from flask import g, make_response, redirect, request, send_file, send_from_dire
 from werkzeug import exceptions
 
 from magic import card as mc, oracle
-from shared import configuration, perf, repo
+from shared import perf, repo
 from shared.pd_exception import DoesNotExistException, InvalidArgumentException, InvalidDataException
 
 from decksite import auth, deck_name, league as lg

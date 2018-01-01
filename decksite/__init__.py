@@ -10,4 +10,4 @@ APP.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
 APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
 oracle.init()
 
-from . import api as API # pylint: disable=wrong-import-position
+from . import api as API # pylint: disable=wrong-import-position, unused-import

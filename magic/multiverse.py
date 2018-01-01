@@ -1,6 +1,6 @@
 import re
-import pkg_resources
 from typing import Dict
+import pkg_resources
 
 from magic import card, database, fetcher, rotation
 from magic.database import db

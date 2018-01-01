@@ -19,6 +19,7 @@ def load_people(where='1 = 1'):
         SELECT
             p.id,
             {person_query} AS name,
+            p.discord_id,
             p.elo,
             {all_select},
             SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `all_num_competitions`,

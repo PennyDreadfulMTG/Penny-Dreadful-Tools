@@ -24,3 +24,4 @@ decksite/images/*-cmc.png
 .web_cache/
 my_doodle.py
 /images/charts/*-cmc.png
+/.mypy_cache/

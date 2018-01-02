@@ -6,7 +6,7 @@ from flask import abort, g, make_response, redirect, request, send_file, send_fr
 from werkzeug import exceptions
 
 from magic import card as mc, oracle
-from shared import configuration, perf, repo
+from shared import perf, repo
 from shared.pd_exception import DoesNotExistException, InvalidArgumentException, InvalidDataException
 
 from decksite import auth, deck_name, league as lg
@@ -331,7 +331,7 @@ def prizes():
         IN
             ({competition_type_id_select})
         AND
-            c.start_date > (UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK)
+            c.start_date > (UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK))
         """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
     comps = comp.load_competitions(where)
     first_runs = lg.first_runs()
@@ -416,8 +416,7 @@ def internal_server_error(e):
 @APP.before_request
 def before_request():
     g.p = perf.start()
-    APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
-    oracle.init()
+
 
 @APP.teardown_request
 def teardown_request(response):
@@ -425,6 +424,5 @@ def teardown_request(response):
     return response
 
 def init():
-    # This makes sure that the method decorators are called.
-    import decksite.api as _ # pylint: disable=unused-import
+    """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""
     APP.run(host='0.0.0.0', debug=True)

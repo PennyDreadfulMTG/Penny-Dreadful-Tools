@@ -310,6 +310,8 @@ def first_runs():
             INNER JOIN
                 competition AS c ON d.competition_id = c.id
             INNER JOIN
+                competition_series AS cs ON cs.id = c.competition_series_id
+            INNER JOIN
                 deck_match AS dm ON dm.deck_id = d.id
             WHERE
                 cs.competition_type_id IN ({league_competition_type_id})

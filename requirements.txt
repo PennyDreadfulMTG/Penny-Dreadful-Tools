@@ -5,6 +5,7 @@ coverage
 discord.py[voice]>=0.15.0
 flask
 googler
+google-api-python-client
 inflect
 markdown
 matplotlib
@@ -21,4 +22,3 @@ requests_oauthlib
 seaborn
 titlecase
 untangle
-google-api-python-client

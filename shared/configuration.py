@@ -40,7 +40,7 @@ DEFAULTS = {
     'cse_engine_id': None
 }
 
-def get(key):
+def get(key: str) -> str:
     try:
         cfg = json.load(open('config.json'))
     except FileNotFoundError:
@@ -61,7 +61,7 @@ def get(key):
     fh.write(json.dumps(cfg, indent=4))
     return cfg[key]
 
-def write(key, value):
+def write(key: str, value: str) -> str:
     try:
         cfg = json.load(open('config.json'))
     except FileNotFoundError:

@@ -1,4 +1,5 @@
 import re
+from typing import Dict
 import pkg_resources
 
 from magic import card, database, fetcher, rotation
@@ -8,8 +9,8 @@ from shared.database import sqlescape
 
 # Database setup for the magic package. Mostly internal. To interface with what the package knows about magic cards use the `oracle` module.
 
-FORMAT_IDS = {}
-CARD_IDS = {}
+FORMAT_IDS: Dict[str, int] = {}
+CARD_IDS: Dict[str, int] = {}
 
 SEASONS = ['EMN', 'KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX']
 

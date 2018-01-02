@@ -6,6 +6,8 @@ from requests_oauthlib import OAuth2Session
 
 from shared import configuration
 
+from decksite.data import person
+
 API_BASE_URL = 'https://discordapp.com/api'
 AUTHORIZATION_BASE_URL = API_BASE_URL + '/oauth2/authorize'
 TOKEN_URL = API_BASE_URL + '/oauth2/token'
@@ -70,9 +72,31 @@ def admin_required(f):
 def logout():
     session['admin'] = None
     session['id'] = None
+    session['logged_person_id'] = None
 
 def redirect_uri():
     uri = url_for('authenticate_callback', _external=True)
     if 'http://' in uri:
         os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
     return uri
+
+def is_logged():
+    return session.get('id')
+
+def logged_person():
+    return session.get('logged_person_id')
+
+def log_person(person_id):
+    session['logged_person_id'] = person_id
+
+def logged(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        discord_user = session.get('id')
+        if discord_user is not None:
+            ps = person.load_person_by_discord_id(discord_user)
+            if ps:
+                log_person(ps.id)
+
+        return f(*args, **kwargs)
+    return decorated_function

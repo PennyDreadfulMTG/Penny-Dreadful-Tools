@@ -162,8 +162,9 @@ class View:
             d.decklist = ''
         total, num_cards = 0, 0
         for c in d.maindeck:
-            num_cards += c['n']
-            total += c['n'] * c['card'].cmc
+            if 'Land' not in c.type
+                num_cards += c['n']
+                total += c['n'] * c['card'].cmc
         d.average_cmc = round(total / num_cards, 2)
 
     def prepare_cards(self):

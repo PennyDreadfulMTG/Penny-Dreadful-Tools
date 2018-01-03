@@ -73,6 +73,7 @@ def logout():
     session['admin'] = None
     session['id'] = None
     session['logged_person_id'] = None
+    session['mtgo_username'] = None
 
 def redirect_uri():
     uri = url_for('authenticate_callback', _external=True)
@@ -86,8 +87,12 @@ def discord_id():
 def logged_person():
     return session.get('logged_person_id')
 
-def log_person(person_id):
+def logged_person_mtgo_username():
+    return session.get('mtgo_username')
+
+def log_person(person_id, name):
     session['logged_person_id'] = person_id
+    session['mtgo_username'] = name
 
 def logged(f):
     @wraps(f)
@@ -96,7 +101,7 @@ def logged(f):
         if id is not None:
             ps = person.load_person_by_discord_id(id)
             if ps:
-                log_person(ps.id)
+                log_person(ps.id, ps.name)
 
         return f(*args, **kwargs)
     return decorated_function

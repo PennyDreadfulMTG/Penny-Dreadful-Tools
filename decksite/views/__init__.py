@@ -12,6 +12,7 @@ from .deck import Deck
 from .decks import Decks
 from .edit_archetypes import EditArchetypes
 from .edit_matches import EditMatches
+from .edit_news import EditNews
 from .home import Home
 from .internal_server_error import InternalServerError
 from .league_form import LeagueForm

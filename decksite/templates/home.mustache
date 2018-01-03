@@ -1,3 +1,18 @@
+{{#has_news}}
+    <article class="news">
+        <section>
+            <h1>News</h1>
+            {{#news}}
+                <div class="item">
+                    <h2>{{title}}</h2>
+                    <p class="date">{{display_date}}</p>
+                    <p class="body">{{body}}</p>
+                </div>
+            {{/news}}
+            <p><a href="{{news_url}}">All News</a></p>
+        </section>
+    </article>
+{{/has_news}}
 <section>
     <h1>Latest Decks</h1>
     {{> decktable}}

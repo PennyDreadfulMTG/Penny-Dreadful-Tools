@@ -1437,6 +1437,35 @@ tr > .primary.initial {
 
 /*
 
+News
+
+*/
+
+.news .item {
+    border-top: 0.05rem solid #502828;
+}
+
+.news h2 {
+    border-top: 0;
+    float: left;
+}
+
+.news .date {
+    color: #999;
+    float: right;
+    font-size: 0.75rem;
+    line-height: 1.777;
+    margin-bottom: 2rem; /* Match h2 that it floats alongside. */
+    margin-top: 1rem; /* Match h2 that it floats alongside. */
+    padding-top: 1.05rem; /* Match h2 that it floats alongside + border-top. */
+}
+
+.news .body {
+    clear: both;
+}
+
+/*
+
 Season Symbols
 
 */

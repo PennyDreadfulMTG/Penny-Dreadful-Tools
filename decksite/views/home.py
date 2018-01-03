@@ -7,7 +7,9 @@ from shared import dtutil
 
 # pylint: disable=no-self-use
 class Home(View):
-    def __init__(self, decks, cards):
+    def __init__(self, news, decks, cards):
+        self.news = news
+        self.has_news = len(news) > 0
         min_decks = 10
         one_day_ago_ts = dtutil.now() - datetime.timedelta(days=1)
         week_decks = [d for d in decks if d.created_date > one_day_ago_ts]

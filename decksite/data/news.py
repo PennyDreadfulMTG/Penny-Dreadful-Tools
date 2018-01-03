@@ -23,7 +23,6 @@ def load_news(start_date=0, end_date=sys.maxsize, max_items=sys.maxsize):
         LIMIT
             %s
     """
-    print(sql)
     results = [Container(r) for r in db().execute(sql, [start_date, end_date, max_items])]
     for result in results:
         result.date = dtutil.ts2dt(result.date)
@@ -39,17 +38,14 @@ def add_or_update_news(id, date, title, body):
 
 def update_news(id, date, title, body):
     sql = 'UPDATE news_item SET `date` = %s, title = %s, body = %s WHERE id = %s'
-    print(sql)
     print([date, title, body, id])
     return db().execute(sql, [date, title, body, id])
 
 def add_news(date, title, body):
     sql = 'INSERT INTO news_item (`date`, title, body) VALUES (%s, %s, %s)'
-    print(sql)
     print([date, title, body])
     return db().execute(sql, [date, title, body])
 
 def delete(id):
     sql = 'DELETE FROM news_item WHERE id = %s'
-    print(sql)
     return db().execute(sql, [id])

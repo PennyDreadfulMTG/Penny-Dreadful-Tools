@@ -1,4 +1,4 @@
-    import os
+import os
 import traceback
 import urllib.parse
 
@@ -16,7 +16,7 @@ from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck as ds, news as ns, person as ps, query
 from decksite.charts import chart
 from decksite.league import ReportForm, RetireForm, SignUpForm
-from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, EditNews, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChanges, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
+from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, EditNews, Home, InternalServerError, LeagueInfo, News, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChanges, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
 
 # Decks
 
@@ -195,6 +195,13 @@ def resources():
 @cached()
 def bugs():
     view = Bugs()
+    return view.page()
+
+@APP.route('/news/')
+@cached()
+def news():
+    news_items = ns.load_news()
+    view = News(news_items)
     return view.page()
 
 # League

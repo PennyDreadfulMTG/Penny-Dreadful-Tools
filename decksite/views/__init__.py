@@ -17,6 +17,7 @@ from .home import Home
 from .internal_server_error import InternalServerError
 from .league_form import LeagueForm
 from .league_info import LeagueInfo
+from .news import News
 from .not_found import NotFound
 from .people import People
 from .person import Person

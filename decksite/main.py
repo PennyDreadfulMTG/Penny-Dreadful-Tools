@@ -336,8 +336,8 @@ def post_matches():
 @auth.admin_required
 def edit_news():
     new_item = Container({'form_date': dtutil.form_date(dtutil.now(dtutil.WOTC_TZ), dtutil.WOTC_TZ), 'title': '', 'body': ''})
-    news = [new_item] + ns.load_news()
-    view = EditNews(news)
+    news_items = [new_item] + ns.load_news()
+    view = EditNews(news_items)
     return view.page()
 
 @APP.route('/admin/news/', methods=['POST'])

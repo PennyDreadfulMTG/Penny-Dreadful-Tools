@@ -10,7 +10,7 @@ from shared.pd_exception import InvalidDataException
 
 # pylint: disable=no-self-use, too-many-instance-attributes
 class Deck(View):
-    def __init__(self, d, logged_person=None):
+    def __init__(self, d, logged_person_id=None):
         self._deck = d
         self.prepare_deck(self._deck)
         self.cards = d.all_cards()
@@ -42,7 +42,7 @@ class Deck(View):
         self.cardhoarder_url = fetcher.cardhoarder_url(d)
         self.legal_formats = list(sorted(d.legal_formats, key=legality.order_score))
         self.is_in_current_run = d.is_in_current_run()
-        self.logged_person = logged_person
+        self.logged_person_id = logged_person_id
 
     def has_matches(self):
         return len(self.matches) > 0
@@ -104,9 +104,9 @@ class Deck(View):
     def public(self):
         if not self.is_in_current_run:
             return True
-        if self.logged_person is None:
+        if self.logged_person_id is None:
             return False
-        if self.logged_person.id != self._deck.person_id:
+        if self.logged_person_id != self._deck.person_id:
             return False
         return True
 

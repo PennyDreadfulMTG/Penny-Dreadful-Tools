@@ -18,6 +18,8 @@ UTC_TZ = pytz.timezone('UTC')
 MTGGOLDFISH_TZ = UTC_TZ
 CARDHOARDER_TZ = UTC_TZ
 
+FORM_FORMAT = '%Y-%m-%d %H:%M'
+
 # Converts a UTC timestamp (seconds) into a timezone-aware UTC datetime.
 def ts2dt(ts):
     return pytz.timezone('UTC').localize(datetime.datetime.utcfromtimestamp(ts))
@@ -45,6 +47,9 @@ def now(tz=None):
 
 def day_of_week(dt, tz):
     return dt.astimezone(tz).strftime("%A")
+
+def form_date(dt, tz):
+    return dt.astimezone(tz).strftime(FORM_FORMAT)
 
 def display_date(dt, granularity=1):
     start = now()

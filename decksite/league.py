@@ -29,6 +29,11 @@ class Form(Container):
 
 # pylint: disable=attribute-defined-outside-init
 class SignUpForm(Form):
+    def __init__(self, form, mtgo_username=None):
+        super().__init__(form)
+        if mtgo_username is not None:
+            self.mtgo_username = mtgo_username
+
     def do_validation(self):
         if len(self.mtgo_username) == 0:
             self.errors['mtgo_username'] = "Magic Online Username is required"

@@ -2,7 +2,7 @@ import os
 import traceback
 import urllib.parse
 
-from flask import g, make_response, redirect, request, send_file, send_from_directory, session, url_for
+from flask import abort, g, make_response, redirect, request, send_file, send_from_directory, session, url_for
 from werkzeug import exceptions
 
 from magic import card as mc, oracle
@@ -32,17 +32,14 @@ def decks():
     return view.page()
 
 @APP.route('/decks/<deck_id>/')
+@auth.logged
 def deck(deck_id):
     d = ds.load_deck(deck_id)
-    person_from_discord = None
-    discord_user = session.get('id')
-    if discord_user is not None:
-        person_from_discord = ps.load_person_by_discord_id(discord_user)
-        if person_from_discord is None:
-            ps.associate(d, discord_user)
-            person_from_discord = ps.load_person_by_discord_id(discord_user)
+    if auth.discord_id() and auth.logged_person() is None:
+        ps.associate(d, auth.discord_id())
+        auth.log_person(ps.load_person_by_discord_id(auth.discord_id()))
 
-    view = Deck(d, person_from_discord)
+    view = Deck(d, auth.logged_person())
     return view.page()
 
 @APP.route('/seasons/')
@@ -178,9 +175,14 @@ def rotation():
     view = Rotation()
     return view.page()
 
+
 @APP.route('/export/<deck_id>/')
+@auth.logged
 def export(deck_id):
     d = ds.load_deck(deck_id)
+    if d.is_in_current_run():
+        if not auth.logged_person() or auth.logged_person() != d.person_id:
+            abort(403)
     safe_name = deck_name.file_name(d)
     return (mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 

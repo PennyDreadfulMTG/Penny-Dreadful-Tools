@@ -1,5 +1,7 @@
 import collections
 
+from typing import Dict
+
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String
 from magic import card, mana, multiverse
@@ -13,7 +15,7 @@ EXPECT_TERM = 'expect_term'
 QUOTED_STRING = 'quoted_string'
 UNQUOTED_STRING = 'unquoted_string'
 
-VALUE_LOOKUP = {}
+VALUE_LOOKUP: Dict[str, Dict[str, int]] = {}
 
 def search(query):
     where = parse(tokenize(query))

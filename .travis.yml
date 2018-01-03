@@ -6,8 +6,10 @@ services:
 env:
   - mysql_user=root magic_database=cards.sqlite
   - mysql_user=root magic_database=cards
-install: 
+install:
   - pip install -r requirements.txt
   - ./setup_spellfix.sh
   - python run.py maintenance reprime_cache
-script: pytest
+script:
+  - pytest
+  # - mypy --ignore-missing-imports .

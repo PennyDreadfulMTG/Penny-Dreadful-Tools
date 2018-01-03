@@ -9,7 +9,6 @@ env:
 install:
   - pip install -r requirements.txt
   - ./setup_spellfix.sh
-  - python run.py maintenance reprime_cache
 script:
-  - pytest
+  - python run.py tests
   # - mypy --ignore-missing-imports .

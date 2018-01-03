@@ -156,8 +156,10 @@ class View:
             d.legal_icons += '<a href="{url}"><i class="ss ss-{set} ss-common ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), set=code.lower(), n=n)
         if 'Commander' in d.legal_formats: # I think C16 looks the nicest.
             d.legal_icons += '<i class="ss ss-c16 ss-uncommon ss-grad">CMDR</i>'
-        if not d.is_in_current_run():
+        if session.get('admin') or not d.is_in_current_run():
             d.decklist = str(d).replace('\n', '<br>')
+        else:
+            d.decklist = ''
 
     def prepare_cards(self):
         for c in getattr(self, 'cards', []):

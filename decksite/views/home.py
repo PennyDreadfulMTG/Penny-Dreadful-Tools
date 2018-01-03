@@ -5,7 +5,7 @@ from flask import url_for
 from decksite.view import View
 from shared import dtutil
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use,too-many-instance-attributes
 class Home(View):
     def __init__(self, news, decks, cards):
         self.news = news

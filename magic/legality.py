@@ -1,7 +1,9 @@
+from typing import Set
+
 from magic.database import db
 from magic import multiverse, oracle
 
-FORMATS = set()
+FORMATS: Set[str] = set()
 
 def legal_in_format(d, f):
     return f in legal_formats(d, [f])

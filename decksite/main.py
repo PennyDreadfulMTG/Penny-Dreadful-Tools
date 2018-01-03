@@ -1,4 +1,4 @@
-import os
+    import os
 import traceback
 import urllib.parse
 
@@ -6,7 +6,7 @@ from flask import g, make_response, redirect, request, send_file, send_from_dire
 from werkzeug import exceptions
 
 from magic import card as mc, oracle
-from shared import configuration, dtutil, perf, repo
+from shared import dtutil, perf, repo
 from shared.container import Container
 from shared.pd_exception import DoesNotExistException, InvalidArgumentException, InvalidDataException
 
@@ -434,8 +434,7 @@ def internal_server_error(e):
 @APP.before_request
 def before_request():
     g.p = perf.start()
-    APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
-    oracle.init()
+
 
 @APP.teardown_request
 def teardown_request(response):
@@ -443,6 +442,5 @@ def teardown_request(response):
     return response
 
 def init():
-    # This makes sure that the method decorators are called.
-    import decksite.api as _ # pylint: disable=unused-import
+    """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""
     APP.run(host='0.0.0.0', debug=True)

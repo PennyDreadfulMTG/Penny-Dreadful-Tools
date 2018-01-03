@@ -92,9 +92,8 @@ def log_person(person_id):
 def logged(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        id = discord_id()
-        if id is not None:
-            ps = person.load_person_by_discord_id(id)
+        if discord_id() is not None:
+            ps = person.load_person_by_discord_id(discord_id())
             if ps:
                 log_person(ps.id)
 

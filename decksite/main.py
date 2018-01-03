@@ -35,9 +35,9 @@ def decks():
 @auth.logged
 def deck(deck_id):
     d = ds.load_deck(deck_id)
-    if auth.is_logged() and auth.logged_person() is None:
-        ps.associate(d, discord_user)
-        auth.log_person(ps.load_person_by_discord_id(discord_user))
+    if auth.discord_id() and auth.logged_person() is None:
+        ps.associate(d, auth.discord_id())
+        auth.log_person(ps.load_person_by_discord_id(auth.discord_id()))
 
     view = Deck(d, auth.logged_person())
     return view.page()
@@ -181,7 +181,7 @@ def rotation():
 def export(deck_id):
     d = ds.load_deck(deck_id)
     if d.is_in_current_run():
-        if not auth.logged_person() or auth.logged_person().id != d.person_id:
+        if not auth.logged_person() or auth.logged_person() != d.person_id:
             abort(403)
     safe_name = deck_name.file_name(d)
     return (mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})

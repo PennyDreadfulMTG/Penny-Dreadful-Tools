@@ -80,7 +80,7 @@ def redirect_uri():
         os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
     return uri
 
-def is_logged():
+def discord_id():
     return session.get('id')
 
 def logged_person():
@@ -92,9 +92,9 @@ def log_person(person_id):
 def logged(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        discord_user = session.get('id')
-        if discord_user is not None:
-            ps = person.load_person_by_discord_id(discord_user)
+        id = discord_id()
+        if id is not None:
+            ps = person.load_person_by_discord_id(id)
             if ps:
                 log_person(ps.id)
 

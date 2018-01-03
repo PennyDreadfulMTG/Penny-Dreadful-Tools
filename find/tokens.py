@@ -1,5 +1,7 @@
+from typing import List
+
 class Token:
-    values = []
+    values: List[str] = []
 
     @classmethod
     def match(cls, chars):

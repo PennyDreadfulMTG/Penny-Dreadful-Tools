@@ -1,15 +1,15 @@
 import os
 
-from flask import g
+from flask import request
 
 from decksite import APP
 from shared import configuration
 from shared.database import get_database
 
 def db():
-    if not hasattr(g, 'database'):
-        g.database = get_database(configuration.get('decksite_database'))
-    return g.database
+    if not hasattr(request, 'database'):
+        request.database = get_database(configuration.get('decksite_database'))
+    return request.database
 
 def setup():
     db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER UNIQUE NOT NULL)')

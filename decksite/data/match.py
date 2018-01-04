@@ -6,8 +6,8 @@ from decksite.data import deck, elo, query
 from decksite.database import db
 
 # pylint: disable=too-many-arguments
-def insert_match(dt, left_id, left_games, right_id, right_games, round_num=None, elimination=False, match_id=None):
-    match_id = db().insert("INSERT INTO `match` (`date`, `round`, elimination) VALUES (%s, %s, %s)", [dtutil.dt2ts(dt), round_num, elimination])
+def insert_match(dt, left_id, left_games, right_id, right_games, round_num=None, elimination=False, mtgo_match_id=None):
+    match_id = db().insert("INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)", [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
     sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
     db().execute(sql, [left_id, match_id, left_games])
     if right_id is not None: # Don't insert matches or adjust Elo for the bye.

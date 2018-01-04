@@ -231,10 +231,11 @@ def add_signup():
     return signup(form)
 
 @APP.route('/report/')
+@auth.logged
 def report(form=None):
     if form is None:
-        form = ReportForm(request.form, request.cookies.get('deck_id', ''))
-    view = Report(form)
+        form = ReportForm(request.form, request.cookies.get('deck_id', ''), auth.logged_person())
+    view = Report(form, auth.logged_person())
     return view.page()
 
 @APP.route('/report/', methods=['POST'])

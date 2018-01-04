@@ -258,14 +258,16 @@ def load_latest_league_matches():
 
 def load_matches(where='1 = 1'):
     sql = """
-        SELECT m.id, GROUP_CONCAT(dm.deck_id) AS deck_ids, GROUP_CONCAT(dm.games) AS games
+        SELECT m.date, m.id, GROUP_CONCAT(dm.deck_id) AS deck_ids, GROUP_CONCAT(dm.games) AS games
         FROM `match` AS m
         INNER JOIN deck_match AS dm ON m.id = dm.match_id
         WHERE {where}
         GROUP BY m.id
+        ORDER BY m.date DESC
     """.format(where=where)
     matches = [Container(m) for m in db().execute(sql)]
     for m in matches:
+        m.date = dtutil.ts2dt(m.date)
         deck_ids = m.deck_ids.split(',')
         games = m.games.split(',')
         m.left_id = deck_ids[0]

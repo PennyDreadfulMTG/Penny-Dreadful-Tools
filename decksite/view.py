@@ -60,7 +60,8 @@ class View:
                 {'name': 'League Info', 'url': url_for('league')},
                 {'name': 'Sign Up', 'url': url_for('signup')},
                 {'name': 'Report', 'url': url_for('report')},
-                {'name': 'Records', 'url': url_for('current_league')}
+                {'name': 'Records', 'url': url_for('current_league')},
+                {'name': 'Retire', 'url': url_for('retire')},
             ]},
             {'name': 'Competitions', 'url': url_for('competitions'), 'submenu': [
                 {'name': 'Competition Results', 'url': url_for('competitions')},
@@ -69,7 +70,11 @@ class View:
                 {'name': 'Gatherling', 'url': 'http://gatherling.com/'},
                 {'name': 'Hosting', 'url': url_for('hosting')}
             ]},
-            {'name': 'Resources', 'url': url_for('resources')}
+            {'name': 'Resources', 'url': url_for('resources'), 'submenu': [
+                    {'name': 'Links', 'url': url_for('resources')},
+                    {'name': 'Log Out', 'url': url_for('logout')}
+                ]
+            }
         ]
         if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7):
             menu += [{'name': 'Rotation', 'url': url_for('rotation')}]
@@ -165,7 +170,7 @@ class View:
             if 'Land' not in c['card'].type:
                 num_cards += c['n']
                 total += c['n'] * c['card'].cmc
-        d.average_cmc = round(total / num_cards, 2)
+        d.average_cmc = round(total / max(1, num_cards), 2)
 
     def prepare_cards(self):
         for c in getattr(self, 'cards', []):
@@ -264,6 +269,7 @@ class View:
             p.finish = pos
             p.stage_reached = 1
             p.position = chr(9311 + pos) # ①, ②, ③, …
+            p.url = url_for('person', person_id=p.person_id)
             pos += 1
             if pos > 8:
                 break

@@ -165,7 +165,7 @@ class View:
             if 'Land' not in c['card'].type:
                 num_cards += c['n']
                 total += c['n'] * c['card'].cmc
-        d.average_cmc = round(total / num_cards, 2)
+        d.average_cmc = round(total / max(1, num_cards), 2)
 
     def prepare_cards(self):
         for c in getattr(self, 'cards', []):

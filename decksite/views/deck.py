@@ -14,8 +14,11 @@ class Deck(View):
         self._deck = d
         self.prepare_deck(self._deck)
         self.cards = d.all_cards()
-        # This is called 'decks' and not something more sane because of limitations of Mustache and our desire to use a partial for decktable.
-        self.decks = deck.get_similar_decks(d)
+        if not self.is_in_current_run():
+            # This is called 'decks' and not something more sane because of limitations of Mustache and our desire to use a partial for decktable.
+            self.decks = [sd for sd in deck.get_similar_decks(d) if not sd.is_in_current_run()]
+        else:
+            self.decks = []
         self.has_similar = len(self.decks) > 0
         self.matches = match.get_matches(d, True)
         for m in self.matches:

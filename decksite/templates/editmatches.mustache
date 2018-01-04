@@ -1,18 +1,34 @@
+<h1>Matches</h1>
 <section>
-    <h2>Matches</h2>
-            <tbody>
-                {{#matches}}
-                    <tr>
-                        <td><a href="{{left_url}}">{{left_id}}</a> v <a href="{{right_url}}">{{right_id}}</a></td>
-                        <td>
-                            <form method="post" class="inline">
-                                <input type="hidden" name="match_id" value="{{id}}">
-                                <button type="submit">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                {{/matches}}
-            </tbody>
-        </table>
+    <table>
+        <tbody>
+            {{#matches}}
+                <tr>
+                    <td>
+                        {{display_date}}
+                    </td>
+                    <td>
+                        <a href="{{left_url}}">
+                            {{#left_deck}}
+                                {{name}} ({{person}})
+                            {{/left_deck}}
+                        </a>
+                        {{left_games}} – {{right_games}}
+                        <a href="{{right_url}}">
+                            {{#right_deck}}
+                                {{name}} ({{person}})
+                            {{/right_deck}}
+                        </a>
+                    </td>
+                    <td>
+                        <form method="post" class="inline">
+                            <input type="hidden" name="match_id" value="{{id}}">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {{/matches}}
+        </tbody>
+    </table>
     </form>
 </section>

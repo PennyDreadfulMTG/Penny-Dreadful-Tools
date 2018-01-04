@@ -28,7 +28,7 @@
   - pip3 install --user https://github.com/rogerbinns/apsw/releases/download/3.14.1-r1/apsw-3.14.1-r1.zip \
 --global-option=fetch --global-option=--version --global-option=3.14.1 --global-option=--all \
 --global-option=build --global-option=--enable-all-extensions
+    Note: You may need `sudo -H` here and you may or may not need the `--user` option.
 - Optionally add SELECT LOAD_EXTENSION('<path to spellfix.dylib>'); to your ~/.sqliterc
 - Optionally (for the `!google` bot command):
     - git clone https://github.com/jarun/googler/ && cd googler && sudo make install
-

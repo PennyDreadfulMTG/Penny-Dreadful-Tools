@@ -6,23 +6,24 @@ from flask import abort, g, make_response, redirect, request, send_file, send_fr
 from werkzeug import exceptions
 
 from magic import card as mc, oracle
-from shared import perf, repo
+from shared import dtutil, perf, repo
+from shared.container import Container
 from shared.pd_exception import DoesNotExistException, InvalidArgumentException, InvalidDataException
 
 from decksite import auth, deck_name, league as lg
 from decksite import APP
 from decksite.cache import cached
-from decksite.data import archetype as archs, card as cs, competition as comp, deck as ds, person as ps, query
+from decksite.data import archetype as archs, card as cs, competition as comp, deck as ds, news as ns, person as ps, query
 from decksite.charts import chart
 from decksite.league import ReportForm, RetireForm, SignUpForm
-from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChanges, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
+from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, EditNews, Home, InternalServerError, LeagueInfo, News, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChanges, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
 
 # Decks
 
 @APP.route('/')
 @cached()
 def home():
-    view = Home(ds.load_decks(limit='LIMIT 50'), cs.played_cards())
+    view = Home(ns.load_news(max_items=10), ds.load_decks(limit='LIMIT 50'), cs.played_cards())
     return view.page()
 
 @APP.route('/decks/')
@@ -199,6 +200,13 @@ def bugs():
     view = Bugs()
     return view.page()
 
+@APP.route('/news/')
+@cached()
+def news():
+    news_items = ns.load_news()
+    view = News(news_items)
+    return view.page()
+
 # League
 
 @APP.route('/league/')
@@ -326,6 +334,25 @@ def post_matches():
     if request.form.get('match_id') is not None:
         lg.delete_match(request.form.get('match_id'))
     return edit_matches()
+
+@APP.route('/admin/news/')
+@auth.admin_required
+def edit_news():
+    new_item = Container({'form_date': dtutil.form_date(dtutil.now(dtutil.WOTC_TZ), dtutil.WOTC_TZ), 'title': '', 'body': ''})
+    news_items = [new_item] + ns.load_news()
+    view = EditNews(news_items)
+    return view.page()
+
+@APP.route('/admin/news/', methods=['POST'])
+@auth.admin_required
+def post_news():
+    print(request.form)
+    if request.form.get('action') == 'delete':
+        ns.delete(request.form.get('id'))
+    else:
+        date = dtutil.parse(request.form.get('date'), dtutil.FORM_FORMAT, dtutil.WOTC_TZ)
+        ns.add_or_update_news(request.form.get('id'), date, request.form.get('title'), request.form.get('body'))
+    return edit_news()
 
 @APP.route('/admin/prizes/')
 def prizes():

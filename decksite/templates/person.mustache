@@ -17,6 +17,9 @@
     <section>
         <h2>Achievements</h2>
         <ul class="buttons">
+            {{#tournament_organizer}}
+                <li>Tournament Organizer</li>
+            {{/tournament_organizer}}
             {{#tournament_wins}}
                 <li title="{{tournament_wins}} Wins">Tournament Winner</li>
             {{/tournament_wins}}

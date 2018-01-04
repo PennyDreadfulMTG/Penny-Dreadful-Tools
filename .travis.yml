@@ -7,7 +7,7 @@ env:
   - mysql_user=root magic_database=cards.sqlite
   - mysql_user=root magic_database=cards
 install:
-  - pip install -r requirements.txt
+  - travis_retry pip install -r requirements.txt
   - ./setup_spellfix.sh
 script:
   - python run.py tests

@@ -1,5 +1,6 @@
 from flask import url_for
 
+from magic import tournaments
 from shared.database import sqlescape
 
 from decksite.data import card
@@ -18,6 +19,7 @@ class Person(View):
             record.show_record = True
             record.opp_url = url_for('person', person_id=record.opp_mtgo_username)
         self.show_head_to_head = len(person.head_to_head) > 0
+        self.tournament_organizer = self.person.name in [host for series in tournaments.all_series_info() for host in series['hosts']]
 
     def __getattr__(self, attr):
         return getattr(self.person, attr)

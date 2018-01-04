@@ -31,6 +31,7 @@ def gatherer_image(printing) -> str:
     multiverse_id = printing.multiverseid
     if multiverse_id and int(multiverse_id) > 0:
         return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(multiverse_id) + '.jpg'
+    return None
 
 def download_bluebones_image(cards, filepath):
     print('Trying to get image for {cards}'.format(cards=', '.join(card.name for card in cards)))
@@ -49,6 +50,7 @@ def download_scryfall_image(cards, filepath, version='') -> str:
         print('Error: {e}'.format(e=e))
     if internal.acceptable_file(filepath):
         return filepath
+    return None
 
 def download_mci_image(cards, filepath) -> str:
     printings = oracle.get_printings(cards[0])
@@ -67,6 +69,7 @@ def download_mci_image(cards, filepath) -> str:
                 return filepath
         except FetchException as e:
             print('Error: {e}'.format(e=e))
+    return None
 
 def determine_filepath(cards) -> str:
     imagename = basename(cards)

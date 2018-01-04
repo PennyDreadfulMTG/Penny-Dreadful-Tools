@@ -24,11 +24,13 @@ class Competition(View):
                     bonus = 1
                 points = d.wins + bonus
                 if d.person_id not in leaderboard:
-                    leaderboard[d.person_id] = Container({'person': d.person, 'url': url_for('person', person_id=d.person_id), 'points': 0})
+                    leaderboard[d.person_id] = Container({'person': d.person, 'person_id': d.person_id, 'points': 0, 'played': 0, 'retirements': 0})
                 leaderboard[d.person_id]['points'] += points
+                leaderboard[d.person_id]['played'] += d.wins + d.draws + d.losses
+                leaderboard[d.person_id]['retirements'] += 1 if d.retired else 0
             if len(leaderboard) > 0:
                 self.has_leaderboard = True
-                self.leaderboard = sorted(leaderboard.values(), key=lambda k: k['points'], reverse=True)
+                self.leaderboard = sorted(leaderboard.values(), key=lambda k: (k['points'], k['played'], -k['retirements']), reverse=True)
                 self.leaderboards = [self.leaderboard] # Will be prepared in View.
 
     def __getattr__(self, attr):

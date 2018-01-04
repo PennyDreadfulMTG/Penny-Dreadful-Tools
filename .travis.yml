@@ -1,13 +1,14 @@
 language: python
 python:
-  - "3.5"
+  - "3.6"
 services:
   - mysql
 env:
   - mysql_user=root magic_database=cards.sqlite
   - mysql_user=root magic_database=cards
-install: 
-  - pip install -r requirements.txt
+install:
+  - travis_retry pip install -r requirements.txt
   - ./setup_spellfix.sh
-  - python run.py maintenance reprime_cache
-script: pytest
+script:
+  - python run.py tests
+  # - mypy --ignore-missing-imports .

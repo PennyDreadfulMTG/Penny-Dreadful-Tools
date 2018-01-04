@@ -10,12 +10,15 @@ from shared.pd_exception import InvalidDataException
 
 # pylint: disable=no-self-use, too-many-instance-attributes
 class Deck(View):
-    def __init__(self, d, logged_person=None):
+    def __init__(self, d, logged_person_id=None):
         self._deck = d
         self.prepare_deck(self._deck)
         self.cards = d.all_cards()
-        # This is called 'decks' and not something more sane because of limitations of Mustache and our desire to use a partial for decktable.
-        self.decks = deck.get_similar_decks(d)
+        if not self._deck.is_in_current_run():
+            # This is called 'decks' and not something more sane because of limitations of Mustache and our desire to use a partial for decktable.
+            self.decks = [sd for sd in deck.get_similar_decks(d) if not sd.is_in_current_run()]
+        else:
+            self.decks = []
         self.has_similar = len(self.decks) > 0
         self.matches = match.get_matches(d, True)
         for m in self.matches:
@@ -42,7 +45,7 @@ class Deck(View):
         self.cardhoarder_url = fetcher.cardhoarder_url(d)
         self.legal_formats = list(sorted(d.legal_formats, key=legality.order_score))
         self.is_in_current_run = d.is_in_current_run()
-        self.logged_person = logged_person
+        self.logged_person_id = logged_person_id
 
     def has_matches(self):
         return len(self.matches) > 0
@@ -104,9 +107,9 @@ class Deck(View):
     def public(self):
         if not self.is_in_current_run:
             return True
-        if self.logged_person is None:
+        if self.logged_person_id is None:
             return False
-        if self.logged_person.id != self._deck.person_id:
+        if self.logged_person_id != self._deck.person_id:
             return False
         return True
 

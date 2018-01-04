@@ -2,6 +2,8 @@ import html
 import re
 import sys
 
+from typing import Dict
+
 from magic import card, fetcher_internal, multiverse, oracle
 from magic.database import db
 from shared import configuration, dtutil
@@ -11,7 +13,7 @@ from shared.pd_exception import DatabaseException
 from price_grabber import price
 
 DATABASE = get_database(configuration.get('prices_database'))
-CARDS = {}
+CARDS: Dict[str, str] = {}
 
 def run():
     multiverse.init()

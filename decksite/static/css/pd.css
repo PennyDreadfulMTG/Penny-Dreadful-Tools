@@ -532,7 +532,7 @@ tr.wide+tr td {
 tr.wide td.wide {
     padding-right: 1em;
     max-width: 50em;
-    white-space: pre-line;
+    white-space: normal;
 }
 
 td.divider, th.divider {

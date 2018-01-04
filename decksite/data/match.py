@@ -29,7 +29,7 @@ def get_matches(d, should_load_decks=False):
         INNER JOIN deck AS d1 ON dm1.deck_id = d1.id
         LEFT JOIN deck AS d2 ON dm2.deck_id = d2.id
         LEFT JOIN person AS p ON p.id = d2.person_id
-        ORDER BY round
+        ORDER BY m.date, round
     """.format(person_query=query.person_query())
     matches = [Container(m) for m in db().execute(sql, [d.id, d.id])]
     if should_load_decks:

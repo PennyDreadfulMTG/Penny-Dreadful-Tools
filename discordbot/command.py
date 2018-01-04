@@ -502,7 +502,7 @@ Want to contribute? Send a Pull Request."""
                 """,
                 {}
             ],
-            'price': [
+            'prices': [
                 """
                 The price output contains current price.
                 If the price is low enough it will show season-low and season-high also.
@@ -559,6 +559,9 @@ Want to contribute? Send a Pull Request."""
         explanations['rotation'] = explanations['legality']
         explanations['tournaments'] = explanations['tournament']
         word = args.strip()
+        for k in explanations.keys():
+            if k.startswith(word):
+                word = k
         try:
             s = '{text}\n'.format(text=textwrap.dedent(explanations[word][0]))
         except KeyError:

@@ -3,6 +3,7 @@ import traceback
 import urllib.parse
 
 from flask import abort, g, make_response, redirect, request, send_file, send_from_directory, session, url_for
+from github.GithubException import GithubException
 from werkzeug import exceptions
 
 from magic import card as mc, oracle
@@ -438,7 +439,10 @@ def not_found(e):
 def internal_server_error(e):
     traceback.print_exception(e, e, None)
     path = request.path
-    repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports')
+    try:
+        repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports')
+    except GithubException:
+        print("Github error")
     view = InternalServerError(e)
     return view.page(), 500
 

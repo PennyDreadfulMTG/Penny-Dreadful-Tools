@@ -400,9 +400,11 @@ a.external:after {
     white-space: pre-wrap;
 }
 
-a.first_time {
-    background-color: #999;
+a.first-time {
+    background-color: #eee;
     border-radius: 0.317em;
+    margin-left: -0.317em;
+    padding: 0.317em
 }
 
 /*

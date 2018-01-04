@@ -160,6 +160,12 @@ class View:
             d.decklist = str(d).replace('\n', '<br>')
         else:
             d.decklist = ''
+        total, num_cards = 0, 0
+        for c in d.maindeck:
+            if 'Land' not in c['card'].type:
+                num_cards += c['n']
+                total += c['n'] * c['card'].cmc
+        d.average_cmc = round(total / num_cards, 2)
 
     def prepare_cards(self):
         for c in getattr(self, 'cards', []):

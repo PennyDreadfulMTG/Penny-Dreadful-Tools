@@ -68,3 +68,6 @@ you can uninstall (or in my case just plain remove) matplotlib and reinstall it 
 
   sudo pip3 install matplotlib
 
+If you have problems with pylint (module lazy_object_proxy or wrapt not found), try installing those dependencies by hand:
+  sudo pip3 install lazy_object_proxy
+  sudo pip3 install wrapt

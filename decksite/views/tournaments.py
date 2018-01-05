@@ -2,7 +2,6 @@ import inflect
 from flask import url_for
 
 from magic import tournaments
-from shared import rules
 
 from decksite.data import competition
 from decksite.view import View

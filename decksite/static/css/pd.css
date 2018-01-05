@@ -449,7 +449,7 @@ main table {
 
     /*
     Tables horizontal-scroll by default but if they are not huge we override that with footable in js.
-    Important to override the inline style that footble adds.
+    Important to override the inline style that footable adds.
     */
     display: block !important; /* csslint allow: important */;
     overflow-x: auto;

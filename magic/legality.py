@@ -82,7 +82,7 @@ def order_score(fmt):
 def init():
     if FORMATS:
         return
-    print('Updating Legalities...')
+    print('Updating Legalities…')
     assert len(oracle.legal_cards()) > 0
     all_known = oracle.load_card('island').legalities
     # assert 'Penny Dreadful EMN' in all_known

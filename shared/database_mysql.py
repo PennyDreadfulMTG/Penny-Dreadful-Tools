@@ -93,4 +93,4 @@ class MysqlDatabase(GenericDatabase):
             width = '({w})'.format(w=prefix_width)
         else:
             width = ''
-        return 'CREATE INDEX {name} on {table} ({column}{width})'.format(name=name, table=table,column=column,width=width)
+        return 'CREATE INDEX {name} on {table} ({column}{width})'.format(name=name, table=table, column=column, width=width)

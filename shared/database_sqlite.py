@@ -56,10 +56,10 @@ class SqliteDatabase(GenericDatabase):
     # pylint: disable=no-self-use
     def is_sqlite(self):
         return True
-    
-    # pylint: disable=unused-variable
+
+    # pylint: disable=unused-argument
     def create_index_query(self, name, table, column, prefix_width=None):
-        return 'CREATE INDEX {name} on {table} ({column})'.format(name=name, table=table,column=column)
+        return 'CREATE INDEX {name} on {table} ({column})'.format(name=name, table=table, column=column)
 
 def row_factory(cursor, row):
     columns = [t[0] for t in cursor.getdescription()]

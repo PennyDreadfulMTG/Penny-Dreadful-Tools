@@ -71,10 +71,16 @@ class SignUpForm(Form):
                     self.errors['decklist'] = str(e)
 
 class ReportForm(Form):
-    def __init__(self, form, deck_id=None):
+    def __init__(self, form, deck_id=None, person_id=None):
         super().__init__(form)
+
         decks = active_decks()
-        self.entry_options = deck_options(decks, self.get('entry', deck_id))
+        if person_id is not None:
+            entry_decks = active_decks_by_person(person_id)
+        else:
+            entry_decks = decks
+
+        self.entry_options = deck_options(entry_decks, self.get('entry', deck_id))
         self.opponent_options = deck_options(decks, self.get('opponent', None))
         self.result_options = [
             {'text': 'Win 2–0', 'value': '2–0', 'selected': self.get('result', None) == '2–0'},
@@ -132,6 +138,9 @@ def identifier(params):
     return json.dumps([params['mtgo_username'], params['name'], params['competition_id'], str(int(time.time()))])
 
 def deck_options(decks, v):
+    if (v is None or v == '') and len(decks) == 1:
+        v = str(decks[0].id)
+
     return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
 
 def active_decks(additional_where='1 = 1'):

@@ -56,7 +56,7 @@ def valid_name(name):
             raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
 
 def load_card(name):
-    return load_cards([name])[0]
+    return CARDS_BY_NAME.get(name, load_cards([name])[0])
 
 def load_cards(names=None, where=None):
     if names:

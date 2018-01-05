@@ -254,7 +254,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def rulings(self, bot, channel, args, author):
-        """Display rulings for a card."""
+        """`!rulings {name}` Display rulings for a card."""
         await bot.client.send_typing(channel)
         await single_card_text(bot, channel, args, author, card_rulings)
 
@@ -436,6 +436,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def art(self, bot, channel, args, author):
+        """`!art {name}` Display the art (only) of the most recent printing of the named card."""
         await bot.client.send_typing(channel)
         c = await single_card_or_send_error(bot, channel, args, author)
         if c is not None:

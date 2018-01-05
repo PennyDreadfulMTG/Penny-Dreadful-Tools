@@ -1550,6 +1550,26 @@ Admin items are always loaded but shown with javascript only to admins (because 
 
 /*
 
+Video
+
+*/
+
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    height: 0;
+    margin-bottom: 1rem;
+}
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/*
+
 Tooltips
 
 We used tippedjs for tooltips but we don't want to load their CSS separately so here are the parts we need.

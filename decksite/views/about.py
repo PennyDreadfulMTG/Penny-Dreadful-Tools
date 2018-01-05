@@ -11,14 +11,15 @@ class About(View):
         if src == 'gp':
             self.show_gp_card = True
             self.gp_card_url = url_for('static', filename='images/gp_card.png')
+        self.cards = exciting_cards()
 
     def subtitle(self):
         return 'About Penny Dreadful'
 
-    def exciting_cards(self):
-        cards = fancy_cards()
-        random.shuffle(cards)
-        return cards[:3]
+def exciting_cards():
+    cards = fancy_cards()
+    random.shuffle(cards)
+    return cards[:3]
 
 def fancy_cards():
     return legality.cards_legal_in_format(oracle.load_cards([

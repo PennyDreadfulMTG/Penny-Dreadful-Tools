@@ -593,7 +593,7 @@ def uniqify_cards(cards):
 
 def parse_queries(content: str) -> List[str]:
     queries = re.findall(r'\[?\[([^\]]*)\]\]?', content)
-    return [query.lower() for query in queries if len(query) > 2]
+    return [card.canonicalize(query) for query in queries if len(query) > 2]
 
 def cards_from_queries(queries):
     all_cards = []

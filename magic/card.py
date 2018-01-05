@@ -222,7 +222,8 @@ def canonicalize(name):
         name = name.replace('/', '//')
     if name.find('//') >= 0 and name.find(' // ') == -1:
         name = name.replace('//', ' // ')
-    name = name.replace('Æ', 'Ae')
+    # Replace ligature and smart quotes.
+    name = name.replace('Æ', 'Ae').replace('“', '"').replace('”', '"').replace("'", "'").replace("'", "'")
     return unaccent(name.strip().lower())
 
 def to_mtgo_format(s):

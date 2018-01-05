@@ -450,9 +450,11 @@ Want to contribute? Send a Pull Request."""
         num_tournaments = inflect.engine().number_to_words(len(tournaments.all_series_info()))
         explanations = {
             'bugs': [
-                rules.bugs(version=rules.SHORT),
+                'We allow the playing of cards with known bugs in Penny Dreadful with specific conditions. See the full rules on the website.'
                 {
-                    'Bugged Cards List': 'https://github.com/PennyDreadfulMTG/modo-bugs/issues/'
+                    'Known Bugs List': fetcher.decksite_url('/bugs/'),
+                    'Tournament Rules': fetcher.decksite_url('/tournaments/#bugs'),
+                    'Bugged Cards Database': 'https://github.com/PennyDreadfulMTG/modo-bugs/issues/'
                 }
 
             ],

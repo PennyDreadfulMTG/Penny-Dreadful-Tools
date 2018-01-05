@@ -36,8 +36,7 @@ class Tournaments(View):
                 t.league = {'class': 'ongoing', 'display': False}
         p = inflect.engine()
         self.num_tournaments = p.number_to_words(len(self.tournaments))
-
-        self.bugs_rules = rules.bugs(fmt=rules.HTML)
+        self.bugs_url = url_for('bugs')
 
     def subtitle(self):
         return 'Tournaments'

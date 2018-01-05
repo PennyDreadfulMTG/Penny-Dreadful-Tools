@@ -281,7 +281,8 @@ def set_legal_cards(force=False, season=None):
 def update_cache():
     db().begin()
     db().execute('DROP TABLE IF EXISTS _cache_card')
-    db().execute('CREATE TABLE _cache_card (INDEX idx_name_name(name(142))) AS {base_query}'.format(base_query=base_query()))
+    db().execute('CREATE TABLE _cache_card AS {base_query}'.format(base_query=base_query()))
+    db().execute(db().create_index_query('idx_name_name', '_cache_card', 'name', prefix_width=142))
     db().commit()
 
 def database2json(propname: str) -> str:

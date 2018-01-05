@@ -57,6 +57,8 @@ class SqliteDatabase(GenericDatabase):
     def is_sqlite(self):
         return True
 
+    def create_index_query(self, name, table, column, prefix_width=None):
+        return 'CREATE INDEX {name} on {table} ({column})'.format(name=name, table=table,column=column)
 
 def row_factory(cursor, row):
     columns = [t[0] for t in cursor.getdescription()]

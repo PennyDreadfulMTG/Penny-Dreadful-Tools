@@ -268,11 +268,6 @@ div:after, header:after, nav:after, main:after, footer:after, section:after, .to
     width: 10rem;
 }
 
-.tiny-icon {
-    width: 1rem;
-    height: 1rem;
-}
-
 /*
 
 Colors
@@ -1050,6 +1045,13 @@ p.bug-desc {
 .illegal::after {
     content: "﻿🚫";
     margin-left: 0.2em;
+}
+
+.github {
+    width: 1.333em;
+    height: 1.333em;
+    padding-right: 0.563em;
+    vertical-align: middle;
 }
 
 /*

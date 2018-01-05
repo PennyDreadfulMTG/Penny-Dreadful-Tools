@@ -450,7 +450,7 @@ Want to contribute? Send a Pull Request."""
         num_tournaments = inflect.engine().number_to_words(len(tournaments.all_series_info()))
         explanations = {
             'bugs': [
-                'We allow the playing of cards with known bugs in Penny Dreadful with specific conditions. See the full rules on the website.'
+                'We keep track of cards that are bugged on Magic Online. We allow the playing of cards with known bugs in Penny Dreadful under certain conditions. See the full rules on the website.',
                 {
                     'Known Bugs List': fetcher.decksite_url('/bugs/'),
                     'Tournament Rules': fetcher.decksite_url('/tournaments/#bugs'),

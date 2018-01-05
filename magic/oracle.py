@@ -1,5 +1,7 @@
 import sys
 
+from typing import Dict, List
+
 from magic import card, fetcher, mana, multiverse, rotation
 from magic.database import db
 from shared.database import sqlescape
@@ -7,8 +9,8 @@ from shared.pd_exception import InvalidDataException, TooFewItemsException
 
 # Primary public interface to the magic package. Call `oracle.init()` after setting up application context and before using any methods.
 
-LEGAL_CARDS = []
-CARDS_BY_NAME = {}
+LEGAL_CARDS: List[str] = []
+CARDS_BY_NAME: Dict[str, card.Card] = {}
 
 def init():
     if len(CARDS_BY_NAME) == 0:
@@ -54,7 +56,7 @@ def valid_name(name):
             raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
 
 def load_card(name):
-    return load_cards([name])[0]
+    return CARDS_BY_NAME.get(name, load_cards([name])[0])
 
 def load_cards(names=None, where=None):
     if names:
@@ -244,10 +246,10 @@ def changes_between_formats(f1, f2):
 
 def query_diff_formats(f1, f2):
     where = '''
-    c.id IN 
-        (SELECT card_id FROM card_legality 
-            WHERE format_id = {format1}) 
-    AND c.id NOT IN 
+    c.id IN
+        (SELECT card_id FROM card_legality
+            WHERE format_id = {format1})
+    AND c.id NOT IN
         (SELECT card_id FROM card_legality WHERE format_id = {format2})
     '''.format(format1=f1, format2=f2)
 

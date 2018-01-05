@@ -29,6 +29,11 @@ class Form(Container):
 
 # pylint: disable=attribute-defined-outside-init
 class SignUpForm(Form):
+    def __init__(self, form, mtgo_username=None):
+        super().__init__(form)
+        if mtgo_username is not None:
+            self.mtgo_username = mtgo_username
+
     def do_validation(self):
         if len(self.mtgo_username) == 0:
             self.errors['mtgo_username'] = "Magic Online Username is required"
@@ -66,10 +71,16 @@ class SignUpForm(Form):
                     self.errors['decklist'] = str(e)
 
 class ReportForm(Form):
-    def __init__(self, form, deck_id=None):
+    def __init__(self, form, deck_id=None, person_id=None):
         super().__init__(form)
+
         decks = active_decks()
-        self.entry_options = deck_options(decks, self.get('entry', deck_id))
+        if person_id is not None:
+            entry_decks = active_decks_by_person(person_id)
+        else:
+            entry_decks = decks
+
+        self.entry_options = deck_options(entry_decks, self.get('entry', deck_id))
         self.opponent_options = deck_options(decks, self.get('opponent', None))
         self.result_options = [
             {'text': 'Win 2–0', 'value': '2–0', 'selected': self.get('result', None) == '2–0'},
@@ -127,6 +138,9 @@ def identifier(params):
     return json.dumps([params['mtgo_username'], params['name'], params['competition_id'], str(int(time.time()))])
 
 def deck_options(decks, v):
+    if (v is None or v == '') and len(decks) == 1:
+        v = str(decks[0].id)
+
     return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
 
 def active_decks(additional_where='1 = 1'):
@@ -253,14 +267,16 @@ def load_latest_league_matches():
 
 def load_matches(where='1 = 1'):
     sql = """
-        SELECT m.id, GROUP_CONCAT(dm.deck_id) AS deck_ids, GROUP_CONCAT(dm.games) AS games
+        SELECT m.date, m.id, GROUP_CONCAT(dm.deck_id) AS deck_ids, GROUP_CONCAT(dm.games) AS games
         FROM `match` AS m
         INNER JOIN deck_match AS dm ON m.id = dm.match_id
         WHERE {where}
         GROUP BY m.id
+        ORDER BY m.date DESC
     """.format(where=where)
     matches = [Container(m) for m in db().execute(sql)]
     for m in matches:
+        m.date = dtutil.ts2dt(m.date)
         deck_ids = m.deck_ids.split(',')
         games = m.games.split(',')
         m.left_id = deck_ids[0]

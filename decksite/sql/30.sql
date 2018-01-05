@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS news_item (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    `date` INT NOT NULL,
+    title VARCHAR(190) NOT NULL,
+    body TEXT NOT NULL
+);

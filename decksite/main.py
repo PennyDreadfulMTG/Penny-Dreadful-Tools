@@ -2,27 +2,29 @@ import os
 import traceback
 import urllib.parse
 
-from flask import g, make_response, redirect, request, send_file, send_from_directory, session, url_for
+from flask import abort, g, make_response, redirect, request, send_file, send_from_directory, session, url_for
+from github.GithubException import GithubException
 from werkzeug import exceptions
 
 from magic import card as mc, oracle
-from shared import perf, repo
+from shared import dtutil, perf, repo
+from shared.container import Container
 from shared.pd_exception import DoesNotExistException, InvalidArgumentException, InvalidDataException
 
 from decksite import auth, deck_name, league as lg
 from decksite import APP
 from decksite.cache import cached
-from decksite.data import archetype as archs, card as cs, competition as comp, deck as ds, person as ps, query
+from decksite.data import archetype as archs, card as cs, competition as comp, deck as ds, news as ns, person as ps, query
 from decksite.charts import chart
 from decksite.league import ReportForm, RetireForm, SignUpForm
-from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, Home, InternalServerError, LeagueInfo, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChanges, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
+from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, EditNews, Home, InternalServerError, LeagueInfo, News, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChanges, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
 
 # Decks
 
 @APP.route('/')
 @cached()
 def home():
-    view = Home(ds.load_decks(limit='LIMIT 50'), cs.played_cards())
+    view = Home(ns.load_news(max_items=10), ds.load_decks(limit='LIMIT 50'), cs.played_cards())
     return view.page()
 
 @APP.route('/decks/')
@@ -32,17 +34,15 @@ def decks():
     return view.page()
 
 @APP.route('/decks/<deck_id>/')
+@auth.logged
 def deck(deck_id):
     d = ds.load_deck(deck_id)
-    person_from_discord = None
-    discord_user = session.get('id')
-    if discord_user is not None:
-        person_from_discord = ps.load_person_by_discord_id(discord_user)
-        if person_from_discord is None:
-            ps.associate(d, discord_user)
-            person_from_discord = ps.load_person_by_discord_id(discord_user)
+    if auth.discord_id() and auth.logged_person() is None:
+        ps.associate(d, auth.discord_id())
+        p = ps.load_person_by_discord_id(auth.discord_id())
+        auth.log_person(p.id, p.name)
 
-    view = Deck(d, person_from_discord)
+    view = Deck(d, auth.logged_person())
     return view.page()
 
 @APP.route('/seasons/')
@@ -178,9 +178,14 @@ def rotation():
     view = Rotation()
     return view.page()
 
+
 @APP.route('/export/<deck_id>/')
+@auth.logged
 def export(deck_id):
     d = ds.load_deck(deck_id)
+    if d.is_in_current_run():
+        if not auth.logged_person() or auth.logged_person() != d.person_id:
+            abort(403)
     safe_name = deck_name.file_name(d)
     return (mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 
@@ -196,6 +201,13 @@ def bugs():
     view = Bugs()
     return view.page()
 
+@APP.route('/news/')
+@cached()
+def news():
+    news_items = ns.load_news()
+    view = News(news_items)
+    return view.page()
+
 # League
 
 @APP.route('/league/')
@@ -209,9 +221,10 @@ def current_league():
     return competition(lg.active_league().id)
 
 @APP.route('/signup/')
+@auth.logged
 def signup(form=None):
     if form is None:
-        form = SignUpForm(request.form)
+        form = SignUpForm(request.form, auth.logged_person_mtgo_username())
     view = SignUp(form)
     return view.page()
 
@@ -227,10 +240,11 @@ def add_signup():
     return signup(form)
 
 @APP.route('/report/')
+@auth.logged
 def report(form=None):
     if form is None:
-        form = ReportForm(request.form, request.cookies.get('deck_id', ''))
-    view = Report(form)
+        form = ReportForm(request.form, request.cookies.get('deck_id', ''), auth.logged_person())
+    view = Report(form, auth.logged_person())
     return view.page()
 
 @APP.route('/report/', methods=['POST'])
@@ -322,6 +336,25 @@ def post_matches():
         lg.delete_match(request.form.get('match_id'))
     return edit_matches()
 
+@APP.route('/admin/news/')
+@auth.admin_required
+def edit_news():
+    new_item = Container({'form_date': dtutil.form_date(dtutil.now(dtutil.WOTC_TZ), dtutil.WOTC_TZ), 'title': '', 'body': ''})
+    news_items = [new_item] + ns.load_news()
+    view = EditNews(news_items)
+    return view.page()
+
+@APP.route('/admin/news/', methods=['POST'])
+@auth.admin_required
+def post_news():
+    print(request.form)
+    if request.form.get('action') == 'delete':
+        ns.delete(request.form.get('id'))
+    else:
+        date = dtutil.parse(request.form.get('date'), dtutil.FORM_FORMAT, dtutil.WOTC_TZ)
+        ns.add_or_update_news(request.form.get('id'), date, request.form.get('title'), request.form.get('body'))
+    return edit_news()
+
 @APP.route('/admin/prizes/')
 def prizes():
     where = """
@@ -407,7 +440,10 @@ def not_found(e):
 def internal_server_error(e):
     traceback.print_exception(e, e, None)
     path = request.path
-    repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports')
+    try:
+        repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports')
+    except GithubException:
+        print("Github error")
     view = InternalServerError(e)
     return view.page(), 500
 

@@ -5,9 +5,12 @@ from flask import url_for
 from decksite.view import View
 from shared import dtutil
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use,too-many-instance-attributes
 class Home(View):
-    def __init__(self, decks, cards):
+    def __init__(self, news, decks, cards):
+        self.news = news
+        self.has_news = len(news) > 0
+        self.all_news_url = url_for('news')
         min_decks = 10
         one_day_ago_ts = dtutil.now() - datetime.timedelta(days=1)
         week_decks = [d for d in decks if d.created_date > one_day_ago_ts]

@@ -56,7 +56,8 @@ class SqliteDatabase(GenericDatabase):
     # pylint: disable=no-self-use
     def is_sqlite(self):
         return True
-
+    
+    # pylint: disable=unused-variable
     def create_index_query(self, name, table, column, prefix_width=None):
         return 'CREATE INDEX {name} on {table} ({column})'.format(name=name, table=table,column=column)
 

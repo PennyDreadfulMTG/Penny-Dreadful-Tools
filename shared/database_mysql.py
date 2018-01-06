@@ -87,3 +87,10 @@ class MysqlDatabase(GenericDatabase):
 
     def release_lock(self, lock_id):
         self.execute('select release_lock(%s)', [lock_id])
+
+    def create_index_query(self, name, table, column, prefix_width=None):
+        if prefix_width is not None:
+            width = '({w})'.format(w=prefix_width)
+        else:
+            width = ''
+        return 'CREATE INDEX {name} on {table} ({column}{width})'.format(name=name, table=table, column=column, width=width)

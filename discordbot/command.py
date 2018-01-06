@@ -17,7 +17,7 @@ from googleapiclient.errors import HttpError
 from discordbot import emoji
 from find import search
 from magic import card, database, image_fetcher, fetcher, multiverse, oracle, rotation, tournaments
-from shared import configuration, dtutil, repo, rules
+from shared import configuration, dtutil, repo
 from shared.pd_exception import TooFewItemsException
 
 
@@ -200,7 +200,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Developer')
     async def echo(self, bot, channel, args):
-        """Repeat after me..."""
+        """Repeat after me…"""
         s = emoji.replace_emoji(args, bot.client)
         await bot.client.send_message(channel, s)
 
@@ -254,7 +254,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def rulings(self, bot, channel, args, author):
-        """Display rulings for a card."""
+        """`!rulings {name}` Display rulings for a card."""
         await bot.client.send_typing(channel)
         await single_card_text(bot, channel, args, author, card_rulings)
 
@@ -389,7 +389,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def pdm(self, bot, channel, args):
         """Alias for `!resources`."""
-        # Because of the weird way we call and use methods on Commands we need ...
+        # Because of the weird way we call and use methods on Commands we need …
         # pylint: disable=too-many-function-args
         await self.resources(self, bot, channel, args)
 
@@ -436,6 +436,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def art(self, bot, channel, args, author):
+        """`!art {name}` Display the art (only) of the most recent printing of the named card."""
         await bot.client.send_typing(channel)
         c = await single_card_or_send_error(bot, channel, args, author)
         if c is not None:
@@ -449,9 +450,11 @@ Want to contribute? Send a Pull Request."""
         num_tournaments = inflect.engine().number_to_words(len(tournaments.all_series_info()))
         explanations = {
             'bugs': [
-                rules.bugs(version=rules.SHORT),
+                'We keep track of cards that are bugged on Magic Online. We allow the playing of cards with known bugs in Penny Dreadful under certain conditions. See the full rules on the website.',
                 {
-                    'Bugged Cards List': 'https://github.com/PennyDreadfulMTG/modo-bugs/issues/'
+                    'Known Bugs List': fetcher.decksite_url('/bugs/'),
+                    'Tournament Rules': fetcher.decksite_url('/tournaments/#bugs'),
+                    'Bugged Cards Database': 'https://github.com/PennyDreadfulMTG/modo-bugs/issues/'
                 }
 
             ],
@@ -502,7 +505,7 @@ Want to contribute? Send a Pull Request."""
                 """,
                 {}
             ],
-            'price': [
+            'prices': [
                 """
                 The price output contains current price.
                 If the price is low enough it will show season-low and season-high also.
@@ -559,6 +562,9 @@ Want to contribute? Send a Pull Request."""
         explanations['rotation'] = explanations['legality']
         explanations['tournaments'] = explanations['tournament']
         word = args.strip()
+        for k in explanations:
+            if k.startswith(word):
+                word = k
         try:
             s = '{text}\n'.format(text=textwrap.dedent(explanations[word][0]))
         except KeyError:
@@ -587,7 +593,7 @@ def uniqify_cards(cards):
 
 def parse_queries(content: str) -> List[str]:
     queries = re.findall(r'\[?\[([^\]]*)\]\]?', content)
-    return [query.lower() for query in queries if len(query) > 2]
+    return [card.canonicalize(query) for query in queries if len(query) > 2]
 
 def cards_from_queries(queries):
     all_cards = []
@@ -635,7 +641,7 @@ def card_rulings(c):
     if len(rulings) > 3:
         n = len(rulings) - 2
         rulings = rulings[:2]
-        rulings.append("And {n} others.  See <https://scryfall.com/search?q=%21%22{cardname}%22>".format(n=n, cardname=c.name))
+        rulings.append("And {n} others.  See <https://scryfall.com/search?q=%21%22{cardname}%22>".format(n=n, cardname=fetcher.internal.escape(c.name)))
     return "\n".join(rulings) or "No rulings available."
 
 def site_resources(args):

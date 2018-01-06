@@ -1,9 +1,10 @@
 import random
 
 from flask import url_for
+import inflect
 
 from decksite.view import View
-from magic import legality, oracle
+from magic import legality, oracle, tournaments
 
 # pylint: disable=no-self-use
 class About(View):
@@ -11,14 +12,16 @@ class About(View):
         if src == 'gp':
             self.show_gp_card = True
             self.gp_card_url = url_for('static', filename='images/gp_card.png')
+        self.cards = exciting_cards()
+        self.num_tournaments = inflect.engine().number_to_words(len(tournaments.all_series_info())).title()
 
     def subtitle(self):
         return 'About Penny Dreadful'
 
-    def exciting_cards(self):
-        cards = fancy_cards()
-        random.shuffle(cards)
-        return cards[:3]
+def exciting_cards():
+    cards = fancy_cards()
+    random.shuffle(cards)
+    return cards[:3]
 
 def fancy_cards():
     return legality.cards_legal_in_format(oracle.load_cards([

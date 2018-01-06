@@ -6,6 +6,7 @@ from shared.database import sqlescape
 from decksite.data import card
 from decksite.view import View
 
+# pylint: disable=no-self-use,too-many-instance-attributes
 class Person(View):
     def __init__(self, person):
         self.person = person

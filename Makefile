@@ -18,7 +18,7 @@ unit:
 	@echo
 	@echo "******************************** Unit Tests ***********************************"
 	@echo
-	@find . -name "*$(TEST)*" | grep _test.py$ | xargs python3 run.py tests
+	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 run.py tests
 	@echo
 
 # Run lint on all python files.
@@ -27,10 +27,7 @@ lint:
 	@echo "******************************** Lint *****************************************"
 	@echo
 	@pylint  --generate-rcfile | grep -v "ignored-modules=" >.pylintrc.tmp
-# - to continue on error so we cleanup the .pylintrc.tmp file we created.
-	-@find . -name "*.py" | grep -v .git | xargs pylint --ignored-modules=MySQLdb --rcfile=.pylintrc.tmp --reports=n -f parseable
-	@rm .pylintrc.tmp
-	@echo
+	@find . -name "*.py" | grep -v .git | xargs pylint --ignored-modules=MySQLdb --rcfile=.pylintrc.tmp --reports=n -f parseable; (ret=$$?; echo; rm -f .pylintrc.tmp && exit $$ret)
 
 shortlint:
 	@echo

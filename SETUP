@@ -33,3 +33,4 @@
 - Optionally (for the `!google` bot command):
     - git clone https://github.com/jarun/googler/ && cd googler && sudo make install
 
+

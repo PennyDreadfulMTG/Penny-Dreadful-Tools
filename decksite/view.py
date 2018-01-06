@@ -71,10 +71,9 @@ class View:
                 {'name': 'Hosting', 'url': url_for('hosting')}
             ]},
             {'name': 'Resources', 'url': url_for('resources'), 'submenu': [
-                    {'name': 'Links', 'url': url_for('resources')},
-                    {'name': 'Log Out', 'url': url_for('logout')}
-                ]
-            }
+                {'name': 'Links', 'url': url_for('resources')},
+                {'name': 'Log Out', 'url': url_for('logout')}
+            ]}
         ]
         if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7):
             menu += [{'name': 'Rotation', 'url': url_for('rotation')}]
@@ -142,7 +141,7 @@ class View:
         d.comp_row_len = len("{comp_name} (Piloted by {person}".format(comp_name=d.competition_name, person=d.person))
         if d.get('archetype_id', None):
             d.archetype_url = '/archetypes/{id}/'.format(id=d.archetype_id)
-        if d.omw is not None:
+        if d.get('omw') is not None:
             d.omw = str(int(d.omw)) + '%'
         else:
             d.omw = ''

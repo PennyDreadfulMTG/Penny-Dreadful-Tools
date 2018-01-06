@@ -2,7 +2,6 @@ import inflect
 from flask import url_for
 
 from magic import tournaments
-from shared import rules
 
 from decksite.data import competition
 from decksite.view import View
@@ -24,7 +23,7 @@ class Tournaments(View):
             if month != prev_month:
                 t.month = month
                 prev_month = month
-            t.date = t.time.strftime('%-d')
+            t.date = t.time.day
             if len(leagues) > 0 and t.time >= leagues[-1].start_date and t.time < leagues[-1].end_date:
                 t.league = leagues.pop(-1)
                 t.league.display = True
@@ -36,8 +35,7 @@ class Tournaments(View):
                 t.league = {'class': 'ongoing', 'display': False}
         p = inflect.engine()
         self.num_tournaments = p.number_to_words(len(self.tournaments))
-
-        self.bugs_rules = rules.bugs(fmt=rules.HTML)
+        self.bugs_url = url_for('bugs')
 
     def subtitle(self):
         return 'Tournaments'

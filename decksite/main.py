@@ -17,7 +17,7 @@ from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck as ds, news as ns, person as ps, query
 from decksite.charts import chart
 from decksite.league import ReportForm, RetireForm, SignUpForm
-from decksite.views import About, AboutPdm, AddForm, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, EditNews, Home, InternalServerError, LeagueInfo, News, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChanges, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
+from decksite.views import About, AboutPdm, AddForm, Admin, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, EditNews, Home, InternalServerError, LeagueInfo, News, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChanges, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
 
 # Decks
 
@@ -37,7 +37,7 @@ def decks():
 @auth.logged
 def deck(deck_id):
     d = ds.load_deck(deck_id)
-    if auth.discord_id() and auth.logged_person() is None:
+    if auth.discord_id() and auth.logged_person() is None and not d.is_person_associated():
         ps.associate(d, auth.discord_id())
         p = ps.load_person_by_discord_id(auth.discord_id())
         auth.log_person(p.id, p.name)
@@ -178,7 +178,6 @@ def rotation():
     view = Rotation()
     return view.page()
 
-
 @APP.route('/export/<deck_id>/')
 @auth.logged
 def export(deck_id):
@@ -276,13 +275,25 @@ def do_claim():
     return retire(form)
 
 
-@APP.route('/rotationchanges')
+@APP.route('/rotation/changes/')
 def rotation_changes():
     view = RotationChanges(*oracle.last_pd_rotation_changes())
     return view.page()
 
+@APP.route('/rotation/speculation/')
+def rotation_speculation():
+    view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), subtitle="Rotation speculation: what rotation would look like with last week's prices")
+    return view.page()
+
 
 # Admin
+
+@APP.route('/admin/')
+@auth.admin_required
+def admin_home():
+    urls = sorted([url_for(rule.endpoint) for rule in APP.url_map.iter_rules() if 'GET' in rule.methods and rule.rule.startswith('/admin')])
+    view = Admin(urls)
+    return view.page()
 
 @APP.route('/querytappedout/')
 def deckcycle_tappedout():

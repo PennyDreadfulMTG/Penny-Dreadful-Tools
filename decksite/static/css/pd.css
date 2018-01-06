@@ -239,6 +239,8 @@ footer {
 section {
     float: left;
     margin: 0 3.8445rem /* Width of .marginalia + left-padding + right-padding * font-size */ 1rem 0;
+    max-width: 100%; /* So that overflow-x clips overly wide content, otherwise the fact that sections are floated means it is ignored. */
+    overflow-x: scroll;
     padding-top: 1rem;
 }
 
@@ -264,11 +266,6 @@ div:after, header:after, nav:after, main:after, footer:after, section:after, .to
 
 .resource {
     width: 10rem;
-}
-
-.tiny-icon {
-    width: 1rem;
-    height: 1rem;
 }
 
 /*
@@ -400,9 +397,11 @@ a.external:after {
     white-space: pre-wrap;
 }
 
-a.first_time {
-    background-color: #999;
+a.first-time {
+    background-color: #eee;
     border-radius: 0.317em;
+    margin-left: -0.317em;
+    padding: 0.317em
 }
 
 /*
@@ -447,7 +446,7 @@ main table {
 
     /*
     Tables horizontal-scroll by default but if they are not huge we override that with footable in js.
-    Important to override the inline style that footble adds.
+    Important to override the inline style that footable adds.
     */
     display: block !important; /* csslint allow: important */;
     overflow-x: auto;
@@ -532,7 +531,7 @@ tr.wide+tr td {
 tr.wide td.wide {
     padding-right: 1em;
     max-width: 50em;
-    white-space: pre-line;
+    white-space: normal;
 }
 
 td.divider, th.divider {
@@ -590,7 +589,7 @@ source      130  950
 season      212 1162
 (omw)
 -(toggle)   -44 1118
-...
+…
 ^ ------ lg ------ ^    56rem (1120px)
 
 Card tables:
@@ -1046,6 +1045,13 @@ p.bug-desc {
 .illegal::after {
     content: "﻿🚫";
     margin-left: 0.2em;
+}
+
+.github {
+    width: 1.333em;
+    height: 1.333em;
+    padding-right: 0.563em;
+    vertical-align: middle;
 }
 
 /*
@@ -1544,6 +1550,27 @@ Admin items are always loaded but shown with javascript only to admins (because 
 
 .admin {
     display: none; /* Will be shown with javascript if admin is viewing. */
+}
+
+/*
+
+Video
+
+*/
+
+.video-wrapper {
+    background: #eee;
+    height: 0;
+    margin-bottom: 1rem;
+    padding-bottom: 56.25%; /* 16:9 */
+    position: relative;
+}
+.video-wrapper iframe {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
 }
 
 /*

@@ -32,3 +32,5 @@
 - Optionally add SELECT LOAD_EXTENSION('<path to spellfix.dylib>'); to your ~/.sqliterc
 - Optionally (for the `!google` bot command):
     - git clone https://github.com/jarun/googler/ && cd googler && sudo make install
+
+

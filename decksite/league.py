@@ -188,12 +188,12 @@ def report(form):
             return False
         pdbot = form.get('api_token', None) == configuration.get('pdbot_api_token')
         if pdbot:
-            match_id = form.get('matchID', None)
+            mtgo_match_id = form.get('matchID', None)
         else:
-            match_id = None
+            mtgo_match_id = None
 
         db().begin()
-        match.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games, None, None, match_id)
+        match.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games, None, None, mtgo_match_id)
         db().commit()
         return True
     except LockNotAcquiredException:

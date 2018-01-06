@@ -4,6 +4,7 @@
 .cache/
 .coverage
 .DS_Store
+.pylintrc.tmp
 .vscode
 config.json
 db

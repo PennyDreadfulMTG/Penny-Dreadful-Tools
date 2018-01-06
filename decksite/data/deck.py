@@ -149,11 +149,11 @@ def set_legality(d):
 #     'cards' {
 #         'maindeck': {
 #             '<canonical card name>': <int>,
-#             ...
+#             …
 #         },
 #         'sideboard': {
 #             '<canonical card name>': <int>,
-#             ...
+#             …
 #         }
 #     }
 # }
@@ -333,30 +333,17 @@ def load_opponent_stats(decks):
             GROUP_CONCAT(m.elimination) AS elim
         FROM
             deck AS d
+        INNER JOIN
+            deck_match AS my_dm ON my_dm.deck_id = d.id
         LEFT JOIN
-            deck AS od
-        ON od.id IN (
-            SELECT
-                deck_id
-            FROM
-                deck_match
-            WHERE
-                deck_id <> d.id
-            AND
-                match_id IN (
-                    SELECT
-                        match_id
-                    FROM
-                        deck_match
-                    WHERE
-                        deck_id = d.id
-                )
-            )
+            deck_match AS my_odm ON my_odm.match_id = my_dm.match_id AND my_odm.deck_id <> d.id
+        INNER JOIN
+            deck AS od ON od.id = my_odm.deck_id
+        INNER JOIN
+            deck_match AS dm ON dm.deck_id = od.id
         LEFT JOIN
-            deck_match AS dm ON od.id = dm.deck_id
-        LEFT JOIN
-            deck_match AS odm ON odm.match_id = dm.match_id AND odm.deck_id <> od.id
-        LEFT JOIN
+            deck_match AS odm ON odm.match_id = dm.match_id AND odm.deck_id <> dm.deck_id
+        INNER JOIN
             `match` AS m ON m.id = dm.match_id
         WHERE
             d.id IN ({deck_ids})

@@ -282,7 +282,7 @@ def rotation_changes():
 
 @APP.route('/rotation/speculation/')
 def rotation_speculation():
-    view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), subtitle="Rotation speculation: what rotation would look like with last week's prices")
+    view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), speculation=True)
     return view.page()
 
 

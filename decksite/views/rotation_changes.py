@@ -22,5 +22,4 @@ class RotationChanges(View):
     def subtitle(self):
         if self.speculation:
             return "Rotation speculation: what rotation would look like if it happened today"
-        else:
-            return "Rotation Changes"
+        return "Rotation Changes"

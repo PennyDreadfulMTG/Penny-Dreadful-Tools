@@ -78,7 +78,8 @@ def create_tables():
         price MEDIUMINT UNSIGNED,
         week FLOAT,
         month FLOAT,
-        season FLOAT
+        season FLOAT,
+        INDEX idx_name_price (price)
     )"""
     execute(sql)
     sql = """CREATE TABLE IF NOT EXISTS low_price (

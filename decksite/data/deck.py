@@ -66,6 +66,7 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
             {person_query} AS person,
             p.id AS person_id,
             p.banned,
+            p.discord_id,
             d.created_date AS `date`,
             d.decklist_hash,
             d.retired,
@@ -443,3 +444,6 @@ class Deck(Container):
         for entry in self.sideboard:
             s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
         return s.strip()
+
+    def is_person_associated(self):
+        return self.discord_id is not None

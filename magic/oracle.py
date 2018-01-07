@@ -256,3 +256,23 @@ def query_diff_formats(f1, f2):
     rs = db().execute(multiverse.cached_base_query(where=where))
     out = [card.Card(r) for r in rs]
     return sorted(out, key=lambda card: card['name'])
+
+def if_todays_prices(out=True):
+    current_format = multiverse.get_format_id("Penny Dreadful")
+    if out:
+        not_clause = ''
+        compare = '<'
+    else:
+        not_clause = 'NOT'
+        compare = '>='
+
+    where = '''
+    c.id {not_clause} IN
+        (SELECT card_id FROM card_legality
+            WHERE format_id = {format})
+    AND c.name in (SELECT name from prices.cache where week {compare} 0.5)
+    '''.format(not_clause=not_clause, format=current_format, compare=compare)
+
+    rs = db().execute(multiverse.cached_base_query(where=where))
+    out = [card.Card(r) for r in rs]
+    return sorted(out, key=lambda card: card['name'])

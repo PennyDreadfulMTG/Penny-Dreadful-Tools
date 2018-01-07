@@ -12,13 +12,13 @@ from typing import List
 
 import inflect
 
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 from discordbot import emoji
 from find import search
 from magic import card, database, image_fetcher, fetcher, multiverse, oracle, rotation, tournaments
 from shared import configuration, dtutil, repo
 from shared.pd_exception import TooFewItemsException
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 
 
 DEFAULT_CARDS_SHOWN = 4

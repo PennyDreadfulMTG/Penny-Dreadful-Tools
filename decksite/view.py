@@ -48,6 +48,15 @@ class View:
             n = len(deck.load_decks('NOT d.reviewed'))
             if n > 0:
                 archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
+        rotation_submenu = []
+        if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7) or (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
+            rotation_submenu += [{'name': 'Rotation Tracking', 'url': url_for('rotation')}]
+        rotation_submenu += [
+            {'name': 'Rotation Changes', 'url': url_for('rotation_changes')},
+            {'name': 'Rotation Speculation', 'url': url_for('rotation_speculation')},
+            {'name': 'External Links', 'url': url_for('resources')},
+            {'name': 'Log Out', 'url': url_for('logout')}
+        ]
         menu = [
             {'name': 'Metagame', 'url': url_for('home'), 'badge': archetypes_badge, 'submenu': [
                 {'name': 'Latest Decks', 'url': url_for('decks')},
@@ -70,16 +79,7 @@ class View:
                 {'name': 'Gatherling', 'url': 'http://gatherling.com/'},
                 {'name': 'Hosting', 'url': url_for('hosting')}
             ]},
-            {'name': 'Resources', 'url': url_for('resources'), 'submenu': [
-                {'name': 'Links', 'url': url_for('resources')},
-                {'name': 'Log Out', 'url': url_for('logout')}
-            ]}
-        ]
-        if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7):
-            menu += [{'name': 'Rotation', 'url': url_for('rotation')}]
-        elif (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
-            menu += [{'name': 'Supplemental Rotation', 'url': url_for('rotation')}]
-        menu += [
+            {'name': 'Resources', 'url': url_for('resources'), 'submenu': rotation_submenu},
             {'name': 'About', 'url': url_for('about'), 'submenu': [
                 {'name': 'What is Penny Dreadful?', 'url': url_for('about')},
                 {'name': 'About pennydreadfulmagic.com', 'url': url_for('about_pdm')}

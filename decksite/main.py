@@ -452,7 +452,7 @@ def internal_server_error(e):
     traceback.print_exception(e, e, None)
     path = request.path
     try:
-        repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports')
+        repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports', exception=e)
     except GithubException:
         print("Github error")
     view = InternalServerError(e)

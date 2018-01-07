@@ -1,11 +1,12 @@
 import textwrap
+import traceback
 
 from flask import request, session
 from github import Github
 
 from shared import configuration
 
-def create_issue(content, author, location='Discord', repo='PennyDreadfulMTG/Penny-Dreadful-Tools'):
+def create_issue(content, author, location='Discord', repo_name='PennyDreadfulMTG/Penny-Dreadful-Tools', exception=None):
     if content is None or content == '':
         return None
     body = ''
@@ -27,11 +28,16 @@ def create_issue(content, author, location='Discord', repo='PennyDreadfulMTG/Pen
             User-Agent: {user_agent}
             Referrer: {referrer}
         """.format(method=request.method, full_path=request.full_path, cookies=request.cookies, endpoint=request.endpoint, view_args=request.view_args, id=session.get('id', 'logged_out'), user_agent=request.headers.get('User-Agent'), referrer=request.referrer))
+    if exception:
+        body += '--------------------------------------------------------------------------------\n'
+        stack = traceback.extract_stack()[:-3] + traceback.extract_tb(exception.__traceback__)
+        pretty = traceback.format_list(stack)
+        body += 'Stack Trace:\n' + ''.join(pretty) + '\n'
     print(title + '\n' + body)
     # Only check for github details at the last second to get log output even if github not configured.
     if not configuration.get('github_user') or not configuration.get('github_password'):
         return None
     g = Github(configuration.get('github_user'), configuration.get('github_password'))
-    repo = g.get_repo(repo)
-    issue = repo.create_issue(title=title, body=body)
+    git_repo = g.get_repo(repo_name)
+    issue = git_repo.create_issue(title=title, body=body)
     return issue

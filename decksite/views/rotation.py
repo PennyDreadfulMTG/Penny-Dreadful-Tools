@@ -1,11 +1,12 @@
+import datetime
 import fileinput
 import glob
 import html
 import os
 from collections import Counter
 
-from magic import oracle
-from shared import configuration
+from magic import oracle, rotation
+from shared import configuration, dtutil
 from shared.pd_exception import DoesNotExistException
 
 from decksite.view import View
@@ -13,6 +14,23 @@ from decksite.view import View
 # pylint: disable=no-self-use
 class Rotation(View):
     def __init__(self):
+        until_full_rotation = rotation.next_rotation() - dtutil.now()
+        until_supplemental_rotation = rotation.next_supplemental() - dtutil.now()
+        in_rotation = False
+        if until_full_rotation < datetime.timedelta(7):
+            in_rotation = True
+            self.rotation_msg = 'Full rotation is in progress, ends ' + dtutil.display_date(until_full_rotation)
+        elif until_supplemental_rotation < datetime.timedelta(7):
+            in_rotation = True
+            self.rotation_msg = 'Supplemental rotation is in progress, ends ' + dtutil.display_date(until_full_rotation)
+        elif until_full_rotation < until_supplemental_rotation:
+            self.rotation_msg = 'Full rotation is ' + dtutil.display_date(rotation.next_rotation())
+        else:
+            self.rotation_msg = 'Supplemental rotation is ' + dtutil.display_date(rotation.next_supplemental())
+        if in_rotation:
+            self.read_rotation_files()
+
+    def read_rotation_files(self):
         lines = []
         files = glob.glob(os.path.join(configuration.get('legality_dir'), "Run_*.txt"))
         if len(files) == 0:

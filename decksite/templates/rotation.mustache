@@ -1,25 +1,28 @@
 <h1>Rotation</h1>
 <section>
-    <p>{{runs}} ({{runs_percent}}%) of 168 runs completed.</p>
-    <p>Stats on undecided cards are redacted to reduce rampant market manipulation</p>
-    {{> spinner}}
-    <table>
-        <thead>
-            <tr>
-                <th>Card</th>
-                <th>Hits</th>
-                <th>Needed</th>
-                <th>Status</th>
-        </thead>
-        <tbody>
-            {{#cards}}
+    {{rotation_msg}}
+    {{#runs}}
+        <p>{{runs}} ({{runs_percent}}%) of 168 runs completed.</p>
+        <p>Stats on undecided cards are redacted to reduce rampant market manipulation</p>
+        {{> spinner}}
+        <table>
+            <thead>
                 <tr>
-                    <td>{{> singlecard}}</td>
-                    <td class="n">{{hits}} ({{percent}}%)</td>
-                    <td class="n">{{hits_needed}} ({{percent_hits_needed}}%)</td>
-                    <td>{{status}}</td>
-                </tr>
-            {{/cards}}
-        </tbody>
-    </table>
+                    <th>Card</th>
+                    <th>Hits</th>
+                    <th>Needed</th>
+                    <th>Status</th>
+            </thead>
+            <tbody>
+                {{#cards}}
+                    <tr>
+                        <td>{{> singlecard}}</td>
+                        <td class="n">{{hits}} ({{percent}}%)</td>
+                        <td class="n">{{hits_needed}} ({{percent_hits_needed}}%)</td>
+                        <td>{{status}}</td>
+                    </tr>
+                {{/cards}}
+            </tbody>
+        </table>
+    {{/runs}}
 </section>

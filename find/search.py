@@ -331,7 +331,7 @@ def init_value_lookup():
 def is_subquery(subquery_name):
     if subquery_name == 'split':
         return "(c.layout = 'split' OR c.layout = 'aftermath')"
-    if subquery_name in multiverse.layouts():
+    if subquery_name in multiverse.layouts().keys():
         return '(c.layout = {layout})'.format(layout=sqlescape(subquery_name))
     subqueries = {
         'gainland': 't:land o:"When ~ enters the battlefield, you gain 1 life"',

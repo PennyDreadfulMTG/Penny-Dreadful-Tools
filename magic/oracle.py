@@ -267,11 +267,12 @@ def if_todays_prices(out=True):
         compare = '>='
 
     where = '''
-    c.id {not_clause} IN
-        (SELECT card_id FROM card_legality
-            WHERE format_id = {format})
-    AND c.name in (SELECT name from prices.cache where week {compare} 0.5)
-    '''.format(not_clause=not_clause, format=current_format, compare=compare)
+        c.id {not_clause} IN
+            (SELECT card_id FROM card_legality
+                WHERE format_id = {format})
+        AND c.name in (SELECT name from prices.cache where week {compare} 0.5)
+        AND c.layout IN ({layouts})
+    '''.format(not_clause=not_clause, format=current_format, compare=compare, layouts=', '.join([sqlescape(k) for k, v in multiverse.layouts().items() if v]))
 
     rs = db().execute(multiverse.cached_base_query(where=where))
     out = [card.Card(r) for r in rs]

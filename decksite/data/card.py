@@ -72,7 +72,7 @@ def only_played_by(person_id):
                 DISTINCT deck_id
             FROM
                 deck_match
-        ) -- Only include cards that actually got played competitively rather than just posted to Goldfish as "new cards this season" or similar.-- Only include cards that actually got played competitively rather than just posted to Goldfish as "new cards this season" or similar.
+        ) -- Only include cards that actually got played competitively rather than just posted to Goldfish as "new cards this season" or similar.
         GROUP BY
             card
         HAVING

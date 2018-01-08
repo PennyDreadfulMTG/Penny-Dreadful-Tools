@@ -345,7 +345,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def modobug(self, bot, channel, args, author):
-        """Report an MTGO bug."""
+        """Report a Magic Online bug."""
         await bot.client.send_typing(channel)
         issue = repo.create_issue(args, author, 'Discord', 'PennyDreadfulMTG/modo-bugs')
         if issue is None:
@@ -457,6 +457,17 @@ Want to contribute? Send a Pull Request."""
                     'Bugged Cards Database': 'https://github.com/PennyDreadfulMTG/modo-bugs/issues/'
                 }
 
+            ],
+            'deckbuilding': [
+                """
+                The best way to build decks is to use a search engine that supports Penny Dreadful legality (`f:pd`) like Scryfall.
+                You can find Penny Dreadful decklists from tournaments, leagues and elsewhere at pennydreadfulmagic.com.
+                """,
+                {
+                    'Scryfall': 'https://scryfall.com/',
+                    'Latest Decks': fetcher.decksite_url('/'),
+                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt'
+                }
             ],
             'decklists': [
                 """

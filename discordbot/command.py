@@ -458,6 +458,17 @@ Want to contribute? Send a Pull Request."""
                 }
 
             ],
+            'deckbuilding': [
+                """
+                The best way to build decks is to use a search engine that supports Penny Dreadful legality (`f:pd`) like Scryfall.
+                You can find Penny Dreadful decklists from tournaments, leagues and elsewhere at pennydreadfulmagic.com.
+                """,
+                {
+                    'Scryfall': 'https://scryfall.com/',
+                    'Latest Decks': fetcher.decksite_url('/'),
+                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt'
+                }
+            ],
             'decklists': [
                 """
                 You can find Penny Dreadful decklists from tournaments, leagues and elsewhere at pennydreadfulmagic.com

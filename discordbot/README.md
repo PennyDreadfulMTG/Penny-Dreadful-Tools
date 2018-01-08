@@ -16,6 +16,8 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!oracle {name}` Give the Oracle text of the named card.
 
+`!art` No Help Available
+
 `!barbs` Gives Volvary's helpful advice for when to sideboard in Aura Barbs.
 
 `!bug` Report a bug/task for the Penny Dreadful Tools team. For MTGO bugs see `!modobug`.
@@ -52,7 +54,9 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!rotation` Give the date of the next Penny Dreadful rotation.
 
-`!scryfall {query}` search scryfall for the query.
+`!rulings` Display rulings for a card.
+
+`!scryfall {query}` Search for cards using Scryfall.
 
 `!search {query}` Search for cards, using a scryfall-style query.
 

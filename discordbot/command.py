@@ -345,7 +345,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def modobug(self, bot, channel, args, author):
-        """Report an MTGO bug."""
+        """Report a Magic Online bug."""
         await bot.client.send_typing(channel)
         issue = repo.create_issue(args, author, 'Discord', 'PennyDreadfulMTG/modo-bugs')
         if issue is None:

@@ -274,7 +274,6 @@ def do_claim():
         return redirect(url_for('signup'))
     return retire(form)
 
-
 @APP.route('/rotation/changes/')
 def rotation_changes():
     view = RotationChanges(*oracle.last_pd_rotation_changes())
@@ -284,7 +283,6 @@ def rotation_changes():
 def rotation_speculation():
     view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), speculation=True)
     return view.page()
-
 
 # Admin
 

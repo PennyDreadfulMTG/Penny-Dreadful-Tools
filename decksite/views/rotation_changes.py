@@ -18,7 +18,6 @@ class RotationChanges(View):
         self.sections.append({'name': 'Rotated out', 'entries': entries_out, 'num_entries': len(entries_out)})
         self.speculation = speculation
 
-
     def subtitle(self):
         if self.speculation:
             return "Rotation speculation: what rotation would look like if it happened today"

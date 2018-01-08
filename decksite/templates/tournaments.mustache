@@ -50,6 +50,27 @@
         {{> tournamentrounds}}
     </section>
     <section>
+        <h2>Prizes</h2>
+        {{> spinner}}
+        <table>
+            <thead>
+                <tr>
+                    <th class="n">Finish</th>
+                    <th class="n">Prize</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#prizes}}
+                    <tr>
+                        <td class="n">{{finish}}</td>
+                        <td class="n">{{prize}} tix</td>
+                    </tr>
+                {{/prizes}}
+            </tbody>
+        </table>
+        <p>Prizes from our sponsor <a class="external" href="http://cardhoarder.com/">Cardhoarder</a> in credit. Prizes will be credited within a few days of the Friday following the tournament.</p>
+    </section>
+    <section>
         <h2><a name="bugs">Bugs</a></h2>
         <p>We allow the playing of cards with known bugs in Penny Dreadful with specific conditions.</p>
         <ul>

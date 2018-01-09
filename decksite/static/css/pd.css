@@ -978,6 +978,17 @@ main .banner h1 {
 
 /*
 
+Charts
+
+*/
+
+.sparkline {
+    vertical-align: bottom;
+    width: 10em;
+}
+
+/*
+
 Button bars.
 
 */

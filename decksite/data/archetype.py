@@ -9,6 +9,8 @@ from shared.pd_exception import DoesNotExistException, TooManyItemsException
 from decksite.data import deck
 from decksite.database import db
 
+BASE_ARCHETYPES = {}
+
 def load_archetype(archetype):
     try:
         archetype_id = int(archetype)
@@ -155,6 +157,19 @@ def move(archetype_id, parent_id):
     """
     db().execute(add_sql, [archetype_id, parent_id])
     db().commit()
+
+def base_archetypes():
+    return [a for a in load_archetypes_deckless() if a.parent is None]
+
+def base_archetype_by_id():
+    if len(BASE_ARCHETYPES) == 0:
+        archetypes_by_id = {a.id: a for a in load_archetypes_deckless()}
+        for k, v in archetypes_by_id.items():
+            p = v
+            while p.parent is not None:
+                p = p.parent
+            BASE_ARCHETYPES[k] = p
+    return BASE_ARCHETYPES
 
 class Archetype(Container, NodeMixin):
     pass

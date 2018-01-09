@@ -4,7 +4,7 @@ from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
 
-from decksite.data import deck, guarantee, query
+from decksite.data import archetype, deck, guarantee, query
 from decksite.database import db
 
 def get_or_insert_competition(start_date, end_date, name, competition_series, url):
@@ -54,7 +54,7 @@ def load_competitions(where='1 = 1'):
         GROUP BY c.id
         ORDER BY c.start_date DESC, c.name
     """.format(where=where)
-    competitions = [Container(r) for r in db().execute(sql)]
+    competitions = [Competition(r) for r in db().execute(sql)]
     for c in competitions:
         c.start_date = dtutil.ts2dt(c.start_date)
         c.end_date = dtutil.ts2dt(c.end_date)
@@ -141,3 +141,20 @@ def leaderboards(where="ct.name = 'Gatherling' AND season.id = (SELECT id FROM s
     if len(current) > 0:
         results.append(current)
     return results
+
+class Competition(Container):
+    def __init__(self, params):
+        super().__init__(params)
+        self.base_archetype_date = None
+
+    # pylint: disable=attribute-defined-outside-init
+    def base_archetypes_data(self):
+        base_archetype_by_id = archetype.base_archetype_by_id()
+        if not self.get('base_archetype_data'):
+            self.base_archetype_data = {a.name: 0 for a in archetype.base_archetypes()}
+            for d in self.decks:
+                if not d.archetype_id:
+                    continue
+                base_archetype_name = base_archetype_by_id[d.archetype_id].name
+                self.base_archetype_data[base_archetype_name] += 1
+        return self.base_archetype_data

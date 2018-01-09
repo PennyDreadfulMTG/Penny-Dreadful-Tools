@@ -432,6 +432,10 @@ def favicon(rest):
 def cmc_chart(deck_id):
     return send_file(chart.cmc(int(deck_id)))
 
+@APP.route('/charts/archetypes/<competition_id>-archetypes-sparkline.png')
+def archetype_sparkline_chart(competition_id):
+    return send_file(chart.archetypes_sparkline(int(competition_id)))
+
 @APP.route('/legal_cards.txt')
 def legal_cards():
     if os.path.exists('legal_cards.txt'):

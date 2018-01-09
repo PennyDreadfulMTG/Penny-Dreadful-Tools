@@ -8,16 +8,12 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from decksite.data import deck
+from decksite.data import competition, deck
 from shared import configuration
 from shared.pd_exception import DoesNotExistException
 
 def cmc(deck_id):
-    name = str(deck_id) + '-cmc.png'
-    pathlib.Path(configuration.get('charts_dir')).mkdir(parents=True, exist_ok=True)
-    if not os.path.exists(configuration.get('charts_dir')):
-        raise DoesNotExistException('Cannot store graph images because {dir} does not exist.'.format(dir=configuration.get('charts_dir')))
-    path = os.path.join(configuration.get('charts_dir'), name)
+    path = determine_path(str(deck_id) + '-cmc.png')
     if os.path.exists(path):
         return path
     d = deck.load_deck(deck_id)
@@ -43,7 +39,7 @@ def image(path, costs):
     xs = [costs.get(k, 0) for k in ys]
     sns.set_style('white')
     sns.set(font='Concourse C3', font_scale=3)
-    g = sns.barplot(ys, xs, palette=['grey'] * len(ys))
+    g = sns.barplot(ys, xs, palette=['#cccccc'] * len(ys))
     g.axes.yaxis.set_ticklabels([])
     rects = g.patches
     sns.set(font='Concourse C3', font_scale=2)
@@ -57,3 +53,30 @@ def image(path, costs):
     g.get_figure().savefig(path, transparent=True, pad_inches=0, bbox_inches='tight')
     plt.clf() # Clear all data from matplotlib so it does not persist across requests.
     return path
+
+def archetypes_sparkline(competition_id):
+    path = determine_path(str(competition_id) + '-archetypes-sparkline.png')
+    if os.path.exists(path):
+        print('exists')
+        return path
+    c = competition.load_competition(competition_id)
+    return sparkline(path, c.base_archetypes_data().values())
+
+def sparkline(path, values, figsize=(2, 0.16)):
+    values = list(values)
+    fig, ax = plt.subplots(1, 1, figsize=figsize)
+    for v in ax.spines.values():
+        v.set_visible(False)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    plt.bar(range(len(values)), values, 1/1.1, align='edge', color='#cccccc')
+    plt.margins(y=0, x=0)
+    fig.savefig(path, transparent=True, pad_inches=0, bbox_inches='tight')
+    plt.clf()
+    return path
+
+def determine_path(name):
+    pathlib.Path(configuration.get('charts_dir')).mkdir(parents=True, exist_ok=True)
+    if not os.path.exists(configuration.get('charts_dir')):
+        raise DoesNotExistException('Cannot store graph images because {dir} does not exist.'.format(dir=configuration.get('charts_dir')))
+    return os.path.join(configuration.get('charts_dir'), name)

@@ -29,6 +29,7 @@ def scrape():
             d.name = a.contents[0].strip()
             d.mtggoldfish_username = raw_deck.select_one('div.deck-author').contents[0].strip()
             d.created_date = scrape_created_date(d)
+            time.sleep(1)
             d.cards = scrape_decklist(d)
             try:
                 vivified = decklist.vivify(d.cards)
@@ -37,7 +38,7 @@ def scrape():
                 print('Rejecting decklist of deck with identifier {identifier} because of {e}'.format(identifier=d.identifier, e=e))
                 continue
             if len([f for f in legality.legal_formats(vivified) if 'Penny Dreadful' in f]) == 0:
-                print('Rejecting deck with identifier {identifier} becuase it is not legal in any PD formats.'.format(identifier=d.identifier))
+                print('Rejecting deck with identifier {identifier} because it is not legal in any PD formats.'.format(identifier=d.identifier))
                 continue
             if len(d.cards) == 0:
                 print('Rejecting deck with identifier {identifier} because it has no cards.'.format(identifier=d.identifier))

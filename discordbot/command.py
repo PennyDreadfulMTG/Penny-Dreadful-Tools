@@ -20,7 +20,6 @@ from magic import card, database, image_fetcher, fetcher, multiverse, oracle, ro
 from shared import configuration, dtutil, repo
 from shared.pd_exception import TooFewItemsException
 
-
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10
 
@@ -552,7 +551,7 @@ Want to contribute? Send a Pull Request."""
             ],
             'tournament': [
                 """
-                We have {num_tournaments} free-to-enter weekly tournaments with prizes from Card Hoarder.
+                We have {num_tournaments} free-to-enter weekly tournaments with prizes from Cardhoarder.
                 They are hosted on gatherling.com along with a lot of other player-run Magic Online events.
                 """.format(num_tournaments=num_tournaments),
                 {

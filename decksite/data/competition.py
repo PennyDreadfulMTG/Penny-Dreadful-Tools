@@ -145,12 +145,11 @@ def leaderboards(where="ct.name = 'Gatherling' AND season.id = (SELECT id FROM s
 class Competition(Container):
     def __init__(self, params):
         super().__init__(params)
-        self.base_archetype_date = None
+        self.base_archetype_data = None
 
-    # pylint: disable=attribute-defined-outside-init
     def base_archetypes_data(self):
         base_archetype_by_id = archetype.base_archetype_by_id()
-        if not self.get('base_archetype_data'):
+        if not self.base_archetype_data:
             self.base_archetype_data = {a.name: 0 for a in archetype.base_archetypes()}
             for d in self.decks:
                 if not d.archetype_id:

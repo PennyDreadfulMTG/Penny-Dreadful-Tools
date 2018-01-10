@@ -1,5 +1,6 @@
-from anytree import NodeMixin
 import sys
+
+from anytree import NodeMixin
 import titlecase
 
 from magic import rotation

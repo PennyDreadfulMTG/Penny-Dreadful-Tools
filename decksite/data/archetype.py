@@ -1,4 +1,5 @@
 from anytree import NodeMixin
+import sys
 import titlecase
 
 from magic import rotation
@@ -44,10 +45,21 @@ def load_archetypes(where='1 = 1', merge=False):
         archetype.all_wins = archetype.get('all_wins', 0) + (d.get('all_wins') or 0)
         archetype.all_losses = archetype.get('all_losses', 0) + (d.get('all_losses') or 0)
         archetype.all_draws = archetype.get('all_draws', 0) + (d.get('all_draws') or 0)
+        if d.get('finish') == 1:
+            archetype.all_tournament_wins = archetype.get('all_tournament_wins', 0) + 1
+        if (d.get('finish') or sys.maxsize) <= 8:
+            archetype.all_top8s = archetype.get('all_top8s', 0) + 1
+            archetype.all_perfect_runs = archetype.get('all_perfect_runs', 0) + 1
         if d.created_date >= rotation.last_rotation():
             archetype.season_wins = archetype.get('season_wins', 0) + (d.get('season_wins') or 0)
             archetype.season_losses = archetype.get('season_losses', 0) + (d.get('season_losses') or 0)
             archetype.season_draws = archetype.get('season_draws', 0) + (d.get('season_draws') or 0)
+            if d.get('finish') == 1:
+                archetype.season_tournament_wins = archetype.get('season_tournament_wins', 0) + 1
+            if (d.get('finish') or sys.maxsize) <= 8:
+                archetype.season_top8s = archetype.get('season_top8s', 0) + 1
+            if d.source_name == 'League' and d.wins >= 5 and d.losses == 0:
+                archetype.season_perfect_runs = archetype.get('season_all_perfect_runs', 0) + 1
         archetypes[key] = archetype
     archetypes = list(archetypes.values())
     return archetypes

@@ -57,7 +57,6 @@ def image(path, costs):
 def archetypes_sparkline(competition_id):
     path = determine_path(str(competition_id) + '-archetypes-sparkline.png')
     if os.path.exists(path):
-        print('exists')
         return path
     c = competition.load_competition(competition_id)
     return sparkline(path, c.base_archetypes_data().values())

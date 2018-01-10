@@ -5,7 +5,7 @@ def exactly_one(l):
         raise TooManyItemsException('Found {n} items when expecing 1 in `{l}`.'.format(n=len(l), l=l))
     try:
         return l[0]
-    except IndexError as e:
+    except IndexError:
         raise DoesNotExistException('Did not find an item when expecting one.')
 
 def at_most_one(l):

@@ -30,7 +30,7 @@ class MysqlDatabase(GenericDatabase):
                 print('Creating database {db}'.format(db=db))
                 self.execute('CREATE DATABASE {db} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'.format(db=db))
                 self.execute('USE {db}'.format(db=db))
-        except MySQLdb.Error as e:
+        except MySQLdb.Error:
             raise DatabaseException('Failed to initialize database in `{location}`'.format(location=db))
 
     def execute(self, sql, args=None):

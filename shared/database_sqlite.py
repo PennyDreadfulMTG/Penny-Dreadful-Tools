@@ -13,7 +13,7 @@ class SqliteDatabase(GenericDatabase):
             self.connection.enableloadextension(True)
             self.connection.loadextension(configuration.get('spellfix'))
             self.cursor = self.connection.cursor()
-        except apsw.Error as e:
+        except apsw.Error:
             raise DatabaseException('Failed to initialize database in `{location}`'.format(location=location))
 
     def execute(self, sql, args=None):

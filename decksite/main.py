@@ -274,17 +274,15 @@ def do_claim():
         return redirect(url_for('signup'))
     return retire(form)
 
-
 @APP.route('/rotation/changes/')
 def rotation_changes():
-    view = RotationChanges(*oracle.last_pd_rotation_changes())
+    view = RotationChanges(*oracle.last_pd_rotation_changes(), cs.playability())
     return view.page()
 
 @APP.route('/rotation/speculation/')
 def rotation_speculation():
-    view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), speculation=True)
+    view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), cs.playability(), speculation=True)
     return view.page()
-
 
 # Admin
 
@@ -433,6 +431,10 @@ def favicon(rest):
 @APP.route('/charts/cmc/<deck_id>-cmc.png')
 def cmc_chart(deck_id):
     return send_file(chart.cmc(int(deck_id)))
+
+@APP.route('/charts/archetypes/<competition_id>-archetypes-sparkline.png')
+def archetype_sparkline_chart(competition_id):
+    return send_file(chart.archetypes_sparkline(int(competition_id)))
 
 @APP.route('/legal_cards.txt')
 def legal_cards():

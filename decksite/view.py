@@ -1,4 +1,5 @@
 import datetime
+import html
 import urllib
 from collections import Counter
 
@@ -208,6 +209,12 @@ class View:
             c.ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
             c.date_sort = dtutil.dt2ts(c.start_date)
             c.league = True if c.type == 'League' else False
+            title_safe = ''
+            for k, v in c.base_archetypes_data().items():
+                if v > 0:
+                    title_safe += '{v} {k}<br>'.format(v=v, k=html.escape(k))
+            c.archetypes_sparkline_chart_title_safe = title_safe
+            c.archetypes_sparkline_chart_url = url_for('archetype_sparkline_chart', competition_id=c.id)
 
     def prepare_people(self):
         for p in getattr(self, 'people', []):

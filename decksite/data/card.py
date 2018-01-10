@@ -72,7 +72,7 @@ def only_played_by(person_id):
                 DISTINCT deck_id
             FROM
                 deck_match
-        ) -- Only include cards that actually got played competitively rather than just posted to Goldfish as "new cards this season" or similar.-- Only include cards that actually got played competitively rather than just posted to Goldfish as "new cards this season" or similar.
+        ) -- Only include cards that actually got played competitively rather than just posted to Goldfish as "new cards this season" or similar.
         GROUP BY
             card
         HAVING
@@ -82,3 +82,17 @@ def only_played_by(person_id):
     """.format(person_id=sqlescape(person_id))
     cards = {c.name: c for c in oracle.load_cards()}
     return [cards[r['name']] for r in db().execute(sql)]
+
+def playability():
+    sql = """
+        SELECT
+            card AS name,
+            COUNT(*) AS played
+        FROM
+            deck_card
+        GROUP BY
+            card
+    """
+    rs = [Container(r) for r in db().execute(sql)]
+    high = max([c.played for c in rs])
+    return {c.name: (c.played / high) for c in rs}

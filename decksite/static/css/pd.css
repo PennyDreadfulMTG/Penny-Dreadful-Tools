@@ -396,11 +396,19 @@ a.external:after {
     white-space: pre-wrap;
 }
 
-a.first-time {
-    background-color: #eee;
+a.interesting, a.interesting:hover {
     border-radius: 0.317em;
-    margin-left: -0.317em;
-    padding: 0.317em
+    margin-left: -0.317rem;
+    padding: 0.05rem 0.317rem;
+}
+
+a.interestingness-heavily-played, a.interestingness-heavily-played:hover, a.interestingness-new, a.interestingness-new:hover {
+    border: 0.05rem solid #999;
+    padding-top: 0;
+}
+
+a.interestingness-heavily-played, a.interestingness-moderately-played {
+    background-color: #eee;
 }
 
 /*
@@ -676,18 +684,6 @@ table.with-marginalia.footable-details {
     .timespan-table .footable-details tr:nth-child(2) th:before {
         content: "All Time ";
     }
-}
-
-.fooicon {
-    color: #999;
-}
-
-.fooicon-minus:before {
-    content: "–";
-}
-
-.fooicon-plus:before {
-    content: "+";
 }
 
 /*
@@ -978,6 +974,17 @@ main .banner h1 {
 
 /*
 
+Charts
+
+*/
+
+.sparkline {
+    vertical-align: bottom;
+    width: 10em;
+}
+
+/*
+
 Button bars.
 
 */
@@ -1253,7 +1260,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 }
 
 /* When search wraps under the logo it needs different behavior. */
-@media only screen and (max-width: 1120px) {
+@media only screen and (max-width: 800px) {
     .search {
         float: none;
         margin-bottom: 1rem;
@@ -1266,11 +1273,6 @@ We need to override a lot of Google's inline styles hence a lot of !important.
     margin-bottom: 0 !important; /* csslint allow: important */;
 }
 
-.gsc-search-box {
-    /* Make wrap-under happen at narrower widths, and look right when it does. */
-    width: 80% !important; /* csslint allow: important */
-}
-
 .gsc-search-box td {
     /* Stop the input box text hugging the bottom. */
     vertical-align: top !important; /* ccslint allow: important */
@@ -1280,8 +1282,8 @@ We need to override a lot of Google's inline styles hence a lot of !important.
     background: transparent !important; /* csslint allow: important */
     border: 0 !important; /* csslint allow: important */
     color: #502828 !important; /* csslint allow: important */
-    max-width: 20rem !important; /* csslint allow: important */
-    width: 100% !important; /* csslint allow: important */
+    max-width: 100% !important; /* csslint allow: important */
+    width: 15rem !important; /* csslint allow: important */
 }
 
 .gsc-input {

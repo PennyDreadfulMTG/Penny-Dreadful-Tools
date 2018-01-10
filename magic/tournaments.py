@@ -49,7 +49,9 @@ def get_all_next_tournament_dates(start, index=0):
     return [pdsat_time, pds_time, pdm_time, pdt_time]
 
 def prize(d):
-    f = d.get('finish') or sys.maxsize
+    return prize_by_finish(d.get('finish') or sys.maxsize)
+
+def prize_by_finish(f):
     if f == 1:
         return 4
     elif f == 2:

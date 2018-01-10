@@ -8,9 +8,9 @@ class GenericDatabase:
     def value(self, sql, args=None, default=None, fail_on_missing=False):
         try:
             return self.values(sql, args)[0]
-        except IndexError as e:
+        except IndexError:
             if fail_on_missing:
-                raise DatabaseException('Failed to get a value from `{sql}`'.format(sql=sql)) from e
+                raise DatabaseException('Failed to get a value from `{sql}`'.format(sql=sql))
             else:
                 return default
 

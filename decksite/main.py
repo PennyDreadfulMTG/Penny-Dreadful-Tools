@@ -276,12 +276,12 @@ def do_claim():
 
 @APP.route('/rotation/changes/')
 def rotation_changes():
-    view = RotationChanges(*oracle.last_pd_rotation_changes())
+    view = RotationChanges(*oracle.last_pd_rotation_changes(), cs.playability())
     return view.page()
 
 @APP.route('/rotation/speculation/')
 def rotation_speculation():
-    view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), speculation=True)
+    view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), cs.playability(), speculation=True)
     return view.page()
 
 # Admin

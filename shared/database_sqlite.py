@@ -13,8 +13,8 @@ class SqliteDatabase(GenericDatabase):
             self.connection.enableloadextension(True)
             self.connection.loadextension(configuration.get('spellfix'))
             self.cursor = self.connection.cursor()
-        except apsw.Error as e:
-            raise DatabaseException('Failed to initialize database in `{location}`'.format(location=location)) from e
+        except apsw.Error:
+            raise DatabaseException('Failed to initialize database in `{location}`'.format(location=location))
 
     def execute(self, sql, args=None):
         sql = sql.replace('MEDIUMINT UNSIGNED', 'INTEGER') # Column type difference.
@@ -34,7 +34,7 @@ class SqliteDatabase(GenericDatabase):
                 self.execute("ROLLBACK")
                 if sql == "BEGIN TRANSACTION":
                     return self.cursor.execute(sql, args).fetchall()
-            raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e)) from e
+            raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
 
     def insert(self, sql, args=None):
         self.execute(sql, args)

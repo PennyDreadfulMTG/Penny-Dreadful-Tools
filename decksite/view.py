@@ -180,7 +180,7 @@ class View:
 
     def prepare_card(self, c):
         c.url = '/cards/{id}/'.format(id=c.name)
-        c.img_url = 'http://magic.bluebones.net/proxies/index2.php?c={name}'.format(name=urllib.parse.quote(c.name))
+        c.img_url = 'https://api.scryfall.com/cards/named?exact={name}&format=image'.format(name=urllib.parse.quote(c.name))
         c.card_img_class = 'two-faces' if c.layout in ['double-faced', 'meld'] else ''
         c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
         c.legal_formats = set([k for k, v in c.legalities.items() if v != 'Banned'])

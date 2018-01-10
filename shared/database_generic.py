@@ -10,7 +10,7 @@ class GenericDatabase:
             return self.values(sql, args)[0]
         except IndexError as e:
             if fail_on_missing:
-                raise DatabaseException('Failed to get a value from `{sql}`'.format(sql=sql)) from e
+                raise DatabaseException('Failed to get a value from `{sql}`'.format(sql=sql))
             else:
                 return default
 

@@ -6,7 +6,7 @@ def exactly_one(l):
     try:
         return l[0]
     except IndexError as e:
-        raise DoesNotExistException('Did not find an item when expecting one.') from e
+        raise DoesNotExistException('Did not find an item when expecting one.')
 
 def at_most_one(l):
     if len(l) > 1:

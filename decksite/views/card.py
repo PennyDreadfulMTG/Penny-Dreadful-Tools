@@ -6,7 +6,6 @@ class Card(View):
     def __init__(self, card):
         self.card = card
         self.cards = [card]
-        #self.decks = card.decks
         self.decks = [d for d in card.decks if not d.is_in_current_run()]
         self.legal_formats = list(sorted(card.legalities.keys(), key=legality.order_score))
 

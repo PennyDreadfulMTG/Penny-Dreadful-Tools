@@ -9,6 +9,7 @@ import textwrap
 import time
 import traceback
 from typing import List
+from copy import copy
 
 import inflect
 
@@ -29,7 +30,8 @@ async def respond_to_card_names(message, bot):
         return
     queries = parse_queries(message.content)
     if len(queries) > 0:
-        cards = cards_from_queries(queries)
+        #cards = cards_from_queries(queries)
+        cards = cards_from_queries2(queries, bot)
         await bot.post_cards(cards, message.channel, message.author)
 
     matches = re.findall(r'https?://(?:www.)?tappedout.net/mtg-decks/(?P<slug>[\w-]+)/?', message.content, flags=re.IGNORECASE)
@@ -157,7 +159,7 @@ Want to contribute? Send a Pull Request."""
                 number = int(args.strip())
             except ValueError:
                 pass
-        cards = [oracle.cards_from_query(name)[0] for name in random.sample(oracle.legal_cards(), number)]
+        cards = [oracle.cards_by_name()[name] for name in random.sample(oracle.legal_cards(), number)]
         await bot.post_cards(cards, channel)
 
     @cmd_header('Developer')
@@ -222,7 +224,7 @@ Want to contribute? Send a Pull Request."""
         rhino_name = "Siege Rhino"
         if random.random() < 0.05:
             rhino_name = "Abundant Maw"
-        rhinos.extend(oracle.cards_from_query(rhino_name))
+        rhinos.extend([oracle.cards_by_name()[rhino_name]])
         def find_rhino(query):
             cards = complex_search('f:pd {0}'.format(query))
             if len(cards) == 0:
@@ -613,6 +615,34 @@ def cards_from_queries(queries):
             all_cards.extend(cards)
     return all_cards
 
+def copy_with_mode(cards, result, mode):
+    c = copy(cards[result['name']])
+    c['mode'] = mode
+    c['relevant'] = result.get('relevant', None)
+    return c
+
+def mode_and_aliasing(query):
+    mode = 0
+    if query.startswith('$'):
+        mode = '$'
+        query = query[1:]
+    # If we searched for an alias, change query so we can find the card in the results.
+    for alias, name in fetcher.card_aliases():
+        if query == card.canonicalize(alias):
+            query = name
+    return [mode, query]
+
+
+def cards_from_queries2(queries, bot):
+    cards = oracle.cards_by_name()
+    all_cards = []
+    for query in queries:
+        mode, query = mode_and_aliasing(query)
+        results = bot.searcher.search(query)
+        if len(results) > 0:
+            all_cards.extend([copy_with_mode(cards, result, mode) for result in results])
+    return all_cards
+
 def complex_search(query):
     if query == '':
         return []
@@ -626,7 +656,9 @@ def simplify_string(s):
     return re.sub(r'[\W_]+', '', s).lower()
 
 async def single_card_or_send_error(bot, channel, args, author):
-    cards = list(oracle.cards_from_query(args))
+    cards = cards_from_queries2([args], bot)
+    if len(cards) > 1 and cards[0]['relevant']:
+        cards = cards[0:1]
     if len(cards) > 1:
         await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
     elif len(cards) == 1:

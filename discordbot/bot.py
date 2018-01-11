@@ -10,16 +10,19 @@ from magic import multiverse
 from magic import tournaments
 from shared import configuration, dtutil
 from shared.pd_exception import InvalidDataException
+from shared.whoosh_search import WhooshSearcher
 
 class Bot:
     def __init__(self):
         self.client = discord.Client()
         self.voice = None
+        self.searcher = None
 
     def init(self):
         multiverse.init()
         multiverse.update_bugged_cards()
         oracle.init()
+        self.searcher = WhooshSearcher()
         self.client.run(configuration.get('token'))
 
     async def on_ready(self):

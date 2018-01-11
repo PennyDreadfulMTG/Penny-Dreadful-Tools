@@ -3,21 +3,28 @@
     <thead>
         <tr>
             <td></td>
-            <th class="legend" colspan="{{#hide_num_decks}}2{{/hide_num_decks}}{{^hide_num_decks}}3{{/hide_num_decks}}" data-sortInitialOrder="desc">This Season</th>
-            <th class="legend" colspan="{{#hide_num_decks}}2{{/hide_num_decks}}{{^hide_num_decks}}3{{/hide_num_decks}}" data-sortInitialOrder="desc">All Time</th>
+            <!-- BAKERT we've messed up the css fritznig with ALL TIME and SEASON, now -->
+            <th class="legend" colspan="{{#hide_num_decks}}5{{/hide_num_decks}}{{^hide_num_decks}}6{{/hide_num_decks}}" data-sortInitialOrder="desc">This Season</th>
+            <th class="legend" colspan="{{#hide_num_decks}}5{{/hide_num_decks}}{{^hide_num_decks}}6{{/hide_num_decks}}" data-sortInitialOrder="desc">All Time</th>
         </tr>
         <tr>
             <th data-lockedorder="asc">Archetype</th>
             {{^hide_num_decks}}
-                <th data-breakpoints="xs" data-sortInitialOrder="desc"># Decks</th>
+                <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc"># Decks</th>
             {{/hide_num_decks}}
             <th data-sortInitialOrder="desc">Record</th>
-            <th data-breakpoints="xs" class="divider" data-sortInitialOrder="desc">Win %</th>
+            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">Win %</th>
+            <th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">①</th>
+            <th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">⑧</th>
+            <th class="divider n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">5-0s</th>
             {{^hide_num_decks}}
-                <th data-breakpoints="xs sm md" data-sortInitialOrder="desc"># Decks</th>
+                <th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc"># Decks</th>
             {{/hide_num_decks}}
-            <th data-breakpoints="xs" data-sortInitialOrder="desc">Record</th>
-            <th data-breakpoints="xs sm md" data-sortInitialOrder="desc">Win %</th>
+            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">Record</th>
+            <th class="n"data-breakpoints="xs sm md" data-sortInitialOrder="desc">Win %</th>
+            <th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">①</th>
+            <th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">⑧</th>
+            <th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">5-0s</th>
             {{! Empty column to hold the toggle when footable kicks in.}}
             <td></td>
         </tr>
@@ -32,12 +39,18 @@
                             <td class="n">{{season_num_decks}}</td>
                         {{/hide_num_decks}}
                         <td class="n">{{#season_show_record}}{{season_wins}}–{{season_losses}}{{#season_draws}}–{{season_draws}}{{/season_draws}}{{/season_show_record}}</td>
-                        <td class="n divider">{{#season_show_record}}{{season_win_percent}}{{/season_show_record}}</td>
+                        <td class="n">{{#season_show_record}}{{season_win_percent}}{{/season_show_record}}</td>
+                        <td class="n">{{#season_tournament_top8s}}{{season_tournament_wins}}{{/season_tournament_top8s}}</td>
+                        <td class="n">{{#season_tournament_top8s}}{{season_tournament_top8s}}{{/season_tournament_top8s}}</td>
+                        <td class="n divider">{{#season_perfect_runs}}{{season_perfect_runs}}{{/season_perfect_runs}}</td>
                         {{^hide_num_decks}}
                             <td class="n">{{all_num_decks}}</td>
                         {{/hide_num_decks}}
                         <td class="n">{{#all_show_record}}{{all_wins}}–{{all_losses}}{{#all_draws}}–{{all_draws}}{{/all_draws}}{{/all_show_record}}</td>
                         <td class="n">{{#all_show_record}}{{all_win_percent}}{{/all_show_record}}</td>
+                        <td class="n">{{#all_tournament_top8s}}{{all_tournament_wins}}{{/all_tournament_top8s}}</td>
+                        <td class="n">{{#all_tournament_top8s}}{{all_tournament_top8s}}{{/all_tournament_top8s}}</td>
+                        <td class="n">{{#all_perfect_runs}}{{all_perfect_runs}}{{/all_perfect_runs}}</td>
                         {{! Empty column to hold the toggle when footable kicks in.}}
                         <td></td>
                     </tr>

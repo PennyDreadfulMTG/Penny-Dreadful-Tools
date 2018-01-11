@@ -373,6 +373,9 @@ def nwdl_select(prefix='', additional_clause='TRUE'):
         SUM(CASE WHEN {additional_clause} THEN wins ELSE 0 END) AS `{prefix}wins`,
         SUM(CASE WHEN {additional_clause} THEN losses ELSE 0 END) AS `{prefix}losses`,
         SUM(CASE WHEN {additional_clause} THEN draws ELSE 0 END) AS `{prefix}draws`,
+        SUM(CASE WHEN {additional_clause} AND wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS {prefix}perfect_runs,
+        SUM(CASE WHEN {additional_clause} AND dsum.finish = 1 THEN 1 ELSE 0 END) AS `{prefix}tournament_wins`,
+        SUM(CASE WHEN {additional_clause} AND dsum.finish <= 8 THEN 1 ELSE 0 END) AS `{prefix}tournament_top8s`,
         IFNULL(ROUND((SUM(CASE WHEN {additional_clause} THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN {additional_clause} THEN wins + losses ELSE 0 END), 0)) * 100, 1), '') AS `{prefix}win_percent`
     """.format(prefix=prefix, additional_clause=additional_clause)
 
@@ -392,6 +395,7 @@ def nwdl_join():
                 SELECT
                     d.id,
                     d.created_date,
+                    d.finish,
                     SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins, -- IFNULL so we still count byes as wins.
                     SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
                     SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws

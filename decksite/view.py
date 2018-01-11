@@ -1,4 +1,5 @@
 import datetime
+import html
 import urllib
 from collections import Counter
 
@@ -48,6 +49,15 @@ class View:
             n = len(deck.load_decks('NOT d.reviewed'))
             if n > 0:
                 archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
+        rotation_submenu = []
+        if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7) or (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
+            rotation_submenu += [{'name': 'Rotation Tracking', 'url': url_for('rotation')}]
+        rotation_submenu += [
+            {'name': 'Rotation Changes', 'url': url_for('rotation_changes')},
+            {'name': 'Rotation Speculation', 'url': url_for('rotation_speculation')},
+            {'name': 'External Links', 'url': url_for('resources')},
+            {'name': 'Log Out', 'url': url_for('logout')}
+        ]
         menu = [
             {'name': 'Metagame', 'url': url_for('home'), 'badge': archetypes_badge, 'submenu': [
                 {'name': 'Latest Decks', 'url': url_for('decks')},
@@ -70,16 +80,7 @@ class View:
                 {'name': 'Gatherling', 'url': 'http://gatherling.com/'},
                 {'name': 'Hosting', 'url': url_for('hosting')}
             ]},
-            {'name': 'Resources', 'url': url_for('resources'), 'submenu': [
-                {'name': 'Links', 'url': url_for('resources')},
-                {'name': 'Log Out', 'url': url_for('logout')}
-            ]}
-        ]
-        if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7):
-            menu += [{'name': 'Rotation', 'url': url_for('rotation')}]
-        elif (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
-            menu += [{'name': 'Supplemental Rotation', 'url': url_for('rotation')}]
-        menu += [
+            {'name': 'Resources', 'url': url_for('resources'), 'submenu': rotation_submenu},
             {'name': 'About', 'url': url_for('about'), 'submenu': [
                 {'name': 'What is Penny Dreadful?', 'url': url_for('about')},
                 {'name': 'About pennydreadfulmagic.com', 'url': url_for('about_pdm')}
@@ -208,6 +209,12 @@ class View:
             c.ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
             c.date_sort = dtutil.dt2ts(c.start_date)
             c.league = True if c.type == 'League' else False
+            title_safe = ''
+            for k, v in c.base_archetypes_data().items():
+                if v > 0:
+                    title_safe += '{v} {k}<br>'.format(v=v, k=html.escape(k))
+            c.archetypes_sparkline_chart_title_safe = title_safe
+            c.archetypes_sparkline_chart_url = url_for('archetype_sparkline_chart', competition_id=c.id)
 
     def prepare_people(self):
         for p in getattr(self, 'people', []):
@@ -298,7 +305,7 @@ def set_stars_and_top8(d):
     elif d.finish == 3:
         d.top8_safe = '<span title="Losing Semifinalist">④</span>'
         d.stars_safe = '★★'
-    elif d.finish == 5 and d.stage_reached > 0: # Don't show ⑧ for fifth place in a top 4 tournament.
+    elif d.finish == 5 and d.get('stage_reached', 0) > 0: # Don't show ⑧ for fifth place in a top 4 tournament.
         d.top8_safe = '<span title="Losing Quarterfinalist">⑧</span>'
         d.stars_safe = '★'
     else:

@@ -36,6 +36,13 @@ class Tournaments(View):
         p = inflect.engine()
         self.num_tournaments = p.number_to_words(len(self.tournaments))
         self.bugs_url = url_for('bugs')
+        self.prizes, finish = [], 1
+        while True:
+            prize = tournaments.prize_by_finish(finish)
+            if not prize:
+                break
+            self.prizes.append({'finish': p.ordinal(finish), 'prize': prize})
+            finish += 1
 
     def subtitle(self):
         return 'Tournaments'

@@ -1,4 +1,4 @@
-from flask import url_for
+from flask import session, url_for
 import inflect
 import titlecase
 
@@ -109,6 +109,8 @@ class Deck(View):
             return True
         if self.logged_person_id is None:
             return False
+        if session.get('admin'):
+            return True
         if self.logged_person_id != self._deck.person_id:
             return False
         return True

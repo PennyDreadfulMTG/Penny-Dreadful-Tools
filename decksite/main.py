@@ -274,17 +274,15 @@ def do_claim():
         return redirect(url_for('signup'))
     return retire(form)
 
-
 @APP.route('/rotation/changes/')
 def rotation_changes():
-    view = RotationChanges(*oracle.last_pd_rotation_changes())
+    view = RotationChanges(*oracle.last_pd_rotation_changes(), cs.playability())
     return view.page()
 
 @APP.route('/rotation/speculation/')
 def rotation_speculation():
-    view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), subtitle="Rotation speculation: what rotation would look like with last week's prices")
+    view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), cs.playability(), speculation=True)
     return view.page()
-
 
 # Admin
 
@@ -434,6 +432,10 @@ def favicon(rest):
 def cmc_chart(deck_id):
     return send_file(chart.cmc(int(deck_id)))
 
+@APP.route('/charts/archetypes/<competition_id>-archetypes-sparkline.png')
+def archetype_sparkline_chart(competition_id):
+    return send_file(chart.archetypes_sparkline(int(competition_id)))
+
 @APP.route('/legal_cards.txt')
 def legal_cards():
     if os.path.exists('legal_cards.txt'):
@@ -452,7 +454,7 @@ def internal_server_error(e):
     traceback.print_exception(e, e, None)
     path = request.path
     try:
-        repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports')
+        repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports', exception=e)
     except GithubException:
         print("Github error")
     view = InternalServerError(e)

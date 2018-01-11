@@ -25,7 +25,7 @@ def init():
         reindex()
 
 def layouts():
-    return ['normal', 'meld', 'split', 'phenomenon', 'token', 'vanguard', 'double-faced', 'plane', 'flip', 'scheme', 'leveler', 'aftermath']
+    return {'normal': True, 'meld': True, 'split': True, 'phenomenon': False, 'token': False, 'vanguard': False, 'double-faced': True, 'plane': False, 'flip': True, 'scheme': False, 'leveler': True, 'aftermath': True}
 
 def cached_base_query(where='(1 = 1)'):
     return 'SELECT * FROM _cache_card AS c WHERE {where}'.format(where=where)
@@ -132,8 +132,8 @@ def update_database(new_version):
 
 def check_layouts():
     rs = db().execute('SELECT DISTINCT layout FROM card')
-    if sorted([row['layout'] for row in rs]) != sorted(layouts()):
-        print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid. Comparing {old} with {new}.'.format(old=sorted(layouts()), new=sorted([row['layout'] for row in rs])))
+    if sorted([row['layout'] for row in rs]) != sorted(layouts().keys()):
+        print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid. Comparing {old} with {new}.'.format(old=sorted(layouts().keys()), new=sorted([row['layout'] for row in rs])))
 
 def update_fuzzy_matching():
     format_id = get_format_id('Penny Dreadful', True)

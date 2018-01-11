@@ -7,16 +7,18 @@
             <th>Competition</th>
             <th class="n" data-breakpoints="xs">Entries</th>
             <th data-breakpoints="xs">Date</th>
+            <th data-breakpoints="sm">Metagame</th>
             {{! Empty column to hold the toggle when footable kicks in. }}
             <td></td>
         </thead>
         <tbody>
-                {{#competitions}}
+            {{#competitions}}
                 {{#num_decks}}
                     <tr>
                         <td><a href="{{competition_url}}">{{{name}}}</a></td>
                         <td class="n"><a href="{{competition_url}}">{{{num_decks}}}</a></td>
                         <td data-text="{{date_sort}}"><a href="{{competition_url}}">{{{display_date}}}</a></td>
+                        <td data-breakpoints="xs sm"><a href="{{competition_url}}"><img class="sparkline" title="{{{archetypes_sparkline_chart_title_safe}}}" src="{{archetypes_sparkline_chart_url}}"></a></td>
                         {{! Empty column to hold the toggle when footable kicks in. }}
                         <td></td>
                     </tr>

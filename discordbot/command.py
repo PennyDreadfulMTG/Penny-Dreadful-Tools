@@ -346,7 +346,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def modobug(self, bot, channel, args, author):
-        """Report an MTGO bug."""
+        """Report a Magic Online bug."""
         await bot.client.send_typing(channel)
         issue = repo.create_issue(args, author, 'Discord', 'PennyDreadfulMTG/modo-bugs')
         if issue is None:
@@ -459,6 +459,17 @@ Want to contribute? Send a Pull Request."""
                 }
 
             ],
+            'deckbuilding': [
+                """
+                The best way to build decks is to use a search engine that supports Penny Dreadful legality (`f:pd`) like Scryfall.
+                You can find Penny Dreadful decklists from tournaments, leagues and elsewhere at pennydreadfulmagic.com.
+                """,
+                {
+                    'Scryfall': 'https://scryfall.com/',
+                    'Latest Decks': fetcher.decksite_url('/'),
+                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt'
+                }
+            ],
             'decklists': [
                 """
                 You can find Penny Dreadful decklists from tournaments, leagues and elsewhere at pennydreadfulmagic.com
@@ -542,7 +553,7 @@ Want to contribute? Send a Pull Request."""
             ],
             'tournament': [
                 """
-                We have {num_tournaments} free-to-enter weekly tournaments with prizes from Card Hoarder.
+                We have {num_tournaments} free-to-enter weekly tournaments with prizes from Cardhoarder.
                 They are hosted on gatherling.com along with a lot of other player-run Magic Online events.
                 """.format(num_tournaments=num_tournaments),
                 {

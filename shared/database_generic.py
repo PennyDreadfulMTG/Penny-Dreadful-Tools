@@ -1,11 +1,12 @@
+from typing import Any, List
 from shared.pd_exception import DatabaseException
 
 class GenericDatabase:
 
-    def execute(self, sql, args=None):
+    def execute(self, sql: str, args: Any = None) -> List[Any]:
         raise NotImplementedError()
 
-    def value(self, sql, args=None, default=None, fail_on_missing=False):
+    def value(self, sql: str, args: Any = None, default: Any = None, fail_on_missing: bool = False) -> Any:
         try:
             return self.values(sql, args)[0]
         except IndexError:
@@ -14,21 +15,21 @@ class GenericDatabase:
             else:
                 return default
 
-    def values(self, sql, args=None):
+    def values(self, sql: str, args: Any = None) -> List[Any]:
         rs = self.execute(sql, args)
         return [list(row.values())[0] for row in rs]
 
-    def insert(self, sql, args=None):
+    def insert(self, sql: str, args: Any = None) -> int:
         raise NotImplementedError()
 
     # pylint: disable=no-self-use
-    def is_mysql(self):
+    def is_mysql(self) -> bool:
         return False
 
     # pylint: disable=no-self-use
-    def is_sqlite(self):
+    def is_sqlite(self) -> bool:
         return False
 
     # pylint: disable=no-self-use
-    def supports_lock(self):
+    def supports_lock(self) -> bool:
         return False

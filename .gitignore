@@ -26,3 +26,4 @@ decksite/images/*-cmc.png
 my_doodle.py
 /images/charts/*-cmc.png
 /.mypy_cache/
+whoosh_index/

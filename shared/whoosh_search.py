@@ -25,7 +25,7 @@ class WhooshSearcher():
 
 def tag_first_if_relevant(results):
     if len(results) == 0:
-        return;
+        return
     if len(results) == 1:
         results[0]['relevant'] = True
         return

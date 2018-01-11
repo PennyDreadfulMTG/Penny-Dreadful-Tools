@@ -47,13 +47,7 @@ def valid_name(name):
         for k in CARDS_BY_NAME:
             if canonicalized == card.canonicalize(k):
                 return k
-        try:
-            cards = cards_from_query(name, 20)
-            if len(cards) > 1:
-                raise InvalidDataException('Found more than one card looking for `{name}`'.format(name=name))
-            return cards[0].name
-        except IndexError:
-            raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
+    raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
 
 def load_card(name):
     return CARDS_BY_NAME.get(name, load_cards([name])[0])

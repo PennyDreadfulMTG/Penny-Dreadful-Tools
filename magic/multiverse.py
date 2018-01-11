@@ -6,6 +6,7 @@ from magic import card, database, fetcher, rotation
 from magic.database import db
 from shared import dtutil
 from shared.database import sqlescape
+from shared.whoosh_write import WhooshWriter
 
 # Database setup for the magic package. Mostly internal. To interface with what the package knows about magic cards use the `oracle` module.
 
@@ -21,6 +22,7 @@ def init():
         update_database(current_version)
         set_legal_cards()
         update_cache()
+        reindex()
 
 def layouts():
     return ['normal', 'meld', 'split', 'phenomenon', 'token', 'vanguard', 'double-faced', 'plane', 'flip', 'scheme', 'leveler', 'aftermath']
@@ -108,13 +110,13 @@ def update_database(new_version):
         if c.get('layout') == 'meld' and c.get('name') == c.get('names')[2]:
             melded_faces.append(c)
         else:
-            insert_card(c)
+            insert_card(c, update_index=False)
     for face in melded_faces:
-        insert_card(face)
+        insert_card(face, update_index=False)
         first, second = face['names'][0:2]
         face['names'][0] = second
         face['names'][1] = first
-        insert_card(face)
+        insert_card(face, update_index=False)
     sets = fetcher.all_sets()
     for _, s in sets.items():
         insert_set(s)
@@ -179,7 +181,7 @@ def update_pd_legality():
             break
         set_legal_cards(season=s)
 
-def insert_card(c):
+def insert_card(c, update_index=True):
     name = card_name(c)
     try:
         card_id = CARD_IDS[name]
@@ -226,6 +228,10 @@ def insert_card(c):
     for info in c.get('legalities', []):
         format_id = get_format_id(info['format'], True)
         db().execute('INSERT INTO card_legality (card_id, format_id, legality) VALUES (?, ?, ?)', [card_id, format_id, info['legality']])
+    if update_index:
+        writer = WhooshWriter()
+        c['id'] = c['cardId']
+        writer.update_card(c)
 
 def insert_set(s) -> None:
     sql = 'INSERT INTO `set` ('
@@ -285,6 +291,10 @@ def update_cache():
     db().execute(db().create_index_query('idx_name_name', '_cache_card', 'name', prefix_width=142))
     db().commit()
 
+def reindex():
+    writer = WhooshWriter()
+    writer.rewrite_index(get_all_cards())
+
 def database2json(propname: str) -> str:
     if propname == "system_id":
         propname = "id"
@@ -333,3 +343,7 @@ def add_hardcoded_cards(cards):
         "rarity": "Rare"
     }
     return cards
+
+def get_all_cards():
+    rs = db().execute(cached_base_query())
+    return [card.Card(r) for r in rs]

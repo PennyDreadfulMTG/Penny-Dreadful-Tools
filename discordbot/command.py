@@ -636,9 +636,12 @@ def mode_and_aliasing(query):
 def cards_from_queries2(queries, bot):
     cards = oracle.cards_by_name()
     all_cards = []
-    for query in queries:
+    for query in [card.canonicalize(q) for q in queries]:
         mode, query = mode_and_aliasing(query)
         results = bot.searcher.search(query)
+        for result in results:
+            if card.canonicalize(result.name) == query:
+                results = [result]
         if len(results) > 0:
             all_cards.extend([copy_with_mode(cards, result, mode) for result in results])
     return all_cards

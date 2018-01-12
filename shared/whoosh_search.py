@@ -1,4 +1,3 @@
-import itertools
 from whoosh.index import open_dir
 from whoosh.query import And, FuzzyTerm, Or, Term
 
@@ -13,11 +12,12 @@ class WhooshSearcher():
 
     def search(self, w):
         normalized = list(WhooshConstants.normalized_analyzer(w))[0].text
+        query_exact = Term('name_exact', normalized)
         query_normalized = fuzzy_term(normalized, self.DIST, "normalized")
         terms = [Term('name_stemmed', q.text) for q in WhooshConstants.stem_analyzer(w)]
         query_stemmed = And(terms)
         terms = [fuzzy_term(q.text, self.DIST, "tokenized") for q in WhooshConstants.tokenized_analyzer(w)]
-        query = Or([query_normalized, query_stemmed, And(terms)])
+        query = Or([query_exact, query_normalized, query_stemmed, And(terms)])
         with self.ix.searcher() as searcher:
             results = [Container({'name':r['name'], 'score':r.score}) for r in searcher.search(query, limit=40)]
             tag_first_if_relevant(results)
@@ -30,11 +30,8 @@ def tag_first_if_relevant(results):
         results[0]['relevant'] = True
         return
     scores = [el['score'] for el in results]
-    a, b = itertools.tee(scores)
-    next(b, None)
-    diffs = [(i1 - i2) for i1, i2 in zip(a, b)]
-    average = sum(diffs) / len(diffs)
-    if diffs[0] / average >= 2:
+    average = sum(scores[1:]) / (len(scores) - 1)
+    if average > 0 and scores[0] / average >= 2:
         results[0]['relevant'] = True
 
 def fuzzy_term(q, dist, field_suffix):

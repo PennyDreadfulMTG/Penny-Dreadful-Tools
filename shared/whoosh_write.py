@@ -6,7 +6,7 @@ from shared.whoosh_constants import WhooshConstants
 
 class WhooshWriter():
     def __init__(self):
-        self.schema = Schema(id=NUMERIC(unique=True, stored=True), name=STORED(), name_tokenized=TEXT(stored=False, analyzer=WhooshConstants.tokenized_analyzer), name_normalized=TEXT(stored=False, analyzer=WhooshConstants.normalized_analyzer), name_stemmed=TEXT(stored=False, analyzer=WhooshConstants.stem_analyzer))
+        self.schema = Schema(id=NUMERIC(unique=True, stored=True), name=STORED(), name_exact=TEXT(stored=True, analyzer=WhooshConstants.normalized_analyzer, field_boost=10.0), name_tokenized=TEXT(stored=False, analyzer=WhooshConstants.tokenized_analyzer), name_normalized=TEXT(stored=False, analyzer=WhooshConstants.normalized_analyzer), name_stemmed=TEXT(stored=False, analyzer=WhooshConstants.stem_analyzer))
 
     def rewrite_index(self, cards):
         print("Rewriting index in {d}".format(d=WhooshConstants.index_dir))
@@ -29,6 +29,7 @@ def update_index(index, cards):
         document = {}
         document['id'] = card['id']
         document['name'] = card['name']
+        document['name_exact'] = card['name']
         document['name_tokenized'] = card['name']
         document['name_normalized'] = card['name']
         document['name_stemmed'] = card['name']

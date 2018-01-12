@@ -37,7 +37,8 @@ DEFAULTS = {
     'tournament_channel_id': '207281932214599682',
     'web_cache': '.web_cache',
     'cse_api_key': None,
-    'cse_engine_id': None
+    'cse_engine_id': None,
+    'whoosh_index_dir': 'whoosh_index'
 }
 
 def get(key: str) -> str:

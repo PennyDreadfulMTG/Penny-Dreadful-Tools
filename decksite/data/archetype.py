@@ -1,3 +1,5 @@
+import sys
+
 from anytree import NodeMixin
 import titlecase
 
@@ -8,6 +10,8 @@ from shared.pd_exception import DoesNotExistException, TooManyItemsException
 
 from decksite.data import deck
 from decksite.database import db
+
+BASE_ARCHETYPES = {}
 
 def load_archetype(archetype):
     try:
@@ -42,10 +46,21 @@ def load_archetypes(where='1 = 1', merge=False):
         archetype.all_wins = archetype.get('all_wins', 0) + (d.get('all_wins') or 0)
         archetype.all_losses = archetype.get('all_losses', 0) + (d.get('all_losses') or 0)
         archetype.all_draws = archetype.get('all_draws', 0) + (d.get('all_draws') or 0)
+        if d.get('finish') == 1:
+            archetype.all_tournament_wins = archetype.get('all_tournament_wins', 0) + 1
+        if (d.get('finish') or sys.maxsize) <= 8:
+            archetype.all_top8s = archetype.get('all_top8s', 0) + 1
+            archetype.all_perfect_runs = archetype.get('all_perfect_runs', 0) + 1
         if d.created_date >= rotation.last_rotation():
             archetype.season_wins = archetype.get('season_wins', 0) + (d.get('season_wins') or 0)
             archetype.season_losses = archetype.get('season_losses', 0) + (d.get('season_losses') or 0)
             archetype.season_draws = archetype.get('season_draws', 0) + (d.get('season_draws') or 0)
+            if d.get('finish') == 1:
+                archetype.season_tournament_wins = archetype.get('season_tournament_wins', 0) + 1
+            if (d.get('finish') or sys.maxsize) <= 8:
+                archetype.season_top8s = archetype.get('season_top8s', 0) + 1
+            if d.source_name == 'League' and d.wins >= 5 and d.losses == 0:
+                archetype.season_perfect_runs = archetype.get('season_all_perfect_runs', 0) + 1
         archetypes[key] = archetype
     archetypes = list(archetypes.values())
     return archetypes
@@ -155,6 +170,19 @@ def move(archetype_id, parent_id):
     """
     db().execute(add_sql, [archetype_id, parent_id])
     db().commit()
+
+def base_archetypes():
+    return [a for a in load_archetypes_deckless() if a.parent is None]
+
+def base_archetype_by_id():
+    if len(BASE_ARCHETYPES) == 0:
+        archetypes_by_id = {a.id: a for a in load_archetypes_deckless()}
+        for k, v in archetypes_by_id.items():
+            p = v
+            while p.parent is not None:
+                p = p.parent
+            BASE_ARCHETYPES[k] = p
+    return BASE_ARCHETYPES
 
 class Archetype(Container, NodeMixin):
     pass

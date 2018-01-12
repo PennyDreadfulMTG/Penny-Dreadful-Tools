@@ -25,7 +25,7 @@ class Archetype(View):
             self.prepare_archetype(m, matchup_archetypes)
         # Storing this in matchups_container like this lets us include two different archetype trees on the same page without collision.
         self.matchups_container = [{
-            'hide_num_decks': True,
+            'is_matchups': True,
             'roots': [m for m in matchup_archetypes if m.is_root],
         }]
 

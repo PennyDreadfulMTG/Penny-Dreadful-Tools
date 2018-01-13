@@ -1,5 +1,5 @@
 import sys
-from typing import List
+from typing import Dict, List
 
 from anytree import NodeMixin
 import titlecase
@@ -11,8 +11,10 @@ from shared.pd_exception import DoesNotExistException, TooManyItemsException
 
 from decksite.data import deck
 from decksite.database import db
+class Archetype(Container, NodeMixin):
+    pass
 
-BASE_ARCHETYPES = {}
+BASE_ARCHETYPES: Dict[Archetype, Archetype] = {}
 
 def load_archetype(archetype):
     try:
@@ -185,6 +187,3 @@ def base_archetype_by_id():
                 p = p.parent
             BASE_ARCHETYPES[k] = p
     return BASE_ARCHETYPES
-
-class Archetype(Container, NodeMixin):
-    pass

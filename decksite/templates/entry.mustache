@@ -1,5 +1,5 @@
 <li>
-    <a href="{{card.url}}" class="{{^card.pd_legal}}illegal{{/card.pd_legal}} card {{#first_time}}first-time{{/first_time}}">{{#n}}{{n}} {{/n}}{{name}}</a>
+    <a href="{{card.url}}" class="card {{#interestingness}}interesting interestingness-{{interestingness}}{{/interestingness}}">{{#n}}{{n}} {{/n}}{{name}}</a>{{^card.pd_legal}}<span class="illegal"></span>{{/card.pd_legal}}
     {{#card.bugs}}
         <a href="{{card.url}}" class="bug" title="{{description}}: {{classification}}">🐞</a>
     {{/card.bugs}}

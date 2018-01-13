@@ -27,7 +27,8 @@ def create_issue(content, author, location='Discord', repo_name='PennyDreadfulMT
             Person: {id}
             User-Agent: {user_agent}
             Referrer: {referrer}
-        """.format(method=request.method, full_path=request.full_path, cookies=request.cookies, endpoint=request.endpoint, view_args=request.view_args, id=session.get('id', 'logged_out'), user_agent=request.headers.get('User-Agent'), referrer=request.referrer))
+            Request Data: {safe_data}
+        """.format(method=request.method, full_path=request.full_path, cookies=request.cookies, endpoint=request.endpoint, view_args=request.view_args, id=session.get('id', 'logged_out'), user_agent=request.headers.get('User-Agent'), referrer=request.referrer, safe_data=str(safe_data(request.form))))
     if exception:
         body += '--------------------------------------------------------------------------------\n'
         stack = traceback.extract_stack()[:-3] + traceback.extract_tb(exception.__traceback__)
@@ -41,3 +42,10 @@ def create_issue(content, author, location='Discord', repo_name='PennyDreadfulMT
     git_repo = g.get_repo(repo_name)
     issue = git_repo.create_issue(title=title, body=body)
     return issue
+
+def safe_data(data):
+    safe = {}
+    for k, v in data.items():
+        if 'oauth' not in k.lower() and 'api_token' not in k.lower():
+            safe[k] = v
+    return safe

@@ -3,3 +3,6 @@ Crawl-Delay: 60
 
 User-agent: YandexBot
 Crawl-Delay: 60
+
+User-agent: Slurp
+Crawl-Delay: 60

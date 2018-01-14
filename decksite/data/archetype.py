@@ -176,7 +176,7 @@ def move(archetype_id, parent_id):
     db().commit()
 
 def base_archetypes():
-    return [a for a in load_archetypes_deckless() if a.parent is None]
+    return [a for a in base_archetype_by_id().values() if a.parent is None]
 
 def base_archetype_by_id():
     if len(BASE_ARCHETYPES) == 0:

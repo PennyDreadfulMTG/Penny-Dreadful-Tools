@@ -1,10 +1,9 @@
 import inflect
 from flask import url_for
 
-from magic import tournaments
-
 from decksite.data import competition
 from decksite.view import View
+from magic import tournaments
 
 # pylint: disable=no-self-use
 class Tournaments(View):
@@ -33,16 +32,9 @@ class Tournaments(View):
                 shown_end = True
             elif end_date:
                 t.league = {'class': 'ongoing', 'display': False}
-        p = inflect.engine()
-        self.num_tournaments = p.number_to_words(len(self.tournaments))
+        self.num_tournaments = inflect.engine().number_to_words(len(self.tournaments))
         self.bugs_url = url_for('bugs')
-        self.prizes, finish = [], 1
-        while True:
-            prize = tournaments.prize_by_finish(finish)
-            if not prize:
-                break
-            self.prizes.append({'finish': p.ordinal(finish), 'prize': prize})
-            finish += 1
+        self.prizes = tournaments.prizes_by_finish()
 
     def subtitle(self):
         return 'Tournaments'

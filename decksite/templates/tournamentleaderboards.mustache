@@ -29,3 +29,24 @@
         </table>
     </section>
 {{/series}}
+<section>
+    <h2>Prizes</h2>
+    {{> spinner}}
+    <table>
+        <thead>
+            <tr>
+                <th class="n">Finish</th>
+                <th class="n">Prize</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#prizes}}
+                <tr>
+                    <td class="n">{{finish}}</td>
+                    <td class="n">{{prize}} tix</td>
+                </tr>
+            {{/prizes}}
+        </tbody>
+    </table>
+    <p>Prizes from our sponsor <a class="external" href="http://cardhoarder.com/">Cardhoarder</a> in credit.</p>
+</section>

@@ -1,4 +1,5 @@
 import sys
+from typing import Dict, List
 
 from anytree import NodeMixin
 import titlecase
@@ -10,8 +11,10 @@ from shared.pd_exception import DoesNotExistException, TooManyItemsException
 
 from decksite.data import deck
 from decksite.database import db
+class Archetype(Container, NodeMixin):
+    pass
 
-BASE_ARCHETYPES = {}
+BASE_ARCHETYPES: Dict[Archetype, Archetype] = {}
 
 def load_archetype(archetype):
     try:
@@ -97,11 +100,12 @@ def load_archetypes_deckless(where='1 = 1', order_by='`season_num_decks` DESC, `
         a.parent = archetypes_by_id.get(a.parent_id, None)
     return archetypes
 
-def load_archetypes_deckless_for(archetype_id):
+def load_archetypes_deckless_for(archetype_id) -> List[Archetype]:
     archetypes = load_archetypes_deckless()
     for a in archetypes:
         if int(a.id) == int(archetype_id):
             return list(a.ancestors) + [a] + list(a.descendants)
+    return list()
 
 def add(name, parent):
     archetype_id = db().insert('INSERT INTO archetype (name) VALUES (?)', [name])
@@ -183,6 +187,3 @@ def base_archetype_by_id():
                 p = p.parent
             BASE_ARCHETYPES[k] = p
     return BASE_ARCHETYPES
-
-class Archetype(Container, NodeMixin):
-    pass

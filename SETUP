@@ -44,7 +44,7 @@ Note: this overwrites your existing pip and pip3 executables with the one from 3
 
   sudo apt install python3.6-dev
 
-The python3.6-dev I'm not sure it's actually required. 
+The python3.6-dev I'm not sure it's actually required.
 
   sudo apt-get install libfreetype6-dev
   sudo apt-get install libatlas-dev
@@ -71,3 +71,4 @@ you can uninstall (or in my case just plain remove) matplotlib and reinstall it 
 If you have problems with pylint (module lazy_object_proxy or wrapt not found), try installing those dependencies by hand:
   sudo pip3 install lazy_object_proxy
   sudo pip3 install wrapt
+

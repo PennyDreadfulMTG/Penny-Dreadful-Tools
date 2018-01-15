@@ -76,7 +76,7 @@ class Rotation(View):
                 'percent': percent,
                 'percent_hits_needed': percent_needed,
                 'status': status,
-                'interestingness': rotation.interesting(playability, c)
+                'interestingness': rotation.interesting(playability, c, speculation=False)
             })
             self.cards.append(c)
 

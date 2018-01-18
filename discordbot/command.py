@@ -622,27 +622,30 @@ def copy_with_mode(cards, result, mode):
     c['relevant'] = result.get('relevant', None)
     return c
 
-def mode_and_aliasing(query):
+def parse_mode(query):
     mode = 0
     if query.startswith('$'):
         mode = '$'
         query = query[1:]
-    # If we searched for an alias, change query so we can find the card in the results.
-    for alias, name in fetcher.card_aliases():
-        if query == card.canonicalize(alias):
-            query = name
     return [mode, query]
 
-
 def cards_from_queries2(queries, bot):
+    aliases = fetcher.card_aliases()
     cards = oracle.cards_by_name()
     all_cards = []
     for query in [card.canonicalize(q) for q in queries]:
-        mode, query = mode_and_aliasing(query)
-        results = bot.searcher.search(query)
+        results = []
+        mode, query = parse_mode(query)
+        for alias, name in aliases:
+            if card.canonicalize(alias) == query:
+                results = [oracle.load_card(name)]
+                break
+        if not results:
+            results = bot.searcher.search(query)
         for result in results:
             if card.canonicalize(result.name) == query:
                 results = [result]
+                break
         if len(results) > 0:
             all_cards.extend([copy_with_mode(cards, result, mode) for result in results])
     return all_cards

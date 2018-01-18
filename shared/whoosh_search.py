@@ -33,7 +33,7 @@ def tag_first_if_relevant(results):
     a, b = itertools.tee(scores)
     next(b, None)
     diffs = [(i1 - i2) for i1, i2 in zip(a, b)]
-    average = sum(diffs) / len(diffs)
+    average = sum(diffs) / (len(diffs) or 1)
     if diffs[0] / average >= 2:
         results[0]['relevant'] = True
 

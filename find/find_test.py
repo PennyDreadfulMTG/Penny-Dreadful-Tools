@@ -101,10 +101,10 @@ def test_not():
     do_test('t:creature -t:artifact t:legendary', "(type LIKE '%%creature%%') AND NOT (type LIKE '%%artifact%%') AND (type LIKE '%%legendary%%')")
 
 def test_not_cmc():
-    do_test('-cmc=2', "NOT (cmc IS NOT NULL AND cmc <> '' AND CAST(cmc AS REAL) = 2)")
+    do_test('-cmc=2', "NOT (cmc IS NOT NULL AND cmc <> '' AND cmc = 2)")
 
 def test_cmc():
-    do_test('cmc>2', "(cmc IS NOT NULL AND cmc <> '' AND CAST(cmc AS REAL) > 2)")
+    do_test('cmc>2', "(cmc IS NOT NULL AND cmc <> '' AND cmc > 2)")
 
 def test_not_text():
     do_test('o:haste NOT o:deathtouch o:trample NOT o:"first strike" o:lifelink', "(search_text LIKE '%%haste%%') AND NOT (search_text LIKE '%%deathtouch%%') AND (search_text LIKE '%%trample%%') AND NOT (search_text LIKE '%%first strike%%') AND (search_text LIKE '%%lifelink%%')")

@@ -29,6 +29,7 @@ class Rotation(View):
             self.rotation_msg = 'Supplemental rotation is ' + dtutil.display_date(rotation.next_supplemental())
         if in_rotation:
             self.read_rotation_files()
+        self.show_interesting = True
 
     def read_rotation_files(self):
         lines = []

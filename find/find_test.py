@@ -128,13 +128,13 @@ def test_parentheses():
     do_test('x OR (a OR (b AND c))', "(name_ascii LIKE '%%x%%') OR ((name_ascii LIKE '%%a%%') OR ((name_ascii LIKE '%%b%%') AND (name_ascii LIKE '%%c%%')))")
 
 def test_toughness():
-    do_test('c:r tou>2', "(c.id IN (SELECT card_id FROM card_color WHERE color_id = 4)) AND (toughness IS NOT NULL AND toughness <> '' AND CAST(toughness AS REAL) > 2)")
+    do_test('c:r tou>2', "(c.id IN (SELECT card_id FROM card_color WHERE color_id = 4)) AND (toughness IS NOT NULL AND toughness <> '' AND toughness > 2)")
 
 def test_type():
     do_test('t:"human wizard"', "(type LIKE '%%human wizard%%')")
 
 def test_power():
-    do_test('t:wizard pow<2', "(type LIKE '%%wizard%%') AND (power IS NOT NULL AND power <> '' AND CAST(power AS REAL) < 2)")
+    do_test('t:wizard pow<2', "(type LIKE '%%wizard%%') AND (power IS NOT NULL AND power <> '' AND power < 2)")
 
 def test_mana_with_other():
     do_test('t:creature mana=WW o:lifelink', "(type LIKE '%%creature%%') AND (mana_cost = '{W}{W}') AND (search_text LIKE '%%lifelink%%')")
@@ -143,13 +143,13 @@ def test_mana_alone():
     do_test('mana=2uu', "(mana_cost = '{2}{U}{U}')")
 
 def test_or_and_parentheses():
-    do_test('o:"target attacking" OR (mana=2uu AND (tou>2 OR pow>2))', "(search_text LIKE '%%target attacking%%') OR ((mana_cost = '{2}{U}{U}') AND ((toughness IS NOT NULL AND toughness <> '' AND CAST(toughness AS REAL) > 2) OR (power IS NOT NULL AND power <> '' AND CAST(power AS REAL) > 2)))")
+    do_test('o:"target attacking" OR (mana=2uu AND (tou>2 OR pow>2))', "(search_text LIKE '%%target attacking%%') OR ((mana_cost = '{2}{U}{U}') AND ((toughness IS NOT NULL AND toughness <> '' AND toughness > 2) OR (power IS NOT NULL AND power <> '' AND power > 2)))")
 
 def test_not_color():
     do_test('c:r NOT c:u', '(c.id IN (SELECT card_id FROM card_color WHERE color_id = 4)) AND NOT (c.id IN (SELECT card_id FROM card_color WHERE color_id = 2))')
 
 def test_complex():
-    do_test('c:u OR (c:g AND NOT tou>3)', "(c.id IN (SELECT card_id FROM card_color WHERE color_id = 2)) OR ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 5)) AND NOT (toughness IS NOT NULL AND toughness <> '' AND CAST(toughness AS REAL) > 3))")
+    do_test('c:u OR (c:g AND NOT tou>3)', "(c.id IN (SELECT card_id FROM card_color WHERE color_id = 2)) OR ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 5)) AND NOT (toughness IS NOT NULL AND toughness <> '' AND toughness > 3))")
 
 def test_is_hybrid():
     do_test('is:hybrid', "((mana_cost LIKE '%%/2%%') OR (mana_cost LIKE '%%/W%%') OR (mana_cost LIKE '%%/U%%') OR (mana_cost LIKE '%%/B%%') OR (mana_cost LIKE '%%/R%%') OR (mana_cost LIKE '%%/G%%'))")

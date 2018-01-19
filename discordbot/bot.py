@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import re
 
 import discord
 
@@ -9,6 +10,7 @@ from magic import oracle
 from magic import multiverse
 from magic import tournaments
 from shared import configuration, dtutil
+from shared.container import Container
 from shared.pd_exception import InvalidDataException
 from shared.whoosh_search import WhooshSearcher
 
@@ -164,13 +166,19 @@ async def on_server_join(server):
     await BOT.client.send_message(server.default_channel, "By default, I display Penny Dreadful legality. If you don't want or need that, just type `!notpenny`.")
 
 @BOT.client.event
-async def on_reaction_add(reaction, _):
+async def on_reaction_add(reaction, author):
     if reaction.message.author == BOT.client.user:
         c = reaction.count
         if reaction.me:
             c = c - 1
         if c > 0 and not reaction.custom_emoji and reaction.emoji == "❎":
             await BOT.client.delete_message(reaction.message)
+        elif c > 0 and "Ambiguous name for " in reaction.message.content and reaction.emoji in command.DISAMBIGUATION_EMOJIS_BY_NUMBER.values():
+            await BOT.client.send_typing(reaction.message.channel)
+            previous_command, suggestions = re.search(r"Ambiguous name for ([^\.]*)\. Suggestions: (.*)", reaction.message.content).group(1, 2)
+            card = re.findall(r":[^:]*?: ([^:]*) ", suggestions + " ")[command.DISAMBIGUATION_NUMBERS_BY_EMOJI[reaction.emoji]-1]
+            message = Container(content="!{c} {a}".format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[])
+            await BOT.on_message(message)
 
 async def background_task_spoiler_season():
     "Poll Scryfall for the latest 250 cards, and add them to our db if missing"

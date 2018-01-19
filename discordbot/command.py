@@ -23,6 +23,9 @@ from shared.pd_exception import TooFewItemsException
 
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10
+DISAMBIGUATION_EMOJIS = [':one:', ':two:', ':three:', ':four:', ':five:']
+DISAMBIGUATION_EMOJIS_BY_NUMBER = {1 : '1⃣', 2 : '2⃣', 3 : '3⃣', 4 : '4⃣', 5 : '5⃣'}
+DISAMBIGUATION_NUMBERS_BY_EMOJI = {'1⃣' : 1, '2⃣' : 2, '3⃣' : 3, '4⃣' : 4, '5⃣' : 5}
 
 async def respond_to_card_names(message, bot):
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
@@ -31,7 +34,13 @@ async def respond_to_card_names(message, bot):
     queries = parse_queries(message.content)
     if len(queries) > 0:
         #cards = cards_from_queries(queries)
-        cards = cards_from_queries2(queries, bot)
+        results = cards_from_queries2(queries, bot)
+        cards = []
+        for r in results:
+            if r.has_match() and not r.is_ambiguous():
+                cards.extend(cards_from_names_with_mode([r.get_best_match()], r.mode))
+            elif r.is_ambiguous():
+                cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), r.mode))
         await bot.post_cards(cards, message.channel, message.author)
 
     matches = re.findall(r'https?://(?:www.)?tappedout.net/mtg-decks/(?P<slug>[\w-]+)/?', message.content, flags=re.IGNORECASE)
@@ -49,6 +58,7 @@ async def handle_command(message, bot):
     args = ""
     if len(parts) > 1:
         args = parts[1]
+
 
     if method is not None:
         try:
@@ -257,22 +267,22 @@ Want to contribute? Send a Pull Request."""
     async def rulings(self, bot, channel, args, author):
         """`!rulings {name}` Display rulings for a card."""
         await bot.client.send_typing(channel)
-        await single_card_text(bot, channel, args, author, card_rulings)
+        await single_card_text(bot, channel, args, author, card_rulings, "rulings")
 
     @cmd_header('Commands')
     async def _oracle(self, bot, channel, args, author):
         """`!oracle {name}` Give the Oracle text of the named card."""
-        await single_card_text(bot, channel, args, author, oracle_text)
+        await single_card_text(bot, channel, args, author, oracle_text, "oracle")
 
     @cmd_header('Commands')
     async def price(self, bot, channel, args, author):
         """`!price {name}` Get price information about the named card."""
-        await single_card_text(bot, channel, args, author, fetcher.card_price_string)
+        await single_card_text(bot, channel, args, author, fetcher.card_price_string, "price")
 
     @cmd_header('Commands')
     async def legal(self, bot, channel, args, author):
         """Announce whether the specified card is legal or not."""
-        await single_card_text(bot, channel, args, author, lambda c: '')
+        await single_card_text(bot, channel, args, author, lambda c: '', "legal")
 
     @cmd_header('Commands')
     async def modofail(self, bot, channel, args, author):
@@ -439,7 +449,7 @@ Want to contribute? Send a Pull Request."""
     async def art(self, bot, channel, args, author):
         """`!art {name}` Display the art (only) of the most recent printing of the named card."""
         await bot.client.send_typing(channel)
-        c = await single_card_or_send_error(bot, channel, args, author)
+        c = await single_card_or_send_error(bot, channel, args, author, "art")
         if c is not None:
             image_file = image_fetcher.download_scryfall_image([c], image_fetcher.determine_filepath([c]) + '.art_crop.jpg', version='art_crop')
             await bot.send_image_with_retry(channel, image_file)
@@ -615,10 +625,15 @@ def cards_from_queries(queries):
             all_cards.extend(cards)
     return all_cards
 
-def copy_with_mode(cards, result, mode):
-    c = copy(cards[result['name']])
+
+
+def cards_from_names_with_mode(cards, mode):
+    oracle_cards = oracle.cards_by_name()
+    return [copy_with_mode(oracle_cards[c], mode) for c in cards if c is not None]
+
+def copy_with_mode(oracle_card, mode):
+    c = copy(oracle_card)
     c['mode'] = mode
-    c['relevant'] = result.get('relevant', None)
     return c
 
 def mode_and_aliasing(query):
@@ -626,25 +641,17 @@ def mode_and_aliasing(query):
     if query.startswith('$'):
         mode = '$'
         query = query[1:]
-    # If we searched for an alias, change query so we can find the card in the results.
-    for alias, name in fetcher.card_aliases():
-        if query == card.canonicalize(alias):
-            query = name
     return [mode, query]
 
 
 def cards_from_queries2(queries, bot):
-    cards = oracle.cards_by_name()
-    all_cards = []
-    for query in [card.canonicalize(q) for q in queries]:
+    all_results = []
+    for query in queries:
         mode, query = mode_and_aliasing(query)
-        results = bot.searcher.search(query)
-        for result in results:
-            if card.canonicalize(result.name) == query:
-                results = [result]
-        if len(results) > 0:
-            all_cards.extend([copy_with_mode(cards, result, mode) for result in results])
-    return all_cards
+        result = bot.searcher.search(query)
+        result.mode = mode
+        all_results.append(result)
+    return all_results
 
 def complex_search(query):
     if query == '':
@@ -658,19 +665,31 @@ def simplify_string(s):
     s = ''.join(s.split())
     return re.sub(r'[\W_]+', '', s).lower()
 
-async def single_card_or_send_error(bot, channel, args, author):
-    cards = cards_from_queries2([args], bot)
-    if len(cards) > 1 and cards[0]['relevant']:
-        cards = cards[0:1]
-    if len(cards) > 1:
-        await bot.client.send_message(channel, '{author}: Ambiguous name.'.format(author=author.mention))
-    elif len(cards) == 1:
-        return cards[0]
+def disambiguation(cards):
+    if len(cards) > 5:
+        return ",".join(cards)
+    return " ".join([" ".join(x) for x in zip(DISAMBIGUATION_EMOJIS, cards)])
+
+async def disambiguation_reactions(bot, message, cards):
+    for i in range(1, len(cards)+1):
+        await bot.client.add_reaction(message, DISAMBIGUATION_EMOJIS_BY_NUMBER[i])
+
+
+
+async def single_card_or_send_error(bot, channel, args, author, command):
+    result = cards_from_queries2([args], bot)[0]
+    if result.has_match() and not result.is_ambiguous():
+        return cards_from_names_with_mode([result.get_best_match()], result.mode)[0]
+
+    if result.is_ambiguous():
+        message = await bot.client.send_message(channel, '{author}: Ambiguous name for {c}. Suggestions: {s}'.format(author=author.mention, c=command, s=disambiguation(result.get_ambiguous_matches()[0:5])))
+        await disambiguation_reactions(bot, message, result.get_ambiguous_matches()[0:5])
     else:
         await bot.client.send_message(channel, '{author}: No matches.'.format(author=author.mention))
 
-async def single_card_text(bot, channel, args, author, f):
-    c = await single_card_or_send_error(bot, channel, args, author)
+# pylint: disable=too-many-arguments
+async def single_card_text(bot, channel, args, author, f, command):
+    c = await single_card_or_send_error(bot, channel, args, author, command)
     if c is not None:
         legal_emoji = emoji.legal_emoji(c)
         text = emoji.replace_emoji(f(c), bot.client)

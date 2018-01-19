@@ -73,7 +73,7 @@ class WhooshSearcher():
                 self.trie[list(WhooshConstants.normalized_analyzer(doc[1]['name']))[0].text] = doc[1]['name']
 
     def search(self, w):
-        if self.ix.up_to_date():
+        if not self.ix.up_to_date():
             self.initialize_trie() # if the index is not up to date, someone has added cards, so we reinitialize the trie
 
         # If we searched for an alias, make it the exact hit

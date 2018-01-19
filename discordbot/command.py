@@ -584,9 +584,10 @@ Want to contribute? Send a Pull Request."""
         explanations['rotation'] = explanations['legality']
         explanations['tournaments'] = explanations['tournament']
         word = args.strip()
-        for k in explanations:
-            if k.startswith(word):
-                word = k
+        if len(word) > 0:
+            for k in explanations:
+                if k.startswith(word):
+                    word = k
         try:
             s = '{text}\n'.format(text=textwrap.dedent(explanations[word][0]))
         except KeyError:

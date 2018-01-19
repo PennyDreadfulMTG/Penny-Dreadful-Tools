@@ -1,0 +1,12 @@
+
+pep8:
+  run: false
+
+pyflakes:
+  run: false
+
+vulture:
+  run: false
+
+uses:
+  - flask

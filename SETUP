@@ -30,7 +30,45 @@
 --global-option=build --global-option=--enable-all-extensions
     Note: You may need `sudo -H` here and you may or may not need the `--user` option.
 - Optionally add SELECT LOAD_EXTENSION('<path to spellfix.dylib>'); to your ~/.sqliterc
-- Optionally (for the `!google` bot command):
-    - git clone https://github.com/jarun/googler/ && cd googler && sudo make install
 
+Notes on installing Python 3.6 in Linux Mint
+
+These are the steps I needed to make to install Python 3.6 in a Linux Mint 17.1, where python 2.7 was the default:
+
+  sudo add-apt-repository ppa:jonathonf/python-3.6
+  sudo apt update
+  sudo apt install python3.6
+  curl https://bootstrap.pypa.io/ez_setup.py -o - | sudo python3.6 && sudo python3.6 -m easy_install pip
+
+Note: this overwrites your existing pip and pip3 executables with the one from 3.6.
+
+  sudo apt install python3.6-dev
+
+The python3.6-dev I'm not sure it's actually required.
+
+  sudo apt-get install libfreetype6-dev
+  sudo apt-get install libatlas-dev
+  sudo apt-get install libatlas-base-dev gfortran
+
+  pip3 install -r requirements
+
+Follow the above instructions for apsw. This installed the apsw in a .local in my home folder, and since I was doing everything with sudo, it had root permissions, which I had to fix:
+
+  sudo chown -R user:user ~/.local/lib
+
+The requests requirement might be an older version than the one needed (2.18.4), so if you need to upgrade:
+
+  sudo pip3 install -U requests
+
+I also had some problems with matplotlib and it's dynamic library link to numpy. It might have been cause I installed numpy or scipy by hand at some point, but if you get this kind of problem:
+
+  RuntimeError: module compiled against API version 0xc but this version of numpy is 0xb
+
+you can uninstall (or in my case just plain remove) matplotlib and reinstall it again with:
+
+  sudo pip3 install matplotlib
+
+If you have problems with pylint (module lazy_object_proxy or wrapt not found), try installing those dependencies by hand:
+  sudo pip3 install lazy_object_proxy
+  sudo pip3 install wrapt
 

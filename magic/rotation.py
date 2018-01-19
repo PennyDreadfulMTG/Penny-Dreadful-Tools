@@ -32,4 +32,14 @@ def parse_rotation_date(setinfo):
     setinfo['enter_date'] = dtutil.parse(setinfo['enter_date'], '%Y-%m-%dT%H:%M:%S.%fZ', dtutil.WOTC_TZ)
     return setinfo
 
+def interesting(playability, c, speculation=True, new=True):
+    if new and len({k: v for (k, v) in c['legalities'].items() if 'Penny Dreadful' in k}) == (0 if speculation else 1):
+        return 'new'
+    p = playability.get(c.name, 0)
+    if p > 0.1:
+        return 'heavily-played'
+    elif p > 0.01:
+        return 'moderately-played'
+    return None
+
 SETS = init()

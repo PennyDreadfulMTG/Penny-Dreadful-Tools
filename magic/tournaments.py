@@ -1,8 +1,9 @@
 import sys
-
 from datetime import timedelta
 from enum import Enum
+
 from dateutil import rrule
+import inflect
 
 from shared import dtutil
 from shared.container import Container
@@ -61,6 +62,16 @@ def prize_by_finish(f):
     elif f <= 8:
         return 1
     return 0
+
+def prizes_by_finish(multiplier=1):
+    prizes, finish, p = [], 1, inflect.engine()
+    while True:
+        pz = prize_by_finish(finish)
+        if not pz:
+            break
+        prizes.append({'finish': p.ordinal(finish), 'prize': pz * multiplier})
+        finish += 1
+    return prizes
 
 def all_series_info():
     info = get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))

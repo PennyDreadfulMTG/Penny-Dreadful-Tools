@@ -13,7 +13,7 @@ from shared.whoosh_write import WhooshWriter
 FORMAT_IDS: Dict[str, int] = {}
 CARD_IDS: Dict[str, int] = {}
 
-SEASONS = ['EMN', 'KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX']
+SEASONS = ['EMN', 'KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX', 'DOM']
 
 def init():
     current_version = fetcher.mtgjson_version()

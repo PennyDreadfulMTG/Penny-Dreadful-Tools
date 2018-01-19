@@ -7,6 +7,7 @@ from shared.whoosh_constants import WhooshConstants
 
 from magic import card, fetcher
 
+# pylint: disable=unused-variable
 class SearchResult():
     def __init__(self, exact, prefix_whole_word, other_prefixed, fuzzy):
         self.exact = exact

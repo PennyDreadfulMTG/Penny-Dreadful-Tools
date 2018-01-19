@@ -1,5 +1,4 @@
 anytree==2.4.3
-astroid==1.5.3
 bs4==0.0.1
 cachecontrol[filecache]==0.12.3
 coverage==4.4.2

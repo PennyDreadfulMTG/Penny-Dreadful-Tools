@@ -28,7 +28,7 @@ def legal_formats(d, formats_to_check=None, errors=None):
         errors['Commander'] = 'Incorrect deck size.'
     card_count = {}
     for c in d.all_cards():
-        if not c.type.startswith('Basic Land') and not 'A deck can have any number of cards named' in c.text:
+        if not c.type.startswith('Basic ') and not 'A deck can have any number of cards named' in c.text:
             card_count[c.name] = card_count.get(c.name, 0) + 1
     if card_count.values() and max(card_count.values()) > 4:
         for f in formats_to_check:

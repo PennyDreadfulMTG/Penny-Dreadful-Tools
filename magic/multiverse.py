@@ -13,7 +13,7 @@ from shared.whoosh_write import WhooshWriter
 FORMAT_IDS: Dict[str, int] = {}
 CARD_IDS: Dict[str, int] = {}
 
-SEASONS = ['EMN', 'KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX']
+SEASONS = ['EMN', 'KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX', 'DOM']
 
 def init():
     current_version = fetcher.mtgjson_version()
@@ -133,7 +133,7 @@ def update_database(new_version):
 def check_layouts():
     rs = db().execute('SELECT DISTINCT layout FROM card')
     if sorted([row['layout'] for row in rs]) != sorted(layouts().keys()):
-        print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid. Comparing {old} with {new}.'.format(old=sorted(layouts().keys()), new=sorted([row['layout'] for row in rs])))
+        print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid. You may also want to add it to playable_layouts. Comparing {old} with {new}.'.format(old=sorted(layouts().keys()), new=sorted([row['layout'] for row in rs])))
 
 def update_fuzzy_matching():
     format_id = get_format_id('Penny Dreadful', True)
@@ -196,7 +196,7 @@ def insert_card(c, update_index=True):
         card_id = db().last_insert_rowid()
         CARD_IDS[name] = card_id
     # mtgjson thinks the text of Jhessian Lookout is NULL not '' but that is clearly wrong.
-    if c.get('text', None) is None and c['layout'] in ['normal', 'token', 'double-faced', 'split', 'aftermath']:
+    if c.get('text', None) is None and c['layout'] in playable_layouts():
         c['text'] = ''
     c['nameAscii'] = card.unaccent(c.get('name'))
     c['searchText'] = re.sub(r'\([^\)]+\)', '', c['text'])
@@ -347,3 +347,6 @@ def add_hardcoded_cards(cards):
 def get_all_cards():
     rs = db().execute(cached_base_query())
     return [card.Card(r) for r in rs]
+
+def playable_layouts():
+    return ['normal', 'token', 'double-faced', 'split', 'aftermath']

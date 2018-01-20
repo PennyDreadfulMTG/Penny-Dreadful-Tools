@@ -4,7 +4,7 @@ cachecontrol[filecache]==0.12.3
 coverage==4.4.2
 discord.py[voice]==0.16.12
 flask==0.12.2
-google-api-python-client==1.6.4
+google-api-python-client==1.6.5
 git+https://github.com/PennyDreadfulMTG/googler.git
 inflect==0.2.5
 matplotlib==2.1.1

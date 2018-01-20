@@ -34,7 +34,7 @@ def tag_first_if_relevant(results):
     next(b, None)
     diffs = [(i1 - i2) for i1, i2 in zip(a, b)]
     try:
-        results[0]['relevant'] = (diffs[0] / (sum(diffs) / len(diffs))) >=2
+        results[0]['relevant'] = (diffs[0] / (sum(diffs) / len(diffs))) >= 2
     except ZeroDivisionError:
         pass
 

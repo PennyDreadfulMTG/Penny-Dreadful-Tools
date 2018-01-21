@@ -27,3 +27,4 @@ my_doodle.py
 /images/charts/*-cmc.png
 /.mypy_cache/
 whoosh_index/
+/monkeytype.sqlite3

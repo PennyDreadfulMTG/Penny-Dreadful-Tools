@@ -72,3 +72,4 @@ If you have problems with pylint (module lazy_object_proxy or wrapt not found), 
   sudo pip3 install lazy_object_proxy
   sudo pip3 install wrapt
 
+

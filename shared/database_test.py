@@ -6,7 +6,7 @@ from shared.pd_exception import DatabaseException
 
 
 def location():
-    return '{scratch_dir}/tmp.sqlite'.format(scratch_dir=configuration.get('scratch_dir'))
+    return 'tmp'
 
 def setup():
     db = getattr(setup, "db", None)
@@ -19,7 +19,9 @@ def setup():
 
 def teardown_function():
     try:
-        os.remove(location())
+        db = getattr(setup, "db", None)
+        if db is not None:
+            db.execute("DROP TABLE IF EXISTS x")
         setattr(setup, "db", None)
         print("Teardown removed tmp.sqlite")
     except FileNotFoundError:

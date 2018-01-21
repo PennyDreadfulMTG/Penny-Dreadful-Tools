@@ -1,8 +1,6 @@
-from shared import database_mysql, database_sqlite
+from shared import database_mysql
 
 def get_database(location):
-    if location.lower().endswith('.sqlite'):
-        return database_sqlite.SqliteDatabase(location)
     return database_mysql.MysqlDatabase(location)
 
 def sqlescape(s, force_string=False) -> str:

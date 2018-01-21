@@ -5,4 +5,4 @@ def ad_hoc():
     multiverse.init() # New Cards?
     multiverse.set_legal_cards() # PD current list
     multiverse.update_pd_legality() # PD previous lists
-    reprime_cache.ad_hoc() # Update deck legalities
+    reprime_cache.run() # Update deck legalities

@@ -12,5 +12,7 @@ def test_roughly_matches():
 def test_cards_from_queries2():
     bot = Container()
     bot.searcher = whoosh_search.WhooshSearcher()
-    assert len(command.cards_from_queries2(['bolt'], bot)) == 1
-    assert command.cards_from_queries2(['bolt'], bot)[0].name == 'Lightning Bolt'
+    result = command.cards_from_queries2(['bolt'], bot)[0]
+    assert result.has_match()
+    assert not result.is_ambiguous()
+    assert result.get_best_match() == 'Lightning Bolt'

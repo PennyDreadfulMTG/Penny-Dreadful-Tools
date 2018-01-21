@@ -1,11 +1,12 @@
 from shared.container import Container
 
 from decksite.database import db
-
+from . import elo
 USERNAME_COLUMNS = ['mtgo_username', 'tappedout_username', 'mtggoldfish_username']
 
 # Find people with identical usernames across systems and squash them together.
 def run():
+    run_elo = False
     for i in range(0, len(USERNAME_COLUMNS)):
         for j in range(i + 1, len(USERNAME_COLUMNS)):
             sql = """
@@ -17,9 +18,13 @@ def run():
             """.format(col1=USERNAME_COLUMNS[i], col2=USERNAME_COLUMNS[j])
             pairs = [Container(row) for row in db().execute(sql)]
             if len(pairs) > 0:
-                print('You will want to run maintenance task "elo" after this to correct all Elo ratings.')
+                run_elo = True
             for pair in pairs:
                 squash(pair.p1_id, pair.p2_id, pair.col1, pair.col2)
+    if run_elo:
+        print('Running maintenance task to correct all Elo ratings.')
+        elo.ad_hoc()
+
 
 def squash(p1id, p2id, col1, col2):
     print('Squashing {p1id} and {p2id} on {col1} and {col2}'.format(p1id=p1id, p2id=p2id, col1=col1, col2=col2))

@@ -233,6 +233,7 @@ def last_pd_rotation_changes():
     previous = multiverse.SEASONS[multiverse.SEASONS.index(current_code) - 1]
     previous_id = multiverse.get_format_id("Penny Dreadful {f}".format(f=previous))
     current_id = multiverse.get_format_id("Penny Dreadful")
+    print("Data: ", current_code, previous, previous_id, current_id)
     return changes_between_formats(previous_id, current_id)
 
 def changes_between_formats(f1, f2):

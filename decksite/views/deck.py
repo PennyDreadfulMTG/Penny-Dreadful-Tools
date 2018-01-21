@@ -59,12 +59,6 @@ class Deck(View):
     def og_url(self):
         return url_for('deck', deck_id=self._deck.id, _external=True)
 
-    def authenticate_url(self):
-        return url_for('authenticate', target=self.og_url())
-
-    def logout_url(self):
-        return url_for('logout', target=self.og_url())
-
     def og_description(self):
         if self.archetype_name:
             p = inflect.engine()
@@ -73,6 +67,12 @@ class Deck(View):
             archetype_s = 'A'
         description = '{archetype_s} deck by {author}'.format(archetype_s=archetype_s, author=self.person.decode('utf-8'))
         return description
+
+    def authenticate_url(self):
+        return url_for('authenticate', target=self.og_url())
+
+    def logout_url(self):
+        return url_for('logout', target=self.og_url())
 
     def __getattr__(self, attr):
         return getattr(self._deck, attr)

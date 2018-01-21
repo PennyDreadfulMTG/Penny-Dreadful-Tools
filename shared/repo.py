@@ -31,6 +31,7 @@ def create_issue(content, author, location='Discord', repo_name='PennyDreadfulMT
         """.format(method=request.method, full_path=request.full_path, cookies=request.cookies, endpoint=request.endpoint, view_args=request.view_args, id=session.get('id', 'logged_out'), user_agent=request.headers.get('User-Agent'), referrer=request.referrer, safe_data=str(safe_data(request.form))))
     if exception:
         body += '--------------------------------------------------------------------------------\n'
+        body += exception.__class__.__name__ + '\n'
         stack = traceback.extract_stack()[:-3] + traceback.extract_tb(exception.__traceback__)
         pretty = traceback.format_list(stack)
         body += 'Stack Trace:\n' + ''.join(pretty) + '\n'

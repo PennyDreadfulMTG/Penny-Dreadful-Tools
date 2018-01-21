@@ -637,18 +637,17 @@ def copy_with_mode(oracle_card, mode):
     c['mode'] = mode
     return c
 
-def mode_and_aliasing(query):
+def parse_mode(query):
     mode = 0
     if query.startswith('$'):
         mode = '$'
         query = query[1:]
     return [mode, query]
 
-
 def cards_from_queries2(queries, bot):
     all_results = []
     for query in queries:
-        mode, query = mode_and_aliasing(query)
+        mode, query = parse_mode(query)
         result = bot.searcher.search(query)
         result.mode = mode
         all_results.append(result)

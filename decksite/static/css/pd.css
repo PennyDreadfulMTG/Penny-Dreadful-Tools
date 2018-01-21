@@ -693,6 +693,18 @@ table.with-marginalia.footable-details {
     }
 }
 
+.fooicon {
+    color: #999;
+}
+
+.fooicon-minus:before {
+    content: "–";
+}
+
+.fooicon-plus:before {
+    content: "+";
+}
+
 /*
 
 Menu

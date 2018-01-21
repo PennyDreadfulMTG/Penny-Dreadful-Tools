@@ -199,7 +199,7 @@ def math_where(column, operator, term):
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(1 <> 1)'
-    return "({column} IS NOT NULL AND {column} <> '' AND CAST({column} AS REAL) {operator} {term})".format(column=column, operator=operator, term=sqlescape(term))
+    return "({column} IS NOT NULL AND {column} <> '' AND {column} {operator} {term})".format(column=column, operator=operator, term=sqlescape(term))
 
 def color_where(subtable, operator, term):
     if operator == ':' and subtable == 'color_identity':

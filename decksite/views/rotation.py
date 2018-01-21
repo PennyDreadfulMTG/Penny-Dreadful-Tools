@@ -7,7 +7,7 @@ from collections import Counter
 
 from decksite.data import card
 from decksite.view import View
-from magic import oracle, rotation
+from magic import multiverse, oracle, rotation
 from shared import configuration, dtutil
 from shared.pd_exception import DoesNotExistException
 
@@ -29,6 +29,7 @@ class Rotation(View):
             self.rotation_msg = 'Supplemental rotation is ' + dtutil.display_date(rotation.next_supplemental())
         if in_rotation:
             self.read_rotation_files()
+        self.show_interesting = True
 
     def read_rotation_files(self):
         lines = []
@@ -53,6 +54,8 @@ class Rotation(View):
             name = html.unescape(name.encode('latin-1').decode('utf-8'))
             hits_needed = max(84 - hits, 0)
             c = cs.get(name)
+            if c.layout not in multiverse.playable_layouts():
+                continue
             percent = round(round(hits / self.runs, 2) * 100)
             if remaining_runs == 0:
                 percent_needed = 0

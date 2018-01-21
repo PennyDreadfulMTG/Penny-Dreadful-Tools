@@ -2,7 +2,7 @@ from magic import multiverse, oracle
 
 from decksite.data import deck
 
-def ad_hoc():
+def run():
     multiverse.update_cache()
     oracle.init()
     ds = deck.load_decks()

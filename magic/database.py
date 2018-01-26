@@ -1,4 +1,5 @@
 import flask
+from flask import has_request_context, request
 
 from magic import card
 from shared import configuration
@@ -12,7 +13,10 @@ DATABASE = Container()
 
 def db():
     if flask.current_app:
-        context = flask.g
+        if has_request_context():
+            context = request
+        else:
+            context = flask.g
     else:
         context = DATABASE
     if hasattr(context, 'magic_database'):

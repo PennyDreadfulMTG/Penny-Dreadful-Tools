@@ -25,7 +25,7 @@ def ensure_dir_exists(directory):
 
 def update_index(index, cards):
     writer = index.writer()
-    cards = [c for c in cards if c.layout != 'token' and c.type != 'Vanguard']
+    cards = [c for c in cards if c['layout'] != 'token' and c['type'] != 'Vanguard']
     for card in cards:
         document = {}
         document['id'] = card['id']

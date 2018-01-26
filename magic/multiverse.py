@@ -15,6 +15,53 @@ CARD_IDS: Dict[str, int] = {}
 
 SEASONS = ['EMN', 'KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX', 'DOM']
 
+HARDCODED_MELD_NAMES = [
+    ["Gisela, the Broken Blade", "Bruna, the Fading Light", "Brisela, Voice of Nightmares"],
+    ["Graf Rats", "Midnight Scavengers", "Chittering Host"], 
+    ["Hanweir Garrison", "Hanweir Battlements", "Hanweir, the Writhing Township"]
+]
+
+HARDCODED_DFC_NAMES = {'Mayor of Avabruck': ['Mayor of Avabruck', 'Howlpack Alpha'],
+'Ravenous Demon': ['Ravenous Demon', 'Archdemon of Greed'],
+'Mondronen Shaman': ['Mondronen Shaman', 'Tovolar\'s Magehunter'],
+'Ludevic\'s Test Subject': ['Ludevic\'s Test Subject', 'Ludevic\'s Abomination'],
+'Civilized Scholar': ['Civilized Scholar', 'Homicidal Brute'],
+'Thraben Sentry': ['Thraben Sentry', 'Thraben Militia'],
+'Daybreak Ranger': ['Daybreak Ranger', 'Nightfall Predator'],
+'Village Ironsmith': ['Village Ironsmith', 'Ironfang'],
+'Tormented Pariah': ['Tormented Pariah', 'Rampaging Werewolf'],
+'Villagers of Estwald': ['Villagers of Estwald', 'Howlpack of Estwald'],
+'Grizzled Outcasts': ['Grizzled Outcasts', 'Krallenhorde Wantons'],
+'Gatstaf Shepherd': ['Gatstaf Shepherd', 'Gatstaf Howler'],
+'Hinterland Hermit': ['Hinterland Hermit', 'Hinterland Scourge'],
+'Chalice of Life': ['Chalice of Life', 'Chalice of Death'],
+'Scorned Villager': ['Scorned Villager', 'Moonscarred Werewolf'],
+'Lambholt Elder': ['Lambholt Elder', 'Silverpelt Werewolf'],
+'Nissa, Vastwood Seer': ['Nissa, Vastwood Seer', 'Nissa, Sage Animist'],
+'Elbrus, the Binding Blade': ['Elbrus, the Binding Blade', 'Withengar Unbound'],
+'Huntmaster of the Fells': ['Huntmaster of the Fells', 'Ravager of the Fells'],
+
+'Howlpack Alpha': ['Mayor of Avabruck', 'Howlpack Alpha'],
+'Archdemon of Greed': ['Ravenous Demon', 'Archdemon of Greed'],
+'Tovolar\'s Magehunter': ['Mondronen Shaman', 'Tovolar\'s Magehunter'],
+'Ludevic\'s Abomination': ['Ludevic\'s Test Subject', 'Ludevic\'s Abomination'],
+'Homicidal Brute': ['Civilized Scholar', 'Homicidal Brute'],
+'Thraben Militia': ['Thraben Sentry', 'Thraben Militia'],
+'Nightfall Predator': ['Daybreak Ranger', 'Nightfall Predator'],
+'Ironfang': ['Village Ironsmith', 'Ironfang'],
+'Rampaging Werewolf': ['Tormented Pariah', 'Rampaging Werewolf'],
+'Howlpack of Estwald': ['Villagers of Estwald', 'Howlpack of Estwald'],
+'Krallenhorde Wantons': ['Grizzled Outcasts', 'Krallenhorde Wantons'],
+'Gatstaf Howler': ['Gatstaf Shepherd', 'Gatstaf Howler'],
+'Hinterland Scourge': ['Hinterland Hermit', 'Hinterland Scourge'],
+'Chalice of Death': ['Chalice of Life', 'Chalice of Death'],
+'Moonscarred Werewolf': ['Scorned Villager', 'Moonscarred Werewolf'],
+'Silverpelt Werewolf': ['Lambholt Elder', 'Silverpelt Werewolf'],
+'Nissa, Sage Animist': ['Nissa, Vastwood Seer', 'Nissa, Sage Animist'],
+'Withengar Unbound': ['Elbrus, the Binding Blade', 'Withengar Unbound'],
+'Ravager of the Fells': ['Huntmaster of the Fells', 'Ravager of the Fells']
+}
+
 def init():
     current_version = fetcher.mtgjson_version()
     if pkg_resources.parse_version(current_version) > pkg_resources.parse_version(database.mtgjson_version()):
@@ -182,10 +229,8 @@ def update_pd_legality():
         set_legal_cards(season=s)
 
 def insert_card(c, update_index=True):
-    name = card_name(c)
-    try:
-        card_id = CARD_IDS[name]
-    except KeyError:
+    name, card_id = try_find_card_id(c)
+    if card_id is None:
         sql = 'INSERT INTO card ('
         sql += ', '.join(name for name, prop in card.card_properties().items() if prop['mtgjson'])
         sql += ') VALUES ('
@@ -244,8 +289,14 @@ def insert_set(s) -> None:
     # avoid while inserting sets
     db().execute(sql, values)
     set_id = db().last_insert_rowid()
-    for c in s.get('cards', []):
-        card_id = CARD_IDS[card_name(c)]
+    set_cards = s.get('cards', [])
+    fix_mtgjson_melded_cards_bug_array(set_cards)
+    fix_double_faced_bug_array(set_cards)
+    for c in set_cards:
+        name, card_id = try_find_card_id(c)
+        if card_id is None:
+            print("Can't find id for: '{n}': {ns}".format(n=c['name'], ns=c['names']))
+            continue
         sql = 'INSERT INTO printing (card_id, set_id, '
         sql += ', '.join(name for name, prop in card.printing_properties().items() if prop['mtgjson'])
         sql += ') VALUES (?, ?, '
@@ -267,7 +318,6 @@ def set_legal_cards(force=False, season=None):
 
     if new_list == [''] or new_list is None:
         return None
-
     db().execute('DELETE FROM card_legality WHERE format_id = ?', [format_id])
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
         SELECT {format_id}, bq.id, 'Legal'
@@ -323,10 +373,11 @@ def get_format_id(name, allow_create=False):
 
 def card_name(c):
     if c.get('layout') == 'meld':
-        if c.get('name') != c.get('names')[2]:
-            return c.get('name')
-        return c.get('names')[0]
+        if c.get('name') == c.get('names')[2]:
+            return c.get('names')[0]
+        return c.get('name')
     return ' // '.join(c.get('names', [c.get('name')]))
+ 
 
 def add_hardcoded_cards(cards):
     cards['Gleemox'] = {
@@ -342,6 +393,8 @@ def add_hardcoded_cards(cards):
         "printings": ["PRM"],
         "rarity": "Rare"
     }
+    fix_mtgjson_melded_cards_bug(cards)
+    fix_double_faced_bug(cards)
     return cards
 
 def get_all_cards():
@@ -350,3 +403,33 @@ def get_all_cards():
 
 def playable_layouts():
     return ['normal', 'token', 'double-faced', 'split', 'aftermath']
+
+def try_find_card_id(c):
+    card_id = None
+    name = card_name(c)
+    try:
+        card_id = CARD_IDS[name]
+        return (name, card_id)
+    except KeyError:
+        return (name, None)
+
+def fix_mtgjson_melded_cards_bug(cards):
+    for names in HARDCODED_MELD_NAMES:
+        for name in names:
+            if cards.get(name, None):
+                cards[name]["names"] = names
+
+def fix_mtgjson_melded_cards_bug_array(cards):
+    for c in cards:
+        for group in HARDCODED_MELD_NAMES:
+            if c.get('name') in group:
+                c["names"] = group
+
+def fix_double_faced_bug(cards):
+    for card, names in HARDCODED_DFC_NAMES.items():
+        cards[card]["names"] = names
+
+def fix_double_faced_bug_array(cards):
+    for card in cards:
+        if card['name'] in HARDCODED_DFC_NAMES:
+            card["names"] = HARDCODED_DFC_NAMES[card['name']]

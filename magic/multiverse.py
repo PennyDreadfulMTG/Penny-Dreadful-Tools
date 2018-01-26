@@ -7,6 +7,7 @@ from magic.database import db
 from shared import dtutil
 from shared.database import sqlescape
 from shared.whoosh_write import WhooshWriter
+from shared.pd_exception import InvalidDataException
 
 # Database setup for the magic package. Mostly internal. To interface with what the package knows about magic cards use the `oracle` module.
 
@@ -17,49 +18,50 @@ SEASONS = ['EMN', 'KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX', 'DOM']
 
 HARDCODED_MELD_NAMES = [
     ["Gisela, the Broken Blade", "Bruna, the Fading Light", "Brisela, Voice of Nightmares"],
-    ["Graf Rats", "Midnight Scavengers", "Chittering Host"], 
+    ["Graf Rats", "Midnight Scavengers", "Chittering Host"],
     ["Hanweir Garrison", "Hanweir Battlements", "Hanweir, the Writhing Township"]
 ]
 
-HARDCODED_DFC_NAMES = {'Mayor of Avabruck': ['Mayor of Avabruck', 'Howlpack Alpha'],
-'Ravenous Demon': ['Ravenous Demon', 'Archdemon of Greed'],
-'Mondronen Shaman': ['Mondronen Shaman', 'Tovolar\'s Magehunter'],
-'Ludevic\'s Test Subject': ['Ludevic\'s Test Subject', 'Ludevic\'s Abomination'],
-'Civilized Scholar': ['Civilized Scholar', 'Homicidal Brute'],
-'Thraben Sentry': ['Thraben Sentry', 'Thraben Militia'],
-'Daybreak Ranger': ['Daybreak Ranger', 'Nightfall Predator'],
-'Village Ironsmith': ['Village Ironsmith', 'Ironfang'],
-'Tormented Pariah': ['Tormented Pariah', 'Rampaging Werewolf'],
-'Villagers of Estwald': ['Villagers of Estwald', 'Howlpack of Estwald'],
-'Grizzled Outcasts': ['Grizzled Outcasts', 'Krallenhorde Wantons'],
-'Gatstaf Shepherd': ['Gatstaf Shepherd', 'Gatstaf Howler'],
-'Hinterland Hermit': ['Hinterland Hermit', 'Hinterland Scourge'],
-'Chalice of Life': ['Chalice of Life', 'Chalice of Death'],
-'Scorned Villager': ['Scorned Villager', 'Moonscarred Werewolf'],
-'Lambholt Elder': ['Lambholt Elder', 'Silverpelt Werewolf'],
-'Nissa, Vastwood Seer': ['Nissa, Vastwood Seer', 'Nissa, Sage Animist'],
-'Elbrus, the Binding Blade': ['Elbrus, the Binding Blade', 'Withengar Unbound'],
-'Huntmaster of the Fells': ['Huntmaster of the Fells', 'Ravager of the Fells'],
+HARDCODED_DFC_NAMES = {
+    'Mayor of Avabruck': ['Mayor of Avabruck', 'Howlpack Alpha'],
+    'Ravenous Demon': ['Ravenous Demon', 'Archdemon of Greed'],
+    'Mondronen Shaman': ['Mondronen Shaman', 'Tovolar\'s Magehunter'],
+    'Ludevic\'s Test Subject': ['Ludevic\'s Test Subject', 'Ludevic\'s Abomination'],
+    'Civilized Scholar': ['Civilized Scholar', 'Homicidal Brute'],
+    'Thraben Sentry': ['Thraben Sentry', 'Thraben Militia'],
+    'Daybreak Ranger': ['Daybreak Ranger', 'Nightfall Predator'],
+    'Village Ironsmith': ['Village Ironsmith', 'Ironfang'],
+    'Tormented Pariah': ['Tormented Pariah', 'Rampaging Werewolf'],
+    'Villagers of Estwald': ['Villagers of Estwald', 'Howlpack of Estwald'],
+    'Grizzled Outcasts': ['Grizzled Outcasts', 'Krallenhorde Wantons'],
+    'Gatstaf Shepherd': ['Gatstaf Shepherd', 'Gatstaf Howler'],
+    'Hinterland Hermit': ['Hinterland Hermit', 'Hinterland Scourge'],
+    'Chalice of Life': ['Chalice of Life', 'Chalice of Death'],
+    'Scorned Villager': ['Scorned Villager', 'Moonscarred Werewolf'],
+    'Lambholt Elder': ['Lambholt Elder', 'Silverpelt Werewolf'],
+    'Nissa, Vastwood Seer': ['Nissa, Vastwood Seer', 'Nissa, Sage Animist'],
+    'Elbrus, the Binding Blade': ['Elbrus, the Binding Blade', 'Withengar Unbound'],
+    'Huntmaster of the Fells': ['Huntmaster of the Fells', 'Ravager of the Fells'],
 
-'Howlpack Alpha': ['Mayor of Avabruck', 'Howlpack Alpha'],
-'Archdemon of Greed': ['Ravenous Demon', 'Archdemon of Greed'],
-'Tovolar\'s Magehunter': ['Mondronen Shaman', 'Tovolar\'s Magehunter'],
-'Ludevic\'s Abomination': ['Ludevic\'s Test Subject', 'Ludevic\'s Abomination'],
-'Homicidal Brute': ['Civilized Scholar', 'Homicidal Brute'],
-'Thraben Militia': ['Thraben Sentry', 'Thraben Militia'],
-'Nightfall Predator': ['Daybreak Ranger', 'Nightfall Predator'],
-'Ironfang': ['Village Ironsmith', 'Ironfang'],
-'Rampaging Werewolf': ['Tormented Pariah', 'Rampaging Werewolf'],
-'Howlpack of Estwald': ['Villagers of Estwald', 'Howlpack of Estwald'],
-'Krallenhorde Wantons': ['Grizzled Outcasts', 'Krallenhorde Wantons'],
-'Gatstaf Howler': ['Gatstaf Shepherd', 'Gatstaf Howler'],
-'Hinterland Scourge': ['Hinterland Hermit', 'Hinterland Scourge'],
-'Chalice of Death': ['Chalice of Life', 'Chalice of Death'],
-'Moonscarred Werewolf': ['Scorned Villager', 'Moonscarred Werewolf'],
-'Silverpelt Werewolf': ['Lambholt Elder', 'Silverpelt Werewolf'],
-'Nissa, Sage Animist': ['Nissa, Vastwood Seer', 'Nissa, Sage Animist'],
-'Withengar Unbound': ['Elbrus, the Binding Blade', 'Withengar Unbound'],
-'Ravager of the Fells': ['Huntmaster of the Fells', 'Ravager of the Fells']
+    'Howlpack Alpha': ['Mayor of Avabruck', 'Howlpack Alpha'],
+    'Archdemon of Greed': ['Ravenous Demon', 'Archdemon of Greed'],
+    'Tovolar\'s Magehunter': ['Mondronen Shaman', 'Tovolar\'s Magehunter'],
+    'Ludevic\'s Abomination': ['Ludevic\'s Test Subject', 'Ludevic\'s Abomination'],
+    'Homicidal Brute': ['Civilized Scholar', 'Homicidal Brute'],
+    'Thraben Militia': ['Thraben Sentry', 'Thraben Militia'],
+    'Nightfall Predator': ['Daybreak Ranger', 'Nightfall Predator'],
+    'Ironfang': ['Village Ironsmith', 'Ironfang'],
+    'Rampaging Werewolf': ['Tormented Pariah', 'Rampaging Werewolf'],
+    'Howlpack of Estwald': ['Villagers of Estwald', 'Howlpack of Estwald'],
+    'Krallenhorde Wantons': ['Grizzled Outcasts', 'Krallenhorde Wantons'],
+    'Gatstaf Howler': ['Gatstaf Shepherd', 'Gatstaf Howler'],
+    'Hinterland Scourge': ['Hinterland Hermit', 'Hinterland Scourge'],
+    'Chalice of Death': ['Chalice of Life', 'Chalice of Death'],
+    'Moonscarred Werewolf': ['Scorned Villager', 'Moonscarred Werewolf'],
+    'Silverpelt Werewolf': ['Lambholt Elder', 'Silverpelt Werewolf'],
+    'Nissa, Sage Animist': ['Nissa, Vastwood Seer', 'Nissa, Sage Animist'],
+    'Withengar Unbound': ['Elbrus, the Binding Blade', 'Withengar Unbound'],
+    'Ravager of the Fells': ['Huntmaster of the Fells', 'Ravager of the Fells']
 }
 
 def init():
@@ -290,13 +292,12 @@ def insert_set(s) -> None:
     db().execute(sql, values)
     set_id = db().last_insert_rowid()
     set_cards = s.get('cards', [])
-    fix_mtgjson_melded_cards_bug_array(set_cards)
+    fix_mtgjson_melded_cards_array(set_cards)
     fix_double_faced_bug_array(set_cards)
     for c in set_cards:
-        name, card_id = try_find_card_id(c)
+        _, card_id = try_find_card_id(c)
         if card_id is None:
-            print("Can't find id for: '{n}': {ns}".format(n=c['name'], ns=c['names']))
-            continue
+            raise InvalidDataException("Can't find id for: '{n}': {ns}".format(n=c['name'], ns=c['names']))
         sql = 'INSERT INTO printing (card_id, set_id, '
         sql += ', '.join(name for name, prop in card.printing_properties().items() if prop['mtgjson'])
         sql += ') VALUES (?, ?, '
@@ -377,7 +378,7 @@ def card_name(c):
             return c.get('names')[0]
         return c.get('name')
     return ' // '.join(c.get('names', [c.get('name')]))
- 
+
 
 def add_hardcoded_cards(cards):
     cards['Gleemox'] = {
@@ -419,17 +420,17 @@ def fix_mtgjson_melded_cards_bug(cards):
             if cards.get(name, None):
                 cards[name]["names"] = names
 
-def fix_mtgjson_melded_cards_bug_array(cards):
+def fix_mtgjson_melded_cards_array(cards):
     for c in cards:
         for group in HARDCODED_MELD_NAMES:
             if c.get('name') in group:
                 c["names"] = group
 
 def fix_double_faced_bug(cards):
-    for card, names in HARDCODED_DFC_NAMES.items():
-        cards[card]["names"] = names
+    for c, names in HARDCODED_DFC_NAMES.items():
+        cards[c]["names"] = names
 
 def fix_double_faced_bug_array(cards):
-    for card in cards:
-        if card['name'] in HARDCODED_DFC_NAMES:
-            card["names"] = HARDCODED_DFC_NAMES[card['name']]
+    for c in cards:
+        if c['name'] in HARDCODED_DFC_NAMES:
+            c["names"] = HARDCODED_DFC_NAMES[c['name']]

@@ -57,16 +57,18 @@ class MysqlDatabase(GenericDatabase):
             raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
 
     def execute_with_reconnect(self, sql, args):
-        # Attemp to excute the query and reconnect 3 times, then give up
+        result = None
+        # Attempt to excute the query and reconnect 3 times, then give up
         for _ in range(3):
             try:
                 p = perf.start()
                 self.cursor.execute(sql, args)
                 perf.check(p, 'slow_query', (sql, args), 'mysql')
-                return self.cursor.fetchall()
+                result = self.cursor.fetchall()
+                break
             except OperationalError as e:
                 if 'MySQL server has gone away' in str(e):
-                    print("Trying to reconnect")
+                    print("MySQL server has gone away: trying to reconnect")
                     self.connect()
                 else:
                     # raise any other exception
@@ -74,6 +76,7 @@ class MysqlDatabase(GenericDatabase):
         else:
             # all attempts failed
             raise DatabaseException('Failed to execute `{sql}` with `{args}`. MySQL has gone away and it was not possible to reconnect in 3 attemps'.format(sql=sql, args=args))
+        return result
 
     def insert(self, sql, args=None):
         self.execute(sql, args)

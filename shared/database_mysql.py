@@ -58,7 +58,7 @@ class MysqlDatabase(GenericDatabase):
 
     def execute_with_reconnect(self, sql, args):
         # Attemp to excute the query and reconnect 3 times, then give up
-        for attempt in range(3):
+        for _ in range(3):
             try:
                 p = perf.start()
                 self.cursor.execute(sql, args)

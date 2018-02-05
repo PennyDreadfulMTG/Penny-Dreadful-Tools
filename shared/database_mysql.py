@@ -2,6 +2,7 @@
 import warnings
 
 import MySQLdb
+from MySQLdb import OperationalError
 
 from shared import configuration
 from shared.database_generic import GenericDatabase
@@ -12,26 +13,29 @@ from shared import perf
 class MysqlDatabase(GenericDatabase):
     def __init__(self, db):
         warnings.filterwarnings('error', category=MySQLdb.Warning)
+        self.name = db
+        self.host = configuration.get('mysql_host')
+        self.port = configuration.get('mysql_port')
+        if str(self.port).startswith('0.0.0.0:'):
+            # Thanks Docker :/
+            self.port = int(self.port[8:])
+        self.user = configuration.get('mysql_user')
+        self.passwd = configuration.get('mysql_passwd')
+        self.connect()
+
+    def connect(self):
         try:
-            self.name = db
-            host = configuration.get('mysql_host')
-            port = configuration.get('mysql_port')
-            if str(port).startswith('0.0.0.0:'):
-                # Thanks Docker :/
-                port = int(port[8:])
-            user = configuration.get('mysql_user')
-            passwd = configuration.get('mysql_passwd')
-            self.connection = MySQLdb.connect(host=host, port=port, user=user, passwd=passwd, use_unicode=True, charset='utf8', autocommit=True)
+            self.connection = MySQLdb.connect(host=self.host, port=self.port, user=self.user, passwd=self.passwd, use_unicode=True, charset='utf8', autocommit=True)
             self.cursor = self.connection.cursor(MySQLdb.cursors.DictCursor)
             self.execute('SET NAMES utf8mb4')
             try:
-                self.execute("USE {db}".format(db=db))
+                self.execute("USE {db}".format(db=self.name))
             except DatabaseException:
-                print('Creating database {db}'.format(db=db))
-                self.execute('CREATE DATABASE {db} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'.format(db=db))
-                self.execute('USE {db}'.format(db=db))
+                print('Creating database {db}'.format(db=self.name))
+                self.execute('CREATE DATABASE {db} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'.format(db=self.name))
+                self.execute('USE {db}'.format(db=self.name))
         except MySQLdb.Error:
-            raise DatabaseException('Failed to initialize database in `{location}`'.format(location=db))
+            raise DatabaseException('Failed to initialize database in `{location}`'.format(location=self.name))
 
     def execute(self, sql, args=None):
         sql = sql.replace('COLLATE NOCASE', '') # Needed for case insensitivity in SQLite which is default in MySQL.
@@ -41,10 +45,7 @@ class MysqlDatabase(GenericDatabase):
             # eww
             sql = sql.replace('?', '%s')
         try:
-            p = perf.start()
-            self.cursor.execute(sql, args)
-            perf.check(p, 'slow_query', (sql, args), 'mysql')
-            return self.cursor.fetchall()
+            return self.execute_with_reconnect(sql, args)
         except MySQLdb.Warning as e:
             if e.args[0] == 1050 or e.args[0] == 1051:
                 pass # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or DROP TABLE IF NOT EXISTS raises an "unknown table" warning.
@@ -54,6 +55,28 @@ class MysqlDatabase(GenericDatabase):
                 raise
         except MySQLdb.Error as e:
             raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
+
+    def execute_with_reconnect(self, sql, args):
+        result = None
+        # Attempt to excute the query and reconnect 3 times, then give up
+        for _ in range(3):
+            try:
+                p = perf.start()
+                self.cursor.execute(sql, args)
+                perf.check(p, 'slow_query', (sql, args), 'mysql')
+                result = self.cursor.fetchall()
+                break
+            except OperationalError as e:
+                if 'MySQL server has gone away' in str(e):
+                    print("MySQL server has gone away: trying to reconnect")
+                    self.connect()
+                else:
+                    # raise any other exception
+                    raise e
+        else:
+            # all attempts failed
+            raise DatabaseException('Failed to execute `{sql}` with `{args}`. MySQL has gone away and it was not possible to reconnect in 3 attemps'.format(sql=sql, args=args))
+        return result
 
     def insert(self, sql, args=None):
         self.execute(sql, args)

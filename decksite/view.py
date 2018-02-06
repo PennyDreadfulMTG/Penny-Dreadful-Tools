@@ -5,6 +5,7 @@ from collections import Counter
 
 from anytree.iterators import PreOrderIter
 from flask import session, url_for
+from flask_babel import gettext
 
 from magic import multiverse, oracle, rotation
 from shared import dtutil
@@ -51,39 +52,39 @@ class View:
                 archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
         rotation_submenu = []
         if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7) or (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
-            rotation_submenu += [{'name': 'Rotation Tracking', 'url': url_for('rotation')}]
+            rotation_submenu += [{'name': gettext('Rotation Tracking'), 'url': url_for('rotation')}]
         rotation_submenu += [
-            {'name': 'Rotation Changes', 'url': url_for('rotation_changes')},
-            {'name': 'Rotation Speculation', 'url': url_for('rotation_speculation')},
-            {'name': 'External Links', 'url': url_for('resources')},
-            {'name': 'Log Out', 'url': url_for('logout')}
+            {'name': gettext('Rotation Changes'), 'url': url_for('rotation_changes')},
+            {'name': gettext('Rotation Speculation'), 'url': url_for('rotation_speculation')},
+            {'name': gettext('External Links'), 'url': url_for('resources')},
+            {'name': gettext('Log Out'), 'url': url_for('logout')}
         ]
         menu = [
-            {'name': 'Metagame', 'url': url_for('home'), 'badge': archetypes_badge, 'submenu': [
-                {'name': 'Latest Decks', 'url': url_for('decks')},
-                {'name': 'Archetypes', 'url': url_for('archetypes'), 'badge': archetypes_badge},
-                {'name': 'People', 'url': url_for('people')},
-                {'name': 'Cards', 'url': url_for('cards')},
-                {'name': 'Past Seasons', 'url': url_for('seasons')}
+            {'name': gettext('Metagame'), 'url': url_for('home'), 'badge': archetypes_badge, 'submenu': [
+                {'name': gettext('Latest Decks'), 'url': url_for('decks')},
+                {'name': gettext('Archetypes'), 'url': url_for('archetypes'), 'badge': archetypes_badge},
+                {'name': gettext('People'), 'url': url_for('people')},
+                {'name': gettext('Cards'), 'url': url_for('cards')},
+                {'name': gettext('Past Seasons'), 'url': url_for('seasons')}
             ]},
-            {'name': 'League', 'url': url_for('league'), 'submenu': [
-                {'name': 'League Info', 'url': url_for('league')},
-                {'name': 'Sign Up', 'url': url_for('signup')},
-                {'name': 'Report', 'url': url_for('report')},
-                {'name': 'Records', 'url': url_for('current_league')},
-                {'name': 'Retire', 'url': url_for('retire')},
+            {'name': gettext('League'), 'url': url_for('league'), 'submenu': [
+                {'name': gettext('League Info'), 'url': url_for('league')},
+                {'name': gettext('Sign Up'), 'url': url_for('signup')},
+                {'name': gettext('Report'), 'url': url_for('report')},
+                {'name': gettext('Records'), 'url': url_for('current_league')},
+                {'name': gettext('Retire'), 'url': url_for('retire')},
             ]},
-            {'name': 'Competitions', 'url': url_for('competitions'), 'submenu': [
-                {'name': 'Competition Results', 'url': url_for('competitions')},
-                {'name': 'Tournament Info', 'url': url_for('tournaments')},
-                {'name': 'Leaderboards', 'url': url_for('tournament_leaderboards')},
-                {'name': 'Gatherling', 'url': 'http://gatherling.com/'},
-                {'name': 'Hosting', 'url': url_for('hosting')}
+            {'name': gettext('Competitions'), 'url': url_for('competitions'), 'submenu': [
+                {'name': gettext('Competition Results'), 'url': url_for('competitions')},
+                {'name': gettext('Tournament Info'), 'url': url_for('tournaments')},
+                {'name': gettext('Leaderboards'), 'url': url_for('tournament_leaderboards')},
+                {'name': gettext('Gatherling'), 'url': 'http://gatherling.com/'},
+                {'name': gettext('Hosting'), 'url': url_for('hosting')}
             ]},
-            {'name': 'Resources', 'url': url_for('resources'), 'submenu': rotation_submenu},
-            {'name': 'About', 'url': url_for('about'), 'submenu': [
-                {'name': 'What is Penny Dreadful?', 'url': url_for('about')},
-                {'name': 'About pennydreadfulmagic.com', 'url': url_for('about_pdm')}
+            {'name': gettext('Resources'), 'url': url_for('resources'), 'submenu': rotation_submenu},
+            {'name': gettext('About'), 'url': url_for('about'), 'submenu': [
+                {'name': gettext('What is Penny Dreadful?'), 'url': url_for('about')},
+                {'name': gettext('About pennydreadfulmagic.com'), 'url': url_for('about_pdm')}
             ]}
         ]
         for item in menu:
@@ -282,6 +283,12 @@ class View:
 
     def commit_id(self):
         return APP.config['commit-id']
+
+    def TT_LEAGUE_INFO(self):
+        return gettext('League Info')
+
+    def TT_LEAGUE_RESULTS(self):
+        return gettext("League Results")
 
 def colors_html(colors, colored_symbols):
     total = len(colored_symbols)

@@ -28,3 +28,4 @@ my_doodle.py
 /.mypy_cache/
 whoosh_index/
 /monkeytype.sqlite3
+*.mo

@@ -38,7 +38,8 @@ DEFAULTS = {
     'web_cache': '.web_cache',
     'cse_api_key': None,
     'cse_engine_id': None,
-    'whoosh_index_dir': 'whoosh_index'
+    'whoosh_index_dir': 'whoosh_index',
+    'poeditor_api_key': None,
 }
 
 def get(key: str) -> str:

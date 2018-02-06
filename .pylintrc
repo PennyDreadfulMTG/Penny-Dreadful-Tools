@@ -116,10 +116,10 @@ include-naming-hint=yes
 property-classes=abc.abstractproperty
 
 # Regular expression matching correct method names
-method-rgx=[a-z_][a-z0-9_]{1,30}$
+method-rgx=(([a-z_][a-z0-9_]{1,30})|(TT_[A-Z_]+))$
 
 # Naming hint for method names
-method-name-hint=[a-z_][a-z0-9_]{1,30}$
+method-name-hint=(([a-z_][a-z0-9_]{1,30})|(TT_[A-Z_]+))$
 
 # Regular expression matching correct variable names
 variable-rgx=[a-z_][a-z0-9_]{0,30}$
@@ -277,7 +277,7 @@ ignore-mixin-members=yes
 # (useful for modules/projects where namespaces are manipulated during runtime
 # and thus existing member attributes cannot be deduced by static analysis. It
 # supports qualified module names, as well as Unix pattern matching.
-ignored-modules=anytree,apsw,bs4,cachecontrol,dateutil,googleapiclient,inflect,matplotlib,markdown,munch,MySQLdb,pygtrie,pytest,pytz,requests_oauthlib,rrule,seaborn,titlecase,untangle,whoosh
+ignored-modules=anytree,apsw,bs4,cachecontrol,dateutil,flask-babel,googleapiclient,inflect,matplotlib,markdown,munch,MySQLdb,pygtrie,pytest,pytz,requests_oauthlib,rrule,seaborn,titlecase,untangle,whoosh
 
 # List of class names for which member attributes should not be checked (useful
 # for classes with dynamically set attributes). This supports the use of

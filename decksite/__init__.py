@@ -9,7 +9,7 @@ from shared import configuration
 from shared.pd_exception import DatabaseException
 
 APP = Flask(__name__)
-babel = Babel(APP)
+BABEL = Babel(APP)
 APP.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
 APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
 try:

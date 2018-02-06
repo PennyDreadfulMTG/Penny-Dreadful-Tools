@@ -1,6 +1,6 @@
 from flask import request
 
-from . import babel
+from . import BABEL as babel
 
 LANGUAGES = [str(locale) for locale in babel.list_translations()]
 

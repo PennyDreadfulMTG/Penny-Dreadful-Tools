@@ -116,10 +116,10 @@ include-naming-hint=yes
 property-classes=abc.abstractproperty
 
 # Regular expression matching correct method names
-method-rgx=(([a-z_][a-z0-9_]{1,30})|(TT_[A-Z_]+))$
+method-rgx=(([a-z_][a-z0-9_]{1,30})|(TT_[A-Z_]+(_[0-9]+)?))$
 
 # Naming hint for method names
-method-name-hint=(([a-z_][a-z0-9_]{1,30})|(TT_[A-Z_]+))$
+method-name-hint=(([a-z_][a-z0-9_]{1,30})|(TT_[A-Z_]+(_[0-9]+)?))$
 
 # Regular expression matching correct variable names
 variable-rgx=[a-z_][a-z0-9_]{0,30}$

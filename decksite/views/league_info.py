@@ -2,7 +2,7 @@ from flask import url_for
 from flask_babel import gettext
 
 from decksite.view import View
-from decksite import league
+from decksite import league, localization
 
 # pylint: disable=no-self-use
 class LeagueInfo(View):
@@ -20,8 +20,30 @@ class LeagueInfo(View):
     def TT_SIGN_UP_LINK(self):
         return gettext('Sign Up Here')
 
+    # By doing it this way, all we need to care about is the text left, inside, and right of the link.
     def TT_LEAGUE_LASTS_A_MONTH(self):
-        return gettext('Each league lasts roughly a month.')
+        return gettext('Each league lasts roughly a month. The [[current league]] will run until {END_DATE}.').format(END_DATE=self.end_date)
+
+    def TT_LEAGUE_LASTS_A_MONTH_1(self):
+        return localization.split_link(self.TT_LEAGUE_LASTS_A_MONTH())[0]
+
+    def TT_LEAGUE_LASTS_A_MONTH_2(self):
+        return localization.split_link(self.TT_LEAGUE_LASTS_A_MONTH())[1]
+
+    def TT_LEAGUE_LASTS_A_MONTH_3(self):
+        return localization.split_link(self.TT_LEAGUE_LASTS_A_MONTH())[2]
+
+    def TT_SIGNUP_AT_ANY_TIME(self):
+        return gettext('You can [[sign up]] at any time.')
+
+    def TT_SIGNUP_AT_ANY_TIME_1(self):
+        return localization.split_link(self.TT_SIGNUP_AT_ANY_TIME())[0]
+
+    def TT_SIGNUP_AT_ANY_TIME_2(self):
+        return localization.split_link(self.TT_SIGNUP_AT_ANY_TIME())[1]
+
+    def TT_SIGNUP_AT_ANY_TIME_3(self):
+        return localization.split_link(self.TT_SIGNUP_AT_ANY_TIME())[2]
 
 def suffix(d):
     return 'th' if 11 <= d <= 13 else {1:'st', 2:'nd', 3:'rd'}.get(d % 10, 'th')

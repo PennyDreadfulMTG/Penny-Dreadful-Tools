@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-02-07 05:55+1100\n"
+"POT-Creation-Date: 2018-02-08 02:31+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -135,6 +135,14 @@ msgstr ""
 
 #: decksite/views/about_pdm.py:22
 msgid "Help us translate the site into your language"
+msgstr ""
+
+#: decksite/views/league_info.py:21
+msgid "Sign Up Here"
+msgstr ""
+
+#: decksite/views/league_info.py:24
+msgid "Each league lasts roughly a month."
 msgstr ""
 
 #: decksite/views/report.py:21

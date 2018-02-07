@@ -1,4 +1,5 @@
 from flask import url_for
+from flask_babel import gettext
 
 from decksite.view import View
 from decksite import league
@@ -15,6 +16,12 @@ class LeagueInfo(View):
 
     def subtitle(self):
         return 'League'
+
+    def TT_SIGN_UP_LINK(self):
+        return gettext('Sign Up Here')
+
+    def TT_LEAGUE_LASTS_A_MONTH(self):
+        return gettext('Each league lasts roughly a month.')
 
 def suffix(d):
     return 'th' if 11 <= d <= 13 else {1:'st', 2:'nd', 3:'rd'}.get(d % 10, 'th')

@@ -24,8 +24,9 @@ coverage.xml
 decksite/images/*-cmc.png
 .web_cache/
 my_doodle.py
-/images/charts/*-cmc.png
+/images/charts/*.png
 /.mypy_cache/
 whoosh_index/
 /monkeytype.sqlite3
 *.mo
+*.po

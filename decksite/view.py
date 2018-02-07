@@ -13,7 +13,7 @@ from shared.container import Container
 
 from decksite import template
 from decksite.data import deck
-from decksite import APP
+from decksite import APP, BABEL
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10
 
@@ -283,6 +283,12 @@ class View:
 
     def commit_id(self):
         return APP.config['commit-id']
+
+    def babel_languages(self):
+        return BABEL.list_translations()
+
+    def language_icon(self):
+        return url_for('static', filename='images/language_icon.svg')
 
     def TT_LEAGUE_INFO(self):
         return gettext('League Info')

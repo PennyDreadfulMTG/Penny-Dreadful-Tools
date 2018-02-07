@@ -1511,6 +1511,22 @@ Season Symbols
 
 /*
 
+Language Switcher
+
+*/
+.language_switcher {
+    float: left;
+}
+
+.language_icon {
+    width: 1.333em;
+    height: 1.333em;
+    padding-right: 0.563em;
+    vertical-align: middle;
+}
+
+/*
+
 Notification Badges
 
 */

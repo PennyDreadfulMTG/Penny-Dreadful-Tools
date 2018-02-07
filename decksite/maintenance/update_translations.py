@@ -12,6 +12,7 @@ def run():
         return
     client = POEditorAPI(api_token=api_key)
     languages = client.list_project_languages("162959")
+    # pull down translations
     for locale in languages:
         print("Found translation for {code}: {percent}%".format(code=locale['code'], percent=locale['percentage']))
         if locale['percentage'] > 0:
@@ -23,7 +24,12 @@ def run():
             if os.path.exists(pofile):
                 os.remove(pofile)
             client.export("162959", locale['code'], local_file=pofile)
+    # Compile .po files into .mo files
     compiler = compile_catalog()
     compiler.directory = os.path.join('decksite', 'translations')
     compiler.domain = ['messages']
     compiler.run()
+    # hack for English - We need an empty folder so that Enlish shows up in the 'Known Languages' list.
+    path = os.path.join('decksite', 'translations', 'en', 'LC_MESSAGES')
+    if not os.path.exists(path):
+        os.makedirs(path)

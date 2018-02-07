@@ -1525,6 +1525,10 @@ Language Switcher
     vertical-align: middle;
 }
 
+.language_cta {
+    padding-top: 0.3rem;
+}
+
 /*
 
 Notification Badges

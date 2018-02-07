@@ -296,6 +296,9 @@ class View:
     def TT_LEAGUE_RESULTS(self):
         return gettext("League Results")
 
+    def TT_HELP_TRANSLATE(self) -> str:
+        return gettext("Help us translate the site into your language")
+
 def colors_html(colors, colored_symbols):
     total = len(colored_symbols)
     if total == 0:

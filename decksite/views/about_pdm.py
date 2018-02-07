@@ -17,6 +17,3 @@ class AboutPdm(View):
 
     def TT_TRANSLATED_INTO(self) -> str:
         return gettext("This site is currently translated into:")
-
-    def TT_HELP_TRANSLATE(self) -> str:
-        return gettext("Help us translate the site into your language")

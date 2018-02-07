@@ -1,4 +1,6 @@
 import pystache
+from pystache.parsed import ParsedTemplate
+from flask_babel import gettext
 
 def render_name(template, *context):
     return CachedRenderer(search_dirs=['decksite/templates']).render_name(template, *context)
@@ -39,5 +41,32 @@ class CachedRenderEngine(pystache.renderengine.RenderEngine):
 
     def render(self, template, context_stack, delimiters=None):
         if self.parsed_templates.get(template) is None:
-            self.parsed_templates[template] = pystache.parser.parse(template, delimiters)
+            self.parsed_templates[template] = insert_gettext_nodes(pystache.parser.parse(template, delimiters))
         return self.parsed_templates[template].render(self, context_stack)
+
+## Localization Shim
+# pylint: disable=protected-access
+def insert_gettext_nodes(parsed_template: ParsedTemplate) -> ParsedTemplate:
+    new_template = ParsedTemplate()
+    for node in parsed_template._parse_tree:
+        if isinstance(node, pystache.parser._EscapeNode):
+            if node.key[0:2] == '_ ':
+                key = node.key[2:].strip()
+                new_template.add(_GettextNode(key))
+            else:
+                new_template.add(node)
+        else:
+            new_template.add(node)
+        # We may need to iterate into Sections and Inverted nodes
+    return new_template
+
+class _GettextNode(object):
+    def __init__(self, key):
+        self.key = key
+
+    def __repr__(self):
+        return pystache.parser._format(self)
+
+    def render(self, engine, context): # pylint: disable=unused-argument
+        s = gettext(self.key)
+        return engine.escape(s)

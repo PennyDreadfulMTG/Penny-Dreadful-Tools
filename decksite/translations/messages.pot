@@ -1,14 +1,15 @@
-# Translations template for PROJECT.
+# Translations template for Penny-Dreadful-Tools.
 # Copyright (C) 2018 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
+# This file is distributed under the same license as the
+# Penny-Dreadful-Tools project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
+"Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-02-08 02:31+1100\n"
+"POT-Creation-Date: 2018-02-08 10:09+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,7 +66,7 @@ msgstr ""
 msgid "League"
 msgstr ""
 
-#: decksite/view.py:71 decksite/view.py:288
+#: decksite/view.py:71 decksite/view.py:294
 msgid "League Info"
 msgstr ""
 
@@ -125,24 +126,86 @@ msgstr ""
 msgid "About pennydreadfulmagic.com"
 msgstr ""
 
-#: decksite/view.py:291
+#: decksite/view.py:297
 msgid "League Results"
+msgstr ""
+
+#: decksite/view.py:300
+msgid "Help us translate the site into your language"
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"When you complete a five match league run for the first time ever you "
+"will get 1 tik credit with MTGO Traders (at the end of the month)."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "A league run is five matches against five different decks/opponents."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"Your deck stays the same through a run but you can change decks for each "
+"run (or not if you want to play again with the same deck)."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "You can only have one run going at once."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "Prizes"
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"At the end of each month, the top eight players of that month’s league "
+"scoreboard will get credit with MTGO Traders (6/4/3/2/1/1/1/1)."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"For each match you won, you get one point. For each perfect (5-0) run you"
+" have, you get an extra point."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "You can enter the league as many times as you want."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "Finding a Match"
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"The easiest way to find a match to to simply play PD games with your "
+"league deck.  PDBot will alert you if both players are registered in "
+"league. Add \"Penny Dreadful League\" in a comment on your match in Just "
+"for Fun, Freeform to make your intentions clear."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "Matches should use 25 minute timers."
 msgstr ""
 
 #: decksite/views/about_pdm.py:19
 msgid "This site is currently translated into:"
 msgstr ""
 
-#: decksite/views/about_pdm.py:22
-msgid "Help us translate the site into your language"
-msgstr ""
-
 #: decksite/views/league_info.py:21
 msgid "Sign Up Here"
 msgstr ""
 
-#: decksite/views/league_info.py:24
-msgid "Each league lasts roughly a month."
+#: decksite/views/league_info.py:25
+msgid ""
+"Each league lasts roughly a month. The [[current league]] will run until "
+"{END_DATE}."
+msgstr ""
+
+#: decksite/views/league_info.py:37
+msgid "You can [[sign up]] at any time."
 msgstr ""
 
 #: decksite/views/report.py:21

@@ -6,13 +6,15 @@ import os
 from flask import request, make_response
 from werkzeug.contrib.cache import SimpleCache
 
+from . import localization
+
 CACHE = SimpleCache()
 
 def cached():
     return cached_impl(cacheable=True, must_revalidate=True, client_only=False, client_timeout=1 * 60 * 60, server_timeout=5 * 60)
 
 # pylint: disable=too-many-arguments
-def cached_impl(cacheable=False, must_revalidate=True, client_only=True, client_timeout=0, server_timeout=5 * 60, key='view{id}'):
+def cached_impl(cacheable=False, must_revalidate=True, client_only=True, client_timeout=0, server_timeout=5 * 60, key='view{id}{locale}'):
     """
 
     @see https://jakearchibald.com/2016/caching-best-practices/
@@ -21,7 +23,7 @@ def cached_impl(cacheable=False, must_revalidate=True, client_only=True, client_
     def decorator(f):
         @functools.wraps(f)
         def decorated_function(*args, **kwargs):
-            cache_key = key.format(id=request.full_path) # include querystring
+            cache_key = key.format(id=request.full_path, locale=localization.get_locale()) # include querystring
             cache_policy = ''
             if not cacheable:
                 cache_policy += ', no-store' # tells the browser not to cache at all

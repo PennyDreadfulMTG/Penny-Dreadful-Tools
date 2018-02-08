@@ -1,4 +1,5 @@
 from flask import url_for
+from flask_babel import gettext
 
 from decksite.views import LeagueForm
 
@@ -12,3 +13,9 @@ class Report(LeagueForm):
 
     def subtitle(self):
         return '{league} Result Report'.format(league=self.league['name'])
+
+    def TT_REPORT(self):
+        return gettext('Report')
+
+    def TT_YOUR_DECK(self):
+        return gettext('Your Deck')

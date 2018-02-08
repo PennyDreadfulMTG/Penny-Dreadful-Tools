@@ -353,6 +353,7 @@ def is_subquery(subquery_name):
     query = "({0})".format(query)
     return query
 
+# pylint: disable=stop-iteration-return
 def intersperse(iterable, delimiter):
     it = iter(iterable)
     yield next(it)

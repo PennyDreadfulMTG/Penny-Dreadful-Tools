@@ -52,7 +52,7 @@ def parse_mtgotraders_prices(s):
     for line in s.splitlines():
         if line.count('|') != 7:
             print('Bad line (mtgotraders): {line}'.format(line=line)) # BAKERT this should be a hard fail?
-        mtgo_set, rarity, premium, name, number, p, image_path, in_stock = line.split('|')
+        mtgo_set, rarity, premium, name, number, p, image_path, in_stock = line.split('|') # pylint: disable=unused-variable
         in_stock = in_stock.replace('<br>', '')
         assert in_stock == 'Yes' or in_stock == 'No'
         assert p == '0.01' or p == '0.00'

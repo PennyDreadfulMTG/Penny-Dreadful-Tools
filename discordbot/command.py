@@ -82,7 +82,7 @@ async def handle_command(message, bot):
 def find_method(name):
     cmd = name.lstrip('!').lower()
     if len(cmd) == 0:
-        return
+        return None
     method = [m for m in dir(Commands) if m == cmd or m == '_' + cmd]
     if len(method) == 0:
         method = [m for m in dir(Commands) if m.startswith(cmd) or m.startswith('_{cmd}'.format(cmd=cmd))]

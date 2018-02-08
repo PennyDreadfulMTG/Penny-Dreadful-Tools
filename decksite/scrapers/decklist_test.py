@@ -257,7 +257,7 @@ def test_parse8():
     assert d['maindeck']['Cryptic Serpent'] == 1
     assert d['sideboard']['Convolute'] == 1
 
-# Test a Gatherling deck with
+# Test a Gatherling deck with no sideboard
 def test_parse9():
     s = """
         2 Bonded Horncrest
@@ -288,3 +288,11 @@ def test_parse9():
     assert sum(d['maindeck'].values()) == 60
     assert sum(d['sideboard'].values()) == 0
     assert d['maindeck']['Shining Aerosaur'] == 2
+
+def test_parse10():
+    s = """
+        Sideboard"""
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    assert sum(d['maindeck'].values()) == 0
+    assert sum(d['sideboard'].values()) == 0

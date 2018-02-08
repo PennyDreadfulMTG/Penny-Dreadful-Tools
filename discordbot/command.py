@@ -419,7 +419,7 @@ Want to contribute? Send a Pull Request."""
 
         try:
             service = build("customsearch", "v1", developerKey=api_key)
-            res = service.cse().list(q=args, cx=cse_id, num=1).execute()
+            res = service.cse().list(q=args, cx=cse_id, num=1).execute() # pylint: disable=no-member
             if 'items' in res:
                 r = res['items'][0]
                 s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['link'], abstract=r['snippet'])

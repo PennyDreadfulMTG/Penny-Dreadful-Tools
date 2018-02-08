@@ -3,7 +3,7 @@
     {{> league_header}}
     <form method="post">
         <div>
-            <label for="entry">Your Deck</label>
+            <label for="entry">{{TT_YOUR_DECK}}</label>
             <select class="{{#form.errors.entry}}error {{/form.errors.entry}}deckselect" name="entry" id="entry">
                 <option value="">Choose …</option>
                 {{#form.entry_options}}
@@ -35,7 +35,7 @@
             </span>
             <div class="error">{{form.errors.result}}</div>
         </div>
-        <button type="submit">Report</button>
+        <button type="submit">{{TT_REPORT}}</button>
         {{#logged_person}}<div class="logout">Not your deck? <a href="{{logout_url}}">Log out</a></div>{{/logged_person}}
     </form>
 </section>

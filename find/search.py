@@ -166,6 +166,7 @@ def parse_criterion(key, operator, term):
         return is_subquery(term.value())
     elif key.value() == 'playable' or key.value() == 'p':
         return playable_where(term.value())
+    return None
 
 def text_where(column, term):
     q = term

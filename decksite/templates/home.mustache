@@ -2,14 +2,14 @@
     {{> news}}
 {{/has_news}}
 <section>
-    <h1>Latest Decks</h1>
+    <h1>{{_ Latest Decks}}</h1>
     {{> decktable}}
-    <a href="{{decks_url}}">More decks …</a>
+    <a href="{{decks_url}}">{{_ More decks…}}</a>
 </section>
 <section>
-    <h1>Top Cards</h1>
+    <h1>{{_ Top Cards}}</h1>
     <section>
-        <h2>This Season</h2>
+        <h2>{{_ This Season}}</h2>
         {{> spinner}}
         <table>
             <thead>
@@ -33,10 +33,10 @@
                 {{/top_cards}}
             </tbody>
         </table>
-        <p><a href="{{cards_url}}">More cards …</a></p>
+        <p><a href="{{cards_url}}">{{_ More cards…}}</a></p>
     </section>
     <section>
-        <h2>This Week</h2>
+        <h2>{{_ This Week}}</h2>
         {{> spinner}}
         <table>
             <thead>
@@ -62,7 +62,7 @@
         </table>
     </section>
     <section>
-        <h2>Fastest Rising</h2>
+        <h2>{{_ Fastest Rising}}</h2>
         {{> spinner}}
         <table>
             <thead>

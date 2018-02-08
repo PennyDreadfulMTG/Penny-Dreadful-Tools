@@ -1,0 +1,278 @@
+# Translations template for Penny-Dreadful-Tools.
+# Copyright (C) 2018 ORGANIZATION
+# This file is distributed under the same license as the
+# Penny-Dreadful-Tools project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2018-02-08 11:55+1100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.5.3\n"
+
+#: decksite/view.py:55
+msgid "Rotation Tracking"
+msgstr ""
+
+#: decksite/view.py:57
+msgid "Rotation Changes"
+msgstr ""
+
+#: decksite/view.py:58
+msgid "Rotation Speculation"
+msgstr ""
+
+#: decksite/view.py:59
+msgid "External Links"
+msgstr ""
+
+#: decksite/view.py:60
+msgid "Log Out"
+msgstr ""
+
+#: decksite/view.py:63
+msgid "Metagame"
+msgstr ""
+
+#: decksite/templates/home.mustache:1 decksite/view.py:64
+msgid "Latest Decks"
+msgstr ""
+
+#: decksite/view.py:65
+msgid "Archetypes"
+msgstr ""
+
+#: decksite/view.py:66
+msgid "People"
+msgstr ""
+
+#: decksite/view.py:67
+msgid "Cards"
+msgstr ""
+
+#: decksite/view.py:68
+msgid "Past Seasons"
+msgstr ""
+
+#: decksite/view.py:70
+msgid "League"
+msgstr ""
+
+#: decksite/templates/league_header.mustache:1 decksite/view.py:71
+msgid "League Info"
+msgstr ""
+
+#: decksite/view.py:72 decksite/views/signup.py:26
+msgid "Sign Up"
+msgstr ""
+
+#: decksite/view.py:73 decksite/views/report.py:18
+msgid "Report"
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1 decksite/view.py:74
+msgid "Records"
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1 decksite/view.py:75
+msgid "Retire"
+msgstr ""
+
+#: decksite/view.py:77
+msgid "Competitions"
+msgstr ""
+
+#: decksite/view.py:78
+msgid "Competition Results"
+msgstr ""
+
+#: decksite/view.py:79
+msgid "Tournament Info"
+msgstr ""
+
+#: decksite/view.py:80
+msgid "Leaderboards"
+msgstr ""
+
+#: decksite/view.py:81
+msgid "Gatherling"
+msgstr ""
+
+#: decksite/view.py:82
+msgid "Hosting"
+msgstr ""
+
+#: decksite/view.py:84
+msgid "Resources"
+msgstr ""
+
+#: decksite/view.py:85 decksite/views/about_pdm.py:13
+msgid "About"
+msgstr ""
+
+#: decksite/view.py:86
+msgid "What is Penny Dreadful?"
+msgstr ""
+
+#: decksite/view.py:87
+msgid "About pennydreadfulmagic.com"
+msgstr ""
+
+#: decksite/view.py:294
+msgid "Help us translate the site into your language"
+msgstr ""
+
+#: decksite/templates/home.mustache:1
+msgid "More decks…"
+msgstr ""
+
+#: decksite/templates/home.mustache:1
+msgid "Top Cards"
+msgstr ""
+
+#: decksite/templates/home.mustache:1
+msgid "This Season"
+msgstr ""
+
+#: decksite/templates/home.mustache:1
+msgid "More cards…"
+msgstr ""
+
+#: decksite/templates/home.mustache:1
+msgid "This Week"
+msgstr ""
+
+#: decksite/templates/home.mustache:1
+msgid "Fastest Rising"
+msgstr ""
+
+#: decksite/templates/league_header.mustache:1
+msgid "League Results"
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "MTGO Traders League"
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "Sign Up Here"
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"When you complete a five match league run for the first time ever you "
+"will get 1 tik credit with MTGO Traders (at the end of the month)."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "A league run is five matches against five different decks/opponents."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"Your deck stays the same through a run but you can change decks for each "
+"run (or not if you want to play again with the same deck)."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "You can only have one run going at once."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"To export your deck from Magic Online, right click on the name of the "
+"deck on the left of the Collection tab, then click export."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "Prizes"
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"At the end of each month, the top eight players of that month’s league "
+"scoreboard will get credit with MTGO Traders (6/4/3/2/1/1/1/1)."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"For each match you won, you get one point. For each perfect (5-0) run you"
+" have, you get an extra point."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "You can enter the league as many times as you want."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "Finding a Match"
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"The easiest way to find a match to to simply play PD games with your "
+"league deck.  PDBot will alert you if both players are registered in "
+"league. Add \"Penny Dreadful League\" in a comment on your match in Just "
+"for Fun, Freeform to make your intentions clear."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "Matches should use 25 minute timers."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "Signup Form"
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "Report Results"
+msgstr ""
+
+#: decksite/views/about_pdm.py:19
+msgid "This site is currently translated into:"
+msgstr ""
+
+#: decksite/views/league_info.py:22
+msgid ""
+"Each league lasts roughly a month. The [[current league]] will run until "
+"{END_DATE}."
+msgstr ""
+
+#: decksite/views/league_info.py:34
+msgid "You can [[sign up]] at any time."
+msgstr ""
+
+#: decksite/views/report.py:21
+msgid "Your Deck"
+msgstr ""
+
+#: decksite/views/signup.py:11
+msgid ""
+"When you complete a five match league run for the first time ever you "
+"will get 1 tik credit with MTGO Traders."
+msgstr ""
+
+#: decksite/views/signup.py:14
+msgid "Magic Online Username"
+msgstr ""
+
+#: decksite/views/signup.py:17
+msgid "Deck Name"
+msgstr ""
+
+#: decksite/views/signup.py:20
+msgid "Decklist"
+msgstr ""
+
+#: decksite/views/signup.py:23
+msgid "Enter or upload your decklist"
+msgstr ""
+

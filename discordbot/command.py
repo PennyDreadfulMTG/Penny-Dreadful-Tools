@@ -674,8 +674,6 @@ async def disambiguation_reactions(bot, message, cards):
     for i in range(1, len(cards)+1):
         await bot.client.add_reaction(message, DISAMBIGUATION_EMOJIS_BY_NUMBER[i])
 
-
-
 async def single_card_or_send_error(bot, channel, args, author, command):
     result = cards_from_queries2([args], bot)[0]
     if result.has_match() and not result.is_ambiguous():

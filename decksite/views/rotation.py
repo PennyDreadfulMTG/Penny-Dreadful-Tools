@@ -19,14 +19,14 @@ class Rotation(View):
         in_rotation = False
         if until_full_rotation < datetime.timedelta(7):
             in_rotation = True
-            self.rotation_msg = 'Full rotation is in progress, ends ' + dtutil.display_date(rotation.next_rotation())
+            self.rotation_msg = 'Full rotation is in progress, ends ' + dtutil.display_date(rotation.next_rotation(), 2)
         elif until_supplemental_rotation < datetime.timedelta(7):
             in_rotation = True
-            self.rotation_msg = 'Supplemental rotation is in progress, ends ' + dtutil.display_date(rotation.next_supplemental())
+            self.rotation_msg = 'Supplemental rotation is in progress, ends ' + dtutil.display_date(rotation.next_supplemental(), 2)
         elif until_full_rotation < until_supplemental_rotation:
-            self.rotation_msg = 'Full rotation is ' + dtutil.display_date(rotation.next_rotation())
+            self.rotation_msg = 'Full rotation is ' + dtutil.display_date(rotation.next_rotation(), 2)
         else:
-            self.rotation_msg = 'Supplemental rotation is ' + dtutil.display_date(rotation.next_supplemental())
+            self.rotation_msg = 'Supplemental rotation is ' + dtutil.display_date(rotation.next_supplemental(), 2)
         if in_rotation:
             self.read_rotation_files()
         self.show_interesting = True

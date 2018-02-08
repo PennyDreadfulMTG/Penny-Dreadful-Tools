@@ -1,4 +1,5 @@
 {
+    "cardhoarder_urls": [],
     "charts_dir": "./images/charts",
     "decksite_database": "decksite",
     "decksite_hostname": "pennydreadfulmagic.com",
@@ -10,6 +11,7 @@
     "image_dir": "./images",
     "legality_dir": "~/legality/Legality Checker/",
     "magic_database": "magic",
+    "mtgotraders_url": "",
     "mysql_host": "localhost",
     "mysql_passwd": "",
     "mysql_port": 3306,

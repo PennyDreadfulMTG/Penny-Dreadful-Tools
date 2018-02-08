@@ -39,8 +39,7 @@ def download_bluebones_image(cards, filepath):
         internal.store(bluebones_image(cards), filepath)
     except FetchException as e:
         print('Error: {e}'.format(e=e))
-    if internal.acceptable_file(filepath):
-        return filepath
+    return internal.acceptable_file(filepath)
 
 def download_scryfall_image(cards, filepath, version='') -> str:
     print('Trying to get scryfall image for {card}'.format(card=cards[0]))
@@ -48,9 +47,7 @@ def download_scryfall_image(cards, filepath, version='') -> str:
         internal.store(scryfall_image(cards[0], version=version), filepath)
     except FetchException as e:
         print('Error: {e}'.format(e=e))
-    if internal.acceptable_file(filepath):
-        return filepath
-    return None
+    return internal.acceptable_file(filepath)
 
 def download_mci_image(cards, filepath) -> str:
     printings = oracle.get_printings(cards[0])
@@ -59,17 +56,17 @@ def download_mci_image(cards, filepath) -> str:
         try:
             internal.store(mci_image(p), filepath)
             if internal.acceptable_file(filepath):
-                return filepath
+                return True
         except FetchException as e:
             print('Error: {e}'.format(e=e))
         print('Trying to get fallback image for {imagename}'.format(imagename=os.path.basename(filepath)))
         try:
             internal.store(gatherer_image(p), filepath)
             if internal.acceptable_file(filepath):
-                return filepath
+                return True
         except FetchException as e:
             print('Error: {e}'.format(e=e))
-    return None
+    return False
 
 def determine_filepath(cards) -> str:
     imagename = basename(cards)

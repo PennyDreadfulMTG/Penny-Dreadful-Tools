@@ -52,7 +52,7 @@ class MysqlDatabase(GenericDatabase):
             elif e.args[0] == 1062:
                 pass # We don't care if an INSERT IGNORE INTO didn't do anything.
             else:
-                raise
+                raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
         except MySQLdb.Error as e:
             raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
 

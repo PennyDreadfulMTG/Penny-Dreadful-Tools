@@ -4,7 +4,10 @@ import os
 import random
 import string
 
+from shared.pd_exception import InvalidArgumentException
+
 DEFAULTS = {
+    'cardhoarder_urls': [],
     'card_alias_file': './card_aliases.tsv',
     'charts_dir': './images/charts',
     'decksite_database': 'decksite',
@@ -17,6 +20,7 @@ DEFAULTS = {
     'image_dir': './images',
     'legality_dir': '~/legality/Legality Checker/',
     'magic_database': 'cards',
+    'mtgotraders_url': None,
     'mysql_host': 'localhost',
     'mysql_passwd': '',
     'mysql_port': 3306,
@@ -51,12 +55,14 @@ def get(key: str) -> str:
         return cfg[key]
     elif key in os.environ:
         cfg[key] = os.environ[key]
-    else:
+    elif key in DEFAULTS:
         # Lock in the default value if we use it.
         cfg[key] = DEFAULTS[key]
 
         if inspect.isfunction(cfg[key]): # If default value is a function, call it.
             cfg[key] = cfg[key]()
+    else:
+        raise InvalidArgumentException('No default or other configuration value available for {key}'.format(key=key))
 
     print("CONFIG: {0}={1}".format(key, cfg[key]))
     fh = open('config.json', 'w')

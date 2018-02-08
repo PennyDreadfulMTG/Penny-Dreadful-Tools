@@ -290,12 +290,6 @@ class View:
     def language_icon(self):
         return url_for('static', filename='images/language_icon.svg')
 
-    def TT_LEAGUE_INFO(self):
-        return gettext('League Info')
-
-    def TT_LEAGUE_RESULTS(self):
-        return gettext("League Results")
-
     def TT_HELP_TRANSLATE(self) -> str:
         return gettext("Help us translate the site into your language")
 

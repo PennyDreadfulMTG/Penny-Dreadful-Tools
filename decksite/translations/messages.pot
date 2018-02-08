@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-02-08 10:09+1100\n"
+"POT-Creation-Date: 2018-02-08 11:55+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,7 +42,7 @@ msgstr ""
 msgid "Metagame"
 msgstr ""
 
-#: decksite/view.py:64
+#: decksite/templates/home.mustache:1 decksite/view.py:64
 msgid "Latest Decks"
 msgstr ""
 
@@ -66,7 +66,7 @@ msgstr ""
 msgid "League"
 msgstr ""
 
-#: decksite/view.py:71 decksite/view.py:294
+#: decksite/templates/league_header.mustache:1 decksite/view.py:71
 msgid "League Info"
 msgstr ""
 
@@ -78,11 +78,11 @@ msgstr ""
 msgid "Report"
 msgstr ""
 
-#: decksite/view.py:74
+#: decksite/templates/leagueinfo.mustache:1 decksite/view.py:74
 msgid "Records"
 msgstr ""
 
-#: decksite/view.py:75
+#: decksite/templates/leagueinfo.mustache:1 decksite/view.py:75
 msgid "Retire"
 msgstr ""
 
@@ -126,12 +126,44 @@ msgstr ""
 msgid "About pennydreadfulmagic.com"
 msgstr ""
 
-#: decksite/view.py:297
+#: decksite/view.py:294
+msgid "Help us translate the site into your language"
+msgstr ""
+
+#: decksite/templates/home.mustache:1
+msgid "More decks…"
+msgstr ""
+
+#: decksite/templates/home.mustache:1
+msgid "Top Cards"
+msgstr ""
+
+#: decksite/templates/home.mustache:1
+msgid "This Season"
+msgstr ""
+
+#: decksite/templates/home.mustache:1
+msgid "More cards…"
+msgstr ""
+
+#: decksite/templates/home.mustache:1
+msgid "This Week"
+msgstr ""
+
+#: decksite/templates/home.mustache:1
+msgid "Fastest Rising"
+msgstr ""
+
+#: decksite/templates/league_header.mustache:1
 msgid "League Results"
 msgstr ""
 
-#: decksite/view.py:300
-msgid "Help us translate the site into your language"
+#: decksite/templates/leagueinfo.mustache:1
+msgid "MTGO Traders League"
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "Sign Up Here"
 msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
@@ -152,6 +184,12 @@ msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
 msgid "You can only have one run going at once."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"To export your deck from Magic Online, right click on the name of the "
+"deck on the left of the Collection tab, then click export."
 msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
@@ -190,21 +228,25 @@ msgstr ""
 msgid "Matches should use 25 minute timers."
 msgstr ""
 
+#: decksite/templates/leagueinfo.mustache:1
+msgid "Signup Form"
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "Report Results"
+msgstr ""
+
 #: decksite/views/about_pdm.py:19
 msgid "This site is currently translated into:"
 msgstr ""
 
-#: decksite/views/league_info.py:21
-msgid "Sign Up Here"
-msgstr ""
-
-#: decksite/views/league_info.py:25
+#: decksite/views/league_info.py:22
 msgid ""
 "Each league lasts roughly a month. The [[current league]] will run until "
 "{END_DATE}."
 msgstr ""
 
-#: decksite/views/league_info.py:37
+#: decksite/views/league_info.py:34
 msgid "You can [[sign up]] at any time."
 msgstr ""
 

@@ -17,9 +17,6 @@ class LeagueInfo(View):
     def subtitle(self):
         return 'League'
 
-    def TT_SIGN_UP_LINK(self):
-        return gettext('Sign Up Here')
-
     # By doing it this way, all we need to care about is the text left, inside, and right of the link.
     def TT_LEAGUE_LASTS_A_MONTH(self):
         return gettext('Each league lasts roughly a month. The [[current league]] will run until {END_DATE}.').format(END_DATE=self.end_date)

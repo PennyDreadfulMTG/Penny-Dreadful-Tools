@@ -1,4 +1,13 @@
-<h1>{{name}}</h1>
+<div class="banner">
+    <div class="title">
+        <h1>{{name}}</h1>
+    </div>
+    {{^league}}
+        <ul class="buttons">
+            <li><a title="View competition source ({{type}})" class="external" href="{{url}}">Source</a></li>
+        </ul>
+    {{/league}}
+</div>
 <section>
     <h2>Decks</h2>
     {{#league}}

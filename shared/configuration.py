@@ -5,6 +5,7 @@ import random
 import string
 
 DEFAULTS = {
+    'cardhoarder_urls': [],
     'card_alias_file': './card_aliases.tsv',
     'charts_dir': './images/charts',
     'decksite_database': 'decksite',
@@ -17,6 +18,7 @@ DEFAULTS = {
     'image_dir': './images',
     'legality_dir': '~/legality/Legality Checker/',
     'magic_database': 'cards',
+    'mtgotraders_url': None,
     'mysql_host': 'localhost',
     'mysql_passwd': '',
     'mysql_port': 3306,

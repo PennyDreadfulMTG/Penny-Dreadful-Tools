@@ -40,13 +40,13 @@ def cache():
                 MAX(`time`) AS `time`,
                 name,
                 MIN(CASE WHEN `time` = ? THEN price END) AS price,
-                MIN(price) AS low,
-                MAX(price) AS high,
+                MIN(CASE WHEN `time` > ? THEN price END) AS low,
+                MAX(CASE WHEN `time` > ? THEN price END) AS high,
                 AVG(CASE WHEN `time` > ? AND price = 1 THEN 1 WHEN `time` > ? THEN 0 END) AS week,
                 AVG(CASE WHEN `time` > ? AND price = 1 THEN 1 WHEN `time` > ? THEN 0 END) AS month,
                 AVG(CASE WHEN `time` > ? AND price = 1 THEN 1 WHEN `time` > ? THEN 0 END) AS season
             FROM low_price
             GROUP BY name;
     """
-    db.execute(sql, [latest, week, week, month, month, last_rotation, last_rotation])
+    db.execute(sql, [latest, last_rotation, last_rotation, week, week, month, month, last_rotation, last_rotation])
     db.commit()

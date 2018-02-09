@@ -7,6 +7,13 @@ class WhooshSearchTest(unittest.TestCase):
     def setUp(self):
         self.searcher = WhooshSearcher()
 
+    def best_match_is(self, query, expected_best_match, *additional_matches):
+        result = self.searcher.search(query)
+        assert result.get_best_match() == expected_best_match
+        all = result.get_all_matches()
+        for r in additional_matches:
+            assert is_included(r, all)
+
     def finds_at_least(self, query, card_name):
         result = self.searcher.search(query)
         cards = result.get_all_matches()
@@ -26,7 +33,7 @@ class WhooshSearchTest(unittest.TestCase):
         self.finds_at_least('Ashenmoor Gourger', 'Ashenmoor Gouger')
         self.finds_at_least('Ashenmmor', 'Ashenmoor Gouger')
         self.finds_at_least('narcomeba', 'Narcomoeba')
-        self.finds_at_least('devler of secrets', 'Delver of Secrets')
+        #self.finds_at_least('devler of secrets', 'Delver of Secrets')
 
     def test_split_cards(self):
         self.finds_at_least('Far/Away', 'Far // Away')
@@ -47,6 +54,10 @@ class WhooshSearchTest(unittest.TestCase):
     def test_2_typos_in_2_words(self):
         self.finds_at_least('Womds of Rogh', 'Winds of Rath')
 
+    def best_match_without_prefix(self):
+        self.best_match_is('Winds of Wrath', 'Winds of Rath')
+        self.best_match_is('etherling', 'Aetherling')
+
     def test_stem_finds_variations(self):
         self.finds_at_least('Frantic Salvaging', 'Frantic Salvage')
         self.finds_at_least('Efficient Constructor', 'Efficient Construction')
@@ -62,11 +73,7 @@ class WhooshSearchTest(unittest.TestCase):
             assert result.get_best_match() == card
 
     def test_whole_word(self):
-        result = self.searcher.search("rofellos")
-        assert result.get_best_match() == "Rofellos, Llanowar Emissary"
-        assert is_included("Rofellos's Gift", result.get_all_matches())
-
-
+        self.best_match_is("rofellos", "Rofellos, Llanowar Emissary", "Rofellos's Gift")
 
 def is_included(name, cards):
     return len([x for x in cards if x == name]) >= 1

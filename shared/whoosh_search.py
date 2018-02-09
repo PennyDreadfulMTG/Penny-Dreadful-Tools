@@ -88,9 +88,10 @@ class WhooshSearcher():
             return SearchResult(exact, prefix_whole_word, other_prefixed, None)
 
         # We try fuzzy and stemmed queries
+        query_normalized = fuzzy_term(normalized, self.DIST, "name_normalized")
         query_stemmed = And([Term('name_stemmed', q.text) for q in WhooshConstants.stem_analyzer(w)])
         query_tokenized = And([fuzzy_term(q.text, self.DIST, "name_tokenized") for q in WhooshConstants.tokenized_analyzer(w)])
-        query = Or([query_tokenized, query_stemmed])
+        query = Or([query_normalized, query_tokenized, query_stemmed])
 
         with self.ix.searcher() as searcher:
             fuzzy = [r['name'] for r in searcher.search(query, limit=40)]

@@ -153,6 +153,7 @@ def update_database(new_version):
     DELETE FROM `set`;
     """)
     cards = fetcher.all_cards()
+    fix_mtgjson_melded_cards_bug(cards)
     cards = add_hardcoded_cards(cards)
     melded_faces = []
     for _, c in cards.items():
@@ -372,13 +373,12 @@ def get_format_id(name, allow_create=False):
         return None
     return FORMAT_IDS[name]
 
-def card_name(c):
+def card_name(c, reverse_names=False):
     if c.get('layout') == 'meld':
         if c.get('name') == c.get('names')[2]:
             return c.get('names')[0]
         return c.get('name')
     return ' // '.join(c.get('names', [c.get('name')]))
-
 
 def add_hardcoded_cards(cards):
     cards['Gleemox'] = {

@@ -82,7 +82,7 @@ async def handle_command(message, bot):
 def find_method(name):
     cmd = name.lstrip('!').lower()
     if len(cmd) == 0:
-        return
+        return None
     method = [m for m in dir(Commands) if m == cmd or m == '_' + cmd]
     if len(method) == 0:
         method = [m for m in dir(Commands) if m.startswith(cmd) or m.startswith('_{cmd}'.format(cmd=cmd))]
@@ -419,7 +419,7 @@ Want to contribute? Send a Pull Request."""
 
         try:
             service = build("customsearch", "v1", developerKey=api_key)
-            res = service.cse().list(q=args, cx=cse_id, num=1).execute()
+            res = service.cse().list(q=args, cx=cse_id, num=1).execute() # pylint: disable=no-member
             if 'items' in res:
                 r = res['items'][0]
                 s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['link'], abstract=r['snippet'])
@@ -443,7 +443,8 @@ Want to contribute? Send a Pull Request."""
         else:
             started = ""
         prev_message = "The last tournament was {name}, {started}{time} ago".format(name=prev['next_tournament_name'], started=started, time=prev['next_tournament_time'])
-        await bot.client.send_message(channel, 'The next tournament is {name} in {time}.\nSign up on <http://gatherling.com/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], time=t['next_tournament_time'], prev_message=prev_message, url=fetcher.decksite_url('/tournaments/')))
+        next_time = 'in ' + t['next_tournament_time'] if t['next_tournament_time'] != dtutil.display_time(0, 0) else t['next_tournament_time']
+        await bot.client.send_message(channel, 'The next tournament is {name} {next_time}.\nSign up on <http://gatherling.com/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], next_time=next_time, prev_message=prev_message, url=fetcher.decksite_url('/tournaments/')))
 
     @cmd_header('Commands')
     async def art(self, bot, channel, args, author):
@@ -547,7 +548,7 @@ Want to contribute? Send a Pull Request."""
             ],
             'report': [
                 """
-                For gatherling.com tournaments PDBot is information-only, *both* players must report at the bottom of Player CP.
+                For gatherling.com tournaments PDBot is information-only, *both* players must report near the top of Player CP.
                 If PDBot reports your league match in Discord you don't need to do anything (only league matches, tournament matches must still be reported). If not, either player can report.
                 """,
                 {
@@ -673,8 +674,6 @@ def disambiguation(cards):
 async def disambiguation_reactions(bot, message, cards):
     for i in range(1, len(cards)+1):
         await bot.client.add_reaction(message, DISAMBIGUATION_EMOJIS_BY_NUMBER[i])
-
-
 
 async def single_card_or_send_error(bot, channel, args, author, command):
     result = cards_from_queries2([args], bot)[0]

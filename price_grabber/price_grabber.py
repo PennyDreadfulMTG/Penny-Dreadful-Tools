@@ -8,7 +8,7 @@ from magic import card, fetcher_internal, multiverse, oracle
 from magic.database import db
 from shared import configuration, dtutil
 from shared.database import get_database
-from shared.pd_exception import DatabaseException
+from shared.pd_exception import DatabaseException, TooFewItemsException
 
 from price_grabber import price
 
@@ -26,19 +26,40 @@ def fetch():
     for i, url in enumerate(configuration.get('cardhoarder_urls')):
         s = fetcher_internal.fetch(url)
         timestamps.append(dtutil.parse_to_ts(s.split('\n', 1)[0].replace('UPDATED ', ''), '%Y-%m-%dT%H:%M:%S+00:00', dtutil.CARDHOARDER_TZ))
-        all_prices[i] = parse_prices(s)
+        all_prices[i] = parse_cardhoarder_prices(s)
+    url = configuration.get('mtgotraders_url')
+    if url:
+        s = fetcher_internal.fetch(configuration.get('mtgotraders_url'))
+        timestamps.append(dtutil.dt2ts(dtutil.now()))
+        all_prices['mtgotraders'] = parse_mtgotraders_prices(s)
+    if not timestamps:
+        raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=configuration.get('cardhoarder_urls') + [configuration.get('mtgotraders_url')], all_prices=all_prices))
     store(min(timestamps), all_prices)
 
-def parse_prices(s):
+def parse_cardhoarder_prices(s):
     details = []
     for line in s.splitlines()[2:]: # Skipping date and header line.
         if line.count('\t') != 6:
-            print('Bad line: {line}'.format(line=line))
+            print('Bad line (cardhoarder): {line}'.format(line=line)) # BAKERT this should be a hard fail?
         else:
             _mtgo_id, mtgo_set, _mtgjson_set, set_number, name, p, quantity = line.split('\t')  # pylint: disable=unused-variable
             if int(quantity) > 0 and not mtgo_set.startswith('CH-') and mtgo_set != 'VAN' and mtgo_set != 'EVENT' and not re.search(r'(Booster|Commander Deck|Commander:|Theme Deck|Draft Pack|Duel Decks|Reward Pack|Intro Pack|Tournament Pack|Premium Deck Series:|From the Vault)', name):
                 details.append((name, p))
     return [(name_lookup(html.unescape(name.strip())), html.unescape(p.strip())) for name, p in details if name_lookup(html.unescape(name.strip())) is not None]
+
+def parse_mtgotraders_prices(s):
+    details = []
+    for line in s.splitlines():
+        if line.count('|') != 7:
+            print('Bad line (mtgotraders): {line}'.format(line=line)) # BAKERT this should be a hard fail?
+        mtgo_set, rarity, premium, name, number, p, image_path, in_stock = line.split('|') # pylint: disable=unused-variable
+        in_stock = in_stock.replace('<br>', '')
+        assert in_stock == 'Yes' or in_stock == 'No'
+        assert p == '0.01' or p == '0.00'
+        in_stock = in_stock == 'Yes'
+        if p == '0.01' and in_stock:
+            details.append((name, p))
+    return [(name_lookup(name), p) for name, p in details if name_lookup(name) is not None]
 
 def store(timestamp, all_prices):
     DATABASE.begin()

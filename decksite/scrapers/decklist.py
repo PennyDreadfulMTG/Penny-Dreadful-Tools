@@ -29,7 +29,7 @@ def parse(s):
     maindeck = {}
     sideboard = {}
     chunks = re.split(r'\r?\n\r?\n|^\s*sideboard.*?\n', s, flags=re.IGNORECASE|re.MULTILINE)
-    if len(chunks) > 1 and (len(chunks[-1]) > 1 or len(chunks[-1][0]) > 0):
+    if len(chunks) > 1 and (len(chunks[-1]) > 1 or len(chunks[-1][0]) > 0) or 'Sideboard' in s:
         for chunk in chunks[:-1]:
             parse_chunk(chunk, maindeck)
         parse_chunk(chunks[-1], sideboard)

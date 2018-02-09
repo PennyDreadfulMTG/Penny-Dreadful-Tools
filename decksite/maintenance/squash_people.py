@@ -7,7 +7,9 @@ USERNAME_COLUMNS = ['mtgo_username', 'tappedout_username', 'mtggoldfish_username
 # Find people with identical usernames across systems and squash them together.
 def run():
     run_elo = False
+    # pylint: disable=consider-using-enumerate
     for i in range(0, len(USERNAME_COLUMNS)):
+        # pylint: disable=consider-using-enumerate
         for j in range(i + 1, len(USERNAME_COLUMNS)):
             sql = """
                 SELECT p1.id AS p1_id, p2.id AS p2_id, '{col1}' AS col1, '{col2}' AS col2

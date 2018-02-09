@@ -64,7 +64,7 @@ def parse_mtgotraders_prices(s):
     return [(name_lookup(name), p) for name, p in details if name_lookup(name) is not None]
 
 def is_exceptional_name(name):
-    return name.startswith('APAC ') or 'Alternate art' in name or name.startswith('Avatar - ') or or name.startswith('Euro ')
+    return name.startswith('APAC ') or 'Alternate art' in name or name.startswith('Avatar - ') or name.startswith('Euro ')
 
 def store(timestamp, all_prices):
     DATABASE.begin()

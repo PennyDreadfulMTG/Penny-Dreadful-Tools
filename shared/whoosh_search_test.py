@@ -10,9 +10,9 @@ class WhooshSearchTest(unittest.TestCase):
     def best_match_is(self, query, expected_best_match, *additional_matches):
         result = self.searcher.search(query)
         assert result.get_best_match() == expected_best_match
-        all = result.get_all_matches()
+        all_matches = result.get_all_matches()
         for r in additional_matches:
-            assert is_included(r, all)
+            assert is_included(r, all_matches)
 
     def finds_at_least(self, query, card_name):
         result = self.searcher.search(query)
@@ -33,16 +33,13 @@ class WhooshSearchTest(unittest.TestCase):
         self.finds_at_least('Ashenmoor Gourger', 'Ashenmoor Gouger')
         self.finds_at_least('Ashenmmor', 'Ashenmoor Gouger')
         self.finds_at_least('narcomeba', 'Narcomoeba')
+        self.best_match_is('Uphaeval', 'Upheaval')
         #self.finds_at_least('devler of secrets', 'Delver of Secrets')
 
     def test_split_cards(self):
         self.finds_at_least('Far/Away', 'Far // Away')
         self.finds_at_least('Ready / Willing', 'Ready // Willing')
         self.finds_at_least('Fire // Ice', 'Fire // Ice')
-
-    def test_typo_includes_all(self):
-        self.finds_at_least('Uphaeval', 'Upheaval')
-        self.finds_at_least('Uphaeval', 'Volcanic Upheaval')
 
     def test_special_chars(self):
         self.finds_at_least('Jötun Grunt', 'Jötun Grunt')
@@ -64,16 +61,17 @@ class WhooshSearchTest(unittest.TestCase):
 
     def test_exact_match(self):
         for card in ('Upheaval', 'Hellrider', 'Necropotence', 'Skullclamp', 'Mana Leak'):
-            result = self.searcher.search(card)
-            assert result.get_best_match() == card
+            self.best_match_is(card, card)
 
     def test_prefix_match(self):
         for q, card in (('Jeskai Asc', 'Jeskai Ascendancy'), ('Uphe', 'Upheaval')):
-            result = self.searcher.search(q)
-            assert result.get_best_match() == card
+            self.best_match_is(q, card)
 
     def test_whole_word(self):
         self.best_match_is("rofellos", "Rofellos, Llanowar Emissary", "Rofellos's Gift")
+
+    def test_normalized_beats_tokenized(self):
+        self.best_match_is("Flash Food", "Flash Flood")
 
 def is_included(name, cards):
     return len([x for x in cards if x == name]) >= 1

@@ -373,7 +373,7 @@ def get_format_id(name, allow_create=False):
         return None
     return FORMAT_IDS[name]
 
-def card_name(c, reverse_names=False):
+def card_name(c):
     if c.get('layout') == 'meld':
         if c.get('name') == c.get('names')[2]:
             return c.get('names')[0]

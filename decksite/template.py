@@ -1,3 +1,4 @@
+import markdown
 import pystache
 from pystache.parsed import ParsedTemplate
 from flask_babel import gettext
@@ -55,6 +56,10 @@ def insert_gettext_nodes(parsed_template: ParsedTemplate) -> ParsedTemplate:
                 new_template.add(_GettextNode(key))
             else:
                 new_template.add(node)
+        elif isinstance(node, pystache.parser._InvertedNode):
+            new_template.add(pystache.parser._InvertedNode(node.key, insert_gettext_nodes(node.parsed_section)))
+        elif isinstance(node, pystache.parser._SectionNode):
+            new_template.add(pystache.parser._SectionNode(node.key, insert_gettext_nodes(node.parsed), node.delimiters, node.template, node.index_begin, node.index_end))
         else:
             new_template.add(node)
         # We may need to iterate into Sections and Inverted nodes
@@ -69,4 +74,5 @@ class _GettextNode(object):
 
     def render(self, engine, context): # pylint: disable=unused-argument
         s = gettext(self.key)
-        return engine.escape(s)
+        return markdown.markdown(engine.escape(s))
+

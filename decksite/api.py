@@ -94,6 +94,7 @@ def gitpull():
         if payload['ref'] == "refs/heads/master":
             try:
                 subprocess.check_output(['git', 'pull'])
+                subprocess.check_output(['pip', 'install', '-U', '--user', '-r', 'requirements.txt', '--no-cache'])
                 import uwsgi
                 uwsgi.reload()
                 return return_json({'rebooting': True})

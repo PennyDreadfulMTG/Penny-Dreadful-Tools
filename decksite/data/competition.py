@@ -105,23 +105,23 @@ def leaderboards(where="ct.name = 'Gatherling' AND season.id = (SELECT id FROM s
                     s2.start_date AS end_date
                 FROM
                     season AS s
-                INNER JOIN
+                LEFT JOIN
                     season AS s2
                 ON
                     s2.start_date = (SELECT MIN(start_date) FROM season WHERE start_date > s.start_date)
-            ) AS season ON c.start_date >= season.start_date AND c.start_date < season.end_date
+            ) AS season ON c.start_date >= season.start_date AND (c.start_date < season.end_date OR season.end_date IS NULL)
         WHERE
             {where}
-        GROUP BY
-            cs.id,
-            p.id,
-            season.id
-        ORDER BY
-            cs.id,
-            points DESC,
-            wins DESC,
-            tournaments DESC,
-            person
+            GROUP BY
+                cs.id,
+                p.id,
+                season.id
+            ORDER BY
+                cs.id,
+                points DESC,
+                wins DESC,
+                tournaments DESC,
+                person
     """.format(person_query=query.person_query(), where=where)
     results = []
     current = {}

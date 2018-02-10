@@ -9,8 +9,7 @@ from magic import legality, rotation
 from shared import configuration, dtutil
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import InvalidDataException
-from shared.pd_exception import LockNotAcquiredException
+from shared.pd_exception import InvalidDataException, LockNotAcquiredException
 
 from decksite.data import competition, deck, guarantee, match, person, query
 from decksite.database import db

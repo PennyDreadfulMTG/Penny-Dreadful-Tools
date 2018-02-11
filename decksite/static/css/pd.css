@@ -1136,8 +1136,12 @@ button {
     -webkit-appearance: button;
 }
 
-button, div.error, .uploader-label {
+button, div.error, .uploader-label, div.logout {
     margin-left: 12rem;
+}
+
+div.logout {
+    margin-top: 1rem;
 }
 
 div.error {

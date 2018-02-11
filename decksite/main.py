@@ -470,6 +470,6 @@ def teardown_request(response):
     perf.check(g.p, 'slow_page', request.path, 'decksite')
     return response
 
-def init(debug=True):
+def init(debug=True, port=None):
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""
-    APP.run(host='0.0.0.0', debug=debug)
+    APP.run(host='0.0.0.0', debug=debug, port=port)

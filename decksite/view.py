@@ -12,7 +12,7 @@ from shared import dtutil
 from shared.container import Container
 
 from decksite import template
-from decksite.data import deck
+from decksite.data import archetype,deck
 from decksite import APP, BABEL
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10
@@ -211,9 +211,12 @@ class View:
             c.date_sort = dtutil.dt2ts(c.start_date)
             c.league = True if c.type == 'League' else False
             title_safe = ''
-            for k, v in c.base_archetypes_data().items():
-                if v > 0:
-                    title_safe += '{v} {k}<br>'.format(v=v, k=html.escape(k))
+            try:
+                for k, v in c.base_archetypes_data().items():
+                    if v > 0:
+                        title_safe += '{v} {k}<br>'.format(v=v, k=html.escape(k))
+            except KeyError:
+                archetype.rebuild_archetypes()
             c.archetypes_sparkline_chart_title_safe = title_safe
             c.archetypes_sparkline_chart_url = url_for('archetype_sparkline_chart', competition_id=c.id)
 

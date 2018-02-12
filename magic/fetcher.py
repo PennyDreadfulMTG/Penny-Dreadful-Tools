@@ -105,6 +105,16 @@ def mtgo_status():
     except (FetchException, json.decoder.JSONDecodeError):
         return 'UNKNOWN'
 
+def post_discord_webhook(webhook_id: str, webhook_token: str, message: str, name=None) -> bool:
+    if webhook_id is None or webhook_token is None:
+        return False
+    url = "https://discordapp.com/api/webhooks/{id}/{token}".format(id=webhook_id, token=webhook_token)
+    res = internal.post(url, json={
+        'content': message,
+        'username': name,
+        })
+    return True
+
 def resources():
     with open('decksite/resources.json') as resources_file:
         return json.load(resources_file, object_pairs_hook=OrderedDict)

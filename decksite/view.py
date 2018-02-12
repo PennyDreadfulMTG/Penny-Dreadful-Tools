@@ -12,7 +12,7 @@ from shared import dtutil
 from shared.container import Container
 
 from decksite import template
-from decksite.data import archetype,deck
+from decksite.data import archetype, deck
 from decksite import APP, BABEL
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10

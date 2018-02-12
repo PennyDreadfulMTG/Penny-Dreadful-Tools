@@ -3,8 +3,8 @@ import traceback
 import urllib.parse
 
 from flask import abort, g, make_response, redirect, request, send_file, send_from_directory, session, url_for
-from github.GithubException import GithubException
 from werkzeug import exceptions
+from github.GithubException import GithubException
 
 from magic import card as mc, oracle
 from shared import dtutil, perf, repo

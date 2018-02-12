@@ -109,7 +109,7 @@ def post_discord_webhook(webhook_id: str, webhook_token: str, message: str, name
     if webhook_id is None or webhook_token is None:
         return False
     url = "https://discordapp.com/api/webhooks/{id}/{token}".format(id=webhook_id, token=webhook_token)
-    res = internal.post(url, json={
+    internal.post(url, json_data={
         'content': message,
         'username': name,
         })

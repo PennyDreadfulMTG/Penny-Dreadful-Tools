@@ -1,11 +1,10 @@
-from typing import Union
 from shared import database_mysql
 from shared.database_generic import GenericDatabase
 
 def get_database(location: str) -> GenericDatabase:
     return database_mysql.MysqlDatabase(location)
 
-def sqlescape(s, force_string: bool=False):
+def sqlescape(s, force_string: bool = False):
     if str(s).isdecimal() and not force_string:
         return s
     if isinstance(s, str):

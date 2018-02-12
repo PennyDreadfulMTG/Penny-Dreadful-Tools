@@ -1,3 +1,5 @@
+from typing import Union
+
 from magic import rotation
 from shared.container import Container
 from shared.database import sqlescape
@@ -5,7 +7,11 @@ from shared.database import sqlescape
 from decksite.data import deck, guarantee, query
 from decksite.database import db
 
-def load_person(person):
+class Person(Container):
+    pass
+
+
+def load_person(person: Union[int, str]) -> Person:
     try:
         person_id = int(person)
         username = "'{person}'".format(person=person)
@@ -184,6 +190,3 @@ def is_allowed_to_retire(deck_id, discord_id):
 
 def load_person_by_discord_id(discord_id):
     return guarantee.at_most_one(load_people('p.discord_id = {discord_id}'.format(discord_id=sqlescape(discord_id))))
-
-class Person(Container):
-    pass

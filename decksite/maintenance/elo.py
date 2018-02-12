@@ -3,7 +3,7 @@ from decksite.database import db
 
 PEOPLE = {}
 
-def ad_hoc():
+def run():
     sql = """
         SELECT
             GROUP_CONCAT(d.person_id) AS people,

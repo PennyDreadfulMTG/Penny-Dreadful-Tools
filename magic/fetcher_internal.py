@@ -59,10 +59,10 @@ def fetch_json(url, character_encoding=None):
         print('Failed to load JSON:\n{0}'.format(blob))
         raise
 
-def post(url, data):
+def post(url, data=None, json_data=None):
     print('POSTing to {url} with {data}'.format(url=url, data=data))
     try:
-        response = SESSION.post(url, data=data)
+        response = SESSION.post(url, data=data, json=json_data)
         return response.text
     except requests.exceptions.ConnectionError as e:
         raise FetchException(e)

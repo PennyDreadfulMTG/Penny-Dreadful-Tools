@@ -135,7 +135,7 @@ def parse_printable(raw_deck):
 def scrape_user(username):
     parsed = {}
     parsed['username'] = username
-    s = fetcher_internal.fetch('http://tappedout.net/users/{0}/'.format(username))
+    s = fetcher_internal.fetch('https://tappedout.net/users/{0}/'.format(username))
     soup = BeautifulSoup(s, 'html.parser')
     mtgo = soup.find('td', string="MTGO Username")
     if mtgo is not None:

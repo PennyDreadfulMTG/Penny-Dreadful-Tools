@@ -14,6 +14,7 @@ import pytz
 
 GATHERLING_TZ = pytz.timezone('America/New_York')
 WOTC_TZ = pytz.timezone('America/Los_Angeles')
+MELBOURNE_TZ = pytz.timezone('Australia/Melbourne')
 UTC_TZ = pytz.timezone('UTC')
 MTGGOLDFISH_TZ = UTC_TZ
 CARDHOARDER_TZ = UTC_TZ
@@ -40,7 +41,7 @@ def parse_to_ts(s, date_format, tz):
 def timezone(tzid):
     return pytz.timezone(tzid)
 
-def now(tz=None):
+def now(tz=None) -> datetime.datetime:
     if tz is None:
         tz = datetime.timezone.utc
     return datetime.datetime.now(tz)

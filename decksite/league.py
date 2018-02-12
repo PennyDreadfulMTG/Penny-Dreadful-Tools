@@ -5,12 +5,11 @@ import calendar
 
 from flask import url_for
 
-from magic import legality, rotation
+from magic import fetcher, legality, rotation
 from shared import configuration, dtutil
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import InvalidDataException
-from shared.pd_exception import LockNotAcquiredException
+from shared.pd_exception import InvalidDataException, LockNotAcquiredException
 
 from decksite.data import competition, deck, guarantee, match, person, query
 from decksite.database import db
@@ -191,6 +190,13 @@ def report(form):
             mtgo_match_id = form.get('matchID', None)
         else:
             mtgo_match_id = None
+            entry_name = deck.load_deck(int(form.entry)).person.decode('utf-8')
+            opp_name = deck.load_deck(int(form.opponent)).person.decode('utf-8')
+            fetcher.post_discord_webhook(
+                configuration.get("league_webhook_id"),
+                configuration.get("league_webhook_token"),
+                "{entry} reported {f.entry_games}-{f.opponent_games} vs {opponent}".format(f=form, entry=entry_name, opponent=opp_name)
+            )
 
         db().begin()
         match.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games, None, None, mtgo_match_id)

@@ -3,21 +3,21 @@
         "Official site": "http://pdmtgo.com/",
         "Legal cards list": "http://pdmtgo.com/legal_cards.txt",
         "Chat": "https://discord.gg/H6EHdHu",
-        "Reddit": "http://reddit.com/r/PennyDreadfulMTG/",
-        "Card search": "http://scryfall.com/search/?q=f:pd",
+        "Reddit": "https://reddit.com/r/PennyDreadfulMTG/",
+        "Card search": "https://scryfall.com/search/?q=f:pd",
         "Magic Online guide": "https://docs.google.com/document/d/1GGvhaISyESrrvPAkauP5LWKAixh6rcH1Q2jfbfpUOoA/edit"
     },
     "Deckbuilding": {
         "Decklists": "https://pennydreadfulmagic.com/",
         "Legal cards list": "http://pdmtgo.com/legal_cards.txt",
-        "Card search": "http://scryfall.com/search/?q=f:pd",
+        "Card search": "https://scryfall.com/search/?q=f:pd",
         "Deck checker": "http://pdmtgo.com/deck_check.html",
-        "Deck builder": "http://tappedout.net/mtg-deck-builder/penny-dreadful/",
+        "Deck builder": "https://tappedout.net/mtg-deck-builder/penny-dreadful/",
         "Current bugs": "https://pennydreadfulmagic.com/bugs/"
     },
     "Tournaments": {
         "League": "https://pennydreadfulmagic.com/league/",
-        "Gatherling": "http://gatherling.com/",
+        "Gatherling": "https://gatherling.com/",
         "Weekly Tournaments": "https://pennydreadfulmagic.com/tournaments/"
     },
     "League": {
@@ -27,16 +27,18 @@
         "Current league": "https://pennydreadfulmagic.com/league/current/"
     },
     "Search Engines": {
-        "Scryfall": "http://scryfall.com/search/?q=f:pd",
+        "Scryfall": "https://scryfall.com/search/?q=f:pd",
         "Magidex": "https://magidex.com/search?q=f:pd",
-        "mtg.wtf": "http://mtg.wtf/card?q=f%3Apd",
+        "mtg.wtf": "https://mtg.wtf/card?q=f%3Apd",
         "combodeck.net": "http://combodeck.net/"
     },
     "Articles": {
-          "Mrs. Mulligan SCG": "http://www.starcitygames.com/article/33860_Penny-Dreadful.html"
+          "Mrs. Mulligan SCG": "https://www.starcitygames.com/article/33860_Penny-Dreadful.html",
+          "TheWolf, PureMTGO": "http://puremtgo.com/articles/penny-dreadful-best-format-you-are-not-playing",
+          "Cheshire, goto.game": "https://goto.game/penny-dreadful-mtgo-primer/"
     },
     "Blogs": {
-        "testingpennydreadful": "http://testingpennydreadful.tumblr.com/"
+        "testingpennydreadful": "https://testingpennydreadful.tumblr.com/"
     },
     "Code": {
           "Penny Dreadful Tools": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/",
@@ -49,8 +51,8 @@
         "j_meka (YouTube)": "https://www.youtube.com/channel/UC8F23LLimd4FVs3QLwjmtnQ",
         "Mrs. Mulligan": "https://twitch.tv/mrs_mulligan",
         "Dragonas77": "https://twitch.tv/dragonas77",
-        "silasary": "http://twitch.tv/silasary",
-        "crazybaloth": "http://twitch.tv/the_dark_hand",
+        "silasary": "https://twitch.tv/silasary",
+        "crazybaloth": "https://twitch.tv/the_dark_hand",
         "testingpennydreadful": "https://www.youtube.com/channel/UCNMDcnME6vo8YOFnW4dRskQ",
         "Commeradicore": "https://twitch.tv/commeradicore",
         "TinyTim123mtgo": "https://twitch.tv/tinytim123mtgo"

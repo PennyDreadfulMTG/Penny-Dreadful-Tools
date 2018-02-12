@@ -180,10 +180,13 @@ def base_archetypes():
 
 def base_archetype_by_id():
     if len(BASE_ARCHETYPES) == 0:
-        archetypes_by_id = {a.id: a for a in load_archetypes_deckless()}
-        for k, v in archetypes_by_id.items():
-            p = v
-            while p.parent is not None:
-                p = p.parent
-            BASE_ARCHETYPES[k] = p
+        rebuild_archetypes()
     return BASE_ARCHETYPES
+
+def rebuild_archetypes():
+    archetypes_by_id = {a.id: a for a in load_archetypes_deckless()}
+    for k, v in archetypes_by_id.items():
+        p = v
+        while p.parent is not None:
+            p = p.parent
+        BASE_ARCHETYPES[k] = p

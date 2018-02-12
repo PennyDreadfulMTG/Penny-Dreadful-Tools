@@ -3,8 +3,8 @@ import traceback
 import urllib.parse
 
 from flask import abort, g, make_response, redirect, request, send_file, send_from_directory, session, url_for
-from github.GithubException import GithubException
 from werkzeug import exceptions
+from github.GithubException import GithubException
 
 from magic import card as mc, oracle
 from shared import dtutil, perf, repo
@@ -470,6 +470,6 @@ def teardown_request(response):
     perf.check(g.p, 'slow_page', request.path, 'decksite')
     return response
 
-def init(debug=True):
+def init(debug=True, port=None):
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""
-    APP.run(host='0.0.0.0', debug=debug)
+    APP.run(host='0.0.0.0', debug=debug, port=port)

@@ -78,7 +78,7 @@ class View:
                 {'name': gettext('Competition Results'), 'url': url_for('competitions')},
                 {'name': gettext('Tournament Info'), 'url': url_for('tournaments')},
                 {'name': gettext('Leaderboards'), 'url': url_for('tournament_leaderboards')},
-                {'name': gettext('Gatherling'), 'url': 'http://gatherling.com/'},
+                {'name': gettext('Gatherling'), 'url': 'https://gatherling.com/'},
                 {'name': gettext('Hosting'), 'url': url_for('hosting')}
             ]},
             {'name': gettext('Resources'), 'url': url_for('resources'), 'submenu': rotation_submenu},

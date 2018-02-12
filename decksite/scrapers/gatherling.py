@@ -17,7 +17,7 @@ TOP_4 = 't4'
 TOP_8 = 't8'
 
 def scrape(limit=50):
-    soup = BeautifulSoup(fetcher.internal.fetch('http://gatherling.com/eventreport.php?format=Penny+Dreadful&series=&season=&mode=Filter+Events', character_encoding='utf-8'), 'html.parser')
+    soup = BeautifulSoup(fetcher.internal.fetch('https://gatherling.com/eventreport.php?format=Penny+Dreadful&series=&season=&mode=Filter+Events', character_encoding='utf-8'), 'html.parser')
     tournaments = [(gatherling_url(link['href']), link.string) for link in soup.find_all('a') if link['href'].find('eventreport.php?') >= 0]
     n = 0
     for (url, name) in tournaments:
@@ -124,7 +124,7 @@ def tournament_deck(cells, competition_id, date, ranks):
     return deck.add_deck(d)
 
 def tournament_matches(d):
-    url = 'http://gatherling.com/deck.php?mode=view&id={identifier}'.format(identifier=d.identifier)
+    url = 'https://gatherling.com/deck.php?mode=view&id={identifier}'.format(identifier=d.identifier)
     s = fetcher.internal.fetch(url, character_encoding='utf-8')
     soup = BeautifulSoup(s, 'html.parser')
     anchor = soup.find(string='MATCHUPS')
@@ -191,4 +191,4 @@ def add_ids(matches, ds):
 def gatherling_url(href):
     if href.startswith('http'):
         return href
-    return 'http://gatherling.com/{href}'.format(href=href)
+    return 'https://gatherling.com/{href}'.format(href=href)

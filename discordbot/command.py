@@ -45,7 +45,7 @@ async def respond_to_card_names(message, bot):
 
     matches = re.findall(r'https?://(?:www.)?tappedout.net/mtg-decks/(?P<slug>[\w-]+)/?', message.content, flags=re.IGNORECASE)
     for match in matches:
-        data = {"url": "http://tappedout.net/mtg-decks/{slug}".format(slug=match)}
+        data = {"url": "https://tappedout.net/mtg-decks/{slug}".format(slug=match)}
         fetcher.internal.post(fetcher.decksite_url('/add/'), data)
 
 async def handle_command(message, bot):
@@ -552,7 +552,7 @@ Want to contribute? Send a Pull Request."""
                 If PDBot reports your league match in Discord you don't need to do anything (only league matches, tournament matches must still be reported). If not, either player can report.
                 """,
                 {
-                    'Gatherling': 'http://gatherling.com/player.php',
+                    'Gatherling': 'https://gatherling.com/player.php',
                     'League Report': fetcher.decksite_url('/report/')
                 }
             ],
@@ -569,7 +569,7 @@ Want to contribute? Send a Pull Request."""
                 """.format(num_tournaments=num_tournaments),
                 {
                     'More Info': fetcher.decksite_url('/tournaments/'),
-                    'Sign Up': 'http://gatherling.com/',
+                    'Sign Up': 'https://gatherling.com/',
                 }
             ],
             'username': [
@@ -742,4 +742,4 @@ def resources_resources(args):
     return results
 
 def more_results_link(args, total):
-    return 'and {n} more.\n<http://scryfall.com/search/?q={q}>'.format(n=total - 4, q=fetcher.internal.escape(args)) if total > MAX_CARDS_SHOWN else ''
+    return 'and {n} more.\n<https://scryfall.com/search/?q={q}>'.format(n=total - 4, q=fetcher.internal.escape(args)) if total > MAX_CARDS_SHOWN else ''

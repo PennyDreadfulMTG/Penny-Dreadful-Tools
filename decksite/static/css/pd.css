@@ -1101,6 +1101,11 @@ input[type=checkbox].toggle-illegal {
     width: 1rem;
 }
 
+input[disabled=true] {
+    border: none;
+    background: none;
+}
+
 button, input, label, select, textarea {
     margin-top: 1rem;
 }

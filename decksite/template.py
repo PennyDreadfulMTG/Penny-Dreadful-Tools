@@ -75,4 +75,3 @@ class _GettextNode(object):
     def render(self, engine, context): # pylint: disable=unused-argument
         s = gettext(self.key)
         return markdown.markdown(engine.escape(s))
-

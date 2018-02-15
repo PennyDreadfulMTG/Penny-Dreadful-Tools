@@ -34,18 +34,20 @@ def load_season(season=None, league_only=False):
         WHERE {where}
     """.format(where=where)
     season = Container(guarantee.exactly_one(db().execute(sql)))
-    where = 'd.created_date >= {start_ts} AND d.created_date < IFNULL({end_ts}, 999999999999)'.format(start_ts=season.start_date, end_ts=season.end_date or 'NULL')
+    where = 'd.created_date >= {start_ts}'.format(start_ts=season.start_date)
+    if season.end_date:
+        where = '{where} AND d.created_date < {end_ts}'.format(where=where, end_ts=season.end_date)
     if league_only:
         where = "{where} AND d.competition_id IN ({competition_ids_by_type_select})".format(where=where, competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
     season.decks = load_decks(where)
     season.start_date = dtutil.ts2dt(season.start_date)
-    season.end_date = dtutil.ts2dt(season.end_date)
+    season.end_date = dtutil.ts2dt(season.end_date) if season.end_date else None
     return season
 
 # pylint: disable=attribute-defined-outside-init
 def load_decks(where='1 = 1', order_by=None, limit=''):
     if order_by is None:
-        order_by = 'd.created_date DESC, IFNULL(d.finish, 9999999999)'
+        order_by = 'd.created_date DESC, d.finish IS NULL, d.finish'
     sql = """
         SELECT
             d.id,

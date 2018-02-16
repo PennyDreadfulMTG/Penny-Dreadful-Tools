@@ -192,14 +192,12 @@ def export(deck_id):
 @auth.login_required
 def link():
     view = LinkAccounts()
-    view.validate()
     return view.page()
 
 @APP.route('/link', methods=['POST'])
 @auth.login_required
 def link_post():
     view = LinkAccounts()
-    view.validate()
     return view.page()
 
 @APP.route('/resources/')

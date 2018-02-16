@@ -199,3 +199,11 @@ def load_person_by_tappedout_name(username):
 
 def load_person_by_mtggoldfish_name(username):
     return guarantee.at_most_one(load_people('p.mtggoldfish_username = {username}'.format(username=sqlescape(username))))
+
+def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username):
+    sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
+    person_id = db().value(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
+    if person_id:
+        return person_id
+    sql = 'INSERT INTO person (mtgo_username, tappedout_username, mtggoldfish_username) VALUES (%s, %s, %s)'
+    return db().insert(sql, [mtgo_username, tappedout_username, mtggoldfish_username])

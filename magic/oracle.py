@@ -14,8 +14,11 @@ CARDS_BY_NAME: Dict[str, card.Card] = {}
 
 def init():
     if len(CARDS_BY_NAME) == 0:
-        for c in load_cards():
-            CARDS_BY_NAME[c.name] = c
+        force_init()
+
+def force_init():
+    for c in load_cards():
+        CARDS_BY_NAME[c.name] = c
 
 # 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold default.
 def search(query, fuzzy_threshold=260):

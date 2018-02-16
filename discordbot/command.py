@@ -374,7 +374,6 @@ Want to contribute? Send a Pull Request."""
         else:
             await bot.client.send_message(channel, 'Issue has been reported at <{url}>.'.format(url=issue.html_url))
 
-
     @cmd_header('Commands')
     async def invite(self, bot, channel):
         """Invite me to your server."""

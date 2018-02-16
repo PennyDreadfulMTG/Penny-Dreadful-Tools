@@ -223,6 +223,7 @@ def update_bugged_cards(use_transaction=True):
         db().execute("INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog) VALUES (?, ?, ?, ?, ?, ?)", [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog']])
     if use_transaction:
         db().commit()
+    oracle.force_init()
 
 def update_pd_legality():
     for s in SEASONS:

@@ -365,6 +365,17 @@ Want to contribute? Send a Pull Request."""
             await bot.client.send_message(channel, 'Issue has been reported at <{url}>. Please add square brackets and screenshot as explained here: <https://github.com/PennyDreadfulMTG/modo-bugs/blob/master/README.md>'.format(url=issue.html_url))
 
     @cmd_header('Commands')
+    async def gbug(self, bot, channel, args, author):
+        """Report a Gatherling bug."""
+        await bot.client.send_typing(channel)
+        issue = repo.create_issue(args, author, 'Discord', 'PennyDreadfulMTG/gatherling')
+        if issue is None:
+            await bot.client.send_message(channel, 'Report Gatherling issues at <https://github.com/PennyDreadfulMTG/gatherling/issues/new>')
+        else:
+            await bot.client.send_message(channel, 'Issue has been reported at <{url}>.'.format(url=issue.html_url))
+
+
+    @cmd_header('Commands')
     async def invite(self, bot, channel):
         """Invite me to your server."""
         await bot.client.send_message(channel, "Invite me to your discord server by clicking this link: <https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=268757056>")

@@ -58,7 +58,7 @@ def parse(s):
     return {'maindeck':maindeck, 'sideboard':sideboard}
 
 
-# Parse a deck in the MTGO XML .dek format or raise an InvalidDataException.
+# Parse a deck in the Magic Online XML .dek format or raise an InvalidDataException.
 def parse_xml(s):
     d = {'maindeck': {}, 'sideboard': {}}
     try:

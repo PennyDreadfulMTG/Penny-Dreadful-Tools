@@ -1,9 +1,7 @@
-from flask import request, url_for
+from flask import request
 from flask_babel import gettext
 
-from magic import tournaments
 from shared.container import Container
-from shared.database import sqlescape
 
 from decksite.data import deck, person
 from decksite.database import db

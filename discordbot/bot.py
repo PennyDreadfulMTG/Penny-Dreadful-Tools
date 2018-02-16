@@ -60,39 +60,15 @@ class Bot:
 
     async def post_cards(self, cards, channel, replying_to=None, additional_text=''):
         await self.client.send_typing(channel)
-
-        not_pd = configuration.get('not_pd').split(',')
-        disable_emoji = False
-        if channel.id in not_pd:
-            disable_emoji = True
-
         if len(cards) == 0:
-            if replying_to is not None:
-                text = '{author}: No matches.'.format(author=replying_to.mention)
-            else:
-                text = 'No matches.'
-            message = await self.client.send_message(channel, text)
-            await self.client.add_reaction(message, '❎')
+            await self.post_no_cards(channel, replying_to)
             return
+        disable_emoji = channel.id in configuration.get('not_pd').split(',')
         cards = command.uniqify_cards(cards)
         if len(cards) > command.MAX_CARDS_SHOWN:
             cards = cards[:command.DEFAULT_CARDS_SHOWN]
         if len(cards) == 1:
-            card = cards[0]
-            mana = emoji.replace_emoji(''.join(card.mana_cost or []), self.client)
-            legal = ' — ' + emoji.legal_emoji(card, True)
-            if disable_emoji:
-                legal = ''
-            if card.get('mode', None) == '$':
-                text = '{name} {legal} — {price}'.format(name=card.name, price=fetcher.card_price_string(card), legal=legal)
-            else:
-                text = '{name} {mana} — {type}{legal}'.format(name=card.name, mana=mana, type=card.type, legal=legal)
-            if card.bugs:
-                for bug in card.bugs:
-                    text += '\n:beetle:{rank} bug: {bug}'.format(bug=bug['description'], rank=bug['classification'])
-                    if bug['last_confirmed'] < (dtutil.now() - datetime.timedelta(days=60)):
-                        time_since_confirmed = (dtutil.now() - bug['last_confirmed']).seconds
-                        text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(time_since_confirmed, 1))
+            text = self.single_card_text(cards[0], disable_emoji)
         else:
             text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.legal_emoji(card)) if not disable_emoji else ''), price=((fetcher.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
         if len(cards) > command.MAX_CARDS_SHOWN:
@@ -111,6 +87,16 @@ class Bot:
         else:
             await self.send_image_with_retry(channel, image_file, text)
 
+    async def post_no_cards(self, channel, replying_to):
+        if replying_to is not None:
+            text = '{author}: No matches.'.format(author=replying_to.mention)
+        else:
+            text = 'No matches.'
+        message = await self.client.send_message(channel, text)
+        await self.client.add_reaction(message, '❎')
+        return
+
+
     async def send_image_with_retry(self, channel, image_file, text=''):
         message = await self.client.send_file(channel, image_file, content=text)
         if message and message.attachments and message.attachments[0]['size'] == 0:
@@ -125,6 +111,24 @@ class Bot:
         if is_pd_server: # or is_test_server:
             greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> and <http://pdmtgo.com> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
             await self.client.send_message(member.server.default_channel, greeting)
+
+    def single_card_text(self, card, disable_emoji):
+        mana = emoji.replace_emoji(''.join(card.mana_cost or []), self.client)
+        legal = ' — ' + emoji.legal_emoji(card, True)
+        if disable_emoji:
+            legal = ''
+        if card.get('mode', None) == '$':
+            text = '{name} {legal} — {price}'.format(name=card.name, price=fetcher.card_price_string(card), legal=legal)
+        else:
+            text = '{name} {mana} — {type}{legal}'.format(name=card.name, mana=mana, type=card.type, legal=legal)
+        if card.bugs:
+            for bug in card.bugs:
+                text += '\n:beetle:{rank} bug: {bug}'.format(bug=bug['description'], rank=bug['classification'])
+                if bug['last_confirmed'] < (dtutil.now() - datetime.timedelta(days=60)):
+                    time_since_confirmed = (dtutil.now() - bug['last_confirmed']).seconds
+                    text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(time_since_confirmed, 1))
+        return text
+
 
 BOT = Bot()
 

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-02-08 11:55+1100\n"
+"POT-Creation-Date: 2018-02-14 22:20+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,100 +34,124 @@ msgstr ""
 msgid "External Links"
 msgstr ""
 
-#: decksite/view.py:60
+#: decksite/view.py:63
 msgid "Log Out"
 msgstr ""
 
-#: decksite/view.py:63
+#: decksite/view.py:67
+msgid "Log In"
+msgstr ""
+
+#: decksite/view.py:71
 msgid "Metagame"
 msgstr ""
 
-#: decksite/templates/home.mustache:1 decksite/view.py:64
+#: decksite/templates/home.mustache:1 decksite/view.py:72
 msgid "Latest Decks"
 msgstr ""
 
-#: decksite/view.py:65
+#: decksite/view.py:73
 msgid "Archetypes"
 msgstr ""
 
-#: decksite/view.py:66
+#: decksite/view.py:74
 msgid "People"
 msgstr ""
 
-#: decksite/view.py:67
+#: decksite/view.py:75
 msgid "Cards"
 msgstr ""
 
-#: decksite/view.py:68
+#: decksite/view.py:76
 msgid "Past Seasons"
 msgstr ""
 
-#: decksite/view.py:70
+#: decksite/templates/tournaments.mustache:1 decksite/view.py:78
 msgid "League"
 msgstr ""
 
-#: decksite/templates/league_header.mustache:1 decksite/view.py:71
+#: decksite/templates/league_header.mustache:1 decksite/view.py:79
 msgid "League Info"
 msgstr ""
 
-#: decksite/view.py:72 decksite/views/signup.py:26
+#: decksite/view.py:80 decksite/views/signup.py:26
 msgid "Sign Up"
 msgstr ""
 
-#: decksite/view.py:73 decksite/views/report.py:18
+#: decksite/view.py:81 decksite/views/report.py:18
 msgid "Report"
 msgstr ""
 
-#: decksite/templates/leagueinfo.mustache:1 decksite/view.py:74
+#: decksite/templates/leagueinfo.mustache:1 decksite/view.py:82
 msgid "Records"
 msgstr ""
 
-#: decksite/templates/leagueinfo.mustache:1 decksite/view.py:75
+#: decksite/templates/leagueinfo.mustache:1 decksite/view.py:83
 msgid "Retire"
 msgstr ""
 
-#: decksite/view.py:77
+#: decksite/view.py:85
 msgid "Competitions"
 msgstr ""
 
-#: decksite/view.py:78
+#: decksite/view.py:86
 msgid "Competition Results"
 msgstr ""
 
-#: decksite/view.py:79
+#: decksite/view.py:87
 msgid "Tournament Info"
 msgstr ""
 
-#: decksite/view.py:80
+#: decksite/view.py:88
 msgid "Leaderboards"
 msgstr ""
 
-#: decksite/view.py:81
+#: decksite/view.py:89
 msgid "Gatherling"
 msgstr ""
 
-#: decksite/view.py:82
+#: decksite/view.py:90
 msgid "Hosting"
 msgstr ""
 
-#: decksite/view.py:84
+#: decksite/view.py:92
 msgid "Resources"
 msgstr ""
 
-#: decksite/view.py:85 decksite/views/about_pdm.py:13
+#: decksite/view.py:93 decksite/views/about_pdm.py:13
 msgid "About"
 msgstr ""
 
-#: decksite/view.py:86
+#: decksite/view.py:94
 msgid "What is Penny Dreadful?"
 msgstr ""
 
-#: decksite/view.py:87
+#: decksite/view.py:95
 msgid "About pennydreadfulmagic.com"
 msgstr ""
 
-#: decksite/view.py:294
+#: decksite/view.py:305
 msgid "Help us translate the site into your language"
+msgstr ""
+
+#: decksite/templates/about.mustache:1
+msgid ""
+"**The cheapest format ever played.** Every deck in the format costs less "
+"than a dollar."
+msgstr ""
+
+#: decksite/templates/about.mustache:1
+msgid ""
+"**A brewer's paradise.** A card pool as big as Modern with gems (and "
+"jank) waiting to be discovered."
+msgstr ""
+
+#: decksite/templates/about.mustache:1
+msgid ""
+"**A diverse format** with countless different archetypes. Winners of past"
+" tournaments include Reanimator, Red Deck Wins, Heroic, Aristocrats, "
+"Demonic Rising, Abzan Midrange, Elves, Grenzo Combo, Dragon Control and "
+"Vampires in one season alone."
 msgstr ""
 
 #: decksite/templates/home.mustache:1
@@ -234,6 +258,65 @@ msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
 msgid "Report Results"
+msgstr ""
+
+#: decksite/templates/retire.mustache:1
+msgid "Not your deck?"
+msgstr ""
+
+#: decksite/templates/retire.mustache:1
+msgid "Log out"
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid "Cardhoarder Tournaments"
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid "Date"
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid "Tournaments"
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid "Magic Online Bugs"
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid ""
+"We allow the playing of cards with known bugs in Penny Dreadful with "
+"specific conditions."
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid ""
+"Cards with game-breaking bugs must not be played. Exceptions: Cards that "
+"are only bugged in Multiplayer games."
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid ""
+"Cards with disadvantageous bugs can be played and no extra rules apply. "
+"The opposing player is under no obligation to treat the card as if it "
+"worked properly."
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid ""
+"Cards with advantageous bugs can be played but accruing advantage "
+"intentionally will result in disqualification."
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid ""
+"Accruing advantage any other way with a card with an advantageous bug is "
+"a game loss for the owner of the bugged card."
+msgstr ""
+
+#: decksite/templates/unauthorized.mustache:1
+msgid "You are not authorized to see this page."
 msgstr ""
 
 #: decksite/views/about_pdm.py:19

@@ -17,7 +17,7 @@ from decksite.cache import cached
 from decksite.data import archetype as archs, card as cs, competition as comp, deck as ds, news as ns, person as ps, query
 from decksite.charts import chart
 from decksite.league import ReportForm, RetireForm, SignUpForm
-from decksite.views import About, AboutPdm, AddForm, Admin, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, EditNews, Home, InternalServerError, LeagueInfo, News, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChanges, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
+from decksite.views import About, AboutPdm, AddForm, Admin, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, EditNews, Home, InternalServerError, LeagueInfo, LinkAccounts, News, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChanges, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
 
 # Decks
 
@@ -187,6 +187,18 @@ def export(deck_id):
             abort(403)
     safe_name = deck_name.file_name(d)
     return (mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
+
+@APP.route('/link')
+@auth.login_required
+def link():
+    view = LinkAccounts()
+    return view.page()
+
+@APP.route('/link', methods=['POST'])
+@auth.login_required
+def link_post():
+    view = LinkAccounts()
+    return view.page()
 
 @APP.route('/resources/')
 @cached()

@@ -25,6 +25,9 @@ def load_people(where='1 = 1'):
         SELECT
             p.id,
             {person_query} AS name,
+            p.mtgo_username,
+            p.tappedout_username,
+            p.mtggoldfish_username,
             p.discord_id,
             p.elo,
             {all_select},
@@ -190,3 +193,17 @@ def is_allowed_to_retire(deck_id, discord_id):
 
 def load_person_by_discord_id(discord_id):
     return guarantee.at_most_one(load_people('p.discord_id = {discord_id}'.format(discord_id=sqlescape(discord_id))))
+
+def load_person_by_tappedout_name(username):
+    return guarantee.at_most_one(load_people('p.tappedout_username = {username}'.format(username=sqlescape(username))))
+
+def load_person_by_mtggoldfish_name(username):
+    return guarantee.at_most_one(load_people('p.mtggoldfish_username = {username}'.format(username=sqlescape(username))))
+
+def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username):
+    sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
+    person_id = db().value(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
+    if person_id:
+        return person_id
+    sql = 'INSERT INTO person (mtgo_username, tappedout_username, mtggoldfish_username) VALUES (%s, %s, %s)'
+    return db().insert(sql, [mtgo_username, tappedout_username, mtggoldfish_username])

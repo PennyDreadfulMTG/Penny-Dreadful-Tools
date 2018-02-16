@@ -660,11 +660,11 @@ table.with-marginalia.footable-details {
         margin: 0;
     }
     td.marginalia {
-        /* Override the inline style `display: table-cell` added by footable */;
+        /* Override the inline style `display: table-cell` added by footable */
         display: none !important; /* csslint allow: important */
     }
     table.footable-details.with-marginalia tbody tr:first-child th:first-child {
-        /* Override the inline style `display: table-cell` added by footable */;
+        /* Override the inline style `display: table-cell` added by footable */
         display: none !important; /* csslint allow: important */
     }
     /* Don't show the additional header row for "Season" and "All Time" at this size - we'll be hiding the all time stats. */
@@ -1099,6 +1099,11 @@ button, input, select, textarea, .uploader-label {
 
 input[type=checkbox].toggle-illegal {
     width: 1rem;
+}
+
+input[disabled=true] {
+    border: none;
+    background: none;
 }
 
 button, input, label, select, textarea {

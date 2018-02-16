@@ -26,7 +26,14 @@ def league_api():
 
 @APP.route('/api/person/<person>')
 def person_api(person):
-    return return_json(ps.load_person(person))
+    p = ps.load_person(person)
+    p.decks = url_for('person_decks_api', person=person)
+    return return_json(p)
+
+@APP.route('/api/person/<person>/decks')
+def person_decks_api(person):
+    p = ps.load_person(person)
+    return return_json(p.decks)
 
 @APP.route('/api/league/run/<person>')
 def league_run_api(person):

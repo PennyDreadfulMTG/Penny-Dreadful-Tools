@@ -16,7 +16,7 @@ DEFAULTS = {
     'decksite_protocol': 'https',
     'github_password': None,
     'github_user': None,
-    'guild_id': '',
+    'guild_id': '207281932214599682',
     'image_dir': './images',
     'legality_dir': '~/legality/Legality Checker/',
     'magic_database': 'cards',

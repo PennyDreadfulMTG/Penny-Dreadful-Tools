@@ -25,7 +25,7 @@ def run():
                 squash(pair.p1_id, pair.p2_id, pair.col1, pair.col2)
     if run_elo:
         print('Running maintenance task to correct all Elo ratings.')
-        elo.ad_hoc()
+        elo.run()
 
 
 def squash(p1id, p2id, col1, col2):

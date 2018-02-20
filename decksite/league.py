@@ -124,7 +124,7 @@ class RetireForm(Form):
         if len(self.entry) == 0:
             self.errors['entry'] = 'Please select your deck'
         if not person.is_allowed_to_retire(self.entry, self.discord_user):
-            self.errors['entry'] = 'You cannot retire this deck. This discord user is already assigned to another mtgo user'
+            self.errors['entry'] = 'You cannot retire this deck. This discord user is already assigned to another Magic Online user'
         print(self.errors)
 
 def signup(form):

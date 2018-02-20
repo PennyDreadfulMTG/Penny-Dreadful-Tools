@@ -47,41 +47,44 @@ class Rotation(View):
         scores = Counter(lines).most_common()
         self.runs = scores[0][1]
         self.runs_percent = round(round(self.runs / 168, 2) * 100)
-        cs = oracle.cards_by_name()
-        remaining_runs = (168 - self.runs)
-        playability = card.playability()
+        self.cs = oracle.cards_by_name()
         for name, hits in scores:
-            name = html.unescape(name.encode('latin-1').decode('utf-8'))
-            hits_needed = max(84 - hits, 0)
-            c = cs.get(name)
-            if c.layout not in multiverse.playable_layouts():
-                continue
-            percent = round(round(hits / self.runs, 2) * 100)
-            if remaining_runs == 0:
-                percent_needed = 0
-            else:
-                percent_needed = round(round(hits_needed / remaining_runs, 2) * 100)
-            if c is None:
-                raise DoesNotExistException("Legality list contains unknown card '{name}'".format(name=name))
-            if remaining_runs + hits < 84:
-                status = 'Not Legal'
-            elif hits >= 84:
-                status = 'Legal'
-            else:
-                status = 'Undecided'
-                hits = redact(hits)
-                hits_needed = redact(hits_needed)
-                percent = redact(percent)
-                percent_needed = redact(percent_needed)
-            c.update({
-                'hits': hits,
-                'hits_needed': hits_needed,
-                'percent': percent,
-                'percent_hits_needed': percent_needed,
-                'status': status,
-                'interestingness': rotation.interesting(playability, c)
-            })
-            self.cards.append(c)
+            self.process_score(name, hits)
+
+    def process_score(self, name, hits):
+        playability = card.playability()
+        remaining_runs = (168 - self.runs)
+        name = html.unescape(name.encode('latin-1').decode('utf-8'))
+        hits_needed = max(84 - hits, 0)
+        c = self.cs.get(name)
+        if c.layout not in multiverse.playable_layouts():
+            return
+        percent = round(round(hits / self.runs, 2) * 100)
+        if remaining_runs == 0:
+            percent_needed = 0
+        else:
+            percent_needed = round(round(hits_needed / remaining_runs, 2) * 100)
+        if c is None:
+            raise DoesNotExistException("Legality list contains unknown card '{name}'".format(name=name))
+        if remaining_runs + hits < 84:
+            status = 'Not Legal'
+        elif hits >= 84:
+            status = 'Legal'
+        else:
+            status = 'Undecided'
+            hits = redact(hits)
+            hits_needed = redact(hits_needed)
+            percent = redact(percent)
+            percent_needed = redact(percent_needed)
+        c.update({
+            'hits': hits,
+            'hits_needed': hits_needed,
+            'percent': percent,
+            'percent_hits_needed': percent_needed,
+            'status': status,
+            'interestingness': rotation.interesting(playability, c)
+        })
+        self.cards.append(c)
 
     def subtitle(self):
         return 'Rotation'

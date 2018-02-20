@@ -49,7 +49,7 @@ def face_properties():
     for k in ['id', 'card_id', 'hand', 'life', 'starter']:
         props[k]['type'] = INTEGER
     props['id']['primary_key'] = True
-    props['id']['query'] = "`{table}`.`{column}` AS face_id"
+    props['id']['query'] = '`{table}`.`{column}` AS face_id'
     props['cmc']['type'] = REAL
     props['name']['query'] = """{name_query} AS name""".format(name_query=name_query())
     props['name_ascii']['query'] = """{name_query} AS name_ascii""".format(name_query=name_query('name_ascii'))
@@ -233,28 +233,7 @@ class Card(Container):
     def __init__(self, params):
         super().__init__()
         for k in params.keys():
-            v = params[k]
-            if k == 'names' or k == 'mana_cost':
-                if v is not None:
-                    v = v.split('|')
-            if k == 'legalities':
-                if v is not None:
-                    formats = v.split(',')
-                    v = {}
-                    for f in formats:
-                        parts = f.split(':')
-                        v[parts[0]] = parts[1]
-                else:
-                    v = {}
-            if k == 'bugs':
-                if v is not None:
-                    bugs = v.split('_SEPARATOR_')
-                    v = []
-                    for b in bugs:
-                        description, classification, last_confirmed, url, from_bug_blog = b.split('|')
-                        bb = from_bug_blog == "1"
-                        v.append({'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(float(last_confirmed)), 'url': url, 'from_bug_blog': bb})
-            setattr(self, k, v)
+            setattr(self, k, determine_value(k, params))
         if not self.names:
             setattr(self, 'names', [self.name])
 
@@ -269,6 +248,37 @@ class Card(Container):
 
     def is_split(self):
         return self.name.find('//') >= 0
+
+def determine_value(k, params):
+    v = params[k]
+    if k == 'names' or k == 'mana_cost':
+        return v.split('|') if v is not None else None
+    elif k == 'legalities':
+        v = determine_legalities(v)
+    elif k == 'bugs':
+        v = determine_bugs(v)
+    return v
+
+def determine_legalities(v):
+    if v is None:
+        return {}
+    formats = v.split(',')
+    v = {}
+    for f in formats:
+        name, status = f.split(':')
+        v[name] = status
+    return v
+
+def determine_bugs(v):
+    if v is None:
+        return None
+    bugs = v.split('_SEPARATOR_')
+    v = []
+    for b in bugs:
+        description, classification, last_confirmed, url, from_bug_blog = b.split('|')
+        bb = from_bug_blog == '1'
+        v.append({'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(float(last_confirmed)), 'url': url, 'from_bug_blog': bb})
+        return v
 
 class Printing(Container):
     pass

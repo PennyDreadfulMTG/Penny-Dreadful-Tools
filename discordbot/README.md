@@ -34,7 +34,7 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!legal` Announce whether the specified card is legal or not.
 
-`!modobug` Report an MTGO bug.
+`!modobug` Report a Magic Online bug.
 
 `!modofail` Ding!
 
@@ -62,7 +62,7 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!spoiler {cardname}`: Request a card from an upcoming set.
 
-`!status` Gives the status of MTGO, UP or DOWN.
+`!status` Gives the status of Magic Online: UP or DOWN.
 
 `!time {location}` Show the current time in the specified location.
 

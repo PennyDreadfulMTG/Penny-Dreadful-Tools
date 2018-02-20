@@ -205,7 +205,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def status(self, bot, channel):
-        """`!status` Gives the status of MTGO, UP or DOWN."""
+        """`!status` Gives the status of Magic Online: UP or DOWN."""
         status = fetcher.mtgo_status()
         await bot.client.send_message(channel, 'MTGO is {status}'.format(status=status))
 
@@ -360,9 +360,20 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_typing(channel)
         issue = repo.create_issue(args, author, 'Discord', 'PennyDreadfulMTG/modo-bugs')
         if issue is None:
-            await bot.client.send_message(channel, 'Report MTGO issues at <https://github.com/PennyDreadfulMTG/modo-bugs/issues/new>')
+            await bot.client.send_message(channel, 'Report Magic Online issues at <https://github.com/PennyDreadfulMTG/modo-bugs/issues/new>')
         else:
             await bot.client.send_message(channel, 'Issue has been reported at <{url}>. Please add square brackets and screenshot as explained here: <https://github.com/PennyDreadfulMTG/modo-bugs/blob/master/README.md>'.format(url=issue.html_url))
+
+    @cmd_header('Commands')
+    async def gbug(self, bot, channel, args, author):
+        """Report a Gatherling bug."""
+        await bot.client.send_typing(channel)
+        issue = repo.create_issue(args, author, 'Discord', 'PennyDreadfulMTG/gatherling')
+        if issue is None:
+            await bot.client.send_message(channel, 'Report Gatherling issues at <https://github.com/PennyDreadfulMTG/gatherling/issues/new>')
+        else:
+            await bot.client.send_message(channel, 'Issue has been reported at <{url}>.'.format(url=issue.html_url))
+
 
     @cmd_header('Commands')
     async def invite(self, bot, channel):
@@ -505,7 +516,7 @@ Want to contribute? Send a Pull Request."""
             ],
             'legality': [
                 """
-                Legality is determined at the release of a Standard-legal set on MTGO.
+                Legality is determined at the release of a Standard-legal set on Magic Online.
                 Prices are checked every hour for a week. Anything 1c or less for half or more of all checks is legal for the season.
                 Cards from the just-released set are added (nothing removed) a couple of weeks later via a supplemental rotation after prices have settled a little.
                 Any version of a card on the legal cards list is legal.
@@ -517,7 +528,7 @@ Want to contribute? Send a Pull Request."""
             ],
             'noshow': [
                 """
-                If your opponent does not join your game please @-message them on Discord and contact them on MTGO.
+                If your opponent does not join your game please @-message them on Discord and contact them on Magic Online.
                 If you haven't heard from them by 10 minutes after the start of the round let the Tournament Organizer know.
                 You will receive a 2-0 win and your opponent will be dropped from the competition.
                 """

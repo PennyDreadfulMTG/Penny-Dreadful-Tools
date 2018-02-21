@@ -12,7 +12,49 @@ from decksite import deck_name
 from decksite.data import guarantee, query
 from decksite.database import db
 
-def load_deck(deck_id):
+# pylint: disable=too-many-instance-attributes
+class Deck(Container):
+    def __init__(self, params):
+        super().__init__()
+        for k in params.keys():
+            self[k] = params[k]
+        self.sorted = False
+
+    def all_cards(self):
+        cards = []
+        for entry in self.maindeck + self.sideboard:
+            cards += [entry['card']] * entry['n']
+        return cards
+
+    def sort(self):
+        if not self.sorted and (len(self.maindeck) > 0 or len(self.sideboard) > 0):
+            self.maindeck.sort(key=lambda x: oracle.deck_sort(x['card']))
+            self.sideboard.sort(key=lambda x: oracle.deck_sort(x['card']))
+            self.sorted = True
+
+    def is_in_current_run(self):
+        if ((self.wins or 0) + (self.draws or 0) + (self.losses or 0) >= 5) or self.retired:
+            return False
+        elif self.competition_type_name != 'League':
+            return False
+        elif self.competition_end_date < dtutil.now():
+            return False
+        return True
+
+    def __str__(self):
+        self.sort()
+        s = ''
+        for entry in self.maindeck:
+            s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
+        s += '\n'
+        for entry in self.sideboard:
+            s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
+        return s.strip()
+
+    def is_person_associated(self):
+        return self.discord_id is not None
+
+def load_deck(deck_id) -> Deck:
     return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))
 
 def load_season(season=None, league_only=False):
@@ -164,14 +206,16 @@ def set_legality(d):
 # Optionally: created_date (unix timestamp, defaults to now), resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url, wins, losses, draws, finish
 #
 # source + identifier must be unique for each decklist.
-def add_deck(params):
+def add_deck(params) -> Deck:
     if not params.get('mtgo_username') and not params.get('tappedout_username') and not params.get('mtggoldfish_username'):
         raise InvalidDataException('Did not find a username in {params}'.format(params=params))
     person_id = get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'), params.get('mtggoldfish_username'))
     deck_id = get_deck_id(params['source'], params['identifier'])
     if deck_id:
         add_cards(deck_id, params['cards'])
-        return deck_id
+        d = load_deck(deck_id)
+        prime_cache(d)
+        return d
     created_date = params.get('created_date')
     if not created_date:
         created_date = time.time()
@@ -411,45 +455,3 @@ def nwdl_join():
                     d.id
             ) AS dsum ON d.id = dsum.id
     """
-
-# pylint: disable=too-many-instance-attributes
-class Deck(Container):
-    def __init__(self, params):
-        super().__init__()
-        for k in params.keys():
-            self[k] = params[k]
-        self.sorted = False
-
-    def all_cards(self):
-        cards = []
-        for entry in self.maindeck + self.sideboard:
-            cards += [entry['card']] * entry['n']
-        return cards
-
-    def sort(self):
-        if not self.sorted and (len(self.maindeck) > 0 or len(self.sideboard) > 0):
-            self.maindeck.sort(key=lambda x: oracle.deck_sort(x['card']))
-            self.sideboard.sort(key=lambda x: oracle.deck_sort(x['card']))
-            self.sorted = True
-
-    def is_in_current_run(self):
-        if ((self.wins or 0) + (self.draws or 0) + (self.losses or 0) >= 5) or self.retired:
-            return False
-        elif self.competition_type_name != 'League':
-            return False
-        elif self.competition_end_date < dtutil.now():
-            return False
-        return True
-
-    def __str__(self):
-        self.sort()
-        s = ''
-        for entry in self.maindeck:
-            s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
-        s += '\n'
-        for entry in self.sideboard:
-            s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
-        return s.strip()
-
-    def is_person_associated(self):
-        return self.discord_id is not None

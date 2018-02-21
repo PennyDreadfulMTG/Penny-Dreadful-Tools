@@ -1,4 +1,6 @@
 import markdown
+from markdown.extensions import Extension
+from markdown.treeprocessors import Treeprocessor
 import pystache
 from pystache.parsed import ParsedTemplate
 from flask_babel import gettext
@@ -74,4 +76,14 @@ class _GettextNode(object):
 
     def render(self, engine, context): # pylint: disable=unused-argument
         s = gettext(self.key)
-        return markdown.markdown(engine.escape(s))
+        return markdown.markdown(engine.escape(s), extensions=[NoParaTagsExtension()])
+
+#pylint: disable=no-self-use
+class NoParaTagProcessor(Treeprocessor):
+    def run(self, root):
+        root[0].tag = 'string'
+
+#pylint: disable=no-self-use, invalid-name
+class NoParaTagsExtension(Extension):
+    def extendMarkdown(self, md, _):
+        md.treeprocessors.add('noparatag', NoParaTagProcessor(), '_end')

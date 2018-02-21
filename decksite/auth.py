@@ -31,6 +31,7 @@ def setup_session(url):
     session['id'] = user['id']
     guilds = discord.get(API_BASE_URL + '/users/@me/guilds').json()
     for guild in guilds:
+        print("auth.py: guild: {g} ({t})".format(g=guild, t=type(guild)))
         if guild['id'] == configuration.get('guild_id'):
             session['admin'] = (guild['permissions'] & 0x10000000) != 0 # Check for the MANAGE_ROLES permissions on Discord as a proxy for "is admin".
 

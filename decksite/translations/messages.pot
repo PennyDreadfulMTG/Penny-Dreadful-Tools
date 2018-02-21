@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-02-14 22:20+1100\n"
+"POT-Creation-Date: 2018-02-21 12:37+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -323,6 +323,14 @@ msgstr ""
 msgid "This site is currently translated into:"
 msgstr ""
 
+#: decksite/views/competition.py:15 decksite/views/decks.py:11
+#: decksite/views/home.py:18
+#, python-format
+msgid "%(num)d active league run"
+msgid_plural "%(num)d active league runs"
+msgstr[0] ""
+msgstr[1] ""
+
 #: decksite/views/league_info.py:22
 msgid ""
 "Each league lasts roughly a month. The [[current league]] will run until "
@@ -331,6 +339,10 @@ msgstr ""
 
 #: decksite/views/league_info.py:34
 msgid "You can [[sign up]] at any time."
+msgstr ""
+
+#: decksite/views/link_accounts.py:34
+msgid "Link accounts"
 msgstr ""
 
 #: decksite/views/report.py:21

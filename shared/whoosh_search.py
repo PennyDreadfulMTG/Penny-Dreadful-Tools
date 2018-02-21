@@ -12,6 +12,7 @@ class SearchResult():
         self.prefix_whole_word = prefix_whole_word if prefix_whole_word else []
         self.other_prefixed = other_prefixed if other_prefixed else []
         self.fuzzy = fuzzy if fuzzy else []
+        self.prune_fuzzy_by_score()
         self.remove_duplicates()
 
     def has_match(self):
@@ -48,6 +49,17 @@ class SearchResult():
         if not self.has_match():
             return []
         return [r for r in ([self.exact] + self.prefix_whole_word + self.other_prefixed + self.fuzzy) if r is not None]
+
+    def prune_fuzzy_by_score(self):
+        if len(self.fuzzy) == 0:
+            return
+        if len(self.fuzzy) == 1:
+            self.fuzzy = [self.fuzzy[0][0]]
+            return
+        if self.fuzzy[0][1] >= self.fuzzy[1][1] * 2:
+            self.fuzzy = [self.fuzzy[0][0]]
+            return
+        self.fuzzy = [f[0] for f in self.fuzzy]
 
     def remove_duplicates(self):
         for n in [self.exact] + self.prefix_whole_word + self.other_prefixed:
@@ -88,12 +100,13 @@ class WhooshSearcher():
             return SearchResult(exact, prefix_whole_word, other_prefixed, None)
 
         # We try fuzzy and stemmed queries
+        query_normalized = fuzzy_term(normalized, self.DIST, "name_normalized")
         query_stemmed = And([Term('name_stemmed', q.text) for q in WhooshConstants.stem_analyzer(w)])
         query_tokenized = And([fuzzy_term(q.text, self.DIST, "name_tokenized") for q in WhooshConstants.tokenized_analyzer(w)])
-        query = Or([query_tokenized, query_stemmed])
+        query = Or([query_normalized, query_tokenized, query_stemmed])
 
         with self.ix.searcher() as searcher:
-            fuzzy = [r['name'] for r in searcher.search(query, limit=40)]
+            fuzzy = [(r['name'], r.score) for r in searcher.search(query, limit=40)]
         return SearchResult(exact, prefix_whole_word, other_prefixed, fuzzy)
 
     def find_matches_by_prefix(self, query):

@@ -379,7 +379,6 @@ def card_name(c):
         return c.get('name')
     return ' // '.join(c.get('names', [c.get('name')]))
 
-
 def add_hardcoded_cards(cards):
     cards['Gleemox'] = {
         "text": "{T}: Add one mana of any color to your mana pool.\nThis card is banned.",

@@ -172,11 +172,11 @@ def update_database(new_version):
     check_layouts() # Check that the hardcoded list of layouts we're about to use is still valid.
     rs = db().execute('SELECT id, name FROM rarity')
     for row in rs:
-        db().execute('UPDATE printing SET rarity_id = ? WHERE rarity = ?', [row['id'], row['name']])
+        db().execute('UPDATE printing SET rarity_id = %s WHERE rarity = %s', [row['id'], row['name']])
     update_fuzzy_matching()
     update_bugged_cards(False)
     update_pd_legality()
-    db().execute('INSERT INTO version (version) VALUES (?)', [new_version])
+    db().execute('INSERT INTO version (version) VALUES (%s)', [new_version])
     db().commit()
 
 def check_layouts():
@@ -205,7 +205,7 @@ def update_fuzzy_matching():
         db().execute(sql)
         aliases = fetcher.card_aliases()
         for alias, name in aliases:
-            db().execute('INSERT INTO fuzzy (word, soundslike) VALUES (LOWER(?), ?)', [name, alias])
+            db().execute('INSERT INTO fuzzy (word, soundslike) VALUES (LOWER(%s), %s)', [name, alias])
 
 def update_bugged_cards(use_transaction=True):
     bugs = fetcher.bugged_cards()
@@ -216,11 +216,11 @@ def update_bugged_cards(use_transaction=True):
     db().execute("DELETE FROM card_bug")
     for bug in bugs:
         last_confirmed_ts = dtutil.parse_to_ts(bug['last_updated'], '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
-        card_id = db().value("SELECT card_id FROM face WHERE name = ?", [bug['card']])
+        card_id = db().value("SELECT card_id FROM face WHERE name = %s", [bug['card']])
         if card_id is None:
             print("UNKNOWN BUGGED CARD: {card}".format(card=bug['card']))
             continue
-        db().execute("INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog) VALUES (?, ?, ?, ?, ?, ?)", [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog']])
+        db().execute("INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog) VALUES (%s, %s, %s, %s, %s, %s)", [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog']])
     if use_transaction:
         db().commit()
 
@@ -236,7 +236,7 @@ def insert_card(c, update_index=True):
         sql = 'INSERT INTO card ('
         sql += ', '.join(name for name, prop in card.card_properties().items() if prop['mtgjson'])
         sql += ') VALUES ('
-        sql += ', '.join('?' for name, prop in card.card_properties().items() if prop['mtgjson'])
+        sql += ', '.join('%s' for name, prop in card.card_properties().items() if prop['mtgjson'])
         sql += ')'
         values = [c.get(database2json(name)) for name, prop in card.card_properties().items() if prop['mtgjson']]
         db().execute(sql, values)
@@ -252,7 +252,7 @@ def insert_card(c, update_index=True):
     sql = 'INSERT INTO face ('
     sql += ', '.join(name for name, prop in card.face_properties().items() if not prop['primary_key'])
     sql += ') VALUES ('
-    sql += ', '.join('?' for name, prop in card.face_properties().items() if not prop['primary_key'])
+    sql += ', '.join('%s' for name, prop in card.face_properties().items() if not prop['primary_key'])
     sql += ')'
     values = [c.get(database2json(name)) for name, prop in card.face_properties().items() if not prop['primary_key']]
     try:
@@ -261,20 +261,20 @@ def insert_card(c, update_index=True):
         print(c)
         raise
     for color in c.get('colors', []):
-        color_id = db().value('SELECT id FROM color WHERE name = ?', [color])
+        color_id = db().value('SELECT id FROM color WHERE name = %s', [color])
         # INSERT IGNORE INTO because some cards have multiple faces with the same color. See DFCs and What // When // Where // Who // Why.
-        db().execute('INSERT IGNORE INTO card_color (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
+        db().execute('INSERT IGNORE INTO card_color (card_id, color_id) VALUES (%s, %s)', [card_id, color_id])
     for symbol in c.get('colorIdentity', []):
-        color_id = db().value('SELECT id FROM color WHERE symbol = ?', [symbol])
+        color_id = db().value('SELECT id FROM color WHERE symbol = %s', [symbol])
         # INSERT IGNORE INTO because some cards have multiple faces with the same color identity. See DFCs and What // When // Where // Who // Why.
-        db().execute('INSERT IGNORE INTO card_color_identity (card_id, color_id) VALUES (?, ?)', [card_id, color_id])
+        db().execute('INSERT IGNORE INTO card_color_identity (card_id, color_id) VALUES (%s, %s)', [card_id, color_id])
     for supertype in c.get('supertypes', []):
-        db().execute('INSERT INTO card_supertype (card_id, supertype) VALUES (?, ?)', [card_id, supertype])
+        db().execute('INSERT INTO card_supertype (card_id, supertype) VALUES (%s, %s)', [card_id, supertype])
     for subtype in c.get('subtypes', []):
-        db().execute('INSERT INTO card_subtype (card_id, subtype) VALUES (?, ?)', [card_id, subtype])
+        db().execute('INSERT INTO card_subtype (card_id, subtype) VALUES (%s, %s)', [card_id, subtype])
     for info in c.get('legalities', []):
         format_id = get_format_id(info['format'], True)
-        db().execute('INSERT INTO card_legality (card_id, format_id, legality) VALUES (?, ?, ?)', [card_id, format_id, info['legality']])
+        db().execute('INSERT INTO card_legality (card_id, format_id, legality) VALUES (%s, %s, %s)', [card_id, format_id, info['legality']])
     if update_index:
         writer = WhooshWriter()
         c['id'] = c['cardId']
@@ -284,7 +284,7 @@ def insert_set(s) -> None:
     sql = 'INSERT INTO `set` ('
     sql += ', '.join(name for name, prop in card.set_properties().items() if prop['mtgjson'])
     sql += ') VALUES ('
-    sql += ', '.join('?' for name, prop in card.set_properties().items() if prop['mtgjson'])
+    sql += ', '.join('%s' for name, prop in card.set_properties().items() if prop['mtgjson'])
     sql += ')'
     values = [date2int(s.get(database2json(name)), name) for name, prop in card.set_properties().items() if prop['mtgjson']]
     # database.execute commits after each statement, which we want to
@@ -300,8 +300,8 @@ def insert_set(s) -> None:
             raise InvalidDataException("Can't find id for: '{n}': {ns}".format(n=c['name'], ns=c['names']))
         sql = 'INSERT INTO printing (card_id, set_id, '
         sql += ', '.join(name for name, prop in card.printing_properties().items() if prop['mtgjson'])
-        sql += ') VALUES (?, ?, '
-        sql += ', '.join('?' for name, prop in card.printing_properties().items() if prop['mtgjson'])
+        sql += ') VALUES (%s, %s, '
+        sql += ', '.join('%s' for name, prop in card.printing_properties().items() if prop['mtgjson'])
         sql += ')'
         values = [card_id, set_id] + [c.get(database2json(name)) for name, prop in card.printing_properties().items() if prop['mtgjson']]
         db().execute(sql, values)
@@ -319,7 +319,7 @@ def set_legal_cards(force=False, season=None):
 
     if new_list == [''] or new_list is None:
         return None
-    db().execute('DELETE FROM card_legality WHERE format_id = ?', [format_id])
+    db().execute('DELETE FROM card_legality WHERE format_id = %s', [format_id])
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
         SELECT {format_id}, bq.id, 'Legal'
         FROM ({base_query}) AS bq
@@ -327,7 +327,7 @@ def set_legal_cards(force=False, season=None):
     """.format(format_id=format_id, base_query=base_query(), names=', '.join(sqlescape(name) for name in new_list))
     db().execute(sql)
     # Check we got the right number of legal cards.
-    n = db().value('SELECT COUNT(*) FROM card_legality WHERE format_id = ?', [format_id])
+    n = db().value('SELECT COUNT(*) FROM card_legality WHERE format_id = %s', [format_id])
     if n != len(new_list):
         print("Found {n} pd legal cards in the database but the list was {len} long".format(n=n, len=len(new_list)))
         sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=base_query(), format_id=format_id)
@@ -366,7 +366,7 @@ def get_format_id(name, allow_create=False):
         for row in rs:
             FORMAT_IDS[row['name']] = row['id']
     if name not in FORMAT_IDS.keys() and allow_create:
-        db().execute('INSERT INTO format (name) VALUES (?)', [name])
+        db().execute('INSERT INTO format (name) VALUES (%s)', [name])
         FORMAT_IDS[name] = db().last_insert_rowid()
     if name not in FORMAT_IDS.keys():
         return None

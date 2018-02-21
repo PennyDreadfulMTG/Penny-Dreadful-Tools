@@ -41,9 +41,6 @@ class MysqlDatabase(GenericDatabase):
         sql = sql.replace('COLLATE NOCASE', '') # Needed for case insensitivity in SQLite which is default in MySQL.
         if args is None:
             args = []
-        if args:
-            # eww
-            sql = sql.replace('?', '%s')
         try:
             return self.execute_with_reconnect(sql, args)
         except MySQLdb.Warning as e:

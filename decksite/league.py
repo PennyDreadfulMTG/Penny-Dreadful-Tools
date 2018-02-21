@@ -309,8 +309,8 @@ def load_matches(where='1 = 1'):
     return matches
 
 def delete_match(match_id):
-    sql = 'DELETE FROM `match` WHERE id = ?'
-    db().execute(sql, [sqlescape(match_id)])
+    sql = 'DELETE FROM `match` WHERE id = %s'
+    db().execute(sql, [match_id])
 
 def first_runs():
     sql = """

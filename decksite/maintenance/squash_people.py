@@ -31,8 +31,8 @@ def run():
 def squash(p1id, p2id, col1, col2):
     print('Squashing {p1id} and {p2id} on {col1} and {col2}'.format(p1id=p1id, p2id=p2id, col1=col1, col2=col2))
     db().begin()
-    new_value = db().value('SELECT {col2} FROM person WHERE id = ?'.format(col2=col2), [p2id])
-    db().execute('UPDATE deck SET person_id = ? WHERE person_id = ?', [p1id, p2id])
-    db().execute('DELETE FROM person WHERE id = ?', [p2id])
-    db().execute('UPDATE person SET {col2} = ? WHERE id = ?'.format(col2=col2), [new_value, p1id])
+    new_value = db().value('SELECT {col2} FROM person WHERE id = %s'.format(col2=col2), [p2id])
+    db().execute('UPDATE deck SET person_id = %s WHERE person_id = %s', [p1id, p2id])
+    db().execute('DELETE FROM person WHERE id = %s', [p2id])
+    db().execute('UPDATE person SET {col2} = %s WHERE id = %s'.format(col2=col2), [new_value, p1id])
     db().commit()

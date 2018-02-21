@@ -234,7 +234,7 @@ def set_where(name):
 def format_where(term):
     if term == 'pd':
         term = 'Penny Dreadful'
-    format_id = db().value('SELECT id FROM format WHERE name LIKE ?', ['{term}%%'.format(term=card.unaccent(term))])
+    format_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term=card.unaccent(term))])
     if format_id is None:
         raise InvalidValueException("Invalid format '{term}'".format(term=term))
     return "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))".format(format_id=format_id)

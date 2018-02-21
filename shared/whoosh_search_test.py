@@ -34,7 +34,7 @@ class WhooshSearchTest(unittest.TestCase):
         self.finds_at_least('Ashenmmor', 'Ashenmoor Gouger')
         self.finds_at_least('narcomeba', 'Narcomoeba')
         self.best_match_is('Uphaeval', 'Upheaval')
-        #self.finds_at_least('devler of secrets', 'Delver of Secrets')
+        self.finds_at_least('devler of secrets', 'Delver of Secrets')
 
     def test_split_cards(self):
         self.finds_at_least('Far/Away', 'Far // Away')

@@ -153,7 +153,6 @@ def update_database(new_version):
     DELETE FROM `set`;
     """)
     cards = fetcher.all_cards()
-    fix_mtgjson_melded_cards_bug(cards)
     cards = add_hardcoded_cards(cards)
     melded_faces = []
     for _, c in cards.items():

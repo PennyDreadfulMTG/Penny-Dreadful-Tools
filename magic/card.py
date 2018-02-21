@@ -6,12 +6,15 @@ from shared.container import Container
 
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
 
+MAX_LEN_TEXT = 21845
+MAX_LEN_VARCHAR = 190
+
 BOOLEAN = 'BOOLEAN'
 DATE = 'INTEGER'
 INTEGER = 'INTEGER'
 REAL = 'REAL'
 TEXT = 'LONGTEXT'
-VARCHAR = 'VARCHAR(190)'
+VARCHAR = 'VARCHAR({n})'.format(n=MAX_LEN_VARCHAR)
 
 BASE = {
     'type': VARCHAR,

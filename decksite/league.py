@@ -5,7 +5,7 @@ import calendar
 
 from flask import url_for
 
-from magic import fetcher, legality, rotation
+from magic import card, fetcher, legality, rotation
 from shared import configuration, dtutil
 from shared.container import Container
 from shared.database import sqlescape
@@ -36,10 +36,14 @@ class SignUpForm(Form):
     def do_validation(self):
         if len(self.mtgo_username) == 0:
             self.errors['mtgo_username'] = "Magic Online Username is required"
-        elif active_decks_by(self.mtgo_username.strip()):
+        elif len(self.mtgo_username) > card.MAX_LEN_VARCHAR:
+            self.errors['mtgo_username'] = "Magic Online Username is too long (max {n})".format(n=card.MAX_LEN_VARCHAR)
+        elif active_decks_by(self.mtgo_username):
             self.errors['mtgo_username'] = "You already have an active league run.  If you wish to retire your run early, private message '!retire' to PDBot"
-        if len(self.name.strip()) == 0:
+        if len(self.name) == 0:
             self.errors['name'] = 'Deck Name is required'
+        elif len(self.name) > card.MAX_LEN_TEXT:
+            self.errors['name'] = 'Deck Name is too long (max {n})'.format(n=card.MAX_LEN_TEXT)
         else:
             self.source = 'League'
             self.competition_id = db().value(active_competition_id_query())
@@ -134,7 +138,7 @@ def signup(form):
 
 def identifier(params):
     # Current timestamp is part of identifier here because we don't need to defend against dupes in league – it's fine to enter the same league with the same deck, later.
-    return json.dumps([params['mtgo_username'], params['name'], params['competition_id'], str(int(time.time()))])
+    return json.dumps([params['mtgo_username'], params['competition_id'], str(int(time.time()))])
 
 def deck_options(decks, v):
     if (v is None or v == '') and len(decks) == 1:

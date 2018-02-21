@@ -1,35 +1,21 @@
+- Install MySQL
 - Install python3.6+
-  -- if you're running OSX, install python and openssl via brew.
 - Install pip3
-- pip3 install -r requirements.txt. If your default python is python2 try `python3 -m pip install -r requirements.txt` instead.
+- pip3 install -r requirements.txt # If your default python is python2 try `python3 -m pip install -r requirements.txt` instead.
+- Note that the Makefile needs python3 and pylint to be in your PATH to function correctly. You may need to do something to make that true.
 - Add a bot at https://discordapp.com/developers/applications/me
 - Add a bot user for the bot
 - Add the bot to your server with https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot
 - Click to reveal the token (not secret) on https://discordapp.com/developers/applications/me
 - Copy config.json.example to config.json and alter the value for "token" to this value
 - Optionally alter the various _dir and _database values in there if you want image files, scratch files and databases stored somewhere else. If you want to collect decks from tappedout.net with valid dates update to_username and to_password.
-- Install MySQL.
-- Using the values from your config.json issue the following commands in MySQL:
+- Using the values from your config.json issue the following commands in MySQL (you don't need to create the databases):
   -- CREATE USER '<mysql_user>'@'<mysql_host>' IDENTIFIED BY '<mysql_password>';
   -- GRANT ALL ON <decksite_database>.* TO '<mysql_user>'@'<mysql_host>';
   -- GRANT ALL ON <prices_database>.* TO '<mysql_user>'@'<mysql_host>';
   -- GRANT ALL ON <magic_database>.* TO '<mysql_user>'@'<mysql_host>';
-- The sqlite extension we use for fuzzy matching is not part of any string distribution so you must download and build it.
-  - curl https://sqlite.org/cgi/src/raw/ext/misc/spellfix.c?name=a4723b6aff748a417b5091b68a46443265c40f0d -o spellfix.c
-  - curl https://sqlite.org/cgi/src/raw/src/sqlite3ext.h?name=8648034aa702469afb553231677306cc6492a1ae -o sqlite3ext.h
-  - curl https://sqlite.org/cgi/src/raw/src/sqlite.h.in?name=2683a291ed8db5228024267be6421f0de507b80e -o sqlite3.h
-  - gcc -fPIC -shared spellfix.c -o spellfix.dylib
-    - Windows:   cl /LD spellfix.c
-  - NOTE! You may need .dll or .so as the file extension instead of .dylib depending on your operating system.
-  - If you don't want the spellfix library in the root of the app, copy the new spellfix.dylib file and change the location in config.json
-  - You can delete the .c files once the compilation completes.
-- To be able to load the spellfix1 extension we need load_extension which is not supported by the standard python sqlite3.
-    - PLEASE NOTE: your system may have a python-apsw package which probably makes more sense than installing with pip. If you do need pip you can use the following command.
-  - pip3 install --user https://github.com/rogerbinns/apsw/releases/download/3.14.1-r1/apsw-3.14.1-r1.zip \
---global-option=fetch --global-option=--version --global-option=3.14.1 --global-option=--all \
---global-option=build --global-option=--enable-all-extensions
-    Note: You may need `sudo -H` here and you may or may not need the `--user` option.
-- Optionally add SELECT LOAD_EXTENSION('<path to spellfix.dylib>'); to your ~/.sqliterc
+
+--------
 
 Notes on installing Python 3.6 in Linux Mint
 

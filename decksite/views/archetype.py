@@ -8,7 +8,7 @@ from decksite.view import View
 # pylint: disable=no-self-use
 class Archetype(View):
     def __init__(self, archetype, archetypes, matchups):
-        if archetype is None or archetypes is None:
+        if not archetype or not archetypes:
             raise DoesNotExistException('No archetype supplied to view.')
         self.archetype = next(a for a in archetypes if a.id == archetype.id)
         self.archetype.decks = archetype.decks

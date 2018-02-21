@@ -1,5 +1,4 @@
 from magic import oracle
-from magic.database import db
 
 def test_legality():
     cards = oracle.cards_from_query('Swamp')

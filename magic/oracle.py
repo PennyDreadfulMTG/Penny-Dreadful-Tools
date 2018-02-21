@@ -1,5 +1,3 @@
-import sys
-
 from typing import Dict, List
 
 from magic import card, fetcher, mana, multiverse, rotation
@@ -17,8 +15,7 @@ def init():
         for c in load_cards():
             CARDS_BY_NAME[c.name] = c
 
-# 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold default.
-def search(query, fuzzy_threshold=260):
+def search(query):
     like_query = '%{query}%'.format(query=card.canonicalize(query))
     sql = """
         {base_query}
@@ -101,7 +98,7 @@ def deck_sort(c):
     s += c.name
     return s
 
-def cards_from_query(query, fuzziness_threshold=260):
+def cards_from_query(query):
     # Skip searching if the request is too short.
     if len(query) <= 2:
         return []
@@ -118,7 +115,7 @@ def cards_from_query(query, fuzziness_threshold=260):
         if query == card.canonicalize(alias):
             query = card.canonicalize(name)
 
-    cards = search(query, fuzziness_threshold)
+    cards = search(query)
     cards = [c for c in cards if c.layout != 'token' and c.type != 'Vanguard']
 
     # First look for an exact match.

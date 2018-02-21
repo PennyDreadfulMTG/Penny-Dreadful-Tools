@@ -27,9 +27,5 @@ class GenericDatabase:
         return False
 
     # pylint: disable=no-self-use
-    def is_sqlite(self) -> bool:
-        return False
-
-    # pylint: disable=no-self-use
     def supports_lock(self) -> bool:
         return False

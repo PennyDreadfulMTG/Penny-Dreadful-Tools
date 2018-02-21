@@ -229,7 +229,7 @@ def color_where(subtable, operator, term):
     return clause
 
 def set_where(name):
-    return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=sqllikeescape(name), name=sqlescape(name))
+    return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name})))'.format(name_fuzzy=sqllikeescape(name), name=sqlescape(name))
 
 def format_where(term):
     if term == 'pd':

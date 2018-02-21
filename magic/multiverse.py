@@ -173,7 +173,6 @@ def update_database(new_version):
     rs = db().execute('SELECT id, name FROM rarity')
     for row in rs:
         db().execute('UPDATE printing SET rarity_id = %s WHERE rarity = %s', [row['id'], row['name']])
-    update_fuzzy_matching()
     update_bugged_cards(False)
     update_pd_legality()
     db().execute('INSERT INTO version (version) VALUES (%s)', [new_version])
@@ -183,29 +182,6 @@ def check_layouts():
     rs = db().execute('SELECT DISTINCT layout FROM card')
     if sorted([row['layout'] for row in rs]) != sorted(layouts().keys()):
         print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid. You may also want to add it to playable_layouts. Comparing {old} with {new}.'.format(old=sorted(layouts().keys()), new=sorted([row['layout'] for row in rs])))
-
-def update_fuzzy_matching():
-    format_id = get_format_id('Penny Dreadful', True)
-    if db().is_sqlite():
-        db().execute('DROP TABLE IF EXISTS fuzzy')
-        db().execute('CREATE VIRTUAL TABLE IF NOT EXISTS fuzzy USING spellfix1')
-        sql = """INSERT INTO fuzzy (word, rank)
-            SELECT LOWER(bq.name), bq.pd_legal
-            FROM ({base_query}) AS bq
-        """.format(base_query=base_query())
-        db().execute(sql)
-        sql = """INSERT INTO fuzzy (word, rank)
-            SELECT LOWER(f.name), SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0
-            FROM face AS f
-            INNER JOIN card AS c ON f.card_id = c.id
-            LEFT OUTER JOIN card_legality AS cl ON cl.card_id = c.id AND cl.format_id = {format_id}
-            WHERE LOWER(f.name) NOT IN (SELECT word FROM fuzzy)
-            GROUP BY f.id
-        """.format(format_id=format_id)
-        db().execute(sql)
-        aliases = fetcher.card_aliases()
-        for alias, name in aliases:
-            db().execute('INSERT INTO fuzzy (word, soundslike) VALUES (LOWER(%s), %s)', [name, alias])
 
 def update_bugged_cards(use_transaction=True):
     bugs = fetcher.bugged_cards()

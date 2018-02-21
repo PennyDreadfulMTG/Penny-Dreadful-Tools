@@ -11,7 +11,7 @@ def test_match():
     assert search.Criterion.match(list('tou>2'))
 
 def test_edition():
-    do_test('e:ktk', "(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE '%%ktk%%' OR code = 'ktk' COLLATE NOCASE)))")
+    do_test('e:ktk', "(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE '%%ktk%%' OR code = 'ktk')))")
 
 def test_special_chars():
     do_test('o:a_c%', "(search_text LIKE '%%a\\_c\\%%%%')")

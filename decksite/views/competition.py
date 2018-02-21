@@ -1,4 +1,5 @@
 from flask import url_for
+from flask_babel import ngettext
 
 from shared.container import Container
 
@@ -9,7 +10,10 @@ class Competition(View):
     def __init__(self, competition):
         self.competition = competition
         self.competitions = [self.competition]
-        self.decks = competition.decks
+        decks = competition.decks
+        active_runs = [d for d in decks if d.is_in_current_run()]
+        self.active_runs = ngettext('%(num)d active league run', '%(num)d active league runs', len(active_runs))
+        self.decks = [d for d in decks if d not in active_runs]
         self.hide_source = True
         if competition.type == 'League':
             self.show_omw = True

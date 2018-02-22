@@ -15,6 +15,7 @@ from cachecontrol.heuristics import ExpiresAfter
 from shared import configuration, perf
 from shared.pd_exception import OperationalException
 
+from typing import Dict, List, Optional, Union
 SESSION = CacheControl(requests.Session(),
                        cache=FileCache(configuration.get('web_cache')))
 SESSION.mount(
@@ -36,7 +37,7 @@ def unzip(url, path):
     shutil.rmtree(location)
     return s
 
-def fetch(url, character_encoding=None, force=False):
+def fetch(url: str, character_encoding: Optional[str] = None, force: bool = False) -> str:
     headers = {}
     if force:
         headers['Cache-Control'] = 'no-cache'
@@ -48,7 +49,7 @@ def fetch(url, character_encoding=None, force=False):
         if character_encoding is not None:
             response.encoding = character_encoding
         return response.text
-    except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e:
+    except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
         raise FetchException(e)
 
 def fetch_json(url, character_encoding=None):
@@ -88,4 +89,4 @@ def escape(str_input) -> str:
     # Expand 'AE' into two characters. This matches the legal list and
     # WotC's naming scheme in Kaladesh, and is compatible with the
     # image server and scryfall.
-    return urllib.parse.quote_plus(str_input.replace(u'Æ', 'AE')).lower()
+    return urllib.parse.quote_plus(str_input.replace(u'Æ', 'AE')).lower() # type: ignore # urllib isn't fully stubbed

@@ -11,11 +11,11 @@ STARTING_ELO = 1500
 ELO_WIDTH = 1600
 K_FACTOR = 12
 
-def adjustment(elo1, elo2):
+def adjustment(elo1: int, elo2: int) -> int:
     e = expected(elo1, elo2)
     return round(K_FACTOR * (1 - e))
 
-def expected(elo1, elo2):
+def expected(elo1: int, elo2: int) -> float:
     return 1.0 / (1 + 10**((elo2 - elo1) / ELO_WIDTH))
 
 def adjust_elo(winning_deck_id, losing_deck_id):

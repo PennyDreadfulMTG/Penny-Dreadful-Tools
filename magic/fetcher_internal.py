@@ -4,18 +4,16 @@ import shutil
 import stat
 import urllib.request
 import zipfile
+from typing import Dict, List, Optional, Union
 
 import requests
-
-from cachecontrol import CacheControl
-from cachecontrol import CacheControlAdapter
+from cachecontrol import CacheControl, CacheControlAdapter
 from cachecontrol.caches.file_cache import FileCache
 from cachecontrol.heuristics import ExpiresAfter
 
 from shared import configuration, perf
 from shared.pd_exception import OperationalException
 
-from typing import Dict, List, Optional, Union
 SESSION = CacheControl(requests.Session(),
                        cache=FileCache(configuration.get('web_cache')))
 SESSION.mount(

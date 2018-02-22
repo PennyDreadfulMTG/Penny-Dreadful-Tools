@@ -1,16 +1,17 @@
 import sys
 from typing import Dict, List
 
-from anytree import NodeMixin
 import titlecase
+from anytree import NodeMixin
 
+from decksite.data import deck
+from decksite.database import db
 from magic import rotation
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import DoesNotExistException, TooManyItemsException
 
-from decksite.data import deck
-from decksite.database import db
+
 class Archetype(Container, NodeMixin):
     pass
 

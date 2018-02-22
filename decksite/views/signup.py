@@ -2,6 +2,7 @@ from flask_babel import gettext
 
 from decksite.views.league_form import LeagueForm
 
+
 # pylint: disable=no-self-use
 class SignUp(LeagueForm):
     def subtitle(self):

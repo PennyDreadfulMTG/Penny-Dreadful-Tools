@@ -3,13 +3,13 @@ import time
 
 from bs4 import BeautifulSoup
 
+from decksite.data import deck
+from decksite.scrapers import decklist
 from magic import fetcher, legality
 from shared import dtutil
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
 
-from decksite.data import deck
-from decksite.scrapers import decklist
 
 def scrape():
     page = 1

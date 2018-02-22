@@ -1,10 +1,11 @@
 import random
 
-from flask import url_for
 import inflect
+from flask import url_for
 
 from decksite.view import View
 from magic import legality, oracle, tournaments
+
 
 # pylint: disable=no-self-use
 class About(View):

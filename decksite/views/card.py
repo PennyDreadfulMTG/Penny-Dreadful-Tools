@@ -1,6 +1,7 @@
 from decksite.view import View
 from magic import legality
 
+
 # pylint: disable=no-self-use
 class Card(View):
     def __init__(self, card):

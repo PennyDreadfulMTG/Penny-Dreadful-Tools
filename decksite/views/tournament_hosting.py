@@ -1,6 +1,6 @@
+from decksite.view import View
 from magic import tournaments
 
-from decksite.view import View
 
 # pylint: disable=no-self-use
 class TournamentHosting(View):

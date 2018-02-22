@@ -1,13 +1,13 @@
 import copy
 import unicodedata
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from shared import dtutil
 from shared.container import Container
 
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
 
-from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
 BOOLEAN = 'BOOLEAN'
 DATE = 'INTEGER'
 INTEGER = 'INTEGER'

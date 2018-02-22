@@ -4,11 +4,10 @@ import warnings
 import MySQLdb
 from MySQLdb import OperationalError
 
-from shared import configuration
+from shared import configuration, perf
 from shared.database_generic import GenericDatabase
-from shared.pd_exception import DatabaseException
-from shared.pd_exception import LockNotAcquiredException
-from shared import perf
+from shared.pd_exception import DatabaseException, LockNotAcquiredException
+
 
 class MysqlDatabase(GenericDatabase):
     def __init__(self, db):

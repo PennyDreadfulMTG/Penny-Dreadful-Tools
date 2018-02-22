@@ -4,12 +4,14 @@ import subprocess
 from flask import Response, request, session, url_for
 
 from decksite import APP, league
-from decksite.data import card as cs, competition as comp, deck, guarantee, match, person as ps
-
+from decksite.data import card as cs
+from decksite.data import competition as comp
+from decksite.data import person as ps
+from decksite.data import deck, guarantee, match
+from magic import oracle, rotation
 from shared import configuration, dtutil
 from shared.serialization import extra_serializer
 
-from magic import rotation, oracle
 
 @APP.route('/api/decks/<deck_id>')
 def deck_api(deck_id):

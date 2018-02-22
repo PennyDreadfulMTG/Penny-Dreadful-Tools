@@ -1,6 +1,7 @@
 from decksite import league
 from shared import dtutil
 
+
 def test_determine_end_of_league():
     start_date = dtutil.parse('2017-11-01 00:00:00', '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ)
     end_date = league.determine_end_of_league(start_date)

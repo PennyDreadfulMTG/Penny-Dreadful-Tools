@@ -3,6 +3,7 @@ import time
 from magic import rotation
 from shared import configuration, database
 
+
 def info(card, force=False):
     if not force:
         r = info_cached(card)

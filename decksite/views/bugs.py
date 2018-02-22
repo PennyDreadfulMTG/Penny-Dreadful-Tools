@@ -1,7 +1,8 @@
 from flask import url_for
 
-from magic import oracle
 from decksite.view import View
+from magic import oracle
+
 
 # pylint: disable=no-self-use
 class Bugs(View):

@@ -1,7 +1,8 @@
 import pytest
 
 from decksite.main import APP
-from decksite.scrapers import tappedout, gatherling
+from decksite.scrapers import gatherling, tappedout
+
 
 @pytest.mark.slowtest
 def test_tappedout():

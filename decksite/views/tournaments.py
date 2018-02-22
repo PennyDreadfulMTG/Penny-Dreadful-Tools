@@ -5,6 +5,7 @@ from decksite.data import competition
 from decksite.view import View
 from magic import tournaments
 
+
 # pylint: disable=no-self-use
 class Tournaments(View):
     def __init__(self):

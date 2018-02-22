@@ -7,10 +7,11 @@ from urllib import parse
 import pytz
 
 import magic.fetcher_internal as internal
-from magic.fetcher_internal import FetchException
 from magic import card as mc
+from magic.fetcher_internal import FetchException
 from shared import configuration, dtutil
 from shared.pd_exception import TooFewItemsException
+
 
 def all_cards():
     try:

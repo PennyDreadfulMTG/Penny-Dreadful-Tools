@@ -1,13 +1,13 @@
 from flask import request
 from flask_babel import gettext
 
-from shared.container import Container
-
+from decksite import auth
 from decksite.data import deck, person
 from decksite.database import db
 from decksite.maintenance import squash_people
 from decksite.view import View
-from decksite import auth
+from shared.container import Container
+
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class LinkAccounts(View):

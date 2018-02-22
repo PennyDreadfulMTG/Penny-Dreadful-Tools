@@ -6,6 +6,7 @@ from github import Github
 
 from shared import configuration
 
+
 def create_issue(content: str, author: str, location: str = 'Discord', repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools', exception: None = None) -> None:
     if content is None or content == '':
         return None

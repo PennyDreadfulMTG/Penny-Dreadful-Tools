@@ -1,7 +1,6 @@
-from shared.database import sqlescape
-
 from decksite.data import guarantee, person
 from decksite.database import db
+from shared.database import sqlescape
 
 # Using chess numbers here would make individual matches have too much meaning. Magic matches should move your rating less because of the inherent variance in Magic.
 # Fritz with the width in order to make the numbers look like chess numbers so that similar numbers are "good" and "great" even though that means a gap of 200 now means a lot less for who is going to win than it does in chess.

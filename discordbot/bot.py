@@ -7,17 +7,15 @@ import discord
 from discord.channel import Channel
 from discord.member import Member
 from discord.message import Message
-from magic.card import Card
 
 from discordbot import command, emoji
-from magic import image_fetcher, fetcher
-from magic import oracle
-from magic import multiverse
-from magic import tournaments
+from magic import fetcher, image_fetcher, multiverse, oracle, tournaments
+from magic.card import Card
 from shared import configuration, dtutil
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
 from shared.whoosh_search import WhooshSearcher
+
 
 class Bot:
     def __init__(self) -> None:

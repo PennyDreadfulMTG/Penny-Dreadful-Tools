@@ -1,9 +1,9 @@
 import sys
 
+from decksite.database import db
 from shared import dtutil
 from shared.container import Container
 
-from decksite.database import db
 
 def load_news(start_date=0, end_date=sys.maxsize, max_items=sys.maxsize):
     sql = """

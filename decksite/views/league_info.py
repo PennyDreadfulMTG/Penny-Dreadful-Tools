@@ -1,8 +1,9 @@
 from flask import url_for
 from flask_babel import gettext
 
-from decksite.view import View
 from decksite import league, localization
+from decksite.view import View
+
 
 # pylint: disable=no-self-use
 class LeagueInfo(View):

@@ -2,10 +2,9 @@ import json
 
 from flask import Flask
 
-from magic import oracle, multiverse
-from shared.serialization import extra_serializer
-
+from magic import multiverse, oracle
 from price_grabber import price
+from shared.serialization import extra_serializer
 
 SRV = Flask(__name__)
 

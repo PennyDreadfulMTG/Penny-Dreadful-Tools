@@ -1,6 +1,6 @@
 import hashlib
-import re
 import os
+import re
 
 import magic.fetcher_internal as internal
 from magic import oracle

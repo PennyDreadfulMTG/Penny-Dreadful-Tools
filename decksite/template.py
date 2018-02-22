@@ -1,9 +1,10 @@
 import markdown
+import pystache
+from flask_babel import gettext
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
-import pystache
 from pystache.parsed import ParsedTemplate
-from flask_babel import gettext
+
 
 def render_name(template, *context):
     return CachedRenderer(search_dirs=['decksite/templates']).render_name(template, *context)

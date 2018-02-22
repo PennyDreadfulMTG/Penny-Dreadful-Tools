@@ -10,6 +10,7 @@ from magic import fetcher_internal, legality
 from shared import configuration
 from shared.pd_exception import InvalidDataException
 
+
 def scrape():
     login()
     print('Logged in to TappedOut: {is_authorised}'.format(is_authorised=is_authorised()))

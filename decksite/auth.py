@@ -4,9 +4,8 @@ from functools import wraps
 from flask import redirect, request, session, url_for
 from requests_oauthlib import OAuth2Session
 
-from shared import configuration
-
 from decksite.data import person
+from shared import configuration
 
 API_BASE_URL = 'https://discordapp.com/api'
 AUTHORIZATION_BASE_URL = API_BASE_URL + '/oauth2/authorize'

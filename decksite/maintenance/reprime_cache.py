@@ -1,6 +1,6 @@
+from decksite.data import deck
 from magic import multiverse, oracle
 
-from decksite.data import deck
 
 def run():
     multiverse.update_cache()

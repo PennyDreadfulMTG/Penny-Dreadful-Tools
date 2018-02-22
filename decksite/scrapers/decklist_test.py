@@ -2,6 +2,7 @@ import textwrap
 
 from decksite.scrapers import decklist
 
+
 def test_parse():
     s = """
         3 Barter in Blood

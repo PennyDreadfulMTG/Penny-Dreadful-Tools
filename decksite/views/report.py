@@ -3,6 +3,7 @@ from flask_babel import gettext
 
 from decksite.views.league_form import LeagueForm
 
+
 # pylint: disable=no-self-use
 class Report(LeagueForm):
     def __init__(self, form, logged_person=None):

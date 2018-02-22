@@ -5,7 +5,9 @@ from babel.messages import frontend
 from poeditor.client import POEditorAPI
 
 from shared import configuration
+
 from .. import template
+
 
 def ad_hoc():
     dist = Distribution(dict(

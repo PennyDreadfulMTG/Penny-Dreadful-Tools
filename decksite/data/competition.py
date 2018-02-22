@@ -1,11 +1,11 @@
 from flask import url_for
 
+from decksite.data import archetype, deck, guarantee, query
+from decksite.database import db
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
 
-from decksite.data import archetype, deck, guarantee, query
-from decksite.database import db
 
 def get_or_insert_competition(start_date, end_date, name, competition_series, url):
     competition_series_id = db().value('SELECT id FROM competition_series WHERE name = %s', [competition_series], fail_on_missing=True)

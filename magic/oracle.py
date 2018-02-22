@@ -1,5 +1,4 @@
 import sys
-
 from typing import Dict, List
 
 from magic import card, fetcher, mana, multiverse, rotation

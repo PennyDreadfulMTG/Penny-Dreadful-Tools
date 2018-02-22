@@ -14,3 +14,4 @@ install:
 script:
   - python run.py tests
   - mypy --ignore-missing-imports .
+  - isort --check-only

@@ -2,7 +2,7 @@ import sys
 from datetime import timedelta
 from enum import Enum
 
-from dateutil import rrule
+from dateutil import rrule # type: ignore # dateutil stubs are incomplete
 import inflect
 
 from shared import dtutil

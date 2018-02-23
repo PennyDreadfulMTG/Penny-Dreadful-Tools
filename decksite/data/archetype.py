@@ -22,7 +22,7 @@ def load_archetype(archetype):
         archetype_id = int(archetype)
     except ValueError:
         name = titlecase.titlecase(archetype.replace('-', ' '))
-        archetype_id = db().value('SELECT id FROM archetype WHERE name = ?', [name])
+        archetype_id = db().value('SELECT id FROM archetype WHERE name = %s', [name])
         if not archetype_id:
             raise DoesNotExistException('Did not find archetype with name of `{name}`'.format(name=name))
     archetypes = load_archetypes('d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'.format(archetype_id=sqlescape(archetype_id)), True)
@@ -31,7 +31,7 @@ def load_archetype(archetype):
     archetype = archetypes[0] if len(archetypes) == 1 else Archetype()
     # Because load_archetypes loads the root archetype and all below merged the id and name might not be those of the root archetype. Overwrite.
     archetype.id = int(archetype_id)
-    archetype.name = db().value('SELECT name FROM archetype WHERE id = ?', [archetype_id])
+    archetype.name = db().value('SELECT name FROM archetype WHERE id = %s', [archetype_id])
     if len(archetypes) == 0:
         archetype.decks = []
     return archetype
@@ -109,8 +109,8 @@ def load_archetypes_deckless_for(archetype_id) -> List[Archetype]:
     return list()
 
 def add(name, parent):
-    archetype_id = db().insert('INSERT INTO archetype (name) VALUES (?)', [name])
-    ancestors = db().execute('SELECT ancestor, depth FROM archetype_closure WHERE descendant = ?', [sqlescape(parent)])
+    archetype_id = db().insert('INSERT INTO archetype (name) VALUES (%s)', [name])
+    ancestors = db().execute('SELECT ancestor, depth FROM archetype_closure WHERE descendant = %s', [parent])
     sql = 'INSERT INTO archetype_closure (ancestor, descendant, depth) VALUES '
     for a in ancestors:
         sql += '({ancestor}, {descendant}, {depth}), '.format(ancestor=sqlescape(a['ancestor']), descendant=archetype_id, depth=int(a['depth']) + 1)
@@ -118,7 +118,7 @@ def add(name, parent):
     return db().execute(sql)
 
 def assign(deck_id, archetype_id):
-    return db().execute('UPDATE deck SET reviewed = TRUE, archetype_id = ? WHERE id = ?', [archetype_id, deck_id])
+    return db().execute('UPDATE deck SET reviewed = TRUE, archetype_id = %s WHERE id = %s', [archetype_id, deck_id])
 
 def load_matchups(archetype_id):
     sql = """
@@ -163,15 +163,15 @@ def move(archetype_id, parent_id):
             ON a.descendant = d.descendant
         LEFT JOIN archetype_closure AS x
             ON x.ancestor = d.ancestor AND x.descendant = a.ancestor
-        WHERE d.ancestor = ? AND x.ancestor IS NULL
+        WHERE d.ancestor = %s AND x.ancestor IS NULL
     """
     db().execute(remove_sql, [archetype_id])
     add_sql = """
         INSERT INTO archetype_closure (ancestor, descendant, depth)
             SELECT supertree.ancestor, subtree.descendant, supertree.depth + subtree.depth + 1
             FROM archetype_closure AS supertree JOIN archetype_closure AS subtree
-            WHERE subtree.ancestor = ?
-            AND supertree.descendant = ?
+            WHERE subtree.ancestor = %s
+            AND supertree.descendant = %s
     """
     db().execute(add_sql, [archetype_id, parent_id])
     db().commit()

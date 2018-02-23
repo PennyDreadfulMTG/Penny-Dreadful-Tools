@@ -76,7 +76,7 @@ def store(timestamp, all_prices):
             if cents < lows.get(name, sys.maxsize):
                 lows[name] = cents
     sql = 'INSERT INTO low_price (`time`, name, price) VALUES '
-    sql += ", ".join(['(?, ?, ?)'] * len(lows))
+    sql += ", ".join(['(%s, %s, %s)'] * len(lows))
     values = []
     for name, cents in lows.items():
         values.extend([timestamp, name, cents])

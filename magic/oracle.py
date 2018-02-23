@@ -1,4 +1,3 @@
-import sys
 from typing import Dict, List
 
 from magic import card, fetcher, mana, multiverse, rotation
@@ -16,26 +15,14 @@ def init():
         for c in load_cards():
             CARDS_BY_NAME[c.name] = c
 
-# 260 makes 'Odds/Ends' match 'Odds // Ends' so that's what we're using for our spellfix1 threshold default.
-def search(query, fuzzy_threshold=260):
-    query = card.canonicalize(query)
-    like_query = '%{query}%'.format(query=query)
-    if db().is_mysql():
-        having = 'name_ascii LIKE ? OR names LIKE ?'
-        args = [like_query, like_query]
-    else:
-        having = """LOWER({name_query}) IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold})
-            OR {name_ascii_query} LIKE ?
-            OR SUM(CASE WHEN LOWER(face_name) IN (SELECT word FROM fuzzy WHERE word MATCH ? AND distance <= {fuzzy_threshold}) THEN 1 ELSE 0 END) > 0
-        """.format(name_query=card.name_query().format(table='u'), name_ascii_query=card.name_query('name_ascii').format(table='u'), fuzzy_threshold=fuzzy_threshold)
-        fuzzy_query = '{query}*'.format(query=query)
-        args = [fuzzy_query, like_query, fuzzy_query]
+def search(query):
+    like_query = '%{query}%'.format(query=card.canonicalize(query))
     sql = """
         {base_query}
-        HAVING {having}
+        HAVING name_ascii LIKE %s OR names LIKE %s
         ORDER BY pd_legal DESC, name
-    """.format(base_query=multiverse.base_query(), having=having)
-    rs = db().execute(sql, args)
+    """.format(base_query=multiverse.base_query())
+    rs = db().execute(sql, [like_query, like_query])
     return [card.Card(r) for r in rs]
 
 def valid_name(name):
@@ -90,7 +77,7 @@ def get_printings(generalized_card: card.Card):
     sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code' \
         + ' FROM printing AS p' \
         + ' LEFT OUTER JOIN `set` AS s ON p.set_id = s.id' \
-        + ' WHERE card_id = ? '
+        + ' WHERE card_id = %s '
     rs = db().execute(sql, [generalized_card.id])
     return [card.Printing(r) for r in rs]
 
@@ -111,7 +98,7 @@ def deck_sort(c):
     s += c.name
     return s
 
-def cards_from_query(query, fuzziness_threshold=260):
+def cards_from_query(query):
     # Skip searching if the request is too short.
     if len(query) <= 2:
         return []
@@ -128,7 +115,7 @@ def cards_from_query(query, fuzziness_threshold=260):
         if query == card.canonicalize(alias):
             query = card.canonicalize(name)
 
-    cards = search(query, fuzziness_threshold)
+    cards = search(query)
     cards = [c for c in cards if c.layout != 'token' and c.type != 'Vanguard']
 
     # First look for an exact match.
@@ -162,22 +149,6 @@ def cards_from_query(query, fuzziness_threshold=260):
         names = [card.canonicalize(name) for name in c.names]
         for name in names:
             if name.startswith(query):
-                results.append(c)
-    if len(results) > 0:
-        return results
-
-    # If we have fuzzy matching then chop off the bad matches if we have good matches.
-    if db().is_sqlite():
-        sql = 'SELECT word, score FROM fuzzy WHERE word MATCH ? ORDER BY score ASC'
-        fuzzy_query = '{query}*'.format(query=query)
-        rs = db().execute(sql, [fuzzy_query])
-        if len(rs) == 0:
-            return cards
-        threshold = rs[0]['score'] * 2
-        scores = {row['word']: row['score'] for row in rs}
-        for c in cards:
-            names = [card.canonicalize(name) for name in c.names]
-            if min([scores.get(name, sys.maxsize) for name in names]) <= threshold:
                 results.append(c)
     if len(results) > 0:
         return results

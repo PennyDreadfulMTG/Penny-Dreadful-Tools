@@ -1,6 +1,6 @@
 <ul class="menu badges">
     {{#menu}}
-        <li {{#has_submenu}}class="has-submenu"{{/has_submenu}}>
+        <li class="{{#has_submenu}}has-submenu{{/has_submenu}} {{#admin_only}}admin{{/admin_only}}">
             {{#badge}}
                 <div class="badge-holder">
                     <span class="admin badge"><a href="{{url}}">{{text}}</a></span>

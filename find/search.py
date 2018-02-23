@@ -228,12 +228,12 @@ def color_where(subtable, operator, term):
     return clause
 
 def set_where(name):
-    return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name} COLLATE NOCASE)))'.format(name_fuzzy=sqllikeescape(name), name=sqlescape(name))
+    return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name})))'.format(name_fuzzy=sqllikeescape(name), name=sqlescape(name))
 
 def format_where(term):
     if term == 'pd':
         term = 'Penny Dreadful'
-    format_id = db().value('SELECT id FROM format WHERE name LIKE ?', ['{term}%%'.format(term=card.unaccent(term))])
+    format_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term=card.unaccent(term))])
     if format_id is None:
         raise InvalidValueException("Invalid format '{term}'".format(term=term))
     return "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))".format(format_id=format_id)

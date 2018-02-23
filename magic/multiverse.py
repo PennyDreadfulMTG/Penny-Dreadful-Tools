@@ -174,6 +174,7 @@ def update_database(new_version):
     rs = db().execute('SELECT id, name FROM rarity')
     for row in rs:
         db().execute('UPDATE printing SET rarity_id = %s WHERE rarity = %s', [row['id'], row['name']])
+    # Create the current Penny Dreadful format.
     get_format_id('Penny Dreadful', True)
     update_bugged_cards(False)
     update_pd_legality()

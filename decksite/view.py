@@ -7,7 +7,7 @@ from anytree.iterators import PreOrderIter
 from flask import request, session, url_for
 from flask_babel import gettext
 
-from decksite import admin, APP, BABEL, template
+from decksite import APP, BABEL, admin, template
 from decksite.data import archetype, deck
 from magic import multiverse, oracle, rotation
 from shared import dtutil

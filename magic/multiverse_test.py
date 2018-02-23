@@ -1,6 +1,7 @@
 from magic import multiverse, rotation
 from magic.database import db
 
+
 def test_base_query_legalities():
     sql = multiverse.base_query("f.name = 'Mother of Runes'")
     rs = db().execute(sql)

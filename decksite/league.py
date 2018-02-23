@@ -1,19 +1,19 @@
+import calendar
+import datetime
 import json
 import time
-import datetime
-import calendar
 
 from flask import url_for
 
+from decksite.data import competition, deck, guarantee, match, person, query
+from decksite.database import db
+from decksite.scrapers import decklist
 from magic import fetcher, legality, rotation
 from shared import configuration, dtutil
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException, LockNotAcquiredException
 
-from decksite.data import competition, deck, guarantee, match, person, query
-from decksite.database import db
-from decksite.scrapers import decklist
 
 class Form(Container):
     def __init__(self, form):

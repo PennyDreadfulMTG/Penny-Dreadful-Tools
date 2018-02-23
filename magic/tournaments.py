@@ -2,11 +2,12 @@ import sys
 from datetime import timedelta
 from enum import Enum
 
-from dateutil import rrule
 import inflect
+from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
 
 from shared import dtutil
 from shared.container import Container
+
 
 class TimeDirection(Enum):
     BEFORE = 1

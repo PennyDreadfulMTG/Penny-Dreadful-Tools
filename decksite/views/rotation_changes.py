@@ -1,6 +1,7 @@
 from decksite.view import View
 from magic import rotation
 
+
 # pylint: disable=no-self-use
 class RotationChanges(View):
     def __init__(self, cards_in, cards_out, playability, speculation=False):

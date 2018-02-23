@@ -1,7 +1,8 @@
 from flask import url_for
 from flask_babel import gettext
 
-from decksite.views import LeagueForm
+from decksite.views.league_form import LeagueForm
+
 
 # pylint: disable=no-self-use
 class Report(LeagueForm):

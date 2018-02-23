@@ -1,6 +1,6 @@
+from decksite.view import View
 from magic import fetcher
 
-from decksite.view import View
 
 # pylint: disable=no-self-use
 class Resources(View):

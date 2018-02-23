@@ -1,11 +1,11 @@
 from typing import Union
 
+from decksite.data import deck, guarantee, query
+from decksite.database import db
 from magic import rotation
 from shared.container import Container
 from shared.database import sqlescape
 
-from decksite.data import deck, guarantee, query
-from decksite.database import db
 
 class Person(Container):
     pass

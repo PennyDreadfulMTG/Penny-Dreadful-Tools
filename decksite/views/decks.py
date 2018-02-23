@@ -4,6 +4,7 @@ from flask_babel import ngettext
 from decksite.view import View
 from magic import rotation
 
+
 # pylint: disable=no-self-use
 class Decks(View):
     def __init__(self, decks):

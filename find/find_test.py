@@ -1,6 +1,7 @@
 from find import search
 from magic.database import db
 
+
 def test_match():
     assert search.Key.match(['c'])
     assert search.Key.match(['mana'])

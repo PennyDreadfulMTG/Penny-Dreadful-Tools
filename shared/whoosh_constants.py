@@ -1,9 +1,8 @@
-from whoosh.analysis import IDTokenizer
-from whoosh.analysis import SubstitutionFilter
-from whoosh.analysis import LowercaseFilter
-from whoosh.analysis import StandardAnalyzer
-from whoosh.analysis import StemmingAnalyzer
+from whoosh.analysis import (IDTokenizer, LowercaseFilter, StandardAnalyzer,
+                             StemmingAnalyzer, SubstitutionFilter)
+
 from shared import configuration
+
 
 class WhooshConstants():
     index_dir = configuration.get('whoosh_index_dir')

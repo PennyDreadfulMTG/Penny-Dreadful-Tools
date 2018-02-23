@@ -2,6 +2,7 @@ import time
 
 from shared import configuration, repo
 
+
 def start():
     return time.perf_counter()
 

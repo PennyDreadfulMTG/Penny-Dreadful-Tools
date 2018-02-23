@@ -2,6 +2,7 @@ import time
 
 from magic import multiverse
 
+
 def run():
     start = time.time()
     multiverse.reindex()

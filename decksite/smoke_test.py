@@ -4,6 +4,7 @@ import pytest
 
 from decksite.main import APP
 
+
 class SmokeTest(unittest.TestCase):
     def setUp(self):
         # creates a test client

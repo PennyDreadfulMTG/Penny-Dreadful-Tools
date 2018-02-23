@@ -1,5 +1,7 @@
 from magic import multiverse
+
 from . import reprime_cache
+
 
 def ad_hoc():
     multiverse.init() # New Cards?

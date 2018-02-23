@@ -1,6 +1,7 @@
 from decksite.data import deck
 from decksite.view import View
 
+
 # pylint: disable=no-self-use
 class EditArchetypes(View):
     def __init__(self, archetypes, search_results):

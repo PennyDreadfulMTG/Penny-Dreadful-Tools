@@ -1,9 +1,9 @@
-from shared import dtutil
-from shared.database import sqlescape
-from shared.container import Container
-
 from decksite.data import deck, elo, query
 from decksite.database import db
+from shared import dtutil
+from shared.container import Container
+from shared.database import sqlescape
+
 
 # pylint: disable=too-many-arguments
 def insert_match(dt, left_id, left_games, right_id, right_games, round_num=None, elimination=False, mtgo_match_id=None):

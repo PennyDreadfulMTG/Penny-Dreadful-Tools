@@ -1,5 +1,7 @@
 import copy
 import unicodedata
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Union, cast
 
 from shared import dtutil
 from shared.container import Container
@@ -180,7 +182,7 @@ def card_bug_properties():
     props['from_bug_blog']['type'] = BOOLEAN
     return props
 
-def name_query(column='face_name'):
+def name_query(column: str = 'face_name') -> str:
     return """
         CASE
         WHEN layout = 'double-faced' OR layout = 'flip' THEN
@@ -192,7 +194,7 @@ def name_query(column='face_name'):
         END
     """.format(column=column, table='{table}')
 
-def cmc_query():
+def cmc_query() -> str:
     return """
         CASE
         WHEN layout = 'split' OR layout = 'aftermath' THEN
@@ -204,7 +206,7 @@ def cmc_query():
         END
     """
 
-def type_query():
+def type_query() -> str:
     return """
         CASE
         WHEN layout = 'meld' THEN
@@ -214,10 +216,10 @@ def type_query():
         END
     """
 
-def unaccent(s):
+def unaccent(s: str) -> str:
     return ''.join((c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn'))
 
-def canonicalize(name):
+def canonicalize(name: str) -> str:
     if name.find('/') >= 0 and name.find('//') == -1:
         name = name.replace('/', '//')
     if name.find('//') >= 0 and name.find(' // ') == -1:
@@ -230,7 +232,7 @@ def to_mtgo_format(s):
     return s.replace(' // ', '/').replace('\n', '\r\n')
 
 class Card(Container):
-    def __init__(self, params):
+    def __init__(self, params) -> None:
         super().__init__()
         for k in params.keys():
             setattr(self, k, determine_value(k, params))
@@ -249,36 +251,37 @@ class Card(Container):
     def is_split(self):
         return self.name.find('//') >= 0
 
-def determine_value(k, params):
+def determine_value(k: str, params) -> Any:
     v = params[k]
     if k == 'names' or k == 'mana_cost':
-        return v.split('|') if v is not None else None
+        return cast(str, v).split('|') if v is not None else None
     elif k == 'legalities':
-        v = determine_legalities(v)
+        v = determine_legalities(cast(str, v))
     elif k == 'bugs':
-        v = determine_bugs(v)
+        v = determine_bugs(cast(str, v))
     return v
 
-def determine_legalities(v):
-    if v is None:
+def determine_legalities(s: Optional[str]) -> Dict[str, str]:
+    if s is None:
         return {}
-    formats = v.split(',')
+    formats = s.split(',')
     v = {}
     for f in formats:
         name, status = f.split(':')
         v[name] = status
     return v
 
-def determine_bugs(v):
-    if v is None:
+def determine_bugs(s: Optional[str]) -> Optional[List[Dict[str, Union[str, datetime, bool]]]]:
+    if s is None:
         return None
-    bugs = v.split('_SEPARATOR_')
+    bugs = s.split('_SEPARATOR_')
     v = []
     for b in bugs:
         description, classification, last_confirmed, url, from_bug_blog = b.split('|')
         bb = from_bug_blog == '1'
         v.append({'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(float(last_confirmed)), 'url': url, 'from_bug_blog': bb})
         return v
+    return None
 
 class Printing(Container):
     pass

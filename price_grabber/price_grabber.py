@@ -1,17 +1,17 @@
 import html
 import re
 import sys
-
 from typing import Dict
+
 import ftfy
 
 from magic import card, fetcher_internal, multiverse, oracle
 from magic.database import db
+from price_grabber import price
 from shared import configuration, dtutil
 from shared.database import get_database
-from shared.pd_exception import DatabaseException, InvalidDataException, TooFewItemsException
-
-from price_grabber import price
+from shared.pd_exception import (DatabaseException, InvalidDataException,
+                                 TooFewItemsException)
 
 DATABASE = get_database(configuration.get('prices_database'))
 CARDS: Dict[str, str] = {}

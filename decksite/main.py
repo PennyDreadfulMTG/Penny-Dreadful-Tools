@@ -2,22 +2,39 @@ import os
 import traceback
 import urllib.parse
 
-from flask import abort, g, make_response, redirect, request, send_file, send_from_directory, session, url_for
-from werkzeug import exceptions
+from flask import (abort, g, make_response, redirect, request, send_file,
+                   send_from_directory, session, url_for)
 from github.GithubException import GithubException
+from werkzeug import exceptions
 
-from magic import card as mc, oracle
+from decksite import league as lg
+from decksite import APP, auth, deck_name
+from decksite.cache import cached
+from decksite.charts import chart
+from decksite.data import archetype as archs
+from decksite.data import card as cs
+from decksite.data import competition as comp
+from decksite.data import deck as ds
+from decksite.data import news as ns
+from decksite.data import person as ps
+from decksite.data import query
+from decksite.league import ReportForm, RetireForm, SignUpForm
+from decksite.views import (About, AboutPdm, AddForm, Admin, Archetype,
+                            Archetypes, Bugs, Card, Cards, Competition,
+                            Competitions, Deck, Decks, EditArchetypes,
+                            EditMatches, EditNews, Home, InternalServerError,
+                            LeagueInfo, LinkAccounts, News, NotFound, People,
+                            Person, Prizes, Report, Resources, Retire,
+                            Rotation, RotationChanges, RotationChecklist,
+                            Season, Seasons, SignUp, TournamentHosting,
+                            TournamentLeaderboards, Tournaments, Unauthorized)
+from magic import card as mc
+from magic import oracle
 from shared import dtutil, perf, repo
 from shared.container import Container
-from shared.pd_exception import DoesNotExistException, InvalidArgumentException, InvalidDataException
-
-from decksite import auth, deck_name, league as lg
-from decksite import APP
-from decksite.cache import cached
-from decksite.data import archetype as archs, card as cs, competition as comp, deck as ds, news as ns, person as ps, query
-from decksite.charts import chart
-from decksite.league import ReportForm, RetireForm, SignUpForm
-from decksite.views import About, AboutPdm, AddForm, Admin, Archetype, Archetypes, Bugs, Card, Cards, Competition, Competitions, Deck, Decks, EditArchetypes, EditMatches, EditNews, Home, InternalServerError, LeagueInfo, LinkAccounts, News, NotFound, People, Person, Prizes, Report, Resources, Retire, Rotation, RotationChanges, RotationChecklist, Season, Seasons, SignUp, TournamentHosting, TournamentLeaderboards, Tournaments, Unauthorized
+from shared.pd_exception import (DoesNotExistException,
+                                 InvalidArgumentException,
+                                 InvalidDataException)
 
 # Decks
 

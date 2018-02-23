@@ -1,7 +1,7 @@
 from typing import Set
 
-from magic.database import db
 from magic import multiverse, oracle
+from magic.database import db
 
 FORMATS: Set[str] = set()
 

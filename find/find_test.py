@@ -12,7 +12,7 @@ def test_match():
     assert search.Criterion.match(list('tou>2'))
 
 def test_edition():
-    do_test('e:ktk', "(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE '%%ktk%%' OR code = 'ktk' COLLATE NOCASE)))")
+    do_test('e:ktk', "(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE '%%ktk%%' OR code = 'ktk')))")
 
 def test_special_chars():
     do_test('o:a_c%', "(search_text LIKE '%%a\\_c\\%%%%')")
@@ -92,7 +92,7 @@ def test_mana7():
     do_test('mana:uu', "(mana_cost LIKE '%%{U}{U}%%')")
 
 def test_uppercase():
-    pd_id = db().value('SELECT id FROM format WHERE name LIKE ?', ['{term}%%'.format(term='Penny Dreadful')])
+    pd_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term='Penny Dreadful')])
     do_test('F:pd', "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {pd_id} AND legality <> 'Banned'))".format(pd_id=pd_id))
 
 def test_subtype():

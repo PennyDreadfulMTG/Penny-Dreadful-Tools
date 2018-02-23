@@ -7,7 +7,7 @@ from anytree.iterators import PreOrderIter
 from flask import request, session, url_for
 from flask_babel import gettext
 
-from decksite import APP, BABEL, template
+from decksite import APP, BABEL, admin, template
 from decksite.data import archetype, deck
 from magic import multiverse, oracle, rotation
 from shared import dtutil
@@ -91,7 +91,8 @@ class View:
             {'name': gettext('About'), 'url': url_for('about'), 'submenu': [
                 {'name': gettext('What is Penny Dreadful?'), 'url': url_for('about')},
                 {'name': gettext('About pennydreadfulmagic.com'), 'url': url_for('about_pdm')}
-            ]}
+            ]},
+            {'name': gettext('Admin'), 'admin_only': True, 'url': url_for('admin'), 'submenu': admin.menu()}
         ]
         for item in menu:
             item['has_submenu'] = item.get('submenu') is not None

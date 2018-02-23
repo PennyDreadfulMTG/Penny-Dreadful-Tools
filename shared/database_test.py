@@ -65,7 +65,7 @@
 # def test_value():
 #     db = setup()
 #     db.execute("INSERT INTO x (v) VALUES ('A'), ('B'), ('C')")
-#     assert db.value('SELECT id FROM x WHERE v = ?', ['B']) == 2
+#     assert db.value('SELECT id FROM x WHERE v = %s', ['B']) == 2
 #     db = setup()
 #     assert db.value('SELECT id FROM x WHERE v = 999', default='Z') == 'Z'
 #     exception_occurred = False

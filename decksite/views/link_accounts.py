@@ -44,7 +44,7 @@ class LinkAccounts(View):
         p = deck.get_or_insert_person_id(self.form['mtgo_username'], None, None)
         p = person.load_person(p)
         if p.discord_id is None:
-            sql = 'UPDATE person SET discord_id = ? WHERE id = ?'
+            sql = 'UPDATE person SET discord_id = %s WHERE id = %s'
             db().execute(sql, [auth.discord_id(), p.id])
             self.person = p
         else:

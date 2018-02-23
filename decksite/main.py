@@ -8,7 +8,7 @@ from github.GithubException import GithubException
 from werkzeug import exceptions
 
 from decksite import league as lg
-from decksite import APP, auth, deck_name
+from decksite import APP, admin, auth, deck_name
 from decksite.cache import cached
 from decksite.charts import chart
 from decksite.data import archetype as archs
@@ -318,8 +318,8 @@ def rotation_speculation():
 @APP.route('/admin/')
 @auth.admin_required
 def admin_home():
-    urls = sorted([url_for(rule.endpoint) for rule in APP.url_map.iter_rules() if 'GET' in rule.methods and rule.rule.startswith('/admin')])
-    view = Admin(urls)
+    menu = admin.menu()
+    view = Admin(menu)
     return view.page()
 
 @APP.route('/querytappedout/')

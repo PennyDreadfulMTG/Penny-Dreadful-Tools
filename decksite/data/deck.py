@@ -273,8 +273,8 @@ def prime_cache(d):
     legal_formats_s = json.dumps(list(d.legal_formats))
     normalized_name = deck_name.normalize(d)
     db().begin()
-    db().execute('DELETE FROM deck_cache WHERE deck_id = ?', [d.id])
-    db().execute('INSERT INTO deck_cache (deck_id, normalized_name, colors, colored_symbols, legal_formats) VALUES (?, ?, ?, ?, ?)', [d.id, normalized_name, colors_s, colored_symbols_s, legal_formats_s])
+    db().execute('DELETE FROM deck_cache WHERE deck_id = %s', [d.id])
+    db().execute('INSERT INTO deck_cache (deck_id, normalized_name, colors, colored_symbols, legal_formats) VALUES (%s, %s, %s, %s, %s)', [d.id, normalized_name, colors_s, colored_symbols_s, legal_formats_s])
     db().commit()
 
 def add_cards(deck_id, cards):

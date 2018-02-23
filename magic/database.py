@@ -91,42 +91,23 @@ def setup():
 
 # Drop the database so we can recreate it.
 def delete():
-    if db().is_sqlite():
-        db().execute("PRAGMA writable_schema = 1")
-        db().execute("DELETE FROM sqlite_master WHERE type IN ('table', 'index', 'trigger')")
-        db().execute("PRAGMA writable_schema = 0;")
-        db().execute("VACUUM")
-    else:
-        db().begin()
-        query = db().values("""
+    db().begin()
+    query = db().values("""
         SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;')
         FROM information_schema.tables
         WHERE table_schema = %s;
-        """, [db().name])
-        db().execute('SET FOREIGN_KEY_CHECKS = 0')
-        db().execute(''.join(query))
-        db().execute('SET FOREIGN_KEY_CHECKS = 1')
-        db().commit()
+    """, [db().name])
+    db().execute('SET FOREIGN_KEY_CHECKS = 0')
+    db().execute(''.join(query))
+    db().execute('SET FOREIGN_KEY_CHECKS = 1')
+    db().commit()
 
 def column_def(name, prop):
-    if db().is_sqlite():
-        nullable = 'NOT NULL' if not prop['nullable'] else ''
-        primary_key = 'PRIMARY KEY' if prop['primary_key'] else ''
-        default = 'DEFAULT {default}'.format(default=prop['default']) if prop['default'] is not None else ''
-        unique = 'UNIQUE' if prop['unique'] else ''
-        if prop['type'].startswith('VARCHAR') or prop['type'] == 'LONGTEXT':
-            prop['type'] = 'TEXT'
-        if prop['type'] == 'BOOLEAN':
-            prop['type'] = 'INTEGER'
-        return '`{name}` {type} {primary_key} {nullable} {unique} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, unique=unique, default=default)
-    elif db().is_mysql():
-        nullable = 'NOT NULL' if not prop['nullable'] else ''
-        primary_key = 'PRIMARY KEY AUTO_INCREMENT' if prop['primary_key'] else ''
-        default = 'DEFAULT {default}'.format(default=prop['default']) if prop['default'] is not None else ''
-        unique = 'UNIQUE' if prop['unique'] else ''
-        return '`{name}` {type} {nullable} {primary_key} {unique} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, unique=unique, default=default)
-    else:
-        raise DatabaseException('Unknown Database type')
+    nullable = 'NOT NULL' if not prop['nullable'] else ''
+    primary_key = 'PRIMARY KEY AUTO_INCREMENT' if prop['primary_key'] else ''
+    default = 'DEFAULT {default}'.format(default=prop['default']) if prop['default'] is not None else ''
+    unique = 'UNIQUE' if prop['unique'] else ''
+    return '`{name}` {type} {nullable} {primary_key} {unique} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, unique=unique, default=default)
 
 def foreign_key_def(name, fk):
     return 'FOREIGN KEY(`{name}`) REFERENCES `{table}`(`{column}`)'.format(name=name, table=fk[0], column=fk[1])

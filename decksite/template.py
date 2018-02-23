@@ -1,8 +1,9 @@
-import markdown
 import pystache
+import pystache.parsed
 from flask_babel import gettext
-from markdown import extensions.Extension, treeprocessors.Treeprocessor
-from pystache.parsed import ParsedTemplate
+from markdown import markdown
+from markdown.extensions import Extension
+from markdown.treeprocessors import Treeprocessor
 
 
 def render_name(template, *context):
@@ -49,8 +50,8 @@ class CachedRenderEngine(pystache.renderengine.RenderEngine):
 
 ## Localization Shim
 # pylint: disable=protected-access
-def insert_gettext_nodes(parsed_template: ParsedTemplate) -> ParsedTemplate:
-    new_template = ParsedTemplate()
+def insert_gettext_nodes(parsed_template: pystache.parsed.ParsedTemplate) -> pystache.parsed.ParsedTemplate:
+    new_template = pystache.parsed.ParsedTemplate()
     for node in parsed_template._parse_tree:
         if isinstance(node, pystache.parser._EscapeNode):
             if node.key[0:2] == '_ ':
@@ -76,14 +77,14 @@ class _GettextNode(object):
 
     def render(self, engine, context): # pylint: disable=unused-argument
         s = gettext(self.key)
-        return markdown.markdown(engine.escape(s), extensions=[NoParaTagsExtension()])
+        return markdown(engine.escape(s), extensions=[NoParaTagsExtension()])
 
 #pylint: disable=no-self-use
-class NoParaTagProcessor(treeprocessor.Treeprocessor):
+class NoParaTagProcessor(Treeprocessor):
     def run(self, root):
         root[0].tag = 'string'
 
 #pylint: disable=no-self-use, invalid-name
-class NoParaTagsExtension(extensions.Extension):
+class NoParaTagsExtension(Extension):
     def extendMarkdown(self, md, _):
         md.treeprocessors.add('noparatag', NoParaTagProcessor(), '_end')

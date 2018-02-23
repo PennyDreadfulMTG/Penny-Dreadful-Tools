@@ -3,13 +3,12 @@ import urllib.parse
 
 from bs4 import BeautifulSoup
 
-from magic import fetcher
-from shared import dtutil
-from shared.pd_exception import InvalidDataException
-
 from decksite.data import competition, deck, match
 from decksite.database import db
 from decksite.scrapers import decklist
+from magic import fetcher
+from shared import dtutil
+from shared.pd_exception import InvalidDataException
 
 WINNER = '1st'
 SECOND = '2nd'

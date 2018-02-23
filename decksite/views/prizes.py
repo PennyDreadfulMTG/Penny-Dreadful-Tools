@@ -1,11 +1,12 @@
 import datetime
-from dateutil.relativedelta import relativedelta, FR
 
-from magic import tournaments
-from shared.container import Container
-from shared import dtutil
+from dateutil.relativedelta import FR, relativedelta
 
 from decksite.view import View
+from magic import tournaments
+from shared import dtutil
+from shared.container import Container
+
 
 # pylint: disable=no-self-use
 class Prizes(View):

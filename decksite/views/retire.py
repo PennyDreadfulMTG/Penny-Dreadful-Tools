@@ -1,5 +1,7 @@
 from flask import url_for
-from decksite.views import LeagueForm
+
+from decksite.views.league_form import LeagueForm
+
 
 # pylint: disable=no-self-use
 class Retire(LeagueForm):

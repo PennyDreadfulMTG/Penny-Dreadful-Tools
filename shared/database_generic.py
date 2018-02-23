@@ -1,5 +1,7 @@
 from typing import Any, List
+
 from shared.pd_exception import DatabaseException
+
 
 class GenericDatabase:
 

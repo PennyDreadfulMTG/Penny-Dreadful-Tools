@@ -13,4 +13,5 @@ install:
   # - ./setup_spellfix.sh
 script:
   - python run.py tests
-  # - mypy --ignore-missing-imports .
+  - mypy --ignore-missing-imports .
+  - isort --check-only

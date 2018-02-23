@@ -1,5 +1,4 @@
 import collections
-
 from typing import Dict
 
 from find.expression import Expression

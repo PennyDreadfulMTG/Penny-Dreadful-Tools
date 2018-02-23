@@ -1,9 +1,9 @@
 import os
 
 from discordbot import command, emoji
-
-from magic import card, oracle, fetcher_internal, image_fetcher
+from magic import card, fetcher_internal, image_fetcher, oracle
 from shared import configuration
+
 
 # Check that we can fetch card images.
 def test_imagedownload():

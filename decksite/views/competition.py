@@ -1,9 +1,9 @@
 from flask import url_for
 from flask_babel import ngettext
 
+from decksite.view import View
 from shared.container import Container
 
-from decksite.view import View
 
 # pylint: disable=no-self-use, too-many-instance-attributes
 class Competition(View):

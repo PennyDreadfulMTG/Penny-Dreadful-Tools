@@ -1,5 +1,6 @@
 from magic import oracle
 
+
 def test_legality():
     cards = oracle.cards_from_query('Swamp')
     assert len(cards) == 1

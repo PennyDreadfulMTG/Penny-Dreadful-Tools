@@ -1,6 +1,6 @@
 from decksite import deck_name
-
 from shared.container import Container
+
 
 def test_normalize():
     d = Container({'original_name': 'Dimir Control', 'archetype': 'Control', 'colors': ['U', 'B']})

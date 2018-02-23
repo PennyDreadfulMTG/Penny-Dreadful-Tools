@@ -3,6 +3,7 @@ import os.path
 
 from decksite import template
 
+
 def test_render_name():
     templates = glob.glob('**/*.mustache', recursive=True)
     print(templates)

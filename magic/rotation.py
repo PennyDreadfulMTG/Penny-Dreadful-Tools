@@ -3,6 +3,7 @@ import datetime
 from magic import fetcher
 from shared import dtutil
 
+
 def init():
     info = fetcher.whatsinstandard()
     if info['deprecated']:

@@ -1,8 +1,8 @@
 import random
 
+from decksite.view import View
 from magic import oracle
 
-from decksite.view import View
 
 # pylint: disable=no-self-use
 class NotFound(View):

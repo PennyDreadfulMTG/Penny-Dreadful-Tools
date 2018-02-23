@@ -1,9 +1,11 @@
+from typing import Dict
+
 from decksite.data import elo, person
 from decksite.database import db
 
-PEOPLE = {}
+PEOPLE: Dict[str, int] = {}
 
-def run():
+def run() -> None:
     sql = """
         SELECT
             GROUP_CONCAT(d.person_id) AS people,
@@ -32,7 +34,7 @@ def run():
             print('{id} currently has Elo of {current_elo} and we are setting it to {new_elo}'.format(id=p.id, current_elo=p.elo, new_elo=new_elo))
             db().execute(sql, [new_elo, p.id])
 
-def match(m):
+def match(m: Dict[str, str]) -> None:
     if ',' not in m['games']:
         return
     elif int(m['games'].split(',')[0]) == 2:
@@ -45,10 +47,10 @@ def match(m):
         return
     adjust(winner, loser)
 
-def adjust(winner, loser):
+def adjust(winner: str, loser: str) -> None:
     change = elo.adjustment(get_elo(winner), get_elo(loser))
     PEOPLE[winner] = get_elo(winner) + change
     PEOPLE[loser] = get_elo(loser) - change
 
-def get_elo(person_id):
+def get_elo(person_id: str) -> int:
     return PEOPLE.get(person_id, elo.STARTING_ELO)

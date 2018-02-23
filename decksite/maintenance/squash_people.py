@@ -1,7 +1,8 @@
+from decksite.database import db
 from shared.container import Container
 
-from decksite.database import db
 from . import elo
+
 USERNAME_COLUMNS = ['mtgo_username', 'tappedout_username', 'mtggoldfish_username']
 
 # Find people with identical usernames across systems and squash them together.

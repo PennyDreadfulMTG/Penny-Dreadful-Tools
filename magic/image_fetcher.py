@@ -1,6 +1,6 @@
 import hashlib
-import re
 import os
+import re
 
 import magic.fetcher_internal as internal
 from magic import oracle
@@ -33,7 +33,7 @@ def gatherer_image(printing) -> str:
         return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(multiverse_id) + '.jpg'
     return None
 
-def download_bluebones_image(cards, filepath):
+def download_bluebones_image(cards, filepath) -> bool:
     print('Trying to get image for {cards}'.format(cards=', '.join(card.name for card in cards)))
     try:
         internal.store(bluebones_image(cards), filepath)
@@ -41,7 +41,7 @@ def download_bluebones_image(cards, filepath):
         print('Error: {e}'.format(e=e))
     return internal.acceptable_file(filepath)
 
-def download_scryfall_image(cards, filepath, version='') -> str:
+def download_scryfall_image(cards, filepath, version='') -> bool:
     print('Trying to get scryfall image for {card}'.format(card=cards[0]))
     try:
         internal.store(scryfall_image(cards[0], version=version), filepath)
@@ -49,7 +49,7 @@ def download_scryfall_image(cards, filepath, version='') -> str:
         print('Error: {e}'.format(e=e))
     return internal.acceptable_file(filepath)
 
-def download_mci_image(cards, filepath) -> str:
+def download_mci_image(cards, filepath) -> bool:
     printings = oracle.get_printings(cards[0])
     for p in printings:
         print("Trying to get MCI image for {imagename}".format(imagename=os.path.basename(filepath)))

@@ -1,6 +1,7 @@
 from shared import database_mysql
 from shared.database_generic import GenericDatabase
 
+
 def get_database(location: str) -> GenericDatabase:
     return database_mysql.MysqlDatabase(location)
 

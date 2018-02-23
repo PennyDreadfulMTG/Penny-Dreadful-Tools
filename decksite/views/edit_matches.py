@@ -1,9 +1,9 @@
 from flask import url_for
 
-from shared import dtutil
-
 from decksite.data import deck
 from decksite.view import View
+from shared import dtutil
+
 
 # pylint: disable=no-self-use
 class EditMatches(View):

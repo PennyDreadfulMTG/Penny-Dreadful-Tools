@@ -1,38 +1,41 @@
 import asyncio
 import datetime
 import re
+from typing import List
 
 import discord
+from discord.channel import Channel
+from discord.member import Member
+from discord.message import Message
 
 from discordbot import command, emoji
-from magic import image_fetcher, fetcher
-from magic import oracle
-from magic import multiverse
-from magic import tournaments
+from magic import fetcher, image_fetcher, multiverse, oracle, tournaments
+from magic.card import Card
 from shared import configuration, dtutil
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
 from shared.whoosh_search import WhooshSearcher
 
+
 class Bot:
-    def __init__(self):
+    def __init__(self) -> None:
         self.client = discord.Client()
         self.voice = None
-        self.searcher = None
+        self.searcher: WhooshSearcher = None
 
-    def init(self):
+    def init(self) -> None:
         multiverse.init()
         multiverse.update_bugged_cards()
         oracle.init()
         self.searcher = WhooshSearcher()
         self.client.run(configuration.get('token'))
 
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print('Logged in as {username} ({id})'.format(username=self.client.user.name, id=self.client.user.id))
         print('Connected to {0}'.format(', '.join([server.name for server in self.client.servers])))
         print('--------')
 
-    async def on_message(self, message):
+    async def on_message(self, message: Message):
         # We do not want the bot to reply to itself.
         if message.author == self.client.user:
             return
@@ -43,7 +46,7 @@ class Bot:
         else:
             await self.respond_to_card_names(message)
 
-    async def on_voice_state_update(self, before, after):
+    async def on_voice_state_update(self, before: Member, after: Member) -> None:
         # pylint: disable=unused-argument
         # If we're the only one left in a voice chat, leave the channel
         voice = after.server.voice_client
@@ -52,13 +55,19 @@ class Bot:
         if len(voice.channel.voice_members) == 1:
             await voice.disconnect()
 
-    async def respond_to_card_names(self, message):
+    async def respond_to_card_names(self, message: Message) -> None:
         await command.respond_to_card_names(message, self)
 
-    async def respond_to_command(self, message):
+    async def respond_to_command(self, message: Message) -> None:
         await command.handle_command(message, self)
 
-    async def post_cards(self, cards, channel, replying_to=None, additional_text=''):
+    async def post_cards(
+            self,
+            cards: List[Card],
+            channel: Channel,
+            replying_to: Member = None,
+            additional_text: str = ''
+    ) -> None:
         await self.client.send_typing(channel)
         if len(cards) == 0:
             await self.post_no_cards(channel, replying_to)
@@ -87,7 +96,7 @@ class Bot:
         else:
             await self.send_image_with_retry(channel, image_file, text)
 
-    async def post_no_cards(self, channel, replying_to):
+    async def post_no_cards(self, channel, replying_to: Member) -> None:
         if replying_to is not None:
             text = '{author}: No matches.'.format(author=replying_to.mention)
         else:
@@ -97,14 +106,14 @@ class Bot:
         return
 
 
-    async def send_image_with_retry(self, channel, image_file, text=''):
+    async def send_image_with_retry(self, channel, image_file, text='') -> None:
         message = await self.client.send_file(channel, image_file, content=text)
         if message and message.attachments and message.attachments[0]['size'] == 0:
             print('Message size is zero so resending')
             await self.client.delete_message(message)
             await self.client.send_file(channel, image_file, content=text)
 
-    async def on_member_join(self, member):
+    async def on_member_join(self, member) -> None:
         print('{0} joined {1} ({2})'.format(member.mention, member.server.name, member.server.id))
         is_pd_server = member.server.id == "207281932214599682"
         # is_test_server = member.server.id == "226920619302715392"
@@ -112,7 +121,7 @@ class Bot:
             greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> and <http://pdmtgo.com> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
             await self.client.send_message(member.server.default_channel, greeting)
 
-    def single_card_text(self, card, disable_emoji):
+    def single_card_text(self, card, disable_emoji) -> str:
         mana = emoji.replace_emoji(''.join(card.mana_cost or []), self.client)
         legal = ' — ' + emoji.legal_emoji(card, True)
         if disable_emoji:
@@ -136,19 +145,19 @@ BOT = Bot()
 # Thus we stub on_message and on_ready here and pass to Bot to do the real work.
 
 @BOT.client.event
-async def on_message(message):
+async def on_message(message) -> None:
     await BOT.on_message(message)
 
 @BOT.client.event
-async def on_ready():
+async def on_ready() -> None:
     await BOT.on_ready()
 
 @BOT.client.event
-async def on_voice_state_update(before, after):
+async def on_voice_state_update(before, after) -> None:
     await BOT.on_voice_state_update(before, after)
 
 @BOT.client.event
-async def on_member_update(before, after):
+async def on_member_update(before, after) -> None:
     streaming_role = [r for r in before.server.roles if r.name == "Currently Streaming"]
     if not streaming_role:
         return
@@ -161,16 +170,16 @@ async def on_member_update(before, after):
         await BOT.client.add_roles(after, streaming_role)
 
 @BOT.client.event
-async def on_member_join(member):
+async def on_member_join(member) -> None:
     await BOT.on_member_join(member)
 
 @BOT.client.event
-async def on_server_join(server):
+async def on_server_join(server) -> None:
     await BOT.client.send_message(server.default_channel, "Hi, I'm mtgbot.  To look up cards, just mention them in square brackets. (eg `[Llanowar Elves] is better than [Elvish Mystic]`).")
     await BOT.client.send_message(server.default_channel, "By default, I display Penny Dreadful legality. If you don't want or need that, just type `!notpenny`.")
 
 @BOT.client.event
-async def on_reaction_add(reaction, author):
+async def on_reaction_add(reaction, author) -> None:
     if reaction.message.author == BOT.client.user:
         c = reaction.count
         if reaction.me:
@@ -185,7 +194,7 @@ async def on_reaction_add(reaction, author):
             await BOT.on_message(message)
             await BOT.client.delete_message(reaction.message)
 
-async def background_task_spoiler_season():
+async def background_task_spoiler_season() -> None:
     "Poll Scryfall for the latest 250 cards, and add them to our db if missing"
     await BOT.client.wait_until_ready()
     new_cards = fetcher.scryfall_cards()
@@ -196,7 +205,7 @@ async def background_task_spoiler_season():
             oracle.insert_scryfall_card(c)
             print('Imported {0} from Scryfall'.format(c['name']))
 
-async def background_task_tournaments():
+async def background_task_tournaments() -> None:
     await BOT.client.wait_until_ready()
     tournament_channel_id = configuration.get('tournament_channel_id')
     if not tournament_channel_id:
@@ -239,7 +248,7 @@ async def background_task_tournaments():
         print('diff={0}, timer={1}'.format(diff, timer))
         await asyncio.sleep(timer)
 
-def init():
+def init() -> None:
     asyncio.ensure_future(background_task_spoiler_season())
     asyncio.ensure_future(background_task_tournaments())
     BOT.init()

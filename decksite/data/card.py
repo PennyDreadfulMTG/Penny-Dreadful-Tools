@@ -1,9 +1,9 @@
+from decksite.data import deck, guarantee
+from decksite.database import db
 from magic import oracle, rotation
 from shared.container import Container
 from shared.database import sqlescape
 
-from decksite.data import deck, guarantee
-from decksite.database import db
 
 def played_cards(where='1 = 1'):
     sql = """

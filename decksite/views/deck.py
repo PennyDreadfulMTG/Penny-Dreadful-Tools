@@ -1,12 +1,13 @@
-from flask import session, url_for
 import inflect
 import titlecase
+from flask import session, url_for
 
 from decksite.data import archetype, deck, match
 from decksite.view import View
 from magic import fetcher, legality, oracle
 from shared import dtutil
 from shared.pd_exception import InvalidDataException
+
 
 # pylint: disable=no-self-use, too-many-instance-attributes
 class Deck(View):

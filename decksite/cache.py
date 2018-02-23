@@ -3,7 +3,7 @@ import datetime
 import functools
 import os
 
-from flask import request, make_response
+from flask import make_response, request
 from werkzeug.contrib.cache import SimpleCache
 
 from . import localization

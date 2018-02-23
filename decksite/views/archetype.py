@@ -1,9 +1,9 @@
 from flask import url_for
 
-from shared.pd_exception import DoesNotExistException
-
 from decksite.data import archetype as archs
 from decksite.view import View
+from shared.pd_exception import DoesNotExistException
+
 
 # pylint: disable=no-self-use
 class Archetype(View):

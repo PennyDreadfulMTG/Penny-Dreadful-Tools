@@ -2,15 +2,15 @@ import hashlib
 import json
 import time
 
-from magic import mana, oracle, legality, rotation
+from decksite import deck_name
+from decksite.data import guarantee, query
+from decksite.database import db
+from magic import legality, mana, oracle, rotation
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
-from decksite import deck_name
-from decksite.data import guarantee, query
-from decksite.database import db
 
 # pylint: disable=too-many-instance-attributes
 class Deck(Container):

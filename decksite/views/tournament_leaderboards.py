@@ -1,6 +1,7 @@
 from decksite.view import View
 from magic import tournaments
 
+
 # pylint: disable=no-self-use
 class TournamentLeaderboards(View):
     def __init__(self, series):

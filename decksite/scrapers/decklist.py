@@ -3,10 +3,10 @@ import xml
 
 import untangle
 
+from decksite.data.deck import Deck
 from magic import oracle
 from shared.pd_exception import InvalidDataException
 
-from decksite.data.deck import Deck
 
 def parse_line(line):
     match = re.match(r'(\d+)\s+(.*)', line)

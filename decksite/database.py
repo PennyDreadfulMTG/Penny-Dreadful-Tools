@@ -6,6 +6,7 @@ from decksite import APP
 from shared import configuration
 from shared.database import get_database
 
+
 def db():
     if has_request_context():
         ctx = request

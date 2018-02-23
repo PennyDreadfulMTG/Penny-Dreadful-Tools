@@ -2,6 +2,7 @@ import unittest
 
 from shared.whoosh_search import WhooshSearcher
 
+
 # pylint: disable=unused-variable
 class WhooshSearchTest(unittest.TestCase):
     def setUp(self):

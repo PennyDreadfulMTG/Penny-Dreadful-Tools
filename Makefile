@@ -28,6 +28,7 @@ lint:
 	@echo
 	@pylint  --generate-rcfile | grep -v "ignored-modules=" >.pylintrc.tmp
 	@find . -name "*.py" | grep -v .git | xargs pylint --ignored-modules=MySQLdb --rcfile=.pylintrc.tmp --reports=n -f parseable; (ret=$$?; echo; rm -f .pylintrc.tmp && exit $$ret)
+	@isort --check-only
 
 readme:
 	@echo

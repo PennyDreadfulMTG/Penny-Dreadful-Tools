@@ -1,6 +1,7 @@
 import datetime
 import decimal
 
+
 def extra_serializer(obj):
     """JSON serializer for objects not serializable by default json code"""
 

@@ -5,6 +5,7 @@ from pytz import timezone
 
 from shared import dtutil
 
+
 def test_ts2dt():
     epoch_seconds = 0
     dt = dtutil.ts2dt(epoch_seconds)

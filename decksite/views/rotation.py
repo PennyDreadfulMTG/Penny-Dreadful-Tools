@@ -11,6 +11,7 @@ from magic import multiverse, oracle, rotation
 from shared import configuration, dtutil
 from shared.pd_exception import DoesNotExistException
 
+
 # pylint: disable=no-self-use
 class Rotation(View):
     def __init__(self):

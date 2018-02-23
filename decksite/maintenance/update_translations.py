@@ -5,6 +5,7 @@ from poeditor.client import POEditorAPI
 
 from shared import configuration
 
+
 def run():
     api_key = configuration.get("poeditor_api_key")
     if api_key is None:

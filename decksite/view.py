@@ -7,13 +7,11 @@ from anytree.iterators import PreOrderIter
 from flask import request, session, url_for
 from flask_babel import gettext
 
+from decksite import APP, BABEL, template
+from decksite.data import archetype, deck
 from magic import multiverse, oracle, rotation
 from shared import dtutil
 from shared.container import Container
-
-from decksite import template
-from decksite.data import archetype, deck
-from decksite import APP, BABEL
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10
 

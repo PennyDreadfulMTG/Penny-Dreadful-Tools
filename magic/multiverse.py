@@ -346,7 +346,7 @@ def get_format_id(name, allow_create=False):
         db().execute('INSERT INTO format (name) VALUES (%s)', [name])
         FORMAT_IDS[name] = db().last_insert_rowid()
     if name not in FORMAT_IDS.keys():
-        return None
+        throw new NotFoundException('Unknown format: {name}'.format(name=name))
     return FORMAT_IDS[name]
 
 def card_name(c):

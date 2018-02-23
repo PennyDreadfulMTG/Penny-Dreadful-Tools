@@ -4,6 +4,7 @@ import sys
 from typing import Dict
 
 import ftfy
+
 from magic import card, fetcher_internal, multiverse, oracle
 from magic.database import db
 from price_grabber import price

@@ -4,7 +4,7 @@ import shutil
 import stat
 import urllib.request
 import zipfile
-from typing import List, Optional, Union
+from typing import Optional
 
 import requests
 from cachecontrol import CacheControl, CacheControlAdapter

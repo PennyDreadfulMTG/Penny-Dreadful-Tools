@@ -116,20 +116,21 @@ class RetireForm(Form):
         if discord_user is not None:
             person_object = person.load_person_by_discord_id(discord_user)
         if person_object:
-            decks = active_decks_by_person(person_object.id)
+            self.decks = active_decks_by_person(person_object.id)
         else:
-            decks = active_decks()
-        self.entry_options = deck_options(decks, self.get('entry', deck_id))
+            self.decks = active_decks()
+        self.entry_options = deck_options(self.decks, self.get('entry', deck_id))
         self.discord_user = discord_user
-        if len(decks) == 0:
+        if len(self.decks) == 0:
             self.errors['entry'] = "You don't have any decks to retire"
 
     def do_validation(self):
-        if len(self.entry) == 0:
+        if len(self.decks) == 0:
+            self.errors['entry'] = "You don't have any decks to retire"
+        elif len(self.entry) == 0:
             self.errors['entry'] = 'Please select your deck'
-        if not person.is_allowed_to_retire(self.entry, self.discord_user):
+        elif not person.is_allowed_to_retire(self.entry, self.discord_user):
             self.errors['entry'] = 'You cannot retire this deck. This discord user is already assigned to another Magic Online user'
-        print(self.errors)
 
 def signup(form):
     form.mtgo_username = form.mtgo_username.strip()

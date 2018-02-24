@@ -50,12 +50,11 @@ def fancy_cards():
         'Dragonstorm',
         'Day of Judgment',
         'Cruel Ultimatum',
-        'Rofellos, Llanowar Emissary',
         'Mana Leak',
         'Burning of Xinye',
         'Psychatog',
         'Smokestack',
         'Llanowar Elves',
-        'Isamaru, Hound of Konda',
-        'Animate Dead'
+        'Animate Dead',
+        'Demonic Consultation'
     ]), 'Penny Dreadful')

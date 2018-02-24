@@ -186,6 +186,10 @@ def associate(d, discord_id):
     return db().execute(sql, [discord_id, person.id])
 
 def is_allowed_to_retire(deck_id, discord_id):
+    if not deck_id:
+        return False
+    if not discord_id:
+        return True
     person = load_person_by_discord_id(discord_id)
     if person is None:
         return True

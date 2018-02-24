@@ -14,9 +14,9 @@ PD.init = function () {
     $.get("/api/admin/", PD.showAdmin);
 };
 PD.initDismiss = function () {
-    $('.dismiss').click(function () {
-        alert('If you need to see this again, visit FAQs on the About menu');
-        $(this).closest('.intro-container').hide();
+    $(".dismiss").click(function () {
+        alert("If you need to see this again, visit FAQs on the About menu");
+        $(this).closest(".intro-container").hide();
         $.post("/api/intro/"); // Fire and forget request to set cookie to remember dismissal of intro box and not show it again.
         return false;
     });
@@ -120,8 +120,8 @@ PD.initTables = function () {
     $(selector).tablesorter({});
 };
 PD.initDetails = function () {
-    $(".details").siblings('p.question').click(function () {
-        $(this).siblings('.details').toggle();
+    $(".details").siblings("p.question").click(function () {
+        $(this).siblings(".details").toggle();
         return false;
     });
 };
@@ -161,7 +161,7 @@ PD.toggleDrawDropdown = function () {
     return can_draw;
 }
 PD.toggleIllegalCards = function () {
-    // Fix the width of the table columns so that it doesn't "jump" when rows are added or removed.
+    // Fix the width of the table columns so that it does not "jump" when rows are added or removed.
     $(".bugtable tr td").each(function() {
         $(this).css({"width": $(this).width() + "px"});
     });
@@ -169,7 +169,7 @@ PD.toggleIllegalCards = function () {
     $("tr").find(".illegal").closest("tr").toggle(!this.checked);
 }
 PD.showIntro = function (show) {
-    if (show && !PD.getUrlParameter('hide_intro')) {
+    if (show && !PD.getUrlParameter("hide_intro")) {
         $(".intro-container").show();
     }
 }
@@ -185,10 +185,10 @@ PD.showLocalTimes = function () {
     });
 }
 PD.getUrlParameter = function (name) {
-    var cleanName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'),
-        regex = new RegExp('[\\?&]' + cleanName + '=([^&#]*)'),
+    var cleanName = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]"),
+        regex = new RegExp("[\\?&]" + cleanName + "=([^&#]*)"),
         results = regex.exec(window.location.search);
-    return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
 };
 
 $(document).ready(function () {

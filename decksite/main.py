@@ -22,12 +22,13 @@ from decksite.league import ReportForm, RetireForm, SignUpForm
 from decksite.views import (About, AboutPdm, AddForm, Admin, Archetype,
                             Archetypes, Bugs, Card, Cards, Competition,
                             Competitions, Deck, Decks, EditArchetypes,
-                            EditMatches, EditNews, Faqs, Home, InternalServerError,
-                            LeagueInfo, LinkAccounts, News, NotFound, People,
-                            Person, Prizes, Report, Resources, Retire,
-                            Rotation, RotationChanges, RotationChecklist,
-                            Season, Seasons, SignUp, TournamentHosting,
-                            TournamentLeaderboards, Tournaments, Unauthorized)
+                            EditMatches, EditNews, Faqs, Home,
+                            InternalServerError, LeagueInfo, LinkAccounts,
+                            News, NotFound, People, Person, Prizes, Report,
+                            Resources, Retire, Rotation, RotationChanges,
+                            RotationChecklist, Season, Seasons, SignUp,
+                            TournamentHosting, TournamentLeaderboards,
+                            Tournaments, Unauthorized)
 from magic import card as mc
 from magic import oracle
 from shared import dtutil, perf, repo

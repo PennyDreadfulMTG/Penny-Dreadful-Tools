@@ -3,10 +3,10 @@ import html
 import urllib
 from collections import Counter
 
+import inflect
 from anytree.iterators import PreOrderIter
 from flask import request, session, url_for
 from flask_babel import gettext
-import inflect
 
 from decksite import APP, BABEL, admin, template
 from decksite.data import archetype, deck

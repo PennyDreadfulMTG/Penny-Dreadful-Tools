@@ -16,9 +16,8 @@ def cached():
 # pylint: disable=too-many-arguments
 def cached_impl(cacheable=False, must_revalidate=True, client_only=True, client_timeout=0, server_timeout=5 * 60, key='view{id}{locale}'):
     """
-
     @see https://jakearchibald.com/2016/caching-best-practices/
-        https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching
+         https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching
     """
     def decorator(f):
         @functools.wraps(f)

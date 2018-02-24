@@ -1,15 +1,25 @@
 /*global PD:true Deckbox:false FooTable:false */
 window.PD = {};
 PD.init = function () {
+    PD.initDismiss();
     PD.initMenu();
     PD.initTables();
+    PD.initDetails();
     PD.initTooltips();
-    $("input[type=file]").on("change", PD.loadDeck);
-    $(".deckselect").on("change", PD.toggleDrawDropdown);
+    $("input[type=file]").on("change", PD.loadDeck).on("change", PD.toggleDrawDropdown);
     $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
     PD.showLocalTimes();
+    $.get("/api/intro/", PD.showIntro);
     $.get("/api/admin/", PD.showAdmin);
+};
+PD.initDismiss = function () {
+    $('.dismiss').click(function () {
+        alert('If you need to see this again, visit FAQs on the About menu');
+        $(this).closest('.intro-container').hide();
+        $.post("/api/intro/"); // Fire and forget request to set cookie to remember dismissal of intro box and not show it again.
+        return false;
+    });
 };
 PD.initMenu = function () {
     $(".has-submenu").hoverIntent({
@@ -109,6 +119,12 @@ PD.initTables = function () {
     });
     $(selector).tablesorter({});
 };
+PD.initDetails = function () {
+    $(".details").siblings('p.question').click(function () {
+        $(this).siblings('.details').toggle();
+        return false;
+    });
+};
 // Disable tooltips on touch devices where they are awkward but enable on others where they are useful.
 PD.initTooltips = function () {
     $("body").on("touchstart", function() {
@@ -152,6 +168,11 @@ PD.toggleIllegalCards = function () {
     $(".bugtable").not(".footable-details").each(function () { FooTable.get(this).rows.collapse(); });
     $("tr").find(".illegal").closest("tr").toggle(!this.checked);
 }
+PD.showIntro = function (show) {
+    if (show && !PD.getUrlParameter('hide_intro')) {
+        $(".intro-container").show();
+    }
+}
 PD.showAdmin = function (show) {
     if (show) {
         $(".admin").show();
@@ -163,6 +184,12 @@ PD.showLocalTimes = function () {
         $(this).html(t.tz(moment.tz.guess()).format("dddd h:mma z")).parent(".local").show();
     });
 }
+PD.getUrlParameter = function (name) {
+    var cleanName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'),
+        regex = new RegExp('[\\?&]' + cleanName + '=([^&#]*)'),
+        results = regex.exec(window.location.search);
+    return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' '));
+};
 
 $(document).ready(function () {
     PD.init();

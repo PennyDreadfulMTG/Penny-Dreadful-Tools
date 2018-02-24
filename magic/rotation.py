@@ -43,4 +43,14 @@ def interesting(playability, c, speculation=True, new=True):
         return 'moderately-played'
     return None
 
+def text():
+    full = next_rotation()
+    supplemental = next_supplemental()
+    now = dtutil.now()
+    sdiff = supplemental - now
+    diff = full - now
+    if sdiff < diff:
+        return "The supplemental rotation is in {sdiff} (The next full rotation is in {diff})".format(diff=dtutil.display_time(diff.total_seconds()), sdiff=dtutil.display_time(sdiff.total_seconds()))
+    return "The next rotation is in {diff}".format(diff=dtutil.display_time(diff.total_seconds()))
+
 SETS = init()

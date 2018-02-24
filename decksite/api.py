@@ -3,7 +3,7 @@ import subprocess
 
 from flask import Response, request, session, url_for
 
-from decksite import APP, league
+from decksite import APP, auth, league
 from decksite.data import card as cs
 from decksite.data import competition as comp
 from decksite.data import deck, guarantee, match
@@ -95,6 +95,16 @@ def sitemap():
 @APP.route('/api/admin/')
 def admin():
     return return_json(session.get('admin'))
+
+@APP.route('/api/intro/')
+def intro():
+    return return_json(not request.cookies.get('hide_intro', False) and not auth.hide_intro())
+
+@APP.route('/api/intro/', methods=['POST'])
+def hide_intro():
+    r = Response(response='')
+    r.set_cookie('hide_intro', str(True))
+    return r
 
 @APP.route('/api/gitpull', methods=['POST'])
 def gitpull():

@@ -243,6 +243,12 @@ section {
     padding-top: 1rem;
 }
 
+.box {
+    background: #eee;
+    border: 0.05rem solid #ccc;
+    padding: 0 1rem;
+}
+
 /* Enable right-scroll-in-place to work by not floating things that might need right-scroll-in-place.
    Floating takes them out-of-flow and stops overflow-x doing its job.  */
 @media only screen and (max-width: 640px) {
@@ -359,7 +365,7 @@ Links in text are underlined in such a way as to break on descenders like those 
 
 */
 
-a, main table.calendar a {
+a, main table.calendar a, main .intro .details a {
     color: inherit;
     font-family: heading-caps;
     text-decoration: none;
@@ -1194,6 +1200,55 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
     button, div.error, .uploader-label {
         margin-left: 0;
     }
+}
+
+/*
+
+Intro
+
+*/
+
+.dismiss {
+    color: #ccc;
+    position: absolute;
+    right: 1rem;
+    top: 0.565rem;
+}
+
+.intro {
+    background: #eee;
+    border: 0.05rem solid #ccc;
+    max-width: 30em;
+    padding: 2rem;
+    position: relative; /* So that we can absolutely position the dismiss x in the corner. */
+    width: 100%;
+}
+
+.intro-container {
+    display: none; /* Starts hidden and then we check if we should show it in js to avoid annoying regular visitors. */
+    padding: 2rem 0; /* Compensate for the lack of top padding on section at most sizes, to make sure intro box does not touch menu or expose gray background. */
+}
+
+@media only screen and (max-width: 800px) {
+    .intro {
+        max-width: 70%; /* Don't go off the right hand side of the page. */
+    }
+}
+
+.intro h1 {
+    margin-bottom: 0;
+}
+
+.intro .learn-more  {
+    text-align: right;
+}
+
+.details {
+    background: #f9f9f9;
+    border: 0.05rem solid #ccc;
+    display: none;
+    margin-bottom: 1rem;
+    padding: 1rem 1rem 0 1rem;
 }
 
 /*

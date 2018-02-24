@@ -253,16 +253,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def rotation(self, bot, channel):
         """`!rotation` Give the date of the next Penny Dreadful rotation."""
-        next_rotation = rotation.next_rotation()
-        next_supplemental = rotation.next_supplemental()
-        now = dtutil.now()
-        sdiff = next_supplemental - now
-        diff = next_rotation - now
-        if sdiff < diff:
-            msg = "The supplemental rotation is in {sdiff} (The next full rotation is in {diff})".format(diff=dtutil.display_time(diff.total_seconds()), sdiff=dtutil.display_time(sdiff.total_seconds()))
-        else:
-            msg = "The next rotation is in {diff}".format(diff=dtutil.display_time(diff.total_seconds()))
-        await bot.client.send_message(channel, msg)
+        await bot.client.send_message(channel, rotation.text())
 
     @cmd_header('Commands')
     async def rulings(self, bot, channel, args, author):

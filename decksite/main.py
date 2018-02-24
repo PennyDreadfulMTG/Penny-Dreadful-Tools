@@ -22,7 +22,7 @@ from decksite.league import ReportForm, RetireForm, SignUpForm
 from decksite.views import (About, AboutPdm, AddForm, Admin, Archetype,
                             Archetypes, Bugs, Card, Cards, Competition,
                             Competitions, Deck, Decks, EditArchetypes,
-                            EditMatches, EditNews, Home, InternalServerError,
+                            EditMatches, EditNews, Faqs, Home, InternalServerError,
                             LeagueInfo, LinkAccounts, News, NotFound, People,
                             Person, Prizes, Report, Resources, Retire,
                             Rotation, RotationChanges, RotationChecklist,
@@ -187,6 +187,12 @@ def about_gp():
 @cached()
 def about():
     view = About(request.args.get('src'))
+    return view.page()
+
+@APP.route('/faqs/')
+@cached()
+def faqs():
+    view = Faqs()
     return view.page()
 
 @APP.route('/rotation/')

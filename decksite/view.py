@@ -6,10 +6,11 @@ from collections import Counter
 from anytree.iterators import PreOrderIter
 from flask import request, session, url_for
 from flask_babel import gettext
+import inflect
 
 from decksite import APP, BABEL, admin, template
 from decksite.data import archetype, deck
-from magic import multiverse, oracle, rotation
+from magic import multiverse, oracle, rotation, tournaments
 from shared import dtutil
 from shared.container import Container
 
@@ -90,7 +91,8 @@ class View:
             {'name': gettext('Resources'), 'url': url_for('resources'), 'submenu': rotation_submenu},
             {'name': gettext('About'), 'url': url_for('about'), 'submenu': [
                 {'name': gettext('What is Penny Dreadful?'), 'url': url_for('about')},
-                {'name': gettext('About pennydreadfulmagic.com'), 'url': url_for('about_pdm')}
+                {'name': gettext('About pennydreadfulmagic.com'), 'url': url_for('about_pdm')},
+                {'name': gettext('FAQs'), 'url': url_for('faqs')}
             ]},
             {'name': gettext('Admin'), 'admin_only': True, 'url': url_for('admin'), 'submenu': admin.menu()}
         ]
@@ -114,6 +116,15 @@ class View:
 
     def subtitle(self):
         return None
+
+    def num_tournaments(self):
+        return inflect.engine().number_to_words(len(tournaments.all_series_info()))
+
+    def rotation_text(self):
+        return rotation.text()
+
+    def learn_more_url(self):
+        return url_for('about', hide_intro=True)
 
     def prepare(self):
         self.prepare_decks()

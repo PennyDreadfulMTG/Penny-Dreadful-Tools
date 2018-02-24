@@ -94,6 +94,9 @@ def log_person(person_id, name):
     session['logged_person_id'] = person_id
     session['mtgo_username'] = name
 
+def hide_intro():
+    return session.get('hide_intro')
+
 def logged(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):

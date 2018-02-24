@@ -1235,8 +1235,8 @@ Intro
     }
 }
 
-main .intro h1 {
-    margin-bottom: 0;
+.tagline {
+    font-size: 1.333rem;
 }
 
 .intro .learn-more  {

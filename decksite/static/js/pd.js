@@ -1,15 +1,25 @@
 /*global PD:true Deckbox:false FooTable:false */
 window.PD = {};
 PD.init = function () {
+    PD.initDismiss();
     PD.initMenu();
     PD.initTables();
+    PD.initDetails();
     PD.initTooltips();
-    $("input[type=file]").on("change", PD.loadDeck);
-    $(".deckselect").on("change", PD.toggleDrawDropdown);
+    $("input[type=file]").on("change", PD.loadDeck).on("change", PD.toggleDrawDropdown);
     $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
     PD.showLocalTimes();
+    $.get("/api/intro/", PD.showIntro);
     $.get("/api/admin/", PD.showAdmin);
+};
+PD.initDismiss = function () {
+    $(".dismiss").click(function () {
+        alert("If you need to see this again, visit FAQs on the About menu");
+        $(this).closest(".intro-container").hide();
+        $.post("/api/intro/"); // Fire and forget request to set cookie to remember dismissal of intro box and not show it again.
+        return false;
+    });
 };
 PD.initMenu = function () {
     $(".has-submenu").hoverIntent({
@@ -109,6 +119,12 @@ PD.initTables = function () {
     });
     $(selector).tablesorter({});
 };
+PD.initDetails = function () {
+    $(".details").siblings("p.question").click(function () {
+        $(this).siblings(".details").toggle();
+        return false;
+    });
+};
 // Disable tooltips on touch devices where they are awkward but enable on others where they are useful.
 PD.initTooltips = function () {
     $("body").on("touchstart", function() {
@@ -145,12 +161,17 @@ PD.toggleDrawDropdown = function () {
     return can_draw;
 }
 PD.toggleIllegalCards = function () {
-    // Fix the width of the table columns so that it doesn't "jump" when rows are added or removed.
+    // Fix the width of the table columns so that it does not "jump" when rows are added or removed.
     $(".bugtable tr td").each(function() {
         $(this).css({"width": $(this).width() + "px"});
     });
     $(".bugtable").not(".footable-details").each(function () { FooTable.get(this).rows.collapse(); });
     $("tr").find(".illegal").closest("tr").toggle(!this.checked);
+}
+PD.showIntro = function (show) {
+    if (show && !PD.getUrlParam("hide_intro")) {
+        $(".intro-container").show();
+    }
 }
 PD.showAdmin = function (show) {
     if (show) {
@@ -162,6 +183,19 @@ PD.showLocalTimes = function () {
         var t = moment($(this).data("time"));
         $(this).html(t.tz(moment.tz.guess()).format("dddd h:mma z")).parent(".local").show();
     });
+}
+PD.getUrlParams = function () {
+    var vars = [], hash, i,
+        hashes = window.location.href.slice(window.location.href.indexOf("?") + 1).split("&");
+    for (i = 0; i < hashes.length; i++) {
+        hash = hashes[i].split("=");
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
+},
+PD.getUrlParam = function (name) {
+    return PD.getUrlParams()[name];
 }
 
 $(document).ready(function () {

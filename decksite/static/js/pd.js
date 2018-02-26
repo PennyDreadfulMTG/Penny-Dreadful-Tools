@@ -169,7 +169,7 @@ PD.toggleIllegalCards = function () {
     $("tr").find(".illegal").closest("tr").toggle(!this.checked);
 }
 PD.showIntro = function (show) {
-    if (show && !PD.getUrlParameter("hide_intro")) {
+    if (show && !PD.getUrlParam("hide_intro")) {
         $(".intro-container").show();
     }
 }
@@ -184,12 +184,19 @@ PD.showLocalTimes = function () {
         $(this).html(t.tz(moment.tz.guess()).format("dddd h:mma z")).parent(".local").show();
     });
 }
-PD.getUrlParameter = function (name) {
-    var cleanName = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]"),
-        regex = new RegExp("[\\?&]" + cleanName + "=([^&#]*)"),
-        results = regex.exec(window.location.search);
-    return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
-};
+PD.getUrlParams = function () {
+    var vars = [], hash, i,
+        hashes = window.location.href.slice(window.location.href.indexOf("?") + 1).split("&");
+    for (i = 0; i < hashes.length; i++) {
+        hash = hashes[i].split("=");
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
+},
+PD.getUrlParam = function (name) {
+    return PD.getUrlParams()[name];
+}
 
 $(document).ready(function () {
     PD.init();

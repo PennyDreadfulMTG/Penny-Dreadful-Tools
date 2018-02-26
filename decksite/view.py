@@ -56,16 +56,9 @@ class View:
             {'name': gettext('Rotation Changes'), 'url': url_for('rotation_changes')},
             {'name': gettext('Rotation Speculation'), 'url': url_for('rotation_speculation')},
             {'name': gettext('External Links'), 'url': url_for('resources')},
+            {'name': gettext('Log In'), 'url': url_for('authenticate', target=request.url)},
+            {'name': gettext('Log Out'), 'url': url_for('logout')}
         ]
-        if session.get('id'):
-            rotation_submenu += [
-                {'name': gettext('Log Out'), 'url': url_for('logout')}
-            ]
-        else:
-            rotation_submenu += [
-                {'name': gettext('Log In'), 'url': url_for('authenticate', target=request.url)}
-            ]
-
         menu = [
             {'name': gettext('Metagame'), 'url': url_for('home'), 'badge': archetypes_badge, 'submenu': [
                 {'name': gettext('Latest Decks'), 'url': url_for('decks')},

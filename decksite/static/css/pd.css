@@ -1439,7 +1439,9 @@ td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
 }
 
 .gsc-search-button {
+    height: 0.75rem;
     margin-top: 0 !important; /* csslint allow: important */
+    width: 0.75rem;
 }
 
 .gsc-webResult.gsc-result {

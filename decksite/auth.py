@@ -29,10 +29,15 @@ def setup_session(url):
     user = discord.get(API_BASE_URL + '/users/@me').json()
     session['id'] = user['id']
     guilds = discord.get(API_BASE_URL + '/users/@me/guilds').json()
+    wrong_guilds = False # protect against an unexpected response from discord
     for guild in guilds:
-        print("auth.py: guild: {g} ({t})".format(g=guild, t=type(guild)))
-        if guild['id'] == configuration.get('guild_id'):
-            session['admin'] = (guild['permissions'] & 0x10000000) != 0 # Check for the MANAGE_ROLES permissions on Discord as a proxy for "is admin".
+        if isinstance(guild, dict) and 'id' in guild:
+            if guild['id'] == configuration.get('guild_id'):
+                session['admin'] = (guild['permissions'] & 0x10000000) != 0 # Check for the MANAGE_ROLES permissions on Discord as a proxy for "is admin".
+        else:
+            wrong_guilds = True
+    if wrong_guilds:
+        print("auth.py: unexpected discord response. Guilds: {g}".format(g=guilds))
 
 def make_session(token=None, state=None, scope=None):
     return OAuth2Session(

@@ -98,10 +98,6 @@ class ReportForm(Form):
             self.errors['entry'] = 'Please select your deck'
         if len(self.opponent) == 0:
             self.errors['opponent'] = "Please select your opponent's deck"
-        else:
-            for m in match.get_matches(self):
-                if int(self.opponent) == m.opponent_deck_id:
-                    self.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=m.game_wins, game_losses=m.game_losses, opponent=m.opponent, date=dtutil.display_date(m.date))
         if len(self.result) == 0:
             self.errors['result'] = 'Please select a result'
         else:
@@ -183,6 +179,12 @@ def report(form):
         if db().supports_lock():
             db().get_lock('deck_id:{id}'.format(id=form.entry))
             db().get_lock('deck_id:{id}'.format(id=form.opponent))
+
+        for m in match.get_matches(form):
+            if int(form.opponent) == m.opponent_deck_id:
+                form.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=m.game_wins, game_losses=m.game_losses, opponent=m.opponent, date=dtutil.display_date(m.date))
+                return False
+
         counts = deck.count_matches(form.entry, form.opponent)
         if counts[int(form.entry)] >= 5:
             form.errors['entry'] = "You already have 5 matches reported"

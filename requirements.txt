@@ -16,7 +16,7 @@ munch==2.2.0
 mysqlclient==1.3.12
 mypy==0.560
 poeditor==1.0.5
-pygithub==1.36
+pygithub==1.37
 pygtrie==2.2
 pylint==1.8.2
 pystache==0.5.4

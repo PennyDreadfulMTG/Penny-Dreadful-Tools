@@ -707,7 +707,7 @@ def card_rulings(c):
     if len(rulings) > 3:
         n = len(rulings) - 2
         rulings = rulings[:2]
-        rulings.append("And {n} others.  See <https://scryfall.com/search?q=%21%22{cardname}%22>".format(n=n, cardname=fetcher.internal.escape(c.name)))
+        rulings.append("And {n} others.  See <https://scryfall.com/search?q=%21%22{cardname}%22#rulings>".format(n=n, cardname=fetcher.internal.escape(c.name)))
     return "\n".join(rulings) or "No rulings available."
 
 def site_resources(args):

@@ -259,8 +259,8 @@ def current_league():
 @auth.logged
 def signup(form=None):
     if form is None:
-        form = SignUpForm(request.form, auth.logged_person_mtgo_username())
-    view = SignUp(form)
+        form = SignUpForm(request.form, auth.logged_person(), auth.logged_person_mtgo_username())
+    view = SignUp(form, auth.logged_person())
     return view.page()
 
 @APP.route('/signup/', methods=['POST'])

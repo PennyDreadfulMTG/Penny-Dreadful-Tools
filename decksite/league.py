@@ -28,8 +28,18 @@ class Form(Container):
 
 # pylint: disable=attribute-defined-outside-init
 class SignUpForm(Form):
-    def __init__(self, form, mtgo_username=None):
+    def __init__(self, form, person_id=None, mtgo_username=None):
         super().__init__(form)
+        if person_id is not None:
+            ps = person.load_person(person_id)
+            self.recent_decks = []
+            for d in sorted(ps.decks, key=lambda deck: deck["created_date"], reverse=True)[0:10]:
+                decklist = {"name": d["name"], "main": [], "sb":[]}
+                for c in d.maindeck:
+                    decklist["main"].append("{n} {c}".format(n=c["n"], c=c["name"]))
+                for c in d.sideboard:
+                    decklist["sb"].append("{n} {c}".format(n=c["n"], c=c["name"]))
+                self.recent_decks.append({"name":d["name"], "list":json.dumps(decklist)})
         if mtgo_username is not None:
             self.mtgo_username = mtgo_username
 

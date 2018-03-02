@@ -12,6 +12,7 @@ PD.init = function () {
     PD.showLocalTimes();
     $.get("/api/intro/", PD.showIntro);
     $.get("/api/admin/", PD.showAdmin);
+    PD.initSignupDeckChooser();
 };
 PD.initDismiss = function () {
     $(".dismiss").click(function () {
@@ -197,6 +198,20 @@ PD.getUrlParams = function () {
 PD.getUrlParam = function (name) {
     return PD.getUrlParams()[name];
 }
+
+PD.initSignupDeckChooser = function () {
+    $("#signup_recent_decks").on("change", function() {
+        var data = JSON.parse($("option:selected", this).attr("data"));
+        $("#name").val(data.name);
+        var textarea = $("#decklist");
+        var buffer = data.main.join("\n") + "\n";
+        if (data.sb.length > 0) {
+            buffer += "\nSideboard:\n" + data.sb.join("\n");
+        }
+        textarea.val(buffer);
+    })
+}
+
 
 $(document).ready(function () {
     PD.init();

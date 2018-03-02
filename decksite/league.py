@@ -26,7 +26,7 @@ class Form(Container):
         self.do_validation()
         return len(self.errors) == 0
 
-# pylint: disable=attribute-defined-outside-init
+# pylint: disable=attribute-defined-outside-init,too-many-instance-attributes
 class SignUpForm(Form):
     def __init__(self, form, person_id=None, mtgo_username=None):
         super().__init__(form)
@@ -34,12 +34,12 @@ class SignUpForm(Form):
             ps = person.load_person(person_id)
             self.recent_decks = []
             for d in sorted(ps.decks, key=lambda deck: deck["created_date"], reverse=True)[0:10]:
-                decklist = {"name": d["name"], "main": [], "sb":[]}
+                recent_deck = {"name": d["name"], "main": [], "sb":[]}
                 for c in d.maindeck:
-                    decklist["main"].append("{n} {c}".format(n=c["n"], c=c["name"]))
+                    recent_deck["main"].append("{n} {c}".format(n=c["n"], c=c["name"]))
                 for c in d.sideboard:
-                    decklist["sb"].append("{n} {c}".format(n=c["n"], c=c["name"]))
-                self.recent_decks.append({"name":d["name"], "list":json.dumps(decklist)})
+                    recent_deck["sb"].append("{n} {c}".format(n=c["n"], c=c["name"]))
+                self.recent_decks.append({"name":d["name"], "list":json.dumps(recent_deck)})
         if mtgo_username is not None:
             self.mtgo_username = mtgo_username
 

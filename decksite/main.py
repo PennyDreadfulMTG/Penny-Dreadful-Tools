@@ -58,7 +58,7 @@ def deck(deck_id):
     if auth.discord_id() and auth.logged_person() is None and not d.is_person_associated():
         ps.associate(d, auth.discord_id())
         p = ps.load_person_by_discord_id(auth.discord_id())
-        auth.log_person(p.id, p.name)
+        auth.log_person(p)
 
     view = Deck(d, auth.logged_person())
     return view.page()

@@ -35,4 +35,3 @@ class SignUp(LeagueForm):
 
     def TT_CHOOSE_DECK(self):
         return gettext('Choose one of your recent decks')
-

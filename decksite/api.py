@@ -121,6 +121,13 @@ def gitpull():
                 pass
     return return_json({'rebooting': False, 'commit-id': APP.config['commit-id']})
 
+@APP.route('/api/status/')
+@auth.logged
+def status():
+    if auth.logged_person() is not None:
+        return return_json({"status": "logged in", "mtgo_username": auth.logged_person_mtgo_username()})
+    return return_json({"status": "not logged in", "mtgo_username": auth.logged_person_mtgo_username()})
+
 def validate_api_key():
     if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):
         return None

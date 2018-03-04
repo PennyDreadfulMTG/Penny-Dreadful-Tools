@@ -13,6 +13,7 @@ PD.init = function () {
     $.get("/api/intro/", PD.showIntro);
     $.get("/api/admin/", PD.showAdmin);
     PD.initSignupDeckChooser();
+    PD.initStatusFooter();
 };
 PD.initDismiss = function () {
     $(".dismiss").click(function () {
@@ -210,6 +211,16 @@ PD.initSignupDeckChooser = function () {
         }
         textarea.val(buffer);
     })
+}
+
+PD.initStatusFooter = function() {
+    $.get("/api/status/", function(data) {
+        var text = data.status;
+        if (data.mtgo_username != null) {
+            text += " (" + data.mtgo_username + ")";
+        }
+        $("#status-bar").html(text);
+    })    
 }
 
 

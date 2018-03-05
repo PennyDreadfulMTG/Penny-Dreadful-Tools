@@ -33,7 +33,7 @@ class Prizes(View):
             self.months[-1]['people'].append(p)
 
     def subtitle(self):
-        'Prizes'
+        return 'Prizes'
 
 def split_by_week(competitions):
     dt = (dtutil.now(dtutil.WOTC_TZ) + relativedelta(weekday=FR(-1))).replace(hour=0, minute=0, second=0)

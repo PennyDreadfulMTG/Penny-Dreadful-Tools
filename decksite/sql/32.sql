@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS person_note (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    created_date INT NOT NULL,
+    creator_id INT NOT NULL,
+    subject_id INT NOT NULL,
+    note TEXT NOT NULL,
+    FOREIGN KEY(creator_id) REFERENCES person(id) ON UPDATE NO ACTION ON DELETE NO ACTION,
+    FOREIGN KEY(subject_id) REFERENCES person(id) ON UPDATE NO ACTION ON DELETE NO ACTION
+);

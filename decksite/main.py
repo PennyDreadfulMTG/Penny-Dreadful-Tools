@@ -24,11 +24,11 @@ from decksite.views import (About, AboutPdm, AddForm, Admin, Archetype,
                             Competitions, Deck, Decks, EditArchetypes,
                             EditMatches, EditNews, Faqs, Home,
                             InternalServerError, LeagueInfo, LinkAccounts,
-                            News, NotFound, People, Person, Prizes, Report,
-                            Resources, Retire, Rotation, RotationChanges,
-                            RotationChecklist, Season, Seasons, SignUp,
-                            TournamentHosting, TournamentLeaderboards,
-                            Tournaments, Unauthorized)
+                            News, NotFound, People, Person, PlayerNotes,
+                            Prizes, Report, Resources, Retire, Rotation,
+                            RotationChanges, RotationChecklist, Season,
+                            Seasons, SignUp, TournamentHosting,
+                            TournamentLeaderboards, Tournaments, Unauthorized)
 from magic import card as mc
 from magic import oracle
 from shared import dtutil, perf, repo
@@ -392,7 +392,6 @@ def edit_news():
 @APP.route('/admin/news/', methods=['POST'])
 @auth.admin_required
 def post_news():
-    print(request.form)
     if request.form.get('action') == 'delete':
         ns.delete(request.form.get('id'))
     else:
@@ -418,6 +417,21 @@ def prizes():
 def rotation_checklist():
     view = RotationChecklist()
     return view.page()
+
+@APP.route('/admin/people/notes/')
+@auth.admin_required
+def player_notes():
+    notes = ps.load_notes()
+    all_people = ps.load_people(order_by='p.mtgo_username')
+    view = PlayerNotes(notes, all_people)
+    return view.page()
+
+@APP.route('/admin/people/notes/', methods=['POST'])
+@auth.admin_required
+def post_player_note():
+    creator = ps.load_person_by_discord_id(session['id'])
+    ps.add_note(creator.id, request.form.get('subject_id'), request.form.get('note'))
+    return player_notes()
 
 # OAuth
 

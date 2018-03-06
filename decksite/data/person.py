@@ -1,4 +1,3 @@
-import itertools
 from typing import Union
 
 from decksite.data import deck, guarantee, query

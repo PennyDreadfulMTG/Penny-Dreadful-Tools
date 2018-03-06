@@ -58,7 +58,7 @@ def deck(deck_id):
     d = ds.load_deck(deck_id)
     if auth.discord_id() and auth.logged_person() is None and not d.is_person_associated():
         ps.associate(d, auth.discord_id())
-        p = ps.ferson_by_discord_id(auth.discord_id())
+        p = ps.load_person_by_discord_id(auth.discord_id())
         auth.log_person(p)
 
     view = Deck(d, auth.logged_person())
@@ -423,8 +423,8 @@ def rotation_checklist():
 @auth.admin_required
 def player_notes():
     notes = ps.load_notes()
-    people = ps.load_people(order_by='p.mtgo_username')
-    view = PlayerNotes(notes, people)
+    all_people = ps.load_people(order_by='p.mtgo_username')
+    view = PlayerNotes(notes, all_people)
     return view.page()
 
 @APP.route('/admin/people/notes/', methods=['POST'])

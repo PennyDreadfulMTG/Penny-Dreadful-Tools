@@ -492,14 +492,13 @@ def internal_server_error(e):
     try:
         repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports', exception=e)
     except GithubException:
-        print("Github error")
+        print('Github error')
     view = InternalServerError(e)
     return view.page(), 500
 
 @APP.before_request
 def before_request():
     g.p = perf.start()
-
 
 @APP.teardown_request
 def teardown_request(response):

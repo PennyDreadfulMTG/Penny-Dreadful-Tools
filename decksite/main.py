@@ -28,8 +28,7 @@ from decksite.views import (About, AboutPdm, AddForm, Admin, Archetype,
                             Prizes, Report, Resources, Retire, Rotation,
                             RotationChanges, RotationChecklist, Season,
                             Seasons, SignUp, TournamentHosting,
-                            TournamentLeaderboards, Tournaments,
-                            Unauthorized)
+                            TournamentLeaderboards, Tournaments, Unauthorized)
 from magic import card as mc
 from magic import oracle
 from shared import dtutil, perf, repo

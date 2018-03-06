@@ -1,0 +1,2 @@
+ALTER TABLE competition CHANGE COLUMN url url VARCHAR(190);
+ALTER TABLE competition ADD CONSTRAINT url UNIQUE (url);

@@ -1,41 +1,20 @@
 from magic import oracle
 
-
 def test_legality():
-    cards = oracle.cards_from_query('Swamp')
-    assert len(cards) == 1
-    assert cards[0].legalities['Standard'] == 'Legal'
-    assert cards[0].legalities['Modern'] == 'Legal'
-    assert cards[0].legalities['Legacy'] == 'Legal'
-    assert cards[0].legalities['Vintage'] == 'Legal'
-    assert cards[0].legalities['Penny Dreadful'] == 'Legal'
-    cards = oracle.cards_from_query('Black Lotus')
-    assert len(cards) == 1
-    assert 'Standard' not in cards[0].legalities.keys()
-    assert 'Modern' not in cards[0].legalities.keys()
-    assert cards[0].legalities['Legacy'] == 'Banned'
-    assert cards[0].legalities['Vintage'] == 'Restricted'
-    assert 'Penny Dreadful' not in cards[0].legalities.keys()
-
-def test_cards_from_query():
-    cards = oracle.cards_from_query('Far/Away')
-    assert len(cards) == 1
-    assert cards[0].name == 'Far // Away'
-    cards = oracle.cards_from_query('Jötun Grunt')
-    assert len(cards) == 1
-    assert cards[0].name == 'Jötun Grunt'
-    cards = oracle.cards_from_query('Jotun Grunt')
-    assert len(cards) == 1
-    assert cards[0].name == 'Jötun Grunt'
-    cards = oracle.cards_from_query('Ready / Willing')
-    assert len(cards) == 1
-    assert cards[0].name == 'Ready // Willing'
-    cards = oracle.cards_from_query('Fire // Ice')
-    assert len(cards) == 1
-    assert cards[0].name == 'Fire // Ice'
-    cards = oracle.cards_from_query('Upheaval')
-    assert len(cards) == 1
-    assert cards[0].name == 'Upheaval'
+    card = oracle.load_card('Swamp')
+    assert card is not None
+    assert card.legalities['Standard'] == 'Legal'
+    assert card.legalities['Modern'] == 'Legal'
+    assert card.legalities['Legacy'] == 'Legal'
+    assert card.legalities['Vintage'] == 'Legal'
+    assert card.legalities['Penny Dreadful'] == 'Legal'
+    card = oracle.load_card('Black Lotus')
+    assert card is not None
+    assert 'Standard' not in card.legalities.keys()
+    assert 'Modern' not in card.legalities.keys()
+    assert card.legalities['Legacy'] == 'Banned'
+    assert card.legalities['Vintage'] == 'Restricted'
+    assert 'Penny Dreadful' not in card.legalities.keys()
 
 def test_valid_name():
     assert oracle.valid_name('Dark Ritual') == 'Dark Ritual'

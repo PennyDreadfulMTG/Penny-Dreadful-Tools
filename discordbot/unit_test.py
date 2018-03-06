@@ -2,7 +2,7 @@ import os
 
 from discordbot import command, emoji
 from magic import card, fetcher_internal, image_fetcher, oracle
-from shared import configuration
+from shared import configuration, whoosh_search
 
 
 # Check that we can fetch card images.
@@ -11,7 +11,7 @@ def test_imagedownload():
     if fetcher_internal.acceptable_file(filepath):
         os.remove(filepath)
     c = []
-    c.extend(oracle.cards_from_query('Island'))
+    c.extend(oracle.load_card('Island'))
     assert image_fetcher.download_image(c) is not None
 
 # Check that we can fall back to the Gatherer images if all else fails.
@@ -21,7 +21,7 @@ def test_fallbackimagedownload():
     if fetcher_internal.acceptable_file(filepath):
         os.remove(filepath)
     c = []
-    c.extend(oracle.cards_from_query('Nalathni Dragon'))
+    c.extend(oracle.load_card('Nalathni Dragon'))
     assert image_fetcher.download_image(c) is not None
 
 # Check that we can succesfully fail at getting an image.
@@ -34,28 +34,28 @@ def test_solo_query():
     names = command.parse_queries('[Gilder Bairn]')
     assert len(names) == 1
     assert names[0] == 'gilder bairn'
-    cards = command.cards_from_queries(names)
+    cards = command.cards_from_queries2(names, whoosh_search.WhooshSearcher())
     assert len(cards) == 1
 
 # Two cards, via full name
 def test_double_query():
     names = command.parse_queries('[Mother of Runes] [Ghostfire]')
     assert len(names) == 2
-    cards = command.cards_from_queries(names)
+    cards = command.cards_from_queries2(names, whoosh_search.WhooshSearcher())
     assert len(cards) == 2
 
 # The following two sets assume that Kamahl is a long dead character, and is getting no new cards.
-# If wizards does an Onslaught/Odyssey throwback in some supplimental product, they may start failing.
+# If wizards does an Onslaught/Odyssey throwback in some supplemental product, they may start failing.
 def test_legend_query():
     names = command.parse_queries('[Kamahl]')
     assert len(names) == 1
-    cards = command.cards_from_queries(names)
+    cards = command.cards_from_queries2(names, whoosh_search.WhooshSearcher())
     assert len(cards) == 2
 
 def test_partial_query():
     names = command.parse_queries("[Kamahl's]")
     assert len(names) == 1
-    cards = command.cards_from_queries(names)
+    cards = command.cards_from_queries2(names, whoosh_search.WhooshSearcher())
     assert len(cards) == 3
 
 # Check that the list of legal cards is being fetched correctly.
@@ -66,33 +66,33 @@ def test_legality_list():
 def test_legality_emoji():
     legal_cards = oracle.legal_cards()
     assert len(legal_cards) > 0
-    legal_card = oracle.cards_from_query('island')[0]
+    legal_card = oracle.load_card('island')[0]
     assert emoji.legal_emoji(legal_card) == ':white_check_mark:'
-    illegal_card = oracle.cards_from_query('black lotus')[0]
+    illegal_card = oracle.load_card('black lotus')[0]
     assert emoji.legal_emoji(illegal_card) == ':no_entry_sign:'
     assert emoji.legal_emoji(illegal_card, True) == ':no_entry_sign: (not legal in PD)'
 
 def test_accents():
-    cards = oracle.cards_from_query('Lim-Dûl the Necromancer')
+    cards = oracle.load_card('Lim-Dûl the Necromancer')
     assert len(cards) == 1
-    cards = oracle.cards_from_query('Séance')
+    cards = oracle.load_card('Séance')
     assert len(cards) == 1
-    cards = oracle.cards_from_query('Lim-Dul the Necromancer')
+    cards = oracle.load_card('Lim-Dul the Necromancer')
     assert len(cards) == 1
-    cards = oracle.cards_from_query('Seance')
+    cards = oracle.load_card('Seance')
     assert len(cards) == 1
 
 def test_aether():
-    cards = oracle.cards_from_query('aether Spellbomb')
+    cards = oracle.load_card('aether Spellbomb')
     assert len(cards) == 1
 
 def test_split_cards():
-    cards = oracle.cards_from_query('Armed // Dangerous')
+    cards = oracle.load_card('Armed // Dangerous')
     assert len(cards) == 1
     assert image_fetcher.download_image(cards) is not None
     names = command.parse_queries('[Toil // Trouble]')
     assert len(names) == 1
-    cards = command.cards_from_queries(names)
+    cards = command.cards_from_queries2(names, whoosh_search.WhooshSearcher())
     assert len(cards) == 1
 
 def test_some_names():

@@ -34,7 +34,7 @@ async def respond_to_card_names(message, bot):
         return
     queries = parse_queries(message.content)
     if len(queries) > 0:
-        results = cards_from_queries2(queries, bot.searcher)
+        results = results_from_queries(queries, bot.searcher)
         cards = []
         for r in results:
             if r.has_match() and not r.is_ambiguous():
@@ -637,7 +637,7 @@ def parse_mode(query):
         query = query[1:]
     return [mode, query]
 
-def cards_from_queries2(queries, searcher):
+def results_from_queries(queries, searcher):
     all_results = []
     for query in queries:
         mode, query = parse_mode(query)
@@ -668,7 +668,7 @@ async def disambiguation_reactions(bot, message, cards):
         await bot.client.add_reaction(message, DISAMBIGUATION_EMOJIS_BY_NUMBER[i])
 
 async def single_card_or_send_error(bot, channel, args, author, command):
-    result = cards_from_queries2([args], bot)[0]
+    result = results_from_queries([args], bot)[0]
     if result.has_match() and not result.is_ambiguous():
         return cards_from_names_with_mode([result.get_best_match()], result.mode)[0]
 

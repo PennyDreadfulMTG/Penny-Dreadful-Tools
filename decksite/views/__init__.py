@@ -24,6 +24,7 @@ from .news import News
 from .not_found import NotFound
 from .people import People
 from .person import Person
+from .player_notes import PlayerNotes
 from .prizes import Prizes
 from .report import Report
 from .resources import Resources

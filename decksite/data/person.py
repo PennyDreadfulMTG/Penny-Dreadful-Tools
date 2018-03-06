@@ -3,6 +3,7 @@ from typing import Union
 from decksite.data import deck, guarantee, query
 from decksite.database import db
 from magic import rotation
+from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
 
@@ -20,7 +21,7 @@ def load_person(person: Union[int, str]) -> Person:
         username = sqlescape(person)
     return guarantee.exactly_one(load_people('p.id = {person_id} OR p.mtgo_username = {username}'.format(person_id=person_id, username=username)))
 
-def load_people(where='1 = 1'):
+def load_people(where='1 = 1', order_by='`season_num_decks` DESC, `all_num_decks` DESC, name'):
     sql = """
         SELECT
             p.id,
@@ -44,10 +45,8 @@ def load_people(where='1 = 1'):
         GROUP BY
             p.id
         ORDER BY
-            `season_num_decks` DESC,
-            `all_num_decks` DESC,
-            name
-    """.format(person_query=query.person_query(), all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_join=deck.nwdl_join(), where=where)
+            {order_by}
+    """.format(person_query=query.person_query(), all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_join=deck.nwdl_join(), where=where, order_by=order_by)
     people = [Person(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())])]
     if len(people) > 0:
         set_decks(people)
@@ -211,3 +210,31 @@ def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_usern
         return person_id
     sql = 'INSERT INTO person (mtgo_username, tappedout_username, mtggoldfish_username) VALUES (%s, %s, %s)'
     return db().insert(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
+
+def load_notes():
+    sql = """
+        SELECT
+            pn.created_date,
+            pn.creator_id,
+            {creator_query} AS creator,
+            pn.subject_id,
+            {subject_query} AS subject,
+            note
+        FROM
+            person_note AS pn
+        INNER JOIN
+            person AS c ON pn.creator_id = c.id
+        INNER JOIN
+            person AS s ON pn.subject_id = s.id
+        ORDER BY
+            s.id,
+            pn.created_date DESC
+    """.format(creator_query=query.person_query('c'), subject_query=query.person_query('s'))
+    notes = [Container(r) for r in db().execute(sql)]
+    for n in notes:
+        n.created_date = dtutil.ts2dt(n.created_date)
+    return notes
+
+def add_note(creator_id, subject_id, note):
+    sql = 'INSERT INTO person_note (created_date, creator_id, subject_id, note) VALUES (UNIX_TIMESTAMP(NOW()), %s, %s, %s)'
+    return db().execute(sql, [creator_id, subject_id, note])

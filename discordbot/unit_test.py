@@ -71,18 +71,18 @@ def test_legality_emoji():
     assert emoji.legal_emoji(illegal_card, True) == ':no_entry_sign: (not legal in PD)'
 
 def test_accents():
-    card = oracle.load_card('Lim-Dûl the Necromancer')
-    assert card is not None
-    card = oracle.load_card('Séance')
-    assert card is not None
-    card = oracle.load_card('Lim-Dul the Necromancer')
-    assert card is not None
-    card = oracle.load_card('Seance')
-    assert card is not None
+    c = oracle.load_card('Lim-Dûl the Necromancer')
+    assert c is not None
+    c = oracle.load_card('Séance')
+    assert c is not None
+    c = oracle.load_card('Lim-Dul the Necromancer')
+    assert c is not None
+    c = oracle.load_card('Seance')
+    assert c is not None
 
 def test_aether():
-    card = oracle.load_card('aether Spellbomb')
-    assert card is not None
+    c = oracle.load_card('aether Spellbomb')
+    assert c is not None
 
 def test_split_cards():
     cards = oracle.load_cards(['Armed // Dangerous'])

@@ -1,5 +1,6 @@
 from magic import oracle
 
+
 def test_legality():
     card = oracle.load_card('Swamp')
     assert card is not None

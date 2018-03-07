@@ -74,6 +74,9 @@ class SearchResult():
     def __str__(self):
         return "(exact: {e}, whole word: {r}, other prefixes: {o}, fuzzy: {f})".format(e=self.exact, r=self.prefix_whole_word, o=self.other_prefixed, f=self.fuzzy)
 
+    def __len__(self):
+        return len(self.get_all_matches())
+
 class WhooshSearcher():
     DIST = 2
     def __init__(self):

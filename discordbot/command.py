@@ -34,8 +34,7 @@ async def respond_to_card_names(message, bot):
         return
     queries = parse_queries(message.content)
     if len(queries) > 0:
-        #cards = cards_from_queries(queries)
-        results = cards_from_queries2(queries, bot)
+        results = results_from_queries(queries, bot.searcher)
         cards = []
         for r in results:
             if r.has_match() and not r.is_ambiguous():
@@ -622,16 +621,6 @@ def parse_queries(content: str) -> List[str]:
     queries = re.findall(r'\[?\[([^\]]*)\]\]?', content)
     return [card.canonicalize(query) for query in queries if len(query) > 2]
 
-def cards_from_queries(queries):
-    all_cards = []
-    for query in queries:
-        cards = oracle.cards_from_query(query)
-        if len(cards) > 0:
-            all_cards.extend(cards)
-    return all_cards
-
-
-
 def cards_from_names_with_mode(cards, mode):
     oracle_cards = oracle.cards_by_name()
     return [copy_with_mode(oracle_cards[c], mode) for c in cards if c is not None]
@@ -648,11 +637,11 @@ def parse_mode(query):
         query = query[1:]
     return [mode, query]
 
-def cards_from_queries2(queries, bot):
+def results_from_queries(queries, searcher):
     all_results = []
     for query in queries:
         mode, query = parse_mode(query)
-        result = bot.searcher.search(query)
+        result = searcher.search(query)
         result.mode = mode
         all_results.append(result)
     return all_results
@@ -679,7 +668,7 @@ async def disambiguation_reactions(bot, message, cards):
         await bot.client.add_reaction(message, DISAMBIGUATION_EMOJIS_BY_NUMBER[i])
 
 async def single_card_or_send_error(bot, channel, args, author, command):
-    result = cards_from_queries2([args], bot)[0]
+    result = results_from_queries([args], bot)[0]
     if result.has_match() and not result.is_ambiguous():
         return cards_from_names_with_mode([result.get_best_match()], result.mode)[0]
 

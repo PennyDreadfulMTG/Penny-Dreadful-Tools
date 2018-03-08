@@ -45,10 +45,9 @@ class View:
 
     def menu(self):
         archetypes_badge = None
-        if session.get('admin') is True:
-            n = len(deck.load_decks('NOT d.reviewed'))
-            if n > 0:
-                archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
+        n = len(deck.load_decks('NOT d.reviewed'))
+        if n > 0:
+            archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
         rotation_submenu = []
         if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7) or (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
             rotation_submenu += [{'name': gettext('Rotation Tracking'), 'url': url_for('rotation')}]

@@ -406,6 +406,8 @@ def prizes():
         IN
             ({competition_type_id_select})
         AND
+            cs.sponsor_id IS NOT NULL
+        AND
             c.start_date > (UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK))
         """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
     comps = comp.load_competitions(where)

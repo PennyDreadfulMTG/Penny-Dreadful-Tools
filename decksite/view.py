@@ -85,7 +85,8 @@ class View:
             {'name': gettext('About'), 'url': url_for('about'), 'submenu': [
                 {'name': gettext('What is Penny Dreadful?'), 'url': url_for('about')},
                 {'name': gettext('About pennydreadfulmagic.com'), 'url': url_for('about_pdm')},
-                {'name': gettext('FAQs'), 'url': url_for('faqs')}
+                {'name': gettext('FAQs'), 'url': url_for('faqs')},
+                {'name': gettext('Community Guidelines'), 'url': url_for('community_guidelines')}
             ]},
             {'name': gettext('Admin'), 'admin_only': True, 'url': url_for('admin'), 'submenu': admin.menu()}
         ]

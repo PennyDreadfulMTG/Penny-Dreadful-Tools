@@ -20,9 +20,9 @@ from decksite.data import person as ps
 from decksite.data import query
 from decksite.league import ReportForm, RetireForm, SignUpForm
 from decksite.views import (About, AboutPdm, AddForm, Admin, Archetype,
-                            Archetypes, Bugs, Card, Cards, Competition,
-                            Competitions, Deck, Decks, EditArchetypes,
-                            EditMatches, EditNews, Faqs, Home,
+                            Archetypes, Bugs, Card, Cards, CommunityGuidelines,
+                            Competition, Competitions, Deck, Decks,
+                            EditArchetypes, EditMatches, EditNews, Faqs, Home,
                             InternalServerError, LeagueInfo, LinkAccounts,
                             News, NotFound, People, Person, PlayerNotes,
                             Prizes, Report, Resources, Retire, Rotation,
@@ -194,6 +194,12 @@ def about():
 @cached()
 def faqs():
     view = Faqs()
+    return view.page()
+
+@APP.route('/community/guidelines/')
+@cached()
+def community_guidelines():
+    view = CommunityGuidelines()
     return view.page()
 
 @APP.route('/rotation/')

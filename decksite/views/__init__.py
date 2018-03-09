@@ -7,6 +7,7 @@ from .archetypes import Archetypes
 from .bugs import Bugs
 from .card import Card
 from .cards import Cards
+from .community_guidelines import CommunityGuidelines
 from .competition import Competition
 from .competitions import Competitions
 from .deck import Deck

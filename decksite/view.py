@@ -48,12 +48,13 @@ class View:
         n = len(deck.load_decks('NOT d.reviewed'))
         if n > 0:
             archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
-        rotation_submenu = []
+        resources_submenu = []
         if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7) or (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
-            rotation_submenu += [{'name': gettext('Rotation Tracking'), 'url': url_for('rotation')}]
-        rotation_submenu += [
+            resources_submenu += [{'name': gettext('Rotation Tracking'), 'url': url_for('rotation')}]
+        resources_submenu += [
             {'name': gettext('Rotation Changes'), 'url': url_for('rotation_changes')},
             {'name': gettext('Rotation Speculation'), 'url': url_for('rotation_speculation')},
+            {'name': gettext('Discord Chat'), 'url': 'https://discord.gg/H6EHdHu'},
             {'name': gettext('External Links'), 'url': url_for('resources')},
             {'name': gettext('Log In'), 'url': url_for('authenticate', target=request.url)},
             {'name': gettext('Log Out'), 'url': url_for('logout')}
@@ -80,7 +81,7 @@ class View:
                 {'name': gettext('Gatherling'), 'url': 'https://gatherling.com/'},
                 {'name': gettext('Hosting'), 'url': url_for('hosting')}
             ]},
-            {'name': gettext('Resources'), 'url': url_for('resources'), 'submenu': rotation_submenu},
+            {'name': gettext('Resources'), 'url': url_for('resources'), 'submenu': resources_submenu},
             {'name': gettext('About'), 'url': url_for('about'), 'submenu': [
                 {'name': gettext('What is Penny Dreadful?'), 'url': url_for('about')},
                 {'name': gettext('About pennydreadfulmagic.com'), 'url': url_for('about_pdm')},

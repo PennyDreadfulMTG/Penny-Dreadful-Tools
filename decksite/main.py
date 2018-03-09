@@ -212,13 +212,13 @@ def export(deck_id):
     safe_name = deck_name.file_name(d)
     return (mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 
-@APP.route('/link')
+@APP.route('/link/')
 @auth.login_required
 def link():
     view = LinkAccounts()
     return view.page()
 
-@APP.route('/link', methods=['POST'])
+@APP.route('/link/', methods=['POST'])
 @auth.login_required
 def link_post():
     view = LinkAccounts()

@@ -289,11 +289,10 @@ class View:
         for p in leaderboard:
             p.finish = pos
             p.stage_reached = 1
-            p.position = chr(9311 + pos) # ①, ②, ③, …
+            if pos <= 8:
+                p.position = chr(9311 + pos) # ①, ②, ③, …
             p.url = url_for('person', person_id=p.person_id)
             pos += 1
-            if pos > 8:
-                break
 
     def commit_id(self):
         return APP.config['commit-id']

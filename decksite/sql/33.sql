@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS sponsor (
 );
 
 INSERT INTO sponsor (name, url) VALUES ('Cardhoarder', 'https://www.cardhoarder.com/'); # 1
-INSERT INTO sponsor (name, url) VALUES ('Mana', 'https://www.manatraders.com/'); # 2
+INSERT INTO sponsor (name, url) VALUES ('Manatraders', 'https://www.manatraders.com/'); # 2
 INSERT INTO sponsor (name, url) VALUES ('MTGO Traders', 'https://www.mtgotraders.com/'); # 3
 
 ALTER TABLE competition_series ADD COLUMN sponsor_id INT;

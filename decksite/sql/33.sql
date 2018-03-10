@@ -16,4 +16,4 @@ UPDATE competition_series SET sponsor_id = 2 WHERE name = 'Penny Paradise';
 
 INSERT INTO competition_series (name, competition_type_id, sponsor_id) VALUES ('APAC Penny Dreadful Sundays', 2, NULL); # 7
 
-UPDATE competition SET competition_series_id = 7 WHERE name LIKE '%APAC%';
+UPDATE competition SET competition_series_id = 7 WHERE name LIKE '%%APAC%%';

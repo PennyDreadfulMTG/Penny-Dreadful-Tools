@@ -125,13 +125,13 @@ def test_bad_or():
 def test_or_without_args():
     try:
         do_test('or GG', "(name_ascii LIKE '%%or gg%%')")
-    except search.InvalidSearchException as e:
+    except search.InvalidSearchException:
         pass
 
 def test_not_without_args():
     try:
         do_test('c:r NOT', 'Expected InvalidSearchException')
-    except search.InvalidSearchException as e:
+    except search.InvalidSearchException:
         pass
 
 def test_or_with_args():

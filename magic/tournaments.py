@@ -95,7 +95,7 @@ def all_series_info():
         }),
         Container({
             'name': 'Penny Dreadful Sundays',
-            'hosts': ['bakert99', 'littlefield'],
+            'hosts': ['bakert99', 'littlefield', 'mrsad'],
             'display_time': '1:30pm Eastern',
             'time': info[2][1],
             'chat_room': '#PDS'

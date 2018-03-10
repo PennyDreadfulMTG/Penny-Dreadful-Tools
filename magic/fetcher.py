@@ -33,10 +33,13 @@ def bugged_cards():
         return None
     return bugs
 
+def banned_bugged_cards():
+    names = internal.fetch('https://pennydreadfulmtg.github.io/modo-bugs/pd_bannable.txt')
+    return names.strip().split('\n')
+
 def card_aliases():
     with open(configuration.get('card_alias_file'), newline='', encoding='utf-8') as f:
         return list(csv.reader(f, dialect='excel-tab'))
-
 
 def card_price(cardname):
     return internal.fetch_json('http://vorpald20.com:5800/{0}/'.format(cardname.replace('//', '-split-')))

@@ -1,7 +1,7 @@
         </main>
         <footer>
             {{#menu}}
-                <section>
+                <section {{#admin_only}}class="admin"{{/admin_only}}>
                     <p><b><a class="menuitem" href="{{url}}">{{name}}</a></b></p>
                     {{#submenu}}
                         <p><a {{#is_external}}class="external"{{/is_external}} href="{{url}}">{{name}}</a></p>

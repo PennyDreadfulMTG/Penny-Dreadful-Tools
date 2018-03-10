@@ -514,7 +514,9 @@ Want to contribute? Send a Pull Request."""
                 """,
                 {
                     'Deck Checker': 'http://pdmtgo.com/deck_check.html',
-                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt'
+                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt',
+                    'Rotation Speculation': fetcher.decksite_url('/rotation/speculation/'),
+                    'Rotation Changes': fetcher.decksite_url('/rotation/changes/')
                 }
             ],
             'noshow': [
@@ -586,7 +588,7 @@ Want to contribute? Send a Pull Request."""
         explanations['drop'] = explanations['retire']
         explanations['rotation'] = explanations['legality']
         explanations['tournaments'] = explanations['tournament']
-        word = args.strip()
+        word = args.strip().lower()
         if len(word) > 0:
             for k in explanations:
                 if k.startswith(word):

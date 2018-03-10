@@ -20,9 +20,9 @@ from decksite.data import person as ps
 from decksite.data import query
 from decksite.league import ReportForm, RetireForm, SignUpForm
 from decksite.views import (About, AboutPdm, AddForm, Admin, Archetype,
-                            Archetypes, Bugs, Card, Cards, Competition,
-                            Competitions, Deck, Decks, EditArchetypes,
-                            EditMatches, EditNews, Faqs, Home,
+                            Archetypes, Bugs, Card, Cards, CommunityGuidelines,
+                            Competition, Competitions, Deck, Decks,
+                            EditArchetypes, EditMatches, EditNews, Faqs, Home,
                             InternalServerError, LeagueInfo, LinkAccounts,
                             News, NotFound, People, Person, PlayerNotes,
                             Prizes, Report, Resources, Retire, Rotation,
@@ -196,6 +196,12 @@ def faqs():
     view = Faqs()
     return view.page()
 
+@APP.route('/community/guidelines/')
+@cached()
+def community_guidelines():
+    view = CommunityGuidelines()
+    return view.page()
+
 @APP.route('/rotation/')
 @cached()
 def rotation():
@@ -212,13 +218,13 @@ def export(deck_id):
     safe_name = deck_name.file_name(d)
     return (mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 
-@APP.route('/link')
+@APP.route('/link/')
 @auth.login_required
 def link():
     view = LinkAccounts()
     return view.page()
 
-@APP.route('/link', methods=['POST'])
+@APP.route('/link/', methods=['POST'])
 @auth.login_required
 def link_post():
     view = LinkAccounts()
@@ -405,6 +411,8 @@ def prizes():
             cs.competition_type_id
         IN
             ({competition_type_id_select})
+        AND
+            cs.sponsor_id IS NOT NULL
         AND
             c.start_date > (UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK))
         """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))

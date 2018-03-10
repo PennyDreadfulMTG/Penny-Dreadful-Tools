@@ -514,7 +514,9 @@ Want to contribute? Send a Pull Request."""
                 """,
                 {
                     'Deck Checker': 'http://pdmtgo.com/deck_check.html',
-                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt'
+                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt',
+                    'Rotation Speculation': fetcher.decksite_url('/rotation/speculation/'),
+                    'Rotation Changes': fetcher.decksite_url('/rotation/changes/')
                 }
             ],
             'noshow': [

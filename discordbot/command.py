@@ -586,7 +586,7 @@ Want to contribute? Send a Pull Request."""
         explanations['drop'] = explanations['retire']
         explanations['rotation'] = explanations['legality']
         explanations['tournaments'] = explanations['tournament']
-        word = args.strip()
+        word = args.strip().lower()
         if len(word) > 0:
             for k in explanations:
                 if k.startswith(word):

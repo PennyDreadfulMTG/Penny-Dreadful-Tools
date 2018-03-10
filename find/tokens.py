@@ -37,6 +37,14 @@ class BooleanOperator(Token):
     # Strict substrings of other operators must appear later in the list.
     values = ['AND', 'OR', 'NOT', '-']
 
+    @classmethod
+    def find(cls, chars):
+        s = ''.join(chars)
+        for value in cls.values:
+            if s.lower().startswith(value.lower() + ' ') or (s.lower().startswith(value.lower()) and len(s) == len(value)) or (value == '-' and s.startswith('-')):
+                return value
+        return ''
+
     def value(self):
         if self.val == '-':
             return 'NOT'

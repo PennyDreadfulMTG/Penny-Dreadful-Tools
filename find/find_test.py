@@ -119,6 +119,24 @@ def test_color():
 def test_or():
     do_test('a OR b', "(name_ascii LIKE '%%a%%') OR (name_ascii LIKE '%%b%%')")
 
+def test_bad_or():
+    do_test('orgg', "(name_ascii LIKE '%%orgg%%')")
+
+def test_or_without_args():
+    try:
+        do_test('or GG', "(name_ascii LIKE '%%or gg%%')")
+    except search.InvalidSearchException as e:
+        pass
+
+def test_not_without_args():
+    try:
+        do_test('c:r NOT', 'Expected InvalidSearchException')
+    except search.InvalidSearchException as e:
+        pass
+
+def test_or_with_args():
+    do_test('AA or GG', "(name_ascii LIKE '%%aa%%') OR (name_ascii LIKE '%%gg%%')")
+
 def test_text():
     do_test('o:"target attacking"', "(search_text LIKE '%%target attacking%%')")
 

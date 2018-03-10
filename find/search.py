@@ -115,6 +115,10 @@ def parse(expression):
             i += 2
         elif cls == Expression:
             s += '({token})'.format(token=parse(token))
+        elif cls == BooleanOperator and i == 0 and token.value().strip() != 'NOT':
+            raise InvalidSearchException('You cannot start a search expression with a boolean operator')
+        elif cls == BooleanOperator and i == len(tokens) - 1:
+            raise InvalidSearchException('You cannot end a search expression with a boolean operator')
         elif cls == BooleanOperator:
             pass
         else:

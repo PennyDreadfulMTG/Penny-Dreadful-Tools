@@ -215,12 +215,15 @@ PD.initSignupDeckChooser = function () {
 
 PD.initStatusFooter = function() {
     $.get("/api/status/", function(data) {
-        var text = data.status;
+        var text = '<p>' + data.status;
         if (data.mtgo_username != null) {
-            text += " (" + data.mtgo_username + ")";
+            text += " as " + data.mtgo_username + '. <a href="/logout/">Log Out</a>';
+        } else {
+            text += '. <a href="/authenticate/">Log In</a>';
         }
-        $("#status-bar").html(text);
-    })    
+        text += '</p>'
+        $(".status-bar").html(text);
+    })
 }
 
 

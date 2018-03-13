@@ -1,5 +1,6 @@
         </main>
         <footer>
+            <div class="status-bar"><p class="loading"><span class="spinner"></span> <span class="text">Loading…</span></p></div>
             {{#menu}}
                 <section>
                     <p><b><a class="menuitem" href="{{url}}">{{name}}</a></b></p>
@@ -16,7 +17,6 @@
                 <p>The Penny Dreadful league is sponsored by <a class="external" href="https://www.mtgotraders.com/">MTGO Traders</a>.</p>
             </section>
         </footer>
-        <div id="status-bar"></div>
         <script defer src="//code.jquery.com/jquery-latest.min.js"></script>
         {{#tooltips_url}}
             <script defer src="{{tooltips_url}}"></script>

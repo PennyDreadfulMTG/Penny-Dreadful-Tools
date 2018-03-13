@@ -194,7 +194,7 @@ Sizes are in rems because the layout doesn't care what size text is in it, it re
 
 */
 
-header, nav, main, footer, #status-bar {
+header, nav, main, footer, .status-bar {
     padding: 0 10%; /* padding not margin because we want colors to bleed all the way to the edge of the window. */
 }
 
@@ -232,18 +232,21 @@ main {
 }
 
 footer {
-    padding-bottom: 4rem;
+    padding-bottom: 7rem; /* This is especially large to account for the status bar and still make it really obvious you have reached the bottom. */
     padding-top: 2rem;
 }
 
-#status-bar {
-    position: fixed;
-    left: 0;
+.status-bar {
+    background-color: #eee;
+    border-top: 0.05rem solid #ccc;
     bottom: 0;
-    width: 20%;
-    background-color:rgba(0, 0, 0, 0.5);
     color: #502828;
+    left: 0;
+    padding-bottom: 1rem;
+    padding-top: 2rem;
+    position: fixed;
     text-align: left;
+    width: 100%;
 }
 
 section {
@@ -837,12 +840,17 @@ z-index
 
     100 page
     200 badge
+    250 status-bar
     300 dropdown menu
 
 */
 
 .badge-holder {
     z-index: 200;
+}
+
+.status-bar {
+    z-index: 250;
 }
 
 .has-submenu > a:after {

@@ -17,7 +17,6 @@ from decksite.data import competition as comp
 from decksite.data import deck as ds
 from decksite.data import news as ns
 from decksite.data import person as ps
-from decksite.data import query
 from decksite.league import ReportForm, RetireForm, SignUpForm
 from decksite.views import (About, AboutPdm, AddForm, Admin, Archetype,
                             Archetypes, Bugs, Card, Cards, CommunityGuidelines,
@@ -407,18 +406,9 @@ def post_news():
 
 @APP.route('/admin/prizes/')
 def prizes():
-    where = """
-            cs.competition_type_id
-        IN
-            ({competition_type_id_select})
-        AND
-            cs.sponsor_id IS NOT NULL
-        AND
-            c.start_date > (UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK))
-        """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
-    comps = comp.load_competitions(where)
+    tournaments_with_prizes = comp.tournaments_with_prizes()
     first_runs = lg.first_runs()
-    view = Prizes(comps, first_runs)
+    view = Prizes(tournaments_with_prizes, first_runs)
     return view.page()
 
 @APP.route('/admin/rotation/')

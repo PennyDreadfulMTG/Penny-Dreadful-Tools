@@ -72,6 +72,18 @@ def set_decks(competitions):
     for d in decks:
         competitions_by_id[d.competition_id].decks.append(d)
 
+def tournaments_with_prizes():
+    where = """
+            cs.competition_type_id
+        IN
+            ({competition_type_id_select})
+        AND
+            cs.sponsor_id IS NOT NULL
+        AND
+            c.start_date > (UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK))
+        """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
+    return load_competitions(where)
+
 def leaderboards(where="ct.name = 'Gatherling' AND season.id = (SELECT id FROM season WHERE start_date = (SELECT MAX(start_date) FROM season WHERE start_date < UNIX_TIMESTAMP(NOW())))"):
     sql = """
         SELECT

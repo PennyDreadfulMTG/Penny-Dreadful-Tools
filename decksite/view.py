@@ -18,7 +18,7 @@ NUM_MOST_COMMON_CARDS_TO_LIST = 10
 
 # pylint: disable=no-self-use, too-many-public-methods
 class View:
-    def __init__():
+    def __init__(self):
         # Set some pointless instance vars to keep Codacy happy.
         self.decks = None
         self.active_runs_text = None

@@ -32,7 +32,6 @@ class Competition(View):
                 self.has_leaderboard = True
                 self.leaderboard = sorted(leaderboard.values(), key=lambda k: (k['points'], k['played'], -k['retirements']), reverse=True)
                 self.leaderboards = [self.leaderboard] # Will be prepared in View.
-        super().__init__()
 
     def __getattr__(self, attr):
         return getattr(self.competition, attr)

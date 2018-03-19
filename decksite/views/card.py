@@ -9,7 +9,6 @@ class Card(View):
         self.cards = [card]
         self.decks = card.decks
         self.legal_formats = list(sorted(card.legalities.keys(), key=legality.order_score))
-        super().__init__()
 
     def __getattr__(self, attr):
         return getattr(self.card, attr)

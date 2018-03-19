@@ -124,9 +124,7 @@ def gitpull():
 @APP.route('/api/status/')
 @auth.logged
 def status():
-    if auth.logged_person() is not None:
-        return return_json({"status": "Logged in", "mtgo_username": auth.logged_person_mtgo_username()})
-    return return_json({"status": "Not logged in", "mtgo_username": auth.logged_person_mtgo_username()})
+    return return_json({'discord_id': auth.discord_id() is not None, 'mtgo_username': auth.logged_person_mtgo_username(), 'discord_id': auth.discord_id()})
 
 def validate_api_key():
     if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):

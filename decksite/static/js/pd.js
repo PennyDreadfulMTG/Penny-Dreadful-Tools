@@ -215,9 +215,9 @@ PD.initSignupDeckChooser = function () {
 
 PD.initStatusFooter = function() {
     $.get("/api/status/", function(data) {
-        var text = ""
+        var text = "";
         if (data.discord_id) {
-            text += 'Logged in';
+            text += "Logged in";
             if (data.mtgo_username != null) {
                 text += " as " + data.mtgo_username;
             } else {

@@ -20,7 +20,7 @@ NUM_MOST_COMMON_CARDS_TO_LIST = 10
 class View:
     def __init__(self):
         # Set some pointless instance vars to keep Codacy happy.
-        self.decks = None
+        self.decks = []
         self.active_runs_text = None
 
     def template(self):

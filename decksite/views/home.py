@@ -12,6 +12,7 @@ class Home(View):
         self.news = news
         self.has_news = len(news) > 0
         self.all_news_url = url_for('news')
+        self.decks = decks
         min_decks = 10
         one_day_ago_ts = dtutil.now() - datetime.timedelta(days=1)
         week_decks = [d for d in self.decks if d.created_date > one_day_ago_ts]

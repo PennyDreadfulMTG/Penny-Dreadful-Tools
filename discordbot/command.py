@@ -491,6 +491,10 @@ Want to contribute? Send a Pull Request."""
                     'Latest Decks': fetcher.decksite_url('/')
                 }
             ],
+            'doorprize': [
+                "The door prize is 1 tik credit with Cardhoarder, awarded to one randomly-selected player that completes the Swiss rounds but doesn't make top 8.",
+                {}
+            ],
             'league': [
                 """
                 Leagues last for roughly a month. You may enter any number of times but only one deck at a time.
@@ -588,7 +592,7 @@ Want to contribute? Send a Pull Request."""
         explanations['drop'] = explanations['retire']
         explanations['rotation'] = explanations['legality']
         explanations['tournaments'] = explanations['tournament']
-        word = args.strip().lower()
+        word = args.strip().lower().rstrip('s') # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
         if len(word) > 0:
             for k in explanations:
                 if k.startswith(word):

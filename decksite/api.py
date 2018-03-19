@@ -124,7 +124,7 @@ def gitpull():
 @APP.route('/api/status/')
 @auth.logged
 def status():
-    return return_json({'discord_id': auth.discord_id() is not None, 'mtgo_username': auth.logged_person_mtgo_username(), 'discord_id': auth.discord_id()})
+    return return_json({'mtgo_username': auth.logged_person_mtgo_username(), 'discord_id': auth.discord_id()})
 
 def validate_api_key():
     if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):
@@ -134,7 +134,7 @@ def validate_api_key():
 def generate_error(code, msg):
     return {'error': True, 'code': code, 'msg': msg}
 
-def return_json(content, status=200):
+def return_json(content, http_status=200):
     content = json.dumps(content, default=extra_serializer)
-    r = Response(response=content, status=status, mimetype="application/json")
+    r = Response(response=content, status=http_status, mimetype="application/json")
     return r

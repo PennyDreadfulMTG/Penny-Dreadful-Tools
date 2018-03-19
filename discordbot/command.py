@@ -457,6 +457,8 @@ Want to contribute? Send a Pull Request."""
             file_path = image_fetcher.determine_filepath([c]) + '.art_crop.jpg'
             if image_fetcher.download_scryfall_image([c], file_path, version='art_crop'):
                 await bot.send_image_with_retry(channel, file_path)
+            else:
+                await bot.client.send_message(channel, '{author}: Could not get image.'.format(author=author.mention))
 
     @cmd_header('Commands')
     async def explain(self, bot, channel, args):

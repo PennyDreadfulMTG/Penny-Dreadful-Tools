@@ -7,6 +7,7 @@ from .archetypes import Archetypes
 from .bugs import Bugs
 from .card import Card
 from .cards import Cards
+from .community_guidelines import CommunityGuidelines
 from .competition import Competition
 from .competitions import Competitions
 from .deck import Deck
@@ -24,6 +25,7 @@ from .news import News
 from .not_found import NotFound
 from .people import People
 from .person import Person
+from .player_notes import PlayerNotes
 from .prizes import Prizes
 from .report import Report
 from .resources import Resources

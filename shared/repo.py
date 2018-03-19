@@ -1,3 +1,4 @@
+import sys
 import textwrap
 import traceback
 
@@ -26,17 +27,17 @@ def create_issue(content: str, author: str, location: str = 'Discord', repo_name
             Endpoint: {endpoint}
             View Args: {view_args}
             Person: {id}
-            User-Agent: {user_agent}
             Referrer: {referrer}
             Request Data: {safe_data}
-        """.format(method=request.method, full_path=request.full_path, cookies=request.cookies, endpoint=request.endpoint, view_args=request.view_args, id=session.get('id', 'logged_out'), user_agent=request.headers.get('User-Agent'), referrer=request.referrer, safe_data=str(safe_data(request.form))))
+        """.format(method=request.method, full_path=request.full_path, cookies=request.cookies, endpoint=request.endpoint, view_args=request.view_args, id=session.get('id', 'logged_out'), referrer=request.referrer, safe_data=str(safe_data(request.form))))
+        body += '\n'.join(['{k}: {v}'.format(k=k, v=v) for k, v in request.headers])
     if exception:
         body += '--------------------------------------------------------------------------------\n'
         body += exception.__class__.__name__ + '\n'
         stack = traceback.extract_stack()[:-3] + traceback.extract_tb(exception.__traceback__)
         pretty = traceback.format_list(stack)
         body += 'Stack Trace:\n' + ''.join(pretty) + '\n'
-    print(title + '\n' + body)
+    print(title + '\n' + body, file=sys.stderr)
     # Only check for github details at the last second to get log output even if github not configured.
     if not configuration.get('github_user') or not configuration.get('github_password'):
         return None

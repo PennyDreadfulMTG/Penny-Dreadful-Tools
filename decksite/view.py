@@ -48,16 +48,16 @@ class View:
 
     def menu(self):
         archetypes_badge = None
-        if session.get('admin') is True:
-            n = len(deck.load_decks('NOT d.reviewed'))
-            if n > 0:
-                archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
-        rotation_submenu = []
+        n = len(deck.load_decks('NOT d.reviewed'))
+        if n > 0:
+            archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
+        resources_submenu = []
         if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7) or (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
-            rotation_submenu += [{'name': gettext('Rotation Tracking'), 'url': url_for('rotation')}]
-        rotation_submenu += [
+            resources_submenu += [{'name': gettext('Rotation Tracking'), 'url': url_for('rotation')}]
+        resources_submenu += [
             {'name': gettext('Rotation Changes'), 'url': url_for('rotation_changes')},
             {'name': gettext('Rotation Speculation'), 'url': url_for('rotation_speculation')},
+            {'name': gettext('Discord Chat'), 'url': 'https://discord.gg/H6EHdHu'},
             {'name': gettext('External Links'), 'url': url_for('resources')},
             {'name': gettext('Log In'), 'url': self.login_url()},
             {'name': gettext('Log Out'), 'url': url_for('logout')}
@@ -84,11 +84,12 @@ class View:
                 {'name': gettext('Gatherling'), 'url': 'https://gatherling.com/'},
                 {'name': gettext('Hosting'), 'url': url_for('hosting')}
             ]},
-            {'name': gettext('Resources'), 'url': url_for('resources'), 'submenu': rotation_submenu},
+            {'name': gettext('Resources'), 'url': url_for('resources'), 'submenu': resources_submenu},
             {'name': gettext('About'), 'url': url_for('about'), 'submenu': [
                 {'name': gettext('What is Penny Dreadful?'), 'url': url_for('about')},
                 {'name': gettext('About pennydreadfulmagic.com'), 'url': url_for('about_pdm')},
-                {'name': gettext('FAQs'), 'url': url_for('faqs')}
+                {'name': gettext('FAQs'), 'url': url_for('faqs')},
+                {'name': gettext('Community Guidelines'), 'url': url_for('community_guidelines')}
             ]},
             {'name': gettext('Admin'), 'admin_only': True, 'url': url_for('admin'), 'submenu': admin.menu()}
         ]
@@ -292,11 +293,10 @@ class View:
         for p in leaderboard:
             p.finish = pos
             p.stage_reached = 1
-            p.position = chr(9311 + pos) # ①, ②, ③, …
+            if pos <= 8:
+                p.position = chr(9311 + pos) # ①, ②, ③, …
             p.url = url_for('person', person_id=p.person_id)
             pos += 1
-            if pos > 8:
-                break
 
     def commit_id(self):
         return APP.config['commit-id']

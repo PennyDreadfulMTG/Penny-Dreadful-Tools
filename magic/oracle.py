@@ -98,64 +98,6 @@ def deck_sort(c):
     s += c.name
     return s
 
-def cards_from_query(query):
-    # Skip searching if the request is too short.
-    if len(query) <= 2:
-        return []
-
-    mode = 0
-    if query.startswith('$'):
-        mode = '$'
-        query = query[1:]
-
-    query = card.canonicalize(query)
-
-    # If we searched for an alias, change query so we can find the card in the results.
-    for alias, name in fetcher.card_aliases():
-        if query == card.canonicalize(alias):
-            query = card.canonicalize(name)
-
-    cards = search(query)
-    cards = [c for c in cards if c.layout != 'token' and c.type != 'Vanguard']
-
-    # First look for an exact match.
-    results = []
-    for c in cards:
-        c.mode = mode
-        if query == card.canonicalize(c.name):
-            results.append(c)
-    if len(results) > 0:
-        return results
-
-    for c in cards:
-        names = [card.canonicalize(name) for name in c.names]
-        if query in names:
-            results.append(c)
-    if len(results) > 0:
-        return results
-
-
-    # If not found, use cards that start with the query and a punctuation char.
-    for c in cards:
-        names = [card.canonicalize(name) for name in c.names]
-        for name in names:
-            if name.startswith('{query} '.format(query=query)) or name.startswith('{query},'.format(query=query)):
-                results.append(c)
-    if len(results) > 0:
-        return results
-
-    # If not found, use cards that start with the query.
-    for c in cards:
-        names = [card.canonicalize(name) for name in c.names]
-        for name in names:
-            if name.startswith(query):
-                results.append(c)
-    if len(results) > 0:
-        return results
-
-    # If we didn't find any of those then use all search results.
-    return cards
-
 def scryfall_import(name):
     sfcard = fetcher.internal.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=name))
     if sfcard['object'] == 'error':

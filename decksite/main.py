@@ -20,15 +20,15 @@ from decksite.data import person as ps
 from decksite.data import query
 from decksite.league import ReportForm, RetireForm, SignUpForm
 from decksite.views import (About, AboutPdm, AddForm, Admin, Archetype,
-                            Archetypes, Bugs, Card, Cards, Competition,
-                            Competitions, Deck, Decks, EditArchetypes,
-                            EditMatches, EditNews, Faqs, Home,
+                            Archetypes, Bugs, Card, Cards, CommunityGuidelines,
+                            Competition, Competitions, Deck, Decks,
+                            EditArchetypes, EditMatches, EditNews, Faqs, Home,
                             InternalServerError, LeagueInfo, LinkAccounts,
-                            News, NotFound, People, Person, Prizes, Report,
-                            Resources, Retire, Rotation, RotationChanges,
-                            RotationChecklist, Season, Seasons, SignUp,
-                            TournamentHosting, TournamentLeaderboards,
-                            Tournaments, Unauthorized)
+                            News, NotFound, People, Person, PlayerNotes,
+                            Prizes, Report, Resources, Retire, Rotation,
+                            RotationChanges, RotationChecklist, Season,
+                            Seasons, SignUp, TournamentHosting,
+                            TournamentLeaderboards, Tournaments, Unauthorized)
 from magic import card as mc
 from magic import oracle
 from shared import dtutil, perf, repo
@@ -196,6 +196,12 @@ def faqs():
     view = Faqs()
     return view.page()
 
+@APP.route('/community/guidelines/')
+@cached()
+def community_guidelines():
+    view = CommunityGuidelines()
+    return view.page()
+
 @APP.route('/rotation/')
 @cached()
 def rotation():
@@ -212,13 +218,13 @@ def export(deck_id):
     safe_name = deck_name.file_name(d)
     return (mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 
-@APP.route('/link')
+@APP.route('/link/')
 @auth.login_required
 def link():
     view = LinkAccounts()
     return view.page()
 
-@APP.route('/link', methods=['POST'])
+@APP.route('/link/', methods=['POST'])
 @auth.login_required
 def link_post():
     view = LinkAccounts()
@@ -392,7 +398,6 @@ def edit_news():
 @APP.route('/admin/news/', methods=['POST'])
 @auth.admin_required
 def post_news():
-    print(request.form)
     if request.form.get('action') == 'delete':
         ns.delete(request.form.get('id'))
     else:
@@ -407,6 +412,8 @@ def prizes():
         IN
             ({competition_type_id_select})
         AND
+            cs.sponsor_id IS NOT NULL
+        AND
             c.start_date > (UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK))
         """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
     comps = comp.load_competitions(where)
@@ -418,6 +425,21 @@ def prizes():
 def rotation_checklist():
     view = RotationChecklist()
     return view.page()
+
+@APP.route('/admin/people/notes/')
+@auth.admin_required
+def player_notes():
+    notes = ps.load_notes()
+    all_people = ps.load_people(order_by='p.mtgo_username')
+    view = PlayerNotes(notes, all_people)
+    return view.page()
+
+@APP.route('/admin/people/notes/', methods=['POST'])
+@auth.admin_required
+def post_player_note():
+    creator = ps.load_person_by_discord_id(session['id'])
+    ps.add_note(creator.id, request.form.get('subject_id'), request.form.get('note'))
+    return player_notes()
 
 # OAuth
 
@@ -492,14 +514,13 @@ def internal_server_error(e):
     try:
         repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports', exception=e)
     except GithubException:
-        print("Github error")
+        print('Github error')
     view = InternalServerError(e)
     return view.page(), 500
 
 @APP.before_request
 def before_request():
     g.p = perf.start()
-
 
 @APP.teardown_request
 def teardown_request(response):

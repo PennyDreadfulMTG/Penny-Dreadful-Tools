@@ -1,5 +1,5 @@
 <h1>{{subtitle}}</h1>
-{{^person}}
+{{^person.mtgo_username}}
     <section>
         <h2>{{_ You have not connected your Discord and Magic Online accounts}}</h2>
         <form method="post">
@@ -11,8 +11,8 @@
             <button type="submit">{{_ Connect}}</button>
         </form>
     </section>
-{{/person}}
-{{#person}}
+{{/person.mtgo_username}}
+{{#person.mtgo_username}}
     <section>
         <h2>{{_ You have successfully connected your Discord and Magic Online accounts}}</h2>
         <form method="post">
@@ -30,5 +30,4 @@
             <button type="submit">{{_ Connect}}</button>
         </form>
     </section>
-
-{{/person}}
+{{/person.mtgo_username}}

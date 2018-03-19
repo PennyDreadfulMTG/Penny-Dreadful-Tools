@@ -13,6 +13,7 @@ PD.init = function () {
     $.get("/api/intro/", PD.showIntro);
     $.get("/api/admin/", PD.showAdmin);
     PD.initSignupDeckChooser();
+    PD.initStatusFooter();
 };
 PD.initDismiss = function () {
     $(".dismiss").click(function () {
@@ -209,6 +210,24 @@ PD.initSignupDeckChooser = function () {
             buffer += "\nSideboard:\n" + data.sb.join("\n");
         }
         textarea.val(buffer);
+    })
+}
+
+PD.initStatusFooter = function() {
+    $.get("/api/status/", function(data) {
+        var text = "";
+        if (data.discord_id) {
+            text += "Logged in";
+            if (data.mtgo_username != null) {
+                text += " as " + data.mtgo_username;
+            } else {
+                text += ". <a href=\"/link/\">Link</a> your Magic Online account";
+            }
+            text += ". <a href=\"/logout/\">Log Out</a>";
+        } else  {
+            text += "<a href=\"/authenticate/\">Log In</a>";
+        }
+        $(".status-bar").html("<p>" + text + "</p>");
     })
 }
 

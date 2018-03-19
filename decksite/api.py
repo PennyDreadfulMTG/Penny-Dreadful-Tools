@@ -121,6 +121,11 @@ def gitpull():
                 pass
     return return_json({'rebooting': False, 'commit-id': APP.config['commit-id']})
 
+@APP.route('/api/status/')
+@auth.logged
+def person_status():
+    return return_json({'mtgo_username': auth.logged_person_mtgo_username(), 'discord_id': auth.discord_id()})
+
 def validate_api_key():
     if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):
         return None

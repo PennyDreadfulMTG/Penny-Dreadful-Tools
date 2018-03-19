@@ -18,23 +18,24 @@ class LinkAccounts(View):
         for k in request.form.keys():
             self.form[k] = request.form[k]
         self.form.errors = Container()
-        if self.person:
+        print(self.person)
+        if self.person and self.person.mtgo_username:
             if self.form.get('to_username', None) is None and self.person.tappedout_username is not None:
                 self.form['to_username'] = self.person.tappedout_username
                 self.disable_to = True
             if self.form.get('gf_username', None) is None and self.person.mtggoldfish_username is not None:
                 self.form['gf_username'] = self.person.mtggoldfish_username
                 self.disable_gf = True
-        self.validate()
+        self.process()
 
     def __getattr__(self, attr):
         return getattr(self.person, attr)
 
     def subtitle(self):
-        return gettext("Link accounts")
+        return gettext('Link Accounts')
 
-    def validate(self):
-        if self.person:
+    def process(self):
+        if self.person and self.person.mtgo_username:
             self.link_tappedout()
             self.link_mtggoldfish()
         elif self.form.get('mtgo_username', None): # Not linked

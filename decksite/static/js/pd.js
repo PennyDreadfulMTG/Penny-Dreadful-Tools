@@ -215,19 +215,19 @@ PD.initSignupDeckChooser = function () {
 
 PD.initStatusFooter = function() {
     $.get("/api/status/", function(data) {
-        var text = ''
+        var text = ""
         if (data.discord_id) {
             text += 'Logged in';
             if (data.mtgo_username != null) {
                 text += " as " + data.mtgo_username;
             } else {
-                text += '. <a href="/link/">Link</a> your Magic Online account';
+                text += ". <a href=\"/link/\">Link</a> your Magic Online account";
             }
-            text += '. <a href="/logout/">Log Out</a>';
+            text += ". <a href=\"/logout/\">Log Out</a>";
         } else  {
-            text += '<a href="/authenticate/">Log In</a>';
+            text += "<a href=\"/authenticate/\">Log In</a>";
         }
-        $(".status-bar").html('<p>' + text + '</p>');
+        $(".status-bar").html("<p>" + text + "</p>");
     })
 }
 

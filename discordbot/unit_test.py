@@ -42,16 +42,16 @@ def test_double_query():
     results = command.results_from_queries(names, whoosh_search.WhooshSearcher())
     assert len(results) == 2
 
-# The following two sets assume that Kamahl is a long dead character, and is getting no new cards.
-# If wizards does an Onslaught/Odyssey throwback in some supplemental product, they may start failing.
+# The following two sets assume that Ertai is a long dead character, and is getting no new cards.
+# If wizards does an Invasion block throwback in some supplemental product, they may start failing.
 def test_legend_query():
-    names = command.parse_queries('[Kamahl]')
+    names = command.parse_queries('[Ertai]')
     assert len(names) == 1
     results = command.results_from_queries(names, whoosh_search.WhooshSearcher())[0]
     assert len(results.get_ambiguous_matches()) == 2
 
 def test_partial_query():
-    names = command.parse_queries("[Kamahl's]")
+    names = command.parse_queries("[Ertai's]")
     assert len(names) == 1
     results = command.results_from_queries(names, whoosh_search.WhooshSearcher())[0]
     assert len(results.get_ambiguous_matches()) == 3

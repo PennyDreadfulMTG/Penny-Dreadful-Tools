@@ -1,7 +1,6 @@
 import datetime
 
 from flask import url_for
-from flask_babel import ngettext
 
 from decksite.view import View
 from shared import dtutil
@@ -15,14 +14,11 @@ class Home(View):
         self.all_news_url = url_for('news')
         min_decks = 10
         one_day_ago_ts = dtutil.now() - datetime.timedelta(days=1)
-        active_runs = [d for d in decks if d.is_in_current_run()]
-        self.active_runs = ngettext('%(num)d active league run', '%(num)d active league runs', len(active_runs))
-        decks = [d for d in decks if d not in active_runs]
-        week_decks = [d for d in decks if d.created_date > one_day_ago_ts]
+        week_decks = [d for d in self.decks if d.created_date > one_day_ago_ts]
         display_decks = week_decks
         if len(display_decks) < min_decks:
             one_week_ago_ts = dtutil.now() - datetime.timedelta(weeks=1)
-            display_decks = [d for d in decks if d.created_date > one_week_ago_ts]
+            display_decks = [d for d in self.decks if d.created_date > one_week_ago_ts]
             if len(display_decks) < min_decks:
                 display_decks = decks
         self.decks = display_decks

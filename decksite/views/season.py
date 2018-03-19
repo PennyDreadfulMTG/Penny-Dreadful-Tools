@@ -7,6 +7,7 @@ class Season(View):
         self.season = season
         self.decks = season.decks
         self.league_only = self.show_omw = self.hide_source = league_only
+        super().__init__()
 
     def subtitle(self):
         return 'Season {n}'.format(n=self.season.number)

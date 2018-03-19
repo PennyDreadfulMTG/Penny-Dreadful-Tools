@@ -6,7 +6,7 @@ from collections import Counter
 import inflect
 from anytree.iterators import PreOrderIter
 from flask import request, session, url_for
-from flask_babel import gettext
+from flask_babel import gettext, ngettext
 
 from decksite import APP, BABEL, admin, template
 from decksite.data import archetype, deck
@@ -129,9 +129,11 @@ class View:
         self.prepare_leaderboards()
 
     def prepare_decks(self):
+        active_runs = [d for d in getattr(self, 'decks', []) if d.is_in_current_run()]
+        if len(active_runs) > 0:
+            self.active_runs_text = ngettext('%(num)d active league run', '%(num)d active league runs', len(active_runs))
+            self.decks = [d for d in self.decks if not d.is_in_current_run()]
         for d in getattr(self, 'decks', []):
-            self.prepare_deck(d)
-        for d in getattr(self, 'similar', []):
             self.prepare_deck(d)
 
     def prepare_deck(self, d):

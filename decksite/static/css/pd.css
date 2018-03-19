@@ -1360,6 +1360,18 @@ We need to override a lot of Google's inline styles hence a lot of !important.
     padding: 3rem 0 0; /* matches h1 as it floats alongside the logo */
 }
 
+/* Hide the placeholder text "Google Custom Search". */
+.search ::-webkit-input-placeholder {
+    color: transparent;
+}
+.search ::-moz-placeholder {
+   color: transparent;
+   opacity:  1;
+}
+.search :-ms-input-placeholder {
+   color: transparent;
+}
+
 /* When search wraps under the logo it needs different behavior. */
 @media only screen and (max-width: 800px) {
     .search {
@@ -1457,7 +1469,7 @@ td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
 }
 
 .gsc-search-button {
-    height: 0.75rem;
+    height: 1.33rem;
     margin-top: 0 !important; /* csslint allow: important */
     width: 0.75rem;
 }

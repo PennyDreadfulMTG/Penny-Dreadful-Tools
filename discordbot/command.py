@@ -454,8 +454,11 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_typing(channel)
         c = await single_card_or_send_error(bot, channel, args, author, "art")
         if c is not None:
-            image_file = image_fetcher.download_scryfall_image([c], image_fetcher.determine_filepath([c]) + '.art_crop.jpg', version='art_crop')
-            await bot.send_image_with_retry(channel, image_file)
+            file_path = image_fetcher.determine_filepath([c]) + '.art_crop.jpg'
+            if image_fetcher.download_scryfall_image([c], file_path, version='art_crop'):
+                await bot.send_image_with_retry(channel, file_path)
+            else:
+                await bot.client.send_message(channel, '{author}: Could not get image.'.format(author=author.mention))
 
     @cmd_header('Commands')
     async def explain(self, bot, channel, args):
@@ -490,6 +493,10 @@ Want to contribute? Send a Pull Request."""
                 {
                     'Latest Decks': fetcher.decksite_url('/')
                 }
+            ],
+            'doorprize': [
+                "The door prize is 1 tik credit with Cardhoarder, awarded to one randomly-selected player that completes the Swiss rounds but doesn't make top 8.",
+                {}
             ],
             'league': [
                 """
@@ -588,7 +595,7 @@ Want to contribute? Send a Pull Request."""
         explanations['drop'] = explanations['retire']
         explanations['rotation'] = explanations['legality']
         explanations['tournaments'] = explanations['tournament']
-        word = args.strip().lower()
+        word = args.strip().lower().rstrip('s') # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
         if len(word) > 0:
             for k in explanations:
                 if k.startswith(word):

@@ -59,7 +59,7 @@ def load_deck(deck_id) -> Deck:
 
 def load_season(season=None, league_only=False):
     if season is None:
-        where = 'start. start_date <= UNIX_TIMESTAMP() AND `end`.start_date > UNIX_TIMESTAMP()'
+        where = 'start.start_date <= UNIX_TIMESTAMP() AND `end`.start_date > UNIX_TIMESTAMP()'
     else:
         try:
             number = int(season)

@@ -13,11 +13,11 @@ def test_tappedout():
     APP.config["SERVER_NAME"] = prev
 
 # Temporarily disabling this test.
-@pytest.mark.slowtest
-def test_gatherling():
-    with APP.app_context():
-        #gatherling.scrape(5)
-        pass
+#@pytest.mark.slowtest
+#def test_gatherling():
+#    with APP.app_context():
+#        #gatherling.scrape(5)
+#        pass
 
 def test_manual_tappedout():
     with APP.app_context():

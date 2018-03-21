@@ -124,7 +124,11 @@ def gitpull():
 @APP.route('/api/status/')
 @auth.logged
 def person_status():
-    return return_json({'mtgo_username': auth.logged_person_mtgo_username(), 'discord_id': auth.discord_id()})
+    r = {'mtgo_username': auth.logged_person_mtgo_username(), 'discord_id': auth.discord_id()}
+    d = guarantee.at_most_one(league.active_decks_by(auth.logged_person_mtgo_username()))
+    if d is not None:
+        r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id)}
+    return return_json(r)
 
 def validate_api_key():
     if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):

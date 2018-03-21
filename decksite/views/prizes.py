@@ -11,6 +11,7 @@ from shared.container import Container
 # pylint: disable=no-self-use
 class Prizes(View):
     def __init__(self, competitions, first_runs):
+        super().__init__()
         self.weeks = []
         weeks = split_by_week(competitions)
         for week in weeks:

@@ -15,6 +15,7 @@ from shared.pd_exception import DoesNotExistException
 # pylint: disable=no-self-use
 class Rotation(View):
     def __init__(self):
+        super().__init__()
         until_full_rotation = rotation.next_rotation() - dtutil.now()
         until_supplemental_rotation = rotation.next_supplemental() - dtutil.now()
         in_rotation = False

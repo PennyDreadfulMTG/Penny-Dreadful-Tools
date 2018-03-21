@@ -8,6 +8,7 @@ from shared import dtutil
 # pylint: disable=no-self-use
 class EditMatches(View):
     def __init__(self, matches):
+        super().__init__()
         self.matches = matches
         if matches:
             deck_ids = [m.left_id for m in self.matches] + [m.right_id for m in self.matches if m.right_id is not None]

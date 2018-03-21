@@ -7,6 +7,7 @@ from magic import oracle
 # pylint: disable=no-self-use
 class InternalServerError(View):
     def __init__(self, exception):
+        super().__init__()
         self.exception = str(exception)
         self.card = random.choice(oracle.load_cards(['Erratic Explosion', 'Curse of Chaos', 'Anarchy']))
         self.cards = [self.card]

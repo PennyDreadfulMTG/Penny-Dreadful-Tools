@@ -774,11 +774,12 @@ Menu items can have submenus. These are "mega menus" that stretch across the who
 
 .submenu-container {
     background: #502828;
+    box-sizing: border-box; /* So we can say width: 100% without worrying about the padding used for page margin. */;
     color: #f9f9f9;
     display: none;
     left: 0;
     position: absolute;
-    width: 80%; /* 100% - padding-left - padding-right */
+    width: 100%;
 }
 
 .submenu-container a:hover {

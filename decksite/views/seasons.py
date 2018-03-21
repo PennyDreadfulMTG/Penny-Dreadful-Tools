@@ -7,6 +7,7 @@ from magic import multiverse, rotation
 # pylint: disable=no-self-use
 class Seasons(View):
     def __init__(self):
+        super().__init__()
         self.seasons = []
         num = 1
         next_rotation_set_code = rotation.next_rotation_ex()['code']

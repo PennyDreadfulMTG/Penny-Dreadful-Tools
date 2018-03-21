@@ -10,6 +10,7 @@ from magic import legality, oracle, tournaments
 # pylint: disable=no-self-use
 class About(View):
     def __init__(self, src):
+        super().__init__()
         if src == 'gp':
             self.show_gp_card = True
             self.gp_card_url = url_for('static', filename='images/gp_card.png')

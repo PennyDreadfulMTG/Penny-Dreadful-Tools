@@ -4,6 +4,7 @@ from decksite.view import View
 # pylint: disable=no-self-use
 class Season(View):
     def __init__(self, season, league_only):
+        super().__init__()
         self.season = season
         self.decks = season.decks
         self.league_only = self.show_omw = self.hide_source = league_only

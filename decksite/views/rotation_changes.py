@@ -5,6 +5,7 @@ from magic import rotation
 # pylint: disable=no-self-use
 class RotationChanges(View):
     def __init__(self, cards_in, cards_out, playability, speculation=False):
+        super().__init__()
         self.sections = []
         self.cards = cards_in + cards_out
         entries_in = [{'name': c.name, 'card': c, 'interestingness': rotation.interesting(playability, c, speculation)} for c in cards_in]

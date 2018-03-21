@@ -8,6 +8,7 @@ from shared.pd_exception import DoesNotExistException
 # pylint: disable=no-self-use
 class Archetype(View):
     def __init__(self, archetype, archetypes, matchups):
+        super().__init__()
         if not archetype or not archetypes:
             raise DoesNotExistException('No archetype supplied to view.')
         self.archetype = next(a for a in archetypes if a.id == archetype.id)

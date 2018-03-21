@@ -194,20 +194,20 @@ Sizes are in rems because the layout doesn't care what size text is in it, it re
 
 */
 
-header, nav, main, footer, .status-bar {
-    padding: 0 10%; /* padding not margin because we want colors to bleed all the way to the edge of the window. */
+header, nav, main, footer, .status-bar, .submenu-container {
+    padding: 0 10%; /* padding not margin because we want colors to bleed all the way to the edge of the window.  See also .submenu-container and .status-bar. */
 }
 
 /* Minimal spacing around the content on extra-small displays. */
 @media only screen and (max-width: 640px) {
-    header, nav, main, footer {
+    header, nav, main, footer, .status-bar, .submenu-container {
         padding: 0 1rem;
     }
 }
 
 /* Ensure the margin is big enough to contain .marginalia on small displays, but no bigger. */
 @media only screen and (min-width: 641px) and (max-width: 800px) {
-    header, nav, main, footer {
+    header, nav, main, footer, .status-bar, .submenu-container {
         padding: 0 1rem 0 3.845rem; /* (width of .marginalia (4em) + padding-left + padding-right) * font-size (0.75) */
     }
 }
@@ -240,6 +240,7 @@ footer {
     background-color: #eee;
     border-top: 0.05rem solid #ccc;
     bottom: 0;
+    box-sizing: border-box; /* So we can just say 100% width and have the status bar with padding fit the screen. */
     color: #502828;
     left: 0;
     padding-bottom: 1rem;
@@ -436,6 +437,7 @@ Lists
 
 Our standard lists use a bullet in the left margin.
 Text continues to line up with text above/below.
+Multiple pieces of information on a single line can be broken up with .division on each element.
 
 */
 
@@ -450,6 +452,11 @@ ul.decklist {
     padding-left: 0;
     line-height: 1;
     font-size: 0.75rem;
+}
+
+.division:after {
+    content: "▪";
+    padding: 0 0.563em;
 }
 
 /*
@@ -770,7 +777,6 @@ Menu items can have submenus. These are "mega menus" that stretch across the who
     color: #f9f9f9;
     display: none;
     left: 0;
-    padding: 0 10%; /* Left and right padding same as nav padding because this is position absolutely under the menu. */
     position: absolute;
     width: 80%; /* 100% - padding-left - padding-right */
 }

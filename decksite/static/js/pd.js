@@ -217,13 +217,18 @@ PD.initStatusFooter = function() {
     $.get("/api/status/", function(data) {
         var text = "";
         if (data.discord_id) {
-            text += "Logged in";
+            text += "You are logged in";
             if (data.mtgo_username != null) {
-                text += " as " + data.mtgo_username;
+                text += " as <a href=\"/people/" + PD.htmlEscape(data.mtgo_username) + "\">" + PD.htmlEscape(data.mtgo_username) + "</a>";
             } else {
-                text += ". <a href=\"/link/\">Link</a> your Magic Online account";
+                text += " <span class=\"division\"></span> <a href=\"/link/\">Link</a> your Magic Online account";
             }
-            text += ". <a href=\"/logout/\">Log Out</a>";
+            if (data.deck) {
+                text += " <span class=\"division\"></span> Your current league deck is <a href=\"" + PD.htmlEscape(data.deck.url) + "\">" + PD.htmlEscape(data.deck.name) + "</a>";
+            } else {
+                text += " <span class=\"division\"></span> You do not have an active league run <span class=\"division\"></span> <a href=\"/signup/\">Sign Up</a>";
+            }
+            text += " <span class=\"division\"></span> <a href=\"/logout/\">Log Out</a>";
         } else  {
             text += "<a href=\"/authenticate/\">Log In</a>";
         }
@@ -231,6 +236,9 @@ PD.initStatusFooter = function() {
     })
 }
 
+PD.htmlEscape = function (s) {
+    return $("<div>").text(s).html();
+}
 
 $(document).ready(function () {
     PD.init();

@@ -12,6 +12,7 @@ from shared.pd_exception import InvalidDataException
 # pylint: disable=no-self-use, too-many-instance-attributes
 class Deck(View):
     def __init__(self, d, logged_person_id=None):
+        super().__init__()
         self._deck = d
         self.prepare_deck(self._deck)
         self.cards = d.all_cards()

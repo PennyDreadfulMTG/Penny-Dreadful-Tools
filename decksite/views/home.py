@@ -9,6 +9,7 @@ from shared import dtutil
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Home(View):
     def __init__(self, news, decks, cards):
+        super().__init__()
         self.news = news
         self.has_news = len(news) > 0
         self.all_news_url = url_for('news')

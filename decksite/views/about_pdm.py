@@ -9,6 +9,7 @@ from .. import BABEL
 # pylint: disable=no-self-use
 class AboutPdm(View):
     def __init__(self):
+        super().__init__()
         self.about_url = url_for('about')
 
     def subtitle(self):

@@ -5,6 +5,7 @@ from decksite.view import View
 # pylint: disable=no-self-use
 class EditArchetypes(View):
     def __init__(self, archetypes, search_results):
+        super().__init__()
         self.archetypes = archetypes
         self.roots = [a for a in self.archetypes if a.is_root]
         self.queue = deck.load_decks(where='NOT d.reviewed', order_by='updated_date DESC', limit='LIMIT 10')

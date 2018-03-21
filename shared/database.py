@@ -1,5 +1,6 @@
 from shared import database_mysql
 from shared.database_generic import GenericDatabase
+from shared.pd_exception import InvalidArgumentException
 
 
 def get_database(location: str) -> GenericDatabase:
@@ -15,7 +16,7 @@ def sqlescape(s, force_string: bool = False, backslashed_escaped=False):
         if not backslashed_escaped:
             encodable = encodable.replace("\\", "\\\\")
         return "'{escaped}'".format(escaped=encodable.replace("'", "''").replace('%', '%%'))
-    raise Exception
+    raise InvalidArgumentException('Cannot sqlescape `{s}`'.format(s=s))
 
 def sqllikeescape(s: str) -> str:
     s = s.replace("\\", "\\\\").replace('%', '\\%').replace('_', '\\_')

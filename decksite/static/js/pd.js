@@ -224,9 +224,9 @@ PD.initStatusFooter = function() {
                 text += " <span class=\"division\"></span> <a href=\"/link/\">Link</a> your Magic Online account";
             }
             if (data.deck) {
-                text += " <span class=\"division\"></span> Your current league deck is <a href=\"" + PD.htmlEscape(data.deck.url) + "\">" + PD.htmlEscape(data.deck.name) + "</a>";
+                text += " <span class=\"division\"></span> " + data.deck.wins + "–" + data.deck.losses + " with <a href=\"" + PD.htmlEscape(data.deck.url) + "\">" + PD.htmlEscape(data.deck.name) + "</a> <span class=\"division\"></span> <a href=\"/retire/\">Retire</a>";
             } else {
-                text += " <span class=\"division\"></span> You do not have an active league run <span class=\"division\"></span> <a href=\"/signup/\">Sign Up</a>";
+                text += " <span class=\"division\"></span> You do not have an active league run — <a href=\"/signup/\">Sign Up</a>";
             }
             text += " <span class=\"division\"></span> <a href=\"/logout/\">Log Out</a>";
         } else  {

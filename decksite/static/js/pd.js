@@ -55,7 +55,7 @@ PD.initTables = function () {
         // Prevent expanded information from sorting first and not staying with parent row by collapsing all expanded rows before sorting.
         FooTable.get(this).rows.collapse();
     }).css({ "display": "table" });
-    $(".loading").addClass("loaded");
+    $("div.loading").addClass("loaded");
     $(selector).css({ "visibility": "visible" });
 
     $.tablesorter.addParser({
@@ -224,9 +224,9 @@ PD.initStatusFooter = function() {
                 text += " <span class=\"division\"></span> <a href=\"/link/\">Link</a> your Magic Online account";
             }
             if (data.deck) {
-                text += " <span class=\"division\"></span> Your current league deck is <a href=\"" + PD.htmlEscape(data.deck.url) + "\">" + PD.htmlEscape(data.deck.name) + "</a>";
+                text += " <span class=\"division\"></span> " + data.deck.wins + "–" + data.deck.losses + " with <a href=\"" + PD.htmlEscape(data.deck.url) + "\">" + PD.htmlEscape(data.deck.name) + "</a> <span class=\"division\"></span> <a href=\"/retire/\">Retire</a>";
             } else {
-                text += " <span class=\"division\"></span> You do not have an active league run <span class=\"division\"></span> <a href=\"/signup/\">Sign Up</a>";
+                text += " <span class=\"division\"></span> You do not have an active league run — <a href=\"/signup/\">Sign Up</a>";
             }
             text += " <span class=\"division\"></span> <a href=\"/logout/\">Log Out</a>";
         } else  {

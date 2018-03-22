@@ -128,7 +128,7 @@ def person_status():
     if auth.logged_person_mtgo_username():
         d = guarantee.at_most_one(league.active_decks_by(auth.logged_person_mtgo_username()))
         if d is not None:
-            r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id)}
+            r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}
     return return_json(r)
 
 def validate_api_key():

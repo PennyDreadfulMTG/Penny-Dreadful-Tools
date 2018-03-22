@@ -243,8 +243,8 @@ footer {
     box-sizing: border-box; /* So we can just say 100% width and have the status bar with padding fit the screen. */
     color: #502828;
     left: 0;
-    padding-bottom: 1rem;
-    padding-top: 2rem;
+    padding-bottom: 1em;
+    padding-top: 2em;
     position: fixed;
     text-align: left;
     width: 100%;
@@ -1282,11 +1282,12 @@ Spinner
 
 <div class="loading"><span class="spinner"></span> <span class="text">Loading…</span></div>
 
+Alternatively use p element instead of div to get p text size and not enforced 0.75rem.
+
 */
 
 .loading {
     color: #999;
-    font-size: 0.75rem;
     margin-left: -1rem;
 }
 
@@ -1298,10 +1299,14 @@ Spinner
     display: none;
 }
 
+div.loading {
+    font-size: 0.75rem; /* Only make the text smaller in the table spinners not the status bar spinner, to avoid a change in status bar size on load. */
+}
+
 .spinner {
     height: 0.75em;
     width: 0.75em;
-    margin: 1rem auto 0 auto;
+    margin: 0 auto;
     position: relative;
     -webkit-animation: rotation .6s infinite linear;
     -moz-animation: rotation .6s infinite linear;

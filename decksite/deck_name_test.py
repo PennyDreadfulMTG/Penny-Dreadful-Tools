@@ -104,6 +104,8 @@ def test_normalize():
     assert deck_name.normalize(d) == 'Mono White Soldiers'
     d.original_name = 'BWWave'
     assert deck_name.normalize(d) == 'Bwwave' # Not ideal but ok.
+    d.original_name = 'PD - Archfiend Cycling'
+    assert deck_name.normalize(d) == 'Archfiend Cycling'
 
     # Undefined cases
     # d.original_name = 'U/B Aggro' when d.archetype = 'Control'

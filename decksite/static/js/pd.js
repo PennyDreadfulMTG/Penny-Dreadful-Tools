@@ -55,7 +55,7 @@ PD.initTables = function () {
         // Prevent expanded information from sorting first and not staying with parent row by collapsing all expanded rows before sorting.
         FooTable.get(this).rows.collapse();
     }).css({ "display": "table" });
-    $(".loading").addClass("loaded");
+    $("div.loading").addClass("loaded");
     $(selector).css({ "visibility": "visible" });
 
     $.tablesorter.addParser({

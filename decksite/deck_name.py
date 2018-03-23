@@ -61,6 +61,7 @@ def normalize(d):
     name = remove_pd(name)
     name = remove_hashtags(name)
     name = remove_brackets(name)
+    name = strip_leading_punctuation(name)
     unabbreviated = expand_common_abbreviations(name)
     if unabbreviated != name:
         name = unabbreviated
@@ -137,3 +138,6 @@ def ucase_trailing_roman_numerals(name):
     if re.search('^[ivx]+$', last_word):
         name = re.sub('{last_word}$'.format(last_word=last_word), last_word.upper(), name)
     return name
+
+def strip_leading_punctuation(name):
+    return re.sub('^[^a-z0-9]*', '', name, flags=re.IGNORECASE)

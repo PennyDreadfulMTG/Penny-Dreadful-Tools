@@ -34,7 +34,7 @@ def tournament(url, name):
     # Hack in the known start time because it's not in the page.
     start_time = '19:00'
     name = cell.find('a').string.strip()
-    if 'Saturday' in name or 'Sunday' in name or 'PDS' in name:
+    if 'Saturday' in name or 'Sunday' in name or 'PDS' in name or 'EU' in name:
         start_time = '13:30'
     date_s = cell.find('br').next.strip() + ' {start_time}'.format(start_time=start_time)
     if '-0001' in date_s:

@@ -13,7 +13,7 @@ from shared import configuration, dtutil
 from shared.serialization import extra_serializer
 
 
-@APP.route('/api/decks/<deck_id>')
+@APP.route('/api/decks/<deck_id>/')
 def deck_api(deck_id):
     blob = deck.load_deck(deck_id)
     return return_json(blob)
@@ -22,17 +22,17 @@ def deck_api(deck_id):
 def competition_api(competition_id):
     return return_json(comp.load_competition(competition_id))
 
-@APP.route('/api/league')
+@APP.route('/api/league/')
 def league_api():
     return return_json(league.active_league())
 
-@APP.route('/api/person/<person>')
+@APP.route('/api/person/<person>/')
 def person_api(person):
     p = ps.load_person(person)
     p.decks = url_for('person_decks_api', person=person)
     return return_json(p)
 
-@APP.route('/api/person/<person>/decks')
+@APP.route('/api/person/<person>/decks/')
 def person_decks_api(person):
     p = ps.load_person(person)
     return return_json(p.decks)
@@ -67,7 +67,7 @@ def drop(person):
     result = {'success':True}
     return return_json(result)
 
-@APP.route('/api/rotation')
+@APP.route('/api/rotation/')
 def rotation_api():
     now = dtutil.now()
     diff = rotation.next_rotation() - now
@@ -79,11 +79,11 @@ def rotation_api():
     }
     return return_json(result)
 
-@APP.route('/api/cards')
+@APP.route('/api/cards/')
 def cards_api():
     return return_json(cs.played_cards())
 
-@APP.route('/api/card/<card>')
+@APP.route('/api/card/<card>/')
 def card_api(card):
     return return_json(oracle.load_card(card))
 

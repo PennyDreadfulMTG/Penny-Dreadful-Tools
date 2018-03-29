@@ -2,7 +2,6 @@ from decksite.data import deck, guarantee
 from decksite.database import db
 from magic import oracle, rotation
 from shared.container import Container
-from shared.container_lazy import LazyContainer
 from shared.database import sqlescape
 
 
@@ -27,10 +26,10 @@ def played_cards(where='1 = 1'):
             SUM(CASE WHEN dsum.created_date >= %s THEN dsum.wins - dsum.losses ELSE 0 END) DESC,
             name
     """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), week_select=deck.nwdl_week_select(), nwdl_join=deck.nwdl_join(), where=where)
-    cs = [LazyContainer(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())])]
+    cs = [Container(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())])]
     cards = oracle.cards_by_name()
     for c in cs:
-        c.lazy_update(cards[c.name])
+        c.update(cards[c.name])
     return cs
 
 def load_card(name):

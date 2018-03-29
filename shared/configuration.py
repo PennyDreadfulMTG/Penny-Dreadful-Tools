@@ -81,5 +81,5 @@ def write(key: str, value: str) -> str:
 
     print("CONFIG: {0}={1}".format(key, cfg[key]))
     fh = open('config.json', 'w')
-    fh.write(json.dumps(cfg, indent=4))
+    fh.write(json.dumps(cfg, indent=4, sort_keys=True))
     return cfg[key]

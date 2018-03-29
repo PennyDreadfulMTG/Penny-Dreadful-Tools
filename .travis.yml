@@ -4,6 +4,7 @@ branches:
     - staging.tmp
 python:
   - "3.6"
+cache: pip
 services:
   - mysql
 env:
@@ -12,6 +13,6 @@ install:
   - travis_retry pip install -r requirements.txt
   # - ./setup_spellfix.sh
 script:
-  - python run.py tests
+  - python run.py tests -m "not tappedout"
   - mypy --ignore-missing-imports .
   - isort --check-only

@@ -22,7 +22,7 @@ def scrape(limit=50):
     for (url, name) in tournaments:
         i = tournament(url, name)
         n = n + i
-        if i > limit:
+        if n > limit:
             return
 
 def tournament(url, name):

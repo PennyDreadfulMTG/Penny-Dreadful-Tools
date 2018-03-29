@@ -4,6 +4,7 @@ branches:
     - staging.tmp
 python:
   - "3.6"
+cache: pip
 services:
   - mysql
 env:

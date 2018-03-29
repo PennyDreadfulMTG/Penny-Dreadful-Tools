@@ -1,5 +1,6 @@
 from .container import Container
 
+
 class LazyContainer(Container):
     def __init__(self, *args, **kwargs):
         super().__init__(self, *args, **kwargs)

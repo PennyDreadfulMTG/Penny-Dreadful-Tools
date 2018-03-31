@@ -38,7 +38,12 @@
         <h2>Decklist</h2>
         <p>This deck is hidden because it is active in the league.</p>
         {{^logged_person_id}}
-            <p>If it's your deck <a href="{{authenticate_url}}">login with discord</a> to see it.</p>
+            {{^discord_id}}
+                <p>If it's your deck <a href="{{authenticate_url}}">login with discord</a> to see it.</p>
+            {{/discord_id}}
+            {{#discord_id}}
+                <p>Your account is not linked. Please use the status bar to link it</a>.</p>
+            {{/discord_id}}
         {{/logged_person_id}}
         {{#logged_person_id}}
             <p>You are logged in but this deck is not yours. <a href="{{logout_url}}">Logout</a></p>

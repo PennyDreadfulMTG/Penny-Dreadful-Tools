@@ -22,7 +22,7 @@ def scrape(limit=50):
     for (url, name) in tournaments:
         i = tournament(url, name)
         n = n + i
-        if i > limit:
+        if n > limit:
             return
 
 def tournament(url, name):
@@ -42,7 +42,13 @@ def tournament(url, name):
         return 0
 
     dt = dtutil.parse(date_s, '%d %B %Y %H:%M', dtutil.GATHERLING_TZ)
-    competition_id = competition.get_or_insert_competition(dt, dt, name, 'Penny Dreadful {day}s'.format(day=dtutil.day_of_week(dt, dtutil.GATHERLING_TZ)), url)
+    if "APAC" in name:
+        competition_series = "APAC Penny Dreadful Sundays"
+    elif "EU" in name:
+        competition_series = "Penny Dreadful FNM - EU"
+    else:
+        competition_series = 'Penny Dreadful {day}s'.format(day=dtutil.day_of_week(dt, dtutil.GATHERLING_TZ))
+    competition_id = competition.get_or_insert_competition(dt, dt, name, competition_series, url)
     table = soup.find(text='Current Standings').find_parent('table')
     ranks = rankings(table)
 

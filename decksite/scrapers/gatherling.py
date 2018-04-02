@@ -31,28 +31,40 @@ def tournament(url, name):
     # Tournament details
     soup = BeautifulSoup(s, 'html.parser')
     cell = soup.find('div', {'id': 'EventReport'}).find_all('td')[1]
-    # Hack in the known start time because it's not in the page.
-    start_time = '19:00'
+
     name = cell.find('a').string.strip()
-    if 'Saturday' in name or 'Sunday' in name or 'PDS' in name or 'EU' in name:
-        start_time = '13:30'
-    date_s = cell.find('br').next.strip() + ' {start_time}'.format(start_time=start_time)
-    if '-0001' in date_s:
+    day_s = cell.find('br').next.strip()
+    if '-0001' in day_s:
         # Tournament has been incorrectly configured.
         return 0
 
-    dt = dtutil.parse(date_s, '%d %B %Y %H:%M', dtutil.GATHERLING_TZ)
+    # Hack in the known start time and series name because it's not in the page, depending on the series.
     if "APAC" in name:
         competition_series = "APAC Penny Dreadful Sundays"
+        start_time = '16:00'
+        dt = get_dt(day_s, start_time, dtutil.APAC_SERIES_TZ)
     elif "EU" in name:
         competition_series = "Penny Dreadful FNM - EU"
+        start_time = '13:30'
+        dt = get_dt(day_s, start_time, dtutil.GATHERLING_TZ)
     else:
+        if 'Saturday' in name or 'Sunday' in name or 'PDS' in name:
+            start_time = '13:30'
+        else:
+            start_time = '19:00'
+        dt = get_dt(day_s, start_time, dtutil.GATHERLING_TZ)
         competition_series = 'Penny Dreadful {day}s'.format(day=dtutil.day_of_week(dt, dtutil.GATHERLING_TZ))
+
     competition_id = competition.get_or_insert_competition(dt, dt, name, competition_series, url)
     table = soup.find(text='Current Standings').find_parent('table')
     ranks = rankings(table)
 
     return add_decks(dt, competition_id, ranks, s)
+
+def get_dt(day_s, start_time, timezone):
+    date_s = day_s + ' {start_time}'.format(start_time=start_time)
+    return dtutil.parse(date_s, '%d %B %Y %H:%M', timezone)
+
 
 def add_decks(dt, competition_id, ranks, s):
     # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.

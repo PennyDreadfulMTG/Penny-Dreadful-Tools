@@ -14,7 +14,7 @@ import pytz
 
 GATHERLING_TZ = pytz.timezone('America/New_York')
 WOTC_TZ = pytz.timezone('America/Los_Angeles')
-MELBOURNE_TZ = pytz.timezone('Australia/Melbourne')
+APAC_SERIES_TZ = pytz.timezone('Asia/Tokyo')
 UTC_TZ = pytz.timezone('UTC')
 MTGGOLDFISH_TZ = UTC_TZ
 CARDHOARDER_TZ = UTC_TZ

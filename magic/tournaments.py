@@ -43,11 +43,11 @@ def get_nearest_tournament(time_direction=TimeDirection.AFTER):
     return sorted(dates, key=lambda t: t[1])[index]
 
 def get_all_next_tournament_dates(start, index=0):
-    aus_start = start.astimezone(tz=dtutil.MELBOURNE_TZ)
+    apac_start = start.astimezone(tz=dtutil.APAC_SERIES_TZ)
     until = start + timedelta(days=7)
     pdfnmeu_time = ['Friday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index]]
     pdsat_time = ['Saturday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index]]
-    apds_time = ['APAC Sunday', rrule.rrule(rrule.WEEKLY, byhour=18, byminute=0, bysecond=0, dtstart=aus_start, until=until, byweekday=rrule.SU)[index]]
+    apds_time = ['APAC Sunday', rrule.rrule(rrule.WEEKLY, byhour=16, byminute=0, bysecond=0, dtstart=apac_start, until=until, byweekday=rrule.SU)[index]]
     pds_time = ['Sunday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index]]
     pdm_time = ['Monday', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index]]
     pdt_time = ['Thursday', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index]]
@@ -98,7 +98,7 @@ def all_series_info():
         Container({
             'name': 'APAC Penny Dreadful Sundays',
             'hosts': ['stash86', 'silasary'],
-            'display_time': '6pm Australian Eastern',
+            'display_time': '4pm Japan Standard Time',
             'time': info[2][1],
             'chat_room': '#PDS'
         }),

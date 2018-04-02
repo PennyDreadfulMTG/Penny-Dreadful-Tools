@@ -23,7 +23,17 @@
                     <td>
                         <form method="post" class="inline">
                             <input type="hidden" name="match_id" value="{{id}}">
-                            <button type="submit">Delete</button>
+                            <input type="hidden" name="left_id" value="{{left_id}}">
+                            <input type="hidden" name="right_id" value="{{right_id}}">
+                            <input type="number" name="left_games" value="{{left_games}}">
+                            <input type="number" name="right_games" value="{{right_games}}">
+                            <button name="action" value="change" type="submit">Change</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="post" class="inline">
+                            <input type="hidden" name="match_id" value="{{id}}">
+                            <button name="action" value="delete" type="submit">Delete</button>
                         </form>
                     </td>
                 </tr>

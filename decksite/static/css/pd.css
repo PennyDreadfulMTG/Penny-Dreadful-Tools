@@ -1208,6 +1208,13 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
     float: none;
     margin: 0;
     max-width: 100%;
+}
+
+.inline button {
+    width: 4rem;
+}
+
+.inline select {
     width: inherit;
 }
 

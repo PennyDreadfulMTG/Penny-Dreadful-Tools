@@ -372,3 +372,14 @@ def first_runs():
             p.mtgo_username
     """.format(league_competition_type_id=query.competition_type_id_select('League'))
     return [Container(r) for r in db().execute(sql)]
+
+def update_match(match_id, left_id, left_games, right_id, right_games):
+    db().begin()
+    update_games(match_id, left_id, left_games)
+    update_games(match_id, right_id, right_games)
+    return db().commit()
+
+def update_games(match_id, deck_id, games):
+    sql = 'UPDATE deck_match SET games = %s WHERE match_id = %s AND deck_id = %s'
+    args = [games, match_id, deck_id]
+    return db().execute(sql, args)

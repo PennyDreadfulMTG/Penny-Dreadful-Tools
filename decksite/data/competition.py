@@ -45,11 +45,13 @@ def load_competitions(where='1 = 1'):
     sql = """
         SELECT c.id, c.name, c.start_date, c.end_date, c.url,
         COUNT(d.id) AS num_decks,
+        sp.name AS sponsor_name,
         ct.name AS type
         FROM competition AS c
         LEFT JOIN deck AS d ON c.id = d.competition_id
         LEFT JOIN competition_series AS cs ON cs.id = c.competition_series_id
         LEFT JOIN competition_type as ct ON ct.id = cs.competition_type_id
+        LEFT JOIN sponsor AS sp ON cs.sponsor_id = sp.id
         WHERE {where}
         GROUP BY c.id
         ORDER BY c.start_date DESC, c.name
@@ -91,6 +93,7 @@ def leaderboards(where="ct.name = 'Gatherling' AND season.id = (SELECT id FROM s
             season.code AS season_code,
             {person_query} AS person,
             cs.name AS competition_series_name,
+            sp.name AS sponsor_name,
             COUNT(DISTINCT d.id) AS tournaments,
             SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins,
             COUNT(DISTINCT d.id) + SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS points
@@ -98,6 +101,8 @@ def leaderboards(where="ct.name = 'Gatherling' AND season.id = (SELECT id FROM s
             competition AS c
         INNER JOIN
             competition_series AS cs ON cs.id = c.competition_series_id
+        LEFT JOIN
+            sponsor AS sp ON sp.id = cs.sponsor_id
         INNER JOIN
             competition_type AS ct ON ct.id = cs.competition_type_id
         INNER JOIN
@@ -144,8 +149,9 @@ def leaderboards(where="ct.name = 'Gatherling' AND season.id = (SELECT id FROM s
                 results.append(current)
             current = {
                 'competition_series_name': row['competition_series_name'],
+                'entries': [],
                 'season_code': row['season_code'],
-                'entries': []
+                'sponsor_name': row['sponsor_name']
             }
         row.pop('competition_series_name')
         row.pop('season_code')

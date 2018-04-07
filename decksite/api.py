@@ -103,7 +103,7 @@ def intro():
 @APP.route('/api/intro/', methods=['POST'])
 def hide_intro():
     r = Response(response='')
-    r.set_cookie('hide_intro', str(True))
+    r.set_cookie('hide_intro', value=str(True), expires=dtutil.dt2ts(dtutil.now()) + 60 *  60 * 24 * 365 * 10)
     return r
 
 @APP.route('/api/gitpull', methods=['POST'])

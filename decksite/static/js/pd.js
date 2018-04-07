@@ -17,7 +17,6 @@ PD.init = function () {
 };
 PD.initDismiss = function () {
     $(".dismiss").click(function () {
-        alert("If you need to see this again, visit FAQs on the About menu");
         $(this).closest(".intro-container").hide();
         $.post("/api/intro/"); // Fire and forget request to set cookie to remember dismissal of intro box and not show it again.
         return false;

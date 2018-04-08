@@ -295,7 +295,7 @@ Want to contribute? Send a Pull Request."""
     modofail.last_fail = time.time()
 
     @cmd_header('Commands')
-    async def resources(self, bot, channel, args):
+    async def resources(self, bot, channel, args, author):
         """`!resources {args}` Link to useful pages related to `args`. Examples: 'tournaments', 'card Hymn to Tourach', 'deck check', 'league'."""
         results = {}
         if len(args) > 0:
@@ -304,6 +304,8 @@ Want to contribute? Send a Pull Request."""
         s = ''
         if len(results) == 0:
             s = 'PD resources: <{url}>'.format(url=fetcher.decksite_url('/resources/'))
+        elif len(results) > 10:
+            s  = '{author}: Too many results, please be more specific.'.format(author=author.mention)
         else:
             for url, text in results.items():
                 s += '{text}: <{url}>\n'.format(text=text, url=url)
@@ -392,11 +394,11 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_message(channel, '{args}: {time}'.format(args=args, time=t))
 
     @cmd_header('Commands')
-    async def pdm(self, bot, channel, args):
+    async def pdm(self, bot, channel, args, author):
         """Alias for `!resources`."""
         # Because of the weird way we call and use methods on Commands we need …
         # pylint: disable=too-many-function-args
-        await self.resources(self, bot, channel, args)
+        await self.resources(self, bot, channel, args, author)
 
     @cmd_header('Commands')
     async def google(self, bot, channel, args, author):

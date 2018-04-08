@@ -180,10 +180,12 @@ html
         main
             h1
             (content)
-                section (0+)
-                h2 (0+)
-                (content)
+                article (0+)
+                    section (0+)
+                    h2 (0+)
+                    (content)
         footer
+        footer (status bar)
         (javascript)
 
 Main page does not have to use sections if it concerns only one subject.

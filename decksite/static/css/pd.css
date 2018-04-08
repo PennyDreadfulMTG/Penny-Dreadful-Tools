@@ -1124,7 +1124,7 @@ button, form, input, select, textarea {
     font-size: inherit;
 }
 
-button, input, select, textarea, .uploader-label {
+button, input, select, textarea, .uploader-label, .instructions {
     width: 20rem;
 }
 
@@ -1172,7 +1172,7 @@ button {
     -webkit-appearance: button;
 }
 
-button, div.error, .uploader-label, div.logout {
+button, div.error, .uploader-label, div.logout, .instructions {
     margin-left: 12rem;
 }
 
@@ -1192,11 +1192,15 @@ input.error, select.error, textarea.error {
     display: none;
 }
 
-.uploader-label {
+.uploader-label, .instructions {
     cursor: pointer;
     float: none;
     margin-top: 0;
     text-align: left;
+}
+
+.instructions {
+    color: #ccc;
 }
 
 .draw-report {
@@ -1229,7 +1233,7 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
         margin-top: 0.5625rem;
         max-width: 80%;
     }
-    button, div.error, .uploader-label {
+    button, div.error, .uploader-label, .instructions {
         margin-left: 0;
     }
 }
@@ -1587,27 +1591,22 @@ News
 
 */
 
-.news .item {
-    border-top: 0.05rem solid #502828;
+.news div a {
+    font-family: main-text;
+    text-transform: none;
 }
 
-.news h2 {
-    border-top: 0;
-    float: left;
+.news div {
+    margin: 0;
+    padding: 0;
 }
 
 .news .date {
     color: #999;
-    float: right;
+    display: inline-block;
+    font-family: main-text;
     font-size: 0.75rem;
-    line-height: 1.777;
-    margin-bottom: 2rem; /* Match h2 that it floats alongside. */
-    margin-top: 1rem; /* Match h2 that it floats alongside. */
-    padding-top: 1.05rem; /* Match h2 that it floats alongside + border-top. */
-}
-
-.news .body {
-    clear: both;
+    float: right;
 }
 
 /*

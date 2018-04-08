@@ -16,7 +16,6 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 from discordbot import emoji
-from find import search
 from magic import (card, database, fetcher, image_fetcher, multiverse, oracle,
                    rotation, tournaments)
 from shared import configuration, dtutil, repo
@@ -188,20 +187,18 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def search(self, bot, channel, args, author):
         """`!search {query}` Search for cards, using a scryfall-style query."""
-        try:
-            cards = complex_search(args)
-        except search.InvalidSearchException as e:
-            return await bot.client.send_message(channel, '{author}: {e}'.format(author=author.mention, e=e))
-        await bot.post_cards(cards, channel, author, more_results_link(args, len(cards)))
-
-    @cmd_header('Commands')
-    async def scryfall(self, bot, channel, args, author):
-        """`!scryfall {query}` Search for cards using Scryfall."""
         await bot.client.send_typing(channel)
         how_many, cardnames = fetcher.search_scryfall(args)
         cbn = oracle.cards_by_name()
         cards = [cbn.get(name) for name in cardnames if cbn.get(name) is not None]
         await bot.post_cards(cards, channel, author, more_results_link(args, how_many))
+
+    @cmd_header('Commands')
+    async def scryfall(self, bot, channel, args, author):
+        """`!scryfall {query}` Alias for `!search`."""
+        # Because of the weird way we call and use methods on Commands we need …
+        # pylint: disable=too-many-function-args
+        await self.resources(self, bot, channel, args, author)
 
     @cmd_header('Commands')
     async def status(self, bot, channel):
@@ -653,7 +650,9 @@ def results_from_queries(queries, searcher):
 def complex_search(query):
     if query == '':
         return []
-    return search.search(query)
+    how_many, cardnames = fetcher.search_scryfall(query)
+    cbn = oracle.cards_by_name()
+    return [cbn.get(name) for name in cardnames if cbn.get(name) is not None]
 
 def roughly_matches(s1, s2):
     return simplify_string(s1).find(simplify_string(s2)) >= 0

@@ -48,9 +48,6 @@ class View:
     def js_url(self):
         return url_for('static', filename='js/pd.js', v=self.commit_id())
 
-    def login_url(self):
-        return url_for('authenticate', target=request.url)
-
     def menu(self):
         archetypes_badge = None
         n = len(deck.load_decks('NOT d.reviewed'))
@@ -63,9 +60,7 @@ class View:
             {'name': gettext('Rotation Changes'), 'url': url_for('rotation_changes')},
             {'name': gettext('Rotation Speculation'), 'url': url_for('rotation_speculation')},
             {'name': gettext('Discord Chat'), 'url': 'https://discord.gg/H6EHdHu'},
-            {'name': gettext('External Links'), 'url': url_for('resources')},
-            {'name': gettext('Log In'), 'url': self.login_url()},
-            {'name': gettext('Log Out'), 'url': url_for('logout')}
+            {'name': gettext('External Links'), 'url': url_for('resources')}
         ]
         menu = [
             {'name': gettext('Metagame'), 'url': url_for('home'), 'badge': archetypes_badge, 'submenu': [

@@ -11,7 +11,7 @@ def load_news(start_date=0, end_date=sys.maxsize, max_items=sys.maxsize):
             id,
             `date`,
             title,
-            body
+            url
         FROM
             news_item
         WHERE
@@ -30,19 +30,21 @@ def load_news(start_date=0, end_date=sys.maxsize, max_items=sys.maxsize):
         result.display_date = dtutil.display_date(result.date)
     return results
 
-def add_or_update_news(news_item_id, date, title, body):
+def add_or_update_news(news_item_id, date, title, url):
     date = dtutil.dt2ts(date)
     if news_item_id is not None:
-        return update_news(news_item_id, date, title, body)
-    return add_news(date, title, body)
+        return update_news(news_item_id, date, title, url)
+    return add_news(date, title, url)
 
-def update_news(news_item_id, date, title, body):
-    sql = 'UPDATE news_item SET `date` = %s, title = %s, body = %s WHERE id = %s'
-    return db().execute(sql, [date, title, body, news_item_id])
+def update_news(news_item_id, date, title, url):
+    sql = 'UPDATE news_item SET `date` = %s, title = %s, url = %s WHERE id = %s'
+    print(sql)
+    print([date, title, url, news_item_id])
+    return db().execute(sql, [date, title, url, news_item_id])
 
-def add_news(date, title, body):
-    sql = 'INSERT INTO news_item (`date`, title, body) VALUES (%s, %s, %s)'
-    return db().execute(sql, [date, title, body])
+def add_news(date, title, url):
+    sql = 'INSERT INTO news_item (`date`, title, url) VALUES (%s, %s, %s)'
+    return db().execute(sql, [date, title, url])
 
 def delete(news_item_id):
     sql = 'DELETE FROM news_item WHERE id = %s'

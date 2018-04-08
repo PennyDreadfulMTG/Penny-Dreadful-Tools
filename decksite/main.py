@@ -377,14 +377,16 @@ def edit_matches():
 @APP.route('/admin/matches/', methods=['POST'])
 @auth.admin_required
 def post_matches():
-    if request.form.get('match_id') is not None:
+    if request.form.get('action') == 'change':
+        lg.update_match(request.form.get('match_id'), request.form.get('left_id'), request.form.get('left_games'), request.form.get('right_id'), request.form.get('right_games'))
+    elif request.form.get('action') == 'delete':
         lg.delete_match(request.form.get('match_id'))
     return edit_matches()
 
 @APP.route('/admin/news/')
 @auth.admin_required
 def edit_news():
-    new_item = Container({'form_date': dtutil.form_date(dtutil.now(dtutil.WOTC_TZ), dtutil.WOTC_TZ), 'title': '', 'body': ''})
+    new_item = Container({'form_date': dtutil.form_date(dtutil.now(dtutil.WOTC_TZ), dtutil.WOTC_TZ), 'title': '', 'url': ''})
     news_items = [new_item] + ns.load_news()
     view = EditNews(news_items)
     return view.page()
@@ -396,7 +398,7 @@ def post_news():
         ns.delete(request.form.get('id'))
     else:
         date = dtutil.parse(request.form.get('date'), dtutil.FORM_FORMAT, dtutil.WOTC_TZ)
-        ns.add_or_update_news(request.form.get('id'), date, request.form.get('title'), request.form.get('body'))
+        ns.add_or_update_news(request.form.get('id'), date, request.form.get('title'), request.form.get('url'))
     return edit_news()
 
 @APP.route('/admin/prizes/')

@@ -74,5 +74,10 @@ class WhooshSearchTest(unittest.TestCase):
     def test_normalized_beats_tokenized(self):
         self.best_match_is("Flash Food", "Flash Flood")
 
+    def test_10_cycles_are_returned(self):
+        result = self.searcher.search('Guildgate')
+        assert len(result.fuzzy) == 10
+
+
 def is_included(name, cards):
     return len([x for x in cards if x == name]) >= 1

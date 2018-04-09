@@ -59,8 +59,15 @@ class SearchResult():
         if len(self.fuzzy) == 1:
             self.fuzzy = [self.fuzzy[0][0]]
             return
-        if self.fuzzy[0][1] >= self.fuzzy[1][1] * 2:
-            self.fuzzy = [self.fuzzy[0][0]]
+        top = []
+        low = self.fuzzy[0][1]
+        for k, v in self.fuzzy:
+            if v >= self.fuzzy[0][1]:
+                top.append(k)
+            else:
+                low = v
+        if self.fuzzy[0][1] >= low * 2:
+            self.fuzzy = top
             return
         self.fuzzy = [f[0] for f in self.fuzzy]
 

@@ -8,6 +8,17 @@
             <input {{#form.errors.mtgo_username}}class="error"{{/form.errors.mtgo_username}} type="text" name="mtgo_username" id="mtgo_username" value="{{form.mtgo_username}}">
             <div class="error">{{form.errors.mtgo_username}}</div>
         </div>
+        {{#logged_person}}
+            <div class="field">
+                <label for="name">{{TT_YOUR_RECENT_DECKS}}</label>
+                    <select id="signup_recent_decks">
+                        <option value="">{{TT_CHOOSE_DECK}}</option>
+                        {{#form.recent_decks}}
+                            <option value="" data="{{list}}">{{name}}</option>
+                        {{/form.recent_decks}}
+                    </select>
+            </div>
+        {{/logged_person}}
         <div class="field">
             <label for="name">{{TT_DECK_NAME}}</label>
             <input {{#form.errors.name}}class="error"{{/form.errors.name}} type="text" name="name" id="name" value="{{form.name}}">
@@ -20,17 +31,6 @@
             <input class="uploader" id="uploader" type="file">
             <div class="error">{{form.errors.decklist}}</div>
         </div>
-        {{#logged_person}}
-        <div class="field">
-            <label for="name">{{TT_YOUR_RECENT_DECKS}}</label>
-                <select id="signup_recent_decks">
-                    <option value="">{{TT_CHOOSE_DECK}}</option>
-                    {{#form.recent_decks}}
-                        <option value="" data="{{list}}">{{name}}</option>
-                    {{/form.recent_decks}}
-                </select>
-        </div>
-        {{/logged_person}}
         <button type="submit">{{TT_SIGNUP}}</button>
     </form>
 </section>

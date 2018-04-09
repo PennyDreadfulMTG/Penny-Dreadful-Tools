@@ -31,7 +31,7 @@ class SignUp(LeagueForm):
         return gettext('Sign Up')
 
     def TT_YOUR_RECENT_DECKS(self):
-        return gettext('Your recent decks')
+        return gettext('Your Recent Decks')
 
     def TT_CHOOSE_DECK(self):
-        return gettext('Choose one of your recent decks')
+        return gettext('Select a recent deck to start from there')

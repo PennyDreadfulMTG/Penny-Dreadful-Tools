@@ -122,11 +122,11 @@ def gitpull():
     return return_json({'rebooting': False, 'commit-id': APP.config['commit-id']})
 
 @APP.route('/api/status/')
-@auth.logged
+@auth.load_person
 def person_status():
-    r = {'mtgo_username': auth.logged_person_mtgo_username(), 'discord_id': auth.discord_id()}
-    if auth.logged_person_mtgo_username():
-        d = guarantee.at_most_one(league.active_decks_by(auth.logged_person_mtgo_username()))
+    r = {'mtgo_username': auth.mtgo_username(), 'discord_id': auth.discord_id()}
+    if auth.mtgo_username():
+        d = guarantee.at_most_one(league.active_decks_by(auth.mtgo_username()))
         if d is not None:
             r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}
     return return_json(r)

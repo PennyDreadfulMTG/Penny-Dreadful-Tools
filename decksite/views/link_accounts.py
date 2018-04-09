@@ -13,7 +13,7 @@ from shared.container import Container
 class LinkAccounts(View):
     def __init__(self):
         super().__init__()
-        self.mtgo_name = auth.logged_person_mtgo_username()
+        self.mtgo_name = auth.mtgo_username()
         self.person = person.load_person_by_discord_id(auth.discord_id())
         self.form = Container()
         for k in request.form.keys():

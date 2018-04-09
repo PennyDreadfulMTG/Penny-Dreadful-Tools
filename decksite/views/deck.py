@@ -11,7 +11,7 @@ from shared.pd_exception import InvalidDataException
 
 # pylint: disable=no-self-use, too-many-instance-attributes
 class Deck(View):
-    def __init__(self, d, logged_person_id=None, discord_id=None):
+    def __init__(self, d, person_id=None, discord_id=None):
         super().__init__()
         self._deck = d
         self.prepare_deck(self._deck)
@@ -47,7 +47,7 @@ class Deck(View):
         self.cardhoarder_url = fetcher.cardhoarder_url(d)
         self.legal_formats = list(sorted(d.legal_formats, key=legality.order_score))
         self.is_in_current_run = d.is_in_current_run()
-        self.logged_person_id = logged_person_id
+        self.person_id = person_id
         self.discord_id = discord_id
 
     def has_matches(self):
@@ -110,11 +110,11 @@ class Deck(View):
     def public(self):
         if not self.is_in_current_run:
             return True
-        if self.logged_person_id is None:
+        if self.person_id is None:
             return False
         if session.get('admin'):
             return True
-        if self.logged_person_id != self._deck.person_id:
+        if self.person_id != self._deck.person_id:
             return False
         return True
 

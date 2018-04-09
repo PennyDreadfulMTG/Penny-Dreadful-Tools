@@ -5,9 +5,9 @@ from decksite.views.league_form import LeagueForm
 
 # pylint: disable=no-self-use
 class SignUp(LeagueForm):
-    def __init__(self, form, logged_person=None):
+    def __init__(self, form, person_id=None):
         super().__init__(form)
-        self.logged_person = logged_person
+        self.person_id = person_id
 
     def subtitle(self):
         return '{league} Sign Up'.format(league=self.league['name'])

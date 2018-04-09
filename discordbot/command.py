@@ -16,7 +16,6 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 from discordbot import emoji
-from find import search
 from magic import (card, database, fetcher, image_fetcher, multiverse, oracle,
                    rotation, tournaments)
 from shared import configuration, dtutil, repo
@@ -188,20 +187,18 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def search(self, bot, channel, args, author):
         """`!search {query}` Search for cards, using a scryfall-style query."""
-        try:
-            cards = complex_search(args)
-        except search.InvalidSearchException as e:
-            return await bot.client.send_message(channel, '{author}: {e}'.format(author=author.mention, e=e))
-        await bot.post_cards(cards, channel, author, more_results_link(args, len(cards)))
-
-    @cmd_header('Commands')
-    async def scryfall(self, bot, channel, args, author):
-        """`!scryfall {query}` Search for cards using Scryfall."""
         await bot.client.send_typing(channel)
         how_many, cardnames = fetcher.search_scryfall(args)
         cbn = oracle.cards_by_name()
         cards = [cbn.get(name) for name in cardnames if cbn.get(name) is not None]
         await bot.post_cards(cards, channel, author, more_results_link(args, how_many))
+
+    @cmd_header('Commands')
+    async def scryfall(self, bot, channel, args, author):
+        """`!scryfall {query}` Alias for `!search`."""
+        # Because of the weird way we call and use methods on Commands we need …
+        # pylint: disable=too-many-function-args
+        await self.resources(self, bot, channel, args, author)
 
     @cmd_header('Commands')
     async def status(self, bot, channel):
@@ -298,7 +295,7 @@ Want to contribute? Send a Pull Request."""
     modofail.last_fail = time.time()
 
     @cmd_header('Commands')
-    async def resources(self, bot, channel, args):
+    async def resources(self, bot, channel, args, author):
         """`!resources {args}` Link to useful pages related to `args`. Examples: 'tournaments', 'card Hymn to Tourach', 'deck check', 'league'."""
         results = {}
         if len(args) > 0:
@@ -307,6 +304,8 @@ Want to contribute? Send a Pull Request."""
         s = ''
         if len(results) == 0:
             s = 'PD resources: <{url}>'.format(url=fetcher.decksite_url('/resources/'))
+        elif len(results) > 10:
+            s = '{author}: Too many results, please be more specific.'.format(author=author.mention)
         else:
             for url, text in results.items():
                 s += '{text}: <{url}>\n'.format(text=text, url=url)
@@ -346,7 +345,7 @@ Want to contribute? Send a Pull Request."""
             await bot.client.send_message(channel, "Issue has been reported at <{url}>".format(url=issue.html_url))
 
     @cmd_header('Commands')
-    async def modobug(self, bot, channel, args, author):
+    async def modobug(self, bot, channel):
         """Report a Magic Online bug."""
         await bot.client.send_message(channel, 'Report Magic Online issues at <https://github.com/PennyDreadfulMTG/modo-bugs/issues/new>. Please follow the instructions at <https://github.com/PennyDreadfulMTG/modo-bugs/blob/master/README.md#how-report-or-update-bugs>. Thanks!')
 
@@ -395,11 +394,11 @@ Want to contribute? Send a Pull Request."""
         await bot.client.send_message(channel, '{args}: {time}'.format(args=args, time=t))
 
     @cmd_header('Commands')
-    async def pdm(self, bot, channel, args):
+    async def pdm(self, bot, channel, args, author):
         """Alias for `!resources`."""
         # Because of the weird way we call and use methods on Commands we need …
         # pylint: disable=too-many-function-args
-        await self.resources(self, bot, channel, args)
+        await self.resources(self, bot, channel, args, author)
 
     @cmd_header('Commands')
     async def google(self, bot, channel, args, author):
@@ -653,7 +652,9 @@ def results_from_queries(queries, searcher):
 def complex_search(query):
     if query == '':
         return []
-    return search.search(query)
+    _, cardnames = fetcher.search_scryfall(query)
+    cbn = oracle.cards_by_name()
+    return [cbn.get(name) for name in cardnames if cbn.get(name) is not None]
 
 def roughly_matches(s1, s2):
     return simplify_string(s1).find(simplify_string(s2)) >= 0

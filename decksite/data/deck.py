@@ -87,7 +87,7 @@ def load_season(season=None, league_only=False):
     return season
 
 # pylint: disable=attribute-defined-outside-init
-def load_decks(where='1 = 1', order_by=None, limit=''):
+def load_decks(where='1 = 1', order_by=None, limit='', season_id=None):
     if order_by is None:
         order_by = 'd.created_date DESC, d.finish IS NULL, d.finish'
     sql = """
@@ -119,7 +119,8 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
             cache.normalized_name AS name,
             cache.colors,
             cache.colored_symbols,
-            cache.legal_formats
+            cache.legal_formats,
+            season.id AS season_id
         FROM
             deck AS d
         LEFT JOIN
@@ -135,14 +136,28 @@ def load_decks(where='1 = 1', order_by=None, limit=''):
             deck_match AS dm ON d.id = dm.deck_id
         LEFT JOIN
             deck_match AS odm ON odm.deck_id <> d.id AND dm.match_id = odm.match_id
+        LEFT JOIN
+            (
+                SELECT
+                    `start`.id,
+                    `start`.code,
+                    `start`.start_date AS start_date,
+                    `end`.start_date AS end_date
+                FROM
+                    season AS `start`
+                LEFT JOIN
+                    season AS `end` ON `end`.id = `start`.id + 1
+            ) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
         WHERE
-            {where}
+            ({where})
+        AND
+            ({season_query})
         GROUP BY
             d.id
         ORDER BY
             {order_by}
         {limit}
-    """.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit)
+    """.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit, season_query=query.season_query(season_id))
     db().execute('SET group_concat_max_len=100000')
     rows = db().execute(sql)
     decks = []

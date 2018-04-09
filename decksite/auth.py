@@ -28,6 +28,7 @@ def setup_session(url):
     discord = make_session(token=session.get('oauth2_token'))
     user = discord.get(API_BASE_URL + '/users/@me').json()
     session['id'] = user['id']
+    session['discord_id'] = user['id']
     guilds = discord.get(API_BASE_URL + '/users/@me/guilds').json()
     wrong_guilds = False # protect against an unexpected response from discord
     for guild in guilds:
@@ -77,7 +78,9 @@ def admin_required(f):
 def logout():
     session['admin'] = None
     session['id'] = None
+    session['discord_id'] = None
     session['logged_person_id'] = None
+    session['person_id'] = None
     session['mtgo_username'] = None
 
 def redirect_uri():
@@ -89,26 +92,26 @@ def redirect_uri():
 def discord_id():
     return session.get('id')
 
-def logged_person():
+def person_id():
     return session.get('logged_person_id')
 
-def logged_person_mtgo_username():
+def mtgo_username():
     return session.get('mtgo_username')
 
-def log_person(ps):
-    session['logged_person_id'] = ps.id
-    session['mtgo_username'] = ps.name
+def login(p):
+    session['logged_person_id'] = p.id
+    session['person_id'] = p.id
+    session['mtgo_username'] = p.name
 
 def hide_intro():
     return session.get('hide_intro')
 
-def logged(f):
+def load_person(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if discord_id() is not None:
-            ps = person.load_person_by_discord_id(discord_id())
-            if ps:
-                log_person(ps)
-
+            p = person.load_person_by_discord_id(discord_id())
+            if p:
+                login(p)
         return f(*args, **kwargs)
     return decorated_function

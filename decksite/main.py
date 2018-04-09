@@ -7,7 +7,7 @@ from flask import (abort, g, make_response, redirect, request, send_file,
 from github.GithubException import GithubException
 from werkzeug import exceptions
 
-from decksite import APP, admin, auth, deck_name
+from decksite import APP, SEASON, admin, auth, deck_name
 from decksite import league as lg
 from decksite.cache import cached
 from decksite.charts import chart
@@ -45,16 +45,17 @@ def home():
     return view.page()
 
 @APP.route('/decks/')
+@SEASON.route('/decks/')
 @cached()
 def decks():
-    view = Decks(ds.load_decks(limit='LIMIT 500'))
+    view = Decks(ds.load_decks(limit='LIMIT 500', season_id=g.get('season_id')))
     return view.page()
 
 @APP.route('/decks/<deck_id>/')
-@auth.logged
+@auth.load_person
 def deck(deck_id):
     d = ds.load_deck(deck_id)
-    view = Deck(d, auth.logged_person(), auth.discord_id())
+    view = Deck(d, auth.person_id(), auth.discord_id())
     return view.page()
 
 @APP.route('/seasons/')
@@ -203,11 +204,11 @@ def rotation():
     return view.page()
 
 @APP.route('/export/<deck_id>/')
-@auth.logged
+@auth.load_person
 def export(deck_id):
     d = ds.load_deck(deck_id)
     if d.is_in_current_run():
-        if not auth.logged_person() or auth.logged_person() != d.person_id:
+        if not auth.person_id() or auth.person_id() != d.person_id:
             abort(403)
     safe_name = deck_name.file_name(d)
     return (mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
@@ -256,11 +257,11 @@ def current_league():
     return competition(lg.active_league().id)
 
 @APP.route('/signup/')
-@auth.logged
+@auth.load_person
 def signup(form=None):
     if form is None:
-        form = SignUpForm(request.form, auth.logged_person(), auth.logged_person_mtgo_username())
-    view = SignUp(form, auth.logged_person())
+        form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
+    view = SignUp(form, auth.person_id())
     return view.page()
 
 @APP.route('/signup/', methods=['POST'])
@@ -275,11 +276,11 @@ def add_signup():
     return signup(form)
 
 @APP.route('/report/')
-@auth.logged
+@auth.load_person
 def report(form=None):
     if form is None:
-        form = ReportForm(request.form, request.cookies.get('deck_id', ''), auth.logged_person())
-    view = Report(form, auth.logged_person())
+        form = ReportForm(request.form, request.cookies.get('deck_id', ''), auth.person_id())
+    view = Report(form, auth.person_id())
     return view.page()
 
 @APP.route('/report/', methods=['POST'])
@@ -517,3 +518,5 @@ def teardown_request(response):
 def init(debug=True, port=None):
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""
     APP.run(host='0.0.0.0', debug=debug, port=port)
+
+APP.register_blueprint(SEASON)

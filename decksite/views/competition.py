@@ -1,6 +1,7 @@
 from flask import url_for
 
 from decksite.view import View
+from shared import dtutil
 from shared.container import Container
 
 
@@ -33,6 +34,7 @@ class Competition(View):
                 self.has_leaderboard = True
                 self.leaderboard = sorted(leaderboard.values(), key=lambda k: (k['points'], k['played'], -k['retirements']), reverse=True)
                 self.leaderboards = [self.leaderboard] # Will be prepared in View.
+        self.date = dtutil.display_date(competition.start_date)
 
     def __getattr__(self, attr):
         return getattr(self.competition, attr)

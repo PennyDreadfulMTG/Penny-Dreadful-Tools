@@ -1,3 +1,5 @@
+from shared.database import sqlescape
+
 def person_query(table='p'):
     return 'LOWER(IFNULL(IFNULL(IFNULL({table}.name, {table}.mtgo_username), {table}.mtggoldfish_username), {table}.tappedout_username))'.format(table=table)
 
@@ -39,3 +41,11 @@ def competition_join():
         LEFT JOIN
             competition_type AS ct ON ct.id = cs.competition_type_id
     """
+
+def season_query(season=None):
+    if season is None:
+        return 'TRUE'
+    try:
+        return 'season.id = {season_id}'.format(season_id=int(season))
+    except ValueError:
+        return 'season.code = {code}'.format(code=sqlescape(season))

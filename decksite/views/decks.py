@@ -1,4 +1,4 @@
-from flask import url_for
+from flask import g, url_for
 
 from decksite.view import View
 from magic import rotation
@@ -9,7 +9,7 @@ class Decks(View):
     def __init__(self, decks):
         super().__init__()
         self.decks = decks
-        self.season_url = url_for('season', season_id=rotation.last_rotation_ex()['code'])
+        self.season_url = url_for('season', season_id=g.get('season_id', rotation.last_rotation_ex()['code']))
 
     def subtitle(self):
         return 'Latest Decks'

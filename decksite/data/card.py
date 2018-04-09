@@ -1,4 +1,4 @@
-from decksite.data import deck, guarantee
+from decksite.data import deck, guarantee, query
 from decksite.database import db
 from magic import oracle, rotation
 from shared.container import Container
@@ -18,7 +18,7 @@ def played_cards(where='1 = 1'):
             deck AS d ON dc.deck_id = d.id
         {nwdl_join}
         WHERE
-            {where}
+            ({where})
         GROUP BY
             dc.card
         ORDER BY

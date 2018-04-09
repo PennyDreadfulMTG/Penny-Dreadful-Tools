@@ -64,7 +64,7 @@ class View:
         ]
         menu = [
             {'name': gettext('Metagame'), 'url': url_for('home'), 'badge': archetypes_badge, 'submenu': [
-                {'name': gettext('Latest Decks'), 'url': url_for('decks')},
+                {'name': gettext('Latest Decks'), 'url': url_for('.decks')},
                 {'name': gettext('Archetypes'), 'url': url_for('archetypes'), 'badge': archetypes_badge},
                 {'name': gettext('People'), 'url': url_for('people')},
                 {'name': gettext('Cards'), 'url': url_for('cards')},

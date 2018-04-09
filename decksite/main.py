@@ -2,12 +2,12 @@ import os
 import traceback
 import urllib.parse
 
-from flask import (abort, g, make_response, redirect, request, send_file,
-                   send_from_directory, session, url_for)
+from flask import (abort, Blueprint, g, make_response, redirect, request,
+                   send_file, send_from_directory, session, url_for)
 from github.GithubException import GithubException
 from werkzeug import exceptions
 
-from decksite import APP, admin, auth, deck_name
+from decksite import APP, admin, auth, deck_name, SEASON
 from decksite import league as lg
 from decksite.cache import cached
 from decksite.charts import chart
@@ -45,9 +45,10 @@ def home():
     return view.page()
 
 @APP.route('/decks/')
+@SEASON.route('/decks/')
 @cached()
 def decks():
-    view = Decks(ds.load_decks(limit='LIMIT 500'))
+    view = Decks(ds.load_decks(limit='LIMIT 500', season_id=g.get('season_id')))
     return view.page()
 
 @APP.route('/decks/<deck_id>/')
@@ -517,3 +518,5 @@ def teardown_request(response):
 def init(debug=True, port=None):
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""
     APP.run(host='0.0.0.0', debug=debug, port=port)
+
+APP.register_blueprint(SEASON)

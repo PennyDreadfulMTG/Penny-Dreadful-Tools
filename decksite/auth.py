@@ -95,9 +95,9 @@ def logged_person():
 def logged_person_mtgo_username():
     return session.get('mtgo_username')
 
-def log_person(ps):
-    session['logged_person_id'] = ps.id
-    session['mtgo_username'] = ps.name
+def login(p):
+    session['logged_person_id'] = p.id
+    session['mtgo_username'] = p.name
 
 def hide_intro():
     return session.get('hide_intro')
@@ -106,9 +106,9 @@ def logged(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if discord_id() is not None:
-            ps = person.load_person_by_discord_id(discord_id())
-            if ps:
-                log_person(ps)
+            p = person.load_person_by_discord_id(discord_id())
+            if p:
+                login_person(p)
 
         return f(*args, **kwargs)
     return decorated_function

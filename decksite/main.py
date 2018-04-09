@@ -2,12 +2,12 @@ import os
 import traceback
 import urllib.parse
 
-from flask import (abort, Blueprint, g, make_response, redirect, request,
-                   send_file, send_from_directory, session, url_for)
+from flask import (abort, g, make_response, redirect, request, send_file,
+                   send_from_directory, session, url_for)
 from github.GithubException import GithubException
 from werkzeug import exceptions
 
-from decksite import APP, admin, auth, deck_name, SEASON
+from decksite import APP, SEASON, admin, auth, deck_name
 from decksite import league as lg
 from decksite.cache import cached
 from decksite.charts import chart

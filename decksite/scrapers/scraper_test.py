@@ -24,4 +24,5 @@ def test_gatherling():
 def test_manual_tappedout():
     # with APP.app_context():
     #     tappedout.scrape_url('https://tappedout.net/mtg-decks/60-island/') # Best deck
-    pass
+    if __name__ == 'false':
+        tappedout.scrape()

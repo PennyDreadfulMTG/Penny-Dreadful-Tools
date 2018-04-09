@@ -5,7 +5,7 @@ from collections import Counter
 
 import inflect
 from anytree.iterators import PreOrderIter
-from flask import request, session, url_for
+from flask import session, url_for
 from flask_babel import gettext, ngettext
 
 from decksite import APP, BABEL, admin, template

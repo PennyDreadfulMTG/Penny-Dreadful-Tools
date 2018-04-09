@@ -305,7 +305,7 @@ Want to contribute? Send a Pull Request."""
         if len(results) == 0:
             s = 'PD resources: <{url}>'.format(url=fetcher.decksite_url('/resources/'))
         elif len(results) > 10:
-            s  = '{author}: Too many results, please be more specific.'.format(author=author.mention)
+            s = '{author}: Too many results, please be more specific.'.format(author=author.mention)
         else:
             for url, text in results.items():
                 s += '{text}: <{url}>\n'.format(text=text, url=url)
@@ -345,7 +345,7 @@ Want to contribute? Send a Pull Request."""
             await bot.client.send_message(channel, "Issue has been reported at <{url}>".format(url=issue.html_url))
 
     @cmd_header('Commands')
-    async def modobug(self, bot, channel, args, author):
+    async def modobug(self, bot, channel):
         """Report a Magic Online bug."""
         await bot.client.send_message(channel, 'Report Magic Online issues at <https://github.com/PennyDreadfulMTG/modo-bugs/issues/new>. Please follow the instructions at <https://github.com/PennyDreadfulMTG/modo-bugs/blob/master/README.md#how-report-or-update-bugs>. Thanks!')
 
@@ -652,7 +652,7 @@ def results_from_queries(queries, searcher):
 def complex_search(query):
     if query == '':
         return []
-    how_many, cardnames = fetcher.search_scryfall(query)
+    _, cardnames = fetcher.search_scryfall(query)
     cbn = oracle.cards_by_name()
     return [cbn.get(name) for name in cardnames if cbn.get(name) is not None]
 

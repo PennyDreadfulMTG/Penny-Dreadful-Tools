@@ -1,4 +1,4 @@
-from decksite.data import deck, guarantee, query
+from decksite.data import deck, guarantee
 from decksite.database import db
 from magic import oracle, rotation
 from shared.container import Container

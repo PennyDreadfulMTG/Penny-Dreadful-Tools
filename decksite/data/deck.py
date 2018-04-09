@@ -385,7 +385,6 @@ def load_opponent_stats(decks):
         return
     decks_by_id = {d.id: d for d in decks}
     sql = """
-        SET range_optimizer_max_mem_size = 0; -- Prevent a huge IN clause from breaking this query on MySQL (MariaDB unaffected).
         SELECT
             d.id,
             SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) AS opp_wins,

@@ -66,6 +66,7 @@ class SearchResult():
                 top.append(k)
             else:
                 low = v
+                break
         if self.fuzzy[0][1] >= low * 2:
             self.fuzzy = top
             return

@@ -139,9 +139,7 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None):
         LEFT JOIN
             ({season_table}) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
         WHERE
-            ({where})
-        AND
-            ({season_query})
+            ({where}) AND ({season_query})
         GROUP BY
             d.id
         ORDER BY

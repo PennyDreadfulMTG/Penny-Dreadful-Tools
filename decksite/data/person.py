@@ -2,7 +2,6 @@ from typing import Union
 
 from decksite.data import deck, guarantee, query
 from decksite.database import db
-from magic import rotation
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
@@ -41,9 +40,7 @@ def load_people(where='1 = 1', order_by='`all_num_decks` DESC, name', season_id=
             ({season_table}) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
         {nwdl_join}
         WHERE
-            ({where})
-        AND
-            ({season_query})
+            ({where}) AND ({season_query})
         GROUP BY
             p.id
         ORDER BY

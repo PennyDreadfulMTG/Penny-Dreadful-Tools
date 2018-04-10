@@ -1,7 +1,4 @@
-from flask import url_for
-
 from decksite.view import View
-from magic import multiverse, rotation
 
 
 # pylint: disable=no-self-use

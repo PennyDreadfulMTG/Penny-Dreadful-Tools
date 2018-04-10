@@ -470,7 +470,7 @@ def logout():
 def robots():
     return send_from_directory(os.path.join(APP.root_path, 'static'), 'robots.txt')
 
-@APP.route('/favicon<rest>/')
+@APP.route('/favicon<rest>')
 def favicon(rest):
     return send_from_directory(os.path.join(APP.root_path, 'static/images/favicon'), 'favicon{rest}'.format(rest=rest))
 

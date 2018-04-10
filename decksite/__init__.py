@@ -3,7 +3,7 @@ import subprocess
 from flask import Blueprint, Flask, g
 from flask_babel import Babel
 
-from magic import multiverse, oracle
+from magic import multiverse, oracle, rotation
 from shared import configuration
 from shared.pd_exception import DatabaseException
 
@@ -13,7 +13,7 @@ SEASON = Blueprint('season', __name__, url_prefix='/season/<season_id>')
 
 @SEASON.url_defaults
 def add_season_id(endpoint, values):
-    values.setdefault('season_id', g.season_id)
+    values.setdefault('season_id', g.get('season_id', rotation.last_rotation_ex()['code'].lower()))
 
 @SEASON.url_value_preprocessor
 def pull_season_id(endpoint, values):

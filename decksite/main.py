@@ -73,9 +73,10 @@ def season(season_id, deck_type=None):
     return view.page()
 
 @APP.route('/people/')
+@SEASON.route('/people/')
 @cached()
 def people():
-    view = People(ps.load_people())
+    view = People(ps.load_people(season_id=g.get('season_id')))
     return view.page()
 
 @APP.route('/people/<person_id>/')

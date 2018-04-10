@@ -1,3 +1,4 @@
+from magic import rotation
 from shared.database import sqlescape
 
 
@@ -45,8 +46,23 @@ def competition_join():
 
 def season_query(season=None):
     if season is None:
+        season = rotation.last_rotation_ex()['code'].lower()
+    if season == 'all':
         return 'TRUE'
     try:
         return 'season.id = {season_id}'.format(season_id=int(season))
     except ValueError:
         return 'season.code = {code}'.format(code=sqlescape(season))
+
+def season_table():
+    return """
+        SELECT
+            `start`.id,
+            `start`.code,
+            `start`.start_date AS start_date,
+            `end`.start_date AS end_date
+        FROM
+            season AS `start`
+        LEFT JOIN
+            season AS `end` ON `end`.id = `start`.id + 1
+    """

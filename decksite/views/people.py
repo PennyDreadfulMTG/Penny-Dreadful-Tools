@@ -7,5 +7,8 @@ class People(View):
         super().__init__()
         self.people = people
 
+    def show_seasons(self):
+        return True
+
     def subtitle(self):
         return 'People'

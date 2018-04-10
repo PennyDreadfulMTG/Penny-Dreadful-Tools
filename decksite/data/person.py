@@ -21,7 +21,7 @@ def load_person(person: Union[int, str]) -> Person:
         username = sqlescape(person)
     return guarantee.exactly_one(load_people('p.id = {person_id} OR p.mtgo_username = {username}'.format(person_id=person_id, username=username)))
 
-def load_people(where='1 = 1', order_by='`season_num_decks` DESC, `all_num_decks` DESC, name'):
+def load_people(where='1 = 1', order_by='`all_num_decks` DESC, name', season_id=None):
     sql = """
         SELECT
             p.id,
@@ -32,22 +32,24 @@ def load_people(where='1 = 1', order_by='`season_num_decks` DESC, `all_num_decks
             p.discord_id,
             p.elo,
             {all_select},
-            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `all_num_competitions`,
-            {season_select},
-            SUM(DISTINCT CASE WHEN d.created_date >= %s AND d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `season_num_competitions`
+            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `all_num_competitions`
         FROM
             person AS p
         LEFT JOIN
             deck AS d ON p.id = d.person_id
+        LEFT JOIN
+            ({season_table}) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
         {nwdl_join}
         WHERE
-            {where}
+            ({where})
+        AND
+            ({season_query})
         GROUP BY
             p.id
         ORDER BY
             {order_by}
-    """.format(person_query=query.person_query(), all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_join=deck.nwdl_join(), where=where, order_by=order_by)
-    people = [Person(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())])]
+    """.format(person_query=query.person_query(), all_select=deck.nwdl_all_select(), nwdl_join=deck.nwdl_join(), where=where, order_by=order_by, season_query=query.season_query(season_id), season_table=query.season_table())
+    people = [Person(r) for r in db().execute(sql)]
     if len(people) > 0:
         set_decks(people)
         set_achievements(people)

@@ -137,17 +137,7 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None):
         LEFT JOIN
             deck_match AS odm ON odm.deck_id <> d.id AND dm.match_id = odm.match_id
         LEFT JOIN
-            (
-                SELECT
-                    `start`.id,
-                    `start`.code,
-                    `start`.start_date AS start_date,
-                    `end`.start_date AS end_date
-                FROM
-                    season AS `start`
-                LEFT JOIN
-                    season AS `end` ON `end`.id = `start`.id + 1
-            ) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
+            ({season_table}) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
         WHERE
             ({where})
         AND
@@ -157,7 +147,7 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None):
         ORDER BY
             {order_by}
         {limit}
-    """.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit, season_query=query.season_query(season_id))
+    """.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit, season_query=query.season_query(season_id), season_table=query.season_table())
     db().execute('SET group_concat_max_len=100000')
     rows = db().execute(sql)
     decks = []

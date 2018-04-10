@@ -5,8 +5,9 @@ from collections import Counter
 
 import inflect
 from anytree.iterators import PreOrderIter
-from flask import session, url_for
+from flask import g, request, session, url_for
 from flask_babel import gettext, ngettext
+from werkzeug.routing import BuildError
 
 from decksite import APP, BABEL, admin, template
 from decksite.data import archetype, deck
@@ -47,6 +48,38 @@ class View:
 
     def js_url(self):
         return url_for('static', filename='js/pd.js', v=self.commit_id())
+
+    def show_seasons(self):
+        return False
+
+    def season_name(self):
+        return 'Season {num}'.format(num=g.season_id).replace('Season all', 'All Time') if g.get('season_id') else 'Season {num}'.format(num=self.all_seasons()[0]['num'])
+
+    def all_seasons(self):
+        seasons = [{
+            'name': 'All Time',
+            'code': 'all',
+            'num': None,
+            'url': seasonized_url('all'),
+            'decks_url': url_for('season', season_id='all'),
+            'league_decks_url': url_for('season', season_id='all', deck_type='league'),
+        }]
+        num = 1
+        next_rotation_set_code = rotation.next_rotation_ex()['code']
+        for code in multiverse.SEASONS:
+            if code == next_rotation_set_code:
+                break
+            seasons.append({
+                'name': 'Season {num}'.format(num=num),
+                'code': code,
+                'num': num,
+                'url': seasonized_url(num),
+                'decks_url': url_for('season', season_id=code),
+                'league_decks_url': url_for('season', season_id=code, deck_type='league'),
+            })
+            num += 1
+        seasons.reverse()
+        return seasons
 
     def menu(self):
         archetypes_badge = None
@@ -241,9 +274,7 @@ class View:
     def prepare_people(self):
         for p in getattr(self, 'people', []):
             p.url = '/people/{id}/'.format(id=p.id)
-            if p.get('season_num_decks') is not None and p.get('all_num_decks') is not None:
-                p.season_show_record = p.season_wins or p.season_losses or p.get('season_draws', None)
-                p.all_show_record = p.all_wins or p.all_losses or p.get('all_draws', None)
+            p.all_show_record = p.get('all_wins', None) or p.get('all_losses', None) or p.get('all_draws', None)
 
     def prepare_archetypes(self):
         for a in getattr(self, 'archetypes', []):
@@ -352,3 +383,10 @@ def set_stars_and_top8(d):
 
     if len(d.stars_safe) > 0:
         d.stars_safe = '<span class="stars" title="Success Rating">{stars}</span>'.format(stars=d.stars_safe)
+
+def seasonized_url(season_id):
+    prefix = '' if request.endpoint.startswith('season.') else 'season.'
+    try:
+        return url_for('{prefix}{endpoint}'.format(prefix=prefix, endpoint=request.endpoint), season_id=season_id)
+    except BuildError:
+        return url_for(request.endpoint)

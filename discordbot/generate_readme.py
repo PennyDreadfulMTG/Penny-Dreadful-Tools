@@ -26,7 +26,7 @@ To add this bot to your servers use this <a href='https://discordapp.com/oauth2/
 
 [Discord.py](https://github.com/Rapptz/discord.py)
 
-[mtgjson](http://mtgjson.com/)
+[mtgjson](https://mtgjson.com/)
 """
 
 def generate_readme():

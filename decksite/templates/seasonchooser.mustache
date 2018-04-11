@@ -1,0 +1,11 @@
+{{#show_seasons}}
+    <label class="dropdown">
+        <div class="dd-button">{{season_name}} ▾</div>
+        <input type="checkbox" class="dd-input">
+        <ul class="dd-menu">
+            {{#all_seasons}}
+                <li><a href="{{url}}">{{name}}</a></li>
+            {{/all_seasons}}
+        </ul>
+    </label>
+{{/show_seasons}}

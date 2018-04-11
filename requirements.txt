@@ -22,7 +22,7 @@ pylint==1.8.4
 pystache==0.5.4
 pytest==3.5.0
 python-dateutil==2.7.2
-pytz==2018.3
+pytz==2018.4
 requests==2.18.4
 requests_oauthlib==0.8.0
 seaborn==0.8.1

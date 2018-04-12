@@ -198,7 +198,7 @@ Want to contribute? Send a Pull Request."""
         """`!scryfall {query}` Alias for `!search`."""
         # Because of the weird way we call and use methods on Commands we need …
         # pylint: disable=too-many-function-args
-        await self.resources(self, bot, channel, args, author)
+        await self.search(self, bot, channel, args, author)
 
     @cmd_header('Commands')
     async def status(self, bot, channel):

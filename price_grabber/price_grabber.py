@@ -13,16 +13,17 @@ from shared.database import get_database
 from shared.pd_exception import (DatabaseException, InvalidDataException,
                                  TooFewItemsException)
 
+from typing import Dict, List, Tuple, Union
 DATABASE = get_database(configuration.get('prices_database'))
 CARDS: Dict[str, str] = {}
 
-def run():
+def run() -> None:
     multiverse.init()
     oracle.init()
     fetch()
     price.cache()
 
-def fetch():
+def fetch() -> None:
     all_prices, timestamps = {}, []
     for i, url in enumerate(configuration.get('cardhoarder_urls')):
         s = fetcher_internal.fetch(url)
@@ -38,7 +39,7 @@ def fetch():
         raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=configuration.get('cardhoarder_urls') + [configuration.get('mtgotraders_url')], all_prices=all_prices))
     store(min(timestamps), all_prices)
 
-def parse_cardhoarder_prices(s):
+def parse_cardhoarder_prices(s: str) -> List[Tuple[str, str]]:
     details = []
     for line in s.splitlines()[2:]: # Skipping date and header line.
         if line.count('\t') != 6:
@@ -66,7 +67,7 @@ def parse_mtgotraders_prices(s):
 def is_exceptional_name(name):
     return name.startswith('APAC ') or 'Alternate art' in name or name.startswith('Avatar - ') or name.startswith('Euro ')
 
-def store(timestamp, all_prices):
+def store(timestamp: float, all_prices: Dict[int, List[Tuple[str, str]]]) -> None:
     DATABASE.begin()
     lows = {}
     for code in all_prices:
@@ -83,7 +84,7 @@ def store(timestamp, all_prices):
     execute(sql, values)
     DATABASE.commit()
 
-def execute(sql, values=None):
+def execute(sql: str, values: Optional[List[Union[float, str, int]]] = None) -> None:
     if values is None:
         values = []
     try:
@@ -116,7 +117,7 @@ def create_tables():
     )"""
     execute(sql)
 
-def name_lookup(name):
+def name_lookup(name: str) -> str:
     if name == 'Kongming, Sleeping Dragon':
         name = 'Kongming, "Sleeping Dragon"'
     elif name == 'Pang Tong, Young Phoenix':

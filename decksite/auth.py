@@ -7,6 +7,7 @@ from requests_oauthlib import OAuth2Session
 from decksite.data import person
 from shared import configuration
 
+from typing import Callable
 API_BASE_URL = 'https://discordapp.com/api'
 AUTHORIZATION_BASE_URL = API_BASE_URL + '/oauth2/authorize'
 TOKEN_URL = API_BASE_URL + '/oauth2/token'
@@ -56,7 +57,7 @@ def make_session(token=None, state=None, scope=None):
 def token_updater(token):
     session['oauth2_token'] = token
 
-def login_required(f):
+def login_required(f: Callable) -> Callable:
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get('id') is None:
@@ -64,7 +65,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-def admin_required(f):
+def admin_required(f: Callable) -> Callable:
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get('admin') is None:
@@ -102,7 +103,7 @@ def log_person(ps):
 def hide_intro():
     return session.get('hide_intro')
 
-def logged(f):
+def logged(f: Callable) -> Callable:
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if discord_id() is not None:

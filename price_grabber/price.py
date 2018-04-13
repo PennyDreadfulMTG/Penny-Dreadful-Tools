@@ -22,7 +22,7 @@ def info_cached(card=None, name=None):
     except IndexError:
         return None
 
-def cache():
+def cache() -> None:
     db = database.get_database(configuration.get('prices_database'))
 
     now = int(time.time())

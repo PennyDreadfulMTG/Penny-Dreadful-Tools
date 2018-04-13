@@ -16,7 +16,7 @@ from typing import Dict, Tuple, List
 
 GATHERLING_TZ = pytz.timezone('America/New_York')
 WOTC_TZ = pytz.timezone('America/Los_Angeles')
-MELBOURNE_TZ = pytz.timezone('Australia/Melbourne')
+APAC_SERIES_TZ = pytz.timezone('Asia/Tokyo')
 UTC_TZ = pytz.timezone('UTC')
 MTGGOLDFISH_TZ = UTC_TZ
 CARDHOARDER_TZ = UTC_TZ
@@ -94,15 +94,19 @@ def display_time(seconds: float, granularity: int = 2) -> str:
         else:
             value = round(seconds / seconds_per_unit) # round off last unit
             if value == max_units and seconds < (value * seconds_per_unit) and unit != 'seconds': # rounding off bumped us up to one of the *preceeding* unit.
-                # Send the rounding up back up the chain until we find a value that does not need the previous value rounding up.
-                for i in range(0, len(result)):
-                    prev_value, prev_unit = result[-i]
-                    result[-i] = (prev_value + 1, prev_unit)
-                    if result[-i][0] < intervals[prev_unit][1]:
-                        break
+                result = round_up_preceeding_unit(result, intervals)
                 seconds -= value * seconds_per_unit
                 value = 0
         if value > 0 or len(result):
             result.append((value, unit))
             seconds -= value * seconds_per_unit
     return ', '.join(['{} {}'.format(value, unit.rstrip('s') if value == 1 else unit) for (value, unit) in result[:granularity] if value > 0])
+
+def round_up_preceeding_unit(result, intervals):
+    # Send the rounding up back up the chain until we find a value that does not need the previous value rounding up.
+    for i in range(0, len(result)):
+        prev_value, prev_unit = result[-i]
+        result[-i] = (prev_value + 1, prev_unit)
+        if result[-i][0] < intervals[prev_unit][1]:
+            break
+    return result

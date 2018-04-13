@@ -42,6 +42,7 @@ class SignUpForm(Form):
                 self.recent_decks.append({"name":d["name"], "list":json.dumps(recent_deck)})
         if mtgo_username is not None:
             self.mtgo_username = mtgo_username
+        self.deck = None
 
     def do_validation(self):
         if len(self.mtgo_username) == 0:
@@ -63,31 +64,41 @@ class SignUpForm(Form):
         if len(self.decklist) == 0:
             self.errors['decklist'] = 'Decklist is required'
         else:
-            self.cards = None
-            if self.decklist.startswith('<?xml'):
-                try:
-                    self.cards = decklist.parse_xml(self.decklist)
-                except InvalidDataException as e:
-                    self.errors['decklist'] = 'Unable to read .dek decklist. Try exporting from Magic Online as Text and pasting the result.'.format(specific=str(e))
-            else:
-                try:
-                    self.cards = decklist.parse(self.decklist)
-                except InvalidDataException as e:
-                    self.errors['decklist'] = '{specific}. Try exporting from Magic Online as Text and pasting the result.'.format(specific=str(e))
+            self.parse_decklist()
             if self.cards is not None:
-                try:
-                    vivified = decklist.vivify(self.cards)
-                    errors = {}
-                    if 'Penny Dreadful' not in legality.legal_formats(vivified, None, errors):
-                        self.errors['decklist'] = 'Deck is not legal in Penny Dreadful - {error}'.format(error=errors.get('Penny Dreadful'))
-                    else:
-                        banned_for_bugs = set([c.name for c in vivified.all_cards() if any([b.bannable for b in c.bugs or []])])
-                        if len(banned_for_bugs) == 1:
-                            self.errors['decklist'] = '{name} is currently not allowed because of a game-breaking Magic Online bug'.format(name=next(iter(banned_for_bugs)))
-                        if len(banned_for_bugs) > 1:
-                            self.errors['decklist'] = '{names} are currently not allowed because of game-breaking Magic Online bugs'.format(names=', '.join([name for name in banned_for_bugs]))
-                except InvalidDataException as e:
-                    self.errors['decklist'] = str(e)
+                self.vivify_deck()
+            if self.deck is not None:
+                self.check_deck_legality()
+
+    def parse_decklist(self):
+        self.cards = None
+        if self.decklist.startswith('<?xml'):
+            try:
+                self.cards = decklist.parse_xml(self.decklist)
+            except InvalidDataException as e:
+                self.errors['decklist'] = 'Unable to read .dek decklist. Try exporting from Magic Online as Text and pasting the result.'.format(specific=str(e))
+        else:
+            try:
+                self.cards = decklist.parse(self.decklist)
+            except InvalidDataException as e:
+                self.errors['decklist'] = '{specific}. Try exporting from Magic Online as Text and pasting the result.'.format(specific=str(e))
+
+    def vivify_deck(self):
+        try:
+            self.deck = decklist.vivify(self.cards)
+        except InvalidDataException as e:
+            self.errors['decklist'] = str(e)
+
+    def check_deck_legality(self):
+        errors = {}
+        if 'Penny Dreadful' not in legality.legal_formats(self.deck, None, errors):
+            self.errors['decklist'] = 'Deck is not legal in Penny Dreadful - {error}'.format(error=errors.get('Penny Dreadful'))
+        else:
+            banned_for_bugs = set([c.name for c in self.deck.all_cards() if any([b.bannable for b in c.bugs or []])])
+            if len(banned_for_bugs) == 1:
+                self.errors['decklist'] = '{name} is currently not allowed because of a game-breaking Magic Online bug'.format(name=next(iter(banned_for_bugs)))
+            if len(banned_for_bugs) > 1:
+                self.errors['decklist'] = '{names} are currently not allowed because of game-breaking Magic Online bugs'.format(names=', '.join([name for name in banned_for_bugs]))
 
 class ReportForm(Form):
     def __init__(self, form, deck_id=None, person_id=None):
@@ -372,3 +383,14 @@ def first_runs():
             p.mtgo_username
     """.format(league_competition_type_id=query.competition_type_id_select('League'))
     return [Container(r) for r in db().execute(sql)]
+
+def update_match(match_id, left_id, left_games, right_id, right_games):
+    db().begin()
+    update_games(match_id, left_id, left_games)
+    update_games(match_id, right_id, right_games)
+    return db().commit()
+
+def update_games(match_id, deck_id, games):
+    sql = 'UPDATE deck_match SET games = %s WHERE match_id = %s AND deck_id = %s'
+    args = [games, match_id, deck_id]
+    return db().execute(sql, args)

@@ -348,12 +348,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def modobug(self, bot, channel, args, author):
         """Report a Magic Online bug."""
-        await bot.client.send_typing(channel)
-        issue = repo.create_issue(args, author, 'Discord', 'PennyDreadfulMTG/modo-bugs')
-        if issue is None:
-            await bot.client.send_message(channel, 'Report Magic Online issues at <https://github.com/PennyDreadfulMTG/modo-bugs/issues/new>')
-        else:
-            await bot.client.send_message(channel, 'Issue has been reported at <{url}>. Please add square brackets and screenshot as explained here: <https://github.com/PennyDreadfulMTG/modo-bugs/blob/master/README.md>'.format(url=issue.html_url))
+        await bot.client.send_message(channel, 'Report Magic Online issues at <https://github.com/PennyDreadfulMTG/modo-bugs/issues/new>. Please follow the instructions at <https://github.com/PennyDreadfulMTG/modo-bugs/blob/master/README.md#how-report-or-update-bugs>. Thanks!')
 
     @cmd_header('Commands')
     async def gbug(self, bot, channel, args, author):
@@ -575,7 +570,7 @@ Want to contribute? Send a Pull Request."""
             ],
             'tournament': [
                 """
-                We have {num_tournaments} free-to-enter weekly tournaments with prizes from Cardhoarder.
+                We have {num_tournaments} free-to-enter weekly tournaments, most of which have prizes from Cardhoarder.
                 They are hosted on gatherling.com along with a lot of other player-run Magic Online events.
                 """.format(num_tournaments=num_tournaments),
                 {

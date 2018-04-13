@@ -43,11 +43,11 @@ def get_nearest_tournament(time_direction=TimeDirection.AFTER):
     return sorted(dates, key=lambda t: t[1])[index]
 
 def get_all_next_tournament_dates(start, index=0):
-    aus_start = start.astimezone(tz=dtutil.MELBOURNE_TZ)
+    apac_start = start.astimezone(tz=dtutil.APAC_SERIES_TZ)
     until = start + timedelta(days=7)
     pdfnmeu_time = ['Friday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index]]
     pdsat_time = ['Saturday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index]]
-    apds_time = ['APAC Sunday', rrule.rrule(rrule.WEEKLY, byhour=18, byminute=0, bysecond=0, dtstart=aus_start, until=until, byweekday=rrule.SU)[index]]
+    apds_time = ['APAC Sunday', rrule.rrule(rrule.WEEKLY, byhour=16, byminute=0, bysecond=0, dtstart=apac_start, until=until, byweekday=rrule.SU)[index]]
     pds_time = ['Sunday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index]]
     pdm_time = ['Monday', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index]]
     pdt_time = ['Thursday', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index]]
@@ -85,7 +85,8 @@ def all_series_info():
             'hosts': ['merawder', 'bakert99'],
             'display_time': '1:30pm Eastern',
             'time': info[0][1],
-            'chat_room': '#PDF'
+            'chat_room': '#PDF',
+            'sponsor_name': None
 
         }),
         Container({
@@ -93,34 +94,39 @@ def all_series_info():
             'hosts': ['back_alley_g', 'bigm'],
             'display_time': '1:30pm Eastern',
             'time': info[1][1],
-            'chat_room': '#PDS'
+            'chat_room': '#PDS',
+            'sponsor_name': 'Cardhoarder'
         }),
         Container({
             'name': 'APAC Penny Dreadful Sundays',
             'hosts': ['stash86', 'silasary'],
-            'display_time': '6pm Australian Eastern',
+            'display_time': '4pm Japan Standard Time',
             'time': info[2][1],
-            'chat_room': '#PDS'
+            'chat_room': '#PDS',
+            'sponsor_name': None
         }),
         Container({
             'name': 'Penny Dreadful Sundays',
             'hosts': ['bakert99', 'littlefield', 'mrsad'],
             'display_time': '1:30pm Eastern',
             'time': info[3][1],
-            'chat_room': '#PDS'
+            'chat_room': '#PDS',
+            'sponsor_name': 'Cardhoarder'
         }),
         Container({
             'name': 'Penny Dreadful Mondays',
             'hosts': ['stash86', 'silasary'],
             'display_time': '7pm Eastern',
             'time': info[4][1],
-            'chat_room': '#PDM'
+            'chat_room': '#PDM',
+            'sponsor_name': 'Cardhoarder'
         }),
         Container({
             'name': 'Penny Dreadful Thursdays',
             'hosts': ['silasary', 'stash86'],
             'display_time': '7pm Eastern',
             'time': info[5][1],
-            'chat_room': '#PDT'
+            'chat_room': '#PDT',
+            'sponsor_name': 'Cardhoarder'
         })
     ]

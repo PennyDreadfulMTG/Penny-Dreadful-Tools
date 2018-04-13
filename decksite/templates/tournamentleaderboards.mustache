@@ -1,7 +1,7 @@
-<h1>Cardhoarder Tournament Series Leaderboards</h1>
+<h1>Tournament Series Leaderboards</h1>
 {{#series}}
     <section>
-        <h2>{{competition_series_name}}</h2>
+        <h2>{{competition_series_name}} {{#sponsor_name}}🏆{{/sponsor_name}}</h2>
         {{> spinner}}
         <table class="with-marginalia">
             <thead>
@@ -31,6 +31,7 @@
 {{/series}}
 <section>
     <h2>Prizes</h2>
+    <p>Leaderboards marked with 🏆 award <a class="external" href="https://cardhoarder.com/">Cardhoarder</a> credit at the end of the season.</p>
     {{> spinner}}
     <table>
         <thead>
@@ -48,5 +49,4 @@
             {{/prizes}}
         </tbody>
     </table>
-    <p>Prizes from our sponsor <a class="external" href="https://cardhoarder.com/">Cardhoarder</a> in credit.</p>
 </section>

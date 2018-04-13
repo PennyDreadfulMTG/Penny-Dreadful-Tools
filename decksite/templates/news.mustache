@@ -1,15 +1,11 @@
 <article class="news">
     <h1>News</h1>
-    <section>
-        {{#news}}
-            <div class="item">
-                <h2>{{title}}</h2>
-                <p class="date">{{display_date}}</p>
-                <p class="body">{{body}}</p>
-            </div>
-        {{/news}}
-        {{#all_news_url}}
-            <p><a href="{{all_news_url}}">All News</a></p>
-        {{/all_news_url}}
-    </section>
+    {{#news}}
+        <div>
+            <p>{{#url}}<a href="{{url}}">{{/url}}{{title}} <span class="date">{{display_date}}</span>{{#url}}</a>{{/url}}</p>
+        </div>
+    {{/news}}
+    {{#all_news_url}}
+        <p><a href="{{all_news_url}}">More News …</a></p>
+    {{/all_news_url}}
 </article>

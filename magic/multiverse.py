@@ -199,7 +199,7 @@ def update_bugged_cards(use_transaction=True):
         if card_id is None:
             print("UNKNOWN BUGGED CARD: {card}".format(card=bug['card']))
             continue
-        db().execute("INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog) VALUES (%s, %s, %s, %s, %s, %s)", [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog']])
+        db().execute("INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog, bannable) VALUES (%s, %s, %s, %s, %s, %s, %s)", [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog'], bug['bannable']])
     if use_transaction:
         db().commit()
 

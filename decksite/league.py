@@ -81,7 +81,7 @@ class SignUpForm(Form):
                     if 'Penny Dreadful' not in legality.legal_formats(vivified, None, errors):
                         self.errors['decklist'] = 'Deck is not legal in Penny Dreadful - {error}'.format(error=errors.get('Penny Dreadful'))
                     else:
-                        banned_for_bugs = set([c.name for c in vivified.all_cards() if c.name in fetcher.banned_bugged_cards()])
+                        banned_for_bugs = set([c.name for c in vivified.all_cards() if any([b.bannable for b in c.bugs or []])])
                         if len(banned_for_bugs) == 1:
                             self.errors['decklist'] = '{name} is currently not allowed because of a game-breaking Magic Online bug'.format(name=next(iter(banned_for_bugs)))
                         if len(banned_for_bugs) > 1:

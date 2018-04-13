@@ -172,7 +172,7 @@ def card_alias_properties():
 
 def card_bug_properties():
     props = {}
-    for k in ['id', 'card_id', 'description', 'classification', 'last_confirmed', 'url', 'from_bug_blog']:
+    for k in ['id', 'card_id', 'description', 'classification', 'last_confirmed', 'url', 'from_bug_blog', 'bannable']:
         props[k] = copy.deepcopy(BASE)
         props[k]['nullable'] = False
     props['id']['type'] = INTEGER
@@ -183,6 +183,7 @@ def card_bug_properties():
     props['last_confirmed']['type'] = INTEGER
     props['url']['type'] = TEXT
     props['from_bug_blog']['type'] = BOOLEAN
+    props['bannable']['type'] = BOOLEAN
     return props
 
 def name_query(column: str = 'face_name') -> str:

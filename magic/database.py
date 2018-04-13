@@ -7,7 +7,7 @@ from shared.database import get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
-SCHEMA_VERSION = 97
+SCHEMA_VERSION = 98
 DATABASE = Container()
 
 def db():

@@ -19,7 +19,6 @@ def test_gatherling():
     with APP.app_context():
         gatherling.scrape(5)
 
-@pytest.mark.slowtest
 @pytest.mark.tappedout
 def test_manual_tappedout():
     with APP.app_context():

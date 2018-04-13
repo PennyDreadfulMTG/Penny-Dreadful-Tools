@@ -330,10 +330,10 @@ def database2json(propname: str) -> str:
         propname = "id"
     return underscore2camel(propname)
 
-def underscore2camel(s):
+def underscore2camel(s: str) -> str:
     return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)
 
-def date2int(s, name):
+def date2int(s: str, name: str) -> str:
     if name == 'release_date':
         return dtutil.parse_to_ts(s, '%Y-%m-%d', dtutil.WOTC_TZ)
     return s

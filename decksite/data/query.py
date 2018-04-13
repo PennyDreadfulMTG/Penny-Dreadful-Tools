@@ -1,3 +1,7 @@
+from magic import rotation
+from shared.database import sqlescape
+
+
 def person_query(table='p'):
     return 'LOWER(IFNULL(IFNULL(IFNULL({table}.name, {table}.mtgo_username), {table}.mtggoldfish_username), {table}.tappedout_username))'.format(table=table)
 
@@ -38,4 +42,27 @@ def competition_join():
             competition_series AS cs ON cs.id = c.competition_series_id
         LEFT JOIN
             competition_type AS ct ON ct.id = cs.competition_type_id
+    """
+
+def season_query(season=None):
+    if season is None:
+        season = rotation.last_rotation_ex()['code'].lower()
+    if season == 'all':
+        return 'TRUE'
+    try:
+        return 'season.id = {season_id}'.format(season_id=int(season))
+    except ValueError:
+        return 'season.code = {code}'.format(code=sqlescape(season))
+
+def season_table():
+    return """
+        SELECT
+            `start`.id,
+            `start`.code,
+            `start`.start_date AS start_date,
+            `end`.start_date AS end_date
+        FROM
+            season AS `start`
+        LEFT JOIN
+            season AS `end` ON `end`.id = `start`.id + 1
     """

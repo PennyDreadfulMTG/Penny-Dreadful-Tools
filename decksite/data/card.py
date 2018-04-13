@@ -18,7 +18,7 @@ def played_cards(where='1 = 1'):
             deck AS d ON dc.deck_id = d.id
         {nwdl_join}
         WHERE
-            {where}
+            ({where})
         GROUP BY
             dc.card
         ORDER BY

@@ -16,7 +16,7 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!oracle {name}` Give the Oracle text of the named card.
 
-`!art` No Help Available
+`!art {name}` Display the art (only) of the most recent printing of the named card.
 
 `!barbs` Gives Volvary's helpful advice for when to sideboard in Aura Barbs.
 
@@ -25,6 +25,8 @@ The bot will search for any quoted cards, and respond with the card details.
 `!explain`. Get a list of things the bot knows how to explain.
 
 `!explain {thing}`. Print commonly needed explanation for 'thing'.
+
+`!gbug` Report a Gatherling bug.
 
 `!google {args}` Search google for `args`.
 
@@ -54,9 +56,9 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!rotation` Give the date of the next Penny Dreadful rotation.
 
-`!rulings` Display rulings for a card.
+`!rulings {name}` Display rulings for a card.
 
-`!scryfall {query}` Search for cards using Scryfall.
+`!scryfall {query}` Alias for `!search`.
 
 `!search {query}` Search for cards, using a scryfall-style query.
 

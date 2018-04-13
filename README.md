@@ -14,8 +14,6 @@ View individual subdirectories for details
 
 **decksite** is the code for [pennydreadfulmagic.com](https://pennydreadfulmagic.com/).
 
-**find** is the code powering our card search syntax.
-
 **magic** knows everything about all magic cards and how to fetch that information from the internet.
 
 **price-grabber** builds a database of historic prices.

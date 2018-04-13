@@ -381,14 +381,14 @@ Links in text are underlined in such a way as to break on descenders like those 
 
 */
 
-a, main table.calendar a, main .intro .details a {
+a, main table.calendar a, main .intro .details a, .details a {
     color: inherit;
     font-family: heading-caps;
     text-decoration: none;
     text-transform: lowercase;
 }
 
-main a:hover, main table.calendar a:hover {
+main a:hover, main table.calendar a:hover, .details a:hover {
     background-color: #eee;
     border-radius: 0.317em;
     transition-duration: 1s;
@@ -1042,15 +1042,18 @@ Button bars.
 */
 
 ul.buttons li {
-    list-style-type: none;
-    margin-left: 0.75rem;
     color: #999;
-    border: 0.05rem solid #eee;
-    border-radius: 0.563em;
     display: block;
     font-size: 0.75rem;
+    list-style-type: none;
     padding: 0.422em 1em;
     text-align: center;
+}
+
+ul.buttons > li {
+    border: 0.05rem solid #eee;
+    border-radius: 0.563em;
+    margin-left: 0.75rem;
 }
 
 /* We only want to float the buttons alongside the h1. Other buttons should just appear in the flow. */
@@ -1060,20 +1063,77 @@ ul.buttons li {
     margin-top: 2rem; /* Line up with the h1 of the title when not wrapped under. */
 }
 
+.banner ul.buttons > li {
+    float: left;
+}
+
 /* When the buttons are links we want the whole button to be the link. */
 
 .banner ul.buttons li {
-    float: left;
     padding: 0;
 }
 
-.banner ul.buttons li a {
+.banner ul.buttons li a, .banner ul.buttons li .dd-button {
     display: block;
     padding: 0.422em 1em;
 }
 
-ul.buttons li a:hover {
+ul.buttons li a:hover, ul.buttons li .dd-button:hover {
     background: #eee;
+}
+
+/* Button Bar Dropdowns - adapted from https://codepen.io/raneio/pen/NbbZEM */
+
+.dropdown {
+    display: inline-block;
+    position: relative;
+}
+
+.dd-button {
+    display: inline-block;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.dd-input {
+    display: none;
+}
+
+.dropdown .dd-menu {
+    border: 0.05rem solid #eee;
+    list-style-type: none;
+    padding: 0;
+    position: absolute;
+    top: 100%;
+}
+
+.dd-input + .dd-menu {
+    display: none;
+}
+
+.dd-input:checked + .dd-menu {
+    display: block;
+}
+
+.dd-menu {
+  list-style-type: none;
+  position: absolute;
+  top: 100%;
+}
+
+.dd-menu li {
+    cursor: pointer;
+    float: none;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.dd-menu li:hover {
+    background-color: #f6f6f6;
+}
+
+.dd-menu li a {
+    display: block;
 }
 
 /*
@@ -1139,7 +1199,7 @@ input[disabled=true] {
     background: none;
 }
 
-button, input, label, select, textarea {
+button, input, form label, select, textarea {
     margin-top: 1rem;
 }
 
@@ -1147,7 +1207,7 @@ input[type=number] {
     width: 2rem;
 }
 
-label {
+form label {
     display: block;
     float: left;
     margin-right: 1rem;
@@ -1159,7 +1219,7 @@ textarea {
     height: 10rem;
 }
 
-label {
+form label {
     margin-right: 1rem;
     width: 10rem;
 }
@@ -1225,7 +1285,7 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
 }
 
 @media only screen and (max-width: 800px) {
-    label {
+    form label {
         float: none;
         text-align: left;
     }

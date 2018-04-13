@@ -224,7 +224,7 @@ PD.initStatusFooter = function() {
             }
             if (data.deck) {
                 text += " <span class=\"division\"></span> " + data.deck.wins + "–" + data.deck.losses + " with <a href=\"" + PD.htmlEscape(data.deck.url) + "\">" + PD.htmlEscape(data.deck.name) + "</a> <span class=\"division\"></span> <a href=\"/retire/\">Retire</a>";
-            } else {
+            } else if (data.mtgo_username != null) {
                 text += " <span class=\"division\"></span> You do not have an active league run — <a href=\"/signup/\">Sign Up</a>";
             }
             text += " <span class=\"division\"></span> <a href=\"/logout/\">Log Out</a>";

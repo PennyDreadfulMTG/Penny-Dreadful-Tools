@@ -41,7 +41,7 @@ def get_matches(d, should_load_decks=False):
         decks_by_id = {d.id: d for d in decks}
     for m in matches:
         m.date = dtutil.ts2dt(m.date)
-        if should_load_decks and m.opponent_deck_id is not None:
+        if should_load_decks and m.opponent_deck_id is not None and decks_by_id.get(m.opponent_deck_id):
             m.opponent_deck = decks_by_id[m.opponent_deck_id]
         elif should_load_decks:
             m.opponent_deck = None

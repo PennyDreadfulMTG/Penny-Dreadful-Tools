@@ -50,7 +50,7 @@ class SignUpForm(Form):
         elif len(self.mtgo_username) > card.MAX_LEN_VARCHAR:
             self.errors['mtgo_username'] = "Magic Online Username is too long (max {n})".format(n=card.MAX_LEN_VARCHAR)
         elif active_decks_by(self.mtgo_username):
-            self.errors['mtgo_username'] = "You already have an active league run.  If you wish to retire your run early, private message '!retire' to PDBot"
+            self.errors['mtgo_username'] = "You already have an active league run.  If you wish to retire your run early, private message '!retire' to PDBot or visit the <a href=\"{retire_url}\">retire page</a>".format(retire_url=url_for('retire'))
         if len(self.name) == 0:
             self.errors['name'] = 'Deck Name is required'
         elif len(self.name) > card.MAX_LEN_TEXT:

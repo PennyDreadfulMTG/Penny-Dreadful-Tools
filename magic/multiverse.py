@@ -15,7 +15,10 @@ from shared.whoosh_write import WhooshWriter
 FORMAT_IDS: Dict[str, int] = {}
 CARD_IDS: Dict[str, int] = {}
 
-SEASONS = ['EMN', 'KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX', 'DOM']
+SEASONS = [
+    'EMN', 'KLD', 'AER', 'AKH', 'HOU',
+    'XLN', 'RIX', 'DOM', 'M19',
+    ]
 
 HARDCODED_MELD_NAMES = [
     ["Gisela, the Broken Blade", "Bruna, the Fading Light", "Brisela, Voice of Nightmares"],

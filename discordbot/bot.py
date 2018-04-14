@@ -204,6 +204,7 @@ async def background_task_spoiler_season() -> None:
         except InvalidDataException:
             oracle.insert_scryfall_card(c)
             print('Imported {0} from Scryfall'.format(c['name']))
+        await asyncio.sleep(5)
 
 async def background_task_tournaments() -> None:
     await BOT.client.wait_until_ready()
@@ -249,6 +250,5 @@ async def background_task_tournaments() -> None:
         await asyncio.sleep(timer)
 
 def init() -> None:
-    asyncio.ensure_future(background_task_spoiler_season())
     asyncio.ensure_future(background_task_tournaments())
     BOT.init()

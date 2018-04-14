@@ -18,7 +18,7 @@ unit:
 	@echo
 	@echo "******************************** Unit Tests ***********************************"
 	@echo
-	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 run.py tests -x -m "not slowtest"
+	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 run.py tests -x -m "not tappedout"
 	@echo
 
 # Run lint on all python files.
@@ -28,6 +28,7 @@ lint:
 	@echo
 	@pylint  --generate-rcfile | grep -v "ignored-modules=" >.pylintrc.tmp
 	@find . -name "*.py" | grep -v .git | xargs pylint --ignored-modules=MySQLdb --rcfile=.pylintrc.tmp --reports=n -f parseable; (ret=$$?; echo; rm -f .pylintrc.tmp && exit $$ret)
+	@mypy --ignore-missing-imports .
 	@isort --check-only
 
 readme:

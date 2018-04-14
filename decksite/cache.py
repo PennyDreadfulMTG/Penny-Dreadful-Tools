@@ -2,6 +2,7 @@ import binascii
 import datetime
 import functools
 import os
+from typing import Callable
 
 from flask import make_response, request
 from werkzeug.contrib.cache import SimpleCache
@@ -10,11 +11,16 @@ from . import localization
 
 CACHE = SimpleCache()
 
-def cached():
+def cached() -> Callable:
     return cached_impl(cacheable=True, must_revalidate=True, client_only=False, client_timeout=1 * 60 * 60, server_timeout=5 * 60)
 
 # pylint: disable=too-many-arguments
-def cached_impl(cacheable=False, must_revalidate=True, client_only=True, client_timeout=0, server_timeout=5 * 60, key='view{id}{locale}'):
+def cached_impl(cacheable: bool = False,
+                must_revalidate: bool = True,
+                client_only: bool = True,
+                client_timeout: int = 0,
+                server_timeout: int = 5 * 60,
+                key: str = 'view{id}{locale}') -> Callable:
     """
     @see https://jakearchibald.com/2016/caching-best-practices/
          https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching

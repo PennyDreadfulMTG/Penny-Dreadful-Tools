@@ -3,8 +3,9 @@ import json
 import os
 import random
 import string
+from typing import List, Union
 
-from shared.pd_exception import InvalidArgumentException
+from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
 DEFAULTS = {
     'cardhoarder_urls': [],
@@ -48,7 +49,23 @@ DEFAULTS = {
     'league_webhook_token': None,
 }
 
-def get(key: str) -> str:
+def get_str(key: str) -> str:
+    val = get(key)
+    if val is None:
+        return None
+    if isinstance(val, str):
+        return val
+    raise InvalidDataException("Expected a String")
+
+def get_list(key: str) -> List[str]:
+    val = get(key)
+    if val is None:
+        return None
+    if isinstance(val, list):
+        return val
+    raise InvalidDataException("Expected a List[String]")
+
+def get(key: str) -> Union[str, List[str], int]:
     try:
         cfg = json.load(open('config.json'))
     except FileNotFoundError:

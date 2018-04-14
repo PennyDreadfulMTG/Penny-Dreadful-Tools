@@ -15,7 +15,10 @@ from shared.whoosh_write import WhooshWriter
 FORMAT_IDS: Dict[str, int] = {}
 CARD_IDS: Dict[str, int] = {}
 
-SEASONS = ['EMN', 'KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX', 'DOM']
+SEASONS = [
+    'EMN', 'KLD', 'AER', 'AKH', 'HOU',
+    'XLN', 'RIX', 'DOM', 'M19',
+    ]
 
 HARDCODED_MELD_NAMES = [
     ["Gisela, the Broken Blade", "Bruna, the Fading Light", "Brisela, Voice of Nightmares"],
@@ -199,7 +202,7 @@ def update_bugged_cards(use_transaction=True):
         if card_id is None:
             print("UNKNOWN BUGGED CARD: {card}".format(card=bug['card']))
             continue
-        db().execute("INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog) VALUES (%s, %s, %s, %s, %s, %s)", [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog']])
+        db().execute("INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog, bannable) VALUES (%s, %s, %s, %s, %s, %s, %s)", [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog'], bug['bannable']])
     if use_transaction:
         db().commit()
 
@@ -330,10 +333,10 @@ def database2json(propname: str) -> str:
         propname = "id"
     return underscore2camel(propname)
 
-def underscore2camel(s):
+def underscore2camel(s: str) -> str:
     return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)
 
-def date2int(s, name):
+def date2int(s: str, name: str) -> str:
     if name == 'release_date':
         return dtutil.parse_to_ts(s, '%Y-%m-%d', dtutil.WOTC_TZ)
     return s

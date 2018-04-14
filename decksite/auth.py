@@ -1,5 +1,6 @@
 import os
 from functools import wraps
+from typing import Callable
 
 from flask import redirect, request, session, url_for
 from requests_oauthlib import OAuth2Session
@@ -57,7 +58,7 @@ def make_session(token=None, state=None, scope=None):
 def token_updater(token):
     session['oauth2_token'] = token
 
-def login_required(f):
+def login_required(f: Callable) -> Callable:
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get('id') is None:
@@ -65,7 +66,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-def admin_required(f):
+def admin_required(f: Callable) -> Callable:
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get('admin') is None:

@@ -22,8 +22,8 @@ def info_cached(card=None, name=None):
     except IndexError:
         return None
 
-def cache():
-    db = database.get_database(configuration.get('prices_database'))
+def cache() -> None:
+    db = database.get_database(configuration.get_str('prices_database'))
 
     now = int(time.time())
     week = now - 60 * 60 * 24 * 7

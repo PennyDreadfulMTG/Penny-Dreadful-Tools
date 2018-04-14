@@ -72,7 +72,7 @@ class Bot:
         if len(cards) == 0:
             await self.post_no_cards(channel, replying_to)
             return
-        disable_emoji = channel.id in configuration.get('not_pd').split(',')
+        disable_emoji = channel.id in configuration.get_str('not_pd').split(',')
         cards = command.uniqify_cards(cards)
         if len(cards) > command.MAX_CARDS_SHOWN:
             cards = cards[:command.DEFAULT_CARDS_SHOWN]

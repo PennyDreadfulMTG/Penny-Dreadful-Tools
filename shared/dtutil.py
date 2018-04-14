@@ -1,6 +1,7 @@
 import datetime
 import re
 from collections import OrderedDict
+from typing import Dict, List, Tuple
 
 import inflect
 import pytz
@@ -22,11 +23,11 @@ CARDHOARDER_TZ = UTC_TZ
 FORM_FORMAT = '%Y-%m-%d %H:%M'
 
 # Converts a UTC timestamp (seconds) into a timezone-aware UTC datetime.
-def ts2dt(ts):
+def ts2dt(ts: float) -> datetime.datetime:
     return pytz.timezone('UTC').localize(datetime.datetime.utcfromtimestamp(ts))
 
 # Converts a timezone-aware UTC datetime into a UTC timestamp (seconds).
-def dt2ts(dt):
+def dt2ts(dt: datetime.datetime) -> float:
     return dt.timestamp()
 
 # Converts the given string in the format `format` to a timezone-aware UTC datetime assuming the original string is in timezone `tz`.
@@ -52,7 +53,7 @@ def day_of_week(dt, tz):
 def form_date(dt, tz):
     return dt.astimezone(tz).strftime(FORM_FORMAT)
 
-def display_date(dt, granularity=1):
+def display_date(dt: datetime.datetime, granularity: int = 1) -> str:
     start = now()
     if (start - dt) > datetime.timedelta(365):
         s = '{:%b %Y}'.format(dt.astimezone(WOTC_TZ))
@@ -67,21 +68,21 @@ def display_date(dt, granularity=1):
             return 'just now'
         return '{duration} {suffix}'.format(duration=display_time(diff, granularity), suffix=suffix)
 
-def replace_day_with_ordinal(s):
+def replace_day_with_ordinal(s: str) -> str:
     return re.sub(r'_(.*)_', day2ordinal, s)
 
 def day2ordinal(m):
     p = inflect.engine()
     return p.ordinal(int(m.group(1)))
 
-def display_time(seconds, granularity=2):
-    intervals = OrderedDict()
+def display_time(seconds: float, granularity: int = 2) -> str:
+    intervals: Dict[str, Tuple[int, int]] = OrderedDict()
     intervals['weeks'] = (None, 60 * 60 * 24 * 7)
     intervals['days'] = (7, 60 * 60 * 24)
     intervals['hours'] = (24, 60 * 60)
     intervals['minutes'] = (60, 60)
     intervals['seconds'] = (60, 1)
-    result = []
+    result: List[Tuple[int, str]] = []
     seconds = round(seconds) # in case we've been handed a decimal not an int
     if seconds == 0:
         return 'now'

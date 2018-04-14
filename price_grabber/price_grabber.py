@@ -1,7 +1,7 @@
 import html
 import re
 import sys
-from typing import Dict
+from typing import Dict, List, Optional, Tuple
 
 import ftfy
 
@@ -13,32 +13,32 @@ from shared.database import get_database
 from shared.pd_exception import (DatabaseException, InvalidDataException,
                                  TooFewItemsException)
 
-DATABASE = get_database(configuration.get('prices_database'))
+DATABASE = get_database(configuration.get_str('prices_database'))
 CARDS: Dict[str, str] = {}
 
-def run():
+def run() -> None:
     multiverse.init()
     oracle.init()
     fetch()
     price.cache()
 
-def fetch():
+def fetch() -> None:
     all_prices, timestamps = {}, []
-    for i, url in enumerate(configuration.get('cardhoarder_urls')):
+    for _, url in enumerate(configuration.get_list('cardhoarder_urls')):
         s = fetcher_internal.fetch(url)
         s = ftfy.fix_encoding(s)
         timestamps.append(dtutil.parse_to_ts(s.split('\n', 1)[0].replace('UPDATED ', ''), '%Y-%m-%dT%H:%M:%S+00:00', dtutil.CARDHOARDER_TZ))
-        all_prices[i] = parse_cardhoarder_prices(s)
-    url = configuration.get('mtgotraders_url')
+        all_prices[url] = parse_cardhoarder_prices(s)
+    url = configuration.get_str('mtgotraders_url')
     if url:
-        s = fetcher_internal.fetch(configuration.get('mtgotraders_url'))
+        s = fetcher_internal.fetch(url)
         timestamps.append(dtutil.dt2ts(dtutil.now()))
         all_prices['mtgotraders'] = parse_mtgotraders_prices(s)
     if not timestamps:
-        raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=configuration.get('cardhoarder_urls') + [configuration.get('mtgotraders_url')], all_prices=all_prices))
+        raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=configuration.get_list('cardhoarder_urls') + [configuration.get_str('mtgotraders_url')], all_prices=all_prices))
     store(min(timestamps), all_prices)
 
-def parse_cardhoarder_prices(s):
+def parse_cardhoarder_prices(s: str) -> List[Tuple[str, str]]:
     details = []
     for line in s.splitlines()[2:]: # Skipping date and header line.
         if line.count('\t') != 6:
@@ -66,9 +66,9 @@ def parse_mtgotraders_prices(s):
 def is_exceptional_name(name):
     return name.startswith('APAC ') or 'Alternate art' in name or name.startswith('Avatar - ') or name.startswith('Euro ')
 
-def store(timestamp, all_prices):
+def store(timestamp: float, all_prices: Dict[str, List[Tuple[str, str]]]) -> None:
     DATABASE.begin()
-    lows = {}
+    lows: Dict[str, int] = {}
     for code in all_prices:
         prices = all_prices[code]
         for name, p in prices:
@@ -83,7 +83,7 @@ def store(timestamp, all_prices):
     execute(sql, values)
     DATABASE.commit()
 
-def execute(sql, values=None):
+def execute(sql: str, values: Optional[List[object]] = None) -> None:
     if values is None:
         values = []
     try:
@@ -116,7 +116,7 @@ def create_tables():
     )"""
     execute(sql)
 
-def name_lookup(name):
+def name_lookup(name: str) -> str:
     if name == 'Kongming, Sleeping Dragon':
         name = 'Kongming, "Sleeping Dragon"'
     elif name == 'Pang Tong, Young Phoenix':

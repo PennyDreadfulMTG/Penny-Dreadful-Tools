@@ -1,10 +1,9 @@
-from shared import database_mysql
-from shared.database_generic import GenericDatabase
+from shared.database_mysql import MysqlDatabase
 from shared.pd_exception import InvalidArgumentException
 
 
-def get_database(location: str) -> GenericDatabase:
-    return database_mysql.MysqlDatabase(location)
+def get_database(location: str) -> MysqlDatabase:
+    return MysqlDatabase(location)
 
 def sqlescape(s, force_string: bool = False, backslashed_escaped=False):
     if str(s).isdecimal() and not force_string:

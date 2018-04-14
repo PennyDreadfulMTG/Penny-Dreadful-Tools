@@ -7,8 +7,8 @@ from magic import oracle
 from magic.fetcher_internal import FetchException, escape
 from shared import configuration
 
-if not os.path.exists(configuration.get('image_dir')):
-    os.mkdir(configuration.get('image_dir'))
+if not os.path.exists(configuration.get_str('image_dir')):
+    os.mkdir(configuration.get_str('image_dir'))
 
 def basename(cards):
     from magic import card

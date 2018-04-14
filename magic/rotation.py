@@ -55,6 +55,6 @@ def text():
 
 __SETS = []
 def sets():
-    if __SETS is None:
+    if not __SETS:
         __SETS.extend(init())
     return __SETS

@@ -8,8 +8,8 @@ def init():
     info = fetcher.whatsinstandard()
     if info['deprecated']:
         print('Current whatsinstandard API version is DEPRECATED.')
-    sets = info['sets']
-    return [parse_rotation_date(release) for release in sets]
+    set_info = info['sets']
+    return [parse_rotation_date(release) for release in set_info]
 
 def last_rotation():
     return last_rotation_ex()['enter_date']
@@ -18,10 +18,10 @@ def next_rotation():
     return next_rotation_ex()['enter_date']
 
 def last_rotation_ex():
-    return max([s for s in SETS if s['enter_date'] < dtutil.now()], key=lambda s: s['enter_date'])
+    return max([s for s in sets() if s['enter_date'] < dtutil.now()], key=lambda s: s['enter_date'])
 
 def next_rotation_ex():
-    return min([s for s in SETS if s['enter_date'] > dtutil.now()], key=lambda s: s['enter_date'])
+    return min([s for s in sets() if s['enter_date'] > dtutil.now()], key=lambda s: s['enter_date'])
 
 def next_supplemental():
     last = last_rotation() + datetime.timedelta(weeks=3)
@@ -53,4 +53,8 @@ def text():
         return "The supplemental rotation is in {sdiff} (The next full rotation is in {diff})".format(diff=dtutil.display_time(diff.total_seconds()), sdiff=dtutil.display_time(sdiff.total_seconds()))
     return "The next rotation is in {diff}".format(diff=dtutil.display_time(diff.total_seconds()))
 
-SETS = init()
+__SETS = []
+def sets():
+    if __SETS is None:
+        __SETS.extend(init())
+    return __SETS

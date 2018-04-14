@@ -1,5 +1,6 @@
 import os
 from functools import wraps
+from typing import Callable
 
 from flask import redirect, request, session, url_for
 from requests_oauthlib import OAuth2Session
@@ -7,7 +8,6 @@ from requests_oauthlib import OAuth2Session
 from decksite.data import person
 from shared import configuration
 
-from typing import Callable
 API_BASE_URL = 'https://discordapp.com/api'
 AUTHORIZATION_BASE_URL = API_BASE_URL + '/oauth2/authorize'
 TOKEN_URL = API_BASE_URL + '/oauth2/token'

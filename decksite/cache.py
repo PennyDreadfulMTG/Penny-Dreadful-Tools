@@ -2,13 +2,13 @@ import binascii
 import datetime
 import functools
 import os
+from typing import Callable
 
 from flask import make_response, request
 from werkzeug.contrib.cache import SimpleCache
 
 from . import localization
 
-from typing import Callable
 CACHE = SimpleCache()
 
 def cached() -> Callable:

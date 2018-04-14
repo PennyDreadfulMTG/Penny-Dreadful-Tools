@@ -1,7 +1,6 @@
 import copy
 import unicodedata
-from datetime import datetime
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Optional, cast
 
 from shared import dtutil
 from shared.container import Container
@@ -275,7 +274,7 @@ def determine_legalities(s: Optional[str]) -> Dict[str, str]:
         v[name] = status
     return v
 
-def determine_bugs(s: Optional[str]) -> Optional[List[Dict[str, Union[str, datetime, bool]]]]:
+def determine_bugs(s: Optional[str]) -> Optional[List[Dict[str, object]]]:
     if s is None:
         return None
     bugs = s.split('_SEPARATOR_')
@@ -283,7 +282,9 @@ def determine_bugs(s: Optional[str]) -> Optional[List[Dict[str, Union[str, datet
     for b in bugs:
         description, classification, last_confirmed, url, from_bug_blog = b.split('|')
         bb = from_bug_blog == '1'
-        v.append({'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(float(last_confirmed)), 'url': url, 'from_bug_blog': bb})
+        bug = {'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(float(last_confirmed)), 'url': url, 'from_bug_blog': bb}
+        v.append(bug)
+    if v:
         return v
     return None
 

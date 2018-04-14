@@ -1,11 +1,10 @@
 import datetime
 import re
 from collections import OrderedDict
+from typing import Dict, List, Tuple
 
 import inflect
 import pytz
-
-from typing import Dict, Tuple, List
 
 # All dates should be stored as a UTC timestamp (seconds).
 # All dates should be manipulated in memory as a timezone-aware UTC datetime.

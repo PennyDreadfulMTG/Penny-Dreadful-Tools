@@ -23,7 +23,7 @@ def info_cached(card=None, name=None):
         return None
 
 def cache() -> None:
-    db = database.get_database(configuration.get('prices_database'))
+    db = database.get_database(configuration.get_str('prices_database'))
 
     now = int(time.time())
     week = now - 60 * 60 * 24 * 7

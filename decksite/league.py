@@ -50,7 +50,7 @@ class SignUpForm(Form):
         elif len(self.mtgo_username) > card.MAX_LEN_VARCHAR:
             self.errors['mtgo_username'] = "Magic Online Username is too long (max {n})".format(n=card.MAX_LEN_VARCHAR)
         elif active_decks_by(self.mtgo_username):
-            self.errors['mtgo_username'] = "You already have an active league run.  If you wish to retire your run early, private message '!retire' to PDBot or visit the <a href=\"{retire_url}\">retire page</a>".format(retire_url=url_for('retire'))
+            self.errors['mtgo_username'] = "You already have an active league run.  If you wish to retire your run early, private message '!retire' to PDBot or visit the retire page."
         if len(self.name) == 0:
             self.errors['name'] = 'Deck Name is required'
         elif len(self.name) > card.MAX_LEN_TEXT:
@@ -94,7 +94,7 @@ class SignUpForm(Form):
         if 'Penny Dreadful' not in legality.legal_formats(self.deck, None, errors):
             self.errors['decklist'] = 'Deck is not legal in Penny Dreadful - {error}'.format(error=errors.get('Penny Dreadful'))
         else:
-            banned_for_bugs = set([c.name for c in self.deck.all_cards() if any([b.bannable for b in c.bugs or []])])
+            banned_for_bugs = set([c.name for c in self.deck.all_cards() if any([b.get('bannable') for b in c.bugs or []])])
             if len(banned_for_bugs) == 1:
                 self.errors['decklist'] = '{name} is currently not allowed because of a game-breaking Magic Online bug'.format(name=next(iter(banned_for_bugs)))
             if len(banned_for_bugs) > 1:

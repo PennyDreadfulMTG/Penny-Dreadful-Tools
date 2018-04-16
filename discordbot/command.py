@@ -793,17 +793,17 @@ async def send_image_with_retry(client, channel, image_file, text='') -> None:
         await client.delete_message(message)
         await client.send_file(channel, image_file, content=text)
 
-def single_card_text_internal(client, card, disable_emoji) -> str:
-    mana = emoji.replace_emoji(''.join(card.mana_cost or []), client)
-    legal = ' — ' + emoji.legal_emoji(card, True)
+def single_card_text_internal(client, requested_card, disable_emoji) -> str:
+    mana = emoji.replace_emoji(''.join(requested_card.mana_cost or []), client)
+    legal = ' — ' + emoji.legal_emoji(requested_card, True)
     if disable_emoji:
         legal = ''
-    if card.get('mode', None) == '$':
-        text = '{name} {legal} — {price}'.format(name=card.name, price=fetcher.card_price_string(card), legal=legal)
+    if requested_card.get('mode', None) == '$':
+        text = '{name} {legal} — {price}'.format(name=requested_card.name, price=fetcher.card_price_string(requested_card), legal=legal)
     else:
-        text = '{name} {mana} — {type}{legal}'.format(name=card.name, mana=mana, type=card.type, legal=legal)
-    if card.bugs:
-        for bug in card.bugs:
+        text = '{name} {mana} — {type}{legal}'.format(name=requested_card.name, mana=mana, type=requested_card.type, legal=legal)
+    if requested_card.bugs:
+        for bug in requested_card.bugs:
             text += '\n:beetle:{rank} bug: {bug}'.format(bug=bug['description'], rank=bug['classification'])
             if bug['last_confirmed'] < (dtutil.now() - datetime.timedelta(days=60)):
                 time_since_confirmed = (dtutil.now() - bug['last_confirmed']).seconds

@@ -75,8 +75,9 @@ def day2ordinal(m):
     p = inflect.engine()
     return p.ordinal(int(m.group(1)))
 
-IntervalsType = Dict[str, Tuple[int, int]]
-ResultsType = List[Tuple[int, str]]
+IntervalsType = Dict[str, Tuple[int, int]] #pylint: disable=invalid-name
+ResultsType = List[Tuple[int, str]] #pylint: disable=invalid-name
+
 def display_time(seconds: float, granularity: int = 2) -> str:
     intervals: IntervalsType = OrderedDict()
     intervals['weeks'] = (None, 60 * 60 * 24 * 7)

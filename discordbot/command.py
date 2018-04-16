@@ -18,13 +18,13 @@ from discord.member import Member
 from discord.message import Message
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from shared.lazy import lazy_property
 
 from discordbot import emoji
 from magic import (card, database, fetcher, image_fetcher, multiverse, oracle,
                    rotation, tournaments)
 from magic.card import Card
 from shared import configuration, dtutil, repo
+from shared.lazy import lazy_property
 from shared.pd_exception import TooFewItemsException
 from shared.whoosh_search import WhooshSearcher
 

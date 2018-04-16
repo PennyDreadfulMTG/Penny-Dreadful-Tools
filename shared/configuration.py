@@ -57,6 +57,15 @@ def get_str(key: str) -> str:
         return val
     raise InvalidDataException("Expected a String")
 
+def get_int(key: str) -> int:
+    val = get(key)
+    if val is None:
+        return None
+    if isinstance(val, int):
+        return val
+    raise InvalidDataException("Expected an Integer")
+
+
 def get_list(key: str) -> List[str]:
     val = get(key)
     if val is None:

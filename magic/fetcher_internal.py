@@ -4,7 +4,7 @@ import shutil
 import stat
 import urllib.request
 import zipfile
-from typing import Optional
+from typing import Any, Dict, Optional
 
 import requests
 from cachecontrol import CacheControl, CacheControlAdapter
@@ -50,7 +50,7 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
         raise FetchException(e)
 
-def fetch_json(url, character_encoding=None):
+def fetch_json(url, character_encoding=None) -> Any:
     try:
         blob = fetch(url, character_encoding)
         return json.loads(blob)
@@ -58,7 +58,10 @@ def fetch_json(url, character_encoding=None):
         print('Failed to load JSON:\n{0}'.format(blob))
         raise
 
-def post(url, data=None, json_data=None):
+def post(url: str,
+         data: Optional[Dict[str, str]] = None,
+         json_data: Any = None
+        ) -> str:
     print('POSTing to {url} with {data}'.format(url=url, data=data))
     try:
         response = SESSION.post(url, data=data, json=json_data)

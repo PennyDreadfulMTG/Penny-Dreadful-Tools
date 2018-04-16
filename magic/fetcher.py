@@ -2,6 +2,7 @@ import csv
 import json
 import os
 from collections import OrderedDict
+from typing import Dict, List, Union, cast
 from urllib import parse
 
 import pytz
@@ -96,8 +97,8 @@ def legal_cards(force=False, season=None):
     legal_txt = internal.fetch(url, encoding, force=force)
     return legal_txt.strip().split('\n')
 
-def mtgjson_version():
-    return internal.fetch_json('https://mtgjson.com/json/version.json')
+def mtgjson_version() -> str:
+    return cast(str, internal.fetch_json('https://mtgjson.com/json/version.json'))
 
 def mtgo_status():
     try:
@@ -105,7 +106,7 @@ def mtgo_status():
     except (FetchException, json.decoder.JSONDecodeError):
         return 'UNKNOWN'
 
-def post_discord_webhook(webhook_id: str, webhook_token: str, message: str, name=None) -> bool:
+def post_discord_webhook(webhook_id: str, webhook_token: str, message: str, name: str = None) -> bool:
     if webhook_id is None or webhook_token is None:
         return False
     url = "https://discordapp.com/api/webhooks/{id}/{token}".format(id=webhook_id, token=webhook_token)
@@ -176,5 +177,5 @@ def time(q):
             raise TooFewItemsException('Not a recognized timezone: {q}'.format(q=q))
     return dtutil.now(timezone).strftime('%l:%M %p')
 
-def whatsinstandard():
+def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
     return internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json')

@@ -31,7 +31,7 @@ def dt2ts(dt: datetime.datetime) -> float:
     return dt.timestamp()
 
 # Converts the given string in the format `format` to a timezone-aware UTC datetime assuming the original string is in timezone `tz`.
-def parse(s, date_format, tz):
+def parse(s: str, date_format: str, tz) -> datetime.datetime:
     dt = datetime.datetime.strptime(s, date_format)
     return tz.localize(dt).astimezone(pytz.timezone('UTC'))
 

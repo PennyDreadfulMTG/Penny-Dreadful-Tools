@@ -9,7 +9,7 @@ import textwrap
 import time
 import traceback
 from copy import copy
-from typing import Callable, List
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import inflect
 from discord.channel import Channel
@@ -26,7 +26,7 @@ from magic.card import Card
 from shared import configuration, dtutil, repo
 from shared.lazy import lazy_property
 from shared.pd_exception import TooFewItemsException
-from shared.whoosh_search import WhooshSearcher
+from shared.whoosh_search import SearchResult, WhooshSearcher
 
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10
@@ -91,7 +91,7 @@ def find_method(name: str) -> Callable:
         return getattr(Commands, method[0])
     return None
 
-def build_help(readme=False, cmd=None):
+def build_help(readme: bool = False, cmd: None = None) -> str:
     def print_group(group):
         msg = ''
         for methodname in dir(Commands):
@@ -142,7 +142,7 @@ class Commands:
     """
 
     @cmd_header('Commands')
-    async def help(self, client, channel, args, **_):
+    async def help(self, client: Client, channel: Channel, args: str, **_) -> None:
         """`!help` Provides information on how to operate the bot."""
         if args:
             msg = build_help(cmd=args)
@@ -161,7 +161,7 @@ Want to contribute? Send a Pull Request."""
             await client.send_message(channel, msg)
 
     @cmd_header('Commands')
-    async def random(self, client, channel, args, **_):
+    async def random(self, client: Client, channel: Channel, args: str, **_) -> None:
         """`!random` Request a random PD legal card.
 `!random X` Request X random PD legal cards."""
         number = 1
@@ -174,20 +174,20 @@ Want to contribute? Send a Pull Request."""
         await post_cards(client, cards, channel)
 
     @cmd_header('Developer')
-    async def update(self, client, channel, **_):
+    async def update(self, client, channel, **_) -> None:
         """Forces an update to legal cards and bugs."""
         oracle.legal_cards(force=True)
         multiverse.update_bugged_cards()
         await client.send_message(channel, 'Reloaded legal cards and bugs.')
 
     @cmd_header('Developer')
-    async def restartbot(self, client, channel, **_):
+    async def restartbot(self, client, channel, **_) -> None:
         """Restarts the bot."""
         await client.send_message(channel, 'Rebooting!')
         await client.logout()
 
     @cmd_header('Commands')
-    async def search(self, client, channel, args, author, **_):
+    async def search(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
         """`!search {query}` Search for cards, using a scryfall-style query."""
         await client.send_typing(channel)
         how_many, cardnames = fetcher.search_scryfall(args)
@@ -196,38 +196,38 @@ Want to contribute? Send a Pull Request."""
         await post_cards(client, cards, channel, author, more_results_link(args, how_many))
 
     @cmd_header('Commands')
-    async def scryfall(self, client, channel, args, author, **_):
+    async def scryfall(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
         """`!scryfall {query}` Alias for `!search`."""
         # Because of the weird way we call and use methods on Commands we need …
         # pylint: disable=too-many-function-args
         await self.search(self, client, channel, args, author)
 
     @cmd_header('Commands')
-    async def status(self, client, channel, **_):
+    async def status(self, client: Client, channel: Channel, **_) -> None:
         """`!status` Gives the status of Magic Online: UP or DOWN."""
         status = fetcher.mtgo_status()
         await client.send_message(channel, 'MTGO is {status}'.format(status=status))
 
     @cmd_header('Developer')
-    async def echo(self, client, channel, args, **_):
+    async def echo(self, client, channel, args, **_) -> None:
         """Repeat after me…"""
         s = emoji.replace_emoji(args, client)
         await client.send_message(channel, s)
 
     @cmd_header('Commands')
-    async def barbs(self, client, channel, **_):
+    async def barbs(self, client: Client, channel: Channel, **_) -> None:
         """`!barbs` Gives Volvary's helpful advice for when to sideboard in Aura Barbs."""
         msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
         await client.send_message(channel, msg)
 
     @cmd_header('Commands')
-    async def quality(self, client, channel, **_):
+    async def quality(self, client: Client, channel: Channel, **_) -> None:
         """`!quality` A helpful reminder about everyone's favorite way to play digital Magic"""
         msg = "**Magic Online** is a Quality™ Program."
         await client.send_message(channel, msg)
 
     @cmd_header('Commands')
-    async def rhinos(self, client, channel, **_):
+    async def rhinos(self, client: Client, channel: Channel, **_) -> None:
         """`!rhinos` Anything can be a rhino if you try hard enough"""
         rhinos = []
         rhino_name = "Siege Rhino"
@@ -249,33 +249,33 @@ Want to contribute? Send a Pull Request."""
         await post_cards(client, rhinos, channel, additional_text=msg)
 
     @cmd_header('Commands')
-    async def rotation(self, client, channel, **_):
+    async def rotation(self, client: Client, channel: Channel, **_) -> None:
         """`!rotation` Give the date of the next Penny Dreadful rotation."""
         await client.send_message(channel, rotation.text())
 
     @cmd_header('Commands')
-    async def rulings(self, client, channel, args, author, **_):
+    async def rulings(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
         """`!rulings {name}` Display rulings for a card."""
         await client.send_typing(channel)
         await single_card_text(client, channel, args, author, card_rulings, "rulings")
 
     @cmd_header('Commands')
-    async def _oracle(self, client, channel, args, author, **_):
+    async def _oracle(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
         """`!oracle {name}` Give the Oracle text of the named card."""
         await single_card_text(client, channel, args, author, oracle_text, "oracle")
 
     @cmd_header('Commands')
-    async def price(self, client, channel, args, author, **_):
+    async def price(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
         """`!price {name}` Get price information about the named card."""
         await single_card_text(client, channel, args, author, fetcher.card_price_string, "price")
 
     @cmd_header('Commands')
-    async def legal(self, client, channel, args, author, **_):
+    async def legal(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
         """Announce whether the specified card is legal or not."""
         await single_card_text(client, channel, args, author, lambda c: '', "legal")
 
     @cmd_header('Commands')
-    async def modofail(self, client, channel, args, author, **_):
+    async def modofail(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
         """Ding!"""
         if args.lower() == "reset":
             self.modofail.count = 0
@@ -297,7 +297,7 @@ Want to contribute? Send a Pull Request."""
     modofail.last_fail = time.time()
 
     @cmd_header('Commands')
-    async def resources(self, client, channel, args, author, **_):
+    async def resources(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
         """`!resources {args}` Link to useful pages related to `args`. Examples: 'tournaments', 'card Hymn to Tourach', 'deck check', 'league'."""
         results = {}
         if len(args) > 0:
@@ -314,7 +314,7 @@ Want to contribute? Send a Pull Request."""
         await client.send_message(channel, s)
 
     @cmd_header('Developer')
-    async def clearimagecache(self, client, channel, **_):
+    async def clearimagecache(self, client, channel, **_) -> None:
         """Deletes all the cached images.  Use sparingly"""
         image_dir = configuration.get('image_dir')
         if not image_dir:
@@ -325,7 +325,7 @@ Want to contribute? Send a Pull Request."""
         await client.send_message(channel, '{n} cleared.'.format(n=len(files)))
 
     @cmd_header('Developer')
-    async def notpenny(self, client, channel, args, **_):
+    async def notpenny(self, client, channel, args, **_) -> None:
         """Don't show PD Legality in this channel"""
         existing = configuration.get('not_pd')
         if args and args[0] == "server":
@@ -337,7 +337,7 @@ Want to contribute? Send a Pull Request."""
         await client.send_message(channel, 'Disable PD marks')
 
     @cmd_header('Commands')
-    async def bug(self, client, channel, args, author, **_):
+    async def bug(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
         """Report a bug/task for the Penny Dreadful Tools team. For MTGO bugs see `!modobug`."""
         await client.send_typing(channel)
         issue = repo.create_issue(args, author)
@@ -347,12 +347,12 @@ Want to contribute? Send a Pull Request."""
             await client.send_message(channel, "Issue has been reported at <{url}>".format(url=issue.html_url))
 
     @cmd_header('Commands')
-    async def modobug(self, client, channel, **_):
+    async def modobug(self, client: Client, channel: Channel, **_) -> None:
         """Report a Magic Online bug."""
         await client.send_message(channel, 'Report Magic Online issues at <https://github.com/PennyDreadfulMTG/modo-bugs/issues/new>. Please follow the instructions at <https://github.com/PennyDreadfulMTG/modo-bugs/blob/master/README.md#how-report-or-update-bugs>. Thanks!')
 
     @cmd_header('Commands')
-    async def gbug(self, client, channel, args, author, **_):
+    async def gbug(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
         """Report a Gatherling bug."""
         await client.send_typing(channel)
         issue = repo.create_issue(args, author, 'Discord', 'PennyDreadfulMTG/gatherling')
@@ -363,12 +363,12 @@ Want to contribute? Send a Pull Request."""
 
 
     @cmd_header('Commands')
-    async def invite(self, client, channel, **_):
+    async def invite(self, client: Client, channel: Channel, **_) -> None:
         """Invite me to your server."""
         await client.send_message(channel, "Invite me to your discord server by clicking this link: <https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=268757056>")
 
     @cmd_header('Commands')
-    async def spoiler(self, client, channel, args, author, **_):
+    async def spoiler(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
         """`!spoiler {cardname}`: Request a card from an upcoming set."""
         if len(args) == 0:
             return await client.send_message(channel, '{author}: Please specify a card name.'.format(author=author.mention))
@@ -387,7 +387,7 @@ Want to contribute? Send a Pull Request."""
         oracle.scryfall_import(sfcard['name'])
 
     @cmd_header('Commands')
-    async def time(self, client, channel, args, author, **_):
+    async def time(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
         """`!time {location}` Show the current time in the specified location."""
         try:
             t = fetcher.time(args.strip())
@@ -396,14 +396,14 @@ Want to contribute? Send a Pull Request."""
         await client.send_message(channel, '{args}: {time}'.format(args=args, time=t))
 
     @cmd_header('Commands')
-    async def pdm(self, client, channel, args, author, **_):
+    async def pdm(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
         """Alias for `!resources`."""
         # Because of the weird way we call and use methods on Commands we need …
         # pylint: disable=too-many-function-args
         await self.resources(self, client, channel, args, author)
 
     @cmd_header('Commands')
-    async def google(self, client, channel, args, author, **_):
+    async def google(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
         """`!google {args}` Search google for `args`."""
         await client.send_typing(channel)
 
@@ -432,7 +432,7 @@ Want to contribute? Send a Pull Request."""
         await client.send_message(channel, s)
 
     @cmd_header('Commands')
-    async def tournament(self, client, channel, **_):
+    async def tournament(self, client: Client, channel: Channel, **_) -> None:
         """`!tournament` Get information about the next tournament."""
         t = tournaments.next_tournament_info()
         prev = tournaments.previous_tournament_info()
@@ -445,7 +445,7 @@ Want to contribute? Send a Pull Request."""
         await client.send_message(channel, 'The next tournament is {name} {next_time}.\nSign up on <http://gatherling.com/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], next_time=next_time, prev_message=prev_message, url=fetcher.decksite_url('/tournaments/')))
 
     @cmd_header('Commands')
-    async def art(self, client, channel, args, author, **_):
+    async def art(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
         """`!art {name}` Display the art (only) of the most recent printing of the named card."""
         await client.send_typing(channel)
         c = await single_card_or_send_error(client, channel, args, author, "art")
@@ -457,7 +457,7 @@ Want to contribute? Send a Pull Request."""
                 await client.send_message(channel, '{author}: Could not get image.'.format(author=author.mention))
 
     @cmd_header('Commands')
-    async def explain(self, client, channel, args, **_):
+    async def explain(self, client: Client, channel: Channel, args: str, **_) -> None:
         """`!explain`. Get a list of things the bot knows how to explain.
 `!explain {thing}`. Print commonly needed explanation for 'thing'."""
         num_tournaments = inflect.engine().number_to_words(len(tournaments.all_series_info()))
@@ -607,7 +607,7 @@ Want to contribute? Send a Pull Request."""
         await client.send_message(channel, s)
 
     @cmd_header('Developer')
-    async def version(self, client, channel, **_):
+    async def version(self, client, channel, **_) -> None:
         """Display the current version numbers"""
         await client.send_typing(channel)
         commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
@@ -615,7 +615,7 @@ Want to contribute? Send a Pull Request."""
         return await client.send_message(channel, "I am currently running mtgbot version `{commit}`, and mtgjson version `{mtgjson}`".format(commit=commit, mtgjson=mtgjson))
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
-def uniqify_cards(cards):
+def uniqify_cards(cards: List[Card]) -> List[Card]:
     # Remove multiple printings of the same card from the result set.
     results = collections.OrderedDict()
     for c in cards:
@@ -642,7 +642,7 @@ def parse_mode(query: str) -> List[str]:
         query = query[1:]
     return [mode, query]
 
-def results_from_queries(queries: List[str]):
+def results_from_queries(queries: List[str]) -> List[SearchResult]:
     all_results = []
     for query in queries:
         mode, query = parse_mode(query)
@@ -658,23 +658,23 @@ def complex_search(query: str) -> List[Card]:
     cbn = oracle.cards_by_name()
     return [cbn.get(name) for name in cardnames if cbn.get(name) is not None]
 
-def roughly_matches(s1, s2):
+def roughly_matches(s1: str, s2: str) -> bool:
     return simplify_string(s1).find(simplify_string(s2)) >= 0
 
-def simplify_string(s):
+def simplify_string(s: str) -> str:
     s = ''.join(s.split())
     return re.sub(r'[\W_]+', '', s).lower()
 
-def disambiguation(cards):
+def disambiguation(cards: List[str]) -> str:
     if len(cards) > 5:
         return ",".join(cards)
     return " ".join([" ".join(x) for x in zip(DISAMBIGUATION_EMOJIS, cards)])
 
-async def disambiguation_reactions(client, message, cards):
+async def disambiguation_reactions(client: Client, message: Message, cards: List[str]) -> None:
     for i in range(1, len(cards)+1):
         await client.add_reaction(message, DISAMBIGUATION_EMOJIS_BY_NUMBER[i])
 
-async def single_card_or_send_error(client, channel, args, author, command):
+async def single_card_or_send_error(client: Client, channel: Channel, args: str, author: Member, command: str) -> Optional[Card]:
     result = results_from_queries([args])[0]
     if result.has_match() and not result.is_ambiguous():
         return cards_from_names_with_mode([result.get_best_match()], result.mode)[0]
@@ -686,7 +686,7 @@ async def single_card_or_send_error(client, channel, args, author, command):
         await client.send_message(channel, '{author}: No matches.'.format(author=author.mention))
 
 # pylint: disable=too-many-arguments
-async def single_card_text(client, channel, args, author, f, command):
+async def single_card_text(client: Client, channel: Channel, args: str, author: Member, f: Callable, command: str) -> None:
     c = await single_card_or_send_error(client, channel, args, author, command)
     if c is not None:
         legal_emoji = emoji.legal_emoji(c)
@@ -694,10 +694,10 @@ async def single_card_text(client, channel, args, author, f, command):
         message = '**{name}** {legal_emoji} {text}'.format(name=c.name, legal_emoji=legal_emoji, text=text)
         await client.send_message(channel, message)
 
-def oracle_text(c):
+def oracle_text(c: Card) -> str:
     return c.text
 
-def card_rulings(c):
+def card_rulings(c: Card) -> str:
     rulings = fetcher.rulings(c.name)
     rulings = [r['comment'] for r in rulings]
     if len(rulings) > 3:
@@ -706,7 +706,7 @@ def card_rulings(c):
         rulings.append("And {n} others.  See <https://scryfall.com/search?q=%21%22{cardname}%22#rulings>".format(n=n, cardname=fetcher.internal.escape(c.name)))
     return "\n".join(rulings) or "No rulings available."
 
-def site_resources(args):
+def site_resources(args: str) -> Dict[Any, Any]:
     results = {}
     if ' ' in args.strip():
         area, detail = args.strip().split(' ', 1)
@@ -726,7 +726,7 @@ def site_resources(args):
         results[url] = args
     return results
 
-def resources_resources(args):
+def resources_resources(args: str) -> Dict[Any, Any]:
     results = {}
     words = args.split()
     resources = fetcher.resources()
@@ -740,14 +740,14 @@ def resources_resources(args):
                 results[url] = text
     return results
 
-def more_results_link(args, total):
+def more_results_link(args: str, total: int) -> str:
     return 'and {n} more.\n<https://scryfall.com/search/?q={q}>'.format(n=total - 4, q=fetcher.internal.escape(args)) if total > MAX_CARDS_SHOWN else ''
 
 async def post_cards(
-        client,
+        client: Client,
         cards: List[Card],
         channel: Channel,
-        replying_to: Member = None,
+        replying_to: Optional[Member] = None,
         additional_text: str = ''
 ) -> None:
     await client.send_typing(channel)
@@ -776,7 +776,7 @@ async def post_cards(
     if image_file is None:
         await client.send_message(channel, text)
     else:
-        await send_image_with_retry(channel, image_file, text)
+        await send_image_with_retry(client, channel, image_file, text)
 
 async def post_no_cards(client, channel, replying_to: Member) -> None:
     if replying_to is not None:
@@ -786,14 +786,14 @@ async def post_no_cards(client, channel, replying_to: Member) -> None:
     message = await client.send_message(channel, text)
     await client.add_reaction(message, '❎')
 
-async def send_image_with_retry(client, channel, image_file, text='') -> None:
+async def send_image_with_retry(client: Client, channel: Channel, image_file: str, text: str = '') -> None:
     message = await client.send_file(channel, image_file, content=text)
     if message and message.attachments and message.attachments[0]['size'] == 0:
         print('Message size is zero so resending')
         await client.delete_message(message)
         await client.send_file(channel, image_file, content=text)
 
-def single_card_text_internal(client, requested_card, disable_emoji) -> str:
+def single_card_text_internal(client: Client, requested_card: Card, disable_emoji: bool) -> str:
     mana = emoji.replace_emoji(''.join(requested_card.mana_cost or []), client)
     legal = ' — ' + emoji.legal_emoji(requested_card, True)
     if disable_emoji:

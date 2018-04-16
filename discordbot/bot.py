@@ -1,33 +1,26 @@
 import asyncio
-import datetime
 import re
-from typing import List
 
 import discord
-from discord.channel import Channel
 from discord.member import Member
 from discord.message import Message
 
-from discordbot import command, emoji
-from magic import fetcher, image_fetcher, multiverse, oracle, tournaments
-from magic.card import Card
+from discordbot import command
+from magic import fetcher, multiverse, oracle, tournaments
 from shared import configuration, dtutil
 from shared.container import Container
-from shared.pd_exception import InvalidDataException
-from shared.whoosh_search import WhooshSearcher
+from shared.pd_exception import InvalidDataException, TooFewItemsException
 
 
 class Bot:
     def __init__(self) -> None:
         self.client = discord.Client()
         self.voice = None
-        self.searcher: WhooshSearcher = None
 
     def init(self) -> None:
         multiverse.init()
         multiverse.update_bugged_cards()
         oracle.init()
-        self.searcher = WhooshSearcher()
         self.client.run(configuration.get('token'))
 
     async def on_ready(self) -> None:
@@ -42,9 +35,9 @@ class Bot:
         if message.author.bot:
             return
         if message.content.startswith('!') and len(message.content.replace('!', '')) > 0:
-            await self.respond_to_command(message)
+            await command.handle_command(message, self.client)
         else:
-            await self.respond_to_card_names(message)
+            await command.respond_to_card_names(message, self.client)
 
     async def on_voice_state_update(self, before: Member, after: Member) -> None:
         # pylint: disable=unused-argument
@@ -55,64 +48,6 @@ class Bot:
         if len(voice.channel.voice_members) == 1:
             await voice.disconnect()
 
-    async def respond_to_card_names(self, message: Message) -> None:
-        await command.respond_to_card_names(message, self)
-
-    async def respond_to_command(self, message: Message) -> None:
-        await command.handle_command(message, self)
-
-    async def post_cards(
-            self,
-            cards: List[Card],
-            channel: Channel,
-            replying_to: Member = None,
-            additional_text: str = ''
-    ) -> None:
-        await self.client.send_typing(channel)
-        if len(cards) == 0:
-            await self.post_no_cards(channel, replying_to)
-            return
-        disable_emoji = channel.id in configuration.get_str('not_pd').split(',')
-        cards = command.uniqify_cards(cards)
-        if len(cards) > command.MAX_CARDS_SHOWN:
-            cards = cards[:command.DEFAULT_CARDS_SHOWN]
-        if len(cards) == 1:
-            text = self.single_card_text(cards[0], disable_emoji)
-        else:
-            text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.legal_emoji(card)) if not disable_emoji else ''), price=((fetcher.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
-        if len(cards) > command.MAX_CARDS_SHOWN:
-            image_file = None
-        else:
-            image_file = image_fetcher.download_image(cards)
-        if image_file is None:
-            text += '\n\n'
-            if len(cards) == 1:
-                text += emoji.replace_emoji(cards[0].text, self.client)
-            else:
-                text += 'No image available.'
-        text += additional_text
-        if image_file is None:
-            await self.client.send_message(channel, text)
-        else:
-            await self.send_image_with_retry(channel, image_file, text)
-
-    async def post_no_cards(self, channel, replying_to: Member) -> None:
-        if replying_to is not None:
-            text = '{author}: No matches.'.format(author=replying_to.mention)
-        else:
-            text = 'No matches.'
-        message = await self.client.send_message(channel, text)
-        await self.client.add_reaction(message, '❎')
-        return
-
-
-    async def send_image_with_retry(self, channel, image_file, text='') -> None:
-        message = await self.client.send_file(channel, image_file, content=text)
-        if message and message.attachments and message.attachments[0]['size'] == 0:
-            print('Message size is zero so resending')
-            await self.client.delete_message(message)
-            await self.client.send_file(channel, image_file, content=text)
-
     async def on_member_join(self, member) -> None:
         print('{0} joined {1} ({2})'.format(member.mention, member.server.name, member.server.id))
         is_pd_server = member.server.id == "207281932214599682"
@@ -121,22 +56,6 @@ class Bot:
             greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> and <http://pdmtgo.com> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
             await self.client.send_message(member.server.default_channel, greeting)
 
-    def single_card_text(self, card, disable_emoji) -> str:
-        mana = emoji.replace_emoji(''.join(card.mana_cost or []), self.client)
-        legal = ' — ' + emoji.legal_emoji(card, True)
-        if disable_emoji:
-            legal = ''
-        if card.get('mode', None) == '$':
-            text = '{name} {legal} — {price}'.format(name=card.name, price=fetcher.card_price_string(card), legal=legal)
-        else:
-            text = '{name} {mana} — {type}{legal}'.format(name=card.name, mana=mana, type=card.type, legal=legal)
-        if card.bugs:
-            for bug in card.bugs:
-                text += '\n:beetle:{rank} bug: {bug}'.format(bug=bug['description'], rank=bug['classification'])
-                if bug['last_confirmed'] < (dtutil.now() - datetime.timedelta(days=60)):
-                    time_since_confirmed = (dtutil.now() - bug['last_confirmed']).seconds
-                    text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(time_since_confirmed, 1))
-        return text
 
 
 BOT = Bot()
@@ -199,12 +118,15 @@ async def background_task_spoiler_season() -> None:
     await BOT.client.wait_until_ready()
     new_cards = fetcher.scryfall_cards()
     for c in new_cards['data']:
+        await asyncio.sleep(5)
         try:
             oracle.valid_name(c['name'])
         except InvalidDataException:
-            oracle.insert_scryfall_card(c)
+            oracle.insert_scryfall_card(c, True)
             print('Imported {0} from Scryfall'.format(c['name']))
-        await asyncio.sleep(5)
+            return
+        except TooFewItemsException:
+            pass
 
 async def background_task_tournaments() -> None:
     await BOT.client.wait_until_ready()

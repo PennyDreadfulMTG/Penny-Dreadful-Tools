@@ -10,7 +10,7 @@ from shared.pd_exception import InvalidDataException, TooFewItemsException
 LEGAL_CARDS: List[str] = []
 CARDS_BY_NAME: Dict[str, card.Card] = {}
 
-def init():
+def init() -> None:
     if len(CARDS_BY_NAME) == 0:
         for c in load_cards():
             CARDS_BY_NAME[c.name] = c
@@ -25,7 +25,7 @@ def search(query):
     rs = db().execute(sql, [like_query, like_query])
     return [card.Card(r) for r in rs]
 
-def valid_name(name):
+def valid_name(name: str) -> str:
     if name in CARDS_BY_NAME:
         return name
     else:
@@ -54,7 +54,7 @@ def load_cards(names=None, where=None):
         raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`.  missing=`{missing}`'.format(namelen=len(names), rslen=len(rs), names=names, missing=missing))
     return [card.Card(r) for r in rs]
 
-def cards_by_name():
+def cards_by_name() -> Dict[str, card.Card]:
     return CARDS_BY_NAME
 
 def bugged_cards():
@@ -109,7 +109,7 @@ def scryfall_import(name):
         insert_scryfall_card(sfcard)
         return True
 
-def insert_scryfall_card(sfcard):
+def insert_scryfall_card(sfcard, rebuild_cache: bool = True) -> None:
     imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
     c = {
         'layout': sfcard['layout'],
@@ -137,8 +137,9 @@ def insert_scryfall_card(sfcard):
         })
         c['names'] = names
         multiverse.insert_card(c)
-    multiverse.update_cache()
-    CARDS_BY_NAME[sfcard['name']] = load_card(sfcard['name'])
+    if rebuild_cache:
+        multiverse.update_cache()
+        CARDS_BY_NAME[sfcard['name']] = load_card(sfcard['name'])
 
 def last_pd_rotation_changes():
     current_code = rotation.last_rotation_ex()['code']

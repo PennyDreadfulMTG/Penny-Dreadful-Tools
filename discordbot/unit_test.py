@@ -90,7 +90,7 @@ def test_split_cards():
     assert image_fetcher.download_image(cards) is not None
     names = command.parse_queries('[Toil // Trouble]')
     assert len(names) == 1
-    results = command.results_from_queries(names)[0]
+    results = command.results_from_queries(names)
     assert len(results) == 1
 
 def test_some_names():

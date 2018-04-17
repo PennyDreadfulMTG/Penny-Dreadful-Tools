@@ -21,7 +21,7 @@ class SearchResult():
         self.exact = exact
         self.prefix_whole_word = prefix_whole_word if prefix_whole_word else []
         self.other_prefixed = other_prefixed if other_prefixed else []
-        self.fuzzy = self.prune_fuzzy_by_score(fuzzy if fuzzy else [])
+        self.fuzzy = prune_fuzzy_by_score(fuzzy if fuzzy else [])
         self.remove_duplicates()
 
     def has_match(self) -> bool:
@@ -58,23 +58,6 @@ class SearchResult():
         if not self.has_match():
             return []
         return [r for r in ([self.exact] + self.prefix_whole_word + self.other_prefixed + self.fuzzy) if r is not None]
-
-    def prune_fuzzy_by_score(self, fuzzy: List[Tuple[str, float]]) -> List[str]:
-        if len(fuzzy) == 0:
-            return []
-        if len(fuzzy) == 1:
-            return [fuzzy[0][0]]
-        top = []
-        low = fuzzy[0][1]
-        for k, v in fuzzy:
-            if v >= fuzzy[0][1]:
-                top.append(k)
-            else:
-                low = v
-                break
-        if fuzzy[0][1] >= low * 2:
-            return top
-        return [f[0] for f in fuzzy]
 
     def remove_duplicates(self) -> None:
         for n in [self.exact] + self.prefix_whole_word + self.other_prefixed:
@@ -160,3 +143,20 @@ def fuzzy_term(q, dist, field):
     if len(q) <= 3:
         return Term(field, q)
     return FuzzyTerm(field, q, maxdist=dist, prefixlength=1)
+
+def prune_fuzzy_by_score(fuzzy: List[Tuple[str, float]]) -> List[str]:
+    if len(fuzzy) == 0:
+        return []
+    if len(fuzzy) == 1:
+        return [fuzzy[0][0]]
+    top = []
+    low = fuzzy[0][1]
+    for k, v in fuzzy:
+        if v >= fuzzy[0][1]:
+            top.append(k)
+        else:
+            low = v
+            break
+    if fuzzy[0][1] >= low * 2:
+        return top
+    return [f[0] for f in fuzzy]

@@ -164,7 +164,7 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None):
         d.can_draw = 'Divine Intervention' in [card.name for card in d.all_cards()]
         decks.append(d)
     load_cards(decks)
-    load_opponent_stats(decks)
+    load_competitive_stats(decks)
     return decks
 
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks we will claim your deck is neither W nor G which is not true. But this should cover most cases.
@@ -368,7 +368,7 @@ def load_cards(decks):
         d[location].append({'n': row['n'], 'name': name, 'card': cards[name]})
 
 # It makes the main query about 5x faster to do this as a separate query (which is trivial and done only once for all decks).
-def load_opponent_stats(decks):
+def load_competitive_stats(decks):
     if len(decks) == 0:
         return
     decks_by_id = {d.id: d for d in decks}

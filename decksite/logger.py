@@ -1,5 +1,6 @@
-from decksite import APP
 from typing import Any, List
+
+from decksite import APP
 
 
 def fatal(*args: List[Any]) -> None:

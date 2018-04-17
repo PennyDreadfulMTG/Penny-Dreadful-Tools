@@ -63,7 +63,7 @@ class SearchResult():
         if len(fuzzy) == 0:
             return []
         if len(fuzzy) == 1:
-            return [self.fuzzy[0][0]]
+            return [fuzzy[0][0]]
         top = []
         low = fuzzy[0][1]
         for k, v in fuzzy:
@@ -74,7 +74,7 @@ class SearchResult():
                 break
         if fuzzy[0][1] >= low * 2:
             return top
-        return [f[0] for f in self.fuzzy]
+        return [f[0] for f in fuzzy]
 
     def remove_duplicates(self) -> None:
         for n in [self.exact] + self.prefix_whole_word + self.other_prefixed:

@@ -46,7 +46,7 @@ def competition_join():
 
 def season_query(season=None):
     if season is None:
-        season = rotation.last_rotation_ex()['code'].lower()
+        season = rotation.current_season_code().lower()
     if season == 'all':
         return 'TRUE'
     try:

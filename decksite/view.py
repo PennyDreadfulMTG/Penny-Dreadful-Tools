@@ -203,7 +203,7 @@ class View:
         d.legal_icons = ''
         sets = multiverse.SEASONS
         if 'Penny Dreadful' in d.legal_formats:
-            icon = rotation.last_rotation_ex()['code'].lower()
+            icon = rotation.current_season_code().lower()
             n = sets.index(icon.upper()) + 1
             d.legal_icons += '<a href="{url}"><i class="ss ss-{code} ss-rare ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), code=icon, n=n)
         past_pd_formats = [fmt.replace('Penny Dreadful ', '') for fmt in d.legal_formats if 'Penny Dreadful ' in fmt]

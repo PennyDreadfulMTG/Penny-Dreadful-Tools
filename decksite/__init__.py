@@ -13,7 +13,7 @@ SEASON = Blueprint('season', __name__, url_prefix='/season/<season_id>')
 
 @SEASON.url_defaults
 def add_season_id(endpoint, values):
-    values.setdefault('season_id', g.get('season_id', rotation.last_rotation_ex()['code'].lower()))
+    values.setdefault('season_id', g.get('season_id', rotation.current_season_code().lower()))
 
 @SEASON.url_value_preprocessor
 def pull_season_id(endpoint, values):

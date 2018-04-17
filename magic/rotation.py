@@ -13,6 +13,9 @@ def init() -> List[SetInfo]:
     set_info = cast(List[SetInfo], info['sets'])
     return [parse_rotation_date(release) for release in set_info]
 
+def current_season_code():
+    return current_season_code()
+
 def last_rotation():
     return last_rotation_ex()['enter_date']
 

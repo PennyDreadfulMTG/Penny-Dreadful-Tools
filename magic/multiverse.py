@@ -208,7 +208,7 @@ def update_bugged_cards(use_transaction=True):
 
 def update_pd_legality():
     for s in SEASONS:
-        if s == rotation.last_rotation_ex()['code']:
+        if s == rotation.current_season_code():
             break
         set_legal_cards(season=s)
 

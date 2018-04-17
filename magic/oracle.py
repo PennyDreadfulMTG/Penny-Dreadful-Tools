@@ -141,7 +141,7 @@ def insert_scryfall_card(sfcard):
     CARDS_BY_NAME[sfcard['name']] = load_card(sfcard['name'])
 
 def last_pd_rotation_changes():
-    current_code = rotation.last_rotation_ex()['code']
+    current_code = rotation.current_season_code()
     previous = multiverse.SEASONS[multiverse.SEASONS.index(current_code) - 1]
     previous_id = multiverse.get_format_id("Penny Dreadful {f}".format(f=previous))
     current_id = multiverse.get_format_id("Penny Dreadful")

@@ -55,7 +55,7 @@ def get_str(key: str) -> str:
         return None
     if isinstance(val, str):
         return val
-    raise InvalidDataException("Expected a String")
+    fail(key, val, str)
 
 def get_int(key: str) -> int:
     val = get(key)
@@ -63,8 +63,15 @@ def get_int(key: str) -> int:
         return None
     if isinstance(val, int):
         return val
-    raise InvalidDataException("Expected an Integer")
+    fail(key, val, int)
 
+def get_float(key: str) -> float:
+    val = get(key)
+    if val is None:
+        return None
+    if isinstance(val, float):
+        return val
+    fail(key, val, int)
 
 def get_list(key: str) -> List[str]:
     val = get(key)
@@ -72,7 +79,7 @@ def get_list(key: str) -> List[str]:
         return None
     if isinstance(val, list):
         return val
-    raise InvalidDataException("Expected a List[String]")
+    fail(key, val, List[str])
 
 def get(key: str) -> Union[str, List[str], int]:
     try:
@@ -109,3 +116,6 @@ def write(key: str, value: str) -> str:
     fh = open('config.json', 'w')
     fh.write(json.dumps(cfg, indent=4, sort_keys=True))
     return cfg[key]
+
+def fail(key, val, expected_type):
+    raise InvalidDataException('Expected a {expected_type} for {key}, got `{val}` ({actual_type})'.format(expected_type=expected_type, key=key, val=val, actual_type=type(val)))

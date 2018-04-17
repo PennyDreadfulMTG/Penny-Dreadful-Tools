@@ -492,13 +492,13 @@ def legal_cards():
 @APP.errorhandler(DoesNotExistException)
 @APP.errorhandler(exceptions.NotFound)
 def not_found(e):
-    traceback.print_exception(e, e, None)
+    log_exception(e)
     view = NotFound(e)
     return view.page(), 404
 
 @APP.errorhandler(exceptions.InternalServerError)
 def internal_server_error(e):
-    traceback.print_exception(e, e, None)
+    log_exception(e)
     path = request.path
     try:
         repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports', exception=e)
@@ -515,6 +515,9 @@ def before_request():
 def teardown_request(response):
     perf.check(g.p, 'slow_page', request.path, 'decksite')
     return response
+
+def log_exception(e):
+    traceback.print_exception(e, e, e.__traceback__)
 
 def init(debug=True, port=None):
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""

@@ -5,18 +5,19 @@ from flask import g, has_request_context, request
 from decksite import APP, logger
 from shared import configuration
 from shared.database import get_database
+from shared.database_mysql import MysqlDatabase
 
 
-def db():
+def db() -> MysqlDatabase:
     if has_request_context():
         ctx = request
     else:
         ctx = g
     if not hasattr(ctx, 'database'):
-        ctx.database = get_database(configuration.get('decksite_database'))
+        ctx.database = get_database(configuration.get_str('decksite_database'))
     return ctx.database
 
-def setup():
+def setup() -> None:
     db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER UNIQUE NOT NULL)')
     version = db_version()
     patches = os.listdir('decksite/sql')

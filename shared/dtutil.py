@@ -35,7 +35,7 @@ def parse(s: str, date_format: str, tz) -> datetime.datetime:
     dt = datetime.datetime.strptime(s, date_format)
     return tz.localize(dt).astimezone(pytz.timezone('UTC'))
 
-def parse_to_ts(s, date_format, tz):
+def parse_to_ts(s: str, date_format: str, tz) -> float:
     dt = parse(s, date_format, tz)
     return dt2ts(dt)
 
@@ -75,14 +75,17 @@ def day2ordinal(m):
     p = inflect.engine()
     return p.ordinal(int(m.group(1)))
 
+IntervalsType = Dict[str, Tuple[int, int]] #pylint: disable=invalid-name
+ResultsType = List[Tuple[int, str]] #pylint: disable=invalid-name
+
 def display_time(seconds: float, granularity: int = 2) -> str:
-    intervals: Dict[str, Tuple[int, int]] = OrderedDict()
+    intervals: IntervalsType = OrderedDict()
     intervals['weeks'] = (None, 60 * 60 * 24 * 7)
     intervals['days'] = (7, 60 * 60 * 24)
     intervals['hours'] = (24, 60 * 60)
     intervals['minutes'] = (60, 60)
     intervals['seconds'] = (60, 1)
-    result: List[Tuple[int, str]] = []
+    result: ResultsType = []
     seconds = round(seconds) # in case we've been handed a decimal not an int
     if seconds == 0:
         return 'now'
@@ -101,7 +104,7 @@ def display_time(seconds: float, granularity: int = 2) -> str:
             seconds -= value * seconds_per_unit
     return ', '.join(['{} {}'.format(value, unit.rstrip('s') if value == 1 else unit) for (value, unit) in result[:granularity] if value > 0])
 
-def round_up_preceeding_unit(result, intervals):
+def round_up_preceeding_unit(result: ResultsType, intervals: IntervalsType) -> ResultsType:
     # Send the rounding up back up the chain until we find a value that does not need the previous value rounding up.
     for i in range(0, len(result)):
         prev_value, prev_unit = result[-i]

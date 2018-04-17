@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Collection, Dict, List, Optional
 
 from magic import card, fetcher, mana, multiverse, rotation
 from magic.database import db
@@ -10,7 +10,7 @@ from shared.pd_exception import InvalidDataException, TooFewItemsException
 LEGAL_CARDS: List[str] = []
 CARDS_BY_NAME: Dict[str, card.Card] = {}
 
-def init():
+def init() -> None:
     if len(CARDS_BY_NAME) == 0:
         for c in load_cards():
             CARDS_BY_NAME[c.name] = c
@@ -25,7 +25,7 @@ def search(query):
     rs = db().execute(sql, [like_query, like_query])
     return [card.Card(r) for r in rs]
 
-def valid_name(name):
+def valid_name(name: str) -> str:
     if name in CARDS_BY_NAME:
         return name
     else:
@@ -35,26 +35,28 @@ def valid_name(name):
                 return k
     raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
 
-def load_card(name):
+def load_card(name) -> card.Card:
     return CARDS_BY_NAME.get(name, load_cards([name])[0])
 
-def load_cards(names=None, where=None):
+def load_cards(names: Collection[str] = None, where: Optional[str] = None) -> List[card.Card]:
     if names:
-        names = set(names)
-    if names:
-        names_clause = 'LOWER(c.name) IN ({names})'.format(names=', '.join(sqlescape(name).lower() for name in names))
+        setnames = set(names)
+    else:
+        setnames = set()
+    if setnames:
+        names_clause = 'LOWER(c.name) IN ({names})'.format(names=', '.join(sqlescape(name).lower() for name in setnames))
     else:
         names_clause = '(1 = 1)'
     if where is None:
         where = '(1 = 1)'
     sql = multiverse.cached_base_query('({where} AND {names})'.format(where=where, names=names_clause))
     rs = db().execute(sql)
-    if names and len(names) != len(rs):
-        missing = names.symmetric_difference([r['name'] for r in rs])
-        raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`.  missing=`{missing}`'.format(namelen=len(names), rslen=len(rs), names=names, missing=missing))
+    if setnames and len(setnames) != len(rs):
+        missing = setnames.symmetric_difference([r['name'] for r in rs])
+        raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`.  missing=`{missing}`'.format(namelen=len(setnames), rslen=len(rs), names=setnames, missing=missing))
     return [card.Card(r) for r in rs]
 
-def cards_by_name():
+def cards_by_name() -> Dict[str, card.Card]:
     return CARDS_BY_NAME
 
 def bugged_cards():
@@ -62,7 +64,7 @@ def bugged_cards():
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 
-def legal_cards(force=False):
+def legal_cards(force=False) -> List[str]:
     if len(LEGAL_CARDS) == 0 or force:
         new_list = multiverse.set_legal_cards(force)
         if new_list is None:
@@ -109,7 +111,7 @@ def scryfall_import(name):
         insert_scryfall_card(sfcard)
         return True
 
-def insert_scryfall_card(sfcard):
+def insert_scryfall_card(sfcard, rebuild_cache: bool = True) -> None:
     imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
     c = {
         'layout': sfcard['layout'],
@@ -137,8 +139,9 @@ def insert_scryfall_card(sfcard):
         })
         c['names'] = names
         multiverse.insert_card(c)
-    multiverse.update_cache()
-    CARDS_BY_NAME[sfcard['name']] = load_card(sfcard['name'])
+    if rebuild_cache:
+        multiverse.update_cache()
+        CARDS_BY_NAME[sfcard['name']] = load_card(sfcard['name'])
 
 def last_pd_rotation_changes():
     current_code = rotation.current_season_code()

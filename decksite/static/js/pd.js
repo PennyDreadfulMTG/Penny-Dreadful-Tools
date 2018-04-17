@@ -138,7 +138,7 @@ PD.initTooltips = function () {
         Tipped.create("main [title]", {"showDelay": 500, "size": "large", maxWidth: "200"});
         $("body").off();
     });
-}
+};
 PD.loadDeck = function () {
     var file = this.files[0],
         reader = new FileReader();
@@ -146,7 +146,7 @@ PD.loadDeck = function () {
         $("textarea").val(e.target.result);
     };
     reader.readAsText(file);
-}
+};
 PD.toggleDrawDropdown = function () {
     var can_draw = false;
     $(document).find(".deckselect").each(function(_, select) {
@@ -160,7 +160,7 @@ PD.toggleDrawDropdown = function () {
         $("#draws").val(0);
     }
     return can_draw;
-}
+};
 PD.toggleIllegalCards = function () {
     // Fix the width of the table columns so that it does not "jump" when rows are added or removed.
     $(".bugtable tr td").each(function() {
@@ -168,23 +168,23 @@ PD.toggleIllegalCards = function () {
     });
     $(".bugtable").not(".footable-details").each(function () { FooTable.get(this).rows.collapse(); });
     $("tr").find(".illegal").closest("tr").toggle(!this.checked);
-}
+};
 PD.showIntro = function (show) {
     if (show && !PD.getUrlParam("hide_intro")) {
         $(".intro-container").show();
     }
-}
+};
 PD.showAdmin = function (show) {
     if (show) {
         $(".admin").show();
     }
-}
+};
 PD.showLocalTimes = function () {
     $(".time").each(function () {
         var t = moment($(this).data("time"));
         $(this).html(t.tz(moment.tz.guess()).format("dddd h:mma z")).parent(".local").show();
     });
-}
+};
 PD.getUrlParams = function () {
     var vars = [], hash, i,
         hashes = window.location.href.slice(window.location.href.indexOf("?") + 1).split("&");
@@ -194,10 +194,10 @@ PD.getUrlParams = function () {
         vars[hash[0]] = hash[1];
     }
     return vars;
-},
+};
 PD.getUrlParam = function (name) {
     return PD.getUrlParams()[name];
-}
+};
 
 PD.initSignupDeckChooser = function () {
     $("#signup_recent_decks").on("change", function() {
@@ -210,7 +210,7 @@ PD.initSignupDeckChooser = function () {
         }
         textarea.val(buffer);
     })
-}
+};
 
 PD.initStatusFooter = function() {
     $.get("/api/status/", function(data) {
@@ -233,11 +233,11 @@ PD.initStatusFooter = function() {
         }
         $(".status-bar").html("<p>" + text + "</p>");
     })
-}
+};
 
 PD.htmlEscape = function (s) {
     return $("<div>").text(s).html();
-}
+};
 
 $(document).ready(function () {
     PD.init();

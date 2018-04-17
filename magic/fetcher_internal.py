@@ -20,7 +20,7 @@ SESSION.mount(
     'http://whatsinstandard.com',
     CacheControlAdapter(heuristic=ExpiresAfter(days=14)))
 
-def unzip(url, path):
+def unzip(url, path) -> str:
     location = '{scratch_dir}/zip'.format(scratch_dir=configuration.get('scratch_dir'))
     def remove_readonly(func, path, _):
         os.chmod(path, stat.S_IWRITE)
@@ -69,7 +69,7 @@ def post(url: str,
     except requests.exceptions.ConnectionError as e:
         raise FetchException(e)
 
-def store(url, path):
+def store(url, path) -> requests.Response:
     print('Storing {url} in {path}'.format(url=url, path=path))
     try:
         response = requests.get(url, stream=True)
@@ -77,7 +77,7 @@ def store(url, path):
             for chunk in response.iter_content(1024):
                 fout.write(chunk)
         return response
-    except urllib.error.HTTPError as e:
+    except urllib.error.HTTPError as e: # type: ignore
         raise FetchException(e)
 
 class FetchException(OperationalException):

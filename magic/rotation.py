@@ -56,7 +56,7 @@ def interesting(playability, c, speculation=True, new=True):
         return 'moderately-played'
     return None
 
-def text():
+def text() -> str:
     full = next_rotation()
     supplemental = next_supplemental()
     now = dtutil.now()

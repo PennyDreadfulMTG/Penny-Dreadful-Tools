@@ -10,9 +10,9 @@ def error(*args: Any) -> None:
     """Thing that should not happen or state that should not occur, must be fixed."""
     APP.logger.error('\n'.join(map(str, args)))
 
-def warn(*args: Any) -> None:
+def warning(*args: Any) -> None:
     """Potentially interesting information that will be logged in production."""
-    APP.logger.warn('\n'.join(map(str, args)))
+    APP.logger.warning('\n'.join(map(str, args)))
 
 def info(*args: Any) -> None:
     """Potentially interesting information that will not be logged in production but will be logged in dev."""

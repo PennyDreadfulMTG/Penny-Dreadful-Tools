@@ -28,7 +28,7 @@ try:
 except DatabaseException as e:
     # Import logger here not at the top because it uses the initialized APP.
     from decksite import logger
-    logger.warn("Unable to initialize oracle. I'll build it now. If this is happening on user time this is bad.", e)
+    logger.warning("Unable to initialize oracle. I'll build it now. If this is happening on user time this is bad.", e)
     multiverse.init()
     oracle.init()
 

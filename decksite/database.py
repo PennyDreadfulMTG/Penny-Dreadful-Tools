@@ -26,7 +26,7 @@ def setup() -> None:
         path = os.path.join('decksite/sql', fn)
         n = int(fn.split('.')[0])
         if version < n:
-            logger.warn("Patching database to v{0}".format(n))
+            logger.warning("Patching database to v{0}".format(n))
             fh = open(path, 'r')
             sql = fh.read()
             for stmt in sql.split(';'):

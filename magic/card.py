@@ -1,11 +1,25 @@
 import copy
 import unicodedata
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Dict, List, Optional, Tuple, cast
+
+from mypy_extensions import TypedDict
 
 from shared import dtutil
 from shared.container import Container
 
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
+ColumnDescription = TypedDict('ColumnDescription', { #pylint: disable=invalid-name
+    'type': str,
+    'nullable': bool,
+    'primary_key': bool,
+    'query': str,
+    'mtgjson': bool,
+    'foreign_key': Tuple[str, str],
+    'default': str,
+    'unique': bool,
+    'unique_with': List[str],
+    })
+TableDescription = Dict[str, ColumnDescription] #pylint: disable=invalid-name
 
 MAX_LEN_TEXT = 21845
 MAX_LEN_VARCHAR = 190
@@ -17,7 +31,7 @@ REAL = 'REAL'
 TEXT = 'LONGTEXT'
 VARCHAR = 'VARCHAR({n})'.format(n=MAX_LEN_VARCHAR)
 
-BASE = {
+BASE: ColumnDescription = {
     'type': VARCHAR,
     'nullable': True,
     'primary_key': False,
@@ -29,7 +43,7 @@ BASE = {
     'unique_with': None
 }
 
-def card_properties():
+def card_properties() -> TableDescription:
     props = {}
     for k in ['id', 'layout']:
         props[k] = copy.deepcopy(BASE)
@@ -40,7 +54,7 @@ def card_properties():
     props['layout']['nullable'] = False
     return props
 
-def face_properties():
+def face_properties() -> TableDescription:
     props = {}
     base = copy.deepcopy(BASE)
     base['query'] = "GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN `{table}`.`{column}` ELSE '' END SEPARATOR '') AS `{column}`"
@@ -66,7 +80,7 @@ def face_properties():
     props['card_id']['foreign_key'] = ('card', 'id')
     return props
 
-def set_properties():
+def set_properties() -> TableDescription:
     props = {}
     for k in ['id', 'name', 'code', 'gatherer_code', 'old_code', 'magiccardsinfo_code', 'release_date', 'border', 'type', 'online_only']:
         props[k] = copy.deepcopy(BASE)
@@ -84,7 +98,7 @@ def set_properties():
     props['magiccardsinfo_code']['unique'] = True
     return props
 
-def printing_properties():
+def printing_properties() -> TableDescription:
     props = {}
     for k in ['id', 'system_id', 'rarity', 'flavor', 'artist', 'number', 'multiverseid', 'watermark', 'border', 'timeshifted', 'reserved', 'mci_number', 'card_id', 'set_id', 'rarity_id']:
         props[k] = copy.deepcopy(BASE)
@@ -103,7 +117,7 @@ def printing_properties():
     props['flavor']['type'] = TEXT
     return props
 
-def color_properties():
+def color_properties() -> TableDescription:
     props = {}
     for k in ['id', 'name', 'symbol']:
         props[k] = copy.deepcopy(BASE)
@@ -112,7 +126,7 @@ def color_properties():
     props['id']['primary_key'] = True
     return props
 
-def card_color_properties():
+def card_color_properties() -> TableDescription:
     props = {}
     for k in ['id', 'card_id', 'color_id']:
         props[k] = copy.deepcopy(BASE)
@@ -124,7 +138,7 @@ def card_color_properties():
     props['color_id']['foreign_key'] = ('color', 'id')
     return props
 
-def card_type_properties(typetype):
+def card_type_properties(typetype) -> TableDescription:
     props = {}
     for k in ['id', 'card_id', typetype]:
         props[k] = copy.deepcopy(BASE)
@@ -135,7 +149,7 @@ def card_type_properties(typetype):
     props['card_id']['foreign_key'] = ('card', 'id')
     return props
 
-def format_properties():
+def format_properties() -> TableDescription:
     props = {}
     for k in ['id', 'name']:
         props[k] = copy.deepcopy(BASE)
@@ -144,7 +158,7 @@ def format_properties():
     props['id']['primary_key'] = True
     return props
 
-def card_legality_properties():
+def card_legality_properties() -> TableDescription:
     props = {}
     for k in ['id', 'card_id', 'format_id', 'legality']:
         props[k] = copy.deepcopy(BASE)
@@ -158,7 +172,7 @@ def card_legality_properties():
     props['legality']['nullable'] = True
     return props
 
-def card_alias_properties():
+def card_alias_properties() -> TableDescription:
     props = {}
     for k in ['id', 'card_id', 'alias']:
         props[k] = copy.deepcopy(BASE)
@@ -169,7 +183,7 @@ def card_alias_properties():
     props['card_id']['foreign_key'] = ('card', 'id')
     return props
 
-def card_bug_properties():
+def card_bug_properties() -> TableDescription:
     props = {}
     for k in ['id', 'card_id', 'description', 'classification', 'last_confirmed', 'url', 'from_bug_blog', 'bannable']:
         props[k] = copy.deepcopy(BASE)

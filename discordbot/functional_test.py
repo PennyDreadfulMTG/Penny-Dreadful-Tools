@@ -1,7 +1,9 @@
 import asyncio
 import types
 
-from discordbot import bot, command
+import discord
+
+from discordbot import command
 from magic import fetcher_internal
 
 
@@ -21,10 +23,10 @@ def generate_fakebot():
         assert content != ''
     async def fake_send_typing(channel):
         assert channel is not None
-    fakebot = bot.Bot()
-    fakebot.client.send_message = fake_send_message
-    fakebot.client.send_file = fake_send_file
-    fakebot.client.send_typing = fake_send_typing
+    fakebot = discord.Client()
+    fakebot.send_message = fake_send_message
+    fakebot.send_file = fake_send_file
+    fakebot.send_typing = fake_send_typing
     return fakebot
 
 def generate_fakechannel():

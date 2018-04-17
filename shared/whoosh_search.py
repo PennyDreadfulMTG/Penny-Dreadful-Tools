@@ -1,4 +1,5 @@
 import re
+from typing import Any, List, Optional, Tuple
 
 import pygtrie
 from whoosh.index import open_dir
@@ -10,25 +11,30 @@ from shared.whoosh_constants import WhooshConstants
 
 # pylint: disable=unused-variable
 class SearchResult():
-    def __init__(self, exact, prefix_whole_word, other_prefixed, fuzzy):
+    def __init__(
+            self,
+            exact: Optional[str],
+            prefix_whole_word: List[str],
+            other_prefixed: List[Any],
+            fuzzy: Optional[List[Tuple[str, float]]]
+    ) -> None:
         self.exact = exact
         self.prefix_whole_word = prefix_whole_word if prefix_whole_word else []
         self.other_prefixed = other_prefixed if other_prefixed else []
-        self.fuzzy = fuzzy if fuzzy else []
-        self.prune_fuzzy_by_score()
+        self.fuzzy = prune_fuzzy_by_score(fuzzy if fuzzy else [])
         self.remove_duplicates()
 
-    def has_match(self):
+    def has_match(self) -> bool:
         return bool(has(self.exact) or has(self.prefix_whole_word) or has(self.other_prefixed) or has(self.fuzzy))
 
-    def is_ambiguous(self):
+    def is_ambiguous(self) -> bool:
         return bool(not has(self.exact) and (
             (len(self.prefix_whole_word) > 1) or
             ((len(self.prefix_whole_word) == 0) and (len(self.other_prefixed) > 1)) or
             (len(self.prefix_whole_word) == 0 and len(self.other_prefixed) == 0 and len(self.fuzzy) > 1)
             ))
 
-    def get_best_match(self):
+    def get_best_match(self) -> str:
         if not self.has_match() or self.is_ambiguous():
             return None
         if self.exact:
@@ -39,7 +45,7 @@ class SearchResult():
             return self.other_prefixed[0]
         return self.fuzzy[0]
 
-    def get_ambiguous_matches(self):
+    def get_ambiguous_matches(self) -> List[str]:
         if not self.is_ambiguous():
             return None
         if has(self.prefix_whole_word):
@@ -53,26 +59,7 @@ class SearchResult():
             return []
         return [r for r in ([self.exact] + self.prefix_whole_word + self.other_prefixed + self.fuzzy) if r is not None]
 
-    def prune_fuzzy_by_score(self):
-        if len(self.fuzzy) == 0:
-            return
-        if len(self.fuzzy) == 1:
-            self.fuzzy = [self.fuzzy[0][0]]
-            return
-        top = []
-        low = self.fuzzy[0][1]
-        for k, v in self.fuzzy:
-            if v >= self.fuzzy[0][1]:
-                top.append(k)
-            else:
-                low = v
-                break
-        if self.fuzzy[0][1] >= low * 2:
-            self.fuzzy = top
-            return
-        self.fuzzy = [f[0] for f in self.fuzzy]
-
-    def remove_duplicates(self):
+    def remove_duplicates(self) -> None:
         for n in [self.exact] + self.prefix_whole_word + self.other_prefixed:
             try:
                 self.fuzzy.remove(n)
@@ -97,7 +84,7 @@ class WhooshSearcher():
             for doc in reader.iter_docs():
                 self.trie[list(WhooshConstants.normalized_analyzer(doc[1]['name']))[0].text] = doc[1]['name']
 
-    def search(self, w):
+    def search(self, w) -> SearchResult:
         if not self.ix.up_to_date():
             self.initialize_trie() # if the index is not up to date, someone has added cards, so we reinitialize the trie
 
@@ -123,7 +110,7 @@ class WhooshSearcher():
             fuzzy = [(r['name'], r.score) for r in searcher.search(query, limit=40)]
         return SearchResult(exact, prefix_whole_word, other_prefixed, fuzzy)
 
-    def find_matches_by_prefix(self, query):
+    def find_matches_by_prefix(self, query: str) -> Tuple[Optional[str], List[str], List[str]]:
         exact = None
         prefix_as_whole_word = []
         other_prefixed = []
@@ -137,12 +124,14 @@ class WhooshSearcher():
 
         return (exact, prefix_as_whole_word, other_prefixed)
 
-def has(elements):
+def has(elements) -> bool:
     return bool(elements and len(elements) > 0)
 
-def classify(matches, word):
+WordSubword = Tuple[List[str], List[str]] #pylint: disable=invalid-name
+
+def classify(matches: List[str], word: str) -> WordSubword:
     regex = r"{w}( |,)".format(w=word)
-    acc = ([], [])
+    acc: WordSubword = ([], []) # Name this data structure.
     for match in matches:
         if re.match(regex, match.lower()):
             acc[0].append(match)
@@ -154,3 +143,20 @@ def fuzzy_term(q, dist, field):
     if len(q) <= 3:
         return Term(field, q)
     return FuzzyTerm(field, q, maxdist=dist, prefixlength=1)
+
+def prune_fuzzy_by_score(fuzzy: List[Tuple[str, float]]) -> List[str]:
+    if len(fuzzy) == 0:
+        return []
+    if len(fuzzy) == 1:
+        return [fuzzy[0][0]]
+    top = []
+    low = fuzzy[0][1]
+    for k, v in fuzzy:
+        if v >= fuzzy[0][1]:
+            top.append(k)
+        else:
+            low = v
+            break
+    if fuzzy[0][1] >= low * 2:
+        return top
+    return [f[0] for f in fuzzy]

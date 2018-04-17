@@ -2,7 +2,7 @@ import csv
 import json
 import os
 from collections import OrderedDict
-from typing import Dict, List, Union, cast
+from typing import Any, Dict, List, Tuple, Union, cast
 from urllib import parse
 
 import pytz
@@ -14,7 +14,7 @@ from shared import configuration, dtutil
 from shared.pd_exception import TooFewItemsException
 
 
-def all_cards():
+def all_cards() -> Any:
     try:
         return json.load(open('AllCards-x.json'))
     except FileNotFoundError:
@@ -41,8 +41,8 @@ def card_aliases():
 def card_price(cardname):
     return internal.fetch_json('http://vorpald20.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
 
-def card_price_string(card, short=False):
-    def price_info(c):
+def card_price_string(card, short: bool = False) -> str:
+    def price_info(c) -> str:
         try:
             p = card_price(c.name)
         except FetchException:
@@ -75,12 +75,12 @@ def cardhoarder_url(d):
     deck_s = '||'.join([str(v) + ' ' + mc.to_mtgo_format(k).replace('"', '') for k, v in cs.items()])
     return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=internal.escape(deck_s))
 
-def decksite_url(path='/'):
-    hostname = configuration.get('decksite_hostname')
-    port = configuration.get('decksite_port')
+def decksite_url(path: str = '/') -> str:
+    hostname = configuration.get_str('decksite_hostname')
+    port = configuration.get_int('decksite_port')
     if port != 80:
         hostname = '{hostname}:{port}'.format(hostname=hostname, port=port)
-    return parse.urlunparse((configuration.get('decksite_protocol'), hostname, path, None, None, None))
+    return parse.urlunparse((configuration.get_str('decksite_protocol'), hostname, path, None, None, None))
 
 def legal_cards(force=False, season=None):
     if season is None and os.path.exists('legal_cards.txt'):
@@ -100,9 +100,9 @@ def legal_cards(force=False, season=None):
 def mtgjson_version() -> str:
     return cast(str, internal.fetch_json('https://mtgjson.com/json/version.json'))
 
-def mtgo_status():
+def mtgo_status() -> str:
     try:
-        return internal.fetch_json('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php')['status']
+        return cast(str, internal.fetch_json('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php')['status'])
     except (FetchException, json.decoder.JSONDecodeError):
         return 'UNKNOWN'
 
@@ -124,7 +124,7 @@ def scryfall_cards():
     url = 'https://api.scryfall.com/cards'
     return internal.fetch_json(url)
 
-def search_scryfall(query):
+def search_scryfall(query) -> Tuple[int, List[str]]:
     """Returns a tuple. First member is an integer indicating how many cards match the query total,
        second member is a list of card names up to the maximum that could be fetched in a timely fashion."""
     if query == '':
@@ -140,7 +140,7 @@ def search_scryfall(query):
     result_data = result_json['data']
     result_data.sort(key=lambda x: x['legalities']['penny'])
 
-    def get_frontside(scr_card):
+    def get_frontside(scr_card) -> str:
         """If card is transform, returns first name. Otherwise, returns name.
         This is to make sure cards are later found in the database"""
         #not sure how to handle meld cards
@@ -157,7 +157,7 @@ def rulings(cardname):
 def sitemap():
     return internal.fetch_json(decksite_url('/api/sitemap/'))
 
-def time(q):
+def time(q) -> str:
     if len(q) > 3:
         url = 'http://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false'.format(q=internal.escape(q))
         info = internal.fetch_json(url)
@@ -173,7 +173,7 @@ def time(q):
     else:
         try:
             timezone = dtutil.timezone(q.upper())
-        except pytz.exceptions.UnknownTimeZoneError:
+        except pytz.exceptions.UnknownTimeZoneError: # type: ignore
             raise TooFewItemsException('Not a recognized timezone: {q}'.format(q=q))
     return dtutil.now(timezone).strftime('%l:%M %p')
 

@@ -13,7 +13,7 @@ def played_cards(where='1 = 1'):
             {season_select},
             {week_select}
         FROM
-            deck_card AS dc
+            (select card, deck_id from deck_card group by card,deck_id) AS dc
         INNER JOIN
             deck AS d ON dc.deck_id = d.id
         {nwdl_join}

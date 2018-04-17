@@ -3,6 +3,7 @@ import time
 
 from bs4 import BeautifulSoup
 
+from decksite import logger
 from decksite.data import deck
 from decksite.scrapers import decklist
 from magic import fetcher, legality
@@ -19,7 +20,7 @@ def scrape():
         soup = BeautifulSoup(fetcher.internal.fetch(url, character_encoding='utf-8'), 'html.parser')
         raw_decks = soup.find_all('div', {'class': 'deck-tile'})
         if len(raw_decks) == 0:
-            print('No decks found in {url} so stopping.'.format(url=url))
+            logger.warn('No decks found in {url} so stopping.'.format(url=url))
             break
         for raw_deck in raw_decks:
             d = Container({'source': 'MTG Goldfish'})
@@ -35,13 +36,13 @@ def scrape():
                 vivified = decklist.vivify(d.cards)
             # MTGG doesn't do any validation of cards so some decks with fail here with card names like 'Stroke of Genuineness'.
             except InvalidDataException as e:
-                print('Rejecting decklist of deck with identifier {identifier} because of {e}'.format(identifier=d.identifier, e=e))
+                logger.warn('Rejecting decklist of deck with identifier {identifier} because of {e}'.format(identifier=d.identifier, e=e))
                 continue
             if len([f for f in legality.legal_formats(vivified) if 'Penny Dreadful' in f]) == 0:
-                print('Rejecting deck with identifier {identifier} because it is not legal in any PD formats.'.format(identifier=d.identifier))
+                logger.warn('Rejecting deck with identifier {identifier} because it is not legal in any PD formats.'.format(identifier=d.identifier))
                 continue
             if len(d.cards) == 0:
-                print('Rejecting deck with identifier {identifier} because it has no cards.'.format(identifier=d.identifier))
+                logger.warn('Rejecting deck with identifier {identifier} because it has no cards.'.format(identifier=d.identifier))
                 continue
             deck.add_deck(d)
         page += 1

@@ -1,3 +1,4 @@
+import logging
 import os
 import traceback
 import urllib.parse
@@ -7,7 +8,7 @@ from flask import (abort, g, make_response, redirect, request, send_file,
 from github.GithubException import GithubException
 from werkzeug import exceptions
 
-from decksite import APP, SEASON, admin, auth, deck_name
+from decksite import APP, SEASON, admin, auth, deck_name, logger
 from decksite import league as lg
 from decksite.cache import cached
 from decksite.charts import chart
@@ -503,7 +504,7 @@ def internal_server_error(e):
     try:
         repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports', exception=e)
     except GithubException:
-        print('Github error')
+        logger.error('Github error', e)
     view = InternalServerError(e)
     return view.page(), 500
 
@@ -517,10 +518,11 @@ def teardown_request(response):
     return response
 
 def log_exception(e):
-    traceback.print_exception(e, e, e.__traceback__)
+    logger.error(''.join(traceback.format_exception(e, e, e.__traceback__)))
 
 def init(debug=True, port=None):
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""
+    APP.logger.setLevel(logging.INFO)
     APP.run(host='0.0.0.0', debug=debug, port=port)
 
 APP.register_blueprint(SEASON)

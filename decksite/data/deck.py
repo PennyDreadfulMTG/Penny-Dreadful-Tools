@@ -2,7 +2,7 @@ import hashlib
 import json
 import time
 
-from decksite import deck_name
+from decksite import deck_name, logger
 from decksite.data import guarantee, query
 from decksite.database import db
 from magic import legality, mana, oracle, rotation

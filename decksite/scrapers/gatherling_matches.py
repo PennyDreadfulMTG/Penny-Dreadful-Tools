@@ -1,3 +1,4 @@
+from decksite import logger
 from decksite.data import deck
 from decksite.scrapers import gatherling
 
@@ -11,7 +12,7 @@ def scrape(ignore_competition_ids=None):
         where += ' AND d.competition_id NOT IN ({ids})'.format(ids=', '.join([str(id) for id in ignore_competition_ids]))
     decks = deck.load_decks(where, order_by='d.competition_id')
     if len(decks) == 0:
-        print('No more competitions to insert matches for.')
+        logger.warn('No more competitions to insert matches for.')
         return
     ds, competition_id = [], decks[0].competition_id
     for d in decks:
@@ -20,7 +21,7 @@ def scrape(ignore_competition_ids=None):
             if len(ds) >= 4:
                 break
             else:
-                print('Skipping {id} because deck count is {n}.'.format(id=competition_id, n=len(ds)))
+                logger.warn('Skipping {id} because deck count is {n}.'.format(id=competition_id, n=len(ds)))
                 ds = []
                 competition_id = d.competition_id
         ds.append(d)
@@ -28,7 +29,7 @@ def scrape(ignore_competition_ids=None):
     for d in ds:
         matches += gatherling.tournament_matches(d)
     if len(matches) == 0:
-        print('Found no matches in {id} so trying the next competition.'.format(id=competition_id))
+        logger.warn('Found no matches in {id} so trying the next competition.'.format(id=competition_id))
         scrape(ignore_competition_ids + [competition_id])
     gatherling.add_ids(matches, ds)
     gatherling.insert_matches_without_dupes(ds[0].created_date, matches)

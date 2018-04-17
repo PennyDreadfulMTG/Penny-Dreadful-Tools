@@ -5,6 +5,7 @@ from typing import Callable
 from flask import redirect, request, session, url_for
 from requests_oauthlib import OAuth2Session
 
+from decksite import logger
 from decksite.data import person
 from shared import configuration
 
@@ -39,7 +40,7 @@ def setup_session(url):
         else:
             wrong_guilds = True
     if wrong_guilds:
-        print("auth.py: unexpected discord response. Guilds: {g}".format(g=guilds))
+        logger.warn("auth.py: unexpected discord response. Guilds: {g}".format(g=guilds))
 
 def make_session(token=None, state=None, scope=None):
     return OAuth2Session(

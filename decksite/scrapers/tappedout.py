@@ -3,7 +3,7 @@ import urllib
 
 from bs4 import BeautifulSoup
 
-from decksite import translation
+from decksite import logger, translation
 from decksite.data import deck
 from decksite.scrapers import decklist
 from magic import fetcher_internal, legality
@@ -13,7 +13,7 @@ from shared.pd_exception import InvalidDataException
 
 def scrape():
     login()
-    print('Logged in to TappedOut: {is_authorised}'.format(is_authorised=is_authorised()))
+    logger.warn('Logged in to TappedOut: {is_authorised}'.format(is_authorised=is_authorised()))
     raw_decks = fetch_decks()
     for raw_deck in raw_decks:
         try:
@@ -22,7 +22,7 @@ def scrape():
             raw_deck = set_values(raw_deck)
             deck.add_deck(raw_deck)
         except InvalidDataException as e:
-            print('Skipping {slug} because of {e}'.format(slug=raw_deck.get('slug', '-no slug-'), e=e))
+            logger.warn('Skipping {slug} because of {e}'.format(slug=raw_deck.get('slug', '-no slug-'), e=e))
 
 def fetch_decks():
     return fetcher_internal.fetch_json('https://tappedout.net/api/deck/latest/penny-dreadful/')
@@ -77,7 +77,7 @@ def login(user=None, password=None):
     if password is None:
         password = configuration.get('to_password')
     if user == '' or password == '':
-        print('No TappedOut credentials provided')
+        logger.warn('No TappedOut credentials provided')
         return
     url = "https://tappedout.net/accounts/login/"
     session = fetcher_internal.SESSION
@@ -98,10 +98,10 @@ def login(user=None, password=None):
     headers = {
         'referer': url,
     }
-    print("Logging in to TappedOut as {0}".format(user))
+    logger.warn("Logging in to TappedOut as {0}".format(user))
     response = session.post(url, data=data, headers=headers)
     if response.status_code == 403:
-        print("Failed to log in")
+        logger.warn("Failed to log in")
 
 def scrape_url(url):
     if not url.endswith('/'):

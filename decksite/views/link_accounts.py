@@ -19,7 +19,6 @@ class LinkAccounts(View):
         for k in request.form.keys():
             self.form[k] = request.form[k]
         self.form.errors = Container()
-        print(self.person)
         if self.person and self.person.mtgo_username:
             if self.form.get('to_username', None) is None and self.person.tappedout_username is not None:
                 self.form['to_username'] = self.person.tappedout_username

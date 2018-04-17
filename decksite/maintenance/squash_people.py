@@ -1,3 +1,4 @@
+from decksite import logger
 from decksite.database import db
 from shared.container import Container
 
@@ -25,12 +26,12 @@ def run():
             for pair in pairs:
                 squash(pair.p1_id, pair.p2_id, pair.col1, pair.col2)
     if run_elo:
-        print('Running maintenance task to correct all Elo ratings.')
+        logger.warn('Running maintenance task to correct all Elo ratings.')
         elo.run()
 
 
 def squash(p1id, p2id, col1, col2):
-    print('Squashing {p1id} and {p2id} on {col1} and {col2}'.format(p1id=p1id, p2id=p2id, col1=col1, col2=col2))
+    logger.warn('Squashing {p1id} and {p2id} on {col1} and {col2}'.format(p1id=p1id, p2id=p2id, col1=col1, col2=col2))
     db().begin()
     new_value = db().value('SELECT {col2} FROM person WHERE id = %s'.format(col2=col2), [p2id])
     db().execute('UPDATE deck SET person_id = %s WHERE person_id = %s', [p1id, p2id])

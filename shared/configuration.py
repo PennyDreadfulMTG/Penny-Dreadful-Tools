@@ -55,7 +55,7 @@ def get_str(key: str) -> str:
         return None
     if isinstance(val, str):
         return val
-    raise InvalidDataException("Expected a String")
+    raise InvalidDataException('Expected a str for `{key}`'.format(key=key))
 
 def get_int(key: str) -> int:
     val = get(key)
@@ -63,7 +63,7 @@ def get_int(key: str) -> int:
         return None
     if isinstance(val, int):
         return val
-    raise InvalidDataException("Expected an Integer")
+    raise InvalidDataException('Expected an int for `{key}`'.format(key=key))
 
 
 def get_list(key: str) -> List[str]:
@@ -72,7 +72,7 @@ def get_list(key: str) -> List[str]:
         return None
     if isinstance(val, list):
         return val
-    raise InvalidDataException("Expected a List[String]")
+    raise InvalidDataException('Expected a List[str] for `{key}`'.format(key=key))
 
 def get(key: str) -> Union[str, List[str], int]:
     try:

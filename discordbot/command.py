@@ -9,7 +9,7 @@ import textwrap
 import time
 import traceback
 from copy import copy
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Union, Tuple
 
 import inflect
 from discord.channel import Channel
@@ -91,8 +91,8 @@ def find_method(name: str) -> Callable:
         return getattr(Commands, method[0])
     return None
 
-def build_help(readme: bool = False, cmd: None = None) -> str:
-    def print_group(group):
+def build_help(readme: bool = False, cmd: str = None) -> str:
+    def print_group(group: str) -> str:
         msg = ''
         for methodname in dir(Commands):
             if methodname.startswith("__"):
@@ -103,7 +103,7 @@ def build_help(readme: bool = False, cmd: None = None) -> str:
             msg += '\n' + print_cmd(method, readme)
         return msg
 
-    def print_cmd(method, verbose):
+    def print_cmd(method: Callable, verbose: bool) -> str:
         if method.__doc__:
             if not method.__doc__.startswith('`'):
                 return '`!{0}` {1}'.format(method.__name__, method.__doc__)
@@ -234,7 +234,7 @@ Want to contribute? Send a Pull Request."""
         if random.random() < 0.05:
             rhino_name = "Abundant Maw"
         rhinos.extend([oracle.cards_by_name()[rhino_name]])
-        def find_rhino(query):
+        def find_rhino(query: str) -> Card:
             cards = complex_search('f:pd {0}'.format(query))
             if len(cards) == 0:
                 cards = complex_search(query)
@@ -327,7 +327,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Developer')
     async def notpenny(self, client, channel, args, **_) -> None:
         """Don't show PD Legality in this channel"""
-        existing = configuration.get('not_pd')
+        existing = configuration.get_str('not_pd')
         if args and args[0] == "server":
             cid = channel.server.id
         else:
@@ -461,8 +461,8 @@ Want to contribute? Send a Pull Request."""
         """`!explain`. Get a list of things the bot knows how to explain.
 `!explain {thing}`. Print commonly needed explanation for 'thing'."""
         num_tournaments = inflect.engine().number_to_words(len(tournaments.all_series_info()))
-        explanations = {
-            'bugs': [
+        explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
+            'bugs': (
                 'We keep track of cards that are bugged on Magic Online. We allow the playing of cards with known bugs in Penny Dreadful under certain conditions. See the full rules on the website.',
                 {
                     'Known Bugs List': fetcher.decksite_url('/bugs/'),
@@ -470,8 +470,8 @@ Want to contribute? Send a Pull Request."""
                     'Bugged Cards Database': 'https://github.com/PennyDreadfulMTG/modo-bugs/issues/'
                 }
 
-            ],
-            'deckbuilding': [
+            ),
+            'deckbuilding': (
                 """
                 The best way to build decks is to use a search engine that supports Penny Dreadful legality (`f:pd`) like Scryfall.
                 You can find Penny Dreadful decklists from tournaments, leagues and elsewhere at pennydreadfulmagic.com.
@@ -481,20 +481,20 @@ Want to contribute? Send a Pull Request."""
                     'Latest Decks': fetcher.decksite_url('/'),
                     'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt'
                 }
-            ],
-            'decklists': [
+            ),
+            'decklists': (
                 """
                 You can find Penny Dreadful decklists from tournaments, leagues and elsewhere at pennydreadfulmagic.com
                 """,
                 {
                     'Latest Decks': fetcher.decksite_url('/')
                 }
-            ],
-            'doorprize': [
+            ),
+            'doorprize': (
                 "The door prize is 1 tik credit with Cardhoarder, awarded to one randomly-selected player that completes the Swiss rounds but doesn't make top 8.",
                 {}
-            ],
-            'league': [
+            ),
+            'league': (
                 """
                 Leagues last for roughly a month. You may enter any number of times but only one deck at a time.
                 You play five matches per run. You can join the league at any time.
@@ -507,8 +507,8 @@ Want to contribute? Send a Pull Request."""
                     'Sign Up': fetcher.decksite_url('/signup/'),
                     'Current League': fetcher.decksite_url('/league/current/')
                 }
-            ],
-            'legality': [
+            ),
+            'legality': (
                 """
                 Legality is determined at the release of a Standard-legal set on Magic Online.
                 Prices are checked every hour for a week. Anything 1c or less for half or more of all checks is legal for the season.
@@ -521,29 +521,30 @@ Want to contribute? Send a Pull Request."""
                     'Rotation Speculation': fetcher.decksite_url('/rotation/speculation/'),
                     'Rotation Changes': fetcher.decksite_url('/rotation/changes/')
                 }
-            ],
-            'noshow': [
+            ),
+            'noshow': (
                 """
                 If your opponent does not join your game please @-message them on Discord and contact them on Magic Online.
                 If you haven't heard from them by 10 minutes after the start of the round let the Tournament Organizer know.
                 You will receive a 2-0 win and your opponent will be dropped from the competition.
-                """
-            ],
-            'playing': [
+                """,
+                {}
+            ),
+            'playing': (
                 """
                 To get a match go to Constructed Open Play, Just for Fun on MTGO and create a Freeform game with "Penny Dreadful" in the comments.
                 """,
                 {}
-            ],
-            'prices': [
+            ),
+            'prices': (
                 """
                 The price output contains current price.
                 If the price is low enough it will show season-low and season-high also.
                 If the card has been 1c at any point this season it will also include the amount of time (as a percentage) the card has spent at 1c or below this week, month and season.
                 """,
                 {}
-            ],
-            'prizes': [
+            ),
+            'prizes': (
                 """
                 Gatherling tournaments pay prizes to the Top 8 in Cardhoarder credit.
                 One player not making Top 8 but playing all the Swiss rounds will be randomly allocated the door prize.
@@ -552,8 +553,8 @@ Want to contribute? Send a Pull Request."""
                 {
                     'More Info': fetcher.decksite_url('/tournaments/')
                 }
-            ],
-            'report': [
+            ),
+            'report': (
                 """
                 For gatherling.com tournaments PDBot is information-only, *both* players must report near the top of Player CP.
                 If PDBot reports your league match in Discord you don't need to do anything (only league matches, tournament matches must still be reported). If not, either player can report.
@@ -562,14 +563,14 @@ Want to contribute? Send a Pull Request."""
                     'Gatherling': 'https://gatherling.com/player.php',
                     'League Report': fetcher.decksite_url('/report/')
                 }
-            ],
-            'retire': [
+            ),
+            'retire': (
                 'To retire from a league run message PDBot on MTGO with !retire. Alternatively retire via pennydreadfulmagic.com (requires Discord authentication)',
                 {
                     'Retire': fetcher.decksite_url('/retire/')
                 }
-            ],
-            'tournament': [
+            ),
+            'tournament': (
                 """
                 We have {num_tournaments} free-to-enter weekly tournaments, most of which have prizes from Cardhoarder.
                 They are hosted on gatherling.com along with a lot of other player-run Magic Online events.
@@ -578,14 +579,15 @@ Want to contribute? Send a Pull Request."""
                     'More Info': fetcher.decksite_url('/tournaments/'),
                     'Sign Up': 'https://gatherling.com/',
                 }
-            ],
-            'username': [
+            ),
+            'username': (
                 """
                 Please change your Discord username to include your MTGO username so we can know who you are.
                 To change, right-click your username.
                 This will not affect any other Discord channel.
-                """
-            ]
+                """,
+                {}
+            )
         }
         keys = sorted(explanations.keys())
         explanations['drop'] = explanations['retire']
@@ -601,9 +603,8 @@ Want to contribute? Send a Pull Request."""
         except KeyError:
             usage = 'I can explain any of these things: {things}'.format(things=', '.join(sorted(keys)))
             return await client.send_message(channel, usage)
-        if len(explanations[word]) >= 2:
-            for k in sorted(explanations[word][1].keys()):
-                s += '{k}: <{v}>\n'.format(k=k, v=explanations[word][1][k])
+        for k in sorted(explanations[word][1].keys()):
+            s += '{k}: <{v}>\n'.format(k=k, v=explanations[word][1][k])
         await client.send_message(channel, s)
 
     @cmd_header('Developer')
@@ -684,6 +685,7 @@ async def single_card_or_send_error(client: Client, channel: Channel, args: str,
         await disambiguation_reactions(client, message, result.get_ambiguous_matches()[0:5])
     else:
         await client.send_message(channel, '{author}: No matches.'.format(author=author.mention))
+    return None
 
 # pylint: disable=too-many-arguments
 async def single_card_text(client: Client, channel: Channel, args: str, author: Member, f: Callable, command: str) -> None:
@@ -706,7 +708,7 @@ def card_rulings(c: Card) -> str:
         rulings.append("And {n} others.  See <https://scryfall.com/search?q=%21%22{cardname}%22#rulings>".format(n=n, cardname=fetcher.internal.escape(c.name)))
     return "\n".join(rulings) or "No rulings available."
 
-def site_resources(args: str) -> Dict[Any, Any]:
+def site_resources(args: str) -> Dict[str, str]:
     results = {}
     if ' ' in args.strip():
         area, detail = args.strip().split(' ', 1)
@@ -726,7 +728,7 @@ def site_resources(args: str) -> Dict[Any, Any]:
         results[url] = args
     return results
 
-def resources_resources(args: str) -> Dict[Any, Any]:
+def resources_resources(args: str) -> Dict[str, str]:
     results = {}
     words = args.split()
     resources = fetcher.resources()

@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional, Collection
 
 from magic import card, fetcher, mana, multiverse, rotation
 from magic.database import db
@@ -38,20 +38,22 @@ def valid_name(name: str) -> str:
 def load_card(name):
     return CARDS_BY_NAME.get(name, load_cards([name])[0])
 
-def load_cards(names=None, where=None):
+def load_cards(names: Collection[str] = None, where: Optional[str] = None) -> List[card.Card]:
     if names:
-        names = set(names)
-    if names:
-        names_clause = 'LOWER(c.name) IN ({names})'.format(names=', '.join(sqlescape(name).lower() for name in names))
+        setnames = set(names)
+    else:
+        setnames = set()
+    if setnames:
+        names_clause = 'LOWER(c.name) IN ({names})'.format(names=', '.join(sqlescape(name).lower() for name in setnames))
     else:
         names_clause = '(1 = 1)'
     if where is None:
         where = '(1 = 1)'
     sql = multiverse.cached_base_query('({where} AND {names})'.format(where=where, names=names_clause))
     rs = db().execute(sql)
-    if names and len(names) != len(rs):
-        missing = names.symmetric_difference([r['name'] for r in rs])
-        raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`.  missing=`{missing}`'.format(namelen=len(names), rslen=len(rs), names=names, missing=missing))
+    if setnames and len(setnames) != len(rs):
+        missing = setnames.symmetric_difference([r['name'] for r in rs])
+        raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`.  missing=`{missing}`'.format(namelen=len(setnames), rslen=len(rs), names=setnames, missing=missing))
     return [card.Card(r) for r in rs]
 
 def cards_by_name() -> Dict[str, card.Card]:
@@ -62,7 +64,7 @@ def bugged_cards():
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 
-def legal_cards(force=False):
+def legal_cards(force=False) -> List[str]:
     if len(LEGAL_CARDS) == 0 or force:
         new_list = multiverse.set_legal_cards(force)
         if new_list is None:

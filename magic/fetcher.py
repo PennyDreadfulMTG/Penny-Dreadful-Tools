@@ -100,9 +100,9 @@ def legal_cards(force=False, season=None):
 def mtgjson_version() -> str:
     return cast(str, internal.fetch_json('https://mtgjson.com/json/version.json'))
 
-def mtgo_status():
+def mtgo_status() -> str:
     try:
-        return internal.fetch_json('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php')['status']
+        return cast(str, internal.fetch_json('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php')['status'])
     except (FetchException, json.decoder.JSONDecodeError):
         return 'UNKNOWN'
 
@@ -157,7 +157,7 @@ def rulings(cardname):
 def sitemap():
     return internal.fetch_json(decksite_url('/api/sitemap/'))
 
-def time(q):
+def time(q) -> str:
     if len(q) > 3:
         url = 'http://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false'.format(q=internal.escape(q))
         info = internal.fetch_json(url)
@@ -173,7 +173,7 @@ def time(q):
     else:
         try:
             timezone = dtutil.timezone(q.upper())
-        except pytz.exceptions.UnknownTimeZoneError:
+        except pytz.exceptions.UnknownTimeZoneError: # type: ignore
             raise TooFewItemsException('Not a recognized timezone: {q}'.format(q=q))
     return dtutil.now(timezone).strftime('%l:%M %p')
 

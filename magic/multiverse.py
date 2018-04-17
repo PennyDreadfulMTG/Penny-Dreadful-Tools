@@ -1,5 +1,5 @@
 import re
-from typing import Dict, List
+from typing import Dict, List, Union
 
 import pkg_resources
 
@@ -336,7 +336,7 @@ def database2json(propname: str) -> str:
 def underscore2camel(s: str) -> str:
     return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)
 
-def date2int(s: str, name: str) -> str:
+def date2int(s: str, name: str) -> Union[str, float]:
     if name == 'release_date':
         return dtutil.parse_to_ts(s, '%Y-%m-%d', dtutil.WOTC_TZ)
     return s

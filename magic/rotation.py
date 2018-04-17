@@ -28,7 +28,7 @@ def current_season_num():
     n = 0
     for code in look_in:
         n += 1
-        if code == current_season_code:
+        if code == look_for:
             return n
     raise InvalidDataException('I did not find the current season code (`{code}`) in the list of seasons ({seasons}) and I am confused.'.format(code=look_for, seasons=','.join(look_in)))
 

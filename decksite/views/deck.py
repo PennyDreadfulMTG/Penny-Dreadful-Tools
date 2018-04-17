@@ -67,7 +67,7 @@ class Deck(View):
             archetype_s = titlecase.titlecase(p.a(self.archetype_name))
         else:
             archetype_s = 'A'
-        description = '{archetype_s} deck by {author}'.format(archetype_s=archetype_s, author=self.person.decode('utf-8'))
+        description = '{archetype_s} deck by {author}'.format(archetype_s=archetype_s, author=self.person)
         return description
 
     def authenticate_url(self):

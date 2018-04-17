@@ -2,7 +2,7 @@ import os
 
 from discordbot import command, emoji
 from magic import card, fetcher_internal, image_fetcher, oracle
-from shared import configuration, whoosh_search
+from shared import configuration
 
 
 # Check that we can fetch card images.

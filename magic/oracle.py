@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Collection
+from typing import Collection, Dict, List, Optional
 
 from magic import card, fetcher, mana, multiverse, rotation
 from magic.database import db

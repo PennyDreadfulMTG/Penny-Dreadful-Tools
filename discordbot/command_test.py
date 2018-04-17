@@ -1,5 +1,4 @@
 from discordbot import command
-from shared import whoosh_search
 
 
 def test_roughly_matches():

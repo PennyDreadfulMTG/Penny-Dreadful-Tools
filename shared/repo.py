@@ -4,8 +4,7 @@ import traceback
 from typing import Optional
 
 from flask import request, session
-from github import Github
-from github import Issue
+from github import Github, Issue
 
 from shared import configuration
 

@@ -1,13 +1,7 @@
 import re
+from typing import Any, List, Optional, Tuple
 
 import pygtrie
-from typing import (
-    Any,
-    List,
-    Optional,
-    Tuple,
-    Union,
-)
 from whoosh.index import open_dir
 from whoosh.query import And, FuzzyTerm, Or, Term
 

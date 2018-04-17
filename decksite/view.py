@@ -11,7 +11,7 @@ from werkzeug.routing import BuildError
 
 from decksite import APP, BABEL, admin, template
 from decksite.data import archetype, deck
-from magic import multiverse, oracle, rotation, tournaments
+from magic import oracle, rotation, tournaments
 from shared import dtutil
 from shared.container import Container
 
@@ -66,7 +66,7 @@ class View:
         }]
         num = 1
         next_rotation_set_code = rotation.next_rotation_ex()['code']
-        for code in multiverse.SEASONS:
+        for code in rotation.SEASONS:
             if code == next_rotation_set_code:
                 break
             seasons.append({
@@ -201,7 +201,7 @@ class View:
         d.has_legal_format = len(d.legal_formats) > 0
         d.pd_legal = 'Penny Dreadful' in d.legal_formats
         d.legal_icons = ''
-        sets = multiverse.SEASONS
+        sets = rotation.SEASONS
         if 'Penny Dreadful' in d.legal_formats:
             icon = rotation.current_season_code().lower()
             n = sets.index(icon.upper()) + 1

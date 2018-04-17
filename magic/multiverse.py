@@ -15,11 +15,6 @@ from shared.whoosh_write import WhooshWriter
 FORMAT_IDS: Dict[str, int] = {}
 CARD_IDS: Dict[str, int] = {}
 
-SEASONS = [
-    'EMN', 'KLD', 'AER', 'AKH', 'HOU',
-    'XLN', 'RIX', 'DOM', 'M19',
-    ]
-
 HARDCODED_MELD_NAMES = [
     ["Gisela, the Broken Blade", "Bruna, the Fading Light", "Brisela, Voice of Nightmares"],
     ["Graf Rats", "Midnight Scavengers", "Chittering Host"],
@@ -207,7 +202,7 @@ def update_bugged_cards(use_transaction: bool = True) -> None:
         db().commit()
 
 def update_pd_legality() -> None:
-    for s in SEASONS:
+    for s in rotation.SEASONS:
         if s == rotation.current_season_code():
             break
         set_legal_cards(season=s)

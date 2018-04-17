@@ -145,7 +145,7 @@ def insert_scryfall_card(sfcard, rebuild_cache: bool = True) -> None:
 
 def last_pd_rotation_changes():
     current_code = rotation.current_season_code()
-    previous = multiverse.SEASONS[multiverse.SEASONS.index(current_code) - 1]
+    previous = rotation.SEASONS[rotation.SEASONS.index(current_code) - 1]
     previous_id = multiverse.get_format_id("Penny Dreadful {f}".format(f=previous))
     current_id = multiverse.get_format_id("Penny Dreadful")
     return changes_between_formats(previous_id, current_id)

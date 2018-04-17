@@ -7,6 +7,8 @@ from typing import List, Union
 
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
+ConfigValue = Union[str, List[str], int, float]
+
 DEFAULTS = {
     'cardhoarder_urls': [],
     'card_alias_file': './card_aliases.tsv',
@@ -61,7 +63,7 @@ def get_float(key: str) -> float:
 def get_list(key: str) -> List[str]:
     return get(key, List[str])
 
-def get(key: str, val_type: type = None) -> Union[str, List[str], int, float]:
+def get(key: str, val_type: type = None) -> ConfigValue:
     val = get_raw(key)
     if val is None:
         return None
@@ -69,7 +71,7 @@ def get(key: str, val_type: type = None) -> Union[str, List[str], int, float]:
         return val
     raise InvalidDataException('Expected a `{val_type}` for `{key}`, got `{val}` (`{actual_type}`)'.format(val_type=val_type, key=key, val=val, actual_type=type(val)))
 
-def get_raw(key: str):
+def get_raw(key: str) -> ConfigValue:
     try:
         cfg = json.load(open('config.json'))
     except FileNotFoundError:

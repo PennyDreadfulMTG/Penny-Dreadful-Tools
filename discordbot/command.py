@@ -9,7 +9,7 @@ import textwrap
 import time
 import traceback
 from copy import copy
-from typing import Callable, Dict, List, Optional, Union, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 import inflect
 from discord.channel import Channel
@@ -46,11 +46,12 @@ async def respond_to_card_names(message: Message, client: Client) -> None:
     if len(queries) > 0:
         results = results_from_queries(queries)
         cards = []
-        for r in results:
+        for i in results:
+            (r, mode) = i
             if r.has_match() and not r.is_ambiguous():
-                cards.extend(cards_from_names_with_mode([r.get_best_match()], r.mode))
+                cards.extend(cards_from_names_with_mode([r.get_best_match()], mode))
             elif r.is_ambiguous():
-                cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), r.mode))
+                cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode))
         await post_cards(client, cards, message.channel, message.author)
 
     matches = re.findall(r'https?://(?:www.)?tappedout.net/mtg-decks/(?P<slug>[\w-]+)/?', message.content, flags=re.IGNORECASE)
@@ -618,7 +619,7 @@ Want to contribute? Send a Pull Request."""
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards: List[Card]) -> List[Card]:
     # Remove multiple printings of the same card from the result set.
-    results = collections.OrderedDict()
+    results: Dict[str, Card] = collections.OrderedDict()
     for c in cards:
         results[card.canonicalize(c.name)] = c
     return list(results.values())
@@ -627,11 +628,11 @@ def parse_queries(content: str) -> List[str]:
     queries = re.findall(r'\[?\[([^\]]*)\]\]?', content)
     return [card.canonicalize(query) for query in queries if len(query) > 2]
 
-def cards_from_names_with_mode(cards: List[str], mode: int) -> List[Card]:
+def cards_from_names_with_mode(cards: List[str], mode: str) -> List[Card]:
     oracle_cards = oracle.cards_by_name()
     return [copy_with_mode(oracle_cards[c], mode) for c in cards if c is not None]
 
-def copy_with_mode(oracle_card: Card, mode: int) -> Card:
+def copy_with_mode(oracle_card: Card, mode: str) -> Card:
     c = copy(oracle_card)
     c['mode'] = mode
     return c
@@ -643,13 +644,12 @@ def parse_mode(query: str) -> List[str]:
         query = query[1:]
     return [mode, query]
 
-def results_from_queries(queries: List[str]) -> List[SearchResult]:
+def results_from_queries(queries: List[str]) -> List[Tuple[SearchResult, str]]:
     all_results = []
     for query in queries:
         mode, query = parse_mode(query)
         result = searcher().search(query)
-        result.mode = mode
-        all_results.append(result)
+        all_results.append((result, mode))
     return all_results
 
 def complex_search(query: str) -> List[Card]:
@@ -676,9 +676,9 @@ async def disambiguation_reactions(client: Client, message: Message, cards: List
         await client.add_reaction(message, DISAMBIGUATION_EMOJIS_BY_NUMBER[i])
 
 async def single_card_or_send_error(client: Client, channel: Channel, args: str, author: Member, command: str) -> Optional[Card]:
-    result = results_from_queries([args])[0]
+    result, mode = results_from_queries([args])[0]
     if result.has_match() and not result.is_ambiguous():
-        return cards_from_names_with_mode([result.get_best_match()], result.mode)[0]
+        return cards_from_names_with_mode([result.get_best_match()], mode)[0]
 
     if result.is_ambiguous():
         message = await client.send_message(channel, '{author}: Ambiguous name for {c}. Suggestions: {s}'.format(author=author.mention, c=command, s=disambiguation(result.get_ambiguous_matches()[0:5])))

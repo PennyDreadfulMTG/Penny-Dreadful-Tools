@@ -1,14 +1,16 @@
 import sys
 import textwrap
 import traceback
+from typing import Optional
 
 from flask import request, session
 from github import Github
+from github import Issue
 
 from shared import configuration
 
 
-def create_issue(content: str, author: str, location: Optional[str] = 'Discord', repo_name: Optional[str] = 'PennyDreadfulMTG/Penny-Dreadful-Tools', exception: None = None) -> None:
+def create_issue(content: str, author: str, location: Optional[str] = 'Discord', repo_name: Optional[str] = 'PennyDreadfulMTG/Penny-Dreadful-Tools', exception: None = None) -> Issue:
     if content is None or content == '':
         return None
     body = ''

@@ -31,6 +31,7 @@ from decksite.views import (About, AboutPdm, AddForm, Admin, Archetype,
                             TournamentLeaderboards, Tournaments, Unauthorized)
 from magic import card as mc
 from magic import oracle
+from magic import rotation as rot
 from shared import dtutil, perf, repo
 from shared.container import Container
 from shared.pd_exception import (DoesNotExistException,
@@ -49,7 +50,7 @@ def home():
 @SEASON.route('/decks/')
 @cached()
 def decks():
-    view = Decks(ds.load_decks(limit='LIMIT 500', season_id=g.get('season_id')))
+    view = Decks(ds.load_decks(limit='LIMIT 500', season_id=g.get('season_id', rot.current_season_num())))
     return view.page()
 
 @APP.route('/decks/<deck_id>/')
@@ -77,13 +78,14 @@ def season(season_id, deck_type=None):
 @SEASON.route('/people/')
 @cached()
 def people():
-    view = People(ps.load_people(season_id=g.get('season_id')))
+    view = People(ps.load_people(season_id=g.get('season_id', rot.current_season_num())))
     return view.page()
 
 @APP.route('/people/<person_id>/')
+@SEASON.route('/people/<person_id>')
 @cached()
 def person(person_id):
-    p = ps.load_person(person_id)
+    p = ps.load_person(person_id, season_id=g.get('season_id', rot.current_season_num()))
     view = Person(p)
     return view.page()
 

@@ -21,6 +21,7 @@ class Person(View):
             record.opp_url = url_for('person', person_id=record.opp_mtgo_username)
         self.show_head_to_head = len(person.head_to_head) > 0
         self.tournament_organizer = self.person.name in [host for series in tournaments.all_series_info() for host in series['hosts']]
+        self.show_seasons = True
 
     def __getattr__(self, attr):
         return getattr(self.person, attr)

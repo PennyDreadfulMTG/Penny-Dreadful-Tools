@@ -385,8 +385,15 @@ def set_stars_and_top8(d):
         d.stars_safe = '<span class="stars" title="Success Rating">{stars}</span>'.format(stars=d.stars_safe)
 
 def seasonized_url(season_id):
-    prefix = '' if request.endpoint.startswith('season.') else 'season.'
+    args = request.view_args.copy()
+    if season_id == rotation.current_season_num():
+        args.pop('season_id', None)
+        endpoint = request.endpoint.replace('season.', '')
+    else:
+        args['season_id'] = season_id
+        prefix = '' if request.endpoint.startswith('season.') else 'season.'
+        endpoint = '{prefix}{endpoint}'.format(prefix=prefix, endpoint=request.endpoint)
     try:
-        return url_for('{prefix}{endpoint}'.format(prefix=prefix, endpoint=request.endpoint), season_id=season_id)
+        return url_for(endpoint, **args)
     except BuildError:
         return url_for(request.endpoint)

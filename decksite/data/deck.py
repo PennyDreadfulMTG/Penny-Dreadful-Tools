@@ -141,7 +141,8 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None):
         WHERE
             ({where}) AND ({season_query})
         GROUP BY
-            d.id
+            d.id,
+            season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
         ORDER BY
             {order_by}
         {limit}

@@ -45,14 +45,12 @@ def competition_join():
     """
 
 def season_query(season=None):
-    if season is None:
-        season = rotation.current_season_code().lower()
-    if season == 'all':
+    if season is None or season == 'all':
         return 'TRUE'
     try:
         return 'season.id = {season_id}'.format(season_id=int(season))
     except ValueError:
-        return 'season.code = {code}'.format(code=sqlescape(season))
+        raise InvalidArgumentException('No season with id `{season_id}`'.format(season_id=season_id))
 
 def season_table():
     return """

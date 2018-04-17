@@ -1,7 +1,7 @@
 import datetime
 from typing import Dict, List, Union, cast
 
-from magic import fetcher
+from magic import fetcher, multiverse
 from shared import dtutil
 
 SetInfo = Dict[str, Union[str, datetime.datetime]] #pylint: disable=invalid-name
@@ -15,6 +15,14 @@ def init() -> List[SetInfo]:
 
 def current_season_code():
     return last_rotation_ex()['code']
+
+def current_season_num():
+    next_rotation_set_code = last_rotation_ex()['code']
+    n = 0
+    for code in multiverse.SEASONS:
+        n += 1
+        if code == next_rotation_set_code:
+            return n
 
 def last_rotation():
     return last_rotation_ex()['enter_date']

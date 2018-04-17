@@ -7,6 +7,8 @@ from typing import List, Union
 
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
+ConfigValue = Union[str, List[str], int, float]
+
 DEFAULTS = {
     'cardhoarder_urls': [],
     'card_alias_file': './card_aliases.tsv',
@@ -50,31 +52,26 @@ DEFAULTS = {
 }
 
 def get_str(key: str) -> str:
-    val = get(key)
-    if val is None:
-        return None
-    if isinstance(val, str):
-        return val
-    raise InvalidDataException("Expected a String")
+    return get(key, str)
 
 def get_int(key: str) -> int:
-    val = get(key)
-    if val is None:
-        return None
-    if isinstance(val, int):
-        return val
-    raise InvalidDataException("Expected an Integer")
+    return get(key, int)
 
+def get_float(key: str) -> float:
+    return get(key, float)
 
 def get_list(key: str) -> List[str]:
-    val = get(key)
+    return get(key, List[str])
+
+def get(key: str, val_type: type = None) -> ConfigValue:
+    val = get_raw(key)
     if val is None:
         return None
-    if isinstance(val, list):
+    if val_type is None or isinstance(val, val_type):
         return val
-    raise InvalidDataException("Expected a List[String]")
+    raise InvalidDataException('Expected a `{val_type}` for `{key}`, got `{val}` (`{actual_type}`)'.format(val_type=val_type, key=key, val=val, actual_type=type(val)))
 
-def get(key: str) -> Union[str, List[str], int]:
+def get_raw(key: str) -> ConfigValue:
     try:
         cfg = json.load(open('config.json'))
     except FileNotFoundError:
@@ -86,12 +83,10 @@ def get(key: str) -> Union[str, List[str], int]:
     elif key in DEFAULTS:
         # Lock in the default value if we use it.
         cfg[key] = DEFAULTS[key]
-
         if inspect.isfunction(cfg[key]): # If default value is a function, call it.
             cfg[key] = cfg[key]()
     else:
         raise InvalidArgumentException('No default or other configuration value available for {key}'.format(key=key))
-
     print("CONFIG: {0}={1}".format(key, cfg[key]))
     fh = open('config.json', 'w')
     fh.write(json.dumps(cfg, indent=4))

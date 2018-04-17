@@ -55,7 +55,7 @@ def get_str(key: str) -> str:
         return None
     if isinstance(val, str):
         return val
-    fail(key, val, str)
+    raise fail(key, val, str)
 
 def get_int(key: str) -> int:
     val = get(key)
@@ -63,7 +63,7 @@ def get_int(key: str) -> int:
         return None
     if isinstance(val, int):
         return val
-    fail(key, val, int)
+    raise fail(key, val, int)
 
 def get_float(key: str) -> float:
     val = get(key)
@@ -71,7 +71,7 @@ def get_float(key: str) -> float:
         return None
     if isinstance(val, float):
         return val
-    fail(key, val, int)
+    raise fail(key, val, int)
 
 def get_list(key: str) -> List[str]:
     val = get(key)
@@ -79,7 +79,7 @@ def get_list(key: str) -> List[str]:
         return None
     if isinstance(val, list):
         return val
-    fail(key, val, List[str])
+    raise fail(key, val, List[str])
 
 def get(key: str) -> Union[str, List[str], int]:
     try:
@@ -118,4 +118,4 @@ def write(key: str, value: str) -> str:
     return cfg[key]
 
 def fail(key, val, expected_type):
-    raise InvalidDataException('Expected a {expected_type} for {key}, got `{val}` ({actual_type})'.format(expected_type=expected_type, key=key, val=val, actual_type=type(val)))
+    return InvalidDataException('Expected a {expected_type} for {key}, got `{val}` ({actual_type})'.format(expected_type=expected_type, key=key, val=val, actual_type=type(val)))

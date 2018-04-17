@@ -38,8 +38,6 @@ def add_or_update_news(news_item_id, date, title, url):
 
 def update_news(news_item_id, date, title, url):
     sql = 'UPDATE news_item SET `date` = %s, title = %s, url = %s WHERE id = %s'
-    print(sql)
-    print([date, title, url, news_item_id])
     return db().execute(sql, [date, title, url, news_item_id])
 
 def add_news(date, title, url):

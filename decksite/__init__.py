@@ -1,3 +1,4 @@
+import logging
 import subprocess
 
 from flask import Blueprint, Flask, g
@@ -8,12 +9,13 @@ from shared import configuration
 from shared.pd_exception import DatabaseException
 
 APP = Flask(__name__)
+APP.logger.setLevel(logging.WARN)
 BABEL = Babel(APP)
 SEASON = Blueprint('season', __name__, url_prefix='/season/<season_id>')
 
 @SEASON.url_defaults
 def add_season_id(endpoint, values):
-    values.setdefault('season_id', g.get('season_id', rotation.last_rotation_ex()['code'].lower()))
+    values.setdefault('season_id', g.get('season_id', rotation.current_season_code().lower()))
 
 @SEASON.url_value_preprocessor
 def pull_season_id(endpoint, values):
@@ -24,7 +26,9 @@ APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
 try:
     oracle.init()
 except DatabaseException as e:
-    print("Unable to initialize oracle. I'll build it now. If this is happening on user time this is bad.", e)
+    # Import logger here not at the top because it uses the initialized APP.
+    from decksite import logger
+    logger.warning("Unable to initialize oracle. I'll build it now. If this is happening on user time this is bad.", e)
     multiverse.init()
     oracle.init()
 

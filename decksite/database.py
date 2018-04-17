@@ -2,7 +2,7 @@ import os
 
 from flask import g, has_request_context, request
 
-from decksite import APP
+from decksite import APP, logger
 from shared import configuration
 from shared.database import get_database
 from shared.database_mysql import MysqlDatabase
@@ -26,7 +26,7 @@ def setup() -> None:
         path = os.path.join('decksite/sql', fn)
         n = int(fn.split('.')[0])
         if version < n:
-            print("Patching database to v{0}".format(n))
+            logger.warning("Patching database to v{0}".format(n))
             fh = open(path, 'r')
             sql = fh.read()
             for stmt in sql.split(';'):

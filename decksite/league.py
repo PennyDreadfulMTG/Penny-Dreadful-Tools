@@ -31,7 +31,7 @@ class SignUpForm(Form):
     def __init__(self, form, person_id=None, mtgo_username=None):
         super().__init__(form)
         if person_id is not None:
-            ps = person.load_person(person_id)
+            ps = person.load_person(person_id, season_id=rotation.current_season_code())
             self.recent_decks = []
             for d in sorted(ps.decks, key=lambda deck: deck["created_date"], reverse=True)[0:10]:
                 recent_deck = {"name": d["name"], "main": [], "sb":[]}

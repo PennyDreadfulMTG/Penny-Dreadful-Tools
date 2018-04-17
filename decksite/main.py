@@ -1,3 +1,4 @@
+import logging
 import os
 import traceback
 import urllib.parse
@@ -9,6 +10,7 @@ from werkzeug import exceptions
 
 from decksite import APP, SEASON, admin, auth, deck_name
 from decksite import league as lg
+from decksite import logger
 from decksite.cache import cached
 from decksite.charts import chart
 from decksite.data import archetype as archs
@@ -30,6 +32,7 @@ from decksite.views import (About, AboutPdm, AddForm, Admin, Archetype,
                             TournamentLeaderboards, Tournaments, Unauthorized)
 from magic import card as mc
 from magic import oracle
+from magic import rotation as rot
 from shared import dtutil, perf, repo
 from shared.container import Container
 from shared.pd_exception import (DoesNotExistException,
@@ -48,7 +51,7 @@ def home():
 @SEASON.route('/decks/')
 @cached()
 def decks():
-    view = Decks(ds.load_decks(limit='LIMIT 500', season_id=g.get('season_id')))
+    view = Decks(ds.load_decks(limit='LIMIT 500', season_id=g.get('season_id', rot.current_season_num())))
     return view.page()
 
 @APP.route('/decks/<deck_id>/')
@@ -76,13 +79,14 @@ def season(season_id, deck_type=None):
 @SEASON.route('/people/')
 @cached()
 def people():
-    view = People(ps.load_people(season_id=g.get('season_id')))
+    view = People(ps.load_people(season_id=g.get('season_id', rot.current_season_num())))
     return view.page()
 
 @APP.route('/people/<person_id>/')
+@SEASON.route('/people/<person_id>')
 @cached()
 def person(person_id):
-    p = ps.load_person(person_id)
+    p = ps.load_person(person_id, season_id=g.get('season_id', rot.current_season_num()))
     view = Person(p)
     return view.page()
 
@@ -492,18 +496,18 @@ def legal_cards():
 @APP.errorhandler(DoesNotExistException)
 @APP.errorhandler(exceptions.NotFound)
 def not_found(e):
-    traceback.print_exception(e, e, None)
+    log_exception(e)
     view = NotFound(e)
     return view.page(), 404
 
 @APP.errorhandler(exceptions.InternalServerError)
 def internal_server_error(e):
-    traceback.print_exception(e, e, None)
+    log_exception(e)
     path = request.path
     try:
         repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports', exception=e)
     except GithubException:
-        print('Github error')
+        logger.error('Github error', e)
     view = InternalServerError(e)
     return view.page(), 500
 
@@ -516,8 +520,12 @@ def teardown_request(response):
     perf.check(g.p, 'slow_page', request.path, 'decksite')
     return response
 
+def log_exception(e):
+    logger.error(''.join(traceback.format_exception(e, e, e.__traceback__)))
+
 def init(debug=True, port=None):
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""
+    APP.logger.setLevel(logging.INFO)
     APP.run(host='0.0.0.0', debug=debug, port=port)
 
 APP.register_blueprint(SEASON)

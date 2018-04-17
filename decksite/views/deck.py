@@ -13,10 +13,8 @@ from shared.pd_exception import InvalidDataException
 class Deck(View):
     def __init__(self, d, person_id=None, discord_id=None):
         super().__init__()
-        self._deck = d
-        self.prepare_deck(self._deck)
-        self.cards = d.all_cards()
-        if not self._deck.is_in_current_run():
+        self.deck = d
+        if not self.deck.is_in_current_run():
             # This is called 'decks' and not something more sane because of limitations of Mustache and our desire to use a partial for decktable.
             self.decks = [sd for sd in deck.get_similar_decks(d) if not sd.is_in_current_run()]
         else:
@@ -40,8 +38,8 @@ class Deck(View):
                 m.opponent_deck_name = '-'
             if self.has_rounds():
                 m.display_round = display_round(m)
-        self._deck['maindeck'].sort(key=lambda x: oracle.deck_sort(x['card']))
-        self._deck['sideboard'].sort(key=lambda x: oracle.deck_sort(x['card']))
+        self.deck['maindeck'].sort(key=lambda x: oracle.deck_sort(x['card']))
+        self.deck['sideboard'].sort(key=lambda x: oracle.deck_sort(x['card']))
         self.archetypes = archetype.load_archetypes_deckless(order_by='a.name')
         self.edit_archetype_url = url_for('edit_archetypes')
         self.cardhoarder_url = fetcher.cardhoarder_url(d)
@@ -57,10 +55,10 @@ class Deck(View):
         return self.has_matches() and self.matches[0].get('round')
 
     def og_title(self):
-        return self._deck.name
+        return self.deck.name
 
     def og_url(self):
-        return url_for('deck', deck_id=self._deck.id, _external=True)
+        return url_for('deck', deck_id=self.deck.id, _external=True)
 
     def og_description(self):
         if self.archetype_name:
@@ -68,7 +66,7 @@ class Deck(View):
             archetype_s = titlecase.titlecase(p.a(self.archetype_name))
         else:
             archetype_s = 'A'
-        description = '{archetype_s} deck by {author}'.format(archetype_s=archetype_s, author=self.person.decode('utf-8'))
+        description = '{archetype_s} deck by {author}'.format(archetype_s=archetype_s, author=self.person)
         return description
 
     def authenticate_url(self):
@@ -78,10 +76,10 @@ class Deck(View):
         return url_for('logout', target=self.og_url())
 
     def __getattr__(self, attr):
-        return getattr(self._deck, attr)
+        return getattr(self.deck, attr)
 
     def subtitle(self):
-        return self._deck.name
+        return self.deck.name
 
     def sections(self):
         sections = []
@@ -96,16 +94,16 @@ class Deck(View):
         return sections
 
     def creatures(self):
-        return [entry for entry in self._deck.maindeck if entry['card'].is_creature()]
+        return [entry for entry in self.deck.maindeck if entry['card'].is_creature()]
 
     def spells(self):
-        return [entry for entry in self._deck.maindeck if entry['card'].is_spell()]
+        return [entry for entry in self.deck.maindeck if entry['card'].is_spell()]
 
     def lands(self):
-        return [entry for entry in self._deck.maindeck if entry['card'].is_land()]
+        return [entry for entry in self.deck.maindeck if entry['card'].is_land()]
 
     def sideboard(self):
-        return self._deck.sideboard
+        return self.deck.sideboard
 
     def public(self):
         if not self.is_in_current_run:
@@ -114,7 +112,7 @@ class Deck(View):
             return False
         if session.get('admin'):
             return True
-        if self.person_id != self._deck.person_id:
+        if self.person_id != self.deck.person_id:
             return False
         return True
 

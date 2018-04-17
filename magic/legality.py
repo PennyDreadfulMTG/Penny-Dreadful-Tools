@@ -1,6 +1,6 @@
 from typing import Set
 
-from magic import multiverse, oracle
+from magic import oracle, rotation
 from magic.database import db
 
 FORMATS: Set[str] = set()
@@ -64,7 +64,7 @@ def order_score(fmt):
     if fmt == 'Penny Dreadful':
         return 1
     elif 'Penny Dreadful' in fmt:
-        return 1000 - multiverse.SEASONS.index(fmt.replace('Penny Dreadful ', ''))
+        return 1000 - rotation.SEASONS.index(fmt.replace('Penny Dreadful ', ''))
     elif fmt == 'Vintage':
         return 10000
     elif fmt == 'Legacy':

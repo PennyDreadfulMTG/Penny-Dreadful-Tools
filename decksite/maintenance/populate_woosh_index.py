@@ -1,5 +1,6 @@
 import time
 
+from decksite import logger
 from magic import multiverse
 
 
@@ -7,4 +8,4 @@ def run():
     start = time.time()
     multiverse.reindex()
     end = time.time()
-    print("Indexing done in {t} seconds".format(t=(end - start)))
+    logger.warning("Indexing done in {t} seconds".format(t=(end - start)))

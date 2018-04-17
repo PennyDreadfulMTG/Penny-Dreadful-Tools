@@ -3,6 +3,7 @@ import urllib.parse
 
 from bs4 import BeautifulSoup
 
+from decksite import logger
 from decksite.data import competition, deck, match
 from decksite.database import db
 from decksite.scrapers import decklist
@@ -136,7 +137,7 @@ def tournament_deck(cells, competition_id, date, ranks):
         return None
     d['cards'] = decklist.parse(fetcher.internal.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
     if len(d['cards']) == 0:
-        print('Rejecting deck with id {id} because it has no cards.'.format(id=gatherling_id))
+        logger.warning('Rejecting deck with id {id} because it has no cards.'.format(id=gatherling_id))
         return None
     return deck.add_deck(d)
 
@@ -146,7 +147,7 @@ def tournament_matches(d):
     soup = BeautifulSoup(s, 'html.parser')
     anchor = soup.find(string='MATCHUPS')
     if anchor is None:
-        print('Skipping {id} because it has no MATCHUPS.'.format(id=d.id))
+        logger.warning('Skipping {id} because it has no MATCHUPS.'.format(id=d.id))
         return []
     table = anchor.findParents('table')[0]
     rows = table.find_all('tr')
@@ -159,7 +160,7 @@ def find_matches(d, rows):
     for row in rows:
         tds = row.find_all('td')
         if 'No matches were found for this deck' in tds[0].renderContents().decode('utf-8'):
-            print('Skipping {identifier} because it played no matches.'.format(identifier=d.identifier))
+            logger.warning('Skipping {identifier} because it played no matches.'.format(identifier=d.identifier))
             break
         round_type, num = re.findall(r'([TR])(\d+)', tds[0].string)[0]
         num = int(num)

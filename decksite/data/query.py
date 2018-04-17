@@ -1,5 +1,4 @@
-from magic import rotation
-from shared.database import sqlescape
+from shared.pd_exception import InvalidArgumentException
 
 
 def person_query(table='p'):
@@ -44,15 +43,13 @@ def competition_join():
             competition_type AS ct ON ct.id = cs.competition_type_id
     """
 
-def season_query(season=None):
-    if season is None:
-        season = rotation.last_rotation_ex()['code'].lower()
-    if season == 'all':
+def season_query(season_id=None):
+    if season_id is None or season_id == 'all':
         return 'TRUE'
     try:
-        return 'season.id = {season_id}'.format(season_id=int(season))
+        return 'season.id = {season_id}'.format(season_id=int(season_id))
     except ValueError:
-        return 'season.code = {code}'.format(code=sqlescape(season))
+        raise InvalidArgumentException('No season with id `{season_id}`'.format(season_id=season_id))
 
 def season_table():
     return """

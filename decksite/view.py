@@ -11,7 +11,7 @@ from werkzeug.routing import BuildError
 
 from decksite import APP, BABEL, admin, template
 from decksite.data import archetype, deck
-from magic import multiverse, oracle, rotation, tournaments
+from magic import oracle, rotation, tournaments
 from shared import dtutil
 from shared.container import Container
 
@@ -66,7 +66,7 @@ class View:
         }]
         num = 1
         next_rotation_set_code = rotation.next_rotation_ex()['code']
-        for code in multiverse.SEASONS:
+        for code in rotation.SEASONS:
             if code == next_rotation_set_code:
                 break
             seasons.append({
@@ -201,9 +201,9 @@ class View:
         d.has_legal_format = len(d.legal_formats) > 0
         d.pd_legal = 'Penny Dreadful' in d.legal_formats
         d.legal_icons = ''
-        sets = multiverse.SEASONS
+        sets = rotation.SEASONS
         if 'Penny Dreadful' in d.legal_formats:
-            icon = rotation.last_rotation_ex()['code'].lower()
+            icon = rotation.current_season_code().lower()
             n = sets.index(icon.upper()) + 1
             d.legal_icons += '<a href="{url}"><i class="ss ss-{code} ss-rare ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), code=icon, n=n)
         past_pd_formats = [fmt.replace('Penny Dreadful ', '') for fmt in d.legal_formats if 'Penny Dreadful ' in fmt]
@@ -385,8 +385,15 @@ def set_stars_and_top8(d):
         d.stars_safe = '<span class="stars" title="Success Rating">{stars}</span>'.format(stars=d.stars_safe)
 
 def seasonized_url(season_id):
-    prefix = '' if request.endpoint.startswith('season.') else 'season.'
+    args = request.view_args.copy()
+    if season_id == rotation.current_season_num():
+        args.pop('season_id', None)
+        endpoint = request.endpoint.replace('season.', '')
+    else:
+        args['season_id'] = season_id
+        prefix = '' if request.endpoint.startswith('season.') else 'season.'
+        endpoint = '{prefix}{endpoint}'.format(prefix=prefix, endpoint=request.endpoint)
     try:
-        return url_for('{prefix}{endpoint}'.format(prefix=prefix, endpoint=request.endpoint), season_id=season_id)
+        return url_for(endpoint, **args)
     except BuildError:
         return url_for(request.endpoint)

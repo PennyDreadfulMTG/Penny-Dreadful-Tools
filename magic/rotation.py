@@ -3,8 +3,14 @@ from typing import Dict, List, Union, cast
 
 from magic import fetcher
 from shared import dtutil
+from shared.pd_exception import InvalidDataException
 
 SetInfo = Dict[str, Union[str, datetime.datetime]] #pylint: disable=invalid-name
+
+SEASONS = [
+    'EMN', 'KLD', 'AER', 'AKH', 'HOU',
+    'XLN', 'RIX', 'DOM', 'M19',
+    ]
 
 def init() -> List[SetInfo]:
     info = fetcher.whatsinstandard()
@@ -12,6 +18,19 @@ def init() -> List[SetInfo]:
         print('Current whatsinstandard API version is DEPRECATED.')
     set_info = cast(List[SetInfo], info['sets'])
     return [parse_rotation_date(release) for release in set_info]
+
+def current_season_code():
+    return last_rotation_ex()['code']
+
+def current_season_num():
+    look_for = current_season_code()
+    look_in = SEASONS
+    n = 0
+    for code in look_in:
+        n += 1
+        if code == look_for:
+            return n
+    raise InvalidDataException('I did not find the current season code (`{code}`) in the list of seasons ({seasons}) and I am confused.'.format(code=look_for, seasons=','.join(look_in)))
 
 def last_rotation():
     return last_rotation_ex()['enter_date']

@@ -372,6 +372,10 @@ def load_competitive_stats(decks):
     if len(decks) == 0:
         return
     decks_by_id = {d.id: d for d in decks}
+    if len(decks) < 1000:
+        where = 'd.id IN ({deck_ids})'.format(deck_ids=', '.join(map(sqlescape, map(str, decks_by_id.keys()))))
+    else:
+        where = 'TRUE' # MySQL doesn't like to be asked to do IN queries for very long argument lists. Just load everything. (MariaDB doesn't care, interestingly.)
     sql = """
         SELECT
             d.id,
@@ -396,16 +400,18 @@ def load_competitive_stats(decks):
         INNER JOIN
             `match` AS m ON m.id = dm.match_id
         WHERE
-            d.id IN ({deck_ids})
+            {where}
         GROUP BY
             d.id
-    """.format(deck_ids=', '.join(map(sqlescape, map(str, decks_by_id.keys()))))
-    for row in db().execute(sql):
-        decks_by_id[row['id']].opp_wins = row['opp_wins']
-        decks_by_id[row['id']].opp_losses = row['opp_losses']
-        decks_by_id[row['id']].omw = row['omw']
-        decks_by_id[row['id']].stage_reached = row['stage_reached']
-        decks_by_id[row['id']].elim = row['elim'] # This property is never used? and is always a bunch of zeroes?
+    """.format(where=where)
+    rs = db().execute(sql)
+    for row in rs:
+        if decks_by_id.get(row['id']):
+            decks_by_id[row['id']].opp_wins = row['opp_wins']
+            decks_by_id[row['id']].opp_losses = row['opp_losses']
+            decks_by_id[row['id']].omw = row['omw']
+            decks_by_id[row['id']].stage_reached = row['stage_reached']
+            decks_by_id[row['id']].elim = row['elim'] # This property is never used? and is always a bunch of zeroes?
 
 def count_matches(deck_id, opponent_deck_id):
     sql = 'SELECT deck_id, count(id) as count FROM deck_match WHERE deck_id in (%s, %s) group by deck_id'

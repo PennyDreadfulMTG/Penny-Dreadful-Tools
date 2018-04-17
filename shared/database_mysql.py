@@ -1,28 +1,28 @@
 # pylint: disable=import-error, duplicate-code
 import warnings
+from typing import Any, List
 
 import MySQLdb
 from MySQLdb import OperationalError
 
 from shared import configuration, perf
-from shared.database_generic import GenericDatabase
 from shared.pd_exception import DatabaseException, LockNotAcquiredException
 
 
-class MysqlDatabase(GenericDatabase):
-    def __init__(self, db):
+class MysqlDatabase():
+    def __init__(self, db: str) -> None:
         warnings.filterwarnings('error', category=MySQLdb.Warning)
         self.name = db
-        self.host = configuration.get('mysql_host')
-        self.port = configuration.get('mysql_port')
-        if str(self.port).startswith('0.0.0.0:'):
-            # Thanks Docker :/
-            self.port = int(self.port[8:])
-        self.user = configuration.get('mysql_user')
-        self.passwd = configuration.get('mysql_passwd')
+        self.host = configuration.get_str('mysql_host')
+        self.port = configuration.get_int('mysql_port')
+        # if str(self.port).startswith('0.0.0.0:'):
+        #     # Thanks Docker :/
+        #     self.port = int(self.port[8:])
+        self.user = configuration.get_str('mysql_user')
+        self.passwd = configuration.get_str('mysql_passwd')
         self.connect()
 
-    def connect(self):
+    def connect(self) -> None:
         try:
             self.connection = MySQLdb.connect(host=self.host, port=self.port, user=self.user, passwd=self.passwd, use_unicode=True, charset='utf8', autocommit=True)
             self.cursor = self.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -36,22 +36,22 @@ class MysqlDatabase(GenericDatabase):
         except MySQLdb.Error:
             raise DatabaseException('Failed to initialize database in `{location}`'.format(location=self.name))
 
-    def execute(self, sql, args=None):
+    def execute(self, sql: str, args: Any = None) -> List[Any]:
         if args is None:
             args = []
         try:
             return self.execute_with_reconnect(sql, args)
         except MySQLdb.Warning as e:
             if e.args[0] == 1050 or e.args[0] == 1051:
-                pass # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or DROP TABLE IF NOT EXISTS raises an "unknown table" warning.
+                return None # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or DROP TABLE IF NOT EXISTS raises an "unknown table" warning.
             elif e.args[0] == 1062:
-                pass # We don't care if an INSERT IGNORE INTO didn't do anything.
+                return None # We don't care if an INSERT IGNORE INTO didn't do anything.
             else:
                 raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
         except MySQLdb.Error as e:
             raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
 
-    def execute_with_reconnect(self, sql, args):
+    def execute_with_reconnect(self, sql: str, args: Any = None) -> List[Any]:
         result = None
         # Attempt to excute the query and reconnect 3 times, then give up
         for _ in range(3):
@@ -106,9 +106,22 @@ class MysqlDatabase(GenericDatabase):
     def release_lock(self, lock_id):
         self.execute('select release_lock(%s)', [lock_id])
 
-    def create_index_query(self, name, table, column, prefix_width=None):
+    def create_index_query(self, name: str, table: str, column: str, prefix_width: int = None):
         if prefix_width is not None:
             width = '({w})'.format(w=prefix_width)
         else:
             width = ''
         return 'CREATE INDEX {name} on {table} ({column}{width})'.format(name=name, table=table, column=column, width=width)
+
+    def value(self, sql: str, args: Any = None, default: Any = None, fail_on_missing: bool = False) -> Any:
+        try:
+            return self.values(sql, args)[0]
+        except IndexError:
+            if fail_on_missing:
+                raise DatabaseException('Failed to get a value from `{sql}`'.format(sql=sql))
+            else:
+                return default
+
+    def values(self, sql: str, args: Any = None) -> List[Any]:
+        rs = self.execute(sql, args)
+        return [list(row.values())[0] for row in rs]

@@ -1,5 +1,5 @@
 import re
-from typing import Dict
+from typing import Dict, List, Union
 
 import pkg_resources
 
@@ -68,7 +68,7 @@ HARDCODED_DFC_NAMES = {
     'Ravager of the Fells': ['Huntmaster of the Fells', 'Ravager of the Fells']
 }
 
-def init():
+def init() -> None:
     current_version = fetcher.mtgjson_version()
     if pkg_resources.parse_version(current_version) > pkg_resources.parse_version(database.mtgjson_version()):
         print('Database update required')
@@ -77,13 +77,13 @@ def init():
         update_cache()
         reindex()
 
-def layouts():
+def layouts() -> Dict[str, bool]:
     return {'normal': True, 'meld': True, 'split': True, 'phenomenon': False, 'token': False, 'vanguard': False, 'double-faced': True, 'plane': False, 'flip': True, 'scheme': False, 'leveler': True, 'aftermath': True}
 
 def cached_base_query(where='(1 = 1)'):
     return 'SELECT * FROM _cache_card AS c WHERE {where}'.format(where=where)
 
-def base_query(where='(1 = 1)'):
+def base_query(where: str = '(1 = 1)') -> str:
     return """
         SELECT
             {card_queries},
@@ -139,7 +139,7 @@ def base_query(where='(1 = 1)'):
         where=where)
 
 
-def update_database(new_version):
+def update_database(new_version: str) -> None:
     db().begin()
     db().execute('DELETE FROM version')
     db().execute("""
@@ -184,12 +184,12 @@ def update_database(new_version):
     db().execute('INSERT INTO version (version) VALUES (%s)', [new_version])
     db().commit()
 
-def check_layouts():
+def check_layouts() -> None:
     rs = db().execute('SELECT DISTINCT layout FROM card')
     if sorted([row['layout'] for row in rs]) != sorted(layouts().keys()):
         print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid. You may also want to add it to playable_layouts. Comparing {old} with {new}.'.format(old=sorted(layouts().keys()), new=sorted([row['layout'] for row in rs])))
 
-def update_bugged_cards(use_transaction=True):
+def update_bugged_cards(use_transaction: bool = True) -> None:
     bugs = fetcher.bugged_cards()
     if bugs is None:
         return
@@ -206,7 +206,7 @@ def update_bugged_cards(use_transaction=True):
     if use_transaction:
         db().commit()
 
-def update_pd_legality():
+def update_pd_legality() -> None:
     for s in SEASONS:
         if s == rotation.current_season_code():
             break
@@ -288,7 +288,7 @@ def insert_set(s) -> None:
         values = [card_id, set_id] + [c.get(database2json(name)) for name, prop in card.printing_properties().items() if prop['mtgjson']]
         db().execute(sql, values)
 
-def set_legal_cards(force=False, season=None):
+def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
     new_list = ['']
     try:
         new_list = fetcher.legal_cards(force, season)
@@ -317,14 +317,14 @@ def set_legal_cards(force=False, season=None):
         print(set(new_list).symmetric_difference(set(db_legal_list)))
     return new_list
 
-def update_cache():
+def update_cache() -> None:
     db().begin()
     db().execute('DROP TABLE IF EXISTS _cache_card')
     db().execute('CREATE TABLE _cache_card AS {base_query}'.format(base_query=base_query()))
     db().execute(db().create_index_query('idx_name_name', '_cache_card', 'name', prefix_width=142))
     db().commit()
 
-def reindex():
+def reindex() -> None:
     writer = WhooshWriter()
     writer.rewrite_index(get_all_cards())
 
@@ -336,13 +336,13 @@ def database2json(propname: str) -> str:
 def underscore2camel(s: str) -> str:
     return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)
 
-def date2int(s: str, name: str) -> str:
+def date2int(s: str, name: str) -> Union[str, float]:
     if name == 'release_date':
         return dtutil.parse_to_ts(s, '%Y-%m-%d', dtutil.WOTC_TZ)
     return s
 
 # I'm not sure this belong here, but it's here for now.
-def get_format_id(name, allow_create=False):
+def get_format_id(name: str, allow_create: bool = False) -> int:
     if len(FORMAT_IDS) == 0:
         rs = db().execute('SELECT id, name FROM format')
         for row in rs:

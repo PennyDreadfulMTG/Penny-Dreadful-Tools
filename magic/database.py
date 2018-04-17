@@ -1,27 +1,30 @@
+from typing import List, Tuple
+
 import flask
 
 from magic import card
 from shared import configuration
 from shared.container import Container
 from shared.database import get_database
+from shared.database_mysql import MysqlDatabase
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
 SCHEMA_VERSION = 98
 DATABASE = Container()
 
-def db():
+def db() -> MysqlDatabase:
     if flask.current_app:
         context = flask.g
     else:
         context = DATABASE
     if hasattr(context, 'magic_database'):
         return context.get('magic_database')
-    context.magic_database = get_database(configuration.get('magic_database'))
+    context.magic_database = get_database(configuration.get_str('magic_database'))
     init()
     return context.get('magic_database')
 
-def init():
+def init() -> None:
     try:
         mtgjson_version()
         if db_version() < SCHEMA_VERSION:
@@ -36,7 +39,7 @@ def mtgjson_version() -> str:
 def db_version() -> int:
     return db().value('SELECT version FROM db_version', [], 0)
 
-def setup():
+def setup() -> None:
     db().begin()
     db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER)')
     db().execute('CREATE TABLE IF NOT EXISTS version (version TEXT)')
@@ -90,7 +93,7 @@ def setup():
     db().commit()
 
 # Drop the database so we can recreate it.
-def delete():
+def delete() -> None:
     db().begin()
     query = db().values("""
         SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;')
@@ -102,21 +105,21 @@ def delete():
     db().execute('SET FOREIGN_KEY_CHECKS = 1')
     db().commit()
 
-def column_def(name, prop):
+def column_def(name: str, prop: card.ColumnDescription) -> str:
     nullable = 'NOT NULL' if not prop['nullable'] else ''
     primary_key = 'PRIMARY KEY AUTO_INCREMENT' if prop['primary_key'] else ''
     default = 'DEFAULT {default}'.format(default=prop['default']) if prop['default'] is not None else ''
     unique = 'UNIQUE' if prop['unique'] else ''
     return '`{name}` {type} {nullable} {primary_key} {unique} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, unique=unique, default=default)
 
-def foreign_key_def(name, fk):
+def foreign_key_def(name: str, fk: Tuple[str, str]):
     return 'FOREIGN KEY(`{name}`) REFERENCES `{table}`(`{column}`)'.format(name=name, table=fk[0], column=fk[1])
 
-def unique_constraint_def(name, cols):
+def unique_constraint_def(name: str, cols: List[str]):
     cols = [name] + cols
     return 'CONSTRAINT `{name}` UNIQUE ({cols})'.format(name='_'.join(cols), cols=', '.join('`{col}`'.format(col=col) for col in cols))
 
-def create_table_def(name, props):
+def create_table_def(name: str, props: card.TableDescription) -> str:
     sql = 'CREATE TABLE IF NOT EXISTS `{name}` ('
     sql += ', '.join(column_def(name, prop) for name, prop in props.items())
     fk = ', '.join(foreign_key_def(name, prop['foreign_key']) for name, prop in props.items() if prop['foreign_key'])

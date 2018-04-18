@@ -18,10 +18,10 @@ class Home(View):
         one_day_ago_ts = dtutil.now() - datetime.timedelta(days=1)
         week_decks = [d for d in self.decks if d.created_date > one_day_ago_ts]
         display_decks = week_decks
-        if len(display_decks) < min_decks:
+        if len([d for d in display_decks if not d.is_in_current_run()]) < min_decks:
             one_week_ago_ts = dtutil.now() - datetime.timedelta(weeks=1)
             display_decks = [d for d in self.decks if d.created_date > one_week_ago_ts]
-            if len(display_decks) < min_decks:
+            if len([d for d in display_decks if not d.is_in_current_run()]) < min_decks:
                 display_decks = decks
         self.decks = display_decks
         cards = [c for c in cards if 'Basic Land' not in c.type]

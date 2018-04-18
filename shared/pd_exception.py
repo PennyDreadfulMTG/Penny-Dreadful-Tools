@@ -27,3 +27,6 @@ class InvalidArgumentException(PDException):
 
 class LockNotAcquiredException(DatabaseException):
     pass
+
+class AlreadyExistsException(PDException):
+    pass

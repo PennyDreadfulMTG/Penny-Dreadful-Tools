@@ -5,6 +5,7 @@ from decksite.database import db
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
+from shared.pd_exception import AlreadyExistsException
 
 
 class Person(Container):
@@ -240,3 +241,12 @@ def load_notes():
 def add_note(creator_id, subject_id, note):
     sql = 'INSERT INTO person_note (created_date, creator_id, subject_id, note) VALUES (UNIX_TIMESTAMP(NOW()), %s, %s, %s)'
     return db().execute(sql, [creator_id, subject_id, note])
+
+def link_discord(mtgo_username, discord_id):
+    p = deck.get_or_insert_person_id(mtgo_username, None, None)
+    p = load_person(p)
+    if p.discord_id is not None:
+        raise AlreadyExistsException('Player with mtgo username {mtgo_username} already has discord id {old_discord_id}, cannot add {new_discord_id}'.format(mtgo_username=mtgo_username, old_discord_id=p.discord_id, new_discord_id=discord_id))
+    sql = 'UPDATE person SET discord_id = %s WHERE id = %s'
+    db().execute(sql, [discord_id, p.id])
+    return p

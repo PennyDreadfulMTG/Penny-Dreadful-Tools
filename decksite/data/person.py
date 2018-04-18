@@ -1,6 +1,5 @@
 from typing import Union
 
-from decksite import auth
 from decksite.data import deck, guarantee, query
 from decksite.database import db
 from shared import dtutil

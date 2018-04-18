@@ -2,7 +2,7 @@ from flask import request
 from flask_babel import gettext
 
 from decksite import auth
-from decksite.data import deck, person
+from decksite.data import person
 from decksite.maintenance import squash_people
 from decksite.view import View
 from shared.container import Container

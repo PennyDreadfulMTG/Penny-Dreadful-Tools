@@ -1,7 +1,6 @@
+from shared import configuration
 from whoosh.analysis import (IDTokenizer, LowercaseFilter, StandardAnalyzer,
                              StemmingAnalyzer, SubstitutionFilter)
-
-from shared import configuration
 
 
 class WhooshConstants():

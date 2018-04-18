@@ -2,6 +2,7 @@ import subprocess
 
 from discordbot import generate_readme as bot_readme
 
+
 HEADER = """
 # Penny Dreadful Tools
 Repository for a bunch of tools used in and around the Penny Dreadful Discord channel.

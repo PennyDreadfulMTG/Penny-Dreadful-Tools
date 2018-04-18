@@ -6,11 +6,11 @@ from collections import Counter
 import inflect
 from anytree.iterators import PreOrderIter
 from flask import g, request, session, url_for
-from flask_babel import gettext, ngettext
 from werkzeug.routing import BuildError
 
 from decksite import APP, BABEL, admin, template
 from decksite.data import archetype, deck
+from flask_babel import gettext, ngettext
 from magic import oracle, rotation, tournaments
 from shared import dtutil
 from shared.container import Container

@@ -8,9 +8,8 @@ from flask import (abort, g, make_response, redirect, request, send_file,
 from github.GithubException import GithubException
 from werkzeug import exceptions
 
-from decksite import APP, SEASON, admin, auth, deck_name
 from decksite import league as lg
-from decksite import logger
+from decksite import APP, SEASON, admin, auth, deck_name, logger
 from decksite.cache import cached
 from decksite.charts import chart
 from decksite.data import archetype as archs
@@ -31,8 +30,8 @@ from decksite.views import (About, AboutPdm, AddForm, Admin, Archetype,
                             Seasons, SignUp, TournamentHosting,
                             TournamentLeaderboards, Tournaments, Unauthorized)
 from magic import card as mc
-from magic import oracle
 from magic import rotation as rot
+from magic import oracle
 from shared import dtutil, perf, repo
 from shared.container import Container
 from shared.pd_exception import (DoesNotExistException,

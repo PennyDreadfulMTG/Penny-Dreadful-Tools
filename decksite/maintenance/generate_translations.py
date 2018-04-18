@@ -1,9 +1,9 @@
 from distutils.dist import Distribution
 
 import pystache
+
 from babel.messages import frontend
 from poeditor.client import POEditorAPI
-
 from shared import configuration
 
 from .. import template

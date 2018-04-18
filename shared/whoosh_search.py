@@ -2,11 +2,10 @@ import re
 from typing import Any, List, Optional, Tuple
 
 import pygtrie
-from whoosh.index import open_dir
-from whoosh.query import And, FuzzyTerm, Or, Term
-
 from magic import card, fetcher
 from shared.whoosh_constants import WhooshConstants
+from whoosh.index import open_dir
+from whoosh.query import And, FuzzyTerm, Or, Term
 
 
 # pylint: disable=unused-variable

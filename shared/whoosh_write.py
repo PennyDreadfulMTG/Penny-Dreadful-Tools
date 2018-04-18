@@ -1,9 +1,8 @@
 import os
 
+from shared.whoosh_constants import WhooshConstants
 from whoosh.fields import NUMERIC, STORED, TEXT, Schema
 from whoosh.index import create_in, open_dir
-
-from shared.whoosh_constants import WhooshConstants
 
 
 class WhooshWriter():

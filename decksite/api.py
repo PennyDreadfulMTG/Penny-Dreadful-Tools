@@ -6,8 +6,8 @@ from flask import Response, request, session, url_for
 from decksite import APP, auth, league
 from decksite.data import card as cs
 from decksite.data import competition as comp
-from decksite.data import deck, guarantee, match
 from decksite.data import person as ps
+from decksite.data import deck, guarantee, match
 from magic import oracle, rotation
 from shared import configuration, dtutil
 from shared.serialization import extra_serializer

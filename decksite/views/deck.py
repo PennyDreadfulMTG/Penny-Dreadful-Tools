@@ -14,6 +14,8 @@ class Deck(View):
     def __init__(self, d, person_id=None, discord_id=None):
         super().__init__()
         self.deck = d
+        self.prepare_deck(self.deck)
+        self.cards = d.all_cards()
         if not self.deck.is_in_current_run():
             # This is called 'decks' and not something more sane because of limitations of Mustache and our desire to use a partial for decktable.
             self.decks = [sd for sd in deck.get_similar_decks(d) if not sd.is_in_current_run()]

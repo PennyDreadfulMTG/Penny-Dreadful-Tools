@@ -3,10 +3,10 @@ from flask_babel import gettext
 
 from decksite import auth
 from decksite.data import deck, person
-from decksite.database import db
 from decksite.maintenance import squash_people
 from decksite.view import View
 from shared.container import Container
+from shared.pd_exception import AlreadyExistsException
 
 
 # pylint: disable=no-self-use,too-many-instance-attributes
@@ -42,13 +42,9 @@ class LinkAccounts(View):
             self.link_discord()
 
     def link_discord(self):
-        p = deck.get_or_insert_person_id(self.form['mtgo_username'], None, None)
-        p = person.load_person(p)
-        if p.discord_id is None:
-            sql = 'UPDATE person SET discord_id = %s WHERE id = %s'
-            db().execute(sql, [auth.discord_id(), p.id])
-            self.person = p
-        else:
+        try:
+            self.person = person.link_discord(self.form['mtgo_username'], auth.discord_id())
+        except AlreadyExistsException:
             self.form.errors.mtgo_username = '{mtgo_username} is already connected to another discord account.'.format(mtgo_username=self.form['mtgo_username'])
 
     def link_mtggoldfish(self):

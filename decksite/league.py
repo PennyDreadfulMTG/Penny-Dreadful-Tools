@@ -224,8 +224,8 @@ def report(form):
             mtgo_match_id = form.get('matchID', None)
         else:
             mtgo_match_id = None
-            entry_name = deck.load_deck(int(form.entry)).person.decode('utf-8')
-            opp_name = deck.load_deck(int(form.opponent)).person.decode('utf-8')
+            entry_name = deck.load_deck(int(form.entry)).person
+            opp_name = deck.load_deck(int(form.opponent)).person
             fetcher.post_discord_webhook(
                 configuration.get("league_webhook_id"),
                 configuration.get("league_webhook_token"),

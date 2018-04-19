@@ -98,10 +98,11 @@ def cards():
     return view.page()
 
 @APP.route('/cards/<path:name>/')
+@SEASON.route('/cards/<path:name>/')
 @cached()
 def card(name):
     try:
-        c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)))
+        c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)), season_id=g.get('season_id', rot.current_season_num()))
         view = Card(c)
         return view.page()
     except InvalidDataException as e:

@@ -1,4 +1,4 @@
-<h1>{{name}}</h1>
+{{> banner}}
 <section>
     <img src="{{img_url}}" alt="{{name}}" class="card-img {{card_img_class}}">
     {{#bugs}}
@@ -12,24 +12,14 @@
         <table class="timespan-table">
             <thead>
                 <tr>
-                    <th class="legend" colspan="3">This Season</th>
-                    <th class="legend" colspan="3">All Time</th>
-                </tr>
-                <tr>
                     <th># Decks</th>
                     <th>Record</th>
-                    <th data-breakpoints="xs sm" class="divider">Win %</th>
-                    <th data-breakpoints="xs sm"># Decks</th>
-                    <th data-breakpoints="xs sm">Record</th>
                     <th data-breakpoints="xs sm">Win %</th>
                     {{! Empty column to hold the toggle when footable kicks in.}}
                     <td></td>
                 </tr>
             </thead>
             <tbody>
-                <td class="n">{{season_num_decks}}</td>
-                <td class="n">{{#season_show_record}}{{season_wins}}–{{season_losses}}{{#season_draws}}–{{season_draws}}{{/season_draws}}{{/season_show_record}}</td>
-                <td class="n divider">{{season_win_percent}}</td>
                 <td class="n">{{all_num_decks}}</td>
                 <td class="n">{{#all_show_record}}{{all_wins}}–{{all_losses}}{{#all_draws}}–{{all_draws}}{{/all_draws}}{{/all_show_record}}</td>
                 <td class="n">{{all_win_percent}}</td>

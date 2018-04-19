@@ -11,13 +11,13 @@ from shared.pd_exception import DatabaseException
 APP = Flask(__name__)
 APP.logger.setLevel(logging.WARN)
 BABEL = Babel(APP)
-SEASON = Blueprint('season', __name__, url_prefix='/season/<season_id>')
+SEASONS = Blueprint('seasons', __name__, url_prefix='/seasons/<season_id>')
 
-@SEASON.url_defaults
+@SEASONS.url_defaults
 def add_season_id(endpoint, values):
     values.setdefault('season_id', g.get('season_id', rotation.current_season_num()))
 
-@SEASON.url_value_preprocessor
+@SEASONS.url_value_preprocessor
 def pull_season_id(endpoint, values):
     g.season_id = values.pop('season_id')
 

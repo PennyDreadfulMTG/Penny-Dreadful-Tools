@@ -8,6 +8,7 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from decksite import logger
 from decksite.data import competition, deck
 from shared import configuration
 from shared.pd_exception import DoesNotExistException
@@ -15,7 +16,10 @@ from shared.pd_exception import DoesNotExistException
 def cmc(deck_id):
     path = determine_path(str(deck_id) + '-cmc.png')
     if os.path.exists(path):
-        return path
+        if os.path.getsize(path) > 1024 * 1024 * 8:
+            return path
+        else:
+            logger.warning('Regenerating graph for {deck_id} because the existing one is suspiciously small.'.format(deck_id=deck_id))
     d = deck.load_deck(deck_id)
     costs = {}
     for ci in d.maindeck:

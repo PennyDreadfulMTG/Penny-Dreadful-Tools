@@ -25,7 +25,7 @@ class MysqlDatabase():
             self.cursor = self.connection.cursor(MySQLdb.cursors.DictCursor)
             self.execute('SET NAMES utf8mb4')
             try:
-                self.execute("USE {db}".format(db=self.name))
+                self.execute('USE {db}'.format(db=self.name))
             except DatabaseException:
                 print('Creating database {db}'.format(db=self.name))
                 self.execute('CREATE DATABASE {db} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'.format(db=self.name))
@@ -60,7 +60,7 @@ class MysqlDatabase():
                 break
             except OperationalError as e:
                 if 'MySQL server has gone away' in str(e):
-                    print("MySQL server has gone away: trying to reconnect")
+                    print('MySQL server has gone away: trying to reconnect')
                     self.connect()
                 else:
                     # raise any other exception

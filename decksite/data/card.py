@@ -18,8 +18,7 @@ def played_cards(where='1 = 1', season_id=None):
             deck AS d ON dc.deck_id = d.id
         {season_join}
         {nwdl_join}
-        WHERE
-            ({where}) AND ({season_query})
+        WHERE ({where}) AND ({season_query})
         GROUP BY
             dc.card
         ORDER BY

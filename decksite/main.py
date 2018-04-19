@@ -8,7 +8,7 @@ from flask import (abort, g, make_response, redirect, request, send_file,
 from github.GithubException import GithubException
 from werkzeug import exceptions
 
-from decksite import APP, SEASON, admin, auth, deck_name
+from decksite import APP, SEASONS, admin, auth, deck_name
 from decksite import league as lg
 from decksite import logger
 from decksite.cache import cached
@@ -48,7 +48,7 @@ def home():
     return view.page()
 
 @APP.route('/decks/')
-@SEASON.route('/decks/')
+@SEASONS.route('/decks/')
 @cached()
 def decks():
     view = Decks(ds.load_decks(limit='LIMIT 500', season_id=g.get('season_id', rot.current_season_num())))
@@ -67,23 +67,23 @@ def seasons():
     view = Seasons()
     return view.page()
 
-@APP.route('/seasons/<season_id>/')
-@APP.route('/seasons/<season_id>/<deck_type>/')
+@SEASONS.route('/')
+@SEASONS.route('/<deck_type>/')
 @cached()
-def season(season_id, deck_type=None):
+def season(deck_type=None):
     league_only = deck_type == 'league'
-    view = Season(ds.load_season(season_id, league_only), league_only)
+    view = Season(ds.load_season(g.get('season_id', rot.current_season_num()), league_only), league_only)
     return view.page()
 
 @APP.route('/people/')
-@SEASON.route('/people/')
+@SEASONS.route('/people/')
 @cached()
 def people():
     view = People(ps.load_people(season_id=g.get('season_id', rot.current_season_num())))
     return view.page()
 
 @APP.route('/people/<person_id>/')
-@SEASON.route('/people/<person_id>/')
+@SEASONS.route('/people/<person_id>/')
 @cached()
 def person(person_id):
     p = ps.load_person(person_id, season_id=g.get('season_id', rot.current_season_num()))
@@ -91,14 +91,14 @@ def person(person_id):
     return view.page()
 
 @APP.route('/cards/')
-@SEASON.route('/cards/')
+@SEASONS.route('/cards/')
 @cached()
 def cards():
     view = Cards(cs.played_cards(season_id=g.get('season_id', rot.current_season_num())))
     return view.page()
 
 @APP.route('/cards/<path:name>/')
-@SEASON.route('/cards/<path:name>/')
+@SEASONS.route('/cards/<path:name>/')
 @cached()
 def card(name):
     try:
@@ -109,7 +109,7 @@ def card(name):
         raise DoesNotExistException(e)
 
 @APP.route('/competitions/')
-@SEASON.route('/competitions/')
+@SEASONS.route('/competitions/')
 @cached()
 def competitions():
     view = Competitions(comp.load_competitions(season_id=g.get('season_id', rot.current_season_num())))
@@ -122,14 +122,14 @@ def competition(competition_id):
     return view.page()
 
 @APP.route('/archetypes/')
-@SEASON.route('/archetypes/')
+@SEASONS.route('/archetypes/')
 @cached()
 def archetypes():
     view = Archetypes(archs.load_archetypes_deckless(season_id=g.get('season_id', rot.current_season_num())))
     return view.page()
 
 @APP.route('/archetypes/<archetype_id>/')
-@SEASON.route('/archetypes/<archetype_id>/')
+@SEASONS.route('/archetypes/<archetype_id>/')
 @cached()
 def archetype(archetype_id):
     a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=g.get('season_id', rot.current_season_num()))
@@ -533,4 +533,4 @@ def init(debug=True, port=None):
     APP.logger.setLevel(logging.INFO)
     APP.run(host='0.0.0.0', debug=debug, port=port)
 
-APP.register_blueprint(SEASON)
+APP.register_blueprint(SEASONS)

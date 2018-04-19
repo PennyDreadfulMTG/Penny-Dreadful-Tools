@@ -7,5 +7,5 @@ class Cards(View):
         super().__init__()
         self.cards = cards
 
-    def subtitle(self):
+    def page_title(self):
         return 'Cards'

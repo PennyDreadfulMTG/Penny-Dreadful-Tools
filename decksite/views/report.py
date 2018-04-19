@@ -12,7 +12,7 @@ class Report(LeagueForm):
         self.person_id = person_id
         self.logout_url = url_for('logout', target='report')
 
-    def subtitle(self):
+    def page_title(self):
         return '{league} Result Report'.format(league=self.league['name'])
 
     def TT_REPORT(self):

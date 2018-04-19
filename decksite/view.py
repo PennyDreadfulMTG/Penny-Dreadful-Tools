@@ -140,11 +140,11 @@ class View:
         return url_for('favicon', rest='-152.png')
 
     def title(self):
-        if not self.subtitle():
+        if not self.page_title():
             return 'pennydreadfulmagic.com'
-        return '{subtitle} – pennydreadfulmagic.com'.format(subtitle=self.subtitle())
+        return '{page_title} – pennydreadfulmagic.com'.format(page_title=self.page_title())
 
-    def subtitle(self):
+    def page_title(self):
         return None
 
     def num_tournaments(self):

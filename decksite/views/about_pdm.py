@@ -12,7 +12,7 @@ class AboutPdm(View):
         super().__init__()
         self.about_url = url_for('about')
 
-    def subtitle(self):
+    def page_title(self):
         return gettext('About')
 
     def languages(self) -> str:

@@ -15,5 +15,5 @@ class Resources(View):
                 section['items'].append(item)
         return sections
 
-    def subtitle(self):
+    def page_title(self):
         return 'Resources'

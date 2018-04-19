@@ -9,7 +9,7 @@ class SignUp(LeagueForm):
         super().__init__(form)
         self.person_id = person_id
 
-    def subtitle(self):
+    def page_title(self):
         return '{league} Sign Up'.format(league=self.league['name'])
 
     def TT_MTGOTRADERS_SIGNUP_TIK(self):

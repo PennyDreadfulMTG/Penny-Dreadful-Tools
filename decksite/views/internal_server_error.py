@@ -18,5 +18,5 @@ class InternalServerError(View):
     def template(self):
         return 'error'
 
-    def subtitle(self):
+    def page_title(self):
         return 'Internal Server Error'

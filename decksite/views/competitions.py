@@ -7,5 +7,5 @@ class Competitions(View):
         super().__init__()
         self.competitions = competitions
 
-    def subtitle(self):
+    def page_title(self):
         return 'Competitions'

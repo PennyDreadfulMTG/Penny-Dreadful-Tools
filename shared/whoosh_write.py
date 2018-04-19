@@ -36,18 +36,3 @@ def update_index(index, cards):
         document['name_normalized'] = card['name']
         writer.update_document(**document)
     writer.commit()
-
-
-# If we want to index more things like power, toughness and others
-#   keys = ('cmc', 'id', 'name', 'power', 'text', 'toughness', 'type')
-#           dict = {k:card[k] for k in keys}
-#           to_int(dict, 'power')
-#           to_int(dict, 'toughness')
-
-#   def to_int(dict, key):
-#       if key in dict and dict[key] is not None:
-#           try:
-#               p = int(dict[key])
-#           except ValueError:
-#               p = 0
-#           dict[key] = p

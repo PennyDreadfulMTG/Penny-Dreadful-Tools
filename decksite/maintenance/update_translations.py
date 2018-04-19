@@ -8,15 +8,15 @@ from shared import configuration
 
 
 def run():
-    api_key = configuration.get("poeditor_api_key")
+    api_key = configuration.get('poeditor_api_key')
     if api_key is None:
-        logger.warning("Missing poeditor.com API key")
+        logger.warning('Missing poeditor.com API key')
         return
     client = POEditorAPI(api_token=api_key)
-    languages = client.list_project_languages("162959")
+    languages = client.list_project_languages('162959')
     # pull down translations
     for locale in languages:
-        logger.warning("Found translation for {code}: {percent}%".format(code=locale['code'], percent=locale['percentage']))
+        logger.warning('Found translation for {code}: {percent}%'.format(code=locale['code'], percent=locale['percentage']))
         if locale['percentage'] > 0:
             path = os.path.join('decksite', 'translations', locale['code'].replace('-', '_'), 'LC_MESSAGES')
             if not os.path.exists(path):
@@ -25,7 +25,7 @@ def run():
             logger.warning('Saving to {0}'.format(pofile))
             if os.path.exists(pofile):
                 os.remove(pofile)
-            client.export("162959", locale['code'], local_file=pofile)
+            client.export('162959', locale['code'], local_file=pofile)
     # Compile .po files into .mo files
     compiler = compile_catalog()
     compiler.directory = os.path.join('decksite', 'translations')

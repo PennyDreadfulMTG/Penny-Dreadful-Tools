@@ -854,6 +854,7 @@ z-index
     100 page
     200 badge
     250 status-bar
+    275 season dropdown
     300 dropdown menu
 
 */
@@ -864,6 +865,10 @@ z-index
 
 .status-bar {
     z-index: 250;
+}
+
+.dd-menu {
+    z-index: 275;
 }
 
 .has-submenu > a:after {

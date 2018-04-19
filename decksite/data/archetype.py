@@ -17,7 +17,7 @@ class Archetype(Container, NodeMixin):
 
 BASE_ARCHETYPES: Dict[Archetype, Archetype] = {}
 
-def load_archetype(archetype):
+def load_archetype(archetype, season_id=None):
     try:
         archetype_id = int(archetype)
     except ValueError:
@@ -25,7 +25,7 @@ def load_archetype(archetype):
         archetype_id = db().value('SELECT id FROM archetype WHERE name = %s', [name])
         if not archetype_id:
             raise DoesNotExistException('Did not find archetype with name of `{name}`'.format(name=name))
-    archetypes = load_archetypes('d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'.format(archetype_id=sqlescape(archetype_id)), True)
+    archetypes = load_archetypes(where='d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'.format(archetype_id=sqlescape(archetype_id)), merge=True, season_id=season_id)
     if len(archetypes) > 1:
         raise TooManyItemsException('Found {n} archetypes when expecting 1 at most'.format(n=len(archetypes)))
     archetype = archetypes[0] if len(archetypes) == 1 else Archetype()
@@ -36,8 +36,8 @@ def load_archetype(archetype):
         archetype.decks = []
     return archetype
 
-def load_archetypes(where='1 = 1', merge=False):
-    decks = deck.load_decks(where)
+def load_archetypes(where='1 = 1', merge=False, season_id=None):
+    decks = deck.load_decks(where, season_id=season_id)
     archetypes = {}
     for d in decks:
         if d.archetype_id is None:
@@ -101,8 +101,8 @@ def load_archetypes_deckless(where='1 = 1', order_by='`all_num_decks` DESC, `all
         a.parent = archetypes_by_id.get(a.parent_id, None)
     return archetypes
 
-def load_archetypes_deckless_for(archetype_id) -> List[Archetype]:
-    archetypes = load_archetypes_deckless()
+def load_archetypes_deckless_for(archetype_id, season_id=None) -> List[Archetype]:
+    archetypes = load_archetypes_deckless(season_id=season_id)
     for a in archetypes:
         if int(a.id) == int(archetype_id):
             return list(a.ancestors) + [a] + list(a.descendants)
@@ -120,7 +120,7 @@ def add(name, parent):
 def assign(deck_id, archetype_id):
     return db().execute('UPDATE deck SET reviewed = TRUE, archetype_id = %s WHERE id = %s', [archetype_id, deck_id])
 
-def load_matchups(archetype_id):
+def load_matchups(archetype_id, season_id=None):
     sql = """
         SELECT
             oa.id,
@@ -128,11 +128,7 @@ def load_matchups(archetype_id):
             SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS all_wins, -- IFNULL so we still count byes as wins.
             SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS all_losses,
             SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS all_draws,
-            IFNULL(ROUND((SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN dm.games <> IFNULL(odm.games, 0) THEN 1 ELSE 0 END), 0)) * 100, 1), '') AS all_win_percent,
-            SUM(CASE WHEN d.created_date > %s AND dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS season_wins, -- IFNULL so we still count byes as wins.
-            SUM(CASE WHEN d.created_date > %s AND dm.games < odm.games THEN 1 ELSE 0 END) AS season_losses,
-            SUM(CASE WHEN d.created_date > %s AND dm.games = odm.games THEN 1 ELSE 0 END) AS season_draws,
-            IFNULL(ROUND((SUM(CASE WHEN d.created_date > %s AND dm.games > odm.games THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN d.created_date > %s AND dm.games <> IFNULL(odm.games, 0) THEN 1 ELSE 0 END), 0)) * 100, 1), '') AS season_win_percent
+            IFNULL(ROUND((SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN dm.games <> IFNULL(odm.games, 0) THEN 1 ELSE 0 END), 0)) * 100, 1), '') AS all_win_percent
         FROM
             archetype AS a
         INNER JOIN
@@ -145,14 +141,15 @@ def load_matchups(archetype_id):
             deck AS od ON od.id = odm.deck_id
         INNER JOIN
             archetype AS oa ON od.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = oa.id)
+        {season_join}
         WHERE
-            a.id = %s
+            (a.id = %s) AND ({season_query})
         GROUP BY
             oa.id
         ORDER BY
-            `season_wins` DESC, `all_wins` DESC
-    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_join=deck.nwdl_join())
-    return [Container(m) for m in db().execute(sql, [int(rotation.last_rotation().timestamp())] * 5 + [archetype_id])]
+            `all_wins` DESC, oa.name
+    """.format(season_join=query.season_join(), season_query=query.season_query(season_id))
+    return [Container(m) for m in db().execute(sql, [archetype_id])]
 
 def move(archetype_id, parent_id):
     db().begin()

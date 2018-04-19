@@ -26,14 +26,14 @@ def setup() -> None:
         path = os.path.join('decksite/sql', fn)
         n = int(fn.split('.')[0])
         if version < n:
-            logger.warning("Patching database to v{0}".format(n))
+            logger.warning('Patching database to v{0}'.format(n))
             fh = open(path, 'r')
             sql = fh.read()
             for stmt in sql.split(';'):
-                if stmt.strip() != "":
+                if stmt.strip() != '':
                     db().execute(stmt)
             fh.close()
-            db().execute("INSERT INTO db_version (version) VALUES ({n})".format(n=n))
+            db().execute('INSERT INTO db_version (version) VALUES ({n})'.format(n=n))
 
 def db_version() -> int:
     return db().value('SELECT version FROM db_version ORDER BY version DESC LIMIT 1', [], 0)

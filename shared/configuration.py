@@ -3,7 +3,7 @@ import json
 import os
 import random
 import string
-from typing import Any, List, Union
+from typing import Any, List, Union, overload
 
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
@@ -72,7 +72,7 @@ def get_float(key: str) -> float:
     if isinstance(val, float):
         return val
     if isinstance(val, int):
-        return float(val)
+        return write(key, float(val))
     raise fail(key, val, float)
 
 def get_list(key: str) -> List[str]:
@@ -83,7 +83,7 @@ def get_list(key: str) -> List[str]:
         return val
     raise fail(key, val, List[str])
 
-def get(key: str) -> Union[str, List[str], int]:
+def get(key: str) -> Union[str, List[str], int, float]:
     try:
         cfg = json.load(open('config.json'))
     except FileNotFoundError:
@@ -106,7 +106,19 @@ def get(key: str) -> Union[str, List[str], int]:
     fh.write(json.dumps(cfg, indent=4))
     return cfg[key]
 
+@overload
 def write(key: str, value: str) -> str:
+    pass
+
+@overload
+def write(key: str, value: int) -> int:
+    pass
+
+@overload
+def write(key: str, value: float) -> float:
+    pass
+
+def write(key: str, value: Union[str, List[str], int, float]) -> Union[str, List[str], int, float]:
     try:
         cfg = json.load(open('config.json'))
     except FileNotFoundError:

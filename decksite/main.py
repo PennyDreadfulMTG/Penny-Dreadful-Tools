@@ -98,10 +98,11 @@ def cards():
     return view.page()
 
 @APP.route('/cards/<path:name>/')
+@SEASON.route('/cards/<path:name>/')
 @cached()
 def card(name):
     try:
-        c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)))
+        c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)), season_id=g.get('season_id', rot.current_season_num()))
         view = Card(c)
         return view.page()
     except InvalidDataException as e:
@@ -120,16 +121,18 @@ def competition(competition_id):
     return view.page()
 
 @APP.route('/archetypes/')
+@SEASON.route('/archetypes/')
 @cached()
 def archetypes():
-    view = Archetypes(archs.load_archetypes_deckless())
+    view = Archetypes(archs.load_archetypes_deckless(season_id=g.get('season_id', rot.current_season_num())))
     return view.page()
 
 @APP.route('/archetypes/<archetype_id>/')
+@SEASON.route('/archetypes/<archetype_id>/')
 @cached()
 def archetype(archetype_id):
-    a = archs.load_archetype(archetype_id.replace('+', ' '))
-    view = Archetype(a, archs.load_archetypes_deckless_for(a.id), archs.load_matchups(a.id))
+    a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=g.get('season_id', rot.current_season_num()))
+    view = Archetype(a, archs.load_archetypes_deckless_for(a.id, season_id=g.get('season_id', rot.current_season_num())), archs.load_matchups(a.id, season_id=g.get('season_id', rot.current_season_num())), g.get('season_id', rot.current_season_num()))
     return view.page()
 
 @APP.route('/tournaments/')

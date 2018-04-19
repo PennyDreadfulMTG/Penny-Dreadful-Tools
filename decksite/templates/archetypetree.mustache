@@ -2,26 +2,12 @@
 <table class="archetypes timespan-table">
     <thead>
         <tr>
-            <td></td>
-            <!-- BAKERT we've messed up the css fritznig with ALL TIME and SEASON, now -->
-            <th class="legend" colspan="{{#is_matchups}}2{{/is_matchups}}{{^is_matchups}}6{{/is_matchups}}" data-sortInitialOrder="desc">This Season</th>
-            <th class="legend" colspan="{{#is_matchups}}2{{/is_matchups}}{{^is_matchups}}6{{/is_matchups}}" data-sortInitialOrder="desc">All Time</th>
-        </tr>
-        <tr>
             <th data-lockedorder="asc">Archetype</th>
             {{^is_matchups}}
                 <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc"># Decks</th>
             {{/is_matchups}}
             <th data-sortInitialOrder="desc">Record</th>
             <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">Win %</th>
-            {{^is_matchups}}<th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">①</th>{{/is_matchups}}
-            {{^is_matchups}}<th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">⑧</th>{{/is_matchups}}
-            {{^is_matchups}}<th class="divider n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">5-0s</th>{{/is_matchups}}
-            {{^is_matchups}}
-                <th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc"># Decks</th>
-            {{/is_matchups}}
-            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">Record</th>
-            <th class="n"data-breakpoints="xs sm md" data-sortInitialOrder="desc">Win %</th>
             {{^is_matchups}}<th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">①</th>{{/is_matchups}}
             {{^is_matchups}}<th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">⑧</th>{{/is_matchups}}
             {{^is_matchups}}<th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">5-0s</th>{{/is_matchups}}
@@ -35,14 +21,6 @@
                 {{^hide_archetype}}
                     <tr class="archetype archetype-{{depth}}{{#current}} current{{/current}}">
                         <td data-sort="{{sort}}" class="primary initial"><a href="{{url}}">{{name}}</a></td>
-                        {{^is_matchups}}
-                            <td class="n">{{season_num_decks}}</td>
-                        {{/is_matchups}}
-                        <td class="n">{{#season_show_record}}{{season_wins}}–{{season_losses}}{{#season_draws}}–{{season_draws}}{{/season_draws}}{{/season_show_record}}</td>
-                        <td class="n">{{#season_show_record}}{{season_win_percent}}{{/season_show_record}}</td>
-                        {{^is_matchups}}<td class="n">{{#season_tournament_top8s}}{{season_tournament_wins}}{{/season_tournament_top8s}}</td>{{/is_matchups}}
-                        {{^is_matchups}}<td class="n">{{#season_tournament_top8s}}{{season_tournament_top8s}}{{/season_tournament_top8s}}</td>{{/is_matchups}}
-                        {{^is_matchups}}<td class="n divider">{{#season_perfect_runs}}{{season_perfect_runs}}{{/season_perfect_runs}}</td>{{/is_matchups}}
                         {{^is_matchups}}
                             <td class="n">{{all_num_decks}}</td>
                         {{/is_matchups}}

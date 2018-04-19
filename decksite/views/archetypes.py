@@ -8,6 +8,7 @@ class Archetypes(View):
         self.archetypes = archetypes
         self.decks = []
         self.roots = [a for a in self.archetypes if a.is_root]
+        self.show_seasons = True
 
     def page_title(self):
         return 'Archetypes'

@@ -1,6 +1,6 @@
 from decksite.data import deck, guarantee, query
 from decksite.database import db
-from magic import oracle, rotation
+from magic import oracle
 from shared.container import Container
 from shared.database import sqlescape
 
@@ -32,10 +32,9 @@ def played_cards(where='1 = 1', season_id=None):
         c.update(cards[c.name])
     return cs
 
-def load_card(name):
+def load_card(name, season_id=None):
     c = guarantee.exactly_one(oracle.load_cards([name]))
-    c.decks = deck.load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name)))
-    c.season = Container()
+    c.decks = deck.load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name)), season_id=season_id)
     c.all = Container()
     c.all_wins = sum(filter(None, [d.wins for d in c.decks]))
     c.all_losses = sum(filter(None, [d.losses for d in c.decks]))
@@ -45,15 +44,6 @@ def load_card(name):
     else:
         c.all_win_percent = ''
     c.all_num_decks = len(c.decks)
-    season_decks = [d for d in c.decks if d.created_date > rotation.last_rotation()]
-    c.season_wins = sum(filter(None, [d.wins for d in season_decks]))
-    c.season_losses = sum(filter(None, [d.losses for d in season_decks]))
-    c.season_draws = sum(filter(None, [d.draws for d in season_decks]))
-    if c.season_wins or c.season_losses or c.season_draws:
-        c.season_win_percent = round((c.season_wins / (c.season_wins + c.season_losses)) * 100, 1)
-    else:
-        c.season_win_percent = ''
-    c.season_num_decks = len(season_decks)
     c.played_competitively = c.all_wins or c.all_losses or c.all_draws
     return c
 

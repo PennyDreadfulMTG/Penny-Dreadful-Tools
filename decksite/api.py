@@ -72,10 +72,10 @@ def rotation_api():
     now = dtutil.now()
     diff = rotation.next_rotation() - now
     result = {
-        "last": rotation.last_rotation_ex(),
-        "next": rotation.next_rotation_ex(),
-        "diff": diff.total_seconds(),
-        "friendly_diff": dtutil.display_time(diff.total_seconds())
+        'last': rotation.last_rotation_ex(),
+        'next': rotation.next_rotation_ex(),
+        'diff': diff.total_seconds(),
+        'friendly_diff': dtutil.display_time(diff.total_seconds())
     }
     return return_json(result)
 
@@ -108,9 +108,9 @@ def hide_intro():
 
 @APP.route('/api/gitpull', methods=['POST'])
 def gitpull():
-    if request.headers.get('X-GitHub-Event') == "push":
+    if request.headers.get('X-GitHub-Event') == 'push':
         payload = json.loads(request.data)
-        if payload['ref'] == "refs/heads/master":
+        if payload['ref'] == 'refs/heads/master':
             try:
                 subprocess.check_output(['git', 'pull'])
                 subprocess.check_output(['pip', 'install', '-U', '--user', '-r', 'requirements.txt', '--no-cache'])
@@ -141,5 +141,5 @@ def generate_error(code, msg):
 
 def return_json(content, status=200):
     content = json.dumps(content, default=extra_serializer)
-    r = Response(response=content, status=status, mimetype="application/json")
+    r = Response(response=content, status=status, mimetype='application/json')
     return r

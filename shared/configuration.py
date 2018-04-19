@@ -99,7 +99,7 @@ def get(key: str) -> Union[str, List[str], int]:
     else:
         raise InvalidArgumentException('No default or other configuration value available for {key}'.format(key=key))
 
-    print("CONFIG: {0}={1}".format(key, cfg[key]))
+    print('CONFIG: {0}={1}'.format(key, cfg[key]))
     fh = open('config.json', 'w')
     fh.write(json.dumps(cfg, indent=4))
     return cfg[key]
@@ -112,7 +112,7 @@ def write(key: str, value: str) -> str:
 
     cfg[key] = value
 
-    print("CONFIG: {0}={1}".format(key, cfg[key]))
+    print('CONFIG: {0}={1}'.format(key, cfg[key]))
     fh = open('config.json', 'w')
     fh.write(json.dumps(cfg, indent=4, sort_keys=True))
     return cfg[key]

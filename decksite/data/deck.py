@@ -109,6 +109,7 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None):
             d.identifier,
             {person_query} AS person,
             p.id AS person_id,
+            p.banned,
             p.discord_id,
             d.created_date AS `date`,
             d.decklist_hash,

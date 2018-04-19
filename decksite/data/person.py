@@ -30,7 +30,6 @@ def load_people(where='1 = 1', order_by='`all_num_decks` DESC, name', season_id=
             p.mtggoldfish_username,
             p.discord_id,
             p.elo,
-            p.banned,
             {all_select},
             SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `all_num_competitions`
         FROM

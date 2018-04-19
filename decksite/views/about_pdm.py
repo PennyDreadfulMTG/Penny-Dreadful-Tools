@@ -16,7 +16,7 @@ class AboutPdm(View):
         return gettext('About')
 
     def languages(self) -> str:
-        return ", ".join([locale.display_name for locale in BABEL.list_translations()])
+        return ', '.join([locale.display_name for locale in BABEL.list_translations()])
 
     def TT_TRANSLATED_INTO(self) -> str:
-        return gettext("This site is currently translated into:")
+        return gettext('This site is currently translated into:')

@@ -69,10 +69,10 @@ class WhooshSearchTest(unittest.TestCase):
             self.best_match_is(q, card)
 
     def test_whole_word(self):
-        self.best_match_is("rofellos", "Rofellos, Llanowar Emissary", "Rofellos's Gift")
+        self.best_match_is('rofellos', 'Rofellos, Llanowar Emissary', "Rofellos's Gift")
 
     def test_normalized_beats_tokenized(self):
-        self.best_match_is("Flash Food", "Flash Flood")
+        self.best_match_is('Flash Food', 'Flash Flood')
 
     def test_10_cycles_are_returned(self):
         result = self.searcher.search('Guildgate')

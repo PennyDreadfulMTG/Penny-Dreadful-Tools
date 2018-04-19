@@ -109,9 +109,10 @@ def card(name):
         raise DoesNotExistException(e)
 
 @APP.route('/competitions/')
+@SEASON.route('/competitions/')
 @cached()
 def competitions():
-    view = Competitions(comp.load_competitions())
+    view = Competitions(comp.load_competitions(season_id=g.get('season_id', rot.current_season_num())))
     return view.page()
 
 @APP.route('/competitions/<competition_id>/')

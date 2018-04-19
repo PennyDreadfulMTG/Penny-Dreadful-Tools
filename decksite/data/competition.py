@@ -41,7 +41,7 @@ def get_or_insert_competition(start_date, end_date, name, competition_series, ur
 def load_competition(competition_id):
     return guarantee.exactly_one(load_competitions('c.id = {competition_id}'.format(competition_id=sqlescape(competition_id))))
 
-def load_competitions(where='1 = 1'):
+def load_competitions(where='1 = 1', season_id=None):
     sql = """
         SELECT c.id, c.name, c.start_date, c.end_date, c.url,
         COUNT(d.id) AS num_decks,
@@ -52,10 +52,11 @@ def load_competitions(where='1 = 1'):
         LEFT JOIN competition_series AS cs ON cs.id = c.competition_series_id
         LEFT JOIN competition_type as ct ON ct.id = cs.competition_type_id
         LEFT JOIN sponsor AS sp ON cs.sponsor_id = sp.id
-        WHERE {where}
+        {season_join}
+        WHERE ({where}) AND  ({season_query})
         GROUP BY c.id
         ORDER BY c.start_date DESC, c.name
-    """.format(where=where)
+    """.format(season_join=query.season_join(), where=where, season_query=query.season_query(season_id))
     competitions = [Competition(r) for r in db().execute(sql)]
     for c in competitions:
         c.start_date = dtutil.ts2dt(c.start_date)

@@ -1051,6 +1051,7 @@ Button bars.
 */
 
 ul.buttons li {
+    background: #f9f9f9;
     color: #999;
     display: block;
     font-size: 0.75rem;

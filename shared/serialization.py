@@ -14,4 +14,4 @@ def extra_serializer(obj):
     elif isinstance(obj, set) or type(obj) == 'dict_keys': # pylint: disable=unidiomatic-typecheck
         return list(obj)
 
-    raise TypeError("Type {t} not serializable - {obj}".format(t=type(obj), obj=obj))
+    raise TypeError('Type {t} not serializable - {obj}'.format(t=type(obj), obj=obj))

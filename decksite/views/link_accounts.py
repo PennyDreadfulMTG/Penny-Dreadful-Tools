@@ -56,7 +56,7 @@ class LinkAccounts(View):
             elif mtggoldfish_user.mtgo_username is not None:
                 self.form.errors.gf_username = '"{mtggoldfish_name}" is already associated to another user.  If you believe this is in error, contact us.'.format(mtggoldfish_name=mtggoldfish_name)
             else:
-                squash_people.squash(self.person.id, mtggoldfish_user.id, "mtgo_username", "mtggoldfish_username")
+                squash_people.squash(self.person.id, mtggoldfish_user.id, 'mtgo_username', 'mtggoldfish_username')
                 self.disable_gf = True
 
     def link_tappedout(self):
@@ -68,5 +68,5 @@ class LinkAccounts(View):
             elif tapped_user.id is not None:
                 self.form.errors.to_username = '"{tapped_name}" is already associated to another user.  If you believe this is in error, contact us.'.format(tapped_name=tapped_name)
             else:
-                squash_people.squash(self.person.id, tapped_user.id, "mtgo_username", "tappedout_username")
+                squash_people.squash(self.person.id, tapped_user.id, 'mtgo_username', 'tappedout_username')
                 self.disable_to = True

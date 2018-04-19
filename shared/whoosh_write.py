@@ -10,7 +10,7 @@ class WhooshWriter():
     def __init__(self):
         self.schema = Schema(id=NUMERIC(unique=True, stored=True), name=STORED(), name_tokenized=TEXT(stored=False, analyzer=WhooshConstants.tokenized_analyzer), name_stemmed=TEXT(stored=False, analyzer=WhooshConstants.stem_analyzer), name_normalized=TEXT(stored=False, analyzer=WhooshConstants.normalized_analyzer, field_boost=100.0))
     def rewrite_index(self, cards):
-        print("Rewriting index in {d}".format(d=WhooshConstants.index_dir))
+        print('Rewriting index in {d}'.format(d=WhooshConstants.index_dir))
         ensure_dir_exists(WhooshConstants.index_dir)
         ix = create_in(WhooshConstants.index_dir, self.schema)
         update_index(ix, cards)
@@ -36,18 +36,3 @@ def update_index(index, cards):
         document['name_normalized'] = card['name']
         writer.update_document(**document)
     writer.commit()
-
-
-# If we want to index more things like power, toughness and others
-#   keys = ('cmc', 'id', 'name', 'power', 'text', 'toughness', 'type')
-#           dict = {k:card[k] for k in keys}
-#           to_int(dict, 'power')
-#           to_int(dict, 'toughness')
-
-#   def to_int(dict, key):
-#       if key in dict and dict[key] is not None:
-#           try:
-#               p = int(dict[key])
-#           except ValueError:
-#               p = 0
-#           dict[key] = p

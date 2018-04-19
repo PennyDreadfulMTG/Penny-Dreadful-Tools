@@ -67,7 +67,7 @@ class SearchResult():
                 pass
 
     def __str__(self):
-        return "(exact: {e}, whole word: {r}, other prefixes: {o}, fuzzy: {f})".format(e=self.exact, r=self.prefix_whole_word, o=self.other_prefixed, f=self.fuzzy)
+        return '(exact: {e}, whole word: {r}, other prefixes: {o}, fuzzy: {f})'.format(e=self.exact, r=self.prefix_whole_word, o=self.other_prefixed, f=self.fuzzy)
 
     def __len__(self):
         return len(self.get_all_matches())
@@ -101,9 +101,9 @@ class WhooshSearcher():
             return SearchResult(exact, prefix_whole_word, other_prefixed, None)
 
         # We try fuzzy and stemmed queries
-        query_normalized = fuzzy_term(normalized, self.DIST, "name_normalized")
+        query_normalized = fuzzy_term(normalized, self.DIST, 'name_normalized')
         query_stemmed = And([Term('name_stemmed', q.text) for q in WhooshConstants.stem_analyzer(w)])
-        query_tokenized = And([fuzzy_term(q.text, self.DIST, "name_tokenized") for q in WhooshConstants.tokenized_analyzer(w)])
+        query_tokenized = And([fuzzy_term(q.text, self.DIST, 'name_tokenized') for q in WhooshConstants.tokenized_analyzer(w)])
         query = Or([query_normalized, query_tokenized, query_stemmed])
 
         with self.ix.searcher() as searcher:
@@ -130,7 +130,7 @@ def has(elements) -> bool:
 WordSubword = Tuple[List[str], List[str]] #pylint: disable=invalid-name
 
 def classify(matches: List[str], word: str) -> WordSubword:
-    regex = r"{w}( |,)".format(w=word)
+    regex = r'{w}( |,)'.format(w=word)
     acc: WordSubword = ([], []) # Name this data structure.
     for match in matches:
         if re.match(regex, match.lower()):

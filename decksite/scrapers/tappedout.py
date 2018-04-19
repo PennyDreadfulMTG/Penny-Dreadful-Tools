@@ -28,7 +28,7 @@ def fetch_decks():
     return fetcher_internal.fetch_json('https://tappedout.net/api/deck/latest/penny-dreadful/')
 
 def fetch_deck_details(raw_deck):
-    return fetcher_internal.fetch_json("https://tappedout.net/api/collection/collection:deck/{slug}/".format(slug=raw_deck['slug']))
+    return fetcher_internal.fetch_json('https://tappedout.net/api/collection/collection:deck/{slug}/'.format(slug=raw_deck['slug']))
 
 def set_values(raw_deck):
     raw_deck = translation.translate(translation.TAPPEDOUT, raw_deck)
@@ -68,8 +68,8 @@ def is_authorised():
 
 def get_auth():
     cookie = fetcher_internal.SESSION.cookies.get('tapped')
-    token = configuration.get("tapped_API_key")
-    return fetcher_internal.fetch("https://tappedout.net/api/v1/cookie/{0}/?access_token={1}".format(cookie, token))
+    token = configuration.get('tapped_API_key')
+    return fetcher_internal.fetch('https://tappedout.net/api/v1/cookie/{0}/?access_token={1}'.format(cookie, token))
 
 def login(user=None, password=None):
     if user is None:
@@ -79,7 +79,7 @@ def login(user=None, password=None):
     if user == '' or password == '':
         logger.warning('No TappedOut credentials provided')
         return
-    url = "https://tappedout.net/accounts/login/"
+    url = 'https://tappedout.net/accounts/login/'
     session = fetcher_internal.SESSION
     response = session.get(url)
 
@@ -98,10 +98,10 @@ def login(user=None, password=None):
     headers = {
         'referer': url,
     }
-    logger.warning("Logging in to TappedOut as {0}".format(user))
+    logger.warning('Logging in to TappedOut as {0}'.format(user))
     response = session.post(url, data=data, headers=headers)
     if response.status_code == 403:
-        logger.warning("Failed to log in")
+        logger.warning('Failed to log in')
 
 def scrape_url(url):
     if not url.endswith('/'):
@@ -129,7 +129,7 @@ def parse_printable(raw_deck):
     soup = BeautifulSoup(s, 'html.parser')
     raw_deck['name'] = soup.find('h2').string.strip('"')
     infobox = soup.find('table', {'id': 'info_box'})
-    user = infobox.find('td', string="User")
+    user = infobox.find('td', string='User')
     raw_deck['user'] = user.find_next_sibling('td').string
     return raw_deck
 
@@ -138,7 +138,7 @@ def scrape_user(username):
     parsed['username'] = username
     s = fetcher_internal.fetch('https://tappedout.net/users/{0}/'.format(username))
     soup = BeautifulSoup(s, 'html.parser')
-    mtgo = soup.find('td', string="MTGO Username")
+    mtgo = soup.find('td', string='MTGO Username')
     if mtgo is not None:
         parsed['mtgo_username'] = mtgo.find_next_sibling('td').string
     else:

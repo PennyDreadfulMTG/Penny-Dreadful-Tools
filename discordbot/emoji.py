@@ -40,7 +40,7 @@ def legal_emoji(c: Card, verbose: bool = False) -> str:
     if c.name in oracle.legal_cards():
         s = ':white_check_mark:'
         if c.bugs:
-            s += ":beetle:"
+            s += ':beetle:'
     else:
         s = ':no_entry_sign:'
         if verbose:

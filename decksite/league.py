@@ -33,22 +33,22 @@ class SignUpForm(Form):
         if person_id is not None:
             ps = person.load_person(person_id, season_id=rotation.current_season_num())
             self.recent_decks = []
-            for d in sorted(ps.decks, key=lambda deck: deck["created_date"], reverse=True)[0:10]:
-                recent_deck = {"name": d["name"], "main": [], "sb":[]}
+            for d in sorted(ps.decks, key=lambda deck: deck['created_date'], reverse=True)[0:10]:
+                recent_deck = {'name': d['name'], 'main': [], 'sb':[]}
                 for c in d.maindeck:
-                    recent_deck["main"].append("{n} {c}".format(n=c["n"], c=c["name"]))
+                    recent_deck['main'].append('{n} {c}'.format(n=c['n'], c=c['name']))
                 for c in d.sideboard:
-                    recent_deck["sb"].append("{n} {c}".format(n=c["n"], c=c["name"]))
-                self.recent_decks.append({"name":d["name"], "list":json.dumps(recent_deck)})
+                    recent_deck['sb'].append('{n} {c}'.format(n=c['n'], c=c['name']))
+                self.recent_decks.append({'name':d['name'], 'list':json.dumps(recent_deck)})
         if mtgo_username is not None:
             self.mtgo_username = mtgo_username
         self.deck = None
 
     def do_validation(self):
         if len(self.mtgo_username) == 0:
-            self.errors['mtgo_username'] = "Magic Online Username is required"
+            self.errors['mtgo_username'] = 'Magic Online Username is required'
         elif len(self.mtgo_username) > card.MAX_LEN_VARCHAR:
-            self.errors['mtgo_username'] = "Magic Online Username is too long (max {n})".format(n=card.MAX_LEN_VARCHAR)
+            self.errors['mtgo_username'] = 'Magic Online Username is too long (max {n})'.format(n=card.MAX_LEN_VARCHAR)
         elif active_decks_by(self.mtgo_username):
             self.errors['mtgo_username'] = "You already have an active league run.  If you wish to retire your run early, private message '!retire' to PDBot or visit the retire page."
         if len(self.name) == 0:
@@ -214,10 +214,10 @@ def report(form):
 
         counts = deck.count_matches(form.entry, form.opponent)
         if counts[int(form.entry)] >= 5:
-            form.errors['entry'] = "You already have 5 matches reported"
+            form.errors['entry'] = 'You already have 5 matches reported'
             return False
         if counts[int(form.opponent)] >= 5:
-            form.errors['opponent'] = "Your opponent already has 5 matches reported"
+            form.errors['opponent'] = 'Your opponent already has 5 matches reported'
             return False
         pdbot = form.get('api_token', None) == configuration.get('pdbot_api_token')
         if pdbot:
@@ -227,9 +227,9 @@ def report(form):
             entry_name = deck.load_deck(int(form.entry)).person
             opp_name = deck.load_deck(int(form.opponent)).person
             fetcher.post_discord_webhook(
-                configuration.get("league_webhook_id"),
-                configuration.get("league_webhook_token"),
-                "{entry} reported {f.entry_games}-{f.opponent_games} vs {opponent}".format(f=form, entry=entry_name, opponent=opp_name)
+                configuration.get('league_webhook_id'),
+                configuration.get('league_webhook_token'),
+                '{entry} reported {f.entry_games}-{f.opponent_games} vs {opponent}'.format(f=form, entry=entry_name, opponent=opp_name)
             )
 
         db().begin()
@@ -237,7 +237,7 @@ def report(form):
         db().commit()
         return True
     except LockNotAcquiredException:
-        form.errors['entry'] = "Cannot report right now, somebody else is reporting a match for you or your opponent. Try again a bit later"
+        form.errors['entry'] = 'Cannot report right now, somebody else is reporting a match for you or your opponent. Try again a bit later'
         return False
     finally:
         if db().supports_lock():
@@ -291,7 +291,7 @@ def determine_end_of_league(start_date):
     return end_date
 
 def determine_league_name(end_date):
-    return "League {MM} {YYYY}".format(MM=calendar.month_name[end_date.month], YYYY=end_date.year)
+    return 'League {MM} {YYYY}'.format(MM=calendar.month_name[end_date.month], YYYY=end_date.year)
 
 def retire_deck(d):
     if d.wins == 0 and d.losses == 0 and d.draws == 0:

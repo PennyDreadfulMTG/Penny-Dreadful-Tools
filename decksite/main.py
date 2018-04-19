@@ -159,14 +159,14 @@ def add_form():
 def add_deck():
     url = request.form['url']
     error = None
-    if "tappedout" in url:
+    if 'tappedout' in url:
         import decksite.scrapers.tappedout
         try:
             deck_id = decksite.scrapers.tappedout.scrape_url(url).id
         except InvalidDataException as e:
             error = e.args[0]
     else:
-        error = "Deck host is not supported."
+        error = 'Deck host is not supported.'
     if error is not None:
         view = AddForm()
         view.error = error
@@ -491,7 +491,7 @@ def archetype_sparkline_chart(competition_id):
 def legal_cards():
     if os.path.exists('legal_cards.txt'):
         return send_from_directory('.', 'legal_cards.txt')
-    return "Not supported yet", 404
+    return 'Not supported yet', 404
 
 @APP.errorhandler(DoesNotExistException)
 @APP.errorhandler(exceptions.NotFound)

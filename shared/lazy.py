@@ -1,6 +1,6 @@
 def lazy_property(fn):
-    '''Decorator that makes a property lazy-evaluated.
-    '''
+    """Decorator that makes a property lazy-evaluated.
+    """
     attr_name = '_lazy_' + fn.__name__
 
     def _lazy_property():

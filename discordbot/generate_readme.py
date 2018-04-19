@@ -30,7 +30,7 @@ To add this bot to your servers use this <a href='https://discordapp.com/oauth2/
 """
 
 def generate_readme():
-    readme = ""
+    readme = ''
     readme += HEADER
     readme += USAGE
     readme += """
@@ -40,14 +40,14 @@ def generate_readme():
     readme += '\n'
     readme += FOOTER
 
-    fh = open(os.path.join("discordbot", "README.md"))
+    fh = open(os.path.join('discordbot', 'README.md'))
     old_readme = fh.read()
     fh.close()
 
     if readme != old_readme:
-        fh = open(os.path.join("discordbot", "README.md"), mode='w')
+        fh = open(os.path.join('discordbot', 'README.md'), mode='w')
         fh.write(readme)
         fh.close()
-        print("Readme updated.")
+        print('Readme updated.')
         return 1
     return 0

@@ -24,7 +24,7 @@ class WhooshSearchTest(unittest.TestCase):
 
     # pylint: disable=line-too-long
     def aliases_are_exact(self):
-        for q, card in (('bob', 'Dark Confidant'), ('jens', 'Solemn Simulacrum'), ('sad robot', 'Solemn Simulacrum'), ('mom', 'Mother of Runes'), ('tim', 'Prodigal Sorcerer'), ('gary', 'Gray Merchant of Asphodel'), ('finkel', 'Shadowmage Infiltrator'), ('kai', 'Voidmage Prodigy'), ('tiago', 'Snapcaster Mage'), ('pikula', 'Meddling Mage'), ('durdle turtle', 'Meandering Towershell'), ('volvary', 'Aura Barbs'), ('bolt', 'Lightning Bolt'), ('ftk', 'Flametongue Kavu'), ('fow', 'Force of Will'), ('looter scooter', 'Smuggler\'s Copter'), ('nerd ape', 'Inventor\'s Apprentice')):
+        for q, card in (('bob', 'Dark Confidant'), ('jens', 'Solemn Simulacrum'), ('sad robot', 'Solemn Simulacrum'), ('mom', 'Mother of Runes'), ('tim', 'Prodigal Sorcerer'), ('gary', 'Gray Merchant of Asphodel'), ('finkel', 'Shadowmage Infiltrator'), ('kai', 'Voidmage Prodigy'), ('tiago', 'Snapcaster Mage'), ('pikula', 'Meddling Mage'), ('durdle turtle', 'Meandering Towershell'), ('volvary', 'Aura Barbs'), ('bolt', 'Lightning Bolt'), ('ftk', 'Flametongue Kavu'), ('fow', 'Force of Will'), ('looter scooter', "Smuggler's Copter"), ('nerd ape', "Inventor's Apprentice")):
             result = self.searcher.search(q)
             assert result.get_best_match() == card
 
@@ -69,10 +69,10 @@ class WhooshSearchTest(unittest.TestCase):
             self.best_match_is(q, card)
 
     def test_whole_word(self):
-        self.best_match_is("rofellos", "Rofellos, Llanowar Emissary", "Rofellos's Gift")
+        self.best_match_is('rofellos', 'Rofellos, Llanowar Emissary', "Rofellos's Gift")
 
     def test_normalized_beats_tokenized(self):
-        self.best_match_is("Flash Food", "Flash Flood")
+        self.best_match_is('Flash Food', 'Flash Flood')
 
     def test_10_cycles_are_returned(self):
         result = self.searcher.search('Guildgate')

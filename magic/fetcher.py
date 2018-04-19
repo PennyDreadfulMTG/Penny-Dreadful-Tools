@@ -46,9 +46,9 @@ def card_price_string(card, short: bool = False) -> str:
         try:
             p = card_price(c.name)
         except FetchException:
-            return "Price unavailable"
+            return 'Price unavailable'
         if p is None:
-            return "Not available online"
+            return 'Not available online'
         # Currently disabled
         s = '{price}'.format(price=format_price(p['price']))
         if float(p['low']) <= 0.05:
@@ -84,7 +84,7 @@ def decksite_url(path: str = '/') -> str:
 
 def legal_cards(force=False, season=None):
     if season is None and os.path.exists('legal_cards.txt'):
-        print("HACK: Using local legal_cards override.")
+        print('HACK: Using local legal_cards override.')
         h = open('legal_cards.txt')
         legal = h.readlines()
         h.close()
@@ -109,7 +109,7 @@ def mtgo_status() -> str:
 def post_discord_webhook(webhook_id: str, webhook_token: str, message: str, name: str = None) -> bool:
     if webhook_id is None or webhook_token is None:
         return False
-    url = "https://discordapp.com/api/webhooks/{id}/{token}".format(id=webhook_id, token=webhook_token)
+    url = 'https://discordapp.com/api/webhooks/{id}/{token}'.format(id=webhook_id, token=webhook_token)
     internal.post(url, json_data={
         'content': message,
         'username': name,

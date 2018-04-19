@@ -146,28 +146,28 @@ def insert_scryfall_card(sfcard, rebuild_cache: bool = True) -> None:
 def last_pd_rotation_changes():
     current_code = rotation.current_season_code()
     previous = rotation.SEASONS[rotation.SEASONS.index(current_code) - 1]
-    previous_id = multiverse.get_format_id("Penny Dreadful {f}".format(f=previous))
-    current_id = multiverse.get_format_id("Penny Dreadful")
+    previous_id = multiverse.get_format_id('Penny Dreadful {f}'.format(f=previous))
+    current_id = multiverse.get_format_id('Penny Dreadful')
     return changes_between_formats(previous_id, current_id)
 
 def changes_between_formats(f1, f2):
     return [query_diff_formats(f2, f1), query_diff_formats(f1, f2)]
 
 def query_diff_formats(f1, f2):
-    where = '''
+    where = """
     c.id IN
         (SELECT card_id FROM card_legality
             WHERE format_id = {format1})
     AND c.id NOT IN
         (SELECT card_id FROM card_legality WHERE format_id = {format2})
-    '''.format(format1=f1, format2=f2)
+    """.format(format1=f1, format2=f2)
 
     rs = db().execute(multiverse.cached_base_query(where=where))
     out = [card.Card(r) for r in rs]
     return sorted(out, key=lambda card: card['name'])
 
 def if_todays_prices(out=True):
-    current_format = multiverse.get_format_id("Penny Dreadful")
+    current_format = multiverse.get_format_id('Penny Dreadful')
     if out:
         not_clause = ''
         compare = '<'
@@ -175,13 +175,13 @@ def if_todays_prices(out=True):
         not_clause = 'NOT'
         compare = '>='
 
-    where = '''
+    where = """
         c.id {not_clause} IN
             (SELECT card_id FROM card_legality
                 WHERE format_id = {format})
         AND c.name in (SELECT name from prices.cache where week {compare} 0.5)
         AND c.layout IN ({layouts})
-    '''.format(not_clause=not_clause, format=current_format, compare=compare, layouts=', '.join([sqlescape(k) for k, v in multiverse.layouts().items() if v]))
+    """.format(not_clause=not_clause, format=current_format, compare=compare, layouts=', '.join([sqlescape(k) for k, v in multiverse.layouts().items() if v]))
 
     rs = db().execute(multiverse.cached_base_query(where=where))
     out = [card.Card(r) for r in rs]

@@ -8,4 +8,4 @@ def run():
     start = time.time()
     multiverse.reindex()
     end = time.time()
-    logger.warning("Indexing done in {t} seconds".format(t=(end - start)))
+    logger.warning('Indexing done in {t} seconds'.format(t=(end - start)))

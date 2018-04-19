@@ -26,11 +26,11 @@ def ad_hoc():
     compiler.finalize_options()
     compiler.run()
 
-    api_key = configuration.get("poeditor_api_key")
+    api_key = configuration.get('poeditor_api_key')
     if api_key is None:
         return
     client = POEditorAPI(api_token=api_key)
-    client.update_terms("162959", './decksite/translations/messages.pot')
+    client.update_terms('162959', './decksite/translations/messages.pot')
 
 # pylint: disable=protected-access, unused-argument
 def extract_mustache(fileobj, keywords, comment_tags, options):

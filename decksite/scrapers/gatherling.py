@@ -40,12 +40,12 @@ def tournament(url, name):
         return 0
 
     # Hack in the known start time and series name because it's not in the page, depending on the series.
-    if "APAC" in name:
-        competition_series = "APAC Penny Dreadful Sundays"
+    if 'APAC' in name:
+        competition_series = 'APAC Penny Dreadful Sundays'
         start_time = '16:00'
         dt = get_dt(day_s, start_time, dtutil.APAC_SERIES_TZ)
-    elif "EU" in name:
-        competition_series = "Penny Dreadful FNM - EU"
+    elif 'EU' in name:
+        competition_series = 'Penny Dreadful FNM - EU'
         start_time = '13:30'
         dt = get_dt(day_s, start_time, dtutil.GATHERLING_TZ)
     else:
@@ -84,16 +84,17 @@ def add_decks(dt, competition_id, ranks, s):
 
 def rankings(table):
     rows = table.find_all('tr')
-    # assert [<td colspan="8"><h6> Penny Dreadful Thursdays 1.02</h6></td>]
-    # assert [<td>Rank</td>, <td>Player</td>, <td>Match Points</td>, <td>OMW %</td>, <td>PGW %</td>, <td>OGW %</td>, <td>Matches Played</td>, <td>Byes</td>]
 
-    # [<td colspan="8"><br/><b> Tiebreakers Explained </b><p></p></td>]
-    # [<td colspan="8"> Players with the same number of match points are ranked based on three tiebreakers scores according to DCI rules. In order, they are: </td>]
-    # [<td colspan="8"> OMW % is the average percentage of matches your opponents have won. </td>]
-    # [<td colspan="8"> PGW % is the percentage of games you have won. </td>]
-    # [<td colspan="8"> OGW % is the average percentage of games your opponents have won. </td>]
-    # [<td colspan="8"> BYEs are not included when calculating standings. For example, a player with one BYE, one win, and one loss has a match win percentage of .50 rather than .66</td>]
-    # [<td colspan="8"> When calculating standings, any opponent with less than a .33 win percentage is calculated as .33</td>]
+    # Expected structure:
+    # <td colspan="8"><h6> Penny Dreadful Thursdays 1.02</h6></td>
+    # <td>Rank</td>, <td>Player</td>, <td>Match Points</td>, <td>OMW %</td>, <td>PGW %</td>, <td>OGW %</td>, <td>Matches Played</td>, <td>Byes</td>
+    # <td colspan="8"><br/><b> Tiebreakers Explained </b><p></p></td>
+    # <td colspan="8"> Players with the same number of match points are ranked based on three tiebreakers scores according to DCI rules. In order, they are: </td>
+    # <td colspan="8"> OMW % is the average percentage of matches your opponents have won. </td>
+    # <td colspan="8"> PGW % is the percentage of games you have won. </td>
+    # <td colspan="8"> OGW % is the average percentage of games your opponents have won. </td>
+    # <td colspan="8"> BYEs are not included when calculating standings. For example, a player with one BYE, one win, and one loss has a match win percentage of .50 rather than .66</td>
+    # <td colspan="8"> When calculating standings, any opponent with less than a .33 win percentage is calculated as .33</td>
 
     rows = rows[2:-7]
     ranks = {}

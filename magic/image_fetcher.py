@@ -19,13 +19,13 @@ def bluebones_image(cards) -> str:
     return 'http://magic.bluebones.net/proxies/index2.php?c={c}'.format(c=escape(c))
 
 def scryfall_image(card, version='') -> str:
-    u = "https://api.scryfall.com/cards/named?exact={c}&format=image".format(c=escape(card.name))
+    u = 'https://api.scryfall.com/cards/named?exact={c}&format=image'.format(c=escape(card.name))
     if version:
         u += '&version={v}'.format(v=escape(version))
     return u
 
 def mci_image(printing) -> str:
-    return "http://magiccards.info/scans/en/{code}/{number}.jpg".format(code=printing.set_code.lower(), number=printing.number)
+    return 'http://magiccards.info/scans/en/{code}/{number}.jpg'.format(code=printing.set_code.lower(), number=printing.number)
 
 def gatherer_image(printing) -> str:
     multiverse_id = printing.multiverseid
@@ -52,7 +52,7 @@ def download_scryfall_image(cards, filepath, version='') -> bool:
 def download_mci_image(cards, filepath) -> bool:
     printings = oracle.get_printings(cards[0])
     for p in printings:
-        print("Trying to get MCI image for {imagename}".format(imagename=os.path.basename(filepath)))
+        print('Trying to get MCI image for {imagename}'.format(imagename=os.path.basename(filepath)))
         try:
             internal.store(mci_image(p), filepath)
             if internal.acceptable_file(filepath):

@@ -400,4 +400,4 @@ def seasonized_url(season_id):
     try:
         return url_for(endpoint, **args)
     except BuildError:
-        return url_for(request.endpoint)
+        return url_for(request.endpoint, **args)

@@ -2,6 +2,7 @@ import importlib
 import pkgutil
 import sys
 
+
 def run():
     if len(sys.argv) == 0:
         print('No entry point specified.')

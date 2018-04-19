@@ -80,7 +80,7 @@ def load_season(season=None, league_only=False):
     if season.end_date:
         where = '{where} AND d.created_date < {end_ts}'.format(where=where, end_ts=season.end_date)
     if league_only:
-        where = "{where} AND d.competition_id IN ({competition_ids_by_type_select})".format(where=where, competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
+        where = '{where} AND d.competition_id IN ({competition_ids_by_type_select})'.format(where=where, competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
     season.decks = load_decks(where)
     season.start_date = dtutil.ts2dt(season.start_date)
     season.end_date = dtutil.ts2dt(season.end_date) if season.end_date else None
@@ -284,8 +284,8 @@ def prime_cache(d):
 def add_cards(deck_id, cards):
     db().begin()
     deckhash = hashlib.sha1(repr(cards).encode('utf-8')).hexdigest()
-    db().execute("UPDATE deck SET decklist_hash = %s WHERE id = %s", [deckhash, deck_id])
-    db().execute("DELETE FROM deck_card WHERE deck_id = %s", [deck_id])
+    db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [deckhash, deck_id])
+    db().execute('DELETE FROM deck_card WHERE deck_id = %s', [deck_id])
     for name, n in cards['maindeck'].items():
         insert_deck_card(deck_id, name, n, False)
     for name, n in cards['sideboard'].items():

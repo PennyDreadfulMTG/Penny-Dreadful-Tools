@@ -16,16 +16,16 @@ FORMAT_IDS: Dict[str, int] = {}
 CARD_IDS: Dict[str, int] = {}
 
 HARDCODED_MELD_NAMES = [
-    ["Gisela, the Broken Blade", "Bruna, the Fading Light", "Brisela, Voice of Nightmares"],
-    ["Graf Rats", "Midnight Scavengers", "Chittering Host"],
-    ["Hanweir Garrison", "Hanweir Battlements", "Hanweir, the Writhing Township"]
+    ['Gisela, the Broken Blade', 'Bruna, the Fading Light', 'Brisela, Voice of Nightmares'],
+    ['Graf Rats', 'Midnight Scavengers', 'Chittering Host'],
+    ['Hanweir Garrison', 'Hanweir Battlements', 'Hanweir, the Writhing Township']
 ]
 
 HARDCODED_DFC_NAMES = {
     'Mayor of Avabruck': ['Mayor of Avabruck', 'Howlpack Alpha'],
     'Ravenous Demon': ['Ravenous Demon', 'Archdemon of Greed'],
-    'Mondronen Shaman': ['Mondronen Shaman', 'Tovolar\'s Magehunter'],
-    'Ludevic\'s Test Subject': ['Ludevic\'s Test Subject', 'Ludevic\'s Abomination'],
+    'Mondronen Shaman': ['Mondronen Shaman', "Tovolar's Magehunter"],
+    "Ludevic's Test Subject": ["Ludevic's Test Subject", "Ludevic's Abomination"],
     'Civilized Scholar': ['Civilized Scholar', 'Homicidal Brute'],
     'Thraben Sentry': ['Thraben Sentry', 'Thraben Militia'],
     'Daybreak Ranger': ['Daybreak Ranger', 'Nightfall Predator'],
@@ -44,8 +44,8 @@ HARDCODED_DFC_NAMES = {
 
     'Howlpack Alpha': ['Mayor of Avabruck', 'Howlpack Alpha'],
     'Archdemon of Greed': ['Ravenous Demon', 'Archdemon of Greed'],
-    'Tovolar\'s Magehunter': ['Mondronen Shaman', 'Tovolar\'s Magehunter'],
-    'Ludevic\'s Abomination': ['Ludevic\'s Test Subject', 'Ludevic\'s Abomination'],
+    "Tovolar's Magehunter": ['Mondronen Shaman', "Tovolar's Magehunter"],
+    "Ludevic's Abomination": ["Ludevic's Test Subject", "Ludevic's Abomination"],
     'Homicidal Brute': ['Civilized Scholar', 'Homicidal Brute'],
     'Thraben Militia': ['Thraben Sentry', 'Thraben Militia'],
     'Nightfall Predator': ['Daybreak Ranger', 'Nightfall Predator'],
@@ -190,14 +190,14 @@ def update_bugged_cards(use_transaction: bool = True) -> None:
         return
     if use_transaction:
         db().begin()
-    db().execute("DELETE FROM card_bug")
+    db().execute('DELETE FROM card_bug')
     for bug in bugs:
         last_confirmed_ts = dtutil.parse_to_ts(bug['last_updated'], '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
-        card_id = db().value("SELECT card_id FROM face WHERE name = %s", [bug['card']])
+        card_id = db().value('SELECT card_id FROM face WHERE name = %s', [bug['card']])
         if card_id is None:
-            print("UNKNOWN BUGGED CARD: {card}".format(card=bug['card']))
+            print('UNKNOWN BUGGED CARD: {card}'.format(card=bug['card']))
             continue
-        db().execute("INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog, bannable) VALUES (%s, %s, %s, %s, %s, %s, %s)", [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog'], bug['bannable']])
+        db().execute('INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog, bannable) VALUES (%s, %s, %s, %s, %s, %s, %s)', [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog'], bug['bannable']])
     if use_transaction:
         db().commit()
 
@@ -306,7 +306,7 @@ def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
     # Check we got the right number of legal cards.
     n = db().value('SELECT COUNT(*) FROM card_legality WHERE format_id = %s', [format_id])
     if n != len(new_list):
-        print("Found {n} pd legal cards in the database but the list was {len} long".format(n=n, len=len(new_list)))
+        print('Found {n} pd legal cards in the database but the list was {len} long'.format(n=n, len=len(new_list)))
         sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=base_query(), format_id=format_id)
         db_legal_list = [row['name'] for row in db().execute(sql)]
         print(set(new_list).symmetric_difference(set(db_legal_list)))
@@ -324,8 +324,8 @@ def reindex() -> None:
     writer.rewrite_index(get_all_cards())
 
 def database2json(propname: str) -> str:
-    if propname == "system_id":
-        propname = "id"
+    if propname == 'system_id':
+        propname = 'id'
     return underscore2camel(propname)
 
 def underscore2camel(s: str) -> str:
@@ -358,17 +358,17 @@ def card_name(c):
 
 def add_hardcoded_cards(cards):
     cards['Gleemox'] = {
-        "text": "{T}: Add one mana of any color to your mana pool.\nThis card is banned.",
-        "manaCost": "{0}",
-        "type": "Artifact",
-        "layout": "normal",
-        "types": ["Artifact"],
-        "cmc": 0,
+        'text': '{T}: Add one mana of any color to your mana pool.\nThis card is banned.',
+        'manaCost': '{0}',
+        'type': 'Artifact',
+        'layout': 'normal',
+        'types': ['Artifact'],
+        'cmc': 0,
         'imageName': 'gleemox',
-        "legalities": [],
-        "name": "Gleemox",
-        "printings": ["PRM"],
-        "rarity": "Rare"
+        'legalities': [],
+        'name': 'Gleemox',
+        'printings': ['PRM'],
+        'rarity': 'Rare'
     }
     fix_mtgjson_melded_cards_bug(cards)
     fix_double_faced_bug(cards)
@@ -394,19 +394,19 @@ def fix_mtgjson_melded_cards_bug(cards):
     for names in HARDCODED_MELD_NAMES:
         for name in names:
             if cards.get(name, None):
-                cards[name]["names"] = names
+                cards[name]['names'] = names
 
 def fix_mtgjson_melded_cards_array(cards):
     for c in cards:
         for group in HARDCODED_MELD_NAMES:
             if c.get('name') in group:
-                c["names"] = group
+                c['names'] = group
 
 def fix_double_faced_bug(cards):
     for c, names in HARDCODED_DFC_NAMES.items():
-        cards[c]["names"] = names
+        cards[c]['names'] = names
 
 def fix_double_faced_bug_array(cards):
     for c in cards:
         if c['name'] in HARDCODED_DFC_NAMES:
-            c["names"] = HARDCODED_DFC_NAMES[c['name']]
+            c['names'] = HARDCODED_DFC_NAMES[c['name']]

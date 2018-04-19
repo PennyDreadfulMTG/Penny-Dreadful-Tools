@@ -191,7 +191,7 @@ class View:
             d.stars_safe = '{active} {stars}'.format(active=d.active_safe, stars=d.stars_safe).strip()
             d.source_sort = '1'
         d.source_is_external = False if d.source_name == 'League' else True
-        d.comp_row_len = len("{comp_name} (Piloted by {person}".format(comp_name=d.competition_name, person=d.person))
+        d.comp_row_len = len('{comp_name} (Piloted by {person}'.format(comp_name=d.competition_name, person=d.person))
         if d.get('archetype_id', None):
             d.archetype_url = '/archetypes/{id}/'.format(id=d.archetype_id)
         if d.get('omw') is not None:
@@ -342,7 +342,7 @@ class View:
         return url_for('static', filename='images/language_icon.svg')
 
     def TT_HELP_TRANSLATE(self) -> str:
-        return gettext("Help us translate the site into your language")
+        return gettext('Help us translate the site into your language')
 
 def colors_html(colors, colored_symbols):
     total = len(colored_symbols)

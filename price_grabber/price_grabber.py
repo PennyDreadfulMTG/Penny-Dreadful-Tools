@@ -76,7 +76,7 @@ def store(timestamp: float, all_prices: Dict[str, List[Tuple[str, str]]]) -> Non
             if cents < lows.get(name, sys.maxsize):
                 lows[name] = cents
     sql = 'INSERT INTO low_price (`time`, name, price) VALUES '
-    sql += ", ".join(['(%s, %s, %s)'] * len(lows))
+    sql += ', '.join(['(%s, %s, %s)'] * len(lows))
     values = []
     for name, cents in lows.items():
         values.extend([timestamp, name, cents])
@@ -127,5 +127,5 @@ def name_lookup(name: str) -> str:
             CARDS[card.canonicalize(row['name'])] = row['name']
     canonical = card.canonicalize(name)
     if canonical not in CARDS:
-        raise InvalidDataException("Bogus name {name} ({canonical}) found.".format(name=name, canonical=canonical))
+        raise InvalidDataException('Bogus name {name} ({canonical}) found.'.format(name=name, canonical=canonical))
     return CARDS[canonical]

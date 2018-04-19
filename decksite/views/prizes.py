@@ -33,7 +33,7 @@ class Prizes(View):
                 current_competition_id = p.competition_id
             self.months[-1]['people'].append(p)
 
-    def subtitle(self):
+    def page_title(self):
         return 'Prizes'
 
 def split_by_week(competitions):

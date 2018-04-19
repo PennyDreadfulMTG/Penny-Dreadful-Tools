@@ -9,5 +9,5 @@ class Archetypes(View):
         self.decks = []
         self.roots = [a for a in self.archetypes if a.is_root]
 
-    def subtitle(self):
+    def page_title(self):
         return 'Archetypes'

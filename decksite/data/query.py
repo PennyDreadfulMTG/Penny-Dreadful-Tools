@@ -51,6 +51,12 @@ def season_query(season_id=None):
     except ValueError:
         raise InvalidArgumentException('No season with id `{season_id}`'.format(season_id=season_id))
 
+def season_join():
+    return """
+        LEFT JOIN
+            ({season_table}) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
+    """.format(season_table=season_table())
+
 def season_table():
     return """
         SELECT

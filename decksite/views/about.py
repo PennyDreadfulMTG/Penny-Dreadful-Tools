@@ -17,7 +17,7 @@ class About(View):
         self.cards = exciting_cards()
         self.num_tournaments = inflect.engine().number_to_words(len(tournaments.all_series_info())).title()
 
-    def subtitle(self):
+    def page_title(self):
         return 'About Penny Dreadful'
 
 def exciting_cards():

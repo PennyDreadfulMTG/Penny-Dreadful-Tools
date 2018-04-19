@@ -7,5 +7,5 @@ class Admin(View):
         super().__init__()
         self.menu = menu
 
-    def subtitle(self):
+    def page_title(self):
         return 'Admin Menu'

@@ -26,5 +26,5 @@ class Person(View):
     def __getattr__(self, attr):
         return getattr(self.person, attr)
 
-    def subtitle(self):
+    def page_title(self):
         return self.person.name

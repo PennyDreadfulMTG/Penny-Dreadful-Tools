@@ -80,7 +80,7 @@ class Deck(View):
     def __getattr__(self, attr):
         return getattr(self.deck, attr)
 
-    def subtitle(self):
+    def page_title(self):
         return self.deck.name
 
     def sections(self):

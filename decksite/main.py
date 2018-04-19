@@ -83,7 +83,7 @@ def people():
     return view.page()
 
 @APP.route('/people/<person_id>/')
-@SEASON.route('/people/<person_id>')
+@SEASON.route('/people/<person_id>/')
 @cached()
 def person(person_id):
     p = ps.load_person(person_id, season_id=g.get('season_id', rot.current_season_num()))
@@ -91,9 +91,10 @@ def person(person_id):
     return view.page()
 
 @APP.route('/cards/')
+@SEASON.route('/cards/')
 @cached()
 def cards():
-    view = Cards(cs.played_cards())
+    view = Cards(cs.played_cards(season_id=g.get('season_id', rot.current_season_num())))
     return view.page()
 
 @APP.route('/cards/<path:name>/')

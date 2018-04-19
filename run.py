@@ -1,9 +1,7 @@
-import codecs
 import importlib
 import pkgutil
 import sys
 
-sys.stdout = codecs.getwriter('utf-8')(sys.stdout.detach()) # type: ignore
 
 def run():
     if len(sys.argv) == 0:

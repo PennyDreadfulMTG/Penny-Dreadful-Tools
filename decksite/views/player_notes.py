@@ -11,5 +11,5 @@ class PlayerNotes(View):
         self.notes = notes
         self.people = people
 
-    def subtitle(self):
+    def page_title(self):
         return 'Player Notes'

@@ -23,5 +23,5 @@ class EditMatches(View):
                 else:
                     m.right_url = None
 
-    def subtitle(self):
+    def page_title(self):
         return 'Edit Matches'

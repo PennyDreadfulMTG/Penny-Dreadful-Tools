@@ -21,5 +21,5 @@ class EditArchetypes(View):
         for d in self.search_results:
             self.prepare_deck(d)
 
-    def subtitle(self):
+    def page_title(self):
         return 'Edit Archetypes'

@@ -10,5 +10,5 @@ class People(View):
     def show_seasons(self):
         return True
 
-    def subtitle(self):
+    def page_title(self):
         return 'People'

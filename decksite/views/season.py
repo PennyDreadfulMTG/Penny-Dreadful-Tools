@@ -9,7 +9,7 @@ class Season(View):
         self.decks = season.decks
         self.league_only = self.show_omw = self.hide_source = league_only
 
-    def subtitle(self):
+    def page_title(self):
         return 'Season {n}'.format(n=self.season.number)
 
     def __getattr__(self, attr):

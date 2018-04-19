@@ -7,5 +7,5 @@ class News(View):
         super().__init__()
         self.news = news
 
-    def subtitle(self):
+    def page_title(self):
         return 'News'

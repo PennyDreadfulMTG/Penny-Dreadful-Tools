@@ -10,5 +10,5 @@ class TournamentHosting(View):
         hosts += ['chaosblackdoom', 'hexalite']
         self.hosts = ', '.join(set(hosts))
 
-    def subtitle(self):
+    def page_title(self):
         return 'Tournament Hosting'

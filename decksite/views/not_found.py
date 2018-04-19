@@ -18,5 +18,5 @@ class NotFound(View):
     def template(self):
         return 'error'
 
-    def subtitle(self):
+    def page_title(self):
         return 'Not Found'

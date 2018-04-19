@@ -23,6 +23,7 @@ class View:
         # Set some pointless instance vars to keep Codacy happy.
         self.decks = []
         self.active_runs_text = None
+        self.is_very_large = None
 
     def template(self):
         return self.__class__.__name__.lower()
@@ -93,7 +94,8 @@ class View:
             {'name': gettext('Rotation Changes'), 'url': url_for('rotation_changes')},
             {'name': gettext('Rotation Speculation'), 'url': url_for('rotation_speculation')},
             {'name': gettext('Discord Chat'), 'url': 'https://discord.gg/H6EHdHu'},
-            {'name': gettext('External Links'), 'url': url_for('resources')}
+            {'name': gettext('External Links'), 'url': url_for('resources')},
+            {'name': gettext('Link Accounts'), 'url': url_for('link')},
         ]
         menu = [
             {'name': gettext('Metagame'), 'url': url_for('home'), 'badge': archetypes_badge, 'submenu': [
@@ -140,11 +142,11 @@ class View:
         return url_for('favicon', rest='-152.png')
 
     def title(self):
-        if not self.subtitle():
+        if not self.page_title():
             return 'pennydreadfulmagic.com'
-        return '{subtitle} – pennydreadfulmagic.com'.format(subtitle=self.subtitle())
+        return '{page_title} – pennydreadfulmagic.com'.format(page_title=self.page_title())
 
-    def subtitle(self):
+    def page_title(self):
         return None
 
     def num_tournaments(self):
@@ -225,6 +227,7 @@ class View:
         d.average_cmc = round(total / max(1, num_cards), 2)
 
     def prepare_cards(self):
+        self.is_very_large = len(getattr(self, 'cards', [])) > 500
         for c in getattr(self, 'cards', []):
             self.prepare_card(c)
         for c in getattr(self, 'only_played_cards', []):
@@ -237,8 +240,7 @@ class View:
         c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
         c.legal_formats = set([k for k, v in c.legalities.items() if v != 'Banned'])
         c.has_legal_format = len(c.legal_formats) > 0
-        if c.get('season_num_decks') is not None and c.get('all_num_decks') is not None:
-            c.season_show_record = c.get('season_wins') or c.get('season_losses') or c.get('season_draws')
+        if c.get('all_num_decks') is not None:
             c.all_show_record = c.get('all_wins') or c.get('all_losses') or c.get('all_draws')
         c.has_decks = len(c.get('decks', [])) > 0
         counter = Counter()

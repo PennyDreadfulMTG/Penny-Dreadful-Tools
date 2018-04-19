@@ -37,5 +37,5 @@ class Tournaments(View):
         self.bugs_url = url_for('bugs')
         self.prizes = tournaments.prizes_by_finish()
 
-    def subtitle(self):
+    def page_title(self):
         return 'Tournaments'

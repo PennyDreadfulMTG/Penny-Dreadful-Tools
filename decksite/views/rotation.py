@@ -88,7 +88,7 @@ class Rotation(View):
         })
         self.cards.append(c)
 
-    def subtitle(self):
+    def page_title(self):
         return 'Rotation'
 
 def redact(num):

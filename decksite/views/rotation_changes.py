@@ -15,7 +15,7 @@ class RotationChanges(View):
         self.speculation = speculation
         self.show_interesting = True
 
-    def subtitle(self):
+    def page_title(self):
         if self.speculation:
             return 'Rotation Speculation'
         return 'Rotation Changes'

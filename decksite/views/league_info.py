@@ -16,7 +16,7 @@ class LeagueInfo(View):
         self.records_url = url_for('current_league')
         self.retire_url = url_for('retire')
 
-    def subtitle(self):
+    def page_title(self):
         return 'League'
 
     # By doing it this way, all we need to care about is the text left, inside, and right of the link.

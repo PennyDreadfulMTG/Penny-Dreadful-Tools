@@ -1,19 +1,8 @@
 {{> spinner}}
-<table class="timespan-table">
+<table class="timespan-table {{#is_very_large}}very-large{{/is_very_large}}">
     <thead>
         <tr>
-            <td></td>
-            <th class="legend" colspan="6" data-sortInitialOrder="desc">This Season</th>
-            <th class="legend" colspan="6" data-sortInitialOrder="desc">All Time</th>
-        </tr>
-        <tr>
             <th>Card</th>
-            <th class="n" data-sortInitialOrder="desc"># Decks</th>
-            <th class="n" data-sortInitialOrder="desc">Record</th>
-            <th class="n" data-breakpoints="xs" class="divider" data-sortInitialOrder="desc">Win %</th>
-            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">①</th>
-            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">⑧</th>
-            <th class="n divider" data-breakpoints="xs" data-sortInitialOrder="desc">5–0s</th>
             <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc"># Decks</th>
             <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">Record</th>
             <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">Win %</th>
@@ -28,12 +17,6 @@
         {{#cards}}
             <tr>
                 <td>{{> singlecard}}</td>
-                <td class="n">{{season_num_decks}}</td>
-                <td class="n">{{#season_show_record}}{{season_wins}}–{{season_losses}}{{#season_draws}}–{{season_draws}}{{/season_draws}}{{/season_show_record}}</td>
-                <td class="n">{{#season_show_record}}{{season_win_percent}}{{/season_show_record}}</td>
-                <td class="n">{{#season_tournament_wins}}{{season_tournament_wins}}{{/season_tournament_wins}}</td>
-                <td class="n">{{#season_tournament_top8s}}{{season_tournament_top8s}}{{/season_tournament_top8s}}</td>
-                <td class="n divider">{{#season_perfect_runs}}{{season_perfect_runs}}{{/season_perfect_runs}}</td>
                 <td class="n">{{all_num_decks}}</td>
                 <td class="n">{{#all_show_record}}{{all_wins}}–{{all_losses}}{{#all_draws}}–{{all_draws}}{{/all_draws}}{{/all_show_record}}</td>
                 <td class="n">{{#all_show_record}}{{all_win_percent}}{{/all_show_record}}</td>

@@ -14,5 +14,5 @@ class Card(View):
     def __getattr__(self, attr):
         return getattr(self.card, attr)
 
-    def subtitle(self):
+    def page_title(self):
         return self.card.name

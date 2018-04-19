@@ -8,5 +8,5 @@ class Unauthorized(View):
         if error:
             self.error = error
 
-    def subtitle(self):
+    def page_title(self):
         return 'Unauthorized'

@@ -1,32 +1,32 @@
-from decksite.data import deck, guarantee
+from decksite.data import deck, guarantee, query
 from decksite.database import db
 from magic import oracle, rotation
 from shared.container import Container
 from shared.database import sqlescape
 
 
-def played_cards(where='1 = 1'):
+def played_cards(where='1 = 1', season_id=None):
     sql = """
         SELECT
             card AS name,
             {all_select},
-            {season_select},
+            {season_select}, -- We use the season data on the homepage to calculate movement, even though we no longer use it on /cards/.
             {week_select}
         FROM
             deck_card AS dc
         INNER JOIN
             deck AS d ON dc.deck_id = d.id
+        {season_join}
         {nwdl_join}
-        WHERE
-            ({where})
+        WHERE ({where}) AND ({season_query})
         GROUP BY
             dc.card
         ORDER BY
-            season_num_decks DESC,
-            SUM(CASE WHEN dsum.created_date >= %s THEN dsum.wins - dsum.losses ELSE 0 END) DESC,
+            all_num_decks DESC,
+            SUM(dsum.wins - dsum.losses) DESC,
             name
-    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), week_select=deck.nwdl_week_select(), nwdl_join=deck.nwdl_join(), where=where)
-    cs = [Container(r) for r in db().execute(sql, [int(rotation.last_rotation().timestamp())])]
+    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), week_select=deck.nwdl_week_select(), season_join=query.season_join(), nwdl_join=deck.nwdl_join(), where=where, season_query=query.season_query(season_id))
+    cs = [Container(r) for r in db().execute(sql)]
     cards = oracle.cards_by_name()
     for c in cs:
         c.update(cards[c.name])

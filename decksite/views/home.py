@@ -36,5 +36,5 @@ class Home(View):
         self.decks_url = url_for('decks')
         self.cards_url = url_for('cards')
 
-    def subtitle(self):
+    def page_title(self):
         return None

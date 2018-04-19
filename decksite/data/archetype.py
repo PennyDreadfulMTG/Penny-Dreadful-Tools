@@ -4,7 +4,7 @@ from typing import Dict, List
 import titlecase
 from anytree import NodeMixin
 
-from decksite.data import deck
+from decksite.data import deck, query
 from decksite.database import db
 from magic import rotation
 from shared.container import Container
@@ -69,14 +69,13 @@ def load_archetypes(where='1 = 1', merge=False):
     archetypes = list(archetypes.values())
     return archetypes
 
-def load_archetypes_deckless(where='1 = 1', order_by='`season_num_decks` DESC, `all_num_decks` DESC, `season_wins` DESC, `all_wins` DESC'):
+def load_archetypes_deckless(where='1 = 1', order_by='`all_num_decks` DESC, `all_wins` DESC, name', season_id=None):
     sql = """
         SELECT
             a.id,
             a.name,
             aca.ancestor AS parent_id,
-            {all_select},
-            {season_select}
+            {all_select}
         FROM
             archetype AS a
         LEFT JOIN
@@ -85,15 +84,16 @@ def load_archetypes_deckless(where='1 = 1', order_by='`season_num_decks` DESC, `
             archetype_closure AS acd ON a.id = acd.ancestor
         LEFT JOIN
             deck AS d ON acd.descendant = d.archetype_id
+        {season_join}
         {nwdl_join}
         WHERE
-            {where}
+            ({where}) AND ({season_query})
         GROUP BY
             a.id,
             aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
         ORDER BY
             {order_by}
-    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), nwdl_join=deck.nwdl_join(), where=where, order_by=order_by)
+    """.format(all_select=deck.nwdl_all_select(), season_join=query.season_join(), nwdl_join=deck.nwdl_join(), where=where, season_query=query.season_query(season_id), order_by=order_by)
     archetypes = [Archetype(a) for a in db().execute(sql)]
     archetypes_by_id = {a.id: a for a in archetypes}
     for a in archetypes:

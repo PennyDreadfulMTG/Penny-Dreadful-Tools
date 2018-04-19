@@ -284,9 +284,8 @@ class View:
 
     def prepare_archetype(self, a, archetypes):
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
-        if a.get('all_num_decks') is not None and a.get('season_num_decks') is not None:
+        if a.get('all_num_decks') is not None:
             a.all_show_record = a.get('all_wins') or a.get('all_draws') or a.get('all_losses')
-            a.season_show_record = a.get('season_wins') or a.get('season_draws') or a.get('season_losses')
             a.show_matchups = a.all_show_record
         a.url = '/archetypes/{id}/'.format(id=a.id)
         a.best_decks = Container({'decks': []})

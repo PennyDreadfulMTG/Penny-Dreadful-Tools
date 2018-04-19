@@ -121,9 +121,10 @@ def competition(competition_id):
     return view.page()
 
 @APP.route('/archetypes/')
+@SEASON.route('/archetypes/')
 @cached()
 def archetypes():
-    view = Archetypes(archs.load_archetypes_deckless())
+    view = Archetypes(archs.load_archetypes_deckless(season_id=g.get('season_id', rot.current_season_num())))
     return view.page()
 
 @APP.route('/archetypes/<archetype_id>/')

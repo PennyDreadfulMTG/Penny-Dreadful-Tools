@@ -35,10 +35,10 @@ class Rotation(View):
 
     def read_rotation_files(self):
         lines = []
-        files = glob.glob(os.path.join(configuration.get('legality_dir'), "Run_*.txt"))
+        files = glob.glob(os.path.join(configuration.get('legality_dir'), 'Run_*.txt'))
         self.cards = []
         if len(files) == 0:
-            files = glob.glob(os.path.join(configuration.get('legality_dir'), "*.jar"))
+            files = glob.glob(os.path.join(configuration.get('legality_dir'), '*.jar'))
             if len(files) == 0:
                 raise DoesNotExistException('Invalid configuration.  Could not find Legality Checker')
             self.runs = 0

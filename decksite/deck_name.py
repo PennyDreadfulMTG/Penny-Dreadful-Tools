@@ -120,6 +120,7 @@ def whitelisted(name):
     for w in WHITELIST:
         if name.startswith(w):
             return True
+    return False
 
 def prepend_colors(s, colors):
     colors_part = name_from_colors(colors, s)

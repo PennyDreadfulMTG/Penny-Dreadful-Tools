@@ -225,6 +225,7 @@ class View:
         d.average_cmc = round(total / max(1, num_cards), 2)
 
     def prepare_cards(self):
+        self.is_very_large = len(getattr(self, 'cards', [])) > 500
         for c in getattr(self, 'cards', []):
             self.prepare_card(c)
         for c in getattr(self, 'only_played_cards', []):
@@ -237,8 +238,7 @@ class View:
         c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
         c.legal_formats = set([k for k, v in c.legalities.items() if v != 'Banned'])
         c.has_legal_format = len(c.legal_formats) > 0
-        if c.get('season_num_decks') is not None and c.get('all_num_decks') is not None:
-            c.season_show_record = c.get('season_wins') or c.get('season_losses') or c.get('season_draws')
+        if c.get('all_num_decks') is not None:
             c.all_show_record = c.get('all_wins') or c.get('all_losses') or c.get('all_draws')
         c.has_decks = len(c.get('decks', [])) > 0
         counter = Counter()

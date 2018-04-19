@@ -91,9 +91,10 @@ def person(person_id):
     return view.page()
 
 @APP.route('/cards/')
+@SEASON.route('/cards/')
 @cached()
 def cards():
-    view = Cards(cs.played_cards())
+    view = Cards(cs.played_cards(season_id=g.get('season_id', rot.current_season_num())))
     return view.page()
 
 @APP.route('/cards/<path:name>/')

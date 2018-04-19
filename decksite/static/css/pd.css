@@ -487,6 +487,10 @@ main table {
     overflow-x: auto;
 }
 
+main table.very-large {
+    visibility: visible;
+}
+
 /* Allow overflow-x so highlighting shows in left margin. Looks clipped in narrowest view to get sideways scrolling. */
 @media only screen and (min-width: 360px) {
     main table.highlights, main table.highlights td {

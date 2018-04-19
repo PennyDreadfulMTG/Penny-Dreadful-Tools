@@ -40,7 +40,7 @@ def setup_session(url):
         else:
             wrong_guilds = True
     if wrong_guilds:
-        logger.warning("auth.py: unexpected discord response. Guilds: {g}".format(g=guilds))
+        logger.warning('auth.py: unexpected discord response. Guilds: {g}'.format(g=guilds))
 
 def make_session(token=None, state=None, scope=None):
     return OAuth2Session(

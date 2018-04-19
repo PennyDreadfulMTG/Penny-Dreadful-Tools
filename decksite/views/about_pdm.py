@@ -1,7 +1,7 @@
 from flask import url_for
+from flask_babel import gettext
 
 from decksite.view import View
-from flask_babel import gettext
 
 from .. import BABEL
 

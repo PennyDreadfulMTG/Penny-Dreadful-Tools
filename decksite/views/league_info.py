@@ -1,8 +1,8 @@
 from flask import url_for
+from flask_babel import gettext
 
 from decksite import league, localization
 from decksite.view import View
-from flask_babel import gettext
 
 
 # pylint: disable=no-self-use

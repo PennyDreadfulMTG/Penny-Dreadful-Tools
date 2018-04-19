@@ -2,7 +2,6 @@ import os
 
 from discordbot import command
 
-
 HEADER = """
 # Penny-Dreadful-Discord-Bot
 Displays info about quoted cards in a discord channel

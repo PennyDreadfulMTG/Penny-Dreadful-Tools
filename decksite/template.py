@@ -1,10 +1,9 @@
 import pystache
 import pystache.parsed
+from flask_babel import gettext
 from markdown import markdown
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
-
-from flask_babel import gettext
 
 
 def render_name(template, *context):

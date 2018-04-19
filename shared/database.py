@@ -13,10 +13,10 @@ def sqlescape(s, force_string: bool = False, backslashed_escaped=False):
         if encodable.find('\x00') >= 0:
             raise Exception('NUL not allowed in SQL string.')
         if not backslashed_escaped:
-            encodable = encodable.replace("\\", "\\\\")
+            encodable = encodable.replace('\\', '\\\\')
         return "'{escaped}'".format(escaped=encodable.replace("'", "''").replace('%', '%%'))
     raise InvalidArgumentException('Cannot sqlescape `{s}`'.format(s=s))
 
 def sqllikeescape(s: str) -> str:
-    s = s.replace("\\", "\\\\").replace('%', '\\%').replace('_', '\\_')
+    s = s.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
     return sqlescape('%{s}%'.format(s=s), backslashed_escaped=True)

@@ -50,18 +50,18 @@ def test_commands():
         calls = channel.calls
 
         message = types.new_class('Message')
-        message.content = "!{0} args".format(cmd)
+        message.content = '!{0} args'.format(cmd)
         message.channel = channel
 
         if cmd == 'time':
             message.content = '!time Melbourne'
 
         message.author = types.new_class('User')
-        message.author.mention = "@nobody"
+        message.author.mention = '@nobody'
         message.author.voice = types.new_class('VoiceState')
         message.author.voice.voice_channel = None
 
-        print("Calling {0}".format(message.content))
+        print('Calling {0}'.format(message.content))
         loop.run_until_complete(command.handle_command(message, fakebot))
         assert channel.calls > calls
         calls = channel.calls

@@ -21,8 +21,10 @@ def add_season_id(endpoint, values):
 def pull_season_id(endpoint, values):
     g.season_id = values.pop('season_id')
 
-APP.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+APP.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip()
+APP.config['branch'] = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip()
 APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
+
 try:
     oracle.init()
 except DatabaseException as e:

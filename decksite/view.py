@@ -335,6 +335,9 @@ class View:
     def commit_id(self):
         return APP.config['commit-id']
 
+    def git_branch(self):
+        return APP.config['branch']
+
     def babel_languages(self):
         return BABEL.list_translations()
 

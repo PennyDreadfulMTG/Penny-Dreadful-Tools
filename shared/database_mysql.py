@@ -15,9 +15,6 @@ class MysqlDatabase():
         self.name = db
         self.host = configuration.get_str('mysql_host')
         self.port = configuration.get_int('mysql_port')
-        # if str(self.port).startswith('0.0.0.0:'):
-        #     # Thanks Docker :/
-        #     self.port = int(self.port[8:])
         self.user = configuration.get_str('mysql_user')
         self.passwd = configuration.get_str('mysql_passwd')
         self.connect()

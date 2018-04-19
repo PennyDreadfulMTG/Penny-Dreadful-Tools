@@ -20,7 +20,7 @@ persistent=yes
 
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
-load-plugins=
+load-plugins=pylint_quotes
 
 # Use multiple processes to speed up Pylint.
 jobs=1
@@ -419,3 +419,8 @@ analyse-fallback-blocks=no
 # Exceptions that will emit a warning when being caught. Defaults to
 # "Exception"
 overgeneral-exceptions=Exception
+
+[QUOTES]
+string-quote=single-avoid-escape
+triple-quote=double
+docstring-quote=double

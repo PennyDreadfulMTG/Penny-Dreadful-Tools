@@ -50,8 +50,8 @@ class Bot:
 
     async def on_member_join(self, member) -> None:
         print('{0} joined {1} ({2})'.format(member.mention, member.server.name, member.server.id))
-        is_pd_server = member.server.id == "207281932214599682"
-        # is_test_server = member.server.id == "226920619302715392"
+        is_pd_server = member.server.id == '207281932214599682'
+        # is_test_server = member.server.id == '226920619302715392'
         if is_pd_server: # or is_test_server:
             greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> and <http://pdmtgo.com> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
             await self.client.send_message(member.server.default_channel, greeting)
@@ -77,7 +77,7 @@ async def on_voice_state_update(before, after) -> None:
 
 @BOT.client.event
 async def on_member_update(before, after) -> None:
-    streaming_role = [r for r in before.server.roles if r.name == "Currently Streaming"]
+    streaming_role = [r for r in before.server.roles if r.name == 'Currently Streaming']
     if not streaming_role:
         return
     streaming_role = streaming_role[0]
@@ -103,18 +103,18 @@ async def on_reaction_add(reaction, author) -> None:
         c = reaction.count
         if reaction.me:
             c = c - 1
-        if c > 0 and not reaction.custom_emoji and reaction.emoji == "❎":
+        if c > 0 and not reaction.custom_emoji and reaction.emoji == '❎':
             await BOT.client.delete_message(reaction.message)
-        elif c > 0 and "Ambiguous name for " in reaction.message.content and reaction.emoji in command.DISAMBIGUATION_EMOJIS_BY_NUMBER.values():
+        elif c > 0 and 'Ambiguous name for ' in reaction.message.content and reaction.emoji in command.DISAMBIGUATION_EMOJIS_BY_NUMBER.values():
             await BOT.client.send_typing(reaction.message.channel)
-            previous_command, suggestions = re.search(r"Ambiguous name for ([^\.]*)\. Suggestions: (.*)", reaction.message.content).group(1, 2)
-            card = re.findall(r":[^:]*?: ([^:]*) ", suggestions + " ")[command.DISAMBIGUATION_NUMBERS_BY_EMOJI[reaction.emoji]-1]
-            message = Container(content="!{c} {a}".format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[])
+            previous_command, suggestions = re.search(r'Ambiguous name for ([^\.]*)\. Suggestions: (.*)', reaction.message.content).group(1, 2)
+            card = re.findall(r':[^:]*?: ([^:]*) ', suggestions + ' ')[command.DISAMBIGUATION_NUMBERS_BY_EMOJI[reaction.emoji]-1]
+            message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[])
             await BOT.on_message(message)
             await BOT.client.delete_message(reaction.message)
 
 async def background_task_spoiler_season() -> None:
-    "Poll Scryfall for the latest 250 cards, and add them to our db if missing"
+    'Poll Scryfall for the latest 250 cards, and add them to our db if missing'
     await BOT.client.wait_until_ready()
     new_cards = fetcher.scryfall_cards()
     for c in new_cards['data']:

@@ -1,6 +1,6 @@
 # pylint: disable=import-error, duplicate-code
 import warnings
-from typing import Any, List
+from typing import Any, List, cast
 
 import MySQLdb
 from MySQLdb import OperationalError
@@ -70,29 +70,29 @@ class MysqlDatabase():
             raise DatabaseException('Failed to execute `{sql}` with `{args}`. MySQL has gone away and it was not possible to reconnect in 3 attemps'.format(sql=sql, args=args))
         return result
 
-    def insert(self, sql, args=None):
+    def insert(self, sql, args=None) -> int:
         self.execute(sql, args)
         return self.last_insert_rowid()
 
-    def begin(self):
+    def begin(self) -> None:
         self.connection.begin()
 
-    def commit(self):
+    def commit(self) -> None:
         self.connection.commit()
 
-    def last_insert_rowid(self):
-        return self.value('SELECT LAST_INSERT_ID()')
+    def last_insert_rowid(self) -> int:
+        return cast(int, self.value('SELECT LAST_INSERT_ID()'))
 
     # pylint: disable=no-self-use
-    def concat(self, parts):
+    def concat(self, parts) -> str:
         return 'CONCAT(' + ', '.join(parts) + ')'
 
     # pylint: disable=no-self-use
-    def is_mysql(self):
+    def is_mysql(self) -> bool:
         return True
 
     # pylint: disable=no-self-use
-    def supports_lock(self):
+    def supports_lock(self) -> bool:
         return True
 
     def get_lock(self, lock_id, timeout=4):

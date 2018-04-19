@@ -39,8 +39,8 @@ def test_results_from_queries() -> None:
     assert result.get_best_match() == 'Upheaval'
 
 def test_resources_matching_in_url():
-    results = command.resources_resources("github")
+    results = command.resources_resources('github')
     assert results['https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/'] == 'Penny Dreadful Tools'
 
-    results = command.resources_resources("starcitygames")
+    results = command.resources_resources('starcitygames')
     assert results['https://www.starcitygames.com/article/33860_Penny-Dreadful.html'] == 'Mrs. Mulligan SCG'

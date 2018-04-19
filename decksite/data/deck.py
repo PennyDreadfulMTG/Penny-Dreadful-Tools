@@ -136,17 +136,15 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None):
             deck_match AS dm ON d.id = dm.deck_id
         LEFT JOIN
             deck_match AS odm ON odm.deck_id <> d.id AND dm.match_id = odm.match_id
-        LEFT JOIN
-            ({season_table}) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
-        WHERE
-            ({where}) AND ({season_query})
+        {season_join}
+        WHERE ({where}) AND ({season_query})
         GROUP BY
             d.id,
             season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
         ORDER BY
             {order_by}
         {limit}
-    """.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit, season_query=query.season_query(season_id), season_table=query.season_table())
+    """.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit, season_query=query.season_query(season_id), season_join=query.season_join())
     db().execute('SET group_concat_max_len=100000')
     rows = db().execute(sql)
     decks = []

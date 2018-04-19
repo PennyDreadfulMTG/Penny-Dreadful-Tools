@@ -16,8 +16,7 @@ def played_cards(where='1 = 1', season_id=None):
             deck_card AS dc
         INNER JOIN
             deck AS d ON dc.deck_id = d.id
-        LEFT JOIN
-            ({season_table}) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
+        {season_join}
         {nwdl_join}
         WHERE
             ({where}) AND ({season_query})
@@ -27,7 +26,7 @@ def played_cards(where='1 = 1', season_id=None):
             all_num_decks DESC,
             SUM(dsum.wins - dsum.losses) DESC,
             name
-    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), week_select=deck.nwdl_week_select(), season_table=query.season_table(), nwdl_join=deck.nwdl_join(), where=where, season_query=query.season_query(season_id))
+    """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), week_select=deck.nwdl_week_select(), season_join=query.season_join(), nwdl_join=deck.nwdl_join(), where=where, season_query=query.season_query(season_id))
     cs = [Container(r) for r in db().execute(sql)]
     cards = oracle.cards_by_name()
     for c in cs:

@@ -23,6 +23,7 @@ class View:
         # Set some pointless instance vars to keep Codacy happy.
         self.decks = []
         self.active_runs_text = None
+        self.is_very_large = None
 
     def template(self):
         return self.__class__.__name__.lower()

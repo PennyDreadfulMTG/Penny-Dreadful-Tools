@@ -36,8 +36,7 @@ def load_people(where='1 = 1', order_by='`all_num_decks` DESC, name', season_id=
             person AS p
         LEFT JOIN
             deck AS d ON p.id = d.person_id
-        LEFT JOIN
-            ({season_table}) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
+        {season_join}
         {nwdl_join}
         WHERE
             ({where}) AND ({season_query})
@@ -45,7 +44,7 @@ def load_people(where='1 = 1', order_by='`all_num_decks` DESC, name', season_id=
             p.id
         ORDER BY
             {order_by}
-    """.format(person_query=query.person_query(), all_select=deck.nwdl_all_select(), nwdl_join=deck.nwdl_join(), season_table=query.season_table(), where=where, season_query=query.season_query(season_id), order_by=order_by)
+    """.format(person_query=query.person_query(), all_select=deck.nwdl_all_select(), nwdl_join=deck.nwdl_join(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id), order_by=order_by)
     people = [Person(r) for r in db().execute(sql)]
     if len(people) > 0:
         set_decks(people, season_id)
@@ -125,14 +124,13 @@ def set_achievements(people, season_id=None):
             person AS p
         LEFT JOIN
             deck AS d ON d.person_id = p.id
-        LEFT JOIN
-            ({season_table}) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
+        {season_join}
         {competition_join}
         WHERE
             p.id IN ({ids}) AND ({season_query})
         GROUP BY
             p.id
-    """.format(competition_join=query.competition_join(), competition_ids_by_type_select=query.competition_ids_by_type_select('League'), ids=', '.join(str(k) for k in people_by_id.keys()), season_table=query.season_table(), season_query=query.season_query(season_id))
+    """.format(competition_join=query.competition_join(), competition_ids_by_type_select=query.competition_ids_by_type_select('League'), ids=', '.join(str(k) for k in people_by_id.keys()), season_join=query.season_join(), season_query=query.season_query(season_id))
     results = [Container(r) for r in db().execute(sql)]
     for result in results:
         people_by_id[result['id']].update(result)
@@ -161,8 +159,7 @@ def set_head_to_head(people, season_id=None):
             deck AS od ON odm.deck_id = od.id
         INNER JOIN
             person AS opp ON od.person_id = opp.id
-        LEFT JOIN
-            ({season_table}) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
+        {season_join}
         WHERE
             p.id IN ({ids}) AND ({season_query})
         GROUP BY
@@ -174,7 +171,7 @@ def set_head_to_head(people, season_id=None):
             win_percent DESC,
             SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) DESC,
             opp_mtgo_username
-    """.format(ids=', '.join(str(k) for k in people_by_id.keys()), season_table=query.season_table(), season_query=query.season_query(season_id))
+    """.format(ids=', '.join(str(k) for k in people_by_id.keys()), season_join=query.season_join(), season_query=query.season_query(season_id))
     results = [Container(r) for r in db().execute(sql)]
     for result in results:
         people_by_id[result.id].head_to_head = people_by_id[result.id].get('head_to_head', []) + [result]

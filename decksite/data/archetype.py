@@ -86,8 +86,7 @@ def load_archetypes_deckless(where='1 = 1', order_by='`all_num_decks` DESC, `all
             deck AS d ON acd.descendant = d.archetype_id
         {season_join}
         {nwdl_join}
-        WHERE
-            ({where}) AND ({season_query})
+        WHERE ({where}) AND ({season_query})
         GROUP BY
             a.id,
             aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.

@@ -92,13 +92,14 @@ PD.initTables = function () {
         },
         "type": "numeric"
     });
+    PD.bugCategories = ["Game Breaking", "Avoidable Game Breaking", "Advantageous", "Disadvantageous", "Graphical", "Non-Functional ability", "Unclassified"];
     $.tablesorter.addParser({
         "id": "bugseverity",
         "is": function(s) {
-            return ["Game Breaking", "Advantageous", "Disadvantageous", "Graphical", "Non-Functional ability", "Unclassified"].indexOf(s) > -1;
+            return PD.bugCategories.indexOf(s) > -1;
         },
         "format": function(s) {
-            return ["Game Breaking", "Advantageous", "Disadvantageous", "Graphical", "Non-Functional ability", "Unclassified"].indexOf(s)
+            return PD.bugCategories.indexOf(s);
         },
         "type": "numeric"
     });

@@ -48,7 +48,7 @@ def now(tz=None) -> datetime.datetime:
     return datetime.datetime.now(tz)
 
 def day_of_week(dt, tz):
-    return dt.astimezone(tz).strftime("%A")
+    return dt.astimezone(tz).strftime('%A')
 
 def form_date(dt, tz):
     return dt.astimezone(tz).strftime(FORM_FORMAT)

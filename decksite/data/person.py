@@ -249,4 +249,7 @@ def link_discord(mtgo_username, discord_id):
     return p
 
 def is_banned(mtgo_username):
-    return db().value('SELECT banned FROM person WHERE mtgo_username = %s', [mtgo_username]) is not None
+    banned = db().value('SELECT banned FROM person WHERE mtgo_username = %s', [mtgo_username])
+    if banned: # Banned can either be 0 or null.  This is the easiest check.
+        return True
+    return False

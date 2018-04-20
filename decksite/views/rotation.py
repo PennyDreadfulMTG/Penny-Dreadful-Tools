@@ -4,10 +4,12 @@ import glob
 import html
 import os
 from collections import Counter
+from typing import List
 
 from decksite.data import card
 from decksite.view import View
 from magic import multiverse, oracle, rotation
+from magic.card import Card
 from shared import configuration, dtutil
 from shared.pd_exception import DoesNotExistException
 
@@ -29,16 +31,16 @@ class Rotation(View):
             self.rotation_msg = 'Full rotation is ' + dtutil.display_date(rotation.next_rotation(), 2)
         else:
             self.rotation_msg = 'Supplemental rotation is ' + dtutil.display_date(rotation.next_supplemental(), 2)
+        self.cards: List[Card] = []
         if in_rotation:
             self.read_rotation_files()
         self.show_interesting = True
 
-    def read_rotation_files(self):
+    def read_rotation_files(self) -> None:
         lines = []
-        files = glob.glob(os.path.join(configuration.get('legality_dir'), 'Run_*.txt'))
-        self.cards = []
+        files = glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))
         if len(files) == 0:
-            files = glob.glob(os.path.join(configuration.get('legality_dir'), '*.jar'))
+            files = glob.glob(os.path.join(configuration.get_str('legality_dir'), '*.jar'))
             if len(files) == 0:
                 raise DoesNotExistException('Invalid configuration.  Could not find Legality Checker')
             self.runs = 0

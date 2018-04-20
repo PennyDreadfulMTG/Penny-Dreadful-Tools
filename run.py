@@ -3,7 +3,7 @@ import pkgutil
 import sys
 
 
-def run():
+def run() -> None:
     if len(sys.argv) == 0:
         print('No entry point specified.')
         sys.exit(1)
@@ -36,6 +36,9 @@ def run():
         sys.argv.remove('tests')
         code = pytest.main()
         sys.exit(code)
+    elif 'rotation' in sys.argv:
+        from rotation_script import rotation_script
+        rotation_script.run()
     else:
         print("You didn't tell me what to run or I don't recognize that name")
         sys.exit(1)

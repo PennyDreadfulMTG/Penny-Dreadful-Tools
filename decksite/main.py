@@ -523,7 +523,8 @@ def before_request():
 
 @APP.teardown_request
 def teardown_request(response):
-    perf.check(g.p, 'slow_page', request.path, 'decksite')
+    if g.get('p') is not None:
+        perf.check(g.p, 'slow_page', request.path, 'decksite')
     return response
 
 def log_exception(e):

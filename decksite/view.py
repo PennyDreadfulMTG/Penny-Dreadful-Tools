@@ -409,12 +409,12 @@ def seasonized_url(season_id):
     args = request.view_args.copy()
     if season_id == rotation.current_season_num():
         args.pop('season_id', None)
-        endpoint = request.endpoint.replace('season.', '')
+        endpoint = request.endpoint.replace('seasons.', '')
     else:
         args['season_id'] = season_id
-        prefix = '' if request.endpoint.startswith('season.') else 'season.'
+        prefix = '' if request.endpoint.startswith('seasons.') else 'seasons.'
         endpoint = '{prefix}{endpoint}'.format(prefix=prefix, endpoint=request.endpoint)
     try:
         return url_for(endpoint, **args)
     except BuildError:
-        return url_for(request.endpoint, **args)
+        return url_for(request.endpoint)

@@ -98,6 +98,7 @@ class View:
             {'name': gettext('Discord Chat'), 'url': 'https://discord.gg/H6EHdHu'},
             {'name': gettext('External Links'), 'url': url_for('resources')},
             {'name': gettext('Link Accounts'), 'url': url_for('link')},
+            {'name': gettext('Bugs'), 'url': url_for('bugs')}
         ]
         menu = [
             {'name': gettext('Metagame'), 'url': url_for('home'), 'badge': archetypes_badge, 'submenu': [

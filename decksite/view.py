@@ -160,6 +160,21 @@ class View:
     def learn_more_url(self):
         return url_for('about', hide_intro=True)
 
+    def decks_url(self):
+        return url_for('decks')
+
+    def current_league_url(self):
+        return url_for('current_league')
+
+    def league_info_url(self):
+        return url_for('league')
+
+    def league_signup_url(self):
+        return url_for('signup')
+
+    def tournaments_info_url(self):
+        return url_for('tournaments')
+
     def prepare(self):
         self.prepare_decks()
         self.prepare_cards()
@@ -394,12 +409,12 @@ def seasonized_url(season_id):
     args = request.view_args.copy()
     if season_id == rotation.current_season_num():
         args.pop('season_id', None)
-        endpoint = request.endpoint.replace('season.', '')
+        endpoint = request.endpoint.replace('seasons.', '')
     else:
         args['season_id'] = season_id
-        prefix = '' if request.endpoint.startswith('season.') else 'season.'
+        prefix = '' if request.endpoint.startswith('seasons.') else 'seasons.'
         endpoint = '{prefix}{endpoint}'.format(prefix=prefix, endpoint=request.endpoint)
     try:
         return url_for(endpoint, **args)
     except BuildError:
-        return url_for(request.endpoint, **args)
+        return url_for(request.endpoint)

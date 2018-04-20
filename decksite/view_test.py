@@ -7,18 +7,17 @@ from decksite.main import APP
 from magic import rotation
 
 
-class ViewTest(unittest.TestCase):
-    def test_seasonized_url_for_app_endpoint(self):
-        with APP.test_request_context('/decks/'):
-            assert '/seasons/1/decks/' == view.seasonized_url(1)
-            assert '/decks/' == view.seasonized_url(rotation.current_season_num())
+def test_seasonized_url_for_app():
+    with APP.test_request_context('/decks/'):
+        assert view.seasonized_url(1) == '/seasons/1/decks/'
+        assert view.seasonized_url(rotation.current_season_num()) == '/decks/'
 
-    def test_seasonized_url_for_seasons_endpoint(self):
-        with APP.test_request_context('/seasons/2/decks/'):
-            assert '/seasons/1/decks/' == view.seasonized_url(1)
-            assert '/decks/' == view.seasonized_url(rotation.current_season_num())
+def test_seasonized_url_for_seasons():
+    with APP.test_request_context('/seasons/2/decks/'):
+        assert view.seasonized_url(1) == '/seasons/1/decks/'
+        assert view.seasonized_url(rotation.current_season_num()) == '/decks/'
 
-    def test_seasonized_url_when_not_seasonized(self):
-        with APP.test_request_context('/tournaments/'):
-            assert '/tournaments/' == view.seasonized_url(1)
-            assert '/tournaments/' == view.seasonized_url(rotation.current_season_num())
+def test_seasonized_url_when_not_seasonized():
+    with APP.test_request_context('/tournaments/'):
+        assert view.seasonized_url(1) == '/tournaments/'
+        assert view.seasonized_url(rotation.current_season_num()) == '/tournaments/'

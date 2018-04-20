@@ -82,7 +82,7 @@ def store(timestamp: float, all_prices: Dict[str, PriceList]) -> None:
         sql = 'INSERT INTO low_price (`time`, name, price) VALUES '
         chunk = []
         try:
-            for _ in range(0, 20):
+            for _ in range(0, 20): # type: ignore
                 chunk.append(lows.popitem())
         except KeyError:
             pass # Emptied it

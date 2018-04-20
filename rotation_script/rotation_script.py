@@ -40,10 +40,12 @@ def process(all_prices: Dict[str, PriceList]) -> None:
                 hits.add(name)
                 used_sets.add(mtgo_set)
     ignored = seen_sets - used_sets
+    process_sets(seen_sets, used_sets, hits, ignored)
 
-    files = glob.glob(os.path.join(configuration.get_str('legality_dir'), "Run_*.txt"))
+def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignored: Set[str]) -> None:
+    files = glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))
     n = len(files) + 1
-    path = os.path.join(configuration.get_str('legality_dir'), "Run_{n}.txt").format(n=n)
+    path = os.path.join(configuration.get_str('legality_dir'), 'Run_{n}.txt').format(n=n)
     h = open(path, mode='w', encoding='utf-8')
     for card in hits:
         line = card + '\n'

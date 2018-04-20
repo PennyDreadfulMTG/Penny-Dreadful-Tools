@@ -3,7 +3,8 @@ from typing import Collection, Dict, List, Optional
 from magic import card, fetcher, mana, multiverse, rotation
 from magic.database import db
 from shared.database import sqlescape
-from shared.pd_exception import InvalidDataException, TooFewItemsException
+from shared.pd_exception import (InvalidArgumentException,
+                                 InvalidDataException, TooFewItemsException)
 
 # Primary public interface to the magic package. Call `oracle.init()` after setting up application context and before using any methods.
 
@@ -14,16 +15,6 @@ def init() -> None:
     if len(CARDS_BY_NAME) == 0:
         for c in load_cards():
             CARDS_BY_NAME[c.name] = c
-
-def search(query):
-    like_query = '%{query}%'.format(query=card.canonicalize(query))
-    sql = """
-        {base_query}
-        HAVING name_ascii LIKE %s OR names LIKE %s
-        ORDER BY pd_legal DESC, name
-    """.format(base_query=multiverse.base_query())
-    rs = db().execute(sql, [like_query, like_query])
-    return [card.Card(r) for r in rs]
 
 def valid_name(name: str) -> str:
     if name in CARDS_BY_NAME:
@@ -143,12 +134,19 @@ def insert_scryfall_card(sfcard, rebuild_cache: bool = True) -> None:
         multiverse.update_cache()
         CARDS_BY_NAME[sfcard['name']] = load_card(sfcard['name'])
 
-def last_pd_rotation_changes():
-    current_code = rotation.current_season_code()
-    previous = rotation.SEASONS[rotation.SEASONS.index(current_code) - 1]
-    previous_id = multiverse.get_format_id('Penny Dreadful {f}'.format(f=previous))
-    current_id = multiverse.get_format_id('Penny Dreadful')
-    return changes_between_formats(previous_id, current_id)
+def pd_rotation_changes(season_id):
+    # Bit of a hack to make 'all' not explode until we cope with selective season dropdowns.
+    if season_id == 'all':
+        season_id = rotation.current_season_num()
+    try:
+        from_format_id = multiverse.get_format_id_from_season_id(int(season_id) - 1)
+    except InvalidArgumentException:
+        from_format_id = -1
+    try:
+        to_format_id = multiverse.get_format_id_from_season_id(season_id)
+    except InvalidArgumentException:
+        to_format_id = -1
+    return changes_between_formats(from_format_id, to_format_id)
 
 def changes_between_formats(f1, f2):
     return [query_diff_formats(f2, f1), query_diff_formats(f1, f2)]

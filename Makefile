@@ -18,7 +18,15 @@ unit:
 	@echo
 	@echo "******************************** Unit Tests ***********************************"
 	@echo
-	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 run.py tests -x -m "not tappedout"
+	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 run.py tests -x -m "not functional"
+	@echo
+
+# Run functional tests.
+functional:
+	@echo
+	@echo "******************************** Functional Tests ******************************"
+	@echo
+	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 run.py tests -x -m "functional"
 	@echo
 
 # Run lint on all python files.

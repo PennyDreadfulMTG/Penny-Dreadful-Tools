@@ -322,8 +322,9 @@ def do_claim():
     return retire(form)
 
 @APP.route('/rotation/changes/')
+@SEASONS.route('/rotation/changes/')
 def rotation_changes():
-    view = RotationChanges(*oracle.last_pd_rotation_changes(), cs.playability())
+    view = RotationChanges(*oracle.pd_rotation_changes(g.get('season_id', rot.current_season_num())), cs.playability())
     return view.page()
 
 @APP.route('/rotation/speculation/')

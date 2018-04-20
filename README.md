@@ -19,4 +19,3 @@ View individual subdirectories for details
 **price-grabber** builds a database of historic prices.
 
 **shared** contains a bunch of general purpose helper classes.
-

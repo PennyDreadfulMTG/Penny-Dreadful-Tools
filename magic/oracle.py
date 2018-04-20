@@ -3,7 +3,8 @@ from typing import Collection, Dict, List, Optional
 from magic import card, fetcher, mana, multiverse, rotation
 from magic.database import db
 from shared.database import sqlescape
-from shared.pd_exception import InvalidArgumentException, InvalidDataException, TooFewItemsException
+from shared.pd_exception import (InvalidArgumentException,
+                                 InvalidDataException, TooFewItemsException)
 
 # Primary public interface to the magic package. Call `oracle.init()` after setting up application context and before using any methods.
 

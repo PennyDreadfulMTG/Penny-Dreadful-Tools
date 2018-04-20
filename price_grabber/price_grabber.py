@@ -78,13 +78,20 @@ def store(timestamp: float, all_prices: Dict[str, PriceList]) -> None:
             cents = int(float(p) * 100)
             if cents < lows.get(name, sys.maxsize):
                 lows[name] = cents
-    sql = 'INSERT INTO low_price (`time`, name, price) VALUES '
-    sql += ', '.join(['(%s, %s, %s)'] * len(lows))
-    values = []
-    for name, cents in lows.items():
-        values.extend([timestamp, name, cents])
-    execute(sql, values)
-    DATABASE.commit()
+    while lows:
+        sql = 'INSERT INTO low_price (`time`, name, price) VALUES '
+        chunk = []
+        try:
+            for _ in range(0, 20):
+                chunk.append(lows.popitem())
+        except KeyError:
+            pass # Emptied it
+        sql += ', '.join(['(%s, %s, %s)'] * len(chunk))
+        values = []
+        for name, cents in chunk:
+            values.extend([timestamp, name, cents])
+        execute(sql, values)
+        DATABASE.commit()
 
 def execute(sql: str, values: Optional[List[object]] = None) -> None:
     if values is None:

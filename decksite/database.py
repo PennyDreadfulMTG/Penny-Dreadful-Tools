@@ -4,11 +4,10 @@ from flask import g, has_request_context, request
 
 from decksite import APP, logger
 from shared import configuration
-from shared.database import get_database
-from shared.database_mysql import MysqlDatabase
+from shared.database import Database, get_database
 
 
-def db() -> MysqlDatabase:
+def db() -> Database:
     if has_request_context():
         ctx = request
     else:

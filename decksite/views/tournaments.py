@@ -1,4 +1,3 @@
-import inflect
 from flask import url_for
 
 from decksite.data import competition

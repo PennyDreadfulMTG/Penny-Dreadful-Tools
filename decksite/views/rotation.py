@@ -18,6 +18,7 @@ from shared.pd_exception import DoesNotExistException
 class Rotation(View):
     def __init__(self):
         super().__init__()
+        self.playability = card.playability()
         until_full_rotation = rotation.next_rotation() - dtutil.now()
         until_supplemental_rotation = rotation.next_supplemental() - dtutil.now()
         in_rotation = False
@@ -56,7 +57,6 @@ class Rotation(View):
             self.process_score(name, hits)
 
     def process_score(self, name, hits):
-        playability = card.playability()
         remaining_runs = (168 - self.runs)
         name = html.unescape(name.encode('latin-1').decode('utf-8'))
         hits_needed = max(84 - hits, 0)
@@ -86,7 +86,7 @@ class Rotation(View):
             'percent': percent,
             'percent_hits_needed': percent_needed,
             'status': status,
-            'interestingness': rotation.interesting(playability, c)
+            'interestingness': rotation.interesting(self.playability, c)
         })
         self.cards.append(c)
 

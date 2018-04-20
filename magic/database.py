@@ -57,8 +57,6 @@ def setup() -> None:
     db().execute(sql)
     sql = create_table_def('card_supertype', card.card_type_properties('supertype'))
     db().execute(sql)
-    sql = create_table_def('card_type', card.card_type_properties('type'))
-    db().execute(sql)
     sql = create_table_def('card_subtype', card.card_type_properties('subtype'))
     db().execute(sql)
     sql = create_table_def('format', card.format_properties())

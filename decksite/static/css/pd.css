@@ -751,7 +751,7 @@ Menu items can have submenus. These are "mega menus" that stretch across the who
     float: left;
 }
 
-.menu li > a {
+.menu li > a, .submenu-container li > a {
     display: block;
     padding: 2em; /* Matches negative margin of nav so when it aligns left (even wrapped under). */
     text-decoration: none;
@@ -759,7 +759,7 @@ Menu items can have submenus. These are "mega menus" that stretch across the who
 }
 
 @media only screen and (max-width: 640px) {
-    .menu li > a {
+    .menu li > a, .submenu-container li > a {
         padding: 0.563em;
     }
 }
@@ -807,7 +807,7 @@ Menu items can have submenus. These are "mega menus" that stretch across the who
 /* Slide-out caret at top of submenu dropdown. */
 
 /* Don't drop the opacity of the caret when menu item is selected because it's not semantically part of the menu item even though technically it is. */
-a.menuitem:focus {
+a.menuitem:focus, .language-switcher > a:focus {
     opacity: 1;
 }
 
@@ -827,10 +827,17 @@ a.menuitem:focus {
     margin-left: -1.333em; /* Equal to border-left/border-right, to compenstate for *starting* at left 50% instead of centering there. */
     opacity: 0;
     position: absolute; /* Take the caret out of the flow so it doesn't push content below down. */
-    top: 4.333em; /* menuitem[padding-top] + menuitem[padding-bottom] + (menuitem[line-height] * menuitem[font-size]) - translateY/border-bottom */
     transform: translateY(1em); /* [border-bottom] – In the hidden state the caret is pushed down by the height of the caret. */
     transition: all 0.1s ease-out; /* When we transition back to this state hide the caret quite quickly so you don't see the caret when the dropdown has gone. */
     width: 0;
+}
+
+.has-submenu > a.menuitem:after {
+    top: 4.333em; /* menuitem[padding-top] + menuitem[padding-bottom] + (menuitem[line-height] * menuitem[font-size]) - translateY/border-bottom */
+}
+
+.language-switcher.has-submenu > a:after {
+    top: 1.126em; /* menuitem[padding-top] + menuitem[padding-bottom] */
 }
 
 /* Accomodate the smaller padding on menu items in xs and sm view. */
@@ -1700,19 +1707,34 @@ Season Symbols
 Language Switcher
 
 */
-.language_switcher {
-    float: left;
+
+header {
+    position: relative;
 }
 
-.language_icon {
+.language-switcher {
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+/* BAKERT we want the same mobile behavior as the normal submenus - get thinner. */
+
+/* We don't want a left padding on the submenu because the switcher lives in the margin not in the main body of the page. */
+.language-switcher li > a {
+    padding-left: 10%;
+}
+
+.language-switcher .submenu-container {
+    padding-left: 0;
+}
+
+.language-icon {
     width: 1.333em;
     height: 1.333em;
-    padding-right: 0.563em;
+    padding: 0.563em;
     vertical-align: middle;
-}
-
-.language_cta {
-    padding-top: 0.3rem;
 }
 
 /*

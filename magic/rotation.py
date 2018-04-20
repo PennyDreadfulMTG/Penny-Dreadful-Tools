@@ -1,11 +1,22 @@
 import datetime
-from typing import Dict, List, Union, cast
+from typing import List, Optional, cast
+
+from mypy_extensions import TypedDict
 
 from magic import fetcher
 from shared import dtutil
 from shared.pd_exception import InvalidDataException
 
-SetInfo = Dict[str, Union[str, datetime.datetime]] #pylint: disable=invalid-name
+SetInfo = TypedDict('SetInfo', { #pylint: disable=invalid-name
+    'name': str,
+    'block': Optional[str],
+    'code': str,
+    'mtgo_code': Optional[str],
+    'enter_date': str,
+    'exit_date': str,
+    'rough_exit_date': str,
+    'enter_date_dt': datetime.datetime,
+    })
 
 SEASONS = [
     'EMN', 'KLD', 'AER', 'AKH', 'HOU',
@@ -17,7 +28,7 @@ def init() -> List[SetInfo]:
     if info['deprecated']:
         print('Current whatsinstandard API version is DEPRECATED.')
     set_info = cast(List[SetInfo], info['sets'])
-    return [parse_rotation_date(release) for release in set_info]
+    return [postprocess(release) for release in set_info]
 
 def current_season_code():
     return last_rotation_ex()['code']
@@ -32,26 +43,30 @@ def current_season_num():
             return n
     raise InvalidDataException('I did not find the current season code (`{code}`) in the list of seasons ({seasons}) and I am confused.'.format(code=look_for, seasons=','.join(look_in)))
 
-def last_rotation():
-    return last_rotation_ex()['enter_date']
+def last_rotation() -> datetime.datetime:
+    return last_rotation_ex()['enter_date_dt']
 
-def next_rotation():
-    return next_rotation_ex()['enter_date']
+def next_rotation() -> datetime.datetime:
+    return next_rotation_ex()['enter_date_dt']
 
-def last_rotation_ex():
-    return max([s for s in sets() if s['enter_date'] < dtutil.now()], key=lambda s: s['enter_date'])
+def last_rotation_ex() -> SetInfo:
+    return max([s for s in sets() if s['enter_date_dt'] < dtutil.now()], key=lambda s: s['enter_date_dt'])
 
-def next_rotation_ex():
-    return min([s for s in sets() if s['enter_date'] > dtutil.now()], key=lambda s: s['enter_date'])
+def next_rotation_ex() -> SetInfo:
+    return min([s for s in sets() if s['enter_date_dt'] > dtutil.now()], key=lambda s: s['enter_date_dt'])
 
-def next_supplemental():
+def next_supplemental() -> datetime.datetime:
     last = last_rotation() + datetime.timedelta(weeks=3)
     if last > dtutil.now():
         return last
     return next_rotation() + datetime.timedelta(weeks=3)
 
-def parse_rotation_date(setinfo: SetInfo) -> SetInfo:
-    setinfo['enter_date'] = dtutil.parse(cast(str, setinfo['enter_date']), '%Y-%m-%dT%H:%M:%S.%fZ', dtutil.WOTC_TZ)
+def postprocess(setinfo: SetInfo) -> SetInfo:
+    setinfo['enter_date_dt'] = dtutil.parse(cast(str, setinfo['enter_date']), '%Y-%m-%dT%H:%M:%S.%fZ', dtutil.WOTC_TZ)
+    if setinfo['code'] == 'DOM': # !quality
+        setinfo['mtgo_code'] = 'DAR'
+    else:
+        setinfo['mtgo_code'] = setinfo['code']
     return setinfo
 
 def interesting(playability, c, speculation=True, new=True):
@@ -75,7 +90,7 @@ def text() -> str:
     return 'The next rotation is in {diff}'.format(diff=dtutil.display_time(diff.total_seconds()))
 
 __SETS: List[SetInfo] = []
-def sets():
+def sets() -> List[SetInfo]:
     if not __SETS:
         __SETS.extend(init())
     return __SETS

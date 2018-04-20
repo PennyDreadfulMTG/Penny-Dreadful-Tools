@@ -62,15 +62,11 @@ async def respond_to_card_names(message: Message, client: Client) -> None:
 async def handle_command(message: Message, client: Client) -> None:
     parts = message.content.split(' ', 1)
     method = find_method(parts[0])
-
     if parts[0].lower() in configuration.get_str('otherbot_commands').split(','):
         return
-
     args = ''
     if len(parts) > 1:
         args = parts[1]
-
-
     if method is not None:
         try:
             await method(Commands, client=client, channel=message.channel, args=args, author=message.author)
@@ -339,7 +335,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def bug(self, client: Client, channel: Channel, args: str, author: Member, **_) -> None:
-        """Report a bug/task for the Penny Dreadful Tools team. For MTGO bugs see `!modobug`."""
+        """Report a bug/task for the Penny Dreadful Tools team. For Magic Online bugs see `!modobug`."""
         await client.send_typing(channel)
         issue = repo.create_issue(args, author)
         if issue is None:
@@ -362,6 +358,22 @@ Want to contribute? Send a Pull Request."""
         else:
             await client.send_message(channel, 'Issue has been reported at <{url}>.'.format(url=issue.html_url))
 
+    @cmd_header('Commands')
+    async def buglink(self, client: Client, channel: Channel, args: str, author: Member, **_) ->  None:
+        """Get a link to the modo-bugs page for the named card."""
+        base_url = 'https://github.com/PennyDreadfulMTG/modo-bugs/issues'
+        if args.strip() == '':
+            await client.send_message(channel, base_url)
+            return
+        result, mode = results_from_queries([args])[0]
+        if result.has_match() and not result.is_ambiguous():
+            c = cards_from_names_with_mode([result.get_best_match()], mode)[0]
+            msg = '{base_url}?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+%22{name}%22'.format(base_url=base_url, name=fetcher.internal.escape(args))
+            if not c.bugs or len(c.bugs) == 0:
+                msg = "I don't know of a bug for {name} but here's the link: {link}".format(name=c.name, link=msg)
+        else:
+            msg = "{author}: I'm not quite sure what you mean by '{args}'".format(author=author.mention, args=args)
+        await client.send_message(channel, msg)
 
     @cmd_header('Commands')
     async def invite(self, client: Client, channel: Channel, **_) -> None:

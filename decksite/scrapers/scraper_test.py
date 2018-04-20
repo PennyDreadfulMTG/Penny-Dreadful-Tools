@@ -4,7 +4,7 @@ from decksite.main import APP
 from decksite.scrapers import gatherling, tappedout
 
 
-@pytest.mark.slowtest
+@pytest.mark.functional
 @pytest.mark.tappedout
 def test_tappedout():
     prev = APP.config['SERVER_NAME']
@@ -13,12 +13,13 @@ def test_tappedout():
         tappedout.scrape()
     APP.config['SERVER_NAME'] = prev
 
-@pytest.mark.slowtest
+@pytest.mark.functional
 @pytest.mark.gatherling
 def test_gatherling():
     with APP.app_context():
         gatherling.scrape(5)
 
+@pytest.mark.functional
 @pytest.mark.tappedout
 def test_manual_tappedout():
     with APP.app_context():

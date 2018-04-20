@@ -7,20 +7,21 @@ from decksite.main import APP
 
 class SmokeTest(unittest.TestCase):
     def setUp(self):
-        # creates a test client
         self.app = APP.test_client()
         # propagate the exceptions to the test client
         self.app.testing = True
 
+    @pytest.mark.functional
     def test_home_status_code(self):
         result = self.app.get('/')
         self.assertEqual(result.status_code, 200)
 
+    @pytest.mark.functional
     def test_home_data(self):
         result = self.app.get('/')
         self.assertIn('<h1><string>Latest Decks</string></h1>', result.data.decode('utf-8'))
 
-    @pytest.mark.slowtest
+    @pytest.mark.functional
     def test_some_pages(self):
         result = self.app.get('/')
         self.assertEqual(result.status_code, 200)

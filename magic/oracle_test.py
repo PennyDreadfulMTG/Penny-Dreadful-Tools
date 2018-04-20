@@ -1,3 +1,5 @@
+import pytest
+
 from magic import oracle
 
 
@@ -33,3 +35,9 @@ def test_deck_sort_x_last():
     cards = {c.name: c for c in cards}
     assert oracle.deck_sort(cards.get('Ghitu Fire')) < oracle.deck_sort(cards.get('Flash of Insight'))
     assert oracle.deck_sort(cards.get('Ghitu Fire')) > oracle.deck_sort(cards.get('Frantic Search'))
+
+# Check that the list of legal cards is being fetched correctly.
+@pytest.mark.functional
+def test_legality_list() -> None:
+    legal_cards = oracle.legal_cards()
+    assert len(legal_cards) > 0

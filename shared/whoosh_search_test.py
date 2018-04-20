@@ -28,7 +28,6 @@ class WhooshSearchTest(unittest.TestCase):
             result = self.searcher.search(q)
             assert result.get_best_match() == card
 
-
     def test_assorted_typos(self):
         self.finds_at_least('Define Bloodlord', 'Defiant Bloodlord')
         self.finds_at_least('Ashenmoor Gourger', 'Ashenmoor Gouger')

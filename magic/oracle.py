@@ -15,16 +15,6 @@ def init() -> None:
         for c in load_cards():
             CARDS_BY_NAME[c.name] = c
 
-def search(query):
-    like_query = '%{query}%'.format(query=card.canonicalize(query))
-    sql = """
-        {base_query}
-        HAVING name_ascii LIKE %s OR names LIKE %s
-        ORDER BY pd_legal DESC, name
-    """.format(base_query=multiverse.base_query())
-    rs = db().execute(sql, [like_query, like_query])
-    return [card.Card(r) for r in rs]
-
 def valid_name(name: str) -> str:
     if name in CARDS_BY_NAME:
         return name

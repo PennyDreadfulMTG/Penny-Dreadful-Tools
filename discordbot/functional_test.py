@@ -2,6 +2,7 @@ import asyncio
 import types
 
 import discord
+import pytest
 
 from discordbot import command
 from magic import fetcher_internal
@@ -36,6 +37,7 @@ def generate_fakechannel():
     fakechannel.id = 0
     return fakechannel
 
+@pytest.mark.functional
 def test_commands():
     fakebot = generate_fakebot()
 

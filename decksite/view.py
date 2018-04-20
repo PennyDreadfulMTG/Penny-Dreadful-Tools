@@ -160,6 +160,21 @@ class View:
     def learn_more_url(self):
         return url_for('about', hide_intro=True)
 
+    def decks_url(self):
+        return url_for('decks')
+
+    def current_league_url(self):
+        return url_for('current_league')
+
+    def league_info_url(self):
+        return url_for('league')
+
+    def league_signup_url(self):
+        return url_for('signup')
+
+    def tournaments_info_url(self):
+        return url_for('tournaments')
+
     def prepare(self):
         self.prepare_decks()
         self.prepare_cards()

@@ -1700,18 +1700,18 @@ Season Symbols
 Language Switcher
 
 */
-.language_switcher {
+.language-switcher {
     float: left;
 }
 
-.language_icon {
+.language-icon {
     width: 1.333em;
     height: 1.333em;
     padding-right: 0.563em;
     vertical-align: middle;
 }
 
-.language_cta {
+.language-cta {
     padding-top: 0.3rem;
 }
 

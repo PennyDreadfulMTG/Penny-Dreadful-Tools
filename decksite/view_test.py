@@ -1,7 +1,3 @@
-import unittest
-
-from flask import appcontext_pushed, g, request
-
 from decksite import view
 from decksite.main import APP
 from magic import rotation
@@ -17,7 +13,7 @@ def test_seasonized_url_for_seasons():
         assert view.seasonized_url(1) == '/seasons/1/decks/'
         assert view.seasonized_url(rotation.current_season_num()) == '/decks/'
 
-def test_seasonized_url_when_not_seasonized():
+def test_seasonized_url_simple():
     with APP.test_request_context('/tournaments/'):
         assert view.seasonized_url(1) == '/tournaments/'
         assert view.seasonized_url(rotation.current_season_num()) == '/tournaments/'

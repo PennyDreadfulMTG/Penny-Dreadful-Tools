@@ -14,6 +14,7 @@ class RotationChanges(View):
         self.sections.append({'name': 'Rotated out', 'entries': entries_out, 'num_entries': len(entries_out)})
         self.speculation = speculation
         self.show_interesting = True
+        self.show_seasons = not speculation
 
     def page_title(self):
         if self.speculation:

@@ -64,6 +64,7 @@ class View:
             'url': seasonized_url('all'),
             'decks_url': url_for('seasons.season', season_id='all'),
             'league_decks_url': url_for('seasons.season', season_id='all', deck_type='league'),
+            'rotation_changes_url': url_for('seasons.rotation_changes', season_id='all')
         }]
         num = 1
         next_rotation_set_code = rotation.next_rotation_ex()['code']
@@ -77,6 +78,7 @@ class View:
                 'url': seasonized_url(num),
                 'decks_url': url_for('seasons.season', season_id=code),
                 'league_decks_url': url_for('seasons.season', season_id=code, deck_type='league'),
+                'rotation_changes_url': url_for('seasons.rotation_changes', season_id=num)
             })
             num += 1
         seasons.reverse()

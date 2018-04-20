@@ -53,7 +53,7 @@ class Bot:
         is_pd_server = member.server.id == '207281932214599682'
         # is_test_server = member.server.id == '226920619302715392'
         if is_pd_server: # or is_test_server:
-            greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> and <http://pdmtgo.com> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
+            greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
             await self.client.send_message(member.server.default_channel, greeting)
 
 

@@ -15,7 +15,7 @@ class About(View):
             self.show_gp_card = True
             self.gp_card_url = url_for('static', filename='images/gp_card.png')
         self.cards = exciting_cards()
-        self.num_tournaments = inflect.engine().number_to_words(len(tournaments.all_series_info())).title()
+        self.num_tournaments_title_case = self.num_tournaments().title()
 
     def page_title(self):
         return 'About Penny Dreadful'

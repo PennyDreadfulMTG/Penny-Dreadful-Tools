@@ -33,7 +33,6 @@ class Tournaments(View):
                 shown_end = True
             elif end_date:
                 t.league = {'class': 'ongoing', 'display': False}
-        self.num_tournaments = inflect.engine().number_to_words(len(self.tournaments))
         self.bugs_url = url_for('bugs')
         self.prizes = tournaments.prizes_by_finish()
 

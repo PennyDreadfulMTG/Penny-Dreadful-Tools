@@ -16,6 +16,8 @@ from shared.pd_exception import (DatabaseException, InvalidDataException,
 DATABASE = get_database(configuration.get_str('prices_database'))
 CARDS: Dict[str, str] = {}
 
+PriceList = List[Tuple[str, str, str]] # pylint: disable=invalid-name
+
 def run() -> None:
     multiverse.init()
     oracle.init()
@@ -38,40 +40,41 @@ def fetch() -> None:
         raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=configuration.get_list('cardhoarder_urls') + [configuration.get_str('mtgotraders_url')], all_prices=all_prices))
     store(min(timestamps), all_prices)
 
-def parse_cardhoarder_prices(s: str) -> List[Tuple[str, str]]:
+def parse_cardhoarder_prices(s: str) -> PriceList:
     details = []
     for line in s.splitlines()[2:]: # Skipping date and header line.
         if line.count('\t') != 6:
             raise InvalidDataException('Bad line (cardhoarder): {line}'.format(line=line))
         else:
             _mtgo_id, mtgo_set, _mtgjson_set, set_number, name, p, quantity = line.split('\t')  # pylint: disable=unused-variable
+            name = html.unescape(name.strip())
             if int(quantity) > 0 and not mtgo_set.startswith('CH-') and mtgo_set != 'VAN' and mtgo_set != 'EVENT' and not re.search(r'(Booster|Commander Deck|Commander:|Theme Deck|Draft Pack|Duel Decks|Reward Pack|Intro Pack|Tournament Pack|Premium Deck Series:|From the Vault)', name):
-                details.append((name, p))
-    return [(name_lookup(html.unescape(name.strip())), html.unescape(p.strip())) for name, p in details if name_lookup(html.unescape(name.strip())) is not None]
+                details.append((name, p, mtgo_set))
+    return [(name_lookup(name), html.unescape(p.strip()), mtgo_set) for name, p, mtgo_set in details if name_lookup(name) is not None]
 
-def parse_mtgotraders_prices(s):
+def parse_mtgotraders_prices(s: str) -> PriceList:
     details = []
     for line in s.splitlines():
         if line.count('|') != 7:
             raise InvalidDataException('Bad line (mtgotraders): {line}'.format(line=line))
-        mtgo_set, rarity, premium, name, number, p, image_path, in_stock = line.split('|') # pylint: disable=unused-variable
-        in_stock = in_stock.replace('<br>', '')
-        assert in_stock == 'Yes' or in_stock == 'No'
+        mtgo_set, rarity, premium, name, number, p, image_path, in_stock_str = line.split('|') # pylint: disable=unused-variable
+        in_stock_str = in_stock_str.replace('<br>', '')
+        assert in_stock_str == 'Yes' or in_stock_str == 'No'
         assert p == '0.01' or p == '0.00'
-        in_stock = in_stock == 'Yes'
+        in_stock = in_stock_str == 'Yes'
         if p == '0.01' and in_stock and not is_exceptional_name(name):
-            details.append((name, p))
-    return [(name_lookup(name), p) for name, p in details if name_lookup(name) is not None]
+            details.append((name, p, mtgo_set))
+    return [(name_lookup(name), p, mtgo_set) for name, p, mtgo_set in details if name_lookup(name) is not None]
 
-def is_exceptional_name(name):
+def is_exceptional_name(name: str) -> bool:
     return name.startswith('APAC ') or 'Alternate art' in name or name.startswith('Avatar - ') or name.startswith('Euro ')
 
-def store(timestamp: float, all_prices: Dict[str, List[Tuple[str, str]]]) -> None:
+def store(timestamp: float, all_prices: Dict[str, PriceList]) -> None:
     DATABASE.begin()
     lows: Dict[str, int] = {}
     for code in all_prices:
         prices = all_prices[code]
-        for name, p in prices:
+        for name, p, _ in prices:
             cents = int(float(p) * 100)
             if cents < lows.get(name, sys.maxsize):
                 lows[name] = cents
@@ -94,7 +97,7 @@ def execute(sql: str, values: Optional[List[object]] = None) -> None:
         create_tables()
         execute(sql, values)
 
-def create_tables():
+def create_tables() -> None:
     print('Creating price tables.')
     sql = """CREATE TABLE IF NOT EXISTS cache (
         `time` INTEGER,

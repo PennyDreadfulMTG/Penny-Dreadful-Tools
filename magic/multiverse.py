@@ -144,7 +144,6 @@ def update_database(new_version: str) -> None:
     DELETE FROM card_legality;
     DELETE FROM card_subtype;
     DELETE FROM card_supertype;
-    DELETE FROM card_type;
     DELETE FROM card_bug;
     DELETE FROM face;
     DELETE FROM printing;

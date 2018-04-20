@@ -110,7 +110,8 @@ def hide_intro():
 def gitpull():
     if request.headers.get('X-GitHub-Event') == 'push':
         payload = json.loads(request.data)
-        if payload['ref'] == 'refs/heads/{0}'.format(APP.config['branch']):
+        expected = 'refs/heads/{0}'.format(APP.config['branch'])
+        if payload['ref'] == expected:
             try:
                 subprocess.check_output(['git', 'pull'])
                 subprocess.check_output(['pip', 'install', '-U', '--user', '-r', 'requirements.txt', '--no-cache'])
@@ -119,7 +120,13 @@ def gitpull():
                 return return_json({'rebooting': True})
             except ImportError:
                 pass
-    return return_json({'rebooting': False, 'commit-id': APP.config['commit-id'], 'branch': APP.config['branch']})
+    return return_json({
+        'rebooting': False,
+        'commit-id': APP.config['commit-id'],
+        'current_branch': APP.config['branch'],
+        'ref': payload['ref'],
+        'expected': expected
+        })
 
 @APP.route('/api/status/')
 @auth.load_person

@@ -17,3 +17,6 @@ script:
   - python run.py tests -m "not tappedout"
   - mypy --ignore-missing-imports .
   - isort --check-only
+notifications:
+    webhooks: https://www.travisbuddy.com/
+    on_success: never

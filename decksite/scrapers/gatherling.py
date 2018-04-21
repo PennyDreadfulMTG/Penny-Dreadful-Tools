@@ -70,6 +70,9 @@ def get_dt(day_s, start_time, timezone):
     date_s = day_s + ' {start_time}'.format(start_time=start_time)
     return dtutil.parse(date_s, '%d %B %Y %H:%M', timezone)
 
+def find_top_n(soup: BeautifulSoup):
+    return competition.Top(int(soup.find('div', {'id': 'EventReport'}).find_all('table')[1].find_all('td')[1].string.strip().replace('TOP ', '')))
+
 def add_decks(dt, competition_id, ranks, s):
     # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.
     rows = re.findall('<tr style=">(.*?)</tr>', s, re.MULTILINE | re.DOTALL)
@@ -214,6 +217,3 @@ def gatherling_url(href):
     if href.startswith('http'):
         return href
     return 'https://gatherling.com/{href}'.format(href=href)
-
-def find_top_n(soup: BeautifulSoup):
-    return competition.Top(int(soup.find('div', {'id': 'EventReport'}).find_all('table')[1].find_all('td')[1].string.strip().replace('TOP ', '')))

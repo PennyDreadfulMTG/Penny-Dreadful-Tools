@@ -39,7 +39,16 @@ def tournament(url, name):
         # Tournament has been incorrectly configured.
         return 0
 
-    # Hack in the known start time and series name because it's not in the page, depending on the series.
+    dt, competition_series = get_dt_and_series(name, day_s)
+    top_n = find_top_n(soup)
+    competition_id = competition.get_or_insert_competition(dt, dt, name, competition_series, url, top_n)
+    table = soup.find(text='Current Standings').find_parent('table')
+    ranks = rankings(table)
+
+    return add_decks(dt, competition_id, ranks, s)
+
+# Hack in the known start time and series name because it's not in the page, depending on the series.
+def get_dt_and_series(name, day_s):
     if 'APAC' in name:
         competition_series = 'APAC Penny Dreadful Sundays'
         start_time = '16:00'
@@ -55,14 +64,7 @@ def tournament(url, name):
             start_time = '19:00'
         dt = get_dt(day_s, start_time, dtutil.GATHERLING_TZ)
         competition_series = 'Penny Dreadful {day}s'.format(day=dtutil.day_of_week(dt, dtutil.GATHERLING_TZ))
-
-    top_n = find_top_n(soup)
-
-    competition_id = competition.get_or_insert_competition(dt, dt, name, competition_series, url, top_n)
-    table = soup.find(text='Current Standings').find_parent('table')
-    ranks = rankings(table)
-
-    return add_decks(dt, competition_id, ranks, s)
+    return (dt, competition_series)
 
 def get_dt(day_s, start_time, timezone):
     date_s = day_s + ' {start_time}'.format(start_time=start_time)
@@ -121,11 +123,11 @@ def tournament_deck(cells, competition_id, date, ranks):
         elif img == TOP_8:
             d['finish'] = 5
         elif img == 'verified':
-            d['finish'] = ranks.get(d['mtgo_username'], None)
+            d['finish'] = ranks.get(d['mtgo_username'], None) # BAKERT this is wrong if they dropped and did not make top N but are within the top N
         else:
             raise InvalidDataException('Unknown player image `{img}`'.format(img=img))
     else:
-        d['finish'] = ranks.get(d['mtgo_username'], None)
+        d['finish'] = ranks.get(d['mtgo_username'], None) # BAKERT this is wrong if they dropped and did not make top N but are within the top N
     link = cells[4].a
     d['url'] = gatherling_url(link['href'])
     d['name'] = link.string

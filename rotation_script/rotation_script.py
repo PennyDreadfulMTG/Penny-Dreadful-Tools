@@ -6,7 +6,7 @@ from typing import Dict, Set
 import ftfy
 
 from magic import fetcher_internal, rotation
-from price_grabber.price_grabber import (PriceList, parse_cardhoarder_prices,
+from price_grabber.parser import (PriceList, parse_cardhoarder_prices,
                                          parse_mtgotraders_prices)
 from shared import configuration, dtutil
 

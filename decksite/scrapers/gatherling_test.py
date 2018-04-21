@@ -107,14 +107,14 @@ def test_rankings():
     assert rankings[13] == 'prestontiger3'
 
 def test_medal_winners():
-    html =  get_html('gatherling.top4.html')
+    html = get_html('gatherling.top4.html')
     winners = gatherling.medal_winners(html)
     assert winners['Gleiciano'] == 1
     assert winners['BoozeMongoose'] == 2
     assert winners['bakert99'] == 3
     assert winners['mandrakata'] == 3
 
-    html =  get_html('gatherling.top8.html')
+    html = get_html('gatherling.top8.html')
     winners = gatherling.medal_winners(html)
     assert winners['FSkura'] == 1
     assert winners['ribbonsofnight'] == 2
@@ -125,7 +125,7 @@ def test_medal_winners():
     assert winners['NightHawk521'] == 5
     assert winners['pixywing'] == 5
 
-    html =  get_html('gatherling.drop.html')
+    html = get_html('gatherling.drop.html')
     winners = gatherling.medal_winners(html)
     assert winners['yellowvanblake'] == 1
     assert winners['Rooby_Roo'] == 2
@@ -133,7 +133,7 @@ def test_medal_winners():
     assert winners['The_Wolf'] == 3
 
 def test_finishes():
-    fs =  gatherling.finishes({'e': 1, 'b': 2, 'c': 3, 'd': 4}, ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'])
+    fs = gatherling.finishes({'e': 1, 'b': 2, 'c': 3, 'd': 4}, ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'])
     assert fs['a'] == 5
     assert fs['b'] == 2
     assert fs['c'] == 3

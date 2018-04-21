@@ -74,13 +74,13 @@ def get_dt(day_s, start_time, timezone):
 def find_top_n(soup: BeautifulSoup):
     return competition.Top(int(soup.find('div', {'id': 'EventReport'}).find_all('table')[1].find_all('td')[1].string.strip().replace('TOP ', '')))
 
-def add_decks(dt, competition_id, finishes, s):
+def add_decks(dt, competition_id, final, s):
     # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.
     rows = re.findall('<tr style=">(.*?)</tr>', s, re.MULTILINE | re.DOTALL)
     decks_added, matches, ds = 0, [], []
     for row in rows:
         cells = BeautifulSoup(row, 'html.parser').find_all('td')
-        d = tournament_deck(cells, competition_id, dt, finishes)
+        d = tournament_deck(cells, competition_id, dt, final)
         if d is not None:
             decks_added += 1
             ds.append(d)
@@ -135,20 +135,20 @@ def medal_winners(s):
                 raise InvalidDataException('Unknown player image `{img}`'.format(img=img))
     return winners
 
-def finishes(medal_winners, rankings):
-    finishes = medal_winners.copy()
-    r = len(finishes)
-    for p in rankings:
-        if p not in finishes.keys():
+def finishes(winners, ranks):
+    final = winners.copy()
+    r = len(final)
+    for p in ranks:
+        if p not in final.keys():
             r += 1
-            finishes[p] = r
-    return finishes
+            final[p] = r
+    return final
 
-def tournament_deck(cells, competition_id, date, finishes):
+def tournament_deck(cells, competition_id, date, final):
     d = {'source': 'Gatherling', 'competition_id': competition_id, 'created_date': dtutil.dt2ts(date)}
     player = cells[2]
     d['mtgo_username'] = player.a.contents[0]
-    d['finish'] = finishes.get(d['mtgo_username'])
+    d['finish'] = final.get(d['mtgo_username'])
     link = cells[4].a
     d['url'] = gatherling_url(link['href'])
     d['name'] = link.string

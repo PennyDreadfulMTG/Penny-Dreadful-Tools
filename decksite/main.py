@@ -148,9 +148,10 @@ def hosting():
     return view.page()
 
 @APP.route('/tournaments/leaderboards/')
+@SEASONS.route('/tournaments/leaderboards/')
 @cached()
 def tournament_leaderboards():
-    leaderboards = comp.leaderboards()
+    leaderboards = comp.leaderboards(season_id=g.get('season_id', rot.current_season_num()))
     view = TournamentLeaderboards(leaderboards)
     return view.page()
 

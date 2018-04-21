@@ -378,13 +378,13 @@ def colors_html(colors, colored_symbols):
     return s
 
 def set_stars_and_top8(d):
-    if d.finish == 1:
+    if d.finish == 1 and d.competition_top_n >= 1:
         d.top8_safe = '<span title="Winner">①</span>'
         d.stars_safe = '★★★'
-    elif d.finish == 2:
+    elif d.finish == 2 and d.competition_top_n >= 2:
         d.top8_safe = '<span title="Losing Finalist">②</span>'
         d.stars_safe = '★★'
-    elif d.finish == 3:
+    elif d.finish == 3 and d.competition_top_n >= 3:
         d.top8_safe = '<span title="Losing Semifinalist">④</span>'
         d.stars_safe = '★★'
     elif d.finish == 5 and d.competition_top_n >= 5:

@@ -17,7 +17,7 @@ class Archetype(View):
         self.archetypes = archetypes
         self.decks = self.archetype.decks
         self.roots = [a for a in self.archetypes if a.is_root]
-        matchup_archetypes = archs.load_archetypes_deckless(season_id)
+        matchup_archetypes = archs.load_archetypes_deckless(season_id=season_id)
         matchups_by_id = {m.id: m for m in matchups}
         for m in matchup_archetypes:
             # Overwite totals with vs-archetype specific details. Wipe out if there are none.

@@ -269,7 +269,7 @@ def active_league():
         start_date = dtutil.now(tz=dtutil.WOTC_TZ)
         end_date = determine_end_of_league(start_date)
         name = determine_league_name(end_date)
-        comp_id = competition.get_or_insert_competition(start_date, end_date, name, 'League', None)
+        comp_id = competition.get_or_insert_competition(start_date, end_date, name, 'League', None, competition.Top.EIGHT)
         leagues = [competition.load_competition(comp_id)]
     return guarantee.exactly_one(leagues)
 

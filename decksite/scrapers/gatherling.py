@@ -56,7 +56,9 @@ def tournament(url, name):
         dt = get_dt(day_s, start_time, dtutil.GATHERLING_TZ)
         competition_series = 'Penny Dreadful {day}s'.format(day=dtutil.day_of_week(dt, dtutil.GATHERLING_TZ))
 
-    competition_id = competition.get_or_insert_competition(dt, dt, name, competition_series, url)
+    top_n = find_top_n(soup)
+
+    competition_id = competition.get_or_insert_competition(dt, dt, name, competition_series, url, top_n)
     table = soup.find(text='Current Standings').find_parent('table')
     ranks = rankings(table)
 
@@ -65,7 +67,6 @@ def tournament(url, name):
 def get_dt(day_s, start_time, timezone):
     date_s = day_s + ' {start_time}'.format(start_time=start_time)
     return dtutil.parse(date_s, '%d %B %Y %H:%M', timezone)
-
 
 def add_decks(dt, competition_id, ranks, s):
     # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.
@@ -211,3 +212,6 @@ def gatherling_url(href):
     if href.startswith('http'):
         return href
     return 'https://gatherling.com/{href}'.format(href=href)
+
+def find_top_n(soup: BeautifulSoup):
+    return competition.Top(int(soup.find('div', {'id': 'EventReport'}).find_all('table')[1].find_all('td')[1].string.strip().replace('TOP ', '')))

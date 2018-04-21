@@ -87,7 +87,7 @@ def tournaments_with_prizes():
         """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
     return load_competitions(where)
 
-def leaderboards(where="ct.name = 'Gatherling' AND season.id = (SELECT id FROM season WHERE start_date = (SELECT MAX(start_date) FROM season WHERE start_date < UNIX_TIMESTAMP(NOW())))"):
+def leaderboards(where="ct.name = 'Gatherling'", season_id=None):
     sql = """
         SELECT
             p.id AS person_id,
@@ -114,33 +114,20 @@ def leaderboards(where="ct.name = 'Gatherling' AND season.id = (SELECT id FROM s
             deck_match AS dm ON dm.deck_id = d.id
         LEFT JOIN
             deck_match AS odm ON odm.match_id = dm.match_id AND odm.deck_id <> d.id
-        INNER JOIN
-            (
-                SELECT
-                    s.id,
-                    s.code,
-                    s.start_date AS start_date,
-                    s2.start_date AS end_date
-                FROM
-                    season AS s
-                LEFT JOIN
-                    season AS s2
-                ON
-                    s2.start_date = (SELECT MIN(start_date) FROM season WHERE start_date > s.start_date)
-            ) AS season ON c.start_date >= season.start_date AND (c.start_date < season.end_date OR season.end_date IS NULL)
+        {season_join}
         WHERE
-            {where}
-            GROUP BY
-                cs.id,
-                p.id,
-                season.id
-            ORDER BY
-                cs.id,
-                points DESC,
-                wins DESC,
-                tournaments DESC,
-                person
-    """.format(person_query=query.person_query(), where=where)
+            ({where}) AND ({season_query})
+        GROUP BY
+            cs.id,
+            p.id,
+            season.id
+        ORDER BY
+            cs.id,
+            points DESC,
+            wins DESC,
+            tournaments DESC,
+            person
+    """.format(person_query=query.person_query(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id))
     results = []
     current = {}
     for row in db().execute(sql):

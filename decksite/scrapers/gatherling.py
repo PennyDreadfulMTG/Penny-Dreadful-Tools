@@ -42,10 +42,11 @@ def tournament(url, name):
     dt, competition_series = get_dt_and_series(name, day_s)
     top_n = find_top_n(soup)
     competition_id = competition.get_or_insert_competition(dt, dt, name, competition_series, url, top_n)
-    table = soup.find(text='Current Standings').find_parent('table')
-    ranks = rankings(table)
+    ranks = rankings(soup)
+    medals = medal_winners(s)
+    final = finishes(medals, ranks)
 
-    return add_decks(dt, competition_id, ranks, s)
+    return add_decks(dt, competition_id, final, s)
 
 # Hack in the known start time and series name because it's not in the page, depending on the series.
 def get_dt_and_series(name, day_s):
@@ -73,13 +74,13 @@ def get_dt(day_s, start_time, timezone):
 def find_top_n(soup: BeautifulSoup):
     return competition.Top(int(soup.find('div', {'id': 'EventReport'}).find_all('table')[1].find_all('td')[1].string.strip().replace('TOP ', '')))
 
-def add_decks(dt, competition_id, ranks, s):
+def add_decks(dt, competition_id, finishes, s):
     # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.
     rows = re.findall('<tr style=">(.*?)</tr>', s, re.MULTILINE | re.DOTALL)
     decks_added, matches, ds = 0, [], []
     for row in rows:
         cells = BeautifulSoup(row, 'html.parser').find_all('td')
-        d = tournament_deck(cells, competition_id, dt, ranks)
+        d = tournament_deck(cells, competition_id, dt, finishes)
         if d is not None:
             decks_added += 1
             ds.append(d)
@@ -88,8 +89,8 @@ def add_decks(dt, competition_id, ranks, s):
     insert_matches_without_dupes(dt, matches)
     return decks_added
 
-def rankings(table):
-    rows = table.find_all('tr')
+def rankings(soup):
+    rows = soup.find(text='Current Standings').find_parent('table').find_all('tr')
 
     # Expected structure:
     # <td colspan="8"><h6> Penny Dreadful Thursdays 1.02</h6></td>
@@ -103,34 +104,51 @@ def rankings(table):
     # <td colspan="8"> When calculating standings, any opponent with less than a .33 win percentage is calculated as .33</td>
 
     rows = rows[2:-7]
-    ranks = {}
+    ranks = []
     for row in rows:
         cells = row.find_all('td')
-        rank = int(cells[0].string)
         mtgo_username = cells[1].string
-        ranks[mtgo_username] = rank
+        ranks.append(mtgo_username)
     return ranks
 
-def tournament_deck(cells, competition_id, date, ranks):
+# BAKERT some duplication with add_decks here in the regex.
+def medal_winners(s):
+    winners = {}
+    # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.
+    rows = re.findall('<tr style=">(.*?)</tr>', s, re.MULTILINE | re.DOTALL)
+    for row in rows:
+        player = BeautifulSoup(row, 'html.parser').find_all('td')[2]
+        if player.find('img'):
+            mtgo_username = player.a.contents[0]
+            img = re.sub(r'styles/Chandra/images/(.*?)\.png', r'\1', player.img['src'])
+            if img == WINNER:
+                winners[mtgo_username] = 1
+            elif img == SECOND:
+                winners[mtgo_username] = 2
+            elif img == TOP_4:
+                winners[mtgo_username] = 3
+            elif img == TOP_8:
+                winners[mtgo_username] = 5
+            elif img == 'verified':
+                pass
+            else:
+                raise InvalidDataException('Unknown player image `{img}`'.format(img=img))
+    return winners
+
+def finishes(medal_winners, rankings):
+    finishes = medal_winners.copy()
+    r = len(finishes)
+    for p in rankings:
+        if p not in finishes.keys():
+            r += 1
+            finishes[p] = r
+    return finishes
+
+def tournament_deck(cells, competition_id, date, finishes):
     d = {'source': 'Gatherling', 'competition_id': competition_id, 'created_date': dtutil.dt2ts(date)}
     player = cells[2]
     d['mtgo_username'] = player.a.contents[0]
-    if player.find('img'):
-        img = re.sub(r'styles/Chandra/images/(.*?)\.png', r'\1', player.img['src'])
-        if img == WINNER:
-            d['finish'] = 1
-        elif img == SECOND:
-            d['finish'] = 2
-        elif img == TOP_4:
-            d['finish'] = 3
-        elif img == TOP_8:
-            d['finish'] = 5
-        elif img == 'verified':
-            d['finish'] = ranks.get(d['mtgo_username'], None) # BAKERT this is wrong if they dropped and did not make top N but are within the top N
-        else:
-            raise InvalidDataException('Unknown player image `{img}`'.format(img=img))
-    else:
-        d['finish'] = ranks.get(d['mtgo_username'], None) # BAKERT this is wrong if they dropped and did not make top N but are within the top N
+    d['finish'] = finishes.get(d['mtgo_username'])
     link = cells[4].a
     d['url'] = gatherling_url(link['href'])
     d['name'] = link.string

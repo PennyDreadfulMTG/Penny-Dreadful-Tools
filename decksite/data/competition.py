@@ -1,23 +1,18 @@
-from enum import Enum
-
 from flask import url_for
 
 from decksite.data import archetype, deck, guarantee, query
+from decksite.data.top import Top
 from decksite.database import db
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
 
 
-class Top(Enum):
-    EIGHT = 8
-    FOUR = 4
-
 def get_or_insert_competition(start_date, end_date, name, competition_series, url, top_n: Top):
     competition_series_id = db().value('SELECT id FROM competition_series WHERE name = %s', [competition_series], fail_on_missing=True)
     start = start_date.timestamp()
     end = end_date.timestamp()
-    values = [start, end, name, competition_series_id, url, top_n]
+    values = [start, end, name, competition_series_id, url, top_n.value]
     sql = """
         SELECT
             id

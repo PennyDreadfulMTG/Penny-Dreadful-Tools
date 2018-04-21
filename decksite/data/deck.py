@@ -4,6 +4,7 @@ import time
 
 from decksite import deck_name
 from decksite.data import guarantee, query
+from decksite.data.top import Top
 from decksite.database import db
 from magic import legality, mana, oracle, rotation
 from shared import dtutil
@@ -105,6 +106,7 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None):
             d.competition_id,
             c.name AS competition_name,
             c.end_date AS competition_end_date,
+            c.top_n AS competition_top_n,
             ct.name AS competition_type_name,
             d.identifier,
             {person_query} AS person,
@@ -152,6 +154,7 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None):
         d = Deck(row)
         d.maindeck = []
         d.sideboard = []
+        d.competition_top_n = Top(d.competition_top_n or 0)
         d.colored_symbols = json.loads(d.colored_symbols or '[]')
         d.colors = json.loads(d.colors or '[]')
         d.legal_formats = set(json.loads(d.legal_formats or '[]'))
@@ -382,7 +385,6 @@ def load_competitive_stats(decks):
             SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS opp_losses,
             SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS opp_draws,
             ROUND(SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) / NULLIF((SUM(CASE WHEN dm.games <> odm.games THEN 1 ELSE 0 END)), 0), 2) * 100 AS omw,
-            IFNULL(MIN(CASE WHEN m.elimination > 0 THEN m.elimination END), 0) AS stage_reached,
             GROUP_CONCAT(m.elimination) AS elim
         FROM
             deck AS d
@@ -409,7 +411,6 @@ def load_competitive_stats(decks):
             decks_by_id[row['id']].opp_wins = row['opp_wins']
             decks_by_id[row['id']].opp_losses = row['opp_losses']
             decks_by_id[row['id']].omw = row['omw']
-            decks_by_id[row['id']].stage_reached = row['stage_reached']
             decks_by_id[row['id']].elim = row['elim'] # This property is never used? and is always a bunch of zeroes?
 
 def count_matches(deck_id, opponent_deck_id):

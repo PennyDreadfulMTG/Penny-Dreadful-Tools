@@ -1,17 +1,13 @@
-import html
-import re
 import sys
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import ftfy
 
-from magic import card, fetcher_internal, multiverse, oracle
-from magic.database import db
-from price_grabber import price, parser
+from magic import fetcher_internal, multiverse, oracle
+from price_grabber import parser, price
 from shared import configuration, dtutil
 from shared.database import get_database
-from shared.pd_exception import (DatabaseException, InvalidDataException,
-                                 TooFewItemsException)
+from shared.pd_exception import DatabaseException, TooFewItemsException
 
 DATABASE = get_database(configuration.get_str('prices_database'))
 
@@ -94,4 +90,3 @@ def create_tables() -> None:
         INDEX idx_name_time_price (name, `time`, price)
     )"""
     execute(sql)
-

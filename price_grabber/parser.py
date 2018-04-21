@@ -1,17 +1,10 @@
 import html
 import re
-import sys
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
-import ftfy
-
-from magic import card, fetcher_internal, multiverse, oracle
+from magic import card, multiverse
 from magic.database import db
-from price_grabber import price
-from shared import configuration, dtutil
-from shared.database import get_database
-from shared.pd_exception import (DatabaseException, InvalidDataException,
-                                 TooFewItemsException)
+from shared.pd_exception import InvalidDataException
 
 PriceList = List[Tuple[str, str, str]] # pylint: disable=invalid-name
 

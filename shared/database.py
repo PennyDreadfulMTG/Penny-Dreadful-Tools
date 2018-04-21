@@ -1,5 +1,3 @@
-# BAKERT can we remove this now?
-# pylint: disable=import-error, duplicate-code
 import warnings
 from typing import Any, List, cast
 

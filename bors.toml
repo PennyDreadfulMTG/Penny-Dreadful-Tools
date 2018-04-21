@@ -1,1 +1,6 @@
+status = [
+  "continuous-integration/travis-ci/push",
+  "Codacy/PR Quality Review"
+]
+
 delete_merged_branches = true

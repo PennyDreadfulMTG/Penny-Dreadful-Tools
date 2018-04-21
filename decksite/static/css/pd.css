@@ -612,6 +612,8 @@ th.legend {
 
 Shrink tables when the viewport is not wide enough for their full glory using footable.
 
+(This is very out of date since seasonizing but as we haven't updated these values yet I'll leave it in place.)
+
 Deck tables:
 
 v ------  0 ------ v    0
@@ -698,30 +700,6 @@ table.with-marginalia.footable-details {
     table.footable-details.with-marginalia tbody tr:first-child th:first-child {
         /* Override the inline style `display: table-cell` added by footable */
         display: none !important; /* csslint allow: important */
-    }
-    /* Don't show the additional header row for "Season" and "All Time" at this size - we'll be hiding the all time stats. */
-    .timespan-table > thead > tr:first-child {
-        display: none;
-    }
-    .timespan-table .footable-details {
-        position: relative;
-    }
-    /* … but showing them inline so prepend the first all time item with "All Time". */
-    .timespan-table .footable-details tr:nth-child(1) th:before, .timespan-table .footable-details tr:nth-child(2) th:before {
-        display: inline-block;
-        margin-right: 1em;
-        margin-left: 0.563em;
-        text-align: left;
-    }
-    /* Separate This Season from All Time with a border. */
-    .timespan-table .footable-details tr:nth-child(2) th, .timespan-table .footable-details tr:nth-child(2) td {
-        border-top: 0.05rem solid #999;
-    }
-    .timespan-table .footable-details tr:nth-child(1) th:before {
-        content: "This Season ";
-    }
-    .timespan-table .footable-details tr:nth-child(2) th:before {
-        content: "All Time ";
     }
 }
 
@@ -1686,20 +1664,6 @@ News
     font-family: main-text;
     font-size: 0.75rem;
     float: right;
-}
-
-/*
-
-Season Symbols
-
-*/
-
-.ss:before {
-    margin-right: 0.178em;
-    vertical-align: -0.1em; /* None of the standard keyword values for vertical-align successfully line up the text and the image center. */
-}
-.ss {
-    margin-right: 0.317rem;
 }
 
 /*

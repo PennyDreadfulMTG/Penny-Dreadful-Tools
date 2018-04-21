@@ -205,9 +205,8 @@ def active_decks_by_person(person_id):
 
 def report(form):
     try:
-        if db().supports_lock():
-            db().get_lock('deck_id:{id}'.format(id=form.entry))
-            db().get_lock('deck_id:{id}'.format(id=form.opponent))
+        db().get_lock('deck_id:{id}'.format(id=form.entry))
+        db().get_lock('deck_id:{id}'.format(id=form.opponent))
 
         for m in match.get_matches(form):
             if int(form.opponent) == m.opponent_deck_id:
@@ -242,9 +241,8 @@ def report(form):
         form.errors['entry'] = 'Cannot report right now, somebody else is reporting a match for you or your opponent. Try again a bit later'
         return False
     finally:
-        if db().supports_lock():
-            db().release_lock('deck_id:{id}'.format(id=form.opponent))
-            db().release_lock('deck_id:{id}'.format(id=form.entry))
+        db().release_lock('deck_id:{id}'.format(id=form.opponent))
+        db().release_lock('deck_id:{id}'.format(id=form.entry))
 
 def winner_and_loser(params):
     if params.entry_games > params.opponent_games:

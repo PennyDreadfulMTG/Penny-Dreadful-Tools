@@ -5,15 +5,14 @@ import flask
 from magic import card
 from shared import configuration
 from shared.container import Container
-from shared.database import get_database
-from shared.database_mysql import MysqlDatabase
+from shared.database import Database, get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
 SCHEMA_VERSION = 98
 DATABASE = Container()
 
-def db() -> MysqlDatabase:
+def db() -> Database:
     if flask.current_app:
         context = flask.g
     else:
@@ -126,7 +125,5 @@ def create_table_def(name: str, props: card.TableDescription) -> str:
         sql += ', ' + fk
     if uc:
         sql += ', ' + uc
-    sql += ')'
-    if db().is_mysql():
-        sql += ' CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
+    sql += ') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
     return sql.format(name=name)

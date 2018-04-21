@@ -99,7 +99,7 @@ def base_query(where: str = '(1 = 1)') -> str:
                     SELECT
                         cl.card_id,
                         SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal,
-                        GROUP_CONCAT({legality_code}) AS legalities
+                        GROUP_CONCAT(CONCAT(fo.name, ':', cl.legality)) AS legalities
                     FROM
                         card_legality AS cl
                     LEFT JOIN
@@ -115,7 +115,7 @@ def base_query(where: str = '(1 = 1)') -> str:
             LEFT JOIN (
                 SELECT
                     cb.card_id,
-                    GROUP_CONCAT({bug_repr} SEPARATOR '_SEPARATOR_') AS bugs
+                    GROUP_CONCAT(CONCAT(cb.description, '|', cb.classification, '|', cb.last_confirmed, '|', cb.url, '|', cb.from_bug_blog) SEPARATOR '_SEPARATOR_') AS bugs
                 FROM
                     card_bug AS cb
                 GROUP BY
@@ -126,9 +126,7 @@ def base_query(where: str = '(1 = 1)') -> str:
     """.format(
         card_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.card_properties().items()),
         face_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.face_properties().items()),
-        bug_repr=db().concat(['cb.description', "'|'", 'cb.classification', "'|'", 'cb.last_confirmed', "'|'", 'cb.url', "'|'", 'cb.from_bug_blog']),
         format_id=get_format_id('Penny Dreadful'),
-        legality_code=db().concat(['fo.name', "':'", 'cl.legality']),
         card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
         face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),
         where=where)
@@ -315,7 +313,7 @@ def update_cache() -> None:
     db().begin()
     db().execute('DROP TABLE IF EXISTS _cache_card')
     db().execute('CREATE TABLE _cache_card AS {base_query}'.format(base_query=base_query()))
-    db().execute(db().create_index_query('idx_name_name', '_cache_card', 'name', prefix_width=142))
+    db().execute('CREATE INDEX idx_name_name on _cache_card (name(142))')
     db().commit()
 
 def reindex() -> None:

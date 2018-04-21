@@ -345,7 +345,6 @@ class View:
         pos = 1
         for p in leaderboard:
             p.finish = pos
-            p.stage_reached = 1
             if pos <= 8:
                 p.position = chr(9311 + pos) # ①, ②, ③, …
             p.url = url_for('person', person_id=p.person_id)
@@ -388,7 +387,7 @@ def set_stars_and_top8(d):
     elif d.finish == 3:
         d.top8_safe = '<span title="Losing Semifinalist">④</span>'
         d.stars_safe = '★★'
-    elif d.finish == 5 and d.get('stage_reached', 0) > 0: # Don't show ⑧ for fifth place in a top 4 tournament.
+    elif d.finish == 5 and d.competition_top_n >= 5:
         d.top8_safe = '<span title="Losing Quarterfinalist">⑧</span>'
         d.stars_safe = '★'
     else:

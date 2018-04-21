@@ -1,17 +1,19 @@
 from flask import url_for
 
 from decksite.data import archetype, deck, guarantee, query
+from decksite.data.top import Top
 from decksite.database import db
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
 
 
-def get_or_insert_competition(start_date, end_date, name, competition_series, url):
+# pylint: disable=too-many-arguments
+def get_or_insert_competition(start_date, end_date, name, competition_series, url, top_n: Top):
     competition_series_id = db().value('SELECT id FROM competition_series WHERE name = %s', [competition_series], fail_on_missing=True)
     start = start_date.timestamp()
     end = end_date.timestamp()
-    values = [start, end, name, competition_series_id, url]
+    values = [start, end, name, competition_series_id, url, top_n.value]
     sql = """
         SELECT id
         FROM competition
@@ -25,12 +27,14 @@ def get_or_insert_competition(start_date, end_date, name, competition_series, ur
             competition_series_id = %s
         AND
             url = %s
+        AND
+            top_n = %s
     """
     competition_id = db().value(sql, values)
     if competition_id:
         return competition_id
     db().begin()
-    sql = 'INSERT INTO competition (start_date, end_date, name, competition_series_id, url) VALUES (%s, %s, %s, %s, %s)'
+    sql = 'INSERT INTO competition (start_date, end_date, name, competition_series_id, url, top_n) VALUES (%s, %s, %s, %s, %s, %s)'
     competition_id = db().insert(sql, values)
     if url is None:
         sql = 'UPDATE competition SET url = %s WHERE id = %s'

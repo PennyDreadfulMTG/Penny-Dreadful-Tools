@@ -59,7 +59,7 @@ def parse_inventory(inventory):
             name = removefoil.group(1)
         if board['b'] == 'main':
             d['maindeck'][name] = board['qty']
-        elif  board['b'] == 'side':
+        elif board['b'] == 'side':
             d['sideboard'][name] = board['qty']
     return d
 

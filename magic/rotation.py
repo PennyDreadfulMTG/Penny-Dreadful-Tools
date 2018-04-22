@@ -5,7 +5,7 @@ from mypy_extensions import TypedDict
 
 from magic import fetcher
 from shared import dtutil
-from shared.pd_exception import InvalidDataException
+from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 SetInfo = TypedDict('SetInfo', { #pylint: disable=invalid-name
     'name': str,
@@ -94,3 +94,17 @@ def sets() -> List[SetInfo]:
     if not __SETS:
         __SETS.extend(init())
     return __SETS
+
+def determine_season_id(v):
+    try:
+        n = int(v)
+        SEASONS[n]
+        return n
+    except (ValueError, IndexError):
+        pass
+    try:
+        if v.lower() == 'all':
+            return 'all'
+        return SEASONS.index(v.upper()) + 1
+    except (ValueError, AttributeError):
+        raise DoesNotExistException("I don't know a season called {v}".format(v=v))

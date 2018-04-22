@@ -48,6 +48,11 @@ class Rotation(View):
             self.runs_percent = 0
             return
         for line in fileinput.input(files):
+            try:
+                line = line.encode('latin-1').decode('utf-8')
+            except UnicodeDecodeError:
+                pass
+            line = html.unescape(line)
             lines.append(line.strip())
         scores = Counter(lines).most_common()
         self.runs = scores[0][1]
@@ -58,7 +63,6 @@ class Rotation(View):
 
     def process_score(self, name, hits):
         remaining_runs = (168 - self.runs)
-        name = html.unescape(name.encode('latin-1').decode('utf-8'))
         hits_needed = max(84 - hits, 0)
         c = self.cs.get(name)
         if c.layout not in multiverse.playable_layouts():

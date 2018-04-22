@@ -8,7 +8,7 @@ def test_determine_season_id():
     try:
         rotation.determine_season_id(999)
     except DoesNotExistException:
-        found =  True
+        found = True
     assert found
     found = False
     try:

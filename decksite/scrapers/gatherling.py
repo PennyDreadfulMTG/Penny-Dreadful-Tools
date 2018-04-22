@@ -111,7 +111,6 @@ def rankings(soup):
         ranks.append(mtgo_username)
     return ranks
 
-# BAKERT some duplication with add_decks here in the regex.
 def medal_winners(s):
     winners = {}
     # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.

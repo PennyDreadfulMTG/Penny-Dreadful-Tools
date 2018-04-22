@@ -95,11 +95,14 @@ def sets() -> List[SetInfo]:
         __SETS.extend(init())
     return __SETS
 
-def determine_season_id(v):
+def season_id(v):
+    """From any value return the season id which is the integer representing the season, or 'all' for all time."""
+    if v is None:
+        return current_season_num()
     try:
         n = int(v)
-        SEASONS[n]
-        return n
+        if SEASONS[n - 1]:
+            return n
     except (ValueError, IndexError):
         pass
     try:
@@ -108,3 +111,17 @@ def determine_season_id(v):
         return SEASONS.index(v.upper()) + 1
     except (ValueError, AttributeError):
         raise DoesNotExistException("I don't know a season called {v}".format(v=v))
+
+def season_code(v):
+    """From any value return the season code which is a three letter string representing the season, or 'ALL' for all time."""
+    sid = season_id(v)
+    if sid == 'all':
+        return 'ALL'
+    return SEASONS[sid - 1]
+
+def season_name(v):
+    """From any value return the person-friendly name of the season, or 'All Time' for all time."""
+    sid = season_id(v)
+    if sid == 'all':
+        return 'All Time'
+    return 'Season {num}'.format(num=sid)

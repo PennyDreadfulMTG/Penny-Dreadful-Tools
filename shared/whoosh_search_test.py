@@ -22,7 +22,6 @@ class WhooshSearchTest(unittest.TestCase):
         assert len(cards) >= 1
         assert is_included(card_name, cards)
 
-    # pylint: disable=line-too-long
     def aliases_are_exact(self):
         for q, card in (('bob', 'Dark Confidant'), ('jens', 'Solemn Simulacrum'), ('sad robot', 'Solemn Simulacrum'), ('mom', 'Mother of Runes'), ('tim', 'Prodigal Sorcerer'), ('gary', 'Gray Merchant of Asphodel'), ('finkel', 'Shadowmage Infiltrator'), ('kai', 'Voidmage Prodigy'), ('tiago', 'Snapcaster Mage'), ('pikula', 'Meddling Mage'), ('durdle turtle', 'Meandering Towershell'), ('volvary', 'Aura Barbs'), ('bolt', 'Lightning Bolt'), ('ftk', 'Flametongue Kavu'), ('fow', 'Force of Will'), ('looter scooter', "Smuggler's Copter"), ('nerd ape', "Inventor's Apprentice")):
             result = self.searcher.search(q)

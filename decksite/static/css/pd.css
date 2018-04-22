@@ -780,12 +780,16 @@ Menu items can have submenus. These are "mega menus" that stretch across the who
 
 .submenu-container {
     background: #502828;
-    box-sizing: border-box; /* So we can say width: 100% without worrying about the padding used for page margin. */;
+    box-sizing: border-box; /* So we can position the first menu item's text flush-left with the page text without worrying about the padding used for page margin. */;
     color: #f9f9f9;
     display: none;
     left: 0;
     position: absolute;
-    width: 100%;
+    width: 100vw; /* Use this rather than the more obvious "100%" because the language switcher is absolutely positioned and yet contains a submenu which thinks 100% means 100% of the language switcher element, not of the whole page. */
+}
+
+.submenu-container li {
+    float: left;
 }
 
 .submenu-container a:hover {
@@ -807,7 +811,7 @@ Menu items can have submenus. These are "mega menus" that stretch across the who
 /* Slide-out caret at top of submenu dropdown. */
 
 /* Don't drop the opacity of the caret when menu item is selected because it's not semantically part of the menu item even though technically it is. */
-a.menuitem:focus, .language-switcher > a:focus {
+.has-submenu > a:focus {
     opacity: 1;
 }
 
@@ -1712,26 +1716,10 @@ Language Switcher
 
 */
 
-header {
-    position: relative;
-}
-
 .language-switcher {
     left: 0;
     position: absolute;
     top: 0;
-    width: 100%;
-}
-
-/* BAKERT we want the same mobile behavior as the normal submenus - get thinner. */
-
-/* We don't want a left padding on the submenu because the switcher lives in the margin not in the main body of the page. */
-.language-switcher li > a {
-    padding-left: 10%;
-}
-
-.language-switcher .submenu-container {
-    padding-left: 0;
 }
 
 .language-icon {
@@ -1739,6 +1727,16 @@ header {
     height: 1.333em;
     padding: 0.563em;
     vertical-align: middle;
+}
+
+/*
+    Override the negative margin that would be applied to get text to line up flush-left with page text because we're out in the margin here already as the language switcher is absolutely positioned in the top left of the screen.
+    In the narrower view the margin is small enough that we actually DO want to line up as the normal submenu behavior does.
+*/
+@media only screen and (min-width: 641px) {
+    .language-switcher .submenu-container ul {
+        margin-left: -1.563rem;
+    }
 }
 
 /*

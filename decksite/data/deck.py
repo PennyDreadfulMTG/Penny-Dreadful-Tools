@@ -58,33 +58,13 @@ class Deck(Container):
 def load_deck(deck_id) -> Deck:
     return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))
 
-def load_season(season=None, league_only=False):
-    if season is None:
-        where = 'start.start_date <= UNIX_TIMESTAMP() AND `end`.start_date > UNIX_TIMESTAMP()'
-    else:
-        try:
-            number = int(season)
-            code = "'{season}'".format(season=season)
-        except ValueError:
-            number = 0
-            code = sqlescape(season)
-        where = 'start.`number` = {number} OR start.`code` = {code}'.format(number=number, code=code)
-    sql = """
-        SELECT start.`number`, start.`code`, `start`.start_date, `end`.start_date AS end_date
-        FROM season AS `start`
-        LEFT JOIN season AS `end`
-        ON `start`.`number` + 1 = `end`.`number`
-        WHERE {where}
-    """.format(where=where)
-    season = Container(guarantee.exactly_one(db().execute(sql)))
-    where = 'd.created_date >= {start_ts}'.format(start_ts=season.start_date)
-    if season.end_date:
-        where = '{where} AND d.created_date < {end_ts}'.format(where=where, end_ts=season.end_date)
+def load_season(season_id=None, league_only=False):
+    season = Container()
+    where = 'TRUE'
     if league_only:
-        where = '{where} AND d.competition_id IN ({competition_ids_by_type_select})'.format(where=where, competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
-    season.decks = load_decks(where)
-    season.start_date = dtutil.ts2dt(season.start_date)
-    season.end_date = dtutil.ts2dt(season.end_date) if season.end_date else None
+        where = 'd.competition_id IN ({competition_ids_by_type_select})'.format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
+    season.decks = load_decks(where, season_id=season_id)
+    season.number = season_id
     return season
 
 # pylint: disable=attribute-defined-outside-init

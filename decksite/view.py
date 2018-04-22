@@ -56,10 +56,14 @@ class View:
     def season_name(self):
         return 'Season {num}'.format(num=g.season_id).replace('Season all', 'All Time') if g.get('season_id') else 'Season {num}'.format(num=self.all_seasons()[0]['num'])
 
+    def season_code_lower(self):
+        return (self.all_seasons()[g.season_id] if g.get('season_id') else self.all_seasons()[0]['code']).lower()
+
     def all_seasons(self):
         seasons = [{
             'name': 'All Time',
             'code': 'all',
+            'code_lower': 'all',
             'num': None,
             'url': seasonized_url('all'),
             'decks_url': url_for('seasons.season', season_id='all'),
@@ -74,6 +78,7 @@ class View:
             seasons.append({
                 'name': 'Season {num}'.format(num=num),
                 'code': code,
+                'code_lower': code.lower(),
                 'num': num,
                 'url': seasonized_url(num),
                 'decks_url': url_for('seasons.season', season_id=code),

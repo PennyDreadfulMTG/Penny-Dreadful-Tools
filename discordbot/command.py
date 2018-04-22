@@ -1,6 +1,7 @@
 import collections
 import datetime
 import glob
+import logging
 import os
 import random
 import re
@@ -405,6 +406,7 @@ Want to contribute? Send a Pull Request."""
         try:
             t = fetcher.time(args.strip())
         except TooFewItemsException:
+            logging.exception('Exception trying to get the time for {args}.'.format(args=args))
             return await client.send_message(channel, '{author}: Location not found.'.format(author=author.mention))
         await client.send_message(channel, '{args}: {time}'.format(args=args, time=t))
 

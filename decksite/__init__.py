@@ -19,7 +19,8 @@ def add_season_id(endpoint, values):
 
 @SEASONS.url_value_preprocessor
 def pull_season_id(endpoint, values):
-    g.season_id = values.pop('season_id')
+    v = values.pop('season_id')
+    g.season_id = rotation.determine_season_id(v)
 
 APP.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip()
 APP.config['branch'] = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()

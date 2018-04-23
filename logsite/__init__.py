@@ -6,7 +6,7 @@ from flask import Flask
 from flask_babel import Babel
 
 APP = Flask(__name__)
-babel = Babel(APP)
+BABEL = Babel(APP)
 
 
 from . import db, main, stats, api, localization # pylint: disable=wrong-import-position, unused-import

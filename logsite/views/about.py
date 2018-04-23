@@ -2,7 +2,7 @@ from flask_babel import gettext
 
 from logsite.view import View
 
-from .. import APP, babel
+from .. import APP, BABEL
 
 
 @APP.route('/about/')
@@ -16,4 +16,4 @@ class About(View):
         return gettext('About')
 
     def languages(self) -> str:
-        return ', '.join([locale.display_name for locale in babel.list_translations()])
+        return ', '.join([locale.display_name for locale in BABEL.list_translations()])

@@ -1,7 +1,6 @@
 import datetime
 import fileinput
 import glob
-import html
 import os
 from collections import Counter
 from typing import Dict, List, Set
@@ -11,7 +10,7 @@ import ftfy
 from magic import fetcher_internal, rotation
 from price_grabber.parser import (PriceList, parse_cardhoarder_prices,
                                   parse_mtgotraders_prices)
-from shared import configuration, dtutil
+from shared import configuration, dtutil, text
 
 BLACKLIST: Set[str] = set()
 WHITELIST: Set[str] = set()
@@ -81,11 +80,7 @@ def make_final_list() -> None:
     files = glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))
     lines: List[str] = []
     for line in fileinput.input(files):
-        try:
-            line = line.encode('latin-1').decode('utf-8')
-        except UnicodeDecodeError:
-            pass
-        line = html.unescape(line)
+        line = text.sanitize(line)
         lines.append(line)
     scores = Counter(lines).most_common()
 

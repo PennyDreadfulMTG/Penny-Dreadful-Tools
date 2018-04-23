@@ -2,7 +2,7 @@ from flask import request
 
 from . import BABEL
 
-LANGUAGES = [str(locale) for locale in babel.list_translations()]
+LANGUAGES = [str(locale) for locale in BABEL.list_translations()]
 
 @BABEL.localeselector
 def get_locale():

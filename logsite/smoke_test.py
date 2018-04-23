@@ -3,13 +3,11 @@ import unittest
 import pytest
 
 from logsite.main import APP
-from shared_web import template
 
 
 class SmokeTest(unittest.TestCase):
     def setUp(self):
         self.app = APP.test_client()
-
         # propagate the exceptions to the test client
         self.app.testing = True
 

@@ -113,7 +113,8 @@ def gitpull():
         expected = 'refs/heads/{0}'.format(APP.config['branch'])
         if payload['ref'] == expected:
             try:
-                subprocess.check_output(['git', 'pull'])
+                subprocess.check_output(['git', 'fetch'])
+                subprocess.check_output(['git', 'reset', '--hard', 'origin/{0}'.format(APP.config['branch'])])
                 subprocess.check_output(['pip', 'install', '-U', '--user', '-r', 'requirements.txt', '--no-cache'])
                 import uwsgi
                 uwsgi.reload()

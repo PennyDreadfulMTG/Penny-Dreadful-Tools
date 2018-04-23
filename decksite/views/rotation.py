@@ -1,7 +1,6 @@
 import datetime
 import fileinput
 import glob
-import html
 import os
 from collections import Counter
 from typing import List
@@ -10,7 +9,7 @@ from decksite.data import card
 from decksite.view import View
 from magic import multiverse, oracle, rotation
 from magic.card import Card
-from shared import configuration, dtutil
+from shared import configuration, dtutil, text
 from shared.pd_exception import DoesNotExistException
 
 
@@ -39,7 +38,7 @@ class Rotation(View):
 
     def read_rotation_files(self) -> None:
         lines = []
-        files = glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))
+        files = rotation.files()
         if len(files) == 0:
             files = glob.glob(os.path.join(configuration.get_str('legality_dir'), '*.jar'))
             if len(files) == 0:
@@ -48,11 +47,7 @@ class Rotation(View):
             self.runs_percent = 0
             return
         for line in fileinput.input(files):
-            try:
-                line = line.encode('latin-1').decode('utf-8')
-            except UnicodeDecodeError:
-                pass
-            line = html.unescape(line)
+            line = text.sanitize(line)
             lines.append(line.strip())
         scores = Counter(lines).most_common()
         self.runs = scores[0][1]

@@ -1,7 +1,5 @@
 import datetime
 import fileinput
-import glob
-import html
 import os
 from collections import Counter
 from typing import Dict, List, Set
@@ -11,7 +9,7 @@ import ftfy
 from magic import fetcher_internal, rotation
 from price_grabber.parser import (PriceList, parse_cardhoarder_prices,
                                   parse_mtgotraders_prices)
-from shared import configuration, dtutil
+from shared import configuration, dtutil, text
 
 BLACKLIST: Set[str] = set()
 WHITELIST: Set[str] = set()
@@ -51,7 +49,7 @@ def process(all_prices: Dict[str, PriceList]) -> int:
 
 
 def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignored: Set[str]) -> int:
-    files = glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))
+    files = rotation.files()
     n = len(files) + 1
     path = os.path.join(configuration.get_str('legality_dir'), 'Run_{n}.txt').format(n=n)
     h = open(path, mode='w', encoding='utf-8')
@@ -78,14 +76,10 @@ def is_good_set(setname: str) -> bool:
     return not WHITELIST
 
 def make_final_list() -> None:
-    files = glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))
+    files = rotation.files()
     lines: List[str] = []
     for line in fileinput.input(files):
-        try:
-            line = line.encode('latin-1').decode('utf-8')
-        except UnicodeDecodeError:
-            pass
-        line = html.unescape(line)
+        line = text.sanitize(line)
         lines.append(line)
     scores = Counter(lines).most_common()
 

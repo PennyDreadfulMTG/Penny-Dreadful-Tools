@@ -1,10 +1,10 @@
 from typing import Any
 
 import sqlalchemy as sa
+from sqlalchemy.orm.exc import MultipleResultsFound
 from flask import url_for
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm.exc import MultipleResultsFound
 
 from shared import configuration
 
@@ -67,11 +67,11 @@ def Add(item: Any) -> None:
     return DB.session.add(item)
 
 # pylint: disable=invalid-name
-def Merge(item):
+def Merge(item) -> None:
     return DB.session.merge(item)
 
 # pylint: disable=invalid-name
-def Delete(item):
+def Delete(item) -> None:
     return DB.session.delete(item)
 
 def get_or_insert_format(name: str) -> Format:

@@ -207,7 +207,7 @@ PD.hideRepetition = function (selector) {
             v = $(this).html();
         }
     });
-}
+};
 PD.getUrlParams = function () {
     var vars = [], hash, i,
         hashes = window.location.href.slice(window.location.href.indexOf("?") + 1).split("&");

@@ -12,7 +12,7 @@ def show_match(match_id):
     view = Match(match.get_match(match_id))
     return view.page()
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use,too-many-instance-attributes
 class Match(View):
     def __init__(self, viewed_match: match.Match) -> None:
         self.match = viewed_match

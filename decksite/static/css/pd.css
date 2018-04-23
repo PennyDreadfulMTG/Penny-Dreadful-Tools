@@ -910,14 +910,6 @@ Calendar
     padding-bottom: 1rem;
 }
 
-.calendar .future td {
-    padding: 0.563em 1rem 0.563em 0;
-}
-
-.calendar .future td.league {
-    padding-left: 1rem;
-}
-
 .calendar td p {
     line-height: 1.777;
 }
@@ -931,11 +923,6 @@ Calendar
     font-size: 1rem;
     text-align: right;
     vertical-align: top;
-}
-
-.calendar .future .date {
-    font-size: 0.75rem;
-    vertical-align: inherit;
 }
 
 .date .month {

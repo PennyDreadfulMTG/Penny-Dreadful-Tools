@@ -3,33 +3,22 @@ import unittest
 import pytest
 
 from logsite.main import APP
+from test.smoke import Tester
 
 
-class SmokeTest(unittest.TestCase):
-    def setUp(self):
-        self.app = APP.test_client()
-        # propagate the exceptions to the test client
-        self.app.testing = True
-
-    @pytest.mark.functional
-    def test_home_status_code(self):
-        result = self.app.get('/')
-        self.assertEqual(result.status_code, 200)
+class LogsiteSmokeTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.tester: Tester = Tester(APP)
 
     @pytest.mark.functional
-    def test_home_data(self):
-        result = self.app.get('/')
-        self.assertIn('<h1><a href="/">PDBot Stats</a></h1>', result.data.decode('utf-8'))
+    def test_base(self) -> None:
+        self.tester.base_tests()
 
     @pytest.mark.functional
-    def test_some_pages(self):
-        result = self.app.get('/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/about/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/matches/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/people/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/recent.json')
-        self.assertEqual(result.status_code, 200)
+    def test_home(self) -> None:
+        self.tester.data_test('/', '<h1><a href="/">PDBot Stats</a></h1>')
+
+    @pytest.mark.functional
+    def test_some_pages(self) -> None:
+        for path in ['/', '/about/', '/matches/', '/people/', '/recent.json', '/stats.json']:
+            self.tester.response_test(path, 200)

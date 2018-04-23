@@ -4,7 +4,7 @@ import sys
 
 
 def run() -> None:
-    if len(sys.argv) == 0:
+    if len(sys.argv) < 2:
         print('No entry point specified.')
         sys.exit(1)
 
@@ -36,12 +36,19 @@ def run() -> None:
         sys.argv.remove('tests')
         code = pytest.main()
         sys.exit(code)
-    elif 'rotation' in sys.argv:
+    elif sys.argv[1] == 'rotation':
         from rotation_script import rotation_script
         rotation_script.run()
+    elif sys.argv[1] == 'logsite':
+        import logsite
+        logsite.APP.run(host='0.0.0.0', debug=True)
     else:
-        print("You didn't tell me what to run or I don't recognize that name")
-        sys.exit(1)
+        try:
+            m = importlib.import_module('{module}.main'.format(module=sys.argv[1])) # type: ignore
+            m.run()
+        except ImportError:
+            print("I don't recognize `{0}`".format(sys.argv[1]))
+            sys.exit(1)
     sys.exit(0)
 
 def task(args):

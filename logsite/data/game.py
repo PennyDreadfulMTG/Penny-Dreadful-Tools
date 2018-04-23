@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 
 from .. import db
-from ..db import db as fsa
+from ..db import DB as fsa
 
 
 class Game(fsa.Model):

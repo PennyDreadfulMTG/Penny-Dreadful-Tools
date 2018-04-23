@@ -7,7 +7,7 @@ from flask import url_for
 from shared import dtutil
 
 from .. import db
-from ..db import db as fsa # type: ignore
+from ..db import DB as fsa # type: ignore
 
 # pylint: disable=no-member
 
@@ -23,8 +23,8 @@ class Match(fsa.Model):
     is_league = sa.Column(sa.Boolean)
     is_tournament = sa.Column(sa.Boolean)
 
-    players = fsa.relationship('User', secondary=db.match_players)
-    modules = fsa.relationship('Module', secondary=db.match_modules)
+    players = fsa.relationship('User', secondary=db.MATCH_PLAYERS)
+    modules = fsa.relationship('Module', secondary=db.MATCH_MODULES)
     games = fsa.relationship('Game', backref='match')
     format = fsa.relationship('Format')
     tournament = fsa.relationship('TournamentInfo', backref='match')

@@ -17,20 +17,20 @@ APP.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{user}:{password}@{host}:{port}
     port=configuration.get('mysql_port'),
     db=configuration.get('logsite_database'))
 
-db = SQLAlchemy(APP) # type: ignore
-migrate = Migrate(APP, db)
+DB = SQLAlchemy(APP) # type: ignore
+MIGRATE = Migrate(APP, DB)
 
-match_players = db.Table('match_players',
-                         db.Column('match_id', db.Integer, db.ForeignKey('match.id'), primary_key=True),
-                         db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+MATCH_PLAYERS = DB.Table('match_players',
+                         DB.Column('match_id', DB.Integer, DB.ForeignKey('match.id'), primary_key=True),
+                         DB.Column('user_id', DB.Integer, DB.ForeignKey('user.id'), primary_key=True)
                         )
 
-match_modules = db.Table('match_modules',
-                         db.Column('match_id', db.Integer, db.ForeignKey('match.id'), primary_key=True),
-                         db.Column('module_id', db.Integer, db.ForeignKey('module.id'), primary_key=True)
+MATCH_MODULES = DB.Table('match_modules',
+                         DB.Column('match_id', DB.Integer, DB.ForeignKey('match.id'), primary_key=True),
+                         DB.Column('module_id', DB.Integer, DB.ForeignKey('module.id'), primary_key=True)
                         )
 
-class User(db.Model): # type: ignore
+class User(DB.Model): # type: ignore
     __tablename__ = 'user'
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String(60))
@@ -39,7 +39,7 @@ class User(db.Model): # type: ignore
     def url(self):
         return url_for('show_person', person=self.name)
 
-class Format(db.Model): # type: ignore
+class Format(DB.Model): # type: ignore
     __tablename__ = 'format'
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String(40))
@@ -50,22 +50,26 @@ class Format(db.Model): # type: ignore
             return self.friendly_name
         return self.name
 
-class Module(db.Model):
+class Module(DB.Model):
     __tablename__ = 'module'
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String(50))
 
+# pylint: disable=invalid-name
 def Commit() -> None:
-    return db.session.commit()
+    return DB.session.commit()
 
+# pylint: disable=invalid-name
 def Add(item: Any) -> None:
-    return db.session.add(item)
+    return DB.session.add(item)
 
+# pylint: disable=invalid-name
 def Merge(item):
-    return db.session.merge(item)
+    return DB.session.merge(item)
 
+# pylint: disable=invalid-name
 def Delete(item):
-    return db.session.delete(item)
+    return DB.session.delete(item)
 
 def get_or_insert_format(name: str) -> Format:
     local = Format.query.filter_by(name=name).one_or_none()

@@ -10,11 +10,11 @@ from .data import match
 @APP.route('/stats.json')
 def stats():
     val = {}
-    last_switcheroo = match.Match.query.filter(match.Match.has_unexpected_third_game == True).order_by(match.Match.id.desc()).first().start_time
+    last_switcheroo = match.Match.query.filter(match.Match.has_unexpected_third_game).order_by(match.Match.id.desc()).first().start_time
     val['last_switcheroo'] = dtutil.dt2ts(last_switcheroo)
 
     val['formats'] = {}
-    base_query = db.db.session.query(match.Match, func.count(match.Match.format_id))
+    base_query = db.DB.session.query(match.Match, func.count(match.Match.format_id))
     for m in base_query.group_by(match.Match.format_id).order_by(func.count(match.Match.format_id).desc()).all():
         f = m[0].format
         val['formats'][f.name] = {}
@@ -37,7 +37,7 @@ def stats():
                             group by user.id
                         ) as a on a.id = b.id
                         """)
-        players = db.db.session.query(db.User).from_statement(stmt).params(fid=f.id).all()
+        players = db.DB.session.query(db.User).from_statement(stmt).params(fid=f.id).all()
         val['formats'][f.name]['last_week']['recent_players'] = [p.name for p in players]
     last_month = dtutil.now() - dtutil.ts2dt(30 * 24 * 60 * 60)
     for m in base_query.group_by(match.Match.format_id).filter(match.Match.start_time > last_month).order_by(func.count(match.Match.format_id).desc()).all():

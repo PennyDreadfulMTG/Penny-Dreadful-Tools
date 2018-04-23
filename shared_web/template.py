@@ -1,13 +1,22 @@
+from typing import List
+
+import flask
 import pystache
 import pystache.parsed
 from flask_babel import gettext
 from markdown import markdown
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
+from pystache.common import TemplateNotFoundError
 
+__SEARCHPATH: List[str] = []
 
-def render_name(template, *context):
-    return CachedRenderer(search_dirs=['decksite/templates']).render_name(template, *context)
+def render_name(template, *context) -> str:
+    try:
+        renderer = CachedRenderer(search_dirs='{0}/templates'.format(flask.current_app.name))
+    except TemplateNotFoundError:
+        renderer = CachedRenderer(search_dirs=__SEARCHPATH)
+    return renderer.render_name(template, *context)
 
 def render(view):
     view.prepare()
@@ -69,7 +78,7 @@ def insert_gettext_nodes(parsed_template: pystache.parsed.ParsedTemplate) -> pys
     return new_template
 
 class _GettextNode(object):
-    def __init__(self, key):
+    def __init__(self, key) -> None:
         self.key = key
 
     def __repr__(self):

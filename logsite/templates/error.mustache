@@ -1,0 +1,18 @@
+<section>
+    <h2>{{subtitle}}</h2>
+    <p>{{message}}</p>
+    <p><a href="https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues">Report bug</a></p>
+    <a href="{{card.url}}" class="card"><img src="{{card.img_url}}" alt="{{card.name}}" class="card-img"></a>
+</section>
+<section>
+    <h2>Try these?</h2>
+    <ul>
+        {{#menu}}
+            <li><a href="{{url}}">{{name}}</a></li>
+        {{/menu}}
+    </ul>
+</section>
+<!--
+Exception:
+{{exception}}
+-->

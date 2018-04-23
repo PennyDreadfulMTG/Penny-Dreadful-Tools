@@ -1,0 +1,55 @@
+import inflect
+import titlecase
+from flask import url_for
+
+from .. import APP, importing
+from ..data import match
+from ..view import View
+
+
+@APP.route('/match/<match_id>/')
+def show_match(match_id):
+    view = Match(match.get_match(match_id))
+    return view.page()
+
+# pylint: disable=no-self-use,too-many-instance-attributes
+class Match(View):
+    def __init__(self, viewed_match: match.Match) -> None:
+        self.match = viewed_match
+        self.id = viewed_match.id
+        self.comment = viewed_match.comment
+        self.format_name = viewed_match.format_name()
+        self.players_string = ' vs '.join([p.name for p in viewed_match.players])
+        if not viewed_match.games:
+            self.no_games = True
+            return
+        self.game_one = viewed_match.games[0]
+        self.has_game_two = False
+        self.has_game_three = False
+        if len(viewed_match.games) > 1:
+            self.has_game_two = True
+            self.game_two = viewed_match.games[1]
+        if len(viewed_match.games) > 2:
+            self.has_game_three = True
+            self.game_three = viewed_match.games[2]
+        if viewed_match.has_unexpected_third_game is None:
+            importing.reimport(viewed_match)
+        self.has_unexpected_third_game = viewed_match.has_unexpected_third_game
+        if viewed_match.is_tournament is None:
+            importing.reimport(viewed_match)
+        self.is_tournament = viewed_match.is_tournament
+
+    def subtitle(self):
+        return None
+
+    def og_title(self):
+        return self.players_string
+
+    def og_url(self):
+        return url_for('show_match', match_id=self.id, _external=True)
+
+    def og_description(self):
+        p = inflect.engine()
+        fmt = titlecase.titlecase(p.a(self.format_name))
+        description = '{fmt} match.'.format(fmt=fmt)
+        return description

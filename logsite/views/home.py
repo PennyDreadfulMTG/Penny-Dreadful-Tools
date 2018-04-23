@@ -1,5 +1,4 @@
 from flask import url_for
-from flask_babel import gettext
 
 from logsite.view import View
 

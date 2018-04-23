@@ -1,5 +1,3 @@
-import random
-
 from logsite.view import View
 
 
@@ -7,7 +5,6 @@ from logsite.view import View
 class NotFound(View):
     def __init__(self, exception):
         self.exception = str(exception)
-        # self.card = random.choice(oracle.cards_from_query('Lost'))
         self.card = None
         self.cards = [self.card]
 

@@ -1,5 +1,3 @@
-import random
-
 from logsite.view import View
 
 
@@ -7,7 +5,6 @@ from logsite.view import View
 class InternalServerError(View):
     def __init__(self, exception):
         self.exception = str(exception)
-        # self.card = random.choice(oracle.load_cards(['Erratic Explosion', 'Curse of Chaos', 'Anarchy']))
         self.card = None
         self.cards = [self.card]
 

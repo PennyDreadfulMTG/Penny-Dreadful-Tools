@@ -75,7 +75,7 @@ def insert_gettext_nodes(parsed_template: pystache.parsed.ParsedTemplate) -> pys
     return new_template
 
 class _GettextNode(object):
-    def __init__(self, key):
+    def __init__(self, key) -> None:
         self.key = key
 
     def __repr__(self):

@@ -1,14 +1,15 @@
 from typing import List
 
 import pytz
-import sqlalchemy as sa
+import sqlalchemy as sa # type: ignore
 from flask import url_for
 
 from shared import dtutil
 
 from .. import db
-from ..db import db as fsa
+from ..db import db as fsa # type: ignore
 
+# pylint: disable=no-member
 
 class Match(fsa.Model):
     __tablename__ = 'match'

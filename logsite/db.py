@@ -7,6 +7,7 @@ from sqlalchemy.orm.exc import MultipleResultsFound
 from shared import configuration
 
 from . import APP
+# pylint: disable=no-member
 
 APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 APP.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{user}:{password}@{host}:{port}/{db}'.format(
@@ -16,7 +17,7 @@ APP.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{user}:{password}@{host}:{port}
     port=configuration.get('mysql_port'),
     db=configuration.get('logsite_database'))
 
-db = SQLAlchemy(APP)
+db = SQLAlchemy(APP) # type: ignore
 migrate = Migrate(APP, db)
 
 match_players = db.Table('match_players',
@@ -29,7 +30,7 @@ match_modules = db.Table('match_modules',
                          db.Column('module_id', db.Integer, db.ForeignKey('module.id'), primary_key=True)
                         )
 
-class User(db.Model):
+class User(db.Model): # type: ignore
     __tablename__ = 'user'
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String(60))
@@ -38,7 +39,7 @@ class User(db.Model):
     def url(self):
         return url_for('show_person', person=self.name)
 
-class Format(db.Model):
+class Format(db.Model): # type: ignore
     __tablename__ = 'format'
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String(40))
@@ -54,10 +55,10 @@ class Module(db.Model):
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String(50))
 
-def Commit():
+def Commit() -> None:
     return db.session.commit()
 
-def Add(item):
+def Add(item: Any) -> None:
     return db.session.add(item)
 
 def Merge(item):

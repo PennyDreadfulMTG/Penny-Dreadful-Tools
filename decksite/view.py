@@ -9,11 +9,12 @@ from flask import g, request, session, url_for
 from flask_babel import gettext, ngettext
 from werkzeug.routing import BuildError
 
-from decksite import APP, BABEL, admin, template
+from decksite import APP, BABEL, admin
 from decksite.data import archetype, deck
 from magic import oracle, rotation, tournaments
 from shared import dtutil
 from shared.container import Container
+from shared_web import template
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10
 

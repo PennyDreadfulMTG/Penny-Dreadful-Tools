@@ -34,7 +34,9 @@ class Deck(View):
                 m.opponent_deck_url = url_for('deck', deck_id=m.opponent_deck_id)
             else:
                 m.opponent_deck_url = False
-            if m.opponent_deck:
+            if m.opponent_deck and m.opponent_deck.is_in_current_run():
+                m.opponent_deck_name = '(Active League Run)'
+            elif m.opponent_deck:
                 m.opponent_deck_name = m.opponent_deck.name
             else:
                 m.opponent_deck_name = '-'

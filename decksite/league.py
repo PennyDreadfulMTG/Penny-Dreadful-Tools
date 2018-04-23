@@ -170,7 +170,7 @@ def deck_options(decks, v):
     if (v is None or v == '') and len(decks) == 1:
         v = str(decks[0].id)
 
-    return [{'text': '{person} - {deck}'.format(person=d.person, deck=d.name), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
+    return [{'text': '{person}'.format(person=d.person), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
 
 def active_decks(additional_where='1 = 1'):
     where = """

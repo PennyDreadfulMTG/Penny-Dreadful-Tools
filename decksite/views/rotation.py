@@ -38,7 +38,7 @@ class Rotation(View):
 
     def read_rotation_files(self) -> None:
         lines = []
-        files = glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))
+        files = rotation.files()
         if len(files) == 0:
             files = glob.glob(os.path.join(configuration.get_str('legality_dir'), '*.jar'))
             if len(files) == 0:

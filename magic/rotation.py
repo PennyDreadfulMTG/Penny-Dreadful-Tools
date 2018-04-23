@@ -1,10 +1,12 @@
 import datetime
+import glob
+import os
 from typing import List, Optional, cast
 
 from mypy_extensions import TypedDict
 
 from magic import fetcher
-from shared import dtutil
+from shared import configuration, dtutil
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 SetInfo = TypedDict('SetInfo', { #pylint: disable=invalid-name
@@ -125,3 +127,6 @@ def season_name(v):
     if sid == 'all':
         return 'All Time'
     return 'Season {num}'.format(num=sid)
+
+def files():
+    return glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))

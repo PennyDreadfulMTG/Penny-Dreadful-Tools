@@ -1,0 +1,42 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d1ee3ec29868ebed393ce10c3ecb231891524457250; tapped=cii1priy8pqbtd0co0fkbt1dynk20jgz;
+          _zermg22wher=o-Ko59np; csrftoken=sHf1M6I8irUAlRo22N77EDProoxqbBeL]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/60-island/
+  response:
+    body:
+      string: !!binary |
+        H4sIAOFf3VoC/6WUbWvbMBDHv4pxX/SBJUrWtB2hK5QkG4GSjXZbYGWYi6zYYrLk6aEQSr/77hKn
+        sdMFv9grS3f+//56ON1zHJywSSpdqWAVD6P4GqLciuXHY0YZx5xU4MCu2PHNdnjN4CZ+F8UaCkGS
+        y140dQp0SsFgFcVy78shYx7KUqQm+K4WnhU+66SC/3bssteRawkjzVKAD1akCQebknqDi06msx+n
+        9EMKXiShpA/l+4MPF4PzQb8/wJzjxtIyznEs9ZPQ3ljayePjK2Y8npxGR9+EFU4g7jn2CsgG40Rf
+        0LgAqWnC0SMzVgpHjLgS/cLMH0/Yfu8FJ3X2DNkjZUK6arJnbexKtGNfNdHTES17ZFRaB2O0FUyS
+        HfZiD4uHGh3NUWIbK8Z4G7gS1U5jj303uUX2Q9BO+Dob423sSnRw2Xf38/Ul8lxLDkqtZsbf6tfC
+        21ndz9sv9Z+Qg9bfHz7TrrCwisaJYbx1VxvRDv2+if45ofL5slAyg3Xh1vCYa8PXhLVLaVicfTqL
+        Tq4mY7T5akUhQ1H3wMQbj6WR9Ia9DeKt45bRfBE0w4diguX4UK082AKglIwbpQT30ujacEiNYa8v
+        +DwUCw1SJVVXYcx58JJ3m1DHZJEx7GBSd3gO1jumwGYi0UaLbqkzgjkVsk23qizWwQKLIPkPnw2g
+        7kNtkxjbbhm//AUNSTrNZQUAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [40fd8eddf9a31d62-MEL]
+      Cache-Control: [no-cache]
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['532']
+      Content-Type: [application/json]
+      Date: ['Mon, 23 Apr 2018 04:24:01 GMT']
+      Expect-CT: ['max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"']
+      Server: [cloudflare]
+      Vary: ['Accept, Accept-Encoding, Accept-Language, Cookie']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+version: 1

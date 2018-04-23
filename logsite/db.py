@@ -1,14 +1,15 @@
 from typing import Any
 
+import sqlalchemy as sa
 from flask import url_for
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm.exc import MultipleResultsFound
-import sqlalchemy as sa
 
 from shared import configuration
 
 from . import APP
+
 # pylint: disable=no-member
 
 APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -52,7 +53,7 @@ class Format(DB.Model): # type: ignore
             return self.friendly_name
         return self.name
 
-class Module(DB.Model):
+class Module(DB.Model): # type: ignore
     __tablename__ = 'module'
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String(50))

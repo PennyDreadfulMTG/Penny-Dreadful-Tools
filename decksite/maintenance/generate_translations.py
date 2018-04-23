@@ -5,7 +5,6 @@ from babel.messages import frontend
 from poeditor.client import POEditorAPI
 
 from shared import configuration
-
 from shared_web import template
 
 

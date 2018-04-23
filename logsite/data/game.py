@@ -4,7 +4,7 @@ from .. import db
 from ..db import DB as fsa
 
 
-class Game(fsa.Model):
+class Game(fsa.Model): # type: ignore
     __tablename__ = 'game'
     id = sa.Column(fsa.Integer, primary_key=True, autoincrement=False)
     match_id = sa.Column(sa.Integer, sa.ForeignKey('match.id'), nullable=False)

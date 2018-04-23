@@ -1,17 +1,17 @@
 from typing import List
 
 import pytz
-import sqlalchemy as sa # type: ignore
+import sqlalchemy as sa  # type: ignore
 from flask import url_for
 
 from shared import dtutil
 
 from .. import db
-from ..db import DB as fsa # type: ignore
+from ..db import DB as fsa  # type: ignore
 
 # pylint: disable=no-member
 
-class Match(fsa.Model):
+class Match(fsa.Model): # type: ignore
     __tablename__ = 'match'
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=False)
     format_id = sa.Column(sa.Integer, sa.ForeignKey('format.id'))
@@ -54,14 +54,14 @@ class Match(fsa.Model):
             return ''
         return dtutil.display_date(pytz.utc.localize(self.start_time))
 
-class TournamentInfo(fsa.Model):
+class TournamentInfo(fsa.Model): # type: ignore
     __tablename__ = 'match_tournament'
     id = sa.Column(sa.Integer, primary_key=True)
     match_id = sa.Column(sa.Integer, sa.ForeignKey('match.id'), nullable=False)
     tournament_id = sa.Column(sa.Integer, sa.ForeignKey('tournament.id'), nullable=False)
     round_num = sa.Column(sa.Integer)
 
-class Tournament(fsa.Model):
+class Tournament(fsa.Model): # type: ignore
     __tablename__ = 'tournament'
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String(length=200), unique=True, index=True)

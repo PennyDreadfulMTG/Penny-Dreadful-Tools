@@ -16,4 +16,4 @@ class About(View):
         return gettext('About')
 
     def languages(self) -> str:
-        return ", ".join([locale.display_name for locale in babel.list_translations()])
+        return ', '.join([locale.display_name for locale in babel.list_translations()])

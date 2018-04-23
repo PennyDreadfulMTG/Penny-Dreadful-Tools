@@ -17,8 +17,8 @@ class Game(fsa.Model):
     winner = fsa.relationship('User')
 
     def sanitized_log(self):
-        if "Exception:" in self.log:
-            return "Log is not visible at this time.  Please contact Silasary."
+        if 'Exception:' in self.log:
+            return 'Log is not visible at this time.  Please contact Silasary.'
         # If we want to remove chat, or OOB messages, do that here.
         return self.log.strip()
 

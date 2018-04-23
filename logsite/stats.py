@@ -56,11 +56,11 @@ def stats():
                             group by user.id
                         ) as a on a.id = b.id
                         """)
-        players = db.db.session.query(db.User).from_statement(stmt).params(fid=f.id).all()
+        players = db.DB.session.query(db.User).from_statement(stmt).params(fid=f.id).all()
         val['formats'][f.name]['last_month']['recent_players'] = [p.name for p in players]
     return return_json(val)
 
-@APP.route("/recent.json")
+@APP.route('/recent.json')
 def recent_json():
     last_week = dtutil.now() - dtutil.ts2dt(7 * 24 * 60 * 60)
     val = {}

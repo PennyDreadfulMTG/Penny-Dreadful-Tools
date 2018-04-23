@@ -48,8 +48,8 @@ def export(match_id: int):
     text = '{format}\n{comment}\n{mods}\n{players}\n\n'.format(
         format=local.format.name,
         comment=local.comment,
-        mods=",".join([m.name for m in local.modules]),
-        players=",".join([p.name for p in local.players]))
+        mods=','.join([m.name for m in local.modules]),
+        players=','.join([p.name for p in local.players]))
     n = 1
     for game in local.games:
         text += '== Game {n} ({id}) ==\n'.format(n=n, id=game.id)

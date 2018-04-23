@@ -31,6 +31,7 @@ requests==2.18.4
 requests_oauthlib==0.8.0
 seaborn==0.8.1
 SQLAlchemy==1.2.7
+sqlalchemy_utils==0.33.2
 titlecase==0.12.0
 untangle==1.1.1
 vcrpy==1.11.1

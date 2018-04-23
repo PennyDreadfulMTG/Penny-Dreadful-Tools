@@ -1,3 +1,4 @@
+import re
 from typing import List
 
 import flask
@@ -84,8 +85,11 @@ class _GettextNode(object):
     def __repr__(self):
         return pystache.parser._format(self)
 
-    def render(self, engine, context): # pylint: disable=unused-argument
+    def render(self, engine, context):
         s = gettext(self.key)
+        def lookup(match):
+            return engine.fetch_string(context, match.group(1))
+        s = re.sub(r'\{([a-z_]+)\}', lookup, s)
         return markdown(engine.escape(s), extensions=[NoParaTagsExtension()])
 
 #pylint: disable=no-self-use

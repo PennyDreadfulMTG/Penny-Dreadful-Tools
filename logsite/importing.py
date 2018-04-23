@@ -56,7 +56,7 @@ def import_log(lines: List[str], match_id: int):
             game_lines.append(line)
         elif gm:
             tname = gm.group(1)
-            print("Gatherling Event: {0}".format(tname))
+            print('Gatherling Event: {0}'.format(tname))
             process_tourney_info(tname, local)
             game_lines.append(line)
         else:

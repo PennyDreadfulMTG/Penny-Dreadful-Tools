@@ -1,7 +1,7 @@
 import glob
 import os.path
 
-from decksite import template
+from shared_web import template
 
 
 def test_render_name():

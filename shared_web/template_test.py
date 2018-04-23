@@ -1,12 +1,17 @@
+import pytest
 import glob
 import os.path
 
 from shared_web import template
 
 
-def test_render_name():
-    template.__SEARCHPATH.extend(['decksite/templates', 'logsite/templates']) # pylint: disable=protected-access
-    templates = glob.glob('**/*.mustache', recursive=True)
+
+# pylint: disable=protected-access
+@pytest.mark.parametrize('module', ['decksite', 'logsite'])
+def test_render_name(module: str) -> None:
+    template.__SEARCHPATH.clear()
+    template.__SEARCHPATH.append('{0}/templates'.format(module))
+    templates = glob.glob('{0}/*.mustache'.format(module), recursive=True)
     print(templates)
     for t in templates:
         template.render_name(os.path.basename(t).replace('.mustache', ''), {})

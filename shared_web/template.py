@@ -10,7 +10,7 @@ from markdown.treeprocessors import Treeprocessor
 
 __SEARCHPATH: List[str] = []
 
-def render_name(template, *context):
+def render_name(template, *context) -> str:
     if not __SEARCHPATH:
         __SEARCHPATH.append('{0}/templates'.format(flask.current_app.name))
     return CachedRenderer(search_dirs=__SEARCHPATH).render_name(template, *context)

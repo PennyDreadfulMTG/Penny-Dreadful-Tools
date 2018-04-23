@@ -1,7 +1,10 @@
 import datetime
+import fileinput
 import glob
+import html
 import os
-from typing import Dict, Set
+from collections import Counter
+from typing import Dict, List, Set
 
 import ftfy
 
@@ -12,6 +15,8 @@ from shared import configuration, dtutil
 
 BLACKLIST: Set[str] = set()
 WHITELIST: Set[str] = set()
+
+TOTAL_RUNS = 168
 
 def run() -> None:
     all_prices = {}
@@ -24,9 +29,11 @@ def run() -> None:
         s = fetcher_internal.fetch(url)
         all_prices['mtgotraders'] = parse_mtgotraders_prices(s)
 
-    process(all_prices)
+    run_number = process(all_prices)
+    if run_number == TOTAL_RUNS:
+        make_final_list()
 
-def process(all_prices: Dict[str, PriceList]) -> None:
+def process(all_prices: Dict[str, PriceList]) -> int:
     seen_sets: Set[str] = set()
     used_sets: Set[str] = set()
 
@@ -40,9 +47,10 @@ def process(all_prices: Dict[str, PriceList]) -> None:
                 hits.add(name)
                 used_sets.add(mtgo_set)
     ignored = seen_sets - used_sets
-    process_sets(seen_sets, used_sets, hits, ignored)
+    return process_sets(seen_sets, used_sets, hits, ignored)
 
-def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignored: Set[str]) -> None:
+
+def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignored: Set[str]) -> int:
     files = glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))
     n = len(files) + 1
     path = os.path.join(configuration.get_str('legality_dir'), 'Run_{n}.txt').format(n=n)
@@ -54,6 +62,7 @@ def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignor
     print('Run {n} completed, with {ccards} cards from {csets}/{tsets} sets'.format(n=n, ccards=len(hits), csets=len(used_sets), tsets=len(seen_sets)))
     print('Used:    {sets}'.format(sets=repr(used_sets)))
     print('Missed:  {sets}'.format(sets=repr(ignored)))
+    return n
 
 def is_good_set(setname: str) -> bool:
     if not BLACKLIST and not WHITELIST:
@@ -67,3 +76,25 @@ def is_good_set(setname: str) -> bool:
     elif setname in WHITELIST:
         return True
     return not WHITELIST
+
+def make_final_list() -> None:
+    files = glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))
+    lines: List[str] = []
+    for line in fileinput.input(files):
+        try:
+            line = line.encode('latin-1').decode('utf-8')
+        except UnicodeDecodeError:
+            pass
+        line = html.unescape(line)
+        lines.append(line)
+    scores = Counter(lines).most_common()
+
+    final: List[str] = []
+    for name, count in scores:
+        if count >= TOTAL_RUNS / 2:
+            final.append(name)
+    final.sort()
+    h = open(os.path.join(configuration.get_str('legality_dir'), 'legal_cards.txt'), mode='w', encoding='utf-8')
+    h.write(''.join(final))
+    h.close()
+    print('Generated legal_cards.txt.  {0}/{1} cards.'.format(len(final), len(scores)))

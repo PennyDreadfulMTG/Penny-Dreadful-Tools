@@ -932,7 +932,7 @@ Calendar
     text-transform: lowercase;
 }
 
-.calendar .date big {
+.calendar .date .day {
     font-size: 1.777rem;
     line-height: 1;
     vertical-align: top;
@@ -1763,16 +1763,6 @@ Notification Badges
 
 .badge a, .badge a:hover {
     color: #502828;
-}
-
-/*
-
-Tournaments
-
-*/
-
-.local {
-    display: none; /* Will be revealed by js when we have a localized time. */
 }
 
 /*

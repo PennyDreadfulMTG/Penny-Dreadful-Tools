@@ -9,7 +9,7 @@ PD.init = function () {
     $("input[type=file]").on("change", PD.loadDeck).on("change", PD.toggleDrawDropdown);
     $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
-    PD.showLocalTimes();
+    PD.localizeTimes();
     $.get("/api/intro/", PD.showIntro);
     $.get("/api/admin/", PD.showAdmin);
     PD.initSignupDeckChooser();
@@ -181,12 +181,33 @@ PD.showAdmin = function (show) {
         $(".admin").show();
     }
 };
-PD.showLocalTimes = function () {
-    $(".time").each(function () {
-        var t = moment($(this).data("time"));
-        $(this).html(t.tz(moment.tz.guess()).format("dddd h:mma z")).parent(".local").show();
+PD.localizeTimes = function () {
+    PD.localizeTimeElements();
+    PD.hideRepetitionInCalendar();
+}
+PD.localizeTimeElements = function () {
+    $("time").each(function () {
+        var t = moment($(this).attr("datetime")),
+            format = $(this).data("format"),
+            tz = moment.tz.guess(),
+            s = t.tz(tz).format(format);
+        $(this).html(s).show();
     });
 };
+PD.hideRepetitionInCalendar = function () {
+    PD.hideRepetition('.calendar time.month');
+    PD.hideRepetition('.calendar time.day');
+};
+PD.hideRepetition = function (selector) {
+    var v = undefined;
+    $(selector).each(function ()  {
+        if ($(this).html() === v) {
+            $(this).html('');
+        } else {
+            v = $(this).html();
+        }
+    });
+}
 PD.getUrlParams = function () {
     var vars = [], hash, i,
         hashes = window.location.href.slice(window.location.href.indexOf("?") + 1).split("&");

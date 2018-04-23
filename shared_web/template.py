@@ -3,11 +3,11 @@ from typing import List
 import flask
 import pystache
 import pystache.parsed
-from pystache.common import TemplateNotFoundError
 from flask_babel import gettext
 from markdown import markdown
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
+from pystache.common import TemplateNotFoundError
 
 __SEARCHPATH: List[str] = []
 

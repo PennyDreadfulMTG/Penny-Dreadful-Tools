@@ -1,9 +1,9 @@
-import pytest
 import glob
 import os.path
 
-from shared_web import template
+import pytest
 
+from shared_web import template
 
 
 # pylint: disable=protected-access

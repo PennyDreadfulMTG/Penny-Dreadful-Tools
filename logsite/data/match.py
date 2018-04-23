@@ -52,8 +52,7 @@ class Match(fsa.Model):
     def display_date(self):
         if self.start_time is None:
             return ''
-        else:
-            return dtutil.display_date(pytz.utc.localize(self.start_time))
+        return dtutil.display_date(pytz.utc.localize(self.start_time))
 
 class TournamentInfo(fsa.Model):
     __tablename__ = 'match_tournament'

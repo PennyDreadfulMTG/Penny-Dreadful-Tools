@@ -3,6 +3,7 @@ from typing import List
 import flask
 import pystache
 import pystache.parsed
+from pystache.common import TemplateNotFoundError
 from flask_babel import gettext
 from markdown import markdown
 from markdown.extensions import Extension
@@ -11,9 +12,11 @@ from markdown.treeprocessors import Treeprocessor
 __SEARCHPATH: List[str] = []
 
 def render_name(template, *context) -> str:
-    if not __SEARCHPATH:
-        __SEARCHPATH.append('{0}/templates'.format(flask.current_app.name))
-    return CachedRenderer(search_dirs=__SEARCHPATH).render_name(template, *context)
+    try:
+        renderer = CachedRenderer(search_dirs='{0}/templates'.format(flask.current_app.name))
+    except TemplateNotFoundError:
+        renderer = CachedRenderer(search_dirs=__SEARCHPATH)
+    return renderer.render_name(template, *context)
 
 def render(view):
     view.prepare()

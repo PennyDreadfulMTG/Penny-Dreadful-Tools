@@ -1,4 +1,4 @@
-/*global PD:true Deckbox:false FooTable:false */
+/*global PD:true Deckbox:false FooTable:false, moment:false */
 window.PD = {};
 PD.init = function () {
     PD.initDismiss();
@@ -56,7 +56,7 @@ PD.initTables = function () {
     }).css({ "display": "table" });
     $("div.loading").addClass("loaded");
     // This operation is very expensive on large tables so we show them on load by default despite it being less pretty.
-    $(selector).not('.very-large').css({'visibility': 'visible'});
+    $(selector).not(".very-large").css({"visibility": "visible"});
 
     $.tablesorter.addParser({
         "id": "record",
@@ -184,7 +184,7 @@ PD.showAdmin = function (show) {
 PD.localizeTimes = function () {
     PD.localizeTimeElements();
     PD.hideRepetitionInCalendar();
-}
+};
 PD.localizeTimeElements = function () {
     $("time").each(function () {
         var t = moment($(this).attr("datetime")),
@@ -195,14 +195,14 @@ PD.localizeTimeElements = function () {
     });
 };
 PD.hideRepetitionInCalendar = function () {
-    PD.hideRepetition('.calendar time.month');
-    PD.hideRepetition('.calendar time.day');
+    PD.hideRepetition(".calendar time.month");
+    PD.hideRepetition(".calendar time.day");
 };
 PD.hideRepetition = function (selector) {
-    var v = undefined;
+    var v;
     $(selector).each(function ()  {
         if ($(this).html() === v) {
-            $(this).html('');
+            $(this).html("");
         } else {
             v = $(this).html();
         }

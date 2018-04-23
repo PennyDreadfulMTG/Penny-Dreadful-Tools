@@ -1,4 +1,4 @@
-/*global PD:true Deckbox:false FooTable:false */
+/*global PD:true Deckbox:false FooTable:false, moment:false */
 window.PD = {};
 PD.init = function () {
     PD.initDismiss();
@@ -9,7 +9,7 @@ PD.init = function () {
     $("input[type=file]").on("change", PD.loadDeck).on("change", PD.toggleDrawDropdown);
     $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
-    PD.showLocalTimes();
+    PD.localizeTimes();
     $.get("/api/intro/", PD.showIntro);
     $.get("/api/admin/", PD.showAdmin);
     PD.initSignupDeckChooser();
@@ -56,7 +56,7 @@ PD.initTables = function () {
     }).css({ "display": "table" });
     $("div.loading").addClass("loaded");
     // This operation is very expensive on large tables so we show them on load by default despite it being less pretty.
-    $(selector).not('.very-large').css({'visibility': 'visible'});
+    $(selector).not(".very-large").css({"visibility": "visible"});
 
     $.tablesorter.addParser({
         "id": "record",
@@ -181,10 +181,31 @@ PD.showAdmin = function (show) {
         $(".admin").show();
     }
 };
-PD.showLocalTimes = function () {
-    $(".time").each(function () {
-        var t = moment($(this).data("time"));
-        $(this).html(t.tz(moment.tz.guess()).format("dddd h:mma z")).parent(".local").show();
+PD.localizeTimes = function () {
+    PD.localizeTimeElements();
+    PD.hideRepetitionInCalendar();
+};
+PD.localizeTimeElements = function () {
+    $("time").each(function () {
+        var t = moment($(this).attr("datetime")),
+            format = $(this).data("format"),
+            tz = moment.tz.guess(),
+            s = t.tz(tz).format(format);
+        $(this).html(s).show();
+    });
+};
+PD.hideRepetitionInCalendar = function () {
+    PD.hideRepetition(".calendar time.month");
+    PD.hideRepetition(".calendar time.day");
+};
+PD.hideRepetition = function (selector) {
+    var v;
+    $(selector).each(function ()  {
+        if ($(this).html() === v) {
+            $(this).html("");
+        } else {
+            v = $(this).html();
+        }
     });
 };
 PD.getUrlParams = function () {

@@ -14,10 +14,13 @@
             <tbody>
                 {{#tournaments}}
                     <tr>
-                        <td class="date"><span class="month">{{month}}</span><big>{{date}}</big> </td>
+                        <td class="date">
+                            <time class="month" datetime="{{time}}" data-format="MMM">{{month}}</time>
+                            <time class="day" datetime="{{time}}" data-format="D">{{date}}</time>
+                        </td>
                         <td>
                             <p>{{name}} {{#sponsor_name}}🏆{{/sponsor_name}}</p>
-                            <p class="local"><span class="time" data-time="{{time}}">{{display_time}}</span></p>
+                            <time datetime="{{time}}" data-format="dddd LT z">{{display_time}}</time>
                             <p><a href="https://gatherling.com/player.php">Sign Up</a></p>
                         </td>
                         {{#league}}

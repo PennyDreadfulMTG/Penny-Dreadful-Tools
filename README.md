@@ -16,6 +16,7 @@ View individual subdirectories for details
 
 **magic** knows everything about all magic cards and how to fetch that information from the internet.
 
-**price-grabber** builds a database of historic prices.
+**price_grabber** builds a database of historic prices.
 
 **shared** contains a bunch of general purpose helper classes.
+

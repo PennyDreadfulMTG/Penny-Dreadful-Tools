@@ -910,14 +910,6 @@ Calendar
     padding-bottom: 1rem;
 }
 
-.calendar .future td {
-    padding: 0.563em 1rem 0.563em 0;
-}
-
-.calendar .future td.league {
-    padding-left: 1rem;
-}
-
 .calendar td p {
     line-height: 1.777;
 }
@@ -933,11 +925,6 @@ Calendar
     vertical-align: top;
 }
 
-.calendar .future .date {
-    font-size: 0.75rem;
-    vertical-align: inherit;
-}
-
 .date .month {
     display: block;
     font-family: heading-caps;
@@ -945,7 +932,7 @@ Calendar
     text-transform: lowercase;
 }
 
-.calendar .date big {
+.calendar .date .day {
     font-size: 1.777rem;
     line-height: 1;
     vertical-align: top;
@@ -1776,16 +1763,6 @@ Notification Badges
 
 .badge a, .badge a:hover {
     color: #502828;
-}
-
-/*
-
-Tournaments
-
-*/
-
-.local {
-    display: none; /* Will be revealed by js when we have a localized time. */
 }
 
 /*

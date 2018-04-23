@@ -20,7 +20,9 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!barbs` Gives Volvary's helpful advice for when to sideboard in Aura Barbs.
 
-`!bug` Report a bug/task for the Penny Dreadful Tools team. For MTGO bugs see `!modobug`.
+`!bug` Report a bug/task for the Penny Dreadful Tools team. For Magic Online bugs see `!modobug`.
+
+`!buglink` Get a link to the modo-bugs page for the named card.
 
 `!explain`. Get a list of things the bot knows how to explain.
 

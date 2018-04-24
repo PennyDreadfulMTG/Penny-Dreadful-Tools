@@ -1,4 +1,4 @@
-/*global PD:true Deckbox:false FooTable:false, moment:false */
+/*global PD:true Deckbox:false FooTable:false, moment:false, $, Tipped */
 window.PD = {};
 PD.init = function () {
     PD.initDismiss();
@@ -109,7 +109,7 @@ PD.initTables = function () {
         is: function (_s, _table, _td, $td) {
             return $td.hasClass("initial");
         },
-        "format": function(s, table, td, $td) {
+        "format": function(s, table, td) {
             return $(td).data("sort");
         },
         "type": "numeric"

@@ -28,6 +28,7 @@ def ts2dt(ts: float) -> datetime.datetime:
 
 # Converts a timezone-aware UTC datetime into a UTC timestamp (seconds).
 def dt2ts(dt: datetime.datetime) -> float:
+    assert dt.tzinfo is not None, 'datetime must be timezone aware.'
     return dt.timestamp()
 
 # Converts the given string in the format `format` to a timezone-aware UTC datetime assuming the original string is in timezone `tz`.

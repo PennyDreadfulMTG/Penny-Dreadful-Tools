@@ -13,6 +13,7 @@ def run() -> None:
 def lint() -> None:
     args = sys.argv[2:] or ['--rcfile=.pylintrc', # Load rcfile first.
                             '--ignored-modules=alembic,MySQLdb,flask_sqlalchemy', # override ignored-modules (codacy hack)
+                            '--load-plugins', 'pylint_quotes',
                             '--reports=n', '-f', 'parseable'
                            ]
     args.extend(LINT_PATHS)

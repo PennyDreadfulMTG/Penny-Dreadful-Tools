@@ -63,7 +63,7 @@ def import_log(lines: List[str], match_id: int):
             game_lines.append(line)
     game.insert_game(game_id, match_id, '\n'.join(game_lines))
 
-def process_tourney_info(tname, local):
+def process_tourney_info(tname, local) -> None:
     tourney = match.get_tournament(tname)
     if tourney is None:
         tourney = match.create_tournament(tname)

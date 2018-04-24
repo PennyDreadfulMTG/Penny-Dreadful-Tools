@@ -3,7 +3,7 @@ function ts2str(ts) {
     var t = moment.unix(ts),
         s = t.format("dddd LT z");
     return s;
-};
+}
 
 function build(ctx, data, label) {
     var myChart = new Chart(ctx, {
@@ -11,7 +11,7 @@ function build(ctx, data, label) {
         data: {
             labels: Object.keys(data).map(ts2str),
             datasets: [{
-                label: label,
+                label,
                 data: Object.values(data),
                 borderWidth: 1
             }]
@@ -26,12 +26,12 @@ function build(ctx, data, label) {
             }
         }
     });
-};
+}
 
 function makeChart(data) {
-    PD.chart_data = data;
+    PD.recent = data;
     var ctx = document.getElementById("myChart").getContext("2d");
-    build(ctx, PD.chart_data.formats.PennyDreadful, "# Penny Dreadful Games");
-};
+    build(ctx, PD.recent.formats.PennyDreadful, "# Penny Dreadful Games");
+}
 
 $.get("/recent.json", makeChart);

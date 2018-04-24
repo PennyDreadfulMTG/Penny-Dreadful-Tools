@@ -1,6 +1,7 @@
+import datetime
 import sys
-from datetime import timedelta
 from enum import Enum
+from typing import Any, Dict, List, Tuple
 
 import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
@@ -9,17 +10,19 @@ from shared import dtutil
 from shared.container import Container
 
 
+TournamentDate = Tuple[str, datetime.datetime]
+
 class TimeDirection(Enum):
     BEFORE = 1
     AFTER = 2
 
-def next_tournament_info():
+def next_tournament_info() -> Dict[str, Any]:
     return tournament_info(TimeDirection.AFTER)
 
-def previous_tournament_info():
+def previous_tournament_info() -> Dict[str, Any]:
     return tournament_info(TimeDirection.BEFORE, units=1)
 
-def tournament_info(time_direction, units=2):
+def tournament_info(time_direction, units=2) -> Dict[str, Any]:
     day, time = get_nearest_tournament(time_direction)
     next_tournament_time_precise = abs(dtutil.dt2ts(time) - dtutil.dt2ts(dtutil.now()))
     near = next_tournament_time_precise < 18000 # Threshold for near: 5 hours in seconds
@@ -31,26 +34,26 @@ def tournament_info(time_direction, units=2):
         'near': near
     }
 
-def get_nearest_tournament(time_direction=TimeDirection.AFTER):
+def get_nearest_tournament(time_direction=TimeDirection.AFTER) -> TournamentDate:
     start = dtutil.now(dtutil.GATHERLING_TZ)
     if time_direction == TimeDirection.AFTER:
         index = 0
     else:
         index = -1
-        start = start - timedelta(days=7)
+        start = start - datetime.timedelta(days=7)
 
     dates = get_all_next_tournament_dates(start, index=index)
     return sorted(dates, key=lambda t: t[1])[index]
 
-def get_all_next_tournament_dates(start, index=0):
+def get_all_next_tournament_dates(start, index=0) -> List[TournamentDate]:
     apac_start = start.astimezone(tz=dtutil.APAC_SERIES_TZ)
-    until = start + timedelta(days=7)
-    pdfnmeu_time = ['Friday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index]]
-    pdsat_time = ['Saturday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index]]
-    apds_time = ['APAC Sunday', rrule.rrule(rrule.WEEKLY, byhour=16, byminute=0, bysecond=0, dtstart=apac_start, until=until, byweekday=rrule.SU)[index]]
-    pds_time = ['Sunday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index]]
-    pdm_time = ['Monday', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index]]
-    pdt_time = ['Thursday', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index]]
+    until = start + datetime.timedelta(days=7)
+    pdfnmeu_time = ('Friday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index])
+    pdsat_time = ('Saturday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index])
+    apds_time = ('APAC Sunday', rrule.rrule(rrule.WEEKLY, byhour=16, byminute=0, bysecond=0, dtstart=apac_start, until=until, byweekday=rrule.SU)[index])
+    pds_time = ('Sunday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index])
+    pdm_time = ('Monday', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index])
+    pdt_time = ('Thursday', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index])
     return [pdfnmeu_time, pdsat_time, apds_time, pds_time, pdm_time, pdt_time]
 
 def prize(d):
@@ -77,7 +80,7 @@ def prizes_by_finish(multiplier=1):
         finish += 1
     return prizes
 
-def all_series_info():
+def all_series_info() -> List[Container]:
     info = get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))
     return [
         Container({

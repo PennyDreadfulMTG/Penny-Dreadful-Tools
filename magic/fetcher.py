@@ -116,7 +116,7 @@ def post_discord_webhook(webhook_id: str, webhook_token: str, message: str, name
         })
     return True
 
-def resources():
+def resources() -> Dict[str, OrderedDict[str, str]]:
     with open('decksite/resources.json') as resources_file:
         return json.load(resources_file, object_pairs_hook=OrderedDict)
 
@@ -150,11 +150,11 @@ def search_scryfall(query) -> Tuple[int, List[str]]:
     result_cardnames = [get_frontside(obj) for obj in result_data]
     return result_json['total_cards'], result_cardnames
 
-def rulings(cardname):
+def rulings(cardname) -> List[Dict[str, str]]:
     card = internal.fetch_json('https://api.scryfall.com/cards/named?exact={name}'.format(name=cardname))
     return internal.fetch_json(card['uri'] + '/rulings')['data']
 
-def sitemap():
+def sitemap() -> List[str]:
     return internal.fetch_json(decksite_url('/api/sitemap/'))
 
 def time(q) -> str:

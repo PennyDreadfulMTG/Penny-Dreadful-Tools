@@ -34,8 +34,8 @@ def bugged_cards():
         return None
     return bugs
 
-def card_aliases():
-    with open(configuration.get('card_alias_file'), newline='', encoding='utf-8') as f:
+def card_aliases() -> List[List[str]]:
+    with open(configuration.get_str('card_alias_file'), newline='', encoding='utf-8') as f:
         return list(csv.reader(f, dialect='excel-tab'))
 
 def card_price(cardname) -> Dict[str, Any]:

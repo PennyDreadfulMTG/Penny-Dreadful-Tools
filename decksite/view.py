@@ -68,7 +68,7 @@ class View(BaseView):
             if code == next_rotation_set_code:
                 break
             seasons.append({
-                'name': 'Season {num}'.format(num=num),
+                'name': rotation.season_name(num),
                 'code': code,
                 'code_lower': code.lower(),
                 'num': num,

@@ -14,21 +14,21 @@ from shared import configuration, dtutil
 from shared.pd_exception import TooFewItemsException
 
 
-def all_cards() -> Any:
+def all_cards() -> Dict[str, Dict[str, Any]]:
     try:
         return json.load(open('AllCards-x.json'))
     except FileNotFoundError:
         s = internal.unzip('https://mtgjson.com/json/AllCards-x.json.zip', 'AllCards-x.json')
         return json.loads(s)
 
-def all_sets():
+def all_sets() -> Dict[str, Dict[str, Any]]:
     try:
         return json.load(open('AllSets.json'))
     except FileNotFoundError:
         s = internal.unzip('https://mtgjson.com/json/AllSets.json.zip', 'AllSets.json')
         return json.loads(s)
 
-def bugged_cards():
+def bugged_cards() -> Optional[List[Dict[str, Any]]]:
     bugs = internal.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
     if bugs is None:
         return None
@@ -82,7 +82,7 @@ def decksite_url(path: str = '/') -> str:
         hostname = '{hostname}:{port}'.format(hostname=hostname, port=port)
     return parse.urlunparse((configuration.get_str('decksite_protocol'), hostname, path, None, None, None))
 
-def legal_cards(force=False, season=None):
+def legal_cards(force=False, season=None) -> List[str]:
     if season is None and os.path.exists('legal_cards.txt'):
         print('HACK: Using local legal_cards override.')
         h = open('legal_cards.txt')

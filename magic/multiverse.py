@@ -1,5 +1,5 @@
 import re
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pkg_resources
 
@@ -31,7 +31,7 @@ def init() -> None:
 def layouts() -> Dict[str, bool]:
     return {'normal': True, 'meld': True, 'split': True, 'phenomenon': False, 'token': False, 'vanguard': False, 'double-faced': True, 'plane': False, 'flip': True, 'scheme': False, 'leveler': True, 'aftermath': True}
 
-def cached_base_query(where='(1 = 1)'):
+def cached_base_query(where='(1 = 1)') -> str:
     return 'SELECT * FROM _cache_card AS c WHERE {where}'.format(where=where)
 
 def base_query(where: str = '(1 = 1)') -> str:
@@ -160,7 +160,7 @@ def update_pd_legality() -> None:
             break
         set_legal_cards(season=s)
 
-def insert_card(c, update_index=True):
+def insert_card(c, update_index=True) -> None:
     name, card_id = try_find_card_id(c)
     if card_id is None:
         sql = 'INSERT INTO card ('
@@ -230,8 +230,8 @@ def insert_set(s) -> None:
         sql += ') VALUES (%s, %s, '
         sql += ', '.join('%s' for name, prop in card.printing_properties().items() if prop['mtgjson'])
         sql += ')'
-        values = [card_id, set_id] + [c.get(database2json(name)) for name, prop in card.printing_properties().items() if prop['mtgjson']]
-        db().execute(sql, values)
+        cards_values = [card_id, set_id] + [c.get(database2json(name)) for name, prop in card.printing_properties().items() if prop['mtgjson']]
+        db().execute(sql, cards_values)
 
 def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
     new_list = ['']
@@ -307,14 +307,14 @@ def get_format_id_from_season_id(season_id):
         format_name = 'Penny Dreadful {f}'.format(f=season_code)
     return get_format_id(format_name)
 
-def card_name(c):
+def card_name(c) -> str:
     if c.get('layout') == 'meld':
         if c.get('name') == c.get('names')[2]:
             return c.get('names')[0]
         return c.get('name')
     return ' // '.join(c.get('names', [c.get('name')]))
 
-def add_hardcoded_cards(cards):
+def add_hardcoded_cards(cards) -> Dict[str, Dict[str, Any]]:
     cards['Gleemox'] = {
         'text': '{T}: Add one mana of any color to your mana pool.\nThis card is banned.',
         'manaCost': '{0}',
@@ -331,14 +331,14 @@ def add_hardcoded_cards(cards):
     fix_mtgjson_melded_cards_bug(cards)
     return cards
 
-def get_all_cards():
+def get_all_cards() -> List[card.Card]:
     rs = db().execute(cached_base_query())
     return [card.Card(r) for r in rs]
 
-def playable_layouts():
+def playable_layouts() -> List[str]:
     return ['normal', 'token', 'double-faced', 'split', 'aftermath']
 
-def try_find_card_id(c):
+def try_find_card_id(c) -> Tuple[str, Optional[int]]:
     card_id = None
     name = card_name(c)
     try:
@@ -347,13 +347,13 @@ def try_find_card_id(c):
     except KeyError:
         return (name, None)
 
-def fix_mtgjson_melded_cards_bug(cards):
+def fix_mtgjson_melded_cards_bug(cards) -> None:
     for names in HARDCODED_MELD_NAMES:
         for name in names:
             if cards.get(name, None):
                 cards[name]['names'] = names
 
-def fix_mtgjson_melded_cards_array(cards):
+def fix_mtgjson_melded_cards_array(cards) -> None:
     for c in cards:
         for group in HARDCODED_MELD_NAMES:
             if c.get('name') in group:

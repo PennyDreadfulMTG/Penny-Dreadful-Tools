@@ -1,7 +1,7 @@
 import datetime
 import glob
 import os
-from typing import List, Optional, cast
+from typing import List, Optional, Union, cast
 
 from mypy_extensions import TypedDict
 
@@ -32,10 +32,10 @@ def init() -> List[SetInfo]:
     set_info = cast(List[SetInfo], info['sets'])
     return [postprocess(release) for release in set_info]
 
-def current_season_code():
+def current_season_code() -> str:
     return last_rotation_ex()['code']
 
-def current_season_num():
+def current_season_num() -> int:
     look_for = current_season_code()
     look_in = SEASONS
     n = 0

@@ -217,8 +217,6 @@ def insert_set(s) -> None:
     sql += ', '.join('%s' for name, prop in card.set_properties().items() if prop['mtgjson'])
     sql += ')'
     values = [date2int(s.get(database2json(name)), name) for name, prop in card.set_properties().items() if prop['mtgjson']]
-    # database.execute commits after each statement, which we want to
-    # avoid while inserting sets
     db().execute(sql, values)
     set_id = db().last_insert_rowid()
     set_cards = s.get('cards', [])

@@ -1,10 +1,4 @@
-/*global PD,Chart */
-function make_chart(data) {
-    PD.chart_data = data;
-    var ctx = document.getElementById("myChart").getContext('2d');
-    build(ctx, PD.chart_data.formats.PennyDreadful, '# Penny Dreadful Games');
-};
-
+/*global PD,Chart, moment */
 function ts2str(ts) {
     var t = moment.unix(ts),
         s = t.format("dddd LT z");
@@ -13,7 +7,7 @@ function ts2str(ts) {
 
 function build(ctx, data, label) {
     var myChart = new Chart(ctx, {
-        type: 'bar',
+        type: "bar",
         data: {
             labels: Object.keys(data).map(ts2str),
             datasets: [{
@@ -34,5 +28,10 @@ function build(ctx, data, label) {
     });
 };
 
+function makeChart(data) {
+    PD.chart_data = data;
+    var ctx = document.getElementById("myChart").getContext("2d");
+    build(ctx, PD.chart_data.formats.PennyDreadful, "# Penny Dreadful Games");
+};
 
-$.get("/recent.json", make_chart);
+$.get("/recent.json", makeChart);

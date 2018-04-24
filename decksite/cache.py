@@ -9,7 +9,7 @@ from werkzeug.contrib.cache import SimpleCache
 
 from . import localization
 
-CACHE = SimpleCache()
+CACHE = SimpleCache() # type: ignore
 
 def cached() -> Callable:
     return cached_impl(cacheable=True, must_revalidate=True, client_only=False, client_timeout=1 * 60 * 60, server_timeout=5 * 60)

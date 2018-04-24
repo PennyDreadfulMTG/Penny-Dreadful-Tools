@@ -18,7 +18,7 @@ def run() -> None:
         from werkzeug.contrib.profiler import ProfilerMiddleware
         from decksite import main
         main.APP.config['PROFILE'] = True
-        main.APP.wsgi_app = ProfilerMiddleware(main.APP.wsgi_app, restrictions=[30])
+        main.APP.wsgi_app = ProfilerMiddleware(main.APP.wsgi_app, restrictions=[30]) # type: ignore
         main.init()
     elif 'price_grabber' in sys.argv:
         from price_grabber import price_grabber

@@ -71,7 +71,7 @@ def postprocess(setinfo: SetInfo) -> SetInfo:
         setinfo['mtgo_code'] = setinfo['code']
     return setinfo
 
-def interesting(playability, c, speculation=True, new=True):
+def interesting(playability, c, speculation=True, new=True) -> Optional[str]:
     if new and len({k: v for (k, v) in c['legalities'].items() if 'Penny Dreadful' in k}) == (0 if speculation else 1):
         return 'new'
     p = playability.get(c.name, 0)

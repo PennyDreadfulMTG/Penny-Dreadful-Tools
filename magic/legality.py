@@ -1,4 +1,4 @@
-from typing import Set
+from typing import Dict, Set
 
 from magic import oracle, rotation
 from magic.database import db
@@ -8,7 +8,7 @@ FORMATS: Set[str] = set()
 def legal_in_format(d, f):
     return f in legal_formats(d, [f])
 
-def legal_formats(d, formats_to_check=None, errors=None):
+def legal_formats(d, formats_to_check=None, errors=None) -> Set[str]:
     init()
     if formats_to_check is None:
         formats_to_check = FORMATS
@@ -26,7 +26,7 @@ def legal_formats(d, formats_to_check=None, errors=None):
     if (sum(e['n'] for e in d.maindeck) + sum(e['n'] for e in d.sideboard)) != 100:
         formats.discard('Commander')
         errors['Commander'] = 'Incorrect deck size.'
-    card_count = {}
+    card_count: Dict[str, int] = {}
     for c in d.all_cards():
         if not c.type.startswith('Basic ') and not 'A deck can have any number of cards named' in c.text:
             card_count[c.name] = card_count.get(c.name, 0) + 1
@@ -79,7 +79,7 @@ def order_score(fmt):
         return 1000000000
     return 10000000000
 
-def init():
+def init() -> None:
     if FORMATS:
         return
     print('Updating Legalities…')

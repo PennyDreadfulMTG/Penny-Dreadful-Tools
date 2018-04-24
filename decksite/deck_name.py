@@ -54,7 +54,7 @@ COLOR_COMBINATIONS = {
     'Five Color': ['W', 'U', 'B', 'R', 'G']
 }
 
-def normalize(d):
+def normalize(d) -> str:
     name = d.original_name
     name = name.lower()
     name = replace_space_alternatives(name)
@@ -80,16 +80,16 @@ def normalize(d):
     name = ucase_trailing_roman_numerals(name)
     return titlecase.titlecase(name)
 
-def file_name(d):
+def file_name(d) -> str:
     safe_name = normalize(d).replace(' ', '-')
     safe_name = re.sub('--+', '-', safe_name, flags=re.IGNORECASE)
     safe_name = re.sub('[^0-9a-z-]', '', safe_name, flags=re.IGNORECASE)
     return safe_name.strip('-')
 
-def replace_space_alternatives(name):
+def replace_space_alternatives(name) -> str:
     return name.replace('_', ' ').replace('.', ' ')
 
-def remove_pd(name):
+def remove_pd(name) -> str:
     name = re.sub(r'(^| )[\[\(]?pd[hmstf]?[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny ?dreadful (friday|fnm|sunday|monday|thursday)[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny ?dreadful[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
@@ -98,37 +98,37 @@ def remove_pd(name):
     name = re.sub(r'(^| )[\[\(]?S[0-9]+[\[\(]?', '', name, flags=re.IGNORECASE).strip()
     return name
 
-def remove_hashtags(name):
+def remove_hashtags(name) -> str:
     name = re.sub(r'#[^ ]*', '', name).strip()
     return name
 
-def remove_brackets(name):
+def remove_brackets(name) -> str:
     return re.sub(r'\[[^\]]*\]', '', name).strip()
 
-def remove_colors(name):
+def remove_colors(name) -> str:
     patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*', 'Mono', 'Mono-?[WURBRG]', 'Mono-?(White|Blue|Black|Red|Green)'] + list(COLOR_COMBINATIONS.keys())
     for pattern in patterns:
         name = re.sub('(^| ){pattern}( |$)'.format(pattern=pattern), ' ', name, flags=re.IGNORECASE).strip()
     return name
 
-def expand_common_abbreviations(name):
+def expand_common_abbreviations(name) -> str:
     for abbreviation, expansion in ABBREVIATIONS.items():
         name = re.sub('(^| ){abbrev}( |$)'.format(abbrev=abbreviation), '\\1{expansion}\\2'.format(expansion=expansion), name, flags=re.IGNORECASE).strip()
     return name
 
-def whitelisted(name):
+def whitelisted(name) -> bool:
     for w in WHITELIST:
         if name.startswith(w):
             return True
     return False
 
-def prepend_colors(s, colors):
+def prepend_colors(s, colors) -> str:
     colors_part = name_from_colors(colors, s)
     if s == 'suicide':
         return '{s} {colors_part}'.format(colors_part=colors_part, s=s)
     return '{colors_part} {s}'.format(colors_part=colors_part, s=s).strip()
 
-def name_from_colors(colors, s=''):
+def name_from_colors(colors, s='') -> str:
     ordered = mana.order(colors)
     for name, symbols in COLOR_COMBINATIONS.items():
         if mana.order(symbols) == ordered:
@@ -139,11 +139,11 @@ def name_from_colors(colors, s=''):
             return name
     return 'colorless'
 
-def ucase_trailing_roman_numerals(name):
+def ucase_trailing_roman_numerals(name) -> str:
     last_word = name.split()[-1]
     if re.search('^[ivx]+$', last_word):
         name = re.sub('{last_word}$'.format(last_word=last_word), last_word.upper(), name)
     return name
 
-def strip_leading_punctuation(name):
+def strip_leading_punctuation(name) -> str:
     return re.sub('^[^a-z0-9]*', '', name, flags=re.IGNORECASE)

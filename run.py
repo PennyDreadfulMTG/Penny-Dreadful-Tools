@@ -51,7 +51,7 @@ def run() -> None:
             sys.exit(1)
     sys.exit(0)
 
-def task(args):
+def task(args) -> None:
     module = args[1]
     if module == 'scraper':
         module = 'scrapers'
@@ -66,20 +66,20 @@ def task(args):
         if name == 'all':
             m = importlib.import_module('decksite.{module}'.format(module=module))
             # pylint: disable=unused-variable
-            for importer, modname, ispkg in pkgutil.iter_modules(m.__path__):
+            for importer, modname, ispkg in pkgutil.iter_modules(m.__path__): # type: ignore
                 s = importlib.import_module('decksite.{module}.{name}'.format(name=modname, module=module))
                 if getattr(s, 'scrape', None) is not None:
-                    s.scrape()
+                    s.scrape() # type: ignore
                 elif getattr(s, 'run', None) is not None:
-                    s.run()
+                    s.run() # type: ignore
         else:
             s = importlib.import_module('decksite.{module}.{name}'.format(name=name, module=module))
             if getattr(s, 'scrape', None) is not None:
-                s.scrape()
+                s.scrape() # type: ignore
             elif getattr(s, 'run', None) is not None:
-                s.run()
+                s.run() # type: ignore
             # Only when called directly, not in 'all'
             elif getattr(s, 'ad_hoc', None) is not None:
-                s.ad_hoc()
+                s.ad_hoc() # type: ignore
 
 run()

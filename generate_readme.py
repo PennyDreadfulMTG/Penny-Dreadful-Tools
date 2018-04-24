@@ -26,7 +26,7 @@ View individual subdirectories for details
 
 """
 
-def generate_readme():
+def generate_readme() -> int:
     changed = 0
     readme = ''
     readme += HEADER

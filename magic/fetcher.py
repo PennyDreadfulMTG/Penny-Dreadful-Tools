@@ -120,7 +120,7 @@ def resources() -> Dict[str, OrderedDict[str, str]]:
     with open('decksite/resources.json') as resources_file:
         return json.load(resources_file, object_pairs_hook=OrderedDict)
 
-def scryfall_cards():
+def scryfall_cards() -> Dict[str, Any]:
     url = 'https://api.scryfall.com/cards'
     return internal.fetch_json(url)
 

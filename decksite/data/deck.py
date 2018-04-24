@@ -280,9 +280,9 @@ def get_deck_id(source_name, identifier) -> Optional[int]:
     return db().value(sql, [source_id, identifier])
 
 def insert_deck_card(deck_id, name, n, in_sideboard) -> None:
-    card = oracle.valid_name(name)
-    sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (%s, %s, %s, %s)'
-    db().execute(sql, [deck_id, card, n, in_sideboard])
+    name = oracle.valid_name(name)
+    sql = 'INSERT INTO deck_card (deck_id, name, n, sideboard) VALUES (%s, %s, %s, %s)'
+    db().execute(sql, [deck_id, name, n, in_sideboard])
 
 def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username) -> int:
     sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
@@ -318,8 +318,8 @@ def get_similar_decks(deck):
 # Dead simple for now, may get more sophisticated. 1 point for each differently named card shared in maindeck. Count irrelevant.
 def similarity_score(a, b):
     score = 0
-    for card in a.maindeck:
-        if card in b.maindeck:
+    for c in a.maindeck:
+        if c in b.maindeck:
             score += 1
     return float(score) / float(max(len(a.maindeck), len(b.maindeck)))
 

@@ -40,7 +40,7 @@ def parse_to_ts(s: str, date_format: str, tz) -> float:
     dt = parse(s, date_format, tz)
     return dt2ts(dt)
 
-def timezone(tzid):
+def timezone(tzid) -> datetime.tzinfo:
     return pytz.timezone(tzid)
 
 def now(tz=None) -> datetime.datetime:

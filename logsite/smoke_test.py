@@ -3,7 +3,7 @@ import unittest
 import pytest
 
 from logsite.main import APP
-from test.smoke import Tester
+from shared_web.smoke import Tester
 
 
 class LogsiteSmokeTest(unittest.TestCase):

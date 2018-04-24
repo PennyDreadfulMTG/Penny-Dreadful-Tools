@@ -13,7 +13,7 @@ __SEARCHPATH: List[str] = []
 
 def render_name(template, *context) -> str:
     try:
-        renderer = CachedRenderer(search_dirs='{0}/templates'.format(flask.current_app.name))
+        renderer = CachedRenderer(search_dirs=['{0}/templates'.format(flask.current_app.name), 'shared_web/templates'])
     except TemplateNotFoundError:
         renderer = CachedRenderer(search_dirs=__SEARCHPATH)
     return renderer.render_name(template, *context)

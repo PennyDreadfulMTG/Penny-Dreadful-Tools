@@ -69,7 +69,7 @@ def recent_json():
         f = m.format
         if val['formats'].get(f.name, None) is None:
             val['formats'][f.name] = {}
-        time = dtutil.dt2ts(m.start_time.replace(microsecond=0, second=0, minute=0))
+        time = dtutil.dt2ts(m.start_time_aware().replace(microsecond=0, second=0, minute=0))
         val['formats'][f.name][time] = val['formats'][f.name].get(time, 0) + 1
 
     return return_json(val)

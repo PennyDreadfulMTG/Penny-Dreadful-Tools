@@ -28,6 +28,9 @@ class View:
     def js_url(self):
         return 'https://pennydreadfulmagic.com/static/js/pd.js'
 
+    def js_extra_url(self):
+        return None
+
     def menu(self):
         menu = [
             {'name': 'Home', 'url': url_for('home')},

@@ -1,5 +1,6 @@
 from .home import Home
 from .about import About
+from .charts import Charts
 from .matches import Matches
 from .match_view import Match
 from .not_found import NotFound

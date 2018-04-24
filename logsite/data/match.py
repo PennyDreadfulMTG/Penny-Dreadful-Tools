@@ -49,10 +49,13 @@ class Match(fsa.Model): # type: ignore
         self.end_time = dtutil.ts2dt(end_time)
         db.Commit()
 
+    def start_time_aware(self):
+        return pytz.utc.localize(self.start_time)
+
     def display_date(self):
         if self.start_time is None:
             return ''
-        return dtutil.display_date(pytz.utc.localize(self.start_time))
+        return dtutil.display_date(self.start_time_aware())
 
 class TournamentInfo(fsa.Model): # type: ignore
     __tablename__ = 'match_tournament'

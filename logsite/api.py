@@ -1,10 +1,7 @@
-import json
-import subprocess
+from flask import request, session
 
-from flask import Response, request, session
-
-from shared import configuration
-from shared.serialization import extra_serializer
+from shared_web.api import (process_github_webhook, return_json,
+                            validate_api_key)
 
 from . import APP, importing
 from .data import match
@@ -32,15 +29,9 @@ def upload():
 
     return return_json({'success': True})
 
-@APP.route('/api/gitpull', methods=['GET', 'POST'])
+@APP.route('/api/gitpull', methods=['POST'])
 def gitpull():
-    subprocess.check_output(['git', 'pull'])
-    try:
-        import uwsgi
-        uwsgi.reload()
-    except ImportError:
-        pass
-    return return_json(APP.config['commit-id'])
+    process_github_webhook()
 
 @APP.route('/export/<match_id>')
 def export(match_id: int):
@@ -60,16 +51,3 @@ def export(match_id: int):
         'Content-type': 'text/plain; charset=utf-8',
         'Content-Disposition': 'attachment; filename={match_id}.txt'.format(match_id=match_id)
         })
-
-def generate_error(code, msg):
-    return {'error': True, 'code': code, 'msg': msg}
-
-def return_json(content, status=200):
-    content = json.dumps(content, default=extra_serializer)
-    r = Response(response=content, status=status, mimetype='application/json')
-    return r
-
-def validate_api_key():
-    if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):
-        return None
-    return return_json(generate_error('UNAUTHORIZED', 'Invalid API key'), status=403)

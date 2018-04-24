@@ -1,6 +1,7 @@
 from flask import request, session
 
-from shared_web.api import return_json, process_github_webhook, validate_api_key
+from shared_web.api import (process_github_webhook, return_json,
+                            validate_api_key)
 
 from . import APP, importing
 from .data import match

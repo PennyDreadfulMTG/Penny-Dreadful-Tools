@@ -1,7 +1,7 @@
 import json
 import subprocess
 
-from flask import request, current_app, Response
+from flask import Response, current_app, request
 
 from shared import configuration
 from shared.serialization import extra_serializer

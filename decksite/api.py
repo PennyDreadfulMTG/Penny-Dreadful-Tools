@@ -7,7 +7,9 @@ from decksite.data import deck, guarantee, match
 from decksite.data import person as ps
 from magic import oracle, rotation
 from shared import dtutil
-from shared_web.api import return_json, process_github_webhook, generate_error, validate_api_key
+from shared_web.api import (generate_error, process_github_webhook,
+                            return_json, validate_api_key)
+
 
 @APP.route('/api/decks/<deck_id>/')
 def deck_api(deck_id):

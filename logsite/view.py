@@ -1,21 +1,12 @@
 from flask import url_for
 
-from shared_web import template
+from shared_web.base_view import BaseView
 
 from . import APP
 
 
 # pylint: disable=no-self-use, too-many-public-methods
-class View:
-    def template(self):
-        return self.__class__.__name__.lower()
-
-    def content(self):
-        return template.render(self)
-
-    def page(self):
-        return template.render_name('page', self)
-
+class View(BaseView):
     def home_url(self):
         return url_for('home')
 

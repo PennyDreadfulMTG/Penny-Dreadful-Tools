@@ -3,7 +3,6 @@ import unittest
 import pytest
 
 from logsite.main import APP
-from shared_web import template
 
 
 class SmokeTest(unittest.TestCase):
@@ -34,4 +33,6 @@ class SmokeTest(unittest.TestCase):
         result = self.app.get('/people/')
         self.assertEqual(result.status_code, 200)
         result = self.app.get('/recent.json')
+        self.assertEqual(result.status_code, 200)
+        result = self.app.get('/stats.json')
         self.assertEqual(result.status_code, 200)

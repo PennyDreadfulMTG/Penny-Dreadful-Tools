@@ -1,7 +1,7 @@
 import datetime
 import glob
 import os
-from typing import List, Optional, Union, cast
+from typing import List, Optional, cast
 
 from mypy_extensions import TypedDict
 

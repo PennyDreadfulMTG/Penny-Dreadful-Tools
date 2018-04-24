@@ -1,9 +1,8 @@
 import itertools
 import re
-from typing import Dict, Iterable, List, Optional, Set
+from typing import Dict, Iterable, List, Set
 
 from shared.pd_exception import ParseException
-
 
 START = ''
 DIGIT = '[0-9]'

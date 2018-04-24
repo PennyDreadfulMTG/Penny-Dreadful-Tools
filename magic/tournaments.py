@@ -9,7 +9,7 @@ from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
 from shared import dtutil
 from shared.container import Container
 
-
+# pylint: disable=invalid-name
 TournamentDate = Tuple[str, datetime.datetime]
 
 class TimeDirection(Enum):

@@ -155,12 +155,12 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None) -> List[D
 def set_colors(d) -> None:
     deck_colors: Set[str] = set()
     deck_colored_symbols: List[str] = []
-    for card in [c['card'] for c in d.maindeck + d.sideboard]:
-        for cost in card.get('mana_cost') or ():
-            if card.layout == 'split' or card.layout == 'aftermath':
+    for card in [entry['card'] for entry in d.maindeck + d.sideboard]:
+        for cost in c.get('mana_cost') or ():
+            if c.layout == 'split' or c.layout == 'aftermath':
                 continue # They might only be using one half so ignore it.
             card_symbols = mana.parse(cost)
-            card_colors = mana.colors(card_symbols)
+            card_colors = mana.colors(c_symbols)
             deck_colors.update(card_colors['required'])
             card_colored_symbols = mana.colored_symbols(card_symbols)
             deck_colored_symbols += card_colored_symbols['required']

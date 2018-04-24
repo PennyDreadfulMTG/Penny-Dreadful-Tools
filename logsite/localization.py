@@ -1,10 +1,10 @@
 from flask import request
 
-from . import babel
+from . import BABEL
 
-LANGUAGES = [str(locale) for locale in babel.list_translations()]
+LANGUAGES = [str(locale) for locale in BABEL.list_translations()]
 
-@babel.localeselector
+@BABEL.localeselector
 def get_locale():
     result = request.accept_languages.best_match(LANGUAGES)
     return result

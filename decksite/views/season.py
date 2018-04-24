@@ -1,4 +1,5 @@
 from decksite.view import View
+from magic import rotation
 
 
 # pylint: disable=no-self-use
@@ -10,7 +11,7 @@ class Season(View):
         self.league_only = self.show_omw = self.hide_source = league_only
 
     def page_title(self):
-        return 'Season {n}'.format(n=self.season.number)
+        return rotation.season_name(self.season.number)
 
     def __getattr__(self, attr):
         return getattr(self.season, attr)

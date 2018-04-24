@@ -1,6 +1,7 @@
 import hashlib
 import json
 import time
+from typing import List
 
 from decksite import deck_name
 from decksite.data import guarantee, query
@@ -68,7 +69,7 @@ def load_season(season_id=None, league_only=False):
     return season
 
 # pylint: disable=attribute-defined-outside-init
-def load_decks(where='1 = 1', order_by=None, limit='', season_id=None):
+def load_decks(where='1 = 1', order_by=None, limit='', season_id=None) -> List[Deck]:
     if order_by is None:
         order_by = 'd.created_date DESC, d.finish IS NULL, d.finish'
     sql = """
@@ -322,7 +323,7 @@ def similarity_score(a, b):
             score += 1
     return float(score) / float(max(len(a.maindeck), len(b.maindeck)))
 
-def load_decks_by_cards(names):
+def load_decks_by_cards(names) -> List[Deck]:
     sql = """
         d.id IN (
             SELECT deck_id
@@ -414,16 +415,16 @@ def nwdl_select(prefix='', additional_clause='TRUE'):
         IFNULL(ROUND((SUM(CASE WHEN {additional_clause} THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN {additional_clause} THEN wins + losses ELSE 0 END), 0)) * 100, 1), '') AS `{prefix}win_percent`
     """.format(prefix=prefix, additional_clause=additional_clause)
 
-def nwdl_all_select():
+def nwdl_all_select() -> str:
     return nwdl_select('all_')
 
-def nwdl_season_select():
+def nwdl_season_select() -> str:
     return nwdl_select('season_', 'dsum.created_date >= {season_start}'.format(season_start=int(rotation.last_rotation().timestamp())))
 
-def nwdl_week_select():
+def nwdl_week_select() -> str:
     return nwdl_select('week_', 'dsum.created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK)')
 
-def nwdl_join():
+def nwdl_join() -> str:
     return """
         LEFT JOIN
             (

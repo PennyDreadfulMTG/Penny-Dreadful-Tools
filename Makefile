@@ -35,7 +35,7 @@ lint:
 	@echo "******************************** Lint *****************************************"
 	@echo
 	@python3 dev.py pylint
-	@mypy --ignore-missing-imports .
+	@mypy --disallow-untyped-calls --ignore-missing-imports .
 	@isort --check-only --skip=''
 
 readme:

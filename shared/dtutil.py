@@ -1,7 +1,7 @@
 import datetime
 import re
 from collections import OrderedDict
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import inflect
 import pytz
@@ -23,20 +23,20 @@ CARDHOARDER_TZ = UTC_TZ
 FORM_FORMAT = '%Y-%m-%d %H:%M'
 
 # Converts a UTC timestamp (seconds) into a timezone-aware UTC datetime.
-def ts2dt(ts: float) -> datetime.datetime:
+def ts2dt(ts: int) -> datetime.datetime:
     return pytz.timezone('UTC').localize(datetime.datetime.utcfromtimestamp(ts))
 
 # Converts a timezone-aware UTC datetime into a UTC timestamp (seconds).
-def dt2ts(dt: datetime.datetime) -> float:
+def dt2ts(dt: datetime.datetime) -> int:
     assert dt.tzinfo is not None, 'datetime must be timezone aware.'
-    return dt.timestamp()
+    return int(dt.timestamp())
 
 # Converts the given string in the format `format` to a timezone-aware UTC datetime assuming the original string is in timezone `tz`.
-def parse(s: str, date_format: str, tz) -> datetime.datetime:
+def parse(s: str, date_format: str, tz: Any) -> datetime.datetime:
     dt = datetime.datetime.strptime(s, date_format)
     return tz.localize(dt).astimezone(pytz.timezone('UTC'))
 
-def parse_to_ts(s: str, date_format: str, tz) -> float:
+def parse_to_ts(s: str, date_format: str, tz) -> int:
     dt = parse(s, date_format, tz)
     return dt2ts(dt)
 

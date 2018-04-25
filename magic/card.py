@@ -296,7 +296,7 @@ def determine_bugs(s: Optional[str]) -> Optional[List[Dict[str, object]]]:
     for b in bugs:
         description, classification, last_confirmed, url, from_bug_blog = b.split('|')
         bb = from_bug_blog == '1'
-        bug = {'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(float(last_confirmed)), 'url': url, 'from_bug_blog': bb}
+        bug = {'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(int(last_confirmed)), 'url': url, 'from_bug_blog': bb}
         v.append(bug)
     if v:
         return v

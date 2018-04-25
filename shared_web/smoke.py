@@ -6,6 +6,7 @@ class SmokeTester:
         self.test_client = app.test_client()
         # Propagate the exceptions to the test client
         self.test_client.testing = True
+        self.base_tests()
 
     def base_tests(self) -> None:
         self.response_test('/', 200)

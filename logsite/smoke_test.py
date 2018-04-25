@@ -11,10 +11,6 @@ class LogsiteSmokeTest(unittest.TestCase):
         self.tester: SmokeTester = SmokeTester(APP)
 
     @pytest.mark.functional
-    def test_base(self) -> None:
-        self.tester.base_tests()
-
-    @pytest.mark.functional
     def test_home(self) -> None:
         self.tester.data_test('/', '<h1><a href="/">PDBot Stats</a></h1>')
 

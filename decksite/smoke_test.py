@@ -11,10 +11,6 @@ class DecksiteSmokeTest(unittest.TestCase):
         self.tester: SmokeTester = SmokeTester(APP)
 
     @pytest.mark.functional
-    def test_base(self) -> None:
-        self.tester.base_tests()
-
-    @pytest.mark.functional
     def test_home(self) -> None:
         self.tester.data_test('/', '<h1><string>Latest Decks</string></h1>')
 

@@ -1,6 +1,6 @@
-from typing import Any, Dict, List, Optional
 import re
 import urllib
+from typing import Any, Dict, List, Optional
 
 from bs4 import BeautifulSoup
 

@@ -57,7 +57,7 @@ fiximports:
 	@echo
 	@echo "******************************** Import Ordering ******************************"
 	@echo
-	@echo yes | isort
+	@yes | isort
 	@echo
 
 readme:

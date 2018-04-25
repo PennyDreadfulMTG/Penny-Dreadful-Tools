@@ -1,5 +1,5 @@
 from distutils.dist import Distribution
-from typing import Any, Dict, List, Generator
+from typing import Any, Dict, Generator, List
 
 import pystache
 from babel.messages import frontend

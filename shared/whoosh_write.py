@@ -1,5 +1,5 @@
-from typing import List
 import os
+from typing import List
 
 from whoosh.fields import NUMERIC, STORED, TEXT, Schema
 from whoosh.index import create_in, open_dir

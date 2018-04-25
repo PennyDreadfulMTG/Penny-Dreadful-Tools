@@ -1,10 +1,10 @@
-from typing import Any, Dict, List, Tuple
 import datetime
 import re
 import urllib.parse
+from typing import Any, Dict, List, Tuple
 
-from bs4 import BeautifulSoup
 import bs4
+from bs4 import BeautifulSoup
 
 from decksite import logger
 from decksite.data import competition, deck, match

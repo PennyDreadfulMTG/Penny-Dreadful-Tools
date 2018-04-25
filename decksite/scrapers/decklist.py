@@ -1,13 +1,12 @@
-from typing import Any, Dict, Tuple
 import re
 import xml
+from typing import Any, Dict, Tuple
 
 import untangle
 
 from decksite.data.deck import Deck
 from magic import oracle
 from shared.pd_exception import InvalidDataException
-
 
 Section = Dict[str, int] # pylint: disable=invalid-name
 Decklist = Dict[str, Section] # pylint: disable=invalid-name

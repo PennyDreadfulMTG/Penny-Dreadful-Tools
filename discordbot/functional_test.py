@@ -1,6 +1,6 @@
-from typing import Any
 import asyncio
 import types
+from typing import Any
 
 import discord
 import pytest

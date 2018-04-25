@@ -10,9 +10,9 @@ def test_ts2dt() -> None:
     epoch_seconds = 0
     dt = dtutil.ts2dt(epoch_seconds)
     assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '1970-01-01 00:00:00 +0000'
-    now_seconds = round(time.time())
-    dt = dtutil.ts2dt(now_seconds)
-    assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '{:%Y-%m-%d %H:%M:%S %z}'.format(datetime.datetime.now(datetime.timezone.utc))
+    now = datetime.datetime.now(datetime.timezone.utc)
+    dt = dtutil.ts2dt(now.timestamp())
+    assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '{:%Y-%m-%d %H:%M:%S %z}'.format(now)
 
 def test_dt2ts() -> None:
     dt = timezone('UTC').localize(datetime.datetime.utcfromtimestamp(0))

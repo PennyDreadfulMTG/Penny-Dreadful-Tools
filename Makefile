@@ -1,4 +1,4 @@
-.PHONY: default push test unit lint shortlint readme coverage branch popclean
+.PHONY: default push test check unit functional lint types imports fiximports readme coverage branch popclean
 
 # This is the first thing in the makefile so it is the default when just "make" is run
 # and something else doesn't get run by accident.
@@ -10,7 +10,10 @@ push:
 	git pull origin master && make test && git push --set-upstream origin `git rev-parse --abbrev-ref HEAD`
 
 # Run all unit and syntax tests.
-test: lint unit
+test: check unit
+
+# Run all typechecking and linting.
+check: lint types imports
 
 # Run unit tests.
 TEST=.
@@ -35,8 +38,27 @@ lint:
 	@echo "******************************** Lint *****************************************"
 	@echo
 	@python3 dev.py pylint
+	@echo
+
+types:
+	@echo
+	@echo "******************************** Typechecking *********************************"
 	@mypy --disallow-untyped-calls --ignore-missing-imports .
-	@isort --check-only --skip=''
+	@echo
+
+imports:
+	@echo
+	@echo "******************************** Import Ordering ******************************"
+	@echo
+	@isort --check-only --dont-skip=__init__.py
+	@echo
+
+fiximports:
+	@echo
+	@echo "******************************** Import Ordering ******************************"
+	@echo
+	@echo yes | isort
+	@echo
 
 readme:
 	@echo
@@ -52,6 +74,7 @@ coverage:
 	@coverage run run.py tests
 	@coverage xml
 	@coverage report
+	@echo
 
 # Make a branch based off of current (remote) master with all your local changes preserved (but not added).
 branch:

@@ -1,6 +1,5 @@
 from typing import Callable, TypeVar
 
-
 T = TypeVar('T')
 # pylint: disable=invalid-name
 PropertyFunction = Callable[[], T]

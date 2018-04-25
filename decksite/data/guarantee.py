@@ -2,7 +2,6 @@ from typing import Any, List, Optional, TypeVar
 
 from shared.pd_exception import DoesNotExistException, TooManyItemsException
 
-
 T = TypeVar('T')
 
 def exactly_one(l: List[T]) -> T:

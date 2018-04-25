@@ -83,7 +83,7 @@ def all_series_info():
             'name': 'Penny Dreadful Saturdays',
             'hosts': ['back_alley_g', 'bigm'],
             'display_time': '1:30pm Eastern',
-            'time': info[1][1],
+            'time': info[0][1],
             'chat_room': '#PDS',
             'sponsor_name': 'Cardhoarder'
         }),
@@ -91,7 +91,7 @@ def all_series_info():
             'name': 'APAC Penny Dreadful Sundays',
             'hosts': ['stash86', 'silasary'],
             'display_time': '4pm Japan Standard Time',
-            'time': info[2][1],
+            'time': info[1][1],
             'chat_room': '#PDS',
             'sponsor_name': None
         }),
@@ -99,7 +99,7 @@ def all_series_info():
             'name': 'Penny Dreadful Sundays',
             'hosts': ['bakert99', 'littlefield', 'mrsad'],
             'display_time': '1:30pm Eastern',
-            'time': info[3][1],
+            'time': info[2][1],
             'chat_room': '#PDS',
             'sponsor_name': 'Cardhoarder'
         }),
@@ -107,7 +107,7 @@ def all_series_info():
             'name': 'Penny Dreadful Mondays',
             'hosts': ['stash86', 'silasary'],
             'display_time': '7pm Eastern',
-            'time': info[4][1],
+            'time': info[3][1],
             'chat_room': '#PDM',
             'sponsor_name': 'Cardhoarder'
         }),
@@ -115,7 +115,7 @@ def all_series_info():
             'name': 'Penny Dreadful Thursdays',
             'hosts': ['silasary', 'stash86'],
             'display_time': '7pm Eastern',
-            'time': info[5][1],
+            'time': info[4][1],
             'chat_room': '#PDT',
             'sponsor_name': 'Cardhoarder'
         })

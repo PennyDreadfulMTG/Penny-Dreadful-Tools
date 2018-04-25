@@ -11,6 +11,7 @@ from .community_guidelines import CommunityGuidelines
 from .competition import Competition
 from .competitions import Competitions
 from .deck import Deck
+from .deck_check import DeckCheck
 from .decks import Decks
 from .edit_archetypes import EditArchetypes
 from .edit_matches import EditMatches

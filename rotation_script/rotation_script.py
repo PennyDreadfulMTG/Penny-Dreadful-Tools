@@ -17,6 +17,10 @@ WHITELIST: Set[str] = set()
 TOTAL_RUNS = 168
 
 def run() -> None:
+    files = rotation.files()
+    n = len(files)
+    if n >= TOTAL_RUNS:
+        return
     all_prices = {}
     for url in configuration.get_list('cardhoarder_urls'):
         s = fetcher_internal.fetch(url)

@@ -62,6 +62,9 @@ class SignUpForm(Form):
             self.competition_id = db().value(active_competition_id_query())
             self.identifier = identifier(self)
             self.url = url_for('competitions', competition_id=self.competition_id)
+        self.parse_and_validate_decklist()
+
+    def parse_and_validate_decklist(self):
         self.decklist = self.decklist.strip()
         if len(self.decklist) == 0:
             self.errors['decklist'] = 'Decklist is required'
@@ -101,6 +104,12 @@ class SignUpForm(Form):
                 self.errors['decklist'] = '{name} is currently not allowed because of a game-breaking Magic Online bug'.format(name=next(iter(banned_for_bugs)))
             if len(banned_for_bugs) > 1:
                 self.errors['decklist'] = '{names} are currently not allowed because of game-breaking Magic Online bugs'.format(names=', '.join([name for name in banned_for_bugs]))
+
+class DeckCheckForm(SignUpForm):
+    def do_validation(self):
+        self.parse_and_validate_decklist()
+        if len(self.errors) == 0:
+            self.validation_ok_message = 'The deck is legal'
 
 class ReportForm(Form):
     def __init__(self, form, deck_id=None, person_id=None):

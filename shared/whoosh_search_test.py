@@ -5,8 +5,9 @@ from shared.whoosh_search import WhooshSearcher
 
 # pylint: disable=unused-variable
 class WhooshSearchTest(unittest.TestCase):
-    def setUp(self):
-        self.searcher = WhooshSearcher()
+    @classmethod
+    def setUpClass(cls):
+        cls.searcher = WhooshSearcher()
 
     def best_match_is(self, query, expected_best_match, *additional_matches) -> None:
         result = self.searcher.search(query)

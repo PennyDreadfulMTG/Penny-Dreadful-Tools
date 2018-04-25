@@ -19,10 +19,10 @@ from decksite.data import competition as comp
 from decksite.data import deck as ds
 from decksite.data import news as ns
 from decksite.data import person as ps
-from decksite.league import ReportForm, RetireForm, SignUpForm
+from decksite.league import DeckCheckForm, ReportForm, RetireForm, SignUpForm
 from decksite.views import (About, AboutPdm, AddForm, Admin, Archetype,
                             Archetypes, Bugs, Card, Cards, CommunityGuidelines,
-                            Competition, Competitions, Deck, Decks,
+                            Competition, Competitions, Deck, DeckCheck, Decks,
                             EditArchetypes, EditMatches, EditNews, Faqs, Home,
                             InternalServerError, LeagueInfo, LinkAccounts,
                             News, NotFound, People, Person, PlayerNotes,
@@ -285,6 +285,23 @@ def add_signup():
         response.set_cookie('deck_id', str(d.id))
         return response
     return signup(form)
+
+@APP.route('/deckcheck/')
+@auth.load_person
+def deck_check(form=None):
+    if form is None:
+        form = DeckCheckForm(request.form, auth.person_id(), auth.mtgo_username())
+    view = DeckCheck(form, auth.person_id())
+    return view.page()
+
+@APP.route('/deckcheck/', methods=['POST'])
+@cached()
+def do_deck_check():
+    form = DeckCheckForm(request.form)
+    form.validate()
+    return deck_check(form)
+
+
 
 @APP.route('/report/')
 @auth.load_person

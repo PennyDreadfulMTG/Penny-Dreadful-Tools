@@ -31,7 +31,7 @@ def upload():
 
 @APP.route('/api/gitpull', methods=['POST'])
 def gitpull():
-    process_github_webhook()
+    return process_github_webhook()
 
 @APP.route('/export/<match_id>')
 def export(match_id: int):

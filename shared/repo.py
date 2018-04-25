@@ -47,7 +47,7 @@ def create_issue(content: str, author: str, location: Optional[str] = 'Discord',
     issue = git_repo.create_issue(title=title, body=body)
     return issue
 
-def safe_data(data) -> Dict[str, str]:
+def safe_data(data: Dict[str, str]) -> Dict[str, str]:
     safe = {}
     for k, v in data.items():
         if 'oauth' not in k.lower() and 'api_token' not in k.lower():

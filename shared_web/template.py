@@ -1,5 +1,5 @@
 import re
-from typing import (TYPE_CHECKING, Callable, Dict, List, Match, Optional,
+from typing import (TYPE_CHECKING, Any, Callable, Dict, List, Match, Optional,
                     Tuple, Union)
 
 import flask
@@ -103,10 +103,10 @@ class _GettextNode(object):
 
 #pylint: disable=no-self-use
 class NoParaTagProcessor(Treeprocessor):
-    def run(self, root: List[object]) -> None:
+    def run(self, root: List[Any]) -> None:
         root[0].tag = 'string'
 
 #pylint: disable=no-self-use, invalid-name
 class NoParaTagsExtension(Extension):
-    def extendMarkdown(self, md, _):
+    def extendMarkdown(self, md, _) -> None:
         md.treeprocessors.add('noparatag', NoParaTagProcessor(), '_end')

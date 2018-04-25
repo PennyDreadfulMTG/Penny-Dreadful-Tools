@@ -25,7 +25,7 @@ def info_cached(card=None, name=None):
 def cache() -> None:
     db = database.get_database(configuration.get_str('prices_database'))
 
-    now = int(time.time())
+    now = round(time.time())
     week = now - 60 * 60 * 24 * 7
     month = now - 60 * 60 * 24 * 7 * 30
     last_rotation = int(rotation.last_rotation().timestamp())

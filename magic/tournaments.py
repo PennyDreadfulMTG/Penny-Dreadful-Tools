@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Tuple
 import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
 
+from decksite.data import Deck
 from shared import dtutil
 from shared.container import Container
 
@@ -22,7 +23,7 @@ def next_tournament_info() -> Dict[str, Any]:
 def previous_tournament_info() -> Dict[str, Any]:
     return tournament_info(TimeDirection.BEFORE, units=1)
 
-def tournament_info(time_direction, units=2) -> Dict[str, Any]:
+def tournament_info(time_direction: TimeDirection, units: int = 2) -> Dict[str, Any]:
     day, time = get_nearest_tournament(time_direction)
     next_tournament_time_precise = abs(dtutil.dt2ts(time) - dtutil.dt2ts(dtutil.now()))
     near = next_tournament_time_precise < 18000 # Threshold for near: 5 hours in seconds
@@ -34,7 +35,7 @@ def tournament_info(time_direction, units=2) -> Dict[str, Any]:
         'near': near
     }
 
-def get_nearest_tournament(time_direction=TimeDirection.AFTER) -> TournamentDate:
+def get_nearest_tournament(time_direction: TimeDirection = TimeDirection.AFTER) -> TournamentDate:
     start = dtutil.now(dtutil.GATHERLING_TZ)
     if time_direction == TimeDirection.AFTER:
         index = 0
@@ -45,7 +46,7 @@ def get_nearest_tournament(time_direction=TimeDirection.AFTER) -> TournamentDate
     dates = get_all_next_tournament_dates(start, index=index)
     return sorted(dates, key=lambda t: t[1])[index]
 
-def get_all_next_tournament_dates(start, index=0) -> List[TournamentDate]:
+def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> List[TournamentDate]:
     apac_start = start.astimezone(tz=dtutil.APAC_SERIES_TZ)
     until = start + datetime.timedelta(days=7)
     pdfnmeu_time = ('Friday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index])
@@ -56,10 +57,10 @@ def get_all_next_tournament_dates(start, index=0) -> List[TournamentDate]:
     pdt_time = ('Thursday', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index])
     return [pdfnmeu_time, pdsat_time, apds_time, pds_time, pdm_time, pdt_time]
 
-def prize(d):
+def prize(d: Deck):
     return prize_by_finish(d.get('finish') or sys.maxsize)
 
-def prize_by_finish(f):
+def prize_by_finish(f: int):
     if f == 1:
         return 4
     elif f == 2:
@@ -70,7 +71,7 @@ def prize_by_finish(f):
         return 1
     return 0
 
-def prizes_by_finish(multiplier=1):
+def prizes_by_finish(multiplier: int = 1):
     prizes, finish, p = [], 1, inflect.engine()
     while True:
         pz = prize_by_finish(finish)

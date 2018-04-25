@@ -164,7 +164,7 @@ def signup(form):
 
 def identifier(params):
     # Current timestamp is part of identifier here because we don't need to defend against dupes in league – it's fine to enter the same league with the same deck, later.
-    return json.dumps([params['mtgo_username'], params['competition_id'], str(int(time.time()))])
+    return json.dumps([params['mtgo_username'], params['competition_id'], str(round(time.time()))])
 
 def deck_options(decks, v):
     if (v is None or v == '') and len(decks) == 1:

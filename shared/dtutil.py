@@ -48,10 +48,10 @@ def now(tz: Any = None) -> datetime.datetime:
         tz = datetime.timezone.utc
     return datetime.datetime.now(tz)
 
-def day_of_week(dt: datetime.datetime, tz: Any):
+def day_of_week(dt: datetime.datetime, tz: Any) -> str:
     return dt.astimezone(tz).strftime('%A')
 
-def form_date(dt: datetime.datetime, tz: Any):
+def form_date(dt: datetime.datetime, tz: Any) -> str:
     return dt.astimezone(tz).strftime(FORM_FORMAT)
 
 def display_date(dt: datetime.datetime, granularity: int = 1) -> str:
@@ -72,7 +72,7 @@ def display_date(dt: datetime.datetime, granularity: int = 1) -> str:
 def replace_day_with_ordinal(s: str) -> str:
     return re.sub(r'_(.*)_', day2ordinal, s)
 
-def day2ordinal(m: Match):
+def day2ordinal(m: Match) -> str:
     p = inflect.engine()
     return p.ordinal(round(m.group(1)))
 

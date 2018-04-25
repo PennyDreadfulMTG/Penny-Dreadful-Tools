@@ -1242,7 +1242,7 @@ button {
     -webkit-appearance: button;
 }
 
-button, div.error, .uploader-label, div.logout, .instructions {
+button, div.error, .uploader-label, div.logout, .instructions, div.validation_ok {
     margin-left: 12rem;
 }
 
@@ -1252,6 +1252,10 @@ div.logout {
 
 div.error {
     color: red;
+}
+
+div.validation_ok {
+    margin-top: 1rem;
 }
 
 input.error, select.error, textarea.error {
@@ -1303,7 +1307,7 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
         margin-top: 0.5625rem;
         max-width: 80%;
     }
-    button, div.error, .uploader-label, .instructions {
+    button, div.error, .uploader-label, .instructions, div.validation_ok {
         margin-left: 0;
     }
 }

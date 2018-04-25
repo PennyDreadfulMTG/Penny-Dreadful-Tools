@@ -1,5 +1,5 @@
 import re
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 
 import flask
 import pystache
@@ -11,9 +11,9 @@ from markdown.treeprocessors import Treeprocessor
 from pystache.common import TemplateNotFoundError
 from pystache.context import ContextStack
 
-# For typing only.
-# pylint: disable=cyclic-import
-from shared_web.base_view import BaseView
+# pylint: disable=cyclic-import,unused-import
+if TYPE_CHECKING:
+    from shared_web.base_view import BaseView
 
 __SEARCHPATH: List[str] = []
 
@@ -27,7 +27,7 @@ def render_name(template: str, *context: ContextStack) -> str:
         renderer = CachedRenderer(search_dirs=__SEARCHPATH)
     return renderer.render_name(template, *context)
 
-def render(view: BaseView) -> str:
+def render(view: 'BaseView') -> str:
     view.prepare()
     return render_name(view.template(), view)
 

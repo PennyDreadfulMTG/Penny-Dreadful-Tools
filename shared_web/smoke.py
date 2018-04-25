@@ -1,8 +1,12 @@
-class Tester:
-    def __init__(self, app) -> None:
+from flask import Flask
+
+
+class SmokeTester:
+    def __init__(self, app: Flask) -> None:
         self.test_client = app.test_client()
         # Propagate the exceptions to the test client
         self.test_client.testing = True
+        self.base_tests()
 
     def base_tests(self) -> None:
         self.response_test('/', 200)

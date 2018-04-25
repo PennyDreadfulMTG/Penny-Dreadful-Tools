@@ -2,7 +2,7 @@ from magic import multiverse, rotation
 from magic.database import db
 
 
-def test_base_query_legalities():
+def test_base_query_legalities() -> None:
     sql = multiverse.base_query("f.name = 'Mother of Runes'")
     rs = db().execute(sql)
     assert len(rs) == 1
@@ -10,7 +10,7 @@ def test_base_query_legalities():
     assert 'Penny Dreadful EMN:Legal' in legalities
     assert 'Penny Dreadful AKH:Legal' not in legalities
 
-def test_seasons_enum_uptodate():
+def test_seasons_enum_uptodate() -> None:
     """If this is failing, go append new set codes to rotation.SEASONS.
        This needs to be done every few months.
 

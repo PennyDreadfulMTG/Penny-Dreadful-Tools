@@ -1,6 +1,9 @@
+import datetime
 import re
 import urllib.parse
+from typing import Any, Dict, List, Tuple
 
+import bs4
 from bs4 import BeautifulSoup
 
 from decksite import logger
@@ -16,7 +19,7 @@ SECOND = '2nd'
 TOP_4 = 't4'
 TOP_8 = 't8'
 
-def scrape(limit=50):
+def scrape(limit: int = 50) -> None:
     soup = BeautifulSoup(fetcher.internal.fetch('https://gatherling.com/eventreport.php?format=Penny+Dreadful&series=&season=&mode=Filter+Events', character_encoding='utf-8'), 'html.parser')
     tournaments = [(gatherling_url(link['href']), link.string) for link in soup.find_all('a') if link['href'].find('eventreport.php?') >= 0]
     n = 0
@@ -26,7 +29,7 @@ def scrape(limit=50):
         if n > limit:
             return
 
-def tournament(url, name):
+def tournament(url: str, name: str) -> int:
     s = fetcher.internal.fetch(url, character_encoding='utf-8')
 
     # Tournament details
@@ -49,7 +52,7 @@ def tournament(url, name):
     return add_decks(dt, competition_id, final, s)
 
 # Hack in the known start time and series name because it's not in the page, depending on the series.
-def get_dt_and_series(name, day_s):
+def get_dt_and_series(name: str, day_s: str) -> Tuple[datetime.datetime, str]:
     if 'APAC' in name:
         competition_series = 'APAC Penny Dreadful Sundays'
         start_time = '16:00'
@@ -67,17 +70,18 @@ def get_dt_and_series(name, day_s):
         competition_series = 'Penny Dreadful {day}s'.format(day=dtutil.day_of_week(dt, dtutil.GATHERLING_TZ))
     return (dt, competition_series)
 
-def get_dt(day_s, start_time, timezone):
+def get_dt(day_s: str, start_time: str, timezone: Any) -> datetime.datetime:
     date_s = day_s + ' {start_time}'.format(start_time=start_time)
     return dtutil.parse(date_s, '%d %B %Y %H:%M', timezone)
 
-def find_top_n(soup: BeautifulSoup):
+def find_top_n(soup: BeautifulSoup) -> competition.Top:
     return competition.Top(int(soup.find('div', {'id': 'EventReport'}).find_all('table')[1].find_all('td')[1].string.strip().replace('TOP ', '')))
 
-def add_decks(dt, competition_id, final, s):
+def add_decks(dt: datetime.datetime, competition_id: int, final: Dict[str, int], s: str) -> int:
     # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.
     rows = re.findall('<tr style=">(.*?)</tr>', s, re.MULTILINE | re.DOTALL)
-    decks_added, matches, ds = 0, [], []
+    decks_added, ds = 0, []
+    matches: List[bs4.element.Tag] = []
     for row in rows:
         cells = BeautifulSoup(row, 'html.parser').find_all('td')
         d = tournament_deck(cells, competition_id, dt, final)
@@ -89,7 +93,7 @@ def add_decks(dt, competition_id, final, s):
     insert_matches_without_dupes(dt, matches)
     return decks_added
 
-def rankings(soup):
+def rankings(soup: BeautifulSoup) -> List[str]:
     rows = soup.find(text='Current Standings').find_parent('table').find_all('tr')
 
     # Expected structure:
@@ -111,7 +115,7 @@ def rankings(soup):
         ranks.append(mtgo_username)
     return ranks
 
-def medal_winners(s):
+def medal_winners(s: str) -> Dict[str, int]:
     winners = {}
     # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.
     rows = re.findall('<tr style=">(.*?)</tr>', s, re.MULTILINE | re.DOTALL)
@@ -134,7 +138,7 @@ def medal_winners(s):
                 raise InvalidDataException('Unknown player image `{img}`'.format(img=img))
     return winners
 
-def finishes(winners, ranks):
+def finishes(winners: Dict[str, int], ranks: List[str]) -> Dict[str, int]:
     final = winners.copy()
     r = len(final)
     for p in ranks:
@@ -143,11 +147,12 @@ def finishes(winners, ranks):
             final[p] = r
     return final
 
-def tournament_deck(cells, competition_id, date, final):
+def tournament_deck(cells, competition_id: int, date: datetime.datetime, final: Dict[str, int]) -> deck.Deck:
     d = {'source': 'Gatherling', 'competition_id': competition_id, 'created_date': dtutil.dt2ts(date)}
     player = cells[2]
-    d['mtgo_username'] = player.a.contents[0]
-    d['finish'] = final.get(d['mtgo_username'])
+    username = player.a.contents[0].string
+    d['mtgo_username'] = username
+    d['finish'] = final.get(username)
     link = cells[4].a
     d['url'] = gatherling_url(link['href'])
     d['name'] = link.string
@@ -155,17 +160,18 @@ def tournament_deck(cells, competition_id, date, final):
         d['archetype'] = cells[5].a.string
     else:
         d['archetype'] = cells[5].string
-    gatherling_id = urllib.parse.parse_qs(urllib.parse.urlparse(d['url']).query)['id'][0]
+    gatherling_id = urllib.parse.parse_qs(urllib.parse.urlparse(str(d['url'])).query)['id'][0]
     d['identifier'] = gatherling_id
     if deck.get_deck_id(d['source'], d['identifier']) is not None:
         return None
-    d['cards'] = decklist.parse(fetcher.internal.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
-    if len(d['cards']) == 0:
+    dlist = decklist.parse(fetcher.internal.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
+    d['cards'] = dlist
+    if len(dlist['maindeck']) + len(dlist['sideboard']) == 0:
         logger.warning('Rejecting deck with id {id} because it has no cards.'.format(id=gatherling_id))
         return None
     return deck.add_deck(d)
 
-def tournament_matches(d):
+def tournament_matches(d: deck.Deck) -> List[bs4.element.Tag]:
     url = 'https://gatherling.com/deck.php?mode=view&id={identifier}'.format(identifier=d.identifier)
     s = fetcher.internal.fetch(url, character_encoding='utf-8')
     soup = BeautifulSoup(s, 'html.parser')
@@ -179,7 +185,7 @@ def tournament_matches(d):
     rows.pop() # skip empty last row
     return find_matches(d, rows)
 
-def find_matches(d, rows):
+def find_matches(d, rows) -> List[Dict[str, Any]]:
     matches = []
     for row in rows:
         tds = row.find_all('td')
@@ -212,9 +218,9 @@ def find_matches(d, rows):
         })
     return matches
 
-def insert_matches_without_dupes(dt, matches):
+def insert_matches_without_dupes(dt, matches) -> None:
     db().begin()
-    inserted = {}
+    inserted: Dict[str, bool] = {}
     for m in matches:
         reverse_key = str(m['round']) + '|' + str(m['right_id']) + '|' + str(m['left_id'])
         if inserted.get(reverse_key):
@@ -224,13 +230,13 @@ def insert_matches_without_dupes(dt, matches):
         inserted[key] = True
     db().commit()
 
-def add_ids(matches, ds):
+def add_ids(matches, ds) -> None:
     decks_by_identifier = {d.identifier: d for d in ds}
     for m in matches:
         m['left_id'] = decks_by_identifier[m['left_identifier']].id
         m['right_id'] = decks_by_identifier[m['right_identifier']].id if m['right_identifier'] else None
 
-def gatherling_url(href):
+def gatherling_url(href: str) -> str:
     if href.startswith('http'):
         return href
     return 'https://gatherling.com/{href}'.format(href=href)

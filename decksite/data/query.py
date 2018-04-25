@@ -1,10 +1,12 @@
+from typing import Optional
+
 from shared.pd_exception import InvalidArgumentException
 
 
-def person_query(table='p'):
+def person_query(table: str = 'p') -> str:
     return 'LOWER(IFNULL(IFNULL(IFNULL({table}.name, {table}.mtgo_username), {table}.mtggoldfish_username), {table}.tappedout_username))'.format(table=table)
 
-def competition_ids_by_type_select(competition_type):
+def competition_ids_by_type_select(competition_type: str) -> str:
     return """
         SELECT
             id
@@ -23,7 +25,7 @@ def competition_ids_by_type_select(competition_type):
                 )
         """.format(competition_type_id=competition_type_id_select(competition_type))
 
-def competition_type_id_select(competition_type):
+def competition_type_id_select(competition_type: str) -> str:
     return """
         SELECT
             id
@@ -33,7 +35,7 @@ def competition_type_id_select(competition_type):
             name = '{competition_type}'
     """.format(competition_type=competition_type)
 
-def competition_join():
+def competition_join() -> str:
     return """
         LEFT JOIN
             competition AS c ON d.competition_id = c.id
@@ -43,7 +45,7 @@ def competition_join():
             competition_type AS ct ON ct.id = cs.competition_type_id
     """
 
-def season_query(season_id=None):
+def season_query(season_id: Optional[int] = None) -> str:
     if season_id is None or season_id == 'all':
         return 'TRUE'
     try:
@@ -51,13 +53,13 @@ def season_query(season_id=None):
     except ValueError:
         raise InvalidArgumentException('No season with id `{season_id}`'.format(season_id=season_id))
 
-def season_join():
+def season_join() -> str:
     return """
         LEFT JOIN
             ({season_table}) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
     """.format(season_table=season_table())
 
-def season_table():
+def season_table() -> str:
     return """
         SELECT
             `start`.id,

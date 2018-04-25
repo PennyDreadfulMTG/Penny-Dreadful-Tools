@@ -1,5 +1,6 @@
 import itertools
 import re
+from typing import Dict, Iterable, List, Set, Tuple
 
 from shared.pd_exception import ParseException
 
@@ -11,7 +12,7 @@ SLASH = '/'
 MODIFIER = 'P'
 HALF = '[wh]'
 
-def parse(s):
+def parse(s: str) -> List[str]:
     tmp = ''
     tokens = []
     mode = START
@@ -63,14 +64,14 @@ def parse(s):
         tokens.append(tmp)
     return tokens
 
-def colors(symbols):
+def colors(symbols: List[str]) -> Dict[str, Set[str]]:
     return colors_from_colored_symbols(colored_symbols(symbols))
 
-def colors_from_colored_symbols(all_colored_symbols):
+def colors_from_colored_symbols(all_colored_symbols: Dict[str, List[str]]) -> Dict[str, Set[str]]:
     return {'required': set(all_colored_symbols['required']), 'also': set(all_colored_symbols['also'])}
 
-def colored_symbols(symbols):
-    cs = {'required': [], 'also': []}
+def colored_symbols(symbols: List[str]) -> Dict[str, List[str]]:
+    cs: Dict[str, List[str]] = {'required': [], 'also': []}
     for symbol in symbols:
         if generic(symbol) or variable(symbol):
             pass
@@ -89,33 +90,33 @@ def colored_symbols(symbols):
             raise InvalidManaCostException('Unrecognized symbol type: `{symbol}` in `{symbols}`'.format(symbol=symbol, symbols=symbols))
     return cs
 
-def generic(symbol):
-    return re.match('^{digit}+$'.format(digit=DIGIT), symbol)
+def generic(symbol: str) -> bool:
+    return bool(re.match('^{digit}+$'.format(digit=DIGIT), symbol))
 
-def variable(symbol):
-    return re.match('^{x}$'.format(x=X), symbol)
+def variable(symbol: str) -> bool:
+    return bool(re.match('^{x}$'.format(x=X), symbol))
 
-def phyrexian(symbol):
-    return re.match('^{color}/{modifier}$'.format(color=COLOR, modifier=MODIFIER), symbol)
+def phyrexian(symbol: str) -> bool:
+    return bool(re.match('^{color}/{modifier}$'.format(color=COLOR, modifier=MODIFIER), symbol))
 
-def hybrid(symbol):
-    return re.match('^{color}/{color}$'.format(color=COLOR), symbol)
+def hybrid(symbol: str) -> bool:
+    return bool(re.match('^{color}/{color}$'.format(color=COLOR), symbol))
 
-def twobrid(symbol):
-    return re.match('^2/{color}$'.format(color=COLOR), symbol)
+def twobrid(symbol: str) -> bool:
+    return bool(re.match('^2/{color}$'.format(color=COLOR), symbol))
 
-def colored(symbol):
-    return re.match('^{color}$'.format(color=COLOR), symbol)
+def colored(symbol: str) -> bool:
+    return bool(re.match('^{color}$'.format(color=COLOR), symbol))
 
-def has_x(mana_cost):
+def has_x(mana_cost: str) -> bool:
     return len([symbol for symbol in parse(mana_cost) if variable(symbol)]) > 0
 
-def order(symbols):
+def order(symbols: Iterable[str]) -> List[str]:
     permutations = itertools.permutations(symbols)
     return list(sorted(permutations, key=order_score)[0])
 
-def order_score(symbols):
-    symbols = [symbol for symbol in symbols if symbol != 'C']
+def order_score(initial_symbols: Tuple[str, ...]) -> int:
+    symbols = [symbol for symbol in initial_symbols if symbol != 'C']
     if not symbols:
         return 0
     score = 0

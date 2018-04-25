@@ -2,7 +2,7 @@ from decksite.data import deck
 from magic import legality, oracle
 
 
-def test_legal_formats():
+def test_legal_formats() -> None:
     swamp = oracle.load_card('Swamp')
     think_twice = oracle.load_card('Think Twice')
     fork = oracle.load_card('Fork')

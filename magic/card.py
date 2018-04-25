@@ -8,7 +8,7 @@ from shared import dtutil
 from shared.container import Container
 
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
-ColumnDescription = TypedDict('ColumnDescription', { #pylint: disable=invalid-name
+ColumnDescription = TypedDict('ColumnDescription', { # pylint: disable=invalid-name
     'type': str,
     'nullable': bool,
     'primary_key': bool,
@@ -19,7 +19,7 @@ ColumnDescription = TypedDict('ColumnDescription', { #pylint: disable=invalid-na
     'unique': bool,
     'unique_with': List[str],
     })
-TableDescription = Dict[str, ColumnDescription] #pylint: disable=invalid-name
+TableDescription = Dict[str, ColumnDescription] # pylint: disable=invalid-name
 
 MAX_LEN_TEXT = 21845
 MAX_LEN_VARCHAR = 190
@@ -138,7 +138,7 @@ def card_color_properties() -> TableDescription:
     props['color_id']['foreign_key'] = ('color', 'id')
     return props
 
-def card_type_properties(typetype) -> TableDescription:
+def card_type_properties(typetype: str) -> TableDescription:
     props = {}
     for k in ['id', 'card_id', typetype]:
         props[k] = copy.deepcopy(BASE)
@@ -245,30 +245,30 @@ def canonicalize(name: str) -> str:
     name = name.replace('Æ', 'Ae').replace('“', '"').replace('”', '"').replace("'", "'").replace("'", "'")
     return unaccent(name.strip().lower())
 
-def to_mtgo_format(s):
+def to_mtgo_format(s: str) -> str:
     return s.replace(' // ', '/').replace('\n', '\r\n')
 
 class Card(Container):
-    def __init__(self, params) -> None:
+    def __init__(self, params: Dict[str, Any]) -> None:
         super().__init__()
         for k in params.keys():
             setattr(self, k, determine_value(k, params))
         if not self.names:
             setattr(self, 'names', [self.name])
 
-    def is_creature(self):
+    def is_creature(self) -> bool:
         return 'Creature' in self.type
 
-    def is_land(self):
+    def is_land(self) -> bool:
         return 'Land' in self.type
 
-    def is_spell(self):
+    def is_spell(self) -> bool:
         return not self.is_creature() and not self.is_land()
 
-    def is_split(self):
+    def is_split(self) -> bool:
         return self.name.find('//') >= 0
 
-def determine_value(k: str, params) -> Any:
+def determine_value(k: str, params: Dict[str, Any]) -> Any:
     v = params[k]
     if k == 'names' or k == 'mana_cost':
         return cast(str, v).split('|') if v is not None else None
@@ -296,7 +296,7 @@ def determine_bugs(s: Optional[str]) -> Optional[List[Dict[str, object]]]:
     for b in bugs:
         description, classification, last_confirmed, url, from_bug_blog = b.split('|')
         bb = from_bug_blog == '1'
-        bug = {'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(float(last_confirmed)), 'url': url, 'from_bug_blog': bb}
+        bug = {'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(int(last_confirmed)), 'url': url, 'from_bug_blog': bb}
         v.append(bug)
     if v:
         return v

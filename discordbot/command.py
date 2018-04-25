@@ -714,8 +714,8 @@ def oracle_text(c: Card) -> str:
     return c.text
 
 def card_rulings(c: Card) -> str:
-    rulings = fetcher.rulings(c.name)
-    rulings = [r['comment'] for r in rulings]
+    raw_rulings = fetcher.rulings(c.name)
+    rulings = [r['comment'] for r in raw_rulings]
     if len(rulings) > 3:
         n = len(rulings) - 2
         rulings = rulings[:2]

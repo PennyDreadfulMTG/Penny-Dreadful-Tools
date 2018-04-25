@@ -1,7 +1,7 @@
 import datetime
 import re
 from collections import OrderedDict
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Match, Tuple
 
 import inflect
 import pytz
@@ -23,35 +23,35 @@ CARDHOARDER_TZ = UTC_TZ
 FORM_FORMAT = '%Y-%m-%d %H:%M'
 
 # Converts a UTC timestamp (seconds) into a timezone-aware UTC datetime.
-def ts2dt(ts: float) -> datetime.datetime:
+def ts2dt(ts: int) -> datetime.datetime:
     return pytz.timezone('UTC').localize(datetime.datetime.utcfromtimestamp(ts))
 
 # Converts a timezone-aware UTC datetime into a UTC timestamp (seconds).
-def dt2ts(dt: datetime.datetime) -> float:
+def dt2ts(dt: datetime.datetime) -> int:
     assert dt.tzinfo is not None, 'datetime must be timezone aware.'
-    return dt.timestamp()
+    return round(dt.timestamp())
 
 # Converts the given string in the format `format` to a timezone-aware UTC datetime assuming the original string is in timezone `tz`.
-def parse(s: str, date_format: str, tz) -> datetime.datetime:
+def parse(s: str, date_format: str, tz: Any) -> datetime.datetime:
     dt = datetime.datetime.strptime(s, date_format)
     return tz.localize(dt).astimezone(pytz.timezone('UTC'))
 
-def parse_to_ts(s: str, date_format: str, tz) -> float:
+def parse_to_ts(s: str, date_format: str, tz: Any) -> int:
     dt = parse(s, date_format, tz)
     return dt2ts(dt)
 
-def timezone(tzid) -> datetime.tzinfo:
+def timezone(tzid: str) -> datetime.tzinfo:
     return pytz.timezone(tzid)
 
-def now(tz=None) -> datetime.datetime:
+def now(tz: Any = None) -> datetime.datetime:
     if tz is None:
         tz = datetime.timezone.utc
     return datetime.datetime.now(tz)
 
-def day_of_week(dt, tz):
+def day_of_week(dt: datetime.datetime, tz: Any) -> str:
     return dt.astimezone(tz).strftime('%A')
 
-def form_date(dt, tz):
+def form_date(dt: datetime.datetime, tz: Any) -> str:
     return dt.astimezone(tz).strftime(FORM_FORMAT)
 
 def display_date(dt: datetime.datetime, granularity: int = 1) -> str:
@@ -72,12 +72,12 @@ def display_date(dt: datetime.datetime, granularity: int = 1) -> str:
 def replace_day_with_ordinal(s: str) -> str:
     return re.sub(r'_(.*)_', day2ordinal, s)
 
-def day2ordinal(m):
+def day2ordinal(m: Match) -> str:
     p = inflect.engine()
     return p.ordinal(int(m.group(1)))
 
-IntervalsType = Dict[str, Tuple[int, int]] #pylint: disable=invalid-name
-ResultsType = List[Tuple[int, str]] #pylint: disable=invalid-name
+IntervalsType = Dict[str, Tuple[int, int]] # pylint: disable=invalid-name
+ResultsType = List[Tuple[int, str]] # pylint: disable=invalid-name
 
 def display_time(seconds: float, granularity: int = 2) -> str:
     intervals: IntervalsType = OrderedDict()

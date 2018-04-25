@@ -15,7 +15,7 @@ def cardprice(card):
     card = card.replace('-split-', '//')
     return json.dumps(price.info_cached(name=card), default=extra_serializer)
 
-def init():
+def init() -> None:
     multiverse.init()
     oracle.init()
     SRV.run(port=5800, host='0.0.0.0')

@@ -56,7 +56,7 @@ class Rotation(View):
         for name, hits in scores:
             self.process_score(name, hits)
 
-    def process_score(self, name, hits):
+    def process_score(self, name, hits) -> None:
         remaining_runs = (168 - self.runs)
         hits_needed = max(84 - hits, 0)
         c = self.cs.get(name)
@@ -78,12 +78,12 @@ class Rotation(View):
             hits = redact(hits)
             hits_needed = redact(hits_needed)
             percent = redact(percent)
-            percent_needed = redact(percent_needed)
+            percent_needed_s = redact(percent_needed)
         c.update({
             'hits': hits,
             'hits_needed': hits_needed,
             'percent': percent,
-            'percent_hits_needed': percent_needed,
+            'percent_hits_needed': percent_needed_s,
             'status': status,
             'interestingness': rotation.interesting(self.playability, c)
         })
@@ -92,5 +92,5 @@ class Rotation(View):
     def page_title(self):
         return 'Rotation'
 
-def redact(num):
+def redact(num) -> str:
     return ''.join(['█' for _ in str(num)])

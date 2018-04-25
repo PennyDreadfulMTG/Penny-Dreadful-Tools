@@ -78,7 +78,7 @@ class WhooshSearcher():
         self.ix = open_dir(WhooshConstants.index_dir)
         self.initialize_trie()
 
-    def initialize_trie(self):
+    def initialize_trie(self) -> None:
         self.trie = pygtrie.CharTrie()
         with self.ix.reader() as reader:
             for doc in reader.iter_docs():
@@ -127,7 +127,7 @@ class WhooshSearcher():
 def has(elements) -> bool:
     return bool(elements and len(elements) > 0)
 
-WordSubword = Tuple[List[str], List[str]] #pylint: disable=invalid-name
+WordSubword = Tuple[List[str], List[str]] # pylint: disable=invalid-name
 
 def classify(matches: List[str], word: str) -> WordSubword:
     regex = r'{w}( |,)'.format(w=word)
@@ -139,7 +139,7 @@ def classify(matches: List[str], word: str) -> WordSubword:
             acc[1].append(match)
     return acc
 
-def fuzzy_term(q, dist, field):
+def fuzzy_term(q, dist, field) -> Term:
     if len(q) <= 3:
         return Term(field, q)
     return FuzzyTerm(field, q, maxdist=dist, prefixlength=1)

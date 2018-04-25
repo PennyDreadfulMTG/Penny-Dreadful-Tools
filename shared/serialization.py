@@ -1,8 +1,9 @@
 import datetime
 import decimal
+from typing import Any, List, Union
 
 
-def extra_serializer(obj):
+def extra_serializer(obj: Any) -> Union[str, List[Any]]:
     """JSON serializer for objects not serializable by default json code"""
 
     if isinstance(obj, datetime.datetime):

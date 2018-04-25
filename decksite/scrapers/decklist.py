@@ -1,5 +1,6 @@
 import re
 import xml
+from typing import Any, Dict, Tuple
 
 import untangle
 
@@ -7,8 +8,10 @@ from decksite.data.deck import Deck
 from magic import oracle
 from shared.pd_exception import InvalidDataException
 
+Section = Dict[str, int] # pylint: disable=invalid-name
+Decklist = Dict[str, Section] # pylint: disable=invalid-name
 
-def parse_line(line):
+def parse_line(line: str) -> Tuple[int, str]:
     match = re.match(r'(\d+)\s+(.*)', line)
     if match is None:
         raise InvalidDataException('No number specified with `{line}`'.format(line=line))
@@ -16,7 +19,7 @@ def parse_line(line):
         n, name = re.search(r'(\d+)\s+(.*)', line).groups()
         return (int(n), name)
 
-def parse_chunk(chunk, section):
+def parse_chunk(chunk: str, section: Section) -> None:
     for line in chunk.splitlines():
         if line.lower().strip() == 'sideboard':
             continue
@@ -24,10 +27,10 @@ def parse_chunk(chunk, section):
         section[name] = int(n) + section.get(name, 0)
 
 # Read a text decklist into an intermediate dict form.
-def parse(s):
+def parse(s: str) -> Decklist:
     s = s.lstrip().rstrip()
-    maindeck = {}
-    sideboard = {}
+    maindeck: Dict[str, Any] = {}
+    sideboard: Dict[str, Any] = {}
     chunks = re.split(r'\r?\n\r?\n|^\s*sideboard.*?\n', s, flags=re.IGNORECASE|re.MULTILINE)
     if len(chunks) > 1 and (len(chunks[-1]) > 1 or len(chunks[-1][0]) > 0) or 'Sideboard' in s:
         for chunk in chunks[:-1]:
@@ -59,20 +62,21 @@ def parse(s):
 
 
 # Parse a deck in the Magic Online XML .dek format or raise an InvalidDataException.
-def parse_xml(s):
-    d = {'maindeck': {}, 'sideboard': {}}
+def parse_xml(s: str) -> Decklist:
+    d: Decklist = {'maindeck': {}, 'sideboard': {}}
     try:
         doc = untangle.parse(s)
         for c in doc.Deck.Cards:
             section = 'sideboard' if c['Sideboard'] == 'true' else 'maindeck'
             d[section][c['Name']] = d[section].get(c['Name'], 0) + int(c['Quantity'])
         return d
-    except xml.sax.SAXException as e:
+    except xml.sax.SAXException as e: # type: ignore
         raise InvalidDataException(e)
 
 # Load the cards in the intermediate dict form.
-def vivify(decklist):
-    validated, invalid_names = {'maindeck': {}, 'sideboard': {}}, set()
+def vivify(decklist: Decklist) -> Deck:
+    validated: Decklist = {'maindeck': {}, 'sideboard': {}}
+    invalid_names = set()
     for section in ['maindeck', 'sideboard']:
         for name, n in decklist[section].items():
             try:

@@ -173,7 +173,7 @@ def signup(form):
 
 def identifier(params):
     # Current timestamp is part of identifier here because we don't need to defend against dupes in league – it's fine to enter the same league with the same deck, later.
-    return json.dumps([params['mtgo_username'], params['competition_id'], str(int(time.time()))])
+    return json.dumps([params['mtgo_username'], params['competition_id'], str(round(time.time()))])
 
 def deck_options(decks, v):
     if (v is None or v == '') and len(decks) == 1:
@@ -282,7 +282,7 @@ def active_league():
         leagues = [competition.load_competition(comp_id)]
     return guarantee.exactly_one(leagues)
 
-def determine_end_of_league(start_date):
+def determine_end_of_league(start_date: datetime.datetime) -> datetime.datetime:
     if start_date.day < 15:
         month = start_date.month + 1
     else:
@@ -299,7 +299,7 @@ def determine_end_of_league(start_date):
     end_date = end_date - datetime.timedelta(seconds=1)
     return end_date
 
-def determine_league_name(end_date):
+def determine_league_name(end_date: datetime.datetime) -> str:
     return 'League {MM} {YYYY}'.format(MM=calendar.month_name[end_date.month], YYYY=end_date.year)
 
 def retire_deck(d):

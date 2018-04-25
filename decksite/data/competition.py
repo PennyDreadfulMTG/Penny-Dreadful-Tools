@@ -68,7 +68,7 @@ def load_competitions(where='1 = 1', season_id=None):
     set_decks(competitions)
     return competitions
 
-def set_decks(competitions):
+def set_decks(competitions) -> None:
     if competitions == []:
         return
     competitions_by_id = {c.id: c for c in competitions}

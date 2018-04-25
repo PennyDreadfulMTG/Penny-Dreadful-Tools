@@ -1,4 +1,5 @@
 from distutils.dist import Distribution
+from typing import Any, Dict, Generator, List
 
 import pystache
 from babel.messages import frontend
@@ -8,11 +9,11 @@ from shared import configuration
 from shared_web import template
 
 
-def ad_hoc():
+def ad_hoc() -> None:
     dist = Distribution(dict(
         name='Penny-Dreadful-Tools'
     ))
-    dist.message_extractors = {
+    dist.message_extractors = { # type: ignore
         'decksite': [
             ('**.py', 'python', {}),
             ('**.mustache', extract_mustache, {})
@@ -32,7 +33,7 @@ def ad_hoc():
     client.update_terms('162959', './decksite/translations/messages.pot')
 
 # pylint: disable=protected-access, unused-argument
-def extract_mustache(fileobj, keywords, comment_tags, options):
+def extract_mustache(fileobj: Any, keywords: List[str], comment_tags: List[str], options: Dict[str, str]) -> Generator:
     """Extract messages from mustache files.
 
     :param fileobj: the file-like object the messages should be extracted

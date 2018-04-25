@@ -2,7 +2,7 @@ from decksite import deck_name
 from shared.container import Container
 
 
-def test_normalize():
+def test_normalize() -> None:
     d = Container({'original_name': 'Dimir Control', 'archetype': 'Control', 'colors': ['U', 'B']})
     assert deck_name.normalize(d) == 'Dimir Control'
     d.original_name = 'U/B Control'
@@ -111,7 +111,7 @@ def test_normalize():
     # d.original_name = 'U/B Aggro' when d.archetype = 'Control'
     # d.original_name = 'UB Control' when d.colors = ['U', 'B', 'R']
 
-def test_remove_pd():
+def test_remove_pd() -> None:
     assert deck_name.remove_pd('Penny Dreadful Knights') == 'Knights'
     assert deck_name.remove_pd('biovisionary pd') == 'biovisionary'
     assert deck_name.remove_pd('[PD] Mono Black Control') == 'Mono Black Control'

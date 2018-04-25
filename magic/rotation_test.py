@@ -2,7 +2,7 @@ from magic import rotation
 from shared.pd_exception import DoesNotExistException
 
 
-def test_season_id():
+def test_season_id() -> None:
     assert rotation.season_id(1) == 1
     found = False
     try:
@@ -21,7 +21,7 @@ def test_season_id():
     assert rotation.season_id('ALL') == 'all'
     assert rotation.season_id('all') == 'all'
 
-def test_season_code():
+def test_season_code() -> None:
     assert rotation.season_code(1) == 'EMN'
     found = False
     try:
@@ -40,7 +40,7 @@ def test_season_code():
     assert rotation.season_code('ALL') == 'ALL'
     assert rotation.season_code('all') == 'ALL'
 
-def test_season_name():
+def test_season_name() -> None:
     assert rotation.season_name(1) == 'Season 1'
     found = False
     try:

@@ -12,7 +12,7 @@ from shared.container import Container
 from shared.pd_exception import InvalidDataException
 
 
-def scrape():
+def scrape() -> None:
     page = 1
     while True:
         time.sleep(0.1)
@@ -47,12 +47,12 @@ def scrape():
             deck.add_deck(d)
         page += 1
 
-def scrape_created_date(d):
+def scrape_created_date(d: deck.Deck) -> int:
     soup = BeautifulSoup(fetcher.internal.fetch(d.url, character_encoding='utf-8'), 'html.parser')
     description = soup.select_one('div.deck-view-description').renderContents().decode('utf-8')
     date_s = re.findall(r'([A-Z][a-z][a-z] \d+, \d\d\d\d)', description)[0]
     return dtutil.parse_to_ts(date_s, '%b %d, %Y', dtutil.MTGGOLDFISH_TZ)
 
-def scrape_decklist(d):
+def scrape_decklist(d: deck.Deck) -> decklist.Decklist:
     url = 'https://www.mtggoldfish.com/deck/download/{identifier}'.format(identifier=d.identifier)
     return decklist.parse(fetcher.internal.fetch(url))

@@ -403,7 +403,7 @@ def set_stars_and_top8(d):
     if len(d.stars_safe) > 0:
         d.stars_safe = '<span class="stars" title="Success Rating">{stars}</span>'.format(stars=d.stars_safe)
 
-def seasonized_url(season_id):
+def seasonized_url(season_id) -> str:
     args = request.view_args.copy()
     if season_id == rotation.current_season_num():
         args.pop('season_id', None)

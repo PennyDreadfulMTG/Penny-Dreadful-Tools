@@ -3,7 +3,7 @@ import textwrap
 from decksite.scrapers import decklist
 
 
-def test_parse():
+def test_parse() -> None:
     s = """
         3 Barter in Blood
         4 Consume Spirit
@@ -36,7 +36,7 @@ def test_parse():
     assert len(d['sideboard']) == 7
 
 
-def test_parse2():
+def test_parse2() -> None:
     s = """
         3 Barter in Blood
         4 Consume Spirit
@@ -69,7 +69,7 @@ def test_parse2():
     assert len(d['sideboard']) == 7
 
 
-def test_parse3():
+def test_parse3() -> None:
     s = """
         3 Barter in Blood
         4 Consume Spirit
@@ -99,7 +99,7 @@ def test_parse3():
     assert len(d['maindeck']) == 15
     assert len(d['sideboard']) == 7
 
-def test_parse4():
+def test_parse4() -> None:
     s = """
 
 
@@ -144,7 +144,7 @@ def test_parse4():
     assert len(d['maindeck']) == 15
     assert len(d['sideboard']) == 7
 
-def test_parse5():
+def test_parse5() -> None:
     s = """
         4 Animist's Awakening
         4 Copperhorn Scout
@@ -168,7 +168,7 @@ def test_parse5():
     assert len(d['sideboard']) == 1
 
 # Test that a 71 card deck includes the last 15 as sideboard
-def test_parse6():
+def test_parse6() -> None:
     s = """
         4 Animist's Awakening
         4 Copperhorn Scout
@@ -198,7 +198,7 @@ def test_parse6():
     assert len(d['sideboard']) == 7
 
 # Test a 63 card deck + 12 sideboard
-def test_parse7():
+def test_parse7() -> None:
     s = """
         16 Forest
         4 Animist's Awakening
@@ -227,7 +227,7 @@ def test_parse7():
     assert len(d['sideboard']) == 5
 
 # Test a 61 card deck + 15 sideboard with one-offs around the cut
-def test_parse8():
+def test_parse8() -> None:
     s = """
         24 Island
         4 Curious Homunculus
@@ -259,7 +259,7 @@ def test_parse8():
     assert d['sideboard']['Convolute'] == 1
 
 # Test a Gatherling deck with no sideboard
-def test_parse9():
+def test_parse9() -> None:
     s = """
         2 Bonded Horncrest
         4 Boros Guildgate
@@ -290,7 +290,7 @@ def test_parse9():
     assert sum(d['sideboard'].values()) == 0
     assert d['maindeck']['Shining Aerosaur'] == 2
 
-def test_parse10():
+def test_parse10() -> None:
     s = """
         Sideboard"""
     s = textwrap.dedent(s)

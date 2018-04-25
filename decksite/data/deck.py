@@ -1,12 +1,13 @@
 import hashlib
 import json
 import time
+from typing import List, Optional, Set
 
 from decksite import deck_name
 from decksite.data import guarantee, query
 from decksite.data.top import Top
 from decksite.database import db
-from magic import legality, mana, oracle, rotation
+from magic import card, legality, mana, oracle, rotation
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
@@ -15,14 +16,14 @@ from shared.pd_exception import InvalidDataException
 
 # pylint: disable=too-many-instance-attributes
 class Deck(Container):
-    def __init__(self, params):
+    def __init__(self, params) -> None:
         super().__init__()
         for k in params.keys():
             self[k] = params[k]
         self.sorted = False
 
-    def all_cards(self):
-        cards = []
+    def all_cards(self) -> List[card.Card]:
+        cards: List[card.Card] = []
         for entry in self.maindeck + self.sideboard:
             cards += [entry['card']] * entry['n']
         return cards
@@ -68,7 +69,7 @@ def load_season(season_id=None, league_only=False):
     return season
 
 # pylint: disable=attribute-defined-outside-init
-def load_decks(where='1 = 1', order_by=None, limit='', season_id=None):
+def load_decks(where='1 = 1', order_by=None, limit='', season_id=None) -> List[Deck]:
     if order_by is None:
         order_by = 'd.created_date DESC, d.finish IS NULL, d.finish'
     sql = """
@@ -151,12 +152,12 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None):
 
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks we will claim your deck is neither W nor G which is not true. But this should cover most cases.
 # We also ignore split and aftermath cards so if you are genuinely using a color in a split card but have no other cards of that color we won't claim it as one of the deck's colors.
-def set_colors(d):
-    deck_colors = set()
-    deck_colored_symbols = []
-    for card in [c['card'] for c in d.maindeck + d.sideboard]:
-        for cost in card.get('mana_cost') or ():
-            if card.layout == 'split' or card.layout == 'aftermath':
+def set_colors(d) -> None:
+    deck_colors: Set[str] = set()
+    deck_colored_symbols: List[str] = []
+    for c in [entry['card'] for entry in d.maindeck + d.sideboard]:
+        for cost in c.get('mana_cost') or ():
+            if c.layout == 'split' or c.layout == 'aftermath':
                 continue # They might only be using one half so ignore it.
             card_symbols = mana.parse(cost)
             card_colors = mana.colors(card_symbols)
@@ -166,7 +167,7 @@ def set_colors(d):
     d.colors = mana.order(deck_colors)
     d.colored_symbols = deck_colored_symbols
 
-def set_legality(d):
+def set_legality(d) -> None:
     d.legal_formats = legality.legal_formats(d)
 
 # Expects:
@@ -250,7 +251,7 @@ def add_deck(params) -> Deck:
     prime_cache(d)
     return d
 
-def prime_cache(d):
+def prime_cache(d) -> None:
     set_colors(d)
     colors_s = json.dumps(d.colors)
     colored_symbols_s = json.dumps(d.colored_symbols)
@@ -262,7 +263,7 @@ def prime_cache(d):
     db().execute('INSERT INTO deck_cache (deck_id, normalized_name, colors, colored_symbols, legal_formats) VALUES (%s, %s, %s, %s, %s)', [d.id, normalized_name, colors_s, colored_symbols_s, legal_formats_s])
     db().commit()
 
-def add_cards(deck_id, cards):
+def add_cards(deck_id, cards) -> None:
     db().begin()
     deckhash = hashlib.sha1(repr(cards).encode('utf-8')).hexdigest()
     db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [deckhash, deck_id])
@@ -273,17 +274,17 @@ def add_cards(deck_id, cards):
         insert_deck_card(deck_id, name, n, True)
     db().commit()
 
-def get_deck_id(source_name, identifier):
+def get_deck_id(source_name, identifier) -> Optional[int]:
     source_id = get_source_id(source_name)
     sql = 'SELECT id FROM deck WHERE source_id = %s AND identifier = %s'
     return db().value(sql, [source_id, identifier])
 
-def insert_deck_card(deck_id, name, n, in_sideboard):
-    card = oracle.valid_name(name)
+def insert_deck_card(deck_id, name, n, in_sideboard) -> None:
+    name = oracle.valid_name(name)
     sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (%s, %s, %s, %s)'
-    return db().execute(sql, [deck_id, card, n, in_sideboard])
+    db().execute(sql, [deck_id, name, n, in_sideboard])
 
-def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username):
+def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username) -> int:
     sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
     person_id = db().value(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
     if person_id:
@@ -291,14 +292,14 @@ def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_usern
     sql = 'INSERT INTO person (mtgo_username, tappedout_username, mtggoldfish_username) VALUES (%s, %s, %s)'
     return db().insert(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
 
-def get_source_id(source):
+def get_source_id(source) -> int:
     sql = 'SELECT id FROM source WHERE name = %s'
     source_id = db().value(sql, [source])
     if not source_id:
         raise InvalidDataException('Unknown source: `{source}`'.format(source=source))
     return source_id
 
-def get_archetype_id(archetype):
+def get_archetype_id(archetype) -> Optional[int]:
     sql = 'SELECT id FROM archetype WHERE name = %s'
     return db().value(sql, [archetype])
 
@@ -317,12 +318,12 @@ def get_similar_decks(deck):
 # Dead simple for now, may get more sophisticated. 1 point for each differently named card shared in maindeck. Count irrelevant.
 def similarity_score(a, b):
     score = 0
-    for card in a.maindeck:
-        if card in b.maindeck:
+    for c in a.maindeck:
+        if c in b.maindeck:
             score += 1
     return float(score) / float(max(len(a.maindeck), len(b.maindeck)))
 
-def load_decks_by_cards(names):
+def load_decks_by_cards(names) -> List[Deck]:
     sql = """
         d.id IN (
             SELECT deck_id
@@ -333,7 +334,7 @@ def load_decks_by_cards(names):
         """.format(n=len(names), names=', '.join(map(sqlescape, names)))
     return load_decks(sql)
 
-def load_cards(decks):
+def load_cards(decks) -> None:
     if len(decks) == 0:
         return
     decks_by_id = {d.id: d for d in decks}
@@ -350,7 +351,7 @@ def load_cards(decks):
         d[location].append({'n': row['n'], 'name': name, 'card': cards[name]})
 
 # It makes the main query about 5x faster to do this as a separate query (which is trivial and done only once for all decks).
-def load_competitive_stats(decks):
+def load_competitive_stats(decks) -> None:
     if len(decks) == 0:
         return
     decks_by_id = {d.id: d for d in decks}
@@ -402,7 +403,7 @@ def count_matches(deck_id, opponent_deck_id):
 
 # Query Helpers for number of decks, wins, draws and losses.
 
-def nwdl_select(prefix='', additional_clause='TRUE'):
+def nwdl_select(prefix='', additional_clause='TRUE') -> str:
     return """
         SUM(CASE WHEN {additional_clause} THEN 1 ELSE 0 END) AS `{prefix}num_decks`,
         SUM(CASE WHEN {additional_clause} THEN wins ELSE 0 END) AS `{prefix}wins`,
@@ -414,16 +415,16 @@ def nwdl_select(prefix='', additional_clause='TRUE'):
         IFNULL(ROUND((SUM(CASE WHEN {additional_clause} THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN {additional_clause} THEN wins + losses ELSE 0 END), 0)) * 100, 1), '') AS `{prefix}win_percent`
     """.format(prefix=prefix, additional_clause=additional_clause)
 
-def nwdl_all_select():
+def nwdl_all_select() -> str:
     return nwdl_select('all_')
 
-def nwdl_season_select():
+def nwdl_season_select() -> str:
     return nwdl_select('season_', 'dsum.created_date >= {season_start}'.format(season_start=int(rotation.last_rotation().timestamp())))
 
-def nwdl_week_select():
+def nwdl_week_select() -> str:
     return nwdl_select('week_', 'dsum.created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK)')
 
-def nwdl_join():
+def nwdl_join() -> str:
     return """
         LEFT JOIN
             (

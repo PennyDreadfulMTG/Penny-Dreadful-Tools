@@ -10,7 +10,7 @@ from shared import configuration
 if not os.path.exists(configuration.get_str('image_dir')):
     os.mkdir(configuration.get_str('image_dir'))
 
-def basename(cards):
+def basename(cards) -> str:
     from magic import card
     return '_'.join(re.sub('[^a-z-]', '-', card.canonicalize(c.name)) for c in cards)
 

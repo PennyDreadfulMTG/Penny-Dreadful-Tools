@@ -14,28 +14,28 @@ from shared import configuration, dtutil
 from shared.pd_exception import TooFewItemsException
 
 
-def all_cards() -> Any:
+def all_cards() -> Dict[str, Dict[str, Any]]:
     try:
         return json.load(open('AllCards-x.json'))
     except FileNotFoundError:
         s = internal.unzip('https://mtgjson.com/json/AllCards-x.json.zip', 'AllCards-x.json')
         return json.loads(s)
 
-def all_sets():
+def all_sets() -> Dict[str, Dict[str, Any]]:
     try:
         return json.load(open('AllSets.json'))
     except FileNotFoundError:
         s = internal.unzip('https://mtgjson.com/json/AllSets.json.zip', 'AllSets.json')
         return json.loads(s)
 
-def bugged_cards():
+def bugged_cards() -> Optional[List[Dict[str, Any]]]:
     bugs = internal.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
     if bugs is None:
         return None
     return bugs
 
-def card_aliases():
-    with open(configuration.get('card_alias_file'), newline='', encoding='utf-8') as f:
+def card_aliases() -> List[List[str]]:
+    with open(configuration.get_str('card_alias_file'), newline='', encoding='utf-8') as f:
         return list(csv.reader(f, dialect='excel-tab'))
 
 def card_price(cardname) -> Dict[str, Any]:
@@ -82,7 +82,7 @@ def decksite_url(path: str = '/') -> str:
         hostname = '{hostname}:{port}'.format(hostname=hostname, port=port)
     return parse.urlunparse((configuration.get_str('decksite_protocol'), hostname, path, None, None, None))
 
-def legal_cards(force=False, season=None):
+def legal_cards(force=False, season=None) -> List[str]:
     if season is None and os.path.exists('legal_cards.txt'):
         print('HACK: Using local legal_cards override.')
         h = open('legal_cards.txt')
@@ -116,11 +116,12 @@ def post_discord_webhook(webhook_id: str, webhook_token: str, message: str, name
         })
     return True
 
-def resources():
+# pylint: disable=unsubscriptable-object
+def resources() -> Dict[str, Dict[str, str]]:
     with open('decksite/resources.json') as resources_file:
         return json.load(resources_file, object_pairs_hook=OrderedDict)
 
-def scryfall_cards():
+def scryfall_cards() -> Dict[str, Any]:
     url = 'https://api.scryfall.com/cards'
     return internal.fetch_json(url)
 
@@ -150,11 +151,11 @@ def search_scryfall(query) -> Tuple[int, List[str]]:
     result_cardnames = [get_frontside(obj) for obj in result_data]
     return result_json['total_cards'], result_cardnames
 
-def rulings(cardname):
+def rulings(cardname) -> List[Dict[str, str]]:
     card = internal.fetch_json('https://api.scryfall.com/cards/named?exact={name}'.format(name=cardname))
     return internal.fetch_json(card['uri'] + '/rulings')['data']
 
-def sitemap():
+def sitemap() -> List[str]:
     return internal.fetch_json(decksite_url('/api/sitemap/'))
 
 def time(q) -> str:

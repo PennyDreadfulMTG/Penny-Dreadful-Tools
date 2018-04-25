@@ -1,9 +1,10 @@
-from typing import Any, List
+from typing import List, Optional, TypeVar
 
 from shared.pd_exception import DoesNotExistException, TooManyItemsException
 
+T = TypeVar('T')
 
-def exactly_one(l: List[Any]) -> Any:
+def exactly_one(l: List[T]) -> T:
     if len(l) > 1:
         raise TooManyItemsException('Found {n} items when expecing 1 in `{l}`.'.format(n=len(l), l=l))
     try:
@@ -11,7 +12,7 @@ def exactly_one(l: List[Any]) -> Any:
     except IndexError:
         raise DoesNotExistException('Did not find an item when expecting one.')
 
-def at_most_one(l):
+def at_most_one(l: List[T]) -> Optional[T]:
     if len(l) > 1:
         raise TooManyItemsException('Found {n} items when expecing at most 1 in `{l}`.'.format(n=len(l), l=l))
     elif len(l) == 0:

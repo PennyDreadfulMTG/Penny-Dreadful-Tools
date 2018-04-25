@@ -1,6 +1,3 @@
-import json
-import subprocess
-
 from flask import Response, request, session, url_for
 
 from decksite import APP, auth, league
@@ -9,8 +6,9 @@ from decksite.data import competition as comp
 from decksite.data import deck, guarantee, match
 from decksite.data import person as ps
 from magic import oracle, rotation
-from shared import configuration, dtutil
-from shared.serialization import extra_serializer
+from shared import dtutil
+from shared_web.api import (generate_error, process_github_webhook,
+                            return_json, validate_api_key)
 
 
 @APP.route('/api/decks/<deck_id>/')
@@ -108,25 +106,7 @@ def hide_intro():
 
 @APP.route('/api/gitpull', methods=['POST'])
 def gitpull():
-    if request.headers.get('X-GitHub-Event') == 'push':
-        payload = json.loads(request.data)
-        expected = 'refs/heads/{0}'.format(APP.config['branch'])
-        if payload['ref'] == expected:
-            try:
-                subprocess.check_output(['git', 'pull'])
-                subprocess.check_output(['pip', 'install', '-U', '--user', '-r', 'requirements.txt', '--no-cache'])
-                import uwsgi
-                uwsgi.reload()
-                return return_json({'rebooting': True})
-            except ImportError:
-                pass
-    return return_json({
-        'rebooting': False,
-        'commit-id': APP.config['commit-id'],
-        'current_branch': APP.config['branch'],
-        'ref': payload['ref'],
-        'expected': expected
-        })
+    process_github_webhook()
 
 @APP.route('/api/status/')
 @auth.load_person
@@ -137,16 +117,3 @@ def person_status():
         if d is not None:
             r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}
     return return_json(r)
-
-def validate_api_key():
-    if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):
-        return None
-    return return_json(generate_error('UNAUTHORIZED', 'Invalid API key'), status=403)
-
-def generate_error(code, msg):
-    return {'error': True, 'code': code, 'msg': msg}
-
-def return_json(content, status=200):
-    content = json.dumps(content, default=extra_serializer)
-    r = Response(response=content, status=status, mimetype='application/json')
-    return r

@@ -1,0 +1,10 @@
+<section>
+    <h1>Matches</h1>
+    {{> matchtable}}
+    {{#has_prev}}
+        <a href="{{prev_url}}">⏪︎ Previous Page</a>
+    {{/has_prev}}
+    {{#has_next}}
+        <a href="{{next_url}}">Next Page ⏩︎</a>
+    {{/has_next}}
+</section>

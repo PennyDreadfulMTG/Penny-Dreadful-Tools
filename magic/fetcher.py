@@ -2,7 +2,7 @@ import csv
 import json
 import os
 from collections import OrderedDict
-from typing import Any, Dict, List, Tuple, Union, cast
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 from urllib import parse
 
 import pytz
@@ -38,7 +38,7 @@ def card_aliases():
     with open(configuration.get('card_alias_file'), newline='', encoding='utf-8') as f:
         return list(csv.reader(f, dialect='excel-tab'))
 
-def card_price(cardname):
+def card_price(cardname) -> Dict[str, Any]:
     return internal.fetch_json('http://vorpald20.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
 
 def card_price_string(card, short: bool = False) -> str:
@@ -60,7 +60,7 @@ def card_price_string(card, short: bool = False) -> str:
         if age > 60 * 60 * 2:
             s += '\nWARNING: price information is {display} old'.format(display=dtutil.display_time(age, 1))
         return s
-    def format_price(p):
+    def format_price(p: Optional[str]) -> str:
         if p is None:
             return 'Unknown'
         dollars, cents = str(round(float(p), 2)).split('.')

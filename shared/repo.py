@@ -1,7 +1,7 @@
 import sys
 import textwrap
 import traceback
-from typing import Optional
+from typing import Dict, Optional
 
 from flask import request, session
 from github import Github, Issue
@@ -47,7 +47,7 @@ def create_issue(content: str, author: str, location: Optional[str] = 'Discord',
     issue = git_repo.create_issue(title=title, body=body)
     return issue
 
-def safe_data(data):
+def safe_data(data) -> Dict[str, str]:
     safe = {}
     for k, v in data.items():
         if 'oauth' not in k.lower() and 'api_token' not in k.lower():

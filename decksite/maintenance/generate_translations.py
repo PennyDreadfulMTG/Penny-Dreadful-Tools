@@ -5,8 +5,7 @@ from babel.messages import frontend
 from poeditor.client import POEditorAPI
 
 from shared import configuration
-
-from .. import template
+from shared_web import template
 
 
 def ad_hoc():

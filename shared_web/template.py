@@ -1,13 +1,23 @@
+import re
+from typing import List
+
+import flask
 import pystache
 import pystache.parsed
 from flask_babel import gettext
 from markdown import markdown
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
+from pystache.common import TemplateNotFoundError
 
+__SEARCHPATH: List[str] = []
 
-def render_name(template, *context):
-    return CachedRenderer(search_dirs=['decksite/templates']).render_name(template, *context)
+def render_name(template, *context) -> str:
+    try:
+        renderer = CachedRenderer(search_dirs=['{0}/templates'.format(flask.current_app.name), 'shared_web/templates'])
+    except TemplateNotFoundError:
+        renderer = CachedRenderer(search_dirs=__SEARCHPATH)
+    return renderer.render_name(template, *context)
 
 def render(view):
     view.prepare()
@@ -69,14 +79,17 @@ def insert_gettext_nodes(parsed_template: pystache.parsed.ParsedTemplate) -> pys
     return new_template
 
 class _GettextNode(object):
-    def __init__(self, key):
+    def __init__(self, key) -> None:
         self.key = key
 
     def __repr__(self):
         return pystache.parser._format(self)
 
-    def render(self, engine, context): # pylint: disable=unused-argument
+    def render(self, engine, context):
         s = gettext(self.key)
+        def lookup(match):
+            return engine.fetch_string(context, match.group(1))
+        s = re.sub(r'\{([a-z_]+)\}', lookup, s)
         return markdown(engine.escape(s), extensions=[NoParaTagsExtension()])
 
 #pylint: disable=no-self-use

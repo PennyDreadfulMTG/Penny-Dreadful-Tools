@@ -9,30 +9,22 @@ from flask import g, request, session, url_for
 from flask_babel import gettext, ngettext
 from werkzeug.routing import BuildError
 
-from decksite import APP, BABEL, admin, template
+from decksite import APP, BABEL, admin
 from decksite.data import archetype, deck
 from magic import oracle, rotation, tournaments
 from shared import dtutil
 from shared.container import Container
+from shared_web.base_view import BaseView
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10
 
 # pylint: disable=no-self-use, too-many-public-methods
-class View:
+class View(BaseView):
     def __init__(self):
         # Set some pointless instance vars to keep Codacy happy.
         self.decks = []
         self.active_runs_text = None
         self.is_very_large = None
-
-    def template(self):
-        return self.__class__.__name__.lower()
-
-    def content(self):
-        return template.render(self)
-
-    def page(self):
-        return template.render_name('page', self)
 
     def home_url(self):
         return url_for('home')
@@ -76,7 +68,7 @@ class View:
             if code == next_rotation_set_code:
                 break
             seasons.append({
-                'name': 'Season {num}'.format(num=num),
+                'name': rotation.season_name(num),
                 'code': code,
                 'code_lower': code.lower(),
                 'num': num,

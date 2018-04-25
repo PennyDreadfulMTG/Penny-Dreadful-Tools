@@ -548,7 +548,7 @@ def teardown_request(response):
 def log_exception(e):
     logger.error(''.join(traceback.format_exception(e, e, e.__traceback__)))
 
-def init(debug=True, port=None):
+def init(debug=True, port=None) -> None:
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""
     APP.logger.setLevel(logging.INFO)
     APP.run(host='0.0.0.0', debug=debug, port=port)

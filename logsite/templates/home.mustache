@@ -1,0 +1,8 @@
+{{#has_news}}
+    {{> news}}
+{{/has_news}}
+<section>
+    <h1>{{_ Latest Matches}}</h1>
+    {{> matchtable}}
+    <a href="{{matches_url}}">{{_ More matches…}}</a>
+</section>

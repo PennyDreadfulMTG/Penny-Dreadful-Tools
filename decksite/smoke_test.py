@@ -3,49 +3,22 @@ import unittest
 import pytest
 
 from decksite.main import APP
+from shared_web.smoke import Tester
 
 
-class SmokeTest(unittest.TestCase):
+class DecksiteSmokeTest(unittest.TestCase):
     def setUp(self):
-        self.app = APP.test_client()
-        # propagate the exceptions to the test client
-        self.app.testing = True
+        self.tester: Tester = Tester(APP)
 
     @pytest.mark.functional
-    def test_home_status_code(self):
-        result = self.app.get('/')
-        self.assertEqual(result.status_code, 200)
+    def test_base(self) -> None:
+        self.tester.base_tests()
 
     @pytest.mark.functional
-    def test_home_data(self):
-        result = self.app.get('/')
-        self.assertIn('<h1><string>Latest Decks</string></h1>', result.data.decode('utf-8'))
+    def test_home(self) -> None:
+        self.tester.data_test('/', '<h1><string>Latest Decks</string></h1>')
 
     @pytest.mark.functional
-    def test_some_pages(self):
-        result = self.app.get('/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/archetypes/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/people/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/cards/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/cards/Unsummon/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/competitions/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/competitions/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/tournaments/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/resources/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/bugs/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/signup/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/report/')
-        self.assertEqual(result.status_code, 200)
-        result = self.app.get('/doesnotexist')
-        self.assertEqual(result.status_code, 404)
+    def test_some_pages(self) -> None:
+        for path in ['/', '/people/', '/cards/', '/cards/Unsummon/', '/competitions/', '/competitions/', '/tournaments/', '/resources/', '/bugs/', '/signup/', '/report/']:
+            self.tester.response_test(path, 200)

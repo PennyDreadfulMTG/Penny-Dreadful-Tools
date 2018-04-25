@@ -34,8 +34,7 @@ lint:
 	@echo
 	@echo "******************************** Lint *****************************************"
 	@echo
-	@pylint  --generate-rcfile | grep -v "ignored-modules=" >.pylintrc.tmp
-	@find . -name "*.py" | grep -v .git | xargs pylint --ignored-modules=MySQLdb --rcfile=.pylintrc.tmp --reports=n -f parseable; (ret=$$?; echo; rm -f .pylintrc.tmp && exit $$ret)
+	@python3 dev.py pylint
 	@mypy --ignore-missing-imports .
 	@isort --check-only --skip=''
 
@@ -63,4 +62,3 @@ branch:
 # This cleans up for you.
 popclean:
 	@git stash pop 2>&1 | grep already | cut -d' ' -f1 | xargs rm && git stash pop
-

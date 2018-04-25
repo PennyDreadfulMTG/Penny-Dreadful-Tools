@@ -20,6 +20,7 @@ DEFAULTS = {
     'guild_id': '207281932214599682',
     'image_dir': './images',
     'legality_dir': '~/legality/Legality Checker/',
+    'logsite_database': 'pdlogs',
     'magic_database': 'cards',
     'mtgotraders_url': None,
     'mysql_host': 'localhost',

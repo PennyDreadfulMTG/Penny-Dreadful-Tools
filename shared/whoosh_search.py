@@ -127,7 +127,7 @@ class WhooshSearcher():
 def has(elements) -> bool:
     return bool(elements and len(elements) > 0)
 
-WordSubword = Tuple[List[str], List[str]] #pylint: disable=invalid-name
+WordSubword = Tuple[List[str], List[str]] # pylint: disable=invalid-name
 
 def classify(matches: List[str], word: str) -> WordSubword:
     regex = r'{w}( |,)'.format(w=word)

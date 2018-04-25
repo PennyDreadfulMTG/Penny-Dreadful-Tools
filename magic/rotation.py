@@ -9,7 +9,7 @@ from magic import fetcher
 from shared import configuration, dtutil
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
-SetInfo = TypedDict('SetInfo', { #pylint: disable=invalid-name
+SetInfo = TypedDict('SetInfo', { # pylint: disable=invalid-name
     'name': str,
     'block': Optional[str],
     'code': str,

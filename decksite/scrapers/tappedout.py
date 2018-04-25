@@ -42,7 +42,7 @@ def set_values(raw_deck: Dict[str, Any]) -> Dict[str, Any]:
     raw_deck['identifier'] = raw_deck['url']
     return raw_deck
 
-def parse_inventory(inventory) -> decklist.Decklist:
+def parse_inventory(inventory: List[List[Any]]) -> decklist.Decklist:
     d: decklist.Decklist = {'maindeck': {}, 'sideboard': {}}
     for name, board in inventory:
         # Decklists can contain editions. eg: Island (INV)

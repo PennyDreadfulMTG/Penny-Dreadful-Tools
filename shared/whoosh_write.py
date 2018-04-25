@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import List
 import os
 
 from whoosh.fields import NUMERIC, STORED, TEXT, Schema

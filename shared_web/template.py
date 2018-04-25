@@ -101,12 +101,12 @@ class _GettextNode(object):
         s = re.sub(r'\{([a-z_]+)\}', lookup, s)
         return markdown(engine.escape(s), extensions=[NoParaTagsExtension()])
 
-#pylint: disable=no-self-use
+# pylint: disable=no-self-use
 class NoParaTagProcessor(Treeprocessor):
     def run(self, root: List[Any]) -> None:
         root[0].tag = 'string'
 
-#pylint: disable=no-self-use, invalid-name
+# pylint: disable=no-self-use, invalid-name
 class NoParaTagsExtension(Extension):
     def extendMarkdown(self, md, _) -> None:
         md.treeprocessors.add('noparatag', NoParaTagProcessor(), '_end')

@@ -10,14 +10,14 @@ class WhooshSearchTest(unittest.TestCase):
         cls.searcher = WhooshSearcher()
 
     def best_match_is(self, query, expected_best_match, *additional_matches) -> None:
-        result = self.searcher.search(query)
+        result = self.searcher.search(query) # type: ignore
         assert result.get_best_match() == expected_best_match
         all_matches = result.get_all_matches()
         for r in additional_matches:
             assert is_included(r, all_matches)
 
     def finds_at_least(self, query, card_name) -> None:
-        result = self.searcher.search(query)
+        result = self.searcher.search(query) # type: ignore
         cards = result.get_all_matches()
         cards = [c for c in cards if c is not None]
         assert len(cards) >= 1
@@ -25,7 +25,7 @@ class WhooshSearchTest(unittest.TestCase):
 
     def aliases_are_exact(self):
         for q, card in (('bob', 'Dark Confidant'), ('jens', 'Solemn Simulacrum'), ('sad robot', 'Solemn Simulacrum'), ('mom', 'Mother of Runes'), ('tim', 'Prodigal Sorcerer'), ('gary', 'Gray Merchant of Asphodel'), ('finkel', 'Shadowmage Infiltrator'), ('kai', 'Voidmage Prodigy'), ('tiago', 'Snapcaster Mage'), ('pikula', 'Meddling Mage'), ('durdle turtle', 'Meandering Towershell'), ('volvary', 'Aura Barbs'), ('bolt', 'Lightning Bolt'), ('ftk', 'Flametongue Kavu'), ('fow', 'Force of Will'), ('looter scooter', "Smuggler's Copter"), ('nerd ape', "Inventor's Apprentice")):
-            result = self.searcher.search(q)
+            result = self.searcher.search(q) # type: ignore
             assert result.get_best_match() == card
 
     def test_assorted_typos(self) -> None:
@@ -74,7 +74,7 @@ class WhooshSearchTest(unittest.TestCase):
         self.best_match_is('Flash Food', 'Flash Flood')
 
     def test_10_cycles_are_returned(self) -> None:
-        result = self.searcher.search('Guildgate')
+        result = self.searcher.search('Guildgate') # type: ignore
         assert len(result.fuzzy) == 10
 
 

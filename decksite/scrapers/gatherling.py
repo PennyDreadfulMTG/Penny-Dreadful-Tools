@@ -138,7 +138,7 @@ def medal_winners(s: str) -> Dict[str, int]:
                 raise InvalidDataException('Unknown player image `{img}`'.format(img=img))
     return winners
 
-def finishes(winners: Dict[str, int], ranks: List[str]  ) -> Dict[str, int]:
+def finishes(winners: Dict[str, int], ranks: List[str]) -> Dict[str, int]:
     final = winners.copy()
     r = len(final)
     for p in ranks:
@@ -164,9 +164,9 @@ def tournament_deck(cells, competition_id: int, date: datetime.datetime, final: 
     d['identifier'] = gatherling_id
     if deck.get_deck_id(d['source'], d['identifier']) is not None:
         return None
-    decklist = decklist.parse(fetcher.internal.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
-    d['cards'] = decklist
-    if len(decklist['maindeck']) + len(decklist['sideboard']) == 0:
+    dlist = decklist.parse(fetcher.internal.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
+    d['cards'] = dlist
+    if len(dlist['maindeck']) + len(dlist['sideboard']) == 0:
         logger.warning('Rejecting deck with id {id} because it has no cards.'.format(id=gatherling_id))
         return None
     return deck.add_deck(d)

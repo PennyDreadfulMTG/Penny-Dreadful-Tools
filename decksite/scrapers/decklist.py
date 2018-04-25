@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, Tuple
 import re
 import xml
 
@@ -9,8 +9,8 @@ from magic import oracle
 from shared.pd_exception import InvalidDataException
 
 
-Section = Dict[str, int]
-Decklist = Dict[str, Section]
+Section = Dict[str, int] # pylint: disable=invalid-name
+Decklist = Dict[str, Section] # pylint: disable=invalid-name
 
 def parse_line(line: str) -> Tuple[int, str]:
     match = re.match(r'(\d+)\s+(.*)', line)

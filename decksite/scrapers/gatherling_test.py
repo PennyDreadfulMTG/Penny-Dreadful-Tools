@@ -17,10 +17,6 @@ def test_get_dt_and_series() -> None:
     assert dt.strftime('%Y-%m-%d %H:%M') == '2018-02-18 07:00'
     assert competition_series == 'APAC Penny Dreadful Sundays'
 
-    dt, competition_series = gatherling.get_dt_and_series('Penny Dreadful FNM - EU 99.99', '03 January 2020')
-    assert dt.strftime('%Y-%m-%d %H:%M') == '2020-01-03 18:30'
-    assert competition_series == 'Penny Dreadful FNM - EU'
-
     dt, competition_series = gatherling.get_dt_and_series('Penny Dreadful Saturdays 1.99', '06 January 2018')
     assert competition_series == 'Penny Dreadful Saturdays'
     assert dt.strftime('%Y-%m-%d %H:%M') == '2018-01-06 18:30'

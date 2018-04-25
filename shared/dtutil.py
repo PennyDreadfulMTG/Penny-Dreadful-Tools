@@ -74,7 +74,7 @@ def replace_day_with_ordinal(s: str) -> str:
 
 def day2ordinal(m: Match) -> str:
     p = inflect.engine()
-    return p.ordinal(round(m.group(1)))
+    return p.ordinal(int(m.group(1)))
 
 IntervalsType = Dict[str, Tuple[int, int]] # pylint: disable=invalid-name
 ResultsType = List[Tuple[int, str]] # pylint: disable=invalid-name

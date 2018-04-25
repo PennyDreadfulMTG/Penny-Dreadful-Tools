@@ -281,7 +281,7 @@ def get_deck_id(source_name, identifier) -> Optional[int]:
 
 def insert_deck_card(deck_id, name, n, in_sideboard) -> None:
     name = oracle.valid_name(name)
-    sql = 'INSERT INTO deck_card (deck_id, name, n, sideboard) VALUES (%s, %s, %s, %s)'
+    sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (%s, %s, %s, %s)'
     db().execute(sql, [deck_id, name, n, in_sideboard])
 
 def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username) -> int:

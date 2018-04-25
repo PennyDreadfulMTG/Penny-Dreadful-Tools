@@ -3,12 +3,12 @@ import unittest
 import pytest
 
 from decksite.main import APP
-from shared_web.smoke import Tester
+from shared_web.smoke import SmokeTester
 
 
 class DecksiteSmokeTest(unittest.TestCase):
     def setUp(self):
-        self.tester: Tester = Tester(APP)
+        self.tester: SmokeTester = SmokeTester(APP)
 
     @pytest.mark.functional
     def test_base(self) -> None:

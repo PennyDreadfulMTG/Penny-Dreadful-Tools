@@ -1,5 +1,6 @@
 import re
-from typing import Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
+from typing import (TYPE_CHECKING, Callable, Dict, List, Match, Optional,
+                    Tuple, Union)
 
 import flask
 import pystache

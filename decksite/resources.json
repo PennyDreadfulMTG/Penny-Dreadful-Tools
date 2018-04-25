@@ -11,7 +11,8 @@
         "Decklists": "https://pennydreadfulmagic.com/",
         "Legal cards list": "http://pdmtgo.com/legal_cards.txt",
         "Card search": "https://scryfall.com/search/?q=f:pd",
-        "Deck checker": "http://pdmtgo.com/deck_check.html",
+        "Deck checker": "http://pennydreadfulmagic.com/deckcheck/",
+        "Deck checker 2": "http://pdmtgo.com/deck_check.html",
         "Deck builder": "https://tappedout.net/mtg-deck-builder/penny-dreadful/",
         "Current bugs": "https://pennydreadfulmagic.com/bugs/"
     },

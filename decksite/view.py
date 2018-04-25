@@ -100,6 +100,7 @@ class View:
         resources_submenu += [
             {'name': gettext('Rotation Changes'), 'url': url_for('rotation_changes')},
             {'name': gettext('Rotation Speculation'), 'url': url_for('rotation_speculation')},
+            {'name': gettext('Deck Check'), 'url': url_for('deck_check')},
             {'name': gettext('Discord Chat'), 'url': 'https://discord.gg/H6EHdHu'},
             {'name': gettext('External Links'), 'url': url_for('resources')},
             {'name': gettext('Link Accounts'), 'url': url_for('link')},

@@ -59,7 +59,7 @@ COLOR_COMBINATIONS = {
     'Five Color': ['W', 'U', 'B', 'R', 'G']
 }
 
-def normalize(d: Deck) -> str:
+def normalize(d: 'Deck') -> str:
     name = d.original_name
     name = name.lower()
     name = replace_space_alternatives(name)
@@ -85,7 +85,7 @@ def normalize(d: Deck) -> str:
     name = ucase_trailing_roman_numerals(name)
     return titlecase.titlecase(name)
 
-def file_name(d: Deck) -> str:
+def file_name(d: 'Deck') -> str:
     safe_name = normalize(d).replace(' ', '-')
     safe_name = re.sub('--+', '-', safe_name, flags=re.IGNORECASE)
     safe_name = re.sub('[^0-9a-z-]', '', safe_name, flags=re.IGNORECASE)

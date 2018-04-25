@@ -1,5 +1,5 @@
 import re
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import flask
 import pystache
@@ -11,6 +11,8 @@ from markdown.treeprocessors import Treeprocessor
 from pystache.common import TemplateNotFoundError
 from pystache.context import ContextStack
 
+# For typing only.
+# pylint: disable=cyclic-import
 from shared_web.base_view import BaseView
 
 __SEARCHPATH: List[str] = []
@@ -55,7 +57,7 @@ class CachedLoader(pystache.loader.Loader):
 # If you have already parsed a template, don't parse it again.
 class CachedRenderEngine(pystache.renderengine.RenderEngine):
     # pylint: disable=too-many-arguments
-    def __init__(self, literal: StringConverterFunction = None, escape: StringConverterFunction = None, resolve_context: Optional[Callable[[ContextStack, str], str]] = None, resolve_partial: Optional[StringConverterFunction] = None, to_str = Optional[Callable[[object], str]]) -> None:
+    def __init__(self, literal: StringConverterFunction = None, escape: StringConverterFunction = None, resolve_context: Optional[Callable[[ContextStack, str], str]] = None, resolve_partial: Optional[StringConverterFunction] = None, to_str: Optional[Callable[[object], str]] = None) -> None:
         super().__init__(literal, escape, resolve_context, resolve_partial, to_str)
         self.parsed_templates: Dict[str, pystache.parsed.ParsedTemplate] = {}
 

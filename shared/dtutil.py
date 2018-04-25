@@ -1,7 +1,7 @@
 import datetime
 import re
 from collections import OrderedDict
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Match, Tuple
 
 import inflect
 import pytz
@@ -36,22 +36,22 @@ def parse(s: str, date_format: str, tz: Any) -> datetime.datetime:
     dt = datetime.datetime.strptime(s, date_format)
     return tz.localize(dt).astimezone(pytz.timezone('UTC'))
 
-def parse_to_ts(s: str, date_format: str, tz) -> int:
+def parse_to_ts(s: str, date_format: str, tz: Any) -> int:
     dt = parse(s, date_format, tz)
     return dt2ts(dt)
 
-def timezone(tzid) -> datetime.tzinfo:
+def timezone(tzid: str) -> datetime.tzinfo:
     return pytz.timezone(tzid)
 
-def now(tz=None) -> datetime.datetime:
+def now(tz: Any = None) -> datetime.datetime:
     if tz is None:
         tz = datetime.timezone.utc
     return datetime.datetime.now(tz)
 
-def day_of_week(dt, tz):
+def day_of_week(dt: datetime.datetime, tz: Any):
     return dt.astimezone(tz).strftime('%A')
 
-def form_date(dt, tz):
+def form_date(dt: datetime.datetime, tz: Any):
     return dt.astimezone(tz).strftime(FORM_FORMAT)
 
 def display_date(dt: datetime.datetime, granularity: int = 1) -> str:
@@ -72,7 +72,7 @@ def display_date(dt: datetime.datetime, granularity: int = 1) -> str:
 def replace_day_with_ordinal(s: str) -> str:
     return re.sub(r'_(.*)_', day2ordinal, s)
 
-def day2ordinal(m):
+def day2ordinal(m: Match):
     p = inflect.engine()
     return p.ordinal(int(m.group(1)))
 

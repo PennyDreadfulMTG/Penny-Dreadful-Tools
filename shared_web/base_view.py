@@ -3,7 +3,6 @@ from typing import NoReturn
 from . import template
 
 
-# pylint: disable=no-self-use, too-many-public-methods
 class BaseView:
     def template(self) -> str:
         return self.__class__.__name__.lower()

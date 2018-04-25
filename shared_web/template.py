@@ -61,7 +61,7 @@ class CachedRenderEngine(pystache.renderengine.RenderEngine):
         super().__init__(literal, escape, resolve_context, resolve_partial, to_str)
         self.parsed_templates: Dict[str, pystache.parsed.ParsedTemplate] = {}
 
-    def render(self, template, context_stack: ContextStack, delimiters: Optional[Tuple[str, str]] = None) -> str:
+    def render(self, template: str, context_stack: ContextStack, delimiters: Optional[Tuple[str, str]] = None) -> str:
         if self.parsed_templates.get(template) is None:
             self.parsed_templates[template] = insert_gettext_nodes(pystache.parser.parse(template, delimiters))
         return self.parsed_templates[template].render(self, context_stack)
@@ -87,22 +87,22 @@ def insert_gettext_nodes(parsed_template: pystache.parsed.ParsedTemplate) -> pys
     return new_template
 
 class _GettextNode(object):
-    def __init__(self, key) -> None:
+    def __init__(self, key: str) -> None:
         self.key = key
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return pystache.parser._format(self)
 
-    def render(self, engine, context):
+    def render(self, engine: pystache.renderengine.RenderEngine, context: ContextStack) -> str:
         s = gettext(self.key)
-        def lookup(match):
+        def lookup(match: Match) -> str:
             return engine.fetch_string(context, match.group(1))
         s = re.sub(r'\{([a-z_]+)\}', lookup, s)
         return markdown(engine.escape(s), extensions=[NoParaTagsExtension()])
 
 #pylint: disable=no-self-use
 class NoParaTagProcessor(Treeprocessor):
-    def run(self, root):
+    def run(self, root: List[object]) -> None:
         root[0].tag = 'string'
 
 #pylint: disable=no-self-use, invalid-name

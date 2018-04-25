@@ -1,7 +1,7 @@
 from magic import card
 
 
-def test_canonicalize():
+def test_canonicalize() -> None:
     assert card.canonicalize('Jötun Grunt') == 'jotun grunt'
     assert card.canonicalize('Séance') == 'seance'
     assert card.canonicalize('Far/Away') == 'far // away'

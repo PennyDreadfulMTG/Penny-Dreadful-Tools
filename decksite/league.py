@@ -273,7 +273,7 @@ def active_league():
         leagues = [competition.load_competition(comp_id)]
     return guarantee.exactly_one(leagues)
 
-def determine_end_of_league(start_date):
+def determine_end_of_league(start_date: datetime.datetime) -> datetime.datetime:
     if start_date.day < 15:
         month = start_date.month + 1
     else:
@@ -290,7 +290,7 @@ def determine_end_of_league(start_date):
     end_date = end_date - datetime.timedelta(seconds=1)
     return end_date
 
-def determine_league_name(end_date):
+def determine_league_name(end_date: datetime.datetime) -> str:
     return 'League {MM} {YYYY}'.format(MM=calendar.month_name[end_date.month], YYYY=end_date.year)
 
 def retire_deck(d):

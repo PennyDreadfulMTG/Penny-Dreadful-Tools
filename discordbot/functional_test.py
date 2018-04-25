@@ -1,3 +1,4 @@
+from typing import Any
 import asyncio
 import types
 
@@ -10,7 +11,7 @@ from magic import fetcher_internal
 
 # Mock up assertions within the discord client.
 # I love that Python lets us just ruin 3rd-party libraries like this.
-def generate_fakebot():
+def generate_fakebot() -> discord.Client:
     async def fake_send_message(channel, text):
         print('Responding with "{0}"'.format(text))
         channel.calls += 1
@@ -30,15 +31,15 @@ def generate_fakebot():
     fakebot.send_typing = fake_send_typing
     return fakebot
 
-def generate_fakechannel():
+def generate_fakechannel() -> Any:
     fakechannel = types.new_class('Channel')
-    fakechannel.is_private = True
-    fakechannel.calls = 0
-    fakechannel.id = 0
+    fakechannel.is_private = True # type: ignore
+    fakechannel.calls = 0 # type: ignore
+    fakechannel.id = 0 # type: ignore
     return fakechannel
 
 @pytest.mark.functional
-def test_commands():
+def test_commands() -> None:
     fakebot = generate_fakebot()
 
     loop = asyncio.get_event_loop()
@@ -49,23 +50,23 @@ def test_commands():
             continue
 
         channel = generate_fakechannel()
-        calls = channel.calls
+        calls = channel.calls # type: ignore
 
         message = types.new_class('Message')
-        message.content = '!{0} args'.format(cmd)
-        message.channel = channel
+        message.content = '!{0} args'.format(cmd) # type: ignore
+        message.channel = channel # type: ignore
 
         if cmd == 'time':
-            message.content = '!time Melbourne'
+            message.content = '!time Melbourne' # type: ignore
 
-        message.author = types.new_class('User')
-        message.author.mention = '@nobody'
-        message.author.voice = types.new_class('VoiceState')
-        message.author.voice.voice_channel = None
+        message.author = types.new_class('User') # type: ignore
+        message.author.mention = '@nobody' # type: ignore
+        message.author.voice = types.new_class('VoiceState') # type: ignore
+        message.author.voice.voice_channel = None # type: ignore
 
-        print('Calling {0}'.format(message.content))
+        print('Calling {0}'.format(message.content)) # type: ignore
         loop.run_until_complete(command.handle_command(message, fakebot))
-        assert channel.calls > calls
-        calls = channel.calls
+        assert channel.calls > calls # type: ignore
+        calls = channel.calls # type: ignore
 
     loop.close()

@@ -74,7 +74,7 @@ def get_printings(generalized_card: card.Card):
     rs = db().execute(sql, [generalized_card.id])
     return [card.Printing(r) for r in rs]
 
-def deck_sort(c):
+def deck_sort(c: card.Card) -> str:
     s = ''
     if c.is_creature():
         s += 'A'

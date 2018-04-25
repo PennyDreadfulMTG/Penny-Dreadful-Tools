@@ -17,7 +17,7 @@ def adjustment(elo1: int, elo2: int) -> int:
 def expected(elo1: int, elo2: int) -> float:
     return 1.0 / (1 + 10**((elo2 - elo1) / ELO_WIDTH))
 
-def adjust_elo(winning_deck_id, losing_deck_id):
+def adjust_elo(winning_deck_id, losing_deck_id) -> None:
     if not losing_deck_id:
         return # Intentional draws do not affect Elo.
     winner = guarantee.exactly_one(person.load_people('p.id IN (SELECT person_id FROM deck WHERE id = {winning_deck_id})'.format(winning_deck_id=sqlescape(winning_deck_id))))

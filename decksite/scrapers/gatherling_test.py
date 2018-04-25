@@ -6,13 +6,13 @@ from decksite.data import competition
 from decksite.scrapers import gatherling
 
 
-def test_top_n():
+def test_top_n() -> None:
     for n in [4, 8]:
         filename = 'gatherling.top{n}.html'.format(n=n)
         soup = get_soup(filename)
         assert competition.Top(n) == gatherling.find_top_n(soup)
 
-def test_get_dt_and_series():
+def test_get_dt_and_series() -> None:
     dt, competition_series = gatherling.get_dt_and_series('APAC Penny Dreadful Sundays 7.02', '18 February 2018')
     assert dt.strftime('%Y-%m-%d %H:%M') == '2018-02-18 07:00'
     assert competition_series == 'APAC Penny Dreadful Sundays'
@@ -37,7 +37,7 @@ def test_get_dt_and_series():
     assert competition_series == 'Penny Dreadful Thursdays'
     assert dt.strftime('%Y-%m-%d %H:%M') == '2018-01-12 00:00'
 
-def test_rankings():
+def test_rankings() -> None:
     soup = get_soup('gatherling.top4.html')
     rankings = gatherling.rankings(soup)
     assert len(rankings) == 13
@@ -106,7 +106,7 @@ def test_rankings():
     assert rankings[12] == 'silasary'
     assert rankings[13] == 'prestontiger3'
 
-def test_medal_winners():
+def test_medal_winners() -> None:
     html = get_html('gatherling.top4.html')
     winners = gatherling.medal_winners(html)
     assert winners['Gleiciano'] == 1
@@ -132,7 +132,7 @@ def test_medal_winners():
     assert winners['jackslagel'] == 3
     assert winners['The_Wolf'] == 3
 
-def test_finishes():
+def test_finishes() -> None:
     fs = gatherling.finishes({'e': 1, 'b': 2, 'c': 3, 'd': 4}, ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'])
     assert fs['a'] == 5
     assert fs['b'] == 2
@@ -143,11 +143,11 @@ def test_finishes():
     assert fs['g'] == 7
     assert fs['h'] == 8
 
-def get_html(filename):
+def get_html(filename: str) -> str:
     path = '{path}/{filename}'.format(path=os.path.dirname(__file__), filename=filename)
     with open(path, 'r') as f:
         return f.read()
 
-def get_soup(filename):
+def get_soup(filename: str) -> BeautifulSoup:
     page = get_html(filename)
     return BeautifulSoup(page, 'html.parser')

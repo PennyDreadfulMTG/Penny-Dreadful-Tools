@@ -38,7 +38,7 @@ def test_results_from_queries() -> None:
     assert not result.is_ambiguous()
     assert result.get_best_match() == 'Upheaval'
 
-def test_resources_matching_in_url():
+def test_resources_matching_in_url() -> None:
     results = command.resources_resources('github')
     assert results['https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/'] == 'Penny Dreadful Tools'
 

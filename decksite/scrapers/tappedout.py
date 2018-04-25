@@ -1,3 +1,4 @@
+from typing import Any, Dict, List, Optional
 import re
 import urllib
 
@@ -11,7 +12,7 @@ from shared import configuration
 from shared.pd_exception import InvalidDataException
 
 
-def scrape():
+def scrape() -> None:
     login()
     logger.warning('Logged in to TappedOut: {is_authorised}'.format(is_authorised=is_authorised()))
     raw_decks = fetch_decks()
@@ -24,13 +25,13 @@ def scrape():
         except InvalidDataException as e:
             logger.warning('Skipping {slug} because of {e}'.format(slug=raw_deck.get('slug', '-no slug-'), e=e))
 
-def fetch_decks():
+def fetch_decks() -> List[Dict[str, Any]]:
     return fetcher_internal.fetch_json('https://tappedout.net/api/deck/latest/penny-dreadful/')
 
-def fetch_deck_details(raw_deck):
+def fetch_deck_details(raw_deck) -> Dict[str, Any]:
     return fetcher_internal.fetch_json('https://tappedout.net/api/collection/collection:deck/{slug}/'.format(slug=raw_deck['slug']))
 
-def set_values(raw_deck):
+def set_values(raw_deck: Dict[str, Any]) -> Dict[str, Any]:
     raw_deck = translation.translate(translation.TAPPEDOUT, raw_deck)
     if 'inventory' in raw_deck:
         raw_deck['cards'] = parse_inventory(raw_deck['inventory'])
@@ -41,8 +42,8 @@ def set_values(raw_deck):
     raw_deck['identifier'] = raw_deck['url']
     return raw_deck
 
-def parse_inventory(inventory):
-    d = {'maindeck': {}, 'sideboard': {}}
+def parse_inventory(inventory) -> decklist.Decklist:
+    d: decklist.Decklist = {'maindeck': {}, 'sideboard': {}}
     for name, board in inventory:
         # Decklists can contain editions. eg: Island (INV)
         # We can't handle these right now.
@@ -63,7 +64,7 @@ def parse_inventory(inventory):
             d['sideboard'][name] = board['qty']
     return d
 
-def is_authorised():
+def is_authorised() -> bool:
     return fetcher_internal.SESSION.cookies.get('tapped') is not None
 
 def get_auth():
@@ -71,11 +72,11 @@ def get_auth():
     token = configuration.get('tapped_API_key')
     return fetcher_internal.fetch('https://tappedout.net/api/v1/cookie/{0}/?access_token={1}'.format(cookie, token))
 
-def login(user=None, password=None):
+def login(user: Optional[str] = None, password: Optional[str] = None):
     if user is None:
-        user = configuration.get('to_username')
+        user = configuration.get_str('to_username')
     if password is None:
-        password = configuration.get('to_password')
+        password = configuration.get_str('to_password')
     if user == '' or password == '':
         logger.warning('No TappedOut credentials provided')
         return
@@ -103,12 +104,12 @@ def login(user=None, password=None):
     if response.status_code == 403:
         logger.warning('Failed to log in')
 
-def scrape_url(url):
+def scrape_url(url: str) -> deck.Deck:
     if not url.endswith('/'):
         url += '/'
     path = urllib.parse.urlparse(url).path
     slug = path.split('/')[2]
-    raw_deck = dict()
+    raw_deck: Dict[str, Any] = {}
     raw_deck['slug'] = slug
     raw_deck['url'] = url
     if is_authorised():
@@ -117,14 +118,14 @@ def scrape_url(url):
         raw_deck.update(parse_printable(raw_deck))
     raw_deck = set_values(raw_deck)
     vivified = decklist.vivify(raw_deck['cards'])
-    errors = {}
+    errors: Dict[str, List[str]] = {}
     if 'Penny Dreadful' not in legality.legal_formats(vivified, None, errors):
         print(repr(raw_deck['cards']))
         raise InvalidDataException('Deck is not legal in Penny Dreadful - {error}'.format(error=errors.get('Penny Dreadful')))
     else:
         return deck.add_deck(raw_deck)
 
-def parse_printable(raw_deck):
+def parse_printable(raw_deck) -> Dict[str, Any]:
     """If we're not authorized for the TappedOut API, this method will collect name and author of a deck.
     It could also grab a date, but I haven't implemented that yet."""
     s = fetcher_internal.fetch(raw_deck['url'] + '?fmt=printable')

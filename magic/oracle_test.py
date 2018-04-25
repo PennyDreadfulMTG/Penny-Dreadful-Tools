@@ -3,7 +3,7 @@ import pytest
 from magic import oracle
 
 
-def test_legality():
+def test_legality() -> None:
     card = oracle.load_card('Swamp')
     assert card is not None
     assert card.legalities['Standard'] == 'Legal'
@@ -19,22 +19,22 @@ def test_legality():
     assert card.legalities['Vintage'] == 'Restricted'
     assert 'Penny Dreadful' not in card.legalities.keys()
 
-def test_valid_name():
+def test_valid_name() -> None:
     assert oracle.valid_name('Dark Ritual') == 'Dark Ritual'
     assert oracle.valid_name('Far/Away') == 'Far // Away'
 
-def test_load_cards():
+def test_load_cards() -> None:
     cards = oracle.load_cards(['Think Twice', 'Swamp'])
     assert len(cards) == 2
     assert 'Think Twice' in [c.name for c in cards]
     assert 'Swamp' in [c.name for c in cards]
 
-def test_deck_sort_x_last():
+def test_deck_sort_x_last() -> None:
     cards = oracle.load_cards(['Ghitu Fire', 'Flash of Insight', 'Frantic Search'])
     assert len(cards) == 3
-    cards = {c.name: c for c in cards}
-    assert oracle.deck_sort(cards.get('Ghitu Fire')) < oracle.deck_sort(cards.get('Flash of Insight'))
-    assert oracle.deck_sort(cards.get('Ghitu Fire')) > oracle.deck_sort(cards.get('Frantic Search'))
+    cards_by_name = {c.name: c for c in cards}
+    assert oracle.deck_sort(cards_by_name.get('Ghitu Fire')) < oracle.deck_sort(cards_by_name.get('Flash of Insight'))
+    assert oracle.deck_sort(cards_by_name.get('Ghitu Fire')) > oracle.deck_sort(cards_by_name.get('Frantic Search'))
 
 # Check that the list of legal cards is being fetched correctly.
 @pytest.mark.functional

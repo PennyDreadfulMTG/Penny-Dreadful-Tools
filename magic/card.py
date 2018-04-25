@@ -138,7 +138,7 @@ def card_color_properties() -> TableDescription:
     props['color_id']['foreign_key'] = ('color', 'id')
     return props
 
-def card_type_properties(typetype) -> TableDescription:
+def card_type_properties(typetype: str) -> TableDescription:
     props = {}
     for k in ['id', 'card_id', typetype]:
         props[k] = copy.deepcopy(BASE)
@@ -245,30 +245,30 @@ def canonicalize(name: str) -> str:
     name = name.replace('Æ', 'Ae').replace('“', '"').replace('”', '"').replace("'", "'").replace("'", "'")
     return unaccent(name.strip().lower())
 
-def to_mtgo_format(s):
+def to_mtgo_format(s: str) -> str:
     return s.replace(' // ', '/').replace('\n', '\r\n')
 
 class Card(Container):
-    def __init__(self, params) -> None:
+    def __init__(self, params: Dict[str, Any]) -> None:
         super().__init__()
         for k in params.keys():
             setattr(self, k, determine_value(k, params))
         if not self.names:
             setattr(self, 'names', [self.name])
 
-    def is_creature(self):
+    def is_creature(self) -> bool:
         return 'Creature' in self.type
 
-    def is_land(self):
+    def is_land(self) -> bool:
         return 'Land' in self.type
 
-    def is_spell(self):
+    def is_spell(self) -> bool:
         return not self.is_creature() and not self.is_land()
 
-    def is_split(self):
+    def is_split(self) -> bool:
         return self.name.find('//') >= 0
 
-def determine_value(k: str, params) -> Any:
+def determine_value(k: str, params: Dict[str, Any]) -> Any:
     v = params[k]
     if k == 'names' or k == 'mana_cost':
         return cast(str, v).split('|') if v is not None else None

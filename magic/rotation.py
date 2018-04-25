@@ -1,7 +1,7 @@
 import datetime
 import glob
 import os
-from typing import List, Optional, cast
+from typing import List, Optional, Union, cast
 
 from mypy_extensions import TypedDict
 
@@ -97,7 +97,7 @@ def sets() -> List[SetInfo]:
         __SETS.extend(init())
     return __SETS
 
-def season_id(v):
+def season_id(v) -> Union[int, str]:
     """From any value return the season id which is the integer representing the season, or 'all' for all time."""
     if v is None:
         return current_season_num()
@@ -114,14 +114,14 @@ def season_id(v):
     except (ValueError, AttributeError):
         raise DoesNotExistException("I don't know a season called {v}".format(v=v))
 
-def season_code(v):
+def season_code(v) -> str:
     """From any value return the season code which is a three letter string representing the season, or 'ALL' for all time."""
     sid = season_id(v)
     if sid == 'all':
         return 'ALL'
-    return SEASONS[sid - 1]
+    return SEASONS[int(sid) - 1]
 
-def season_name(v):
+def season_name(v) -> str:
     """From any value return the person-friendly name of the season, or 'All Time' for all time."""
     sid = season_id(v)
     if sid == 'all':

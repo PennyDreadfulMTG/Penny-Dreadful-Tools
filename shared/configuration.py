@@ -3,7 +3,7 @@ import json
 import os
 import random
 import string
-from typing import Any, List, Union, overload
+from typing import Any, List, Optional, Union, overload
 
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
@@ -50,7 +50,7 @@ DEFAULTS = {
     'league_webhook_token': None,
 }
 
-def get_str(key: str) -> str:
+def get_str(key: str) -> Optional[str]:
     val = get(key)
     if val is None:
         return None
@@ -58,7 +58,7 @@ def get_str(key: str) -> str:
         return val
     raise fail(key, val, str)
 
-def get_int(key: str) -> int:
+def get_int(key: str) -> Optional[int]:
     val = get(key)
     if val is None:
         return None
@@ -66,7 +66,7 @@ def get_int(key: str) -> int:
         return val
     raise fail(key, val, int)
 
-def get_float(key: str) -> float:
+def get_float(key: str) -> Optional[float]:
     val = get(key)
     if val is None:
         return None
@@ -76,7 +76,7 @@ def get_float(key: str) -> float:
         return write(key, float(val))
     raise fail(key, val, float)
 
-def get_list(key: str) -> List[str]:
+def get_list(key: str) -> Optional[List[str]]:
     val = get(key)
     if val is None:
         return None
@@ -84,7 +84,7 @@ def get_list(key: str) -> List[str]:
         return val
     raise fail(key, val, List[str])
 
-def get(key: str) -> Union[str, List[str], int, float]:
+def get(key: str) -> Optional[Union[str, List[str], int, float]]:
     try:
         cfg = json.load(open('config.json'))
     except FileNotFoundError:

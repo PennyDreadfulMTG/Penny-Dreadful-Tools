@@ -128,5 +128,5 @@ def season_name(v):
         return 'All Time'
     return 'Season {num}'.format(num=sid)
 
-def files():
+def files() -> List[str]:
     return glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))

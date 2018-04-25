@@ -29,7 +29,7 @@ def ts2dt(ts: int) -> datetime.datetime:
 # Converts a timezone-aware UTC datetime into a UTC timestamp (seconds).
 def dt2ts(dt: datetime.datetime) -> int:
     assert dt.tzinfo is not None, 'datetime must be timezone aware.'
-    return int(dt.timestamp())
+    return round(dt.timestamp())
 
 # Converts the given string in the format `format` to a timezone-aware UTC datetime assuming the original string is in timezone `tz`.
 def parse(s: str, date_format: str, tz: Any) -> datetime.datetime:
@@ -74,7 +74,7 @@ def replace_day_with_ordinal(s: str) -> str:
 
 def day2ordinal(m: Match):
     p = inflect.engine()
-    return p.ordinal(int(m.group(1)))
+    return p.ordinal(round(m.group(1)))
 
 IntervalsType = Dict[str, Tuple[int, int]] #pylint: disable=invalid-name
 ResultsType = List[Tuple[int, str]] #pylint: disable=invalid-name

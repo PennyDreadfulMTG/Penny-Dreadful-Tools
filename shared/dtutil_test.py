@@ -18,7 +18,7 @@ def test_dt2ts():
     dt = timezone('UTC').localize(datetime.datetime.utcfromtimestamp(0))
     assert dtutil.dt2ts(dt) == 0
     now = datetime.datetime.now(datetime.timezone.utc)
-    now_ts = now.timestamp()
+    now_ts = round(now.timestamp())
     assert dtutil.dt2ts(now) == now_ts
 
 def test_end_to_end():
@@ -41,7 +41,7 @@ def test_parse_to_ts():
     assert dtutil.parse_to_ts(s, '%Y-%m-%d %H:%M:%S', timezone('UTC')) == 0
     s = '1970-01-01 00:01:59'
     assert dtutil.parse_to_ts(s, '%Y-%m-%d %H:%M:%S', timezone('UTC')) == 119
-    assert str(dtutil.parse_to_ts(s, '%Y-%m-%d %H:%M:%S', timezone('UTC'))) == '119.0'
+    assert str(dtutil.parse_to_ts(s, '%Y-%m-%d %H:%M:%S', timezone('UTC'))) == '119'
 
 def test_now():
     then = dtutil.parse('2016-01-01', '%Y-%m-%d', dtutil.WOTC_TZ)

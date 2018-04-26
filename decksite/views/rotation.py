@@ -64,9 +64,9 @@ class Rotation(View):
             return
         percent = round(round(hits / self.runs, 2) * 100)
         if remaining_runs == 0:
-            percent_needed = 0
+            percent_needed = '0'
         else:
-            percent_needed = round(round(hits_needed / remaining_runs, 2) * 100)
+            percent_needed = str(round(round(hits_needed / remaining_runs, 2) * 100))
         if c is None:
             raise DoesNotExistException("Legality list contains unknown card '{name}'".format(name=name))
         if remaining_runs + hits < 84:
@@ -78,12 +78,12 @@ class Rotation(View):
             hits = redact(hits)
             hits_needed = redact(hits_needed)
             percent = redact(percent)
-            percent_needed_s = redact(percent_needed)
+            redact = redact(percent_needed)
         c.update({
             'hits': hits,
             'hits_needed': hits_needed,
             'percent': percent,
-            'percent_hits_needed': percent_needed_s,
+            'percent_hits_needed': percent_needed,
             'status': status,
             'interestingness': rotation.interesting(self.playability, c)
         })

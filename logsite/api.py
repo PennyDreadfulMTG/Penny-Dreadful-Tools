@@ -14,7 +14,7 @@ def admin() -> Response:
     return return_json(session.get('admin'))
 
 @APP.route('/api/matchExists/<match_id>')
-def match_exists(match_id) -> Response:
+def match_exists(match_id: int) -> Response:
     return return_json(match.get_match(match_id) is not None)
 
 @APP.route('/api/upload', methods=['POST'])

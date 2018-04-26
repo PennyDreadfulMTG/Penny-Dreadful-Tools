@@ -1,6 +1,7 @@
 import importlib
 import pkgutil
 import sys
+from typing import List
 
 
 def run() -> None:
@@ -41,7 +42,7 @@ def run() -> None:
         rotation_script.run()
     elif sys.argv[1] == 'logsite':
         import logsite
-        logsite.APP.run(host='0.0.0.0', debug=True)
+        logsite.APP.run(host='0.0.0.0', port=5001, debug=True)
     else:
         try:
             m = importlib.import_module('{module}.main'.format(module=sys.argv[1]))
@@ -51,7 +52,7 @@ def run() -> None:
             sys.exit(1)
     sys.exit(0)
 
-def task(args) -> None:
+def task(args: List[str]) -> None:
     module = args[1]
     if module == 'scraper':
         module = 'scrapers'

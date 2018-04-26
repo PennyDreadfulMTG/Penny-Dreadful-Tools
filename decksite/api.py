@@ -28,12 +28,18 @@ def league_api():
 def person_api(person):
     p = ps.load_person(person)
     p.decks = url_for('person_decks_api', person=person)
+    p.head_to_head = url_for('person_h2h_api', person=person)
     return return_json(p)
 
 @APP.route('/api/person/<person>/decks/')
 def person_decks_api(person):
     p = ps.load_person(person)
     return return_json(p.decks)
+
+@APP.route('/api/person/<person>/h2h/')
+def person_h2h_api(person):
+    p = ps.load_person(person)
+    return return_json(p.head_to_head)
 
 @APP.route('/api/league/run/<person>')
 def league_run_api(person):
@@ -111,7 +117,11 @@ def gitpull():
 @APP.route('/api/status/')
 @auth.load_person
 def person_status():
-    r = {'mtgo_username': auth.mtgo_username(), 'discord_id': auth.discord_id()}
+    r = {
+        'mtgo_username': auth.mtgo_username(),
+        'discord_id': auth.discord_id(),
+        'admin': session.get('admin', False)
+        }
     if auth.mtgo_username():
         d = guarantee.at_most_one(league.active_decks_by(auth.mtgo_username()))
         if d is not None:

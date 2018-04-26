@@ -18,7 +18,7 @@ def load_person(person: Union[int, str], season_id=None) -> Person:
     except ValueError:
         person_id = 0
         username = sqlescape(person)
-    return guarantee.exactly_one(load_people('p.id = {person_id} OR p.mtgo_username = {username}'.format(person_id=person_id, username=username), season_id=season_id))
+    return guarantee.exactly_one(load_people('p.id = {person_id} OR p.mtgo_username = {username} OR p.discord_id = {person_id}'.format(person_id=person_id, username=username), season_id=season_id))
 
 def load_people(where='1 = 1', order_by='`all_num_decks` DESC, name', season_id=None) -> List[Person]:
     sql = """

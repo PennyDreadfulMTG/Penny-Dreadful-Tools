@@ -6,7 +6,7 @@ from magic import rotation
 
 # pylint: disable=no-self-use
 class Decks(View):
-    def __init__(self, decks):
+    def __init__(self, decks) -> None:
         super().__init__()
         self.decks = decks
         self.season_url = url_for('seasons.season', season_id=g.get('season_id', rotation.current_season_num()))

@@ -1,3 +1,5 @@
+from typing import Dict, List
+
 from flask import request, session, url_for
 
 from decksite import APP, auth
@@ -14,7 +16,7 @@ from shared.container import Container
 from shared.pd_exception import InvalidArgumentException
 
 
-def menu():
+def admin_menu() -> List[Dict[str, str]]:
     m = []
     urls = sorted([url_for(rule.endpoint) for rule in APP.url_map.iter_rules() if 'GET' in rule.methods and rule.rule.startswith('/admin')])
     for url in urls:
@@ -26,7 +28,7 @@ def menu():
 @APP.route('/admin/')
 @auth.admin_required
 def admin_home():
-    view = Admin(menu())
+    view = Admin(admin_menu())
     return view.page()
 
 @APP.route('/admin/archetypes/')

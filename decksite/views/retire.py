@@ -5,7 +5,7 @@ from decksite.views.league_form import LeagueForm
 
 # pylint: disable=no-self-use
 class Retire(LeagueForm):
-    def __init__(self, form):
+    def __init__(self, form) -> None:
         super().__init__(form)
         self.logout_url = url_for('logout', target='retire')
 

@@ -6,7 +6,7 @@ from magic import oracle
 
 # pylint: disable=no-self-use
 class Bugs(View):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.github_icon = url_for('static', filename='images/github.svg')
         self.cards = oracle.bugged_cards()

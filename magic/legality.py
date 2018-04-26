@@ -1,6 +1,6 @@
-from typing import Dict, Set
+from typing import Dict, List, Set
 
-from magic import oracle, rotation
+from magic import card, oracle, rotation
 from magic.database import db
 
 FORMATS: Set[str] = set()
@@ -52,7 +52,7 @@ def legal_formats(d, formats_to_check=None, errors=None) -> Set[str]:
 
     return formats
 
-def cards_legal_in_format(cardlist, f):
+def cards_legal_in_format(cardlist, f) -> List[card.Card]:
     init()
     results = []
     for c in cardlist:

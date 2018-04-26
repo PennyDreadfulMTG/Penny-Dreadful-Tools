@@ -1,7 +1,7 @@
 import hashlib
 import json
 import time
-from typing import List, Optional, Set
+from typing import Dict, List, Optional, Set
 
 from decksite import deck_name
 from decksite.data import guarantee, query
@@ -34,7 +34,7 @@ class Deck(Container):
             self.sideboard.sort(key=lambda x: oracle.deck_sort(x['card']))
             self.sorted = True
 
-    def is_in_current_run(self):
+    def is_in_current_run(self) -> bool:
         if ((self.wins or 0) + (self.draws or 0) + (self.losses or 0) >= 5) or self.retired:
             return False
         elif self.competition_type_name != 'League':
@@ -303,7 +303,7 @@ def get_archetype_id(archetype) -> Optional[int]:
     sql = 'SELECT id FROM archetype WHERE name = %s'
     return db().value(sql, [archetype])
 
-def get_similar_decks(deck):
+def get_similar_decks(deck: Deck) -> List[Deck]:
     threshold = 20
     cards_escaped = ', '.join(sqlescape(c['name']) for c in deck.maindeck if c['name'] not in ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'])
     if len(cards_escaped) == 0:
@@ -316,7 +316,7 @@ def get_similar_decks(deck):
     return decks
 
 # Dead simple for now, may get more sophisticated. 1 point for each differently named card shared in maindeck. Count irrelevant.
-def similarity_score(a, b):
+def similarity_score(a: Deck, b: Deck) -> float:
     score = 0
     for c in a.maindeck:
         if c in b.maindeck:
@@ -394,7 +394,7 @@ def load_competitive_stats(decks) -> None:
             decks_by_id[row['id']].omw = row['omw']
             decks_by_id[row['id']].elim = row['elim'] # This property is never used? and is always a bunch of zeroes?
 
-def count_matches(deck_id, opponent_deck_id):
+def count_matches(deck_id: int, opponent_deck_id: int) -> Dict[int, int]:
     sql = 'SELECT deck_id, count(id) as count FROM deck_match WHERE deck_id in (%s, %s) group by deck_id'
     result = {int(deck_id): 0, int(opponent_deck_id): 0}
     for row in db().execute(sql, [deck_id, opponent_deck_id]):

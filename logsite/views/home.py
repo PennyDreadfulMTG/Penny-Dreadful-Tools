@@ -14,7 +14,7 @@ def home():
 
 # pylint: disable=no-self-use
 class Home(View):
-    def __init__(self):
+    def __init__(self) -> None:
         pd = db.get_or_insert_format('PennyDreadful')
         self.matches = match.get_recent_matches_by_format(pd.id).paginate(per_page=10).items
         self.matches_url = url_for('matches')

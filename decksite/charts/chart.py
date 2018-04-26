@@ -1,5 +1,6 @@
 import os.path
 import pathlib
+from typing import Dict
 
 import matplotlib as mpl
 # This has to happen before pyplot is imported to avoid needing an X server to draw the graphs.
@@ -13,7 +14,7 @@ from decksite.data import competition, deck
 from shared import configuration
 from shared.pd_exception import DoesNotExistException
 
-def cmc(deck_id):
+def cmc(deck_id: int) -> str:
     path = determine_path(str(deck_id) + '-cmc.png')
     if os.path.exists(path):
         if os.path.getsize(path) > 1024 * 1024 * 8:
@@ -21,7 +22,7 @@ def cmc(deck_id):
         else:
             logger.warning('Regenerating graph for {deck_id} because the existing one is suspiciously small.'.format(deck_id=deck_id))
     d = deck.load_deck(deck_id)
-    costs = {}
+    costs: Dict[str, int] = {}
     for ci in d.maindeck:
         c = ci.get('card')
         if c.is_land():
@@ -31,14 +32,14 @@ def cmc(deck_id):
         elif next((s for s in c.mana_cost if '{X}' in s), None) is not None:
             cost = 'X'
         else:
-            cost = int(float(c.cmc))
-            if cost >= 7:
+            converted = int(float(c.cmc))
+            if converted >= 7:
                 cost = '7+'
-            cost = str(cost)
+            cost = str(converted)
         costs[cost] = ci.get('n') + costs.get(cost, 0)
     return image(path, costs)
 
-def image(path, costs):
+def image(path, costs) -> str:
     ys = ['0', '1', '2', '3', '4', '5', '6', '7+', 'X']
     xs = [costs.get(k, 0) for k in ys]
     sns.set_style('white')
@@ -58,14 +59,14 @@ def image(path, costs):
     plt.clf() # Clear all data from matplotlib so it does not persist across requests.
     return path
 
-def archetypes_sparkline(competition_id):
+def archetypes_sparkline(competition_id: int) -> str:
     path = determine_path(str(competition_id) + '-archetypes-sparkline.png')
     if os.path.exists(path):
         return path
     c = competition.load_competition(competition_id)
     return sparkline(path, c.base_archetypes_data().values())
 
-def sparkline(path, values, figsize=(2, 0.16)):
+def sparkline(path, values, figsize=(2, 0.16)) -> str:
     values = list(values)
     fig, ax = plt.subplots(1, 1, figsize=figsize)
     for v in ax.spines.values():
@@ -78,8 +79,9 @@ def sparkline(path, values, figsize=(2, 0.16)):
     plt.clf()
     return path
 
-def determine_path(name):
-    pathlib.Path(configuration.get('charts_dir')).mkdir(parents=True, exist_ok=True)
-    if not os.path.exists(configuration.get('charts_dir')):
-        raise DoesNotExistException('Cannot store graph images because {dir} does not exist.'.format(dir=configuration.get('charts_dir')))
-    return os.path.join(configuration.get('charts_dir'), name)
+def determine_path(name: str) -> str:
+    charts_dir = configuration.get_str('charts_dir')
+    pathlib.Path(charts_dir).mkdir(parents=True, exist_ok=True)
+    if not os.path.exists(charts_dir):
+        raise DoesNotExistException('Cannot store graph images because {charts_dir} does not exist.'.format(charts_dir=charts_dir))
+    return os.path.join(charts_dir, name)

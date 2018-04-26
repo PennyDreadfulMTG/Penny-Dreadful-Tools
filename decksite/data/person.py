@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Optional, Union
 
 from decksite.data import deck, guarantee, query
 from decksite.database import db
@@ -194,16 +194,16 @@ def is_allowed_to_retire(deck_id, discord_id):
         return True
     return any(int(deck_id) == deck.id for deck in person.decks)
 
-def load_person_by_discord_id(discord_id):
+def load_person_by_discord_id(discord_id: int) -> Optional[Person]:
     return guarantee.at_most_one(load_people('p.discord_id = {discord_id}'.format(discord_id=sqlescape(discord_id))))
 
-def load_person_by_tappedout_name(username):
+def load_person_by_tappedout_name(username: str) -> Optional[Person]:
     return guarantee.at_most_one(load_people('p.tappedout_username = {username}'.format(username=sqlescape(username))))
 
-def load_person_by_mtggoldfish_name(username):
+def load_person_by_mtggoldfish_name(username: str) -> Optional[Person]:
     return guarantee.at_most_one(load_people('p.mtggoldfish_username = {username}'.format(username=sqlescape(username))))
 
-def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username):
+def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username) -> int:
     sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
     person_id = db().value(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
     if person_id:
@@ -211,7 +211,7 @@ def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_usern
     sql = 'INSERT INTO person (mtgo_username, tappedout_username, mtggoldfish_username) VALUES (%s, %s, %s)'
     return db().insert(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
 
-def load_notes():
+def load_notes() -> List[Container]:
     sql = """
         SELECT
             pn.created_date,
@@ -235,13 +235,13 @@ def load_notes():
         n.created_date = dtutil.ts2dt(n.created_date)
     return notes
 
-def add_note(creator_id, subject_id, note):
+def add_note(creator_id: int, subject_id: int, note: str) -> None:
     sql = 'INSERT INTO person_note (created_date, creator_id, subject_id, note) VALUES (UNIX_TIMESTAMP(NOW()), %s, %s, %s)'
-    return db().execute(sql, [creator_id, subject_id, note])
+    db().execute(sql, [creator_id, subject_id, note])
 
-def link_discord(mtgo_username, discord_id):
-    p = deck.get_or_insert_person_id(mtgo_username, None, None)
-    p = load_person(p)
+def link_discord(mtgo_username: str, discord_id: int) -> Person:
+    person_id = deck.get_or_insert_person_id(mtgo_username, None, None)
+    p = load_person(person_id)
     if p.discord_id is not None:
         raise AlreadyExistsException('Player with mtgo username {mtgo_username} already has discord id {old_discord_id}, cannot add {new_discord_id}'.format(mtgo_username=mtgo_username, old_discord_id=p.discord_id, new_discord_id=discord_id))
     sql = 'UPDATE person SET discord_id = %s WHERE id = %s'

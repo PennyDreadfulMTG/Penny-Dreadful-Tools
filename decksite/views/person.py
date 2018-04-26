@@ -8,7 +8,7 @@ from shared.database import sqlescape
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Person(View):
-    def __init__(self, person):
+    def __init__(self, person) -> None:
         super().__init__()
         self.person = person
         self.decks = person.decks

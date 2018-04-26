@@ -1,5 +1,5 @@
 import warnings
-from typing import Any, List, cast
+from typing import Any, Dict, List, Optional, cast
 
 import MySQLdb
 from MySQLdb import OperationalError
@@ -33,7 +33,7 @@ class Database():
         except MySQLdb.Error:
             raise DatabaseException('Failed to initialize database in `{location}`'.format(location=self.name))
 
-    def execute(self, sql: str, args: Any = None) -> List[Any]:
+    def execute(self, sql: str, args: Optional[List[Any]] = None) -> Optional[List[Dict[str, Any]]]:
         if args is None:
             args = []
         try:
@@ -83,12 +83,12 @@ class Database():
     def last_insert_rowid(self) -> int:
         return cast(int, self.value('SELECT LAST_INSERT_ID()'))
 
-    def get_lock(self, lock_id, timeout=4):
+    def get_lock(self, lock_id: str, timeout: int = 4) -> None:
         result = self.value('select get_lock(%s, %s)', [lock_id, timeout])
         if result != 1:
             raise LockNotAcquiredException
 
-    def release_lock(self, lock_id):
+    def release_lock(self, lock_id: str) -> None:
         self.execute('select release_lock(%s)', [lock_id])
 
     def value(self, sql: str, args: Any = None, default: Any = None, fail_on_missing: bool = False) -> Any:

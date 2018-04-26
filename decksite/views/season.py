@@ -4,7 +4,7 @@ from magic import rotation
 
 # pylint: disable=no-self-use
 class Season(View):
-    def __init__(self, season, league_only):
+    def __init__(self, season, league_only) -> None:
         super().__init__()
         self.season = season
         self.decks = season.decks

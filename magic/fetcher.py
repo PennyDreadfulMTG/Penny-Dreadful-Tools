@@ -67,8 +67,8 @@ def card_price_string(card, short: bool = False) -> str:
         return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
     return price_info(card)
 
-def cardhoarder_url(d):
-    cs = {}
+def cardhoarder_url(d) -> str:
+    cs: Dict[str, int] = {}
     for entry in d.maindeck + d.sideboard:
         name = entry['card'].name
         cs[name] = cs.get(name, 0) + entry['n']

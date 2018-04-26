@@ -7,7 +7,7 @@ from shared_web.smoke import SmokeTester
 
 
 class DecksiteSmokeTest(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.tester: SmokeTester = SmokeTester(APP)
 
     @pytest.mark.functional

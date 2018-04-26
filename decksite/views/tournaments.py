@@ -7,7 +7,7 @@ from magic import tournaments
 
 # pylint: disable=no-self-use
 class Tournaments(View):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         info = tournaments.next_tournament_info()
         self.next_tournament_name = info['next_tournament_name']

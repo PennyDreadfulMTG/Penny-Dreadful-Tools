@@ -3,7 +3,7 @@ from decksite.view import View
 
 # pylint: disable=no-self-use
 class Archetypes(View):
-    def __init__(self, archetypes):
+    def __init__(self, archetypes) -> None:
         super().__init__()
         self.archetypes = archetypes
         self.decks = []

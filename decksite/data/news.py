@@ -1,11 +1,13 @@
+import datetime
 import sys
+from typing import List
 
 from decksite.database import db
 from shared import dtutil
 from shared.container import Container
 
 
-def load_news(start_date=0, end_date=sys.maxsize, max_items=sys.maxsize):
+def load_news(start_date: int = 0, end_date: int = sys.maxsize, max_items: int = sys.maxsize) -> List[Container]:
     sql = """
         SELECT
             id,
@@ -30,20 +32,21 @@ def load_news(start_date=0, end_date=sys.maxsize, max_items=sys.maxsize):
         result.display_date = dtutil.display_date(result.date)
     return results
 
-def add_or_update_news(news_item_id, date, title, url):
-    date = dtutil.dt2ts(date)
+def add_or_update_news(news_item_id: int, date: datetime.datetime, title: str, url: str) -> None:
+    ts = dtutil.dt2ts(date)
     if news_item_id is not None:
-        return update_news(news_item_id, date, title, url)
-    return add_news(date, title, url)
+        update_news(news_item_id, ts, title, url)
+        return
+    add_news(ts, title, url)
 
-def update_news(news_item_id, date, title, url):
+def update_news(news_item_id: int, ts: int, title: str, url: str) -> None:
     sql = 'UPDATE news_item SET `date` = %s, title = %s, url = %s WHERE id = %s'
-    return db().execute(sql, [date, title, url, news_item_id])
+    db().execute(sql, [ts, title, url, news_item_id])
 
-def add_news(date, title, url):
+def add_news(ts: int, title: str, url: str) -> None:
     sql = 'INSERT INTO news_item (`date`, title, url) VALUES (%s, %s, %s)'
-    return db().execute(sql, [date, title, url])
+    db().execute(sql, [ts, title, url])
 
-def delete(news_item_id):
+def delete(news_item_id: int) -> None:
     sql = 'DELETE FROM news_item WHERE id = %s'
-    return db().execute(sql, [news_item_id])
+    db().execute(sql, [news_item_id])

@@ -3,7 +3,7 @@ from logsite.view import View
 
 # pylint: disable=no-self-use
 class InternalServerError(View):
-    def __init__(self, exception):
+    def __init__(self, exception) -> None:
         self.exception = str(exception)
         self.card = None
         self.cards = [self.card]

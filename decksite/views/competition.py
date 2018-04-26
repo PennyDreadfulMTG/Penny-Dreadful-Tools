@@ -1,4 +1,4 @@
-from flask import url_for
+from typing import Any, Dict
 
 from decksite.view import View
 from shared import dtutil
@@ -7,7 +7,7 @@ from shared.container import Container
 
 # pylint: disable=no-self-use, too-many-instance-attributes
 class Competition(View):
-    def __init__(self, competition):
+    def __init__(self, competition) -> None:
         super().__init__()
         self.competition = competition
         self.competitions = [self.competition]
@@ -16,8 +16,7 @@ class Competition(View):
         if competition.type == 'League':
             self.show_omw = True
             self.hide_top8 = True
-            self.league_info_url = url_for('league')
-            leaderboard = {}
+            leaderboard: Dict[int, Any] = {}
             for d in competition.decks:
                 if d.banned:
                     continue

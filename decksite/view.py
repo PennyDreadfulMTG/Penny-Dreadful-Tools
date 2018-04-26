@@ -2,6 +2,7 @@ import datetime
 import html
 import urllib
 from collections import Counter
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 import inflect
 from anytree.iterators import PreOrderIter
@@ -11,47 +12,49 @@ from werkzeug.routing import BuildError
 
 from decksite import APP, BABEL, admin
 from decksite.data import archetype, deck
-from magic import oracle, rotation, tournaments
+from magic import card, oracle, rotation, tournaments
 from shared import dtutil
 from shared.container import Container
 from shared_web.base_view import BaseView
+
+# pylint: disable=cyclic-import,unused-import
+if TYPE_CHECKING:
+    from decksite.data.deck import Deck
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10
 
 # pylint: disable=no-self-use, too-many-public-methods
 class View(BaseView):
-    def __init__(self):
+    def __init__(self) -> None:
         # Set some pointless instance vars to keep Codacy happy.
-        self.decks = []
-        self.active_runs_text = None
-        self.is_very_large = None
+        self.decks: List['Deck'] = []
+        self.active_runs_text: Optional[str] = None
+        self.is_very_large: Optional[bool] = None
+        self.show_seasons: bool = False
 
-    def home_url(self):
+    def home_url(self) -> str:
         return url_for('home')
 
-    def css_url(self):
+    def css_url(self) -> str:
         return url_for('static', filename='css/pd.css', v=self.commit_id())
 
-    def tooltips_url(self):
+    def tooltips_url(self) -> str:
         # Don't preload 10,000 images.
         # pylint: disable=no-member
-        if not hasattr(self, 'cards') or len(self.cards) > 500:
+        if not hasattr(self, 'cards') or len(getattr(self, 'cards')) > 500:
             return None
         return url_for('static', filename='js/tooltips.js', v=self.commit_id())
 
-    def js_url(self):
+    def js_url(self) -> str:
         return url_for('static', filename='js/pd.js', v=self.commit_id())
 
-    def show_seasons(self):
-        return False
-
-    def season_name(self):
+    def season_name(self) -> str:
         return rotation.season_name(g.get('season_id'))
 
-    def season_code_lower(self):
+    def season_code_lower(self) -> str:
         return rotation.season_code(g.get('season_id')).lower()
 
-    def all_seasons(self):
+    def all_seasons(self) -> List[Dict[str, Any]]:
         seasons = [{
             'name': 'All Time',
             'code': 'all',
@@ -81,12 +84,12 @@ class View(BaseView):
         seasons.reverse()
         return seasons
 
-    def menu(self):
+    def menu(self) -> List[Dict[str, Union[str, Dict[str, str]]]]:
         archetypes_badge = None
         n = len(deck.load_decks('NOT d.reviewed'))
         if n > 0:
             archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
-        resources_submenu = []
+        resources_submenu: List[Dict[str, str]] = []
         if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7) or (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
             resources_submenu += [{'name': gettext('Rotation Tracking'), 'url': url_for('rotation')}]
         resources_submenu += [
@@ -127,7 +130,7 @@ class View(BaseView):
                 {'name': gettext('FAQs'), 'url': url_for('faqs')},
                 {'name': gettext('Community Guidelines'), 'url': url_for('community_guidelines')}
             ]},
-            {'name': gettext('Admin'), 'admin_only': True, 'url': url_for('admin'), 'submenu': admin.menu()}
+            {'name': gettext('Admin'), 'admin_only': True, 'url': url_for('admin'), 'submenu': admin.admin_menu()}
         ]
         for item in menu:
             item['has_submenu'] = item.get('submenu') is not None
@@ -136,45 +139,45 @@ class View(BaseView):
                 subitem['is_external'] = subitem.get('url', '').startswith('http') and '://pennydreadfulmagic.com/' not in subitem['url']
         return menu
 
-    def favicon_url(self):
+    def favicon_url(self) -> str:
         return url_for('favicon', rest='.ico')
 
-    def favicon_152_url(self):
+    def favicon_152_url(self) -> str:
         return url_for('favicon', rest='-152.png')
 
-    def title(self):
+    def title(self) -> str:
         if not self.page_title():
             return 'pennydreadfulmagic.com'
         return '{page_title} – pennydreadfulmagic.com'.format(page_title=self.page_title())
 
-    def page_title(self):
+    def page_title(self) -> Optional[str]:
         return None
 
-    def num_tournaments(self):
+    def num_tournaments(self) -> str:
         return inflect.engine().number_to_words(len(tournaments.all_series_info()))
 
-    def rotation_text(self):
+    def rotation_text(self) -> str:
         return rotation.text()
 
-    def learn_more_url(self):
+    def learn_more_url(self) -> str:
         return url_for('about', hide_intro=True)
 
-    def decks_url(self):
+    def decks_url(self) -> str:
         return url_for('decks')
 
-    def current_league_url(self):
+    def current_league_url(self) -> str:
         return url_for('current_league')
 
-    def league_info_url(self):
+    def league_info_url(self) -> str:
         return url_for('league')
 
-    def league_signup_url(self):
+    def league_signup_url(self) -> str:
         return url_for('signup')
 
-    def tournaments_info_url(self):
+    def tournaments_info_url(self) -> str:
         return url_for('tournaments')
 
-    def prepare(self):
+    def prepare(self) -> None:
         self.prepare_decks()
         self.prepare_cards()
         self.prepare_competitions()
@@ -182,7 +185,7 @@ class View(BaseView):
         self.prepare_archetypes()
         self.prepare_leaderboards()
 
-    def prepare_decks(self):
+    def prepare_decks(self) -> None:
         # The 'list' here is just to get past codacy and is a no-op.
         active_runs = [d for d in list(getattr(self, 'decks', [])) if d.is_in_current_run()]
         if len(active_runs) > 0:
@@ -191,7 +194,7 @@ class View(BaseView):
         for d in getattr(self, 'decks', []):
             self.prepare_deck(d)
 
-    def prepare_deck(self, d):
+    def prepare_deck(self, d: deck.Deck) -> None:
         set_stars_and_top8(d)
         if d.get('colors') is not None:
             d.colors_safe = colors_html(d.colors, d.colored_symbols)
@@ -242,14 +245,14 @@ class View(BaseView):
                 total += c['n'] * c['card'].cmc
         d.average_cmc = round(total / max(1, num_cards), 2)
 
-    def prepare_cards(self):
+    def prepare_cards(self) -> None:
         self.is_very_large = len(getattr(self, 'cards', [])) > 500
         for c in getattr(self, 'cards', []):
             self.prepare_card(c)
         for c in getattr(self, 'only_played_cards', []):
             self.prepare_card(c)
 
-    def prepare_card(self, c):
+    def prepare_card(self, c: card.Card):
         c.url = '/cards/{id}/'.format(id=c.name)
         c.img_url = 'http://magic.bluebones.net/proxies/index2.php?c={name}'.format(name=urllib.parse.quote(c.name))
         c.card_img_class = 'two-faces' if c.layout in ['double-faced', 'meld'] else ''
@@ -259,7 +262,7 @@ class View(BaseView):
         if c.get('all_num_decks') is not None:
             c.all_show_record = c.get('all_wins') or c.get('all_losses') or c.get('all_draws')
         c.has_decks = len(c.get('decks', [])) > 0
-        counter = Counter()
+        counter = Counter() # type: ignore
         for d in c.get('decks', []):
             for c2 in d.maindeck:
                 if not c2['card'].type.startswith('Basic Land') and not c2['name'] == c.name:
@@ -272,7 +275,7 @@ class View(BaseView):
             c.most_common_cards.append(cs[v[0]])
         c.has_most_common_cards = len(c.most_common_cards) > 0
 
-    def prepare_competitions(self):
+    def prepare_competitions(self) -> None:
         for c in getattr(self, 'competitions', []):
             c.competition_url = '/competitions/{id}/'.format(id=c.id)
             c.display_date = dtutil.display_date(c.start_date)
@@ -289,16 +292,16 @@ class View(BaseView):
             c.archetypes_sparkline_chart_title_safe = title_safe
             c.archetypes_sparkline_chart_url = url_for('archetype_sparkline_chart', competition_id=c.id)
 
-    def prepare_people(self):
+    def prepare_people(self) -> None:
         for p in getattr(self, 'people', []):
             p.url = '/people/{id}/'.format(id=p.id)
             p.all_show_record = p.get('all_wins', None) or p.get('all_losses', None) or p.get('all_draws', None)
 
-    def prepare_archetypes(self):
+    def prepare_archetypes(self) -> None:
         for a in getattr(self, 'archetypes', []):
             self.prepare_archetype(a, getattr(self, 'archetypes', []))
 
-    def prepare_archetype(self, a, archetypes):
+    def prepare_archetype(self, a, archetypes) -> None:
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
         if a.get('all_num_decks') is not None:
             a.all_show_record = a.get('all_wins') or a.get('all_draws') or a.get('all_losses')
@@ -312,7 +315,7 @@ class View(BaseView):
                     a.best_decks.decks.append(d)
             n -= 1
         a.show_best_decks = len(a.decks) != len(a.best_decks.decks)
-        counter = Counter()
+        counter = Counter() # type: ignore
         a.cards = []
         a.most_common_cards = []
         for d in a.get('decks', []):
@@ -335,11 +338,11 @@ class View(BaseView):
             # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
             r['depth'] = r.depth
 
-    def prepare_leaderboards(self):
+    def prepare_leaderboards(self) -> None:
         for l in getattr(self, 'leaderboards', []):
             self.prepare_leaderboard(l)
 
-    def prepare_leaderboard(self, leaderboard):
+    def prepare_leaderboard(self, leaderboard) -> None:
         pos = 1
         for p in leaderboard:
             p.finish = pos
@@ -348,10 +351,10 @@ class View(BaseView):
             p.url = url_for('person', person_id=p.person_id)
             pos += 1
 
-    def commit_id(self):
+    def commit_id(self) -> str:
         return APP.config['commit-id']
 
-    def git_branch(self):
+    def git_branch(self) -> str:
         return APP.config['branch']
 
     def babel_languages(self):
@@ -363,7 +366,7 @@ class View(BaseView):
     def TT_HELP_TRANSLATE(self) -> str:
         return gettext('Help us translate the site into your language')
 
-def colors_html(colors, colored_symbols):
+def colors_html(colors, colored_symbols) -> str:
     total = len(colored_symbols)
     if total == 0:
         return '<span class="mana" style="width: 3rem"></span>'
@@ -375,7 +378,7 @@ def colors_html(colors, colored_symbols):
         s += '<span class="mana mana-{color}" style="width: {width}rem"></span>'.format(color=color, width=width)
     return s
 
-def set_stars_and_top8(d):
+def set_stars_and_top8(d) -> None:
     if d.finish == 1 and d.competition_top_n >= 1:
         d.top8_safe = '<span title="Winner">①</span>'
         d.stars_safe = '★★★'

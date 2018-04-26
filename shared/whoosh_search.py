@@ -74,7 +74,7 @@ class SearchResult():
 
 class WhooshSearcher():
     DIST = 2
-    def __init__(self):
+    def __init__(self) -> None:
         self.ix = open_dir(WhooshConstants.index_dir)
         self.initialize_trie()
 

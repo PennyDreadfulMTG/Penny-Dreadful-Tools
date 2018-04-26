@@ -1,5 +1,5 @@
 from functools import wraps
-from typing import Callable
+from typing import Callable, Optional
 
 from flask import redirect, request, session, url_for
 
@@ -24,7 +24,7 @@ def admin_required(f: Callable) -> Callable:
         return f(*args, **kwargs)
     return decorated_function
 
-def logout():
+def logout() -> None:
     session['admin'] = None
     session['id'] = None
     session['discord_id'] = None
@@ -32,24 +32,24 @@ def logout():
     session['person_id'] = None
     session['mtgo_username'] = None
 
-def discord_id():
+def discord_id() -> Optional[int]:
     return session.get('id')
 
-def person_id():
+def person_id() -> Optional[int]:
     return session.get('logged_person_id')
 
-def mtgo_username():
+def mtgo_username() -> Optional[str]:
     return session.get('mtgo_username')
 
-def login(p):
+def login(p: person.Person) -> None:
     session['logged_person_id'] = p.id
     session['person_id'] = p.id
     session['mtgo_username'] = p.name
 
-def hide_intro():
-    return session.get('hide_intro')
+def hide_intro() -> bool:
+    return session.get('hide_intro', False)
 
-def load_person(f):
+def load_person(f: Callable) -> Callable:
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if discord_id() is not None:

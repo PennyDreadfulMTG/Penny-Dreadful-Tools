@@ -1,3 +1,5 @@
+from typing import Any
+
 import inflect
 import titlecase
 from flask import session, url_for
@@ -6,12 +8,13 @@ from decksite.data import archetype, deck, match
 from decksite.view import View
 from magic import fetcher, legality, oracle
 from shared import dtutil
+from shared.container import Container
 from shared.pd_exception import InvalidDataException
 
 
 # pylint: disable=no-self-use, too-many-instance-attributes
 class Deck(View):
-    def __init__(self, d, person_id=None, discord_id=None):
+    def __init__(self, d, person_id=None, discord_id=None) -> None:
         super().__init__()
         self.deck = d
         self.prepare_deck(self.deck)
@@ -52,16 +55,16 @@ class Deck(View):
         self.person_id = person_id
         self.discord_id = discord_id
 
-    def has_matches(self):
+    def has_matches(self) -> bool:
         return len(self.matches) > 0
 
-    def has_rounds(self):
+    def has_rounds(self) -> bool:
         return self.has_matches() and self.matches[0].get('round')
 
-    def og_title(self):
+    def og_title(self) -> str:
         return self.deck.name
 
-    def og_url(self):
+    def og_url(self) -> str:
         return url_for('deck', deck_id=self.deck.id, _external=True)
 
     def og_description(self):
@@ -73,13 +76,13 @@ class Deck(View):
         description = '{archetype_s} deck by {author}'.format(archetype_s=archetype_s, author=self.person)
         return description
 
-    def authenticate_url(self):
+    def authenticate_url(self) -> str:
         return url_for('authenticate', target=self.og_url())
 
-    def logout_url(self):
+    def logout_url(self) -> str:
         return url_for('logout', target=self.og_url())
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> Any:
         return getattr(self.deck, attr)
 
     def page_title(self):
@@ -120,7 +123,7 @@ class Deck(View):
             return False
         return True
 
-def display_round(m):
+def display_round(m: Container) -> str:
     if not m.get('elimination'):
         return m.round
     if int(m.elimination) == 8:

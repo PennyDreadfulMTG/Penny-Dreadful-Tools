@@ -17,6 +17,10 @@ def ad_hoc() -> None:
         'decksite': [
             ('**.py', 'python', {}),
             ('**.mustache', extract_mustache, {})
+        ],
+        'logsite': [
+            ('**.py', 'python', {}),
+            ('**.mustache', extract_mustache, {})
         ]
     }
     compiler = frontend.extract_messages(dist)

@@ -33,7 +33,6 @@ class Home(View):
         rising_cards = sorted(cards, key=lambda x: x.movement, reverse=True)
         self.rising_cards = rising_cards[0:5]
         self.cards = self.top_cards + self.week_cards + self.rising_cards
-        self.decks_url = url_for('decks')
         self.cards_url = url_for('cards')
 
     def page_title(self):

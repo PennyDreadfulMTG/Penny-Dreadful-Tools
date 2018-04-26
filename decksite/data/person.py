@@ -203,7 +203,7 @@ def load_person_by_tappedout_name(username: str) -> Optional[Person]:
 def load_person_by_mtggoldfish_name(username: str) -> Optional[Person]:
     return guarantee.at_most_one(load_people('p.mtggoldfish_username = {username}'.format(username=sqlescape(username))))
 
-def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username):
+def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username) -> int:
     sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
     person_id = db().value(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
     if person_id:
@@ -239,9 +239,9 @@ def add_note(creator_id: int, subject_id: int, note: str) -> None:
     sql = 'INSERT INTO person_note (created_date, creator_id, subject_id, note) VALUES (UNIX_TIMESTAMP(NOW()), %s, %s, %s)'
     db().execute(sql, [creator_id, subject_id, note])
 
-def link_discord(mtgo_username, discord_id):
-    p = deck.get_or_insert_person_id(mtgo_username, None, None)
-    p = load_person(p)
+def link_discord(mtgo_username: str, discord_id: int) -> Person:
+    person_id = deck.get_or_insert_person_id(mtgo_username, None, None)
+    p = load_person(person_id)
     if p.discord_id is not None:
         raise AlreadyExistsException('Player with mtgo username {mtgo_username} already has discord id {old_discord_id}, cannot add {new_discord_id}'.format(mtgo_username=mtgo_username, old_discord_id=p.discord_id, new_discord_id=discord_id))
     sql = 'UPDATE person SET discord_id = %s WHERE id = %s'

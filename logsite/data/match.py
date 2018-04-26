@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, List
 
 import pytz
 import sqlalchemy as sa  # type: ignore
@@ -83,13 +83,13 @@ def create_match(match_id: int, format_name: str, comment: str, modules: List[st
 def get_match(match_id: int) -> Match:
     return Match.query.filter_by(id=match_id).one_or_none()
 
-def get_recent_matches() -> List[Match]:
+def get_recent_matches() -> Any:
     return Match.query.order_by(Match.id.desc())
 
-def get_recent_matches_by_player(name: str) -> List[Match]:
+def get_recent_matches_by_player(name: str) -> Any:
     return Match.query.filter(Match.players.any(db.User.name == name)).order_by(Match.id.desc())
 
-def get_recent_matches_by_format(format_id: int) -> List[Match]:
+def get_recent_matches_by_format(format_id: int) -> Any:
     return Match.query.filter(Match.format_id == format_id).order_by(Match.id.desc())
 
 def get_tournament(name: str) -> Tournament:

@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 from flask import url_for
 
 from decksite.view import View
@@ -16,8 +18,7 @@ class Competition(View):
         if competition.type == 'League':
             self.show_omw = True
             self.hide_top8 = True
-            self.league_info_url = url_for('league')
-            leaderboard = {}
+            leaderboard: Dict[int, Any] = {}
             for d in competition.decks:
                 if d.banned:
                     continue

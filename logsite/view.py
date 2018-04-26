@@ -48,5 +48,5 @@ class View(BaseView):
     def subtitle(self):
         return None
 
-    def commit_id(self):
+    def commit_id(self) -> str:
         return APP.config['commit-id']

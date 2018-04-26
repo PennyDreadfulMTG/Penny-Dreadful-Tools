@@ -32,17 +32,7 @@ def logout() -> None:
     session['person_id'] = None
     session['mtgo_username'] = None
 
-<<<<<<< Updated upstream
-def discord_id():
-=======
-def redirect_uri() -> str:
-    uri = url_for('authenticate_callback', _external=True)
-    if 'http://' in uri:
-        os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
-    return uri
-
 def discord_id() -> Optional[int]:
->>>>>>> Stashed changes
     return session.get('id')
 
 def person_id() -> Optional[int]:

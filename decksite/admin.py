@@ -15,7 +15,7 @@ from shared.container import Container
 from shared.pd_exception import InvalidArgumentException
 
 
-def menu() -> List[Dict[str, str]]:
+def admin_menu() -> List[Dict[str, str]]:
     m = []
     urls = sorted([url_for(rule.endpoint) for rule in APP.url_map.iter_rules() if 'GET' in rule.methods and rule.rule.startswith('/admin')])
     for url in urls:
@@ -27,7 +27,7 @@ def menu() -> List[Dict[str, str]]:
 @APP.route('/admin/')
 @auth.admin_required
 def admin_home():
-    view = Admin(menu())
+    view = Admin(admin_menu())
     return view.page()
 
 @APP.route('/admin/archetypes/')

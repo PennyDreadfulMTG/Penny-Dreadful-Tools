@@ -30,7 +30,7 @@ def info_cached(card: Card = None, name: str = None) -> PriceData:
     sql = 'SELECT `time`, low / 100.0 AS low, high / 100.0 AS high, price / 100.0 AS price, week, month, season FROM cache WHERE name = %s'
     db = database.get_database(configuration.get_str('prices_database'))
     try:
-        return db.execute(sql, [name])[0]
+        return db.execute(sql, [name])[0] # type: ignore
     except IndexError:
         return None
 

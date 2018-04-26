@@ -11,4 +11,3 @@ class LeagueForm(View):
         self.form = form
         self.league = league.active_league()
         self.competitions = [self.league]
-        self.league_info_url = url_for('league')

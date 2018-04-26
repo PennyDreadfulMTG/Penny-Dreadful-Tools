@@ -50,7 +50,7 @@ def load_cards(names: Collection[str] = None, where: Optional[str] = None) -> Li
 def cards_by_name() -> Dict[str, card.Card]:
     return CARDS_BY_NAME
 
-def bugged_cards():
+def bugged_cards() -> List[card.Card]:
     sql = multiverse.cached_base_query('bugs IS NOT NULL')
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]

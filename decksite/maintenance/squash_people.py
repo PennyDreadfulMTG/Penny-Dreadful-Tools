@@ -7,7 +7,7 @@ from . import elo
 USERNAME_COLUMNS = ['mtgo_username', 'tappedout_username', 'mtggoldfish_username']
 
 # Find people with identical usernames across systems and squash them together.
-def run():
+def run() -> None:
     run_elo = False
     # pylint: disable=consider-using-enumerate
     for i in range(0, len(USERNAME_COLUMNS)):
@@ -30,7 +30,7 @@ def run():
         elo.run()
 
 
-def squash(p1id, p2id, col1, col2):
+def squash(p1id: int, p2id: int, col1: str, col2: str) -> None:
     logger.warning('Squashing {p1id} and {p2id} on {col1} and {col2}'.format(p1id=p1id, p2id=p2id, col1=col1, col2=col2))
     db().begin()
     new_value = db().value('SELECT {col2} FROM person WHERE id = %s'.format(col2=col2), [p2id])

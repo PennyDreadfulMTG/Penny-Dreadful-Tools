@@ -34,7 +34,7 @@ class Deck(Container):
             self.sideboard.sort(key=lambda x: oracle.deck_sort(x['card']))
             self.sorted = True
 
-    def is_in_current_run(self):
+    def is_in_current_run(self) -> bool:
         if ((self.wins or 0) + (self.draws or 0) + (self.losses or 0) >= 5) or self.retired:
             return False
         elif self.competition_type_name != 'League':
@@ -303,7 +303,7 @@ def get_archetype_id(archetype) -> Optional[int]:
     sql = 'SELECT id FROM archetype WHERE name = %s'
     return db().value(sql, [archetype])
 
-def get_similar_decks(deck):
+def get_similar_decks(deck: Deck) -> List[Deck]:
     threshold = 20
     cards_escaped = ', '.join(sqlescape(c['name']) for c in deck.maindeck if c['name'] not in ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'])
     if len(cards_escaped) == 0:
@@ -316,7 +316,7 @@ def get_similar_decks(deck):
     return decks
 
 # Dead simple for now, may get more sophisticated. 1 point for each differently named card shared in maindeck. Count irrelevant.
-def similarity_score(a, b):
+def similarity_score(a: Deck, b: Deck) -> float:
     score = 0
     for c in a.maindeck:
         if c in b.maindeck:

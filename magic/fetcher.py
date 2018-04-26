@@ -38,7 +38,7 @@ def card_aliases() -> List[List[str]]:
     with open(configuration.get_str('card_alias_file'), newline='', encoding='utf-8') as f:
         return list(csv.reader(f, dialect='excel-tab'))
 
-def card_price(cardname) -> Dict[str, Any]:
+def card_price(cardname: str) -> Dict[str, Any]:
     return internal.fetch_json('http://vorpald20.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
 
 def card_price_string(card, short: bool = False) -> str:
@@ -82,7 +82,7 @@ def decksite_url(path: str = '/') -> str:
         hostname = '{hostname}:{port}'.format(hostname=hostname, port=port)
     return parse.urlunparse((configuration.get_str('decksite_protocol'), hostname, path, None, None, None))
 
-def legal_cards(force=False, season=None) -> List[str]:
+def legal_cards(force: bool = False, season: str = None) -> List[str]:
     if season is None and os.path.exists('legal_cards.txt'):
         print('HACK: Using local legal_cards override.')
         h = open('legal_cards.txt')
@@ -151,14 +151,14 @@ def search_scryfall(query) -> Tuple[int, List[str]]:
     result_cardnames = [get_frontside(obj) for obj in result_data]
     return result_json['total_cards'], result_cardnames
 
-def rulings(cardname) -> List[Dict[str, str]]:
+def rulings(cardname: str) -> List[Dict[str, str]]:
     card = internal.fetch_json('https://api.scryfall.com/cards/named?exact={name}'.format(name=cardname))
     return internal.fetch_json(card['uri'] + '/rulings')['data']
 
 def sitemap() -> List[str]:
     return internal.fetch_json(decksite_url('/api/sitemap/'))
 
-def time(q) -> str:
+def time(q: str) -> str:
     if len(q) > 3:
         url = 'http://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false'.format(q=internal.escape(q))
         info = internal.fetch_json(url)

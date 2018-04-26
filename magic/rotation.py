@@ -21,8 +21,9 @@ SetInfo = TypedDict('SetInfo', { # pylint: disable=invalid-name
     })
 
 SEASONS = [
-    'EMN', 'KLD', 'AER', 'AKH', 'HOU',
-    'XLN', 'RIX', 'DOM', 'M19',
+    'EMN', 'KLD', # 2016
+    'AER', 'AKH', 'HOU', 'XLN', # 2017
+    'RIX', 'DOM', 'M19', #2018
     ]
 
 def init() -> List[SetInfo]:

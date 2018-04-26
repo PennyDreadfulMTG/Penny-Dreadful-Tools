@@ -16,10 +16,17 @@ WHITELIST: Set[str] = set()
 
 TOTAL_RUNS = 168
 
+TIME_UNTIL_FULL_ROTATION = rotation.next_rotation() - dtutil.now()
+TIME_UNTIL_SUPPLEMENTAL_ROTATION = rotation.next_supplemental() - dtutil.now()
+
 def run() -> None:
     files = rotation.files()
     n = len(files)
     if n >= TOTAL_RUNS:
+        print('It is the moment of discovery, the triumph of the mind, and the end of this rotation.')
+        return
+    if n == 0 and TIME_UNTIL_FULL_ROTATION > datetime.timedelta(7) and TIME_UNTIL_SUPPLEMENTAL_ROTATION > datetime.timedelta(7):
+        print('The monks of the North Tree rarely saw their kodama until the rotation, when it woke like a slumbering, angry bear.')
         return
     all_prices = {}
     for url in configuration.get_list('cardhoarder_urls'):
@@ -68,7 +75,7 @@ def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignor
 
 def is_good_set(setname: str) -> bool:
     if not BLACKLIST and not WHITELIST:
-        supplimental = (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7)
+        supplimental = TIME_UNTIL_SUPPLEMENTAL_ROTATION < datetime.timedelta(7)
         if supplimental:
             WHITELIST.add(rotation.last_rotation_ex()['mtgo_code'])
         else:

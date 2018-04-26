@@ -1,6 +1,6 @@
 import json
 import subprocess
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 from flask import Response, current_app, request
 
@@ -38,7 +38,7 @@ def validate_api_key() -> Response:
 def generate_error(code: str, msg: str) -> Dict[str, Any]:
     return {'error': True, 'code': code, 'msg': msg}
 
-def return_json(content: Dict[str, Any], status: int = 200) -> Response:
+def return_json(content: Union[bool, Dict[str, Any]], status: int = 200) -> Response:
     s = json.dumps(content, default=extra_serializer)
     r = Response(response=s, status=status, mimetype='application/json')
     return r

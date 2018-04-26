@@ -1,10 +1,22 @@
 import time
 
+from mypy_extensions import TypedDict
+
 from magic import rotation
+from magic.card import Card
 from shared import configuration, database
 
+PriceData = TypedDict('PriceData', { # pylint: disable=invalid-name
+    'time': int,
+    'low': str,
+    'high': str,
+    'price': str,
+    'week': float,
+    'month': float,
+    'season': float,
+    })
 
-def info(card, force=False):
+def info(card: Card, force: bool = False) -> PriceData:
     if not force:
         r = info_cached(card)
         if r is not None:
@@ -12,11 +24,11 @@ def info(card, force=False):
     cache()
     return info_cached(card)
 
-def info_cached(card=None, name=None):
+def info_cached(card: Card = None, name: str = None) -> PriceData:
     if name is None and card is not None:
         name = card.name
     sql = 'SELECT `time`, low / 100.0 AS low, high / 100.0 AS high, price / 100.0 AS price, week, month, season FROM cache WHERE name = %s'
-    db = database.get_database(configuration.get('prices_database'))
+    db = database.get_database(configuration.get_str('prices_database'))
     try:
         return db.execute(sql, [name])[0]
     except IndexError:

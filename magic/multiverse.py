@@ -247,6 +247,7 @@ def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
     if new_list == [''] or new_list is None:
         return None
     db().execute('DELETE FROM card_legality WHERE format_id = %s', [format_id])
+    db().execute('SET group_concat_max_len=100000')
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
         SELECT {format_id}, bq.id, 'Legal'
         FROM ({base_query}) AS bq

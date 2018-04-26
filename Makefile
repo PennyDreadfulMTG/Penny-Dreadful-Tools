@@ -43,7 +43,7 @@ lint:
 types:
 	@echo
 	@echo "******************************** Typechecking *********************************"
-	@mypy --disallow-untyped-calls --ignore-missing-imports .
+	@python3 dev.py types
 	@echo
 
 imports:

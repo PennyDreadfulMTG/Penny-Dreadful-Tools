@@ -3,7 +3,7 @@ bs4==0.0.1
 cachecontrol[filecache]==0.12.4
 coverage==4.5.1
 discord.py[voice]==0.16.12
-flask==0.12.2
+flask==1.0
 flask-babel==0.11.2
 Flask-SQLAlchemy==2.3.2
 Flask-Migrate

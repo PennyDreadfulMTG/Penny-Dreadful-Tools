@@ -92,16 +92,16 @@ def get_recent_matches_by_player(name: str) -> List[Match]:
 def get_recent_matches_by_format(format_id: int) -> List[Match]:
     return Match.query.filter(Match.format_id == format_id).order_by(Match.id.desc())
 
-def get_tournament(name: str):
+def get_tournament(name: str) -> Tournament:
     return Tournament.query.filter_by(name=name).one_or_none()
 
-def create_tournament(name: str):
+def create_tournament(name: str) -> Tournament:
     local = Tournament(name=name, active=True)
     db.Add(local)
     db.Commit()
     return local
 
-def create_tournament_info(match_id: int, tournament_id: int):
+def create_tournament_info(match_id: int, tournament_id: int) -> TournamentInfo:
     local = TournamentInfo(match_id=match_id, tournament_id=tournament_id)
     db.Add(local)
     db.Commit()

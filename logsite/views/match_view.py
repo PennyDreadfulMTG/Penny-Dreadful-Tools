@@ -20,6 +20,7 @@ class Match(View):
         self.comment = viewed_match.comment
         self.format_name = viewed_match.format_name()
         self.players_string = ' vs '.join([p.name for p in viewed_match.players])
+        self.module_string = ', '.join([m.name for m in viewed_match.modules])
         if not viewed_match.games:
             self.no_games = True
             return

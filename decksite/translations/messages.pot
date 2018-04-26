@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-02-21 12:37+1100\n"
+"POT-Creation-Date: 2018-04-27 02:33+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,119 +18,147 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.5.3\n"
 
-#: decksite/view.py:55
+#: decksite/view.py:91
 msgid "Rotation Tracking"
 msgstr ""
 
-#: decksite/view.py:57
+#: decksite/view.py:93
 msgid "Rotation Changes"
 msgstr ""
 
-#: decksite/view.py:58
+#: decksite/view.py:94
 msgid "Rotation Speculation"
 msgstr ""
 
-#: decksite/view.py:59
+#: decksite/view.py:95
+msgid "Deck Check"
+msgstr ""
+
+#: decksite/view.py:96
+msgid "Discord Chat"
+msgstr ""
+
+#: decksite/view.py:97
 msgid "External Links"
 msgstr ""
 
-#: decksite/view.py:63
-msgid "Log Out"
+#: decksite/view.py:98 decksite/views/link_accounts.py:35
+msgid "Link Accounts"
 msgstr ""
 
-#: decksite/view.py:67
-msgid "Log In"
+#: decksite/view.py:99
+msgid "Bugs"
 msgstr ""
 
-#: decksite/view.py:71
+#: decksite/view.py:102
 msgid "Metagame"
 msgstr ""
 
-#: decksite/templates/home.mustache:1 decksite/view.py:72
+#: decksite/templates/home.mustache:1 decksite/view.py:103
 msgid "Latest Decks"
 msgstr ""
 
-#: decksite/view.py:73
+#: decksite/view.py:104
 msgid "Archetypes"
 msgstr ""
 
-#: decksite/view.py:74
+#: decksite/view.py:105
 msgid "People"
 msgstr ""
 
-#: decksite/view.py:75
+#: decksite/view.py:106
 msgid "Cards"
 msgstr ""
 
-#: decksite/view.py:76
+#: decksite/view.py:107
 msgid "Past Seasons"
 msgstr ""
 
-#: decksite/templates/tournaments.mustache:1 decksite/view.py:78
+#: decksite/templates/tournaments.mustache:1 decksite/view.py:109
 msgid "League"
 msgstr ""
 
-#: decksite/templates/league_header.mustache:1 decksite/view.py:79
+#: decksite/templates/league_header.mustache:1 decksite/view.py:110
 msgid "League Info"
 msgstr ""
 
-#: decksite/view.py:80 decksite/views/signup.py:26
+#: decksite/templates/faqsbody.mustache:1 decksite/view.py:111
+#: decksite/views/signup.py:31
 msgid "Sign Up"
 msgstr ""
 
-#: decksite/view.py:81 decksite/views/report.py:18
+#: decksite/view.py:112 decksite/views/report.py:19
 msgid "Report"
 msgstr ""
 
-#: decksite/templates/leagueinfo.mustache:1 decksite/view.py:82
+#: decksite/templates/leagueinfo.mustache:1 decksite/view.py:113
 msgid "Records"
 msgstr ""
 
-#: decksite/templates/leagueinfo.mustache:1 decksite/view.py:83
+#: decksite/templates/leagueinfo.mustache:1 decksite/view.py:114
 msgid "Retire"
 msgstr ""
 
-#: decksite/view.py:85
+#: decksite/view.py:116
 msgid "Competitions"
 msgstr ""
 
-#: decksite/view.py:86
+#: decksite/view.py:117
 msgid "Competition Results"
 msgstr ""
 
-#: decksite/view.py:87
+#: decksite/view.py:118
 msgid "Tournament Info"
 msgstr ""
 
-#: decksite/view.py:88
+#: decksite/view.py:119
 msgid "Leaderboards"
 msgstr ""
 
-#: decksite/view.py:89
+#: decksite/view.py:120
 msgid "Gatherling"
 msgstr ""
 
-#: decksite/view.py:90
+#: decksite/view.py:121
 msgid "Hosting"
 msgstr ""
 
-#: decksite/view.py:92
+#: decksite/view.py:123
 msgid "Resources"
 msgstr ""
 
-#: decksite/view.py:93 decksite/views/about_pdm.py:13
+#: decksite/view.py:124 decksite/views/about_pdm.py:16
 msgid "About"
 msgstr ""
 
-#: decksite/view.py:94
+#: decksite/view.py:125
 msgid "What is Penny Dreadful?"
 msgstr ""
 
-#: decksite/view.py:95
+#: decksite/view.py:126
 msgid "About pennydreadfulmagic.com"
 msgstr ""
 
-#: decksite/view.py:305
+#: decksite/view.py:127
+msgid "FAQs"
+msgstr ""
+
+#: decksite/view.py:128
+msgid "Community Guidelines"
+msgstr ""
+
+#: decksite/view.py:130
+msgid "Admin"
+msgstr ""
+
+#: decksite/view.py:189
+#, python-format
+msgid "%(num)d active league run"
+msgid_plural "%(num)d active league runs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/view.py:364
 msgid "Help us translate the site into your language"
 msgstr ""
 
@@ -152,6 +180,153 @@ msgid ""
 " tournaments include Reanimator, Red Deck Wins, Heroic, Aristocrats, "
 "Demonic Rising, Abzan Midrange, Elves, Grenzo Combo, Dragon Control and "
 "Vampires in one season alone."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid "How do I get started with Magic Online?"
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"Check out the [guide to Magic "
+"Online](https://docs.google.com/document/d/1GGvhaISyESrrvPAkauP5LWKAixh6rcH1Q2jfbfpUOoA/edit)."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid "Which cards are legal?"
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"The best way to search legal cards is with "
+"[Scryfall](https://scryfall.com/search?q=f%3Apd)."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"You can view the full [legal cards "
+"list](http://pdmtgo.com/legal_cards.txt)."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid "How do I find or brew a decklist?"
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"The best way to build decks is to use a search engine that supports Penny"
+" Dreadful legality (f:pd) like "
+"[Scryfall](https://scryfall.com/search?q=f%3Apd)."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid "Browse [Decklists]({decks_url}) from tournaments, leagues and elsewhere"
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid "View the full [legal cards list](http://pdmtgo.com/legal_cards.txt)"
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid "How do I get a game and find other Penny Dreadful players?"
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"To get a match in Magic Online go to Constructed Open Play, Just for Fun "
+"on MTGO and create a Freeform game with \"Penny Dreadful\" in the "
+"comments."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"To find the Penny Dreadful community join the "
+"[Discord](https://discord.gg/H6EHdHu)."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid "How do I enter the league?"
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"Leagues last for roughly a month. You may enter any number of times but "
+"only one deck at a time."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid "You play five matches per run. You can join the league at any time."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"To find a game sign up and then create a game in Just for Fun with "
+"\"Penny Dreadful League\" as the comment."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"Top 8 finishers on each month's league leaderboard win credit with [MTGO "
+"Traders](https://mtgotraders.com/)."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"When you complete a five match league run for the first time ever you "
+"will get 1 tik credit with [MTGO Traders](https://mtgotraders.com/)."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid "Current League"
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid "More Info"
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid "How do I enter a tournament?"
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"We have {num_tournaments} free-to-enter weekly tournaments with prizes "
+"from [Cardhoarder](https://cardhoarder.com/)."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"They are hosted on [Gatherling](https://gatherling.com/) along with a lot"
+" of other player-run Magic Online events."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"What happens if a card goes above 1¢? How does rotation work? When is the"
+" next rotation? How long are cards legal for?"
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"Legality is determined at the release of a Standard-legal set on Magic "
+"Online."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"Prices are checked every hour for a week. Anything 1c or less for half or"
+" more of all checks is legal for the season."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid ""
+"Cards from the just-released set are added (nothing removed) a couple of "
+"weeks later via a supplemental rotation after prices have settled a "
+"little."
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid "Any version of a card on the legal cards list is legal."
 msgstr ""
 
 #: decksite/templates/home.mustache:1
@@ -315,59 +490,55 @@ msgid ""
 "a game loss for the owner of the bugged card."
 msgstr ""
 
-#: decksite/templates/unauthorized.mustache:1
-msgid "You are not authorized to see this page."
-msgstr ""
-
-#: decksite/views/about_pdm.py:19
+#: decksite/views/about_pdm.py:22
 msgid "This site is currently translated into:"
 msgstr ""
 
-#: decksite/views/competition.py:15 decksite/views/decks.py:11
-#: decksite/views/home.py:18
-#, python-format
-msgid "%(num)d active league run"
-msgid_plural "%(num)d active league runs"
-msgstr[0] ""
-msgstr[1] ""
+#: decksite/views/deck_check.py:16 decksite/views/signup.py:25
+msgid "Decklist"
+msgstr ""
 
-#: decksite/views/league_info.py:22
+#: decksite/views/deck_check.py:19 decksite/views/signup.py:28
+msgid "Enter or upload your decklist"
+msgstr ""
+
+#: decksite/views/deck_check.py:22 decksite/views/signup.py:34
+msgid "Your Recent Decks"
+msgstr ""
+
+#: decksite/views/deck_check.py:25 decksite/views/signup.py:37
+msgid "Select a recent deck to start from there"
+msgstr ""
+
+#: decksite/views/deck_check.py:28
+msgid "Check your deck"
+msgstr ""
+
+#: decksite/views/league_info.py:24
 msgid ""
 "Each league lasts roughly a month. The [[current league]] will run until "
 "{END_DATE}."
 msgstr ""
 
-#: decksite/views/league_info.py:34
+#: decksite/views/league_info.py:36
 msgid "You can [[sign up]] at any time."
 msgstr ""
 
-#: decksite/views/link_accounts.py:34
-msgid "Link accounts"
-msgstr ""
-
-#: decksite/views/report.py:21
+#: decksite/views/report.py:22
 msgid "Your Deck"
 msgstr ""
 
-#: decksite/views/signup.py:11
+#: decksite/views/signup.py:16
 msgid ""
 "When you complete a five match league run for the first time ever you "
 "will get 1 tik credit with MTGO Traders."
 msgstr ""
 
-#: decksite/views/signup.py:14
+#: decksite/views/signup.py:19
 msgid "Magic Online Username"
 msgstr ""
 
-#: decksite/views/signup.py:17
+#: decksite/views/signup.py:22
 msgid "Deck Name"
-msgstr ""
-
-#: decksite/views/signup.py:20
-msgid "Decklist"
-msgstr ""
-
-#: decksite/views/signup.py:23
-msgid "Enter or upload your decklist"
 msgstr ""
 

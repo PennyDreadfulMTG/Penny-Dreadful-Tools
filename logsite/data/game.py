@@ -18,7 +18,7 @@ class Game(fsa.Model): # type: ignore
         # If we want to remove chat, or OOB messages, do that here.
         return self.log.strip()
 
-def insert_game(game_id, match_id, game_lines) -> None:
+def insert_game(game_id: int, match_id: int, game_lines: str) -> None:
     local = Game(id=game_id, match_id=match_id, log=game_lines)
     db.Merge(local) # This will replace an old version of the game, if one exists.
     db.Commit()

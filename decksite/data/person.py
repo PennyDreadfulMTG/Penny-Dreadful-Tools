@@ -18,7 +18,7 @@ def load_person(person: Union[int, str], season_id=None) -> Person:
     except ValueError:
         person_id = 0
         username = sqlescape(person)
-    return guarantee.exactly_one(load_people('p.id = {person_id} OR p.mtgo_username = {username}'.format(person_id=person_id, username=username), season_id=season_id))
+    return guarantee.exactly_one(load_people('p.id = {person_id} OR p.mtgo_username = {username} OR p.discord_id = {person_id}'.format(person_id=person_id, username=username), season_id=season_id))
 
 def load_people(where='1 = 1', order_by='`all_num_decks` DESC, name', season_id=None) -> List[Person]:
     sql = """
@@ -52,7 +52,7 @@ def load_people(where='1 = 1', order_by='`all_num_decks` DESC, name', season_id=
         set_head_to_head(people, season_id)
     return people
 
-def set_decks(people, season_id=None) -> None:
+def set_decks(people: List[Person], season_id=None) -> None:
     people_by_id = {person.id: person for person in people}
     where = 'd.person_id IN ({ids})'.format(ids=', '.join(str(k) for k in people_by_id.keys()))
     decks = deck.load_decks(where, season_id=season_id)
@@ -61,7 +61,7 @@ def set_decks(people, season_id=None) -> None:
     for d in decks:
         people_by_id[d.person_id].decks.append(d)
 
-def set_achievements(people, season_id=None) -> None:
+def set_achievements(people: List[Person], season_id=None) -> None:
     people_by_id = {person.id: person for person in people}
     sql = """
         SELECT
@@ -136,7 +136,7 @@ def set_achievements(people, season_id=None) -> None:
         people_by_id[result['id']].update(result)
         people_by_id[result['id']].achievements = len([k for k, v in result.items() if k != 'id' and v > 0])
 
-def set_head_to_head(people, season_id=None) -> None:
+def set_head_to_head(people: List[Person], season_id=None) -> None:
     people_by_id = {person.id: person for person in people}
     sql = """
         SELECT

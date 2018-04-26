@@ -1,6 +1,6 @@
-from decksite import logger
 from decksite.database import db
 from shared.container import Container
+from shared_web import logger
 
 from . import elo
 

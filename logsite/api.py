@@ -1,4 +1,6 @@
-from flask import request, session
+from typing import Dict, Tuple
+
+from flask import Response, request, session
 
 from shared_web.api import (process_github_webhook, return_json,
                             validate_api_key)
@@ -8,15 +10,15 @@ from .data import match
 
 
 @APP.route('/api/admin/')
-def admin():
+def admin() -> Response:
     return return_json(session.get('admin'))
 
 @APP.route('/api/matchExists/<match_id>')
-def match_exists(match_id):
+def match_exists(match_id: int) -> Response:
     return return_json(match.get_match(match_id) is not None)
 
 @APP.route('/api/upload', methods=['POST'])
-def upload():
+def upload() -> Response:
     error = validate_api_key()
     if error:
         return error
@@ -34,7 +36,7 @@ def gitpull():
     return process_github_webhook()
 
 @APP.route('/export/<match_id>')
-def export(match_id: int):
+def export(match_id: int) -> Tuple[str, int, Dict[str, str]]:
     local = match.get_match(match_id)
     text = '{format}\n{comment}\n{mods}\n{players}\n\n'.format(
         format=local.format.name,

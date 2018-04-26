@@ -3,8 +3,8 @@ import os
 from babel.messages.frontend import compile_catalog
 from poeditor.client import POEditorAPI
 
-from decksite import logger
 from shared import configuration
+from shared_web import logger
 
 
 def run():

@@ -3,9 +3,9 @@ import os
 from flask import g, has_request_context, request
 
 from decksite import APP
-from shared_web import logger
 from shared import configuration
 from shared.database import Database, get_database
+from shared_web import logger
 
 
 def db() -> Database:

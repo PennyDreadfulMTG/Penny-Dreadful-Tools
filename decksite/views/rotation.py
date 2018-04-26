@@ -78,7 +78,7 @@ class Rotation(View):
             hits = redact(hits)
             hits_needed = redact(hits_needed)
             percent = redact(percent)
-            redact = redact(percent_needed)
+            percent_needed = redact(percent_needed)
         c.update({
             'hits': hits,
             'hits_needed': hits_needed,

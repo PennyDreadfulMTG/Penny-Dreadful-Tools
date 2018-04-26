@@ -6,13 +6,13 @@ from typing import Any, Dict, List, Tuple
 import bs4
 from bs4 import BeautifulSoup
 
-from decksite import logger
 from decksite.data import competition, deck, match
 from decksite.database import db
 from decksite.scrapers import decklist
 from magic import fetcher
 from shared import dtutil
 from shared.pd_exception import InvalidDataException
+from shared_web import logger
 
 WINNER = '1st'
 SECOND = '2nd'

@@ -1,8 +1,8 @@
 from typing import Dict
 
-from decksite import logger
 from decksite.data import elo, person
 from decksite.database import db
+from shared_web import logger
 
 PEOPLE: Dict[str, int] = {}
 

@@ -1,7 +1,7 @@
 import time
 
-from decksite import logger
 from magic import multiverse
+from shared_web import logger
 
 
 def run():

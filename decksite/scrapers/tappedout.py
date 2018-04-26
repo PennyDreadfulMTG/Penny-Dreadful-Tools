@@ -4,12 +4,13 @@ from typing import Any, Dict, List, Optional
 
 from bs4 import BeautifulSoup
 
-from decksite import logger, translation
+from decksite import translation
 from decksite.data import deck
 from decksite.scrapers import decklist
 from magic import fetcher_internal, legality
 from shared import configuration
 from shared.pd_exception import InvalidDataException
+from shared_web import logger
 
 
 def scrape() -> None:
@@ -72,7 +73,7 @@ def get_auth():
     token = configuration.get('tapped_API_key')
     return fetcher_internal.fetch('https://tappedout.net/api/v1/cookie/{0}/?access_token={1}'.format(cookie, token))
 
-def login(user: Optional[str] = None, password: Optional[str] = None):
+def login(user: Optional[str] = None, password: Optional[str] = None) -> None:
     if user is None:
         user = configuration.get_str('to_username')
     if password is None:

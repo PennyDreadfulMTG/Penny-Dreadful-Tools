@@ -33,4 +33,4 @@ except DatabaseException as e:
     multiverse.init()
     oracle.init()
 
-from . import api as API, localization # pylint: disable=wrong-import-position, unused-import
+from . import api as API, admin, localization # pylint: disable=wrong-import-position, unused-import

@@ -1,6 +1,6 @@
-from decksite import logger
 from decksite.data import deck
 from decksite.scrapers import gatherling
+from shared_web import logger
 
 # Script to scrape match results without scraping decklists so we can backfill all Gatherling results without rescraping decks.
 

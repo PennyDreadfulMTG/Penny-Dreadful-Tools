@@ -106,7 +106,7 @@ def hide_intro():
 
 @APP.route('/api/gitpull', methods=['POST'])
 def gitpull():
-    process_github_webhook()
+    return process_github_webhook()
 
 @APP.route('/api/status/')
 @auth.load_person

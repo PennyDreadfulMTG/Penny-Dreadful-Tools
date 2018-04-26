@@ -7,7 +7,7 @@ from shared import dtutil
 
 # pylint: disable=no-self-use
 class EditMatches(View):
-    def __init__(self, matches):
+    def __init__(self, matches) -> None:
         super().__init__()
         self.matches = matches
         if matches:

@@ -4,7 +4,7 @@ from magic import legality
 
 # pylint: disable=no-self-use
 class Card(View):
-    def __init__(self, card):
+    def __init__(self, card) -> None:
         super().__init__()
         self.card = card
         self.cards = [card]

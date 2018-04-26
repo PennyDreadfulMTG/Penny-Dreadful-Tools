@@ -107,17 +107,17 @@ def load_archetypes_deckless_for(archetype_id, season_id=None) -> List[Archetype
             return list(a.ancestors) + [a] + list(a.descendants)
     return list()
 
-def add(name, parent):
+def add(name: str, parent: int) -> None:
     archetype_id = db().insert('INSERT INTO archetype (name) VALUES (%s)', [name])
     ancestors = db().execute('SELECT ancestor, depth FROM archetype_closure WHERE descendant = %s', [parent])
     sql = 'INSERT INTO archetype_closure (ancestor, descendant, depth) VALUES '
     for a in ancestors:
         sql += '({ancestor}, {descendant}, {depth}), '.format(ancestor=sqlescape(a['ancestor']), descendant=archetype_id, depth=int(a['depth']) + 1)
     sql += '({ancestor}, {descendant}, {depth})'.format(ancestor=archetype_id, descendant=archetype_id, depth=0)
-    return db().execute(sql)
+    db().execute(sql)
 
-def assign(deck_id, archetype_id):
-    return db().execute('UPDATE deck SET reviewed = TRUE, archetype_id = %s WHERE id = %s', [archetype_id, deck_id])
+def assign(deck_id: int, archetype_id: int) -> None:
+    db().execute('UPDATE deck SET reviewed = TRUE, archetype_id = %s WHERE id = %s', [archetype_id, deck_id])
 
 def load_matchups(archetype_id, season_id=None):
     sql = """
@@ -150,7 +150,7 @@ def load_matchups(archetype_id, season_id=None):
     """.format(season_join=query.season_join(), season_query=query.season_query(season_id))
     return [Container(m) for m in db().execute(sql, [archetype_id])]
 
-def move(archetype_id, parent_id):
+def move(archetype_id: int, parent_id: int) -> None:
     db().begin()
     remove_sql = """
         DELETE a
@@ -172,15 +172,15 @@ def move(archetype_id, parent_id):
     db().execute(add_sql, [archetype_id, parent_id])
     db().commit()
 
-def base_archetypes():
+def base_archetypes() -> List[Archetype]:
     return [a for a in base_archetype_by_id().values() if a.parent is None]
 
-def base_archetype_by_id():
+def base_archetype_by_id() -> Dict[Archetype, Archetype]:
     if len(BASE_ARCHETYPES) == 0:
         rebuild_archetypes()
     return BASE_ARCHETYPES
 
-def rebuild_archetypes():
+def rebuild_archetypes() -> None:
     archetypes_by_id = {a.id: a for a in load_archetypes_deckless()}
     for k, v in archetypes_by_id.items():
         p = v

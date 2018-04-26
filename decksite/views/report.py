@@ -6,7 +6,7 @@ from decksite.views.league_form import LeagueForm
 
 # pylint: disable=no-self-use
 class Report(LeagueForm):
-    def __init__(self, form, person_id=None):
+    def __init__(self, form, person_id=None) -> None:
         super().__init__(form)
         self.retire_url = url_for('retire')
         self.person_id = person_id

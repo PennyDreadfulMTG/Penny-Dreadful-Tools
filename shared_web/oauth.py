@@ -57,7 +57,7 @@ def make_session(token=None, state=None, scope=None):
 def token_updater(token):
     session['oauth2_token'] = token
 
-def redirect_uri():
+def redirect_uri() -> str:
     uri = url_for('authenticate_callback', _external=True)
     if 'http://' in uri:
         os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'

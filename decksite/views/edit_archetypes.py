@@ -4,7 +4,7 @@ from decksite.view import View
 
 # pylint: disable=no-self-use
 class EditArchetypes(View):
-    def __init__(self, archetypes, search_results):
+    def __init__(self, archetypes, search_results) -> None:
         super().__init__()
         self.archetypes = archetypes
         self.roots = [a for a in self.archetypes if a.is_root]

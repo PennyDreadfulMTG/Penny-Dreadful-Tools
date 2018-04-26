@@ -1,3 +1,5 @@
+from typing import List
+
 from decksite.data import deck, elo, query
 from decksite.database import db
 from shared import dtutil
@@ -15,7 +17,7 @@ def insert_match(dt, left_id, left_games, right_id, right_games, round_num=None,
         elo.adjust_elo(left_id if left_games > right_games else right_id, left_id if left_games < right_games else right_id)
     return match_id
 
-def get_matches(d, should_load_decks=False):
+def get_matches(d: deck.Deck, should_load_decks: bool = False) -> List[Container]:
     sql = """
         SELECT
             m.`date`, m.id, m.round, m.elimination,

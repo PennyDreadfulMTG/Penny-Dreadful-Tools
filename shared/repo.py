@@ -9,7 +9,7 @@ from github import Github, Issue
 from shared import configuration
 
 
-def create_issue(content: str, author: str, location: Optional[str] = 'Discord', repo_name: Optional[str] = 'PennyDreadfulMTG/Penny-Dreadful-Tools', exception: None = None) -> Issue:
+def create_issue(content: str, author: str, location: Optional[str] = 'Discord', repo_name: Optional[str] = 'PennyDreadfulMTG/Penny-Dreadful-Tools', exception: Exception = None) -> Issue:
     if content is None or content == '':
         return None
     body = ''

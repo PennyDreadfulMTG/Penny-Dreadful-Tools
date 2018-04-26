@@ -15,7 +15,7 @@ from shared.pd_exception import DoesNotExistException
 
 # pylint: disable=no-self-use
 class Rotation(View):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.playability = card.playability()
         until_full_rotation = rotation.next_rotation() - dtutil.now()

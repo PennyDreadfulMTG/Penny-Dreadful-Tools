@@ -14,7 +14,7 @@ def people():
 
 # pylint: disable=no-self-use
 class People(View):
-    def __init__(self):
+    def __init__(self) -> None:
         people_query = db.User.query.order_by(db.User.name.asc()).paginate(per_page=50)
         self.people = people_query.items
         self.has_next = people_query.has_next

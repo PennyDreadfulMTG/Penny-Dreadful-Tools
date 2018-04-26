@@ -7,7 +7,7 @@ from shared.container import Container
 
 # pylint: disable=no-self-use, too-many-instance-attributes
 class Competition(View):
-    def __init__(self, competition):
+    def __init__(self, competition) -> None:
         super().__init__()
         self.competition = competition
         self.competitions = [self.competition]

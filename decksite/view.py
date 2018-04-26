@@ -2,6 +2,7 @@ import datetime
 import html
 import urllib
 from collections import Counter
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import inflect
 from anytree.iterators import PreOrderIter
@@ -16,15 +17,20 @@ from shared import dtutil
 from shared.container import Container
 from shared_web.base_view import BaseView
 
+# pylint: disable=cyclic-import,unused-import
+if TYPE_CHECKING:
+    from decksite.data.deck import Deck
+
 NUM_MOST_COMMON_CARDS_TO_LIST = 10
 
 # pylint: disable=no-self-use, too-many-public-methods
 class View(BaseView):
-    def __init__(self):
+    def __init__(self) -> None:
         # Set some pointless instance vars to keep Codacy happy.
-        self.decks = []
-        self.active_runs_text = None
-        self.is_very_large = None
+        self.decks: List['Deck'] = []
+        self.active_runs_text: Optional[str] = None
+        self.is_very_large: Optional[bool] = None
+        self.show_seasons: bool = False
 
     def home_url(self):
         return url_for('home')
@@ -42,16 +48,13 @@ class View(BaseView):
     def js_url(self):
         return url_for('static', filename='js/pd.js', v=self.commit_id())
 
-    def show_seasons(self):
-        return False
-
     def season_name(self):
         return rotation.season_name(g.get('season_id'))
 
     def season_code_lower(self):
         return rotation.season_code(g.get('season_id')).lower()
 
-    def all_seasons(self):
+    def all_seasons(self) -> List[Dict[str, Any]]:
         seasons = [{
             'name': 'All Time',
             'code': 'all',

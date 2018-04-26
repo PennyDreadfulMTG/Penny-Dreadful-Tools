@@ -2,8 +2,9 @@ import logging
 import os
 import traceback
 import urllib.parse
+from typing import List, Optional, Tuple
 
-from flask import (abort, g, make_response, redirect, request, send_file,
+from flask import (Response, abort, g, make_response, redirect, request, send_file,
                    send_from_directory, session, url_for)
 from github.GithubException import GithubException
 from werkzeug import exceptions
@@ -346,7 +347,6 @@ def rotation_speculation():
     view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), cs.playability(), speculation=True)
     return view.page()
 
-
 # OAuth
 
 @APP.route('/authenticate/')
@@ -370,7 +370,7 @@ def authenticate_callback():
     return redirect(url)
 
 @APP.route('/unauthorized/')
-def unauthorized(error=None):
+def unauthorized(error=None) -> str:
     view = Unauthorized(error)
     return view.page()
 
@@ -389,32 +389,32 @@ def robots():
     return send_from_directory(os.path.join(APP.root_path, 'static'), 'robots.txt')
 
 @APP.route('/favicon<rest>')
-def favicon(rest):
+def favicon(rest: str):
     return send_from_directory(os.path.join(APP.root_path, 'static/images/favicon'), 'favicon{rest}'.format(rest=rest))
 
 @APP.route('/charts/cmc/<deck_id>-cmc.png')
-def cmc_chart(deck_id):
+def cmc_chart(deck_id: int):
     return send_file(chart.cmc(int(deck_id)))
 
 @APP.route('/charts/archetypes/<competition_id>-archetypes-sparkline.png')
-def archetype_sparkline_chart(competition_id):
+def archetype_sparkline_chart(competition_id: int):
     return send_file(chart.archetypes_sparkline(int(competition_id)))
 
 @APP.route('/legal_cards.txt')
-def legal_cards():
+def legal_cards() -> Tuple[str, int]:
     if os.path.exists('legal_cards.txt'):
         return send_from_directory('.', 'legal_cards.txt')
     return 'Not supported yet', 404
 
 @APP.errorhandler(DoesNotExistException)
 @APP.errorhandler(exceptions.NotFound)
-def not_found(e):
+def not_found(e: Exception) -> Tuple[str, int]:
     log_exception(e)
     view = NotFound(e)
     return view.page(), 404
 
 @APP.errorhandler(exceptions.InternalServerError)
-def internal_server_error(e):
+def internal_server_error(e: Exception) -> Tuple[str, int]:
     log_exception(e)
     path = request.path
     try:
@@ -425,19 +425,19 @@ def internal_server_error(e):
     return view.page(), 500
 
 @APP.before_request
-def before_request():
+def before_request() -> None:
     g.p = perf.start()
 
 @APP.teardown_request
-def teardown_request(response):
+def teardown_request(response: Response) -> Response:
     if g.get('p') is not None:
         perf.check(g.p, 'slow_page', request.path, 'decksite')
     return response
 
-def log_exception(e):
-    logger.error(''.join(traceback.format_exception(e, e, e.__traceback__)))
+def log_exception(e: BaseException) -> None:
+    logger.error(''.join(traceback.format_exception(type(e), e, e.__traceback__)))
 
-def init(debug: bool = True, port: int = None) -> None:
+def init(debug: bool = True, port: Optional[int] = None) -> None:
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""
     APP.logger.setLevel(logging.INFO)
     APP.run(host='0.0.0.0', debug=debug, port=port)

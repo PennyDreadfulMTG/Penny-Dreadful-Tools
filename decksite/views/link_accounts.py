@@ -1,3 +1,5 @@
+from typing import Any
+
 from flask import request
 from flask_babel import gettext
 
@@ -11,7 +13,7 @@ from shared.pd_exception import AlreadyExistsException
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class LinkAccounts(View):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.mtgo_name = auth.mtgo_username()
         self.person = person.load_person_by_discord_id(auth.discord_id())
@@ -28,26 +30,26 @@ class LinkAccounts(View):
                 self.disable_gf = True
         self.process()
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> Any:
         return getattr(self.person, attr)
 
-    def page_title(self):
+    def page_title(self) -> str:
         return gettext('Link Accounts')
 
-    def process(self):
+    def process(self) -> None:
         if self.person and self.person.mtgo_username:
             self.link_tappedout()
             self.link_mtggoldfish()
         elif self.form.get('mtgo_username', None): # Not linked
             self.link_discord()
 
-    def link_discord(self):
+    def link_discord(self) -> None:
         try:
             self.person = person.link_discord(self.form['mtgo_username'], auth.discord_id())
         except AlreadyExistsException:
             self.form.errors.mtgo_username = '{mtgo_username} is already connected to another discord account.'.format(mtgo_username=self.form['mtgo_username'])
 
-    def link_mtggoldfish(self):
+    def link_mtggoldfish(self) -> None:
         mtggoldfish_name = self.form.get('gf_username', None)
         if mtggoldfish_name is not None and self.person.mtggoldfish_username != mtggoldfish_name:
             mtggoldfish_user = person.load_person_by_mtggoldfish_name(mtggoldfish_name)
@@ -59,7 +61,7 @@ class LinkAccounts(View):
                 squash_people.squash(self.person.id, mtggoldfish_user.id, 'mtgo_username', 'mtggoldfish_username')
                 self.disable_gf = True
 
-    def link_tappedout(self):
+    def link_tappedout(self) -> None:
         tapped_name = self.form.get('to_username', None)
         if tapped_name is not None and self.person.tappedout_username != tapped_name:
             tapped_user = person.load_person_by_tappedout_name(tapped_name)

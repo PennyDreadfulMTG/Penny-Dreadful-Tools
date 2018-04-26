@@ -1,11 +1,13 @@
+from typing import Dict, List, Optional
+
 from decksite.data import deck, guarantee, query
 from decksite.database import db
-from magic import oracle
+from magic import card, oracle
 from shared.container import Container
 from shared.database import sqlescape
 
 
-def played_cards(where='1 = 1', season_id=None):
+def played_cards(where: str = '1 = 1', season_id: Optional[int] = None) -> List[card.Card]:
     sql = """
         SELECT
             card AS name,
@@ -47,7 +49,7 @@ def load_card(name, season_id=None):
     c.played_competitively = c.all_wins or c.all_losses or c.all_draws
     return c
 
-def only_played_by(person_id):
+def only_played_by(person_id: int) -> List[card.Card]:
     sql = """
         SELECT
             card AS name
@@ -73,7 +75,7 @@ def only_played_by(person_id):
     cards = {c.name: c for c in oracle.load_cards()}
     return [cards[r['name']] for r in db().execute(sql)]
 
-def playability():
+def playability() -> Dict[str, float]:
     sql = """
         SELECT
             card AS name,

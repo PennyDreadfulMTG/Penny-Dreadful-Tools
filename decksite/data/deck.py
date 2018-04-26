@@ -1,7 +1,7 @@
 import hashlib
 import json
 import time
-from typing import List, Optional, Set
+from typing import Dict, List, Optional, Set
 
 from decksite import deck_name
 from decksite.data import guarantee, query
@@ -394,7 +394,7 @@ def load_competitive_stats(decks) -> None:
             decks_by_id[row['id']].omw = row['omw']
             decks_by_id[row['id']].elim = row['elim'] # This property is never used? and is always a bunch of zeroes?
 
-def count_matches(deck_id, opponent_deck_id):
+def count_matches(deck_id: int, opponent_deck_id: int) -> Dict[int, int]:
     sql = 'SELECT deck_id, count(id) as count FROM deck_match WHERE deck_id in (%s, %s) group by deck_id'
     result = {int(deck_id): 0, int(opponent_deck_id): 0}
     for row in db().execute(sql, [deck_id, opponent_deck_id]):

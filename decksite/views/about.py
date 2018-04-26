@@ -8,7 +8,7 @@ from magic import legality, oracle
 
 # pylint: disable=no-self-use
 class About(View):
-    def __init__(self, src):
+    def __init__(self, src) -> None:
         super().__init__()
         if src == 'gp':
             self.show_gp_card = True

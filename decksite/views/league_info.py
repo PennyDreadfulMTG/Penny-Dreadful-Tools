@@ -7,7 +7,7 @@ from decksite.view import View
 
 # pylint: disable=no-self-use
 class LeagueInfo(View):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.current = league.active_league()
         self.end_date = custom_strftime('%B {S}', self.current.end_date)

@@ -2,6 +2,7 @@ import calendar
 import datetime
 import json
 import time
+from typing import Any, Dict, List
 
 from flask import url_for
 
@@ -16,11 +17,11 @@ from shared.pd_exception import InvalidDataException, LockNotAcquiredException
 
 
 class Form(Container):
-    def __init__(self, form):
+    def __init__(self, form) -> None:
         super().__init__()
         form = form.to_dict()
         self.update(form)
-        self.errors = {}
+        self.errors: Dict[str, str] = {}
 
     def validate(self):
         self.do_validation()
@@ -28,11 +29,11 @@ class Form(Container):
 
 # pylint: disable=attribute-defined-outside-init,too-many-instance-attributes
 class SignUpForm(Form):
-    def __init__(self, form, person_id=None, mtgo_username=None):
+    def __init__(self, form, person_id=None, mtgo_username=None) -> None:
         super().__init__(form)
         if person_id is not None:
             ps = person.load_person(person_id, season_id=rotation.current_season_num())
-            self.recent_decks = []
+            self.recent_decks: List[Dict[str, Any]] = []
             for d in sorted(ps.decks, key=lambda deck: deck['created_date'], reverse=True)[0:10]:
                 recent_deck = {'name': d['name'], 'main': [], 'sb':[]}
                 for c in d.maindeck:
@@ -112,7 +113,7 @@ class DeckCheckForm(SignUpForm):
             self.validation_ok_message = 'The deck is legal'
 
 class ReportForm(Form):
-    def __init__(self, form, deck_id=None, person_id=None):
+    def __init__(self, form, deck_id=None, person_id=None) -> None:
         super().__init__(form)
 
         decks = active_decks()
@@ -144,7 +145,7 @@ class ReportForm(Form):
             self.errors['opponent'] = "You can't play yourself"
 
 class RetireForm(Form):
-    def __init__(self, form, deck_id=None, discord_user=None):
+    def __init__(self, form, deck_id=None, discord_user=None) -> None:
         super().__init__(form)
         person_object = None
         if discord_user is not None:
@@ -175,13 +176,12 @@ def identifier(params):
     # Current timestamp is part of identifier here because we don't need to defend against dupes in league – it's fine to enter the same league with the same deck, later.
     return json.dumps([params['mtgo_username'], params['competition_id'], str(round(time.time()))])
 
-def deck_options(decks, v):
+def deck_options(decks, v) -> List[Dict[str, Any]]:
     if (v is None or v == '') and len(decks) == 1:
         v = str(decks[0].id)
-
     return [{'text': '{person}'.format(person=d.person), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
 
-def active_decks(additional_where='1 = 1'):
+def active_decks(additional_where: str = '1 = 1') -> List[deck.Deck]:
     where = """
         d.id IN (
             SELECT
@@ -206,13 +206,13 @@ def active_decks(additional_where='1 = 1'):
     decks = deck.load_decks(where)
     return sorted(decks, key=lambda d: '{person}{deck}'.format(person=d.person.ljust(100), deck=d.name))
 
-def active_decks_by(mtgo_username):
+def active_decks_by(mtgo_username: str) -> List[deck.Deck]:
     return active_decks('p.mtgo_username = {mtgo_username}'.format(mtgo_username=sqlescape(mtgo_username, force_string=True)))
 
-def active_decks_by_person(person_id):
+def active_decks_by_person(person_id: int) -> List[deck.Deck]:
     return active_decks('p.id = {id}'.format(id=person_id))
 
-def report(form):
+def report(form: ReportForm) -> bool:
     try:
         db().get_lock('deck_id:{id}'.format(id=form.entry))
         db().get_lock('deck_id:{id}'.format(id=form.opponent))
@@ -237,8 +237,8 @@ def report(form):
             entry_name = deck.load_deck(int(form.entry)).person
             opp_name = deck.load_deck(int(form.opponent)).person
             fetcher.post_discord_webhook(
-                configuration.get('league_webhook_id'),
-                configuration.get('league_webhook_token'),
+                configuration.get_str('league_webhook_id'),
+                configuration.get_str('league_webhook_token'),
                 '{entry} reported {f.entry_games}-{f.opponent_games} vs {opponent}'.format(f=form, entry=entry_name, opponent=opp_name)
             )
 
@@ -260,7 +260,7 @@ def winner_and_loser(params):
         return (params.opponent, params.entry)
     return (None, None)
 
-def active_competition_id_query():
+def active_competition_id_query() -> str:
     return """
         SELECT id FROM competition
         WHERE
@@ -271,7 +271,7 @@ def active_competition_id_query():
             id IN ({competition_ids_by_type_select})
         """.format(now=dtutil.dt2ts(dtutil.now()), competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
-def active_league():
+def active_league() -> competition.Competition:
     where = 'c.id = ({id_query})'.format(id_query=active_competition_id_query())
     leagues = competition.load_competitions(where)
     if len(leagues) == 0:
@@ -347,11 +347,11 @@ def load_matches(where='1 = 1'):
             m.loser = None
     return matches
 
-def delete_match(match_id):
+def delete_match(match_id: int) -> None:
     sql = 'DELETE FROM `match` WHERE id = %s'
     db().execute(sql, [match_id])
 
-def first_runs():
+def first_runs() -> List[Container]:
     sql = """
         SELECT
             d.competition_id,
@@ -393,13 +393,13 @@ def first_runs():
     """.format(league_competition_type_id=query.competition_type_id_select('League'))
     return [Container(r) for r in db().execute(sql)]
 
-def update_match(match_id, left_id, left_games, right_id, right_games):
+def update_match(match_id: int, left_id: int, left_games: int, right_id: int, right_games: int) -> None:
     db().begin()
     update_games(match_id, left_id, left_games)
     update_games(match_id, right_id, right_games)
     return db().commit()
 
-def update_games(match_id, deck_id, games):
+def update_games(match_id: int, deck_id: int, games: int) -> List[Dict[str, Any]]:
     sql = 'UPDATE deck_match SET games = %s WHERE match_id = %s AND deck_id = %s'
     args = [games, match_id, deck_id]
     return db().execute(sql, args)

@@ -8,7 +8,7 @@ from shared import dtutil
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Home(View):
-    def __init__(self, news, decks, cards):
+    def __init__(self, news, decks, cards) -> None:
         super().__init__()
         self.news = news
         self.has_news = len(news) > 0

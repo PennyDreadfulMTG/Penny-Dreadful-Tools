@@ -1,7 +1,5 @@
 from typing import Any, Dict
 
-from flask import url_for
-
 from decksite.view import View
 from shared import dtutil
 from shared.container import Container

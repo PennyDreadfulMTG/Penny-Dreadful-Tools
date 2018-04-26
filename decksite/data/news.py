@@ -35,7 +35,8 @@ def load_news(start_date: int = 0, end_date: int = sys.maxsize, max_items: int =
 def add_or_update_news(news_item_id: int, date: datetime.datetime, title: str, url: str) -> None:
     ts = dtutil.dt2ts(date)
     if news_item_id is not None:
-        return update_news(news_item_id, ts, title, url)
+        update_news(news_item_id, ts, title, url)
+        return
     add_news(ts, title, url)
 
 def update_news(news_item_id: int, ts: int, title: str, url: str) -> None:

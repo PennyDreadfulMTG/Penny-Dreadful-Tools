@@ -2,7 +2,7 @@ import logging
 import os
 import traceback
 import urllib.parse
-from typing import List, Optional, Tuple
+from typing import Optional, Tuple
 
 from flask import (Response, abort, g, make_response, redirect, request, send_file,
                    send_from_directory, session, url_for)

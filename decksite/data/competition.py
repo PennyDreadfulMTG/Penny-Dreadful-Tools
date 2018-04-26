@@ -10,6 +10,22 @@ from shared.container import Container
 from shared.database import sqlescape
 
 
+class Competition(Container):
+    def __init__(self, params) -> None:
+        super().__init__(params)
+        self.base_archetype_data: Dict[str, int] = {}
+
+    def base_archetypes_data(self) -> Dict[str, int]:
+        base_archetype_by_id = archetype.base_archetype_by_id()
+        if not self.base_archetype_data:
+            self.base_archetype_data = {a.name: 0 for a in archetype.base_archetypes()}
+            for d in self.decks:
+                if not d.archetype_id:
+                    continue
+                base_archetype_name = base_archetype_by_id[d.archetype_id].name
+                self.base_archetype_data[base_archetype_name] += 1
+        return self.base_archetype_data
+
 # pylint: disable=too-many-arguments
 def get_or_insert_competition(start_date, end_date, name, competition_series, url, top_n: Top):
     competition_series_id = db().value('SELECT id FROM competition_series WHERE name = %s', [competition_series], fail_on_missing=True)
@@ -153,19 +169,3 @@ def leaderboards(where="ct.name = 'Gatherling'", season_id=None) -> List[Dict[st
     if len(current) > 0:
         results.append(current)
     return results
-
-class Competition(Container):
-    def __init__(self, params) -> None:
-        super().__init__(params)
-        self.base_archetype_data: Dict[str, int] = {}
-
-    def base_archetypes_data(self) -> Dict[str, int]:
-        base_archetype_by_id = archetype.base_archetype_by_id()
-        if not self.base_archetype_data:
-            self.base_archetype_data = {a.name: 0 for a in archetype.base_archetypes()}
-            for d in self.decks:
-                if not d.archetype_id:
-                    continue
-                base_archetype_name = base_archetype_by_id[d.archetype_id].name
-                self.base_archetype_data[base_archetype_name] += 1
-        return self.base_archetype_data

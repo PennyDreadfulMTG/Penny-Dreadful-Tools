@@ -80,8 +80,8 @@ def sparkline(path, values, figsize=(2, 0.16)) -> str:
     return path
 
 def determine_path(name: str) -> str:
-    dir = configuration.get_str('charts_dir')
-    pathlib.Path(dir).mkdir(parents=True, exist_ok=True)
-    if not os.path.exists(dir):
-        raise DoesNotExistException('Cannot store graph images because {dir} does not exist.'.format(dir=configuration.get('charts_dir')))
-    return os.path.join(dir, name)
+    charts_dir = configuration.get_str('charts_dir')
+    pathlib.Path(charts_dir).mkdir(parents=True, exist_ok=True)
+    if not os.path.exists(charts_dir):
+        raise DoesNotExistException('Cannot store graph images because {charts_dir} does not exist.'.format(charts_dir=charts_dir))
+    return os.path.join(charts_dir, name)

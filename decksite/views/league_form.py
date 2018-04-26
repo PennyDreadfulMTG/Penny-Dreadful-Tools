@@ -1,5 +1,3 @@
-from flask import url_for
-
 from decksite import league
 from decksite.view import View
 

@@ -4,8 +4,8 @@ import traceback
 import urllib.parse
 from typing import Optional, Tuple
 
-from flask import (Response, abort, g, make_response, redirect, request, send_file,
-                   send_from_directory, session, url_for)
+from flask import (Response, abort, g, make_response, redirect, request,
+                   send_file, send_from_directory, session, url_for)
 from github.GithubException import GithubException
 from werkzeug import exceptions
 

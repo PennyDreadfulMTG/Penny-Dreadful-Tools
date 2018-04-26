@@ -1,5 +1,6 @@
-from flask import request, session, url_for
 from typing import Dict, List
+
+from flask import request, session, url_for
 
 from decksite import APP, auth
 from decksite import league as lg

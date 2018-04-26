@@ -289,7 +289,10 @@ ignore-mixin-members=yes
 # (useful for modules/projects where namespaces are manipulated during runtime
 # and thus existing member attributes cannot be deduced by static analysis. It
 # supports qualified module names, as well as Unix pattern matching.
-ignored-modules=alembic,anytree,apsw,babel,bs4,cachecontrol,dateutil,discord,flask_babel,flask_sqlalchemy,googleapiclient,inflect,matplotlib,markdown,munch,MySQLdb,mypy_extensions,poeditor,pygtrie,pystache,pytest,pytz,requests_oauthlib,rrule,seaborn,titlecase,untangle,whoosh
+ignored-modules=alembic,anytree,apsw,babel,bs4,cachecontrol,dateutil,discord,flask_babel,
+                flask_sqlalchemy,googleapiclient,inflect,matplotlib,markdown,munch,MySQLdb,
+                mypy,mypy_extensions,poeditor,pygtrie,pystache,pytest,pytz,requests_oauthlib,
+                rrule,seaborn,titlecase,untangle,whoosh
 
 
 # List of class names for which member attributes should not be checked (useful

@@ -376,7 +376,7 @@ def unauthorized(error=None) -> str:
 
 @APP.route('/logout/')
 def logout():
-    auth.logout()
+    oauth.logout()
     target = request.args.get('target', 'home')
     if bool(urllib.parse.urlparse(target).netloc):
         return redirect(target)
@@ -389,15 +389,15 @@ def robots():
     return send_from_directory(os.path.join(APP.root_path, 'static'), 'robots.txt')
 
 @APP.route('/favicon<rest>')
-def favicon(rest: str):
+def favicon(rest: str) -> Response:
     return send_from_directory(os.path.join(APP.root_path, 'static/images/favicon'), 'favicon{rest}'.format(rest=rest))
 
 @APP.route('/charts/cmc/<deck_id>-cmc.png')
-def cmc_chart(deck_id: int):
+def cmc_chart(deck_id: int) -> Response:
     return send_file(chart.cmc(int(deck_id)))
 
 @APP.route('/charts/archetypes/<competition_id>-archetypes-sparkline.png')
-def archetype_sparkline_chart(competition_id: int):
+def archetype_sparkline_chart(competition_id: int) -> Response:
     return send_file(chart.archetypes_sparkline(int(competition_id)))
 
 @APP.route('/legal_cards.txt')

@@ -24,14 +24,6 @@ def admin_required(f: Callable) -> Callable:
         return f(*args, **kwargs)
     return decorated_function
 
-def logout() -> None:
-    session['admin'] = None
-    session['id'] = None
-    session['discord_id'] = None
-    session['logged_person_id'] = None
-    session['person_id'] = None
-    session['mtgo_username'] = None
-
 def discord_id() -> Optional[int]:
     return session.get('id')
 

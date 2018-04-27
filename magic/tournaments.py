@@ -10,7 +10,7 @@ from shared import dtutil
 from shared.container import Container
 
 if TYPE_CHECKING:
-    from decksite.data import Deck
+    from decksite.data import Deck # pylint: disable=unused-import
 
 
 # pylint: disable=invalid-name
@@ -73,7 +73,7 @@ def prize_by_finish(f: int) -> int:
         return 1
     return 0
 
-def prizes_by_finish(multiplier: int = 1):
+def prizes_by_finish(multiplier: int = 1) -> List[Dict[str, Any]]:
     prizes, finish, p = [], 1, inflect.engine()
     while True:
         pz = prize_by_finish(finish)

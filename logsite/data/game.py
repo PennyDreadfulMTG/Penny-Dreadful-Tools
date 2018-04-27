@@ -3,6 +3,10 @@ import sqlalchemy as sa
 from .. import db
 from ..db import DB as fsa
 
+CLEARANCE_PUBLIC = 0    # Anyone can view
+CLEARANCE_PLAYERS = 1   # Players in the game can view
+CLEARANCE_MODS = 2      # Mods, TOs, etc
+CLEARANCE_ADMIN = 3     # Debug info, developer eyes only.
 
 class Game(fsa.Model): # type: ignore
     __tablename__ = 'game'
@@ -22,3 +26,8 @@ def insert_game(game_id: int, match_id: int, game_lines: str) -> None:
     local = Game(id=game_id, match_id=match_id, log=game_lines)
     db.Merge(local) # This will replace an old version of the game, if one exists.
     db.Commit()
+
+class Line(fsa.Model): #type: ignore
+    id = sa.Column(fsa.Integer, primary_key=True, autoincrement=True)
+    game_id = sa.Column(sa.Integer, sa.ForeignKey('game.id'), nullable=False)
+    clearance = sa.Column(sa.Integer, nullable=True)

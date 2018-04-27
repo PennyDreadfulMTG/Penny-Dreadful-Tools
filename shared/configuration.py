@@ -8,15 +8,22 @@ from typing import Any, List, Optional, Union, overload
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
 DEFAULTS = {
+    # Array of Pricefile URLs (foil, non-foil).  Used by price_grabber and rotation_script
     'cardhoarder_urls': [],
+    # Path to TSV list of card nicknames.  Should never be changed.  Used by magic.
     'card_alias_file': './card_aliases.tsv',
+    # Path to chart storage directory.  Used by decksite.
     'charts_dir': './images/charts',
+    # mysql database name.  Used by decksite.
     'decksite_database': 'decksite',
+    # URL for decksite API calls.  Used by discordbot.
     'decksite_hostname': 'pennydreadfulmagic.com',
     'decksite_port': 80,
     'decksite_protocol': 'https',
+    # github credentials.  Used for auto-reporting issues.
     'github_password': None,
     'github_user': None,
+    # Discord server id.  Used for admin verification.  Used by decksite.
     'guild_id': '207281932214599682',
     'image_dir': './images',
     'legality_dir': '~/legality/Legality Checker/',

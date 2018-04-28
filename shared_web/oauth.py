@@ -62,3 +62,11 @@ def redirect_uri() -> str:
     if 'http://' in uri:
         os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = 'true'
     return uri
+
+def logout() -> None:
+    session['admin'] = None
+    session['id'] = None
+    session['discord_id'] = None
+    session['logged_person_id'] = None
+    session['person_id'] = None
+    session['mtgo_username'] = None

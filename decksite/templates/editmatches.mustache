@@ -21,6 +21,14 @@
                         </a>
                     </td>
                     <td>
+                        {{#mtgo_id}}
+                        <a href="https://logs.pennydreadfulmagic.com/match/{{mtgo_id}}">{{mtgo_id}}</a>
+                        {{/mtgo_id}}
+                        {{^mtgo_id}}
+                        Manually Reported
+                        {{/mtgo_id}}
+                    </td>
+                    <td>
                         <form method="post" class="inline">
                             <input type="hidden" name="match_id" value="{{id}}">
                             <input type="hidden" name="left_id" value="{{left_id}}">

@@ -15,7 +15,7 @@ install:
   # - ./setup_spellfix.sh
 script:
   - python run.py tests -m "not tappedout"
-  - mypy --ignore-missing-imports .
+  - python dev.py mypy
   - isort --check-only
 notifications:
     webhooks: https://www.travisbuddy.com/

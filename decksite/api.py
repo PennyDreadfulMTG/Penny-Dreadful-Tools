@@ -47,7 +47,7 @@ def league_run_api(person):
     if len(decks) == 0:
         return return_json(None)
 
-    run = guarantee.exactly_one(decks)
+    run = guarantee_at_most_one_or_retire(decks)
 
     decks = league.active_decks()
     already_played = [m.opponent_deck_id for m in match.get_matches(run)]
@@ -123,7 +123,15 @@ def person_status():
         'admin': session.get('admin', False)
         }
     if auth.mtgo_username():
-        d = guarantee.at_most_one(league.active_decks_by(auth.mtgo_username()))
+        d = guarantee_at_most_one_or_retire(league.active_decks_by(auth.mtgo_username()))
         if d is not None:
             r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}
     return return_json(r)
+
+def guarantee_at_most_one_or_retire(decks):
+    try:
+        run = guarantee.at_most_one(decks)
+    except TooManyItemsException:
+        league.retire_deck(decks[0])
+        run = decks[1]
+    return run

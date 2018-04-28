@@ -7,6 +7,7 @@ from decksite.data import deck, guarantee, match
 from decksite.data import person as ps
 from magic import oracle, rotation
 from shared import dtutil
+from shared.pd_exception import TooManyItemsException
 from shared_web.api import (generate_error, process_github_webhook,
                             return_json, validate_api_key)
 

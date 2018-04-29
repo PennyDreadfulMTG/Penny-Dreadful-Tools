@@ -31,7 +31,7 @@ def init() -> None:
 def layouts() -> Dict[str, bool]:
     return {'normal': True, 'meld': True, 'split': True, 'phenomenon': False, 'token': False, 'vanguard': False, 'double-faced': True, 'plane': False, 'flip': True, 'scheme': False, 'leveler': True, 'aftermath': True}
 
-def cached_base_query(where='(1 = 1)') -> str:
+def cached_base_query(where: str = '(1 = 1)') -> str:
     return 'SELECT * FROM _cache_card AS c WHERE {where}'.format(where=where)
 
 def base_query(where: str = '(1 = 1)') -> str:
@@ -160,7 +160,7 @@ def update_pd_legality() -> None:
             break
         set_legal_cards(season=s)
 
-def insert_card(c, update_index=True) -> None:
+def insert_card(c, update_index: bool = True) -> None:
     name, card_id = try_find_card_id(c)
     if card_id is None:
         sql = 'INSERT INTO card ('
@@ -315,7 +315,7 @@ def card_name(c) -> str:
         return c.get('name')
     return ' // '.join(c.get('names', [c.get('name')]))
 
-def add_hardcoded_cards(cards) -> Dict[str, Dict[str, Any]]:
+def add_hardcoded_cards(cards: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     cards['Gleemox'] = {
         'text': '{T}: Add one mana of any color to your mana pool.\nThis card is banned.',
         'manaCost': '{0}',
@@ -348,7 +348,7 @@ def try_find_card_id(c) -> Tuple[str, Optional[int]]:
     except KeyError:
         return (name, None)
 
-def fix_mtgjson_melded_cards_bug(cards) -> None:
+def fix_mtgjson_melded_cards_bug(cards: Dict[str, Dict[str, Any]]) -> None:
     for names in HARDCODED_MELD_NAMES:
         for name in names:
             if cards.get(name, None):

@@ -68,11 +68,6 @@ def parse_inventory(inventory: List[List[Any]]) -> decklist.Decklist:
 def is_authorised() -> bool:
     return fetcher_internal.SESSION.cookies.get('tapped') is not None
 
-def get_auth():
-    cookie = fetcher_internal.SESSION.cookies.get('tapped')
-    token = configuration.get('tapped_API_key')
-    return fetcher_internal.fetch('https://tappedout.net/api/v1/cookie/{0}/?access_token={1}'.format(cookie, token))
-
 def login(user: Optional[str] = None, password: Optional[str] = None) -> None:
     if user is None:
         user = configuration.get_str('to_username')

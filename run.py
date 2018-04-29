@@ -30,13 +30,8 @@ def run() -> None:
     elif sys.argv[1] in ['scraper', 'scrapers', 'maintenance']:
         task(sys.argv)
     elif sys.argv[1] == 'tests':
-        import pytest
-        from magic import multiverse, oracle
-        multiverse.init()
-        oracle.init()
-        sys.argv.remove('tests')
-        code = pytest.main()
-        sys.exit(code)
+        print('Call `dev.py tests` instead.')
+        sys.exit(1)
     elif sys.argv[1] == 'rotation':
         from rotation_script import rotation_script
         rotation_script.run()

@@ -65,7 +65,7 @@ def next_supplemental() -> datetime.datetime:
     return next_rotation() + datetime.timedelta(weeks=3)
 
 def postprocess(setinfo: SetInfo) -> SetInfo:
-    setinfo['enter_date_dt'] = dtutil.parse(cast(str, setinfo['enter_date']), '%Y-%m-%dT%H:%M:%S.%fZ', dtutil.WOTC_TZ)
+    setinfo['enter_date_dt'] = dtutil.parse(setinfo['enter_date'], '%Y-%m-%dT%H:%M:%S.%f', dtutil.WOTC_TZ)
     if setinfo['code'] == 'DOM': # !quality
         setinfo['mtgo_code'] = 'DAR'
     else:

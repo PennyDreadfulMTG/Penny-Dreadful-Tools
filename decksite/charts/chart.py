@@ -1,6 +1,6 @@
 import os.path
 import pathlib
-from typing import Dict
+from typing import Dict, List, Tuple
 
 import matplotlib as mpl
 # This has to happen before pyplot is imported to avoid needing an X server to draw the graphs.
@@ -39,7 +39,7 @@ def cmc(deck_id: int) -> str:
         costs[cost] = ci.get('n') + costs.get(cost, 0)
     return image(path, costs)
 
-def image(path, costs) -> str:
+def image(path: str, costs: Dict[str, int]) -> str:
     ys = ['0', '1', '2', '3', '4', '5', '6', '7+', 'X']
     xs = [costs.get(k, 0) for k in ys]
     sns.set_style('white')
@@ -64,10 +64,9 @@ def archetypes_sparkline(competition_id: int) -> str:
     if os.path.exists(path):
         return path
     c = competition.load_competition(competition_id)
-    return sparkline(path, c.base_archetypes_data().values())
+    return sparkline(path, list(c.base_archetypes_data().values()))
 
-def sparkline(path, values, figsize=(2, 0.16)) -> str:
-    values = list(values)
+def sparkline(path: str, values: List[int], figsize: Tuple[float, float] = (2, 0.16)) -> str:
     fig, ax = plt.subplots(1, 1, figsize=figsize)
     for v in ax.spines.values():
         v.set_visible(False)

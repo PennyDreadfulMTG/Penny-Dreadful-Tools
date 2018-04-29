@@ -34,7 +34,7 @@ def played_cards(where: str = '1 = 1', season_id: Optional[int] = None) -> List[
         c.update(cards[c.name])
     return cs
 
-def load_card(name, season_id=None):
+def load_card(name: str, season_id: Optional[int] = None) -> card.Card:
     c = guarantee.exactly_one(oracle.load_cards([name]))
     c.decks = deck.load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name)), season_id=season_id)
     c.all = Container()

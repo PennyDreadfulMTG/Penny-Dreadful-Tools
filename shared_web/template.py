@@ -6,7 +6,7 @@ import flask
 import pystache
 import pystache.parsed
 from flask_babel import gettext
-from markdown import markdown
+from markdown import Markdown, markdown
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
 from pystache.common import TemplateNotFoundError
@@ -108,5 +108,5 @@ class NoParaTagProcessor(Treeprocessor):
 
 # pylint: disable=no-self-use, invalid-name
 class NoParaTagsExtension(Extension):
-    def extendMarkdown(self, md, _) -> None:
+    def extendMarkdown(self, md: Markdown, _: Any) -> None:
         md.treeprocessors.add('noparatag', NoParaTagProcessor(), '_end')

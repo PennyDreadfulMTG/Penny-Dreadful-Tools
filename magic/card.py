@@ -288,7 +288,7 @@ def determine_legalities(s: Optional[str]) -> Dict[str, str]:
         v[name] = status
     return v
 
-def determine_bugs(s: Optional[str]) -> Optional[List[Dict[str, object]]]:
+def determine_bugs(s: str) -> Optional[List[Dict[str, object]]]:
     if s is None:
         return None
     bugs = s.split('_SEPARATOR_')

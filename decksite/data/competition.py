@@ -27,7 +27,7 @@ class Competition(Container):
         return self.base_archetype_data
 
 # pylint: disable=too-many-arguments
-def get_or_insert_competition(start_date, end_date, name, competition_series, url, top_n: Top):
+def get_or_insert_competition(start_date, end_date, name, competition_series, url, top_n: Top) -> int:
     competition_series_id = db().value('SELECT id FROM competition_series WHERE name = %s', [competition_series], fail_on_missing=True)
     start = start_date.timestamp()
     end = end_date.timestamp()
@@ -86,7 +86,7 @@ def load_competitions(where: str = '1 = 1', season_id: Optional[int] = None) -> 
     set_decks(competitions)
     return competitions
 
-def set_decks(competitions) -> None:
+def set_decks(competitions: List[Competition]) -> None:
     if competitions == []:
         return
     competitions_by_id = {c.id: c for c in competitions}
@@ -109,7 +109,7 @@ def tournaments_with_prizes() -> List[Competition]:
         """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
     return load_competitions(where)
 
-def leaderboards(where="ct.name = 'Gatherling'", season_id=None) -> List[Dict[str, Any]]:
+def leaderboards(where: str = "ct.name = 'Gatherling'", season_id=None) -> List[Dict[str, Any]]:
     sql = """
         SELECT
             p.id AS person_id,

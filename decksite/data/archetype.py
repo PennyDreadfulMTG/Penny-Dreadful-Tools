@@ -69,7 +69,9 @@ def load_archetypes(where='1 = 1', merge=False, season_id=None):
     archetypes = list(archetypes.values())
     return archetypes
 
-def load_archetypes_deckless(where='1 = 1', order_by='`all_num_decks` DESC, `all_wins` DESC, name', season_id=None) -> List[Archetype]:
+def load_archetypes_deckless(where: str = '1 = 1',
+                             order_by: str = '`all_num_decks` DESC, `all_wins` DESC, name',
+                             season_id: int = None) -> List[Archetype]:
     sql = """
         SELECT
             a.id,
@@ -100,7 +102,7 @@ def load_archetypes_deckless(where='1 = 1', order_by='`all_num_decks` DESC, `all
         a.parent = archetypes_by_id.get(a.parent_id, None)
     return archetypes
 
-def load_archetypes_deckless_for(archetype_id, season_id=None) -> List[Archetype]:
+def load_archetypes_deckless_for(archetype_id: int, season_id: int = None) -> List[Archetype]:
     archetypes = load_archetypes_deckless(season_id=season_id)
     for a in archetypes:
         if int(a.id) == int(archetype_id):

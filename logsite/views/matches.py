@@ -17,7 +17,7 @@ def matches():
 
 # pylint: disable=no-self-use
 class Matches(View):
-    def __init__(self, person=None) -> None:
+    def __init__(self, person: str = None) -> None:
         if person is None:
             recent = match.get_recent_matches().paginate()
         else:

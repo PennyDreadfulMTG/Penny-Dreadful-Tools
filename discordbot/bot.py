@@ -4,6 +4,8 @@ import re
 import discord
 from discord.member import Member
 from discord.message import Message
+from discord.reaction import Reaction
+from discord.server import Server
 
 from discordbot import command
 from magic import fetcher, multiverse, oracle, tournaments
@@ -28,7 +30,7 @@ class Bot:
         print('Connected to {0}'.format(', '.join([server.name for server in self.client.servers])))
         print('--------')
 
-    async def on_message(self, message: Message):
+    async def on_message(self, message: Message) -> None:
         # We do not want the bot to reply to itself.
         if message.author == self.client.user:
             return
@@ -48,7 +50,7 @@ class Bot:
         if len(voice.channel.voice_members) == 1:
             await voice.disconnect()
 
-    async def on_member_join(self, member) -> None:
+    async def on_member_join(self, member: Member) -> None:
         print('{0} joined {1} ({2})'.format(member.mention, member.server.name, member.server.id))
         is_pd_server = member.server.id == '207281932214599682'
         # is_test_server = member.server.id == '226920619302715392'
@@ -64,7 +66,7 @@ BOT = Bot()
 # Thus we stub on_message and on_ready here and pass to Bot to do the real work.
 
 @BOT.client.event
-async def on_message(message) -> None:
+async def on_message(message: Message) -> None:
     await BOT.on_message(message)
 
 @BOT.client.event
@@ -72,11 +74,11 @@ async def on_ready() -> None:
     await BOT.on_ready()
 
 @BOT.client.event
-async def on_voice_state_update(before, after) -> None:
+async def on_voice_state_update(before: Member, after: Member) -> None:
     await BOT.on_voice_state_update(before, after)
 
 @BOT.client.event
-async def on_member_update(before, after) -> None:
+async def on_member_update(before: Member, after: Member) -> None:
     streaming_role = [r for r in before.server.roles if r.name == 'Currently Streaming']
     if not streaming_role:
         return
@@ -89,16 +91,16 @@ async def on_member_update(before, after) -> None:
         await BOT.client.add_roles(after, streaming_role)
 
 @BOT.client.event
-async def on_member_join(member) -> None:
+async def on_member_join(member: Member) -> None:
     await BOT.on_member_join(member)
 
 @BOT.client.event
-async def on_server_join(server) -> None:
+async def on_server_join(server: Server) -> None:
     await BOT.client.send_message(server.default_channel, "Hi, I'm mtgbot.  To look up cards, just mention them in square brackets. (eg `[Llanowar Elves] is better than [Elvish Mystic]`).")
     await BOT.client.send_message(server.default_channel, "By default, I display Penny Dreadful legality. If you don't want or need that, just type `!notpenny`.")
 
 @BOT.client.event
-async def on_reaction_add(reaction, author) -> None:
+async def on_reaction_add(reaction: Reaction, author: Member) -> None:
     if reaction.message.author == BOT.client.user:
         c = reaction.count
         if reaction.me:

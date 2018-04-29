@@ -22,7 +22,7 @@ def load_from_file():
             shutil.move(fname, 'import/processed/{0}.txt'.format(match_id))
             return
 
-def import_log(lines: List[str], match_id: int):
+def import_log(lines: List[str], match_id: int) -> None:
     """Processes a log"""
     lines = [line.strip('\r\n') for line in lines]
     print('importing {0}'.format(match_id))
@@ -63,14 +63,14 @@ def import_log(lines: List[str], match_id: int):
             game_lines.append(line)
     game.insert_game(game_id, match_id, '\n'.join(game_lines))
 
-def process_tourney_info(tname, local) -> None:
+def process_tourney_info(tname: str, local: match.Match) -> None:
     tourney = match.get_tournament(tname)
     if tourney is None:
         tourney = match.create_tournament(tname)
     local.is_tournament = True
     match.create_tournament_info(local.id, tourney.id)
 
-def reimport(local: match.Match):
+def reimport(local: match.Match) -> None:
     for lgame in local.games:
         if local.has_unexpected_third_game is None and re.match(REGEX_SWITCHEROO, lgame.log):
             local.has_unexpected_third_game = True

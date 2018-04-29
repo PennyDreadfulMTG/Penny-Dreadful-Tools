@@ -67,11 +67,11 @@ def Add(item: Any) -> None:
     return DB.session.add(item)
 
 # pylint: disable=invalid-name
-def Merge(item) -> None:
+def Merge(item: Any) -> None:
     return DB.session.merge(item)
 
 # pylint: disable=invalid-name
-def Delete(item) -> None:
+def Delete(item: Any) -> None:
     return DB.session.delete(item)
 
 def get_or_insert_format(name: str) -> Format:

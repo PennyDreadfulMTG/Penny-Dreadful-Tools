@@ -1,3 +1,4 @@
+import datetime
 from typing import Any, List
 
 import pytz
@@ -44,15 +45,15 @@ class Match(fsa.Model): # type: ignore
     def other_player_names(self):
         return [p.name for p in self.other_players()]
 
-    def set_times(self, start_time: int, end_time: int):
+    def set_times(self, start_time: int, end_time: int) -> None:
         self.start_time = dtutil.ts2dt(start_time)
         self.end_time = dtutil.ts2dt(end_time)
         db.Commit()
 
-    def start_time_aware(self):
+    def start_time_aware(self) -> datetime.datetime:
         return pytz.utc.localize(self.start_time)
 
-    def display_date(self):
+    def display_date(self) -> str:
         if self.start_time is None:
             return ''
         return dtutil.display_date(self.start_time_aware())

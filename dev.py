@@ -13,6 +13,9 @@ def run() -> None:
     if cmd in ('types', 'mypy'):
         mypy()
 
+    if cmd in ('test', 'tests', 'pytest'):
+        tests()
+
 def lint() -> None:
     args = sys.argv[2:] or ['--rcfile=.pylintrc', # Load rcfile first.
                             '--ignored-modules=alembic,MySQLdb,flask_sqlalchemy', # override ignored-modules (codacy hack)
@@ -24,12 +27,14 @@ def lint() -> None:
     pylint.lint.Run(args)
 
 def mypy() -> None:
-    args = sys.argv[2:] or [
+    args = [
         '--ignore-missing-imports',     # Don't complain about 3rd party libs with no stubs
         '--disallow-untyped-calls',     # Strict Mode.  All function calls must have a return type.
         # "--disallow-incomplete-defs", # All parameters must have type definitions.
-        '.'                             # Invoke on the entire project.
         ]
+    args.extend(sys.argv[2:] or [
+        '.'                             # Invoke on the entire project.
+        ])
     from mypy import api
     result = api.run(args)
 
@@ -41,6 +46,14 @@ def mypy() -> None:
 
     print('\nExit status: {code} ({english})'.format(code=result[2], english='Failure' if result[2] else 'Success'))
     sys.exit(result[2])
+
+def tests() -> None:
+    import pytest
+    from magic import multiverse, oracle
+    multiverse.init()
+    oracle.init()
+    code = pytest.main(sys.argv[2:])
+    sys.exit(code)
 
 if __name__ == '__main__':
     run()

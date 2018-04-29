@@ -6,7 +6,7 @@ import flask
 import pystache
 import pystache.parsed
 from flask_babel import gettext
-from markdown import markdown, Markdown
+from markdown import Markdown, markdown
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
 from pystache.common import TemplateNotFoundError

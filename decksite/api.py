@@ -7,7 +7,7 @@ from decksite.data import deck, guarantee, match
 from decksite.data import person as ps
 from magic import oracle, rotation
 from shared import dtutil
-from shared.pd_exception import TooManyItemsException
+from shared.pd_exception import DoesNotExistException, TooManyItemsException
 from shared_web.api import (generate_error, process_github_webhook,
                             return_json, validate_api_key)
 
@@ -27,10 +27,13 @@ def league_api():
 
 @APP.route('/api/person/<person>/')
 def person_api(person):
-    p = ps.load_person(person)
-    p.decks = url_for('person_decks_api', person=person)
-    p.head_to_head = url_for('person_h2h_api', person=person)
-    return return_json(p)
+    try:
+        p = ps.load_person(person)
+        p.decks = url_for('person_decks_api', person=person)
+        p.head_to_head = url_for('person_h2h_api', person=person)
+        return return_json(p)
+    except DoesNotExistException:
+        return return_json(generate_error('NOTFOUND', 'Person does not exist'))
 
 @APP.route('/api/person/<person>/decks/')
 def person_decks_api(person):

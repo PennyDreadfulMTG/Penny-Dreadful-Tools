@@ -106,6 +106,13 @@ def mtgo_status() -> str:
     except (FetchException, json.decoder.JSONDecodeError):
         return 'UNKNOWN'
 
+def person_data(person: Union[str, int]) -> Dict[str, Any]:
+    try:
+        data = internal.fetch_json('https://pennydreadfulmagic.com/api/person/{0}'.format(person))
+    except (FetchException, json.decoder.JSONDecodeError):
+        return {}
+    return data
+
 def post_discord_webhook(webhook_id: str, webhook_token: str, message: str, name: str = None) -> bool:
     if webhook_id is None or webhook_token is None:
         return False

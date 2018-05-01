@@ -6,6 +6,7 @@ from discord.member import Member
 from discord.message import Message
 from discord.reaction import Reaction
 from discord.server import Server
+from discord.state import Status
 
 from discordbot import command
 from magic import fetcher, multiverse, oracle, tournaments
@@ -79,16 +80,26 @@ async def on_voice_state_update(before: Member, after: Member) -> None:
 
 @BOT.client.event
 async def on_member_update(before: Member, after: Member) -> None:
-    streaming_role = [r for r in before.server.roles if r.name == 'Currently Streaming']
-    if not streaming_role:
-        return
-    streaming_role = streaming_role[0]
-    if (not after.game or after.game.type == 0) and streaming_role in before.roles:
-        print('{user} no longer streaming'.format(user=after.name))
-        await BOT.client.remove_roles(after, streaming_role)
-    if (after.game and after.game.type == 1) and not streaming_role in before.roles:
-        print('{user} started streaming'.format(user=after.name))
-        await BOT.client.add_roles(after, streaming_role)
+    # streamers.
+    roles = [r for r in before.server.roles if r.name == 'Currently Streaming']
+    if roles:
+        streaming_role = roles[0]
+        if (not after.game or after.game.type == 0) and streaming_role in before.roles:
+            print('{user} no longer streaming'.format(user=after.name))
+            await BOT.client.remove_roles(after, streaming_role)
+        if (after.game and after.game.type == 1) and not streaming_role in before.roles:
+            print('{user} started streaming'.format(user=after.name))
+            await BOT.client.add_roles(after, streaming_role)
+    # Achivements
+    if before.status == Status.offline and after.status == Status.online:
+        data = None
+        # Linked to PDM
+        roles = [r for r in before.server.roles if r.name == 'Linked Magic Online']
+        if roles and not roles[0] in before.roles:
+            if data is None:
+                data = fetcher.person_data(before.id)
+            if data.get('id', None):
+                await BOT.client.add_roles(after, roles[0])
 
 @BOT.client.event
 async def on_member_join(member: Member) -> None:

@@ -31,7 +31,7 @@ def load_people(where='1 = 1', order_by='`all_num_decks` DESC, name', season_id=
             p.discord_id,
             p.elo,
             {all_select},
-            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS `all_num_competitions`
+            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL AND {season_query} THEN 1 ELSE 0 END) AS `all_num_competitions`
         FROM
             person AS p
         LEFT JOIN
@@ -39,12 +39,12 @@ def load_people(where='1 = 1', order_by='`all_num_decks` DESC, name', season_id=
         {season_join}
         {nwdl_join}
         WHERE
-            ({where}) AND ({season_query})
+            ({where})
         GROUP BY
             p.id
         ORDER BY
             {order_by}
-    """.format(person_query=query.person_query(), all_select=deck.nwdl_all_select(), nwdl_join=deck.nwdl_join(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id), order_by=order_by)
+    """.format(person_query=query.person_query(), all_select=deck.nwdl_select('all_', query.season_query()), nwdl_join=deck.nwdl_join(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id), order_by=order_by)
     people = [Person(r) for r in db().execute(sql)]
     if len(people) > 0:
         set_decks(people, season_id)

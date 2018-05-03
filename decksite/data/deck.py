@@ -405,7 +405,7 @@ def count_matches(deck_id: int, opponent_deck_id: int) -> Dict[int, int]:
 
 def nwdl_select(prefix='', additional_clause='TRUE') -> str:
     return """
-        SUM(CASE WHEN {additional_clause} THEN 1 ELSE 0 END) AS `{prefix}num_decks`,
+        SUM(CASE WHEN {additional_clause} AND d.id IS NOT NULL THEN 1 ELSE 0 END) AS `{prefix}num_decks`,
         SUM(CASE WHEN {additional_clause} THEN wins ELSE 0 END) AS `{prefix}wins`,
         SUM(CASE WHEN {additional_clause} THEN losses ELSE 0 END) AS `{prefix}losses`,
         SUM(CASE WHEN {additional_clause} THEN draws ELSE 0 END) AS `{prefix}draws`,

@@ -2,12 +2,13 @@ import datetime
 import html
 import urllib
 from collections import Counter
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 import inflect
 from anytree.iterators import PreOrderIter
 from flask import g, request, session, url_for
 from flask_babel import gettext, ngettext
+from mypy_extensions import TypedDict
 from werkzeug.routing import BuildError
 
 from decksite import APP, BABEL, admin
@@ -20,6 +21,16 @@ from shared_web.base_view import BaseView
 # pylint: disable=cyclic-import,unused-import
 if TYPE_CHECKING:
     from decksite.data.deck import Deck
+SeasonInfo = TypedDict('SeasonInfo', { # pylint: disable=invalid-name
+    'name': str,
+    'code': str,
+    'code_lower': str,
+    'num': Optional[int],
+    'url': str,
+    'decks_url': str,
+    'league_decks_url': str,
+    'rotation_changes_url': str,
+})
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10
 
@@ -38,7 +49,7 @@ class View(BaseView):
     def css_url(self) -> str:
         return url_for('static', filename='css/pd.css', v=self.commit_id())
 
-    def tooltips_url(self) -> str:
+    def tooltips_url(self) -> Optional[str]:
         # Don't preload 10,000 images.
         # pylint: disable=no-member
         if not hasattr(self, 'cards') or len(getattr(self, 'cards')) > 500:
@@ -54,8 +65,8 @@ class View(BaseView):
     def season_code_lower(self) -> str:
         return rotation.season_code(g.get('season_id')).lower()
 
-    def all_seasons(self) -> List[Dict[str, Any]]:
-        seasons = [{
+    def all_seasons(self) -> List[SeasonInfo]:
+        seasons: List[SeasonInfo] = [{
             'name': 'All Time',
             'code': 'all',
             'code_lower': 'all',
@@ -252,7 +263,7 @@ class View(BaseView):
         for c in getattr(self, 'only_played_cards', []):
             self.prepare_card(c)
 
-    def prepare_card(self, c: card.Card):
+    def prepare_card(self, c: card.Card) -> None:
         c.url = '/cards/{id}/'.format(id=c.name)
         c.img_url = 'http://magic.bluebones.net/proxies/index2.php?c={name}'.format(name=urllib.parse.quote(c.name))
         c.card_img_class = 'two-faces' if c.layout in ['double-faced', 'meld'] else ''

@@ -120,11 +120,13 @@ async def on_reaction_add(reaction: Reaction, author: Member) -> None:
             await BOT.client.delete_message(reaction.message)
         elif c > 0 and 'Ambiguous name for ' in reaction.message.content and reaction.emoji in command.DISAMBIGUATION_EMOJIS_BY_NUMBER.values():
             await BOT.client.send_typing(reaction.message.channel)
-            previous_command, suggestions = re.search(r'Ambiguous name for ([^\.]*)\. Suggestions: (.*)', reaction.message.content).group(1, 2)
-            card = re.findall(r':[^:]*?: ([^:]*) ', suggestions + ' ')[command.DISAMBIGUATION_NUMBERS_BY_EMOJI[reaction.emoji]-1]
-            message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[])
-            await BOT.on_message(message)
-            await BOT.client.delete_message(reaction.message)
+            search = re.search(r'Ambiguous name for ([^\.]*)\. Suggestions: (.*)', reaction.message.content)
+            if search:
+                previous_command, suggestions = search.group(1, 2)
+                card = re.findall(r':[^:]*?: ([^:]*) ', suggestions + ' ')[command.DISAMBIGUATION_NUMBERS_BY_EMOJI[reaction.emoji]-1]
+                message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[])
+                await BOT.on_message(message)
+                await BOT.client.delete_message(reaction.message)
 
 async def background_task_spoiler_season() -> None:
     'Poll Scryfall for the latest 250 cards, and add them to our db if missing'

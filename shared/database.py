@@ -33,16 +33,16 @@ class Database():
         except MySQLdb.Error:
             raise DatabaseException('Failed to initialize database in `{location}`'.format(location=self.name))
 
-    def execute(self, sql: str, args: Optional[List[Any]] = None) -> Optional[List[Dict[str, Any]]]:
+    def execute(self, sql: str, args: Optional[List[Any]] = None) -> List[Dict[str, Any]]:
         if args is None:
             args = []
         try:
             return self.execute_with_reconnect(sql, args)
         except MySQLdb.Warning as e:
             if e.args[0] == 1050 or e.args[0] == 1051:
-                return None # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or DROP TABLE IF NOT EXISTS raises an "unknown table" warning.
+                return [] # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or DROP TABLE IF NOT EXISTS raises an "unknown table" warning.
             elif e.args[0] == 1062:
-                return None # We don't care if an INSERT IGNORE INTO didn't do anything.
+                return [] # We don't care if an INSERT IGNORE INTO didn't do anything.
             else:
                 raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
         except MySQLdb.Error as e:
@@ -70,7 +70,7 @@ class Database():
             raise DatabaseException('Failed to execute `{sql}` with `{args}`. MySQL has gone away and it was not possible to reconnect in 3 attemps'.format(sql=sql, args=args))
         return result
 
-    def insert(self, sql: str, args=None) -> int:
+    def insert(self, sql: str, args: Optional[List[Any]] = None) -> int:
         self.execute(sql, args)
         return self.last_insert_rowid()
 

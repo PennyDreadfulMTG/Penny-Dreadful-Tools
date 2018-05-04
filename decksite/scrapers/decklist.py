@@ -16,7 +16,7 @@ def parse_line(line: str) -> Tuple[int, str]:
     if match is None:
         raise InvalidDataException('No number specified with `{line}`'.format(line=line))
     else:
-        n, name = re.search(r'(\d+)\s+(.*)', line).groups()
+        n, name = match.groups()
         return (int(n), name)
 
 def parse_chunk(chunk: str, section: Section) -> None:

@@ -57,7 +57,7 @@ DEFAULTS = {
     'league_webhook_token': None,
 }
 
-def get_str(key: str) -> Optional[str]:
+def get_optional_str(key: str) -> Optional[str]:
     val = get(key)
     if val is None:
         return None
@@ -65,10 +65,14 @@ def get_str(key: str) -> Optional[str]:
         return val
     raise fail(key, val, str)
 
-def get_int(key: str) -> Optional[int]:
-    val = get(key)
+def get_str(key: str) -> str:
+    val = get_optional_str(key)
     if val is None:
-        return None
+        raise fail(key, val, str)
+    return val
+
+def get_int(key: str) -> int:
+    val = get(key)
     if isinstance(val, int):
         return val
     raise fail(key, val, int)
@@ -83,10 +87,10 @@ def get_float(key: str) -> Optional[float]:
         return write(key, float(val))
     raise fail(key, val, float)
 
-def get_list(key: str) -> Optional[List[str]]:
+def get_list(key: str) -> List[str]:
     val = get(key)
     if val is None:
-        return None
+        return []
     if isinstance(val, list):
         return val
     raise fail(key, val, List[str])

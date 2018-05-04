@@ -3,6 +3,8 @@ from typing import Sequence
 
 from flask import request, session
 
+from shared.pd_exception import InvalidDataException
+
 from . import BABEL as babel
 
 LANGUAGES = [str(locale) for locale in babel.list_translations()]
@@ -20,4 +22,7 @@ def get_locale() -> str:
     return result
 
 def split_link(para: str) -> Sequence[str]:
-    return SPLIT_REGEX.match(para).groups()
+    m = SPLIT_REGEX.match(para)
+    if m:
+        return m.groups()
+    raise InvalidDataException(para)

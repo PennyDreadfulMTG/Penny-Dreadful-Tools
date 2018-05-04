@@ -1,6 +1,7 @@
 import hashlib
 import os
 import re
+from typing import Optional
 
 import magic.fetcher_internal as internal
 from magic import oracle
@@ -27,7 +28,7 @@ def scryfall_image(card, version='') -> str:
 def mci_image(printing) -> str:
     return 'http://magiccards.info/scans/en/{code}/{number}.jpg'.format(code=printing.set_code.lower(), number=printing.number)
 
-def gatherer_image(printing) -> str:
+def gatherer_image(printing) -> Optional[str]:
     multiverse_id = printing.multiverseid
     if multiverse_id and int(multiverse_id) > 0:
         return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(multiverse_id) + '.jpg'
@@ -76,7 +77,7 @@ def determine_filepath(cards) -> str:
     filename = imagename + '.jpg'
     return '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename=filename)
 
-def download_image(cards) -> str:
+def download_image(cards) -> Optional[str]:
     filepath = determine_filepath(cards)
     if internal.acceptable_file(filepath):
         return filepath

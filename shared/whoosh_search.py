@@ -1,3 +1,4 @@
+import itertools
 import re
 from typing import Any, List, Optional, Tuple
 
@@ -16,9 +17,9 @@ class SearchResult():
             exact: Optional[str],
             prefix_whole_word: List[str],
             other_prefixed: List[Any],
-            fuzzy: Optional[List[Tuple[str, float]]]
+            fuzzy: List[Tuple[str, float]]
     ) -> None:
-        self.exact = exact
+        self.exact = [exact] if exact else []
         self.prefix_whole_word = prefix_whole_word if prefix_whole_word else []
         self.other_prefixed = other_prefixed if other_prefixed else []
         self.fuzzy = prune_fuzzy_by_score(fuzzy if fuzzy else [])
@@ -34,11 +35,11 @@ class SearchResult():
             (len(self.prefix_whole_word) == 0 and len(self.other_prefixed) == 0 and len(self.fuzzy) > 1)
             ))
 
-    def get_best_match(self) -> str:
+    def get_best_match(self) -> Optional[str]:
         if not self.has_match() or self.is_ambiguous():
             return None
         if self.exact:
-            return self.exact
+            return self.exact[0]
         if has(self.prefix_whole_word):
             return self.prefix_whole_word[0]
         if has(self.other_prefixed):
@@ -47,20 +48,20 @@ class SearchResult():
 
     def get_ambiguous_matches(self) -> List[str]:
         if not self.is_ambiguous():
-            return None
+            return []
         if has(self.prefix_whole_word):
             return self.prefix_whole_word
         if has(self.other_prefixed):
             return self.other_prefixed
         return self.fuzzy
 
-    def get_all_matches(self):
+    def get_all_matches(self) -> List[str]:
         if not self.has_match():
             return []
-        return [r for r in ([self.exact] + self.prefix_whole_word + self.other_prefixed + self.fuzzy) if r is not None]
+        return [r for r in itertools.chain(self.exact, self.prefix_whole_word, self.other_prefixed, self.fuzzy) if r is not None]
 
     def remove_duplicates(self) -> None:
-        for n in [self.exact] + self.prefix_whole_word + self.other_prefixed:
+        for n in itertools.chain(self.exact, self.prefix_whole_word, self.other_prefixed):
             try:
                 self.fuzzy.remove(n)
             except ValueError:
@@ -91,14 +92,14 @@ class WhooshSearcher():
         # If we searched for an alias, make it the exact hit
         for alias, name in fetcher.card_aliases():
             if w == card.canonicalize(alias):
-                return SearchResult(name, None, None, None)
+                return SearchResult(name, [], [], [])
 
         normalized = list(WhooshConstants.normalized_analyzer(w))[0].text
 
         # If we get matches by prefix, we return that
         exact, prefix_whole_word, other_prefixed = self.find_matches_by_prefix(normalized)
         if exact or len(prefix_whole_word) > 0 or len(other_prefixed) > 0:
-            return SearchResult(exact, prefix_whole_word, other_prefixed, None)
+            return SearchResult(exact, prefix_whole_word, other_prefixed, [])
 
         # We try fuzzy and stemmed queries
         query_normalized = fuzzy_term(normalized, self.DIST, 'name_normalized')

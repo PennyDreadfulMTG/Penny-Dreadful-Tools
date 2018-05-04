@@ -1,3 +1,4 @@
+import itertools
 import sys
 from typing import Dict, List, Optional
 
@@ -19,18 +20,20 @@ def run() -> None:
 
 def fetch() -> None:
     all_prices, timestamps = {}, []
-    for _, url in enumerate(configuration.get_list('cardhoarder_urls')):
-        s = fetcher_internal.fetch(url)
-        s = ftfy.fix_encoding(s)
-        timestamps.append(dtutil.parse_to_ts(s.split('\n', 1)[0].replace('UPDATED ', ''), '%Y-%m-%dT%H:%M:%S+00:00', dtutil.CARDHOARDER_TZ))
-        all_prices[url] = parser.parse_cardhoarder_prices(s)
+    ch_urls = configuration.get_list('cardhoarder_urls')
+    if ch_urls:
+        for _, url in enumerate(ch_urls):
+            s = fetcher_internal.fetch(url)
+            s = ftfy.fix_encoding(s)
+            timestamps.append(dtutil.parse_to_ts(s.split('\n', 1)[0].replace('UPDATED ', ''), '%Y-%m-%dT%H:%M:%S+00:00', dtutil.CARDHOARDER_TZ))
+            all_prices[url] = parser.parse_cardhoarder_prices(s)
     url = configuration.get_str('mtgotraders_url')
     if url:
         s = fetcher_internal.fetch(url)
         timestamps.append(dtutil.dt2ts(dtutil.now()))
         all_prices['mtgotraders'] = parser.parse_mtgotraders_prices(s)
     if not timestamps:
-        raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=configuration.get_list('cardhoarder_urls') + [configuration.get_str('mtgotraders_url')], all_prices=all_prices))
+        raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=itertools.chain(configuration.get_list('cardhoarder_urls'), [configuration.get_str('mtgotraders_url')]), all_prices=all_prices))
     store(min(timestamps), all_prices)
 
 

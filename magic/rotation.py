@@ -14,7 +14,7 @@ SetInfo = TypedDict('SetInfo', { # pylint: disable=invalid-name
     'name': str,
     'block': Optional[str],
     'code': str,
-    'mtgo_code': Optional[str],
+    'mtgo_code': str,
     'enter_date': str,
     'exit_date': str,
     'rough_exit_date': str,

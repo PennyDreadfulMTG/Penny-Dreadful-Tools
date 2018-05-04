@@ -14,10 +14,10 @@ ColumnDescription = TypedDict('ColumnDescription', { # pylint: disable=invalid-n
     'primary_key': bool,
     'query': str,
     'mtgjson': bool,
-    'foreign_key': Tuple[str, str],
-    'default': str,
+    'foreign_key': Optional[Tuple[str, str]],
+    'default': Optional[str],
     'unique': bool,
-    'unique_with': List[str],
+    'unique_with': Optional[List[str]],
     })
 TableDescription = Dict[str, ColumnDescription] # pylint: disable=invalid-name
 

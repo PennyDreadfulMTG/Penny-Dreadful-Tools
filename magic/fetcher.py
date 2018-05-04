@@ -80,7 +80,9 @@ def decksite_url(path: str = '/') -> str:
     port = configuration.get_int('decksite_port')
     if port != 80:
         hostname = '{hostname}:{port}'.format(hostname=hostname, port=port)
-    return parse.urlunparse((configuration.get_str('decksite_protocol'), hostname, path, None, None, None))
+    url = parse.urlunparse((configuration.get_str('decksite_protocol'), hostname, path, '', '', ''))
+    assert url is not None
+    return url
 
 def legal_cards(force: bool = False, season: str = None) -> List[str]:
     if season is None and os.path.exists('legal_cards.txt'):
@@ -132,7 +134,7 @@ def scryfall_cards() -> Dict[str, Any]:
     url = 'https://api.scryfall.com/cards'
     return internal.fetch_json(url)
 
-def search_scryfall(query) -> Tuple[int, List[str]]:
+def search_scryfall(query: str) -> Tuple[int, List[str]]:
     """Returns a tuple. First member is an integer indicating how many cards match the query total,
        second member is a list of card names up to the maximum that could be fetched in a timely fashion."""
     if query == '':

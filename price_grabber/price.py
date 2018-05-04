@@ -1,4 +1,5 @@
 import time
+from typing import Optional
 
 from mypy_extensions import TypedDict
 
@@ -16,7 +17,7 @@ PriceData = TypedDict('PriceData', { # pylint: disable=invalid-name
     'season': float,
     })
 
-def info(card: Card, force: bool = False) -> PriceData:
+def info(card: Card, force: bool = False) -> Optional[PriceData]:
     if not force:
         r = info_cached(card)
         if r is not None:
@@ -24,7 +25,7 @@ def info(card: Card, force: bool = False) -> PriceData:
     cache()
     return info_cached(card)
 
-def info_cached(card: Card = None, name: str = None) -> PriceData:
+def info_cached(card: Card = None, name: str = None) -> Optional[PriceData]:
     if name is None and card is not None:
         name = card.name
     sql = 'SELECT `time`, low / 100.0 AS low, high / 100.0 AS high, price / 100.0 AS price, week, month, season FROM cache WHERE name = %s'

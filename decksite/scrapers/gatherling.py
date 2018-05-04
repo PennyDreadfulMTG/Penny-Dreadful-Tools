@@ -1,7 +1,7 @@
 import datetime
 import re
 import urllib.parse
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import bs4
 from bs4 import BeautifulSoup
@@ -147,7 +147,7 @@ def finishes(winners: Dict[str, int], ranks: List[str]) -> Dict[str, int]:
             final[p] = r
     return final
 
-def tournament_deck(cells, competition_id: int, date: datetime.datetime, final: Dict[str, int]) -> deck.Deck:
+def tournament_deck(cells, competition_id: int, date: datetime.datetime, final: Dict[str, int]) -> Optional[deck.Deck]:
     d = {'source': 'Gatherling', 'competition_id': competition_id, 'created_date': dtutil.dt2ts(date)}
     player = cells[2]
     username = player.a.contents[0].string

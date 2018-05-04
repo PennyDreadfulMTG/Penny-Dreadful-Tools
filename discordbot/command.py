@@ -10,7 +10,7 @@ import textwrap
 import time
 import traceback
 from copy import copy
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
 import inflect
 from discord.channel import Channel
@@ -78,7 +78,7 @@ async def handle_command(message: Message, client: Client) -> None:
             await client.send_message(message.channel, '{author}: I know the command `{cmd}` but I could not do that.'.format(cmd=parts[0], author=message.author.mention))
             await getattr(Commands, 'bug')(Commands, client, message.channel, 'Command failed with {c}: {cmd}\n\n```\n{tb}\n```'.format(c=e.__class__.__name__, cmd=message.content, tb=tb), message.author)
 
-def find_method(name: str) -> Callable:
+def find_method(name: str) -> Optional[Callable]:
     cmd = name.lstrip('!').lower()
     if len(cmd) == 0:
         return None
@@ -190,7 +190,7 @@ Want to contribute? Send a Pull Request."""
         await client.send_typing(channel)
         how_many, cardnames = fetcher.search_scryfall(args)
         cbn = oracle.cards_by_name()
-        cards = [cbn.get(name) for name in cardnames if cbn.get(name) is not None]
+        cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]
         await post_cards(client, cards, channel, author, more_results_link(args, how_many))
 
     @cmd_header('Commands')
@@ -642,7 +642,7 @@ def parse_queries(content: str) -> List[str]:
     queries = re.findall(r'\[?\[([^\]]*)\]\]?', content)
     return [card.canonicalize(query) for query in queries if len(query) > 2]
 
-def cards_from_names_with_mode(cards: List[str], mode: str) -> List[Card]:
+def cards_from_names_with_mode(cards: Sequence[Optional[str]], mode: str) -> List[Card]:
     oracle_cards = oracle.cards_by_name()
     return [copy_with_mode(oracle_cards[c], mode) for c in cards if c is not None]
 
@@ -671,7 +671,7 @@ def complex_search(query: str) -> List[Card]:
         return []
     _, cardnames = fetcher.search_scryfall(query)
     cbn = oracle.cards_by_name()
-    return [cbn.get(name) for name in cardnames if cbn.get(name) is not None]
+    return [cbn[name] for name in cardnames if cbn.get(name) is not None]
 
 def roughly_matches(s1: str, s2: str) -> bool:
     return simplify_string(s1).find(simplify_string(s2)) >= 0

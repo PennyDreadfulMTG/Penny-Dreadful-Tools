@@ -26,7 +26,7 @@ def valid_name(name: str) -> str:
                 return k
     raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
 
-def load_card(name) -> card.Card:
+def load_card(name: str) -> card.Card:
     return CARDS_BY_NAME.get(name, load_cards([name])[0])
 
 def load_cards(names: Collection[str] = None, where: Optional[str] = None) -> List[card.Card]:
@@ -55,10 +55,10 @@ def bugged_cards() -> List[card.Card]:
     rs = db().execute(sql)
     return [card.Card(r) for r in rs]
 
-def legal_cards(force=False) -> List[str]:
+def legal_cards(force: bool = False) -> List[str]:
     if len(LEGAL_CARDS) == 0 or force:
         new_list = multiverse.set_legal_cards(force)
-        if new_list is None:
+        if not new_list:
             sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=multiverse.base_query(), format_id=multiverse.get_format_id('Penny Dreadful'))
             new_list = [row['name'] for row in db().execute(sql)]
         LEGAL_CARDS.clear()
@@ -66,7 +66,7 @@ def legal_cards(force=False) -> List[str]:
             LEGAL_CARDS.append(name)
     return LEGAL_CARDS
 
-def get_printings(generalized_card: card.Card):
+def get_printings(generalized_card: card.Card) -> List[card.Printing]:
     sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code' \
         + ' FROM printing AS p' \
         + ' LEFT OUTER JOIN `set` AS s ON p.set_id = s.id' \

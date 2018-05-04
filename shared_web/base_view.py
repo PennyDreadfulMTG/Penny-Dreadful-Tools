@@ -1,5 +1,3 @@
-from typing import NoReturn
-
 from . import template
 
 
@@ -13,5 +11,5 @@ class BaseView:
     def page(self) -> str:
         return template.render_name('page', self)
 
-    def prepare(self) -> NoReturn:
+    def prepare(self) -> None:
         raise NotImplementedError

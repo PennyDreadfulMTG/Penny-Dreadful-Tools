@@ -21,7 +21,7 @@ unit:
 	@echo
 	@echo "******************************** Unit Tests ***********************************"
 	@echo
-	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 dev.py tests -x -m "not functional"
+	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 dev.py tests -x -m "not functional not perf"
 	@echo
 
 # Run functional tests.
@@ -30,6 +30,14 @@ functional:
 	@echo "******************************** Functional Tests ******************************"
 	@echo
 	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 dev.py tests -x -m "functional"
+	@echo
+
+# Run perf tests.
+perf:
+	@echo
+	@echo "******************************** Performance Tests *****************************"
+	@echo
+	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 dev.py tests -x -m "perf"
 	@echo
 
 # Run lint on all python files.

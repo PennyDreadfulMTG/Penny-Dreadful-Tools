@@ -108,7 +108,7 @@ def update_database(new_version: str) -> None:
     cards = add_hardcoded_cards(cards)
     melded_faces = []
     for _, c in cards.items():
-        if c.get('layout') == 'meld' and c.get('name') == c.get('names')[2]:
+        if c.get('layout') == 'meld' and c.get('name') == c['names'][2]:
             melded_faces.append(c)
         else:
             insert_card(c, update_index=False)
@@ -245,7 +245,7 @@ def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
         format_id = get_format_id('Penny Dreadful {season}'.format(season=season), True)
 
     if new_list == [''] or new_list is None:
-        return None
+        return []
     db().execute('DELETE FROM card_legality WHERE format_id = %s', [format_id])
     db().execute('SET group_concat_max_len=100000')
     sql = """INSERT INTO card_legality (format_id, card_id, legality)

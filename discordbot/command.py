@@ -10,7 +10,7 @@ import textwrap
 import time
 import traceback
 from copy import copy
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Sequence
 
 import inflect
 from discord.channel import Channel
@@ -642,7 +642,7 @@ def parse_queries(content: str) -> List[str]:
     queries = re.findall(r'\[?\[([^\]]*)\]\]?', content)
     return [card.canonicalize(query) for query in queries if len(query) > 2]
 
-def cards_from_names_with_mode(cards: List[Optional[str]], mode: str) -> List[Card]:
+def cards_from_names_with_mode(cards: Sequence[Optional[str]], mode: str) -> List[Card]:
     oracle_cards = oracle.cards_by_name()
     return [copy_with_mode(oracle_cards[c], mode) for c in cards if c is not None]
 

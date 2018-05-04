@@ -20,7 +20,9 @@ def load_person(person: Union[int, str], season_id: Optional[int] = None) -> Per
         username = sqlescape(person)
     return guarantee.exactly_one(load_people('p.id = {person_id} OR p.mtgo_username = {username} OR p.discord_id = {person_id}'.format(person_id=person_id, username=username), season_id=season_id))
 
-def load_people(where='1 = 1', order_by='`all_num_decks` DESC, name', season_id=None) -> Sequence[Person]:
+def load_people(where: str = '1 = 1',
+                order_by: str = '`all_num_decks` DESC, name',
+                season_id: Optional[int] = None) -> Sequence[Person]:
     sql = """
         SELECT
             p.id,

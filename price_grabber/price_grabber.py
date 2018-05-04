@@ -1,4 +1,5 @@
 import sys
+import itertools
 from typing import Dict, List, Optional
 
 import ftfy
@@ -32,7 +33,7 @@ def fetch() -> None:
         timestamps.append(dtutil.dt2ts(dtutil.now()))
         all_prices['mtgotraders'] = parser.parse_mtgotraders_prices(s)
     if not timestamps:
-        raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=configuration.get_list('cardhoarder_urls') + [configuration.get_str('mtgotraders_url')], all_prices=all_prices))
+        raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=itertools.chain(configuration.get_list('cardhoarder_urls'), [configuration.get_str('mtgotraders_url')]), all_prices=all_prices))
     store(min(timestamps), all_prices)
 
 

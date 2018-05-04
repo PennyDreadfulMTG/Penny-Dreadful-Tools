@@ -4,6 +4,7 @@ from typing import Sequence
 from flask import request, session
 
 from . import BABEL as babel
+from shared.pd_exception import InvalidDataException
 
 LANGUAGES = [str(locale) for locale in babel.list_translations()]
 SPLIT_REGEX = re.compile(r'^(.*)\[\[(.*)\]\](.*)$')
@@ -20,4 +21,7 @@ def get_locale() -> str:
     return result
 
 def split_link(para: str) -> Sequence[str]:
-    return SPLIT_REGEX.match(para).groups()
+    m = SPLIT_REGEX.match(para)
+    if m:
+        return m.groups()
+    raise InvalidDataException(para)

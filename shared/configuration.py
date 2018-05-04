@@ -87,10 +87,10 @@ def get_float(key: str) -> Optional[float]:
         return write(key, float(val))
     raise fail(key, val, float)
 
-def get_list(key: str) -> Optional[List[str]]:
+def get_list(key: str) -> List[str]:
     val = get(key)
     if val is None:
-        return None
+        return []
     if isinstance(val, list):
         return val
     raise fail(key, val, List[str])

@@ -2,7 +2,9 @@ import datetime
 import html
 import urllib
 from collections import Counter
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
+
+from mypy_extensions import TypedDict
 
 import inflect
 from anytree.iterators import PreOrderIter
@@ -20,6 +22,16 @@ from shared_web.base_view import BaseView
 # pylint: disable=cyclic-import,unused-import
 if TYPE_CHECKING:
     from decksite.data.deck import Deck
+SeasonInfo = TypedDict('SeasonInfo', { # pylint: disable=invalid-name
+    'name': str,
+    'code': str,
+    'code_lower': str,
+    'num': Optional[int],
+    'url': str,
+    'decks_url': str,
+    'league_decks_url': str,
+    'rotation_changes_url': str,
+})
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10
 
@@ -54,8 +66,8 @@ class View(BaseView):
     def season_code_lower(self) -> str:
         return rotation.season_code(g.get('season_id')).lower()
 
-    def all_seasons(self) -> List[Dict[str, Any]]:
-        seasons = [{
+    def all_seasons(self) -> List[SeasonInfo]:
+        seasons: List[SeasonInfo] = [{
             'name': 'All Time',
             'code': 'all',
             'code_lower': 'all',

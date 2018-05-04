@@ -1,4 +1,5 @@
 import re
+import itertools
 from typing import Any, List, Optional, Tuple
 
 import pygtrie
@@ -18,7 +19,7 @@ class SearchResult():
             other_prefixed: List[Any],
             fuzzy: List[Tuple[str, float]]
     ) -> None:
-        self.exact = exact
+        self.exact = [exact] if exact else []
         self.prefix_whole_word = prefix_whole_word if prefix_whole_word else []
         self.other_prefixed = other_prefixed if other_prefixed else []
         self.fuzzy = prune_fuzzy_by_score(fuzzy if fuzzy else [])
@@ -38,7 +39,7 @@ class SearchResult():
         if not self.has_match() or self.is_ambiguous():
             return None
         if self.exact:
-            return self.exact
+            return self.exact[0]
         if has(self.prefix_whole_word):
             return self.prefix_whole_word[0]
         if has(self.other_prefixed):
@@ -57,10 +58,10 @@ class SearchResult():
     def get_all_matches(self) -> List[str]:
         if not self.has_match():
             return []
-        return [r for r in ([self.exact] + self.prefix_whole_word + self.other_prefixed + self.fuzzy) if r is not None]
+        return [r for r in itertools.chain(self.exact, self.prefix_whole_word, self.other_prefixed, self.fuzzy) if r is not None]
 
     def remove_duplicates(self) -> None:
-        for n in [self.exact] + self.prefix_whole_word + self.other_prefixed:
+        for n in itertools.chain(self.exact, self.prefix_whole_word, self.other_prefixed):
             try:
                 self.fuzzy.remove(n)
             except ValueError:

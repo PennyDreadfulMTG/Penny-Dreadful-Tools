@@ -41,7 +41,7 @@ from shared_web import logger, oauth
 @APP.route('/')
 @cached()
 def home():
-    view = Home(ns.load_news(max_items=10), ds.load_decks(limit='LIMIT 50'), cs.played_cards())
+    view = Home(ns.load_news(max_items=10), ds.load_decks(limit='LIMIT 50'), cs.played_cards(season_id=g.get('season_id', rot.current_season_num())))
     return view.page()
 
 @APP.route('/decks/')

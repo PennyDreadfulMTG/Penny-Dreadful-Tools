@@ -26,7 +26,7 @@ def valid_name(name: str) -> str:
                 return k
     raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
 
-def load_card(name) -> card.Card:
+def load_card(name: str) -> card.Card:
     return CARDS_BY_NAME.get(name, load_cards([name])[0])
 
 def load_cards(names: Collection[str] = None, where: Optional[str] = None) -> List[card.Card]:

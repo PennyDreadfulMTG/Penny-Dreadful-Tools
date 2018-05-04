@@ -34,7 +34,7 @@ class SearchResult():
             (len(self.prefix_whole_word) == 0 and len(self.other_prefixed) == 0 and len(self.fuzzy) > 1)
             ))
 
-    def get_best_match(self) -> str:
+    def get_best_match(self) -> Optional[str]:
         if not self.has_match() or self.is_ambiguous():
             return None
         if self.exact:
@@ -47,14 +47,14 @@ class SearchResult():
 
     def get_ambiguous_matches(self) -> List[str]:
         if not self.is_ambiguous():
-            return None
+            return []
         if has(self.prefix_whole_word):
             return self.prefix_whole_word
         if has(self.other_prefixed):
             return self.other_prefixed
         return self.fuzzy
 
-    def get_all_matches(self):
+    def get_all_matches(self) -> List[str]:
         if not self.has_match():
             return []
         return [r for r in ([self.exact] + self.prefix_whole_word + self.other_prefixed + self.fuzzy) if r is not None]

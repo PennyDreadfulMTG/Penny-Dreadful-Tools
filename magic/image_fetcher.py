@@ -27,7 +27,7 @@ def scryfall_image(card, version='') -> str:
 def mci_image(printing) -> str:
     return 'http://magiccards.info/scans/en/{code}/{number}.jpg'.format(code=printing.set_code.lower(), number=printing.number)
 
-def gatherer_image(printing) -> str:
+def gatherer_image(printing) -> Optional[str]:
     multiverse_id = printing.multiverseid
     if multiverse_id and int(multiverse_id) > 0:
         return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(multiverse_id) + '.jpg'

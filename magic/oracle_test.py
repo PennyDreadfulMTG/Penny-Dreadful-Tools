@@ -33,8 +33,8 @@ def test_deck_sort_x_last() -> None:
     cards = oracle.load_cards(['Ghitu Fire', 'Flash of Insight', 'Frantic Search'])
     assert len(cards) == 3
     cards_by_name = {c.name: c for c in cards}
-    assert oracle.deck_sort(cards_by_name.get('Ghitu Fire')) < oracle.deck_sort(cards_by_name.get('Flash of Insight'))
-    assert oracle.deck_sort(cards_by_name.get('Ghitu Fire')) > oracle.deck_sort(cards_by_name.get('Frantic Search'))
+    assert oracle.deck_sort(cards_by_name['Ghitu Fire']) < oracle.deck_sort(cards_by_name['Flash of Insight'])
+    assert oracle.deck_sort(cards_by_name['Ghitu Fire']) > oracle.deck_sort(cards_by_name['Frantic Search'])
 
 # Check that the list of legal cards is being fetched correctly.
 @pytest.mark.functional

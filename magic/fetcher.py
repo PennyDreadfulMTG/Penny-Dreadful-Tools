@@ -80,7 +80,9 @@ def decksite_url(path: str = '/') -> str:
     port = configuration.get_int('decksite_port')
     if port != 80:
         hostname = '{hostname}:{port}'.format(hostname=hostname, port=port)
-    return parse.urlunparse((configuration.get_str('decksite_protocol'), hostname, path, None, None, None))
+    url = parse.urlunparse((configuration.get_str('decksite_protocol'), hostname, path, None, None, None))
+    assert url is not None
+    return url
 
 def legal_cards(force: bool = False, season: str = None) -> List[str]:
     if season is None and os.path.exists('legal_cards.txt'):

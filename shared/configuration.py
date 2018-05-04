@@ -57,13 +57,19 @@ DEFAULTS = {
     'league_webhook_token': None,
 }
 
-def get_str(key: str) -> Optional[str]:
+def get_optional_str(key: str) -> Optional[str]:
     val = get(key)
     if val is None:
         return None
     if isinstance(val, str):
         return val
     raise fail(key, val, str)
+
+def get_str(key: str) -> str:
+    val = get_str(key)
+    if val is None:
+        fail(key, val, str)
+    return val
 
 def get_int(key: str) -> Optional[int]:
     val = get(key)

@@ -1,7 +1,7 @@
 import datetime
 import re
 from collections import OrderedDict
-from typing import Any, Dict, List, Match, Tuple
+from typing import Any, Dict, List, Match, Optional, Tuple
 
 import inflect
 import pytz
@@ -76,7 +76,7 @@ def day2ordinal(m: Match) -> str:
     p = inflect.engine()
     return p.ordinal(int(m.group(1)))
 
-IntervalsType = Dict[str, Tuple[int, int]] # pylint: disable=invalid-name
+IntervalsType = Dict[str, Tuple[Optional[int], int]] # pylint: disable=invalid-name
 ResultsType = List[Tuple[int, str]] # pylint: disable=invalid-name
 
 def display_time(seconds: float, granularity: int = 2) -> str:

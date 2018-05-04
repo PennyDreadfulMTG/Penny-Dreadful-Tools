@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Sequence
 
 from decksite.data import deck, guarantee, query
 from decksite.database import db
@@ -11,7 +11,7 @@ from shared.pd_exception import AlreadyExistsException
 class Person(Container):
     pass
 
-def load_person(person: Union[int, str], season_id=None) -> Person:
+def load_person(person: Union[int, str], season_id: Optional[int] = None) -> Person:
     try:
         person_id = int(person)
         username = "'{person}'".format(person=person)
@@ -20,7 +20,7 @@ def load_person(person: Union[int, str], season_id=None) -> Person:
         username = sqlescape(person)
     return guarantee.exactly_one(load_people('p.id = {person_id} OR p.mtgo_username = {username} OR p.discord_id = {person_id}'.format(person_id=person_id, username=username), season_id=season_id))
 
-def load_people(where='1 = 1', order_by='`all_num_decks` DESC, name', season_id=None) -> List[Person]:
+def load_people(where='1 = 1', order_by='`all_num_decks` DESC, name', season_id=None) -> Sequence[Person]:
     sql = """
         SELECT
             p.id,
@@ -194,7 +194,9 @@ def is_allowed_to_retire(deck_id, discord_id):
         return True
     return any(int(deck_id) == deck.id for deck in person.decks)
 
-def load_person_by_discord_id(discord_id: int) -> Optional[Person]:
+def load_person_by_discord_id(discord_id: Optional[int]) -> Optional[Person]:
+    if discord_id is None:
+        return None
     return guarantee.at_most_one(load_people('p.discord_id = {discord_id}'.format(discord_id=sqlescape(discord_id))))
 
 def load_person_by_tappedout_name(username: str) -> Optional[Person]:

@@ -109,18 +109,18 @@ def column_def(name: str, prop: card.ColumnDescription) -> str:
     unique = 'UNIQUE' if prop['unique'] else ''
     return '`{name}` {type} {nullable} {primary_key} {unique} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, unique=unique, default=default)
 
-def foreign_key_def(name: str, fk: Tuple[str, str]):
+def foreign_key_def(name: str, fk: Tuple[str, str]) -> str:
     return 'FOREIGN KEY(`{name}`) REFERENCES `{table}`(`{column}`)'.format(name=name, table=fk[0], column=fk[1])
 
-def unique_constraint_def(name: str, cols: List[str]):
+def unique_constraint_def(name: str, cols: List[str]) -> str:
     cols = [name] + cols
     return 'CONSTRAINT `{name}` UNIQUE ({cols})'.format(name='_'.join(cols), cols=', '.join('`{col}`'.format(col=col) for col in cols))
 
 def create_table_def(name: str, props: card.TableDescription) -> str:
     sql = 'CREATE TABLE IF NOT EXISTS `{name}` ('
     sql += ', '.join(column_def(name, prop) for name, prop in props.items())
-    fk = ', '.join(foreign_key_def(name, prop['foreign_key']) for name, prop in props.items() if prop['foreign_key'])
-    uc = ', '.join(unique_constraint_def(name, prop['unique_with']) for name, prop in props.items() if prop['unique_with'])
+    fk = ', '.join(foreign_key_def(name, prop['foreign_key']) for name, prop in props.items() if prop['foreign_key'] is not None)
+    uc = ', '.join(unique_constraint_def(name, prop['unique_with']) for name, prop in props.items() if prop['unique_with'] is not None)
     if fk:
         sql += ', ' + fk
     if uc:

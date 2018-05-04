@@ -16,8 +16,8 @@ def check(start_time: float, kind: str, detail: Any, location: str) -> None:
         repo.create_issue(msg, 'perf', location, 'PennyDreadfulMTG/perf-reports')
 
 def test(f, limit) -> None:
-    start = time.perf_counter()
+    begin = time.perf_counter()
     f()
-    duration = time.perf_counter() - start
+    duration = time.perf_counter() - begin
     print(duration)
     assert duration <= limit

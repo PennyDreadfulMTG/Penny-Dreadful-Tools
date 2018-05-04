@@ -14,4 +14,4 @@ def test_played_cards_person() -> None:
 
 @pytest.mark.perf
 def test_played_cards_all() -> None:
-    perf.test(card.played_cards, 0.5)
+    perf.test(card.played_cards, 5)

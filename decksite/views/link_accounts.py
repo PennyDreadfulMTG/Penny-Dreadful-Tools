@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, cast
 
 from flask import request
 from flask_babel import gettext
@@ -78,5 +78,5 @@ class LinkAccounts(View):
             elif tapped_user.id is not None:
                 self.form.errors.to_username = '"{tapped_name}" is already associated to another user.  If you believe this is in error, contact us.'.format(tapped_name=tapped_name)
             else:
-                squash_people.squash(self.person.id, tapped_user.id, 'mtgo_username', 'tappedout_username')
+                squash_people.squash(self.person.id, cast(int, tapped_user.id), 'mtgo_username', 'tappedout_username')
                 self.disable_to = True

@@ -16,7 +16,7 @@ class SearchResult():
             exact: Optional[str],
             prefix_whole_word: List[str],
             other_prefixed: List[Any],
-            fuzzy: Optional[List[Tuple[str, float]]]
+            fuzzy: List[Tuple[str, float]]
     ) -> None:
         self.exact = exact
         self.prefix_whole_word = prefix_whole_word if prefix_whole_word else []
@@ -91,14 +91,14 @@ class WhooshSearcher():
         # If we searched for an alias, make it the exact hit
         for alias, name in fetcher.card_aliases():
             if w == card.canonicalize(alias):
-                return SearchResult(name, None, None, None)
+                return SearchResult(name, [], [], [])
 
         normalized = list(WhooshConstants.normalized_analyzer(w))[0].text
 
         # If we get matches by prefix, we return that
         exact, prefix_whole_word, other_prefixed = self.find_matches_by_prefix(normalized)
         if exact or len(prefix_whole_word) > 0 or len(other_prefixed) > 0:
-            return SearchResult(exact, prefix_whole_word, other_prefixed, None)
+            return SearchResult(exact, prefix_whole_word, other_prefixed, [])
 
         # We try fuzzy and stemmed queries
         query_normalized = fuzzy_term(normalized, self.DIST, 'name_normalized')

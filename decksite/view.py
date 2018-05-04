@@ -38,7 +38,7 @@ class View(BaseView):
     def css_url(self) -> str:
         return url_for('static', filename='css/pd.css', v=self.commit_id())
 
-    def tooltips_url(self) -> str:
+    def tooltips_url(self) -> Optional[str]:
         # Don't preload 10,000 images.
         # pylint: disable=no-member
         if not hasattr(self, 'cards') or len(getattr(self, 'cards')) > 500:

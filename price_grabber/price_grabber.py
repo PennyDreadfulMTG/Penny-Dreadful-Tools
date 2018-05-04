@@ -19,11 +19,13 @@ def run() -> None:
 
 def fetch() -> None:
     all_prices, timestamps = {}, []
-    for _, url in enumerate(configuration.get_list('cardhoarder_urls')):
-        s = fetcher_internal.fetch(url)
-        s = ftfy.fix_encoding(s)
-        timestamps.append(dtutil.parse_to_ts(s.split('\n', 1)[0].replace('UPDATED ', ''), '%Y-%m-%dT%H:%M:%S+00:00', dtutil.CARDHOARDER_TZ))
-        all_prices[url] = parser.parse_cardhoarder_prices(s)
+    ch_urls = configuration.get_list('cardhoarder_urls')
+    if ch_urls:
+        for _, url in enumerate(ch_urls):
+            s = fetcher_internal.fetch(url)
+            s = ftfy.fix_encoding(s)
+            timestamps.append(dtutil.parse_to_ts(s.split('\n', 1)[0].replace('UPDATED ', ''), '%Y-%m-%dT%H:%M:%S+00:00', dtutil.CARDHOARDER_TZ))
+            all_prices[url] = parser.parse_cardhoarder_prices(s)
     url = configuration.get_str('mtgotraders_url')
     if url:
         s = fetcher_internal.fetch(url)

@@ -2,6 +2,8 @@ import hashlib
 import os
 import re
 
+from typing import Optional
+
 import magic.fetcher_internal as internal
 from magic import oracle
 from magic.fetcher_internal import FetchException, escape
@@ -76,7 +78,7 @@ def determine_filepath(cards) -> str:
     filename = imagename + '.jpg'
     return '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename=filename)
 
-def download_image(cards) -> str:
+def download_image(cards) -> Optional[str]:
     filepath = determine_filepath(cards)
     if internal.acceptable_file(filepath):
         return filepath

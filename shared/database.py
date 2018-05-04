@@ -70,7 +70,7 @@ class Database():
             raise DatabaseException('Failed to execute `{sql}` with `{args}`. MySQL has gone away and it was not possible to reconnect in 3 attemps'.format(sql=sql, args=args))
         return result
 
-    def insert(self, sql: str, args=None) -> int:
+    def insert(self, sql: str, args: Optional[List[Any]] = None) -> int:
         self.execute(sql, args)
         return self.last_insert_rowid()
 

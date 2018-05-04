@@ -66,15 +66,13 @@ def get_optional_str(key: str) -> Optional[str]:
     raise fail(key, val, str)
 
 def get_str(key: str) -> str:
-    val = get_str(key)
+    val = get_optional_str(key)
     if val is None:
-        fail(key, val, str)
+        raise fail(key, val, str)
     return val
 
-def get_int(key: str) -> Optional[int]:
+def get_int(key: str) -> int:
     val = get(key)
-    if val is None:
-        return None
     if isinstance(val, int):
         return val
     raise fail(key, val, int)

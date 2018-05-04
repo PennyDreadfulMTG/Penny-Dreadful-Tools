@@ -134,7 +134,7 @@ def scryfall_cards() -> Dict[str, Any]:
     url = 'https://api.scryfall.com/cards'
     return internal.fetch_json(url)
 
-def search_scryfall(query) -> Tuple[int, List[str]]:
+def search_scryfall(query: str) -> Tuple[int, List[str]]:
     """Returns a tuple. First member is an integer indicating how many cards match the query total,
        second member is a list of card names up to the maximum that could be fetched in a timely fashion."""
     if query == '':

@@ -1,4 +1,4 @@
-from typing import List, Optional, Union, Sequence
+from typing import List, Optional, Sequence, Union
 
 from decksite.data import deck, guarantee, query
 from decksite.database import db

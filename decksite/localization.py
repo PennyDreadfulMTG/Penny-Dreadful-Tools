@@ -3,8 +3,9 @@ from typing import Sequence
 
 from flask import request, session
 
-from . import BABEL as babel
 from shared.pd_exception import InvalidDataException
+
+from . import BABEL as babel
 
 LANGUAGES = [str(locale) for locale in babel.list_translations()]
 SPLIT_REGEX = re.compile(r'^(.*)\[\[(.*)\]\](.*)$')

@@ -1,7 +1,7 @@
 import datetime
 import re
 import urllib.parse
-from typing import Any, Dict, List, Tuple, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import bs4
 from bs4 import BeautifulSoup

@@ -1,5 +1,5 @@
-import re
 import itertools
+import re
 from typing import Any, List, Optional, Tuple
 
 import pygtrie

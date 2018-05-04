@@ -10,7 +10,7 @@ import textwrap
 import time
 import traceback
 from copy import copy
-from typing import Any, Callable, Dict, List, Optional, Tuple, Sequence
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
 import inflect
 from discord.channel import Channel

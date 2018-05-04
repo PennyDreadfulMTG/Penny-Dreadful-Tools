@@ -1,5 +1,5 @@
-import sys
 import itertools
+import sys
 from typing import Dict, List, Optional
 
 import ftfy

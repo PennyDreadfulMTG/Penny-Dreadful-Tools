@@ -4,12 +4,11 @@ import urllib
 from collections import Counter
 from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
-from mypy_extensions import TypedDict
-
 import inflect
 from anytree.iterators import PreOrderIter
 from flask import g, request, session, url_for
 from flask_babel import gettext, ngettext
+from mypy_extensions import TypedDict
 from werkzeug.routing import BuildError
 
 from decksite import APP, BABEL, admin

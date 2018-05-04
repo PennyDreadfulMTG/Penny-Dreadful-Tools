@@ -1,4 +1,4 @@
-from typing import Sequence, Optional, TypeVar
+from typing import Optional, Sequence, TypeVar
 
 from shared.pd_exception import DoesNotExistException, TooManyItemsException
 

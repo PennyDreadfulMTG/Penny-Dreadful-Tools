@@ -1,9 +1,7 @@
 from flask import url_for
 
-from decksite.data import card
 from decksite.view import View
 from magic import tournaments
-from shared.database import sqlescape
 
 
 # pylint: disable=no-self-use,too-many-instance-attributes

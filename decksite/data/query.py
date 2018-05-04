@@ -45,7 +45,7 @@ def competition_join() -> str:
             competition_type AS ct ON ct.id = cs.competition_type_id
     """
 
-def season_query(season_id: Optional[int] = None) -> str:
+def season_query(season_id: Optional[int]) -> str:
     if season_id is None or season_id == 'all':
         return 'TRUE'
     try:

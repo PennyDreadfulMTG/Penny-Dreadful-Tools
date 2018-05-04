@@ -4,6 +4,7 @@ from flask import g, has_request_context, request
 
 from decksite import APP
 from shared import configuration
+from shared.container import Container
 from shared.database import Database, get_database
 from shared_web import logger
 
@@ -11,8 +12,10 @@ from shared_web import logger
 def db() -> Database:
     if has_request_context():
         ctx = request
-    else:
+    elif g:
         ctx = g
+    else:
+        ctx = Container() # Fallback context for testing.
     if not hasattr(ctx, 'database'):
         ctx.database = get_database(configuration.get_str('decksite_database'))
     return ctx.database

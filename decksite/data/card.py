@@ -34,6 +34,9 @@ def played_cards(where: str = '1 = 1', season_id: Optional[int] = None) -> List[
         c.update(cards[c.name])
     return cs
 
+def played_cards_by_person(person_id: int, season_id: Optional[int] = None) -> List[card.Card]:
+    return played_cards('d.person_id = {person_id}'.format(person_id=sqlescape(person_id)), season_id=season_id)
+
 def load_card(name: str, season_id: Optional[int] = None) -> card.Card:
     c = guarantee.exactly_one(oracle.load_cards([name]))
     c.decks = deck.load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name)), season_id=season_id)
@@ -49,7 +52,7 @@ def load_card(name: str, season_id: Optional[int] = None) -> card.Card:
     c.played_competitively = c.all_wins or c.all_losses or c.all_draws
     return c
 
-def only_played_by(person_id: int) -> List[card.Card]:
+def only_played_by(person_id: int, season_id: Optional[int] = None) -> List[card.Card]:
     sql = """
         SELECT
             card AS name
@@ -57,21 +60,25 @@ def only_played_by(person_id: int) -> List[card.Card]:
             deck_card AS dc
         INNER JOIN
             deck AS d ON dc.deck_id = d.id
+        {season_join}
         WHERE
             deck_id
-        IN (
-            SELECT
-                DISTINCT deck_id
-            FROM
-                deck_match
-        ) -- Only include cards that actually got played competitively rather than just posted to Goldfish as "new cards this season" or similar.
+        IN
+            (
+                SELECT
+                    DISTINCT deck_id
+                FROM
+                    deck_match
+            ) -- Only include cards that actually got played competitively rather than just posted to Goldfish as "new cards this season" or similar.
+        AND
+            ({season_query})
         GROUP BY
             card
         HAVING
             COUNT(DISTINCT d.person_id) = 1
         AND
             MAX(d.person_id) = {person_id} -- In MySQL 5.7+ this could/should be ANY_VALUE not MAX but this works with any version. The COUNT(DISTINCT  p.id) ensures this only has one possible value but MySQL can't work that out.-- In MySQL 5.7+ this could/should be ANY_VALUE not MAX but this works with any version. The COUNT(DISTINCT  p.id) ensures this only has one possible value but MySQL can't work that out.
-    """.format(person_id=sqlescape(person_id))
+    """.format(season_join=query.season_join(), season_query=query.season_query(season_id), person_id=sqlescape(person_id))
     cards = {c.name: c for c in oracle.load_cards()}
     return [cards[r['name']] for r in db().execute(sql)]
 

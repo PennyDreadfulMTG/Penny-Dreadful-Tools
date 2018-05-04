@@ -46,7 +46,7 @@ def load_people(where: str = '1 = 1',
             p.id
         ORDER BY
             {order_by}
-    """.format(person_query=query.person_query(), all_select=deck.nwdl_select('all_', query.season_query()), nwdl_join=deck.nwdl_join(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id), order_by=order_by)
+    """.format(person_query=query.person_query(), all_select=deck.nwdl_select('all_', query.season_query(season_id)), nwdl_join=deck.nwdl_join(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id), order_by=order_by)
     people = [Person(r) for r in db().execute(sql)]
     if len(people) > 0:
         set_decks(people, season_id)

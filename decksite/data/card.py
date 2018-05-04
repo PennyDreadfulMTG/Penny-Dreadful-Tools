@@ -34,6 +34,9 @@ def played_cards(where: str = '1 = 1', season_id: Optional[int] = None) -> List[
         c.update(cards[c.name])
     return cs
 
+def played_cards_by_person(person_id: int, season_id: Optional[int] = None) -> List[card.Card]:
+    return played_cards('d.person_id = {person_id}'.format(person_id=sqlescape(person_id)), season_id=season_id)
+
 def load_card(name: str, season_id: Optional[int] = None) -> card.Card:
     c = guarantee.exactly_one(oracle.load_cards([name]))
     c.decks = deck.load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name)), season_id=season_id)
@@ -49,7 +52,7 @@ def load_card(name: str, season_id: Optional[int] = None) -> card.Card:
     c.played_competitively = c.all_wins or c.all_losses or c.all_draws
     return c
 
-def only_played_by(person_id: int) -> List[card.Card]:
+def only_played_by(person_id: int, season_id: Optional[int] = None) -> List[card.Card]:
     sql = """
         SELECT
             card AS name

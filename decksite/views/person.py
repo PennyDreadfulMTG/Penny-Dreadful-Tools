@@ -8,13 +8,13 @@ from shared.database import sqlescape
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Person(View):
-    def __init__(self, person) -> None:
+    def __init__(self, person, cards, only_played_cards) -> None:
         super().__init__()
         self.person = person
         self.decks = person.decks
         self.hide_person = True
-        self.cards = card.played_cards('d.person_id = {person_id}'.format(person_id=sqlescape(person.id)))
-        self.only_played_cards = card.only_played_by(person.id)
+        self.cards = cards
+        self.only_played_cards = only_played_cards
         self.has_only_played_cards = len(self.only_played_cards) > 0
         for record in person.head_to_head:
             record.show_record = True

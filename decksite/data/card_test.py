@@ -1,7 +1,8 @@
 import pytest
 
-from shared import perf
 from decksite.data import card
+from shared import perf
+
 
 @pytest.mark.perf
 def test_played_cards_season() -> None:

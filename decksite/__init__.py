@@ -9,7 +9,7 @@ from shared import configuration
 from shared.pd_exception import DatabaseException
 
 APP = Flask(__name__)
-APP.logger.setLevel(logging.WARN)
+APP.logger.setLevel(logging.WARN) # pylint: disable=no-member,no-name-in-module
 BABEL = Babel(APP)
 SEASONS = Blueprint('seasons', __name__, url_prefix='/seasons/<season_id>')
 

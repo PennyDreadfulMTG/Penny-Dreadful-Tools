@@ -223,8 +223,8 @@ class View(BaseView):
         if d.get('colors') is not None:
             d.colors_safe = colors_html(d.colors, d.colored_symbols)
         d.person_url = '/people/{id}/'.format(id=d.person_id)
-        d.date_sort = dtutil.dt2ts(d.date)
-        d.display_date = dtutil.display_date(d.date)
+        d.date_sort = dtutil.dt2ts(d.active_date)
+        d.display_date = dtutil.display_date(d.active_date)
         d.show_record = d.wins or d.losses or d.draws
         if d.competition_id:
             d.competition_url = '/competitions/{id}/'.format(id=d.competition_id)

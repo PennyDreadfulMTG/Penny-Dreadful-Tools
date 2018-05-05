@@ -55,7 +55,7 @@ def load_archetypes(where='1 = 1', merge=False, season_id=None):
         if (d.get('finish') or sys.maxsize) <= 8:
             archetype.all_top8s = archetype.get('all_top8s', 0) + 1
             archetype.all_perfect_runs = archetype.get('all_perfect_runs', 0) + 1
-        if d.created_date >= rotation.last_rotation():
+        if d.active_date >= rotation.last_rotation():
             archetype.season_wins = archetype.get('season_wins', 0) + (d.get('season_wins') or 0)
             archetype.season_losses = archetype.get('season_losses', 0) + (d.get('season_losses') or 0)
             archetype.season_draws = archetype.get('season_draws', 0) + (d.get('season_draws') or 0)

@@ -10,6 +10,7 @@ class Decks(View):
         super().__init__()
         self.decks = decks
         self.season_url = url_for('seasons.season', season_id=g.get('season_id', rotation.current_season_num()))
+        self.show_seasons = True
 
     def page_title(self):
-        return 'Latest Decks'
+        return '{season_name} Decks'.format(season_name=self.season_name())

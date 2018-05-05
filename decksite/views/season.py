@@ -9,6 +9,7 @@ class Season(View):
         self.season = season
         self.decks = season.decks
         self.league_only = self.show_omw = self.hide_source = league_only
+        self.show_seasons = True
 
     def page_title(self):
         return rotation.season_name(self.season.number)

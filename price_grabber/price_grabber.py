@@ -1,10 +1,11 @@
+import datetime
 import itertools
 import sys
 from typing import Dict, List, Optional
 
 import ftfy
 
-from magic import fetcher_internal, multiverse, oracle
+from magic import fetcher_internal, multiverse, oracle, rotation
 from price_grabber import parser, price
 from shared import configuration, dtutil
 from shared.database import get_database
@@ -35,7 +36,7 @@ def fetch() -> None:
     if not timestamps:
         raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=itertools.chain(configuration.get_list('cardhoarder_urls'), [configuration.get_str('mtgotraders_url')]), all_prices=all_prices))
     store(min(timestamps), all_prices)
-
+    cleanup()
 
 def store(timestamp: float, all_prices: Dict[str, parser.PriceList]) -> None:
     DATABASE.begin()
@@ -60,6 +61,12 @@ def store(timestamp: float, all_prices: Dict[str, parser.PriceList]) -> None:
             values.extend([timestamp, name, cents])
         execute(sql, values)
         DATABASE.commit()
+
+def cleanup() -> None:
+    beginning_of_season = rotation.last_rotation()
+    one_month_ago = dtutil.now(dtutil.WOTC_TZ) - datetime.timedelta(31)
+    oldest_needed = min(beginning_of_season, one_month_ago)
+    execute('DELETE FROM low_price WHERE `time` < %s', [dtutil.dt2ts(oldest_needed)])
 
 def execute(sql: str, values: Optional[List[object]] = None) -> None:
     if values is None:

@@ -20,8 +20,9 @@ class Deck(View):
         self.prepare_deck(self.deck)
         self.cards = d.all_cards()
         if not self.deck.is_in_current_run():
+            deck.load_similar_decks([d])
             # This is called 'decks' and not something more sane because of limitations of Mustache and our desire to use a partial for decktable.
-            self.decks = [sd for sd in deck.get_similar_decks(d) if not sd.is_in_current_run()]
+            self.decks = [sd for sd in d.similar_decks if not sd.is_in_current_run()]
         else:
             self.decks = []
         self.has_similar = len(self.decks) > 0

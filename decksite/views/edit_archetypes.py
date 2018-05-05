@@ -9,10 +9,10 @@ class EditArchetypes(View):
         self.archetypes = archetypes
         self.roots = [a for a in self.archetypes if a.is_root]
         self.queue = deck.load_decks(where='NOT d.reviewed', order_by='updated_date DESC', limit='LIMIT 10')
+        deck.load_similar_decks(self.queue)
         for d in self.queue:
-            similar_decks = deck.get_similar_decks(d)
-            if len(similar_decks) > 0:
-                d.suggestion = similar_decks[0]
+            if len(d.similar_decks) > 0:
+                d.suggestion = d.similar_decks[0]
                 self.prepare_deck(d.suggestion)
         for d in self.queue:
             self.prepare_deck(d)

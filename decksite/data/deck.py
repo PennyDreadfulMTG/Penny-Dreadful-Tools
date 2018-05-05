@@ -303,17 +303,26 @@ def get_archetype_id(archetype) -> Optional[int]:
     sql = 'SELECT id FROM archetype WHERE name = %s'
     return db().value(sql, [archetype])
 
-def get_similar_decks(deck: Deck) -> List[Deck]:
+def load_similar_decks(ds: List[Deck]) -> None:
     threshold = 20
-    cards_escaped = ', '.join(sqlescape(c['name']) for c in deck.maindeck if c['name'] not in ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest'])
+    cards_escaped = ', '.join(sqlescape(name) for name in all_card_names(ds))
     if len(cards_escaped) == 0:
-        return []
-    decks = load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card IN ({cards_escaped}))'.format(cards_escaped=cards_escaped))
-    for d in decks:
-        d.similarity_score = round(similarity_score(deck, d) * 100)
-    decks = [d for d in decks if d.similarity_score >= threshold and d.id != deck.id]
-    decks.sort(key=lambda d: -(d.similarity_score))
-    return decks
+        return
+    potentially_similar = load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card IN ({cards_escaped}))'.format(cards_escaped=cards_escaped))
+    for d in ds:
+        for psd in potentially_similar:
+            psd.similarity_score = round(similarity_score(d, psd) * 100)
+        d.similar_decks = [psd for psd in potentially_similar if psd.similarity_score >= threshold and psd.id != d.id]
+        d.similar_decks.sort(key=lambda d: -(d.similarity_score))
+
+def all_card_names(ds: List[Deck]) -> List[str]:
+    basic_lands = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest']
+    names = []
+    for d in ds:
+        for c in d.maindeck:
+            if c['name'] not in basic_lands:
+                names.append(c['name'])
+    return names
 
 # Dead simple for now, may get more sophisticated. 1 point for each differently named card shared in maindeck. Count irrelevant.
 def similarity_score(a: Deck, b: Deck) -> float:

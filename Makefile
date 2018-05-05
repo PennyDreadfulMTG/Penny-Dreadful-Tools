@@ -21,7 +21,7 @@ unit:
 	@echo
 	@echo "******************************** Unit Tests ***********************************"
 	@echo
-	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 dev.py tests -x -m "not functional not perf"
+	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 dev.py tests -x -m "not functional and not perf"
 	@echo
 
 # Run functional tests.

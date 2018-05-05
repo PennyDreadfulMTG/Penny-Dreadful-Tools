@@ -1,18 +1,10 @@
-from logsite.view import View
+from logsite.views.error import Error
 
 
 # pylint: disable=no-self-use
-class InternalServerError(View):
-    def __init__(self, exception: Exception) -> None:
-        self.exception = str(exception)
-        self.card = None
-        self.cards = [self.card]
-
+class InternalServerError(Error):
     def message(self):
         return 'Something went wrong.'
-
-    def template(self):
-        return 'error'
 
     def subtitle(self):
         return 'Internal Server Error'

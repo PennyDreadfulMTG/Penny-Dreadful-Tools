@@ -6,3 +6,6 @@ class Error(View):
         self.exception = str(exception)
         self.card = None
         self.cards = [self.card]
+
+    def template(self):
+        return 'error'

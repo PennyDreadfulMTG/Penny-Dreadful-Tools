@@ -71,7 +71,7 @@ def load_season(season_id=None, league_only=False):
 # pylint: disable=attribute-defined-outside-init
 def load_decks(where='1 = 1', order_by=None, limit='', season_id=None) -> List[Deck]:
     if order_by is None:
-        order_by = 'd.created_date DESC, d.finish IS NULL, d.finish'
+        order_by = 'active_date DESC, d.finish IS NULL, d.finish'
     sql = """
         SELECT
             d.id,
@@ -94,7 +94,6 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None) -> List[D
             p.id AS person_id,
             p.banned,
             p.discord_id,
-            d.created_date AS `date`,
             d.decklist_hash,
             d.retired,
             s.name AS source_name,
@@ -103,7 +102,8 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None) -> List[D
             cache.colors,
             cache.colored_symbols,
             cache.legal_formats,
-            season.id AS season_id
+            season.id AS season_id,
+            IFNULL(MAX(m.date), d.created_date) AS active_date
         FROM
             deck AS d
         LEFT JOIN
@@ -117,6 +117,8 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None) -> List[D
             deck_cache AS cache ON d.id = cache.deck_id
         LEFT JOIN
             deck_match AS dm ON d.id = dm.deck_id
+        LEFT JOIN
+            `match` AS m ON dm.match_id = m.id
         LEFT JOIN
             deck_match AS odm ON odm.deck_id <> d.id AND dm.match_id = odm.match_id
         {season_join}
@@ -139,11 +141,11 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None) -> List[D
         d.colored_symbols = json.loads(d.colored_symbols or '[]')
         d.colors = json.loads(d.colors or '[]')
         d.legal_formats = set(json.loads(d.legal_formats or '[]'))
+        d.active_date = dtutil.ts2dt(d.active_date)
         d.created_date = dtutil.ts2dt(d.created_date)
         d.updated_date = dtutil.ts2dt(d.updated_date)
         if d.competition_end_date:
             d.competition_end_date = dtutil.ts2dt(d.competition_end_date)
-        d.date = dtutil.ts2dt(d.date)
         d.can_draw = 'Divine Intervention' in [card.name for card in d.all_cards()]
         decks.append(d)
     load_cards(decks)

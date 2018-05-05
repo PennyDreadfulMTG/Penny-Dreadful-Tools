@@ -1,7 +1,7 @@
 {{> banner}}
 {{#series}}
     <section>
-        <h2>{{competition_series_name}} {{#sponsor_name}}🏆{{/sponsor_name}}</h2>
+        <h2>{{competition_series_name}}</h2>
         {{> spinner}}
         <table class="with-marginalia">
             <thead>
@@ -27,26 +27,6 @@
                 {{/entries}}
             </tbody>
         </table>
+        <p>{{#sponsor_name}}Sponsored by {{sponsor_name}}{{/sponsor_name}}
     </section>
 {{/series}}
-<section>
-    <h2>Prizes</h2>
-    <p>Leaderboards marked with 🏆 award <a class="external" href="https://cardhoarder.com/">Cardhoarder</a> credit at the end of the season.</p>
-    {{> spinner}}
-    <table>
-        <thead>
-            <tr>
-                <th class="n">Finish</th>
-                <th class="n">Prize</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#prizes}}
-                <tr>
-                    <td class="n">{{finish}}</td>
-                    <td class="n">{{prize}} tix</td>
-                </tr>
-            {{/prizes}}
-        </tbody>
-    </table>
-</section>

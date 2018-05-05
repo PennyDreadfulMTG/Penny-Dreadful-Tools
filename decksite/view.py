@@ -209,6 +209,7 @@ class View(BaseView):
         self.prepare_leaderboards()
 
     def prepare_decks(self) -> None:
+        self.is_very_large = self.is_very_large or len(getattr(self, 'decks', [])) > 500
         # The 'list' here is just to get past codacy and is a no-op.
         active_runs = [d for d in list(getattr(self, 'decks', [])) if d.is_in_current_run()]
         if len(active_runs) > 0:
@@ -269,7 +270,7 @@ class View(BaseView):
         d.average_cmc = round(total / max(1, num_cards), 2)
 
     def prepare_cards(self) -> None:
-        self.is_very_large = len(getattr(self, 'cards', [])) > 500
+        self.is_very_large = self.is_very_large or len(getattr(self, 'cards', [])) > 500
         for c in getattr(self, 'cards', []):
             self.prepare_card(c)
         for c in getattr(self, 'only_played_cards', []):

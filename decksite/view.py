@@ -29,6 +29,10 @@ SeasonInfo = TypedDict('SeasonInfo', { # pylint: disable=invalid-name
     'url': str,
     'decks_url': str,
     'league_decks_url': str,
+    'competitions_url': str,
+    'archetypes_url': str,
+    'people_url': str,
+    'cards_url': str,
     'rotation_changes_url': str,
 })
 

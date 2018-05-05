@@ -6,12 +6,12 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 import inflect
 from anytree.iterators import PreOrderIter
-from flask import g, request, session, url_for
+from flask import request, session, url_for
 from flask_babel import gettext, ngettext
 from mypy_extensions import TypedDict
 from werkzeug.routing import BuildError
 
-from decksite import APP, BABEL, admin
+from decksite import APP, BABEL, admin, get_season_id
 from decksite.data import archetype, deck
 from magic import card, oracle, rotation, tournaments
 from shared import dtutil
@@ -64,10 +64,10 @@ class View(BaseView):
         return url_for('static', filename='js/pd.js', v=self.commit_id())
 
     def season_name(self) -> str:
-        return rotation.season_name(g.get('season_id'))
+        return rotation.season_name(get_season_id())
 
     def season_code_lower(self) -> str:
-        return rotation.season_code(g.get('season_id')).lower()
+        return rotation.season_code(get_season_id()).lower()
 
     def all_seasons(self) -> List[SeasonInfo]:
         seasons: List[SeasonInfo] = [{

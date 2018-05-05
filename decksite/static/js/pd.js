@@ -252,7 +252,7 @@ PD.initStatusFooter = function() {
             }
             text += " <span class=\"division\"></span> <a href=\"/logout/\">Log Out</a>";
         } else  {
-            text += "<a href=\"/authenticate/\">Log In</a>";
+            text += "<a href=\"/authenticate/?target=" + window.location.href + "\">Log In</a>";
         }
         $(".status-bar").html("<p>" + text + "</p>");
     })

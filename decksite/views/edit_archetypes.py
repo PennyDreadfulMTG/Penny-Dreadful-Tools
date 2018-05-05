@@ -30,4 +30,3 @@ class EditArchetypes(View):
 
     def page_title(self):
         return 'Edit Archetypes'
-

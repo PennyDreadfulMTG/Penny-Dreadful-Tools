@@ -58,7 +58,7 @@ imports:
 	@echo
 	@echo "******************************** Import Ordering ******************************"
 	@echo
-	@isort --check-only --dont-skip=__init__.py
+	@isort --check-only
 	@echo
 
 fiximports:

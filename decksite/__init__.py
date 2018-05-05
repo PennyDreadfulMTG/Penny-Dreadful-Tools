@@ -13,9 +13,12 @@ APP.logger.setLevel(logging.WARN) # pylint: disable=no-member,no-name-in-module
 BABEL = Babel(APP)
 SEASONS = Blueprint('seasons', __name__, url_prefix='/seasons/<season_id>')
 
+def get_season_id() -> int:
+    return g.get('season_id', rotation.current_season_num())
+
 @SEASONS.url_defaults
 def add_season_id(_endpoint, values):
-    values.setdefault('season_id', g.get('season_id', rotation.current_season_num()))
+    values.setdefault('season_id', get_season_id())
 
 @SEASONS.url_value_preprocessor
 def pull_season_id(_endpoint, values):

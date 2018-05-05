@@ -9,7 +9,7 @@ from flask import (Response, abort, g, make_response, redirect, request,
 from github.GithubException import GithubException
 from werkzeug import exceptions
 
-from decksite import APP, SEASONS, auth, deck_name
+from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite import league as lg
 from decksite.cache import cached
 from decksite.charts import chart
@@ -31,7 +31,6 @@ from decksite.views import (About, AboutPdm, AddForm, Archetype, Archetypes,
                             Tournaments, Unauthorized)
 from magic import card as mc
 from magic import oracle
-from magic import rotation as rot
 from shared import perf, repo
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 from shared_web import logger, oauth
@@ -41,14 +40,14 @@ from shared_web import logger, oauth
 @APP.route('/')
 @cached()
 def home():
-    view = Home(ns.load_news(max_items=10), ds.load_decks(limit='LIMIT 50'), cs.played_cards(season_id=g.get('season_id', rot.current_season_num())))
+    view = Home(ns.load_news(max_items=10), ds.load_decks(limit='LIMIT 50'), cs.played_cards(season_id=get_season_id()))
     return view.page()
 
 @APP.route('/decks/')
 @SEASONS.route('/decks/')
 @cached()
 def decks():
-    view = Decks(ds.load_decks(limit='LIMIT 500', season_id=g.get('season_id', rot.current_season_num())))
+    view = Decks(ds.load_decks(limit='LIMIT 500', season_id=get_season_id()))
     return view.page()
 
 @APP.route('/decks/<deck_id>/')
@@ -69,23 +68,23 @@ def seasons():
 @cached()
 def season(deck_type=None):
     league_only = deck_type == 'league'
-    view = Season(ds.load_season(g.get('season_id', rot.current_season_num()), league_only), league_only)
+    view = Season(ds.load_season(get_season_id(), league_only), league_only)
     return view.page()
 
 @APP.route('/people/')
 @SEASONS.route('/people/')
 @cached()
 def people():
-    view = People(ps.load_people(season_id=g.get('season_id', rot.current_season_num())))
+    view = People(ps.load_people(season_id=get_season_id()))
     return view.page()
 
 @APP.route('/people/<person_id>/')
 @SEASONS.route('/people/<person_id>/')
 @cached()
 def person(person_id):
-    p = ps.load_person(person_id, season_id=g.get('season_id', rot.current_season_num()))
-    played_cards = cs.played_cards_by_person(p.id, g.get('season_id', rot.current_season_num()))
-    only_played_cards = cs.only_played_by(p.id, g.get('season_id', rot.current_season_num()))
+    p = ps.load_person(person_id, season_id=get_season_id())
+    played_cards = cs.played_cards_by_person(p.id, get_season_id())
+    only_played_cards = cs.only_played_by(p.id, get_season_id())
     view = Person(p, played_cards, only_played_cards)
     return view.page()
 
@@ -93,7 +92,7 @@ def person(person_id):
 @SEASONS.route('/cards/')
 @cached()
 def cards():
-    view = Cards(cs.played_cards(season_id=g.get('season_id', rot.current_season_num())))
+    view = Cards(cs.played_cards(season_id=get_season_id()))
     return view.page()
 
 @APP.route('/cards/<path:name>/')
@@ -101,7 +100,7 @@ def cards():
 @cached()
 def card(name):
     try:
-        c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)), season_id=g.get('season_id', rot.current_season_num()))
+        c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)), season_id=get_season_id())
         view = Card(c)
         return view.page()
     except InvalidDataException as e:
@@ -111,7 +110,7 @@ def card(name):
 @SEASONS.route('/competitions/')
 @cached()
 def competitions():
-    view = Competitions(comp.load_competitions(season_id=g.get('season_id', rot.current_season_num())))
+    view = Competitions(comp.load_competitions(season_id=get_season_id()))
     return view.page()
 
 @APP.route('/competitions/<competition_id>/')
@@ -124,15 +123,16 @@ def competition(competition_id):
 @SEASONS.route('/archetypes/')
 @cached()
 def archetypes():
-    view = Archetypes(archs.load_archetypes_deckless(season_id=g.get('season_id', rot.current_season_num())))
+    view = Archetypes(archs.load_archetypes_deckless(season_id=get_season_id()))
     return view.page()
 
 @APP.route('/archetypes/<archetype_id>/')
 @SEASONS.route('/archetypes/<archetype_id>/')
 @cached()
 def archetype(archetype_id):
-    a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=g.get('season_id', rot.current_season_num()))
-    view = Archetype(a, archs.load_archetypes_deckless_for(a.id, season_id=g.get('season_id', rot.current_season_num())), archs.load_matchups(a.id, season_id=g.get('season_id', rot.current_season_num())), g.get('season_id', rot.current_season_num()))
+    season_id = get_season_id()
+    a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id)
+    view = Archetype(a, archs.load_archetypes_deckless_for(a.id, season_id=season_id), archs.load_matchups(a.id, season_id=season_id), season_id)
     return view.page()
 
 @APP.route('/tournaments/')
@@ -150,7 +150,7 @@ def hosting():
 @SEASONS.route('/tournaments/leaderboards/')
 @cached()
 def tournament_leaderboards():
-    leaderboards = comp.leaderboards(season_id=g.get('season_id', rot.current_season_num()))
+    leaderboards = comp.leaderboards(season_id=get_season_id())
     view = TournamentLeaderboards(leaderboards)
     return view.page()
 
@@ -341,7 +341,7 @@ def do_claim():
 @APP.route('/rotation/changes/')
 @SEASONS.route('/rotation/changes/')
 def rotation_changes():
-    view = RotationChanges(*oracle.pd_rotation_changes(g.get('season_id', rot.current_season_num())), cs.playability())
+    view = RotationChanges(*oracle.pd_rotation_changes(get_season_id()), cs.playability())
     return view.page()
 
 @APP.route('/rotation/speculation/')

@@ -74,6 +74,10 @@ class View(BaseView):
             'url': seasonized_url('all'),
             'decks_url': url_for('seasons.season', season_id='all'),
             'league_decks_url': url_for('seasons.season', season_id='all', deck_type='league'),
+            'competitions_url': url_for('seasons.competitions', season_id='all'),
+            'archetypes_url': url_for('seasons.archetypes', season_id='all'),
+            'people_url': url_for('seasons.people', season_id='all'),
+            'cards_url': url_for('seasons.cards', season_id='all'),
             'rotation_changes_url': url_for('seasons.rotation_changes', season_id='all')
         }]
         num = 1
@@ -87,8 +91,12 @@ class View(BaseView):
                 'code_lower': code.lower(),
                 'num': num,
                 'url': seasonized_url(num),
-                'decks_url': url_for('seasons.season', season_id=code),
-                'league_decks_url': url_for('seasons.season', season_id=code, deck_type='league'),
+                'decks_url': url_for('seasons.season', season_id=num),
+                'league_decks_url': url_for('seasons.season', season_id=num, deck_type='league'),
+                'competitions_url': url_for('seasons.competitions', season_id=num),
+                'archetypes_url': url_for('seasons.archetypes', season_id=num),
+                'people_url': url_for('seasons.people', season_id=num),
+                'cards_url': url_for('seasons.cards', season_id=num),
                 'rotation_changes_url': url_for('seasons.rotation_changes', season_id=num)
             })
             num += 1

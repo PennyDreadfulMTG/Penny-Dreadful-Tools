@@ -306,8 +306,6 @@ def get_archetype_id(archetype) -> Optional[int]:
 def load_similar_decks(ds: List[Deck]) -> None:
     threshold = 20
     cards_escaped = ', '.join(sqlescape(name) for name in all_card_names(ds))
-    if len(cards_escaped) == 0:
-        return
     potentially_similar = load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card IN ({cards_escaped}))'.format(cards_escaped=cards_escaped))
     for d in ds:
         for psd in potentially_similar:

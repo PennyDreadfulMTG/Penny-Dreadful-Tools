@@ -699,30 +699,6 @@ table.with-marginalia.footable-details {
         /* Override the inline style `display: table-cell` added by footable */
         display: none !important; /* csslint allow: important */
     }
-    /* Don't show the additional header row for "Season" and "All Time" at this size - we'll be hiding the all time stats. */
-    .timespan-table > thead > tr:first-child {
-        display: none;
-    }
-    .timespan-table .footable-details {
-        position: relative;
-    }
-    /* … but showing them inline so prepend the first all time item with "All Time". */
-    .timespan-table .footable-details tr:nth-child(1) th:before, .timespan-table .footable-details tr:nth-child(2) th:before {
-        display: inline-block;
-        margin-right: 1em;
-        margin-left: 0.563em;
-        text-align: left;
-    }
-    /* Separate This Season from All Time with a border. */
-    .timespan-table .footable-details tr:nth-child(2) th, .timespan-table .footable-details tr:nth-child(2) td {
-        border-top: 0.05rem solid #999;
-    }
-    .timespan-table .footable-details tr:nth-child(1) th:before {
-        content: "This Season ";
-    }
-    .timespan-table .footable-details tr:nth-child(2) th:before {
-        content: "All Time ";
-    }
 }
 
 .fooicon {

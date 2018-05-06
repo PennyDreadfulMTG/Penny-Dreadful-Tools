@@ -1,8 +1,9 @@
 import os
 
 from discordbot import command, emoji
-from magic import card, fetcher_internal, image_fetcher, oracle
+from magic import fetcher_internal, image_fetcher, oracle
 from shared import configuration
+from shared.models.card import Card
 
 
 # Check that we can fetch card images.
@@ -24,7 +25,7 @@ def test_fallbackimagedownload() -> None:
 
 # Check that we can succesfully fail at getting an image.
 def test_noimageavailable() -> None:
-    c = card.Card({'name': "Barry's Land", 'id': 0, 'multiverseid': 0, 'names': "Barry's Land"})
+    c = Card({'name': "Barry's Land", 'id': 0, 'multiverseid': 0, 'names': "Barry's Land"})
     assert image_fetcher.download_image([c]) is None
 
 # Search for a single card via full name,

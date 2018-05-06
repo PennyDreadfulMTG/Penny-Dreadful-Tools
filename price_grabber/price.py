@@ -4,8 +4,8 @@ from typing import Optional
 from mypy_extensions import TypedDict
 
 from magic import rotation
-from magic.card import Card
 from shared import configuration, database
+from shared.models.card import Card
 
 PriceData = TypedDict('PriceData', { # pylint: disable=invalid-name
     'time': int,

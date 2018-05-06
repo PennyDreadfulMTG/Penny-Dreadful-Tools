@@ -4,7 +4,8 @@ from typing import List
 from flask import url_for
 
 from decksite.view import View
-from magic import card, legality, oracle
+from magic import legality, oracle
+from shared.models.card import Card
 
 
 # pylint: disable=no-self-use
@@ -20,12 +21,12 @@ class About(View):
     def page_title(self):
         return 'About Penny Dreadful'
 
-def exciting_cards() -> List[card.Card]:
+def exciting_cards() -> List[Card]:
     cards = fancy_cards()
     random.shuffle(cards)
     return cards[:3]
 
-def fancy_cards() -> List[card.Card]:
+def fancy_cards() -> List[Card]:
     return legality.cards_legal_in_format(oracle.load_cards([
         'Mother of Runes',
         'Treasure Cruise',

@@ -20,7 +20,7 @@ SESSION.mount(
     'http://whatsinstandard.com',
     CacheControlAdapter(heuristic=ExpiresAfter(days=14)))
 
-def unzip(url, path) -> str:
+def unzip(url: str, path: str) -> str:
     location = '{scratch_dir}/zip'.format(scratch_dir=configuration.get('scratch_dir'))
     def remove_readonly(func, path, _):
         os.chmod(path, stat.S_IWRITE)
@@ -50,7 +50,7 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
         raise FetchException(e)
 
-def fetch_json(url, character_encoding=None) -> Any:
+def fetch_json(url: str, character_encoding: str = None) -> Any:
     try:
         blob = fetch(url, character_encoding)
         return json.loads(blob)
@@ -69,7 +69,7 @@ def post(url: str,
     except requests.exceptions.ConnectionError as e:
         raise FetchException(e)
 
-def store(url, path) -> requests.Response:
+def store(url: str, path: str) -> requests.Response:
     print('Storing {url} in {path}'.format(url=url, path=path))
     try:
         response = requests.get(url, stream=True)
@@ -86,7 +86,7 @@ class FetchException(OperationalException):
 def acceptable_file(filepath: str) -> bool:
     return os.path.isfile(filepath) and os.path.getsize(filepath) > 1000
 
-def escape(str_input) -> str:
+def escape(str_input: str) -> str:
     # Expand 'AE' into two characters. This matches the legal list and
     # WotC's naming scheme in Kaladesh, and is compatible with the
     # image server and scryfall.

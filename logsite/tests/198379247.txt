@@ -1,0 +1,164 @@
+PennyDreadful
+PDS R3 vs j_meka
+BuggedCardObserver,LeagueObserver,PennyDreadfulLegality,Tourney
+j_meka,Gleiciano
+
+== Game 1 (596794762) ==
+PDBot has started watching.
+[Gatherling] Event=Penny Dreadful Saturdays 7.10
+[Gatherling] Round=3
+[League] Goblins by gleiciano (11930) vs Devoid Aggro by j_meka (11872)
+j_meka is being attacked by [Inventor's Apprentice], [Veteran Motorist], and [Inventor's Apprentice].
+[CHAT] PDBot: [sD] If this is a league game, don't forget to report!
+If you do not want this match to be auto-reported, type !notleague
+[CHAT] PDBot: [sD][sR] Inventor's Apprentice was not on a submitted league decklist. This is not a league match.
+Turn 6: j_meka
+j_meka plays [Plains].
+[CHAT] Gleiciano: !noleague
+[CHAT] PDBot: Unknown Command
+j_meka casts [Nevermaker].
+Turn 7: Gleiciano
+Gleiciano activates an ability of [Sky Skiff] (Crew 1).
+Gleiciano puts triggered ability from [Veteran Motorist] onto the stack (Whenever Veteran Motorist crews a Vehicle, that Vehicle gets +1/+1 until end of turn.).
+j_meka is being attacked by [Sky Skiff], [Inventor's Apprentice], [Veteran Motorist], and [Inventor's Apprentice].
+j_meka has conceded from the game.
+Winner: j_meka
+Game 1 Completed.
+
+== Game 2 (596796184) ==
+PDBot has started watching.
+j_meka chooses to play first.
+j_meka keeps this hand.
+Gleiciano keeps this hand.
+Turn 1: j_meka
+j_meka skips their draw step.
+j_meka plays [Plains].
+Turn 1: Gleiciano
+Gleiciano plays [Mountain].
+Gleiciano casts [Inventor's Apprentice].
+Turn 2: j_meka
+j_meka plays [Island].
+Turn 2: Gleiciano
+Gleiciano plays [Plains].
+Gleiciano casts [Veteran Motorist].
+Gleiciano puts triggered ability from [Veteran Motorist] onto the stack (When Veteran Motorist enters the battlefield, scry 2.).
+Gleiciano put a card on top of Gleiciano's library.
+Gleiciano put a card on top of Gleiciano's library.
+j_meka is being attacked by [Inventor's Apprentice].
+Turn 3: j_meka
+j_meka plays [Island].
+Turn 3: Gleiciano
+Gleiciano plays [Mountain].
+Gleiciano casts [Renegade Wheelsmith].
+j_meka is being attacked by [Veteran Motorist] and [Inventor's Apprentice].
+j_meka casts [Surge of Righteousness] targeting [Veteran Motorist].
+Turn 4: j_meka
+j_meka plays [Plains].
+Turn 4: Gleiciano
+Gleiciano plays [Boros Guildgate].
+j_meka is being attacked by [Renegade Wheelsmith] and [Inventor's Apprentice].
+Gleiciano puts triggered ability from [Renegade Wheelsmith] onto the stack targeting [Inventor's Apprentice] (Whenever Renegade Wheelsmith becomes tapped, target creature can't block this turn.).
+Gleiciano casts [Peacewalker Colossus].
+j_meka casts [Dissolve] targeting [Peacewalker Colossus].
+j_meka put a card on top of j_meka's library.
+Turn 5: j_meka
+j_meka plays [Island].
+j_meka casts [Planar Outburst].
+Turn 5: Gleiciano
+Gleiciano plays [Boros Guildgate].
+Gleiciano casts [Gearshift Ace].
+Gleiciano casts [Sky Skiff].
+Turn 6: j_meka
+j_meka plays [Calciform Pools].
+j_meka casts [Yosei, the Morning Star].
+Turn 6: Gleiciano
+Gleiciano plays [Mountain].
+Turn 7: j_meka
+j_meka plays [Island].
+j_meka casts [Mirror Mockery] targeting [Yosei, the Morning Star].
+Gleiciano activates an ability of [Sky Skiff] (Crew 1).
+Gleiciano puts triggered ability from [Gearshift Ace] onto the stack (Whenever Gearshift Ace crews a Vehicle, that Vehicle gains first strike until end of turn.).
+Gleiciano is being attacked by [Yosei, the Morning Star].
+j_meka puts triggered ability from [Mirror Mockery] onto the stack (Whenever enchanted creature attacks, you may create a token that's a copy of that creature. Exile ...).
+j_meka puts triggered ability from [Yosei, the Morning Star] onto the stack targeting Gleiciano, [Sky Skiff], [Boros Guildgate], [Boros Guildgate], [Mountain], and [Mountain] (When Yosei, the Morning Star dies, target player skips his or her next untap step. Tap up to five ...).
+j_meka puts triggered ability from [Mirror Mockery] onto the stack (Exile Yosei, the Morning Star at end of combat.).
+Turn 7: Gleiciano
+Gleiciano skips his or her untap phase.
+Gleiciano casts [Court Homunculus].
+Gleiciano has conceded from the game.
+Winner: j_meka
+Game 2 Completed.
+Match Winner: j_meka: 2–0
+
+== Game 3 (596797414) ==
+!! Warning, unexpected game 3 !!
+PDBot has started watching.
+Gleiciano mulligans to 6 cards.
+j_meka keeps this hand.
+Gleiciano keeps this hand.
+Gleiciano put a card on top of Gleiciano's library.
+Turn 1: Gleiciano
+Gleiciano skips their draw step.
+Gleiciano plays [Plains].
+Turn 1: j_meka
+j_meka plays [Evolving Wilds].
+j_meka activates an ability of [Evolving Wilds] ( Search your library for a basic land card, put it onto the battlefield tapped, then shuffle your ...).
+Turn 2: Gleiciano
+Gleiciano plays [Mountain].
+Turn 2: j_meka
+j_meka plays [Calciform Pools].
+Turn 3: Gleiciano
+Gleiciano plays [Plains].
+Gleiciano casts [Renegade Wheelsmith].
+j_meka activates an ability of [Calciform Pools] ( Put a storage counter on Calciform Pools.).
+Turn 3: j_meka
+j_meka plays [Island].
+Turn 4: Gleiciano
+j_meka is being attacked by [Renegade Wheelsmith].
+Gleiciano puts triggered ability from [Renegade Wheelsmith] onto the stack targeting [Renegade Wheelsmith] (Whenever Renegade Wheelsmith becomes tapped, target creature can't block this turn.).
+j_meka casts [Surge of Righteousness] targeting [Renegade Wheelsmith].
+Gleiciano's Triggered ability from Renegade Wheelsmith is countered because it has no legal targets.
+Gleiciano casts [Peacewalker Colossus].
+j_meka discards [Hieroglyphic Illumination].
+j_meka cycles [Hieroglyphic Illumination].
+Turn 4: j_meka
+j_meka plays [Tranquil Cove].
+j_meka puts triggered ability from [Tranquil Cove] onto the stack (When Tranquil Cove enters the battlefield, you gain 1 life.).
+Turn 5: Gleiciano
+Gleiciano plays [Mountain].
+Gleiciano casts [Untethered Express].
+j_meka casts [Dissolve] targeting [Untethered Express].
+j_meka put a card on the bottom of the library.
+Turn 5: j_meka
+j_meka casts [Anticipate].
+j_meka plays [Island].
+Turn 6: Gleiciano
+Gleiciano casts [Inventor's Apprentice].
+Gleiciano casts [Cultivator's Caravan].
+j_meka casts [Anticipate].
+Turn 6: j_meka
+j_meka plays [Island].
+j_meka casts [Yosei, the Morning Star].
+Turn 7: Gleiciano
+Gleiciano casts [Renegade Wheelsmith].
+Gleiciano activates an ability of [Cultivator's Caravan] (Crew 3).
+Gleiciano puts triggered ability from [Renegade Wheelsmith] onto the stack targeting [Yosei, the Morning Star] (Whenever Renegade Wheelsmith becomes tapped, target creature can't block this turn.).
+j_meka is being attacked by [Cultivator's Caravan] and [Inventor's Apprentice].
+Turn 7: j_meka
+j_meka plays [Island].
+j_meka casts [Mirror Mockery] targeting [Yosei, the Morning Star].
+Gleiciano is being attacked by [Yosei, the Morning Star].
+j_meka puts triggered ability from [Mirror Mockery] onto the stack (Whenever enchanted creature attacks, you may create a token that's a copy of that creature. Exile ...).
+j_meka puts triggered ability from [Yosei, the Morning Star] onto the stack targeting Gleiciano, [Mountain], and [Peacewalker Colossus] (When Yosei, the Morning Star dies, target player skips his or her next untap step. Tap up to five ...).
+j_meka puts triggered ability from [Mirror Mockery] onto the stack (Exile Yosei, the Morning Star at end of combat.).
+j_meka casts [Cloudblazer].
+j_meka puts triggered ability from [Cloudblazer] onto the stack (When Cloudblazer enters the battlefield, you gain 2 life and draw two cards.).
+j_meka draws two cards with [Cloudblazer]'s ability.
+Turn 8: Gleiciano
+Gleiciano skips his or her untap phase.
+Gleiciano plays [Plains].
+Gleiciano has conceded from the game.
+Winner: j_meka
+Game 3 Completed.
+Gleiciano has left the game.
+

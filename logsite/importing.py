@@ -23,7 +23,7 @@ def load_from_file():
             shutil.move(fname, 'import/processed/{0}.txt'.format(match_id))
             return
 
-def import_log(lines: List[str], match_id: int) -> None:
+def import_log(lines: List[str], match_id: int) -> match.Match:
     """Processes a log"""
     lines = [line.strip('\r\n') for line in lines]
     print('importing {0}'.format(match_id))
@@ -63,12 +63,13 @@ def import_log(lines: List[str], match_id: int) -> None:
             game_lines.append(line)
         elif gr:
             roundnum = gr.group(1)
-            print('Gatherling Round: {0}'.format(tname))
+            print('Gatherling Round: {0}'.format(roundnum))
             process_tourney_info(local, roundnum=roundnum)
             game_lines.append(line)
         else:
             game_lines.append(line)
     game.insert_game(game_id, match_id, '\n'.join(game_lines))
+    return local
 
 def process_tourney_info(local: match.Match, tname: Optional[str] = None, roundnum: Optional[str] = None) -> None:
     if tname:

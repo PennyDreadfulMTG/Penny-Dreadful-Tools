@@ -1,0 +1,399 @@
+PennyDreadful
+Penny Dreadful
+BuggedCardObserver, LeagueObserver, PennyDreadfulLegality
+OG_Grizzly,bakert99
+
+== Game 1 (565250506) ==
+PDBot has started watching.
+OG_Grizzly joined the game.
+bakert99 joined the game.
+OG_Grizzly chooses to play first.
+OG_Grizzly keeps this hand.
+bakert99 keeps this hand.
+OG_Grizzly skips their draw step.
+OG_Grizzly plays [Swamp].
+Turn 1: bakert99.
+bakert99 plays [Plains].
+bakert99 casts [Myth Realized].
+Turn 2: OG_Grizzly.
+OG_Grizzly plays [Swamp].
+Turn 2: bakert99.
+bakert99 plays [Plains].
+bakert99 casts [Shrine of Loyal Legions].
+bakert99 puts triggered ability from [Myth Realized] onto the stack (Whenever you cast a noncreature spell, put a lore counter on Myth Realized.).
+Turn 3: OG_Grizzly.
+Turn 3: bakert99.
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+[CHAT] OG_Grizzly: oops
+bakert99 casts [Bandage] targeting bakert99.
+bakert99 puts triggered ability from [Myth Realized] onto the stack (Whenever you cast a noncreature spell, put a lore counter on Myth Realized.).
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 draws a card with [Bandage].
+bakert99 casts [Festival of the Guildpact]. (X is 0).
+bakert99 puts triggered ability from [Myth Realized] onto the stack (Whenever you cast a noncreature spell, put a lore counter on Myth Realized.).
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 draws a card with [Festival of the Guildpact].
+Turn 4: OG_Grizzly.
+OG_Grizzly plays [Swamp].
+OG_Grizzly casts [Read the Bones].
+OG_Grizzly put a card on the bottom of the library.
+OG_Grizzly put a card on top of OG_Grizzly's library.
+OG_Grizzly draws two cards with [Read the Bones].
+OG_Grizzly discards [Swamp].
+Turn 4: bakert99.
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 casts [Implement of Improvement].
+bakert99 puts triggered ability from [Myth Realized] onto the stack (Whenever you cast a noncreature spell, put a lore counter on Myth Realized.).
+bakert99 activates an ability of [Myth Realized] ( Until end of turn, Myth Realized becomes a Monk Avatar creature in addition to its other types an...).
+OG_Grizzly is being attacked by [Myth Realized].
+Turn 5: OG_Grizzly.
+OG_Grizzly plays [Dread Statuary].
+Turn 5: bakert99.
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 plays [Plains].
+LitheAndLies has started watching.
+bakert99 casts [Hoofprints of the Stag].
+bakert99 puts triggered ability from [Myth Realized] onto the stack (Whenever you cast a noncreature spell, put a lore counter on Myth Realized.).
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 casts [Heal] targeting bakert99.
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 puts triggered ability from [Myth Realized] onto the stack (Whenever you cast a noncreature spell, put a lore counter on Myth Realized.).
+Turn 6: OG_Grizzly.
+bakert99 puts triggered ability from [Heal] onto the stack (Draw a card at the beginning of the next turn's upkeep.).
+LitheAndLies has stopped watching.
+bakert99 draws a card with [Heal]'s ability.
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+OG_Grizzly plays [Dread Statuary].
+Turn 6: bakert99.
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 plays [Plains].
+bakert99 activates an ability of [Myth Realized] ( Until end of turn, Myth Realized becomes a Monk Avatar creature in addition to its other types an...).
+OG_Grizzly casts [Ultimate Price] targeting [Myth Realized].
+bakert99 casts [Shelter] targeting [Myth Realized].
+bakert99 puts triggered ability from [Myth Realized] onto the stack (Whenever you cast a noncreature spell, put a lore counter on Myth Realized.).
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 chooses black.
+bakert99 draws a card with [Shelter].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+OG_Grizzly's [Ultimate Price] is countered because it has no legal targets.
+OG_Grizzly is being attacked by [Myth Realized].
+bakert99 casts [Festival of the Guildpact]. (X is 0).
+bakert99 puts triggered ability from [Myth Realized] onto the stack (Whenever you cast a noncreature spell, put a lore counter on Myth Realized.).
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 draws a card with [Festival of the Guildpact].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+Turn 7: OG_Grizzly.
+OG_Grizzly casts [Haunted Plate Mail].
+Turn 7: bakert99.
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 activates an ability of [Myth Realized] ( Until end of turn, Myth Realized becomes a Monk Avatar creature in addition to its other types an...).
+OG_Grizzly is being attacked by [Myth Realized].
+OG_Grizzly activates an ability of [Haunted Plate Mail] ( Until end of turn, Haunted Plate Mail becomes a 4/4 Spirit artifact creature that's no longer an ...).
+bakert99 casts [Niveous Wisps] targeting [Haunted Plate Mail].
+bakert99 puts triggered ability from [Myth Realized] onto the stack (Whenever you cast a noncreature spell, put a lore counter on Myth Realized.).
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 draws a card with [Niveous Wisps].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+OG_Grizzly has conceded from the game.
+Winner: bakert99
+Game 1 Completed.
+== Game 2 (565252164) ==
+PDBot has started watching.
+bakert99 draws a card with [Heal]'s ability.
+Turn 2: bakert99.
+bakert99 casts [Festival of the Guildpact]. (X is 0).
+[CHAT] OG_Grizzly: fuuu.. i skipped my turn again
+bakert99 draws a card with [Festival of the Guildpact].
+bakert99 plays [Plains].
+[CHAT] bakert99: oh
+[CHAT] bakert99: you should not do that :)
+bakert99 casts [Heal] targeting bakert99.
+Turn 3: OG_Grizzly.
+bakert99 puts triggered ability from [Heal] onto the stack (Draw a card at the beginning of the next turn's upkeep.).
+bakert99 draws a card with [Heal]'s ability.
+OG_Grizzly plays [Swamp].
+Turn 3: bakert99.
+bakert99 casts [Bandage] targeting bakert99.
+[CHAT] OG_Grizzly: Heal confused me. I thought it was your turn lol
+bakert99 draws a card with [Bandage].
+bakert99 plays [Plains].
+Turn 4: OG_Grizzly.
+OG_Grizzly plays [Swamp].
+[CHAT] bakert99: :D
+OG_Grizzly casts [Read the Bones].
+OG_Grizzly put a card on top of OG_Grizzly's library.
+OG_Grizzly put a card on top of OG_Grizzly's library.
+OG_Grizzly draws two cards with [Read the Bones].
+OG_Grizzly discards [Wretched Banquet].
+Turn 4: bakert99.
+[CHAT] bakert99: slowtrips
+bakert99 plays [Plains].
+Turn 5: OG_Grizzly.
+OG_Grizzly plays [Swamp].
+OG_Grizzly casts [Memoricide] targeting bakert99.
+OG_Grizzly names Myth Realized for [Memoricide].
+Turn 5: bakert99.
+bakert99 casts [Hoofprints of the Stag].
+Turn 6: OG_Grizzly.
+OG_Grizzly plays [Swamp].
+OG_Grizzly casts [Underworld Connections] targeting [Swamp].
+Turn 6: bakert99.
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 plays [Plains].
+OG_Grizzly activates an ability of [Swamp] ( Draw a card.).
+OG_Grizzly draws a card with [Swamp]'s ability.
+Turn 7: OG_Grizzly.
+OG_Grizzly plays [Spawning Pool].
+OG_Grizzly casts [Homicidal Seclusion].
+Turn 7: bakert99.
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 casts [Implement of Improvement].
+bakert99 activates an ability of [Implement of Improvement] ( You gain 2 life.).
+bakert99 puts triggered ability from [Implement of Improvement] onto the stack (When Implement of Improvement is put into a graveyard from the battlefield, draw a card.).
+bakert99 draws a card with [Implement of Improvement]'s ability.
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 casts [Festival of the Guildpact]. (X is 0).
+bakert99 draws a card with [Festival of the Guildpact].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+Turn 8: OG_Grizzly.
+OG_Grizzly plays [Swamp].
+OG_Grizzly activates an ability of [Spawning Pool] ( Spawning Pool becomes a 1/1 black Skeleton creature with '{B}: Regenerate this creature' until en...).
+bakert99 casts [Niveous Wisps] targeting [Spawning Pool].
+bakert99 draws a card with [Niveous Wisps].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+OG_Grizzly activates an ability of [Swamp] ( Draw a card.).
+OG_Grizzly draws a card with [Swamp]'s ability.
+bakert99 casts [Defiant Strike] targeting [Spawning Pool].
+bakert99 draws a card with [Defiant Strike].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+Turn 8: bakert99.
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 casts [Shrine of Loyal Legions].
+bakert99 casts [Bandage] targeting bakert99.
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 draws a card with [Bandage].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+Turn 9: OG_Grizzly.
+OG_Grizzly plays [Swamp].
+OG_Grizzly casts [Demonic Rising].
+Turn 9: bakert99.
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 plays [Plains].
+bakert99 activates an ability of [Hoofprints of the Stag] ( Create a 4/4 white Elemental creature token with flying.).
+bakert99's [Hoofprints of the Stag] creates an Elemental token.
+OG_Grizzly casts [Ultimate Price] targeting [Elemental] token.
+OG_Grizzly activates an ability of [Swamp] ( Draw a card.).
+OG_Grizzly draws a card with [Swamp]'s ability.
+Turn 10: OG_Grizzly.
+OG_Grizzly plays [Blighted Fen].
+OG_Grizzly activates an ability of [Spawning Pool] ( Spawning Pool becomes a 1/1 black Skeleton creature with '{B}: Regenerate this creature' until en...).
+bakert99 casts [Niveous Wisps] targeting [Spawning Pool].
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+Hetfield881 has started watching.
+bakert99 draws a card with [Niveous Wisps].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 casts [Defiant Strike] targeting [Spawning Pool].
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 draws a card with [Defiant Strike].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 casts [Festival of the Guildpact]. (X is 0).
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 draws a card with [Festival of the Guildpact].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+OG_Grizzly puts triggered ability from [Demonic Rising] onto the stack (At the beginning of your end step, if you control exactly 1 creature, create a 5/5 black Demon cre...).
+OG_Grizzly's [Demonic Rising] creates a Demon token.
+Turn 10: bakert99.
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 activates an ability of [Hoofprints of the Stag] ( Create a 4/4 white Elemental creature token with flying.).
+bakert99's [Hoofprints of the Stag] creates an Elemental token.
+bakert99 casts [Implement of Improvement].
+OG_Grizzly activates an ability of [Swamp] ( Draw a card.).
+OG_Grizzly draws a card with [Swamp]'s ability.
+Turn 11: OG_Grizzly.
+OG_Grizzly plays [Blighted Fen].
+OG_Grizzly activates an ability of [Blighted Fen] targeting bakert99 ( Target opponent sacrifices a creature.).
+bakert99 activates an ability of [Implement of Improvement] ( You gain 2 life.).
+bakert99 puts triggered ability from [Implement of Improvement] onto the stack (When Implement of Improvement is put into a graveyard from the battlefield, draw a card.).
+bakert99 draws a card with [Implement of Improvement]'s ability.
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 sacrifices [Elemental] token.
+bakert99 is being attacked by [Demon] token.
+OG_Grizzly casts [Lay Bare the Heart] targeting bakert99.
+bakert99 casts [Festival of the Guildpact]. (X is 0).
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 draws a card with [Festival of the Guildpact].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 discards [Hoofprints of the Stag].
+bakert99 reveals their hand to [Lay Bare the Heart], containing [Implement of Improvement], [Plains], [Shelter], [Shelter], and [Angelic Gift].
+OG_Grizzly puts triggered ability from [Demonic Rising] onto the stack (At the beginning of your end step, if you control exactly 1 creature, create a 5/5 black Demon cre...).
+OG_Grizzly's [Demonic Rising] creates a Demon token.
+Turn 11: bakert99.
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 activates an ability of [Hoofprints of the Stag] ( Create a 4/4 white Elemental creature token with flying.).
+bakert99's [Hoofprints of the Stag] creates an Elemental token.
+bakert99 plays [Plains].
+bakert99 activates an ability of [Hoofprints of the Stag] ( Create a 4/4 white Elemental creature token with flying.).
+bakert99's [Hoofprints of the Stag] creates an Elemental token.
+bakert99 casts [Implement of Improvement].
+OG_Grizzly activates an ability of [Swamp] ( Draw a card.).
+OG_Grizzly draws a card with [Swamp]'s ability.
+Turn 12: OG_Grizzly.
+OG_Grizzly plays [Spawning Pool].
+bakert99 is being attacked by [Demon] token and [Demon] token.
+OG_Grizzly casts [Read the Bones].
+OG_Grizzly put a card on the bottom of the library.
+OG_Grizzly put a card on top of OG_Grizzly's library.
+OG_Grizzly draws two cards with [Read the Bones].
+Turn 12: bakert99.
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+OG_Grizzly casts [Consume the Meek].
+bakert99 activates an ability of [Implement of Improvement] ( You gain 2 life.).
+bakert99 puts triggered ability from [Implement of Improvement] onto the stack (When Implement of Improvement is put into a graveyard from the battlefield, draw a card.).
+bakert99 draws a card with [Implement of Improvement]'s ability.
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 casts [Defiant Strike] targeting [Elemental] token.
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+OG_Grizzly activates an ability of [Swamp] ( Draw a card.).
+OG_Grizzly draws a card with [Swamp]'s ability.
+bakert99 draws a card with [Defiant Strike].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+Turn 13: OG_Grizzly.
+OG_Grizzly plays [Spawning Pool].
+OG_Grizzly activates an ability of [Spawning Pool] ( Spawning Pool becomes a 1/1 black Skeleton creature with '{B}: Regenerate this creature' until en...).
+bakert99 casts [Niveous Wisps] targeting [Spawning Pool].
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 draws a card with [Niveous Wisps].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+OG_Grizzly casts [Demonic Rising].
+OG_Grizzly puts triggered ability from [Demonic Rising] onto the stack (At the beginning of your end step, if you control exactly 1 creature, create a 5/5 black Demon cre...).
+OG_Grizzly puts triggered ability from [Demonic Rising] onto the stack (At the beginning of your end step, if you control exactly 1 creature, create a 5/5 black Demon cre...).
+OG_Grizzly's [Demonic Rising] creates a Demon token.
+OG_Grizzly's [Demonic Rising]'s triggered ability does not resolve because the intervening "if" condition is not met.
+bakert99 activates an ability of [Shrine of Loyal Legions] ( Create a 1/1 colorless Myr artifact creature token for each charge counter on Shrine of Loyal Leg...).
+bakert99's [Shrine of Loyal Legions] creates eleven Myr tokens.
+Turn 13: bakert99.
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+OG_Grizzly casts [Bile Blight] targeting [Myr] token.
+bakert99 casts [Shelter] targeting [Myr] token.
+bakert99 chooses black.
+bakert99 draws a card with [Shelter].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+OG_Grizzly's [Bile Blight] is countered because it has no legal targets.
+bakert99 plays [Plains].
+bakert99 casts [Seal of Cleansing].
+bakert99 activates an ability of [Seal of Cleansing] targeting [Homicidal Seclusion] ( Destroy target artifact or enchantment.).
+OG_Grizzly is being attacked by [Myr] token, [Myr] token, [Myr] token, [Myr] token, [Myr] token, [Myr] token, [Myr] token, [Myr] token, [Myr] token, and [Myr] token.
+[Demon] token blocks [Myr] token.
+bakert99 activates an ability of [Hoofprints of the Stag] ( Create a 4/4 white Elemental creature token with flying.).
+bakert99's [Hoofprints of the Stag] creates an Elemental token.
+Turn 14: OG_Grizzly.
+OG_Grizzly casts [Unburden] targeting bakert99.
+bakert99 discards [Hoofprints of the Stag].
+bakert99 discards [Shrine of Loyal Legions].
+OG_Grizzly plays [Dread Statuary].
+OG_Grizzly casts [Flaying Tendrils].
+[CHAT] PDBot: [sU]Flaying Tendrils[sU] has a Advantageous bug.  exiles creature cards put into the graveyard from anywhere this turn, rather than just those from the battlefield.
+OG_Grizzly casts [Underworld Connections] targeting [Swamp].
+OG_Grizzly puts triggered ability from [Demonic Rising] onto the stack (At the beginning of your end step, if you control exactly 1 creature, create a 5/5 black Demon cre...).
+OG_Grizzly puts triggered ability from [Demonic Rising] onto the stack (At the beginning of your end step, if you control exactly 1 creature, create a 5/5 black Demon cre...).
+OG_Grizzly's [Demonic Rising] creates a Demon token.
+OG_Grizzly's [Demonic Rising]'s triggered ability does not resolve because the intervening "if" condition is not met.
+bakert99 casts [Heal] targeting bakert99.
+Turn 14: bakert99.
+bakert99 puts triggered ability from [Heal] onto the stack (Draw a card at the beginning of the next turn's upkeep.).
+bakert99 draws a card with [Heal]'s ability.
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 casts [Implement of Improvement].
+bakert99 activates an ability of [Implement of Improvement] ( You gain 2 life.).
+bakert99 puts triggered ability from [Implement of Improvement] onto the stack (When Implement of Improvement is put into a graveyard from the battlefield, draw a card.).
+bakert99 draws a card with [Implement of Improvement]'s ability.
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 casts [Angelic Gift] targeting [Demon] token.
+bakert99 puts triggered ability from [Angelic Gift] onto the stack (When Angelic Gift enters the battlefield, draw a card.).
+bakert99 draws a card with [Angelic Gift]'s ability.
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 plays [Plains].
+bakert99 activates an ability of [Hoofprints of the Stag] ( Create a 4/4 white Elemental creature token with flying.).
+bakert99's [Hoofprints of the Stag] creates an Elemental token.
+Turn 15: OG_Grizzly.
+bakert99 is being attacked by [Demon] token and [Demon] token.
+[Elemental] token blocks [Demon] token.
+[Elemental] token blocks [Demon] token.
+Blockers for [Demon] token are ordered as follows: [Elemental] token, [Elemental] token
+bakert99 casts [Shelter] targeting [Elemental] token.
+bakert99 chooses black.
+bakert99 draws a card with [Shelter].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+OG_Grizzly casts [Consume the Meek].
+OG_Grizzly activates an ability of [Spawning Pool] ( Spawning Pool becomes a 1/1 black Skeleton creature with '{B}: Regenerate this creature' until en...).
+OG_Grizzly puts triggered ability from [Demonic Rising] onto the stack (At the beginning of your end step, if you control exactly 1 creature, create a 5/5 black Demon cre...).
+OG_Grizzly puts triggered ability from [Demonic Rising] onto the stack (At the beginning of your end step, if you control exactly 1 creature, create a 5/5 black Demon cre...).
+OG_Grizzly's [Demonic Rising] creates a Demon token.
+OG_Grizzly's [Demonic Rising]'s triggered ability does not resolve because the intervening "if" condition is not met.
+Turn 15: bakert99.
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 casts [Shrine of Loyal Legions].
+bakert99 casts [Defiant Strike] targeting [Demon] token.
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 draws a card with [Defiant Strike].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 plays [Plains].
+bakert99 activates an ability of [Hoofprints of the Stag] ( Create a 4/4 white Elemental creature token with flying.).
+bakert99's [Hoofprints of the Stag] creates an Elemental token.
+Turn 16: OG_Grizzly.
+OG_Grizzly plays [Dread Statuary].
+bakert99 is being attacked by [Demon] token.
+[Elemental] token blocks [Demon] token.
+bakert99 casts [Shelter] targeting [Elemental] token.
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 chooses black.
+bakert99 draws a card with [Shelter].
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+OG_Grizzly puts triggered ability from [Demonic Rising] onto the stack (At the beginning of your end step, if you control exactly 1 creature, create a 5/5 black Demon cre...).
+OG_Grizzly puts triggered ability from [Demonic Rising] onto the stack (At the beginning of your end step, if you control exactly 1 creature, create a 5/5 black Demon cre...).
+OG_Grizzly's [Demonic Rising] creates a Demon token.
+OG_Grizzly's [Demonic Rising]'s triggered ability does not resolve because the intervening "if" condition is not met.
+Turn 16: bakert99.
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+bakert99 puts triggered ability from [Hoofprints of the Stag] onto the stack (Whenever you draw a card, you may put a hoofprint counter on Hoofprints of the Stag. ).
+bakert99 casts [Seal of Cleansing].
+bakert99 puts triggered ability from [Shrine of Loyal Legions] onto the stack (At the beginning of your upkeep or whenever you cast a white spell, put a charge counter on Shrine...).
+Turn 17: OG_Grizzly.
+OG_Grizzly activates an ability of [Dread Statuary] ( Dread Statuary becomes a 4/2 Golem artifact creature until end of turn. It's still a land.).
+OG_Grizzly activates an ability of [Dread Statuary] ( Dread Statuary becomes a 4/2 Golem artifact creature until end of turn. It's still a land.).
+bakert99 is being attacked by [Demon] token, [Dread Statuary], and [Demon] token.
+bakert99 activates an ability of [Seal of Cleansing] targeting [Dread Statuary] ( Destroy target artifact or enchantment.).
+OG_Grizzly casts [Death Rattle] targeting [Elemental] token.
+Winner: OG_Grizzly
+Game 2 Completed.
+OG_Grizzly has left the game.
+== Game 3 (565257534) ==
+PDBot has started watching.
+[CHAT] OG_Grizzly: I'm still really slow on modo though haven't gotten used to it yet
+bakert99 chooses to play first.
+[CHAT] bakert99: :)
+[CHAT] bakert99: yeah it's a mess
+[CHAT] bakert99: but you do get used to it
+bakert99 keeps this hand.
+OG_Grizzly keeps this hand.
+bakert99 skips their draw step.
+bakert99 plays [Plains].
+Turn 1: OG_Grizzly.
+OG_Grizzly plays [Swamp].
+Turn 2: bakert99.
+bakert99 plays [Plains].
+bakert99 casts [Shrine of Loyal Legions].
+Turn 2: OG_Grizzly.
+OG_Grizzly has conceded from the game.
+Turn 3: bakert99.
+Winner: bakert99
+Game 3 Completed.
+Match Winner: bakert99: 2–1
+bakert99 has left the game.

@@ -17,14 +17,17 @@ def run() -> None:
         tests()
 
 def lint() -> None:
-    args = sys.argv[2:] or ['--rcfile=.pylintrc', # Load rcfile first.
-                            '--ignored-modules=alembic,MySQLdb,flask_sqlalchemy', # override ignored-modules (codacy hack)
-                            '--load-plugins', 'pylint_quotes',
-                            '--reports=n', '-f', 'parseable'
-                           ]
-    args.extend(LINT_PATHS)
+    args = ['--rcfile=.pylintrc', # Load rcfile first.
+            '--ignored-modules=alembic,MySQLdb,flask_sqlalchemy', # override ignored-modules (codacy hack)
+            '--load-plugins', 'pylint_quotes, pylint_monolith', # Plugins
+            '--reports=n', # Don't show reports.
+            '-f', 'parseable' # Machine-readable output.
+           ]
+    args.extend(sys.argv[2:] or LINT_PATHS)
     import pylint.lint
-    pylint.lint.Run(args)
+    pylint.lint.Run(args, exit=True)
+
+
 
 def mypy() -> None:
     args = [
@@ -44,7 +47,7 @@ def mypy() -> None:
     if result[1]:
         print(result[1])  # stderr
 
-    print('\nExit status: {code} ({english})'.format(code=result[2], english='Failure' if result[2] else 'Success'))
+    print('Exit status: {code} ({english})'.format(code=result[2], english='Failure' if result[2] else 'Success'))
     sys.exit(result[2])
 
 def tests() -> None:

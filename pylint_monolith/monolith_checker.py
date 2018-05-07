@@ -67,14 +67,10 @@ class MonolithChecker(BaseChecker):
                 args=(parent_basename, imported_module.name)
             )
 
-
 def get_basename(modname: str) -> str:
     if modname.startswith('.'):
         return '.' + modname.split('.')[1]
-    else:
-        return modname.split('.')[0]
-
-
+    return modname.split('.')[0]
 
 def _get_imported_module(importnode, modname):
     try:

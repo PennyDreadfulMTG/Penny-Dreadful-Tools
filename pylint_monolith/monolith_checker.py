@@ -24,7 +24,7 @@ class MonolithChecker(BaseChecker):
     __implements__ = IAstroidChecker
     name = 'monolith'
     msgs = {
-        'R4101': (
+        'E4101': (
             'Module %s should not be importing %s',
             'invalid-monolith-import',
             'Used when code is breaking the monolith structure'
@@ -64,6 +64,7 @@ class MonolithChecker(BaseChecker):
             self.add_message(
                 'invalid-monolith-import',
                 line=node.lineno,
+                node=node,
                 args=(parent_basename, imported_module.name)
             )
 

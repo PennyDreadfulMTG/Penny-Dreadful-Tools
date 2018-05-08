@@ -14,7 +14,7 @@ APP = PDFlask(__name__)
 BABEL = Babel(APP)
 
 
-from . import db, main, stats, api, localization, auth, views # pylint: disable=wrong-import-position, unused-import
+from . import db, main, stats, api, localization, views # pylint: disable=wrong-import-position, unused-import
 
 def __create_schema() -> None:
     engine = create_engine(APP.config['SQLALCHEMY_DATABASE_URI'])

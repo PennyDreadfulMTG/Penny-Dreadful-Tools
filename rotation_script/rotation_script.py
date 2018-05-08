@@ -6,7 +6,7 @@ from typing import Dict, List, Set
 
 import ftfy
 
-from magic import fetcher_internal, rotation
+from magic import fetcher, fetcher_internal, rotation
 from price_grabber.parser import (PriceList, parse_cardhoarder_prices,
                                   parse_mtgotraders_prices)
 from shared import configuration, dtutil, text
@@ -18,6 +18,7 @@ TOTAL_RUNS = 168
 
 TIME_UNTIL_FULL_ROTATION = rotation.next_rotation() - dtutil.now()
 TIME_UNTIL_SUPPLEMENTAL_ROTATION = rotation.next_supplemental() - dtutil.now()
+TIME_SINCE_SUPPLEMENTAL_ROTATION = dtutil.now() - rotation.this_supplemental()
 
 def run() -> None:
     files = rotation.files()
@@ -75,7 +76,7 @@ def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignor
 
 def is_good_set(setname: str) -> bool:
     if not BLACKLIST and not WHITELIST:
-        supplimental = TIME_UNTIL_SUPPLEMENTAL_ROTATION < datetime.timedelta(7)
+        supplimental = is_supplemental()
         if supplimental:
             WHITELIST.add(rotation.last_rotation_ex()['mtgo_code'])
         else:
@@ -86,6 +87,9 @@ def is_good_set(setname: str) -> bool:
         return True
     return not WHITELIST
 
+def is_supplemental() -> bool:
+    return TIME_UNTIL_SUPPLEMENTAL_ROTATION < datetime.timedelta(7) or abs(TIME_SINCE_SUPPLEMENTAL_ROTATION) < datetime.timedelta(1)
+
 def make_final_list() -> None:
     files = rotation.files()
     lines: List[str] = []
@@ -94,12 +98,17 @@ def make_final_list() -> None:
         lines.append(line)
     scores = Counter(lines).most_common()
 
-    final: List[str] = []
+    passed: List[str] = []
     for name, count in scores:
         if count >= TOTAL_RUNS / 2:
-            final.append(name)
+            passed.append(name)
+    final = list(passed)
+    if is_supplemental():
+        temp = set(passed)
+        final = list(temp.union(fetcher.legal_cards()))
     final.sort()
     h = open(os.path.join(configuration.get_str('legality_dir'), 'legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))
     h.close()
-    print('Generated legal_cards.txt.  {0}/{1} cards.'.format(len(final), len(scores)))
+    print('Generated legal_cards.txt.  {0}/{1} cards.'.format(len(passed), len(scores)))
+

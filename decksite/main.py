@@ -29,7 +29,6 @@ from magic import card as mc
 from magic import oracle
 from shared import perf
 from shared.pd_exception import DoesNotExistException, InvalidDataException
-from shared_web import oauth
 
 # Decks
 

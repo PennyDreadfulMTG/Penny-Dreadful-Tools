@@ -1,5 +1,3 @@
-import urllib
-
 from flask import redirect, request, session, url_for
 
 from shared_web import oauth
@@ -32,12 +30,3 @@ def authenticate_callback():
     # logsite duplication, see #4743
     session['target'] = None
     return redirect(url)
-
-@APP.route('/logout/')
-def logout():
-    oauth.logout()
-    target = request.args.get('target', 'home')
-    # logsite duplication, see #4743
-    if bool(urllib.parse.urlparse(target).netloc):
-        return redirect(target)
-    return redirect(url_for(target))

@@ -1,13 +1,10 @@
 import logging
 import os
-import traceback
 import urllib.parse
 from typing import Optional, Tuple
 
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, send_from_directory, session, url_for)
-from github.GithubException import GithubException
-from werkzeug import exceptions
 
 from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite import league as lg
@@ -23,17 +20,16 @@ from decksite.league import DeckCheckForm, ReportForm, RetireForm, SignUpForm
 from decksite.views import (About, AboutPdm, AddForm, Archetype, Archetypes,
                             Bugs, Card, Cards, CommunityGuidelines,
                             Competition, Competitions, Deck, DeckCheck, Decks,
-                            Faqs, Home, InternalServerError, LeagueInfo,
-                            LinkAccounts, News, NotFound, People, Person,
-                            Report, Resources, Retire, Rotation,
+                            Faqs, Home, LeagueInfo, LinkAccounts, News, People,
+                            Person, Report, Resources, Retire, Rotation,
                             RotationChanges, Season, Seasons, SignUp,
                             TournamentHosting, TournamentLeaderboards,
-                            Tournaments, Unauthorized)
+                            Tournaments)
 from magic import card as mc
 from magic import oracle
-from shared import perf, repo
+from shared import perf
 from shared.pd_exception import DoesNotExistException, InvalidDataException
-from shared_web import logger, oauth
+from shared_web import oauth
 
 # Decks
 
@@ -371,19 +367,6 @@ def authenticate_callback():
     session['target'] = None
     return redirect(url)
 
-@APP.route('/unauthorized/')
-def unauthorized(error=None) -> str:
-    view = Unauthorized(error)
-    return view.page()
-
-@APP.route('/logout/')
-def logout():
-    oauth.logout()
-    target = request.args.get('target', 'home')
-    if bool(urllib.parse.urlparse(target).netloc):
-        return redirect(target)
-    return redirect(url_for(target))
-
 # Infra
 
 @APP.route('/robots.txt')
@@ -408,24 +391,6 @@ def legal_cards() -> Tuple[str, int]:
         return send_from_directory('.', 'legal_cards.txt')
     return 'Not supported yet', 404
 
-@APP.errorhandler(DoesNotExistException)
-@APP.errorhandler(exceptions.NotFound)
-def not_found(e: Exception) -> Tuple[str, int]:
-    log_exception(e)
-    view = NotFound(e)
-    return view.page(), 404
-
-@APP.errorhandler(exceptions.InternalServerError)
-def internal_server_error(e: Exception) -> Tuple[str, int]:
-    log_exception(e)
-    path = request.path
-    try:
-        repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports', exception=e)
-    except GithubException:
-        logger.error('Github error', e)
-    view = InternalServerError(e)
-    return view.page(), 500
-
 @APP.before_request
 def before_request() -> None:
     g.p = perf.start()
@@ -435,9 +400,6 @@ def teardown_request(response: Response) -> Response:
     if g.get('p') is not None:
         perf.check(g.p, 'slow_page', request.path, 'decksite')
     return response
-
-def log_exception(e: BaseException) -> None:
-    logger.error(''.join(traceback.format_exception(type(e), e, e.__traceback__)))
 
 def init(debug: bool = True, port: Optional[int] = None) -> None:
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""

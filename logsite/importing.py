@@ -27,13 +27,7 @@ def import_log(lines: List[str], match_id: int) -> match.Match:
     """Processes a log"""
     lines = [line.strip('\r\n') for line in lines]
     print('importing {0}'.format(match_id))
-    format_name = lines[0]
-    comment = lines[1]
-    modules = [mod.strip() for mod in lines[2].split(',')]
-    players = [player.strip() for player in lines[3].split(',')]
-    local = match.get_match(match_id)
-    if local is None:
-        local = match.create_match(match_id, format_name, comment, modules, players)
+    local = import_header(lines, match_id)
     if local.has_unexpected_third_game is None:
         local.has_unexpected_third_game = False
     lines = lines[4:]
@@ -69,6 +63,16 @@ def import_log(lines: List[str], match_id: int) -> match.Match:
         else:
             game_lines.append(line)
     game.insert_game(game_id, match_id, '\n'.join(game_lines))
+    return local
+
+def import_header(lines: List[str], match_id: int) -> match.Match:
+    local = match.get_match(match_id)
+    if local is None:
+        format_name = lines[0]
+        comment = lines[1]
+        modules = [mod.strip() for mod in lines[2].split(',')]
+        players = [player.strip() for player in lines[3].split(',')]
+        local = match.create_match(match_id, format_name, comment, modules, players)
     return local
 
 def process_tourney_info(local: match.Match, tname: Optional[str] = None, roundnum: Optional[str] = None) -> None:

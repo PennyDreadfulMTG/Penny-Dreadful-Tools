@@ -10,26 +10,8 @@ class View(BaseView):
     def home_url(self):
         return url_for('home')
 
-    def css_url(self):
-        return 'https://pennydreadfulmagic.com/static/css/pd.css'
-
-    def tooltips_url(self):
-        return url_for('static', filename='js/tooltips.js', v=self.commit_id())
-
-    def js_url(self):
-        return 'https://pennydreadfulmagic.com/static/js/pd.js'
-
     def js_extra_url(self):
         return None
-
-    def menu(self):
-        menu = [
-            {'name': 'Home', 'url': url_for('home')},
-            {'name': 'Matches', 'url': url_for('matches')},
-            {'name': 'People', 'url': url_for('people')},
-            {'name': 'About', 'url': url_for('about')},
-        ]
-        return menu
 
     def prepare(self):
         pass

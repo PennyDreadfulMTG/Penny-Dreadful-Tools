@@ -1,9 +1,11 @@
-from decksite.view import View
+from typing import Optional
+
+from .error import ErrorView
 
 
 # pylint: disable=no-self-use
-class Unauthorized(View):
-    def __init__(self, error: str) -> None:
+class Unauthorized(ErrorView):
+    def __init__(self, error: Optional[str]) -> None:
         super().__init__()
         if error:
             self.error = error

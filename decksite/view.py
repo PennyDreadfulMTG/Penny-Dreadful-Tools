@@ -1,8 +1,7 @@
-import datetime
 import html
 import urllib
 from collections import Counter
-from typing import TYPE_CHECKING, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional
 
 import inflect
 from anytree.iterators import PreOrderIter
@@ -11,7 +10,7 @@ from flask_babel import gettext, ngettext
 from mypy_extensions import TypedDict
 from werkzeug.routing import BuildError
 
-from decksite import APP, BABEL, admin, get_season_id
+from decksite import BABEL, get_season_id
 from decksite.data import archetype, deck
 from magic import card, oracle, rotation, tournaments
 from shared import dtutil
@@ -49,19 +48,6 @@ class View(BaseView):
 
     def home_url(self) -> str:
         return url_for('home')
-
-    def css_url(self) -> str:
-        return url_for('static', filename='css/pd.css', v=self.commit_id())
-
-    def tooltips_url(self) -> Optional[str]:
-        # Don't preload 10,000 images.
-        # pylint: disable=no-member
-        if not hasattr(self, 'cards') or len(getattr(self, 'cards')) > 500:
-            return None
-        return url_for('static', filename='js/tooltips.js', v=self.commit_id())
-
-    def js_url(self) -> str:
-        return url_for('static', filename='js/pd.js', v=self.commit_id())
 
     def season_name(self) -> str:
         return rotation.season_name(get_season_id())
@@ -106,61 +92,6 @@ class View(BaseView):
             num += 1
         seasons.reverse()
         return seasons
-
-    def menu(self) -> List[Dict[str, Union[str, Dict[str, str]]]]:
-        archetypes_badge = None
-        n = len(deck.load_decks('NOT d.reviewed'))
-        if n > 0:
-            archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
-        resources_submenu: List[Dict[str, str]] = []
-        if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7) or (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
-            resources_submenu += [{'name': gettext('Rotation Tracking'), 'url': url_for('rotation')}]
-        resources_submenu += [
-            {'name': gettext('Rotation Changes'), 'url': url_for('rotation_changes')},
-            {'name': gettext('Rotation Speculation'), 'url': url_for('rotation_speculation')},
-            {'name': gettext('Deck Check'), 'url': url_for('deck_check')},
-            {'name': gettext('Discord Chat'), 'url': 'https://discord.gg/H6EHdHu'},
-            {'name': gettext('External Links'), 'url': url_for('resources')},
-            {'name': gettext('Link Accounts'), 'url': url_for('link')},
-            {'name': gettext('Bugs'), 'url': url_for('bugs')}
-        ]
-        menu = [
-            {'name': gettext('Metagame'), 'url': url_for('home'), 'badge': archetypes_badge, 'submenu': [
-                {'name': gettext('Latest Decks'), 'url': url_for('.decks')},
-                {'name': gettext('Archetypes'), 'url': url_for('archetypes'), 'badge': archetypes_badge},
-                {'name': gettext('People'), 'url': url_for('people')},
-                {'name': gettext('Cards'), 'url': url_for('cards')},
-                {'name': gettext('Past Seasons'), 'url': url_for('seasons')}
-            ]},
-            {'name': gettext('League'), 'url': url_for('league'), 'submenu': [
-                {'name': gettext('League Info'), 'url': url_for('league')},
-                {'name': gettext('Sign Up'), 'url': url_for('signup')},
-                {'name': gettext('Report'), 'url': url_for('report')},
-                {'name': gettext('Records'), 'url': url_for('current_league')},
-                {'name': gettext('Retire'), 'url': url_for('retire')},
-            ]},
-            {'name': gettext('Competitions'), 'url': url_for('competitions'), 'submenu': [
-                {'name': gettext('Competition Results'), 'url': url_for('competitions')},
-                {'name': gettext('Tournament Info'), 'url': url_for('tournaments')},
-                {'name': gettext('Leaderboards'), 'url': url_for('tournament_leaderboards')},
-                {'name': gettext('Gatherling'), 'url': 'https://gatherling.com/'},
-                {'name': gettext('Hosting'), 'url': url_for('hosting')}
-            ]},
-            {'name': gettext('Resources'), 'url': url_for('resources'), 'submenu': resources_submenu},
-            {'name': gettext('About'), 'url': url_for('about'), 'submenu': [
-                {'name': gettext('What is Penny Dreadful?'), 'url': url_for('about')},
-                {'name': gettext('About pennydreadfulmagic.com'), 'url': url_for('about_pdm')},
-                {'name': gettext('FAQs'), 'url': url_for('faqs')},
-                {'name': gettext('Community Guidelines'), 'url': url_for('community_guidelines')}
-            ]},
-            {'name': gettext('Admin'), 'admin_only': True, 'url': url_for('admin'), 'submenu': admin.admin_menu()}
-        ]
-        for item in menu:
-            item['has_submenu'] = item.get('submenu') is not None
-            item['is_external'] = item.get('url', '').startswith('http') and '://pennydreadfulmagic.com/' not in item['url']
-            for subitem in item.get('submenu', []):
-                subitem['is_external'] = subitem.get('url', '').startswith('http') and '://pennydreadfulmagic.com/' not in subitem['url']
-        return menu
 
     def favicon_url(self) -> str:
         return url_for('favicon', rest='.ico')
@@ -375,17 +306,8 @@ class View(BaseView):
             p.url = url_for('person', person_id=p.person_id)
             pos += 1
 
-    def commit_id(self) -> str:
-        return APP.config['commit-id']
-
-    def git_branch(self) -> str:
-        return APP.config['branch']
-
     def babel_languages(self):
         return BABEL.list_translations()
-
-    def language_icon(self):
-        return url_for('static', filename='images/language_icon.svg')
 
     def TT_HELP_TRANSLATE(self) -> str:
         return gettext('Help us translate the site into your language')

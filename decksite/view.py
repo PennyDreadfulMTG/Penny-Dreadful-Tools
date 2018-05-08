@@ -46,9 +46,6 @@ class View(BaseView):
         self.is_very_large: Optional[bool] = None
         self.show_seasons: bool = False
 
-    def home_url(self) -> str:
-        return url_for('home')
-
     def season_name(self) -> str:
         return rotation.season_name(get_season_id())
 

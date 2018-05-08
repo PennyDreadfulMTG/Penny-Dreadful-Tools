@@ -21,6 +21,8 @@ class PDFlask(Flask):
         super().register_error_handler(exceptions.NotFound, self.not_found)
         super().route('/unauthorized/')(self.unauthorized)
         super().route('/logout/')(self.logout)
+        super().route('/authenticate/')(self.authenticate)
+        super().route('/authenticate/callback/')(self.authenticate_callback)
         self.config['menu'] = []
         self.config['js_url'] = ''
         self.config['css_url'] = ''
@@ -50,6 +52,25 @@ class PDFlask(Flask):
         if bool(urllib.parse.urlparse(target).netloc):
             return redirect(target)
         return redirect(url_for(target))
+
+    def authenticate(self):
+        target = request.args.get('target')
+        authorization_url, state = oauth.setup_authentication()
+        session['oauth2_state'] = state
+        if target is not None:
+            session['target'] = target
+        return redirect(authorization_url)
+
+    def authenticate_callback(self):
+        if request.values.get('error'):
+            return redirect(url_for('unauthorized', error=request.values['error']))
+        oauth.setup_session(request.url)
+        url = session.get('target')
+        if url is None:
+            url = url_for('home')
+        session['target'] = None
+        return redirect(url)
+
 
 def log_exception(e: BaseException) -> None:
     logger.error(''.join(traceback.format_exception(type(e), e, e.__traceback__)))

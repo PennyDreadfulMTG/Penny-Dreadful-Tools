@@ -7,6 +7,9 @@ from . import template
 
 # pylint: disable=no-self-use, too-many-public-methods
 class BaseView:
+    def home_url(self) -> str:
+        return url_for('home')
+
     def template(self) -> str:
         return self.__class__.__name__.lower()
 

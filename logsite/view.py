@@ -7,14 +7,8 @@ from . import APP
 
 # pylint: disable=no-self-use, too-many-public-methods
 class View(BaseView):
-    def home_url(self):
-        return url_for('home')
-
     def js_extra_url(self):
         return None
-
-    def prepare(self):
-        pass
 
     def favicon_url(self):
         return url_for('favicon', rest='.ico')

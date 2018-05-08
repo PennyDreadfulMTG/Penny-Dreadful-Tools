@@ -345,28 +345,6 @@ def rotation_speculation():
     view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), cs.playability(), speculation=True)
     return view.page()
 
-# OAuth
-
-@APP.route('/authenticate/')
-def authenticate():
-    target = request.args.get('target')
-    authorization_url, state = oauth.setup_authentication()
-    session['oauth2_state'] = state
-    if target is not None:
-        session['target'] = target
-    return redirect(authorization_url)
-
-@APP.route('/authenticate/callback/')
-def authenticate_callback():
-    if request.values.get('error'):
-        return redirect(url_for('unauthorized', error=request.values['error']))
-    oauth.setup_session(request.url)
-    url = session.get('target')
-    if url is None:
-        url = url_for('home')
-    session['target'] = None
-    return redirect(url)
-
 # Infra
 
 @APP.route('/robots.txt')

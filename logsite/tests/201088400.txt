@@ -1,0 +1,228 @@
+PennyDreadful
+pds t8 vs ssWakizashI
+BuggedCardObserver,PennyDreadfulLegality,Tourney
+j_meka,ssWakizashI
+
+== Game 1 (607453958) ==
+[06:46:46] PDBot has started watching.
+[06:46:47] j_meka joined the game.
+[Gatherling] Event=Penny Dreadful Sundays 8.02
+[Gatherling] Round=5
+[06:46:53] ssWakizashI chooses to play first.
+[06:47:01] ssWakizashI keeps this hand.
+[06:47:01] j_meka keeps this hand.
+[06:47:01] Turn 1: ssWakizashI
+[06:47:02] ssWakizashI skips their draw step.
+[06:47:06] ssWakizashI plays [Evolving Wilds].
+[06:47:10] Turn 1: j_meka
+[06:47:12] j_meka plays [Highland Lake].
+[06:47:15] ssWakizashI activates an ability of [Evolving Wilds] ( Search your library for a basic land card, put it onto the battlefield tapped, then shuffle your ...).
+[06:47:20] Turn 2: ssWakizashI
+[06:47:23] ssWakizashI plays [Swamp].
+[06:47:26] Turn 2: j_meka
+[06:47:28] j_meka plays [Island].
+[06:47:31] j_meka casts [Quiet Speculation] targeting j_meka.
+[06:47:49] Turn 3: ssWakizashI
+[06:47:54] ssWakizashI plays [Plains].
+[06:48:00] Turn 3: j_meka
+[06:48:02] j_meka plays [Mountain].
+[06:48:05] j_meka casts [Sailor of Means].
+[06:48:08] j_meka puts triggered ability from [Sailor of Means] onto the stack (When Sailor of Means enters the battlefield, create a colorless Treasure artifact token with '{T},...).
+[06:48:09] j_meka's [Sailor of Means] creates a Treasure token.
+[06:48:13] Turn 4: ssWakizashI
+[06:48:15] ssWakizashI plays [Azorius Guildgate].
+[06:48:19] Treeek22 has started watching.
+[06:48:22] Turn 4: j_meka
+[06:48:24] j_meka plays [Mountain].
+[06:48:29] ssWakizashI is being attacked by [Sailor of Means].
+[06:48:36] Turn 5: ssWakizashI
+[06:48:38] ssWakizashI plays [Swamp].
+[06:48:52] j_meka casts [Incinerate] targeting ssWakizashI.
+[06:48:58] j_meka casts [Incinerate] targeting ssWakizashI.
+[06:49:01] Turn 5: j_meka
+[06:49:03] j_meka plays [Highland Lake].
+[06:49:09] ssWakizashI is being attacked by [Sailor of Means].
+[06:49:19] ssWakizashI casts [Azorius Charm] (Draw a card.).
+[06:49:21] ssWakizashI draws a card with [Azorius Charm].
+[06:49:33] ssWakizashI casts [Murderous Cut] targeting [Sailor of Means].
+[06:49:40] Turn 6: ssWakizashI
+[06:49:46] mandrakata has started watching.
+[06:49:51] j_meka casts [Dreamcaller Siren].
+[06:50:05] Turn 6: j_meka
+[06:50:07] j_meka plays [Island].
+[06:50:13] ssWakizashI is being attacked by [Dreamcaller Siren].
+[06:50:21] ssWakizashI casts [Utter End] targeting [Dreamcaller Siren].
+[06:50:30] j_meka casts [Cackling Counterpart] from the graveyard targeting [Dreamcaller Siren].
+[06:50:33] j_meka puts triggered ability from [Dreamcaller Siren] onto the stack (When Dreamcaller Siren enters the battlefield, if you control another Pirate, tap up to two target...).
+[06:50:38] Turn 7: ssWakizashI
+[06:50:44] ssWakizashI plays [Grand Coliseum].
+[06:50:53] ssWakizashI casts [Planar Outburst].
+[06:51:03] Turn 7: j_meka
+[06:51:07] j_meka casts [Frantic Search].
+[06:51:09] j_meka draws two cards with [Frantic Search].
+[06:51:15] j_meka discards [Mountain].
+[06:51:15] j_meka discards [Island].
+[06:51:26] j_meka casts [Goblin Dark-Dwellers].
+[06:51:29] j_meka puts triggered ability from [Goblin Dark-Dwellers] onto the stack targeting [Cackling Counterpart] (When Goblin Dark-Dwellers enters the battlefield, you may cast target instant or sorcery card with...).
+[06:51:35] j_meka casts [Cackling Counterpart] from the graveyard with [Goblin Dark-Dwellers]'s ability targeting [Goblin Dark-Dwellers].
+[06:51:38] j_meka puts triggered ability from [Goblin Dark-Dwellers] onto the stack targeting [Frantic Search] (When Goblin Dark-Dwellers enters the battlefield, you may cast target instant or sorcery card with...).
+[06:51:41] j_meka casts [Frantic Search] from the graveyard with [Goblin Dark-Dwellers]'s ability.
+[06:51:41] j_meka draws two cards with [Frantic Search].
+[06:51:45] j_meka discards [Island].
+[06:51:45] j_meka discards [Mountain].
+[06:51:50] Turn 8: ssWakizashI
+[06:51:56] ssWakizashI casts [Final Judgment].
+[06:51:58] ssWakizashI plays [Grand Coliseum].
+[06:51:59] Turn 8: j_meka
+[06:52:08] Turn 9: ssWakizashI
+[06:52:19] j_meka casts [Burst Lightning] (with kicker) targeting ssWakizashI.
+[06:52:27] ssWakizashI casts [Dissolve] targeting [Burst Lightning].
+[06:52:43] ssWakizashI puts 1 card on top of their library.
+[06:52:43] Turn 9: j_meka
+[06:52:44] j_meka casts [Sphinx of Lost Truths].
+[06:52:58] ssWakizashI casts [Dissolve] targeting [Sphinx of Lost Truths].
+[06:53:04] ssWakizashI puts 1 card on top of their library.
+[06:53:06] Turn 10: ssWakizashI
+[06:53:10] Turn 10: j_meka
+[06:53:14] j_meka casts [Strategic Planning].
+[06:53:23] j_meka puts [Mountain] and [Incinerate] into their graveyard.
+[06:53:30] Turn 11: ssWakizashI
+[06:53:38] Turn 11: j_meka
+[06:53:46] Turn 12: ssWakizashI
+[06:53:56] j_meka casts [Frantic Search].
+[06:53:59] j_meka draws two cards with [Frantic Search].
+[06:54:03] j_meka discards [Island].
+[06:54:03] j_meka discards [Twinflame].
+[06:54:05] mandrakata has stopped watching.
+[06:54:09] Turn 12: j_meka
+[06:54:11] j_meka plays [Mountain].
+[06:54:21] ssWakizashI casts [Jace's Ingenuity].
+[06:54:23] ssWakizashI draws three cards with [Jace's Ingenuity].
+[06:54:26] Turn 13: ssWakizashI
+[06:54:29] ssWakizashI plays [Azorius Guildgate].
+[06:54:52] Turn 13: j_meka
+[06:55:02] ssWakizashI discards [Akroma's Vengeance].
+[06:55:02] ssWakizashI cycles [Akroma's Vengeance].
+[06:55:06] Turn 14: ssWakizashI
+[06:55:09] ssWakizashI plays [Grand Coliseum].
+[06:55:14] Turn 14: j_meka
+[06:55:23] ssWakizashI discards [Decree of Justice].
+[06:55:23] ssWakizashI cycles [Decree of Justice].
+[06:55:23] ssWakizashI puts triggered ability from [Decree of Justice] onto the stack ( When you cycle Decree of Justice, you may pay {X}. If you do, create X 1/1 white Soldier creature...).
+[06:55:33] ssWakizashI's [Decree of Justice] creates five Soldier tokens.
+[06:55:35] Turn 15: ssWakizashI
+[06:55:38] ssWakizashI plays [Grand Coliseum].
+[06:55:43] j_meka is being attacked by [Soldier] token, [Soldier] token, [Soldier] token, [Soldier] token, and [Soldier] token.
+[06:55:54] j_meka casts [Dreamcaller Siren].
+[06:56:12] Turn 15: j_meka
+[06:56:26] ssWakizashI is being attacked by [Dreamcaller Siren].
+[06:56:30] ssWakizashI casts [Tribute to Hunger] targeting j_meka.
+[06:56:38] j_meka casts [Frantic Search].
+[06:57:07] ssWakizashI casts [Power Sink] targeting [Frantic Search]. (X is 5).
+[06:57:16] j_meka sacrifices [Dreamcaller Siren].
+[06:57:20] Turn 16: ssWakizashI
+[06:57:33] j_meka is being attacked by [Soldier] token, [Soldier] token, [Soldier] token, [Soldier] token, and [Soldier] token.
+[06:57:42] Turn 16: j_meka
+[06:57:46] j_meka plays [Island].
+[06:57:54] Turn 17: ssWakizashI
+[06:58:00] j_meka is being attacked by [Soldier] token, [Soldier] token, [Soldier] token, [Soldier] token, and [Soldier] token.
+[06:58:19] j_meka casts [Burst Lightning] (with kicker) targeting ssWakizashI.
+[06:58:24] Turn 17: j_meka
+[06:58:28] j_meka has conceded from the game.
+Winner: j_meka
+Game 1 Completed.
+
+== Game 2 (607457478) ==
+[06:59:44] PDBot has started watching.
+[06:59:54] j_meka chooses to play first.
+[06:59:57] j_meka mulligans to 6 cards.
+[07:00:03] ssWakizashI keeps this hand.
+[07:00:07] j_meka keeps this hand.
+[07:00:10] j_meka puts 1 card on the bottom of their library.
+[07:00:10] Turn 1: j_meka
+[07:00:11] j_meka skips their draw step.
+[07:00:11] j_meka plays [Mountain].
+[07:00:16] Turn 1: ssWakizashI
+[07:00:19] ssWakizashI plays [Grand Coliseum].
+[07:00:22] Turn 2: j_meka
+[07:00:23] j_meka plays [Island].
+[07:00:27] Turn 2: ssWakizashI
+[07:00:33] ssWakizashI plays [Evolving Wilds].
+[07:00:39] Turn 3: j_meka
+[07:00:41] j_meka plays [Island].
+[07:00:47] ssWakizashI activates an ability of [Evolving Wilds] ( Search your library for a basic land card, put it onto the battlefield tapped, then shuffle your ...).
+[07:00:52] Turn 3: ssWakizashI
+[07:00:54] ssWakizashI plays [Island].
+[07:01:00] Turn 4: j_meka
+[07:01:02] j_meka plays [Mountain].
+[07:01:13] ssWakizashI casts [Azorius Charm] (Draw a card.).
+[07:01:16] ssWakizashI draws a card with [Azorius Charm].
+[07:01:18] Turn 4: ssWakizashI
+[07:01:29] ssWakizashI plays [Plains].
+[07:01:42] ssWakizashI casts [Slaughter Games] targeting j_meka.
+[07:02:13] ssWakizashI names Goblin Dark-Dwellers for [Slaughter Games].
+[07:03:10] Turn 5: j_meka
+[07:03:12] j_meka plays [Island].
+[07:03:17] Turn 5: ssWakizashI
+[07:03:22] ssWakizashI plays [Evolving Wilds].
+[07:03:46] Turn 6: j_meka
+[07:03:48] j_meka plays [Mountain].
+[07:03:55] ssWakizashI activates an ability of [Evolving Wilds] ( Search your library for a basic land card, put it onto the battlefield tapped, then shuffle your ...).
+[07:04:11] Turn 6: ssWakizashI
+[07:04:13] ssWakizashI plays [Orzhov Guildgate].
+[07:04:19] Landonpeanut has started watching.
+[07:04:20] Turn 7: j_meka
+[07:04:21] j_meka plays [Highland Lake].
+[07:04:28] Turn 7: ssWakizashI
+[07:04:29] ssWakizashI plays [Azorius Guildgate].
+[07:04:37] Turn 8: j_meka
+[07:04:38] j_meka plays [Mountain].
+[07:04:46] ssWakizashI casts [Azorius Charm] (Draw a card.).
+[07:04:47] ssWakizashI draws a card with [Azorius Charm].
+[07:04:53] ssWakizashI casts [Flash of Insight]. (X is 2).
+[07:05:01] Turn 8: ssWakizashI
+[07:05:16] j_meka casts [Turnabout] targeting ssWakizashI.
+[07:05:20] ssWakizashI casts [Negate] targeting [Turnabout].
+[07:05:24] Turn 9: j_meka
+[07:05:30] j_meka casts [Sphinx of Lost Truths] (with kicker).
+[07:05:36] ssWakizashI casts [Dissolve] targeting [Sphinx of Lost Truths].
+[07:05:45] ssWakizashI puts 1 card on the bottom of their library.
+[07:05:49] Treeek22 has stopped watching.
+[07:06:06] ssWakizashI exiles [Azorius Charm], [Azorius Charm], [Negate], and [Dissolve] with with [Flash of Insight]'s ability.
+[07:06:06] ssWakizashI casts [Flash of Insight] from the graveyard. (X is 4).
+[07:06:18] Turn 9: ssWakizashI
+[07:06:30] Turn 10: j_meka
+[07:06:37] ssWakizashI discards [Decree of Justice].
+[07:06:37] ssWakizashI cycles [Decree of Justice].
+[07:06:37] ssWakizashI puts triggered ability from [Decree of Justice] onto the stack ( When you cycle Decree of Justice, you may pay {X}. If you do, create X 1/1 white Soldier creature...).
+[07:06:58] bakert99 has started watching.
+[07:07:31] ssWakizashI's [Decree of Justice] creates four Soldier tokens.
+[07:07:54] Turn 10: ssWakizashI
+[07:07:56] ssWakizashI plays [Dreadship Reef].
+[07:08:02] j_meka is being attacked by [Soldier] token, [Soldier] token, [Soldier] token, and [Soldier] token.
+[07:08:12] j_meka casts [Dreamcaller Siren].
+[07:08:32] ssWakizashI casts [Dissolve] targeting [Dreamcaller Siren].
+[07:08:39] j_meka casts [Negate] targeting [Dissolve].
+[07:08:53] Briar_moss has started watching.
+[07:08:56] ssWakizashI casts [Tribute to Hunger] targeting j_meka.
+[07:09:10] j_meka sacrifices [Dreamcaller Siren].
+[07:09:35] Turn 11: j_meka
+[07:09:39] j_meka casts [Frantic Search].
+[07:09:43] j_meka draws two cards with [Frantic Search].
+[07:09:48] j_meka discards [Twinflame].
+[07:09:48] j_meka discards [Twinflame].
+[07:10:00] Turn 11: ssWakizashI
+[07:10:10] j_meka is being attacked by [Soldier] token, [Soldier] token, [Soldier] token, and [Soldier] token.
+[07:10:18] Turn 12: j_meka
+[07:10:28] ssWakizashI casts [Jace's Ingenuity].
+[07:10:34] ssWakizashI draws three cards with [Jace's Ingenuity].
+[07:10:34] Turn 12: ssWakizashI
+[07:10:37] MrSad has started watching.
+[07:10:37] ssWakizashI plays [Swamp].
+[07:10:43] j_meka is being attacked by [Soldier] token, [Soldier] token, [Soldier] token, and [Soldier] token.
+[07:11:05] ssWakizashI discards [Azorius Guildgate].
+[07:11:05] Turn 13: j_meka
+[07:11:08] j_meka has conceded from the game.
+Winner: ssWakizashI
+Game 2 Completed.
+

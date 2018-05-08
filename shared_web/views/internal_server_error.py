@@ -1,15 +1,14 @@
 import random
 
-from decksite.view import View
-from magic import oracle
+from .error import ErrorView
 
 
 # pylint: disable=no-self-use
-class InternalServerError(View):
-    def __init__(self, exception) -> None:
+class InternalServerError(ErrorView):
+    def __init__(self, exception: Exception) -> None:
         super().__init__()
         self.exception = str(exception)
-        self.card = random.choice(oracle.load_cards(['Erratic Explosion', 'Curse of Chaos', 'Anarchy']))
+        self.card = super().make_card(random.choice(['Erratic Explosion', 'Curse of Chaos', 'Anarchy']))
         self.cards = [self.card]
 
     def message(self):

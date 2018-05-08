@@ -1,0 +1,115 @@
+PennyDreadful
+Penny Dreadful League
+BuggedCardObserver, LeagueObserver, PennyDreadfulLegality
+bakert99,littlefield
+
+[League] Gruul Aggro by bakert99 (6716) vs Escape From Trogdor by littlefield (6708)
+== Game 1 (572960640) ==
+PDBot has started watching.
+bakert99 chooses to play first.
+bakert99 keeps this hand.
+littlefield keeps this hand.
+bakert99 skips their draw step.
+bakert99 plays [Mountain].
+bakert99 casts [Rakdos Cackler].
+Turn 1: littlefield.
+littlefield plays [Plains].
+littlefield casts [Favored Hoplite].
+Turn 2: bakert99.
+littlefield is being attacked by [Rakdos Cackler].
+bakert99 plays [Forest].
+bakert99 casts [Flinthoof Boar].
+Turn 2: littlefield.
+littlefield plays [Plains].
+bakert99 is being attacked by [Favored Hoplite].
+littlefield casts [Seeker of the Way].
+Turn 3: bakert99.
+littlefield is being attacked by [Rakdos Cackler].
+bakert99 plays [Mountain Valley].
+Turn 3: littlefield.
+littlefield plays [Plains].
+littlefield casts [Phalanx Leader].
+littlefield casts [Cartouche of Solidarity] targeting [Phalanx Leader].
+littlefield puts triggered ability from [Seeker of the Way] onto the stack (Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)).
+littlefield puts triggered ability from [Seeker of the Way] onto the stack (Whenever you cast a noncreature spell, Seeker of the Way gains lifelink until end of turn.).
+littlefield puts triggered ability from [Phalanx Leader] onto the stack (Whenever you cast a spell that targets Phalanx Leader, put a +1/+1 counter on each creature you co...).
+littlefield puts triggered ability from [Cartouche of Solidarity] onto the stack (When Cartouche of Solidarity enters the battlefield, create a 1/1 white Warrior creature token wit...).
+littlefield's [Cartouche of Solidarity] creates a Warrior token.
+bakert99 is being attacked by [Seeker of the Way].
+Turn 4: bakert99.
+bakert99 plays [Temple of Abandon].
+bakert99 puts triggered ability from [Temple of Abandon] onto the stack (When Temple of Abandon enters the battlefield, scry 1.).
+bakert99 put a card on the bottom of the library.
+Turn 4: littlefield.
+littlefield plays [Plains].
+littlefield casts [Defiant Strike] targeting [Phalanx Leader].
+littlefield puts triggered ability from [Seeker of the Way] onto the stack (Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)).
+littlefield puts triggered ability from [Seeker of the Way] onto the stack (Whenever you cast a noncreature spell, Seeker of the Way gains lifelink until end of turn.).
+littlefield puts triggered ability from [Phalanx Leader] onto the stack (Whenever you cast a spell that targets Phalanx Leader, put a +1/+1 counter on each creature you co...).
+bakert99 activates an ability of [Mountain Valley] ( Search your library for a Mountain or Forest card and put it onto the battlefield. Then shuffle y...).
+littlefield draws a card with [Defiant Strike].
+littlefield casts [Gods Willing] targeting [Phalanx Leader].
+littlefield puts triggered ability from [Seeker of the Way] onto the stack (Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)).
+littlefield puts triggered ability from [Seeker of the Way] onto the stack (Whenever you cast a noncreature spell, Seeker of the Way gains lifelink until end of turn.).
+littlefield puts triggered ability from [Phalanx Leader] onto the stack (Whenever you cast a spell that targets Phalanx Leader, put a +1/+1 counter on each creature you co...).
+bakert99 has conceded from the game.
+Winner: littlefield
+Game 1 Completed.
+== Game 2 (572961394) ==
+PDBot has started watching.
+bakert99 put a card on top of bakert99's library.
+bakert99 casts [Kessig Prowler].
+Turn 2: littlefield.
+littlefield plays [Plains].
+bakert99 is being attacked by [Favored Hoplite].
+littlefield casts [Seeker of the Way].
+Turn 3: bakert99.
+bakert99 plays [Mountain].
+littlefield is being attacked by [Kessig Prowler].
+bakert99 casts [Hanweir Garrison].
+Turn 3: littlefield.
+littlefield plays [Plains].
+littlefield casts [Favored Hoplite].
+littlefield casts [Gryff's Boon] targeting [Favored Hoplite].
+littlefield puts triggered ability from [Seeker of the Way] onto the stack (Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)).
+littlefield puts triggered ability from [Seeker of the Way] onto the stack (Whenever you cast a noncreature spell, Seeker of the Way gains lifelink until end of turn.).
+littlefield puts triggered ability from [Favored Hoplite] onto the stack (Whenever you cast a spell that targets Favored Hoplite, put a +1/+1 counter on Favored Hoplite and...).
+bakert99 is being attacked by [Seeker of the Way] and [Favored Hoplite].
+Turn 4: bakert99.
+littlefield is being attacked by [Hanweir Garrison] and [Kessig Prowler].
+bakert99 puts triggered ability from [Hanweir Garrison] onto the stack (Whenever Hanweir Garrison attacks, create 2 1/1 red Human creature tokens that are tapped and atta...).
+bakert99's [Hanweir Garrison] creates two Human tokens.
+bakert99 puts [Human] token onto the battlefield attacking littlefield
+bakert99 puts [Human] token onto the battlefield attacking littlefield
+littlefield casts [Defiant Strike] targeting [Favored Hoplite].
+littlefield puts triggered ability from [Seeker of the Way] onto the stack (Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)).
+littlefield puts triggered ability from [Seeker of the Way] onto the stack (Whenever you cast a noncreature spell, Seeker of the Way gains lifelink until end of turn.).
+littlefield puts triggered ability from [Favored Hoplite] onto the stack (Whenever you cast a spell that targets Favored Hoplite, put a +1/+1 counter on Favored Hoplite and...).
+littlefield draws a card with [Defiant Strike].
+[Favored Hoplite] blocks [Hanweir Garrison].
+2 damage caused by [Hanweir Garrison] to [Favored Hoplite] is prevented.
+bakert99 casts [Hanweir Garrison].
+bakert99 plays [Mountain Valley].
+Turn 4: littlefield.
+littlefield plays [Plains].
+littlefield casts [Launch the Fleet] targeting [Favored Hoplite], [Seeker of the Way], and [Favored Hoplite].
+littlefield puts triggered ability from [Seeker of the Way] onto the stack (Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)).
+littlefield puts triggered ability from [Seeker of the Way] onto the stack (Whenever you cast a noncreature spell, Seeker of the Way gains lifelink until end of turn.).
+littlefield puts triggered ability from [Favored Hoplite] onto the stack (Whenever you cast a spell that targets Favored Hoplite, put a +1/+1 counter on Favored Hoplite and...).
+littlefield puts triggered ability from [Favored Hoplite] onto the stack (Whenever you cast a spell that targets Favored Hoplite, put a +1/+1 counter on Favored Hoplite and...).
+bakert99 is being attacked by [Favored Hoplite], [Seeker of the Way], and [Favored Hoplite].
+littlefield puts triggered ability from [Favored Hoplite] onto the stack (Whenever this creature attacks, create a 1/1 white Soldier creature token that's tapped and attack...).
+littlefield puts triggered ability from [Seeker of the Way] onto the stack (Whenever this creature attacks, create a 1/1 white Soldier creature token that's tapped and attack...).
+littlefield puts triggered ability from [Favored Hoplite] onto the stack (Whenever this creature attacks, create a 1/1 white Soldier creature token that's tapped and attack...).
+littlefield's [Favored Hoplite] creates a Soldier token.
+littlefield puts [Soldier] token onto the battlefield attacking bakert99
+littlefield's [Seeker of the Way] creates a Soldier token.
+littlefield puts [Soldier] token onto the battlefield attacking bakert99
+littlefield's [Favored Hoplite] creates a Soldier token.
+littlefield puts [Soldier] token onto the battlefield attacking bakert99
+[CHAT] bakert99: this gruul deck is surprisngly powerful and even has some late game
+[CHAT] bakert99: but this matchup feels utterly hopeless
+Winner: littlefield
+Game 2 Completed.
+Match Winner: littlefield: 2–0
+littlefield has left the game.

@@ -111,4 +111,3 @@ def make_final_list() -> None:
     h.write(''.join(final))
     h.close()
     print('Generated legal_cards.txt.  {0}/{1} cards.'.format(len(passed), len(scores)))
-

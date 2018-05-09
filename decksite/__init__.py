@@ -4,7 +4,6 @@ import subprocess
 from typing import Dict, List, Tuple, Union
 
 from flask import Blueprint, g, url_for
-from flask_babel import Babel
 from flask_babel import gettext, ngettext
 
 from magic import multiverse, oracle, rotation
@@ -14,7 +13,6 @@ from shared_web.flask_app import PDFlask
 
 APP = PDFlask(__name__)
 APP.logger.setLevel(logging.WARN) # pylint: disable=no-member,no-name-in-module
-BABEL = Babel(APP)
 SEASONS = Blueprint('seasons', __name__, url_prefix='/seasons/<season_id>')
 
 def get_season_id() -> int:
@@ -40,7 +38,7 @@ except DatabaseException as e:
     multiverse.init()
     oracle.init()
 
-from . import api as API, admin, localization # pylint: disable=wrong-import-position, unused-import
+from . import api as API, admin # pylint: disable=wrong-import-position, unused-import
 from .data import deck # pylint: disable=wrong-import-position
 
 def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:

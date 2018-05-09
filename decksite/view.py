@@ -10,7 +10,7 @@ from flask_babel import gettext, ngettext
 from mypy_extensions import TypedDict
 from werkzeug.routing import BuildError
 
-from decksite import BABEL, get_season_id
+from decksite import APP, get_season_id
 from decksite.data import archetype, deck
 from magic import card, oracle, rotation, tournaments
 from shared import dtutil
@@ -304,7 +304,7 @@ class View(BaseView):
             pos += 1
 
     def babel_languages(self):
-        return BABEL.list_translations()
+        return APP.babel.list_translations()
 
     def TT_HELP_TRANSLATE(self) -> str:
         return gettext('Help us translate the site into your language')

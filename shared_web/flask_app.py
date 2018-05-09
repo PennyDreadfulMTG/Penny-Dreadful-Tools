@@ -3,13 +3,14 @@ import urllib
 from typing import Optional, Tuple
 
 from flask import Flask, redirect, request, session, url_for
+from flask_babel import Babel
 from github.GithubException import GithubException
 from werkzeug import exceptions
 
 from shared import repo
 from shared.pd_exception import DoesNotExistException
 
-from . import logger, oauth
+from . import localization, logger, oauth
 from .views import InternalServerError, NotFound, Unauthorized
 
 
@@ -27,6 +28,8 @@ class PDFlask(Flask):
         self.config['menu'] = []
         self.config['js_url'] = ''
         self.config['css_url'] = ''
+        self.babel = Babel(self)
+        localization.init(self.babel)
 
     def not_found(self, e: Exception) -> Tuple[str, int]:
         log_exception(e)

@@ -2,7 +2,6 @@ import subprocess
 from typing import Dict, List, Union
 
 from flask import url_for
-from flask_babel import Babel
 from sqlalchemy import create_engine
 from sqlalchemy_utils import create_database, database_exists
 
@@ -11,10 +10,8 @@ from shared import configuration
 from shared_web.flask_app import PDFlask
 
 APP = PDFlask(__name__)
-BABEL = Babel(APP)
 
-
-from . import db, main, stats, api, localization, views # pylint: disable=wrong-import-position, unused-import
+from . import db, main, stats, api, views # pylint: disable=wrong-import-position, unused-import
 
 def __create_schema() -> None:
     engine = create_engine(APP.config['SQLALCHEMY_DATABASE_URI'])

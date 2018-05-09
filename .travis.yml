@@ -18,5 +18,5 @@ script:
   - python dev.py mypy
   - isort --check-only
 notifications:
-    webhooks: https://www.travisbuddy.com/
+    webhooks: https://www.travisbuddy.com/?insertMode=update
     on_success: never

@@ -19,7 +19,7 @@ class PDFlask(Flask):
         super().__init__(import_name)
         super().register_error_handler(DoesNotExistException, self.not_found)
         super().register_error_handler(exceptions.NotFound, self.not_found)
-        super().register_error_handler(exceptions.InternalServerError)(self.internal_server_error)
+        super().register_error_handler(exceptions.InternalServerError, self.internal_server_error)
         super().route('/unauthorized/')(self.unauthorized)
         super().route('/logout/')(self.logout)
         super().route('/authenticate/')(self.authenticate)

@@ -10,7 +10,7 @@ Flask-Migrate
 ftfy==5.3.0
 google-api-python-client==1.6.7
 git+https://github.com/PennyDreadfulMTG/googler.git
-inflect==0.2.5
+inflect==0.3.1
 isort==4.3.4
 matplotlib==2.2.2
 markdown==2.6.11

@@ -2,7 +2,7 @@ import pytest
 import vcr
 
 from decksite.main import APP
-from decksite.scrapers import gatherling, tappedout, mtggoldfish
+from decksite.scrapers import gatherling, mtggoldfish, tappedout
 
 
 @pytest.mark.functional

@@ -12,7 +12,6 @@ from shared import configuration
 from shared.pd_exception import InvalidDataException
 from shared_web import logger
 
-
 DeckType = Dict[str, Any]
 
 def scrape() -> None:

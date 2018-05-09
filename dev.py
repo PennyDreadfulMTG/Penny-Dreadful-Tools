@@ -10,11 +10,15 @@ def run() -> None:
     if cmd in ('lint', 'pylint'):
         lint()
 
-    if cmd in ('types', 'mypy'):
+    elif cmd in ('types', 'mypy'):
         mypy()
 
-    if cmd in ('test', 'tests', 'pytest'):
+    elif cmd in ('test', 'tests', 'pytest'):
         tests()
+
+    else:
+        print('Unrecognised command {cmd}.'.format(cmd=cmd))
+        exit(1)
 
 def lint() -> None:
     args = ['--rcfile=.pylintrc', # Load rcfile first.

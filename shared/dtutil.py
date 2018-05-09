@@ -76,8 +76,8 @@ def day2ordinal(m: Match) -> str:
     p = inflect.engine()
     return p.ordinal(int(m.group(1)))
 
-IntervalsType = Dict[str, Tuple[Optional[int], int]] # pylint: disable=invalid-name
-ResultsType = List[Tuple[int, str]] # pylint: disable=invalid-name
+IntervalsType = Dict[str, Tuple[Optional[int], int]]
+ResultsType = List[Tuple[int, str]]
 
 def display_time(seconds: float, granularity: int = 2) -> str:
     intervals: IntervalsType = OrderedDict()

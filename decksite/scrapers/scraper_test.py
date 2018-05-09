@@ -2,7 +2,7 @@ import pytest
 import vcr
 
 from decksite.main import APP
-from decksite.scrapers import gatherling, tappedout
+from decksite.scrapers import gatherling, mtggoldfish, tappedout
 
 
 @pytest.mark.functional
@@ -27,3 +27,10 @@ def test_gatherling() -> None:
 def test_manual_tappedout() -> None:
     with APP.app_context():
         tappedout.scrape_url('https://tappedout.net/mtg-decks/60-island/') # Best deck
+
+@pytest.mark.functional
+@pytest.mark.goldfish
+@vcr.use_cassette
+def test_goldfish() -> None:
+    with APP.app_context():
+        mtggoldfish.scrape(1)

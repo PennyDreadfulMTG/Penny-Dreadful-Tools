@@ -10,7 +10,7 @@ from magic.card import Card
 from shared import configuration, dtutil
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
-SetInfo = TypedDict('SetInfo', { # pylint: disable=invalid-name
+SetInfoType = TypedDict('SetInfoType', {
     'name': str,
     'block': Optional[str],
     'code': str,
@@ -27,11 +27,11 @@ SEASONS = [
     'RIX', 'DOM', 'M19', #2018
     ]
 
-def init() -> List[SetInfo]:
+def init() -> List[SetInfoType]:
     info = fetcher.whatsinstandard()
     if info['deprecated']:
         print('Current whatsinstandard API version is DEPRECATED.')
-    set_info = cast(List[SetInfo], info['sets'])
+    set_info = cast(List[SetInfoType], info['sets'])
     return [postprocess(release) for release in set_info]
 
 def current_season_code() -> str:
@@ -53,10 +53,10 @@ def last_rotation() -> datetime.datetime:
 def next_rotation() -> datetime.datetime:
     return next_rotation_ex()['enter_date_dt']
 
-def last_rotation_ex() -> SetInfo:
+def last_rotation_ex() -> SetInfoType:
     return max([s for s in sets() if s['enter_date_dt'] < dtutil.now()], key=lambda s: s['enter_date_dt'])
 
-def next_rotation_ex() -> SetInfo:
+def next_rotation_ex() -> SetInfoType:
     return min([s for s in sets() if s['enter_date_dt'] > dtutil.now()], key=lambda s: s['enter_date_dt'])
 
 def next_supplemental() -> datetime.datetime:
@@ -68,7 +68,7 @@ def next_supplemental() -> datetime.datetime:
 def this_supplemental() -> datetime.datetime:
     return last_rotation() + datetime.timedelta(weeks=3)
 
-def postprocess(setinfo: SetInfo) -> SetInfo:
+def postprocess(setinfo: SetInfoType) -> SetInfoType:
     setinfo['enter_date_dt'] = dtutil.parse(setinfo['enter_date'], '%Y-%m-%dT%H:%M:%S.%f', dtutil.WOTC_TZ)
     if setinfo['code'] == 'DOM': # !quality
         setinfo['mtgo_code'] = 'DAR'
@@ -96,8 +96,8 @@ def text() -> str:
         return 'The supplemental rotation is in {sdiff} (The next full rotation is in {diff})'.format(diff=dtutil.display_time(diff.total_seconds()), sdiff=dtutil.display_time(sdiff.total_seconds()))
     return 'The next rotation is in {diff}'.format(diff=dtutil.display_time(diff.total_seconds()))
 
-__SETS: List[SetInfo] = []
-def sets() -> List[SetInfo]:
+__SETS: List[SetInfoType] = []
+def sets() -> List[SetInfoType]:
     if not __SETS:
         __SETS.extend(init())
     return __SETS

@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple
 
 from magic import card, multiverse
 from magic.database import db
-from shared.pd_exception import InvalidDataException, DatabaseException
+from shared.pd_exception import DatabaseException, InvalidDataException
 
 PriceList = List[Tuple[str, str, str]] # pylint: disable=invalid-name
 

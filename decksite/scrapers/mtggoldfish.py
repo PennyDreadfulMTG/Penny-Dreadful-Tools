@@ -28,7 +28,10 @@ def scrape(limit: int = 255) -> None:
             d.identifier = re.findall(r'/deck/(\d+)#online', a.get('href'))[0]
             d.url = 'https://www.mtggoldfish.com/deck/{identifier}#online'.format(identifier=d.identifier)
             d.name = a.contents[0].strip()
-            d.mtggoldfish_username = raw_deck.select_one('div.deck-author').contents[0].strip()
+            d.mtggoldfish_username = raw_deck.select_one('div.deck-tile-author').contents[0].strip()
+            remove_by = re.match(r'^(by )?(.*)$', d.mtggoldfish_username)
+            if remove_by:
+                d.mtggoldfish_username = remove_by.group(2)
             d.created_date = scrape_created_date(d)
             time.sleep(1)
             d.cards = scrape_decklist(d)

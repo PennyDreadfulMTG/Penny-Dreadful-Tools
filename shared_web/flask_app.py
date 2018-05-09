@@ -10,7 +10,7 @@ from werkzeug import exceptions
 from shared import repo
 from shared.pd_exception import DoesNotExistException
 
-from . import logger, oauth, localization
+from . import localization, logger, oauth
 from .views import InternalServerError, NotFound, Unauthorized
 
 

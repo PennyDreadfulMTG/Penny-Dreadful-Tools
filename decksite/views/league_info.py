@@ -5,6 +5,7 @@ from flask import url_for
 from decksite import league
 from decksite.view import View
 
+
 # pylint: disable=no-self-use
 class LeagueInfo(View):
     def __init__(self) -> None:

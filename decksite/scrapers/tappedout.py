@@ -36,36 +36,11 @@ def fetch_deck_details(raw_deck: DeckType) -> DeckType:
 
 def set_values(raw_deck: DeckType) -> DeckType:
     raw_deck = translation.translate(translation.TAPPEDOUT, raw_deck)
-    if 'inventory' in raw_deck:
-        raw_deck['cards'] = parse_inventory(raw_deck['inventory'])
-    else:
-        raw_decklist = fetcher_internal.fetch('{base_url}?fmt=txt'.format(base_url=raw_deck['url']))
-        raw_deck['cards'] = decklist.parse(raw_decklist)
+    raw_decklist = fetcher_internal.fetch('{base_url}?fmt=txt'.format(base_url=raw_deck['url']))
+    raw_deck['cards'] = decklist.parse(raw_decklist)
     raw_deck['source'] = 'Tapped Out'
     raw_deck['identifier'] = raw_deck['url']
     return raw_deck
-
-def parse_inventory(inventory: List[List[Any]]) -> decklist.DecklistType:
-    d: decklist.DecklistType = {'maindeck': {}, 'sideboard': {}}
-    for name, board in inventory:
-        # Decklists can contain editions. eg: Island (INV)
-        # We can't handle these right now.
-        removeset = re.match(r'([^\(]+)(\(\w\w\w\))?', name)
-        if removeset is not None:
-            name = removeset.group(1)
-        # Same with comments
-        removecomments = re.match(r'(.*?)#', name)
-        if removecomments is not None:
-            name = removecomments.group(1)
-        # Same with foil indicators
-        removefoil = re.match(r'(.*?) \*F\*', name)
-        if removefoil is not None:
-            name = removefoil.group(1)
-        if board['b'] == 'main':
-            d['maindeck'][name] = board['qty']
-        elif board['b'] == 'side':
-            d['sideboard'][name] = board['qty']
-    return d
 
 def is_authorised() -> bool:
     return fetcher_internal.SESSION.cookies.get('tapped') is not None

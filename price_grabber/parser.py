@@ -7,13 +7,12 @@ from magic import card, multiverse
 from magic.database import db
 from shared.pd_exception import DatabaseException, InvalidDataException
 
-PriceList = List[Tuple[str, str, str]] # pylint: disable=invalid-name
-
+PriceListType = List[Tuple[str, str, str]]
 
 CARDS: Dict[str, str] = {}
 
 
-def parse_cardhoarder_prices(s: str) -> PriceList:
+def parse_cardhoarder_prices(s: str) -> PriceListType:
     details = []
     for line in s.splitlines()[2:]: # Skipping date and header line.
         if line.count('\t') != 6:
@@ -25,7 +24,7 @@ def parse_cardhoarder_prices(s: str) -> PriceList:
                 details.append((name, p, mtgo_set))
     return [(name_lookup(name), html.unescape(p.strip()), mtgo_set) for name, p, mtgo_set in details if name_lookup(name) is not None]
 
-def parse_mtgotraders_prices(s: str) -> PriceList:
+def parse_mtgotraders_prices(s: str) -> PriceListType:
     details = []
     for line in s.splitlines():
         if line.count('|') != 7:

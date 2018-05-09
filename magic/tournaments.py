@@ -13,8 +13,7 @@ if TYPE_CHECKING:
     from decksite.data import Deck # pylint: disable=unused-import
 
 
-# pylint: disable=invalid-name
-TournamentDate = Tuple[str, datetime.datetime]
+TournamentDateType = Tuple[str, datetime.datetime]
 
 class TimeDirection(Enum):
     BEFORE = 1
@@ -38,7 +37,7 @@ def tournament_info(time_direction: TimeDirection, units: int = 2) -> Dict[str, 
         'near': near
     }
 
-def get_nearest_tournament(time_direction: TimeDirection = TimeDirection.AFTER) -> TournamentDate:
+def get_nearest_tournament(time_direction: TimeDirection = TimeDirection.AFTER) -> TournamentDateType:
     start = dtutil.now(dtutil.GATHERLING_TZ)
     if time_direction == TimeDirection.AFTER:
         index = 0
@@ -49,7 +48,7 @@ def get_nearest_tournament(time_direction: TimeDirection = TimeDirection.AFTER) 
     dates = get_all_next_tournament_dates(start, index=index)
     return sorted(dates, key=lambda t: t[1])[index]
 
-def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> List[TournamentDate]:
+def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> List[TournamentDateType]:
     apac_start = start.astimezone(tz=dtutil.APAC_SERIES_TZ)
     until = start + datetime.timedelta(days=7)
     pdsat_time = ('Saturday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index])

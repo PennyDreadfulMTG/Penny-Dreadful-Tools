@@ -12,9 +12,9 @@ from shared.pd_exception import InvalidDataException
 from shared_web import logger
 
 
-def scrape() -> None:
+def scrape(limit: int = 255) -> None:
     page = 1
-    while True:
+    while page <= limit:
         time.sleep(0.1)
         url = 'https://www.mtggoldfish.com/deck/custom/penny_dreadful?page={n}#online'.format(n=page)
         soup = BeautifulSoup(fetcher.internal.fetch(url, character_encoding='utf-8'), 'html.parser')
@@ -53,6 +53,6 @@ def scrape_created_date(d: deck.Deck) -> int:
     date_s = re.findall(r'([A-Z][a-z][a-z] \d+, \d\d\d\d)', description)[0]
     return dtutil.parse_to_ts(date_s, '%b %d, %Y', dtutil.MTGGOLDFISH_TZ)
 
-def scrape_decklist(d: deck.Deck) -> decklist.Decklist:
+def scrape_decklist(d: deck.Deck) -> decklist.DecklistType:
     url = 'https://www.mtggoldfish.com/deck/download/{identifier}'.format(identifier=d.identifier)
     return decklist.parse(fetcher.internal.fetch(url))

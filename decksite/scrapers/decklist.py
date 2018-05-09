@@ -8,8 +8,8 @@ from decksite.data.deck import Deck
 from magic import oracle
 from shared.pd_exception import InvalidDataException
 
-Section = Dict[str, int] # pylint: disable=invalid-name
-Decklist = Dict[str, Section] # pylint: disable=invalid-name
+SectionType = Dict[str, int]
+DecklistType = Dict[str, SectionType]
 
 def parse_line(line: str) -> Tuple[int, str]:
     match = re.match(r'(\d+)\s+(.*)', line)
@@ -19,7 +19,7 @@ def parse_line(line: str) -> Tuple[int, str]:
         n, name = match.groups()
         return (int(n), name)
 
-def parse_chunk(chunk: str, section: Section) -> None:
+def parse_chunk(chunk: str, section: SectionType) -> None:
     for line in chunk.splitlines():
         if line.lower().strip() == 'sideboard':
             continue
@@ -27,7 +27,7 @@ def parse_chunk(chunk: str, section: Section) -> None:
         section[name] = int(n) + section.get(name, 0)
 
 # Read a text decklist into an intermediate dict form.
-def parse(s: str) -> Decklist:
+def parse(s: str) -> DecklistType:
     s = s.lstrip().rstrip()
     maindeck: Dict[str, Any] = {}
     sideboard: Dict[str, Any] = {}
@@ -62,8 +62,8 @@ def parse(s: str) -> Decklist:
 
 
 # Parse a deck in the Magic Online XML .dek format or raise an InvalidDataException.
-def parse_xml(s: str) -> Decklist:
-    d: Decklist = {'maindeck': {}, 'sideboard': {}}
+def parse_xml(s: str) -> DecklistType:
+    d: DecklistType = {'maindeck': {}, 'sideboard': {}}
     try:
         doc = untangle.parse(s)
         for c in doc.Deck.Cards:
@@ -74,8 +74,8 @@ def parse_xml(s: str) -> Decklist:
         raise InvalidDataException(e)
 
 # Load the cards in the intermediate dict form.
-def vivify(decklist: Decklist) -> Deck:
-    validated: Decklist = {'maindeck': {}, 'sideboard': {}}
+def vivify(decklist: DecklistType) -> Deck:
+    validated: DecklistType = {'maindeck': {}, 'sideboard': {}}
     invalid_names = set()
     for section in ['maindeck', 'sideboard']:
         for name, n in decklist[section].items():

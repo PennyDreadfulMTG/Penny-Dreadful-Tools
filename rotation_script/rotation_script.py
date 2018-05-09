@@ -7,7 +7,7 @@ from typing import Dict, List, Set
 import ftfy
 
 from magic import fetcher, fetcher_internal, rotation
-from price_grabber.parser import (PriceList, parse_cardhoarder_prices,
+from price_grabber.parser import (PriceListType, parse_cardhoarder_prices,
                                   parse_mtgotraders_prices)
 from shared import configuration, dtutil, text
 
@@ -50,7 +50,7 @@ def run() -> None:
     if run_number == TOTAL_RUNS:
         make_final_list()
 
-def process(all_prices: Dict[str, PriceList]) -> int:
+def process(all_prices: Dict[str, PriceListType]) -> int:
     seen_sets: Set[str] = set()
     used_sets: Set[str] = set()
 

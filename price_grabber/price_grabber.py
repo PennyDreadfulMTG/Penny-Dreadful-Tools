@@ -38,7 +38,7 @@ def fetch() -> None:
     store(min(timestamps), all_prices)
     cleanup()
 
-def store(timestamp: float, all_prices: Dict[str, parser.PriceList]) -> None:
+def store(timestamp: float, all_prices: Dict[str, parser.PriceListType]) -> None:
     DATABASE.begin()
     lows: Dict[str, int] = {}
     for code in all_prices:

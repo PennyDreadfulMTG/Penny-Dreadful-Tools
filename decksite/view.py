@@ -20,7 +20,7 @@ from shared_web.base_view import BaseView
 # pylint: disable=cyclic-import,unused-import
 if TYPE_CHECKING:
     from decksite.data.deck import Deck
-SeasonInfo = TypedDict('SeasonInfo', { # pylint: disable=invalid-name
+SeasonInfoDescription = TypedDict('SeasonInfoDescription', {
     'name': str,
     'code': str,
     'code_lower': str,
@@ -52,8 +52,8 @@ class View(BaseView):
     def season_code_lower(self) -> str:
         return rotation.season_code(get_season_id()).lower()
 
-    def all_seasons(self) -> List[SeasonInfo]:
-        seasons: List[SeasonInfo] = [{
+    def all_seasons(self) -> List[SeasonInfoDescription]:
+        seasons: List[SeasonInfoDescription] = [{
             'name': 'All Time',
             'code': 'all',
             'code_lower': 'all',

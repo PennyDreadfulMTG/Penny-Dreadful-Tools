@@ -21,7 +21,7 @@ class LeagueInfo(View):
         return 'League'
 
     def discord_url(self):
-        return 'https://discord.gg/Yekrz3s'
+        return 'https://discord.gg/Yekrz3s' # Invite directly into #league channel
 
 def suffix(d: int) -> str:
     return 'th' if 11 <= d <= 13 else {1:'st', 2:'nd', 3:'rd'}.get(d % 10, 'th')

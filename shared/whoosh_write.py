@@ -4,7 +4,7 @@ from typing import List
 from whoosh.fields import NUMERIC, STORED, TEXT, Schema
 from whoosh.index import create_in, open_dir
 
-from magic.card import Card
+from shared.models.card import Card
 from shared.whoosh_constants import WhooshConstants
 
 

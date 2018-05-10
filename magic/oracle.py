@@ -3,13 +3,14 @@ from typing import Collection, Dict, List, Optional
 from magic import card, fetcher, mana, multiverse, rotation
 from magic.database import db
 from shared.database import sqlescape
+from shared.models.card import Card
 from shared.pd_exception import (InvalidArgumentException,
                                  InvalidDataException, TooFewItemsException)
 
 # Primary public interface to the magic package. Call `oracle.init()` after setting up application context and before using any methods.
 
 LEGAL_CARDS: List[str] = []
-CARDS_BY_NAME: Dict[str, card.Card] = {}
+CARDS_BY_NAME: Dict[str, Card] = {}
 
 def init() -> None:
     if len(CARDS_BY_NAME) == 0:
@@ -26,10 +27,10 @@ def valid_name(name: str) -> str:
                 return k
     raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
 
-def load_card(name: str) -> card.Card:
+def load_card(name: str) -> Card:
     return CARDS_BY_NAME.get(name, load_cards([name])[0])
 
-def load_cards(names: Collection[str] = None, where: Optional[str] = None) -> List[card.Card]:
+def load_cards(names: Collection[str] = None, where: Optional[str] = None) -> List[Card]:
     if names:
         setnames = set(names)
     else:
@@ -45,15 +46,15 @@ def load_cards(names: Collection[str] = None, where: Optional[str] = None) -> Li
     if setnames and len(setnames) != len(rs):
         missing = setnames.symmetric_difference([r['name'] for r in rs])
         raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`.  missing=`{missing}`'.format(namelen=len(setnames), rslen=len(rs), names=setnames, missing=missing))
-    return [card.Card(r) for r in rs]
+    return [Card(r) for r in rs]
 
-def cards_by_name() -> Dict[str, card.Card]:
+def cards_by_name() -> Dict[str, Card]:
     return CARDS_BY_NAME
 
-def bugged_cards() -> List[card.Card]:
+def bugged_cards() -> List[Card]:
     sql = multiverse.cached_base_query('bugs IS NOT NULL')
     rs = db().execute(sql)
-    return [card.Card(r) for r in rs]
+    return [Card(r) for r in rs]
 
 def legal_cards(force: bool = False) -> List[str]:
     if len(LEGAL_CARDS) == 0 or force:
@@ -66,7 +67,7 @@ def legal_cards(force: bool = False) -> List[str]:
             LEGAL_CARDS.append(name)
     return LEGAL_CARDS
 
-def get_printings(generalized_card: card.Card) -> List[card.Printing]:
+def get_printings(generalized_card: Card) -> List[card.Printing]:
     sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code' \
         + ' FROM printing AS p' \
         + ' LEFT OUTER JOIN `set` AS s ON p.set_id = s.id' \
@@ -74,7 +75,7 @@ def get_printings(generalized_card: card.Card) -> List[card.Printing]:
     rs = db().execute(sql, [generalized_card.id])
     return [card.Printing(r) for r in rs]
 
-def deck_sort(c: card.Card) -> str:
+def deck_sort(c: Card) -> str:
     s = ''
     if c.is_creature():
         s += 'A'
@@ -161,7 +162,7 @@ def query_diff_formats(f1, f2):
     """.format(format1=f1, format2=f2)
 
     rs = db().execute(multiverse.cached_base_query(where=where))
-    out = [card.Card(r) for r in rs]
+    out = [Card(r) for r in rs]
     return sorted(out, key=lambda card: card['name'])
 
 def if_todays_prices(out=True):
@@ -182,5 +183,5 @@ def if_todays_prices(out=True):
     """.format(not_clause=not_clause, format=current_format, compare=compare, layouts=', '.join([sqlescape(k) for k, v in multiverse.layouts().items() if v]))
 
     rs = db().execute(multiverse.cached_base_query(where=where))
-    out = [card.Card(r) for r in rs]
+    out = [Card(r) for r in rs]
     return sorted(out, key=lambda card: card['name'])

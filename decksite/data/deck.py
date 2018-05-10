@@ -7,10 +7,11 @@ from decksite import deck_name
 from decksite.data import guarantee, query
 from decksite.data.top import Top
 from decksite.database import db
-from magic import card, legality, mana, oracle, rotation
+from magic import legality, mana, oracle, rotation
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
+from shared.models.card import Card
 from shared.pd_exception import InvalidDataException
 
 
@@ -22,8 +23,8 @@ class Deck(Container):
             self[k] = params[k]
         self.sorted = False
 
-    def all_cards(self) -> List[card.Card]:
-        cards: List[card.Card] = []
+    def all_cards(self) -> List[Card]:
+        cards: List[Card] = []
         for entry in self.maindeck + self.sideboard:
             cards += [entry['card']] * entry['n']
         return cards

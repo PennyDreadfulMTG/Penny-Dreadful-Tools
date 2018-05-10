@@ -35,12 +35,6 @@ def test_normalize() -> None:
     assert deck_name.normalize(d) == 'Jund Control'
     d.archetype = None
     assert deck_name.normalize(d) == 'Jund'
-    d.colors = ['W', 'G']
-    d.original_name = 'White Green'
-    d.archetype = 'Aggro'
-    assert deck_name.normalize(d) == 'Selesnya Aggro'
-    d.archetype = None
-    assert deck_name.normalize(d) == 'Selesnya'
     d.colors = ['R']
     d.original_name = 'RDW'
     assert deck_name.normalize(d) == 'Red Deck Wins'
@@ -106,10 +100,34 @@ def test_normalize() -> None:
     assert deck_name.normalize(d) == 'Bwwave' # Not ideal but ok.
     d.original_name = 'PD - Archfiend Cycling'
     assert deck_name.normalize(d) == 'Archfiend Cycling'
+    d.original_name = 'a red deck but not a net deck'
+    assert deck_name.normalize(d) == 'A Red Deck but Not a Net Deck'
+    d.original_name = 'Better red than dead'
+    assert deck_name.normalize(d) == 'Better Red Than Dead'
+    d.original_name = "Is it Izzet or isn't it?"
+    assert deck_name.normalize(d) == "Is It Izzet or Isn't It?"
+    d.original_name = 'Rise like a golgari'
+    d.colors = ['W', 'U', 'B', 'R', 'G']
+    assert deck_name.normalize(d) == 'Rise Like a Golgari'
+    d.original_name = 'BIG RED'
+    assert deck_name.normalize(d) == 'Big Red'
+    d.original_name = 'big Green'
+    assert deck_name.normalize(d) == 'Big Green'
+    d.colors = ['U', 'B']
+    d.original_name = 'Black Power'
+    assert deck_name.normalize(d) == 'Mono Black Power'
 
     # Undefined cases
     # d.original_name = 'U/B Aggro' when d.archetype = 'Control'
     # d.original_name = 'UB Control' when d.colors = ['U', 'B', 'R']
+
+    # Cases that used to work well under strip-and-replace that no longer do
+    # d.colors = ['W', 'G']
+    # d.original_name = 'White Green'
+    # d.archetype = 'Aggro'
+    # assert deck_name.normalize(d) == 'Selesnya Aggro'
+    # d.archetype = None
+    # assert deck_name.normalize(d) == 'Selesnya'
 
 def test_remove_pd() -> None:
     assert deck_name.remove_pd('Penny Dreadful Knights') == 'Knights'

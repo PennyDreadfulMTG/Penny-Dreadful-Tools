@@ -1,5 +1,5 @@
 import re
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Match, Optional
 
 import titlecase
 
@@ -10,12 +10,7 @@ if TYPE_CHECKING:
     from decksite.data.deck import Deck
 
 WHITELIST = [
-    'a red deck but not a net deck',
-    'better red than dead',
-    "is it izzet or isn't it?",
-    'rise like a golgari',
-    'big red',
-    'big green'
+    'White Green'
 ]
 
 ABBREVIATIONS = {
@@ -68,20 +63,14 @@ def normalize(d: 'Deck') -> str:
     name = remove_brackets(name)
     name = strip_leading_punctuation(name)
     unabbreviated = expand_common_abbreviations(name)
-    if unabbreviated != name:
+    if unabbreviated != name or name in ABBREVIATIONS.values():
         name = unabbreviated
     elif whitelisted(name):
         pass
     else:
-        removed_colors = False
-        without_colors = remove_colors(name)
-        if name != without_colors:
-            removed_colors = True
-        name = without_colors
-        if name == '' and d.get('archetype'):
-            name = d.archetype
-        if removed_colors or name == '':
-            name = prepend_colors(name, d.colors)
+        name = normalize_colors(name)
+        name = add_archetype_if_just_colors(name, d.get('archetype_name'))
+        name = remove_mono_if_not_first_word(name)
     name = ucase_trailing_roman_numerals(name)
     return titlecase.titlecase(name)
 
@@ -110,12 +99,6 @@ def remove_hashtags(name: str) -> str:
 def remove_brackets(name: str) -> str:
     return re.sub(r'\[[^\]]*\]', '', name).strip()
 
-def remove_colors(name: str) -> str:
-    patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*', 'Mono', 'Mono-?[WURBRG]', 'Mono-?(White|Blue|Black|Red|Green)'] + list(COLOR_COMBINATIONS.keys())
-    for pattern in patterns:
-        name = re.sub('(^| ){pattern}( |$)'.format(pattern=pattern), ' ', name, flags=re.IGNORECASE).strip()
-    return name
-
 def expand_common_abbreviations(name: str) -> str:
     for abbreviation, expansion in ABBREVIATIONS.items():
         name = re.sub('(^| ){abbrev}( |$)'.format(abbrev=abbreviation), '\\1{expansion}\\2'.format(expansion=expansion), name, flags=re.IGNORECASE).strip()
@@ -127,22 +110,40 @@ def whitelisted(name: str) -> bool:
             return True
     return False
 
-def prepend_colors(s: str, colors: List[str]) -> str:
-    colors_part = name_from_colors(colors, s)
-    if s == 'suicide':
-        return '{s} {colors_part}'.format(colors_part=colors_part, s=s)
-    return '{colors_part} {s}'.format(colors_part=colors_part, s=s).strip()
+def normalize_colors(name: str) -> str:
+    patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*'] + list(COLOR_COMBINATIONS.keys())
+    for pattern in patterns:
+        name = re.sub('(^| )(mono[ -]?)?{pattern}( |$)'.format(pattern=pattern), standard_color_with_spaces, name, flags=re.IGNORECASE).strip()
+    return name
 
-def name_from_colors(colors: List[str], s='') -> str:
+def standard_color_with_spaces(m: Match) -> str:
+    name_without_mono = re.sub('(mono[ -]?)', '', m.group(0))
+    name = standardize_color_string(name_without_mono)
+    return ' {name} '.format(name=name)
+
+def standardize_color_string(s: str) -> str:
+    colors = re.sub('Mono|/|-', '', s).strip().lower()
+    for k in COLOR_COMBINATIONS:
+        find = k.lower()
+        colors = colors.replace(find, ''.join(COLOR_COMBINATIONS[k]))
+    return name_from_colors(list(colors.upper()))
+
+def name_from_colors(colors: List[str]) -> str:
     ordered = mana.order(colors)
     for name, symbols in COLOR_COMBINATIONS.items():
         if mana.order(symbols) == ordered:
             if len(symbols) == 1:
-                if s.startswith('deck wins') or s.startswith('weenie') or s.startswith('suicide'):
-                    return name
                 return 'mono {name}'.format(name=name)
             return name
     return 'colorless'
+
+def add_archetype_if_just_colors(name: str, archetype: Optional[str]) -> str:
+    if name in COLOR_COMBINATIONS.keys() and archetype:
+        return '{name} {archetype}'.format(name=name, archetype=archetype)
+    return name
+
+def remove_mono_if_not_first_word(name: str) -> str:
+    return re.sub('(.+) mono ', '\\1 ', name)
 
 def ucase_trailing_roman_numerals(name: str) -> str:
     last_word = name.split()[-1]

@@ -59,6 +59,7 @@ def name_lookup(name: str) -> str:
 
     canonical = card.canonicalize(name)
     if canonical not in CARDS:
-        print('WARNING: Bogus name {name} ({canonical}) found.'.format(name=name, canonical=canonical))
+        if CARDS.get('', None) is None:
+            print('WARNING: Bogus name {name} ({canonical}) found.'.format(name=name, canonical=canonical))
         return name
     return CARDS[canonical]

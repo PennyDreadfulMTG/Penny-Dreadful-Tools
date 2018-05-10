@@ -5,6 +5,7 @@ import time
 from typing import Any, Dict, List
 
 from flask import url_for
+from werkzeug.datastructures import ImmutableMultiDict
 
 from decksite.data import competition, deck, guarantee, match, person, query
 from decksite.database import db
@@ -19,8 +20,7 @@ from shared.pd_exception import InvalidDataException, LockNotAcquiredException
 class Form(Container):
     def __init__(self, form) -> None:
         super().__init__()
-        form = form.to_dict()
-        self.update(form)
+        self.update(form.to_dict())
         self.errors: Dict[str, str] = {}
 
     def validate(self):
@@ -29,7 +29,10 @@ class Form(Container):
 
 # pylint: disable=attribute-defined-outside-init,too-many-instance-attributes
 class SignUpForm(Form):
-    def __init__(self, form, person_id=None, mtgo_username=None) -> None:
+    def __init__(self,
+                 form: ImmutableMultiDict,
+                 person_id: int = None,
+                 mtgo_username: str = None) -> None:
         super().__init__(form)
         if person_id is not None:
             ps = person.load_person(person_id)
@@ -113,7 +116,10 @@ class DeckCheckForm(SignUpForm):
             self.validation_ok_message = 'The deck is legal'
 
 class ReportForm(Form):
-    def __init__(self, form, deck_id=None, person_id=None) -> None:
+    def __init__(self,
+                 form: ImmutableMultiDict,
+                 deck_id: int = None,
+                 person_id: int = None) -> None:
         super().__init__(form)
 
         decks = active_decks()
@@ -145,7 +151,10 @@ class ReportForm(Form):
             self.errors['opponent'] = "You can't play yourself"
 
 class RetireForm(Form):
-    def __init__(self, form, deck_id=None, discord_user=None) -> None:
+    def __init__(self,
+                 form: ImmutableMultiDict,
+                 deck_id: int = None,
+                 discord_user: int = None) -> None:
         super().__init__(form)
         person_object = None
         if discord_user is not None:

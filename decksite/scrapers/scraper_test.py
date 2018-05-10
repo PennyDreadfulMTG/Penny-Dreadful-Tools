@@ -7,6 +7,7 @@ from decksite.scrapers import gatherling, mtggoldfish, tappedout
 
 @pytest.mark.functional
 @pytest.mark.tappedout
+@vcr.use_cassette(record_mode='new_episodes')
 def test_tappedout() -> None:
     prev = APP.config['SERVER_NAME']
     APP.config['SERVER_NAME'] = '127:0.0.1:5000'

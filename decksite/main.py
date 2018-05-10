@@ -362,11 +362,9 @@ def cmc_chart(deck_id: int) -> Response:
 def archetype_sparkline_chart(competition_id: int) -> Response:
     return send_file(chart.archetypes_sparkline(int(competition_id)))
 
-@APP.route('/legal_cards.txt')
-def legal_cards() -> Tuple[str, int]:
-    if os.path.exists('legal_cards.txt'):
-        return send_from_directory('.', 'legal_cards.txt')
-    return 'Not supported yet', 404
+@APP.route('/discord')
+def discord() -> Response:
+    return redirect('https://discord.gg/RxhTEEP')
 
 @APP.before_request
 def before_request() -> None:

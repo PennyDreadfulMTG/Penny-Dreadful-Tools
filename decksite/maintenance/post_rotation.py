@@ -1,6 +1,6 @@
 from magic import multiverse
 
-from . import reprime_cache, insert_seasons
+from . import insert_seasons, reprime_cache
 
 
 def ad_hoc():

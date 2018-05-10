@@ -1,6 +1,8 @@
-from ..database import db
 from magic import rotation
 from shared import dtutil
+
+from ..database import db
+
 
 def run():
     existing = list(map(lambda s: s['number'], db().execute('SELECT `number` FROM `season`;')))

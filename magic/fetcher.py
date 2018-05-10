@@ -11,6 +11,7 @@ import magic.fetcher_internal as internal
 from magic import card as mc
 from magic.fetcher_internal import FetchException
 from shared import configuration, dtutil
+from shared.models.card import Card
 from shared.pd_exception import TooFewItemsException
 
 
@@ -41,8 +42,8 @@ def card_aliases() -> List[List[str]]:
 def card_price(cardname: str) -> Dict[str, Any]:
     return internal.fetch_json('http://vorpald20.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
 
-def card_price_string(card, short: bool = False) -> str:
-    def price_info(c) -> str:
+def card_price_string(card: Card, short: bool = False) -> str:
+    def price_info(c: Card) -> str:
         try:
             p = card_price(c.name)
         except FetchException:

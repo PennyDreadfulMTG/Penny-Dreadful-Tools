@@ -7,6 +7,7 @@ from magic import card, database, fetcher, rotation
 from magic.database import db
 from shared import dtutil
 from shared.database import sqlescape
+from shared.models.card import Card
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 from shared.whoosh_write import WhooshWriter
 
@@ -332,9 +333,9 @@ def add_hardcoded_cards(cards: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str,
     fix_mtgjson_melded_cards_bug(cards)
     return cards
 
-def get_all_cards() -> List[card.Card]:
+def get_all_cards() -> List[Card]:
     rs = db().execute(cached_base_query())
-    return [card.Card(r) for r in rs]
+    return [Card(r) for r in rs]
 
 def playable_layouts() -> List[str]:
     return ['normal', 'token', 'double-faced', 'split', 'aftermath']

@@ -12,9 +12,10 @@ from werkzeug.routing import BuildError
 
 from decksite import APP, get_season_id
 from decksite.data import archetype, deck
-from magic import card, oracle, rotation, tournaments
+from magic import oracle, rotation, tournaments
 from shared import dtutil
 from shared.container import Container
+from shared.models.card import Card
 from shared_web.base_view import BaseView
 
 # pylint: disable=cyclic-import,unused-import
@@ -204,7 +205,7 @@ class View(BaseView):
         for c in getattr(self, 'only_played_cards', []):
             self.prepare_card(c)
 
-    def prepare_card(self, c: card.Card) -> None:
+    def prepare_card(self, c: Card) -> None:
         c.url = '/cards/{id}/'.format(id=c.name)
         c.img_url = 'http://magic.bluebones.net/proxies/index2.php?c={name}'.format(name=urllib.parse.quote(c.name))
         c.card_img_class = 'two-faces' if c.layout in ['double-faced', 'meld'] else ''

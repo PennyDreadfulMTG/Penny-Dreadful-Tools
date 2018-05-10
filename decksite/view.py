@@ -253,7 +253,10 @@ class View(BaseView):
         for a in getattr(self, 'archetypes', []):
             self.prepare_archetype(a, getattr(self, 'archetypes', []))
 
-    def prepare_archetype(self, a, archetypes) -> None:
+    def prepare_archetype(self,
+                          a: archetype.Archetype,
+                          archetypes: List[archetype.Archetype]
+                         ) -> None:
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
         if a.get('all_num_decks') is not None:
             a.all_show_record = a.get('all_wins') or a.get('all_draws') or a.get('all_losses')
@@ -286,7 +289,7 @@ class View(BaseView):
             # Prune branches we don't want to show
             if r.id not in [a.id for a in archetypes]:
                 r.parent = None
-            r['url'] = '/archetypes/{id}/'.format(id=r['id'])
+            r['url'] = url_for('.archetype', archetype_id=r['id'])
             # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
             r['depth'] = r.depth
 
@@ -300,7 +303,7 @@ class View(BaseView):
             p.finish = pos
             if pos <= 8:
                 p.position = chr(9311 + pos) # ①, ②, ③, …
-            p.url = url_for('person', person_id=p.person_id)
+            p.url = url_for('.person', person_id=p.person_id)
             pos += 1
 
     def babel_languages(self):

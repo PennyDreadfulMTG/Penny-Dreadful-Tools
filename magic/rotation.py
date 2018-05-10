@@ -137,3 +137,9 @@ def season_name(v: Union[int, str]) -> str:
 
 def files() -> List[str]:
     return glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))
+
+def get_set_info(code: str) -> SetInfoType:
+    for setinfo in sets():
+        if setinfo['code'] == code:
+            return setinfo
+    raise DoesNotExistException('Could not find Set Info about {code}'.format(code=code))

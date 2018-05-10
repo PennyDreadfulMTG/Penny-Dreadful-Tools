@@ -15,7 +15,7 @@ def insert_match(dt: datetime.datetime,
                  right_id: int,
                  right_games: int,
                  round_num: Optional[int] = None,
-                 elimination: bool = False,
+                 elimination: Optional[int] = None,
                  mtgo_match_id: Optional[int] = None) -> int:
     match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
     sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'

@@ -23,11 +23,11 @@ TIME_SINCE_SUPPLEMENTAL_ROTATION = dtutil.now() - rotation.this_supplemental()
 def run() -> None:
     files = rotation.files()
     n = len(files)
-    time_until = min(TIME_UNTIL_FULL_ROTATION, TIME_UNTIL_SUPPLEMENTAL_ROTATION)
+    time_until = min(TIME_UNTIL_FULL_ROTATION, TIME_UNTIL_SUPPLEMENTAL_ROTATION) - datetime.timedelta(weeks=1)
     if n >= TOTAL_RUNS:
         print('It is the moment of discovery, the triumph of the mind, and the end of this rotation.')
 
-        if time_until < datetime.timedelta(weeks=2):
+        if time_until < datetime.timedelta(days=3):
             for f in files:
                 print('Removing {f}'.format(f=f))
                 os.remove(f)

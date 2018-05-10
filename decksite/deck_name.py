@@ -69,7 +69,7 @@ def normalize(d: 'Deck') -> str:
         pass
     else:
         name = normalize_colors(name)
-        name = add_archetype_if_just_colors(name, d.archetype)
+        name = add_archetype_if_just_colors(name, d.get('archetype_name'))
         name = remove_mono_if_not_first_word(name)
     name = ucase_trailing_roman_numerals(name)
     return titlecase.titlecase(name)

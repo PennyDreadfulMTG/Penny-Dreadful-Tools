@@ -1,18 +1,18 @@
 import html
 import re
+import traceback
 from typing import Dict, List, Tuple
 
 from magic import card, multiverse
 from magic.database import db
-from shared.pd_exception import InvalidDataException
+from shared.pd_exception import DatabaseException, InvalidDataException
 
-PriceList = List[Tuple[str, str, str]] # pylint: disable=invalid-name
-
+PriceListType = List[Tuple[str, str, str]]
 
 CARDS: Dict[str, str] = {}
 
 
-def parse_cardhoarder_prices(s: str) -> PriceList:
+def parse_cardhoarder_prices(s: str) -> PriceListType:
     details = []
     for line in s.splitlines()[2:]: # Skipping date and header line.
         if line.count('\t') != 6:
@@ -24,7 +24,7 @@ def parse_cardhoarder_prices(s: str) -> PriceList:
                 details.append((name, p, mtgo_set))
     return [(name_lookup(name), html.unescape(p.strip()), mtgo_set) for name, p, mtgo_set in details if name_lookup(name) is not None]
 
-def parse_mtgotraders_prices(s: str) -> PriceList:
+def parse_mtgotraders_prices(s: str) -> PriceListType:
     details = []
     for line in s.splitlines():
         if line.count('|') != 7:
@@ -46,10 +46,17 @@ def name_lookup(name: str) -> str:
         name = 'Kongming, "Sleeping Dragon"'
     elif name == 'Pang Tong, Young Phoenix':
         name = 'Pang Tong, "Young Phoenix"'
-    if not CARDS:
-        rs = db().execute(multiverse.base_query())
-        for row in rs:
-            CARDS[card.canonicalize(row['name'])] = row['name']
+    try:
+        if not CARDS:
+            rs = db().execute(multiverse.base_query())
+            for row in rs:
+                CARDS[card.canonicalize(row['name'])] = row['name']
+    except DatabaseException:
+        tb = traceback.format_exc()
+        print(tb)
+        if not CARDS:
+            CARDS[''] = '' # Filler, so that we don't try to do this every lookup.
+
     canonical = card.canonicalize(name)
     if canonical not in CARDS:
         print('WARNING: Bogus name {name} ({canonical}) found.'.format(name=name, canonical=canonical))

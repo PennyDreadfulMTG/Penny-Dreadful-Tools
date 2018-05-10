@@ -1,0 +1,17 @@
+PennyDreadful
+Penny Dreadful League
+BuggedCardObserver, LeagueObserver, PennyDreadfulLegality
+bakert99,wooten22
+
+[League] Gruul Aggro by bakert99 (6649) vs Hyper V2 by wooten22 (6695)
+== Game 1 (572748380) ==
+PDBot has started watching.
+bakert99 joined the game.
+[CHAT] wooten22: Hello
+[CHAT] wooten22: Hello?
+[CHAT] wooten22: hmmm
+bakert99 has lost the game due to inaction.
+bakert99 keeps this hand.
+Winner: wooten22
+Game 1 Completed.
+wooten22 has left the game.

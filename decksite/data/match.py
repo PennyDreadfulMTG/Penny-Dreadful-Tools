@@ -1,4 +1,5 @@
-from typing import List
+import datetime
+from typing import List, Optional
 
 from decksite.data import deck, elo, query
 from decksite.database import db
@@ -8,7 +9,14 @@ from shared.database import sqlescape
 
 
 # pylint: disable=too-many-arguments
-def insert_match(dt, left_id, left_games, right_id, right_games, round_num=None, elimination=False, mtgo_match_id=None) -> int:
+def insert_match(dt: datetime.datetime,
+                 left_id: int,
+                 left_games: int,
+                 right_id: int,
+                 right_games: int,
+                 round_num: Optional[int] = None,
+                 elimination: Optional[int] = None,
+                 mtgo_match_id: Optional[int] = None) -> int:
     match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
     sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
     db().execute(sql, [left_id, match_id, left_games])

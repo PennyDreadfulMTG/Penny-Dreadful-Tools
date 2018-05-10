@@ -7,7 +7,7 @@ from typing import Callable
 from flask import make_response, request
 from werkzeug.contrib.cache import SimpleCache
 
-from . import localization
+from shared_web import localization
 
 CACHE = SimpleCache() # type: ignore
 

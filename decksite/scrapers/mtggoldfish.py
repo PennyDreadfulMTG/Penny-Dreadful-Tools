@@ -12,9 +12,9 @@ from shared.pd_exception import InvalidDataException
 from shared_web import logger
 
 
-def scrape() -> None:
+def scrape(limit: int = 255) -> None:
     page = 1
-    while True:
+    while page <= limit:
         time.sleep(0.1)
         url = 'https://www.mtggoldfish.com/deck/custom/penny_dreadful?page={n}#online'.format(n=page)
         soup = BeautifulSoup(fetcher.internal.fetch(url, character_encoding='utf-8'), 'html.parser')
@@ -28,7 +28,10 @@ def scrape() -> None:
             d.identifier = re.findall(r'/deck/(\d+)#online', a.get('href'))[0]
             d.url = 'https://www.mtggoldfish.com/deck/{identifier}#online'.format(identifier=d.identifier)
             d.name = a.contents[0].strip()
-            d.mtggoldfish_username = raw_deck.select_one('div.deck-author').contents[0].strip()
+            d.mtggoldfish_username = raw_deck.select_one('div.deck-tile-author').contents[0].strip()
+            remove_by = re.match(r'^(by )?(.*)$', d.mtggoldfish_username)
+            if remove_by:
+                d.mtggoldfish_username = remove_by.group(2)
             d.created_date = scrape_created_date(d)
             time.sleep(1)
             d.cards = scrape_decklist(d)
@@ -53,6 +56,6 @@ def scrape_created_date(d: deck.Deck) -> int:
     date_s = re.findall(r'([A-Z][a-z][a-z] \d+, \d\d\d\d)', description)[0]
     return dtutil.parse_to_ts(date_s, '%b %d, %Y', dtutil.MTGGOLDFISH_TZ)
 
-def scrape_decklist(d: deck.Deck) -> decklist.Decklist:
+def scrape_decklist(d: deck.Deck) -> decklist.DecklistType:
     url = 'https://www.mtggoldfish.com/deck/download/{identifier}'.format(identifier=d.identifier)
     return decklist.parse(fetcher.internal.fetch(url))

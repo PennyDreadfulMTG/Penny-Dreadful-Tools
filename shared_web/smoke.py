@@ -1,8 +1,8 @@
-from flask import Flask
+from shared_web.flask_app import PDFlask
 
 
 class SmokeTester:
-    def __init__(self, app: Flask) -> None:
+    def __init__(self, app: PDFlask) -> None:
         self.test_client = app.test_client()
         # Propagate the exceptions to the test client
         self.test_client.testing = True

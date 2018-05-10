@@ -7,7 +7,7 @@ from mypy_extensions import TypedDict
 from shared.container import Container
 
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
-ColumnDescription = TypedDict('ColumnDescription', { # pylint: disable=invalid-name
+ColumnDescription = TypedDict('ColumnDescription', {
     'type': str,
     'nullable': bool,
     'primary_key': bool,
@@ -18,7 +18,7 @@ ColumnDescription = TypedDict('ColumnDescription', { # pylint: disable=invalid-n
     'unique': bool,
     'unique_with': Optional[List[str]],
     })
-TableDescription = Dict[str, ColumnDescription] # pylint: disable=invalid-name
+TableDescription = Dict[str, ColumnDescription]
 
 MAX_LEN_TEXT = 21845
 MAX_LEN_VARCHAR = 190

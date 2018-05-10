@@ -7,7 +7,7 @@ from magic import rotation
 from shared import configuration, database
 from shared.models.card import Card
 
-PriceData = TypedDict('PriceData', { # pylint: disable=invalid-name
+PriceDataType = TypedDict('PriceDataType', {
     'time': int,
     'low': str,
     'high': str,
@@ -17,7 +17,7 @@ PriceData = TypedDict('PriceData', { # pylint: disable=invalid-name
     'season': float,
     })
 
-def info(card: Card, force: bool = False) -> Optional[PriceData]:
+def info(card: Card, force: bool = False) -> Optional[PriceDataType]:
     if not force:
         r = info_cached(card)
         if r is not None:
@@ -25,7 +25,7 @@ def info(card: Card, force: bool = False) -> Optional[PriceData]:
     cache()
     return info_cached(card)
 
-def info_cached(card: Card = None, name: str = None) -> Optional[PriceData]:
+def info_cached(card: Card = None, name: str = None) -> Optional[PriceDataType]:
     if name is None and card is not None:
         name = card.name
     sql = 'SELECT `time`, low / 100.0 AS low, high / 100.0 AS high, price / 100.0 AS price, week, month, season FROM cache WHERE name = %s'

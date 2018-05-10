@@ -176,7 +176,7 @@ function-rgx=[a-z_][a-z0-9_]{1,30}$
 function-name-hint=[a-z_][a-z0-9_]{1,30}$
 
 # Regular expression matching correct constant names
-const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
+const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__)|([A-Z][A-Za-z]+(Type|Description|Function)))$
 
 # Naming hint for constant names
 const-name-hint=(([A-Z_][A-Z0-9_]*)|(__.*__))$

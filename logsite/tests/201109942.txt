@@ -1,0 +1,188 @@
+PennyDreadful
+Penny Dreadful League
+BuggedCardObserver,LeagueObserver,PennyDreadfulLegality
+subrosian_z,Camper_116
+
+== Game 1 (607538084) ==
+[12:31:45] PDBot has started watching.
+[12:31:48] Camper_116 joined the game.
+[League] Weapon Masters by subrosian_z (14546) vs Ubrg by camper_116 (14481)
+[12:31:49] [CHAT] PDBot: [sD] Good luck in your League match!
+[12:31:49] [CHAT] PDBot: [sD] Due to a Magic Online bug, PDBot is unable to tell which player is which.  Please report this league match manually.
+[12:32:10] Camper_116 chooses to play first.
+[12:32:20] Camper_116 mulligans to 6 cards.
+[12:32:22] subrosian_z keeps this hand.
+[12:32:24] Camper_116 keeps this hand.
+[12:32:30] Camper_116 puts 1 card on top of their library.
+[12:32:30] Turn 1: Camper_116
+[12:32:30] Camper_116 skips their draw step.
+[12:32:31] Camper_116 plays [Frontier Bivouac].
+[12:32:37] Turn 1: subrosian_z
+[12:32:39] subrosian_z plays [Plains].
+[12:32:40] subrosian_z casts [Kor Duelist].
+[12:32:47] Turn 2: Camper_116
+[12:33:09] Camper_116 plays [Frontier Bivouac].
+[12:33:17] Turn 2: subrosian_z
+[12:33:22] subrosian_z plays [Plains].
+[12:33:25] subrosian_z casts [Stoneforge Masterwork].
+[12:33:28] subrosian_z casts [Bone Saw].
+[12:33:30] subrosian_z activates an ability of [Bone Saw] targeting [Kor Duelist] (Equip {1}).
+[12:33:33] Camper_116 is being attacked by [Kor Duelist].
+[12:33:36] Turn 3: Camper_116
+[12:33:41] Camper_116 plays [Bloodfell Caves].
+[12:33:42] Camper_116 puts triggered ability from [Bloodfell Caves] onto the stack (When Bloodfell Caves enters the battlefield, you gain 1 life.).
+[12:33:53] Camper_116 casts [Sylvan Ranger].
+[12:33:55] Camper_116 puts triggered ability from [Sylvan Ranger] onto the stack (When Sylvan Ranger enters the battlefield, you may search your library for a basic land card, reve...).
+[12:34:15] Camper_116 reveals [Swamp].
+[12:34:24] Turn 3: subrosian_z
+[12:34:27] subrosian_z casts [Kor Outfitter].
+[12:34:34] subrosian_z puts triggered ability from [Kor Outfitter] onto the stack targeting [Stoneforge Masterwork], and [Kor Duelist] (When Kor Outfitter enters the battlefield, you may attach target Equipment you control to target c...).
+[12:34:41] Camper_116 is being attacked by [Kor Duelist].
+[12:34:45] [Sylvan Ranger] blocks [Kor Duelist].
+[12:34:50] Turn 4: Camper_116
+[12:34:53] Camper_116 plays [Forest].
+[12:35:04] Camper_116 casts [Flametongue Kavu].
+[12:35:10] Camper_116 puts triggered ability from [Flametongue Kavu] onto the stack targeting [Kor Duelist] (When Flametongue Kavu enters the battlefield, it deals 4 damage to target creature.).
+[12:35:19] Turn 4: subrosian_z
+[12:35:20] subrosian_z plays [Plains].
+[12:35:26] subrosian_z casts [Armament Master].
+[12:35:33] subrosian_z casts [Shuko].
+[12:35:39] subrosian_z activates an ability of [Shuko] targeting [Armament Master] (Equip {0}).
+[12:35:44] Camper_116 is being attacked by [Kor Outfitter].
+[12:35:49] [Flametongue Kavu] blocks [Kor Outfitter].
+[12:35:54] Turn 5: Camper_116
+[12:35:59] Camper_116 plays [Swamp].
+[12:36:05] Camper_116 casts [Desecration Demon].
+[12:36:09] Camper_116 puts triggered ability from [Desecration Demon] onto the stack (At the beginning of each combat, any opponent may sacrifice a creature. If a player does, tap Dese...).
+[12:36:16] Turn 5: subrosian_z
+[12:36:22] subrosian_z casts [Kor Outfitter].
+[12:36:26] subrosian_z puts triggered ability from [Kor Outfitter] onto the stack targeting [Stoneforge Masterwork], and [Armament Master] (When Kor Outfitter enters the battlefield, you may attach target Equipment you control to target c...).
+[12:36:35] subrosian_z activates an ability of [Bone Saw] targeting [Armament Master] (Equip {1}).
+[12:36:37] Camper_116 puts triggered ability from [Desecration Demon] onto the stack (At the beginning of each combat, any opponent may sacrifice a creature. If a player does, tap Dese...).
+[12:36:45] Turn 6: Camper_116
+[12:36:49] Camper_116 plays [Savage Lands].
+[12:36:53] Camper_116 puts triggered ability from [Desecration Demon] onto the stack (At the beginning of each combat, any opponent may sacrifice a creature. If a player does, tap Dese...).
+[12:37:02] Turn 6: subrosian_z
+[12:37:03] subrosian_z plays [Plains].
+[12:37:06] Camper_116 puts triggered ability from [Desecration Demon] onto the stack (At the beginning of each combat, any opponent may sacrifice a creature. If a player does, tap Dese...).
+[12:37:12] Camper_116 is being attacked by [Kor Outfitter].
+[12:37:25] Camper_116 casts [Murderous Cut] targeting [Kor Outfitter].
+[12:37:34] subrosian_z casts [Avacynian Missionaries].
+[12:37:42] subrosian_z activates an ability of [Shuko] targeting [Avacynian Missionaries] (Equip {0}).
+[12:37:48] subrosian_z puts triggered ability from [Avacynian Missionaries] onto the stack (At the beginning of your end step, if Avacynian Missionaries is equipped, transform it.).
+[12:37:55] subrosian_z puts triggered ability from [Lunarch Inquisitors] onto the stack targeting [Desecration Demon] (When this creature transforms into Lunarch Inquisitors, you may exile another target creature unti...).
+[12:38:04] Turn 7: Camper_116
+[12:38:08] Camper_116 plays [Vivid Crag].
+[12:38:15] Turn 7: subrosian_z
+[12:38:20] subrosian_z casts [Armament Master].
+[12:38:23] subrosian_z casts [Kitesail Apprentice].
+[12:38:32] subrosian_z activates an ability of [Shuko] targeting [Armament Master] (Equip {0}).
+[12:38:37] Camper_116 is being attacked by [Lunarch Inquisitors] and [Armament Master].
+[12:38:44] Turn 8: Camper_116
+[12:39:00] Camper_116 casts [Flametongue Kavu].
+[12:39:06] Camper_116 puts triggered ability from [Flametongue Kavu] onto the stack targeting [Lunarch Inquisitors] (When Flametongue Kavu enters the battlefield, it deals 4 damage to target creature.).
+[12:39:11] Camper_116 plays [Forest].
+[12:39:14] Camper_116 puts triggered ability from [Desecration Demon] onto the stack (At the beginning of each combat, any opponent may sacrifice a creature. If a player does, tap Dese...).
+[12:39:22] Turn 8: subrosian_z
+[12:39:25] Camper_116 puts triggered ability from [Desecration Demon] onto the stack (At the beginning of each combat, any opponent may sacrifice a creature. If a player does, tap Dese...).
+[12:39:35] Camper_116 is being attacked by [Kitesail Apprentice] and [Armament Master].
+[12:39:54] [Desecration Demon] blocks [Kitesail Apprentice].
+[12:39:56] [Flametongue Kavu] blocks [Armament Master].
+[12:40:01] Turn 9: Camper_116
+[12:40:05] Camper_116 has conceded from the game.
+Winner: subrosian_z
+Game 1 Completed.
+
+== Game 2 (607540282) ==
+[12:41:00] PDBot has started watching.
+[12:41:05] Camper_116 chooses to play first.
+[12:41:11] Camper_116 keeps this hand.
+[12:41:17] subrosian_z keeps this hand.
+[12:41:17] Turn 1: Camper_116
+[12:41:17] Camper_116 skips their draw step.
+[12:41:21] Camper_116 plays [Savage Lands].
+[12:41:27] Turn 1: subrosian_z
+[12:41:28] subrosian_z plays [Plains].
+[12:41:29] subrosian_z casts [Kor Duelist].
+[12:41:32] Turn 2: Camper_116
+[12:41:36] Camper_116 plays [Island].
+[12:41:40] Camper_116 casts [Sylvan Ranger].
+[12:41:41] Camper_116 puts triggered ability from [Sylvan Ranger] onto the stack (When Sylvan Ranger enters the battlefield, you may search your library for a basic land card, reve...).
+[12:41:50] Camper_116 reveals [Swamp].
+[12:41:56] Turn 2: subrosian_z
+[12:41:57] subrosian_z plays [Plains].
+[12:42:00] subrosian_z casts [Bone Saw].
+[12:42:04] subrosian_z activates an ability of [Bone Saw] targeting [Kor Duelist] (Equip {1}).
+[12:42:08] Camper_116 is being attacked by [Kor Duelist].
+[12:42:17] Turn 3: Camper_116
+[12:42:32] Camper_116 plays [Bloodfell Caves].
+[12:42:32] Camper_116 puts triggered ability from [Bloodfell Caves] onto the stack (When Bloodfell Caves enters the battlefield, you gain 1 life.).
+[12:42:40] Camper_116 casts [Duskwatch Recruiter].
+[12:42:48] Turn 3: subrosian_z
+[12:42:49] subrosian_z plays [Plains].
+[12:42:55] subrosian_z casts [Captain's Claws].
+[12:43:06] Camper_116 is being attacked by [Kor Duelist].
+[12:43:15] [Sylvan Ranger] blocks [Kor Duelist].
+[12:43:20] Turn 4: Camper_116
+[12:43:36] Camper_116 plays [Frontier Bivouac].
+[12:44:03] Turn 4: subrosian_z
+[12:44:03] Camper_116 puts triggered ability from [Duskwatch Recruiter] onto the stack (At the beginning of each upkeep, if no spells were cast last turn, transform Duskwatch Recruiter.).
+[12:44:17] subrosian_z casts [Armament Master].
+[12:44:26] subrosian_z activates an ability of [Captain's Claws] targeting [Kor Duelist] (Equip {1}).
+[12:45:09] Camper_116 casts [Sultai Charm] targeting [Kor Duelist] (Destroy target monocolored creature.).
+[12:45:17] Turn 5: Camper_116
+[12:45:34] Camper_116 casts [Woodland Wanderer].
+[12:45:41] Camper_116 plays [Forest].
+[12:45:43] Camper_116 casts [Duskwatch Recruiter].
+[12:45:49] subrosian_z is being attacked by [Krallenhorde Howler].
+[12:45:56] Turn 5: subrosian_z
+[12:45:56] Camper_116 puts triggered ability from [Krallenhorde Howler] onto the stack (At the beginning of each upkeep, if a player cast two or more spells last turn, transform Krallenh...).
+[12:46:03] subrosian_z activates an ability of [Captain's Claws] targeting [Armament Master] (Equip {1}).
+[12:46:07] subrosian_z activates an ability of [Bone Saw] targeting [Armament Master] (Equip {1}).
+[12:46:12] subrosian_z casts [Stave Off] targeting [Armament Master].
+[12:46:16] subrosian_z chooses green.
+[12:46:27] Camper_116 is being attacked by [Armament Master].
+[12:46:27] subrosian_z puts triggered ability from [Captain's Claws] onto the stack (Whenever equipped creature attacks, create a 1/1 white Kor Ally creature token that's tapped and a...).
+[12:46:29] subrosian_z's [Captain's Claws] creates a Kor Ally token.
+[12:46:29] subrosian_z puts [Kor Ally] token onto the battlefield attacking Camper_116
+[12:46:40] [Duskwatch Recruiter] blocks [Kor Ally] token.
+[12:46:46] Turn 6: Camper_116
+[12:46:55] Camper_116 plays [Swamp].
+[12:47:07] subrosian_z is being attacked by [Woodland Wanderer] and [Duskwatch Recruiter].
+[12:47:14] Turn 6: subrosian_z
+[12:47:14] Camper_116 puts triggered ability from [Duskwatch Recruiter] onto the stack (At the beginning of each upkeep, if no spells were cast last turn, transform Duskwatch Recruiter.).
+[12:47:23] subrosian_z casts [Stone Haven Outfitter].
+[12:47:53] Camper_116 casts [Terror] targeting [Armament Master].
+[12:47:58] subrosian_z casts [Stave Off] targeting [Armament Master].
+[12:48:01] subrosian_z chooses black.
+[12:48:06] Camper_116's [Terror] is countered because it has no legal targets.
+[12:48:15] Camper_116 is being attacked by [Kor Ally] token and [Armament Master].
+[12:48:15] subrosian_z puts triggered ability from [Captain's Claws] onto the stack (Whenever equipped creature attacks, create a 1/1 white Kor Ally creature token that's tapped and a...).
+[12:48:19] subrosian_z's [Captain's Claws] creates a Kor Ally token.
+[12:48:19] subrosian_z puts [Kor Ally] token onto the battlefield attacking Camper_116
+[12:48:28] [Woodland Wanderer] blocks [Armament Master].
+[12:48:32] subrosian_z puts triggered ability from [Stone Haven Outfitter] onto the stack (Whenever an equipped creature you control dies, draw a card.).
+[12:48:36] subrosian_z draws a card with [Stone Haven Outfitter]'s ability.
+[12:48:38] subrosian_z plays [Plains].
+[12:48:42] subrosian_z activates an ability of [Captain's Claws] targeting [Stone Haven Outfitter] (Equip {1}).
+[12:48:47] Turn 7: Camper_116
+[12:48:47] Camper_116 puts triggered ability from [Krallenhorde Howler] onto the stack (At the beginning of each upkeep, if a player cast two or more spells last turn, transform Krallenh...).
+[12:49:07] Turn 7: subrosian_z
+[12:49:08] Camper_116 puts triggered ability from [Duskwatch Recruiter] onto the stack (At the beginning of each upkeep, if no spells were cast last turn, transform Duskwatch Recruiter.).
+[12:49:17] Camper_116 activates an ability of [Duskwatch Recruiter] ( Look at the top three cards of your library. You may reveal a creature card from among them and p...).
+[12:49:20] Camper_116 puts [Sylvan Ranger] into their hand with with [Duskwatch Recruiter]'s ability.
+[12:49:30] subrosian_z casts [Armament Master].
+[12:49:41] subrosian_z activates an ability of [Bone Saw] targeting [Armament Master] (Equip {1}).
+[12:50:04] Camper_116 casts [Putrefy] targeting [Armament Master].
+[12:50:08] subrosian_z puts triggered ability from [Stone Haven Outfitter] onto the stack (Whenever an equipped creature you control dies, draw a card.).
+[12:50:11] subrosian_z draws a card with [Stone Haven Outfitter]'s ability.
+[12:50:18] Camper_116 is being attacked by [Kor Ally] token, [Stone Haven Outfitter], and [Kor Ally] token.
+[12:50:18] subrosian_z puts triggered ability from [Captain's Claws] onto the stack (Whenever equipped creature attacks, create a 1/1 white Kor Ally creature token that's tapped and a...).
+[12:50:20] subrosian_z's [Captain's Claws] creates a Kor Ally token.
+[12:50:20] subrosian_z puts [Kor Ally] token onto the battlefield attacking Camper_116
+[12:50:24] [Krallenhorde Howler] blocks [Stone Haven Outfitter].
+Winner: subrosian_z
+Game 2 Completed.
+Match Winner: subrosian_z: 2–0
+[12:50:30] [CHAT] Camper_116: ggs
+

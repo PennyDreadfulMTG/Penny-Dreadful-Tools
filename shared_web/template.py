@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 
 __SEARCHPATH: List[str] = []
 
-# pylint: disable=invalid-name
 StringConverterFunction = Optional[Callable[[str], str]]
 
 def render_name(template: str, *context: ContextStack) -> str:

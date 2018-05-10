@@ -128,11 +128,11 @@ class WhooshSearcher():
 def has(elements) -> bool:
     return bool(elements and len(elements) > 0)
 
-WordSubword = Tuple[List[str], List[str]] # pylint: disable=invalid-name
+WordSubwordType = Tuple[List[str], List[str]]
 
-def classify(matches: List[str], word: str) -> WordSubword:
+def classify(matches: List[str], word: str) -> WordSubwordType:
     regex = r'{w}( |,)'.format(w=word)
-    acc: WordSubword = ([], []) # Name this data structure.
+    acc: WordSubwordType = ([], []) # Name this data structure.
     for match in matches:
         if re.match(regex, match.lower()):
             acc[0].append(match)

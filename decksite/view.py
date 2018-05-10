@@ -156,7 +156,7 @@ class View(BaseView):
         d.show_record = d.wins or d.losses or d.draws
         if d.competition_id:
             d.competition_url = '/competitions/{id}/'.format(id=d.competition_id)
-        d.url = url_for('deck', deck_id=d.id)
+        d.url = '/decks/{id}/'.format(id=d.id)
         d.export_url = '/export/{id}/'.format(id=d.id)
         d.cmc_chart_url = '/charts/cmc/{id}-cmc.png'.format(id=d.id)
         if d.is_in_current_run():

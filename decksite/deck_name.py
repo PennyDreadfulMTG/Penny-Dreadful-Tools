@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from decksite.data.deck import Deck
 
 WHITELIST = [
+    'White Green'
 ]
 
 ABBREVIATIONS = {

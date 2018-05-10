@@ -1,7 +1,8 @@
-from typing import Any, cast, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 from shared import dtutil
 from shared.container import Container
+
 
 class Card(Container):
     def __init__(self, params: Dict[str, Any]) -> None:

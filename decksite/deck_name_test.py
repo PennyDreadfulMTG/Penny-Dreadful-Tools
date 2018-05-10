@@ -3,7 +3,7 @@ from shared.container import Container
 
 
 def test_normalize() -> None:
-    d = Container({'original_name': 'Dimir Control', 'archetype': 'Control', 'colors': ['U', 'B']})
+    d = Container({'original_name': 'Dimir Control', 'archetype_name': 'Control', 'colors': ['U', 'B']})
     assert deck_name.normalize(d) == 'Dimir Control'
     d.original_name = 'U/B Control'
     assert deck_name.normalize(d) == 'Dimir Control'
@@ -18,22 +18,22 @@ def test_normalize() -> None:
     d.original_name = 'biovisionary pd'
     assert deck_name.normalize(d) == 'Biovisionary'
     d.colors = ['R']
-    d.archetype = 'Aggro'
+    d.archetype_name = 'Aggro'
     d.original_name = 'mono red ashling aggro'
     assert deck_name.normalize(d) == 'Mono Red Ashling Aggro'
     d.colors = ['W', 'U', 'B']
-    d.archetype = 'Unclassified'
+    d.archetype_name = 'Unclassified'
     d.original_name = 'penny dreadful esper mill'
     assert deck_name.normalize(d) == 'Esper Mill'
     d.colors = ['W', 'G']
-    d.archetype = 'Aggro-Combo'
+    d.archetype_name = 'Aggro-Combo'
     d.original_name = 'penny dreadful gw tokens'
     assert deck_name.normalize(d) == 'Selesnya Tokens'
     d.colors = ['R', 'G', 'B']
-    d.archetype = 'Control'
+    d.archetype_name = 'Control'
     d.original_name = 'Jund'
     assert deck_name.normalize(d) == 'Jund Control'
-    d.archetype = None
+    d.archetype_name = None
     assert deck_name.normalize(d) == 'Jund'
     d.colors = ['R']
     d.original_name = 'RDW'
@@ -118,15 +118,15 @@ def test_normalize() -> None:
     assert deck_name.normalize(d) == 'Mono Black Power'
 
     # Undefined cases
-    # d.original_name = 'U/B Aggro' when d.archetype = 'Control'
+    # d.original_name = 'U/B Aggro' when d.archetype_name = 'Control'
     # d.original_name = 'UB Control' when d.colors = ['U', 'B', 'R']
 
     # Cases that used to work well under strip-and-replace that no longer do
     # d.colors = ['W', 'G']
     # d.original_name = 'White Green'
-    # d.archetype = 'Aggro'
+    # d.archetype_name = 'Aggro'
     # assert deck_name.normalize(d) == 'Selesnya Aggro'
-    # d.archetype = None
+    # d.archetype_name = None
     # assert deck_name.normalize(d) == 'Selesnya'
 
 def test_remove_pd() -> None:

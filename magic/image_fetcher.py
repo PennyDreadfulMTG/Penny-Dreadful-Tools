@@ -62,7 +62,9 @@ def download_mci_image(cards, filepath) -> bool:
             print('Error: {e}'.format(e=e))
         print('Trying to get fallback image for {imagename}'.format(imagename=os.path.basename(filepath)))
         try:
-            internal.store(gatherer_image(p), filepath)
+            img = gatherer_image(p)
+            if img:
+                internal.store(img, filepath)
             if internal.acceptable_file(filepath):
                 return True
         except FetchException as e:

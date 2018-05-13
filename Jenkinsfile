@@ -1,5 +1,9 @@
 node{
     def FailedTests = false
+    env.mysql_user = 'jenkins'
+    env.magic_database = 'jenkins_cards'
+    env.decksite_database = 'jenkins_decksite'
+    env.logsite_database = 'jenkins_logsite'
 
     stage('Clone') {
         sh 'git config user.email "jenkins@katelyngigante.com"'
@@ -11,13 +15,12 @@ node{
         sh 'python3 -m pip install -U --user -r requirements.txt'
     }
 
-    stage('Integration Tests') {
-        env.test_vcr_record_mode = 'all'
-        env.mysql_user = 'jenkins'
-        env.magic_database = 'jenkins_cards'
-        env.decksite_database = 'jenkins_decksite'
-        env.logsite_database = 'jenkins_logsite'
+    stage('External Data Tests') {
         FailedTests = sh(returnStatus: true, script: 'python3 dev.py tests -m "external"')
+        if (!FailedTests) {
+            // Don't update the scraper recordings unless they failed.
+            sh(returnStatus: true, script: 'git reset --hard HEAD')
+        }
     }
 
     stage('Pylint') {

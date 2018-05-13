@@ -5,7 +5,10 @@ from decksite.main import APP
 from decksite.scrapers import gatherling, mtggoldfish, tappedout
 from shared import configuration
 
-TEST_VCR = vcr.VCR(record_mode=configuration.get('test_vcr_record_mode'))
+TEST_VCR = vcr.VCR(
+    record_mode=configuration.get('test_vcr_record_mode'),
+    path_transformer=vcr.VCR.ensure_suffix('.yaml'),
+    )
 
 @pytest.mark.functional
 @pytest.mark.tappedout

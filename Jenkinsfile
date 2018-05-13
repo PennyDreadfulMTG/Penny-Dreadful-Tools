@@ -34,10 +34,10 @@ node{
 
     stage('Fix') {
         if (FailedTests) {
-            sh(returnStatus: true, script: 'git branch -d jenkins_results')
+            sh(returnStatus: true, script: 'git branch -D jenkins_results')
             sh 'git checkout -b jenkins_results'
             sh 'git commit -am "Automated update"'
-            sh 'git push --set-upstream origin jenkins_results'
+            sh 'git push --set-upstream origin jenkins_results --force'
         }
     }
 }

@@ -1,17 +1,20 @@
 node{
     def FailedTests = false
-    
+
     stage('Clone') {
         checkout scm
     }
 
     stage("pip") {
         sh 'python3 -m pip install -U --user -r requirements.txt'
-        sh 'python3 -m pip install -U --user codacy-coverage'
     }
 
-    stage('Unit Tests') {
-        echo 'Unit tests run on travis now.'
+    stage('Integration Tests') {
+        env.test_vcr_record_mode = 'all'
+        env.mysql_user = 'jenkins'
+        env.magic_database = 'jenkins_cards'
+        env.decksite_database = 'jenkins_decksite'
+        FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; python3 dev.py tests')
     }
 
     stage('Pylint') {
@@ -19,11 +22,19 @@ node{
         step([$class: 'WarningsPublisher', canComputeNew: false, canResolveRelativePaths: false, canRunOnFailed: true, excludePattern: '', failedTotalHigh: '0', unstableTotalAll: '0', healthy: '0', includePattern: '', messagesPattern: '', parserConfigurations: [[parserName: 'PyLint', pattern: 'pylint.log']], unHealthy: '10'])
     }
 
-    // stage('Update Readme') {
-    //     readme = sh(returnStatus: true, script: 'python3 generate_readme.py')
-    //     if (readme) {
-    //         echo 'The readme files are out of date.  Run generate_readme.py'
-    //         error 'The readme is out of date.'
-    //     }
-    // }
+    stage('Update Readme') {
+        readme = sh(returnStatus: true, script: 'python3 generate_readme.py')
+        if (readme) {
+            FailedTests = true
+        }
+    }
+
+    stage('Fix') {
+        if (FailedTests) {
+            sh(returnStatus: true, script: 'git branch -d jenkins_results')
+            sh 'git checkout -b jenkins_results'
+            sh 'git commit -am "Automated update"'
+            sh 'git push'
+        }
+    }
 }

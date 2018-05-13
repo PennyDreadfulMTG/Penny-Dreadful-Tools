@@ -80,7 +80,7 @@ def file_name(d: 'Deck') -> str:
     safe_name = re.sub('[^0-9a-z-]', '', safe_name, flags=re.IGNORECASE)
     return safe_name.strip('-')
 
-def replace_space_alternatives(name) -> str:
+def replace_space_alternatives(name: str) -> str:
     return name.replace('_', ' ').replace('.', ' ')
 
 def remove_pd(name: str) -> str:

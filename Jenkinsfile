@@ -16,6 +16,7 @@ node{
     }
 
     stage('External Data Tests') {
+        sh 'rm decksite/scrapers/test_*.yaml'
         FailedTests = sh(returnStatus: true, script: 'python3 dev.py tests -m "external"')
         if (!FailedTests) {
             // Don't update the scraper recordings unless they failed.

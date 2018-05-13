@@ -37,7 +37,7 @@ node{
             sh(returnStatus: true, script: 'git branch -d jenkins_results')
             sh 'git checkout -b jenkins_results'
             sh 'git commit -am "Automated update"'
-            sh 'git push'
+            sh 'git push --set-upstream origin jenkins_results'
         }
     }
 }

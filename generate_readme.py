@@ -20,9 +20,13 @@ View individual subdirectories for details
 
 **magic** knows everything about all magic cards and how to fetch that information from the internet.
 
+**logsite**  is the code for [logs.pennydreadfulmagic.com](https://logs.pennydreadfulmagic.com/).
+
 **price_grabber** builds a database of historic prices.
 
 **shared** contains a bunch of general purpose helper classes.
+
+**shared_web** contains a bunch of web-specific helper classes.
 
 """
 

@@ -2,6 +2,8 @@ node{
     def FailedTests = false
 
     stage('Clone') {
+        sh 'git config user.email "jenkins@katelyngigante.com"'
+        sh 'git config user.name "Vorpal Buildbot"'
         checkout scm
     }
 

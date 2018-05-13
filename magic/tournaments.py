@@ -99,7 +99,7 @@ def all_series_info() -> List[Container]:
             'display_time': '4pm Japan Standard Time',
             'time': info[1][1],
             'chat_room': '#PDS',
-            'sponsor_name': None
+            'sponsor_name': 'Cardhoarder'
         }),
         Container({
             'name': 'Penny Dreadful Sundays',

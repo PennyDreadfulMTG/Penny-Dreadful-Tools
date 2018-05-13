@@ -14,7 +14,7 @@ node{
         env.mysql_user = 'jenkins'
         env.magic_database = 'jenkins_cards'
         env.decksite_database = 'jenkins_decksite'
-        FailedTests = sh(returnStatus: true, script: 'PATH=$PATH:~/.local/bin/; python3 dev.py tests')
+        FailedTests = sh(returnStatus: true, script: 'python3 dev.py tests -m "functional"')
     }
 
     stage('Pylint') {

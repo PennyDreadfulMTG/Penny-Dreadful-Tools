@@ -9,6 +9,7 @@ TEST_VCR = vcr.VCR(record_mode=configuration.get('test_vcr_record_mode'))
 
 @pytest.mark.functional
 @pytest.mark.tappedout
+@pytest.mark.external
 @TEST_VCR.use_cassette
 def test_tappedout() -> None:
     prev = APP.config['SERVER_NAME']
@@ -19,6 +20,7 @@ def test_tappedout() -> None:
 
 @pytest.mark.functional
 @pytest.mark.gatherling
+@pytest.mark.external
 @TEST_VCR.use_cassette
 def test_gatherling() -> None:
     with APP.app_context():
@@ -26,6 +28,7 @@ def test_gatherling() -> None:
 
 @pytest.mark.functional
 @pytest.mark.tappedout
+@pytest.mark.external
 @TEST_VCR.use_cassette
 def test_manual_tappedout() -> None:
     with APP.app_context():
@@ -33,6 +36,7 @@ def test_manual_tappedout() -> None:
 
 @pytest.mark.functional
 @pytest.mark.goldfish
+@pytest.mark.external
 @TEST_VCR.use_cassette
 def test_goldfish() -> None:
     with APP.app_context():

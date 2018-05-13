@@ -11,6 +11,14 @@ from shared_web.flask_app import PDFlask
 
 APP = PDFlask(__name__)
 
+APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+APP.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{user}:{password}@{host}:{port}/{db}'.format(
+    user=configuration.get('mysql_user'),
+    password=configuration.get('mysql_passwd'),
+    host=configuration.get('mysql_host'),
+    port=configuration.get('mysql_port'),
+    db=configuration.get('logsite_database'))
+
 from . import db, main, stats, api, views # pylint: disable=wrong-import-position, unused-import
 
 def __create_schema() -> None:

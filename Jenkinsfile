@@ -16,6 +16,7 @@ node{
         env.mysql_user = 'jenkins'
         env.magic_database = 'jenkins_cards'
         env.decksite_database = 'jenkins_decksite'
+        env.logsite_database = 'jenkins_logsite'
         FailedTests = sh(returnStatus: true, script: 'python3 dev.py tests -m "functional"')
     }
 

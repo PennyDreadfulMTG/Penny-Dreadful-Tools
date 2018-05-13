@@ -6,19 +6,9 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm.exc import MultipleResultsFound
 
-from shared import configuration
-
 from . import APP
 
 # pylint: disable=no-member
-
-APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-APP.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{user}:{password}@{host}:{port}/{db}'.format(
-    user=configuration.get('mysql_user'),
-    password=configuration.get('mysql_passwd'),
-    host=configuration.get('mysql_host'),
-    port=configuration.get('mysql_port'),
-    db=configuration.get('logsite_database'))
 
 DB = SQLAlchemy(APP) # type: ignore
 MIGRATE = Migrate(APP, DB)

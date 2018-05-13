@@ -45,6 +45,7 @@ DEFAULTS = {
     'slow_page': 10.0,
     'slow_query': 5.0,
     'spellfix': './spellfix',
+    'test_vcr_record_mode': 'new_episodes', # https://vcrpy.readthedocs.io/en/latest/usage.html#record-modes
     'to_password': '',
     'to_username': '',
     'tournament_channel_id': '207281932214599682',

@@ -8,7 +8,7 @@
 - Add the bot to your server with https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot
 - Click to reveal the token (not secret) on https://discordapp.com/developers/applications/me
 - Copy config.json.example to config.json and alter the value for "token" to this value
-- Optionally alter the various _dir and _database values in there if you want image files, scratch files and databases stored somewhere else. If you want to collect decks from tappedout.net with valid dates update to_username and to_password.
+- Optionally take a look at configuration.py and enter any required non-default information into config.json.
 - Using the values from your config.json issue the following commands in MySQL (you don't need to create the databases):
   -- CREATE USER '<mysql_user>'@'<mysql_host>' IDENTIFIED BY '<mysql_password>';
   -- GRANT ALL ON <decksite_database>.* TO '<mysql_user>'@'<mysql_host>';

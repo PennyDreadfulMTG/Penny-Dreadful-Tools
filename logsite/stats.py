@@ -40,6 +40,27 @@ def stats():
                         """)
         players = db.DB.session.query(db.User).from_statement(stmt).params(fid=f.id).all()
         val['formats'][f.name]['last_week']['recent_players'] = [p.name for p in players]
+    last_last_week = dtutil.now() - dtutil.ts2dt(2 * 7 * 24 * 60 * 60)
+    for m in base_query.group_by(match.Match.format_id).filter(match.Match.start_time < last_week).filter(match.Match.start_time > last_last_week).order_by(func.count(match.Match.format_id).desc()).all():
+        f = m[0].format
+        val['formats'][f.name]['last_last_week'] = {}
+        val['formats'][f.name]['last_last_week']['num_matches'] = m[1]
+        stmt = text("""select b.* from user as b
+                        inner join (
+                            select user.id from user
+                            left join match_players
+                            ON match_players.user_id = user.id
+                            left join `match`
+                            on `match`.id = match_players.match_id
+                            where `match`.format_id = :fid and `match`.start_time is not null and
+                            `match`.start_time > date_sub(now(), interval 14 DAY) and
+                            `match`.start_time < date_sub(now(), interval 7 DAY)
+                            group by user.id
+                        ) as a on a.id = b.id
+                        """)
+        players = db.DB.session.query(db.User).from_statement(stmt).params(fid=f.id).all()
+        val['formats'][f.name]['last_last_week']['recent_players'] = [p.name for p in players]
+
     last_month = dtutil.now() - dtutil.ts2dt(30 * 24 * 60 * 60)
     for m in base_query.group_by(match.Match.format_id).filter(match.Match.start_time > last_month).order_by(func.count(match.Match.format_id).desc()).all():
         f = m[0].format

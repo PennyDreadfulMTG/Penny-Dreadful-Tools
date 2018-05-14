@@ -116,6 +116,13 @@ def test_normalize() -> None:
     d.colors = ['U', 'B']
     d.original_name = 'Black Power'
     assert deck_name.normalize(d) == 'Mono Black Power'
+    d.colors = ['G']
+    d.original_name = 'PD'
+    assert deck_name.normalize(d) == 'Mono Green'
+    d.colors = ['U', 'W']
+    d.original_name = 'PD'
+    d.archetype_name = 'Control'
+    assert deck_name.normalize(d) == 'Azorius Control'
 
     # Undefined cases
     # d.original_name = 'U/B Aggro' when d.archetype_name = 'Control'

@@ -68,6 +68,7 @@ def normalize(d: 'Deck') -> str:
     elif whitelisted(name):
         pass
     else:
+        name = add_colors_if_no_deckname(name, d.get('colors'))
         name = normalize_colors(name)
         name = add_archetype_if_just_colors(name, d.get('archetype_name'))
         name = remove_mono_if_not_first_word(name)
@@ -136,6 +137,11 @@ def name_from_colors(colors: List[str]) -> str:
                 return 'mono {name}'.format(name=name)
             return name
     return 'colorless'
+
+def add_colors_if_no_deckname(name: str, colors: List[str]) -> str:
+    if not name:
+        name = name_from_colors(colors)
+    return name
 
 def add_archetype_if_just_colors(name: str, archetype: Optional[str]) -> str:
     if name in COLOR_COMBINATIONS.keys() and archetype:

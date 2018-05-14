@@ -60,8 +60,6 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!rulings {name}` Display rulings for a card.
 
-`!scryfall {query}` Alias for `!search`.
-
 `!search {query}` Search for cards, using a scryfall-style query.
 
 `!spoiler {cardname}`: Request a card from an upcoming set.
@@ -71,6 +69,10 @@ The bot will search for any quoted cards, and respond with the card details.
 `!time {location}` Show the current time in the specified location.
 
 `!tournament` Get information about the next tournament.
+
+# Aliases
+
+`!scryfall {query}` Alias for `!search`.
 
 # Developer Commands
 

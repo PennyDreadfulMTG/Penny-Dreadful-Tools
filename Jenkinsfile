@@ -44,7 +44,7 @@ node{
             withCredentials([usernamePassword(credentialsId: 'd61f34a1-4929-406d-b4c5-ec380d823780', passwordVariable: 'github_password', usernameVariable: 'github_user')]) {
                 sh 'git push https://$github_user:$github_password@github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git jenkins_results --force'
             }
-            sh 'hub pull-request -m "Automated PR from Jenkins"'
+            sh 'hub pull-request  -b master -h jenkins_results -m "Automated PR from Jenkins"'
         }
     }
 }

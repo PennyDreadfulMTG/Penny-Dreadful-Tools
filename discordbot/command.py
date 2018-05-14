@@ -118,6 +118,8 @@ def build_help(readme: bool = False, cmd: str = None) -> str:
 
     msg = print_group('Commands')
     if readme:
+        msg += '\n# Aliases'
+        msg += print_group('Aliases')
         msg += '\n# Developer Commands'
         msg += print_group('Developer')
     return msg
@@ -193,7 +195,7 @@ Want to contribute? Send a Pull Request."""
         cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]
         await post_cards(client, cards, channel, author, more_results_link(args, how_many))
 
-    @cmd_header('Commands')
+    @cmd_header('Aliases')
     async def scryfall(self, client: Client, channel: Channel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!scryfall {query}` Alias for `!search`."""
         # Because of the weird way we call and use methods on Commands we need …

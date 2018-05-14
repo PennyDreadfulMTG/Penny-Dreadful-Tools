@@ -24,10 +24,10 @@ node{
         }
     }
 
-    stage('Pylint') {
-        // sh 'PATH=$PATH:~/.local/bin/; make lint | tee pylint.log'
-        // step([$class: 'WarningsPublisher', canComputeNew: false, canResolveRelativePaths: false, canRunOnFailed: true, excludePattern: '', failedTotalHigh: '0', unstableTotalAll: '0', healthy: '0', includePattern: '', messagesPattern: '', parserConfigurations: [[parserName: 'PyLint', pattern: 'pylint.log']], unHealthy: '10'])
-    }
+    // stage('Pylint') {
+    //     sh 'PATH=$PATH:~/.local/bin/; make lint | tee pylint.log'
+    //     step([$class: 'WarningsPublisher', canComputeNew: false, canResolveRelativePaths: false, canRunOnFailed: true, excludePattern: '', failedTotalHigh: '0', unstableTotalAll: '0', healthy: '0', includePattern: '', messagesPattern: '', parserConfigurations: [[parserName: 'PyLint', pattern: 'pylint.log']], unHealthy: '10'])
+    // }
 
     stage('Update Readme') {
         readme = sh(returnStatus: true, script: 'python3 generate_readme.py')

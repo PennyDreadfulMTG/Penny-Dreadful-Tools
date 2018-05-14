@@ -86,9 +86,10 @@ def add_decks(dt: datetime.datetime, competition_id: int, final: Dict[str, int],
         cells = BeautifulSoup(row, 'html.parser').find_all('td')
         d = tournament_deck(cells, competition_id, dt, final)
         if d is not None:
-            decks_added += 1
-            ds.append(d)
-            matches += tournament_matches(d)
+            if d.get('id') is None or not match.get_matches(d):
+                decks_added += 1
+                ds.append(d)
+                matches += tournament_matches(d)
     add_ids(matches, ds)
     insert_matches_without_dupes(dt, matches)
     return decks_added
@@ -162,8 +163,9 @@ def tournament_deck(cells, competition_id: int, date: datetime.datetime, final: 
         d['archetype'] = cells[5].string
     gatherling_id = urllib.parse.parse_qs(urllib.parse.urlparse(str(d['url'])).query)['id'][0]
     d['identifier'] = gatherling_id
-    if deck.get_deck_id(d['source'], d['identifier']) is not None:
-        return None
+    existing = deck.get_deck_id(d['source'], d['identifier'])
+    if existing is not None:
+        return deck.load_deck(existing)
     dlist = decklist.parse(fetcher.internal.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
     d['cards'] = dlist
     if len(dlist['maindeck']) + len(dlist['sideboard']) == 0:
@@ -185,7 +187,7 @@ def tournament_matches(d: deck.Deck) -> List[bs4.element.Tag]:
     rows.pop() # skip empty last row
     return find_matches(d, rows)
 
-def find_matches(d, rows) -> List[Dict[str, Any]]:
+def find_matches(d: deck.Deck, rows) -> List[Dict[str, Any]]:
     matches = []
     for row in rows:
         tds = row.find_all('td')
@@ -230,11 +232,16 @@ def insert_matches_without_dupes(dt, matches) -> None:
         inserted[key] = True
     db().commit()
 
-def add_ids(matches, ds) -> None:
+def add_ids(matches, ds: List[deck.Deck]) -> None:
     decks_by_identifier = {d.identifier: d for d in ds}
+    def lookup(gatherling_id: int) -> deck.Deck:
+        try:
+            return decks_by_identifier[gatherling_id]
+        except KeyError:
+            raise InvalidDataException("Unable to find deck with gatherling id '{0}'".format(gatherling_id))
     for m in matches:
-        m['left_id'] = decks_by_identifier[m['left_identifier']].id
-        m['right_id'] = decks_by_identifier[m['right_identifier']].id if m['right_identifier'] else None
+        m['left_id'] = lookup(m['left_identifier']).id
+        m['right_id'] = lookup(m['right_identifier']).id if m['right_identifier'] else None
 
 def gatherling_url(href: str) -> str:
     if href.startswith('http'):

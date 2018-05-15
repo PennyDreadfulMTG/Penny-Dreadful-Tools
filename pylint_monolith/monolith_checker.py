@@ -9,6 +9,7 @@ ACCEPTABLE_IMPORTS = {
     'discordbot': ('discordbot', 'magic', 'shared'),
     'logsite': ('logsite', 'shared', 'shared_web'),
     'magic': ('magic', 'shared'),
+    'maintenance': ('decksite', 'magic', 'maintenance', 'shared', 'shared_web'),
     'price_grabber': ('price_grabber', 'magic', 'shared'),
     'pylint_monolith': ('pylint_monolith'),
     'rotation_script': ('rotation_script', 'price_grabber', 'magic', 'shared'),

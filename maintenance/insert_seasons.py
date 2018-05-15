@@ -1,7 +1,7 @@
 from magic import rotation
 from shared import dtutil
 
-from ..database import db
+from decksite.database import db
 
 
 def run():

@@ -37,7 +37,7 @@ DISAMBIGUATION_NUMBERS_BY_EMOJI = {'1⃣' : 1, '2⃣' : 2, '3⃣' : 3, '4⃣' : 
 
 @lazy_property
 def searcher() -> WhooshSearcher:
-    return WhooshSearcher() # type: ignore
+    return WhooshSearcher()
 
 async def respond_to_card_names(message: Message, client: Client) -> None:
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.

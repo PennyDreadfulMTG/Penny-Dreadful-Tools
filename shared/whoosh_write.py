@@ -2,7 +2,7 @@ import os
 from typing import List
 
 from whoosh.fields import NUMERIC, STORED, TEXT, Schema
-from whoosh.index import create_in, open_dir
+from whoosh.index import Index, create_in, open_dir
 
 from shared.models.card import Card
 from shared.whoosh_constants import WhooshConstants
@@ -27,7 +27,7 @@ def ensure_dir_exists(directory: str) -> None:
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-def update_index(index, cards: List[Card]) -> None:
+def update_index(index: Index, cards: List[Card]) -> None:
     writer = index.writer()
     cards = [c for c in cards if c.layout != 'token' and c.type != 'Vanguard']
     for card in cards:

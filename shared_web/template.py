@@ -9,6 +9,7 @@ from flask_babel import gettext
 from markdown import Markdown, markdown
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
+from markdown.util import etree
 from pystache.common import TemplateNotFoundError
 from pystache.context import ContextStack
 
@@ -102,7 +103,7 @@ class _GettextNode(object):
 
 # pylint: disable=no-self-use
 class NoParaTagProcessor(Treeprocessor):
-    def run(self, root: List[Any]) -> None:
+    def run(self, root: etree.Element) -> None:
         root[0].tag = 'string'
 
 # pylint: disable=no-self-use, invalid-name

@@ -1,5 +1,6 @@
 from decksite.data import deck
 
+
 def test_load_similar_decks() -> None:
     ds = []
     deck.load_similar_decks(ds)

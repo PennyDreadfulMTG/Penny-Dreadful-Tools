@@ -12,15 +12,16 @@ import seaborn as sns
 from shared_web import logger
 from decksite.data import competition, deck
 from shared import configuration
-from shared.pd_exception import DoesNotExistException
+from shared.pd_exception import DoesNotExistException, OperationalException
 
-def cmc(deck_id: int) -> str:
+def cmc(deck_id: int, attempts: int = 0) -> str:
+    if attempts > 3:
+        msg = 'Unable to generate cmc chart for {id} in 3 attempts.'.format(id=deck_id)
+        logger.error(msg)
+        raise OperationalException(msg)
     path = determine_path(str(deck_id) + '-cmc.png')
-    if os.path.exists(path):
-        if os.path.getsize(path) > 1024 * 1024 * 8:
-            return path
-        else:
-            logger.warning('Regenerating graph for {deck_id} because the existing one is suspiciously small.'.format(deck_id=deck_id))
+    if acceptable_file(path):
+        return path
     d = deck.load_deck(deck_id)
     costs: Dict[str, int] = {}
     for ci in d.maindeck:
@@ -37,7 +38,11 @@ def cmc(deck_id: int) -> str:
                 cost = '7+'
             cost = str(converted)
         costs[cost] = ci.get('n') + costs.get(cost, 0)
-    return image(path, costs)
+    path = image(path, costs)
+    if acceptable_file(path):
+        return path
+    else:
+        return cmc(deck_id, attempts + 1)
 
 def image(path: str, costs: Dict[str, int]) -> str:
     ys = ['0', '1', '2', '3', '4', '5', '6', '7+', 'X']
@@ -84,3 +89,11 @@ def determine_path(name: str) -> str:
     if not os.path.exists(charts_dir):
         raise DoesNotExistException('Cannot store graph images because {charts_dir} does not exist.'.format(charts_dir=charts_dir))
     return os.path.join(charts_dir, name)
+
+def acceptable_file(path: str) -> bool:
+    if not os.path.exists(path):
+        return False
+    if os.path.getsize(path) > 1024 * 8:
+        return True
+    logger.warning('Chart at {path} is suspiciously small.'.format(path=path))
+    return False

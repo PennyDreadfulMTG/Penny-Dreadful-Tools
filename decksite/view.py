@@ -263,14 +263,6 @@ class View(BaseView):
             a.all_show_record = a.get('all_wins') or a.get('all_draws') or a.get('all_losses')
             a.show_matchups = a.all_show_record
         a.url = '/archetypes/{id}/'.format(id=a.id)
-        a.best_decks = Container({'decks': []})
-        n = 3
-        while len(a.best_decks.decks) == 0 and n >= 0:
-            for d in a.get('decks', []):
-                if d.get('stars_safe', '').count('★') >= n:
-                    a.best_decks.decks.append(d)
-            n -= 1
-        a.show_best_decks = len(a.decks) != len(a.best_decks.decks)
         counter = Counter() # type: ignore
         a.cards = []
         a.most_common_cards = []

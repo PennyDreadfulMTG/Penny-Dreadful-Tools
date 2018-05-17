@@ -1,8 +1,10 @@
-from typing import Optional
-import re
 import os
+import re
+from typing import Optional
+
 from babel.messages import pofile
 from babel.messages.catalog import Catalog, Message
+
 
 def ad_hoc():
     for directory, _, files in os.walk(os.path.join('shared_web', 'translations')):
@@ -40,15 +42,13 @@ def validate_string(message: Message, catalog: Catalog) -> None:
 
 
 def has_missing_var(english: str, string: str) -> Optional[str]:
-    try:
-        for m in re.findall(r'\{\w+\}', english):
-            if not m in string:
-                return 'Variable {m} missing from translation'.format(m=m)
-        return None
-    except TypeError:
-        print(repr(english))
-        print(type(english))
-        raise
+    for m in re.findall(r'\{\w+\}', english):
+        if not m in string:
+            return 'Variable {m} missing from translation'.format(m=m)
+    nums = len(re.findall('%(num)d', english))
+    if len(re.findall('%(num)d', string)) != nums:
+        return 'Missing %(num)d'
+    return None
 
 def error(message: Message, catalog: Catalog, warning: str) -> None:
     print('Warning: {lang} {message} failed tests:\n... {str}\n... {warning}'.format(message=message.id, lang=catalog.locale, warning=warning, str=message.string))

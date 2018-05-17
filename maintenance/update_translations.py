@@ -5,7 +5,9 @@ from poeditor.client import POEditorAPI
 
 from shared import configuration
 from shared_web import logger
+
 from . import validate_translations
+
 
 def run():
     api_key = configuration.get('poeditor_api_key')

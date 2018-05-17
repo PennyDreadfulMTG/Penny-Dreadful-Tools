@@ -1,5 +1,5 @@
-from decksite.database import db
 from decksite.data import person
+from decksite.database import db
 from shared.container import Container
 from shared_web import logger
 

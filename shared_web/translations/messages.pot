@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-04-27 02:33+1000\n"
+"POT-Creation-Date: 2018-05-15 23:38+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,147 +18,148 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.5.3\n"
 
-#: decksite/view.py:91
+#: decksite/__init__.py:51
 msgid "Rotation Tracking"
 msgstr ""
 
-#: decksite/view.py:93
+#: decksite/__init__.py:53
 msgid "Rotation Changes"
 msgstr ""
 
-#: decksite/view.py:94
+#: decksite/__init__.py:54
 msgid "Rotation Speculation"
 msgstr ""
 
-#: decksite/view.py:95
+#: decksite/__init__.py:55
 msgid "Deck Check"
 msgstr ""
 
-#: decksite/view.py:96
+#: decksite/__init__.py:56
 msgid "Discord Chat"
 msgstr ""
 
-#: decksite/view.py:97
+#: decksite/__init__.py:57
 msgid "External Links"
 msgstr ""
 
-#: decksite/view.py:98 decksite/views/link_accounts.py:35
+#: decksite/__init__.py:58 decksite/views/link_accounts.py:36
 msgid "Link Accounts"
 msgstr ""
 
-#: decksite/view.py:99
+#: decksite/__init__.py:59
 msgid "Bugs"
 msgstr ""
 
-#: decksite/view.py:102
+#: decksite/__init__.py:62
 msgid "Metagame"
 msgstr ""
 
-#: decksite/templates/home.mustache:1 decksite/view.py:103
+#: decksite/__init__.py:63 decksite/templates/home.mustache:1
 msgid "Latest Decks"
 msgstr ""
 
-#: decksite/view.py:104
+#: decksite/__init__.py:64
 msgid "Archetypes"
 msgstr ""
 
-#: decksite/view.py:105
+#: decksite/__init__.py:65
 msgid "People"
 msgstr ""
 
-#: decksite/view.py:106
+#: decksite/__init__.py:66
 msgid "Cards"
 msgstr ""
 
-#: decksite/view.py:107
+#: decksite/__init__.py:67
 msgid "Past Seasons"
 msgstr ""
 
-#: decksite/templates/tournaments.mustache:1 decksite/view.py:109
+#: decksite/__init__.py:69 decksite/templates/tournaments.mustache:1
 msgid "League"
 msgstr ""
 
-#: decksite/templates/league_header.mustache:1 decksite/view.py:110
+#: decksite/__init__.py:70 decksite/templates/league_header.mustache:1
 msgid "League Info"
 msgstr ""
 
-#: decksite/templates/faqsbody.mustache:1 decksite/view.py:111
+#: decksite/__init__.py:71 decksite/templates/faqsbody.mustache:1
 #: decksite/views/signup.py:31
 msgid "Sign Up"
 msgstr ""
 
-#: decksite/view.py:112 decksite/views/report.py:19
+#: decksite/__init__.py:72 decksite/views/report.py:19
 msgid "Report"
 msgstr ""
 
-#: decksite/templates/leagueinfo.mustache:1 decksite/view.py:113
+#: decksite/__init__.py:73 decksite/templates/leagueinfo.mustache:1
 msgid "Records"
 msgstr ""
 
-#: decksite/templates/leagueinfo.mustache:1 decksite/view.py:114
+#: decksite/__init__.py:74 decksite/templates/leagueinfo.mustache:1
 msgid "Retire"
 msgstr ""
 
-#: decksite/view.py:116
+#: decksite/__init__.py:76
 msgid "Competitions"
 msgstr ""
 
-#: decksite/view.py:117
+#: decksite/__init__.py:77
 msgid "Competition Results"
 msgstr ""
 
-#: decksite/view.py:118
+#: decksite/__init__.py:78
 msgid "Tournament Info"
 msgstr ""
 
-#: decksite/view.py:119
+#: decksite/__init__.py:79
 msgid "Leaderboards"
 msgstr ""
 
-#: decksite/view.py:120
+#: decksite/__init__.py:80
 msgid "Gatherling"
 msgstr ""
 
-#: decksite/view.py:121
+#: decksite/__init__.py:81
 msgid "Hosting"
 msgstr ""
 
-#: decksite/view.py:123
+#: decksite/__init__.py:83
 msgid "Resources"
 msgstr ""
 
-#: decksite/view.py:124 decksite/views/about_pdm.py:16
+#: decksite/__init__.py:84 decksite/views/about_pdm.py:16
+#: logsite/views/about.py:16
 msgid "About"
 msgstr ""
 
-#: decksite/view.py:125
+#: decksite/__init__.py:85
 msgid "What is Penny Dreadful?"
 msgstr ""
 
-#: decksite/view.py:126
+#: decksite/__init__.py:86
 msgid "About pennydreadfulmagic.com"
 msgstr ""
 
-#: decksite/view.py:127
+#: decksite/__init__.py:87
 msgid "FAQs"
 msgstr ""
 
-#: decksite/view.py:128
+#: decksite/__init__.py:88
 msgid "Community Guidelines"
 msgstr ""
 
-#: decksite/view.py:130
+#: decksite/__init__.py:90
 msgid "Admin"
 msgstr ""
 
-#: decksite/view.py:189
+#: decksite/view.py:145
 #, python-format
 msgid "%(num)d active league run"
 msgid_plural "%(num)d active league runs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/view.py:364
+#: decksite/view.py:314 logsite/templates/about.mustache:1
 msgid "Help us translate the site into your language"
 msgstr ""
 
@@ -180,6 +181,10 @@ msgid ""
 " tournaments include Reanimator, Red Deck Wins, Heroic, Aristocrats, "
 "Demonic Rising, Abzan Midrange, Elves, Grenzo Combo, Dragon Control and "
 "Vampires in one season alone."
+msgstr ""
+
+#: decksite/templates/aboutpdm.mustache:1 logsite/templates/about.mustache:1
+msgid "This site is currently translated into:"
 msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1
@@ -367,6 +372,16 @@ msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
 msgid ""
+"Each league lasts roughly a month. The [current league]({records_url}) "
+"will run until {end_date}."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "You can [sign up]({signup_url}) at any time."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
 "When you complete a five match league run for the first time ever you "
 "will get 1 tik credit with MTGO Traders (at the end of the month)."
 msgstr ""
@@ -387,8 +402,37 @@ msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
 msgid ""
+"If you don't want to finish a league run message <code>!retire</code> to "
+"PDBot on Magic Online or [retire]({retire_url}) via the website and your "
+"run will end."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid "Your deck will be checked for legality when you [sign up]({signup_url})."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"The easiest way to sign up is to export your deck from Magic Online and "
+"then upload it or copy it into the [sign up page]({signup_url})."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
 "To export your deck from Magic Online, right click on the name of the "
 "deck on the left of the Collection tab, then click export."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"PDBot will report your match result if it is watching your match but if "
+"not the winner should [report the result]({report_url}) of the match."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"Make sure you have the right deck name for both you and your opponent "
+"before submitting. Report any problems on [Discord]({discord_url})."
 msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
@@ -421,6 +465,12 @@ msgid ""
 "league deck.  PDBot will alert you if both players are registered in "
 "league. Add \"Penny Dreadful League\" in a comment on your match in Just "
 "for Fun, Freeform to make your intentions clear."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"You can also find opponents through the #league channel on "
+"[Discord]({discord_url})."
 msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
@@ -490,10 +540,6 @@ msgid ""
 "a game loss for the owner of the bugged card."
 msgstr ""
 
-#: decksite/views/about_pdm.py:22
-msgid "This site is currently translated into:"
-msgstr ""
-
 #: decksite/views/deck_check.py:16 decksite/views/signup.py:25
 msgid "Decklist"
 msgstr ""
@@ -514,16 +560,6 @@ msgstr ""
 msgid "Check your deck"
 msgstr ""
 
-#: decksite/views/league_info.py:24
-msgid ""
-"Each league lasts roughly a month. The [[current league]] will run until "
-"{END_DATE}."
-msgstr ""
-
-#: decksite/views/league_info.py:36
-msgid "You can [[sign up]] at any time."
-msgstr ""
-
 #: decksite/views/report.py:22
 msgid "Your Deck"
 msgstr ""
@@ -540,5 +576,32 @@ msgstr ""
 
 #: decksite/views/signup.py:22
 msgid "Deck Name"
+msgstr ""
+
+#: logsite/templates/about.mustache:1
+msgid "About PDBot"
+msgstr ""
+
+#: logsite/templates/about.mustache:1
+msgid ""
+"PDBot is a robot that observes people playing games on Magic Online, and "
+"provides the role of judge, informing players with legality and bug "
+"information."
+msgstr ""
+
+#: logsite/templates/charts.mustache:1
+msgid "Recent Activity"
+msgstr ""
+
+#: logsite/templates/home.mustache:1
+msgid "Latest Matches"
+msgstr ""
+
+#: logsite/templates/home.mustache:1
+msgid "More matches…"
+msgstr ""
+
+#: logsite/views/charts.py:17
+msgid "Stats"
 msgstr ""
 

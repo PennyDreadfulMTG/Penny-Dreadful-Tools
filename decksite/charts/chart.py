@@ -93,7 +93,7 @@ def determine_path(name: str) -> str:
 def acceptable_file(path: str) -> bool:
     if not os.path.exists(path):
         return False
-    if os.path.getsize(path) >= 6860: // This is a few bytes smaller than a completely empty graph on prod.
+    if os.path.getsize(path) >= 6860: # This is a few bytes smaller than a completely empty graph on prod.
         return True
     logger.warning('Chart at {path} is suspiciously small.'.format(path=path))
     return False

@@ -1,3 +1,4 @@
+from decksite.data import person
 from decksite.database import db
 from shared.container import Container
 from shared_web import logger
@@ -24,17 +25,7 @@ def run() -> None:
             if len(pairs) > 0:
                 run_elo = True
             for pair in pairs:
-                squash(pair.p1_id, pair.p2_id, pair.col1, pair.col2)
+                person.squash(pair.p1_id, pair.p2_id, pair.col1, pair.col2)
     if run_elo:
         logger.warning('Running maintenance task to correct all Elo ratings.')
         elo.run()
-
-
-def squash(p1id: int, p2id: int, col1: str, col2: str) -> None:
-    logger.warning('Squashing {p1id} and {p2id} on {col1} and {col2}'.format(p1id=p1id, p2id=p2id, col1=col1, col2=col2))
-    db().begin()
-    new_value = db().value('SELECT {col2} FROM person WHERE id = %s'.format(col2=col2), [p2id])
-    db().execute('UPDATE deck SET person_id = %s WHERE person_id = %s', [p1id, p2id])
-    db().execute('DELETE FROM person WHERE id = %s', [p2id])
-    db().execute('UPDATE person SET {col2} = %s WHERE id = %s'.format(col2=col2), [new_value, p1id])
-    db().commit()

@@ -5,7 +5,6 @@ from flask_babel import gettext
 
 from decksite import auth
 from decksite.data import person
-from decksite.maintenance import squash_people
 from decksite.view import View
 from shared.container import Container
 from shared.pd_exception import AlreadyExistsException
@@ -64,7 +63,7 @@ class LinkAccounts(View):
             elif mtggoldfish_user.mtgo_username is not None:
                 self.form.errors.gf_username = '"{mtggoldfish_name}" is already associated to another user.  If you believe this is in error, contact us.'.format(mtggoldfish_name=mtggoldfish_name)
             else:
-                squash_people.squash(self.person.id, mtggoldfish_user.id, 'mtgo_username', 'mtggoldfish_username')
+                person.squash(self.person.id, mtggoldfish_user.id, 'mtgo_username', 'mtggoldfish_username')
                 self.disable_gf = True
 
     def link_tappedout(self) -> None:
@@ -78,5 +77,5 @@ class LinkAccounts(View):
             elif tapped_user.id is not None:
                 self.form.errors.to_username = '"{tapped_name}" is already associated to another user.  If you believe this is in error, contact us.'.format(tapped_name=tapped_name)
             else:
-                squash_people.squash(self.person.id, cast(int, tapped_user.id), 'mtgo_username', 'tappedout_username')
+                person.squash(self.person.id, cast(int, tapped_user.id), 'mtgo_username', 'tappedout_username')
                 self.disable_to = True

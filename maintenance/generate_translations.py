@@ -25,8 +25,8 @@ def ad_hoc() -> None:
     }
     compiler = frontend.extract_messages(dist)
     compiler.initialize_options()
-    compiler.output_file = './decksite/translations/messages.pot'
-    compiler.input_paths = 'decksite'
+    compiler.output_file = './shared_web/translations/messages.pot'
+    compiler.input_paths = ['decksite', 'logsite']
     compiler.finalize_options()
     compiler.run()
 
@@ -34,7 +34,7 @@ def ad_hoc() -> None:
     if api_key is None:
         return
     client = POEditorAPI(api_token=api_key)
-    client.update_terms('162959', './decksite/translations/messages.pot')
+    client.update_terms('162959', './shared_web/translations/messages.pot')
 
 # pylint: disable=protected-access, unused-argument
 def extract_mustache(fileobj: Any, keywords: List[str], comment_tags: List[str], options: Dict[str, str]) -> Generator:

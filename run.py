@@ -51,6 +51,8 @@ def task(args: List[str]) -> None:
     module = args[1]
     if module == 'scraper':
         module = 'scrapers'
+    if module == 'scrapers':
+        module = 'decksite.scrapers'
     name = args.pop()
     from decksite.main import APP
     APP.config['SERVER_NAME'] = '127:0.0.1:5000'
@@ -60,16 +62,16 @@ def task(args: List[str]) -> None:
         if name != 'reprime_cache':
             oracle.init()
         if name == 'all':
-            m = importlib.import_module('decksite.{module}'.format(module=module))
+            m = importlib.import_module('{module}'.format(module=module))
             # pylint: disable=unused-variable
             for importer, modname, ispkg in pkgutil.iter_modules(m.__path__): # type: ignore
-                s = importlib.import_module('decksite.{module}.{name}'.format(name=modname, module=module))
+                s = importlib.import_module('{module}.{name}'.format(name=modname, module=module))
                 if getattr(s, 'scrape', None) is not None:
                     s.scrape() # type: ignore
                 elif getattr(s, 'run', None) is not None:
                     s.run() # type: ignore
         else:
-            s = importlib.import_module('decksite.{module}.{name}'.format(name=name, module=module))
+            s = importlib.import_module('{module}.{name}'.format(name=name, module=module))
             if getattr(s, 'scrape', None) is not None:
                 s.scrape() # type: ignore
             elif getattr(s, 'run', None) is not None:

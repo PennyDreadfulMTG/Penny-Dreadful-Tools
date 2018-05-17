@@ -6,6 +6,7 @@ from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import AlreadyExistsException
+from shared_web import logger
 
 
 class Person(Container):
@@ -254,3 +255,12 @@ def link_discord(mtgo_username: str, discord_id: int) -> Person:
 
 def is_banned(mtgo_username):
     return db().value('SELECT banned FROM person WHERE mtgo_username = %s', [mtgo_username]) == 1
+
+def squash(p1id: int, p2id: int, col1: str, col2: str) -> None:
+    logger.warning('Squashing {p1id} and {p2id} on {col1} and {col2}'.format(p1id=p1id, p2id=p2id, col1=col1, col2=col2))
+    db().begin()
+    new_value = db().value('SELECT {col2} FROM person WHERE id = %s'.format(col2=col2), [p2id])
+    db().execute('UPDATE deck SET person_id = %s WHERE person_id = %s', [p1id, p2id])
+    db().execute('DELETE FROM person WHERE id = %s', [p2id])
+    db().execute('UPDATE person SET {col2} = %s WHERE id = %s'.format(col2=col2), [new_value, p1id])
+    db().commit()

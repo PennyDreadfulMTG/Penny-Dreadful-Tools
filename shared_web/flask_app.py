@@ -1,3 +1,4 @@
+import os
 import traceback
 import urllib
 from typing import Optional, Tuple
@@ -28,6 +29,8 @@ class PDFlask(Flask):
         self.config['menu'] = []
         self.config['js_url'] = ''
         self.config['css_url'] = ''
+        translations = os.path.join(os.path.dirname(__file__), 'translations')
+        self.config['BABEL_TRANSLATION_DIRECTORIES'] = translations
         self.babel = Babel(self)
         localization.init(self.babel)
 

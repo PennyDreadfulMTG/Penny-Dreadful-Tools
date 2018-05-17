@@ -39,6 +39,6 @@ def run():
     compiler.domain = ['messages']
     compiler.run()
     # hack for English - We need an empty folder so that Enlish shows up in the 'Known Languages' list.
-    path = os.path.join('decksite', 'translations', 'en', 'LC_MESSAGES')
+    path = os.path.join('shared_web', 'translations', 'en', 'LC_MESSAGES')
     if not os.path.exists(path):
         os.makedirs(path)

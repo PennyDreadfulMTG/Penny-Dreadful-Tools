@@ -63,7 +63,11 @@ class PDFlask(Flask):
         session['oauth2_state'] = state
         if target is not None:
             session['target'] = target
-        return redirect(authorization_url)
+        response = redirect(authorization_url)
+        # Google doesn't like the discordapp.com page we redirect to being disallowed in discordapp.com's robots.txt without `X-Robots-Tag: noindex` in our response.
+        # See https://support.google.com/webmasters/answer/93710
+        response.headers['X-Robots-Tag'] = 'noindex'
+        return response
 
     def authenticate_callback(self):
         if request.values.get('error'):

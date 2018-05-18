@@ -112,7 +112,7 @@ def make_final_list() -> None:
     final = list(passed)
     if is_supplemental():
         temp = set(passed)
-        final = list(temp.union(fetcher.legal_cards()))
+        final = list(temp.union([c + '\n' for c in fetcher.legal_cards()]))
     final.sort()
     h = open(os.path.join(configuration.get_str('legality_dir'), 'legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))

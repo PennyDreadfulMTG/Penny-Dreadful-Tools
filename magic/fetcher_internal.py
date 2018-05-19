@@ -53,7 +53,9 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
 def fetch_json(url: str, character_encoding: str = None) -> Any:
     try:
         blob = fetch(url, character_encoding)
-        return json.loads(blob)
+        if blob:
+            return json.loads(blob)
+        return None
     except json.decoder.JSONDecodeError:
         print('Failed to load JSON:\n{0}'.format(blob))
         raise

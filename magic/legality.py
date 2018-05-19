@@ -1,4 +1,4 @@
-from typing import Dict, List, Set
+from typing import Dict, List, Optional, Set
 
 from magic import oracle, rotation
 from magic.database import db
@@ -9,7 +9,7 @@ FORMATS: Set[str] = set()
 def legal_in_format(d, f):
     return f in legal_formats(d, [f])
 
-def legal_formats(d, formats_to_check=None, errors=None) -> Set[str]:
+def legal_formats(d, formats_to_check: Set[str] = None, errors: Optional[Dict[str, str]] = None) -> Set[str]:
     init()
     if formats_to_check is None:
         formats_to_check = FORMATS
@@ -53,7 +53,7 @@ def legal_formats(d, formats_to_check=None, errors=None) -> Set[str]:
 
     return formats
 
-def cards_legal_in_format(cardlist, f) -> List[Card]:
+def cards_legal_in_format(cardlist: List[Card], f: str) -> List[Card]:
     init()
     results = []
     for c in cardlist:

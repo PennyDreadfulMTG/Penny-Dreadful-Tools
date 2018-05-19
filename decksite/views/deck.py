@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict, Optional
 
 import inflect
 import titlecase
@@ -6,7 +6,7 @@ from flask import session, url_for
 
 from decksite.data import archetype, deck, match
 from decksite.view import View
-from magic import fetcher, legality, oracle
+from magic import card, fetcher, legality, oracle
 from shared import dtutil
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
@@ -14,7 +14,7 @@ from shared.pd_exception import InvalidDataException
 
 # pylint: disable=no-self-use, too-many-instance-attributes
 class Deck(View):
-    def __init__(self, d, person_id=None, discord_id=None) -> None:
+    def __init__(self, d: deck.Deck, person_id: Optional[int] = None, discord_id: Optional[int] = None) -> None:
         super().__init__()
         self.deck = d
         self.prepare_deck(self.deck)
@@ -50,7 +50,6 @@ class Deck(View):
         self.deck['sideboard'].sort(key=lambda x: oracle.deck_sort(x['card']))
         self.archetypes = archetype.load_archetypes_deckless(order_by='a.name')
         self.edit_archetype_url = url_for('edit_archetypes')
-        self.cardhoarder_url = fetcher.cardhoarder_url(d)
         self.legal_formats = list(sorted(d.legal_formats, key=legality.order_score))
         self.is_in_current_run = d.is_in_current_run()
         self.person_id = person_id
@@ -123,6 +122,15 @@ class Deck(View):
         if self.person_id != self.deck.person_id:
             return False
         return True
+
+    def cardhoarder_url(self) -> str: # This should be a Deck, but we can't import it from here.
+        d = self.deck
+        cs: Dict[str, int] = {}
+        for entry in d.maindeck + d.sideboard:
+            name = entry['card'].name
+            cs[name] = cs.get(name, 0) + entry['n']
+        deck_s = '||'.join([str(v) + ' ' + card.to_mtgo_format(k).replace('"', '') for k, v in cs.items()])
+        return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=fetcher.internal.escape(deck_s))
 
 def display_round(m: Container) -> str:
     if not m.get('elimination'):

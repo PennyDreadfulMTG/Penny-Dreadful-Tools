@@ -8,6 +8,7 @@ from shared import configuration, perf
 from shared.pd_exception import (DatabaseException, InvalidArgumentException,
                                  LockNotAcquiredException)
 
+ValidSqlArgumentDescription = Any
 
 class Database():
     def __init__(self, db: str) -> None:
@@ -33,7 +34,7 @@ class Database():
         except MySQLdb.Error:
             raise DatabaseException('Failed to initialize database in `{location}`'.format(location=self.name))
 
-    def execute(self, sql: str, args: Optional[List[Any]] = None) -> List[Dict[str, Any]]:
+    def execute(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[Dict[str, ValidSqlArgumentDescription]]:
         if args is None:
             args = []
         try:
@@ -48,7 +49,7 @@ class Database():
         except MySQLdb.Error as e:
             raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
 
-    def execute_with_reconnect(self, sql: str, args: Any = None) -> List[Any]:
+    def execute_with_reconnect(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[ValidSqlArgumentDescription]:
         result = None
         # Attempt to excute the query and reconnect 3 times, then give up
         for _ in range(3):
@@ -70,7 +71,7 @@ class Database():
             raise DatabaseException('Failed to execute `{sql}` with `{args}`. MySQL has gone away and it was not possible to reconnect in 3 attemps'.format(sql=sql, args=args))
         return result
 
-    def insert(self, sql: str, args: Optional[List[Any]] = None) -> int:
+    def insert(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> int:
         self.execute(sql, args)
         return self.last_insert_rowid()
 
@@ -91,7 +92,7 @@ class Database():
     def release_lock(self, lock_id: str) -> None:
         self.execute('select release_lock(%s)', [lock_id])
 
-    def value(self, sql: str, args: Any = None, default: Any = None, fail_on_missing: bool = False) -> Any:
+    def value(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, default: Any = None, fail_on_missing: bool = False) -> Any:
         try:
             return self.values(sql, args)[0]
         except IndexError:
@@ -100,14 +101,14 @@ class Database():
             else:
                 return default
 
-    def values(self, sql: str, args: Any = None) -> List[Any]:
+    def values(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[Any]:
         rs = self.execute(sql, args)
         return [list(row.values())[0] for row in rs]
 
 def get_database(location: str) -> Database:
     return Database(location)
 
-def sqlescape(s, force_string: bool = False, backslashed_escaped=False):
+def sqlescape(s: ValidSqlArgumentDescription, force_string: bool = False, backslashed_escaped: bool = False) -> ValidSqlArgumentDescription:
     if str(s).isdecimal() and not force_string:
         return s
     if isinstance(s, str):

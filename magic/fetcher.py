@@ -8,7 +8,6 @@ from urllib import parse
 import pytz
 
 import magic.fetcher_internal as internal
-from magic import card as mc
 from magic.fetcher_internal import FetchException
 from shared import configuration, dtutil
 from shared.models.card import Card
@@ -67,14 +66,6 @@ def card_price_string(card: Card, short: bool = False) -> str:
         dollars, cents = str(round(float(p), 2)).split('.')
         return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
     return price_info(card)
-
-def cardhoarder_url(d) -> str:
-    cs: Dict[str, int] = {}
-    for entry in d.maindeck + d.sideboard:
-        name = entry['card'].name
-        cs[name] = cs.get(name, 0) + entry['n']
-    deck_s = '||'.join([str(v) + ' ' + mc.to_mtgo_format(k).replace('"', '') for k, v in cs.items()])
-    return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=internal.escape(deck_s))
 
 def decksite_url(path: str = '/') -> str:
     hostname = configuration.get_str('decksite_hostname')
@@ -151,7 +142,7 @@ def search_scryfall(query: str) -> Tuple[int, List[str]]:
     result_data = result_json['data']
     result_data.sort(key=lambda x: x['legalities']['penny'])
 
-    def get_frontside(scr_card) -> str:
+    def get_frontside(scr_card: Dict) -> str:
         """If card is transform, returns first name. Otherwise, returns name.
         This is to make sure cards are later found in the database"""
         #not sure how to handle meld cards

@@ -87,7 +87,7 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
             {'name': gettext('FAQs'), 'url': url_for('faqs')},
             {'name': gettext('Community Guidelines'), 'url': url_for('community_guidelines')}
         ]},
-        {'name': gettext('Admin'), 'admin_only': True, 'url': url_for('admin'), 'submenu': admin.admin_menu()}
+        {'name': gettext('Admin'), 'admin_only': True, 'url': url_for('admin_home'), 'submenu': admin.admin_menu()}
     ]
     for item in menu:
         item['has_submenu'] = item.get('submenu') is not None

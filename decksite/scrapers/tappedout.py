@@ -90,7 +90,7 @@ def scrape_url(url: str) -> deck.Deck:
         raw_deck.update(parse_printable(raw_deck))
     raw_deck = set_values(raw_deck)
     vivified = decklist.vivify(raw_deck['cards'])
-    errors: Dict[str, List[str]] = {}
+    errors: Dict[str, str] = {}
     if 'Penny Dreadful' not in legality.legal_formats(vivified, None, errors):
         print(repr(raw_deck['cards']))
         raise InvalidDataException('Deck is not legal in Penny Dreadful - {error}'.format(error=errors.get('Penny Dreadful')))

@@ -165,13 +165,17 @@ Want to contribute? Send a Pull Request."""
         """`!random` Request a random PD legal card.
 `!random X` Request X random PD legal cards."""
         number = 1
+        additional_text = ''
         if len(args) > 0:
             try:
                 number = int(args.strip())
+                if number > 10:
+                    additional_text = "{number}? Tsk. Here's ten.".format(number=number)
+                    number = 10
             except ValueError:
                 pass
         cards = [oracle.cards_by_name()[name] for name in random.sample(oracle.legal_cards(), number)]
-        await post_cards(client, cards, channel)
+        await post_cards(client, cards, channel, None, additional_text)
 
     @cmd_header('Developer')
     async def update(self, client: Client, channel: Channel, **_: Dict[str, Any]) -> None:

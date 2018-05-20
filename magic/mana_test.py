@@ -22,6 +22,9 @@ def test_gleemax() -> None:
 def test_x() -> None:
     do_test('X', ['X'])
 
+def test_y() -> None:
+    do_test('XYZ', ['X', 'Y', 'Z'])
+
 def test_multicolor_x() -> None:
     do_test('XRB', ['X', 'R', 'B'])
 
@@ -63,6 +66,7 @@ def test_has_x() -> None:
     assert not mana.has_x('{1}{W}{W}')
     assert mana.has_x('{X}{Y}{R}')
     assert not mana.has_x('{C}')
+    assert mana.has_x('{Y}{Z}')
 
 def test_order() -> None:
     assert mana.order(['U']) == ['U']

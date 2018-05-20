@@ -267,6 +267,7 @@ def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
 def update_cache() -> None:
     db().begin()
     db().execute('DROP TABLE IF EXISTS _cache_card')
+    db().execute('SET group_concat_max_len=100000')
     db().execute('CREATE TABLE _cache_card AS {base_query}'.format(base_query=base_query()))
     db().execute('CREATE INDEX idx_name_name on _cache_card (name(142))')
     db().commit()

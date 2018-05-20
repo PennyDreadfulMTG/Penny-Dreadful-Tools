@@ -2,6 +2,7 @@ from typing import Collection, Dict, List, Optional
 
 from magic import card, fetcher, mana, multiverse, rotation
 from magic.database import db
+from shared.container import Container
 from shared.database import sqlescape
 from shared.models.card import Card
 from shared.pd_exception import (InvalidArgumentException,
@@ -105,7 +106,7 @@ def scryfall_import(name) -> bool:
 
 def insert_scryfall_card(sfcard, rebuild_cache: bool = True) -> None:
     imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
-    c = {
+    c = Container({
         'layout': sfcard['layout'],
         'cmc': int(float(sfcard['cmc'])),
         'imageName': imagename,
@@ -113,7 +114,7 @@ def insert_scryfall_card(sfcard, rebuild_cache: bool = True) -> None:
         'printings': [sfcard['set']],
         'rarity': sfcard['rarity'],
         'names': []
-    }
+    })
     faces = sfcard.get('card_faces', [sfcard])
     names = [face['name'] for face in faces]
     for face in faces:
@@ -129,7 +130,7 @@ def insert_scryfall_card(sfcard, rebuild_cache: bool = True) -> None:
             'text': face.get('oracle_text', ''),
             'manaCost': face.get('mana_cost', None)
         })
-        c['names'] = names
+        c.names = names
         multiverse.insert_card(c)
     if rebuild_cache:
         multiverse.update_cache()

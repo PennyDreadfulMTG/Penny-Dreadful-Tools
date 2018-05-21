@@ -124,7 +124,7 @@ def normalize_colors(name: str) -> str:
         name = name.replace('mono ', '')
     return name
 
-def regex_pattern(pattern):
+def regex_pattern(pattern: str) -> str:
     return '(^| )(mono[ -]?)?{pattern}( |$)'.format(pattern=pattern)
 
 def standard_color_with_spaces(m: Match) -> str:

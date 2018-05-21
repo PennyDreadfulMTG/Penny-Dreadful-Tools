@@ -1,3 +1,5 @@
+from typing import List
+
 from magic import database, mana
 
 
@@ -5,7 +7,7 @@ def  test_simple() -> None:
     do_test('U', ['U'])
     do_test('{U}', ['U'])
     try:
-        do_test('Not a mana symbol sequence', None)
+        do_test('Not a mana symbol sequence', [])
         assert False
     except mana.InvalidManaCostException:
         assert True
@@ -21,6 +23,9 @@ def test_gleemax() -> None:
 
 def test_x() -> None:
     do_test('X', ['X'])
+
+def test_y() -> None:
+    do_test('XYZ', ['X', 'Y', 'Z'])
 
 def test_multicolor_x() -> None:
     do_test('XRB', ['X', 'R', 'B'])
@@ -63,6 +68,7 @@ def test_has_x() -> None:
     assert not mana.has_x('{1}{W}{W}')
     assert mana.has_x('{X}{Y}{R}')
     assert not mana.has_x('{C}')
+    assert mana.has_x('{Y}{Z}')
 
 def test_order() -> None:
     assert mana.order(['U']) == ['U']
@@ -80,7 +86,7 @@ def test_order() -> None:
 def test_colorless() -> None:
     assert mana.colored_symbols(['C']) == {'required': ['C'], 'also': []}
 
-def do_test(s, expected) -> None:
+def do_test(s: str, expected: List[str]) -> None:
     symbols = mana.parse(s)
     works = symbols == expected
     if not works:

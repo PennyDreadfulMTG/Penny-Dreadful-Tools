@@ -5,7 +5,6 @@ import pytest
 from decksite import deck_name
 from shared.container import Container
 
-
 TESTDATA = [
     ('Dimir Control', 'Dimir Control', ['U', 'B'], 'Control'),
     ('U/B Control', 'Dimir Control', ['U', 'B'], 'Control'),
@@ -55,6 +54,7 @@ TESTDATA = [
     ('PD', 'Azorius Control', ['U', 'W'], 'Control'),
     ('PD', 'Azorius', ['U', 'W'], 'Unclassified'),
     ('White Jund', 'White Jund', None, None),
+    ('Bant #Value', 'Bant Yisan-Prophet', ['G', 'U', 'W'], 'Yisan-Prophet'),
 
     # Cases that used to work well under strip-and-replace that no longer do
     # ('White Green', 'Selesnya Aggro', ['W', 'G'], 'Aggro'),

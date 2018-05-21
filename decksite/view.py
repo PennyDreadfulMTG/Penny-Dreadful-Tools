@@ -14,7 +14,6 @@ from decksite import APP, get_season_id
 from decksite.data import archetype, deck
 from magic import oracle, rotation, tournaments
 from shared import dtutil
-from shared.container import Container
 from shared.models.card import Card
 from shared_web.base_view import BaseView
 

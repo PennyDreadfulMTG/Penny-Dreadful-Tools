@@ -1,3 +1,5 @@
+from typing import List
+
 from magic import database, mana
 
 
@@ -5,7 +7,7 @@ def  test_simple() -> None:
     do_test('U', ['U'])
     do_test('{U}', ['U'])
     try:
-        do_test('Not a mana symbol sequence', None)
+        do_test('Not a mana symbol sequence', [])
         assert False
     except mana.InvalidManaCostException:
         assert True
@@ -84,7 +86,7 @@ def test_order() -> None:
 def test_colorless() -> None:
     assert mana.colored_symbols(['C']) == {'required': ['C'], 'also': []}
 
-def do_test(s, expected) -> None:
+def do_test(s: str, expected: List[str]) -> None:
     symbols = mana.parse(s)
     works = symbols == expected
     if not works:

@@ -123,6 +123,10 @@ def test_normalize() -> None:
     d.original_name = 'PD'
     d.archetype_name = 'Control'
     assert deck_name.normalize(d) == 'Azorius Control'
+    d.archetype_name = 'Unclassified'
+    assert deck_name.normalize(d) == 'Azorius'
+    d.original_name = 'White Jund'
+    assert deck_name.normalize(d) == 'White Jund'
 
     # Undefined cases
     # d.original_name = 'U/B Aggro' when d.archetype_name = 'Control'

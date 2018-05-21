@@ -114,8 +114,18 @@ def whitelisted(name: str) -> bool:
 def normalize_colors(name: str) -> str:
     patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*'] + list(COLOR_COMBINATIONS.keys())
     for pattern in patterns:
-        name = re.sub('(^| )(mono[ -]?)?{pattern}( |$)'.format(pattern=pattern), standard_color_with_spaces, name, flags=re.IGNORECASE).strip()
+        regex = regex_pattern(pattern)
+        name = re.sub(regex, standard_color_with_spaces, name, flags=re.IGNORECASE).strip()
+    color_words = 0
+    for pattern in patterns:
+        regex = regex_pattern(pattern)
+        color_words += 1 if re.search(regex, name, flags=re.IGNORECASE) else 0
+    if color_words > 1:
+        name = name.replace('mono ', '')
     return name
+
+def regex_pattern(pattern):
+    return '(^| )(mono[ -]?)?{pattern}( |$)'.format(pattern=pattern)
 
 def standard_color_with_spaces(m: Match) -> str:
     name_without_mono = re.sub('(mono[ -]?)', '', m.group(0))
@@ -144,7 +154,7 @@ def add_colors_if_no_deckname(name: str, colors: List[str]) -> str:
     return name
 
 def add_archetype_if_just_colors(name: str, archetype: Optional[str]) -> str:
-    if name in COLOR_COMBINATIONS.keys() and archetype:
+    if name in COLOR_COMBINATIONS.keys() and archetype and archetype != 'Unclassified':
         return '{name} {archetype}'.format(name=name, archetype=archetype)
     return name
 

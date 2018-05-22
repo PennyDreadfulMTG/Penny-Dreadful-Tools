@@ -12,8 +12,8 @@ from shared import repo
 from shared.pd_exception import DoesNotExistException
 
 from . import localization, logger, oauth
-from .views import InternalServerError, NotFound, Unauthorized
 from .api import generate_error, return_json
+from .views import InternalServerError, NotFound, Unauthorized
 
 
 # pylint: disable=no-self-use, too-many-public-methods

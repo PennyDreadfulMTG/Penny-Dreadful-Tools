@@ -76,7 +76,7 @@ def normalize(d: 'Deck') -> str:
             name = remove_mono_if_not_first_word(name)
         name = ucase_trailing_roman_numerals(name)
         return titlecase.titlecase(name)
-    except KeyError:
+    except ValueError:
         raise InvalidDataException('Failed to normalize {d}'.format(d=d))
 
 def file_name(d: 'Deck') -> str:

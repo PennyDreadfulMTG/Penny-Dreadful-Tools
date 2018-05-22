@@ -4,6 +4,7 @@ import pytest
 
 from decksite import deck_name
 from shared.container import Container
+from shared.pd_exception import InvalidDataException
 
 TESTDATA = [
     ('Dimir Control', 'Dimir Control', ['U', 'B'], 'Control'),
@@ -72,3 +73,13 @@ def test_remove_pd() -> None:
     assert deck_name.remove_pd('Penny Dreadful Knights') == 'Knights'
     assert deck_name.remove_pd('biovisionary pd') == 'biovisionary'
     assert deck_name.remove_pd('[PD] Mono Black Control') == 'Mono Black Control'
+
+def test_invalid_color() -> None:
+    d = Container({'original_name': 'PD',
+                   'archetype_name': 'Control',
+                   'colors': ['U', 'X']})
+    try:
+        deck_name.normalize(d)
+        assert False
+    except InvalidDataException:
+        assert True

@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, List, Match, Optional
 import titlecase
 
 from magic import mana
+from shared.pd_exception import InvalidDataException
 
 # pylint: disable=cyclic-import,unused-import
 if TYPE_CHECKING:
@@ -55,25 +56,28 @@ COLOR_COMBINATIONS = {
 }
 
 def normalize(d: 'Deck') -> str:
-    name = d.original_name
-    name = name.lower()
-    name = replace_space_alternatives(name)
-    name = remove_pd(name)
-    name = remove_hashtags(name)
-    name = remove_brackets(name)
-    name = strip_leading_punctuation(name)
-    unabbreviated = expand_common_abbreviations(name)
-    if unabbreviated != name or name in ABBREVIATIONS.values():
-        name = unabbreviated
-    elif whitelisted(name):
-        pass
-    else:
-        name = add_colors_if_no_deckname(name, d.get('colors'))
-        name = normalize_colors(name)
-        name = add_archetype_if_just_colors(name, d.get('archetype_name'))
-        name = remove_mono_if_not_first_word(name)
-    name = ucase_trailing_roman_numerals(name)
-    return titlecase.titlecase(name)
+    try:
+        name = d.original_name
+        name = name.lower()
+        name = replace_space_alternatives(name)
+        name = remove_pd(name)
+        name = remove_hashtags(name)
+        name = remove_brackets(name)
+        name = strip_leading_punctuation(name)
+        unabbreviated = expand_common_abbreviations(name)
+        if unabbreviated != name or name in ABBREVIATIONS.values():
+            name = unabbreviated
+        elif whitelisted(name):
+            pass
+        else:
+            name = add_colors_if_no_deckname(name, d.get('colors'))
+            name = normalize_colors(name)
+            name = add_archetype_if_just_colors(name, d.get('archetype_name'))
+            name = remove_mono_if_not_first_word(name)
+        name = ucase_trailing_roman_numerals(name)
+        return titlecase.titlecase(name)
+    except KeyError:
+        raise InvalidDataException('Failed to normalize {d}'.format(d=d))
 
 def file_name(d: 'Deck') -> str:
     safe_name = normalize(d).replace(' ', '-')

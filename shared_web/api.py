@@ -35,8 +35,8 @@ def validate_api_key() -> Response:
         return None
     return return_json(generate_error('UNAUTHORIZED', 'Invalid API key'), status=403)
 
-def generate_error(code: str, msg: str) -> Dict[str, Any]:
-    return {'error': True, 'code': code, 'msg': msg}
+def generate_error(code: str, msg: str, **more: Any) -> Dict[str, Any]:
+    return {'error': True, 'code': code, 'msg': msg, **more}
 
 def return_json(content: Union[bool, Dict[str, Any]], status: int = 200) -> Response:
     s = json.dumps(content, default=extra_serializer)

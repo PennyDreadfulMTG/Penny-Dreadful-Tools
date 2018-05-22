@@ -1,15 +1,16 @@
 from typing import Dict, List, Optional, Set
 
 from magic import oracle, rotation
+from shared.container import Container
 from magic.database import db
 from shared.models.card import Card
 
 FORMATS: Set[str] = set()
 
-def legal_in_format(d, f):
-    return f in legal_formats(d, [f])
+def legal_in_format(d: Container, f: str) -> bool:
+    return f in legal_formats(d, set([f]))
 
-def legal_formats(d, formats_to_check: Set[str] = None, errors: Optional[Dict[str, str]] = None) -> Set[str]:
+def legal_formats(d: Container, formats_to_check: Set[str] = None, errors: Dict[str, str] = None) -> Set[str]:
     init()
     if formats_to_check is None:
         formats_to_check = FORMATS
@@ -61,7 +62,7 @@ def cards_legal_in_format(cardlist: List[Card], f: str) -> List[Card]:
             results.append(c)
     return results
 
-def order_score(fmt):
+def order_score(fmt: str) -> int:
     if fmt == 'Penny Dreadful':
         return 1
     elif 'Penny Dreadful' in fmt:

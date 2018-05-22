@@ -316,7 +316,7 @@ def colors_html(colors, colored_symbols) -> str:
         s += '<span class="mana mana-{color}" style="width: {width}rem"></span>'.format(color=color, width=width)
     return s
 
-def set_stars_and_top8(d) -> None:
+def set_stars_and_top8(d: deck.Deck) -> None:
     if d.finish == 1 and d.competition_top_n >= 1:
         d.top8_safe = '<span title="Winner">①</span>'
         d.stars_safe = '★★★'

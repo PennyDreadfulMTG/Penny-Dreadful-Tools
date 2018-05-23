@@ -59,10 +59,10 @@ class Deck(Container):
     def is_person_associated(self):
         return self.discord_id is not None
 
-def load_deck(deck_id) -> Deck:
+def load_deck(deck_id: int) -> Deck:
     return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))
 
-def load_season(season_id=None, league_only=False):
+def load_season(season_id: int = None, league_only: bool = False) -> Container:
     season = Container()
     where = 'TRUE'
     if league_only:
@@ -157,7 +157,7 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None) -> List[D
 
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks we will claim your deck is neither W nor G which is not true. But this should cover most cases.
 # We also ignore split and aftermath cards so if you are genuinely using a color in a split card but have no other cards of that color we won't claim it as one of the deck's colors.
-def set_colors(d) -> None:
+def set_colors(d: Deck) -> None:
     deck_colors: Set[str] = set()
     deck_colored_symbols: List[str] = []
     for c in [entry['card'] for entry in d.maindeck + d.sideboard]:
@@ -172,7 +172,7 @@ def set_colors(d) -> None:
     d.colors = mana.order(deck_colors)
     d.colored_symbols = deck_colored_symbols
 
-def set_legality(d) -> None:
+def set_legality(d: Deck) -> None:
     d.legal_formats = legality.legal_formats(d)
 
 # Expects:

@@ -47,7 +47,7 @@ COLOR_COMBINATIONS = {
     'Abzan': ['W', 'B', 'G'],
     'Jeskai': ['W', 'U', 'R'],
     'Sultai': ['U', 'B', 'G'],
-    'Yore-Tiller': ['W', 'U', 'B', 'R'],
+    'WUBR': ['W', 'U', 'B', 'R'],
     'UBRG': ['U', 'B', 'R', 'G'],
     'BRGW': ['B', 'R', 'G', 'W'],
     'RGWU': ['R', 'G', 'W', 'U'],
@@ -77,7 +77,7 @@ def normalize(d: 'Deck') -> str:
         name = ucase_trailing_roman_numerals(name)
         return titlecase.titlecase(name)
     except ValueError:
-        raise InvalidDataException('Failed to normalize {d}'.format(d=d))
+        raise InvalidDataException('Failed to normalize {d}'.format(d=repr(d)))
 
 def file_name(d: 'Deck') -> str:
     safe_name = normalize(d).replace(' ', '-')

@@ -3,6 +3,8 @@ import json
 import time
 from typing import Dict, List, Optional, Set
 
+from flask import url_for
+
 from decksite import deck_name
 from decksite.data import guarantee, query
 from decksite.data.top import Top
@@ -46,7 +48,7 @@ class Deck(Container):
 
     def __str__(self):
         self.sort()
-        s = ''
+        s = '# {url}\n'.format(url=url_for('deck', deck_id=self.id, _external=True))
         for entry in self.maindeck:
             s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
         s += '\n'

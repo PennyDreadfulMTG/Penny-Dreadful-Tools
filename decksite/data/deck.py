@@ -3,8 +3,6 @@ import json
 import time
 from typing import Dict, List, Optional, Set
 
-from flask import url_for
-
 from decksite import deck_name
 from decksite.data import guarantee, query
 from decksite.data.top import Top
@@ -13,51 +11,8 @@ from magic import legality, mana, oracle, rotation
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
-from shared.models.card import Card
+from shared.models.deck import Deck
 from shared.pd_exception import InvalidDataException
-
-
-# pylint: disable=too-many-instance-attributes
-class Deck(Container):
-    def __init__(self, params) -> None:
-        super().__init__()
-        for k in params.keys():
-            self[k] = params[k]
-        self.sorted = False
-
-    def all_cards(self) -> List[Card]:
-        cards: List[Card] = []
-        for entry in self.maindeck + self.sideboard:
-            cards += [entry['card']] * entry['n']
-        return cards
-
-    def sort(self):
-        if not self.sorted and (len(self.maindeck) > 0 or len(self.sideboard) > 0):
-            self.maindeck.sort(key=lambda x: oracle.deck_sort(x['card']))
-            self.sideboard.sort(key=lambda x: oracle.deck_sort(x['card']))
-            self.sorted = True
-
-    def is_in_current_run(self) -> bool:
-        if ((self.wins or 0) + (self.draws or 0) + (self.losses or 0) >= 5) or self.retired:
-            return False
-        elif self.competition_type_name != 'League':
-            return False
-        elif self.competition_end_date < dtutil.now():
-            return False
-        return True
-
-    def __str__(self):
-        self.sort()
-        s = ''.format(url=url_for('deck', deck_id=self.id, _external=True))
-        for entry in self.maindeck:
-            s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
-        s += '\n'
-        for entry in self.sideboard:
-            s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
-        return s.strip()
-
-    def is_person_associated(self):
-        return self.discord_id is not None
 
 def load_deck(deck_id: int) -> Deck:
     return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))

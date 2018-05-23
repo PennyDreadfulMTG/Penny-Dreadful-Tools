@@ -1,7 +1,7 @@
 import html
 import urllib
 from collections import Counter
-from typing import TYPE_CHECKING, List, Optional
+from typing import List, Optional
 
 import inflect
 from anytree.iterators import PreOrderIter
@@ -11,15 +11,13 @@ from mypy_extensions import TypedDict
 from werkzeug.routing import BuildError
 
 from decksite import APP, get_season_id
-from decksite.data import archetype, deck
+from decksite.data import archetype
 from magic import oracle, rotation, tournaments
 from shared import dtutil
 from shared.models.card import Card
+from shared.models.deck import Deck
 from shared_web.base_view import BaseView
 
-# pylint: disable=cyclic-import,unused-import
-if TYPE_CHECKING:
-    from decksite.data.deck import Deck
 SeasonInfoDescription = TypedDict('SeasonInfoDescription', {
     'name': str,
     'code': str,
@@ -41,7 +39,7 @@ NUM_MOST_COMMON_CARDS_TO_LIST = 10
 class View(BaseView):
     def __init__(self) -> None:
         # Set some pointless instance vars to keep Codacy happy.
-        self.decks: List['Deck'] = []
+        self.decks: List[Deck] = []
         self.active_runs_text: Optional[str] = None
         self.is_very_large: Optional[bool] = None
         self.show_seasons: bool = False
@@ -146,7 +144,7 @@ class View(BaseView):
         for d in getattr(self, 'decks', []):
             self.prepare_deck(d)
 
-    def prepare_deck(self, d: deck.Deck) -> None:
+    def prepare_deck(self, d: Deck) -> None:
         set_stars_and_top8(d)
         if d.get('colors') is not None:
             d.colors_safe = colors_html(d.colors, d.colored_symbols)
@@ -316,7 +314,7 @@ def colors_html(colors, colored_symbols) -> str:
         s += '<span class="mana mana-{color}" style="width: {width}rem"></span>'.format(color=color, width=width)
     return s
 
-def set_stars_and_top8(d: deck.Deck) -> None:
+def set_stars_and_top8(d: Deck) -> None:
     if d.finish == 1 and d.competition_top_n >= 1:
         d.top8_safe = '<span title="Winner">①</span>'
         d.stars_safe = '★★★'

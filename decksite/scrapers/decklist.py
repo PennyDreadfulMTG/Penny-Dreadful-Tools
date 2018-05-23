@@ -4,8 +4,8 @@ from typing import Any, Dict, Tuple
 
 import untangle
 
-from decksite.data.deck import Deck
 from magic import oracle
+from shared.models.deck import Deck
 from shared.pd_exception import InvalidDataException
 
 SectionType = Dict[str, int]

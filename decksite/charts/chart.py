@@ -41,8 +41,7 @@ def cmc(deck_id: int, attempts: int = 0) -> str:
     path = image(path, costs)
     if acceptable_file(path):
         return path
-    else:
-        return cmc(deck_id, attempts + 1)
+    return cmc(deck_id, attempts + 1)
 
 def image(path: str, costs: Dict[str, int]) -> str:
     ys = ['0', '1', '2', '3', '4', '5', '6', '7+', 'X']

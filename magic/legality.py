@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Set
 
 from magic import oracle, rotation
 from magic.database import db

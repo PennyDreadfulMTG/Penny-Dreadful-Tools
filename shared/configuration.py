@@ -3,7 +3,7 @@ import json
 import os
 import random
 import string
-from typing import Any, List, Optional, Union, overload
+from typing import Any, List, Optional, Union, overload, Dict
 
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
@@ -58,6 +58,8 @@ DEFAULTS = {
     'league_webhook_token': None,
 }
 
+CONFIG: Dict[str, Any] = {}
+
 def get_optional_str(key: str) -> Optional[str]:
     val = get(key)
     if val is None:
@@ -97,11 +99,14 @@ def get_list(key: str) -> List[str]:
     raise fail(key, val, List[str])
 
 def get(key: str) -> Optional[Union[str, List[str], int, float]]:
+    if key in CONFIG:
+        return CONFIG[key]
     try:
         cfg = json.load(open('config.json'))
     except FileNotFoundError:
         cfg = {}
     if key in cfg:
+        CONFIG.update(cfg)
         return cfg[key]
     elif key in os.environ:
         cfg[key] = os.environ[key]

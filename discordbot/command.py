@@ -568,6 +568,7 @@ Want to contribute? Send a Pull Request."""
             'prizes': (
                 """
                 Gatherling tournaments pay prizes to the Top 8 in Cardhoarder credit.
+                This credit will appear when you trade with one of their bots on Magic Online.
                 One player not making Top 8 but playing all the Swiss rounds will be randomly allocated the door prize.
                 Prizes are credited once a week usually on the Friday or Saturday following the tournament but may sometimes take longer.
                 """,

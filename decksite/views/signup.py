@@ -13,7 +13,7 @@ class SignUp(LeagueForm):
         return '{league} Sign Up'.format(league=self.league['name'])
 
     def TT_MTGOTRADERS_SIGNUP_TIK(self):
-        return gettext('When you complete a five match league run for the first time ever you will get 1 tik credit with MTGO Traders.')
+        return gettext('When you complete a five match league run for the first time ever you will get 1 tik credit with MTGO Traders. This credit will appear when you trade with one of their bots on Magic Online.')
 
     def TT_MTGO_USERNAME(self):
         return gettext('Magic Online Username')

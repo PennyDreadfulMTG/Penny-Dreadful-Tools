@@ -14,6 +14,7 @@ from shared.database import sqlescape
 from shared.models.deck import Deck
 from shared.pd_exception import InvalidDataException
 
+
 def load_deck(deck_id: int) -> Deck:
     return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))
 

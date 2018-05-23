@@ -10,7 +10,6 @@ from shared import dtutil
 from shared.container import Container
 from shared.models.deck import Deck
 
-
 TournamentDateType = Tuple[str, datetime.datetime]
 
 class TimeDirection(Enum):

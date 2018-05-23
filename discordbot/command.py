@@ -23,11 +23,11 @@ from googleapiclient.errors import HttpError
 from discordbot import emoji
 from magic import (card, database, fetcher, image_fetcher, multiverse, oracle,
                    rotation, tournaments)
+from magic.whoosh_search import SearchResult, WhooshSearcher
 from shared import configuration, dtutil, repo
 from shared.lazy import lazy_property
 from shared.models.card import Card
 from shared.pd_exception import TooFewItemsException
-from shared.whoosh_search import SearchResult, WhooshSearcher
 
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10

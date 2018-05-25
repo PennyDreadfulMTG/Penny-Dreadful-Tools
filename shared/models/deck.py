@@ -2,6 +2,7 @@ from typing import List
 
 from flask import url_for
 
+from magic import oracle
 from shared import dtutil
 from shared.container import Container
 from shared.models.card import Card

@@ -45,7 +45,7 @@ node{
                 sh 'git push https://$github_user:$github_password@github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git jenkins_results --force'
             }
             sleep(30) // Lovely race condition where we make a PR before the push has propogated.
-            sh 'hub pull-request  -b master -h jenkins_results -m "Automated PR from Jenkins"'
+            sh 'hub pull-request  -b master -h jenkins_results -m "Automated PR from Jenkins" -f'
         }
     }
 }

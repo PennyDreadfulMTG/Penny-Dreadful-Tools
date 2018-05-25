@@ -8,10 +8,10 @@ from decksite.data import guarantee, query
 from decksite.data.top import Top
 from decksite.database import db
 from magic import legality, mana, oracle, rotation
+from magic.models.deck import Deck
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
-from shared.models.deck import Deck
 from shared.pd_exception import InvalidDataException
 
 

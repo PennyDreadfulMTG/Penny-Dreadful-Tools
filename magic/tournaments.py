@@ -6,9 +6,9 @@ from typing import Any, Dict, List, Tuple
 import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
 
+from magic.models.deck import Deck
 from shared import dtutil
 from shared.container import Container
-from shared.models.deck import Deck
 
 TournamentDateType = Tuple[str, datetime.datetime]
 

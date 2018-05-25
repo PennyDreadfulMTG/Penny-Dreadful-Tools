@@ -2,9 +2,9 @@ from typing import List
 
 from flask import url_for
 
+from magic.models.card import Card
 from shared import dtutil
 from shared.container import Container
-from shared.models.card import Card
 
 
 # pylint: disable=too-many-instance-attributes
@@ -23,8 +23,8 @@ class Deck(Container):
 
     def sort(self):
         if not self.sorted and (len(self.maindeck) > 0 or len(self.sideboard) > 0):
-            self.maindeck.sort(key=lambda x: oracle.deck_sort(x['card']))
-            self.sideboard.sort(key=lambda x: oracle.deck_sort(x['card']))
+            self.maindeck.sort(key=lambda x: deck_sort(x['card']))
+            self.sideboard.sort(key=lambda x: deck_sort(x['card']))
             self.sorted = True
 
     def is_in_current_run(self) -> bool:

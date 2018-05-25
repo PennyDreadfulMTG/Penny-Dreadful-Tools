@@ -5,7 +5,7 @@ from typing import Any, Dict, Tuple
 import untangle
 
 from magic import oracle
-from shared.models.deck import Deck
+from magic.models.deck import Deck
 from shared.pd_exception import InvalidDataException
 
 SectionType = Dict[str, int]

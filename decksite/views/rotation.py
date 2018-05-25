@@ -8,8 +8,8 @@ from typing import List
 from decksite.data import card
 from decksite.view import View
 from magic import multiverse, oracle, rotation
+from magic.models.card import Card
 from shared import configuration, dtutil, text
-from shared.models.card import Card
 from shared.pd_exception import DoesNotExistException
 
 

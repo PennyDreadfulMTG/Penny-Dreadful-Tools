@@ -2,8 +2,8 @@ import os
 
 from discordbot import command, emoji
 from magic import fetcher_internal, image_fetcher, oracle
+from magic.models.card import Card
 from shared import configuration
-from shared.models.card import Card
 
 
 # Check that we can fetch card images.

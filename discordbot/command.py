@@ -23,11 +23,11 @@ from googleapiclient.errors import HttpError
 from discordbot import emoji
 from magic import (card, database, fetcher, image_fetcher, multiverse, oracle,
                    rotation, tournaments)
+from magic.whoosh_search import SearchResult, WhooshSearcher
 from shared import configuration, dtutil, repo
 from shared.lazy import lazy_property
 from shared.models.card import Card
 from shared.pd_exception import TooFewItemsException
-from shared.whoosh_search import SearchResult, WhooshSearcher
 
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10
@@ -568,6 +568,7 @@ Want to contribute? Send a Pull Request."""
             'prizes': (
                 """
                 Gatherling tournaments pay prizes to the Top 8 in Cardhoarder credit.
+                This credit will appear when you trade with one of their bots on Magic Online.
                 One player not making Top 8 but playing all the Swiss rounds will be randomly allocated the door prize.
                 Prizes are credited once a week usually on the Friday or Saturday following the tournament but may sometimes take longer.
                 """,

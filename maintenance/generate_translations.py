@@ -1,4 +1,5 @@
-from distutils.dist import Distribution # pylint: disable=no-name-in-module,import-error
+from distutils.dist import \
+    Distribution  # pylint: disable=no-name-in-module,import-error
 from typing import Any, Dict, Generator, List
 
 import pystache

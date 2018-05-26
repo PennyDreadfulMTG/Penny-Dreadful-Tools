@@ -14,6 +14,7 @@ env:
   matrix:
     - CMD="python dev.py tests"
     - CMD="python dev.py mypy"
+    - CMD="python dev.py lint"
     - CMD="isort --check-only"
 install:
   - travis_retry pip install -r requirements.txt

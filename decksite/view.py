@@ -13,9 +13,9 @@ from werkzeug.routing import BuildError
 from decksite import APP, get_season_id
 from decksite.data import archetype
 from magic import oracle, rotation, tournaments
+from magic.models.card import Card
+from magic.models.deck import Deck
 from shared import dtutil
-from shared.models.card import Card
-from shared.models.deck import Deck
 from shared_web.base_view import BaseView
 
 SeasonInfoDescription = TypedDict('SeasonInfoDescription', {

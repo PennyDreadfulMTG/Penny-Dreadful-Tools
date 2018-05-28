@@ -9,8 +9,8 @@ import pytz
 
 import magic.fetcher_internal as internal
 from magic.fetcher_internal import FetchException
+from magic.models.card import Card
 from shared import configuration, dtutil
-from shared.models.card import Card
 from shared.pd_exception import TooFewItemsException
 
 

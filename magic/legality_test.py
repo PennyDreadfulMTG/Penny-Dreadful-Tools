@@ -1,5 +1,5 @@
 from magic import legality, oracle
-from shared.models.deck import Deck
+from magic.models.deck import Deck
 
 
 def test_legal_formats() -> None:

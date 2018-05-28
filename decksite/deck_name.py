@@ -4,7 +4,7 @@ from typing import List, Match, Optional
 import titlecase
 
 from magic import mana
-from shared.models.deck import Deck
+from magic.models.deck import Deck
 from shared.pd_exception import InvalidDataException
 
 WHITELIST = [

@@ -3,9 +3,9 @@ from typing import List
 from flask import url_for
 
 from magic import oracle
+from magic.models.card import Card
 from shared import dtutil
 from shared.container import Container
-from shared.models.card import Card
 
 
 # pylint: disable=too-many-instance-attributes

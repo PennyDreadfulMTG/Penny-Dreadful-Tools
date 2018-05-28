@@ -642,15 +642,15 @@ Card tables:
 
 v ------  0 ------ v    0
 name                211
-season - # decks     70  281
+# decks              70  281
 (toggle)             44  325
 ^ ------ xs ------ ^    18rem (360px)
-season - record      68  393
-season - win %       58  451
-all time - # decks   70  521
-all time - record    68  589
-all time - win %     58  647
--(toggle)           -44  603
+record              104  429
+win %                58  487
+tournament wins      40  527
+tournament top 8s    40  567
+5–0s                 52  619
+-(toggle)           -44  575
 ^ ------ sm ------ ^    32rem (640px)
 (same)
 ^ ------ md ------ ^    40rem (800px)

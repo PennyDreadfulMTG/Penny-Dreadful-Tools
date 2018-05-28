@@ -633,7 +633,7 @@ Want to contribute? Send a Pull Request."""
     async def version(self, client: Client, channel: Channel, **_: Dict[str, Any]) -> None:
         """Display the current version numbers"""
         await client.send_typing(channel)
-        commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+        commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], universal_newlines=True).strip('\n').strip('"')
         mtgjson = database.mtgjson_version()
         return await client.send_message(channel, 'I am currently running mtgbot version `{commit}`, and mtgjson version `{mtgjson}`'.format(commit=commit, mtgjson=mtgjson))
 

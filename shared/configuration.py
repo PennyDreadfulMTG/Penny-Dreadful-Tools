@@ -102,6 +102,14 @@ def get_list(key: str) -> List[str]:
         return val
     raise fail(key, val, List[str])
 
+def get_bool(key: str) -> bool:
+    val = get(key)
+    if val is None:
+        raise fail(key, val, bool)
+    if isinstance(val, bool):
+        return val
+    raise fail(key, val, bool)
+
 def get(key: str) -> Optional[Union[str, List[str], int, float]]:
     if key in CONFIG:
         return CONFIG[key]
@@ -150,6 +158,7 @@ def write(key: str, value: Union[str, List[str], int, float]) -> Union[str, List
         cfg = {}
 
     cfg[key] = value
+    CONFIG[key] = value
 
     print('CONFIG: {0}={1}'.format(key, cfg[key]))
     fh = open('config.json', 'w')

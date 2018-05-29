@@ -5,6 +5,7 @@ from decksite.database import db
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
+from shared.redis_cache import redis_cache_container
 from shared.pd_exception import AlreadyExistsException
 from shared_web import logger
 
@@ -197,6 +198,7 @@ def is_allowed_to_retire(deck_id, discord_id):
         return True
     return any(int(deck_id) == deck.id for deck in person.decks)
 
+@redis_cache_container
 def load_person_by_discord_id(discord_id: Optional[int]) -> Optional[Person]:
     if discord_id is None:
         return None

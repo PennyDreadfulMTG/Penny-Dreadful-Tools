@@ -278,7 +278,7 @@ def load_similar_decks(ds: List[Deck]) -> None:
         d.similar_decks = [psd for psd in potentially_similar if psd.similarity_score >= threshold and psd.id != d.id]
         d.similar_decks.sort(key=lambda d: -(d.similarity_score))
 
-def all_card_names(ds: List[Deck]) -> List[str]:
+def all_card_names(ds: List[Deck]) -> Set[str]:
     basic_lands = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest']
     names = set()
     for d in ds:

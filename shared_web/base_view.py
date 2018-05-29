@@ -24,10 +24,15 @@ class BaseView:
         return
 
     def commit_id(self, path: str = None) -> str:
-        args = ['git', 'log', '--format="%H"', '-n', '1']
-        if path:
-            args.append(path)
-        return subprocess.check_output(args, universal_newlines=True).strip('\n').strip('"')
+        if not path:
+            return current_app.config['commit-id']
+        key = f'commit-id-{path}'
+        commit = current_app.config.get(key, None)
+        if commit is None:
+            args = ['git', 'log', '--format="%H"', '-n', '1', path]
+            commit = subprocess.check_output(args, universal_newlines=True).strip('\n').strip('"')
+            current_app.config[key] = commit
+        return commit
 
     def git_branch(self) -> str:
         return current_app.config['branch']

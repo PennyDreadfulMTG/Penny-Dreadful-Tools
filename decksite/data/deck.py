@@ -280,11 +280,11 @@ def load_similar_decks(ds: List[Deck]) -> None:
 
 def all_card_names(ds: List[Deck]) -> List[str]:
     basic_lands = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest']
-    names = []
+    names = set()
     for d in ds:
         for c in d.maindeck:
-            if c['name'] not in basic_lands:
-                names.append(c['name'])
+            if c['name'] not in basic_lands and c['name']:
+                names.add(c['name'])
     return names
 
 # Dead simple for now, may get more sophisticated. 1 point for each differently named card shared in maindeck. Count irrelevant.

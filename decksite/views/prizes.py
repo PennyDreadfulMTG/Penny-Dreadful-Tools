@@ -12,7 +12,7 @@ from shared.container import Container
 
 # pylint: disable=no-self-use
 class Prizes(View):
-    def __init__(self, competitions, first_runs) -> None:
+    def __init__(self, competitions: List[Competition], first_runs) -> None:
         super().__init__()
         self.weeks: List[Container] = []
         weeks = split_by_week(competitions)

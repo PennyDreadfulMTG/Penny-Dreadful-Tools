@@ -3,7 +3,7 @@ import fileinput
 import glob
 import os
 from collections import Counter
-from typing import List
+from typing import List, Union
 
 from decksite.data import card
 from decksite.view import View
@@ -56,7 +56,7 @@ class Rotation(View):
         for name, hits in scores:
             self.process_score(name, hits)
 
-    def process_score(self, name, hits) -> None:
+    def process_score(self, name: str, hits: int) -> None:
         remaining_runs = (168 - self.runs)
         hits_needed = max(84 - hits, 0)
         c = self.cs[name]
@@ -75,15 +75,11 @@ class Rotation(View):
             status = 'Legal'
         else:
             status = 'Undecided'
-            hits = redact(hits)
-            hits_needed = redact(hits_needed)
-            percent = redact(percent)
-            percent_needed = redact(percent_needed)
         c.update({
-            'hits': hits,
-            'hits_needed': hits_needed,
-            'percent': percent,
-            'percent_hits_needed': percent_needed,
+            'hits': redact(hits) if status == 'Undecided' else hits,
+            'hits_needed': redact(hits_needed) if status == 'Undecided' else hits_needed,
+            'percent': redact(percent) if status == 'Undecided' else percent,
+            'percent_hits_needed': redact(percent_needed) if status == 'Undecided' else percent_needed,
             'status': status,
             'interestingness': rotation.interesting(self.playability, c)
         })
@@ -92,5 +88,5 @@ class Rotation(View):
     def page_title(self):
         return 'Rotation'
 
-def redact(num) -> str:
+def redact(num: Union[str, int]) -> str:
     return ''.join(['█' for _ in str(num)])

@@ -7,7 +7,7 @@ from whoosh.index import open_dir
 from whoosh.query import And, FuzzyTerm, Or, Term
 
 from magic import card, fetcher
-from shared.whoosh_constants import WhooshConstants
+from magic.whoosh_constants import WhooshConstants
 
 
 # pylint: disable=unused-variable

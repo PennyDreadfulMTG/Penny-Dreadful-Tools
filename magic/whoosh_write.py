@@ -4,8 +4,8 @@ from typing import List
 from whoosh.fields import NUMERIC, STORED, TEXT, Schema
 from whoosh.index import Index, create_in, open_dir
 
-from shared.models.card import Card
-from shared.whoosh_constants import WhooshConstants
+from magic.models.card import Card
+from magic.whoosh_constants import WhooshConstants
 
 
 class WhooshWriter():

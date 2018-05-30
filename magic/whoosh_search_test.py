@@ -1,6 +1,6 @@
 import unittest
 
-from shared.whoosh_search import WhooshSearcher
+from magic.whoosh_search import WhooshSearcher
 
 
 # pylint: disable=unused-variable

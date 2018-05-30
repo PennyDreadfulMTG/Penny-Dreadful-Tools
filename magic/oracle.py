@@ -2,9 +2,9 @@ from typing import Collection, Dict, List, Optional
 
 from magic import card, fetcher, mana, multiverse, rotation
 from magic.database import db
+from magic.models.card import Card
 from shared.container import Container
 from shared.database import sqlescape
-from shared.models.card import Card
 from shared.pd_exception import (InvalidArgumentException,
                                  InvalidDataException, TooFewItemsException)
 

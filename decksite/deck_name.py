@@ -1,14 +1,11 @@
 import re
-from typing import TYPE_CHECKING, List, Match, Optional
+from typing import List, Match, Optional
 
 import titlecase
 
 from magic import mana
+from magic.models.deck import Deck
 from shared.pd_exception import InvalidDataException
-
-# pylint: disable=cyclic-import,unused-import
-if TYPE_CHECKING:
-    from decksite.data.deck import Deck
 
 WHITELIST = [
     'White Green'
@@ -55,7 +52,7 @@ COLOR_COMBINATIONS = {
     'Five Color': ['W', 'U', 'B', 'R', 'G']
 }
 
-def normalize(d: 'Deck') -> str:
+def normalize(d: Deck) -> str:
     try:
         name = d.original_name
         name = name.lower()
@@ -79,7 +76,7 @@ def normalize(d: 'Deck') -> str:
     except ValueError:
         raise InvalidDataException('Failed to normalize {d}'.format(d=repr(d)))
 
-def file_name(d: 'Deck') -> str:
+def file_name(d: Deck) -> str:
     safe_name = normalize(d).replace(' ', '-')
     safe_name = re.sub('--+', '-', safe_name, flags=re.IGNORECASE)
     safe_name = re.sub('[^0-9a-z-]', '', safe_name, flags=re.IGNORECASE)

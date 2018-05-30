@@ -9,7 +9,7 @@ class Card(Container):
         super().__init__()
         for k in params.keys():
             setattr(self, k, determine_value(k, params))
-        if not self.names:
+        if not hasattr(self, 'names'):
             setattr(self, 'names', [self.name])
 
     def is_creature(self) -> bool:

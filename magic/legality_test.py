@@ -1,5 +1,5 @@
-from decksite.data import deck
 from magic import legality, oracle
+from magic.models.deck import Deck
 
 
 def test_legal_formats() -> None:
@@ -7,7 +7,7 @@ def test_legal_formats() -> None:
     think_twice = oracle.load_card('Think Twice')
     fork = oracle.load_card('Fork')
 
-    d = deck.Deck({'id': 0})
+    d = Deck({'id': 0})
     d.maindeck = [{'n': 59, 'card': swamp}]
     d.sideboard = []
     assert len(d.all_cards()) == 59

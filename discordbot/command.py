@@ -23,11 +23,11 @@ from googleapiclient.errors import HttpError
 from discordbot import emoji
 from magic import (card, database, fetcher, image_fetcher, multiverse, oracle,
                    rotation, tournaments)
+from magic.models.card import Card
+from magic.whoosh_search import SearchResult, WhooshSearcher
 from shared import configuration, dtutil, repo
 from shared.lazy import lazy_property
-from shared.models.card import Card
 from shared.pd_exception import TooFewItemsException
-from shared.whoosh_search import SearchResult, WhooshSearcher
 
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10
@@ -568,6 +568,7 @@ Want to contribute? Send a Pull Request."""
             'prizes': (
                 """
                 Gatherling tournaments pay prizes to the Top 8 in Cardhoarder credit.
+                This credit will appear when you trade with one of their bots on Magic Online.
                 One player not making Top 8 but playing all the Swiss rounds will be randomly allocated the door prize.
                 Prizes are credited once a week usually on the Friday or Saturday following the tournament but may sometimes take longer.
                 """,
@@ -586,7 +587,7 @@ Want to contribute? Send a Pull Request."""
                 }
             ),
             'retire': (
-                'To retire from a league run message PDBot on MTGO with !retire. Alternatively retire via pennydreadfulmagic.com (requires Discord authentication)',
+                'To retire from a league run message PDBot on MTGO with `!retire`. If you have authenticated with Discord on pennydreadfulmagic.com you can say `!retire` on Discord or retire on the website.',
                 {
                     'Retire': fetcher.decksite_url('/retire/')
                 }
@@ -632,7 +633,7 @@ Want to contribute? Send a Pull Request."""
     async def version(self, client: Client, channel: Channel, **_: Dict[str, Any]) -> None:
         """Display the current version numbers"""
         await client.send_typing(channel)
-        commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+        commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], universal_newlines=True).strip('\n').strip('"')
         mtgjson = database.mtgjson_version()
         return await client.send_message(channel, 'I am currently running mtgbot version `{commit}`, and mtgjson version `{mtgjson}`'.format(commit=commit, mtgjson=mtgjson))
 

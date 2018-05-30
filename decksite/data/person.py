@@ -56,7 +56,7 @@ def load_people(where: str = '1 = 1',
         set_head_to_head(people, season_id)
     return people
 
-def set_decks(people: List[Person], season_id=None) -> None:
+def set_decks(people: List[Person], season_id: int = None) -> None:
     people_by_id = {person.id: person for person in people}
     where = 'd.person_id IN ({ids})'.format(ids=', '.join(str(k) for k in people_by_id.keys()))
     decks = deck.load_decks(where, season_id=season_id)
@@ -65,7 +65,7 @@ def set_decks(people: List[Person], season_id=None) -> None:
     for d in decks:
         people_by_id[d.person_id].decks.append(d)
 
-def set_achievements(people: List[Person], season_id=None) -> None:
+def set_achievements(people: List[Person], season_id: int = None) -> None:
     people_by_id = {person.id: person for person in people}
     sql = """
         SELECT
@@ -140,7 +140,7 @@ def set_achievements(people: List[Person], season_id=None) -> None:
         people_by_id[result['id']].update(result)
         people_by_id[result['id']].achievements = len([k for k, v in result.items() if k != 'id' and v > 0])
 
-def set_head_to_head(people: List[Person], season_id=None) -> None:
+def set_head_to_head(people: List[Person], season_id: int = None) -> None:
     people_by_id = {person.id: person for person in people}
     sql = """
         SELECT
@@ -210,7 +210,7 @@ def load_person_by_tappedout_name(username: str) -> Optional[Person]:
 def load_person_by_mtggoldfish_name(username: str) -> Optional[Person]:
     return guarantee.at_most_one(load_people('p.mtggoldfish_username = {username}'.format(username=sqlescape(username))))
 
-def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username) -> int:
+def get_or_insert_person_id(mtgo_username: Optional[str], tappedout_username: Optional[str], mtggoldfish_username: Optional[str]) -> int:
     sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
     person_id = db().value(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
     if person_id:

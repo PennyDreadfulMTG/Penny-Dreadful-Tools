@@ -1,3 +1,4 @@
+import subprocess
 from typing import Dict, List, Optional, Union
 
 from flask import current_app, url_for
@@ -22,14 +23,22 @@ class BaseView:
     def prepare(self) -> None:
         return
 
-    def commit_id(self) -> str:
-        return current_app.config['commit-id']
+    def commit_id(self, path: str = None) -> str:
+        if not path:
+            return current_app.config['commit-id']
+        key = f'commit-id-{path}'
+        commit = current_app.config.get(key, None)
+        if commit is None:
+            args = ['git', 'log', '--format="%H"', '-n', '1', path]
+            commit = subprocess.check_output(args, universal_newlines=True).strip('\n').strip('"')
+            current_app.config[key] = commit
+        return commit
 
     def git_branch(self) -> str:
         return current_app.config['branch']
 
     def css_url(self) -> str:
-        return current_app.config['css_url'] or url_for('static', filename='css/pd.css', v=self.commit_id())
+        return current_app.config['css_url'] or url_for('static', filename='css/pd.css', v=self.commit_id('decksite/static/css/pd.css'))
 
     def tooltips_url(self) -> Optional[str]:
         # Don't preload 10,000 images.
@@ -39,7 +48,7 @@ class BaseView:
         return url_for('static', filename='js/tooltips.js', v=self.commit_id())
 
     def js_url(self) -> str:
-        return current_app.config['js_url'] or url_for('static', filename='js/pd.js', v=self.commit_id())
+        return current_app.config['js_url'] or url_for('static', filename='js/pd.js', v=self.commit_id('decksite/static/js/pd.js'))
 
     def language_icon(self):
         return url_for('static', filename='images/language_icon.svg')

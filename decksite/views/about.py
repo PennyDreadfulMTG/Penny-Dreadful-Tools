@@ -5,7 +5,7 @@ from flask import url_for
 
 from decksite.view import View
 from magic import legality, oracle
-from shared.models.card import Card
+from magic.models.card import Card
 
 
 # pylint: disable=no-self-use

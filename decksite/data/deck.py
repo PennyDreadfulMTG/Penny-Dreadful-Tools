@@ -3,61 +3,17 @@ import json
 import time
 from typing import Dict, List, Optional, Set
 
-from flask import url_for
-
 from decksite import deck_name
 from decksite.data import guarantee, query
 from decksite.data.top import Top
 from decksite.database import db
 from magic import legality, mana, oracle, rotation
+from magic.models.deck import Deck
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
-from shared.models.card import Card
 from shared.pd_exception import InvalidDataException
 
-
-# pylint: disable=too-many-instance-attributes
-class Deck(Container):
-    def __init__(self, params) -> None:
-        super().__init__()
-        for k in params.keys():
-            self[k] = params[k]
-        self.sorted = False
-
-    def all_cards(self) -> List[Card]:
-        cards: List[Card] = []
-        for entry in self.maindeck + self.sideboard:
-            cards += [entry['card']] * entry['n']
-        return cards
-
-    def sort(self):
-        if not self.sorted and (len(self.maindeck) > 0 or len(self.sideboard) > 0):
-            self.maindeck.sort(key=lambda x: oracle.deck_sort(x['card']))
-            self.sideboard.sort(key=lambda x: oracle.deck_sort(x['card']))
-            self.sorted = True
-
-    def is_in_current_run(self) -> bool:
-        if ((self.wins or 0) + (self.draws or 0) + (self.losses or 0) >= 5) or self.retired:
-            return False
-        elif self.competition_type_name != 'League':
-            return False
-        elif self.competition_end_date < dtutil.now():
-            return False
-        return True
-
-    def __str__(self):
-        self.sort()
-        s = ''.format(url=url_for('deck', deck_id=self.id, _external=True))
-        for entry in self.maindeck:
-            s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
-        s += '\n'
-        for entry in self.sideboard:
-            s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
-        return s.strip()
-
-    def is_person_associated(self):
-        return self.discord_id is not None
 
 def load_deck(deck_id: int) -> Deck:
     return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))
@@ -322,13 +278,13 @@ def load_similar_decks(ds: List[Deck]) -> None:
         d.similar_decks = [psd for psd in potentially_similar if psd.similarity_score >= threshold and psd.id != d.id]
         d.similar_decks.sort(key=lambda d: -(d.similarity_score))
 
-def all_card_names(ds: List[Deck]) -> List[str]:
+def all_card_names(ds: List[Deck]) -> Set[str]:
     basic_lands = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest']
-    names = []
+    names = set()
     for d in ds:
         for c in d.maindeck:
-            if c['name'] not in basic_lands:
-                names.append(c['name'])
+            if c['name'] not in basic_lands and c['name']:
+                names.add(c['name'])
     return names
 
 # Dead simple for now, may get more sophisticated. 1 point for each differently named card shared in maindeck. Count irrelevant.

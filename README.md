@@ -14,13 +14,13 @@ View individual subdirectories for details
 
 **decksite** is the code for [pennydreadfulmagic.com](https://pennydreadfulmagic.com/).
 
-**magic** knows everything about all magic cards and how to fetch that information from the internet.
+**magic** knows everything about all magic cards and how to fetch that information from the internet and model it.
 
 **logsite**  is the code for [logs.pennydreadfulmagic.com](https://logs.pennydreadfulmagic.com/).
 
 **price_grabber** builds a database of historic prices.
 
-**shared** contains a bunch of general purpose helper classes.
+**shared** contains a bunch of general purpose helper classes. Things that could be used in any project.
 
 **shared_web** contains a bunch of web-specific helper classes.
 

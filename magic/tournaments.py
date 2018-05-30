@@ -1,17 +1,14 @@
 import datetime
 import sys
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
 
+from magic.models.deck import Deck
 from shared import dtutil
 from shared.container import Container
-
-if TYPE_CHECKING:
-    from decksite.data import Deck # pylint: disable=unused-import
-
 
 TournamentDateType = Tuple[str, datetime.datetime]
 
@@ -58,7 +55,7 @@ def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> L
     pdt_time = ('Thursday', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index])
     return [pdsat_time, apds_time, pds_time, pdm_time, pdt_time]
 
-def prize(d: 'Deck') -> int:
+def prize(d: Deck) -> int:
     return prize_by_finish(d.get('finish') or sys.maxsize)
 
 def prize_by_finish(f: int) -> int:

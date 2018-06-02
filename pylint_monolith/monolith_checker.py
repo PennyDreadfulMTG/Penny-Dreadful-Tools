@@ -4,22 +4,8 @@ from pylint.checkers import BaseChecker
 from pylint.checkers.utils import check_messages
 from pylint.interfaces import IAstroidChecker
 
-ACCEPTABLE_IMPORTS = {
-    'decksite': ('decksite', 'magic', 'shared', 'shared_web'),
-    'discordbot': ('discordbot', 'magic', 'shared'),
-    'logsite': ('logsite', 'shared', 'shared_web'),
-    'magic': ('magic', 'shared'),
-    'maintenance': ('decksite', 'magic', 'maintenance', 'shared', 'shared_web'),
-    'price_grabber': ('price_grabber', 'magic', 'shared'),
-    'pylint_monolith': ('pylint_monolith'),
-    'rotation_script': ('rotation_script', 'price_grabber', 'magic', 'shared'),
-    'shared': ('shared'),
-    'shared_web': ('shared_web', 'shared'),
+from . import ACCEPTABLE_IMPORTS
 
-    'dev': ('magic'),
-    'generate_readme': ('discordbot'),
-    'run': ('discordbot', 'decksite', 'price_grabber', 'rotation_script', 'magic'),
-}
 
 class MonolithChecker(BaseChecker):
     __implements__ = IAstroidChecker

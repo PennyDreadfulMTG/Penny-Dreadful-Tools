@@ -8,8 +8,7 @@ from decksite.data import person as ps
 from magic import oracle, rotation
 from shared import dtutil
 from shared.pd_exception import DoesNotExistException, TooManyItemsException
-from shared_web.api import (generate_error, process_github_webhook,
-                            return_json, validate_api_key)
+from shared_web.api import generate_error, return_json, validate_api_key
 
 
 @APP.route('/api/decks/<deck_id>/')
@@ -113,10 +112,6 @@ def hide_intro():
     r = Response(response='')
     r.set_cookie('hide_intro', value=str(True), expires=dtutil.dt2ts(dtutil.now()) + 60 *  60 * 24 * 365 * 10)
     return r
-
-@APP.route('/api/gitpull', methods=['POST'])
-def gitpull():
-    return process_github_webhook()
 
 @APP.route('/api/status/')
 @auth.load_person

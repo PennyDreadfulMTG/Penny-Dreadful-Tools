@@ -38,6 +38,9 @@ def run() -> None:
     elif sys.argv[1] == 'logsite':
         import logsite
         logsite.APP.run(host='0.0.0.0', port=5001, debug=True)
+    elif sys.argv[1] == 'github_tools':
+        import github_tools
+        github_tools.APP.run(host='0.0.0.0', port=5002, debug=True)
     else:
         try:
             m = importlib.import_module('{module}.main'.format(module=sys.argv[1]))

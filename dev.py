@@ -22,7 +22,7 @@ def run() -> None:
 
 def lint() -> None:
     args = ['--rcfile=.pylintrc', # Load rcfile first.
-            '--ignored-modules=alembic,MySQLdb,flask_sqlalchemy', # override ignored-modules (codacy hack)
+            '--ignored-modules=alembic,MySQLdb,flask_sqlalchemy,distutils.dist', # override ignored-modules (codacy hack)
             '--load-plugins', 'pylint_quotes, pylint_monolith', # Plugins
             '--reports=n', # Don't show reports.
             '-f', 'parseable', # Machine-readable output.

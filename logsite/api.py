@@ -2,8 +2,7 @@ from typing import Dict, Tuple
 
 from flask import Response, request, session
 
-from shared_web.api import (process_github_webhook, return_json,
-                            validate_api_key)
+from shared_web.api import return_json, validate_api_key
 
 from . import APP, importing
 from .data import match
@@ -30,10 +29,6 @@ def upload() -> Response:
     match.get_match(match_id).set_times(start_time, end_time)
 
     return return_json({'success': True})
-
-@APP.route('/api/gitpull', methods=['POST'])
-def gitpull():
-    return process_github_webhook()
 
 @APP.route('/export/<match_id>')
 def export(match_id: int) -> Tuple[str, int, Dict[str, str]]:

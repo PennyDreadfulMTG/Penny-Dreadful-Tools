@@ -5,7 +5,6 @@ from decksite.database import db
 from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
-from shared.redis_cache import redis_cache_container
 from shared.pd_exception import AlreadyExistsException
 from shared_web import logger
 
@@ -49,6 +48,7 @@ def load_people(where: str = '1 = 1',
         ORDER BY
             {order_by}
     """.format(person_query=query.person_query(), all_select=deck.nwdl_select('all_', query.season_query(season_id)), nwdl_join=deck.nwdl_join(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id), order_by=order_by)
+
     people = [Person(r) for r in db().execute(sql)]
     if len(people) > 0:
         set_decks(people, season_id)
@@ -198,7 +198,6 @@ def is_allowed_to_retire(deck_id, discord_id):
         return True
     return any(int(deck_id) == deck.id for deck in person.decks)
 
-@redis_cache_container
 def load_person_by_discord_id(discord_id: Optional[int]) -> Optional[Person]:
     if discord_id is None:
         return None

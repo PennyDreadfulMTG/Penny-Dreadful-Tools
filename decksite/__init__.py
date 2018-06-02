@@ -27,8 +27,6 @@ def pull_season_id(_endpoint, values):
     v = values.pop('season_id')
     g.season_id = rotation.season_id(v)
 
-APP.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip()
-APP.config['branch'] = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
 APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
 
 try:

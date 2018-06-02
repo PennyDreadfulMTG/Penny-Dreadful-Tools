@@ -1,4 +1,5 @@
 import os
+import subprocess
 import traceback
 import urllib
 from typing import Optional, Tuple
@@ -31,6 +32,9 @@ class PDFlask(Flask):
         self.config['menu'] = []
         self.config['js_url'] = ''
         self.config['css_url'] = ''
+        self.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip().decode()
+        self.config['branch'] = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
+
         translations = os.path.abspath(os.path.join(os.path.dirname(__file__), 'translations'))
         self.config['BABEL_TRANSLATION_DIRECTORIES'] = translations
         self.babel = Babel(self)
@@ -38,7 +42,7 @@ class PDFlask(Flask):
 
     def not_found(self, e: Exception) -> Tuple[str, int]:
         log_exception(e)
-        if request.url.startswith('/api/'):
+        if request.path.startswith('/api/'):
             return return_json(generate_error('NOTFOUND', 'Endpoint not found'), status=404)
         view = NotFound(e)
         return view.page(), 404
@@ -50,7 +54,7 @@ class PDFlask(Flask):
             repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports', exception=e)
         except GithubException:
             logger.error('Github error', e)
-        if request.url.startswith('/api/'):
+        if request.path.startswith('/api/'):
             return return_json(generate_error('INTERNALERROR', 'Internal Error.', exception=e), status=404)
         view = InternalServerError(e)
         return view.page(), 500

@@ -50,9 +50,9 @@ def determine_bugs(s: str) -> Optional[List[Dict[str, object]]]:
     bugs = s.split('_SEPARATOR_')
     v = []
     for b in bugs:
-        description, classification, last_confirmed, url, from_bug_blog = b.split('|')
+        description, classification, last_confirmed, url, from_bug_blog, bannable = b.split('|')
         bb = from_bug_blog == '1'
-        bug = {'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(int(last_confirmed)), 'url': url, 'from_bug_blog': bb}
+        bug = {'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(int(last_confirmed)), 'url': url, 'from_bug_blog': bb, 'bannable': bannable}
         v.append(bug)
     if v:
         return v

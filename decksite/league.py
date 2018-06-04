@@ -101,13 +101,13 @@ class SignUpForm(Form):
     def check_deck_legality(self):
         errors = {}
         if 'Penny Dreadful' not in legality.legal_formats(self.deck, None, errors):
-            self.errors['decklist'] = 'Deck is not legal in Penny Dreadful - {error}'.format(error=errors.get('Penny Dreadful'))
-        else:
-            banned_for_bugs = set([c.name for c in self.deck.all_cards() if any([b.get('bannable') for b in c.bugs or []])])
-            if len(banned_for_bugs) == 1:
-                self.errors['decklist'] = '{name} is currently not allowed because of a game-breaking Magic Online bug'.format(name=next(iter(banned_for_bugs)))
-            if len(banned_for_bugs) > 1:
-                self.errors['decklist'] = '{names} are currently not allowed because of game-breaking Magic Online bugs'.format(names=', '.join([name for name in banned_for_bugs]))
+            self.errors['decklist'] = errors.get('Penny Dreadful')
+        banned_for_bugs = set([c.name for c in self.deck.all_cards() if any([b.get('bannable') for b in c.bugs or []])])
+        if len(banned_for_bugs) > 0:
+            if 'decklist' not in self.errors:
+                self.errors['decklist'] = {}
+            self.errors['decklist']['Bugs'] = [name for name in banned_for_bugs]
+
 
 class DeckCheckForm(SignUpForm):
     def do_validation(self):

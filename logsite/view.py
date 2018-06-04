@@ -2,8 +2,6 @@ from flask import url_for
 
 from shared_web.base_view import BaseView
 
-from . import APP
-
 
 # pylint: disable=no-self-use, too-many-public-methods
 class View(BaseView):
@@ -23,6 +21,3 @@ class View(BaseView):
 
     def subtitle(self):
         return None
-
-    def commit_id(self) -> str:
-        return APP.config['commit-id']

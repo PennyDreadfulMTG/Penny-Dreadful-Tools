@@ -45,7 +45,7 @@ def load_card(name: str, season_id: Optional[int] = None) -> Card:
     c.all_wins = sum(filter(None, [d.wins for d in c.decks]))
     c.all_losses = sum(filter(None, [d.losses for d in c.decks]))
     c.all_draws = sum(filter(None, [d.draws for d in c.decks]))
-    if c.all_wins or c.all_losses or c.all_draws:
+    if c.all_wins or c.all_losses:
         c.all_win_percent = round((c.all_wins / (c.all_wins + c.all_losses)) * 100, 1)
     else:
         c.all_win_percent = ''

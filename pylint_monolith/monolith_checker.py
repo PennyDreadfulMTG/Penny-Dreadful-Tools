@@ -7,14 +7,15 @@ from pylint.interfaces import IAstroidChecker
 ACCEPTABLE_IMPORTS = {
     'decksite': ('decksite', 'magic', 'shared', 'shared_web'),
     'discordbot': ('discordbot', 'magic', 'shared'),
+    'github_tools': ('github_tools', 'shared', 'shared_web'),
     'logsite': ('logsite', 'shared', 'shared_web'),
     'magic': ('magic', 'shared'),
     'maintenance': ('decksite', 'magic', 'maintenance', 'shared', 'shared_web'),
-    'price_grabber': ('price_grabber', 'magic', 'shared'),
+    'price_grabber': ('magic', 'price_grabber', 'shared'),
     'pylint_monolith': ('pylint_monolith'),
-    'rotation_script': ('rotation_script', 'price_grabber', 'magic', 'shared'),
+    'rotation_script': ('magic', 'price_grabber', 'rotation_script', 'shared'),
     'shared': ('shared'),
-    'shared_web': ('shared_web', 'shared'),
+    'shared_web': ('shared', 'shared_web'),
 
     'dev': ('magic'),
     'generate_readme': ('discordbot'),

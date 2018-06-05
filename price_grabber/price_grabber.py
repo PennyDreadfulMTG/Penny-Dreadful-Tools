@@ -5,9 +5,9 @@ from typing import Dict, List, Optional
 
 import ftfy
 
-from magic import fetcher_internal, multiverse, oracle, rotation
+from magic import multiverse, oracle, rotation
 from price_grabber import parser, price
-from shared import configuration, dtutil
+from shared import configuration, dtutil, fetcher_internal
 from shared.database import get_database
 from shared.pd_exception import DatabaseException, TooFewItemsException
 

@@ -1,5 +1,9 @@
 {
   "checkpoints": {
+    "LOGS": {
+      "url": "https://logs.pennydreadfulmagic.com/about",
+      "overdue": "1H"
+    },
     "PROD": {
       "url": "https://pennydreadfulmagic.com/about",
       "overdue": "1H"

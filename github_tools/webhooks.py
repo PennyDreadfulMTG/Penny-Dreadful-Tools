@@ -1,11 +1,15 @@
 from typing import Tuple
-from shared import configuration, lazy, redis
+
 from github import Github
-from github.PullRequest import PullRequest
 from github.Commit import Commit
+from github.PullRequest import PullRequest
 from github.Repository import Repository
 
-# @lazy.lazy_property
+from shared import configuration, lazy, redis
+
+PDM_CHECK_CONTEXT = 'pdm/automerge'
+
+@lazy.lazy_property
 def get_github() -> Github:
     if not configuration.get_str('github_user') or not configuration.get_str('github_password'):
         return None
@@ -37,7 +41,9 @@ def get_pr_from_status(data) -> PullRequest:
 def get_pr_from_commit(repo: Repository, sha: str) -> PullRequest:
     cached = redis.get_list(f'github:head:{sha}')
     if cached:
-        return repo.get_pull(cached)
+        pr = repo.get_pull(cached)
+        if pr.head.sha == sha and pr.state == 'open':
+            return pr
     for pr in repo.get_pulls():
         head = pr.head.sha
         redis.store(f'github:head:{head}', pr.number, ex=3600)
@@ -47,4 +53,25 @@ def get_pr_from_commit(repo: Repository, sha: str) -> PullRequest:
 
 def set_check(data, status, message):
     commit = load_commit(data)
-    status = commit.create_status(state=status, target_url='https://pennydreadfulmagic.com', description=message, context='pdm/automerge')
+    return commit.create_status(state=status, description=message, context=PDM_CHECK_CONTEXT)
+
+def check_pr_for_mergability(pr: PullRequest) -> str:
+    repo = pr.base.repo
+    commit = repo.get_commit(pr.head.sha)
+    checks = {}
+    for status in commit.get_statuses():
+        print(status)
+        if status.context == PDM_CHECK_CONTEXT:
+            continue
+        if checks.get(status.context) is None:
+            checks[status.context] = status.state
+            if status.state != 'success':
+                commit.create_status(state='pending', description=f'Waiting for {status.context}', context=PDM_CHECK_CONTEXT)
+                return f'Merge blocked by {status.context}'
+    print(checks)
+    if not 'merge when ready' in [l.name for l in pr.as_issue().labels]:
+        commit.create_status(state='pending', description='Waiting for "Ready to Merge"', context=PDM_CHECK_CONTEXT)
+
+    commit.create_status(state='success', description='Ready to merge', context=PDM_CHECK_CONTEXT)
+    pr.merge()
+    return 'good to merge'

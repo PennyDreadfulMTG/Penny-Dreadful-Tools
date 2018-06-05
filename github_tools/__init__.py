@@ -22,12 +22,15 @@ def on_status(data):
     context = data.get('context')
     state = data.get('state')
     print(f'Got status for {sha}: {context} = {state}')
+    if context == webhooks.PDM_CHECK_CONTEXT:
+        return 'Ignoring own status'
     pr = webhooks.get_pr_from_status(data)
     if pr is None:
         resp = 'Commit is no longer HEAD.  Ignoring'
         print(resp)
         return resp
     print(f'Commit belongs to {pr.number}')
+    webhooks.check_pr_for_mergability(pr)
     return data
 
 @WEBHOOK.hook(event_type='check_suite')

@@ -9,7 +9,7 @@ flask-session==0.3
 Flask-SQLAlchemy==2.3.2
 Flask-Migrate
 ftfy==5.3.0
-google-api-python-client==1.7.1
+google-api-python-client==1.7.3
 github_webhook==1.0.2
 inflect==0.3.1
 isort==4.3.4
@@ -30,7 +30,7 @@ python-dateutil==2.7.3
 pytz==2018.4
 redis==2.10.6
 requests==2.18.4
-requests_oauthlib==0.8.0
+requests-oauthlib==1.0.0
 seaborn==0.8.1
 SQLAlchemy==1.2.8
 sqlalchemy-utils==0.33.3

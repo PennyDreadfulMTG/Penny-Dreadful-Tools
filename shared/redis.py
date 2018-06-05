@@ -1,5 +1,5 @@
 import json
-from typing import Optional, TypeVar, List, Any
+from typing import Any, List, Optional, TypeVar
 
 import redis
 
@@ -47,4 +47,3 @@ def store(key: str, val: T, **kwargs: Any) -> T:
     if REDIS is not None:
         REDIS.set(key, json.dumps(val, default=extra_serializer), **kwargs)
     return val
-

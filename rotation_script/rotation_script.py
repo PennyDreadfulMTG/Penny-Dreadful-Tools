@@ -6,10 +6,10 @@ from typing import Dict, List, Set
 
 import ftfy
 
-from magic import fetcher, fetcher_internal, rotation
+from magic import fetcher, rotation
 from price_grabber.parser import (PriceListType, parse_cardhoarder_prices,
                                   parse_mtgotraders_prices)
-from shared import configuration, dtutil, text
+from shared import configuration, dtutil, fetcher_internal, text
 
 BLACKLIST: Set[str] = set()
 WHITELIST: Set[str] = set()

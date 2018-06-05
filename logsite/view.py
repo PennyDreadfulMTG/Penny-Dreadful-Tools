@@ -2,6 +2,7 @@ from flask import url_for
 
 from shared_web.base_view import BaseView
 
+
 # pylint: disable=no-self-use, too-many-public-methods
 class View(BaseView):
     def js_extra_url(self):

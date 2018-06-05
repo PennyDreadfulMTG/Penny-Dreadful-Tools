@@ -4,7 +4,6 @@ from pylint.checkers import BaseChecker
 from pylint.checkers.utils import check_messages
 from pylint.interfaces import IAstroidChecker
 
-
 ACCEPTABLE_IMPORTS = {
     'decksite': ('decksite', 'magic', 'shared', 'shared_web'),
     'discordbot': ('discordbot', 'magic', 'shared'),

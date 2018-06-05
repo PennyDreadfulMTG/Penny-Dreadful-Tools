@@ -23,6 +23,8 @@ DEFAULTS = {
     # github credentials.  Used for auto-reporting issues.
     'github_password': None,
     'github_user': None,
+    # Required if you want to share cookies between subdomains
+    'flask_cookie_domain': None,
     # Discord server id.  Used for admin verification.  Used by decksite.
     'guild_id': '207281932214599682',
     'image_dir': './images',
@@ -35,9 +37,9 @@ DEFAULTS = {
     'mysql_port': 3306,
     'mysql_user': 'pennydreadful',
     'not_pd': '',
+    # Discord OAuth settings
     'oauth2_client_id': '',
     'oauth2_client_secret': '',
-    'otherbot_commands': '!s,!card,!ipg,!mtr,!cr,!define',
     'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32)),
     'prices_database': 'prices',
     'redis_enabled': True,
@@ -54,10 +56,12 @@ DEFAULTS = {
     'to_username': '',
     'tournament_channel_id': '207281932214599682',
     'web_cache': '.web_cache',
+    # Google Custom Search Engine (for !google)
     'cse_api_key': None,
     'cse_engine_id': None,
     'whoosh_index_dir': 'whoosh_index',
     'poeditor_api_key': None,
+    # Discord Webhook endpoint
     'league_webhook_id': None,
     'league_webhook_token': None,
 }

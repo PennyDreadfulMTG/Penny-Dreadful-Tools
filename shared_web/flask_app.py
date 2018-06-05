@@ -10,7 +10,7 @@ from flask_session import Session
 from github.GithubException import GithubException
 from werkzeug import exceptions
 
-from shared import redis, repo
+from shared import redis, repo, configuration
 from shared.pd_exception import DoesNotExistException
 
 from . import localization, logger, oauth
@@ -35,6 +35,7 @@ class PDFlask(Flask):
         self.config['css_url'] = ''
         self.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip().decode()
         self.config['branch'] = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
+        self.config['SESSION_COOKIE_DOMAIN'] = configuration.get_optional_str('flask_cookie_domain')
 
         translations = os.path.abspath(os.path.join(os.path.dirname(__file__), 'translations'))
         self.config['BABEL_TRANSLATION_DIRECTORIES'] = translations

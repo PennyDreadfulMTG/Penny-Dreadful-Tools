@@ -1,8 +1,9 @@
 from typing import Tuple
-from shared import configuration, lazy
+from shared import configuration, lazy, redis
 from github import Github
 from github.PullRequest import PullRequest
 from github.Commit import Commit
+from github.Repository import Repository
 
 @lazy.lazy_property
 def get_github() -> Github:
@@ -11,8 +12,8 @@ def get_github() -> Github:
     return Github(configuration.get('github_user'), configuration.get('github_password'))
 
 def parse_pr_url(url: str) -> Tuple[str, str, int]:
-    splitted_url = url.split('/')
-    return splitted_url[4], splitted_url[5], int(splitted_url[7])
+    split_url = url.split('/')
+    return split_url[4], split_url[5], int(split_url[7])
 
 def load_pr(data: dict) -> PullRequest:
     org, repo, pr_number = parse_pr_url(data.get('pull_request', data.get('issue'))['url'])
@@ -28,7 +29,23 @@ def load_commit(data: dict) -> Commit:
     g = get_github()
     return g.get_repo(f'{org}/{repo}').get_commit(head.get('sha'))
 
+def get_pr_from_status(data) -> PullRequest:
+    g = get_github()
+    repo = g.get_repo(data['name'])
+    return get_pr_from_commit(repo, data['sha'])
+
+def get_pr_from_commit(repo: Repository, sha: str) -> PullRequest:
+    cached = redis.get_list(f'github-head-{sha}')
+    if cached:
+        return repo.get_pull(cached)
+    for pr in repo.get_pulls():
+        head = pr.head.sha
+        redis.store(f'github-head-{head}', pr.number)
+        if head == sha:
+            return pr
+    return None
+
 def set_check(data, status, message):
     commit = load_commit(data)
     status = commit.create_status(state=status, target_url='https://pennydreadfulmagic.com', description=message, context='pdm/automerge')
-    print(repr(status))
+

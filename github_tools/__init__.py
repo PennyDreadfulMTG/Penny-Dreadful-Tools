@@ -18,7 +18,16 @@ def on_push(data):
 
 @WEBHOOK.hook(event_type='status')
 def on_status(data):
-    print('Got status with: {0}'.format(data))
+    sha = data.get('sha')
+    context = data.get('context')
+    state = data.get('state')
+    print(f'Got status for {sha}: {context} = {state}')
+    pr = webhooks.get_pr_from_status(data)
+    if pr is None:
+        resp = 'Commit is no longer HEAD.  Ignoring'
+        print(resp)
+        return resp
+    print(f'Commit belongs to {pr.number}')
     return data
 
 @WEBHOOK.hook(event_type='check_suite')

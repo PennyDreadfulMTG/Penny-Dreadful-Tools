@@ -1,5 +1,5 @@
 import json
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, List
 
 import redis
 
@@ -24,7 +24,7 @@ def init() -> Optional[redis.Redis]:
 
 REDIS = init()
 
-def get(key: str) -> Optional[Container]:
+def get_container(key: str) -> Optional[Container]:
     if REDIS is not None:
         blob = REDIS.get(key)
         if blob is not None:
@@ -33,9 +33,18 @@ def get(key: str) -> Optional[Container]:
                 return Container(val)
     return None
 
+def get_list(key: str) -> Optional[List[str]]:
+    if REDIS is not None:
+        blob = REDIS.get(key)
+        if blob is not None:
+            val = json.loads(blob)
+            return val
+    return None
+
 T = TypeVar('T', dict, list, str, covariant=True)
 
 def store(key: str, val: T) -> T:
     if REDIS is not None:
         REDIS.set(key, json.dumps(val, default=extra_serializer))
     return val
+

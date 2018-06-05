@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Dict, Tuple
 
 from github import Github
 from github.Commit import Commit
@@ -58,7 +58,7 @@ def set_check(data, status, message):
 def check_pr_for_mergability(pr: PullRequest) -> str:
     repo = pr.base.repo
     commit = repo.get_commit(pr.head.sha)
-    checks = {}
+    checks: Dict[str, str] = {}
     for status in commit.get_statuses():
         print(status)
         if status.context == PDM_CHECK_CONTEXT:

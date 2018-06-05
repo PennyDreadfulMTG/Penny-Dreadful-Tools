@@ -71,6 +71,7 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
     print(checks)
     if not 'merge when ready' in [l.name for l in pr.as_issue().labels]:
         commit.create_status(state='pending', description='Waiting for "Ready to Merge"', context=PDM_CHECK_CONTEXT)
+        return 'Waiting for label'
 
     commit.create_status(state='success', description='Ready to merge', context=PDM_CHECK_CONTEXT)
     pr.merge()

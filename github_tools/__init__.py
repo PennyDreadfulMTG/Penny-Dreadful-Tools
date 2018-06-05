@@ -35,7 +35,7 @@ def on_status(data):
 
 @WEBHOOK.hook(event_type='check_suite')
 def on_check_suite(data):
-    print('Got check_suite with: {0}'.format(data))
+    print('Got check_suite')
     return data
 
 @WEBHOOK.hook(event_type='pull_request')
@@ -44,6 +44,6 @@ def on_pull_request(data):
     print([org, repo, pr_number])
     if data['action'] == 'synchronize' or data['action'] == 'opened':
         webhooks.set_check(data, 'pending', 'Waiting for tests')
-    if data['action'] == 'labelled':
+    if data['action'] == 'labeled':
         pr = webhooks.load_pr(data)
         webhooks.check_pr_for_mergability(pr)

@@ -10,7 +10,7 @@ from flask_session import Session
 from github.GithubException import GithubException
 from werkzeug import exceptions
 
-from shared import redis, repo, configuration
+from shared import configuration, redis, repo
 from shared.pd_exception import DoesNotExistException
 
 from . import localization, logger, oauth

@@ -9,7 +9,7 @@ class Person(View):
     def __init__(self, person, cards, only_played_cards) -> None:
         super().__init__()
         self.person = person
-        self.decks = person.decks()
+        self.decks = person.decks
         self.hide_person = True
         self.cards = cards
         self.only_played_cards = only_played_cards

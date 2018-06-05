@@ -11,6 +11,7 @@ from shared_web import logger
 
 class Person(Container):
     __decks = None
+    @property
     def decks(self) -> List[deck.Deck]:
         if self.__decks is None:
             self.__decks = deck.load_decks(f'd.person_id = {self.id}', season_id=self.season_id)

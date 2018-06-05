@@ -5,7 +5,7 @@ from github.PullRequest import PullRequest
 from github.Commit import Commit
 from github.Repository import Repository
 
-@lazy.lazy_property
+# @lazy.lazy_property
 def get_github() -> Github:
     if not configuration.get_str('github_user') or not configuration.get_str('github_password'):
         return None
@@ -35,12 +35,12 @@ def get_pr_from_status(data) -> PullRequest:
     return get_pr_from_commit(repo, data['sha'])
 
 def get_pr_from_commit(repo: Repository, sha: str) -> PullRequest:
-    cached = redis.get_list(f'github-head-{sha}')
+    cached = redis.get_list(f'github:head:{sha}')
     if cached:
         return repo.get_pull(cached)
     for pr in repo.get_pulls():
         head = pr.head.sha
-        redis.store(f'github-head-{head}', pr.number)
+        redis.store(f'github:head:{head}', pr.number, ex=3600)
         if head == sha:
             return pr
     return None
@@ -48,4 +48,3 @@ def get_pr_from_commit(repo: Repository, sha: str) -> PullRequest:
 def set_check(data, status, message):
     commit = load_commit(data)
     status = commit.create_status(state=status, target_url='https://pennydreadfulmagic.com', description=message, context='pdm/automerge')
-

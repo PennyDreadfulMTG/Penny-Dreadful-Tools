@@ -1,5 +1,5 @@
 import json
-from typing import Optional, TypeVar, List
+from typing import Optional, TypeVar, List, Any
 
 import redis
 
@@ -43,8 +43,8 @@ def get_list(key: str) -> Optional[List[str]]:
 
 T = TypeVar('T', dict, list, str, covariant=True)
 
-def store(key: str, val: T) -> T:
+def store(key: str, val: T, **kwargs: Any) -> T:
     if REDIS is not None:
-        REDIS.set(key, json.dumps(val, default=extra_serializer))
+        REDIS.set(key, json.dumps(val, default=extra_serializer), **kwargs)
     return val
 

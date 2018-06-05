@@ -37,7 +37,7 @@ class SignUpForm(Form):
         if person_id is not None:
             ps = person.load_person(person_id)
             self.recent_decks: List[Dict[str, Any]] = []
-            for d in sorted(ps.decks, key=lambda deck: deck['created_date'], reverse=True)[0:10]:
+            for d in sorted(ps.decks(), key=lambda deck: deck['created_date'], reverse=True)[0:10]:
                 recent_deck = {'name': d['name'], 'main': [], 'sb':[]}
                 for c in d.maindeck:
                     recent_deck['main'].append('{n} {c}'.format(n=c['n'], c=c['name']))

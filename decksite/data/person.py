@@ -10,7 +10,11 @@ from shared_web import logger
 
 
 class Person(Container):
-    pass
+    __decks = None
+    def decks(self) -> List[deck.Deck]:
+        if self.__decks is None:
+            self.__decks = deck.load_decks(f'd.person_id = {self.id}', season_id=self.season_id)
+        return self.__decks
 
 def load_person(person: Union[int, str], season_id: Optional[int] = None) -> Person:
     try:
@@ -50,20 +54,13 @@ def load_people(where: str = '1 = 1',
     """.format(person_query=query.person_query(), all_select=deck.nwdl_select('all_', query.season_query(season_id)), nwdl_join=deck.nwdl_join(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id), order_by=order_by)
 
     people = [Person(r) for r in db().execute(sql)]
+    for p in people:
+        p.season_id = season_id
+
     if len(people) > 0:
-        set_decks(people, season_id)
         set_achievements(people, season_id)
         set_head_to_head(people, season_id)
     return people
-
-def set_decks(people: List[Person], season_id: int = None) -> None:
-    people_by_id = {person.id: person for person in people}
-    where = 'd.person_id IN ({ids})'.format(ids=', '.join(str(k) for k in people_by_id.keys()))
-    decks = deck.load_decks(where, season_id=season_id)
-    for p in people:
-        p.decks = []
-    for d in decks:
-        people_by_id[d.person_id].decks.append(d)
 
 def set_achievements(people: List[Person], season_id: int = None) -> None:
     people_by_id = {person.id: person for person in people}

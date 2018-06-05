@@ -28,7 +28,7 @@ def league_api():
 def person_api(person):
     try:
         p = ps.load_person(person)
-        p.decks = url_for('person_decks_api', person=person)
+        p.decks_url = url_for('person_decks_api', person=person)
         p.head_to_head = url_for('person_h2h_api', person=person)
         return return_json(p)
     except DoesNotExistException:

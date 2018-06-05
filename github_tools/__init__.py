@@ -35,7 +35,7 @@ def on_status(data):
 
 @WEBHOOK.hook(event_type='check_suite')
 def on_check_suite(data):
-    print('Got check_suite with: {0}'.format(data))
+    print('Got check_suite')
     return data
 
 @WEBHOOK.hook(event_type='pull_request')

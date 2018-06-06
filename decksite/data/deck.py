@@ -91,7 +91,7 @@ def load_decks(where: str = '1 = 1',
     heavy = []
     for row in rows:
         d = redis.get_container('decksite:deck:{id}'.format(id=row['id']))
-        if d is None:
+        if d is None or d.name is None:
             heavy.append(row['id'])
             # decks.append(guarantee.exactly_one(load_decks_heavy('d.id = {id}'.format(id=row['id']))))
         else:

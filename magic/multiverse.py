@@ -72,7 +72,7 @@ def base_query(where: str = '(1 = 1)') -> str:
             LEFT JOIN (
                 SELECT
                     cb.card_id,
-                    GROUP_CONCAT(CONCAT(cb.description, '|', cb.classification, '|', cb.last_confirmed, '|', cb.url, '|', cb.from_bug_blog) SEPARATOR '_SEPARATOR_') AS bugs
+                    GROUP_CONCAT(CONCAT(cb.description, '|', cb.classification, '|', cb.last_confirmed, '|', cb.url, '|', cb.from_bug_blog, '|', cb.bannable) SEPARATOR '_SEPARATOR_') AS bugs
                 FROM
                     card_bug AS cb
                 GROUP BY

@@ -24,6 +24,14 @@ class Card(Container):
     def is_split(self) -> bool:
         return self.name.find('//') >= 0
 
+    def __hash__(self) -> int:
+        return hash(self.name)
+
+    def __eq__(self, other) -> bool:
+        if isinstance(self, other.__class__):
+            return self.name == other.name
+        return False
+
 def determine_value(k: str, params: Dict[str, Any]) -> Any:
     v = params[k]
     if k == 'names' or k == 'mana_cost':
@@ -50,9 +58,9 @@ def determine_bugs(s: str) -> Optional[List[Dict[str, object]]]:
     bugs = s.split('_SEPARATOR_')
     v = []
     for b in bugs:
-        description, classification, last_confirmed, url, from_bug_blog = b.split('|')
+        description, classification, last_confirmed, url, from_bug_blog, bannable = b.split('|')
         bb = from_bug_blog == '1'
-        bug = {'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(int(last_confirmed)), 'url': url, 'from_bug_blog': bb}
+        bug = {'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(int(last_confirmed)), 'url': url, 'from_bug_blog': bb, 'bannable': bannable}
         v.append(bug)
     if v:
         return v

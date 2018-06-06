@@ -69,7 +69,20 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
                 commit.create_status(state='pending', description=f'Waiting for {status.context}', context=PDM_CHECK_CONTEXT)
                 return f'Merge blocked by {status.context}'
     print(checks)
-    if not 'merge when ready' in [l.name for l in pr.as_issue().labels]:
+    travis_pr = 'continuous-integration/travis-ci/pr'
+    if travis_pr not in checks.keys():
+        # There's a lovely race condition where, if:
+        # 1. travis/push has completed before the PR was made
+        # 2. And the label is applied on creation (or author is whitelisted)
+        # The PR can be merged before travis is aware of the PR.
+        # The solution to this is to hardcode a check for /pr
+        commit.create_status(state='pending', description=f'Waiting for {travis_pr}', context=PDM_CHECK_CONTEXT)
+        return f'Merge blocked by {travis_pr}'
+    whitelisted = pr.user in repo.get_collaborators()
+    labels = [l.name for l in pr.as_issue().labels]
+    if whitelisted and not 'do not merge' in labels:
+        print('Whitelisted Author')
+    elif not 'merge when ready' in labels:
         commit.create_status(state='pending', description='Waiting for "merge when ready"', context=PDM_CHECK_CONTEXT)
         return 'Waiting for label'
 

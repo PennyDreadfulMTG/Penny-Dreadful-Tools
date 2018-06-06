@@ -1,3 +1,5 @@
+from flask import redirect
+
 from shared import configuration
 from shared_web.flask_app import PDFlask
 from github_webhook import Webhook
@@ -47,3 +49,7 @@ def on_pull_request(data):
     if data['action'] == 'labeled':
         pr = webhooks.load_pr(data)
         return webhooks.check_pr_for_mergability(pr)
+
+@APP.route('/cards/<path:name>/')
+def card(name):
+    return redirect('https://pennydreadfulmagic.com/cards/{name}/'.format(name=name))

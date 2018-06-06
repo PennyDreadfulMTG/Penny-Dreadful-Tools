@@ -14,7 +14,8 @@ from magic import card, fetcher, legality, rotation
 from shared import configuration, dtutil, redis
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import InvalidDataException, LockNotAcquiredException, DatabaseException
+from shared.pd_exception import (DatabaseException, InvalidDataException,
+                                 LockNotAcquiredException)
 
 
 class Form(Container):

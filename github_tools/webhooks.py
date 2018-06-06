@@ -3,9 +3,9 @@ from typing import Dict, Tuple
 from github import Github
 from github.Commit import Commit
 from github.CommitStatus import CommitStatus
+from github.GithubException import UnknownObjectException
 from github.PullRequest import PullRequest
 from github.Repository import Repository
-from github.GithubException import UnknownObjectException
 
 from shared import configuration, lazy, redis
 

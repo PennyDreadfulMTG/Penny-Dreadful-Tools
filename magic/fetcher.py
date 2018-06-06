@@ -9,7 +9,7 @@ import pytz
 
 import shared.fetcher_internal as internal
 from magic.models.card import Card
-from shared import configuration, dtutil
+from shared import configuration, dtutil, redis
 from shared.fetcher_internal import FetchException
 from shared.pd_exception import TooFewItemsException
 
@@ -180,4 +180,10 @@ def time(q: str) -> str:
     return dtutil.now(timezone).strftime('%l:%M %p')
 
 def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
-    return internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json')
+    cached = redis.get_container('magic:fetcher:whatisinstandard')
+    if cached is not None:
+        return cached
+
+    info = internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json')
+    redis.store('magic:fetcher:whatisinstandard', info, ex=3600)
+    return info

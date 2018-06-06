@@ -4,6 +4,7 @@ node{
     env.magic_database = 'jenkins_cards'
     env.decksite_database = 'jenkins_decksite'
     env.logsite_database = 'jenkins_logsite'
+    env.redis_db = '9'
 
     stage('Clone') {
         sh 'git config user.email "jenkins@katelyngigante.com"'
@@ -45,7 +46,8 @@ node{
                 sh 'git push https://$github_user:$github_password@github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git jenkins_results --force'
             }
             sleep(30) // Lovely race condition where we make a PR before the push has propogated.
-            sh 'hub pull-request  -b master -h jenkins_results -m "Automated PR from Jenkins" -f'
+            sh(returnStatus: true, script: 'hub pull-request -b master -h jenkins_results -m "Automated PR from Jenkins" -f')
+
         }
     }
 }

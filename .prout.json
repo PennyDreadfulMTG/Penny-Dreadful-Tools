@@ -1,11 +1,11 @@
 {
   "checkpoints": {
     "LOGS": {
-      "url": "https://logs.pennydreadfulmagic.com/about",
+      "url": "https://logs.pennydreadfulmagic.com/api/commit",
       "overdue": "1H"
     },
     "PROD": {
-      "url": "https://pennydreadfulmagic.com/about",
+      "url": "https://pennydreadfulmagic.com/api/commit",
       "overdue": "1H"
     }
   }

@@ -1,3 +1,5 @@
+from flask import redirect
+
 from shared import configuration
 from shared_web.flask_app import PDFlask
 from github_webhook import Webhook
@@ -13,7 +15,10 @@ def home():
 
 @WEBHOOK.hook()
 def on_push(data):
-    print('Got push')
+    ref = data['ref']
+    print(f'Got push on {ref}')
+    if ref == 'refs/heads/master':
+        webhooks.update_prs(data)
     return data
 
 @WEBHOOK.hook(event_type='status')
@@ -26,9 +31,7 @@ def on_status(data):
         return 'Ignoring own status'
     pr = webhooks.get_pr_from_status(data)
     if pr is None:
-        resp = 'Commit is no longer HEAD.  Ignoring'
-        print(resp)
-        return resp
+        return 'Commit is no longer HEAD.  Ignoring'
     print(f'Commit belongs to {pr.number}')
     webhooks.check_pr_for_mergability(pr)
     return data
@@ -46,4 +49,19 @@ def on_pull_request(data):
         webhooks.set_check(data, 'pending', 'Waiting for tests')
     if data['action'] == 'labeled':
         pr = webhooks.load_pr(data)
-        webhooks.check_pr_for_mergability(pr)
+        if pr.state == 'open':
+            return webhooks.check_pr_for_mergability(pr)
+        elif pr.state == 'closed' and 'Overdue-on-GH' in [l.name for l in pr.as_issue().labels]:
+            # We can't actually reboot when `master` is pushed like the other sites.
+            # So this is a lovely hack to reboot ourselves when we absolutely need to.
+            try:
+                import uwsgi
+                uwsgi.reload()
+            except ImportError:
+                pass
+            return 'I need to be reloaded'
+    return ''
+
+@APP.route('/cards/<path:name>/')
+def card(name):
+    return redirect('https://pennydreadfulmagic.com/cards/{name}/'.format(name=name))

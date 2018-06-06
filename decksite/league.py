@@ -14,7 +14,8 @@ from magic import card, fetcher, legality, rotation
 from shared import configuration, dtutil, redis
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import InvalidDataException, LockNotAcquiredException
+from shared.pd_exception import (DatabaseException, InvalidDataException,
+                                 LockNotAcquiredException)
 
 
 class Form(Container):
@@ -313,10 +314,14 @@ def determine_league_name(end_date: datetime.datetime) -> str:
     return 'League {MM} {YYYY}'.format(MM=calendar.month_name[end_date.month], YYYY=end_date.year)
 
 def retire_deck(d):
-    if d.wins == 0 and d.losses == 0 and d.draws == 0:
-        sql = 'DELETE FROM deck WHERE id = %s'
-    else:
-        sql = 'UPDATE `deck` SET `retired` = 1 WHERE id = %s'
+    try:
+        if d.wins == 0 and d.losses == 0 and d.draws == 0:
+            sql = 'DELETE FROM deck WHERE id = %s'
+            db().execute(sql, [d.id])
+            return
+    except DatabaseException:
+        pass
+    sql = 'UPDATE `deck` SET `retired` = 1 WHERE id = %s'
     db().execute(sql, [d.id])
     redis.clear(f'decksite:deck:{d.id}')
 

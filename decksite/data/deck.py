@@ -88,12 +88,18 @@ def load_decks(where: str = '1 = 1',
     db().execute('SET group_concat_max_len=100000')
     rows = db().execute(sql)
     decks = []
+    heavy = []
     for row in rows:
         d = redis.get_container('decksite:deck:{id}'.format(id=row['id']))
-        if d is None:
-            decks.append(guarantee.exactly_one(load_decks_heavy('d.id = {id}'.format(id=row['id']))))
+        if d is None or d.name is None:
+            heavy.append(row['id'])
+            # decks.append(guarantee.exactly_one(load_decks_heavy('d.id = {id}'.format(id=row['id']))))
         else:
             decks.append(deserialize_deck(d))
+    if heavy:
+        # This currently messes up the order.
+        where = 'd.id IN ({deck_ids})'.format(deck_ids=', '.join(map(sqlescape, map(str, heavy))))
+        decks.extend(load_decks_heavy(where))
     return decks
 
 def deserialize_deck(sdeck: Container) -> Deck:

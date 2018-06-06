@@ -13,8 +13,8 @@ from werkzeug import exceptions
 from shared import configuration, redis, repo
 from shared.pd_exception import DoesNotExistException
 
-from . import localization, logger, oauth
-from .api import generate_error, process_github_webhook, return_json
+from . import api, localization, logger, oauth
+from .api import generate_error,  return_json
 from .views import InternalServerError, NotFound, Unauthorized
 
 
@@ -29,7 +29,8 @@ class PDFlask(Flask):
         super().route('/logout/')(self.logout)
         super().route('/authenticate/')(self.authenticate)
         super().route('/authenticate/callback/')(self.authenticate_callback)
-        super().route('/api/gitpull', methods=['POST'])(process_github_webhook)
+        super().route('/api/gitpull', methods=['POST'])(api.process_github_webhook)
+        super().route('/api/commit')(api.commit_id)
         self.config['menu'] = []
         self.config['js_url'] = ''
         self.config['css_url'] = ''

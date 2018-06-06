@@ -34,7 +34,7 @@ def load_commit(data: dict) -> Commit:
     g = get_github()
     return g.get_repo(f'{org}/{repo}').get_commit(head.get('sha'))
 
-def get_pr_from_status(data) -> PullRequest:
+def get_pr_from_status(data: dict) -> PullRequest:
     g = get_github()
     repo = g.get_repo(data['name'])
     return get_pr_from_commit(repo, data['sha'])
@@ -69,7 +69,7 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
             if status.state != 'success':
                 commit.create_status(state='pending', description=f'Waiting for {status.context}', context=PDM_CHECK_CONTEXT)
                 return f'Merge blocked by {status.context}'
-    print(checks)
+
     travis_pr = 'continuous-integration/travis-ci/pr'
     if travis_pr not in checks.keys():
         # There's a lovely race condition where, if:
@@ -79,11 +79,14 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
         # The solution to this is to hardcode a check for /pr
         commit.create_status(state='pending', description=f'Waiting for {travis_pr}', context=PDM_CHECK_CONTEXT)
         return f'Merge blocked by {travis_pr}'
-    whitelisted = pr.user in repo.get_collaborators()
+
     labels = [l.name for l in pr.as_issue().labels]
-    if whitelisted and not 'do not merge' in labels:
-        print('Whitelisted Author')
-    elif not 'merge when ready' in labels:
+    if 'do not merge' in labels:
+        commit.create_status(state='failure', description='Blocked by "do not merge"', context=PDM_CHECK_CONTEXT)
+        return 'Do not Merge'
+
+    whitelisted = pr.user in repo.get_collaborators()
+    if not whitelisted and not 'merge when ready' in labels:
         commit.create_status(state='pending', description='Waiting for "merge when ready"', context=PDM_CHECK_CONTEXT)
         return 'Waiting for label'
 

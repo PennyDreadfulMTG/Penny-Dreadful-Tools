@@ -46,4 +46,4 @@ def on_pull_request(data):
         webhooks.set_check(data, 'pending', 'Waiting for tests')
     if data['action'] == 'labeled':
         pr = webhooks.load_pr(data)
-        webhooks.check_pr_for_mergability(pr)
+        return webhooks.check_pr_for_mergability(pr)

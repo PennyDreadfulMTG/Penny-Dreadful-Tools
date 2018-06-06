@@ -28,7 +28,11 @@ def load_season(season_id: int = None, league_only: bool = False) -> Container:
     return season
 
 # pylint: disable=attribute-defined-outside-init
-def load_decks(where='1 = 1', order_by=None, limit='', season_id=None) -> List[Deck]:
+def load_decks(where: str = '1 = 1',
+               order_by: Optional[str] = None,
+               limit: str = '',
+               season_id: Optional[int] = None
+              ) -> List[Deck]:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
     sql = """
@@ -235,17 +239,17 @@ def add_cards(deck_id, cards) -> None:
         insert_deck_card(deck_id, name, n, True)
     db().commit()
 
-def get_deck_id(source_name, identifier) -> Optional[int]:
+def get_deck_id(source_name: str, identifier) -> Optional[int]:
     source_id = get_source_id(source_name)
     sql = 'SELECT id FROM deck WHERE source_id = %s AND identifier = %s'
     return db().value(sql, [source_id, identifier])
 
-def insert_deck_card(deck_id, name, n, in_sideboard) -> None:
+def insert_deck_card(deck_id: int, name: str, n, in_sideboard) -> None:
     name = oracle.valid_name(name)
     sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (%s, %s, %s, %s)'
     db().execute(sql, [deck_id, name, n, in_sideboard])
 
-def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username) -> int:
+def get_or_insert_person_id(mtgo_username: Optional[str], tappedout_username: Optional[str], mtggoldfish_username: Optional[str]) -> int:
     sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
     person_id = db().value(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
     if person_id:
@@ -253,14 +257,14 @@ def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_usern
     sql = 'INSERT INTO person (mtgo_username, tappedout_username, mtggoldfish_username) VALUES (%s, %s, %s)'
     return db().insert(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
 
-def get_source_id(source) -> int:
+def get_source_id(source: str) -> int:
     sql = 'SELECT id FROM source WHERE name = %s'
     source_id = db().value(sql, [source])
     if not source_id:
         raise InvalidDataException('Unknown source: `{source}`'.format(source=source))
     return source_id
 
-def get_archetype_id(archetype) -> Optional[int]:
+def get_archetype_id(archetype: str) -> Optional[int]:
     sql = 'SELECT id FROM archetype WHERE name = %s'
     return db().value(sql, [archetype])
 
@@ -375,7 +379,7 @@ def count_matches(deck_id: int, opponent_deck_id: int) -> Dict[int, int]:
 
 # Query Helpers for number of decks, wins, draws and losses.
 
-def nwdl_select(prefix='', additional_clause='TRUE') -> str:
+def nwdl_select(prefix: str = '', additional_clause: str = 'TRUE') -> str:
     return """
         SUM(CASE WHEN {additional_clause} AND d.id IS NOT NULL THEN 1 ELSE 0 END) AS `{prefix}num_decks`,
         SUM(CASE WHEN {additional_clause} THEN wins ELSE 0 END) AS `{prefix}wins`,

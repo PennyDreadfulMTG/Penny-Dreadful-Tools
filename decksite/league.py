@@ -11,7 +11,7 @@ from decksite.data import competition, deck, guarantee, match, person, query
 from decksite.database import db
 from decksite.scrapers import decklist
 from magic import card, fetcher, legality, rotation
-from shared import configuration, dtutil
+from shared import configuration, dtutil, redis
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException, LockNotAcquiredException
@@ -317,6 +317,7 @@ def retire_deck(d):
     else:
         sql = 'UPDATE `deck` SET `retired` = 1 WHERE id = %s'
     db().execute(sql, [d.id])
+    redis.clear(f'decksite:deck:{d.id}')
 
 def load_latest_league_matches():
     competition_id = active_league().id
@@ -406,7 +407,8 @@ def update_match(match_id: int, left_id: int, left_games: int, right_id: int, ri
     db().begin()
     update_games(match_id, left_id, left_games)
     update_games(match_id, right_id, right_games)
-    return db().commit()
+    db().commit()
+    redis.clear(f'decksite:deck:{left_id}', f'decksite:deck:{right_id}')
 
 def update_games(match_id: int, deck_id: int, games: int) -> List[Dict[str, Any]]:
     sql = 'UPDATE deck_match SET games = %s WHERE match_id = %s AND deck_id = %s'

@@ -23,6 +23,8 @@ DEFAULTS = {
     # github credentials.  Used for auto-reporting issues.
     'github_password': None,
     'github_user': None,
+    # Required if you want to share cookies between subdomains
+    'flask_cookie_domain': None,
     # Discord server id.  Used for admin verification.  Used by decksite.
     'guild_id': '207281932214599682',
     'image_dir': './images',
@@ -35,11 +37,15 @@ DEFAULTS = {
     'mysql_port': 3306,
     'mysql_user': 'pennydreadful',
     'not_pd': '',
+    # Discord OAuth settings
     'oauth2_client_id': '',
     'oauth2_client_secret': '',
-    'otherbot_commands': '!s,!card,!ipg,!mtr,!cr,!define',
     'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32)),
     'prices_database': 'prices',
+    'redis_enabled': True,
+    'redis_host': 'localhost',
+    'redis_port': 6379,
+    'redis_db': 0,
     'scratch_dir': '.',
     'slow_fetch': 10.0,
     'slow_page': 10.0,
@@ -50,10 +56,12 @@ DEFAULTS = {
     'to_username': '',
     'tournament_channel_id': '207281932214599682',
     'web_cache': '.web_cache',
+    # Google Custom Search Engine (for !google)
     'cse_api_key': None,
     'cse_engine_id': None,
     'whoosh_index_dir': 'whoosh_index',
     'poeditor_api_key': None,
+    # Discord Webhook endpoint
     'league_webhook_id': None,
     'league_webhook_token': None,
 }
@@ -97,6 +105,14 @@ def get_list(key: str) -> List[str]:
     if isinstance(val, list):
         return val
     raise fail(key, val, List[str])
+
+def get_bool(key: str) -> bool:
+    val = get(key)
+    if val is None:
+        raise fail(key, val, bool)
+    if isinstance(val, bool):
+        return val
+    raise fail(key, val, bool)
 
 def get(key: str) -> Optional[Union[str, List[str], int, float]]:
     if key in CONFIG:
@@ -146,6 +162,7 @@ def write(key: str, value: Union[str, List[str], int, float]) -> Union[str, List
         cfg = {}
 
     cfg[key] = value
+    CONFIG[key] = value
 
     print('CONFIG: {0}={1}'.format(key, cfg[key]))
     fh = open('config.json', 'w')

@@ -7,10 +7,10 @@ from urllib import parse
 
 import pytz
 
-import magic.fetcher_internal as internal
-from magic.fetcher_internal import FetchException
+import shared.fetcher_internal as internal
 from magic.models.card import Card
 from shared import configuration, dtutil
+from shared.fetcher_internal import FetchException
 from shared.pd_exception import TooFewItemsException
 
 

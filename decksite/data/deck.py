@@ -9,7 +9,7 @@ from decksite.data.top import Top
 from decksite.database import db
 from magic import legality, mana, oracle, rotation
 from magic.models.deck import Deck
-from shared import dtutil
+from shared import dtutil, redis
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
@@ -28,7 +28,98 @@ def load_season(season_id: int = None, league_only: bool = False) -> Container:
     return season
 
 # pylint: disable=attribute-defined-outside-init
-def load_decks(where='1 = 1', order_by=None, limit='', season_id=None) -> List[Deck]:
+def load_decks(where: str = '1 = 1',
+               order_by: Optional[str] = None,
+               limit: str = '',
+               season_id: Optional[int] = None
+              ) -> List[Deck]:
+    if redis.REDIS is None:
+        return load_decks_heavy(where, order_by, limit, season_id)
+    if order_by is None:
+        order_by = 'active_date DESC, d.finish IS NULL, d.finish'
+    sql = """
+        SELECT
+            d.id,
+            d.finish,
+            IFNULL(MAX(m.date), d.created_date) AS active_date
+        FROM
+            deck AS d
+        LEFT JOIN
+            deck_match AS dm ON d.id = dm.deck_id
+        LEFT JOIN
+            `match` AS m ON dm.match_id = m.id
+        LEFT JOIN
+            deck_match AS odm ON odm.deck_id <> d.id AND dm.match_id = odm.match_id
+        """
+    if 'p.' in where or 'p.' in order_by:
+        sql += """
+        LEFT JOIN
+            person AS p ON d.person_id = p.id
+        """
+    if 's.' in where or 's.' in order_by:
+        sql += """
+        LEFT JOIN
+            source AS s ON d.source_id = s.id
+        """
+    if 'a.' in where or 'a.' in order_by:
+        sql += """
+        LEFT JOIN
+            archetype AS a ON d.archetype_id = a.id
+        """
+    sql += """
+        {competition_join}
+        """
+    if 'cache.' in where or 'cache.' in order_by:
+        sql += """
+        LEFT JOIN
+            deck_cache AS cache ON d.id = cache.deck_id
+        """
+    sql += """
+        {season_join}
+        WHERE ({where}) AND ({season_query})
+        GROUP BY
+            d.id,
+            season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
+        ORDER BY
+            {order_by}
+        {limit}
+    """
+    sql = sql.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit, season_query=query.season_query(season_id), season_join=query.season_join())
+    db().execute('SET group_concat_max_len=100000')
+    rows = db().execute(sql)
+    decks = []
+    for row in rows:
+        d = redis.get_container('decksite:deck:{id}'.format(id=row['id']))
+        if d is None:
+            decks.append(guarantee.exactly_one(load_decks_heavy('d.id = {id}'.format(id=row['id']))))
+        else:
+            decks.append(deserialize_deck(d))
+    return decks
+
+def deserialize_deck(sdeck: Container) -> Deck:
+    deck = Deck(sdeck)
+    deck.active_date = dtutil.ts2dt(deck.active_date)
+    deck.created_date = dtutil.ts2dt(deck.created_date)
+    deck.updated_date = dtutil.ts2dt(deck.updated_date)
+    if deck.competition_end_date is not None:
+        deck.competition_end_date = dtutil.ts2dt(deck.competition_end_date)
+    deck.wins = int(deck.wins)
+    deck.losses = int(deck.losses)
+    deck.draws = int(deck.draws)
+    if deck.get('omw') is not None:
+        deck.omw = float(deck.omw)
+    cards_by_name = oracle.cards_by_name()
+    for entry in deck.maindeck:
+        entry['card'] = cards_by_name[entry['card']['name']]
+    for entry in deck.sideboard:
+        entry['card'] = cards_by_name[entry['card']['name']]
+    return deck
+
+def load_decks_heavy(where: str = '1 = 1',
+                     order_by: Optional[str] = None,
+                     limit: str = '',
+                     season_id: Optional[int] = None
+                    ) -> List[Deck]:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
     sql = """
@@ -109,6 +200,8 @@ def load_decks(where='1 = 1', order_by=None, limit='', season_id=None) -> List[D
         decks.append(d)
     load_cards(decks)
     load_competitive_stats(decks)
+    for d in decks:
+        redis.store('decksite:deck:{id}'.format(id=d.id), d, ex=3600)
     return decks
 
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks we will claim your deck is neither W nor G which is not true. But this should cover most cases.
@@ -212,7 +305,7 @@ def add_deck(params) -> Deck:
     prime_cache(d)
     return d
 
-def prime_cache(d) -> None:
+def prime_cache(d: Deck) -> None:
     set_colors(d)
     colors_s = json.dumps(d.colors)
     colored_symbols_s = json.dumps(d.colored_symbols)
@@ -224,7 +317,7 @@ def prime_cache(d) -> None:
     db().execute('INSERT INTO deck_cache (deck_id, normalized_name, colors, colored_symbols, legal_formats) VALUES (%s, %s, %s, %s, %s)', [d.id, normalized_name, colors_s, colored_symbols_s, legal_formats_s])
     db().commit()
 
-def add_cards(deck_id, cards) -> None:
+def add_cards(deck_id: int, cards) -> None:
     db().begin()
     deckhash = hashlib.sha1(repr(cards).encode('utf-8')).hexdigest()
     db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [deckhash, deck_id])
@@ -240,12 +333,12 @@ def get_deck_id(source_name, identifier) -> Optional[int]:
     sql = 'SELECT id FROM deck WHERE source_id = %s AND identifier = %s'
     return db().value(sql, [source_id, identifier])
 
-def insert_deck_card(deck_id, name, n, in_sideboard) -> None:
+def insert_deck_card(deck_id: int, name: str, n, in_sideboard) -> None:
     name = oracle.valid_name(name)
     sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (%s, %s, %s, %s)'
     db().execute(sql, [deck_id, name, n, in_sideboard])
 
-def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_username) -> int:
+def get_or_insert_person_id(mtgo_username: Optional[str], tappedout_username: Optional[str], mtggoldfish_username: Optional[str]) -> int:
     sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
     person_id = db().value(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
     if person_id:
@@ -253,14 +346,14 @@ def get_or_insert_person_id(mtgo_username, tappedout_username, mtggoldfish_usern
     sql = 'INSERT INTO person (mtgo_username, tappedout_username, mtggoldfish_username) VALUES (%s, %s, %s)'
     return db().insert(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
 
-def get_source_id(source) -> int:
+def get_source_id(source: str) -> int:
     sql = 'SELECT id FROM source WHERE name = %s'
     source_id = db().value(sql, [source])
     if not source_id:
         raise InvalidDataException('Unknown source: `{source}`'.format(source=source))
     return source_id
 
-def get_archetype_id(archetype) -> Optional[int]:
+def get_archetype_id(archetype: str) -> Optional[int]:
     sql = 'SELECT id FROM archetype WHERE name = %s'
     return db().value(sql, [archetype])
 
@@ -295,7 +388,7 @@ def similarity_score(a: Deck, b: Deck) -> float:
             score += 1
     return float(score) / float(max(len(a.maindeck), len(b.maindeck)))
 
-def load_decks_by_cards(names) -> List[Deck]:
+def load_decks_by_cards(names: List[str]) -> List[Deck]:
     sql = """
         d.id IN (
             SELECT deck_id
@@ -306,7 +399,7 @@ def load_decks_by_cards(names) -> List[Deck]:
         """.format(n=len(names), names=', '.join(map(sqlescape, names)))
     return load_decks(sql)
 
-def load_cards(decks) -> None:
+def load_cards(decks: List[Deck]) -> None:
     if len(decks) == 0:
         return
     decks_by_id = {d.id: d for d in decks}
@@ -323,7 +416,7 @@ def load_cards(decks) -> None:
         d[location].append({'n': row['n'], 'name': name, 'card': cards[name]})
 
 # It makes the main query about 5x faster to do this as a separate query (which is trivial and done only once for all decks).
-def load_competitive_stats(decks) -> None:
+def load_competitive_stats(decks: List[Deck]) -> None:
     if len(decks) == 0:
         return
     decks_by_id = {d.id: d for d in decks}
@@ -375,7 +468,7 @@ def count_matches(deck_id: int, opponent_deck_id: int) -> Dict[int, int]:
 
 # Query Helpers for number of decks, wins, draws and losses.
 
-def nwdl_select(prefix='', additional_clause='TRUE') -> str:
+def nwdl_select(prefix: str = '', additional_clause: str = 'TRUE') -> str:
     return """
         SUM(CASE WHEN {additional_clause} AND d.id IS NOT NULL THEN 1 ELSE 0 END) AS `{prefix}num_decks`,
         SUM(CASE WHEN {additional_clause} THEN wins ELSE 0 END) AS `{prefix}wins`,

@@ -63,8 +63,6 @@ async def respond_to_card_names(message: Message, client: Client) -> None:
 async def handle_command(message: Message, client: Client) -> None:
     parts = message.content.split(' ', 1)
     method = find_method(parts[0])
-    if parts[0].lower() in configuration.get_str('otherbot_commands').split(','):
-        return
     args = ''
     if len(parts) > 1:
         args = parts[1]

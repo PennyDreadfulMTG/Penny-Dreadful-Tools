@@ -6,7 +6,7 @@ import discord
 import pytest
 
 from discordbot import command
-from magic import fetcher_internal
+from shared import fetcher_internal
 
 
 # Mock up assertions within the discord client.

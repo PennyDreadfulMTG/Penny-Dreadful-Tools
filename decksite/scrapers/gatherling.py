@@ -4,7 +4,7 @@ import urllib.parse
 from typing import Any, Dict, List, Optional, Tuple
 
 import bs4
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, ResultSet
 
 from decksite.data import competition, deck, match
 from decksite.database import db
@@ -148,7 +148,7 @@ def finishes(winners: Dict[str, int], ranks: List[str]) -> Dict[str, int]:
             final[p] = r
     return final
 
-def tournament_deck(cells, competition_id: int, date: datetime.datetime, final: Dict[str, int]) -> Optional[deck.Deck]:
+def tournament_deck(cells: ResultSet, competition_id: int, date: datetime.datetime, final: Dict[str, int]) -> Optional[deck.Deck]:
     d = {'source': 'Gatherling', 'competition_id': competition_id, 'created_date': dtutil.dt2ts(date)}
     player = cells[2]
     username = player.a.contents[0].string
@@ -187,7 +187,9 @@ def tournament_matches(d: deck.Deck) -> List[bs4.element.Tag]:
     rows.pop() # skip empty last row
     return find_matches(d, rows)
 
-def find_matches(d: deck.Deck, rows) -> List[Dict[str, Any]]:
+MatchListType = List[Dict[str, Any]]
+
+def find_matches(d: deck.Deck, rows: ResultSet) -> MatchListType:
     matches = []
     for row in rows:
         tds = row.find_all('td')
@@ -220,7 +222,7 @@ def find_matches(d: deck.Deck, rows) -> List[Dict[str, Any]]:
         })
     return matches
 
-def insert_matches_without_dupes(dt, matches) -> None:
+def insert_matches_without_dupes(dt: datetime.datetime, matches: MatchListType) -> None:
     db().begin()
     inserted: Dict[str, bool] = {}
     for m in matches:
@@ -232,7 +234,7 @@ def insert_matches_without_dupes(dt, matches) -> None:
         inserted[key] = True
     db().commit()
 
-def add_ids(matches, ds: List[deck.Deck]) -> None:
+def add_ids(matches: MatchListType, ds: List[deck.Deck]) -> None:
     decks_by_identifier = {d.identifier: d for d in ds}
     def lookup(gatherling_id: int) -> deck.Deck:
         try:

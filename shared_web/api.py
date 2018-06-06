@@ -30,6 +30,9 @@ def process_github_webhook() -> Response:
         'expected': expected
         })
 
+def commit_id() -> Response:
+    return return_json(current_app.config['commit-id'])
+
 def validate_api_key() -> Response:
     if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):
         return None

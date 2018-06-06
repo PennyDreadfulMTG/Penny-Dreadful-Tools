@@ -10,8 +10,6 @@ PD.init = function () {
     $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
     PD.localizeTimes();
-    $.get("/api/intro/", PD.showIntro);
-    $.get("/api/admin/", PD.showAdmin);
     PD.initSignupDeckChooser();
     PD.initStatusFooter();
 };
@@ -171,16 +169,6 @@ PD.toggleIllegalCards = function () {
     $(".bugtable").not(".footable-details").each(function () { FooTable.get(this).rows.collapse(); });
     $("tr").find(".illegal").closest("tr").toggle(!this.checked);
 };
-PD.showIntro = function (show) {
-    if (show && !PD.getUrlParam("hide_intro")) {
-        $(".intro-container").show();
-    }
-};
-PD.showAdmin = function (show) {
-    if (show) {
-        $(".admin").show();
-    }
-};
 PD.localizeTimes = function () {
     PD.localizeTimeElements();
     PD.hideRepetitionInCalendar();
@@ -255,6 +243,15 @@ PD.initStatusFooter = function() {
             text += "<a href=\"/authenticate/?target=" + window.location.href + "\">Log In</a>";
         }
         $(".status-bar").html("<p>" + text + "</p>");
+        if (data.admin) {
+            $(".admin").show();
+            if (data.archetypes_to_tag > 0) {
+                $('.edit_archetypes').children()[0].text = data.archetypes_to_tag
+            }
+        }
+        if (!data.hide_intro && !PD.getUrlParam("hide_intro")) {
+            $(".intro-container").show();
+        }
     })
 };
 

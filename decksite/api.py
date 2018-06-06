@@ -99,10 +99,6 @@ def sitemap():
     urls = [url_for(rule.endpoint) for rule in APP.url_map.iter_rules() if 'GET' in rule.methods and len(rule.arguments) == 0]
     return return_json(urls)
 
-@APP.route('/api/admin/')
-def admin():
-    return return_json(session.get('admin'))
-
 @APP.route('/api/intro/')
 def intro():
     return return_json(not request.cookies.get('hide_intro', False) and not auth.hide_intro())
@@ -119,12 +115,15 @@ def person_status():
     r = {
         'mtgo_username': auth.mtgo_username(),
         'discord_id': auth.discord_id(),
-        'admin': session.get('admin', False)
+        'admin': session.get('admin', False),
+        'hide_intro': request.cookies.get('hide_intro', False) or auth.hide_intro(),
         }
     if auth.mtgo_username():
         d = guarantee_at_most_one_or_retire(league.active_decks_by(auth.mtgo_username()))
         if d is not None:
             r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}
+    if r['admin']:
+        r['archetypes_to_tag'] = len(deck.load_decks('NOT d.reviewed'))
     return return_json(r)
 
 def guarantee_at_most_one_or_retire(decks):

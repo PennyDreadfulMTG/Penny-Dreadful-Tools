@@ -49,6 +49,8 @@ class PDFlask(Flask):
             self.session = Session(self)
 
     def not_found(self, e: Exception) -> Tuple[str, int]:
+        if request.path.startswith('/error/HTTP'):
+            return return_json(generate_error('NOTSUPPORTED', 'Not supported'), status=404)
         log_exception(e)
         if request.path.startswith('/api/'):
             return return_json(generate_error('NOTFOUND', 'Endpoint not found'), status=404)

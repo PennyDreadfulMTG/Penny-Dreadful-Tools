@@ -3,6 +3,7 @@ from typing import Dict, Tuple
 from github import Github
 from github.Commit import Commit
 from github.CommitStatus import CommitStatus
+from github.GithubException import UnknownObjectException
 from github.PullRequest import PullRequest
 from github.Repository import Repository
 
@@ -42,9 +43,12 @@ def get_pr_from_status(data: dict) -> PullRequest:
 def get_pr_from_commit(repo: Repository, sha: str) -> PullRequest:
     cached = redis.get_list(f'github:head:{sha}')
     if cached:
-        pr = repo.get_pull(cached)
-        if pr.head.sha == sha and pr.state == 'open':
-            return pr
+        try:
+            pr = repo.get_pull(cached)
+            if pr.head.sha == sha and pr.state == 'open':
+                return pr
+        except UnknownObjectException:
+            pass
     for pr in repo.get_pulls():
         head = pr.head.sha
         redis.store(f'github:head:{head}', pr.number, ex=3600)
@@ -93,3 +97,9 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
     commit.create_status(state='success', description='Ready to merge', context=PDM_CHECK_CONTEXT)
     pr.merge()
     return 'good to merge'
+
+def update_prs(data: dict) -> None:
+    repo = get_github().get_repo(data['repository']['full_name'])
+    for pull in repo.get_pulls():
+        if 'update me' in [l.name for l in pull.as_issue().labels]:
+            print(f'We should keep {pull.number} up to date with master.')

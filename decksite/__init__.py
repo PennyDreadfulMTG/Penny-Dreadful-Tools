@@ -41,9 +41,7 @@ from .data import deck # pylint: disable=wrong-import-position
 
 def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
     archetypes_badge = None
-    n = len(deck.load_decks('NOT d.reviewed'))
-    if n > 0:
-        archetypes_badge = {'url': url_for('edit_archetypes'), 'text': n}
+    archetypes_badge = {'url': url_for('edit_archetypes'), 'text': '', 'badge_class': 'edit_archetypes'}
     resources_submenu: List[Dict[str, str]] = []
     if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7) or (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
         resources_submenu += [{'name': gettext('Rotation Tracking'), 'url': url_for('rotation')}]

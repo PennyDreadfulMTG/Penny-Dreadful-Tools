@@ -24,6 +24,14 @@ class Card(Container):
     def is_split(self) -> bool:
         return self.name.find('//') >= 0
 
+    def __hash__(self) -> int:
+        return hash(self.name)
+
+    def __eq__(self, other) -> bool:
+        if isinstance(self, other.__class__):
+            return self.name == other.name
+        return False
+
 def determine_value(k: str, params: Dict[str, Any]) -> Any:
     v = params[k]
     if k == 'names' or k == 'mana_cost':

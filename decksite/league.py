@@ -47,6 +47,7 @@ class SignUpForm(Form):
         if mtgo_username is not None:
             self.mtgo_username = mtgo_username
         self.deck = None
+        self.card_errors: Dict[str, List[str]] = {}
 
     def do_validation(self):
         if len(self.mtgo_username) == 0:
@@ -101,12 +102,12 @@ class SignUpForm(Form):
     def check_deck_legality(self):
         errors = {}
         if 'Penny Dreadful' not in legality.legal_formats(self.deck, None, errors):
-            self.errors['decklist'] = errors.get('Penny Dreadful')
+            self.errors['decklist'] = ' '.join(errors.get('Penny Dreadful').pop('Legality_General', ['You have illegal cards.']))
+            self.card_errors = errors.get('Penny Dreadful')
+
         banned_for_bugs = set([c.name for c in self.deck.all_cards() if any([b.get('bannable') for b in c.bugs or []])])
         if len(banned_for_bugs) > 0:
-            if 'decklist' not in self.errors:
-                self.errors['decklist'] = {}
-            self.errors['decklist']['Bugs'] = [name for name in banned_for_bugs]
+            self.card_errors['Legality_Bugs'] = [name for name in banned_for_bugs]
 
 
 class DeckCheckForm(SignUpForm):

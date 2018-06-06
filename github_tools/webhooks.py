@@ -4,6 +4,7 @@ from github import Github
 from github.Commit import Commit
 from github.PullRequest import PullRequest
 from github.Repository import Repository
+from github.CommitStatus import CommitStatus
 
 from shared import configuration, lazy, redis
 
@@ -51,7 +52,7 @@ def get_pr_from_commit(repo: Repository, sha: str) -> PullRequest:
             return pr
     return None
 
-def set_check(data, status, message):
+def set_check(data: dict, status: str, message: str) -> CommitStatus:
     commit = load_commit(data)
     return commit.create_status(state=status, description=message, context=PDM_CHECK_CONTEXT)
 

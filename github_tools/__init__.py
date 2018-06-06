@@ -31,9 +31,7 @@ def on_status(data):
         return 'Ignoring own status'
     pr = webhooks.get_pr_from_status(data)
     if pr is None:
-        resp = 'Commit is no longer HEAD.  Ignoring'
-        print(resp)
-        return resp
+        return 'Commit is no longer HEAD.  Ignoring'
     print(f'Commit belongs to {pr.number}')
     webhooks.check_pr_for_mergability(pr)
     return data

@@ -48,7 +48,8 @@ def on_pull_request(data):
         webhooks.set_check(data, 'pending', 'Waiting for tests')
     if data['action'] == 'labeled':
         pr = webhooks.load_pr(data)
-        return webhooks.check_pr_for_mergability(pr)
+        if pr.state == 'open':
+            return webhooks.check_pr_for_mergability(pr)
 
 @APP.route('/cards/<path:name>/')
 def card(name):

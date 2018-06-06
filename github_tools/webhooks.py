@@ -2,9 +2,9 @@ from typing import Dict, Tuple
 
 from github import Github
 from github.Commit import Commit
+from github.CommitStatus import CommitStatus
 from github.PullRequest import PullRequest
 from github.Repository import Repository
-from github.CommitStatus import CommitStatus
 
 from shared import configuration, lazy, redis
 

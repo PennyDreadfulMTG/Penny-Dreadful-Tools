@@ -14,7 +14,7 @@ from shared import configuration, redis, repo
 from shared.pd_exception import DoesNotExistException
 
 from . import api, localization, logger, oauth
-from .api import generate_error,  return_json
+from .api import generate_error, return_json
 from .views import InternalServerError, NotFound, Unauthorized
 
 

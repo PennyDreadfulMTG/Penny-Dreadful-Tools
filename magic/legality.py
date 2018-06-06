@@ -52,7 +52,7 @@ def legal_formats(d: Container, formats_to_check: Set[str] = None, errors: Dict[
 
     return formats_to_check - formats_to_discard
 
-def add_error(errors: Dict[str, Dict[str, List[str]]], fmt: str, error_type: str, card: Card) -> None:
+def add_error(errors: Dict[str, Dict[str, List[str]]], fmt: str, error_type: str, card: str) -> None:
     if fmt not in errors:
         errors[fmt] = dict()
     if error_type not in errors[fmt]:

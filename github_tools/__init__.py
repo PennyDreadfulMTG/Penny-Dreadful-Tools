@@ -50,6 +50,7 @@ def on_pull_request(data):
         pr = webhooks.load_pr(data)
         if pr.state == 'open':
             return webhooks.check_pr_for_mergability(pr)
+    return ''
 
 @APP.route('/cards/<path:name>/')
 def card(name):

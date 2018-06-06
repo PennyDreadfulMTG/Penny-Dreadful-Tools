@@ -8,8 +8,8 @@ from decksite.data import guarantee, query
 from decksite.data.top import Top
 from decksite.database import db
 from magic import legality, mana, oracle, rotation
-from magic.models.deck import Deck
-from shared import dtutil
+from magic.models.deck import Card, Deck
+from shared import dtutil, redis
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
@@ -33,6 +33,94 @@ def load_decks(where: str = '1 = 1',
                limit: str = '',
                season_id: Optional[int] = None
               ) -> List[Deck]:
+    if redis.REDIS is None:
+        return load_decks_heavy(where, order_by, limit, season_id)
+    if order_by is None:
+        order_by = 'active_date DESC, d.finish IS NULL, d.finish'
+    sql = """
+        SELECT
+            d.id,
+            d.finish,
+            IFNULL(MAX(m.date), d.created_date) AS active_date
+        FROM
+            deck AS d
+        LEFT JOIN
+            deck_match AS dm ON d.id = dm.deck_id
+        LEFT JOIN
+            `match` AS m ON dm.match_id = m.id
+        LEFT JOIN
+            deck_match AS odm ON odm.deck_id <> d.id AND dm.match_id = odm.match_id
+        """
+    if 'p.' in where or 'p.' in order_by:
+        sql += """
+        LEFT JOIN
+            person AS p ON d.person_id = p.id
+        """
+    if 's.' in where or 's.' in order_by:
+        sql += """
+        LEFT JOIN
+            source AS s ON d.source_id = s.id
+        """
+    if 'a.' in where or 'a.' in order_by:
+        sql += """
+        LEFT JOIN
+            archetype AS a ON d.archetype_id = a.id
+        """
+    sql += """
+        {competition_join}
+        """
+    if 'cache.' in where or 'cache.' in order_by:
+        sql += """
+        LEFT JOIN
+            deck_cache AS cache ON d.id = cache.deck_id
+        """
+    sql += """
+        {season_join}
+        WHERE ({where}) AND ({season_query})
+        GROUP BY
+            d.id,
+            season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
+        ORDER BY
+            {order_by}
+        {limit}
+    """
+    sql= sql.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit, season_query=query.season_query(season_id), season_join=query.season_join())
+    db().execute('SET group_concat_max_len=100000')
+    rows = db().execute(sql)
+    decks = []
+    for row in rows:
+        d = redis.get_container('decksite:deck:{id}'.format(id=row['id']))
+        if d is None:
+            decks.append(guarantee.exactly_one(load_decks_heavy('d.id = {id}'.format(id=row['id']))))
+        else:
+            decks.append(deserialize_deck(d))
+
+    return decks
+
+def deserialize_deck(sdeck: Container) -> Deck:
+    deck = Deck(sdeck)
+    deck.active_date = dtutil.ts2dt(deck.active_date)
+    deck.created_date = dtutil.ts2dt(deck.created_date)
+    deck.updated_date = dtutil.ts2dt(deck.updated_date)
+    if deck.competition_end_date is not None:
+        deck.competition_end_date = dtutil.ts2dt(deck.competition_end_date)
+    deck.wins = int(deck.wins)
+    deck.losses = int(deck.losses)
+    deck.draws = int(deck.draws)
+    if deck.get('omw') is not None:
+        deck.omw = float(deck.omw)
+    cards_by_name = oracle.cards_by_name()
+    for entry in deck.maindeck:
+        entry['card'] = cards_by_name[entry['card']['name']]
+    for entry in deck.sideboard:
+        entry['card'] = cards_by_name[entry['card']['name']]
+    return deck
+
+def load_decks_heavy(where: str = '1 = 1',
+                     order_by: Optional[str] = None,
+                     limit: str = '',
+                     season_id: Optional[int] = None
+                    ) -> List[Deck]:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
     sql = """
@@ -113,6 +201,8 @@ def load_decks(where: str = '1 = 1',
         decks.append(d)
     load_cards(decks)
     load_competitive_stats(decks)
+    for d in decks:
+        redis.store('decksite:deck:{id}'.format(id=d.id), d, ex=3600)
     return decks
 
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks we will claim your deck is neither W nor G which is not true. But this should cover most cases.
@@ -239,7 +329,7 @@ def add_cards(deck_id: int, cards) -> None:
         insert_deck_card(deck_id, name, n, True)
     db().commit()
 
-def get_deck_id(source_name: str, identifier) -> Optional[int]:
+def get_deck_id(source_name, identifier) -> Optional[int]:
     source_id = get_source_id(source_name)
     sql = 'SELECT id FROM deck WHERE source_id = %s AND identifier = %s'
     return db().value(sql, [source_id, identifier])

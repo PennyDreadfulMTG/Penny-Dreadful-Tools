@@ -81,9 +81,10 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
         return f'Merge blocked by {travis_pr}'
     whitelisted = pr.user in repo.get_collaborators()
     labels = [l.name for l in pr.as_issue().labels]
-    if whitelisted and not 'do not merge' in labels:
-        print('Whitelisted Author')
-    elif not 'merge when ready' in labels:
+    if 'do not merge' in labels:
+        commit.create_status(state='failure', description='Blocked by "do not merge"', context=PDM_CHECK_CONTEXT)
+        return 'Do not Merge'
+    if not whitelisted and not 'merge when ready' in labels:
         commit.create_status(state='pending', description='Waiting for "merge when ready"', context=PDM_CHECK_CONTEXT)
         return 'Waiting for label'
 

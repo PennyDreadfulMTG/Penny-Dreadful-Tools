@@ -216,7 +216,7 @@ def add_deck(params) -> Deck:
     prime_cache(d)
     return d
 
-def prime_cache(d) -> None:
+def prime_cache(d: Deck) -> None:
     set_colors(d)
     colors_s = json.dumps(d.colors)
     colored_symbols_s = json.dumps(d.colored_symbols)
@@ -228,7 +228,7 @@ def prime_cache(d) -> None:
     db().execute('INSERT INTO deck_cache (deck_id, normalized_name, colors, colored_symbols, legal_formats) VALUES (%s, %s, %s, %s, %s)', [d.id, normalized_name, colors_s, colored_symbols_s, legal_formats_s])
     db().commit()
 
-def add_cards(deck_id, cards) -> None:
+def add_cards(deck_id: int, cards) -> None:
     db().begin()
     deckhash = hashlib.sha1(repr(cards).encode('utf-8')).hexdigest()
     db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [deckhash, deck_id])
@@ -299,7 +299,7 @@ def similarity_score(a: Deck, b: Deck) -> float:
             score += 1
     return float(score) / float(max(len(a.maindeck), len(b.maindeck)))
 
-def load_decks_by_cards(names) -> List[Deck]:
+def load_decks_by_cards(names: List[str]) -> List[Deck]:
     sql = """
         d.id IN (
             SELECT deck_id
@@ -310,7 +310,7 @@ def load_decks_by_cards(names) -> List[Deck]:
         """.format(n=len(names), names=', '.join(map(sqlescape, names)))
     return load_decks(sql)
 
-def load_cards(decks) -> None:
+def load_cards(decks: List[Deck]) -> None:
     if len(decks) == 0:
         return
     decks_by_id = {d.id: d for d in decks}
@@ -327,7 +327,7 @@ def load_cards(decks) -> None:
         d[location].append({'n': row['n'], 'name': name, 'card': cards[name]})
 
 # It makes the main query about 5x faster to do this as a separate query (which is trivial and done only once for all decks).
-def load_competitive_stats(decks) -> None:
+def load_competitive_stats(decks: List[Deck]) -> None:
     if len(decks) == 0:
         return
     decks_by_id = {d.id: d for d in decks}

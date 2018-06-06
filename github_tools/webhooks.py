@@ -5,6 +5,7 @@ from github.Commit import Commit
 from github.CommitStatus import CommitStatus
 from github.PullRequest import PullRequest
 from github.Repository import Repository
+from github.GithubException import UnknownObjectException
 
 from shared import configuration, lazy, redis
 
@@ -42,9 +43,12 @@ def get_pr_from_status(data: dict) -> PullRequest:
 def get_pr_from_commit(repo: Repository, sha: str) -> PullRequest:
     cached = redis.get_list(f'github:head:{sha}')
     if cached:
-        pr = repo.get_pull(cached)
-        if pr.head.sha == sha and pr.state == 'open':
-            return pr
+        try:
+            pr = repo.get_pull(cached)
+            if pr.head.sha == sha and pr.state == 'open':
+                return pr
+        except UnknownObjectException:
+            pass
     for pr in repo.get_pulls():
         head = pr.head.sha
         redis.store(f'github:head:{head}', pr.number, ex=3600)

@@ -121,11 +121,13 @@ def get(key: str) -> Optional[Union[str, List[str], int, float]]:
         cfg = json.load(open('config.json'))
     except FileNotFoundError:
         cfg = {}
-    if key in cfg:
+    if key in os.environ:
+        cfg[key] = os.environ[key]
+        print('CONFIG: {0}={1}'.format(key, cfg[key]))
+        return cfg[key]
+    elif key in cfg:
         CONFIG.update(cfg)
         return cfg[key]
-    elif key in os.environ:
-        cfg[key] = os.environ[key]
     elif key in DEFAULTS:
         # Lock in the default value if we use it.
         cfg[key] = DEFAULTS[key]
@@ -137,7 +139,7 @@ def get(key: str) -> Optional[Union[str, List[str], int, float]]:
 
     print('CONFIG: {0}={1}'.format(key, cfg[key]))
     fh = open('config.json', 'w')
-    fh.write(json.dumps(cfg, indent=4))
+    fh.write(json.dumps(cfg, indent=4, sort_keys=True))
     return cfg[key]
 
 # pylint: disable=unused-argument, function-redefined

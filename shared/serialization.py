@@ -4,7 +4,8 @@ from typing import Any, List, Union
 
 from shared import dtutil
 
-def extra_serializer(obj: Any) -> Union[str, List[Any]]:
+
+def extra_serializer(obj: Any) -> Union[int, str, List[Any]]:
     """JSON serializer for objects not serializable by default json code"""
 
     if isinstance(obj, datetime.datetime):

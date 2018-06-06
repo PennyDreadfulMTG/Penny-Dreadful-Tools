@@ -8,7 +8,7 @@ from decksite.data import guarantee, query
 from decksite.data.top import Top
 from decksite.database import db
 from magic import legality, mana, oracle, rotation
-from magic.models.deck import Card, Deck
+from magic.models.deck import Deck
 from shared import dtutil, redis
 from shared.container import Container
 from shared.database import sqlescape
@@ -84,7 +84,7 @@ def load_decks(where: str = '1 = 1',
             {order_by}
         {limit}
     """
-    sql= sql.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit, season_query=query.season_query(season_id), season_join=query.season_join())
+    sql = sql.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit, season_query=query.season_query(season_id), season_join=query.season_join())
     db().execute('SET group_concat_max_len=100000')
     rows = db().execute(sql)
     decks = []
@@ -94,7 +94,6 @@ def load_decks(where: str = '1 = 1',
             decks.append(guarantee.exactly_one(load_decks_heavy('d.id = {id}'.format(id=row['id']))))
         else:
             decks.append(deserialize_deck(d))
-
     return decks
 
 def deserialize_deck(sdeck: Container) -> Deck:

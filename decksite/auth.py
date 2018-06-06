@@ -37,6 +37,7 @@ def login(p: person.Person) -> None:
     session['logged_person_id'] = p.id
     session['person_id'] = p.id
     session['mtgo_username'] = p.name
+    session.permanent = True
 
 def hide_intro() -> bool:
     return session.get('hide_intro', False)

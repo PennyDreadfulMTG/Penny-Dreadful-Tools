@@ -2,12 +2,14 @@ import datetime
 import decimal
 from typing import Any, List, Union
 
+from shared import dtutil
 
-def extra_serializer(obj: Any) -> Union[str, List[Any]]:
+
+def extra_serializer(obj: Any) -> Union[int, str, List[Any]]:
     """JSON serializer for objects not serializable by default json code"""
 
     if isinstance(obj, datetime.datetime):
-        return obj.isoformat()
+        return dtutil.dt2ts(obj)
     elif isinstance(obj, bytes):
         return obj.decode('utf-8')
     elif isinstance(obj, decimal.Decimal):

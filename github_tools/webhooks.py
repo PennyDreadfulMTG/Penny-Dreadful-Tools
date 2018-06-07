@@ -95,7 +95,7 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
         return 'Waiting for label'
 
     if 'beta test' in labels:
-        trying = repo.get_git_ref('trying')
+        trying = repo.get_git_ref('heads/trying')
         trying.edit(commit.sha, True)
         commit.create_status(state='success', description='Deployed to test branch', context=PDM_CHECK_CONTEXT)
         return 'beta test'

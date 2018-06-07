@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Set, List
 
 from github import Github
 from github.Commit import Commit
@@ -98,8 +98,52 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
     pr.merge()
     return 'good to merge'
 
-def update_prs(data: dict) -> None:
-    repo = get_github().get_repo(data['repository']['full_name'])
+def update_prs(repo_name: str) -> None:
+    repo = get_github().get_repo(repo_name)
     for pull in repo.get_pulls():
         if 'update me' in [l.name for l in pull.as_issue().labels]:
-            print(f'We should keep {pull.number} up to date with master.')
+            print(f'Checking if #{pull.number} is up to date with master.')
+            master = repo.get_branch('master')
+            base, head = get_common_tree(repo, master.commit.sha, pull.head.sha)
+            if head.issuperset(base):
+                # Up to date
+                continue
+            print(f'#{pull.number}: {pull.head.ref} is behind.')
+            repo.merge(pull.head.ref, 'master', f'Merge master into #{pull.number}')
+
+
+def get_parents(repo: Repository, sha: str) -> List[str]:
+    value = redis.get_list(f'github:parents:{repo.full_name}:{sha}')
+    if value is None:
+        # print(f'getting parents for {sha}')
+        commit = repo.get_commit(sha)
+        parents = [p.sha for p in commit.parents]
+        redis.store(f'github:parents:{repo.full_name}:{sha}', list(parents), ex=604800)
+        return parents
+    return value
+
+def get_tree(repo: Repository, head: str, max_depth: int = 0) -> Set[str]:
+    full_tree: Set[str] = set()
+    to_walk = [head]
+    depth = 0
+    while to_walk:
+        commit = to_walk.pop()
+        if commit in full_tree:
+            continue
+        full_tree.add(commit)
+        to_walk.extend(get_parents(repo, commit))
+        if max_depth:
+            depth = depth + 1
+            if depth > max_depth:
+                break
+    return full_tree
+
+def get_common_tree(repo: Repository, a: str, b: str) -> Tuple[Set[str], Set[str]]:
+    depth = 0
+    a_tree: Set[str] = set()
+    b_tree: Set[str] = set()
+    while a_tree.isdisjoint(b_tree):
+        depth = depth + 1
+        a_tree = get_tree(repo, a, depth)
+        b_tree = get_tree(repo, b, depth)
+    return a_tree, b_tree

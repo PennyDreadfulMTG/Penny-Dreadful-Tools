@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Set, List
+from typing import Dict, List, Set, Tuple
 
 from github import Github
 from github.Commit import Commit
@@ -106,7 +106,7 @@ def update_prs(repo_name: str) -> None:
             master = repo.get_branch('master')
             base, head = get_common_tree(repo, master.commit.sha, pull.head.sha)
             if head.issuperset(base):
-                # Up to date
+                print('Up to date')
                 continue
             print(f'#{pull.number}: {pull.head.ref} is behind.')
             repo.merge(pull.head.ref, 'master', f'Merge master into #{pull.number}')

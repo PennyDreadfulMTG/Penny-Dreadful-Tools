@@ -1,6 +1,7 @@
 from flask import Response, request, session, url_for
 
 from decksite import APP, auth, league
+from decksite.views import DeckEmbed
 from decksite.data import card as cs
 from decksite.data import competition as comp
 from decksite.data import deck, guarantee, match
@@ -9,6 +10,7 @@ from magic import oracle, rotation
 from shared import dtutil
 from shared.pd_exception import DoesNotExistException, TooManyItemsException
 from shared_web.api import generate_error, return_json, validate_api_key
+from shared_web import template
 
 
 @APP.route('/api/decks/<deck_id>/')
@@ -133,3 +135,15 @@ def guarantee_at_most_one_or_retire(decks):
         league.retire_deck(decks[0])
         run = decks[1]
     return run
+
+@APP.route('/decks/<deck_id>/oembed')
+def deck_embed(deck_id):
+    d = deck.load_deck(deck_id)
+    view = DeckEmbed(d, None, None)
+    embed = {
+        'type': 'rich',
+        'version': '1.0',
+        'title': view.page_title(),
+        'html': template.render(view)
+    }
+    return return_json(embed)

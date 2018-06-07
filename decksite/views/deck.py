@@ -143,3 +143,6 @@ def display_round(m: Container) -> str:
         return 'F'
     else:
         raise InvalidDataException('Do not recognize round in {m}'.format(m=m))
+
+class DeckEmbed(Deck):
+    pass

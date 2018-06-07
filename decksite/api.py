@@ -144,6 +144,8 @@ def deck_embed(deck_id):
         'type': 'rich',
         'version': '1.0',
         'title': view.page_title(),
+        'width': 1200,
+        'height': 500,
         'html': template.render(view)
     }
     return return_json(embed)

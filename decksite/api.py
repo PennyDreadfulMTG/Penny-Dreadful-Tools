@@ -1,16 +1,16 @@
 from flask import Response, request, session, url_for
 
 from decksite import APP, auth, league
-from decksite.views import DeckEmbed
 from decksite.data import card as cs
 from decksite.data import competition as comp
 from decksite.data import deck, guarantee, match
 from decksite.data import person as ps
+from decksite.views import DeckEmbed
 from magic import oracle, rotation
 from shared import dtutil
 from shared.pd_exception import DoesNotExistException, TooManyItemsException
-from shared_web.api import generate_error, return_json, validate_api_key
 from shared_web import template
+from shared_web.api import generate_error, return_json, validate_api_key
 
 
 @APP.route('/api/decks/<deck_id>/')

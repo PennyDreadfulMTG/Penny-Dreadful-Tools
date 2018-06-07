@@ -86,6 +86,10 @@ def get_int(key: str) -> int:
     val = get(key)
     if isinstance(val, int):
         return val
+    if isinstance(val, str):
+        # required so that we can pass int-values in environment variables
+        CONFIG[key] = int(val)
+        return CONFIG[key]
     raise fail(key, val, int)
 
 def get_float(key: str) -> Optional[float]:

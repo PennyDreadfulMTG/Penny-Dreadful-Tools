@@ -1,6 +1,6 @@
 anytree==2.4.3
 bs4==0.0.1
-cachecontrol[filecache]==0.12.4
+cachecontrol[filecache]==0.12.5
 coverage==4.5.1
 discord.py[voice]==0.16.12
 flask==1.0.2

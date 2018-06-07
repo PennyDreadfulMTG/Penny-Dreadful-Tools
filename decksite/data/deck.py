@@ -207,7 +207,8 @@ def load_decks_heavy(where: str = '1 = 1',
     load_cards(decks)
     load_competitive_stats(decks)
     for d in decks:
-        redis.store('decksite:deck:{id}'.format(id=d.id), d, ex=3600)
+        expiry = 60 if d.is_in_current_run() else 3600
+        redis.store('decksite:deck:{id}'.format(id=d.id), d, ex=expiry)
     return decks
 
 # We ignore 'also' here which means if you are playing a deck where there are no other G or W cards than Kitchen Finks we will claim your deck is neither W nor G which is not true. But this should cover most cases.

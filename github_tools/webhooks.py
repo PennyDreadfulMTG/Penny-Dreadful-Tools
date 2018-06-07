@@ -96,6 +96,9 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
 
     if 'beta test' in labels:
         trying = repo.get_git_ref('heads/trying')
+        if trying.object.sha == commit.sha:
+            commit.create_status(state='success', description='Deployed to test branch', context=PDM_CHECK_CONTEXT)
+            return 'Already deployed'
         trying.edit(commit.sha, True)
         commit.create_status(state='success', description='Deployed to test branch', context=PDM_CHECK_CONTEXT)
         return 'beta test'

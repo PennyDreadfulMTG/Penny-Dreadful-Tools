@@ -1,0 +1,74 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d488066efad68d3ebec42d9ba4ae6a2ff1526269311; _zermg22wher=o-Ko59np]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: https://tappedout.net/mtg-decks/60-island/?fmt=printable
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA9xX32/aMBB+Tv6Kk582VHAChXaVsTRtmtRpmip1fZqmyYmvjYWxI9vlx39fQaDr
+        KAHG2kxanoLvu7vvzvZ3JI5ZEcaaxxErUEgew+phWpkRhHmJQxJwFmjuPYHC4e2QUOqDCCrvBFGW
+        KO196BgM1NMpZqXIR3SCRlrXPs8Epqf9/nmvixLzrDcQ/bYPc42+swznUA9JtVAgBgKUx1HEggoa
+        +SCBS6+FkXDllAki0wifrBuLwGiFiCNGK9YRy6ycL52lmkCuhfdDklsThDLoyK+6lrU9wTg73bBu
+        InKr22PZTrvbcEWXk0eihNGi+xy0xavHW60rZ4NdNLjVYrToHeJX8m+F8qA8CAjoA0jMR3BrHby/
+        ugSHwlvjO4yWPI5ZyS8DFMLDIIHvFcEfJ7Do51RpDUJPxdxDhqDxTmhQBnCCbr4INxZhFeUZBSrV
+        ZKObW5ZerMFLbLX3K/TyR9uhL63xaoIElBwSZW7tz8zOCCyP05BMlQzFRS9JyllN2Jpcbju6Mkp+
+        nVuHjAa5G1ZrXDy9etfawIzWMTuujhuPbn8ZTKyv/L1H56lXWnjh5pTw9SujgjdH+1EA9hC/MSNj
+        p6Z1DLO9JD4IJ/1+DoPkVbJ/FOGAA/hZmA50+yfQTdKzE0jTi+QUys648yJ7xejyGvIj9eHvxeJd
+        nVbsDbbz/B1nqOHYI7tlYDVA1l7e3N8R/mUh0G8Gydvts+RgPmky22mvBgLL3GLmHp3lrIkk/SaS
+        pP3/ppRGknQb2ZRGkjRyU7ao4CupUfwH6VfLUbRHxqIniE3FulYSMyucrBRrBf3NRSv+1RpkVKtn
+        gKfJ/8Wfy8MGRvxCnd7a/PULo9VXDKPVN9kDAAAA//8DAJk/O4mdDQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [41aa5d6efd066d2a-SJC]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Type: [text/html]
+      Date: ['Mon, 14 May 2018 03:44:13 GMT']
+      Expect-CT: ['max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"']
+      Last-Modified: ['Thu, 26 Jan 2017 12:35:14 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d488066efad68d3ebec42d9ba4ae6a2ff1526269311; _zermg22wher=o-Ko59np]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: https://tappedout.net/mtg-decks/60-island/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAzI0UPAszknMS+HlMoezTOEsQ1MsggiWEUIhgoUwEQQBAAAA//8DAJmOt1JhAAAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [41aa5d715db86d2a-SJC]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=60-island.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Type: [text/plain]
+      Date: ['Mon, 14 May 2018 03:44:14 GMT']
+      Expect-CT: ['max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"']
+      Last-Modified: ['Thu, 26 Jan 2017 12:35:14 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+version: 1

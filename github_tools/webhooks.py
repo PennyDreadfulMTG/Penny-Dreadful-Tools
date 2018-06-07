@@ -94,6 +94,12 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
         commit.create_status(state='pending', description='Waiting for "merge when ready"', context=PDM_CHECK_CONTEXT)
         return 'Waiting for label'
 
+    if 'beta test' in labels:
+        trying = repo.get_git_ref('trying')
+        trying.edit(commit.sha, True)
+        commit.create_status(state='success', description='Deployed to test branch', context=PDM_CHECK_CONTEXT)
+        return 'beta test'
+
     commit.create_status(state='success', description='Ready to merge', context=PDM_CHECK_CONTEXT)
     pr.merge()
     return 'good to merge'

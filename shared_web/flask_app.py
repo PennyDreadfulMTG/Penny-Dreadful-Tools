@@ -61,7 +61,7 @@ class PDFlask(Flask):
         log_exception(e)
         path = request.path
         try:
-            repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), self.name, 'PennyDreadfulMTG/perf-reports', exception=e)
+            repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('mtgo_username', session.get('id', 'logged_out')), self.name, 'PennyDreadfulMTG/perf-reports', exception=e)
         except GithubException:
             logger.error('Github error', e)
         if request.path.startswith('/api/'):

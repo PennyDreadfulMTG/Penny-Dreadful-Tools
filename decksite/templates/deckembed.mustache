@@ -1,0 +1,45 @@
+<div class="banner">
+    <div class="title">
+        <h1>{{name}}</h1>
+        <div class="subtitle">
+            {{#archetype_id}}<a href="{{archetype_url}}">{{archetype_name}}</a>{{/archetype_id}}
+            {{#archetype_id}}d{{/archetype_id}}{{^archetype_id}}D{{/archetype_id}}eck
+            by <a href="{{person_url}}">{{person}}</a>
+        </div>
+        <div class="subtitle">
+            {{display_date}}
+        </div>
+        <div class="subtitle">
+            <a href="{{competition_url}}">{{source_name}} {{> record}}</a> {{{active_safe}}}
+        </div>
+    </div>
+</div>
+{{#public}}
+    <section>
+        {{#sections}}
+            {{> section}}
+        {{/sections}}
+    </section>
+    <section>
+        <h2>Mana Costs</h2>
+        <img src="{{cmc_chart_url}}" width="200">
+        <p>{{average_cmc}} average</p>
+    </section>
+{{/public}}
+{{^public}}
+    <section>
+        <h2>Decklist</h2>
+        <p>This deck is hidden because it is active in the league.</p>
+        {{^person_id}}
+            {{^discord_id}}
+                <p>If it's your deck <a href="{{authenticate_url}}">login with discord</a> to see it.</p>
+            {{/discord_id}}
+            {{#discord_id}}
+                <p>Your account is not linked. Please use the status bar to link it</a>.</p>
+            {{/discord_id}}
+        {{/person_id}}
+        {{#person_id}}
+            <p>You are logged in but this deck is not yours. <a href="{{logout_url}}">Logout</a></p>
+        {{/person_id}}
+    </section>
+{{/public}}

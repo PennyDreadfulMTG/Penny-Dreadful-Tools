@@ -6,11 +6,10 @@ from typing import Optional, Tuple
 
 from flask import Flask, redirect, request, session, url_for
 from flask_babel import Babel
-from flask_session import Session
 from github.GithubException import GithubException
 from werkzeug import exceptions
 
-from shared import configuration, redis, repo
+from shared import configuration, repo
 from shared.pd_exception import DoesNotExistException
 
 from . import api, localization, logger, oauth
@@ -43,11 +42,6 @@ class PDFlask(Flask):
         self.babel = Babel(self)
         localization.init(self.babel)
 
-        if redis.REDIS is not None:
-            self.config['SESSION_TYPE'] = 'redis'
-            self.config['SESSION_REDIS'] = redis.REDIS
-            self.session = Session(self)
-
     def not_found(self, e: Exception) -> Tuple[str, int]:
         if request.path.startswith('/error/HTTP'):
             return return_json(generate_error('NOTSUPPORTED', 'Not supported'), status=404)
@@ -61,7 +55,7 @@ class PDFlask(Flask):
         log_exception(e)
         path = request.path
         try:
-            repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('id', 'logged_out'), 'decksite', 'PennyDreadfulMTG/perf-reports', exception=e)
+            repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('mtgo_username', session.get('id', 'logged_out')), self.name, 'PennyDreadfulMTG/perf-reports', exception=e)
         except GithubException:
             logger.error('Github error', e)
         if request.path.startswith('/api/'):

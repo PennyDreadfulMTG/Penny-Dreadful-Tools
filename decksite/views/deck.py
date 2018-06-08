@@ -76,6 +76,9 @@ class Deck(View):
         description = '{archetype_s} deck by {author}'.format(archetype_s=archetype_s, author=self.person)
         return description
 
+    def oembed_url(self) -> str:
+        return url_for('deck_embed', deck_id=self.deck.id, _external=True)
+
     def authenticate_url(self) -> str:
         return url_for('authenticate', target=self.og_url())
 
@@ -143,3 +146,6 @@ def display_round(m: Container) -> str:
         return 'F'
     else:
         raise InvalidDataException('Do not recognize round in {m}'.format(m=m))
+
+class DeckEmbed(Deck):
+    pass

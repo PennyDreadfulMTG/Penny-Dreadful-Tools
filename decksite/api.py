@@ -5,9 +5,11 @@ from decksite.data import card as cs
 from decksite.data import competition as comp
 from decksite.data import deck, guarantee, match
 from decksite.data import person as ps
+from decksite.views import DeckEmbed
 from magic import oracle, rotation
 from shared import dtutil
 from shared.pd_exception import DoesNotExistException, TooManyItemsException
+from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 
 
@@ -133,3 +135,20 @@ def guarantee_at_most_one_or_retire(decks):
         league.retire_deck(decks[0])
         run = decks[1]
     return run
+
+@APP.route('/decks/<deck_id>/oembed')
+def deck_embed(deck_id):
+    # Discord doesn't actually show this yet.  I've reached out to them for better documentation about what they do/don't accept.
+    d = deck.load_deck(deck_id)
+    view = DeckEmbed(d, None, None)
+    width = 1200
+    height = 500
+    embed = {
+        'type': 'rich',
+        'version': '1.0',
+        'title': view.page_title(),
+        'width': width,
+        'height': height,
+        'html': template.render(view)
+    }
+    return return_json(embed)

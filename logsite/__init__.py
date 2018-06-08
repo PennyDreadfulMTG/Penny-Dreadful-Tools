@@ -31,8 +31,7 @@ def __create_schema() -> None:
 APP.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
 APP.config['branch'] = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
 APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
-APP.config['js_url'] = 'https://pennydreadfulmagic.com/static/js/pd.js'
-APP.config['css_url'] = 'https://pennydreadfulmagic.com/static/css/pd.css'
+
 def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
     menu = [
         {'name': 'Home', 'url': url_for('home')},

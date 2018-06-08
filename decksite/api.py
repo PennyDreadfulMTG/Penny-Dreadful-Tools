@@ -138,14 +138,17 @@ def guarantee_at_most_one_or_retire(decks):
 
 @APP.route('/decks/<deck_id>/oembed')
 def deck_embed(deck_id):
+    # Discord doesn't actually show this yet.  I've reached out to them for better documentation about what they do/don't accept.
     d = deck.load_deck(deck_id)
     view = DeckEmbed(d, None, None)
+    width = 1200
+    height = 500
     embed = {
         'type': 'rich',
         'version': '1.0',
         'title': view.page_title(),
-        'width': 1200,
-        'height': 500,
+        'width': width,
+        'height': height,
         'html': template.render(view)
     }
     return return_json(embed)

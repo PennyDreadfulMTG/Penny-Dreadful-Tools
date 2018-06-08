@@ -4,7 +4,8 @@ import traceback
 import urllib
 from typing import Optional, Tuple
 
-from flask import Flask, redirect, request, session, url_for, Response, send_from_directory
+from flask import (Flask, Response, redirect, request, send_from_directory,
+                   session, url_for)
 from flask_babel import Babel
 from flask_session import Session
 from github.GithubException import GithubException

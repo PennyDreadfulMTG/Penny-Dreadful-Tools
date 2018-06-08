@@ -38,7 +38,7 @@ class BaseView:
         return current_app.config['branch']
 
     def css_url(self) -> str:
-        return current_app.config['css_url'] or url_for('static', filename='css/pd.css', v=self.commit_id('shared_web/static/css/pd.css'))
+        return current_app.config['css_url'] or url_for('static', filename='css/pd.css', v=self.commit_id('decksite/static/css/pd.css'))
 
     def tooltips_url(self) -> Optional[str]:
         # Don't preload 10,000 images.
@@ -48,7 +48,7 @@ class BaseView:
         return url_for('static', filename='js/tooltips.js', v=self.commit_id())
 
     def js_url(self) -> str:
-        return current_app.config['js_url'] or url_for('static', filename='js/pd.js', v=self.commit_id('shared_web/static/js/pd.js'))
+        return current_app.config['js_url'] or url_for('static', filename='js/pd.js', v=self.commit_id('decksite/static/js/pd.js'))
 
     def language_icon(self):
         return url_for('static', filename='images/language_icon.svg')

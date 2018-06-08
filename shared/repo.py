@@ -1,7 +1,7 @@
 import sys
 import textwrap
 import traceback
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from flask import request, session
 from github import Github, Issue
@@ -9,7 +9,12 @@ from github import Github, Issue
 from shared import configuration
 
 
-def create_issue(content: str, author: str, location: Optional[str] = 'Discord', repo_name: Optional[str] = 'PennyDreadfulMTG/Penny-Dreadful-Tools', exception: Exception = None) -> Issue:
+def create_issue(content: str,
+                 author: str,
+                 location: str = 'Discord',
+                 repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools',
+                 exception: Optional[Exception] = None) -> Issue:
+    labels: List[str] = []
     if content is None or content == '':
         return None
     body = ''
@@ -44,7 +49,11 @@ def create_issue(content: str, author: str, location: Optional[str] = 'Discord',
         return None
     g = Github(configuration.get('github_user'), configuration.get('github_password'))
     git_repo = g.get_repo(repo_name)
-    issue = git_repo.create_issue(title=title, body=body)
+    if repo_name == 'PennyDreadfulMTG/perf-reports':
+        labels.append(location)
+        if exception:
+            labels.append(exception.__class__.__name__)
+    issue = git_repo.create_issue(title=title, body=body, labels=labels)
     return issue
 
 def safe_data(data: Dict[str, str]) -> Dict[str, str]:

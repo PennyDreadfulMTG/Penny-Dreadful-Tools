@@ -4,7 +4,7 @@ import traceback
 import urllib
 from typing import Optional, Tuple
 
-from flask import Flask, redirect, request, session, url_for
+from flask import Flask, redirect, request, session, url_for, Response, send_from_directory
 from flask_babel import Babel
 from flask_session import Session
 from github.GithubException import GithubException
@@ -31,6 +31,8 @@ class PDFlask(Flask):
         super().route('/authenticate/callback/')(self.authenticate_callback)
         super().route('/api/gitpull', methods=['POST'])(api.process_github_webhook)
         super().route('/api/commit')(api.commit_id)
+        super().route('/robots.txt')(self.robots_txt)
+        super().route('/favicon<rest>')(self.favicon)
         self.config['menu'] = []
         self.config['js_url'] = ''
         self.config['css_url'] = ''
@@ -38,7 +40,10 @@ class PDFlask(Flask):
         self.config['branch'] = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
         self.config['SESSION_COOKIE_DOMAIN'] = configuration.get_optional_str('flask_cookie_domain')
 
-        translations = os.path.abspath(os.path.join(os.path.dirname(__file__), 'translations'))
+        shared_web_path = os.path.dirname(__file__)
+        self.static_folder = os.path.join(shared_web_path, 'static')
+
+        translations = os.path.abspath(os.path.join(shared_web_path, 'translations'))
         self.config['BABEL_TRANSLATION_DIRECTORIES'] = translations
         self.babel = Babel(self)
         localization.init(self.babel)
@@ -101,6 +106,12 @@ class PDFlask(Flask):
             url = url_for('home')
         session['target'] = None
         return redirect(url)
+
+    def robots_txt(self):
+        return send_from_directory(self.static_folder, 'robots.txt')
+
+    def favicon(self, rest: str) -> Response:
+        return send_from_directory(os.path.join(self.static_folder, 'images', 'favicon'), 'favicon{rest}'.format(rest=rest))
 
 
 def log_exception(e: BaseException) -> None:

@@ -6,11 +6,10 @@ from typing import Optional, Tuple
 
 from flask import Flask, redirect, request, session, url_for
 from flask_babel import Babel
-from flask_session import Session
 from github.GithubException import GithubException
 from werkzeug import exceptions
 
-from shared import configuration, redis, repo
+from shared import configuration, repo
 from shared.pd_exception import DoesNotExistException
 
 from . import api, localization, logger, oauth
@@ -42,11 +41,6 @@ class PDFlask(Flask):
         self.config['BABEL_TRANSLATION_DIRECTORIES'] = translations
         self.babel = Babel(self)
         localization.init(self.babel)
-
-        if redis.REDIS is not None:
-            self.config['SESSION_TYPE'] = 'redis'
-            self.config['SESSION_REDIS'] = redis.REDIS
-            self.session = Session(self)
 
     def not_found(self, e: Exception) -> Tuple[str, int]:
         if request.path.startswith('/error/HTTP'):

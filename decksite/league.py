@@ -8,6 +8,7 @@ from flask import url_for
 from werkzeug.datastructures import ImmutableMultiDict
 
 from decksite.data import competition, deck, guarantee, match, person, query
+from decksite.data.form import Form
 from decksite.database import db
 from decksite.scrapers import decklist
 from magic import card, fetcher, legality, rotation
@@ -17,16 +18,6 @@ from shared.database import sqlescape
 from shared.pd_exception import (DatabaseException, InvalidDataException,
                                  LockNotAcquiredException)
 
-
-class Form(Container):
-    def __init__(self, form) -> None:
-        super().__init__()
-        self.update(form.to_dict())
-        self.errors: Dict[str, str] = {}
-
-    def validate(self):
-        self.do_validation()
-        return len(self.errors) == 0
 
 # pylint: disable=attribute-defined-outside-init,too-many-instance-attributes
 class SignUpForm(Form):
@@ -178,7 +169,7 @@ class RetireForm(Form):
         elif not person.is_allowed_to_retire(self.entry, self.discord_user):
             self.errors['entry'] = 'You cannot retire this deck. This discord user is already assigned to another Magic Online user'
 
-def signup(form):
+def signup(form: SignUpForm) -> deck.Deck:
     form.mtgo_username = form.mtgo_username.strip()
     form.name = form.name.strip()
     return deck.add_deck(form)
@@ -187,7 +178,7 @@ def identifier(params):
     # Current timestamp is part of identifier here because we don't need to defend against dupes in league – it's fine to enter the same league with the same deck, later.
     return json.dumps([params['mtgo_username'], params['competition_id'], str(round(time.time()))])
 
-def deck_options(decks, v) -> List[Dict[str, Any]]:
+def deck_options(decks: List[deck.Deck], v: str) -> List[Dict[str, Any]]:
     if (v is None or v == '') and len(decks) == 1:
         v = str(decks[0].id)
     return [{'text': '{person}'.format(person=d.person), 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]

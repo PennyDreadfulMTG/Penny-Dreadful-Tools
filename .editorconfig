@@ -5,3 +5,4 @@ insert_final_newline = true
 [*.py]
 indent_style = space
 indent_size = 4
+not_skip = __init__.py

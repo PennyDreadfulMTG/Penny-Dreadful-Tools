@@ -5,7 +5,6 @@ from flask import url_for
 from sqlalchemy import create_engine
 from sqlalchemy_utils import create_database, database_exists
 
-
 from shared import configuration
 from shared_web.flask_app import PDFlask
 
@@ -19,7 +18,7 @@ APP.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{user}:{password}@{host}:{port}
     port=configuration.get('mysql_port'),
     db=configuration.get('logsite_database'))
 
-from . import db, main, stats, api, views # pylint: disable=wrong-import-position, unused-import
+from . import db, main, stats, api, views # isort:skip # pylint: disable=wrong-import-position, unused-import
 
 def __create_schema() -> None:
     engine = create_engine(APP.config['SQLALCHEMY_DATABASE_URI'])
@@ -31,8 +30,7 @@ def __create_schema() -> None:
 APP.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
 APP.config['branch'] = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
 APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
-APP.config['js_url'] = 'https://pennydreadfulmagic.com/static/js/pd.js'
-APP.config['css_url'] = 'https://pennydreadfulmagic.com/static/css/pd.css'
+
 def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
     menu = [
         {'name': 'Home', 'url': url_for('home')},

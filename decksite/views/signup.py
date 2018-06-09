@@ -5,7 +5,7 @@ from decksite.views.league_form import LeagueForm
 
 # pylint: disable=no-self-use
 class SignUp(LeagueForm):
-    def __init__(self, form, person_id=None) -> None:
+    def __init__(self, form, person_id: int = None) -> None:
         super().__init__(form)
         self.person_id = person_id
         self.classify_illegal_cards()

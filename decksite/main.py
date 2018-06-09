@@ -1,10 +1,9 @@
 import logging
-import os
 import urllib.parse
 from typing import Optional
 
 from flask import (Response, abort, g, make_response, redirect, request,
-                   send_file, send_from_directory, session, url_for)
+                   send_file, session, url_for)
 
 from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite import league as lg
@@ -345,14 +344,6 @@ def rotation_speculation():
     return view.page()
 
 # Infra
-
-@APP.route('/robots.txt')
-def robots():
-    return send_from_directory(os.path.join(APP.root_path, 'static'), 'robots.txt')
-
-@APP.route('/favicon<rest>')
-def favicon(rest: str) -> Response:
-    return send_from_directory(os.path.join(APP.root_path, 'static/images/favicon'), 'favicon{rest}'.format(rest=rest))
 
 @APP.route('/charts/cmc/<deck_id>-cmc.png')
 def cmc_chart(deck_id: int) -> Response:

@@ -21,7 +21,7 @@ from .views import InternalServerError, NotFound, Unauthorized
 # pylint: disable=no-self-use, too-many-public-methods
 class PDFlask(Flask):
     def __init__(self, import_name: str) -> None:
-        shared_web_path = os.path.dirname(__file__)
+        shared_web_path = os.path.abspath(os.path.dirname(__file__))
         static_folder = os.path.join(shared_web_path, 'static')
         super().__init__(import_name, static_folder=static_folder)
         super().register_error_handler(DoesNotExistException, self.not_found)

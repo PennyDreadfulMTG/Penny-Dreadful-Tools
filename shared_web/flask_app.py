@@ -21,7 +21,9 @@ from .views import InternalServerError, NotFound, Unauthorized
 # pylint: disable=no-self-use, too-many-public-methods
 class PDFlask(Flask):
     def __init__(self, import_name: str) -> None:
-        super().__init__(import_name)
+        shared_web_path = os.path.dirname(__file__)
+        static_folder = os.path.join(shared_web_path, 'static')
+        super().__init__(import_name, static_folder=static_folder)
         super().register_error_handler(DoesNotExistException, self.not_found)
         super().register_error_handler(exceptions.NotFound, self.not_found)
         super().register_error_handler(exceptions.InternalServerError, self.internal_server_error)
@@ -39,9 +41,6 @@ class PDFlask(Flask):
         self.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip().decode()
         self.config['branch'] = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
         self.config['SESSION_COOKIE_DOMAIN'] = configuration.get_optional_str('flask_cookie_domain')
-
-        shared_web_path = os.path.dirname(__file__)
-        self.static_folder = os.path.join(shared_web_path, 'static')
 
         translations = os.path.abspath(os.path.join(shared_web_path, 'translations'))
         self.config['BABEL_TRANSLATION_DIRECTORIES'] = translations

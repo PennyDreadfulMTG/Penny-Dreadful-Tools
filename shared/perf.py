@@ -15,7 +15,7 @@ def check(start_time: float, kind: str, detail: Any, location: str) -> None:
     if limit is not None and run_time > limit:
         detail_s = detail if isinstance(detail, str) else '\n\n'.join(map(str, list(detail)))
         msg = 'Exceeded {kind} limit ({run_time} > {limit}) in {location}: {detail_s} ({kind}, {run_time}, {location})'.format(kind=kind, run_time=round(run_time, 1), limit=limit, detail_s=detail_s, location=location)
-        if current_app._get_current_object() is not None:
+        if current_app._get_current_object() is not None: # pylint: disable=protected-access
             flask_location = current_app.name
         repo.create_issue(msg, f'{location}-perf', flask_location or location, 'PennyDreadfulMTG/perf-reports')
 

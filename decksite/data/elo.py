@@ -1,5 +1,6 @@
-from decksite.data import guarantee, person
+from decksite.data import person
 from decksite.database import db
+from shared import guarantee
 from shared.database import sqlescape
 
 # Using chess numbers here would make individual matches have too much meaning. Magic matches should move your rating less because of the inherent variance in Magic.

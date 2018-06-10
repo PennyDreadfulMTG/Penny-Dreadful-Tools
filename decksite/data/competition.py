@@ -2,10 +2,10 @@ from typing import Any, Dict, List, Optional
 
 from flask import url_for
 
-from decksite.data import archetype, deck, guarantee, query
+from decksite.data import archetype, deck, query
 from decksite.data.top import Top
 from decksite.database import db
-from shared import dtutil
+from shared import dtutil, guarantee
 from shared.container import Container
 from shared.database import sqlescape
 

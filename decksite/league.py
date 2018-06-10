@@ -7,12 +7,12 @@ from typing import Any, Dict, List
 from flask import url_for
 from werkzeug.datastructures import ImmutableMultiDict
 
-from decksite.data import competition, deck, guarantee, match, person, query
+from decksite.data import competition, deck, match, person, query
 from decksite.data.form import Form
 from decksite.database import db
 from decksite.scrapers import decklist
 from magic import card, fetcher, legality, rotation
-from shared import configuration, dtutil, redis
+from shared import configuration, dtutil, guarantee, redis
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import (DatabaseException, InvalidDataException,

@@ -1,8 +1,8 @@
 from typing import List, Optional, Sequence, Union
 
-from decksite.data import deck, guarantee, query
+from decksite.data import deck, query
 from decksite.database import db
-from shared import dtutil
+from shared import dtutil, guarantee
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import AlreadyExistsException

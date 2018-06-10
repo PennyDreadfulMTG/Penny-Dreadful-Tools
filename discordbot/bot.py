@@ -92,14 +92,15 @@ async def on_member_update(before: Member, after: Member) -> None:
             await BOT.client.add_roles(after, streaming_role)
     # Achivements
     if before.status == Status.offline and after.status == Status.online:
-        data = None
-        # Linked to PDM
-        roles = [r for r in before.server.roles if r.name == 'Linked Magic Online']
-        if roles and not roles[0] in before.roles:
-            if data is None:
-                data = fetcher.person_data(before.id)
-            if data.get('id', None):
-                await BOT.client.add_roles(after, roles[0])
+        pass
+    #     data = None
+    #     # Linked to PDM
+    #     roles = [r for r in before.server.roles if r.name == 'Linked Magic Online']
+    #     if roles and not roles[0] in before.roles:
+    #         if data is None:
+    #             data = fetcher.person_data(before.id)
+    #         if data.get('id', None):
+    #             await BOT.client.add_roles(after, roles[0])
 
 @BOT.client.event
 async def on_member_join(member: Member) -> None:

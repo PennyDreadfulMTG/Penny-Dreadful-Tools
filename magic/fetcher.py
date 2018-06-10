@@ -94,15 +94,15 @@ def legal_cards(force: bool = False, season: str = None) -> List[str]:
 def mtgjson_version() -> str:
     return cast(str, internal.fetch_json('https://mtgjson.com/json/version.json'))
 
-def mtgo_status() -> str:
+async def mtgo_status() -> str:
     try:
-        return cast(str, internal.fetch_json('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php')['status'])
+        return cast(str, (await internal.fetch_json_async('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php'))['status'])
     except (FetchException, json.decoder.JSONDecodeError):
         return 'UNKNOWN'
 
-def person_data(person: Union[str, int]) -> Dict[str, Any]:
+async def person_data_async(person: Union[str, int]) -> Dict[str, Any]:
     try:
-        data = internal.fetch_json('https://pennydreadfulmagic.com/api/person/{0}'.format(person))
+        data = await internal.fetch_json_async('https://pennydreadfulmagic.com/api/person/{0}'.format(person))
     except (FetchException, json.decoder.JSONDecodeError):
         return {}
     return data
@@ -122,9 +122,9 @@ def resources() -> Dict[str, Dict[str, str]]:
     with open('decksite/resources.json') as resources_file:
         return json.load(resources_file, object_pairs_hook=OrderedDict)
 
-def scryfall_cards() -> Dict[str, Any]:
+async def scryfall_cards_async() -> Dict[str, Any]:
     url = 'https://api.scryfall.com/cards'
-    return internal.fetch_json(url)
+    return await internal.fetch_json_async(url)
 
 def search_scryfall(query: str) -> Tuple[int, List[str]]:
     """Returns a tuple. First member is an integer indicating how many cards match the query total,

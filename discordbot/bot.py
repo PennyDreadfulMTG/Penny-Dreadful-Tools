@@ -91,7 +91,8 @@ async def on_member_update(before: Member, after: Member) -> None:
             print('{user} started streaming'.format(user=after.name))
             await BOT.client.add_roles(after, streaming_role)
     # Achivements
-    # if before.status == Status.offline and after.status == Status.online:
+    if before.status == Status.offline and after.status == Status.online:
+        pass
     #     data = None
     #     # Linked to PDM
     #     roles = [r for r in before.server.roles if r.name == 'Linked Magic Online']

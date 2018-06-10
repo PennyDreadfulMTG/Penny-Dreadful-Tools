@@ -1,9 +1,10 @@
 from typing import Dict, List, Optional
 
-from decksite.data import deck, guarantee, query
+from decksite.data import deck, query
 from decksite.database import db
 from magic import oracle
 from magic.models.card import Card
+from shared import guarantee
 from shared.container import Container
 from shared.database import sqlescape
 

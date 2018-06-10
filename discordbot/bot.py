@@ -152,13 +152,18 @@ async def background_task_tournaments() -> None:
     while not BOT.client.is_closed:
         info = tournaments.next_tournament_info()
         diff = info['next_tournament_time_precise']
+        if info['sponsor_name']:
+            message = 'A {sponsor} sponsored tournament'.format(sponsor=info['sponsor_name'])
+        else:
+            message = 'A free tournament'
+        embed = discord.Embed(title=info['next_tournament_name'], description=message)
         if diff <= 0:
-            message = 'Tournament starting!'
+            embed.add_field(name='Starting now', value='Check <#334220558159970304> for further annoucements')
         elif diff <= 14400:
-            message = 'Starting: {0}.'.format(dtutil.display_time(diff, 2))
+            embed.add_field(name='Starting in:', value=dtutil.display_time(diff, 2))
+            embed.add_field(name='Signup at:', value='https://gatherling.com')
 
         if diff <= 14400:
-            embed = discord.Embed(title=info['next_tournament_name'], description=message)
             embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
             # See #2809.
             # pylint: disable=no-value-for-parameter,unexpected-keyword-arg

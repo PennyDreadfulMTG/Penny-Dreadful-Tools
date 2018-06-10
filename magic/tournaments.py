@@ -7,7 +7,7 @@ import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
 
 from magic.models.deck import Deck
-from shared import dtutil
+from shared import dtutil, guarantee
 from shared.container import Container
 
 TournamentDateType = Tuple[str, datetime.datetime]
@@ -23,16 +23,18 @@ def previous_tournament_info() -> Dict[str, Any]:
     return tournament_info(TimeDirection.BEFORE, units=1)
 
 def tournament_info(time_direction: TimeDirection, units: int = 2) -> Dict[str, Any]:
-    day, time = get_nearest_tournament(time_direction)
+    name, time = get_nearest_tournament(time_direction)
     next_tournament_time_precise = abs(dtutil.dt2ts(time) - dtutil.dt2ts(dtutil.now()))
     near = next_tournament_time_precise < 18000 # Threshold for near: 5 hours in seconds
     next_tournament_time = dtutil.display_time(next_tournament_time_precise, units)
-    return {
-        'next_tournament_name': 'Penny Dreadful {day}'.format(day=day),
+    info = {
+        'next_tournament_name': name,
         'next_tournament_time': next_tournament_time,
         'next_tournament_time_precise': next_tournament_time_precise,
         'near': near
     }
+    info.update(series_info(name))
+    return info
 
 def get_nearest_tournament(time_direction: TimeDirection = TimeDirection.AFTER) -> TournamentDateType:
     start = dtutil.now(dtutil.GATHERLING_TZ)
@@ -48,11 +50,11 @@ def get_nearest_tournament(time_direction: TimeDirection = TimeDirection.AFTER) 
 def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> List[TournamentDateType]:
     apac_start = start.astimezone(tz=dtutil.APAC_SERIES_TZ)
     until = start + datetime.timedelta(days=7)
-    pdsat_time = ('Saturday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index])
-    apds_time = ('APAC Sunday', rrule.rrule(rrule.WEEKLY, byhour=16, byminute=0, bysecond=0, dtstart=apac_start, until=until, byweekday=rrule.SU)[index])
-    pds_time = ('Sunday', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index])
-    pdm_time = ('Monday', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index])
-    pdt_time = ('Thursday', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index])
+    pdsat_time = ('Penny Dreadful Saturdays', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index])
+    apds_time = ('APAC Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=16, byminute=0, bysecond=0, dtstart=apac_start, until=until, byweekday=rrule.SU)[index])
+    pds_time = ('Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index])
+    pdm_time = ('Penny Dreadful Mondays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index])
+    pdt_time = ('Penny Dreadful Thursdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index])
     return [pdsat_time, apds_time, pds_time, pdm_time, pdt_time]
 
 def prize(d: Deck) -> int:
@@ -78,6 +80,9 @@ def prizes_by_finish(multiplier: int = 1) -> List[Dict[str, Any]]:
         prizes.append({'finish': p.ordinal(finish), 'prize': pz * multiplier})
         finish += 1
     return prizes
+
+def series_info(name: str) -> Container:
+    return guarantee.exactly_one([s for s in all_series_info() if s.name == name])
 
 def all_series_info() -> List[Container]:
     info = get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))

@@ -92,15 +92,14 @@ async def on_member_update(before: Member, after: Member) -> None:
             await BOT.client.add_roles(after, streaming_role)
     # Achivements
     if before.status == Status.offline and after.status == Status.online:
-        pass
-    #     data = None
-    #     # Linked to PDM
-    #     roles = [r for r in before.server.roles if r.name == 'Linked Magic Online']
-    #     if roles and not roles[0] in before.roles:
-    #         if data is None:
-    #             data = fetcher.person_data(before.id)
-    #         if data.get('id', None):
-    #             await BOT.client.add_roles(after, roles[0])
+        data = None
+        # Linked to PDM
+        roles = [r for r in before.server.roles if r.name == 'Linked Magic Online']
+        if roles and not roles[0] in before.roles:
+            if data is None:
+                data = await fetcher.person_data_async(before.id)
+            if data.get('id', None):
+                await BOT.client.add_roles(after, roles[0])
 
 @BOT.client.event
 async def on_member_join(member: Member) -> None:
@@ -132,15 +131,15 @@ async def on_reaction_add(reaction: Reaction, author: Member) -> None:
 async def background_task_spoiler_season() -> None:
     'Poll Scryfall for the latest 250 cards, and add them to our db if missing'
     await BOT.client.wait_until_ready()
-    new_cards = fetcher.scryfall_cards()
+    new_cards = await fetcher.scryfall_cards_async()
     for c in new_cards['data']:
-        await asyncio.sleep(5)
         try:
             oracle.valid_name(c['name'])
+            await asyncio.sleep(1)
         except InvalidDataException:
             oracle.insert_scryfall_card(c, True)
             print('Imported {0} from Scryfall'.format(c['name']))
-            return
+            await asyncio.sleep(5)
         except TooFewItemsException:
             pass
 
@@ -194,4 +193,5 @@ async def background_task_tournaments() -> None:
 
 def init() -> None:
     asyncio.ensure_future(background_task_tournaments())
+    asyncio.ensure_future(background_task_spoiler_season())
     BOT.init()

@@ -131,15 +131,15 @@ async def on_reaction_add(reaction: Reaction, author: Member) -> None:
 async def background_task_spoiler_season() -> None:
     'Poll Scryfall for the latest 250 cards, and add them to our db if missing'
     await BOT.client.wait_until_ready()
-    new_cards = fetcher.scryfall_cards()
+    new_cards = await fetcher.scryfall_cards_async()
     for c in new_cards['data']:
-        await asyncio.sleep(5)
         try:
             oracle.valid_name(c['name'])
+            await asyncio.sleep(1)
         except InvalidDataException:
             oracle.insert_scryfall_card(c, True)
             print('Imported {0} from Scryfall'.format(c['name']))
-            return
+            await asyncio.sleep(5)
         except TooFewItemsException:
             pass
 
@@ -193,4 +193,5 @@ async def background_task_tournaments() -> None:
 
 def init() -> None:
     asyncio.ensure_future(background_task_tournaments())
+    asyncio.ensure_future(background_task_spoiler_season())
     BOT.init()

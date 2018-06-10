@@ -207,7 +207,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def status(self, client: Client, channel: Channel, **_: Dict[str, Any]) -> None:
         """`!status` Gives the status of Magic Online: UP or DOWN."""
-        status = fetcher.mtgo_status()
+        status = await fetcher.mtgo_status()
         await client.send_message(channel, 'MTGO is {status}'.format(status=status))
 
     @cmd_header('Developer')

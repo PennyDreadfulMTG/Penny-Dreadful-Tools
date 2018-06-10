@@ -94,9 +94,9 @@ def legal_cards(force: bool = False, season: str = None) -> List[str]:
 def mtgjson_version() -> str:
     return cast(str, internal.fetch_json('https://mtgjson.com/json/version.json'))
 
-def mtgo_status() -> str:
+async def mtgo_status() -> str:
     try:
-        return cast(str, internal.fetch_json('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php')['status'])
+        return cast(str, (await internal.fetch_json_async('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php'))['status'])
     except (FetchException, json.decoder.JSONDecodeError):
         return 'UNKNOWN'
 

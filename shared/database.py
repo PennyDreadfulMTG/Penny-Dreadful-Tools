@@ -56,7 +56,7 @@ class Database():
             try:
                 p = perf.start()
                 self.cursor.execute(sql, args)
-                perf.check(p, 'slow_query', (sql, args), 'mysql')
+                perf.check(p, 'slow_query', (f'```{sql}```', f'```{args}```'), 'mysql')
                 result = self.cursor.fetchall()
                 break
             except OperationalError as e:

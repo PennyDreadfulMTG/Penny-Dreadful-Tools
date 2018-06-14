@@ -185,5 +185,5 @@ def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
         return cached
 
     info = internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json')
-    redis.store('magic:fetcher:whatisinstandard', info, ex=3600)
+    redis.store('magic:fetcher:whatisinstandard', info, ex=86400)
     return info

@@ -2,7 +2,7 @@ import unittest
 
 import pytest
 
-from logsite.main import APP
+from logsite import APP
 from shared_web.smoke import SmokeTester
 
 

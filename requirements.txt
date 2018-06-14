@@ -29,7 +29,7 @@ pytest==3.6.1
 python-dateutil==2.7.3
 pytz==2018.4
 redis==2.10.6
-requests==2.19.0
+requests==2.19.1
 requests-oauthlib==1.0.0
 seaborn==0.8.1
 SQLAlchemy==1.2.8

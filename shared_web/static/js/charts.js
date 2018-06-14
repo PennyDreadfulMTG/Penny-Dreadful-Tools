@@ -1,4 +1,4 @@
-/*global PD,Chart, moment */
+/*global PD,Chart, moment, $ */
 var ctx = document.getElementById("pdChart").getContext("2d");
 
 function ts2str(ts) {
@@ -10,7 +10,7 @@ function ts2str(ts) {
 
 function build() {
     var data = PD.recent.formats.PennyDreadful;
-    var myChart = new Chart(ctx, {
+    new Chart(ctx, {
         type: "bar",
         data: {
             labels: Object.keys(data).map(ts2str),

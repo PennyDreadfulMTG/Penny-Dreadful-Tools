@@ -18,7 +18,7 @@ APP.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{user}:{password}@{host}:{port}
     port=configuration.get('mysql_port'),
     db=configuration.get('logsite_database'))
 
-from . import db, main, stats, api, views # isort:skip # pylint: disable=wrong-import-position, unused-import
+from . import db, stats, api, views # isort:skip # pylint: disable=wrong-import-position, unused-import
 
 def __create_schema() -> None:
     engine = create_engine(APP.config['SQLALCHEMY_DATABASE_URI'])
@@ -36,6 +36,7 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
         {'name': 'Home', 'url': url_for('home')},
         {'name': 'Matches', 'url': url_for('matches')},
         {'name': 'People', 'url': url_for('people')},
+        {'name': 'Stats', 'url': url_for('charts')},
         {'name': 'About', 'url': url_for('about')},
     ]
     return menu

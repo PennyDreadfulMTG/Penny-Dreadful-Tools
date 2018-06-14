@@ -1,3 +1,4 @@
+/*global Deckbox, $ */
 /* Tooltip code originally from https://deckbox.org/help/tooltips and now much hacked around and jQuery dependency introduced. */
 
 // Initialize namespaces.

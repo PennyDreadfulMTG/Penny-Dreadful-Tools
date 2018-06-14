@@ -10,23 +10,27 @@ function ts2str(ts) {
 
 function build() {
     var data = PD.recent.formats.PennyDreadful;
-    new Chart(ctx, {
+    PD.Chart = new Chart(ctx, {
         type: "bar",
         data: {
             labels: Object.keys(data).map(ts2str),
-            datasets: [{
-                label: "# Penny Dreadful Games",
-                data: Object.values(data),
-                borderWidth: 1
-            }]
+            datasets: [
+                {
+                    label: "# Penny Dreadful Games",
+                    data: Object.values(data),
+                    borderWidth: 1
+                }
+            ]
         },
         options: {
             scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
+                yAxes:
+                [
+                    {
+                        ticks:
+                         {beginAtZero:true}
                     }
-                }]
+                ]
             }
         }
     });

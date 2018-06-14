@@ -24,11 +24,13 @@ def init() -> Optional[redislib.Redis]:
 
 REDIS = init()
 
-def get_str(key: str) -> Optional[str]:
+def get_str(key: str, ex: Optional[int] = None) -> Optional[str]:
     try:
         if REDIS is not None:
             blob = REDIS.get(key)
             if blob is not None:
+                if ex is not None:
+                    REDIS.set(key, blob, ex=ex)
                 return blob
     except redislib.exceptions.BusyLoadingError:
         pass

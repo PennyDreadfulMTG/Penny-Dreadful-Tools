@@ -35,6 +35,7 @@ class PDFlask(Flask):
         super().route('/api/commit')(api.commit_id)
         super().route('/robots.txt')(self.robots_txt)
         super().route('/favicon<rest>')(self.favicon)
+        self.url_build_error_handlers.append(self.external_url_handler)
         self.config['menu'] = []
         self.config['js_url'] = ''
         self.config['css_url'] = ''
@@ -107,6 +108,20 @@ class PDFlask(Flask):
     def favicon(self, rest: str) -> Response:
         return send_from_directory(os.path.join(self.static_folder, 'images', 'favicon'), 'favicon{rest}'.format(rest=rest))
 
+    def external_url_handler(self, error, endpoint, values):
+        """Looks up an external URL when `url_for` cannot build a URL."""
+        url = self.lookup_external_url(endpoint, **values)
+        if url is None:
+            # External lookup did not have a URL.
+            # Re-raise the BuildError, in context of original traceback.
+            raise error
+        # url_for will use this result, instead of raising BuildError.
+        return url
+
+    def lookup_external_url(self, endpoint, **values):
+        if endpoint == 'card': # The error pages make a /cards/<name> reference, but only decksite implements it.
+            return 'https://pennydreadfulmagic.com/cards/{name}/'.format(name=values['name'])
+        return None
 
 def log_exception(e: BaseException) -> None:
     logger.error(''.join(traceback.format_exception(type(e), e, e.__traceback__)))

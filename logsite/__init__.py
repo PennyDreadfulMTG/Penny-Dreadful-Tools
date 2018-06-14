@@ -36,6 +36,7 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
         {'name': 'Home', 'url': url_for('home')},
         {'name': 'Matches', 'url': url_for('matches')},
         {'name': 'People', 'url': url_for('people')},
+        {'name': 'Stats', 'url': url_for('charts')},
         {'name': 'About', 'url': url_for('about')},
     ]
     return menu

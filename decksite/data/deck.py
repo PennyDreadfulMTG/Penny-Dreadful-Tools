@@ -365,7 +365,8 @@ def get_archetype_id(archetype: str) -> Optional[int]:
     return db().value(sql, [archetype])
 
 def load_similar_decks(ds: List[Deck]) -> None:
-    return
+    for d in ds:
+        d.similar_decks = []
 
 def all_card_names(ds: List[Deck]) -> Set[str]:
     basic_lands = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest']

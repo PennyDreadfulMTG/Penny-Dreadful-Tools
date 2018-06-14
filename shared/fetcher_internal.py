@@ -6,6 +6,7 @@ import urllib.request
 import zipfile
 from typing import Any, Dict, Optional
 
+import aiohttp
 import requests
 from cachecontrol import CacheControl, CacheControlAdapter
 from cachecontrol.caches.file_cache import FileCache
@@ -19,6 +20,8 @@ SESSION = CacheControl(requests.Session(),
 SESSION.mount(
     'http://whatsinstandard.com',
     CacheControlAdapter(heuristic=ExpiresAfter(days=14)))
+
+AIOSESSION = aiohttp.ClientSession()
 
 def unzip(url: str, path: str) -> str:
     location = '{scratch_dir}/zip'.format(scratch_dir=configuration.get('scratch_dir'))
@@ -50,9 +53,27 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
         raise FetchException(e)
 
+async def fetch_async(url: str) -> str:
+    print(f'Async fetching {url}')
+    try:
+        response = await AIOSESSION.get(url)
+        return await response.text()
+    except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
+        raise FetchException(e)
+
 def fetch_json(url: str, character_encoding: str = None) -> Any:
     try:
         blob = fetch(url, character_encoding)
+        if blob:
+            return json.loads(blob)
+        return None
+    except json.decoder.JSONDecodeError:
+        print('Failed to load JSON:\n{0}'.format(blob))
+        raise
+
+async def fetch_json_async(url: str) -> Any:
+    try:
+        blob = await fetch_async(url)
         if blob:
             return json.loads(blob)
         return None

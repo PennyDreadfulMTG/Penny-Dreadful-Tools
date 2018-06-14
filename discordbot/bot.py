@@ -97,7 +97,7 @@ async def on_member_update(before: Member, after: Member) -> None:
         roles = [r for r in before.server.roles if r.name == 'Linked Magic Online']
         if roles and not roles[0] in before.roles:
             if data is None:
-                data = fetcher.person_data(before.id)
+                data = await fetcher.person_data_async(before.id)
             if data.get('id', None):
                 await BOT.client.add_roles(after, roles[0])
 
@@ -131,15 +131,15 @@ async def on_reaction_add(reaction: Reaction, author: Member) -> None:
 async def background_task_spoiler_season() -> None:
     'Poll Scryfall for the latest 250 cards, and add them to our db if missing'
     await BOT.client.wait_until_ready()
-    new_cards = fetcher.scryfall_cards()
+    new_cards = await fetcher.scryfall_cards_async()
     for c in new_cards['data']:
-        await asyncio.sleep(5)
         try:
             oracle.valid_name(c['name'])
+            await asyncio.sleep(1)
         except InvalidDataException:
             oracle.insert_scryfall_card(c, True)
             print('Imported {0} from Scryfall'.format(c['name']))
-            return
+            await asyncio.sleep(5)
         except TooFewItemsException:
             pass
 
@@ -152,13 +152,18 @@ async def background_task_tournaments() -> None:
     while not BOT.client.is_closed:
         info = tournaments.next_tournament_info()
         diff = info['next_tournament_time_precise']
+        if info['sponsor_name']:
+            message = 'A {sponsor} sponsored tournament'.format(sponsor=info['sponsor_name'])
+        else:
+            message = 'A free tournament'
+        embed = discord.Embed(title=info['next_tournament_name'], description=message)
         if diff <= 0:
-            message = 'Tournament starting!'
+            embed.add_field(name='Starting now', value='Check <#334220558159970304> for further annoucements')
         elif diff <= 14400:
-            message = 'Starting: {0}.'.format(dtutil.display_time(diff, 2))
+            embed.add_field(name='Starting in:', value=dtutil.display_time(diff, 2))
+            embed.add_field(name='Pre-register now:', value='https://gatherling.com')
 
         if diff <= 14400:
-            embed = discord.Embed(title=info['next_tournament_name'], description=message)
             embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
             # See #2809.
             # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
@@ -188,4 +193,5 @@ async def background_task_tournaments() -> None:
 
 def init() -> None:
     asyncio.ensure_future(background_task_tournaments())
+    asyncio.ensure_future(background_task_spoiler_season())
     BOT.init()

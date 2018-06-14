@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, Dict, List
 
 from flask import url_for
 
@@ -10,7 +10,7 @@ from shared.container import Container
 
 # pylint: disable=too-many-instance-attributes
 class Deck(Container):
-    def __init__(self, params) -> None:
+    def __init__(self, params: Dict[str, Any]) -> None:
         super().__init__()
         for k in params.keys():
             self[k] = params[k]

@@ -868,7 +868,7 @@ z-index
 }
 
 .deckbox_i_tooltip, .deckbox_t_tooltip, .tpd-tooltip {
-    z-index: 400 !important; /* Override 3rd party css loaded by js. */
+    z-index: 400 !important /* csslint allow: important */; /* Override 3rd party css loaded by js. */
 }
 
 /*

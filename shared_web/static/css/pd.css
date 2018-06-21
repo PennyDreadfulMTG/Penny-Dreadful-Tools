@@ -843,6 +843,7 @@ z-index
     250 status-bar
     275 season dropdown
     300 dropdown menu
+    400 card and text tooltips
 
 */
 
@@ -864,6 +865,10 @@ z-index
 
 .submenu-container {
     z-index: 300;
+}
+
+.deckbox_i_tooltip, .deckbox_t_tooltip, .tpd-tooltip {
+    z-index: 400 !important; /* Override 3rd party css loaded by js. */
 }
 
 /*

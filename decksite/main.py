@@ -78,7 +78,7 @@ def people():
 def person(person_id):
     p = ps.load_person(person_id, season_id=get_season_id())
     played_cards = cs.played_cards_by_person(p.id, get_season_id())
-    only_played_cards = cs.only_played_by(p.id, get_season_id())
+    only_played_cards = []
     view = Person(p, played_cards, only_played_cards)
     return view.page()
 

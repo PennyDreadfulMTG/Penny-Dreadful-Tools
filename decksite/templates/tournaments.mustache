@@ -19,7 +19,7 @@
                             <time class="day" datetime="{{time}}" data-format="D">{{date}}</time>
                         </td>
                         <td>
-                            <p>{{name}} {{#sponsor_name}}🏆{{/sponsor_name}}</p>
+                            <p>{{name}}</p>
                             <time datetime="{{time}}" data-format="dddd LT z">{{display_time}}</time>
                             <p><a href="https://gatherling.com/player.php">Sign Up</a></p>
                         </td>
@@ -35,8 +35,7 @@
                 {{/tournaments}}
             </tbody>
         </table>
-        <p>🏆 = Sponsored tournaments with prizes.</p>
-        <p>There are {{num_tournaments}} weekly Penny Dreadful tournaments, and hosted on <a class="external" href="https://gatherling.com/">gatherling.com</a>. They are all free to enter and some offer prizes from <a class="external" href="https://www.cardhoarder.com/">Cardhoarder</a>. Be sure to also check out the <a href="/league/">league</a> for a play-when-you-like competition.</p>
+        <p>There are {{num_tournaments}} weekly Penny Dreadful tournaments, and hosted on <a class="external" href="https://gatherling.com/">gatherling.com</a>. They are all free to enter and offer prizes from <a class="external" href="https://www.cardhoarder.com/">Cardhoarder</a>. Be sure to also check out the <a href="/league/">league</a> for a play-when-you-like competition.</p>
         <p>Each tournament series has a <a href="{{leaderboards_url}}">leaderboard</a> for the season with prizes for Top 8 finishers.</p>
     </section>
     <section>

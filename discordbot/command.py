@@ -180,6 +180,7 @@ Want to contribute? Send a Pull Request."""
         """Forces an update to legal cards and bugs."""
         oracle.legal_cards(force=True)
         multiverse.update_bugged_cards()
+        multiverse.update_cache()
         await client.send_message(channel, 'Reloaded legal cards and bugs.')
 
     @cmd_header('Developer')

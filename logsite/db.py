@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 import sqlalchemy as sa
 from flask import url_for
@@ -64,8 +64,11 @@ def Merge(item: Any) -> None:
 def Delete(item: Any) -> None:
     return DB.session.delete(item)
 
+def get_format(name: str) -> Optional[Format]:
+    return Format.query.filter_by(name=name).one_or_none()
+
 def get_or_insert_format(name: str) -> Format:
-    local = Format.query.filter_by(name=name).one_or_none()
+    local = get_format(name)
     if local is not None:
         return local
     local = Format(name=name)

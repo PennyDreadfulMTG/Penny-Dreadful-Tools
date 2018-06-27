@@ -24,7 +24,7 @@ def init() -> Optional[redislib.Redis]:
 
 REDIS = init()
 
-def get_str(key: str, ex: Optional[int] = None) -> Optional[str]:
+def _get(key: str, ex: Optional[int] = None) -> Optional[str]:
     try:
         if REDIS is not None:
             blob = REDIS.get(key)
@@ -38,9 +38,18 @@ def get_str(key: str, ex: Optional[int] = None) -> Optional[str]:
         pass
     return None
 
-def get_container(key: str) -> Optional[Container]:
+def get_str(key: str, ex: Optional[int] = None) -> Optional[str]:
     if REDIS is not None:
-        blob = get_str(key)
+        blob = _get(key, ex)
+        if blob is not None:
+            val = json.loads(blob)
+            if val is not None:
+                return val
+    return None
+
+def get_container(key: str, ex: Optional[int] = None) -> Optional[Container]:
+    if REDIS is not None:
+        blob = _get(key, ex)
         if blob is not None:
             val = json.loads(blob)
             if val is not None:
@@ -49,7 +58,7 @@ def get_container(key: str) -> Optional[Container]:
 
 def get_list(key: str) -> Optional[List[str]]:
     if REDIS is not None:
-        blob = get_str(key)
+        blob = _get(key)
         if blob is not None:
             val = json.loads(blob)
             return val

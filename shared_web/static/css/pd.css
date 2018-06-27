@@ -608,6 +608,19 @@ th.legend {
     line-height: 0; /* Don't mess up row spacing because the star is big. */
 }
 
+/* Angled headers */
+
+th.angled {
+    height: 8em;
+    overflow: visible;
+    white-space: nowrap;
+}
+
+th.angled .inner {
+    transform: translate(1rem, 5rem) rotate(315deg);
+    width: 1em;
+}
+
 /*
 
 Shrink tables when the viewport is not wide enough for their full glory using footable.

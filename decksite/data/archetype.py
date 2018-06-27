@@ -121,9 +121,11 @@ def add(name: str, parent: int) -> None:
 def assign(deck_id: int, archetype_id: int) -> None:
     db().execute('UPDATE deck SET reviewed = TRUE, archetype_id = %s WHERE id = %s', [archetype_id, deck_id])
 
-def load_matchups(archetype_id, season_id=None):
+def load_all_matchups(where='TRUE', season_id=None):
     sql = """
         SELECT
+            a.id AS archetype_id,
+            a.name AS archetype_name,
             oa.id,
             oa.name,
             SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS all_wins, -- IFNULL so we still count byes as wins.
@@ -144,13 +146,20 @@ def load_matchups(archetype_id, season_id=None):
             archetype AS oa ON od.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = oa.id)
         {season_join}
         WHERE
-            (a.id = %s) AND ({season_query})
+            ({where}) AND ({season_query})
         GROUP BY
+            a.id,
             oa.id
         ORDER BY
-            `all_wins` DESC, oa.name
-    """.format(season_join=query.season_join(), season_query=query.season_query(season_id))
-    return [Container(m) for m in db().execute(sql, [archetype_id])]
+            `all_wins` DESC,
+            oa.name
+    """.format(season_join=query.season_join(), where=where, season_query=query.season_query(season_id))
+    print(sql)
+    return [Container(m) for m in db().execute(sql)]
+
+def load_matchups(archetype_id, season_id=None):
+    where = 'a.id = {archetype_id}'.format(archetype_id=archetype_id)
+    return load_all_matchups(where, season_id)
 
 def move(archetype_id: int, parent_id: int) -> None:
     db().begin()

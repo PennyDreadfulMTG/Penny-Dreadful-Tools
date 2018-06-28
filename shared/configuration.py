@@ -120,7 +120,7 @@ def get_bool(key: str) -> bool:
         return val
     if isinstance(val, str):
         # required so that we can pass bool-values in environment variables
-        CONFIG[key] = bool(distutils.util.strtobool(val)) # type: ignore
+        CONFIG[key] = bool(distutils.util.strtobool(val)) # type: ignore # pylint: disable=no-member,import-error
         return CONFIG[key]
     raise fail(key, val, bool)
 

@@ -335,12 +335,12 @@ def add_cards(deck_id: int, cards) -> None:
         insert_deck_card(deck_id, name, n, True)
     db().commit()
 
-def get_deck_id(source_name, identifier) -> Optional[int]:
+def get_deck_id(source_name: str, identifier: str) -> Optional[int]:
     source_id = get_source_id(source_name)
     sql = 'SELECT id FROM deck WHERE source_id = %s AND identifier = %s'
     return db().value(sql, [source_id, identifier])
 
-def insert_deck_card(deck_id: int, name: str, n, in_sideboard) -> None:
+def insert_deck_card(deck_id: int, name: str, n: int, in_sideboard: bool) -> None:
     name = oracle.valid_name(name)
     sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (%s, %s, %s, %s)'
     db().execute(sql, [deck_id, name, n, in_sideboard])

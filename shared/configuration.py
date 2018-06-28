@@ -1,3 +1,4 @@
+import distutils
 import inspect
 import json
 import os
@@ -46,6 +47,7 @@ DEFAULTS = {
     'redis_host': 'localhost',
     'redis_port': 6379,
     'redis_db': 0,
+    'save_historic_legal_lists': False,
     'scratch_dir': '.',
     'slow_fetch': 10.0,
     'slow_page': 10.0,
@@ -116,6 +118,10 @@ def get_bool(key: str) -> bool:
         raise fail(key, val, bool)
     if isinstance(val, bool):
         return val
+    if isinstance(val, str):
+        # required so that we can pass bool-values in environment variables
+        CONFIG[key] = bool(distutils.util.strtobool(val)) # type: ignore # pylint: disable=no-member,import-error
+        return CONFIG[key]
     raise fail(key, val, bool)
 
 def get(key: str) -> Optional[Union[str, List[str], int, float]]:

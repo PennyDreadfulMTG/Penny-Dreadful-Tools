@@ -77,18 +77,24 @@ def decksite_url(path: str = '/') -> str:
     return url
 
 def legal_cards(force: bool = False, season: str = None) -> List[str]:
-    if season is None and os.path.exists('legal_cards.txt'):
-        print('HACK: Using local legal_cards override.')
-        h = open('legal_cards.txt')
+    if season is None:
+        url = 'legal_cards.txt'
+    else:
+        url = '{season}_legal_cards.txt'.format(season=season)
+    encoding = 'utf-8' if season != 'EMN' else 'latin-1' # EMN was encoded weirdly.
+    cached_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'legal_cards')
+    if os.path.exists(os.path.join(cached_path, url)):
+        h = open(os.path.join(cached_path, url), encoding=encoding)
         legal = h.readlines()
         h.close()
         return [l.strip() for l in legal]
-    if season is None:
-        url = 'http://pdmtgo.com/legal_cards.txt'
-    else:
-        url = 'http://pdmtgo.com/{season}_legal_cards.txt'.format(season=season)
-    encoding = 'utf-8' if season != 'EMN' else 'latin-1' # EMN was encoded weirdly.
+
+    url = 'http://pdmtgo.com/' + url
     legal_txt = internal.fetch(url, encoding, force=force)
+    if season is not None and configuration.get_bool('save_historic_legal_lists'):
+        with open(os.path.join(cached_path, f'{season}_legal_cards.txt'), 'w') as h:
+            h.write(legal_txt)
+
     return legal_txt.strip().split('\n')
 
 def mtgjson_version() -> str:

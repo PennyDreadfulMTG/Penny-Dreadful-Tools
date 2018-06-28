@@ -240,7 +240,7 @@ RawDeckDescription = TypedDict('RawDeckDescription',
                                    'source': str, # Source name
                                    'identifier': str, # Unique ID
                                    'cards': CardsDescription, # Contents of Deck
-                                   'archetype': str,
+                                   'archetype': Optional[str],
                                    'created_date': float, # Date deck was created.  If null, current time will be used.
                                    # One of these three usernames is required:
                                    'mtgo_username': Optional[str],
@@ -298,7 +298,7 @@ def add_deck(params: RawDeckDescription) -> Deck:
     created_date = params.get('created_date')
     if not created_date:
         created_date = time.time()
-    archetype_id = get_archetype_id(params['archetype'])
+    archetype_id = get_archetype_id(params.get('archetype'))
     for result in ['wins', 'losses', 'draws']:
         if params.get('competition_id') and not params.get(result):
             params[result] = 0 # type: ignore
@@ -392,7 +392,7 @@ def get_source_id(source: str) -> int:
         raise InvalidDataException('Unknown source: `{source}`'.format(source=source))
     return source_id
 
-def get_archetype_id(archetype: str) -> Optional[int]:
+def get_archetype_id(archetype: Optional[str]) -> Optional[int]:
     sql = 'SELECT id FROM archetype WHERE name = %s'
     return db().value(sql, [archetype])
 

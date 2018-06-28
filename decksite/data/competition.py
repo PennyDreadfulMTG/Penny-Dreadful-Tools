@@ -1,3 +1,4 @@
+import datetime
 from typing import Any, Dict, List, Optional
 
 from flask import url_for
@@ -11,7 +12,7 @@ from shared.database import sqlescape
 
 
 class Competition(Container):
-    def __init__(self, params) -> None:
+    def __init__(self, params: Dict[str, Any]) -> None:
         super().__init__(params)
         self.base_archetype_data: Dict[str, int] = {}
 
@@ -27,7 +28,12 @@ class Competition(Container):
         return self.base_archetype_data
 
 # pylint: disable=too-many-arguments
-def get_or_insert_competition(start_date, end_date, name, competition_series, url, top_n: Top) -> int:
+def get_or_insert_competition(start_date: datetime.datetime,
+                              end_date: datetime.datetime,
+                              name: str,
+                              competition_series: str,
+                              url: Optional[str],
+                              top_n: Top) -> int:
     competition_series_id = db().value('SELECT id FROM competition_series WHERE name = %s', [competition_series], fail_on_missing=True)
     start = start_date.timestamp()
     end = end_date.timestamp()
@@ -109,7 +115,7 @@ def tournaments_with_prizes() -> List[Competition]:
         """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
     return load_competitions(where)
 
-def leaderboards(where: str = "ct.name = 'Gatherling'", season_id=None) -> List[Dict[str, Any]]:
+def leaderboards(where: str = "ct.name = 'Gatherling'", season_id: Optional[int] = None) -> List[Dict[str, Any]]:
     sql = """
         SELECT
             p.id AS person_id,

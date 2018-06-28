@@ -1,8 +1,8 @@
 from decksite import translation
-
+from decksite.data.deck import RawDeckDescription
 
 def test_translate() -> None:
-    d = {'x': 100, 'user': 'myusername'}
+    d: RawDeckDescription = {'score': 100, 'user': 'myusername'}
     t = translation.translate(translation.TAPPEDOUT, d)
-    assert t['x'] == 100
+    assert t['score'] == 100
     assert t['tappedout_username'] == 'myusername'

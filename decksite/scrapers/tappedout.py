@@ -1,6 +1,6 @@
 import re
 import urllib
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 from bs4 import BeautifulSoup
 
@@ -12,7 +12,7 @@ from shared import configuration, fetcher_internal
 from shared.pd_exception import InvalidDataException
 from shared_web import logger
 
-DeckType = Dict[str, Any]
+DeckType = deck.RawDeckDescription
 
 def scrape() -> None:
     login()
@@ -21,7 +21,7 @@ def scrape() -> None:
     for raw_deck in raw_decks:
         try:
             if is_authorised():
-                raw_deck.update(fetch_deck_details(raw_deck))
+                raw_deck.update(fetch_deck_details(raw_deck)) # type: ignore
             raw_deck = set_values(raw_deck)
             deck.add_deck(raw_deck)
         except InvalidDataException as e:
@@ -85,9 +85,9 @@ def scrape_url(url: str) -> deck.Deck:
     raw_deck['slug'] = slug
     raw_deck['url'] = url
     if is_authorised():
-        raw_deck.update(fetch_deck_details(raw_deck))
+        raw_deck.update(fetch_deck_details(raw_deck)) # type: ignore
     else:
-        raw_deck.update(parse_printable(raw_deck))
+        raw_deck.update(parse_printable(raw_deck)) # type: ignore
     raw_deck = set_values(raw_deck)
     vivified = decklist.vivify(raw_deck['cards'])
     errors: Dict[str, Dict[str, List[str]]] = {}

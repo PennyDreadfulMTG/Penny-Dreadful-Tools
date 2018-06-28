@@ -149,7 +149,7 @@ def finishes(winners: Dict[str, int], ranks: List[str]) -> Dict[str, int]:
     return final
 
 def tournament_deck(cells: ResultSet, competition_id: int, date: datetime.datetime, final: Dict[str, int]) -> Optional[deck.Deck]:
-    d = {'source': 'Gatherling', 'competition_id': competition_id, 'created_date': dtutil.dt2ts(date)}
+    d: deck.RawDeckDescription = {'source': 'Gatherling', 'competition_id': competition_id, 'created_date': dtutil.dt2ts(date)}
     player = cells[2]
     username = player.a.contents[0].string
     d['mtgo_username'] = username

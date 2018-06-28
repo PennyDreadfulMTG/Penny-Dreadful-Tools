@@ -1,5 +1,5 @@
 import random
-from typing import List
+from typing import List, Optional
 
 from flask import url_for
 
@@ -10,7 +10,7 @@ from magic.models.card import Card
 
 # pylint: disable=no-self-use
 class About(View):
-    def __init__(self, src) -> None:
+    def __init__(self, src: Optional[str]) -> None:
         super().__init__()
         if src == 'gp':
             self.show_gp_card = True

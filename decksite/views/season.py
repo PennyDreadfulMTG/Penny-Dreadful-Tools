@@ -2,6 +2,7 @@ from decksite.view import View
 from magic import rotation
 from shared.container import Container
 
+
 # pylint: disable=no-self-use
 class Season(View):
     def __init__(self, season: Container, league_only: bool) -> None:

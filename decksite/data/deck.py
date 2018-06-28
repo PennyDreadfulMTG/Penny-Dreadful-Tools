@@ -2,6 +2,7 @@ import hashlib
 import json
 import time
 from typing import Dict, List, Optional, Set
+
 from mypy_extensions import TypedDict
 
 from decksite import deck_name

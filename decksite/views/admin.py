@@ -1,5 +1,6 @@
+from typing import Dict, List
+
 from decksite.view import View
-from typing import List, Dict
 
 
 # pylint: disable=no-self-use

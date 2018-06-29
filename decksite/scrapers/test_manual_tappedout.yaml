@@ -5,35 +5,35 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Cookie: [__cfduid=d488066efad68d3ebec42d9ba4ae6a2ff1526269311; _zermg22wher=o-Ko59np]
-      User-Agent: [python-requests/2.18.4]
+      Cookie: [__cfduid=d09ba29afc069c4d6ac7c6a7cd38cb43c1530272545]
+      User-Agent: [python-requests/2.19.1]
     method: GET
     uri: https://tappedout.net/mtg-decks/60-island/?fmt=printable
   response:
     body:
       string: !!binary |
-        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
+        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
     headers:
       Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
       Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
-      CF-RAY: [41aa5d6efd066d2a-SJC]
+      CF-RAY: [43282706ac646c64-SJC]
       Cache-Control: ['public,s-maxage=10800,max-age=10800']
       Connection: [keep-alive]
       Content-Encoding: [gzip]
       Content-Language: [en]
       Content-Type: [text/html]
-      Date: ['Mon, 14 May 2018 03:44:13 GMT']
+      Date: ['Fri, 29 Jun 2018 11:46:24 GMT']
       Expect-CT: ['max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"']
       Last-Modified: ['Thu, 26 Jan 2017 12:35:14 GMT']
       Server: [cloudflare]
@@ -46,8 +46,8 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Cookie: [__cfduid=d488066efad68d3ebec42d9ba4ae6a2ff1526269311; _zermg22wher=o-Ko59np]
-      User-Agent: [python-requests/2.18.4]
+      Cookie: [__cfduid=d09ba29afc069c4d6ac7c6a7cd38cb43c1530272545]
+      User-Agent: [python-requests/2.19.1]
     method: GET
     uri: https://tappedout.net/mtg-decks/60-island/?fmt=txt
   response:
@@ -57,14 +57,14 @@ interactions:
     headers:
       Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
       Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
-      CF-RAY: [41aa5d715db86d2a-SJC]
+      CF-RAY: [43282709bd016c64-SJC]
       Cache-Control: ['public,s-maxage=10800,max-age=10800']
       Connection: [keep-alive]
       Content-Disposition: [attachment;filename=60-island.txt]
       Content-Encoding: [gzip]
       Content-Language: [en]
       Content-Type: [text/plain]
-      Date: ['Mon, 14 May 2018 03:44:14 GMT']
+      Date: ['Fri, 29 Jun 2018 11:46:25 GMT']
       Expect-CT: ['max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"']
       Last-Modified: ['Thu, 26 Jan 2017 12:35:14 GMT']
       Server: [cloudflare]

@@ -5,7 +5,7 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Cookie: [__cfduid=d09ba29afc069c4d6ac7c6a7cd38cb43c1530272545]
+      Cookie: [__cfduid=d084ce44906531ea59b407795604766071530276105]
       User-Agent: [python-requests/2.19.1]
     method: GET
     uri: https://tappedout.net/mtg-decks/60-island/?fmt=printable
@@ -27,13 +27,13 @@ interactions:
     headers:
       Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
       Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
-      CF-RAY: [43282706ac646c64-SJC]
+      CF-RAY: [43287deffc046bbc-SJC]
       Cache-Control: ['public,s-maxage=10800,max-age=10800']
       Connection: [keep-alive]
       Content-Encoding: [gzip]
       Content-Language: [en]
       Content-Type: [text/html]
-      Date: ['Fri, 29 Jun 2018 11:46:24 GMT']
+      Date: ['Fri, 29 Jun 2018 12:45:44 GMT']
       Expect-CT: ['max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"']
       Last-Modified: ['Thu, 26 Jan 2017 12:35:14 GMT']
       Server: [cloudflare]
@@ -46,7 +46,7 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Cookie: [__cfduid=d09ba29afc069c4d6ac7c6a7cd38cb43c1530272545]
+      Cookie: [__cfduid=d084ce44906531ea59b407795604766071530276105]
       User-Agent: [python-requests/2.19.1]
     method: GET
     uri: https://tappedout.net/mtg-decks/60-island/?fmt=txt
@@ -57,14 +57,14 @@ interactions:
     headers:
       Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
       Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
-      CF-RAY: [43282709bd016c64-SJC]
+      CF-RAY: [43287df32c816bbc-SJC]
       Cache-Control: ['public,s-maxage=10800,max-age=10800']
       Connection: [keep-alive]
       Content-Disposition: [attachment;filename=60-island.txt]
       Content-Encoding: [gzip]
       Content-Language: [en]
       Content-Type: [text/plain]
-      Date: ['Fri, 29 Jun 2018 11:46:25 GMT']
+      Date: ['Fri, 29 Jun 2018 12:45:46 GMT']
       Expect-CT: ['max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"']
       Last-Modified: ['Thu, 26 Jan 2017 12:35:14 GMT']
       Server: [cloudflare]

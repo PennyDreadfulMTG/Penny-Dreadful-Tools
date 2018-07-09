@@ -289,6 +289,11 @@ div:after, header:after, nav:after, main:after, footer:after, section:after, .to
     width: 10rem;
 }
 
+.sponsor-logo {
+    width: 20rem;
+    max-width: 100%;
+}
+
 /*
 
 Colors

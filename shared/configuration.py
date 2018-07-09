@@ -1,4 +1,4 @@
-import distutils
+import distutils.util
 import inspect
 import json
 import os

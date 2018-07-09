@@ -1,11 +1,12 @@
 node{
     def FailedTests = false
+    def DoNotMerge = false
     env.mysql_user = 'jenkins'
     env.magic_database = 'jenkins_cards'
     env.decksite_database = 'jenkins_decksite'
     env.logsite_database = 'jenkins_logsite'
     env.redis_db = '9'
-    env.save_historic_legal_lists = 'true'
+    env.save_historic_legal_lists = 'True'
 
     stage('Clone') {
         sh 'git config user.email "jenkins@katelyngigante.com"'
@@ -23,6 +24,7 @@ node{
         if (!FailedTests) {
             // Don't update the scraper recordings unless they failed.
             sh(returnStatus: true, script: 'git reset --hard HEAD')
+            DoNotMerge = true
         }
     }
 
@@ -47,8 +49,11 @@ node{
                 sh 'git push https://$github_user:$github_password@github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git jenkins_results --force'
             }
             sleep(30) // Lovely race condition where we make a PR before the push has propogated.
-            sh(returnStatus: true, script: 'hub pull-request -b master -h jenkins_results -m "Automated PR from Jenkins" -f')
-
+            cmd = 'hub pull-request -b master -h jenkins_results -m "Automated PR from Jenkins" -f'
+            if (DoNotMerge) {
+                cmd = cmd + ' --labels "do not merge"'
+            }
+            sh(returnStatus: true, script: cmd)
         }
     }
 }

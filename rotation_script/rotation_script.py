@@ -27,10 +27,10 @@ def run() -> None:
     if n >= TOTAL_RUNS:
         print('It is the moment of discovery, the triumph of the mind, and the end of this rotation.')
 
-        if time_until < datetime.timedelta(days=3):
-            for f in files:
-                print('Removing {f}'.format(f=f))
-                os.remove(f)
+        # if time_until < datetime.timedelta(days=3):
+        #     for f in files:
+        #         print('Removing {f}'.format(f=f))
+        #         os.remove(f)
         return
     if n == 0 and TIME_UNTIL_FULL_ROTATION > datetime.timedelta(7) and TIME_UNTIL_SUPPLEMENTAL_ROTATION > datetime.timedelta(7):
         print('The monks of the North Tree rarely saw their kodama until the rotation, when it woke like a slumbering, angry bear.')

@@ -241,8 +241,6 @@ class View(BaseView):
                         title_safe += '{v} {k}<br>'.format(v=v, k=html.escape(k))
             except KeyError:
                 archetype.rebuild_archetypes()
-            c.archetypes_sparkline_chart_title_safe = title_safe
-            c.archetypes_sparkline_chart_url = url_for('archetype_sparkline_chart', competition_id=c.id)
 
     def prepare_people(self) -> None:
         for p in getattr(self, 'people', []):

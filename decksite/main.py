@@ -352,10 +352,6 @@ def rotation_speculation():
 def cmc_chart(deck_id: int) -> Response:
     return send_file(chart.cmc(int(deck_id)))
 
-@APP.route('/charts/archetypes/<competition_id>-archetypes-sparkline.png')
-def archetype_sparkline_chart(competition_id: int) -> Response:
-    return send_file(chart.archetypes_sparkline(int(competition_id)))
-
 @APP.route('/discord')
 def discord() -> Response:
     return redirect('https://discord.gg/RxhTEEP')

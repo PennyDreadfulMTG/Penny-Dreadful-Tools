@@ -1,6 +1,6 @@
 import os.path
 import pathlib
-from typing import Dict, List, Tuple
+from typing import Dict
 
 import matplotlib as mpl
 # This has to happen before pyplot is imported to avoid needing an X server to draw the graphs.
@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from shared_web import logger
-from decksite.data import competition, deck
+from decksite.data import deck
 from shared import configuration
 from shared.pd_exception import DoesNotExistException, OperationalException
 
@@ -61,25 +61,6 @@ def image(path: str, costs: Dict[str, int]) -> str:
     sns.despine(left=True, bottom=True)
     g.get_figure().savefig(path, transparent=True, pad_inches=0, bbox_inches='tight')
     plt.clf() # Clear all data from matplotlib so it does not persist across requests.
-    return path
-
-def archetypes_sparkline(competition_id: int) -> str:
-    path = determine_path(str(competition_id) + '-archetypes-sparkline.png')
-    if os.path.exists(path):
-        return path
-    c = competition.load_competition(competition_id)
-    return sparkline(path, list(c.base_archetypes_data().values()))
-
-def sparkline(path: str, values: List[int], figsize: Tuple[float, float] = (2, 0.16)) -> str:
-    fig, ax = plt.subplots(1, 1, figsize=figsize)
-    for v in ax.spines.values():
-        v.set_visible(False)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    plt.bar(range(len(values)), values, 1/1.1, align='edge', color='#cccccc')
-    plt.margins(y=0, x=0)
-    fig.savefig(path, transparent=True, pad_inches=0, bbox_inches='tight')
-    plt.clf()
     return path
 
 def determine_path(name: str) -> str:

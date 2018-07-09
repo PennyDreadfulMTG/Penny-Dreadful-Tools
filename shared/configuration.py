@@ -1,4 +1,4 @@
-import distutils.util
+import ast
 import inspect
 import json
 import os
@@ -120,8 +120,10 @@ def get_bool(key: str) -> bool:
         return val
     if isinstance(val, str):
         # required so that we can pass bool-values in environment variables
-        CONFIG[key] = bool(distutils.util.strtobool(val)) # type: ignore # pylint: disable=no-member,import-error
-        return CONFIG[key]
+        val2 = ast.literal_eval(val)
+        if isinstance(val2, bool):
+            CONFIG[key] = val2
+            return CONFIG[key]
     raise fail(key, val, bool)
 
 def get(key: str) -> Optional[Union[str, List[str], int, float]]:

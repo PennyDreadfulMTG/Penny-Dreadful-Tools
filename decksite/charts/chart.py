@@ -1,6 +1,6 @@
 import os.path
 import pathlib
-from typing import Dict, List, Tuple
+from typing import Dict
 
 import matplotlib as mpl
 # This has to happen before pyplot is imported to avoid needing an X server to draw the graphs.
@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from shared_web import logger
-from decksite.data import competition, deck
+from decksite.data import deck
 from shared import configuration
 from shared.pd_exception import DoesNotExistException, OperationalException
 

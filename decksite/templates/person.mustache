@@ -13,31 +13,34 @@
         </ul>
     </section>
 {{/has_only_played_cards}}
-{{#achievements}}
+{{#num_achievements}}
     <section>
         <h2>Achievements</h2>
         <ul class="buttons">
-            {{#tournament_organizer}}
-                <li>Tournament Organizer</li>
-            {{/tournament_organizer}}
-            {{#tournament_wins}}
-                <li title="{{tournament_wins}} Wins">Tournament Winner</li>
-            {{/tournament_wins}}
-            {{#tournament_entries}}
-                <li title="{{tournament_entries}} Entries">Tournament Player</li>
-            {{/tournament_entries}}
-            {{#perfect_runs}}
-                <li title="{{perfect_runs}} Perfect Runs">Perfect League Run</li>
-            {{/perfect_runs}}
-            {{#league_entries}}
-                <li title="{{league_entries}} Entries">League Player</li>
-            {{/league_entries}}
-            {{#perfect_run_crushes}}
-                <li title="{{perfect_run_crushes}} Crushes">Perfect Run Crusher</li>
-            {{/perfect_run_crushes}}
+            {{#achievements}}
+
+                {{#tournament_organizer}}
+                    <li>Tournament Organizer</li>
+                {{/tournament_organizer}}
+                {{#tournament_wins}}
+                    <li title="{{tournament_wins}} Wins">Tournament Winner</li>
+                {{/tournament_wins}}
+                {{#tournament_entries}}
+                    <li title="{{tournament_entries}} Entries">Tournament Player</li>
+                {{/tournament_entries}}
+                {{#perfect_runs}}
+                    <li title="{{perfect_runs}} Perfect Runs">Perfect League Run</li>
+                {{/perfect_runs}}
+                {{#league_entries}}
+                    <li title="{{league_entries}} Entries">League Player</li>
+                {{/league_entries}}
+                {{#perfect_run_crushes}}
+                    <li title="{{perfect_run_crushes}} Crushes">Perfect Run Crusher</li>
+                {{/perfect_run_crushes}}
+            {{/achievements}}
         </ul>
     </section>
-{{/achievements}}
+{{/num_achievements}}
 {{#show_head_to_head}}
     <section>
         <h2>Head to Head</h2>

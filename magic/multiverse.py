@@ -339,7 +339,7 @@ def get_all_cards() -> List[Card]:
     return [Card(r) for r in rs]
 
 def playable_layouts() -> List[str]:
-    return ['normal', 'token', 'double-faced', 'split', 'aftermath']
+    return ['normal', 'token', 'double-faced', 'split', 'aftermath', 'flip', 'leveler', 'meld']
 
 def try_find_card_id(c) -> Tuple[str, Optional[int]]:
     card_id = None

@@ -119,6 +119,7 @@ def person_status():
         'discord_id': auth.discord_id(),
         'admin': session.get('admin', False),
         'hide_intro': request.cookies.get('hide_intro', False) or auth.hide_intro(),
+        'in_guild': session.get('in_guild', False),
         }
     if auth.mtgo_username():
         d = guarantee_at_most_one_or_retire(league.active_decks_by(auth.mtgo_username()))

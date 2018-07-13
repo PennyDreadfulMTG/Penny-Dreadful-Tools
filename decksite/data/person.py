@@ -71,6 +71,28 @@ def set_achievements(people: List[Person], season_id: int = None) -> None:
             COUNT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END) AS tournament_entries,
             COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END) AS tournament_wins,
             COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END) AS league_entries,
+            CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END AS completionist,
+			SUM(
+                CASE WHEN d.id IN
+                    (
+                        SELECT
+                            d.id
+                        FROM
+                            deck AS d
+                        LEFT JOIN
+                            deck_card AS dc ON dc.deck_id = d.id
+                        {competition_join}
+                        WHERE
+                            ct.name = 'League' OR ct.name = 'gatherling'
+                        GROUP BY
+                            d.id
+                        HAVING
+                            SUM(dc.n) >= 77
+                        AND
+                            SUM(dc.n) < 200
+                    )
+                THEN 1 ELSE 0 END
+            ) AS challenging_the_fundamentals,
             SUM(
                 CASE WHEN d.id IN
                     (
@@ -135,8 +157,9 @@ def set_achievements(people: List[Person], season_id: int = None) -> None:
     """.format(competition_join=query.competition_join(), competition_ids_by_type_select=query.competition_ids_by_type_select('League'), ids=', '.join(str(k) for k in people_by_id.keys()), season_join=query.season_join(), season_query=query.season_query(season_id))
     results = [Container(r) for r in db().execute(sql)]
     for result in results:
-        people_by_id[result['id']].update(result)
-        people_by_id[result['id']].achievements = len([k for k, v in result.items() if k != 'id' and v > 0])
+        people_by_id[result['id']].num_achievements = len([k for k, v in result.items() if k != 'id' and v > 0])
+        people_by_id[result['id']].achievements = result
+        people_by_id[result['id']].achievements.pop('id')
 
 def set_head_to_head(people: List[Person], season_id: int = None) -> None:
     people_by_id = {person.id: person for person in people}

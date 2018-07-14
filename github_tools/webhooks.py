@@ -1,11 +1,16 @@
 from typing import Dict, List, Set, Tuple
 
+import changelogs
+import whatthepatch
+import packaging.version
+from requirements.requirement import Requirement
 from github import Github
 from github.Commit import Commit
 from github.CommitStatus import CommitStatus
 from github.GithubException import UnknownObjectException
 from github.PullRequest import PullRequest
 from github.Repository import Repository
+from github.File import File
 
 from shared import configuration, lazy, redis
 
@@ -59,6 +64,46 @@ def get_pr_from_commit(repo: Repository, sha: str) -> PullRequest:
 def set_check(data: dict, status: str, message: str) -> CommitStatus:
     commit = load_commit(data)
     return commit.create_status(state=status, description=message, context=PDM_CHECK_CONTEXT)
+
+def check_for_changelogs(pr: PullRequest) -> None:
+    for change in pr.get_files():
+        if change.filename == 'requirements.txt':
+            lines = build_changelog(change)
+            for comment in pr.get_issue_comments():
+                if comment.body.startswith('# Changelogs'):
+                    # Changelog comment
+                    comment.edit(body='\n'.join(lines))
+                    break
+            else:
+                pr.create_issue_comment('\n'.join(lines))
+
+def build_changelog(change: File) -> List[str]:
+    lines = ['# Changelogs']
+    patch = whatthepatch.parse_patch(change.patch).__next__()
+    oldversions: Dict[str, str] = {}
+    newversions: Dict[str, str] = {}
+    for p in patch.changes:
+        if p[1] is None:
+            req = Requirement.parse(p[2])
+            oldversions[req.name] = req.specs[0][1]
+        elif p[0] is None:
+            req = Requirement.parse(p[2])
+            newversions[req.name] = req.specs[0][1]
+    for package in newversions:
+        old = packaging.version.parse(oldversions.get(package))
+        new = packaging.version.parse(newversions.get(package))
+        changes = changelogs.get(package)
+        logged = False
+        for version_string in changes.keys():
+            v = packaging.version.parse(version_string)
+            if v > old and v <= new:
+                lines.append(f'## {package} {version_string}')
+                lines.append(changes[version_string])
+                logged = True
+        if not logged:
+            lines.append(f'## {package} {new}')
+            lines.append('No release notes found.')
+    return lines
 
 def check_pr_for_mergability(pr: PullRequest) -> str:
     repo = pr.base.repo

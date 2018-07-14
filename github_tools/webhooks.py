@@ -1,16 +1,16 @@
 from typing import Dict, List, Set, Tuple
 
 import changelogs
-import whatthepatch
 import packaging.version
-from requirements.requirement import Requirement
+import whatthepatch
 from github import Github
 from github.Commit import Commit
 from github.CommitStatus import CommitStatus
+from github.File import File
 from github.GithubException import UnknownObjectException
 from github.PullRequest import PullRequest
 from github.Repository import Repository
-from github.File import File
+from requirements.requirement import Requirement
 
 from shared import configuration, lazy, redis
 

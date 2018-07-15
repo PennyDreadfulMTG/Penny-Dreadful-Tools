@@ -109,15 +109,23 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
     repo = pr.base.repo
     commit = repo.get_commit(pr.head.sha)
     checks: Dict[str, str] = {}
+    blocked = False
     for status in commit.get_statuses():
         print(status)
         if status.context == PDM_CHECK_CONTEXT:
             continue
         if checks.get(status.context) is None:
             checks[status.context] = status.state
-            if status.state != 'success':
+            if status.state != 'success' and not blocked:
                 commit.create_status(state='pending', description=f'Waiting for {status.context}', context=PDM_CHECK_CONTEXT)
-                return f'Merge blocked by {status.context}'
+                blocked = True
+                status = f'Merge blocked by {status.context}'
+
+    if blocked:
+        # We should only merge master into the PR if it's gonna do something.
+        if checks.get('continuous-integration/travis-ci/push') == 'failure' and checks.get('continuous-integration/travis-ci/pr') == 'success':
+            update_pr(pr)
+        return 'blocked'
 
     travis_pr = 'continuous-integration/travis-ci/pr'
     if travis_pr not in checks.keys():
@@ -152,18 +160,17 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
     pr.merge()
     return 'good to merge'
 
-def update_prs(repo_name: str) -> None:
-    repo = get_github().get_repo(repo_name)
-    for pull in repo.get_pulls():
-        if 'update me' in [l.name for l in pull.as_issue().labels]:
-            print(f'Checking if #{pull.number} is up to date with master.')
-            master = repo.get_branch('master')
-            base, head = get_common_tree(repo, master.commit.sha, pull.head.sha)
-            if head.issuperset(base):
-                print('Up to date')
-                continue
-            print(f'#{pull.number}: {pull.head.ref} is behind.')
-            repo.merge(pull.head.ref, 'master', f'Merge master into #{pull.number}')
+def update_pr(pull: PullRequest) -> None:
+    repo = pull.base.repo
+    if 'update me' in [l.name for l in pull.as_issue().labels]:
+        print(f'Checking if #{pull.number} is up to date with master.')
+        master = repo.get_branch('master')
+        base, head = get_common_tree(repo, master.commit.sha, pull.head.sha)
+        if head.issuperset(base):
+            print('Up to date')
+            return
+        print(f'#{pull.number}: {pull.head.ref} is behind.')
+        repo.merge(pull.head.ref, 'master', f'Merge master into #{pull.number}')
 
 
 def get_parents(repo: Repository, sha: str) -> List[str]:

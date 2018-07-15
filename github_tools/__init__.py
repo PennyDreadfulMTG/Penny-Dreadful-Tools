@@ -53,7 +53,7 @@ def on_pull_request(data):
         pr = webhooks.load_pr(data)
         if pr.state == 'open':
             return webhooks.check_pr_for_mergability(pr)
-        elif pr.state == 'closed' and 'Overdue-on-GH' in [l.name for l in pr.as_issue().labels]:
+        if pr.state == 'closed' and 'Overdue-on-GH' in [l.name for l in pr.as_issue().labels]:
             # We can't actually reboot when `master` is pushed like the other sites.
             # So this is a lovely hack to reboot ourselves when we absolutely need to.
             try:

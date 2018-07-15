@@ -38,7 +38,7 @@ def run() -> None:
 def match(m: Dict[str, str]) -> None:
     if ',' not in m['games']:
         return
-    elif int(m['games'].split(',')[0]) == 2:
+    if int(m['games'].split(',')[0]) == 2:
         winner = m['people'].split(',')[0]
         loser = m['people'].split(',')[1]
     elif int(m['games'].split(',')[1]) == 2:

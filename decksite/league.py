@@ -97,7 +97,7 @@ class SignUpForm(Form):
             self.errors['decklist'] = ' '.join(errors.get('Penny Dreadful').pop('Legality_General', ['You have illegal cards.']))
             self.card_errors = errors.get('Penny Dreadful')
 
-        banned_for_bugs = set([c.name for c in self.deck.all_cards() if any([b.get('bannable') for b in c.bugs or []])])
+        banned_for_bugs = {c.name for c in self.deck.all_cards() if any([b.get('bannable') for b in c.bugs or []])}
         if len(banned_for_bugs) > 0:
             self.card_errors['Legality_Bugs'] = [name for name in banned_for_bugs]
 
@@ -258,7 +258,7 @@ def report(form: ReportForm) -> bool:
 def winner_and_loser(params):
     if params.entry_games > params.opponent_games:
         return (params.entry, params.opponent)
-    elif params.opponent_games > params.entry_games:
+    if params.opponent_games > params.entry_games:
         return (params.opponent, params.entry)
     return (None, None)
 

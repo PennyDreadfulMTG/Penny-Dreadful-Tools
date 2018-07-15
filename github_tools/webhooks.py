@@ -96,7 +96,7 @@ def build_changelog(change: File) -> List[str]:
         logged = False
         for version_string in changes.keys():
             v = packaging.version.parse(version_string)
-            if v > old and v <= new:
+            if old < v <= new:
                 lines.append(f'## {package} {version_string}')
                 lines.append(changes[version_string])
                 logged = True

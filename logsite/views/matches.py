@@ -42,6 +42,3 @@ class Matches(View):
             self.next_url = url_for(request.endpoint, person=person, page=recent.next_num)
         if recent.has_prev:
             self.prev_url = url_for(request.endpoint, person=person, page=recent.prev_num)
-
-    def subtitle(self):
-        return None

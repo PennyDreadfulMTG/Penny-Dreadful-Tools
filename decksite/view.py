@@ -102,7 +102,7 @@ class View(BaseView):
         return '{page_title} – pennydreadfulmagic.com'.format(page_title=self.page_title())
 
     def page_title(self) -> Optional[str]:
-        return None
+        pass
 
     def num_tournaments(self) -> str:
         return inflect.engine().number_to_words(len(tournaments.all_series_info()))
@@ -209,7 +209,7 @@ class View(BaseView):
         c.img_url = 'http://magic.bluebones.net/proxies/index2.php?c={name}'.format(name=urllib.parse.quote(c.name))
         c.card_img_class = 'two-faces' if c.layout in ['double-faced', 'meld'] else ''
         c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
-        c.legal_formats = set([k for k, v in c.legalities.items() if v != 'Banned'])
+        c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}
         c.has_legal_format = len(c.legal_formats) > 0
         if c.get('all_num_decks') is not None:
             c.all_show_record = c.get('all_wins') or c.get('all_losses') or c.get('all_draws')

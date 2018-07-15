@@ -19,7 +19,7 @@ def admin_required(f: Callable) -> Callable:
     def decorated_function(*args, **kwargs):
         if session.get('admin') is None:
             return redirect(url_for('authenticate', target=request.url))
-        elif session.get('admin') is False:
+        if session.get('admin') is False:
             return redirect(url_for('unauthorized'))
         return f(*args, **kwargs)
     return decorated_function

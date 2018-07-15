@@ -1,4 +1,4 @@
-from typing import Collection, Dict, List, Optional
+from typing import Dict, Iterable, List, Optional
 
 from magic import card, fetcher, mana, multiverse, rotation
 from magic.database import db
@@ -21,17 +21,16 @@ def init() -> None:
 def valid_name(name: str) -> str:
     if name in CARDS_BY_NAME:
         return name
-    else:
-        canonicalized = card.canonicalize(name)
-        for k in CARDS_BY_NAME:
-            if canonicalized == card.canonicalize(k):
-                return k
+    canonicalized = card.canonicalize(name)
+    for k in CARDS_BY_NAME:
+        if canonicalized == card.canonicalize(k):
+            return k
     raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
 
 def load_card(name: str) -> Card:
     return CARDS_BY_NAME.get(name, load_cards([name])[0])
 
-def load_cards(names: Collection[str] = None, where: Optional[str] = None) -> List[Card]:
+def load_cards(names: Iterable[str] = None, where: Optional[str] = None) -> List[Card]:
     if names:
         setnames = set(names)
     else:

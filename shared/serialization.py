@@ -10,11 +10,11 @@ def extra_serializer(obj: Any) -> Union[int, str, List[Any]]:
 
     if isinstance(obj, datetime.datetime):
         return dtutil.dt2ts(obj)
-    elif isinstance(obj, bytes):
+    if isinstance(obj, bytes):
         return obj.decode('utf-8')
-    elif isinstance(obj, decimal.Decimal):
+    if isinstance(obj, decimal.Decimal):
         return obj.to_eng_string()
-    elif isinstance(obj, set) or type(obj) == 'dict_keys': # pylint: disable=unidiomatic-typecheck
+    if isinstance(obj, set) or type(obj) == 'dict_keys': # pylint: disable=unidiomatic-typecheck
         return list(obj)
 
     raise TypeError('Type {t} not serializable - {obj}'.format(t=type(obj), obj=obj))

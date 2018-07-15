@@ -96,5 +96,4 @@ def get_or_insert_user(name: str) -> User:
         return local
     except MultipleResultsFound:
         query = User.query.filter_by(name=name)
-        # todo: Merge errant entry
         return query.first()

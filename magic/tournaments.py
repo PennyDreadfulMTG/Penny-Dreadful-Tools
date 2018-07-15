@@ -63,11 +63,11 @@ def prize(d: Deck) -> int:
 def prize_by_finish(f: int) -> int:
     if f == 1:
         return 4
-    elif f == 2:
+    if f == 2:
         return 3
-    elif f <= 4:
+    if f <= 4:
         return 2
-    elif f <= 8:
+    if f <= 8:
         return 1
     return 0
 

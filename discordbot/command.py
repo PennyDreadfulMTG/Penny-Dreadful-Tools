@@ -80,7 +80,7 @@ def find_method(name: str) -> Optional[Callable]:
     cmd = name.lstrip('!').lower()
     if len(cmd) == 0:
         return None
-    method = [m for m in dir(Commands) if m == cmd or m == '_' + cmd]
+    method = [m for m in dir(Commands) if m in (cmd, '_' + cmd)]
     if len(method) == 0:
         method = [m for m in dir(Commands) if m.startswith(cmd) or m.startswith('_{cmd}'.format(cmd=cmd))]
     if len(method) > 0:
@@ -104,7 +104,7 @@ def build_help(readme: bool = False, cmd: str = None) -> str:
             if not method.__doc__.startswith('`'):
                 return '`!{0}` {1}'.format(method.__name__, method.__doc__)
             return '{0}'.format(method.__doc__)
-        elif verbose:
+        if verbose:
             return '`!{0}` No Help Available'.format(method.__name__)
         return '`!{0}`'.format(method.__name__)
 

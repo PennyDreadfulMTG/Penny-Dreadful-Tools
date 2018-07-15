@@ -31,8 +31,8 @@ def parse_mtgotraders_prices(s: str) -> PriceListType:
             raise InvalidDataException('Bad line (mtgotraders): {line}'.format(line=line))
         mtgo_set, rarity, premium, name, number, p, image_path, in_stock_str = line.split('|') # pylint: disable=unused-variable
         in_stock_str = in_stock_str.replace('<br>', '')
-        assert in_stock_str == 'Yes' or in_stock_str == 'No'
-        assert p == '0.01' or p == '0.00'
+        assert in_stock_str in ('Yes', 'No')
+        assert p in ('0.01', '0.00')
         in_stock = in_stock_str == 'Yes'
         if p == '0.01' and in_stock and not is_exceptional_name(name):
             details.append((name, p, mtgo_set))

@@ -25,9 +25,6 @@ class People(View):
         if people_query.has_prev:
             self.prev_url = url_for('people', page=people_query.prev_num)
 
-    def subtitle(self):
-        return None
-
     def prepare(self):
         for p in self.people:
             key = f'logsite:people:{p.id}'

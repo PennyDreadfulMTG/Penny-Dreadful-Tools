@@ -34,9 +34,9 @@ class Card(Container):
 
 def determine_value(k: str, params: Dict[str, Any]) -> Any:
     v = params[k]
-    if k == 'names' or k == 'mana_cost':
+    if k in ('names', 'mana_cost'):
         return cast(str, v).split('|') if v is not None else None
-    elif k == 'legalities':
+    if k == 'legalities':
         v = determine_legalities(cast(str, v))
     elif k == 'bugs':
         v = determine_bugs(cast(str, v))

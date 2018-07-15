@@ -137,10 +137,10 @@ def get(key: str) -> Optional[Union[str, List[str], int, float]]:
         cfg[key] = os.environ[key]
         print('CONFIG: {0}={1}'.format(key, cfg[key]))
         return cfg[key]
-    elif key in cfg:
+    if key in cfg:
         CONFIG.update(cfg)
         return cfg[key]
-    elif key in DEFAULTS:
+    if key in DEFAULTS:
         # Lock in the default value if we use it.
         cfg[key] = DEFAULTS[key]
 

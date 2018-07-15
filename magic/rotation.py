@@ -83,7 +83,7 @@ def interesting(playability: Dict[str, float], c: Card, speculation: bool = True
     p = playability.get(c.name, 0)
     if p > 0.1:
         return 'heavily-played'
-    elif p > 0.01:
+    if p > 0.01:
         return 'moderately-played'
     return None
 

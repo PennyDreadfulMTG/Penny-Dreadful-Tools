@@ -70,19 +70,19 @@ def cards_legal_in_format(cardlist: List[Card], f: str) -> List[Card]:
 def order_score(fmt: str) -> int:
     if fmt == 'Penny Dreadful':
         return 1
-    elif 'Penny Dreadful' in fmt:
+    if 'Penny Dreadful' in fmt:
         return 1000 - rotation.SEASONS.index(fmt.replace('Penny Dreadful ', ''))
-    elif fmt == 'Vintage':
+    if fmt == 'Vintage':
         return 10000
-    elif fmt == 'Legacy':
+    if fmt == 'Legacy':
         return 100000
-    elif fmt == 'Modern':
+    if fmt == 'Modern':
         return 1000000
-    elif fmt == 'Standard':
+    if fmt == 'Standard':
         return 10000000
-    elif 'Block' in fmt:
+    if 'Block' in fmt:
         return 100000000
-    elif fmt == 'Commander':
+    if fmt == 'Commander':
         return 1000000000
     return 10000000000
 

@@ -87,7 +87,7 @@ def insert_gettext_nodes(parsed_template: pystache.parsed.ParsedTemplate) -> pys
         # We may need to iterate into Sections and Inverted nodes
     return new_template
 
-class _GettextNode(object):
+class _GettextNode():
     def __init__(self, key: str) -> None:
         self.key = key
 

@@ -30,7 +30,7 @@ def lint() -> None:
            ]
     args.extend(sys.argv[2:] or LINT_PATHS)
     import pylint.lint
-    pylint.lint.Run(args, exit=True)
+    pylint.lint.Run(args, do_exit=True)
 
 
 

@@ -90,7 +90,7 @@ def is_good_set(setname: str) -> bool:
             BLACKLIST.add(rotation.next_rotation_ex()['mtgo_code'])
     if setname in BLACKLIST:
         return False
-    elif setname in WHITELIST:
+    if setname in WHITELIST:
         return True
     return not WHITELIST
 

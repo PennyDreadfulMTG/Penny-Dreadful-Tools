@@ -40,9 +40,6 @@ class Match(View):
             importing.reimport(viewed_match)
         self.is_tournament = viewed_match.is_tournament
 
-    def subtitle(self):
-        return None
-
     def og_title(self):
         return self.players_string
 

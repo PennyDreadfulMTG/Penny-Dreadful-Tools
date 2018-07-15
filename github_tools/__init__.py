@@ -17,8 +17,6 @@ def home():
 def on_push(data):
     ref = data['ref']
     print(f'Got push on {ref}')
-    if ref == 'refs/heads/master':
-        webhooks.update_prs(data['repository']['full_name'])
     return data
 
 @WEBHOOK.hook(event_type='status')

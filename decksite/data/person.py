@@ -72,27 +72,6 @@ def set_achievements(people: List[Person], season_id: int = None) -> None:
             COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END) AS tournament_wins,
             COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END) AS league_entries,
             CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END AS completionist,
-			SUM(
-                CASE WHEN d.id IN
-                    (
-                        SELECT
-                            d.id
-                        FROM
-                            deck AS d
-                        LEFT JOIN
-                            deck_card AS dc ON dc.deck_id = d.id
-                        {competition_join}
-                        WHERE
-                            ct.name = 'League' OR ct.name = 'gatherling'
-                        GROUP BY
-                            d.id
-                        HAVING
-                            SUM(dc.n) >= 77
-                        AND
-                            SUM(dc.n) < 200
-                    )
-                THEN 1 ELSE 0 END
-            ) AS challenging_the_fundamentals,
             SUM(
                 CASE WHEN d.id IN
                     (

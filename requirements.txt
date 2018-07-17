@@ -20,7 +20,7 @@ munch==2.3.2
 mysqlclient==1.3.13
 mypy==0.600 # rq.filter: <=0.600
 mypy_extensions==0.3.0
-poeditor==1.0.5
+poeditor==1.1.0
 pygithub==1.40
 pygtrie==2.2
 pylint==2.0.0

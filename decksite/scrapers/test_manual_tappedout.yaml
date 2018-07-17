@@ -5,35 +5,75 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Cookie: [__cfduid=de75f3e78d49d15e522c9b7499bebd7941530286911]
+      Cookie: [__cfduid=dab2e5f25676a009f39866aaa21ebe0ce1531795338]
       User-Agent: [python-requests/2.19.1]
     method: GET
     uri: https://tappedout.net/mtg-decks/60-island/?fmt=printable
   response:
     body:
       string: !!binary |
-        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
+        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
+        3zmqV48gAAA=
     headers:
       Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
       Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
-      CF-RAY: [432985da2c196d6c-SJC]
+      CF-RAY: [43b964168d3c6d24-SJC]
       Cache-Control: ['public,s-maxage=10800,max-age=10800']
       Connection: [keep-alive]
       Content-Encoding: [gzip]
       Content-Language: [en]
       Content-Type: [text/html]
-      Date: ['Fri, 29 Jun 2018 15:45:54 GMT']
+      Date: ['Tue, 17 Jul 2018 02:48:41 GMT']
       Expect-CT: ['max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"']
       Last-Modified: ['Thu, 26 Jan 2017 12:35:14 GMT']
       Server: [cloudflare]
@@ -46,7 +86,7 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Cookie: [__cfduid=de75f3e78d49d15e522c9b7499bebd7941530286911]
+      Cookie: [__cfduid=dab2e5f25676a009f39866aaa21ebe0ce1531795338]
       User-Agent: [python-requests/2.19.1]
     method: GET
     uri: https://tappedout.net/mtg-decks/60-island/?fmt=txt
@@ -57,14 +97,14 @@ interactions:
     headers:
       Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
       Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
-      CF-RAY: [432985dcacfa6d6c-SJC]
+      CF-RAY: [43b96418fd996d24-SJC]
       Cache-Control: ['public,s-maxage=10800,max-age=10800']
       Connection: [keep-alive]
       Content-Disposition: [attachment;filename=60-island.txt]
       Content-Encoding: [gzip]
       Content-Language: [en]
       Content-Type: [text/plain]
-      Date: ['Fri, 29 Jun 2018 15:45:55 GMT']
+      Date: ['Tue, 17 Jul 2018 02:48:42 GMT']
       Expect-CT: ['max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"']
       Last-Modified: ['Thu, 26 Jan 2017 12:35:14 GMT']
       Server: [cloudflare]

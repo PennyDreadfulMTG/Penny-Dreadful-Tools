@@ -16,7 +16,10 @@ def process_github_webhook() -> Response:
             try:
                 subprocess.check_output(['git', 'fetch'])
                 subprocess.check_output(['git', 'reset', '--hard', 'origin/{0}'.format(current_app.config['branch'])])
-                subprocess.check_output(['pip', 'install', '-U', '--user', '-r', 'requirements.txt', '--no-cache'])
+                try:
+                    subprocess.check_output(['pip', 'install', '-U', '--user', '-r', 'requirements.txt', '--no-cache'])
+                except subprocess.CalledProcessError:
+                    pass
                 import uwsgi
                 uwsgi.reload()
                 return return_json({'rebooting': True})

@@ -18,7 +18,7 @@ def run() -> None:
     session = requests.session()
     session.headers.update({'User-Agent': 'pennydreadfulmagic.com cache renewer'})
     # It would be nice to exclude endpoints that are not cached admin urls but it's hard to determine those programatically. We make an approximation here.
-    urls = [url for url in urls if 'admin' not in url and 'api' not in url]
+    urls = [url for url in urls if 'admin' not in url and 'api' not in url and 'authenticate' not in url]
     for url in urls:
         print(url)
         session.get(url)

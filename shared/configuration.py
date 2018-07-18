@@ -194,5 +194,5 @@ def write(key: str, value: Union[str, List[str], int, float]) -> Union[str, List
 def fail(key: str, val: Any, expected_type: type) -> InvalidDataException:
     return InvalidDataException('Expected a {expected_type} for {key}, got `{val}` ({actual_type})'.format(expected_type=expected_type, key=key, val=val, actual_type=type(val)))
 
-def server_name():
+def server_name() -> str:
     return get_str('decksite_hostname') + ':{port}'.format(port=get_int('decksite_port')) if get_optional_int('decksite_port') else ''

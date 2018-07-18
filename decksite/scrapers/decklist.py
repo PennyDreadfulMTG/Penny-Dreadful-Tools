@@ -72,6 +72,8 @@ def parse_xml(s: str) -> DecklistType:
         return d
     except xml.sax.SAXException as e: # type: ignore
         raise InvalidDataException(e)
+    except AttributeError as e:
+        raise InvalidDataException(e) # Not valid MTGO .deck format
 
 # Load the cards in the intermediate dict form.
 def vivify(decklist: DecklistType) -> Deck:

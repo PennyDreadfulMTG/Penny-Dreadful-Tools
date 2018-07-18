@@ -84,8 +84,10 @@ def get_str(key: str) -> str:
         raise fail(key, val, str)
     return val
 
-def get_int(key: str) -> int:
+def get_optional_int(key: str) -> Optional[int]:
     val = get(key)
+    if val is None:
+        return None
     if isinstance(val, int):
         return val
     if isinstance(val, str):
@@ -93,6 +95,12 @@ def get_int(key: str) -> int:
         CONFIG[key] = int(val)
         return CONFIG[key]
     raise fail(key, val, int)
+
+def get_int(key: str) -> int:
+    val = get_optional_int(key)
+    if val is None:
+        raise fail(key, val, int)
+    return val
 
 def get_float(key: str) -> Optional[float]:
     val = get(key)
@@ -185,3 +193,6 @@ def write(key: str, value: Union[str, List[str], int, float]) -> Union[str, List
 
 def fail(key: str, val: Any, expected_type: type) -> InvalidDataException:
     return InvalidDataException('Expected a {expected_type} for {key}, got `{val}` ({actual_type})'.format(expected_type=expected_type, key=key, val=val, actual_type=type(val)))
+
+def server_name():
+    return get_str('decksite_hostname') + ':{port}'.format(port=get_int('decksite_port')) if get_optional_int('decksite_port') else ''

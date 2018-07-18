@@ -16,7 +16,7 @@ TEST_VCR = vcr.VCR(
 @TEST_VCR.use_cassette
 def test_tappedout() -> None:
     prev = APP.config['SERVER_NAME']
-    APP.config['SERVER_NAME'] = '127:0.0.1:5000'
+    APP.config['SERVER_NAME'] = configuration.server_name()
     with APP.app_context():
         tappedout.scrape()
     APP.config['SERVER_NAME'] = prev

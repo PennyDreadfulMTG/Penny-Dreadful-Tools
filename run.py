@@ -58,7 +58,8 @@ def task(args: List[str]) -> None:
         module = 'decksite.scrapers'
     name = args.pop()
     from decksite.main import APP
-    APP.config['SERVER_NAME'] = '127:0.0.1:5000'
+    from shared import configuration
+    APP.config['SERVER_NAME'] = configuration.server_name()
     with APP.app_context():
         from magic import oracle, multiverse
         multiverse.init()

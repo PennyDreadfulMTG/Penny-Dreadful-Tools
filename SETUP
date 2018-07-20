@@ -19,6 +19,7 @@
 
 Notes on installing Python 3.6 in Linux Mint
 
+
 These are the steps I needed to make to install Python 3.6 in a Linux Mint 17.1, where python 2.7 was the default:
 
   sudo add-apt-repository ppa:jonathonf/python-3.6

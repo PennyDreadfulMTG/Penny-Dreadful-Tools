@@ -593,7 +593,7 @@ Want to contribute? Send a Pull Request."""
             ),
             'tournament': (
                 """
-                We have {num_tournaments} free-to-enter weekly tournaments, most of which have prizes from Cardhoarder.
+                We have {num_tournaments} free-to-enter weekly tournaments that award trade credit prizes from Cardhoarder.
                 They are hosted on gatherling.com along with a lot of other player-run Magic Online events.
                 """.format(num_tournaments=num_tournaments),
                 {

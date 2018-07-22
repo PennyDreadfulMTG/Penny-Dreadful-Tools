@@ -18,7 +18,6 @@
         <h2>Achievements</h2>
         <ul class="buttons">
             {{#achievements}}
-
                 {{#tournament_organizer}}
                     <li>Tournament Organizer</li>
                 {{/tournament_organizer}}
@@ -42,6 +41,7 @@
                 {{/completionist}}
             {{/achievements}}
         </ul>
+        <p><a href="{{achievements_url}}">See all achievements</a></p>
     </section>
 {{/num_achievements}}
 {{#show_head_to_head}}

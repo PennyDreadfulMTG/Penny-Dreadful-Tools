@@ -16,7 +16,7 @@ from decksite.data import deck as ds
 from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.league import DeckCheckForm, ReportForm, RetireForm, SignUpForm
-from decksite.views import (About, AboutPdm, AddForm, Archetype, Archetypes,
+from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype, Archetypes,
                             Bugs, Card, Cards, CommunityGuidelines,
                             Competition, Competitions, Deck, DeckCheck, Decks,
                             Faqs, Home, LeagueInfo, LinkAccounts, News, People,
@@ -80,6 +80,11 @@ def person(person_id):
     played_cards = cs.played_cards_by_person(p.id, get_season_id())
     only_played_cards = []
     view = Person(p, played_cards, only_played_cards)
+    return view.page()
+
+@APP.route('/person/achievements/')
+def achievements():
+    view = Achievements(auth.mtgo_username())
     return view.page()
 
 @APP.route('/cards/')

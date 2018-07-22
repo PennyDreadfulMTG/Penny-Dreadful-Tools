@@ -92,7 +92,6 @@ def all_series_info() -> List[Container]:
             'hosts': ['back_alley_g', 'bigm'],
             'display_time': '1:30pm Eastern',
             'time': info[0][1],
-            'chat_room': '#PDS',
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
@@ -100,7 +99,6 @@ def all_series_info() -> List[Container]:
             'hosts': ['stash86', 'silasary'],
             'display_time': '4pm Japan Standard Time',
             'time': info[1][1],
-            'chat_room': '#PDS',
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
@@ -108,7 +106,6 @@ def all_series_info() -> List[Container]:
             'hosts': ['bakert99', 'littlefield', 'mrsad'],
             'display_time': '1:30pm Eastern',
             'time': info[2][1],
-            'chat_room': '#PDS',
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
@@ -116,7 +113,6 @@ def all_series_info() -> List[Container]:
             'hosts': ['stash86', 'silasary'],
             'display_time': '7pm Eastern',
             'time': info[3][1],
-            'chat_room': '#PDM',
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
@@ -124,7 +120,6 @@ def all_series_info() -> List[Container]:
             'hosts': ['silasary', 'stash86'],
             'display_time': '7pm Eastern',
             'time': info[4][1],
-            'chat_room': '#PDT',
             'sponsor_name': 'Cardhoarder'
         })
     ]

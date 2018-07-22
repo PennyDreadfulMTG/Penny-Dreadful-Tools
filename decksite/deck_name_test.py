@@ -57,6 +57,7 @@ TESTDATA = [
     ('White Jund', 'White Jund', None, None),
     ('Bant #Value', 'Bant Yisan-Prophet', ['G', 'U', 'W'], 'Yisan-Prophet'),
     ('Yore-Tiller Control', 'Yore-Tiller Control', ['W', 'U', 'B', 'R'], 'Control'),
+    ('Dimir', 'Dimir Control', ['U', 'B'], 'Control')
 
     # Cases that used to work well under strip-and-replace that no longer do
     # ('White Green', 'Selesnya Aggro', ['W', 'G'], 'Aggro'),

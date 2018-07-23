@@ -61,6 +61,8 @@ def seasons():
 @SEASONS.route('/<deck_type>/')
 @cached()
 def season(deck_type=None):
+    if deck_type not in [None, 'league']:
+        raise DoesNotExistException('Unrecognized deck_type: `{deck_type}`'.format(deck_type=deck_type))
     league_only = deck_type == 'league'
     view = Season(ds.load_season(get_season_id(), league_only), league_only)
     return view.page()

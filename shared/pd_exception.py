@@ -13,6 +13,9 @@ class InvalidDataException(PDException):
 class DatabaseException(PDException):
     pass
 
+class DatabaseMissingException(DatabaseException):
+    pass
+
 class DoesNotExistException(PDException):
     pass
 

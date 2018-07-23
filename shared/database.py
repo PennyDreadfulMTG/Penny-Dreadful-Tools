@@ -5,7 +5,7 @@ import MySQLdb
 from MySQLdb import OperationalError
 
 from shared import configuration, perf
-from shared.pd_exception import (DatabaseException, InvalidArgumentException,
+from shared.pd_exception import (DatabaseException, DatabaseMissingException, InvalidArgumentException,
                                  LockNotAcquiredException)
 
 ValidSqlArgumentDescription = Any
@@ -96,7 +96,7 @@ class Database():
             return self.values(sql, args)[0]
         except IndexError:
             if fail_on_missing:
-                raise DatabaseException('Failed to get a value from `{sql}`'.format(sql=sql))
+                raise DatabaseMissingException('Failed to get a value from `{sql}`'.format(sql=sql))
             else:
                 return default
 

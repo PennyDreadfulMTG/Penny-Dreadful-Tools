@@ -39,8 +39,6 @@ def lint() -> None:
     import pylint.lint
     pylint.lint.Run(args, do_exit=True)
 
-
-
 def mypy() -> None:
     args = [
         '--ignore-missing-imports',     # Don't complain about 3rd party libs with no stubs

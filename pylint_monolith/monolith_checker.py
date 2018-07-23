@@ -11,10 +11,11 @@ ACCEPTABLE_IMPORTS = {
     'logsite': ('logsite', 'shared', 'shared_web'),
     'magic': ('magic', 'shared'),
     'maintenance': ('decksite', 'magic', 'maintenance', 'shared', 'shared_web'),
+    'modo_bugs': ('shared'),
     'price_grabber': ('magic', 'price_grabber', 'shared'),
     'pylint_monolith': ('pylint_monolith'),
     'rotation_script': ('magic', 'price_grabber', 'rotation_script', 'shared'),
-    'shared': ('shared'),
+    'shared': (),
     'shared_web': ('shared', 'shared_web'),
 
     'dev': ('magic'),
@@ -60,6 +61,11 @@ class MonolithChecker(BaseChecker):
         basename = get_basename(imported_module.name)
         # print("{p} ({pb}) -> {i} ({c})".format(p=parent.name, pb=parent_basename, i=imported_module.name, c=import_category))
         # verify
+
+        if parent_basename == imported_module.name:
+            return
+        if imported_module.name.startswith(f'{parent_basename}.'):
+            return
 
         acceptable = ACCEPTABLE_IMPORTS.get(parent_basename, [])
         if not basename in acceptable:

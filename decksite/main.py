@@ -16,8 +16,8 @@ from decksite.data import deck as ds
 from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.league import DeckCheckForm, ReportForm, RetireForm, SignUpForm
-from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype, Archetypes,
-                            Bugs, Card, Cards, CommunityGuidelines,
+from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
+                            Archetypes, Bugs, Card, Cards, CommunityGuidelines,
                             Competition, Competitions, Deck, DeckCheck, Decks,
                             Faqs, Home, LeagueInfo, LinkAccounts, News, People,
                             Person, Report, Resources, Retire, Rotation,

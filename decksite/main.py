@@ -29,6 +29,7 @@ from magic import oracle
 from shared import perf
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
+
 @APP.route('/')
 @cached()
 def home():

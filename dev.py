@@ -1,8 +1,15 @@
 import os
 import sys
+from shared import configuration
+
 
 LINT_PATHS = [o for o in os.listdir('.') if os.path.isdir(o) and os.path.exists(os.path.join(o, '__init__.py'))]
 LINT_PATHS.extend([o for o in os.listdir('.') if os.path.isfile(o) and os.path.splitext(o)[1] == '.py'])
+
+ON_PROD = configuration.get_bool('production')
+if ON_PROD:
+    print('DO NOT RUN dev.py ON PROD')
+    sys.exit(1)
 
 def run() -> None:
     cmd = sys.argv[1].lower()

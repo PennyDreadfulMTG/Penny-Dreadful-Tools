@@ -29,7 +29,6 @@ from magic import oracle
 from shared import perf
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
-# Decks
 
 @APP.route('/')
 @cached()
@@ -61,6 +60,8 @@ def seasons():
 @SEASONS.route('/<deck_type>/')
 @cached()
 def season(deck_type=None):
+    if deck_type not in [None, 'league']:
+        raise DoesNotExistException('Unrecognized deck_type: `{deck_type}`'.format(deck_type=deck_type))
     league_only = deck_type == 'league'
     view = Season(ds.load_season(get_season_id(), league_only), league_only)
     return view.page()
@@ -302,8 +303,6 @@ def do_deck_check():
     form.validate()
     return deck_check(form)
 
-
-
 @APP.route('/report/')
 @auth.load_person
 def report(form=None):
@@ -350,8 +349,6 @@ def rotation_changes():
 def rotation_speculation():
     view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), cs.playability(), speculation=True)
     return view.page()
-
-# Infra
 
 @APP.route('/charts/cmc/<deck_id>-cmc.png')
 def cmc_chart(deck_id: int) -> Response:

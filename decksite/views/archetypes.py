@@ -49,5 +49,7 @@ class Archetypes(View):
             for mu in a.matchups:
                 mu.show_in_matchups_grid = mu.opponent_archetype.show_in_matchups_grid
 
+        self.num_archetypes = len([mu for mu in self.archetypes[0].matchups if mu.show_in_matchups_grid]) if self.archetypes else 0
+
     def page_title(self):
         return 'Archetypes'

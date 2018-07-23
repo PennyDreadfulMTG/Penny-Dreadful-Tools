@@ -119,7 +119,7 @@ main p, footer p {
     margin: 0 0 1em 0;
 }
 
-main li {
+main li, main dt, main dd {
     margin: 0 0 0.422em;
 }
 
@@ -365,7 +365,7 @@ main h1 {
     padding-top: 2rem;
 }
 
-main h2 {
+main h2, dt {
     border-top: 0.05rem solid #502828;
     font-size: 1rem;
     margin-bottom: 2rem;
@@ -464,6 +464,10 @@ ul.decklist {
 .division:after {
     content: "▪";
     padding: 0 0.563em;
+}
+
+main dl {
+    padding-bottom: 2em;
 }
 
 /*

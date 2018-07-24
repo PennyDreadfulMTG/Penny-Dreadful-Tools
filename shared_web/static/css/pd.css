@@ -119,7 +119,7 @@ main p, footer p {
     margin: 0 0 1em 0;
 }
 
-main li {
+main li, main dt, main dd {
     margin: 0 0 0.422em;
 }
 
@@ -289,6 +289,11 @@ div:after, header:after, nav:after, main:after, footer:after, section:after, .to
     width: 10rem;
 }
 
+.sponsor-logo {
+    width: 20rem;
+    max-width: 100%;
+}
+
 /*
 
 Colors
@@ -360,7 +365,7 @@ main h1 {
     padding-top: 2rem;
 }
 
-main h2 {
+main h2, dt {
     border-top: 0.05rem solid #502828;
     font-size: 1rem;
     margin-bottom: 2rem;
@@ -459,6 +464,10 @@ ul.decklist {
 .division:after {
     content: "▪";
     padding: 0 0.563em;
+}
+
+main dl {
+    padding-bottom: 2em;
 }
 
 /*
@@ -606,6 +615,19 @@ th.legend {
 .stars {
     font-size: 1.333rem; /* The stars are a bit small in our chosen font but the targets are not. */
     line-height: 0; /* Don't mess up row spacing because the star is big. */
+}
+
+/* Angled headers */
+
+th.angled {
+    height: 8em;
+    overflow: visible;
+    white-space: nowrap;
+}
+
+th.angled .inner {
+    transform: translate(1rem, 5rem) rotate(315deg);
+    width: 1em;
 }
 
 /*
@@ -1010,17 +1032,6 @@ main .banner h1 {
     line-height: 1;
     margin-left: 1rem;
     margin-top: 0.333rem;
-}
-
-/*
-
-Charts
-
-*/
-
-.sparkline {
-    vertical-align: bottom;
-    width: 10em;
 }
 
 /*

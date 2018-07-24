@@ -1,11 +1,16 @@
 from typing import Dict, List, Set, Tuple
 
+import changelogs
+import packaging.version
+import whatthepatch
 from github import Github
 from github.Commit import Commit
 from github.CommitStatus import CommitStatus
+from github.File import File
 from github.GithubException import UnknownObjectException
 from github.PullRequest import PullRequest
 from github.Repository import Repository
+from requirements.requirement import Requirement
 
 from shared import configuration, lazy, redis
 
@@ -60,19 +65,67 @@ def set_check(data: dict, status: str, message: str) -> CommitStatus:
     commit = load_commit(data)
     return commit.create_status(state=status, description=message, context=PDM_CHECK_CONTEXT)
 
+def check_for_changelogs(pr: PullRequest) -> None:
+    for change in pr.get_files():
+        if change.filename == 'requirements.txt':
+            lines = build_changelog(change)
+            for comment in pr.get_issue_comments():
+                if comment.body.startswith('# Changelogs'):
+                    # Changelog comment
+                    comment.edit(body='\n'.join(lines))
+                    break
+            else:
+                pr.create_issue_comment('\n'.join(lines))
+
+def build_changelog(change: File) -> List[str]:
+    lines = ['# Changelogs']
+    patch = whatthepatch.parse_patch(change.patch).__next__()
+    oldversions: Dict[str, str] = {}
+    newversions: Dict[str, str] = {}
+    for p in patch.changes:
+        if p[1] is None:
+            req = Requirement.parse(p[2])
+            oldversions[req.name] = req.specs[0][1]
+        elif p[0] is None:
+            req = Requirement.parse(p[2])
+            newversions[req.name] = req.specs[0][1]
+    for package in newversions:
+        old = packaging.version.parse(oldversions.get(package))
+        new = packaging.version.parse(newversions.get(package))
+        changes = changelogs.get(package)
+        logged = False
+        for version_string in changes.keys():
+            v = packaging.version.parse(version_string)
+            if old < v <= new:
+                lines.append(f'## {package} {version_string}')
+                lines.append(changes[version_string])
+                logged = True
+        if not logged:
+            lines.append(f'## {package} {new}')
+            lines.append('No release notes found.')
+    return lines
+
 def check_pr_for_mergability(pr: PullRequest) -> str:
     repo = pr.base.repo
     commit = repo.get_commit(pr.head.sha)
     checks: Dict[str, str] = {}
+    blocked = False
     for status in commit.get_statuses():
         print(status)
         if status.context == PDM_CHECK_CONTEXT:
             continue
         if checks.get(status.context) is None:
             checks[status.context] = status.state
-            if status.state != 'success':
+            if status.state != 'success' and not blocked:
                 commit.create_status(state='pending', description=f'Waiting for {status.context}', context=PDM_CHECK_CONTEXT)
-                return f'Merge blocked by {status.context}'
+                blocked = True
+                status = f'Merge blocked by {status.context}'
+
+    if blocked:
+        # We should only merge master into the PR if it's gonna do something.
+        if checks.get('continuous-integration/travis-ci/push') == 'failure' and checks.get('continuous-integration/travis-ci/pr') == 'success':
+            update_pr(pr)
+        return 'blocked'
 
     travis_pr = 'continuous-integration/travis-ci/pr'
     if travis_pr not in checks.keys():
@@ -107,18 +160,17 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
     pr.merge()
     return 'good to merge'
 
-def update_prs(repo_name: str) -> None:
-    repo = get_github().get_repo(repo_name)
-    for pull in repo.get_pulls():
-        if 'update me' in [l.name for l in pull.as_issue().labels]:
-            print(f'Checking if #{pull.number} is up to date with master.')
-            master = repo.get_branch('master')
-            base, head = get_common_tree(repo, master.commit.sha, pull.head.sha)
-            if head.issuperset(base):
-                print('Up to date')
-                continue
-            print(f'#{pull.number}: {pull.head.ref} is behind.')
-            repo.merge(pull.head.ref, 'master', f'Merge master into #{pull.number}')
+def update_pr(pull: PullRequest) -> None:
+    repo = pull.base.repo
+    if 'update me' in [l.name for l in pull.as_issue().labels]:
+        print(f'Checking if #{pull.number} is up to date with master.')
+        master = repo.get_branch('master')
+        base, head = get_common_tree(repo, master.commit.sha, pull.head.sha)
+        if head.issuperset(base):
+            print('Up to date')
+            return
+        print(f'#{pull.number}: {pull.head.ref} is behind.')
+        repo.merge(pull.head.ref, 'master', f'Merge master into #{pull.number}')
 
 
 def get_parents(repo: Repository, sha: str) -> List[str]:

@@ -3,6 +3,8 @@ import json
 import time
 from typing import Dict, List, Optional, Set
 
+from mypy_extensions import TypedDict
+
 from decksite import deck_name
 from decksite.data import query
 from decksite.data.top import Top
@@ -231,6 +233,37 @@ def set_colors(d: Deck) -> None:
 def set_legality(d: Deck) -> None:
     d.legal_formats = legality.legal_formats(d)
 
+CardsDescription = Dict[str, Dict[str, int]]
+RawDeckDescription = TypedDict('RawDeckDescription',
+                               {
+                                   'name': str, # Name of Deck
+                                   'url': str, # Source URL of Deck
+                                   'source': str, # Source name
+                                   'identifier': str, # Unique ID
+                                   'cards': CardsDescription, # Contents of Deck
+                                   'archetype': Optional[str],
+                                   'created_date': float, # Date deck was created.  If null, current time will be used.
+                                   # One of these three usernames is required:
+                                   'mtgo_username': Optional[str],
+                                   'tappedout_username': Optional[str],
+                                   'mtggoldfish_username': Optional[str],
+
+                                   # TappedOut Variables
+                                   'resource_uri': Optional[str],
+                                   'featured_card': Optional[str],
+                                   'score': Optional[int],
+                                   'thumbnail_url': Optional[str],
+                                   'small_thumbnail_url': Optional[str],
+                                   'slug': Optional[str],
+                                   'user': Optional[str], # This is mapped to tappedout_username
+
+                                   # Competition variables (League/Gatherling)
+                                   'competition_id': Optional[int],
+                                   'finish': Optional[int],
+                                   'wins': int,
+                                   'losses': int,
+                                   'draws': int,
+                               }, total=False)
 # Expects:
 #
 # {
@@ -253,7 +286,7 @@ def set_legality(d: Deck) -> None:
 # Optionally: created_date (unix timestamp, defaults to now), resource_uri, featured_card, score, thumbnail_url, small_thumbnail_url, wins, losses, draws, finish
 #
 # source + identifier must be unique for each decklist.
-def add_deck(params) -> Deck:
+def add_deck(params: RawDeckDescription) -> Deck:
     if not params.get('mtgo_username') and not params.get('tappedout_username') and not params.get('mtggoldfish_username'):
         raise InvalidDataException('Did not find a username in {params}'.format(params=params))
     person_id = get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'), params.get('mtggoldfish_username'))
@@ -269,7 +302,7 @@ def add_deck(params) -> Deck:
     archetype_id = get_archetype_id(params.get('archetype'))
     for result in ['wins', 'losses', 'draws']:
         if params.get('competition_id') and not params.get(result):
-            params[result] = 0
+            params[result] = 0 # type: ignore
     sql = """INSERT INTO deck (
         created_date,
         updated_date,
@@ -324,7 +357,7 @@ def prime_cache(d: Deck) -> None:
     db().execute('INSERT INTO deck_cache (deck_id, normalized_name, colors, colored_symbols, legal_formats) VALUES (%s, %s, %s, %s, %s)', [d.id, normalized_name, colors_s, colored_symbols_s, legal_formats_s])
     db().commit()
 
-def add_cards(deck_id: int, cards) -> None:
+def add_cards(deck_id: int, cards: CardsDescription) -> None:
     db().begin()
     deckhash = hashlib.sha1(repr(cards).encode('utf-8')).hexdigest()
     db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [deckhash, deck_id])
@@ -335,12 +368,12 @@ def add_cards(deck_id: int, cards) -> None:
         insert_deck_card(deck_id, name, n, True)
     db().commit()
 
-def get_deck_id(source_name, identifier) -> Optional[int]:
+def get_deck_id(source_name: str, identifier: str) -> Optional[int]:
     source_id = get_source_id(source_name)
     sql = 'SELECT id FROM deck WHERE source_id = %s AND identifier = %s'
     return db().value(sql, [source_id, identifier])
 
-def insert_deck_card(deck_id: int, name: str, n, in_sideboard) -> None:
+def insert_deck_card(deck_id: int, name: str, n: int, in_sideboard: bool) -> None:
     name = oracle.valid_name(name)
     sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (%s, %s, %s, %s)'
     db().execute(sql, [deck_id, name, n, in_sideboard])
@@ -360,7 +393,7 @@ def get_source_id(source: str) -> int:
         raise InvalidDataException('Unknown source: `{source}`'.format(source=source))
     return source_id
 
-def get_archetype_id(archetype: str) -> Optional[int]:
+def get_archetype_id(archetype: Optional[str]) -> Optional[int]:
     sql = 'SELECT id FROM archetype WHERE name = %s'
     return db().value(sql, [archetype])
 

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from flask import url_for
 
 from shared_web.base_view import BaseView
@@ -5,8 +7,8 @@ from shared_web.base_view import BaseView
 
 # pylint: disable=no-self-use, too-many-public-methods
 class View(BaseView):
-    def js_extra_url(self):
-        return None
+    def js_extra_url(self) -> Optional[str]:
+        pass
 
     def favicon_url(self):
         return url_for('favicon', rest='.ico')
@@ -19,5 +21,5 @@ class View(BaseView):
             return 'PDBot Logs'
         return '{subtitle} – PDBot Logs'.format(subtitle=self.subtitle())
 
-    def subtitle(self):
-        return None
+    def subtitle(self) -> Optional[str]:
+        pass

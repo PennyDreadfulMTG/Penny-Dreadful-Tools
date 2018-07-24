@@ -17,8 +17,6 @@ def home():
 def on_push(data):
     ref = data['ref']
     print(f'Got push on {ref}')
-    if ref == 'refs/heads/master':
-        webhooks.update_prs(data['repository']['full_name'])
     return data
 
 @WEBHOOK.hook(event_type='status')
@@ -47,11 +45,13 @@ def on_pull_request(data):
     print([org, repo, pr_number])
     if data['action'] == 'synchronize' or data['action'] == 'opened':
         webhooks.set_check(data, 'pending', 'Waiting for tests')
+        pr = webhooks.load_pr(data)
+        webhooks.check_for_changelogs(pr)
     if data['action'] == 'labeled' or data['action'] == 'unlabeled':
         pr = webhooks.load_pr(data)
         if pr.state == 'open':
             return webhooks.check_pr_for_mergability(pr)
-        elif pr.state == 'closed' and 'Overdue-on-GH' in [l.name for l in pr.as_issue().labels]:
+        if pr.state == 'closed' and 'Overdue-on-GH' in [l.name for l in pr.as_issue().labels]:
             # We can't actually reboot when `master` is pushed like the other sites.
             # So this is a lovely hack to reboot ourselves when we absolutely need to.
             try:

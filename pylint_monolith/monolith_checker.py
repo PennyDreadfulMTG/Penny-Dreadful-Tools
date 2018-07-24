@@ -19,7 +19,7 @@ ACCEPTABLE_IMPORTS = {
 
     'dev': ('magic'),
     'generate_readme': ('discordbot'),
-    'run': ('discordbot', 'decksite', 'price_grabber', 'rotation_script', 'magic'),
+    'run': ('discordbot', 'decksite', 'price_grabber', 'rotation_script', 'magic', 'shared'),
 }
 
 class MonolithChecker(BaseChecker):

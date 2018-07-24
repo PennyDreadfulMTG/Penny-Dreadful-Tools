@@ -21,7 +21,7 @@ class BaseView:
         return template.render_name('page', self)
 
     def prepare(self) -> None:
-        return
+        pass
 
     def commit_id(self, path: str = None) -> str:
         if not path:

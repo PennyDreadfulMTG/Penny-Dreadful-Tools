@@ -25,7 +25,7 @@ def create_issue(content: str,
         title = content
     body += 'Reported on {location} by {author}'.format(location=location, author=author)
     if request:
-        body += textwrap.dedent("""
+        body += textwrap.dedent("""```
             --------------------------------------------------------------------------------
             Request Method: {method}
             Path: {full_path}
@@ -37,12 +37,19 @@ def create_issue(content: str,
             Request Data: {safe_data}
         """.format(method=request.method, full_path=request.full_path, cookies=request.cookies, endpoint=request.endpoint, view_args=request.view_args, id=session.get('id', 'logged_out'), referrer=request.referrer, safe_data=str(safe_data(request.form))))
         body += '\n'.join(['{k}: {v}'.format(k=k, v=v) for k, v in request.headers])
+        body += '\n```\n'
+        ua = request.headers.get('User-Agent')
+        if ua == 'pennydreadfulmagic.com cache renewer':
+            labels.append(ua)
+        elif 'YandexBot' in ua or 'Googlebot' in ua:
+            labels.append('Search Engine')
+
     if exception:
         body += '--------------------------------------------------------------------------------\n'
         body += exception.__class__.__name__ + '\n'
         stack = traceback.extract_stack()[:-3] + traceback.extract_tb(exception.__traceback__)
         pretty = traceback.format_list(stack)
-        body += 'Stack Trace:\n' + ''.join(pretty) + '\n'
+        body += 'Stack Trace:\n```\n' + ''.join(pretty) + '\n```\n'
     print(title + '\n' + body, file=sys.stderr)
     # Only check for github details at the last second to get log output even if github not configured.
     if not configuration.get('github_user') or not configuration.get('github_password'):

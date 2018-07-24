@@ -1,3 +1,4 @@
+import ast
 import inspect
 import json
 import os
@@ -46,6 +47,7 @@ DEFAULTS = {
     'redis_host': 'localhost',
     'redis_port': 6379,
     'redis_db': 0,
+    'save_historic_legal_lists': False,
     'scratch_dir': '.',
     'slow_fetch': 10.0,
     'slow_page': 10.0,
@@ -82,8 +84,10 @@ def get_str(key: str) -> str:
         raise fail(key, val, str)
     return val
 
-def get_int(key: str) -> int:
+def get_optional_int(key: str) -> Optional[int]:
     val = get(key)
+    if val is None:
+        return None
     if isinstance(val, int):
         return val
     if isinstance(val, str):
@@ -91,6 +95,12 @@ def get_int(key: str) -> int:
         CONFIG[key] = int(val)
         return CONFIG[key]
     raise fail(key, val, int)
+
+def get_int(key: str) -> int:
+    val = get_optional_int(key)
+    if val is None:
+        raise fail(key, val, int)
+    return val
 
 def get_float(key: str) -> Optional[float]:
     val = get(key)
@@ -116,6 +126,12 @@ def get_bool(key: str) -> bool:
         raise fail(key, val, bool)
     if isinstance(val, bool):
         return val
+    if isinstance(val, str):
+        # required so that we can pass bool-values in environment variables
+        val2 = ast.literal_eval(val)
+        if isinstance(val2, bool):
+            CONFIG[key] = val2
+            return CONFIG[key]
     raise fail(key, val, bool)
 
 def get(key: str) -> Optional[Union[str, List[str], int, float]]:
@@ -129,10 +145,10 @@ def get(key: str) -> Optional[Union[str, List[str], int, float]]:
         cfg[key] = os.environ[key]
         print('CONFIG: {0}={1}'.format(key, cfg[key]))
         return cfg[key]
-    elif key in cfg:
+    if key in cfg:
         CONFIG.update(cfg)
         return cfg[key]
-    elif key in DEFAULTS:
+    if key in DEFAULTS:
         # Lock in the default value if we use it.
         cfg[key] = DEFAULTS[key]
 
@@ -177,3 +193,6 @@ def write(key: str, value: Union[str, List[str], int, float]) -> Union[str, List
 
 def fail(key: str, val: Any, expected_type: type) -> InvalidDataException:
     return InvalidDataException('Expected a {expected_type} for {key}, got `{val}` ({actual_type})'.format(expected_type=expected_type, key=key, val=val, actual_type=type(val)))
+
+def server_name() -> str:
+    return get_str('decksite_hostname') + ':{port}'.format(port=get_int('decksite_port')) if get_optional_int('decksite_port') else ''

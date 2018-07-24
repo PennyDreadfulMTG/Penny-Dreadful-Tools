@@ -24,7 +24,8 @@ SetInfoType = TypedDict('SetInfoType', {
 SEASONS = [
     'EMN', 'KLD', # 2016
     'AER', 'AKH', 'HOU', 'XLN', # 2017
-    'RIX', 'DOM', 'M19', #2018
+    'RIX', 'DOM', 'M19', 'GRN', #2018
+    'RNA', # 2019
     ]
 
 def init() -> List[SetInfoType]:
@@ -82,7 +83,7 @@ def interesting(playability: Dict[str, float], c: Card, speculation: bool = True
     p = playability.get(c.name, 0)
     if p > 0.1:
         return 'heavily-played'
-    elif p > 0.01:
+    if p > 0.01:
         return 'moderately-played'
     return None
 

@@ -1,0 +1,37 @@
+<section>
+    <h2>Matchups</h2>
+    <table>
+        <thead>
+            <tr>
+                <td></td>
+                <td colspan="{{num_archetypes}}">Opponent</td>
+            </tr>
+            <tr>
+                <td></td>
+                {{#roots}}
+                    {{#archetype_tree}}
+                        {{#show_in_matchups_grid}}
+                            <th class="angled"><div class="inner">{{name}}</div></th>
+                        {{/show_in_matchups_grid}}
+                    {{/archetype_tree}}
+                {{/roots}}
+            </tr>
+        </thead>
+        <tbody>
+            {{#roots}}
+                {{#archetype_tree}}
+                    {{#show_in_matchups_grid}}
+                        <tr>
+                            <th>{{name}}</th>
+                            {{#matchups}}
+                                {{#show_in_matchups_grid}}
+                                    <td {{#color_cell}}style="background: hsl({{hue}}, {{saturation}}%, {{lightness}}%)"{{/color_cell}} class="n" {{#has_data}}title="{{archetype_name}} {{all_wins}}–{{all_losses}}{{#draws}}–{{draws}}{{/draws}} {{name}}{{/has_data}}">{{#has_data}}{{all_wins}}–{{all_losses}}{{#draws}}–{{draws}}{{/draws}}{{/has_data}}</td>
+                                {{/show_in_matchups_grid}}
+                            {{/matchups}}
+                        </tr>
+                    {{/show_in_matchups_grid}}
+                {{/archetype_tree}}
+            {{/roots}}
+        </tbody>
+    </table>
+</section>

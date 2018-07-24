@@ -27,16 +27,16 @@ class Card(Container):
     def __hash__(self) -> int:
         return hash(self.name)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(self, other.__class__):
             return self.name == other.name
         return False
 
 def determine_value(k: str, params: Dict[str, Any]) -> Any:
     v = params[k]
-    if k == 'names' or k == 'mana_cost':
+    if k in ('names', 'mana_cost'):
         return cast(str, v).split('|') if v is not None else None
-    elif k == 'legalities':
+    if k == 'legalities':
         v = determine_legalities(cast(str, v))
     elif k == 'bugs':
         v = determine_bugs(cast(str, v))
@@ -58,8 +58,9 @@ def determine_bugs(s: str) -> Optional[List[Dict[str, object]]]:
     bugs = s.split('_SEPARATOR_')
     v = []
     for b in bugs:
-        description, classification, last_confirmed, url, from_bug_blog, bannable = b.split('|')
+        description, classification, last_confirmed, url, from_bug_blog, bannable_str = b.split('|')
         bb = from_bug_blog == '1'
+        bannable = bannable_str == '1'
         bug = {'description': description, 'classification': classification, 'last_confirmed': dtutil.ts2dt(int(last_confirmed)), 'url': url, 'from_bug_blog': bb, 'bannable': bannable}
         v.append(bug)
     if v:

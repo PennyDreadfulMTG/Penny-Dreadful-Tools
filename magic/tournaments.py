@@ -63,11 +63,11 @@ def prize(d: Deck) -> int:
 def prize_by_finish(f: int) -> int:
     if f == 1:
         return 4
-    elif f == 2:
+    if f == 2:
         return 3
-    elif f <= 4:
+    if f <= 4:
         return 2
-    elif f <= 8:
+    if f <= 8:
         return 1
     return 0
 
@@ -92,7 +92,6 @@ def all_series_info() -> List[Container]:
             'hosts': ['back_alley_g', 'bigm'],
             'display_time': '1:30pm Eastern',
             'time': info[0][1],
-            'chat_room': '#PDS',
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
@@ -100,7 +99,6 @@ def all_series_info() -> List[Container]:
             'hosts': ['stash86', 'silasary'],
             'display_time': '4pm Japan Standard Time',
             'time': info[1][1],
-            'chat_room': '#PDS',
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
@@ -108,7 +106,6 @@ def all_series_info() -> List[Container]:
             'hosts': ['bakert99', 'littlefield', 'mrsad'],
             'display_time': '1:30pm Eastern',
             'time': info[2][1],
-            'chat_room': '#PDS',
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
@@ -116,7 +113,6 @@ def all_series_info() -> List[Container]:
             'hosts': ['stash86', 'silasary'],
             'display_time': '7pm Eastern',
             'time': info[3][1],
-            'chat_room': '#PDM',
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
@@ -124,7 +120,6 @@ def all_series_info() -> List[Container]:
             'hosts': ['silasary', 'stash86'],
             'display_time': '7pm Eastern',
             'time': info[4][1],
-            'chat_room': '#PDT',
             'sponsor_name': 'Cardhoarder'
         })
     ]

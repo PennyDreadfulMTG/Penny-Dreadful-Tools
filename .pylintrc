@@ -77,7 +77,7 @@ disable=long-builtin,backtick,old-raise-syntax,unichr-builtin,old-octal-literal,
         file-builtin,coerce-method,next-method-called,oct-method,range-builtin-not-iterating,
         parameter-unpacking,missing-docstring,too-few-public-methods,too-many-return-statements,
         too-many-branches,too-many-statements,locally-disabled,invalid-sequence-index,len-as-condition,
-        wrong-import-order,line-too-long,ungrouped-imports
+        wrong-import-order,line-too-long,ungrouped-imports,wrong-import-position,
 
 
 [REPORTS]
@@ -86,12 +86,6 @@ disable=long-builtin,backtick,old-raise-syntax,unichr-builtin,old-octal-literal,
 # (visual studio) and html. You can also give a reporter class, eg
 # mypackage.mymodule.MyReporterClass.
 output-format=text
-
-# Put messages in a separate file for each module / package specified on the
-# command line instead of printing them on stdout. Reports (if any) will be
-# written in a file name "pylint_global.[txt|html]". This option is deprecated
-# and it will be removed in Pylint 2.0.
-files-output=no
 
 # Tells whether to display a full report or only the messages
 reports=yes
@@ -152,10 +146,10 @@ inlinevar-rgx=[A-Za-z_][A-Za-z0-9_]*$
 inlinevar-name-hint=[A-Za-z_][A-Za-z0-9_]*$
 
 # Regular expression matching correct class names
-class-rgx=[A-Z_][a-zA-Z0-9]+$
+class-rgx=([A-Z_][a-zA-Z0-9]+$|T)
 
 # Naming hint for class names
-class-name-hint=[A-Z_][a-zA-Z0-9]+$
+class-name-hint=([A-Z_][a-zA-Z0-9]+$|T)
 
 # Regular expression matching correct argument names
 argument-rgx=[a-z_][a-z0-9_]{0,30}$

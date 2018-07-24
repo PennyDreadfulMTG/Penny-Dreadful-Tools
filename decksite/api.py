@@ -18,6 +18,10 @@ def deck_api(deck_id):
     blob = deck.load_deck(deck_id)
     return return_json(blob)
 
+@APP.route('/api/competitions/')
+def competitions_api():
+    return return_json(comp.load_competitions())
+
 @APP.route('/api/competitions/<competition_id>/')
 def competition_api(competition_id):
     return return_json(comp.load_competition(competition_id))
@@ -119,6 +123,7 @@ def person_status():
         'discord_id': auth.discord_id(),
         'admin': session.get('admin', False),
         'hide_intro': request.cookies.get('hide_intro', False) or auth.hide_intro(),
+        'in_guild': session.get('in_guild', False),
         }
     if auth.mtgo_username():
         d = guarantee_at_most_one_or_retire(league.active_decks_by(auth.mtgo_username()))

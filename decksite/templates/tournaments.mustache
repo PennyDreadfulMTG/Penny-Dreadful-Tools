@@ -21,7 +21,7 @@
                         <td>
                             <p>{{name}}</p>
                             <time datetime="{{time}}" data-format="dddd LT z">{{display_time}}</time>
-                            <p><a href="https://gatherling.com/player.php">Sign Up</a></p>
+                            <p><a href="https://gatherling.com/player.php">{{_ Sign Up}}</a></p>
                         </td>
                         {{#league}}
                             <td class="league {{class}}">
@@ -35,25 +35,25 @@
                 {{/tournaments}}
             </tbody>
         </table>
-        <p>There are {{num_tournaments}} weekly Penny Dreadful tournaments, and hosted on <a class="external" href="https://gatherling.com/">gatherling.com</a>. They are all free to enter and offer prizes from <a class="external" href="https://www.cardhoarder.com/">Cardhoarder</a>. Be sure to also check out the <a href="/league/">league</a> for a play-when-you-like competition.</p>
-        <p>Each tournament series has a <a href="{{leaderboards_url}}">leaderboard</a> for the season with prizes for Top 8 finishers.</p>
+        <p>{{_ There are {num_tournaments} weekly Penny Dreadful tournaments hosted on [Gatherling.com](https://gatherling.com). They are all free to enter and some offer prizes from [Cardhoarder](https://www.cardhoarder.com/). Be sure to also check out the [league](/league/) for a play-when-you-like competition.}}</p>
+        <p>{{_ Each tournament series has a [vanity leaderboard]({leaderboards_url}).}}</p>
     </section>
     <section>
-        <h2>Joining a Tournament</h2>
+        <h2>{{_ Joining a Tournament}}</h2>
         <ul>
-            <li><a class="external" href="https://gatherling.com/register.php">Register</a></li>
-            <li><a class="external" href="https://gatherling.com/login.php">Sign In</a></li>
-            <li><a class="external" href="https://gatherling.com/player.php">Sign Up</a> under "Preregister for Events"</li>
-            <li><a class="external" class="external" href="https://discord.gg/KK866Pe">Join #tournament-room</a> on Discord</li>
-            <li>Wait for announcements from the Tournament Organizer</li>
-            <li>Matches will be played in the Getting Serious room</li>
+            <li><a class="external" href="https://gatherling.com/register.php">{{_ Register}}</a></li>
+            <li><a class="external" href="https://gatherling.com/login.php">{{_ Sign In}}</a></li>
+            <li>{{_ [Sign Up](https://gatherling.com/player.php) under "Preregister for Events"}}</li>
+            <li>{{_ [Join #tournament-room](https://discord.gg/KK866Pe) on Discord}}</li>
+            <li>{{_ Wait for announcements from the Tournament Organizer}}</li>
+            <li>{{_ Matches will be played in the Getting Serious room}}</li>
         </ul>
     </section>
     <section>
         {{> tournamentrounds}}
     </section>
     <section>
-        <h2>Prizes</h2>
+        <h2>{{_ Prizes}}</h2>
         {{> spinner}}
         <table>
             <thead>
@@ -101,16 +101,16 @@
 
         <p>For all these matters the Tournament Organizer has the flexibility to rule as they see fit and their decision is final.</p>
 
-        <p><a href="{{bugs_url}}">List of all known bugged cards</a></p>
+        <p><a href="{{bugs_url}}">{{_ List of all known bugged cards}}</a></p>
     </section>
     <section>
-        <h2>Other Notes</h2>
-        <p>If a player starts a sideboarded game with less than 60 cards (quite possible due to a known Magic Online bug) and either player notices before the end of turn 2 and either player wants to restart the game, the game will be restarted. The result of any game played beyond turn 2 with less than 60 cards in maindeck will stand.</p>
-        <p>Matches should use 25 minute timers.</p>
-        <p>A player may not play games under more than one account in a Penny Dreadful tournament.</p>
-        <p>Please do not double queue Penny Dreadful tournaments with other tournaments nor double queue in the league.</p>
-        <p>Only players completing the tournament will be awarded prizes.</p>
-        <p>Because of a <a href="https://github.com/PennyDreadfulMTG/modo-bugs/issues/308">bug</a> removing all stops is not allowed.</p>
-        <p>You may only enter a given tournament once (either on the same account or multiple accounts).</p>
+        <h2>{{_ Other Notes}}</h2>
+        <p>{{_ If a player starts a sideboarded game with less than 60 cards (quite possible due to a known Magic Online bug) and either player notices before the end of turn 2 and either player wants to restart the game, the game will be restarted. The result of any game played beyond turn 2 with less than 60 cards in maindeck will stand.}}</p>
+        <p>{{_ Matches should use 25 minute timers.}}</p>
+        <p>{{_ A player may not play games under more than one account in a Penny Dreadful tournament.}}</p>
+        <p>{{_ Please do not double queue Penny Dreadful tournaments with other tournaments nor double queue in the league.}}</p>
+        <p>{{_ Only players completing the tournament will be awarded prizes.}}</p>
+        <p>{{_ Because of a [bug](https://github.com/PennyDreadfulMTG/modo-bugs/issues/308) removing all stops is not allowed.}}</p>
+        <p>{{_ You may only enter a given tournament once (either on the same account or multiple accounts).}}</p>
     </section>
 </article>

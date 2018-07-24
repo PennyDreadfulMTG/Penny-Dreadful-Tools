@@ -140,12 +140,11 @@ def display_round(m: Container) -> str:
         return m.round
     if int(m.elimination) == 8:
         return 'QF'
-    elif int(m.elimination) == 4:
+    if int(m.elimination) == 4:
         return 'SF'
-    elif int(m.elimination) == 2:
+    if int(m.elimination) == 2:
         return 'F'
-    else:
-        raise InvalidDataException('Do not recognize round in {m}'.format(m=m))
+    raise InvalidDataException('Do not recognize round in {m}'.format(m=m))
 
 class DeckEmbed(Deck):
     pass

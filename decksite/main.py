@@ -16,8 +16,8 @@ from decksite.data import deck as ds
 from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.league import DeckCheckForm, ReportForm, RetireForm, SignUpForm
-from decksite.views import (About, AboutPdm, AddForm, Archetype, Archetypes,
-                            Bugs, Card, Cards, CommunityGuidelines,
+from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
+                            Archetypes, Bugs, Card, Cards, CommunityGuidelines,
                             Competition, Competitions, Deck, DeckCheck, Decks,
                             Faqs, Home, LeagueInfo, LinkAccounts, News, People,
                             Person, Report, Resources, Retire, Rotation,
@@ -29,7 +29,6 @@ from magic import oracle
 from shared import perf
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
-# Decks
 
 @APP.route('/')
 @cached()
@@ -61,6 +60,8 @@ def seasons():
 @SEASONS.route('/<deck_type>/')
 @cached()
 def season(deck_type=None):
+    if deck_type not in [None, 'league']:
+        raise DoesNotExistException('Unrecognized deck_type: `{deck_type}`'.format(deck_type=deck_type))
     league_only = deck_type == 'league'
     view = Season(ds.load_season(get_season_id(), league_only), league_only)
     return view.page()
@@ -80,6 +81,11 @@ def person(person_id):
     played_cards = cs.played_cards_by_person(p.id, get_season_id())
     only_played_cards = []
     view = Person(p, played_cards, only_played_cards)
+    return view.page()
+
+@APP.route('/person/achievements/')
+def achievements():
+    view = Achievements(auth.mtgo_username())
     return view.page()
 
 @APP.route('/cards/')
@@ -117,7 +123,10 @@ def competition(competition_id):
 @SEASONS.route('/archetypes/')
 @cached()
 def archetypes():
-    view = Archetypes(archs.load_archetypes_deckless(season_id=get_season_id()))
+    season_id = get_season_id()
+    deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id)
+    all_matchups = archs.load_all_matchups(season_id=season_id)
+    view = Archetypes(deckless_archetypes, all_matchups)
     return view.page()
 
 @APP.route('/archetypes/<archetype_id>/')
@@ -294,8 +303,6 @@ def do_deck_check():
     form.validate()
     return deck_check(form)
 
-
-
 @APP.route('/report/')
 @auth.load_person
 def report(form=None):
@@ -343,15 +350,9 @@ def rotation_speculation():
     view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), cs.playability(), speculation=True)
     return view.page()
 
-# Infra
-
 @APP.route('/charts/cmc/<deck_id>-cmc.png')
 def cmc_chart(deck_id: int) -> Response:
     return send_file(chart.cmc(int(deck_id)))
-
-@APP.route('/charts/archetypes/<competition_id>-archetypes-sparkline.png')
-def archetype_sparkline_chart(competition_id: int) -> Response:
-    return send_file(chart.archetypes_sparkline(int(competition_id)))
 
 @APP.route('/discord')
 def discord() -> Response:

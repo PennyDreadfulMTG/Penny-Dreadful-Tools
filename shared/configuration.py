@@ -32,6 +32,7 @@ DEFAULTS = {
     'legality_dir': '~/legality/Legality Checker/',
     'logsite_database': 'pdlogs',
     'magic_database': 'cards',
+    'modo_bugs_dir': 'modo_bugs_repo',
     'mtgotraders_url': None,
     'mysql_host': 'localhost',
     'mysql_passwd': '',
@@ -43,6 +44,7 @@ DEFAULTS = {
     'oauth2_client_secret': '',
     'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32)),
     'prices_database': 'prices',
+    'production': False, # Block some of the more dangerous things from running if this is true
     'redis_enabled': True,
     'redis_host': 'localhost',
     'redis_port': 6379,

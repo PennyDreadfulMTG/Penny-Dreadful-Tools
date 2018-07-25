@@ -32,6 +32,7 @@ DEFAULTS = {
     'legality_dir': '~/legality/Legality Checker/',
     'logsite_database': 'pdlogs',
     'magic_database': 'cards',
+    'modo_bugs_dir': 'modo_bugs_repo',
     'mtgotraders_url': None,
     'mysql_host': 'localhost',
     'mysql_passwd': '',

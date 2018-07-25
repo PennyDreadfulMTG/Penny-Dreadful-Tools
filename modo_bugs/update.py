@@ -123,9 +123,8 @@ def process_issue(issue: Issue) -> None:
         else:
             cat = 'Unconfirmed'
             if not issue.comments:
-                print('Issue #{id} was reported {days} ago via Discord, and has had no followup.'.format(id=issue.number, days=age))
-                if age > 14:
-                    return
+                print('Issue #{id} was reported {days} ago, and has had no followup.'.format(id=issue.number, days=age))
+                if age > 30:
                     issue.create_comment('Closing due to lack of followup.')
                     issue.edit(state='closed')
                     return

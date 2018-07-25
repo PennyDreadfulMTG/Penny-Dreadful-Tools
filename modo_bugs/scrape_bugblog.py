@@ -190,7 +190,7 @@ def find_issue_by_code(code: str) -> Issue:
                 # Only bug blog issues have bug blog data
                 repo.set_issue_bbt(issue.number, None)
                 continue
-            icode = repo.ISSUE_CODES.get(issue.number, None)
+            icode = repo.get_issue_bbt(issue)
             if icode == code:
                 return issue
             if icode is not None:

@@ -21,8 +21,6 @@ SESSION.mount(
     'http://whatsinstandard.com',
     CacheControlAdapter(heuristic=ExpiresAfter(days=14)))
 
-AIOSESSION = aiohttp.ClientSession()
-
 def unzip(url: str, path: str) -> str:
     location = '{scratch_dir}/zip'.format(scratch_dir=configuration.get('scratch_dir'))
     def remove_readonly(func, path, _):
@@ -56,7 +54,7 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
 async def fetch_async(url: str) -> str:
     print(f'Async fetching {url}')
     try:
-        response = await AIOSESSION.get(url)
+        response = await aiohttp.ClientSession().get(url)
         return await response.text()
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
         raise FetchException(e)

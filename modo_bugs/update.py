@@ -4,7 +4,7 @@ import json
 import re
 import sys
 import urllib.parse
-from typing import Dict, List
+from typing import Dict, List, Match, Optional
 
 import requests
 from github.Issue import Issue
@@ -135,7 +135,7 @@ def process_issue(issue: Issue) -> None:
 
         ALL_BUGS.append(bug)
 
-def update_issue_body(issue: Issue, cards: List[str], see_also: List[str]) -> None:
+def update_issue_body(issue: Issue, cards: List[str], see_also: Optional[Match]) -> None:
     expected = '<!-- Images --> '
     images = re.search(IMAGES_REGEX, issue.body, re.MULTILINE)
     for row in strings.grouper(4, cards):

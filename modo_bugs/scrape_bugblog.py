@@ -1,6 +1,6 @@
 import re
 import sys
-from typing import List, Optional, Tuple
+from typing import List, Match, Optional, Tuple
 
 import requests
 from bs4 import BeautifulSoup, Comment
@@ -130,7 +130,7 @@ def parse_knownbugs(b: Tag) -> None:
         # This is very expensive.
         check_for_missing_bugs(b)
 
-def check_if_removed_from_bugblog(bbt: re.Match, b: Tag, issue: Issue) -> None:
+def check_if_removed_from_bugblog(bbt: Match, b: Tag, issue: Issue) -> None:
     if bbt is not None:
         text = remove_smartquotes(bbt.group(1).strip())
         for row in b.find_all('tr'):

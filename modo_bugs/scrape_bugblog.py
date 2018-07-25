@@ -124,39 +124,44 @@ def parse_knownbugs(b: Tag) -> None:
 
         if 'From Bug Blog' in [i.name for i in issue.labels]:
             # Don't check for Bug Blog Text if it's not marked as a BB issue (Maybe because it was reopened)
-            if bbt is not None:
-                text = remove_smartquotes(bbt.group(1).strip())
-                for row in b.find_all('tr'):
-                    data = row.find_all('td')
-                    rowtext = remove_smartquotes(data[1].text.strip())
-                    if rowtext == text:
-                        break
-                    elif strip_squarebrackets(rowtext) == strip_squarebrackets(text):
-                        # Fix this
-                        print("Issue #{id}'s bug blog text has differing autocard notation.".format(id=issue.number))
-                        body = re.sub(BBT_REGEX, 'Bug Blog Text: {0}'.format(rowtext), issue.body, flags=re.MULTILINE)
-                        if issue.body != body:
-                            issue.edit(body=body)
-                            print('Updated to `{0}`'.format(rowtext))
-                        break
-                else:
-                    print('{id} is fixed!'.format(id=issue.number))
-                    repo.create_comment(issue, 'This bug has been removed from the bug blog!')
-                    issue.edit(state='closed')
+            check_if_removed_from_bugblog(bbt, b, issue)
 
     if 'check-missing' in sys.argv:
         # This is very expensive.
+        check_for_missing_bugs(b)
+
+def check_if_removed_from_bugblog(bbt: re.Match, b: Tag, issue: Issue) -> None:
+    if bbt is not None:
+        text = remove_smartquotes(bbt.group(1).strip())
         for row in b.find_all('tr'):
             data = row.find_all('td')
-            row_text = data[1].text.strip()
-            if row_text == 'Description':
-                # BS4 is bad.
-                continue
-            if find_issue_by_code(row_text):
-                continue
-            print('Could not find issue for `{row}`'.format(row=row_text))
-            text = 'From Bug Blog.\nBug Blog Text: {0}'.format(row_text)
-            repo.get_repo().create_issue(remove_smartquotes(row_text), body=remove_smartquotes(text), labels=['From Bug Blog'])
+            rowtext = remove_smartquotes(data[1].text.strip())
+            if rowtext == text:
+                break
+            elif strip_squarebrackets(rowtext) == strip_squarebrackets(text):
+                # Fix this
+                print("Issue #{id}'s bug blog text has differing autocard notation.".format(id=issue.number))
+                body = re.sub(BBT_REGEX, 'Bug Blog Text: {0}'.format(rowtext), issue.body, flags=re.MULTILINE)
+                issue.edit(body=body)
+                print('Updated to `{0}`'.format(rowtext))
+                break
+        else:
+            print('{id} is fixed!'.format(id=issue.number))
+            repo.create_comment(issue, 'This bug has been removed from the bug blog!')
+            issue.edit(state='closed')
+
+def check_for_missing_bugs(b: Tag) -> None:
+    for row in b.find_all('tr'):
+        data = row.find_all('td')
+        row_text = data[1].text.strip()
+        if row_text == 'Description':
+            # BS4 is bad.
+            continue
+        if find_issue_by_code(row_text):
+            continue
+        print('Could not find issue for `{row}`'.format(row=row_text))
+        text = 'From Bug Blog.\nBug Blog Text: {0}'.format(row_text)
+        repo.get_repo().create_issue(remove_smartquotes(row_text), body=remove_smartquotes(text), labels=['From Bug Blog'])
 
 
 def find_bbt_in_issue_title(issue: Issue, known_issues: Tag) -> None:

@@ -67,44 +67,12 @@ def process_issue(issue: Issue) -> None:
         fix_user_errors(issue)
         apply_screenshot_labels(issue)
     labels = [c.name for c in issue.labels]
-    affects = re.search(AFFECTS_REGEX, issue.body, re.MULTILINE)
     see_also = re.search(SEEALSO_REGEX, issue.body, re.MULTILINE)
-    if affects is None:
-        affects_str = issue.title
-    else:
-        affects_str = affects.group(1)
-
-    cards = re.findall(REGEX_CARDREF, affects_str)
-    cards = [c for c in cards]
-
-    fail = False
-    for c in cards:
-        if '//' in c:
-            pass
-        elif not c in CARDNAMES:
-            fail = True
-    if fail and not 'Invalid Card Name' in labels:
-        issue.add_to_labels('Invalid Card Name')
-    elif not fail and 'Invalid Card Name' in labels:
-        issue.remove_from_labels('Invalid Card Name')
-
-    expected = '<!-- Images --> '
-    images = re.search(IMAGES_REGEX, issue.body, re.MULTILINE)
-    for row in strings.grouper(4, cards):
-        expected = expected + '<img src="http://magic.bluebones.net/proxies/index2.php?c={0}" height="300px">'.format('|'.join([urllib.parse.quote(c) for c in row if c is not None]))
-    if see_also is not None:
-        for row in strings.grouper(5, re.findall(REGEX_CARDREF, see_also.group(1))):
-            expected = expected + '<img src="http://magic.bluebones.net/proxies/index2.php?c={0}" height="250px">'.format('|'.join([urllib.parse.quote(c) for c in row if c is not None]))
+    cards = get_affects(issue)
 
     if age < 5:
-        if not images:
-            print('Adding Images...')
-            body = issue.body + '\n' + expected
-            issue.edit(body=body)
-        elif images.group(0) != expected:
-            print('Updating images...')
-            body = issue.body.replace(images.group(0), expected)
-            issue.edit(body=body)
+        check_for_invalid_card_names(issue, cards)
+        update_issue_body(issue, cards, see_also)
 
     pd_legal = ([True for c in cards if c in LEGAL_CARDS] or [False])[0]
 
@@ -114,8 +82,6 @@ def process_issue(issue: Issue) -> None:
         issue.remove_from_labels('Affects PD')
 
     msg = issue.title
-    #while msg.startswith('['):
-    #    msg = msg[msg.find(']')+1:].strip()
 
     categories = [c for c in labels if c in CATEGORIES]
     if not categories:
@@ -168,6 +134,48 @@ def process_issue(issue: Issue) -> None:
             bug['help_wanted'] = True
 
         ALL_BUGS.append(bug)
+
+def update_issue_body(issue: Issue, cards: List[str], see_also: List[str]) -> None:
+    expected = '<!-- Images --> '
+    images = re.search(IMAGES_REGEX, issue.body, re.MULTILINE)
+    for row in strings.grouper(4, cards):
+        expected = expected + '<img src="http://magic.bluebones.net/proxies/index2.php?c={0}" height="300px">'.format('|'.join([urllib.parse.quote(c) for c in row if c is not None]))
+    if see_also is not None:
+        for row in strings.grouper(5, re.findall(REGEX_CARDREF, see_also.group(1))):
+            expected = expected + '<img src="http://magic.bluebones.net/proxies/index2.php?c={0}" height="250px">'.format('|'.join([urllib.parse.quote(c) for c in row if c is not None]))
+
+    if not images:
+        print('Adding Images...')
+        body = issue.body + '\n' + expected
+        issue.edit(body=body)
+    elif images.group(0) != expected:
+        print('Updating images...')
+        body = issue.body.replace(images.group(0), expected)
+        issue.edit(body=body)
+
+def check_for_invalid_card_names(issue: Issue, cards: List[str]) -> None:
+    labels = [lab.name for lab in issue.labels]
+    fail = False
+    for c in cards:
+        if '//' in c:
+            pass
+        elif not c in CARDNAMES:
+            fail = True
+    if fail and not 'Invalid Card Name' in labels:
+        issue.add_to_labels('Invalid Card Name')
+    elif not fail and 'Invalid Card Name' in labels:
+        issue.remove_from_labels('Invalid Card Name')
+
+def get_affects(issue: Issue) -> List[str]:
+    affects = re.search(AFFECTS_REGEX, issue.body, re.MULTILINE)
+    if affects is None:
+        affects_str = issue.title
+    else:
+        affects_str = affects.group(1)
+
+    cards = re.findall(REGEX_CARDREF, affects_str)
+    cards = [c for c in cards]
+    return cards
 
 def fix_user_errors(issue: Issue) -> None:
     body = issue.body

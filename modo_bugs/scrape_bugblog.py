@@ -7,9 +7,8 @@ from bs4 import BeautifulSoup, Comment
 from bs4.element import Tag
 from github.Issue import Issue
 
-from .strings import (BBT_REGEX, remove_smartquotes,
-                      strip_squarebrackets)
 from . import repo
+from .strings import BBT_REGEX, remove_smartquotes, strip_squarebrackets
 
 
 def main() -> None:

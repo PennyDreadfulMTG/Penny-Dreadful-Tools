@@ -10,7 +10,8 @@ import requests
 from github.Issue import Issue
 
 from shared import configuration
-from . import strings, fetcher, repo
+
+from . import fetcher, repo, strings
 from .strings import (AFFECTS_REGEX, BAD_AFFECTS_REGEX, BADCATS, CATEGORIES,
                       IMAGES_REGEX, REGEX_CARDREF, SEEALSO_REGEX)
 

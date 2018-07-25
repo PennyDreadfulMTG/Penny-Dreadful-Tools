@@ -1,10 +1,12 @@
 from typing import Dict, Optional
-from github.Issue import Issue
+
 from github import Github
+from github.Issue import Issue
 from github.IssueComment import IssueComment
 from github.Repository import Repository
 
 from shared import configuration, lazy, redis
+
 from . import strings
 
 ISSUE_CODES: Dict[int, str] = {}

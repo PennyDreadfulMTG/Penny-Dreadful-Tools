@@ -4,6 +4,7 @@ import subprocess
 from modo_bugs import scrape_bugblog, update, verification
 from shared import configuration
 
+
 def run() -> None:
     wd = configuration.get_str('modo_bugs_dir')
     if not os.path.exists(wd):

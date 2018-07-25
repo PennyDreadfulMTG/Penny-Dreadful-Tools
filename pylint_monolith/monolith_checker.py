@@ -18,7 +18,7 @@ ACCEPTABLE_IMPORTS = {
     'shared': (),
     'shared_web': ('shared', 'shared_web'),
 
-    'dev': ('magic'),
+    'dev': ('magic', 'shared'),
     'generate_readme': ('discordbot'),
     'run': ('discordbot', 'decksite', 'price_grabber', 'rotation_script', 'magic', 'shared'),
 }

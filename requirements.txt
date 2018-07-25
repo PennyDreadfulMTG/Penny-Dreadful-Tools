@@ -1,3 +1,4 @@
+aiohttp==3.3.2
 anytree==2.4.3
 bs4==0.0.1
 cachecontrol[filecache]==0.12.5
@@ -22,6 +23,7 @@ mypy==0.600 # rq.filter: <=0.600
 mypy_extensions==0.3.0
 poeditor==1.1.0
 pygithub==1.40
+PyNaCl==1.2.1
 pygtrie==2.2
 pylint==2.0.0
 pylint-quotes==0.1.9

@@ -16,6 +16,7 @@ from . import fetcher, repo, strings
 from .strings import (AFFECTS_REGEX, BAD_AFFECTS_REGEX, BADCATS, CATEGORIES,
                       IMAGES_REGEX, REGEX_CARDREF, SEEALSO_REGEX)
 
+
 @lazy_property
 def cardnames() -> List[str]:
     return fetcher.catalog_cardnames()

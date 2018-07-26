@@ -20,7 +20,15 @@ def deck_api(deck_id):
 
 @APP.route('/api/competitions/')
 def competitions_api():
-    return return_json(comp.load_competitions())
+    comps = comp.load_competitions()
+    r = []
+    for c in comps:
+        cr = {}
+        cr['id'] = c.id
+        cr['name'] = c.name
+        cr['url'] = url_for('competition_api', competition_id=c.id, _external=True)
+        r.append(cr)
+    return return_json(r)
 
 @APP.route('/api/competitions/<competition_id>/')
 def competition_api(competition_id):

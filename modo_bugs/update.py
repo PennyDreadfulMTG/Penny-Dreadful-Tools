@@ -10,12 +10,16 @@ import requests
 from github.Issue import Issue
 
 from shared import configuration
+from shared.lazy import lazy_property
 
 from . import fetcher, repo, strings
 from .strings import (AFFECTS_REGEX, BAD_AFFECTS_REGEX, BADCATS, CATEGORIES,
                       IMAGES_REGEX, REGEX_CARDREF, SEEALSO_REGEX)
 
-CARDNAMES: List[str] = fetcher.catalog_cardnames()
+
+@lazy_property
+def cardnames() -> List[str]:
+    return fetcher.catalog_cardnames()
 
 LEGAL_CARDS: List[str] = []
 
@@ -159,7 +163,7 @@ def check_for_invalid_card_names(issue: Issue, cards: List[str]) -> None:
     for c in cards:
         if '//' in c:
             pass
-        elif not c in CARDNAMES:
+        elif not c in cardnames():
             fail = True
     if fail and not 'Invalid Card Name' in labels:
         issue.add_to_labels('Invalid Card Name')

@@ -68,6 +68,8 @@ DEFAULTS = {
     # Discord Webhook endpoint
     'league_webhook_id': None,
     'league_webhook_token': None,
+    'bugs_webhook_id': None,
+    'bugs_webhook_token': None,
 }
 
 CONFIG: Dict[str, Any] = {}

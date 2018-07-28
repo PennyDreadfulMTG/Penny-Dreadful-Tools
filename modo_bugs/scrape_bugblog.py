@@ -1,46 +1,20 @@
 import re
-import sys
-from typing import List, Match, Optional, Tuple
+from typing import List, Match, Optional
 
 import requests
 from bs4 import BeautifulSoup, Comment
 from bs4.element import Tag
 from github.Issue import Issue
 
-from . import repo
+from . import fetcher, repo
 from .strings import BBT_REGEX, remove_smartquotes, strip_squarebrackets
 
 
 def main() -> None:
-    print('Fetching http://magic.wizards.com/en/articles/archive/184956')
-    soup = BeautifulSoup(requests.get('http://magic.wizards.com/en/articles/archive/184956').text, 'html.parser')
-    articles = [parse_article_item_extended(a) for a in soup.find_all('div', class_='article-item-extended')]
-    bug_blogs = [a for a in articles if str(a[0].string).startswith('Magic Online Bug Blog')]
-    print('scraping {0} ({1})'.format(bug_blogs[0][0], bug_blogs[0][1]))
-    new = update_redirect(bug_blogs[0][0].text, bug_blogs[0][1])
+    (link, new) = fetcher.find_bug_blog()
     if new:
-        scrape_bb(bug_blogs[0][1])
+        scrape_bb(link)
 
-def update_redirect(title: str, redirect: str) -> bool:
-    text = '---\ntitle: {title}\nredirect_to:\n - {url}\n---\n'.format(title=title, url=redirect)
-    bb_jekyl = open('bug_blog.md', mode='r')
-    orig = bb_jekyl.read()
-    bb_jekyl.close()
-    if orig != text:
-        print('New bug blog update!')
-        sys.argv.append('check-missing') # This might be a bad idea
-        bb_jekyl = open('bug_blog.md', mode='w')
-        bb_jekyl.write(text)
-        bb_jekyl.close()
-        return True
-    if 'always-scrape' in sys.argv:
-        return True
-    return False
-
-def parse_article_item_extended(a: Tag) -> Tuple[Tag, str]:
-    title = a.find_all('h3')[0]
-    link = 'http://magic.wizards.com' + a.find_all('a')[0]['href']
-    return (title, link)
 
 def scrape_bb(url: str) -> None:
     soup = BeautifulSoup(requests.get(url).text, 'html.parser')
@@ -126,9 +100,7 @@ def parse_knownbugs(b: Tag) -> None:
             # Don't check for Bug Blog Text if it's not marked as a BB issue (Maybe because it was reopened)
             check_if_removed_from_bugblog(bbt, b, issue)
 
-    if 'check-missing' in sys.argv:
-        # This is very expensive.
-        check_for_missing_bugs(b)
+    check_for_missing_bugs(b)
 
 def check_if_removed_from_bugblog(bbt: Match, b: Tag, issue: Issue) -> None:
     if bbt is not None:
@@ -190,7 +162,7 @@ def find_issue_by_code(code: str) -> Issue:
                 # Only bug blog issues have bug blog data
                 repo.set_issue_bbt(issue.number, None)
                 continue
-            icode = repo.ISSUE_CODES.get(issue.number, None)
+            icode = repo.get_issue_bbt(issue)
             if icode == code:
                 return issue
             if icode is not None:

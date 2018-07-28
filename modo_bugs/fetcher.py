@@ -1,6 +1,12 @@
-from typing import List
+import os
+import sys
+from typing import Any, Dict, List, Tuple
+
+from bs4 import BeautifulSoup
+from bs4.element import Tag
 
 import shared.fetcher_internal as internal
+from shared import lazy
 
 
 def search_scryfall(query):
@@ -37,3 +43,71 @@ def catalog_cardnames() -> List[str]:
         if ' // ' in n:
             names.extend(n.split(' // '))
     return names
+
+def update_redirect(file: str, title: str, redirect: str, **kwargs: str) -> bool:
+    text = '---\ntitle: {title}\nredirect_to:\n - {url}\n'.format(title=title, url=redirect)
+    for key, value in kwargs.items():
+        text += f'{key}: {value}\n'
+    text = text + '---\n'
+    fname = f'{file}.md'
+    if not os.path.exists(fname):
+        bb_jekyl = open(fname, mode='w')
+        bb_jekyl.write('')
+        bb_jekyl.close()
+    bb_jekyl = open(fname, mode='r')
+    orig = bb_jekyl.read()
+    bb_jekyl.close()
+    if orig != text:
+        print(f'New {file} update!')
+        bb_jekyl = open(fname, mode='w')
+        bb_jekyl.write(text)
+        bb_jekyl.close()
+        return True
+    if 'always-scrape' in sys.argv:
+        return True
+    return False
+
+def find_bug_blog() -> Tuple[str, bool]:
+    bug_blogs = [a for a in get_article_archive() if str(a[0].string).startswith('Magic Online Bug Blog')]
+    (title, link) = bug_blogs[0]
+    print('Found: {0} ({1})'.format(title, link))
+    new = update_redirect('bug_blog', title.text, link)
+    return (link, new)
+
+def find_announcements() -> Tuple[str, bool]:
+    articles = [a for a in get_article_archive() if str(a[0].string).startswith('Magic Online Announcements')]
+    (title, link) = articles[0]
+    print('Found: {0} ({1})'.format(title, link))
+    bn = 'Build Notes' in internal.fetch(link)
+    new = update_redirect('announcements', title.text, link, has_build_notes=str(bn))
+    return (link, new)
+
+def parse_article_item_extended(a: Tag) -> Tuple[Tag, str]:
+    title = a.find_all('h3')[0]
+    link = 'http://magic.wizards.com' + a.find_all('a')[0]['href']
+    return (title, link)
+
+@lazy.lazy_property
+def get_article_archive() -> List[Tuple[Tag, str]]:
+    html = internal.fetch('http://magic.wizards.com/en/articles/archive/184956')
+    soup = BeautifulSoup(html, 'html.parser')
+    return [parse_article_item_extended(a) for a in soup.find_all('div', class_='article-item-extended')]
+
+#pylint: disable=R0913
+def post_discord_webhook(webhook_id: str,
+                         webhook_token: str,
+                         message: str = None,
+                         username: str = None,
+                         avatar_url: str = None,
+                         embeds: List[Dict[str, Any]] = None
+                        ) -> bool:
+    if webhook_id is None or webhook_token is None:
+        return False
+    url = 'https://discordapp.com/api/webhooks/{id}/{token}'.format(id=webhook_id, token=webhook_token)
+    internal.post(url, json_data={
+        'content': message,
+        'username': username,
+        'avatar_url': avatar_url,
+        'embeds': embeds,
+        })
+    return True

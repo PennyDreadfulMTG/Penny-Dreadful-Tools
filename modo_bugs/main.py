@@ -2,7 +2,8 @@ import os
 import subprocess
 import sys
 
-from modo_bugs import scrape_bugblog, update, verification
+from modo_bugs import (scrape_announcements, scrape_bugblog, update,
+                       verification)
 from shared import configuration
 
 
@@ -17,6 +18,7 @@ def run() -> None:
     print('modo_bugs invoked with modes: ' + repr(args))
     if 'scrape' in args:
         scrape_bugblog.main()
+        scrape_announcements.main()
     if 'update' in args:
         update.main()
     if 'verify' in args:

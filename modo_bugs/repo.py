@@ -35,4 +35,14 @@ def set_issue_bbt(number: int, text: Optional[str]) -> None:
         redis.clear(key)
     else:
         ISSUE_CODES[number] = text
-        redis.store(key, text)
+        redis.store(key, text, ex=1200)
+
+def get_issue_bbt(issue: Issue) -> Optional[str]:
+    key = f'modobugs:bug_blog_text:{issue.number}'
+    bbt = ISSUE_CODES.get(issue.number, None)
+    if bbt is not None:
+        return bbt
+    bbt = redis.get_str(key, ex=1200)
+    if bbt is not None:
+        return bbt
+    return None

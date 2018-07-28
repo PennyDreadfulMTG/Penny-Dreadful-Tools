@@ -26,16 +26,13 @@ def run() -> None:
     time_until = min(TIME_UNTIL_FULL_ROTATION, TIME_UNTIL_SUPPLEMENTAL_ROTATION) - datetime.timedelta(weeks=1)
     if n >= TOTAL_RUNS:
         print('It is the moment of discovery, the triumph of the mind, and the end of this rotation.')
-
-        # if time_until < datetime.timedelta(days=3):
-        #     for f in files:
-        #         print('Removing {f}'.format(f=f))
-        #         os.remove(f)
         return
+
     if n == 0 and TIME_UNTIL_FULL_ROTATION > datetime.timedelta(7) and TIME_UNTIL_SUPPLEMENTAL_ROTATION > datetime.timedelta(7):
         print('The monks of the North Tree rarely saw their kodama until the rotation, when it woke like a slumbering, angry bear.')
         print('ETA: {t}'.format(t=dtutil.display_time(time_until.total_seconds())))
         return
+
     all_prices = {}
     for url in configuration.get_list('cardhoarder_urls'):
         s = fetcher_internal.fetch(url)

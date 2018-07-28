@@ -17,19 +17,19 @@ def main() -> None:
     articles = [parse_article_item_extended(a) for a in soup.find_all('div', class_='article-item-extended')]
     bug_blogs = [a for a in articles if str(a[0].string).startswith('Magic Online Bug Blog')]
     print('scraping {0} ({1})'.format(bug_blogs[0][0], bug_blogs[0][1]))
-    new = update_redirect(bug_blogs[0][0].text, bug_blogs[0][1])
+    new = update_redirect('bug_blog', bug_blogs[0][0].text, bug_blogs[0][1])
     if new:
         scrape_bb(bug_blogs[0][1])
 
-def update_redirect(title: str, redirect: str) -> bool:
+
+def update_redirect(file: str, title: str, redirect: str) -> bool:
     text = '---\ntitle: {title}\nredirect_to:\n - {url}\n---\n'.format(title=title, url=redirect)
-    bb_jekyl = open('bug_blog.md', mode='r')
+    bb_jekyl = open(f'{file}.md', mode='r')
     orig = bb_jekyl.read()
     bb_jekyl.close()
     if orig != text:
-        print('New bug blog update!')
-        sys.argv.append('check-missing') # This might be a bad idea
-        bb_jekyl = open('bug_blog.md', mode='w')
+        print('New {file} update!')
+        bb_jekyl = open(f'{file}.md', mode='w')
         bb_jekyl.write(text)
         bb_jekyl.close()
         return True
@@ -126,9 +126,7 @@ def parse_knownbugs(b: Tag) -> None:
             # Don't check for Bug Blog Text if it's not marked as a BB issue (Maybe because it was reopened)
             check_if_removed_from_bugblog(bbt, b, issue)
 
-    if 'check-missing' in sys.argv:
-        # This is very expensive.
-        check_for_missing_bugs(b)
+    check_for_missing_bugs(b)
 
 def check_if_removed_from_bugblog(bbt: Match, b: Tag, issue: Issue) -> None:
     if bbt is not None:

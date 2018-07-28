@@ -2173,3 +2173,19 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 /* links */
 .tpd-skin-dark a,
 .tpd-skin-dark a:hover { color: #ccc; }
+
+header.season-9 {
+    background-image: url("/static/images/s9-banner.jfif");
+    filter: grayscale(90%);
+    background-size: cover;
+}
+header.season-8 {
+    background-image: url("/static/images/s8-banner.jfif");
+    filter: grayscale(90%);
+    background-size: cover;
+}
+header.season-7 {
+    background-image: url("/static/images/s7-banner.jfif");
+    filter: grayscale(90%);
+    background-size: cover;
+}

@@ -46,6 +46,9 @@ class View(BaseView):
         self.cardhoarder_logo_url = url_for('static', filename='images/cardhoarder.png')
         self.mtgotraders_logo_url = url_for('static', filename='images/mtgotraders.png')
 
+    def season_id(self) -> int:
+        return get_season_id()
+
     def season_name(self) -> str:
         return rotation.season_name(get_season_id())
 

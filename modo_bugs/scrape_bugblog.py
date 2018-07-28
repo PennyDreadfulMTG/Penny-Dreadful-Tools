@@ -1,46 +1,20 @@
 import re
-import sys
-from typing import List, Match, Optional, Tuple
+from typing import List, Match, Optional
 
 import requests
 from bs4 import BeautifulSoup, Comment
 from bs4.element import Tag
 from github.Issue import Issue
 
-from . import repo
+from . import fetcher, repo
 from .strings import BBT_REGEX, remove_smartquotes, strip_squarebrackets
 
 
 def main() -> None:
-    print('Fetching http://magic.wizards.com/en/articles/archive/184956')
-    soup = BeautifulSoup(requests.get('http://magic.wizards.com/en/articles/archive/184956').text, 'html.parser')
-    articles = [parse_article_item_extended(a) for a in soup.find_all('div', class_='article-item-extended')]
-    bug_blogs = [a for a in articles if str(a[0].string).startswith('Magic Online Bug Blog')]
-    print('scraping {0} ({1})'.format(bug_blogs[0][0], bug_blogs[0][1]))
-    new = update_redirect('bug_blog', bug_blogs[0][0].text, bug_blogs[0][1])
+    (link, new) = fetcher.find_bug_blog()
     if new:
-        scrape_bb(bug_blogs[0][1])
+        scrape_bb(link)
 
-
-def update_redirect(file: str, title: str, redirect: str) -> bool:
-    text = '---\ntitle: {title}\nredirect_to:\n - {url}\n---\n'.format(title=title, url=redirect)
-    bb_jekyl = open(f'{file}.md', mode='r')
-    orig = bb_jekyl.read()
-    bb_jekyl.close()
-    if orig != text:
-        print('New {file} update!')
-        bb_jekyl = open(f'{file}.md', mode='w')
-        bb_jekyl.write(text)
-        bb_jekyl.close()
-        return True
-    if 'always-scrape' in sys.argv:
-        return True
-    return False
-
-def parse_article_item_extended(a: Tag) -> Tuple[Tag, str]:
-    title = a.find_all('h3')[0]
-    link = 'http://magic.wizards.com' + a.find_all('a')[0]['href']
-    return (title, link)
 
 def scrape_bb(url: str) -> None:
     soup = BeautifulSoup(requests.get(url).text, 'html.parser')

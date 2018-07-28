@@ -83,7 +83,7 @@ def post(url: str,
          data: Optional[Dict[str, str]] = None,
          json_data: Any = None
         ) -> str:
-    print('POSTing to {url} with {data}'.format(url=url, data=data))
+    print('POSTing to {url} with {data} / {json_data}'.format(url=url, data=data, json_data=json_data))
     try:
         response = SESSION.post(url, data=data, json=json_data)
         return response.text

@@ -15,8 +15,8 @@ class EditArchetypes(View):
         self.search_results = search_results
         for d in self.search_results:
             self.prepare_deck(d)
-        self.q = q
-        self.notq = notq
+        self.query = q
+        self.notquery = notq
 
     def page_title(self):
         return 'Edit Archetypes'

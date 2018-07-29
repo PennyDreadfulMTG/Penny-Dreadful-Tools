@@ -33,10 +33,10 @@ def admin_home():
 
 @APP.route('/admin/archetypes/')
 @auth.admin_required
-def edit_archetypes(search_results=None):
+def edit_archetypes(search_results=None, q='', notq=''):
     if search_results is None:
         search_results = []
-    view = EditArchetypes(archs.load_archetypes_deckless(order_by='a.name'), search_results)
+    view = EditArchetypes(archs.load_archetypes_deckless(order_by='a.name'), search_results, q, notq)
     return view.page()
 
 @APP.route('/admin/archetypes/', methods=['POST'])
@@ -60,7 +60,7 @@ def post_archetypes():
         archs.add(request.form.get('name'), request.form.get('parent'))
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/archetypes: {f}'.format(f=request.form))
-    return edit_archetypes(search_results)
+    return edit_archetypes(search_results, request.form.get('q', ''), request.form.get('notq', ''))
 
 @APP.route('/admin/matches/')
 @auth.admin_required

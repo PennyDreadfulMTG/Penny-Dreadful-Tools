@@ -4,7 +4,7 @@ from decksite.view import View
 
 # pylint: disable=no-self-use
 class EditArchetypes(View):
-    def __init__(self, archetypes, search_results) -> None:
+    def __init__(self, archetypes, search_results, q, notq) -> None:
         super().__init__()
         self.archetypes = archetypes
         self.roots = [a for a in self.archetypes if a.is_root]
@@ -15,6 +15,8 @@ class EditArchetypes(View):
         self.search_results = search_results
         for d in self.search_results:
             self.prepare_deck(d)
+        self.q = q
+        self.notq = notq
 
     def page_title(self):
         return 'Edit Archetypes'

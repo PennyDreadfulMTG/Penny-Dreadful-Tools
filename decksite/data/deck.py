@@ -418,16 +418,25 @@ def similarity_score(a: Deck, b: Deck) -> float:
             score += 1
     return float(score) / float(max(len(a.maindeck), len(b.maindeck)))
 
-def load_decks_by_cards(names: List[str]) -> List[Deck]:
-    sql = """
-        d.id IN (
+def load_decks_by_cards(names: List[str], not_names: List[str]) -> List[Deck]:
+    sql = ''
+    if (names):
+        sql += contains_cards_clause(names)
+    if (names and not_names):
+        sql += ' AND '
+    if (not_names):
+        sql += contains_cards_clause(not_names, True)
+    return load_decks(sql)
+
+def contains_cards_clause(names: List[str], negate: bool = False) -> str:
+    negation = ' NOT' if negate else ''
+    return """d.id {negation} IN (
             SELECT deck_id
             FROM deck_card
             WHERE card IN ({names})
             GROUP BY deck_id
             HAVING COUNT(DISTINCT card) = {n})
-        """.format(n=len(names), names=', '.join(map(sqlescape, names)))
-    return load_decks(sql)
+        """.format(negation=negation, names=', '.join(map(sqlescape, names)), n=len(names))
 
 def load_cards(decks: List[Deck]) -> None:
     if len(decks) == 0:

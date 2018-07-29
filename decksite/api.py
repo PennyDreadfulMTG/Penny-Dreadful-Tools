@@ -58,7 +58,7 @@ def person_h2h_api(person):
     p = ps.load_person(person)
     return return_json(p.head_to_head)
 
-@APP.route('/api/league/run/<person>')
+@APP.route('/api/league/run/<person>/')
 def league_run_api(person):
     decks = league.active_decks_by(person)
     if len(decks) == 0:
@@ -72,7 +72,7 @@ def league_run_api(person):
 
     return return_json(run)
 
-@APP.route('/api/league/drop/<person>', methods=['POST'])
+@APP.route('/api/league/drop/<person>/', methods=['POST'])
 def drop(person):
     error = validate_api_key()
     if error:
@@ -149,7 +149,7 @@ def guarantee_at_most_one_or_retire(decks):
         run = decks[1]
     return run
 
-@APP.route('/decks/<deck_id>/oembed')
+@APP.route('/decks/<deck_id>/oembed/')
 def deck_embed(deck_id):
     # Discord doesn't actually show this yet.  I've reached out to them for better documentation about what they do/don't accept.
     d = deck.load_deck(deck_id)

@@ -354,7 +354,7 @@ def rotation_speculation():
 def cmc_chart(deck_id: int) -> Response:
     return send_file(chart.cmc(int(deck_id)))
 
-@APP.route('/discord')
+@APP.route('/discord/')
 def discord() -> Response:
     return redirect('https://discord.gg/RxhTEEP')
 

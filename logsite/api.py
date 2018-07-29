@@ -12,11 +12,11 @@ from .data import match
 def admin() -> Response:
     return return_json(session.get('admin'))
 
-@APP.route('/api/matchExists/<match_id>')
+@APP.route('/api/matchExists/<match_id>/')
 def match_exists(match_id: int) -> Response:
     return return_json(match.get_match(match_id) is not None)
 
-@APP.route('/api/upload', methods=['POST'])
+@APP.route('/api/upload/', methods=['POST'])
 def upload() -> Response:
     error = validate_api_key()
     if error:
@@ -30,7 +30,7 @@ def upload() -> Response:
 
     return return_json({'success': True})
 
-@APP.route('/export/<match_id>')
+@APP.route('/export/<match_id>/')
 def export(match_id: int) -> Tuple[str, int, Dict[str, str]]:
     local = match.get_match(match_id)
     text = '{format}\n{comment}\n{mods}\n{players}\n\n'.format(

@@ -420,11 +420,11 @@ def similarity_score(a: Deck, b: Deck) -> float:
 
 def load_decks_by_cards(names: List[str], not_names: List[str]) -> List[Deck]:
     sql = ''
-    if (names):
+    if names:
         sql += contains_cards_clause(names)
-    if (names and not_names):
+    if names and not_names:
         sql += ' AND '
-    if (not_names):
+    if not_names:
         sql += contains_cards_clause(not_names, True)
     return load_decks(sql)
 

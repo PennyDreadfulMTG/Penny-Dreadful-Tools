@@ -33,10 +33,10 @@ def admin_home():
 
 @APP.route('/admin/archetypes/')
 @auth.admin_required
-def edit_archetypes(search_results=None):
+def edit_archetypes(search_results=None, q='', notq=''):
     if search_results is None:
         search_results = []
-    view = EditArchetypes(archs.load_archetypes_deckless(order_by='a.name'), search_results)
+    view = EditArchetypes(archs.load_archetypes_deckless(order_by='a.name'), search_results, q, notq)
     return view.page()
 
 @APP.route('/admin/archetypes/', methods=['POST'])
@@ -52,15 +52,15 @@ def post_archetypes():
             archetype_id = archetype_ids.pop(0)
             if archetype_id:
                 archs.assign(deck_id, archetype_id)
-    elif request.form.get('q') is not None:
-        search_results = ds.load_decks_by_cards(request.form.get('q').splitlines())
+    elif request.form.get('q') is not None and request.form.get('notq') is not None:
+        search_results = ds.load_decks_by_cards(request.form.get('q').splitlines(), request.form.get('notq').splitlines())
     elif request.form.getlist('archetype_id') is not None and len(request.form.getlist('archetype_id')) == 2:
         archs.move(request.form.getlist('archetype_id')[0], request.form.getlist('archetype_id')[1])
     elif request.form.get('parent') is not None:
         archs.add(request.form.get('name'), request.form.get('parent'))
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/archetypes: {f}'.format(f=request.form))
-    return edit_archetypes(search_results)
+    return edit_archetypes(search_results, request.form.get('q', ''), request.form.get('notq', ''))
 
 @APP.route('/admin/matches/')
 @auth.admin_required

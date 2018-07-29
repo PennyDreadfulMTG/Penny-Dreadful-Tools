@@ -35,8 +35,12 @@
 
     <form method="post">
         <div>
-            <label for="q">Cards (separated by newlines)</label>
-            <textarea name="q"></textarea>
+            <label for="q">With these cards (separated by newlines)</label>
+            <textarea name="q">{{query}}</textarea>
+        </div>
+        <div>
+            <label for="notq">Without these cards</label>
+            <textarea name="notq">{{notquery}}</textarea>
         </div>
         <button type="submit">Search</button>
     </form>

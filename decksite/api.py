@@ -130,7 +130,7 @@ def person_status():
         'mtgo_username': auth.mtgo_username(),
         'discord_id': auth.discord_id(),
         'admin': session.get('admin', False),
-        'hide_intro': request.cookies.get('hide_intro', False) or auth.hide_intro(),
+        'hide_intro': request.cookies.get('hide_intro', False) or auth.hide_intro() or auth.mtgo_username() or auth.discord_id(),
         'in_guild': session.get('in_guild', False),
         }
     if auth.mtgo_username():

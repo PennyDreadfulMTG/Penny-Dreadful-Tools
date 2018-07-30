@@ -28,13 +28,15 @@
         </tr>
     </thead>
     <tbody>
-        {{#active_runs_text}}
-            <tr>
-                <td class="marginalia"><span class="active" title="Active in the current league">⊕</span></td>
-                <td></td>
-                <td>{{active_runs_text}}</td>
-            </tr>
-        {{/active_runs_text}}
+        {{#show_active_runs_text}}
+            {{#active_runs_text}}
+                <tr>
+                    <td class="marginalia"><span class="active" title="Active in the current league">⊕</span></td>
+                    <td></td>
+                    <td>{{active_runs_text}}</td>
+                </tr>
+            {{/active_runs_text}}
+        {{/show_active_runs_text}}
         {{#decks}}
             {{> deckrow}}
         {{/decks}}

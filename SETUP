@@ -38,10 +38,6 @@ The python3.6-dev I'm not sure it's actually required.
 
   pip3 install -r requirements
 
-Follow the above instructions for apsw. This installed the apsw in a .local in my home folder, and since I was doing everything with sudo, it had root permissions, which I had to fix:
-
-  sudo chown -R user:user ~/.local/lib
-
 The requests requirement might be an older version than the one needed (2.18.4), so if you need to upgrade:
 
   sudo pip3 install -U requests

@@ -18,6 +18,10 @@ node{
         sh 'python3 -m pip install -U --user -r requirements.txt'
     }
 
+    stage('reset_db') {
+        sh 'python3 dev.py reset_db'
+    }
+
     stage('External Data Tests') {
         sh 'rm decksite/scrapers/test_*.yaml'
         FailedTests = sh(returnStatus: true, script: 'python3 dev.py tests -m "external"')

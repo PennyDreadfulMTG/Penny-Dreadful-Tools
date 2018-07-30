@@ -91,16 +91,7 @@ def setup() -> None:
 
 # Drop the database so we can recreate it.
 def delete() -> None:
-    db().begin()
-    query = db().values("""
-        SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;')
-        FROM information_schema.tables
-        WHERE table_schema = %s;
-    """, [db().name])
-    db().execute('SET FOREIGN_KEY_CHECKS = 0')
-    db().execute(''.join(query))
-    db().execute('SET FOREIGN_KEY_CHECKS = 1')
-    db().commit()
+    db().nuke_database()
 
 def column_def(name: str, prop: card.ColumnDescription) -> str:
     nullable = 'NOT NULL' if not prop['nullable'] else ''

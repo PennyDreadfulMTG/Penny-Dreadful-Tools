@@ -105,6 +105,18 @@ class Database():
         rs = self.execute(sql, args)
         return [list(row.values())[0] for row in rs]
 
+    def nuke_database(self) -> None:
+        self.begin()
+        query = self.values("""
+            SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;')
+            FROM information_schema.tables
+            WHERE table_schema = %s;
+        """, [self.name])
+        self.execute('SET FOREIGN_KEY_CHECKS = 0')
+        self.execute(''.join(query))
+        self.execute('SET FOREIGN_KEY_CHECKS = 1')
+        self.commit()
+
 def get_database(location: str) -> Database:
     return Database(location)
 

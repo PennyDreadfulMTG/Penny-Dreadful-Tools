@@ -34,3 +34,4 @@ class Home(View):
         self.rising_cards = rising_cards[0:5]
         self.cards = self.top_cards + self.week_cards + self.rising_cards
         self.cards_url = url_for('cards')
+        self.show_active_runs_text = False

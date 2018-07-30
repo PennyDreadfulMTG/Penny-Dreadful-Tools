@@ -38,8 +38,8 @@ NUM_MOST_COMMON_CARDS_TO_LIST = 10
 # pylint: disable=no-self-use, too-many-public-methods
 class View(BaseView):
     def __init__(self) -> None:
-        # Set some pointless instance vars to keep Codacy happy.
         self.decks: List[Deck] = []
+        self.show_active_runs_text: bool = True
         self.active_runs_text: Optional[str] = None
         self.is_very_large: Optional[bool] = None
         self.show_seasons: bool = False

@@ -23,6 +23,9 @@ def run() -> None:
     elif cmd in ('test', 'tests', 'pytest'):
         tests()
 
+    elif cmd in ('nuke_db', 'reset_db'):
+        reset_db()
+
     else:
         print('Unrecognised command {cmd}.'.format(cmd=cmd))
         exit(1)
@@ -67,6 +70,15 @@ def tests() -> None:
     oracle.init()
     code = pytest.main(sys.argv[2:])
     sys.exit(code)
+
+def reset_db() -> None:
+    """
+    Handle with care.
+    """
+    import decksite.database
+    decksite.database.db().nuke_database()
+    import magic.database
+    magic.database.db().nuke_database()
 
 if __name__ == '__main__':
     run()

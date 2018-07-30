@@ -17,7 +17,7 @@ def played_cards(where: str = '1 = 1', season_id: Optional[int] = None) -> List[
             {season_select}, -- We use the season data on the homepage to calculate movement, even though we no longer use it on /cards/.
             {week_select}
         FROM
-            (SELECT card, deck_id FROM deck_card GROUP BY card, deck_id) AS dc -- Don't make sideboard cards "count double".
+            deck_card AS dc
         INNER JOIN
             deck AS d ON dc.deck_id = d.id
         {season_join}

@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, cast
 import MySQLdb
 from MySQLdb import OperationalError
 
-from shared import configuration, perf
+from shared import configuration, perf, redis
 from shared.pd_exception import (DatabaseException, DatabaseMissingException,
                                  InvalidArgumentException,
                                  LockNotAcquiredException)

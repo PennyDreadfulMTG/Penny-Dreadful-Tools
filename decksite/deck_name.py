@@ -1,6 +1,7 @@
 import re
 from typing import List, Match, Optional
 
+from profanity import profanity
 import titlecase
 
 from magic import mana
@@ -72,6 +73,9 @@ def normalize(d: Deck) -> str:
             name = normalize_colors(name)
             name = add_archetype_if_just_colors(name, d.get('archetype_name'))
             name = remove_mono_if_not_first_word(name)
+            profanity.load_words(['bitch'])
+            profanity.set_censor_characters(' ')
+            name = profanity.censor(name).strip()
         name = ucase_trailing_roman_numerals(name)
         return titlecase.titlecase(name)
     except ValueError:

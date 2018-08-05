@@ -1,8 +1,8 @@
 import re
 from typing import List, Match, Optional
 
-from profanity import profanity
 import titlecase
+from profanity import profanity
 
 from magic import mana
 from magic.models.deck import Deck

@@ -24,10 +24,10 @@ poeditor==1.1.0
 profanity==1.1
 pygithub==1.40
 pygtrie==2.2
-pylint==2.0.1
+pylint==2.1.0
 pylint-quotes==0.1.9
 pystache==0.5.4
-pytest==3.7.0
+pytest==3.7.1
 python-dateutil==2.7.3
 pytz==2018.5
 redis==2.10.6

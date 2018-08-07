@@ -11,7 +11,7 @@ ACCEPTABLE_IMPORTS = {
     'logsite': ('logsite', 'shared', 'shared_web'),
     'magic': ('magic', 'shared'),
     'maintenance': ('decksite', 'magic', 'maintenance', 'shared', 'shared_web'),
-    'modo_bugs': ('shared'),
+    'modo_bugs': ('shared', 'shared_web'),
     'price_grabber': ('magic', 'price_grabber', 'shared'),
     'pylint_monolith': ('pylint_monolith'),
     'rotation_script': ('magic', 'price_grabber', 'rotation_script', 'shared'),

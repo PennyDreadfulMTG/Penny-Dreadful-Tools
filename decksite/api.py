@@ -30,11 +30,11 @@ def competitions_api():
         r.append(cr)
     return return_json(r)
 
-@APP.route('/api/competitions/<competition_id>/')
+@APP.route('/api/competitions/<competition_id>')
 def competition_api(competition_id):
     return return_json(comp.load_competition(competition_id))
 
-@APP.route('/api/league/')
+@APP.route('/api/league')
 def league_api():
     return return_json(league.active_league())
 
@@ -48,17 +48,17 @@ def person_api(person):
     except DoesNotExistException:
         return return_json(generate_error('NOTFOUND', 'Person does not exist'))
 
-@APP.route('/api/person/<person>/decks/')
+@APP.route('/api/person/<person>/decks')
 def person_decks_api(person):
     p = ps.load_person(person)
     return return_json(p.decks)
 
-@APP.route('/api/person/<person>/h2h/')
+@APP.route('/api/person/<person>/h2h')
 def person_h2h_api(person):
     p = ps.load_person(person)
     return return_json(p.head_to_head)
 
-@APP.route('/api/league/run/<person>/')
+@APP.route('/api/league/run/<person>')
 def league_run_api(person):
     decks = league.active_decks_by(person)
     if len(decks) == 0:
@@ -72,7 +72,7 @@ def league_run_api(person):
 
     return return_json(run)
 
-@APP.route('/api/league/drop/<person>/', methods=['POST'])
+@APP.route('/api/league/drop/<person>', methods=['POST'])
 def drop(person):
     error = validate_api_key()
     if error:
@@ -88,7 +88,7 @@ def drop(person):
     result = {'success':True}
     return return_json(result)
 
-@APP.route('/api/rotation/')
+@APP.route('/api/rotation')
 def rotation_api():
     now = dtutil.now()
     diff = rotation.next_rotation() - now
@@ -100,11 +100,11 @@ def rotation_api():
     }
     return return_json(result)
 
-@APP.route('/api/cards/')
+@APP.route('/api/cards')
 def cards_api():
     return return_json(cs.played_cards())
 
-@APP.route('/api/card/<card>/')
+@APP.route('/api/card/<card>')
 def card_api(card):
     return return_json(oracle.load_card(card))
 
@@ -149,7 +149,7 @@ def guarantee_at_most_one_or_retire(decks):
         run = decks[1]
     return run
 
-@APP.route('/decks/<deck_id>/oembed/')
+@APP.route('/decks/<deck_id>/oembed')
 def deck_embed(deck_id):
     # Discord doesn't actually show this yet.  I've reached out to them for better documentation about what they do/don't accept.
     d = deck.load_deck(deck_id)

@@ -95,5 +95,5 @@ def reimport(local: match.Match) -> None:
     tournament = re.search(REGEX_GATHERLING, local.games[0].log)
     local.is_tournament = tournament is not None
     if tournament:
-        process_tourney_info(tournament.group(1), local)
+        process_tourney_info(local, tournament.group(1))
     match.db.Commit()

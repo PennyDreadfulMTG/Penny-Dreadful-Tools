@@ -19,13 +19,13 @@ class Deck(Container):
     def all_cards(self) -> List[Card]:
         cards: List[Card] = []
         for entry in self.maindeck + self.sideboard:
-            cards += [entry['card']] * entry['n']
+            cards += [entry.card] * entry['n']
         return cards
 
     def sort(self):
         if not self.sorted and (len(self.maindeck) > 0 or len(self.sideboard) > 0):
-            self.maindeck.sort(key=lambda x: oracle.deck_sort(x['card']))
-            self.sideboard.sort(key=lambda x: oracle.deck_sort(x['card']))
+            self.maindeck.sort(key=lambda x: oracle.deck_sort(x.card))
+            self.sideboard.sort(key=lambda x: oracle.deck_sort(x.card))
             self.sorted = True
 
     def is_in_current_run(self) -> bool:

@@ -1,6 +1,9 @@
-from shared.container import Container
 from magic import oracle
+from shared.container import Container
+
 from .card import Card
+
+
 class CardRef(Container):
     __card = None
 

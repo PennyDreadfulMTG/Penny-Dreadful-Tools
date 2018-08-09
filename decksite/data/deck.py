@@ -10,11 +10,12 @@ from decksite.data import query
 from decksite.data.top import Top
 from decksite.database import db
 from magic import legality, mana, oracle, rotation
-from magic.models import Deck, Card, CardRef
+from magic.models import Card, CardRef, Deck
 from shared import dtutil, guarantee, redis
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
+
 
 def load_deck(deck_id: int) -> Deck:
     return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))

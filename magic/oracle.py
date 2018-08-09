@@ -92,7 +92,7 @@ def deck_sort(c: Card) -> str:
     s += c.name
     return s
 
-def scryfall_import(name) -> bool:
+def scryfall_import(name: str) -> bool:
     sfcard = fetcher.internal.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=name))
     if sfcard['object'] == 'error':
         raise Exception()
@@ -103,7 +103,7 @@ def scryfall_import(name) -> bool:
         insert_scryfall_card(sfcard)
         return True
 
-def insert_scryfall_card(sfcard, rebuild_cache: bool = True) -> None:
+def insert_scryfall_card(sfcard: Dict, rebuild_cache: bool = True) -> None:
     imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
     c = Container({
         'layout': sfcard['layout'],

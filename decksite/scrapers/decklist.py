@@ -5,7 +5,7 @@ from typing import Any, Dict, Tuple
 import untangle
 
 from magic import oracle
-from magic.models.deck import Deck
+from magic.models import CardRef, Deck
 from shared.pd_exception import InvalidDataException
 
 SectionType = Dict[str, int]
@@ -87,10 +87,8 @@ def vivify(decklist: DecklistType) -> Deck:
                 invalid_names.add(name)
     if invalid_names:
         raise InvalidDataException('Invalid cards: {invalid_names}'.format(invalid_names='; '.join(invalid_names)))
-    validated_names = list(validated['maindeck'].keys()) + list(validated['sideboard'].keys())
-    cards = {c.name: c for c in oracle.load_cards(validated_names)}
     d = Deck({'maindeck': [], 'sideboard': []})
     for section in ['maindeck', 'sideboard']:
         for name, n in validated[section].items():
-            d[section].append({'n': n, 'name': name, 'card': cards[name]})
+            d[section].append(CardRef(name, n))
     return d

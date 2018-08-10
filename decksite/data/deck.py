@@ -215,7 +215,7 @@ def load_decks_heavy(where: str = '1 = 1',
 def set_colors(d: Deck) -> None:
     deck_colors: Set[str] = set()
     deck_colored_symbols: List[str] = []
-    for c in [entry['card'] for entry in d.maindeck + d.sideboard]:
+    for c in [entry.card for entry in d.maindeck + d.sideboard]:
         for cost in c.get('mana_cost') or ():
             if c.layout == 'split' or c.layout == 'aftermath':
                 continue # They might only be using one half so ignore it.

@@ -192,9 +192,9 @@ class View(BaseView):
             d.decklist = ''
         total, num_cards = 0, 0
         for c in d.maindeck:
-            if 'Land' not in c['card'].type:
+            if 'Land' not in c.card.type:
                 num_cards += c['n']
-                total += c['n'] * c['card'].cmc
+                total += c['n'] * c.card.cmc
         d.average_cmc = round(total / max(1, num_cards), 2)
 
     def prepare_cards(self) -> None:
@@ -217,7 +217,7 @@ class View(BaseView):
         counter = Counter() # type: ignore
         for d in c.get('decks', []):
             for c2 in d.maindeck:
-                if not c2['card'].type.startswith('Basic Land') and not c2['name'] == c.name:
+                if not c2.card.type.startswith('Basic Land') and not c2['name'] == c.name:
                     counter[c2['name']] += c2['n']
         most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
         c.most_common_cards = []
@@ -266,7 +266,7 @@ class View(BaseView):
         for d in a.get('decks', []):
             a.cards += d.maindeck + d.sideboard
             for c in d.maindeck:
-                if not c['card'].type.startswith('Basic Land'):
+                if not c.card.type.startswith('Basic Land'):
                     counter[c['name']] += c['n']
         most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
         cs = oracle.cards_by_name()
@@ -302,7 +302,7 @@ class View(BaseView):
     def TT_HELP_TRANSLATE(self) -> str:
         return gettext('Help us translate the site into your language')
 
-def colors_html(colors, colored_symbols) -> str:
+def colors_html(colors: List[str], colored_symbols: List[str]) -> str:
     total = len(colored_symbols)
     if total == 0:
         return '<span class="mana" style="width: 3rem"></span>'

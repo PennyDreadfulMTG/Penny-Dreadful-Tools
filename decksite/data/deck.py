@@ -10,7 +10,7 @@ from decksite.data import query
 from decksite.data.top import Top
 from decksite.database import db
 from magic import legality, mana, oracle, rotation
-from magic.models.deck import Deck
+from magic.models import CardRef, Deck
 from shared import dtutil, guarantee, redis
 from shared.container import Container
 from shared.database import sqlescape
@@ -116,11 +116,8 @@ def deserialize_deck(sdeck: Container) -> Deck:
     deck.draws = int(deck.draws)
     if deck.get('omw') is not None:
         deck.omw = float(deck.omw)
-    cards_by_name = oracle.cards_by_name()
-    for entry in deck.maindeck:
-        entry['card'] = cards_by_name[entry['card']['name']]
-    for entry in deck.sideboard:
-        entry['card'] = cards_by_name[entry['card']['name']]
+    deck.maindeck = [CardRef(ref['name'], ref['n']) for ref in deck.maindeck]
+    deck.sideboard = [CardRef(ref['name'], ref['n']) for ref in deck.sideboard]
     return deck
 
 def load_decks_heavy(where: str = '1 = 1',
@@ -218,7 +215,7 @@ def load_decks_heavy(where: str = '1 = 1',
 def set_colors(d: Deck) -> None:
     deck_colors: Set[str] = set()
     deck_colored_symbols: List[str] = []
-    for c in [entry['card'] for entry in d.maindeck + d.sideboard]:
+    for c in [entry.card for entry in d.maindeck + d.sideboard]:
         for cost in c.get('mana_cost') or ():
             if c.layout == 'split' or c.layout == 'aftermath':
                 continue # They might only be using one half so ignore it.
@@ -444,7 +441,6 @@ def load_cards(decks: List[Deck]) -> None:
     if len(decks) == 0:
         return
     decks_by_id = {d.id: d for d in decks}
-    cards = oracle.cards_by_name()
     sql = """
         SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN ({deck_ids})
     """.format(deck_ids=', '.join(map(sqlescape, map(str, decks_by_id.keys()))))
@@ -454,7 +450,7 @@ def load_cards(decks: List[Deck]) -> None:
         name = row['card']
         d = decks_by_id[row['deck_id']]
         d[location] = d.get(location, [])
-        d[location].append({'n': row['n'], 'name': name, 'card': cards[name]})
+        d[location].append(CardRef(name, row['n']))
 
 # It makes the main query about 5x faster to do this as a separate query (which is trivial and done only once for all decks).
 def load_competitive_stats(decks: List[Deck]) -> None:

@@ -50,7 +50,7 @@ def export(match_id: int) -> Tuple[str, int, Dict[str, str]]:
         })
 
 @APP.route('/api/status/')
-def person_status():
+def person_status() -> Response:
     r = {
         'mtgo_username': session.get('mtgo_username'),
         'discord_id': session.get('discord_id'),

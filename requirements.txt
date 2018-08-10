@@ -23,7 +23,7 @@ mypy_extensions==0.3.0
 poeditor==1.1.0
 profanity==1.1
 pygithub==1.40
-pygtrie==2.2
+pygtrie==2.3
 pylint==2.1.1
 pylint-quotes==0.1.9
 pystache==0.5.4

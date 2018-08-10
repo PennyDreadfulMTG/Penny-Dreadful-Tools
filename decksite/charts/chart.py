@@ -25,7 +25,7 @@ def cmc(deck_id: int, attempts: int = 0) -> str:
     d = deck.load_deck(deck_id)
     costs: Dict[str, int] = {}
     for ci in d.maindeck:
-        c = ci.get('card')
+        c = ci.card
         if c.is_land():
             continue
         if c.mana_cost is None:

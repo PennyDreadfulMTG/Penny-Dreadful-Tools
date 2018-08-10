@@ -12,6 +12,16 @@ class CardRef(Container):
         self['n'] = count
         self.name = name
 
+    def __contains__(self, key) -> bool:
+        if key == 'card':
+            return True
+        return super().__contains__(key)
+
+    def __getitem__(self, key):
+        if key == 'card':
+            return self.card
+        return super().__getitem__(key)
+
     @property
     def card(self) -> Card:
         if self.__card is None:

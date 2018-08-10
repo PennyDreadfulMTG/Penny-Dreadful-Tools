@@ -23,11 +23,12 @@ def competitions_api():
     comps = comp.load_competitions()
     r = []
     for c in comps:
-        cr = {}
-        cr['id'] = c.id
-        cr['name'] = c.name
-        cr['url'] = url_for('competition_api', competition_id=c.id, _external=True)
-        r.append(cr)
+        if c.decks:
+            cr = {}
+            cr['id'] = c.id
+            cr['name'] = c.name
+            cr['url'] = url_for('competition_api', competition_id=c.id, _external=True)
+            r.append(cr)
     return return_json(r)
 
 @APP.route('/api/competitions/<competition_id>')

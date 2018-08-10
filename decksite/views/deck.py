@@ -46,8 +46,8 @@ class Deck(View):
                 m.opponent_deck_name = '-'
             if self.has_rounds():
                 m.display_round = display_round(m)
-        self.deck['maindeck'].sort(key=lambda x: oracle.deck_sort(x['card']))
-        self.deck['sideboard'].sort(key=lambda x: oracle.deck_sort(x['card']))
+        self.deck['maindeck'].sort(key=lambda x: oracle.deck_sort(x.card))
+        self.deck['sideboard'].sort(key=lambda x: oracle.deck_sort(x.card))
         self.archetypes = archetype.load_archetypes_deckless(order_by='a.name')
         self.edit_archetype_url = url_for('edit_archetypes')
         self.legal_formats = list(sorted(d.legal_formats, key=legality.order_score))
@@ -104,13 +104,13 @@ class Deck(View):
         return sections
 
     def creatures(self):
-        return [entry for entry in self.deck.maindeck if entry['card'].is_creature()]
+        return [entry for entry in self.deck.maindeck if entry.card.is_creature()]
 
     def spells(self):
-        return [entry for entry in self.deck.maindeck if entry['card'].is_spell()]
+        return [entry for entry in self.deck.maindeck if entry.card.is_spell()]
 
     def lands(self):
-        return [entry for entry in self.deck.maindeck if entry['card'].is_land()]
+        return [entry for entry in self.deck.maindeck if entry.card.is_land()]
 
     def sideboard(self):
         return self.deck.sideboard
@@ -130,7 +130,7 @@ class Deck(View):
         d = self.deck
         cs: Dict[str, int] = {}
         for entry in d.maindeck + d.sideboard:
-            name = entry['card'].name
+            name = entry.name
             cs[name] = cs.get(name, 0) + entry['n']
         deck_s = '||'.join([str(v) + ' ' + card.to_mtgo_format(k).replace('"', '') for k, v in cs.items()])
         return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=fetcher.internal.escape(deck_s))

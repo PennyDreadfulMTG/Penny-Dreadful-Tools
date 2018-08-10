@@ -7,6 +7,8 @@ from typing import Callable
 from flask import make_response, request
 from werkzeug.contrib.cache import SimpleCache
 
+from decksite import get_season_id
+from magic import rotation
 from shared_web import localization
 
 CACHE = SimpleCache() # type: ignore
@@ -49,7 +51,13 @@ def cached_impl(cacheable: bool = False,
                 else:
                     cache_policy += ', public'
 
-                cache_policy += ', max-age={client_timeout}'.format(client_timeout=client_timeout)
+                actual_client_timeout = client_timeout
+                actual_server_timeout = server_timeout
+                if get_season_id() and get_season_id() < rotation.current_season_num():
+                    actual_client_timeout = 7 * 24 * 60 * 60
+                    actual_server_timeout = 7 * 24 * 60 * 60
+
+                cache_policy += ', max-age={client_timeout}'.format(client_timeout=actual_client_timeout)
 
             headers = {}
             cache_policy = cache_policy.strip(',')
@@ -76,7 +84,7 @@ def cached_impl(cacheable: bool = False,
                     # - If you can find any faster random algorithm go for it.
                     response.headers.add('ETag', binascii.hexlify(os.urandom(4)))
                     response.headers.add('X-Last-Modified', str(now))
-                    CACHE.set(cache_key, response, timeout=server_timeout)
+                    CACHE.set(cache_key, response, timeout=actual_server_timeout)
 
             response.headers.extend(headers)
             return response

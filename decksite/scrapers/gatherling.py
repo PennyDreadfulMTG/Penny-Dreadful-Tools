@@ -10,7 +10,6 @@ from decksite.data import archetype, competition, deck, match
 from decksite.database import db
 from decksite.scrapers import decklist
 from magic import fetcher
-from maintenance import calculate_similar_decks
 from shared import dtutil
 from shared.pd_exception import InvalidDataException
 from shared_web import logger
@@ -97,7 +96,7 @@ def add_decks(dt: datetime.datetime, competition_id: int, final: Dict[str, int],
     return decks_added
 
 def guess_archetypes(ds: List[deck.Deck]) -> None:
-    calculate_similar_decks.load_similar_decks(ds)
+    deck.calculate_similar_decks(ds)
     for d in ds:
         if d.similar_decks:
             archetype.assign(d.id, d.similar_decks[0].archetype_id, False)

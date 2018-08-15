@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import bs4
 from bs4 import BeautifulSoup, ResultSet
 
-from decksite.data import competition, deck, match
+from decksite.data import archetype, competition, deck, match
 from decksite.database import db
 from decksite.scrapers import decklist
 from magic import fetcher
@@ -92,7 +92,14 @@ def add_decks(dt: datetime.datetime, competition_id: int, final: Dict[str, int],
                 matches += tournament_matches(d)
     add_ids(matches, ds)
     insert_matches_without_dupes(dt, matches)
+    guess_archetypes(ds)
     return decks_added
+
+def guess_archetypes(ds: List[deck.Deck]) -> None:
+    deck.calculate_similar_decks(ds)
+    for d in ds:
+        if d.similar_decks:
+            archetype.assign(d.id, d.similar_decks[0].archetype_id, False)
 
 def rankings(soup: BeautifulSoup) -> List[str]:
     rows = soup.find(text='Current Standings').find_parent('table').find_all('tr')

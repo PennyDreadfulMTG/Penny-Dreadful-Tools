@@ -36,9 +36,9 @@ def load_archetype(archetype, season_id=None):
         archetype.decks = []
     return archetype
 
-def load_archetypes(where='1 = 1', merge=False, season_id=None):
+def load_archetypes(where: str = '1 = 1', merge: bool = False, season_id: int = None) -> List[Archetype]:
     decks = deck.load_decks(where, season_id=season_id)
-    archetypes = {}
+    archetypes: Dict[str, Archetype] = {}
     for d in decks:
         if d.archetype_id is None:
             continue
@@ -66,8 +66,8 @@ def load_archetypes(where='1 = 1', merge=False, season_id=None):
             if d.source_name == 'League' and d.wins >= 5 and d.losses == 0:
                 archetype.season_perfect_runs = archetype.get('season_all_perfect_runs', 0) + 1
         archetypes[key] = archetype
-    archetypes = list(archetypes.values())
-    return archetypes
+    archetype_list = list(archetypes.values())
+    return archetype_list
 
 def load_archetypes_deckless(where: str = '1 = 1',
                              order_by: str = '`all_num_decks` DESC, `all_wins` DESC, name',
@@ -118,8 +118,8 @@ def add(name: str, parent: int) -> None:
     sql += '({ancestor}, {descendant}, {depth})'.format(ancestor=archetype_id, descendant=archetype_id, depth=0)
     db().execute(sql)
 
-def assign(deck_id: int, archetype_id: int) -> None:
-    db().execute('UPDATE deck SET reviewed = TRUE, archetype_id = %s WHERE id = %s', [archetype_id, deck_id])
+def assign(deck_id: int, archetype_id: int, reviewed: bool = True) -> None:
+    db().execute('UPDATE deck SET reviewed = %s, archetype_id = %s WHERE id = %s', [reviewed, archetype_id, deck_id])
 
 def load_all_matchups(where='TRUE', season_id=None):
     sql = """

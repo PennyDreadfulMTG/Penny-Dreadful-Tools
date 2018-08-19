@@ -829,6 +829,6 @@ def single_card_text_internal(client: Client, requested_card: Card, disable_emoj
         for bug in requested_card.bugs:
             text += '\n:beetle:{rank} bug: {bug}'.format(bug=bug['description'], rank=bug['classification'])
             if bug['last_confirmed'] < (dtutil.now() - datetime.timedelta(days=60)):
-                time_since_confirmed = (dtutil.now() - bug['last_confirmed']).seconds
+                time_since_confirmed = (dtutil.now() - bug['last_confirmed']).total_seconds()
                 text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(time_since_confirmed, 1))
     return text

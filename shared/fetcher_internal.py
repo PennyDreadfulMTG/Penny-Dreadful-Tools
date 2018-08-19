@@ -54,8 +54,9 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
 async def fetch_async(url: str) -> str:
     print(f'Async fetching {url}')
     try:
-        response = await aiohttp.ClientSession().get(url)
-        return await response.text()
+        async with aiohttp.ClientSession() as aios:
+            response = await aios.get(url)
+            return await response.text()
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
         raise FetchException(e)
 

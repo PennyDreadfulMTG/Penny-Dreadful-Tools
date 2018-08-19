@@ -39,6 +39,7 @@ def generate_fakechannel() -> Any:
     return fakechannel
 
 @pytest.mark.functional
+@pytest.mark.xfail(reason='API changes.  Needs full rewrite')
 def test_commands() -> None:
     fakebot = generate_fakebot()
 

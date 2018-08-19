@@ -34,9 +34,7 @@ def cmc(deck_id: int, attempts: int = 0) -> str:
             cost = 'X'
         else:
             converted = int(float(c.cmc))
-            if converted >= 7:
-                cost = '7+'
-            cost = str(converted)
+            cost = '7+' if converted >= 7 else str(converted)
         costs[cost] = ci.get('n') + costs.get(cost, 0)
     path = image(path, costs)
     if acceptable_file(path):

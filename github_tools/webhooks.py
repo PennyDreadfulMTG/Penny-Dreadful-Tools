@@ -144,10 +144,6 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
 
     whitelisted = pr.user in repo.get_collaborators()
 
-    if pr.mergable is False:
-        commit.create_status(state='failure', description='Cannot merge', context=PDM_CHECK_CONTEXT)
-        return 'Cannot Merge'
-
     if 'squash when ready' in labels:
         commit.create_status(state='success', description='Ready to squash and merge', context=PDM_CHECK_CONTEXT)
         pr.merge(merge_method='squash')

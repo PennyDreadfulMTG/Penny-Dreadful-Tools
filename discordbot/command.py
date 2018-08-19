@@ -13,7 +13,6 @@ from copy import copy
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
 import inflect
-
 from discord import FFmpegPCMAudio, File
 from discord.channel import TextChannel
 from discord.client import Client

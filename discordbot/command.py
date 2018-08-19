@@ -614,7 +614,7 @@ Want to contribute? Send a Pull Request."""
         explanations['drop'] = explanations['retire']
         explanations['rotation'] = explanations['legality']
         explanations['tournaments'] = explanations['tournament']
-        word = args.strip().lower().rstrip('s') # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
+        word = args.strip().lower().replace(' ', '').rstrip('s') # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
         if len(word) > 0:
             for k in explanations:
                 if k.startswith(word):

@@ -9,7 +9,6 @@ from magic.models.deck import Deck
 from shared.pd_exception import InvalidDataException
 
 WHITELIST = [
-    'White Green',
     '#justnayathings'
 ]
 
@@ -18,6 +17,11 @@ ABBREVIATIONS = {
     'ww': 'white weenie',
     'muc': 'mono blue control',
     'mbc': 'mono black control',
+    'yore-tiller': 'wubr',
+    'glint-eye': 'ubrg',
+    'dune-brood': 'brgw',
+    'ink-treader': 'rgwu',
+    'witch-maw': 'gwub'
 }
 
 COLOR_COMBINATIONS = {
@@ -68,6 +72,8 @@ def normalize(d: Deck) -> str:
             name = unabbreviated
         elif whitelisted(name):
             pass
+        elif name and d.get('archetype_name') and name == d.get('archetype_name', '').lower():
+            pass
         else:
             name = add_colors_if_no_deckname(name, d.get('colors'))
             name = normalize_colors(name)
@@ -77,7 +83,8 @@ def normalize(d: Deck) -> str:
             profanity.set_censor_characters(' ')
             name = profanity.censor(name).strip()
         name = ucase_trailing_roman_numerals(name)
-        return titlecase.titlecase(name)
+        name = titlecase.titlecase(name)
+        return correct_case_of_non_titlecase_color_names(name)
     except ValueError:
         raise InvalidDataException('Failed to normalize {d}'.format(d=repr(d)))
 
@@ -119,27 +126,40 @@ def whitelisted(name: str) -> bool:
 
 def normalize_colors(name: str) -> str:
     patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*'] + list(COLOR_COMBINATIONS.keys())
+    color_words = []
     for pattern in patterns:
         regex = regex_pattern(pattern)
-        name = re.sub(regex, standard_color_with_spaces, name, flags=re.IGNORECASE).strip()
-    color_words = 0
-    for pattern in patterns:
-        regex = regex_pattern(pattern)
-        color_words += 1 if re.search(regex, name, flags=re.IGNORECASE) else 0
-    if color_words > 1:
-        name = name.replace('mono ', '')
+        found = re.search(regex, name, flags=re.IGNORECASE)
+        if found:
+            color_words.append(found.group().strip())
+    if len(color_words) == 0:
+        return name
+    canonical_colors = canonicalize_colors(color_words)
+    true_color = name_from_colors(canonical_colors)
+    name = name.replace(color_words[0], true_color)
+    for color_word in color_words[1:]:
+        name = name.replace(color_word, '')
+    # BAKERT remove double spaces or prevent them occuring, add a test, "bitch"
+    if len(canonical_colors) == 1 and name.startswith(true_color):
+        name = 'mono {name}'.format(name=name)
     return name
+
+def canonicalize_colors(colors: List[str]):
+    color_words = []
+    for color in colors:
+        color_words.append(standardize_color_string(color))
+    canonical_colors = set()
+    for color in color_words:
+        for name, symbols in COLOR_COMBINATIONS.items():
+            if name == color:
+                canonical_colors = canonical_colors | set(symbols)
+    return mana.order(canonical_colors)
 
 def regex_pattern(pattern: str) -> str:
     return '(^| )(mono[ -]?)?{pattern}( |$)'.format(pattern=pattern)
 
-def standard_color_with_spaces(m: Match) -> str:
-    name_without_mono = re.sub('(mono[ -]?)', '', m.group(0))
-    name = standardize_color_string(name_without_mono)
-    return ' {name} '.format(name=name)
-
 def standardize_color_string(s: str) -> str:
-    colors = re.sub('Mono|/|-', '', s).strip().lower()
+    colors = re.sub('mono|/|-', '', s, re.IGNORECASE).strip().lower()
     for k in COLOR_COMBINATIONS:
         find = k.lower()
         colors = colors.replace(find, ''.join(COLOR_COMBINATIONS[k]))
@@ -149,8 +169,6 @@ def name_from_colors(colors: List[str]) -> str:
     ordered = mana.order(colors)
     for name, symbols in COLOR_COMBINATIONS.items():
         if mana.order(symbols) == ordered:
-            if len(symbols) == 1:
-                return 'mono {name}'.format(name=name)
             return name
     return 'colorless'
 
@@ -175,3 +193,9 @@ def ucase_trailing_roman_numerals(name: str) -> str:
 
 def strip_leading_punctuation(name: str) -> str:
     return re.sub('^[^a-z0-9]*', '', name, flags=re.IGNORECASE)
+
+def correct_case_of_non_titlecase_color_names(name: str) -> str:
+    for k in COLOR_COMBINATIONS:
+        titlecase_k = titlecase.titlecase(k)
+        name = name.replace(titlecase_k, k)
+    return name

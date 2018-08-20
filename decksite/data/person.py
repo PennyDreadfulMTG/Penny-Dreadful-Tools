@@ -254,6 +254,14 @@ def link_discord(mtgo_username: str, discord_id: int) -> Person:
     db().execute(sql, [discord_id, p.id])
     return p
 
+def unlink_discord(person_id: int) -> int:
+    sql = 'UPDATE person SET discord_id = NULL WHERE id = %s'
+    return db().execute2(sql, [person_id])
+
+def remove_discord_link(discord_id: int) -> int:
+    sql = 'UPDATE person SET discord_id = NULL WHERE discord_id = %s'
+    return db().execute2(sql, [discord_id])
+
 def is_banned(mtgo_username):
     return db().value('SELECT banned FROM person WHERE mtgo_username = %s', [mtgo_username]) == 1
 

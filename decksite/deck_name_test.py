@@ -54,15 +54,20 @@ TESTDATA = [
     ('PD', 'Mono Green', ['G'], None),
     ('PD', 'Azorius Control', ['U', 'W'], 'Control'),
     ('PD', 'Azorius', ['U', 'W'], 'Unclassified'),
-    ('White Jund', 'White Jund', None, None),
     ('Bant #Value', 'Bant Yisan-Prophet', ['G', 'U', 'W'], 'Yisan-Prophet'),
-    ('Yore-Tiller Control', 'Yore-Tiller Control', ['W', 'U', 'B', 'R'], 'Control'),
+    ('Yore-Tiller Control', 'WUBR Control', ['W', 'U', 'B', 'R'], 'Control'),
     ('Dimir', 'Dimir Control', ['U', 'B'], 'Control'),
-    ('Basic Red Bitch', 'Basic Red', ['R'], 'Aggro')
-
-    # Cases that used to work well under strip-and-replace that no longer do
-    # ('White Green', 'Selesnya Aggro', ['W', 'G'], 'Aggro'),
-    # ('White Green', 'Selesnya', ['W', 'G'], None),
+    ('Basic Red Bitch', 'Basic Red', ['R'], 'Aggro'),
+    ('black white aristocrats', 'Orzhov Aristocrats', ['B', 'W'], 'Aggro-Combo'),
+    ('Yore-Tiller Control', 'WUBR Control', ['W', 'U', 'B', 'R'], 'Control'),
+    ('WUBR Control', 'WUBR Control', ['W', 'U', 'B', 'R'], 'Control'),
+    ('RBUW Control', 'WUBR Control', ['W', 'U', 'B', 'R'], 'Control'),
+    ('White Jund', 'White Jund', ['B', 'R', 'G', 'W'], 'White Jund'),
+    ('White Jund', 'BRGW', ['B', 'R', 'G', 'W'], None),
+    ('ゼウスサイクリング', 'Sultai New Perspectives', ['U', 'G', 'B'], 'New Perspectives'),
+    ('$', 'UBRG Necrotic Ooze Combo', ['U', 'B', 'R', 'G'], 'Necrotic Ooze Combo'),
+    ('White Green', 'Selesnya Aggro', ['W', 'G'], 'Aggro'),
+    ('White Green', 'Selesnya', ['W', 'G'], None)
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)
@@ -86,3 +91,8 @@ def test_invalid_color() -> None:
         assert False
     except InvalidDataException:
         assert True
+
+def test_canonicalize_colors() -> None:
+    assert deck_name.canonicalize_colors([]) == []
+    assert deck_name.canonicalize_colors(['White', 'Black', 'Orzhov', 'Abzan']) == ['B', 'G', 'W']
+    assert deck_name.canonicalize_colors(['White', 'White', 'White']) == ['W']

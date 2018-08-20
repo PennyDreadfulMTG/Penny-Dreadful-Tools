@@ -103,6 +103,8 @@ class PDFlask(Flask):
         return redirect(url)
 
     def robots_txt(self):
+        if configuration.get_bool('is_test_site'):
+            return send_from_directory(self.static_folder, 'deny-all-robots.txt')
         return send_from_directory(self.static_folder, 'robots.txt')
 
     def favicon(self, rest: str) -> Response:

@@ -119,7 +119,6 @@ def leaderboards(where: str = "ct.name = 'Gatherling'", season_id: Optional[int]
     sql = """
         SELECT
             p.id AS person_id,
-            season.code AS season_code,
             {person_query} AS person,
             cs.name AS competition_series_name,
             sp.name AS sponsor_name,
@@ -147,8 +146,7 @@ def leaderboards(where: str = "ct.name = 'Gatherling'", season_id: Optional[int]
             ({where}) AND ({season_query})
         GROUP BY
             cs.id,
-            p.id,
-            season.id
+            p.id
         ORDER BY
             cs.id,
             points DESC,
@@ -159,18 +157,16 @@ def leaderboards(where: str = "ct.name = 'Gatherling'", season_id: Optional[int]
     results = []
     current: Dict[str, Any] = {}
     for row in db().execute(sql):
-        k = (row['competition_series_name'], row['season_code'])
-        if (current.get('competition_series_name', None), current.get('season_code', None)) != k:
+        k = row['competition_series_name']
+        if current.get('competition_series_name', None) != k:
             if len(current) > 0:
                 results.append(current)
             current = {
                 'competition_series_name': row['competition_series_name'],
                 'entries': [],
-                'season_code': row['season_code'],
                 'sponsor_name': row['sponsor_name']
             }
         row.pop('competition_series_name')
-        row.pop('season_code')
         current['entries'] = current['entries'] + [Container(row)]
     if len(current) > 0:
         results.append(current)

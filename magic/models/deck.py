@@ -1,7 +1,5 @@
 from typing import Any, Dict, List
 
-from flask import url_for
-
 from magic import oracle
 from magic.models.card import Card
 from shared import dtutil
@@ -39,7 +37,7 @@ class Deck(Container):
 
     def __str__(self):
         self.sort()
-        s = ''.format(url=url_for('deck', deck_id=self.id, _external=True))
+        s = ''
         for entry in self.maindeck:
             s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
         s += '\n'

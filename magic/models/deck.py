@@ -1,7 +1,5 @@
 from typing import Any, Dict, List
 
-from flask import url_for
-
 from magic import oracle
 from magic.models.card import Card
 from shared import dtutil

@@ -1,5 +1,5 @@
 import re
-from typing import List, Match, Optional
+from typing import List, Optional
 
 import titlecase
 from profanity import profanity
@@ -84,7 +84,7 @@ def normalize(d: Deck) -> str:
             name = profanity.censor(name).strip()
         name = ucase_trailing_roman_numerals(name)
         name = titlecase.titlecase(name)
-        return correct_case_of_non_titlecase_color_names(name)
+        return correct_case_of_color_names(name)
     except ValueError:
         raise InvalidDataException('Failed to normalize {d}'.format(d=repr(d)))
 
@@ -194,7 +194,7 @@ def ucase_trailing_roman_numerals(name: str) -> str:
 def strip_leading_punctuation(name: str) -> str:
     return re.sub('^[^a-z0-9]*', '', name, flags=re.IGNORECASE)
 
-def correct_case_of_non_titlecase_color_names(name: str) -> str:
+def correct_case_of_color_names(name: str) -> str:
     for k in COLOR_COMBINATIONS:
         titlecase_k = titlecase.titlecase(k)
         name = name.replace(titlecase_k, k)

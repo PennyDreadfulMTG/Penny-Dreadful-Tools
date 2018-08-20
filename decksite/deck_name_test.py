@@ -63,11 +63,11 @@ TESTDATA = [
     ('WUBR Control', 'WUBR Control', ['W', 'U', 'B', 'R'], 'Control'),
     ('RBUW Control', 'WUBR Control', ['W', 'U', 'B', 'R'], 'Control'),
     ('White Jund', 'White Jund', ['B', 'R', 'G', 'W'], 'White Jund'),
-    ('White Jund', 'BRGW', ['B', 'R', 'G', 'W'], None)
-
-    # Cases that used to work well under strip-and-replace that no longer do
-    # ('White Green', 'Selesnya Aggro', ['W', 'G'], 'Aggro'),
-    # ('White Green', 'Selesnya', ['W', 'G'], None),
+    ('White Jund', 'BRGW', ['B', 'R', 'G', 'W'], None),
+    ('ゼウスサイクリング', 'Sultai New Perspectives', ['U', 'G', 'B'], 'New Perspectives'),
+    ('$', 'UBRG Necrotic Ooze Combo', ['U', 'B', 'R', 'G'], 'Necrotic Ooze Combo'),
+    ('White Green', 'Selesnya Aggro', ['W', 'G'], 'Aggro'),
+    ('White Green', 'Selesnya', ['W', 'G'], None)
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

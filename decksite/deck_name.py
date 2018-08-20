@@ -79,9 +79,7 @@ def normalize(d: Deck) -> str:
             name = normalize_colors(name)
             name = add_archetype_if_just_colors(name, d.get('archetype_name'))
             name = remove_mono_if_not_first_word(name)
-            profanity.load_words(['bitch'])
-            profanity.set_censor_characters(' ')
-            name = profanity.censor(name).strip()
+            name = remove_profanity(name)
         name = ucase_trailing_roman_numerals(name)
         name = titlecase.titlecase(name)
         return correct_case_of_color_names(name)
@@ -126,12 +124,13 @@ def whitelisted(name: str) -> bool:
 
 def normalize_colors(name: str) -> str:
     patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*'] + list(COLOR_COMBINATIONS.keys())
-    color_words = []
+    color_words = set()
     for pattern in patterns:
         regex = regex_pattern(pattern)
         found = re.search(regex, name, flags=re.IGNORECASE)
         if found:
-            color_words.append(found.group().strip())
+            color_words.add(found.group().strip())
+    color_words = list(color_words)
     if len(color_words) == 0:
         return name
     canonical_colors = canonicalize_colors(color_words)
@@ -141,7 +140,7 @@ def normalize_colors(name: str) -> str:
         name = name.replace(color_word, '')
     if len(canonical_colors) == 1 and name.startswith(true_color):
         name = 'mono {name}'.format(name=name)
-    return name
+    return name.strip()
 
 def canonicalize_colors(colors: List[str]):
     color_words = []
@@ -173,7 +172,7 @@ def name_from_colors(colors: List[str]) -> str:
 
 def add_colors_if_no_deckname(name: str, colors: List[str]) -> str:
     if not name:
-        name = name_from_colors(colors)
+        name = name_from_colors(colors).strip()
     return name
 
 def add_archetype_if_just_colors(name: str, archetype: Optional[str]) -> str:
@@ -184,7 +183,16 @@ def add_archetype_if_just_colors(name: str, archetype: Optional[str]) -> str:
 def remove_mono_if_not_first_word(name: str) -> str:
     return re.sub('(.+) mono ', '\\1 ', name)
 
+def remove_profanity(name):
+    profanity.load_words(['bitch'])
+    profanity.set_censor_characters(' ')
+    name = profanity.censor(name).strip()
+    name = re.sub(' +', ' ', name) # We just replaced profanity with a space so compress spaces.
+    return name
+
 def ucase_trailing_roman_numerals(name: str) -> str:
+    if not name:
+        raise ValueError('Asked to remove trailing roman numerals from an empty deck name')
     last_word = name.split()[-1]
     if re.search('^[ivx]+$', last_word):
         name = re.sub('{last_word}$'.format(last_word=last_word), last_word.upper(), name)

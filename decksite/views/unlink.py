@@ -1,5 +1,4 @@
 from decksite.view import View
-from shared import dtutil
 
 
 # pylint: disable=no-self-use

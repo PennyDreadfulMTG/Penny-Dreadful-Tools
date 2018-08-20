@@ -1,5 +1,5 @@
 import warnings
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 import MySQLdb
 from MySQLdb import OperationalError
@@ -35,21 +35,32 @@ class Database():
         except MySQLdb.Error:
             raise DatabaseException('Failed to initialize database in `{location}`'.format(location=self.name))
 
-    def execute(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[Dict[str, ValidSqlArgumentDescription]]:
+    # Execute a SQL statement and get the rows fetched back. (SELECT.)
+    def execute(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None):
+        [n, rows] = self.execute_anything(sql, args)
+        return rows
+
+    # Execute a SQL statement and get the number of rows affected back. (UPDATE, INSERT - but see `insert`.)
+    # This should really be called execute and execute should be called `select`.
+    def execute2(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None):
+        [n, rows] = self.execute_anything(sql, args, False)
+        return n
+
+    def execute_anything(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, fetch_rows = True) -> Tuple[int, List[Dict[str, ValidSqlArgumentDescription]]]:
         if args is None:
             args = []
         try:
-            return self.execute_with_reconnect(sql, args)
+            return self.execute_with_reconnect(sql, args, fetch_rows)
         except MySQLdb.Warning as e:
             if e.args[0] == 1050 or e.args[0] == 1051:
-                return [] # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or DROP TABLE IF NOT EXISTS raises an "unknown table" warning.
+                return (0, []) # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or DROP TABLE IF NOT EXISTS raises an "unknown table" warning.
             if e.args[0] == 1062:
-                return [] # We don't care if an INSERT IGNORE INTO didn't do anything.
+                return (0, []) # We don't care if an INSERT IGNORE INTO didn't do anything.
             raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
         except MySQLdb.Error as e:
             raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
 
-    def execute_with_reconnect(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[ValidSqlArgumentDescription]:
+    def execute_with_reconnect(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, fetch_rows: Optional[bool] = False) -> Tuple[int, List[ValidSqlArgumentDescription]]:
         result = None
         # Attempt to excute the query and reconnect 3 times, then give up
         for _ in range(3):
@@ -57,8 +68,11 @@ class Database():
                 p = perf.start()
                 n = self.cursor.execute(sql, args)
                 perf.check(p, 'slow_query', (f'```{sql}```', f'```{args}```'), 'mysql')
-                rows = self.cursor.fetchall()
-                result = n if sql.strip().startswith('UPDATE') or sql.strip().startswith('INSERT') else rows
+                if fetch_rows:
+                    rows = self.cursor.fetchall()
+                    result = (n, rows)
+                else:
+                    result = (n, [])
                 break
             except OperationalError as e:
                 if 'MySQL server has gone away' in str(e):

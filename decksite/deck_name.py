@@ -1,5 +1,5 @@
 import re
-from typing import List, Optional
+from typing import List, Optional, Set
 
 import titlecase
 from profanity import profanity
@@ -124,15 +124,15 @@ def whitelisted(name: str) -> bool:
 
 def normalize_colors(name: str) -> str:
     patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*'] + list(COLOR_COMBINATIONS.keys())
-    color_words = set()
+    unique_color_words = set()
     for pattern in patterns:
         regex = regex_pattern(pattern)
         found = re.search(regex, name, flags=re.IGNORECASE)
         if found:
-            color_words.add(found.group().strip())
-    color_words = list(color_words)
-    if len(color_words) == 0:
+            unique_color_words.add(found.group().strip())
+    if len(unique_color_words) == 0:
         return name
+    color_words = list(unique_color_words)
     canonical_colors = canonicalize_colors(color_words)
     true_color = name_from_colors(canonical_colors)
     name = name.replace(color_words[0], true_color)
@@ -142,11 +142,11 @@ def normalize_colors(name: str) -> str:
         name = 'mono {name}'.format(name=name)
     return name.strip()
 
-def canonicalize_colors(colors: List[str]):
+def canonicalize_colors(colors: List[str]) -> List[str]:
     color_words = []
     for color in colors:
         color_words.append(standardize_color_string(color))
-    canonical_colors = set()
+    canonical_colors: Set[str] = set()
     for color in color_words:
         for name, symbols in COLOR_COMBINATIONS.items():
             if name == color:
@@ -183,7 +183,7 @@ def add_archetype_if_just_colors(name: str, archetype: Optional[str]) -> str:
 def remove_mono_if_not_first_word(name: str) -> str:
     return re.sub('(.+) mono ', '\\1 ', name)
 
-def remove_profanity(name):
+def remove_profanity(name: str) -> str:
     profanity.load_words(['bitch'])
     profanity.set_censor_characters(' ')
     name = profanity.censor(name).strip()

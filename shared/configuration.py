@@ -29,6 +29,7 @@ DEFAULTS = {
     # Discord server id.  Used for admin verification.  Used by decksite.
     'guild_id': '207281932214599682',
     'image_dir': './images',
+    'is_test_site': False,
     'legality_dir': '~/legality/Legality Checker/',
     'logsite_database': 'pdlogs',
     'magic_database': 'cards',

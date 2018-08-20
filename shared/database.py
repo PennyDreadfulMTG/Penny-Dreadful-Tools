@@ -36,13 +36,13 @@ class Database():
             raise DatabaseException('Failed to initialize database in `{location}`'.format(location=self.name))
 
     # Execute a SQL statement and get the rows fetched back. (SELECT.)
-    def execute(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None):
+    def execute(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[Dict[str, ValidSqlArgumentDescription]]:
         [n, rows] = self.execute_anything(sql, args)
         return rows
 
     # Execute a SQL statement and get the number of rows affected back. (UPDATE, INSERT - but see `insert`.)
     # This should really be called execute and execute should be called `select`.
-    def execute2(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None):
+    def execute2(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> int:
         [n, rows] = self.execute_anything(sql, args, False)
         return n
 

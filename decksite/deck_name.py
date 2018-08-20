@@ -139,7 +139,6 @@ def normalize_colors(name: str) -> str:
     name = name.replace(color_words[0], true_color)
     for color_word in color_words[1:]:
         name = name.replace(color_word, '')
-    # BAKERT remove double spaces or prevent them occuring, add a test, "bitch"
     if len(canonical_colors) == 1 and name.startswith(true_color):
         name = 'mono {name}'.format(name=name)
     return name

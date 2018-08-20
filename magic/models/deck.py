@@ -39,7 +39,7 @@ class Deck(Container):
 
     def __str__(self):
         self.sort()
-        s = ''.format(url=url_for('deck', deck_id=self.id, _external=True))
+        s = ''
         for entry in self.maindeck:
             s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
         s += '\n'

@@ -31,31 +31,31 @@
             <input class="uploader" id="uploader" type="file">
             <div class="error">
                 {{#form.errors.decklist}}
-                <div>{{.}}</div>
+                    <div>{{.}}</div>
                 {{/form.errors.decklist}}
                 {{#has_not_legal}}
-                The following cards are not legal in Penny Dreadful:
-                <ul>
-                    {{#form.card_errors.Legality_Not_Legal}}
-                    <li>{{.}}</li>
-                    {{/form.card_errors.Legality_Not_Legal}}
-                </ul>
+                    <p>The following cards are not legal in Penny Dreadful:</p>
+                    <ul>
+                        {{#form.card_errors.Legality_Not_Legal}}
+                            <li>{{.}}</li>
+                        {{/form.card_errors.Legality_Not_Legal}}
+                    </ul>
                 {{/has_not_legal}}
                 {{#has_banned}}
-                The following cards are banned:
-                <ul>
-                    {{#form.card_errors.Legality_Banned}}
-                    <li>{{.}}</li>
-                    {{/form.card_errors.Legality_Banned}}
-                </ul>
+                    <p>The following cards are banned:</p>
+                    <ul>
+                        {{#form.card_errors.Legality_Banned}}
+                            <li>{{.}}</li>
+                        {{/form.card_errors.Legality_Banned}}
+                    </ul>
                 {{/has_banned}}
                 {{#has_bugs}}
-                The following cards are currently not allowed because of game-breaking Magic Online bugs:
-                <ul>
-                    {{#form.card_errors.Legality_Bugs}}
-                    <li>{{.}}</li>
-                    {{/form.card_errors.Legality_Bugs}}
-                </ul>
+                    <p>The following cards are currently not allowed because of game-breaking Magic Online bugs:</p>
+                    <ul>
+                        {{#form.card_errors.Legality_Bugs}}
+                            <li>{{.}}</li>
+                        {{/form.card_errors.Legality_Bugs}}
+                    </ul>
                 {{/has_bugs}}
             </div>
         </div>

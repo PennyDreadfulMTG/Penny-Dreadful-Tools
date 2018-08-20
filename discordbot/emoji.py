@@ -9,8 +9,8 @@ from magic.models.card import Card
 
 def find_emoji(emoji: str, client: Client) -> Optional[str]:
     try:
-        for server in client.servers:
-            emojis = server.emojis
+        for guild in client.guilds:
+            emojis = guild.emojis
             res = next((x for x in emojis if x.name == emoji), None)
             if res is not None:
                 return res

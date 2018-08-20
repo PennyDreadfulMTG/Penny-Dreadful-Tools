@@ -416,11 +416,11 @@ Want to contribute? Send a Pull Request."""
         await channel.send('{args}: {time}'.format(args=args, time=t))
 
     @cmd_header('Commands')
-    async def pdm(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
+    async def pdm(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """Alias for `!resources`."""
         # Because of the weird way we call and use methods on Commands we need …
         # pylint: disable=too-many-function-args
-        await self.resources(self, client, channel, args, author)
+        await self.resources(self, channel, args, author)
 
     @cmd_header('Commands')
     async def google(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:

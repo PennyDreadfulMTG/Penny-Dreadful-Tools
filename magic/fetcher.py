@@ -92,7 +92,7 @@ def legal_cards(force: bool = False, season: str = None) -> List[str]:
     url = 'http://pdmtgo.com/' + url
     legal_txt = internal.fetch(url, encoding, force=force)
     if season is not None and configuration.get_bool('save_historic_legal_lists'):
-        with open(os.path.join(cached_path, f'{season}_legal_cards.txt'), 'w') as h:
+        with open(os.path.join(cached_path, f'{season}_legal_cards.txt'), 'w', encoding=encoding) as h:
             h.write(legal_txt)
 
     return legal_txt.strip().split('\n')

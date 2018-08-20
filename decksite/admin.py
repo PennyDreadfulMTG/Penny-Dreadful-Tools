@@ -10,7 +10,7 @@ from decksite.data import deck as ds
 from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.views import (Admin, EditArchetypes, EditMatches, EditNews,
-                            PlayerNotes, Prizes, RotationChecklist)
+                            PlayerNotes, Prizes, RotationChecklist, Unlink)
 from shared import dtutil
 from shared.container import Container
 from shared.pd_exception import InvalidArgumentException
@@ -121,3 +121,22 @@ def post_player_note():
     creator = ps.load_person_by_discord_id(session['id'])
     ps.add_note(creator.id, request.form.get('subject_id'), request.form.get('note'))
     return player_notes()
+
+@APP.route('/admin/unlink/')
+@auth.admin_required
+def unlink(num_affected_people=None):
+    all_people = ps.load_people(order_by='p.mtgo_username')
+    view = Unlink(all_people, num_affected_people)
+    return view.page()
+
+@APP.route('/admin/unlink/', methods=['POST'])
+@auth.admin_required
+def post_unlink():
+    n = 0
+    person_id = request.form.get('person_id')
+    if person_id:
+        n += ps.unlink_discord(person_id)
+    discord_id = request.form.get('discord_id')
+    if discord_id:
+        n += ps.remove_discord_link(discord_id)
+    return unlink(n)

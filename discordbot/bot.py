@@ -2,13 +2,13 @@ import asyncio
 import re
 
 import discord
+from discord import VoiceState
 from discord.activity import Streaming
 from discord.guild import Guild
 from discord.member import Member
 from discord.message import Message
 from discord.reaction import Reaction
 from discord.state import Status
-from discord import VoiceState
 
 from discordbot import command
 from magic import fetcher, multiverse, oracle, tournaments

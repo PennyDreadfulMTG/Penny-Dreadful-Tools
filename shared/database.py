@@ -55,9 +55,10 @@ class Database():
         for _ in range(3):
             try:
                 p = perf.start()
-                self.cursor.execute(sql, args)
+                n = self.cursor.execute(sql, args)
                 perf.check(p, 'slow_query', (f'```{sql}```', f'```{args}```'), 'mysql')
-                result = self.cursor.fetchall()
+                rows = self.cursor.fetchall()
+                result = n if sql.strip().startswith('UPDATE') or sql.strip().startswith('INSERT') else rows
                 break
             except OperationalError as e:
                 if 'MySQL server has gone away' in str(e):

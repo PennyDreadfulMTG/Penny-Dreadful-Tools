@@ -1,5 +1,5 @@
 import warnings
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, List, Optional, Tuple, cast
 
 import MySQLdb
 from MySQLdb import OperationalError
@@ -37,16 +37,16 @@ class Database():
 
     # Execute a SQL statement and get the rows fetched back. (SELECT.)
     def execute(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[Dict[str, ValidSqlArgumentDescription]]:
-        [n, rows] = self.execute_anything(sql, args)
+        [_, rows] = self.execute_anything(sql, args)
         return rows
 
     # Execute a SQL statement and get the number of rows affected back. (UPDATE, INSERT - but see `insert`.)
     # This should really be called execute and execute should be called `select`.
     def execute2(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> int:
-        [n, rows] = self.execute_anything(sql, args, False)
+        [n, _] = self.execute_anything(sql, args, False)
         return n
 
-    def execute_anything(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, fetch_rows = True) -> Tuple[int, List[Dict[str, ValidSqlArgumentDescription]]]:
+    def execute_anything(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, fetch_rows: bool = True) -> Tuple[int, List[Dict[str, ValidSqlArgumentDescription]]]:
         if args is None:
             args = []
         try:

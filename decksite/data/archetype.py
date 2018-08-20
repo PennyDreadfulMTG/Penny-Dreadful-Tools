@@ -21,8 +21,9 @@ def load_archetype(archetype, season_id=None):
     try:
         archetype_id = int(archetype)
     except ValueError:
-        name = titlecase.titlecase(archetype.replace('-', ' '))
-        archetype_id = db().value('SELECT id FROM archetype WHERE name = %s', [name])
+        name = titlecase.titlecase(archetype)
+        name_without_dashes = name.replace('-', ' ')
+        archetype_id = db().value('SELECT id FROM archetype WHERE name IN (%s, %s)', [name, name_without_dashes])
         if not archetype_id:
             raise DoesNotExistException('Did not find archetype with name of `{name}`'.format(name=name))
     archetypes = load_archetypes(where='d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'.format(archetype_id=sqlescape(archetype_id)), merge=True, season_id=season_id)

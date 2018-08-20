@@ -2,6 +2,7 @@ import asyncio
 import re
 
 import discord
+from discord import VoiceState
 from discord.activity import Streaming
 from discord.guild import Guild
 from discord.member import Member
@@ -43,7 +44,7 @@ class Bot(discord.Client):
         else:
             await command.respond_to_card_names(message, self)
 
-    async def on_voice_state_update(self, before: Member, after: Member) -> None:
+    async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:
         # pylint: disable=unused-argument
         # If we're the only one left in a voice chat, leave the channel
         voice = after.guild.voice_client

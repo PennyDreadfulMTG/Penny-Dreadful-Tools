@@ -67,10 +67,10 @@ class Bot(discord.Client):
         roles = [r for r in before.guild.roles if r.name == 'Currently Streaming']
         if roles:
             streaming_role = roles[0]
-            if after.activity is not Streaming and streaming_role in before.roles:
+            if not isinstance(after.activity, Streaming) and streaming_role in before.roles:
                 print('{user} no longer streaming'.format(user=after.name))
                 await after.remove_roles(streaming_role)
-            if after.activity is Streaming and not streaming_role in before.roles:
+            if isinstance(after.activity, Streaming) and not streaming_role in before.roles:
                 print('{user} started streaming'.format(user=after.name))
                 await after.add_roles(streaming_role)
         # Achivements

@@ -4,7 +4,7 @@ from shared import dtutil
 
 
 def run():
-    existing = list(map(lambda s: s['number'], db().execute('SELECT `number` FROM `season`;')))
+    existing = list(map(lambda s: s['number'], db().select('SELECT `number` FROM `season`;')))
     for season, setcode in enumerate(rotation.SEASONS, start=1):
         if not season in existing:
             info = rotation.get_set_info(setcode)

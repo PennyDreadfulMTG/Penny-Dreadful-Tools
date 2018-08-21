@@ -48,7 +48,7 @@ def name_lookup(name: str) -> str:
         name = 'Pang Tong, "Young Phoenix"'
     try:
         if not CARDS:
-            rs = db().execute(multiverse.base_query())
+            rs = db().select(multiverse.base_query())
             for row in rs:
                 CARDS[card.canonicalize(row['name'])] = row['name']
     except DatabaseException:

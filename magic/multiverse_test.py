@@ -4,7 +4,7 @@ from magic.database import db
 
 def test_base_query_legalities() -> None:
     sql = multiverse.base_query("f.name = 'Mother of Runes'")
-    rs = db().execute(sql)
+    rs = db().select(sql)
     assert len(rs) == 1
     legalities = rs[0]['legalities']
     assert 'Penny Dreadful EMN:Legal' in legalities

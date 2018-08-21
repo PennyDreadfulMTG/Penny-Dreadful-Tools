@@ -330,7 +330,7 @@ def load_matches(where='1 = 1'):
         GROUP BY m.id
         ORDER BY m.date DESC
     """.format(where=where)
-    matches = [Container(m) for m in db().execute(sql)]
+    matches = [Container(m) for m in db().select(sql)]
     for m in matches:
         m.date = dtutil.ts2dt(m.date)
         deck_ids = m.deck_ids.split(',')
@@ -398,7 +398,7 @@ def first_runs() -> List[Container]:
             c.start_date DESC,
             p.mtgo_username
     """.format(league_competition_type_id=query.competition_type_id_select('League'))
-    return [Container(r) for r in db().execute(sql)]
+    return [Container(r) for r in db().select(sql)]
 
 def update_match(match_id: int, left_id: int, left_games: int, right_id: int, right_games: int) -> None:
     db().begin()
@@ -407,7 +407,7 @@ def update_match(match_id: int, left_id: int, left_games: int, right_id: int, ri
     db().commit()
     redis.clear(f'decksite:deck:{left_id}', f'decksite:deck:{right_id}')
 
-def update_games(match_id: int, deck_id: int, games: int) -> List[Dict[str, Any]]:
+def update_games(match_id: int, deck_id: int, games: int) -> int:
     sql = 'UPDATE deck_match SET games = %s WHERE match_id = %s AND deck_id = %s'
     args = [games, match_id, deck_id]
     return db().execute(sql, args)

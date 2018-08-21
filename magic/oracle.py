@@ -42,7 +42,7 @@ def load_cards(names: Iterable[str] = None, where: Optional[str] = None) -> List
     if where is None:
         where = '(1 = 1)'
     sql = multiverse.cached_base_query('({where} AND {names})'.format(where=where, names=names_clause))
-    rs = db().execute(sql)
+    rs = db().select(sql)
     if setnames and len(setnames) != len(rs):
         missing = setnames.symmetric_difference([r['name'] for r in rs])
         raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`.  missing=`{missing}`'.format(namelen=len(setnames), rslen=len(rs), names=setnames, missing=missing))
@@ -53,7 +53,7 @@ def cards_by_name() -> Dict[str, Card]:
 
 def bugged_cards() -> List[Card]:
     sql = multiverse.cached_base_query('bugs IS NOT NULL')
-    rs = db().execute(sql)
+    rs = db().select(sql)
     return [Card(r) for r in rs]
 
 def legal_cards(force: bool = False) -> List[str]:
@@ -61,7 +61,7 @@ def legal_cards(force: bool = False) -> List[str]:
         new_list = multiverse.set_legal_cards(force)
         if not new_list:
             sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=multiverse.base_query(), format_id=multiverse.get_format_id('Penny Dreadful'))
-            new_list = [row['name'] for row in db().execute(sql)]
+            new_list = [row['name'] for row in db().select(sql)]
         LEGAL_CARDS.clear()
         for name in new_list:
             LEGAL_CARDS.append(name)
@@ -72,7 +72,7 @@ def get_printings(generalized_card: Card) -> List[card.Printing]:
         + ' FROM printing AS p' \
         + ' LEFT OUTER JOIN `set` AS s ON p.set_id = s.id' \
         + ' WHERE card_id = %s '
-    rs = db().execute(sql, [generalized_card.id])
+    rs = db().select(sql, [generalized_card.id])
     return [card.Printing(r) for r in rs]
 
 def deck_sort(c: Card) -> str:
@@ -161,7 +161,7 @@ def query_diff_formats(f1, f2):
         (SELECT card_id FROM card_legality WHERE format_id = {format2})
     """.format(format1=f1, format2=f2)
 
-    rs = db().execute(multiverse.cached_base_query(where=where))
+    rs = db().select(multiverse.cached_base_query(where=where))
     out = [Card(r) for r in rs]
     return sorted(out, key=lambda card: card['name'])
 
@@ -182,6 +182,6 @@ def if_todays_prices(out=True):
         AND c.layout IN ({layouts})
     """.format(not_clause=not_clause, format=current_format, compare=compare, layouts=', '.join([sqlescape(k) for k, v in multiverse.layouts().items() if v]))
 
-    rs = db().execute(multiverse.cached_base_query(where=where))
+    rs = db().select(multiverse.cached_base_query(where=where))
     out = [Card(r) for r in rs]
     return sorted(out, key=lambda card: card['name'])

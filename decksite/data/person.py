@@ -54,7 +54,7 @@ def load_people(where: str = '1 = 1',
             {order_by}
     """.format(person_query=query.person_query(), all_select=deck.nwdl_select('all_', query.season_query(season_id)), nwdl_join=deck.nwdl_join(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id), order_by=order_by)
 
-    people = [Person(r) for r in db().execute(sql)]
+    people = [Person(r) for r in db().select(sql)]
     for p in people:
         p.season_id = season_id
 
@@ -134,7 +134,7 @@ def set_achievements(people: List[Person], season_id: int = None) -> None:
         GROUP BY
             p.id
     """.format(competition_join=query.competition_join(), competition_ids_by_type_select=query.competition_ids_by_type_select('League'), ids=', '.join(str(k) for k in people_by_id.keys()), season_join=query.season_join(), season_query=query.season_query(season_id))
-    results = [Container(r) for r in db().execute(sql)]
+    results = [Container(r) for r in db().select(sql)]
     for result in results:
         people_by_id[result['id']].num_achievements = len([k for k, v in result.items() if k != 'id' and v > 0])
         people_by_id[result['id']].achievements = result
@@ -176,7 +176,7 @@ def set_head_to_head(people: List[Person], season_id: int = None) -> None:
             SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) DESC,
             opp_mtgo_username
     """.format(ids=', '.join(str(k) for k in people_by_id.keys()), season_join=query.season_join(), season_query=query.season_query(season_id))
-    results = [Container(r) for r in db().execute(sql)]
+    results = [Container(r) for r in db().select(sql)]
     for result in results:
         people_by_id[result.id].head_to_head = people_by_id[result.id].get('head_to_head', []) + [result]
     for person in people:
@@ -236,7 +236,7 @@ def load_notes() -> List[Container]:
             s.id,
             pn.created_date DESC
     """.format(creator_query=query.person_query('c'), subject_query=query.person_query('s'))
-    notes = [Container(r) for r in db().execute(sql)]
+    notes = [Container(r) for r in db().select(sql)]
     for n in notes:
         n.created_date = dtutil.ts2dt(n.created_date)
     return notes
@@ -256,11 +256,11 @@ def link_discord(mtgo_username: str, discord_id: int) -> Person:
 
 def unlink_discord(person_id: int) -> int:
     sql = 'UPDATE person SET discord_id = NULL WHERE id = %s'
-    return db().execute2(sql, [person_id])
+    return db().execute(sql, [person_id])
 
 def remove_discord_link(discord_id: int) -> int:
     sql = 'UPDATE person SET discord_id = NULL WHERE discord_id = %s'
-    return db().execute2(sql, [discord_id])
+    return db().execute(sql, [discord_id])
 
 def is_banned(mtgo_username):
     return db().value('SELECT banned FROM person WHERE mtgo_username = %s', [mtgo_username]) == 1

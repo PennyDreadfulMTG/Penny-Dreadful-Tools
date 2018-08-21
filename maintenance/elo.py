@@ -23,7 +23,7 @@ def run() -> None:
             m.date,
             `round`
     """
-    matches = db().execute(sql)
+    matches = db().select(sql)
     for m in matches:
         match(m)
     current = person.load_people()

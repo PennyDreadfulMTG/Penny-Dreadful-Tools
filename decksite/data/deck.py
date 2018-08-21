@@ -88,7 +88,7 @@ def load_decks(where: str = '1 = 1',
     """
     sql = sql.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit, season_query=query.season_query(season_id), season_join=query.season_join())
     db().execute('SET group_concat_max_len=100000')
-    rows = db().execute(sql)
+    rows = db().select(sql)
     decks = []
     heavy = []
     for row in rows:
@@ -186,7 +186,7 @@ def load_decks_heavy(where: str = '1 = 1',
         {limit}
     """.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit, season_query=query.season_query(season_id), season_join=query.season_join())
     db().execute('SET group_concat_max_len=100000')
-    rows = db().execute(sql)
+    rows = db().select(sql)
     decks = []
     for row in rows:
         d = Deck(row)
@@ -460,7 +460,7 @@ def load_cards(decks: List[Deck]) -> None:
     sql = """
         SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN ({deck_ids})
     """.format(deck_ids=', '.join(map(sqlescape, map(str, decks_by_id.keys()))))
-    rs = db().execute(sql)
+    rs = db().select(sql)
     for row in rs:
         location = 'sideboard' if row['sideboard'] else 'maindeck'
         name = row['card']
@@ -504,7 +504,7 @@ def load_competitive_stats(decks: List[Deck]) -> None:
         GROUP BY
             d.id
     """.format(where=where)
-    rs = db().execute(sql)
+    rs = db().select(sql)
     for row in rs:
         if decks_by_id.get(row['id']):
             decks_by_id[row['id']].opp_wins = row['opp_wins']
@@ -515,7 +515,7 @@ def load_competitive_stats(decks: List[Deck]) -> None:
 def count_matches(deck_id: int, opponent_deck_id: int) -> Dict[int, int]:
     sql = 'SELECT deck_id, count(id) as count FROM deck_match WHERE deck_id in (%s, %s) group by deck_id'
     result = {int(deck_id): 0, int(opponent_deck_id): 0}
-    for row in db().execute(sql, [deck_id, opponent_deck_id]):
+    for row in db().select(sql, [deck_id, opponent_deck_id]):
         result[row['deck_id']] = row['count']
     return result
 

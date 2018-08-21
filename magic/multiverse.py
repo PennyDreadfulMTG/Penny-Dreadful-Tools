@@ -123,7 +123,7 @@ def update_database(new_version: str) -> None:
     for _, s in sets.items():
         insert_set(s)
     check_layouts() # Check that the hardcoded list of layouts we're about to use is still valid.
-    rs = db().execute('SELECT id, name FROM rarity')
+    rs = db().select('SELECT id, name FROM rarity')
     for row in rs:
         db().execute('UPDATE printing SET rarity_id = %s WHERE rarity = %s', [row['id'], row['name']])
     # Create the current Penny Dreadful format.
@@ -134,7 +134,7 @@ def update_database(new_version: str) -> None:
     db().commit()
 
 def check_layouts() -> None:
-    rs = db().execute('SELECT DISTINCT layout FROM card')
+    rs = db().select('SELECT DISTINCT layout FROM card')
     if sorted([row['layout'] for row in rs]) != sorted(layouts().keys()):
         print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid. You may also want to add it to playable_layouts. Comparing {old} with {new}.'.format(old=sorted(layouts().keys()), new=sorted([row['layout'] for row in rs])))
 
@@ -260,7 +260,7 @@ def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
     if n != len(new_list):
         print('Found {n} pd legal cards in the database but the list was {len} long'.format(n=n, len=len(new_list)))
         sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=base_query(), format_id=format_id)
-        db_legal_list = [row['name'] for row in db().execute(sql)]
+        db_legal_list = [row['name'] for row in db().select(sql)]
         print(set(new_list).symmetric_difference(set(db_legal_list)))
     return new_list
 
@@ -292,7 +292,7 @@ def date2int(s: str, name: str) -> Union[str, float]:
 # I'm not sure this belong here, but it's here for now.
 def get_format_id(name: str, allow_create: bool = False) -> int:
     if len(FORMAT_IDS) == 0:
-        rs = db().execute('SELECT id, name FROM format')
+        rs = db().select('SELECT id, name FROM format')
         for row in rs:
             FORMAT_IDS[row['name']] = row['id']
     if name not in FORMAT_IDS.keys() and allow_create:
@@ -335,7 +335,7 @@ def add_hardcoded_cards(cards: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str,
     return cards
 
 def get_all_cards() -> List[Card]:
-    rs = db().execute(cached_base_query())
+    rs = db().select(cached_base_query())
     return [Card(r) for r in rs]
 
 def playable_layouts() -> List[str]:

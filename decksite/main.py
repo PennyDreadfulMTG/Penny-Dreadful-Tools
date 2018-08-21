@@ -33,7 +33,7 @@ from shared.pd_exception import DoesNotExistException, InvalidDataException
 @APP.route('/')
 @cached()
 def home():
-    view = Home(ns.load_news(max_items=10), ds.load_decks(limit='LIMIT 50'), cs.played_cards(season_id=get_season_id()))
+    view = Home(ns.all_news(max_items=10), ds.load_decks(limit='LIMIT 50'), cs.played_cards(season_id=get_season_id()))
     return view.page()
 
 @APP.route('/decks/')
@@ -253,7 +253,7 @@ def bugs():
 @APP.route('/news/')
 @cached()
 def news():
-    news_items = ns.load_news()
+    news_items = ns.all_news()
     view = News(news_items)
     return view.page()
 

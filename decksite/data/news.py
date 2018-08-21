@@ -8,8 +8,8 @@ from decksite.data import deck
 from decksite.database import db
 from magic.models import Deck
 from shared import dtutil, repo
-from shared.database import sqlescape
 from shared.container import Container
+from shared.database import sqlescape
 
 
 def all_news(start_date: datetime.datetime = None, end_date: datetime.datetime = None, max_items: int = sys.maxsize) -> List[Container]:

@@ -5,7 +5,7 @@ import traceback
 from typing import Dict, List, Optional
 
 from flask import request, session
-from github import Github, Issue
+from github import Github, Issue, PullRequest
 
 from shared import configuration, dtutil
 
@@ -74,7 +74,7 @@ def safe_data(data: Dict[str, str]) -> Dict[str, str]:
 def get_pull_requests(start_date: datetime.datetime, end_date: datetime.datetime, max_pull_requests: int = sys.maxsize, repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools'):
     g = Github(configuration.get('github_user'), configuration.get('github_password'))
     git_repo = g.get_repo(repo_name)
-    pulls = []
+    pulls: List[PullRequest] = []
     for pull in git_repo.get_pulls(state='closed', sort='updated', direction='desc'):
         if not pull.merged_at:
             continue

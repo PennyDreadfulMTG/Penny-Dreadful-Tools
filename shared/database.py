@@ -35,14 +35,11 @@ class Database():
         except MySQLdb.Error:
             raise DatabaseException('Failed to initialize database in `{location}`'.format(location=self.name))
 
-    # Execute a SQL statement and get the rows fetched back. (SELECT.)
-    def execute(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[Dict[str, ValidSqlArgumentDescription]]:
+    def select(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[Dict[str, ValidSqlArgumentDescription]]:
         [_, rows] = self.execute_anything(sql, args)
         return rows
 
-    # Execute a SQL statement and get the number of rows affected back. (UPDATE, INSERT - but see `insert`.)
-    # This should really be called execute and execute should be called `select`.
-    def execute2(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> int:
+    def execute(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> int:
         [n, _] = self.execute_anything(sql, args, False)
         return n
 
@@ -100,12 +97,12 @@ class Database():
         return cast(int, self.value('SELECT LAST_INSERT_ID()'))
 
     def get_lock(self, lock_id: str, timeout: int = 4) -> None:
-        result = self.value('select get_lock(%s, %s)', [lock_id, timeout])
+        result = self.value('SELECT GET_LOCK(%s, %s)', [lock_id, timeout])
         if result != 1:
             raise LockNotAcquiredException
 
     def release_lock(self, lock_id: str) -> None:
-        self.execute('select release_lock(%s)', [lock_id])
+        self.execute('SELECT RELEASE_LOCK(%s)', [lock_id])
 
     def value(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, default: Any = None, fail_on_missing: bool = False) -> Any:
         try:
@@ -117,7 +114,7 @@ class Database():
                 return default
 
     def values(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[Any]:
-        rs = self.execute(sql, args)
+        rs = self.select(sql, args)
         return [list(row.values())[0] for row in rs]
 
     def nuke_database(self) -> None:

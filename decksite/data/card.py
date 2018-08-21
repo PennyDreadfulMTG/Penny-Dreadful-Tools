@@ -30,7 +30,7 @@ def played_cards(where: str = '1 = 1', season_id: Optional[int] = None) -> List[
             SUM(dsum.wins - dsum.losses) DESC,
             name
     """.format(all_select=deck.nwdl_all_select(), season_select=deck.nwdl_season_select(), week_select=deck.nwdl_week_select(), season_join=query.season_join(), nwdl_join=deck.nwdl_join(), where=where, season_query=query.season_query(season_id))
-    cs = [Container(r) for r in db().execute(sql)]
+    cs = [Container(r) for r in db().select(sql)]
     cards = oracle.cards_by_name()
     for c in cs:
         c.update(cards[c.name])
@@ -64,6 +64,6 @@ def playability() -> Dict[str, float]:
         GROUP BY
             card
     """
-    rs = [Container(r) for r in db().execute(sql)]
+    rs = [Container(r) for r in db().select(sql)]
     high = max([c.played for c in rs])
     return {c.name: (c.played / high) for c in rs}

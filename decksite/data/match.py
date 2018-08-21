@@ -41,7 +41,7 @@ def get_matches(d: deck.Deck, should_load_decks: bool = False) -> List[Container
         LEFT JOIN person AS p ON p.id = d2.person_id
         ORDER BY m.date, round
     """.format(person_query=query.person_query())
-    matches = [Container(m) for m in db().execute(sql, [d.id, d.id])]
+    matches = [Container(m) for m in db().select(sql, [d.id, d.id])]
     if should_load_decks:
         opponents = [m.opponent_deck_id for m in matches if m.opponent_deck_id is not None]
         if len(opponents) > 0:

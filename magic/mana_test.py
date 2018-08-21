@@ -43,7 +43,7 @@ def test_slitherhead() -> None:
     do_test('{B/G}', ['B/G'])
 
 def test_everything() -> None:
-    rs = database.db().execute('SELECT name, mana_cost FROM face')
+    rs = database.db().select('SELECT name, mana_cost FROM face')
     for row in rs:
         if row['mana_cost']:
             mana.parse(row['mana_cost'])

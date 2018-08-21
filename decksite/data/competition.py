@@ -85,7 +85,7 @@ def load_competitions(where: str = '1 = 1', season_id: Optional[int] = None) -> 
         GROUP BY c.id
         ORDER BY c.start_date DESC, c.name
     """.format(season_join=query.season_join(), where=where, season_query=query.season_query(season_id))
-    competitions = [Competition(r) for r in db().execute(sql)]
+    competitions = [Competition(r) for r in db().select(sql)]
     for c in competitions:
         c.start_date = dtutil.ts2dt(c.start_date)
         c.end_date = dtutil.ts2dt(c.end_date)
@@ -156,7 +156,7 @@ def leaderboards(where: str = "ct.name = 'Gatherling'", season_id: Optional[int]
     """.format(person_query=query.person_query(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id))
     results = []
     current: Dict[str, Any] = {}
-    for row in db().execute(sql):
+    for row in db().select(sql):
         k = row['competition_series_name']
         if current.get('competition_series_name', None) != k:
             if len(current) > 0:

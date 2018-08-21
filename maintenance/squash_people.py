@@ -21,7 +21,7 @@ def run() -> None:
                 ON p1.{col1} = p2.{col2} AND p1.id <> p2.id
                 WHERE p1.id IS NOT NULL AND p2.id IS NOT NULL
             """.format(col1=USERNAME_COLUMNS[i], col2=USERNAME_COLUMNS[j])
-            pairs = [Container(row) for row in db().execute(sql)]
+            pairs = [Container(row) for row in db().select(sql)]
             if len(pairs) > 0:
                 run_elo = True
             for pair in pairs:

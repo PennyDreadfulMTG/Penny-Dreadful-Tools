@@ -96,7 +96,7 @@ def load_archetypes_deckless(where: str = '1 = 1',
         ORDER BY
             {order_by}
     """.format(all_select=deck.nwdl_all_select(), season_join=query.season_join(), nwdl_join=deck.nwdl_join(), where=where, season_query=query.season_query(season_id), order_by=order_by)
-    archetypes = [Archetype(a) for a in db().execute(sql)]
+    archetypes = [Archetype(a) for a in db().select(sql)]
     archetypes_by_id = {a.id: a for a in archetypes}
     for a in archetypes:
         a.decks = []
@@ -112,7 +112,7 @@ def load_archetypes_deckless_for(archetype_id: int, season_id: int = None) -> Li
 
 def add(name: str, parent: int) -> None:
     archetype_id = db().insert('INSERT INTO archetype (name) VALUES (%s)', [name])
-    ancestors = db().execute('SELECT ancestor, depth FROM archetype_closure WHERE descendant = %s', [parent])
+    ancestors = db().select('SELECT ancestor, depth FROM archetype_closure WHERE descendant = %s', [parent])
     sql = 'INSERT INTO archetype_closure (ancestor, descendant, depth) VALUES '
     for a in ancestors:
         sql += '({ancestor}, {descendant}, {depth}), '.format(ancestor=sqlescape(a['ancestor']), descendant=archetype_id, depth=int(a['depth']) + 1)
@@ -156,7 +156,7 @@ def load_all_matchups(where='TRUE', season_id=None):
             oa.name
     """.format(season_join=query.season_join(), where=where, season_query=query.season_query(season_id))
     print(sql)
-    return [Container(m) for m in db().execute(sql)]
+    return [Container(m) for m in db().select(sql)]
 
 def load_matchups(archetype_id, season_id=None):
     where = 'a.id = {archetype_id}'.format(archetype_id=archetype_id)

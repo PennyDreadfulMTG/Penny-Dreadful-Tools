@@ -1,12 +1,13 @@
+import datetime
 import sys
 import textwrap
 import traceback
 from typing import Dict, List, Optional
 
 from flask import request, session
-from github import Github, Issue
+from github import Github, Issue, PullRequest
 
-from shared import configuration
+from shared import configuration, dtutil
 
 
 def create_issue(content: str,
@@ -69,3 +70,21 @@ def safe_data(data: Dict[str, str]) -> Dict[str, str]:
         if 'oauth' not in k.lower() and 'api_token' not in k.lower():
             safe[k] = v
     return safe
+
+def get_pull_requests(start_date: datetime.datetime, end_date: datetime.datetime, max_pull_requests: int = sys.maxsize, repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools'):
+    g = Github(configuration.get('github_user'), configuration.get('github_password'))
+    git_repo = g.get_repo(repo_name)
+    pulls: List[PullRequest] = []
+    for pull in git_repo.get_pulls(state='closed', sort='updated', direction='desc'):
+        if not pull.merged_at:
+            continue
+        pull.merged_dt = pull.merged_at.astimezone(dtutil.UTC_TZ)
+        pull.updated_dt = pull.updated_at.astimezone(dtutil.UTC_TZ)
+        if pull.merged_dt > end_date:
+            continue
+        if pull.updated_dt < start_date:
+            return pulls
+        pulls.append(pull)
+        if len(pulls) >= max_pull_requests:
+            return pulls
+    return pulls

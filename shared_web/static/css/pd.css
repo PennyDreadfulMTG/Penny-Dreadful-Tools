@@ -1679,11 +1679,17 @@ News
     padding: 0;
 }
 
+.news p {
+    font-size: 0.75rem;
+    margin: 0;
+    padding: 0.178em 0.563em; /* Same as table cells. */
+}
+
 .news .date {
     color: #999;
     display: inline-block;
     font-family: main-text;
-    font-size: 0.75rem;
+    font-size: 0..563rem;
     float: right;
 }
 

@@ -18,7 +18,7 @@ PD.scrollToContent = function () {
     if (window.matchMedia("only screen and (max-width: 640px)").matches && document.referrer.indexOf(window.location.hostname) > 0) {
          window.location.href = window.location.href + "#content";
     }
-}
+};
 PD.initDismiss = function () {
     $(".dismiss").click(function () {
         $(this).closest(".intro-container").hide();

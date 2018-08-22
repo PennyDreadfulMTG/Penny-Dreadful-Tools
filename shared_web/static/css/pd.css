@@ -745,115 +745,117 @@ Menu items can have submenus. These are "mega menus" that stretch across the who
 
 */
 
-.menu li {
-    float: left;
-}
+/*
 
-.menu li > a, .submenu-container li > a {
-    display: block;
-    padding: 2em; /* Matches negative margin of nav so when it aligns left (even wrapped under). */
-    text-decoration: none;
-    text-transform: lowercase;
-}
+Desktop Menu
 
-@media only screen and (max-width: 640px) {
+*/
+
+
+@media only screen and (min-width: 641px) {
+
+    .menu li {
+        float: left;
+    }
+
     .menu li > a, .submenu-container li > a {
-        padding: 0.563em;
+        display: block;
+        padding: 2em; /* Matches negative margin of nav so when it aligns left (even wrapped under). */
+        text-decoration: none;
+        text-transform: lowercase;
     }
-}
 
-.menu a:hover {
-    color: #999;
-    transition-duration: 1s;
-    transition-property: color;
-}
+    .menu a:hover {
+        color: #999;
+        transition-duration: 1s;
+        transition-property: color;
+    }
 
-.menu:after {
-    clear: both;
-    content: "";
-    display: table;
-}
+    .menu:after {
+        clear: both;
+        content: "";
+        display: table;
+    }
 
-/* Submenu. */
+    /* Submenu. */
 
-.submenu-container {
-    background: #502828;
-    box-sizing: border-box; /* So we can position the first menu item's text flush-left with the page text without worrying about the padding used for page margin. */;
-    color: #f9f9f9;
-    display: none;
-    left: 0;
-    position: absolute;
-    width: 100vw; /* Use this rather than the more obvious "100%" because the language switcher is absolutely positioned and yet contains a submenu which thinks 100% means 100% of the language switcher element, not of the whole page. */
-}
+    .submenu-container {
+        background: #502828;
+        box-sizing: border-box; /* So we can position the first menu item's text flush-left with the page text without worrying about the padding used for page margin. */;
+        color: #f9f9f9;
+        display: none;
+        left: 0;
+        position: absolute;
+        width: 100vw; /* Use this rather than the more obvious "100%" because the language switcher is absolutely positioned and yet contains a submenu which thinks 100% means 100% of the language switcher element, not of the whole page. */
+    }
 
-.submenu-container li {
-    float: left;
-}
+    .submenu-container li {
+        float: left;
+    }
 
-.submenu-container a:hover {
-    background-color: #502828;
-    color: #999;
-}
+    .submenu-container a:hover {
+        background-color: #502828;
+        color: #999;
+    }
 
-.submenu-container > ul {
-    margin-left: -2rem; /* So that first item text lines up with the left edge of the page. */
-}
-
-/* Accomodate less padding on menu items at narrower widths. */
-@media only screen and (max-width: 640px) {
     .submenu-container > ul {
-        margin-left: -0.563rem; /* So that first item text lines up with the left edge of the page. */
+        margin-left: -2rem; /* So that first item text lines up with the left edge of the page. */
     }
-}
 
-/* Slide-out caret at top of submenu dropdown. */
+    /* Slide-out caret at top of submenu dropdown. */
 
-/* Don't drop the opacity of the caret when menu item is selected because it's not semantically part of the menu item even though technically it is. */
-.has-submenu > a:focus {
-    opacity: 1;
-}
+    /* Don't drop the opacity of the caret when menu item is selected because it's not semantically part of the menu item even though technically it is. */
+    .has-submenu > a:focus {
+        opacity: 1;
+    }
 
-.has-submenu > a {
-    position: relative; /* So we can position the caret relative to its menuitem. */
-}
+    .has-submenu > a {
+        position: relative; /* So we can position the caret relative to its menuitem. */
+    }
 
-/* Create the caret as a border with opacity zero to hide it initially. */
-.has-submenu > a:after {
-    border-bottom: 1em solid #502828;
-    border-left: 1.333em solid transparent;
-    border-right: 1.333em solid transparent;
-    content: "";
-    display: block;
-    height: 0;
-    left: 50%;
-    margin-left: -1.333em; /* Equal to border-left/border-right, to compenstate for *starting* at left 50% instead of centering there. */
-    opacity: 0;
-    position: absolute; /* Take the caret out of the flow so it doesn't push content below down. */
-    transform: translateY(1em); /* [border-bottom] – In the hidden state the caret is pushed down by the height of the caret. */
-    transition: all 0.1s ease-out; /* When we transition back to this state hide the caret quite quickly so you don't see the caret when the dropdown has gone. */
-    width: 0;
-}
-
-.has-submenu > a.menuitem:after {
-    top: 4.333em; /* menuitem[padding-top] + menuitem[padding-bottom] + (menuitem[line-height] * menuitem[font-size]) - translateY/border-bottom */
-}
-
-.language-switcher.has-submenu > a:after {
-    top: 1.126em; /* menuitem[padding-top] + menuitem[padding-bottom] */
-}
-
-/* Accomodate the smaller padding on menu items in xs and sm view. */
-@media only screen and (max-width: 640px) {
+    /* Create the caret as a border with opacity zero to hide it initially. */
     .has-submenu > a:after {
-        top: 1.459em; /* menuitem[padding-top] + menuitem[padding-bottom] + (menuitem[line-height] * menuitem[font-size]) - translateY/border-bottom */
+        border-bottom: 1em solid #502828;
+        border-left: 1.333em solid transparent;
+        border-right: 1.333em solid transparent;
+        content: "";
+        display: block;
+        height: 0;
+        left: 50%;
+        margin-left: -1.333em; /* Equal to border-left/border-right, to compenstate for *starting* at left 50% instead of centering there. */
+        opacity: 0;
+        position: absolute; /* Take the caret out of the flow so it doesn't push content below down. */
+        transform: translateY(1em); /* [border-bottom] – In the hidden state the caret is pushed down by the height of the caret. */
+        transition: all 0.1s ease-out; /* When we transition back to this state hide the caret quite quickly so you don't see the caret when the dropdown has gone. */
+        width: 0;
+    }
+
+    .has-submenu > a.menuitem:after {
+        top: 4.333em; /* menuitem[padding-top] + menuitem[padding-bottom] + (menuitem[line-height] * menuitem[font-size]) - translateY/border-bottom */
+    }
+
+    .language-switcher.has-submenu > a:after {
+        top: 1.126em; /* menuitem[padding-top] + menuitem[padding-bottom] */
+    }
+
+    /* Show the caret on hover. */
+    .hovering > a:after {
+        opacity: 1;
+        transform: translateY(0); /* In the revealed state the caret is sitting inside the menuitem's padding. */
+        transition: all 0.3s ease-out; /* Ease up when we transition to visible position in .hovering > a:after on hover. */
     }
 }
 
-/* Show the caret on hover. */
-.hovering > a:after {
-    opacity: 1;
-    transform: translateY(0); /* In the revealed state the caret is sitting inside the menuitem's padding. */
-    transition: all 0.3s ease-out; /* Ease up when we transition to visible position in .hovering > a:after on hover. */
+/*
+
+Mobile Menu
+
+*/
+
+@media only screen and (max-width: 640px) {
+    .submenu-container ul {
+        margin-left: 1em;
+    }
 }
 
 /*

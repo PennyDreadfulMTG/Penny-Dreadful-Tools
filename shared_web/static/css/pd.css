@@ -853,6 +853,10 @@ Mobile Menu
 */
 
 @media only screen and (max-width: 640px) {
+    .language-switcher {
+        display: none;
+    }
+
     .submenu-container ul {
         margin-left: 1em;
     }

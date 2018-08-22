@@ -24,6 +24,9 @@ def init() -> Optional[redislib.Redis]:
 
 REDIS = init()
 
+def enabled() -> bool:
+    return REDIS is not None
+
 def _get(key: str, ex: Optional[int] = None) -> Optional[str]:
     try:
         if REDIS is not None:

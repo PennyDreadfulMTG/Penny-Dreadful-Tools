@@ -71,8 +71,16 @@ def safe_data(data: Dict[str, str]) -> Dict[str, str]:
             safe[k] = v
     return safe
 
-def get_pull_requests(start_date: datetime.datetime, end_date: datetime.datetime, max_pull_requests: int = sys.maxsize, repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools'):
-    g = Github(configuration.get('github_user'), configuration.get('github_password'))
+def get_pull_requests(start_date: datetime.datetime,
+                      end_date: datetime.datetime,
+                      max_pull_requests: int = sys.maxsize,
+                      repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools'
+                     ) -> List[PullRequest.PullRequest]:
+    gh_user = configuration.get_optional_str('github_user')
+    gh_pass = configuration.get_optional_str('github_password')
+    if gh_user is None or gh_pass is None:
+        return []
+    g = Github(gh_user, gh_pass)
     git_repo = g.get_repo(repo_name)
     pulls: List[PullRequest] = []
     for pull in git_repo.get_pulls(state='closed', sort='updated', direction='desc'):

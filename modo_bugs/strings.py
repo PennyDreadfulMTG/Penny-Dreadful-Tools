@@ -1,6 +1,6 @@
 import itertools
 import re
-from typing import Any, Iterable
+from typing import Any, Iterable, List
 
 CATEGORIES = ['Advantageous', 'Disadvantageous', 'Game Breaking', 'Avoidable Game Breaking', 'Graphical', 'Non-Functional ability']
 BADCATS = ['Game Breaking']
@@ -31,3 +31,8 @@ def grouper(n: int, iterable: Iterable, fillvalue: Any = None) -> Iterable:
     "grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx"
     args = [iter(iterable)] * n
     return itertools.zip_longest(*args, fillvalue=fillvalue)
+
+def get_cards_from_string(item: str) -> List[str]:
+    cards = re.findall(REGEX_CARDREF, item)
+    cards = [c for c in cards]
+    return cards

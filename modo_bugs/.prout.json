@@ -1,0 +1,8 @@
+{
+  "checkpoints": {
+    "GH": {
+      "url": "https://modo_bugs.pennydreadfulmagic.com/api/commit",
+      "overdue": "1H"
+    }
+  }
+}

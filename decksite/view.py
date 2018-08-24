@@ -1,5 +1,4 @@
 import html
-import urllib
 from collections import Counter
 from typing import List, Optional
 

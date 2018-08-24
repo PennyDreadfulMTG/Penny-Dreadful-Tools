@@ -1,7 +1,6 @@
 import hashlib
 import os
 import re
-import sys
 from typing import List, Optional
 
 from PIL import Image
@@ -56,14 +55,12 @@ def download_scryfall_image(cards: List[Card], filepath: str, version: str = '')
         print(card_filepath)
         if not internal.acceptable_file(card_filepath):
             try:
-                 internal.store(scryfall_image(card, version=version), card_filepath)
+                internal.store(scryfall_image(card, version=version), card_filepath)
             except FetchException as e:
                 print('Error: {e}'.format(e=e))
         if internal.acceptable_file(card_filepath):
             image_filepaths.append(card_filepath)
-    if len(image_filepaths) == 1:
-        return internal.acceptable_file(image_filepaths[0])
-    elif len(image_filepaths) > 1:
+    if len(image_filepaths) > 1:
         save_composite_image(image_filepaths, filepath)
     return internal.acceptable_file(filepath)
 
@@ -116,6 +113,6 @@ def save_composite_image(in_filepaths: List[str], out_filepath: str):
     new_image = Image.new('RGB', (total_width, max_height))
     x_offset = 0
     for image in images:
-      new_image.paste(image, (x_offset, 0))
-      x_offset += image.size[0]
+        new_image.paste(image, (x_offset, 0))
+        x_offset += image.size[0]
     new_image.save(out_filepath)

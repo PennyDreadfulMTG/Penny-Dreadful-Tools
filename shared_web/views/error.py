@@ -1,4 +1,3 @@
-import urllib
 from typing import Union
 
 from flask import url_for

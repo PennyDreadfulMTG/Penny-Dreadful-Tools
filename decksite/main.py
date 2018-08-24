@@ -5,6 +5,7 @@ from typing import Optional
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, session, url_for)
 from requests.exceptions import RequestException
+from werkzeug.exceptions import InternalServerError
 
 from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite import league as lg
@@ -360,18 +361,17 @@ def discord() -> Response:
     return redirect('https://discord.gg/RxhTEEP')
 
 @APP.route('/image/<path:c>/')
-def image(c = '') -> Response:
-    names = list(filter(None, c.split('|')))
-    if len(names) == 0:
-        return '', 400
+def image(c: str = '') -> Response:
+    names = c.split('|')
     try:
-        cards = oracle.load_cards(names)
-        if (len(cards) == 1):
-            return redirect(image_fetcher.scryfall_image(cards[0], version='border_crop'))
-        if image_fetcher.download_image(cards):
-            return send_file(image_fetcher.determine_filepath(cards))
-        raise InternalServerError(f'Failed to download image for {c}')
+        requested_cards = oracle.load_cards(names)
+        if len(requested_cards) == 1:
+            return redirect(image_fetcher.scryfall_image(requested_cards[0], version='border_crop'))
+        if image_fetcher.download_image(requested_cards):
+            return send_file(image_fetcher.determine_filepath(requested_cards))
+        raise InternalServerError(f'Failed to download image for {c}') # type: ignore
     except TooFewItemsException as e:
+        print(e)
         return '', 400
 
 @APP.before_request

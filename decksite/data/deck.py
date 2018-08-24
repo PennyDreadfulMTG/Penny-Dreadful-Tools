@@ -185,14 +185,17 @@ def load_decks_heavy(where: str = '1 = 1',
         LEFT JOIN
             deck_match AS odm ON odm.deck_id <> d.id AND dm.match_id = odm.match_id
         {season_join}
-        WHERE ({where}) AND ({season_query})
+        WHERE
+            ({where}) AND ({season_query})
         GROUP BY
             d.id,
             season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
+        HAVING
+            {having}
         ORDER BY
             {order_by}
         {limit}
-    """.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit, season_query=query.season_query(season_id), season_join=query.season_join())
+    """.format(person_query=query.person_query(), competition_join=query.competition_join(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id), having=having, order_by=order_by, limit=limit)
     db().execute('SET group_concat_max_len=100000')
     rows = db().select(sql)
     decks = []

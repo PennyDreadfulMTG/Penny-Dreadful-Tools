@@ -1,10 +1,10 @@
 import logging
 import urllib.parse
-from requests.exceptions import RequestException
 from typing import Optional
 
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, session, url_for)
+from requests.exceptions import RequestException
 
 from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite import league as lg

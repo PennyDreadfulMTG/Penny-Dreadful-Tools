@@ -29,6 +29,8 @@ def parse_chunk(chunk: str, section: SectionType) -> None:
 # Read a text decklist into an intermediate dict form.
 def parse(s: str) -> DecklistType:
     s = s.lstrip().rstrip()
+    if looks_doublespaced(s):
+        s = remove_doublespacing(s)
     maindeck: Dict[str, Any] = {}
     sideboard: Dict[str, Any] = {}
     chunks = re.split(r'\r?\n\r?\n|^\s*sideboard.*?\n', s, flags=re.IGNORECASE|re.MULTILINE)
@@ -60,6 +62,11 @@ def parse(s: str) -> DecklistType:
 
     return {'maindeck':maindeck, 'sideboard':sideboard}
 
+def looks_doublespaced(s):
+    return len(re.findall(r'\r?\n\r?\n', s)) >= len(re.findall(r'\r?\n\r?\n')) / 2 - 1
+
+def remove_doublespacing(s):
+    return re.sub(r'\r?\n\r?\n', '\n', s)
 
 # Parse a deck in the Magic Online XML .dek format or raise an InvalidDataException.
 def parse_xml(s: str) -> DecklistType:

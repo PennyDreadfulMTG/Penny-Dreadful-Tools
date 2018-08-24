@@ -63,7 +63,7 @@ def parse(s: str) -> DecklistType:
     return {'maindeck':maindeck, 'sideboard':sideboard}
 
 def looks_doublespaced(s: str) -> bool:
-    return len(re.findall(r'\r?\n\r?\n', s)) >= len(re.findall(r'\r?\n\r?\n')) / 2 - 1
+    return len(re.findall(r'\r?\n\r?\n', s)) >= len(re.findall(r'\r?\n\r?\n', s)) / 2 - 1
 
 def remove_doublespacing(s: str) -> str:
     return re.sub(r'\r?\n\r?\n', '\n', s)

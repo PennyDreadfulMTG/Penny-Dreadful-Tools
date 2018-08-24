@@ -26,9 +26,9 @@ from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
                             TournamentHosting, TournamentLeaderboards,
                             Tournaments)
 from magic import card as mc
-from magic import oracle
+from magic import image_fetcher, oracle
 from shared import perf
-from shared.pd_exception import DoesNotExistException, InvalidDataException
+from shared.pd_exception import DoesNotExistException, InvalidDataException, TooFewItemsException
 
 
 @APP.route('/')
@@ -358,6 +358,21 @@ def cmc_chart(deck_id: int) -> Response:
 @APP.route('/discord/')
 def discord() -> Response:
     return redirect('https://discord.gg/RxhTEEP')
+
+@APP.route('/image/<path:c>/')
+def image(c = '') -> Response:
+    names = list(filter(None, c.split('|')))
+    if len(names) == 0:
+        return '', 400
+    try:
+        cards = oracle.load_cards(names)
+        if (len(cards) == 1):
+            return redirect(image_fetcher.scryfall_image(cards[0], version='border_crop'))
+        if image_fetcher.download_image(cards):
+            return send_file(image_fetcher.determine_filepath(cards))
+        raise InternalServerError(f'Failed to download image for {c}')
+    except TooFewItemsException as e:
+        return '', 400
 
 @APP.before_request
 def before_request() -> None:

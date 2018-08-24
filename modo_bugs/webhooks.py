@@ -2,7 +2,8 @@ from github_webhook import Webhook
 
 from shared import configuration
 from shared_web.flask_app import PDFlask
-from . import update, repo
+
+from . import repo, update
 
 APP = PDFlask(__name__)
 WEBHOOK = Webhook(APP, endpoint='/api/github')

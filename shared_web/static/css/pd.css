@@ -252,6 +252,13 @@ footer {
     width: 100%;
 }
 
+@media only screen and (max-width: 640px) {
+    .status-bar {
+        padding-bottom: 0;
+        padding-top: 1em;
+    }
+}
+
 section {
     float: left;
     margin: 0 3.8445rem /* Width of .marginalia + left-padding + right-padding * font-size */ 1rem 0;

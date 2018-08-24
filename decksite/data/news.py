@@ -57,7 +57,7 @@ def load_news(start_date: datetime.datetime = None, end_date: datetime.datetime 
         LIMIT
             %s
     """
-    results = [Container(r) for r in db().select(sql, [start_date, end_date, max_items])]
+    results = [Container(r) for r in db().select(sql, [dtutil.dt2ts(start_date), dtutil.dt2ts(end_date), max_items])]
     for result in results:
         result.date = dtutil.ts2dt(result.date)
         result.form_date = dtutil.form_date(result.date, dtutil.WOTC_TZ)

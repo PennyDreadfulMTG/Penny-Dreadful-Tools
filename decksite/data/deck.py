@@ -96,19 +96,22 @@ def load_decks(where: str = '1 = 1',
     sql = sql.format(person_query=query.person_query(), competition_join=query.competition_join(), season_query=query.season_query(season_id), season_join=query.season_join(), where=where, having=having, order_by=order_by, limit=limit)
     db().execute('SET group_concat_max_len=100000')
     rows = db().select(sql)
-    decks = []
+    decks_by_id = {}
     heavy = []
     for row in rows:
         d = redis.get_container('decksite:deck:{id}'.format(id=row['id']))
         if d is None or d.name is None:
             heavy.append(row['id'])
-            # decks.append(guarantee.exactly_one(load_decks_heavy('d.id = {id}'.format(id=row['id']))))
         else:
-            decks.append(deserialize_deck(d))
+            decks_by_id[row['id']] = deserialize_deck(d)
     if heavy:
-        # This currently messes up the order.
         where = 'd.id IN ({deck_ids})'.format(deck_ids=', '.join(map(sqlescape, map(str, heavy))))
-        decks.extend(load_decks_heavy(where))
+        loaded_decks = load_decks_heavy(where)
+        for d in loaded_decks:
+            decks_by_id[d.id] = d
+    decks = []
+    for row in rows:
+        decks.append(decks_by_id[row['id']])
     return decks
 
 def deserialize_deck(sdeck: Container) -> Deck:

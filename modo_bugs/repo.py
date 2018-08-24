@@ -46,3 +46,6 @@ def get_issue_bbt(issue: Issue) -> Optional[str]:
     if bbt is not None:
         return bbt
     return None
+
+def is_issue_from_bug_blog(issue: Issue) -> bool:
+    return 'From Bug Blog' in [i.name for i in issue.labels]

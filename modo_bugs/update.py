@@ -177,9 +177,7 @@ def get_affects(issue: Issue) -> List[str]:
     else:
         affects_str = affects.group(1)
 
-    cards = re.findall(REGEX_CARDREF, affects_str)
-    cards = [c for c in cards]
-    return cards
+    return strings.get_cards_from_string(affects_str)
 
 def fix_user_errors(issue: Issue) -> None:
     body = issue.body
@@ -209,6 +207,14 @@ def fix_user_errors(issue: Issue) -> None:
     body = re.sub(r' - \r?\n', '', body)
     # Some people ignore the request for screenshots.
     body = body.replace('(Attach a screenshot or video here)', 'Currently Unconfirmed.')
+    if repo.is_issue_from_bug_blog(issue):
+        bbt = re.search(strings.BBT_REGEX, issue.body, re.MULTILINE)
+        if not get_affects(issue) and bbt:
+            cards = strings.get_cards_from_string(bbt.group(0))
+            if cards:
+                cardlist = ', '.join([f'[{c}]' for c in cards])
+                body = re.sub(AFFECTS_REGEX, f'Affects: {cardlist}', body, re.MULTILINE)
+
     # Push changes.
     if body != issue.body:
         issue.edit(body=body)

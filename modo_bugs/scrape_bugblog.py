@@ -6,8 +6,8 @@ from bs4 import BeautifulSoup, Comment
 from bs4.element import Tag
 from github.Issue import Issue
 
-from . import fetcher, repo
-from .strings import BBT_REGEX, remove_smartquotes, strip_squarebrackets
+from . import fetcher, repo, strings
+from .strings import BBT_REGEX, strip_squarebrackets
 
 
 def main() -> None:
@@ -38,11 +38,11 @@ def parse_changelog(collapsible_block: Tag) -> None:
     for added in collapsible_block.find_all('ul'):
         for item in added.find_all('li'):
             print(item)
-            bbt = remove_smartquotes(item.get_text())
+            bbt = strings.remove_smartquotes(item.get_text())
 
             issue = find_issue_by_code(bbt)
             if issue is not None:
-                if not ('From Bug Blog' in [i.name for i in issue.labels]):
+                if not repo.is_issue_from_bug_blog(issue):
                     print('Adding Bug Blog to labels')
                     issue.add_to_labels('From Bug Blog')
             elif find_issue_by_name(bbt):
@@ -50,12 +50,7 @@ def parse_changelog(collapsible_block: Tag) -> None:
             else:
                 print('Creating new issue')
                 text = 'From Bug Blog.\nAffects: \n<!-- Images -->\nBug Blog Text: {0}'.format(bbt)
-                repo.get_repo().create_issue(bbt, body=remove_smartquotes(text), labels=['From Bug Blog'])
-
-def get_cards_from_string(item: str) -> List[str]:
-    cards = re.findall(r'\[?\[([^\]]*)\]\]?', item)
-    cards = [c for c in cards]
-    return cards
+                repo.get_repo().create_issue(bbt, body=strings.remove_smartquotes(text), labels=['From Bug Blog'])
 
 def parse_knownbugs(b: Tag) -> None:
     # attempt to find all the fixed bugs
@@ -65,8 +60,8 @@ def parse_knownbugs(b: Tag) -> None:
         # code = re.search(CODE_REGEX, issue.body, re.MULTILINE)
         bbt = re.search(BBT_REGEX, issue.body, re.MULTILINE)
         if bbt is None:
-            cards = get_cards_from_string(issue.title)
-            if 'From Bug Blog' in [i.name for i in issue.labels]:
+            cards = strings.get_cards_from_string(issue.title)
+            if repo.is_issue_from_bug_blog(issue):
                 find_bbt_in_body_or_comments(issue)
                 find_bbt_in_issue_title(issue, b)
                 bbt = re.search(BBT_REGEX, issue.body, re.MULTILINE)
@@ -89,14 +84,14 @@ def parse_knownbugs(b: Tag) -> None:
                 text = ''.join(parent.strings)
                 print(text)
                 repo.create_comment(issue, 'Found in bug blog.\nBug Blog Text: {0}'.format(text))
-                if not ('From Bug Blog' in [i.name for i in issue.labels]):
+                if not repo.is_issue_from_bug_blog(issue):
                     issue.add_to_labels('From Bug Blog')
             continue
         else:
             if 'Invalid Bug Blog' in [i.name for i in issue.labels]:
                 issue.remove_from_labels('Invalid Bug Blog')
 
-        if 'From Bug Blog' in [i.name for i in issue.labels]:
+        if repo.is_issue_from_bug_blog(issue):
             # Don't check for Bug Blog Text if it's not marked as a BB issue (Maybe because it was reopened)
             check_if_removed_from_bugblog(bbt, b, issue)
 
@@ -104,10 +99,10 @@ def parse_knownbugs(b: Tag) -> None:
 
 def check_if_removed_from_bugblog(bbt: Match, b: Tag, issue: Issue) -> None:
     if bbt is not None:
-        text = remove_smartquotes(bbt.group(1).strip())
+        text = strings.remove_smartquotes(bbt.group(1).strip())
         for row in b.find_all('tr'):
             data = row.find_all('td')
-            rowtext = remove_smartquotes(data[1].text.strip())
+            rowtext = strings.remove_smartquotes(data[1].text.strip())
             if rowtext == text:
                 break
             elif strip_squarebrackets(rowtext) == strip_squarebrackets(text):
@@ -133,7 +128,7 @@ def check_for_missing_bugs(b: Tag) -> None:
             continue
         print('Could not find issue for `{row}`'.format(row=row_text))
         text = 'From Bug Blog.\nBug Blog Text: {0}'.format(row_text)
-        repo.get_repo().create_issue(remove_smartquotes(row_text), body=remove_smartquotes(text), labels=['From Bug Blog'])
+        repo.get_repo().create_issue(strings.remove_smartquotes(row_text), body=strings.remove_smartquotes(text), labels=['From Bug Blog'])
 
 
 def find_bbt_in_issue_title(issue: Issue, known_issues: Tag) -> None:
@@ -158,7 +153,7 @@ def find_issue_by_code(code: str) -> Issue:
         return None
     def scan(issue_list: List[Issue]) -> Optional[Issue]:
         for issue in issue_list:
-            if not 'From Bug Blog' in [i.name for i in issue.labels]:
+            if not repo.is_issue_from_bug_blog(issue):
                 # Only bug blog issues have bug blog data
                 repo.set_issue_bbt(issue.number, None)
                 continue

@@ -1,5 +1,6 @@
 import logging
 import urllib.parse
+from requests.exceptions import RequestException
 from typing import Optional
 
 from flask import (Response, abort, g, make_response, redirect, request,
@@ -171,7 +172,7 @@ def add_deck():
         import decksite.scrapers.tappedout
         try:
             deck_id = decksite.scrapers.tappedout.scrape_url(url).id
-        except InvalidDataException as e:
+        except (InvalidDataException, RequestException) as e:
             error = e.args[0]
     else:
         error = 'Deck host is not supported.'

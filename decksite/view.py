@@ -98,7 +98,13 @@ class View(BaseView):
     def title(self) -> str:
         if not self.page_title():
             return 'pennydreadfulmagic.com'
-        return '{page_title} – pennydreadfulmagic.com'.format(page_title=self.page_title())
+        if get_season_id() == rotation.current_season_num():
+            season = ''
+        elif get_season_id() == 'all':
+            season = ' - All Time'
+        else:
+            season = ' - Season {n}'.format(n=get_season_id())
+        return '{page_title}{season} – pennydreadfulmagic.com'.format(page_title=self.page_title(), season=season)
 
     def page_title(self) -> Optional[str]:
         pass

@@ -20,7 +20,9 @@ def deck_api(deck_id):
 
 @APP.route('/api/competitions/')
 def competitions_api():
-    comps = comp.load_competitions()
+    # Don't send competitions with any decks that do not have their correct archetype to third parties otherwise they
+    # will store it and be wrong forever.
+    comps = comp.load_competitions(having='num_reviewed = num_decks')
     r = []
     for c in comps:
         if c.decks:

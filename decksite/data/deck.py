@@ -35,7 +35,7 @@ def load_decks(where: str = '1 = 1',
                limit: str = '',
                season_id: Optional[int] = None
               ) -> List[Deck]:
-    if redis.REDIS is None:
+    if not redis.enabled():
         return load_decks_heavy(where, order_by, limit, season_id)
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'

@@ -1,6 +1,7 @@
 /*global PD:true Deckbox:false FooTable:false, moment:false, $, Tipped */
 window.PD = {};
 PD.init = function () {
+    PD.scrollToContent();
     PD.initDismiss();
     PD.initMenu();
     PD.initTables();
@@ -12,6 +13,11 @@ PD.init = function () {
     PD.localizeTimes();
     PD.initSignupDeckChooser();
     PD.initStatusFooter();
+};
+PD.scrollToContent = function () {
+    if (window.matchMedia("only screen and (max-width: 640px)").matches && document.referrer.indexOf(window.location.hostname) > 0) {
+         window.location.href = window.location.href + "#content";
+    }
 };
 PD.initDismiss = function () {
     $(".dismiss").click(function () {
@@ -29,12 +35,16 @@ PD.initMenu = function () {
     });
 };
 PD.onDropdownHover = function () {
-    $(this).addClass("hovering");
-    $(this).find(".submenu-container").slideDown("fast");
+    if (window.matchMedia("only screen and (min-width: 641px)").matches) {
+        $(this).addClass("hovering");
+        $(this).find(".submenu-container").slideDown("fast");
+    }
 };
 PD.onDropdownLeave = function () {
-    $(this).removeClass("hovering");
-    $(this).find(".submenu-container").slideUp("fast");
+    if (window.matchMedia("only screen and (min-width: 641px)").matches) {
+        $(this).removeClass("hovering");
+        $(this).find(".submenu-container").slideUp("fast");
+    }
 };
 PD.initTables = function () {
     var selector = "main table";

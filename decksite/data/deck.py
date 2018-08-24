@@ -367,6 +367,8 @@ def prime_cache(d: Deck) -> None:
     db().execute('DELETE FROM deck_cache WHERE deck_id = %s', [d.id])
     db().execute('INSERT INTO deck_cache (deck_id, normalized_name, colors, colored_symbols, legal_formats) VALUES (%s, %s, %s, %s, %s)', [d.id, normalized_name, colors_s, colored_symbols_s, legal_formats_s])
     db().commit()
+    # If it was worth priming the in-db cache it's worth busting the in-memory cache to pick up the changes.
+    redis.clear(f'decksite:deck:{d.id}')
 
 def add_cards(deck_id: int, cards: CardsDescription) -> None:
     db().begin()

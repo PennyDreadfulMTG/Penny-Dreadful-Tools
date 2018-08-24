@@ -466,6 +466,8 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def art(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!art {name}` Display the art (only) of the most recent printing of the named card."""
+        if not args:
+            return await channel.send('{author}: Please specify a card name.'.format(author=author.mention))
         async with channel.typing():
             c = await single_card_or_send_error(channel, args, author, 'art')
             if c is not None:

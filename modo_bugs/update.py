@@ -143,10 +143,10 @@ def update_issue_body(issue: Issue, cards: List[str], see_also: Optional[Match])
     expected = '<!-- Images --> '
     images = re.search(IMAGES_REGEX, issue.body, re.MULTILINE)
     for row in strings.grouper(4, cards):
-        expected = expected + '<img src="http://magic.bluebones.net/proxies/index2.php?c={0}" height="300px">'.format('|'.join([urllib.parse.quote(c) for c in row if c is not None]))
+        expected = expected + '<img src="https://pennydreadfulmagic.com/image/{0}/" height="300px">'.format('|'.join([urllib.parse.quote(c) for c in row if c is not None]))
     if see_also is not None:
         for row in strings.grouper(5, re.findall(REGEX_CARDREF, see_also.group(1))):
-            expected = expected + '<img src="http://magic.bluebones.net/proxies/index2.php?c={0}" height="250px">'.format('|'.join([urllib.parse.quote(c) for c in row if c is not None]))
+            expected = expected + '<img src="https://pennydreadfulmagic.com/image/{0}/" height="250px">'.format('|'.join([urllib.parse.quote(c) for c in row if c is not None]))
 
     if not images:
         print('Adding Images...')

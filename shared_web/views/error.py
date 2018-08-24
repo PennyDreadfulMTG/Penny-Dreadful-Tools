@@ -1,8 +1,8 @@
+import urllib.parse
 from typing import Union
 
 from flask import url_for
 
-from magic import image_fetcher
 from shared.container import Container
 
 from ..base_view import BaseView
@@ -18,6 +18,6 @@ class ErrorView(BaseView):
         container = Container({
             'name': c,
             'url': url_for('card', name=c),
+            'img_url': 'https://api.scryfall.com/cards/named?exact={name}&format=image'.format(name=urllib.parse.quote(c))
         })
-        container.img_url = image_fetcher.scryfall_image(container, version='medium')
         return container

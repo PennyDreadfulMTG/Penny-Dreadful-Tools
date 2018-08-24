@@ -7,7 +7,7 @@ from flask import url_for
 from decksite.data import deck
 from decksite.database import db
 from magic.models import Deck
-from shared import dtutil, repo
+from shared import dtutil, redis, repo
 from shared.container import Container
 from shared.database import sqlescape
 
@@ -88,7 +88,7 @@ def tournament_winners(start_date: datetime.datetime, end_date: datetime.datetim
     ds = deck.load_decks(where, limit=f'LIMIT {max_items}')
     return [Container({'date': d.created_date, 'title': tournament_winner_headline(d), 'url': url_for('deck', deck_id=d.id)}) for d in ds]
 
-def tournament_winner_headline(d: Deck):
+def tournament_winner_headline(d: Deck) -> str:
     return f'{d.person} won {d.competition_name} with {d.name}'
 
 def perfect_league_runs(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize) -> List[Container]:
@@ -97,8 +97,12 @@ def perfect_league_runs(start_date: datetime.datetime, end_date: datetime.dateti
     ds = deck.load_decks(where, having=having, limit=f'LIMIT {max_items}')
     return [Container({'date': d.created_date, 'title': perfect_league_run_headline(d), 'url': url_for('deck', deck_id=d.id)}) for d in ds]
 
-def perfect_league_run_headline(d: Deck):
+def perfect_league_run_headline(d: Deck) -> str:
     return f'{d.person} went 5–0 in {d.competition_name} with {d.name}'
 
 def code_merges(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize) -> List[Container]:
-    return [Container({'date': pull.merged_dt, 'title': pull.title, 'url': pull.html_url}) for pull in repo.get_pull_requests(start_date, end_date, max_items)]
+    merges = redis.get_container_list('decksite:news:merges')
+    if merges is None:
+        merges = [Container({'date': pull.merged_dt, 'title': pull.title, 'url': pull.html_url}) for pull in repo.get_pull_requests(start_date, end_date, max_items)]
+        redis.store('decksite:news:merges', merges, ex=3600)
+    return merges

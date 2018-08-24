@@ -67,6 +67,14 @@ def get_list(key: str) -> Optional[List[str]]:
             return val
     return None
 
+def get_container_list(key: str) -> Optional[List[Container]]:
+    if REDIS is not None:
+        blob = _get(key)
+        if blob is not None:
+            val = json.loads(blob)
+            return [Container(d) for d in val]
+    return None
+
 T = TypeVar('T', dict, list, str, covariant=True)
 
 def store(key: str, val: T, **kwargs: Any) -> T:

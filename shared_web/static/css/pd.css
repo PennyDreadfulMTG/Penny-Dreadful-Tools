@@ -1654,28 +1654,21 @@ tr.archetype-0.current > .primary.initial {
 }
 
 /*
-   max-width on table columns does not include padding so account for that here.
-   Use a fixed width rather than a max-width so the column doesn't "jump" when getting smaller because of losing then indents when sorted by something other than archetype name.
+   The padding in the archetype name varies depending on sort order.
+   Fix the width of the column to prevent the table "jump"-ing around the screen as it gets narrower or wider.
 */
 
-tr > .initial {
-    width: 13rem; /* Same as td's max-width. */
-}
-@media only screen and (max-width: 640px) {
-    tr > .initial {
-        width: 10rem; /* Same as td's max-width. */
-    }
+.archetype-name-header {
+    max-width: 13rem;
+    width: 13rem;
 }
 
-tr > .primary.initial {
-    width: 7.669em; /* 13em - 5.331em; */
-}
-@media only screen and (max-width: 640px) {
-    tr > .primary.initial {
-        width: 4.669em; /* 10em - 5.331em; */
+@media screen only and max-width(640px) {
+    .archetype-name-header {
+        max-width: 10rem;
+        width: 10rem;
     }
 }
-
 /*
 
 News

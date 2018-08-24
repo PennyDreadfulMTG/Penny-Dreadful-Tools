@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from decksite.data import deck, elo, query
 from decksite.database import db
-from shared import dtutil
+from shared import dtutil, redis
 from shared.container import Container
 from shared.database import sqlescape
 
@@ -20,9 +20,11 @@ def insert_match(dt: datetime.datetime,
     match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
     sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
     db().execute(sql, [left_id, match_id, left_games])
+    redis.clear(f'decksite:deck:{left_id}')
     if right_id is not None: # Don't insert matches or adjust Elo for the bye.
         db().execute(sql, [right_id, match_id, right_games])
         elo.adjust_elo(left_id if left_games > right_games else right_id, left_id if left_games < right_games else right_id)
+        redis.clear(f'decksite:deck:{right_id}')
     return match_id
 
 def get_matches(d: deck.Deck, should_load_decks: bool = False) -> List[Container]:

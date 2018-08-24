@@ -11,7 +11,7 @@ from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.views import (Admin, EditArchetypes, EditMatches, EditNews,
                             PlayerNotes, Prizes, RotationChecklist, Unlink)
-from shared import dtutil
+from shared import dtutil, redis
 from shared.container import Container
 from shared.pd_exception import InvalidArgumentException
 
@@ -52,6 +52,7 @@ def post_archetypes():
             archetype_id = archetype_ids.pop(0)
             if archetype_id:
                 archs.assign(deck_id, archetype_id)
+                redis.clear(f'decksite:deck:{deck_id}')
     elif request.form.get('q') is not None and request.form.get('notq') is not None:
         search_results = ds.load_decks_by_cards(request.form.get('q').splitlines(), request.form.get('notq').splitlines())
     elif request.form.getlist('archetype_id') is not None and len(request.form.getlist('archetype_id')) == 2:

@@ -7,7 +7,7 @@ from bs4.element import Tag
 from github.Issue import Issue
 
 from . import fetcher, repo
-from .strings import BBT_REGEX, remove_smartquotes, strip_squarebrackets
+from .strings import BBT_REGEX, remove_smartquotes, strip_squarebrackets, get_cards_from_string
 
 
 def main() -> None:
@@ -42,7 +42,7 @@ def parse_changelog(collapsible_block: Tag) -> None:
 
             issue = find_issue_by_code(bbt)
             if issue is not None:
-                if not ('From Bug Blog' in [i.name for i in issue.labels]):
+                if not repo.is_issue_from_bug_blog(issue):
                     print('Adding Bug Blog to labels')
                     issue.add_to_labels('From Bug Blog')
             elif find_issue_by_name(bbt):
@@ -51,11 +51,6 @@ def parse_changelog(collapsible_block: Tag) -> None:
                 print('Creating new issue')
                 text = 'From Bug Blog.\nAffects: \n<!-- Images -->\nBug Blog Text: {0}'.format(bbt)
                 repo.get_repo().create_issue(bbt, body=remove_smartquotes(text), labels=['From Bug Blog'])
-
-def get_cards_from_string(item: str) -> List[str]:
-    cards = re.findall(r'\[?\[([^\]]*)\]\]?', item)
-    cards = [c for c in cards]
-    return cards
 
 def parse_knownbugs(b: Tag) -> None:
     # attempt to find all the fixed bugs
@@ -66,7 +61,7 @@ def parse_knownbugs(b: Tag) -> None:
         bbt = re.search(BBT_REGEX, issue.body, re.MULTILINE)
         if bbt is None:
             cards = get_cards_from_string(issue.title)
-            if 'From Bug Blog' in [i.name for i in issue.labels]:
+            if repo.is_issue_from_bug_blog(issue):
                 find_bbt_in_body_or_comments(issue)
                 find_bbt_in_issue_title(issue, b)
                 bbt = re.search(BBT_REGEX, issue.body, re.MULTILINE)
@@ -89,14 +84,14 @@ def parse_knownbugs(b: Tag) -> None:
                 text = ''.join(parent.strings)
                 print(text)
                 repo.create_comment(issue, 'Found in bug blog.\nBug Blog Text: {0}'.format(text))
-                if not ('From Bug Blog' in [i.name for i in issue.labels]):
+                if not repo.is_issue_from_bug_blog(issue):
                     issue.add_to_labels('From Bug Blog')
             continue
         else:
             if 'Invalid Bug Blog' in [i.name for i in issue.labels]:
                 issue.remove_from_labels('Invalid Bug Blog')
 
-        if 'From Bug Blog' in [i.name for i in issue.labels]:
+        if repo.is_issue_from_bug_blog(issue):
             # Don't check for Bug Blog Text if it's not marked as a BB issue (Maybe because it was reopened)
             check_if_removed_from_bugblog(bbt, b, issue)
 
@@ -158,7 +153,7 @@ def find_issue_by_code(code: str) -> Issue:
         return None
     def scan(issue_list: List[Issue]) -> Optional[Issue]:
         for issue in issue_list:
-            if not 'From Bug Blog' in [i.name for i in issue.labels]:
+            if not repo.is_issue_from_bug_blog(issue):
                 # Only bug blog issues have bug blog data
                 repo.set_issue_bbt(issue.number, None)
                 continue

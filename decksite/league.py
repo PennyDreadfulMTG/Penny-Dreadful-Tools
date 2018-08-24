@@ -355,8 +355,11 @@ def load_matches(where='1 = 1'):
     return matches
 
 def delete_match(match_id: int) -> None:
+    deck_ids = db().values('SELECT deck_id FROM deck_match WHERE match_id = %s', [match_id])
     sql = 'DELETE FROM `match` WHERE id = %s'
     db().execute(sql, [match_id])
+    for deck_id in deck_ids:
+        redis.clear(f'decksite:deck:{deck_id}')
 
 def first_runs() -> List[Container]:
     sql = """

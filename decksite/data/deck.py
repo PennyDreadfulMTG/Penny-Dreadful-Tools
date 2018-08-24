@@ -31,19 +31,23 @@ def load_season(season_id: int = None, league_only: bool = False) -> Container:
 
 # pylint: disable=attribute-defined-outside-init
 def load_decks(where: str = '1 = 1',
+               having: str = '1 = 1',
                order_by: Optional[str] = None,
                limit: str = '',
                season_id: Optional[int] = None
               ) -> List[Deck]:
     if not redis.enabled():
-        return load_decks_heavy(where, order_by, limit, season_id)
+        return load_decks_heavy(where, having, order_by, limit, season_id)
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
     sql = """
         SELECT
             d.id,
             d.finish,
-            IFNULL(MAX(m.date), d.created_date) AS active_date
+            IFNULL(MAX(m.date), d.created_date) AS active_date,
+            SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins,
+            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
+            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws
         FROM
             deck AS d
         LEFT JOIN
@@ -78,15 +82,18 @@ def load_decks(where: str = '1 = 1',
         """
     sql += """
         {season_join}
-        WHERE ({where}) AND ({season_query})
+        WHERE
+            ({where}) AND ({season_query})
         GROUP BY
             d.id,
             season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
+        HAVING
+            {having}
         ORDER BY
             {order_by}
         {limit}
     """
-    sql = sql.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit, season_query=query.season_query(season_id), season_join=query.season_join())
+    sql = sql.format(person_query=query.person_query(), competition_join=query.competition_join(), season_query=query.season_query(season_id), season_join=query.season_join(), where=where, having=having, order_by=order_by, limit=limit)
     db().execute('SET group_concat_max_len=100000')
     rows = db().select(sql)
     decks = []
@@ -121,6 +128,7 @@ def deserialize_deck(sdeck: Container) -> Deck:
     return deck
 
 def load_decks_heavy(where: str = '1 = 1',
+                     having: str = '1 = 1',
                      order_by: Optional[str] = None,
                      limit: str = '',
                      season_id: Optional[int] = None
@@ -177,14 +185,17 @@ def load_decks_heavy(where: str = '1 = 1',
         LEFT JOIN
             deck_match AS odm ON odm.deck_id <> d.id AND dm.match_id = odm.match_id
         {season_join}
-        WHERE ({where}) AND ({season_query})
+        WHERE
+            ({where}) AND ({season_query})
         GROUP BY
             d.id,
             season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
+        HAVING
+            {having}
         ORDER BY
             {order_by}
         {limit}
-    """.format(person_query=query.person_query(), competition_join=query.competition_join(), where=where, order_by=order_by, limit=limit, season_query=query.season_query(season_id), season_join=query.season_join())
+    """.format(person_query=query.person_query(), competition_join=query.competition_join(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id), having=having, order_by=order_by, limit=limit)
     db().execute('SET group_concat_max_len=100000')
     rows = db().select(sql)
     decks = []

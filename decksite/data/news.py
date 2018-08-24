@@ -20,6 +20,7 @@ def all_news(start_date: datetime.datetime = None, end_date: datetime.datetime =
     news: List[Container] = []
     news += load_news(start_date, end_date, max_items)
     news += tournament_winners(start_date, end_date, max_items)
+    news += perfect_league_runs(start_date, end_date, max_items)
     news += code_merges(start_date, end_date, max_items)
     news = sorted(news, key=lambda item: item.date, reverse=True)
     results = []
@@ -84,15 +85,16 @@ def delete(news_item_id: int) -> None:
 
 def tournament_winners(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize) -> List[Container]:
     where = 'd.finish = 1 AND d.created_date > {start_date} AND d.created_date <= {end_date}'.format(start_date=sqlescape(dtutil.dt2ts(start_date)), end_date=sqlescape(dtutil.dt2ts(end_date)))
-    ds = deck.load_decks(where, None, f'LIMIT {max_items}')
+    ds = deck.load_decks(where, limit=f'LIMIT {max_items}')
     return [Container({'date': d.created_date, 'title': tournament_winner_headline(d), 'url': url_for('deck', deck_id=d.id)}) for d in ds]
 
 def tournament_winner_headline(d: Deck):
     return f'{d.person} won {d.competition_name} with {d.name}'
 
 def perfect_league_runs(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize) -> List[Container]:
-    where = "ct.name = 'League' AND wins >=5 AND losses = 0 AND d.created_date > {start_date} AND d.created_date <= {end_date}".format(start_date=sqlescape(dtutil.dt2ts(start_date)), end_date=sqlescape(dtutil.dt2ts(end_date)))
-    ds = deck.load_decks(where, None, f'LIMIT {max_items}')
+    where = "ct.name = 'League' AND d.created_date > {start_date} AND d.created_date <= {end_date}".format(start_date=sqlescape(dtutil.dt2ts(start_date)), end_date=sqlescape(dtutil.dt2ts(end_date)))
+    having = 'wins >= 5 AND losses = 0'
+    ds = deck.load_decks(where, having=having, limit=f'LIMIT {max_items}')
     return [Container({'date': d.created_date, 'title': perfect_league_run_headline(d), 'url': url_for('deck', deck_id=d.id)}) for d in ds]
 
 def perfect_league_run_headline(d: Deck):

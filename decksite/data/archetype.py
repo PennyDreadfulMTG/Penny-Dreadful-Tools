@@ -155,7 +155,6 @@ def load_all_matchups(where='TRUE', season_id=None):
             `all_wins` DESC,
             oa.name
     """.format(season_join=query.season_join(), where=where, season_query=query.season_query(season_id))
-    print(sql)
     return [Container(m) for m in db().select(sql)]
 
 def load_matchups(archetype_id, season_id=None):

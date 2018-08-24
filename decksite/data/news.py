@@ -107,5 +107,5 @@ def code_merges(start_date: datetime.datetime, end_date: datetime.datetime, max_
         redis.store('decksite:news:merges', merges, ex=3600)
     else:
         for merge in merges:
-            merge.merged_dt = dtutil.ts2dt(merge.merged_dt)
+            merge.date = dtutil.ts2dt(merge.date)
     return merges

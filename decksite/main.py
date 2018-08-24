@@ -4,6 +4,7 @@ from typing import Optional
 
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, session, url_for)
+from requests.exceptions import RequestException
 
 from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite import league as lg
@@ -171,7 +172,7 @@ def add_deck():
         import decksite.scrapers.tappedout
         try:
             deck_id = decksite.scrapers.tappedout.scrape_url(url).id
-        except InvalidDataException as e:
+        except (InvalidDataException, RequestException) as e:
             error = e.args[0]
     else:
         error = 'Deck host is not supported.'

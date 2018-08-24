@@ -96,19 +96,22 @@ def load_decks(where: str = '1 = 1',
     sql = sql.format(person_query=query.person_query(), competition_join=query.competition_join(), season_query=query.season_query(season_id), season_join=query.season_join(), where=where, having=having, order_by=order_by, limit=limit)
     db().execute('SET group_concat_max_len=100000')
     rows = db().select(sql)
-    decks = []
+    decks_by_id = {}
     heavy = []
     for row in rows:
         d = redis.get_container('decksite:deck:{id}'.format(id=row['id']))
         if d is None or d.name is None:
             heavy.append(row['id'])
-            # decks.append(guarantee.exactly_one(load_decks_heavy('d.id = {id}'.format(id=row['id']))))
         else:
-            decks.append(deserialize_deck(d))
+            decks_by_id[row['id']] = deserialize_deck(d)
     if heavy:
-        # This currently messes up the order.
         where = 'd.id IN ({deck_ids})'.format(deck_ids=', '.join(map(sqlescape, map(str, heavy))))
-        decks.extend(load_decks_heavy(where))
+        loaded_decks = load_decks_heavy(where)
+        for d in loaded_decks:
+            decks_by_id[d.id] = d
+    decks = []
+    for row in rows:
+        decks.append(decks_by_id[row['id']])
     return decks
 
 def deserialize_deck(sdeck: Container) -> Deck:
@@ -364,6 +367,8 @@ def prime_cache(d: Deck) -> None:
     db().execute('DELETE FROM deck_cache WHERE deck_id = %s', [d.id])
     db().execute('INSERT INTO deck_cache (deck_id, normalized_name, colors, colored_symbols, legal_formats) VALUES (%s, %s, %s, %s, %s)', [d.id, normalized_name, colors_s, colored_symbols_s, legal_formats_s])
     db().commit()
+    # If it was worth priming the in-db cache it's worth busting the in-memory cache to pick up the changes.
+    redis.clear(f'decksite:deck:{d.id}')
 
 def add_cards(deck_id: int, cards: CardsDescription) -> None:
     db().begin()

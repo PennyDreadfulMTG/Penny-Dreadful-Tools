@@ -1,7 +1,10 @@
 import hashlib
 import os
 import re
+import sys
 from typing import List, Optional
+
+from PIL import Image
 
 import shared.fetcher_internal as internal
 from magic import oracle
@@ -45,11 +48,23 @@ def download_bluebones_image(cards: List[Card], filepath: str) -> bool:
     return internal.acceptable_file(filepath)
 
 def download_scryfall_image(cards: List[Card], filepath: str, version: str = '') -> bool:
-    print('Trying to get scryfall image for {card}'.format(card=cards[0]))
-    try:
-        internal.store(scryfall_image(cards[0], version=version), filepath)
-    except FetchException as e:
-        print('Error: {e}'.format(e=e))
+    card_names = ', '.join(card.name for card in cards)
+    print(f'Trying to get scryfall images for {card_names}')
+    image_filepaths = []
+    for card in cards:
+        card_filepath = determine_filepath([card])
+        print(card_filepath)
+        if not internal.acceptable_file(card_filepath):
+            try:
+                 internal.store(scryfall_image(card, version=version), card_filepath)
+            except FetchException as e:
+                print('Error: {e}'.format(e=e))
+        if internal.acceptable_file(card_filepath):
+            image_filepaths.append(card_filepath)
+    if len(image_filepaths) == 1:
+        return internal.acceptable_file(image_filepaths[0])
+    elif len(image_filepaths) > 1:
+        save_composite_image(image_filepaths, filepath)
     return internal.acceptable_file(filepath)
 
 def download_mci_image(cards: List[Card], filepath: str) -> bool:
@@ -85,10 +100,22 @@ def download_image(cards: List[Card]) -> Optional[str]:
     filepath = determine_filepath(cards)
     if internal.acceptable_file(filepath):
         return filepath
-    if download_bluebones_image(cards, filepath):
+    if download_scryfall_image(cards, filepath, version='border_crop'):
         return filepath
-    if download_scryfall_image(cards, filepath):
+    if download_bluebones_image(cards, filepath):
         return filepath
     if download_mci_image(cards, filepath):
         return filepath
     return None
+
+def save_composite_image(in_filepaths: List[str], out_filepath: str):
+    images = list(map(Image.open, in_filepaths))
+    widths, heights = zip(*(i.size for i in images))
+    total_width = sum(widths)
+    max_height = max(heights)
+    new_image = Image.new('RGB', (total_width, max_height))
+    x_offset = 0
+    for image in images:
+      new_image.paste(image, (x_offset, 0))
+      x_offset += image.size[0]
+    new_image.save(out_filepath)

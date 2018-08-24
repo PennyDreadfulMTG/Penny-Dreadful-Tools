@@ -44,6 +44,9 @@ def tournament(url: str, name: str) -> int:
 
     dt, competition_series = get_dt_and_series(name, day_s)
     top_n = find_top_n(soup)
+    # Tournaments that currently advertise a "top 0" are unstarted/in progress and should be ignored for now.
+    if top_n == competition.Top.NONE:
+        return 0
     competition_id = competition.get_or_insert_competition(dt, dt, name, competition_series, url, top_n)
     ranks = rankings(soup)
     medals = medal_winners(s)

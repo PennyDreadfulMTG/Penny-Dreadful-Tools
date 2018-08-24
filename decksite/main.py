@@ -29,7 +29,8 @@ from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
 from magic import card as mc
 from magic import image_fetcher, oracle
 from shared import perf
-from shared.pd_exception import DoesNotExistException, InvalidDataException, TooFewItemsException
+from shared.pd_exception import (DoesNotExistException, InvalidDataException,
+                                 TooFewItemsException)
 
 
 @APP.route('/')

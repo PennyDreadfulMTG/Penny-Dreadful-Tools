@@ -135,7 +135,7 @@ def normalize_colors(name: str) -> str:
     color_words = list(unique_color_words)
     canonical_colors = canonicalize_colors(color_words)
     true_color = name_from_colors(canonical_colors)
-    name = name.replace(color_words[0], true_color)
+    name = name.replace(color_words[0], true_color, 1)
     for color_word in color_words[1:]:
         name = name.replace(color_word, '')
     if len(canonical_colors) == 1 and name.startswith(true_color):

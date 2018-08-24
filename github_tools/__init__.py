@@ -1,7 +1,6 @@
 from flask import redirect
 from github_webhook import Webhook
 
-from shared import configuration
 from shared_web.flask_app import PDFlask
 
 from . import webhooks

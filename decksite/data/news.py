@@ -105,4 +105,7 @@ def code_merges(start_date: datetime.datetime, end_date: datetime.datetime, max_
     if merges is None:
         merges = [Container({'date': pull.merged_dt, 'title': pull.title, 'url': pull.html_url}) for pull in repo.get_pull_requests(start_date, end_date, max_items)]
         redis.store('decksite:news:merges', merges, ex=3600)
+    else:
+        for merge in merges:
+            merge.merged_dt = dtutil.ts2dt(merge.merged_dt)
     return merges

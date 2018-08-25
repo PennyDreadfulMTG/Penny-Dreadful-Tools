@@ -21,7 +21,7 @@ def get_number(url: str) -> int:
 def on_issues(data):
     if data['sender']['login'] == configuration.get_str('github_user'):
         return 'Ignoring self'
-    number = get_number(data['pull_request']['url'])
+    number = get_number(data['issue']['url'])
     issue = repo.get_repo().get_issue(number)
     update.process_issue(issue)
     return 'done'

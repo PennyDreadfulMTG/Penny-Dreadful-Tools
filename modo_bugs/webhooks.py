@@ -20,7 +20,8 @@ def get_number(url: str) -> int:
 @WEBHOOK.hook(event_type='issues')
 def on_issues(data):
     if data['sender']['login'] == configuration.get_str('github_user'):
-        return
+        return 'Ignoring self'
     number = get_number(data['pull_request']['url'])
     issue = repo.get_repo().get_issue(number)
     update.process_issue(issue)
+    return 'done'

@@ -136,7 +136,7 @@ class Commands:
     """To define a new command, simply add a new method to this class.
     If you want !help to show the message, add a docstring to the method.
     Method parameters should be in the format:
-    `async def commandname(self, bot, channel, args, author)`
+    `async def commandname(self, client, channel, args, author)`
     Where any argument after self is optional. (Although at least channel is usually needed)
     """
 

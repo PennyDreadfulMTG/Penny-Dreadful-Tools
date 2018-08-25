@@ -1,5 +1,5 @@
 from decksite.view import View
-from magic import legality
+from magic import legality, rotation
 
 
 # pylint: disable=no-self-use
@@ -9,7 +9,7 @@ class Card(View):
         self.card = card
         self.cards = [card]
         self.decks = card.decks
-        self.legal_formats = list(sorted(card.legalities.keys(), key=legality.order_score))
+        self.legal_formats = card.legalities.keys()
         self.show_seasons = True
 
     def __getattr__(self, attr):

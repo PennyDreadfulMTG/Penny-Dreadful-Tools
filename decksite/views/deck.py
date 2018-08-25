@@ -50,7 +50,7 @@ class Deck(View):
         self.deck['sideboard'].sort(key=lambda x: oracle.deck_sort(x.card))
         self.archetypes = archetype.load_archetypes_deckless(order_by='a.name')
         self.edit_archetype_url = url_for('edit_archetypes')
-        self.legal_formats = list(sorted(d.legal_formats, key=legality.order_score))
+        self.legal_formats = d.legal_formats
         self.is_in_current_run = d.is_in_current_run()
         self.person_id = person_id
         self.discord_id = discord_id

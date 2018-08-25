@@ -11,7 +11,7 @@ from werkzeug.routing import BuildError
 
 from decksite import APP, get_season_id
 from decksite.data import archetype
-from magic import image_fetcher, oracle, rotation, tournaments
+from magic import image_fetcher, legality, oracle, rotation, tournaments
 from magic.models.card import Card
 from magic.models.deck import Deck
 from shared import dtutil
@@ -140,6 +140,7 @@ class View(BaseView):
         self.prepare_people()
         self.prepare_archetypes()
         self.prepare_leaderboards()
+        self.prepare_legal_formats()
 
     def prepare_decks(self) -> None:
         self.is_very_large = self.is_very_large or len(getattr(self, 'decks', [])) > 500
@@ -301,6 +302,10 @@ class View(BaseView):
             p.url = url_for('.person', person_id=p.person_id)
             pos += 1
 
+    def prepare_legal_formats(self):
+        if getattr(self, 'legal_formats', None) is not None:
+            self.legal_formats = map(add_season_num, list(sorted(self.legal_formats, key=legality.order_score)))
+
     def babel_languages(self):
         return APP.babel.list_translations()
 
@@ -360,3 +365,10 @@ def seasonized_url(season_id) -> str:
         return url_for(endpoint, **args)
     except BuildError:
         return url_for(request.endpoint)
+
+def add_season_num(f):
+    if not 'Penny Dreadful ' in f:
+        return f
+    code = f.replace('Penny Dreadful ', '')
+    num = rotation.season_num(code)
+    return f.replace(code, f'{code} (Season {num})')

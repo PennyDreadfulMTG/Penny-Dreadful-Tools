@@ -10,8 +10,6 @@ def test_determine_end_of_league() -> None:
     start_date = dtutil.parse('2017-10-31 11:59:59.999', '%Y-%m-%d %H:%M:%S.%f', dtutil.WOTC_TZ)
     end_date = league.determine_end_of_league(start_date, next_rotation)
     assert dtutil.dt2ts(end_date) == 1512115199
-
-def test_determine_end_of_league_with_rotation() -> None:
     next_rotation = dtutil.parse('2018-07-13 00:00:00', '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ)
     start_date = dtutil.parse('2018-05-31 11:04:15', '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ)
     end_date = league.determine_end_of_league(start_date, next_rotation)

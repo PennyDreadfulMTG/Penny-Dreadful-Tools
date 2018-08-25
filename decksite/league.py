@@ -296,7 +296,7 @@ def determine_end_of_league(start_date: datetime.datetime, next_rotation: dateti
         year = start_date.year
     end_date_s = '{year}-{month}-01 00:00:00'.format(year=year, month=month)
     end_date = dtutil.parse(end_date_s, '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ).astimezone(dtutil.WOTC_TZ)
-    if start_date < next_rotation and end_date > next_rotation:
+    if start_date < next_rotation < end_date:
         end_date = next_rotation
     end_date = end_date - datetime.timedelta(seconds=1)
     # Now we have an end date for this league let's make sure that it doesn't make the next league too short. See #5061.

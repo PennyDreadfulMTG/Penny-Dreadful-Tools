@@ -34,7 +34,7 @@ SeasonInfoDescription = TypedDict('SeasonInfoDescription', {
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10
 
-# pylint: disable=no-self-use, too-many-public-methods
+# pylint: disable=no-self-use, too-many-instance-attributes, too-many-public-methods
 class View(BaseView):
     def __init__(self) -> None:
         self.decks: List[Deck] = []
@@ -42,6 +42,7 @@ class View(BaseView):
         self.active_runs_text: Optional[str] = None
         self.is_very_large: Optional[bool] = None
         self.show_seasons: bool = False
+        self.legal_formats: Optional[List[str]] = None
         self.cardhoarder_logo_url = url_for('static', filename='images/cardhoarder.png')
         self.mtgotraders_logo_url = url_for('static', filename='images/mtgotraders.png')
 

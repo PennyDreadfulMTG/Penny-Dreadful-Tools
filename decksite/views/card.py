@@ -1,5 +1,4 @@
 from decksite.view import View
-from magic import legality, rotation
 
 
 # pylint: disable=no-self-use

@@ -6,7 +6,7 @@ from flask import session, url_for
 
 from decksite.data import archetype, deck, match
 from decksite.view import View
-from magic import card, fetcher, legality, oracle
+from magic import card, fetcher, oracle
 from shared import dtutil
 from shared.container import Container
 from shared.pd_exception import InvalidDataException

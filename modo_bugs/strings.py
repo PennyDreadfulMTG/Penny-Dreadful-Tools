@@ -1,6 +1,6 @@
 import itertools
 import re
-from typing import Any, Iterable, List
+from typing import Any, Iterable, List, Optional
 
 METACATS = ['Cardset', 'Collection', 'Deck Building', 'Duel Scene', 'Leagues', 'Play Lobby', 'Trade']
 CATEGORIES = ['Advantageous', 'Disadvantageous', 'Game Breaking', 'Avoidable Game Breaking', 'Graphical', 'Non-Functional ability']
@@ -48,7 +48,7 @@ def set_body_field(body: str, field: str, value: str) -> str:
         return re.sub(regex, line, body, flags=re.MULTILINE)
     return f'{body}\n{line}'
 
-def get_body_field(body: str, field: str) -> str:
+def get_body_field(body: str, field: str) -> Optional[str]:
     regex = r'^' + field + r': (.*)$'
     m = re.search(regex, body, re.MULTILINE)
     if m:

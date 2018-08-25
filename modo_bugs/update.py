@@ -130,6 +130,8 @@ def process_issue(issue: Issue) -> None:
             }
         if 'Multiplayer' in labels:
             bug['multiplayer_only'] = True
+        if 'Collection' in labels:
+            bug['cade_bug'] = True
 
         age = datetime.datetime.now() - issue.updated_at
         if 'Help Wanted' in labels:

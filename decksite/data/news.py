@@ -112,7 +112,7 @@ def code_merges(start_date: datetime.datetime, end_date: datetime.datetime, max_
             merge.date = dtutil.ts2dt(merge.date)
     return merges
 
-def subreddit(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize):
+def subreddit(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize) -> List[Container]:
     redis_key = 'decksite:news:subreddit'
     items = redis.get_container_list(redis_key)
     if items:

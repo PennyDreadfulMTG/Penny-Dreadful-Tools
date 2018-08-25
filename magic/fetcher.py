@@ -8,6 +8,7 @@ from urllib import parse
 import feedparser
 import pytz
 
+from shared.container import Container
 import shared.fetcher_internal as internal
 from magic.models.card import Card
 from shared import configuration, dtutil, redis
@@ -195,6 +196,6 @@ def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
     redis.store('magic:fetcher:whatisinstandard', info, ex=86400)
     return info
 
-def subreddit() -> Dict[str, Any]:
+def subreddit() -> Container:
     url = 'https://www.reddit.com/r/pennydreadfulMTG/.rss'
     return feedparser.parse(url)

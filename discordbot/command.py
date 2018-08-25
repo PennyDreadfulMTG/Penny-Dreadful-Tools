@@ -46,14 +46,15 @@ async def respond_to_card_names(message: Message, client: Client) -> None:
         return
     queries = parse_queries(message.content)
     if len(queries) > 0:
-        results = results_from_queries(queries)
-        cards = []
-        for i in results:
-            (r, mode) = i
-            if r.has_match() and not r.is_ambiguous():
-                cards.extend(cards_from_names_with_mode([r.get_best_match()], mode))
-            elif r.is_ambiguous():
-                cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode))
+        async with message.channel.typing():
+            results = results_from_queries(queries)
+            cards = []
+            for i in results:
+                (r, mode) = i
+                if r.has_match() and not r.is_ambiguous():
+                    cards.extend(cards_from_names_with_mode([r.get_best_match()], mode))
+                elif r.is_ambiguous():
+                    cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode))
         await post_cards(client, cards, message.channel, message.author)
 
     matches = re.findall(r'https?://(?:www.)?tappedout.net/mtg-decks/(?P<slug>[\w-]+)/?', message.content, flags=re.IGNORECASE)
@@ -69,6 +70,8 @@ async def handle_command(message: Message, client: Client) -> None:
         args = parts[1]
     if method is not None:
         try:
+            async with message.channel.typing():
+                pass
             await method(Commands, client=client, channel=message.channel, args=args, author=message.author)
         except Exception as e: # pylint: disable=broad-except
             print('Caught exception processing command `{cmd}`'.format(cmd=message.content))
@@ -193,11 +196,10 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def search(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!search {query}` Search for cards, using a scryfall-style query."""
-        async with channel.typing():
-            how_many, cardnames = fetcher.search_scryfall(args)
-            cbn = oracle.cards_by_name()
-            cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]
-            await post_cards(client, cards, channel, author, more_results_link(args, how_many))
+        how_many, cardnames = fetcher.search_scryfall(args)
+        cbn = oracle.cards_by_name()
+        cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]
+        await post_cards(client, cards, channel, author, more_results_link(args, how_many))
 
     @cmd_header('Aliases')
     async def scryfall(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
@@ -260,8 +262,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def rulings(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!rulings {name}` Display rulings for a card."""
-        async with channel.typing():
-            await single_card_text(client, channel, args, author, card_rulings, 'rulings')
+        await single_card_text(client, channel, args, author, card_rulings, 'rulings')
 
     @cmd_header('Commands')
     async def _oracle(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
@@ -342,12 +343,11 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def bug(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """Report a bug/task for the Penny Dreadful Tools team. For Magic Online bugs see `!modobug`."""
-        async with channel.typing():
-            issue = repo.create_issue(args, author)
-            if issue is None:
-                await channel.send('Report issues at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>')
-            else:
-                await channel.send('Issue has been reported at <{url}>'.format(url=issue.html_url))
+        issue = repo.create_issue(args, author)
+        if issue is None:
+            await channel.send('Report issues at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>')
+        else:
+            await channel.send('Issue has been reported at <{url}>'.format(url=issue.html_url))
 
     @cmd_header('Commands')
     async def modobug(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
@@ -357,12 +357,11 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def gbug(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """Report a Gatherling bug."""
-        async with channel.typing():
-            issue = repo.create_issue(args, author, 'Discord', 'PennyDreadfulMTG/gatherling')
-            if issue is None:
-                await channel.send('Report Gatherling issues at <https://github.com/PennyDreadfulMTG/gatherling/issues/new>')
-            else:
-                await channel.send('Issue has been reported at <{url}>.'.format(url=issue.html_url))
+        issue = repo.create_issue(args, author, 'Discord', 'PennyDreadfulMTG/gatherling')
+        if issue is None:
+            await channel.send('Report Gatherling issues at <https://github.com/PennyDreadfulMTG/gatherling/issues/new>')
+        else:
+            await channel.send('Issue has been reported at <{url}>.'.format(url=issue.html_url))
 
     @cmd_header('Commands')
     async def buglink(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) ->  None:
@@ -425,30 +424,29 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def google(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!google {args}` Search google for `args`."""
-        async with channel.typing():
-            api_key = configuration.get('cse_api_key')
-            cse_id = configuration.get('cse_engine_id')
-            if api_key is None or cse_id is None:
-                return await channel.send('The google command has not been configured.')
+        api_key = configuration.get('cse_api_key')
+        cse_id = configuration.get('cse_engine_id')
+        if api_key is None or cse_id is None:
+            return await channel.send('The google command has not been configured.')
 
-            if len(args.strip()) == 0:
-                return await channel.send('{author}: No search term provided. Please type !google followed by what you would like to search'.format(author=author.mention))
+        if len(args.strip()) == 0:
+            return await channel.send('{author}: No search term provided. Please type !google followed by what you would like to search'.format(author=author.mention))
 
-            try:
-                service = build('customsearch', 'v1', developerKey=api_key)
-                res = service.cse().list(q=args, cx=cse_id, num=1).execute() # pylint: disable=no-member
-                if 'items' in res:
-                    r = res['items'][0]
-                    s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['link'], abstract=r['snippet'])
-                else:
-                    s = '{author}: Nothing found on Google.'.format(author=author.mention)
-            except HttpError as e:
-                if e.resp['status'] == '403':
-                    s = 'We have reached the allowed limits of Google API'
-                else:
-                    raise e
+        try:
+            service = build('customsearch', 'v1', developerKey=api_key)
+            res = service.cse().list(q=args, cx=cse_id, num=1).execute() # pylint: disable=no-member
+            if 'items' in res:
+                r = res['items'][0]
+                s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['link'], abstract=r['snippet'])
+            else:
+                s = '{author}: Nothing found on Google.'.format(author=author.mention)
+        except HttpError as e:
+            if e.resp['status'] == '403':
+                s = 'We have reached the allowed limits of Google API'
+            else:
+                raise e
 
-            await channel.send(s)
+        await channel.send(s)
 
     @cmd_header('Commands')
     async def tournament(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
@@ -468,14 +466,13 @@ Want to contribute? Send a Pull Request."""
         """`!art {name}` Display the art (only) of the most recent printing of the named card."""
         if not args:
             return await channel.send('{author}: Please specify a card name.'.format(author=author.mention))
-        async with channel.typing():
-            c = await single_card_or_send_error(channel, args, author, 'art')
-            if c is not None:
-                file_path = image_fetcher.determine_filepath([c]) + '.art_crop.jpg'
-                if image_fetcher.download_scryfall_image([c], file_path, version='art_crop'):
-                    await send_image_with_retry(channel, file_path)
-                else:
-                    await channel.send('{author}: Could not get image.'.format(author=author.mention))
+        c = await single_card_or_send_error(channel, args, author, 'art')
+        if c is not None:
+            file_path = image_fetcher.determine_filepath([c]) + '.art_crop.jpg'
+            if image_fetcher.download_scryfall_image([c], file_path, version='art_crop'):
+                await send_image_with_retry(channel, file_path)
+            else:
+                await channel.send('{author}: Could not get image.'.format(author=author.mention))
 
     @cmd_header('Commands')
     async def explain(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
@@ -632,10 +629,9 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Developer')
     async def version(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """Display the current version numbers"""
-        async with channel.typing():
-            commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], universal_newlines=True).strip('\n').strip('"')
-            mtgjson = database.mtgjson_version()
-            return await channel.send('I am currently running mtgbot version `{commit}`, and mtgjson version `{mtgjson}`'.format(commit=commit, mtgjson=mtgjson))
+        commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], universal_newlines=True).strip('\n').strip('"')
+        mtgjson = database.mtgjson_version()
+        return await channel.send('I am currently running mtgbot version `{commit}`, and mtgjson version `{mtgjson}`'.format(commit=commit, mtgjson=mtgjson))
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards: List[Card]) -> List[Card]:
@@ -774,33 +770,32 @@ async def post_cards(
         replying_to: Optional[Member] = None,
         additional_text: str = ''
 ) -> None:
-    async with channel.typing():
-        if len(cards) == 0:
-            await post_no_cards(channel, replying_to)
-            return
-        disable_emoji = channel.id in configuration.get_str('not_pd').split(',')
-        cards = uniqify_cards(cards)
-        if len(cards) > MAX_CARDS_SHOWN:
-            cards = cards[:DEFAULT_CARDS_SHOWN]
+    if len(cards) == 0:
+        await post_no_cards(channel, replying_to)
+        return
+    disable_emoji = channel.id in configuration.get_str('not_pd').split(',')
+    cards = uniqify_cards(cards)
+    if len(cards) > MAX_CARDS_SHOWN:
+        cards = cards[:DEFAULT_CARDS_SHOWN]
+    if len(cards) == 1:
+        text = single_card_text_internal(client, cards[0], disable_emoji)
+    else:
+        text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.legal_emoji(card)) if not disable_emoji else ''), price=((fetcher.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
+    if len(cards) > MAX_CARDS_SHOWN:
+        image_file = None
+    else:
+        image_file = image_fetcher.download_image(cards)
+    if image_file is None:
+        text += '\n\n'
         if len(cards) == 1:
-            text = single_card_text_internal(client, cards[0], disable_emoji)
+            text += emoji.replace_emoji(cards[0].text, client)
         else:
-            text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.legal_emoji(card)) if not disable_emoji else ''), price=((fetcher.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
-        if len(cards) > MAX_CARDS_SHOWN:
-            image_file = None
-        else:
-            image_file = image_fetcher.download_image(cards)
-        if image_file is None:
-            text += '\n\n'
-            if len(cards) == 1:
-                text += emoji.replace_emoji(cards[0].text, client)
-            else:
-                text += 'No image available.'
-        text += additional_text
-        if image_file is None:
-            await channel.send(text)
-        else:
-            await send_image_with_retry(channel, image_file, text)
+            text += 'No image available.'
+    text += additional_text
+    if image_file is None:
+        await channel.send(text)
+    else:
+        await send_image_with_retry(channel, image_file, text)
 
 async def post_no_cards(channel: TextChannel, replying_to: Member) -> None:
     if replying_to is not None:

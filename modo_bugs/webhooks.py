@@ -10,7 +10,7 @@ WEBHOOK = Webhook(APP, endpoint='/api/github')
 
 @APP.route('/')
 def home():
-    return 'build-commit-id: ' + APP.config['commit-id']
+    return 'bughooks: build-commit-id: ' + APP.config['commit-id']
 
 def get_number(url: str) -> int:
     split_url = url.split('/')

@@ -303,7 +303,7 @@ class View(BaseView):
             p.url = url_for('.person', person_id=p.person_id)
             pos += 1
 
-    def prepare_legal_formats(self):
+    def prepare_legal_formats(self) -> None:
         if getattr(self, 'legal_formats', None) is not None:
             self.legal_formats = map(add_season_num, list(sorted(self.legal_formats, key=legality.order_score)))
 

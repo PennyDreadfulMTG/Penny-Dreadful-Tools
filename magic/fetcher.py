@@ -5,11 +5,13 @@ from collections import OrderedDict
 from typing import Any, Dict, List, Optional, Tuple, Union, cast
 from urllib import parse
 
+import feedparser
 import pytz
 
 import shared.fetcher_internal as internal
 from magic.models.card import Card
 from shared import configuration, dtutil, redis
+from shared.container import Container
 from shared.fetcher_internal import FetchException
 from shared.pd_exception import TooFewItemsException
 
@@ -193,3 +195,7 @@ def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
     info = internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json')
     redis.store('magic:fetcher:whatisinstandard', info, ex=86400)
     return info
+
+def subreddit() -> Container:
+    url = 'https://www.reddit.com/r/pennydreadfulMTG/.rss'
+    return feedparser.parse(url)

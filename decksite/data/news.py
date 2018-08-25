@@ -6,6 +6,7 @@ from flask import url_for
 
 from decksite.data import deck
 from decksite.database import db
+from magic import fetcher
 from magic.models import Deck
 from shared import dtutil, redis, repo
 from shared.container import Container
@@ -22,6 +23,7 @@ def all_news(start_date: datetime.datetime = None, end_date: datetime.datetime =
     news += tournament_winners(start_date, end_date, max_items)
     news += perfect_league_runs(start_date, end_date, max_items)
     news += code_merges(start_date, end_date, max_items)
+    news += subreddit(start_date, end_date, max_items)
     news = sorted(news, key=lambda item: item.date, reverse=True)
     results = []
     for item in news:
@@ -86,7 +88,7 @@ def delete(news_item_id: int) -> None:
 def tournament_winners(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize) -> List[Container]:
     where = 'd.finish = 1 AND d.created_date > {start_date} AND d.created_date <= {end_date}'.format(start_date=sqlescape(dtutil.dt2ts(start_date)), end_date=sqlescape(dtutil.dt2ts(end_date)))
     ds = deck.load_decks(where, limit=f'LIMIT {max_items}')
-    return [Container({'date': d.created_date, 'title': tournament_winner_headline(d), 'url': url_for('deck', deck_id=d.id)}) for d in ds]
+    return [Container({'date': d.active_date, 'title': tournament_winner_headline(d), 'url': url_for('deck', deck_id=d.id)}) for d in ds]
 
 def tournament_winner_headline(d: Deck) -> str:
     return f'{d.person} won {d.competition_name} with {d.name}'
@@ -95,7 +97,7 @@ def perfect_league_runs(start_date: datetime.datetime, end_date: datetime.dateti
     where = "ct.name = 'League' AND d.created_date > {start_date} AND d.created_date <= {end_date}".format(start_date=sqlescape(dtutil.dt2ts(start_date)), end_date=sqlescape(dtutil.dt2ts(end_date)))
     having = 'wins >= 5 AND losses = 0'
     ds = deck.load_decks(where, having=having, limit=f'LIMIT {max_items}')
-    return [Container({'date': d.created_date, 'title': perfect_league_run_headline(d), 'url': url_for('deck', deck_id=d.id)}) for d in ds]
+    return [Container({'date': d.active_date, 'title': perfect_league_run_headline(d), 'url': url_for('deck', deck_id=d.id)}) for d in ds]
 
 def perfect_league_run_headline(d: Deck) -> str:
     return f'{d.person} went 5–0 in {d.competition_name} with {d.name}'
@@ -109,3 +111,24 @@ def code_merges(start_date: datetime.datetime, end_date: datetime.datetime, max_
         for merge in merges:
             merge.date = dtutil.ts2dt(merge.date)
     return merges
+
+def subreddit(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize) -> List[Container]:
+    redis_key = 'decksite:news:subreddit'
+    items = redis.get_container_list(redis_key)
+    if items:
+        for item in items:
+            item.date = dtutil.ts2dt(item.date)
+        return items
+    feed = fetcher.subreddit()
+    items = []
+    for entry in feed.entries:
+        item = Container({'title': entry.title, 'date': dtutil.parse(entry.updated, '%Y-%m-%dT%H:%M:%S+00:00', dtutil.UTC_TZ), 'url': entry.link})
+        if item.date > end_date:
+            continue
+        if item.date < start_date:
+            break
+        items.append(item)
+        if len(items) >= max_items:
+            break
+    redis.store(redis_key, items, ex=3600)
+    return items

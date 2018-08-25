@@ -278,13 +278,13 @@ def active_league() -> competition.Competition:
     leagues = competition.load_competitions(where)
     if len(leagues) == 0:
         start_date = dtutil.now(tz=dtutil.WOTC_TZ)
-        end_date = determine_end_of_league(start_date)
+        end_date = determine_end_of_league(start_date, rotation.next_rotation())
         name = determine_league_name(end_date)
         comp_id = competition.get_or_insert_competition(start_date, end_date, name, 'League', None, competition.Top.EIGHT)
         leagues = [competition.load_competition(comp_id)]
     return guarantee.exactly_one(leagues)
 
-def determine_end_of_league(start_date: datetime.datetime) -> datetime.datetime:
+def determine_end_of_league(start_date: datetime.datetime, next_rotation: datetime.datetime, lookahead: bool = True) -> datetime.datetime:
     if start_date.day < 15:
         month = start_date.month + 1
     else:
@@ -296,9 +296,14 @@ def determine_end_of_league(start_date: datetime.datetime) -> datetime.datetime:
         year = start_date.year
     end_date_s = '{year}-{month}-01 00:00:00'.format(year=year, month=month)
     end_date = dtutil.parse(end_date_s, '%Y-%m-%d %H:%M:%S', dtutil.WOTC_TZ).astimezone(dtutil.WOTC_TZ)
-    if end_date > rotation.next_rotation():
-        end_date = rotation.next_rotation()
+    if start_date < next_rotation and end_date > next_rotation:
+        end_date = next_rotation
     end_date = end_date - datetime.timedelta(seconds=1)
+    # Now we have an end date for this league let's make sure that it doesn't make the next league too short. See #5061.
+    if lookahead:
+        next_end_date = determine_end_of_league(end_date, next_rotation, False)
+        if next_end_date - end_date < datetime.timedelta(days=14):
+            end_date = next_end_date
     return end_date
 
 def determine_league_name(end_date: datetime.datetime) -> str:

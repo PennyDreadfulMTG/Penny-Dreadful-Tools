@@ -124,7 +124,25 @@ def check_for_missing_bugs(b: Tag) -> None:
         if row_text == 'Description':
             # BS4 is bad.
             continue
-        if find_issue_by_code(row_text):
+        issue = find_issue_by_code(row_text)
+        if issue:
+            labels = [c.name for c in issue.labels]
+            categories = [c for c in labels if c in strings.METACATS]
+            if categories:
+                continue
+            bbcat = re.match(strings.REGEX_BBCAT, data[2].text.strip())
+            if bbcat is None:
+                continue
+            g1 = bbcat.group(1).strip()
+            if g1 in strings.METACATS:
+                issue.add_to_labels(g1)
+                continue
+            if bbcat.group(2) is not None:
+                g2 = bbcat.group(2).strip()
+                if g2 in strings.METACATS:
+                    issue.add_to_labels(g2)
+                    continue
+            print(f'Unknown BBCat: {bbcat.group(0)}')
             continue
         print('Could not find issue for `{row}`'.format(row=row_text))
         text = 'From Bug Blog.\nBug Blog Text: {0}'.format(row_text)

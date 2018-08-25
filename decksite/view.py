@@ -305,7 +305,7 @@ class View(BaseView):
 
     def prepare_legal_formats(self) -> None:
         if getattr(self, 'legal_formats', None) is not None:
-            self.legal_formats = map(add_season_num, list(sorted(self.legal_formats, key=legality.order_score)))
+            self.legal_formats = list(map(add_season_num, list(sorted(self.legal_formats, key=legality.order_score)))) # type: ignore
 
     def babel_languages(self):
         return APP.babel.list_translations()

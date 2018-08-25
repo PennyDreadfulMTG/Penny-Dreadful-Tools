@@ -213,7 +213,7 @@ def fix_user_errors(issue: Issue) -> None:
             cards = strings.get_cards_from_string(bbt.group(0))
             if cards:
                 cardlist = ', '.join([f'[{c}]' for c in cards])
-                body = re.sub(AFFECTS_REGEX, f'Affects: {cardlist}', body, re.MULTILINE)
+                body = strings.set_body_field(body, 'Affects', cardlist)
 
     # Push changes.
     if body != issue.body:

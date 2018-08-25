@@ -2,21 +2,24 @@ import itertools
 import re
 from typing import Any, Iterable, List
 
+METACATS = ['Cardset', 'Collection', 'Deck Building', 'Duel Scene', 'Leagues', 'Play Lobby', 'Trade']
 CATEGORIES = ['Advantageous', 'Disadvantageous', 'Game Breaking', 'Avoidable Game Breaking', 'Graphical', 'Non-Functional ability']
 BADCATS = ['Game Breaking']
 
 AFFECTS_REGEX = r'^Affects: (.*)$'
 SEEALSO_REGEX = r'^See Also: (.*)$'
+CODE_REGEX = r'^Code: (.*)$'
+BBT_REGEX = r'^Bug Blog Text: (.*)$'
+
 DISCORD_REGEX = r'^Reported on Discord by (\w+#[0-9]+)$'
 IMAGES_REGEX = r'^<!-- Images --> (.*)$'
 REGEX_CARDREF = r'\[?\[([^\]]*)\]\]?'
 REGEX_SEARCHREF = r'\{([\w:/^$" ]+)\}'
 
+REGEX_BBCAT = r'^([\w ]+) ?(\([\w, ]+\))?'
 
 BAD_AFFECTS_REGEX = r'Affects: (\[Card Name\]\(, \[Second Card name\], etc\)\r?\n)\['
 
-CODE_REGEX = r'^Code: (.*)$'
-BBT_REGEX = r'^Bug Blog Text: (.*)$'
 
 def remove_smartquotes(text: str) -> str:
     return text.replace('’', "'").replace('“', '"').replace('”', '"')
@@ -36,3 +39,18 @@ def get_cards_from_string(item: str) -> List[str]:
     cards = re.findall(REGEX_CARDREF, item)
     cards = [c for c in cards]
     return cards
+
+def set_body_field(body: str, field: str, value: str) -> str:
+    regex = r'^' + field + r': (.*)$'
+    line = f'{field}: {value}'
+    m = re.search(regex, body, re.MULTILINE)
+    if m:
+        return re.sub(regex, line, body, flags=re.MULTILINE)
+    return f'{body}\n{line}'
+
+def get_body_field(body: str, field: str) -> str:
+    regex = r'^' + field + r': (.*)$'
+    m = re.search(regex, body, re.MULTILINE)
+    if m:
+        return m.group(1)
+    return None

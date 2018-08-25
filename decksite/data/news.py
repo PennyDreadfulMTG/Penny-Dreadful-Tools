@@ -88,7 +88,7 @@ def delete(news_item_id: int) -> None:
 def tournament_winners(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize) -> List[Container]:
     where = 'd.finish = 1 AND d.created_date > {start_date} AND d.created_date <= {end_date}'.format(start_date=sqlescape(dtutil.dt2ts(start_date)), end_date=sqlescape(dtutil.dt2ts(end_date)))
     ds = deck.load_decks(where, limit=f'LIMIT {max_items}')
-    return [Container({'date': d.created_date, 'title': tournament_winner_headline(d), 'url': url_for('deck', deck_id=d.id)}) for d in ds]
+    return [Container({'date': d.active_date, 'title': tournament_winner_headline(d), 'url': url_for('deck', deck_id=d.id)}) for d in ds]
 
 def tournament_winner_headline(d: Deck) -> str:
     return f'{d.person} won {d.competition_name} with {d.name}'
@@ -97,7 +97,7 @@ def perfect_league_runs(start_date: datetime.datetime, end_date: datetime.dateti
     where = "ct.name = 'League' AND d.created_date > {start_date} AND d.created_date <= {end_date}".format(start_date=sqlescape(dtutil.dt2ts(start_date)), end_date=sqlescape(dtutil.dt2ts(end_date)))
     having = 'wins >= 5 AND losses = 0'
     ds = deck.load_decks(where, having=having, limit=f'LIMIT {max_items}')
-    return [Container({'date': d.created_date, 'title': perfect_league_run_headline(d), 'url': url_for('deck', deck_id=d.id)}) for d in ds]
+    return [Container({'date': d.active_date, 'title': perfect_league_run_headline(d), 'url': url_for('deck', deck_id=d.id)}) for d in ds]
 
 def perfect_league_run_headline(d: Deck) -> str:
     return f'{d.person} went 5–0 in {d.competition_name} with {d.name}'

@@ -136,7 +136,7 @@ class Commands:
     """To define a new command, simply add a new method to this class.
     If you want !help to show the message, add a docstring to the method.
     Method parameters should be in the format:
-    `async def commandname(self, bot, channel, args, author)`
+    `async def commandname(self, client, channel, args, author)`
     Where any argument after self is optional. (Although at least channel is usually needed)
     """
 
@@ -744,7 +744,7 @@ def site_resources(args: str) -> Dict[str, str]:
     sitemap = fetcher.sitemap()
     matches = [endpoint for endpoint in sitemap if endpoint.startswith('/{area}/'.format(area=area))]
     if len(matches) > 0:
-        detail = '{detail}/'.format(detail=fetcher.internal.escape(detail)) if detail else ''
+        detail = '{detail}/'.format(detail=fetcher.internal.escape(detail, True)) if detail else ''
         url = fetcher.decksite_url('/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=detail))
         results[url] = args
     return results

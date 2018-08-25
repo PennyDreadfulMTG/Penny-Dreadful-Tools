@@ -108,14 +108,14 @@ class FetchException(OperationalException):
 def acceptable_file(filepath: str) -> bool:
     return os.path.isfile(filepath) and os.path.getsize(filepath) > 1000
 
-def escape(str_input: str, do_not_escape_double_forward_slash: bool = False) -> str:
+def escape(str_input: str, skip_double_slash: bool = False) -> str:
     # Expand 'AE' into two characters. This matches the legal list and
     # WotC's naming scheme in Kaladesh, and is compatible with the
     # image server and scryfall.
     s = str_input
-    if do_not_escape_double_forward_slash:
+    if skip_double_slash:
         s = s.replace('//', '-split-')
     s = urllib.parse.quote_plus(s.replace(u'Æ', 'AE')).lower() # type: ignore # urllib isn't fully stubbed
-    if do_not_escape_double_forward_slash:
+    if skip_double_slash:
         s = s.replace('-split-', '//')
     return s

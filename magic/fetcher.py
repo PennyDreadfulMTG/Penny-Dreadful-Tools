@@ -8,10 +8,10 @@ from urllib import parse
 import feedparser
 import pytz
 
-from shared.container import Container
 import shared.fetcher_internal as internal
 from magic.models.card import Card
 from shared import configuration, dtutil, redis
+from shared.container import Container
 from shared.fetcher_internal import FetchException
 from shared.pd_exception import TooFewItemsException
 

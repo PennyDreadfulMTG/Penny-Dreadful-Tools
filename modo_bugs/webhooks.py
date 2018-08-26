@@ -10,7 +10,7 @@ WEBHOOK = Webhook(APP, endpoint='/api/github')
 
 @APP.route('/')
 def home():
-    return 'build-commit-id: ' + APP.config['commit-id']
+    return 'bughooks: build-commit-id: ' + APP.config['commit-id']
 
 def get_number(url: str) -> int:
     split_url = url.split('/')
@@ -20,7 +20,8 @@ def get_number(url: str) -> int:
 @WEBHOOK.hook(event_type='issues')
 def on_issues(data):
     if data['sender']['login'] == configuration.get_str('github_user'):
-        return
-    number = get_number(data['pull_request']['url'])
+        return 'Ignoring self'
+    number = get_number(data['issue']['url'])
     issue = repo.get_repo().get_issue(number)
     update.process_issue(issue)
+    return 'done'

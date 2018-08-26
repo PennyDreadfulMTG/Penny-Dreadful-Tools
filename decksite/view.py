@@ -213,7 +213,7 @@ class View(BaseView):
 
     def prepare_card(self, c: Card) -> None:
         c.url = '/cards/{id}/'.format(id=c.name)
-        c.img_url = image_fetcher.scryfall_image(c, version='medium')
+        c.img_url = image_fetcher.scryfall_image(c, version='normal')
         c.card_img_class = 'two-faces' if c.layout in ['double-faced', 'meld'] else ''
         c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
         c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}

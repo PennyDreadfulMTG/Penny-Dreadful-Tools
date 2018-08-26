@@ -200,12 +200,15 @@ def insert_card(c, update_index: bool = True) -> None:
         # INSERT IGNORE INTO because some cards have multiple faces with the same color identity. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT IGNORE INTO card_color_identity (card_id, color_id) VALUES (%s, %s)', [card_id, color_id])
     for supertype in c.get('supertypes', []):
-        db().execute('INSERT INTO card_supertype (card_id, supertype) VALUES (%s, %s)', [card_id, supertype])
+        # INSERT IGNORE INTO because some cards have multiple faces with the same supertype. See DFCs and What // When // Where // Who // Why.
+        db().execute('INSERT  IGNORE INTO card_supertype (card_id, supertype) VALUES (%s, %s)', [card_id, supertype])
     for subtype in c.get('subtypes', []):
-        db().execute('INSERT INTO card_subtype (card_id, subtype) VALUES (%s, %s)', [card_id, subtype])
+        # INSERT IGNORE INTO because some cards have multiple faces with the same subtype. See DFCs and What // When // Where // Who // Why.
+        db().execute('INSERT IGNORE INTO card_subtype (card_id, subtype) VALUES (%s, %s)', [card_id, subtype])
     for info in c.get('legalities', []):
         format_id = get_format_id(info['format'], True)
-        db().execute('INSERT INTO card_legality (card_id, format_id, legality) VALUES (%s, %s, %s)', [card_id, format_id, info['legality']])
+        # INSERT IGNORE INTO because some cards have multiple faces with the same legality. See DFCs and What // When // Where // Who // Why.
+        db().execute('INSERT IGNORE INTO card_legality (card_id, format_id, legality) VALUES (%s, %s, %s)', [card_id, format_id, info['legality']])
     if update_index:
         writer = WhooshWriter()
         c['id'] = c['cardId']

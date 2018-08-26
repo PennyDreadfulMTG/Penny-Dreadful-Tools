@@ -132,8 +132,8 @@ def card_color_properties() -> TableDescription:
         props[k]['type'] = INTEGER
         props[k]['nullable'] = False
     props['id']['primary_key'] = True
-    props['card_id']['unique_with'] = ['color_id']
     props['card_id']['foreign_key'] = ('card', 'id')
+    props['card_id']['unique_with'] = ['color_id']
     props['color_id']['foreign_key'] = ('color', 'id')
     return props
 
@@ -146,6 +146,7 @@ def card_type_properties(typetype: str) -> TableDescription:
     props['id']['primary_key'] = True
     props['card_id']['type'] = INTEGER
     props['card_id']['foreign_key'] = ('card', 'id')
+    props['card_id']['unique_with'] = [typetype]
     return props
 
 def format_properties() -> TableDescription:
@@ -166,6 +167,7 @@ def card_legality_properties() -> TableDescription:
     props['id']['primary_key'] = True
     props['card_id']['type'] = INTEGER
     props['card_id']['foreign_key'] = ('card', 'id')
+    props['card_id']['unique_with'] = ['format_id']
     props['format_id']['type'] = INTEGER
     props['format_id']['foreign_key'] = ('format', 'id')
     props['legality']['nullable'] = True
@@ -180,6 +182,7 @@ def card_alias_properties() -> TableDescription:
     props['id']['primary_key'] = True
     props['card_id']['type'] = INTEGER
     props['card_id']['foreign_key'] = ('card', 'id')
+    props['card_id']['unique_with'] = ['alias']
     return props
 
 def card_bug_properties() -> TableDescription:

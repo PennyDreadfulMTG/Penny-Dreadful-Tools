@@ -2,6 +2,7 @@ from typing import List
 
 from flask import url_for
 
+from decksite.data import person as ps
 from decksite.view import View
 from magic import tournaments
 from magic.models import Card
@@ -9,7 +10,7 @@ from magic.models import Card
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Person(View):
-    def __init__(self, person: Person, cards: List[Card], only_played_cards: List[Card]) -> None:
+    def __init__(self, person: ps.Person, cards: List[Card], only_played_cards: List[Card]) -> None:
         super().__init__()
         self.person = person
         self.decks = person.decks

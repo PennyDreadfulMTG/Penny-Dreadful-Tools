@@ -103,32 +103,39 @@ def perfect_league_run_headline(d: Deck) -> str:
     return f'{d.person} went 5–0 in {d.competition_name} with {d.name}'
 
 def code_merges(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize) -> List[Container]:
-    merges = redis.get_container_list('decksite:news:merges')
-    if merges is None:
-        merges = [Container({'date': pull.merged_dt, 'title': pull.title, 'url': pull.html_url}) for pull in repo.get_pull_requests(start_date, end_date, max_items)]
-        redis.store('decksite:news:merges', merges, ex=3600)
-    else:
-        for merge in merges:
-            merge.date = dtutil.ts2dt(merge.date)
-    return merges
+    try:
+        merges = redis.get_container_list('decksite:news:merges')
+        if merges is None:
+            merges = [Container({'date': pull.merged_dt, 'title': pull.title, 'url': pull.html_url}) for pull in repo.get_pull_requests(start_date, end_date, max_items)]
+            redis.store('decksite:news:merges', merges, ex=3600)
+        else:
+            for merge in merges:
+                merge.date = dtutil.ts2dt(merge.date)
+        return merges
+    except ConnectionError:
+        return []
+
 
 def subreddit(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize) -> List[Container]:
-    redis_key = 'decksite:news:subreddit'
-    items = redis.get_container_list(redis_key)
-    if items:
-        for item in items:
-            item.date = dtutil.ts2dt(item.date)
+    try:
+        redis_key = 'decksite:news:subreddit'
+        items = redis.get_container_list(redis_key)
+        if items:
+            for item in items:
+                item.date = dtutil.ts2dt(item.date)
+            return items
+        feed = fetcher.subreddit()
+        items = []
+        for entry in feed.entries:
+            item = Container({'title': entry.title, 'date': dtutil.parse(entry.updated, '%Y-%m-%dT%H:%M:%S+00:00', dtutil.UTC_TZ), 'url': entry.link})
+            if item.date > end_date:
+                continue
+            if item.date < start_date:
+                break
+            items.append(item)
+            if len(items) >= max_items:
+                break
+        redis.store(redis_key, items, ex=3600)
         return items
-    feed = fetcher.subreddit()
-    items = []
-    for entry in feed.entries:
-        item = Container({'title': entry.title, 'date': dtutil.parse(entry.updated, '%Y-%m-%dT%H:%M:%S+00:00', dtutil.UTC_TZ), 'url': entry.link})
-        if item.date > end_date:
-            continue
-        if item.date < start_date:
-            break
-        items.append(item)
-        if len(items) >= max_items:
-            break
-    redis.store(redis_key, items, ex=3600)
-    return items
+    except ConnectionError:
+        return []

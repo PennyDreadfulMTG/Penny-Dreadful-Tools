@@ -4,6 +4,7 @@ from typing import Any, Dict, List
 from dateutil.relativedelta import FR, relativedelta
 
 from decksite.data.competition import Competition
+from decksite.data.person import Person
 from decksite.view import View
 from magic import tournaments
 from shared import dtutil
@@ -12,7 +13,7 @@ from shared.container import Container
 
 # pylint: disable=no-self-use
 class Prizes(View):
-    def __init__(self, competitions: List[Competition], first_runs) -> None:
+    def __init__(self, competitions: List[Competition], first_runs: List[Person]) -> None:
         super().__init__()
         self.weeks: List[Container] = []
         weeks = split_by_week(competitions)

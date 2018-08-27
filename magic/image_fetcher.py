@@ -105,7 +105,7 @@ def download_image(cards: List[Card]) -> Optional[str]:
         return filepath
     return None
 
-def save_composite_image(in_filepaths: List[str], out_filepath: str):
+def save_composite_image(in_filepaths: List[str], out_filepath: str) -> None:
     images = list(map(Image.open, in_filepaths))
     widths, heights = zip(*(i.size for i in images))
     total_width = sum(widths)

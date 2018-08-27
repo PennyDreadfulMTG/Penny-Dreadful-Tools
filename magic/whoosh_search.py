@@ -85,7 +85,7 @@ class WhooshSearcher():
             for doc in reader.iter_docs():
                 self.trie[list(WhooshConstants.normalized_analyzer(doc[1]['name']))[0].text] = doc[1]['name']
 
-    def search(self, w) -> SearchResult:
+    def search(self, w: str) -> SearchResult:
         if not self.ix.up_to_date():
             self.initialize_trie() # if the index is not up to date, someone has added cards, so we reinitialize the trie
 
@@ -125,7 +125,7 @@ class WhooshSearcher():
 
         return (exact, prefix_as_whole_word, other_prefixed)
 
-def has(elements) -> bool:
+def has(elements: List[str]) -> bool:
     return bool(elements and len(elements) > 0)
 
 WordSubwordType = Tuple[List[str], List[str]]
@@ -140,7 +140,7 @@ def classify(matches: List[str], word: str) -> WordSubwordType:
             acc[1].append(match)
     return acc
 
-def fuzzy_term(q, dist, field) -> Term:
+def fuzzy_term(q: str, dist: int, field: str) -> Term:
     if len(q) <= 3:
         return Term(field, q)
     return FuzzyTerm(field, q, maxdist=dist, prefixlength=1)

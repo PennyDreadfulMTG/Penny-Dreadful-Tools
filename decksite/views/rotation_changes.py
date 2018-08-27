@@ -2,11 +2,12 @@ from typing import Any, Dict, List
 
 from decksite.view import View
 from magic import rotation
+from magic.models import Card
 
 
 # pylint: disable=no-self-use
 class RotationChanges(View):
-    def __init__(self, cards_in, cards_out, playability, speculation=False) -> None:
+    def __init__(self, cards_in: List[Card], cards_out: List[Card], playability: Dict[str, float], speculation: bool = False) -> None:
         super().__init__()
         self.sections: List[Dict[str, Any]] = []
         self.cards = cards_in + cards_out

@@ -3,7 +3,6 @@ import sys
 from typing import List
 
 from flask import url_for
-from requests.exceptions import ConnectionError
 
 from decksite.data import deck
 from decksite.database import db

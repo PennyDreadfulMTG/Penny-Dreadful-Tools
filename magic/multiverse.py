@@ -13,6 +13,8 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
 # Database setup for the magic package. Mostly internal. To interface with what the package knows about magic cards use the `oracle` module.
 
+CardDescription = Dict[str, Any]
+
 FORMAT_IDS: Dict[str, int] = {}
 CARD_IDS: Dict[str, int] = {}
 
@@ -320,7 +322,7 @@ def card_name(c) -> str:
         return c.get('name')
     return ' // '.join(c.get('names', [c.get('name')]))
 
-def add_hardcoded_cards(cards: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+def add_hardcoded_cards(cards: Dict[str, CardDescription]) -> Dict[str, CardDescription]:
     cards['Gleemox'] = {
         'text': '{T}: Add one mana of any color to your mana pool.\nThis card is banned.',
         'manaCost': '{0}',
@@ -344,7 +346,7 @@ def get_all_cards() -> List[Card]:
 def playable_layouts() -> List[str]:
     return ['normal', 'token', 'double-faced', 'split', 'aftermath', 'flip', 'leveler', 'meld']
 
-def try_find_card_id(c) -> Tuple[str, Optional[int]]:
+def try_find_card_id(c: CardDescription) -> Tuple[str, Optional[int]]:
     card_id = None
     name = card_name(c)
     try:
@@ -353,13 +355,13 @@ def try_find_card_id(c) -> Tuple[str, Optional[int]]:
     except KeyError:
         return (name, None)
 
-def fix_mtgjson_melded_cards_bug(cards: Dict[str, Dict[str, Any]]) -> None:
+def fix_mtgjson_melded_cards_bug(cards: Dict[str, CardDescription]) -> None:
     for names in HARDCODED_MELD_NAMES:
         for name in names:
             if cards.get(name, None):
                 cards[name]['names'] = names
 
-def fix_mtgjson_melded_cards_array(cards) -> None:
+def fix_mtgjson_melded_cards_array(cards: List[CardDescription]) -> None:
     for c in cards:
         for group in HARDCODED_MELD_NAMES:
             if c.get('name') in group:

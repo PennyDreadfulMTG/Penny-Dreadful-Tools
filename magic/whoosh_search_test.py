@@ -1,5 +1,5 @@
 import unittest
-
+from typing import List
 from magic.whoosh_search import WhooshSearcher
 
 
@@ -9,14 +9,14 @@ class WhooshSearchTest(unittest.TestCase):
     def setUpClass(cls):
         cls.searcher = WhooshSearcher()
 
-    def best_match_is(self, query, expected_best_match, *additional_matches) -> None:
+    def best_match_is(self, query: str, expected_best_match: str, *additional_matches: str) -> None:
         result = self.searcher.search(query) # type: ignore
         assert result.get_best_match() == expected_best_match
         all_matches = result.get_all_matches()
         for r in additional_matches:
             assert is_included(r, all_matches)
 
-    def finds_at_least(self, query, card_name) -> None:
+    def finds_at_least(self, query: str, card_name: str) -> None:
         result = self.searcher.search(query) # type: ignore
         cards = result.get_all_matches()
         cards = [c for c in cards if c is not None]
@@ -78,5 +78,5 @@ class WhooshSearchTest(unittest.TestCase):
         assert len(result.fuzzy) == 10
 
 
-def is_included(name, cards) -> bool:
+def is_included(name: str, cards: List[str]) -> bool:
     return len([x for x in cards if x == name]) >= 1

@@ -528,9 +528,9 @@ Want to contribute? Send a Pull Request."""
             ),
             'legality': (
                 """
-                Legality is determined at the release of a Standard-legal set on Magic Online.
-                Prices are checked every hour for a week. Anything 1c or less for half or more of all checks is legal for the season.
-                Cards from the just-released set are added (nothing removed) a couple of weeks later via a supplemental rotation after prices have settled a little.
+                Legality is set at the release of a Standard-legal set on Magic Online.
+                Prices are checked every hour for a week beforehand. Anything 1c or less for half or more of all checks is legal for the season.
+                Cards from the just-released set are added (nothing removed) three weeks later via a supplemental rotation after prices have settled a little.
                 Any version of a card on the legal cards list is legal.
                 """,
                 {

@@ -1,9 +1,10 @@
+from decksite.data.form import Form
 from decksite.views.league_form import LeagueForm
 
 
 # pylint: disable=no-self-use
 class DecklistForm(LeagueForm):
-    def __init__(self, form, person_id) -> None:
+    def __init__(self, form: Form, person_id: int) -> None:
         super().__init__(form)
         self.person_id = person_id
         self.classify_illegal_cards()

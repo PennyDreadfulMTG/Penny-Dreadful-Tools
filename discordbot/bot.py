@@ -55,11 +55,13 @@ class Bot(discord.Client):
 
     async def on_member_join(self, member: Member) -> None:
         print('{0} joined {1} ({2})'.format(member.mention, member.guild.name, member.guild.id))
-        is_pd_server = member.guild.id == '207281932214599682'
-        # is_test_server = member.guild.id == '226920619302715392'
+        is_pd_server = member.guild.id == 207281932214599682
+        # is_test_server = member.guild.id == 226920619302715392
         if is_pd_server: # or is_test_server:
             greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
-            await member.guild.text_channels[0].send(greeting)
+            chan = member.guild.text_channels[0]
+            print(f'Greeting in {chan}')
+            await chan.send(greeting)
 
 
 

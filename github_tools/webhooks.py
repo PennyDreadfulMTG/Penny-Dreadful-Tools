@@ -116,6 +116,9 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
             continue
         if checks.get(status.context) is None:
             checks[status.context] = status.state
+            if status.state == 'error' and status.context == 'Codacy/PR Quality Review':
+                # Codacy sometimes has... issues.  We don't care enough.
+                continue
             if status.state != 'success' and not blocked:
                 commit.create_status(state='pending', description=f'Waiting for {status.context}', context=PDM_CHECK_CONTEXT)
                 blocked = True

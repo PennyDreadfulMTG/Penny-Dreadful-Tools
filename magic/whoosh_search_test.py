@@ -1,5 +1,6 @@
 import unittest
 from typing import List
+
 from magic.whoosh_search import WhooshSearcher
 
 

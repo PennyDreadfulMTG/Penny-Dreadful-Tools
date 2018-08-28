@@ -65,6 +65,9 @@ def mypy(strict: bool = False) -> None:
         sys.stderr.write(result[1])  # stderr
 
     print('Exit status: {code} ({english})'.format(code=result[2], english='Failure' if result[2] else 'Success'))
+    if result[2]:
+        n = len(result[0].split('\n'))
+        print(f'{n} issues')
     sys.exit(result[2])
 
 def tests() -> None:

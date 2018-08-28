@@ -12,7 +12,7 @@ class CardRef(Container):
         self['n'] = count
         self.name = name
 
-    def __contains__(self, key) -> bool:
+    def __contains__(self, key: str) -> bool:
         if key == 'card':
             return True
         return super().__contains__(key)

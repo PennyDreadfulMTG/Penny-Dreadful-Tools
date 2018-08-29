@@ -67,7 +67,7 @@ async def handle_command(message: Message, client: Client) -> None:
     method = find_method(parts[0])
     args = ''
     if len(parts) > 1:
-        args = parts[1]
+        args = parts[1].strip()
     if method is not None:
         try:
             async with message.channel.typing():
@@ -170,7 +170,7 @@ Want to contribute? Send a Pull Request."""
         additional_text = ''
         if len(args) > 0:
             try:
-                number = int(args.strip())
+                number = int(args)
                 if number > 10:
                     additional_text = "{number}? Tsk. Here's ten.".format(number=number)
                     number = 10
@@ -367,7 +367,7 @@ Want to contribute? Send a Pull Request."""
     async def buglink(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) ->  None:
         """Get a link to the modo-bugs page for the named card."""
         base_url = 'https://github.com/PennyDreadfulMTG/modo-bugs/issues'
-        if args.strip() == '':
+        if args == '':
             await channel.send(base_url)
             return
         result, mode = results_from_queries([args])[0]
@@ -408,7 +408,7 @@ Want to contribute? Send a Pull Request."""
     async def time(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!time {location}` Show the current time in the specified location."""
         try:
-            t = fetcher.time(args.strip())
+            t = fetcher.time(args)
         except TooFewItemsException:
             logging.exception('Exception trying to get the time for %s.', args)
             return await channel.send('{author}: Location not found.'.format(author=author.mention))
@@ -429,7 +429,7 @@ Want to contribute? Send a Pull Request."""
         if api_key is None or cse_id is None:
             return await channel.send('The google command has not been configured.')
 
-        if len(args.strip()) == 0:
+        if len(args) == 0:
             return await channel.send('{author}: No search term provided. Please type !google followed by what you would like to search'.format(author=author.mention))
 
         try:
@@ -612,7 +612,7 @@ Want to contribute? Send a Pull Request."""
         explanations['drop'] = explanations['retire']
         explanations['rotation'] = explanations['legality']
         explanations['tournaments'] = explanations['tournament']
-        word = args.strip().lower().replace(' ', '').rstrip('s') # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
+        word = args.lower().replace(' ', '').rstrip('s') # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
         if len(word) > 0:
             for k in explanations:
                 if k.startswith(word):

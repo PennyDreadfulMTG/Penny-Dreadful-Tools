@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import pkg_resources
 
 from magic import card, database, fetcher, rotation
-from magic.database import column_def, db
+from magic.database import create_table_def, db
 from magic.models.card import Card
 from magic.whoosh_write import WhooshWriter
 from shared import dtutil
@@ -266,9 +266,8 @@ def update_cache() -> None:
     db().begin()
     db().execute('DROP TABLE IF EXISTS _cache_card')
     db().execute('SET group_concat_max_len=100000')
-    columns = ', '.join(column_def(name, prop) for name, prop in card.base_query_properties().items())
-    db().execute('CREATE TABLE _cache_card ({columns}) AS {base_query}'.format(columns=columns, base_query=base_query()))
-    db().execute('CREATE INDEX idx_name_name on _cache_card (name(142))')
+    db().execute(create_table_def('_cache_card', card.base_query_properties(), base_query()))
+    db().execute('CREATE INDEX idx_name on _cache_card (name(142))')
     db().commit()
 
 def reindex() -> None:

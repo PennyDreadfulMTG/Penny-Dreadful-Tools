@@ -84,7 +84,7 @@ def face_properties() -> TableDescription:
         props[k]['mtgjson'] = False
     for k in ['id', 'name', 'type', 'text', 'search_text']:
         props[k]['nullable'] = False
-    for k in ['id', 'card_id', 'hand', 'life', 'starter']:
+    for k in ['id', 'card_id', 'hand', 'life', 'starter', 'position']:
         props[k]['type'] = INTEGER
         props[k]['query'] = 'SUM(CASE WHEN `{table}`.position = 1 THEN `{table}`.`{column}` ELSE NULL END) AS `{column}`'
     props['id']['primary_key'] = True

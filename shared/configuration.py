@@ -4,7 +4,7 @@ import json
 import os
 import random
 import string
-from typing import Any, Dict, List, Optional, Union, overload
+from typing import Any, Dict, List, Optional, Set, Union, overload
 
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
@@ -123,6 +123,8 @@ def get_list(key: str) -> List[str]:
         return []
     if isinstance(val, list):
         return val
+    if isinstance(val, str):
+        return val.split(',')
     raise fail(key, val, List[str])
 
 def get_bool(key: str) -> bool:
@@ -182,11 +184,19 @@ def write(key: str, value: int) -> int:
 def write(key: str, value: float) -> float:
     pass
 
-def write(key: str, value: Union[str, List[str], int, float]) -> Union[str, List[str], int, float]:
+# pylint: disable=unused-argument, function-redefined
+@overload
+def write(key: str, value: Set[str]) -> Set[str]:
+    pass
+
+def write(key: str, value: Union[str, List[str], Set[str], int, float]) -> Union[str, List[str], Set[str], int, float]:
     try:
         cfg = json.load(open('config.json'))
     except FileNotFoundError:
         cfg = {}
+
+    if isinstance(value, set):
+        value = list(value)
 
     cfg[key] = value
     CONFIG[key] = value

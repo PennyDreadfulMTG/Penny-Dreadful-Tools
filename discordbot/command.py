@@ -339,7 +339,10 @@ Want to contribute? Send a Pull Request."""
         if str(cid) not in existing:
             existing.append(str(cid))
             configuration.write('not_pd', set(existing))
-        await channel.send('Disable PD marks')
+        if args == 'server':
+            await channel.send('Disable PD legality marks for the entire server')
+        else:
+            await channel.send('Disable PD legality marks for this channel. If you wanted to disable for the entire server, use `!notpenny server` instead.')
 
     @cmd_header('Commands')
     async def bug(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:

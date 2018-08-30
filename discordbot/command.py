@@ -727,10 +727,16 @@ def card_rulings(c: Card) -> str:
 
 def site_resources(args: str) -> Dict[str, str]:
     results = {}
-    if ' ' in args.strip():
-        area, detail = args.strip().split(' ', 1)
+    match = re.match('^s? ?([0-9]*|all) +', args)
+    if match:
+        season_prefix = 'seasons/' + match.group(1)
+        args = args.replace(match.group(0), '', 1).strip()
     else:
-        area, detail = args.strip(), ''
+        season_prefix = ''
+    if ' ' in args:
+        area, detail = args.split(' ', 1)
+    else:
+        area, detail = args, ''
     if area == 'archetype':
         area = 'archetypes'
     if area == 'card':
@@ -741,7 +747,7 @@ def site_resources(args: str) -> Dict[str, str]:
     matches = [endpoint for endpoint in sitemap if endpoint.startswith('/{area}/'.format(area=area))]
     if len(matches) > 0:
         detail = '{detail}/'.format(detail=fetcher.internal.escape(detail, True)) if detail else ''
-        url = fetcher.decksite_url('/{area}/{detail}'.format(area=fetcher.internal.escape(area), detail=detail))
+        url = fetcher.decksite_url('{season_prefix}/{area}/{detail}'.format(season_prefix=season_prefix, area=fetcher.internal.escape(area), detail=detail))
         results[url] = args
     return results
 

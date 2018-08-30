@@ -107,7 +107,7 @@ def unique_constraint_def(name: str, cols: List[str]) -> str:
     cols = [name] + cols
     return 'CONSTRAINT `{name}` UNIQUE ({cols})'.format(name='_'.join(cols), cols=', '.join('`{col}`'.format(col=col) for col in cols))
 
-def create_table_def(name: str, props: card.TableDescription) -> str:
+def create_table_def(name: str, props: card.TableDescription, from_query: str = '') -> str:
     sql = 'CREATE TABLE IF NOT EXISTS `{name}` ('
     sql += ', '.join(column_def(name, prop) for name, prop in props.items())
     fk = ', '.join(foreign_key_def(name, prop['foreign_key']) for name, prop in props.items() if prop['foreign_key'] is not None)
@@ -117,4 +117,6 @@ def create_table_def(name: str, props: card.TableDescription) -> str:
     if uc:
         sql += ', ' + uc
     sql += ') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
+    if from_query:
+        sql += f' AS {from_query}'
     return sql.format(name=name)

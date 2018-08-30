@@ -42,7 +42,7 @@ BASE: ColumnDescription = {
     'unique_with': None
 }
 
-def base_query_properties():
+def base_query_properties() -> TableDescription:
     # Important that these are in this order so that 'id' from card overwrites 'id' from face.
     props = face_properties()
     props.update(card_properties())

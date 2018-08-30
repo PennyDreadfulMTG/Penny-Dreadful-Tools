@@ -42,6 +42,27 @@ BASE: ColumnDescription = {
     'unique_with': None
 }
 
+def base_query_properties() -> TableDescription:
+    # Important that these are in this order so that 'id' from card overwrites 'id' from face.
+    props = face_properties()
+    props.update(card_properties())
+    props.update(base_query_specific_properties())
+    return props
+
+def base_query_specific_properties() -> TableDescription:
+    props = {}
+    for k in ['names', 'legalities', 'pd_legal', 'bugs']:
+        props[k] = copy.deepcopy(BASE)
+    props['names']['type'] = TEXT
+    props['names']['query'] = "GROUP_CONCAT(face_name SEPARATOR '|') AS names"
+    props['legalities']['type'] = TEXT
+    props['legalities']['query'] = 'legalities'
+    props['pd_legal']['type'] = BOOLEAN
+    props['bugs']['query'] = 'pd_legal'
+    props['bugs']['type'] = TEXT
+    props['bugs']['query'] = 'bugs'
+    return props
+
 def card_properties() -> TableDescription:
     props = {}
     for k in ['id', 'layout']:
@@ -65,6 +86,7 @@ def face_properties() -> TableDescription:
         props[k]['nullable'] = False
     for k in ['id', 'card_id', 'hand', 'life', 'starter']:
         props[k]['type'] = INTEGER
+        props[k]['query'] = 'SUM(CASE WHEN `{table}`.position = 1 THEN `{table}`.`{column}` ELSE NULL END) AS `{column}`'
     props['id']['primary_key'] = True
     props['id']['query'] = '`{table}`.`{column}` AS face_id'
     props['cmc']['type'] = REAL

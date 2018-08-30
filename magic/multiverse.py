@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import pkg_resources
 
 from magic import card, database, fetcher, rotation
-from magic.database import db
+from magic.database import column_def, db
 from magic.models.card import Card
 from magic.whoosh_write import WhooshWriter
 from shared import dtutil
@@ -40,12 +40,7 @@ def cached_base_query(where: str = '(1 = 1)') -> str:
 def base_query(where: str = '(1 = 1)') -> str:
     return """
         SELECT
-            {card_queries},
-            {face_queries},
-            GROUP_CONCAT(face_name SEPARATOR '|') AS names,
-            legalities,
-            pd_legal,
-            bugs
+            {base_query_props}
             FROM (
                 SELECT {card_props}, {face_props}, f.name AS face_name,
                     pd_legal,
@@ -83,13 +78,11 @@ def base_query(where: str = '(1 = 1)') -> str:
             WHERE u.id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where})
             GROUP BY u.id
     """.format(
-        card_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.card_properties().items()),
-        face_queries=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.face_properties().items()),
+        base_query_props=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.base_query_properties().items()),
         format_id=get_format_id('Penny Dreadful'),
         card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
         face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),
         where=where)
-
 
 def update_database(new_version: str) -> None:
     db().begin()
@@ -273,7 +266,8 @@ def update_cache() -> None:
     db().begin()
     db().execute('DROP TABLE IF EXISTS _cache_card')
     db().execute('SET group_concat_max_len=100000')
-    db().execute('CREATE TABLE _cache_card AS {base_query}'.format(base_query=base_query()))
+    columns = ', '.join(column_def(name, prop) for name, prop in card.base_query_properties().items())
+    db().execute('CREATE TABLE _cache_card ({columns}) AS {base_query}'.format(columns=columns, base_query=base_query()))
     db().execute('CREATE INDEX idx_name_name on _cache_card (name(142))')
     db().commit()
 

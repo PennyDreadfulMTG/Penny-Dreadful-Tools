@@ -62,7 +62,7 @@ class Deck(View):
         return self.has_matches() and self.matches[0].get('round')
 
     def og_title(self) -> str:
-        return self.deck.name
+        return self.deck.name if self.public() else '(Active League Run)'
 
     def og_url(self) -> str:
         return url_for('deck', deck_id=self.deck.id, _external=True)
@@ -89,7 +89,7 @@ class Deck(View):
         return getattr(self.deck, attr)
 
     def page_title(self):
-        return self.deck.name
+        return self.deck.name if self.public() else '(Active League Run)'
 
     def sections(self):
         sections = []

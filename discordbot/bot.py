@@ -76,7 +76,7 @@ class Bot(discord.Client):
             if isinstance(after.activity, Streaming) and not streaming_role in before.roles:
                 print('{user} started streaming'.format(user=after.name))
                 await after.add_roles(streaming_role)
-        # Achivements
+        # Achievements
         if before.status == Status.offline and after.status == Status.online:
             data = None
             # Linked to PDM

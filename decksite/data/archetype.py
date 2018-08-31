@@ -120,7 +120,8 @@ def add(name: str, parent: int) -> None:
     db().execute(sql)
 
 def assign(deck_id: int, archetype_id: int, reviewed: bool = True) -> None:
-    db().execute('UPDATE deck SET reviewed = %s, archetype_id = %s WHERE id = %s', [reviewed, archetype_id, deck_id])
+    and_clause = '' if reviewed else 'AND reviewed is FALSE'
+    db().execute(f'UPDATE deck SET reviewed = %s, archetype_id = %s WHERE id = %s {and_clause}', [reviewed, archetype_id, deck_id])
 
 def load_all_matchups(where='TRUE', season_id=None):
     sql = """

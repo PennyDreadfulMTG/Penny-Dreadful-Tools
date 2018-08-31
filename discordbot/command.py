@@ -332,10 +332,10 @@ Want to contribute? Send a Pull Request."""
     async def notpenny(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
         """Don't show PD Legality in this channel"""
         existing = configuration.get_list('not_pd')
-         if args == 'server':
-             cid = channel_id(channel)
-         else:
-             cid = channel.id
+        if args == 'server':
+            cid = channel_id(channel)
+        else:
+            cid = channel.id
         if str(cid) not in existing:
             existing.append(str(cid))
             configuration.write('not_pd', set(existing))

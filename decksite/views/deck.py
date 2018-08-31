@@ -115,7 +115,7 @@ class Deck(View):
     def sideboard(self):
         return self.deck.sideboard
 
-    def public(self):
+    def public(self) -> bool:
         if not self.is_in_current_run:
             return True
         if self.person_id is None:

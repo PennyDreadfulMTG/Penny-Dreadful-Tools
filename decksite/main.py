@@ -366,7 +366,10 @@ def image(c: str = '') -> Response:
     names = c.split('|')
     try:
         requested_cards = oracle.load_cards(names)
-        return send_file(image_fetcher.download_image(requested_cards))
+        path = image_fetcher.download_image(requested_cards)
+        if path is None:
+            raise InternalServerError(f'Failed to get image for {c}') # type: ignore
+        return send_file(path)
     except TooFewItemsException as e:
         print(e)
         return '', 400

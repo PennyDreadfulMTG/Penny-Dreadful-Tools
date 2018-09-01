@@ -49,6 +49,8 @@ class Bot(discord.Client):
     async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:
         # pylint: disable=unused-argument
         # If we're the only one left in a voice chat, leave the channel
+        if getattr(after.channel, 'guild', None) is None:
+            return
         voice = after.channel.guild.voice_client
         if voice is None or not voice.is_connected():
             return

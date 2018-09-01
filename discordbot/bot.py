@@ -65,8 +65,6 @@ class Bot(discord.Client):
             print(f'Greeting in {chan}')
             await chan.send(greeting)
 
-
-
     async def on_member_update(self, before: Member, after: Member) -> None:
         # streamers.
         roles = [r for r in before.guild.roles if r.name == 'Currently Streaming']
@@ -117,11 +115,11 @@ class Bot(discord.Client):
                         await self.on_message(message)
                         await reaction.message.delete()
 
-    async def on_error(self, event, *args, **kwargs):
-        await super().on_error(event, args, kwargs)
-        (exception_type, exception, traceback) = sys.exc_info()
+    async def on_error(self, event_method, *args, **kwargs):
+        await super().on_error(event_method, args, kwargs)
+        (_, exception, __) = sys.exc_info()
         try:
-            repo.create_issue(f'Bot error {event}\n{args}\n{kwargs}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=exception)
+            repo.create_issue(f'Bot error {event_method}\n{args}\n{kwargs}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=exception)
         except GithubException as e:
             print('Github error', e, file=sys.stderr)
 

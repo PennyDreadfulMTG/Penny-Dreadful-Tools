@@ -1,6 +1,5 @@
 import os
 import subprocess
-import traceback
 import urllib
 from typing import Optional, Tuple
 

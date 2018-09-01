@@ -124,5 +124,5 @@ class PDFlask(Flask):
             return 'https://pennydreadfulmagic.com/cards/{name}/'.format(name=values['name'])
         return None
 
-def log_exception(e: BaseException) -> None:
+def log_exception(e: Exception) -> None:
     logger.error(repo.format_exception(e))

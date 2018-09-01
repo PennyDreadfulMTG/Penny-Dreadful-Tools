@@ -101,6 +101,7 @@ def update_database(new_version: str) -> None:
     DELETE FROM `set`;
     """)
     cards = fetcher.all_cards()
+    cards = fix_bad_mtgjson_data(cards)
     cards = add_hardcoded_cards(cards)
     melded_faces = []
     for _, c in cards.items():
@@ -315,6 +316,13 @@ def card_name(c) -> str:
         return c.get('name')
     return ' // '.join(c.get('names', [c.get('name')]))
 
+def fix_bad_mtgjson_data(cards: Dict[str, CardDescription]) -> Dict[str, CardDescription]:
+    fix_mtgjson_melded_cards_bug(cards)
+    # https://github.com/mtgjson/mtgjson/issues/588
+    cards['Zndrsplt, Eye of Wisdom']['layout'] = 'normal'
+    cards['Okaun, Eye of Chaos']['layout'] = 'normal'
+    return cards
+
 def add_hardcoded_cards(cards: Dict[str, CardDescription]) -> Dict[str, CardDescription]:
     cards['Gleemox'] = {
         'text': '{T}: Add one mana of any color to your mana pool.\nThis card is banned.',
@@ -329,7 +337,6 @@ def add_hardcoded_cards(cards: Dict[str, CardDescription]) -> Dict[str, CardDesc
         'printings': ['PRM'],
         'rarity': 'Rare'
     }
-    fix_mtgjson_melded_cards_bug(cards)
     return cards
 
 def get_all_cards() -> List[Card]:

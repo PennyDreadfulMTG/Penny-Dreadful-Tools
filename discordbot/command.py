@@ -332,7 +332,7 @@ Want to contribute? Send a Pull Request."""
     async def notpenny(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
         """Don't show PD Legality in this channel"""
         existing = configuration.get_list('not_pd')
-        if args == 'server' and channel.guild is not None:
+        if args == 'server' and getattr(channel, 'guild', None) is not None:
             cid = channel.guild.id
         else:
             cid = channel.id
@@ -784,7 +784,7 @@ async def post_cards(
         await post_no_cards(channel, replying_to)
         return
     not_pd = configuration.get_list('not_pd')
-    disable_emoji = str(channel.id) in not_pd or (channel.guild is not None and str(channel.guild.id) in not_pd)
+    disable_emoji = str(channel.id) in not_pd or (getattr(channel, 'guild', None) is not None and str(channel.guild.id) in not_pd)
     cards = uniqify_cards(cards)
     if len(cards) > MAX_CARDS_SHOWN:
         cards = cards[:DEFAULT_CARDS_SHOWN]

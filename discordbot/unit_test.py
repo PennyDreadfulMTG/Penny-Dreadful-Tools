@@ -25,7 +25,7 @@ def test_fallbackimagedownload() -> None:
 
 # Check that we can succesfully fail at getting an image.
 def test_noimageavailable() -> None:
-    c = Card({'name': "Barry's Land", 'id': 0, 'multiverseid': 0, 'names': "Barry's Land"})
+    c = Card({'name': "Barry's Land", 'id': 0, 'multiverseid': 0, 'names': "Barry's Land", 'layout': 'normal'})
     assert image_fetcher.download_image([c]) is None
 
 # Search for a single card via full name,

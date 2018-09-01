@@ -62,24 +62,28 @@ def download_scryfall_image(cards: List[Card], filepath: str, version: str = '')
     for card in cards:
         card_filepath = determine_filepath([card])
         if not internal.acceptable_file(card_filepath):
-            try:
-                if card.is_double_sided():
-                    paths = [re.sub('.jpg$', '.a.jpg', card_filepath), re.sub('.jpg$', '.b.jpg', card_filepath)]
-                    internal.store(scryfall_image(card, version=version), paths[0])
-                    if card.layout == 'double-faced':
-                        internal.store(scryfall_image(card, version=version, face='back'), paths[1])
-                    if card.layout == 'meld':
-                        internal.store(scryfall_image(card, version=version, face='meld'), paths[1])
-                    if (internal.acceptable_file(paths[0]) and internal.acceptable_file(paths[1])):
-                        save_composite_image(paths, card_filepath)
-                else:
-                    internal.store(scryfall_image(card, version=version), card_filepath)
-            except FetchException as e:
-                print('Error: {e}'.format(e=e))
+            download_scryfall_card_image(card, card_filepath, version)
         if internal.acceptable_file(card_filepath):
             image_filepaths.append(card_filepath)
     if len(image_filepaths) > 1:
         save_composite_image(image_filepaths, filepath)
+    return internal.acceptable_file(filepath)
+
+def download_scryfall_card_image(card: Card, filepath: str, version: str = '') -> bool:
+    try:
+        if card.is_double_sided():
+            paths = [re.sub('.jpg$', '.a.jpg', filepath), re.sub('.jpg$', '.b.jpg', filepath)]
+            internal.store(scryfall_image(card, version=version), paths[0])
+            if card.layout == 'double-faced':
+                internal.store(scryfall_image(card, version=version, face='back'), paths[1])
+            if card.layout == 'meld':
+                internal.store(scryfall_image(card, version=version, face='meld'), paths[1])
+            if (internal.acceptable_file(paths[0]) and internal.acceptable_file(paths[1])):
+                save_composite_image(paths, filepath)
+        else:
+            internal.store(scryfall_image(card, version=version), filepath)
+    except FetchException as e:
+        print('Error: {e}'.format(e=e))
     return internal.acceptable_file(filepath)
 
 def download_mci_image(cards: List[Card], filepath: str) -> bool:

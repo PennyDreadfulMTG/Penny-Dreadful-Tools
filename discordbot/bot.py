@@ -117,11 +117,11 @@ class Bot(discord.Client):
                         await self.on_message(message)
                         await reaction.message.delete()
 
-    async def on_error(self, context, exception):
-        super().on_error(context, exception)
+    async def on_error(self, event, *args, **kwargs):
+        await super().on_error(event, args, kwargs)
+        (exception_type, exception, traceback) = sys.exc_info()
         try:
-            exc_info = sys.exc_info()
-            repo.create_issue(f'Bot error at {context}\n {exception}\n {exc_info}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=exception)
+            repo.create_issue(f'Bot error {event}\n{args}\n{kwargs}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=exception)
         except GithubException as e:
             print('Github error', e, file=sys.stderr)
 

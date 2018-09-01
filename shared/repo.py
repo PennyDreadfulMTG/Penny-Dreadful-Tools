@@ -96,3 +96,6 @@ def get_pull_requests(start_date: datetime.datetime,
         if len(pulls) >= max_pull_requests:
             return pulls
     return pulls
+
+def format_exception(e: Exception) -> str:
+    return ''.join(traceback.format_exception(type(e), e, e.__traceback__))

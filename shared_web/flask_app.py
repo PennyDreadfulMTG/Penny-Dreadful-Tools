@@ -126,4 +126,4 @@ class PDFlask(Flask):
         return None
 
 def log_exception(e: BaseException) -> None:
-    logger.error(''.join(traceback.format_exception(type(e), e, e.__traceback__)))
+    logger.error(repo.format_exception(e))

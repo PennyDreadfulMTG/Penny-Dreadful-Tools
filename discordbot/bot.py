@@ -1,5 +1,6 @@
 import asyncio
 import re
+import sys
 
 import discord
 from discord import VoiceState
@@ -9,10 +10,11 @@ from discord.member import Member
 from discord.message import Message
 from discord.reaction import Reaction
 from discord.state import Status
+from github.GithubException import GithubException
 
 from discordbot import command
 from magic import fetcher, multiverse, oracle, tournaments
-from shared import configuration, dtutil
+from shared import configuration, dtutil, repo
 from shared.container import Container
 from shared.pd_exception import InvalidDataException, TooFewItemsException
 
@@ -63,8 +65,6 @@ class Bot(discord.Client):
             print(f'Greeting in {chan}')
             await chan.send(greeting)
 
-
-
     async def on_member_update(self, before: Member, after: Member) -> None:
         # streamers.
         roles = [r for r in before.guild.roles if r.name == 'Currently Streaming']
@@ -78,13 +78,20 @@ class Bot(discord.Client):
                 await after.add_roles(streaming_role)
         # Achievements
         if before.status == Status.offline and after.status == Status.online:
+            print('Found a member coming online going to check for linked account')
+            print('before', before)
             data = None
             # Linked to PDM
+            print('before.guild.roles', before.guild.roles)
             roles = [r for r in before.guild.roles if r.name == 'Linked Magic Online']
+            print('roles', roles)
             if roles and not roles[0] in before.roles:
+                print('roles[0]', roles[0])
                 if data is None:
                     data = await fetcher.person_data_async(before.id)
+                print('data', data)
                 if data.get('id', None):
+                    print('after', after)
                     await after.add_roles(after, roles[0])
 
     async def on_guild_join(self, server: Guild) -> None:
@@ -107,6 +114,14 @@ class Bot(discord.Client):
                         message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[])
                         await self.on_message(message)
                         await reaction.message.delete()
+
+    async def on_error(self, event_method, *args, **kwargs):
+        await super().on_error(event_method, args, kwargs)
+        (_, exception, __) = sys.exc_info()
+        try:
+            repo.create_issue(f'Bot error {event_method}\n{args}\n{kwargs}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=exception)
+        except GithubException as e:
+            print('Github error', e, file=sys.stderr)
 
     async def background_task_spoiler_season(self) -> None:
         'Poll Scryfall for the latest 250 cards, and add them to our db if missing'

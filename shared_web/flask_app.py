@@ -1,6 +1,5 @@
 import os
 import subprocess
-import traceback
 import urllib
 from typing import Optional, Tuple
 
@@ -125,5 +124,5 @@ class PDFlask(Flask):
             return 'https://pennydreadfulmagic.com/cards/{name}/'.format(name=values['name'])
         return None
 
-def log_exception(e: BaseException) -> None:
-    logger.error(''.join(traceback.format_exception(type(e), e, e.__traceback__)))
+def log_exception(e: Exception) -> None:
+    logger.error(repo.format_exception(e))

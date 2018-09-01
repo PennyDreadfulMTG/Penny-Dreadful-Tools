@@ -12,6 +12,9 @@ class Card(Container):
         if not hasattr(self, 'names'):
             setattr(self, 'names', [self.name])
 
+    def is_double_sided(self) -> bool:
+        return self.layout in ['double-faced', 'meld']
+
     def is_creature(self) -> bool:
         return 'Creature' in self.type
 

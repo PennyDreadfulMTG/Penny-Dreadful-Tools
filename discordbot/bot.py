@@ -80,21 +80,14 @@ class Bot(discord.Client):
                 await after.add_roles(streaming_role)
         # Achievements
         if before.status == Status.offline and after.status == Status.online:
-            print('Found a member coming online going to check for linked account')
-            print('before', before)
             data = None
             # Linked to PDM
-            print('before.guild.roles', before.guild.roles)
             roles = [r for r in before.guild.roles if r.name == 'Linked Magic Online']
-            print('roles', roles)
             if roles and not roles[0] in before.roles:
-                print('roles[0]', roles[0])
                 if data is None:
                     data = await fetcher.person_data_async(before.id)
-                print('data', data)
                 if data.get('id', None):
-                    print('after', after)
-                    await after.add_roles(after, roles[0])
+                    await after.add_roles(roles[0])
 
     async def on_guild_join(self, server: Guild) -> None:
         await server.text_channels[0].send("Hi, I'm mtgbot.  To look up cards, just mention them in square brackets. (eg `[Llanowar Elves] is better than [Elvish Mystic]`).")

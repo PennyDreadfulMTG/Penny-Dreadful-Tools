@@ -10,10 +10,11 @@ from discord.member import Member
 from discord.message import Message
 from discord.reaction import Reaction
 from discord.state import Status
+from github.GithubException import GithubException
 
 from discordbot import command
 from magic import fetcher, multiverse, oracle, tournaments
-from shared import configuration, dtutil
+from shared import configuration, dtutil, repo
 from shared.container import Container
 from shared.pd_exception import InvalidDataException, TooFewItemsException
 
@@ -116,13 +117,13 @@ class Bot(discord.Client):
                         await self.on_message(message)
                         await reaction.message.delete()
 
-    async def on_error(context, exception):
+    async def on_error(self, context, exception):
         super().on_error(context, exception)
         try:
             exc_info = sys.exc_info()
             repo.create_issue(f'Bot error at {context}\n {exception}\n {exc_info}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=exception)
-        except GithubException:
-            logger.error('Github error', e)
+        except GithubException as e:
+            print('Github error', e, file=sys.stderr)
 
     async def background_task_spoiler_season(self) -> None:
         'Poll Scryfall for the latest 250 cards, and add them to our db if missing'

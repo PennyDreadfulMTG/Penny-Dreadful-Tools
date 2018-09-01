@@ -26,7 +26,7 @@ def bluebones_image(cards: List[Card]) -> str:
 def scryfall_image(card: Card, version: str = '', face: str = None) -> str:
     if face == 'meld':
         name = card.names[1]
-    elif card.is_split():
+    elif ' // ' in card.name:
         name = card.name.replace(' // ', '/')
     else:
         name = card.name

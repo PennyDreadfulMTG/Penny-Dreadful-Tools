@@ -1,5 +1,6 @@
 import asyncio
 import re
+import sys
 
 import discord
 from discord import VoiceState
@@ -114,6 +115,14 @@ class Bot(discord.Client):
                         message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[])
                         await self.on_message(message)
                         await reaction.message.delete()
+
+    async def on_error(context, exception):
+        super().on_error(context, exception)
+        try:
+            exc_info = sys.exc_info()
+            repo.create_issue(f'Bot error at {context}\n {exception}\n {exc_info}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=exception)
+        except GithubException:
+            logger.error('Github error', e)
 
     async def background_task_spoiler_season(self) -> None:
         'Poll Scryfall for the latest 250 cards, and add them to our db if missing'

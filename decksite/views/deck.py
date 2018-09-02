@@ -68,7 +68,7 @@ class Deck(View):
         return url_for('deck', deck_id=self.deck.id, _external=True)
 
     def og_description(self):
-        if self.archetype_name:
+        if self.public() and self.archetype_name:
             p = inflect.engine()
             archetype_s = titlecase.titlecase(p.a(self.archetype_name))
         else:

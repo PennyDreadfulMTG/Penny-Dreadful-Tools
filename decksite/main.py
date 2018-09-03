@@ -1,4 +1,5 @@
 import logging
+import os
 import urllib.parse
 from typing import Optional
 
@@ -369,7 +370,7 @@ def image(c: str = '') -> Response:
         path = image_fetcher.download_image(requested_cards)
         if path is None:
             raise InternalServerError(f'Failed to get image for {c}') # type: ignore
-        return send_file(path)
+        return send_file(os.path.abspath(path)) # Send abspath to work around monolith root versus web root.
     except TooFewItemsException as e:
         print(e)
         return '', 400

@@ -593,6 +593,13 @@ Want to contribute? Send a Pull Request."""
                     'Retire': fetcher.decksite_url('/retire/')
                 }
             ),
+            'spectating': (
+                """
+                Spectating tournament and league matches is allowed and encouraged.
+                Please do not write anything in chat except to call PDBot's `!record` command to find out the current score in games.
+                """,
+                {}
+            ),
             'tournament': (
                 """
                 We have {num_tournaments} free-to-enter weekly tournaments that award trade credit prizes from Cardhoarder.
@@ -615,6 +622,7 @@ Want to contribute? Send a Pull Request."""
         keys = sorted(explanations.keys())
         explanations['drop'] = explanations['retire']
         explanations['rotation'] = explanations['legality']
+        explanations['spectate'] = explanations['spectating']
         explanations['tournaments'] = explanations['tournament']
         word = args.lower().replace(' ', '').rstrip('s') # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
         if len(word) > 0:

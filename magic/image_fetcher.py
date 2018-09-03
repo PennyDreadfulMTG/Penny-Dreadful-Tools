@@ -129,6 +129,8 @@ def download_image(cards: List[Card]) -> Optional[str]:
 
 def save_composite_image(in_filepaths: List[str], out_filepath: str) -> None:
     images = list(map(Image.open, in_filepaths))
+    for image in images:
+        image.thumbnail([312, 445])
     widths, heights = zip(*(i.size for i in images))
     total_width = sum(widths)
     max_height = max(heights)

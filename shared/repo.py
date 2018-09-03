@@ -48,6 +48,7 @@ def create_issue(content: str,
     if exception:
         body += '--------------------------------------------------------------------------------\n'
         body += exception.__class__.__name__ + '\n'
+        body += str(exception) + '\n'
         stack = traceback.extract_stack()[:-3] + traceback.extract_tb(exception.__traceback__)
         pretty = traceback.format_list(stack)
         body += 'Stack Trace:\n```\n' + ''.join(pretty) + '\n```\n'

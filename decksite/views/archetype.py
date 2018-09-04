@@ -15,9 +15,9 @@ class Archetype(View):
                  matchups,
                  season_id: int) -> None:
         super().__init__()
-        if not archetype or not archetypes:
+        if not archetype:
             raise DoesNotExistException('No archetype supplied to view.')
-        self.archetype = next(a for a in archetypes if a.id == archetype.id)
+        self.archetype = next(a for a in archetypes if a.id == archetype.id) if archetypes else archetype
         self.archetype.decks = archetype.decks
         # Load the deck information from archetype into skinny archetype loaded by load_archetypes_deckless_for with tree information.
         self.archetypes = archetypes
@@ -36,6 +36,8 @@ class Archetype(View):
             'roots': [m for m in matchup_archetypes if m.is_root],
         }]
         self.show_seasons = True
+        self.show_archetype_tree = len(self.archetypes) > 0
+        self.show_all_decks = len(self.decks) > 0
 
     def og_title(self):
         return self.archetype.name

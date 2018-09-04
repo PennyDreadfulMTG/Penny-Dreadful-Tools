@@ -472,6 +472,7 @@ Multiple pieces of information on a single line can be broken up with .division 
 
 main ul {
     list-style-type: disc;
+    margin: 0 0 1em 0; /* Same as `main p`. */
     padding-left: 2em;
 }
 
@@ -1697,7 +1698,6 @@ News
 
 .news ul {
     list-style-type: none;
-    margin: 0 0 1em 0; /* Same as `main p`. */
     padding: 0;
 }
 

@@ -64,7 +64,7 @@ def load_news(start_date: datetime.datetime = None, end_date: datetime.datetime 
         result.date = dtutil.ts2dt(result.date)
         result.form_date = dtutil.form_date(result.date, dtutil.WOTC_TZ)
         result.display_date = dtutil.display_date(result.date)
-        result.icon = '📰'
+        result.type = 'site-news'
     return results
 
 def add_or_update_news(news_item_id: int, date: datetime.datetime, title: str, url: str) -> None:
@@ -89,7 +89,7 @@ def delete(news_item_id: int) -> None:
 def tournament_winners(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize) -> List[Container]:
     where = 'd.finish = 1 AND d.created_date > {start_date} AND d.created_date <= {end_date}'.format(start_date=sqlescape(dtutil.dt2ts(start_date)), end_date=sqlescape(dtutil.dt2ts(end_date)))
     ds = deck.load_decks(where, limit=f'LIMIT {max_items}')
-    return [Container({'date': d.active_date, 'title': tournament_winner_headline(d), 'url': url_for('deck', deck_id=d.id), 'icon': '🏆'}) for d in ds]
+    return [Container({'date': d.active_date, 'title': tournament_winner_headline(d), 'url': url_for('deck', deck_id=d.id), 'type': 'tournament-winner'}) for d in ds]
 
 def tournament_winner_headline(d: Deck) -> str:
     return f'{d.person} won {d.competition_name} with {d.name}'
@@ -98,7 +98,7 @@ def perfect_league_runs(start_date: datetime.datetime, end_date: datetime.dateti
     where = "ct.name = 'League' AND d.created_date > {start_date} AND d.created_date <= {end_date}".format(start_date=sqlescape(dtutil.dt2ts(start_date)), end_date=sqlescape(dtutil.dt2ts(end_date)))
     having = 'wins >= 5 AND losses = 0'
     ds = deck.load_decks(where, having=having, limit=f'LIMIT {max_items}')
-    return [Container({'date': d.active_date, 'title': perfect_league_run_headline(d), 'url': url_for('deck', deck_id=d.id), 'icon': '🏆'}) for d in ds]
+    return [Container({'date': d.active_date, 'title': perfect_league_run_headline(d), 'url': url_for('deck', deck_id=d.id), 'type': 'perfect-league-run'}) for d in ds]
 
 def perfect_league_run_headline(d: Deck) -> str:
     return f'{d.person} went 5–0 in {d.competition_name} with {d.name}'
@@ -107,7 +107,7 @@ def code_merges(start_date: datetime.datetime, end_date: datetime.datetime, max_
     try:
         merges = redis.get_container_list('decksite:news:merges')
         if merges is None:
-            merges = [Container({'date': pull.merged_dt, 'title': pull.title, 'url': pull.html_url, 'icon': '💻'}) for pull in repo.get_pull_requests(start_date, end_date, max_items) if not 'Not News' in [l.name for l in pull.as_issue().labels]]
+            merges = [Container({'date': pull.merged_dt, 'title': pull.title, 'url': pull.html_url, 'type': 'code-release'}) for pull in repo.get_pull_requests(start_date, end_date, max_items) if not 'Not News' in [l.name for l in pull.as_issue().labels]]
             redis.store('decksite:news:merges', merges, ex=3600)
         else:
             for merge in merges:
@@ -128,7 +128,7 @@ def subreddit(start_date: datetime.datetime, end_date: datetime.datetime, max_it
         feed = fetcher.subreddit()
         items = []
         for entry in feed.entries:
-            item = Container({'title': entry.title, 'date': dtutil.parse(entry.updated, '%Y-%m-%dT%H:%M:%S+00:00', dtutil.UTC_TZ), 'url': entry.link, 'icon': '📰'})
+            item = Container({'title': entry.title, 'date': dtutil.parse(entry.updated, '%Y-%m-%dT%H:%M:%S+00:00', dtutil.UTC_TZ), 'url': entry.link, 'type': 'code-release'})
             if item.date > end_date:
                 continue
             if item.date < start_date:

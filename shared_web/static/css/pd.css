@@ -1690,28 +1690,51 @@ News
 
 */
 
-.news div a {
+.news li.item a {
     font-family: main-text, Symbola;
     text-transform: none;
 }
 
-.news div {
-    margin: 0;
+.news ul {
+    list-style-type: none;
+    margin: 0 0 1em 0; /* Same as `main p`. */
     padding: 0;
 }
 
-.news p {
+.news li {
     font-size: 0.75rem;
-    margin: 0;
-    padding: 0.178em 0.563em; /* Same as table cells. */
+    margin-left: -1em; /* Shifted the width of item:before holding the icon to put it into the margin. */
 }
 
 .news .date {
     color: #999;
     display: inline-block;
     font-family: main-text, Symbola;
-    font-size: 0..563rem;
     float: right;
+}
+
+.news p.site-news:before, .news p.subreddit-post:before {
+    content: "📰";
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    width: 1em;
+}
+
+.news li.tournament-winner:before, .news li.perfect-league-run:before {
+    content: "🏆";
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    width: 1em;
+}
+
+.news p.code-release:before {
+    content: "💻";
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    width: 1em;
 }
 
 /*

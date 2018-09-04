@@ -143,7 +143,10 @@ def update_bugged_cards(use_transaction: bool = True) -> None:
     db().execute('DELETE FROM card_bug')
     for bug in bugs:
         last_confirmed_ts = dtutil.parse_to_ts(bug['last_updated'], '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
-        card_id = db().value('SELECT card_id FROM face WHERE name = %s', [bug['card']])
+        card_id = db().value('SELECT card_id FROM _cache_card WHERE name = %s', [bug['card']])
+        if card_id is None:
+            # Look for things like 'Insectile Aberration' and 'Odds' before giving up because although they are not strictly a card name they are pretty unambiguous.
+            card_id = db().value('SELECT card_id FROM face WHERE name = %s', [bug['card']])
         if card_id is None:
             print('UNKNOWN BUGGED CARD: {card}'.format(card=bug['card']))
             continue

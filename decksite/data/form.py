@@ -10,6 +10,7 @@ class Form(Container):
         super().__init__()
         self.update(form.to_dict()) # type: ignore
         self.errors: Dict[str, str] = {}
+        self.warnings: Dict[str, str] = {}
 
     def validate(self):
         self.do_validation()

@@ -38,6 +38,15 @@ def test_results_from_queries() -> None:
     assert not result.is_ambiguous()
     assert result.get_best_match() == 'Upheaval'
 
+def test_do_not_choke_on_unicode() -> None:
+    s = '①②④⑧⇅⊕█↑▪🐞🚫🏆⏩⏪︎📰💻▾'
+    # As a whole …
+    result = command.results_from_queries([s])[0][0]
+    assert not result.has_match()
+    # … and for each char individually.
+    for result in command.results_from_queries(list(s)):
+        assert not result[0].has_match()
+
 def test_resources_matching_in_url() -> None:
     results = command.resources_resources('github')
     assert results['https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/'] == 'Penny Dreadful Tools'

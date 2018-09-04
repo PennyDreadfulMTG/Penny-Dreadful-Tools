@@ -41,42 +41,42 @@ def base_query(where: str = '(1 = 1)') -> str:
     return """
         SELECT
             {base_query_props}
-            FROM (
-                SELECT {card_props}, {face_props}, f.name AS face_name,
-                    pd_legal,
-                    legalities
-                FROM
-                    card AS c
-                INNER JOIN
-                    face AS f ON c.id = f.card_id
-                LEFT JOIN (
-                    SELECT
-                        cl.card_id,
-                        SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal,
-                        GROUP_CONCAT(CONCAT(fo.name, ':', cl.legality)) AS legalities
-                    FROM
-                        card_legality AS cl
-                    LEFT JOIN
-                        format AS fo ON cl.format_id = fo.id
-                    GROUP BY
-                        cl.card_id
-                ) AS cl ON cl.card_id = c.id
-                GROUP BY
-                    f.id
-                ORDER BY
-                    f.card_id, f.position
-            ) AS u
+        FROM (
+            SELECT {card_props}, {face_props}, f.name AS face_name,
+                pd_legal,
+                legalities
+            FROM
+                card AS c
+            INNER JOIN
+                face AS f ON c.id = f.card_id
             LEFT JOIN (
                 SELECT
-                    cb.card_id,
-                    GROUP_CONCAT(CONCAT(cb.description, '|', cb.classification, '|', cb.last_confirmed, '|', cb.url, '|', cb.from_bug_blog, '|', cb.bannable) SEPARATOR '_SEPARATOR_') AS bugs
+                    cl.card_id,
+                    SUM(CASE WHEN cl.format_id = {format_id} THEN 1 ELSE 0 END) > 0 AS pd_legal,
+                    GROUP_CONCAT(CONCAT(fo.name, ':', cl.legality)) AS legalities
                 FROM
-                    card_bug AS cb
+                    card_legality AS cl
+                LEFT JOIN
+                    format AS fo ON cl.format_id = fo.id
                 GROUP BY
-                    cb.card_id
-            ) AS bugs ON u.id = bugs.card_id
-            WHERE u.id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where})
-            GROUP BY u.id
+                    cl.card_id
+            ) AS cl ON cl.card_id = c.id
+            GROUP BY
+                f.id
+            ORDER BY
+                f.card_id, f.position
+        ) AS u
+        LEFT JOIN (
+            SELECT
+                cb.card_id,
+                GROUP_CONCAT(CONCAT(cb.description, '|', cb.classification, '|', cb.last_confirmed, '|', cb.url, '|', cb.from_bug_blog, '|', cb.bannable) SEPARATOR '_SEPARATOR_') AS bugs
+            FROM
+                card_bug AS cb
+            GROUP BY
+                cb.card_id
+        ) AS bugs ON u.id = bugs.card_id
+        WHERE u.id IN (SELECT c.id FROM card AS c INNER JOIN face AS f ON c.id = f.card_id WHERE {where})
+        GROUP BY u.id
     """.format(
         base_query_props=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.base_query_properties().items()),
         format_id=get_format_id('Penny Dreadful'),
@@ -88,17 +88,17 @@ def update_database(new_version: str) -> None:
     db().begin()
     db().execute('DELETE FROM version')
     db().execute("""
-    DELETE FROM card_alias;
-    DELETE FROM card_color;
-    DELETE FROM card_color_identity;
-    DELETE FROM card_legality;
-    DELETE FROM card_subtype;
-    DELETE FROM card_supertype;
-    DELETE FROM card_bug;
-    DELETE FROM face;
-    DELETE FROM printing;
-    DELETE FROM card;
-    DELETE FROM `set`;
+        DELETE FROM card_alias;
+        DELETE FROM card_color;
+        DELETE FROM card_color_identity;
+        DELETE FROM card_legality;
+        DELETE FROM card_subtype;
+        DELETE FROM card_supertype;
+        DELETE FROM card_bug;
+        DELETE FROM face;
+        DELETE FROM printing;
+        DELETE FROM card;
+        DELETE FROM `set`;
     """)
     cards = fetcher.all_cards()
     cards = fix_bad_mtgjson_data(cards)

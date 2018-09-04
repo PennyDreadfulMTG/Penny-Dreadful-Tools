@@ -1272,7 +1272,7 @@ div.logout {
 }
 
 div.error {
-    color: red;
+    margin-top: 1em;
 }
 
 div.validation_ok {

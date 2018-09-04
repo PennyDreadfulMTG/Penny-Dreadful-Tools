@@ -223,11 +223,12 @@ def insert_set(s) -> None:
     db().execute(sql, values)
     set_id = db().last_insert_rowid()
     set_cards = s.get('cards', [])
+    fix_bad_mtgjson_set_cards_data(set_cards)
     fix_mtgjson_melded_cards_array(set_cards)
     for c in set_cards:
         _, card_id = try_find_card_id(c)
         if card_id is None:
-            raise InvalidDataException("Can't find id for: '{n}': {ns}".format(n=c['name'], ns=c['names']))
+            raise InvalidDataException("Can't find id for: '{n}': {ns}".format(n=c['name'], ns='; '.join(c.get('names', []))))
         sql = 'INSERT INTO printing (card_id, set_id, '
         sql += ', '.join(name for name, prop in card.printing_properties().items() if prop['mtgjson'])
         sql += ') VALUES (%s, %s, '
@@ -324,10 +325,18 @@ def card_name(c) -> str:
 
 def fix_bad_mtgjson_data(cards: Dict[str, CardDescription]) -> Dict[str, CardDescription]:
     fix_mtgjson_melded_cards_bug(cards)
+    cards['Sultai Ascendancy']['printings'] += cards['Sultai Ascendacy']['printings']
+    cards.pop('Sultai Ascendacy')
     # https://github.com/mtgjson/mtgjson/issues/588
     cards['Zndrsplt, Eye of Wisdom']['layout'] = 'normal'
     cards['Okaun, Eye of Chaos']['layout'] = 'normal'
     return cards
+
+def fix_bad_mtgjson_set_cards_data(set_cards: Dict[str, CardDescription]) -> Dict[str, CardDescription]:
+    for c in set_cards:
+        if c['name'] == 'Sultai Ascendacy':
+            c['name'] = 'Sultai Ascendancy'
+    return set_cards
 
 def add_hardcoded_cards(cards: Dict[str, CardDescription]) -> Dict[str, CardDescription]:
     cards['Gleemox'] = {

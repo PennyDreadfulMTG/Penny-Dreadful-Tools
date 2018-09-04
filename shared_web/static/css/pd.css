@@ -78,7 +78,7 @@ body {
     background: #999;
     color: #eee;
     /*
-        For most text, the op­ti­mal line spac­ing is be­tween 120% and 145% of the point size.
+        For most text, the optimal line spacing is between 120% and 145% of the point size.
         https://practicaltypography.com/line-spacing.html
     */
     line-height: 1.333;
@@ -99,7 +99,7 @@ nav {
 
 article {
     /*
-        Aim for an av­er­age line length of 45–90 char­ac­ters, in­clud­ing spaces.
+        Aim for an average line length of 45-90 characters, including spaces.
         https://practicaltypography.com/line-length.html
     */
     max-width: 30em;
@@ -113,7 +113,7 @@ blockquote {
 
 main p, footer p {
     /*
-        A space equal to 50–100% of the body text size will usu­ally suf­fice. The larger the point size, the more space you’ll need be­tween para­graphs to make a vis­i­ble difference.
+        A space equal to 50-100% of the body text size will usually suffice. The larger the point size, the more space you'll need between paragraphs to make a visible difference.
         https://practicaltypography.com/space-between-paragraphs.html
     */
     margin: 0 0 1em 0;

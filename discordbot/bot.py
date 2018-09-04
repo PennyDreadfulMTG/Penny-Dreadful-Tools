@@ -68,6 +68,8 @@ class Bot(discord.Client):
             await chan.send(greeting)
 
     async def on_member_update(self, before: Member, after: Member) -> None:
+        if before.bot:
+            return
         # streamers.
         roles = [r for r in before.guild.roles if r.name == 'Currently Streaming']
         if roles:

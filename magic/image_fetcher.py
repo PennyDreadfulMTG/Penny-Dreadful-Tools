@@ -60,7 +60,7 @@ def download_scryfall_image(cards: List[Card], filepath: str, version: str = '')
     print(f'Trying to get scryfall images for {card_names}')
     image_filepaths = []
     for card in cards:
-        card_filepath = determine_filepath([card])
+        card_filepath = determine_filepath([card], version)
         if not internal.acceptable_file(card_filepath):
             download_scryfall_card_image(card, card_filepath, version)
         if internal.acceptable_file(card_filepath):
@@ -107,12 +107,14 @@ def download_mci_image(cards: List[Card], filepath: str) -> bool:
             print('Error: {e}'.format(e=e))
     return False
 
-def determine_filepath(cards: List[Card]) -> str:
+def determine_filepath(cards: List[Card], version: str = '') -> str:
     imagename = basename(cards)
     # Hash the filename if it's otherwise going to be too large to use.
     if len(imagename) > 240:
         imagename = hashlib.md5(imagename.encode('utf-8')).hexdigest()
-    filename = imagename + '.jpg'
+        if version == '':
+            version = 'default'
+    filename = f'{imagename}.{version}.jpg'
     return '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename=filename)
 
 def download_image(cards: List[Card]) -> Optional[str]:

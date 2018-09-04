@@ -6,6 +6,7 @@ from typing import Dict, List, Optional
 
 from flask import request, session
 from github import Github, Issue, PullRequest
+from requests.exceptions import RequestException
 
 from shared import configuration, dtutil
 
@@ -84,18 +85,21 @@ def get_pull_requests(start_date: datetime.datetime,
     g = Github(gh_user, gh_pass)
     git_repo = g.get_repo(repo_name)
     pulls: List[PullRequest] = []
-    for pull in git_repo.get_pulls(state='closed', sort='updated', direction='desc'):
-        if not pull.merged_at:
-            continue
-        pull.merged_dt = pull.merged_at.astimezone(dtutil.UTC_TZ)
-        pull.updated_dt = pull.updated_at.astimezone(dtutil.UTC_TZ)
-        if pull.merged_dt > end_date:
-            continue
-        if pull.updated_dt < start_date:
-            return pulls
-        pulls.append(pull)
-        if len(pulls) >= max_pull_requests:
-            return pulls
+    try:
+        for pull in git_repo.get_pulls(state='closed', sort='updated', direction='desc'):
+            if not pull.merged_at:
+                continue
+            pull.merged_dt = pull.merged_at.astimezone(dtutil.UTC_TZ)
+            pull.updated_dt = pull.updated_at.astimezone(dtutil.UTC_TZ)
+            if pull.merged_dt > end_date:
+                continue
+            if pull.updated_dt < start_date:
+                return pulls
+            pulls.append(pull)
+            if len(pulls) >= max_pull_requests:
+                return pulls
+    except RequestException as e:
+        print('Github pulls error', e)
     return pulls
 
 def format_exception(e: Exception) -> str:

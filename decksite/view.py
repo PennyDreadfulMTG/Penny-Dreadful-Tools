@@ -11,7 +11,7 @@ from werkzeug.routing import BuildError
 
 from decksite import APP, get_season_id
 from decksite.data import archetype
-from magic import image_fetcher, legality, oracle, rotation, tournaments
+from magic import legality, oracle, rotation, tournaments
 from magic.models.card import Card
 from magic.models.deck import Deck
 from shared import dtutil
@@ -213,7 +213,7 @@ class View(BaseView):
 
     def prepare_card(self, c: Card) -> None:
         c.url = '/cards/{id}/'.format(id=c.name)
-        c.img_url = image_fetcher.scryfall_image(c, version='normal')
+        c.img_url = url_for('image', c=c.name)
         c.card_img_class = 'two-faces' if c.layout in ['double-faced', 'meld'] else ''
         c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
         c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}

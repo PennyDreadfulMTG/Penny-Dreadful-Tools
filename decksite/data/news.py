@@ -128,7 +128,7 @@ def subreddit(start_date: datetime.datetime, end_date: datetime.datetime, max_it
         feed = fetcher.subreddit()
         items = []
         for entry in feed.entries:
-            item = Container({'title': entry.title, 'date': dtutil.parse(entry.updated, '%Y-%m-%dT%H:%M:%S+00:00', dtutil.UTC_TZ), 'url': entry.link, 'type': 'code-release'})
+            item = Container({'title': entry.title, 'date': dtutil.parse(entry.updated, '%Y-%m-%dT%H:%M:%S+00:00', dtutil.UTC_TZ), 'url': entry.link, 'type': 'subreddit-post'})
             if item.date > end_date:
                 continue
             if item.date < start_date:

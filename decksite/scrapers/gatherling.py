@@ -47,12 +47,14 @@ def tournament(url: str, name: str) -> int:
     # Tournaments that currently advertise a "top 0" are unstarted/in progress and should be ignored for now.
     if top_n == competition.Top.NONE:
         return 0
+    db().begin()
     competition_id = competition.get_or_insert_competition(dt, dt, name, competition_series, url, top_n)
     ranks = rankings(soup)
     medals = medal_winners(s)
     final = finishes(medals, ranks)
-
-    return add_decks(dt, competition_id, final, s)
+    n = add_decks(dt, competition_id, final, s)
+    db().commit()
+    return n
 
 # Hack in the known start time and series name because it's not in the page, depending on the series.
 def get_dt_and_series(name: str, day_s: str) -> Tuple[datetime.datetime, str]:

@@ -11,6 +11,7 @@ from shared.pd_exception import (DatabaseException, DatabaseMissingException,
 
 ValidSqlArgumentDescription = Any
 
+# pylint: disable=too-many-instance-attributes
 class Database():
     def __init__(self, db: str) -> None:
         warnings.filterwarnings('error', category=MySQLdb.Warning)
@@ -19,6 +20,7 @@ class Database():
         self.port = configuration.get_int('mysql_port')
         self.user = configuration.get_str('mysql_user')
         self.passwd = configuration.get_str('mysql_passwd')
+        self.open_transaction_count = 0
         self.connect()
 
     def connect(self) -> None:
@@ -88,10 +90,16 @@ class Database():
         return self.last_insert_rowid()
 
     def begin(self) -> None:
-        self.connection.begin()
+        print(f'BEGIN ({self.open_transaction_count})')
+        if self.open_transaction_count == 0:
+            self.connection.begin()
+        self.open_transaction_count += 1
 
     def commit(self) -> None:
-        self.connection.commit()
+        print(f'COMMIT ({self.open_transaction_count})')
+        if self.open_transaction_count == 1:
+            self.connection.commit()
+        self.open_transaction_count -= 1
 
     def last_insert_rowid(self) -> int:
         return cast(int, self.value('SELECT LAST_INSERT_ID()'))

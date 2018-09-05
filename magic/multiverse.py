@@ -328,8 +328,8 @@ def fix_bad_mtgjson_data(cards: Dict[str, CardDescription]) -> Dict[str, CardDes
     cards['Okaun, Eye of Chaos']['layout'] = 'normal'
     return cards
 
-def fix_bad_mtgjson_set_cards_data(set_cards: Dict[str, CardDescription]) -> Dict[str, CardDescription]:
-    for c in set_cards.values():
+def fix_bad_mtgjson_set_cards_data(set_cards: List[CardDescription]) -> List[CardDescription]:
+    for c in set_cards:
         if c['name'] == 'Sultai Ascendacy':
             c['name'] = 'Sultai Ascendancy'
     return set_cards

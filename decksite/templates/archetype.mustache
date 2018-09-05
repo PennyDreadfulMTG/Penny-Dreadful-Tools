@@ -1,8 +1,10 @@
 {{> banner}}
-<section>
-    <h2>Archetype Tree</h2>
-    {{> archetypetree}}
-</section>
+{{#show_archetype_tree}}
+    <section>
+        <h2>Archetype Tree</h2>
+        {{> archetypetree}}
+    </section>
+{{/show_archetype_tree}}
 {{#has_most_common_cards}}
     <section>
         <h2>Most Common Cards</h2>

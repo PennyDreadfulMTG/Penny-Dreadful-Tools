@@ -68,7 +68,8 @@ TESTDATA = [
     ('$', 'UBRG Necrotic Ooze Combo', ['U', 'B', 'R', 'G'], 'Necrotic Ooze Combo'),
     ('White Green', 'Selesnya Aggro', ['W', 'G'], 'Aggro'),
     ('White Green', 'Selesnya', ['W', 'G'], None),
-    ('RG Energy', 'Gruul Energy', ['R', 'G'], 'Pummeler')
+    ('RG Energy', 'Gruul Energy', ['R', 'G'], 'Pummeler'),
+    ('Black/Red', 'Rakdos', ['B', 'R'], None)
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

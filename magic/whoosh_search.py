@@ -105,7 +105,10 @@ class WhooshSearcher():
         query_normalized = fuzzy_term(normalized, self.DIST, 'name_normalized')
         query_stemmed = And([Term('name_stemmed', q.text) for q in WhooshConstants.stem_analyzer(w)])
         query_tokenized = And([fuzzy_term(q.text, self.DIST, 'name_tokenized') for q in WhooshConstants.tokenized_analyzer(w)])
-        query = Or([query_normalized, query_tokenized, query_stemmed])
+        if len(query_tokenized) == 0: # This can be empty because some unicode chars are ignored. See #4988
+            query = Or([query_normalized, query_stemmed])
+        else:
+            query = Or([query_normalized, query_tokenized, query_stemmed])
 
         with self.ix.searcher() as searcher:
             fuzzy = [(r['name'], r.score) for r in searcher.search(query, limit=40)]

@@ -1,10 +1,11 @@
 import re
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import pkg_resources
 
 from magic import card, database, fetcher, rotation
 from magic.database import create_table_def, db
+from magic.fetcher import CardDescription
 from magic.models.card import Card
 from magic.whoosh_write import WhooshWriter
 from shared import dtutil
@@ -12,8 +13,6 @@ from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
 # Database setup for the magic package. Mostly internal. To interface with what the package knows about magic cards use the `oracle` module.
-
-CardDescription = Dict[str, Any]
 
 FORMAT_IDS: Dict[str, int] = {}
 CARD_IDS: Dict[str, int] = {}
@@ -333,7 +332,7 @@ def fix_bad_mtgjson_data(cards: Dict[str, CardDescription]) -> Dict[str, CardDes
     return cards
 
 def fix_bad_mtgjson_set_cards_data(set_cards: Dict[str, CardDescription]) -> Dict[str, CardDescription]:
-    for c in set_cards:
+    for c in set_cards.values():
         if c['name'] == 'Sultai Ascendacy':
             c['name'] = 'Sultai Ascendancy'
     return set_cards
@@ -349,6 +348,7 @@ def add_hardcoded_cards(cards: Dict[str, CardDescription]) -> Dict[str, CardDesc
         'imageName': 'gleemox',
         'legalities': [],
         'name': 'Gleemox',
+        'names': ['Gleemox'],
         'printings': ['PRM'],
         'rarity': 'Rare'
     }

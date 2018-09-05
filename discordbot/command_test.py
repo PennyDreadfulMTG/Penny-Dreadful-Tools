@@ -44,8 +44,8 @@ def test_do_not_choke_on_unicode() -> None:
     result = command.results_from_queries([s])[0][0]
     assert not result.has_match()
     # … and for each char individually.
-    for result in command.results_from_queries(list(s)):
-        assert not result[0].has_match()
+    for result, _ in command.results_from_queries(list(s)):
+        assert not result.has_match()
 
 def test_resources_matching_in_url() -> None:
     results = command.resources_resources('github')

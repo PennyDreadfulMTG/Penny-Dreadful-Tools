@@ -1713,7 +1713,7 @@ News
     float: right;
 }
 
-.news p.site-news:before, .news p.subreddit-post:before {
+.news li.site-news:before, .news li.subreddit-post:before {
     content: "📰";
     display: inline-block;
     margin: 0;
@@ -1729,7 +1729,7 @@ News
     width: 1em;
 }
 
-.news p.code-release:before {
+.news li.code-release:before {
     content: "💻";
     display: inline-block;
     margin: 0;

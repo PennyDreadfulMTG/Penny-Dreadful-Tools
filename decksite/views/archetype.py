@@ -37,7 +37,6 @@ class Archetype(View):
         }]
         self.show_seasons = True
         self.show_archetype_tree = len(self.archetypes) > 0
-        self.show_all_decks = len(self.decks) > 0
 
     def og_title(self):
         return self.archetype.name

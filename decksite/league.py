@@ -40,6 +40,7 @@ class SignUpForm(Form):
             self.mtgo_username = mtgo_username
         self.deck = None
         self.card_errors: Dict[str, List[str]] = {}
+        self.card_warnings: Dict[str, List[str]] = {}
 
     def do_validation(self):
         if len(self.mtgo_username) == 0:
@@ -97,9 +98,13 @@ class SignUpForm(Form):
             self.errors['decklist'] = ' '.join(errors.get('Penny Dreadful').pop('Legality_General', ['Not a legal deck']))
             self.card_errors = errors.get('Penny Dreadful')
         banned_for_bugs = {c.name for c in self.deck.all_cards() if any([b.get('bannable', False) for b in c.bugs or []])}
+        playable_bugs = {c.name for c in self.deck.all_cards() if c.pd_legal and any([not b.get('bannable', False) for b in c.bugs or []])}
         if len(banned_for_bugs) > 0:
             self.errors['decklist'] = 'Deck contains cards with game-breaking bugs'
             self.card_errors['Legality_Bugs'] = [name for name in banned_for_bugs]
+        if len(playable_bugs) > 0:
+            self.warnings['decklist'] = 'Deck contains playable bugs'
+            self.card_warnings['Warnings_Bugs'] = [name for name in playable_bugs]
 
 
 class DeckCheckForm(SignUpForm):

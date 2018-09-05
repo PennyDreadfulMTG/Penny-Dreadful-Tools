@@ -123,7 +123,9 @@ def whitelisted(name: str) -> bool:
     return False
 
 def normalize_colors(name: str) -> str:
-    patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*'] + list(COLOR_COMBINATIONS.keys())
+    patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*']
+    patterns += ['(White|Blue|Black|Red|Green)(/(White|Blue|Black|Red|Green))+']
+    patterns += list(COLOR_COMBINATIONS.keys())
     unique_color_words = set()
     for pattern in patterns:
         regex = regex_pattern(pattern)

@@ -34,4 +34,13 @@
             {{/form.card_errors.Legality_Too_Many}}
         </ul>
     {{/has_too_many}}
+    {{#has_warnings}}
+        <p>The following cards have bugs but are allowed to be played under special rules.</p>
+        <p>To understand how this works check the <a href="{{bugged_cards_url}}">bug rules</a>.</p>
+        <ul>
+            {{#form.card_warnings.Warnings_Bugs}}
+                <li>{{.}}</li>
+            {{/form.card_warnings.Warnings_Bugs}}
+        </ul>
+    {{/has_warnings}}
 </div>

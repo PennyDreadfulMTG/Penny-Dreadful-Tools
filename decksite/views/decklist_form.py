@@ -1,3 +1,5 @@
+from flask import url_for
+
 from decksite.data.form import Form
 from decksite.views.league_form import LeagueForm
 
@@ -15,3 +17,6 @@ class DecklistForm(LeagueForm):
             self.has_banned = 'Legality_Banned' in self.form.card_errors and len(self.form.card_errors['Legality_Banned']) > 0
             self.has_bugs = 'Legality_Bugs' in self.form.card_errors and len(self.form.card_errors['Legality_Bugs']) > 0
             self.has_too_many = 'Legality_Too_Many' in self.form.card_errors and len(self.form.card_errors['Legality_Too_Many']) > 0
+        if self.form.card_warnings is not None:
+            self.has_warnings = 'Warnings_Bugs' in self.form.card_warnings and len(self.form.card_warnings['Warnings_Bugs']) > 0
+            self.bugged_cards_url = url_for('tournaments', _anchor='bugs')

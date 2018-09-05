@@ -112,8 +112,8 @@ def determine_filepath(cards: List[Card], version: str = '') -> str:
     # Hash the filename if it's otherwise going to be too large to use.
     if len(imagename) > 240:
         imagename = hashlib.md5(imagename.encode('utf-8')).hexdigest()
-        if version == '':
-            version = 'default'
+    if version == '':
+        version = 'default'
     filename = f'{imagename}.{version}.jpg'
     return '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename=filename)
 

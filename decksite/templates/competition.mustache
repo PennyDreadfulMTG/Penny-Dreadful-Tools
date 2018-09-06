@@ -11,13 +11,11 @@
         </ul>
     {{/league}}
 </div>
+{{#ends}}<p><p>Ends {{ends}}.</p>{{/ends}}
 <section>
     <h2>Decks</h2>
-    {{#league}}
-        <p>Sponsored by <a class="external" href="https:///www.mtgotraders.com/">MTGO Traders</a>. (<a href="{{league_info_url}}">League Info</a>.)</p>
-    {{/league}}
-    {{#ends}}<p><i>Ends {{ends}}.</i></p>{{/ends}}
     {{> decktable}}
+    <p>Sponsored by <a class="external" href="https:///www.mtgotraders.com/">MTGO Traders</a>.</p>
 </section>
 {{#has_leaderboard}}
     <section>

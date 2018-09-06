@@ -264,15 +264,15 @@ def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
     return new_list
 
 def update_cache() -> None:
-    db().begin()
-    db().execute('DROP TABLE IF EXISTS _cache_card')
+    db().execute('DROP TABLE IF EXISTS _new_cache_card')
     db().execute('SET group_concat_max_len=100000')
-    db().execute(create_table_def('_cache_card', card.base_query_properties(), base_query()))
-    db().execute('CREATE UNIQUE INDEX idx_u_card_id on _cache_card (card_id)')
-    db().execute('CREATE UNIQUE INDEX idx_u_name on _cache_card (name(142))')
-    db().execute('CREATE UNIQUE INDEX idx_u_name_ascii on _cache_card (name_ascii(142))')
-    db().execute('CREATE UNIQUE INDEX idx_u_names on _cache_card (names(142))')
-    db().commit()
+    db().execute(create_table_def('_new_cache_card', card.base_query_properties(), base_query()))
+    db().execute('CREATE UNIQUE INDEX idx_u_card_id on _new_cache_card (card_id)')
+    db().execute('CREATE UNIQUE INDEX idx_u_name on _new_cache_card (name(142))')
+    db().execute('CREATE UNIQUE INDEX idx_u_name_ascii on _new_cache_card (name_ascii(142))')
+    db().execute('CREATE UNIQUE INDEX idx_u_names on _new_cache_card (names(142))')
+    db().execute('DROP TABLE IF EXISTS _cache_card')
+    db().execute('RENAME TABLE _new_cache_card TO _cache_card')
 
 def reindex() -> None:
     writer = WhooshWriter()

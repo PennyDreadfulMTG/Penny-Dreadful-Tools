@@ -1,6 +1,7 @@
 from typing import List
 
 from flask import url_for
+from flask_babel import ngettext
 
 from decksite.data import person as ps
 from decksite.view import View
@@ -24,6 +25,15 @@ class Person(View):
         self.show_head_to_head = len(person.head_to_head) > 0
         self.tournament_organizer = self.person.name in [host for series in tournaments.all_series_info() for host in series['hosts']]
         self.show_seasons = True
+        achievements_text = [
+            ('tournament_wins', 'Win', 'Wins'),
+            ('tournament_entries', 'Entry', 'Entries'),
+            ('perfect_runs', 'Perfect Run', 'Perfect Runs'),
+            ('league_entries', 'Entry', 'Entries'),
+            ('perfect_run_crushes', 'Crush', 'Crushes')
+        ]
+        for k, v1, vp in achievements_text:
+            setattr(self, f'{k}_text', ngettext(f'1 {v1}', f'%(num)d {vp}', getattr(person.achievements, k)))
         self.achievements_url = url_for('achievements')
 
     def __getattr__(self, attr):

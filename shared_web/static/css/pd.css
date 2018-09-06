@@ -119,6 +119,24 @@ main p, footer p {
     margin: 0 0 1em 0;
 }
 
+/*
+
+    oldstyle-nums in specific places.
+    Use "lowercase" not "uppercase" numbers where they appear alongside reasonable amounts of text.
+    "Uppercase" numbers where they appear with capitalized card names or in isolation in tables.
+    See #5270.
+    Even though "normal" is the default list cases where it is known to be the desired case here for clarity future reference.
+
+*/
+
+p, .subtitle, .news .item {
+    font-variant-numeric: oldstyle-nums;
+}
+
+table, ul.decklist.li, .news .date {
+    font-variant-numeric: normal;
+}
+
 main li, main dt, main dd {
     margin: 0 0 0.422em;
 }
@@ -1713,7 +1731,7 @@ News
     float: right;
 }
 
-.news p.site-news:before, .news p.subreddit-post:before {
+.news li.site-news:before, .news li.subreddit-post:before {
     content: "📰";
     display: inline-block;
     margin: 0;
@@ -1729,7 +1747,7 @@ News
     width: 1em;
 }
 
-.news p.code-release:before {
+.news li.code-release:before {
     content: "💻";
     display: inline-block;
     margin: 0;

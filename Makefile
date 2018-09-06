@@ -15,6 +15,13 @@ test: check unit
 # Run all typechecking and linting.
 check: lint types imports
 
+# Create a pull request, requies 'hub' from github.
+pr:
+	hub pull-request
+
+# Run all tests, push and create pull request.
+release: push pr
+
 # Run unit tests.
 TEST=.
 unit:

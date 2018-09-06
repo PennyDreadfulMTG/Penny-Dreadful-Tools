@@ -78,6 +78,14 @@ class WhooshSearchTest(unittest.TestCase):
         result = self.searcher.search('Guildgate') # type: ignore
         assert len(result.fuzzy) == 10
 
+    def test_dfc(self) -> None:
+        self.best_match_is('Insectile Aberration', 'Delver of Secrets')
+
+    def test_flip(self) -> None:
+        self.best_match_is('Dokai, Weaver of Life', 'Budoka Gardener')
+
+    def test_meld(self) -> None:
+        self.best_match_is('Chittering Host', 'Graf Rats')
 
 def is_included(name: str, cards: List[str]) -> bool:
     return len([x for x in cards if x == name]) >= 1

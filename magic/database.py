@@ -39,7 +39,6 @@ def db_version() -> int:
     return db().value('SELECT version FROM db_version', [], 0)
 
 def setup() -> None:
-    db().begin()
     db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER)')
     db().execute('CREATE TABLE IF NOT EXISTS version (version TEXT)')
     sql = create_table_def('card', card.card_properties())
@@ -87,7 +86,6 @@ def setup() -> None:
     # Speed up innermost subselect in base_query.
     db().execute('CREATE INDEX idx_card_id_format_id ON card_legality (card_id, format_id, legality)')
     db().execute('INSERT INTO db_version (version) VALUES ({0})'.format(SCHEMA_VERSION))
-    db().commit()
 
 # Drop the database so we can recreate it.
 def delete() -> None:

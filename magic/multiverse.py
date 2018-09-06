@@ -279,11 +279,12 @@ def update_cache() -> None:
 def reindex() -> None:
     writer = WhooshWriter()
     aliases_by_card_name = {name: alias for alias, name in fetcher.card_aliases()}
-    cards = get_all_cards()
-    for card in cards:
-        if card.name in aliases_by_card_name:
-            card.names.append(aliases_by_card_name[card.name])
-    writer.rewrite_index(cards)
+    cs = get_all_cards()
+    for name, alias in fetcher.card_aliases():
+        for c in cs:
+            if c.name == name:
+                c.names.append(alias)
+    writer.rewrite_index(cs)
 
 def database2json(propname: str) -> str:
     if propname == 'system_id':

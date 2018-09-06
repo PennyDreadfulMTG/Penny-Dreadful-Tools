@@ -1192,8 +1192,10 @@ Cards are 445px tall images that are usually 312px wide but may be wider if they
 */
 
 .card-img {
+    border: solid black 0.3rem;
+    border-radius: 0.6rem;
     height: 15rem;
-    padding-top: 1rem;
+    margin-top: 1rem;
     width: 10.517rem;
 }
 

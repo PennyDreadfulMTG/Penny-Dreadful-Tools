@@ -31,10 +31,11 @@ def update_index(index: Index, cards: List[Card]) -> None:
     writer = index.writer()
     cards = [c for c in cards if c.layout != 'token' and c.type != 'Vanguard']
     for card in cards:
-        for name in card['names']:
+        names = card.names if not card.layout == 'meld' or card.position == 1 else card.name
+        for name in names:
             document = {}
-            document['id'] = card['id']
-            document['name'] = card['name']
+            document['id'] = card.id
+            document['name'] = card.name
             document['name_tokenized'] = name
             document['name_stemmed'] = name
             document['name_normalized'] = name

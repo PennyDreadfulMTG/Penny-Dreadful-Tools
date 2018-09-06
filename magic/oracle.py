@@ -13,8 +13,8 @@ from shared.pd_exception import (InvalidArgumentException,
 LEGAL_CARDS: List[str] = []
 CARDS_BY_NAME: Dict[str, Card] = {}
 
-def init() -> None:
-    if len(CARDS_BY_NAME) == 0:
+def init(force: bool = False) -> None:
+    if len(CARDS_BY_NAME) == 0 or force:
         for c in load_cards():
             CARDS_BY_NAME[c.name] = c
 

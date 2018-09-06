@@ -246,6 +246,7 @@ def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
 
     if new_list == [''] or new_list is None:
         return []
+    db().begin()
     db().execute('DELETE FROM card_legality WHERE format_id = %s', [format_id])
     db().execute('SET group_concat_max_len=100000')
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
@@ -254,6 +255,7 @@ def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
         WHERE name IN ({names})
     """.format(format_id=format_id, base_query=base_query(), names=', '.join(sqlescape(name) for name in new_list))
     db().execute(sql)
+    db().commit()
     # Check we got the right number of legal cards.
     n = db().value('SELECT COUNT(*) FROM card_legality WHERE format_id = %s', [format_id])
     if n != len(new_list):

@@ -69,6 +69,9 @@ class SearchResult():
     def __str__(self):
         return '(exact: {e}, whole word: {r}, other prefixes: {o}, fuzzy: {f})'.format(e=self.exact, r=self.prefix_whole_word, o=self.other_prefixed, f=self.fuzzy)
 
+    def __repr__(self):
+        return self.__str__()
+
     def __len__(self):
         return len(self.get_all_matches())
 
@@ -82,7 +85,7 @@ class WhooshSearcher():
         self.trie = pygtrie.CharTrie()
         with self.ix.reader() as reader:
             for doc in reader.iter_docs():
-                self.trie[list(WhooshConstants.normalized_analyzer(doc[1]['name']))[0].text] = doc[1]['name']
+                self.trie[list(WhooshConstants.normalized_analyzer(doc[1]['name']))[0].text] = doc[1]['canonical_name']
 
     def search(self, w: str) -> SearchResult:
         if not self.ix.up_to_date():
@@ -105,7 +108,7 @@ class WhooshSearcher():
             query = Or([query_normalized, query_tokenized, query_stemmed])
 
         with self.ix.searcher() as searcher:
-            fuzzy = [(r['name'], r.score) for r in searcher.search(query, limit=40)]
+            fuzzy = [(r['canonical_name'], r.score) for r in searcher.search(query, limit=40)]
         return SearchResult(exact, prefix_whole_word, other_prefixed, fuzzy)
 
     def find_matches_by_prefix(self, query: str) -> Tuple[Optional[str], List[str], List[str]]:
@@ -119,7 +122,6 @@ class WhooshSearcher():
             whole_word, subword = classify(matches, query)
             prefix_as_whole_word.extend(whole_word)
             other_prefixed.extend(subword)
-
         return (exact, prefix_as_whole_word, other_prefixed)
 
 def has(elements: List[str]) -> bool:

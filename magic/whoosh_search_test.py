@@ -81,10 +81,10 @@ class WhooshSearchTest(unittest.TestCase):
     def test_dfc(self) -> None:
         self.best_match_is('Insectile Aberration', 'Delver of Secrets')
 
-    def test_flip
+    def test_flip(self) -> None:
         self.best_match_is('Dokai, Weaver of Life', 'Budoka Gardener')
 
-    def test_meld(self):
+    def test_meld(self) -> None:
         self.best_match_is('Chittering Host', 'Graf Rats')
 
 def is_included(name: str, cards: List[str]) -> bool:

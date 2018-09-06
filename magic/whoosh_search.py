@@ -89,11 +89,6 @@ class WhooshSearcher():
         if not self.ix.up_to_date():
             self.initialize_trie() # if the index is not up to date, someone has added cards, so we reinitialize the trie
 
-        # If we searched for an alias, make it the exact hit
-        for alias, name in fetcher.card_aliases():
-            if w == card.canonicalize(alias):
-                return SearchResult(name, [], [], [])
-
         normalized = list(WhooshConstants.normalized_analyzer(w))[0].text
 
         # If we get matches by prefix, we return that

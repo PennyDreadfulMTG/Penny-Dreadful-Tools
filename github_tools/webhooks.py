@@ -83,13 +83,15 @@ def build_changelog(change: File) -> List[str]:
     oldversions: Dict[str, str] = {}
     newversions: Dict[str, str] = {}
     for p in patch.changes:
-        if len(req.specs) >= 1 and len(rec.specs[0]) >= 2:
+        if len(req.specs) >= 1 and len(req.specs[0]) >= 2:
             if p[1] is None:
                 req = Requirement.parse(p[2])
                 oldversions[req.name] = req.specs[0][1]
             elif p[0] is None:
                 req = Requirement.parse(p[2])
                 newversions[req.name] = req.specs[0][1]
+        else:
+            print(f'req.specs is only {req.specs} and not what we would normally expect.')
     for package in newversions:
         old = packaging.version.parse(oldversions.get(package))
         new = packaging.version.parse(newversions.get(package))

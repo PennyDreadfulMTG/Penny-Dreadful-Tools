@@ -83,12 +83,15 @@ def build_changelog(change: File) -> List[str]:
     oldversions: Dict[str, str] = {}
     newversions: Dict[str, str] = {}
     for p in patch.changes:
-        if p[1] is None:
-            req = Requirement.parse(p[2])
-            oldversions[req.name] = req.specs[0][1]
-        elif p[0] is None:
-            req = Requirement.parse(p[2])
-            newversions[req.name] = req.specs[0][1]
+        try:
+            if p[1] is None:
+                req = Requirement.parse(p[2])
+                oldversions[req.name] = req.specs[0][1]
+            elif p[0] is None:
+                req = Requirement.parse(p[2])
+                newversions[req.name] = req.specs[0][1]
+        except (IndexError, TypeError) as e:
+            print(f'Patch change does not match structure we expect. Got {e} looking at {p}.')
     for package in newversions:
         old = packaging.version.parse(oldversions.get(package))
         new = packaging.version.parse(newversions.get(package))

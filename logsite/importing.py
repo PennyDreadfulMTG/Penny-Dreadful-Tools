@@ -96,4 +96,4 @@ def reimport(local: match.Match) -> None:
     local.is_tournament = tournament is not None
     if tournament:
         process_tourney_info(local, tournament.group(1))
-    match.db.Commit()
+    match.db.commit()

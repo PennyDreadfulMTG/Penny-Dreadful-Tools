@@ -24,8 +24,8 @@ class Game(fsa.Model): # type: ignore
 
 def insert_game(game_id: int, match_id: int, game_lines: str) -> None:
     local = Game(id=game_id, match_id=match_id, log=game_lines)
-    db.Merge(local) # This will replace an old version of the game, if one exists.
-    db.Commit()
+    db.merge(local) # This will replace an old version of the game, if one exists.
+    db.commit()
 
 class Line(fsa.Model): #type: ignore
     id = sa.Column(fsa.Integer, primary_key=True, autoincrement=True)

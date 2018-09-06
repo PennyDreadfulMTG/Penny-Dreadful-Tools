@@ -6,7 +6,6 @@ import pygtrie
 from whoosh.index import open_dir
 from whoosh.query import And, FuzzyTerm, Or, Term
 
-from magic import card, fetcher
 from magic.whoosh_constants import WhooshConstants
 
 

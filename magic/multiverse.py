@@ -278,7 +278,6 @@ def update_cache() -> None:
 
 def reindex() -> None:
     writer = WhooshWriter()
-    aliases_by_card_name = {name: alias for alias, name in fetcher.card_aliases()}
     cs = get_all_cards()
     for name, alias in fetcher.card_aliases():
         for c in cs:

@@ -333,26 +333,26 @@ def fix_bad_mtgjson_data(cards: Dict[str, CardDescription]) -> Dict[str, CardDes
     # https://github.com/mtgjson/mtgjson/issues/588
     cards['Zndrsplt, Eye of Wisdom']['layout'] = 'normal'
     cards['Okaun, Eye of Chaos']['layout'] = 'normal'
-    cards['Regna, the Redeemer']['position'] = 1
-    cards['Krav, the Unredeemed']['position'] = 1
-    cards['Zndrsplt, Eye of Wisdom']['position'] = 1
-    cards['Okaun, Eye of Chaos']['position'] = 1
-    cards['Virtus the Veiled']['position'] = 1
-    cards['Gorm the Great']['position'] = 1
-    cards['Khorvath Brightflame']['position'] = 1
-    cards['Sylvia Brightspear']['position'] = 1
-    cards['Pir, Imaginative Rascal']['position'] = 1
-    cards['Toothy, Imaginary Friend']['position'] = 1
-    cards['Blaring Recruiter']['position'] = 1
-    cards['Blaring Captain']['position'] = 1
-    cards['Chakram Retriever']['position'] = 1
-    cards['Chakram Slinger']['position'] = 1
-    cards['Soulblade Corrupter']['position'] = 1
-    cards['Soulblade Renewer']['position'] = 1
-    cards['Impetuous Protege']['position'] = 1
-    cards['Proud Mentor']['position'] = 1
-    cards['Ley Weaver']['position'] = 1
-    cards['Lore Weaver']['position'] = 1
+    cards['Regna, the Redeemer']['names'] = ['Regna, the Redeemer']
+    cards['Krav, the Unredeemed']['names'] = ['Krav, the Unredeemed']
+    cards['Zndrsplt, Eye of Wisdom']['names'] = ['Zndrsplt, Eye of Wisdom']
+    cards['Okaun, Eye of Chaos']['names'] = ['Okaun, Eye of Chaos']
+    cards['Virtus the Veiled']['names'] = ['Virtus the Veiled']
+    cards['Gorm the Great']['names'] = ['Gorm the Great']
+    cards['Khorvath Brightflame']['names'] = ['Khorvath Brightflame']
+    cards['Sylvia Brightspear']['names'] = ['Sylvia Brightspear']
+    cards['Pir, Imaginative Rascal']['names'] = ['Pir, Imaginative Rascal']
+    cards['Toothy, Imaginary Friend']['names'] = ['Toothy, Imaginary Friend']
+    cards['Blaring Recruiter']['names'] = ['Blaring Recruiter']
+    cards['Blaring Captain']['names'] = ['Blaring Captain']
+    cards['Chakram Retriever']['names'] = ['Chakram Retriever']
+    cards['Chakram Slinger']['names'] = ['Chakram Slinger']
+    cards['Soulblade Corrupter']['names'] = ['Soulblade Corrupter']
+    cards['Soulblade Renewer']['names'] = ['Soulblade Renewer']
+    cards['Impetuous Protege']['names'] = ['Impetuous Protege']
+    cards['Proud Mentor']['names'] = ['Proud Mentor']
+    cards['Ley Weaver']['names'] = ['Ley Weaver']
+    cards['Lore Weaver']['names'] = ['Lore Weaver']
     return cards
 
 def fix_bad_mtgjson_set_cards_data(set_cards: List[CardDescription]) -> List[CardDescription]:

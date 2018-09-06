@@ -46,7 +46,7 @@ class Rotation(View):
             self.runs = 0
             self.runs_percent = 0
             return
-        for line in fileinput.input(files):
+        for line in fileinput.FileInput(files):
             line = text.sanitize(line)
             lines.append(line.strip())
         scores = Counter(lines).most_common()

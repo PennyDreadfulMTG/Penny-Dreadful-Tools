@@ -326,6 +326,26 @@ def fix_bad_mtgjson_data(cards: Dict[str, CardDescription]) -> Dict[str, CardDes
     # https://github.com/mtgjson/mtgjson/issues/588
     cards['Zndrsplt, Eye of Wisdom']['layout'] = 'normal'
     cards['Okaun, Eye of Chaos']['layout'] = 'normal'
+    cards['Regna, the Redeemer']['position'] = 1
+    cards['Krav, the Unredeemed']['position'] = 1
+    cards['Zndrsplt, Eye of Wisdom']['position'] = 1
+    cards['Okaun, Eye of Chaos']['position'] = 1
+    cards['Virtus the Veiled']['position'] = 1
+    cards['Gorm the Great']['position'] = 1
+    cards['Khorvath Brightflame']['position'] = 1
+    cards['Sylvia Brightspear']['position'] = 1
+    cards['Pir, Imaginative Rascal']['position'] = 1
+    cards['Toothy, Imaginary Friend']['position'] = 1
+    cards['Blaring Recruiter']['position'] = 1
+    cards['Blaring Captain']['position'] = 1
+    cards['Chakram Retriever']['position'] = 1
+    cards['Chakram Slinger']['position'] = 1
+    cards['Soulblade Corrupter']['position'] = 1
+    cards['Soulblade Renewer']['position'] = 1
+    cards['Impetuous Protege']['position'] = 1
+    cards['Proud Mentor']['position'] = 1
+    cards['Ley Weaver']['position'] = 1
+    cards['Lore Weaver']['position'] = 1
     return cards
 
 def fix_bad_mtgjson_set_cards_data(set_cards: List[CardDescription]) -> List[CardDescription]:

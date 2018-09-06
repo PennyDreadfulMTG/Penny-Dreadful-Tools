@@ -82,7 +82,7 @@ def face_properties() -> TableDescription:
         props[k] = copy.deepcopy(base)
     for k in ['id', 'position', 'name_ascii', 'card_id', 'search_text']:
         props[k]['mtgjson'] = False
-    for k in ['id', 'name', 'type', 'text', 'search_text']:
+    for k in ['id', 'name', 'position', 'type', 'text', 'search_text']:
         props[k]['nullable'] = False
     for k in ['id', 'card_id', 'hand', 'life', 'starter', 'position']:
         props[k]['type'] = INTEGER

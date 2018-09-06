@@ -134,6 +134,9 @@ class View(BaseView):
     def tournaments_info_url(self) -> str:
         return url_for('tournaments')
 
+    def show_legal_seasons(self) -> bool:
+        return get_season_id() == 'all'
+
     def prepare(self) -> None:
         self.prepare_decks()
         self.prepare_cards()

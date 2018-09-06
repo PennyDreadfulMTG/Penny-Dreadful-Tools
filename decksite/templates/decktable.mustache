@@ -22,7 +22,9 @@
             {{#has_similar}}
                 <th data-breakpoints="xs sm">Similarity</th>
             {{/has_similar}}
-            <th data-breakpoints="xs sm md">Season</th>
+            {{#show_legal_seasons}}
+                <th data-breakpoints="xs sm md">Season</th>
+            {{/show_legal_seasons}}
             {{! Empty column to hold the toggle when footable kicks in. }}
             <td></td>
         </tr>

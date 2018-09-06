@@ -472,8 +472,8 @@ Want to contribute? Send a Pull Request."""
             return await channel.send('{author}: Please specify a card name.'.format(author=author.mention))
         c = await single_card_or_send_error(channel, args, author, 'art')
         if c is not None:
-            file_path = image_fetcher.determine_filepath([c]) + '.art_crop.jpg'
-            if image_fetcher.download_scryfall_image([c], file_path, version='art_crop'):
+            file_path = re.sub('.jpg$', '.art_crop.jpg', image_fetcher.determine_filepath([c]))
+            if image_fetcher.download_scryfall_card_image(c, file_path, version='art_crop'):
                 await send_image_with_retry(channel, file_path)
             else:
                 await channel.send('{author}: Could not get image.'.format(author=author.mention))

@@ -17,9 +17,8 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException
 FORMAT_IDS: Dict[str, int] = {}
 CARD_IDS: Dict[str, int] = {}
 
-HARDCODED_MELD_NAMES = [
-    ['Gisela, the Broken Blade', 'Bruna, the Fading Light', 'Brisela, Voice of Nightmares']
-]
+HARDCODED_MELD_NAMES = [['Gisela, the Broken Blade', 'Bruna, the Fading Light', 'Brisela, Voice of Nightmares']]
+PARTNERS = ['Regna, the Redeemer', 'Krav, the Unredeemed', 'Zndrsplt, Eye of Wisdom', 'Okaun, Eye of Chaos', 'Virtus the Veiled', 'Gorm the Great', 'Khorvath Brightflame', 'Sylvia Brightspear', 'Pir, Imaginative Rascal', 'Toothy, Imaginary Friend', 'Blaring Recruiter', 'Blaring Captain', 'Chakram Retriever', 'Chakram Slinger', 'Soulblade Corrupter', 'Soulblade Renewer', 'Impetuous Protege', 'Proud Mentor', 'Ley Weaver', 'Lore Weaver']
 
 def init() -> None:
     current_version = fetcher.mtgjson_version()
@@ -333,32 +332,17 @@ def fix_bad_mtgjson_data(cards: Dict[str, CardDescription]) -> Dict[str, CardDes
     # https://github.com/mtgjson/mtgjson/issues/588
     cards['Zndrsplt, Eye of Wisdom']['layout'] = 'normal'
     cards['Okaun, Eye of Chaos']['layout'] = 'normal'
-    cards['Regna, the Redeemer']['names'] = ['Regna, the Redeemer']
-    cards['Krav, the Unredeemed']['names'] = ['Krav, the Unredeemed']
-    cards['Zndrsplt, Eye of Wisdom']['names'] = ['Zndrsplt, Eye of Wisdom']
-    cards['Okaun, Eye of Chaos']['names'] = ['Okaun, Eye of Chaos']
-    cards['Virtus the Veiled']['names'] = ['Virtus the Veiled']
-    cards['Gorm the Great']['names'] = ['Gorm the Great']
-    cards['Khorvath Brightflame']['names'] = ['Khorvath Brightflame']
-    cards['Sylvia Brightspear']['names'] = ['Sylvia Brightspear']
-    cards['Pir, Imaginative Rascal']['names'] = ['Pir, Imaginative Rascal']
-    cards['Toothy, Imaginary Friend']['names'] = ['Toothy, Imaginary Friend']
-    cards['Blaring Recruiter']['names'] = ['Blaring Recruiter']
-    cards['Blaring Captain']['names'] = ['Blaring Captain']
-    cards['Chakram Retriever']['names'] = ['Chakram Retriever']
-    cards['Chakram Slinger']['names'] = ['Chakram Slinger']
-    cards['Soulblade Corrupter']['names'] = ['Soulblade Corrupter']
-    cards['Soulblade Renewer']['names'] = ['Soulblade Renewer']
-    cards['Impetuous Protege']['names'] = ['Impetuous Protege']
-    cards['Proud Mentor']['names'] = ['Proud Mentor']
-    cards['Ley Weaver']['names'] = ['Ley Weaver']
-    cards['Lore Weaver']['names'] = ['Lore Weaver']
+    # Disassociate partners from one another, they are separate cards
+    for name in PARTNERS:
+        cards[name]['names'] = [name]
     return cards
 
 def fix_bad_mtgjson_set_cards_data(set_cards: List[CardDescription]) -> List[CardDescription]:
     for c in set_cards:
         if c['name'] == 'Sultai Ascendacy':
             c['name'] = 'Sultai Ascendancy'
+        if c['name'] in PARTNERS:
+            c['names'] = [c['name']]
     return set_cards
 
 def add_hardcoded_cards(cards: Dict[str, CardDescription]) -> Dict[str, CardDescription]:

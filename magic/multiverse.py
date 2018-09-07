@@ -84,6 +84,7 @@ def base_query(where: str = '(1 = 1)') -> str:
 
 def update_database(new_version: str) -> None:
     db().begin()
+    db().execute('DELETE FROM _cache_card')
     db().execute('DELETE FROM version')
     db().execute("""
         DELETE FROM card_alias;

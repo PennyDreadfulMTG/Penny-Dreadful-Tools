@@ -7,30 +7,15 @@ from urllib import parse
 
 import feedparser
 import pytz
-from mypy_extensions import TypedDict
 
 import shared.fetcher_internal as internal
+from magic.card_description import CardDescription
 from magic.models.card import Card
 from shared import configuration, dtutil, redis
 from shared.container import Container
 from shared.fetcher_internal import FetchException
 from shared.pd_exception import TooFewItemsException
 
-SetCode = str
-CardDescription = TypedDict('CardDescription', {
-    'cmc': int,
-    'imageName': str,
-    'layout': str,
-    'manaCost': str,
-    'legalities': List[Dict[str, Any]],
-    'name': str,
-    'names': List[str],
-    'printings': List[SetCode],
-    'rarity': str,
-    'text': str,
-    'type': str,
-    'types': List[str]
-})
 
 def all_cards() -> Dict[str, CardDescription]:
     try:

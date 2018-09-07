@@ -4,8 +4,8 @@ from typing import Dict, List, Optional, Tuple, Union
 import pkg_resources
 
 from magic import card, database, fetcher, rotation
+from magic.card_description import CardDescription
 from magic.database import create_table_def, db
-from magic.fetcher import CardDescription
 from magic.models.card import Card
 from magic.whoosh_write import WhooshWriter
 from shared import dtutil

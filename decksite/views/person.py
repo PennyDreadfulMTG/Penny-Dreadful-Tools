@@ -32,8 +32,10 @@ class Person(View):
             ('league_entries', 'Entry', 'Entries'),
             ('perfect_run_crushes', 'Crush', 'Crushes')
         ]
+        achievements = person.get('achievements', {})
         for k, v1, vp in achievements_text:
-            setattr(self, f'{k}_text', ngettext(f'1 {v1}', f'%(num)d {vp}', getattr(person.achievements, k)))
+            if k in achievements:
+                setattr(self, f'{k}_text', ngettext(f'1 {v1}', f'%(num)d {vp}', person.achievements[k]))
         self.achievements_url = url_for('achievements')
 
     def __getattr__(self, attr):

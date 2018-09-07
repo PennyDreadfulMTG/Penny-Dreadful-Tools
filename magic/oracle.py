@@ -13,8 +13,8 @@ from shared.pd_exception import (InvalidArgumentException,
 LEGAL_CARDS: List[str] = []
 CARDS_BY_NAME: Dict[str, Card] = {}
 
-def init() -> None:
-    if len(CARDS_BY_NAME) == 0:
+def init(force: bool = False) -> None:
+    if len(CARDS_BY_NAME) == 0 or force:
         for c in load_cards():
             CARDS_BY_NAME[c.name] = c
 
@@ -136,7 +136,7 @@ def insert_scryfall_card(sfcard: Dict, rebuild_cache: bool = True) -> None:
         CARDS_BY_NAME[sfcard['name']] = load_card(sfcard['name'])
 
 def pd_rotation_changes(season_id):
-    # Bit of a hack to make 'all' not explode until we cope with selective season dropdowns.
+    # It doesn't really make sense to do this for 'all' so just show current season in that case.
     if season_id == 'all':
         season_id = rotation.current_season_num()
     try:

@@ -14,6 +14,7 @@
   -- GRANT ALL ON <decksite_database>.* TO '<mysql_user>'@'<mysql_host>';
   -- GRANT ALL ON <prices_database>.* TO '<mysql_user>'@'<mysql_host>';
   -- GRANT ALL ON <magic_database>.* TO '<mysql_user>'@'<mysql_host>';
+  -- GRANT ALL ON <logsite_database>.* TO <mysql_user>'@'<mysql_host>';
 
 --------
 

@@ -48,7 +48,7 @@ class Match(fsa.Model): # type: ignore
     def set_times(self, start_time: int, end_time: int) -> None:
         self.start_time = dtutil.ts2dt(start_time)
         self.end_time = dtutil.ts2dt(end_time)
-        db.Commit()
+        db.commit()
 
     def start_time_aware(self) -> datetime.datetime:
         return pytz.utc.localize(self.start_time)
@@ -77,8 +77,8 @@ def create_match(match_id: int, format_name: str, comment: str, modules: List[st
     modules = [db.get_or_insert_module(mod) for mod in modules]
     local.modules = modules
     local.players = [db.get_or_insert_user(user) for user in set(players)]
-    db.Add(local)
-    db.Commit()
+    db.add(local)
+    db.commit()
     return local
 
 def get_match(match_id: int) -> Match:
@@ -98,12 +98,12 @@ def get_tournament(name: str) -> Tournament:
 
 def create_tournament(name: str) -> Tournament:
     local = Tournament(name=name, active=True)
-    db.Add(local)
-    db.Commit()
+    db.add(local)
+    db.commit()
     return local
 
 def create_tournament_info(match_id: int, tournament_id: int) -> TournamentInfo:
     local = TournamentInfo(match_id=match_id, tournament_id=tournament_id)
-    db.Add(local)
-    db.Commit()
+    db.add(local)
+    db.commit()
     return local

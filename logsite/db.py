@@ -48,20 +48,16 @@ class Module(DB.Model): # type: ignore
     id = sa.Column(sa.Integer, primary_key=True)
     name = sa.Column(sa.String(50))
 
-# pylint: disable=invalid-name
-def Commit() -> None:
+def commit() -> None:
     return DB.session.commit()
 
-# pylint: disable=invalid-name
-def Add(item: Any) -> None:
+def add(item: Any) -> None:
     return DB.session.add(item)
 
-# pylint: disable=invalid-name
-def Merge(item: Any) -> None:
+def merge(item: Any) -> None:
     return DB.session.merge(item)
 
-# pylint: disable=invalid-name
-def Delete(item: Any) -> None:
+def delete(item: Any) -> None:
     return DB.session.delete(item)
 
 def get_format(name: str) -> Optional[Format]:
@@ -72,8 +68,8 @@ def get_or_insert_format(name: str) -> Format:
     if local is not None:
         return local
     local = Format(name=name)
-    Add(local)
-    Commit()
+    add(local)
+    commit()
     return local
 
 def get_or_insert_module(name: str) -> Module:
@@ -81,8 +77,8 @@ def get_or_insert_module(name: str) -> Module:
     if local is not None:
         return local
     local = Module(name=name)
-    Add(local)
-    Commit()
+    add(local)
+    commit()
     return local
 
 def get_or_insert_user(name: str) -> User:
@@ -91,8 +87,8 @@ def get_or_insert_user(name: str) -> User:
         if local is not None:
             return local
         local = User(name=name)
-        Add(local)
-        Commit()
+        add(local)
+        commit()
         return local
     except MultipleResultsFound:
         query = User.query.filter_by(name=name)

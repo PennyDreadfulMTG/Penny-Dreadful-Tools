@@ -17,9 +17,8 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException
 FORMAT_IDS: Dict[str, int] = {}
 CARD_IDS: Dict[str, int] = {}
 
-HARDCODED_MELD_NAMES = [
-    ['Gisela, the Broken Blade', 'Bruna, the Fading Light', 'Brisela, Voice of Nightmares']
-]
+HARDCODED_MELD_NAMES = [['Gisela, the Broken Blade', 'Bruna, the Fading Light', 'Brisela, Voice of Nightmares']]
+PARTNERS = ['Regna, the Redeemer', 'Krav, the Unredeemed', 'Zndrsplt, Eye of Wisdom', 'Okaun, Eye of Chaos', 'Virtus the Veiled', 'Gorm the Great', 'Khorvath Brightflame', 'Sylvia Brightspear', 'Pir, Imaginative Rascal', 'Toothy, Imaginary Friend', 'Blaring Recruiter', 'Blaring Captain', 'Chakram Retriever', 'Chakram Slinger', 'Soulblade Corrupter', 'Soulblade Renewer', 'Impetuous Protege', 'Proud Mentor', 'Ley Weaver', 'Lore Weaver']
 
 def init() -> None:
     current_version = fetcher.mtgjson_version()
@@ -246,6 +245,7 @@ def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
 
     if new_list == [''] or new_list is None:
         return []
+    db().begin()
     db().execute('DELETE FROM card_legality WHERE format_id = %s', [format_id])
     db().execute('SET group_concat_max_len=100000')
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
@@ -254,6 +254,7 @@ def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
         WHERE name IN ({names})
     """.format(format_id=format_id, base_query=base_query(), names=', '.join(sqlescape(name) for name in new_list))
     db().execute(sql)
+    db().commit()
     # Check we got the right number of legal cards.
     n = db().value('SELECT COUNT(*) FROM card_legality WHERE format_id = %s', [format_id])
     if n != len(new_list):
@@ -264,19 +265,24 @@ def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
     return new_list
 
 def update_cache() -> None:
-    db().begin()
-    db().execute('DROP TABLE IF EXISTS _cache_card')
+    db().execute('DROP TABLE IF EXISTS _new_cache_card')
     db().execute('SET group_concat_max_len=100000')
-    db().execute(create_table_def('_cache_card', card.base_query_properties(), base_query()))
-    db().execute('CREATE UNIQUE INDEX idx_u_card_id on _cache_card (card_id)')
-    db().execute('CREATE UNIQUE INDEX idx_u_name on _cache_card (name(142))')
-    db().execute('CREATE UNIQUE INDEX idx_u_name_ascii on _cache_card (name_ascii(142))')
-    db().execute('CREATE UNIQUE INDEX idx_u_names on _cache_card (names(142))')
-    db().commit()
+    db().execute(create_table_def('_new_cache_card', card.base_query_properties(), base_query()))
+    db().execute('CREATE UNIQUE INDEX idx_u_card_id on _new_cache_card (card_id)')
+    db().execute('CREATE UNIQUE INDEX idx_u_name on _new_cache_card (name(142))')
+    db().execute('CREATE UNIQUE INDEX idx_u_name_ascii on _new_cache_card (name_ascii(142))')
+    db().execute('CREATE UNIQUE INDEX idx_u_names on _new_cache_card (names(142))')
+    db().execute('DROP TABLE IF EXISTS _cache_card')
+    db().execute('RENAME TABLE _new_cache_card TO _cache_card')
 
 def reindex() -> None:
     writer = WhooshWriter()
-    writer.rewrite_index(get_all_cards())
+    cs = get_all_cards()
+    for alias, name in fetcher.card_aliases():
+        for c in cs:
+            if c.name == name:
+                c.names.append(alias)
+    writer.rewrite_index(cs)
 
 def database2json(propname: str) -> str:
     if propname == 'system_id':
@@ -326,12 +332,17 @@ def fix_bad_mtgjson_data(cards: Dict[str, CardDescription]) -> Dict[str, CardDes
     # https://github.com/mtgjson/mtgjson/issues/588
     cards['Zndrsplt, Eye of Wisdom']['layout'] = 'normal'
     cards['Okaun, Eye of Chaos']['layout'] = 'normal'
+    # Disassociate partners from one another, they are separate cards
+    for name in PARTNERS:
+        cards[name]['names'] = [name]
     return cards
 
 def fix_bad_mtgjson_set_cards_data(set_cards: List[CardDescription]) -> List[CardDescription]:
     for c in set_cards:
         if c['name'] == 'Sultai Ascendacy':
             c['name'] = 'Sultai Ascendancy'
+        if c['name'] in PARTNERS:
+            c['names'] = [c['name']]
     return set_cards
 
 def add_hardcoded_cards(cards: Dict[str, CardDescription]) -> Dict[str, CardDescription]:

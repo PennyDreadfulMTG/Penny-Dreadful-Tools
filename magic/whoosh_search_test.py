@@ -87,5 +87,11 @@ class WhooshSearchTest(unittest.TestCase):
     def test_meld(self) -> None:
         self.best_match_is('Chittering Host', 'Graf Rats')
 
+    def test_aliases(self) -> None:
+        self.best_match_is('Jens', 'Solemn Simulacrum')
+        self.best_match_is('Sad Robot', 'Solemn Simulacrum')
+        self.best_match_is('Sad Robon', 'Solemn Simulacrum')
+        self.best_match_is('Drak Confidant', 'Dark Confidant')
+
 def is_included(name: str, cards: List[str]) -> bool:
     return len([x for x in cards if x == name]) >= 1

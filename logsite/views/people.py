@@ -1,11 +1,13 @@
 from flask import url_for
-from sqlalchemy import func
+from sqlalchemy import func, text
 
 from logsite.view import View
 from shared import redis
 
 from .. import APP, db
 from ..data import match
+from ..data.match import Match
+from ..db import Format
 
 
 @APP.route('/people/')
@@ -28,15 +30,24 @@ class People(View):
     def prepare(self):
         for p in self.people:
             key = f'logsite:people:{p.id}'
-            data = redis.get_container(key, ex=3600)
+            # data = redis.get_container(key, ex=3600)
+            data = None
             if data:
                 p.fav_format = data.fav_format
                 p.num_matches = data.num_matches
             else:
                 p.num_matches = match.get_recent_matches_by_player(p.name).count()
-                p.formats = db.DB.session.query(match.Match, func.count(match.Match.format_id)).filter(match.Match.players.any(db.User.id == p.id)).group_by(match.Match.format_id).order_by(func.count(match.Match.format_id).desc()).all()
+                stmt = text("""
+                    SELECT f.name, COUNT(*) AS num_matches
+                    FROM match_players AS mp
+                    INNER JOIN `match` AS m ON mp.match_id = m.id
+                    INNER JOIN format AS f ON m.format_id = f.id
+                    WHERE mp.user_id = :pid
+                    GROUP BY f.id;
+                """)
+                p.formats = db.DB.session.query('name', 'num_matches').from_statement(stmt).params(pid=p.id).all()
                 if p.formats:
-                    p.fav_format = '{0} ({1} matches)'.format(p.formats[0][0].format.get_name(), p.formats[0][1])
+                    p.fav_format = '{0} ({1} matches)'.format(p.formats[0][0], p.formats[0][1])
                 else:
                     p.fav_format = '⸺'
                 redis.store(key, {'fav_format': p.fav_format, 'num_matches': p.num_matches}, ex=3600)

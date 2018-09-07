@@ -26,18 +26,20 @@ def stats():
         f = m[0].format
         val['formats'][f.name]['last_week'] = {}
         val['formats'][f.name]['last_week']['num_matches'] = m[1]
-        stmt = text("""select b.* from user as b
-                        inner join (
-                            select user.id from user
-                            left join match_players
-                            ON match_players.user_id = user.id
-                            left join `match`
-                            on `match`.id = match_players.match_id
-                            where `match`.format_id = :fid and `match`.start_time is not null and
-                            `match`.start_time > date_sub(now(), interval 7 DAY)
-                            group by user.id
-                        ) as a on a.id = b.id
-                        """)
+        stmt = text("""
+            SELECT b.*
+            FROM user AS b
+            INNER JOIN (
+                SELECT user.id
+                FROM user
+                LEFT JOIN match_players ON match_players.user_id = user.id
+                LEFT JOIN `match` ON `match`.id = match_players.match_id
+                WHERE `match`.format_id = :fid
+                    AND `match`.start_time IS NOT NULL
+                    AND `match`.start_time > DATE_SUB(NOW(), INTERVAL 7 DAY)
+                GROUP BY user.id
+            ) AS a ON a.id = b.id
+        """)
         players = db.DB.session.query(db.User).from_statement(stmt).params(fid=f.id).all()
         val['formats'][f.name]['last_week']['recent_players'] = [p.name for p in players]
     last_last_week = dtutil.now() - dtutil.ts2dt(2 * 7 * 24 * 60 * 60)
@@ -45,19 +47,21 @@ def stats():
         f = m[0].format
         val['formats'][f.name]['last_last_week'] = {}
         val['formats'][f.name]['last_last_week']['num_matches'] = m[1]
-        stmt = text("""select b.* from user as b
-                        inner join (
-                            select user.id from user
-                            left join match_players
-                            ON match_players.user_id = user.id
-                            left join `match`
-                            on `match`.id = match_players.match_id
-                            where `match`.format_id = :fid and `match`.start_time is not null and
-                            `match`.start_time > date_sub(now(), interval 14 DAY) and
-                            `match`.start_time < date_sub(now(), interval 7 DAY)
-                            group by user.id
-                        ) as a on a.id = b.id
-                        """)
+        stmt = text("""
+            SELECT b.*
+            FROM user AS b
+            INNER JOIN (
+                SELECT user.id
+                FROM user
+                LEFT JOIN match_players ON match_players.user_id = user.id
+                LEFT JOIN `match` ON `match`.id = match_players.match_id
+                WHERE `match`.format_id = :fid
+                    AND `match`.start_time IS NOT NULL
+                    AND `match`.start_time > DATE_SUB(NOW(), INTERVAL 14 DAY)
+                    AND `match`.start_time < DATE_SUB(NOW(), INTERVAL 7 DAY)
+                GROUP BY user.id
+            ) AS a ON a.id = b.id
+        """)
         players = db.DB.session.query(db.User).from_statement(stmt).params(fid=f.id).all()
         val['formats'][f.name]['last_last_week']['recent_players'] = [p.name for p in players]
 
@@ -66,18 +70,20 @@ def stats():
         f = m[0].format
         val['formats'][f.name]['last_month'] = {}
         val['formats'][f.name]['last_month']['num_matches'] = m[1]
-        stmt = text("""select b.* from user as b
-                        inner join (
-                            select user.id from user
-                            left join match_players
-                            ON match_players.user_id = user.id
-                            left join `match`
-                            on `match`.id = match_players.match_id
-                            where `match`.format_id = :fid and `match`.start_time is not null and
-                            `match`.start_time > date_sub(now(), interval 30 DAY)
-                            group by user.id
-                        ) as a on a.id = b.id
-                        """)
+        stmt = text("""
+            SELECT b.*
+            FROM user AS b
+            INNER JOIN (
+                SELECT user.id
+                FROM user
+                LEFT JOIN match_players ON match_players.user_id = user.id
+                LEFT JOIN `match` ON `match`.id = match_players.match_id
+                WHERE `match`.format_id = :fid
+                    AND `match`.start_time IS NOT NULL
+                    AND `match`.start_time > DATE_SUB(NOW(), INTERVAL 30 DAY)
+                GROUP BY user.id
+            ) AS a ON a.id = b.id
+        """)
         players = db.DB.session.query(db.User).from_statement(stmt).params(fid=f.id).all()
         val['formats'][f.name]['last_month']['recent_players'] = [p.name for p in players]
     return return_json(val)

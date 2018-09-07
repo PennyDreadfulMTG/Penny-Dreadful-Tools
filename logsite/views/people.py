@@ -1,13 +1,11 @@
 from flask import url_for
-from sqlalchemy import func, text
+from sqlalchemy import text
 
 from logsite.view import View
 from shared import redis
 
 from .. import APP, db
 from ..data import match
-from ..data.match import Match
-from ..db import Format
 
 
 @APP.route('/people/')

@@ -58,7 +58,7 @@ def get_or_insert_competition(start_date: datetime.datetime,
     if competition_id:
         return competition_id
     db().begin()
-    sql = 'INSERT IGNORE INTO competition (start_date, end_date, name, competition_series_id, url, top_n) VALUES (%s, %s, %s, %s, %s, %s)'
+    sql = 'INSERT INTO competition (start_date, end_date, name, competition_series_id, url, top_n) VALUES (%s, %s, %s, %s, %s, %s)'
     competition_id = db().insert(sql, values)
     if url is None:
         sql = 'UPDATE competition SET url = %s WHERE id = %s'

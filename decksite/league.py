@@ -286,6 +286,8 @@ def active_league() -> competition.Competition:
         end_date = determine_end_of_league(start_date, rotation.next_rotation())
         name = determine_league_name(start_date, end_date)
         comp_id = competition.get_or_insert_competition(start_date, end_date, name, 'League', None, competition.Top.EIGHT)
+        if not comp_id:
+            raise InvalidDataException(f'No competition id with {start_date}, {end_date}, {name}')
         leagues = [competition.load_competition(comp_id)]
     return guarantee.exactly_one(leagues)
 

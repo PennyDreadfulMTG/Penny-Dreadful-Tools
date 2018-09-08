@@ -84,8 +84,8 @@ def base_query(where: str = '(1 = 1)') -> str:
 
 def update_database(new_version: str) -> None:
     db().begin()
-    db().execute('DELETE FROM _cache_card')
     db().execute('DELETE FROM version')
+    db().execute('DROP TABLE IF EXISTS _cache_card') # We can't delete our data if we have FKs referencing it.
     db().execute("""
         DELETE FROM card_alias;
         DELETE FROM card_color;

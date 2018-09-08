@@ -4,8 +4,8 @@ from typing import Dict, List, Optional, Tuple, Union
 import pkg_resources
 
 from magic import card, database, fetcher, rotation
+from magic.card_description import CardDescription
 from magic.database import create_table_def, db
-from magic.fetcher import CardDescription
 from magic.models.card import Card
 from magic.whoosh_write import WhooshWriter
 from shared import dtutil
@@ -85,6 +85,7 @@ def base_query(where: str = '(1 = 1)') -> str:
 def update_database(new_version: str) -> None:
     db().begin()
     db().execute('DELETE FROM version')
+    db().execute('DROP TABLE IF EXISTS _cache_card') # We can't delete our data if we have FKs referencing it.
     db().execute("""
         DELETE FROM card_alias;
         DELETE FROM card_color;

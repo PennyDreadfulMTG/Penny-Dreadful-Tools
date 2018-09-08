@@ -749,11 +749,17 @@ table.with-marginalia.footable-details {
     margin-left: 7.126em; /* Width of .marginalia + left-padding + right-padding + desired margin to show subordinate relationship to parent row. */
 }
 
+table.with-marginalia .footable-empty td {
+    padding-left: 5.126em; /* Width of .marginalia + left-padding + right-padding */
+}
 
 @media only screen and (max-width: 640px) {
     /* When we aren't showing marginalia, don't have the unshown column mess display up. */
     table.with-marginalia, table.with-marginalia.footable-details {
         margin: 0;
+    }
+    table.with-marginalia .footable-empty td {
+        padding-left: 0.563em;
     }
     td.marginalia {
         /* Override the inline style `display: table-cell` added by footable */

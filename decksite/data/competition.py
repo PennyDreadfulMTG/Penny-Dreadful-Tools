@@ -42,17 +42,7 @@ def get_or_insert_competition(start_date: datetime.datetime,
         SELECT id
         FROM competition
         WHERE
-            start_date = %s
-        AND
-            end_date = %s
-        AND
             name = %s
-        AND
-            competition_series_id = %s
-        AND
-            url = %s
-        AND
-            top_n = %s
     """
     competition_id = db().value(sql, values)
     if competition_id:

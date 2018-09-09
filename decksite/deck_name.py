@@ -1,4 +1,5 @@
 import re
+from collections import OrderedDict
 from typing import List, Optional, Set
 
 import titlecase
@@ -126,15 +127,15 @@ def normalize_colors(name: str) -> str:
     patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*']
     patterns += ['(White|Blue|Black|Red|Green)(/(White|Blue|Black|Red|Green))+']
     patterns += list(COLOR_COMBINATIONS.keys())
-    unique_color_words = set()
+    unique_color_words = OrderedDict()
     for pattern in patterns:
         regex = regex_pattern(pattern)
         found = re.search(regex, name, flags=re.IGNORECASE)
         if found:
-            unique_color_words.add(found.group().strip())
+            unique_color_words[found.group().strip()] = True
     if len(unique_color_words) == 0:
         return name
-    color_words = list(unique_color_words)
+    color_words = list(unique_color_words.keys())
     canonical_colors = canonicalize_colors(color_words)
     true_color = name_from_colors(canonical_colors)
     name = name.replace(color_words[0], true_color, 1)

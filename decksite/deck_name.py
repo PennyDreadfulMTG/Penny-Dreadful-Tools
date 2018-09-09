@@ -127,7 +127,7 @@ def normalize_colors(name: str) -> str:
     patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*']
     patterns += ['(White|Blue|Black|Red|Green)(/(White|Blue|Black|Red|Green))+']
     patterns += list(COLOR_COMBINATIONS.keys())
-    unique_color_words = OrderedDict()
+    unique_color_words: OrderedDict = OrderedDict()
     for pattern in patterns:
         regex = regex_pattern(pattern)
         found = re.search(regex, name, flags=re.IGNORECASE)

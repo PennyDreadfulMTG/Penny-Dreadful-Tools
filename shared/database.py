@@ -92,13 +92,13 @@ class Database():
     def begin(self) -> None:
         print(f'BEGIN ({self.open_transaction_count})')
         if self.open_transaction_count == 0:
-            self.connection.begin()
+            self.execute('BEGIN')
         self.open_transaction_count += 1
 
     def commit(self) -> None:
         print(f'COMMIT ({self.open_transaction_count})')
         if self.open_transaction_count == 1:
-            self.connection.commit()
+            self.execute('COMMIT')
         self.open_transaction_count -= 1
 
     def last_insert_rowid(self) -> int:

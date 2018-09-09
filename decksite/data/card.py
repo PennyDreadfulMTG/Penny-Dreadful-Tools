@@ -118,3 +118,55 @@ def playability() -> Dict[str, float]:
     rs = [Container(r) for r in db().select(sql)]
     high = max([c.played for c in rs])
     return {c.name: (c.played / high) for c in rs}
+
+def preaggregate():
+    db().execute('DROP TABLE _new_card_stats')
+    db().execute("""
+        CREATE TABLE _new_card_stats (
+            name VARCHAR(190) NOT NULL,
+            `day` INT NOT NULL,
+            wins INT NOT NULL,
+            losses INT NOT NULL,
+            draws INT NOT NULL,
+            perfect_runs INT NOT NULL,
+            tournament_wins INT NOT NULL,
+            tournament_top8s INT NOT NULL
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+        SELECT
+            card AS name,
+            UNIX_TIMESTAMP(DATE(FROM_UNIXTIME(d.created_date))) AS `day`,
+            SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
+            IFNULL(SUM(wins), 0) AS wins,
+            IFNULL(SUM(losses), 0) AS losses,
+            IFNULL(SUM(draws), 0) AS draws,
+            SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
+            SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
+            SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s
+        FROM
+            deck AS d
+        INNER JOIN
+            deck_card AS dc ON d.id = dc.deck_id
+        LEFT JOIN
+            (
+                SELECT
+                    d.id,
+                    d.created_date,
+                    d.finish,
+                    SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins, -- IFNULL so we still count byes as wins.
+                    SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
+                    SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws
+                FROM
+                    deck_match AS dm
+                INNER JOIN
+                    deck_match AS odm ON dm.match_id = odm.match_id AND dm.deck_id <> odm.deck_id
+                INNER JOIN
+                    deck AS d ON d.id = dm.deck_id
+                GROUP BY
+                    d.id
+            ) AS dsum ON d.id = dsum.id
+        GROUP BY
+            card,
+            `day`
+    """)
+    db().execute('DROP TABLE IF EXISTS _card_stats')
+    db().execute('RENAME TABLE _new_card_stats TO _card_stats')

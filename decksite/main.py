@@ -37,7 +37,7 @@ from shared.pd_exception import (DoesNotExistException, InvalidDataException,
 @APP.route('/')
 @cached()
 def home():
-    view = Home(ns.all_news(max_items=10), ds.load_decks(limit='LIMIT 50'), cs.played_cards(season_id=get_season_id()))
+    view = Home(ns.all_news(max_items=10), ds.load_decks(limit='LIMIT 50'), cs.load_cards(season_id=get_season_id()))
     return view.page()
 
 @APP.route('/decks/')
@@ -82,9 +82,9 @@ def people():
 @cached()
 def person(person_id):
     p = ps.load_person(person_id, season_id=get_season_id())
-    played_cards = cs.played_cards_by_person(p.id, get_season_id())
+    cards = cs.load_cards_by_person(p.id, get_season_id())
     only_played_cards = []
-    view = Person(p, played_cards, only_played_cards)
+    view = Person(p, cards, only_played_cards)
     return view.page()
 
 @APP.route('/person/achievements/')
@@ -96,7 +96,7 @@ def achievements():
 @SEASONS.route('/cards/')
 @cached()
 def cards():
-    view = Cards(cs.played_cards(season_id=get_season_id()))
+    view = Cards(cs.load_cards(season_id=get_season_id()))
     return view.page()
 
 @APP.route('/cards/<path:name>/')

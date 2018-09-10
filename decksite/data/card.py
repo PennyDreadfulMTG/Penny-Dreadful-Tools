@@ -90,7 +90,8 @@ def get_cards_by_person_sql(person_id: int, season_id: Optional[int] = None) -> 
             deck AS d ON dc.deck_id = d.id
         {season_join}
         {nwdl_join}
-        WHERE ({where}) AND ({season_query})
+        WHERE
+            ({where}) AND ({season_query})
         GROUP BY
             dc.card
         ORDER BY

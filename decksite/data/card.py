@@ -53,7 +53,7 @@ def get_cards_sql(season_id: Optional[int] = None) -> str:
             SUM(CASE WHEN `day` > {season_start} THEN perfect_runs ELSE 0 END) AS season_perfect_runs,
             SUM(CASE WHEN `day` > {season_start} THEN tournament_wins ELSE 0 END) AS season_tournament_wins,
             SUM(CASE WHEN `day` > {season_start} THEN tournament_top8s ELSE 0 END) AS season_tournament_top8s,
-            IFNULL(ROUND((SUM(CASE WHEN `day` > {season_start} THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN `day` > {season_start} THEN wins ELSE 0 END + CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN losses ELSE 0 END), 0)) * 100, 1), '') AS season_win_percent,
+            IFNULL(ROUND((SUM(CASE WHEN `day` > {season_start} THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN `day` > {season_start} THEN wins + losses ELSE 0 END), 0)) * 100, 1), '') AS `season_win_percent`,
             SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN num_decks ELSE 0 END) AS week_num_decks,
             SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins ELSE 0 END) AS week_wins,
             SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN losses ELSE 0 END) AS week_losses,
@@ -61,7 +61,7 @@ def get_cards_sql(season_id: Optional[int] = None) -> str:
             SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN perfect_runs ELSE 0 END) AS week_perfect_runs,
             SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN tournament_wins ELSE 0 END) AS week_tournament_wins,
             SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN tournament_top8s ELSE 0 END) AS week_tournament_top8s,
-            IFNULL(ROUND((SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins ELSE 0 END + CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN losses ELSE 0 END), 0)) * 100, 1), '') AS week_win_percent
+            IFNULL(ROUND((SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins + losses ELSE 0 END), 0)) * 100, 1), '') AS `week_win_percent`
         FROM
             _card_stats AS cs
         LEFT JOIN

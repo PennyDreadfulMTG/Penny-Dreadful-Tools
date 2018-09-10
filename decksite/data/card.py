@@ -7,11 +7,20 @@ from magic.models.card import Card
 from shared import guarantee
 from shared.container import Container
 from shared.database import sqlescape
+from shared.pd_exception import DatabaseException
 
 
-def load_cards(season_id: Optional[int] = None) -> List[Card]:
+def load_cards(season_id: Optional[int] = None, retry: bool = False) -> List[Card]:
     sql = get_cards_sql(season_id)
-    return load_cards_from_sql(sql)
+    try:
+        return load_cards_from_sql(sql)
+    except DatabaseException as e:
+        if not retry:
+            print(f"Got {e} trying to load_cards_from_sql so trying to preaggregate. If this is happening on user time that's undesirable")
+            preaggregate()
+            return load_cards(season_id, retry=True)
+        print(f'Failed to preaggregate. Giving up.')
+        raise e
 
 def load_cards_by_person(person_id: int, season_id: Optional[int] = None) -> List[Card]:
     sql = get_cards_by_person_sql(person_id, season_id)
@@ -67,7 +76,7 @@ def get_cards_sql(season_id: Optional[int] = None) -> str:
             name
     """.format(season_table=query.season_table(), season_start=int(rotation.last_rotation().timestamp()), season_query=query.season_query(season_id))
 
-def get_cards_by_person_sql(person_id: int, season_id: Optional[int] = None) -> List[Card]:
+def get_cards_by_person_sql(person_id: int, season_id: Optional[int] = None) -> str:
     where = 'd.person_id = {person_id}'.format(person_id=sqlescape(person_id))
     return """
         SELECT
@@ -119,8 +128,8 @@ def playability() -> Dict[str, float]:
     high = max([c.played for c in rs])
     return {c.name: (c.played / high) for c in rs}
 
-def preaggregate():
-    db().execute('DROP TABLE _new_card_stats')
+def preaggregate() -> None:
+    db().execute('DROP TABLE IF EXISTS _new_card_stats')
     db().execute("""
         CREATE TABLE _new_card_stats (
             name VARCHAR(190) NOT NULL,

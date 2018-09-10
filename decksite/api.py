@@ -105,7 +105,7 @@ def rotation_api():
 
 @APP.route('/api/cards')
 def cards_api():
-    return return_json(cs.played_cards())
+    return return_json(cs.load_cards())
 
 @APP.route('/api/card/<card>')
 def card_api(card):

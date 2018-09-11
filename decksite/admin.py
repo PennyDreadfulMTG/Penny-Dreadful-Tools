@@ -32,7 +32,7 @@ def admin_home():
     return view.page()
 
 @APP.route('/admin/archetypes/')
-@auth.admin_required
+@auth.demimod_required
 def edit_archetypes(search_results=None, q='', notq=''):
     if search_results is None:
         search_results = []
@@ -40,7 +40,7 @@ def edit_archetypes(search_results=None, q='', notq=''):
     return view.page()
 
 @APP.route('/admin/archetypes/', methods=['POST'])
-@auth.admin_required
+@auth.demimod_required
 def post_archetypes():
     search_results = []
     if request.form.get('deck_id') is not None:

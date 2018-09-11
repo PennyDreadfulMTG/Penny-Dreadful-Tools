@@ -36,6 +36,7 @@ def setup_session(url):
         if isinstance(guild, dict) and 'id' in guild:
             if guild['id'] == configuration.get('guild_id'):
                 session['admin'] = (guild['permissions'] & 0x10000000) != 0 # Check for the MANAGE_ROLES permissions on Discord as a proxy for "is admin".
+                session['demimod'] = (guild['permissions'] & 0x20000) != 0 # Check for the "Mention @everyone" permissions on Discord as a proxy for "is demimod".
                 session['in_guild'] = True
         else:
             wrong_guilds = True
@@ -67,6 +68,7 @@ def redirect_uri() -> str:
 
 def logout() -> None:
     session['admin'] = None
+    session['demimod'] = None
     session['id'] = None
     session['discord_id'] = None
     session['logged_person_id'] = None

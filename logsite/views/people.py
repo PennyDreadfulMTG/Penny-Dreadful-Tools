@@ -20,6 +20,7 @@ class People(View):
         self.people = people_query.items
         self.has_next = people_query.has_next
         self.has_prev = people_query.has_prev
+        self.has_pagination = self.has_next or self.has_prev
         if people_query.has_next:
             self.next_url = url_for('people', page=people_query.next_num)
         if people_query.has_prev:

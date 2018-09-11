@@ -785,6 +785,22 @@ table.with-marginalia .footable-empty td {
 
 /*
 
+Pagination
+
+Mostly we just send giant tables of all the data but on logsite we have pagination.
+
+*/
+
+.pagination a {
+    display: inline-block;
+}
+
+.pagination .next {
+    float: right;
+}
+
+/*
+
 Menu
 
 The main menu consists of a handful of top-level items.

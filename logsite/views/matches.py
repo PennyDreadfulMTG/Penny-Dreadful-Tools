@@ -38,6 +38,7 @@ class Matches(View):
         self.matches = recent.items
         self.has_next = recent.has_next
         self.has_prev = recent.has_prev
+        self.has_pagination = self.has_next or self.has_prev
         if recent.has_next:
             self.next_url = url_for(request.endpoint, person=person, page=recent.next_num)
         if recent.has_prev:

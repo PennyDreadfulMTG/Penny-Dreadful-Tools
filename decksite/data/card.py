@@ -10,7 +10,7 @@ from shared.database import sqlescape
 from shared.pd_exception import DatabaseException
 
 
-def load_cards(season_id: Optional[int] = None, person_id: Optional[int] = None, retry: bool = False) -> str:
+def load_cards(season_id: Optional[int] = None, person_id: Optional[int] = None, retry: bool = False) -> List[Card]:
     table = '_card_person_stats' if person_id else '_card_stats'
     where = 'TRUE'
     group_by = 'name'

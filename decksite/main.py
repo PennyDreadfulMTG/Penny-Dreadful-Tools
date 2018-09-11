@@ -82,7 +82,7 @@ def people():
 @cached()
 def person(person_id):
     p = ps.load_person(person_id, season_id=get_season_id())
-    person_cards = cs.load_cards_by_person(p.id, get_season_id())
+    person_cards = cs.load_cards(person_id=p.id, season_id=get_season_id())
     only_played_cards = []
     view = Person(p, person_cards, only_played_cards)
     return view.page()

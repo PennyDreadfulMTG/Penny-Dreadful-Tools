@@ -400,7 +400,7 @@ Want to contribute? Send a Pull Request."""
             return await channel.send('{author}: {details}'.format(author=author.mention, details=sfcard['details']))
         imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
         imagepath = '{image_dir}/{imagename}.jpg'.format(image_dir=configuration.get('image_dir'), imagename=imagename)
-        if sfcard.get('card_faces'):
+        if sfcard.get('card_faces') and sfcard.get('layout', '') != 'split':
             c = sfcard['card_faces'][0]
         else:
             c = sfcard

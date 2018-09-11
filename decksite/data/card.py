@@ -108,7 +108,7 @@ def preaggregate() -> None:
 def preaggregate_card() -> None:
     db().execute('DROP TABLE IF EXISTS _new_card_stats')
     db().execute("""
-        CREATE TABLE _new_card_stats (
+        CREATE TABLE IF NOT EXISTS _new_card_stats (
             name VARCHAR(190) NOT NULL,
             `day` INT NOT NULL,
             wins INT NOT NULL,
@@ -160,7 +160,7 @@ def preaggregate_card() -> None:
 def preaggregate_card_person() -> None:
     db().execute('DROP TABLE IF EXISTS _new_card_person_stats')
     db().execute("""
-        CREATE TABLE _new_card_person_stats (
+        CREATE TABLE IF NOT EXISTS _new_card_person_stats (
             name VARCHAR(190) NOT NULL,
             `day` INT NOT NULL,
             person_id INT NOT NULL,

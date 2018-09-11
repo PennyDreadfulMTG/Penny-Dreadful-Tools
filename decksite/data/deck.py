@@ -350,10 +350,12 @@ def add_deck(params: RawDeckDescription) -> Deck:
         params.get('small_thumbnail_url'),
         params.get('finish')
     ]
+    db().begin()
     deck_id = db().insert(sql, values)
     add_cards(deck_id, params['cards'])
     d = load_deck(deck_id)
     prime_cache(d)
+    db().commit()
     return d
 
 def prime_cache(d: Deck) -> None:

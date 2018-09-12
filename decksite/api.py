@@ -141,7 +141,7 @@ def person_status():
         d = guarantee_at_most_one_or_retire(league.active_decks_by(auth.mtgo_username()))
         if d is not None:
             r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}
-    if r['admin']:
+    if r['admin'] or r['demimod']:
         r['archetypes_to_tag'] = len(deck.load_decks('NOT d.reviewed'))
     return return_json(r)
 

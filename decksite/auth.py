@@ -19,7 +19,7 @@ def demimod_required(f: Callable) -> Callable:
     def decorated_function(*args, **kwargs):
         if session.get('admin') is None and session.get('demimod') is None:
             return redirect(url_for('authenticate', target=request.url))
-        if session.get('admin') is False and session.get('demimod') is None:
+        if session.get('admin') is False and session.get('demimod') is False:
             return redirect(url_for('unauthorized'))
         return f(*args, **kwargs)
     return decorated_function

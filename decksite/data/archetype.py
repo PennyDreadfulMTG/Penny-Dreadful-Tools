@@ -100,7 +100,7 @@ def load_archetypes_deckless(order_by: str = '`all_num_decks` DESC, `all_wins` D
             aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
         ORDER BY
             {order_by}
-    """.format(season_table=query.season_table(), season_join=query.season_join(), season_query=query.season_query(season_id), order_by=order_by)
+    """.format(season_table=query.season_table(), season_query=query.season_query(season_id), order_by=order_by)
     archetypes = [Archetype(a) for a in db().select(sql)]
     archetypes_by_id = {a.id: a for a in archetypes}
     for a in archetypes:

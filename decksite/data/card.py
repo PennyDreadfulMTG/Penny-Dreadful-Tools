@@ -66,7 +66,7 @@ def load_cards(season_id: Optional[int] = None, person_id: Optional[int] = None,
         return cs
     except DatabaseException as e:
         if not retry:
-            print(f"Got {e} trying to load_cards so trying to preaggregate. If this is happening on user time that's undesirable")
+            print(f"Got {e} trying to load_cards so trying to preaggregate. If this is happening on user time that's undesirable.")
             preaggregate()
             return load_cards(season_id, person_id, retry=True)
         print(f'Failed to preaggregate. Giving up.')
@@ -132,28 +132,11 @@ def preaggregate_card() -> None:
             deck AS d
         INNER JOIN
             deck_card AS dc ON d.id = dc.deck_id
-        LEFT JOIN
-            (
-                SELECT
-                    d.id,
-                    d.created_date,
-                    d.finish,
-                    SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins, -- IFNULL so we still count byes as wins.
-                    SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
-                    SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws
-                FROM
-                    deck_match AS dm
-                INNER JOIN
-                    deck_match AS odm ON dm.match_id = odm.match_id AND dm.deck_id <> odm.deck_id
-                INNER JOIN
-                    deck AS d ON d.id = dm.deck_id
-                GROUP BY
-                    d.id
-            ) AS dsum ON d.id = dsum.id
+        {nwdl_join}
         GROUP BY
             card,
             `day`
-    """)
+    """.format(nwdl_join=deck.nwdl_join()))
     db().execute('DROP TABLE IF EXISTS _card_stats')
     db().execute('RENAME TABLE _new_card_stats TO _card_stats')
 
@@ -186,28 +169,11 @@ def preaggregate_card_person() -> None:
             deck AS d
         INNER JOIN
             deck_card AS dc ON d.id = dc.deck_id
-        LEFT JOIN
-            (
-                SELECT
-                    d.id,
-                    d.created_date,
-                    d.finish,
-                    SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins, -- IFNULL so we still count byes as wins.
-                    SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
-                    SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws
-                FROM
-                    deck_match AS dm
-                INNER JOIN
-                    deck_match AS odm ON dm.match_id = odm.match_id AND dm.deck_id <> odm.deck_id
-                INNER JOIN
-                    deck AS d ON d.id = dm.deck_id
-                GROUP BY
-                    d.id
-            ) AS dsum ON d.id = dsum.id
+        {nwdl_join}
         GROUP BY
             card,
             d.person_id,
             `day`
-    """)
+    """.format(nwdl_join=deck.nwdl_join()))
     db().execute('DROP TABLE IF EXISTS _card_person_stats')
     db().execute('RENAME TABLE _new_card_person_stats TO _card_person_stats')

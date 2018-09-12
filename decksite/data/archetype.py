@@ -9,7 +9,7 @@ from decksite.database import db
 from magic import rotation
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import DoesNotExistException, TooManyItemsException
+from shared.pd_exception import DatabaseException, DoesNotExistException, TooManyItemsException
 
 
 class Archetype(Container, NodeMixin):
@@ -70,7 +70,7 @@ def load_archetypes(where: str = '1 = 1', merge: bool = False, season_id: int = 
     archetype_list = list(archetypes.values())
     return archetype_list
 
-def load_archetypes_deckless(order_by: str = '`all_num_decks` DESC, `all_wins` DESC, name', season_id: int = None) -> List[Archetype]:
+def load_archetypes_deckless(order_by: str = '`all_num_decks` DESC, `all_wins` DESC, name', season_id: int = None, retry: bool = False) -> List[Archetype]:
     sql = """
         SELECT
             a.id,
@@ -100,13 +100,22 @@ def load_archetypes_deckless(order_by: str = '`all_num_decks` DESC, `all_wins` D
             aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
         ORDER BY
             {order_by}
-    """.format(season_table=query.season_table(), season_query=query.season_query(season_id), order_by=order_by)
-    archetypes = [Archetype(a) for a in db().select(sql)]
-    archetypes_by_id = {a.id: a for a in archetypes}
-    for a in archetypes:
-        a.decks = []
-        a.parent = archetypes_by_id.get(a.parent_id, None)
-    return archetypes
+    """.format(season_table=query.season_table(),  season_query=query.season_query(season_id), order_by=order_by)
+    try:
+        archetypes = [Archetype(a) for a in db().select(sql)]
+        archetypes_by_id = {a.id: a for a in archetypes}
+        for a in archetypes:
+            a.decks = []
+            a.parent = archetypes_by_id.get(a.parent_id, None)
+        return archetypes
+    except DatabaseException as e:
+        if not retry:
+            print(f"Got {e} trying to load_archetypes_deckless so trying to preaggregate. If this is happening on user time that's undesirable.")
+            preaggregate()
+            return load_archetypes_deckless(order_by=order_by, season_id=season_id, retry=True)
+        print(f'Failed to preaggregate. Giving up.')
+        raise e
+
 
 def load_archetypes_deckless_for(archetype_id: int, season_id: int = None) -> List[Archetype]:
     archetypes = load_archetypes_deckless(season_id=season_id)

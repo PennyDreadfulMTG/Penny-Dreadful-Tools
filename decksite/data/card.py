@@ -66,7 +66,7 @@ def load_cards(season_id: Optional[int] = None, person_id: Optional[int] = None,
         return cs
     except DatabaseException as e:
         if not retry:
-            print(f"Got {e} trying to load_cards so trying to preaggregate. If this is happening on user time that's undesirable")
+            print(f"Got {e} trying to load_cards so trying to preaggregate. If this is happening on user time that's undesirable.")
             preaggregate()
             return load_cards(season_id, person_id, retry=True)
         print(f'Failed to preaggregate. Giving up.')

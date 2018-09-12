@@ -9,7 +9,8 @@ from decksite.database import db
 from magic import rotation
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import DatabaseException, DoesNotExistException, TooManyItemsException
+from shared.pd_exception import (DatabaseException, DoesNotExistException,
+                                 TooManyItemsException)
 
 
 class Archetype(Container, NodeMixin):

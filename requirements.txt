@@ -24,7 +24,7 @@ mypy-extensions==0.4.1
 pillow==5.2.0
 poeditor==1.1.0
 profanity==1.1
-pygithub==1.43.1
+pygithub==1.43.2
 pygtrie==2.3
 pylint==2.1.1
 pylint-quotes==0.1.9

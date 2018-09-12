@@ -70,33 +70,37 @@ def load_archetypes(where: str = '1 = 1', merge: bool = False, season_id: int = 
     archetype_list = list(archetypes.values())
     return archetype_list
 
-def load_archetypes_deckless(where: str = '1 = 1',
-                             order_by: str = '`all_num_decks` DESC, `all_wins` DESC, name',
-                             season_id: int = None) -> List[Archetype]:
+def load_archetypes_deckless(order_by: str = '`all_num_decks` DESC, `all_wins` DESC, name', season_id: int = None) -> List[Archetype]:
     sql = """
         SELECT
             a.id,
             a.name,
             aca.ancestor AS parent_id,
-            {all_select}
+            SUM(num_decks) AS all_num_decks,
+            SUM(wins) AS all_wins,
+            SUM(losses) AS all_losses,
+            SUM(draws) AS all_draws,
+            SUM(wins - losses) AS record,
+            SUM(perfect_runs) AS all_perfect_runs,
+            SUM(tournament_wins) AS all_tournament_wins,
+            SUM(tournament_top8s) AS all_tournament_top8s,
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS all_win_percent
         FROM
             archetype AS a
+        INNER JOIN
+            _archetype_stats AS ars ON a.id = ars.archetype_id
         LEFT JOIN
             archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
         LEFT JOIN
-            archetype_closure AS acd ON a.id = acd.ancestor
-        LEFT JOIN
-            deck AS d ON acd.descendant = d.archetype_id
-        {season_join}
-        {nwdl_join}
+            ({season_table}) AS season ON season.start_date <= ars.day AND (season.end_date IS NULL OR season.end_date > ars.day)
         WHERE
-            ({where}) AND ({season_query})
+            {season_query}
         GROUP BY
             a.id,
             aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
         ORDER BY
             {order_by}
-    """.format(all_select=deck.nwdl_all_select(), season_join=query.season_join(), nwdl_join=deck.nwdl_join(), where=where, season_query=query.season_query(season_id), order_by=order_by)
+    """.format(season_table=query.season_table(), season_join=query.season_join(), season_query=query.season_query(season_id), order_by=order_by)
     archetypes = [Archetype(a) for a in db().select(sql)]
     archetypes_by_id = {a.id: a for a in archetypes}
     for a in archetypes:
@@ -200,3 +204,48 @@ def rebuild_archetypes() -> None:
         while p.parent is not None:
             p = p.parent
         BASE_ARCHETYPES[k] = p
+
+def preaggregate():
+    db().execute('DROP TABLE IF EXISTS _new_archetype_stats')
+    sql = """
+        CREATE TABLE IF NOT EXISTS _new_archetype_stats (
+            archetype_id INT NOT NULL,
+            `day` INT NOT NULL,
+            wins INT NOT NULL,
+            losses INT NOT NULL,
+            draws INT NOT NULL,
+            perfect_runs INT NOT NULL,
+            tournament_wins INT NOT NULL,
+            tournament_top8s INT NOT NULL,
+            PRIMARY KEY (archetype_id, `day`),
+            FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+        SELECT
+            a.id AS archetype_id,
+            UNIX_TIMESTAMP(DATE(FROM_UNIXTIME(d.created_date))) AS `day`,
+            SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
+            IFNULL(SUM(wins), 0) AS wins,
+            IFNULL(SUM(losses), 0) AS losses,
+            IFNULL(SUM(draws), 0) AS draws,
+            SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
+            SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
+            SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s
+        FROM
+            archetype AS a
+        LEFT JOIN
+            archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
+        LEFT JOIN
+            archetype_closure AS acd ON a.id = acd.ancestor
+        LEFT JOIN
+            deck AS d ON acd.descendant = d.archetype_id
+        {nwdl_join}
+        GROUP BY
+            a.id,
+            aca.ancestor, -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
+            `day`
+        HAVING
+            `day` IS NOT NULL
+    """.format(nwdl_join=deck.nwdl_join())
+    db().execute(sql)
+    db().execute('DROP TABLE IF EXISTS _archetype_stats')
+    db().execute('RENAME TABLE _new_archetype_stats TO _archetype_stats')

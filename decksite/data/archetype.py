@@ -214,7 +214,7 @@ def rebuild_archetypes() -> None:
             p = p.parent
         BASE_ARCHETYPES[k] = p
 
-def preaggregate():
+def preaggregate() -> None:
     db().execute('DROP TABLE IF EXISTS _new_archetype_stats')
     sql = """
         CREATE TABLE IF NOT EXISTS _new_archetype_stats (

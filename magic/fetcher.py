@@ -180,7 +180,10 @@ def time(q: str) -> str:
         timezone_info = internal.fetch_json(url)
         if timezone_info['status'] == 'ZERO_RESULTS':
             raise TooFewItemsException(timezone_info['status'])
-        timezone = dtutil.timezone(timezone_info['timeZoneId'])
+        try:
+            timezone = dtutil.timezone(timezone_info['timeZoneId'])
+        except KeyError as e:
+            raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}')
     else:
         try:
             timezone = dtutil.timezone(q.upper())

@@ -133,6 +133,7 @@ def person_status():
         'mtgo_username': auth.mtgo_username(),
         'discord_id': auth.discord_id(),
         'admin': session.get('admin', False),
+        'demimod': session.get('demimod', False),
         'hide_intro': request.cookies.get('hide_intro', False) or auth.hide_intro() or auth.mtgo_username() or auth.discord_id(),
         'in_guild': session.get('in_guild', False),
         }
@@ -140,7 +141,7 @@ def person_status():
         d = guarantee_at_most_one_or_retire(league.active_decks_by(auth.mtgo_username()))
         if d is not None:
             r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}
-    if r['admin']:
+    if r['admin'] or r['demimod']:
         r['archetypes_to_tag'] = len(deck.load_decks('NOT d.reviewed'))
     return return_json(r)
 

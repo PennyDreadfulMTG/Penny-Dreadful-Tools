@@ -16,6 +16,8 @@ def create_issue(content: str,
                  location: str = 'Discord',
                  repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools',
                  exception: Optional[Exception] = None) -> Issue:
+    if not configuration.get_bool('create_github_issues'):
+        return None
     labels: List[str] = []
     if content is None or content == '':
         return None

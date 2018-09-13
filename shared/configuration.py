@@ -15,6 +15,8 @@ DEFAULTS = {
     'card_alias_file': './card_aliases.tsv',
     # Path to chart storage directory.  Used by decksite.
     'charts_dir': './images/charts',
+    # Is the codebase allowed to report github issues?  Disable on dev.
+    'create_github_issues': True,
     # mysql database name.  Used by decksite.
     'decksite_database': 'decksite',
     # URL for decksite API calls.  Used by discordbot.

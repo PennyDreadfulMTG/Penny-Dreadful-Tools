@@ -1,11 +1,11 @@
 import time
 
 from magic import multiverse
-from shared_web import logger
 
+REQUIRES_APP_CONTEXT = False
 
 def run():
     start = time.time()
     multiverse.reindex()
     end = time.time()
-    logger.warning('Indexing done in {t} seconds'.format(t=(end - start)))
+    print('Indexing done in {t} seconds'.format(t=(end - start)))

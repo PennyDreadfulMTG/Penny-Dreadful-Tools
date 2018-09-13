@@ -1,5 +1,5 @@
 import sys
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import titlecase
 from anytree import NodeMixin
@@ -112,11 +112,10 @@ def load_archetypes_deckless(order_by: str = '`all_num_decks` DESC, `all_wins` D
     except DatabaseException as e:
         if not retry:
             print(f"Got {e} trying to load_archetypes_deckless so trying to preaggregate. If this is happening on user time that's undesirable.")
-            preaggregate()
+            preaggregate_archetypes()
             return load_archetypes_deckless(order_by=order_by, season_id=season_id, retry=True)
         print(f'Failed to preaggregate. Giving up.')
         raise e
-
 
 def load_archetypes_deckless_for(archetype_id: int, season_id: int = None) -> List[Archetype]:
     archetypes = load_archetypes_deckless(season_id=season_id)
@@ -138,40 +137,44 @@ def assign(deck_id: int, archetype_id: int, reviewed: bool = True) -> None:
     and_clause = '' if reviewed else 'AND reviewed is FALSE'
     db().execute(f'UPDATE deck SET reviewed = %s, archetype_id = %s WHERE id = %s {and_clause}', [reviewed, archetype_id, deck_id])
 
-def load_all_matchups(where='TRUE', season_id=None):
+def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retry: bool = False) -> List[Container]:
     sql = """
         SELECT
-            a.id AS archetype_id,
+            archetype_id,
             a.name AS archetype_name,
-            oa.id,
-            oa.name,
-            SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS all_wins, -- IFNULL so we still count byes as wins.
-            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS all_losses,
-            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS all_draws,
-            IFNULL(ROUND((SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN dm.games <> IFNULL(odm.games, 0) THEN 1 ELSE 0 END), 0)) * 100, 1), '') AS all_win_percent
+            opponent_archetype_id AS id,
+            oa.name AS name,
+            SUM(wins) AS all_wins,
+            SUM(losses) AS all_losses,
+            SUM(draws) AS all_draws,
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS all_win_percent
         FROM
-            archetype AS a
+            _matchup_stats AS ms
         INNER JOIN
-            deck AS d ON d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = a.id)
+            archetype AS a ON archetype_id = a.id
         INNER JOIN
-            deck_match AS dm ON d.id = dm.deck_id
-        INNER JOIN
-            deck_match AS odm ON dm.match_id = odm.match_id AND odm.deck_id <> d.id
-        INNER JOIN
-            deck AS od ON od.id = odm.deck_id
-        INNER JOIN
-            archetype AS oa ON od.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = oa.id)
-        {season_join}
+            archetype AS oa ON opponent_archetype_id = oa.id
+        LEFT JOIN
+            ({season_table}) AS season ON season.start_date <= ms.day AND (season.end_date IS NULL OR season.end_date > ms.day)
         WHERE
             ({where}) AND ({season_query})
         GROUP BY
-            a.id,
-            oa.id
+            archetype_id,
+            opponent_archetype_id
         ORDER BY
-            `all_wins` DESC,
+            all_wins DESC,
             oa.name
-    """.format(season_join=query.season_join(), where=where, season_query=query.season_query(season_id))
-    return [Container(m) for m in db().select(sql)]
+    """.format(season_table=query.season_table(), where=where, season_query=query.season_query(season_id))
+    try:
+        print(sql)
+        return [Container(m) for m in db().select(sql)]
+    except DatabaseException as e:
+        if not retry:
+            print(f"Got {e} trying to load_all_matchups so trying to preaggregate. If this is happening on user time that's undesirable.")
+            preaggregate_matchups()
+            return load_all_matchups(where=where, season_id=season_id, retry=True)
+        print(f'Failed to preaggregate. Giving up.')
+        raise e
 
 def load_matchups(archetype_id, season_id=None):
     where = 'a.id = {archetype_id}'.format(archetype_id=archetype_id)
@@ -216,6 +219,10 @@ def rebuild_archetypes() -> None:
         BASE_ARCHETYPES[k] = p
 
 def preaggregate() -> None:
+    preaggregate_archetypes()
+    preaggregate_matchups()
+
+def preaggregate_archetypes() -> None:
     db().execute('DROP TABLE IF EXISTS _new_archetype_stats')
     sql = """
         CREATE TABLE IF NOT EXISTS _new_archetype_stats (
@@ -259,3 +266,46 @@ def preaggregate() -> None:
     db().execute(sql)
     db().execute('DROP TABLE IF EXISTS _archetype_stats')
     db().execute('RENAME TABLE _new_archetype_stats TO _archetype_stats')
+
+def preaggregate_matchups() -> None:
+    db().execute('DROP TABLE IF EXISTS _new_matchup_stats')
+    sql = """
+        CREATE TABLE IF NOT EXISTS _new_matchup_stats (
+            archetype_id INT NOT NULL,
+            opponent_archetype_id INT NOT NULL,
+            `day` INT NOT NULL,
+            wins INT NOT NULL,
+            losses INT NOT NULL,
+            draws INT NOT NULL,
+            FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (opponent_archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+        SELECT
+            a.id AS archetype_id,
+            oa.id AS opponent_archetype_id,
+            UNIX_TIMESTAMP(DATE(FROM_UNIXTIME(d.created_date))) AS `day`,
+            SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins, -- IFNULL so we still count byes as wins.
+            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
+            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws
+        FROM
+            archetype AS a
+        INNER JOIN
+            deck AS d ON d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = a.id)
+        INNER JOIN
+            deck_match AS dm ON d.id = dm.deck_id
+        INNER JOIN
+            deck_match AS odm ON dm.match_id = odm.match_id AND odm.deck_id <> d.id
+        INNER JOIN
+            deck AS od ON od.id = odm.deck_id
+        INNER JOIN
+            archetype AS oa ON od.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = oa.id)
+        GROUP BY
+            a.id,
+            oa.id,
+            `day`
+        -- HAVING
+        --     `day` IS NOT NULL
+    """
+    db().execute(sql)
+    db().execute('DROP TABLE IF EXISTS _matchup_stats')
+    db().execute('RENAME TABLE _new_matchup_stats TO _matchup_stats')

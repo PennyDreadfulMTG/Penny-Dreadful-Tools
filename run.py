@@ -1,7 +1,9 @@
 import importlib
 import pkgutil
 import sys
-from typing import List
+from typing import Any, List
+
+from shared import configuration
 
 
 def run() -> None:
@@ -57,31 +59,37 @@ def task(args: List[str]) -> None:
     if module == 'scrapers':
         module = 'decksite.scrapers'
     name = args.pop()
+    from magic import oracle, multiverse
+    multiverse.init()
+    if name != 'reprime_cache':
+        oracle.init()
+    if name == 'all':
+        run_all_tasks(module)
+    else:
+        s = importlib.import_module('{module}.{name}'.format(name=name, module=module))
+        if getattr(s, 'REQUIRES_APP_CONTEXT', True):
+            from decksite.main import APP
+            APP.config['SERVER_NAME'] = configuration.server_name()
+            APP.app_context().__enter__() # Technically we should __exit__() at the end, but since we're terminating...
+        if getattr(s, 'scrape', None) is not None:
+            s.scrape() # type: ignore
+        elif getattr(s, 'run', None) is not None:
+            s.run() # type: ignore
+        # Only when called directly, not in 'all'
+        elif getattr(s, 'ad_hoc', None) is not None:
+            s.ad_hoc() # type: ignore
+
+def run_all_tasks(module: Any) -> None:
     from decksite.main import APP
-    from shared import configuration
     APP.config['SERVER_NAME'] = configuration.server_name()
     with APP.app_context():
-        from magic import oracle, multiverse
-        multiverse.init()
-        if name != 'reprime_cache':
-            oracle.init()
-        if name == 'all':
-            m = importlib.import_module('{module}'.format(module=module))
-            # pylint: disable=unused-variable
-            for importer, modname, ispkg in pkgutil.iter_modules(m.__path__): # type: ignore
-                s = importlib.import_module('{module}.{name}'.format(name=modname, module=module))
-                if getattr(s, 'scrape', None) is not None:
-                    s.scrape() # type: ignore
-                elif getattr(s, 'run', None) is not None:
-                    s.run() # type: ignore
-        else:
-            s = importlib.import_module('{module}.{name}'.format(name=name, module=module))
+        m = importlib.import_module('{module}'.format(module=module))
+        # pylint: disable=unused-variable
+        for importer, modname, ispkg in pkgutil.iter_modules(m.__path__): # type: ignore
+            s = importlib.import_module('{module}.{name}'.format(name=modname, module=module))
             if getattr(s, 'scrape', None) is not None:
                 s.scrape() # type: ignore
             elif getattr(s, 'run', None) is not None:
                 s.run() # type: ignore
-            # Only when called directly, not in 'all'
-            elif getattr(s, 'ad_hoc', None) is not None:
-                s.ad_hoc() # type: ignore
 
 run()

@@ -77,7 +77,7 @@ async def handle_command(message: Message, client: Client) -> None:
             print('Caught exception processing command `{cmd}`'.format(cmd=message.content))
             tb = traceback.format_exc()
             print(tb)
-            await message.channel.send('{author}: I know the command `{cmd}` but I could not do that.'.format(cmd=parts[0], author=message.author.mention))
+            await message.channel.send('{author}: I know the command `{cmd}` but encountered an error while executing it.'.format(cmd=parts[0], author=message.author.mention))
             await getattr(Commands, 'bug')(Commands, channel=message.channel, args='Command failed with {c}: {cmd}\n\n```\n{tb}\n```'.format(c=e.__class__.__name__, cmd=message.content, tb=tb), author=message.author)
 
 def find_method(name: str) -> Optional[Callable]:

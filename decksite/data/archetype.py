@@ -166,7 +166,6 @@ def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retr
             oa.name
     """.format(season_table=query.season_table(), where=where, season_query=query.season_query(season_id))
     try:
-        print(sql)
         return [Container(m) for m in db().select(sql)]
     except DatabaseException as e:
         if not retry:

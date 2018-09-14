@@ -6,28 +6,7 @@
     {{/bugs}}
 </section>
 {{#played_competitively}}
-    <section>
-        <h2>Record</h2>
-        {{> spinner}}
-        <table>
-            <thead>
-                <tr>
-                    <th># Decks</th>
-                    <th>Record</th>
-                    <th data-breakpoints="xs sm">Win %</th>
-                    {{! Empty column to hold the toggle when footable kicks in.}}
-                    <td></td>
-                </tr>
-            </thead>
-            <tbody>
-                <td class="n">{{all_num_decks}}</td>
-                <td class="n">{{#all_show_record}}{{all_wins}}–{{all_losses}}{{#all_draws}}–{{all_draws}}{{/all_draws}}{{/all_show_record}}</td>
-                <td class="n">{{all_win_percent}}</td>
-                {{! Empty column to hold the toggle when footable kicks in.}}
-                <td></td>
-            </tbody>
-        </table>
-    </section>
+    {{> stats}}
 {{/played_competitively}}
 {{#has_most_common_cards}}
     <section>

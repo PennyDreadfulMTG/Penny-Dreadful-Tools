@@ -14,6 +14,7 @@ class Person(View):
     def __init__(self, person: ps.Person, cards: List[Card], only_played_cards: List[Card]) -> None:
         super().__init__()
         self.person = person
+        self.people = [person]
         self.decks = person.decks
         self.hide_person = True
         self.cards = cards

@@ -12,4 +12,5 @@ def run():
         deck.prime_cache(d)
     archetype.preaggregate()
     card.preaggregate()
+    deck.preaggregate_omw()
     return 'Done'

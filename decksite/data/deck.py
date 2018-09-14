@@ -171,6 +171,7 @@ def load_decks_heavy(where: str = '1 = 1',
             cache.colors,
             cache.colored_symbols,
             cache.legal_formats,
+            cache.omw,
             season.id AS season_id,
             IFNULL(MAX(m.date), d.created_date) AS active_date
         FROM
@@ -493,19 +494,15 @@ def load_cards(decks: List[Deck]) -> None:
 def load_competitive_stats(decks: List[Deck]) -> None:
     if len(decks) == 0:
         return
-    decks_by_id = {d.id: d for d in decks}
-    if len(decks) < 1000:
+    decks_by_id = {d.id: d for d in decks if d.get('omw') is None}
+    if len(decks_by_id) < 1000:
         where = 'd.id IN ({deck_ids})'.format(deck_ids=', '.join(map(sqlescape, map(str, decks_by_id.keys()))))
     else:
         where = 'TRUE' # MySQL doesn't like to be asked to do IN queries for very long argument lists. Just load everything. (MariaDB doesn't care, interestingly.)
     sql = """
         SELECT
             d.id,
-            SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) AS opp_wins,
-            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS opp_losses,
-            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS opp_draws,
-            ROUND(SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) / NULLIF((SUM(CASE WHEN dm.games <> odm.games THEN 1 ELSE 0 END)), 0), 2) * 100 AS omw,
-            GROUP_CONCAT(m.elimination) AS elim
+            ROUND(SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) / NULLIF((SUM(CASE WHEN dm.games <> odm.games THEN 1 ELSE 0 END)), 0), 2) * 100 AS omw
         FROM
             deck AS d
         INNER JOIN
@@ -525,13 +522,44 @@ def load_competitive_stats(decks: List[Deck]) -> None:
         GROUP BY
             d.id
     """.format(where=where)
+    print(sql)
     rs = db().select(sql)
     for row in rs:
         if decks_by_id.get(row['id']):
-            decks_by_id[row['id']].opp_wins = row['opp_wins']
-            decks_by_id[row['id']].opp_losses = row['opp_losses']
             decks_by_id[row['id']].omw = row['omw']
-            decks_by_id[row['id']].elim = row['elim'] # This property is never used? and is always a bunch of zeroes?
+
+def preaggregate_omw():
+    sql = """
+        UPDATE
+            deck_cache AS dc
+        INNER JOIN
+            (
+                SELECT
+                    d.id AS deck_id,
+                    ROUND(SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) / NULLIF((SUM(CASE WHEN dm.games <> odm.games THEN 1 ELSE 0 END)), 0), 2) AS omw
+                FROM
+                    deck AS d
+                INNER JOIN
+                    deck_match AS my_dm ON my_dm.deck_id = d.id
+                LEFT JOIN
+                    deck_match AS my_odm ON my_odm.match_id = my_dm.match_id AND my_odm.deck_id <> d.id
+                INNER JOIN
+                    deck AS od ON od.id = my_odm.deck_id
+                INNER JOIN
+                    deck_match AS dm ON dm.deck_id = od.id
+                LEFT JOIN
+                    deck_match AS odm ON odm.match_id = dm.match_id AND odm.deck_id <> dm.deck_id
+                INNER JOIN
+                    `match` AS m ON m.id = dm.match_id
+                WHERE
+                    d.competition_id NOT IN (SELECT id FROM competition WHERE end_date > UNIX_TIMESTAMP(NOW()))
+                GROUP BY
+                    d.id
+            ) AS ds ON dc.deck_id = ds.deck_id
+        SET
+            dc.omw = ds.omw
+    """
+    db().execute(sql)
 
 def count_matches(deck_id: int, opponent_deck_id: int) -> Dict[int, int]:
     sql = 'SELECT deck_id, count(id) as count FROM deck_match WHERE deck_id in (%s, %s) group by deck_id'

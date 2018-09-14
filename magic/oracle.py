@@ -120,11 +120,9 @@ def insert_scryfall_card(sfcard: Dict, rebuild_cache: bool = True) -> None:
         tl = face['type_line'].split('—')
         types = tl[0]
         subtypes = tl[1] if len(tl) > 1 else []
-        position = names.index(face['name'])
 
         c.update({
             'name': face['name'],
-            'position': position,
             'type': face['type_line'],
             'types': types, # This technically includes supertypes.
             'subtypes': subtypes,

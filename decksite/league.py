@@ -17,6 +17,7 @@ from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import (DatabaseException, InvalidDataException,
                                  LockNotAcquiredException)
+from shared_web import logger
 
 
 # pylint: disable=attribute-defined-outside-init,too-many-instance-attributes
@@ -243,12 +244,14 @@ def report(form: ReportForm) -> bool:
             mtgo_match_id = None
             entry_name = deck.load_deck(int(form.entry)).person
             opp_name = deck.load_deck(int(form.opponent)).person
-            fetcher.post_discord_webhook(
-                configuration.get_str('league_webhook_id'),
-                configuration.get_str('league_webhook_token'),
-                '{entry} reported {f.entry_games}-{f.opponent_games} vs {opponent}'.format(f=form, entry=entry_name, opponent=opp_name)
-            )
-
+            if configuration.get('league_webhook_id') and configuration.get('league_webhook_token'):
+                fetcher.post_discord_webhook(
+                    configuration.get_str('league_webhook_id'),
+                    configuration.get_str('league_webhook_token'),
+                    '{entry} reported {f.entry_games}-{f.opponent_games} vs {opponent}'.format(f=form, entry=entry_name, opponent=opp_name)
+                )
+            else:
+                logger.warning('Not posting manual report to discord because not configured.')
         db().begin()
         match.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games, None, None, mtgo_match_id)
         db().commit()

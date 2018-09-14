@@ -15,9 +15,7 @@ def create_issue(content: str,
                  author: str,
                  location: str = 'Discord',
                  repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools',
-                 exception: Optional[Exception] = None) -> Issue:
-    if not configuration.get_bool('create_github_issues'):
-        return None
+                 exception: Optional[BaseException] = None) -> Issue:
     labels: List[str] = []
     if content is None or content == '':
         return None
@@ -58,6 +56,9 @@ def create_issue(content: str,
     print(title + '\n' + body, file=sys.stderr)
     # Only check for github details at the last second to get log output even if github not configured.
     if not configuration.get('github_user') or not configuration.get('github_password'):
+        return None
+    if not configuration.get_bool('create_github_issues'):
+        print(f'Not creating github issue:\n{title}\n\n{body}')
         return None
     g = Github(configuration.get('github_user'), configuration.get('github_password'))
     git_repo = g.get_repo(repo_name)

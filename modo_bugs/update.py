@@ -21,7 +21,10 @@ from .strings import (AFFECTS_REGEX, BAD_AFFECTS_REGEX, BADCATS, CATEGORIES,
 def cardnames() -> List[str]:
     return fetcher.catalog_cardnames()
 
-LEGAL_CARDS: List[str] = []
+@lazy_property
+def pd_legal_cards() -> List[str]:
+    print('Fetching http://pdmtgo.com/legal_cards.txt')
+    return requests.get('http://pdmtgo.com/legal_cards.txt').text.split('\n')
 
 ALL_BUGS: List[Dict] = []
 
@@ -32,18 +35,10 @@ ALL_CSV: List[str] = []
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer) # type: ignore
 
-def fetch_pd_legal() -> None:
-    print('Fetching http://pdmtgo.com/legal_cards.txt')
-    for card in requests.get('http://pdmtgo.com/legal_cards.txt').text.split('\n'):
-        LEGAL_CARDS.append(card)
-
-
 def main() -> None:
     if configuration.get('github_user') is None or configuration.get('github_password') is None:
         print('Invalid Config')
         exit(1)
-
-    fetch_pd_legal()
 
     issues = repo.get_repo().get_issues()
     for issue in issues:
@@ -78,7 +73,7 @@ def process_issue(issue: Issue) -> None:
         check_for_invalid_card_names(issue, cards)
         update_issue_body(issue, cards, see_also)
 
-    pd_legal = ([True for c in cards if c in LEGAL_CARDS] or [False])[0]
+    pd_legal = ([True for c in cards if c in pd_legal_cards()] or [False])[0]
 
     if pd_legal and not 'Affects PD' in labels:
         issue.add_to_labels('Affects PD')
@@ -122,7 +117,7 @@ def process_issue(issue: Issue) -> None:
             'description': msg,
             'category': cat,
             'last_updated': str(issue.updated_at),
-            'pd_legal': card in LEGAL_CARDS,
+            'pd_legal': card in pd_legal_cards(),
             'bug_blog': 'From Bug Blog' in labels,
             'breaking': cat in BADCATS,
             'bannable': bannable,

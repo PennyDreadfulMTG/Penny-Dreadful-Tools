@@ -1,6 +1,7 @@
 import asyncio
 import re
 import sys
+from typing import Any
 
 import discord
 from discord import VoiceState
@@ -112,7 +113,7 @@ class Bot(discord.Client):
                         await self.on_message(message)
                         await reaction.message.delete()
 
-    async def on_error(self, event_method, *args, **kwargs):
+    async def on_error(self, event_method: str, *args: Any, **kwargs: Any) -> None:
         await super().on_error(event_method, args, kwargs)
         (_, exception, __) = sys.exc_info()
         try:
@@ -122,66 +123,73 @@ class Bot(discord.Client):
 
     async def background_task_spoiler_season(self) -> None:
         'Poll Scryfall for the latest 250 cards, and add them to our db if missing'
-        await self.wait_until_ready()
-        new_cards = await fetcher.scryfall_cards_async()
-        for c in new_cards['data']:
-            try:
-                oracle.valid_name(c['name'])
-                await asyncio.sleep(1)
-            except InvalidDataException:
-                oracle.insert_scryfall_card(c, True)
-                print('Imported {0} from Scryfall'.format(c['name']))
-                await asyncio.sleep(5)
-            except TooFewItemsException:
-                pass
+        try:
+            await self.wait_until_ready()
+            new_cards = await fetcher.scryfall_cards_async()
+            for c in new_cards['data']:
+                try:
+                    oracle.valid_name(c['name'])
+                    await asyncio.sleep(1)
+                except InvalidDataException:
+                    oracle.insert_scryfall_card(c, True)
+                    print('Imported {0} from Scryfall'.format(c['name']))
+                    await asyncio.sleep(5)
+                except TooFewItemsException:
+                    pass
+        except Exception: # pylint: disable=broad-except
+            await self.on_error('background_task_spoiler_season')
+
 
     async def background_task_tournaments(self) -> None:
-        await self.wait_until_ready()
-        tournament_channel_id = configuration.get_int('tournament_channel_id')
-        if not tournament_channel_id:
-            return
-        channel = self.get_channel(tournament_channel_id)
-        while not self.is_closed:
-            info = tournaments.next_tournament_info()
-            diff = info['next_tournament_time_precise']
-            if info['sponsor_name']:
-                message = 'A {sponsor} sponsored tournament'.format(sponsor=info['sponsor_name'])
-            else:
-                message = 'A free tournament'
-            embed = discord.Embed(title=info['next_tournament_name'], description=message)
-            if diff <= 0:
-                embed.add_field(name='Starting now', value='Check <#334220558159970304> for further annoucements')
-            elif diff <= 14400:
-                embed.add_field(name='Starting in:', value=dtutil.display_time(diff, 2))
-                embed.add_field(name='Pre-register now:', value='https://gatherling.com')
+        try:
+            await self.wait_until_ready()
+            tournament_channel_id = configuration.get_int('tournament_channel_id')
+            if not tournament_channel_id:
+                return
+            channel = self.get_channel(tournament_channel_id)
+            while not self.is_closed:
+                info = tournaments.next_tournament_info()
+                diff = info['next_tournament_time_precise']
+                if info['sponsor_name']:
+                    message = 'A {sponsor} sponsored tournament'.format(sponsor=info['sponsor_name'])
+                else:
+                    message = 'A free tournament'
+                embed = discord.Embed(title=info['next_tournament_name'], description=message)
+                if diff <= 0:
+                    embed.add_field(name='Starting now', value='Check <#334220558159970304> for further annoucements')
+                elif diff <= 14400:
+                    embed.add_field(name='Starting in:', value=dtutil.display_time(diff, 2))
+                    embed.add_field(name='Pre-register now:', value='https://gatherling.com')
 
-            if diff <= 14400:
-                embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
-                # See #2809.
-                # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
-                await channel.send(embed=embed)
+                if diff <= 14400:
+                    embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
+                    # See #2809.
+                    # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
+                    await channel.send(embed=embed)
 
-            if diff <= 300:
-                # Five minutes, final warning.  Sleep until the tournament has started.
-                timer = 301
-            elif diff <= 1800:
-                # Half an hour. Sleep until 5 minute warning.
-                timer = diff - 300
-            elif diff <= 3600:
-                # One hour.  Sleep until half-hour warning.
-                timer = diff - 1800
-            else:
-                # Wait until four hours before tournament.
-                timer = 3600 + diff % 3600
-                if diff > 3600 * 6:
-                    # The timer can afford to get off-balance by doing other background work.
-                    await self.background_task_spoiler_season()
-                    multiverse.update_bugged_cards()
+                if diff <= 300:
+                    # Five minutes, final warning.  Sleep until the tournament has started.
+                    timer = 301
+                elif diff <= 1800:
+                    # Half an hour. Sleep until 5 minute warning.
+                    timer = diff - 300
+                elif diff <= 3600:
+                    # One hour.  Sleep until half-hour warning.
+                    timer = diff - 1800
+                else:
+                    # Wait until four hours before tournament.
+                    timer = 3600 + diff % 3600
+                    if diff > 3600 * 6:
+                        # The timer can afford to get off-balance by doing other background work.
+                        await self.background_task_spoiler_season()
+                        multiverse.update_bugged_cards()
 
-            if timer < 300:
-                timer = 300
-            print('diff={0}, timer={1}'.format(diff, timer))
-            await asyncio.sleep(timer)
+                if timer < 300:
+                    timer = 300
+                print('diff={0}, timer={1}'.format(diff, timer))
+                await asyncio.sleep(timer)
+        except Exception: # pylint: disable=broad-except
+            await self.on_error('background_task_tournaments')
 
 
 def init() -> None:

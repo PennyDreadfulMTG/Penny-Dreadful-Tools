@@ -3,6 +3,7 @@ from typing import Dict, Optional
 from github import Github
 from github.Issue import Issue
 from github.IssueComment import IssueComment
+from github.Project import Project
 from github.Repository import Repository
 
 from shared import configuration, lazy, redis
@@ -23,6 +24,9 @@ def get_repo() -> Repository:
     if gh is not None:
         return gh.get_repo('PennyDreadfulMTG/modo-bugs')
     return None
+
+def get_verification_project() -> Project:
+    return get_repo().get_projects()[0]
 
 def create_comment(issue: Issue, body: str) -> IssueComment:
     set_issue_bbt(issue.number, None)

@@ -492,9 +492,9 @@ def load_cards(decks: List[Deck]) -> None:
 
 # It makes the main query about 5x faster to do this as a separate query (which is trivial and done only once for all decks).
 def load_competitive_stats(decks: List[Deck]) -> None:
-    if len(decks) == 0:
-        return
     decks_by_id = {d.id: d for d in decks if d.get('omw') is None}
+    if len(decks_by_id) == 0:
+        return
     if len(decks_by_id) < 1000:
         where = 'd.id IN ({deck_ids})'.format(deck_ids=', '.join(map(sqlescape, map(str, decks_by_id.keys()))))
     else:
@@ -522,7 +522,6 @@ def load_competitive_stats(decks: List[Deck]) -> None:
         GROUP BY
             d.id
     """.format(where=where)
-    print(sql)
     rs = db().select(sql)
     for row in rs:
         if decks_by_id.get(row['id']):

@@ -17,6 +17,9 @@ from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
 
+def latest_decks() -> List[Deck]:
+    return load_decks(where='d.created_date > UNIX_TIMESTAMP(NOW() - INTERVAL 30 DAY)', limit='LIMIT 50')
+
 def load_deck(deck_id: int) -> Deck:
     return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))
 

@@ -522,7 +522,6 @@ def load_competitive_stats(decks: List[Deck]) -> None:
         GROUP BY
             d.id
     """.format(where=where)
-    print(sql)
     rs = db().select(sql)
     for row in rs:
         if decks_by_id.get(row['id']):

@@ -492,10 +492,10 @@ def load_cards(decks: List[Deck]) -> None:
 
 # It makes the main query about 5x faster to do this as a separate query (which is trivial and done only once for all decks).
 def load_competitive_stats(decks: List[Deck]) -> None:
-    if len(decks) == 0:
-        return
     decks_by_id = {d.id: d for d in decks if d.get('omw') is None}
-    if len(decks_by_id) < 1000:
+    if len(decks_by_id) == 0:
+        return
+    elif len(decks_by_id) < 1000:
         where = 'd.id IN ({deck_ids})'.format(deck_ids=', '.join(map(sqlescape, map(str, decks_by_id.keys()))))
     else:
         where = 'TRUE' # MySQL doesn't like to be asked to do IN queries for very long argument lists. Just load everything. (MariaDB doesn't care, interestingly.)

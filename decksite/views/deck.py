@@ -122,6 +122,8 @@ class Deck(View):
             return False
         if session.get('admin'):
             return True
+        if session.get('demimod'):
+            return True
         if self.person_id != self.deck.person_id:
             return False
         return True

@@ -3,6 +3,7 @@ from lxml import etree
 
 from . import repo
 
+
 def main() -> None:
     manifest = requests.get('http://mtgoclientdepot.onlinegaming.wizards.com/MTGO.application')
     tree = etree.fromstring(manifest.content)

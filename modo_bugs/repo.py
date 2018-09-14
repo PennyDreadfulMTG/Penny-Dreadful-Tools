@@ -3,8 +3,8 @@ from typing import Dict, Optional
 from github import Github
 from github.Issue import Issue
 from github.IssueComment import IssueComment
-from github.Repository import Repository
 from github.Project import Project
+from github.Repository import Repository
 
 from shared import configuration, lazy, redis
 

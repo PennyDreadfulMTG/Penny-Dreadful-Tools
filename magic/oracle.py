@@ -110,6 +110,7 @@ def insert_scryfall_card(sfcard: Dict, rebuild_cache: bool = True) -> None:
         'cmc': int(float(sfcard['cmc'])),
         'imageName': imagename,
         'legalities': [],
+        'position': 1,
         'printings': [sfcard['set']],
         'rarity': sfcard['rarity'],
         'names': []

@@ -233,7 +233,7 @@ def preaggregate_archetypes() -> None:
             perfect_runs INT NOT NULL,
             tournament_wins INT NOT NULL,
             tournament_top8s INT NOT NULL,
-            PRIMARY KEY (archetype_id, `day`),
+            PRIMARY KEY (`day`, archetype_id),
             FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
@@ -276,6 +276,7 @@ def preaggregate_matchups() -> None:
             wins INT NOT NULL,
             losses INT NOT NULL,
             draws INT NOT NULL,
+            PRIMARY KEY (`day`, archetype_id, opponent_archetype_id),
             FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE,
             FOREIGN KEY (opponent_archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS

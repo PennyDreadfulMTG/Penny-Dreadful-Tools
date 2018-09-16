@@ -625,6 +625,8 @@ Want to contribute? Send a Pull Request."""
         explanations['rotation'] = explanations['legality']
         explanations['spectate'] = explanations['spectating']
         explanations['tournaments'] = explanations['tournament']
+        explanations['watching'] = explanations['spectating']
+        explanations['spectate'] = explanations['spectating']
         word = args.lower().replace(' ', '').rstrip('s') # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
         if len(word) > 0:
             for k in explanations:

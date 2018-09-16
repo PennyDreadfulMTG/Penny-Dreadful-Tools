@@ -116,7 +116,8 @@ def preaggregate_card() -> None:
             draws INT NOT NULL,
             perfect_runs INT NOT NULL,
             tournament_wins INT NOT NULL,
-            tournament_top8s INT NOT NULL
+            tournament_top8s INT NOT NULL,
+            PRIMARY KEY (`day`, name)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             card AS name,
@@ -152,7 +153,8 @@ def preaggregate_card_person() -> None:
             draws INT NOT NULL,
             perfect_runs INT NOT NULL,
             tournament_wins INT NOT NULL,
-            tournament_top8s INT NOT NULL
+            tournament_top8s INT NOT NULL,
+            PRIMARY KEY (`day`, person_id, name)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             card AS name,

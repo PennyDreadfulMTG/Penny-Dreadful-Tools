@@ -47,18 +47,12 @@ def load_decks(where: str = '1 = 1',
         SELECT
             d.id,
             d.finish,
-            IFNULL(MAX(m.date), d.created_date) AS active_date,
-            SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins,
-            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
-            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws
+            cache.active_date,
+            cache.wins,
+            cache.losses,
+            cache.draws
         FROM
             deck AS d
-        LEFT JOIN
-            deck_match AS dm ON d.id = dm.deck_id
-        LEFT JOIN
-            `match` AS m ON dm.match_id = m.id
-        LEFT JOIN
-            deck_match AS odm ON odm.deck_id <> d.id AND dm.match_id = odm.match_id
         """
     if 'p.' in where or 'p.' in order_by:
         sql += """
@@ -78,12 +72,9 @@ def load_decks(where: str = '1 = 1',
     sql += """
         {competition_join}
         """
-    if 'cache.' in where or 'cache.' in order_by:
-        sql += """
+    sql += """
         LEFT JOIN
             deck_cache AS cache ON d.id = cache.deck_id
-        """
-    sql += """
         {season_join}
         WHERE
             ({where}) AND ({season_query})

@@ -24,10 +24,10 @@ def insert_match(dt: datetime.datetime,
     loser_id = left_id if left_games < right_games else right_id
     db().begin()
     match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
-    sql = 'UPDATE deck_cache SET wins = IFNULL(wins, 0) + 1 WHERE deck_id = %s'
-    db().execute(sql, [winner_id])
-    sql = 'UPDATE deck_cache SET losses = IFNULL(losses, 0) + 1 WHERE deck_id = %s'
-    db().execute(sql, [loser_id])
+    sql = 'UPDATE deck_cache SET wins = IFNULL(wins, 0) + 1, active_date = %s WHERE deck_id = %s'
+    db().execute(sql, [dtutil.dt2ts(dt), winner_id])
+    sql = 'UPDATE deck_cache SET losses = IFNULL(losses, 0) + 1, active_date = %s WHERE deck_id = %s'
+    db().execute(sql, [dtutil.dt2ts(dt), loser_id])
     sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
     db().execute(sql, [left_id, match_id, left_games])
     redis.clear(f'decksite:deck:{left_id}')

@@ -47,18 +47,12 @@ def load_decks(where: str = '1 = 1',
         SELECT
             d.id,
             d.finish,
-            IFNULL(MAX(m.date), d.created_date) AS active_date,
-            SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins,
-            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
-            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws
+            cache.active_date,
+            cache.wins,
+            cache.losses,
+            cache.draws
         FROM
             deck AS d
-        LEFT JOIN
-            deck_match AS dm ON d.id = dm.deck_id
-        LEFT JOIN
-            `match` AS m ON dm.match_id = m.id
-        LEFT JOIN
-            deck_match AS odm ON odm.deck_id <> d.id AND dm.match_id = odm.match_id
         """
     if 'p.' in where or 'p.' in order_by:
         sql += """
@@ -78,12 +72,9 @@ def load_decks(where: str = '1 = 1',
     sql += """
         {competition_join}
         """
-    if 'cache.' in where or 'cache.' in order_by:
-        sql += """
+    sql += """
         LEFT JOIN
             deck_cache AS cache ON d.id = cache.deck_id
-        """
-    sql += """
         {season_join}
         WHERE
             ({where}) AND ({season_query})
@@ -371,7 +362,13 @@ def prime_cache(d: Deck) -> None:
     normalized_name = deck_name.normalize(d)
     db().begin()
     db().execute('DELETE FROM deck_cache WHERE deck_id = %s', [d.id])
-    db().execute('INSERT INTO deck_cache (deck_id, normalized_name, colors, colored_symbols, legal_formats) VALUES (%s, %s, %s, %s, %s)', [d.id, normalized_name, colors_s, colored_symbols_s, legal_formats_s])
+    sql = """
+        INSERT INTO
+            deck_cache (deck_id, normalized_name, colors, colored_symbols, legal_formats, wins, draws, losses, active_date)
+        VALUES
+            (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+    """
+    db().execute(sql, [d.id, normalized_name, colors_s, colored_symbols_s, legal_formats_s, 0, 0, 0, dtutil.dt2ts(d.created_date)])
     db().commit()
     # If it was worth priming the in-db cache it's worth busting the in-memory cache to pick up the changes.
     redis.clear(f'decksite:deck:{d.id}')

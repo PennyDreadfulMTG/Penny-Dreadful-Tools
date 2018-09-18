@@ -184,6 +184,8 @@ Symbols provided by our main font are:
     + U+002B PLUS SIGN (expand row in mobile view table)
     − U+2212 MINUS SIGN (close expanded row in mobile view table)
     … U+2026 HORIZONTAL ELLIPSIS (in some link text like "all decks this season …", "More new …", and in dropdowns in "Choose …")
+    → U+2192 RIGHT-POINTING ARROW (paginate right)
+    ← U+2192 LEFT-POINTING ARROW (paginate left)
 
 The characters included in our subsetted font are:
 
@@ -204,8 +206,6 @@ The characters included in our subsetted font are:
     🐞 U+1F41E LADY BEETLE (bug)
     🚫 U+1F6AB NO ENTRY SIGN (card is illegal this season)
     🏆 U+1F3C6 TROPHY (tournament win in news, 5-0 league run in news)
-    ⏩ U+23E9 BLACK RIGHT-POINTING DOUBLE TRIANGLE (paginate right, maybe use → U+2192 RIGHT-POINTING ARROW which is in Concourse which looks similar to the Chrome back and forward buttons, or use single or double angle-quotes)
-    ⏪ U+23EA BLACK LEFT-POINTING DOUBLE TRIANGLE (page left, see above)
     📰 U+1F4F0 NEWSPAPER (subreddit post news item, manually entered news item - we don't actually have any of these yet but the possibility exists)
     💻 U+1F4BB PERSONAL COMPUTER (code release news item)
     ▾ U+25BE BLACK DOWN-POINTING SMALL TRIANGLE (indicator on season selector dropdown)

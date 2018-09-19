@@ -72,29 +72,7 @@ def set_achievements(people: List[Person], season_id: int = None) -> None:
             COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END) AS tournament_wins,
             COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END) AS league_entries,
             CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END AS completionist,
-            SUM(
-                CASE WHEN d.id IN
-                    (
-                        SELECT
-                            d.id
-                        FROM
-                            deck AS d
-                        {competition_join}
-                        LEFT JOIN
-                            deck_match AS dm ON dm.deck_id = d.id
-                        LEFT JOIN
-                            deck_match AS odm ON odm.match_id = dm.match_id AND odm.deck_id <> d.id
-                        WHERE
-                            ct.name = 'League'
-                        GROUP BY
-                            d.id
-                        HAVING
-                            SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) >= 5
-                        AND
-                            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) = 0
-                    )
-                THEN 1 ELSE 0 END
-            ) AS perfect_runs,
+            SUM(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses THEN 1 ELSE 0 END) AS perfect_runs,
             SUM(
                 CASE WHEN d.id IN
                     (
@@ -127,6 +105,8 @@ def set_achievements(people: List[Person], season_id: int = None) -> None:
             person AS p
         LEFT JOIN
             deck AS d ON d.person_id = p.id
+        LEFT JOIN
+            deck_cache AS dc ON dc.deck_id = d.id
         {season_join}
         {competition_join}
         WHERE

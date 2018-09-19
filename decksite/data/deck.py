@@ -71,8 +71,6 @@ def load_decks(where: str = '1 = 1',
         """
     sql += """
         {competition_join}
-        """
-    sql += """
         LEFT JOIN
             deck_cache AS cache ON d.id = cache.deck_id
         {season_join}

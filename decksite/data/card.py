@@ -1,3 +1,4 @@
+import sys
 from typing import Dict, List, Optional
 
 from decksite.data import deck, query
@@ -75,10 +76,14 @@ def load_cards(season_id: Optional[int] = None, person_id: Optional[int] = None,
 def load_card(name: str, season_id: Optional[int] = None) -> Card:
     c = guarantee.exactly_one(oracle.load_cards([name]))
     c.decks = deck.load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name)), season_id=season_id)
-    c.all = Container()
-    c.all_wins = sum(filter(None, [d.wins for d in c.decks]))
-    c.all_losses = sum(filter(None, [d.losses for d in c.decks]))
-    c.all_draws = sum(filter(None, [d.draws for d in c.decks]))
+    c.all_wins, c.all_losses, c.all_draws, c.all_tournament_wins, c.all_tournament_top8s, c.all_perfect_runs = 0, 0, 0, 0, 0, 0
+    for d in c.decks:
+        c.all_wins += d.get('wins', 0)
+        c.all_losses += d.get('losses', 0)
+        c.all_draws += d.get('draws', 0)
+        c.all_tournament_wins += 1 if d.get('finish') == 1 else 0
+        c.all_tournament_top8s += 1 if (d.get('finish') or sys.maxsize) <= 8 else 0
+        c.all_perfect_runs += 1 if d.get('source_name') == 'League' and d.get('wins', 0) >= 5 and d.get('losses', 0) == 0 else 0
     if c.all_wins or c.all_losses:
         c.all_win_percent = round((c.all_wins / (c.all_wins + c.all_losses)) * 100, 1)
     else:

@@ -1,5 +1,4 @@
 import sys
-
 from typing import Dict, List, Optional
 
 from decksite.data import deck, query

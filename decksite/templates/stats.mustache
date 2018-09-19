@@ -7,6 +7,10 @@
                 <th># Decks</th>
                 <th>Record</th>
                 <th data-breakpoints="xs sm">Win %</th>
+                <th class="n" data-breakpoints="xs sm">①</th>
+                <th class="n" data-breakpoints="xs sm">⑧</th>
+                <th class="n" data-breakpoints="xs sm">5–0s</th>
+                {{#elo}}<th class="n" data-breakpoints="xs sm">Elo</th>{{/elo}}
                 {{! Empty column to hold the toggle when footable kicks in.}}
                 <td></td>
             </tr>
@@ -14,7 +18,11 @@
         <tbody>
             <td class="n">{{all_num_decks}}</td>
             <td class="n">{{#all_show_record}}{{all_wins}}–{{all_losses}}{{#all_draws}}–{{all_draws}}{{/all_draws}}{{/all_show_record}}</td>
-            <td class="n">{{all_win_percent}}</td>
+            <td class="n" data-breakpoints="xs sm">{{all_win_percent}}</td>
+            <td class="n" data-breakpoints="xs sm">{{#all_tournament_wins}}{{all_tournament_wins}}{{/all_tournament_wins}}</td>
+            <td class="n" data-breakpoints="xs sm">{{#all_tournament_top8s}}{{all_tournament_top8s}}{{/all_tournament_top8s}}</td>
+            <td class="n" data-breakpoints="xs sm">{{#all_perfect_runs}}{{all_perfect_runs}}{{/all_perfect_runs}}</td>
+            {{#elo}}<td class="n" data-breakpoints="xs sm">{{elo}}</th>{{/elo}}
             {{! Empty column to hold the toggle when footable kicks in.}}
             <td></td>
         </tbody>

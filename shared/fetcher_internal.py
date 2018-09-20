@@ -47,6 +47,8 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
         perf.check(p, 'slow_fetch', (url, headers), 'fetch')
         if character_encoding is not None:
             response.encoding = character_encoding
+        if response.status_code in [500, 502, 503]:
+            raise FetchException(f'Server returned a {response.status_code}')
         return response.text
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
         raise FetchException(e)

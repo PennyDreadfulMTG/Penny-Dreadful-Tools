@@ -16,9 +16,14 @@ def run() -> None:
     if not args:
         args.extend(['scrape', 'update', 'verify'])
     print('modo_bugs invoked with modes: ' + repr(args))
+
     if 'scrape' in args:
+        args.extend(['scrape_bb', 'scrape_an'])
+    if 'scrape_bb' in args:
         scrape_bugblog.main()
+    if 'scrape_an' in args:
         scrape_announcements.main()
+
     if 'update' in args:
         update.main()
     if 'verify' in args:

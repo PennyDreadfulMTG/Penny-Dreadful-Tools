@@ -50,7 +50,7 @@ def parse_build_notes(h: Tag) -> None:
 def parse_downtimes(h: Tag) -> None:
     for n in h.next_elements:
         if isinstance(n, Tag) and n.text:
-            with open('downtimes.md', 'w', encoding='utf-8') as f:
+            with open('downtimes.txt', 'w', encoding='utf-8') as f:
                 txt = n.text.strip()
                 print(txt)
                 f.write(txt)

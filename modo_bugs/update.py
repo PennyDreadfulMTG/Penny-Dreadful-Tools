@@ -139,7 +139,7 @@ def process_issue(issue: Issue) -> None:
         age = datetime.datetime.now() - issue.updated_at
         if 'Help Wanted' in labels:
             bug['help_wanted'] = True
-        elif age.days > 120:
+        elif age.days > 60:
             bug['help_wanted'] = True
 
         bug['last_verified'] = VERIFICATION_BY_ISSUE.get(issue.number, None)

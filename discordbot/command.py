@@ -185,6 +185,7 @@ Want to contribute? Send a Pull Request."""
         oracle.legal_cards(force=True)
         multiverse.update_bugged_cards()
         multiverse.update_cache()
+        multiverse.reindex()
         oracle.init(force=True)
         await channel.send('Reloaded legal cards and bugs.')
 

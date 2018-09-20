@@ -89,7 +89,10 @@ def parse_article_item_extended(a: Tag) -> Tuple[Tag, str]:
 
 @lazy.lazy_property
 def get_article_archive() -> List[Tuple[Tag, str]]:
-    html = internal.fetch('http://magic.wizards.com/en/articles/archive/184956')
+    try:
+        html = internal.fetch('http://magic.wizards.com/en/articles/archive/184956')
+    except internal.FetchException:
+        html = internal.fetch('http://magic.wizards.com/en/articles/archive/')
     soup = BeautifulSoup(html, 'html.parser')
     return [parse_article_item_extended(a) for a in soup.find_all('div', class_='article-item-extended')]
 

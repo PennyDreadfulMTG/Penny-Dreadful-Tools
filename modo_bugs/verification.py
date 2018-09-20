@@ -1,3 +1,5 @@
+import json
+
 import requests
 from lxml import etree
 
@@ -11,6 +13,10 @@ def main() -> None:
     version = identity.attrib['version']
 
     print('Current MTGO Version is {0}'.format(version))
+
+    data = {'version': version}
+    with open('mtgo_version.json', mode='w') as f:
+        json.dump(data, f)
 
     project = repo.get_verification_project()
     current = [c for c in project.get_columns() if c.name == version]

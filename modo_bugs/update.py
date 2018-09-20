@@ -28,9 +28,7 @@ def pd_legal_cards() -> List[str]:
 
 ALL_BUGS: List[Dict] = []
 
-ALL_CSV: List[str] = []
-
-
+VERIFICATION_BY_ISSUE: Dict[int, str] = {}
 
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer) # type: ignore
@@ -39,6 +37,8 @@ def main() -> None:
     if configuration.get('github_user') is None or configuration.get('github_password') is None:
         print('Invalid Config')
         exit(1)
+
+    verification_numbers()
 
     issues = repo.get_repo().get_issues()
     for issue in issues:
@@ -59,6 +59,18 @@ def main() -> None:
     bugsjson = open('bugs.json', mode='w')
     json.dump(ALL_BUGS, bugsjson, indent=2)
     bugsjson.close()
+
+def verification_numbers() -> None:
+    print('Updating Verification Model')
+    project = repo.get_verification_project()
+    for col in project.get_columns():
+        if col.name == 'Needs Testing':
+            continue
+        print(f'... {col.name}')
+        for card in col.get_cards():
+            VERIFICATION_BY_ISSUE[card.get_content().number] = col.name
+    print('... Done')
+
 
 def process_issue(issue: Issue) -> None:
     age = (datetime.datetime.now() - issue.updated_at).days
@@ -105,12 +117,6 @@ def process_issue(issue: Issue) -> None:
         cat = categories.pop()
 
     for card in cards:
-        csv_line = card + '\t'
-        csv_line += msg + '\t'
-        csv_line += cat + '\t'
-        csv_line += str(issue.updated_at)
-        csv_line = strings.remove_smartquotes(csv_line)
-        ALL_CSV.append(csv_line)
         bannable = cat in BADCATS and 'Multiplayer' not in labels
         bug = {
             'card': card,
@@ -135,6 +141,8 @@ def process_issue(issue: Issue) -> None:
             bug['help_wanted'] = True
         elif age.days > 120:
             bug['help_wanted'] = True
+
+        bug['last_verified'] = VERIFICATION_BY_ISSUE.get(issue.number, None)
 
         ALL_BUGS.append(bug)
 

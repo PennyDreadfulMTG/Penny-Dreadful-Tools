@@ -29,8 +29,7 @@ class People(View):
     def prepare(self):
         for p in self.people:
             key = f'logsite:people:{p.id}'
-            # data = redis.get_container(key, ex=3600)
-            data = None
+            data = redis.get_container(key, ex=3600)
             if data:
                 p.fav_format = data.fav_format
                 p.num_matches = data.num_matches

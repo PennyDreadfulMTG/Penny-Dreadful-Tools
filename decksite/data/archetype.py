@@ -263,8 +263,9 @@ def preaggregate_archetypes() -> None:
             `day` IS NOT NULL
     """.format(nwdl_join=deck.nwdl_join())
     db().execute(sql)
-    db().execute('DROP TABLE IF EXISTS _archetype_stats')
-    db().execute('RENAME TABLE _new_archetype_stats TO _archetype_stats')
+    db().execute('DROP TABLE IF EXISTS _old_archetype_stats')
+    db().execute('RENAME TABLE _archetype_stats TO _old_archetype_stats, _new_archetype_stats TO _archetype_stats')
+    db().execute('DROP TABLE IF EXISTS _old_archetype_stats')
 
 def preaggregate_matchups() -> None:
     db().execute('DROP TABLE IF EXISTS _new_matchup_stats')
@@ -307,5 +308,6 @@ def preaggregate_matchups() -> None:
         --     `day` IS NOT NULL
     """
     db().execute(sql)
-    db().execute('DROP TABLE IF EXISTS _matchup_stats')
-    db().execute('RENAME TABLE _new_matchup_stats TO _matchup_stats')
+    db().execute('DROP TABLE IF EXISTS _old_matchup_stats')
+    db().execute('RENAME TABLE _matchup_stats TO _old_matchup_stats, _new_matchup_stats TO _matchup_stats')
+    db().execute('DROP TABLE IF EXISTS _old_matchup_stats')

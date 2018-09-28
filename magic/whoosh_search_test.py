@@ -74,10 +74,6 @@ class WhooshSearchTest(unittest.TestCase):
     def test_normalized_beats_tokenized(self) -> None:
         self.best_match_is('Flash Food', 'Flash Flood')
 
-    def test_10_cycles_are_returned(self) -> None:
-        result = self.searcher.search('Guildgate') # type: ignore
-        assert len(result.fuzzy) == 10
-
     def test_dfc(self) -> None:
         self.best_match_is('Insectile Aberration', 'Delver of Secrets')
 

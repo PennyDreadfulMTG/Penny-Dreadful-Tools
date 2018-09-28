@@ -179,13 +179,15 @@ For symbols not provided by our main-text font we provide a strict subset of Sym
 Symbols provided by our main font are:
 
     — U+2012 EM DASH (Used in status bar to break up various pieces of info, also used from mtgjson info and in discord bot output)
-    – U+2013 EN DASH (for records like “4–1”)
+    – U+2013 EN DASH (for records like “4–1”) 
     ★ U+2605 BLACK STAR (deck quality)
     + U+002B PLUS SIGN (expand row in mobile view table)
     − U+2212 MINUS SIGN (close expanded row in mobile view table)
     … U+2026 HORIZONTAL ELLIPSIS (in some link text like "all decks this season …", "More new …", and in dropdowns in "Choose …")
     → U+2192 RIGHT-POINTING ARROW (paginate right)
-    ← U+2192 LEFT-POINTING ARROW (paginate left)
+    ← U+2190 LEFT-POINTING ARROW (paginate left)
+    ↑ U+2191 UPWARDS ARROW (currently hitting in rotation)
+    ↓ U+2193 DOWNARDS ARROW (currently missing in rotation)
 
 The characters included in our subsetted font are:
 

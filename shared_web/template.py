@@ -108,5 +108,5 @@ class NoParaTagProcessor(Treeprocessor):
 
 # pylint: disable=no-self-use, invalid-name
 class NoParaTagsExtension(Extension):
-    def extendMarkdown(self, md: Markdown, md_globals: Any) -> None:
+    def extendMarkdown(self, md: Markdown, _: Any) -> None:
         md.treeprocessors.add('noparatag', NoParaTagProcessor(), '_end')

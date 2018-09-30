@@ -145,9 +145,10 @@ class Bot(discord.Client):
             await self.wait_until_ready()
             tournament_channel_id = configuration.get_int('tournament_channel_id')
             if not tournament_channel_id:
+                print('tournament channel is not configured')
                 return
             channel = self.get_channel(tournament_channel_id)
-            while not self.is_closed:
+            while self.is_ready:
                 info = tournaments.next_tournament_info()
                 diff = info['next_tournament_time_precise']
                 if info['sponsor_name']:
@@ -188,6 +189,7 @@ class Bot(discord.Client):
                     timer = 300
                 print('diff={0}, timer={1}'.format(diff, timer))
                 await asyncio.sleep(timer)
+            print('naturally stopping tournament reminders')
         except Exception: # pylint: disable=broad-except
             await self.on_error('background_task_tournaments')
 

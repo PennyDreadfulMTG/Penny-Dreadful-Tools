@@ -93,7 +93,7 @@ def face_properties() -> TableDescription:
     props['name']['query'] = """{name_query} AS name""".format(name_query=name_query())
     props['name_ascii']['query'] = """{name_query} AS name_ascii""".format(name_query=name_query('name_ascii'))
     props['cmc']['query'] = """{cmc_query} AS cmc""".format(cmc_query=cmc_query())
-    props['mana_cost']['query'] = "GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '|') AS `{column}`"
+    props['mana_cost']['query'] = """{mana_cost_query} AS mana_cost""".format(mana_cost_query=mana_cost_query())
     props['type']['query'] = """{type_query} AS type""".format(type_query=type_query())
     for k in ['text', 'search_text']:
         props[k]['query'] = "GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '\n-----\n') AS `{column}`"
@@ -244,6 +244,16 @@ def cmc_query() -> str:
             SUM(CASE WHEN `{table}`.position = 1 OR `{table}`.position = 2 THEN {column} ELSE 0 END)
         ELSE
             SUM(CASE WHEN `{table}`.position = 1 THEN `{table}`.cmc ELSE 0 END)
+        END
+    """
+
+def mana_cost_query() -> str:
+    return """
+        CASE
+        WHEN layout = 'flip' THEN
+            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END SEPARATOR '')
+        ELSE
+            GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '|')
         END
     """
 

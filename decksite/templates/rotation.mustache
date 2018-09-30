@@ -8,6 +8,7 @@
         <table class="highlights">{{! Allow overflow-x so highlighting shows in left margin.}}
             <thead>
                 <tr>
+                    <th>⇅</th>
                     <th>Card</th>
                     <th class="n">Hits</th>
                     <th class="n">Needed</th>
@@ -16,6 +17,7 @@
             <tbody>
                 {{#cards}}
                     <tr>
+                        <td>{{#hit_in_last_run}}↑{{/hit_in_last_run}}{{^hit_in_last_run}}↓{{/hit_in_last_run}}</td>
                         <td>{{> singlecard}}</td>
                         <td class="n">{{hits}} ({{percent}}%)</td>
                         <td class="n">{{hits_needed}} ({{percent_hits_needed}}%)</td>

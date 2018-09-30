@@ -21,13 +21,16 @@ HARDCODED_MELD_NAMES = [['Gisela, the Broken Blade', 'Bruna, the Fading Light', 
 PARTNERS = ['Regna, the Redeemer', 'Krav, the Unredeemed', 'Zndrsplt, Eye of Wisdom', 'Okaun, Eye of Chaos', 'Virtus the Veiled', 'Gorm the Great', 'Khorvath Brightflame', 'Sylvia Brightspear', 'Pir, Imaginative Rascal', 'Toothy, Imaginary Friend', 'Blaring Recruiter', 'Blaring Captain', 'Chakram Retriever', 'Chakram Slinger', 'Soulblade Corrupter', 'Soulblade Renewer', 'Impetuous Protege', 'Proud Mentor', 'Ley Weaver', 'Lore Weaver']
 
 def init() -> None:
-    current_version = fetcher.mtgjson_version()
-    if pkg_resources.parse_version(current_version) > pkg_resources.parse_version(database.mtgjson_version()):
-        print('Database update required')
-        update_database(current_version)
-        set_legal_cards()
-        update_cache()
-        reindex()
+    try:
+        current_version = fetcher.mtgjson_version()
+        if pkg_resources.parse_version(current_version) > pkg_resources.parse_version(database.mtgjson_version()):
+            print('Database update required')
+            update_database(current_version)
+            set_legal_cards()
+            update_cache()
+            reindex()
+    except fetcher.FetchException:
+        print('Unable to connect to mtgjson')
 
 def layouts() -> Dict[str, bool]:
     return {'normal': True, 'meld': True, 'split': True, 'phenomenon': False, 'token': False, 'vanguard': False, 'double-faced': True, 'plane': False, 'flip': True, 'scheme': False, 'leveler': True, 'aftermath': True}

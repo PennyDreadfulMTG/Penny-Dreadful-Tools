@@ -67,7 +67,7 @@ def process(all_prices: Dict[str, PriceListType]) -> int:
 def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignored: Set[str]) -> int:
     files = rotation.files()
     n = len(files) + 1
-    path = os.path.join(configuration.get_str('legality_dir'), 'Run_{n}.txt').format(n=n)
+    path = os.path.join(configuration.get_str('legality_dir'), 'Run_{n}.txt').format(n=str(n).zfill(3))
     h = open(path, mode='w', encoding='utf-8')
     for card in hits:
         line = card + '\n'

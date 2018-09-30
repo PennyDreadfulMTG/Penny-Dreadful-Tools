@@ -12,6 +12,16 @@ WEBHOOK = Webhook(APP, endpoint='/api/github')
 def home():
     return 'bughooks: build-commit-id: ' + APP.config['commit-id']
 
+@APP.route('/api/reset/')
+def reset():
+    try:
+        import uwsgi
+        uwsgi.reload()
+        return 'Ok'
+    except ImportError:
+        return 'Not running under uwsgi'
+
+
 def get_number(url: str) -> int:
     split_url = url.split('/')
     return int(split_url[7])

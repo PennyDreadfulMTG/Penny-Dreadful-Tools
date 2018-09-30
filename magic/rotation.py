@@ -138,7 +138,7 @@ def season_name(v: Union[int, str]) -> str:
     return 'Season {num}'.format(num=sid)
 
 def files() -> List[str]:
-    return glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))
+    return sorted(glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt')))
 
 def get_set_info(code: str) -> SetInfoType:
     for setinfo in sets():

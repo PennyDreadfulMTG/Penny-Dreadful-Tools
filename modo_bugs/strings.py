@@ -14,7 +14,7 @@ BBT_REGEX = r'^Bug Blog Text: (.*)$'
 DISCORD_REGEX = r'^Reported on Discord by (\w+#[0-9]+)$'
 IMAGES_REGEX = r'^<!-- Images --> (.*)$'
 REGEX_CARDREF = r'\[?\[([^\]]*)\]\]?'
-REGEX_SEARCHREF = r'\{([\w:/^$" ]+)\}'
+REGEX_SEARCHREF = r'\{\{\{([\w:/^$" ]+)\}\}\}'
 
 REGEX_BBCAT = r'^([\w ]+) ?(\([\w, ]+\))?'
 

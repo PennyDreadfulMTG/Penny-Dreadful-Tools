@@ -1,6 +1,5 @@
 import datetime
 import fileinput
-import glob
 import os
 from collections import Counter
 from typing import List, Union
@@ -13,7 +12,7 @@ from shared import configuration, dtutil, text
 from shared.pd_exception import DoesNotExistException
 
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use,too-many-instance-attributes
 class Rotation(View):
     def __init__(self) -> None:
         super().__init__()
@@ -40,12 +39,12 @@ class Rotation(View):
         lines = []
         files = rotation.files()
         if len(files) == 0:
-            files = glob.glob(os.path.join(configuration.get_str('legality_dir'), '*.jar'))
-            if len(files) == 0:
-                raise DoesNotExistException('Invalid configuration.  Could not find Legality Checker')
+            if not os.path.isdir(configuration.get_str('legality_dir')):
+                raise DoesNotExistException('Invalid configuration.  Could not find legality_dir.')
             self.runs = 0
             self.runs_percent = 0
             return
+        self.latest_list = open(files[-1], 'r').read().splitlines()
         for line in fileinput.FileInput(files):
             line = text.sanitize(line)
             lines.append(line.strip())
@@ -75,13 +74,15 @@ class Rotation(View):
             status = 'Legal'
         else:
             status = 'Undecided'
+        hit_in_last_run = name in self.latest_list
         c.update({
             'hits': redact(hits) if status == 'Undecided' else hits,
             'hits_needed': redact(hits_needed) if status == 'Undecided' else hits_needed,
             'percent': redact(percent) if status == 'Undecided' else percent,
             'percent_hits_needed': redact(percent_needed) if status == 'Undecided' else percent_needed,
             'status': status,
-            'interestingness': rotation.interesting(self.playability, c)
+            'interestingness': rotation.interesting(self.playability, c),
+            'hit_in_last_run': hit_in_last_run
         })
         self.cards.append(c)
 

@@ -103,7 +103,7 @@ def playability() -> Dict[str, float]:
             card
     """
     rs = [Container(r) for r in db().select(sql)]
-    high = max([c.played for c in rs])
+    high = max([c.played for c in rs] + [0])
     return {c.name: (c.played / high) for c in rs}
 
 def preaggregate() -> None:

@@ -358,7 +358,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def modobug(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """Report a Magic Online bug."""
-        await channel.send('Report Magic Online issues at <https://github.com/PennyDreadfulMTG/modo-bugs/issues/new>. Please follow the instructions at <https://github.com/PennyDreadfulMTG/modo-bugs/blob/master/README.md#how-report-or-update-bugs>. Thanks!')
+        await channel.send('Report Magic Online issues at <https://github.com/PennyDreadfulMTG/modo-bugs/issues/new>. Please follow the instructions there. Thanks!')
 
     @cmd_header('Commands')
     async def gbug(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:

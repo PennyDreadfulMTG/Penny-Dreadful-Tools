@@ -144,6 +144,7 @@ def preaggregate_card() -> None:
             `day`
     """.format(nwdl_join=deck.nwdl_join()))
     db().execute('DROP TABLE IF EXISTS _old_card_stats')
+    db().execute('CREATE TABLE IF NOT EXISTS _card_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
     db().execute('RENAME TABLE _card_stats TO _old_card_stats, _new_card_stats TO _card_stats')
     db().execute('DROP TABLE IF EXISTS _old_card_stats')
 
@@ -184,5 +185,6 @@ def preaggregate_card_person() -> None:
             `day`
     """.format(nwdl_join=deck.nwdl_join()))
     db().execute('DROP TABLE IF EXISTS _old_card_person_stats')
+    db().execute('CREATE TABLE IF NOT EXISTS _card_person_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
     db().execute('RENAME TABLE _card_person_stats TO _old_card_person_stats, _new_card_person_stats TO _card_person_stats')
     db().execute('DROP TABLE IF EXISTS _old_card_person_stats')

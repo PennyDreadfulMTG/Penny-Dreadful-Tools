@@ -155,7 +155,7 @@ def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retr
         INNER JOIN
             archetype AS oa ON opponent_archetype_id = oa.id
         LEFT JOIN
-            ({season_table}) AS season ON season.start_date <= ms.day AND (season.end_date IS NULL OR season.end_date > ms.day)
+            ({season_table}) AS season ON ms.season_id = season.id
         WHERE
             ({where}) AND ({season_query})
         GROUP BY

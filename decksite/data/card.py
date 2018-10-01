@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 
 from decksite.data import deck, query
 from decksite.database import db
-from magic import oracle, rotation
+from magic import oracle
 from magic.models.card import Card
 from shared import guarantee
 from shared.container import Container
@@ -29,27 +29,11 @@ def load_cards(season_id: Optional[int] = None, person_id: Optional[int] = None,
             SUM(perfect_runs) AS all_perfect_runs,
             SUM(tournament_wins) AS all_tournament_wins,
             SUM(tournament_top8s) AS all_tournament_top8s,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS all_win_percent,
-            SUM(CASE WHEN `day` > {season_start} THEN num_decks ELSE 0 END) AS season_num_decks,
-            SUM(CASE WHEN `day` > {season_start} THEN wins ELSE 0 END) AS season_wins,
-            SUM(CASE WHEN `day` > {season_start} THEN losses ELSE 0 END) AS season_losses,
-            SUM(CASE WHEN `day` > {season_start} THEN draws ELSE 0 END) AS season_draws,
-            SUM(CASE WHEN `day` > {season_start} THEN perfect_runs ELSE 0 END) AS season_perfect_runs,
-            SUM(CASE WHEN `day` > {season_start} THEN tournament_wins ELSE 0 END) AS season_tournament_wins,
-            SUM(CASE WHEN `day` > {season_start} THEN tournament_top8s ELSE 0 END) AS season_tournament_top8s,
-            IFNULL(ROUND((SUM(CASE WHEN `day` > {season_start} THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN `day` > {season_start} THEN wins + losses ELSE 0 END), 0)) * 100, 1), '') AS `season_win_percent`,
-            SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN num_decks ELSE 0 END) AS week_num_decks,
-            SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins ELSE 0 END) AS week_wins,
-            SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN losses ELSE 0 END) AS week_losses,
-            SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN draws ELSE 0 END) AS week_draws,
-            SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN perfect_runs ELSE 0 END) AS week_perfect_runs,
-            SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN tournament_wins ELSE 0 END) AS week_tournament_wins,
-            SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN tournament_top8s ELSE 0 END) AS week_tournament_top8s,
-            IFNULL(ROUND((SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN `day` > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK) THEN wins + losses ELSE 0 END), 0)) * 100, 1), '') AS `week_win_percent`
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS all_win_percent
         FROM
             {table} AS cs
         LEFT JOIN
-            ({season_table}) AS season ON season.start_date <= cs.day AND (season.end_date IS NULL OR season.end_date > cs.day)
+            ({season_table}) AS season ON season.id = cs.season_id
         WHERE
             {season_query} AND {where}
         GROUP BY
@@ -58,7 +42,7 @@ def load_cards(season_id: Optional[int] = None, person_id: Optional[int] = None,
             all_num_decks DESC,
             record,
             name
-    """.format(table=table, season_table=query.season_table(), season_start=int(rotation.last_rotation().timestamp()), season_query=query.season_query(season_id), where=where, group_by=group_by)
+    """.format(table=table, season_table=query.season_table(), season_query=query.season_query(season_id), where=where, group_by=group_by)
     try:
         cs = [Container(r) for r in db().select(sql)]
         cards = oracle.cards_by_name()
@@ -115,18 +99,20 @@ def preaggregate_card() -> None:
     db().execute("""
         CREATE TABLE IF NOT EXISTS _new_card_stats (
             name VARCHAR(190) NOT NULL,
-            `day` INT NOT NULL,
+            season_id INT NOT NULL,
+            num_decks INT NOT NULL,
             wins INT NOT NULL,
             losses INT NOT NULL,
             draws INT NOT NULL,
             perfect_runs INT NOT NULL,
             tournament_wins INT NOT NULL,
             tournament_top8s INT NOT NULL,
-            PRIMARY KEY (`day`, name)
+            PRIMARY KEY (season_id, name),
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             card AS name,
-            UNIX_TIMESTAMP(DATE(FROM_UNIXTIME(d.created_date))) AS `day`,
+            season.id AS season_id,
             SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
             IFNULL(SUM(wins), 0) AS wins,
             IFNULL(SUM(losses), 0) AS losses,
@@ -138,11 +124,12 @@ def preaggregate_card() -> None:
             deck AS d
         INNER JOIN
             deck_card AS dc ON d.id = dc.deck_id
+        {season_join}
         {nwdl_join}
         GROUP BY
             card,
-            `day`
-    """.format(nwdl_join=deck.nwdl_join()))
+            season.id
+    """.format(season_join=query.season_join(), nwdl_join=deck.nwdl_join()))
     db().execute('DROP TABLE IF EXISTS _old_card_stats')
     db().execute('CREATE TABLE IF NOT EXISTS _card_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
     db().execute('RENAME TABLE _card_stats TO _old_card_stats, _new_card_stats TO _card_stats')
@@ -153,7 +140,7 @@ def preaggregate_card_person() -> None:
     db().execute("""
         CREATE TABLE IF NOT EXISTS _new_card_person_stats (
             name VARCHAR(190) NOT NULL,
-            `day` INT NOT NULL,
+            season_id INT NOT NULL,
             person_id INT NOT NULL,
             wins INT NOT NULL,
             losses INT NOT NULL,
@@ -161,11 +148,12 @@ def preaggregate_card_person() -> None:
             perfect_runs INT NOT NULL,
             tournament_wins INT NOT NULL,
             tournament_top8s INT NOT NULL,
-            PRIMARY KEY (`day`, person_id, name)
+            PRIMARY KEY (season_id, person_id, name),
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             card AS name,
-            UNIX_TIMESTAMP(DATE(FROM_UNIXTIME(d.created_date))) AS `day`,
+            season.id AS season_id,
             d.person_id,
             SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
             IFNULL(SUM(wins), 0) AS wins,
@@ -178,12 +166,13 @@ def preaggregate_card_person() -> None:
             deck AS d
         INNER JOIN
             deck_card AS dc ON d.id = dc.deck_id
+        {season_join}
         {nwdl_join}
         GROUP BY
             card,
             d.person_id,
-            `day`
-    """.format(nwdl_join=deck.nwdl_join()))
+            season.id
+    """.format(season_join=query.season_join(), nwdl_join=deck.nwdl_join()))
     db().execute('DROP TABLE IF EXISTS _old_card_person_stats')
     db().execute('CREATE TABLE IF NOT EXISTS _card_person_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
     db().execute('RENAME TABLE _card_person_stats TO _old_card_person_stats, _new_card_person_stats TO _card_person_stats')

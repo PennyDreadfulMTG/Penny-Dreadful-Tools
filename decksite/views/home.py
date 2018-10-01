@@ -25,13 +25,7 @@ class Home(View):
                 display_decks = decks
         self.decks = display_decks
         cards = [c for c in cards if 'Basic Land' not in c.type]
-        week_cards = sorted(cards, key=lambda x: x['week_num_decks'], reverse=True)
-        for c in cards:
-            c.movement = c.week_num_decks / (max(c.season_num_decks, 1) + len(week_decks))
         self.top_cards = cards[0:5]
-        self.week_cards = week_cards[0:5]
-        rising_cards = sorted(cards, key=lambda x: x.movement, reverse=True)
-        self.rising_cards = rising_cards[0:5]
-        self.cards = self.top_cards + self.week_cards + self.rising_cards
+        self.cards = self.top_cards
         self.cards_url = url_for('cards')
         self.show_active_runs_text = False

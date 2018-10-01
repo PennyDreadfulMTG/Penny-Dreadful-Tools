@@ -93,7 +93,7 @@ def load_archetypes_deckless(order_by: str = '`all_num_decks` DESC, `all_wins` D
         LEFT JOIN
             archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
         LEFT JOIN
-            ({season_table}) AS season ON season.start_date <= ars.day AND (season.end_date IS NULL OR season.end_date > ars.day)
+            ({season_table}) AS season ON season.id = ars.season_id
         WHERE
             {season_query}
         GROUP BY
@@ -226,19 +226,20 @@ def preaggregate_archetypes() -> None:
     sql = """
         CREATE TABLE IF NOT EXISTS _new_archetype_stats (
             archetype_id INT NOT NULL,
-            `day` INT NOT NULL,
+            season_id INT NOT NULL,
             wins INT NOT NULL,
             losses INT NOT NULL,
             draws INT NOT NULL,
             perfect_runs INT NOT NULL,
             tournament_wins INT NOT NULL,
             tournament_top8s INT NOT NULL,
-            PRIMARY KEY (`day`, archetype_id),
+            PRIMARY KEY (season_id, archetype_id),
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
             FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             a.id AS archetype_id,
-            UNIX_TIMESTAMP(DATE(FROM_UNIXTIME(d.created_date))) AS `day`,
+            season.id AS season_id,
             SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
             IFNULL(SUM(wins), 0) AS wins,
             IFNULL(SUM(losses), 0) AS losses,
@@ -254,14 +255,15 @@ def preaggregate_archetypes() -> None:
             archetype_closure AS acd ON a.id = acd.ancestor
         LEFT JOIN
             deck AS d ON acd.descendant = d.archetype_id
+        {season_join}
         {nwdl_join}
         GROUP BY
             a.id,
             aca.ancestor, -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
-            `day`
+            season.id
         HAVING
-            `day` IS NOT NULL
-    """.format(nwdl_join=deck.nwdl_join())
+            season.id IS NOT NULL
+    """.format(season_join=query.season_join(), nwdl_join=deck.nwdl_join())
     db().execute(sql)
     db().execute('DROP TABLE IF EXISTS _old_archetype_stats')
     db().execute('CREATE TABLE IF NOT EXISTS _archetype_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
@@ -274,18 +276,19 @@ def preaggregate_matchups() -> None:
         CREATE TABLE IF NOT EXISTS _new_matchup_stats (
             archetype_id INT NOT NULL,
             opponent_archetype_id INT NOT NULL,
-            `day` INT NOT NULL,
+            season_id INT NOT NULL,
             wins INT NOT NULL,
             losses INT NOT NULL,
             draws INT NOT NULL,
-            PRIMARY KEY (`day`, archetype_id, opponent_archetype_id),
+            PRIMARY KEY (season_id, archetype_id, opponent_archetype_id),
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
             FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE,
             FOREIGN KEY (opponent_archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             a.id AS archetype_id,
             oa.id AS opponent_archetype_id,
-            UNIX_TIMESTAMP(DATE(FROM_UNIXTIME(d.created_date))) AS `day`,
+            season.id AS season_id,
             SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins, -- IFNULL so we still count byes as wins.
             SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
             SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws
@@ -301,13 +304,12 @@ def preaggregate_matchups() -> None:
             deck AS od ON od.id = odm.deck_id
         INNER JOIN
             archetype AS oa ON od.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = oa.id)
+        {season_join}
         GROUP BY
             a.id,
             oa.id,
-            `day`
-        -- HAVING
-        --     `day` IS NOT NULL
-    """
+            season.id
+    """.format(season_join=query.season_join())
     db().execute(sql)
     db().execute('DROP TABLE IF EXISTS _old_matchup_stats')
     db().execute('CREATE TABLE IF NOT EXISTS _matchup_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.

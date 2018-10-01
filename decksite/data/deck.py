@@ -358,16 +358,15 @@ def prime_cache(d: Deck) -> None:
     set_legality(d)
     legal_formats_s = json.dumps(list(d.legal_formats))
     normalized_name = deck_name.normalize(d)
-    db().begin()
-    db().execute('DELETE FROM deck_cache WHERE deck_id = %s', [d.id])
+    # If this is a new deck we're going to make a new record. If it's an existing deck we might as well update a few things that might have changed implementation but should otherwise be static. But leave wins/draws/losses/active date alone.
     sql = """
         INSERT INTO
             deck_cache (deck_id, normalized_name, colors, colored_symbols, legal_formats, wins, draws, losses, active_date)
         VALUES
             (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE normalized_name = %s, colors = %s, colored_symbols = %s, legal_formats = %s
     """
-    db().execute(sql, [d.id, normalized_name, colors_s, colored_symbols_s, legal_formats_s, 0, 0, 0, dtutil.dt2ts(d.created_date)])
-    db().commit()
+    db().execute(sql, [d.id, normalized_name, colors_s, colored_symbols_s, legal_formats_s, 0, 0, 0, dtutil.dt2ts(d.created_date), normalized_name, colors_s, colored_symbols_s, legal_formats_s])
     # If it was worth priming the in-db cache it's worth busting the in-memory cache to pick up the changes.
     redis.clear(f'decksite:deck:{d.id}')
 

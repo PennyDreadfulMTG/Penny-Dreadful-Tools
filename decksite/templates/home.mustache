@@ -5,85 +5,30 @@
 </section>
 <section>
     <h1>{{_ Top Cards}}</h1>
-    <section>
-        <h2>{{_ This Season}}</h2>
-        {{> spinner}}
-        <table>
-            <thead>
-                <th>Card</th>
-                <th># Decks</th>
-                <th data-breakpoints="xs">Record</th>
-                <th data-breakpoints="xs">Win %</th>
-                {{! Empty column to hold the toggle when footable kicks in.}}
-                <td></td>
-            </thead>
-            <tbody>
-                {{#top_cards}}
-                    <tr>
-                        <td>{{> singlecard}}</td>
-                        <td class="n">{{season_num_decks}}</td>
-                        <td class="n">{{season_wins}}–{{season_losses}}{{#season_draws}}–{{season_draws}}{{/season_draws}}</td>
-                        <td class="n">{{season_win_percent}}</td>
-                        {{! Empty column to hold the toggle when footable kicks in.}}
-                        <td></td>
-                    </tr>
-                {{/top_cards}}
-            </tbody>
-        </table>
-        <p><a href="{{cards_url}}">{{_ More cards…}}</a></p>
-    </section>
-    <section>
-        <h2>{{_ This Week}}</h2>
-        {{> spinner}}
-        <table>
-            <thead>
-                <th>Card</th>
-                <th data-breakpoints="xs"># Decks</th>
-                <th>Record</th>
-                <th data-breakpoints="xs">Win %</th>
-                {{! Empty column to hold the toggle when footable kicks in.}}
-                <td></td>
-            </thead>
-            <tbody>
-                {{#week_cards}}
-                    <tr>
-                        <td>{{> singlecard}}</td>
-                        <td class="n" data-breakpoints="xs">{{week_num_decks}}</td>
-                        <td class="n">{{week_wins}}–{{week_losses}}{{#week_draws}}–{{week_draws}}{{/week_draws}}</td>
-                        <td class="n" data-breakpoints="xs">{{week_win_percent}}</td>
-                        {{! Empty column to hold the toggle when footable kicks in.}}
-                        <td></td>
-                    </tr>
-                {{/week_cards}}
-            </tbody>
-        </table>
-    </section>
-    <section>
-        <h2>{{_ Fastest Rising}}</h2>
-        {{> spinner}}
-        <table>
-            <thead>
-                <th>Card</th>
-                <th># Decks</th>
-                <th data-breakpoints="xs">Record</th>
-                <th data-breakpoints="xs">Win %</th>
-                {{! Empty column to hold the toggle when footable kicks in.}}
-                <td></td>
-            </thead>
-            <tbody>
-                {{#rising_cards}}
-                    <tr>
-                        <td>{{> singlecard}}</td>
-                        <td class="n">{{week_num_decks}}</td>
-                        <td class="n">{{week_wins}}–{{week_losses}}{{#week_draws}}–{{week_draws}}{{/week_draws}}</td>
-                        <td class="n">{{week_win_percent}}</td>
-                        {{! Empty column to hold the toggle when footable kicks in.}}
-                        <td></td>
-                    </tr>
-                {{/rising_cards}}
-            </tbody>
-        </table>
-    </section>
+    {{> spinner}}
+    <table>
+        <thead>
+            <th>Card</th>
+            <th># Decks</th>
+            <th data-breakpoints="xs">Record</th>
+            <th data-breakpoints="xs">Win %</th>
+            {{! Empty column to hold the toggle when footable kicks in.}}
+            <td></td>
+        </thead>
+        <tbody>
+            {{#top_cards}}
+                <tr>
+                    <td>{{> singlecard}}</td>
+                    <td class="n">{{all_num_decks}}</td>
+                    <td class="n">{{all_wins}}–{{all_losses}}{{#all_draws}}–{{all_draws}}{{/all_draws}}</td>
+                    <td class="n">{{all_win_percent}}</td>
+                    {{! Empty column to hold the toggle when footable kicks in.}}
+                    <td></td>
+                </tr>
+            {{/top_cards}}
+        </tbody>
+    </table>
+    <p><a href="{{cards_url}}">{{_ More cards…}}</a></p>
 </section>
 {{#has_news}}
     {{> news}}

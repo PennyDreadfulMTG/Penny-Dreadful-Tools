@@ -60,7 +60,7 @@ def store(timestamp: float, all_prices: Dict[str, parser.PriceListType]) -> None
         for name, cents in chunk:
             values.extend([timestamp, name, cents])
         execute(sql, values)
-        DATABASE.commit()
+    DATABASE.commit()
 
 def cleanup() -> None:
     beginning_of_season = rotation.last_rotation()

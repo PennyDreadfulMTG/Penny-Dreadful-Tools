@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 
 from decksite.data import deck, query
 from decksite.database import db
-from magic import oracle, rotation
+from magic import oracle
 from magic.models.card import Card
 from shared import guarantee
 from shared.container import Container
@@ -42,7 +42,7 @@ def load_cards(season_id: Optional[int] = None, person_id: Optional[int] = None,
             all_num_decks DESC,
             record,
             name
-    """.format(table=table, season_table=query.season_table(), season_start=int(rotation.last_rotation().timestamp()), season_query=query.season_query(season_id), where=where, group_by=group_by)
+    """.format(table=table, season_table=query.season_table(), season_query=query.season_query(season_id), where=where, group_by=group_by)
     try:
         cs = [Container(r) for r in db().select(sql)]
         cards = oracle.cards_by_name()

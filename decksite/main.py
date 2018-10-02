@@ -372,6 +372,8 @@ def image(c: str = '') -> Response:
             raise InternalServerError(f'Failed to get image for {c}') # type: ignore
         return send_file(os.path.abspath(path)) # Send abspath to work around monolith root versus web root.
     except TooFewItemsException as e:
+        if len(names) == 1:
+            return redirect(f'https://api.scryfall.com/cards/named?exact={c}&format=image', code=303)
         print(e)
         return '', 400
 

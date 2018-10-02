@@ -38,22 +38,29 @@ def load_people(where: str = '1 = 1',
             p.mtggoldfish_username,
             p.discord_id,
             p.elo,
-            {all_select},
-            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL AND {season_query} THEN 1 ELSE 0 END) AS `all_num_competitions`
+            COUNT(d.id) AS all_num_decks,
+            SUM(wins) AS all_wins,
+            SUM(losses) AS all_losses,
+            SUM(draws) AS all_draws,
+            SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS all_perfect_runs,
+            SUM(CASE WHEN d.finish = 1 THEN 1 ELSE 0 END) AS all_tournament_wins,
+            SUM(CASE WHEN d.finish <= 8 THEN 1 ELSE 0 END) AS all_tournament_top8s,
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS all_win_percent,
+            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS all_num_competitions
         FROM
             person AS p
         LEFT JOIN
             deck AS d ON p.id = d.person_id
+        LEFT JOIN
+            deck_cache AS dc ON d.id = dc.deck_id
         {season_join}
-        {nwdl_join}
         WHERE
-            ({where})
+            ({where}) AND ({season_query})
         GROUP BY
             p.id
         ORDER BY
             {order_by}
-    """.format(person_query=query.person_query(), all_select=deck.nwdl_select('all_', query.season_query(season_id)), nwdl_join=deck.nwdl_join(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id), order_by=order_by)
-
+    """.format(person_query=query.person_query(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id), order_by=order_by)
     people = [Person(r) for r in db().select(sql)]
     for p in people:
         p.season_id = season_id

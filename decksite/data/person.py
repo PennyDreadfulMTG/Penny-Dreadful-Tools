@@ -293,7 +293,7 @@ def preaggregate_head_to_head():
             p.id,
             opp.id,
             season.id
-    """.format(season_join=query.season_join(), nwdl_join=deck.nwdl_join())
+    """.format(season_join=query.season_join())
     db().execute(sql)
     db().execute('DROP TABLE IF EXISTS _old_head_to_head_stats')
     db().execute('CREATE TABLE IF NOT EXISTS _head_to_head_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.

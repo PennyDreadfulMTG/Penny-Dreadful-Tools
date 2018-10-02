@@ -88,7 +88,7 @@ def set_achievements(people: List[Person], season_id: int = None, retry: bool = 
             season ON season_id = season.id
         WHERE
             person_id IN ({ids}) AND ({season_query})
-    """.format(ids=', '.join(str(k) for k in people_by_id.keys()), season_join=query.season_join(), season_query=query.season_query(season_id))
+    """.format(ids=', '.join(str(k) for k in people_by_id.keys()), season_query=query.season_query(season_id))
     try:
         results = [Container(r) for r in db().select(sql)]
         for result in results:

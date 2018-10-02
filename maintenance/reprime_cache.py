@@ -11,7 +11,7 @@ def run():
         redis.clear(f'decksite:deck:{d.id}')
         deck.prime_cache(d)
     archetype.preaggregate()
-    person.preaggregate_head_to_head()
+    person.preaggregate()
     card.preaggregate()
     deck.preaggregate_omw()
     return 'Done'

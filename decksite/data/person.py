@@ -70,62 +70,38 @@ def load_people(where: str = '1 = 1',
         set_head_to_head(people, season_id)
     return people
 
-def set_achievements(people: List[Person], season_id: int = None) -> None:
+def set_achievements(people: List[Person], season_id: int = None, retry: bool = False) -> None:
     people_by_id = {person.id: person for person in people}
     sql = """
         SELECT
-            p.id,
-            COUNT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END) AS tournament_entries,
-            COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END) AS tournament_wins,
-            COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END) AS league_entries,
-            CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END AS completionist,
-            SUM(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses THEN 1 ELSE 0 END) AS perfect_runs,
-            SUM(
-                CASE WHEN d.id IN
-                    (
-                        SELECT
-                            -- MAX here is just to fool MySQL to give us the id of the deck that crushed the perfect run from an aggregate function. There is only one value to MAX.
-                            MAX(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN odm.deck_id ELSE NULL END) AS deck_id
-                        FROM
-                            deck AS d
-                        INNER JOIN
-                            deck_match AS dm
-                        ON
-                            dm.deck_id = d.id
-                        INNER JOIN
-                            deck_match AS odm
-                        ON
-                            dm.match_id = odm.match_id AND odm.deck_id <> d.id
-                        WHERE
-                            d.competition_id IN ({competition_ids_by_type_select})
-                        GROUP BY d.id
-                        HAVING
-                            SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) >=4
-                        AND
-                            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) = 1
-                        AND
-                            SUM(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN 1 ELSE 0 END) = 1
-                    )
-                THEN 1 ELSE 0 END
-            ) AS perfect_run_crushes
+            person_id AS id,
+            season_id,
+            tournament_entries,
+            tournament_wins,
+            league_entries,
+            completionist,
+            perfect_runs,
+            perfect_run_crushes
         FROM
-            person AS p
-        LEFT JOIN
-            deck AS d ON d.person_id = p.id
-        LEFT JOIN
-            deck_cache AS dc ON dc.deck_id = d.id
-        {season_join}
-        {competition_join}
+            _achievements AS a
+        INNER JOIN
+            season ON season_id = season.id
         WHERE
-            p.id IN ({ids}) AND ({season_query})
-        GROUP BY
-            p.id
-    """.format(competition_join=query.competition_join(), competition_ids_by_type_select=query.competition_ids_by_type_select('League'), ids=', '.join(str(k) for k in people_by_id.keys()), season_join=query.season_join(), season_query=query.season_query(season_id))
-    results = [Container(r) for r in db().select(sql)]
-    for result in results:
-        people_by_id[result['id']].num_achievements = len([k for k, v in result.items() if k != 'id' and v > 0])
-        people_by_id[result['id']].achievements = result
-        people_by_id[result['id']].achievements.pop('id')
+            person_id IN ({ids}) AND ({season_query})
+    """.format(ids=', '.join(str(k) for k in people_by_id.keys()), season_join=query.season_join(), season_query=query.season_query(season_id))
+    try:
+        results = [Container(r) for r in db().select(sql)]
+        for result in results:
+            people_by_id[result['id']].num_achievements = len([k for k, v in result.items() if k != 'id' and v > 0])
+            people_by_id[result['id']].achievements = result
+            people_by_id[result['id']].achievements.pop('id')
+    except DatabaseException as e:
+        if not retry:
+            print(f"Got {e} trying to set_head_to_head so trying to preaggregate. If this is happening on user time that's undesirable.")
+            preaggregate_achievements()
+            set_achievements(people=people, season_id=season_id, retry=True)
+        print(f'Failed to preaggregate. Giving up.')
+        raise e
 
 def set_head_to_head(people: List[Person], season_id: int = None, retry: bool = False) -> None:
     people_by_id = {person.id: person for person in people}
@@ -258,6 +234,83 @@ def squash(p1id: int, p2id: int, col1: str, col2: str) -> None:
     db().execute('DELETE FROM person WHERE id = %s', [p2id])
     db().execute('UPDATE person SET {col2} = %s WHERE id = %s'.format(col2=col2), [new_value, p1id])
     db().commit()
+
+def preaggregate() -> None:
+    preaggregate_achievements()
+    preaggregate_head_to_head()
+
+def preaggregate_achievements() -> None:
+    db().execute('DROP TABLE IF EXISTS _new_achievements')
+    sql = """
+        CREATE TABLE IF NOT EXISTS _new_achievements (
+            person_id INT NOT NULL,
+            season_id INT NOT NULL,
+            tournament_entries INT NOT NULL,
+            tournament_wins INT NOT NULL,
+            league_entries INT NOT NULL,
+            completionist BOOLEAN NOT NULL,
+            perfect_runs INT NOT NULL,
+            perfect_run_crushes INT NOT NULL,
+            PRIMARY KEY (season_id, person_id),
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+        SELECT
+            p.id AS person_id,
+            season.id AS season_id,
+            COUNT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END) AS tournament_entries,
+            COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END) AS tournament_wins,
+            COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END) AS league_entries,
+            CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END AS completionist,
+            SUM(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses THEN 1 ELSE 0 END) AS perfect_runs,
+            SUM(
+                CASE WHEN d.id IN
+                    (
+                        SELECT
+                            -- MAX here is just to fool MySQL to give us the id of the deck that crushed the perfect run from an aggregate function. There is only one value to MAX.
+                            MAX(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN odm.deck_id ELSE NULL END) AS deck_id
+                        FROM
+                            deck AS d
+                        INNER JOIN
+                            deck_match AS dm
+                        ON
+                            dm.deck_id = d.id
+                        INNER JOIN
+                            deck_match AS odm
+                        ON
+                            dm.match_id = odm.match_id AND odm.deck_id <> d.id
+                        WHERE
+                            d.competition_id IN ({competition_ids_by_type_select})
+                        GROUP BY
+                            d.id
+                        HAVING
+                            SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) >=4
+                        AND
+                            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) = 1
+                        AND
+                            SUM(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN 1 ELSE 0 END) = 1
+                    )
+                THEN 1 ELSE 0 END
+            ) AS perfect_run_crushes
+        FROM
+            person AS p
+        LEFT JOIN
+            deck AS d ON d.person_id = p.id
+        LEFT JOIN
+            deck_cache AS dc ON dc.deck_id = d.id
+        {season_join}
+        {competition_join}
+        GROUP BY
+            p.id,
+            season.id
+        HAVING
+            season.id IS NOT NULL
+    """.format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'), season_join=query.season_join(), competition_join=query.competition_join())
+    db().execute(sql)
+    db().execute('DROP TABLE IF EXISTS _old_achievements')
+    db().execute('CREATE TABLE IF NOT EXISTS _achievements (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
+    db().execute('RENAME TABLE _achievements TO _old_achievements, _new_achievements TO _achievements')
+    db().execute('DROP TABLE IF EXISTS _old_achievements')
 
 def preaggregate_head_to_head() -> None:
     db().execute('DROP TABLE IF EXISTS _new_head_to_head_stats')

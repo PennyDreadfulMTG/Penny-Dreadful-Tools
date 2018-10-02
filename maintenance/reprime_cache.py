@@ -1,4 +1,4 @@
-from decksite.data import archetype, card, deck
+from decksite.data import archetype, card, deck, person
 from magic import multiverse, oracle
 from shared import redis
 

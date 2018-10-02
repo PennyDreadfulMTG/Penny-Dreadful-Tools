@@ -373,6 +373,8 @@ def image(c: str = '') -> Response:
         return send_file(os.path.abspath(path)) # Send abspath to work around monolith root versus web root.
     except TooFewItemsException as e:
         print(e)
+        if len(names) == 1:
+            return redirect(f'https://api.scryfall.com/cards/named?exact={c}&format=image', code=303)
         return '', 400
 
 @APP.before_request

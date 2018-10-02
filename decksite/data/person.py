@@ -252,7 +252,7 @@ def squash(p1id: int, p2id: int, col1: str, col2: str) -> None:
     db().execute('UPDATE person SET {col2} = %s WHERE id = %s'.format(col2=col2), [new_value, p1id])
     db().commit()
 
-def preaggregate_head_to_head():
+def preaggregate_head_to_head() -> None:
     db().execute('DROP TABLE IF EXISTS _new_head_to_head_stats')
     sql = """
         CREATE TABLE IF NOT EXISTS _new_head_to_head_stats (

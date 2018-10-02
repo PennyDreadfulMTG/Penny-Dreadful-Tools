@@ -1,4 +1,4 @@
-from decksite.data import archetype, card, deck
+from decksite.data import archetype, card, deck, person
 from magic import multiverse, oracle
 from shared import redis
 
@@ -11,6 +11,7 @@ def run():
         redis.clear(f'decksite:deck:{d.id}')
         deck.prime_cache(d)
     archetype.preaggregate()
+    person.preaggregate()
     card.preaggregate()
     deck.preaggregate_omw()
     return 'Done'

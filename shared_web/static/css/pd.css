@@ -2310,3 +2310,33 @@ header.season-7 {
     filter: grayscale(90%);
     background-size: cover;
 }
+header.season-1 {
+    background-image: url("/banner/1.png");
+    filter: grayscale(90%);
+    background-size: cover;
+}
+header.season-2 {
+    background-image: url("/banner/2.png");
+    filter: grayscale(90%);
+    background-size: cover;
+}
+header.season-3 {
+    background-image: url("/banner/3.png");
+    filter: grayscale(90%);
+    background-size: cover;
+}
+header.season-4 {
+    background-image: url("/banner/4.png");
+    filter: grayscale(90%);
+    background-size: cover;
+}
+header.season-5 {
+    background-image: url("/banner/5.png");
+    filter: grayscale(90%);
+    background-size: cover;
+}
+header.season-6 {
+    background-image: url("/banner/6.png");
+    filter: grayscale(90%);
+    background-size: cover;
+}

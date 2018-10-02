@@ -377,6 +377,33 @@ def image(c: str = '') -> Response:
             return redirect(f'https://api.scryfall.com/cards/named?exact={c}&format=image', code=303)
         return '', 400
 
+@APP.route('/banner/<seasonnum>.png')
+def banner(seasonnum: str) -> Response:
+    cardnames = ['Parallax Wave', 'Treasure Cruise', 'Duress', 'Chain Lightning', 'Rofellos, Llanowar Emissary ', 'Necropotence', 'Shrine of Burning Rage']
+    background = 'Lake of the Dead'
+    if seasonnum == '1':
+        cardnames = ['Mother of Runes', 'Treasure Cruise', 'Duress', 'Lightning Strike', 'Elvish Mystic', 'Fleecemane Lion', 'Vivid Marsh']
+        background = 'Dark Ritual'
+    elif seasonnum == '2':
+        cardnames = ['Frantic Search', 'Hymn to Tourach', "Nevinyrral's Disk", 'Winds of Rath', 'Slagstorm', 'Rise from the Tides', 'Cloudpost']
+        background = 'Fact or Fiction'
+    elif seasonnum == '3':
+        cardnames = ['Shrine of Burning Rage', 'Terramorphic Expanse', 'Parallax Wave', 'Kambal, Consul of Allocation', 'Memory Lapse', 'Magister of Worth', 'Tendrils of Agony']
+        background = 'Tidehollow Sculler'
+    elif seasonnum == '4':
+        cardnames = ['Hymn to Tourach', 'Emerge Unscathed', 'Ordeal of Heliod', 'Lightning Strike', 'Cruel Edict', 'Lagonna-Band Trailblazer', 'Vivid Creek']
+        background = 'Vivid Creek'
+    elif seasonnum == '5':
+        cardnames = ['Dark Ritual', 'Cabal Ritual', 'Pyroclasm', 'Cursed Scroll', 'Necropotence', 'Harmonize', 'Precursor Golem']
+        background = 'Boompile'
+    elif seasonnum == '6':
+        cardnames = ['Chain Lightning', 'Compulsive Research', 'Bogardan Hellkite', 'Grand Coliseum', 'Cartouche of Solidarity', 'Lagonna-Band Trailblazer', 'Felidar Guardian']
+        background = 'Parallax Wave'
+
+
+    path = image_fetcher.generate_banner(cardnames, background)
+    return send_file(os.path.abspath(path))
+
 @APP.before_request
 def before_request() -> None:
     g.p = perf.start()

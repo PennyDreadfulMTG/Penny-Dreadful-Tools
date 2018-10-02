@@ -4,7 +4,7 @@ import json
 import re
 import sys
 import urllib.parse
-from typing import Dict, List, Match, Optional
+from typing import Dict, List, Optional
 
 import requests
 from github.Issue import Issue
@@ -13,8 +13,8 @@ from shared import configuration
 from shared.lazy import lazy_property
 
 from . import fetcher, repo, strings
-from .strings import (AFFECTS_REGEX, BAD_AFFECTS_REGEX, BADCATS, CATEGORIES,
-                      IMAGES_REGEX, REGEX_CARDREF, SEEALSO_REGEX)
+from .strings import (BAD_AFFECTS_REGEX, BADCATS, CATEGORIES, IMAGES_REGEX,
+                      REGEX_CARDREF)
 
 
 @lazy_property
@@ -78,7 +78,7 @@ def process_issue(issue: Issue) -> None:
         fix_user_errors(issue)
         apply_screenshot_labels(issue)
     labels = [c.name for c in issue.labels]
-    see_also = re.search(SEEALSO_REGEX, issue.body, re.MULTILINE)
+    see_also = strings.get_body_field(issue.body, 'See Also')
     cards = get_affects(issue)
 
     if age < 5:
@@ -146,13 +146,13 @@ def process_issue(issue: Issue) -> None:
 
         ALL_BUGS.append(bug)
 
-def update_issue_body(issue: Issue, cards: List[str], see_also: Optional[Match]) -> None:
+def update_issue_body(issue: Issue, cards: List[str], see_also: Optional[str]) -> None:
     expected = '<!-- Images --> '
     images = re.search(IMAGES_REGEX, issue.body, re.MULTILINE)
     for row in strings.grouper(4, cards):
         expected = expected + '<img src="https://pennydreadfulmagic.com/image/{0}/" height="300px">'.format('|'.join([urllib.parse.quote(c) for c in row if c is not None]))
     if see_also is not None:
-        for row in strings.grouper(5, re.findall(REGEX_CARDREF, see_also.group(1))):
+        for row in strings.grouper(5, re.findall(REGEX_CARDREF, see_also)):
             expected = expected + '<img src="https://pennydreadfulmagic.com/image/{0}/" height="250px">'.format('|'.join([urllib.parse.quote(c) for c in row if c is not None]))
 
     if not images:
@@ -178,11 +178,9 @@ def check_for_invalid_card_names(issue: Issue, cards: List[str]) -> None:
         issue.remove_from_labels('Invalid Card Name')
 
 def get_affects(issue: Issue) -> List[str]:
-    affects = re.search(AFFECTS_REGEX, issue.body, re.MULTILINE)
+    affects = strings.get_body_field(issue.body, 'Affects')
     if affects is None:
         affects_str = issue.title
-    else:
-        affects_str = affects.group(1)
 
     return strings.get_cards_from_string(affects_str)
 
@@ -191,11 +189,11 @@ def fix_user_errors(issue: Issue) -> None:
     # People sometimes put the affected cards on the following line. Account for that.
     body = re.sub(BAD_AFFECTS_REGEX, 'Affects: [', body)
     # People sometimes neglect Affects all-together, and only put cards in the title.
-    affects = re.search(AFFECTS_REGEX, body, re.MULTILINE)
+    affects = strings.get_body_field(body, 'Affects')
     if affects is None:
         cards = re.findall(REGEX_CARDREF, issue.title)
         cards = [c for c in cards]
-        body = body + '\nAffects: ' + ''.join(['[' + c + ']' for c in cards])
+        body = strings.set_body_field(body, 'Affects', ''.join(['[' + c + ']' for c in cards]))
     if re.search(strings.REGEX_SEARCHREF, body):
         def do_search(m):
             search = m.group(1)
@@ -204,12 +202,7 @@ def fix_user_errors(issue: Issue) -> None:
                 return m.group(0)
             return ', '.join([f'[{c}]' for c in cards])
         body = re.sub(strings.REGEX_SEARCHREF, do_search, body)
-    # We had a bug where the above triggered infinitely.  Clean it up.
-    extra_affects = re.findall(AFFECTS_REGEX, body, re.MULTILINE)
-    if len(extra_affects) > 1:
-        lines = body.split('\n')
-        if re.match(AFFECTS_REGEX, lines[-1]):
-            body = '\n'.join(lines[:-1])
+
     # People are missing the bullet points, and putting info on the following line instead.
     body = re.sub(r' - \r?\n', '', body)
     # Some people ignore the request for screenshots.

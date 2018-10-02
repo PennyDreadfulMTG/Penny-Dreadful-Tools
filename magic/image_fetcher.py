@@ -1,4 +1,5 @@
 import hashlib
+import math
 import os
 import re
 from typing import List, Optional
@@ -68,6 +69,22 @@ def download_scryfall_image(cards: List[Card], filepath: str, version: str = '')
     if len(image_filepaths) > 1:
         save_composite_image(image_filepaths, filepath)
     return internal.acceptable_file(filepath)
+
+def download_scryfall_art_crop(card: Card) -> Optional[str]:
+    file_path = re.sub('.jpg$', '.art_crop.jpg', determine_filepath([card]))
+    if not internal.acceptable_file(file_path):
+        download_scryfall_card_image(card, file_path, version='art_crop')
+    if internal.acceptable_file:
+        return file_path
+    return None
+
+def download_scryfall_png(card: Card) -> Optional[str]:
+    file_path = re.sub('.jpg$', '.png', determine_filepath([card]))
+    if not internal.acceptable_file(file_path):
+        download_scryfall_card_image(card, file_path, version='png')
+    if internal.acceptable_file:
+        return file_path
+    return None
 
 def download_scryfall_card_image(card: Card, filepath: str, version: str = '') -> bool:
     try:
@@ -140,3 +157,32 @@ def save_composite_image(in_filepaths: List[str], out_filepath: str) -> None:
         new_image.paste(image, (x_offset, 0))
         x_offset += image.size[0]
     new_image.save(out_filepath)
+
+def generate_banner(out_path: str, cards: List[str], background: str, v_crop: int = 33) -> None:
+    canvas = Image.new('RGB', (1920, 210))
+    c = oracle.load_card(background)
+    file_path = download_scryfall_art_crop(c)
+    if file_path:
+        with Image.open(file_path) as img:
+            h = v_crop / 100 * 1315
+            canvas.paste(img.resize((1920, 1315)).crop((0, h, 1920, h + 210)))
+
+    n = math.ceil(len(cards) / 2)
+    x = 800
+    for card in cards[:n]:
+        c = oracle.load_card(card)
+        ip = download_scryfall_png(c)
+        with Image.open(ip) as img:
+            img = img.resize((160, 213), Image.LANCZOS)
+            canvas.paste(img, (x, 30))
+            x = x + img.width + 10
+    x = 900
+    for card in cards[n:]:
+        c = oracle.load_card(card)
+        ip = download_scryfall_png(c)
+        with Image.open(ip) as img:
+            img = img.resize((160, 213), Image.LANCZOS)
+            canvas.paste(img, (x, 60))
+            x = x + img.width + 10
+
+    canvas.save(out_path)

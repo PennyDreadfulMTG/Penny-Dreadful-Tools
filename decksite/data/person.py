@@ -100,6 +100,7 @@ def set_achievements(people: List[Person], season_id: int = None, retry: bool = 
             print(f"Got {e} trying to set_head_to_head so trying to preaggregate. If this is happening on user time that's undesirable.")
             preaggregate_achievements()
             set_achievements(people=people, season_id=season_id, retry=True)
+            return
         print(f'Failed to preaggregate. Giving up.')
         raise e
 
@@ -141,6 +142,7 @@ def set_head_to_head(people: List[Person], season_id: int = None, retry: bool = 
             print(f"Got {e} trying to set_head_to_head so trying to preaggregate. If this is happening on user time that's undesirable.")
             preaggregate_head_to_head()
             set_head_to_head(people=people, season_id=season_id, retry=True)
+            return
         print(f'Failed to preaggregate. Giving up.')
         raise e
 

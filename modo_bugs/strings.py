@@ -6,8 +6,6 @@ METACATS = ['Cardset', 'Collection', 'Deck Building', 'Duel Scene', 'Leagues', '
 CATEGORIES = ['Advantageous', 'Disadvantageous', 'Game Breaking', 'Avoidable Game Breaking', 'Graphical', 'Non-Functional ability']
 BADCATS = ['Game Breaking']
 
-AFFECTS_REGEX = r'^Affects: (.*)$'
-SEEALSO_REGEX = r'^See Also: (.*)$'
 CODE_REGEX = r'^Code: (.*)$'
 BBT_REGEX = r'^Bug Blog Text: (.*)$'
 

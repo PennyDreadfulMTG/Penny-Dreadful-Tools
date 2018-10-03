@@ -160,7 +160,7 @@ def load_decks_heavy(where: str = '1 = 1',
             cache.colors,
             cache.colored_symbols,
             cache.legal_formats,
-            cache.omw,
+            ROUND(cache.omw * 100, 2) AS omw,
             season.id AS season_id,
             IFNULL(MAX(m.date), d.created_date) AS active_date
         FROM

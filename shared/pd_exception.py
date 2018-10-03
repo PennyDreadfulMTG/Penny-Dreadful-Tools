@@ -33,3 +33,6 @@ class LockNotAcquiredException(DatabaseException):
 
 class AlreadyExistsException(PDException):
     pass
+
+class NotConfiguredException(PDException):
+    pass

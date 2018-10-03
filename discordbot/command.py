@@ -28,7 +28,7 @@ from magic.models.card import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher
 from shared import configuration, dtutil, repo
 from shared.lazy import lazy_property
-from shared.pd_exception import TooFewItemsException
+from shared.pd_exception import NotConfiguredException, TooFewItemsException
 
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10
@@ -417,8 +417,12 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def time(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!time {location}` Show the current time in the specified location."""
+        if len(args) == 0:
+            return await channel.send('{author}: No location provided. Please type !time followed by the location you want the time for.'.format(author=author.mention))
         try:
             t = fetcher.time(args)
+        except NotConfiguredException:
+            return await channel.send('The time command has not been configured.')
         except TooFewItemsException:
             logging.exception('Exception trying to get the time for %s.', args)
             return await channel.send('{author}: Location not found.'.format(author=author.mention))
@@ -440,7 +444,7 @@ Want to contribute? Send a Pull Request."""
             return await channel.send('The google command has not been configured.')
 
         if len(args) == 0:
-            return await channel.send('{author}: No search term provided. Please type !google followed by what you would like to search'.format(author=author.mention))
+            return await channel.send('{author}: No search term provided. Please type !google followed by what you would like to search.'.format(author=author.mention))
 
         try:
             service = build('customsearch', 'v1', developerKey=api_key)

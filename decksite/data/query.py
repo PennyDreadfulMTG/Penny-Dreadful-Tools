@@ -45,29 +45,26 @@ def competition_join() -> str:
             competition_type AS ct ON ct.id = cs.competition_type_id
     """
 
-def season_query(season_id: Optional[int]) -> str:
+def season_query(season_id: Optional[int], column_name: str = 'season_id') -> str:
     if season_id is None or season_id == 'all':
         return 'TRUE'
     try:
-        return 'season.id = {season_id}'.format(season_id=int(season_id))
+        return '{column_name} = {season_id}'.format(column_name=column_name, season_id=int(season_id))
     except ValueError:
         raise InvalidArgumentException('No season with id `{season_id}`'.format(season_id=season_id))
 
 def season_join() -> str:
     return """
         LEFT JOIN
-            ({season_table}) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
-    """.format(season_table=season_table())
-
-def season_table() -> str:
-    return """
-        SELECT
-            `start`.id,
-            `start`.code,
-            `start`.start_date AS start_date,
-            `end`.start_date AS end_date
-        FROM
-            season AS `start`
-        LEFT JOIN
-            season AS `end` ON `end`.id = `start`.id + 1
+            (
+                SELECT
+                    `start`.id,
+                    `start`.code,
+                    `start`.start_date AS start_date,
+                    `end`.start_date AS end_date
+                FROM
+                    season AS `start`
+                LEFT JOIN
+                    season AS `end` ON `end`.id = `start`.id + 1
+            ) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
     """

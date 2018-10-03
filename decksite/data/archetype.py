@@ -82,8 +82,6 @@ def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, nam
             _archetype_stats AS ars ON a.id = ars.archetype_id
         LEFT JOIN
             archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
-        LEFT JOIN
-            ({season_table}) AS season ON season.id = ars.season_id
         WHERE
             {season_query}
         GROUP BY
@@ -91,7 +89,7 @@ def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, nam
             aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
         ORDER BY
             {order_by}
-    """.format(season_table=query.season_table(), season_query=query.season_query(season_id), order_by=order_by)
+    """.format(season_query=query.season_query(season_id), order_by=order_by)
     try:
         archetypes = [Archetype(a) for a in db().select(sql)]
         archetypes_by_id = {a.id: a for a in archetypes}
@@ -144,8 +142,6 @@ def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retr
             archetype AS a ON archetype_id = a.id
         INNER JOIN
             archetype AS oa ON opponent_archetype_id = oa.id
-        LEFT JOIN
-            ({season_table}) AS season ON ms.season_id = season.id
         WHERE
             ({where}) AND ({season_query})
         GROUP BY
@@ -154,7 +150,7 @@ def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retr
         ORDER BY
             wins DESC,
             oa.name
-    """.format(season_table=query.season_table(), where=where, season_query=query.season_query(season_id))
+    """.format(where=where, season_query=query.season_query(season_id))
     try:
         return [Container(m) for m in db().select(sql)]
     except DatabaseException as e:

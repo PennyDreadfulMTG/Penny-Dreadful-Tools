@@ -60,7 +60,7 @@ def load_people(where: str = '1 = 1',
             p.id
         ORDER BY
             {order_by}
-    """.format(person_query=query.person_query(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id), order_by=order_by)
+    """.format(person_query=query.person_query(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id, 'season.id'), order_by=order_by)
     people = [Person(r) for r in db().select(sql)]
     for p in people:
         p.season_id = season_id
@@ -84,8 +84,6 @@ def set_achievements(people: List[Person], season_id: int = None, retry: bool = 
             perfect_run_crushes
         FROM
             _achievements AS a
-        INNER JOIN
-            season ON season_id = season.id
         WHERE
             person_id IN ({ids}) AND ({season_query})
     """.format(ids=', '.join(str(k) for k in people_by_id.keys()), season_query=query.season_query(season_id))
@@ -119,8 +117,6 @@ def set_head_to_head(people: List[Person], season_id: int = None, retry: bool = 
             _head_to_head_stats AS hths
         INNER JOIN
             person AS opp ON hths.opponent_id = opp.id
-        INNER JOIN
-            season ON hths.season_id = season.id
         WHERE
             hths.person_id IN ({ids}) AND ({season_query})
         ORDER BY

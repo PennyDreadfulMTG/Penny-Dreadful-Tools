@@ -32,17 +32,15 @@ def load_cards(season_id: Optional[int] = None, person_id: Optional[int] = None,
             IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
         FROM
             {table} AS cs
-        LEFT JOIN
-            ({season_table}) AS season ON season.id = cs.season_id
         WHERE
-            {season_query} AND {where}
+            ({where}) AND ({season_query})
         GROUP BY
             {group_by}
         ORDER BY
             num_decks DESC,
             record,
             name
-    """.format(table=table, season_table=query.season_table(), season_query=query.season_query(season_id), where=where, group_by=group_by)
+    """.format(table=table, season_query=query.season_query(season_id), where=where, group_by=group_by)
     try:
         cs = [Container(r) for r in db().select(sql)]
         cards = oracle.cards_by_name()

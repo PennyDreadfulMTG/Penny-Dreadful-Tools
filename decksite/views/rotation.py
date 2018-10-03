@@ -8,7 +8,7 @@ from decksite.data import card
 from decksite.view import View
 from magic import multiverse, oracle, rotation
 from magic.models.card import Card
-from shared import configuration, dtutil, text
+from shared import configuration, dtutil, redis, text
 from shared.pd_exception import DoesNotExistException
 
 
@@ -44,11 +44,16 @@ class Rotation(View):
             self.runs = 0
             self.runs_percent = 0
             return
-        self.latest_list = open(files[-1], 'r').read().splitlines()
-        for line in fileinput.FileInput(files):
-            line = text.sanitize(line)
-            lines.append(line.strip())
-        scores = Counter(lines).most_common()
+        latest_file = files[-1]
+        redis_key = f'decksite:scores:{latest_file}'
+        scores = redis.get_list(redis_key)
+        self.latest_list = open(latest_file, 'r').read().splitlines()
+        if scores is None:
+            for line in fileinput.FileInput(files):
+                line = text.sanitize(line)
+                lines.append(line.strip())
+            scores = Counter(lines).most_common()
+            redis.store(redis_key, scores)
         self.runs = scores[0][1]
         self.runs_percent = round(round(self.runs / 168, 2) * 100)
         self.cs = oracle.cards_by_name()

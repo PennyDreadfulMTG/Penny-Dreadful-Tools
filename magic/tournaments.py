@@ -89,35 +89,35 @@ def all_series_info() -> List[Container]:
     return [
         Container({
             'name': 'Penny Dreadful Saturdays',
-            'hosts': ['back_alley_g', 'bigm'],
+            'hosts': ['pseudodude', 'j_meka'],
             'display_time': '1:30pm Eastern',
             'time': info[0][1],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
             'name': 'APAC Penny Dreadful Sundays',
-            'hosts': ['stash86', 'silasary'],
+            'hosts': ['silasary', 'jgabrielygalan'],
             'display_time': '4pm Japan Standard Time',
             'time': info[1][1],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
             'name': 'Penny Dreadful Sundays',
-            'hosts': ['bakert99', 'littlefield', 'mrsad'],
+            'hosts': ['mrsad', 'bakert99'],
             'display_time': '1:30pm Eastern',
             'time': info[2][1],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
             'name': 'Penny Dreadful Mondays',
-            'hosts': ['stash86', 'silasary'],
+            'hosts': ['briar_moss', 'j_meka'],
             'display_time': '7pm Eastern',
             'time': info[3][1],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
             'name': 'Penny Dreadful Thursdays',
-            'hosts': ['silasary', 'stash86'],
+            'hosts': ['silasary', 'j_meka'],
             'display_time': '7pm Eastern',
             'time': info[4][1],
             'sponsor_name': 'Cardhoarder'

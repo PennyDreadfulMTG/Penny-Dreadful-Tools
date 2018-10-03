@@ -282,6 +282,10 @@ Want to contribute? Send a Pull Request."""
         await single_card_text(client, channel, args, author, lambda c: '', 'legal')
 
     @cmd_header('Commands')
+    async def history(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
+        await single_card_text(client, channel, args, author, card_history, 'history', show_legality=False)
+
+    @cmd_header('Commands')
     async def modofail(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """Ding!"""
         if args.lower() == 'reset':
@@ -470,8 +474,6 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def art(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!art {name}` Display the art (only) of the most recent printing of the named card."""
-        if not args:
-            return await channel.send('{author}: Please specify a card name.'.format(author=author.mention))
         c = await single_card_or_send_error(channel, args, author, 'art')
         if c is not None:
             file_path = re.sub('.jpg$', '.art_crop.jpg', image_fetcher.determine_filepath([c]))
@@ -709,10 +711,12 @@ async def disambiguation_reactions(message: Message, cards: List[str]) -> None:
         await message.add_reaction(DISAMBIGUATION_EMOJIS_BY_NUMBER[i])
 
 async def single_card_or_send_error(channel: TextChannel, args: str, author: Member, command: str) -> Optional[Card]:
+    if not args:
+        await channel.send('{author}: Please specify a card name.'.format(author=author.mention))
+        return None
     result, mode = results_from_queries([args])[0]
     if result.has_match() and not result.is_ambiguous():
         return cards_from_names_with_mode([result.get_best_match()], mode)[0]
-
     if result.is_ambiguous():
         message = await channel.send('{author}: Ambiguous name for {c}. Suggestions: {s}'.format(author=author.mention, c=command, s=disambiguation(result.get_ambiguous_matches()[0:5])))
         await disambiguation_reactions(message, result.get_ambiguous_matches()[0:5])
@@ -721,10 +725,10 @@ async def single_card_or_send_error(channel: TextChannel, args: str, author: Mem
     return None
 
 # pylint: disable=too-many-arguments
-async def single_card_text(client: Client, channel: TextChannel, args: str, author: Member, f: Callable, command: str) -> None:
+async def single_card_text(client: Client, channel: TextChannel, args: str, author: Member, f: Callable, command: str, show_legality: bool = True) -> None:
     c = await single_card_or_send_error(channel, args, author, command)
     if c is not None:
-        legal_emoji = emoji.legal_emoji(c)
+        legal_emoji = emoji.legal_emoji(c) if show_legality else ''
         text = emoji.replace_emoji(f(c), client)
         message = '**{name}** {legal_emoji} {text}'.format(name=c.name, legal_emoji=legal_emoji, text=text)
         await channel.send(message)
@@ -740,6 +744,22 @@ def card_rulings(c: Card) -> str:
         rulings = rulings[:2]
         rulings.append('And {n} others.  See <https://scryfall.com/search?q=%21%22{cardname}%22#rulings>'.format(n=n, cardname=fetcher.internal.escape(c.name)))
     return '\n'.join(rulings) or 'No rulings available.'
+
+def card_history(c: Card) -> str:
+    seasons = {}
+    for format_name, status in c.legalities.items():
+        if 'Penny Dreadful ' in format_name and status == 'Legal':
+            season_id = rotation.SEASONS.index(format_name.replace('Penny Dreadful ', '')) + 1
+            seasons[season_id] = True
+    seasons[rotation.current_season_num()] = c.legalities.get('Penny Dreadful', None) == 'Legal'
+    s = '   '
+    for i in range(1, rotation.current_season_num() + 1):
+        s += f'{i}: '
+        s += ':white_check_mark:' if seasons.get(i, False) else ':no_entry_sign:'
+        s += '  '
+    s = s.strip()
+    s += '\n' + fetcher.decksite_url('/seasons/all/cards/{name}/'.format(name=fetcher.internal.escape(c.name, skip_double_slash=True)))
+    return s
 
 def site_resources(args: str) -> Dict[str, str]:
     results = {}

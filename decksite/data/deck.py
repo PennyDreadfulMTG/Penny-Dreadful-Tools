@@ -9,7 +9,7 @@ from decksite import deck_name
 from decksite.data import query
 from decksite.data.top import Top
 from decksite.database import db
-from magic import legality, mana, oracle, rotation
+from magic import legality, mana, oracle
 from magic.models import CardRef, Deck
 from shared import dtutil, guarantee, redis
 from shared.container import Container

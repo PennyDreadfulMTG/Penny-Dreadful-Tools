@@ -6,7 +6,6 @@ from anytree import NodeMixin
 
 from decksite.data import deck, query
 from decksite.database import db
-from magic import rotation
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import (DatabaseException, DoesNotExistException,

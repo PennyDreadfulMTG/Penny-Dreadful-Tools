@@ -757,7 +757,9 @@ def card_history(c: Card) -> str:
         s += f'{i}: '
         s += ':white_check_mark:' if seasons.get(i, False) else ':no_entry_sign:'
         s += '  '
-    return s.strip()
+    s = s.strip()
+    s += '\n' + fetcher.decksite_url('/seasons/all/cards/{name}/'.format(name=fetcher.internal.escape(c.name, skip_double_slash=True)))
+    return s
 
 def site_resources(args: str) -> Dict[str, str]:
     results = {}

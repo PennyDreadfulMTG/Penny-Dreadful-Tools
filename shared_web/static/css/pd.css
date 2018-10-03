@@ -102,6 +102,7 @@ nav {
 }
 
 article {
+    float: left; /* Wrap as sections do when there's enough screen space. */
     /*
         Aim for an average line length of 45-90 characters, including spaces.
         https://practicaltypography.com/line-length.html
@@ -1796,6 +1797,7 @@ News
     display: inline-block;
     font-family: main-text, symbols;
     float: right;
+    margin-left: 1rem;
 }
 
 .news li.site-news:before, .news li.subreddit-post:before {

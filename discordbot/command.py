@@ -728,9 +728,10 @@ async def single_card_or_send_error(channel: TextChannel, args: str, author: Mem
 async def single_card_text(client: Client, channel: TextChannel, args: str, author: Member, f: Callable, command: str, show_legality: bool = True) -> None:
     c = await single_card_or_send_error(channel, args, author, command)
     if c is not None:
-        legal_emoji = emoji.legal_emoji(c) if show_legality else ''
+        name = c.name
+        info_emoji = emoji.info_emoji(c, show_legality)
         text = emoji.replace_emoji(f(c), client)
-        message = '**{name}** {legal_emoji} {text}'.format(name=c.name, legal_emoji=legal_emoji, text=text)
+        message = f'**{name}** {info_emoji} {text}'
         await channel.send(message)
 
 def oracle_text(c: Card) -> str:
@@ -823,7 +824,7 @@ async def post_cards(
     if len(cards) == 1:
         text = single_card_text_internal(client, cards[0], disable_emoji)
     else:
-        text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.legal_emoji(card)) if not disable_emoji else ''), price=((fetcher.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
+        text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.info_emoji(card)) if not disable_emoji else ''), price=((fetcher.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
     if len(cards) > MAX_CARDS_SHOWN:
         image_file = None
     else:
@@ -857,7 +858,7 @@ async def send_image_with_retry(channel: TextChannel, image_file: str, text: str
 
 def single_card_text_internal(client: Client, requested_card: Card, disable_emoji: bool) -> str:
     mana = emoji.replace_emoji(''.join(requested_card.mana_cost or []), client)
-    legal = ' — ' + emoji.legal_emoji(requested_card, True)
+    legal = ' — ' + emoji.info_emoji(requested_card, verbose=True)
     if disable_emoji:
         legal = ''
     if requested_card.get('mode', None) == '$':

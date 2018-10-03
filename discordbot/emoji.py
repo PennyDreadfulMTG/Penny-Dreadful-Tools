@@ -36,13 +36,15 @@ def replace_emoji(text: str, client: Client) -> str:
             output = output.replace('{' + symbol + '}', str(emoji))
     return output
 
-def legal_emoji(c: Card, verbose: bool = False) -> str:
-    if c.name in oracle.legal_cards():
-        s = ':white_check_mark:'
-        if c.bugs:
-            s += ':beetle:'
-    else:
-        s = ':no_entry_sign:'
-        if verbose:
-            s += ' (not legal in PD)'
+def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True) -> str:
+    s = ''
+    if show_legality:
+        if c.name in oracle.legal_cards():
+            s += ':white_check_mark:'
+        else:
+            s += ':no_entry_sign:'
+            if verbose:
+                s += ' (not legal in PD)'
+    if c.bugs:
+        s += ':beetle:'
     return s

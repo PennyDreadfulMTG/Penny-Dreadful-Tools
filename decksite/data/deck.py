@@ -561,29 +561,6 @@ def count_matches(deck_id: int, opponent_deck_id: int) -> Dict[int, int]:
         result[row['deck_id']] = row['count']
     return result
 
-# Query Helpers for number of decks, wins, draws and losses.
-
-def nwdl_select(prefix: str = '', additional_clause: str = 'TRUE') -> str:
-    return """
-        SUM(CASE WHEN {additional_clause} AND d.id IS NOT NULL THEN 1 ELSE 0 END) AS `{prefix}num_decks`,
-        SUM(CASE WHEN {additional_clause} THEN wins ELSE 0 END) AS `{prefix}wins`,
-        SUM(CASE WHEN {additional_clause} THEN losses ELSE 0 END) AS `{prefix}losses`,
-        SUM(CASE WHEN {additional_clause} THEN draws ELSE 0 END) AS `{prefix}draws`,
-        SUM(CASE WHEN {additional_clause} AND wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS {prefix}perfect_runs,
-        SUM(CASE WHEN {additional_clause} AND dsum.finish = 1 THEN 1 ELSE 0 END) AS `{prefix}tournament_wins`,
-        SUM(CASE WHEN {additional_clause} AND dsum.finish <= 8 THEN 1 ELSE 0 END) AS `{prefix}tournament_top8s`,
-        IFNULL(ROUND((SUM(CASE WHEN {additional_clause} THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN {additional_clause} THEN wins + losses ELSE 0 END), 0)) * 100, 1), '') AS `{prefix}win_percent`
-    """.format(prefix=prefix, additional_clause=additional_clause)
-
-def nwdl_all_select() -> str:
-    return nwdl_select('all_')
-
-def nwdl_season_select() -> str:
-    return nwdl_select('season_', 'dsum.created_date >= {season_start}'.format(season_start=int(rotation.last_rotation().timestamp())))
-
-def nwdl_week_select() -> str:
-    return nwdl_select('week_', 'dsum.created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK)')
-
 def nwdl_join() -> str:
     return """
         LEFT JOIN

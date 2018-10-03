@@ -25,7 +25,7 @@
                             <th>{{name}}</th>
                             {{#matchups}}
                                 {{#show_in_matchups_grid}}
-                                    <td {{#color_cell}}style="background: hsl({{hue}}, {{saturation}}%, {{lightness}}%)"{{/color_cell}} class="n" {{#has_data}}title="{{archetype_name}} {{all_wins}}–{{all_losses}}{{#draws}}–{{draws}}{{/draws}} {{name}}{{/has_data}}">{{#has_data}}{{all_wins}}–{{all_losses}}{{#draws}}–{{draws}}{{/draws}}{{/has_data}}</td>
+                                    <td {{#color_cell}}style="background: hsl({{hue}}, {{saturation}}%, {{lightness}}%)"{{/color_cell}} class="n" {{#has_data}}title="{{archetype_name}} {{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}} {{name}}{{/has_data}}">{{#has_data}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/has_data}}</td>
                                 {{/show_in_matchups_grid}}
                             {{/matchups}}
                         </tr>

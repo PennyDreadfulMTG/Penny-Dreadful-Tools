@@ -221,8 +221,8 @@ class View(BaseView):
         c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
         c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}
         c.has_legal_format = len(c.legal_formats) > 0
-        if c.get('all_num_decks') is not None:
-            c.all_show_record = c.get('all_wins') or c.get('all_losses') or c.get('all_draws')
+        if c.get('num_decks') is not None:
+            c.show_record = c.get('wins') or c.get('losses') or c.get('draws')
         c.has_decks = len(c.get('decks', [])) > 0
         counter = Counter() # type: ignore
         for d in c.get('decks', []):
@@ -255,7 +255,7 @@ class View(BaseView):
     def prepare_people(self) -> None:
         for p in getattr(self, 'people', []):
             p.url = '/people/{id}/'.format(id=p.id)
-            p.all_show_record = p.get('all_wins', None) or p.get('all_losses', None) or p.get('all_draws', None)
+            p.show_record = p.get('wins', None) or p.get('losses', None) or p.get('draws', None)
 
     def prepare_archetypes(self) -> None:
         for a in getattr(self, 'archetypes', []):
@@ -266,9 +266,9 @@ class View(BaseView):
                           archetypes: List[archetype.Archetype]
                          ) -> None:
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
-        if a.get('all_num_decks') is not None:
-            a.all_show_record = a.get('all_wins') or a.get('all_draws') or a.get('all_losses')
-            a.show_matchups = a.all_show_record
+        if a.get('num_decks') is not None:
+            a.show_record = a.get('wins') or a.get('draws') or a.get('losses')
+            a.show_matchups = a.show_record
         a.url = '/archetypes/{id}/'.format(id=a.id)
         counter = Counter() # type: ignore
         a.cards = []

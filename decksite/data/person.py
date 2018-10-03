@@ -27,7 +27,7 @@ def load_person(person: Union[int, str], season_id: Optional[int] = None) -> Per
     return guarantee.exactly_one(load_people('p.id = {person_id} OR p.mtgo_username = {username} OR p.discord_id = {person_id}'.format(person_id=person_id, username=username), season_id=season_id))
 
 def load_people(where: str = '1 = 1',
-                order_by: str = '`all_num_decks` DESC, name',
+                order_by: str = '`num_decks` DESC, name',
                 season_id: Optional[int] = None) -> Sequence[Person]:
     sql = """
         SELECT
@@ -38,15 +38,15 @@ def load_people(where: str = '1 = 1',
             p.mtggoldfish_username,
             p.discord_id,
             p.elo,
-            COUNT(d.id) AS all_num_decks,
-            SUM(wins) AS all_wins,
-            SUM(losses) AS all_losses,
-            SUM(draws) AS all_draws,
-            SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS all_perfect_runs,
-            SUM(CASE WHEN d.finish = 1 THEN 1 ELSE 0 END) AS all_tournament_wins,
-            SUM(CASE WHEN d.finish <= 8 THEN 1 ELSE 0 END) AS all_tournament_top8s,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS all_win_percent,
-            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS all_num_competitions
+            COUNT(d.id) AS num_decks,
+            SUM(wins) AS wins,
+            SUM(losses) AS losses,
+            SUM(draws) AS draws,
+            SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
+            SUM(CASE WHEN d.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
+            SUM(CASE WHEN d.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
+            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS num_competitions
         FROM
             person AS p
         LEFT JOIN

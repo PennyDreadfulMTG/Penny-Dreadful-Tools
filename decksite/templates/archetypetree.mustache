@@ -22,13 +22,13 @@
                     <tr class="archetype archetype-{{depth}}{{#current}} current{{/current}}">
                         <td data-sort="{{sort}}" class="primary initial"><a href="{{url}}">{{name}}</a></td>
                         {{^is_matchups}}
-                            <td class="n">{{all_num_decks}}</td>
+                            <td class="n">{{num_decks}}</td>
                         {{/is_matchups}}
-                        <td class="n">{{#all_show_record}}{{all_wins}}–{{all_losses}}{{#all_draws}}–{{all_draws}}{{/all_draws}}{{/all_show_record}}</td>
-                        <td class="n">{{#all_show_record}}{{all_win_percent}}{{/all_show_record}}</td>
-                        {{^is_matchups}}<td class="n">{{#all_tournament_top8s}}{{all_tournament_wins}}{{/all_tournament_top8s}}</td>{{/is_matchups}}
-                        {{^is_matchups}}<td class="n">{{#all_tournament_top8s}}{{all_tournament_top8s}}{{/all_tournament_top8s}}</td>{{/is_matchups}}
-                        {{^is_matchups}}<td class="n">{{#all_perfect_runs}}{{all_perfect_runs}}{{/all_perfect_runs}}</td>{{/is_matchups}}
+                        <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
+                        <td class="n">{{#show_record}}{{win_percent}}{{/show_record}}</td>
+                        {{^is_matchups}}<td class="n">{{#tournament_top8s}}{{tournament_wins}}{{/tournament_top8s}}</td>{{/is_matchups}}
+                        {{^is_matchups}}<td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>{{/is_matchups}}
+                        {{^is_matchups}}<td class="n">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>{{/is_matchups}}
                         {{! Empty column to hold the toggle when footable kicks in.}}
                         <td></td>
                     </tr>

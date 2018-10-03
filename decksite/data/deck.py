@@ -9,7 +9,7 @@ from decksite import deck_name
 from decksite.data import query
 from decksite.data.top import Top
 from decksite.database import db
-from magic import legality, mana, oracle, rotation
+from magic import legality, mana, oracle
 from magic.models import CardRef, Deck
 from shared import dtutil, guarantee, redis
 from shared.container import Container
@@ -85,7 +85,7 @@ def load_decks(where: str = '1 = 1',
             {order_by}
         {limit}
     """
-    sql = sql.format(person_query=query.person_query(), competition_join=query.competition_join(), season_query=query.season_query(season_id), season_join=query.season_join(), where=where, having=having, order_by=order_by, limit=limit)
+    sql = sql.format(person_query=query.person_query(), competition_join=query.competition_join(), season_query=query.season_query(season_id, 'season.id'), season_join=query.season_join(), where=where, having=having, order_by=order_by, limit=limit)
     db().execute('SET group_concat_max_len=100000')
     rows = db().select(sql)
     decks_by_id = {}
@@ -191,7 +191,7 @@ def load_decks_heavy(where: str = '1 = 1',
         ORDER BY
             {order_by}
         {limit}
-    """.format(person_query=query.person_query(), competition_join=query.competition_join(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id), having=having, order_by=order_by, limit=limit)
+    """.format(person_query=query.person_query(), competition_join=query.competition_join(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id, 'season.id'), having=having, order_by=order_by, limit=limit)
     db().execute('SET group_concat_max_len=100000')
     rows = db().select(sql)
     decks = []
@@ -560,29 +560,6 @@ def count_matches(deck_id: int, opponent_deck_id: int) -> Dict[int, int]:
     for row in db().select(sql, [deck_id, opponent_deck_id]):
         result[row['deck_id']] = row['count']
     return result
-
-# Query Helpers for number of decks, wins, draws and losses.
-
-def nwdl_select(prefix: str = '', additional_clause: str = 'TRUE') -> str:
-    return """
-        SUM(CASE WHEN {additional_clause} AND d.id IS NOT NULL THEN 1 ELSE 0 END) AS `{prefix}num_decks`,
-        SUM(CASE WHEN {additional_clause} THEN wins ELSE 0 END) AS `{prefix}wins`,
-        SUM(CASE WHEN {additional_clause} THEN losses ELSE 0 END) AS `{prefix}losses`,
-        SUM(CASE WHEN {additional_clause} THEN draws ELSE 0 END) AS `{prefix}draws`,
-        SUM(CASE WHEN {additional_clause} AND wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS {prefix}perfect_runs,
-        SUM(CASE WHEN {additional_clause} AND dsum.finish = 1 THEN 1 ELSE 0 END) AS `{prefix}tournament_wins`,
-        SUM(CASE WHEN {additional_clause} AND dsum.finish <= 8 THEN 1 ELSE 0 END) AS `{prefix}tournament_top8s`,
-        IFNULL(ROUND((SUM(CASE WHEN {additional_clause} THEN wins ELSE 0 END) / NULLIF(SUM(CASE WHEN {additional_clause} THEN wins + losses ELSE 0 END), 0)) * 100, 1), '') AS `{prefix}win_percent`
-    """.format(prefix=prefix, additional_clause=additional_clause)
-
-def nwdl_all_select() -> str:
-    return nwdl_select('all_')
-
-def nwdl_season_select() -> str:
-    return nwdl_select('season_', 'dsum.created_date >= {season_start}'.format(season_start=int(rotation.last_rotation().timestamp())))
-
-def nwdl_week_select() -> str:
-    return nwdl_select('week_', 'dsum.created_date >= UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK)')
 
 def nwdl_join() -> str:
     return """

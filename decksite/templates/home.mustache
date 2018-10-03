@@ -19,9 +19,9 @@
             {{#top_cards}}
                 <tr>
                     <td>{{> singlecard}}</td>
-                    <td class="n">{{all_num_decks}}</td>
-                    <td class="n">{{all_wins}}–{{all_losses}}{{#all_draws}}–{{all_draws}}{{/all_draws}}</td>
-                    <td class="n">{{all_win_percent}}</td>
+                    <td class="n">{{num_decks}}</td>
+                    <td class="n">{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}</td>
+                    <td class="n">{{win_percent}}</td>
                     {{! Empty column to hold the toggle when footable kicks in.}}
                     <td></td>
                 </tr>

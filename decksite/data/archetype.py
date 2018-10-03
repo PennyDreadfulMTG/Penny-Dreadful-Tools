@@ -6,7 +6,6 @@ from anytree import NodeMixin
 
 from decksite.data import deck, query
 from decksite.database import db
-from magic import rotation
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import (DatabaseException, DoesNotExistException,
@@ -49,51 +48,39 @@ def load_archetypes(where: str = '1 = 1', merge: bool = False, season_id: int = 
         archetype.id = d.archetype_id
         archetype.name = d.archetype_name
         archetype.decks = archetype.get('decks', []) + [d]
-        archetype.all_wins = archetype.get('all_wins', 0) + (d.get('all_wins') or 0)
-        archetype.all_losses = archetype.get('all_losses', 0) + (d.get('all_losses') or 0)
-        archetype.all_draws = archetype.get('all_draws', 0) + (d.get('all_draws') or 0)
+        archetype.wins = archetype.get('wins', 0) + (d.get('wins') or 0)
+        archetype.losses = archetype.get('losses', 0) + (d.get('losses') or 0)
+        archetype.draws = archetype.get('draws', 0) + (d.get('draws') or 0)
         if d.get('finish') == 1:
-            archetype.all_tournament_wins = archetype.get('all_tournament_wins', 0) + 1
+            archetype.tournament_wins = archetype.get('tournament_wins', 0) + 1
         if (d.get('finish') or sys.maxsize) <= 8:
-            archetype.all_top8s = archetype.get('all_top8s', 0) + 1
-            archetype.all_perfect_runs = archetype.get('all_perfect_runs', 0) + 1
-        if d.active_date >= rotation.last_rotation():
-            archetype.season_wins = archetype.get('season_wins', 0) + (d.get('season_wins') or 0)
-            archetype.season_losses = archetype.get('season_losses', 0) + (d.get('season_losses') or 0)
-            archetype.season_draws = archetype.get('season_draws', 0) + (d.get('season_draws') or 0)
-            if d.get('finish') == 1:
-                archetype.season_tournament_wins = archetype.get('season_tournament_wins', 0) + 1
-            if (d.get('finish') or sys.maxsize) <= 8:
-                archetype.season_top8s = archetype.get('season_top8s', 0) + 1
-            if d.source_name == 'League' and d.wins >= 5 and d.losses == 0:
-                archetype.season_perfect_runs = archetype.get('season_all_perfect_runs', 0) + 1
+            archetype.top8s = archetype.get('top8s', 0) + 1
+            archetype.perfect_runs = archetype.get('perfect_runs', 0) + 1
         archetypes[key] = archetype
     archetype_list = list(archetypes.values())
     return archetype_list
 
-def load_archetypes_deckless(order_by: str = '`all_num_decks` DESC, `all_wins` DESC, name', season_id: int = None, retry: bool = False) -> List[Archetype]:
+def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, name', season_id: int = None, retry: bool = False) -> List[Archetype]:
     sql = """
         SELECT
             a.id,
             a.name,
             aca.ancestor AS parent_id,
-            SUM(num_decks) AS all_num_decks,
-            SUM(wins) AS all_wins,
-            SUM(losses) AS all_losses,
-            SUM(draws) AS all_draws,
+            SUM(num_decks) AS num_decks,
+            SUM(wins) AS wins,
+            SUM(losses) AS losses,
+            SUM(draws) AS draws,
             SUM(wins - losses) AS record,
-            SUM(perfect_runs) AS all_perfect_runs,
-            SUM(tournament_wins) AS all_tournament_wins,
-            SUM(tournament_top8s) AS all_tournament_top8s,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS all_win_percent
+            SUM(perfect_runs) AS perfect_runs,
+            SUM(tournament_wins) AS tournament_wins,
+            SUM(tournament_top8s) AS tournament_top8s,
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
         FROM
             archetype AS a
         INNER JOIN
             _archetype_stats AS ars ON a.id = ars.archetype_id
         LEFT JOIN
             archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
-        LEFT JOIN
-            ({season_table}) AS season ON season.id = ars.season_id
         WHERE
             {season_query}
         GROUP BY
@@ -101,7 +88,7 @@ def load_archetypes_deckless(order_by: str = '`all_num_decks` DESC, `all_wins` D
             aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
         ORDER BY
             {order_by}
-    """.format(season_table=query.season_table(), season_query=query.season_query(season_id), order_by=order_by)
+    """.format(season_query=query.season_query(season_id), order_by=order_by)
     try:
         archetypes = [Archetype(a) for a in db().select(sql)]
         archetypes_by_id = {a.id: a for a in archetypes}
@@ -144,27 +131,25 @@ def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retr
             a.name AS archetype_name,
             opponent_archetype_id AS id,
             oa.name AS name,
-            SUM(wins) AS all_wins,
-            SUM(losses) AS all_losses,
-            SUM(draws) AS all_draws,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS all_win_percent
+            SUM(wins) AS wins,
+            SUM(losses) AS losses,
+            SUM(draws) AS draws,
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
         FROM
             _matchup_stats AS ms
         INNER JOIN
             archetype AS a ON archetype_id = a.id
         INNER JOIN
             archetype AS oa ON opponent_archetype_id = oa.id
-        LEFT JOIN
-            ({season_table}) AS season ON ms.season_id = season.id
         WHERE
             ({where}) AND ({season_query})
         GROUP BY
             archetype_id,
             opponent_archetype_id
         ORDER BY
-            all_wins DESC,
+            wins DESC,
             oa.name
-    """.format(season_table=query.season_table(), where=where, season_query=query.season_query(season_id))
+    """.format(where=where, season_query=query.season_query(season_id))
     try:
         return [Container(m) for m in db().select(sql)]
     except DatabaseException as e:

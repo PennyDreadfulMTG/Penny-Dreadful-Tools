@@ -60,22 +60,37 @@ def load_competition(competition_id: int) -> Competition:
 
 def load_competitions(where: str = '1 = 1', having: str = '1 = 1', season_id: Optional[int] = None) -> List[Competition]:
     sql = """
-        SELECT c.id, c.name, c.start_date, c.end_date, c.url,
-        COUNT(d.id) AS num_decks,
-        SUM(CASE WHEN d.reviewed THEN 1 ELSE 0 END) AS num_reviewed,
-        sp.name AS sponsor_name,
-        ct.name AS type
-        FROM competition AS c
-        LEFT JOIN deck AS d ON c.id = d.competition_id
-        LEFT JOIN competition_series AS cs ON cs.id = c.competition_series_id
-        LEFT JOIN competition_type as ct ON ct.id = cs.competition_type_id
-        LEFT JOIN sponsor AS sp ON cs.sponsor_id = sp.id
+        SELECT
+            c.id,
+            c.name,
+            c.start_date,
+            c.end_date,
+            c.url,
+            COUNT(d.id) AS num_decks,
+            SUM(CASE WHEN d.reviewed THEN 1 ELSE 0 END) AS num_reviewed,
+            sp.name AS sponsor_name,
+            ct.name AS type
+        FROM
+            competition AS c
+        LEFT JOIN
+            deck AS d ON c.id = d.competition_id
+        LEFT JOIN
+            competition_series AS cs ON cs.id = c.competition_series_id
+        LEFT JOIN
+            competition_type as ct ON ct.id = cs.competition_type_id
+        LEFT JOIN
+            sponsor AS sp ON cs.sponsor_id = sp.id
         {season_join}
-        WHERE ({where}) AND  ({season_query})
-        GROUP BY c.id
-        HAVING {having}
-        ORDER BY c.start_date DESC, c.name
-    """.format(season_join=query.season_join(), where=where, season_query=query.season_query(season_id), having=having)
+        WHERE
+            ({where}) AND ({season_query})
+        GROUP BY
+            c.id
+        HAVING
+            {having}
+        ORDER BY
+            c.start_date DESC,
+            c.name
+    """.format(season_join=query.season_join(), where=where, season_query=query.season_query(season_id, 'season.id'), having=having)
     competitions = [Competition(r) for r in db().select(sql)]
     for c in competitions:
         c.start_date = dtutil.ts2dt(c.start_date)
@@ -144,7 +159,7 @@ def leaderboards(where: str = "ct.name = 'Gatherling'", season_id: Optional[int]
             wins DESC,
             tournaments DESC,
             person
-    """.format(person_query=query.person_query(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id))
+    """.format(person_query=query.person_query(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id, 'season.id'))
     results = []
     current: Dict[str, Any] = {}
     for row in db().select(sql):

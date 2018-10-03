@@ -28,18 +28,18 @@ class Archetypes(View):
             for root in self.roots:
                 for b in root.archetype_tree:
                     mu = matchups_by_id.get(b.id)
-                    if mu and mu.all_wins + mu.all_losses > 0:
+                    if mu and mu.wins + mu.losses > 0:
                         mu.has_data = True
-                        mu.all_win_percent = float(mu.all_win_percent)
+                        mu.win_percent = float(mu.win_percent)
                         mu.color_cell = True
-                        mu.hue = 120 if mu.all_win_percent >= 50 else 0
-                        mu.saturation = abs(mu.all_win_percent - 50) + 50
+                        mu.hue = 120 if mu.win_percent >= 50 else 0
+                        mu.saturation = abs(mu.win_percent - 50) + 50
                         mu.lightness = 80
                         mu.opponent_archetype = b
                     else:
                         mu = Container()
                         mu.has_data = False
-                        mu.all_win_percent = None
+                        mu.win_percent = None
                         mu.color_cell = False
                         mu.opponent_archetype = b
                     a.matchups.append(mu)

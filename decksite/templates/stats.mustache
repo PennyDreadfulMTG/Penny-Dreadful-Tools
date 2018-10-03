@@ -16,12 +16,12 @@
             </tr>
         </thead>
         <tbody>
-            <td class="n">{{all_num_decks}}</td>
-            <td class="n">{{#all_show_record}}{{all_wins}}–{{all_losses}}{{#all_draws}}–{{all_draws}}{{/all_draws}}{{/all_show_record}}</td>
-            <td class="n" data-breakpoints="xs sm">{{all_win_percent}}</td>
-            <td class="n" data-breakpoints="xs sm">{{#all_tournament_wins}}{{all_tournament_wins}}{{/all_tournament_wins}}</td>
-            <td class="n" data-breakpoints="xs sm">{{#all_tournament_top8s}}{{all_tournament_top8s}}{{/all_tournament_top8s}}</td>
-            <td class="n" data-breakpoints="xs sm">{{#all_perfect_runs}}{{all_perfect_runs}}{{/all_perfect_runs}}</td>
+            <td class="n">{{num_decks}}</td>
+            <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
+            <td class="n" data-breakpoints="xs sm">{{win_percent}}</td>
+            <td class="n" data-breakpoints="xs sm">{{#tournament_wins}}{{tournament_wins}}{{/tournament_wins}}</td>
+            <td class="n" data-breakpoints="xs sm">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>
+            <td class="n" data-breakpoints="xs sm">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>
             {{#elo}}<td class="n" data-breakpoints="xs sm">{{elo}}</th>{{/elo}}
             {{! Empty column to hold the toggle when footable kicks in.}}
             <td></td>

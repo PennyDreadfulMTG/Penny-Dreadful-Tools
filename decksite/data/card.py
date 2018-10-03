@@ -21,28 +21,26 @@ def load_cards(season_id: Optional[int] = None, person_id: Optional[int] = None,
     sql = """
         SELECT
             name,
-            SUM(num_decks) AS all_num_decks,
-            SUM(wins) AS all_wins,
-            SUM(losses) AS all_losses,
-            SUM(draws) AS all_draws,
+            SUM(num_decks) AS num_decks,
+            SUM(wins) AS wins,
+            SUM(losses) AS losses,
+            SUM(draws) AS draws,
             SUM(wins - losses) AS record,
-            SUM(perfect_runs) AS all_perfect_runs,
-            SUM(tournament_wins) AS all_tournament_wins,
-            SUM(tournament_top8s) AS all_tournament_top8s,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS all_win_percent
+            SUM(perfect_runs) AS perfect_runs,
+            SUM(tournament_wins) AS tournament_wins,
+            SUM(tournament_top8s) AS tournament_top8s,
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
         FROM
             {table} AS cs
-        LEFT JOIN
-            ({season_table}) AS season ON season.id = cs.season_id
         WHERE
-            {season_query} AND {where}
+            ({where}) AND ({season_query})
         GROUP BY
             {group_by}
         ORDER BY
-            all_num_decks DESC,
+            num_decks DESC,
             record,
             name
-    """.format(table=table, season_table=query.season_table(), season_query=query.season_query(season_id), where=where, group_by=group_by)
+    """.format(table=table, season_query=query.season_query(season_id), where=where, group_by=group_by)
     try:
         cs = [Container(r) for r in db().select(sql)]
         cards = oracle.cards_by_name()
@@ -60,20 +58,20 @@ def load_cards(season_id: Optional[int] = None, person_id: Optional[int] = None,
 def load_card(name: str, season_id: Optional[int] = None) -> Card:
     c = guarantee.exactly_one(oracle.load_cards([name]))
     c.decks = deck.load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name)), season_id=season_id)
-    c.all_wins, c.all_losses, c.all_draws, c.all_tournament_wins, c.all_tournament_top8s, c.all_perfect_runs = 0, 0, 0, 0, 0, 0
+    c.wins, c.losses, c.draws, c.tournament_wins, c.tournament_top8s, c.perfect_runs = 0, 0, 0, 0, 0, 0
     for d in c.decks:
-        c.all_wins += d.get('wins', 0)
-        c.all_losses += d.get('losses', 0)
-        c.all_draws += d.get('draws', 0)
-        c.all_tournament_wins += 1 if d.get('finish') == 1 else 0
-        c.all_tournament_top8s += 1 if (d.get('finish') or sys.maxsize) <= 8 else 0
-        c.all_perfect_runs += 1 if d.get('source_name') == 'League' and d.get('wins', 0) >= 5 and d.get('losses', 0) == 0 else 0
-    if c.all_wins or c.all_losses:
-        c.all_win_percent = round((c.all_wins / (c.all_wins + c.all_losses)) * 100, 1)
+        c.wins += d.get('wins', 0)
+        c.losses += d.get('losses', 0)
+        c.draws += d.get('draws', 0)
+        c.tournament_wins += 1 if d.get('finish') == 1 else 0
+        c.tournament_top8s += 1 if (d.get('finish') or sys.maxsize) <= 8 else 0
+        c.perfect_runs += 1 if d.get('source_name') == 'League' and d.get('wins', 0) >= 5 and d.get('losses', 0) == 0 else 0
+    if c.wins or c.losses:
+        c.win_percent = round((c.wins / (c.wins + c.losses)) * 100, 1)
     else:
-        c.all_win_percent = ''
-    c.all_num_decks = len(c.decks)
-    c.played_competitively = c.all_wins or c.all_losses or c.all_draws
+        c.win_percent = ''
+    c.num_decks = len(c.decks)
+    c.played_competitively = c.wins or c.losses or c.draws
     return c
 
 def playability() -> Dict[str, float]:

@@ -754,9 +754,9 @@ def card_history(c: Card) -> str:
     seasons[rotation.current_season_num()] = c.legalities.get('Penny Dreadful', None) == 'Legal'
     s = '   '
     for i in range(1, rotation.current_season_num() + 1):
-        s += f'{i}: '
+        s += f'{i} '
         s += ':white_check_mark:' if seasons.get(i, False) else ':no_entry_sign:'
-        s += '  '
+        s += '   '
     s = s.strip()
     s += '\n' + fetcher.decksite_url('/seasons/all/cards/{name}/'.format(name=fetcher.internal.escape(c.name, skip_double_slash=True)))
     return s

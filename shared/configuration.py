@@ -9,6 +9,9 @@ from typing import Any, Dict, List, Optional, Set, Union, overload
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
 DEFAULTS = {
+    # Discord Webhook endpoint
+    'bugs_webhook_id': None,
+    'bugs_webhook_token': None,
     # Array of Pricefile URLs (foil, non-foil).  Used by price_grabber and rotation_script
     'cardhoarder_urls': [],
     # Path to TSV list of card nicknames.  Should never be changed.  Used by magic.
@@ -17,6 +20,9 @@ DEFAULTS = {
     'charts_dir': './images/charts',
     # Is the codebase allowed to report github issues?  Disable on dev.
     'create_github_issues': True,
+    # Google Custom Search Engine (for !google)
+    'cse_api_key': None,
+    'cse_engine_id': None,
     # mysql database name.  Used by decksite.
     'decksite_database': 'decksite',
     # URL for decksite API calls.  Used by discordbot.
@@ -26,12 +32,17 @@ DEFAULTS = {
     # github credentials.  Used for auto-reporting issues.
     'github_password': None,
     'github_user': None,
+    # Google Maps API key (for !time)
+    'google_maps_api_key': None,
     # Required if you want to share cookies between subdomains
     'flask_cookie_domain': None,
     # Discord server id.  Used for admin verification.  Used by decksite.
     'guild_id': '207281932214599682',
     'image_dir': './images',
     'is_test_site': False,
+    # Discord Webhook endpoint
+    'league_webhook_id': None,
+    'league_webhook_token': None,
     'legality_dir': '~/legality/Legality Checker/',
     'logsite_database': 'pdlogs',
     'magic_database': 'cards',
@@ -46,12 +57,13 @@ DEFAULTS = {
     'oauth2_client_id': '',
     'oauth2_client_secret': '',
     'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32)),
+    'poeditor_api_key': None,
     'prices_database': 'prices',
     'production': False, # Block some of the more dangerous things from running if this is true
+    'redis_db': 0,
     'redis_enabled': True,
     'redis_host': 'localhost',
     'redis_port': 6379,
-    'redis_db': 0,
     'save_historic_legal_lists': False,
     'scratch_dir': '.',
     'slow_fetch': 10.0,
@@ -63,16 +75,7 @@ DEFAULTS = {
     'to_username': '',
     'tournament_channel_id': '207281932214599682',
     'web_cache': '.web_cache',
-    # Google Custom Search Engine (for !google)
-    'cse_api_key': None,
-    'cse_engine_id': None,
     'whoosh_index_dir': 'whoosh_index',
-    'poeditor_api_key': None,
-    # Discord Webhook endpoint
-    'league_webhook_id': None,
-    'league_webhook_token': None,
-    'bugs_webhook_id': None,
-    'bugs_webhook_token': None,
 }
 
 CONFIG: Dict[str, Any] = {}

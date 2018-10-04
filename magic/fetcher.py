@@ -14,7 +14,7 @@ from magic.models.card import Card
 from shared import configuration, dtutil, redis
 from shared.container import Container
 from shared.fetcher_internal import FetchException
-from shared.pd_exception import TooFewItemsException
+from shared.pd_exception import NotConfiguredException, TooFewItemsException
 
 
 def all_cards() -> Dict[str, CardDescription]:
@@ -169,15 +169,22 @@ def sitemap() -> List[str]:
     return internal.fetch_json(decksite_url('/api/sitemap/'))
 
 def time(q: str) -> str:
+    api_key = configuration.get('google_maps_api_key')
+    if not api_key:
+        raise NotConfiguredException('No value found for google_maps_api_key')
     if len(q) > 3:
-        url = 'http://maps.googleapis.com/maps/api/geocode/json?address={q}&sensor=false'.format(q=internal.escape(q))
+        url = 'https://maps.googleapis.com/maps/api/geocode/json?address={q}&key={api_key}&sensor=false'.format(q=internal.escape(q), api_key=api_key)
         info = internal.fetch_json(url)
+        if 'error_message' in info:
+            return info['error_message']
         try:
             location = info['results'][0]['geometry']['location']
         except IndexError as e:
             raise TooFewItemsException(e)
-        url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&sensor=false'.format(lat=internal.escape(str(location['lat'])), lng=internal.escape(str(location['lng'])), timestamp=internal.escape(str(dtutil.dt2ts(dtutil.now()))))
+        url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&key={api_key}&sensor=false'.format(lat=internal.escape(str(location['lat'])), lng=internal.escape(str(location['lng'])), timestamp=internal.escape(str(dtutil.dt2ts(dtutil.now()))), api_key=api_key)
         timezone_info = internal.fetch_json(url)
+        if 'error_message' in timezone_info:
+            return timezone_info['error_message']
         if timezone_info['status'] == 'ZERO_RESULTS':
             raise TooFewItemsException(timezone_info['status'])
         try:

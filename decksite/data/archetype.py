@@ -186,6 +186,9 @@ def move(archetype_id: int, parent_id: int) -> None:
     db().execute(add_sql, [archetype_id, parent_id])
     db().commit()
 
+def rename(archetype_id: int, new_name: str) -> None:
+    db().execute('UPDATE archetype SET name = %s WHERE id = %s', [new_name, archetype_id])
+
 def base_archetypes() -> List[Archetype]:
     return [a for a in base_archetype_by_id().values() if a.parent is None]
 

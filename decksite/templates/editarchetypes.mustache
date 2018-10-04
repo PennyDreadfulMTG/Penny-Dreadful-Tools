@@ -31,6 +31,34 @@
     </form>
 </section>
 <section>
+    <h2>Move</h2>
+    <form method="post">
+        <div>
+            <label>Move</label>
+            {{> archetypedropdown}}
+        </div>
+        <div>
+            <label>New Parent</label>
+            {{> archetypedropdown}}
+        </div>
+        <button type="submit">Move</button>
+    </form>
+</section>
+<section>
+    <h2>Rename</h2>
+    <form method="post">
+        <div>
+            <label for="archetype_id">Rename</label>
+            {{> archetypedropdown}}
+        </div>
+        <div>
+            <label for="rename_to">To</label>
+            <input type="text" name="rename_to" value="{{rename_to}}">
+        </div>
+        <button type="submit">Rename</button>
+    </form>
+</section>
+<section>
     <h2>Search By Card</h2>
 
     <form method="post">
@@ -77,16 +105,6 @@
             <button type="submit">Reassign</button>
         </form>
     {{/has_search_results}}
-</section>
-<section>
-    <h2>Move</h2>
-    <form method="post" class="inline">
-        <p>Move</p>
-        {{> archetypedropdown}}
-        <p>New parent</p>
-        {{> archetypedropdown}}
-        <button type="submit">Move</button>
-    </form>
 </section>
 <section>
     <h2>Add Archetype</h2>

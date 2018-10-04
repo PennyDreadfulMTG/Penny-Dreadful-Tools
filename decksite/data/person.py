@@ -24,7 +24,10 @@ def load_person(person: Union[int, str], season_id: Optional[int] = None) -> Per
     except ValueError:
         person_id = 0
         username = sqlescape(person)
-    return guarantee.exactly_one(load_people('p.id = {person_id} OR p.mtgo_username = {username} OR p.discord_id = {person_id}'.format(person_id=person_id, username=username), season_id=season_id))
+    person = guarantee.exactly_one(load_people('p.id = {person_id} OR p.mtgo_username = {username} OR p.discord_id = {person_id}'.format(person_id=person_id, username=username), season_id=season_id))
+    set_achievements([person], season_id)
+    set_head_to_head([person], season_id)
+    return person
 
 def load_people(where: str = '1 = 1',
                 order_by: str = '`num_decks` DESC, name',
@@ -64,10 +67,6 @@ def load_people(where: str = '1 = 1',
     people = [Person(r) for r in db().select(sql)]
     for p in people:
         p.season_id = season_id
-
-    if len(people) > 0:
-        set_achievements(people, season_id)
-        set_head_to_head(people, season_id)
     return people
 
 def set_achievements(people: List[Person], season_id: int = None, retry: bool = False) -> None:

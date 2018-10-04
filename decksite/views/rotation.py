@@ -58,7 +58,12 @@ class Rotation(View):
     def process_score(self, name: str, hits: int) -> None:
         remaining_runs = (168 - self.runs)
         hits_needed = max(84 - hits, 0)
-        c = self.cs[name]
+        c = self.cs.get(name, None)
+        if c is None:
+            c = Card({
+                'name': name,
+                'layout': 'unknown',
+            })
         if c.layout not in multiverse.playable_layouts():
             return
         percent = round(round(hits / self.runs, 2) * 100)

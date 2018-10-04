@@ -74,17 +74,18 @@ def set_achievements(people: List[Person], season_id: int = None, retry: bool = 
     sql = """
         SELECT
             person_id AS id,
-            season_id,
-            tournament_entries,
-            tournament_wins,
-            league_entries,
-            completionist,
-            perfect_runs,
-            perfect_run_crushes
+            SUM(tournament_entries) AS tournament_entries,
+            SUM(tournament_wins) AS tournament_wins,
+            SUM(league_entries) AS league_entries,
+            SUM(completionist) AS completionist,
+            SUM(perfect_runs) AS perfect_runs,
+            SUM(perfect_run_crushes) AS perfect_run_crushes
         FROM
             _achievements AS a
         WHERE
             person_id IN ({ids}) AND ({season_query})
+        GROUP BY
+            person_id
     """.format(ids=', '.join(str(k) for k in people_by_id.keys()), season_query=query.season_query(season_id))
     try:
         results = [Container(r) for r in db().select(sql)]
@@ -107,22 +108,25 @@ def set_head_to_head(people: List[Person], season_id: int = None, retry: bool = 
         SELECT
             hths.person_id AS id,
             LOWER(opp.mtgo_username) AS opp_mtgo_username,
-            hths.num_matches,
-            hths.wins,
-            hths.losses,
-            hths.draws,
-            IFNULL(ROUND((wins / NULLIF(wins + losses, 0)) * 100, 1), '') AS win_percent
+            SUM(num_matches) AS num_matches,
+            SUM(wins) AS wins,
+            SUM(losses) AS losses,
+            SUM(draws) AS draws,
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
         FROM
             _head_to_head_stats AS hths
         INNER JOIN
             person AS opp ON hths.opponent_id = opp.id
         WHERE
             hths.person_id IN ({ids}) AND ({season_query})
+        GROUP BY
+            hths.person_id,
+            hths.opponent_id
         ORDER BY
-            num_matches DESC,
-            wins - losses DESC,
+            SUM(num_matches) DESC,
+            SUM(wins - losses) DESC,
             win_percent DESC,
-            wins DESC,
+            SUM(wins) DESC,
             opp_mtgo_username
     """.format(ids=', '.join(str(k) for k in people_by_id.keys()), season_query=query.season_query(season_id))
     try:

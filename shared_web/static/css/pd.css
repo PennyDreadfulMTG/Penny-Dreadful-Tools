@@ -2296,19 +2296,11 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 .tpd-skin-dark a:hover { color: #ccc; }
 
 header {
-    background-image: url("/banner/0.png");
-    filter: grayscale(90%);
+    filter: grayscale(70%);
     background-size: cover;
 }
-
-header.season-9 {
-    background-image: url("/static/images/s9-banner.jfif");
-}
-header.season-8 {
-    background-image: url("/static/images/s8-banner.jfif");
-}
-header.season-7 {
-    background-image: url("/static/images/s7-banner.jfif");
+header.season-all {
+    background-image: url("/banner/0.png");
 }
 header.season-1 {
     background-image: url("/banner/1.png");
@@ -2327,4 +2319,16 @@ header.season-5 {
 }
 header.season-6 {
     background-image: url("/banner/6.png");
+}
+header.season-7 {
+    background-image: url("/banner/7.png");
+}
+header.season-8 {
+    background-image: url("/banner/8.png");
+}
+header.season-9 {
+    background-image: url("/banner/9.png");
+}
+header.season-10 {
+    background-image: url("/banner/10.png");
 }

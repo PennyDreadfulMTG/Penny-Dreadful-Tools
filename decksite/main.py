@@ -379,9 +379,15 @@ def image(c: str = '') -> Response:
 
 @APP.route('/banner/<seasonnum>.png')
 def banner(seasonnum: str) -> Response:
-    cardnames = ['Parallax Wave', 'Treasure Cruise', 'Duress', 'Chain Lightning', 'Rofellos, Llanowar Emissary ', 'Necropotence', 'Shrine of Burning Rage']
-    background = 'Lake of the Dead'
-    if seasonnum == '1':
+    nice_path = os.path.join(APP.static_folder, 'images', 'banners', f'{seasonnum}.png')
+    if os.path.exists(nice_path):
+        return send_file(os.path.abspath(nice_path))
+    cardnames = ['Enter the Unknown', 'Unknown Shores', 'Peer through Depths']
+    background = 'Enter the Infinite'
+    if seasonnum == '0':
+        cardnames = ['Parallax Wave', 'Treasure Cruise', 'Duress', 'Chain Lightning', 'Rofellos, Llanowar Emissary ', 'Thawing Glaciers', 'Temur Ascendancy']
+        background = 'Lake of the Dead'
+    elif seasonnum == '1':
         cardnames = ['Mother of Runes', 'Treasure Cruise', 'Duress', 'Lightning Strike', 'Elvish Mystic', 'Fleecemane Lion', 'Vivid Marsh']
         background = 'Dark Ritual'
     elif seasonnum == '2':

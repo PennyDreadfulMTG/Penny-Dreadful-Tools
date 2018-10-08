@@ -270,6 +270,7 @@ def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
     return new_list
 
 def update_cache() -> None:
+    db().begin()
     db().execute('DROP TABLE IF EXISTS _new_cache_card')
     db().execute('SET group_concat_max_len=100000')
     db().execute(create_table_def('_new_cache_card', card.base_query_properties(), base_query()))
@@ -281,6 +282,7 @@ def update_cache() -> None:
     db().execute('CREATE TABLE IF NOT EXISTS _cache_card (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
     db().execute('RENAME TABLE _cache_card TO _old_cache_card, _new_cache_card TO _cache_card')
     db().execute('DROP TABLE IF EXISTS _old_cache_card')
+    db().commit()
 
 def reindex() -> None:
     writer = WhooshWriter()

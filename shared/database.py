@@ -25,7 +25,7 @@ class Database():
 
     def connect(self) -> None:
         try:
-            self.connection = MySQLdb.connect(host=self.host, port=self.port, user=self.user, passwd=self.passwd, use_unicode=True, charset='utf8', autocommit=True)
+            self.connection = MySQLdb.connect(host=self.host, port=self.port, user=self.user, passwd=self.passwd, use_unicode=True, charset='utf8', autocommit=False)
             self.cursor = self.connection.cursor(MySQLdb.cursors.DictCursor)
             self.execute('SET NAMES utf8mb4')
             try:
@@ -43,6 +43,8 @@ class Database():
 
     def execute(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> int:
         [n, _] = self.execute_anything(sql, args, False)
+        if self.open_transaction_count == 0:
+            self.connection.commit()
         return n
 
     def execute_anything(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, fetch_rows: bool = True) -> Tuple[int, List[Dict[str, ValidSqlArgumentDescription]]]:

@@ -242,6 +242,8 @@ def report(form: ReportForm) -> bool:
             mtgo_match_id = form.get('matchID', None)
         else:
             mtgo_match_id = None
+        match.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games, None, None, mtgo_match_id)
+        if not pdbot:
             entry_name = deck.load_deck(int(form.entry)).person
             opp_name = deck.load_deck(int(form.opponent)).person
             if configuration.get('league_webhook_id') and configuration.get('league_webhook_token'):
@@ -252,9 +254,6 @@ def report(form: ReportForm) -> bool:
                 )
             else:
                 logger.warning('Not posting manual report to discord because not configured.')
-        db().begin()
-        match.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games, None, None, mtgo_match_id)
-        db().commit()
         return True
     except LockNotAcquiredException:
         form.errors['entry'] = 'Cannot report right now, somebody else is reporting a match for you or your opponent. Try again a bit later'

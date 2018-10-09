@@ -290,9 +290,9 @@ Want to contribute? Send a Pull Request."""
         """Ding!"""
         if args.lower() == 'reset':
             self.modofail.count = 0
-        if hasattr(author, 'voice') and author.voice is not None and author.voice.voice_channel is not None:
-            voice_channel = author.voice.voice_channel
-            voice = channel.server.voice_client
+        if hasattr(author, 'voice') and author.voice is not None and author.voice.channel is not None:
+            voice_channel = author.voice.channel
+            voice = channel.guild.voice_client
             if voice is None:
                 voice = await voice_channel.connect()
             elif voice.channel != voice_channel:

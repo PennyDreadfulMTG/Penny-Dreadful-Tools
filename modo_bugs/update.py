@@ -180,7 +180,8 @@ def check_for_invalid_card_names(issue: Issue, cards: List[str]) -> None:
 def get_affects(issue: Issue) -> List[str]:
     affects = strings.get_body_field(issue.body, 'Affects')
     if affects is None:
-        affects = issue.title
+        title = issue.title # type: str
+        affects = title
 
     return strings.get_cards_from_string(affects)
 

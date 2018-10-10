@@ -164,9 +164,9 @@ def set_head_to_head(people: List[Person], season_id: int = None, retry: bool = 
         raise e
 
 def associate(d, discord_id):
-    person = guarantee.exactly_one(load_people('d.id = {deck_id}'.format(deck_id=sqlescape(d.id))))
+    person_id = db().value('SELECT person_id FROM deck WHERE id = %s', [d.id], fail_on_missing=True)
     sql = 'UPDATE person SET discord_id = %s WHERE id = %s'
-    return db().execute(sql, [discord_id, person.id])
+    return db().execute(sql, [discord_id, person_id])
 
 def is_allowed_to_retire(deck_id, discord_id):
     if not deck_id:

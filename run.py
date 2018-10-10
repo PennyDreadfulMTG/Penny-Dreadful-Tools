@@ -67,10 +67,12 @@ def task(args: List[str]) -> None:
         run_all_tasks(module)
     else:
         s = importlib.import_module('{module}.{name}'.format(name=name, module=module))
-        if getattr(s, 'REQUIRES_APP_CONTEXT', True):
+        use_app_conext = getattr(s, 'REQUIRES_APP_CONTEXT', True)
+        if use_app_conext:
             from decksite.main import APP
             APP.config['SERVER_NAME'] = configuration.server_name()
-            APP.app_context().__enter__() # Technically we should __exit__() at the end, but since we're terminating...
+            app_context = APP.app_context()
+            app_context.__enter__()
         if getattr(s, 'scrape', None) is not None:
             s.scrape() # type: ignore
         elif getattr(s, 'run', None) is not None:
@@ -78,6 +80,8 @@ def task(args: List[str]) -> None:
         # Only when called directly, not in 'all'
         elif getattr(s, 'ad_hoc', None) is not None:
             s.ad_hoc() # type: ignore
+        if use_app_conext:
+            app_context.__exit__(None, None, None)
 
 def run_all_tasks(module: Any) -> None:
     from decksite.main import APP

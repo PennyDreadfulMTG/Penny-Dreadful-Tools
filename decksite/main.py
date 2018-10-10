@@ -162,12 +162,12 @@ def tournament_leaderboards():
     return view.page()
 
 @APP.route('/add/')
+@cached()
 def add_form():
     view = AddForm()
     return view.page()
 
 @APP.route('/add/', methods=['POST'])
-@cached()
 def add_deck():
     url = request.form['url']
     error = None

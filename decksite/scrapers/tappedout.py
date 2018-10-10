@@ -104,7 +104,11 @@ def parse_printable(raw_deck: DeckType) -> DeckType:
     soup = BeautifulSoup(s, 'html.parser')
     raw_deck['name'] = soup.find('h2').string.strip('"')
     infobox = soup.find('table', {'id': 'info_box'})
+    if not infobox:
+        raise InvalidDataException('Unable to find infobox in parse_printable.')
     user = infobox.find('td', string='User')
+    if not user:
+        raise InvalidDataException('Unable to find infobox in parse_printable.')
     raw_deck['user'] = user.find_next_sibling('td').string
     return raw_deck
 

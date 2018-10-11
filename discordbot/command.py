@@ -810,12 +810,9 @@ def resources_resources(args: str) -> Dict[str, str]:
 def more_results_link(args: str, total: int) -> str:
     return 'and {n} more.\n<https://scryfall.com/search/?q={q}>'.format(n=total - 4, q=fetcher.internal.escape(args)) if total > MAX_CARDS_SHOWN else ''
 
-async def send(channel: TextChannel, content: str, file: File = None) -> None:
+async def send(channel: TextChannel, content: str, file: File = None) -> Message:
     new_s = escape_underscores(content)
-    if file:
-        await channel.send(file=file, content=new_s)
-    else:
-        await channel.send(new_s)
+    return await channel.send(file=file, content=new_s)
 
 async def post_cards(
         client: Client,

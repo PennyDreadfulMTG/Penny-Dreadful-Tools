@@ -56,8 +56,8 @@ def test_resources_matching_in_url() -> None:
 
 def test_escape_underscores() -> None:
     r = command.escape_underscores('simple_test')
-    assert(r == 'simple\\_test')
+    assert r == 'simple\\_test'
     r = command.escape_underscores('<simple_test>')
-    assert(r == '<simple_test>')
+    assert r == '<simple_test>'
     r = command.escape_underscores('people gimmick_: <https://pennydreadfulmagic.com/people/gimmick_/>')
-    assert(r == 'people gimmick\\_: <https://pennydreadfulmagic.com/people/gimmick_/>')
+    assert r == 'people gimmick\\_: <https://pennydreadfulmagic.com/people/gimmick_/>'

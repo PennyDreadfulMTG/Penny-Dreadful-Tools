@@ -885,7 +885,7 @@ def single_card_text_internal(client: Client, requested_card: Card, disable_emoj
     return text
 
 # See #5532.
-def escape_underscores(s):
+def escape_underscores(s: str) -> str:
     should_escape_underscores = True
     new_s = ''
     for char in s:

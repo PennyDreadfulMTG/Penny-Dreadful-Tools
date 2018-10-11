@@ -77,7 +77,7 @@ async def handle_command(message: Message, client: Client) -> None:
             print('Caught exception processing command `{cmd}`'.format(cmd=message.content))
             tb = traceback.format_exc()
             print(tb)
-            await message.channel.send('{author}: I know the command `{cmd}` but encountered an error while executing it.'.format(cmd=parts[0], author=message.author.mention))
+            await send(message.channel, '{author}: I know the command `{cmd}` but encountered an error while executing it.'.format(cmd=parts[0], author=message.author.mention))
             await getattr(Commands, 'bug')(Commands, channel=message.channel, args='Command failed with {c}: {cmd}\n\n```\n{tb}\n```'.format(c=e.__class__.__name__, cmd=message.content, tb=tb), author=message.author)
 
 def find_method(name: str) -> Optional[Callable]:
@@ -158,9 +158,9 @@ Suggestions/bug reports: <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Dis
 
 Want to contribute? Send a Pull Request."""
         if len(msg) > 2000:
-            await channel.send(msg[0:1999] + '…')
+            await send(channel, msg[0:1999] + '…')
         else:
-            await channel.send(msg)
+            await send(channel, msg)
 
     @cmd_header('Commands')
     async def random(self, client: Client, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
@@ -187,12 +187,12 @@ Want to contribute? Send a Pull Request."""
         multiverse.update_cache()
         multiverse.reindex()
         oracle.init(force=True)
-        await channel.send('Reloaded legal cards and bugs.')
+        await send(channel, 'Reloaded legal cards and bugs.')
 
     @cmd_header('Developer')
     async def restartbot(self, client: Client, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """Restarts the bot."""
-        await channel.send('Rebooting!')
+        await send(channel, 'Rebooting!')
         await client.logout()
 
     @cmd_header('Commands')
@@ -214,25 +214,25 @@ Want to contribute? Send a Pull Request."""
     async def status(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """`!status` Gives the status of Magic Online: UP or DOWN."""
         status = await fetcher.mtgo_status()
-        await channel.send('MTGO is {status}'.format(status=status))
+        await send(channel, 'MTGO is {status}'.format(status=status))
 
     @cmd_header('Developer')
     async def echo(self, client: Client, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
         """Repeat after me…"""
         s = emoji.replace_emoji(args, client)
-        await channel.send(s)
+        await send(channel, s)
 
     @cmd_header('Commands')
     async def barbs(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """`!barbs` Gives Volvary's helpful advice for when to sideboard in Aura Barbs."""
         msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
-        await channel.send(msg)
+        await send(channel, msg)
 
     @cmd_header('Commands')
     async def quality(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """`!quality` A helpful reminder about everyone's favorite way to play digital Magic"""
         msg = '**Magic Online** is a Quality™ Program.'
-        await channel.send(msg)
+        await send(channel, msg)
 
     @cmd_header('Commands')
     async def rhinos(self, client: Client, channel: TextChannel, **_: Dict[str, Any]) -> None:
@@ -259,7 +259,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def rotation(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """`!rotation` Give the date of the next Penny Dreadful rotation."""
-        await channel.send(rotation.text())
+        await send(channel, rotation.text())
 
     @cmd_header('Commands')
     async def rulings(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
@@ -302,7 +302,7 @@ Want to contribute? Send a Pull Request."""
             self.modofail.count = 0
         self.modofail.count += 1
         self.modofail.last_fail = time.time()
-        await channel.send(':bellhop: **MODO fail** {0}'.format(self.modofail.count))
+        await send(channel, ':bellhop: **MODO fail** {0}'.format(self.modofail.count))
     modofail.count = 0
     modofail.last_fail = time.time()
 
@@ -321,18 +321,18 @@ Want to contribute? Send a Pull Request."""
         else:
             for url, text in results.items():
                 s += '{text}: <{url}>\n'.format(text=text, url=url)
-        await channel.send(s)
+        await send(channel, s)
 
     @cmd_header('Developer')
     async def clearimagecache(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """Deletes all the cached images.  Use sparingly"""
         image_dir = configuration.get('image_dir')
         if not image_dir:
-            return await channel.send('Cowardly refusing to delete from unknown image_dir.')
+            return await send(channel, 'Cowardly refusing to delete from unknown image_dir.')
         files = glob.glob('{dir}/*.jpg'.format(dir=image_dir))
         for file in files:
             os.remove(file)
-        await channel.send('{n} cleared.'.format(n=len(files)))
+        await send(channel, '{n} cleared.'.format(n=len(files)))
 
     @cmd_header('Developer')
     async def notpenny(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
@@ -346,39 +346,39 @@ Want to contribute? Send a Pull Request."""
             existing.append(str(cid))
             configuration.write('not_pd', set(existing))
         if args == 'server':
-            await channel.send('Disable PD legality marks for the entire server')
+            await send(channel, 'Disable PD legality marks for the entire server')
         else:
-            await channel.send('Disable PD legality marks for this channel. If you wanted to disable for the entire server, use `!notpenny server` instead.')
+            await send(channel, 'Disable PD legality marks for this channel. If you wanted to disable for the entire server, use `!notpenny server` instead.')
 
     @cmd_header('Commands')
     async def bug(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """Report a bug/task for the Penny Dreadful Tools team. For Magic Online bugs see `!modobug`."""
         issue = repo.create_issue(args, author)
         if issue is None:
-            await channel.send('Report issues at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>')
+            await send(channel, 'Report issues at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>')
         else:
-            await channel.send('Issue has been reported at <{url}>'.format(url=issue.html_url))
+            await send(channel, 'Issue has been reported at <{url}>'.format(url=issue.html_url))
 
     @cmd_header('Commands')
     async def modobug(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """Report a Magic Online bug."""
-        await channel.send('Report Magic Online issues at <https://github.com/PennyDreadfulMTG/modo-bugs/issues/new>. Please follow the instructions there. Thanks!')
+        await send(channel, 'Report Magic Online issues at <https://github.com/PennyDreadfulMTG/modo-bugs/issues/new>. Please follow the instructions there. Thanks!')
 
     @cmd_header('Commands')
     async def gbug(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """Report a Gatherling bug."""
         issue = repo.create_issue(args, author, 'Discord', 'PennyDreadfulMTG/gatherling')
         if issue is None:
-            await channel.send('Report Gatherling issues at <https://github.com/PennyDreadfulMTG/gatherling/issues/new>')
+            await send(channel, 'Report Gatherling issues at <https://github.com/PennyDreadfulMTG/gatherling/issues/new>')
         else:
-            await channel.send('Issue has been reported at <{url}>.'.format(url=issue.html_url))
+            await send(channel, 'Issue has been reported at <{url}>.'.format(url=issue.html_url))
 
     @cmd_header('Commands')
     async def buglink(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) ->  None:
         """Get a link to the modo-bugs page for the named card."""
         base_url = 'https://github.com/PennyDreadfulMTG/modo-bugs/issues'
         if args == '':
-            await channel.send(base_url)
+            await send(channel, base_url)
             return
         result, mode = results_from_queries([args])[0]
         if result.has_match() and not result.is_ambiguous():
@@ -388,21 +388,21 @@ Want to contribute? Send a Pull Request."""
                 msg = "I don't know of a bug for {name} but here's the link: {link}".format(name=c.name, link=msg)
         else:
             msg = "{author}: I'm not quite sure what you mean by '{args}'".format(author=author.mention, args=args)
-        await channel.send(msg)
+        await send(channel, msg)
 
     @cmd_header('Commands')
     async def invite(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """Invite me to your server."""
-        await channel.send('Invite me to your discord server by clicking this link: <https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=268757056>')
+        await send(channel, 'Invite me to your discord server by clicking this link: <https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=268757056>')
 
     @cmd_header('Commands')
     async def spoiler(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!spoiler {cardname}`: Request a card from an upcoming set."""
         if len(args) == 0:
-            return await channel.send('{author}: Please specify a card name.'.format(author=author.mention))
+            return await send(channel, '{author}: Please specify a card name.'.format(author=author.mention))
         sfcard = fetcher.internal.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=args))
         if sfcard['object'] == 'error':
-            return await channel.send('{author}: {details}'.format(author=author.mention, details=sfcard['details']))
+            return await send(channel, '{author}: {details}'.format(author=author.mention, details=sfcard['details']))
         imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
         imagepath = '{image_dir}/{imagename}.jpg'.format(image_dir=configuration.get('image_dir'), imagename=imagename)
         if sfcard.get('card_faces') and sfcard.get('layout', '') != 'split':
@@ -411,22 +411,22 @@ Want to contribute? Send a Pull Request."""
             c = sfcard
         fetcher.internal.store(c['image_uris']['normal'], imagepath)
         text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=c['mana_cost']), client)
-        await channel.send(file=File(imagepath), content=text)
+        await send(channel, file=File(imagepath), content=text)
         oracle.scryfall_import(sfcard['name'])
 
     @cmd_header('Commands')
     async def time(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!time {location}` Show the current time in the specified location."""
         if len(args) == 0:
-            return await channel.send('{author}: No location provided. Please type !time followed by the location you want the time for.'.format(author=author.mention))
+            return await send(channel, '{author}: No location provided. Please type !time followed by the location you want the time for.'.format(author=author.mention))
         try:
             t = fetcher.time(args)
         except NotConfiguredException:
-            return await channel.send('The time command has not been configured.')
+            return await send(channel, 'The time command has not been configured.')
         except TooFewItemsException:
             logging.exception('Exception trying to get the time for %s.', args)
-            return await channel.send('{author}: Location not found.'.format(author=author.mention))
-        await channel.send('{args}: {time}'.format(args=args, time=t))
+            return await send(channel, '{author}: Location not found.'.format(author=author.mention))
+        await send(channel, '{args}: {time}'.format(args=args, time=t))
 
     @cmd_header('Commands')
     async def pdm(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
@@ -441,10 +441,10 @@ Want to contribute? Send a Pull Request."""
         api_key = configuration.get('cse_api_key')
         cse_id = configuration.get('cse_engine_id')
         if api_key is None or cse_id is None:
-            return await channel.send('The google command has not been configured.')
+            return await send(channel, 'The google command has not been configured.')
 
         if len(args) == 0:
-            return await channel.send('{author}: No search term provided. Please type !google followed by what you would like to search.'.format(author=author.mention))
+            return await send(channel, '{author}: No search term provided. Please type !google followed by what you would like to search.'.format(author=author.mention))
 
         try:
             service = build('customsearch', 'v1', developerKey=api_key)
@@ -460,7 +460,7 @@ Want to contribute? Send a Pull Request."""
             else:
                 raise e
 
-        await channel.send(s)
+        await send(channel, s)
 
     @cmd_header('Commands')
     async def tournament(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
@@ -473,7 +473,7 @@ Want to contribute? Send a Pull Request."""
             started = ''
         prev_message = 'The last tournament was {name}, {started}{time} ago'.format(name=prev['next_tournament_name'], started=started, time=prev['next_tournament_time'])
         next_time = 'in ' + t['next_tournament_time'] if t['next_tournament_time'] != dtutil.display_time(0, 0) else t['next_tournament_time']
-        await channel.send('The next tournament is {name} {next_time}.\nSign up on <http://gatherling.com/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], next_time=next_time, prev_message=prev_message, url=fetcher.decksite_url('/tournaments/')))
+        await send(channel, 'The next tournament is {name} {next_time}.\nSign up on <http://gatherling.com/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], next_time=next_time, prev_message=prev_message, url=fetcher.decksite_url('/tournaments/')))
 
     @cmd_header('Commands')
     async def art(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
@@ -484,7 +484,7 @@ Want to contribute? Send a Pull Request."""
             if image_fetcher.download_scryfall_card_image(c, file_path, version='art_crop'):
                 await send_image_with_retry(channel, file_path)
             else:
-                await channel.send('{author}: Could not get image.'.format(author=author.mention))
+                await send(channel, '{author}: Could not get image.'.format(author=author.mention))
 
     @cmd_header('Commands')
     async def explain(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
@@ -643,17 +643,17 @@ Want to contribute? Send a Pull Request."""
             s = '{text}\n'.format(text=textwrap.dedent(explanations[word][0]))
         except KeyError:
             usage = 'I can explain any of these things: {things}'.format(things=', '.join(sorted(keys)))
-            return await channel.send(usage)
+            return await send(channel, usage)
         for k in sorted(explanations[word][1].keys()):
             s += '{k}: <{v}>\n'.format(k=k, v=explanations[word][1][k])
-        await channel.send(s)
+        await send(channel, s)
 
     @cmd_header('Developer')
     async def version(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """Display the current version numbers"""
         commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], universal_newlines=True).strip('\n').strip('"')
         mtgjson = database.mtgjson_version()
-        return await channel.send('I am currently running mtgbot version `{commit}`, and mtgjson version `{mtgjson}`'.format(commit=commit, mtgjson=mtgjson))
+        return await send(channel, 'I am currently running mtgbot version `{commit}`, and mtgjson version `{mtgjson}`'.format(commit=commit, mtgjson=mtgjson))
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards: List[Card]) -> List[Card]:
@@ -716,16 +716,16 @@ async def disambiguation_reactions(message: Message, cards: List[str]) -> None:
 
 async def single_card_or_send_error(channel: TextChannel, args: str, author: Member, command: str) -> Optional[Card]:
     if not args:
-        await channel.send('{author}: Please specify a card name.'.format(author=author.mention))
+        await send(channel, '{author}: Please specify a card name.'.format(author=author.mention))
         return None
     result, mode = results_from_queries([args])[0]
     if result.has_match() and not result.is_ambiguous():
         return cards_from_names_with_mode([result.get_best_match()], mode)[0]
     if result.is_ambiguous():
-        message = await channel.send('{author}: Ambiguous name for {c}. Suggestions: {s}'.format(author=author.mention, c=command, s=disambiguation(result.get_ambiguous_matches()[0:5])))
+        message = await send(channel, '{author}: Ambiguous name for {c}. Suggestions: {s}'.format(author=author.mention, c=command, s=disambiguation(result.get_ambiguous_matches()[0:5])))
         await disambiguation_reactions(message, result.get_ambiguous_matches()[0:5])
     else:
-        await channel.send('{author}: No matches.'.format(author=author.mention))
+        await send(channel, '{author}: No matches.'.format(author=author.mention))
     return None
 
 # pylint: disable=too-many-arguments
@@ -736,7 +736,7 @@ async def single_card_text(client: Client, channel: TextChannel, args: str, auth
         info_emoji = emoji.info_emoji(c, show_legality)
         text = emoji.replace_emoji(f(c), client)
         message = f'**{name}** {info_emoji} {text}'
-        await channel.send(message)
+        await send(channel, message)
 
 def oracle_text(c: Card) -> str:
     return c.text
@@ -810,6 +810,10 @@ def resources_resources(args: str) -> Dict[str, str]:
 def more_results_link(args: str, total: int) -> str:
     return 'and {n} more.\n<https://scryfall.com/search/?q={q}>'.format(n=total - 4, q=fetcher.internal.escape(args)) if total > MAX_CARDS_SHOWN else ''
 
+async def send(channel: TextChannel, content: str, file: File = None) -> Message:
+    new_s = escape_underscores(content)
+    return await channel.send(file=file, content=new_s)
+
 async def post_cards(
         client: Client,
         cards: List[Card],
@@ -841,7 +845,7 @@ async def post_cards(
             text += 'No image available.'
     text += additional_text
     if image_file is None:
-        await channel.send(text)
+        await send(channel, text)
     else:
         await send_image_with_retry(channel, image_file, text)
 
@@ -850,15 +854,15 @@ async def post_no_cards(channel: TextChannel, replying_to: Member) -> None:
         text = '{author}: No matches.'.format(author=replying_to.mention)
     else:
         text = 'No matches.'
-    message = await channel.send(text)
+    message = await send(channel, text)
     await message.add_reaction('❎')
 
 async def send_image_with_retry(channel: TextChannel, image_file: str, text: str = '') -> None:
-    message = await channel.send(file=File(image_file), content=text)
+    message = await send(channel, file=File(image_file), content=text)
     if message and message.attachments and message.attachments[0].size == 0:
         print('Message size is zero so resending')
         await message.delete()
-        await channel.send(file=File(image_file), content=text)
+        await send(channel, file=File(image_file), content=text)
 
 def single_card_text_internal(client: Client, requested_card: Card, disable_emoji: bool) -> str:
     mana = emoji.replace_emoji(''.join(requested_card.mana_cost or []), client)
@@ -876,3 +880,18 @@ def single_card_text_internal(client: Client, requested_card: Card, disable_emoj
                 time_since_confirmed = (dtutil.now() - bug['last_confirmed']).total_seconds()
                 text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(time_since_confirmed, 1))
     return text
+
+# See #5532.
+def escape_underscores(s: str) -> str:
+    should_escape_underscores = True
+    new_s = ''
+    for char in s:
+        if char == '_' and should_escape_underscores:
+            new_s += '\\_'
+        else:
+            new_s += char
+        if char == '<':
+            should_escape_underscores = False
+        if char == '>':
+            should_escape_underscores = True
+    return new_s

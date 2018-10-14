@@ -1800,6 +1800,15 @@ News
     margin-left: 1rem;
 }
 
+.news .story {
+    display: inline-block;
+    max-width: 33em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: top; /* Otherwise overflow: hidden makes it rise upwards */
+}
+
 .news li.site-news:before, .news li.subreddit-post:before {
     content: "📰";
     display: inline-block;

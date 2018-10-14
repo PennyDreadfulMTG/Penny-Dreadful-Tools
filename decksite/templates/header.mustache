@@ -25,13 +25,13 @@
         <meta name="google-site-verification" content="5cg_JSKOouPW66K4NuMdm9bQHV9CWH9iVszTByzeDPg">
     </head>
     <body>
-        <header>
-            {{> language_switcher}}
+        <header class="season-{{season_id}}">
             <h1><a href="{{home_url}}">Penny Dreadful Magic</a></h1>
             <div class="search">
                 {{> search}}
             </div>
         </header>
+        {{> language_switcher}}
         <nav>
             {{> menu}}
         </nav>

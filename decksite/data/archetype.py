@@ -77,7 +77,7 @@ def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, nam
             IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
         FROM
             archetype AS a
-        INNER JOIN
+        LEFT JOIN
             _archetype_stats AS ars ON a.id = ars.archetype_id
         LEFT JOIN
             archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1

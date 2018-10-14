@@ -53,3 +53,11 @@ def test_resources_matching_in_url() -> None:
 
     results = command.resources_resources('starcitygames')
     assert results['https://www.starcitygames.com/article/33860_Penny-Dreadful.html'] == 'Mrs. Mulligan SCG'
+
+def test_escape_underscores() -> None:
+    r = command.escape_underscores('simple_test')
+    assert r == 'simple\\_test'
+    r = command.escape_underscores('<simple_test>')
+    assert r == '<simple_test>'
+    r = command.escape_underscores('people gimmick_: <https://pennydreadfulmagic.com/people/gimmick_/>')
+    assert r == 'people gimmick\\_: <https://pennydreadfulmagic.com/people/gimmick_/>'

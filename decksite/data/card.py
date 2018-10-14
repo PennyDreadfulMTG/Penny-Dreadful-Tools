@@ -12,12 +12,14 @@ from shared.pd_exception import DatabaseException
 
 
 def load_cards(season_id: Optional[int] = None, person_id: Optional[int] = None, retry: bool = False) -> List[Card]:
-    table = '_card_person_stats' if person_id else '_card_stats'
-    where = 'TRUE'
-    group_by = 'name'
     if person_id:
-        group_by += ', person_id'
+        table = '_card_person_stats'
         where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
+        group_by = 'person_id, name'
+    else:
+        table = '_card_stats'
+        where = 'TRUE'
+        group_by = 'name'
     sql = """
         SELECT
             name,
@@ -147,7 +149,8 @@ def preaggregate_card_person() -> None:
             tournament_wins INT NOT NULL,
             tournament_top8s INT NOT NULL,
             PRIMARY KEY (season_id, person_id, name),
-            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            INDEX idx_person_id_name (person_id, name)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             card AS name,

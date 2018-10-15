@@ -88,6 +88,8 @@ class WhooshSearchTest(unittest.TestCase):
         self.best_match_is('Dokai, Weaver of Life', 'Budoka Gardener')
 
     def test_meld(self) -> None:
+        self.best_match_is('Graf Rats', 'Graf Rats')
+        self.best_match_is('Midnight Scavengers', 'Midnight Scavengers')
         self.best_match_is('Chittering Host', 'Graf Rats')
 
     def test_aliases(self) -> None:

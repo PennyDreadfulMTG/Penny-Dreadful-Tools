@@ -538,20 +538,6 @@ Want to contribute? Send a Pull Request."""
                     'Current League': fetcher.decksite_url('/league/current/')
                 }
             ),
-            'legality': (
-                """
-                Legality is set at the release of a Standard-legal set on Magic Online.
-                Prices are checked every hour for a week beforehand. Anything 1c or less for half or more of all checks is legal for the season.
-                Cards from the just-released set are added (nothing removed) three weeks later via a supplemental rotation after prices have settled a little.
-                Any version of a card on the legal cards list is legal.
-                """,
-                {
-                    'Deck Checker': 'http://pdmtgo.com/deck_check.html',
-                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt',
-                    'Rotation Speculation': fetcher.decksite_url('/rotation/speculation/'),
-                    'Rotation Changes': fetcher.decksite_url('/rotation/changes/')
-                }
-            ),
             'noshow': (
                 """
                 If your opponent does not join your game please @-message them on Discord and contact them on Magic Online.
@@ -601,6 +587,20 @@ Want to contribute? Send a Pull Request."""
                     'Retire': fetcher.decksite_url('/retire/')
                 }
             ),
+            'rotation': (
+                """
+                Legality is set at the release of a Standard-legal set on Magic Online.
+                Prices are checked every hour for a week beforehand. Anything 1c or less for half or more of all checks is legal for the season.
+                Cards from the just-released set are added (nothing removed) three weeks later via a supplemental rotation after prices have settled a little.
+                Any version of a card on the legal cards list is legal.
+                """,
+                {
+                    'Deck Checker': 'http://pdmtgo.com/deck_check.html',
+                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt',
+                    'Rotation Speculation': fetcher.decksite_url('/rotation/speculation/'),
+                    'Rotation Changes': fetcher.decksite_url('/rotation/changes/')
+                }
+            ),
             'spectating': (
                 """
                 Spectating tournament and league matches is allowed and encouraged.
@@ -629,7 +629,7 @@ Want to contribute? Send a Pull Request."""
         }
         keys = sorted(explanations.keys())
         explanations['drop'] = explanations['retire']
-        explanations['rotation'] = explanations['legality']
+        explanations['legality'] = explanations['rotation']
         explanations['spectate'] = explanations['spectating']
         explanations['tournaments'] = explanations['tournament']
         explanations['watching'] = explanations['spectating']

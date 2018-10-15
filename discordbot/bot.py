@@ -117,7 +117,8 @@ class Bot(discord.Client):
         await super().on_error(event_method, args, kwargs)
         (_, exception, __) = sys.exc_info()
         try:
-            repo.create_issue(f'Bot error {event_method}\n{args}\n{kwargs}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=exception)
+            content = [arg.content for arg in args if hasattr(arg, 'content')] # The default string representation of a Message does not include the message content.
+            repo.create_issue(f'Bot error {event_method}\n{args}\n{kwargs}\n{content}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=exception)
         except GithubException as e:
             print('Github error', e, file=sys.stderr)
 

@@ -108,7 +108,7 @@ def parse_printable(raw_deck: DeckType) -> DeckType:
         raise InvalidDataException('Unable to find infobox in parse_printable.')
     user = infobox.find('td', string='User')
     if not user:
-        raise InvalidDataException('Unable to find infobox in parse_printable.')
+        raise InvalidDataException('Unable to find user in parse_printable.')
     raw_deck['user'] = user.find_next_sibling('td').string
     return raw_deck
 

@@ -46,6 +46,9 @@ class View(BaseView):
         self.cardhoarder_logo_url = url_for('static', filename='images/cardhoarder.png')
         self.mtgotraders_logo_url = url_for('static', filename='images/mtgotraders.png')
 
+    def season_id(self) -> int:
+        return get_season_id()
+
     def season_name(self) -> str:
         return rotation.season_name(get_season_id())
 
@@ -196,7 +199,7 @@ class View(BaseView):
             d.legal_icons += '<a href="{url}"><i class="ss ss-{set} ss-common ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), set=code.lower(), n=n)
         if 'Commander' in d.legal_formats: # I think C16 looks the nicest.
             d.legal_icons += '<i class="ss ss-c16 ss-uncommon ss-grad">CMDR</i>'
-        if session.get('admin') or not d.is_in_current_run():
+        if session.get('admin') or session.get('demimod') or not d.is_in_current_run():
             d.decklist = str(d).replace('\n', '<br>')
         else:
             d.decklist = ''

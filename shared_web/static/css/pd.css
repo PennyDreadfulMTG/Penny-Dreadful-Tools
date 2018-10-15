@@ -1800,6 +1800,15 @@ News
     margin-left: 1rem;
 }
 
+.news .story {
+    display: inline-block;
+    max-width: 33em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: top; /* Otherwise overflow: hidden makes it rise upwards */
+}
+
 .news li.site-news:before, .news li.subreddit-post:before {
     content: "📰";
     display: inline-block;
@@ -2296,3 +2305,41 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 /* links */
 .tpd-skin-dark a,
 .tpd-skin-dark a:hover { color: #ccc; }
+
+header {
+    filter: grayscale(70%);
+    background-size: cover;
+}
+header.season-all {
+    background-image: url("/banner/0.png");
+}
+header.season-1 {
+    background-image: url("/banner/1.png");
+}
+header.season-2 {
+    background-image: url("/banner/2.png");
+}
+header.season-3 {
+    background-image: url("/banner/3.png");
+}
+header.season-4 {
+    background-image: url("/banner/4.png");
+}
+header.season-5 {
+    background-image: url("/banner/5.png");
+}
+header.season-6 {
+    background-image: url("/banner/6.png");
+}
+header.season-7 {
+    background-image: url("/banner/7.png");
+}
+header.season-8 {
+    background-image: url("/banner/8.png");
+}
+header.season-9 {
+    background-image: url("/banner/9.png");
+}
+header.season-10 {
+    background-image: url("/banner/10.png");
+}

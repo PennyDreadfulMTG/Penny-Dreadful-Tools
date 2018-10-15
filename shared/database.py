@@ -104,7 +104,7 @@ class Database():
     def last_insert_rowid(self) -> int:
         return cast(int, self.value('SELECT LAST_INSERT_ID()'))
 
-    def get_lock(self, lock_id: str, timeout: int = 4) -> None:
+    def get_lock(self, lock_id: str, timeout: int = 1) -> None:
         result = self.value('SELECT GET_LOCK(%s, %s)', [lock_id, timeout])
         if result != 1:
             raise LockNotAcquiredException

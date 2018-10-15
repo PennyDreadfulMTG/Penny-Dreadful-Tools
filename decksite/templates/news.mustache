@@ -1,8 +1,8 @@
-<article class="news">
+﻿<article class="news">
     <h1>News</h1>
         <ul>
             {{#news}}
-                <li class="item {{type}}">{{#url}}<a href="{{url}}">{{/url}} {{title}} <span class="date">{{display_date}}</span>{{#url}}</a>{{/url}}</li>
+                <li class="item {{type}}">{{#url}}<a href="{{url}}">{{/url}} <span class="story">{{title}}</span> <span class="date">{{display_date}}</span>{{#url}}</a>{{/url}}</li>
             {{/news}}
         </ul>
     {{#all_news_url}}

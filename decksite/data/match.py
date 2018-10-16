@@ -22,7 +22,7 @@ def insert_match(dt: datetime.datetime,
         raise InvalidDataException('`insert_match` does not support draws.')
     winner_id = left_id if left_games > right_games else right_id
     loser_id = left_id if left_games < right_games else right_id
-    db().begin()
+    db().begin('insert_match')
     match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
     sql = 'UPDATE deck_cache SET wins = IFNULL(wins, 0) + 1, active_date = %s WHERE deck_id = %s'
     db().execute(sql, [dtutil.dt2ts(dt), winner_id])
@@ -35,7 +35,7 @@ def insert_match(dt: datetime.datetime,
         db().execute(sql, [right_id, match_id, right_games])
         elo.adjust_elo(winner_id, loser_id)
         redis.clear(f'decksite:deck:{right_id}')
-    db().commit()
+    db().commit('insert_match')
     return match_id
 
 def get_matches(d: deck.Deck, should_load_decks: bool = False) -> List[Container]:

@@ -18,6 +18,7 @@ from decksite.data import competition as comp
 from decksite.data import deck as ds
 from decksite.data import news as ns
 from decksite.data import person as ps
+from decksite.database import db
 from decksite.league import DeckCheckForm, ReportForm, RetireForm, SignUpForm
 from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
                             Archetypes, Bugs, Card, Cards, CommunityGuidelines,
@@ -418,6 +419,7 @@ def before_request() -> None:
 def teardown_request(response: Response) -> Response:
     if g.get('p') is not None:
         perf.check(g.p, 'slow_page', request.path, 'decksite')
+    db().close()
     return response
 
 def init(debug: bool = True, port: Optional[int] = None) -> None:

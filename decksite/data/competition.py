@@ -46,13 +46,13 @@ def get_or_insert_competition(start_date: datetime.datetime,
     competition_id = db().value(sql, [name])
     if competition_id:
         return competition_id
-    db().begin()
+    db().begin('insert_competition')
     sql = 'INSERT INTO competition (start_date, end_date, name, competition_series_id, url, top_n) VALUES (%s, %s, %s, %s, %s, %s)'
     competition_id = db().insert(sql, [start, end, name, competition_series_id, url, top_n.value])
     if url is None:
         sql = 'UPDATE competition SET url = %s WHERE id = %s'
         db().execute(sql, [url_for('competition', competition_id=competition_id, _external=True), competition_id])
-    db().commit()
+    db().commit('insert_competition')
     return competition_id
 
 def load_competition(competition_id: int) -> Competition:

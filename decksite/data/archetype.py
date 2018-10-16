@@ -165,7 +165,7 @@ def load_matchups(archetype_id, season_id=None):
     return load_all_matchups(where, season_id)
 
 def move(archetype_id: int, parent_id: int) -> None:
-    db().begin()
+    db().begin('move_archetype')
     remove_sql = """
         DELETE a
         FROM archetype_closure AS a
@@ -184,7 +184,7 @@ def move(archetype_id: int, parent_id: int) -> None:
             AND supertree.descendant = %s
     """
     db().execute(add_sql, [archetype_id, parent_id])
-    db().commit()
+    db().commit('move_archetype')
 
 def rename(archetype_id: int, new_name: str) -> None:
     db().execute('UPDATE archetype SET name = %s WHERE id = %s', [new_name, archetype_id])

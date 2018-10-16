@@ -40,10 +40,10 @@ def create_issue(content: str,
         """.format(method=request.method, full_path=request.full_path, cookies=request.cookies, endpoint=request.endpoint, view_args=request.view_args, id=session.get('id', 'logged_out'), referrer=request.referrer, safe_data=str(safe_data(request.form))))
         body += '\n'.join(['{k}: {v}'.format(k=k, v=v) for k, v in request.headers])
         body += '\n```\n'
-        ua = request.headers.get('User-Agent')
+        ua = request.headers.get('User-Agent', '')
         if ua == 'pennydreadfulmagic.com cache renewer':
             labels.append(ua)
-        elif ua is not None and ('YandexBot' in ua or 'Googlebot' in ua):
+        elif 'YandexBot' in ua or 'Googlebot' in ua:
             labels.append('Search Engine')
 
     if exception:

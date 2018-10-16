@@ -20,7 +20,7 @@ class Database():
         self.port = configuration.get_int('mysql_port')
         self.user = configuration.get_str('mysql_user')
         self.passwd = configuration.get_str('mysql_passwd')
-        self.open_transactions = []
+        self.open_transactions: List[str] = []
         self.connect()
 
     def connect(self) -> None:
@@ -129,7 +129,7 @@ class Database():
         rs = self.select(sql, args)
         return [list(row.values())[0] for row in rs]
 
-    def close(self):
+    def close(self) -> None:
         if len(self.open_transactions) > 0:
             self.execute('ROLLBACK')
         self.cursor.close()

@@ -891,15 +891,4 @@ def single_card_text_internal(client: Client, requested_card: Card, disable_emoj
 
 # See #5532.
 def escape_underscores(s: str) -> str:
-    should_escape_underscores = True
-    new_s = ''
-    for char in s:
-        if char == '_' and should_escape_underscores:
-            new_s += '\\_'
-        else:
-            new_s += char
-        if char == '<':
-            should_escape_underscores = False
-        if char == '>':
-            should_escape_underscores = True
-    return new_s
+    return s # Not escaping underscores for now because of #5566

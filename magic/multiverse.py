@@ -86,7 +86,7 @@ def base_query(where: str = '(1 = 1)') -> str:
         where=where)
 
 def update_database(new_version: str) -> None:
-    db().begin()
+    db().begin('update_database')
     db().execute('DELETE FROM version')
     db().execute('DROP TABLE IF EXISTS _cache_card') # We can't delete our data if we have FKs referencing it.
     db().execute("""
@@ -126,22 +126,21 @@ def update_database(new_version: str) -> None:
         db().execute('UPDATE printing SET rarity_id = %s WHERE rarity = %s', [row['id'], row['name']])
     # Create the current Penny Dreadful format.
     get_format_id('Penny Dreadful', True)
-    update_bugged_cards(False)
+    update_bugged_cards()
     update_pd_legality()
     db().execute('INSERT INTO version (version) VALUES (%s)', [new_version])
-    db().commit()
+    db().commit('update_database')
 
 def check_layouts() -> None:
     rs = db().select('SELECT DISTINCT layout FROM card')
     if sorted([row['layout'] for row in rs]) != sorted(layouts().keys()):
         print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid. You may also want to add it to playable_layouts. Comparing {old} with {new}.'.format(old=sorted(layouts().keys()), new=sorted([row['layout'] for row in rs])))
 
-def update_bugged_cards(use_transaction: bool = True) -> None:
+def update_bugged_cards() -> None:
     bugs = fetcher.bugged_cards()
     if bugs is None:
         return
-    if use_transaction:
-        db().begin()
+    db().begin('update_bugged_cards')
     db().execute('DELETE FROM card_bug')
     for bug in bugs:
         last_confirmed_ts = dtutil.parse_to_ts(bug['last_updated'], '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
@@ -151,8 +150,7 @@ def update_bugged_cards(use_transaction: bool = True) -> None:
             print('UNKNOWN BUGGED CARD: {card}'.format(card=bug['card']))
             continue
         db().execute('INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog, bannable) VALUES (%s, %s, %s, %s, %s, %s, %s)', [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog'], bug['bannable']])
-    if use_transaction:
-        db().commit()
+    db().commit('update_bugged_cards')
 
 def update_pd_legality() -> None:
     for s in rotation.SEASONS:
@@ -250,7 +248,7 @@ def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
 
     if new_list == [''] or new_list is None:
         return []
-    db().begin()
+    db().begin('set_legal_cards')
     db().execute('DELETE FROM card_legality WHERE format_id = %s', [format_id])
     db().execute('SET group_concat_max_len=100000')
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
@@ -259,7 +257,7 @@ def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
         WHERE name IN ({names})
     """.format(format_id=format_id, base_query=base_query(), names=', '.join(sqlescape(name) for name in new_list))
     db().execute(sql)
-    db().commit()
+    db().commit('set_legal_cards')
     # Check we got the right number of legal cards.
     n = db().value('SELECT COUNT(*) FROM card_legality WHERE format_id = %s', [format_id])
     if n != len(new_list):

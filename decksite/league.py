@@ -424,10 +424,10 @@ def first_runs() -> List[Container]:
     return [Container(r) for r in db().select(sql)]
 
 def update_match(match_id: int, left_id: int, left_games: int, right_id: int, right_games: int) -> None:
-    db().begin()
+    db().begin('update_match')
     update_games(match_id, left_id, left_games)
     update_games(match_id, right_id, right_games)
-    db().commit()
+    db().commit('update_match')
     redis.clear(f'decksite:deck:{left_id}', f'decksite:deck:{right_id}')
 
 def update_games(match_id: int, deck_id: int, games: int) -> int:

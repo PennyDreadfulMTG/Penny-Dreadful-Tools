@@ -20,7 +20,7 @@ class Database():
         self.port = configuration.get_int('mysql_port')
         self.user = configuration.get_str('mysql_user')
         self.passwd = configuration.get_str('mysql_passwd')
-        self.open_transaction_count = 0
+        self.open_transactions: List[str] = []
         self.connect()
 
     def connect(self) -> None:
@@ -89,17 +89,21 @@ class Database():
         self.execute(sql, args)
         return self.last_insert_rowid()
 
-    def begin(self) -> None:
-        print(f'BEGIN ({self.open_transaction_count})')
-        if self.open_transaction_count == 0:
+    def begin(self, label: str) -> None:
+        print(f'Before BEGIN ({self.open_transactions})')
+        if len(self.open_transactions) == 0:
             self.execute('BEGIN')
-        self.open_transaction_count += 1
+        self.open_transactions.append(label)
+        print(f'After BEGIN ({self.open_transactions})')
 
-    def commit(self) -> None:
-        print(f'COMMIT ({self.open_transaction_count})')
-        if self.open_transaction_count == 1:
+    def commit(self, label: str) -> None:
+        print(f'Before COMMIT ({self.open_transactions})')
+        if len(self.open_transactions) == 1:
             self.execute('COMMIT')
-        self.open_transaction_count -= 1
+        committed = self.open_transactions.pop()
+        if committed != label:
+            raise DatabaseException(f'Asked to commit `{committed}` to the db but was expecting to commit `{label}`.')
+        print(f'After COMMIT ({self.open_transactions})')
 
     def last_insert_rowid(self) -> int:
         return cast(int, self.value('SELECT LAST_INSERT_ID()'))
@@ -125,8 +129,16 @@ class Database():
         rs = self.select(sql, args)
         return [list(row.values())[0] for row in rs]
 
+    def close(self) -> None:
+        if len(self.open_transactions) > 0:
+            self.execute('ROLLBACK')
+        self.cursor.close()
+        self.connection.close()
+        if len(self.open_transactions) > 0:
+            raise DatabaseException(f'Closed database connection with open transactions `{self.open_transactions}` (they have been rolled back).')
+
     def nuke_database(self) -> None:
-        self.begin()
+        self.begin('nuke_database')
         query = self.values("""
             SELECT concat('DROP TABLE IF EXISTS `', table_name, '`;')
             FROM information_schema.tables
@@ -135,7 +147,7 @@ class Database():
         self.execute('SET FOREIGN_KEY_CHECKS = 0')
         self.execute(''.join(query))
         self.execute('SET FOREIGN_KEY_CHECKS = 1')
-        self.commit()
+        self.commit('nuke_database')
 
 def get_database(location: str) -> Database:
     return Database(location)

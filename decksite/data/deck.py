@@ -343,12 +343,12 @@ def add_deck(params: RawDeckDescription) -> Deck:
         params.get('small_thumbnail_url'),
         params.get('finish')
     ]
-    db().begin()
+    db().begin('add_deck')
     deck_id = db().insert(sql, values)
     add_cards(deck_id, params['cards'])
     d = load_deck(deck_id)
     prime_cache(d)
-    db().commit()
+    db().commit('add_deck')
     return d
 
 def prime_cache(d: Deck) -> None:
@@ -371,7 +371,7 @@ def prime_cache(d: Deck) -> None:
     redis.clear(f'decksite:deck:{d.id}')
 
 def add_cards(deck_id: int, cards: CardsDescription) -> None:
-    db().begin()
+    db().begin('add_cards')
     deckhash = hashlib.sha1(repr(cards).encode('utf-8')).hexdigest()
     db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [deckhash, deck_id])
     db().execute('DELETE FROM deck_card WHERE deck_id = %s', [deck_id])
@@ -379,7 +379,7 @@ def add_cards(deck_id: int, cards: CardsDescription) -> None:
         insert_deck_card(deck_id, name, n, False)
     for name, n in cards['sideboard'].items():
         insert_deck_card(deck_id, name, n, True)
-    db().commit()
+    db().commit('add_cards')
 
 def get_deck_id(source_name: str, identifier: str) -> Optional[int]:
     source_id = get_source_id(source_name)

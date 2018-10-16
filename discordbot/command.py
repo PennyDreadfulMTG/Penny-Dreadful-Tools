@@ -608,6 +608,14 @@ Want to contribute? Send a Pull Request."""
                 """,
                 {}
             ),
+            'supplemental': (
+                """
+                Legality for the cards in the newly-released set ONLY is determined three weeks after the normal rotation to allow prices to settle.
+                Prices are checked every hour for a week. Anything in the newly-released set that is 1c or less for half or more of all checks is legal for the rest of the season.
+                Cards are only ever added to the legal list by the supplemental rotation, never removed.
+                """,
+                {}
+            ),
             'tournament': (
                 """
                 We have {num_tournaments} free-to-enter weekly tournaments that award trade credit prizes from Cardhoarder.

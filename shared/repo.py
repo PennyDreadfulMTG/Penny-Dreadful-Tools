@@ -43,7 +43,7 @@ def create_issue(content: str,
         ua = request.headers.get('User-Agent')
         if ua == 'pennydreadfulmagic.com cache renewer':
             labels.append(ua)
-        elif 'YandexBot' in ua or 'Googlebot' in ua:
+        elif ua is not None and ('YandexBot' in ua or 'Googlebot' in ua):
             labels.append('Search Engine')
 
     if exception:

@@ -281,7 +281,7 @@ def preaggregate_achievements() -> None:
             COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END) AS tournament_wins,
             COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END) AS league_entries,
             CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END AS completionist,
-            SUM(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses THEN 1 ELSE 0 END) AS perfect_runs,
+            SUM(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses = 0 THEN 1 ELSE 0 END) AS perfect_runs,
             SUM(
                 CASE WHEN d.id IN
                     (

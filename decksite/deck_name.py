@@ -183,7 +183,7 @@ def add_archetype_if_just_colors(name: str, archetype: Optional[str]) -> str:
     if not name in COLOR_COMBINATIONS.keys() or not archetype or archetype == 'Unclassified':
         return name
     archetype_contains_color_name = False
-    for k in COLOR_COMBINATIONS.keys():
+    for k in COLOR_COMBINATIONS:
         archetype_contains_color_name = archetype_contains_color_name or k in archetype
     new_name = ''
     if not archetype_contains_color_name:

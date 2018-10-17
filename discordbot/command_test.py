@@ -61,3 +61,7 @@ def test_escape_underscores() -> None:
     assert r == '<simple_test>'
     r = command.escape_underscores('people gimmick_: <https://pennydreadfulmagic.com/people/gimmick_/>')
     assert r == 'people gimmick\\_: <https://pennydreadfulmagic.com/people/gimmick_/>'
+    r = command.escape_underscores(':white_check_mark:')
+    assert r == ':white_check_mark:'
+    r = command.escape_underscores('Adamaro, First to Desire :white_check_mark:')
+    assert r == 'Adamaro, First to Desire :white_check_mark:'

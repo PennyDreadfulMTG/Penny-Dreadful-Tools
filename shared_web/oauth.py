@@ -32,6 +32,8 @@ def setup_session(url):
     guilds = discord.get(API_BASE_URL + '/users/@me/guilds').json()
     wrong_guilds = False # protect against an unexpected response from discord
     session['in_guild'] = False
+    session['admin'] = False
+    session['demimod'] = False
     for guild in guilds:
         if isinstance(guild, dict) and 'id' in guild:
             if guild['id'] == configuration.get('guild_id'):

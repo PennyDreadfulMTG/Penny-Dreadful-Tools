@@ -238,7 +238,7 @@ def insert_set(s) -> None:
 def set_legal_cards(season: str = None) -> List[str]:
     new_list = ['']
     try:
-        new_list = fetcher.legal_cards(force=True, season)
+        new_list = fetcher.legal_cards(force=True, season=season)
     except fetcher.FetchException:
         pass
     if season is None:

@@ -889,17 +889,21 @@ def single_card_text_internal(client: Client, requested_card: Card, disable_emoj
                 text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(time_since_confirmed, 1))
     return text
 
-# See #5532.
+# See #5532 and #5566.
 def escape_underscores(s: str) -> str:
-    should_escape_underscores = True
     new_s = ''
+    in_url, in_emoji = False, False
     for char in s:
-        if char == '_' and should_escape_underscores:
+        if char == ':':
+            in_emoji = True
+        elif char not in 'abcdefghijklmnopqrstuvwxyz_':
+            in_emoji = False
+        if char == '<':
+            in_url = True
+        elif char == '>':
+            in_url = False
+        if char == '_' and not in_url and not in_emoji:
             new_s += '\\_'
         else:
             new_s += char
-        if char == '<':
-            should_escape_underscores = False
-        if char == '>':
-            should_escape_underscores = True
     return new_s

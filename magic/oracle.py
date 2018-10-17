@@ -58,6 +58,7 @@ def bugged_cards() -> List[Card]:
 
 def legal_cards(force: bool = False) -> List[str]:
     if len(LEGAL_CARDS) == 0 or force:
+        db().execute('SET group_concat_max_len=100000')
         sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=multiverse.base_query(), format_id=multiverse.get_format_id('Penny Dreadful'))
         new_list = db().values(sql)
         LEGAL_CARDS.clear()

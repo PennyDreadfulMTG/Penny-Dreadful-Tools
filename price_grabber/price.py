@@ -46,7 +46,7 @@ def cache() -> None:
     sql = 'SELECT MAX(`time`) FROM low_price'
     latest = db.value(sql)
 
-    db.begin()
+    db.begin('cache')
     db.execute('DELETE FROM cache')
     sql = """
         INSERT INTO cache (`time`, name, price, low, high, week, month, season)
@@ -63,4 +63,4 @@ def cache() -> None:
             GROUP BY name;
     """
     db.execute(sql, [latest, last_rotation, last_rotation, week, week, month, month, last_rotation, last_rotation])
-    db.commit()
+    db.commit('cache')

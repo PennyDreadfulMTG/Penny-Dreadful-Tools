@@ -47,13 +47,13 @@ def tournament(url: str, name: str) -> int:
     # Tournaments that currently advertise a "top 0" are unstarted/in progress and should be ignored for now.
     if top_n == competition.Top.NONE:
         return 0
-    db().begin()
+    db().begin('tournament')
     competition_id = competition.get_or_insert_competition(dt, dt, name, competition_series, url, top_n)
     ranks = rankings(soup)
     medals = medal_winners(s)
     final = finishes(medals, ranks)
     n = add_decks(dt, competition_id, final, s)
-    db().commit()
+    db().commit('tournament')
     return n
 
 # Hack in the known start time and series name because it's not in the page, depending on the series.
@@ -235,7 +235,7 @@ def find_matches(d: deck.Deck, rows: ResultSet) -> MatchListType:
     return matches
 
 def insert_matches_without_dupes(dt: datetime.datetime, matches: MatchListType) -> None:
-    db().begin()
+    db().begin('insert_matches_without_dupes')
     inserted: Dict[str, bool] = {}
     for m in matches:
         reverse_key = str(m['round']) + '|' + str(m['right_id']) + '|' + str(m['left_id'])
@@ -244,7 +244,7 @@ def insert_matches_without_dupes(dt: datetime.datetime, matches: MatchListType) 
         match.insert_match(dt, m['left_id'], m['left_games'], m['right_id'], m['right_games'], m['round'], m['elimination'])
         key = str(m['round']) + '|' + str(m['left_id']) + '|' + str(m['right_id'])
         inserted[key] = True
-    db().commit()
+    db().commit('insert_matches_without_dupes')
 
 def add_ids(matches: MatchListType, ds: List[deck.Deck]) -> None:
     decks_by_identifier = {d.identifier: d for d in ds}

@@ -56,12 +56,10 @@ def bugged_cards() -> List[Card]:
     rs = db().select(sql)
     return [Card(r) for r in rs]
 
-def legal_cards(force: bool = False) -> List[str]:
+def legal_cards(force_reload: bool = False) -> List[str]:
     if len(LEGAL_CARDS) == 0 or force:
-        new_list = multiverse.set_legal_cards()
-        if not new_list:
-            sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=multiverse.base_query(), format_id=multiverse.get_format_id('Penny Dreadful'))
-            new_list = [row['name'] for row in db().select(sql)]
+        sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=multiverse.base_query(), format_id=multiverse.get_format_id('Penny Dreadful'))
+        new_list = db().values(sql)
         LEGAL_CARDS.clear()
         for name in new_list:
             LEGAL_CARDS.append(name)

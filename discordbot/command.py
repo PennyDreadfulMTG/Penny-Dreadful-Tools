@@ -182,7 +182,8 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Developer')
     async def update(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """Forces an update to legal cards and bugs."""
-        oracle.legal_cards(force=True)
+        multiverse.set_legal_cards()
+        oracle.legal_cards(force_reload=True)
         multiverse.update_bugged_cards()
         multiverse.update_cache()
         multiverse.reindex()

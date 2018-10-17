@@ -15,8 +15,7 @@ from magic import card, fetcher, legality, rotation
 from shared import configuration, dtutil, guarantee, redis
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import (DatabaseException, InvalidDataException,
-                                 LockNotAcquiredException)
+from shared.pd_exception import InvalidDataException, LockNotAcquiredException
 from shared_web import logger
 
 

@@ -235,10 +235,10 @@ def insert_set(s) -> None:
         cards_values = [card_id, set_id] + [c.get(database2json(name)) for name, prop in card.printing_properties().items() if prop['mtgjson']]
         db().execute(sql, cards_values)
 
-def set_legal_cards(force: bool = False, season: str = None) -> List[str]:
+def set_legal_cards(season: str = None) -> List[str]:
     new_list = ['']
     try:
-        new_list = fetcher.legal_cards(force, season)
+        new_list = fetcher.legal_cards(force=True, season)
     except fetcher.FetchException:
         pass
     if season is None:

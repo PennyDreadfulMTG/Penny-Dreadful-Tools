@@ -10,6 +10,7 @@ def run():
     for d in ds:
         redis.clear(f'decksite:deck:{d.id}')
         deck.prime_cache(d)
+        redis.clear(f'decksite:deck:{d.id}')
     archetype.preaggregate()
     person.preaggregate()
     card.preaggregate()

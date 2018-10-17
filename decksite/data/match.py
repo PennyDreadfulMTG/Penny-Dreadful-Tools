@@ -30,12 +30,13 @@ def insert_match(dt: datetime.datetime,
     db().execute(sql, [dtutil.dt2ts(dt), loser_id])
     sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
     db().execute(sql, [left_id, match_id, left_games])
-    redis.clear(f'decksite:deck:{left_id}')
     if right_id is not None: # Don't insert matches or adjust Elo for the bye.
         db().execute(sql, [right_id, match_id, right_games])
         elo.adjust_elo(winner_id, loser_id)
-        redis.clear(f'decksite:deck:{right_id}')
     db().commit('insert_match')
+    redis.clear(f'decksite:deck:{left_id}')
+    if right_id is not None:
+        redis.clear(f'decksite:deck:{right_id}')
     return match_id
 
 def get_matches(d: deck.Deck, should_load_decks: bool = False) -> List[Container]:

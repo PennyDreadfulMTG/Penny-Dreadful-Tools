@@ -60,7 +60,7 @@ class SignUpForm(Form):
             self.source = 'League'
             self.competition_id = db().value(active_competition_id_query())
             self.identifier = identifier(self)
-            self.url = url_for('competitions', competition_id=self.competition_id)
+            self.url = url_for('competition', competition_id=self.competition_id)
         self.parse_and_validate_decklist()
 
     def parse_and_validate_decklist(self):

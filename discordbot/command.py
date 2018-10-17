@@ -284,6 +284,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def history(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
+        """Show the legality history of the specified card and a link to its all time page."""
         await single_card_text(client, channel, args, author, card_history, 'history', show_legality=False)
 
     @cmd_header('Commands')

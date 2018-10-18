@@ -743,7 +743,7 @@ async def single_card_text(client: Client, channel: TextChannel, args: str, auth
     c = await single_card_or_send_error(channel, args, author, command)
     if c is not None:
         name = c.name
-        info_emoji = emoji.info_emoji(c, show_legality)
+        info_emoji = emoji.info_emoji(c, show_legality=show_legality)
         text = emoji.replace_emoji(f(c), client)
         message = f'**{name}** {info_emoji} {text}'
         await send(channel, message)

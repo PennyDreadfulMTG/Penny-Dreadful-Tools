@@ -64,7 +64,7 @@ def test_info_emoji() -> None:
     assert emoji.info_emoji(legal_card) == ':white_check_mark:'
     illegal_card = oracle.load_card('black lotus')
     assert emoji.info_emoji(illegal_card) == ':no_entry_sign:'
-    assert emoji.info_emoji(illegal_card, True) == ':no_entry_sign: (not legal in PD)'
+    assert emoji.info_emoji(illegal_card, verbose=True) == ':no_entry_sign: (not legal in PD)'
 
 def test_accents() -> None:
     c = oracle.load_card('Lim-Dûl the Necromancer')

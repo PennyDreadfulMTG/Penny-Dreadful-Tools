@@ -7,7 +7,7 @@ from decksite.view import View
 from shared.pd_exception import DoesNotExistException
 
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, too-many-instance-attributes
 class Archetype(View):
     def __init__(self,
                  archetype: archs.Archetype,

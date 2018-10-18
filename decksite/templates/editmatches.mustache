@@ -4,7 +4,7 @@
     <form method="post">
         <select name="left_id">
             {{#decks}}
-                <option value="{{id}}">{{person}} ({{name}} {{display_date}}, {{id}})</option>
+                <option value="{{id}}">{{person}} ({{name}}, {{display_date}}, {{id}})</option>
             {{/decks}}
         </select>
         <input type="number" name="left_games">
@@ -12,7 +12,7 @@
         <input type="number" name="right_games">
         <select name="right_id">
             {{#decks}}
-                <option value="{{id}}">{{name}} ({{person}}, {{display_date}}, {{id}})</option>
+                <option value="{{id}}">{{person}} ({{name}}, {{display_date}}, {{id}})</option>
             {{/decks}}
         </select>
         <button type="submit" name="action" value="add">Add Match</button>

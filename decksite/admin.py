@@ -7,8 +7,8 @@ from decksite import league as lg
 from decksite.data import archetype as archs
 from decksite.data import competition as comp
 from decksite.data import deck as ds
-from decksite.data import news as ns
 from decksite.data import match as ms
+from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.views import (Admin, EditArchetypes, EditMatches, EditNews,
                             PlayerNotes, Prizes, RotationChecklist, Unlink)

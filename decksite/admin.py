@@ -8,6 +8,7 @@ from decksite.data import archetype as archs
 from decksite.data import competition as comp
 from decksite.data import deck as ds
 from decksite.data import news as ns
+from decksite.data import match as ms
 from decksite.data import person as ps
 from decksite.views import (Admin, EditArchetypes, EditMatches, EditNews,
                             PlayerNotes, Prizes, RotationChecklist, Unlink)
@@ -78,6 +79,8 @@ def post_matches():
         lg.update_match(request.form.get('match_id'), request.form.get('left_id'), request.form.get('left_games'), request.form.get('right_id'), request.form.get('right_games'))
     elif request.form.get('action') == 'delete':
         lg.delete_match(request.form.get('match_id'))
+    elif request.form.get('action') == 'add':
+        ms.insert_match(dtutil.now(), request.form.get('left_id'), request.form.get('left_games'), request.form.get('right_id'), request.form.get('right_games'), None, None, None)
     return edit_matches()
 
 @APP.route('/admin/news/')

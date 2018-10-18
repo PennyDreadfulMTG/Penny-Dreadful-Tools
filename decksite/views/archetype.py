@@ -7,7 +7,7 @@ from decksite.view import View
 from shared.pd_exception import DoesNotExistException
 
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, too-many-instance-attributes
 class Archetype(View):
     def __init__(self,
                  archetype: archs.Archetype,
@@ -36,6 +36,7 @@ class Archetype(View):
             'roots': [m for m in matchup_archetypes if m.is_root],
         }]
         self.show_seasons = True
+        self.show_archetype = any(d.archetype_id != self.archetype.id for d in self.decks)
         self.show_archetype_tree = len(self.archetypes) > 0
 
     def og_title(self):

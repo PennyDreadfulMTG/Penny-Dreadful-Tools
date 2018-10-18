@@ -10,7 +10,8 @@ from magic.models.deck import Deck
 from shared.pd_exception import InvalidDataException
 
 WHITELIST = [
-    '#justnayathings'
+    '#justnayathings',
+    'blue burn' # deck_id = 24089
 ]
 
 ABBREVIATIONS = {

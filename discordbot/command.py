@@ -182,6 +182,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Developer')
     async def update(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """Forces an update to legal cards and bugs."""
+        multiverse.set_legal_cards()
         oracle.legal_cards(force=True)
         multiverse.update_bugged_cards()
         multiverse.update_cache()
@@ -283,6 +284,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def history(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
+        """Show the legality history of the specified card and a link to its all time page."""
         await single_card_text(client, channel, args, author, card_history, 'history', show_legality=False)
 
     @cmd_header('Commands')
@@ -538,20 +540,6 @@ Want to contribute? Send a Pull Request."""
                     'Current League': fetcher.decksite_url('/league/current/')
                 }
             ),
-            'legality': (
-                """
-                Legality is set at the release of a Standard-legal set on Magic Online.
-                Prices are checked every hour for a week beforehand. Anything 1c or less for half or more of all checks is legal for the season.
-                Cards from the just-released set are added (nothing removed) three weeks later via a supplemental rotation after prices have settled a little.
-                Any version of a card on the legal cards list is legal.
-                """,
-                {
-                    'Deck Checker': 'http://pdmtgo.com/deck_check.html',
-                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt',
-                    'Rotation Speculation': fetcher.decksite_url('/rotation/speculation/'),
-                    'Rotation Changes': fetcher.decksite_url('/rotation/changes/')
-                }
-            ),
             'noshow': (
                 """
                 If your opponent does not join your game please @-message them on Discord and contact them on Magic Online.
@@ -601,10 +589,32 @@ Want to contribute? Send a Pull Request."""
                     'Retire': fetcher.decksite_url('/retire/')
                 }
             ),
+            'rotation': (
+                """
+                Legality is set at the release of a Standard-legal set on Magic Online.
+                Prices are checked every hour for a week beforehand. Anything 1c or less for half or more of all checks is legal for the season.
+                Cards from the just-released set are added (nothing removed) three weeks later via a supplemental rotation after prices have settled a little.
+                Any version of a card on the legal cards list is legal.
+                """,
+                {
+                    'Deck Checker': 'http://pdmtgo.com/deck_check.html',
+                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt',
+                    'Rotation Speculation': fetcher.decksite_url('/rotation/speculation/'),
+                    'Rotation Changes': fetcher.decksite_url('/rotation/changes/')
+                }
+            ),
             'spectating': (
                 """
                 Spectating tournament and league matches is allowed and encouraged.
                 Please do not write anything in chat except to call PDBot's `!record` command to find out the current score in games.
+                """,
+                {}
+            ),
+            'supplemental': (
+                """
+                Legality for the cards in the newly-released set ONLY is determined three weeks after the normal rotation to allow prices to settle.
+                Prices are checked every hour for a week. Anything in the newly-released set that is 1c or less for half or more of all checks is legal for the rest of the season.
+                Cards are only ever added to the legal list by the supplemental rotation, never removed.
                 """,
                 {}
             ),
@@ -629,7 +639,7 @@ Want to contribute? Send a Pull Request."""
         }
         keys = sorted(explanations.keys())
         explanations['drop'] = explanations['retire']
-        explanations['rotation'] = explanations['legality']
+        explanations['legality'] = explanations['rotation']
         explanations['spectate'] = explanations['spectating']
         explanations['tournaments'] = explanations['tournament']
         explanations['watching'] = explanations['spectating']
@@ -881,17 +891,21 @@ def single_card_text_internal(client: Client, requested_card: Card, disable_emoj
                 text += ' (Last confirmed {time} ago.)'.format(time=dtutil.display_time(time_since_confirmed, 1))
     return text
 
-# See #5532.
+# See #5532 and #5566.
 def escape_underscores(s: str) -> str:
-    should_escape_underscores = True
     new_s = ''
+    in_url, in_emoji = False, False
     for char in s:
-        if char == '_' and should_escape_underscores:
+        if char == ':':
+            in_emoji = True
+        elif char not in 'abcdefghijklmnopqrstuvwxyz_':
+            in_emoji = False
+        if char == '<':
+            in_url = True
+        elif char == '>':
+            in_url = False
+        if char == '_' and not in_url and not in_emoji:
             new_s += '\\_'
         else:
             new_s += char
-        if char == '<':
-            should_escape_underscores = False
-        if char == '>':
-            should_escape_underscores = True
     return new_s

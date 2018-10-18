@@ -31,7 +31,7 @@ def update_index(index: Index, cards: List[Card]) -> None:
     writer = index.writer()
     cards = [c for c in cards if c.layout != 'token' and c.type != 'Vanguard']
     for card in cards:
-        names = card.names if not card.layout == 'meld' or card.position == 1 else card.name
+        names = card.names if not card.layout == 'meld' or card.position == 1 else [card.name]
         if card.name not in names:
             names.append(card.name) # Split and aftermath cards
         for name in names:

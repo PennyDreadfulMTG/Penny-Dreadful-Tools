@@ -3,8 +3,8 @@ import subprocess
 import urllib
 from typing import Optional, Tuple
 
-from flask import (Flask, Response, redirect, request, send_from_directory,
-                   session, url_for)
+from flask import (Flask, Request, Response, redirect, request,
+                   send_from_directory, session, url_for)
 from flask_babel import Babel
 from github.GithubException import GithubException
 from werkzeug import exceptions
@@ -50,14 +50,14 @@ class PDFlask(Flask):
     def not_found(self, e: Exception) -> Tuple[str, int]:
         if request.path.startswith('/error/HTTP'):
             return return_json(generate_error('NOTSUPPORTED', 'Not supported'), status=404)
-        log_exception(e)
+        log_exception(request, e)
         if request.path.startswith('/api/'):
             return return_json(generate_error('NOTFOUND', 'Endpoint not found'), status=404)
         view = NotFound(e)
         return view.page(), 404
 
     def internal_server_error(self, e: Exception) -> Tuple[str, int]:
-        log_exception(e)
+        log_exception(request, e)
         path = request.path
         try:
             repo.create_issue('500 error at {path}\n {e}'.format(path=path, e=e), session.get('mtgo_username', session.get('id', 'logged_out')), self.name, 'PennyDreadfulMTG/perf-reports', exception=e)
@@ -124,5 +124,5 @@ class PDFlask(Flask):
             return 'https://pennydreadfulmagic.com/cards/{name}/'.format(name=values['name'])
         return None
 
-def log_exception(e: Exception) -> None:
-    logger.error(repo.format_exception(e))
+def log_exception(r: Request, e: Exception) -> None:
+    logger.error(f'At request path: {r.path}', repo.format_exception(e))

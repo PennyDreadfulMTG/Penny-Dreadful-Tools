@@ -61,7 +61,7 @@ class Database():
 
     def execute_with_reconnect(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, fetch_rows: Optional[bool] = False) -> Tuple[int, List[ValidSqlArgumentDescription]]:
         result = None
-        # Attempt to excute the query and reconnect 3 times, then give up
+        # Attempt to execute the query and reconnect 3 times, then give up
         for _ in range(3):
             try:
                 p = perf.start()

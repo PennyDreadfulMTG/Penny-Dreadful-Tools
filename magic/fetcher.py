@@ -105,7 +105,7 @@ def mtgjson_version() -> str:
 
 async def mtgo_status() -> str:
     try:
-        return cast(str, (await internal.fetch_json_async('https://magic.wizards.com/sites/all/modules/custom/wiz_services/mtgo_status.php'))['status'])
+        return cast(str, (await internal.fetch_json_async('https://s3-us-west-2.amazonaws.com/s3-mtgo-greendot/status.json'))['status'])
     except (FetchException, json.decoder.JSONDecodeError):
         return 'UNKNOWN'
 

@@ -5,6 +5,9 @@
     {{^hide_person}}
         <td><a href="{{person_url}}">{{person}}</a></td>
     {{/hide_person}}
+    {{#show_archetype}}
+        <td><a href="{{archetype_url}}">{{archetype_name}}</a></td>
+    {{/show_archetype}}
     {{^hide_source}}
         <td {{#source_sort}}data-text="{{source_sort}}"{{/source_sort}}>
             {{#competition_url}}<a href="{{competition_url}}">{{/competition_url}}

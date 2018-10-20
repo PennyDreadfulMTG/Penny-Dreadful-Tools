@@ -1,13 +1,15 @@
 <h1>Rotation Checklist</h1>
 <section>
     <ul>
-        <li>Check for new sets to scrape on mtggoldfish.com probably using price_grabber (which has code for grabbing all sets)</li>
-        <li>Set up cron job</li>
         <li>Copy legal_cards.txt to pdmtgo.com</li>
-        <li>Restart decksite</li>
-        <li>Update Gatherling</li>
-        <li>Email richard@mtggoldfish.com</li>
-        <li>Ping /u/basicer on Reddit</li>
+        <li>Run post_rotation task for decksite <code>python3 run.py maintenance post_rotation</code></li>
+        <li>Restart decksite <code>touch /etc/uwsgi/vassals/decksite.ini</code></li>
+        <li>Send <code>!suppresshype</code> to PDBot</li>
+        <li>Restart or update Discord Bot taking note of <a href="https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/5490">#5490</a></li>
+        <li>Update <a href="http://www.gatherling.com/util/updateDefaultFormats.php">Gatherling</a> legal cards list</li>
+        <li>Ping @Csuhta#3333 on Discord for Scryfall</li>
+        <li>Email richard@mtggoldfish.com for MTG Goldfish</li>
+        <li>Ping /u/basicer on Reddit for Magidex</li>
         <li>Ping yeaGO on his wall at tappedout</li>
     </ul>
 </section>

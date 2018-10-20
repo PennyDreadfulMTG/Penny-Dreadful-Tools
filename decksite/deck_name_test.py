@@ -70,7 +70,8 @@ TESTDATA = [
     ('White Green', 'Selesnya', ['W', 'G'], None),
     ('RG Energy', 'Gruul Energy', ['R', 'G'], 'Pummeler'),
     ('Black/Red', 'Rakdos', ['B', 'R'], None),
-    ('Blue Burn', 'Blue Burn', ['U', 'R'], None)
+    ('Blue Burn', 'Blue Burn', ['U', 'R'], None),
+    ('WB', 'Orzhov Aristocrats', ['W', 'B'], 'Orzhov Aristocrats')
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

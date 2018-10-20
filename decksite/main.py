@@ -335,7 +335,7 @@ def retire(form=None):
 
 @APP.route('/retire/', methods=['POST'])
 @auth.login_required
-def do_claim():
+def retire_deck():
     form = RetireForm(request.form, discord_user=session.get('id'))
     if form.validate():
         d = ds.load_deck(form.entry)

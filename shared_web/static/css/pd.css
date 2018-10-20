@@ -1,4 +1,4 @@
-/*
+﻿/*
 
 General Notes
 
@@ -1770,6 +1770,10 @@ Fix the width of the column to prevent the table "jump"-ing around the screen as
         max-width: 10rem;
         width: 10rem;
     }
+}
+
+td.archetype-guidance {
+    max-width: 26em;
 }
 /*
 

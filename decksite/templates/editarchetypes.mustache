@@ -59,6 +59,20 @@
     </form>
 </section>
 <section>
+    <h2>Update guidance</h2>
+    <form method="post">
+        <div>
+            <label>Update</label>
+            {{> archetypedropdown}}
+        </div>
+        <div>
+            <label>New guidance for archetype assigners</label>
+            <input type="text" name="new_guidance" value="">
+        </div>
+        <button type="submit">Update guidance</button>
+    </form>
+</section>
+<section>
     <h2>Search By Card</h2>
 
     <form method="post">
@@ -114,6 +128,7 @@
             {{#archetype_tree}}
                 <tr class="archetype archetype-{{depth}}">
                     <td class="initial primary"><a href="{{url}}">{{name}}</a></td>
+                    <td class="archetype-guidance" title="{{guidance}}">{{guidance}}</td>
                     <td>
                         <form method="post" class="inline">
                             <input type="hidden" name="parent" value="{{id}}">

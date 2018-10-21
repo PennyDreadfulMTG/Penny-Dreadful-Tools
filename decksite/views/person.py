@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import Dict, List
 
 from flask import url_for
 from flask_babel import ngettext

@@ -18,32 +18,9 @@
     <section>
         <h2>Achievements</h2>
         <ul class="buttons">
-            {{#achievements}}
-                {{#tournament_organizer}}
-                    <li>Tournament Organizer</li>
-                {{/tournament_organizer}}
-                {{#tournament_wins}}
-                    <li title="{{tournament_wins_text}}">Tournament Winner</li>
-                {{/tournament_wins}}
-                {{#tournament_entries}}
-                    <li title="{{tournament_entries_text}}">Tournament Player</li>
-                {{/tournament_entries}}
-                {{#perfect_runs}}
-                    <li title="{{perfect_runs_text}}">Perfect League Run</li>
-                {{/perfect_runs}}
-                {{#flawless_runs}}
-                    <li title="{{flawless_runs_text}}">Flawless League Run</li>
-                {{/flawless_runs}}
-                {{#league_entries}}
-                    <li title="{{league_entries_text}}">League Player</li>
-                {{/league_entries}}
-                {{#perfect_run_crushes}}
-                    <li title="{{perfect_run_crushes_text}}">Perfect Run Crusher</li>
-                {{/perfect_run_crushes}}
-                {{#completionist}}
-                    <li title="Never retired a league run">Completionist</li>
-                {{/completionist}}
-            {{/achievements}}
+            {{#displayed_achievements}}
+                <li title="{{detail}}">{{name}}</li>
+            {{/displayed_achievements}}
         </ul>
         <p><a href="{{achievements_url}}">See all achievements</a></p>
     </section>

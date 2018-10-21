@@ -1,34 +1,15 @@
 <h1>Achievements</h1>
 <section>
     <dl>
-        <dt>Tournament Organizer</dt>
-        <dd>Run a tournament for the Penny Dreadful Community.</dd>
-
-        <dt>Tournament Player</dt>
-        <dd>Play in an official Penny Dreadful tournament on <a href="https://gatherling.com/">gatherling.com</a></dd>
-
-        <dt>Tournament Winner</dt>
-        <dd>Win a tournament.</dd>
-
-        <dt>League Player</dt>
-        <dd>Play in the <a href="{{league_url}}">league</a>.</dd>
-
-        <dt>Perfect League Run</dt>
-        <dd>Complete a 5–0 run in the league.</dd>
-
-        <dt>Flawless League Run</dt>
-        <dd>Complete a 5–0 run in the league without losing a game.</dd>
-
-        <dt>Perfect Run Crusher</dt>
-        <dd>Beat a player that's 4–0 in the league.</dd>
-
-        <dt>Completionist</dt>
-        <dd>Never retire a league run before completing five matches.</dd>
+        {{#achievement_descriptions}}
+        <dt>{{title}}</dt>
+        <dd>{{{description_safe}}}</dd>
+        {{/achievement_descriptions}}
     </dl>
-</section<>
+</section>
 
 {{#person_url}}
     <section>
         <p>See your achievements on your <a href="{{person_url}}">player page</a>.</p>
-    </sction>
+    </section>
 {{/person_url}}

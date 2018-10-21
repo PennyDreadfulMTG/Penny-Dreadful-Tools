@@ -1,5 +1,6 @@
 from typing import List, Optional, Sequence, Union
 
+from decksite import achievements as ach
 from decksite.data import deck, query
 from decksite.database import db
 from shared import dtutil, guarantee
@@ -89,23 +90,7 @@ def load_people(where: str = '1 = 1',
 
 def set_achievements(people: List[Person], season_id: int = None, retry: bool = False) -> None:
     people_by_id = {person.id: person for person in people}
-    sql = """
-        SELECT
-            person_id AS id,
-            SUM(tournament_entries) AS tournament_entries,
-            SUM(tournament_wins) AS tournament_wins,
-            SUM(league_entries) AS league_entries,
-            SUM(completionist) AS completionist,
-            SUM(perfect_runs) AS perfect_runs,
-            SUM(flawless_runs) AS flawless_runs,
-            SUM(perfect_run_crushes) AS perfect_run_crushes
-        FROM
-            _achievements AS a
-        WHERE
-            person_id IN ({ids}) AND ({season_query})
-        GROUP BY
-            person_id
-    """.format(ids=', '.join(str(k) for k in people_by_id.keys()), season_query=query.season_query(season_id))
+    sql = ach.load_query(people_by_id, season_id)
     try:
         results = [Container(r) for r in db().select(sql)]
         for result in results:

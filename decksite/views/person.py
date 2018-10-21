@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 
 from flask import url_for
 from flask_babel import ngettext
@@ -24,19 +24,24 @@ class Person(View):
             record.show_record = True
             record.opp_url = url_for('person', person_id=record.opp_mtgo_username)
         self.show_head_to_head = len(person.head_to_head) > 0
-        self.tournament_organizer = self.person.name in [host for series in tournaments.all_series_info() for host in series['hosts']]
         self.show_seasons = True
+        self.displayed_achievements: List[Dict[str, str]] = []
+        if self.person.name in [host for series in tournaments.all_series_info() for host in series['hosts']]:
+            self.displayed_achievements.append({'name': 'Tournament Organizer', 'detail': 'Run a tournament for the Penny Dreadful community'})
         achievements_text = [
-            ('tournament_wins', 'Win', 'Wins'),
-            ('tournament_entries', 'Entry', 'Entries'),
-            ('perfect_runs', 'Perfect Run', 'Perfect Runs'),
-            ('league_entries', 'Entry', 'Entries'),
-            ('perfect_run_crushes', 'Crush', 'Crushes')
+            ('tournament_wins', 'Tournament Winner', 'Win', 'Wins'),
+            ('tournament_entries', 'Tournament Player', 'Entry', 'Entries'),
+            ('perfect_runs', 'Perfect League Run', 'Perfect Run', 'Perfect Runs'),
+            ('flawless_runs', 'Flawless League Run', 'Flawless Run', 'Flawless Runs'),
+            ('league_entries', 'League Player', 'Entry', 'Entries'),
+            ('perfect_run_crushes', 'Perfect Run Crusher', 'Crush', 'Crushes')
         ]
         achievements = person.get('achievements', {})
-        for k, v1, vp in achievements_text:
-            if k in achievements:
-                setattr(self, f'{k}_text', ngettext(f'1 {v1}', f'%(num)d {vp}', person.achievements[k]))
+        for k, t, v1, vp in achievements_text:
+            if k in achievements and achievements[k] > 0:
+                self.displayed_achievements.append({'name':t, 'detail':ngettext(f'1 {v1}', f'%(num)d {vp}', person.achievements[k])})
+        if achievements.get('completionist', 0) > 0:
+            self.displayed_achievements.append({'name':'Completionist', 'detail':'Never retired a league run'})
         self.achievements_url = url_for('achievements')
 
     def __getattr__(self, attr):

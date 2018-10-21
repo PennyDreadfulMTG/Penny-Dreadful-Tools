@@ -58,6 +58,8 @@ def post_archetypes():
         search_results = ds.load_decks_by_cards(request.form.get('q').splitlines(), request.form.get('notq').splitlines())
     elif request.form.get('rename_to') is not None:
         archs.rename(request.form.get('archetype_id'), request.form.get('rename_to'))
+    elif request.form.get('new_description') is not None:
+        archs.update_description(request.form.get('archetype_id'), request.form.get('new_description'))
     elif request.form.getlist('archetype_id') is not None and len(request.form.getlist('archetype_id')) == 2:
         archs.move(request.form.getlist('archetype_id')[0], request.form.getlist('archetype_id')[1])
     elif request.form.get('parent') is not None:

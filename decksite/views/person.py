@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import List, Dict
 
 from flask import url_for
 from flask_babel import ngettext
@@ -25,7 +25,7 @@ class Person(View):
             record.opp_url = url_for('person', person_id=record.opp_mtgo_username)
         self.show_head_to_head = len(person.head_to_head) > 0
         self.show_seasons = True
-        self.displayed_achievements : List[Dict[str, str]] = []
+        self.displayed_achievements: List[Dict[str, str]] = []
         if self.person.name in [host for series in tournaments.all_series_info() for host in series['hosts']]:
             self.displayed_achievements.append({'name': 'Tournament Organizer', 'detail': 'Run a tournament for the Penny Dreadful community'})
         achievements_text = [

@@ -30,6 +30,7 @@ class Person(View):
             ('tournament_wins', 'Win', 'Wins'),
             ('tournament_entries', 'Entry', 'Entries'),
             ('perfect_runs', 'Perfect Run', 'Perfect Runs'),
+            ('flawless_runs', 'Flawless Run', 'Flawless Runs'),
             ('league_entries', 'Entry', 'Entries'),
             ('perfect_run_crushes', 'Crush', 'Crushes')
         ]

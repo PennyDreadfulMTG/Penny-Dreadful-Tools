@@ -65,6 +65,7 @@ def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, nam
         SELECT
             a.id,
             a.name,
+            a.description,
             aca.ancestor AS parent_id,
             SUM(num_decks) AS num_decks,
             SUM(wins) AS wins,
@@ -188,6 +189,9 @@ def move(archetype_id: int, parent_id: int) -> None:
 
 def rename(archetype_id: int, new_name: str) -> None:
     db().execute('UPDATE archetype SET name = %s WHERE id = %s', [new_name, archetype_id])
+
+def update_description(archetype_id: int, description: str) -> None:
+    db().execute('UPDATE archetype SET description = %s WHERE id = %s', [description, archetype_id])
 
 def base_archetypes() -> List[Archetype]:
     return [a for a in base_archetype_by_id().values() if a.parent is None]

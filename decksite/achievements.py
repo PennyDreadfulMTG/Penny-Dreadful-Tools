@@ -1,19 +1,62 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 
 from flask import url_for
 from flask_babel import ngettext
 
-from decksite.data import person, query  # pylint:disable=unused-import
+from decksite.data import query
 from magic import tournaments
 
-ACHIEVEMENTS_TEXT = [
-    ('tournament_wins', 'Tournament Winner', 'Win', 'Wins'),
-    ('tournament_entries', 'Tournament Player', 'Entry', 'Entries'),
-    ('perfect_runs', 'Perfect League Run', 'Perfect Run', 'Perfect Runs'),
-    ('flawless_runs', 'Flawless League Run', 'Flawless Run', 'Flawless Runs'),
-    ('league_entries', 'League Player', 'Entry', 'Entries'),
-    ('perfect_run_crushes', 'Perfect Run Crusher', 'Crush', 'Crushes')
-]
+if TYPE_CHECKING:
+    from decksite.data import person # pylint:disable=unused-import
+# Disabling unused-import supposedly not needed here but actually seems to be?
+
+class Achievement:
+    achs = []
+    key = None
+    title = None
+    def __init_subclass__(cls):
+        if cls.key != None:
+            cls.achs.append(cls())
+
+class CountedAchievement(Achievement):
+    singular = None
+    plural = None
+
+class TournamentWinner(CountedAchievement):
+    key = 'tournament_wins'
+    title = 'Tournament Winner'
+    singular = 'Win'
+    plural = 'Wins'
+
+class TournamentPlayer(CountedAchievement):
+    key = 'tournament_entries'
+    title = 'Tournament Player'
+    singular = 'Entry'
+    plural = 'Entries'
+
+class PerfectRun(CountedAchievement):
+    key = 'perfect_runs'
+    title = 'Perfect League Run'
+    singular = 'Perfect Run'
+    plural = 'Perfect Runs'
+
+class FlawlessRun(CountedAchievement):
+    key = 'flawless_run'
+    title = 'Flawless League Run'
+    singular = 'Flawless Run'
+    plural = 'Flawless Runs'
+
+class LeaguePlayer(CountedAchievement):
+    key = 'league_entries'
+    title = 'League Player'
+    singular = 'Entry'
+    plural = 'Entries'
+
+class PerfectRunCrusher(CountedAchievement):
+    key = 'perfect_run_crushes'
+    title = 'Perfect Run Crusher'
+    singular = 'Crush'
+    plural = 'Crushes'
 
 def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int]) -> str:
     return """
@@ -150,9 +193,9 @@ def displayed_achievements(p: 'person.Person') -> List[Dict[str, str]]:
     if p.name in [host for series in tournaments.all_series_info() for host in series['hosts']]:
         result.append({'name': 'Tournament Organizer', 'detail': 'Run a tournament for the Penny Dreadful community'})
     achievements = p.get('achievements', {})
-    for k, t, v1, vp in ACHIEVEMENTS_TEXT:
-        if k in achievements and achievements[k] > 0:
-            result.append({'name':t, 'detail':ngettext(f'1 {v1}', f'%(num)d {vp}', p.achievements[k])})
+    for a in Achievement.achs:
+        if a.key in achievements and achievements[a.key] > 0:
+            result.append({'name':a.title, 'detail':ngettext(f'1 {a.singular}', f'%(num)d {a.plural}', p.achievements[a.key])})
     if achievements.get('completionist', 0) > 0:
         result.append({'name':'Completionist', 'detail':'Never retired a league run'})
     return result

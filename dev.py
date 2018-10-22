@@ -1,5 +1,7 @@
 import os
+import subprocess
 import sys
+from typing import List
 
 from shared import configuration
 
@@ -13,27 +15,39 @@ if ON_PROD:
 
 def run() -> None:
     cmd = sys.argv[1].lower()
+    args = sys.argv[2:]
 
     if cmd in ('lint', 'pylint'):
-        lint()
+        lint(args)
 
     elif cmd in ('types', 'mypy'):
-        mypy()
+        mypy(args)
 
     elif cmd == 'mypy-strict':
-        mypy(True)
+        mypy(args, True)
 
     elif cmd in ('test', 'tests', 'pytest'):
-        tests()
+        tests(args)
 
     elif cmd in ('nuke_db', 'reset_db'):
         reset_db()
+
+    elif cmd == 'push':
+        push()
+
+    elif cmd in ('pr', 'pull-request'):
+        pull_request(args)
+
+    elif cmd == 'release':
+        push()
+        pull_request(args)
+
 
     else:
         print('Unrecognised command {cmd}.'.format(cmd=cmd))
         exit(1)
 
-def lint() -> None:
+def lint(argv: List[str]) -> None:
     args = ['--rcfile=.pylintrc', # Load rcfile first.
             '--ignored-modules=alembic,MySQLdb,flask_sqlalchemy,distutils.dist', # override ignored-modules (codacy hack)
             '--load-plugins', 'pylint_quotes, pylint_monolith', # Plugins
@@ -41,18 +55,18 @@ def lint() -> None:
             '-f', 'parseable', # Machine-readable output.
             '-j', '4' # Use four cores for speed.
            ]
-    args.extend(sys.argv[2:] or LINT_PATHS)
+    args.extend(argv or LINT_PATHS)
     import pylint.lint
     pylint.lint.Run(args, do_exit=True)
 
-def mypy(strict: bool = False) -> None:
+def mypy(argv: List[str], strict: bool = False) -> None:
     args = [
         '--ignore-missing-imports',     # Don't complain about 3rd party libs with no stubs
         '--disallow-untyped-calls',     # Strict Mode.  All function calls must have a return type.
         ]
     if strict:
         args.append('--disallow-incomplete-defs') # All parameters must have type definitions.
-    args.extend(sys.argv[2:] or [
+    args.extend(argv or [
         '.'                             # Invoke on the entire project.
         ])
     from mypy import api
@@ -70,13 +84,14 @@ def mypy(strict: bool = False) -> None:
         print(f'{n} issues')
     sys.exit(result[2])
 
-def tests() -> None:
+def tests(argv: List[str]) -> None:
     import pytest
     from magic import multiverse, oracle
     multiverse.init()
     oracle.init()
-    code = pytest.main(sys.argv[2:])
-    sys.exit(code)
+    code = pytest.main(argv)
+    if code:
+        sys.exit(code)
 
 def reset_db() -> None:
     """
@@ -86,6 +101,15 @@ def reset_db() -> None:
     decksite.database.db().nuke_database()
     import magic.database
     magic.database.db().nuke_database()
+
+def push() -> None:
+    subprocess.check_call(['git', 'pull', 'origin', 'master'])
+    tests([])
+    branch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
+    subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch])
+
+def pull_request(argv: List[str]) -> None:
+    subprocess.check_call(['hub', 'pull-request', *argv])
 
 if __name__ == '__main__':
     run()

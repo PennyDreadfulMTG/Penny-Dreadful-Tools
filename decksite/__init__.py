@@ -1,6 +1,5 @@
 import datetime
 import logging
-import subprocess
 from typing import Dict, List, Tuple, Union
 
 from flask import Blueprint, g, url_for

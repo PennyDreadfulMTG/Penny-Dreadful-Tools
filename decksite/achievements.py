@@ -106,15 +106,15 @@ class TournamentOrganizer(Achievement):
     description_safe = 'Run a tournament for the Penny Dreadful community.'
     def display(self, p):
         if p.name in [host for series in tournaments.all_series_info() for host in series['hosts']]:
-            return {'name': 'Tournament Organizer', 'detail': 'Run a tournament for the Penny Dreadful community'}
+            return {'name': 'Tournament Organizer', 'detail': 'Ran a tournament for the Penny Dreadful community'}
         else:
             return None
 
 class TournamentPlayer(CountedAchievement):
     key = 'tournament_entries'
     title = 'Tournament Player'
-    singular = 'Entry'
-    plural = 'Entries'
+    singular = 'tournament entered'
+    plural = 'tournaments entered'
     @property
     def description_safe(self):
         return 'Play in an official Penny Dreadful tournament on <a href="https://gatherling.com/">gatherling.com</a>'
@@ -123,16 +123,16 @@ class TournamentPlayer(CountedAchievement):
 class TournamentWinner(CountedAchievement):
     key = 'tournament_wins'
     title = 'Tournament Winner'
-    singular = 'Win'
-    plural = 'Wins'
+    singular = 'victory'
+    plural = 'victories'
     description_safe = 'Win a tournament.'
     sql = "COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
 
 class LeaguePlayer(CountedAchievement):
     key = 'league_entries'
     title = 'League Player'
-    singular = 'Entry'
-    plural = 'Entries'
+    singular = 'league entry'
+    plural = 'league entries'
     @property
     def description_safe(self):
         return f'Play in the <a href="{url_for("signup")}">league</a>.'
@@ -141,16 +141,16 @@ class LeaguePlayer(CountedAchievement):
 class PerfectRun(CountedAchievement):
     key = 'perfect_runs'
     title = 'Perfect League Run'
-    singular = 'Perfect Run'
-    plural = 'Perfect Runs'
+    singular = 'perfect run'
+    plural = 'perfect runs'
     description_safe = 'Complete a 5–0 run in the league.'
     sql = "SUM(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses = 0 THEN 1 ELSE 0 END)"
 
 class FlawlessRun(CountedAchievement):
     key = 'flawless_runs'
     title = 'Flawless League Run'
-    singular = 'Flawless Run'
-    plural = 'Flawless Runs'
+    singular = 'flawless run'
+    plural = 'flawless runs'
     description_safe = 'Complete a 5–0 run in the league without losing a game.'
     @property
     def sql(self):
@@ -180,8 +180,8 @@ class FlawlessRun(CountedAchievement):
 class PerfectRunCrusher(CountedAchievement):
     key = 'perfect_run_crushes'
     title = 'Perfect Run Crusher'
-    singular = 'Crush'
-    plural = 'Crushes'
+    singular = 'dream in tatters'
+    plural = 'dreams in tatters'
     description_safe = "Beat a player that's 4–0 in the league."
     @property
     def sql(self):
@@ -218,9 +218,7 @@ class Completionist(BooleanAchievement):
     title = 'Completionist'
     season_text = 'Never retired a league run this season'
     def alltime_text(self, n):
-        if n>1:
-            return f'Played {n} different seasons without retiring a league run'
-        else:
-            return 'Played in 1 season without retiring a league run'
+        what = ngettext('1 season', f'{n} different seasons', n)
+        return f'Played in {what} without retiring a league run'
     description_safe = 'Play the whole season without retiring an unfinished league run.'
     sql = "CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END"

@@ -14,6 +14,7 @@ class Achievement:
     achs = []
     key = None
     title = None
+    description_safe = None
     def __init_subclass__(cls):
         if cls.key != None:
             cls.achs.append(cls())
@@ -22,41 +23,51 @@ class CountedAchievement(Achievement):
     singular = None
     plural = None
 
-class TournamentWinner(CountedAchievement):
-    key = 'tournament_wins'
-    title = 'Tournament Winner'
-    singular = 'Win'
-    plural = 'Wins'
-
 class TournamentPlayer(CountedAchievement):
     key = 'tournament_entries'
     title = 'Tournament Player'
     singular = 'Entry'
     plural = 'Entries'
+    @property
+    def description_safe(self):
+        return 'Play in an official Penny Dreadful tournament on <a href="https://gatherling.com/">gatherling.com</a>'
 
-class PerfectRun(CountedAchievement):
-    key = 'perfect_runs'
-    title = 'Perfect League Run'
-    singular = 'Perfect Run'
-    plural = 'Perfect Runs'
-
-class FlawlessRun(CountedAchievement):
-    key = 'flawless_run'
-    title = 'Flawless League Run'
-    singular = 'Flawless Run'
-    plural = 'Flawless Runs'
+class TournamentWinner(CountedAchievement):
+    key = 'tournament_wins'
+    title = 'Tournament Winner'
+    singular = 'Win'
+    plural = 'Wins'
+    description_safe = 'Win a tournament.'
 
 class LeaguePlayer(CountedAchievement):
     key = 'league_entries'
     title = 'League Player'
     singular = 'Entry'
     plural = 'Entries'
+    @property
+    def description_safe(self):
+        return f'Play in the <a href="{url_for("signup")}">league</a>.'
+
+class PerfectRun(CountedAchievement):
+    key = 'perfect_runs'
+    title = 'Perfect League Run'
+    singular = 'Perfect Run'
+    plural = 'Perfect Runs'
+    description_safe = 'Complete a 5–0 run in the league.'
+
+class FlawlessRun(CountedAchievement):
+    key = 'flawless_run'
+    title = 'Flawless League Run'
+    singular = 'Flawless Run'
+    plural = 'Flawless Runs'
+    description_safe = 'Complete a 5–0 run in the league without losing a game.'
 
 class PerfectRunCrusher(CountedAchievement):
     key = 'perfect_run_crushes'
     title = 'Perfect Run Crusher'
     singular = 'Crush'
     plural = 'Crushes'
+    description_safe = "Beat a player that's 4–0 in the league."
 
 def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int]) -> str:
     return """
@@ -170,23 +181,11 @@ def preaggregate_query() -> str:
     """.format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'), season_join=query.season_join(), competition_join=query.competition_join())
 
 def descriptions() -> List[Dict[str, str]]:
-    return [{'title': 'Tournament Organizer',
-             'description_safe': 'Run a tournament for the Penny Dreadful community.'},
-            {'title': 'Tournament Player',
-             'description_safe': 'Play in an official Penny Dreadful tournament on <a href="https://gatherling.com/">gatherling.com</a>'},
-            {'title': 'Tournament Winner',
-             'description_safe': 'Win a tournament.'},
-            {'title': 'League Player',
-             'description_safe': f'Play in the <a href="{url_for("signup")}">league</a>.'},
-            {'title': 'Perfect League Run',
-             'description_safe': 'Complete a 5–0 run in the league.'},
-            {'title': 'Flawless League Run',
-             'description_safe': 'Complete a 5–0 run in the league without losing a game.'},
-            {'title': 'Perfect Run Crusher',
-             'description_safe': "Beat a player that's 4–0 in the league."},
-            {'title': 'Completionist',
-             'description_safe': 'Go the whole season without retiring an unfinished league run.'},
-            ]
+    result = [{'title': 'Tournament Organizer', 'description_safe': 'Run a tournament for the Penny Dreadful community.'}]
+    for a in Achievement.achs:
+        result.append({'title': a.title, 'description_safe': a.description_safe})
+    result.append({'title': 'Completionist', 'description_safe': 'Go the whole season without retiring an unfinished league run.'})
+    return result
 
 def displayed_achievements(p: 'person.Person') -> List[Dict[str, str]]:
     result = []

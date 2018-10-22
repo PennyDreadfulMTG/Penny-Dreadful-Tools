@@ -97,6 +97,7 @@ def set_achievements(people: List[Person], season_id: int = None, retry: bool = 
             SUM(league_entries) AS league_entries,
             SUM(completionist) AS completionist,
             SUM(perfect_runs) AS perfect_runs,
+            SUM(flawless_runs) AS flawless_runs,
             SUM(perfect_run_crushes) AS perfect_run_crushes
         FROM
             _achievements AS a
@@ -269,6 +270,7 @@ def preaggregate_achievements() -> None:
             league_entries INT NOT NULL,
             completionist BOOLEAN NOT NULL,
             perfect_runs INT NOT NULL,
+            flawless_runs INT NOT NULL,
             perfect_run_crushes INT NOT NULL,
             PRIMARY KEY (season_id, person_id),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -282,6 +284,30 @@ def preaggregate_achievements() -> None:
             COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END) AS league_entries,
             CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END AS completionist,
             SUM(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses = 0 THEN 1 ELSE 0 END) AS perfect_runs,
+            SUM(
+                CASE WHEN ct.name = 'League' AND d.id IN
+                    (
+                        SELECT
+                            d.id
+                        FROM
+                            deck as d
+                        INNER JOIN
+                            deck_match as dm
+                        ON
+                            dm.deck_id = d.id
+                        INNER JOIN
+                            deck_match as odm
+                        ON
+                            dm.match_id = odm.match_id and odm.deck_id <> d.id
+                        WHERE
+                            d.competition_id IN ({competition_ids_by_type_select})
+                        GROUP BY
+                            d.id
+                        HAVING
+                            SUM(dm.games) = 10 and sum(odm.games) = 0
+                    )
+                THEN 1 ELSE 0 END
+            ) AS flawless_runs,
             SUM(
                 CASE WHEN d.id IN
                     (

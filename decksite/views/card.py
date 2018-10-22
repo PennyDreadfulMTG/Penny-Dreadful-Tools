@@ -10,6 +10,7 @@ class Card(View):
         self.decks = card.decks
         self.legal_formats = card.legalities.keys()
         self.show_seasons = True
+        self.show_archetype = True
 
     def __getattr__(self, attr):
         return getattr(self.card, attr)

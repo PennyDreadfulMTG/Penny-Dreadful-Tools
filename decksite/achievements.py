@@ -10,18 +10,108 @@ if TYPE_CHECKING:
     from decksite.data import person # pylint:disable=unused-import
 # Disabling unused-import supposedly not needed here but actually seems to be?
 
+def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int]) -> str:
+    columns = ', '.join(f'SUM({a.key}) as {a.key}' for a in Achievement.all_achs if a.in_db)
+    return """
+        SELECT
+            person_id AS id,
+            {columns}
+        FROM
+            _achievements AS a
+        WHERE
+            person_id IN ({ids}) AND ({season_query})
+        GROUP BY
+            person_id
+    """.format(columns=columns, ids=', '.join(str(k) for k in people_by_id.keys()), season_query=query.season_query(season_id))
+
+def preaggregate_query() -> str:
+    create_columns = ', '.join(f'{a.key} INT NOT NULL' for a in Achievement.all_achs if a.in_db)
+    select_columns = ', '.join(f'{a.sql} as {a.key}' for a in Achievement.all_achs if a.in_db)
+    return """
+        CREATE TABLE IF NOT EXISTS _new_achievements (
+            person_id INT NOT NULL,
+            season_id INT NOT NULL,
+            {cc},
+            PRIMARY KEY (season_id, person_id),
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+        SELECT
+            p.id AS person_id,
+            season.id AS season_id,
+            {sc}
+        FROM
+            person AS p
+        LEFT JOIN
+            deck AS d ON d.person_id = p.id
+        LEFT JOIN
+            deck_cache AS dc ON dc.deck_id = d.id
+        {season_join}
+        {competition_join}
+        GROUP BY
+            p.id,
+            season.id
+        HAVING
+            season.id IS NOT NULL
+    """.format(cc=create_columns, sc=select_columns, season_join=query.season_join(), competition_join=query.competition_join())
+
+def descriptions() -> List[Dict[str, str]]:
+    result = []
+    for a in Achievement.all_achs:
+        result.append({'title': a.title, 'description_safe': a.description_safe})
+    return result
+
+def displayed_achievements(p: 'person.Person') -> List[Dict[str, str]]:
+    result = []
+    for a in Achievement.all_achs:
+        d = a.display(p)
+        if d is not None:
+            result.append(d)
+    return result
+
+# Abstract achievement classes
+
 class Achievement:
-    achs = []
+    all_achs = []
     key = None
+    in_db = True
     title = None
     description_safe = None
     def __init_subclass__(cls):
         if cls.key != None:
-            cls.achs.append(cls())
+            cls.all_achs.append(cls())
 
 class CountedAchievement(Achievement):
     singular = None
     plural = None
+    def display(self, p):
+        n = p.get('achievements', {}).get(self.key, 0)
+        if n > 0:
+            return {'name': self.title, 'detail': ngettext(f'1 {self.singular}', f'%(num)d {self.plural}', n)}
+        else:
+            return None
+
+class BooleanAchievement(Achievement):
+    achieved_text = None
+    def display(self, p):
+        n = p.get('achievements', {}).get(self.key, 0)
+        if n > 0:
+            return {'name': self.title, 'detail': self.achieved_text}
+        else:
+            return None
+
+# Actual achievement definitions
+
+class TournamentOrganizer(Achievement):
+    key = 'tournament_organizer'
+    in_db = False
+    title = 'Tournament Organizer'
+    description_safe = 'Run a tournament for the Penny Dreadful community.'
+    def display(self, p):
+        if p.name in [host for series in tournaments.all_series_info() for host in series['hosts']]:
+            return {'name': 'Tournament Organizer', 'detail': 'Run a tournament for the Penny Dreadful community'}
+        else:
+            return None
 
 class TournamentPlayer(CountedAchievement):
     key = 'tournament_entries'
@@ -31,6 +121,7 @@ class TournamentPlayer(CountedAchievement):
     @property
     def description_safe(self):
         return 'Play in an official Penny Dreadful tournament on <a href="https://gatherling.com/">gatherling.com</a>'
+    sql = "COUNT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
 
 class TournamentWinner(CountedAchievement):
     key = 'tournament_wins'
@@ -38,6 +129,7 @@ class TournamentWinner(CountedAchievement):
     singular = 'Win'
     plural = 'Wins'
     description_safe = 'Win a tournament.'
+    sql = "COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
 
 class LeaguePlayer(CountedAchievement):
     key = 'league_entries'
@@ -47,6 +139,7 @@ class LeaguePlayer(CountedAchievement):
     @property
     def description_safe(self):
         return f'Play in the <a href="{url_for("signup")}">league</a>.'
+    sql = "COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END)"
 
 class PerfectRun(CountedAchievement):
     key = 'perfect_runs'
@@ -54,66 +147,17 @@ class PerfectRun(CountedAchievement):
     singular = 'Perfect Run'
     plural = 'Perfect Runs'
     description_safe = 'Complete a 5–0 run in the league.'
+    sql = "SUM(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses = 0 THEN 1 ELSE 0 END)"
 
 class FlawlessRun(CountedAchievement):
-    key = 'flawless_run'
+    key = 'flawless_runs'
     title = 'Flawless League Run'
     singular = 'Flawless Run'
     plural = 'Flawless Runs'
     description_safe = 'Complete a 5–0 run in the league without losing a game.'
-
-class PerfectRunCrusher(CountedAchievement):
-    key = 'perfect_run_crushes'
-    title = 'Perfect Run Crusher'
-    singular = 'Crush'
-    plural = 'Crushes'
-    description_safe = "Beat a player that's 4–0 in the league."
-
-def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int]) -> str:
-    return """
-        SELECT
-            person_id AS id,
-            SUM(tournament_entries) AS tournament_entries,
-            SUM(tournament_wins) AS tournament_wins,
-            SUM(league_entries) AS league_entries,
-            SUM(completionist) AS completionist,
-            SUM(perfect_runs) AS perfect_runs,
-            SUM(flawless_runs) AS flawless_runs,
-            SUM(perfect_run_crushes) AS perfect_run_crushes
-        FROM
-            _achievements AS a
-        WHERE
-            person_id IN ({ids}) AND ({season_query})
-        GROUP BY
-            person_id
-    """.format(ids=', '.join(str(k) for k in people_by_id.keys()), season_query=query.season_query(season_id))
-
-def preaggregate_query() -> str:
-    return """
-        CREATE TABLE IF NOT EXISTS _new_achievements (
-            person_id INT NOT NULL,
-            season_id INT NOT NULL,
-            tournament_entries INT NOT NULL,
-            tournament_wins INT NOT NULL,
-            league_entries INT NOT NULL,
-            completionist BOOLEAN NOT NULL,
-            perfect_runs INT NOT NULL,
-            flawless_runs INT NOT NULL,
-            perfect_run_crushes INT NOT NULL,
-            PRIMARY KEY (season_id, person_id),
-            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
-            FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE
-        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
-        SELECT
-            p.id AS person_id,
-            season.id AS season_id,
-            COUNT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END) AS tournament_entries,
-            COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END) AS tournament_wins,
-            COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END) AS league_entries,
-            CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END AS completionist,
-            SUM(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses = 0 THEN 1 ELSE 0 END) AS perfect_runs,
-            SUM(
-                CASE WHEN ct.name = 'League' AND d.id IN
+    @property
+    def sql(self):
+        return """SUM(CASE WHEN ct.name = 'League' AND d.id IN
                     (
                         SELECT
                             d.id
@@ -134,10 +178,17 @@ def preaggregate_query() -> str:
                         HAVING
                             SUM(dm.games) = 10 and sum(odm.games) = 0
                     )
-                THEN 1 ELSE 0 END
-            ) AS flawless_runs,
-            SUM(
-                CASE WHEN d.id IN
+                THEN 1 ELSE 0 END)""".format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
+
+class PerfectRunCrusher(CountedAchievement):
+    key = 'perfect_run_crushes'
+    title = 'Perfect Run Crusher'
+    singular = 'Crush'
+    plural = 'Crushes'
+    description_safe = "Beat a player that's 4–0 in the league."
+    @property
+    def sql(self):
+        return """SUM(CASE WHEN d.id IN
                     (
                         SELECT
                             -- MAX here is just to fool MySQL to give us the id of the deck that crushed the perfect run from an aggregate function. There is only one value to MAX.
@@ -163,38 +214,11 @@ def preaggregate_query() -> str:
                         AND
                             SUM(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN 1 ELSE 0 END) = 1
                     )
-                THEN 1 ELSE 0 END
-            ) AS perfect_run_crushes
-        FROM
-            person AS p
-        LEFT JOIN
-            deck AS d ON d.person_id = p.id
-        LEFT JOIN
-            deck_cache AS dc ON dc.deck_id = d.id
-        {season_join}
-        {competition_join}
-        GROUP BY
-            p.id,
-            season.id
-        HAVING
-            season.id IS NOT NULL
-    """.format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'), season_join=query.season_join(), competition_join=query.competition_join())
+                THEN 1 ELSE 0 END)""".format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
-def descriptions() -> List[Dict[str, str]]:
-    result = [{'title': 'Tournament Organizer', 'description_safe': 'Run a tournament for the Penny Dreadful community.'}]
-    for a in Achievement.achs:
-        result.append({'title': a.title, 'description_safe': a.description_safe})
-    result.append({'title': 'Completionist', 'description_safe': 'Go the whole season without retiring an unfinished league run.'})
-    return result
-
-def displayed_achievements(p: 'person.Person') -> List[Dict[str, str]]:
-    result = []
-    if p.name in [host for series in tournaments.all_series_info() for host in series['hosts']]:
-        result.append({'name': 'Tournament Organizer', 'detail': 'Run a tournament for the Penny Dreadful community'})
-    achievements = p.get('achievements', {})
-    for a in Achievement.achs:
-        if a.key in achievements and achievements[a.key] > 0:
-            result.append({'name':a.title, 'detail':ngettext(f'1 {a.singular}', f'%(num)d {a.plural}', p.achievements[a.key])})
-    if achievements.get('completionist', 0) > 0:
-        result.append({'name':'Completionist', 'detail':'Never retired a league run'})
-    return result
+class Completionist(BooleanAchievement):
+    key = 'completionist'
+    title = 'Completionist'
+    achieved_text = 'Never retired a league run this season'
+    description_safe = 'Play the whole season without retiring an unfinished league run.'
+    sql = "CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END"

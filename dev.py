@@ -35,6 +35,14 @@ def run() -> None:
     elif cmd == 'push':
         push()
 
+    elif cmd in ('pr', 'pull-request'):
+        pull_request(args)
+
+    elif cmd == 'release':
+        push()
+        pull_request(args)
+
+
     else:
         print('Unrecognised command {cmd}.'.format(cmd=cmd))
         exit(1)
@@ -99,6 +107,9 @@ def push() -> None:
     tests([])
     branch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
     subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch])
+
+def pull_request(argv: List[str]) -> None:
+    subprocess.check_call(['hub', 'pull-request', *argv])
 
 if __name__ == '__main__':
     run()

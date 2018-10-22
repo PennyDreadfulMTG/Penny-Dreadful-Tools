@@ -213,6 +213,16 @@ class PerfectRunCrusher(CountedAchievement):
                     )
                 THEN 1 ELSE 0 END)""".format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
+class Generalist(BooleanAchievement):
+    key = 'generalist'
+    title = 'Generalist'
+    season_text = 'Reached the elimination rounds of a tournament playing three different archetypes this season'
+    def alltime_text(self, n):
+        what = ngettext('1 season', f'{n} different seasons', n)
+        return f'Reached the elimination rounds of a tournament playing three different archetypes in {what}'
+    description_safe = 'Play the whole season without retiring an unfinished league run.'
+    sql = "CASE WHEN COUNT(DISTINCT CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END"
+    
 class Completionist(BooleanAchievement):
     key = 'completionist'
     title = 'Completionist'

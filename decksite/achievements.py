@@ -3,6 +3,7 @@ from typing import Dict, List, Optional, TYPE_CHECKING
 from flask import url_for
 from flask_babel import ngettext
 
+import decksite
 from decksite.data import query
 from magic import tournaments
 
@@ -56,18 +57,10 @@ def preaggregate_query() -> str:
     """.format(cc=create_columns, sc=select_columns, season_join=query.season_join(), competition_join=query.competition_join())
 
 def descriptions() -> List[Dict[str, str]]:
-    result = []
-    for a in Achievement.all_achs:
-        result.append({'title': a.title, 'description_safe': a.description_safe})
-    return result
+    return [{'title': a.title, 'description_safe': a.description_safe} for a in Achievement.all_achs]
 
 def displayed_achievements(p: 'person.Person') -> List[Dict[str, str]]:
-    result = []
-    for a in Achievement.all_achs:
-        d = a.display(p)
-        if d is not None:
-            result.append(d)
-    return result
+    return [d for d in (a.display(p) for a in Achievement.all_achs) if d is not None]
 
 # Abstract achievement classes
 
@@ -92,11 +85,15 @@ class CountedAchievement(Achievement):
             return None
 
 class BooleanAchievement(Achievement):
-    achieved_text = None
+    season_text = None
+    alltime_text = None
     def display(self, p):
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
-            return {'name': self.title, 'detail': self.achieved_text}
+            if decksite.get_season_id() == 'all':
+                return {'name': self.title, 'detail': self.alltime_text(n)}
+            else:
+                return {'name': self.title, 'detail': self.season_text}
         else:
             return None
 
@@ -219,6 +216,11 @@ class PerfectRunCrusher(CountedAchievement):
 class Completionist(BooleanAchievement):
     key = 'completionist'
     title = 'Completionist'
-    achieved_text = 'Never retired a league run this season'
+    season_text = 'Never retired a league run this season'
+    def alltime_text(self, n):
+        if n>1:
+            return f'Played {n} different seasons without retiring a league run'
+        else:
+            return 'Played in 1 season without retiring a league run'
     description_safe = 'Play the whole season without retiring an unfinished league run.'
     sql = "CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END"

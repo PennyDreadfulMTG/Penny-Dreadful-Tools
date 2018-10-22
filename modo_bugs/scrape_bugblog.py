@@ -49,7 +49,7 @@ def parse_changelog(collapsible_block: Tag) -> None:
                 print('Already exists.')
             else:
                 print('Creating new issue')
-                text = 'From Bug Blog.\nAffects: \n<!-- Images -->\nBug Blog Text: {0}'.format(bbt)
+                text = 'From Bug Blog.\nBug Blog Text: {0}'.format(bbt)
                 repo.get_repo().create_issue(bbt, body=strings.remove_smartquotes(text), labels=['From Bug Blog'])
 
 def parse_knownbugs(b: Tag) -> None:
@@ -108,9 +108,12 @@ def check_if_removed_from_bugblog(bbt: Match, b: Tag, issue: Issue) -> None:
             elif strip_squarebrackets(rowtext) == strip_squarebrackets(text):
                 # Fix this
                 print("Issue #{id}'s bug blog text has differing autocard notation.".format(id=issue.number))
+                old_bbt = strings.get_body_field(issue.body, 'Bug Blog Text')
                 body = re.sub(BBT_REGEX, 'Bug Blog Text: {0}'.format(rowtext), issue.body, flags=re.MULTILINE)
+                new_bbt = strings.get_body_field(body, 'Bug Blog Text')
                 issue.edit(body=body)
                 print('Updated to `{0}`'.format(rowtext))
+                issue.create_comment(f'Changed bug blog text from `{old_bbt}` to `{new_bbt}`')
                 break
         else:
             print('{id} is fixed!'.format(id=issue.number))

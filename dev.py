@@ -1,6 +1,6 @@
 import os
-import sys
 import subprocess
+import sys
 from typing import List
 
 from shared import configuration

@@ -65,37 +65,38 @@ def displayed_achievements(p: 'person.Person') -> List[Dict[str, str]]:
 # Abstract achievement classes
 
 class Achievement:
-    all_achs = []
-    key = None
+    all_achs: List['Achievement'] = []
+    key: Optional[str] = None
+    sql: Optional[str] = None
     in_db = True
-    title = None
-    description_safe = None
+    title = ''
+    description_safe = ''
     def __init_subclass__(cls):
-        if cls.key != None:
+        if cls.key is not None:
             cls.all_achs.append(cls())
+    @staticmethod
+    def display(_: 'person.Person') -> Optional[Dict[str, str]]:
+        return None
 
 class CountedAchievement(Achievement):
-    singular = None
-    plural = None
+    singular = ''
+    plural = ''
     def display(self, p):
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
             return {'name': self.title, 'detail': ngettext(f'1 {self.singular}', f'%(num)d {self.plural}', n)}
-        else:
-            return None
+        return None
 
 class BooleanAchievement(Achievement):
-    season_text = None
-    alltime_text = None
+    season_text = ''
+    alltime_text = lambda n: '' # to keep lint and types happy
     def display(self, p):
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
             if decksite.get_season_id() == 'all':
                 return {'name': self.title, 'detail': self.alltime_text(n)}
-            else:
-                return {'name': self.title, 'detail': self.season_text}
-        else:
-            return None
+            return {'name': self.title, 'detail': self.season_text}
+        return None
 
 # Actual achievement definitions
 
@@ -104,11 +105,11 @@ class TournamentOrganizer(Achievement):
     in_db = False
     title = 'Tournament Organizer'
     description_safe = 'Run a tournament for the Penny Dreadful community.'
-    def display(self, p):
+    @staticmethod
+    def display(p):
         if p.name in [host for series in tournaments.all_series_info() for host in series['hosts']]:
             return {'name': 'Tournament Organizer', 'detail': 'Ran a tournament for the Penny Dreadful community'}
-        else:
-            return None
+        return None
 
 class TournamentPlayer(CountedAchievement):
     key = 'tournament_entries'
@@ -217,18 +218,20 @@ class Generalist(BooleanAchievement):
     key = 'generalist'
     title = 'Generalist'
     season_text = 'Reached the elimination rounds of a tournament playing three different archetypes this season'
-    def alltime_text(self, n):
+    @staticmethod
+    def alltime_text(n):
         what = ngettext('1 season', f'{n} different seasons', n)
         return f'Reached the elimination rounds of a tournament playing three different archetypes in {what}'
-    description_safe = 'Play the whole season without retiring an unfinished league run.'
+    description_safe = 'Reach the elimination rounds of a tournament playing three different archetypes in a single season.'
     sql = "CASE WHEN COUNT(DISTINCT CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END"
-    
+
 class Completionist(BooleanAchievement):
     key = 'completionist'
     title = 'Completionist'
     season_text = 'Never retired a league run this season'
-    def alltime_text(self, n):
+    @staticmethod
+    def alltime_text(n):
         what = ngettext('1 season', f'{n} different seasons', n)
         return f'Played in {what} without retiring a league run'
     description_safe = 'Play the whole season without retiring an unfinished league run.'
-    sql = "CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END"
+    sql = 'CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END'

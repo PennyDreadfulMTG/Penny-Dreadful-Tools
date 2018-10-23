@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int]) -> str:
     # keys have been normalised earlier but could still be reserved words
-    columns = ', '.join(f'SUM({a.key}) as `{a.key}`' for a in Achievement.all_achievements if a.in_db)
+    columns = ', '.join(f'SUM(`{a.key}`) as `{a.key}`' for a in Achievement.all_achievements if a.in_db)
     return """
         SELECT
             person_id AS id,

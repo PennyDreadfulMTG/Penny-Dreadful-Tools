@@ -34,6 +34,8 @@ The bot will search for any quoted cards, and respond with the card details.
 
 `!help` Provides information on how to operate the bot.
 
+`!history` Show the legality history of the specified card and a link to its all time page.
+
 `!invite` Invite me to your server.
 
 `!legal` Announce whether the specified card is legal or not.

@@ -1,11 +1,10 @@
 from typing import Dict, List
 
 from flask import url_for
-from flask_babel import ngettext
 
+from decksite import achievements as ach
 from decksite.data import person as ps
 from decksite.view import View
-from magic import tournaments
 from magic.models import Card
 
 
@@ -25,23 +24,7 @@ class Person(View):
             record.opp_url = url_for('person', person_id=record.opp_mtgo_username)
         self.show_head_to_head = len(person.head_to_head) > 0
         self.show_seasons = True
-        self.displayed_achievements: List[Dict[str, str]] = []
-        if self.person.name in [host for series in tournaments.all_series_info() for host in series['hosts']]:
-            self.displayed_achievements.append({'name': 'Tournament Organizer', 'detail': 'Run a tournament for the Penny Dreadful community'})
-        achievements_text = [
-            ('tournament_wins', 'Tournament Winner', 'Win', 'Wins'),
-            ('tournament_entries', 'Tournament Player', 'Entry', 'Entries'),
-            ('perfect_runs', 'Perfect League Run', 'Perfect Run', 'Perfect Runs'),
-            ('flawless_runs', 'Flawless League Run', 'Flawless Run', 'Flawless Runs'),
-            ('league_entries', 'League Player', 'Entry', 'Entries'),
-            ('perfect_run_crushes', 'Perfect Run Crusher', 'Crush', 'Crushes')
-        ]
-        achievements = person.get('achievements', {})
-        for k, t, v1, vp in achievements_text:
-            if k in achievements and achievements[k] > 0:
-                self.displayed_achievements.append({'name':t, 'detail':ngettext(f'1 {v1}', f'%(num)d {vp}', person.achievements[k])})
-        if achievements.get('completionist', 0) > 0:
-            self.displayed_achievements.append({'name':'Completionist', 'detail':'Never retired a league run'})
+        self.displayed_achievements: List[Dict[str, str]] = ach.displayed_achievements(self.person)
         self.achievements_url = url_for('achievements')
 
     def __getattr__(self, attr):

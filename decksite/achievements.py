@@ -219,6 +219,27 @@ class PerfectRunCrusher(CountedAchievement):
                     )
                 THEN 1 ELSE 0 END)""".format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
+class Pioneer(CountedAchievement):
+    key = 'pioneer'
+    title = 'Pioneer'
+    singular = 'archetype pioneered'
+    plural = 'archetypes pioneered'
+    description_safe = 'Have one of your decks recognised as the first of a new archetype.'
+    sql = """SUM(CASE WHEN d.id in
+                (
+                    SELECT 
+                        d.id
+                    FROM 
+                        deck AS d
+                    LEFT JOIN 
+                        deck AS d2 ON d.archetype_id = d2.archetype_id AND d.created_date > d2.created_date
+                    LEFT JOIN
+                        archetype as a ON d.archetype_id = a.id
+                    WHERE 
+                        d2.created_date IS NULL and d.archetype_id IS NOT NULL
+                )
+            THEN 1 ELSE 0 END)"""
+
 class Generalist(BooleanAchievement):
     key = 'generalist'
     title = 'Generalist'

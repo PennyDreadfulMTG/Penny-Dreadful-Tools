@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING, Dict, List, Optional
 
+import re
+
 from flask import url_for
 from flask_babel import ngettext
 
@@ -12,7 +14,8 @@ if TYPE_CHECKING:
 # Disabling unused-import supposedly not needed here but actually seems to be?
 
 def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int]) -> str:
-    columns = ', '.join(f'SUM({a.key}) as {a.key}' for a in Achievement.all_achs if a.in_db)
+    # keys have been normalised earlier but could still be reserved words
+    columns = ', '.join(f'SUM({a.key}) as `{a.key}`' for a in Achievement.all_achs if a.in_db)
     return """
         SELECT
             person_id AS id,
@@ -26,8 +29,8 @@ def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int
     """.format(columns=columns, ids=', '.join(str(k) for k in people_by_id.keys()), season_query=query.season_query(season_id))
 
 def preaggregate_query() -> str:
-    create_columns = ', '.join(f'{a.key} INT NOT NULL' for a in Achievement.all_achs if a.in_db)
-    select_columns = ', '.join(f'{a.sql} as {a.key}' for a in Achievement.all_achs if a.in_db)
+    create_columns = ', '.join(f'`{a.key}` INT NOT NULL' for a in Achievement.all_achs if a.in_db)
+    select_columns = ', '.join(f'{a.sql} as `{a.key}`' for a in Achievement.all_achs if a.in_db)
     return """
         CREATE TABLE IF NOT EXISTS _new_achievements (
             person_id INT NOT NULL,
@@ -73,6 +76,10 @@ class Achievement:
     description_safe = ''
     def __init_subclass__(cls):
         if cls.key is not None:
+            # in case anyone ever makes a poor sportsmanship achievement called DROP TABLE
+            cls.key = re.sub('[^A-Za-z0-9_]+', '', cls.key)
+            if cls.key in [c.key for c in cls.all_achs]:
+                print(f"Warning: Two achievements have the same normalised key {cls.key}. This won't do any permanent damage to the database but the results are almost certainly not as intended.")
             cls.all_achs.append(cls())
     @staticmethod
     def display(_: 'person.Person') -> Optional[Dict[str, str]]:

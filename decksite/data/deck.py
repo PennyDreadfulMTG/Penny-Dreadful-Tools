@@ -47,6 +47,7 @@ def load_decks(where: str = '1 = 1',
         SELECT
             d.id,
             d.finish,
+            d.decklist_hash,
             cache.active_date,
             cache.wins,
             cache.losses,
@@ -483,6 +484,22 @@ def load_cards(decks: List[Deck]) -> None:
         d = decks_by_id[row['deck_id']]
         d[location] = d.get(location, [])
         d[location].append(CardRef(name, row['n']))
+
+def load_conflicted_decks() -> List[Deck]:
+    where = """d.decklist_hash in
+        (
+            SELECT
+                d1.decklist_hash as hash
+            FROM
+                deck as d1
+            INNER JOIN
+                deck as d2
+            ON
+                d1.decklist_hash = d2.decklist_hash AND d1.id <> d2.id AND d1.archetype_id <> d2.archetype_id
+            GROUP BY
+                d1.decklist_hash
+        )"""
+    return load_decks(where, order_by='d.decklist_hash')
 
 # It makes the main query about 5x faster to do this as a separate query (which is trivial and done only once for all decks).
 def load_competitive_stats(decks: List[Deck]) -> None:

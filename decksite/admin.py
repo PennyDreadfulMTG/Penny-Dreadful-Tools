@@ -56,6 +56,8 @@ def post_archetypes():
                 redis.clear(f'decksite:deck:{deck_id}')
     elif request.form.get('q') is not None and request.form.get('notq') is not None:
         search_results = ds.load_decks_by_cards(request.form.get('q').splitlines(), request.form.get('notq').splitlines())
+    elif request.form.get('find_conflicts') is not None:
+        search_results = ds.load_conflicted_decks()
     elif request.form.get('rename_to') is not None:
         archs.rename(request.form.get('archetype_id'), request.form.get('rename_to'))
     elif request.form.get('new_description') is not None:

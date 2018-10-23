@@ -73,7 +73,7 @@
     </form>
 </section>
 <section>
-    <h2>Search By Card</h2>
+    <h2>Search for Decks</h2>
 
     <form method="post">
         <div>
@@ -84,7 +84,13 @@
             <label for="notq">Without these cards</label>
             <textarea name="notq">{{notquery}}</textarea>
         </div>
-        <button type="submit">Search</button>
+        <button type="submit">Search by Card</button>
+    </form>
+
+    <form method="post">
+        <p>Use this tool to automatically find cases where identical decks have been assigned different archetypes.</p>
+        <input type="hidden" name="find_conflicts" value="true"></input>
+        <button type="submit" name="conflicts">Search for Conflicts</button>
     </form>
 
     {{#has_search_results}}

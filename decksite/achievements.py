@@ -10,7 +10,6 @@ from magic import tournaments
 
 if TYPE_CHECKING:
     from decksite.data import person # pylint:disable=unused-import
-# Disabling unused-import supposedly not needed here but actually seems to be?
 
 def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int]) -> str:
     # keys have been normalised earlier but could still be reserved words

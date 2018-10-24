@@ -5,10 +5,10 @@ from flask import url_for
 from flask_babel import ngettext
 
 import decksite
-from shared.container import Container
-from decksite.database import db
 from decksite.data import query
+from decksite.database import db
 from magic import tournaments
+from shared.container import Container
 
 if TYPE_CHECKING:
     from decksite.data import person # pylint:disable=unused-import
@@ -78,17 +78,15 @@ class Achievement:
             if cls.key in [c.key for c in cls.all_achievements]:
                 print(f"Warning: Two achievements have the same normalised key {cls.key}. This won't do any permanent damage to the database but the results are almost certainly not as intended.")
             cls.all_achievements.append(cls())
-    @staticmethod
-    def display(_: 'person.Person') -> Optional[Dict[str, str]]:
+    def display(self, _: 'person.Person') -> Optional[Dict[str, str]]: # pylint: disable=no-self-use
         return None
-    @staticmethod
-    def load_summary() -> Optional[str]: # pylint: enable=no-self-use
+    def load_summary(self) -> Optional[str]: # pylint: disable=no-self-use
         return None
 
 class CountedAchievement(Achievement):
     singular = ''
     plural = ''
-    def display(self, p):
+    def display(self, p) -> Optional[Dict[str, str]]:
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
             return {'name': self.title, 'detail': ngettext(f'1 {self.singular}', f'%(num)d {self.plural}', n)}
@@ -102,8 +100,10 @@ class CountedAchievement(Achievement):
 
 class BooleanAchievement(Achievement):
     season_text = ''
-    alltime_text = lambda n: '' # to keep lint and types happy
-    def display(self, p):
+    @staticmethod
+    def alltime_text(n: int) -> str:
+        return f'{n}' # Have to provide a default implementation that uses n to keep lint happy
+    def display(self, p: 'person.Person') -> Optional[Dict[str, str]]:
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
             if decksite.get_season_id() == 'all':
@@ -128,11 +128,11 @@ class TournamentOrganizer(Achievement):
     description_safe = 'Run a tournament for the Penny Dreadful community.'
     def __init__(self):
         self.hosts = [host for series in tournaments.all_series_info() for host in series['hosts']]
-    def display(self, p):
+    def display(self, p: 'person.Person') -> Optional[Dict[str, str]]:
         if p.name in self.hosts:
             return {'name': 'Tournament Organizer', 'detail': 'Ran a tournament for the Penny Dreadful community'}
         return None
-    def load_summary(self):
+    def load_summary(self) -> Optional[str]:
         return f'Earned by {len(self.hosts)} players.'
 
 class TournamentPlayer(CountedAchievement):

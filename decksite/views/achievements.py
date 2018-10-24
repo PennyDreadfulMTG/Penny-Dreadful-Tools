@@ -1,6 +1,8 @@
 from flask import url_for
+
 import decksite.achievements as ach
 from decksite.view import View
+
 
 class Achievements(View):
     def __init__(self, mtgo_username):

@@ -5,6 +5,8 @@ from flask import url_for
 from flask_babel import ngettext
 
 import decksite
+from shared.container import Container
+from decksite.database import db
 from decksite.data import query
 from magic import tournaments
 
@@ -57,9 +59,6 @@ def preaggregate_query() -> str:
             season.id IS NOT NULL
     """.format(cc=create_columns, sc=select_columns, season_join=query.season_join(), competition_join=query.competition_join())
 
-def descriptions() -> List[Dict[str, str]]:
-    return [{'title': a.title, 'description_safe': a.description_safe} for a in Achievement.all_achievements]
-
 def displayed_achievements(p: 'person.Person') -> List[Dict[str, str]]:
     return [d for d in (a.display(p) for a in Achievement.all_achievements) if d is not None]
 
@@ -82,6 +81,9 @@ class Achievement:
     @staticmethod
     def display(_: 'person.Person') -> Optional[Dict[str, str]]:
         return None
+    @staticmethod
+    def load_summary() -> Optional[str]: # pylint: enable=no-self-use
+        return None
 
 class CountedAchievement(Achievement):
     singular = ''
@@ -90,6 +92,12 @@ class CountedAchievement(Achievement):
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
             return {'name': self.title, 'detail': ngettext(f'1 {self.singular}', f'%(num)d {self.plural}', n)}
+        return None
+    def load_summary(self) -> Optional[str]:
+        sql = f"""select sum(`{self.key}`) as count, sum(case when `{self.key}` > 0 then 1 else 0 end) as pcount from _achievements"""
+        for r in db().select(sql):
+            res = Container(r)
+            return f'Earned {res.count} times by {res.pcount} players.'
         return None
 
 class BooleanAchievement(Achievement):
@@ -102,6 +110,14 @@ class BooleanAchievement(Achievement):
                 return {'name': self.title, 'detail': self.alltime_text(n)}
             return {'name': self.title, 'detail': self.season_text}
         return None
+    def load_summary(self) -> Optional[str]:
+        sql = f"""SELECT SUM(s) AS count, COUNT(s) AS pcount FROM
+                    (SELECT SUM(`{self.key}`) AS s FROM _achievements WHERE `{self.key}` > 0 GROUP BY person_id)
+                    AS _"""
+        for r in db().select(sql):
+            res = Container(r)
+            return f'Earned {res.count} times by {res.pcount} players.'
+        return None
 
 # Actual achievement definitions
 
@@ -110,11 +126,14 @@ class TournamentOrganizer(Achievement):
     in_db = False
     title = 'Tournament Organizer'
     description_safe = 'Run a tournament for the Penny Dreadful community.'
-    @staticmethod
-    def display(p):
-        if p.name in [host for series in tournaments.all_series_info() for host in series['hosts']]:
+    def __init__(self):
+        self.hosts = [host for series in tournaments.all_series_info() for host in series['hosts']]
+    def display(self, p):
+        if p.name in self.hosts:
             return {'name': 'Tournament Organizer', 'detail': 'Ran a tournament for the Penny Dreadful community'}
         return None
+    def load_summary(self):
+        return f'Earned by {len(self.hosts)} players.'
 
 class TournamentPlayer(CountedAchievement):
     key = 'tournament_entries'

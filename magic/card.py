@@ -78,9 +78,9 @@ def face_properties() -> TableDescription:
     props = {}
     base = copy.deepcopy(BASE)
     base['query'] = "GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN `{table}`.`{column}` ELSE '' END SEPARATOR '') AS `{column}`"
-    for k in ['id', 'name', 'mana_cost', 'cmc', 'power', 'toughness', 'power', 'toughness', 'loyalty', 'type', 'text', 'search_text', 'image_name', 'hand', 'life', 'starter', 'position', 'name_ascii', 'card_id']:
+    for k in ['id', 'name', 'mana_cost', 'cmc', 'power', 'toughness', 'power', 'toughness', 'loyalty', 'type', 'text', 'search_text', 'image_name', 'hand', 'life', 'starter', 'position', 'card_id']:
         props[k] = copy.deepcopy(base)
-    for k in ['id', 'position', 'name_ascii', 'card_id', 'search_text']:
+    for k in ['id', 'position', 'card_id', 'search_text']:
         props[k]['mtgjson'] = False
     for k in ['id', 'name', 'position', 'type', 'text', 'search_text']:
         props[k]['nullable'] = False

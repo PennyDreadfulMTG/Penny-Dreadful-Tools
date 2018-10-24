@@ -273,7 +273,6 @@ def update_cache() -> None:
     db().execute(create_table_def('_new_cache_card', card.base_query_properties(), base_query()))
     db().execute('CREATE UNIQUE INDEX idx_u_card_id ON _new_cache_card (card_id)')
     db().execute('CREATE UNIQUE INDEX idx_u_name ON _new_cache_card (name(142))')
-    db().execute('CREATE UNIQUE INDEX idx_u_name_ascii ON _new_cache_card (name_ascii(142))')
     db().execute('CREATE UNIQUE INDEX idx_u_names ON _new_cache_card (names(142))')
     db().execute('DROP TABLE IF EXISTS _old_cache_card')
     db().execute('CREATE TABLE IF NOT EXISTS _cache_card (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.

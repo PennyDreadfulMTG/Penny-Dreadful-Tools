@@ -36,7 +36,7 @@ def load_cards(names: Iterable[str] = None, where: Optional[str] = None) -> List
     else:
         setnames = set()
     if setnames:
-        names_clause = 'LOWER(c.name) IN ({names})'.format(names=', '.join(sqlescape(name).lower() for name in setnames))
+        names_clause = 'c.name IN ({names})'.format(names=', '.join(sqlescape(name) for name in setnames))
     else:
         names_clause = '(1 = 1)'
     if where is None:

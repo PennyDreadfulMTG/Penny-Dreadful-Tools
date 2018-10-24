@@ -92,17 +92,17 @@ class CountedAchievement(Achievement):
             return {'name': self.title, 'detail': ngettext(f'1 {self.singular}', f'%(num)d {self.plural}', n)}
         return None
     def load_summary(self) -> Optional[str]:
-        sql = f"""select sum(`{self.key}`) as count, sum(case when `{self.key}` > 0 then 1 else 0 end) as pcount from _achievements"""
+        sql = f"""SELECT SUM(`{self.key}`) AS num, SUM(CASE WHEN `{self.key}` > 0 THEN 1 ELSE 0 END) AS pnum FROM _achievements"""
         for r in db().select(sql):
             res = Container(r)
-            return f'Earned {res.count} times by {res.pcount} players.'
+            return f'Earned {res.num} times by {res.pnum} players.'
         return None
 
 class BooleanAchievement(Achievement):
     season_text = ''
     @staticmethod
-    def alltime_text(n: int) -> str:
-        return f'{n}' # Have to provide a default implementation that uses n to keep lint happy
+    def alltime_text(_: int) -> str:
+        return ''
     def display(self, p: 'person.Person') -> Optional[Dict[str, str]]:
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
@@ -111,12 +111,12 @@ class BooleanAchievement(Achievement):
             return {'name': self.title, 'detail': self.season_text}
         return None
     def load_summary(self) -> Optional[str]:
-        sql = f"""SELECT SUM(s) AS count, COUNT(s) AS pcount FROM
+        sql = f"""SELECT SUM(s) AS num, COUNT(s) AS pnum FROM
                     (SELECT SUM(`{self.key}`) AS s FROM _achievements WHERE `{self.key}` > 0 GROUP BY person_id)
                     AS _"""
         for r in db().select(sql):
             res = Container(r)
-            return f'Earned {res.count} times by {res.pcount} players.'
+            return f'Earned {res.num} times by {res.pnum} players.'
         return None
 
 # Actual achievement definitions
@@ -258,6 +258,43 @@ class Pioneer(CountedAchievement):
                         d2.created_date IS NULL and d.archetype_id IS NOT NULL
                 )
             THEN 1 ELSE 0 END)"""
+
+class Specialist(BooleanAchievement):
+    key = 'specialist'
+    title = 'Specialist'
+    season_text = 'Reached the elimination rounds of a tournament playing the same archetypes three times this season'
+    @staticmethod
+    def alltime_text(n):
+        what = ngettext('1 season', f'{n} different seasons', n)
+        return f'Reached the elimination rounds of a tournament playing the same archetype three times in {what}'
+    description_safe = 'Reach the elimination rounds of a tournament playing the same archetype three times in a single season.'
+    sql = """CASE WHEN EXISTS
+                (
+                    SELECT
+                        p.id
+                    FROM
+                        (
+                            SELECT p.id AS inner_pid, season.id AS inner_seasonid, COUNT(d.id) AS archcount
+                            FROM
+                                person AS p
+                            LEFT JOIN
+                                deck AS d
+                            ON
+                                d.person_id = p.id
+                            {season_join}
+                            {competition_join}
+                            WHERE
+                                d.finish <= c.top_n AND ct.name = 'Gatherling'
+                            GROUP BY
+                                p.id,
+                                season.id,
+                                d.archetype_id
+                            HAVING archcount >= 3
+                        ) AS spec_archs
+                    WHERE
+                        p.id = inner_pid AND season.id = inner_seasonid
+                )
+            THEN True ELSE False END""".format(season_join=query.season_join(), competition_join=query.competition_join())
 
 class Generalist(BooleanAchievement):
     key = 'generalist'

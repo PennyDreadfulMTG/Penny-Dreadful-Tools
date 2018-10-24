@@ -91,7 +91,6 @@ def face_properties() -> TableDescription:
     props['id']['query'] = '`{table}`.`{column}` AS face_id'
     props['cmc']['type'] = REAL
     props['name']['query'] = """{name_query} AS name""".format(name_query=name_query())
-    props['name_ascii']['query'] = """{name_query} AS name_ascii""".format(name_query=name_query('name_ascii'))
     props['cmc']['query'] = """{cmc_query} AS cmc""".format(cmc_query=cmc_query())
     props['mana_cost']['query'] = """{mana_cost_query} AS mana_cost""".format(mana_cost_query=mana_cost_query())
     props['type']['query'] = """{type_query} AS type""".format(type_query=type_query())

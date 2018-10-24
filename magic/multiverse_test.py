@@ -4,6 +4,7 @@ from magic.database import db
 
 def test_base_query_legalities() -> None:
     sql = multiverse.base_query("f.name = 'Mother of Runes'")
+    db().execute('SET group_concat_max_len=100000')
     rs = db().select(sql)
     assert len(rs) == 1
     legalities = rs[0]['legalities']

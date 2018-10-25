@@ -1,7 +1,8 @@
 import importlib
 import pkgutil
 import sys
-from typing import Any, List
+import time
+from typing import Any, List, Optional
 
 from shared import configuration
 
@@ -65,6 +66,8 @@ def task(args: List[str]) -> None:
         oracle.init()
     if name == 'all':
         run_all_tasks(module)
+    elif name == 'hourly':
+        run_all_tasks(module, 'HOURLY')
     else:
         s = importlib.import_module('{module}.{name}'.format(name=name, module=module))
         use_app_conext = getattr(s, 'REQUIRES_APP_CONTEXT', True)
@@ -83,17 +86,35 @@ def task(args: List[str]) -> None:
         if use_app_conext:
             app_context.__exit__(None, None, None)
 
-def run_all_tasks(module: Any) -> None:
-    from decksite.main import APP
-    APP.config['SERVER_NAME'] = configuration.server_name()
-    with APP.app_context():
-        m = importlib.import_module('{module}'.format(module=module))
-        # pylint: disable=unused-variable
-        for importer, modname, ispkg in pkgutil.iter_modules(m.__path__): # type: ignore
-            s = importlib.import_module('{module}.{name}'.format(name=modname, module=module))
-            if getattr(s, 'scrape', None) is not None:
-                s.scrape() # type: ignore
-            elif getattr(s, 'run', None) is not None:
-                s.run() # type: ignore
+def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
+
+    setup_app_context = False
+    m = importlib.import_module('{module}'.format(module=module))
+    # pylint: disable=unused-variable
+    for importer, modname, ispkg in pkgutil.iter_modules(m.__path__): # type: ignore
+        s = importlib.import_module('{module}.{name}'.format(name=modname, module=module))
+        use_app_conext = getattr(s, 'REQUIRES_APP_CONTEXT', True)
+        if use_app_conext and not setup_app_context:
+            from decksite.main import APP
+            APP.config['SERVER_NAME'] = configuration.server_name()
+            app_context = APP.app_context()
+            app_context.__enter__()
+
+        if with_flag and not getattr(s, with_flag, False):
+            continue
+        if getattr(s, 'scrape', None) is not None:
+            timer = time.perf_counter()
+            s.scrape() # type: ignore
+            t = time.perf_counter() - timer
+            print(f'{s.__name__} completed in {t}')
+
+        elif getattr(s, 'run', None) is not None:
+            timer = time.perf_counter()
+            s.run() # type: ignore
+            t = time.perf_counter() - timer
+            print(f'{s.__name__} completed in {t}')
+
+    if setup_app_context:
+        app_context.__exit__(None, None, None)
 
 run()

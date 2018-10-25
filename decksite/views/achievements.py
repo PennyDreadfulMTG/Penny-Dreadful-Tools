@@ -14,7 +14,7 @@ class Achievements(View):
             desc = {'title': a.title, 'description_safe': a.description_safe}
             desc['summary'] = a.load_summary()
             if mtgo_username:
-                p = person.load_person(mtgo_username)
+                p = person.load_person_by_mtgo_username(mtgo_username)
                 desc['detail'] = a.display(p)
             else:
                 desc['detail'] = ''

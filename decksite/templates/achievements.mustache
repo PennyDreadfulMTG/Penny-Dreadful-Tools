@@ -2,7 +2,7 @@
 <section>
     <dl>
         {{#achievement_descriptions}}
-        <dt>{{title}}</dt>
+        <dt class='{{class}}' title="{{detail}}">{{title}}</dt>
         <dd>{{{description_safe}}}</dd>
         {{/achievement_descriptions}}
     </dl>
@@ -10,6 +10,6 @@
 
 {{#person_url}}
     <section>
-        <p>See your achievements on your <a href="{{person_url}}">player page</a>.</p>
+        <p>🏆 = earned.</p>
     </section>
 {{/person_url}}

@@ -128,6 +128,10 @@ main li, main dt, main dd {
     margin: 0 0 0.422em;
 }
 
+dt.earned:before {
+    content: "🏆"
+}
+
 footer a {
     font-family: heading-caps;
     text-transform: lowercase;

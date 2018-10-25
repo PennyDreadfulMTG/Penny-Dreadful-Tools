@@ -57,11 +57,11 @@ def preaggregate_query() -> str:
             season.id IS NOT NULL
     """.format(cc=create_columns, sc=select_columns, season_join=query.season_join(), competition_join=query.competition_join())
 
-def descriptions() -> List[Dict[str, str]]:
-    return [{'title': a.title, 'description_safe': a.description_safe} for a in Achievement.all_achievements]
+def descriptions(p: 'Optional[person.Person]' = None) -> List[Dict[str, str]]:
+    return [{'title': a.title, 'description_safe': a.description_safe, 'detail': a.display(p) if p else ''} for a in Achievement.all_achievements]
 
 def displayed_achievements(p: 'person.Person') -> List[Dict[str, str]]:
-    return [d for d in (a.display(p) for a in Achievement.all_achievements) if d is not None]
+    return [d for d in ({'title': a.title, 'detail': a.display(p)} for a in Achievement.all_achievements) if d['detail']]
 
 # Abstract achievement classes
 
@@ -80,8 +80,8 @@ class Achievement:
                 print(f"Warning: Two achievements have the same normalised key {cls.key}. This won't do any permanent damage to the database but the results are almost certainly not as intended.")
             cls.all_achievements.append(cls())
     @staticmethod
-    def display(_: 'person.Person') -> Optional[Dict[str, str]]:
-        return None
+    def display(_: 'person.Person') -> str:
+        return ''
 
 class CountedAchievement(Achievement):
     singular = ''
@@ -89,8 +89,8 @@ class CountedAchievement(Achievement):
     def display(self, p):
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
-            return {'name': self.title, 'detail': ngettext(f'1 {self.singular}', f'%(num)d {self.plural}', n)}
-        return None
+            return ngettext(f'1 {self.singular}', f'%(num)d {self.plural}', n)
+        return ''
 
 class BooleanAchievement(Achievement):
     season_text = ''
@@ -99,9 +99,9 @@ class BooleanAchievement(Achievement):
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
             if decksite.get_season_id() == 'all':
-                return {'name': self.title, 'detail': self.alltime_text(n)}
-            return {'name': self.title, 'detail': self.season_text}
-        return None
+                return self.alltime_text(n)
+            return self.season_text
+        return ''
 
 # Actual achievement definitions
 
@@ -113,8 +113,8 @@ class TournamentOrganizer(Achievement):
     @staticmethod
     def display(p):
         if p.name in [host for series in tournaments.all_series_info() for host in series['hosts']]:
-            return {'name': 'Tournament Organizer', 'detail': 'Ran a tournament for the Penny Dreadful community'}
-        return None
+            return 'Ran a tournament for the Penny Dreadful community'
+        return ''
 
 class TournamentPlayer(CountedAchievement):
     key = 'tournament_entries'
@@ -227,15 +227,15 @@ class Pioneer(CountedAchievement):
     description_safe = 'Have one of your decks recognised as the first of a new archetype.'
     sql = """SUM(CASE WHEN d.id in
                 (
-                    SELECT 
+                    SELECT
                         d.id
-                    FROM 
+                    FROM
                         deck AS d
-                    LEFT JOIN 
+                    LEFT JOIN
                         deck AS d2 ON d.archetype_id = d2.archetype_id AND d.created_date > d2.created_date
                     LEFT JOIN
                         archetype as a ON d.archetype_id = a.id
-                    WHERE 
+                    WHERE
                         d2.created_date IS NULL and d.archetype_id IS NOT NULL
                 )
             THEN 1 ELSE 0 END)"""

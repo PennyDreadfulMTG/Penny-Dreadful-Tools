@@ -1,5 +1,6 @@
 from decksite.data import archetype, deck
 
+HOURLY = True
 
 def run() -> None:
     decks = deck.load_decks('archetype_id is null')

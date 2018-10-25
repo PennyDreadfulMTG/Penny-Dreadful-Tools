@@ -9,6 +9,7 @@ from decksite.data import query
 from decksite.database import db
 from magic import tournaments
 from shared.container import Container
+from shared.pd_exception import DatabaseException
 
 if TYPE_CHECKING:
     from decksite.data import person # pylint:disable=unused-import
@@ -27,6 +28,14 @@ def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int
         GROUP BY
             person_id
     """.format(columns=columns, ids=', '.join(str(k) for k in people_by_id.keys()), season_query=query.season_query(season_id))
+
+def preaggregate_achievements() -> None:
+    db().execute('DROP TABLE IF EXISTS _new_achievements')
+    db().execute(preaggregate_query())
+    db().execute('DROP TABLE IF EXISTS _old_achievements')
+    db().execute('CREATE TABLE IF NOT EXISTS _achievements (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
+    db().execute('RENAME TABLE _achievements TO _old_achievements, _new_achievements TO _achievements')
+    db().execute('DROP TABLE IF EXISTS _old_achievements')
 
 def preaggregate_query() -> str:
     create_columns = ', '.join(f'`{a.key}` INT NOT NULL' for a in Achievement.all_achievements if a.in_db)
@@ -91,12 +100,22 @@ class CountedAchievement(Achievement):
         if n > 0:
             return {'name': self.title, 'detail': ngettext(f'1 {self.singular}', f'%(num)d {self.plural}', n)}
         return None
-    def load_summary(self) -> Optional[str]:
+    def load_summary(self) -> Optional[str]: # pylint won't allow adding an argument even if optional
+        return self.load_summary_inner()
+    def load_summary_inner(self, retry: bool = False) -> Optional[str]:
         sql = f"""SELECT SUM(`{self.key}`) AS num, SUM(CASE WHEN `{self.key}` > 0 THEN 1 ELSE 0 END) AS pnum FROM _achievements"""
-        for r in db().select(sql):
-            res = Container(r)
-            return f'Earned {res.num} times by {res.pnum} players.'
-        return None
+        try:
+            for r in db().select(sql):
+                res = Container(r)
+                return f'Earned {res.num} times by {res.pnum} players.'
+            return None
+        except DatabaseException as e:
+            if not retry:
+                print(f"Got {e} trying to load_summary so trying to preaggregate. If this is happening on user time that's undesirable.")
+                preaggregate_achievements()
+                return self.load_summary_inner(retry=True)
+            print(f'Failed to preaggregate. Giving up.')
+            raise e
 
 class BooleanAchievement(Achievement):
     season_text = ''
@@ -110,14 +129,24 @@ class BooleanAchievement(Achievement):
                 return {'name': self.title, 'detail': self.alltime_text(n)}
             return {'name': self.title, 'detail': self.season_text}
         return None
-    def load_summary(self) -> Optional[str]:
+    def load_summary(self) -> Optional[str]: # pylint won't allow adding an argument even if optional
+        return self.load_summary_inner()
+    def load_summary_inner(self, retry: bool = False) -> Optional[str]:
         sql = f"""SELECT SUM(s) AS num, COUNT(s) AS pnum FROM
                     (SELECT SUM(`{self.key}`) AS s FROM _achievements WHERE `{self.key}` > 0 GROUP BY person_id)
                     AS _"""
-        for r in db().select(sql):
-            res = Container(r)
-            return f'Earned {res.num} times by {res.pnum} players.'
-        return None
+        try:
+            for r in db().select(sql):
+                res = Container(r)
+                return f'Earned {res.num} times by {res.pnum} players.'
+            return None
+        except DatabaseException as e:
+            if not retry:
+                print(f"Got {e} trying to load_summary so trying to preaggregate. If this is happening on user time that's undesirable.")
+                preaggregate_achievements()
+                return self.load_summary_inner(retry=True)
+            print(f'Failed to preaggregate. Giving up.')
+            raise e
 
 # Actual achievement definitions
 

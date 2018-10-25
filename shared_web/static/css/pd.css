@@ -1429,6 +1429,11 @@ Box of FAQs and intro materials that appears on every page until dismissed.
 
 .dismiss {
     color: #ccc;
+    margin-bottom: 0;
+    text-align: right;
+}
+
+.top-right-corner {
     position: absolute;
     right: 1rem;
     top: 0.565rem;

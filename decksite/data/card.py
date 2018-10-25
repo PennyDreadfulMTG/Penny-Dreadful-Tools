@@ -76,23 +76,28 @@ def load_card(name: str, season_id: Optional[int] = None) -> Card:
     c.played_competitively = c.wins or c.losses or c.draws
     return c
 
-def playability() -> Dict[str, float]:
+def playability(retry: bool = False) -> Dict[str, float]:
     sql = """
         SELECT
-            card AS name,
-            COUNT(*) AS played
+            name,
+            playability
         FROM
-            deck_card
-        GROUP BY
-            card
+            _playability
     """
-    rs = [Container(r) for r in db().select(sql)]
-    high = max([c.played for c in rs] + [0])
-    return {c.name: (c.played / high) for c in rs}
+    try:
+        return {r['name']: r['playability'] for r in db().select(sql)}
+    except DatabaseException as e:
+        if not retry:
+            print(f"Got {e} trying to get playability so trying to preaggregate. If this is happening on user time that's undesirable.")
+            preaggregate_playability()
+            return playability(retry=True)
+        print(f'Failed to preaggregate. Giving up.')
+        raise e
 
 def preaggregate() -> None:
     preaggregate_card()
     preaggregate_card_person()
+    preaggregate_playability()
 
 def preaggregate_card() -> None:
     db().execute('DROP TABLE IF EXISTS _new_card_stats')
@@ -178,3 +183,36 @@ def preaggregate_card_person() -> None:
     db().execute('CREATE TABLE IF NOT EXISTS _card_person_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
     db().execute('RENAME TABLE _card_person_stats TO _old_card_person_stats, _new_card_person_stats TO _card_person_stats')
     db().execute('DROP TABLE IF EXISTS _old_card_person_stats')
+
+def preaggregate_playability() -> None:
+    sql = """
+        SELECT
+            card AS name,
+            COUNT(*) AS played
+        FROM
+            deck_card
+        GROUP BY
+            card
+    """
+    rs = db().select(sql)
+    high = max([r['played'] for r in rs] + [0])
+    db().execute('DROP TABLE IF EXISTS _new_playability')
+    sql = """
+        CREATE TABLE IF NOT EXISTS _new_playability (
+            name VARCHAR(190) NOT NULL,\
+            playability DECIMAL(3,2),
+            PRIMARY KEY (name)
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+        SELECT
+            card AS name,
+            ROUND(COUNT(*) / {high}, 2) AS playability
+        FROM
+            deck_card
+        GROUP BY
+            card
+    """.format(high=high)
+    db().execute(sql)
+    db().execute('DROP TABLE IF EXISTS _old_playability')
+    db().execute('CREATE TABLE IF NOT EXISTS _playability (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
+    db().execute('RENAME TABLE _playability TO _old_playability, _new_playability TO _playability')
+    db().execute('DROP TABLE IF EXISTS _old_playability')

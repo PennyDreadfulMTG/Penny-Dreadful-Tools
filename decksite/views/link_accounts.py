@@ -15,7 +15,7 @@ class LinkAccounts(View):
     def __init__(self) -> None:
         super().__init__()
         self.mtgo_name = auth.mtgo_username()
-        self.person = person.load_person_by_discord_id(auth.discord_id())
+        self.person = person.maybe_load_person_by_discord_id(auth.discord_id())
         self.form = Container()
         for k in request.form.keys():
             self.form[k] = request.form[k]
@@ -71,7 +71,7 @@ class LinkAccounts(View):
             return
         tapped_name = self.form.get('to_username', None)
         if tapped_name is not None and self.person.tappedout_username != tapped_name:
-            tapped_user = person.load_person_by_tappedout_name(tapped_name)
+            tapped_user = person.maybe_load_person_by_tappedout_name(tapped_name)
             if tapped_user is None:
                 self.form.errors.to_username = 'Could not find a TappedOut user called "{tapped_name}" in our database'.format(tapped_name=tapped_name)
             elif tapped_user.id is not None:

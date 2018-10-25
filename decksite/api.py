@@ -44,7 +44,7 @@ def league_api():
 @APP.route('/api/person/<person>/')
 def person_api(person):
     try:
-        p = ps.load_person(person)
+        p = ps.load_person_by_discord_id_or_mtgo_username(person)
         p.decks_url = url_for('person_decks_api', person=person)
         p.head_to_head = url_for('person_h2h_api', person=person)
         return return_json(p)
@@ -53,12 +53,12 @@ def person_api(person):
 
 @APP.route('/api/person/<person>/decks')
 def person_decks_api(person):
-    p = ps.load_person(person)
+    p = ps.load_person_by_discord_id_or_mtgo_username(person)
     return return_json(p.decks)
 
 @APP.route('/api/person/<person>/h2h')
 def person_h2h_api(person):
-    p = ps.load_person(person)
+    p = ps.load_person_by_discord_id_or_mtgo_username(person)
     return return_json(p.head_to_head)
 
 @APP.route('/api/league/run/<person>')

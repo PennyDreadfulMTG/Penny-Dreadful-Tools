@@ -6,7 +6,7 @@ from decksite.database import db
 from shared import dtutil, guarantee
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import AlreadyExistsException, DatabaseException
+from shared.pd_exception import AlreadyExistsException, DatabaseException, DoesNotExistException
 from shared_web import logger
 
 
@@ -18,14 +18,61 @@ class Person(Container):
             self.__decks = deck.load_decks(f'd.person_id = {self.id}', season_id=self.season_id)
         return self.__decks
 
-def load_person(person: Union[int, str], season_id: Optional[int] = None) -> Person:
-    try:
-        person_id = int(person)
-        username = "'{person}'".format(person=person)
-    except ValueError:
-        person_id = 0
-        username = sqlescape(person)
-    person = guarantee.exactly_one(load_people('p.id = {person_id} OR p.mtgo_username = {username} OR p.discord_id = {person_id}'.format(person_id=person_id, username=username), season_id=season_id))
+def load_person_by_id(id: int, season_id: Optional[int] = None) -> Person:
+    return load_person(f'p.id = {id}', season_id=season_id)
+
+def load_person_by_mtgo_username(username: str, season_id: Optional[int] = None) -> Person:
+    return load_person('p.mtgo_username = {username}'.format(username=sqlescape(username)), season_id=season_id)
+
+def load_person_by_discord_id(discord_id: int) -> Person:
+    return guarantee.exactly_one(load_people(f'p.discord_id = {discord_id}'))
+
+def load_person_by_id_or_mtgo_username(person: str, season_id: Optional[int] = None) -> Person:
+    if person.isdigit():
+        try:
+            return load_person_by_id(int(person), season_id)
+        except DoesNotExistException:
+            pass # If we failed to load by id we want to try and load as a Magic Online username for people with Magic Online usernames that are integers like '4423'.
+    return load_person_by_mtgo_username(person, season_id)
+
+def load_person_by_discord_id_or_mtgo_username(person: str) -> Person:
+    # It would probably be better if this method did not exist but for now it's required by the API.
+    # The problem is that Magic Online usernames can be integers so we cannot be completely unambiguous here.
+    # We can make a really good guess, though.
+    # See https://discordapp.com/developers/docs/reference#snowflakes
+    # Unix timestamp (ms) for 2015-01-01T00:00:00.0000    =       1420070400000
+    # Unix timestamp (ms) for 2015-01-01T00:00:00.0001    =       1420070400001
+    # Unix timestamp (ms) for 2015-02-01T00:00:00.0000    =       1422748800000
+    # Unix timestamp (ms) for 2100-01-01T00:00:00.0000    =       4102444800000
+    # Discord timestamp (ms) for 2015-01-01T00:00:00.0000 =                   0
+    # Discord timestamp (ms) for 2015-01-01T00:00:00.0001 =                   1
+    # Discord timestamp (ms) for 2015-02-01T00:00:00.0000 =          2678400000
+    # Min Discord snowflake for 2015-01-01T00:00:00.0000  =                   0 (                                        00000000000000000000000 in binary)
+    # Min Discord snowflake for 2015-01-01T00:00:00.0001  =             4194304 (                                        10000000000000000000000 in binary)
+    # Min Discord snowflake for 2015-02-01T00:00:00.0000  =   11234023833600000 (         100111111010010100100100000000000000000000000000000000 in binary)
+    # Min Discord snowflake for 2100-01-01T00:00:00.0000  = 5625346837708800000 (100111000010001001111110010010100000000000000000000000000000000 in binary)
+    # Discord snowflakes created between 2015-01-01T00:00:00.001Z and 2100-01-01T00:00:00.000Z will therefore fall in the range 2097152-5625346837708800000 if created before the year 2100.
+    # We use 2015-02-01T00:00:00.000Z (11234023833600000) as the start of the range instead because it greatly reduces the range and we have seen no evidence of Discord snowflakes from before December 28th 2015.
+    # This function will fail or (very unlikely) return incorrect results if we ever have a player with a Magic Online username that falls numerically between MIN_DISCORD_ID and MAX_DISCORD_ID.
+    MIN_DISCORD_ID =   11234023833600000
+    MAX_DISCORD_ID = 5625346837708800000
+    if person.isdigit() and int(person) >= MIN_DISCORD_ID and int(person) <= MAX_DISCORD_ID:
+        return load_person_by_discord_id(person)
+    return load_person_by_mtgo_username(person)
+
+def maybe_load_person_by_discord_id(discord_id: Optional[int]) -> Optional[Person]:
+    if discord_id is None:
+        return None
+    return guarantee.at_most_one(load_people(f'p.discord_id = {discord_id}'))
+
+def maybe_load_person_by_tappedout_name(username: str) -> Optional[Person]:
+    return guarantee.at_most_one(load_people('p.tappedout_username = {username}'.format(username=sqlescape(username))))
+
+def maybe_load_person_by_mtggoldfish_name(username: str) -> Optional[Person]:
+    return guarantee.at_most_one(load_people('p.mtggoldfish_username = {username}'.format(username=sqlescape(username))))
+
+def load_person(where: str, season_id: Optional[int] = None) -> Person:
+    person = guarantee.exactly_one(load_people(where, season_id=season_id))
     set_achievements([person], season_id)
     set_head_to_head([person], season_id)
     return person
@@ -159,21 +206,10 @@ def is_allowed_to_retire(deck_id, discord_id):
         return False
     if not discord_id:
         return True
-    person = load_person_by_discord_id(discord_id)
+    person = maybe_load_person_by_discord_id(discord_id)
     if person is None:
         return True
     return any(int(deck_id) == deck.id for deck in person.decks)
-
-def load_person_by_discord_id(discord_id: Optional[int]) -> Optional[Person]:
-    if discord_id is None:
-        return None
-    return guarantee.at_most_one(load_people('p.discord_id = {discord_id}'.format(discord_id=sqlescape(discord_id))))
-
-def load_person_by_tappedout_name(username: str) -> Optional[Person]:
-    return guarantee.at_most_one(load_people('p.tappedout_username = {username}'.format(username=sqlescape(username))))
-
-def load_person_by_mtggoldfish_name(username: str) -> Optional[Person]:
-    return guarantee.at_most_one(load_people('p.mtggoldfish_username = {username}'.format(username=sqlescape(username))))
 
 def get_or_insert_person_id(mtgo_username: Optional[str], tappedout_username: Optional[str], mtggoldfish_username: Optional[str]) -> int:
     sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
@@ -213,7 +249,7 @@ def add_note(creator_id: int, subject_id: int, note: str) -> None:
 
 def link_discord(mtgo_username: str, discord_id: int) -> Person:
     person_id = deck.get_or_insert_person_id(mtgo_username, None, None)
-    p = load_person(person_id)
+    p = load_person_by_id(person_id)
     if p.discord_id is not None:
         raise AlreadyExistsException('Player with mtgo username {mtgo_username} already has discord id {old_discord_id}, cannot add {new_discord_id}'.format(mtgo_username=mtgo_username, old_discord_id=p.discord_id, new_discord_id=discord_id))
     sql = 'UPDATE person SET discord_id = %s WHERE id = %s'

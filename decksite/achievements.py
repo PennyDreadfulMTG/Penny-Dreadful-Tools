@@ -69,7 +69,7 @@ def preaggregate_query() -> str:
     """.format(cc=create_columns, sc=select_columns, season_join=query.season_join(), competition_join=query.competition_join())
 
 def displayed_achievements(p: 'person.Person') -> List[Dict[str, str]]:
-    return [d for d in (a.display(p) for a in Achievement.all_achievements) if d is not None]
+    return [d for d in ({'title': a.title, 'detail': a.display(p)} for a in Achievement.all_achievements) if d['detail']]
 
 # Abstract achievement classes
 
@@ -87,19 +87,19 @@ class Achievement:
             if cls.key in [c.key for c in cls.all_achievements]:
                 print(f"Warning: Two achievements have the same normalised key {cls.key}. This won't do any permanent damage to the database but the results are almost certainly not as intended.")
             cls.all_achievements.append(cls())
-    def display(self, _: 'person.Person') -> Optional[Dict[str, str]]: # pylint: disable=no-self-use
-        return None
+    def display(self, p: 'person.Person') -> str:  # pylint: disable=no-self-use, unused-argument
+        return ''
     def load_summary(self) -> Optional[str]: # pylint: disable=no-self-use
         return None
 
 class CountedAchievement(Achievement):
     singular = ''
     plural = ''
-    def display(self, p) -> Optional[Dict[str, str]]:
+    def display(self, p: 'person.Person') -> str:
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
-            return {'name': self.title, 'detail': ngettext(f'1 {self.singular}', f'%(num)d {self.plural}', n)}
-        return None
+            return ngettext(f'1 {self.singular}', f'%(num)d {self.plural}', n)
+        return ''
     @retry_after_calling(preaggregate_achievements)
     def load_summary(self) -> Optional[str]:
         sql = f"""SELECT SUM(`{self.key}`) AS num, SUM(CASE WHEN `{self.key}` > 0 THEN 1 ELSE 0 END) AS pnum FROM _achievements"""
@@ -113,13 +113,13 @@ class BooleanAchievement(Achievement):
     @staticmethod
     def alltime_text(_: int) -> str:
         return ''
-    def display(self, p: 'person.Person') -> Optional[Dict[str, str]]:
+    def display(self, p: 'person.Person') -> str:
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
             if decksite.get_season_id() == 'all':
-                return {'name': self.title, 'detail': self.alltime_text(n)}
-            return {'name': self.title, 'detail': self.season_text}
-        return None
+                return self.alltime_text(n)
+            return self.season_text
+        return ''
     @retry_after_calling(preaggregate_achievements)
     def load_summary(self) -> Optional[str]:
         sql = f"""SELECT SUM(s) AS num, COUNT(s) AS pnum FROM
@@ -130,7 +130,6 @@ class BooleanAchievement(Achievement):
             return f'Earned {res.num} times by {res.pnum} players.'
         return None
 
-# Actual achievement definitions
 
 class TournamentOrganizer(Achievement):
     key = 'tournament_organizer'
@@ -139,10 +138,10 @@ class TournamentOrganizer(Achievement):
     description_safe = 'Run a tournament for the Penny Dreadful community.'
     def __init__(self):
         self.hosts = [host for series in tournaments.all_series_info() for host in series['hosts']]
-    def display(self, p: 'person.Person') -> Optional[Dict[str, str]]:
+    def display(self, p: 'person.Person') -> str:
         if p.name in self.hosts:
-            return {'name': 'Tournament Organizer', 'detail': 'Ran a tournament for the Penny Dreadful community'}
-        return None
+            return 'Ran a tournament for the Penny Dreadful community'
+        return ''
     def load_summary(self) -> Optional[str]:
         return f'Earned by {len(self.hosts)} players.'
 
@@ -257,15 +256,15 @@ class Pioneer(CountedAchievement):
     description_safe = 'Have one of your decks recognised as the first of a new archetype.'
     sql = """SUM(CASE WHEN d.id in
                 (
-                    SELECT 
+                    SELECT
                         d.id
-                    FROM 
+                    FROM
                         deck AS d
-                    LEFT JOIN 
+                    LEFT JOIN
                         deck AS d2 ON d.archetype_id = d2.archetype_id AND d.created_date > d2.created_date
                     LEFT JOIN
                         archetype as a ON d.archetype_id = a.id
-                    WHERE 
+                    WHERE
                         d2.created_date IS NULL and d.archetype_id IS NOT NULL
                 )
             THEN 1 ELSE 0 END)"""

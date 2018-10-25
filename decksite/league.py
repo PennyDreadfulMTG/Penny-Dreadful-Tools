@@ -27,7 +27,7 @@ class SignUpForm(Form):
                  mtgo_username: str = None) -> None:
         super().__init__(form)
         if person_id is not None:
-            ps = person.load_person(person_id)
+            ps = person.load_person_by_id(person_id)
             self.recent_decks: List[Dict[str, Any]] = []
             for d in sorted(ps.decks, key=lambda deck: deck['created_date'], reverse=True)[0:10]:
                 recent_deck = {'name': d['name'], 'main': [], 'sb':[]}
@@ -156,7 +156,7 @@ class RetireForm(Form):
         super().__init__(form)
         person_object = None
         if discord_user is not None:
-            person_object = person.load_person_by_discord_id(discord_user)
+            person_object = person.maybe_load_person_by_discord_id(discord_user)
         if person_object:
             self.decks = active_decks_by_person(person_object.id)
         else:

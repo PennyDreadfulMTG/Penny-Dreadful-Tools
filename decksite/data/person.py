@@ -57,7 +57,7 @@ def load_person_by_discord_id_or_mtgo_username(person: str) -> Person:
     MIN_DISCORD_ID =   11234023833600000
     MAX_DISCORD_ID = 5625346837708800000
     if person.isdigit() and int(person) >= MIN_DISCORD_ID and int(person) <= MAX_DISCORD_ID:
-        return load_person_by_discord_id(person)
+        return load_person_by_discord_id(int(person))
     return load_person_by_mtgo_username(person)
 
 def maybe_load_person_by_discord_id(discord_id: Optional[int]) -> Optional[Person]:

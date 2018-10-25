@@ -57,7 +57,7 @@ class LinkAccounts(View):
             return
         mtggoldfish_name = self.form.get('gf_username', None)
         if mtggoldfish_name is not None and self.person.mtggoldfish_username != mtggoldfish_name:
-            mtggoldfish_user = person.load_person_by_mtggoldfish_name(mtggoldfish_name)
+            mtggoldfish_user = person.maybe_load_person_by_mtggoldfish_name(mtggoldfish_name)
             if mtggoldfish_user is None:
                 self.form.errors.gf_username = 'Could not find a MTGGoldfish user called "{mtggoldfish_name}" in our database'.format(mtggoldfish_name=mtggoldfish_name)
             elif mtggoldfish_user.mtgo_username is not None:

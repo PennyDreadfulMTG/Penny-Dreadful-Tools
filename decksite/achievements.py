@@ -5,10 +5,11 @@ from flask import url_for
 from flask_babel import ngettext
 
 import decksite
-from decksite.data import query, retry_after_calling
+from decksite.data import query
 from decksite.database import db
 from magic import tournaments
 from shared.container import Container
+from shared.decorators import retry_after_calling
 
 if TYPE_CHECKING:
     from decksite.data import person # pylint:disable=unused-import

@@ -1,11 +1,12 @@
 from typing import List, Optional, Sequence, Union
 
 from decksite import achievements as ach
-from decksite.data import deck, query, retry_after_calling
+from decksite.data import deck, query
 from decksite.database import db
 from shared import dtutil, guarantee
 from shared.container import Container
 from shared.database import sqlescape
+from shared.decorators import retry_after_calling
 from shared.pd_exception import AlreadyExistsException
 from shared_web import logger
 

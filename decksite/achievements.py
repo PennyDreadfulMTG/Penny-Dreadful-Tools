@@ -87,8 +87,7 @@ class Achievement:
             if cls.key in [c.key for c in cls.all_achievements]:
                 print(f"Warning: Two achievements have the same normalised key {cls.key}. This won't do any permanent damage to the database but the results are almost certainly not as intended.")
             cls.all_achievements.append(cls())
-    @staticmethod
-    def display(_: 'person.Person') -> str:
+    def display(self, p: 'person.Person') -> str:  # pylint: disable=no-self-use, unused-argument
         return ''
     def load_summary(self) -> Optional[str]: # pylint: disable=no-self-use
         return None
@@ -96,7 +95,7 @@ class Achievement:
 class CountedAchievement(Achievement):
     singular = ''
     plural = ''
-    def display(self, p) -> str:
+    def display(self, p: 'person.Person') -> str:
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
             return ngettext(f'1 {self.singular}', f'%(num)d {self.plural}', n)

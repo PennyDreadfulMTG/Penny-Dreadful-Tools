@@ -6,8 +6,8 @@ from decksite.database import db
 from shared import dtutil, guarantee
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import (AlreadyExistsException, DatabaseException,
-                                 DoesNotExistException)
+from shared.decorators import retry_after_calling
+from shared.pd_exception import AlreadyExistsException, DoesNotExistException
 from shared_web import logger
 
 
@@ -141,25 +141,70 @@ def load_people(where: str = '1 = 1',
         p.season_id = season_id
     return people
 
-def set_achievements(people: List[Person], season_id: int = None, retry: bool = False) -> None:
+def preaggregate() -> None:
+    ach.preaggregate_achievements()
+    preaggregate_head_to_head()
+
+def preaggregate_head_to_head() -> None:
+    db().execute('DROP TABLE IF EXISTS _new_head_to_head_stats')
+    sql = """
+        CREATE TABLE IF NOT EXISTS _new_head_to_head_stats (
+            person_id INT NOT NULL,
+            opponent_id INT NOT NULL,
+            season_id INT NOT NULL,
+            num_matches INT NOT NULL,
+            wins INT NOT NULL,
+            losses INT NOT NULL,
+            draws INT NOT NULL,
+            PRIMARY KEY (season_id, person_id, opponent_id),
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (opponent_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+        SELECT
+            p.id AS person_id,
+            opp.id AS opponent_id,
+            season.id AS season_id,
+            COUNT(p.id) AS num_matches,
+            SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) AS wins,
+            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
+            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws
+        FROM
+            person AS p
+        INNER JOIN
+            deck AS d ON p.id = d.person_id
+        INNER JOIN
+            deck_match AS dm ON dm.deck_id = d.id
+        INNER JOIN
+            deck_match AS odm ON dm.match_id = odm.match_id AND dm.deck_id <> IFNULL(odm.deck_id, 0)
+        INNER JOIN
+            deck AS od ON odm.deck_id = od.id
+        INNER JOIN
+            person AS opp ON od.person_id = opp.id
+        {season_join}
+        GROUP BY
+            p.id,
+            opp.id,
+            season.id
+    """.format(season_join=query.season_join())
+    db().execute(sql)
+    db().execute('DROP TABLE IF EXISTS _old_head_to_head_stats')
+    db().execute('CREATE TABLE IF NOT EXISTS _head_to_head_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
+    db().execute('RENAME TABLE _head_to_head_stats TO _old_head_to_head_stats, _new_head_to_head_stats TO _head_to_head_stats')
+    db().execute('DROP TABLE IF EXISTS _old_head_to_head_stats')
+
+@retry_after_calling(ach.preaggregate_achievements)
+def set_achievements(people: List[Person], season_id: int = None) -> None:
     people_by_id = {person.id: person for person in people}
     sql = ach.load_query(people_by_id, season_id)
-    try:
-        results = [Container(r) for r in db().select(sql)]
-        for result in results:
-            people_by_id[result['id']].num_achievements = len([k for k, v in result.items() if k != 'id' and v > 0])
-            people_by_id[result['id']].achievements = result
-            people_by_id[result['id']].achievements.pop('id')
-    except DatabaseException as e:
-        if not retry:
-            print(f"Got {e} trying to set_head_to_head so trying to preaggregate. If this is happening on user time that's undesirable.")
-            ach.preaggregate_achievements()
-            set_achievements(people=people, season_id=season_id, retry=True)
-            return
-        print(f'Failed to preaggregate. Giving up.')
-        raise e
+    results = [Container(r) for r in db().select(sql)]
+    for result in results:
+        people_by_id[result['id']].num_achievements = len([k for k, v in result.items() if k != 'id' and v > 0])
+        people_by_id[result['id']].achievements = result
+        people_by_id[result['id']].achievements.pop('id')
 
-def set_head_to_head(people: List[Person], season_id: int = None, retry: bool = False) -> None:
+@retry_after_calling(preaggregate_head_to_head)
+def set_head_to_head(people: List[Person], season_id: int = None) -> None:
     people_by_id = {person.id: person for person in people}
     sql = """
         SELECT
@@ -186,21 +231,12 @@ def set_head_to_head(people: List[Person], season_id: int = None, retry: bool = 
             SUM(wins) DESC,
             opp_mtgo_username
     """.format(ids=', '.join(str(k) for k in people_by_id.keys()), season_query=query.season_query(season_id))
-    try:
-        results = [Container(r) for r in db().select(sql)]
-        for result in results:
-            people_by_id[result.id].head_to_head = people_by_id[result.id].get('head_to_head', []) + [result]
-        for person in people:
-            if person.get('head_to_head') is None:
-                person.head_to_head = []
-    except DatabaseException as e:
-        if not retry:
-            print(f"Got {e} trying to set_head_to_head so trying to preaggregate. If this is happening on user time that's undesirable.")
-            preaggregate_head_to_head()
-            set_head_to_head(people=people, season_id=season_id, retry=True)
-            return
-        print(f'Failed to preaggregate. Giving up.')
-        raise e
+    results = [Container(r) for r in db().select(sql)]
+    for result in results:
+        people_by_id[result.id].head_to_head = people_by_id[result.id].get('head_to_head', []) + [result]
+    for person in people:
+        if person.get('head_to_head') is None:
+            person.head_to_head = []
 
 def associate(d, discord_id):
     person_id = db().value('SELECT person_id FROM deck WHERE id = %s', [d.id], fail_on_missing=True)
@@ -281,55 +317,3 @@ def squash(p1id: int, p2id: int, col1: str, col2: str) -> None:
     db().execute('DELETE FROM person WHERE id = %s', [p2id])
     db().execute('UPDATE person SET {col2} = %s WHERE id = %s'.format(col2=col2), [new_value, p1id])
     db().commit('squash')
-
-def preaggregate() -> None:
-    ach.preaggregate_achievements()
-    preaggregate_head_to_head()
-
-def preaggregate_head_to_head() -> None:
-    db().execute('DROP TABLE IF EXISTS _new_head_to_head_stats')
-    sql = """
-        CREATE TABLE IF NOT EXISTS _new_head_to_head_stats (
-            person_id INT NOT NULL,
-            opponent_id INT NOT NULL,
-            season_id INT NOT NULL,
-            num_matches INT NOT NULL,
-            wins INT NOT NULL,
-            losses INT NOT NULL,
-            draws INT NOT NULL,
-            PRIMARY KEY (season_id, person_id, opponent_id),
-            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
-            FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE,
-            FOREIGN KEY (opponent_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE
-        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
-        SELECT
-            p.id AS person_id,
-            opp.id AS opponent_id,
-            season.id AS season_id,
-            COUNT(p.id) AS num_matches,
-            SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END) AS wins,
-            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
-            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws
-        FROM
-            person AS p
-        INNER JOIN
-            deck AS d ON p.id = d.person_id
-        INNER JOIN
-            deck_match AS dm ON dm.deck_id = d.id
-        INNER JOIN
-            deck_match AS odm ON dm.match_id = odm.match_id AND dm.deck_id <> IFNULL(odm.deck_id, 0)
-        INNER JOIN
-            deck AS od ON odm.deck_id = od.id
-        INNER JOIN
-            person AS opp ON od.person_id = opp.id
-        {season_join}
-        GROUP BY
-            p.id,
-            opp.id,
-            season.id
-    """.format(season_join=query.season_join())
-    db().execute(sql)
-    db().execute('DROP TABLE IF EXISTS _old_head_to_head_stats')
-    db().execute('CREATE TABLE IF NOT EXISTS _head_to_head_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
-    db().execute('RENAME TABLE _head_to_head_stats TO _old_head_to_head_stats, _new_head_to_head_stats TO _head_to_head_stats')
-    db().execute('DROP TABLE IF EXISTS _old_head_to_head_stats')

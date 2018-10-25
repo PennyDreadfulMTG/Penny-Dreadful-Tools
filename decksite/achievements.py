@@ -6,7 +6,10 @@ from flask_babel import ngettext
 
 import decksite
 from decksite.data import query
+from decksite.database import db
 from magic import tournaments
+from shared.container import Container
+from shared.pd_exception import DatabaseException
 
 if TYPE_CHECKING:
     from decksite.data import person # pylint:disable=unused-import
@@ -25,6 +28,14 @@ def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int
         GROUP BY
             person_id
     """.format(columns=columns, ids=', '.join(str(k) for k in people_by_id.keys()), season_query=query.season_query(season_id))
+
+def preaggregate_achievements() -> None:
+    db().execute('DROP TABLE IF EXISTS _new_achievements')
+    db().execute(preaggregate_query())
+    db().execute('DROP TABLE IF EXISTS _old_achievements')
+    db().execute('CREATE TABLE IF NOT EXISTS _achievements (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
+    db().execute('RENAME TABLE _achievements TO _old_achievements, _new_achievements TO _achievements')
+    db().execute('DROP TABLE IF EXISTS _old_achievements')
 
 def preaggregate_query() -> str:
     create_columns = ', '.join(f'`{a.key}` INT NOT NULL' for a in Achievement.all_achievements if a.in_db)
@@ -57,9 +68,6 @@ def preaggregate_query() -> str:
             season.id IS NOT NULL
     """.format(cc=create_columns, sc=select_columns, season_join=query.season_join(), competition_join=query.competition_join())
 
-def descriptions(p: 'Optional[person.Person]' = None) -> List[Dict[str, str]]:
-    return [{'title': a.title, 'description_safe': a.description_safe, 'detail': a.display(p) if p else ''} for a in Achievement.all_achievements]
-
 def displayed_achievements(p: 'person.Person') -> List[Dict[str, str]]:
     return [d for d in ({'title': a.title, 'detail': a.display(p)} for a in Achievement.all_achievements) if d['detail']]
 
@@ -82,39 +90,79 @@ class Achievement:
     @staticmethod
     def display(_: 'person.Person') -> str:
         return ''
+    def load_summary(self) -> Optional[str]: # pylint: disable=no-self-use
+        return None
 
 class CountedAchievement(Achievement):
     singular = ''
     plural = ''
-    def display(self, p):
+    def display(self, p) -> str:
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
             return ngettext(f'1 {self.singular}', f'%(num)d {self.plural}', n)
         return ''
+    def load_summary(self) -> Optional[str]: # pylint won't allow adding an argument even if optional
+        return self.load_summary_inner()
+    def load_summary_inner(self, retry: bool = False) -> Optional[str]:
+        sql = f"""SELECT SUM(`{self.key}`) AS num, SUM(CASE WHEN `{self.key}` > 0 THEN 1 ELSE 0 END) AS pnum FROM _achievements"""
+        try:
+            for r in db().select(sql):
+                res = Container(r)
+                return f'Earned {res.num} times by {res.pnum} players.'
+            return None
+        except DatabaseException as e:
+            if not retry:
+                print(f"Got {e} trying to load_summary so trying to preaggregate. If this is happening on user time that's undesirable.")
+                preaggregate_achievements()
+                return self.load_summary_inner(retry=True)
+            print(f'Failed to preaggregate. Giving up.')
+            raise e
 
 class BooleanAchievement(Achievement):
     season_text = ''
-    alltime_text = lambda n: '' # to keep lint and types happy
-    def display(self, p):
+    @staticmethod
+    def alltime_text(_: int) -> str:
+        return ''
+    def display(self, p: 'person.Person') -> str:
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
             if decksite.get_season_id() == 'all':
                 return self.alltime_text(n)
             return self.season_text
         return ''
+    def load_summary(self) -> Optional[str]: # pylint won't allow adding an argument even if optional
+        return self.load_summary_inner()
+    def load_summary_inner(self, retry: bool = False) -> Optional[str]:
+        sql = f"""SELECT SUM(s) AS num, COUNT(s) AS pnum FROM
+                    (SELECT SUM(`{self.key}`) AS s FROM _achievements WHERE `{self.key}` > 0 GROUP BY person_id)
+                    AS _"""
+        try:
+            for r in db().select(sql):
+                res = Container(r)
+                return f'Earned {res.num} times by {res.pnum} players.'
+            return None
+        except DatabaseException as e:
+            if not retry:
+                print(f"Got {e} trying to load_summary so trying to preaggregate. If this is happening on user time that's undesirable.")
+                preaggregate_achievements()
+                return self.load_summary_inner(retry=True)
+            print(f'Failed to preaggregate. Giving up.')
+            raise e
 
-# Actual achievement definitions
 
 class TournamentOrganizer(Achievement):
     key = 'tournament_organizer'
     in_db = False
     title = 'Tournament Organizer'
     description_safe = 'Run a tournament for the Penny Dreadful community.'
-    @staticmethod
-    def display(p):
-        if p.name in [host for series in tournaments.all_series_info() for host in series['hosts']]:
+    def __init__(self):
+        self.hosts = [host for series in tournaments.all_series_info() for host in series['hosts']]
+    def display(self, p: 'person.Person') -> str:
+        if p.name in self.hosts:
             return 'Ran a tournament for the Penny Dreadful community'
         return ''
+    def load_summary(self) -> Optional[str]:
+        return f'Earned by {len(self.hosts)} players.'
 
 class TournamentPlayer(CountedAchievement):
     key = 'tournament_entries'
@@ -239,6 +287,43 @@ class Pioneer(CountedAchievement):
                         d2.created_date IS NULL and d.archetype_id IS NOT NULL
                 )
             THEN 1 ELSE 0 END)"""
+
+class Specialist(BooleanAchievement):
+    key = 'specialist'
+    title = 'Specialist'
+    season_text = 'Reached the elimination rounds of a tournament playing the same archetypes three times this season'
+    @staticmethod
+    def alltime_text(n):
+        what = ngettext('1 season', f'{n} different seasons', n)
+        return f'Reached the elimination rounds of a tournament playing the same archetype three times in {what}'
+    description_safe = 'Reach the elimination rounds of a tournament playing the same archetype three times in a single season.'
+    sql = """CASE WHEN EXISTS
+                (
+                    SELECT
+                        p.id
+                    FROM
+                        (
+                            SELECT p.id AS inner_pid, season.id AS inner_seasonid, COUNT(d.id) AS archcount
+                            FROM
+                                person AS p
+                            LEFT JOIN
+                                deck AS d
+                            ON
+                                d.person_id = p.id
+                            {season_join}
+                            {competition_join}
+                            WHERE
+                                d.finish <= c.top_n AND ct.name = 'Gatherling'
+                            GROUP BY
+                                p.id,
+                                season.id,
+                                d.archetype_id
+                            HAVING archcount >= 3
+                        ) AS spec_archs
+                    WHERE
+                        p.id = inner_pid AND season.id = inner_seasonid
+                )
+            THEN True ELSE False END""".format(season_join=query.season_join(), competition_join=query.competition_join())
 
 class Generalist(BooleanAchievement):
     key = 'generalist'

@@ -100,7 +100,7 @@ def set_achievements(people: List[Person], season_id: int = None, retry: bool = 
     except DatabaseException as e:
         if not retry:
             print(f"Got {e} trying to set_head_to_head so trying to preaggregate. If this is happening on user time that's undesirable.")
-            preaggregate_achievements()
+            ach.preaggregate_achievements()
             set_achievements(people=people, season_id=season_id, retry=True)
             return
         print(f'Failed to preaggregate. Giving up.')
@@ -241,16 +241,8 @@ def squash(p1id: int, p2id: int, col1: str, col2: str) -> None:
     db().commit('squash')
 
 def preaggregate() -> None:
-    preaggregate_achievements()
+    ach.preaggregate_achievements()
     preaggregate_head_to_head()
-
-def preaggregate_achievements() -> None:
-    db().execute('DROP TABLE IF EXISTS _new_achievements')
-    db().execute(ach.preaggregate_query())
-    db().execute('DROP TABLE IF EXISTS _old_achievements')
-    db().execute('CREATE TABLE IF NOT EXISTS _achievements (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
-    db().execute('RENAME TABLE _achievements TO _old_achievements, _new_achievements TO _achievements')
-    db().execute('DROP TABLE IF EXISTS _old_achievements')
 
 def preaggregate_head_to_head() -> None:
     db().execute('DROP TABLE IF EXISTS _new_head_to_head_stats')

@@ -1,4 +1,4 @@
-from typing import List, Optional, Sequence, Union
+from typing import List, Optional, Sequence
 
 from decksite import achievements as ach
 from decksite.data import deck, query
@@ -6,7 +6,8 @@ from decksite.database import db
 from shared import dtutil, guarantee
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import AlreadyExistsException, DatabaseException, DoesNotExistException
+from shared.pd_exception import (AlreadyExistsException, DatabaseException,
+                                 DoesNotExistException)
 from shared_web import logger
 
 
@@ -18,8 +19,8 @@ class Person(Container):
             self.__decks = deck.load_decks(f'd.person_id = {self.id}', season_id=self.season_id)
         return self.__decks
 
-def load_person_by_id(id: int, season_id: Optional[int] = None) -> Person:
-    return load_person(f'p.id = {id}', season_id=season_id)
+def load_person_by_id(person_id: int, season_id: Optional[int] = None) -> Person:
+    return load_person(f'p.id = {person_id}', season_id=season_id)
 
 def load_person_by_mtgo_username(username: str, season_id: Optional[int] = None) -> Person:
     return load_person('p.mtgo_username = {username}'.format(username=sqlescape(username)), season_id=season_id)
@@ -27,6 +28,7 @@ def load_person_by_mtgo_username(username: str, season_id: Optional[int] = None)
 def load_person_by_discord_id(discord_id: int) -> Person:
     return guarantee.exactly_one(load_people(f'p.discord_id = {discord_id}'))
 
+# pylint: disable=invalid-name
 def load_person_by_id_or_mtgo_username(person: str, season_id: Optional[int] = None) -> Person:
     if person.isdigit():
         try:
@@ -35,7 +37,8 @@ def load_person_by_id_or_mtgo_username(person: str, season_id: Optional[int] = N
             pass # If we failed to load by id we want to try and load as a Magic Online username for people with Magic Online usernames that are integers like '4423'.
     return load_person_by_mtgo_username(person, season_id)
 
-def load_person_by_discord_id_or_mtgo_username(person: str) -> Person:
+# pylint: disable=invalid-name
+def load_person_by_discord_id_or_username(person: str) -> Person:
     # It would probably be better if this method did not exist but for now it's required by the API.
     # The problem is that Magic Online usernames can be integers so we cannot be completely unambiguous here.
     # We can make a really good guess, though.
@@ -54,20 +57,23 @@ def load_person_by_discord_id_or_mtgo_username(person: str) -> Person:
     # Discord snowflakes created between 2015-01-01T00:00:00.001Z and 2100-01-01T00:00:00.000Z will therefore fall in the range 2097152-5625346837708800000 if created before the year 2100.
     # We use 2015-02-01T00:00:00.000Z (11234023833600000) as the start of the range instead because it greatly reduces the range and we have seen no evidence of Discord snowflakes from before December 28th 2015.
     # This function will fail or (very unlikely) return incorrect results if we ever have a player with a Magic Online username that falls numerically between MIN_DISCORD_ID and MAX_DISCORD_ID.
-    MIN_DISCORD_ID =   11234023833600000
+    MIN_DISCORD_ID = 11234023833600000
     MAX_DISCORD_ID = 5625346837708800000
     if person.isdigit() and int(person) >= MIN_DISCORD_ID and int(person) <= MAX_DISCORD_ID:
         return load_person_by_discord_id(int(person))
     return load_person_by_mtgo_username(person)
 
+# pylint: disable=invalid-name
 def maybe_load_person_by_discord_id(discord_id: Optional[int]) -> Optional[Person]:
     if discord_id is None:
         return None
     return guarantee.at_most_one(load_people(f'p.discord_id = {discord_id}'))
 
+# pylint: disable=invalid-name
 def maybe_load_person_by_tappedout_name(username: str) -> Optional[Person]:
     return guarantee.at_most_one(load_people('p.tappedout_username = {username}'.format(username=sqlescape(username))))
 
+# pylint: disable=invalid-name
 def maybe_load_person_by_mtggoldfish_name(username: str) -> Optional[Person]:
     return guarantee.at_most_one(load_people('p.mtggoldfish_username = {username}'.format(username=sqlescape(username))))
 

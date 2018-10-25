@@ -82,7 +82,7 @@ def people():
 @SEASONS.route('/people/<person_id>/')
 @cached()
 def person(person_id):
-    p = ps.load_person(person_id, season_id=get_season_id())
+    p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
     person_cards = cs.load_cards(person_id=p.id, season_id=get_season_id())
     only_played_cards = []
     view = Person(p, person_cards, only_played_cards)

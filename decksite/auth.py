@@ -56,7 +56,7 @@ def load_person(f: Callable) -> Callable:
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if discord_id() is not None:
-            p = person.load_person_by_discord_id(discord_id())
+            p = person.maybe_load_person_by_discord_id(discord_id())
             if p:
                 login(p)
         return f(*args, **kwargs)

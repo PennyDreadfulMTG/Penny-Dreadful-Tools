@@ -129,7 +129,7 @@ main li, main dt, main dd {
 }
 
 dt.earned:before {
-    content: "🏆"
+    content: ""
 }
 
 footer a {

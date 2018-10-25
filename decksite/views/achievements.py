@@ -1,8 +1,8 @@
 from flask import url_for
 
 import decksite.achievements as ach
-from decksite.view import View
 from decksite.data import person
+from decksite.view import View
 
 
 class Achievements(View):

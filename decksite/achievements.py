@@ -116,8 +116,44 @@ class Achievement:
     def leaderboard(self, season_id: Optional[int] = None):
         season_condition = query.season_query(season_id)
         result = []
-        # If I forget to reformat this before committing, sorry Tom!
-        sql = f'select p.mtgo_username as name, p.id as person_id, sum({self.key}) as num from person as p join _achievements on p.id = _achievements.person_id where {season_condition} group by p.id having num >= (select min(s) from (select sum({self.key}) as s from _achievements where {season_condition} group by person_id having s > 0 order by s desc limit {LEADERBOARD_TOP_N}) as _) order by num desc limit {LEADERBOARD_LIMIT}'
+        sql = f"""SELECT
+                        p.mtgo_username AS name, p.id AS person_id, SUM({self.key}) AS num
+                    FROM
+                        person AS p
+                    JOIN
+                        _achievements
+                    ON
+                        p.id = _achievements.person_id
+                    WHERE
+                        {season_condition}
+                    GROUP BY
+                        p.id
+                    HAVING
+                        num >=
+                            (   -- Work out the minimum score to make top N, counting ties
+                                SELECT
+                                    MIN(s)
+                                FROM
+                                    (
+                                        SELECT
+                                            SUM({self.key}) AS s
+                                        FROM
+                                            _achievements
+                                        WHERE
+                                            {season_condition}
+                                        GROUP BY
+                                            person_id
+                                        HAVING
+                                            s > 0
+                                        ORDER BY
+                                            s DESC
+                                        LIMIT
+                                            {LEADERBOARD_TOP_N}
+                                    ) AS _
+                            ) 
+                    ORDER BY
+                        num DESC
+                    LIMIT {LEADERBOARD_LIMIT}"""
         for row in [Container(r) for r in db().select(sql)]:
             result.append({'person': row.name, 'url': url_for('person', person_id=row.person_id), 'points': row.num})
         return result if len(result) > 0 else None

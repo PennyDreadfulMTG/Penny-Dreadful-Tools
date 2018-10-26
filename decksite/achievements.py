@@ -94,7 +94,6 @@ class Achievement:
     def load_summary(self, season_id: Optional[int] = None) -> Optional[str]:
         season_condition = f'AND season_id = {season_id}' if season_id != 'all' else ''
         sql = f"""SELECT SUM(`{self.key}`) AS num, COUNT(DISTINCT person_id) AS pnum FROM _achievements WHERE `{self.key}` > 0 {season_condition}"""
-        print(sql)
         for r in db().select(sql):
             res = Container(r)
             if res.num is None:

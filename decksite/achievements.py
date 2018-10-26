@@ -157,7 +157,7 @@ class Achievement:
         for row in [Container(r) for r in db().select(sql)]:
             result.append({'person': row.name, 'url': url_for('person', person_id=row.person_id), 'points': row.num})
         return result if len(result) > 0 else None
-    def leaderboard_heading(self):
+    def leaderboard_heading(self): # pylint: disable=no-self-use
         return ''
 
 class CountedAchievement(Achievement):

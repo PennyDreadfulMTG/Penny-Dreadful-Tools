@@ -155,7 +155,7 @@ class Achievement:
                         num DESC
                     LIMIT {LEADERBOARD_LIMIT}"""
         for row in [Container(r) for r in db().select(sql)]:
-            result.append({'person': row.name, 'url': url_for('person', person_id=row.person_id), 'points': row.num})
+            result.append({'person': row.name, 'points': row.num, 'url': url_for('person', person_id=row.person_id)})
         return result if len(result) > 0 else None
     def leaderboard_heading(self): # pylint: disable=no-self-use
         return ''

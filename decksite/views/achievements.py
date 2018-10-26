@@ -20,3 +20,7 @@ class Achievements(View):
                 desc['detail'] = ''
             desc['class'] = 'earned' if desc['detail'] else 'unearned'
             self.achievement_descriptions.append(desc)
+        self.show_seasons = True
+    @staticmethod
+    def page_title():
+        return 'Achievements'

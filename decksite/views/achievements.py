@@ -21,6 +21,11 @@ class Achievements(View):
                 desc['detail'] = ''
             desc['class'] = 'earned' if desc['detail'] else 'unearned'
             desc['percent'] = a.percent(season_id=get_season_id())
+            lb = a.leaderboard()
+            if lb is not None:
+                desc['leaderboard'] = lb
+                desc['has_leaderboard'] = True
+                desc['leaderboard_heading'] = a.leaderboard_heading()
             self.achievement_descriptions.append(desc)
         self.show_seasons = True
     @staticmethod

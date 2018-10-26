@@ -103,13 +103,22 @@ class Achievement:
             return f'Earned{times_text} by {players_text}.'
         return None
     def percent(self, season_id: Optional[int] = None) -> float:
-        season_condition = f'season_id = {season_id}' if season_id != 'all' else ''
+        season_condition = query.season_query(season_id)
         sql = f"""SELECT SUM(CASE WHEN {self.key} > 0 THEN 1 ELSE 0 END) AS pnum, COUNT(*) AS mnum FROM _achievements WHERE {season_condition}"""
         r = db().select(sql)[0]
         try:
             return int(r['pnum'] or 0) * 100.0 / int(r['mnum'])
         except ZeroDivisionError:
             return 0
+    def leaderboard(self):
+        result = []
+        # If I forget to reformat this before committing, sorry Tom!
+        sql = f'select p.mtgo_username as name, p.id as person_id, sum({self.key}) as num from person as p join _achievements on p.id = _achievements.person_id group by p.id having num >= (select min(s) from (select sum({self.key}) as s from _achievements group by person_id order by s desc limit 5) as _) order by num desc limit 20'
+        for row in [Container(r) for r in db().select(sql)]:
+            result.append({'position': 1, 'pos': 1, 'person': row.name, 'url': url_for('person', person_id=row.person_id), 'points': row.num})
+        return result
+    def leaderboard_heading(self):
+        return ''
 
 class CountedAchievement(Achievement):
     singular = ''
@@ -119,6 +128,8 @@ class CountedAchievement(Achievement):
         if n > 0:
             return ngettext(f'1 {self.singular}', f'%(num)d {self.plural}', n)
         return ''
+    def leaderboard_heading(self):
+        return self.plural
 
 class BooleanAchievement(Achievement):
     season_text = ''
@@ -132,6 +143,8 @@ class BooleanAchievement(Achievement):
                 return self.alltime_text(n)
             return self.season_text
         return ''
+    def leaderboard_heading(self):
+        return 'seasons'
 
 class TournamentOrganizer(Achievement):
     key = 'tournament_organizer'
@@ -152,6 +165,8 @@ class TournamentOrganizer(Achievement):
         sql = f"""SELECT COUNT(*) AS mnum FROM _achievements"""
         r = db().select(sql)[0]
         return len(self.hosts) * 100.0 / int(r['mnum'])
+    def leaderboard(self):
+        return None
 
 class TournamentPlayer(CountedAchievement):
     key = 'tournament_entries'

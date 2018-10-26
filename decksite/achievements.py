@@ -94,7 +94,6 @@ class Achievement:
     def load_summary(self, season_id: Optional[int] = None) -> Optional[str]:
         season_condition = f'AND season_id = {season_id}' if season_id != 'all' else ''
         sql = f"""SELECT SUM(`{self.key}`) AS num, COUNT(DISTINCT person_id) AS pnum FROM _achievements WHERE `{self.key}` > 0 {season_condition}"""
-        print(sql)
         for r in db().select(sql):
             res = Container(r)
             if res.num is None:
@@ -103,6 +102,14 @@ class Achievement:
             players_text = ngettext('1 player', f'%(num)d players', res.pnum)
             return f'Earned{times_text} by {players_text}.'
         return None
+    def percent(self, season_id: Optional[int] = None) -> float:
+        season_condition = f'season_id = {season_id}' if season_id != 'all' else ''
+        sql = f"""SELECT SUM(CASE WHEN {self.key} > 0 THEN 1 ELSE 0 END) AS pnum, COUNT(*) AS mnum FROM _achievements WHERE {season_condition}"""
+        r = db().select(sql)[0]
+        try:
+            return int(r['pnum'] or 0) * 100.0 / int(r['mnum'])
+        except ZeroDivisionError:
+            return 0
 
 class CountedAchievement(Achievement):
     singular = ''
@@ -141,6 +148,10 @@ class TournamentOrganizer(Achievement):
         # We can't give per-season stats for this because they don't exist
         clarification = ' (all-time)' if season_id != 'all' else ''
         return f'Earned by {len(self.hosts)} players{clarification}.'
+    def percent(self, season_id: Optional[int] = None) -> float: # pylint: disable=unused-argument
+        sql = f"""SELECT COUNT(*) AS mnum FROM _achievements"""
+        r = db().select(sql)[0]
+        return len(self.hosts) * 100.0 / int(r['mnum'])
 
 class TournamentPlayer(CountedAchievement):
     key = 'tournament_entries'

@@ -4,7 +4,12 @@
         {{#achievement_descriptions}}
         <dt class='{{class}}'>{{title}}</dt>
         <dd>{{{description_safe}}}</dd>
-        {{#summary}}<dd>{{summary}}</dd>{{/summary}}
+        {{#summary}}
+            <dd class='achievement_holder'>
+                <div class='achievement_bar' style='width: {{percent}}%'></div>
+                <div class='achievement_summary'>{{summary}}</div>
+            </dd>
+        {{/summary}}
         {{#detail}}<dd class='{{class}}'>🏆 {{detail}}</dd>{{/detail}}
         {{/achievement_descriptions}}
     </dl>

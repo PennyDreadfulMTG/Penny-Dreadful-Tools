@@ -89,7 +89,7 @@ class Achievement:
             cls.all_achievements.append(cls())
     def display(self, p: 'person.Person') -> str:  # pylint: disable=no-self-use, unused-argument
         return ''
-    # Note: load_summary must be overridden if in_db = False!
+    # Note: load_summary must be overridden if in_db=False!
     @retry_after_calling(preaggregate_achievements)
     def load_summary(self, season_id: Optional[int] = None) -> Optional[str]:
         season_condition = f'AND season_id = {season_id}' if season_id != 'all' else ''

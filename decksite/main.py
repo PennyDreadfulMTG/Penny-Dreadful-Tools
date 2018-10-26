@@ -88,7 +88,8 @@ def person(person_id):
     view = Person(p, person_cards, only_played_cards)
     return view.page()
 
-@APP.route('/person/achievements/')
+@APP.route('/achievements/')
+@SEASONS.route('/achievements/')
 def achievements():
     view = Achievements(auth.mtgo_username())
     return view.page()

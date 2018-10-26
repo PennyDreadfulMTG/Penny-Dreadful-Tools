@@ -89,7 +89,19 @@ class Achievement:
             cls.all_achievements.append(cls())
     def display(self, p: 'person.Person') -> str:  # pylint: disable=no-self-use, unused-argument
         return ''
-    def load_summary(self) -> Optional[str]: # pylint: disable=no-self-use
+    # Note: load_summary must be overridden if in_db=False!
+    @retry_after_calling(preaggregate_achievements)
+    def load_summary(self, season_id: Optional[int] = None) -> Optional[str]:
+        season_condition = f'AND season_id = {season_id}' if season_id != 'all' else ''
+        sql = f"""SELECT SUM(`{self.key}`) AS num, COUNT(DISTINCT person_id) AS pnum FROM _achievements WHERE `{self.key}` > 0 {season_condition}"""
+        print(sql)
+        for r in db().select(sql):
+            res = Container(r)
+            if res.num is None:
+                return 'Not earned by any players.'
+            times_text = ngettext(' once', f' %(num)d times', res.num) if res.num > res.pnum else ''
+            players_text = ngettext('1 player', f'%(num)d players', res.pnum)
+            return f'Earned{times_text} by {players_text}.'
         return None
 
 class CountedAchievement(Achievement):
@@ -100,13 +112,6 @@ class CountedAchievement(Achievement):
         if n > 0:
             return ngettext(f'1 {self.singular}', f'%(num)d {self.plural}', n)
         return ''
-    @retry_after_calling(preaggregate_achievements)
-    def load_summary(self) -> Optional[str]:
-        sql = f"""SELECT SUM(`{self.key}`) AS num, SUM(CASE WHEN `{self.key}` > 0 THEN 1 ELSE 0 END) AS pnum FROM _achievements"""
-        for r in db().select(sql):
-            res = Container(r)
-            return f'Earned {res.num} times by {res.pnum} players.'
-        return None
 
 class BooleanAchievement(Achievement):
     season_text = ''
@@ -120,16 +125,6 @@ class BooleanAchievement(Achievement):
                 return self.alltime_text(n)
             return self.season_text
         return ''
-    @retry_after_calling(preaggregate_achievements)
-    def load_summary(self) -> Optional[str]:
-        sql = f"""SELECT SUM(s) AS num, COUNT(s) AS pnum FROM
-                    (SELECT SUM(`{self.key}`) AS s FROM _achievements WHERE `{self.key}` > 0 GROUP BY person_id)
-                    AS _"""
-        for r in db().select(sql):
-            res = Container(r)
-            return f'Earned {res.num} times by {res.pnum} players.'
-        return None
-
 
 class TournamentOrganizer(Achievement):
     key = 'tournament_organizer'
@@ -142,8 +137,10 @@ class TournamentOrganizer(Achievement):
         if p.name in self.hosts:
             return 'Ran a tournament for the Penny Dreadful community'
         return ''
-    def load_summary(self) -> Optional[str]:
-        return f'Earned by {len(self.hosts)} players.'
+    def load_summary(self, season_id: Optional[int] = None) -> Optional[str]:
+        # We can't give per-season stats for this because they don't exist
+        clarification = ' (all-time)' if season_id != 'all' else ''
+        return f'Earned by {len(self.hosts)} players{clarification}.'
 
 class TournamentPlayer(CountedAchievement):
     key = 'tournament_entries'

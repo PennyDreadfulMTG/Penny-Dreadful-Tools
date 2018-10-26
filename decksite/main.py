@@ -94,6 +94,10 @@ def achievements():
     view = Achievements(auth.mtgo_username())
     return view.page()
 
+@APP.route('/person/achievements/')
+def achievements_redirect():
+    return redirect(url_for('achievements'))
+
 @APP.route('/cards/')
 @SEASONS.route('/cards/')
 @cached()

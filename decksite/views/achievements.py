@@ -20,6 +20,7 @@ class Achievements(View):
             else:
                 desc['detail'] = ''
             desc['class'] = 'earned' if desc['detail'] else 'unearned'
+            desc['percent'] = a.percent(season_id=get_season_id())
             self.achievement_descriptions.append(desc)
         self.show_seasons = True
     @staticmethod

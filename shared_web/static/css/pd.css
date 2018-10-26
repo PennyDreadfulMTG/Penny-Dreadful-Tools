@@ -124,14 +124,6 @@ main p, footer p {
     margin: 0 0 1em 0;
 }
 
-main li, main dt, main dd {
-    margin: 0 0 0.422em;
-}
-
-dt.earned:before {
-    content: ""
-}
-
 footer a {
     font-family: heading-caps;
     text-transform: lowercase;
@@ -143,6 +135,34 @@ footer a:hover {
     transition-duration: 1s;
 }
 
+/* Achivements */
+main li, main dt, main dd {
+    margin: 0 0 0.422em;
+}
+
+dt.earned:before {
+    content: ""
+}
+
+.achievement_holder {
+	position: relative;
+	padding: 1px;
+	overflow: hidden;
+}
+
+.achievement_bar {
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	bottom: 2px;
+	z-index: 10;
+	background: #eee;
+}
+
+.achievement_summary {
+	position: relative;
+	z-index: 40;
+}
 /* Fonts */
 
 @font-face {

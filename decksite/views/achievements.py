@@ -21,9 +21,16 @@ class Achievements(View):
                 desc['detail'] = ''
             desc['class'] = 'earned' if desc['detail'] else 'unearned'
             desc['percent'] = a.percent(season_id=get_season_id())
-            lb = a.leaderboard()
+            lb = a.leaderboard(season_id=get_season_id())
             if lb is not None:
                 desc['leaderboard'] = lb
+                pos = 1
+                for ix, entry in enumerate(lb):
+                    if ix > 0 and entry['points'] < last_entry['points']:
+                        pos = ix + 1
+                    entry['pos'] = pos
+                    entry['position'] = chr(9311 + pos)
+                    last_entry = entry
                 desc['has_leaderboard'] = True
                 desc['leaderboard_heading'] = a.leaderboard_heading()
             self.achievement_descriptions.append(desc)

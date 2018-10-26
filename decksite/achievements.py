@@ -14,6 +14,9 @@ from shared.decorators import retry_after_calling
 if TYPE_CHECKING:
     from decksite.data import person # pylint:disable=unused-import
 
+LEADERBOARD_TOP_N = 5
+LEADERBOARD_LIMIT = 12
+
 def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int]) -> str:
     # keys have been normalised earlier but could still be reserved words
     columns = ', '.join(f'SUM(`{a.key}`) as `{a.key}`' for a in Achievement.all_achievements if a.in_db)
@@ -110,13 +113,14 @@ class Achievement:
             return int(r['pnum'] or 0) * 100.0 / int(r['mnum'])
         except ZeroDivisionError:
             return 0
-    def leaderboard(self):
+    def leaderboard(self, season_id: Optional[int] = None):
+        season_condition = query.season_query(season_id)
         result = []
         # If I forget to reformat this before committing, sorry Tom!
-        sql = f'select p.mtgo_username as name, p.id as person_id, sum({self.key}) as num from person as p join _achievements on p.id = _achievements.person_id group by p.id having num >= (select min(s) from (select sum({self.key}) as s from _achievements group by person_id order by s desc limit 5) as _) order by num desc limit 20'
+        sql = f'select p.mtgo_username as name, p.id as person_id, sum({self.key}) as num from person as p join _achievements on p.id = _achievements.person_id where {season_condition} group by p.id having num >= (select min(s) from (select sum({self.key}) as s from _achievements where {season_condition} group by person_id having s > 0 order by s desc limit {LEADERBOARD_TOP_N}) as _) order by num desc limit {LEADERBOARD_LIMIT}'
         for row in [Container(r) for r in db().select(sql)]:
-            result.append({'position': 1, 'pos': 1, 'person': row.name, 'url': url_for('person', person_id=row.person_id), 'points': row.num})
-        return result
+            result.append({'person': row.name, 'url': url_for('person', person_id=row.person_id), 'points': row.num})
+        return result if len(result) > 0 else None
     def leaderboard_heading(self):
         return ''
 
@@ -143,6 +147,11 @@ class BooleanAchievement(Achievement):
                 return self.alltime_text(n)
             return self.season_text
         return ''
+    # No point showing a leaderboard for these on single-season page because no-one can have more than 1
+    def leaderboard(self, season_id: Optional[int] = None):
+        if season_id == 'all':
+            return super(BooleanAchievement, self).leaderboard(season_id=season_id)
+        return None
     def leaderboard_heading(self):
         return 'seasons'
 
@@ -165,7 +174,7 @@ class TournamentOrganizer(Achievement):
         sql = f"""SELECT COUNT(*) AS mnum FROM _achievements"""
         r = db().select(sql)[0]
         return len(self.hosts) * 100.0 / int(r['mnum'])
-    def leaderboard(self):
+    def leaderboard(self, season_id: Optional[int] = None):
         return None
 
 class TournamentPlayer(CountedAchievement):

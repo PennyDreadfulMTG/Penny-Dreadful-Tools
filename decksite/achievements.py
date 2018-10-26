@@ -103,7 +103,7 @@ class Achievement:
             return f'Earned{times_text} by {players_text}.'
         return None
     def percent(self, season_id: Optional[int] = None) -> float:
-        season_condition = f'season_id = {season_id}' if season_id != 'all' else ''
+        season_condition = query.season_query(season_id)
         sql = f"""SELECT SUM(CASE WHEN {self.key} > 0 THEN 1 ELSE 0 END) AS pnum, COUNT(*) AS mnum FROM _achievements WHERE {season_condition}"""
         r = db().select(sql)[0]
         try:

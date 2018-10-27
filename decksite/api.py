@@ -18,19 +18,14 @@ def deck_api(deck_id):
     blob = deck.load_deck(deck_id)
     return return_json(blob)
 
-@APP.route('/api/randomlegaldeck/')
+@APP.route('/api/randomlegaldeck')
 def random_deck_api():
     blob = deck.random_legal_deck()
-    return return_json(blob)
-
-@APP.route('/api/randomlegaldeckurl/')
-def random_deck_url_api():
-    d = deck.random_legal_deck()
-    if d is None:
-        result = {'url': None, 'error':True, 'message':'No legal decks could be found'}
+    if blob is None:
+        blob = {'error': True, 'msg': 'No legal decks could be found'}
     else:
-        result = {'url': url_for('deck', deck_id=id, _external=True)}
-    return return_json(result)
+        blob['url'] = url_for('deck', deck_id=blob['id'], _external=True)
+    return return_json(blob)
 
 @APP.route('/api/competitions/')
 def competitions_api():

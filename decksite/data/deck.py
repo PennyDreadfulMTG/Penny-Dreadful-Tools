@@ -1,5 +1,6 @@
 import hashlib
 import json
+import random
 import time
 from typing import Dict, List, Optional, Set
 
@@ -9,7 +10,7 @@ from decksite import deck_name
 from decksite.data import query
 from decksite.data.top import Top
 from decksite.database import db
-from magic import legality, mana, oracle
+from magic import legality, mana, oracle, rotation
 from magic.models import CardRef, Deck
 from shared import dtutil, guarantee, redis
 from shared.container import Container
@@ -599,3 +600,16 @@ def nwdl_join() -> str:
                     d.id
             ) AS dsum ON d.id = dsum.id
     """
+
+def random_legal_deck() -> Optional[Deck]:
+    sql = f"""SELECT MIN(id) AS min, MAX(id) AS max FROM deck WHERE
+                created_date > (SELECT start_date FROM season WHERE number = {rotation.current_season_num()})
+                AND reviewed=TRUE"""
+    r = Container(db().select(sql)[0])
+    if r.min is None or r.max is None: # no legal decks in the db, maybe we just rotated?
+        return None
+    for _ in range(10):
+        deck = load_deck(random.randrange(r.min, r.max+1))
+        if not deck.is_in_current_run() and not deck.banned:
+            return deck
+    return None

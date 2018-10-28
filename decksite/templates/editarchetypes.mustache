@@ -10,7 +10,7 @@
                     <th>Deck Name</th>
                     <th>Source</th>
                     <th>Current</th>
-                    <th>Confidence</th>
+                    <th>Similarity</th>
                     <th>Assign To</th>
             </thead>
             <tbody>
@@ -20,7 +20,7 @@
                         <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
                         <td><a href="{{source_url}}">{{source_name}}</a></td>
                         <td>{{archetype_name}}</td>
-                        <td>{{confidence}}</td>
+                        <td>{{similarity}}</td>
                         <td>
                             <input type="hidden" name="deck_id" value="{{id}}">
                             {{> archetypedropdown}}

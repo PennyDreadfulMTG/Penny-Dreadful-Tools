@@ -502,14 +502,13 @@ def load_conflicted_decks() -> List[Deck]:
         )"""
     return load_decks(where, order_by='d.decklist_hash')
 
-def load_confidence(decks: List[Deck]) -> None:
-    # Confidence scores for decks not in the queue get deleted by the hourly maintenance job, so just get all
-    sql = 'SELECT deck_id, score FROM confidence'
+def load_queue_similarity(decks: List[Deck]) -> None:
+    sql = 'SELECT deck_id, similarity FROM deck_cache WHERE reviewed = FALSE'
     conf = {}
     for row in (Container(r) for r in db().select(sql)):
-        conf[row.deck_id] = row.score
+        sim[row.deck_id] = row.similarity
     for deck in decks:
-        deck.confidence = '{0}%'.format(conf[deck.id]) if deck.id in conf else ''
+        deck.similarity = '{0}%'.format(sim[deck.id]) if deck.id in sim else ''
 
 # It makes the main query about 5x faster to do this as a separate query (which is trivial and done only once for all decks).
 def load_competitive_stats(decks: List[Deck]) -> None:

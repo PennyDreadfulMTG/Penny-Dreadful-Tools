@@ -3,8 +3,11 @@ from decksite.data import archetype, deck
 HOURLY = True
 
 def run() -> None:
-    decks = deck.load_decks('archetype_id is null')
+    decks = deck.load_decks('reviewed = FALSE')
     deck.calculate_similar_decks(decks)
     for d in decks:
-        if d.similar_decks:
-            archetype.assign(d.id, d.similar_decks[0].archetype_id, False)
+        for s in d.similar_decks:
+            if s.archetype_id is not None:
+                sim = int(100 * deck.similarity_score(d, s))
+                archetype.assign(d.id, s.archetype_id, False, sim)
+                break

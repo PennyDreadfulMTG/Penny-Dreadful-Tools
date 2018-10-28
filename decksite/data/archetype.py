@@ -121,9 +121,14 @@ def add(name: str, parent: int) -> None:
     sql += '({ancestor}, {descendant}, {depth})'.format(ancestor=archetype_id, descendant=archetype_id, depth=0)
     db().execute(sql)
 
-def assign(deck_id: int, archetype_id: int, reviewed: bool = True) -> None:
+def assign(deck_id: int, archetype_id: int, reviewed: bool = True, confidence: Optional[int] = None) -> None:
     and_clause = '' if reviewed else 'AND reviewed is FALSE'
     db().execute(f'UPDATE deck SET reviewed = %s, archetype_id = %s WHERE id = %s {and_clause}', [reviewed, archetype_id, deck_id])
+    if not reviewed and confidence is not None:
+        db().execute(f'INSERT INTO confidence VALUES (%s, %s) ON DUPLICATE KEY UPDATE score=%s', [deck_id, confidence, confidence])
+
+def clear_old_predictions() -> None:
+    db().execute('DELETE confidence FROM confidence LEFT JOIN deck ON confidence.deck_id = deck.id WHERE deck.reviewed = TRUE')
 
 def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retry: bool = False) -> List[Container]:
     sql = """

@@ -509,7 +509,7 @@ def load_confidence(decks: List[Deck]) -> None:
     for row in (Container(r) for r in db().select(sql)):
         conf[row.deck_id] = row.score
     for deck in decks:
-        deck.confidence = f"{conf[deck.id]}%" if deck.id in conf else ''
+        deck.confidence = f'{conf[deck.id]}%' if deck.id in conf else ''
 
 # It makes the main query about 5x faster to do this as a separate query (which is trivial and done only once for all decks).
 def load_competitive_stats(decks: List[Deck]) -> None:

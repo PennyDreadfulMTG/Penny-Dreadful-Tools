@@ -5,4 +5,4 @@ CREATE TABLE IF NOT EXISTS confidence (
 );
 
 -- Clear existing predictions so that we recalculate a confidence score for them
-UPDATE deck SET archetype_id=NULL WHERE reviewed=FALSE;
+UPDATE deck SET archetype_id = NULL WHERE reviewed = FALSE;

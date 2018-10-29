@@ -43,6 +43,7 @@ def preaggregate_achievements() -> None:
 def preaggregate_query() -> str:
     create_columns = ', '.join(f'`{a.key}` INT NOT NULL' for a in Achievement.all_achievements if a.in_db)
     select_columns = ', '.join(f'{a.sql} as `{a.key}`' for a in Achievement.all_achievements if a.in_db)
+    with_clauses = ', '.join(a.with_sql for a in Achievement.all_achievements if a.with_sql is not None)
     return """
         CREATE TABLE IF NOT EXISTS _new_achievements (
             person_id INT NOT NULL,
@@ -52,6 +53,8 @@ def preaggregate_query() -> str:
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
             FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+        WITH
+        {with_clauses}
         SELECT
             p.id AS person_id,
             season.id AS season_id,
@@ -69,7 +72,7 @@ def preaggregate_query() -> str:
             season.id
         HAVING
             season.id IS NOT NULL
-    """.format(cc=create_columns, sc=select_columns, season_join=query.season_join(), competition_join=query.competition_join())
+    """.format(cc=create_columns, sc=select_columns, with_clauses=with_clauses, season_join=query.season_join(), competition_join=query.competition_join())
 
 def displayed_achievements(p: 'person.Person') -> List[Dict[str, str]]:
     return [d for d in ({'title': a.title, 'detail': a.display(p)} for a in Achievement.all_achievements) if d['detail']]
@@ -80,6 +83,7 @@ class Achievement:
     all_achievements: List['Achievement'] = []
     key: Optional[str] = None
     sql: Optional[str] = None
+    with_sql: Optional[str] = None
     in_db = True
     title = ''
     description_safe = ''
@@ -105,6 +109,7 @@ class Achievement:
             players_text = ngettext('1 player', f'%(num)d players', res.pnum)
             return f'Earned{times_text} by {players_text}.'
         return None
+    @retry_after_calling(preaggregate_achievements)
     def percent(self, season_id: Optional[int] = None) -> float:
         season_condition = query.season_query(season_id)
         sql = f"""SELECT SUM(CASE WHEN {self.key} > 0 THEN 1 ELSE 0 END) AS pnum, COUNT(*) AS mnum FROM _achievements WHERE {season_condition}"""
@@ -207,6 +212,7 @@ class TournamentOrganizer(Achievement):
         # We can't give per-season stats for this because they don't exist
         clarification = ' (all-time)' if season_id != 'all' else ''
         return f'Earned by {len(self.hosts)} players{clarification}.'
+    @retry_after_calling(preaggregate_achievements)
     def percent(self, season_id: Optional[int] = None) -> float: # pylint: disable=unused-argument
         sql = f"""SELECT COUNT(*) AS mnum FROM _achievements"""
         r = db().select(sql)[0]
@@ -329,6 +335,26 @@ class PerfectRunCrusher(CountedAchievement):
                             SUM(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN 1 ELSE 0 END) = 1
                     )
                 THEN 1 ELSE 0 END)""".format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
+
+class Deckbuilder(CountedAchievement):
+    key = 'deckbuilder'
+    title = 'Deck Builder'
+    description_safe = 'Have someone else register an exact copy of a deck you registered first.'
+    def leaderboard_heading(self):
+        return gettext('decks played by others')
+    def localised_display(self, n):
+        return ngettext('1 deck played by others', '%(num)d decks played by others', n)
+    sql = 'COUNT(DISTINCT CASE WHEN d.id IN (SELECT original FROM repeats WHERE newplayer = TRUE) AND d.id NOT IN (SELECT copy FROM repeats) THEN d.id ELSE NULL END)'
+    with_sql = """repeats AS
+                    (
+                        SELECT
+                            d1.id AS original, d2.id AS copy, d1.person_id != d2.person_id AS newplayer
+                        FROM
+                            deck AS d1
+                        JOIN
+                            deck AS d2
+                        ON d1.decklist_hash = d2.decklist_hash AND d1.created_date < d2.created_date
+                    )"""
 
 class Pioneer(CountedAchievement):
     key = 'pioneer'

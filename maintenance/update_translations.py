@@ -28,9 +28,7 @@ def run():
             if os.path.exists(pofile):
                 os.remove(pofile)
             client.export(project_id='162959', language_code=locale['code'],
-                          local_file=pofile, filters='not_fuzzy')
-                          # Filers should be ['translated', 'not_fuzzy'].
-                          # Blocked by https://github.com/sporteasy/python-poeditor/pull/10
+                          local_file=pofile, filters=['translated', 'not_fuzzy'])
 
     # Compile .po files into .mo files
     validate_translations.ad_hoc()

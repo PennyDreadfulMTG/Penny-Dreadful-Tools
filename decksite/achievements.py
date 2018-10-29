@@ -2,7 +2,7 @@ import re
 from typing import TYPE_CHECKING, Dict, List, Optional
 
 from flask import url_for
-from flask_babel import ngettext
+from flask_babel import gettext, ngettext
 
 import decksite
 from decksite.data import query
@@ -113,7 +113,7 @@ class Achievement:
             return int(r['pnum'] or 0) * 100.0 / int(r['mnum'])
         except ZeroDivisionError:
             return 0
-    def leaderboard(self, season_id: Optional[int] = None):
+    def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Dict]]:
         season_condition = query.season_query(season_id)
         result = []
         sql = f"""SELECT
@@ -150,7 +150,7 @@ class Achievement:
                                         LIMIT
                                             {LEADERBOARD_TOP_N}
                                     ) AS _
-                            ) 
+                            )
                     ORDER BY
                         num DESC
                     LIMIT {LEADERBOARD_LIMIT}"""
@@ -161,15 +161,16 @@ class Achievement:
         return ''
 
 class CountedAchievement(Achievement):
-    singular = ''
-    plural = ''
     def display(self, p: 'person.Person') -> str:
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
-            return ngettext(f'1 {self.singular}', f'%(num)d {self.plural}', n)
+            return self.localised_display(n)
         return ''
     def leaderboard_heading(self):
-        return self.plural
+        raise NotImplementedError()
+    def localised_display(self, n: int) -> str:
+        """calls and returns ngettext"""
+        raise NotImplementedError()
 
 class BooleanAchievement(Achievement):
     season_text = ''
@@ -184,7 +185,7 @@ class BooleanAchievement(Achievement):
             return self.season_text
         return ''
     # No point showing a leaderboard for these on single-season page because no-one can have more than 1
-    def leaderboard(self, season_id: Optional[int] = None):
+    def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Dict]]:
         if season_id == 'all':
             return super(BooleanAchievement, self).leaderboard(season_id=season_id)
         return None
@@ -210,51 +211,61 @@ class TournamentOrganizer(Achievement):
         sql = f"""SELECT COUNT(*) AS mnum FROM _achievements"""
         r = db().select(sql)[0]
         return len(self.hosts) * 100.0 / int(r['mnum'])
-    def leaderboard(self, season_id: Optional[int] = None):
+    def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Dict]]:
         return None
 
 class TournamentPlayer(CountedAchievement):
     key = 'tournament_entries'
     title = 'Tournament Player'
-    singular = 'tournament entered'
-    plural = 'tournaments entered'
     @property
     def description_safe(self):
         return 'Play in an official Penny Dreadful tournament on <a href="https://gatherling.com/">gatherling.com</a>'
     sql = "COUNT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
+    def leaderboard_heading(self):
+        return gettext('tournaments entered')
+    def localised_display(self, n):
+        return ngettext('1 tournament entered', '%(num)d tournaments entered', n)
 
 class TournamentWinner(CountedAchievement):
     key = 'tournament_wins'
     title = 'Tournament Winner'
-    singular = 'victory'
-    plural = 'victories'
     description_safe = 'Win a tournament.'
     sql = "COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
+    def leaderboard_heading(self):
+        return gettext('victories')
+    def localised_display(self, n):
+        return ngettext('1 victory', '%(num)d victories', n)
 
 class LeaguePlayer(CountedAchievement):
     key = 'league_entries'
     title = 'League Player'
-    singular = 'league entry'
-    plural = 'league entries'
     @property
     def description_safe(self):
         return f'Play in the <a href="{url_for("signup")}">league</a>.'
     sql = "COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END)"
+    def leaderboard_heading(self):
+        return gettext('league entries')
+    def localised_display(self, n):
+        return ngettext('1 league entry', '%(num)d league entries', n)
 
 class PerfectRun(CountedAchievement):
     key = 'perfect_runs'
     title = 'Perfect League Run'
-    singular = 'perfect run'
-    plural = 'perfect runs'
     description_safe = 'Complete a 5–0 run in the league.'
     sql = "SUM(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses = 0 THEN 1 ELSE 0 END)"
+    def leaderboard_heading(self):
+        return gettext('perfect runs')
+    def localised_display(self, n):
+        return ngettext('1 perfect run', '%(num)d perfect runs', n)
 
 class FlawlessRun(CountedAchievement):
     key = 'flawless_runs'
     title = 'Flawless League Run'
-    singular = 'flawless run'
-    plural = 'flawless runs'
     description_safe = 'Complete a 5–0 run in the league without losing a game.'
+    def leaderboard_heading(self):
+        return gettext('flawless runs')
+    def localised_display(self, n):
+        return ngettext('1 flawless run', '%(num)d flawless runs', n)
     @property
     def sql(self):
         return """SUM(CASE WHEN ct.name = 'League' AND d.id IN
@@ -280,12 +291,15 @@ class FlawlessRun(CountedAchievement):
                     )
                 THEN 1 ELSE 0 END)""".format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
+
 class PerfectRunCrusher(CountedAchievement):
     key = 'perfect_run_crushes'
     title = 'Perfect Run Crusher'
-    singular = 'dream in tatters'
-    plural = 'dreams in tatters'
     description_safe = "Beat a player that's 4–0 in the league."
+    def leaderboard_heading(self):
+        return gettext('dreams in tatters')
+    def localised_display(self, n):
+        return ngettext('1 dream in tatters', '%(num)d dreams in tatters', n)
     @property
     def sql(self):
         return """SUM(CASE WHEN d.id IN
@@ -319,9 +333,11 @@ class PerfectRunCrusher(CountedAchievement):
 class Pioneer(CountedAchievement):
     key = 'pioneer'
     title = 'Pioneer'
-    singular = 'archetype pioneered'
-    plural = 'archetypes pioneered'
     description_safe = 'Have one of your decks recognised as the first of a new archetype.'
+    def leaderboard_heading(self):
+        return gettext('archetypes pioneered')
+    def localised_display(self, n):
+        return ngettext('1 archetype pioneered', '%(num)d archetypes pioneered', n)
     sql = """SUM(CASE WHEN d.id in
                 (
                     SELECT
@@ -343,7 +359,7 @@ class Specialist(BooleanAchievement):
     season_text = 'Reached the elimination rounds of a tournament playing the same archetypes three times this season'
     @staticmethod
     def alltime_text(n):
-        what = ngettext('1 season', f'{n} different seasons', n)
+        what = ngettext('1 season', '%(num)d different seasons', n)
         return f'Reached the elimination rounds of a tournament playing the same archetype three times in {what}'
     description_safe = 'Reach the elimination rounds of a tournament playing the same archetype three times in a single season.'
     sql = """CASE WHEN EXISTS
@@ -380,7 +396,7 @@ class Generalist(BooleanAchievement):
     season_text = 'Reached the elimination rounds of a tournament playing three different archetypes this season'
     @staticmethod
     def alltime_text(n):
-        what = ngettext('1 season', f'{n} different seasons', n)
+        what = ngettext('1 season', '%(num)d different seasons', n)
         return f'Reached the elimination rounds of a tournament playing three different archetypes in {what}'
     description_safe = 'Reach the elimination rounds of a tournament playing three different archetypes in a single season.'
     sql = "CASE WHEN COUNT(DISTINCT CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END"
@@ -391,7 +407,7 @@ class Completionist(BooleanAchievement):
     season_text = 'Never retired a league run this season'
     @staticmethod
     def alltime_text(n):
-        what = ngettext('1 season', f'{n} different seasons', n)
+        what = ngettext('1 season', '%(num)d different seasons', n)
         return f'Played in {what} without retiring a league run'
     description_safe = 'Play the whole season without retiring an unfinished league run.'
     sql = 'CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END'

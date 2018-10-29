@@ -2,7 +2,7 @@ import re
 from typing import TYPE_CHECKING, Dict, List, Optional
 
 from flask import url_for
-from flask_babel import ngettext, gettext
+from flask_babel import gettext, ngettext
 
 import decksite
 from decksite.data import query
@@ -113,7 +113,7 @@ class Achievement:
             return int(r['pnum'] or 0) * 100.0 / int(r['mnum'])
         except ZeroDivisionError:
             return 0
-    def leaderboard(self, season_id: Optional[int] = None):
+    def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Dict]]:
         season_condition = query.season_query(season_id)
         result = []
         sql = f"""SELECT
@@ -185,7 +185,7 @@ class BooleanAchievement(Achievement):
             return self.season_text
         return ''
     # No point showing a leaderboard for these on single-season page because no-one can have more than 1
-    def leaderboard(self, season_id: Optional[int] = None):
+    def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Dict]]:
         if season_id == 'all':
             return super(BooleanAchievement, self).leaderboard(season_id=season_id)
         return None
@@ -211,7 +211,7 @@ class TournamentOrganizer(Achievement):
         sql = f"""SELECT COUNT(*) AS mnum FROM _achievements"""
         r = db().select(sql)[0]
         return len(self.hosts) * 100.0 / int(r['mnum'])
-    def leaderboard(self, season_id: Optional[int] = None):
+    def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Dict]]:
         return None
 
 class TournamentPlayer(CountedAchievement):

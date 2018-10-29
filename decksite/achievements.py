@@ -109,6 +109,7 @@ class Achievement:
             players_text = ngettext('1 player', f'%(num)d players', res.pnum)
             return f'Earned{times_text} by {players_text}.'
         return None
+    @retry_after_calling(preaggregate_achievements)
     def percent(self, season_id: Optional[int] = None) -> float:
         season_condition = query.season_query(season_id)
         sql = f"""SELECT SUM(CASE WHEN {self.key} > 0 THEN 1 ELSE 0 END) AS pnum, COUNT(*) AS mnum FROM _achievements WHERE {season_condition}"""
@@ -210,6 +211,7 @@ class TournamentOrganizer(Achievement):
         # We can't give per-season stats for this because they don't exist
         clarification = ' (all-time)' if season_id != 'all' else ''
         return f'Earned by {len(self.hosts)} players{clarification}.'
+    @retry_after_calling(preaggregate_achievements)
     def percent(self, season_id: Optional[int] = None) -> float: # pylint: disable=unused-argument
         sql = f"""SELECT COUNT(*) AS mnum FROM _achievements"""
         r = db().select(sql)[0]
@@ -326,16 +328,16 @@ class Deckbuilder(CountedAchievement):
     singular = 'deck played by others'
     plural = 'decks played by others'
     description_safe = 'Have someone else register an exact copy of a deck you registered first.'
-    sql = 'COUNT(DISTINCT CASE WHEN d.id IN (SELECT original FROM netdecks) AND d.id NOT IN (SELECT copy FROM netdecks) THEN d.id ELSE NULL END)'
-    with_sql = """netdecks AS
+    sql = 'COUNT(DISTINCT CASE WHEN d.id IN (SELECT original FROM repeats WHERE newplayer = TRUE) AND d.id NOT IN (SELECT copy FROM repeats) THEN d.id ELSE NULL END)'
+    with_sql = """repeats AS
                     (
                         SELECT
-                            d1.id AS original, d2.id AS copy
+                            d1.id AS original, d2.id AS copy, d1.person_id != d2.person_id AS newplayer
                         FROM
                             deck AS d1
                         JOIN
                             deck AS d2
-                        ON d1.decklist_hash = d2.decklist_hash AND d1.created_date < d2.created_date AND d1.person_id != d2.person_id
+                        ON d1.decklist_hash = d2.decklist_hash AND d1.created_date < d2.created_date
                     )"""
 
 class Pioneer(CountedAchievement):

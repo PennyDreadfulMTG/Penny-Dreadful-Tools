@@ -18,6 +18,15 @@ def deck_api(deck_id):
     blob = deck.load_deck(deck_id)
     return return_json(blob)
 
+@APP.route('/api/randomlegaldeck')
+def random_deck_api():
+    blob = deck.random_legal_deck()
+    if blob is None:
+        blob = {'error': True, 'msg': 'No legal decks could be found'}
+    else:
+        blob['url'] = url_for('deck', deck_id=blob['id'], _external=True)
+    return return_json(blob)
+
 @APP.route('/api/competitions/')
 def competitions_api():
     # Don't send competitions with any decks that do not have their correct archetype to third parties otherwise they

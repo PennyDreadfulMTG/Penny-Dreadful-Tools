@@ -14,6 +14,9 @@ from shared.decorators import retry_after_calling
 if TYPE_CHECKING:
     from decksite.data import person # pylint:disable=unused-import
 
+LEADERBOARD_TOP_N = 5
+LEADERBOARD_LIMIT = 12
+
 def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int]) -> str:
     # keys have been normalised earlier but could still be reserved words
     columns = ', '.join(f'SUM(`{a.key}`) as `{a.key}`' for a in Achievement.all_achievements if a.in_db)
@@ -92,8 +95,8 @@ class Achievement:
     # Note: load_summary must be overridden if in_db=False!
     @retry_after_calling(preaggregate_achievements)
     def load_summary(self, season_id: Optional[int] = None) -> Optional[str]:
-        season_condition = f'AND season_id = {season_id}' if season_id != 'all' else ''
-        sql = f"""SELECT SUM(`{self.key}`) AS num, COUNT(DISTINCT person_id) AS pnum FROM _achievements WHERE `{self.key}` > 0 {season_condition}"""
+        season_condition = query.season_query(season_id)
+        sql = f"""SELECT SUM(`{self.key}`) AS num, COUNT(DISTINCT person_id) AS pnum FROM _achievements WHERE `{self.key}` > 0 AND {season_condition}"""
         for r in db().select(sql):
             res = Container(r)
             if res.num is None:
@@ -103,13 +106,59 @@ class Achievement:
             return f'Earned{times_text} by {players_text}.'
         return None
     def percent(self, season_id: Optional[int] = None) -> float:
-        season_condition = f'season_id = {season_id}' if season_id != 'all' else ''
+        season_condition = query.season_query(season_id)
         sql = f"""SELECT SUM(CASE WHEN {self.key} > 0 THEN 1 ELSE 0 END) AS pnum, COUNT(*) AS mnum FROM _achievements WHERE {season_condition}"""
         r = db().select(sql)[0]
         try:
             return int(r['pnum'] or 0) * 100.0 / int(r['mnum'])
         except ZeroDivisionError:
             return 0
+    def leaderboard(self, season_id: Optional[int] = None):
+        season_condition = query.season_query(season_id)
+        result = []
+        sql = f"""SELECT
+                        p.mtgo_username AS name, p.id AS person_id, SUM({self.key}) AS num
+                    FROM
+                        person AS p
+                    JOIN
+                        _achievements
+                    ON
+                        p.id = _achievements.person_id
+                    WHERE
+                        {season_condition}
+                    GROUP BY
+                        p.id
+                    HAVING
+                        num >=
+                            (   -- Work out the minimum score to make top N, counting ties
+                                SELECT
+                                    MIN(s)
+                                FROM
+                                    (
+                                        SELECT
+                                            SUM({self.key}) AS s
+                                        FROM
+                                            _achievements
+                                        WHERE
+                                            {season_condition}
+                                        GROUP BY
+                                            person_id
+                                        HAVING
+                                            s > 0
+                                        ORDER BY
+                                            s DESC
+                                        LIMIT
+                                            {LEADERBOARD_TOP_N}
+                                    ) AS _
+                            ) 
+                    ORDER BY
+                        num DESC
+                    LIMIT {LEADERBOARD_LIMIT}"""
+        for row in [Container(r) for r in db().select(sql)]:
+            result.append({'person': row.name, 'points': row.num, 'url': url_for('person', person_id=row.person_id)})
+        return result if len(result) > 0 else None
+    def leaderboard_heading(self): # pylint: disable=no-self-use
+        return ''
 
 class CountedAchievement(Achievement):
     def display(self, p: 'person.Person') -> str:
@@ -117,6 +166,8 @@ class CountedAchievement(Achievement):
         if n > 0:
             return self.localised_display(n)
         return ''
+    def leaderboard_heading(self):
+        return self.plural
     def localised_display(self, n: int) -> str:
         """calls and returns ngettext"""
         raise NotImplementedError()
@@ -133,6 +184,13 @@ class BooleanAchievement(Achievement):
                 return self.alltime_text(n)
             return self.season_text
         return ''
+    # No point showing a leaderboard for these on single-season page because no-one can have more than 1
+    def leaderboard(self, season_id: Optional[int] = None):
+        if season_id == 'all':
+            return super(BooleanAchievement, self).leaderboard(season_id=season_id)
+        return None
+    def leaderboard_heading(self):
+        return 'seasons'
 
 class TournamentOrganizer(Achievement):
     key = 'tournament_organizer'
@@ -153,6 +211,8 @@ class TournamentOrganizer(Achievement):
         sql = f"""SELECT COUNT(*) AS mnum FROM _achievements"""
         r = db().select(sql)[0]
         return len(self.hosts) * 100.0 / int(r['mnum'])
+    def leaderboard(self, season_id: Optional[int] = None):
+        return None
 
 class TournamentPlayer(CountedAchievement):
     key = 'tournament_entries'

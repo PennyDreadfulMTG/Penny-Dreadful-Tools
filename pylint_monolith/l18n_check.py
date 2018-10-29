@@ -2,10 +2,8 @@
 # From https://github.com/edx/edx-lint/blob/master/edx_lint/pylint/common.py
 # This file is licenced Apache 2.0
 
-import six
-
 import astroid
-
+import six
 from pylint.checkers import BaseChecker, utils
 from pylint.interfaces import IAstroidChecker
 

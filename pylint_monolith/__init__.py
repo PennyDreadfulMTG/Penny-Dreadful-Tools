@@ -1,5 +1,6 @@
-from .monolith_checker import MonolithChecker
 from .l18n_check import TranslationStringConstantsChecker
+from .monolith_checker import MonolithChecker
+
 
 def register(linter):
     """Required method to auto register this checker.

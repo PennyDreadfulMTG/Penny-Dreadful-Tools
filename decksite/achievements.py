@@ -339,9 +339,11 @@ class PerfectRunCrusher(CountedAchievement):
 class Deckbuilder(CountedAchievement):
     key = 'deckbuilder'
     title = 'Deck Builder'
-    singular = 'deck played by others'
-    plural = 'decks played by others'
     description_safe = 'Have someone else register an exact copy of a deck you registered first.'
+    def leaderboard_heading(self):
+        return gettext('decks played by others')
+    def localised_display(self, n):
+        return ngettext('1 deck played by others', '%(num)d decks played by others', n)
     sql = 'COUNT(DISTINCT CASE WHEN d.id IN (SELECT original FROM repeats WHERE newplayer = TRUE) AND d.id NOT IN (SELECT copy FROM repeats) THEN d.id ELSE NULL END)'
     with_sql = """repeats AS
                     (

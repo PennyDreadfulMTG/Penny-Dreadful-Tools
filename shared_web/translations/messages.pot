@@ -9,157 +9,228 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-05-15 23:38+1000\n"
+"POT-Creation-Date: 2018-10-29 16:09+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.5.3\n"
+"Generated-By: Babel 2.6.0\n"
 
-#: decksite/__init__.py:51
+#: decksite/__init__.py:46
 msgid "Rotation Tracking"
 msgstr ""
 
-#: decksite/__init__.py:53
+#: decksite/__init__.py:48
 msgid "Rotation Changes"
 msgstr ""
 
-#: decksite/__init__.py:54
+#: decksite/__init__.py:49
 msgid "Rotation Speculation"
 msgstr ""
 
-#: decksite/__init__.py:55
+#: decksite/__init__.py:50
 msgid "Deck Check"
 msgstr ""
 
-#: decksite/__init__.py:56
+#: decksite/__init__.py:51
 msgid "Discord Chat"
 msgstr ""
 
-#: decksite/__init__.py:57
+#: decksite/__init__.py:52
 msgid "External Links"
 msgstr ""
 
-#: decksite/__init__.py:58 decksite/views/link_accounts.py:36
+#: decksite/__init__.py:53 decksite/views/link_accounts.py:36
 msgid "Link Accounts"
 msgstr ""
 
-#: decksite/__init__.py:59
+#: decksite/__init__.py:54
 msgid "Bugs"
 msgstr ""
 
-#: decksite/__init__.py:62
+#: decksite/__init__.py:57
 msgid "Metagame"
 msgstr ""
 
-#: decksite/__init__.py:63 decksite/templates/home.mustache:1
+#: decksite/__init__.py:58 decksite/templates/home.mustache:1
 msgid "Latest Decks"
 msgstr ""
 
-#: decksite/__init__.py:64
+#: decksite/__init__.py:59
 msgid "Archetypes"
 msgstr ""
 
-#: decksite/__init__.py:65
+#: decksite/__init__.py:60
 msgid "People"
 msgstr ""
 
-#: decksite/__init__.py:66
+#: decksite/__init__.py:61
 msgid "Cards"
 msgstr ""
 
-#: decksite/__init__.py:67
+#: decksite/__init__.py:62
 msgid "Past Seasons"
 msgstr ""
 
-#: decksite/__init__.py:69 decksite/templates/tournaments.mustache:1
+#: decksite/__init__.py:64 decksite/templates/tournaments.mustache:1
 msgid "League"
 msgstr ""
 
-#: decksite/__init__.py:70 decksite/templates/league_header.mustache:1
+#: decksite/__init__.py:65
 msgid "League Info"
 msgstr ""
 
-#: decksite/__init__.py:71 decksite/templates/faqsbody.mustache:1
-#: decksite/views/signup.py:31
+#: decksite/__init__.py:66 decksite/templates/faqsbody.mustache:1
+#: decksite/views/signup.py:27
 msgid "Sign Up"
 msgstr ""
 
-#: decksite/__init__.py:72 decksite/views/report.py:19
+#: decksite/__init__.py:67 decksite/views/report.py:22
 msgid "Report"
 msgstr ""
 
-#: decksite/__init__.py:73 decksite/templates/leagueinfo.mustache:1
+#: decksite/__init__.py:68 decksite/templates/leagueinfo.mustache:1
 msgid "Records"
 msgstr ""
 
-#: decksite/__init__.py:74 decksite/templates/leagueinfo.mustache:1
+#: decksite/__init__.py:69 decksite/templates/leagueinfo.mustache:1
 msgid "Retire"
 msgstr ""
 
-#: decksite/__init__.py:76
+#: decksite/__init__.py:71
 msgid "Competitions"
 msgstr ""
 
-#: decksite/__init__.py:77
+#: decksite/__init__.py:72
 msgid "Competition Results"
 msgstr ""
 
-#: decksite/__init__.py:78
+#: decksite/__init__.py:73
 msgid "Tournament Info"
 msgstr ""
 
-#: decksite/__init__.py:79
+#: decksite/__init__.py:74
 msgid "Leaderboards"
 msgstr ""
 
-#: decksite/__init__.py:80
+#: decksite/__init__.py:75
 msgid "Gatherling"
 msgstr ""
 
-#: decksite/__init__.py:81
+#: decksite/__init__.py:76
 msgid "Hosting"
 msgstr ""
 
-#: decksite/__init__.py:83
+#: decksite/__init__.py:78
 msgid "Resources"
 msgstr ""
 
-#: decksite/__init__.py:84 decksite/views/about_pdm.py:16
+#: decksite/__init__.py:79 decksite/views/about_pdm.py:16
 #: logsite/views/about.py:16
 msgid "About"
 msgstr ""
 
-#: decksite/__init__.py:85
+#: decksite/__init__.py:80
 msgid "What is Penny Dreadful?"
 msgstr ""
 
-#: decksite/__init__.py:86
+#: decksite/__init__.py:81
 msgid "About pennydreadfulmagic.com"
 msgstr ""
 
-#: decksite/__init__.py:87
+#: decksite/__init__.py:82
 msgid "FAQs"
 msgstr ""
 
-#: decksite/__init__.py:88
+#: decksite/__init__.py:83
 msgid "Community Guidelines"
 msgstr ""
 
-#: decksite/__init__.py:90
+#: decksite/__init__.py:85
 msgid "Admin"
 msgstr ""
 
-#: decksite/view.py:145
+#: decksite/achievements.py:101
+#, python-format
+msgid " once"
+msgid_plural " %(num)d times"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/achievements.py:102
+#, python-format
+msgid "1 player"
+msgid_plural "%(num)d players"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/achievements.py:165
+#, python-format
+msgid "1 tournament entered"
+msgid_plural "%(num)d tournaments entered"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/achievements.py:173
+#, python-format
+msgid "1 victory"
+msgid_plural "%(num)d victories"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/achievements.py:183
+#, python-format
+msgid "1 league entry"
+msgid_plural "%(num)d league entries"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/achievements.py:191
+#, python-format
+msgid "1 perfect run"
+msgid_plural "%(num)d perfect runs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/achievements.py:198
+#, python-format
+msgid "1 flawless run"
+msgid_plural "%(num)d flawless runs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/achievements.py:230
+#, python-format
+msgid "1 dream in tatters"
+msgid_plural "%(num)d dreams in tatters"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/achievements.py:266
+#, python-format
+msgid "1 archetype pioneered"
+msgid_plural "%(num)d archetypes pioneered"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/achievements.py:288 decksite/achievements.py:325
+#: decksite/achievements.py:336
+#, python-format
+msgid "1 season"
+msgid_plural "%(num)d different seasons"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/view.py:157
 #, python-format
 msgid "%(num)d active league run"
 msgid_plural "%(num)d active league runs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/view.py:314 logsite/templates/about.mustache:1
+#: decksite/view.py:320 logsite/templates/about.mustache:1
 msgid "Help us translate the site into your language"
 msgstr ""
 
@@ -185,6 +256,109 @@ msgstr ""
 
 #: decksite/templates/aboutpdm.mustache:1 logsite/templates/about.mustache:1
 msgid "This site is currently translated into:"
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid "Magic Online Bugs"
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid ""
+"We allow the playing of cards with known bugs in Penny Dreadful with "
+"specific conditions."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid "The important rules are:"
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid ""
+"Do not play cards with game-breaking bugs (exception: cards that are only"
+" bugged in multiplayer games)."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid ""
+"Gaining advantage from a bug unintentionally will result in a game loss. "
+"The player with the bugged card should concede the game and begin the "
+"next one (if any)."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid ""
+"Gaining advantage from a bug intentionally will result in "
+"disqualification."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid "The Tournament Organizer's decision is final."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid ""
+"**Example of Game Loss**: Playing Living Lore with two cards in graveyard"
+" and opponent removes one at instant speed with a card from their hand "
+"forcing the Living Lore player to imprint a split card."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid ""
+"**Second example of Game Loss**: Playing Profane Command using the mode "
+"that targets an opponent. Opponent plays Gilded Light in response."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid ""
+"**Example of Disqualification**: Playing Living Lore and intentionally "
+"choosing a split card from a stocked graveyard to get an oversized Living"
+" Lore."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid ""
+"In the case where a bugged interaction only becomes known to a player "
+"during a competitive match, at the Tournament Organizer's discretion, a "
+"game loss or match loss may be imposed rather than a disqualification."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid ""
+"The game loss should be enacted by the bugged cards controller conceding "
+"the game."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid ""
+"Any confusion should be discussed with the Tournament Organizer before "
+"conceding the game or ending the match, on the bugged card player's "
+"clock."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid ""
+"When a new bug is encountered for the first time (does not appear at "
+"[pennydreadfulmagic.com/bugs]({bugs_url})) during a competitive match "
+"both players may agree to play on."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid ""
+"If either player does not agree the owner of the bugged cards must swap "
+"out the bugged cards (only) from their decklist, restart the match, "
+"players concede games in the correct order until the record matches the "
+"record before the bugged game. Sideboarding then takes place if it was "
+"not game 1 and the rest of the match plays out."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid ""
+"For all these matters the Tournament Organizer has the flexibility to "
+"rule as they see fit and their decision is final."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid "List of all known bugged cards"
 msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1
@@ -239,8 +413,8 @@ msgstr ""
 #: decksite/templates/faqsbody.mustache:1
 msgid ""
 "To get a match in Magic Online go to Constructed Open Play, Just for Fun "
-"on MTGO and create a Freeform game with \"Penny Dreadful\" in the "
-"comments."
+"on Magic Online and create a Freeform game with \"Penny Dreadful\" in the"
+" comments."
 msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1
@@ -343,23 +517,7 @@ msgid "Top Cards"
 msgstr ""
 
 #: decksite/templates/home.mustache:1
-msgid "This Season"
-msgstr ""
-
-#: decksite/templates/home.mustache:1
 msgid "More cards…"
-msgstr ""
-
-#: decksite/templates/home.mustache:1
-msgid "This Week"
-msgstr ""
-
-#: decksite/templates/home.mustache:1
-msgid "Fastest Rising"
-msgstr ""
-
-#: decksite/templates/league_header.mustache:1
-msgid "League Results"
 msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
@@ -383,7 +541,8 @@ msgstr ""
 #: decksite/templates/leagueinfo.mustache:1
 msgid ""
 "When you complete a five match league run for the first time ever you "
-"will get 1 tik credit with MTGO Traders (at the end of the month)."
+"will get 1 tik credit with MTGO Traders (at the end of the month). This "
+"credit will appear when you trade with one of their bots on Magic Online."
 msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
@@ -402,9 +561,9 @@ msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
 msgid ""
-"If you don't want to finish a league run message <code>!retire</code> to "
-"PDBot on Magic Online or [retire]({retire_url}) via the website and your "
-"run will end."
+"If you don't want to finish a league run message `!retire` to PDBot on "
+"Magic Online or [retire]({retire_url}) via the website and your run will "
+"end."
 msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
@@ -436,13 +595,15 @@ msgid ""
 msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
+#: decksite/templates/tournaments.mustache:1
 msgid "Prizes"
 msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
 msgid ""
-"At the end of each month, the top eight players of that month’s league "
-"scoreboard will get credit with MTGO Traders (6/4/3/2/1/1/1/1)."
+"At the end of each month, the top eight players of that month's league "
+"scoreboard will get credit with MTGO Traders (6/4/3/2/1/1/1/1). This "
+"credit will appear when you trade with one of their bots on Magic Online."
 msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
@@ -474,6 +635,7 @@ msgid ""
 msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
+#: decksite/templates/tournaments.mustache:1
 msgid "Matches should use 25 minute timers."
 msgstr ""
 
@@ -486,7 +648,7 @@ msgid "Report Results"
 msgstr ""
 
 #: decksite/templates/retire.mustache:1
-msgid "Not your deck?"
+msgid "Not you?"
 msgstr ""
 
 #: decksite/templates/retire.mustache:1
@@ -506,75 +668,131 @@ msgid "Tournaments"
 msgstr ""
 
 #: decksite/templates/tournaments.mustache:1
-msgid "Magic Online Bugs"
+msgid ""
+"There are {num_tournaments} weekly Penny Dreadful tournaments hosted on "
+"[Gatherling.com](https://gatherling.com). They are all free to enter and "
+"some offer prizes from [Cardhoarder](https://www.cardhoarder.com/). Be "
+"sure to also check out the [league](/league/) for a play-when-you-like "
+"competition."
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid "Each tournament series has a [leaderboard]({leaderboards_url})."
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid "Joining a Tournament"
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid "Register"
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid "Sign In"
 msgstr ""
 
 #: decksite/templates/tournaments.mustache:1
 msgid ""
-"We allow the playing of cards with known bugs in Penny Dreadful with "
-"specific conditions."
+"[Sign Up](https://gatherling.com/player.php) under \"Preregister for "
+"Events\""
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid "[Join #tournament-room](https://discord.gg/KK866Pe) on Discord"
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid "Wait for announcements from the Tournament Organizer"
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid "Matches will be played in the Getting Serious room"
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid "Other Notes"
 msgstr ""
 
 #: decksite/templates/tournaments.mustache:1
 msgid ""
-"Cards with game-breaking bugs must not be played. Exceptions: Cards that "
-"are only bugged in Multiplayer games."
+"If a player starts a sideboarded game with less than 60 cards (quite "
+"possible due to a known Magic Online bug) and either player notices "
+"before the end of turn 2 and either player wants to restart the game, the"
+" game will be restarted. The result of any game played beyond turn 2 with"
+" less than 60 cards in maindeck will stand."
 msgstr ""
 
 #: decksite/templates/tournaments.mustache:1
 msgid ""
-"Cards with disadvantageous bugs can be played and no extra rules apply. "
-"The opposing player is under no obligation to treat the card as if it "
-"worked properly."
+"A player may not play games under more than one account in a Penny "
+"Dreadful tournament."
 msgstr ""
 
 #: decksite/templates/tournaments.mustache:1
 msgid ""
-"Cards with advantageous bugs can be played but accruing advantage "
-"intentionally will result in disqualification."
+"Please do not double queue Penny Dreadful tournaments with other "
+"tournaments nor double queue in the league."
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid "Only players completing the tournament will be awarded prizes."
 msgstr ""
 
 #: decksite/templates/tournaments.mustache:1
 msgid ""
-"Accruing advantage any other way with a card with an advantageous bug is "
-"a game loss for the owner of the bugged card."
+"Because of a [bug](https://github.com/PennyDreadfulMTG/modo-"
+"bugs/issues/308) removing all stops is not allowed."
 msgstr ""
 
-#: decksite/views/deck_check.py:16 decksite/views/signup.py:25
+#: decksite/templates/tournaments.mustache:1
+msgid ""
+"You may only enter a given tournament once (either on the same account or"
+" multiple accounts)."
+msgstr ""
+
+#: decksite/templates/tournaments.mustache:1
+msgid ""
+"Penny Dreadful tournaments follow official Magic Online tournament rules "
+"and do not allow draws, unlike some other player-run events."
+msgstr ""
+
+#: decksite/views/deck_check.py:12 decksite/views/signup.py:21
 msgid "Decklist"
 msgstr ""
 
-#: decksite/views/deck_check.py:19 decksite/views/signup.py:28
+#: decksite/views/deck_check.py:15 decksite/views/signup.py:24
 msgid "Enter or upload your decklist"
 msgstr ""
 
-#: decksite/views/deck_check.py:22 decksite/views/signup.py:34
+#: decksite/views/deck_check.py:18 decksite/views/signup.py:30
 msgid "Your Recent Decks"
 msgstr ""
 
-#: decksite/views/deck_check.py:25 decksite/views/signup.py:37
+#: decksite/views/deck_check.py:21 decksite/views/signup.py:33
 msgid "Select a recent deck to start from there"
 msgstr ""
 
-#: decksite/views/deck_check.py:28
+#: decksite/views/deck_check.py:24
 msgid "Check your deck"
 msgstr ""
 
-#: decksite/views/report.py:22
+#: decksite/views/report.py:25
 msgid "Your Deck"
 msgstr ""
 
-#: decksite/views/signup.py:16
+#: decksite/views/signup.py:12
 msgid ""
 "When you complete a five match league run for the first time ever you "
-"will get 1 tik credit with MTGO Traders."
+"will get 1 tik credit with MTGO Traders. This credit will appear when you"
+" trade with one of their bots on Magic Online."
 msgstr ""
 
-#: decksite/views/signup.py:19
+#: decksite/views/signup.py:15
 msgid "Magic Online Username"
 msgstr ""
 
-#: decksite/views/signup.py:22
+#: decksite/views/signup.py:18
 msgid "Deck Name"
 msgstr ""
 

@@ -2,7 +2,7 @@ import re
 from typing import TYPE_CHECKING, Dict, List, Optional
 
 from flask import url_for
-from flask_babel import ngettext
+from flask_babel import ngettext, gettext
 
 import decksite
 from decksite.data import query
@@ -150,7 +150,7 @@ class Achievement:
                                         LIMIT
                                             {LEADERBOARD_TOP_N}
                                     ) AS _
-                            ) 
+                            )
                     ORDER BY
                         num DESC
                     LIMIT {LEADERBOARD_LIMIT}"""
@@ -167,7 +167,7 @@ class CountedAchievement(Achievement):
             return self.localised_display(n)
         return ''
     def leaderboard_heading(self):
-        return self.plural
+        raise NotImplementedError()
     def localised_display(self, n: int) -> str:
         """calls and returns ngettext"""
         raise NotImplementedError()
@@ -221,6 +221,8 @@ class TournamentPlayer(CountedAchievement):
     def description_safe(self):
         return 'Play in an official Penny Dreadful tournament on <a href="https://gatherling.com/">gatherling.com</a>'
     sql = "COUNT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
+    def leaderboard_heading(self):
+        return gettext('tournaments entered')
     def localised_display(self, n):
         return ngettext('1 tournament entered', '%(num)d tournaments entered', n)
 
@@ -229,6 +231,8 @@ class TournamentWinner(CountedAchievement):
     title = 'Tournament Winner'
     description_safe = 'Win a tournament.'
     sql = "COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
+    def leaderboard_heading(self):
+        return gettext('victories')
     def localised_display(self, n):
         return ngettext('1 victory', '%(num)d victories', n)
 
@@ -239,6 +243,8 @@ class LeaguePlayer(CountedAchievement):
     def description_safe(self):
         return f'Play in the <a href="{url_for("signup")}">league</a>.'
     sql = "COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END)"
+    def leaderboard_heading(self):
+        return gettext('league entries')
     def localised_display(self, n):
         return ngettext('1 league entry', '%(num)d league entries', n)
 
@@ -247,6 +253,8 @@ class PerfectRun(CountedAchievement):
     title = 'Perfect League Run'
     description_safe = 'Complete a 5–0 run in the league.'
     sql = "SUM(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses = 0 THEN 1 ELSE 0 END)"
+    def leaderboard_heading(self):
+        return gettext('perfect runs')
     def localised_display(self, n):
         return ngettext('1 perfect run', '%(num)d perfect runs', n)
 
@@ -254,6 +262,8 @@ class FlawlessRun(CountedAchievement):
     key = 'flawless_runs'
     title = 'Flawless League Run'
     description_safe = 'Complete a 5–0 run in the league without losing a game.'
+    def leaderboard_heading(self):
+        return gettext('flawless runs')
     def localised_display(self, n):
         return ngettext('1 flawless run', '%(num)d flawless runs', n)
     @property
@@ -286,6 +296,8 @@ class PerfectRunCrusher(CountedAchievement):
     key = 'perfect_run_crushes'
     title = 'Perfect Run Crusher'
     description_safe = "Beat a player that's 4–0 in the league."
+    def leaderboard_heading(self):
+        return gettext('dreams in tatters')
     def localised_display(self, n):
         return ngettext('1 dream in tatters', '%(num)d dreams in tatters', n)
     @property
@@ -322,6 +334,8 @@ class Pioneer(CountedAchievement):
     key = 'pioneer'
     title = 'Pioneer'
     description_safe = 'Have one of your decks recognised as the first of a new archetype.'
+    def leaderboard_heading(self):
+        return gettext('archetypes pioneered')
     def localised_display(self, n):
         return ngettext('1 archetype pioneered', '%(num)d archetypes pioneered', n)
     sql = """SUM(CASE WHEN d.id in

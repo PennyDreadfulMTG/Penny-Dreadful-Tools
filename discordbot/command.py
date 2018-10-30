@@ -181,6 +181,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def randomdeck(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
+        """`!randomdeck` Displays a random pennydreadfulmagic.com deck from the current season."""
         blob = fetcher.internal.fetch_json(fetcher.decksite_url('/api/randomlegaldeck'))
         if 'error' in blob or 'url' not in blob:
             await send(channel, blob.get('msg', ''))

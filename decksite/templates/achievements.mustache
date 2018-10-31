@@ -10,40 +10,37 @@
                 <div class='achievement_summary'>{{summary}}</div>
             </dd>
         {{/summary}}
+        {{#has_leaderboard}}
+            <dd>
 
-{{#has_leaderboard}}
-    <dd>
+                {{> spinner}}
+                <table class="with-marginalia">
+                    <thead>
+                        <tr>
+                            <td class="marginalia"></td>
+                            <th>Person</th>
+                            <th data-sortInitialOrder="desc">{{leaderboard_heading}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#leaderboard}}
+                            <tr class="pos-{{pos}}">
+                                <td class="n marginalia">
+                                    {{position}}
+                                </td>
+                                <td><a href="{{url}}">{{person}}</a></td>
+                                <td class="n">{{points}}</td>
+                            </tr>
+                        {{/leaderboard}}
+                    </tbody>
+                </table>
 
-        {{> spinner}}
-        <table class="with-marginalia">
-            <thead>
-                <tr>
-                    <td class="marginalia"></td>
-                    <th>Person</th>
-                    <th data-sortInitialOrder="desc">{{leaderboard_heading}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#leaderboard}}
-                    <tr class="pos-{{pos}}">
-                        <td class="n marginalia">
-                            {{position}}
-                        </td>
-                        <td><a href="{{url}}">{{person}}</a></td>
-                        <td class="n">{{points}}</td>
-                    </tr>
-                {{/leaderboard}}
-            </tbody>
-        </table>
-
-    </dd>
-{{/has_leaderboard}}
-
+            </dd>
+        {{/has_leaderboard}}
         {{#detail}}<dd class='{{class}}'>🏆 {{detail}}</dd>{{/detail}}
         {{/achievement_descriptions}}
     </dl>
 </section>
-
 {{#person_url}}
     <section>
         <p>🏆 = earned.</p>

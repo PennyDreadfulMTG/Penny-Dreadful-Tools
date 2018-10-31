@@ -16,6 +16,7 @@ from shared import dtutil, guarantee, redis
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
+from shared_web import logger
 
 
 def latest_decks() -> List[Deck]:
@@ -373,15 +374,20 @@ def prime_cache(d: Deck) -> None:
     redis.clear(f'decksite:deck:{d.id}')
 
 def add_cards(deck_id: int, cards: CardsDescription) -> None:
-    db().begin('add_cards')
-    deckhash = hashlib.sha1(repr(cards).encode('utf-8')).hexdigest()
-    db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [deckhash, deck_id])
-    db().execute('DELETE FROM deck_card WHERE deck_id = %s', [deck_id])
-    for name, n in cards['maindeck'].items():
-        insert_deck_card(deck_id, name, n, False)
-    for name, n in cards['sideboard'].items():
-        insert_deck_card(deck_id, name, n, True)
-    db().commit('add_cards')
+    try:
+        db().begin('add_cards')
+        deckhash = hashlib.sha1(repr(cards).encode('utf-8')).hexdigest()
+        db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [deckhash, deck_id])
+        db().execute('DELETE FROM deck_card WHERE deck_id = %s', [deck_id])
+        for name, n in cards['maindeck'].items():
+            insert_deck_card(deck_id, name, n, False)
+        for name, n in cards['sideboard'].items():
+            insert_deck_card(deck_id, name, n, True)
+        db().commit('add_cards')
+    except InvalidDataException as e:
+        logger.warning('Unable to add_cards to {deck_id} with {cards}', e)
+        db().rollback('add_deck')
+        raise
 
 def get_deck_id(source_name: str, identifier: str) -> Optional[int]:
     source_id = get_source_id(source_name)

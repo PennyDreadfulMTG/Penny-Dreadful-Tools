@@ -32,10 +32,10 @@ class Achievements(View):
                     entry['pos'] = pos
                     entry['position'] = chr(9311 + pos)
                     last_entry = entry
-                desc['has_leaderboard'] = True
-                desc['leaderboard_heading'] = a.leaderboard_heading()
+                desc.has_leaderboard = True
+                desc.leaderboard_heading = a.leaderboard_heading()
             self.achievement_descriptions.append(desc)
         self.show_seasons = True
-    @staticmethod
-    def page_title():
+
+    def page_title(self):
         return 'Achievements'

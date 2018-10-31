@@ -144,13 +144,13 @@ dt.earned:before {
     content: ""
 }
 
-.achievement_holder {
+.achievement-holder {
 	position: relative;
 	padding: 1px;
 	overflow: hidden;
 }
 
-.achievement_bar {
+.achievement-bar {
 	position: absolute;
 	top: 2px;
 	left: 2px;
@@ -159,7 +159,7 @@ dt.earned:before {
 	background: #eee;
 }
 
-.achievement_summary {
+.achievement-summary {
 	position: relative;
 	z-index: 40;
 }
@@ -1026,6 +1026,7 @@ z-index
     z-index: 300;
 }
 
+/* These classes use nonstandard underscores because they come from third party-generated html. */
 .deckbox_i_tooltip, .deckbox_t_tooltip, .tpd-tooltip {
     z-index: 400 !important /* csslint allow: important */; /* Override 3rd party css loaded by js. */
 }
@@ -1373,7 +1374,7 @@ button {
     -webkit-appearance: button;
 }
 
-button, div.error, .uploader-label, div.logout, .instructions, div.validation_ok {
+button, div.error, .uploader-label, div.logout, .instructions, div.validation-ok {
     margin-left: 12rem;
 }
 
@@ -1385,7 +1386,7 @@ div.error {
     margin-top: 1em;
 }
 
-div.validation_ok {
+div.validation-ok {
     margin-top: 1rem;
 }
 
@@ -1438,7 +1439,7 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
         margin-top: 0.5625rem;
         max-width: 80%;
     }
-    button, div.error, .uploader-label, .instructions, div.validation_ok {
+    button, div.error, .uploader-label, .instructions, div.validation-ok {
         margin-left: 0;
     }
 }

@@ -105,6 +105,12 @@ class Database():
             raise DatabaseException(f'Asked to commit `{committed}` to the db but was expecting to commit `{label}`.')
         print(f'After COMMIT ({self.open_transactions})')
 
+    def rollback(self, label: str) -> None:
+        print(f'Before ROLLBACK ({self.open_transactions}) in {label}')
+        self.execute('ROLLBACK')
+        self.open_transactions = []
+        print(f'After ROLLBACK ({self.open_transactions}) in {label}')
+
     def last_insert_rowid(self) -> int:
         return cast(int, self.value('SELECT LAST_INSERT_ID()'))
 

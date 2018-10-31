@@ -24,7 +24,7 @@ class Home(View):
                 display_decks = decks
         self.decks = display_decks
         cards = [c for c in cards if 'Basic Land' not in c.type]
-        self.top_cards = cards[0:5]
+        self.top_cards = cards[0:8]
         self.cards = self.top_cards # To get prepare_card treatment
         self.cards_url = url_for('cards')
         self.show_active_runs_text = False

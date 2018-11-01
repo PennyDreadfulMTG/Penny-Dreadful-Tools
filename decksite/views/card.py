@@ -1,9 +1,10 @@
 from decksite.view import View
+from magic.models.card import Card as CardContainer
 
 
 # pylint: disable=no-self-use
 class Card(View):
-    def __init__(self, card) -> None:
+    def __init__(self, card: CardContainer) -> None:
         super().__init__()
         self.card = card
         self.cards = [card]

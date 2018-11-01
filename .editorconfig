@@ -6,3 +6,7 @@ insert_final_newline = true
 indent_style = space
 indent_size = 4
 not_skip = __init__.py
+
+[*.{css,mustache,py}]
+# Make sure that no Byte Order Marks are added
+charset = utf-8

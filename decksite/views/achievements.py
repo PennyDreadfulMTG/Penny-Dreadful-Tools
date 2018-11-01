@@ -35,7 +35,7 @@ class Achievements(View):
                 desc.has_leaderboard = True
                 desc.leaderboard_heading = a.leaderboard_heading()
             self.achievements.append(desc)
-        self.achievements = sorted(self.achievements, key=lambda ad: -ad.percent )
+        self.achievements = sorted(self.achievements, key=lambda ad: -ad.percent)
         self.show_seasons = True
 
     def page_title(self):

@@ -124,6 +124,10 @@ main p, footer p {
     margin: 0 0 1em 0;
 }
 
+main li {
+    margin: 0 0 0.422em;
+}
+
 footer a {
     font-family: heading-caps;
     text-transform: lowercase;
@@ -135,34 +139,6 @@ footer a:hover {
     transition-duration: 1s;
 }
 
-/* Achievements */
-main li, main dt, main dd {
-    margin: 0 0 0.422em;
-}
-
-dt.earned:before {
-    content: ""
-}
-
-.achievement_holder {
-	position: relative;
-	padding: 1px;
-	overflow: hidden;
-}
-
-.achievement_bar {
-	position: absolute;
-	top: 2px;
-	left: 2px;
-	bottom: 2px;
-	z-index: 10;
-	background: #eee;
-}
-
-.achievement_summary {
-	position: relative;
-	z-index: 40;
-}
 /* Fonts */
 
 @font-face {
@@ -472,7 +448,7 @@ main h1 {
     padding-top: 2rem;
 }
 
-main h2, dt {
+main h2 {
     border-top: 0.05rem solid #502828;
     font-size: 1rem;
     margin-bottom: 2rem;
@@ -572,10 +548,6 @@ ul.decklist {
 .division:after {
     content: "▪";
     padding: 0 0.563em;
-}
-
-main dl {
-    padding-bottom: 2em;
 }
 
 /*
@@ -997,7 +969,10 @@ Mobile Menu
 
 z-index
 
-100 page
+100 page, achievement bar background
+125 achievement bar actual bar
+150 achievement bar summary (text over bar), achievement bar symbol, achievement bar slidedown indicator
+175 achievement earned indicator (has a tooltip so needs to be above the rest of the bar)
 200 badge
 250 status-bar
 275 season dropdown
@@ -1005,6 +980,18 @@ z-index
 400 card and text tooltips
 
 */
+
+.achievement-bar .bar {
+    z-index: 125;
+}
+
+.achievement-bar .summary, .achievement-bar .expansion-indicator {
+    z-index: 150;
+}
+
+.achievement-bar .earned {
+    z-index: 175;
+}
 
 .badge-holder {
     z-index: 200;
@@ -1026,6 +1013,7 @@ z-index
     z-index: 300;
 }
 
+/* These classes use nonstandard underscores because they come from third party-generated html. */
 .deckbox_i_tooltip, .deckbox_t_tooltip, .tpd-tooltip {
     z-index: 400 !important /* csslint allow: important */; /* Override 3rd party css loaded by js. */
 }
@@ -1373,7 +1361,7 @@ button {
     -webkit-appearance: button;
 }
 
-button, div.error, .uploader-label, div.logout, .instructions, div.validation_ok {
+button, div.error, .uploader-label, div.logout, .instructions, div.validation-ok {
     margin-left: 12rem;
 }
 
@@ -1385,7 +1373,7 @@ div.error {
     margin-top: 1em;
 }
 
-div.validation_ok {
+div.validation-ok {
     margin-top: 1rem;
 }
 
@@ -1438,7 +1426,7 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
         margin-top: 0.5625rem;
         max-width: 80%;
     }
-    button, div.error, .uploader-label, .instructions, div.validation_ok {
+    button, div.error, .uploader-label, .instructions, div.validation-ok {
         margin-left: 0;
     }
 }
@@ -1983,6 +1971,86 @@ Video
     position: absolute;
     top: 0;
     width: 100%;
+}
+
+/*
+
+Achievements
+
+*/
+
+.achievement-category {
+    border: 0.05rem solid #999;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    max-width: 100%; /* Don't exceed the space available but … */
+    width: 30rem; /* … display at article width if possible. */
+}
+
+.achievement-category p:last-child {
+    margin-bottom: 0; /* Avoid the margin-bottom of p and the padding-bottom of .more-info "doubling up". */
+}
+
+.achievement-category .more-info {
+    border-top: 0.05rem solid #ccc;
+    display: none; /* The detail slideout starts hidden so you can see more achievements at a glance. */
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+}
+
+.achievement-bar {
+    position: relative; /* We are going to overlay a bunch of spans in here to show a bar chart of how many players have this acheivement and other dettails. */
+}
+
+.achievement-bar span {
+    box-sizing: border-box; /* Let's us specify height 100% without having to account for padding. */
+    display: inline-block;
+    height: 100%; /* All parts of the bar should have the same height. */
+    left: 0;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+    position: absolute;
+    top: 0;
+    width: 100%; /* Will be overridden in style attribute for the bar indicating percentage. All the other parts of the bar should cover the whole bar. */
+}
+
+.achievement-bar .bar {
+    background: #eee;
+}
+
+.achievement-bar .background {
+    background: #f9f9f9;
+}
+
+.achievement-bar .expansion-indicator {
+    align-items: center;
+    display: flex; /* We want a larger glyph for folks that think they have to click the glyph to expand not the whole box but we want it to be vertically centered. This is just easier than doing a bunch of calculations. */
+    font-size: 1.777rem; /* It's too small at the same size as the text because it's a small glyph. */
+    height: 100%;
+    justify-content: flex-end; /* Vertically center the expansion indicator regardless of box height. */
+    padding: 0 1rem;
+}
+
+.achievement-bar .summary, .achievement-category .more-info {
+    /* Big padding for the textual component of the achievement bar so that it has space for the achievement indicator to the left and lines up with the text in tables in .more-info which have marginalia. */
+    padding-left: 2.369rem;
+    padding-right: 2.369rem;
+    position: relative; /* Something inside the bar with the right height has to be position: relative in order to give all parts a uniform height. */
+}
+
+.achievement-bar .earned {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: 3rem;
+}
+
+.detail {
+    margin-left: -1.333rem;
+}
+
+.detail .earned {
+    display: inline-block;
+    width: 1.333rem;
 }
 
 /*

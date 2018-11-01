@@ -55,7 +55,6 @@ def download_bluebones_image(cards: List[Card], filepath: str) -> bool:
         print('Error: {e}'.format(e=e))
     return internal.acceptable_file(filepath)
 
-# BAKERT maybe detect 4xx responses here?
 def download_scryfall_image(cards: List[Card], filepath: str, version: str = '') -> bool:
     card_names = ', '.join(card.name for card in cards)
     print(f'Trying to get scryfall images for {card_names}')

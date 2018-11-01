@@ -4,6 +4,7 @@ PD.init = function () {
     PD.scrollToContent();
     PD.initDismiss();
     PD.initMenu();
+    PD.initAchievements();
     PD.initTables();
     PD.initDetails();
     PD.initTooltips();
@@ -46,6 +47,12 @@ PD.onDropdownLeave = function () {
         $(this).find(".submenu-container").slideUp("fast");
     }
 };
+PD.initAchievements = function () {
+    $('.has-more-info').click(PD.onMoreInfoClick);
+}
+PD.onMoreInfoClick = function () {
+    $(this).find('.more-info').slideToggle();
+}
 PD.initTables = function () {
     var selector = "main table";
 

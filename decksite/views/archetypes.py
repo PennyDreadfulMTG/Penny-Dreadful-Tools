@@ -1,10 +1,13 @@
+from typing import List
+
+from decksite.data import archetype as archs
 from decksite.view import View
 from shared.container import Container
 
 
 # pylint: disable=no-self-use
 class Archetypes(View):
-    def __init__(self, archetypes, all_matchups) -> None:
+    def __init__(self, archetypes: List[archs.Archetype], all_matchups) -> None:
         min_matches_for_matchups_grid = 50
         super().__init__()
         self.archetypes = archetypes

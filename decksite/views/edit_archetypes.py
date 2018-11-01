@@ -1,10 +1,13 @@
+from typing import List
+
 from decksite.data import deck
+from decksite.data.archetype import Archetype
 from decksite.view import View
 
 
 # pylint: disable=no-self-use
 class EditArchetypes(View):
-    def __init__(self, archetypes, search_results, q, notq) -> None:
+    def __init__(self, archetypes: List[Archetype], search_results, q, notq) -> None:
         super().__init__()
         self.archetypes = archetypes
         self.roots = [a for a in self.archetypes if a.is_root]

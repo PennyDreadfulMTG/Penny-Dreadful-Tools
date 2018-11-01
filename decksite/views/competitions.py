@@ -1,7 +1,7 @@
 from typing import List
 
-from decksite.view import View
 from decksite.data.competition import Competition
+from decksite.view import View
 
 
 # pylint: disable=no-self-use

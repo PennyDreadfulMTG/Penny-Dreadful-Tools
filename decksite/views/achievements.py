@@ -12,7 +12,7 @@ class Achievements(View):
     def __init__(self, mtgo_username):
         super().__init__()
         self.person_url = url_for('person', person_id=mtgo_username) if mtgo_username else None
-        self.achievement_descriptions = []
+        self.achievements = []
         for a in ach.Achievement.all_achievements:
             desc = Container({'title': a.title, 'description_safe': a.description_safe})
             desc.summary = a.load_summary(season_id=get_season_id())
@@ -34,7 +34,8 @@ class Achievements(View):
                     last_entry = entry
                 desc.has_leaderboard = True
                 desc.leaderboard_heading = a.leaderboard_heading()
-            self.achievement_descriptions.append(desc)
+            self.achievements.append(desc)
+        self.achievements = sorted(self.achievements, key=lambda ad: -ad.percent )
         self.show_seasons = True
 
     def page_title(self):

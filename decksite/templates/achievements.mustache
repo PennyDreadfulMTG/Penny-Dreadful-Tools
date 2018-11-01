@@ -1,17 +1,19 @@
 {{> banner}}
 <section>
-    <dl>
-        {{#achievement_descriptions}}
-            <dt class="{{class}}">{{title}}</dt>
-            <dd>{{{description_safe}}}</dd>
-            {{#summary}}
-                <dd class="achievement-holder">
-                    <div class="achievement-bar" style="width: {{percent}}%"></div>
-                    <div class="achievement-summary">{{summary}}</div>
-                </dd>
-            {{/summary}}
-            {{#has_leaderboard}}
-                <dd>
+    {{#achievements}}
+        <div class="achievement-category has-more-info">
+            <div class="achievement-bar">
+                {{#detail}}
+                    <span class="earned" title="{{detail}}">🏆</span>
+                {{/detail}}
+                <span class="background"></span>
+                <span class="bar" style="width: {{percent}}%"></span>
+                <span class="summary"><b>{{title}}</b> {{summary}}</span>
+                <span class="expansion-indicator">▾</span>
+            </div>
+            <div class="more-info">
+                <p>{{{description_safe}}}</p>
+                {{#has_leaderboard}}
                     {{> spinner}}
                     <table class="with-marginalia">
                         <thead>
@@ -33,15 +35,15 @@
                             {{/leaderboard}}
                         </tbody>
                     </table>
-
-                </dd>
-            {{/has_leaderboard}}
-            {{#detail}}<dd class="{{class}}">🏆 {{detail}}</dd>{{/detail}}
-        {{/achievement_descriptions}}
-    </dl>
+                {{/has_leaderboard}}
+                {{#detail}}<p class="detail"><span class="earned">🏆</span>{{detail}}</p>{{/detail}}
+            </div>
+        </div>
+    {{/achievements}}
 </section>
-{{#person_url}}
-    <section>
-        <p>🏆 = earned.</p>
-    </section>
-{{/person_url}}
+<section>
+    <h2>Key</h2>
+    <ul>
+        <li>🏆 = earned.</li>
+    </ul>
+</section>

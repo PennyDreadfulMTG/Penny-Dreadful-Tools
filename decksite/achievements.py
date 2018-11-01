@@ -297,7 +297,6 @@ class FlawlessRun(CountedAchievement):
                     )
                 THEN 1 ELSE 0 END)""".format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
-
 class PerfectRunCrusher(CountedAchievement):
     key = 'perfect_run_crushes'
     title = 'Perfect Run Crusher'
@@ -335,6 +334,46 @@ class PerfectRunCrusher(CountedAchievement):
                             SUM(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN 1 ELSE 0 END) = 1
                     )
                 THEN 1 ELSE 0 END)""".format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
+
+class RecentGrudge(CountedAchievement):
+    key = 'recent_grudges'
+    title = 'Not-So-Ancient Grudge'
+    description_safe = 'Beat a player in the knockout rounds of a tournament after losing to them in the Swiss.'
+    def leaderboard_heading(self):
+        return gettext('grudges repaid')
+    def localised_display(self, n):
+        return ngettext('1 grudge repaid', '%(num)d grudges repaid', n)
+    sql = """COUNT(DISTINCT CASE WHEN d.id in
+                (
+                    SELECT
+                        distinct(dm1.deck_id) AS deck_id
+                    FROM
+                        deck_match AS dm1
+                    INNER JOIN
+                        deck_match AS odm1
+                    ON
+                        odm1.match_id = dm1.match_id AND odm1.deck_id != dm1.deck_id
+                    INNER JOIN
+                        `match` AS m1
+                    ON
+                        m1.id = dm1.match_id
+                    INNER JOIN
+                        deck_match AS dm2
+                    ON
+                        dm1.deck_id = dm2.deck_id AND dm2.match_id != dm1.match_id
+                    INNER JOIN
+                        deck_match AS odm2
+                    ON
+                        odm2.match_id = dm2.match_id AND odm2.deck_id = odm1.deck_id
+                    INNER JOIN
+                        `match` AS m2
+                    ON
+                        m2.id = dm2.match_id
+                    WHERE
+                        dm1.games < odm1.games AND m1.elimination = 0 AND dm2.games > odm2.games AND m2.elimination > 0
+                    ORDER BY
+                        deck_id
+                ) THEN d.id ELSE NULL END)"""
 
 class Deckbuilder(CountedAchievement):
     key = 'deckbuilder'

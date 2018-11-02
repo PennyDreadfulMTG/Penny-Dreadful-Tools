@@ -8,8 +8,7 @@ from flask import (Response, abort, g, make_response, redirect, request,
 from requests.exceptions import RequestException
 from werkzeug.exceptions import InternalServerError
 
-from decksite import APP, SEASONS
-from decksite import auth, deck_name, get_season_id
+from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite import league as lg
 from decksite.cache import cached
 from decksite.charts import chart

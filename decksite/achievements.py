@@ -125,9 +125,12 @@ class Achievement:
     def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Dict]]:
         season_condition = query.season_query(season_id)
         result = []
+        person_query = query.person_query()
         sql = f"""
             SELECT
-                p.mtgo_username AS name, p.id AS person_id, SUM({self.key}) AS num
+                {person_query} AS name,
+                p.id AS person_id,
+                SUM({self.key}) AS num
             FROM
                 person AS p
             JOIN
@@ -162,7 +165,8 @@ class Achievement:
                             ) AS _
                     )
             ORDER BY
-                num DESC
+                num DESC,
+                name
             LIMIT {LEADERBOARD_LIMIT}
         """
         for row in [Container(r) for r in db().select(sql)]:

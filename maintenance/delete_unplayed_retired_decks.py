@@ -1,5 +1,6 @@
 from decksite.database import db
 
+
 def run():
     sql = """
         DELETE FROM

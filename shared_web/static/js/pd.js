@@ -51,7 +51,7 @@ PD.initAchievements = function () {
     $('.has-more-info').click(PD.onMoreInfoClick);
 }
 PD.onMoreInfoClick = function () {
-    $(this).find('.more-info').slideToggle();
+    $(this).siblings('.more-info').slideToggle();
 }
 PD.initTables = function () {
     var selector = "main table";

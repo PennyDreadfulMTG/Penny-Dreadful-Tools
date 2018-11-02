@@ -133,7 +133,7 @@ class Achievement:
         except ZeroDivisionError:
             return 0
 
-    def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Dict]]:
+    def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Container]]:
         season_condition = query.season_query(season_id)
         person_query = query.person_query()
         sql = f"""
@@ -183,7 +183,7 @@ class Achievement:
         return leaderboard if len(leaderboard) > 0 else None
 
     # pylint: disable=no-self-use
-    def leaderboard_heading(self):
+    def leaderboard_heading(self) -> str:
         return ''
 
 class CountedAchievement(Achievement):
@@ -193,7 +193,7 @@ class CountedAchievement(Achievement):
             return self.localised_display(n)
         return ''
 
-    def leaderboard_heading(self):
+    def leaderboard_heading(self) -> str:
         raise NotImplementedError()
 
     def localised_display(self, n: int) -> str:
@@ -216,12 +216,12 @@ class BooleanAchievement(Achievement):
         return ''
 
     # No point showing a leaderboard for these on single-season page because no-one can have more than 1
-    def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Dict]]:
+    def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Container]]:
         if season_id == 'all':
             return super(BooleanAchievement, self).leaderboard(season_id=season_id)
         return None
 
-    def leaderboard_heading(self):
+    def leaderboard_heading(self) -> str:
         return gettext('Seasons')
 
 class TournamentOrganizer(Achievement):
@@ -249,7 +249,7 @@ class TournamentOrganizer(Achievement):
         r = db().select(sql)[0]
         return len(self.hosts) * 100.0 / int(r['mnum'])
 
-    def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Dict]]:
+    def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Container]]:
         return None
 
 class TournamentPlayer(CountedAchievement):
@@ -261,10 +261,10 @@ class TournamentPlayer(CountedAchievement):
     def description_safe(self):
         return 'Play in an official Penny Dreadful tournament on <a href="https://gatherling.com/">gatherling.com</a>'
 
-    def leaderboard_heading(self):
+    def leaderboard_heading(self) -> str:
         return gettext('Tournaments')
 
-    def localised_display(self, n):
+    def localised_display(self, n) -> str:
         return ngettext('1 tournament entered', '%(num)d tournaments entered', n)
 
 class TournamentWinner(CountedAchievement):
@@ -273,10 +273,10 @@ class TournamentWinner(CountedAchievement):
     description_safe = 'Win a tournament.'
     sql = "COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
 
-    def leaderboard_heading(self):
+    def leaderboard_heading(self) -> str:
         return gettext('Victories')
 
-    def localised_display(self, n):
+    def localised_display(self, n) -> str:
         return ngettext('1 victory', '%(num)d victories', n)
 
 class LeaguePlayer(CountedAchievement):
@@ -288,10 +288,10 @@ class LeaguePlayer(CountedAchievement):
     def description_safe(self):
         return f'Play in the <a href="{url_for("signup")}">league</a>.'
 
-    def leaderboard_heading(self):
+    def leaderboard_heading(self) -> str:
         return gettext('Entries')
 
-    def localised_display(self, n):
+    def localised_display(self, n) -> str:
         return ngettext('1 league entry', '%(num)d league entries', n)
 
 class PerfectRun(CountedAchievement):
@@ -300,10 +300,10 @@ class PerfectRun(CountedAchievement):
     description_safe = 'Complete a 5–0 run in the league.'
     sql = "SUM(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses = 0 THEN 1 ELSE 0 END)"
 
-    def leaderboard_heading(self):
+    def leaderboard_heading(self) -> str:
         return gettext('Runs')
 
-    def localised_display(self, n):
+    def localised_display(self, n) -> str:
         return ngettext('1 perfect run', '%(num)d perfect runs', n)
 
 class FlawlessRun(CountedAchievement):
@@ -311,10 +311,10 @@ class FlawlessRun(CountedAchievement):
     title = 'Flawless League Run'
     description_safe = 'Complete a 5–0 run in the league without losing a game.'
 
-    def leaderboard_heading(self):
+    def leaderboard_heading(self) -> str:
         return gettext('Runs')
 
-    def localised_display(self, n):
+    def localised_display(self, n) -> str:
         return ngettext('1 flawless run', '%(num)d flawless runs', n)
 
     @property
@@ -350,10 +350,10 @@ class PerfectRunCrusher(CountedAchievement):
     title = 'Perfect Run Crusher'
     description_safe = "Beat a player that's 4–0 in the league."
 
-    def leaderboard_heading(self):
+    def leaderboard_heading(self) -> str:
         return gettext('Crushes')
 
-    def localised_display(self, n):
+    def localised_display(self, n) -> str:
         return ngettext('1 perfect run crush', '%(num)d perfect run crushes', n)
 
     @property
@@ -406,10 +406,10 @@ class Deckbuilder(CountedAchievement):
             )
     """
 
-    def leaderboard_heading(self):
+    def leaderboard_heading(self) -> str:
         return gettext('Decks')
 
-    def localised_display(self, n):
+    def localised_display(self, n) -> str:
         return ngettext('1 deck played by others', '%(num)d decks played by others', n)
 
 
@@ -434,10 +434,10 @@ class Pioneer(CountedAchievement):
         THEN 1 ELSE 0 END)
         """
 
-    def leaderboard_heading(self):
+    def leaderboard_heading(self) -> str:
         return gettext('Archetypes')
 
-    def localised_display(self, n):
+    def localised_display(self, n) -> str:
         return ngettext('1 archetype pioneered', '%(num)d archetypes pioneered', n)
 
 class Specialist(BooleanAchievement):

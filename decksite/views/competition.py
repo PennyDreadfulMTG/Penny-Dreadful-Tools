@@ -1,5 +1,6 @@
 from typing import Any, Dict
 
+from decksite.data.competition import Competition as Comp
 from decksite.view import View
 from shared import dtutil
 from shared.container import Container
@@ -7,7 +8,7 @@ from shared.container import Container
 
 # pylint: disable=no-self-use, too-many-instance-attributes
 class Competition(View):
-    def __init__(self, competition) -> None:
+    def __init__(self, competition: Comp) -> None:
         super().__init__()
         self.competition = competition
         self.competitions = [self.competition]

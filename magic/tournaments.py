@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Tuple
 import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
 
-from magic.models.deck import Deck
+from magic.models import Deck
 from shared import dtutil, guarantee
 from shared.container import Container
 

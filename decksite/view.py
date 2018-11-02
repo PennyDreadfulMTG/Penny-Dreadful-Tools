@@ -12,8 +12,7 @@ from werkzeug.routing import BuildError
 from decksite import APP, get_season_id
 from decksite.data import archetype
 from magic import legality, oracle, rotation, tournaments
-from magic.models.card import Card
-from magic.models.deck import Deck
+from magic.models import Card, Deck
 from shared import dtutil
 from shared_web.base_view import BaseView
 

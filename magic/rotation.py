@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Union, cast
 from mypy_extensions import TypedDict
 
 from magic import fetcher
-from magic.models.card import Card
+from magic.models import Card
 from shared import configuration, dtutil
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 

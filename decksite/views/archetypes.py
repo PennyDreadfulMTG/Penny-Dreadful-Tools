@@ -7,7 +7,7 @@ from shared.container import Container
 
 # pylint: disable=no-self-use
 class Archetypes(View):
-    def __init__(self, archetypes: List[archs.Archetype], all_matchups) -> None:
+    def __init__(self, archetypes: List[archs.Archetype], all_matchups: List[Container]) -> None:
         min_matches_for_matchups_grid = 50
         super().__init__()
         self.archetypes = archetypes
@@ -50,7 +50,8 @@ class Archetypes(View):
         # Now we have traversed the tree and worked out which archetypes we are going to show, annotate matchups with that information.
         for a in self.archetypes:
             for mu in a.matchups:
-                mu.show_in_matchups_grid = mu.opponent_archetype.show_in_matchups_grid
+                if mu:
+                    mu.show_in_matchups_grid = mu.opponent_archetype.show_in_matchups_grid
 
         self.num_archetypes = len([mu for mu in self.archetypes[0].matchups if mu.show_in_matchups_grid]) if self.archetypes else 0
 

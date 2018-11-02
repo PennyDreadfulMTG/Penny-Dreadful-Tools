@@ -10,7 +10,7 @@ import pytz
 
 import shared.fetcher_internal as internal
 from magic.card_description import CardDescription
-from magic.models.card import Card
+from magic.models import Card
 from shared import configuration, dtutil, redis
 from shared.container import Container
 from shared.fetcher_internal import FetchException

@@ -6,7 +6,7 @@ import titlecase
 from profanity import profanity
 
 from magic import mana
-from magic.models.deck import Deck
+from magic.models import Deck
 from shared.pd_exception import InvalidDataException
 
 WHITELIST = [

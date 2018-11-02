@@ -7,7 +7,7 @@ from typing import List, Union
 from decksite.data import card
 from decksite.view import View
 from magic import multiverse, oracle, rotation
-from magic.models.card import Card
+from magic.models import Card
 from shared import configuration, dtutil, text
 from shared.pd_exception import DoesNotExistException
 

@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
 
 from magic import oracle
-from magic.models.card import Card
+from magic.models import Card
 from shared import dtutil
 from shared.container import Container
 

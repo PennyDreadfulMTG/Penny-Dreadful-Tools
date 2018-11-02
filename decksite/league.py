@@ -328,12 +328,12 @@ def retire_deck(d):
     db().execute(sql, [d.id])
     redis.clear(f'decksite:deck:{d.id}')
 
-def load_latest_league_matches():
+def load_latest_league_matches() -> List[Container]:
     competition_id = active_league().id
     where = 'dm.deck_id IN (SELECT id FROM deck WHERE competition_id = {competition_id})'.format(competition_id=competition_id)
     return load_matches(where)
 
-def load_matches(where='1 = 1'):
+def load_matches(where: str = '1 = 1') -> List[Container]:
     sql = """
         SELECT m.date, m.id, GROUP_CONCAT(dm.deck_id) AS deck_ids, GROUP_CONCAT(dm.games) AS games, mtgo_id
         FROM `match` AS m

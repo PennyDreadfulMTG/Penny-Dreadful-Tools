@@ -1,7 +1,6 @@
 from typing import List, Optional, Sequence
 
-from decksite import achievements as ach
-from decksite.data import deck, query
+from decksite.data import achievements, deck, query
 from decksite.database import db
 from shared import dtutil, guarantee
 from shared.container import Container
@@ -142,7 +141,7 @@ def load_people(where: str = '1 = 1',
     return people
 
 def preaggregate() -> None:
-    ach.preaggregate_achievements()
+    achievements.preaggregate_achievements()
     preaggregate_head_to_head()
 
 def preaggregate_head_to_head() -> None:
@@ -193,10 +192,10 @@ def preaggregate_head_to_head() -> None:
     db().execute('RENAME TABLE _head_to_head_stats TO _old_head_to_head_stats, _new_head_to_head_stats TO _head_to_head_stats')
     db().execute('DROP TABLE IF EXISTS _old_head_to_head_stats')
 
-@retry_after_calling(ach.preaggregate_achievements)
+@retry_after_calling(achievements.preaggregate_achievements)
 def set_achievements(people: List[Person], season_id: int = None) -> None:
     people_by_id = {person.id: person for person in people}
-    sql = ach.load_query(people_by_id, season_id)
+    sql = achievements.load_query(people_by_id, season_id)
     results = [Container(r) for r in db().select(sql)]
     for result in results:
         people_by_id[result['id']].num_achievements = len([k for k, v in result.items() if k != 'id' and v > 0])

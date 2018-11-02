@@ -1,9 +1,10 @@
-from typing import Dict, List
+from typing import List
 
+import titlecase
 from flask import url_for
 
-from decksite import achievements as ach
 from decksite.data import person as ps
+from decksite.data.achievements import Achievement
 from decksite.view import View
 from magic.models import Card
 
@@ -24,7 +25,7 @@ class Person(View):
             record.opp_url = url_for('person', person_id=record.opp_mtgo_username)
         self.show_head_to_head = len(person.head_to_head) > 0
         self.show_seasons = True
-        self.displayed_achievements: List[Dict[str, str]] = ach.displayed_achievements(self.person)
+        self.displayed_achievements = [{'title': a.title, 'detail': titlecase.titlecase(a.display(self.person))} for a in Achievement.all_achievements if a.display(self.person)]
         self.achievements_url = url_for('achievements')
 
     def __getattr__(self, attr):

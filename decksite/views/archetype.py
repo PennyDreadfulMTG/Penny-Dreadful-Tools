@@ -4,8 +4,8 @@ from flask import url_for
 
 from decksite.data import archetype as archs
 from decksite.view import View
-from shared.pd_exception import DoesNotExistException
 from shared.container import Container
+from shared.pd_exception import DoesNotExistException
 
 
 # pylint: disable=no-self-use, too-many-instance-attributes

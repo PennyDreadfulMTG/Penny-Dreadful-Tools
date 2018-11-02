@@ -4,8 +4,7 @@ from typing import List
 from flask import url_for
 
 from decksite.view import View
-from magic.models.card import Card
-from magic.models.deck import Deck
+from magic.models import Card, Deck
 from shared import dtutil
 from shared.container import Container
 

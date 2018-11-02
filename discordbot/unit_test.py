@@ -2,7 +2,7 @@ import os
 
 from discordbot import command, emoji
 from magic import image_fetcher, oracle
-from magic.models.card import Card
+from magic.models import Card
 from shared import configuration, fetcher_internal
 
 

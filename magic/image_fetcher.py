@@ -9,7 +9,7 @@ from PIL import Image
 import shared.fetcher_internal as internal
 from magic import oracle
 from magic.card import Printing
-from magic.models.card import Card
+from magic.models import Card
 from shared import configuration
 from shared.fetcher_internal import FetchException, escape
 

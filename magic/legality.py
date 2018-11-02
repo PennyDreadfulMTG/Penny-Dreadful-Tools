@@ -2,7 +2,7 @@ from typing import Dict, List, Set
 
 from magic import oracle, rotation
 from magic.database import db
-from magic.models.card import Card
+from magic.models import Card
 from shared.container import Container
 
 FORMATS: Set[str] = set()

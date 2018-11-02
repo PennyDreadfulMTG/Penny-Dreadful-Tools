@@ -2,7 +2,6 @@ from typing import Dict, List, Optional
 
 from flask import request, session, url_for
 
-from magic.models import Deck
 from decksite import APP, auth
 from decksite import league as lg
 from decksite.data import archetype as archs
@@ -13,6 +12,7 @@ from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.views import (Admin, EditArchetypes, EditMatches, EditNews,
                             PlayerNotes, Prizes, RotationChecklist, Unlink)
+from magic.models import Deck
 from shared import dtutil, redis
 from shared.container import Container
 from shared.pd_exception import InvalidArgumentException

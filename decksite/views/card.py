@@ -1,5 +1,5 @@
 from decksite.view import View
-from magic.models.card import Card as CardContainer
+from magic.models import Card as CardContainer
 
 
 # pylint: disable=no-self-use

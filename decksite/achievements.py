@@ -335,6 +335,31 @@ class PerfectRunCrusher(CountedAchievement):
                     )
                 THEN 1 ELSE 0 END)""".format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
+class AncientGrudge(CountedAchievement):
+    key = 'ancient_grudges'
+    title = 'Ancient Grudge'
+    description_safe = 'Beat a player in the knockout rounds of a tournament after losing to them in the knockout rounds of an earlier tournament in the same season.'
+    def leaderboard_heading(self):
+        return gettext('grudges repaid')
+    def localised_display(self, n):
+        return ngettext('1 grudge repaid', '%(num)d grudges repaid', n)
+    sql = 'count(distinct case when d.id in (select k2.winner_deck_id from knockouts as k1 join knockouts as k2 on k1.season_id = k2.season_id and k1.winner_id = k2.loser_id and k1.loser_id = k2.winner_id and k2.date > k1.date) THEN d.id else null end)'
+    with_sql = """knockouts as
+(
+
+select d.id as winner_deck_id, p1.id as winner_id, p2.id as loser_id, season.id as season_id, `match`.date from
+deck as d
+left join person as p1 on d.person_id = p1.id
+left join deck_match as dm1 on d.id = dm1.deck_id
+left join `match` on dm1.match_id = `match`.id
+left join deck_match as dm2 on `match`.id = dm2.match_id and dm2.deck_id != dm1.deck_id
+left join deck as d2 on dm2.deck_id = d2.id
+left join person as p2 on d2.person_id = p2.id
+ {season_join}
+where dm1.games > dm2.games and elimination > 0
+
+)""".format(season_join=query.season_join())
+
 class RecentGrudge(CountedAchievement):
     key = 'recent_grudges'
     title = 'Not-So-Ancient Grudge'

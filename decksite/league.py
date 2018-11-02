@@ -324,7 +324,7 @@ def determine_league_name(start_date: datetime.datetime, end_date: datetime.date
     return 'League {MM} {YYYY}'.format(MM=calendar.month_name[key_date.month], YYYY=key_date.year)
 
 def retire_deck(d):
-    sql = 'UPDATE `deck` SET `retired` = 1 WHERE id = %s'
+    sql = 'UPDATE `deck` SET `retired` = 1, updated_date = UNIX_TIMESTAMP(NOW()) WHERE id = %s'
     db().execute(sql, [d.id])
     redis.clear(f'decksite:deck:{d.id}')
 

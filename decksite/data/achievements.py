@@ -535,6 +535,18 @@ class Pioneer(CountedAchievement):
     def localised_display(self, n) -> str:
         return ngettext('1 archetype pioneered', '%(num)d archetypes pioneered', n)
 
+class VarietyPlayer(BooleanAchievement):
+    key = 'variety_player'
+    title = 'Variety Player'
+    season_text = 'Finished five-match league runs with three different archetypes this season'
+    description_safe = 'Finish five-match league runs with three different archetypes in a single season.'
+    sql = "CASE WHEN COUNT(DISTINCT CASE WHEN dc.wins + dc.losses >= 5 AND ct.name = 'League' THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END"
+
+    @staticmethod
+    def alltime_text(n):
+        what = ngettext('1 season', '%(num)d different seasons', n)
+        return f'Reached the elimination rounds of a tournament playing three different archetypes in {what}'
+
 class Specialist(BooleanAchievement):
     key = 'specialist'
     title = 'Specialist'

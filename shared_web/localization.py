@@ -6,6 +6,7 @@ from flask_babel import Babel
 
 LANGUAGES: List[str] = []
 SPLIT_REGEX = re.compile(r'^(.*)\[\[(.*)\]\](.*)$')
+VALID_LOCALE = re.compile(r'^[a-zA-Z_]+$')
 
 def get_locale() -> Optional[str]:
     result = check_sql_injection(request.args.get('locale', None))
@@ -20,7 +21,7 @@ def get_locale() -> Optional[str]:
 def check_sql_injection(locale: Optional[str]) -> Optional[str]:
     if locale is None:
         return None
-    if 'select' in locale or "'" in locale:
+    if not VALID_LOCALE.match(locale):
         return None
     return locale
 

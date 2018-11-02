@@ -12,6 +12,7 @@ from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite import league as lg
 from decksite.cache import cached
 from decksite.charts import chart
+from decksite.data import achievements as achs
 from decksite.data import archetype as archs
 from decksite.data import card as cs
 from decksite.data import competition as comp
@@ -91,7 +92,8 @@ def person(person_id):
 @APP.route('/achievements/')
 @SEASONS.route('/achievements/')
 def achievements():
-    view = Achievements(auth.mtgo_username())
+    p = ps.load_person_by_mtgo_username(auth.mtgo_username(), season_id=get_season_id()) if auth.mtgo_username() else None
+    view = Achievements(achs.load_achievements(p, season_id=get_season_id()))
     return view.page()
 
 @APP.route('/person/achievements/')

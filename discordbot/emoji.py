@@ -4,7 +4,7 @@ from typing import Optional
 from discord.client import Client
 
 from magic import oracle
-from magic.models.card import Card
+from magic.models import Card
 
 
 def find_emoji(emoji: str, client: Client) -> Optional[str]:

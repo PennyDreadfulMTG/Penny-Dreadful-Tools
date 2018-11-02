@@ -324,16 +324,16 @@ def determine_league_name(start_date: datetime.datetime, end_date: datetime.date
     return 'League {MM} {YYYY}'.format(MM=calendar.month_name[key_date.month], YYYY=key_date.year)
 
 def retire_deck(d):
-    sql = 'UPDATE `deck` SET `retired` = 1 WHERE id = %s'
+    sql = 'UPDATE `deck` SET `retired` = 1, updated_date = UNIX_TIMESTAMP(NOW()) WHERE id = %s'
     db().execute(sql, [d.id])
     redis.clear(f'decksite:deck:{d.id}')
 
-def load_latest_league_matches():
+def load_latest_league_matches() -> List[Container]:
     competition_id = active_league().id
     where = 'dm.deck_id IN (SELECT id FROM deck WHERE competition_id = {competition_id})'.format(competition_id=competition_id)
     return load_matches(where)
 
-def load_matches(where='1 = 1'):
+def load_matches(where: str = '1 = 1') -> List[Container]:
     sql = """
         SELECT m.date, m.id, GROUP_CONCAT(dm.deck_id) AS deck_ids, GROUP_CONCAT(dm.games) AS games, mtgo_id
         FROM `match` AS m

@@ -4,7 +4,7 @@ from typing import Optional
 from mypy_extensions import TypedDict
 
 from magic import rotation
-from magic.models.card import Card
+from magic.models import Card
 from shared import configuration, database
 
 PriceDataType = TypedDict('PriceDataType', {

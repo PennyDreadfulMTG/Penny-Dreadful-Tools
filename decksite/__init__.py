@@ -73,6 +73,7 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
             {'name': gettext('Tournament Info'), 'url': url_for('tournaments')},
             {'name': gettext('Leaderboards'), 'url': url_for('tournament_leaderboards')},
             {'name': gettext('Gatherling'), 'url': 'https://gatherling.com/'},
+            {'name': gettext('Achievements'), 'url': url_for('achievements')},
             {'name': gettext('Hosting'), 'url': url_for('hosting')}
         ]},
         {'name': gettext('Resources'), 'url': url_for('resources'), 'submenu': resources_submenu},

@@ -9,7 +9,7 @@ from PIL import Image
 import shared.fetcher_internal as internal
 from magic import oracle
 from magic.card import Printing
-from magic.models.card import Card
+from magic.models import Card
 from shared import configuration
 from shared.fetcher_internal import FetchException, escape
 
@@ -55,7 +55,6 @@ def download_bluebones_image(cards: List[Card], filepath: str) -> bool:
         print('Error: {e}'.format(e=e))
     return internal.acceptable_file(filepath)
 
-# BAKERT maybe detect 4xx responses here?
 def download_scryfall_image(cards: List[Card], filepath: str, version: str = '') -> bool:
     card_names = ', '.join(card.name for card in cards)
     print(f'Trying to get scryfall images for {card_names}')

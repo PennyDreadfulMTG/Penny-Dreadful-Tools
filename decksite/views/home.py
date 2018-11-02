@@ -1,14 +1,17 @@
 import datetime
+from typing import List
 
 from flask import url_for
 
 from decksite.view import View
+from magic.models import Card, Deck
 from shared import dtutil
+from shared.container import Container
 
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Home(View):
-    def __init__(self, news, decks, cards) -> None:
+    def __init__(self, news: List[Container], decks: List[Deck], cards: List[Card]) -> None:
         super().__init__()
         self.news = news
         self.has_news = len(news) > 0
@@ -24,7 +27,7 @@ class Home(View):
                 display_decks = decks
         self.decks = display_decks
         cards = [c for c in cards if 'Basic Land' not in c.type]
-        self.top_cards = cards[0:5]
+        self.top_cards = cards[0:8]
         self.cards = self.top_cards # To get prepare_card treatment
         self.cards_url = url_for('cards')
         self.show_active_runs_text = False

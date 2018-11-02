@@ -1,4 +1,4 @@
-- Install MySQL
+- Install MariaDB 10.0+ (alternative MySQL 8.0+)
 - Install python3.6+
 - Install pip3
 - pip3 install -r requirements.txt # If your default python is python2 try `python3 -m pip install -r requirements.txt` instead.
@@ -14,7 +14,7 @@
   -- GRANT ALL ON <decksite_database>.* TO '<mysql_user>'@'<mysql_host>';
   -- GRANT ALL ON <prices_database>.* TO '<mysql_user>'@'<mysql_host>';
   -- GRANT ALL ON <magic_database>.* TO '<mysql_user>'@'<mysql_host>';
-  -- GRANT ALL ON <logsite_database>.* TO <mysql_user>'@'<mysql_host>';
+  -- GRANT ALL ON <logsite_database>.* TO '<mysql_user>'@'<mysql_host>';
 - Some very minor parts of the bot (the "modofail" command) use libopus and ffmpeg which are not in pip and must be installed in a your-OS-specific way separately. Very optional.
 
 --------

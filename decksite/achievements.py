@@ -17,6 +17,17 @@ if TYPE_CHECKING:
 LEADERBOARD_TOP_N = 5
 LEADERBOARD_LIMIT = 12
 
+def load_achievements(p: Optional['person.Person'], season_id: Optional[int]) -> List[Container]:
+    achievements = []
+    for a in Achievement.all_achievements:
+        desc = Container({'title': a.title, 'description_safe': a.description_safe})
+        desc.summary = a.load_summary(season_id=season_id)
+        desc.detail = a.display(p) if p else ''
+        desc.percent = a.percent(season_id=season_id)
+        desc.leaderboard = a.leaderboard(season_id=season_id)
+        achievements.append(desc)
+    return sorted(achievements, key=lambda ad: -ad.percent)
+
 def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int]) -> str:
     # keys have been normalised earlier but could still be reserved words
     columns = ', '.join(f'SUM(`{a.key}`) as `{a.key}`' for a in Achievement.all_achievements if a.in_db)
@@ -98,6 +109,7 @@ class Achievement:
 
     def display(self, p: 'person.Person') -> str:  # pylint: disable=no-self-use, unused-argument
         return ''
+
     # Note: load_summary must be overridden if in_db=False!
     @retry_after_calling(preaggregate_achievements)
     def load_summary(self, season_id: Optional[int] = None) -> Optional[str]:
@@ -128,9 +140,9 @@ class Achievement:
         person_query = query.person_query()
         sql = f"""
             SELECT
-                {person_query} AS name,
-                p.id AS person_id,
-                SUM({self.key}) AS num
+                {person_query} AS person,
+                SUM({self.key}) AS points,
+                p.id AS person_id
             FROM
                 person AS p
             JOIN
@@ -142,7 +154,7 @@ class Achievement:
             GROUP BY
                 p.id
             HAVING
-                num >=
+                points >=
                     (   -- Work out the minimum score to make top N, counting ties
                         SELECT
                             MIN(s)
@@ -165,13 +177,12 @@ class Achievement:
                             ) AS _
                     )
             ORDER BY
-                num DESC,
+                points DESC,
                 name
             LIMIT {LEADERBOARD_LIMIT}
         """
-        for row in [Container(r) for r in db().select(sql)]:
-            result.append({'person': row.name, 'points': row.num, 'url': url_for('person', person_id=row.person_id)})
-        return result if len(result) > 0 else None
+        leaderboard = [Container(r) for r in db().select(sql)]
+        return leaderboard if len(leaderboard) > 0 else None
 
     def leaderboard_heading(self): # pylint: disable=no-self-use
         return ''

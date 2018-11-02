@@ -5,6 +5,7 @@ from flask import url_for
 from decksite.data import archetype as archs
 from decksite.view import View
 from shared.pd_exception import DoesNotExistException
+from shared.container import Container
 
 
 # pylint: disable=no-self-use, too-many-instance-attributes
@@ -12,7 +13,7 @@ class Archetype(View):
     def __init__(self,
                  archetype: archs.Archetype,
                  archetypes: List[archs.Archetype],
-                 matchups,
+                 matchups: List[Container],
                  season_id: int) -> None:
         super().__init__()
         if not archetype:

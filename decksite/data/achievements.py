@@ -344,7 +344,6 @@ class FlawlessRun(CountedAchievement):
             THEN 1 ELSE 0 END)
         """.format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
-
 class PerfectRunCrusher(CountedAchievement):
     key = 'perfect_run_crushes'
     title = 'Perfect Run Crusher'
@@ -387,6 +386,102 @@ class PerfectRunCrusher(CountedAchievement):
                 )
             THEN 1 ELSE 0 END)
         """.format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
+
+class AncientGrudge(CountedAchievement):
+    key = 'ancient_grudges'
+    title = 'Ancient Grudge'
+    description_safe = 'Beat a player in the knockout rounds of a tournament after losing to them in the knockout rounds of an earlier tournament in the same season.'
+    def leaderboard_heading(self):
+        return gettext('grudges repaid')
+    def localised_display(self, n):
+        return ngettext('1 grudge repaid', '%(num)d grudges repaid', n)
+    sql = """COUNT(DISTINCT CASE WHEN d.id IN
+                (
+                    SELECT
+                        k2.winner_deck_id
+                    FROM
+                        knockouts AS k1
+                    JOIN
+                        knockouts AS k2
+                    ON
+                        k1.season_id = k2.season_id AND k1.winner_id = k2.loser_id AND k1.loser_id = k2.winner_id AND k2.date > k1.date
+                ) THEN d.id ELSE NULL END)"""
+    @property
+    def with_sql(self):
+        return """knockouts AS
+            (
+                SELECT
+                    d.id AS winner_deck_id, p1.id AS winner_id, p2.id AS loser_id, season.id AS season_id, `match`.date
+                FROM
+                    deck AS d
+                LEFT JOIN
+                    person AS p1
+                ON
+                    d.person_id = p1.id
+                LEFT JOIN
+                    deck_match AS dm1
+                ON
+                    d.id = dm1.deck_id
+                LEFT JOIN
+                    `match`
+                ON
+                    dm1.match_id = `match`.id
+                LEFT JOIN
+                    deck_match AS dm2
+                ON
+                    `match`.id = dm2.match_id AND dm2.deck_id != dm1.deck_id
+                LEFT JOIN
+                    deck AS d2
+                ON
+                    dm2.deck_id = d2.id
+                LEFT JOIN
+                    person AS p2
+                ON
+                    d2.person_id = p2.id
+                {season_join}
+                WHERE
+                    dm1.games > dm2.games AND elimination > 0
+            )""".format(season_join=query.season_join())
+
+class RecentGrudge(CountedAchievement):
+    key = 'recent_grudges'
+    title = 'Not-So-Ancient Grudge'
+    description_safe = 'Beat a player in the knockout rounds of a tournament after losing to them in the Swiss.'
+    def leaderboard_heading(self):
+        return gettext('grudges repaid')
+    def localised_display(self, n):
+        return ngettext('1 grudge repaid', '%(num)d grudges repaid', n)
+    sql = """COUNT(DISTINCT CASE WHEN d.id in
+                (
+                    SELECT
+                        distinct(dm1.deck_id) AS deck_id
+                    FROM
+                        deck_match AS dm1
+                    INNER JOIN
+                        deck_match AS odm1
+                    ON
+                        odm1.match_id = dm1.match_id AND odm1.deck_id != dm1.deck_id
+                    INNER JOIN
+                        `match` AS m1
+                    ON
+                        m1.id = dm1.match_id
+                    INNER JOIN
+                        deck_match AS dm2
+                    ON
+                        dm1.deck_id = dm2.deck_id AND dm2.match_id != dm1.match_id
+                    INNER JOIN
+                        deck_match AS odm2
+                    ON
+                        odm2.match_id = dm2.match_id AND odm2.deck_id = odm1.deck_id
+                    INNER JOIN
+                        `match` AS m2
+                    ON
+                        m2.id = dm2.match_id
+                    WHERE
+                        dm1.games < odm1.games AND m1.elimination = 0 AND dm2.games > odm2.games AND m2.elimination > 0
+                    ORDER BY
+                        deck_id
+                ) THEN d.id ELSE NULL END)"""
 
 class Deckbuilder(CountedAchievement):
     key = 'deckbuilder'
@@ -439,6 +534,18 @@ class Pioneer(CountedAchievement):
 
     def localised_display(self, n) -> str:
         return ngettext('1 archetype pioneered', '%(num)d archetypes pioneered', n)
+
+class VarietyPlayer(BooleanAchievement):
+    key = 'variety_player'
+    title = 'Variety Player'
+    season_text = 'Finished five-match league runs with three different archetypes this season'
+    description_safe = 'Finish five-match league runs with three different archetypes in a single season.'
+    sql = "CASE WHEN COUNT(DISTINCT CASE WHEN dc.wins + dc.losses >= 5 AND ct.name = 'League' THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END"
+
+    @staticmethod
+    def alltime_text(n):
+        what = ngettext('1 season', '%(num)d different seasons', n)
+        return f'Reached the elimination rounds of a tournament playing three different archetypes in {what}'
 
 class Specialist(BooleanAchievement):
     key = 'specialist'

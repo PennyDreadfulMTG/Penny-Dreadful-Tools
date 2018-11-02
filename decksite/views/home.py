@@ -1,14 +1,18 @@
 import datetime
+from typing import List
 
 from flask import url_for
 
 from decksite.view import View
+from magic.models.card import Card
+from magic.models.deck import Deck
 from shared import dtutil
+from shared.container import Container
 
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Home(View):
-    def __init__(self, news, decks, cards) -> None:
+    def __init__(self, news: List[Container], decks: List[Deck], cards: List[Card]) -> None:
         super().__init__()
         self.news = news
         self.has_news = len(news) > 0

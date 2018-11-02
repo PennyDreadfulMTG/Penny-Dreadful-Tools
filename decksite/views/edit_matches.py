@@ -1,13 +1,16 @@
+from typing import List
+
 from flask import url_for
 
 from decksite.data import deck
 from decksite.view import View
 from shared import dtutil
+from shared.container import Container
 
 
 # pylint: disable=no-self-use
 class EditMatches(View):
-    def __init__(self, matches) -> None:
+    def __init__(self, matches: List[Container]) -> None:
         super().__init__()
         self.matches = matches
         if matches:

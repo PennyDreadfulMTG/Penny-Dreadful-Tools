@@ -1,7 +1,8 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from flask import request, session, url_for
 
+from magic.models import Deck
 from decksite import APP, auth
 from decksite import league as lg
 from decksite.data import archetype as archs
@@ -28,13 +29,13 @@ def admin_menu() -> List[Dict[str, str]]:
 
 @APP.route('/admin/')
 @auth.admin_required
-def admin_home():
+def admin_home() -> str:
     view = Admin(admin_menu())
     return view.page()
 
 @APP.route('/admin/archetypes/')
 @auth.demimod_required
-def edit_archetypes(search_results=None, q='', notq=''):
+def edit_archetypes(search_results: Optional[List[Deck]] = None, q: str = '', notq: str = '') -> str:
     if search_results is None:
         search_results = []
     view = EditArchetypes(archs.load_archetypes_deckless(order_by='a.name'), search_results, q, notq)
@@ -42,8 +43,8 @@ def edit_archetypes(search_results=None, q='', notq=''):
 
 @APP.route('/admin/archetypes/', methods=['POST'])
 @auth.demimod_required
-def post_archetypes():
-    search_results = []
+def post_archetypes() -> str:
+    search_results: List[Deck] = []
     if request.form.get('deck_id') is not None:
         archetype_ids = request.form.getlist('archetype_id')
         # Adjust archetype_ids if we're assigning multiple decks to the same archetype.
@@ -72,13 +73,13 @@ def post_archetypes():
 
 @APP.route('/admin/matches/')
 @auth.admin_required
-def edit_matches():
+def edit_matches() -> str:
     view = EditMatches(lg.load_latest_league_matches())
     return view.page()
 
 @APP.route('/admin/matches/', methods=['POST'])
 @auth.admin_required
-def post_matches():
+def post_matches() -> str:
     if request.form.get('action') == 'change':
         lg.update_match(request.form.get('match_id'), request.form.get('left_id'), request.form.get('left_games'), request.form.get('right_id'), request.form.get('right_games'))
     elif request.form.get('action') == 'delete':
@@ -89,7 +90,7 @@ def post_matches():
 
 @APP.route('/admin/news/')
 @auth.admin_required
-def edit_news():
+def edit_news() -> str:
     new_item = Container({'form_date': dtutil.form_date(dtutil.now(dtutil.WOTC_TZ), dtutil.WOTC_TZ), 'title': '', 'url': ''})
     news_items = [new_item] + ns.load_news()
     view = EditNews(news_items)
@@ -97,7 +98,7 @@ def edit_news():
 
 @APP.route('/admin/news/', methods=['POST'])
 @auth.admin_required
-def post_news():
+def post_news() -> str:
     if request.form.get('action') == 'delete':
         ns.delete(request.form.get('id'))
     else:
@@ -106,20 +107,20 @@ def post_news():
     return edit_news()
 
 @APP.route('/admin/prizes/')
-def prizes():
+def prizes() -> str:
     tournaments_with_prizes = comp.tournaments_with_prizes()
     first_runs = lg.first_runs()
     view = Prizes(tournaments_with_prizes, first_runs)
     return view.page()
 
 @APP.route('/admin/rotation/')
-def rotation_checklist():
+def rotation_checklist() -> str:
     view = RotationChecklist()
     return view.page()
 
 @APP.route('/admin/people/notes/')
 @auth.admin_required
-def player_notes():
+def player_notes() -> str:
     notes = ps.load_notes()
     all_people = ps.load_people(order_by='p.mtgo_username')
     view = PlayerNotes(notes, all_people)
@@ -127,21 +128,21 @@ def player_notes():
 
 @APP.route('/admin/people/notes/', methods=['POST'])
 @auth.admin_required
-def post_player_note():
+def post_player_note() -> str:
     creator = ps.load_person_by_discord_id(session['id'])
     ps.add_note(creator.id, request.form.get('subject_id'), request.form.get('note'))
     return player_notes()
 
 @APP.route('/admin/unlink/')
 @auth.admin_required
-def unlink(num_affected_people=None):
+def unlink(num_affected_people: Optional[int] = None) -> str:
     all_people = ps.load_people(order_by='p.mtgo_username')
     view = Unlink(all_people, num_affected_people)
     return view.page()
 
 @APP.route('/admin/unlink/', methods=['POST'])
 @auth.admin_required
-def post_unlink():
+def post_unlink() -> str:
     n = 0
     person_id = request.form.get('person_id')
     if person_id:

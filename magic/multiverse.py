@@ -6,7 +6,7 @@ import pkg_resources
 from magic import card, database, fetcher, rotation
 from magic.card_description import CardDescription
 from magic.database import create_table_def, db
-from magic.models.card import Card
+from magic.models import Card
 from magic.whoosh_write import WhooshWriter
 from shared import dtutil
 from shared.database import sqlescape

@@ -1,4 +1,4 @@
-from typing import List
+from typing import Iterable
 
 from decksite.data.person import Person
 from decksite.view import View
@@ -6,7 +6,7 @@ from decksite.view import View
 
 # pylint: disable=no-self-use
 class Unlink(View):
-    def __init__(self, people: List[Person], num_affected_people: int = None) -> None:
+    def __init__(self, people: Iterable[Person], num_affected_people: int = None) -> None:
         super().__init__()
         self.people = people
         if num_affected_people is not None:

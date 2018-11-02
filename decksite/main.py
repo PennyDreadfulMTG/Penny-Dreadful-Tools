@@ -9,11 +9,11 @@ from requests.exceptions import RequestException
 from werkzeug.exceptions import InternalServerError
 
 from decksite import APP, SEASONS
-from decksite import achievements as achs
 from decksite import auth, deck_name, get_season_id
 from decksite import league as lg
 from decksite.cache import cached
 from decksite.charts import chart
+from decksite.data import achievements as achs
 from decksite.data import archetype as archs
 from decksite.data import card as cs
 from decksite.data import competition as comp

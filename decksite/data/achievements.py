@@ -25,6 +25,7 @@ def load_achievements(p: Optional['person.Person'], season_id: Optional[int]) ->
         desc.detail = a.display(p) if p else ''
         desc.percent = a.percent(season_id=season_id)
         desc.leaderboard = a.leaderboard(season_id=season_id)
+        desc.leaderboard_heading = a.leaderboard_heading()
         achievements.append(desc)
     return sorted(achievements, key=lambda ad: -ad.percent)
 
@@ -85,9 +86,6 @@ def preaggregate_query() -> str:
             season.id IS NOT NULL
     """.format(cc=create_columns, sc=select_columns, with_clauses=with_clauses, season_join=query.season_join(), competition_join=query.competition_join())
 
-def displayed_achievements(p: 'person.Person') -> List[Dict[str, str]]:
-    return [d for d in ({'title': a.title, 'detail': a.display(p)} for a in Achievement.all_achievements) if d['detail']]
-
 # Abstract achievement classes
 
 class Achievement:
@@ -107,7 +105,8 @@ class Achievement:
                 print(f"Warning: Two achievements have the same normalised key {cls.key}. This won't do any permanent damage to the database but the results are almost certainly not as intended.")
             cls.all_achievements.append(cls())
 
-    def display(self, p: 'person.Person') -> str:  # pylint: disable=no-self-use, unused-argument
+    # pylint: disable=no-self-use, unused-argument
+    def display(self, p: 'person.Person') -> str:
         return ''
 
     # Note: load_summary must be overridden if in_db=False!
@@ -136,7 +135,6 @@ class Achievement:
 
     def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Dict]]:
         season_condition = query.season_query(season_id)
-        result = []
         person_query = query.person_query()
         sql = f"""
             SELECT
@@ -184,7 +182,8 @@ class Achievement:
         leaderboard = [Container(r) for r in db().select(sql)]
         return leaderboard if len(leaderboard) > 0 else None
 
-    def leaderboard_heading(self): # pylint: disable=no-self-use
+    # pylint: disable=no-self-use
+    def leaderboard_heading(self):
         return ''
 
 class CountedAchievement(Achievement):
@@ -236,7 +235,7 @@ class TournamentOrganizer(Achievement):
 
     def display(self, p: 'person.Person') -> str:
         if p.name in self.hosts:
-            return 'Ran a tournament for the Penny Dreadful community'
+            return 'Tournament Run'
         return ''
 
     def load_summary(self, season_id: Optional[int] = None) -> Optional[str]:

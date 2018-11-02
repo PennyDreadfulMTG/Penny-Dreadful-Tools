@@ -1,5 +1,3 @@
-from flask import url_for
-
 from decksite.view import View
 
 
@@ -13,7 +11,6 @@ class Achievements(View):
             if a.leaderboard:
                 self.leaderboards.append(a.leaderboard)
                 a.has_leaderboard = True
-                a.leaderboard_heading = a.leaderboard_heading()
         self.show_seasons = True
 
     def page_title(self):

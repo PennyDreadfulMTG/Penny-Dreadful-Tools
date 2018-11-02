@@ -36,7 +36,12 @@
                         </tbody>
                     </table>
                 {{/has_leaderboard}}
-                {{#detail}}<p class="detail"><span class="earned">🏆</span>{{detail}}</p>{{/detail}}
+                {{#detail}}
+                    <p class="detail">
+                        <span class="earned">🏆</span>
+                        <span class="text">{{detail}}</span>
+                    </p>
+                {{/detail}}
             </div>
         </div>
     {{/achievements}}

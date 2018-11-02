@@ -2044,13 +2044,19 @@ Achievements
     width: 3rem;
 }
 
-.detail {
-    margin-left: -1.333rem;
+p.detail {
+    position: relative;
 }
 
-.detail .earned {
+p.detail .earned {
     display: inline-block;
-    width: 1.333rem;
+    left: -1.333rem;
+    position: absolute;
+}
+
+p.detail .text {
+    display: inline-block;
+    position: relative;
 }
 
 /*

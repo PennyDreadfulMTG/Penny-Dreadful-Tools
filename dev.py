@@ -135,7 +135,7 @@ def reset_db() -> None:
     magic.database.db().nuke_database()
 
 def push() -> None:
-    subprocess.check_call(['git', 'pull', 'origin', 'master'])
+    subprocess.check_call(['git', 'pull', 'origin', 'master', '--rebase'])
     lint([])
     mypy([], False)
     tests([])

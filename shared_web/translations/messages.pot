@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-10-29 16:09+1100\n"
+"POT-Creation-Date: 2018-11-03 12:50+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -58,7 +58,7 @@ msgstr ""
 msgid "Latest Decks"
 msgstr ""
 
-#: decksite/__init__.py:59
+#: decksite/__init__.py:59 decksite/data/achievements.py:533
 msgid "Archetypes"
 msgstr ""
 
@@ -120,119 +120,169 @@ msgid "Gatherling"
 msgstr ""
 
 #: decksite/__init__.py:76
+msgid "Achievements"
+msgstr ""
+
+#: decksite/__init__.py:77
 msgid "Hosting"
 msgstr ""
 
-#: decksite/__init__.py:78
+#: decksite/__init__.py:79
 msgid "Resources"
 msgstr ""
 
-#: decksite/__init__.py:79 decksite/views/about_pdm.py:16
+#: decksite/__init__.py:80 decksite/views/about_pdm.py:16
 #: logsite/views/about.py:16
 msgid "About"
 msgstr ""
 
-#: decksite/__init__.py:80
+#: decksite/__init__.py:81
 msgid "What is Penny Dreadful?"
 msgstr ""
 
-#: decksite/__init__.py:81
+#: decksite/__init__.py:82
 msgid "About pennydreadfulmagic.com"
 msgstr ""
 
-#: decksite/__init__.py:82
+#: decksite/__init__.py:83
 msgid "FAQs"
 msgstr ""
 
-#: decksite/__init__.py:83
+#: decksite/__init__.py:84
 msgid "Community Guidelines"
 msgstr ""
 
-#: decksite/__init__.py:85
+#: decksite/__init__.py:86
 msgid "Admin"
 msgstr ""
 
-#: decksite/achievements.py:101
-#, python-format
-msgid " once"
-msgid_plural " %(num)d times"
-msgstr[0] ""
-msgstr[1] ""
-
-#: decksite/achievements.py:102
-#, python-format
-msgid "1 player"
-msgid_plural "%(num)d players"
-msgstr[0] ""
-msgstr[1] ""
-
-#: decksite/achievements.py:165
-#, python-format
-msgid "1 tournament entered"
-msgid_plural "%(num)d tournaments entered"
-msgstr[0] ""
-msgstr[1] ""
-
-#: decksite/achievements.py:173
-#, python-format
-msgid "1 victory"
-msgid_plural "%(num)d victories"
-msgstr[0] ""
-msgstr[1] ""
-
-#: decksite/achievements.py:183
-#, python-format
-msgid "1 league entry"
-msgid_plural "%(num)d league entries"
-msgstr[0] ""
-msgstr[1] ""
-
-#: decksite/achievements.py:191
-#, python-format
-msgid "1 perfect run"
-msgid_plural "%(num)d perfect runs"
-msgstr[0] ""
-msgstr[1] ""
-
-#: decksite/achievements.py:198
-#, python-format
-msgid "1 flawless run"
-msgid_plural "%(num)d flawless runs"
-msgstr[0] ""
-msgstr[1] ""
-
-#: decksite/achievements.py:230
-#, python-format
-msgid "1 dream in tatters"
-msgid_plural "%(num)d dreams in tatters"
-msgstr[0] ""
-msgstr[1] ""
-
-#: decksite/achievements.py:266
-#, python-format
-msgid "1 archetype pioneered"
-msgid_plural "%(num)d archetypes pioneered"
-msgstr[0] ""
-msgstr[1] ""
-
-#: decksite/achievements.py:288 decksite/achievements.py:325
-#: decksite/achievements.py:336
-#, python-format
-msgid "1 season"
-msgid_plural "%(num)d different seasons"
-msgstr[0] ""
-msgstr[1] ""
-
-#: decksite/view.py:157
+#: decksite/view.py:156
 #, python-format
 msgid "%(num)d active league run"
 msgid_plural "%(num)d active league runs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/view.py:320 logsite/templates/about.mustache:1
+#: decksite/view.py:319 logsite/templates/about.mustache:1
 msgid "Help us translate the site into your language"
 msgstr ""
+
+#: decksite/data/achievements.py:121
+#, python-format
+msgid " once"
+msgid_plural " %(num)d times"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/data/achievements.py:122
+#, python-format
+msgid "1 player"
+msgid_plural "%(num)d players"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/data/achievements.py:225
+msgid "Seasons"
+msgstr ""
+
+#: decksite/data/achievements.py:265 decksite/templates/tournaments.mustache:1
+msgid "Tournaments"
+msgstr ""
+
+#: decksite/data/achievements.py:268
+#, python-format
+msgid "1 tournament entered"
+msgid_plural "%(num)d tournaments entered"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/data/achievements.py:277
+msgid "Victories"
+msgstr ""
+
+#: decksite/data/achievements.py:280
+#, python-format
+msgid "1 victory"
+msgid_plural "%(num)d victories"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/data/achievements.py:292
+msgid "Entries"
+msgstr ""
+
+#: decksite/data/achievements.py:295
+#, python-format
+msgid "1 league entry"
+msgid_plural "%(num)d league entries"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/data/achievements.py:304 decksite/data/achievements.py:315
+msgid "Runs"
+msgstr ""
+
+#: decksite/data/achievements.py:307
+#, python-format
+msgid "1 perfect run"
+msgid_plural "%(num)d perfect runs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/data/achievements.py:318
+#, python-format
+msgid "1 flawless run"
+msgid_plural "%(num)d flawless runs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/data/achievements.py:353
+msgid "Crushes"
+msgstr ""
+
+#: decksite/data/achievements.py:356
+#, python-format
+msgid "1 perfect run crush"
+msgid_plural "%(num)d perfect run crushes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/data/achievements.py:395 decksite/data/achievements.py:451
+msgid "grudges repaid"
+msgstr ""
+
+#: decksite/data/achievements.py:397 decksite/data/achievements.py:453
+#, python-format
+msgid "1 grudge repaid"
+msgid_plural "%(num)d grudges repaid"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/data/achievements.py:505
+msgid "Decks"
+msgstr ""
+
+#: decksite/data/achievements.py:508
+#, python-format
+msgid "1 deck played by others"
+msgid_plural "%(num)d decks played by others"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/data/achievements.py:536
+#, python-format
+msgid "1 archetype pioneered"
+msgid_plural "%(num)d archetypes pioneered"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/data/achievements.py:547 decksite/data/achievements.py:587
+#: decksite/data/achievements.py:599 decksite/data/achievements.py:611
+#, python-format
+msgid "1 season"
+msgid_plural "%(num)d different seasons"
+msgstr[0] ""
+msgstr[1] ""
 
 #: decksite/templates/about.mustache:1
 msgid ""
@@ -661,10 +711,6 @@ msgstr ""
 
 #: decksite/templates/tournaments.mustache:1
 msgid "Date"
-msgstr ""
-
-#: decksite/templates/tournaments.mustache:1
-msgid "Tournaments"
 msgstr ""
 
 #: decksite/templates/tournaments.mustache:1

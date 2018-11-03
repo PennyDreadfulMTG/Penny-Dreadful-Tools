@@ -35,6 +35,12 @@ def run() -> None:
     elif cmd == 'push':
         push()
 
+    elif cmd in ('imports', 'isort', 'sort'):
+        sort()
+
+    elif cmd in ('fix-sorts', 'fix-imports'):
+        sort(True)
+
     elif cmd in ('pr', 'pull-request'):
         pull_request(args)
 
@@ -95,6 +101,30 @@ def tests(argv: List[str]) -> None:
     if code:
         sys.exit(code)
 
+def sort(fix: bool = False) -> None:
+    from isort import SortImports
+    import isort.main
+    config = isort.main.from_path('.')
+    if fix:
+        config['recursive'] = True
+        config['check'] = False
+        config['ask_to_apply'] = False
+    else:
+        config['check'] = True
+
+    file_names = isort.main.iter_source_code(['.'], config, [])
+    wrong_sorted_files = False
+    for file_name in file_names:
+        try:
+            sort_attempt = SortImports(file_name, check=config['check'])
+            incorrectly_sorted = sort_attempt.incorrectly_sorted
+            if incorrectly_sorted:
+                wrong_sorted_files = True
+        except IOError as e:
+            print('WARNING: Unable to parse file {0} due to {1}'.format(file_name, e))
+    if wrong_sorted_files:
+        sys.exit(2)
+
 def reset_db() -> None:
     """
     Handle with care.
@@ -109,7 +139,7 @@ def push() -> None:
     lint([])
     mypy([], False)
     tests([])
-    # isort
+    sort(fix=False)
     branch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
     subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch])
 

@@ -7,7 +7,7 @@ from decksite.data import deck, match
 from decksite.data import person as ps
 from decksite.views import DeckEmbed
 from magic import oracle, rotation
-from shared import dtutil, guarantee
+from shared import configuration, dtutil, guarantee
 from shared.pd_exception import DoesNotExistException, TooManyItemsException
 from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
@@ -178,3 +178,9 @@ def deck_embed(deck_id):
         'html': template.render(view)
     }
     return return_json(embed)
+
+@APP.route('/api/test_500')
+def test_500() -> Response:
+    if configuration.get_bool('production'):
+        return return_json(generate_error('ON_PROD', 'This only works on test environments'), status=404)
+    raise TooManyItemsException()

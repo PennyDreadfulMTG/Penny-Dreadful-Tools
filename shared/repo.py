@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import sys
 import textwrap
 import traceback
@@ -53,6 +54,8 @@ def create_issue(content: str,
         stack = traceback.extract_stack()[:-3] + traceback.extract_tb(exception.__traceback__)
         pretty = traceback.format_list(stack)
         body += 'Stack Trace:\n```\n' + ''.join(pretty) + '\n```\n'
+        exhash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
+        body += f'Exeption_hash: {exhash}\n'
     print(title + '\n' + body, file=sys.stderr)
     # Only check for github details at the last second to get log output even if github not configured.
     if not configuration.get('github_user') or not configuration.get('github_password'):

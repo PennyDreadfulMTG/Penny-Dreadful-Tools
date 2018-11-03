@@ -57,7 +57,9 @@ def lint(argv: List[str]) -> None:
            ]
     args.extend(argv or LINT_PATHS)
     import pylint.lint
-    pylint.lint.Run(args, do_exit=True)
+    linter = pylint.lint.Run(args, do_exit=False)
+    if linter.linter.msg_status:
+        sys.exit(linter.linter.msg_status)
 
 def mypy(argv: List[str], strict: bool = False) -> None:
     args = [
@@ -82,7 +84,7 @@ def mypy(argv: List[str], strict: bool = False) -> None:
     if result[2]:
         n = len(result[0].split('\n'))
         print(f'{n} issues')
-    sys.exit(result[2])
+        sys.exit(result[2])
 
 def tests(argv: List[str]) -> None:
     import pytest
@@ -104,7 +106,10 @@ def reset_db() -> None:
 
 def push() -> None:
     subprocess.check_call(['git', 'pull', 'origin', 'master'])
+    lint([])
+    mypy([], False)
     tests([])
+    # isort
     branch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
     subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch])
 

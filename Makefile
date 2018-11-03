@@ -7,7 +7,7 @@ default:
 
 # Push your commits (safely) to the remote branch.
 push:
-	git pull origin master && make test && git push --set-upstream origin `git rev-parse --abbrev-ref HEAD`
+	@python3 dev.py push
 
 # Run all unit and syntax tests.
 test: check unit
@@ -65,14 +65,14 @@ imports:
 	@echo
 	@echo "******************************** Import Ordering ******************************"
 	@echo
-	@isort --check-only
+	@python3 dev.py imports
 	@echo
 
 fiximports:
 	@echo
 	@echo "******************************** Import Ordering ******************************"
 	@echo
-	@isort -rc .
+	@python3 dev.py fiximports
 	@echo
 
 readme:

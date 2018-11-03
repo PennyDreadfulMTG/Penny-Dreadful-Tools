@@ -38,7 +38,7 @@ def run() -> None:
     elif cmd in ('imports', 'isort', 'sort'):
         sort()
 
-    elif cmd in ('fix-sorts', 'fix-imports'):
+    elif cmd in ('fix-sorts', 'fix-imports', 'fiximports'):
         sort(True)
 
     elif cmd in ('pr', 'pull-request'):

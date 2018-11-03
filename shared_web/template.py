@@ -1,5 +1,5 @@
 import re
-from typing import (TYPE_CHECKING, Any, Callable, Dict, List, Match, Optional,
+from typing import (TYPE_CHECKING, Callable, Dict, List, Match, Optional,
                     Tuple, Union)
 
 import flask
@@ -109,5 +109,5 @@ class NoParaTagProcessor(Treeprocessor):
 # pylint: disable=no-self-use, invalid-name
 class NoParaTagsExtension(Extension):
     # pylint: disable=arguments-differ
-    def extendMarkdown(self, md: Markdown, _: Any) -> None:
-        md.treeprocessors.add('noparatag', NoParaTagProcessor(), '_end')
+    def extendMarkdown(self, md: Markdown) -> None:
+        md.treeprocessors.register(NoParaTagProcessor(), 'noparatag', -50)

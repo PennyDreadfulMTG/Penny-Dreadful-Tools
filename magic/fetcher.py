@@ -176,7 +176,7 @@ def times_from_timezone_code(q: str) ->  Dict[str, List[str]]:
     possibles = list(filter(lambda x: datetime.datetime.now(pytz.timezone(x)).strftime('%Z') == q.upper(), pytz.common_timezones))
     if not possibles:
         raise TooFewItemsException(f'Not a recognized timezone: {q.upper()}')
-    results = {}
+    results: Dict[str, List[str]] = {}
     for possible in possibles:
         timezone = dtutil.timezone(possible)
         t = current_time(timezone)

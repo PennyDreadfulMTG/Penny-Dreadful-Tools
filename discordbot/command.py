@@ -446,7 +446,7 @@ Want to contribute? Send a Pull Request."""
             ts = fetcher.time(args)
             times_s = ''
             for t, zones in ts.items():
-                cities = sorted(set([re.sub('.*/(.*)', '\\1', zone).replace('_', ' ') for zone in zones]))
+                cities = sorted(set(re.sub('.*/(.*)', '\\1', zone).replace('_', ' ') for zone in zones))
                 times_s += '{cities}: {t}\n'.format(cities=', '.join(cities), t=t)
         except NotConfiguredException:
             return await send(channel, 'The time command has not been configured.')

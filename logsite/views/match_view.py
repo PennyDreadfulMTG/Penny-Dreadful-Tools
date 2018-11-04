@@ -2,6 +2,8 @@ import inflect
 import titlecase
 from flask import url_for
 
+from shared.pd_exception import DoesNotExistException
+
 from .. import APP, importing
 from ..data import match
 from ..view import View
@@ -15,6 +17,8 @@ def show_match(match_id):
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Match(View):
     def __init__(self, viewed_match: match.Match) -> None:
+        if not viewed_match:
+            raise DoesNotExistException()
         self.match = viewed_match
         self.id = viewed_match.id
         self.comment = viewed_match.comment

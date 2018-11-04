@@ -1,3 +1,5 @@
+from typing import List, Optional
+
 from flask import Response, request, session, url_for
 
 from decksite import APP, auth, league
@@ -7,6 +9,7 @@ from decksite.data import deck, match
 from decksite.data import person as ps
 from decksite.views import DeckEmbed
 from magic import oracle, rotation
+from magic.models import Deck
 from shared import configuration, dtutil, guarantee
 from shared.pd_exception import DoesNotExistException, TooManyItemsException
 from shared_web import template
@@ -19,12 +22,11 @@ def deck_api(deck_id):
     return return_json(blob)
 
 @APP.route('/api/randomlegaldeck')
-def random_deck_api():
+def random_deck_api() -> Response:
     blob = deck.random_legal_deck()
     if blob is None:
-        blob = {'error': True, 'msg': 'No legal decks could be found'}
-    else:
-        blob['url'] = url_for('deck', deck_id=blob['id'], _external=True)
+        return return_json({'error': True, 'msg': 'No legal decks could be found'})
+    blob['url'] = url_for('deck', deck_id=blob['id'], _external=True)
     return return_json(blob)
 
 @APP.route('/api/competitions/')
@@ -43,11 +45,11 @@ def competitions_api():
     return return_json(r)
 
 @APP.route('/api/competitions/<competition_id>')
-def competition_api(competition_id):
+def competition_api(competition_id: int) -> Response:
     return return_json(comp.load_competition(competition_id))
 
 @APP.route('/api/league')
-def league_api():
+def league_api() -> Response:
     return return_json(league.active_league())
 
 @APP.route('/api/person/<person>/')
@@ -154,7 +156,7 @@ def person_status():
         r['archetypes_to_tag'] = len(deck.load_decks('NOT d.reviewed'))
     return return_json(r)
 
-def guarantee_at_most_one_or_retire(decks):
+def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:
     try:
         run = guarantee.at_most_one(decks)
     except TooManyItemsException:

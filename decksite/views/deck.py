@@ -88,7 +88,7 @@ class Deck(View):
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.deck, attr)
 
-    def page_title(self):
+    def page_title(self) -> str:
         return self.deck.name if self.public() else '(Active League Run)'
 
     def sections(self):

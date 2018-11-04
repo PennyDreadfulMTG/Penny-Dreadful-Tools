@@ -38,7 +38,7 @@ def run() -> None:
     elif cmd in ('imports', 'isort', 'sort'):
         sort()
 
-    elif cmd in ('fix-sorts', 'fix-imports'):
+    elif cmd in ('fix-sorts', 'fix-imports', 'fiximports'):
         sort(True)
 
     elif cmd in ('pr', 'pull-request'):
@@ -71,6 +71,8 @@ def mypy(argv: List[str], strict: bool = False) -> None:
     args = [
         '--ignore-missing-imports',     # Don't complain about 3rd party libs with no stubs
         '--disallow-untyped-calls',     # Strict Mode.  All function calls must have a return type.
+        '--warn-redundant-casts',
+        # '--check-untyped-defs',
         ]
     if strict:
         args.append('--disallow-incomplete-defs') # All parameters must have type definitions.
@@ -135,7 +137,7 @@ def reset_db() -> None:
     magic.database.db().nuke_database()
 
 def push() -> None:
-    subprocess.check_call(['git', 'pull', 'origin', 'master'])
+    subprocess.check_call(['git', 'pull', 'origin', 'master', '--rebase'])
     lint([])
     mypy([], False)
     tests([])

@@ -128,6 +128,8 @@ class Bot(discord.Client):
             await self.wait_until_ready()
             new_cards = await fetcher.scryfall_cards_async()
             for c in new_cards['data']:
+                if c['layout'] == 'double_faced_token':
+                    continue # These cause issues for little benefit.  Let's just ignore them for now.
                 try:
                     oracle.valid_name(c['name'])
                     await asyncio.sleep(1)

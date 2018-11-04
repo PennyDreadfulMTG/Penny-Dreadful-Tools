@@ -615,6 +615,11 @@ def nwdl_join() -> str:
             ) AS dsum ON d.id = dsum.id
     """
 
+def num_decks() -> int:
+    sql = 'SELECT COUNT(DISTINCT id) AS c FROM deck'
+    r = Container(db().select(sql)[0])
+    return r.c
+
 def random_legal_deck() -> Optional[Deck]:
     sql = f"""SELECT MIN(id) AS min, MAX(id) AS max FROM deck WHERE
                 created_date > (SELECT start_date FROM season WHERE number = {rotation.current_season_num()})

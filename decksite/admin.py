@@ -10,8 +10,10 @@ from decksite.data import deck as ds
 from decksite.data import match as ms
 from decksite.data import news as ns
 from decksite.data import person as ps
+from decksite.data import rule as rs
 from decksite.views import (Admin, EditArchetypes, EditMatches, EditNews,
-                            PlayerNotes, Prizes, RotationChecklist, Unlink)
+                            EditRules, PlayerNotes, Prizes, RotationChecklist,
+                            Unlink)
 from magic.models import Deck
 from shared import dtutil, redis
 from shared.container import Container
@@ -70,6 +72,14 @@ def post_archetypes() -> str:
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/archetypes: {f}'.format(f=request.form))
     return edit_archetypes(search_results, request.form.get('q', ''), request.form.get('notq', ''))
+
+@APP.route('/admin/rules/')
+@auth.demimod_required
+def edit_rules() -> str:
+    cnum = rs.num_classified_decks()
+    tnum = ds.num_decks()
+    view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks())
+    return view.page()
 
 @APP.route('/admin/matches/')
 @auth.admin_required

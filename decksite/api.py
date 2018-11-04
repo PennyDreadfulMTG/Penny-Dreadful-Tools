@@ -1,3 +1,5 @@
+from typing import List, Optional
+
 from flask import Response, request, session, url_for
 
 from decksite import APP, auth, league
@@ -7,6 +9,7 @@ from decksite.data import deck, match
 from decksite.data import person as ps
 from decksite.views import DeckEmbed
 from magic import oracle, rotation
+from magic.models import Deck
 from shared import configuration, dtutil, guarantee
 from shared.pd_exception import DoesNotExistException, TooManyItemsException
 from shared_web import template
@@ -153,7 +156,7 @@ def person_status():
         r['archetypes_to_tag'] = len(deck.load_decks('NOT d.reviewed'))
     return return_json(r)
 
-def guarantee_at_most_one_or_retire(decks):
+def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:
     try:
         run = guarantee.at_most_one(decks)
     except TooManyItemsException:

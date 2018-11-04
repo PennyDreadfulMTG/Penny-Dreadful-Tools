@@ -12,6 +12,7 @@ from decksite.data.form import Form
 from decksite.database import db
 from decksite.scrapers import decklist
 from magic import card, fetcher, legality, rotation
+from magic.models import Deck
 from shared import configuration, dtutil, guarantee, redis
 from shared.container import Container
 from shared.database import sqlescape
@@ -323,7 +324,7 @@ def determine_league_name(start_date: datetime.datetime, end_date: datetime.date
         key_date = end_date
     return 'League {MM} {YYYY}'.format(MM=calendar.month_name[key_date.month], YYYY=key_date.year)
 
-def retire_deck(d):
+def retire_deck(d: Deck) -> None:
     sql = 'UPDATE `deck` SET `retired` = 1, updated_date = UNIX_TIMESTAMP(NOW()) WHERE id = %s'
     db().execute(sql, [d.id])
     redis.clear(f'decksite:deck:{d.id}')

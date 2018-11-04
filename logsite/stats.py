@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 from sqlalchemy import func, text
 
 from shared import dtutil
@@ -10,7 +12,7 @@ from .db import Format
 
 @APP.route('/stats.json')
 def stats():
-    val = {}
+    val: Dict[str, Any] = {}
     last_switcheroo = match.Match.query.filter(match.Match.has_unexpected_third_game).order_by(match.Match.id.desc()).first()
     if last_switcheroo:
         val['last_switcheroo'] = dtutil.dt2ts(last_switcheroo.start_time_aware())
@@ -92,9 +94,9 @@ def stats():
 @APP.route('/recent.json')
 def recent_json():
     last_week = dtutil.now() - dtutil.ts2dt(7 * 24 * 60 * 60)
-    val = {}
+    val: Dict[str, Any] = {}
     val['formats'] = {}
-    last_f = {}
+    last_f: Dict[str, int] = {}
     for m in match.Match.query.filter(match.Match.start_time > last_week).all():
         f = m.format
         if val['formats'].get(f.name, None) is None:

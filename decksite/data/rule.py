@@ -11,12 +11,24 @@ def num_classified_decks() -> int:
     return (db().select(sql))[0]['c']
 
 def mistagged_decks() -> List[Deck]:
-    sql = """SELECT deck_id, rule_archetype.name as rule_archetype_name, tagged_archetype.name as tagged_archetype_name
-                FROM ({apply_rules_query}) AS applied_rules
-                JOIN deck on applied_rules.deck_id = deck.id
-                join archetype as rule_archetype on rule_archetype.id = applied_rules.archetype_id
-                join archetype as tagged_archetype on tagged_archetype.id = deck.archetype_id
-                WHERE rule_archetype.id != tagged_archetype.id""".format(apply_rules_query=apply_rules_query())
+    sql = """SELECT
+                    deck_id, rule_archetype.name AS rule_archetype_name, tagged_archetype.name AS tagged_archetype_name
+                FROM
+                    ({apply_rules_query}) AS applied_rules
+                JOIN
+                    deck
+                ON
+                    applied_rules.deck_id = deck.id
+                JOIN
+                    archetype AS rule_archetype
+                ON
+                    rule_archetype.id = applied_rules.archetype_id
+                JOIN
+                    archetype AS tagged_archetype
+                ON
+                    tagged_archetype.id = deck.archetype_id
+                WHERE
+                    rule_archetype.id != tagged_archetype.id""".format(apply_rules_query=apply_rules_query())
     deck_ids: List[str] = []
     rule_archetypes = {}
     for r in (Container(row) for row in db().select(sql)):
@@ -28,11 +40,18 @@ def mistagged_decks() -> List[Deck]:
     return result
 
 def doubled_decks() -> List[Deck]:
-    sql = """SELECT deck_id, GROUP_CONCAT(archetype.name) AS concat_archetypes
-                FROM ({apply_rules_query}) AS applied_rules
-                JOIN archetype ON applied_rules.archetype_id = archetype.id
-                GROUP BY deck_id
-                HAVING COUNT(DISTINCT archetype.id) > 1""".format(apply_rules_query=apply_rules_query())
+    sql = """SELECT
+                    deck_id, GROUP_CONCAT(archetype.name) AS concat_archetypes
+                FROM
+                    ({apply_rules_query}) AS applied_rules
+                JOIN
+                    archetype
+                ON
+                    applied_rules.archetype_id = archetype.id
+                GROUP BY
+                    deck_id
+                HAVING
+                    COUNT(DISTINCT archetype.id) > 1""".format(apply_rules_query=apply_rules_query())
     deck_ids: List[str] = []
     concat_archetypes = {}
     for r in (Container(row) for row in db().select(sql)):

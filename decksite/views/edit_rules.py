@@ -1,7 +1,7 @@
 from decksite.view import View
 
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, too-many-instance-attributes, too-many-arguments
 class EditRules(View):
     def __init__(self, num_classified, num_total, doubled_decks, mistagged_decks, rules, archetypes) -> None:
         super().__init__()

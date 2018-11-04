@@ -43,6 +43,39 @@ def doubled_decks() -> List[Deck]:
         d.concat_archetypes = concat_archetypes[d.id]
     return result
 
+def load_all_rules() -> List[Container]:
+    result = []
+    result_by_id = {}
+    sql = 'SELECT rule.id as id, rule.archetype_id, archetype.name as archetype_name FROM rule JOIN archetype on rule.archetype_id = archetype.id'
+    for r in (Container(row) for row in db().select(sql)):
+        result.append(r)
+        result_by_id[r.id] = r
+        r.included_cards = []
+        r.excluded_cards = []
+    sql = 'SELECT rule_id, card, include FROM rule_card'
+    for r in (Container(row) for row in db().select(sql)):
+        if r.include:
+            result_by_id[r.rule_id].included_cards.append(r.card)
+        else:
+            result_by_id[r.rule_id].excluded_cards.append(r.card)
+    return result
+
+def add_rule(archetype_id: int) -> None:
+    sql = 'INSERT INTO rule (archetype_id) VALUES (%s)'
+    db().insert(sql, [archetype_id])
+
+def update_cards(rule_id: int, inc: str, exc: str) -> None:
+    db().begin('update_rule_cards')
+    sql = 'DELETE FROM rule_card WHERE rule_id = %s'
+    db().execute(sql, [rule_id])
+    for card in inc:
+        sql = 'INSERT INTO rule_card (rule_id, card, include) VALUES (%s, %s, TRUE)'
+        db().execute(sql, [rule_id, card])
+    for card in exc:
+        sql = 'INSERT INTO rule_card (rule_id, card, include) VALUES (%s, %s, FALSE)'
+        db().execute(sql, [rule_id, card])
+    db().commit('update_rule_cards')
+
 # Currently we do this query several times in a row, but at least with a small number of rules it's cheap enough not to matter
 def apply_rules_query(deck_query: str = '1 = 1'):
     return f"""

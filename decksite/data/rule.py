@@ -98,27 +98,88 @@ def update_cards(rule_id: int, inc: str, exc: str) -> None:
 # Currently we do this query several times in a row, but at least with a small number of rules it's cheap enough not to matter
 def apply_rules_query(deck_query: str = '1 = 1'):
     return f"""
-with rule_card_count as
+WITH rule_card_count AS
 (
-select rule.id, count(card) as card_count from rule join rule_card on rule.id = rule_card.rule_id where rule_card.include = TRUE group by rule.id
+    SELECT
+        rule.id, COUNT(card) AS card_count
+    FROM
+        rule
+    JOIN
+        rule_card
+    ON
+        rule.id = rule_card.rule_id
+    WHERE
+        rule_card.include = TRUE
+    GROUP BY
+        rule.id
 ),
-candidates as
-(select deck.id as deck_id,
- count(distinct deck_card.card) as included_count,
- max(rule_card_count.card_count) as required_count,-- fake MAX
- rule.id as rule_id
-from deck
- join deck_card on deck.id = deck_card.deck_id
- join (SELECT * from rule_card where include = TRUE) as inclusions on deck_card.card = inclusions.card
- join rule on rule.id = inclusions.rule_id
- join rule_card_count on rule.id = rule_card_count.id
- where {deck_query}
-group by deck.id, rule.id
-having included_count = required_count)
-select candidates.deck_id, candidates.rule_id, suggested_archetype.id as archetype_id from candidates
- join rule on candidates.rule_id = rule.id
- join archetype as suggested_archetype on rule.archetype_id = suggested_archetype.id
- left join (select * from rule_card where include = FALSE) as exclusions on candidates.rule_id = exclusions.rule_id
- left join deck_card on candidates.deck_id = deck_card.deck_id and exclusions.card = deck_card.card
-group by candidates.deck_id, candidates.rule_id
-having count(deck_card.card) = 0"""
+candidates AS
+(
+    SELECT
+        deck.id AS deck_id,
+        COUNT(DISTINCT deck_card.card) AS included_count,
+        MAX(rule_card_count.card_count) AS required_count,-- fake MAX due to aggregate function
+        rule.id AS rule_id
+    FROM
+        deck
+    JOIN
+        deck_card
+    ON
+        deck.id = deck_card.deck_id
+    JOIN
+        (
+            SELECT
+                *
+            FROM
+                rule_card
+            WHERE
+                include = TRUE
+        ) AS inclusions
+    ON
+        deck_card.card = inclusions.card
+    JOIN
+        rule
+    ON
+        rule.id = inclusions.rule_id
+    JOIN
+        rule_card_count
+    ON
+        rule.id = rule_card_count.id
+    WHERE
+        {deck_query}
+    GROUP BY
+        deck.id, rule.id
+    HAVING
+        included_count = required_count
+)
+SELECT
+    candidates.deck_id, candidates.rule_id, suggested_archetype.id AS archetype_id
+FROM
+    candidates
+JOIN
+    rule
+ON
+    candidates.rule_id = rule.id
+JOIN
+    archetype AS suggested_archetype
+ON
+    rule.archetype_id = suggested_archetype.id
+LEFT JOIN
+    (
+        SELECT
+            *
+        FROM
+            rule_card
+        WHERE
+            include = FALSE
+    ) AS exclusions
+ON
+    candidates.rule_id = exclusions.rule_id
+LEFT JOIN
+    deck_card
+ON
+    candidates.deck_id = deck_card.deck_id AND exclusions.card = deck_card.card
+GROUP BY
+    candidates.deck_id, candidates.rule_id
+HAVING
+    COUNT(deck_card.card) = 0"""

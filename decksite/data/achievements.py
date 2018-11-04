@@ -550,7 +550,7 @@ class VarietyPlayer(BooleanAchievement):
 class Specialist(BooleanAchievement):
     key = 'specialist'
     title = 'Specialist'
-    season_text = 'Reached the elimination rounds of a tournament playing the same archetypes three times this season'
+    season_text = 'Reached the elimination rounds of a tournament playing the same archetype three times this season'
     description_safe = 'Reach the elimination rounds of a tournament playing the same archetype three times in a single season.'
     sql = """
         CASE WHEN EXISTS

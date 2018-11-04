@@ -448,12 +448,12 @@ Want to contribute? Send a Pull Request."""
             for t, zones in ts.items():
                 cities = sorted(set(re.sub('.*/(.*)', '\\1', zone).replace('_', ' ') for zone in zones))
                 times_s += '{cities}: {t}\n'.format(cities=', '.join(cities), t=t)
+            await send(channel, times_s)
         except NotConfiguredException:
-            return await send(channel, 'The time command has not been configured.')
+            await send(channel, 'The time command has not been configured.')
         except TooFewItemsException:
             logging.exception('Exception trying to get the time for %s.', args)
-            return await send(channel, '{author}: Location not found.'.format(author=author.mention))
-        await send(channel, '{args}: {time}'.format(args=args, time=times_s))
+            await send(channel, '{author}: Location not found.'.format(author=author.mention))
 
     @cmd_header('Commands')
     async def pdm(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:

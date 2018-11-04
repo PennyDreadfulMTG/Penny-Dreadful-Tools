@@ -1,4 +1,5 @@
 import csv
+import datetime
 import json
 import os
 from collections import OrderedDict
@@ -168,34 +169,45 @@ def rulings(cardname: str) -> List[Dict[str, str]]:
 def sitemap() -> List[str]:
     return internal.fetch_json(decksite_url('/api/sitemap/'))
 
-def time(q: str) -> str:
+def time(q: str) -> Dict[str, List[str]]:
+    return times_from_timezone_code(q) if len(q) <= 3 else times_from_location(q)
+
+def times_from_timezone_code(q: str) ->  Dict[str, List[str]]:
+    possibles = list(filter(lambda x: datetime.datetime.now(pytz.timezone(x)).strftime('%Z') == q.upper(), pytz.common_timezones))
+    if not possibles:
+        raise TooFewItemsException(f'Not a recognized timezone: {q.upper()}')
+    results: Dict[str, List[str]] = {}
+    for possible in possibles:
+        timezone = dtutil.timezone(possible)
+        t = current_time(timezone)
+        results[t] = results.get(t, []) + [possible]
+    return results
+
+def times_from_location(q: str) -> Dict[str, List[str]]:
     api_key = configuration.get('google_maps_api_key')
     if not api_key:
         raise NotConfiguredException('No value found for google_maps_api_key')
-    if len(q) > 3:
-        url = 'https://maps.googleapis.com/maps/api/geocode/json?address={q}&key={api_key}&sensor=false'.format(q=internal.escape(q), api_key=api_key)
-        info = internal.fetch_json(url)
-        if 'error_message' in info:
-            return info['error_message']
-        try:
-            location = info['results'][0]['geometry']['location']
-        except IndexError as e:
-            raise TooFewItemsException(e)
-        url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&key={api_key}&sensor=false'.format(lat=internal.escape(str(location['lat'])), lng=internal.escape(str(location['lng'])), timestamp=internal.escape(str(dtutil.dt2ts(dtutil.now()))), api_key=api_key)
-        timezone_info = internal.fetch_json(url)
-        if 'error_message' in timezone_info:
-            return timezone_info['error_message']
-        if timezone_info['status'] == 'ZERO_RESULTS':
-            raise TooFewItemsException(timezone_info['status'])
-        try:
-            timezone = dtutil.timezone(timezone_info['timeZoneId'])
-        except KeyError as e:
-            raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}')
-    else:
-        try:
-            timezone = dtutil.timezone(q.upper())
-        except pytz.exceptions.UnknownTimeZoneError: # type: ignore
-            raise TooFewItemsException('Not a recognized timezone: {q}'.format(q=q))
+    url = 'https://maps.googleapis.com/maps/api/geocode/json?address={q}&key={api_key}&sensor=false'.format(q=internal.escape(q), api_key=api_key)
+    info = internal.fetch_json(url)
+    if 'error_message' in info:
+        return info['error_message']
+    try:
+        location = info['results'][0]['geometry']['location']
+    except IndexError as e:
+        raise TooFewItemsException(e)
+    url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&key={api_key}&sensor=false'.format(lat=internal.escape(str(location['lat'])), lng=internal.escape(str(location['lng'])), timestamp=internal.escape(str(dtutil.dt2ts(dtutil.now()))), api_key=api_key)
+    timezone_info = internal.fetch_json(url)
+    if 'error_message' in timezone_info:
+        return timezone_info['error_message']
+    if timezone_info['status'] == 'ZERO_RESULTS':
+        raise TooFewItemsException(timezone_info['status'])
+    try:
+        timezone = dtutil.timezone(timezone_info['timeZoneId'])
+    except KeyError as e:
+        raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}')
+    return {current_time(timezone): [q]}
+
+def current_time(timezone: datetime.tzinfo) -> str:
     return dtutil.now(timezone).strftime('%l:%M %p')
 
 def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:

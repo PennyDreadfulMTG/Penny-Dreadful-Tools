@@ -1,4 +1,5 @@
 import csv
+import datetime
 import json
 import os
 from collections import OrderedDict
@@ -168,7 +169,7 @@ def rulings(cardname: str) -> List[Dict[str, str]]:
 def sitemap() -> List[str]:
     return internal.fetch_json(decksite_url('/api/sitemap/'))
 
-def time(q: str) -> str:
+def time(q: str) -> Dict[str, List[str]]:
     api_key = configuration.get('google_maps_api_key')
     if not api_key:
         raise NotConfiguredException('No value found for google_maps_api_key')
@@ -191,11 +192,19 @@ def time(q: str) -> str:
             timezone = dtutil.timezone(timezone_info['timeZoneId'])
         except KeyError as e:
             raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}')
+        return {current_time(timezone): [q]}
     else:
-        try:
-            timezone = dtutil.timezone(q.upper())
-        except pytz.exceptions.UnknownTimeZoneError: # type: ignore
+        possibles = list(filter(lambda x: datetime.datetime.now(pytz.timezone(x)).strftime("%Z") == q.upper(), pytz.common_timezones))
+        if not possibles:
             raise TooFewItemsException('Not a recognized timezone: {q}'.format(q=q))
+        results = {}
+        for possible in possibles:
+            timezone = dtutil.timezone(possible)
+            t = current_time(timezone)
+            results[t] = results.get(t, []) + [possible]
+    return results
+
+def current_time(timezone: datetime.tzinfo) -> str:
     return dtutil.now(timezone).strftime('%l:%M %p')
 
 def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:

@@ -71,6 +71,8 @@ def mypy(argv: List[str], strict: bool = False) -> None:
     args = [
         '--ignore-missing-imports',     # Don't complain about 3rd party libs with no stubs
         '--disallow-untyped-calls',     # Strict Mode.  All function calls must have a return type.
+        '--warn-redundant-casts',
+        # '--check-untyped-defs',
         ]
     if strict:
         args.append('--disallow-incomplete-defs') # All parameters must have type definitions.

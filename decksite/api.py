@@ -79,6 +79,8 @@ def league_run_api(person):
         return return_json(None)
 
     run = guarantee_at_most_one_or_retire(decks)
+    if run is None:
+        return return_json(None)
 
     decks = league.active_decks()
     already_played = [m.opponent_deck_id for m in match.get_matches(run)]

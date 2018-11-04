@@ -242,7 +242,7 @@ def associate(d, discord_id):
     sql = 'UPDATE person SET discord_id = %s WHERE id = %s'
     return db().execute(sql, [discord_id, person_id])
 
-def is_allowed_to_retire(deck_id, discord_id):
+def is_allowed_to_retire(deck_id: int, discord_id: int) -> bool:
     if not deck_id:
         return False
     if not discord_id:
@@ -305,7 +305,7 @@ def remove_discord_link(discord_id: int) -> int:
     sql = 'UPDATE person SET discord_id = NULL WHERE discord_id = %s'
     return db().execute(sql, [discord_id])
 
-def is_banned(mtgo_username):
+def is_banned(mtgo_username: str) -> bool:
     return db().value('SELECT banned FROM person WHERE mtgo_username = %s', [mtgo_username]) == 1
 
 def squash(p1id: int, p2id: int, col1: str, col2: str) -> None:

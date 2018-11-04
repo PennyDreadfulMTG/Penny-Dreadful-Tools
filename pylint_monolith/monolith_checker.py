@@ -1,26 +1,28 @@
+from typing import Dict, List
+
 import astroid
 import isort
 from pylint.checkers import BaseChecker
 from pylint.checkers.utils import check_messages
 from pylint.interfaces import IAstroidChecker
 
-ACCEPTABLE_IMPORTS = {
-    'decksite': ('decksite', 'magic', 'shared', 'shared_web'),
-    'discordbot': ('discordbot', 'magic', 'shared'),
-    'github_tools': ('github_tools', 'shared', 'shared_web'),
-    'logsite': ('logsite', 'shared', 'shared_web'),
-    'magic': ('magic', 'shared'),
-    'maintenance': ('decksite', 'magic', 'maintenance', 'shared', 'shared_web'),
-    'modo_bugs': ('shared', 'shared_web'),
-    'price_grabber': ('magic', 'price_grabber', 'shared'),
-    'pylint_monolith': ('pylint_monolith'),
-    'rotation_script': ('magic', 'price_grabber', 'rotation_script', 'shared'),
-    'shared': (),
-    'shared_web': ('shared', 'shared_web'),
+ACCEPTABLE_IMPORTS: Dict[str, List[str]] = {
+    'decksite': ['decksite', 'magic', 'shared', 'shared_web'],
+    'discordbot': ['discordbot', 'magic', 'shared'],
+    'github_tools': ['github_tools', 'shared', 'shared_web'],
+    'logsite': ['logsite', 'shared', 'shared_web'],
+    'magic': ['magic', 'shared'],
+    'maintenance': ['decksite', 'magic', 'maintenance', 'shared', 'shared_web'],
+    'modo_bugs': ['shared', 'shared_web'],
+    'price_grabber': ['magic', 'price_grabber', 'shared'],
+    'pylint_monolith': ['pylint_monolith'],
+    'rotation_script': ['magic', 'price_grabber', 'rotation_script', 'shared'],
+    'shared': [],
+    'shared_web': ['shared', 'shared_web'],
 
-    'dev': ('magic', 'shared'),
-    'generate_readme': ('discordbot'),
-    'run': ('discordbot', 'decksite', 'price_grabber', 'rotation_script', 'magic', 'shared'),
+    'dev': ['magic', 'shared'],
+    'generate_readme': ['discordbot'],
+    'run': ['discordbot', 'decksite', 'price_grabber', 'rotation_script', 'magic', 'shared'],
 }
 
 class MonolithChecker(BaseChecker):
@@ -67,7 +69,7 @@ class MonolithChecker(BaseChecker):
         if imported_module.name.startswith(f'{parent_basename}.'):
             return
 
-        acceptable = ACCEPTABLE_IMPORTS.get(parent_basename, [])
+        acceptable: List[str] = ACCEPTABLE_IMPORTS.get(parent_basename, [])
         if not basename in acceptable:
             self.add_message(
                 'invalid-monolith-import',

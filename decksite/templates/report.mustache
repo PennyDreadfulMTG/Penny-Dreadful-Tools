@@ -4,7 +4,7 @@
         <div>
             <label for="entry">{{TT_YOUR_DECK}}</label>
             <select class="{{#form.errors.entry}}error {{/form.errors.entry}}deckselect" name="entry" id="entry">
-                <option value="">Choose …</option>
+                <option value="">Choose…</option>
                 {{#form.entry_options}}
                     <option value="{{value}}" {{#selected}}selected="selected"{{/selected}} {{#can_draw}} class="deck-can-draw" {{/can_draw}} >{{text}}</option>
                 {{/form.entry_options}}
@@ -14,7 +14,7 @@
         <div>
             <label for="opponent">Opponent</label>
             <select class="{{#form.errors.opponent}}error {{/form.errors.opponent}} deckselect" name="opponent" id="opponent">
-                <option value="">Choose …</option>
+                <option value="">Choose…</option>
                 {{#form.opponent_options}}
                     <option value="{{value}}" {{#selected}}selected="selected"{{/selected}} {{#can_draw}} class="deck-can-draw" {{/can_draw}}>{{text}}</option>
                 {{/form.opponent_options}}
@@ -24,7 +24,7 @@
         <div>
             <label for="result">Result</label>
             <select {{#form.errors.result}}class="error" {{/form.errors.result}}name="result" id="result">
-                <option value="">Choose …</option>
+                <option value="">Choose…</option>
                 {{#form.result_options}}
                     <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{text}}</option>
                 {{/form.result_options}}

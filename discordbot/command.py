@@ -228,7 +228,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Aliases')
     async def scryfall(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!scryfall {query}` Alias for `!search`."""
-        # Because of the weird way we call and use methods on Commands we need …
+        # Because of the weird way we call and use methods on Commands we need…
         # pylint: disable=too-many-function-args
         await self.search(self, client, channel, args, author)
 
@@ -458,7 +458,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def pdm(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """Alias for `!resources`."""
-        # Because of the weird way we call and use methods on Commands we need …
+        # Because of the weird way we call and use methods on Commands we need…
         # pylint: disable=too-many-function-args
         await self.resources(self, channel, args, author)
 

@@ -40,10 +40,10 @@ def test_results_from_queries() -> None:
 
 def test_do_not_choke_on_unicode() -> None:
     s = '①②④⑧⇅⊕█↑▪🐞🚫🏆⏩⏪︎📰💻▾'
-    # As a whole …
+    # As a whole…
     result = command.results_from_queries([s])[0][0]
     assert not result.has_match()
-    # … and for each char individually.
+    # …and for each char individually.
     for result, _ in command.results_from_queries(list(s)):
         assert not result.has_match()
 

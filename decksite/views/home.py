@@ -41,11 +41,11 @@ class Home(View):
                 break
         self.deck_tables = []
         if league_decks:
-            self.deck_tables.append(deck_table('Recent Top League Decks', url_for('current_league'), 'Current League …', league_decks))
+            self.deck_tables.append(deck_table('Recent Top League Decks', url_for('current_league'), 'Current League…', league_decks))
         if tournament_decks:
-            self.deck_tables.append(deck_table('Latest Tournament Top 8', url_for('competitions', competition_id=tournament_id), 'View Tournament …', tournament_decks))
+            self.deck_tables.append(deck_table('Latest Tournament Top 8', url_for('competitions', competition_id=tournament_id), 'View Tournament…', tournament_decks))
         if latest_decks:
-            self.deck_tables.append(deck_table('Latest Decks', self.decks_url(), 'More Decks …', latest_decks))
+            self.deck_tables.append(deck_table('Latest Decks', self.decks_url(), 'More Decks…', latest_decks))
         self.decks = league_decks + tournament_decks + latest_decks
         self.show_active_runs_text = False
 

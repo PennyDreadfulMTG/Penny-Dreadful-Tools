@@ -1,8 +1,10 @@
-<section>
-    <h1>{{_ Latest Decks}}</h1>
-    {{> decktable}}
-    <a href="{{decks_url}}">{{_ More decks…}}</a>
-</section>
+{{#deck_tables}}
+    <section>
+        <h1>{{title}}</h1>
+        {{> decktable}}
+        <a href="{{url}}">{{link_text}}</a>
+    </section>
+{{/deck_tables}}
 <section>
     <h1>{{_ Top Cards}}</h1>
     {{> spinner}}

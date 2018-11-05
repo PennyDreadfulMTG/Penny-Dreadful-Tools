@@ -4,7 +4,7 @@
         <div>
             <label for="entry">Deck to Retire</label>
             <select class="{{#form.errors.entry}}error {{/form.errors.entry}}deckselect" name="entry" id="entry">
-                <option value="">Choose …</option>
+                <option value="">Choose…</option>
                 {{#form.entry_options}}
                     <option value="{{value}}" {{#selected}}selected="selected"{{/selected}}>{{text}}</option>
                 {{/form.entry_options}}

@@ -1981,7 +1981,6 @@ Achievements
 
 .achievement-category {
     border: 0.05rem solid #999;
-    cursor: pointer;
     margin-bottom: 1rem;
     max-width: 100%; /* Don't exceed the space available but … */
     width: 30rem; /* … display at article width if possible. */
@@ -1999,6 +1998,7 @@ Achievements
 }
 
 .achievement-bar {
+    cursor: pointer;
     position: relative; /* We are going to overlay a bunch of spans in here to show a bar chart of how many players have this acheivement and other dettails. */
 }
 

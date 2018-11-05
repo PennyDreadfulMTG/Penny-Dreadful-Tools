@@ -23,7 +23,10 @@ class Home(View):
 
     def setup_decks(self, decks: List[Deck]) -> None:
         min_decks = 20
-        tournament_id, league_id, tournament_decks, league_decks, latest_decks = None, None, [], [], []
+        tournament_id, league_id = None, None
+        tournament_decks: List[Deck] = []
+        league_decks: List[Deck] = []
+        latest_decks: List[Deck] = []
         for d in decks:
             if d.source_name == 'Gatherling' and tournament_id is None:
                 tournament_id = d.competition_id

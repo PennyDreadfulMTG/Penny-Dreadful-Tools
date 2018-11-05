@@ -39,11 +39,32 @@ class Home(View):
                 break
         self.deck_tables = []
         if league_decks:
-            self.deck_tables.append(deck_table('Recent Top League Decks', url_for('current_league'), 'Current League…', league_decks))
+            self.deck_tables.append(
+                {
+                    'title': gettext('Recent Top League Decks'),
+                    'url': url_for('current_league'),
+                    'link_text': gettext('Current League…'),
+                    'decks': league_decks
+                }
+            )
         if tournament_decks:
-            self.deck_tables.append(deck_table('Latest Tournament Top 8', url_for('competitions', competition_id=tournament_id), 'View Tournament…', tournament_decks))
+            self.deck_tables.append(
+                {
+                    'title': gettext('Latest Tournament Top 8'),
+                    'url': url_for('competitions', competition_id=tournament_id),
+                    'link_text': gettext('View Tournament…'),
+                    'decks': tournament_decks
+                }
+            )
         if latest_decks:
-            self.deck_tables.append(deck_table('Latest Decks', self.decks_url(), 'More Decks…', latest_decks))
+            self.deck_tables.append(
+                {
+                    'title': gettext('Latest Decks'),
+                    'url': self.decks_url(),
+                    'link_text': gettext('More Decks…'),
+                    'decks': latest_decks
+                }
+            )
         self.decks = league_decks + tournament_decks + latest_decks
         self.show_active_runs_text = False
 
@@ -52,11 +73,3 @@ class Home(View):
         self.top_cards = cards[0:8]
         self.cards = self.top_cards # To get prepare_card treatment
         self.cards_url = url_for('cards')
-
-def deck_table(title: str, url: str, link_text: str, decks: List[Deck]):
-    return {
-        'title': gettext(title),
-        'url': url,
-        'link_text': gettext(link_text),
-        'decks': decks
-    }

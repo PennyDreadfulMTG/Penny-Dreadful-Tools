@@ -598,7 +598,7 @@ Want to contribute? Send a Pull Request."""
                     'More Info': fetcher.decksite_url('/tournaments/')
                 }
             ),
-            'report': (
+            'reporting': (
                 """
                 For gatherling.com tournaments PDBot is information-only, *both* players must report near the top of Player CP.
                 If PDBot reports your league match in Discord you don't need to do anything (only league matches, tournament matches must still be reported). If not, either player can report.

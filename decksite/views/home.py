@@ -36,7 +36,7 @@ class Home(View):
                 tournament_decks.append(d)
             if d.competition_id is not None and d.competition_id == league_id and d.wins >= 5 and (d.losses + d.draws) == 0 and len(league_decks) < 8:
                 league_decks.append(d)
-            if len(latest_decks) < min_decks:
+            if len(latest_decks) < min_decks and not d.is_in_current_run():
                 latest_decks.append(d)
             if len(tournament_decks) >= 8 and len(league_decks) >= 8 and len(latest_decks) >= min_decks:
                 break

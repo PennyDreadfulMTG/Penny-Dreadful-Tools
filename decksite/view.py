@@ -179,7 +179,7 @@ class View(BaseView):
         d.comp_row_len = len('{comp_name} (Piloted by {person}'.format(comp_name=d.competition_name, person=d.person))
         if d.get('archetype_id', None):
             d.archetype_url = '/archetypes/{id}/'.format(id=d.archetype_id)
-        if d.get('omw') is not None:
+        if d.get('omw') is not None and '%' not in str(d.omw):
             d.omw = str(int(d.omw)) + '%'
         else:
             d.omw = ''

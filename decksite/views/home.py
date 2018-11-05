@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 
 from flask import url_for
 from flask_babel import gettext
@@ -40,7 +40,7 @@ class Home(View):
                 latest_decks.append(d)
             if len(tournament_decks) >= 8 and len(league_decks) >= 8 and len(latest_decks) >= min_decks:
                 break
-        self.deck_tables = []
+        self.deck_tables: List[Dict] = []
         if league_decks:
             self.deck_tables.append(
                 {

@@ -16,12 +16,12 @@ class Home(View):
         self.setup_decks(decks)
         self.setup_cards(cards)
 
-    def setup_news(self, news):
+    def setup_news(self, news: List[Container]) -> None:
         self.news = news
         self.has_news = len(news) > 0
         self.all_news_url = url_for('news')
 
-    def setup_decks(self, decks):
+    def setup_decks(self, decks: List[Deck]) -> None:
         min_decks = 20
         tournament_id, league_id, tournament_decks, league_decks, latest_decks = None, None, [], [], []
         for d in decks:
@@ -68,7 +68,7 @@ class Home(View):
         self.decks = league_decks + tournament_decks + latest_decks
         self.show_active_runs_text = False
 
-    def setup_cards(self, cards):
+    def setup_cards(self, cards: List[Card]) -> None:
         cards = [c for c in cards if 'Basic Land' not in c.type]
         self.top_cards = cards[0:8]
         self.cards = self.top_cards # To get prepare_card treatment

@@ -10,7 +10,7 @@ from decksite.data import deck as ds
 from decksite.data import match as ms
 from decksite.data import news as ns
 from decksite.data import person as ps
-from decksite.views import (Admin, EditArchetypes, EditMatches, EditNews,
+from decksite.views import (Admin, EditAliases, EditArchetypes, EditMatches, EditNews,
                             PlayerNotes, Prizes, RotationChecklist, Unlink)
 from magic.models import Deck
 from shared import dtutil, redis
@@ -32,6 +32,21 @@ def admin_menu() -> List[Dict[str, str]]:
 def admin_home() -> str:
     view = Admin(admin_menu())
     return view.page()
+
+@APP.route('/admin/aliases/')
+@auth.admin_required
+def edit_aliases() -> str:
+    aliases = ps.load_aliases()
+    all_people = ps.load_people(order_by='p.mtgo_username')
+    view = EditAliases(aliases, all_people)
+    return view.page()
+
+@APP.route('/admin/aliases/', methods=['POST'])
+@auth.admin_required
+def post_aliases() -> str:
+    if request.form.get('person_id') is not None and request.form.get('alias') is not None and len(request.form.get('alias')) > 0:
+        ps.add_alias(request.form.get('person_id'), request.form.get('alias'))
+    return edit_aliases()
 
 @APP.route('/admin/archetypes/')
 @auth.demimod_required

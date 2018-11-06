@@ -1,7 +1,6 @@
 CREATE TABLE IF NOT EXISTS person_alias (
-    canonical_id INT NOT NULL,
-    alias_id INT NOT NULL,
-    PRIMARY KEY (canonical_id, alias_id),
-    FOREIGN KEY canonical_id REFERENCES person (id),
-    FOREIGN KEY alias_id REFERENCES person (id)
+    person_id INT NOT NULL,
+    alias NVARCHAR(190) NOT NULL,
+    PRIMARY KEY (person_id, alias),
+    FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE
 );

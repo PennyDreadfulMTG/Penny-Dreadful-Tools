@@ -260,6 +260,20 @@ def get_or_insert_person_id(mtgo_username: Optional[str], tappedout_username: Op
     sql = 'INSERT INTO person (mtgo_username, tappedout_username, mtggoldfish_username) VALUES (%s, %s, %s)'
     return db().insert(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
 
+def load_aliases() -> List[Container]:
+    return [Container(r) for r in db().select('SELECT person_id, alias FROM person_alias')]
+
+def add_alias(person_id: int, alias: str) -> None:
+    db().begin('add_alias')
+    try:
+        p = load_person_by_mtgo_username(alias)
+        db().execute('UPDATE deck SET person_id = %s WHERE person_id = %s', [person_id, p.id])
+        db().execute('DELETE FROM person WHERE id = %s', [p.id])
+    except DoesNotExistException:
+        pass
+    db().execute('INSERT INTO person_alias (person_id, alias) VALUES (%s, %s)', [person_id, alias])
+    db().commit('add_alias')
+
 def load_notes() -> List[Container]:
     sql = """
         SELECT

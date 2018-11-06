@@ -145,7 +145,7 @@ class Commands:
 
     @cmd_header('Commands')
     async def help(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
-        """`!help` Provides information on how to operate the bot."""
+        """`!help` Bot commands help."""
         if args:
             msg = build_help(cmd=args)
         else:
@@ -164,8 +164,8 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def random(self, client: Client, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
-        """`!random` Request a random PD legal card.
-`!random X` Request X random PD legal cards."""
+        """`!random` A random PD legal card.
+`!random X` X random PD legal cards."""
         number = 1
         additional_text = ''
         if len(args) > 0:
@@ -181,7 +181,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def randomdeck(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!randomdeck` Displays a random pennydreadfulmagic.com deck from the current season."""
+        """`!randomdeck` A random deck from the current season."""
         blob = fetcher.internal.fetch_json(fetcher.decksite_url('/api/randomlegaldeck'))
         if 'error' in blob or 'url' not in blob:
             await send(channel, blob.get('msg', ''))
@@ -213,13 +213,13 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Developer')
     async def restartbot(self, client: Client, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """Restarts the bot."""
+        """Restart the bot."""
         await send(channel, 'Rebooting!')
         await client.logout()
 
     @cmd_header('Commands')
     async def search(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!search {query}` Search for cards, using a scryfall-style query."""
+        """`!search {query}` Card search using Scryfall."""
         how_many, cardnames = fetcher.search_scryfall(args)
         cbn = oracle.cards_by_name()
         cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]
@@ -234,7 +234,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def status(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!status` Gives the status of Magic Online: UP or DOWN."""
+        """`!status` Status of Magic Online."""
         status = await fetcher.mtgo_status()
         await send(channel, 'MTGO is {status}'.format(status=status))
 
@@ -246,13 +246,13 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def barbs(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!barbs` Gives Volvary's helpful advice for when to sideboard in Aura Barbs."""
+        """`!barbs` Volvary's advice for when to board in Aura Barbs."""
         msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
         await send(channel, msg)
 
     @cmd_header('Commands')
     async def quality(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!quality` A helpful reminder about everyone's favorite way to play digital Magic"""
+        """`!quality` A reminder about everyone's favorite way to play digital Magic"""
         msg = '**Magic Online** is a Quality™ Program.'
         await send(channel, msg)
 
@@ -280,22 +280,22 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def rotation(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!rotation` Give the date of the next Penny Dreadful rotation."""
+        """`!rotation` Date of the next Penny Dreadful rotation."""
         await send(channel, rotation.text())
 
     @cmd_header('Commands')
     async def rulings(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!rulings {name}` Display rulings for a card."""
+        """`!rulings {name}`Rulings for a card."""
         await single_card_text(client, channel, args, author, card_rulings, 'rulings')
 
     @cmd_header('Commands')
     async def _oracle(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!oracle {name}` Give the Oracle text of the named card."""
+        """`!oracle {name}` Oracle text of a card."""
         await single_card_text(client, channel, args, author, oracle_text, 'oracle')
 
     @cmd_header('Commands')
     async def price(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!price {name}` Get price information about the named card."""
+        """`!price {name}` Price information for a card."""
         await single_card_text(client, channel, args, author, fetcher.card_price_string, 'price')
 
     @cmd_header('Commands')
@@ -331,7 +331,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def resources(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!resources {args}` Link to useful pages related to `args`. Examples: 'tournaments', 'card Hymn to Tourach', 'deck check', 'league'."""
+        """`!resources {args}` Useful pages related to `args`. Examples: 'tournaments', 'card Naturalize', 'deckcheck', 'league'."""
         results = {}
         if len(args) > 0:
             results.update(resources_resources(args))
@@ -398,7 +398,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def buglink(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) ->  None:
-        """Get a link to the modo-bugs page for the named card."""
+        """Link to the modo-bugs page for a card."""
         base_url = 'https://github.com/PennyDreadfulMTG/modo-bugs/issues'
         if args == '':
             await send(channel, base_url)
@@ -439,7 +439,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def time(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!time {location}` Show the current time in the specified location."""
+        """`!time {location}` Current time in location."""
         if len(args) == 0:
             return await send(channel, '{author}: No location provided. Please type !time followed by the location you want the time for.'.format(author=author.mention))
         try:
@@ -464,7 +464,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def google(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!google {args}` Search google for `args`."""
+        """`!google {args}` Google for `args`."""
         api_key = configuration.get('cse_api_key')
         cse_id = configuration.get('cse_engine_id')
         if api_key is None or cse_id is None:
@@ -491,7 +491,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def tournament(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!tournament` Get information about the next tournament."""
+        """`!tournament` Information about the next tournament."""
         t = tournaments.next_tournament_info()
         prev = tournaments.previous_tournament_info()
         if prev['near']:
@@ -504,7 +504,7 @@ Want to contribute? Send a Pull Request."""
 
     @cmd_header('Commands')
     async def art(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!art {name}` Display the art (only) of the most recent printing of the named card."""
+        """`!art {name}` Art (only) of the most recent printing of a card."""
         c = await single_card_or_send_error(channel, args, author, 'art')
         if c is not None:
             file_path = re.sub('.jpg$', '.art_crop.jpg', image_fetcher.determine_filepath([c]))

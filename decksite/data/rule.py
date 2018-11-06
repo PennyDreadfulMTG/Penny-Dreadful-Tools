@@ -8,27 +8,28 @@ from shared.container import Container
 
 def num_classified_decks() -> int:
     sql = 'SELECT COUNT(DISTINCT(deck_id)) AS c FROM ({apply_rules_query}) AS applied_rules'.format(apply_rules_query=apply_rules_query())
-    return (db().select(sql))[0]['c']
+    return db().value(sql)
 
 def mistagged_decks() -> List[Deck]:
-    sql = """SELECT
-                    deck_id, rule_archetype.name AS rule_archetype_name, tagged_archetype.name AS tagged_archetype_name
-                FROM
-                    ({apply_rules_query}) AS applied_rules
-                JOIN
-                    deck
-                ON
-                    applied_rules.deck_id = deck.id
-                JOIN
-                    archetype AS rule_archetype
-                ON
-                    rule_archetype.id = applied_rules.archetype_id
-                JOIN
-                    archetype AS tagged_archetype
-                ON
-                    tagged_archetype.id = deck.archetype_id
-                WHERE
-                    rule_archetype.id != tagged_archetype.id""".format(apply_rules_query=apply_rules_query())
+    sql = """
+            SELECT
+                deck_id, rule_archetype.name AS rule_archetype_name, tagged_archetype.name AS tagged_archetype_name
+            FROM
+                ({apply_rules_query}) AS applied_rules
+            INNER JOIN
+                deck
+            ON
+                applied_rules.deck_id = deck.id
+            INNER JOIN
+                archetype AS rule_archetype
+            ON
+                rule_archetype.id = applied_rules.archetype_id
+            INNER JOIN
+                archetype AS tagged_archetype
+            ON
+                tagged_archetype.id = deck.archetype_id
+            WHERE
+                rule_archetype.id != tagged_archetype.id""".format(apply_rules_query=apply_rules_query())
     deck_ids: List[str] = []
     rule_archetypes = {}
     for r in (Container(row) for row in db().select(sql)):

@@ -616,9 +616,8 @@ def nwdl_join() -> str:
     """
 
 def num_decks() -> int:
-    sql = 'SELECT COUNT(DISTINCT id) AS c FROM deck'
-    r = Container(db().select(sql)[0])
-    return r.c
+    sql = 'SELECT COUNT(id) AS c FROM deck'
+    return db().value(sql)
 
 def random_legal_deck() -> Optional[Deck]:
     sql = f"""SELECT MIN(id) AS min, MAX(id) AS max FROM deck WHERE

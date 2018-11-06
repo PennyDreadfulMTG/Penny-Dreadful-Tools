@@ -19,7 +19,7 @@ SECOND = '2nd'
 TOP_4 = 't4'
 TOP_8 = 't8'
 
-ALIASES = {}
+ALIASES: Dict[str, str] = {}
 
 def scrape(limit: int = 50) -> None:
     soup = BeautifulSoup(fetcher.internal.fetch('https://gatherling.com/eventreport.php?format=Penny+Dreadful&series=&season=&mode=Filter+Events', character_encoding='utf-8'), 'html.parser')
@@ -264,12 +264,12 @@ def gatherling_url(href: str) -> str:
         return href
     return 'https://gatherling.com/{href}'.format(href=href)
 
-def aliased(username: str):
+def aliased(username: str) -> str:
     if not ALIASES:
         load_aliases()
     return ALIASES.get(username, username)
 
-def load_aliases():
-    ALIASES['dummyplaceholder'] = 1 # To prevent doing the load on every lookup if there are no aliases in the db.
+def load_aliases() -> None:
+    ALIASES['dummyplaceholder'] = '' # To prevent doing the load on every lookup if there are no aliases in the db.
     for entry in person.load_aliases():
         ALIASES[entry.alias] = entry.mtgo_username

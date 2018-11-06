@@ -261,7 +261,17 @@ def get_or_insert_person_id(mtgo_username: Optional[str], tappedout_username: Op
     return db().insert(sql, [mtgo_username, tappedout_username, mtggoldfish_username])
 
 def load_aliases() -> List[Container]:
-    return [Container(r) for r in db().select('SELECT person_id, alias FROM person_alias')]
+    sql = """
+        SELECT
+            pa.person_id,
+            pa.alias,
+            p.mtgo_username
+        FROM
+            person_alias AS pa
+        INNER JOIN
+            person AS p ON p.id = pa.person_id
+    """
+    return [Container(r) for r in db().select(sql)]
 
 def add_alias(person_id: int, alias: str) -> None:
     db().begin('add_alias')

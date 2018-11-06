@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import bs4
 from bs4 import BeautifulSoup, ResultSet
 
-from decksite.data import archetype, competition, deck, match
+from decksite.data import archetype, competition, deck, match, person
 from decksite.database import db
 from decksite.scrapers import decklist
 from magic import fetcher
@@ -18,6 +18,8 @@ WINNER = '1st'
 SECOND = '2nd'
 TOP_4 = 't4'
 TOP_8 = 't8'
+
+ALIASES = {}
 
 def scrape(limit: int = 50) -> None:
     soup = BeautifulSoup(fetcher.internal.fetch('https://gatherling.com/eventreport.php?format=Penny+Dreadful&series=&season=&mode=Filter+Events', character_encoding='utf-8'), 'html.parser')
@@ -124,7 +126,7 @@ def rankings(soup: BeautifulSoup) -> List[str]:
     ranks = []
     for row in rows:
         cells = row.find_all('td')
-        mtgo_username = cells[1].string
+        mtgo_username = aliased(cells[1].string)
         ranks.append(mtgo_username)
     return ranks
 
@@ -135,7 +137,7 @@ def medal_winners(s: str) -> Dict[str, int]:
     for row in rows:
         player = BeautifulSoup(row, 'html.parser').find_all('td')[2]
         if player.find('img'):
-            mtgo_username = player.a.contents[0]
+            mtgo_username = aliased(player.a.contents[0])
             img = re.sub(r'styles/Chandra/images/(.*?)\.png', r'\1', player.img['src'])
             if img == WINNER:
                 winners[mtgo_username] = 1
@@ -163,7 +165,7 @@ def finishes(winners: Dict[str, int], ranks: List[str]) -> Dict[str, int]:
 def tournament_deck(cells: ResultSet, competition_id: int, date: datetime.datetime, final: Dict[str, int]) -> Optional[deck.Deck]:
     d: deck.RawDeckDescription = {'source': 'Gatherling', 'competition_id': competition_id, 'created_date': dtutil.dt2ts(date)}
     player = cells[2]
-    username = player.a.contents[0].string
+    username = aliased(player.a.contents[0].string)
     d['mtgo_username'] = username
     d['finish'] = final.get(username)
     link = cells[4].a
@@ -261,3 +263,13 @@ def gatherling_url(href: str) -> str:
     if href.startswith('http'):
         return href
     return 'https://gatherling.com/{href}'.format(href=href)
+
+def aliased(username: str):
+    if not ALIASES:
+        load_aliases()
+    return ALIASES.get(username, username)
+
+def load_aliases():
+    ALIASES['dummyplaceholder'] = 1 # To prevent doing the load on every lookup if there are no aliases in the db.
+    for entry in person.load_aliases():
+        ALIASES[entry.alias] = entry.mtgo_username

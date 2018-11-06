@@ -130,7 +130,7 @@ def player_notes() -> str:
 @auth.admin_required
 def post_player_note() -> str:
     creator = ps.load_person_by_discord_id(session['id'])
-    ps.add_note(creator.id, request.form.get('subject_id'), request.form.get('note'))
+    ps.add_note(creator.id, request.form.get('person_id'), request.form.get('note'))
     return player_notes()
 
 @APP.route('/admin/unlink/')

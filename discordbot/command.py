@@ -598,7 +598,7 @@ Want to contribute? Send a Pull Request."""
                     'More Info': fetcher.decksite_url('/tournaments/')
                 }
             ),
-            'report': (
+            'reporting': (
                 """
                 For gatherling.com tournaments PDBot is information-only, *both* players must report near the top of Player CP.
                 If PDBot reports your league match in Discord you don't need to do anything (only league matches, tournament matches must still be reported). If not, either player can report.
@@ -699,7 +699,8 @@ def uniqify_cards(cards: List[Card]) -> List[Card]:
     return list(results.values())
 
 def parse_queries(content: str) -> List[str]:
-    queries = re.findall(r'\[?\[([^\]]*)\]\]?', content)
+    to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, re.DOTALL) # Ignore angle brackets inside backticks. It's annoying in #code.
+    queries = re.findall(r'\[?\[([^\]]*)\]\]?', to_scan)
     return [card.canonicalize(query) for query in queries if len(query) > 2]
 
 def cards_from_names_with_mode(cards: Sequence[Optional[str]], mode: str) -> List[Card]:

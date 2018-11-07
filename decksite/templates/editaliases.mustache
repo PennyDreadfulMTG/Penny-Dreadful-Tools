@@ -1,0 +1,34 @@
+<h1>Aliases</h1>
+<section>
+    <h2>Add Alias</h2>
+    <p>Mapping Gatherling usernames to Magic Online usernames to accomodate the brokenness of Gatherling's password recovery.</p>
+    <p>Changes made here will cause irreversible changes to the database.</p>
+
+    <form method="post">
+        <div>
+            <label for="alias">Gatherling Username</label>
+            <input type="text" name="alias">
+        </div>
+        {{> persondropdown}}
+        <button type="submit" name="action" value="add">Add Alias</button>
+    </form>
+</section>
+<section>
+    <h2>Existing Aliases</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Gatherling</th>
+                <th>Magic Online</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#aliases}}
+                <tr>
+                    <td>{{alias}}</td>
+                    <td>{{mtgo_username}}</td>
+                </tr>
+            {{/aliases}}
+        </tbody>
+    </table>
+</section>

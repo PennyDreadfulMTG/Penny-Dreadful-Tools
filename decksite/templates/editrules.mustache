@@ -1,0 +1,88 @@
+<h1>Deck Classification Rules</h1>
+<section>
+    <p>{{num_classified}} out of {{num_total}} decks currently covered by a rule.</p>
+
+    {{#has_doubled_decks}}
+        <h2>Decks where more than one rule applies</h2>
+        {{> spinner}}
+        <table>
+            <thead>
+                <tr>
+                    <th>Colors</th>
+                    <th>Deck Name</th>
+                    <th>Manually-assigned</th>
+                    <th>Rule-assigned</th>
+            </thead>
+            <tbody>
+                {{#doubled_decks}}
+                    <tr>
+                        <td>{{{colors_safe}}}</td>
+                        <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
+                        <td>{{archetype_name}}</td>
+                        <td>{{concat_archetypes}}</td>
+                    </tr>
+                {{/doubled_decks}}
+            </tbody>
+        </table>
+    {{/has_doubled_decks}}
+
+    {{#has_mistagged_decks}}
+        <h2>Decks where the rule doesn't match the assigned archetype</h2>
+        {{> spinner}}
+        <table>
+            <thead>
+                <tr>
+                    <th>Colors</th>
+                    <th>Deck Name</th>
+                    <th>Manually-assigned</th>
+                    <th>Rule-assigned</th>
+            </thead>
+            <tbody>
+                {{#mistagged_decks}}
+                    <tr>
+                        <td>{{{colors_safe}}}</td>
+                        <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
+                        <td>{{archetype_name}}</td>
+                        <td>{{rule_archetype_name}}</td>
+                    </tr>
+                {{/mistagged_decks}}
+            </tbody>
+        </table>
+    {{/has_mistagged_decks}}
+
+    <h2>Other reports</h2>
+    <p>Not currently reported: Archetypes with no matching rule, list of decks not covered by any rule.
+    (These could be added if and when the list of rules is closer to being complete.)</p>
+
+</section>
+<section>
+
+    <h2>View and edit rules</h2>
+
+    {{#rules}}
+        <p>{{archetype_name}} (Rule {{id}})</p>
+        <form method="post">
+            <input type="hidden" name="rule_id" value="{{id}}">
+            <table>
+                <tr>
+                    <th>Must include</th>
+                    <th>Must not include</th>
+                </tr>
+                <tr>
+                    <td><textarea name="include">{{#included_cards}}{{.}}
+    {{/included_cards}}</textarea></td>
+                    <td><textarea name="exclude">{{#excluded_cards}}{{.}}
+    {{/excluded_cards}}</textarea></td>
+                </tr>
+            </table>
+            <button type="submit">Update</button>
+        </form>
+    {{/rules}}
+
+    <h2>New rule</h2>
+    <form method="post">
+    {{>archetypedropdown}}
+    <button type="submit">Create</button>
+    </form>
+
+</section>

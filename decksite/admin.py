@@ -10,9 +10,10 @@ from decksite.data import deck as ds
 from decksite.data import match as ms
 from decksite.data import news as ns
 from decksite.data import person as ps
+from decksite.data import rule as rs
 from decksite.views import (Admin, EditAliases, EditArchetypes, EditMatches,
-                            EditNews, PlayerNotes, Prizes, RotationChecklist,
-                            Unlink)
+                            EditNews, EditRules, PlayerNotes, Prizes,
+                            RotationChecklist, Unlink)
 from magic.models import Deck
 from shared import dtutil, redis
 from shared.container import Container
@@ -86,6 +87,28 @@ def post_archetypes() -> str:
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/archetypes: {f}'.format(f=request.form))
     return edit_archetypes(search_results, request.form.get('q', ''), request.form.get('notq', ''))
+
+@APP.route('/admin/rules/')
+@auth.demimod_required
+def edit_rules() -> str:
+    cnum = rs.num_classified_decks()
+    tnum = ds.num_decks()
+    archetypes = archs.load_archetypes_deckless(order_by='a.name')
+    view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks(), rs.load_all_rules(), archetypes)
+    return view.page()
+
+@APP.route('/admin/rules/', methods=['POST'])
+@auth.demimod_required
+def post_rules() -> str:
+    if request.form.get('rule_id') is not None and request.form.get('include') is not None and request.form.get('exclude') is not None:
+        inc = request.form.get('include').strip().splitlines()
+        exc = request.form.get('exclude').strip().splitlines()
+        rs.update_cards(request.form.get('rule_id'), inc, exc)
+    elif request.form.get('archetype_id') is not None:
+        rs.add_rule(request.form.get('archetype_id'))
+    else:
+        raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/rules: {f}'.format(f=request.form))
+    return edit_rules()
 
 @APP.route('/admin/matches/')
 @auth.admin_required

@@ -10,8 +10,9 @@ from decksite.data import deck as ds
 from decksite.data import match as ms
 from decksite.data import news as ns
 from decksite.data import person as ps
-from decksite.views import (Admin, EditAliases, EditArchetypes, EditMatches, EditNews,
-                            PlayerNotes, Prizes, RotationChecklist, Unlink)
+from decksite.views import (Admin, EditAliases, EditArchetypes, EditMatches,
+                            EditNews, PlayerNotes, Prizes, RotationChecklist,
+                            Unlink)
 from magic.models import Deck
 from shared import dtutil, redis
 from shared.container import Container

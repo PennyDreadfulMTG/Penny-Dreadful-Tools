@@ -65,7 +65,11 @@ def person_api(person):
 @APP.route('/api/person/<person>/decks')
 def person_decks_api(person):
     p = ps.load_person_by_discord_id_or_username(person)
-    return return_json(p.decks)
+    blob = {
+        'name': p.name,
+        'decks': p.decks,
+    }
+    return return_json(blob)
 
 @APP.route('/api/person/<person>/h2h')
 def person_h2h_api(person):
@@ -118,7 +122,8 @@ def rotation_api():
 
 @APP.route('/api/cards')
 def cards_api():
-    return return_json(cs.load_cards())
+    blob = {'cards': cs.load_cards()}
+    return return_json(blob)
 
 @APP.route('/api/card/<card>')
 def card_api(card):

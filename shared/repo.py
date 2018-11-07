@@ -18,6 +18,7 @@ def create_issue(content: str,
                  repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools',
                  exception: Optional[BaseException] = None) -> Issue:
     labels: List[str] = []
+    issue_hash = None
     if content is None or content == '':
         return None
     body = ''
@@ -44,7 +45,7 @@ def create_issue(content: str,
         ua = request.headers.get('User-Agent', '')
         if ua == 'pennydreadfulmagic.com cache renewer':
             labels.append(ua)
-        elif 'YandexBot' in ua or 'Googlebot' in ua:
+        elif 'YandexBot' in ua or 'Googlebot' in ua or 'bingbot' in ua:
             labels.append('Search Engine')
 
     if exception:
@@ -54,8 +55,8 @@ def create_issue(content: str,
         stack = traceback.extract_stack()[:-3] + traceback.extract_tb(exception.__traceback__)
         pretty = traceback.format_list(stack)
         body += 'Stack Trace:\n```\n' + ''.join(pretty) + '\n```\n'
-        exhash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
-        body += f'Exception_hash: {exhash}\n'
+        issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
+        body += f'Exception_hash: {issue_hash}\n'
     print(title + '\n' + body, file=sys.stderr)
     # Only check for github details at the last second to get log output even if github not configured.
     if not configuration.get('github_user') or not configuration.get('github_password'):
@@ -69,6 +70,14 @@ def create_issue(content: str,
         labels.append(location)
         if exception:
             labels.append(exception.__class__.__name__)
+    if issue_hash:
+        existing = g.search_issues(issue_hash, repo=repo_name)
+        try:
+            labelstr = '; '.join(labels)
+            existing[0].create_comment(f'{title}\n\n{body}\n\nLabels: {labelstr}')
+            return existing[0]
+        except IndexError:
+            pass
     issue = git_repo.create_issue(title=title, body=body, labels=labels)
     return issue
 

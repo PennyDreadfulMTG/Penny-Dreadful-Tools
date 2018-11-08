@@ -61,6 +61,8 @@ def create_issue(content: str,
     else:
         stack = traceback.extract_stack()[:-3]
         pretty = traceback.format_list(stack)
+        if request:
+            pretty.append(request.full_path)
         issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
         body += f'Location Hash: {issue_hash}\n'
 

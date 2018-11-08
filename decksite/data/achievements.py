@@ -264,7 +264,7 @@ class TournamentPlayer(CountedAchievement):
     def leaderboard_heading(self) -> str:
         return gettext('Tournaments')
 
-    def localised_display(self, n) -> str:
+    def localised_display(self, n: int) -> str:
         return ngettext('1 tournament entered', '%(num)d tournaments entered', n)
 
 class TournamentWinner(CountedAchievement):
@@ -276,7 +276,7 @@ class TournamentWinner(CountedAchievement):
     def leaderboard_heading(self) -> str:
         return gettext('Victories')
 
-    def localised_display(self, n) -> str:
+    def localised_display(self, n: int) -> str:
         return ngettext('1 victory', '%(num)d victories', n)
 
 class LeaguePlayer(CountedAchievement):
@@ -291,7 +291,7 @@ class LeaguePlayer(CountedAchievement):
     def leaderboard_heading(self) -> str:
         return gettext('Entries')
 
-    def localised_display(self, n) -> str:
+    def localised_display(self, n: int) -> str:
         return ngettext('1 league entry', '%(num)d league entries', n)
 
 class PerfectRun(CountedAchievement):
@@ -303,7 +303,7 @@ class PerfectRun(CountedAchievement):
     def leaderboard_heading(self) -> str:
         return gettext('Runs')
 
-    def localised_display(self, n) -> str:
+    def localised_display(self, n: int) -> str:
         return ngettext('1 perfect run', '%(num)d perfect runs', n)
 
 class FlawlessRun(CountedAchievement):
@@ -314,7 +314,7 @@ class FlawlessRun(CountedAchievement):
     def leaderboard_heading(self) -> str:
         return gettext('Runs')
 
-    def localised_display(self, n) -> str:
+    def localised_display(self, n: int) -> str:
         return ngettext('1 flawless run', '%(num)d flawless runs', n)
 
     @property
@@ -352,7 +352,7 @@ class PerfectRunCrusher(CountedAchievement):
     def leaderboard_heading(self) -> str:
         return gettext('Crushes')
 
-    def localised_display(self, n) -> str:
+    def localised_display(self, n: int) -> str:
         return ngettext('1 perfect run crush', '%(num)d perfect run crushes', n)
 
     @property
@@ -504,7 +504,7 @@ class Deckbuilder(CountedAchievement):
     def leaderboard_heading(self) -> str:
         return gettext('Decks')
 
-    def localised_display(self, n) -> str:
+    def localised_display(self, n: int) -> str:
         return ngettext('1 deck played by others', '%(num)d decks played by others', n)
 
 
@@ -532,7 +532,7 @@ class Pioneer(CountedAchievement):
     def leaderboard_heading(self) -> str:
         return gettext('Archetypes')
 
-    def localised_display(self, n) -> str:
+    def localised_display(self, n: int) -> str:
         return ngettext('1 archetype pioneered', '%(num)d archetypes pioneered', n)
 
 class VarietyPlayer(BooleanAchievement):

@@ -54,6 +54,9 @@ def run() -> None:
         exit(1)
 
 def lint(argv: List[str]) -> None:
+    """
+    Invoke Pylint with our preferred options
+    """
     args = ['--rcfile=.pylintrc', # Load rcfile first.
             '--ignored-modules=alembic,MySQLdb,flask_sqlalchemy,distutils.dist', # override ignored-modules (codacy hack)
             '--load-plugins', 'pylint_quotes, pylint_monolith', # Plugins
@@ -68,6 +71,10 @@ def lint(argv: List[str]) -> None:
         sys.exit(linter.linter.msg_status)
 
 def mypy(argv: List[str], strict: bool = False) -> None:
+    """
+    Invoke mypy with our preferred options.
+    Strict Mode enables additional checks that are currently failing (that we plan on integrating once they pass)
+    """
     args = [
         '--ignore-missing-imports',     # Don't complain about 3rd party libs with no stubs
         '--disallow-untyped-calls',     # Strict Mode.  All function calls must have a return type.
@@ -95,6 +102,9 @@ def mypy(argv: List[str], strict: bool = False) -> None:
         sys.exit(result[2])
 
 def tests(argv: List[str]) -> None:
+    """
+    Literally just prepare the DB and then invoke pytest.
+    """
     import pytest
     from magic import multiverse, oracle
     multiverse.init()
@@ -104,6 +114,9 @@ def tests(argv: List[str]) -> None:
         sys.exit(code)
 
 def sort(fix: bool = False) -> None:
+    """
+    This method is messy, and is a reduced form of isort.main.main()
+    """
     from isort import SortImports
     import isort.main
     config = isort.main.from_path('.')
@@ -137,11 +150,17 @@ def reset_db() -> None:
     magic.database.db().nuke_database()
 
 def push() -> None:
+    print('> Rebasing branch on Master')
     subprocess.check_call(['git', 'pull', 'origin', 'master', '--rebase'])
+    print('> Linting')
     lint([])
+    print('> Typechecking')
     mypy([], False)
+    print('> Running Tests')
     tests([])
+    print('> Checking imports')
     sort(fix=False)
+    print('> Pushing')
     branch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
     subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch])
 

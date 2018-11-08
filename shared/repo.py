@@ -12,6 +12,7 @@ from requests.exceptions import RequestException
 from shared import configuration, dtutil
 
 
+# pylint: disable=too-many-locals
 def create_issue(content: str,
                  author: str,
                  location: str = 'Discord',
@@ -71,11 +72,11 @@ def create_issue(content: str,
         if exception:
             labels.append(exception.__class__.__name__)
     if issue_hash:
-        existing = g.search_issues(issue_hash, repo=repo_name)
         try:
+            issue = g.search_issues(issue_hash, repo=repo_name)[0]
             labelstr = '; '.join(labels)
-            existing[0].create_comment(f'{title}\n\n{body}\n\nLabels: {labelstr}')
-            return existing[0]
+            issue.create_comment(f'{title}\n\n{body}\n\nLabels: {labelstr}')
+            return issue
         except IndexError:
             pass
     issue = git_repo.create_issue(title=title, body=body, labels=labels)

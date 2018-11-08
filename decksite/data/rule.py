@@ -159,7 +159,7 @@ def apply_rules_query(deck_query: str = '1 = 1'):
             ON
                 rule.id = rule_card_count.id
             WHERE
-                {deck_query}
+                deck_card.sideboard = FALSE AND {deck_query}
             GROUP BY
                 deck.id, rule.id
             HAVING

@@ -1,7 +1,7 @@
 import logging
 import os
 import urllib.parse
-from typing import Optional
+from typing import Optional, Union
 
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, session, url_for)
@@ -92,7 +92,10 @@ def person(person_id):
 @APP.route('/achievements/')
 @SEASONS.route('/achievements/')
 def achievements():
-    p = ps.load_person_by_mtgo_username(auth.mtgo_username(), season_id=get_season_id()) if auth.mtgo_username() else None
+    username = auth.mtgo_username()
+    p = None
+    if username is not None:
+        p = ps.load_person_by_mtgo_username(username, season_id=get_season_id())
     view = Achievements(achs.load_achievements(p, season_id=get_season_id()))
     return view.page()
 
@@ -302,7 +305,7 @@ def add_signup():
 
 @APP.route('/deckcheck/')
 @auth.load_person
-def deck_check(form=None):
+def deck_check(form: Optional[DeckCheckForm] = None) -> str:
     if form is None:
         form = DeckCheckForm(request.form, auth.person_id(), auth.mtgo_username())
     view = DeckCheck(form, auth.person_id())
@@ -310,7 +313,7 @@ def deck_check(form=None):
 
 @APP.route('/deckcheck/', methods=['POST'])
 @cached()
-def do_deck_check():
+def do_deck_check() -> str:
     form = DeckCheckForm(request.form)
     form.validate()
     return deck_check(form)
@@ -342,7 +345,7 @@ def retire(form=None):
 
 @APP.route('/retire/', methods=['POST'])
 @auth.login_required
-def retire_deck():
+def retire_deck() -> Union[str, Response]:
     form = RetireForm(request.form, discord_user=session.get('id'))
     if form.validate():
         d = ds.load_deck(form.entry)

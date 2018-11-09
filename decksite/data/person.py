@@ -237,7 +237,7 @@ def set_head_to_head(people: List[Person], season_id: int = None) -> None:
         if person.get('head_to_head') is None:
             person.head_to_head = []
 
-def associate(d, discord_id):
+def associate(d: deck.Deck, discord_id: int) -> int:
     person_id = db().value('SELECT person_id FROM deck WHERE id = %s', [d.id], fail_on_missing=True)
     sql = 'UPDATE person SET discord_id = %s WHERE id = %s'
     return db().execute(sql, [discord_id, person_id])

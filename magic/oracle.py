@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
 from magic import card, fetcher, mana, multiverse, rotation
 from magic.database import db
@@ -148,10 +148,11 @@ def pd_rotation_changes(season_id):
         to_format_id = -1
     return changes_between_formats(from_format_id, to_format_id)
 
-def changes_between_formats(f1, f2):
-    return [query_diff_formats(f2, f1), query_diff_formats(f1, f2)]
 
-def query_diff_formats(f1, f2):
+def changes_between_formats(f1: int, f2: int) -> Tuple[Sequence[Card], Sequence[Card]]:
+    return (query_diff_formats(f2, f1), query_diff_formats(f1, f2))
+
+def query_diff_formats(f1: int, f2: int) -> Sequence[Card]:
     where = """
     c.id IN
         (SELECT card_id FROM card_legality

@@ -9,7 +9,7 @@ from shared_web import logger
 from . import validate_translations
 
 
-def run():
+def run() -> None:
     api_key = configuration.get('poeditor_api_key')
     if api_key is None:
         logger.warning('Missing poeditor.com API key')

@@ -12,6 +12,6 @@ class Form(Container):
         self.errors: Dict[str, str] = {}
         self.warnings: Dict[str, str] = {}
 
-    def validate(self):
+    def validate(self) -> bool:
         self.do_validation()
         return len(self.errors) == 0

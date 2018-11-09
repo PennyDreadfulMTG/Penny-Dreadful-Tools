@@ -314,7 +314,7 @@ def get_format_id(name: str, allow_create: bool = False) -> int:
         raise InvalidArgumentException('Unknown format: {name}'.format(name=name))
     return FORMAT_IDS[name]
 
-def get_format_id_from_season_id(season_id):
+def get_format_id_from_season_id(season_id: int) -> int:
     season_code = rotation.SEASONS[int(season_id) - 1]
     if season_code == rotation.current_season_code():
         format_name = 'Penny Dreadful'

@@ -10,8 +10,10 @@ from decksite.data import deck as ds
 from decksite.data import match as ms
 from decksite.data import news as ns
 from decksite.data import person as ps
-from decksite.views import (Admin, EditArchetypes, EditMatches, EditNews,
-                            PlayerNotes, Prizes, RotationChecklist, Unlink)
+from decksite.data import rule as rs
+from decksite.views import (Admin, EditAliases, EditArchetypes, EditMatches,
+                            EditNews, EditRules, PlayerNotes, Prizes,
+                            RotationChecklist, Unlink)
 from magic.models import Deck
 from shared import dtutil, redis
 from shared.container import Container
@@ -32,6 +34,21 @@ def admin_menu() -> List[Dict[str, str]]:
 def admin_home() -> str:
     view = Admin(admin_menu())
     return view.page()
+
+@APP.route('/admin/aliases/')
+@auth.admin_required
+def edit_aliases() -> str:
+    aliases = ps.load_aliases()
+    all_people = ps.load_people(order_by='p.mtgo_username')
+    view = EditAliases(aliases, all_people)
+    return view.page()
+
+@APP.route('/admin/aliases/', methods=['POST'])
+@auth.admin_required
+def post_aliases() -> str:
+    if request.form.get('person_id') is not None and request.form.get('alias') is not None and len(request.form.get('alias')) > 0:
+        ps.add_alias(request.form.get('person_id'), request.form.get('alias'))
+    return edit_aliases()
 
 @APP.route('/admin/archetypes/')
 @auth.demimod_required
@@ -70,6 +87,28 @@ def post_archetypes() -> str:
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/archetypes: {f}'.format(f=request.form))
     return edit_archetypes(search_results, request.form.get('q', ''), request.form.get('notq', ''))
+
+@APP.route('/admin/rules/')
+@auth.demimod_required
+def edit_rules() -> str:
+    cnum = rs.num_classified_decks()
+    tnum = ds.num_decks()
+    archetypes = archs.load_archetypes_deckless(order_by='a.name')
+    view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks(), rs.load_all_rules(), archetypes)
+    return view.page()
+
+@APP.route('/admin/rules/', methods=['POST'])
+@auth.demimod_required
+def post_rules() -> str:
+    if request.form.get('rule_id') is not None and request.form.get('include') is not None and request.form.get('exclude') is not None:
+        inc = request.form.get('include').strip().splitlines()
+        exc = request.form.get('exclude').strip().splitlines()
+        rs.update_cards(request.form.get('rule_id'), inc, exc)
+    elif request.form.get('archetype_id') is not None:
+        rs.add_rule(request.form.get('archetype_id'))
+    else:
+        raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/rules: {f}'.format(f=request.form))
+    return edit_rules()
 
 @APP.route('/admin/matches/')
 @auth.admin_required
@@ -130,7 +169,7 @@ def player_notes() -> str:
 @auth.admin_required
 def post_player_note() -> str:
     creator = ps.load_person_by_discord_id(session['id'])
-    ps.add_note(creator.id, request.form.get('subject_id'), request.form.get('note'))
+    ps.add_note(creator.id, request.form.get('person_id'), request.form.get('note'))
     return player_notes()
 
 @APP.route('/admin/unlink/')

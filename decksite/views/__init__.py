@@ -14,9 +14,11 @@ from .competitions import Competitions
 from .deck import Deck, DeckEmbed
 from .deck_check import DeckCheck
 from .decks import Decks
+from .edit_aliases import EditAliases
 from .edit_archetypes import EditArchetypes
 from .edit_matches import EditMatches
 from .edit_news import EditNews
+from .edit_rules import EditRules
 from .faqs import Faqs
 from .home import Home
 from .league_form import LeagueForm

@@ -50,17 +50,13 @@ def doubled_decks() -> List[Deck]:
     sql = """
             SELECT
                 deck_id,
-                GROUP_CONCAT(archetype.name) AS concat_archetypes
+                GROUP_CONCAT(archetype_name) AS concat_archetypes
             FROM
                 ({apply_rules_query}) AS applied_rules
-            JOIN
-                archetype
-            ON
-                applied_rules.archetype_id = archetype.id
             GROUP BY
                 deck_id
             HAVING
-                COUNT(DISTINCT archetype.id) > 1
+                COUNT(DISTINCT archetype_id) > 1
             """.format(apply_rules_query=apply_rules_query())
     deck_ids: List[str] = []
     concat_archetypes = {}
@@ -78,7 +74,17 @@ def doubled_decks() -> List[Deck]:
 def load_all_rules() -> List[Container]:
     result = []
     result_by_id = {}
-    sql = 'SELECT rule.id AS id, rule.archetype_id, archetype.name AS archetype_name FROM rule JOIN archetype ON rule.archetype_id = archetype.id'
+    sql = """
+        SELECT
+            rule_id AS id,
+            archetype_id,
+            archetype_name,
+            COUNT(DISTINCT deck_id) as num_decks
+        FROM
+            ({apply_rules_query}) AS applied_rules
+        GROUP BY
+            rule_id
+        """.format(apply_rules_query=apply_rules_query(include_all_rules=True))
     for r in (Container(row) for row in db().select(sql)):
         result.append(r)
         result_by_id[r.id] = r
@@ -109,7 +115,8 @@ def update_cards(rule_id: int, inc: str, exc: str) -> None:
     db().commit('update_rule_cards')
 
 # Currently we do this query several times in a row, but at least with a small number of rules it's cheap enough not to matter
-def apply_rules_query(deck_query: str = '1 = 1'):
+def apply_rules_query(deck_query: str = '1 = 1', include_all_rules=False):
+    join_type = 'RIGHT' if include_all_rules else 'INNER'
     return f"""
         WITH rule_card_count AS
         (
@@ -159,17 +166,20 @@ def apply_rules_query(deck_query: str = '1 = 1'):
             ON
                 rule.id = rule_card_count.id
             WHERE
-                {deck_query}
+                deck_card.sideboard = FALSE AND {deck_query}
             GROUP BY
                 deck.id, rule.id
             HAVING
                 included_count = required_count
         )
         SELECT
-            candidates.deck_id, candidates.rule_id, suggested_archetype.id AS archetype_id
+            candidates.deck_id,
+            rule.id AS rule_id,
+            suggested_archetype.id AS archetype_id,
+            suggested_archetype.name AS archetype_name
         FROM
             candidates
-        JOIN
+        {join_type} JOIN
             rule
         ON
             candidates.rule_id = rule.id

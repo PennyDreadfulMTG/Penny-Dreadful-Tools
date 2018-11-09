@@ -39,6 +39,7 @@ class View(BaseView):
         self.decks: List[Deck] = []
         self.show_active_runs_text: bool = True
         self.active_runs_text: Optional[str] = None
+        self.do_not_hide_active_runs = False
         self.is_very_large: Optional[bool] = None
         self.show_seasons: bool = False
         self.legal_formats: Optional[List[str]] = None

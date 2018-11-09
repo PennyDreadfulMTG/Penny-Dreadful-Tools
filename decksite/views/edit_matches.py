@@ -2,7 +2,6 @@ from typing import List
 
 from flask import url_for
 
-from decksite.data import deck
 from decksite.view import View
 from magic.models import Deck
 from shared import dtutil

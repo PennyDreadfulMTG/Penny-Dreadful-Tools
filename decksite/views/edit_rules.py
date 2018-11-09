@@ -1,9 +1,18 @@
 from decksite.view import View
-
+from shared.container import Container
+from magic.models import Deck
+from decksite.data.archetype import Archetype
+from typing import List
 
 # pylint: disable=no-self-use, too-many-instance-attributes, too-many-arguments
 class EditRules(View):
-    def __init__(self, num_classified, num_total, doubled_decks, mistagged_decks, rules, archetypes) -> None:
+    def __init__(self,
+                 num_classified: int,
+                 num_total: int,
+                 doubled_decks: List[Deck],
+                 mistagged_decks: List[Deck],
+                 rules: List[Container],
+                 archetypes: List[Archetype]) -> None:
         super().__init__()
         self.num_classified = num_classified
         self.num_total = num_total

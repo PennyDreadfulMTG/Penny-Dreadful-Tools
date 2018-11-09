@@ -1,5 +1,5 @@
 import re
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union, Any
 
 import pkg_resources
 
@@ -158,7 +158,7 @@ def update_pd_legality() -> None:
             break
         set_legal_cards(season=s)
 
-def insert_card(c, update_index: bool = True) -> None:
+def insert_card(c: Any, update_index: bool = True) -> None:
     name, card_id = try_find_card_id(c)
     if card_id is None:
         sql = 'INSERT INTO card ('
@@ -211,7 +211,7 @@ def insert_card(c, update_index: bool = True) -> None:
         c['id'] = c['cardId']
         writer.update_card(c)
 
-def insert_set(s) -> None:
+def insert_set(s: Any) -> None:
     sql = 'INSERT INTO `set` ('
     sql += ', '.join(name for name, prop in card.set_properties().items() if prop['mtgjson'])
     sql += ') VALUES ('
@@ -322,12 +322,12 @@ def get_format_id_from_season_id(season_id):
         format_name = 'Penny Dreadful {f}'.format(f=season_code)
     return get_format_id(format_name)
 
-def card_name(c) -> str:
+def card_name(c: CardDescription) -> str:
     if c.get('layout') == 'meld':
-        if c.get('name') == c.get('names')[2]:
-            return c.get('names')[0]
-        return c.get('name')
-    return ' // '.join(c.get('names', [c.get('name')]))
+        if c.get('name', '') == c.get('names', [])[2]:
+            return c.get('names', [])[0]
+        return c.get('name', '')
+    return ' // '.join(c.get('names', [c.get('name', '')]))
 
 def fix_bad_mtgjson_data(cards: Dict[str, CardDescription]) -> Dict[str, CardDescription]:
     fix_mtgjson_melded_cards_bug(cards)

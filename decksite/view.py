@@ -1,6 +1,7 @@
 import html
 from collections import Counter
-from typing import List, Optional
+from typing import List, Optional, Union
+from shared.container import Container
 
 import inflect
 from anytree.iterators import PreOrderIter
@@ -299,7 +300,7 @@ class View(BaseView):
         for l in getattr(self, 'leaderboards', []):
             self.prepare_leaderboard(l)
 
-    def prepare_leaderboard(self, leaderboard) -> None:
+    def prepare_leaderboard(self, leaderboard: List[Container]) -> None:
         pos = 1
         for p in leaderboard:
             p.finish = pos
@@ -358,7 +359,7 @@ def set_stars_and_top8(d: Deck) -> None:
     if len(d.stars_safe) > 0:
         d.stars_safe = '<span class="stars" title="Success Rating">{stars}</span>'.format(stars=d.stars_safe)
 
-def seasonized_url(season_id) -> str:
+def seasonized_url(season_id: Union[int, str]) -> str:
     args = request.view_args.copy()
     if season_id == rotation.current_season_num():
         args.pop('season_id', None)

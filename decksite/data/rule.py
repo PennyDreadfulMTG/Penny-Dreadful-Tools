@@ -203,7 +203,7 @@ def apply_rules_query(deck_query: str = '1 = 1', include_all_rules: bool = False
         ON
             candidates.deck_id = deck_card.deck_id AND exclusions.card = deck_card.card
         GROUP BY
-            candidates.deck_id, candidates.rule_id
+            candidates.deck_id, rule_id
         HAVING
             COUNT(deck_card.card) = 0
     """

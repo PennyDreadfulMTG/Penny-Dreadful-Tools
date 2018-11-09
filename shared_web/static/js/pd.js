@@ -16,7 +16,7 @@ PD.init = function () {
     PD.initStatusFooter();
 };
 PD.scrollToContent = function () {
-    if (window.matchMedia("only screen and (max-width: 640px)").matches && document.referrer.indexOf(window.location.hostname) > 0) {
+    if (window.matchMedia("only screen and (max-width: 640px)").matches && document.referrer.indexOf(window.location.hostname) > 0 && document.location.href.indexOf('#content') === -1) {
          window.location.href = window.location.href + "#content";
     }
 };

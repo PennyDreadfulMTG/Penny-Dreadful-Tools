@@ -1,8 +1,10 @@
-from decksite.view import View
-from shared.container import Container
-from magic.models import Deck
-from decksite.data.archetype import Archetype
 from typing import List
+
+from decksite.data.archetype import Archetype
+from decksite.view import View
+from magic.models import Deck
+from shared.container import Container
+
 
 # pylint: disable=no-self-use, too-many-instance-attributes, too-many-arguments
 class EditRules(View):

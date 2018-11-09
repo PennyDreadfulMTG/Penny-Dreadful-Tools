@@ -60,7 +60,7 @@
     <h2>View and edit rules</h2>
 
     {{#rules}}
-        <p>{{archetype_name}} (Rule {{id}})</p>
+        <p>{{archetype_name}} (Rule {{id}}, {{num_decks}} decks)</p>
         <form method="post">
             <input type="hidden" name="rule_id" value="{{id}}">
             <table>
@@ -70,9 +70,9 @@
                 </tr>
                 <tr>
                     <td><textarea name="include">{{#included_cards}}{{.}}
-    {{/included_cards}}</textarea></td>
+{{/included_cards}}</textarea></td>
                     <td><textarea name="exclude">{{#excluded_cards}}{{.}}
-    {{/excluded_cards}}</textarea></td>
+{{/excluded_cards}}</textarea></td>
                 </tr>
             </table>
             <button type="submit">Update</button>

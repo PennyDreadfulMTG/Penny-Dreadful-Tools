@@ -1,7 +1,6 @@
 import html
 from collections import Counter
 from typing import List, Optional, Union
-from shared.container import Container
 
 import inflect
 from anytree.iterators import PreOrderIter
@@ -15,6 +14,7 @@ from decksite.data import archetype
 from magic import legality, oracle, rotation, tournaments
 from magic.models import Card, Deck
 from shared import dtutil
+from shared.container import Container
 from shared_web.base_view import BaseView
 
 SeasonInfoDescription = TypedDict('SeasonInfoDescription', {

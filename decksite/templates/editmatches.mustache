@@ -8,7 +8,6 @@
             {{/decks}}
         </select>
         <input type="number" name="left_games">
-        –
         <input type="number" name="right_games">
         <select name="right_id">
             {{#decks}}
@@ -42,10 +41,10 @@
                     </td>
                     <td>
                         {{#mtgo_id}}
-                        <a href="https://logs.pennydreadfulmagic.com/match/{{mtgo_id}}">{{mtgo_id}}</a>
+                            <a href="https://logs.pennydreadfulmagic.com/match/{{mtgo_id}}">{{mtgo_id}}</a>
                         {{/mtgo_id}}
                         {{^mtgo_id}}
-                        Manually Reported
+                            Manually Reported
                         {{/mtgo_id}}
                     </td>
                     <td>

@@ -115,7 +115,7 @@ def update_cards(rule_id: int, inc: str, exc: str) -> None:
     db().commit('update_rule_cards')
 
 # Currently we do this query several times in a row, but at least with a small number of rules it's cheap enough not to matter
-def apply_rules_query(deck_query: str = '1 = 1', include_all_rules=False):
+def apply_rules_query(deck_query: str = '1 = 1', include_all_rules: bool = False) -> str:
     join_type = 'RIGHT' if include_all_rules else 'INNER'
     return f"""
         WITH rule_card_count AS

@@ -1,5 +1,5 @@
-from typing import List, Tuple
 import os
+from typing import List, Tuple
 
 from flask import session, url_for
 from requests_oauthlib import OAuth2Session

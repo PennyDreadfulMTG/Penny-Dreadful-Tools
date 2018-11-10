@@ -76,26 +76,35 @@ def load_all_rules() -> List[Container]:
     result_by_id = {}
     sql = """
         SELECT
-            rule_id AS id,
-            archetype_id,
-            archetype_name,
-            COUNT(DISTINCT deck_id) as num_decks
+            rule.id AS id,
+            archetype.id AS archetype_id,
+            archetype.name AS archetype_name,
+            COUNT(DISTINCT applied_rules.deck_id) as num_decks
         FROM
+            rule
+        INNER JOIN
+            archetype
+        ON
+            rule.archetype_id = archetype.id
+        LEFT JOIN
             ({apply_rules_query}) AS applied_rules
+        ON
+            rule.id = applied_rules.rule_id
         GROUP BY
-            rule_id
-        """.format(apply_rules_query=apply_rules_query(include_all_rules=True))
+            id
+        """.format(apply_rules_query=apply_rules_query())
     for r in (Container(row) for row in db().select(sql)):
         result.append(r)
         result_by_id[r.id] = r
         r.included_cards = []
         r.excluded_cards = []
-    sql = 'SELECT rule_id, card, include FROM rule_card'
+        print(r.id)
+    sql = 'SELECT rule_id, card, n, include FROM rule_card'
     for r in (Container(row) for row in db().select(sql)):
         if r.include:
-            result_by_id[r.rule_id].included_cards.append(r.card)
+            result_by_id[r.rule_id].included_cards.append({'n': r.n, 'card': r.card})
         else:
-            result_by_id[r.rule_id].excluded_cards.append(r.card)
+            result_by_id[r.rule_id].excluded_cards.append({'n': r.n, 'card': r.card})
     return result
 
 def add_rule(archetype_id: int) -> None:
@@ -106,17 +115,16 @@ def update_cards(rule_id: int, inc: str, exc: str) -> None:
     db().begin('update_rule_cards')
     sql = 'DELETE FROM rule_card WHERE rule_id = %s'
     db().execute(sql, [rule_id])
-    for card in inc:
-        sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, 1, TRUE)'
-        db().execute(sql, [rule_id, card])
-    for card in exc:
-        sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, 1, FALSE)'
-        db().execute(sql, [rule_id, card])
+    for n, card in inc:
+        sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, %s, TRUE)'
+        db().execute(sql, [rule_id, card, n])
+    for n, card in exc:
+        sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, %s, FALSE)'
+        db().execute(sql, [rule_id, card, n])
     db().commit('update_rule_cards')
 
 # Currently we do this query several times in a row, but at least with a small number of rules it's cheap enough not to matter
-def apply_rules_query(deck_query: str = '1 = 1', include_all_rules: bool = False) -> str:
-    join_type = 'RIGHT' if include_all_rules else 'INNER'
+def apply_rules_query(deck_query: str = '1 = 1') -> str:
     return f"""
         WITH rule_card_count AS
         (
@@ -179,7 +187,7 @@ def apply_rules_query(deck_query: str = '1 = 1', include_all_rules: bool = False
             suggested_archetype.name AS archetype_name
         FROM
             candidates
-        {join_type} JOIN
+        INNER JOIN
             rule
         ON
             candidates.rule_id = rule.id

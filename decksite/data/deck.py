@@ -553,7 +553,7 @@ def load_competitive_stats(decks: List[Deck]) -> None:
         if decks_by_id.get(row['id']):
             decks_by_id[row['id']].omw = row['omw']
 
-def preaggregate_omw():
+def preaggregate_omw() -> None:
     sql = """
         UPDATE
             deck_cache AS dc

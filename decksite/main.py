@@ -1,7 +1,7 @@
 import logging
 import os
 import urllib.parse
-from typing import Optional
+from typing import Optional, Union
 
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, session, url_for)
@@ -75,7 +75,7 @@ def season(deck_type=None):
 @APP.route('/people/')
 @SEASONS.route('/people/')
 @cached()
-def people():
+def people() -> str:
     view = People(ps.load_people(season_id=get_season_id()))
     return view.page()
 
@@ -92,25 +92,28 @@ def person(person_id):
 @APP.route('/achievements/')
 @SEASONS.route('/achievements/')
 def achievements():
-    p = ps.load_person_by_mtgo_username(auth.mtgo_username(), season_id=get_season_id()) if auth.mtgo_username() else None
+    username = auth.mtgo_username()
+    p = None
+    if username is not None:
+        p = ps.load_person_by_mtgo_username(username, season_id=get_season_id())
     view = Achievements(achs.load_achievements(p, season_id=get_season_id()))
     return view.page()
 
 @APP.route('/person/achievements/')
-def achievements_redirect():
+def achievements_redirect() -> Response:
     return redirect(url_for('achievements'))
 
 @APP.route('/cards/')
 @SEASONS.route('/cards/')
 @cached()
-def cards():
+def cards() -> str:
     view = Cards(cs.load_cards(season_id=get_season_id()))
     return view.page()
 
 @APP.route('/cards/<path:name>/')
 @SEASONS.route('/cards/<path:name>/')
 @cached()
-def card(name):
+def card(name: str) -> str:
     try:
         c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)), season_id=get_season_id())
         view = Card(c)
@@ -121,7 +124,7 @@ def card(name):
 @APP.route('/competitions/')
 @SEASONS.route('/competitions/')
 @cached()
-def competitions():
+def competitions() -> str:
     view = Competitions(comp.load_competitions(season_id=get_season_id()))
     return view.page()
 
@@ -134,7 +137,7 @@ def competition(competition_id):
 @APP.route('/archetypes/')
 @SEASONS.route('/archetypes/')
 @cached()
-def archetypes():
+def archetypes() -> str:
     season_id = get_season_id()
     deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id)
     all_matchups = archs.load_all_matchups(season_id=season_id)
@@ -151,13 +154,13 @@ def archetype(archetype_id):
     return view.page()
 
 @APP.route('/tournaments/')
-def tournaments():
+def tournaments() -> str:
     view = Tournaments()
     return view.page()
 
 @APP.route('/tournaments/hosting/')
 @cached()
-def hosting():
+def hosting() -> str:
     view = TournamentHosting()
     return view.page()
 
@@ -302,7 +305,7 @@ def add_signup():
 
 @APP.route('/deckcheck/')
 @auth.load_person
-def deck_check(form=None):
+def deck_check(form: Optional[DeckCheckForm] = None) -> str:
     if form is None:
         form = DeckCheckForm(request.form, auth.person_id(), auth.mtgo_username())
     view = DeckCheck(form, auth.person_id())
@@ -310,7 +313,7 @@ def deck_check(form=None):
 
 @APP.route('/deckcheck/', methods=['POST'])
 @cached()
-def do_deck_check():
+def do_deck_check() -> str:
     form = DeckCheckForm(request.form)
     form.validate()
     return deck_check(form)
@@ -342,7 +345,7 @@ def retire(form=None):
 
 @APP.route('/retire/', methods=['POST'])
 @auth.login_required
-def retire_deck():
+def retire_deck() -> Union[str, Response]:
     form = RetireForm(request.form, discord_user=session.get('id'))
     if form.validate():
         d = ds.load_deck(form.entry)

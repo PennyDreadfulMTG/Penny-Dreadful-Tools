@@ -6,7 +6,7 @@ from babel.messages import pofile
 from babel.messages.catalog import Catalog, Message
 
 
-def ad_hoc():
+def ad_hoc() -> None:
     for directory, _, files in os.walk(os.path.join('shared_web', 'translations')):
         for path in [os.path.join(directory, f) for f in files if os.path.splitext(f)[1] == '.po']:
             print(path)

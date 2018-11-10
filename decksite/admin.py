@@ -1,5 +1,4 @@
 from typing import Dict, List, Optional
-import re
 
 from flask import request, session, url_for
 
@@ -12,10 +11,10 @@ from decksite.data import match as ms
 from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.data import rule as rs
+from decksite.scrapers.decklist import parse_line
 from decksite.views import (Admin, EditAliases, EditArchetypes, EditMatches,
                             EditNews, EditRules, PlayerNotes, Prizes,
                             RotationChecklist, Unlink)
-from decksite.scrapers.decklist import parse_line
 from magic.models import Deck
 from shared import dtutil, redis
 from shared.container import Container

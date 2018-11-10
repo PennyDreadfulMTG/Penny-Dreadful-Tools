@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 from decksite.data import deck
 from decksite.database import db
@@ -111,7 +111,7 @@ def add_rule(archetype_id: int) -> None:
     sql = 'INSERT INTO rule (archetype_id) VALUES (%s)'
     db().insert(sql, [archetype_id])
 
-def update_cards(rule_id: int, inc: str, exc: str) -> None:
+def update_cards(rule_id: int, inc: List[Tuple[int, str]], exc: List[Tuple[int, str]]) -> None:
     db().begin('update_rule_cards')
     sql = 'DELETE FROM rule_card WHERE rule_id = %s'
     db().execute(sql, [rule_id])

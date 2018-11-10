@@ -79,7 +79,7 @@ class PDFlask(Flask):
             return redirect(target)
         return redirect(url_for(target))
 
-    def authenticate(self):
+    def authenticate(self) -> Response:
         target = request.args.get('target')
         authorization_url, state = oauth.setup_authentication()
         session['oauth2_state'] = state
@@ -91,7 +91,7 @@ class PDFlask(Flask):
         response.headers['X-Robots-Tag'] = 'noindex'
         return response
 
-    def authenticate_callback(self):
+    def authenticate_callback(self) -> Response:
         if request.values.get('error'):
             return redirect(url_for('unauthorized', error=request.values['error']))
         oauth.setup_session(request.url)
@@ -101,7 +101,10 @@ class PDFlask(Flask):
         session['target'] = None
         return redirect(url)
 
-    def robots_txt(self):
+    def robots_txt(self) -> Response:
+        """
+        Serves the robots.txt
+        """
         if configuration.get_bool('is_test_site'):
             return send_from_directory(self.static_folder, 'deny-all-robots.txt')
         return send_from_directory(self.static_folder, 'robots.txt')

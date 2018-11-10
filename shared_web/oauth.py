@@ -1,3 +1,4 @@
+from typing import List, Tuple
 import os
 
 from flask import session, url_for
@@ -12,13 +13,13 @@ TOKEN_URL = API_BASE_URL + '/oauth2/token'
 OAUTH2_CLIENT_ID = configuration.get('oauth2_client_id')
 OAUTH2_CLIENT_SECRET = configuration.get('oauth2_client_secret')
 
-def setup_authentication():
+def setup_authentication() -> Tuple[str, str]:
     scope = ['identify', 'guilds']
     discord = make_session(scope=scope)
     return discord.authorization_url(AUTHORIZATION_BASE_URL)
 
 
-def setup_session(url):
+def setup_session(url: str) -> None:
     discord = make_session(state=session.get('oauth2_state'))
     token = discord.fetch_token(
         TOKEN_URL,
@@ -45,7 +46,9 @@ def setup_session(url):
     if wrong_guilds:
         logger.warning('auth.py: unexpected discord response. Guilds: {g}'.format(g=guilds))
 
-def make_session(token=None, state=None, scope=None):
+def make_session(token: str = None,
+                 state: str = None,
+                 scope: List[str] = None) -> OAuth2Session:
     return OAuth2Session(
         client_id=OAUTH2_CLIENT_ID,
         token=token,

@@ -1,4 +1,5 @@
 from pylint.lint import PyLinter
+
 from .l18n_check import TranslationStringConstantsChecker
 from .monolith_checker import MonolithChecker
 

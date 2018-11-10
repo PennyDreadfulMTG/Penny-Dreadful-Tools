@@ -1,0 +1,3 @@
+ALTER TABLE rule_card ADD n INTEGER;
+UPDATE rule_card SET n=1;
+ALTER TABLE rule_card MODIFY n INTEGER NOT NULL;

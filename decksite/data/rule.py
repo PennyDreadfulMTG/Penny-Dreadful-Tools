@@ -107,10 +107,10 @@ def update_cards(rule_id: int, inc: str, exc: str) -> None:
     sql = 'DELETE FROM rule_card WHERE rule_id = %s'
     db().execute(sql, [rule_id])
     for card in inc:
-        sql = 'INSERT INTO rule_card (rule_id, card, include) VALUES (%s, %s, TRUE)'
+        sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, 1, TRUE)'
         db().execute(sql, [rule_id, card])
     for card in exc:
-        sql = 'INSERT INTO rule_card (rule_id, card, include) VALUES (%s, %s, FALSE)'
+        sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, 1, FALSE)'
         db().execute(sql, [rule_id, card])
     db().commit('update_rule_cards')
 
@@ -166,7 +166,7 @@ def apply_rules_query(deck_query: str = '1 = 1', include_all_rules: bool = False
             ON
                 rule.id = rule_card_count.id
             WHERE
-                deck_card.sideboard = FALSE AND {deck_query}
+                deck_card.sideboard = FALSE AND deck_card.n >= inclusions.n AND {deck_query}
             GROUP BY
                 deck.id, rule.id
             HAVING
@@ -201,7 +201,7 @@ def apply_rules_query(deck_query: str = '1 = 1', include_all_rules: bool = False
         LEFT JOIN
             deck_card
         ON
-            candidates.deck_id = deck_card.deck_id AND exclusions.card = deck_card.card
+            candidates.deck_id = deck_card.deck_id AND exclusions.card = deck_card.card AND deck_card.n >= exclusions.n
         GROUP BY
             candidates.deck_id, rule_id
         HAVING

@@ -137,7 +137,7 @@ def competition(competition_id):
 @APP.route('/archetypes/')
 @SEASONS.route('/archetypes/')
 @cached()
-def archetypes():
+def archetypes() -> None:
     season_id = get_season_id()
     deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id)
     all_matchups = archs.load_all_matchups(season_id=season_id)
@@ -154,13 +154,13 @@ def archetype(archetype_id):
     return view.page()
 
 @APP.route('/tournaments/')
-def tournaments():
+def tournaments() -> str:
     view = Tournaments()
     return view.page()
 
 @APP.route('/tournaments/hosting/')
 @cached()
-def hosting():
+def hosting() -> str:
     view = TournamentHosting()
     return view.page()
 

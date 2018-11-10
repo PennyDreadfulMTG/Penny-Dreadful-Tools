@@ -58,7 +58,7 @@ def create_issue(content: str,
         body += 'Stack Trace:\n```\n' + ''.join(pretty) + '\n```\n'
         issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
         body += f'Exception_hash: {issue_hash}\n'
-    else:
+    elif repo_name == 'PennyDreadfulMTG/perf-reports':
         stack = traceback.extract_stack()[:-3]
         pretty = traceback.format_list(stack)
         if request:

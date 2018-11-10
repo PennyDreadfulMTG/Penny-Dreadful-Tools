@@ -1,11 +1,12 @@
 import sys
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 import titlecase
 from anytree import NodeMixin
 
 from decksite.data import deck, query
 from decksite.database import db
+from shared import guarantee
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import (DatabaseException, DoesNotExistException,
@@ -17,7 +18,7 @@ class Archetype(Container, NodeMixin):
 
 BASE_ARCHETYPES: Dict[Archetype, Archetype] = {}
 
-def load_archetype(archetype, season_id=None):
+def load_archetype(archetype: Union[int, str], season_id: int = None) -> Archetype:
     try:
         archetype_id = int(archetype)
     except ValueError:
@@ -27,15 +28,13 @@ def load_archetype(archetype, season_id=None):
         if not archetype_id:
             raise DoesNotExistException('Did not find archetype with name of `{name}`'.format(name=name))
     archetypes = load_archetypes(where='d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'.format(archetype_id=sqlescape(archetype_id)), merge=True, season_id=season_id)
-    if len(archetypes) > 1:
-        raise TooManyItemsException('Found {n} archetypes when expecting 1 at most'.format(n=len(archetypes)))
-    archetype = archetypes[0] if len(archetypes) == 1 else Archetype()
+    arch = guarantee.exactly_one(archetypes, 'archetypes') if archetypes else Archetype()
     # Because load_archetypes loads the root archetype and all below merged the id and name might not be those of the root archetype. Overwrite.
-    archetype.id = int(archetype_id)
-    archetype.name = db().value('SELECT name FROM archetype WHERE id = %s', [archetype_id])
+    arch.id = int(archetype_id)
+    arch.name = db().value('SELECT name FROM archetype WHERE id = %s', [archetype_id])
     if len(archetypes) == 0:
-        archetype.decks = []
-    return archetype
+        arch.decks = []
+    return arch
 
 def load_archetypes(where: str = '1 = 1', merge: bool = False, season_id: int = None) -> List[Archetype]:
     decks = deck.load_decks(where, season_id=season_id)

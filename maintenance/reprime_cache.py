@@ -3,7 +3,7 @@ from magic import multiverse, oracle
 from shared import redis
 
 
-def run():
+def run() -> None:
     multiverse.update_cache()
     oracle.init()
     ds = deck.load_decks()
@@ -15,4 +15,3 @@ def run():
     person.preaggregate()
     card.preaggregate()
     deck.preaggregate_omw()
-    return 'Done'

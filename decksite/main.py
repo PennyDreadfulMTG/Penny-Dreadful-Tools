@@ -75,7 +75,7 @@ def season(deck_type=None):
 @APP.route('/people/')
 @SEASONS.route('/people/')
 @cached()
-def people():
+def people() -> str:
     view = People(ps.load_people(season_id=get_season_id()))
     return view.page()
 
@@ -100,20 +100,20 @@ def achievements():
     return view.page()
 
 @APP.route('/person/achievements/')
-def achievements_redirect():
+def achievements_redirect() -> Response:
     return redirect(url_for('achievements'))
 
 @APP.route('/cards/')
 @SEASONS.route('/cards/')
 @cached()
-def cards():
+def cards() -> str:
     view = Cards(cs.load_cards(season_id=get_season_id()))
     return view.page()
 
 @APP.route('/cards/<path:name>/')
 @SEASONS.route('/cards/<path:name>/')
 @cached()
-def card(name):
+def card(name: str) -> str:
     try:
         c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)), season_id=get_season_id())
         view = Card(c)
@@ -124,7 +124,7 @@ def card(name):
 @APP.route('/competitions/')
 @SEASONS.route('/competitions/')
 @cached()
-def competitions():
+def competitions() -> str:
     view = Competitions(comp.load_competitions(season_id=get_season_id()))
     return view.page()
 

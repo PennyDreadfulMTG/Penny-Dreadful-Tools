@@ -135,28 +135,29 @@ def sitemap():
     return return_json(urls)
 
 @APP.route('/api/intro/')
-def intro():
+def intro() -> Response:
     return return_json(not request.cookies.get('hide_intro', False) and not auth.hide_intro())
 
 @APP.route('/api/intro/', methods=['POST'])
-def hide_intro():
+def hide_intro() -> Response:
     r = Response(response='')
     r.set_cookie('hide_intro', value=str(True), expires=dtutil.dt2ts(dtutil.now()) + 60 *  60 * 24 * 365 * 10)
     return r
 
 @APP.route('/api/status/')
 @auth.load_person
-def person_status():
+def person_status() -> Response:
+    username = auth.mtgo_username()
     r = {
-        'mtgo_username': auth.mtgo_username(),
+        'mtgo_username': username,
         'discord_id': auth.discord_id(),
         'admin': session.get('admin', False),
         'demimod': session.get('demimod', False),
-        'hide_intro': request.cookies.get('hide_intro', False) or auth.hide_intro() or auth.mtgo_username() or auth.discord_id(),
+        'hide_intro': request.cookies.get('hide_intro', False) or auth.hide_intro() or username or auth.discord_id(),
         'in_guild': session.get('in_guild', False),
         }
-    if auth.mtgo_username():
-        d = guarantee_at_most_one_or_retire(league.active_decks_by(auth.mtgo_username()))
+    if username:
+        d = guarantee_at_most_one_or_retire(league.active_decks_by(username))
         if d is not None:
             r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}
     if r['admin'] or r['demimod']:

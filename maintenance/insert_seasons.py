@@ -3,7 +3,7 @@ from magic import rotation
 from shared import dtutil
 
 
-def run():
+def run() -> None:
     existing = list(map(lambda s: s['number'], db().select('SELECT `number` FROM `season`;')))
     for season, setcode in enumerate(rotation.SEASONS, start=1):
         if not season in existing:

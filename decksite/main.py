@@ -1,7 +1,7 @@
 import logging
 import os
 import urllib.parse
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, session, url_for)
@@ -85,7 +85,7 @@ def people() -> str:
 def person(person_id):
     p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
     person_cards = cs.load_cards(person_id=p.id, season_id=get_season_id())
-    only_played_cards = []
+    only_played_cards: List[cs.Card] = []
     view = Person(p, person_cards, only_played_cards)
     return view.page()
 
@@ -356,12 +356,12 @@ def retire_deck() -> Union[str, Response]:
 
 @APP.route('/rotation/changes/')
 @SEASONS.route('/rotation/changes/')
-def rotation_changes():
+def rotation_changes() -> str:
     view = RotationChanges(*oracle.pd_rotation_changes(get_season_id()), cs.playability())
     return view.page()
 
 @APP.route('/rotation/speculation/')
-def rotation_speculation():
+def rotation_speculation() -> str:
     view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), cs.playability(), speculation=True)
     return view.page()
 

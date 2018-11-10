@@ -15,5 +15,5 @@ class Resources(View):
                 section['items'].append(item)
         return sections
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Resources'

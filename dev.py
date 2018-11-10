@@ -83,6 +83,7 @@ def mypy(argv: List[str], strict: bool = False) -> None:
         ]
     if strict:
         args.append('--check-untyped-defs') # Typecheck on all methods, not just typed ones.
+        # args.append('--disallow-untyped-defs') # All methods must be typed.
     args.extend(argv or [
         '.'                             # Invoke on the entire project.
         ])

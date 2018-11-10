@@ -69,9 +69,9 @@
                     <th>Must not include</th>
                 </tr>
                 <tr>
-                    <td><textarea name="include">{{#included_cards}}{{.}}
+                    <td><textarea name="include">{{#included_cards}}{{n}} {{card}}
 {{/included_cards}}</textarea></td>
-                    <td><textarea name="exclude">{{#excluded_cards}}{{.}}
+                    <td><textarea name="exclude">{{#excluded_cards}}{{n}} {{card}}
 {{/excluded_cards}}</textarea></td>
                 </tr>
             </table>

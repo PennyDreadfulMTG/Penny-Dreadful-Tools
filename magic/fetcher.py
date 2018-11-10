@@ -167,7 +167,7 @@ def rulings(cardname: str) -> List[Dict[str, str]]:
     return internal.fetch_json(card['uri'] + '/rulings')['data']
 
 def sitemap() -> List[str]:
-    return internal.fetch_json(decksite_url('/api/sitemap/'))
+    return internal.fetch_json(decksite_url('/api/sitemap/'))['urls']
 
 def time(q: str) -> Dict[str, List[str]]:
     return times_from_timezone_code(q) if len(q) <= 3 else times_from_location(q)

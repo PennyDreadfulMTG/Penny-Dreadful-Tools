@@ -132,7 +132,7 @@ def card_api(card):
 @APP.route('/api/sitemap/')
 def sitemap():
     urls = [url_for(rule.endpoint) for rule in APP.url_map.iter_rules() if 'GET' in rule.methods and len(rule.arguments) == 0]
-    return return_json(urls)
+    return return_json({'urls': urls})
 
 @APP.route('/api/intro/')
 def intro() -> Response:

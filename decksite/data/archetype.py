@@ -161,7 +161,7 @@ def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retr
         print(f'Failed to preaggregate. Giving up.')
         raise e
 
-def load_matchups(archetype_id, season_id=None) -> List[Container]:
+def load_matchups(archetype_id: int, season_id: int = None) -> List[Container]:
     where = 'a.id = {archetype_id}'.format(archetype_id=archetype_id)
     return load_all_matchups(where, season_id)
 

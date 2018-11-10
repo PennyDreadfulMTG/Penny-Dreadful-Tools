@@ -1,8 +1,10 @@
+from pylint.lint import PyLinter
+
 from .l18n_check import TranslationStringConstantsChecker
 from .monolith_checker import MonolithChecker
 
 
-def register(linter):
+def register(linter: PyLinter) -> None:
     """Required method to auto register this checker.
 
     Args:

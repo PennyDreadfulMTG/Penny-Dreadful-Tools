@@ -53,7 +53,7 @@ def league_api() -> Response:
     return return_json(league.active_league())
 
 @APP.route('/api/person/<person>/')
-def person_api(person):
+def person_api(person: str) -> Response:
     try:
         p = ps.load_person_by_discord_id_or_username(person)
         p.decks_url = url_for('person_decks_api', person=person)
@@ -63,7 +63,7 @@ def person_api(person):
         return return_json(generate_error('NOTFOUND', 'Person does not exist'))
 
 @APP.route('/api/person/<person>/decks')
-def person_decks_api(person):
+def person_decks_api(person: str) -> Response:
     p = ps.load_person_by_discord_id_or_username(person)
     blob = {
         'name': p.name,
@@ -72,12 +72,12 @@ def person_decks_api(person):
     return return_json(blob)
 
 @APP.route('/api/person/<person>/h2h')
-def person_h2h_api(person):
+def person_h2h_api(person: str) -> Response:
     p = ps.load_person_by_discord_id_or_username(person)
     return return_json(p.head_to_head)
 
 @APP.route('/api/league/run/<person>')
-def league_run_api(person):
+def league_run_api(person: str) -> Response:
     decks = league.active_decks_by(person)
     if len(decks) == 0:
         return return_json(None)

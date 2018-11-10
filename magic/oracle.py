@@ -134,7 +134,8 @@ def insert_scryfall_card(sfcard: Dict, rebuild_cache: bool = True) -> None:
         multiverse.update_cache()
         CARDS_BY_NAME[sfcard['name']] = load_card(sfcard['name'])
 
-def pd_rotation_changes(season_id):
+
+def pd_rotation_changes(season_id: int) -> Tuple[Sequence[Card], Sequence[Card]]:
     # It doesn't really make sense to do this for 'all' so just show current season in that case.
     if season_id == 'all':
         season_id = rotation.current_season_num()
@@ -165,7 +166,7 @@ def query_diff_formats(f1: int, f2: int) -> Sequence[Card]:
     out = [Card(r) for r in rs]
     return sorted(out, key=lambda card: card['name'])
 
-def if_todays_prices(out=True):
+def if_todays_prices(out: bool = True) -> List[Card]:
     current_format = multiverse.get_format_id('Penny Dreadful')
     if out:
         not_clause = ''
@@ -183,5 +184,5 @@ def if_todays_prices(out=True):
     """.format(not_clause=not_clause, format=current_format, compare=compare, layouts=', '.join([sqlescape(k) for k, v in multiverse.layouts().items() if v]))
 
     rs = db().select(multiverse.cached_base_query(where=where))
-    out = [Card(r) for r in rs]
-    return sorted(out, key=lambda card: card['name'])
+    cards = [Card(r) for r in rs]
+    return sorted(cards, key=lambda card: card['name'])

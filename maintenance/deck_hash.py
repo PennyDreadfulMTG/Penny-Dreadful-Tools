@@ -4,7 +4,7 @@ from decksite.data import deck
 from decksite.database import db
 
 
-def run():
+def run() -> None:
     all_decks = deck.load_decks()
     for d in all_decks:
         # Recalculate all hashes, in case they've changed.  Or we've changed the default sort order.

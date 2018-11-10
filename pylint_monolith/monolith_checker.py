@@ -1,10 +1,11 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import astroid
 import isort
 from pylint.checkers import BaseChecker
 from pylint.checkers.utils import check_messages
 from pylint.interfaces import IAstroidChecker
+from pylint.lint import PyLinter
 
 ACCEPTABLE_IMPORTS: Dict[str, List[str]] = {
     'decksite': ['decksite', 'magic', 'shared', 'shared_web'],
@@ -39,14 +40,14 @@ class MonolithChecker(BaseChecker):
 
     options = ()
 
-    def __init__(self, linter=None):
+    def __init__(self, linter: Optional[PyLinter] = None) -> None:
         BaseChecker.__init__(self, linter)
         self.isort_obj = isort.SortImports(
             file_contents='',
         )
 
     @check_messages(*(msgs.keys()))
-    def visit_importfrom(self, node):
+    def visit_importfrom(self, node: astroid.nodes.ImportFrom) -> None:
         """triggered when a from statement is seen"""
         # We only care about imports within the monolith.
         basename = get_basename(node.modname)
@@ -60,6 +61,8 @@ class MonolithChecker(BaseChecker):
         parent_basename = get_basename(parent.name)
         # Get the real name of the imported module
         imported_module = _get_imported_module(node, basename)
+        if imported_module is None:
+            return
         basename = get_basename(imported_module.name)
         # print("{p} ({pb}) -> {i} ({c})".format(p=parent.name, pb=parent_basename, i=imported_module.name, c=import_category))
         # verify
@@ -83,7 +86,7 @@ def get_basename(modname: str) -> str:
         return '.' + modname.split('.')[1]
     return modname.split('.')[0]
 
-def _get_imported_module(importnode, modname):
+def _get_imported_module(importnode: astroid.nodes.ImportFrom, modname: str) -> Optional[astroid.nodes.Module]:
     try:
         return importnode.do_import_module(modname)
     except astroid.TooManyLevelsError:

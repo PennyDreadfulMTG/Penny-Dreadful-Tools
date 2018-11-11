@@ -180,7 +180,7 @@ def signup(form: SignUpForm) -> deck.Deck:
     form.name = form.name.strip()
     return deck.add_deck(form)
 
-def identifier(params):
+def identifier(params: Dict[str, str]) -> str:
     # Current timestamp is part of identifier here because we don't need to defend against dupes in league – it's fine to enter the same league with the same deck, later.
     return json.dumps([params['mtgo_username'], params['competition_id'], str(round(time.time()))])
 

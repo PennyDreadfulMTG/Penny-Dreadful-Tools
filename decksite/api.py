@@ -42,7 +42,7 @@ def competitions_api():
             cr['name'] = c.name
             cr['url'] = url_for('competition_api', competition_id=c.id, _external=True)
             r.append(cr)
-    return return_json(r)
+    return return_json(r) # type: ignore
 
 @APP.route('/api/competitions/<competition_id>')
 def competition_api(competition_id: int) -> Response:

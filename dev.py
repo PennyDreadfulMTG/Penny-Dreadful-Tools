@@ -80,10 +80,10 @@ def mypy(argv: List[str], strict: bool = False) -> None:
         '--disallow-untyped-calls',     # Strict Mode.  All function calls must have a return type.
         '--warn-redundant-casts',
         '--disallow-incomplete-defs',   # All parameters must have type definitions.
+        '--check-untyped-defs'          # Typecheck on all methods, not just typed ones.
         ]
     if strict:
-        args.append('--check-untyped-defs') # Typecheck on all methods, not just typed ones.
-        # args.append('--disallow-untyped-defs') # All methods must be typed.
+        args.append('--disallow-untyped-defs') # All methods must be typed.
     args.extend(argv or [
         '.'                             # Invoke on the entire project.
         ])

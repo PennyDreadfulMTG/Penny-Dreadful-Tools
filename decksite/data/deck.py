@@ -212,6 +212,9 @@ def load_decks_heavy(where: str = '1 = 1',
         if d.competition_end_date:
             d.competition_end_date = dtutil.ts2dt(d.competition_end_date)
         d.can_draw = 'Divine Intervention' in [card.name for card in d.all_cards()]
+        d.wins = int(d.wins)
+        d.losses = int(d.losses)
+        d.draws = int(d.draws)
         decks.append(d)
     load_cards(decks)
     load_competitive_stats(decks)

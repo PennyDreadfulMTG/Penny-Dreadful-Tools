@@ -93,7 +93,7 @@ def league_run_api(person: str) -> Response:
     return return_json(run)
 
 @APP.route('/api/league/drop/<person>', methods=['POST'])
-def drop(person):
+def drop(person: str) -> Response:
     error = validate_api_key()
     if error:
         return error
@@ -172,8 +172,8 @@ def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:
         run = decks[1]
     return run
 
-@APP.route('/decks/<deck_id>/oembed')
-def deck_embed(deck_id):
+@APP.route('/decks/<int:deck_id>/oembed')
+def deck_embed(deck_id: int) -> Response:
     # Discord doesn't actually show this yet.  I've reached out to them for better documentation about what they do/don't accept.
     d = deck.load_deck(deck_id)
     view = DeckEmbed(d, None, None)

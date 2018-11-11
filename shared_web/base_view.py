@@ -50,7 +50,7 @@ class BaseView:
     def js_url(self) -> str:
         return current_app.config['js_url'] or url_for('static', filename='js/pd.js', v=self.commit_id('shared_web/static/js/pd.js'))
 
-    def language_icon(self):
+    def language_icon(self) -> str:
         return url_for('static', filename='images/language_icon.svg')
 
     def menu(self) -> List[Dict[str, Union[str, Dict[str, str]]]]:

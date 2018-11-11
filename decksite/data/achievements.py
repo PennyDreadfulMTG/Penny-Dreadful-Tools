@@ -93,11 +93,20 @@ class Achievement:
     in_db = True
     key: Optional[str] = None
     title = ''
-    description_safe = ''
-    sql: Optional[str] = None
-    with_sql: Optional[str] = None
 
-    def __init_subclass__(cls):
+    @property
+    def description_safe(self) -> str:
+        return ''
+
+    @property
+    def sql(self) -> Optional[str]:
+        return None
+
+    @property
+    def with_sql(self) -> Optional[str]:
+        return None
+
+    def __init_subclass__(cls) -> None:
         if cls.key is not None:
             # in case anyone ever makes a poor sportsmanship achievement called DROP TABLE
             cls.key = re.sub('[^A-Za-z0-9_]+', '', cls.key)
@@ -230,7 +239,7 @@ class TournamentOrganizer(Achievement):
     title = 'Tournament Organizer'
     description_safe = 'Run a tournament for the Penny Dreadful community.'
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.hosts = [host for series in tournaments.all_series_info() for host in series['hosts']]
 
     def display(self, p: 'person.Person') -> str:
@@ -258,7 +267,7 @@ class TournamentPlayer(CountedAchievement):
     sql = "COUNT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
 
     @property
-    def description_safe(self):
+    def description_safe(self) -> str:
         return 'Play in an official Penny Dreadful tournament on <a href="https://gatherling.com/">gatherling.com</a>'
 
     def leaderboard_heading(self) -> str:
@@ -285,7 +294,7 @@ class LeaguePlayer(CountedAchievement):
     sql = "COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END)"
 
     @property
-    def description_safe(self):
+    def description_safe(self) -> str:
         return f'Play in the <a href="{url_for("signup")}">league</a>.'
 
     def leaderboard_heading(self) -> str:
@@ -318,7 +327,7 @@ class FlawlessRun(CountedAchievement):
         return ngettext('1 flawless run', '%(num)d flawless runs', n)
 
     @property
-    def sql(self):
+    def sql(self) -> str:
         return """
             SUM(CASE WHEN ct.name = 'League' AND d.id IN
                 (
@@ -356,7 +365,7 @@ class PerfectRunCrusher(CountedAchievement):
         return ngettext('1 perfect run crush', '%(num)d perfect run crushes', n)
 
     @property
-    def sql(self):
+    def sql(self) -> str:
         return """
             SUM(CASE WHEN d.id IN
                 (
@@ -391,9 +400,9 @@ class AncientGrudge(CountedAchievement):
     key = 'ancient_grudges'
     title = 'Ancient Grudge'
     description_safe = 'Beat a player in the knockout rounds of a tournament after losing to them in the knockout rounds of an earlier tournament in the same season.'
-    def leaderboard_heading(self):
+    def leaderboard_heading(self) -> str:
         return gettext('grudges repaid')
-    def localised_display(self, n):
+    def localised_display(self, n: int) -> str:
         return ngettext('1 grudge repaid', '%(num)d grudges repaid', n)
     sql = """COUNT(DISTINCT CASE WHEN d.id IN
                 (
@@ -407,7 +416,7 @@ class AncientGrudge(CountedAchievement):
                         k1.season_id = k2.season_id AND k1.winner_id = k2.loser_id AND k1.loser_id = k2.winner_id AND k2.date > k1.date
                 ) THEN d.id ELSE NULL END)"""
     @property
-    def with_sql(self):
+    def with_sql(self) -> str:
         return """knockouts AS
             (
                 SELECT
@@ -447,9 +456,9 @@ class RecentGrudge(CountedAchievement):
     key = 'recent_grudges'
     title = 'Not-So-Ancient Grudge'
     description_safe = 'Beat a player in the knockout rounds of a tournament after losing to them in the Swiss.'
-    def leaderboard_heading(self):
+    def leaderboard_heading(self) -> str:
         return gettext('grudges repaid')
-    def localised_display(self, n):
+    def localised_display(self, n: int) -> str:
         return ngettext('1 grudge repaid', '%(num)d grudges repaid', n)
     sql = """COUNT(DISTINCT CASE WHEN d.id in
                 (
@@ -543,7 +552,7 @@ class VarietyPlayer(BooleanAchievement):
     sql = "CASE WHEN COUNT(DISTINCT CASE WHEN dc.wins + dc.losses >= 5 AND ct.name = 'League' THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END"
 
     @staticmethod
-    def alltime_text(n):
+    def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
         return f'Reached the elimination rounds of a tournament playing three different archetypes in {what}'
 
@@ -583,7 +592,7 @@ class Specialist(BooleanAchievement):
     """.format(season_join=query.season_join(), competition_join=query.competition_join())
 
     @staticmethod
-    def alltime_text(n):
+    def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
         return f'Reached the elimination rounds of a tournament playing the same archetype three times in {what}'
 
@@ -595,7 +604,7 @@ class Generalist(BooleanAchievement):
     sql = "CASE WHEN COUNT(DISTINCT CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END"
 
     @staticmethod
-    def alltime_text(n):
+    def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
         return f'Reached the elimination rounds of a tournament playing three different archetypes in {what}'
 
@@ -607,6 +616,6 @@ class Completionist(BooleanAchievement):
     sql = 'CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END'
 
     @staticmethod
-    def alltime_text(n):
+    def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
         return f'Played in {what} without retiring a league run'

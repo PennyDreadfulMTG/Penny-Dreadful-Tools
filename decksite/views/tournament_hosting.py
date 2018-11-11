@@ -10,5 +10,5 @@ class TournamentHosting(View):
         hosts += ['stash86']
         self.hosts = ', '.join(set(hosts))
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Tournament Hosting'

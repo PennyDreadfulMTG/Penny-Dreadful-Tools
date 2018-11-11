@@ -13,5 +13,5 @@ class Bugs(View):
         self.tournament_bugs_url = url_for('tournaments', _anchor='bugs')
         self.bug_blog_url = 'https://pennydreadfulmtg.github.io/modo-bugs/bug_blog.html'
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Bugged Cards'

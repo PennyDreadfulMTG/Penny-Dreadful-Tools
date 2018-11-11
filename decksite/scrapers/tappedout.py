@@ -112,8 +112,8 @@ def parse_printable(raw_deck: DeckType) -> DeckType:
     raw_deck['user'] = user.find_next_sibling('td').string
     return raw_deck
 
-def scrape_user(username):
-    parsed = {}
+def scrape_user(username: str) -> Dict[str, Optional[str]]:
+    parsed: Dict[str, Optional[str]] = {}
     parsed['username'] = username
     s = fetcher_internal.fetch('https://tappedout.net/users/{0}/'.format(username))
     soup = BeautifulSoup(s, 'html.parser')

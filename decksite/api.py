@@ -16,8 +16,8 @@ from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 
 
-@APP.route('/api/decks/<deck_id>/')
-def deck_api(deck_id):
+@APP.route('/api/decks/<int:deck_id>/')
+def deck_api(deck_id: int) -> Response:
     blob = deck.load_deck(deck_id)
     return return_json(blob)
 
@@ -30,7 +30,7 @@ def random_deck_api() -> Response:
     return return_json(blob)
 
 @APP.route('/api/competitions/')
-def competitions_api():
+def competitions_api() -> Response:
     # Don't send competitions with any decks that do not have their correct archetype to third parties otherwise they
     # will store it and be wrong forever.
     comps = comp.load_competitions(having='num_reviewed = num_decks')
@@ -93,7 +93,7 @@ def league_run_api(person: str) -> Response:
     return return_json(run)
 
 @APP.route('/api/league/drop/<person>', methods=['POST'])
-def drop(person):
+def drop(person: str) -> Response:
     error = validate_api_key()
     if error:
         return error
@@ -109,7 +109,7 @@ def drop(person):
     return return_json(result)
 
 @APP.route('/api/rotation')
-def rotation_api():
+def rotation_api() -> Response:
     now = dtutil.now()
     diff = rotation.next_rotation() - now
     result = {
@@ -121,16 +121,16 @@ def rotation_api():
     return return_json(result)
 
 @APP.route('/api/cards')
-def cards_api():
+def cards_api() -> Response:
     blob = {'cards': cs.load_cards()}
     return return_json(blob)
 
 @APP.route('/api/card/<card>')
-def card_api(card):
+def card_api(card: str) -> Response:
     return return_json(oracle.load_card(card))
 
 @APP.route('/api/sitemap/')
-def sitemap():
+def sitemap() -> Response:
     urls = [url_for(rule.endpoint) for rule in APP.url_map.iter_rules() if 'GET' in rule.methods and len(rule.arguments) == 0]
     return return_json({'urls': urls})
 
@@ -172,8 +172,8 @@ def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:
         run = decks[1]
     return run
 
-@APP.route('/decks/<deck_id>/oembed')
-def deck_embed(deck_id):
+@APP.route('/decks/<int:deck_id>/oembed')
+def deck_embed(deck_id: int) -> Response:
     # Discord doesn't actually show this yet.  I've reached out to them for better documentation about what they do/don't accept.
     d = deck.load_deck(deck_id)
     view = DeckEmbed(d, None, None)

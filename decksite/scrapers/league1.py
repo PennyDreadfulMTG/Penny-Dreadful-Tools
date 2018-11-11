@@ -6,7 +6,7 @@ from shared import dtutil
 # 9/11/2016 10:54:50    200    chrigugigu    Loss    0-2
 # 9/11/2016 14:39:30    199    NiekM    Loss    0-2
 
-def disabled():
+def disabled() -> None:
     # Time is the earliest time that either player reported.
     match.insert_match(dtutil.parse('8/30/2016 20:13:27', '%m/%d/%Y %H:%M:%S', dtutil.WOTC_TZ), 141, 2, 140, 0)
     match.insert_match(dtutil.parse('8/31/2016 1:06:40', '%m/%d/%Y %H:%M:%S', dtutil.WOTC_TZ), 146, 2, 144, 0)

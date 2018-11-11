@@ -27,7 +27,7 @@ def cached_impl(cacheable: bool = False,
     @see https://jakearchibald.com/2016/caching-best-practices/
          https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching
     """
-    def decorator(f):
+    def decorator(f: Callable) -> Callable:
         @functools.wraps(f)
         def decorated_function(*args, **kwargs):
             cache_key = key.format(id=request.full_path, locale=localization.get_locale()) # include querystring

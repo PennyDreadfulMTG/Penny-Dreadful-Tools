@@ -40,17 +40,17 @@ class Archetype(View):
         self.show_archetype = any(d.archetype_id != self.archetype.id for d in self.decks)
         self.show_archetype_tree = len(self.archetypes) > 0
 
-    def og_title(self):
+    def og_title(self) -> str:
         return self.archetype.name
 
-    def og_url(self):
+    def og_url(self) -> str:
         return url_for('archetype', archetype_id=self.archetype.id, _external=True)
 
-    def og_description(self):
+    def og_description(self) -> str:
         return 'Penny Dreadful {name} archetype'.format(name=self.archetype.name)
 
     def __getattr__(self, attr):
         return getattr(self.archetype, attr)
 
-    def page_title(self):
+    def page_title(self) -> str:
         return self.archetype.name

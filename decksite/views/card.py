@@ -1,3 +1,5 @@
+from typing import Any
+
 from decksite.view import View
 from magic.models import Card as CardContainer
 
@@ -13,7 +15,7 @@ class Card(View):
         self.show_seasons = True
         self.show_archetype = True
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> Any:
         return getattr(self.card, attr)
 
     def page_title(self):

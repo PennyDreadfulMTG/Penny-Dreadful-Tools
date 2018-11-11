@@ -10,5 +10,5 @@ class EditNews(View):
         super().__init__()
         self.news = news
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Edit News'

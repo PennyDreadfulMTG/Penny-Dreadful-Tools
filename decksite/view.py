@@ -4,6 +4,7 @@ from typing import List, Optional, Union
 
 import inflect
 from anytree.iterators import PreOrderIter
+from babel import Locale
 from flask import request, session, url_for
 from flask_babel import gettext, ngettext
 from mypy_extensions import TypedDict
@@ -314,7 +315,7 @@ class View(BaseView):
         if getattr(self, 'legal_formats', None) is not None:
             self.legal_formats = list(map(add_season_num, list(sorted(self.legal_formats, key=legality.order_score)))) # type: ignore
 
-    def babel_languages(self):
+    def babel_languages(self) -> List[Locale]:
         return APP.babel.list_translations()
 
     def TT_HELP_TRANSLATE(self) -> str:
@@ -374,7 +375,7 @@ def seasonized_url(season_id: Union[int, str]) -> str:
     except BuildError:
         return url_for(request.endpoint)
 
-def add_season_num(f):
+def add_season_num(f: str) -> str:
     if not 'Penny Dreadful ' in f:
         return f
     code = f.replace('Penny Dreadful ', '')

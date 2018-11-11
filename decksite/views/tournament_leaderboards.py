@@ -11,5 +11,5 @@ class TournamentLeaderboards(View):
         self.leaderboards = [s['entries'] for s in series] # These will be prepared in View.
         self.show_seasons = True
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Tournament Leaderboards'

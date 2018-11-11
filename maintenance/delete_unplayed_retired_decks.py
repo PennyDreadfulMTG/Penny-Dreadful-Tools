@@ -1,7 +1,7 @@
 from decksite.database import db
 
 
-def run():
+def run() -> None:
     sql = """
         DELETE FROM
             deck

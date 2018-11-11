@@ -38,34 +38,34 @@ from shared.pd_exception import (DoesNotExistException, InvalidDataException,
 
 @APP.route('/')
 @cached()
-def home():
+def home() -> str:
     view = Home(ns.all_news(max_items=10), ds.latest_decks(), cs.load_cards(season_id=get_season_id()))
     return view.page()
 
 @APP.route('/decks/')
 @SEASONS.route('/decks/')
 @cached()
-def decks():
+def decks() -> str:
     view = Decks(ds.load_decks(limit='LIMIT 500', season_id=get_season_id()))
     return view.page()
 
-@APP.route('/decks/<deck_id>/')
+@APP.route('/decks/<int:deck_id>/')
 @auth.load_person
-def deck(deck_id):
+def deck(deck_id: int) -> str:
     d = ds.load_deck(deck_id)
     view = Deck(d, auth.person_id(), auth.discord_id())
     return view.page()
 
 @APP.route('/seasons/')
 @cached()
-def seasons():
+def seasons() -> str:
     view = Seasons()
     return view.page()
 
 @SEASONS.route('/')
 @SEASONS.route('/<deck_type>/')
 @cached()
-def season(deck_type=None):
+def season(deck_type: str = None) -> str:
     if deck_type not in [None, 'league']:
         raise DoesNotExistException('Unrecognized deck_type: `{deck_type}`'.format(deck_type=deck_type))
     league_only = deck_type == 'league'
@@ -82,7 +82,7 @@ def people() -> str:
 @APP.route('/people/<person_id>/')
 @SEASONS.route('/people/<person_id>/')
 @cached()
-def person(person_id):
+def person(person_id: str) -> str:
     p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
     person_cards = cs.load_cards(person_id=p.id, season_id=get_season_id())
     only_played_cards: List[cs.Card] = []
@@ -91,7 +91,7 @@ def person(person_id):
 
 @APP.route('/achievements/')
 @SEASONS.route('/achievements/')
-def achievements():
+def achievements() -> str:
     username = auth.mtgo_username()
     p = None
     if username is not None:
@@ -130,7 +130,7 @@ def competitions() -> str:
 
 @APP.route('/competitions/<competition_id>/')
 @cached()
-def competition(competition_id):
+def competition(competition_id: int) -> str:
     view = Competition(comp.load_competition(competition_id))
     return view.page()
 
@@ -147,7 +147,7 @@ def archetypes() -> str:
 @APP.route('/archetypes/<archetype_id>/')
 @SEASONS.route('/archetypes/<archetype_id>/')
 @cached()
-def archetype(archetype_id):
+def archetype(archetype_id: str) -> str:
     season_id = get_season_id()
     a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id)
     view = Archetype(a, archs.load_archetypes_deckless_for(a.id, season_id=season_id), archs.load_matchups(a.id, season_id=season_id), season_id)
@@ -167,19 +167,19 @@ def hosting() -> str:
 @APP.route('/tournaments/leaderboards/')
 @SEASONS.route('/tournaments/leaderboards/')
 @cached()
-def tournament_leaderboards():
+def tournament_leaderboards() -> str:
     leaderboards = comp.leaderboards(season_id=get_season_id())
     view = TournamentLeaderboards(leaderboards)
     return view.page()
 
 @APP.route('/add/')
 @cached()
-def add_form():
+def add_form() -> str:
     view = AddForm()
     return view.page()
 
 @APP.route('/add/', methods=['POST'])
-def add_deck():
+def add_deck() -> Response:
     url = request.form['url']
     error = None
     if 'tappedout' in url:
@@ -198,42 +198,42 @@ def add_deck():
 
 @APP.route('/about/')
 @cached()
-def about_pdm():
+def about_pdm() -> str:
     view = AboutPdm()
     return view.page()
 
 @APP.route('/gp/')
 @cached()
-def about_gp():
+def about_gp() -> Response:
     return make_response(redirect(url_for('about', src='gp')))
 
 @APP.route('/about/pd/')
 @cached()
-def about():
+def about() -> str:
     view = About(request.args.get('src'))
     return view.page()
 
 @APP.route('/faqs/')
 @cached()
-def faqs():
+def faqs() -> str:
     view = Faqs()
     return view.page()
 
 @APP.route('/community/guidelines/')
 @cached()
-def community_guidelines():
+def community_guidelines() -> str:
     view = CommunityGuidelines()
     return view.page()
 
 @APP.route('/rotation/')
 @cached()
-def rotation():
+def rotation() -> str:
     view = Rotation()
     return view.page()
 
 @APP.route('/export/<deck_id>/')
 @auth.load_person
-def export(deck_id):
+def export(deck_id: int) -> Response:
     d = ds.load_deck(deck_id)
     if d.is_in_current_run():
         if not auth.person_id() or auth.person_id() != d.person_id:
@@ -243,31 +243,31 @@ def export(deck_id):
 
 @APP.route('/link/')
 @auth.login_required
-def link():
+def link() -> str:
     view = LinkAccounts()
     return view.page()
 
 @APP.route('/link/', methods=['POST'])
 @auth.login_required
-def link_post():
+def link_post() -> str:
     view = LinkAccounts()
     return view.page()
 
 @APP.route('/resources/')
 @cached()
-def resources():
+def resources() -> str:
     view = Resources()
     return view.page()
 
 @APP.route('/bugs/')
 @cached()
-def bugs():
+def bugs() -> str:
     view = Bugs()
     return view.page()
 
 @APP.route('/news/')
 @cached()
-def news():
+def news() -> str:
     news_items = ns.all_news()
     view = News(news_items)
     return view.page()
@@ -275,18 +275,18 @@ def news():
 # League
 
 @APP.route('/league/')
-def league():
+def league() -> str:
     view = LeagueInfo()
     return view.page()
 
 @APP.route('/league/current/')
 @cached()
-def current_league():
+def current_league() -> str:
     return competition(lg.active_league().id)
 
 @APP.route('/signup/')
 @auth.load_person
-def signup(form=None):
+def signup(form: Optional[SignUpForm] = None) -> str:
     if form is None:
         form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
     view = SignUp(form, auth.person_id())
@@ -294,7 +294,7 @@ def signup(form=None):
 
 @APP.route('/signup/', methods=['POST'])
 @cached()
-def add_signup():
+def add_signup() -> str:
     form = SignUpForm(request.form)
     if form.validate():
         d = lg.signup(form)
@@ -320,14 +320,14 @@ def do_deck_check() -> str:
 
 @APP.route('/report/')
 @auth.load_person
-def report(form=None):
+def report(form: Optional[ReportForm] = None) -> str:
     if form is None:
         form = ReportForm(request.form, request.cookies.get('deck_id', ''), auth.person_id())
     view = Report(form, auth.person_id())
     return view.page()
 
 @APP.route('/report/', methods=['POST'])
-def add_report():
+def add_report() -> str:
     form = ReportForm(request.form)
     if form.validate() and lg.report(form):
         response = make_response(redirect(url_for('deck', deck_id=form.entry)))
@@ -337,7 +337,7 @@ def add_report():
 
 @APP.route('/retire/')
 @auth.login_required
-def retire(form=None):
+def retire(form: Optional[RetireForm] = None) -> str:
     if form is None:
         form = RetireForm(request.form, request.cookies.get('deck_id', ''), session.get('id'))
     view = Retire(form)

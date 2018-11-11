@@ -17,7 +17,7 @@ from shared import dtutil
 # 10/23/2016 20:43:36 253 EnigmaJD    sultai emerge    Win 2-1
 # 10/9/2016 21:43:01    250    Abominus    Red    Win 2-1
 
-def disabled():
+def disabled() -> None:
     match.insert_match(dtutil.parse('10/2/2016 0:18:08', '%m/%d/%Y %H:%M:%S', dtutil.WOTC_TZ), 233, 2, 279, 0)
     match.insert_match(dtutil.parse('10/2/2016 0:28:25', '%m/%d/%Y %H:%M:%S', dtutil.WOTC_TZ), 234, 2, 231, 0)
     match.insert_match(dtutil.parse('10/2/2016 1:31:02', '%m/%d/%Y %H:%M:%S', dtutil.WOTC_TZ), 234, 2, 233, 0)

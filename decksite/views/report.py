@@ -15,11 +15,11 @@ class Report(LeagueForm):
         self.person_id = person_id
         self.logout_url = url_for('logout', target='report')
 
-    def page_title(self):
+    def page_title(self) -> str:
         return '{league} Result Report'.format(league=self.league['name'])
 
-    def TT_REPORT(self):
+    def TT_REPORT(self) -> str:
         return gettext('Report')
 
-    def TT_YOUR_DECK(self):
+    def TT_YOUR_DECK(self) -> str:
         return gettext('Your Deck')

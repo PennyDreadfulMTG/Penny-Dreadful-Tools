@@ -19,7 +19,7 @@ SectionDescription = TypedDict('SectionDescription',
 
 # pylint: disable=no-self-use
 class Resources(View):
-    def sections(self):
+    def sections(self) -> List[SectionDescription]:
         raw_resources = fetcher.resources()
         sections: List[SectionDescription] = []
         for title, raw_section in raw_resources.items():

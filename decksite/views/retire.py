@@ -10,5 +10,5 @@ class Retire(LeagueForm):
         super().__init__(form)
         self.logout_url = url_for('logout', target='retire')
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Retire'

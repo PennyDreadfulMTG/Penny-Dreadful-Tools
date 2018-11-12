@@ -14,6 +14,7 @@ PD.init = function () {
     PD.localizeTimes();
     PD.initSignupDeckChooser();
     PD.initStatusFooter();
+    PD.renderCharts();
 };
 PD.scrollToContent = function () {
     if (window.matchMedia("only screen and (max-width: 640px)").matches && document.referrer.indexOf(window.location.hostname) > 0 && document.location.href.indexOf('#content') === -1) {
@@ -273,6 +274,33 @@ PD.initStatusFooter = function() {
             $(".intro-container").show();
         }
     })
+};
+
+PD.renderCharts = function () {
+    Chart.defaults.global.defaultFontFamily = $("td").css("font-family");
+    Chart.defaults.global.defaultFontSize = parseInt($("td").css("font-size"), 10);
+    Chart.defaults.global.legend.display = false;
+    Chart.defaults.global.title.display = false;
+    Chart.defaults.global.tooltips.displayColors = false;
+    Chart.defaults.scale.ticks.beginAtZero = true;
+    $('.chart').each(function () {
+        var id = $(this).attr("id"),
+            type = $(this).data("type"),
+            labels = $(this).data("labels"),
+            series = $(this).data("series"),
+            options = $(this).data("options"),
+            ctx = this.getContext("2d");
+        new Chart(ctx, {
+            'type': type,
+            'data': {
+                labels: labels,
+                datasets: [{
+                    data: series
+                }]
+            },
+            options: options
+        });
+    });
 };
 
 PD.htmlEscape = function (s) {

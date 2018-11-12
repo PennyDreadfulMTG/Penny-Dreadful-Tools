@@ -56,3 +56,9 @@
     <h2>Cards</h2>
     {{> cardstable}}
 </section>
+{{#charts}}
+    <section>
+        <h2>{{title}}</h2>
+        <canvas class="chart" data-type="{{type}}" data-labels="{{labels}}" data-series="{{series}}"></canvas>
+    </section>
+{{/charts}}

@@ -1,6 +1,6 @@
 from typing import List
 
-from decksite.data import deck
+from decksite.data import deck, rule
 from decksite.data.archetype import Archetype
 from decksite.view import View
 from magic.models import Deck
@@ -14,6 +14,7 @@ class EditArchetypes(View):
         self.roots = [a for a in self.archetypes if a.is_root]
         self.queue = deck.load_decks(where='NOT d.reviewed', order_by='updated_date DESC')
         deck.load_queue_similarity(self.queue)
+        rule.apply_rules_to_decks(self.queue)
         for d in self.queue:
             self.prepare_deck(d)
         self.has_search_results = len(search_results) > 0

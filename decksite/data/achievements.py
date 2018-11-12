@@ -554,7 +554,7 @@ class VarietyPlayer(BooleanAchievement):
     @staticmethod
     def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
-        return f'Reached the elimination rounds of a tournament playing three different archetypes in {what}'
+        return f'Finished five-match league runs with three different archetypes in {what}'
 
 class Specialist(BooleanAchievement):
     key = 'specialist'

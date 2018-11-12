@@ -6,6 +6,27 @@ from magic.models import Deck
 from shared.container import Container
 
 
+def apply_rules_to_decks(decks: List[Deck]) -> None:
+    if len(decks) == 0:
+        return
+    decks_by_id = {}
+    for d in decks:
+        decks_by_id[d.id] = d
+    id_list = ', '.join(str(d.id) for d in decks)
+    sql = """
+            SELECT
+                deck_id,
+                archetype_name
+            FROM
+                ({apply_rules_query}) AS applied_rules
+            GROUP BY
+                deck_id
+            HAVING
+                COUNT(DISTINCT archetype_id) = 1
+        """.format(apply_rules_query=apply_rules_query(f'deck_id IN ({id_list})'))
+    for r in (Container(row) for row in db().select(sql)):
+        decks_by_id[r.deck_id].rule_archetype_name = r.archetype_name
+
 def num_classified_decks() -> int:
     sql = 'SELECT COUNT(DISTINCT(deck_id)) AS c FROM ({apply_rules_query}) AS applied_rules'.format(apply_rules_query=apply_rules_query())
     return db().value(sql)

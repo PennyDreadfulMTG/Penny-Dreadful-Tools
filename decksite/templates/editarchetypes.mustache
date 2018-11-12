@@ -11,6 +11,7 @@
                     <th>Source</th>
                     <th>Current</th>
                     <th class="n">Similarity</th>
+                    <th>Matches Rule</th>
                     <th>Assign To</th>
             </thead>
             <tbody>
@@ -21,6 +22,7 @@
                         <td><a href="{{source_url}}">{{source_name}}</a></td>
                         <td>{{archetype_name}}</td>
                         <td class="n">{{similarity}}</td>
+                        <td>{{rule_archetype_name}}</td>
                         <td>
                             <input type="hidden" name="deck_id" value="{{id}}">
                             {{> archetypedropdown}}

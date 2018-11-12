@@ -92,6 +92,31 @@ def doubled_decks() -> List[Deck]:
         d.concat_archetypes = concat_archetypes[d.id]
     return result
 
+def overlooked_decks() -> List[Deck]:
+    sql = """
+            SELECT
+                deck.id as deck_id
+            FROM
+                deck
+            LEFT JOIN
+                ({apply_rules_query}) AS applied_rules
+            ON
+                deck.id = applied_rules.deck_id
+            WHERE
+                applied_rules.rule_id IS NULL AND deck.archetype_id IN
+                    (
+                        SELECT
+                            DISTINCT archetype_id
+                        FROM
+                            rule
+                    )
+            """.format(apply_rules_query=apply_rules_query())
+    deck_ids: List[str] = []
+    for r in (Container(row) for row in db().select(sql)):
+        deck_ids.append(str(r.deck_id))
+    ids_list = ', '.join(deck_ids)
+    return deck.load_decks(where=f'd.id IN ({ids_list})')
+
 def load_all_rules() -> List[Container]:
     result = []
     result_by_id = {}

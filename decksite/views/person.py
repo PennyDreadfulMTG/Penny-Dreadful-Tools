@@ -1,5 +1,5 @@
-from typing import List
 import json
+from typing import Dict, List
 
 import titlecase
 from flask import url_for
@@ -31,7 +31,7 @@ class Person(View):
         colors: Dict[str, int] = {}
         for d in self.decks:
             for c in d.colors:
-                 colors[c] = colors.get(c, 0) + 1
+                colors[c] = colors.get(c, 0) + 1
         self.charts = [
             {
                 'title': 'Colors Played',

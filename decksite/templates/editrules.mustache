@@ -50,9 +50,31 @@
         </table>
     {{/has_mistagged_decks}}
 
+    {{#has_overlooked_decks}}
+        <h2>Decks which don't match a rule, but a rule exists for the manually-assigned archetype</h2>
+        {{>spinner}}
+        <table>
+            <thead>
+                <tr>
+                    <th>Colors</th>
+                    <th>Deck Name</th>
+                    <th>Manually-assigned</th>
+            </thead>
+            <tbody>
+                {{#overlooked_decks}}
+                    <tr>
+                        <td>{{{colors_safe}}}</td>
+                        <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
+                        <td>{{archetype_name}}</td>
+                    </tr>
+                {{/overlooked_decks}}
+            </tbody>
+        </table>
+    {{/has_overlooked_decks}}
+
     <h2>Other reports</h2>
-    <p>Not currently reported: Archetypes with no matching rule, list of decks not covered by any rule.
-    (These could be added if and when the list of rules is closer to being complete.)</p>
+    <p>Not currently reported: Archetypes with no matching rule.
+    (This could be added if and when the list of rules is closer to being complete.)</p>
 
 </section>
 <section>

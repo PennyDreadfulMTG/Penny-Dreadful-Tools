@@ -114,6 +114,8 @@ def overlooked_decks() -> List[Deck]:
     deck_ids: List[str] = []
     for r in (Container(row) for row in db().select(sql)):
         deck_ids.append(str(r.deck_id))
+    if len(deck_ids) == 0:
+        return []
     ids_list = ', '.join(deck_ids)
     return deck.load_decks(where=f'd.id IN ({ids_list})')
 

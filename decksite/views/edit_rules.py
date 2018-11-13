@@ -1,5 +1,7 @@
 from typing import List
 
+from flask import url_for
+
 from decksite.data.archetype import Archetype
 from decksite.view import View
 from magic.models import Deck
@@ -25,12 +27,12 @@ class EditRules(View):
         self.rules = rules
         self.archetypes = archetypes
         self.rules.sort(key=lambda c: c.archetype_name)
-        for d in self.doubled_decks:
-            self.prepare_deck(d)
+        self.decks = self.doubled_decks + self.mistagged_decks + self.overlooked_decks
         for d in self.mistagged_decks:
-            self.prepare_deck(d)
-        for d in self.overlooked_decks:
-            self.prepare_deck(d)
+            d.rule_archetype_url = url_for('archetype', archetype_id=d.rule_archetype_name)
+        for d in self.doubled_decks:
+            for a in d.archetypes_from_rules:
+                a.archetype_url = url_for('archetype', archetype_id=a.archetype_id)
         self.has_doubled_decks = len(self.doubled_decks) > 0
         self.has_mistagged_decks = len(self.mistagged_decks) > 0
         self.has_overlooked_decks = len(self.overlooked_decks) > 0

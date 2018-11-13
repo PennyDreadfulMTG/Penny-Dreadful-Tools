@@ -18,8 +18,12 @@
                     <tr>
                         <td>{{{colors_safe}}}</td>
                         <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
-                        <td>{{archetype_name}}</td>
-                        <td>{{concat_archetypes}}</td>
+                        <td><a href="{{archetype_url}}">{{archetype_name}}</a></td>
+                        <td class="comma-list">
+                            {{#archetypes_from_rules}}
+                                <span><a href="{{archetype_url}}">{{archetype_name}}</a></span>
+                            {{/archetypes_from_rules}}
+                        </td>
                     </tr>
                 {{/doubled_decks}}
             </tbody>
@@ -42,8 +46,8 @@
                     <tr>
                         <td>{{{colors_safe}}}</td>
                         <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
-                        <td>{{archetype_name}}</td>
-                        <td>{{rule_archetype_name}}</td>
+                        <td><a href="{{archetype_url}}">{{archetype_name}}</a></td>
+                        <td><a href="{{rule_archetype_url}}">{{rule_archetype_name}}</a></td>
                     </tr>
                 {{/mistagged_decks}}
             </tbody>
@@ -65,7 +69,7 @@
                     <tr>
                         <td>{{{colors_safe}}}</td>
                         <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
-                        <td>{{archetype_name}}</td>
+                        <td><a href="{{archetype_url}}">{{archetype_name}}</a></td>
                     </tr>
                 {{/overlooked_decks}}
             </tbody>

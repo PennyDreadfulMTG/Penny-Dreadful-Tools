@@ -550,6 +550,11 @@ ul.decklist {
     padding: 0 0.563em;
 }
 
+/* Inline comma-delimited lists giving us a join-type capability for Mustache templates. */
+.comma-list span:not(:last-of-type):after {
+  content: ", "
+}
+
 /*
 
 Tables

@@ -69,27 +69,28 @@ def mistagged_decks() -> List[Deck]:
 
 def doubled_decks() -> List[Deck]:
     sql = """
-            SELECT
-                deck_id,
-                GROUP_CONCAT(archetype_name) AS concat_archetypes
-            FROM
-                ({apply_rules_query}) AS applied_rules
-            GROUP BY
-                deck_id
-            HAVING
-                COUNT(DISTINCT archetype_id) > 1
-            """.format(apply_rules_query=apply_rules_query())
-    deck_ids: List[str] = []
-    concat_archetypes = {}
-    for r in (Container(row) for row in db().select(sql)):
-        deck_ids.append(str(r.deck_id))
-        concat_archetypes[r.deck_id] = r.concat_archetypes
-    if len(deck_ids) == 0:
+        SELECT
+            deck_id,
+            GROUP_CONCAT(archetype_id) AS archetype_ids,
+            GROUP_CONCAT(archetype_name SEPARATOR '|') AS archetype_names
+        FROM
+            ({apply_rules_query}) AS applied_rules
+        GROUP BY
+            deck_id
+        HAVING
+            COUNT(DISTINCT archetype_id) > 1
+        """.format(apply_rules_query=apply_rules_query())
+    deck_ids: List[int] = []
+    archetypes_from_rules: Dict[int, Dict(str, Union[str, int])] = {}
+    for r in [Container(row) for row in db().select(sql)]:
+        matching_archetypes = zip(r.archetype_ids.split(','), r.archetype_names.split('|'))
+        archetypes_from_rules[r.deck_id] = [Container({'archetype_id': archetype_id, 'archetype_name': archetype_name}) for archetype_id, archetype_name in matching_archetypes]
+    if not archetypes_from_rules:
         return []
-    ids_list = ', '.join(deck_ids)
+    ids_list = ', '.join(str(deck_id) for deck_id in archetypes_from_rules.keys())
     result = deck.load_decks(where=f'd.id IN ({ids_list})')
     for d in result:
-        d.concat_archetypes = concat_archetypes[d.id]
+        d.archetypes_from_rules = archetypes_from_rules[d.id]
     return result
 
 def overlooked_decks() -> List[Deck]:
@@ -146,7 +147,6 @@ def load_all_rules() -> List[Container]:
         result_by_id[r.id] = r
         r.included_cards = []
         r.excluded_cards = []
-        print(r.id)
     sql = 'SELECT rule_id, card, n, include FROM rule_card'
     for r in (Container(row) for row in db().select(sql)):
         if r.include:

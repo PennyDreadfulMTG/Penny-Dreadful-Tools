@@ -1,7 +1,7 @@
 <h1>Deck Classification Rules</h1>
 <p>{{num_classified}} out of {{num_total}} decks currently covered by a rule.</p>
-<section>
-    {{#has_doubled_decks}}
+{{#has_doubled_decks}}
+    <section>
         <h2>Doubled Decks</h2>
         <p>Decks where more than one rule applies</p>
         {{> spinner}}
@@ -29,10 +29,10 @@
                 {{/doubled_decks}}
             </tbody>
         </table>
-    {{/has_doubled_decks}}
-</section>
-<section>
-    {{#has_mistagged_decks}}
+    </section>
+{{/has_doubled_decks}}
+{{#has_mistagged_decks}}
+    <section>
         <h2>Mistagged Decks</h2>
         <p>Decks where the rule doesn't match the assigned archetype</p>
         {{> spinner}}
@@ -56,10 +56,10 @@
                 {{/mistagged_decks}}
             </tbody>
         </table>
-    {{/has_mistagged_decks}}
-</section>
-<section>
-    {{#has_overlooked_decks}}
+    </section>
+{{/has_mistagged_decks}}
+{{#has_overlooked_decks}}
+    <section>
         <h2>Overlooked Decks</h2>
         <p>Decks which don't match a rule, but a rule exists for the manually-assigned archetype</p>
         {{>spinner}}
@@ -81,8 +81,8 @@
                 {{/overlooked_decks}}
             </tbody>
         </table>
-    {{/has_overlooked_decks}}
-</section>
+    </section>
+{{/has_overlooked_decks}}
 <section>
     <h2>No Matching Rule</h2>
     <p>Archetypes with no matching rule</p>
@@ -100,8 +100,8 @@
                     <th>Must not include</th>
                 </tr>
                 <tr>
-                    <td><textarea name="include">{{#included_cards}}{{n}} {{card}}{{/included_cards}}</textarea></td>
-                    <td><textarea name="exclude">{{#excluded_cards}}{{n}} {{card}}{{/excluded_cards}}</textarea></td>
+                    <td><textarea name="include">{{included_cards_s}}</textarea></td>
+                    <td><textarea name="exclude">{{excluded_cards_s}}</textarea></td>
                 </tr>
             </table>
             <button type="submit">Update</button>

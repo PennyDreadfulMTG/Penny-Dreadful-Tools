@@ -27,6 +27,9 @@ class EditRules(View):
         self.rules = rules
         self.archetypes = archetypes
         self.rules.sort(key=lambda c: c.archetype_name)
+        for r in self.rules:
+            r.included_cards_s = '\n'.join('{n} {card}'.format(n=entry['n'], card=entry['card']) for entry in r.included_cards)
+            r.excluded_cards_s = '\n'.join('{n} {card}'.format(n=entry['n'], card=entry['card']) for entry in r.excluded_cards)
         self.decks = self.doubled_decks + self.mistagged_decks + self.overlooked_decks
         for d in self.mistagged_decks:
             d.rule_archetype_url = url_for('archetype', archetype_id=d.rule_archetype_name)

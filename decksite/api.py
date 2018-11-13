@@ -23,7 +23,7 @@ def deck_api(deck_id: int) -> Response:
 
 @APP.route('/api/randomlegaldeck')
 def random_deck_api() -> Response:
-    blob = deck.random_legal_deck()
+    blob = league.random_legal_deck()
     if blob is None:
         return return_json({'error': True, 'msg': 'No legal decks could be found'})
     blob['url'] = url_for('deck', deck_id=blob['id'], _external=True)

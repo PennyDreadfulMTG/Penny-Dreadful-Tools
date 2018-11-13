@@ -11,7 +11,8 @@ from shared.pd_exception import InvalidDataException
 
 WHITELIST = [
     '#justnayathings',
-    'blue burn' # deck_id = 24089
+    'blue burn', # deck_id = 24089
+    "bob's r us"
 ]
 
 ABBREVIATIONS = {
@@ -209,7 +210,7 @@ def ucase_trailing_roman_numerals(name: str) -> str:
     return name
 
 def strip_leading_punctuation(name: str) -> str:
-    return re.sub('^[^a-z0-9]*', '', name, flags=re.IGNORECASE)
+    return re.sub('^[^a-z0-9"\']*', '', name, flags=re.IGNORECASE)
 
 def correct_case_of_color_names(name: str) -> str:
     for k in COLOR_COMBINATIONS:

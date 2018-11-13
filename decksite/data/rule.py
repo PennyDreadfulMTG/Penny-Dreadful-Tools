@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import Dict, List, Tuple, Union
 
 from decksite.data import deck
 from decksite.database import db
@@ -54,14 +54,12 @@ def mistagged_decks() -> List[Deck]:
             WHERE
                 rule_archetype.id != tagged_archetype.id
             """.format(apply_rules_query=apply_rules_query())
-    deck_ids: List[str] = []
     rule_archetypes = {}
     for r in (Container(row) for row in db().select(sql)):
-        deck_ids.append(str(r.deck_id))
         rule_archetypes[r.deck_id] = r.rule_archetype_name
-    if len(deck_ids) == 0:
+    if not rule_archetypes:
         return []
-    ids_list = ', '.join(deck_ids)
+    ids_list = ', '.join(str(deck_id) for deck_id in rule_archetypes)
     result = deck.load_decks(where=f'd.id IN ({ids_list})')
     for d in result:
         d.rule_archetype_name = rule_archetypes[d.id]
@@ -80,14 +78,13 @@ def doubled_decks() -> List[Deck]:
         HAVING
             COUNT(DISTINCT archetype_id) > 1
         """.format(apply_rules_query=apply_rules_query())
-    deck_ids: List[int] = []
     archetypes_from_rules: Dict[int, Dict(str, Union[str, int])] = {}
     for r in [Container(row) for row in db().select(sql)]:
         matching_archetypes = zip(r.archetype_ids.split(','), r.archetype_names.split('|'))
         archetypes_from_rules[r.deck_id] = [Container({'archetype_id': archetype_id, 'archetype_name': archetype_name}) for archetype_id, archetype_name in matching_archetypes]
     if not archetypes_from_rules:
         return []
-    ids_list = ', '.join(str(deck_id) for deck_id in archetypes_from_rules.keys())
+    ids_list = ', '.join(str(deck_id) for deck_id in archetypes_from_rules)
     result = deck.load_decks(where=f'd.id IN ({ids_list})')
     for d in result:
         d.archetypes_from_rules = archetypes_from_rules[d.id]
@@ -112,10 +109,8 @@ def overlooked_decks() -> List[Deck]:
                             rule
                     )
             """.format(apply_rules_query=apply_rules_query())
-    deck_ids: List[str] = []
-    for r in (Container(row) for row in db().select(sql)):
-        deck_ids.append(str(r.deck_id))
-    if len(deck_ids) == 0:
+    deck_ids = [str(row['deck_id']) for row in db().select(sql)]
+    if not deck_ids:
         return []
     ids_list = ', '.join(deck_ids)
     return deck.load_decks(where=f'd.id IN ({ids_list})')

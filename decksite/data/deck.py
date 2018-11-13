@@ -80,6 +80,7 @@ def load_decks(where: str = '1 = 1',
             ({where}) AND ({season_query})
         GROUP BY
             d.id,
+            d.competition_id, -- Every deck has only one competition_id but if we want to use competition_id in the HAVING clause we need this.
             season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
         HAVING
             {having}
@@ -187,6 +188,7 @@ def load_decks_heavy(where: str = '1 = 1',
             ({where}) AND ({season_query})
         GROUP BY
             d.id,
+            d.competition_id, -- Every deck has only one competition_id but if we want to use competition_id in the HAVING clause we need this.
             season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
         HAVING
             {having}

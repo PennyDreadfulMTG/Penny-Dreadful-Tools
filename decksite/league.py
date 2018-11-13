@@ -434,5 +434,5 @@ def random_legal_deck() -> Optional[Deck]:
     try:
         return deck.load_decks(where=where, having=having, order_by='RAND()', limit='LIMIT 1')[0]
     except IndexError:
-        # For a short while at the start of a season there are no decks that match the WHERE clause.
+        # For a short while at the start of a season there are no decks that match the WHERE/HAVING clauses.
         return None

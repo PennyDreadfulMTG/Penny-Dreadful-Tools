@@ -36,6 +36,7 @@ class EditRules(View):
         self.has_doubled_decks = len(self.doubled_decks) > 0
         self.has_mistagged_decks = len(self.mistagged_decks) > 0
         self.has_overlooked_decks = len(self.overlooked_decks) > 0
+        self.do_not_hide_active_runs = True
 
     def page_title(self):
         return 'Edit Rules'

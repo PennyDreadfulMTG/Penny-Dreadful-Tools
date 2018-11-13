@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple
 
 from decksite.data import deck
 from decksite.database import db
@@ -78,7 +78,7 @@ def doubled_decks() -> List[Deck]:
         HAVING
             COUNT(DISTINCT archetype_id) > 1
         """.format(apply_rules_query=apply_rules_query())
-    archetypes_from_rules: Dict[int, Dict(str, Union[str, int])] = {}
+    archetypes_from_rules: Dict[int, List[Container]]
     for r in [Container(row) for row in db().select(sql)]:
         matching_archetypes = zip(r.archetype_ids.split(','), r.archetype_names.split('|'))
         archetypes_from_rules[r.deck_id] = [Container({'archetype_id': archetype_id, 'archetype_name': archetype_name}) for archetype_id, archetype_name in matching_archetypes]

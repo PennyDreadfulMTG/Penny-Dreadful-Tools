@@ -35,6 +35,7 @@ def mistagged_decks() -> List[Deck]:
     sql = """
             SELECT
                 deck_id,
+                rule_archetype.id AS rule_archetype_id,
                 rule_archetype.name AS rule_archetype_name,
                 tagged_archetype.name AS tagged_archetype_name
             FROM
@@ -56,13 +57,13 @@ def mistagged_decks() -> List[Deck]:
             """.format(apply_rules_query=apply_rules_query())
     rule_archetypes = {}
     for r in (Container(row) for row in db().select(sql)):
-        rule_archetypes[r.deck_id] = r.rule_archetype_name
+        rule_archetypes[r.deck_id] = (r.rule_archetype_id, r.rule_archetype_name)
     if not rule_archetypes:
         return []
     ids_list = ', '.join(str(deck_id) for deck_id in rule_archetypes)
     result = deck.load_decks(where=f'd.id IN ({ids_list})')
     for d in result:
-        d.rule_archetype_name = rule_archetypes[d.id]
+        d.rule_archetype_id, d.rule_archetype_name = rule_archetypes[d.id]
     return result
 
 def doubled_decks() -> List[Deck]:

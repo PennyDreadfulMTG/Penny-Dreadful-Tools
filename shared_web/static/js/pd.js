@@ -8,6 +8,7 @@ PD.init = function () {
     PD.initTables();
     PD.initDetails();
     PD.initTooltips();
+    PD.initReassign();
     $("input[type=file]").on("change", PD.loadDeck).on("change", PD.toggleDrawDropdown);
     $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
@@ -157,6 +158,16 @@ PD.initTooltips = function () {
         $("body").off();
     });
 };
+PD.initReassign = function () {
+    $(".reassign").click(function () {
+        $(this).hide();
+        $.post("/api/archetype/reassign", { 'deck_id': $(this).data('deck_id'), 'archetype_id': $(this).data('rule_archetype_id') }, PD.afterReassign);
+        return false;
+    });
+};
+PD.afterReassign = function (data) {
+    $('#deck-row-' + data.deck_id).hide()
+}
 PD.loadDeck = function () {
     var file = this.files[0],
         reader = new FileReader();

@@ -3,6 +3,7 @@ from typing import List, Optional
 from flask import Response, request, session, url_for
 
 from decksite import APP, auth, league
+from decksite.data import archetype as archs
 from decksite.data import card as cs
 from decksite.data import competition as comp
 from decksite.data import deck, match
@@ -10,7 +11,7 @@ from decksite.data import person as ps
 from decksite.views import DeckEmbed
 from magic import oracle, rotation
 from magic.models import Deck
-from shared import configuration, dtutil, guarantee
+from shared import configuration, dtutil, guarantee, redis
 from shared.pd_exception import DoesNotExistException, TooManyItemsException
 from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
@@ -128,6 +129,15 @@ def cards_api() -> Response:
 @APP.route('/api/card/<card>')
 def card_api(card: str) -> Response:
     return return_json(oracle.load_card(card))
+
+@APP.route('/api/archetype/reassign', methods=['POST'])
+@auth.demimod_required
+def post_reassign() -> str:
+    deck_id = request.form.get('deck_id')
+    archetype_id = request.form.get('archetype_id')
+    archs.assign(deck_id, archetype_id)
+    redis.clear(f'decksite:deck:{deck_id}')
+    return return_json({'success':True, 'deck_id':deck_id})
 
 @APP.route('/api/sitemap/')
 def sitemap() -> Response:

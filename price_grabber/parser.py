@@ -39,7 +39,7 @@ def parse_mtgotraders_prices(s: str) -> PriceListType:
     return [(name_lookup(name), p, mtgo_set) for name, p, mtgo_set in details if name_lookup(name) is not None]
 
 def is_exceptional_name(name: str) -> bool:
-    return name.startswith('APAC ') or 'Alternate art' in name or name.startswith('Avatar - ') or name.startswith('Euro ')
+    return name.startswith('APAC ') or 'Alternate art' in name or name.startswith('Avatar - ') or name.startswith('Euro ') or 'Reward Pack' in name
 
 def name_lookup(name: str) -> str:
     if name == 'Kongming, Sleeping Dragon':

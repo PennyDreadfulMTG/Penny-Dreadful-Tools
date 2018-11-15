@@ -166,7 +166,7 @@ PD.initReassign = function () {
     });
 };
 PD.afterReassign = function (data) {
-    $('#deck-row-' + data.deck_id).hide()
+    $('tr:has(a[data-deck_id="' + data.deck_id + '"])').hide()
 }
 PD.loadDeck = function () {
     var file = this.files[0],

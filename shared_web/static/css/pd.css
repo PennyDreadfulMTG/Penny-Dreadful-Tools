@@ -1853,6 +1853,11 @@ Fix the width of the column to prevent the table "jump"-ing around the screen as
 td.archetype-description {
     max-width: 26em;
 }
+/* Ajax links for the "Edit Rules" page */
+.reassign {
+    cursor: pointer;
+}
+
 /*
 
 News

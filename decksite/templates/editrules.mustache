@@ -43,6 +43,7 @@
                     <th>Deck Name</th>
                     <th>Manually-assigned</th>
                     <th>Rule-assigned</th>
+                    <td></td>
                 </tr>
             </thead>
             <tbody>
@@ -52,6 +53,9 @@
                         <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
                         <td><a href="{{archetype_url}}">{{archetype_name}}</a></td>
                         <td><a href="{{rule_archetype_url}}">{{rule_archetype_name}}</a></td>
+                        <td>
+                            <a class="reassign" data-deck_id="{{id}}" data-rule_archetype_id="{{rule_archetype_id}}">Reassign to {{rule_archetype_name}}</a>
+                        </td>
                     </tr>
                 {{/mistagged_decks}}
             </tbody>

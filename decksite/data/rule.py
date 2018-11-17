@@ -4,6 +4,7 @@ from decksite.data import deck
 from decksite.database import db
 from magic.models import Deck
 from shared.container import Container
+from shared.decorators import retry_after_calling
 
 
 def apply_rules_to_decks(decks: List[Deck]) -> None:
@@ -27,10 +28,33 @@ def apply_rules_to_decks(decks: List[Deck]) -> None:
     for r in (Container(row) for row in db().select(sql)):
         decks_by_id[r.deck_id].rule_archetype_name = r.archetype_name
 
+def cache_all_rules() -> None:
+    db().execute('DROP TABLE IF EXISTS _new_applied_rules')
+    sql = """
+            CREATE TABLE IF NOT EXISTS _new_applied_rules (
+                deck_id INT NOT NULL,
+                rule_id INT NOT NULL,
+                archetype_id INT NOT NULL,
+                archetype_name TEXT,
+                PRIMARY KEY (deck_id, rule_id),
+                FOREIGN KEY (deck_id) REFERENCES deck (id) ON UPDATE CASCADE ON DELETE CASCADE,
+                FOREIGN KEY (rule_id) REFERENCES rule (id) ON UPDATE CASCADE ON DELETE CASCADE,
+                FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
+            ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+            {apply_rules_query}
+        """.format(apply_rules_query=apply_rules_query())
+    db().execute(sql)
+    db().execute('DROP TABLE IF EXISTS _old_applied_rules')
+    db().execute('CREATE TABLE IF NOT EXISTS _applied_rules (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
+    db().execute('RENAME TABLE _applied_rules TO _old_applied_rules, _new_applied_rules TO _applied_rules')
+    db().execute('DROP TABLE IF EXISTS _old_applied_rules')
+
+@retry_after_calling(cache_all_rules)
 def num_classified_decks() -> int:
-    sql = 'SELECT COUNT(DISTINCT(deck_id)) AS c FROM ({apply_rules_query}) AS applied_rules'.format(apply_rules_query=apply_rules_query())
+    sql = 'SELECT COUNT(DISTINCT(deck_id)) AS c FROM _applied_rules'.format(apply_rules_query=apply_rules_query())
     return db().value(sql)
 
+@retry_after_calling(cache_all_rules)
 def mistagged_decks() -> List[Deck]:
     sql = """
             SELECT
@@ -39,15 +63,15 @@ def mistagged_decks() -> List[Deck]:
                 rule_archetype.name AS rule_archetype_name,
                 tagged_archetype.name AS tagged_archetype_name
             FROM
-                ({apply_rules_query}) AS applied_rules
+                _applied_rules
             INNER JOIN
                 deck
             ON
-                applied_rules.deck_id = deck.id
+                _applied_rules.deck_id = deck.id
             INNER JOIN
                 archetype AS rule_archetype
             ON
-                rule_archetype.id = applied_rules.archetype_id
+                rule_archetype.id = _applied_rules.archetype_id
             INNER JOIN
                 archetype AS tagged_archetype
             ON
@@ -66,6 +90,7 @@ def mistagged_decks() -> List[Deck]:
         d.rule_archetype_id, d.rule_archetype_name = rule_archetypes[d.id]
     return result
 
+@retry_after_calling(cache_all_rules)
 def doubled_decks() -> List[Deck]:
     sql = """
         SELECT
@@ -73,7 +98,7 @@ def doubled_decks() -> List[Deck]:
             GROUP_CONCAT(archetype_id) AS archetype_ids,
             GROUP_CONCAT(archetype_name SEPARATOR '|') AS archetype_names
         FROM
-            ({apply_rules_query}) AS applied_rules
+            _applied_rules
         GROUP BY
             deck_id
         HAVING
@@ -91,6 +116,7 @@ def doubled_decks() -> List[Deck]:
         d.archetypes_from_rules = archetypes_from_rules[d.id]
     return result
 
+@retry_after_calling(cache_all_rules)
 def overlooked_decks() -> List[Deck]:
     sql = """
             SELECT
@@ -98,11 +124,11 @@ def overlooked_decks() -> List[Deck]:
             FROM
                 deck
             LEFT JOIN
-                ({apply_rules_query}) AS applied_rules
+                _applied_rules
             ON
-                deck.id = applied_rules.deck_id
+                deck.id = _applied_rules.deck_id
             WHERE
-                applied_rules.rule_id IS NULL AND deck.archetype_id IN
+                _applied_rules.rule_id IS NULL AND deck.archetype_id IN
                     (
                         SELECT
                             DISTINCT archetype_id
@@ -116,6 +142,7 @@ def overlooked_decks() -> List[Deck]:
     ids_list = ', '.join(deck_ids)
     return deck.load_decks(where=f'd.id IN ({ids_list})')
 
+@retry_after_calling(cache_all_rules)
 def load_all_rules() -> List[Container]:
     result = []
     result_by_id = {}
@@ -124,7 +151,7 @@ def load_all_rules() -> List[Container]:
             rule.id AS id,
             archetype.id AS archetype_id,
             archetype.name AS archetype_name,
-            COUNT(DISTINCT applied_rules.deck_id) as num_decks
+            COUNT(DISTINCT _applied_rules.deck_id) as num_decks
         FROM
             rule
         INNER JOIN
@@ -132,9 +159,9 @@ def load_all_rules() -> List[Container]:
         ON
             rule.archetype_id = archetype.id
         LEFT JOIN
-            ({apply_rules_query}) AS applied_rules
+            _applied_rules
         ON
-            rule.id = applied_rules.rule_id
+            rule.id = _applied_rules.rule_id
         GROUP BY
             id
         """.format(apply_rules_query=apply_rules_query())

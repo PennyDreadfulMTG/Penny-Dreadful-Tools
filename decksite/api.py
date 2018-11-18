@@ -8,11 +8,14 @@ from decksite.data import card as cs
 from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps
+from decksite.data import rule as rs
+from decksite.scrapers.decklist import parse_line
 from decksite.views import DeckEmbed
 from magic import oracle, rotation
 from magic.models import Deck
 from shared import configuration, dtutil, guarantee, redis
-from shared.pd_exception import DoesNotExistException, TooManyItemsException
+from shared.pd_exception import (DoesNotExistException, InvalidDataException,
+                                 TooManyItemsException)
 from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 
@@ -138,6 +141,30 @@ def post_reassign() -> str:
     archs.assign(deck_id, archetype_id)
     redis.clear(f'decksite:deck:{deck_id}')
     return return_json({'success':True, 'deck_id':deck_id})
+
+@APP.route('/api/rule/update', methods=['POST'])
+@auth.demimod_required
+def post_rule_update() -> str:
+    if request.form.get('rule_id') is not None and request.form.get('include') is not None and request.form.get('exclude') is not None:
+        inc = []
+        exc = []
+        for line in request.form.get('include').strip().splitlines():
+            try:
+                inc.append(parse_line(line))
+            except InvalidDataException:
+                return return_json({'success':False, 'msg':f"Couldn't find a card count and name on line: {line}"})
+            if not cs.card_exists(inc[-1][1]):
+                return return_json({'success':False, 'msg':f'Card not found in any deck: {line}'})
+        for line in request.form.get('exclude').strip().splitlines():
+            try:
+                exc.append(parse_line(line))
+            except InvalidDataException:
+                return return_json({'success':False, 'msg':f"Couldn't find a card count and name on line: {line}"})
+            if not cs.card_exists(exc[-1][1]):
+                return return_json({'success':False, 'msg':f'Card not found in any deck {line}'})
+        rs.update_cards(request.form.get('rule_id'), inc, exc)
+        return return_json({'success':True})
+    return return_json({'success':False, 'msg':'Required keys not found'})
 
 @APP.route('/api/sitemap/')
 def sitemap() -> Response:

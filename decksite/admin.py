@@ -11,7 +11,6 @@ from decksite.data import match as ms
 from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.data import rule as rs
-from decksite.scrapers.decklist import parse_line
 from decksite.views import (Admin, EditAliases, EditArchetypes, EditMatches,
                             EditNews, EditRules, PlayerNotes, Prizes,
                             RotationChecklist, Unlink)
@@ -102,11 +101,7 @@ def edit_rules() -> str:
 @APP.route('/admin/rules/', methods=['POST'])
 @auth.demimod_required
 def post_rules() -> str:
-    if request.form.get('rule_id') is not None and request.form.get('include') is not None and request.form.get('exclude') is not None:
-        inc = [parse_line(line) for line in request.form.get('include').strip().splitlines()]
-        exc = [parse_line(line) for line in request.form.get('exclude').strip().splitlines()]
-        rs.update_cards(request.form.get('rule_id'), inc, exc)
-    elif request.form.get('archetype_id') is not None:
+    if request.form.get('archetype_id') is not None:
         rs.add_rule(request.form.get('archetype_id'))
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/rules: {f}'.format(f=request.form))

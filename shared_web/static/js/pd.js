@@ -172,10 +172,10 @@ PD.afterReassign = function (data) {
 PD.initRuleForms = function () {
     $(".rule-form").submit(function (e) {
         var form = $(this);
-        var url = form.attr('action');
+        var url = form.attr("action");
         $.ajax({
                type: "POST",
-               url: url,
+               url,
                data: form.serialize(), // serializes the form's elements.
                success: PD.afterRuleUpdate
              });
@@ -187,7 +187,10 @@ PD.afterRuleUpdate = function(data) {
     {
         location.reload(true);
     }
-    else alert(data.msg);
+    else
+    {
+        alert(data.msg);
+    }
 }
 PD.loadDeck = function () {
     var file = this.files[0],

@@ -96,7 +96,7 @@
     <h2>View and edit rules</h2>
     {{#rules}}
         <p>{{archetype_name}} (Rule {{id}}, {{num_decks}} decks)</p>
-        <form method="post">
+        <form class="rule-form" method="post" action="/api/rule/update">
             <input type="hidden" name="rule_id" value="{{id}}">
             <table>
                 <tr>

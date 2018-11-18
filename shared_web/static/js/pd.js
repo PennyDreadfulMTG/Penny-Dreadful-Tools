@@ -9,6 +9,7 @@ PD.init = function () {
     PD.initDetails();
     PD.initTooltips();
     PD.initReassign();
+    PD.initRuleForms();
     $("input[type=file]").on("change", PD.loadDeck).on("change", PD.toggleDrawDropdown);
     $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
@@ -167,6 +168,26 @@ PD.initReassign = function () {
 };
 PD.afterReassign = function (data) {
     $('tr:has(a[data-deck_id="' + data.deck_id + '"])').hide()
+}
+PD.initRuleForms = function () {
+    $(".rule-form").submit(function (e) {
+        var form = $(this);
+        var url = form.attr('action');
+        $.ajax({
+               type: "POST",
+               url: url,
+               data: form.serialize(), // serializes the form's elements.
+               success: PD.afterRuleUpdate
+             });
+        return false;
+    });
+}
+PD.afterRuleUpdate = function(data) {
+    if (data.success)
+    {
+        location.reload(true);
+    }
+    else alert(data.msg);
 }
 PD.loadDeck = function () {
     var file = this.files[0],

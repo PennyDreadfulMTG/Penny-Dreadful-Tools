@@ -185,7 +185,7 @@ PD.initRuleForms = function () {
 PD.afterRuleUpdate = function(data) {
     if (data.success)
     {
-        location.reload(true);
+        location.href = location.href; // make sure it's a GET refresh and not a duplicate of a previous POST
     }
     else
     {

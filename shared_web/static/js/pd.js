@@ -288,8 +288,10 @@ PD.initStatusFooter = function() {
 };
 
 PD.renderCharts = function () {
-    Chart.defaults.global.defaultFontFamily = $("td").css("font-family");
-    Chart.defaults.global.defaultFontSize = parseInt($("td").css("font-size"), 10);
+    Chart.defaults.global.defaultFontFamily = $("body").css("font-family");
+    if ($("td").size() > 0) {
+        Chart.defaults.global.defaultFontSize = parseInt($("td").css("font-size"), 10);
+    }
     Chart.defaults.global.legend.display = false;
     Chart.defaults.global.title.display = false;
     Chart.defaults.global.tooltips.displayColors = false;

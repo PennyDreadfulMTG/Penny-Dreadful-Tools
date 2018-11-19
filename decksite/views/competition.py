@@ -35,6 +35,7 @@ class Competition(View):
                 self.leaderboard = sorted(leaderboard.values(), key=lambda k: (k['points'], k['played'], -k['retirements']), reverse=True)
                 self.leaderboards = [self.leaderboard] # Will be prepared in View.
         self.date = dtutil.display_date(competition.start_date)
+        self.sponsor_name = competition.sponsor_name
 
     def __getattr__(self, attr):
         return getattr(self.competition, attr)

@@ -978,51 +978,62 @@ Site Header
 
 
 header {
-    filter: grayscale(50%);
-    background-size: cover;
+    position: relative;
 }
-
-header.season-all {
+header * {
+  position: relative;
+}
+header:before {
+    background-size: cover;
+    content: "";
+    filter: grayscale(50%);
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+header.season-all:before {
     background-image: url("/banner/0.png");
 }
 
-header.season-1 {
+header.season-1:before {
     background-image: url("/banner/1.png");
 }
 
-header.season-2 {
+header.season-2:before {
     background-image: url("/banner/2.png");
 }
 
-header.season-3 {
+header.season-3:before {
     background-image: url("/banner/3.png");
 }
 
-header.season-4 {
+header.season-4:before {
     background-image: url("/banner/4.png");
 }
 
-header.season-5 {
+header.season-5:before {
     background-image: url("/banner/5.png");
 }
 
-header.season-6 {
+header.season-6:before {
     background-image: url("/banner/6.png");
 }
 
-header.season-7 {
+header.season-7:before {
     background-image: url("/banner/7.png");
 }
 
-header.season-8 {
+header.season-8:before {
     background-image: url("/banner/8.png");
 }
 
-header.season-9 {
+header.season-9:before {
     background-image: url("/banner/9.png");
 }
 
-header.season-10 {
+header.season-10:before {
     background-image: url("/banner/10.png");
 }
 

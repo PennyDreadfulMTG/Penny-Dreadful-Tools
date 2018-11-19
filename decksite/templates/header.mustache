@@ -26,12 +26,12 @@
     </head>
     <body>
         <header class="season-{{season_id}}">
+            {{> language_switcher}}
             <h1><a href="{{home_url}}">Penny Dreadful Magic</a></h1>
             <div class="search">
                 {{> search}}
             </div>
         </header>
-        {{> language_switcher}}
         <nav>
             {{> menu}}
         </nav>

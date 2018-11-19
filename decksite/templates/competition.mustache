@@ -15,7 +15,7 @@
 <section>
     <h2>Decks</h2>
     {{> decktable}}
-    <p>Sponsored by <a class="external" href="https:///www.mtgotraders.com/">MTGO Traders</a>.</p>
+    {{#sponsor_name}}<p>Sponsored by {{sponsor_name}}</p>{{/sponsor_name}}
 </section>
 {{#has_leaderboard}}
     <section>

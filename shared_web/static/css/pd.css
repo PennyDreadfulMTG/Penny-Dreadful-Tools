@@ -1030,6 +1030,8 @@ header.season-10 {
 
 z-index
 
+Although z-index is way more complicated than this (google for "stacking contexts") here is what we are trying to achieve as if z-index worked globally.
+
 100 page, achievement bar background
 125 achievement bar actual bar
 150 achievement bar summary (text over bar), achievement bar symbol, achievement bar slidedown indicator
@@ -1041,6 +1043,24 @@ z-index
 400 card and text tooltips
 
 */
+
+/* Create separate stacking contexts for each top-level element in the page by positioning them and giving them approximately sensisble z-index values.
+   See https://www.sitepoint.com/managing-css-stacking-contexts-hostile-environment/ */
+header, nav, main, footer {
+    position: relative;
+}
+header {
+    z-index: 40;
+}
+nav {
+    z-index: 30;
+}
+main {
+    z-index: 20;
+}
+footer {
+    z-index: 10;
+}
 
 .achievement-bar .bar {
     z-index: 125;

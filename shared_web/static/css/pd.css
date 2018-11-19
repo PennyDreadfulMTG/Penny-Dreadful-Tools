@@ -1731,6 +1731,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 }
 
 .gsc-results-wrapper-overlay {
+    height: 75vh !important; /* csslint allow: important */
     max-width: 30rem !important; /* csslint allow: important */
 }
 

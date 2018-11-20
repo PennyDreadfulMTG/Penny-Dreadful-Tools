@@ -48,8 +48,8 @@ class PDFlask(Flask):
         localization.init(self.babel)
 
     def not_found(self, e: Exception) -> Tuple[str, int]:
-        if request.path.startswith('/error/HTTP'):
-            return return_json(generate_error('NOTSUPPORTED', 'Not supported'), status=404)
+        if request.path.startswith('/error/HTTP_BAD_GATEWAY'):
+            return return_json(generate_error('BADGATEWAY', 'Bad Gateway'), status=502)
         log_exception(request, e)
         if request.path.startswith('/api/'):
             return return_json(generate_error('NOTFOUND', 'Endpoint not found'), status=404)
@@ -72,7 +72,7 @@ class PDFlask(Flask):
         view = Unauthorized(error)
         return view.page()
 
-    def logout(self):
+    def logout(self) -> Response:
         oauth.logout()
         target = request.args.get('target', 'home')
         if bool(urllib.parse.urlparse(target).netloc):

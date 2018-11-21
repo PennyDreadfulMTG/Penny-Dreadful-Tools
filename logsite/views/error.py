@@ -7,5 +7,5 @@ class Error(View):
         self.card = None
         self.cards = [self.card]
 
-    def template(self):
+    def template(self) -> str:
         return 'error'

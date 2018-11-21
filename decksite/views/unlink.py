@@ -12,5 +12,5 @@ class Unlink(View):
         if num_affected_people is not None:
             self.message = f'{num_affected_people} were affected'
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Unlink'

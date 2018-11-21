@@ -71,7 +71,7 @@ html {
 
         With this base font size 1px is 0.05rem. If you change the base font size change the 1px width throughout and in calculations including the mana-bar outside of CSS.
     */
-    font: 400 20px main-text, symbols;
+    font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 body {
@@ -97,7 +97,7 @@ i, em /* em to support markdown conversion to HTML, prefer i */ {
 }
 
 nav {
-    font-family: heading-caps;
+    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     border-bottom: 0.05rem solid #999;
 }
 
@@ -129,7 +129,7 @@ main li {
 }
 
 footer a {
-    font-family: heading-caps;
+    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-transform: lowercase;
 }
 
@@ -429,7 +429,7 @@ Currently there is no h3 and nesting that deeply should be pondered but it may b
 header h1 {
     border: 0;
     float: left; /* To accommodate search bar on right. */
-    font-family: heading-caps;
+    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: normal;
     font-size: 1.333rem;
     margin-bottom: 0;
@@ -471,7 +471,7 @@ Links in text are underlined in such a way as to break on descenders like those 
 
 a, main table.calendar a, main .intro .details a, .details a {
     color: inherit;
-    font-family: heading-caps;
+    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-decoration: none;
     text-transform: lowercase;
 }
@@ -610,7 +610,7 @@ table.with-marginalia {
 
 main th {
     cursor: pointer;
-    font-family: heading-caps;
+    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 1em;
     text-align: left;
     text-transform: lowercase;
@@ -1147,7 +1147,7 @@ Calendar
 
 .date .month {
     display: block;
-    font-family: heading-caps;
+    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-align: left;
     text-transform: lowercase;
 }
@@ -1737,7 +1737,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 
 .gsc-results-wrapper-overlay * {
     color: #502828 !important; /* csslint allow: important */
-    font: 400 20px main-text, symbols;
+    font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.75rem !important; /* csslint allow: important */
 }
 
@@ -1746,7 +1746,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 }
 
 .gsc-wrapper a, .gs-title, .gs-title * {
-    font-family: heading-caps;
+    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-decoration: none !important; /* csslint allow: important */
 }
 
@@ -1800,7 +1800,7 @@ td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
 
 .gsc-result-info-container, .gs-snippet {
     /* Not sure why it doesn't pick up the definiton on HTML but it doesn't. */
-    font: 400 20px main-text, symbols;
+    font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .gs-snippet, .gsc-result-info {
@@ -1897,7 +1897,7 @@ News
 */
 
 .news li.item a {
-    font-family: main-text, symbols;
+    font-family: main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-transform: none;
 }
 
@@ -1914,7 +1914,7 @@ News
 .news .date {
     color: #999;
     display: inline-block;
-    font-family: main-text, symbols;
+    font-family: main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     float: right;
     margin-left: 1rem;
 }

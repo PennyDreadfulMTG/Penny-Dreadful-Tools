@@ -1,3 +1,5 @@
+import html
+
 import inflect
 import titlecase
 from flask import url_for
@@ -24,6 +26,7 @@ class Match(View):
         self.comment = viewed_match.comment
         self.format_name = viewed_match.format_name()
         self.players_string = ' vs '.join([p.name for p in viewed_match.players])
+        self.players_string_safe = ' vs '.join([player_link(p.name) for p in viewed_match.players])
         self.module_string = ', '.join([m.name for m in viewed_match.modules])
         if not viewed_match.games:
             self.no_games = True
@@ -55,3 +58,7 @@ class Match(View):
         fmt = titlecase.titlecase(p.a(self.format_name))
         description = '{fmt} match.'.format(fmt=fmt)
         return description
+
+def player_link(name):
+    url = url_for('show_person', person=name)
+    return '<a href="{url}">{name}</a>'.format(url=html.escape(url), name=html.escape(name))

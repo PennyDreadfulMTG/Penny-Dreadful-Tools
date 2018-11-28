@@ -146,7 +146,7 @@ class Bot(discord.Client):
     async def background_task_tournaments(self) -> None:
         try:
             await self.wait_until_ready()
-            tournament_channel_id = configuration.get_int('tournament_channel_id')
+            tournament_channel_id = configuration.get_int('tournament_reminders_channel_id')
             if not tournament_channel_id:
                 print('tournament channel is not configured')
                 return

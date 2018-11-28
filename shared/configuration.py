@@ -73,7 +73,8 @@ DEFAULTS = {
     'test_vcr_record_mode': 'new_episodes', # https://vcrpy.readthedocs.io/en/latest/usage.html#record-modes
     'to_password': '',
     'to_username': '',
-    'tournament_channel_id': '207281932214599682',
+    'tournament_channel_id': '334220558159970304',
+    'tournament_reminders_channel_id': '207281932214599682',
     'web_cache': '.web_cache',
     'whoosh_index_dir': 'whoosh_index',
 }

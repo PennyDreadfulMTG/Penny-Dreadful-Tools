@@ -688,15 +688,15 @@ Want to contribute? Send a Pull Request."""
             for k in explanations:
                 if k.startswith(word):
                     word = k
-        if word == 'reporting':
-            if is_tournament_channel(channel):
-                explanation = reporting_explanations['tournament']
-            else:
-                explanation = reporting_explanations['league']
-        else:
-            explanation = explanations[word]
-
         try:
+            if word == 'reporting':
+                if is_tournament_channel(channel):
+                    explanation = reporting_explanations['tournament']
+                else:
+                    explanation = reporting_explanations['league']
+            else:
+                explanation = explanations[word]
+
             s = '{text}\n'.format(text=textwrap.dedent(explanation[0]))
         except KeyError:
             usage = 'I can explain any of these things: {things}'.format(things=', '.join(sorted(keys)))

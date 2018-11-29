@@ -6,8 +6,7 @@ from bs4 import BeautifulSoup
 
 from decksite import translation
 from decksite.data import deck
-from decksite.scrapers import decklist
-from magic import legality
+from magic import decklist, legality
 from shared import configuration, fetcher_internal
 from shared.pd_exception import InvalidDataException
 from shared_web import logger

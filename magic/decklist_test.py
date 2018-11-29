@@ -1,6 +1,6 @@
 import textwrap
 
-from decksite.scrapers import decklist
+from magic import decklist
 
 
 def test_parse() -> None:

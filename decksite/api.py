@@ -9,9 +9,9 @@ from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps
 from decksite.data import rule as rs
-from decksite.scrapers.decklist import parse_line
 from decksite.views import DeckEmbed
 from magic import oracle, rotation
+from magic.decklist import parse_line
 from magic.models import Deck
 from shared import configuration, dtutil, guarantee, redis
 from shared.pd_exception import (DoesNotExistException, InvalidDataException,

@@ -178,7 +178,7 @@ class View(BaseView):
             d.active_safe = '<span class="active" title="Active in the current league">⊕</span>'
             d.stars_safe = '{active} {stars}'.format(active=d.active_safe, stars=d.stars_safe).strip()
             d.source_sort = '1'
-        d.source_is_external = False if d.source_name == 'League' else True
+        d.source_is_external = not d.source_name == 'League'
         d.comp_row_len = len('{comp_name} (Piloted by {person}'.format(comp_name=d.competition_name, person=d.person))
         if d.get('archetype_id', None):
             d.archetype_url = '/archetypes/{id}/'.format(id=d.archetype_id)
@@ -248,7 +248,7 @@ class View(BaseView):
             c.display_date = dtutil.display_date(c.start_date)
             c.ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
             c.date_sort = dtutil.dt2ts(c.start_date)
-            c.league = True if c.type == 'League' else False
+            c.league = c.type == 'League'
             title_safe = ''
             try:
                 for k, v in c.base_archetypes_data().items():

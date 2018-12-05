@@ -8,8 +8,7 @@ from bs4 import BeautifulSoup, ResultSet
 
 from decksite.data import archetype, competition, deck, match, person
 from decksite.database import db
-from decksite.scrapers import decklist
-from magic import fetcher
+from magic import decklist, fetcher
 from shared import dtutil
 from shared.pd_exception import InvalidDataException
 from shared_web import logger

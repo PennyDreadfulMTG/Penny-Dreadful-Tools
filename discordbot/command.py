@@ -600,12 +600,8 @@ Want to contribute? Send a Pull Request."""
             ),
             'reporting': (
                 """
-                Gatherling: For tournaments PDBot is information-only, *both* players must report near the top of Player CP (or follow the link at the top of any Gatherling page).
-                League: If PDBot reports your league match in #league in Discord you don't need to do anything. If not, either player can report.
                 """,
                 {
-                    'Gatherling': 'https://gatherling.com/player.php',
-                    'League Report': fetcher.decksite_url('/report/')
                 }
             ),
             'retire': (
@@ -662,6 +658,24 @@ Want to contribute? Send a Pull Request."""
                 {}
             )
         }
+        reporting_explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
+            'tournament': (
+                """
+                For tournaments PDBot is information-only, *both* players must report near the top of Player CP (or follow the link at the top of any Gatherling page).
+                """,
+                {
+                    'Gatherling': 'https://gatherling.com/player.php',
+                }
+            ),
+            'league': (
+                """
+                If PDBot reports your league match in #league in Discord you don't need to do anything. If not, either player can report.
+                """,
+                {
+                    'League Report': fetcher.decksite_url('/report/')
+                }
+            )
+        }
         keys = sorted(explanations.keys())
         explanations['drop'] = explanations['retire']
         explanations['legality'] = explanations['rotation']
@@ -675,12 +689,20 @@ Want to contribute? Send a Pull Request."""
                 if k.startswith(word):
                     word = k
         try:
-            s = '{text}\n'.format(text=textwrap.dedent(explanations[word][0]))
+            if word == 'reporting':
+                if is_tournament_channel(channel):
+                    explanation = reporting_explanations['tournament']
+                else:
+                    explanation = reporting_explanations['league']
+            else:
+                explanation = explanations[word]
+
+            s = '{text}\n'.format(text=textwrap.dedent(explanation[0]))
         except KeyError:
             usage = 'I can explain any of these things: {things}'.format(things=', '.join(sorted(keys)))
             return await send(channel, usage)
-        for k in sorted(explanations[word][1].keys()):
-            s += '{k}: <{v}>\n'.format(k=k, v=explanations[word][1][k])
+        for k in sorted(explanation[1].keys()):
+            s += '{k}: <{v}>\n'.format(k=k, v=explanation[1][k])
         await send(channel, s)
 
     @cmd_header('Developer')
@@ -935,3 +957,9 @@ def escape_underscores(s: str) -> str:
         else:
             new_s += char
     return new_s
+
+def is_tournament_channel(channel: TextChannel) -> bool:
+    tournament_channel_id = configuration.get_int('tournament_channel_id')
+    if not tournament_channel_id:
+        return False
+    return channel.id == tournament_channel_id

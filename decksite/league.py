@@ -10,8 +10,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 from decksite.data import competition, deck, match, person, query
 from decksite.data.form import Form
 from decksite.database import db
-from decksite.scrapers import decklist
-from magic import card, fetcher, legality, rotation
+from magic import card, decklist, fetcher, legality, rotation
 from magic.models import Deck
 from shared import configuration, dtutil, guarantee, redis
 from shared.container import Container

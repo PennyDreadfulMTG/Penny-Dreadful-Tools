@@ -33,7 +33,7 @@ pytest==4.0.1
 python-dateutil==2.7.5
 pytz==2018.7
 redis==3.0.1
-requests==2.20.1
+requests==2.21.0
 requests-oauthlib==1.0.0
 requirements-parser==0.2.0
 seaborn==0.9.0

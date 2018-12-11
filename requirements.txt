@@ -37,7 +37,7 @@ requests==2.21.0
 requests-oauthlib==1.0.0
 requirements-parser==0.2.0
 seaborn==0.9.0
-SQLAlchemy==1.2.14
+SQLAlchemy==1.2.15
 sqlalchemy-utils==0.33.9
 titlecase==0.12.0
 untangle==1.1.1

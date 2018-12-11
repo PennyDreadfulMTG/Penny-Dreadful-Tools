@@ -188,6 +188,13 @@ def add_deck() -> Response:
             deck_id = decksite.scrapers.tappedout.scrape_url(url).id
         except (InvalidDataException, RequestException) as e:
             error = e.args[0]
+    elif 'mtggoldfish' in url:
+        import decksite.scrapers.mtggoldfish
+        try:
+            d = decksite.scrapers.mtggoldfish.scrape_one(url)
+            deck_id = d.id
+        except InvalidDataException as e:
+            error = e.args[0]
     else:
         error = 'Deck host is not supported.'
     if error is not None:

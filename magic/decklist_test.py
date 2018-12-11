@@ -297,3 +297,85 @@ def test_parse10() -> None:
     d = decklist.parse(s)
     assert sum(d['maindeck'].values()) == 0
     assert sum(d['sideboard'].values()) == 0
+
+# Test a Commander deck.
+def test_parse11() -> None:
+    s = """
+        1 Groundskeeper
+        1 Jaddi Offshoot
+        1 Scute Mob
+        1 Frontier Guide
+        1 Llanowar Scout
+        1 Grazing Gladehart
+        1 Mwonvuli Beast Tracker
+        1 Ranging Raptors
+        1 Embodiment of Fury
+        1 Grove Rumbler
+        1 Mina and Denn, Wildborn
+        1 Cultivator of Blades
+        1 Embodiment of Insight
+        1 Garruk's Packleader
+        1 Akoum Hellkite
+        1 Baloth Woodcrasher
+        1 Oran-Rief Hydra
+        1 Rubblehulk
+        1 Borborygmos
+        1 Skarrg Goliath
+        1 Myojin of Infinite Rage
+        1 Apocalypse Hydra
+        1 Lay of the Land
+        1 Blackblade Reforged
+        1 Broken Bond
+        1 Evolution Charm
+        1 Fork in the Road
+        1 Ground Assault
+        1 Rampant Growth
+        1 Signal the Clans
+        1 Deep Reconnaissance
+        1 Elemental Bond
+        1 Fires of Yavimaya
+        1 Grow from the Ashes
+        1 Hammer of Purphoros
+        1 Harrow
+        1 Journey of Discovery
+        1 Nissa's Pilgrimage
+        1 Retreat to Valakut
+        1 Ghirapur Orrery
+        1 Seek the Horizon
+        1 Seer's Sundial
+        1 Splendid Reclamation
+        1 Overwhelming Stampede
+        1 Rude Awakening
+        1 Nissa's Renewal
+        1 Animist's Awakening
+        1 Clan Defiance
+        1 Blighted Woodland
+        1 Evolving Wilds
+        16 Forest
+        1 Gruul Guildgate
+        1 Kazandu Refuge
+        14 Mountain
+        1 Mountain Valley
+        1 Rogue's Passage
+        1 Rugged Highlands
+        1 Sylvan Ranger
+        1 Vinelasher Kudzu
+        1 Viridian Emissary
+        1 Zhur-Taa Druid
+        1 Tunneling Geopede
+        1 World Shaper
+        1 Zendikar Incarnate
+        1 Verdant Force
+        1 Strata Scythe
+        1 Sylvan Awakening
+        1 The Mending of Dominaria
+        1 Zendikar's Roil
+        1 Sunbird's Invocation
+        1 Zendikar Resurgent
+        1 Timber Gorge
+        """
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    assert sum(d['maindeck'].values()) == 100
+    assert sum(d['sideboard'].values()) == 0
+    assert d['maindeck']['Timber Gorge'] == 1

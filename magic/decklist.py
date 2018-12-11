@@ -60,6 +60,12 @@ def parse(s: str) -> DecklistType:
             n, name = parse_line(lines.pop(0))
             maindeck[name] = n + maindeck.get(name, 0)
 
+        # But Commander decks are special so undo our trickery if we have exactly 100 cards.
+        if sum(maindeck.values()) + sum(sideboard.values()) == 100:
+            for name in set(maindeck) | set(sideboard):
+                maindeck[name] = maindeck.get(name, 0) + sideboard.get(name, 0)
+            sideboard = {}
+
     return {'maindeck':maindeck, 'sideboard':sideboard}
 
 def looks_doublespaced(s: str) -> bool:

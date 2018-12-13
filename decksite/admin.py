@@ -171,19 +171,23 @@ def post_player_note() -> str:
 
 @APP.route('/admin/unlink/')
 @auth.admin_required
-def unlink(num_affected_people: Optional[int] = None) -> str:
+def unlink(num_affected_people: Optional[int] = None, errors: List[str] = None) -> str:
     all_people = ps.load_people(order_by='p.mtgo_username')
-    view = Unlink(all_people, num_affected_people)
+    view = Unlink(all_people, num_affected_people, errors)
     return view.page()
 
 @APP.route('/admin/unlink/', methods=['POST'])
 @auth.admin_required
 def post_unlink() -> str:
-    n = 0
+    n, errors = 0, []
     person_id = request.form.get('person_id')
     if person_id:
         n += ps.unlink_discord(person_id)
     discord_id = request.form.get('discord_id')
     if discord_id:
-        n += ps.remove_discord_link(discord_id)
-    return unlink(n)
+        try:
+            discord_id = int(discord_id)
+            n += ps.remove_discord_link(discord_id)
+        except ValueError:
+            errors.append('Discord ID must be an integer.')
+    return unlink(n, errors)

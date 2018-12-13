@@ -144,6 +144,57 @@ class Commands:
     """
 
     @cmd_header('Commands')
+    async def art(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
+        """`!art {name}` Art (only) of the most recent printing of a card."""
+        c = await single_card_or_send_error(channel, args, author, 'art')
+        if c is not None:
+            file_path = re.sub('.jpg$', '.art_crop.jpg',
+                               image_fetcher.determine_filepath([c]))
+            if image_fetcher.download_scryfall_card_image(c, file_path, version='art_crop'):
+                await send_image_with_retry(channel, file_path)
+            else:
+                await send(channel, '{author}: Could not get image.'.format(author=author.mention))
+
+    @cmd_header('Commands')
+    async def barbs(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
+        """`!barbs` Volvary's advice for when to board in Aura Barbs."""
+        msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
+        await send(channel, msg)
+
+    @cmd_header('Developer')
+    async def echo(self, client: Client, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
+        """Repeat after me…"""
+        s = emoji.replace_emoji(args, client)
+        await send(channel, s)
+
+    @cmd_header('Commands')
+    async def google(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
+        """`!google {args}` Google for `args`."""
+        api_key = configuration.get('cse_api_key')
+        cse_id = configuration.get('cse_engine_id')
+        if api_key is None or cse_id is None:
+            return await send(channel, 'The google command has not been configured.')
+
+        if len(args) == 0:
+            return await send(channel, '{author}: No search term provided. Please type !google followed by what you would like to search.'.format(author=author.mention))
+
+        try:
+            service = build('customsearch', 'v1', developerKey=api_key)
+            res = service.cse().list(q=args, cx=cse_id, num=1).execute() # pylint: disable=no-member
+            if 'items' in res:
+                r = res['items'][0]
+                s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['link'], abstract=r['snippet'])
+            else:
+                s = '{author}: Nothing found on Google.'.format(author=author.mention)
+        except HttpError as e:
+            if e.resp['status'] == '403':
+                s = 'We have reached the allowed limits of Google API'
+            else:
+                raise e
+
+        await send(channel, s)
+
+    @cmd_header('Commands')
     async def help(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
         """`!help` Bot commands help."""
         if args:
@@ -161,6 +212,11 @@ Want to contribute? Send a Pull Request."""
             await send(channel, msg[0:1999] + '…')
         else:
             await send(channel, msg)
+
+    @cmd_header('Commands')
+    async def invite(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
+        """Invite me to your server."""
+        await send(channel, 'Invite me to your discord server by clicking this link: <https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=268757056>')
 
     @cmd_header('Commands')
     async def random(self, client: Client, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
@@ -211,50 +267,34 @@ Want to contribute? Send a Pull Request."""
         oracle.init(force=True)
         await send(channel, 'Reloaded legal cards and bugs.')
 
-    @cmd_header('Developer')
-    async def restartbot(self, client: Client, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """Restart the bot."""
-        await send(channel, 'Rebooting!')
-        await client.logout()
-
-    @cmd_header('Commands')
-    async def search(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!search {query}` Card search using Scryfall."""
-        how_many, cardnames = fetcher.search_scryfall(args)
-        cbn = oracle.cards_by_name()
-        cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]
-        await post_cards(client, cards, channel, author, more_results_link(args, how_many))
-
-    @cmd_header('Aliases')
-    async def scryfall(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!scryfall {query}` Alias for `!search`."""
-        # Because of the weird way we call and use methods on Commands we need…
-        # pylint: disable=too-many-function-args
-        await self.search(self, client, channel, args, author)
-
-    @cmd_header('Commands')
-    async def status(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!status` Status of Magic Online."""
-        status = await fetcher.mtgo_status()
-        await send(channel, 'MTGO is {status}'.format(status=status))
-
-    @cmd_header('Developer')
-    async def echo(self, client: Client, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
-        """Repeat after me…"""
-        s = emoji.replace_emoji(args, client)
-        await send(channel, s)
-
-    @cmd_header('Commands')
-    async def barbs(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!barbs` Volvary's advice for when to board in Aura Barbs."""
-        msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
-        await send(channel, msg)
-
     @cmd_header('Commands')
     async def quality(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """`!quality` A reminder about everyone's favorite way to play digital Magic"""
         msg = '**Magic Online** is a Quality™ Program.'
         await send(channel, msg)
+
+    @cmd_header('Commands')
+    async def resources(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
+        """`!resources {args}` Useful pages related to `args`. Examples: 'tournaments', 'card Naturalize', 'deckcheck', 'league'."""
+        results = {}
+        if len(args) > 0:
+            results.update(resources_resources(args))
+            results.update(site_resources(args))
+        s = ''
+        if len(results) == 0:
+            s = 'PD resources: <{url}>'.format(url=fetcher.decksite_url('/resources/'))
+        elif len(results) > 10:
+            s = '{author}: Too many results, please be more specific.'.format(author=author.mention)
+        else:
+            for url, text in results.items():
+                s += '{text}: <{url}>\n'.format(text=text, url=url)
+        await send(channel, s)
+
+    @cmd_header('Developer')
+    async def restartbot(self, client: Client, channel: TextChannel, **_: Dict[str, Any]) -> None:
+        """Restart the bot."""
+        await send(channel, 'Rebooting!')
+        await client.logout()
 
     @cmd_header('Commands')
     async def rhinos(self, client: Client, channel: TextChannel, **_: Dict[str, Any]) -> None:
@@ -287,6 +327,27 @@ Want to contribute? Send a Pull Request."""
     async def rulings(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!rulings {name}`Rulings for a card."""
         await single_card_text(client, channel, args, author, card_rulings, 'rulings')
+
+    @cmd_header('Commands')
+    async def search(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
+        """`!search {query}` Card search using Scryfall."""
+        how_many, cardnames = fetcher.search_scryfall(args)
+        cbn = oracle.cards_by_name()
+        cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]
+        await post_cards(client, cards, channel, author, more_results_link(args, how_many))
+
+    @cmd_header('Aliases')
+    async def scryfall(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
+        """`!scryfall {query}` Alias for `!search`."""
+        # Because of the weird way we call and use methods on Commands we need…
+        # pylint: disable=too-many-function-args
+        await self.search(self, client, channel, args, author)
+
+    @cmd_header('Commands')
+    async def status(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
+        """`!status` Status of Magic Online."""
+        status = await fetcher.mtgo_status()
+        await send(channel, 'MTGO is {status}'.format(status=status))
 
     @cmd_header('Commands')
     async def _oracle(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
@@ -328,23 +389,6 @@ Want to contribute? Send a Pull Request."""
         await send(channel, ':bellhop: **MODO fail** {0}'.format(self.modofail.count))
     modofail.count = 0
     modofail.last_fail = time.time()
-
-    @cmd_header('Commands')
-    async def resources(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!resources {args}` Useful pages related to `args`. Examples: 'tournaments', 'card Naturalize', 'deckcheck', 'league'."""
-        results = {}
-        if len(args) > 0:
-            results.update(resources_resources(args))
-            results.update(site_resources(args))
-        s = ''
-        if len(results) == 0:
-            s = 'PD resources: <{url}>'.format(url=fetcher.decksite_url('/resources/'))
-        elif len(results) > 10:
-            s = '{author}: Too many results, please be more specific.'.format(author=author.mention)
-        else:
-            for url, text in results.items():
-                s += '{text}: <{url}>\n'.format(text=text, url=url)
-        await send(channel, s)
 
     @cmd_header('Developer')
     async def clearimagecache(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
@@ -414,11 +458,6 @@ Want to contribute? Send a Pull Request."""
         await send(channel, msg)
 
     @cmd_header('Commands')
-    async def invite(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """Invite me to your server."""
-        await send(channel, 'Invite me to your discord server by clicking this link: <https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=268757056>')
-
-    @cmd_header('Commands')
     async def spoiler(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!spoiler {cardname}`: Request a card from an upcoming set."""
         if len(args) == 0:
@@ -455,39 +494,12 @@ Want to contribute? Send a Pull Request."""
             logging.exception('Exception trying to get the time for %s.', args)
             await send(channel, '{author}: Location not found.'.format(author=author.mention))
 
-    @cmd_header('Commands')
+    @cmd_header('Aliases')
     async def pdm(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """Alias for `!resources`."""
         # Because of the weird way we call and use methods on Commands we need…
         # pylint: disable=too-many-function-args
         await self.resources(self, channel, args, author)
-
-    @cmd_header('Commands')
-    async def google(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!google {args}` Google for `args`."""
-        api_key = configuration.get('cse_api_key')
-        cse_id = configuration.get('cse_engine_id')
-        if api_key is None or cse_id is None:
-            return await send(channel, 'The google command has not been configured.')
-
-        if len(args) == 0:
-            return await send(channel, '{author}: No search term provided. Please type !google followed by what you would like to search.'.format(author=author.mention))
-
-        try:
-            service = build('customsearch', 'v1', developerKey=api_key)
-            res = service.cse().list(q=args, cx=cse_id, num=1).execute() # pylint: disable=no-member
-            if 'items' in res:
-                r = res['items'][0]
-                s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['link'], abstract=r['snippet'])
-            else:
-                s = '{author}: Nothing found on Google.'.format(author=author.mention)
-        except HttpError as e:
-            if e.resp['status'] == '403':
-                s = 'We have reached the allowed limits of Google API'
-            else:
-                raise e
-
-        await send(channel, s)
 
     @cmd_header('Commands')
     async def tournament(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
@@ -501,17 +513,6 @@ Want to contribute? Send a Pull Request."""
         prev_message = 'The last tournament was {name}, {started}{time} ago'.format(name=prev['next_tournament_name'], started=started, time=prev['next_tournament_time'])
         next_time = 'in ' + t['next_tournament_time'] if t['next_tournament_time'] != dtutil.display_time(0, 0) else t['next_tournament_time']
         await send(channel, 'The next tournament is {name} {next_time}.\nSign up on <http://gatherling.com/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], next_time=next_time, prev_message=prev_message, url=fetcher.decksite_url('/tournaments/')))
-
-    @cmd_header('Commands')
-    async def art(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!art {name}` Art (only) of the most recent printing of a card."""
-        c = await single_card_or_send_error(channel, args, author, 'art')
-        if c is not None:
-            file_path = re.sub('.jpg$', '.art_crop.jpg', image_fetcher.determine_filepath([c]))
-            if image_fetcher.download_scryfall_card_image(c, file_path, version='art_crop'):
-                await send_image_with_retry(channel, file_path)
-            else:
-                await send(channel, '{author}: Could not get image.'.format(author=author.mention))
 
     @cmd_header('Commands')
     async def explain(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:

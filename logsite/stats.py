@@ -1,6 +1,7 @@
 from typing import Any, Dict
 
 from sqlalchemy import func, text
+from flask import Response
 
 from shared import dtutil
 
@@ -11,9 +12,9 @@ from .db import Format
 
 
 @APP.route('/stats.json')
-def stats():
+def stats() -> Response:
     val: Dict[str, Any] = {}
-    last_switcheroo = match.Match.query.filter(match.Match.has_unexpected_third_game).order_by(match.Match.id.desc()).first()
+    last_switcheroo = calc_last_switcheroo()
     if last_switcheroo:
         val['last_switcheroo'] = dtutil.dt2ts(last_switcheroo.start_time_aware())
 
@@ -91,8 +92,11 @@ def stats():
         val['formats'][format_name]['last_month']['recent_players'] = [p.name for p in players]
     return return_json(val)
 
+def calc_last_switcheroo() -> match.Match:
+    return match.Match.query.filter(match.Match.has_unexpected_third_game).order_by(match.Match.id.desc()).first()
+
 @APP.route('/recent.json')
-def recent_json():
+def recent_json() -> Response:
     last_week = dtutil.now() - dtutil.ts2dt(7 * 24 * 60 * 60)
     val: Dict[str, Any] = {}
     val['formats'] = {}

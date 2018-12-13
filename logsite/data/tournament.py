@@ -1,8 +1,8 @@
 import sqlalchemy as sa  # type: ignore
 
-
 from .. import db
 from ..db import DB as fsa  # type: ignore
+
 
 class TournamentInfo(fsa.Model):  # type: ignore
     __tablename__ = 'match_tournament'

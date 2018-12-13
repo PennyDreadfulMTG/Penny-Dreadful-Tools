@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
-from sqlalchemy import func, text
 from flask import Response
+from sqlalchemy import func, text
 
 from shared import dtutil
 

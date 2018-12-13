@@ -1,4 +1,4 @@
-from flask import redirect, url_for, Response
+from flask import Response, redirect, url_for
 from flask_babel import gettext
 
 from logsite.view import View

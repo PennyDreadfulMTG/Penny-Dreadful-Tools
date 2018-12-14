@@ -4,14 +4,14 @@ import re
 import shutil
 from typing import List, Optional
 
-from .data import game, match
+from .data import game, match, tournament
 
 REGEX_GAME_HEADER = r'== Game \d \((?P<id>\d+)\) =='
 REGEX_SWITCHEROO = r'!! Warning, unexpected game 3 !!'
 REGEX_GATHERLING = r'\[Gatherling\] Event=(.*)'
 REGEX_ROUND = r'\[Gatherling\] Round=(.*)'
 
-def load_from_file():
+def load_from_file() -> None:
     """"Imports a log from an on-disk file"""
     files = glob.glob('import/queue/*.txt')
     for fname in files:
@@ -77,11 +77,11 @@ def import_header(lines: List[str], match_id: int) -> match.Match:
 
 def process_tourney_info(local: match.Match, tname: Optional[str] = None, roundnum: Optional[str] = None) -> None:
     if tname:
-        tourney = match.get_tournament(tname)
+        tourney = tournament.get_tournament(tname)
         if tourney is None:
-            tourney = match.create_tournament(tname)
+            tourney = tournament.create_tournament(tname)
         local.is_tournament = True
-        match.create_tournament_info(local.id, tourney.id)
+        tournament.create_tournament_info(local.id, tourney.id)
     tourney_info = local.tournament
     if tourney_info and roundnum:
         tourney_info.round_num = roundnum
@@ -92,8 +92,8 @@ def reimport(local: match.Match) -> None:
             local.has_unexpected_third_game = True
     if local.has_unexpected_third_game is None:
         local.has_unexpected_third_game = False
-    tournament = re.search(REGEX_GATHERLING, local.games[0].log)
-    local.is_tournament = tournament is not None
-    if tournament:
-        process_tourney_info(local, tournament.group(1))
+    tourney = re.search(REGEX_GATHERLING, local.games[0].log)
+    local.is_tournament = tourney is not None
+    if tourney:
+        process_tourney_info(local, tourney.group(1))
     match.db.commit()

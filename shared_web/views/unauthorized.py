@@ -10,5 +10,5 @@ class Unauthorized(ErrorView):
         if error:
             self.error = error
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Unauthorized'

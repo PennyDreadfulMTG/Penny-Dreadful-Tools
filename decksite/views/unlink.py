@@ -13,5 +13,5 @@ class Unlink(View):
             self.message = f'{num_affected_people} were affected'
         self.errors = errors or []
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Unlink'

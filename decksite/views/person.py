@@ -45,5 +45,5 @@ class Person(View):
     def __getattr__(self, attr):
         return getattr(self.person, attr)
 
-    def page_title(self):
+    def page_title(self) -> str:
         return self.person.name

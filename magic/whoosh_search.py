@@ -66,13 +66,13 @@ class SearchResult():
             except ValueError:
                 pass
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '(exact: {e}, whole word: {r}, other prefixes: {o}, fuzzy: {f})'.format(e=self.exact, r=self.prefix_whole_word, o=self.other_prefixed, f=self.fuzzy)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.get_all_matches())
 
 class WhooshSearcher():

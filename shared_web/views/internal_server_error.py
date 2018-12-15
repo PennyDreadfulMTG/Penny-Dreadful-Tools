@@ -11,11 +11,11 @@ class InternalServerError(ErrorView):
         self.card = super().make_card(random.choice(['Erratic Explosion', 'Curse of Chaos', 'Anarchy']))
         self.cards = [self.card]
 
-    def message(self):
+    def message(self) -> str:
         return 'Something went wrong.'
 
-    def template(self):
+    def template(self) -> str:
         return 'error'
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Internal Server Error'

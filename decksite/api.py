@@ -212,7 +212,7 @@ def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:
 @APP.route('/api/admin/people/<int:person_id>/notes/')
 @auth.admin_required_no_redirect
 def person_notes(person_id: int) -> Response:
-    return return_json(ps.load_notes(person_id))
+    return return_json({'notes': ps.load_notes(person_id)})
 
 @APP.route('/decks/<int:deck_id>/oembed')
 def deck_embed(deck_id: int) -> Response:

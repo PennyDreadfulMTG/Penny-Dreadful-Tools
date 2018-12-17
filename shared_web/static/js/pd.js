@@ -15,7 +15,7 @@ PD.init = function () {
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
     PD.localizeTimes();
     PD.initSignupDeckChooser();
-    PD.initStatusFooter();
+    PD.initPersonalization();
     PD.renderCharts();
 };
 PD.scrollToContent = function () {
@@ -276,7 +276,7 @@ PD.initSignupDeckChooser = function () {
     })
 };
 
-PD.initStatusFooter = function() {
+PD.initPersonalization = function() {
     $.get("/api/status/", function(data) {
         var text = "";
         if (data.discord_id) {
@@ -298,6 +298,7 @@ PD.initStatusFooter = function() {
         $(".status-bar").html("<p>" + text + "</p>");
         if (data.admin) {
             $(".admin").show();
+            PD.initPersonNotes();
         }
         if (data.demimod) {
             $(".demimod").show();
@@ -310,6 +311,25 @@ PD.initStatusFooter = function() {
         }
     })
 };
+
+PD.initPersonNotes = function() {
+    var i, personId = $('.person-notes').data('person_id');
+    // Only do the work if we're on a page that should show the notes.
+    if (personId) {
+        $.get('/api/admin/people/' + personId + '/notes/', function(data) {
+            if (data.notes.length > 0) {
+                s = '<article>';
+                for (i = 0; i < data.notes.length; i++) {
+                    s += '<p>' + data.notes[i].note + '</p>'
+                }
+                s += '</article>';
+                $('.person-notes').html(s);
+            } else {
+                $('.person-notes').html('<p>None</p>');
+            }
+        });
+    }
+}
 
 PD.renderCharts = function () {
     Chart.defaults.global.defaultFontFamily = $("body").css("font-family");

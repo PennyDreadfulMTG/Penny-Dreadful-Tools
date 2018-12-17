@@ -284,7 +284,8 @@ def add_alias(person_id: int, alias: str) -> None:
     db().execute('INSERT INTO person_alias (person_id, alias) VALUES (%s, %s)', [person_id, alias])
     db().commit('add_alias')
 
-def load_notes() -> List[Container]:
+def load_notes(person_id: int = None) -> List[Container]:
+    where = f'subject_id = {person_id}' if person_id else 'TRUE'
     sql = """
         SELECT
             pn.created_date,
@@ -299,10 +300,12 @@ def load_notes() -> List[Container]:
             person AS c ON pn.creator_id = c.id
         INNER JOIN
             person AS s ON pn.subject_id = s.id
+        WHERE
+            {where}
         ORDER BY
             s.id,
             pn.created_date DESC
-    """.format(creator_query=query.person_query('c'), subject_query=query.person_query('s'))
+    """.format(creator_query=query.person_query('c'), subject_query=query.person_query('s'), where=where)
     notes = [Container(r) for r in db().select(sql)]
     for n in notes:
         n.created_date = dtutil.ts2dt(n.created_date)

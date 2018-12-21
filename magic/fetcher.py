@@ -102,7 +102,13 @@ def legal_cards(force: bool = False, season: str = None) -> List[str]:
     return legal_txt.strip().split('\n')
 
 def mtgjson_version() -> str:
-    return cast(str, internal.fetch_json('https://mtgjson.com/json/version.json'))
+    s = internal.fetch_json('https://mtgjson.com/json/version.json')
+    try:
+        # Try the v4.x.x JSON which is an object not a string.
+        return cast(str, s.get('version'))
+    except AttributeError:
+        # OK we have the v3.x.x version in cache. We can retire this at some point.
+        return cast(str, s)
 
 async def mtgo_status() -> str:
     try:

@@ -1,4 +1,5 @@
 from typing import List
+
 from flask import url_for
 
 from decksite.data import archetype as archs

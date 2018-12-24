@@ -23,9 +23,9 @@ class Archetypes(View):
         self.show_tournament_toggle = True
 
         if tournament_only:
-            self.toggle_results_url = url_for('archetypes')
+            self.toggle_results_url = url_for('.archetypes')
         else:
-            self.toggle_results_url = url_for('archetypes_tournament')
+            self.toggle_results_url = url_for('.archetypes_tournament')
 
         # We need to prepare the roots so we have the archetype tree available for traversal.
         # This is possibly a sign that something is in the wrong place.

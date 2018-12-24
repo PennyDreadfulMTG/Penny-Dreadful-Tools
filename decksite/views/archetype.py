@@ -45,9 +45,9 @@ class Archetype(View):
         self.show_tournament_toggle = True
 
         if tournament_only:
-            self.toggle_results_url = url_for('archetype', archetype_id=self.archetype.id)
+            self.toggle_results_url = url_for('.archetype', archetype_id=self.archetype.id)
         else:
-            self.toggle_results_url = url_for('archetype_tournament', archetype_id=self.archetype.id)
+            self.toggle_results_url = url_for('.archetype_tournament', archetype_id=self.archetype.id)
 
         self.show_archetype = any(d.archetype_id != self.archetype.id for d in self.decks)
         self.show_archetype_tree = len(self.archetypes) > 0

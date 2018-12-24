@@ -268,7 +268,7 @@ class View(BaseView):
 
     def prepare_archetype(self,
                           a: archetype.Archetype,
-                          archetypes: List[archetype.Archetype],
+                          archetypes: List[archetype.Archetype]
                          ) -> None:
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
         if a.get('num_decks') is not None:

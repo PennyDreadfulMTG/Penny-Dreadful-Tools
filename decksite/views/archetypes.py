@@ -1,4 +1,5 @@
 from typing import List
+from flask import url_for
 
 from decksite.data import archetype as archs
 from decksite.view import View
@@ -18,6 +19,13 @@ class Archetypes(View):
         self.roots = [a for a in self.archetypes if a.is_root]
         self.show_seasons = True
         self.tournament_only = tournament_only
+
+        self.show_tournament_toggle = True
+
+        if tournament_only:
+            self.toggle_results_url = url_for('archetypes')
+        else:
+            self.toggle_results_url = url_for('archetypes_tournament')
 
         # We need to prepare the roots so we have the archetype tree available for traversal.
         # This is possibly a sign that something is in the wrong place.

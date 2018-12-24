@@ -7,7 +7,7 @@ from decksite.view import View
 from shared.container import Container
 
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, too-many-instance-attributes
 class Archetypes(View):
     def __init__(self, archetypes: List[archs.Archetype],
                  all_matchups: List[Container],

@@ -14,7 +14,9 @@ class Archetype(View):
                  archetype: archs.Archetype,
                  archetypes: List[archs.Archetype],
                  matchups: List[Container],
-                 season_id: int) -> None:
+                 season_id: int,
+                 tournament_only: bool = False
+                ) -> None:
         super().__init__()
         if not archetype:
             raise DoesNotExistException('No archetype supplied to view.')
@@ -24,7 +26,8 @@ class Archetype(View):
         self.archetypes = archetypes
         self.decks = self.archetype.decks
         self.roots = [a for a in self.archetypes if a.is_root]
-        matchup_archetypes = archs.load_archetypes_deckless(season_id=season_id)
+        self.tournament_only = tournament_only
+        matchup_archetypes = archs.load_archetypes_deckless(season_id=season_id, tournament_only=self.tournament_only)
         matchups_by_id = {m.id: m for m in matchups}
         for m in matchup_archetypes:
             # Overwite totals with vs-archetype specific details. Wipe out if there are none.
@@ -36,7 +39,15 @@ class Archetype(View):
             'is_matchups': True,
             'roots': [m for m in matchup_archetypes if m.is_root],
         }]
+
         self.show_seasons = True
+        self.show_tournament_toggle = True
+
+        if tournament_only:
+            self.toggle_results_url = url_for('archetype', archetype_id=self.archetype.id)
+        else:
+            self.toggle_results_url = url_for('archetype_tournament', archetype_id=self.archetype.id)
+
         self.show_archetype = any(d.archetype_id != self.archetype.id for d in self.decks)
         self.show_archetype_tree = len(self.archetypes) > 0
 

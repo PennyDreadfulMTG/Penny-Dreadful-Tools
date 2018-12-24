@@ -268,13 +268,14 @@ class View(BaseView):
 
     def prepare_archetype(self,
                           a: archetype.Archetype,
-                          archetypes: List[archetype.Archetype]
+                          archetypes: List[archetype.Archetype],
                          ) -> None:
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
         if a.get('num_decks') is not None:
             a.show_record = a.get('wins') or a.get('draws') or a.get('losses')
             a.show_matchups = a.show_record
-        a.url = '/archetypes/{id}/'.format(id=a.id)
+
+        tournament_only = getattr(self, 'tournament_only', False)
         counter = Counter() # type: ignore
         a.cards = []
         a.most_common_cards = []
@@ -294,7 +295,10 @@ class View(BaseView):
             # Prune branches we don't want to show
             if r.id not in [a.id for a in archetypes]:
                 r.parent = None
-            r['url'] = url_for('.archetype', archetype_id=r['id'])
+            if tournament_only:
+                r['url'] = url_for('.archetype_tournament', archetype_id=r['id'])
+            else:
+                r['url'] = url_for('.archetype', archetype_id=r['id'])
             # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
             r['depth'] = r.depth
 

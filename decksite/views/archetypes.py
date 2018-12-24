@@ -7,13 +7,17 @@ from shared.container import Container
 
 # pylint: disable=no-self-use
 class Archetypes(View):
-    def __init__(self, archetypes: List[archs.Archetype], all_matchups: List[Container]) -> None:
-        min_matches_for_matchups_grid = 50
+    def __init__(self, archetypes: List[archs.Archetype],
+                 all_matchups: List[Container],
+                 tournament_only: bool = False
+                ) -> None:
+        min_matches_for_matchups_grid = 50 if not tournament_only else 20
         super().__init__()
         self.archetypes = archetypes
         self.decks = []
         self.roots = [a for a in self.archetypes if a.is_root]
         self.show_seasons = True
+        self.tournament_only = tournament_only
 
         # We need to prepare the roots so we have the archetype tree available for traversal.
         # This is possibly a sign that something is in the wrong place.

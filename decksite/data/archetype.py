@@ -17,7 +17,7 @@ class Archetype(Container, NodeMixin):
 
 BASE_ARCHETYPES: Dict[Archetype, Archetype] = {}
 
-def load_archetype(archetype: Union[int, str], season_id: int = None) -> Archetype:
+def load_archetype(archetype: Union[int, str], season_id: int = None, tournament_only: bool = False) -> Archetype:
     try:
         archetype_id = int(archetype)
     except ValueError:
@@ -26,7 +26,7 @@ def load_archetype(archetype: Union[int, str], season_id: int = None) -> Archety
         archetype_id = db().value('SELECT id FROM archetype WHERE name IN (%s, %s)', [name, name_without_dashes])
         if not archetype_id:
             raise DoesNotExistException('Did not find archetype with name of `{name}`'.format(name=name))
-    archetypes = load_archetypes(where='d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'.format(archetype_id=sqlescape(archetype_id)), merge=True, season_id=season_id)
+    archetypes = load_archetypes(where='d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'.format(archetype_id=sqlescape(archetype_id)), merge=True, season_id=season_id, tournament_only=tournament_only)
     arch = guarantee.exactly_one(archetypes, 'archetypes') if archetypes else Archetype()
     # Because load_archetypes loads the root archetype and all below merged the id and name might not be those of the root archetype. Overwrite.
     arch.id = int(archetype_id)
@@ -35,8 +35,11 @@ def load_archetype(archetype: Union[int, str], season_id: int = None) -> Archety
         arch.decks = []
     return arch
 
-def load_archetypes(where: str = '1 = 1', merge: bool = False, season_id: int = None) -> List[Archetype]:
-    decks = deck.load_decks(where, season_id=season_id)
+def load_archetypes(where: str = '1 = 1', merge: bool = False, season_id: int = None, tournament_only: bool = False) -> List[Archetype]:
+    having = '1 = 1'
+    if tournament_only:
+        having = 'ct.name != "League"'
+    decks = deck.load_decks(where, season_id=season_id, having=having)
     archetypes: Dict[str, Archetype] = {}
     for d in decks:
         if d.archetype_id is None:
@@ -58,22 +61,22 @@ def load_archetypes(where: str = '1 = 1', merge: bool = False, season_id: int = 
     archetype_list = list(archetypes.values())
     return archetype_list
 
-def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, name', season_id: int = None, retry: bool = False) -> List[Archetype]:
+def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, name', season_id: int = None, retry: bool = False, tournament_only: bool = False) -> List[Archetype]:
     sql = """
         SELECT
             a.id,
             a.name,
             a.description,
             aca.ancestor AS parent_id,
-            SUM(num_decks) AS num_decks,
-            SUM(wins) AS wins,
-            SUM(losses) AS losses,
-            SUM(draws) AS draws,
-            SUM(wins - losses) AS record,
+            SUM(num_decks{tournament}) AS num_decks,
+            SUM(wins{tournament}) AS wins,
+            SUM(losses{tournament}) AS losses,
+            SUM(draws{tournament}) AS draws,
+            SUM(wins{tournament} - losses{tournament}) AS record,
             SUM(perfect_runs) AS perfect_runs,
             SUM(tournament_wins) AS tournament_wins,
             SUM(tournament_top8s) AS tournament_top8s,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
+            IFNULL(ROUND((SUM(wins{tournament}) / NULLIF(SUM(wins{tournament} + losses{tournament}), 0)) * 100, 1), '') AS win_percent
         FROM
             archetype AS a
         LEFT JOIN
@@ -87,7 +90,8 @@ def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, nam
             aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
         ORDER BY
             {order_by}
-    """.format(season_query=query.season_query(season_id), order_by=order_by)
+    """.format(tournament='_nonleague' if tournament_only else '',
+               season_query=query.season_query(season_id), order_by=order_by)
     try:
         archetypes = [Archetype(a) for a in db().select(sql)]
         archetypes_by_id = {a.id: a for a in archetypes}
@@ -103,8 +107,8 @@ def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, nam
         print(f'Failed to preaggregate. Giving up.')
         raise e
 
-def load_archetypes_deckless_for(archetype_id: int, season_id: int = None) -> List[Archetype]:
-    archetypes = load_archetypes_deckless(season_id=season_id)
+def load_archetypes_deckless_for(archetype_id: int, season_id: int = None, tournament_only: bool = False) -> List[Archetype]:
+    archetypes = load_archetypes_deckless(season_id=season_id, tournament_only=tournament_only)
     for a in archetypes:
         if int(a.id) == int(archetype_id):
             return list(a.ancestors) + [a] + list(a.descendants)
@@ -125,17 +129,17 @@ def assign(deck_id: int, archetype_id: int, reviewed: bool = True, similarity: O
     if not reviewed and similarity is not None:
         db().execute(f'UPDATE deck_cache SET similarity = %s WHERE deck_id = %s', [similarity, deck_id])
 
-def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retry: bool = False) -> List[Container]:
+def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retry: bool = False, tournament_only: bool = False) -> List[Container]:
     sql = """
         SELECT
             archetype_id,
             a.name AS archetype_name,
             opponent_archetype_id AS id,
             oa.name AS name,
-            SUM(wins) AS wins,
-            SUM(losses) AS losses,
-            SUM(draws) AS draws,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
+            SUM(wins{tournament}) AS wins,
+            SUM(losses{tournament}) AS losses,
+            SUM(draws{tournament}) AS draws,
+            IFNULL(ROUND((SUM(wins{tournament}) / NULLIF(SUM(wins{tournament} + losses{tournament}), 0)) * 100, 1), '') AS win_percent
         FROM
             _matchup_stats AS ms
         INNER JOIN
@@ -143,14 +147,16 @@ def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retr
         INNER JOIN
             archetype AS oa ON opponent_archetype_id = oa.id
         WHERE
-            ({where}) AND ({season_query})
+            ({where}) AND ({season_query}) AND ({tournament_filter})
         GROUP BY
             archetype_id,
             opponent_archetype_id
         ORDER BY
             wins DESC,
             oa.name
-    """.format(where=where, season_query=query.season_query(season_id))
+    """.format(where=where, season_query=query.season_query(season_id),
+               tournament='_nonleague' if tournament_only else '',
+               tournament_filter='wins_nonleague + losses_nonleague + draws_nonleague  > 0' if tournament_only else 'TRUE')
     try:
         return [Container(m) for m in db().select(sql)]
     except DatabaseException as e:
@@ -161,9 +167,9 @@ def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retr
         print(f'Failed to preaggregate. Giving up.')
         raise e
 
-def load_matchups(archetype_id: int, season_id: int = None) -> List[Container]:
+def load_matchups(archetype_id: int, season_id: int = None, tournament_only: bool = False) -> List[Container]:
     where = 'a.id = {archetype_id}'.format(archetype_id=archetype_id)
-    return load_all_matchups(where, season_id)
+    return load_all_matchups(where=where, season_id=season_id, tournament_only=tournament_only)
 
 def move(archetype_id: int, parent_id: int) -> None:
     db().begin('move_archetype')
@@ -225,6 +231,9 @@ def preaggregate_archetypes() -> None:
             perfect_runs INT NOT NULL,
             tournament_wins INT NOT NULL,
             tournament_top8s INT NOT NULL,
+            wins_nonleague INT NOT NULL,
+            losses_nonleague INT NOT NULL,
+            draws_nonleague INT NOT NULL,
             PRIMARY KEY (season_id, archetype_id),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
             FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
@@ -238,7 +247,11 @@ def preaggregate_archetypes() -> None:
             IFNULL(SUM(draws), 0) AS draws,
             SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
             SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
-            SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s
+            SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
+            IFNULL(SUM(CASE WHEN ct.name != "League" THEN wins ELSE 0 END), 0) AS wins_nonleague,
+            IFNULL(SUM(CASE WHEN ct.name != "League" THEN losses ELSE 0 END), 0) AS losses_nonleague,
+            IFNULL(SUM(CASE WHEN ct.name != "League" THEN draws ELSE 0 END), 0) AS draws_nonleague,
+            SUM(CASE WHEN (d.id IS NOT NULL) AND (ct.name != "League") THEN 1 ELSE 0 END) AS num_decks_nonleague
         FROM
             archetype AS a
         LEFT JOIN
@@ -247,6 +260,7 @@ def preaggregate_archetypes() -> None:
             archetype_closure AS acd ON a.id = acd.ancestor
         LEFT JOIN
             deck AS d ON acd.descendant = d.archetype_id
+        {competition_join}
         {season_join}
         {nwdl_join}
         GROUP BY
@@ -255,7 +269,9 @@ def preaggregate_archetypes() -> None:
             season.id
         HAVING
             season.id IS NOT NULL
-    """.format(season_join=query.season_join(), nwdl_join=deck.nwdl_join())
+    """.format(competition_join=query.competition_join(),
+               season_join=query.season_join(),
+               nwdl_join=deck.nwdl_join())
     db().execute(sql)
     db().execute('DROP TABLE IF EXISTS _old_archetype_stats')
     db().execute('CREATE TABLE IF NOT EXISTS _archetype_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
@@ -272,6 +288,9 @@ def preaggregate_matchups() -> None:
             wins INT NOT NULL,
             losses INT NOT NULL,
             draws INT NOT NULL,
+            wins_nonleague INT NOT NULL,
+            losses_nonleague INT NOT NULL,
+            draws_nonleague INT NOT NULL,
             PRIMARY KEY (season_id, archetype_id, opponent_archetype_id),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
             FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -283,7 +302,10 @@ def preaggregate_matchups() -> None:
             season.id AS season_id,
             SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins, -- IFNULL so we still count byes as wins.
             SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
-            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws
+            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws,
+            SUM(CASE WHEN (dm.games > IFNULL(odm.games, 0)) AND (ct.name != "League") THEN 1 ELSE 0 END) AS wins_nonleague,
+            SUM(CASE WHEN (dm.games < IFNULL(odm.games, 0)) AND (ct.name != "League") THEN 1 ELSE 0 END) AS losses_nonleague,
+            SUM(CASE WHEN (dm.games = IFNULL(odm.games, 0)) AND (ct.name != "League") THEN 1 ELSE 0 END) AS draws_nonleague
         FROM
             archetype AS a
         INNER JOIN
@@ -296,12 +318,13 @@ def preaggregate_matchups() -> None:
             deck AS od ON od.id = odm.deck_id
         INNER JOIN
             archetype AS oa ON od.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = oa.id)
+        {competition_join}
         {season_join}
         GROUP BY
             a.id,
             oa.id,
             season.id
-    """.format(season_join=query.season_join())
+    """.format(competition_join=query.competition_join(), season_join=query.season_join())
     db().execute(sql)
     db().execute('DROP TABLE IF EXISTS _old_matchup_stats')
     db().execute('CREATE TABLE IF NOT EXISTS _matchup_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.

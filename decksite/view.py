@@ -271,11 +271,24 @@ class View(BaseView):
                           archetypes: List[archetype.Archetype]
                          ) -> None:
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
-        if a.get('num_decks') is not None:
-            a.show_record = a.get('wins') or a.get('draws') or a.get('losses')
-            a.show_matchups = a.show_record
 
         tournament_only = getattr(self, 'tournament_only', False)
+
+        if (not tournament_only) and a.get('num_decks') is not None:
+            a.show_record = a.get('wins') or a.get('draws') or a.get('losses')
+        elif tournament_only and a.get('num_decks_tournament') is not None:
+            a.show_record = a.get('wins_tournament') or a.get('draws_tournament') or a.get('losses_tournament')
+        else:
+            a.show_record = False
+
+        a.show_matchups = a.show_record
+
+        if tournament_only:
+            a.num_decks = a.num_decks_tournament
+            a.wins = a.wins_tournament
+            a.losses = a.losses_tournament
+            a.draws = a.draws_tournament
+
         counter = Counter() # type: ignore
         a.cards = []
         a.most_common_cards = []

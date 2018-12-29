@@ -35,7 +35,24 @@ class Archetypes(View):
 
         for a in self.archetypes:
             a.matchups = []
-            matchups = [m for m in all_matchups if m.archetype_id == a.id]
+
+            # if tournament_only, move the tournament data into the appropriate slots for the view
+            def convert(m: Container) -> Container:
+                if tournament_only:
+                    m.win_percent = m.win_percent_tournament
+                    m.wins = m.wins_tournament
+                    m.losses = m.losses_tournament
+                    m.draws = m.draws_tournament
+                return m
+
+            # in one pass, filter out matchups with no data so we can determine which
+            #   archetypes to include on the table, and convert matchups appropriately
+            if not tournament_only:
+                matchups = [convert(m) for m in all_matchups if m.archetype_id == a.id]
+            else:
+                matchups = [convert(m) for m in all_matchups if (m.archetype_id == a.id and
+                                                                 m.wins_tournament + m.losses_tournament + m.draws_tournament > 0)]
+
             if len(matchups) < min_matches_for_matchups_grid:
                 a.show_in_matchups_grid = False
                 continue

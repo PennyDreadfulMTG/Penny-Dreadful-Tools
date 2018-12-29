@@ -25,10 +25,14 @@ class Archetype(View):
         self.archetype.decks = archetype.decks
         # Load the deck information from archetype into skinny archetype loaded by load_archetypes_deckless_for with tree information.
         self.archetypes = archetypes
-        self.decks = self.archetype.decks
+        if not tournament_only:
+            self.decks = self.archetype.decks
+        else:
+            self.decks = [d for d in self.archetype.decks if d.competition_type_name == 'Gatherling']
+
         self.roots = [a for a in self.archetypes if a.is_root]
         self.tournament_only = tournament_only
-        matchup_archetypes = archs.load_archetypes_deckless(season_id=season_id, tournament_only=self.tournament_only)
+        matchup_archetypes = archs.load_archetypes_deckless(season_id=season_id)
         matchups_by_id = {m.id: m for m in matchups}
         for m in matchup_archetypes:
             # Overwite totals with vs-archetype specific details. Wipe out if there are none.

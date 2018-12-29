@@ -149,8 +149,8 @@ def archetypes() -> str:
 @cached()
 def archetypes_tournament() -> str:
     season_id = get_season_id()
-    deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id, tournament_only=True)
-    all_matchups = archs.load_all_matchups(season_id=season_id, tournament_only=True)
+    deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id)
+    all_matchups = archs.load_all_matchups(season_id=season_id)
     view = Archetypes(deckless_archetypes, all_matchups, tournament_only=True)
     return view.page()
 
@@ -170,9 +170,9 @@ def archetype(archetype_id: str) -> str:
 @cached()
 def archetype_tournament(archetype_id: str) -> str:
     season_id = get_season_id()
-    a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id, tournament_only=True)
-    deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id, tournament_only=True)
-    matchups = archs.load_matchups(a.id, season_id=season_id, tournament_only=True)
+    a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id)
+    deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id)
+    matchups = archs.load_matchups(a.id, season_id=season_id)
     view = Archetype(a, deckless_archetypes, matchups, season_id, tournament_only=True)
     return view.page()
 

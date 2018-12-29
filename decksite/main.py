@@ -165,8 +165,8 @@ def archetype(archetype_id: str) -> str:
     view = Archetype(a, deckless_archetypes, matchups, season_id)
     return view.page()
 
-@APP.route('/archetypes/tournament/<archetype_id>/')
-@SEASONS.route('/archetypes/tournament/<archetype_id>/')
+@APP.route('/archetypes/<archetype_id>/tournament/')
+@SEASONS.route('/archetypes/<archetype_id>/tournament/')
 @cached()
 def archetype_tournament(archetype_id: str) -> str:
     season_id = get_season_id()

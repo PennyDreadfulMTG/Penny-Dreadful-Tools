@@ -23,12 +23,11 @@ class Archetype(View):
             raise DoesNotExistException('No archetype supplied to view.')
         self.archetype = next(a for a in archetypes if a.id == archetype.id) if archetypes else archetype
         self.archetype.decks = archetype.decks
+        self.archetype.decks_tournament = archetype.decks_tournament
         # Load the deck information from archetype into skinny archetype loaded by load_archetypes_deckless_for with tree information.
         self.archetypes = archetypes
-        if not tournament_only:
-            self.decks = self.archetype.decks
-        else:
-            self.decks = [d for d in self.archetype.decks if d.competition_type_name == 'Gatherling']
+        self.decks = self.archetype.decks
+        self.decks_tournament = self.archetype.decks_tournament
 
         self.roots = [a for a in self.archetypes if a.is_root]
         self.tournament_only = tournament_only

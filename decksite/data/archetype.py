@@ -51,15 +51,15 @@ def load_archetypes(where: str = '1 = 1', merge: bool = False, season_id: int = 
         archetype.losses = archetype.get('losses', 0) + (d.get('losses') or 0)
         archetype.draws = archetype.get('draws', 0) + (d.get('draws') or 0)
 
+        archetype.decks_tournament = archetype.get('decks_tournament', [])
         archetype.wins_tournament = archetype.get('wins_tournament', 0)
         archetype.losses_tournament = archetype.get('losses_tournament', 0)
         archetype.draws_tournament = archetype.get('draws_tournament', 0)
-        archetype.decks_tournament = archetype.get('decks_tournament', [])
-        if d.get('ct_name') == 'Gatherling':
+        if d.competition_type_name == 'Gatherling':
+            archetype.decks_tournament.append(d)
             archetype.wins_tournament += (d.get('wins') or 0)
             archetype.losses_tournament += (d.get('losses') or 0)
             archetype.draws_tournament += (d.get('draws') or 0)
-            archetype.decks_tournament += [d]
 
         if d.get('finish') == 1:
             archetype.tournament_wins = archetype.get('tournament_wins', 0) + 1
@@ -111,6 +111,7 @@ def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, nam
         archetypes_by_id = {a.id: a for a in archetypes}
         for a in archetypes:
             a.decks = []
+            a.decks_tournament = []
             a.parent = archetypes_by_id.get(a.parent_id, None)
         return archetypes
     except DatabaseException as e:

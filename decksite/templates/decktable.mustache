@@ -42,8 +42,15 @@
                 </tr>
             {{/active_runs_text}}
         {{/show_active_runs_text}}
-        {{#decks}}
-            {{> deckrow}}
-        {{/decks}}
+        {{^tournament_only}}
+            {{#decks}}
+                {{> deckrow}}
+            {{/decks}}
+        {{/tournament_only}}
+        {{#tournament_only}}
+            {{#decks_tournament}}
+                {{> deckrow}}
+            {{/decks_tournament}}
+        {{/tournament_only}}
     </tbody>
 </table>

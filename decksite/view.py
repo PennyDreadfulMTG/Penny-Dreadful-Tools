@@ -292,7 +292,16 @@ class View(BaseView):
         counter = Counter() # type: ignore
         a.cards = []
         a.most_common_cards = []
-        for d in a.get('decks', []):
+
+        # Make a pass, collecting card counts while filtering out non-tournament decks if needed
+        all_decks = a.get('decks', [])
+        if tournament_only:
+            a.decks = []
+        for d in all_decks:
+            if tournament_only and d.competition_type_name != 'Gatherling':
+                continue
+            elif tournament_only:
+                a.decks.append(d)
             a.cards += d.maindeck + d.sideboard
             for c in d.maindeck:
                 if not c.card.type.startswith('Basic Land'):

@@ -51,7 +51,7 @@ def generate_readme() -> int:
     #     git_commit()
     return changed
 
-def git_commit():
+def git_commit() -> None:
     subprocess.call(['git', 'add', 'README.md'])
     subprocess.call(['git', 'commit', '-m', 'Updated README.md'])
     subprocess.call(['git', 'push'])

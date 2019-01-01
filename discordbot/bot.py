@@ -6,6 +6,7 @@ from typing import Any
 import discord
 from discord import VoiceState
 from discord.activity import Streaming
+from discord.errors import Forbidden
 from discord.guild import Guild
 from discord.member import Member
 from discord.message import Message
@@ -93,8 +94,13 @@ class Bot(discord.Client):
                     await after.add_roles(roles[0])
 
     async def on_guild_join(self, server: Guild) -> None:
-        await server.text_channels[0].send("Hi, I'm mtgbot.  To look up cards, just mention them in square brackets. (eg `[Llanowar Elves] is better than [Elvish Mystic]`).")
-        await server.text_channels[0].send("By default, I display Penny Dreadful legality. If you don't want or need that, just type `!notpenny`.")
+        for channel in server.text_channels:
+            try:
+                await channel.send("Hi, I'm mtgbot.  To look up cards, just mention them in square brackets. (eg `[Llanowar Elves] is better than [Elvish Mystic]`).")
+                await channel.send("By default, I display Penny Dreadful legality. If you don't want or need that, just type `!notpenny`.")
+                return
+            except Forbidden:
+                pass
 
     async def on_reaction_add(self, reaction: Reaction, author: Member) -> None:
         if reaction.message.author == self.user:

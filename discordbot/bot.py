@@ -165,7 +165,7 @@ class Bot(discord.Client):
                 else:
                     message = 'A free tournament'
                 embed = discord.Embed(title=info['next_tournament_name'], description=message)
-                if diff <= 0:
+                if diff <= 1:
                     embed.add_field(name='Starting now', value='Check <#334220558159970304> for further annoucements')
                 elif diff <= 14400:
                     embed.add_field(name='Starting in:', value=dtutil.display_time(diff, 2))

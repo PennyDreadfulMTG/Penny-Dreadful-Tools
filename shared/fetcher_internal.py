@@ -68,9 +68,9 @@ def fetch_json(url: str, character_encoding: str = None) -> Any:
         if blob:
             return json.loads(blob)
         return None
-    except json.decoder.JSONDecodeError:
+    except json.decoder.JSONDecodeError as e:
         print('Failed to load JSON:\n{0}'.format(blob))
-        raise
+        raise FetchException(e)
 
 async def fetch_json_async(url: str) -> Any:
     try:

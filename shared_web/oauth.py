@@ -62,7 +62,7 @@ def make_session(token: str = None,
         auto_refresh_url=TOKEN_URL,
         token_updater=token_updater)
 
-def token_updater(token):
+def token_updater(token: str) -> None:
     session['oauth2_token'] = token
 
 def redirect_uri() -> str:

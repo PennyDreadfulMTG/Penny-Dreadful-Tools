@@ -3,8 +3,8 @@ from logsite.views.error import Error
 
 # pylint: disable=no-self-use
 class NotFound(Error):
-    def message(self):
+    def message(self) -> str:
         return "We couldn't find that."
 
-    def subtitle(self):
+    def subtitle(self) -> str:
         return 'Not Found'

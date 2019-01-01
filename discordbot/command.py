@@ -46,15 +46,15 @@ async def respond_to_card_names(message: Message, client: Client) -> None:
         return
     queries = parse_queries(message.content)
     if len(queries) > 0:
-        async with message.channel.typing():
-            results = results_from_queries(queries)
-            cards = []
-            for i in results:
-                (r, mode) = i
-                if r.has_match() and not r.is_ambiguous():
-                    cards.extend(cards_from_names_with_mode([r.get_best_match()], mode))
-                elif r.is_ambiguous():
-                    cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode))
+        await message.channel.trigger_typing()
+        results = results_from_queries(queries)
+        cards = []
+        for i in results:
+            (r, mode) = i
+            if r.has_match() and not r.is_ambiguous():
+                cards.extend(cards_from_names_with_mode([r.get_best_match()], mode))
+            elif r.is_ambiguous():
+                cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode))
         await post_cards(client, cards, message.channel, message.author)
 
     matches = re.findall(r'https?://(?:www.)?tappedout.net/mtg-decks/(?P<slug>[\w-]+)/?', message.content, flags=re.IGNORECASE)

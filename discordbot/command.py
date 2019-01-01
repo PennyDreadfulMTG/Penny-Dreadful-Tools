@@ -180,7 +180,7 @@ class Commands:
         result, mode = results_from_queries([args])[0]
         if result.has_match() and not result.is_ambiguous():
             c = cards_from_names_with_mode([result.get_best_match()], mode)[0]
-            msg = '{base_url}?utf8=%E2%9C%93&q=is%3Aissue+is%3Aopen+%22{name}%22'.format(base_url=base_url, name=fetcher.internal.escape(args))
+            msg = '{base_url}?utf8=%E2%9C%93&q=is%3Aissue+%22{name}%22'.format(base_url=base_url, name=fetcher.internal.escape(args))
             if not c.bugs or len(c.bugs) == 0:
                 msg = "I don't know of a bug for {name} but here's the link: {link}".format(name=c.name, link=msg)
         else:

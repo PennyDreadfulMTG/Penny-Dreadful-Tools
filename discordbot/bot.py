@@ -6,7 +6,7 @@ from typing import Any
 import discord
 from discord import VoiceState
 from discord.activity import Streaming
-from discord.errors import Forbidden
+from discord.errors import Forbidden, NotFound
 from discord.guild import Guild
 from discord.member import Member
 from discord.message import Message
@@ -108,7 +108,10 @@ class Bot(discord.Client):
             if reaction.me:
                 c = c - 1
             if c > 0 and not reaction.custom_emoji and reaction.emoji == '❎':
-                await reaction.message.delete()
+                try:
+                    await reaction.message.delete()
+                except NotFound: # Someone beat us to it?
+                    pass
             elif c > 0 and 'Ambiguous name for ' in reaction.message.content and reaction.emoji in command.DISAMBIGUATION_EMOJIS_BY_NUMBER.values():
                 async with reaction.message.channel.typing():
                     search = re.search(r'Ambiguous name for ([^\.]*)\. Suggestions: (.*)', reaction.message.content)

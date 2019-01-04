@@ -272,8 +272,6 @@ class View(BaseView):
                          ) -> None:
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
 
-        tournament_only = getattr(self, 'tournament_only', False)
-
         if a.get('num_decks') is not None:
             a.show_record = a.get('wins') or a.get('draws') or a.get('losses')
         if a.get('num_decks_tournament') is not None:
@@ -298,7 +296,7 @@ class View(BaseView):
                     counter[c['name']] += c['n']
                     if d.competition_type_name == 'Gatherling':
                         counter_tournament[c['name']] += c['n']
-                
+
         most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
         most_common_cards_tournament = counter_tournament.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
 

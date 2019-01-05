@@ -303,13 +303,10 @@ class View(BaseView):
             self.prepare_leaderboard(l)
 
     def prepare_leaderboard(self, leaderboard: List[Container]) -> None:
-        pos = 1
         for p in leaderboard:
-            p.finish = pos
-            if pos <= 8:
-                p.position = chr(9311 + pos) # ①, ②, ③, …
+            if p.finish <= 8:
+                p.position = chr(9311 + p.finish) # ①, ②, ③, …
             p.url = url_for('.person', person_id=p.person_id)
-            pos += 1
 
     def prepare_legal_formats(self) -> None:
         if getattr(self, 'legal_formats', None) is not None:

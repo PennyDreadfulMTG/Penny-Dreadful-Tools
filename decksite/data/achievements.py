@@ -188,7 +188,17 @@ class Achievement:
                 name
             LIMIT {LEADERBOARD_LIMIT}
         """
-        leaderboard = [Container(r) for r in db().select(sql)]
+        finish = 0
+        leaderboard = []
+        points = None
+        for i, row in enumerate(db().select(sql), start=1):
+            c = Container(row)
+            if finish == 0 or c.points != points:
+                points = c.points
+                finish = i
+            c.finish = finish
+            leaderboard.append(c)
+
         return leaderboard if len(leaderboard) > 0 else None
 
     # pylint: disable=no-self-use

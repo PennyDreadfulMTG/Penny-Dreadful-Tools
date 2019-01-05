@@ -450,6 +450,11 @@ class Commands:
 Suggestions/bug reports: <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues/>
 
 Want to contribute? Send a Pull Request."""
+
+        channel = author.dm_channel
+        if channel is None:
+            channel = await author.create_dm()
+
         if len(msg) > 2000:
             await send(channel, msg[0:1999] + '…')
         else:

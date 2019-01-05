@@ -1,15 +1,17 @@
+import datetime
+from time import mktime
 from typing import List, Tuple
 
 import flask
 
 from magic import card
-from shared import configuration
+from shared import configuration, dtutil
 from shared.container import Container
 from shared.database import Database, get_database
 from shared.pd_exception import DatabaseException
 
 # Bump this if you modify the schema.
-SCHEMA_VERSION = 101
+SCHEMA_VERSION = 106
 DATABASE = Container()
 
 def db() -> Database:
@@ -25,22 +27,21 @@ def db() -> Database:
 
 def init() -> None:
     try:
-        mtgjson_version()
         if db_version() < SCHEMA_VERSION:
             delete()
             setup()
     except DatabaseException:
         setup()
 
-def mtgjson_version() -> str:
-    return db().value('SELECT version FROM version', [], '0')
+def last_updated() -> datetime.datetime:
+    return dtutil.ts2dt(db().value('SELECT last_updated FROM scryfall_version', [], 0))
 
 def db_version() -> int:
     return db().value('SELECT version FROM db_version', [], 0)
 
 def setup() -> None:
     db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER)')
-    db().execute('CREATE TABLE IF NOT EXISTS version (version TEXT)')
+    db().execute('CREATE TABLE IF NOT EXISTS scryfall_version (last_updated INTEGER)')
     sql = create_table_def('card', card.card_properties())
     db().execute(sql)
     sql = create_table_def('face', card.face_properties())
@@ -99,7 +100,7 @@ def column_def(name: str, prop: card.ColumnDescription) -> str:
     return '`{name}` {type} {nullable} {primary_key} {unique} {default}'.format(name=name, type=prop['type'], primary_key=primary_key, nullable=nullable, unique=unique, default=default)
 
 def foreign_key_def(name: str, fk: Tuple[str, str]) -> str:
-    return 'FOREIGN KEY(`{name}`) REFERENCES `{table}`(`{column}`)'.format(name=name, table=fk[0], column=fk[1])
+    return 'FOREIGN KEY (`{name}`) REFERENCES `{table}`(`{column}`)'.format(name=name, table=fk[0], column=fk[1])
 
 def unique_constraint_def(name: str, cols: List[str]) -> str:
     cols = [name] + cols

@@ -13,13 +13,13 @@ class Card(Container):
             setattr(self, 'names', [self.name])
 
     def is_double_sided(self) -> bool:
-        return self.layout in ['double-faced', 'meld']
+        return self.layout in ['transform', 'meld']
 
     def is_creature(self) -> bool:
-        return 'Creature' in self.type
+        return 'Creature' in self.type_line
 
     def is_land(self) -> bool:
-        return 'Land' in self.type
+        return 'Land' in self.type_line
 
     def is_spell(self) -> bool:
         return not self.is_creature() and not self.is_land()

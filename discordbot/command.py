@@ -710,6 +710,7 @@ Want to contribute? Send a Pull Request."""
     async def version(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """Display the current version numbers"""
         commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], universal_newlines=True).strip('\n').strip('"')
+        # BAKERT nope
         mtgjson = database.mtgjson_version()
         return await send(channel, 'I am currently running mtgbot version `{commit}`, and mtgjson version `{mtgjson}`'.format(commit=commit, mtgjson=mtgjson))
 
@@ -931,7 +932,7 @@ def single_card_text_internal(client: Client, requested_card: Card, disable_emoj
     if requested_card.get('mode', None) == '$':
         text = '{name} {legal} — {price}'.format(name=requested_card.name, price=fetcher.card_price_string(requested_card), legal=legal)
     else:
-        text = '{name} {mana} — {type}{legal}'.format(name=requested_card.name, mana=mana, type=requested_card.type, legal=legal)
+        text = '{name} {mana} — {type}{legal}'.format(name=requested_card.name, mana=mana, type=requested_card.type_line, legal=legal)
     if requested_card.bugs:
         for bug in requested_card.bugs:
             text += '\n:beetle:{rank} bug: {bug}'.format(bug=bug['description'], rank=bug['classification'])

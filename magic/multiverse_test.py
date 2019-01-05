@@ -17,3 +17,17 @@ def test_seasons_enum_uptodate() -> None:
 
        This test is purely for futureproofing, and failing it does not mean anything is currently broken"""
     assert rotation.next_rotation_ex()['code'] in rotation.SEASONS
+
+def test_supertypes() -> None:
+    assert multiverse.supertypes('Legendary Enchantment Creature - God') == ['Legendary']
+    assert multiverse.supertypes('Artifact Creature - Construct') == []
+    assert multiverse.supertypes('Snow Basic Land - Island') == ['Snow']
+    assert multiverse.supertypes('Enchantment') == []
+    assert multiverse.supertypes('Creature - Elder Dragon') == []
+
+def test_subtypes() -> None:
+    assert multiverse.subtypes('Legendary Enchantment Creature - God') == ['God']
+    assert multiverse.subtypes('Artifact Creature - Construct') == ['Construct']
+    assert multiverse.subtypes('Snow Basic Land - Island') == ['Island']
+    assert multiverse.subtypes('Enchantment') == []
+    assert multiverse.subtypes('Creature - Elder Dragon') == ['Elder', 'Dragon']

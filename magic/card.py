@@ -12,7 +12,7 @@ ColumnDescription = TypedDict('ColumnDescription', {
     'nullable': bool,
     'primary_key': bool,
     'query': str,
-    'mtgjson': bool,
+    'scryfall': bool,
     'foreign_key': Optional[Tuple[str, str]],
     'default': Optional[str],
     'unique': bool,
@@ -35,7 +35,7 @@ BASE: ColumnDescription = {
     'nullable': True,
     'primary_key': False,
     'query': '`{table}`.`{column}` AS `{column}`',
-    'mtgjson': True,
+    'scryfall': True,
     'foreign_key': None,
     'default': None,
     'unique': False,
@@ -51,7 +51,7 @@ def base_query_properties() -> TableDescription:
 
 def base_query_specific_properties() -> TableDescription:
     props = {}
-    for k in ['names', 'legalities', 'pd_legal', 'bugs']:
+    for k in ['legalities', 'names', 'pd_legal', 'bugs']:
         props[k] = copy.deepcopy(BASE)
     props['names']['type'] = TEXT
     props['names']['query'] = "GROUP_CONCAT(face_name SEPARATOR '|') AS names"
@@ -70,21 +70,26 @@ def card_properties() -> TableDescription:
     props['id']['type'] = INTEGER
     props['id']['nullable'] = False
     props['id']['primary_key'] = True
-    props['id']['mtgjson'] = False
+    props['id']['scryfall'] = False
     props['layout']['nullable'] = False
     return props
 
 def face_properties() -> TableDescription:
     props = {}
     base = copy.deepcopy(BASE)
+    # BAKERT
+    # NEW: oracle_id, multiverse_ids, lang, released_at, uri, scryfall_uri, highres_image, image_uris,  (some/all of these go on card not face)
+    # BAKERT type => type_line
+    # BAKERT text => oracle_text
+    # Various other transforms missing here.
     base['query'] = "GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN `{table}`.`{column}` ELSE '' END SEPARATOR '') AS `{column}`"
-    for k in ['id', 'name', 'mana_cost', 'cmc', 'power', 'toughness', 'power', 'toughness', 'loyalty', 'type', 'text', 'search_text', 'image_name', 'hand', 'life', 'starter', 'position', 'card_id']:
+    for k in ['id', 'name', 'mana_cost', 'cmc', 'power', 'toughness', 'power', 'toughness', 'loyalty', 'type_line', 'oracle_text', 'image_name', 'hand', 'life', 'starter', 'position', 'card_id']:
         props[k] = copy.deepcopy(base)
-    for k in ['id', 'position', 'card_id', 'search_text']:
-        props[k]['mtgjson'] = False
-    for k in ['id', 'name', 'position', 'type', 'text', 'search_text']:
+    for k in ['id', 'position', 'card_id']:
+        props[k]['scryfall'] = False
+    for k in ['id', 'name', 'position', 'type_line', 'oracle_text']:
         props[k]['nullable'] = False
-    for k in ['id', 'card_id', 'hand', 'life', 'starter', 'position']:
+    for k in ['id', 'card_id', 'hand', 'life', 'starter']:
         props[k]['type'] = INTEGER
         props[k]['query'] = "SUM(CASE WHEN `{table}`.position = 1  OR (`{table}`.position = 2 AND `{table}`.layout = 'meld') THEN `{table}`.`{column}` ELSE NULL END) AS `{column}`"
     props['id']['primary_key'] = True
@@ -93,8 +98,8 @@ def face_properties() -> TableDescription:
     props['name']['query'] = """{name_query} AS name""".format(name_query=name_query())
     props['cmc']['query'] = """{cmc_query} AS cmc""".format(cmc_query=cmc_query())
     props['mana_cost']['query'] = """{mana_cost_query} AS mana_cost""".format(mana_cost_query=mana_cost_query())
-    props['type']['query'] = """{type_query} AS type""".format(type_query=type_query())
-    for k in ['text', 'search_text']:
+    props['type_line']['query'] = """{type_query} AS type_line""".format(type_query=type_query()) # BAKERT type_line is a dubious name for an amalgamated type
+    for k in ['oracle_text']:
         props[k]['query'] = "GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '\n-----\n') AS `{column}`"
         props[k]['type'] = TEXT
     props['card_id']['foreign_key'] = ('card', 'id')
@@ -102,20 +107,21 @@ def face_properties() -> TableDescription:
 
 def set_properties() -> TableDescription:
     props = {}
-    for k in ['id', 'name', 'code', 'gatherer_code', 'old_code', 'magiccardsinfo_code', 'release_date', 'border', 'type', 'online_only']:
+    # BAKERT do we want to exhaustive the card props like we did here to get new info (yes)
+    for k in ['id', 'name', 'code', 'uri', 'scryfall_uri', 'search_uri', 'released_at', 'set_type', 'card_count', 'parent_set_code', 'digital', 'foil_only', 'icon_svg_uri']:
+        # 'border' => set_type?, 'type' => ? BAKERT change any uses of these obsoleted properties
         props[k] = copy.deepcopy(BASE)
-    for k in ['id', 'name', 'code', 'release_date', 'border', 'type']:
+    for k in ['id', 'name', 'code', 'released_at']: # BAKERT are any of our "new" props non-NULLable? Probably. 'type' wasn't nullable, are they unique or non-varchar types?
         props[k]['nullable'] = False
     props['id']['primary_key'] = True
     props['id']['type'] = INTEGER
-    props['id']['mtgjson'] = False
-    props['release_date']['type'] = DATE
-    props['online_only']['type'] = BOOLEAN
+    props['id']['scryfall'] = False
+    props['released_at']['type'] = DATE
+    props['digital']['type'] = BOOLEAN
     props['name']['unique'] = True
     props['code']['unique'] = True
-    props['gatherer_code']['unique'] = True
-    props['old_code']['unique'] = True
-    props['magiccardsinfo_code']['unique'] = True
+    props['uri']['unique'] = True
+    props['scryfall_uri']['unique'] = True
     return props
 
 def printing_properties() -> TableDescription:
@@ -126,7 +132,7 @@ def printing_properties() -> TableDescription:
         props[k]['nullable'] = False
     for k in ['id', 'card_id', 'set_id', 'rarity_id']:
         props[k]['type'] = INTEGER
-        props[k]['mtgjson'] = False
+        props[k]['scryfall'] = False
     props['id']['primary_key'] = True
     props['id']['nullable'] = False
     props['timeshifted']['type'] = BOOLEAN
@@ -225,7 +231,7 @@ def card_bug_properties() -> TableDescription:
 def name_query(column: str = 'face_name') -> str:
     return """
         CASE
-        WHEN layout = 'double-faced' OR layout = 'flip' THEN
+        WHEN layout = 'transform' OR layout = 'flip' THEN
             GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END SEPARATOR '')
         WHEN layout = 'meld' THEN
             GROUP_CONCAT(CASE WHEN `{table}`.position = 1 OR `{table}`.position = 2 THEN {column} ELSE '' END SEPARATOR '')

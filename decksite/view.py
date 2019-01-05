@@ -207,7 +207,7 @@ class View(BaseView):
             d.decklist = ''
         total, num_cards = 0, 0
         for c in d.maindeck:
-            if 'Land' not in c.card.type:
+            if 'Land' not in c.card.type_line:
                 num_cards += c['n']
                 total += c['n'] * c.card.cmc
         d.average_cmc = round(total / max(1, num_cards), 2)
@@ -222,7 +222,7 @@ class View(BaseView):
     def prepare_card(self, c: Card) -> None:
         c.url = '/cards/{id}/'.format(id=c.name)
         c.img_url = url_for('image', c=c.name)
-        c.card_img_class = 'two-faces' if c.layout in ['double-faced', 'meld'] else ''
+        c.card_img_class = 'two-faces' if c.layout in ['transform', 'meld'] else ''
         c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
         c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}
         c.has_legal_format = len(c.legal_formats) > 0
@@ -232,7 +232,7 @@ class View(BaseView):
         counter = Counter() # type: ignore
         for d in c.get('decks', []):
             for c2 in d.maindeck:
-                if not c2.card.type.startswith('Basic Land') and not c2['name'] == c.name:
+                if not c2.card.type_line.startswith('Basic Land') and not c2['name'] == c.name:
                     counter[c2['name']] += c2['n']
         most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
         c.most_common_cards = []
@@ -248,7 +248,7 @@ class View(BaseView):
             c.display_date = dtutil.display_date(c.start_date)
             c.ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
             c.date_sort = dtutil.dt2ts(c.start_date)
-            c.league = c.type == 'League'
+            c.league = c.type_line == 'League'
             title_safe = ''
             try:
                 for k, v in c.base_archetypes_data().items():
@@ -281,7 +281,7 @@ class View(BaseView):
         for d in a.get('decks', []):
             a.cards += d.maindeck + d.sideboard
             for c in d.maindeck:
-                if not c.card.type.startswith('Basic Land'):
+                if not c.card.type_line.startswith('Basic Land'):
                     counter[c['name']] += c['n']
         most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
         cs = oracle.cards_by_name()

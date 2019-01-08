@@ -188,15 +188,10 @@ class Achievement:
                 name
             LIMIT {LEADERBOARD_LIMIT}
         """
-        finish = 0
         leaderboard = []
-        points = None
-        for i, row in enumerate(db().select(sql), start=1):
+        for row in db().select(sql):
             c = Container(row)
-            if finish == 0 or c.points != points:
-                points = c.points
-                finish = i
-            c.finish = finish
+            c.score = c.points
             leaderboard.append(c)
 
         return leaderboard if len(leaderboard) > 0 else None

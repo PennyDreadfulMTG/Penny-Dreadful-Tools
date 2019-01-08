@@ -33,13 +33,9 @@ class Competition(View):
             if len(leaderboard) > 0:
                 self.has_leaderboard = True
                 self.leaderboard = sorted(leaderboard.values(), key=lambda k: (k['points'], k['played'], -k['retirements']), reverse=True)
-                prev = None
-                finish = 1
-                for i, p in enumerate(self.leaderboard, start=1):
-                    if i == 1 or prev != (p.points, p.played, p.retirements):
-                        prev = (p.points, p.played, p.retirements)
-                        finish = i
-                    p.finish = finish
+
+                for p in self.leaderboard:
+                    p.score = (p.points, p.played, p.retirements)
                 self.leaderboards = [self.leaderboard] # Will be prepared in View.
         self.date = dtutil.display_date(competition.start_date)
         self.sponsor_name = competition.sponsor_name

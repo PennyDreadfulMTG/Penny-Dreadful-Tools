@@ -198,6 +198,34 @@ class Commands:
             os.remove(file)
         await send(channel, '{n} cleared.'.format(n=len(files)))
 
+    @cmd_header('Configuration')
+    async def configure(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
+        try:
+            mode, args = args.split(' ', 1)
+        except ValueError:
+            await send(channel, '`!configure {server|channel} {SETTING=VALUE}.')
+            return
+        if mode == 'channel':
+            if not author.permissions_in(channel).manage_channels:
+                await send(channel, "You don't have permsssion to configure this channel.")
+                return
+            configuring = channel.id
+        elif mode in ['server', 'guild']:
+            if not author.guild_permissions.manage_channels:
+                await send(channel, "You don't have permsssion to configure this server.")
+                return
+            configuring = channel.guild.id
+        else:
+            await send(channel, 'You need to configure one of `server` or `channel`.')
+            return
+        try:
+            key, value = args.split('=', 1)
+        except ValueError:
+            await send(channel, '`!configure {server|channel} {SETTING=VALUE}.')
+            return
+
+        configuration.write(f'{configuring}.{key}', value)
+
     @cmd_header('Developer')
     async def echo(self, client: Client, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
         """Repeat after me…"""
@@ -465,7 +493,6 @@ Want to contribute? Send a Pull Request."""
         """Show the legality history of the specified card and a link to its all time page."""
         await single_card_text(client, channel, args, author, card_history, 'history', show_legality=False)
 
-
     @cmd_header('Commands')
     async def invite(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """Invite me to your server."""
@@ -502,7 +529,7 @@ Want to contribute? Send a Pull Request."""
     modofail.count = 0
     modofail.last_fail = time.time()
 
-    @cmd_header('Developer')
+    @cmd_header('Configuration')
     async def notpenny(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
         """Don't show PD Legality in this channel"""
         existing = configuration.get_list('not_pd')

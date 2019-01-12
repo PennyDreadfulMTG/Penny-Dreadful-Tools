@@ -712,7 +712,8 @@ Want to contribute? Send a Pull Request."""
         if len(args) == 0:
             return await send(channel, '{author}: No location provided. Please type !time followed by the location you want the time for.'.format(author=author.mention))
         try:
-            ts = fetcher.time(args)
+            twentyfour = configuration.get_bool(f'{guild_or_channel_id(channel)}.use_24h') or configuration.get_bool(f'{channel.id}.use_24h')
+            ts = fetcher.time(args, twentyfour)
             times_s = ''
             for t, zones in ts.items():
                 cities = sorted(set(re.sub('.*/(.*)', '\\1', zone).replace('_', ' ') for zone in zones))
@@ -1007,3 +1008,6 @@ def uniqify_cards(cards: List[Card]) -> List[Card]:
     for c in cards:
         results[card.canonicalize(c.name)] = c
     return list(results.values())
+
+def guild_or_channel_id(channel: TextChannel) -> int:
+    return getattr(channel, 'guild', channel).id

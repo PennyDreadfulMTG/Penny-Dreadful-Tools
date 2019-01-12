@@ -10,7 +10,7 @@ import textwrap
 import time
 import traceback
 from copy import copy
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple
 
 import inflect
 from discord import FFmpegPCMAudio, File
@@ -35,6 +35,8 @@ MAX_CARDS_SHOWN = 10
 DISAMBIGUATION_EMOJIS = [':one:', ':two:', ':three:', ':four:', ':five:']
 DISAMBIGUATION_EMOJIS_BY_NUMBER = {1 : '1⃣', 2 : '2⃣', 3 : '3⃣', 4 : '4⃣', 5 : '5⃣'}
 DISAMBIGUATION_NUMBERS_BY_EMOJI = {'1⃣' : 1, '2⃣' : 2, '3⃣' : 3, '4⃣' : 4, '5⃣' : 5}
+
+HELP_GROUPS: Set[str] = set()
 
 @lazy_property
 def searcher() -> WhooshSearcher:
@@ -116,6 +118,8 @@ def build_help(readme: bool = False, cmd: str = None) -> str:
         method = find_method(cmd)
         if method:
             return print_cmd(method, True)
+        if cmd in HELP_GROUPS:
+            return print_group(cmd)
         return '`{cmd}` is not a valid command.'.format(cmd=cmd)
 
     msg = print_group('Commands')
@@ -127,6 +131,7 @@ def build_help(readme: bool = False, cmd: str = None) -> str:
     return msg
 
 def cmd_header(group: str) -> Callable:
+    HELP_GROUPS.add(group)
     def decorator(func: Callable) -> Callable:
         setattr(func, 'group', group)
         return func

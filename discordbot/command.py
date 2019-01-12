@@ -755,14 +755,6 @@ Want to contribute? Send a Pull Request."""
         mtgjson = database.mtgjson_version()
         return await send(channel, 'I am currently running mtgbot version `{commit}`, and mtgjson version `{mtgjson}`'.format(commit=commit, mtgjson=mtgjson))
 
-# Given a list of cards return one (aribtrarily) for each unique name in the list.
-def uniqify_cards(cards: List[Card]) -> List[Card]:
-    # Remove multiple printings of the same card from the result set.
-    results: Dict[str, Card] = collections.OrderedDict()
-    for c in cards:
-        results[card.canonicalize(c.name)] = c
-    return list(results.values())
-
 def parse_queries(content: str) -> List[str]:
     to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, re.DOTALL) # Ignore angle brackets inside backticks. It's annoying in #code.
     queries = re.findall(r'\[?\[([^\]]*)\]\]?', to_scan)
@@ -911,10 +903,6 @@ def resources_resources(args: str) -> Dict[str, str]:
 def more_results_link(args: str, total: int) -> str:
     return 'and {n} more.\n<https://scryfall.com/search/?q={q}>'.format(n=total - 4, q=fetcher.internal.escape(args)) if total > MAX_CARDS_SHOWN else ''
 
-async def send(channel: TextChannel, content: str, file: File = None) -> Message:
-    new_s = escape_underscores(content)
-    return await channel.send(file=file, content=new_s)
-
 async def post_cards(
         client: Client,
         cards: List[Card],
@@ -957,6 +945,11 @@ async def post_no_cards(channel: TextChannel, replying_to: Member) -> None:
         text = 'No matches.'
     message = await send(channel, text)
     await message.add_reaction('❎')
+
+
+async def send(channel: TextChannel, content: str, file: File = None) -> Message:
+    new_s = escape_underscores(content)
+    return await channel.send(file=file, content=new_s)
 
 async def send_image_with_retry(channel: TextChannel, image_file: str, text: str = '') -> None:
     message = await send(channel, file=File(image_file), content=text)
@@ -1006,3 +999,11 @@ def is_tournament_channel(channel: TextChannel) -> bool:
     if not tournament_channel_id:
         return False
     return channel.id == tournament_channel_id
+
+# Given a list of cards return one (aribtrarily) for each unique name in the list.
+def uniqify_cards(cards: List[Card]) -> List[Card]:
+    # Remove multiple printings of the same card from the result set.
+    results: Dict[str, Card] = collections.OrderedDict()
+    for c in cards:
+        results[card.canonicalize(c.name)] = c
+    return list(results.values())

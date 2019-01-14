@@ -91,7 +91,7 @@ def face_properties() -> TableDescription:
         props[k]['nullable'] = False
     for k in ['id', 'card_id', 'hand', 'life', 'starter']:
         props[k]['type'] = INTEGER
-        props[k]['query'] = "SUM(CASE WHEN `{table}`.position = 1  OR (`{table}`.position = 2 AND `{table}`.layout = 'meld') THEN `{table}`.`{column}` ELSE NULL END) AS `{column}`"
+        props[k]['query'] = "MAX(CASE WHEN `{table}`.position = 1  OR (`{table}`.position = 2 AND `{table}`.layout = 'meld') THEN `{table}`.`{column}` ELSE NULL END) AS `{column}`"
     props['id']['primary_key'] = True
     props['id']['query'] = '`{table}`.`{column}` AS face_id'
     props['cmc']['type'] = REAL

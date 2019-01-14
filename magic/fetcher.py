@@ -30,7 +30,7 @@ def all_sets() -> Dict[str, Dict[str, Any]]:
         d = json.load(open("sets.json"))
     except FileNotFoundError:
         d = internal.fetch_json("https://api.scryfall.com/sets")
-    assert(not d['has_more'])
+    assert not d['has_more']
     return d['data']
 
 def bugged_cards() -> Optional[List[Dict[str, Any]]]:
@@ -107,13 +107,7 @@ def scryfall_last_updated() -> datetime.datetime:
     for o in d["data"]:
         if o["type"] == "default_cards":
             return dtutil.parse_rfc3339(o["updated_at"])
-    raise BAKERT
-    try:
-        # Try the v4.x.x JSON which is an object not a string.
-        return cast(str, s.get("version"))
-    except AttributeError:
-        # OK we have the v3.x.x version in cache. We can retire this at some point.
-        return cast(str, s)
+    raise FetchException
 
 async def mtgo_status() -> str:
     try:

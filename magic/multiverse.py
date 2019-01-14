@@ -2,8 +2,6 @@ import datetime
 import re
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-import pkg_resources
-
 from magic import card, database, fetcher, rotation
 from magic.card_description import CardDescription
 from magic.database import create_table_def, db
@@ -375,29 +373,29 @@ def try_find_card_id(c: CardDescription) -> Tuple[str, Optional[int]]:
 def names(c: CardDescription): # BAKERT needs a type
     if not c.get('all_parts') or c.get('layout') == 'token':
         return [c['name']]
-    KNOWN_COMPONENTS = ['combo_piece', 'token', 'meld_part', 'meld_result']
-    if [part for part in c['all_parts'] if part.get('component') not in KNOWN_COMPONENTS]:
+    known_components = ['combo_piece', 'token', 'meld_part', 'meld_result']
+    if [part for part in c['all_parts'] if part.get('component') not in known_components]:
         raise Exception(f'Found an unexpected component type in {c}') # BAKERT exception type
     # Do this in two steps to get meld cards in the right order (meld result last).
-    names = [part['name'] for part in c['all_parts'] if part.get('component') not in ['meld_result', 'token', 'combo_piece']]
-    names = names + [part['name'] for part in c['all_parts'] if part.get('component') == 'meld_result']
-    if not names:
+    card_names = [part['name'] for part in c['all_parts'] if part.get('component') not in ['meld_result', 'token', 'combo_piece']]
+    card_names = card_names + [part['name'] for part in c['all_parts'] if part.get('component') == 'meld_result']
+    if not card_names:
         return [c['name']]
     # For some reason some Schemes and Planes refer to their tokens but not themselves in Scryfall data.
-    if c['name'] not in names and re.match('^(Plane)|((Ongoing )?Scheme)', c['type_line']):
+    if c['name'] not in card_names and re.match('^(Plane)|((Ongoing )?Scheme)', c['type_line']):
         return [c['name']]
-    if c['name'] not in names:
+    if c['name'] not in card_names:
         raise InvalidDataException(f'A non-Scheme card does not have its name but does have an all_parts - this is unexpected {names}: {c}')
-    return names
+    return card_names
 
 def supertypes(type_line: str) -> List[str]:
     types = type_line.split('-')[0]
-    possible_supertypes = ['Basic', 'Legendary', 'Ongoing', 'Snow', 'World']
-    supertypes = []
+    possible_supertypes = ['Legendary', 'Snow', 'Basic', 'Ongoing', 'World', 'Token', 'Host', 'Elite']
+    stypes = []
     for possible in possible_supertypes:
         if possible in types:
-            supertypes.append(possible)
-    return supertypes
+            stypes.append(possible)
+    return stypes
 
 def subtypes(type_line: str) -> List[str]:
     if '-' not in type_line:

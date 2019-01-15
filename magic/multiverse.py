@@ -137,7 +137,7 @@ def update_database(new_date: datetime.datetime) -> None:
         if c['position'] is None:
             raise Exception('no position') # BAKERT
         c['type_line'] = c.get('type_line', '').replace('—', '-')
-        if c.get('layout') == 'meld' and c.get('name') == c['names'][2]:
+        if is_meld_result(c):
             melded_faces.append(c)
         else:
             insert_card(c, update_index=False)
@@ -160,6 +160,9 @@ def update_database(new_date: datetime.datetime) -> None:
     update_pd_legality()
     db().execute('INSERT INTO scryfall_version (last_updated) VALUES (%s)', [dtutil.dt2ts(new_date)])
     db().commit('update_database')
+
+def is_meld_result(c) -> bool:
+    return c.get('layout') == 'meld' and len([p for p in c.get('all_parts', []) if p['name'] == c['name'] and p['component'] == 'meld_result']) > 0
 
 def check_layouts() -> None:
     rs = db().select('SELECT DISTINCT layout FROM card')

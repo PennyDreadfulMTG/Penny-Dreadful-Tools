@@ -21,7 +21,7 @@ def test_seasons_enum_uptodate() -> None:
 def test_supertypes() -> None:
     assert multiverse.supertypes('Legendary Enchantment Creature - God') == ['Legendary']
     assert multiverse.supertypes('Artifact Creature - Construct') == []
-    assert multiverse.supertypes('Snow Basic Land - Island') == ['Basic', 'Snow']
+    assert multiverse.supertypes('Snow Basic Land - Island') == ['Snow', 'Basic']
     assert multiverse.supertypes('Enchantment') == []
     assert multiverse.supertypes('Creature - Elder Dragon') == []
 

@@ -1,5 +1,4 @@
 import datetime
-from time import mktime
 from typing import List, Tuple
 
 import flask

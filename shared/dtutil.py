@@ -25,7 +25,7 @@ CARDHOARDER_TZ = UTC_TZ
 FORM_FORMAT = '%Y-%m-%d %H:%M'
 
 # Converts a UTC timestamp (seconds) into a timezone-aware UTC datetime.
-def ts2dt(ts: int) -> datetime.datetime:
+def ts2dt(ts: float) -> datetime.datetime:
     return pytz.timezone('UTC').localize(datetime.datetime.utcfromtimestamp(ts))
 
 # Converts a timezone-aware UTC datetime into a UTC timestamp (seconds).

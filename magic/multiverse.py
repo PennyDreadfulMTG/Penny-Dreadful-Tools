@@ -188,7 +188,7 @@ def insert_card(p: Any, update_index: bool = True) -> Optional[int]:
     # 'meld' is in the list of normal cards here but is handled differently at a higher level. See above.
     if p['layout'] in ['leveler', 'meld', 'normal', 'saga', 'token']:
         insert_face(p, card_id)
-    elif p['layout'] in ['aftermath', 'double_faced_token', 'flip', 'split', 'transform']:
+    elif p['layout'] in ['double_faced_token', 'flip', 'split', 'transform']:
         insert_card_faces(p, card_id)
     else:
         raise InvalidDataException(f"Unknown layout {p['layout']}")

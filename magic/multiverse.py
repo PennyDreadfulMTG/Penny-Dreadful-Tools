@@ -1,7 +1,7 @@
 import datetime
 from typing import Any, Dict, List, Optional, Union
 
-from magic import card, database, fetcher, rotation
+from magic import card, database, fetcher, mana, rotation
 from magic.card_description import CardDescription
 from magic.database import create_table_def, db
 from magic.models import Card
@@ -233,7 +233,10 @@ def insert_face(p: CardDescription, card_id: int, position: int = 1) -> None:
 
 def insert_card_faces(p: CardDescription, card_id: int) -> None:
     position = 1
+    first_face_cmc = mana.cmc(p['card_faces'][0]['mana_cost'])
     for face in p['card_faces']: # type: ignore
+        # Scryfall doesn't provide cmc on card_faces currently. See #5939.
+        face['cmc'] = mana.cmc(face['mana_cost']) if face['mana_cost'] else first_face_cmc
         insert_face(face, card_id, position)
         position += 1
 

@@ -235,7 +235,7 @@ def cmc_query() -> str:
     return """
         CASE
         WHEN layout = 'split' THEN
-            SUM(`{table}`.cmc)
+            SUM(CASE WHEN `{table}`.cmc IS NOT NULL THEN `{table}`.cmc ELSE 0 END)
         ELSE
             SUM(CASE WHEN `{table}`.position = 1 THEN `{table}`.cmc ELSE 0 END)
         END

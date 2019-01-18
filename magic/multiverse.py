@@ -214,11 +214,9 @@ def insert_card(p: Any, update_index: bool = True) -> Optional[int]:
         format_id = get_format_id(name, True)
         # INSERT IGNORE INTO because some cards have multiple faces with the same legality. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT IGNORE INTO card_legality (card_id, format_id, legality) VALUES (%s, %s, %s)', [card_id, format_id, status.capitalize()])
-    # Temporarily disabled for move to Scryfall but will need to be reinstated. See
     if update_index:
-        # writer = WhooshWriter()
-        # writer.update_card(p)
-        pass
+        writer = WhooshWriter()
+        writer.update_card(p)
     return card_id
 
 def insert_face(p: CardDescription, card_id: int, position: int = 1) -> None:

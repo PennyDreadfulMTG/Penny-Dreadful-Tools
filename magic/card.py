@@ -1,4 +1,5 @@
 import copy
+import re
 import unicodedata
 from typing import Dict, List, Optional, Tuple
 
@@ -264,6 +265,7 @@ def canonicalize(name: str) -> str:
         name = name.replace('/', '//')
     if name.find('//') >= 0 and name.find(' // ') == -1:
         name = name.replace('//', ' // ')
+    name = re.sub(r' \([ab]\)$', '', name)
     # Replace ligature and smart quotes.
     name = name.replace('Æ', 'Ae').replace('“', '"').replace('”', '"').replace("'", "'").replace("'", "'")
     return unaccent(name.strip().lower())

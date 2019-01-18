@@ -173,8 +173,6 @@ def update_pd_legality() -> None:
         set_legal_cards(season=s)
 
 def insert_card(p: Any, update_index: bool = True) -> Optional[int]:
-    if p['layout'] in ['augment', 'emblem', 'host', 'planar', 'scheme', 'vanguard']:
-        return None # See #5927
     # Preprocess card partly for sanity but partly just to match what we used to get from mtgjson to make migration easier.
     sql = 'INSERT INTO card ('
     sql += ', '.join(name for name, prop in card.card_properties().items() if prop['scryfall'])
@@ -185,7 +183,7 @@ def insert_card(p: Any, update_index: bool = True) -> Optional[int]:
     db().execute(sql, values)
     card_id = db().last_insert_rowid()
     # 'meld' is in the list of normal cards here but is handled differently at a higher level. See above.
-    if p['layout'] in ['leveler', 'meld', 'normal', 'saga', 'token']:
+    if p['layout'] in ['augment', 'emblem', 'host', 'leveler', 'meld', 'normal', 'planar', 'saga', 'scheme', 'token', 'vanguard']:
         insert_face(p, card_id)
     elif p['layout'] in ['double_faced_token', 'flip', 'split', 'transform']:
         insert_card_faces(p, card_id)

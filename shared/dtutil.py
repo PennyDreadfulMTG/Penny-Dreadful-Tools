@@ -1,7 +1,7 @@
+from calendar import timegm
 import datetime
 import re
 from collections import OrderedDict
-from time import mktime
 from typing import Any, Dict, List, Match, Optional, Tuple
 
 import feedparser
@@ -41,7 +41,7 @@ def parse(s: str, date_format: str, tz: Any) -> datetime.datetime:
 def parse_rfc3339(s: str) -> datetime.datetime:
     # pylint: disable=protected-access
     struct = feedparser._parse_date(s)
-    return ts2dt(int(mktime(struct)))
+    return ts2dt(int(timegm(struct)))
 
 def parse_to_ts(s: str, date_format: str, tz: Any) -> int:
     dt = parse(s, date_format, tz)

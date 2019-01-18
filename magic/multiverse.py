@@ -122,17 +122,16 @@ def update_database(new_date: datetime.datetime) -> None:
     every_card_printing = fetcher.all_cards()
     cards: Dict[str, int] = {}
     meld_results = []
-    card_id: Optional[int]
     for p in [p for p in every_card_printing if p['name'] != 'Little Girl']: # Exclude little girl because hw mana is a problem rn.
+        card_id: Optional[int] = None
         if p['name'] in cards:
             card_id = cards[p['name']]
+        elif is_meld_result(p):
+            meld_results.append(p)
         else:
-            if not is_meld_result(p):
-                card_id = insert_card(p, update_index=False)
-                if card_id:
-                    cards[p['name']] = card_id
-            else:
-                meld_results.append(p)
+            card_id = insert_card(p, update_index=False)
+            if card_id:
+                cards[p['name']] = card_id
         try:
             set_id = sets[p['set']]
         except KeyError:

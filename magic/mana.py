@@ -92,18 +92,18 @@ def colored_symbols(symbols: List[str]) -> Dict[str, List[str]]:
 
 def cmc(mana_cost: str) -> float:
     symbols = parse(mana_cost)
-    total = 0
+    total = 0.0
     for symbol in symbols:
         if generic(symbol):
             total += int(symbol)
         elif twobrid(symbol):
-            total += 2
+            total += 2.0
         elif half(symbol):
             total += 0.5
         elif variable(symbol):
-            total += 0
+            total += 0.0
         elif phyrexian(symbol) or hybrid(symbol) or colored(symbol):
-            total += 1
+            total += 1.0
         else:
             raise InvalidManaCostException(f"Can't calculate CMC - I don't recognize '{symbol}'")
     return total

@@ -1,6 +1,6 @@
-from calendar import timegm
 import datetime
 import re
+from calendar import timegm
 from collections import OrderedDict
 from typing import Any, Dict, List, Match, Optional, Tuple
 

@@ -90,7 +90,7 @@ def download_scryfall_card_image(card: Card, filepath: str, version: str = '') -
         if card.is_double_sided():
             paths = [re.sub('.jpg$', '.a.jpg', filepath), re.sub('.jpg$', '.b.jpg', filepath)]
             internal.store(scryfall_image(card, version=version), paths[0])
-            if card.layout == 'double-faced':
+            if card.layout == 'transform':
                 internal.store(scryfall_image(card, version=version, face='back'), paths[1])
             if card.layout == 'meld':
                 internal.store(scryfall_image(card, version=version, face='meld'), paths[1])

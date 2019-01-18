@@ -710,9 +710,9 @@ Want to contribute? Send a Pull Request."""
     async def version(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """Display the current version numbers"""
         commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], universal_newlines=True).strip('\n').strip('"')
-        # BAKERT nope
-        mtgjson = database.mtgjson_version()
-        return await send(channel, 'I am currently running mtgbot version `{commit}`, and mtgjson version `{mtgjson}`'.format(commit=commit, mtgjson=mtgjson))
+        scryfall = database.last_updated()
+        return await send(channel, 'I am currently running mtgbot version `{commit}`, and scryfall last updated `{scryfall}`'.format(commit=commit, scryfall=scryfall))
+
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards: List[Card]) -> List[Card]:
@@ -799,7 +799,7 @@ async def single_card_text(client: Client, channel: TextChannel, args: str, auth
         await send(channel, message)
 
 def oracle_text(c: Card) -> str:
-    return c.text
+    return c.oracle_text
 
 def card_rulings(c: Card) -> str:
     raw_rulings = fetcher.rulings(c.name)

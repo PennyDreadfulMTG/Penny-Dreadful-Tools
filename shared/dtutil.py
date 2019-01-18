@@ -39,8 +39,9 @@ def parse(s: str, date_format: str, tz: Any) -> datetime.datetime:
     return tz.localize(dt).astimezone(pytz.timezone('UTC'))
 
 def parse_rfc3339(s: str) -> datetime.datetime:
-    struct = feedparser._parse_date(s) # BAKERT hiiiiiighly dubious this does everything we want - add some tests
-    return ts2dt(mktime(struct))
+    # pylint: disable=protected-access
+    struct = feedparser._parse_date(s)
+    return ts2dt(int(mktime(struct)))
 
 def parse_to_ts(s: str, date_format: str, tz: Any) -> int:
     dt = parse(s, date_format, tz)

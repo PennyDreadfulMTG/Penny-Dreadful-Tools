@@ -30,7 +30,7 @@ def legal_formats(d: Container, formats_to_check: Set[str] = None, errors: Dict[
         formats_to_discard.add('Commander')
     card_count: Dict[str, int] = {}
     for c in d.all_cards():
-        if not c.type.startswith('Basic ') and not 'A deck can have any number of cards named' in c.text:
+        if not c.type_line.startswith('Basic ') and not 'A deck can have any number of cards named' in c.oracle_text:
             card_count[c.name] = card_count.get(c.name, 0) + 1
     if card_count.values() and max(card_count.values()) > 4:
         affected_cards = []

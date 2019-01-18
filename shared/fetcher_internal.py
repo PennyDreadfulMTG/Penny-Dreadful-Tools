@@ -1,9 +1,6 @@
 import json
 import os
-import shutil
-import stat
 import urllib.request
-import zipfile
 from typing import Any, Dict, Optional
 
 import aiohttp
@@ -25,7 +22,7 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
     headers = {}
     if force:
         headers['Cache-Control'] = 'no-cache'
-    detail = '{url} ({cache})'.format(url=url, cache='no cache' if force else 'cache ok')
+    print('Fetching {url} ({cache})'.format(url=url, cache='no cache' if force else 'cache ok'))
     try:
         p = perf.start()
         response = SESSION.get(url, headers=headers)

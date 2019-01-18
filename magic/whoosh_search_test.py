@@ -1,8 +1,6 @@
 import unittest
 from typing import List
 
-import pytest
-
 from magic.whoosh_search import WhooshSearcher
 
 

@@ -1,9 +1,9 @@
 <h1>Rotation</h1>
 <section>
-    {{rotation_msg}}
+    <p>{{rotation_msg}}</p>
     {{#runs}}
-        <p>{{runs}} ({{runs_percent}}%) of 168 runs completed.</p>
-        <p>Stats on undecided cards are redacted to reduce rampant market manipulation</p>
+        <p>{{runs}} ({{runs_percent}}%) of 168 runs completed. {{num_cards}} cards have hits.</p>
+        <p>Stats on undecided cards are redacted to reduce rampant market manipulation.</p>
         {{> spinner}}
         <table class="highlights">{{! Allow overflow-x so highlighting shows in left margin.}}
             <thead>

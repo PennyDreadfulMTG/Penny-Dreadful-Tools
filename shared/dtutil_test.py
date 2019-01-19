@@ -35,6 +35,17 @@ def test_parse() -> None:
     dt = dtutil.parse(s, '%Y-%m-%d %H:%M:%S', timezone('America/Los_Angeles'))
     assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '2016-01-01 08:00:00 +0000'
 
+def test_parse_rfc3339() -> None:
+    s = '2002-10-02T10:00:00-05:00'
+    dt = dtutil.parse_rfc3339(s)
+    assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '2002-10-02 15:00:00 +0000'
+    s = '2002-10-02T15:00:00Z'
+    dt = dtutil.parse_rfc3339(s)
+    assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '2002-10-02 15:00:00 +0000'
+    s = '2002-10-02T15:00:00.05Z'
+    dt = dtutil.parse_rfc3339(s)
+    assert '{:%Y-%m-%d %H:%M:%S %z}'.format(dt) == '2002-10-02 15:00:00 +0000'
+
 def test_parse_to_ts() -> None:
     s = '1970-01-01 00:00:00'
     assert dtutil.parse_to_ts(s, '%Y-%m-%d %H:%M:%S', timezone('UTC')) == 0

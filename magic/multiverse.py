@@ -1,7 +1,5 @@
-import re
-from typing import Any, Dict, List, Optional, Tuple, Union
-
-import pkg_resources
+import datetime
+from typing import Any, Dict, List, Optional, Union
 
 from magic import card, database, fetcher, rotation
 from magic.card_description import CardDescription
@@ -15,25 +13,40 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException
 # Database setup for the magic package. Mostly internal. To interface with what the package knows about magic cards use the `oracle` module.
 
 FORMAT_IDS: Dict[str, int] = {}
-CARD_IDS: Dict[str, int] = {}
-
-HARDCODED_MELD_NAMES = [['Gisela, the Broken Blade', 'Bruna, the Fading Light', 'Brisela, Voice of Nightmares']]
-PARTNERS = ['Regna, the Redeemer', 'Krav, the Unredeemed', 'Zndrsplt, Eye of Wisdom', 'Okaun, Eye of Chaos', 'Virtus the Veiled', 'Gorm the Great', 'Khorvath Brightflame', 'Sylvia Brightspear', 'Pir, Imaginative Rascal', 'Toothy, Imaginary Friend', 'Blaring Recruiter', 'Blaring Captain', 'Chakram Retriever', 'Chakram Slinger', 'Soulblade Corrupter', 'Soulblade Renewer', 'Impetuous Protege', 'Proud Mentor', 'Ley Weaver', 'Lore Weaver']
 
 def init() -> None:
     try:
-        current_version = fetcher.mtgjson_version()
-        if pkg_resources.parse_version(current_version) > pkg_resources.parse_version(database.mtgjson_version()):
+        last_updated = fetcher.scryfall_last_updated()
+        if last_updated > database.last_updated():
             print('Database update required')
-            update_database(current_version)
+            update_database(last_updated)
             set_legal_cards()
             update_cache()
             reindex()
     except fetcher.FetchException:
-        print('Unable to connect to mtgjson')
+        print('Unable to connect to Scryfall.')
 
 def layouts() -> Dict[str, bool]:
-    return {'normal': True, 'meld': True, 'split': True, 'phenomenon': False, 'token': False, 'vanguard': False, 'double-faced': True, 'plane': False, 'flip': True, 'scheme': False, 'leveler': True, 'aftermath': True}
+    return {
+        'augment': False,
+        'double_faced_token': False,
+        'emblem': False,
+        'flip': True,
+        'host': False,
+        'leveler': True,
+        'meld': True,
+        'normal': True,
+        'planar': False,
+        'saga': True,
+        'scheme': False,
+        'split': True,
+        'token': False,
+        'transform': True,
+        'vanguard': False
+    }
+
+def playable_layouts() -> List[str]:
+    return [k for k, v in layouts().items() if v]
 
 def cached_base_query(where: str = '(1 = 1)') -> str:
     return 'SELECT * FROM _cache_card AS c WHERE {where}'.format(where=where)
@@ -85,9 +98,9 @@ def base_query(where: str = '(1 = 1)') -> str:
         face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),
         where=where)
 
-def update_database(new_version: str) -> None:
+def update_database(new_date: datetime.datetime) -> None:
     db().begin('update_database')
-    db().execute('DELETE FROM version')
+    db().execute('DELETE FROM scryfall_version')
     db().execute('DROP TABLE IF EXISTS _cache_card') # We can't delete our data if we have FKs referencing it.
     db().execute("""
         DELETE FROM card_alias;
@@ -102,25 +115,32 @@ def update_database(new_version: str) -> None:
         DELETE FROM card;
         DELETE FROM `set`;
     """)
-    cards = fetcher.all_cards()
-    cards = fix_bad_mtgjson_data(cards)
-    cards = add_hardcoded_cards(cards)
-    melded_faces = []
-    for _, c in cards.items():
-        if c.get('layout') == 'meld' and c.get('name') == c['names'][2]:
-            melded_faces.append(c)
+    raw_sets = fetcher.all_sets()
+    sets = {}
+    for s in raw_sets:
+        sets[s['code']] = insert_set(s)
+    every_card_printing = fetcher.all_cards()
+    cards: Dict[str, int] = {}
+    meld_results = []
+    card_id: Optional[int]
+    for p in [p for p in every_card_printing if p['name'] != 'Little Girl']: # Exclude little girl because hw mana is a problem rn.
+        if p['name'] in cards:
+            card_id = cards[p['name']]
         else:
-            insert_card(c, update_index=False)
-    for face in melded_faces:
-        insert_card(face, update_index=False)
-        first, second = face['names'][0:2]
-        face['names'][0] = second
-        face['names'][1] = first
-        insert_card(face, update_index=False)
-    sets = fetcher.all_sets()
-    for _, s in sets.items():
-        insert_set(s)
-    check_layouts() # Check that the hardcoded list of layouts we're about to use is still valid.
+            if not is_meld_result(p):
+                card_id = insert_card(p, update_index=False)
+                if card_id:
+                    cards[p['name']] = card_id
+            else:
+                meld_results.append(p)
+        try:
+            set_id = sets[p['set']]
+        except KeyError:
+            raise InvalidDataException(f"We think we should have set {p['set']} but it's not in {sets} (from {p})")
+        if card_id:
+            insert_printing(p, card_id, set_id)
+    for p in meld_results:
+        insert_meld_result_faces(p, cards)
     rs = db().select('SELECT id, name FROM rarity')
     for row in rs:
         db().execute('UPDATE printing SET rarity_id = %s WHERE rarity = %s', [row['id'], row['name']])
@@ -128,13 +148,8 @@ def update_database(new_version: str) -> None:
     get_format_id('Penny Dreadful', True)
     update_bugged_cards()
     update_pd_legality()
-    db().execute('INSERT INTO version (version) VALUES (%s)', [new_version])
+    db().execute('INSERT INTO scryfall_version (last_updated) VALUES (%s)', [dtutil.dt2ts(new_date)])
     db().commit('update_database')
-
-def check_layouts() -> None:
-    rs = db().select('SELECT DISTINCT layout FROM card')
-    if sorted([row['layout'] for row in rs]) != sorted(layouts().keys()):
-        print('WARNING. There has been a change in layouts. The update to 0 CMC may no longer be valid. You may also want to add it to playable_layouts. Comparing {old} with {new}.'.format(old=sorted(layouts().keys()), new=sorted([row['layout'] for row in rs])))
 
 def update_bugged_cards() -> None:
     bugs = fetcher.bugged_cards()
@@ -158,82 +173,102 @@ def update_pd_legality() -> None:
             break
         set_legal_cards(season=s)
 
-def insert_card(c: Any, update_index: bool = True) -> None:
-    name, card_id = try_find_card_id(c)
-    if card_id is None:
-        sql = 'INSERT INTO card ('
-        sql += ', '.join(name for name, prop in card.card_properties().items() if prop['mtgjson'])
-        sql += ') VALUES ('
-        sql += ', '.join('%s' for name, prop in card.card_properties().items() if prop['mtgjson'])
-        sql += ')'
-        values = [c.get(database2json(name)) for name, prop in card.card_properties().items() if prop['mtgjson']]
-        db().execute(sql, values)
-        card_id = db().last_insert_rowid()
-        CARD_IDS[name] = card_id
-    # mtgjson thinks the text of Jhessian Lookout is NULL not '' but that is clearly wrong.
-    if c.get('text', None) is None and c['layout'] in playable_layouts():
-        c['text'] = ''
-    c['nameAscii'] = card.unaccent(c.get('name'))
-    c['searchText'] = re.sub(r'\([^\)]+\)', '', c['text'])
-    c['cardId'] = card_id
-    c['position'] = 1 if not c.get('names') else c.get('names', [c.get('name')]).index(c.get('name')) + 1
-    sql = 'INSERT INTO face ('
-    sql += ', '.join(name for name, prop in card.face_properties().items() if not prop['primary_key'])
+def insert_card(p: Any, update_index: bool = True) -> Optional[int]:
+    if p['layout'] in ['augment', 'emblem', 'host', 'planar', 'scheme', 'vanguard']:
+        return None # See #5927
+    # Preprocess card partly for sanity but partly just to match what we used to get from mtgjson to make migration easier.
+    sql = 'INSERT INTO card ('
+    sql += ', '.join(name for name, prop in card.card_properties().items() if prop['scryfall'])
     sql += ') VALUES ('
-    sql += ', '.join('%s' for name, prop in card.face_properties().items() if not prop['primary_key'])
+    sql += ', '.join('%s' for name, prop in card.card_properties().items() if prop['scryfall'])
     sql += ')'
-    values = [c.get(database2json(name)) for name, prop in card.face_properties().items() if not prop['primary_key']]
-    try:
-        db().execute(sql, values)
-    except database.DatabaseException:
-        print(c)
-        raise
-    for color in c.get('colors', []):
-        color_id = db().value('SELECT id FROM color WHERE name = %s', [color])
+    values = [p.get(database2json(name)) for name, prop in card.card_properties().items() if prop['scryfall']]
+    db().execute(sql, values)
+    card_id = db().last_insert_rowid()
+    # 'meld' is in the list of normal cards here but is handled differently at a higher level. See above.
+    if p['layout'] in ['leveler', 'meld', 'normal', 'saga', 'token']:
+        insert_face(p, card_id)
+    elif p['layout'] in ['aftermath', 'double_faced_token', 'flip', 'split', 'transform']:
+        insert_card_faces(p, card_id)
+    else:
+        raise InvalidDataException(f"Unknown layout {p['layout']}")
+    for color in p.get('colors', []):
+        color_id = db().value('SELECT id FROM color WHERE symbol = %s', [color.capitalize()])
         # INSERT IGNORE INTO because some cards have multiple faces with the same color. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT IGNORE INTO card_color (card_id, color_id) VALUES (%s, %s)', [card_id, color_id])
-    for symbol in c.get('colorIdentity', []):
+    for symbol in p.get('color_identity', []):
         color_id = db().value('SELECT id FROM color WHERE symbol = %s', [symbol])
         # INSERT IGNORE INTO because some cards have multiple faces with the same color identity. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT IGNORE INTO card_color_identity (card_id, color_id) VALUES (%s, %s)', [card_id, color_id])
-    for supertype in c.get('supertypes', []):
+    for supertype in supertypes(p.get('type', '')):
         # INSERT IGNORE INTO because some cards have multiple faces with the same supertype. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT  IGNORE INTO card_supertype (card_id, supertype) VALUES (%s, %s)', [card_id, supertype])
-    for subtype in c.get('subtypes', []):
+    for subtype in subtypes(p.get('type_line', '')):
         # INSERT IGNORE INTO because some cards have multiple faces with the same subtype. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT IGNORE INTO card_subtype (card_id, subtype) VALUES (%s, %s)', [card_id, subtype])
-    for info in c.get('legalities', []):
-        format_id = get_format_id(info['format'], True)
+    for f, status in p.get('legalities', []).items():
+        if status == 'not_legal':
+            continue
+        # Strictly speaking we could drop all this capitalizing and use what Scryfall sends us as the canonical name as it's just a holdover from mtgjson.
+        name = f.capitalize()
+        format_id = get_format_id(name, True)
         # INSERT IGNORE INTO because some cards have multiple faces with the same legality. See DFCs and What // When // Where // Who // Why.
-        db().execute('INSERT IGNORE INTO card_legality (card_id, format_id, legality) VALUES (%s, %s, %s)', [card_id, format_id, info['legality']])
+        db().execute('INSERT IGNORE INTO card_legality (card_id, format_id, legality) VALUES (%s, %s, %s)', [card_id, format_id, status.capitalize()])
     if update_index:
         writer = WhooshWriter()
-        c['id'] = c['cardId']
-        writer.update_card(c)
+        writer.update_card(p)
+    return card_id
 
-def insert_set(s: Any) -> None:
-    sql = 'INSERT INTO `set` ('
-    sql += ', '.join(name for name, prop in card.set_properties().items() if prop['mtgjson'])
-    sql += ') VALUES ('
-    sql += ', '.join('%s' for name, prop in card.set_properties().items() if prop['mtgjson'])
+def insert_face(p: CardDescription, card_id: int, position: int = 1) -> None:
+    if not card_id:
+        raise InvalidDataException(f'Cannot insert a face without a card_id: {p}')
+    p['oracle_text'] = p.get('oracle_text', '')
+    sql = 'INSERT INTO face (card_id, position, '
+    sql += ', '.join(name for name, prop in card.face_properties().items() if prop['scryfall'])
+    sql += ') VALUES (%s, %s, '
+    sql += ', '.join('%s' for name, prop in card.face_properties().items() if prop['scryfall'])
     sql += ')'
-    values = [date2int(s.get(database2json(name)), name) for name, prop in card.set_properties().items() if prop['mtgjson']]
+    values = [card_id, position] + [p.get(database2json(name)) for name, prop in card.face_properties().items() if prop['scryfall']] # type: ignore
     db().execute(sql, values)
-    set_id = db().last_insert_rowid()
-    set_cards = s.get('cards', [])
-    fix_bad_mtgjson_set_cards_data(set_cards)
-    fix_mtgjson_melded_cards_array(set_cards)
-    for c in set_cards:
-        _, card_id = try_find_card_id(c)
-        if card_id is None:
-            raise InvalidDataException("Can't find id for: '{n}': {ns}".format(n=c['name'], ns='; '.join(c.get('names', []))))
-        sql = 'INSERT INTO printing (card_id, set_id, '
-        sql += ', '.join(name for name, prop in card.printing_properties().items() if prop['mtgjson'])
-        sql += ') VALUES (%s, %s, '
-        sql += ', '.join('%s' for name, prop in card.printing_properties().items() if prop['mtgjson'])
-        sql += ')'
-        cards_values = [card_id, set_id] + [c.get(database2json(name)) for name, prop in card.printing_properties().items() if prop['mtgjson']]
-        db().execute(sql, cards_values)
+
+def insert_card_faces(p: CardDescription, card_id: int) -> None:
+    position = 1
+    for face in p['card_faces']: # type: ignore
+        insert_face(face, card_id, position)
+        position += 1
+
+def insert_meld_result_faces(p: CardDescription, cards: Dict[str, int]) -> None:
+    front_face_names = [part['name'] for part in p['all_parts'] if part['component'] == 'meld_part'] # type: ignore
+    card_ids = [cards[name] for name in front_face_names]
+    for card_id in card_ids: # type: ignore
+        insert_face(p, card_id, 2)
+
+def is_meld_result(p: CardDescription) -> bool:
+    if not p['layout'] == 'meld' or not p.get('all_parts'):
+        return False
+    meld_result_name = next(part['name'] for part in p['all_parts'] if part['component'] == 'meld_result') # type: ignore
+    return p['name'] == meld_result_name
+
+def insert_set(s: Any) -> int:
+    sql = 'INSERT INTO `set` ('
+    sql += ', '.join(name for name, prop in card.set_properties().items() if prop['scryfall'])
+    sql += ') VALUES ('
+    sql += ', '.join('%s' for name, prop in card.set_properties().items() if prop['scryfall'])
+    sql += ')'
+    values = [date2int(s.get(database2json(name)), name) for name, prop in card.set_properties().items() if prop['scryfall']]
+    db().execute(sql, values)
+    return db().last_insert_rowid()
+
+def insert_printing(p: CardDescription, card_id: int, set_id: int) -> None:
+    if not card_id or not set_id:
+        raise InvalidDataException(f'Cannot insert printing without card_id and set_id: {card_id}, {set_id}, {p}')
+    sql = 'INSERT INTO printing (card_id, set_id, '
+    sql += ', '.join(name for name, prop in card.printing_properties().items() if prop['scryfall'])
+    sql += ') VALUES (%s, %s, '
+    sql += ', '.join('%s' for name, prop in card.printing_properties().items() if prop['scryfall'])
+    sql += ')'
+    cards_values = [card_id, set_id] + [p.get(database2json(name)) for name, prop in card.printing_properties().items() if prop['scryfall']] # type: ignore
+    db().execute(sql, cards_values)
 
 def set_legal_cards(season: str = None) -> List[str]:
     new_list = ['']
@@ -291,13 +326,10 @@ def reindex() -> None:
 def database2json(propname: str) -> str:
     if propname == 'system_id':
         propname = 'id'
-    return underscore2camel(propname)
-
-def underscore2camel(s: str) -> str:
-    return re.sub(r'(?!^)_([a-zA-Z])', lambda m: m.group(1).upper(), s)
+    return propname
 
 def date2int(s: str, name: str) -> Union[str, float]:
-    if name == 'release_date':
+    if name == 'released_at':
         return dtutil.parse_to_ts(s, '%Y-%m-%d', dtutil.WOTC_TZ)
     return s
 
@@ -329,67 +361,20 @@ def card_name(c: CardDescription) -> str:
         return c.get('name', '')
     return ' // '.join(c.get('names', [c.get('name', '')]))
 
-def fix_bad_mtgjson_data(cards: Dict[str, CardDescription]) -> Dict[str, CardDescription]:
-    fix_mtgjson_melded_cards_bug(cards)
-    cards['Sultai Ascendancy']['printings'] += cards['Sultai Ascendacy']['printings']
-    cards.pop('Sultai Ascendacy')
-    # https://github.com/mtgjson/mtgjson/issues/588
-    cards['Zndrsplt, Eye of Wisdom']['layout'] = 'normal'
-    cards['Okaun, Eye of Chaos']['layout'] = 'normal'
-    # Disassociate partners from one another, they are separate cards
-    for name in PARTNERS:
-        cards[name]['names'] = [name]
-    return cards
-
-def fix_bad_mtgjson_set_cards_data(set_cards: List[CardDescription]) -> List[CardDescription]:
-    for c in set_cards:
-        if c['name'] == 'Sultai Ascendacy':
-            c['name'] = 'Sultai Ascendancy'
-        if c['name'] in PARTNERS:
-            c['names'] = [c['name']]
-    return set_cards
-
-def add_hardcoded_cards(cards: Dict[str, CardDescription]) -> Dict[str, CardDescription]:
-    cards['Gleemox'] = {
-        'text': '{T}: Add one mana of any color to your mana pool.\nThis card is banned.',
-        'manaCost': '{0}',
-        'type': 'Artifact',
-        'layout': 'normal',
-        'types': ['Artifact'],
-        'cmc': 0,
-        'imageName': 'gleemox',
-        'legalities': [],
-        'name': 'Gleemox',
-        'names': ['Gleemox'],
-        'printings': ['PRM'],
-        'rarity': 'Rare'
-    }
-    return cards
-
 def get_all_cards() -> List[Card]:
     rs = db().select(cached_base_query())
     return [Card(r) for r in rs]
 
-def playable_layouts() -> List[str]:
-    return ['normal', 'token', 'double-faced', 'split', 'aftermath', 'flip', 'leveler', 'meld']
+def supertypes(type_line: str) -> List[str]:
+    types = type_line.split('-')[0]
+    possible_supertypes = ['Basic', 'Legendary', 'Ongoing', 'Snow', 'World']
+    sts = []
+    for possible in possible_supertypes:
+        if possible in types:
+            sts.append(possible)
+    return sts
 
-def try_find_card_id(c: CardDescription) -> Tuple[str, Optional[int]]:
-    card_id = None
-    name = card_name(c)
-    try:
-        card_id = CARD_IDS[name]
-        return (name, card_id)
-    except KeyError:
-        return (name, None)
-
-def fix_mtgjson_melded_cards_bug(cards: Dict[str, CardDescription]) -> None:
-    for names in HARDCODED_MELD_NAMES:
-        for name in names:
-            if cards.get(name, None):
-                cards[name]['names'] = names
-
-def fix_mtgjson_melded_cards_array(cards: List[CardDescription]) -> None:
-    for c in cards:
-        for group in HARDCODED_MELD_NAMES:
-            if c.get('name') in group:
-                c['names'] = group
+def subtypes(type_line: str) -> List[str]:
+    if ' - ' not in type_line:
+        return []
+    return type_line.split(' - ')[1].split(' ')

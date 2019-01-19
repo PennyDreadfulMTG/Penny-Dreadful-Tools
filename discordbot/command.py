@@ -710,8 +710,9 @@ Want to contribute? Send a Pull Request."""
     async def version(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """Display the current version numbers"""
         commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], universal_newlines=True).strip('\n').strip('"')
-        mtgjson = database.mtgjson_version()
-        return await send(channel, 'I am currently running mtgbot version `{commit}`, and mtgjson version `{mtgjson}`'.format(commit=commit, mtgjson=mtgjson))
+        scryfall = database.last_updated()
+        return await send(channel, 'I am currently running mtgbot version `{commit}`, and scryfall last updated `{scryfall}`'.format(commit=commit, scryfall=scryfall))
+
 
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards: List[Card]) -> List[Card]:
@@ -798,7 +799,7 @@ async def single_card_text(client: Client, channel: TextChannel, args: str, auth
         await send(channel, message)
 
 def oracle_text(c: Card) -> str:
-    return c.text
+    return c.oracle_text
 
 def card_rulings(c: Card) -> str:
     raw_rulings = fetcher.rulings(c.name)
@@ -931,7 +932,7 @@ def single_card_text_internal(client: Client, requested_card: Card, disable_emoj
     if requested_card.get('mode', None) == '$':
         text = '{name} {legal} — {price}'.format(name=requested_card.name, price=fetcher.card_price_string(requested_card), legal=legal)
     else:
-        text = '{name} {mana} — {type}{legal}'.format(name=requested_card.name, mana=mana, type=requested_card.type, legal=legal)
+        text = '{name} {mana} — {type}{legal}'.format(name=requested_card.name, mana=mana, type=requested_card.type_line, legal=legal)
     if requested_card.bugs:
         for bug in requested_card.bugs:
             text += '\n:beetle:{rank} bug: {bug}'.format(bug=bug['description'], rank=bug['classification'])

@@ -179,7 +179,7 @@ For symbols not provided by our main-text font we provide a strict subset of Sym
 
 Symbols provided by our main font are:
 
-    — U+2012 EM DASH (Used in status bar to break up various pieces of info, also used from mtgjson info and in discord bot output)
+    — U+2012 EM DASH (Used in status bar to break up various pieces of info, also used from Scryfall info and in discord bot output)
     – U+2013 EN DASH (for records like “4–1”) 
     ★ U+2605 BLACK STAR (deck quality)
     + U+002B PLUS SIGN (expand row in mobile view table)

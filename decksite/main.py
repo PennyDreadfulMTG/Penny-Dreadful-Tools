@@ -235,7 +235,7 @@ def community_guidelines() -> str:
 @APP.route('/rotation/')
 @APP.route('/rotation/<interestingness>/')
 @cached()
-def rotation(interestingness: None) -> str:
+def rotation(interestingness: Optional[str] = None) -> str:
     view = Rotation(interestingness)
     return view.page()
 

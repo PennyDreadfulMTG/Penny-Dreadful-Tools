@@ -41,6 +41,7 @@ class Person(View):
                 'options': json.dumps({'responsive': True})
             }
         ]
+        self.add_note_url = url_for('post_player_note')
 
     def __getattr__(self, attr):
         return getattr(self.person, attr)

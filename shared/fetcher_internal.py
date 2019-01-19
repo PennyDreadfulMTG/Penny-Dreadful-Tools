@@ -1,9 +1,6 @@
 import json
 import os
-import shutil
-import stat
 import urllib.request
-import zipfile
 from typing import Any, Dict, Optional
 
 import aiohttp
@@ -21,21 +18,6 @@ SESSION.mount(
     'http://whatsinstandard.com',
     CacheControlAdapter(heuristic=ExpiresAfter(days=14)))
 
-def unzip(url: str, path: str) -> str:
-    location = '{scratch_dir}/zip'.format(scratch_dir=configuration.get('scratch_dir'))
-    def remove_readonly(func, path, _):
-        os.chmod(path, stat.S_IWRITE)
-        func(path)
-    shutil.rmtree(location, True, remove_readonly)
-    os.mkdir(location)
-    store(url, '{location}/zip.zip'.format(location=location))
-    f = zipfile.ZipFile('{location}/zip.zip'.format(location=location), 'r')
-    f.extractall('{location}/unzip'.format(location=location))
-    f.close()
-    s = open('{location}/unzip/{path}'.format(location=location, path=path), encoding='utf-8').read()
-    shutil.rmtree(location)
-    return s
-
 def fetch(url: str, character_encoding: Optional[str] = None, force: bool = False) -> str:
     headers = {}
     if force:
@@ -49,7 +31,12 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
             response.encoding = character_encoding
         if response.status_code in [500, 502, 503]:
             raise FetchException(f'Server returned a {response.status_code}')
-        return response.text
+        p = perf.start()
+        t = response.text
+        took = round(perf.took(p), 2)
+        if took > 1:
+            print('Getting text from response was very slow. Setting an explicit character_encoding may help.')
+        return t
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
         raise FetchException(e)
 

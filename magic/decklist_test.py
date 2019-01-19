@@ -379,3 +379,41 @@ def test_parse11() -> None:
     assert sum(d['maindeck'].values()) == 100
     assert sum(d['sideboard'].values()) == 0
     assert d['maindeck']['Timber Gorge'] == 1
+
+# Test a deck that looks a bit like a Commander deck but isn't one.
+def test_parse12() -> None:
+    s = """
+        1 Felidar Sovereign
+        3 Elixir of Immortality
+        4 Ivory Tower
+        4 Rest for the Weary
+        4 Revitalize
+        2 Banishing Light
+        4 Healing Hands
+        4 Renewed Faith
+        4 Reviving Dose
+        4 Ritual of Rejuvenation
+        3 Survival Cache
+        4 Faith's Fetters
+        2 Boon Reflection
+        3 End Hostilities
+        4 Planar Outburst
+        1 Final Judgment
+        2 Sanguine Sacrament
+        4 Encroaching Wastes
+        2 Kjeldoran Outpost
+        19 Plains
+        4 Thawing Glaciers
+        3 Urza's Factory
+        2 Cataclysmic Gearhulk
+        1 Felidar Sovereign
+        2 Purify the Grave
+        4 Scrabbling Claws
+        1 Banishing Light
+        4 Invoke the Divine
+        1 End Hostilities
+        """
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    assert sum(d['maindeck'].values()) == 85
+    assert sum(d['sideboard'].values()) == 15

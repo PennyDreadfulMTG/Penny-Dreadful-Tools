@@ -15,22 +15,24 @@ from magic.models import Card
 from shared import configuration, dtutil, redis
 from shared.container import Container
 from shared.fetcher_internal import FetchException
-from shared.pd_exception import NotConfiguredException, TooFewItemsException
+from shared.pd_exception import (InvalidDataException, NotConfiguredException,
+                                 TooFewItemsException)
 
 
-def all_cards() -> Dict[str, CardDescription]:
+def all_cards() -> List[CardDescription]:
     try:
-        return json.load(open('AllCards-x.json'))
+        f = open('all-default-cards.json')
+        return json.load(f)
     except FileNotFoundError:
-        s = internal.unzip('https://mtgjson.com/json/AllCards-x.json.zip', 'AllCards-x.json')
-        return json.loads(s)
+        return internal.fetch_json('https://archive.scryfall.com/json/scryfall-default-cards.json', character_encoding='utf-8')
 
-def all_sets() -> Dict[str, Dict[str, Any]]:
+def all_sets() -> List[Dict[str, Any]]:
     try:
-        return json.load(open('AllSets.json'))
+        d = json.load(open('sets.json'))
     except FileNotFoundError:
-        s = internal.unzip('https://mtgjson.com/json/AllSets.json.zip', 'AllSets.json')
-        return json.loads(s)
+        d = internal.fetch_json('https://api.scryfall.com/sets')
+    assert not d['has_more']
+    return d['data']
 
 def bugged_cards() -> Optional[List[Dict[str, Any]]]:
     bugs = internal.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
@@ -101,8 +103,12 @@ def legal_cards(force: bool = False, season: str = None) -> List[str]:
 
     return legal_txt.strip().split('\n')
 
-def mtgjson_version() -> str:
-    return cast(str, internal.fetch_json('https://mtgjson.com/json/version.json'))
+def scryfall_last_updated() -> datetime.datetime:
+    d = internal.fetch_json('https://api.scryfall.com/bulk-data')
+    for o in d['data']:
+        if o['type'] == 'default_cards':
+            return dtutil.parse_rfc3339(o['updated_at'])
+    raise InvalidDataException(f'Could not get the last updated date from Scryfall: {d}')
 
 async def mtgo_status() -> str:
     try:

@@ -34,6 +34,14 @@ def admin_required(f: Callable) -> Callable:
         return f(*args, **kwargs)
     return decorated_function
 
+def admin_required_no_redirect(f: Callable) -> Callable:
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('admin'):
+            return '', 403
+        return f(*args, **kwargs)
+    return decorated_function
+
 def discord_id() -> Optional[int]:
     return session.get('id')
 

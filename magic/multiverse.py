@@ -354,13 +354,6 @@ def get_format_id_from_season_id(season_id: int) -> int:
         format_name = 'Penny Dreadful {f}'.format(f=season_code)
     return get_format_id(format_name)
 
-def card_name(c: CardDescription) -> str:
-    if c.get('layout') == 'meld':
-        if c.get('name', '') == c.get('names', [])[2]:
-            return c.get('names', [])[0]
-        return c.get('name', '')
-    return ' // '.join(c.get('names', [c.get('name', '')]))
-
 def get_all_cards() -> List[Card]:
     rs = db().select(cached_base_query())
     return [Card(r) for r in rs]

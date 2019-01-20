@@ -199,7 +199,7 @@ def insert_card(p: Any, update_index: bool = True) -> Optional[int]:
         db().execute('INSERT IGNORE INTO card_color_identity (card_id, color_id) VALUES (%s, %s)', [card_id, color_id])
     for supertype in supertypes(p.get('type', '')):
         # INSERT IGNORE INTO because some cards have multiple faces with the same supertype. See DFCs and What // When // Where // Who // Why.
-        db().execute('INSERT  IGNORE INTO card_supertype (card_id, supertype) VALUES (%s, %s)', [card_id, supertype])
+        db().execute('INSERT IGNORE INTO card_supertype (card_id, supertype) VALUES (%s, %s)', [card_id, supertype])
     for subtype in subtypes(p.get('type_line', '')):
         # INSERT IGNORE INTO because some cards have multiple faces with the same subtype. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT IGNORE INTO card_subtype (card_id, subtype) VALUES (%s, %s)', [card_id, subtype])

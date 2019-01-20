@@ -88,3 +88,18 @@ def test_split_cards() -> None:
     assert len(names) == 1
     results = command.results_from_queries(names)
     assert len(results) == 1
+
+# This is really a test of the multiverse import process, but make sure things get the right CMC.
+def test_cmc() -> None:
+    card = oracle.load_card('Odds // Ends')
+    assert card.cmc == 7
+    card = oracle.load_card('Ancestral Vision')
+    assert card.cmc == 0
+    card = oracle.load_card('Delver of Secrets')
+    assert card.cmc == 1
+    card = oracle.load_card('Gisela, the Broken Blade')
+    assert card.cmc == 4
+    card = oracle.load_card('Budoka Gardener')
+    assert card.cmc == 2
+    card = oracle.load_card('Driven // Despair')
+    assert card.cmc == 4

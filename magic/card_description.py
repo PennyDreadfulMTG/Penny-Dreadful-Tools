@@ -12,7 +12,6 @@ CardDescription = TypedDict('CardDescription', {
     'legalities': List[Dict[str, Any]],
     'manaCost': str,
     'name': str,
-    'names': List[str],
     'oracle_text': str,
     'rarity': str,
     'set': str,

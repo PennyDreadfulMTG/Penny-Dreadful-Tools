@@ -165,6 +165,8 @@ class Commands:
     async def echo(self, client: Client, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
         """Repeat after me…"""
         s = emoji.replace_emoji(args, client)
+        if not s:
+            s = "I'm afraid I can't do that, Dave"
         await send(channel, s)
 
     @cmd_header('Commands')

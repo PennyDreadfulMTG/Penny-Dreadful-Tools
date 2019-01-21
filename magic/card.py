@@ -1,4 +1,5 @@
 import copy
+import re
 import unicodedata
 from typing import Dict, List, Optional, Tuple
 
@@ -12,7 +13,7 @@ ColumnDescription = TypedDict('ColumnDescription', {
     'nullable': bool,
     'primary_key': bool,
     'query': str,
-    'mtgjson': bool,
+    'scryfall': bool,
     'foreign_key': Optional[Tuple[str, str]],
     'default': Optional[str],
     'unique': bool,
@@ -35,7 +36,7 @@ BASE: ColumnDescription = {
     'nullable': True,
     'primary_key': False,
     'query': '`{table}`.`{column}` AS `{column}`',
-    'mtgjson': True,
+    'scryfall': True,
     'foreign_key': None,
     'default': None,
     'unique': False,
@@ -51,7 +52,7 @@ def base_query_properties() -> TableDescription:
 
 def base_query_specific_properties() -> TableDescription:
     props = {}
-    for k in ['names', 'legalities', 'pd_legal', 'bugs']:
+    for k in ['legalities', 'names', 'pd_legal', 'bugs']:
         props[k] = copy.deepcopy(BASE)
     props['names']['type'] = TEXT
     props['names']['query'] = "GROUP_CONCAT(face_name SEPARATOR '|') AS names"
@@ -70,7 +71,7 @@ def card_properties() -> TableDescription:
     props['id']['type'] = INTEGER
     props['id']['nullable'] = False
     props['id']['primary_key'] = True
-    props['id']['mtgjson'] = False
+    props['id']['scryfall'] = False
     props['layout']['nullable'] = False
     return props
 
@@ -78,23 +79,23 @@ def face_properties() -> TableDescription:
     props = {}
     base = copy.deepcopy(BASE)
     base['query'] = "GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN `{table}`.`{column}` ELSE '' END SEPARATOR '') AS `{column}`"
-    for k in ['id', 'name', 'mana_cost', 'cmc', 'power', 'toughness', 'power', 'toughness', 'loyalty', 'type', 'text', 'search_text', 'image_name', 'hand', 'life', 'starter', 'position', 'card_id']:
+    for k in ['id', 'name', 'mana_cost', 'cmc', 'power', 'toughness', 'power', 'toughness', 'loyalty', 'type_line', 'oracle_text', 'image_name', 'hand', 'life', 'starter', 'position', 'card_id']:
         props[k] = copy.deepcopy(base)
-    for k in ['id', 'position', 'card_id', 'search_text']:
-        props[k]['mtgjson'] = False
-    for k in ['id', 'name', 'position', 'type', 'text', 'search_text']:
+    for k in ['id', 'position', 'card_id']:
+        props[k]['scryfall'] = False
+    for k in ['id', 'name', 'position', 'type_line', 'oracle_text', 'card_id']:
         props[k]['nullable'] = False
-    for k in ['id', 'card_id', 'hand', 'life', 'starter', 'position']:
+    for k in ['id', 'card_id', 'hand', 'life', 'starter']:
         props[k]['type'] = INTEGER
-        props[k]['query'] = "SUM(CASE WHEN `{table}`.position = 1  OR (`{table}`.position = 2 AND `{table}`.layout = 'meld') THEN `{table}`.`{column}` ELSE NULL END) AS `{column}`"
+        props[k]['query'] = 'SUM(CASE WHEN `{table}`.position = 1 THEN `{table}`.`{column}` ELSE 0 END) AS `{column}`'
     props['id']['primary_key'] = True
     props['id']['query'] = '`{table}`.`{column}` AS face_id'
     props['cmc']['type'] = REAL
     props['name']['query'] = """{name_query} AS name""".format(name_query=name_query())
     props['cmc']['query'] = """{cmc_query} AS cmc""".format(cmc_query=cmc_query())
     props['mana_cost']['query'] = """{mana_cost_query} AS mana_cost""".format(mana_cost_query=mana_cost_query())
-    props['type']['query'] = """{type_query} AS type""".format(type_query=type_query())
-    for k in ['text', 'search_text']:
+    props['type_line']['query'] = """{type_query} AS type_line""".format(type_query=type_query())
+    for k in ['oracle_text']:
         props[k]['query'] = "GROUP_CONCAT(`{table}`.`{column}` SEPARATOR '\n-----\n') AS `{column}`"
         props[k]['type'] = TEXT
     props['card_id']['foreign_key'] = ('card', 'id')
@@ -102,20 +103,19 @@ def face_properties() -> TableDescription:
 
 def set_properties() -> TableDescription:
     props = {}
-    for k in ['id', 'name', 'code', 'gatherer_code', 'old_code', 'magiccardsinfo_code', 'release_date', 'border', 'type', 'online_only']:
+    for k in ['id', 'name', 'code', 'uri', 'scryfall_uri', 'search_uri', 'released_at', 'set_type', 'card_count', 'parent_set_code', 'digital', 'foil_only', 'icon_svg_uri']:
         props[k] = copy.deepcopy(BASE)
-    for k in ['id', 'name', 'code', 'release_date', 'border', 'type']:
+    for k in ['id', 'name', 'code', 'released_at']:
         props[k]['nullable'] = False
     props['id']['primary_key'] = True
     props['id']['type'] = INTEGER
-    props['id']['mtgjson'] = False
-    props['release_date']['type'] = DATE
-    props['online_only']['type'] = BOOLEAN
+    props['id']['scryfall'] = False
+    props['released_at']['type'] = DATE
+    props['digital']['type'] = BOOLEAN
     props['name']['unique'] = True
     props['code']['unique'] = True
-    props['gatherer_code']['unique'] = True
-    props['old_code']['unique'] = True
-    props['magiccardsinfo_code']['unique'] = True
+    props['uri']['unique'] = True
+    props['scryfall_uri']['unique'] = True
     return props
 
 def printing_properties() -> TableDescription:
@@ -126,7 +126,7 @@ def printing_properties() -> TableDescription:
         props[k]['nullable'] = False
     for k in ['id', 'card_id', 'set_id', 'rarity_id']:
         props[k]['type'] = INTEGER
-        props[k]['mtgjson'] = False
+        props[k]['scryfall'] = False
     props['id']['primary_key'] = True
     props['id']['nullable'] = False
     props['timeshifted']['type'] = BOOLEAN
@@ -225,10 +225,8 @@ def card_bug_properties() -> TableDescription:
 def name_query(column: str = 'face_name') -> str:
     return """
         CASE
-        WHEN layout = 'double-faced' OR layout = 'flip' THEN
+        WHEN layout = 'transform' OR layout = 'flip' OR layout = 'meld' THEN
             GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END SEPARATOR '')
-        WHEN layout = 'meld' THEN
-            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 OR `{table}`.position = 2 THEN {column} ELSE '' END SEPARATOR '')
         ELSE
             GROUP_CONCAT({column} SEPARATOR ' // ' )
         END
@@ -237,10 +235,8 @@ def name_query(column: str = 'face_name') -> str:
 def cmc_query() -> str:
     return """
         CASE
-        WHEN layout = 'split' OR layout = 'aftermath' THEN
-            SUM(`{table}`.cmc)
-        WHEN layout = 'meld' THEN
-            SUM(CASE WHEN `{table}`.position = 1 OR `{table}`.position = 2 THEN {column} ELSE 0 END)
+        WHEN layout = 'split' THEN
+            SUM(CASE WHEN `{table}`.cmc IS NOT NULL THEN `{table}`.cmc ELSE 0 END)
         ELSE
             SUM(CASE WHEN `{table}`.position = 1 THEN `{table}`.cmc ELSE 0 END)
         END
@@ -258,12 +254,7 @@ def mana_cost_query() -> str:
 
 def type_query() -> str:
     return """
-        CASE
-        WHEN layout = 'meld' THEN
-            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 OR `{table}`.position = 2 THEN {column} ELSE '' END SEPARATOR '')
-        ELSE
-            GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END SEPARATOR '')
-        END
+        GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END SEPARATOR '')
     """
 
 def unaccent(s: str) -> str:
@@ -274,6 +265,7 @@ def canonicalize(name: str) -> str:
         name = name.replace('/', '//')
     if name.find('//') >= 0 and name.find(' // ') == -1:
         name = name.replace('//', ' // ')
+    name = re.sub(r' \([ab]\)$', '', name)
     # Replace ligature and smart quotes.
     name = name.replace('Æ', 'Ae').replace('“', '"').replace('”', '"').replace("'", "'").replace("'", "'")
     return unaccent(name.strip().lower())

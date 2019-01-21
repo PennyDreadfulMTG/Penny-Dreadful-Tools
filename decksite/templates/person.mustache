@@ -4,6 +4,14 @@
     <div class="person-notes" data-person_id="{{person.id}}">
         {{> spinner}}
     </div>
+    <form method="post" action="{{add_note_url}}">
+        <input type="hidden" name="person_id" value="{{person.id}}">
+        <div>
+            <label for="note">Note</label>
+            <textarea name="note"></textarea>
+        </div>
+        <button type="submit">Add Note</button>
+    </form>
 </section>
 <section>
     <h2>Decks</h2>

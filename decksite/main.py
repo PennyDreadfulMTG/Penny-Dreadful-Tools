@@ -233,9 +233,10 @@ def community_guidelines() -> str:
     return view.page()
 
 @APP.route('/rotation/')
+@APP.route('/rotation/<interestingness>/')
 @cached()
-def rotation() -> str:
-    view = Rotation()
+def rotation(interestingness: Optional[str] = None) -> str:
+    view = Rotation(interestingness)
     return view.page()
 
 @APP.route('/export/<deck_id>/')

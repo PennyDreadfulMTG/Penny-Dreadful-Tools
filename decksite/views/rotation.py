@@ -2,7 +2,7 @@ import datetime
 import fileinput
 import os
 from collections import Counter
-from typing import List, Union
+from typing import List, Optional, Union
 
 from decksite.data import card
 from decksite.view import View
@@ -14,7 +14,7 @@ from shared.pd_exception import DoesNotExistException
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Rotation(View):
-    def __init__(self) -> None:
+    def __init__(self, interestingness: Optional[str] = None) -> None:
         super().__init__()
         self.playability = card.playability()
         until_full_rotation = rotation.next_rotation() - dtutil.now()
@@ -34,6 +34,9 @@ class Rotation(View):
         if in_rotation:
             self.read_rotation_files()
         self.show_interesting = True
+        if interestingness:
+            self.cards = [c for c in self.cards if c.get('interestingness') == interestingness]
+        self.num_cards = len(self.cards)
 
     def read_rotation_files(self) -> None:
         lines = []

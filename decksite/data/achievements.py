@@ -618,7 +618,7 @@ class Completionist(BooleanAchievement):
     title = 'Completionist'
     season_text = 'Never retired a league run this season'
     description_safe = 'Play the whole season without retiring an unfinished league run.'
-    sql = 'CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END'
+    sql = "CASE WHEN COUNT(CASE WHEN ct.name = 'League' THEN 1 ELSE NULL END) > 0 AND COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END"
 
     @staticmethod
     def alltime_text(n: int) -> str:

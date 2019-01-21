@@ -5,7 +5,8 @@ import MySQLdb
 from MySQLdb import OperationalError
 
 from shared import configuration, perf
-from shared.pd_exception import (DatabaseException, DatabaseMissingException, DuplicateRowException,
+from shared.pd_exception import (DatabaseException, DatabaseMissingException,
+                                 DuplicateRowException,
                                  InvalidArgumentException,
                                  LockNotAcquiredException)
 

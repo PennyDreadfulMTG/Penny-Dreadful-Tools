@@ -8,7 +8,9 @@ from magic.models import Card
 from magic.whoosh_write import WhooshWriter
 from shared import dtutil
 from shared.database import sqlescape
-from shared.pd_exception import InvalidArgumentException, InvalidDataException, DuplicateRowException, DatabaseException
+from shared.pd_exception import (DatabaseException, DuplicateRowException,
+                                 InvalidArgumentException,
+                                 InvalidDataException)
 
 # Database setup for the magic package. Mostly internal. To interface with what the package knows about magic cards use the `oracle` module.
 

@@ -34,6 +34,8 @@ def parse_mtgotraders_prices(s: str) -> PriceListType:
         assert in_stock_str in ('Yes', 'No')
         assert p in ('0.01', '0.00')
         in_stock = in_stock_str == 'Yes'
+        if name.endswith('(a)') or name.endswith('(b)'): # Guildgates
+            name = name[:-4]
         if p == '0.01' and in_stock and not is_exceptional_name(name):
             details.append((name, p, mtgo_set))
     return [(name_lookup(name), p, mtgo_set) for name, p, mtgo_set in details if name_lookup(name) is not None]

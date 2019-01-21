@@ -8,7 +8,7 @@ from magic.models import Card
 from magic.whoosh_write import WhooshWriter
 from shared import dtutil
 from shared.database import sqlescape
-from shared.pd_exception import InvalidArgumentException, InvalidDataException
+from shared.pd_exception import InvalidArgumentException, InvalidDataException, DuplicateRowException, DatabaseException
 
 # Database setup for the magic package. Mostly internal. To interface with what the package knows about magic cards use the `oracle` module.
 
@@ -101,26 +101,17 @@ def base_query(where: str = '(1 = 1)') -> str:
 def update_database(new_date: datetime.datetime) -> None:
     db().begin('update_database')
     db().execute('DELETE FROM scryfall_version')
-    db().execute('DROP TABLE IF EXISTS _cache_card') # We can't delete our data if we have FKs referencing it.
-    db().execute("""
-        DELETE FROM card_alias;
-        DELETE FROM card_color;
-        DELETE FROM card_color_identity;
-        DELETE FROM card_legality;
-        DELETE FROM card_subtype;
-        DELETE FROM card_supertype;
-        DELETE FROM card_bug;
-        DELETE FROM face;
-        DELETE FROM printing;
-        DELETE FROM card;
-        DELETE FROM `set`;
-    """)
     raw_sets = fetcher.all_sets()
     sets = {}
     for s in raw_sets:
         sets[s['code']] = insert_set(s)
     every_card_printing = fetcher.all_cards()
-    cards: Dict[str, int] = {}
+    get_format_id('Penny Dreadful', True) # needed for base_query
+    try:
+        _cards = [(c['name'], c['id']) for c in db().select(cached_base_query())]
+    except DatabaseException:
+        _cards = []
+    cards: Dict[str, int] = dict(_cards)
     meld_results = []
     card_id: Optional[int]
     for p in [p for p in every_card_printing if p['name'] != 'Little Girl']: # Exclude little girl because hw mana is a problem rn.
@@ -256,8 +247,16 @@ def insert_set(s: Any) -> int:
     sql += ', '.join('%s' for name, prop in card.set_properties().items() if prop['scryfall'])
     sql += ')'
     values = [date2int(s.get(database2json(name)), name) for name, prop in card.set_properties().items() if prop['scryfall']]
-    db().execute(sql, values)
-    return db().last_insert_rowid()
+    try:
+        db().execute(sql, values)
+        return db().last_insert_rowid()
+    except DuplicateRowException:
+        sql = 'UPDATE `set` SET '
+        sql += ', '.join(['{name}=%s'.format(name=name) for name, prop in card.set_properties().items() if prop['scryfall']])
+        sql += ' WHERE `system_id` = "{id}" LIMIT 1'.format(id=s['id'])
+        db().execute(sql, values)
+        return db().select('SELECT id FROM `set` WHERE system_id = %s', [s['id']])[0].get('id') # type: ignore
+
 
 def insert_printing(p: CardDescription, card_id: int, set_id: int) -> None:
     if not card_id or not set_id:
@@ -268,7 +267,15 @@ def insert_printing(p: CardDescription, card_id: int, set_id: int) -> None:
     sql += ', '.join('%s' for name, prop in card.printing_properties().items() if prop['scryfall'])
     sql += ')'
     cards_values = [card_id, set_id] + [p.get(database2json(name)) for name, prop in card.printing_properties().items() if prop['scryfall']] # type: ignore
-    db().execute(sql, cards_values)
+    try:
+        db().execute(sql, cards_values)
+    except DuplicateRowException:
+        sql = 'UPDATE `printing` SET '
+        sql += ', '.join(['{name}=%s'.format(name=name) for name, prop in card.printing_properties().items() if prop['scryfall']])
+        sql += ' WHERE `system_id` = "{id}" LIMIT 1'.format(id=p['id'])
+        db().execute(sql, cards_values[2:])
+        return db().select('SELECT id FROM `printing` WHERE system_id = %s', [p['id']])[0].get('id') # type: ignore
+
 
 def set_legal_cards(season: str = None) -> List[str]:
     new_list = ['']

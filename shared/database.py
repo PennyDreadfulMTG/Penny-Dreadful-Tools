@@ -5,7 +5,7 @@ import MySQLdb
 from MySQLdb import OperationalError
 
 from shared import configuration, perf
-from shared.pd_exception import (DatabaseException, DatabaseMissingException,
+from shared.pd_exception import (DatabaseException, DatabaseMissingException, DuplicateRowException,
                                  InvalidArgumentException,
                                  LockNotAcquiredException)
 
@@ -57,6 +57,8 @@ class Database():
                 return (0, []) # We don't care if an INSERT IGNORE INTO didn't do anything.
             raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
         except MySQLdb.Error as e:
+            if e.args[0] == 1062:
+                raise DuplicateRowException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
             raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
 
     def execute_with_reconnect(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, fetch_rows: Optional[bool] = False) -> Tuple[int, List[ValidSqlArgumentDescription]]:

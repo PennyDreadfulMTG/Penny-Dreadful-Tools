@@ -102,9 +102,9 @@ def face_properties() -> TableDescription:
 
 def set_properties() -> TableDescription:
     props = {}
-    for k in ['id', 'name', 'code', 'uri', 'scryfall_uri', 'search_uri', 'released_at', 'set_type', 'card_count', 'parent_set_code', 'digital', 'foil_only', 'icon_svg_uri']:
+    for k in ['id', 'system_id', 'name', 'code', 'uri', 'scryfall_uri', 'search_uri', 'released_at', 'set_type', 'card_count', 'parent_set_code', 'digital', 'foil_only', 'icon_svg_uri']:
         props[k] = copy.deepcopy(BASE)
-    for k in ['id', 'name', 'code', 'released_at']:
+    for k in ['id', 'system_id', 'name', 'code', 'released_at']:
         props[k]['nullable'] = False
     props['id']['primary_key'] = True
     props['id']['type'] = INTEGER
@@ -112,6 +112,7 @@ def set_properties() -> TableDescription:
     props['released_at']['type'] = DATE
     props['digital']['type'] = BOOLEAN
     props['name']['unique'] = True
+    props['system_id']['unique'] = True
     props['code']['unique'] = True
     props['uri']['unique'] = True
     props['scryfall_uri']['unique'] = True
@@ -128,6 +129,7 @@ def printing_properties() -> TableDescription:
         props[k]['scryfall'] = False
     props['id']['primary_key'] = True
     props['id']['nullable'] = False
+    props['system_id']['unique'] = True
     props['timeshifted']['type'] = BOOLEAN
     props['reserved']['type'] = BOOLEAN
     props['card_id']['foreign_key'] = ('card', 'id')

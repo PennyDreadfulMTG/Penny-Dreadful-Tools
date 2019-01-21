@@ -1,19 +1,20 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from mypy_extensions import TypedDict
 
 SetCode = str
 CardDescription = TypedDict('CardDescription', {
+    'all_parts': Optional[List[Any]],
+    'card_faces': Optional[List[Any]],
     'cmc': int,
     'imageName': str,
     'layout': str,
-    'manaCost': str,
     'legalities': List[Dict[str, Any]],
+    'manaCost': str,
     'name': str,
-    'names': List[str],
-    'printings': List[SetCode],
+    'oracle_text': str,
     'rarity': str,
-    'text': str,
-    'type': str,
+    'set': str,
+    'type_line': str,
     'types': List[str]
 })

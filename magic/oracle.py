@@ -122,10 +122,10 @@ def insert_scryfall_card(sfcard: Dict, rebuild_cache: bool = True) -> None:
 
         c.update({
             'name': face['name'],
-            'type': face['type_line'],
+            'type_line': face['type_line'],
             'types': types, # This technically includes supertypes.
             'subtypes': subtypes,
-            'text': face.get('oracle_text', ''),
+            'oracle_text': face.get('oracle_text', ''),
             'manaCost': face.get('mana_cost', None)
         })
         c.names = names

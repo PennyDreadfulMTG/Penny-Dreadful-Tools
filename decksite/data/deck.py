@@ -233,7 +233,7 @@ def set_colors(d: Deck) -> None:
     deck_colored_symbols: List[str] = []
     for c in [entry.card for entry in d.maindeck + d.sideboard]:
         for cost in c.get('mana_cost') or ():
-            if c.layout == 'split' or c.layout == 'aftermath':
+            if c.layout == 'split':
                 continue # They might only be using one half so ignore it.
             card_symbols = mana.parse(cost)
             card_colors = mana.colors(card_symbols)

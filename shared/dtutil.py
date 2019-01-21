@@ -1,8 +1,10 @@
 import datetime
 import re
+from calendar import timegm
 from collections import OrderedDict
 from typing import Any, Dict, List, Match, Optional, Tuple
 
+import feedparser
 import inflect
 import pytz
 
@@ -35,6 +37,11 @@ def dt2ts(dt: datetime.datetime) -> int:
 def parse(s: str, date_format: str, tz: Any) -> datetime.datetime:
     dt = datetime.datetime.strptime(s, date_format)
     return tz.localize(dt).astimezone(pytz.timezone('UTC'))
+
+def parse_rfc3339(s: str) -> datetime.datetime:
+    # pylint: disable=protected-access
+    struct = feedparser._parse_date(s)
+    return ts2dt(int(timegm(struct)))
 
 def parse_to_ts(s: str, date_format: str, tz: Any) -> int:
     dt = parse(s, date_format, tz)

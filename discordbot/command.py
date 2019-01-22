@@ -139,7 +139,7 @@ def cmd_header(group: str) -> Callable:
 
 
 
-# pylint: disable=too-many-public-methods
+# pylint: disable=too-many-public-methods, too-many-lines
 class Commands:
     """To define a new command, simply add a new method to this class.
     If you want !help to show the message, add a docstring to the method.

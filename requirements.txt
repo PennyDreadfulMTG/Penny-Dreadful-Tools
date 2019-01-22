@@ -10,7 +10,7 @@ flask-babel==0.12.2
 flask-session==0.3.1
 Flask-SQLAlchemy==2.3.2
 Flask-Migrate
-ftfy==5.5.0
+ftfy==5.5.1
 google-api-python-client==1.7.7
 github_webhook==1.0.2
 inflect==2.1.0

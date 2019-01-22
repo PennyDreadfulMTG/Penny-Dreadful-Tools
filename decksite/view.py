@@ -303,13 +303,23 @@ class View(BaseView):
             self.prepare_leaderboard(l)
 
     def prepare_leaderboard(self, leaderboard: List[Container]) -> None:
-        pos = 1
-        for p in leaderboard:
-            p.finish = pos
-            if pos <= 8:
-                p.position = chr(9311 + pos) # ①, ②, ③, …
+        # each Container in leaderboard is expected to have attributes:
+        #   - person_id: the id of the person
+        #   - person: the name to display for that person (see data/query.py:person_query)
+        #   - score: a value such that two rows are tied if and only if they have the same score
+        # leaderboard is expected to be sorted such that leaderboard[0] is winning
+        # Depending on the view, the containers may have other attributes as well
+
+        finish = 0
+        score = None
+        for i, p in enumerate(leaderboard, start=1):
+            if finish == 0 or p.score != score:
+                score = p.score
+                finish = i
+            p.finish = finish
+            if p.finish <= 8:
+                p.position = chr(9311 + p.finish) # ①, ②, ③, …
             p.url = url_for('.person', person_id=p.person_id)
-            pos += 1
 
     def prepare_legal_formats(self) -> None:
         if getattr(self, 'legal_formats', None) is not None:

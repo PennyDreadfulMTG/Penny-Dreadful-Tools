@@ -3,10 +3,13 @@ import inspect
 import json
 import os
 import random
+import re
 import string
-from typing import Any, Dict, List, Optional, Set, Union, overload
+from typing import Any, Dict, List, Match, Optional, Set, Union, overload
 
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
+
+RE_SUBKEY = re.compile(r'(\w+)\.(\w+)')
 
 DEFAULTS = {
     # Discord Webhook endpoint
@@ -75,6 +78,7 @@ DEFAULTS = {
     'to_username': '',
     'tournament_channel_id': '334220558159970304',
     'tournament_reminders_channel_id': '207281932214599682',
+    'use_24h': False,
     'web_cache': '.web_cache',
     'whoosh_index_dir': 'whoosh_index',
 }
@@ -150,6 +154,9 @@ def get_bool(key: str) -> bool:
 def get(key: str) -> Optional[Union[str, List[str], int, float]]:
     if key in CONFIG:
         return CONFIG[key]
+    subkey = RE_SUBKEY.match(key)
+    if subkey:
+        return get_sub(subkey)
     try:
         cfg = json.load(open('config.json'))
     except FileNotFoundError:
@@ -175,6 +182,18 @@ def get(key: str) -> Optional[Union[str, List[str], int, float]]:
     fh.write(json.dumps(cfg, indent=4, sort_keys=True))
     return cfg[key]
 
+
+def get_sub(key: Match) -> Optional[Union[str, List[str], int, float]]:
+    filename = key.group(1) + '.config.json'
+    keyname = key.group(2)
+    try:
+        with open(filename) as f:
+            cfg = json.load(f)
+    except FileNotFoundError:
+        cfg = {}
+    return cfg.get(keyname, get(keyname))
+
+
 # pylint: disable=unused-argument, function-redefined
 @overload
 def write(key: str, value: str) -> str:
@@ -196,8 +215,15 @@ def write(key: str, value: Set[str]) -> Set[str]:
     pass
 
 def write(key: str, value: Union[str, List[str], Set[str], int, float]) -> Union[str, List[str], Set[str], int, float]:
+    subkey = RE_SUBKEY.match(key)
+    filename = 'config.json'
+    fullkey = key
+    if subkey:
+        filename = subkey.group(1) + '.config.json'
+        key = subkey.group(2)
+
     try:
-        cfg = json.load(open('config.json'))
+        cfg = json.load(open(filename))
     except FileNotFoundError:
         cfg = {}
 
@@ -205,10 +231,10 @@ def write(key: str, value: Union[str, List[str], Set[str], int, float]) -> Union
         value = list(value)
 
     cfg[key] = value
-    CONFIG[key] = value
+    CONFIG[fullkey] = value
 
-    print('CONFIG: {0}={1}'.format(key, cfg[key]))
-    fh = open('config.json', 'w')
+    print('CONFIG: {0}={1}'.format(fullkey, cfg[key]))
+    fh = open(filename, 'w')
     fh.write(json.dumps(cfg, indent=4, sort_keys=True))
     return cfg[key]
 

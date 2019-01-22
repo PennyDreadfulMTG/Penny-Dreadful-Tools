@@ -175,21 +175,21 @@ def rulings(cardname: str) -> List[Dict[str, str]]:
 def sitemap() -> List[str]:
     return internal.fetch_json(decksite_url('/api/sitemap/'))['urls']
 
-def time(q: str) -> Dict[str, List[str]]:
-    return times_from_timezone_code(q) if len(q) <= 3 else times_from_location(q)
+def time(q: str, twentyfour: bool) -> Dict[str, List[str]]:
+    return times_from_timezone_code(q, twentyfour) if len(q) <= 3 else times_from_location(q, twentyfour)
 
-def times_from_timezone_code(q: str) ->  Dict[str, List[str]]:
+def times_from_timezone_code(q: str, twentyfour: bool) ->  Dict[str, List[str]]:
     possibles = list(filter(lambda x: datetime.datetime.now(pytz.timezone(x)).strftime('%Z') == q.upper(), pytz.common_timezones))
     if not possibles:
         raise TooFewItemsException(f'Not a recognized timezone: {q.upper()}')
     results: Dict[str, List[str]] = {}
     for possible in possibles:
         timezone = dtutil.timezone(possible)
-        t = current_time(timezone)
+        t = current_time(timezone, twentyfour)
         results[t] = results.get(t, []) + [possible]
     return results
 
-def times_from_location(q: str) -> Dict[str, List[str]]:
+def times_from_location(q: str, twentyfour: bool) -> Dict[str, List[str]]:
     api_key = configuration.get('google_maps_api_key')
     if not api_key:
         raise NotConfiguredException('No value found for google_maps_api_key')
@@ -211,10 +211,15 @@ def times_from_location(q: str) -> Dict[str, List[str]]:
         timezone = dtutil.timezone(timezone_info['timeZoneId'])
     except KeyError as e:
         raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}')
-    return {current_time(timezone): [q]}
+    return {current_time(timezone, twentyfour): [q]}
 
-def current_time(timezone: datetime.tzinfo) -> str:
-    return dtutil.now(timezone).strftime('%l:%M %p')
+def current_time(timezone: datetime.tzinfo, twentyfour: bool) -> str:
+    if twentyfour:
+        return dtutil.now(timezone).strftime('%H:%M')
+    try:
+        return dtutil.now(timezone).strftime('%l:%M %p')
+    except ValueError: # %l is not a univerally supported argument.  Fall back to %I on other platforms.
+        return dtutil.now(timezone).strftime('%I:%M %p')
 
 def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
     cached = redis.get_container('magic:fetcher:whatisinstandard')

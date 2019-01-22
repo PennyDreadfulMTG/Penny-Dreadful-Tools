@@ -6,6 +6,7 @@ from typing import Any
 import discord
 from discord import VoiceState
 from discord.activity import Streaming
+from discord.errors import Forbidden, NotFound
 from discord.guild import Guild
 from discord.member import Member
 from discord.message import Message
@@ -93,8 +94,13 @@ class Bot(discord.Client):
                     await after.add_roles(roles[0])
 
     async def on_guild_join(self, server: Guild) -> None:
-        await server.text_channels[0].send("Hi, I'm mtgbot.  To look up cards, just mention them in square brackets. (eg `[Llanowar Elves] is better than [Elvish Mystic]`).")
-        await server.text_channels[0].send("By default, I display Penny Dreadful legality. If you don't want or need that, just type `!notpenny`.")
+        for channel in server.text_channels:
+            try:
+                await channel.send("Hi, I'm mtgbot.  To look up cards, just mention them in square brackets. (eg `[Llanowar Elves] is better than [Elvish Mystic]`).")
+                await channel.send("By default, I display Penny Dreadful legality. If you don't want or need that, just type `!notpenny`.")
+                return
+            except Forbidden:
+                pass
 
     async def on_reaction_add(self, reaction: Reaction, author: Member) -> None:
         if reaction.message.author == self.user:
@@ -102,7 +108,10 @@ class Bot(discord.Client):
             if reaction.me:
                 c = c - 1
             if c > 0 and not reaction.custom_emoji and reaction.emoji == '❎':
-                await reaction.message.delete()
+                try:
+                    await reaction.message.delete()
+                except NotFound: # Someone beat us to it?
+                    pass
             elif c > 0 and 'Ambiguous name for ' in reaction.message.content and reaction.emoji in command.DISAMBIGUATION_EMOJIS_BY_NUMBER.values():
                 async with reaction.message.channel.typing():
                     search = re.search(r'Ambiguous name for ([^\.]*)\. Suggestions: (.*)', reaction.message.content)
@@ -159,7 +168,7 @@ class Bot(discord.Client):
                 else:
                     message = 'A free tournament'
                 embed = discord.Embed(title=info['next_tournament_name'], description=message)
-                if diff <= 0:
+                if diff <= 1:
                     embed.add_field(name='Starting now', value='Check <#334220558159970304> for further annoucements')
                 elif diff <= 14400:
                     embed.add_field(name='Starting in:', value=dtutil.display_time(diff, 2))

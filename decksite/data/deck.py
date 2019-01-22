@@ -52,7 +52,8 @@ def load_decks(where: str = '1 = 1',
             cache.active_date,
             cache.wins,
             cache.losses,
-            cache.draws
+            cache.draws,
+            ct.name AS competition_type_name
         FROM
             deck AS d
         """

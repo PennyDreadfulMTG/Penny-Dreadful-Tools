@@ -144,13 +144,36 @@ def archetypes() -> str:
     view = Archetypes(deckless_archetypes, all_matchups)
     return view.page()
 
+@APP.route('/archetypes/tournament/')
+@SEASONS.route('/archetypes/tournament/')
+@cached()
+def archetypes_tournament() -> str:
+    season_id = get_season_id()
+    deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id)
+    all_matchups = archs.load_all_matchups(season_id=season_id)
+    view = Archetypes(deckless_archetypes, all_matchups, tournament_only=True)
+    return view.page()
+
 @APP.route('/archetypes/<archetype_id>/')
 @SEASONS.route('/archetypes/<archetype_id>/')
 @cached()
 def archetype(archetype_id: str) -> str:
     season_id = get_season_id()
     a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id)
-    view = Archetype(a, archs.load_archetypes_deckless_for(a.id, season_id=season_id), archs.load_matchups(a.id, season_id=season_id), season_id)
+    deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id)
+    matchups = archs.load_matchups(a.id, season_id=season_id)
+    view = Archetype(a, deckless_archetypes, matchups, season_id)
+    return view.page()
+
+@APP.route('/archetypes/<archetype_id>/tournament/')
+@SEASONS.route('/archetypes/<archetype_id>/tournament/')
+@cached()
+def archetype_tournament(archetype_id: str) -> str:
+    season_id = get_season_id()
+    a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id)
+    deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id)
+    matchups = archs.load_matchups(a.id, season_id=season_id)
+    view = Archetype(a, deckless_archetypes, matchups, season_id, tournament_only=True)
     return view.page()
 
 @APP.route('/tournaments/')

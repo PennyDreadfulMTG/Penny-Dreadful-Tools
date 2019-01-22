@@ -1,19 +1,32 @@
 from typing import List
 
+from flask import url_for
+
 from decksite.data import archetype as archs
 from decksite.view import View
 from shared.container import Container
 
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, too-many-instance-attributes
 class Archetypes(View):
-    def __init__(self, archetypes: List[archs.Archetype], all_matchups: List[Container]) -> None:
-        min_matches_for_matchups_grid = 50
+    def __init__(self, archetypes: List[archs.Archetype],
+                 all_matchups: List[Container],
+                 tournament_only: bool = False
+                ) -> None:
+        min_matches_for_matchups_grid = 50 if not tournament_only else 20
         super().__init__()
         self.archetypes = archetypes
         self.decks = []
         self.roots = [a for a in self.archetypes if a.is_root]
         self.show_seasons = True
+        self.tournament_only = tournament_only
+
+        self.show_tournament_toggle = True
+
+        if tournament_only:
+            self.toggle_results_url = url_for('.archetypes')
+        else:
+            self.toggle_results_url = url_for('.archetypes_tournament')
 
         # We need to prepare the roots so we have the archetype tree available for traversal.
         # This is possibly a sign that something is in the wrong place.
@@ -22,7 +35,24 @@ class Archetypes(View):
 
         for a in self.archetypes:
             a.matchups = []
-            matchups = [m for m in all_matchups if m.archetype_id == a.id]
+
+            # if tournament_only, move the tournament data into the appropriate slots for the view
+            def convert(m: Container) -> Container:
+                if tournament_only:
+                    m.win_percent = m.win_percent_tournament
+                    m.wins = m.wins_tournament
+                    m.losses = m.losses_tournament
+                    m.draws = m.draws_tournament
+                return m
+
+            # in one pass, filter out matchups with no data so we can determine which
+            #   archetypes to include on the table, and convert matchups appropriately
+            if not tournament_only:
+                matchups = [convert(m) for m in all_matchups if m.archetype_id == a.id]
+            else:
+                matchups = [convert(m) for m in all_matchups if (m.archetype_id == a.id and
+                                                                 m.wins_tournament + m.losses_tournament + m.draws_tournament > 0)]
+
             if len(matchups) < min_matches_for_matchups_grid:
                 a.show_in_matchups_grid = False
                 continue

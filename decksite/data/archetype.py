@@ -33,6 +33,7 @@ def load_archetype(archetype: Union[int, str], season_id: int = None) -> Archety
     arch.name = db().value('SELECT name FROM archetype WHERE id = %s', [archetype_id])
     if len(archetypes) == 0:
         arch.decks = []
+    arch.decks_tournament = arch.get('decks_tournament', [])
     return arch
 
 def load_archetypes(where: str = '1 = 1', merge: bool = False, season_id: int = None) -> List[Archetype]:

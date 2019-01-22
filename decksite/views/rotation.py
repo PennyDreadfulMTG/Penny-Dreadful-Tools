@@ -14,7 +14,7 @@ from shared.pd_exception import DoesNotExistException
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Rotation(View):
-    def __init__(self, interestingness: Optional[str] = None) -> None:
+    def __init__(self, interestingness: Optional[str] = None, rotation_query: Optional[str] = None, only_these: Optional[List[str]] = None) -> None:
         super().__init__()
         self.playability = card.playability()
         until_full_rotation = rotation.next_rotation() - dtutil.now()
@@ -36,7 +36,10 @@ class Rotation(View):
         self.show_interesting = True
         if interestingness:
             self.cards = [c for c in self.cards if c.get('interestingness') == interestingness]
+        if only_these:
+            self.cards = [c for c in self.cards if c.name in only_these]
         self.num_cards = len(self.cards)
+        self.rotation_query = rotation_query or ''
 
     def read_rotation_files(self) -> None:
         lines = []

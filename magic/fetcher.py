@@ -3,6 +3,7 @@ import datetime
 import json
 import os
 from collections import OrderedDict
+from time import sleep
 from typing import Any, Dict, List, Optional, Tuple, Union, cast
 from urllib import parse
 
@@ -142,22 +143,37 @@ async def scryfall_cards_async() -> Dict[str, Any]:
     url = 'https://api.scryfall.com/cards'
     return await internal.fetch_json_async(url)
 
-def search_scryfall(query: str) -> Tuple[int, List[str]]:
+def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str]]:
     """Returns a tuple. First member is an integer indicating how many cards match the query total,
-       second member is a list of card names up to the maximum that could be fetched in a timely fashion."""
+       second member is a list of card names up to the maximum that could be fetched in a timely fashion.
+       Supply exhaustive=True to instead retrieve the full list (potentially very slow)."""
     if query == '':
         return False, []
-    result_json = internal.fetch_json('https://api.scryfall.com/cards/search?q=' + internal.escape(query), character_encoding='utf-8')
-    if 'code' in result_json.keys(): # The API returned an error
-        if result_json['status'] == 404: # No cards found
-            return False, []
-        print('Error fetching scryfall data:\n', result_json)
-        return False, []
-    for warning in result_json.get('warnings', []): #scryfall-provided human-readable warnings
-        print(warning) # Why aren't we displaying these to the user?
-    result_data = result_json['data']
+    redis_key = f'scryfall:query:{query}:' + 'exhaustive' if exhaustive else 'nonexhaustive'
+    cached = redis.get_list(redis_key)
+    result_data: List[Dict]
+    if cached:
+        total_cards, result_data = int(cached[0]), cached[1]
+    else:
+        url = 'https://api.scryfall.com/cards/search?q=' + internal.escape(query)
+        result_data = []
+        while True:
+            result_json = internal.fetch_json(url, character_encoding='utf-8')
+            if 'code' in result_json.keys(): # The API returned an error
+                if result_json['status'] == 404: # No cards found
+                    return False, []
+                print('Error fetching scryfall data:\n', result_json)
+                return False, []
+            for warning in result_json.get('warnings', []): #scryfall-provided human-readable warnings
+                print(warning) # Why aren't we displaying these to the user?
+            result_data += result_json['data']
+            total_cards = int(result_json['total_cards'])
+            if not exhaustive or len(result_data) >= total_cards:
+                break
+            sleep(0.1)
+            url = result_json['next_page']
+        redis.store(redis_key, [total_cards, result_data], ex=3600)
     result_data.sort(key=lambda x: x['legalities']['penny'])
-
     def get_frontside(scr_card: Dict) -> str:
         """If card is transform, returns first name. Otherwise, returns name.
         This is to make sure cards are later found in the database"""
@@ -166,7 +182,7 @@ def search_scryfall(query: str) -> Tuple[int, List[str]]:
             return scr_card['card_faces'][0]['name']
         return scr_card['name']
     result_cardnames = [get_frontside(obj) for obj in result_data]
-    return result_json['total_cards'], result_cardnames
+    return total_cards, result_cardnames
 
 def rulings(cardname: str) -> List[Dict[str, str]]:
     card = internal.fetch_json('https://api.scryfall.com/cards/named?exact={name}'.format(name=cardname))

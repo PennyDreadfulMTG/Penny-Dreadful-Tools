@@ -53,8 +53,8 @@ def preaggregate_achievements() -> None:
     db().execute('DROP TABLE IF EXISTS _old_achievements')
 
 def preaggregate_query() -> str:
-    create_columns = ', '.join(f'`{a.key}` INT NOT NULL' for a in Achievement.all_achievements if a.in_db)
-    select_columns = ', '.join(f'{a.sql} as `{a.key}`' for a in Achievement.all_achievements if a.in_db)
+    create_columns = ', '.join(a.create_columns for a in Achievement.all_achievements if a.in_db)
+    select_columns = ', '.join(a.select_columns for a in Achievement.all_achievements if a.in_db)
     with_clauses = ', '.join(a.with_sql for a in Achievement.all_achievements if a.with_sql is not None)
     return """
         CREATE TABLE IF NOT EXISTS _new_achievements (
@@ -106,12 +106,34 @@ class Achievement:
     def with_sql(self) -> Optional[str]:
         return None
 
+    @property
+    def detail_sql(self) -> Optional[str]:
+        return None
+
+    @property
+    def create_columns(self) -> Optional[str]:
+        if not self.in_db:
+            return False
+        if self.detail_sql is None:
+            return f'`{self.key}` INT NOT NULL'
+        return f'`{self.key}` INT NOT NULL, `{self.key}_detail` LONGTEXT DEFAULT NULL'
+
+    @property
+    def select_columns(self) -> Optional[str]:
+        if not self.in_db:
+            return False
+        if self.detail_sql is None:
+            return f'{self.sql} AS `{self.key}`'
+        return f'{self.sql} AS `{self.key}`, {self.detail_sql} AS `{self.key}_detail`'
+
     def __init_subclass__(cls) -> None:
         if cls.key is not None:
             # in case anyone ever makes a poor sportsmanship achievement called DROP TABLE
             cls.key = re.sub('[^A-Za-z0-9_]+', '', cls.key)
             if cls.key in [c.key for c in cls.all_achievements]:
                 print(f"Warning: Two achievements have the same normalised key {cls.key}. This won't do any permanent damage to the database but the results are almost certainly not as intended.")
+            if cls.key[-7:] == '_detail':
+                print(f"Warning: achievement key {cls.key} should not end with the string '_detail'.")
             cls.all_achievements.append(cls())
 
     # pylint: disable=no-self-use, unused-argument
@@ -270,6 +292,7 @@ class TournamentPlayer(CountedAchievement):
     key = 'tournament_entries'
     title = 'Tournament Player'
     sql = "COUNT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
+    detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
 
     @property
     def description_safe(self) -> str:
@@ -286,6 +309,7 @@ class TournamentWinner(CountedAchievement):
     title = 'Tournament Winner'
     description_safe = 'Win a tournament.'
     sql = "COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
+    detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
 
     def leaderboard_heading(self) -> str:
         return gettext('Victories')
@@ -297,6 +321,7 @@ class LeaguePlayer(CountedAchievement):
     key = 'league_entries'
     title = 'League Player'
     sql = "COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END)"
+    detail_sql = "COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END)"
 
     @property
     def description_safe(self) -> str:
@@ -313,6 +338,7 @@ class PerfectRun(CountedAchievement):
     title = 'Perfect League Run'
     description_safe = 'Complete a 5–0 run in the league.'
     sql = "SUM(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses = 0 THEN 1 ELSE 0 END)"
+    detail_sql = "GROUP_CONCAT(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses = 0 THEN d.id ELSE NULL END)"
 
     def leaderboard_heading(self) -> str:
         return gettext('Runs')

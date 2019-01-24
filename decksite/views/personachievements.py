@@ -1,9 +1,8 @@
 from typing import List
 
+from decksite.data import person as ps
 from decksite.view import View
 from shared.container import Container
-
-from decksite.data import person as ps
 
 
 # pylint: disable=no-self-use
@@ -13,6 +12,10 @@ class PersonAchievements(View):
         self.person = person
         self.achievements = achievements
         self.show_seasons = True
+        self.decks = []
+        for a in achievements:
+            if a.detail is not None:
+                self.decks += a.detail.decks
 
     def page_title(self):
         return f'Achievement details: {self.person.name}'

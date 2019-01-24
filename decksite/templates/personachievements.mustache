@@ -7,6 +7,9 @@
                 <span class="earned">🏆</span>
                 <span class="text">{{legend}}</span>
             </p>
+            {{#detail}}
+                {{> decktable}}
+            {{/detail}}
         {{/legend}}
     {{/achievements}}
 </section>

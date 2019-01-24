@@ -1,13 +1,14 @@
 import re
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional, cast
 
 from flask import url_for
 from flask_babel import gettext, ngettext
 
 import decksite
-from decksite.data import query
+from decksite.data import deck, query
 from decksite.database import db
 from magic import tournaments
+from magic.models import Deck
 from shared.container import Container
 from shared.decorators import retry_after_calling
 
@@ -24,7 +25,7 @@ def load_achievements(p: Optional['person.Person'], season_id: Optional[int], wi
         desc.summary = a.load_summary(season_id=season_id)
         desc.legend = a.display(p) if p else ''
         if with_detail:
-            pass
+            desc.detail = a.detail(p, season_id=season_id)
         else:
             desc.percent = a.percent(season_id=season_id)
             desc.leaderboard = a.leaderboard(season_id=season_id)
@@ -58,8 +59,9 @@ def preaggregate_achievements() -> None:
     db().execute('DROP TABLE IF EXISTS _old_achievements')
 
 def preaggregate_query() -> str:
-    create_columns = ', '.join(a.create_columns for a in Achievement.all_achievements if a.in_db)
-    select_columns = ', '.join(a.select_columns for a in Achievement.all_achievements if a.in_db)
+    # mypy doesn't understand our contract that a.create_columns etc. are only None if in_db is False
+    create_columns = ', '.join(cast(str, a.create_columns) for a in Achievement.all_achievements if a.in_db)
+    select_columns = ', '.join(cast(str, a.select_columns) for a in Achievement.all_achievements if a.in_db)
     with_clauses = ', '.join(a.with_sql for a in Achievement.all_achievements if a.with_sql is not None)
     return """
         CREATE TABLE IF NOT EXISTS _new_achievements (
@@ -118,7 +120,7 @@ class Achievement:
     @property
     def create_columns(self) -> Optional[str]:
         if not self.in_db:
-            return False
+            return None
         if self.detail_sql is None:
             return f'`{self.key}` INT NOT NULL'
         return f'`{self.key}` INT NOT NULL, `{self.key}_detail` LONGTEXT DEFAULT NULL'
@@ -126,7 +128,7 @@ class Achievement:
     @property
     def select_columns(self) -> Optional[str]:
         if not self.in_db:
-            return False
+            return None
         if self.detail_sql is None:
             return f'{self.sql} AS `{self.key}`'
         return f'{self.sql} AS `{self.key}`, {self.detail_sql} AS `{self.key}_detail`'
@@ -137,7 +139,8 @@ class Achievement:
             cls.key = re.sub('[^A-Za-z0-9_]+', '', cls.key)
             if cls.key in [c.key for c in cls.all_achievements]:
                 print(f"Warning: Two achievements have the same normalised key {cls.key}. This won't do any permanent damage to the database but the results are almost certainly not as intended.")
-            if cls.key[-7:] == '_detail':
+            # pylint can't determine that we have verified cls.key to be a str
+            if cls.key[-7:] == '_detail': #pylint: disable=unsubscriptable-object
                 print(f"Warning: achievement key {cls.key} should not end with the string '_detail'.")
             cls.all_achievements.append(cls())
 
@@ -168,6 +171,25 @@ class Achievement:
             return int(r['pnum'] or 0) * 100.0 / int(r['mnum'])
         except ZeroDivisionError:
             return 0
+
+    @retry_after_calling(preaggregate_achievements)
+    def detail(self, p: 'person.Person', season_id: Optional[int] = None) -> Optional[List[Deck]]:
+        if self.detail_sql is None:
+            return None
+        sql = """
+                SELECT
+                    GROUP_CONCAT({k}_detail)
+                FROM
+                    _achievements
+                WHERE
+                    person_id={id} AND {season_query}
+                GROUP BY
+                    person_id
+            """.format(k=self.key, id=p.id, season_query=query.season_query(season_id))
+        ids = db().value(sql)
+        result = Container()
+        result.decks = deck.load_decks(where=f'd.id IN ({ids})')
+        return result
 
     def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Container]]:
         season_condition = query.season_query(season_id)
@@ -326,7 +348,7 @@ class LeaguePlayer(CountedAchievement):
     key = 'league_entries'
     title = 'League Player'
     sql = "COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END)"
-    detail_sql = "COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END)"
+    detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END)"
 
     @property
     def description_safe(self) -> str:

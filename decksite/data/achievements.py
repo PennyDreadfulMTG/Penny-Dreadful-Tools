@@ -17,16 +17,21 @@ if TYPE_CHECKING:
 LEADERBOARD_TOP_N = 5
 LEADERBOARD_LIMIT = 12
 
-def load_achievements(p: Optional['person.Person'], season_id: Optional[int]) -> List[Container]:
+def load_achievements(p: Optional['person.Person'], season_id: Optional[int], with_detail: bool = False) -> List[Container]:
     achievements = []
     for a in Achievement.all_achievements:
         desc = Container({'title': a.title, 'description_safe': a.description_safe})
         desc.summary = a.load_summary(season_id=season_id)
-        desc.detail = a.display(p) if p else ''
-        desc.percent = a.percent(season_id=season_id)
-        desc.leaderboard = a.leaderboard(season_id=season_id)
-        desc.leaderboard_heading = a.leaderboard_heading()
+        desc.legend = a.display(p) if p else ''
+        if with_detail:
+            pass
+        else:
+            desc.percent = a.percent(season_id=season_id)
+            desc.leaderboard = a.leaderboard(season_id=season_id)
+            desc.leaderboard_heading = a.leaderboard_heading()
         achievements.append(desc)
+    if with_detail:
+        return achievements
     return sorted(achievements, key=lambda ad: -ad.percent)
 
 def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int]) -> str:

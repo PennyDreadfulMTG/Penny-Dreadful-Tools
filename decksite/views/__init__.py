@@ -27,6 +27,7 @@ from .link_accounts import LinkAccounts
 from .news import News
 from .people import People
 from .person import Person
+from .personachievements import PersonAchievements
 from .player_notes import PlayerNotes
 from .prizes import Prizes
 from .report import Report

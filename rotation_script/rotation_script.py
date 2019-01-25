@@ -95,10 +95,15 @@ def is_supplemental() -> bool:
     return TIME_UNTIL_SUPPLEMENTAL_ROTATION < datetime.timedelta(7) or abs(TIME_SINCE_SUPPLEMENTAL_ROTATION) < datetime.timedelta(1)
 
 def make_final_list() -> None:
+    planes = fetcher_internal.fetch_json('https://api.scryfall.com/cards/search?q=t:plane%20or%20t:phenomenon')['data']
+    plane_names = [p['name'] for p in planes]
     files = rotation.files()
     lines: List[str] = []
     for line in fileinput.input(files):
         line = text.sanitize(line)
+        if line in plane_names:
+            print(f'DISCARDED: [{line}] is a plane.')
+            continue
         lines.append(line)
     scores = Counter(lines).most_common()
 

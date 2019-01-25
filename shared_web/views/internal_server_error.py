@@ -8,7 +8,7 @@ class InternalServerError(ErrorView):
     def __init__(self, exception: Exception) -> None:
         super().__init__()
         self.exception = str(exception)
-        self.card = super().make_card(random.choice(['Erratic Explosion', 'Curse of Chaos', 'Anarchy']))
+        self.card = super().make_card(random.choice(['Erratic Explosion', 'Curse of Chaos', 'Anarchy', 'Pandemonium', 'Widespread Panic']))
         self.cards = [self.card]
 
     def message(self) -> str:

@@ -63,6 +63,7 @@ def preaggregate_query() -> str:
     create_columns = ', '.join(cast(str, a.create_columns) for a in Achievement.all_achievements if a.in_db)
     select_columns = ', '.join(cast(str, a.select_columns) for a in Achievement.all_achievements if a.in_db)
     with_clauses = ', '.join(a.with_sql for a in Achievement.all_achievements if a.with_sql is not None)
+    join_clauses = ''.join(a.join_sql for a in Achievement.all_achievements if a.join_sql is not None)
     return """
         CREATE TABLE IF NOT EXISTS _new_achievements (
             person_id INT NOT NULL,
@@ -84,6 +85,7 @@ def preaggregate_query() -> str:
             deck AS d ON d.person_id = p.id
         LEFT JOIN
             deck_cache AS dc ON dc.deck_id = d.id
+        {join_clauses}
         {season_join}
         {competition_join}
         GROUP BY
@@ -91,7 +93,7 @@ def preaggregate_query() -> str:
             season.id
         HAVING
             season.id IS NOT NULL
-    """.format(cc=create_columns, sc=select_columns, with_clauses=with_clauses, season_join=query.season_join(), competition_join=query.competition_join())
+    """.format(cc=create_columns, sc=select_columns, with_clauses=with_clauses, join_clauses=join_clauses, season_join=query.season_join(), competition_join=query.competition_join())
 
 # Abstract achievement classes
 
@@ -111,6 +113,10 @@ class Achievement:
 
     @property
     def with_sql(self) -> Optional[str]:
+        return None
+
+    @property
+    def join_sql(self) -> Optional[str]:
         return None
 
     @property
@@ -539,18 +545,20 @@ class AncientGrudge(CountedAchievement):
                     k1.season_id = k2.season_id AND k1.winner_id = k2.loser_id AND k1.loser_id = k2.winner_id AND k2.date > k1.date
             )""".format(season_join=query.season_join())
 
-class RecentGrudge(CountedAchievement):
-    key = 'recent_grudges'
-    title = 'Not-So-Ancient Grudge'
+class BurningVengeance(CountedAchievement):
+    key = 'burning_vengeances'
+    title = 'Burning Vengeance'
     description_safe = 'Beat a player in the knockout rounds of a tournament after losing to them in the Swiss.'
     def leaderboard_heading(self) -> str:
-        return gettext('grudges repaid')
+        return gettext('defeats avenged')
     def localised_display(self, n: int) -> str:
-        return ngettext('1 grudge repaid', '%(num)d grudges repaid', n)
-    sql = """COUNT(DISTINCT CASE WHEN d.id in
+        return ngettext('1 defeat avenged', '%(num)d defeats avenged', n)
+    sql = 'COUNT(DISTINCT CASE WHEN d.id IN (SELECT id FROM burning_vengeance_decks) THEN d.id ELSE NULL END)'
+    detail_sql = 'GROUP_CONCAT(DISTINCT CASE WHEN d.id IN (SELECT id FROM burning_vengeance_decks) THEN d.id ELSE NULL END)'
+    with_sql = """burning_vengeance_decks AS
                 (
                     SELECT
-                        distinct(dm1.deck_id) AS deck_id
+                        distinct(dm1.deck_id) AS id
                     FROM
                         deck_match AS dm1
                     INNER JOIN
@@ -576,25 +584,28 @@ class RecentGrudge(CountedAchievement):
                     WHERE
                         dm1.games < odm1.games AND m1.elimination = 0 AND dm2.games > odm2.games AND m2.elimination > 0
                     ORDER BY
-                        deck_id
-                ) THEN d.id ELSE NULL END)"""
+                        id
+                )"""
 
 class Deckbuilder(CountedAchievement):
     key = 'deckbuilder'
     title = 'Deck Builder'
     description_safe = 'Have someone else register an exact copy of a deck you registered first.'
     sql = 'COUNT(DISTINCT CASE WHEN d.id IN (SELECT original FROM repeats WHERE newplayer = TRUE) AND d.id NOT IN (SELECT copy FROM repeats) THEN d.id ELSE NULL END)'
+    detail_sql = "GROUP_CONCAT(CASE WHEN d.id IN (SELECT original FROM repeats WHERE newplayer = TRUE) AND d.id NOT IN (SELECT copy FROM repeats) THEN CONCAT(d.id, ',', imitators.imitator_ids) ELSE NULL END)"
+    join_sql = 'JOIN imitators ON imitators.original = d.id'
     with_sql = """
         repeats AS
             (
                 SELECT
-                    d1.id AS original, d2.id AS copy, d1.person_id != d2.person_id AS newplayer
+                    d1.id AS original, d2.id AS copy, d1.person_id != d2.person_id AS newplayer, d1.person_id as original_person_id
                 FROM
                     deck AS d1
                 JOIN
                     deck AS d2
                 ON d1.decklist_hash = d2.decklist_hash AND d1.created_date < d2.created_date
-            )
+            ),
+        imitators AS (SELECT original, GROUP_CONCAT(copy) AS imitator_ids FROM repeats WHERE newplayer = TRUE GROUP BY original)
     """
 
     def leaderboard_heading(self) -> str:

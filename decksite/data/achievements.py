@@ -188,7 +188,7 @@ class Achievement:
             """.format(k=self.key, id=p.id, season_query=query.season_query(season_id))
         ids = db().value(sql)
         result = Container()
-        result.decks = deck.load_decks(where=f'd.id IN ({ids})')
+        result.decks = deck.load_decks(where=f'd.id IN ({ids})') if ids is not None else []
         return result
 
     def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Container]]:
@@ -377,8 +377,8 @@ class FlawlessRun(CountedAchievement):
     key = 'flawless_runs'
     title = 'Flawless League Run'
     description_safe = 'Complete a 5–0 run in the league without losing a game.'
-    sql = "SUM(CASE WHEN ct.name = 'League' AND d.id IN (SELECT id FROM flawless_deck_ids) THEN 1 ELSE 0 END)"
-    #detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN ct.name = 'League' AND d.id IN (SELECT id FROM flawless_deck_ids) THEN d.id ELSE NULL END)"
+    sql = "SUM(CASE WHEN d.id IN (SELECT id FROM flawless_decks1) THEN 1 ELSE 0 END)"
+    detail_sql = "GROUP_CONCAT(CASE WHEN d.id IN (SELECT id FROM flawless_decks2) THEN d.id ELSE NULL END)"
 
     def leaderboard_heading(self) -> str:
         return gettext('Runs')
@@ -386,9 +386,31 @@ class FlawlessRun(CountedAchievement):
     def localised_display(self, n: int) -> str:
         return ngettext('1 flawless run', '%(num)d flawless runs', n)
 
+    # Duplicating this query seems obviously wrong, but it doesn't work if we do the obvious thing and juse reuse it
     @property
     def with_sql(self) -> str:
-        return """flawless_deck_ids AS
+        return """flawless_decks1 AS
+                (
+                    SELECT
+                        d.id AS id
+                    FROM
+                        deck AS d
+                    INNER JOIN
+                        deck_match AS dm
+                    ON
+                        dm.deck_id = d.id
+                    INNER JOIN
+                        deck_match AS odm
+                    ON
+                        dm.match_id = odm.match_id AND odm.deck_id <> d.id
+                    WHERE
+                        d.competition_id IN ({competition_ids_by_type_select})
+                    GROUP BY
+                        d.id
+                    HAVING
+                        SUM(dm.games) = 10 AND SUM(odm.games) = 0
+                ),
+                flawless_decks2 AS
                 (
                     SELECT
                         d.id AS id

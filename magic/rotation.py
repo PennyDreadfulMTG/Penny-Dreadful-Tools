@@ -1,11 +1,11 @@
 import datetime
 import glob
-import json
 import os
 from typing import Dict, List, Optional, Union, cast
 
 from mypy_extensions import TypedDict
 
+from magic import fetcher
 from magic.models import Card
 from shared import configuration, dtutil
 from shared.pd_exception import DoesNotExistException, InvalidDataException
@@ -25,154 +25,11 @@ SEASONS = [
     'EMN', 'KLD', # 2016
     'AER', 'AKH', 'HOU', 'XLN', # 2017
     'RIX', 'DOM', 'M19', 'GRN', #2018
-    'RNA', 'WAR', # 2019
+    'RNA', 'WAR', 'M20', # 2019
     ]
 
 def init() -> List[SetInfoType]:
-    # Big hack see #5965.
-    info = json.loads("""
-        {
-          "deprecated": false,
-          "sets": [
-            {
-              "name": "Battle for Zendikar",
-              "block": "Battle for Zendikar",
-              "code": "BFZ",
-              "enter_date": "2015-10-02T00:00:00.000",
-              "exit_date": "2017-09-29T00:00:00.000",
-              "rough_exit_date": "Q4 2017"
-            },
-            {
-              "name": "Oath of the Gatewatch",
-              "block": "Battle for Zendikar",
-              "code": "OGW",
-              "enter_date": "2016-01-22T00:00:00.000",
-              "exit_date": "2017-09-29T00:00:00.000",
-              "rough_exit_date": "Q4 2017"
-            },
-            {
-              "name": "Shadows over Innistrad",
-              "block": "Shadows over Innistrad",
-              "code": "SOI",
-              "enter_date": "2016-04-08T00:00:00.000",
-              "exit_date": "2017-09-29T00:00:00.000",
-              "rough_exit_date": "Q4 2017"
-            },
-            {
-              "name": "Welcome Deck 2016",
-              "block": "Shadows over Innistrad",
-              "code": "W16",
-              "enter_date": "2016-04-09T00:00:00.000",
-              "exit_date": "2017-09-29T00:00:00.000",
-              "rough_exit_date": "Q4 2017"
-            },
-            {
-              "name": "Eldritch Moon",
-              "block": "Shadows over Innistrad",
-              "code": "EMN",
-              "enter_date": "2016-07-21T00:00:00.000",
-              "exit_date": "2017-09-29T00:00:00.000",
-              "rough_exit_date": "Q4 2017"
-            },
-            {
-              "name": "Kaladesh",
-              "block": "Kaladesh",
-              "code": "KLD",
-              "enter_date": "2016-09-30T00:00:00.000",
-              "exit_date": "2018-10-05T00:00:00.000",
-              "rough_exit_date": "Q4 2018"
-            },
-            {
-              "name": "Aether Revolt",
-              "block": "Kaladesh",
-              "code": "AER",
-              "enter_date": "2017-01-20T00:00:00.000",
-              "exit_date": "2018-10-05T00:00:00.000",
-              "rough_exit_date": "Q4 2018"
-            },
-            {
-              "name": "Amonkhet",
-              "block": "Amonkhet",
-              "code": "AKH",
-              "enter_date": "2017-04-28T00:00:00.000",
-              "exit_date": "2018-10-05T00:00:00.000",
-              "rough_exit_date": "Q4 2018"
-            },
-            {
-              "name": "Welcome Deck 2017",
-              "block": "Amonkhet",
-              "code": "W17",
-              "enter_date": "2017-04-28T00:00:00.000",
-              "exit_date": "2018-10-05T00:00:00.000",
-              "rough_exit_date": "Q4 2018"
-            },
-            {
-              "name": "Hour of Devastation",
-              "block": "Amonkhet",
-              "code": "HOU",
-              "enter_date": "2017-07-14T00:00:00.000",
-              "exit_date": "2018-10-05T00:00:00.000",
-              "rough_exit_date": "Q4 2018"
-            },
-            {
-              "name": "Ixalan",
-              "block": "Ixalan",
-              "code": "XLN",
-              "enter_date": "2017-09-29T00:00:00.000",
-              "exit_date": null,
-              "rough_exit_date": "Q4 2019"
-            },
-            {
-              "name": "Rivals of Ixalan",
-              "block": "Ixalan",
-              "code": "RIX",
-              "enter_date": "2018-01-19T00:00:00.000",
-              "exit_date": null,
-              "rough_exit_date": "Q4 2019"
-            },
-            {
-              "name": "Dominaria",
-              "block": null,
-              "code": "DOM",
-              "enter_date": "2018-04-27T00:00:00.000",
-              "exit_date": null,
-              "rough_exit_date": "Q4 2019"
-            },
-            {
-              "name": "Core Set 2019",
-              "block": null,
-              "code": "M19",
-              "enter_date": "2018-07-13T00:00:00.000",
-              "exit_date": null,
-              "rough_exit_date": "Q4 2019"
-            },
-            {
-              "name": "Guilds of Ravnica",
-              "block": null,
-              "code": "GRN",
-              "enter_date": "2018-10-05T00:00:00.000",
-              "exit_date": null,
-              "rough_exit_date": "Q4 2020"
-            },
-            {
-              "name": "Ravnica Allegiance",
-              "block": null,
-              "code": "RNA",
-              "enter_date": "2019-01-25T00:00:00.000",
-              "exit_date": null,
-              "rough_exit_date": "Q4 2020"
-            },
-            {
-              "name": "War of the Spark",
-              "block": null,
-              "code": "WAR",
-              "enter_date": "2019-04-01T00:00:00.000",
-              "exit_date": null,
-              "rough_exit_date": "Q4 2021"
-            }
-          ]
-        }
-    """)
+    info = fetcher.whatsinstandard()
     if info['deprecated']:
         print('Current whatsinstandard API version is DEPRECATED.')
     set_info = cast(List[SetInfoType], info['sets'])

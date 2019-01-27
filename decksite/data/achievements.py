@@ -63,7 +63,7 @@ def preaggregate_query() -> str:
     create_columns = ', '.join(cast(str, a.create_columns) for a in Achievement.all_achievements if a.in_db)
     select_columns = ', '.join(cast(str, a.select_columns) for a in Achievement.all_achievements if a.in_db)
     with_clauses = ', '.join(a.with_sql for a in Achievement.all_achievements if a.with_sql is not None)
-    join_clauses = ''.join(a.join_sql for a in Achievement.all_achievements if a.join_sql is not None)
+    join_clauses = ' '.join(a.join_sql for a in Achievement.all_achievements if a.join_sql is not None)
     return """
         CREATE TABLE IF NOT EXISTS _new_achievements (
             person_id INT NOT NULL,
@@ -443,21 +443,22 @@ class PerfectRunCrusher(CountedAchievement):
     key = 'perfect_run_crushes'
     title = 'Perfect Run Crusher'
     description_safe = "Beat a player that's 4–0 in the league."
-
     def leaderboard_heading(self) -> str:
         return gettext('Crushes')
-
     def localised_display(self, n: int) -> str:
         return ngettext('1 perfect run crush', '%(num)d perfect run crushes', n)
-
+    sql = 'SUM(CASE WHEN crush_records.crush_count IS NULL THEN 0 ELSE crush_records.crush_count END)'
+    detail_sql = 'GROUP_CONCAT(crush_records.crushee_ids)'
+    join_sql = 'LEFT JOIN crush_records ON d.id = crush_records.crusher_id'
     @property
-    def sql(self) -> str:
+    def with_sql(self) -> str:
         return """
-            SUM(CASE WHEN d.id IN
+            crushes AS
                 (
                     SELECT
                         -- MAX here is just to fool MySQL to give us the id of the deck that crushed the perfect run from an aggregate function. There is only one value to MAX.
-                        MAX(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN odm.deck_id ELSE NULL END) AS deck_id
+                        MAX(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN odm.deck_id ELSE NULL END) AS crusher_id,
+                        d.id AS crushee_id
                     FROM
                         deck AS d
                     INNER JOIN
@@ -478,9 +479,9 @@ class PerfectRunCrusher(CountedAchievement):
                         SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) = 1
                     AND
                         SUM(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN 1 ELSE 0 END) = 1
-                )
-            THEN 1 ELSE 0 END)
-        """.format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
+                ),
+                crush_records AS (SELECT crusher_id, COUNT(crushee_id) AS crush_count, GROUP_CONCAT(crushee_id) AS crushee_ids FROM crushes GROUP BY crusher_id)
+            """.format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
 class AncientGrudge(CountedAchievement):
     key = 'ancient_grudges'
@@ -593,7 +594,7 @@ class Deckbuilder(CountedAchievement):
     description_safe = 'Have someone else register an exact copy of a deck you registered first.'
     sql = 'COUNT(DISTINCT CASE WHEN d.id IN (SELECT original FROM repeats WHERE newplayer = TRUE) AND d.id NOT IN (SELECT copy FROM repeats) THEN d.id ELSE NULL END)'
     detail_sql = "GROUP_CONCAT(CASE WHEN d.id IN (SELECT original FROM repeats WHERE newplayer = TRUE) AND d.id NOT IN (SELECT copy FROM repeats) THEN CONCAT(d.id, ',', imitators.imitator_ids) ELSE NULL END)"
-    join_sql = 'JOIN imitators ON imitators.original = d.id'
+    join_sql = 'LEFT JOIN imitators ON imitators.original = d.id'
     with_sql = """
         repeats AS
             (

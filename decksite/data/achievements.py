@@ -85,9 +85,9 @@ def preaggregate_query() -> str:
             deck AS d ON d.person_id = p.id
         LEFT JOIN
             deck_cache AS dc ON dc.deck_id = d.id
-        {join_clauses}
         {season_join}
         {competition_join}
+        {join_clauses}
         GROUP BY
             p.id,
             season.id
@@ -383,8 +383,8 @@ class FlawlessRun(CountedAchievement):
     key = 'flawless_runs'
     title = 'Flawless League Run'
     description_safe = 'Complete a 5–0 run in the league without losing a game.'
-    sql = "SUM(CASE WHEN d.id IN (SELECT id FROM flawless_decks1) THEN 1 ELSE 0 END)"
-    detail_sql = "GROUP_CONCAT(CASE WHEN d.id IN (SELECT id FROM flawless_decks2) THEN d.id ELSE NULL END)"
+    sql = 'SUM(CASE WHEN d.id IN (SELECT id FROM flawless_decks1) THEN 1 ELSE 0 END)'
+    detail_sql = 'GROUP_CONCAT(CASE WHEN d.id IN (SELECT id FROM flawless_decks2) THEN d.id ELSE NULL END)'
 
     def leaderboard_heading(self) -> str:
         return gettext('Runs')
@@ -392,7 +392,7 @@ class FlawlessRun(CountedAchievement):
     def localised_display(self, n: int) -> str:
         return ngettext('1 flawless run', '%(num)d flawless runs', n)
 
-    # Duplicating this query seems obviously wrong, but it doesn't work if we do the obvious thing and juse reuse it
+    # Duplicating this query seems obviously wrong, but it doesn't work if we do the obvious thing and just reuse it
     @property
     def with_sql(self) -> str:
         return """flawless_decks1 AS
@@ -615,7 +615,6 @@ class Deckbuilder(CountedAchievement):
     def localised_display(self, n: int) -> str:
         return ngettext('1 deck played by others', '%(num)d decks played by others', n)
 
-
 class Pioneer(CountedAchievement):
     key = 'pioneer'
     title = 'Pioneer'
@@ -660,14 +659,16 @@ class Specialist(BooleanAchievement):
     title = 'Specialist'
     season_text = 'Reached the elimination rounds of a tournament playing the same archetype three times this season'
     description_safe = 'Reach the elimination rounds of a tournament playing the same archetype three times in a single season.'
-    sql = """
-        CASE WHEN EXISTS
-            (
-                SELECT
-                    p.id
-                FROM
+    sql = 'CASE WHEN EXISTS (SELECT * FROM arch_top_n_count1 AS atnc WHERE p.id = atnc.person_id AND season.id = atnc.season_id AND n >= 3) THEN TRUE ELSE FALSE END'
+    detail_sql = "GROUP_CONCAT(CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' AND d.archetype_id IN (SELECT archetype_id FROM arch_top_n_count2 AS atnc WHERE p.id = atnc.person_id AND season.id = atnc.season_id AND n >= 3) THEN d.id ELSE NULL END)"
+    with_sql = """
+                top_ns AS
                     (
-                        SELECT p.id AS inner_pid, season.id AS inner_seasonid, COUNT(d.id) AS archcount
+                        SELECT
+                            d.id as deck_id,
+                            p.id AS person_id,
+                            season.id AS season_id,
+                            d.archetype_id AS archetype_id
                         FROM
                             person AS p
                         LEFT JOIN
@@ -678,18 +679,16 @@ class Specialist(BooleanAchievement):
                         {competition_join}
                         WHERE
                             d.finish <= c.top_n AND ct.name = 'Gatherling'
-                        GROUP BY
-                            p.id,
-                            season.id,
-                            d.archetype_id
-                        HAVING archcount >= 3
-                    ) AS spec_archs
-                WHERE
-                    p.id = inner_pid AND season.id = inner_seasonid
-            )
-        THEN TRUE ELSE FALSE END
-    """.format(season_join=query.season_join(), competition_join=query.competition_join())
-
+                    ),
+                arch_top_n_count1 AS
+                    (
+                        SELECT person_id, season_id, archetype_id, COUNT(DISTINCT deck_id) AS n FROM top_ns GROUP BY person_id, season_id, archetype_id
+                    ),
+                arch_top_n_count2 AS
+                    (
+                        SELECT person_id, season_id, archetype_id, COUNT(DISTINCT deck_id) AS n FROM top_ns GROUP BY person_id, season_id, archetype_id
+                    )
+                """.format(season_join=query.season_join(), competition_join=query.competition_join())
     @staticmethod
     def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
@@ -701,6 +700,15 @@ class Generalist(BooleanAchievement):
     season_text = 'Reached the elimination rounds of a tournament playing three different archetypes this season'
     description_safe = 'Reach the elimination rounds of a tournament playing three different archetypes in a single season.'
     sql = "CASE WHEN COUNT(DISTINCT CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END"
+    detail_sql = """
+                    CASE WHEN
+                        COUNT(DISTINCT CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' THEN d.archetype_id ELSE NULL END) >= 3
+                    THEN
+                        GROUP_CONCAT(DISTINCT CASE WHEN d.id IN (SELECT deck_id FROM first_arch_top_ns) THEN d.id ELSE NULL END)
+                    ELSE
+                        NULL
+                    END"""
+    with_sql = 'first_arch_top_ns AS (SELECT MIN(deck_id) AS deck_id, person_id, season_id FROM top_ns GROUP BY person_id, season_id, archetype_id)'
 
     @staticmethod
     def alltime_text(n: int) -> str:

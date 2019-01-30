@@ -24,10 +24,10 @@ mypy-extensions==0.4.1
 pillow==5.4.1
 poeditor==1.1.0
 profanity==1.1
-pygithub==1.43.4
+pygithub==1.43.5
 pygtrie==2.3
 pylint==2.2.2
-pylint-quotes==0.2.0
+pylint-quotes==0.2.1
 pystache==0.5.4
 pytest==4.1.1
 python-dateutil==2.7.5

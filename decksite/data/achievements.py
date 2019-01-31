@@ -649,7 +649,7 @@ class VarietyPlayer(BooleanAchievement):
     title = 'Variety Player'
     season_text = 'Finished five-match league runs with three or more different archetypes this season'
     description_safe = 'Finish five-match league runs with three or more different archetypes in a single season.'
-    sql = "CASE WHEN COUNT(DISTINCT CASE WHEN falr.deck_id IS NOT NULL THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END"
+    sql = 'CASE WHEN COUNT(DISTINCT CASE WHEN falr.deck_id IS NOT NULL THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END'
     detail_sql = """
                     CASE WHEN
                         COUNT(DISTINCT CASE WHEN falr.deck_id IS NOT NULL THEN d.archetype_id ELSE NULL END) >= 3

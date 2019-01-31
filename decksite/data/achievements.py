@@ -491,8 +491,9 @@ class AncientGrudge(CountedAchievement):
         return gettext('grudges repaid')
     def localised_display(self, n: int) -> str:
         return ngettext('1 grudge repaid', '%(num)d grudges repaid', n)
-    sql = """COUNT(DISTINCT CASE WHEN d.id IN (SELECT id FROM ancient_grudge_deck_ids) THEN d.id ELSE NULL END)"""
-    detail_sql = """GROUP_CONCAT(DISTINCT CASE WHEN d.id IN (SELECT * FROM ancient_grudge_deck_ids) THEN d.id ELSE NULL END)"""
+    sql = """COUNT(DISTINCT CASE WHEN agdi.id IS NOT NULL THEN d.id ELSE NULL END)"""
+    detail_sql = """GROUP_CONCAT(DISTINCT CASE WHEN agdi.id IS NOT NULL THEN agdi.both_ids ELSE NULL END)"""
+    join_sql = 'LEFT JOIN ancient_grudge_deck_ids AS agdi ON d.id = agdi.id'
     @property
     def with_sql(self) -> str:
         return """knockouts AS
@@ -537,7 +538,8 @@ class AncientGrudge(CountedAchievement):
             ancient_grudge_deck_ids AS
             (
                 SELECT
-                    k2.winner_deck_id AS id
+                    k2.winner_deck_id AS id,
+                    CONCAT(k1.winner_deck_id, ",", k2.winner_deck_id) AS both_ids
                 FROM
                     knockouts AS k1
                 JOIN
@@ -645,20 +647,20 @@ class Pioneer(CountedAchievement):
 class VarietyPlayer(BooleanAchievement):
     key = 'variety_player'
     title = 'Variety Player'
-    season_text = 'Finished five-match league runs with three different archetypes this season'
-    description_safe = 'Finish five-match league runs with three different archetypes in a single season.'
+    season_text = 'Finished five-match league runs with three or more different archetypes this season'
+    description_safe = 'Finish five-match league runs with three or more different archetypes in a single season.'
     sql = "CASE WHEN COUNT(DISTINCT CASE WHEN dc.wins + dc.losses >= 5 AND ct.name = 'League' THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END"
 
     @staticmethod
     def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
-        return f'Finished five-match league runs with three different archetypes in {what}'
+        return f'Finished five-match league runs with three or more different archetypes in {what}'
 
 class Specialist(BooleanAchievement):
     key = 'specialist'
     title = 'Specialist'
-    season_text = 'Reached the elimination rounds of a tournament playing the same archetype three times this season'
-    description_safe = 'Reach the elimination rounds of a tournament playing the same archetype three times in a single season.'
+    season_text = 'Reached the elimination rounds of a tournament playing the same archetype three or more times this season'
+    description_safe = 'Reach the elimination rounds of a tournament playing the same archetype three or more times in a single season.'
     sql = 'CASE WHEN EXISTS (SELECT * FROM arch_top_n_count1 AS atnc WHERE p.id = atnc.person_id AND season.id = atnc.season_id AND n >= 3) THEN TRUE ELSE FALSE END'
     detail_sql = "GROUP_CONCAT(CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' AND d.archetype_id IN (SELECT archetype_id FROM arch_top_n_count2 AS atnc WHERE p.id = atnc.person_id AND season.id = atnc.season_id AND n >= 3) THEN d.id ELSE NULL END)"
     with_sql = """
@@ -692,13 +694,13 @@ class Specialist(BooleanAchievement):
     @staticmethod
     def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
-        return f'Reached the elimination rounds of a tournament playing the same archetype three times in {what}'
+        return f'Reached the elimination rounds of a tournament playing the same archetype three or more times in {what}'
 
 class Generalist(BooleanAchievement):
     key = 'generalist'
     title = 'Generalist'
-    season_text = 'Reached the elimination rounds of a tournament playing three different archetypes this season'
-    description_safe = 'Reach the elimination rounds of a tournament playing three different archetypes in a single season.'
+    season_text = 'Reached the elimination rounds of a tournament playing three or more different archetypes this season'
+    description_safe = 'Reach the elimination rounds of a tournament playing three or more different archetypes in a single season.'
     sql = "CASE WHEN COUNT(DISTINCT CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END"
     detail_sql = """
                     CASE WHEN
@@ -713,7 +715,7 @@ class Generalist(BooleanAchievement):
     @staticmethod
     def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
-        return f'Reached the elimination rounds of a tournament playing three different archetypes in {what}'
+        return f'Reached the elimination rounds of a tournament playing three or more different archetypes in {what}'
 
 class Completionist(BooleanAchievement):
     key = 'completionist'

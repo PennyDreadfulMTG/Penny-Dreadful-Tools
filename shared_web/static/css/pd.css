@@ -71,7 +71,7 @@ html {
 
         With this base font size 1px is 0.05rem. If you change the base font size change the 1px width throughout and in calculations including the mana-bar outside of CSS.
     */
-    font: 400 20px main-text, symbols;
+    font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 body {
@@ -97,7 +97,7 @@ i, em /* em to support markdown conversion to HTML, prefer i */ {
 }
 
 nav {
-    font-family: heading-caps;
+    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     border-bottom: 0.05rem solid #999;
 }
 
@@ -129,7 +129,7 @@ main li {
 }
 
 footer a {
-    font-family: heading-caps;
+    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-transform: lowercase;
 }
 
@@ -179,7 +179,7 @@ For symbols not provided by our main-text font we provide a strict subset of Sym
 
 Symbols provided by our main font are:
 
-    — U+2012 EM DASH (Used in status bar to break up various pieces of info, also used from mtgjson info and in discord bot output)
+    — U+2012 EM DASH (Used in status bar to break up various pieces of info, also used from Scryfall info and in discord bot output)
     – U+2013 EN DASH (for records like “4–1”) 
     ★ U+2605 BLACK STAR (deck quality)
     + U+002B PLUS SIGN (expand row in mobile view table)
@@ -429,7 +429,7 @@ Currently there is no h3 and nesting that deeply should be pondered but it may b
 header h1 {
     border: 0;
     float: left; /* To accommodate search bar on right. */
-    font-family: heading-caps;
+    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: normal;
     font-size: 1.333rem;
     margin-bottom: 0;
@@ -471,7 +471,7 @@ Links in text are underlined in such a way as to break on descenders like those 
 
 a, main table.calendar a, main .intro .details a, .details a {
     color: inherit;
-    font-family: heading-caps;
+    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-decoration: none;
     text-transform: lowercase;
 }
@@ -550,6 +550,11 @@ ul.decklist {
     padding: 0 0.563em;
 }
 
+/* Inline comma-delimited lists giving us a join-type capability for Mustache templates. */
+.comma-list span:not(:last-of-type):after {
+  content: ", "
+}
+
 /*
 
 Tables
@@ -605,7 +610,7 @@ table.with-marginalia {
 
 main th {
     cursor: pointer;
-    font-family: heading-caps;
+    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 1em;
     text-align: left;
     text-transform: lowercase;
@@ -967,7 +972,76 @@ Mobile Menu
 
 /*
 
+Site Header
+
+*/
+
+
+header {
+    position: relative;
+}
+header * {
+  position: relative;
+}
+header:before {
+    background-size: cover;
+    content: "";
+    filter: grayscale(50%);
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+header.season-all:before {
+    background-image: url("/banner/0.png");
+}
+
+header.season-1:before {
+    background-image: url("/banner/1.png");
+}
+
+header.season-2:before {
+    background-image: url("/banner/2.png");
+}
+
+header.season-3:before {
+    background-image: url("/banner/3.png");
+}
+
+header.season-4:before {
+    background-image: url("/banner/4.png");
+}
+
+header.season-5:before {
+    background-image: url("/banner/5.png");
+}
+
+header.season-6:before {
+    background-image: url("/banner/6.png");
+}
+
+header.season-7:before {
+    background-image: url("/banner/7.png");
+}
+
+header.season-8:before {
+    background-image: url("/banner/8.png");
+}
+
+header.season-9:before {
+    background-image: url("/banner/9.png");
+}
+
+header.season-10:before {
+    background-image: url("/banner/10.png");
+}
+
+/*
+
 z-index
+
+Although z-index is way more complicated than this (google for "stacking contexts") here is what we are trying to achieve as if z-index worked globally.
 
 100 page, achievement bar background
 125 achievement bar actual bar
@@ -980,6 +1054,24 @@ z-index
 400 card and text tooltips
 
 */
+
+/* Create separate stacking contexts for each top-level element in the page by positioning them and giving them approximately sensisble z-index values.
+   See https://www.sitepoint.com/managing-css-stacking-contexts-hostile-environment/ */
+header, nav, main, footer {
+    position: relative;
+}
+header {
+    z-index: 40;
+}
+nav {
+    z-index: 30;
+}
+main {
+    z-index: 20;
+}
+footer {
+    z-index: 10;
+}
 
 .achievement-bar .bar {
     z-index: 125;
@@ -1055,7 +1147,7 @@ Calendar
 
 .date .month {
     display: block;
-    font-family: heading-caps;
+    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-align: left;
     text-transform: lowercase;
 }
@@ -1639,12 +1731,13 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 }
 
 .gsc-results-wrapper-overlay {
+    height: 75vh !important; /* csslint allow: important */
     max-width: 30rem !important; /* csslint allow: important */
 }
 
 .gsc-results-wrapper-overlay * {
     color: #502828 !important; /* csslint allow: important */
-    font: 400 20px main-text, symbols;
+    font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.75rem !important; /* csslint allow: important */
 }
 
@@ -1653,7 +1746,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 }
 
 .gsc-wrapper a, .gs-title, .gs-title * {
-    font-family: heading-caps;
+    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-decoration: none !important; /* csslint allow: important */
 }
 
@@ -1707,7 +1800,7 @@ td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
 
 .gsc-result-info-container, .gs-snippet {
     /* Not sure why it doesn't pick up the definiton on HTML but it doesn't. */
-    font: 400 20px main-text, symbols;
+    font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .gs-snippet, .gsc-result-info {
@@ -1741,15 +1834,14 @@ Archetypes
     width: 45%;
 }
 
-/* Highlight the currently selected row. */
-
-tr.current {
+/* Highlight the currently selected row … */
+tr.current, tr.current td {
     background-color: #eee;
 }
 
-tr.current td {
-    background-color: #eee;
-
+/* … unless you are in an expanded row which displays more like a table. */
+.footable-details tr.current, .footable-details tr.current td {
+    background-color: inherit;
 }
 
 /* Pad to the left of the archetype name based on its depth in the hierarchy.
@@ -1792,6 +1884,11 @@ Fix the width of the column to prevent the table "jump"-ing around the screen as
 td.archetype-description {
     max-width: 26em;
 }
+/* Ajax links for the "Edit Rules" page */
+.reassign {
+    cursor: pointer;
+}
+
 /*
 
 News
@@ -1799,7 +1896,7 @@ News
 */
 
 .news li.item a {
-    font-family: main-text, symbols;
+    font-family: main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-transform: none;
 }
 
@@ -1816,7 +1913,7 @@ News
 .news .date {
     color: #999;
     display: inline-block;
-    font-family: main-text, symbols;
+    font-family: main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     float: right;
     margin-left: 1rem;
 }
@@ -2412,41 +2509,3 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 /* links */
 .tpd-skin-dark a,
 .tpd-skin-dark a:hover { color: #ccc; }
-
-header {
-    filter: grayscale(70%);
-    background-size: cover;
-}
-header.season-all {
-    background-image: url("/banner/0.png");
-}
-header.season-1 {
-    background-image: url("/banner/1.png");
-}
-header.season-2 {
-    background-image: url("/banner/2.png");
-}
-header.season-3 {
-    background-image: url("/banner/3.png");
-}
-header.season-4 {
-    background-image: url("/banner/4.png");
-}
-header.season-5 {
-    background-image: url("/banner/5.png");
-}
-header.season-6 {
-    background-image: url("/banner/6.png");
-}
-header.season-7 {
-    background-image: url("/banner/7.png");
-}
-header.season-8 {
-    background-image: url("/banner/8.png");
-}
-header.season-9 {
-    background-image: url("/banner/9.png");
-}
-header.season-10 {
-    background-image: url("/banner/10.png");
-}

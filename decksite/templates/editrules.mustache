@@ -1,9 +1,9 @@
 <h1>Deck Classification Rules</h1>
-<section>
-    <p>{{num_classified}} out of {{num_total}} decks currently covered by a rule.</p>
-
-    {{#has_doubled_decks}}
-        <h2>Decks where more than one rule applies</h2>
+<p>{{num_classified}} out of {{num_total}} decks currently covered by a rule.</p>
+{{#has_doubled_decks}}
+    <section>
+        <h2>Doubled Decks</h2>
+        <p>Decks where more than one rule applies</p>
         {{> spinner}}
         <table>
             <thead>
@@ -12,22 +12,29 @@
                     <th>Deck Name</th>
                     <th>Manually-assigned</th>
                     <th>Rule-assigned</th>
+                </tr>
             </thead>
             <tbody>
                 {{#doubled_decks}}
                     <tr>
                         <td>{{{colors_safe}}}</td>
                         <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
-                        <td>{{archetype_name}}</td>
-                        <td>{{concat_archetypes}}</td>
+                        <td><a href="{{archetype_url}}">{{archetype_name}}</a></td>
+                        <td class="comma-list">
+                            {{#archetypes_from_rules}}
+                                <span><a href="{{archetype_url}}">{{archetype_name}}</a></span>
+                            {{/archetypes_from_rules}}
+                        </td>
                     </tr>
                 {{/doubled_decks}}
             </tbody>
         </table>
-    {{/has_doubled_decks}}
-
-    {{#has_mistagged_decks}}
-        <h2>Decks where the rule doesn't match the assigned archetype</h2>
+    </section>
+{{/has_doubled_decks}}
+{{#has_mistagged_decks}}
+    <section>
+        <h2>Mistagged Decks</h2>
+        <p>Decks where the rule doesn't match the assigned archetype</p>
         {{> spinner}}
         <table>
             <thead>
@@ -36,32 +43,60 @@
                     <th>Deck Name</th>
                     <th>Manually-assigned</th>
                     <th>Rule-assigned</th>
+                    <td></td>
+                </tr>
             </thead>
             <tbody>
                 {{#mistagged_decks}}
                     <tr>
                         <td>{{{colors_safe}}}</td>
                         <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
-                        <td>{{archetype_name}}</td>
-                        <td>{{rule_archetype_name}}</td>
+                        <td><a href="{{archetype_url}}">{{archetype_name}}</a></td>
+                        <td><a href="{{rule_archetype_url}}">{{rule_archetype_name}}</a></td>
+                        <td>
+                            <a class="reassign" data-deck_id="{{id}}" data-rule_archetype_id="{{rule_archetype_id}}">Reassign to {{rule_archetype_name}}</a>
+                        </td>
                     </tr>
                 {{/mistagged_decks}}
             </tbody>
         </table>
-    {{/has_mistagged_decks}}
-
-    <h2>Other reports</h2>
-    <p>Not currently reported: Archetypes with no matching rule, list of decks not covered by any rule.
-    (These could be added if and when the list of rules is closer to being complete.)</p>
-
+    </section>
+{{/has_mistagged_decks}}
+{{#has_overlooked_decks}}
+    <section>
+        <h2>Overlooked Decks</h2>
+        <p>Decks which don't match a rule, but a rule exists for the manually-assigned archetype</p>
+        {{>spinner}}
+        <table>
+            <thead>
+                <tr>
+                    <th>Colors</th>
+                    <th>Deck Name</th>
+                    <th>Manually-assigned</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#overlooked_decks}}
+                    <tr>
+                        <td>{{{colors_safe}}}</td>
+                        <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
+                        <td><a href="{{archetype_url}}">{{archetype_name}}</a></td>
+                    </tr>
+                {{/overlooked_decks}}
+            </tbody>
+        </table>
+    </section>
+{{/has_overlooked_decks}}
+<section>
+    <h2>No Matching Rule</h2>
+    <p>Archetypes with no matching rule</p>
+    <p>(This could be added if and when the list of rules is closer to being complete.)</p>
 </section>
 <section>
-
-    <h2>View and edit rules</h2>
-
+    <h2>Edit Rules</h2>
     {{#rules}}
         <p>{{archetype_name}} (Rule {{id}}, {{num_decks}} decks)</p>
-        <form method="post">
+        <form class="rule-form" method="post" action="/api/rule/update">
             <input type="hidden" name="rule_id" value="{{id}}">
             <table>
                 <tr>
@@ -69,20 +104,18 @@
                     <th>Must not include</th>
                 </tr>
                 <tr>
-                    <td><textarea name="include">{{#included_cards}}{{n}} {{card}}
-{{/included_cards}}</textarea></td>
-                    <td><textarea name="exclude">{{#excluded_cards}}{{n}} {{card}}
-{{/excluded_cards}}</textarea></td>
+                    <td><textarea name="include">{{included_cards_s}}</textarea></td>
+                    <td><textarea name="exclude">{{excluded_cards_s}}</textarea></td>
                 </tr>
             </table>
             <button type="submit">Update</button>
         </form>
     {{/rules}}
-
-    <h2>New rule</h2>
+</section>
+<section>
+    <h2>New Rule</h2>
     <form method="post">
     {{>archetypedropdown}}
     <button type="submit">Create</button>
     </form>
-
 </section>

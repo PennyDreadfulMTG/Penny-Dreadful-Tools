@@ -71,7 +71,9 @@ TESTDATA = [
     ('RG Energy', 'Gruul Energy', ['R', 'G'], 'Pummeler'),
     ('Black/Red', 'Rakdos', ['B', 'R'], None),
     ('Blue Burn', 'Blue Burn', ['U', 'R'], None),
-    ('WB', 'Orzhov Aristocrats', ['W', 'B'], 'Orzhov Aristocrats')
+    ('WB', 'Orzhov Aristocrats', ['W', 'B'], 'Orzhov Aristocrats'),
+    ("Bob's R Us", "Bob's R Us", ['B'], 'Mono Black Aggro'),
+    ('PD ""Affinity""', '""Affinity""', ['W'], 'Tempered Steel')
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

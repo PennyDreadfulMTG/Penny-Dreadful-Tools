@@ -1,6 +1,5 @@
 import hashlib
 import json
-import random
 import time
 from typing import Dict, List, Optional, Set
 
@@ -10,7 +9,7 @@ from decksite import deck_name
 from decksite.data import query
 from decksite.data.top import Top
 from decksite.database import db
-from magic import legality, mana, oracle, rotation
+from magic import legality, mana, oracle
 from magic.models import CardRef, Deck
 from shared import dtutil, guarantee, redis
 from shared.container import Container
@@ -53,7 +52,8 @@ def load_decks(where: str = '1 = 1',
             cache.active_date,
             cache.wins,
             cache.losses,
-            cache.draws
+            cache.draws,
+            ct.name AS competition_type_name
         FROM
             deck AS d
         """
@@ -81,6 +81,7 @@ def load_decks(where: str = '1 = 1',
             ({where}) AND ({season_query})
         GROUP BY
             d.id,
+            d.competition_id, -- Every deck has only one competition_id but if we want to use competition_id in the HAVING clause we need this.
             season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
         HAVING
             {having}
@@ -157,6 +158,7 @@ def load_decks_heavy(where: str = '1 = 1',
             p.discord_id,
             d.decklist_hash,
             d.retired,
+            d.reviewed,
             s.name AS source_name,
             IFNULL(a.name, '') AS archetype_name,
             cache.normalized_name AS name,
@@ -188,6 +190,7 @@ def load_decks_heavy(where: str = '1 = 1',
             ({where}) AND ({season_query})
         GROUP BY
             d.id,
+            d.competition_id, -- Every deck has only one competition_id but if we want to use competition_id in the HAVING clause we need this.
             season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
         HAVING
             {having}
@@ -230,7 +233,7 @@ def set_colors(d: Deck) -> None:
     deck_colored_symbols: List[str] = []
     for c in [entry.card for entry in d.maindeck + d.sideboard]:
         for cost in c.get('mana_cost') or ():
-            if c.layout == 'split' or c.layout == 'aftermath':
+            if c.layout == 'split':
                 continue # They might only be using one half so ignore it.
             card_symbols = mana.parse(cost)
             card_colors = mana.colors(card_symbols)
@@ -621,16 +624,3 @@ def nwdl_join() -> str:
 def num_decks() -> int:
     sql = 'SELECT COUNT(id) AS c FROM deck'
     return db().value(sql)
-
-def random_legal_deck() -> Optional[Deck]:
-    sql = f"""SELECT MIN(id) AS min, MAX(id) AS max FROM deck WHERE
-                created_date > (SELECT start_date FROM season WHERE number = {rotation.current_season_num()})
-                AND reviewed=TRUE"""
-    r = Container(db().select(sql)[0])
-    if r.min is None or r.max is None: # no legal decks in the db, maybe we just rotated?
-        return None
-    for _ in range(10):
-        deck = load_deck(random.randrange(r.min, r.max+1))
-        if not deck.is_in_current_run() and not deck.banned:
-            return deck
-    return None

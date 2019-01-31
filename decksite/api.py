@@ -3,15 +3,19 @@ from typing import List, Optional
 from flask import Response, request, session, url_for
 
 from decksite import APP, auth, league
+from decksite.data import archetype as archs
 from decksite.data import card as cs
 from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps
+from decksite.data import rule as rs
 from decksite.views import DeckEmbed
 from magic import oracle, rotation
+from magic.decklist import parse_line
 from magic.models import Deck
-from shared import configuration, dtutil, guarantee
-from shared.pd_exception import DoesNotExistException, TooManyItemsException
+from shared import configuration, dtutil, guarantee, redis
+from shared.pd_exception import (DoesNotExistException, InvalidDataException,
+                                 TooManyItemsException)
 from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 
@@ -23,7 +27,7 @@ def deck_api(deck_id: int) -> Response:
 
 @APP.route('/api/randomlegaldeck')
 def random_deck_api() -> Response:
-    blob = deck.random_legal_deck()
+    blob = league.random_legal_deck()
     if blob is None:
         return return_json({'error': True, 'msg': 'No legal decks could be found'})
     blob['url'] = url_for('deck', deck_id=blob['id'], _external=True)
@@ -129,6 +133,39 @@ def cards_api() -> Response:
 def card_api(card: str) -> Response:
     return return_json(oracle.load_card(card))
 
+@APP.route('/api/archetype/reassign', methods=['POST'])
+@auth.demimod_required
+def post_reassign() -> str:
+    deck_id = request.form.get('deck_id')
+    archetype_id = request.form.get('archetype_id')
+    archs.assign(deck_id, archetype_id)
+    redis.clear(f'decksite:deck:{deck_id}')
+    return return_json({'success':True, 'deck_id':deck_id})
+
+@APP.route('/api/rule/update', methods=['POST'])
+@auth.demimod_required
+def post_rule_update() -> str:
+    if request.form.get('rule_id') is not None and request.form.get('include') is not None and request.form.get('exclude') is not None:
+        inc = []
+        exc = []
+        for line in request.form.get('include').strip().splitlines():
+            try:
+                inc.append(parse_line(line))
+            except InvalidDataException:
+                return return_json({'success':False, 'msg':f"Couldn't find a card count and name on line: {line}"})
+            if not cs.card_exists(inc[-1][1]):
+                return return_json({'success':False, 'msg':f'Card not found in any deck: {line}'})
+        for line in request.form.get('exclude').strip().splitlines():
+            try:
+                exc.append(parse_line(line))
+            except InvalidDataException:
+                return return_json({'success':False, 'msg':f"Couldn't find a card count and name on line: {line}"})
+            if not cs.card_exists(exc[-1][1]):
+                return return_json({'success':False, 'msg':f'Card not found in any deck {line}'})
+        rs.update_cards(request.form.get('rule_id'), inc, exc)
+        return return_json({'success':True})
+    return return_json({'success':False, 'msg':'Required keys not found'})
+
 @APP.route('/api/sitemap/')
 def sitemap() -> Response:
     urls = [url_for(rule.endpoint) for rule in APP.url_map.iter_rules() if 'GET' in rule.methods and len(rule.arguments) == 0]
@@ -171,6 +208,11 @@ def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:
         league.retire_deck(decks[0])
         run = decks[1]
     return run
+
+@APP.route('/api/admin/people/<int:person_id>/notes/')
+@auth.admin_required_no_redirect
+def person_notes(person_id: int) -> Response:
+    return return_json({'notes': ps.load_notes(person_id)})
 
 @APP.route('/decks/<int:deck_id>/oembed')
 def deck_embed(deck_id: int) -> Response:

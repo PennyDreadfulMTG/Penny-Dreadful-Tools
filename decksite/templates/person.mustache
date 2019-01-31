@@ -1,4 +1,18 @@
 {{> banner}}
+<section class="admin">
+    <h2>Notes</h2>
+    <div class="person-notes" data-person_id="{{person.id}}">
+        {{> spinner}}
+    </div>
+    <form method="post" action="{{add_note_url}}">
+        <input type="hidden" name="person_id" value="{{person.id}}">
+        <div>
+            <label for="note">Note</label>
+            <textarea name="note"></textarea>
+        </div>
+        <button type="submit">Add Note</button>
+    </form>
+</section>
 <section>
     <h2>Decks</h2>
     {{> decktable}}
@@ -56,3 +70,9 @@
     <h2>Cards</h2>
     {{> cardstable}}
 </section>
+{{#charts}}
+    <section>
+        <h2>{{title}}</h2>
+        <canvas class="chart" data-type="{{type}}" data-labels="{{labels}}" data-series="{{series}}"></canvas>
+    </section>
+{{/charts}}

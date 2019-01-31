@@ -188,7 +188,12 @@ class Achievement:
                 name
             LIMIT {LEADERBOARD_LIMIT}
         """
-        leaderboard = [Container(r) for r in db().select(sql)]
+        leaderboard = []
+        for row in db().select(sql):
+            c = Container(row)
+            c.score = c.points
+            leaderboard.append(c)
+
         return leaderboard if len(leaderboard) > 0 else None
 
     # pylint: disable=no-self-use
@@ -554,7 +559,7 @@ class VarietyPlayer(BooleanAchievement):
     @staticmethod
     def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
-        return f'Reached the elimination rounds of a tournament playing three different archetypes in {what}'
+        return f'Finished five-match league runs with three different archetypes in {what}'
 
 class Specialist(BooleanAchievement):
     key = 'specialist'
@@ -613,7 +618,7 @@ class Completionist(BooleanAchievement):
     title = 'Completionist'
     season_text = 'Never retired a league run this season'
     description_safe = 'Play the whole season without retiring an unfinished league run.'
-    sql = 'CASE WHEN COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END'
+    sql = "CASE WHEN COUNT(CASE WHEN ct.name = 'League' THEN 1 ELSE NULL END) > 0 AND COUNT(CASE WHEN d.retired = 1 THEN 1 ELSE NULL END) = 0 THEN True ELSE False END"
 
     @staticmethod
     def alltime_text(n: int) -> str:

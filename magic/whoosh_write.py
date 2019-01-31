@@ -29,7 +29,7 @@ def ensure_dir_exists(directory: str) -> None:
 
 def update_index(index: Index, cards: List[Card]) -> None:
     writer = index.writer()
-    cards = [c for c in cards if c.layout != 'token' and c.type != 'Vanguard']
+    cards = [c for c in cards if c.layout != 'token' and c.type_line != 'Vanguard']
     for card in cards:
         names = card.names if not card.layout == 'meld' or card.position == 1 else [card.name]
         if card.name not in names:

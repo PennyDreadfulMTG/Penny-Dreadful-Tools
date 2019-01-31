@@ -30,7 +30,7 @@ from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
                             TournamentHosting, TournamentLeaderboards,
                             Tournaments)
 from magic import card as mc
-from magic import image_fetcher, oracle
+from magic import fetcher, image_fetcher, oracle
 from shared import perf
 from shared.pd_exception import (DoesNotExistException, InvalidDataException,
                                  TooFewItemsException)
@@ -144,13 +144,36 @@ def archetypes() -> str:
     view = Archetypes(deckless_archetypes, all_matchups)
     return view.page()
 
+@APP.route('/archetypes/tournament/')
+@SEASONS.route('/archetypes/tournament/')
+@cached()
+def archetypes_tournament() -> str:
+    season_id = get_season_id()
+    deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id)
+    all_matchups = archs.load_all_matchups(season_id=season_id)
+    view = Archetypes(deckless_archetypes, all_matchups, tournament_only=True)
+    return view.page()
+
 @APP.route('/archetypes/<archetype_id>/')
 @SEASONS.route('/archetypes/<archetype_id>/')
 @cached()
 def archetype(archetype_id: str) -> str:
     season_id = get_season_id()
     a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id)
-    view = Archetype(a, archs.load_archetypes_deckless_for(a.id, season_id=season_id), archs.load_matchups(a.id, season_id=season_id), season_id)
+    deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id)
+    matchups = archs.load_matchups(a.id, season_id=season_id)
+    view = Archetype(a, deckless_archetypes, matchups, season_id)
+    return view.page()
+
+@APP.route('/archetypes/<archetype_id>/tournament/')
+@SEASONS.route('/archetypes/<archetype_id>/tournament/')
+@cached()
+def archetype_tournament(archetype_id: str) -> str:
+    season_id = get_season_id()
+    a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id)
+    deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id)
+    matchups = archs.load_matchups(a.id, season_id=season_id)
+    view = Archetype(a, deckless_archetypes, matchups, season_id, tournament_only=True)
     return view.page()
 
 @APP.route('/tournaments/')
@@ -187,6 +210,13 @@ def add_deck() -> Response:
         try:
             deck_id = decksite.scrapers.tappedout.scrape_url(url).id
         except (InvalidDataException, RequestException) as e:
+            error = e.args[0]
+    elif 'mtggoldfish' in url:
+        import decksite.scrapers.mtggoldfish
+        try:
+            d = decksite.scrapers.mtggoldfish.scrape_one(url)
+            deck_id = d.id
+        except InvalidDataException as e:
             error = e.args[0]
     else:
         error = 'Deck host is not supported.'
@@ -226,9 +256,12 @@ def community_guidelines() -> str:
     return view.page()
 
 @APP.route('/rotation/')
+@APP.route('/rotation/<interestingness>/')
 @cached()
-def rotation() -> str:
-    view = Rotation()
+def rotation(interestingness: Optional[str] = None) -> str:
+    rotation_query = request.args.get('rq')
+    _, cardnames = fetcher.search_scryfall(rotation_query, exhaustive=True) if rotation_query else (None, None)
+    view = Rotation(interestingness, rotation_query, cardnames)
     return view.page()
 
 @APP.route('/export/<deck_id>/')

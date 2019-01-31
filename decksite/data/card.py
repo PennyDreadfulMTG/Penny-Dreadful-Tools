@@ -216,3 +216,7 @@ def preaggregate_playability() -> None:
     db().execute('CREATE TABLE IF NOT EXISTS _playability (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
     db().execute('RENAME TABLE _playability TO _old_playability, _new_playability TO _playability')
     db().execute('DROP TABLE IF EXISTS _old_playability')
+
+def card_exists(name: str) -> bool:
+    sql = 'SELECT EXISTS(SELECT * FROM deck_card WHERE card = %s LIMIT 1)'
+    return bool(db().value(sql, [name]))

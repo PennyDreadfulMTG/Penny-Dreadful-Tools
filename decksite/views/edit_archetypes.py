@@ -1,6 +1,8 @@
 from typing import List
 
-from decksite.data import deck
+from flask import url_for
+
+from decksite.data import deck, rule
 from decksite.data.archetype import Archetype
 from decksite.view import View
 from magic.models import Deck
@@ -14,8 +16,12 @@ class EditArchetypes(View):
         self.roots = [a for a in self.archetypes if a.is_root]
         self.queue = deck.load_decks(where='NOT d.reviewed', order_by='updated_date DESC')
         deck.load_queue_similarity(self.queue)
+        rule.apply_rules_to_decks(self.queue)
         for d in self.queue:
             self.prepare_deck(d)
+            d.archetype_url = url_for('archetype', archetype_id=d.archetype_name)
+            if d.get('rule_archetype_name'):
+                d.rule_archetype_url = url_for('archetype', archetype_id=d.rule_archetype_name)
         self.has_search_results = len(search_results) > 0
         self.search_results = search_results
         for d in self.search_results:

@@ -2,7 +2,7 @@ import calendar
 import datetime
 import json
 import time
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from flask import url_for
 from werkzeug.datastructures import ImmutableMultiDict
@@ -10,8 +10,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 from decksite.data import competition, deck, match, person, query
 from decksite.data.form import Form
 from decksite.database import db
-from decksite.scrapers import decklist
-from magic import card, fetcher, legality, rotation
+from magic import card, decklist, fetcher, legality, rotation
 from magic.models import Deck
 from shared import configuration, dtutil, guarantee, redis
 from shared.container import Container
@@ -427,3 +426,12 @@ def update_games(match_id: int, deck_id: int, games: int) -> int:
     sql = 'UPDATE deck_match SET games = %s WHERE match_id = %s AND deck_id = %s'
     args = [games, match_id, deck_id]
     return db().execute(sql, args)
+
+def random_legal_deck() -> Optional[Deck]:
+    where = 'd.reviewed AND d.created_date > (SELECT start_date FROM season WHERE number = {current_season_num})'.format(current_season_num=rotation.current_season_num())
+    having = '(d.competition_id NOT IN ({active_competition_id_query}) OR SUM(cache.wins + cache.draws + cache.losses) >= 5)'.format(active_competition_id_query=active_competition_id_query())
+    try:
+        return deck.load_decks(where=where, having=having, order_by='RAND()', limit='LIMIT 1')[0]
+    except IndexError:
+        # For a short while at the start of a season there are no decks that match the WHERE/HAVING clauses.
+        return None

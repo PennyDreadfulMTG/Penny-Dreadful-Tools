@@ -2,7 +2,7 @@ import datetime
 import fileinput
 import os
 from collections import Counter
-from typing import List, Union
+from typing import List, Optional, Union
 
 from decksite.data import card
 from decksite.view import View
@@ -14,7 +14,7 @@ from shared.pd_exception import DoesNotExistException
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Rotation(View):
-    def __init__(self) -> None:
+    def __init__(self, interestingness: Optional[str] = None, rotation_query: Optional[str] = None, only_these: Optional[List[str]] = None) -> None:
         super().__init__()
         self.playability = card.playability()
         until_full_rotation = rotation.next_rotation() - dtutil.now()
@@ -34,6 +34,12 @@ class Rotation(View):
         if in_rotation:
             self.read_rotation_files()
         self.show_interesting = True
+        if interestingness:
+            self.cards = [c for c in self.cards if c.get('interestingness') == interestingness]
+        if only_these:
+            self.cards = [c for c in self.cards if c.name in only_these]
+        self.num_cards = len(self.cards)
+        self.rotation_query = rotation_query or ''
 
     def read_rotation_files(self) -> None:
         lines = []
@@ -58,12 +64,7 @@ class Rotation(View):
     def process_score(self, name: str, hits: int) -> None:
         remaining_runs = (168 - self.runs)
         hits_needed = max(84 - hits, 0)
-        c = self.cs.get(name, None)
-        if c is None:
-            c = Card({
-                'name': name,
-                'layout': 'unknown',
-            })
+        c = self.cs[name]
         if c.layout not in multiverse.playable_layouts():
             return
         percent = round(round(hits / self.runs, 2) * 100)

@@ -1,4 +1,5 @@
-from typing import List
+import json
+from typing import Dict, List
 
 import titlecase
 from flask import url_for
@@ -27,9 +28,23 @@ class Person(View):
         self.show_seasons = True
         self.displayed_achievements = [{'title': a.title, 'detail': titlecase.titlecase(a.display(self.person))} for a in Achievement.all_achievements if a.display(self.person)]
         self.achievements_url = url_for('achievements')
+        colors: Dict[str, int] = {}
+        for d in self.decks:
+            for c in d.colors:
+                colors[c] = colors.get(c, 0) + 1
+        self.charts = [
+            {
+                'title': 'Colors Played',
+                'type': 'horizontalBar',
+                'labels': json.dumps(['White', 'Blue', 'Black', 'Red', 'Green', 'Colorless']),
+                'series': json.dumps([colors.get('W'), colors.get('U'), colors.get('B'), colors.get('R'), colors.get('G'), colors.get('C')]),
+                'options': json.dumps({'responsive': True})
+            }
+        ]
+        self.add_note_url = url_for('post_player_note')
 
     def __getattr__(self, attr):
         return getattr(self.person, attr)
 
-    def page_title(self):
+    def page_title(self) -> str:
         return self.person.name

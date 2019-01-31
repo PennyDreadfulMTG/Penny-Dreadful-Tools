@@ -160,8 +160,12 @@ def leaderboards(where: str = "ct.name = 'Gatherling'", season_id: Optional[int]
             tournaments DESC,
             person
     """.format(person_query=query.person_query(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id, 'season.id'))
+
+    # results is the returned list of leaderboards for each competition
     results = []
+    # current holds the currently-being-processed competition before it's added to results
     current: Dict[str, Any] = {}
+
     for row in db().select(sql):
         k = row['competition_series_name']
         if current.get('competition_series_name', None) != k:
@@ -172,8 +176,12 @@ def leaderboards(where: str = "ct.name = 'Gatherling'", season_id: Optional[int]
                 'entries': [],
                 'sponsor_name': row['sponsor_name']
             }
+
         row.pop('competition_series_name')
-        current['entries'] = current['entries'] + [Container(row)]
+        c = Container(row)
+        c.score = (c.wins, c.points)
+        current['entries'].append(c)
+
     if len(current) > 0:
         results.append(current)
     return results

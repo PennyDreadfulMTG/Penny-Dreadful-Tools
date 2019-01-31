@@ -8,12 +8,15 @@ PD.init = function () {
     PD.initTables();
     PD.initDetails();
     PD.initTooltips();
+    PD.initReassign();
+    PD.initRuleForms();
     $("input[type=file]").on("change", PD.loadDeck).on("change", PD.toggleDrawDropdown);
     $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
     PD.localizeTimes();
     PD.initSignupDeckChooser();
-    PD.initStatusFooter();
+    PD.initPersonalization();
+    PD.renderCharts();
 };
 PD.scrollToContent = function () {
     if (window.matchMedia("only screen and (max-width: 640px)").matches && document.referrer.indexOf(window.location.hostname) > 0 && document.location.href.indexOf('#content') === -1) {
@@ -156,6 +159,39 @@ PD.initTooltips = function () {
         $("body").off();
     });
 };
+PD.initReassign = function () {
+    $(".reassign").click(function () {
+        $(this).hide();
+        $.post("/api/archetype/reassign", { 'deck_id': $(this).data('deck_id'), 'archetype_id': $(this).data('rule_archetype_id') }, PD.afterReassign);
+        return false;
+    });
+};
+PD.afterReassign = function (data) {
+    $('tr:has(a[data-deck_id="' + data.deck_id + '"])').hide()
+}
+PD.initRuleForms = function () {
+    $(".rule-form").submit(function (e) {
+        var form = $(this);
+        var url = form.attr("action");
+        $.ajax({
+               type: "POST",
+               url,
+               data: form.serialize(), // serializes the form's elements.
+               success: PD.afterRuleUpdate
+             });
+        return false;
+    });
+}
+PD.afterRuleUpdate = function(data) {
+    if (data.success)
+    {
+        location.href = location.href; // make sure it's a GET refresh and not a duplicate of a previous POST
+    }
+    else
+    {
+        alert(data.msg);
+    }
+}
 PD.loadDeck = function () {
     var file = this.files[0],
         reader = new FileReader();
@@ -240,8 +276,8 @@ PD.initSignupDeckChooser = function () {
     })
 };
 
-PD.initStatusFooter = function () {
-    $.get("/api/status/", function (data) {
+PD.initPersonalization = function() {
+    $.get("/api/status/", function(data) {
         var text = "";
         if (data.discord_id) {
             text += "You are logged in";
@@ -262,6 +298,7 @@ PD.initStatusFooter = function () {
         $(".status-bar").html("<p>" + text + "</p>");
         if (data.admin) {
             $(".admin").show();
+            PD.initPersonNotes();
         }
         if (data.demimod) {
             $(".demimod").show();
@@ -273,6 +310,54 @@ PD.initStatusFooter = function () {
             $(".intro-container").show();
         }
     })
+};
+
+PD.initPersonNotes = function() {
+    var i, personId = $('.person-notes').data('person_id');
+    // Only do the work if we're on a page that should show the notes.
+    if (personId) {
+        $.get('/api/admin/people/' + personId + '/notes/', function(data) {
+            if (data.notes.length > 0) {
+                s = '<article>';
+                for (i = 0; i < data.notes.length; i++) {
+                    s += '<p>' + data.notes[i].note + '</p>'
+                }
+                s += '</article>';
+                $('.person-notes').html(s);
+            } else {
+                $('.person-notes').html('<p>None</p>');
+            }
+        });
+    }
+}
+
+PD.renderCharts = function () {
+    Chart.defaults.global.defaultFontFamily = $("body").css("font-family");
+    if ($("td").size() > 0) {
+        Chart.defaults.global.defaultFontSize = parseInt($("td").css("font-size"), 10);
+    }
+    Chart.defaults.global.legend.display = false;
+    Chart.defaults.global.title.display = false;
+    Chart.defaults.global.tooltips.displayColors = false;
+    Chart.defaults.scale.ticks.beginAtZero = true;
+    $('.chart').each(function () {
+        var id = $(this).attr("id"),
+            type = $(this).data("type"),
+            labels = $(this).data("labels"),
+            series = $(this).data("series"),
+            options = $(this).data("options"),
+            ctx = this.getContext("2d");
+        new Chart(ctx, {
+            'type': type,
+            'data': {
+                labels: labels,
+                datasets: [{
+                    data: series
+                }]
+            },
+            options: options
+        });
+    });
 };
 
 PD.htmlEscape = function (s) {

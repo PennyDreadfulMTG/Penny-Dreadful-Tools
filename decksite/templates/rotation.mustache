@@ -1,9 +1,17 @@
 <h1>Rotation</h1>
 <section>
-    {{rotation_msg}}
+    <p>{{rotation_msg}}</p>
     {{#runs}}
-        <p>{{runs}} ({{runs_percent}}%) of 168 runs completed.</p>
-        <p>Stats on undecided cards are redacted to reduce rampant market manipulation</p>
+        <p>{{runs}} ({{runs_percent}}%) of 168 runs completed. {{num_cards}} cards have hits.</p>
+        <p>Stats on undecided cards are redacted to reduce rampant market manipulation.</p>
+        {{#rotation_query}}
+            <p>
+                <form class="inline">
+                    <input type="text" name="rq" value="{{rotation_query}}">
+                    <button type="submit">Submit</button>
+                </form>
+            </p>
+        {{/rotation_query}}
         {{> spinner}}
         <table class="highlights">{{! Allow overflow-x so highlighting shows in left margin.}}
             <thead>
@@ -29,3 +37,17 @@
         {{> rotationkey}}
     {{/runs}}
 </section>
+{{^rotation_query}}
+    <section>
+        <h2>Search</h2>
+        <form>
+            <p>Search using Scryfall syntax.</p>
+            <div>
+                <label>Query</label>
+                <input type="text" name="rq" value="{{rotation_query}}">
+            </div>
+            <button type="submit">Submit</button>
+            <p>Warning: can be very slow.</p>
+        </form>
+    </section>
+{{/rotation_query}}

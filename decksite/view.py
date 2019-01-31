@@ -178,7 +178,7 @@ class View(BaseView):
             d.active_safe = '<span class="active" title="Active in the current league">⊕</span>'
             d.stars_safe = '{active} {stars}'.format(active=d.active_safe, stars=d.stars_safe).strip()
             d.source_sort = '1'
-        d.source_is_external = False if d.source_name == 'League' else True
+        d.source_is_external = not d.source_name == 'League'
         d.comp_row_len = len('{comp_name} (Piloted by {person}'.format(comp_name=d.competition_name, person=d.person))
         if d.get('archetype_id', None):
             d.archetype_url = '/archetypes/{id}/'.format(id=d.archetype_id)
@@ -207,7 +207,7 @@ class View(BaseView):
             d.decklist = ''
         total, num_cards = 0, 0
         for c in d.maindeck:
-            if 'Land' not in c.card.type:
+            if 'Land' not in c.card.type_line:
                 num_cards += c['n']
                 total += c['n'] * c.card.cmc
         d.average_cmc = round(total / max(1, num_cards), 2)
@@ -222,7 +222,7 @@ class View(BaseView):
     def prepare_card(self, c: Card) -> None:
         c.url = '/cards/{id}/'.format(id=c.name)
         c.img_url = url_for('image', c=c.name)
-        c.card_img_class = 'two-faces' if c.layout in ['double-faced', 'meld'] else ''
+        c.card_img_class = 'two-faces' if c.layout in ['transform', 'meld'] else ''
         c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
         c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}
         c.has_legal_format = len(c.legal_formats) > 0
@@ -232,7 +232,7 @@ class View(BaseView):
         counter = Counter() # type: ignore
         for d in c.get('decks', []):
             for c2 in d.maindeck:
-                if not c2.card.type.startswith('Basic Land') and not c2['name'] == c.name:
+                if not c2.card.type_line.startswith('Basic Land') and not c2['name'] == c.name:
                     counter[c2['name']] += c2['n']
         most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
         c.most_common_cards = []
@@ -248,7 +248,7 @@ class View(BaseView):
             c.display_date = dtutil.display_date(c.start_date)
             c.ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
             c.date_sort = dtutil.dt2ts(c.start_date)
-            c.league = True if c.type == 'League' else False
+            c.league = c.type == 'League'
             title_safe = ''
             try:
                 for k, v in c.base_archetypes_data().items():
@@ -271,30 +271,49 @@ class View(BaseView):
                           archetypes: List[archetype.Archetype]
                          ) -> None:
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
-        if a.get('num_decks') is not None:
-            a.show_record = a.get('wins') or a.get('draws') or a.get('losses')
-            a.show_matchups = a.show_record
-        a.url = '/archetypes/{id}/'.format(id=a.id)
+
+        a.show_record = a.get('num_decks') is not None and (a.get('wins') or a.get('draws') or a.get('losses'))
+        a.show_record_tournament = a.get('num_decks_tournament') is not None and (a.get('wins_tournament') or a.get('draws_tournament') or a.get('losses_tournament'))
+
         counter = Counter() # type: ignore
         a.cards = []
         a.most_common_cards = []
+
+        counter_tournament = Counter() # type: ignore
+        a.cards_tournament = []
+        a.most_common_cards_tournament = []
+
+        # Make a pass, collecting card counts for all decks and for tournament decks
         for d in a.get('decks', []):
             a.cards += d.maindeck + d.sideboard
             for c in d.maindeck:
-                if not c.card.type.startswith('Basic Land'):
+                if not c.card.type_line.startswith('Basic Land'):
                     counter[c['name']] += c['n']
+                    if d.competition_type_name == 'Gatherling':
+                        counter_tournament[c['name']] += c['n']
+
         most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
+        most_common_cards_tournament = counter_tournament.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
+
         cs = oracle.cards_by_name()
+
         for v in most_common_cards:
             self.prepare_card(cs[v[0]])
             a.most_common_cards.append(cs[v[0]])
         a.has_most_common_cards = len(a.most_common_cards) > 0
+
+        for v in most_common_cards_tournament:
+            self.prepare_card(cs[v[0]])
+            a.most_common_cards_tournament.append(cs[v[0]])
+        a.has_most_common_cards_tournament = len(a.most_common_cards_tournament) > 0
+
         a.archetype_tree = PreOrderIter(a)
         for r in a.archetype_tree:
             # Prune branches we don't want to show
             if r.id not in [a.id for a in archetypes]:
                 r.parent = None
             r['url'] = url_for('.archetype', archetype_id=r['id'])
+            r['url_tournament'] = url_for('.archetype_tournament', archetype_id=r['id'])
             # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
             r['depth'] = r.depth
 
@@ -303,13 +322,23 @@ class View(BaseView):
             self.prepare_leaderboard(l)
 
     def prepare_leaderboard(self, leaderboard: List[Container]) -> None:
-        pos = 1
-        for p in leaderboard:
-            p.finish = pos
-            if pos <= 8:
-                p.position = chr(9311 + pos) # ①, ②, ③, …
+        # each Container in leaderboard is expected to have attributes:
+        #   - person_id: the id of the person
+        #   - person: the name to display for that person (see data/query.py:person_query)
+        #   - score: a value such that two rows are tied if and only if they have the same score
+        # leaderboard is expected to be sorted such that leaderboard[0] is winning
+        # Depending on the view, the containers may have other attributes as well
+
+        finish = 0
+        score = None
+        for i, p in enumerate(leaderboard, start=1):
+            if finish == 0 or p.score != score:
+                score = p.score
+                finish = i
+            p.finish = finish
+            if p.finish <= 8:
+                p.position = chr(9311 + p.finish) # ①, ②, ③, …
             p.url = url_for('.person', person_id=p.person_id)
-            pos += 1
 
     def prepare_legal_formats(self) -> None:
         if getattr(self, 'legal_formats', None) is not None:

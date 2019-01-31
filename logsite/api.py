@@ -44,6 +44,7 @@ def export(match_id: int) -> Tuple[str, int, Dict[str, str]]:
         n = n + 1
         text += game.sanitized_log().strip()
         text += '\n\n'
+    text = text.replace('\n', '\r\n')
     return (text, 200, {
         'Content-type': 'text/plain; charset=utf-8',
         'Content-Disposition': 'attachment; filename={match_id}.txt'.format(match_id=match_id)

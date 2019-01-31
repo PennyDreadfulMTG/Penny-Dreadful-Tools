@@ -1,0 +1,8 @@
+{{#show_tournament_toggle}}
+    {{#tournament_only}}
+        <a href="{{toggle_results_url}}">Showing Tournament Results</a>
+    {{/tournament_only}}
+    {{^tournament_only}}
+        <a href="{{toggle_results_url}}">Showing All Results</a>
+    {{/tournament_only}}
+{{/show_tournament_toggle}}

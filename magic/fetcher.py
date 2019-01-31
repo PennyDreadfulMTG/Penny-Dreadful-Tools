@@ -3,6 +3,7 @@ import datetime
 import json
 import os
 from collections import OrderedDict
+from time import sleep
 from typing import Any, Dict, List, Optional, Tuple, Union, cast
 from urllib import parse
 
@@ -15,22 +16,24 @@ from magic.models import Card
 from shared import configuration, dtutil, redis
 from shared.container import Container
 from shared.fetcher_internal import FetchException
-from shared.pd_exception import NotConfiguredException, TooFewItemsException
+from shared.pd_exception import (InvalidDataException, NotConfiguredException,
+                                 TooFewItemsException)
 
 
-def all_cards() -> Dict[str, CardDescription]:
+def all_cards() -> List[CardDescription]:
     try:
-        return json.load(open('AllCards-x.json'))
+        f = open('all-default-cards.json')
+        return json.load(f)
     except FileNotFoundError:
-        s = internal.unzip('https://mtgjson.com/json/AllCards-x.json.zip', 'AllCards-x.json')
-        return json.loads(s)
+        return internal.fetch_json('https://archive.scryfall.com/json/scryfall-default-cards.json', character_encoding='utf-8')
 
-def all_sets() -> Dict[str, Dict[str, Any]]:
+def all_sets() -> List[Dict[str, Any]]:
     try:
-        return json.load(open('AllSets.json'))
+        d = json.load(open('sets.json'))
     except FileNotFoundError:
-        s = internal.unzip('https://mtgjson.com/json/AllSets.json.zip', 'AllSets.json')
-        return json.loads(s)
+        d = internal.fetch_json('https://api.scryfall.com/sets')
+    assert not d['has_more']
+    return d['data']
 
 def bugged_cards() -> Optional[List[Dict[str, Any]]]:
     bugs = internal.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
@@ -101,8 +104,12 @@ def legal_cards(force: bool = False, season: str = None) -> List[str]:
 
     return legal_txt.strip().split('\n')
 
-def mtgjson_version() -> str:
-    return cast(str, internal.fetch_json('https://mtgjson.com/json/version.json'))
+def scryfall_last_updated() -> datetime.datetime:
+    d = internal.fetch_json('https://api.scryfall.com/bulk-data')
+    for o in d['data']:
+        if o['type'] == 'default_cards':
+            return dtutil.parse_rfc3339(o['updated_at'])
+    raise InvalidDataException(f'Could not get the last updated date from Scryfall: {d}')
 
 async def mtgo_status() -> str:
     try:
@@ -136,22 +143,37 @@ async def scryfall_cards_async() -> Dict[str, Any]:
     url = 'https://api.scryfall.com/cards'
     return await internal.fetch_json_async(url)
 
-def search_scryfall(query: str) -> Tuple[int, List[str]]:
+def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str]]:
     """Returns a tuple. First member is an integer indicating how many cards match the query total,
-       second member is a list of card names up to the maximum that could be fetched in a timely fashion."""
+       second member is a list of card names up to the maximum that could be fetched in a timely fashion.
+       Supply exhaustive=True to instead retrieve the full list (potentially very slow)."""
     if query == '':
         return False, []
-    result_json = internal.fetch_json('https://api.scryfall.com/cards/search?q=' + internal.escape(query), character_encoding='utf-8')
-    if 'code' in result_json.keys(): # The API returned an error
-        if result_json['status'] == 404: # No cards found
-            return False, []
-        print('Error fetching scryfall data:\n', result_json)
-        return False, []
-    for warning in result_json.get('warnings', []): #scryfall-provided human-readable warnings
-        print(warning) # Why aren't we displaying these to the user?
-    result_data = result_json['data']
+    redis_key = f'scryfall:query:{query}:' + ('exhaustive' if exhaustive else 'nonexhaustive')
+    cached = redis.get_list(redis_key)
+    result_data: List[Dict]
+    if cached:
+        total_cards, result_data = int(cached[0]), cached[1]
+    else:
+        url = 'https://api.scryfall.com/cards/search?q=' + internal.escape(query)
+        result_data = []
+        while True:
+            result_json = internal.fetch_json(url, character_encoding='utf-8')
+            if 'code' in result_json.keys(): # The API returned an error
+                if result_json['status'] == 404: # No cards found
+                    return False, []
+                print('Error fetching scryfall data:\n', result_json)
+                return False, []
+            for warning in result_json.get('warnings', []): #scryfall-provided human-readable warnings
+                print(warning) # Why aren't we displaying these to the user?
+            result_data += result_json['data']
+            total_cards = int(result_json['total_cards'])
+            if not exhaustive or len(result_data) >= total_cards:
+                break
+            sleep(0.1)
+            url = result_json['next_page']
+        redis.store(redis_key, [total_cards, result_data], ex=3600)
     result_data.sort(key=lambda x: x['legalities']['penny'])
-
     def get_frontside(scr_card: Dict) -> str:
         """If card is transform, returns first name. Otherwise, returns name.
         This is to make sure cards are later found in the database"""
@@ -160,7 +182,7 @@ def search_scryfall(query: str) -> Tuple[int, List[str]]:
             return scr_card['card_faces'][0]['name']
         return scr_card['name']
     result_cardnames = [get_frontside(obj) for obj in result_data]
-    return result_json['total_cards'], result_cardnames
+    return total_cards, result_cardnames
 
 def rulings(cardname: str) -> List[Dict[str, str]]:
     card = internal.fetch_json('https://api.scryfall.com/cards/named?exact={name}'.format(name=cardname))
@@ -169,21 +191,21 @@ def rulings(cardname: str) -> List[Dict[str, str]]:
 def sitemap() -> List[str]:
     return internal.fetch_json(decksite_url('/api/sitemap/'))['urls']
 
-def time(q: str) -> Dict[str, List[str]]:
-    return times_from_timezone_code(q) if len(q) <= 3 else times_from_location(q)
+def time(q: str, twentyfour: bool) -> Dict[str, List[str]]:
+    return times_from_timezone_code(q, twentyfour) if len(q) <= 3 else times_from_location(q, twentyfour)
 
-def times_from_timezone_code(q: str) ->  Dict[str, List[str]]:
+def times_from_timezone_code(q: str, twentyfour: bool) ->  Dict[str, List[str]]:
     possibles = list(filter(lambda x: datetime.datetime.now(pytz.timezone(x)).strftime('%Z') == q.upper(), pytz.common_timezones))
     if not possibles:
         raise TooFewItemsException(f'Not a recognized timezone: {q.upper()}')
     results: Dict[str, List[str]] = {}
     for possible in possibles:
         timezone = dtutil.timezone(possible)
-        t = current_time(timezone)
+        t = current_time(timezone, twentyfour)
         results[t] = results.get(t, []) + [possible]
     return results
 
-def times_from_location(q: str) -> Dict[str, List[str]]:
+def times_from_location(q: str, twentyfour: bool) -> Dict[str, List[str]]:
     api_key = configuration.get('google_maps_api_key')
     if not api_key:
         raise NotConfiguredException('No value found for google_maps_api_key')
@@ -205,10 +227,15 @@ def times_from_location(q: str) -> Dict[str, List[str]]:
         timezone = dtutil.timezone(timezone_info['timeZoneId'])
     except KeyError as e:
         raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}')
-    return {current_time(timezone): [q]}
+    return {current_time(timezone, twentyfour): [q]}
 
-def current_time(timezone: datetime.tzinfo) -> str:
-    return dtutil.now(timezone).strftime('%l:%M %p')
+def current_time(timezone: datetime.tzinfo, twentyfour: bool) -> str:
+    if twentyfour:
+        return dtutil.now(timezone).strftime('%H:%M')
+    try:
+        return dtutil.now(timezone).strftime('%l:%M %p')
+    except ValueError: # %l is not a univerally supported argument.  Fall back to %I on other platforms.
+        return dtutil.now(timezone).strftime('%I:%M %p')
 
 def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
     cached = redis.get_container('magic:fetcher:whatisinstandard')

@@ -59,7 +59,7 @@ def get_container(key: str, ex: Optional[int] = None) -> Optional[Container]:
                 return Container(val)
     return None
 
-def get_list(key: str) -> Optional[List[str]]:
+def get_list(key: str) -> Optional[List[Any]]:
     if REDIS is not None:
         blob = _get(key)
         if blob is not None:

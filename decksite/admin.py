@@ -11,7 +11,6 @@ from decksite.data import match as ms
 from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.data import rule as rs
-from decksite.scrapers.decklist import parse_line
 from decksite.views import (Admin, EditAliases, EditArchetypes, EditMatches,
                             EditNews, EditRules, PlayerNotes, Prizes,
                             RotationChecklist, Unlink)
@@ -95,17 +94,14 @@ def edit_rules() -> str:
     cnum = rs.num_classified_decks()
     tnum = ds.num_decks()
     archetypes = archs.load_archetypes_deckless(order_by='a.name')
-    view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks(), rs.load_all_rules(), archetypes)
+    rs.cache_all_rules()
+    view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks(), rs.overlooked_decks(), rs.load_all_rules(), archetypes)
     return view.page()
 
 @APP.route('/admin/rules/', methods=['POST'])
 @auth.demimod_required
 def post_rules() -> str:
-    if request.form.get('rule_id') is not None and request.form.get('include') is not None and request.form.get('exclude') is not None:
-        inc = [parse_line(line) for line in request.form.get('include').strip().splitlines()]
-        exc = [parse_line(line) for line in request.form.get('exclude').strip().splitlines()]
-        rs.update_cards(request.form.get('rule_id'), inc, exc)
-    elif request.form.get('archetype_id') is not None:
+    if request.form.get('archetype_id') is not None:
         rs.add_rule(request.form.get('archetype_id'))
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/rules: {f}'.format(f=request.form))
@@ -175,19 +171,23 @@ def post_player_note() -> str:
 
 @APP.route('/admin/unlink/')
 @auth.admin_required
-def unlink(num_affected_people: Optional[int] = None) -> str:
+def unlink(num_affected_people: Optional[int] = None, errors: List[str] = None) -> str:
     all_people = ps.load_people(order_by='p.mtgo_username')
-    view = Unlink(all_people, num_affected_people)
+    view = Unlink(all_people, num_affected_people, errors)
     return view.page()
 
 @APP.route('/admin/unlink/', methods=['POST'])
 @auth.admin_required
 def post_unlink() -> str:
-    n = 0
+    n, errors = 0, []
     person_id = request.form.get('person_id')
     if person_id:
         n += ps.unlink_discord(person_id)
     discord_id = request.form.get('discord_id')
     if discord_id:
-        n += ps.remove_discord_link(discord_id)
-    return unlink(n)
+        try:
+            discord_id = int(discord_id)
+            n += ps.remove_discord_link(discord_id)
+        except ValueError:
+            errors.append('Discord ID must be an integer.')
+    return unlink(n, errors)

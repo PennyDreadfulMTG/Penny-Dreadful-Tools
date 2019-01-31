@@ -72,7 +72,7 @@ class Home(View):
         self.show_active_runs_text = False
 
     def setup_cards(self, cards: List[Card]) -> None:
-        cards = [c for c in cards if 'Basic Land' not in c.type]
+        cards = [c for c in cards if 'Basic Land' not in c.type_line]
         self.top_cards = cards[0:8]
         self.cards = self.top_cards # To get prepare_card treatment
         self.cards_url = url_for('cards')

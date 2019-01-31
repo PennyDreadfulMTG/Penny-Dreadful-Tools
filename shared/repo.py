@@ -113,8 +113,8 @@ def get_pull_requests(start_date: datetime.datetime,
         for pull in git_repo.get_pulls(state='closed', sort='updated', direction='desc'):
             if not pull.merged_at:
                 continue
-            pull.merged_dt = pull.merged_at.astimezone(dtutil.UTC_TZ)
-            pull.updated_dt = pull.updated_at.astimezone(dtutil.UTC_TZ)
+            pull.merged_dt = dtutil.UTC_TZ.localize(pull.merged_at)
+            pull.updated_dt = dtutil.UTC_TZ.localize(pull.updated_at)
             if pull.merged_dt > end_date:
                 continue
             if pull.updated_dt < start_date:

@@ -649,7 +649,38 @@ class VarietyPlayer(BooleanAchievement):
     title = 'Variety Player'
     season_text = 'Finished five-match league runs with three or more different archetypes this season'
     description_safe = 'Finish five-match league runs with three or more different archetypes in a single season.'
-    sql = "CASE WHEN COUNT(DISTINCT CASE WHEN dc.wins + dc.losses >= 5 AND ct.name = 'League' THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END"
+    sql = "CASE WHEN COUNT(DISTINCT CASE WHEN falr.deck_id IS NOT NULL THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END"
+    detail_sql = """
+                    CASE WHEN
+                        COUNT(DISTINCT CASE WHEN falr.deck_id IS NOT NULL THEN d.archetype_id ELSE NULL END) >= 3
+                    THEN
+                        GROUP_CONCAT(falr.deck_id)
+                    ELSE
+                        NULL
+                    END
+                """
+    with_sql = """
+                    first_arch_league_runs AS
+                    (
+                        SELECT
+                            MIN(d.id) as deck_id,
+                            d.person_id AS person_id,
+                            season.id AS season_id,
+                            d.archetype_id AS archetype_id
+                        FROM
+                            deck AS d
+                        LEFT JOIN
+                            deck_cache AS dc ON dc.deck_id = d.id
+                        {season_join}
+                        {competition_join}
+                        WHERE
+                            ct.name = 'League' AND dc.wins + dc.losses >= 5
+                        GROUP BY
+                            person_id,
+                            season_id,
+                            archetype_id
+                    )""".format(season_join=query.season_join(), competition_join=query.competition_join())
+    join_sql = 'LEFT JOIN first_arch_league_runs AS falr ON d.id = falr.deck_id'
 
     @staticmethod
     def alltime_text(n: int) -> str:

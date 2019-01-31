@@ -272,13 +272,8 @@ class View(BaseView):
                          ) -> None:
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
 
-        if a.get('num_decks') is not None:
-            a.show_record = a.get('wins') or a.get('draws') or a.get('losses')
-        if a.get('num_decks_tournament') is not None:
-            a.show_record_tournament = a.get('wins_tournament') or a.get('draws_tournament') or a.get('losses_tournament')
-
-        a.show_matchups = a.show_record
-        a.show_matchups_tournament = a.show_record_tournament
+        a.show_record = a.get('num_decks') is not None and (a.get('wins') or a.get('draws') or a.get('losses'))
+        a.show_record_tournament = a.get('num_decks_tournament') is not None and (a.get('wins_tournament') or a.get('draws_tournament') or a.get('losses_tournament'))
 
         counter = Counter() # type: ignore
         a.cards = []

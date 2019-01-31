@@ -149,7 +149,7 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str
        Supply exhaustive=True to instead retrieve the full list (potentially very slow)."""
     if query == '':
         return False, []
-    redis_key = f'scryfall:query:{query}:' + 'exhaustive' if exhaustive else 'nonexhaustive'
+    redis_key = f'scryfall:query:{query}:' + ('exhaustive' if exhaustive else 'nonexhaustive')
     cached = redis.get_list(redis_key)
     result_data: List[Dict]
     if cached:

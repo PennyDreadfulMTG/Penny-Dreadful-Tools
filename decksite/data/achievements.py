@@ -1,13 +1,14 @@
 import re
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional, cast
 
 from flask import url_for
 from flask_babel import gettext, ngettext
 
 import decksite
-from decksite.data import query
+from decksite.data import deck, query
 from decksite.database import db
 from magic import tournaments
+from magic.models import Deck
 from shared.container import Container
 from shared.decorators import retry_after_calling
 
@@ -17,16 +18,21 @@ if TYPE_CHECKING:
 LEADERBOARD_TOP_N = 5
 LEADERBOARD_LIMIT = 12
 
-def load_achievements(p: Optional['person.Person'], season_id: Optional[int]) -> List[Container]:
+def load_achievements(p: Optional['person.Person'], season_id: Optional[int], with_detail: bool = False) -> List[Container]:
     achievements = []
     for a in Achievement.all_achievements:
         desc = Container({'title': a.title, 'description_safe': a.description_safe})
         desc.summary = a.load_summary(season_id=season_id)
-        desc.detail = a.display(p) if p else ''
-        desc.percent = a.percent(season_id=season_id)
-        desc.leaderboard = a.leaderboard(season_id=season_id)
-        desc.leaderboard_heading = a.leaderboard_heading()
+        desc.legend = a.display(p) if p else ''
+        if with_detail:
+            desc.detail = a.detail(p, season_id=season_id)
+        else:
+            desc.percent = a.percent(season_id=season_id)
+            desc.leaderboard = a.leaderboard(season_id=season_id)
+            desc.leaderboard_heading = a.leaderboard_heading()
         achievements.append(desc)
+    if with_detail:
+        return achievements
     return sorted(achievements, key=lambda ad: -ad.percent)
 
 def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int]) -> str:
@@ -53,9 +59,11 @@ def preaggregate_achievements() -> None:
     db().execute('DROP TABLE IF EXISTS _old_achievements')
 
 def preaggregate_query() -> str:
-    create_columns = ', '.join(f'`{a.key}` INT NOT NULL' for a in Achievement.all_achievements if a.in_db)
-    select_columns = ', '.join(f'{a.sql} as `{a.key}`' for a in Achievement.all_achievements if a.in_db)
+    # mypy doesn't understand our contract that a.create_columns etc. are only None if in_db is False
+    create_columns = ', '.join(cast(str, a.create_columns) for a in Achievement.all_achievements if a.in_db)
+    select_columns = ', '.join(cast(str, a.select_columns) for a in Achievement.all_achievements if a.in_db)
     with_clauses = ', '.join(a.with_sql for a in Achievement.all_achievements if a.with_sql is not None)
+    join_clauses = ' '.join(a.join_sql for a in Achievement.all_achievements if a.join_sql is not None)
     return """
         CREATE TABLE IF NOT EXISTS _new_achievements (
             person_id INT NOT NULL,
@@ -79,12 +87,13 @@ def preaggregate_query() -> str:
             deck_cache AS dc ON dc.deck_id = d.id
         {season_join}
         {competition_join}
+        {join_clauses}
         GROUP BY
             p.id,
             season.id
         HAVING
             season.id IS NOT NULL
-    """.format(cc=create_columns, sc=select_columns, with_clauses=with_clauses, season_join=query.season_join(), competition_join=query.competition_join())
+    """.format(cc=create_columns, sc=select_columns, with_clauses=with_clauses, join_clauses=join_clauses, season_join=query.season_join(), competition_join=query.competition_join())
 
 # Abstract achievement classes
 
@@ -106,12 +115,39 @@ class Achievement:
     def with_sql(self) -> Optional[str]:
         return None
 
+    @property
+    def join_sql(self) -> Optional[str]:
+        return None
+
+    @property
+    def detail_sql(self) -> Optional[str]:
+        return None
+
+    @property
+    def create_columns(self) -> Optional[str]:
+        if not self.in_db:
+            return None
+        if self.detail_sql is None:
+            return f'`{self.key}` INT NOT NULL'
+        return f'`{self.key}` INT NOT NULL, `{self.key}_detail` LONGTEXT DEFAULT NULL'
+
+    @property
+    def select_columns(self) -> Optional[str]:
+        if not self.in_db:
+            return None
+        if self.detail_sql is None:
+            return f'{self.sql} AS `{self.key}`'
+        return f'{self.sql} AS `{self.key}`, {self.detail_sql} AS `{self.key}_detail`'
+
     def __init_subclass__(cls) -> None:
         if cls.key is not None:
             # in case anyone ever makes a poor sportsmanship achievement called DROP TABLE
             cls.key = re.sub('[^A-Za-z0-9_]+', '', cls.key)
             if cls.key in [c.key for c in cls.all_achievements]:
                 print(f"Warning: Two achievements have the same normalised key {cls.key}. This won't do any permanent damage to the database but the results are almost certainly not as intended.")
+            # pylint can't determine that we have verified cls.key to be a str
+            if cls.key[-7:] == '_detail': #pylint: disable=unsubscriptable-object
+                print(f"Warning: achievement key {cls.key} should not end with the string '_detail'.")
             cls.all_achievements.append(cls())
 
     # pylint: disable=no-self-use, unused-argument
@@ -141,6 +177,25 @@ class Achievement:
             return int(r['pnum'] or 0) * 100.0 / int(r['mnum'])
         except ZeroDivisionError:
             return 0
+
+    @retry_after_calling(preaggregate_achievements)
+    def detail(self, p: 'person.Person', season_id: Optional[int] = None) -> Optional[List[Deck]]:
+        if self.detail_sql is None:
+            return None
+        sql = """
+                SELECT
+                    GROUP_CONCAT({k}_detail)
+                FROM
+                    _achievements
+                WHERE
+                    person_id={id} AND {season_query}
+                GROUP BY
+                    person_id
+            """.format(k=self.key, id=p.id, season_query=query.season_query(season_id))
+        ids = db().value(sql)
+        result = Container()
+        result.decks = deck.load_decks(where=f'd.id IN ({ids})') if ids is not None else []
+        return result
 
     def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Container]]:
         season_condition = query.season_query(season_id)
@@ -270,6 +325,7 @@ class TournamentPlayer(CountedAchievement):
     key = 'tournament_entries'
     title = 'Tournament Player'
     sql = "COUNT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
+    detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
 
     @property
     def description_safe(self) -> str:
@@ -286,6 +342,7 @@ class TournamentWinner(CountedAchievement):
     title = 'Tournament Winner'
     description_safe = 'Win a tournament.'
     sql = "COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
+    detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
 
     def leaderboard_heading(self) -> str:
         return gettext('Victories')
@@ -297,6 +354,7 @@ class LeaguePlayer(CountedAchievement):
     key = 'league_entries'
     title = 'League Player'
     sql = "COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END)"
+    detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END)"
 
     @property
     def description_safe(self) -> str:
@@ -313,6 +371,7 @@ class PerfectRun(CountedAchievement):
     title = 'Perfect League Run'
     description_safe = 'Complete a 5–0 run in the league.'
     sql = "SUM(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses = 0 THEN 1 ELSE 0 END)"
+    detail_sql = "GROUP_CONCAT(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses = 0 THEN d.id ELSE NULL END)"
 
     def leaderboard_heading(self) -> str:
         return gettext('Runs')
@@ -324,6 +383,8 @@ class FlawlessRun(CountedAchievement):
     key = 'flawless_runs'
     title = 'Flawless League Run'
     description_safe = 'Complete a 5–0 run in the league without losing a game.'
+    sql = 'SUM(CASE WHEN d.id IN (SELECT id FROM flawless_decks1) THEN 1 ELSE 0 END)'
+    detail_sql = 'GROUP_CONCAT(CASE WHEN d.id IN (SELECT id FROM flawless_decks2) THEN d.id ELSE NULL END)'
 
     def leaderboard_heading(self) -> str:
         return gettext('Runs')
@@ -331,52 +392,73 @@ class FlawlessRun(CountedAchievement):
     def localised_display(self, n: int) -> str:
         return ngettext('1 flawless run', '%(num)d flawless runs', n)
 
+    # Duplicating this query seems obviously wrong, but it doesn't work if we do the obvious thing and just reuse it
     @property
-    def sql(self) -> str:
-        return """
-            SUM(CASE WHEN ct.name = 'League' AND d.id IN
+    def with_sql(self) -> str:
+        return """flawless_decks1 AS
                 (
                     SELECT
-                        d.id
+                        d.id AS id
                     FROM
-                        deck as d
+                        deck AS d
                     INNER JOIN
-                        deck_match as dm
+                        deck_match AS dm
                     ON
                         dm.deck_id = d.id
                     INNER JOIN
-                        deck_match as odm
+                        deck_match AS odm
                     ON
-                        dm.match_id = odm.match_id and odm.deck_id <> d.id
+                        dm.match_id = odm.match_id AND odm.deck_id <> d.id
                     WHERE
                         d.competition_id IN ({competition_ids_by_type_select})
                     GROUP BY
                         d.id
                     HAVING
-                        SUM(dm.games) = 10 and sum(odm.games) = 0
+                        SUM(dm.games) = 10 AND SUM(odm.games) = 0
+                ),
+                flawless_decks2 AS
+                (
+                    SELECT
+                        d.id AS id
+                    FROM
+                        deck AS d
+                    INNER JOIN
+                        deck_match AS dm
+                    ON
+                        dm.deck_id = d.id
+                    INNER JOIN
+                        deck_match AS odm
+                    ON
+                        dm.match_id = odm.match_id AND odm.deck_id <> d.id
+                    WHERE
+                        d.competition_id IN ({competition_ids_by_type_select})
+                    GROUP BY
+                        d.id
+                    HAVING
+                        SUM(dm.games) = 10 AND SUM(odm.games) = 0
                 )
-            THEN 1 ELSE 0 END)
         """.format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
 class PerfectRunCrusher(CountedAchievement):
     key = 'perfect_run_crushes'
     title = 'Perfect Run Crusher'
     description_safe = "Beat a player that's 4–0 in the league."
-
     def leaderboard_heading(self) -> str:
         return gettext('Crushes')
-
     def localised_display(self, n: int) -> str:
         return ngettext('1 perfect run crush', '%(num)d perfect run crushes', n)
-
+    sql = 'SUM(CASE WHEN crush_records.crush_count IS NULL THEN 0 ELSE crush_records.crush_count END)'
+    detail_sql = 'GROUP_CONCAT(crush_records.crushee_ids)'
+    join_sql = 'LEFT JOIN crush_records ON d.id = crush_records.crusher_id'
     @property
-    def sql(self) -> str:
+    def with_sql(self) -> str:
         return """
-            SUM(CASE WHEN d.id IN
+            crushes AS
                 (
                     SELECT
                         -- MAX here is just to fool MySQL to give us the id of the deck that crushed the perfect run from an aggregate function. There is only one value to MAX.
-                        MAX(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN odm.deck_id ELSE NULL END) AS deck_id
+                        MAX(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN odm.deck_id ELSE NULL END) AS crusher_id,
+                        d.id AS crushee_id
                     FROM
                         deck AS d
                     INNER JOIN
@@ -397,9 +479,9 @@ class PerfectRunCrusher(CountedAchievement):
                         SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) = 1
                     AND
                         SUM(CASE WHEN dm.games < odm.games AND dm.match_id IN (SELECT MAX(match_id) FROM deck_match WHERE deck_id = d.id) THEN 1 ELSE 0 END) = 1
-                )
-            THEN 1 ELSE 0 END)
-        """.format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
+                ),
+                crush_records AS (SELECT crusher_id, COUNT(crushee_id) AS crush_count, GROUP_CONCAT(crushee_id) AS crushee_ids FROM crushes GROUP BY crusher_id)
+            """.format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
 class AncientGrudge(CountedAchievement):
     key = 'ancient_grudges'
@@ -409,23 +491,20 @@ class AncientGrudge(CountedAchievement):
         return gettext('grudges repaid')
     def localised_display(self, n: int) -> str:
         return ngettext('1 grudge repaid', '%(num)d grudges repaid', n)
-    sql = """COUNT(DISTINCT CASE WHEN d.id IN
-                (
-                    SELECT
-                        k2.winner_deck_id
-                    FROM
-                        knockouts AS k1
-                    JOIN
-                        knockouts AS k2
-                    ON
-                        k1.season_id = k2.season_id AND k1.winner_id = k2.loser_id AND k1.loser_id = k2.winner_id AND k2.date > k1.date
-                ) THEN d.id ELSE NULL END)"""
+    sql = """COUNT(DISTINCT CASE WHEN agdi.id IS NOT NULL THEN d.id ELSE NULL END)"""
+    detail_sql = """GROUP_CONCAT(DISTINCT CASE WHEN agdi.id IS NOT NULL THEN agdi.both_ids ELSE NULL END)"""
+    join_sql = 'LEFT JOIN ancient_grudge_deck_ids AS agdi ON d.id = agdi.id'
     @property
     def with_sql(self) -> str:
         return """knockouts AS
             (
                 SELECT
-                    d.id AS winner_deck_id, p1.id AS winner_id, p2.id AS loser_id, season.id AS season_id, `match`.date
+                    dm1.deck_id AS winner_deck_id,
+                    dm2.deck_id AS loser_deck_id,
+                    p1.id AS winner_id,
+                    p2.id AS loser_id,
+                    season.id AS season_id,
+                    `match`.date
                 FROM
                     deck AS d
                 LEFT JOIN
@@ -455,20 +534,34 @@ class AncientGrudge(CountedAchievement):
                 {season_join}
                 WHERE
                     dm1.games > dm2.games AND elimination > 0
+            ),
+            ancient_grudge_deck_ids AS
+            (
+                SELECT
+                    k2.winner_deck_id AS id,
+                    CONCAT(k1.winner_deck_id, ",", k2.winner_deck_id) AS both_ids
+                FROM
+                    knockouts AS k1
+                JOIN
+                    knockouts AS k2
+                ON
+                    k1.season_id = k2.season_id AND k1.winner_id = k2.loser_id AND k1.loser_id = k2.winner_id AND k2.date > k1.date
             )""".format(season_join=query.season_join())
 
-class RecentGrudge(CountedAchievement):
-    key = 'recent_grudges'
-    title = 'Not-So-Ancient Grudge'
+class BurningVengeance(CountedAchievement):
+    key = 'burning_vengeances'
+    title = 'Burning Vengeance'
     description_safe = 'Beat a player in the knockout rounds of a tournament after losing to them in the Swiss.'
     def leaderboard_heading(self) -> str:
-        return gettext('grudges repaid')
+        return gettext('defeats avenged')
     def localised_display(self, n: int) -> str:
-        return ngettext('1 grudge repaid', '%(num)d grudges repaid', n)
-    sql = """COUNT(DISTINCT CASE WHEN d.id in
+        return ngettext('1 defeat avenged', '%(num)d defeats avenged', n)
+    sql = 'COUNT(DISTINCT CASE WHEN d.id IN (SELECT id FROM burning_vengeance_decks) THEN d.id ELSE NULL END)'
+    detail_sql = 'GROUP_CONCAT(DISTINCT CASE WHEN d.id IN (SELECT id FROM burning_vengeance_decks) THEN d.id ELSE NULL END)'
+    with_sql = """burning_vengeance_decks AS
                 (
                     SELECT
-                        distinct(dm1.deck_id) AS deck_id
+                        distinct(dm1.deck_id) AS id
                     FROM
                         deck_match AS dm1
                     INNER JOIN
@@ -494,25 +587,28 @@ class RecentGrudge(CountedAchievement):
                     WHERE
                         dm1.games < odm1.games AND m1.elimination = 0 AND dm2.games > odm2.games AND m2.elimination > 0
                     ORDER BY
-                        deck_id
-                ) THEN d.id ELSE NULL END)"""
+                        id
+                )"""
 
 class Deckbuilder(CountedAchievement):
     key = 'deckbuilder'
     title = 'Deck Builder'
     description_safe = 'Have someone else register an exact copy of a deck you registered first.'
     sql = 'COUNT(DISTINCT CASE WHEN d.id IN (SELECT original FROM repeats WHERE newplayer = TRUE) AND d.id NOT IN (SELECT copy FROM repeats) THEN d.id ELSE NULL END)'
+    detail_sql = "GROUP_CONCAT(CASE WHEN d.id IN (SELECT original FROM repeats WHERE newplayer = TRUE) AND d.id NOT IN (SELECT copy FROM repeats) THEN CONCAT(d.id, ',', imitators.imitator_ids) ELSE NULL END)"
+    join_sql = 'LEFT JOIN imitators ON imitators.original = d.id'
     with_sql = """
         repeats AS
             (
                 SELECT
-                    d1.id AS original, d2.id AS copy, d1.person_id != d2.person_id AS newplayer
+                    d1.id AS original, d2.id AS copy, d1.person_id != d2.person_id AS newplayer, d1.person_id as original_person_id
                 FROM
                     deck AS d1
                 JOIN
                     deck AS d2
                 ON d1.decklist_hash = d2.decklist_hash AND d1.created_date < d2.created_date
-            )
+            ),
+        imitators AS (SELECT original, GROUP_CONCAT(copy) AS imitator_ids FROM repeats WHERE newplayer = TRUE GROUP BY original)
     """
 
     def leaderboard_heading(self) -> str:
@@ -521,27 +617,26 @@ class Deckbuilder(CountedAchievement):
     def localised_display(self, n: int) -> str:
         return ngettext('1 deck played by others', '%(num)d decks played by others', n)
 
-
 class Pioneer(CountedAchievement):
     key = 'pioneer'
     title = 'Pioneer'
     description_safe = 'Have one of your decks recognised as the first of a new archetype.'
-    sql = """
-        SUM(CASE WHEN d.id IN
-            (
-                SELECT
-                    d.id
-                FROM
-                    deck AS d
-                LEFT JOIN
-                    deck AS d2 ON d.archetype_id = d2.archetype_id AND d.created_date > d2.created_date
-                LEFT JOIN
-                    archetype as a ON d.archetype_id = a.id
-                WHERE
-                    d2.created_date IS NULL and d.archetype_id IS NOT NULL
-            )
-        THEN 1 ELSE 0 END)
-        """
+    sql = 'SUM(CASE WHEN d.id IN (SELECT * FROM pioneer_decks) THEN 1 ELSE 0 END)'
+    detail_sql = 'GROUP_CONCAT(CASE WHEN d.id IN (SELECT * FROM pioneer_decks) THEN d.id ELSE NULL END)'
+    with_sql = """
+        pioneer_decks AS
+        (
+            SELECT
+                d.id
+            FROM
+                deck AS d
+            LEFT JOIN
+                deck AS d2 ON d.archetype_id = d2.archetype_id AND d.created_date > d2.created_date
+            LEFT JOIN
+                archetype as a ON d.archetype_id = a.id
+            WHERE
+                d2.created_date IS NULL and d.archetype_id IS NOT NULL
+        )"""
 
     def leaderboard_heading(self) -> str:
         return gettext('Archetypes')
@@ -552,28 +647,61 @@ class Pioneer(CountedAchievement):
 class VarietyPlayer(BooleanAchievement):
     key = 'variety_player'
     title = 'Variety Player'
-    season_text = 'Finished five-match league runs with three different archetypes this season'
-    description_safe = 'Finish five-match league runs with three different archetypes in a single season.'
-    sql = "CASE WHEN COUNT(DISTINCT CASE WHEN dc.wins + dc.losses >= 5 AND ct.name = 'League' THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END"
+    season_text = 'Finished five-match league runs with three or more different archetypes this season'
+    description_safe = 'Finish five-match league runs with three or more different archetypes in a single season.'
+    sql = 'CASE WHEN COUNT(DISTINCT CASE WHEN falr.deck_id IS NOT NULL THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END'
+    detail_sql = """
+                    CASE WHEN
+                        COUNT(DISTINCT CASE WHEN falr.deck_id IS NOT NULL THEN d.archetype_id ELSE NULL END) >= 3
+                    THEN
+                        GROUP_CONCAT(falr.deck_id)
+                    ELSE
+                        NULL
+                    END
+                """
+    with_sql = """
+                    first_arch_league_runs AS
+                    (
+                        SELECT
+                            MIN(d.id) as deck_id,
+                            d.person_id AS person_id,
+                            season.id AS season_id,
+                            d.archetype_id AS archetype_id
+                        FROM
+                            deck AS d
+                        LEFT JOIN
+                            deck_cache AS dc ON dc.deck_id = d.id
+                        {season_join}
+                        {competition_join}
+                        WHERE
+                            ct.name = 'League' AND dc.wins + dc.losses >= 5
+                        GROUP BY
+                            person_id,
+                            season_id,
+                            archetype_id
+                    )""".format(season_join=query.season_join(), competition_join=query.competition_join())
+    join_sql = 'LEFT JOIN first_arch_league_runs AS falr ON d.id = falr.deck_id'
 
     @staticmethod
     def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
-        return f'Finished five-match league runs with three different archetypes in {what}'
+        return f'Finished five-match league runs with three or more different archetypes in {what}'
 
 class Specialist(BooleanAchievement):
     key = 'specialist'
     title = 'Specialist'
-    season_text = 'Reached the elimination rounds of a tournament playing the same archetype three times this season'
-    description_safe = 'Reach the elimination rounds of a tournament playing the same archetype three times in a single season.'
-    sql = """
-        CASE WHEN EXISTS
-            (
-                SELECT
-                    p.id
-                FROM
+    season_text = 'Reached the elimination rounds of a tournament playing the same archetype three or more times this season'
+    description_safe = 'Reach the elimination rounds of a tournament playing the same archetype three or more times in a single season.'
+    sql = 'CASE WHEN EXISTS (SELECT * FROM arch_top_n_count1 AS atnc WHERE p.id = atnc.person_id AND season.id = atnc.season_id AND n >= 3) THEN TRUE ELSE FALSE END'
+    detail_sql = "GROUP_CONCAT(CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' AND d.archetype_id IN (SELECT archetype_id FROM arch_top_n_count2 AS atnc WHERE p.id = atnc.person_id AND season.id = atnc.season_id AND n >= 3) THEN d.id ELSE NULL END)"
+    with_sql = """
+                top_ns AS
                     (
-                        SELECT p.id AS inner_pid, season.id AS inner_seasonid, COUNT(d.id) AS archcount
+                        SELECT
+                            d.id as deck_id,
+                            p.id AS person_id,
+                            season.id AS season_id,
+                            d.archetype_id AS archetype_id
                         FROM
                             person AS p
                         LEFT JOIN
@@ -584,34 +712,41 @@ class Specialist(BooleanAchievement):
                         {competition_join}
                         WHERE
                             d.finish <= c.top_n AND ct.name = 'Gatherling'
-                        GROUP BY
-                            p.id,
-                            season.id,
-                            d.archetype_id
-                        HAVING archcount >= 3
-                    ) AS spec_archs
-                WHERE
-                    p.id = inner_pid AND season.id = inner_seasonid
-            )
-        THEN TRUE ELSE FALSE END
-    """.format(season_join=query.season_join(), competition_join=query.competition_join())
-
+                    ),
+                arch_top_n_count1 AS
+                    (
+                        SELECT person_id, season_id, archetype_id, COUNT(DISTINCT deck_id) AS n FROM top_ns GROUP BY person_id, season_id, archetype_id
+                    ),
+                arch_top_n_count2 AS
+                    (
+                        SELECT person_id, season_id, archetype_id, COUNT(DISTINCT deck_id) AS n FROM top_ns GROUP BY person_id, season_id, archetype_id
+                    )
+                """.format(season_join=query.season_join(), competition_join=query.competition_join())
     @staticmethod
     def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
-        return f'Reached the elimination rounds of a tournament playing the same archetype three times in {what}'
+        return f'Reached the elimination rounds of a tournament playing the same archetype three or more times in {what}'
 
 class Generalist(BooleanAchievement):
     key = 'generalist'
     title = 'Generalist'
-    season_text = 'Reached the elimination rounds of a tournament playing three different archetypes this season'
-    description_safe = 'Reach the elimination rounds of a tournament playing three different archetypes in a single season.'
+    season_text = 'Reached the elimination rounds of a tournament playing three or more different archetypes this season'
+    description_safe = 'Reach the elimination rounds of a tournament playing three or more different archetypes in a single season.'
     sql = "CASE WHEN COUNT(DISTINCT CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' THEN d.archetype_id ELSE NULL END) >= 3 THEN True ELSE False END"
+    detail_sql = """
+                    CASE WHEN
+                        COUNT(DISTINCT CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' THEN d.archetype_id ELSE NULL END) >= 3
+                    THEN
+                        GROUP_CONCAT(DISTINCT CASE WHEN d.id IN (SELECT deck_id FROM first_arch_top_ns) THEN d.id ELSE NULL END)
+                    ELSE
+                        NULL
+                    END"""
+    with_sql = 'first_arch_top_ns AS (SELECT MIN(deck_id) AS deck_id, person_id, season_id FROM top_ns GROUP BY person_id, season_id, archetype_id)'
 
     @staticmethod
     def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
-        return f'Reached the elimination rounds of a tournament playing three different archetypes in {what}'
+        return f'Reached the elimination rounds of a tournament playing three or more different archetypes in {what}'
 
 class Completionist(BooleanAchievement):
     key = 'completionist'

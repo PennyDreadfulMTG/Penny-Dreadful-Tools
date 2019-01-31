@@ -25,9 +25,9 @@ from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
                             Archetypes, Bugs, Card, Cards, CommunityGuidelines,
                             Competition, Competitions, Deck, DeckCheck, Decks,
                             Faqs, Home, LeagueInfo, LinkAccounts, News, People,
-                            Person, Report, Resources, Retire, Rotation,
-                            RotationChanges, Season, Seasons, SignUp,
-                            TournamentHosting, TournamentLeaderboards,
+                            Person, PersonAchievements, Report, Resources,
+                            Retire, Rotation, RotationChanges, Season, Seasons,
+                            SignUp, TournamentHosting, TournamentLeaderboards,
                             Tournaments)
 from magic import card as mc
 from magic import fetcher, image_fetcher, oracle
@@ -97,6 +97,13 @@ def achievements() -> str:
     if username is not None:
         p = ps.load_person_by_mtgo_username(username, season_id=get_season_id())
     view = Achievements(achs.load_achievements(p, season_id=get_season_id()))
+    return view.page()
+
+@APP.route('/people/<person_id>/achievements')
+@SEASONS.route('/people/<person_id>/achievements')
+def person_achievements(person_id: str) -> str:
+    p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
+    view = PersonAchievements(p, achs.load_achievements(p, season_id=get_season_id(), with_detail=True))
     return view.page()
 
 @APP.route('/person/achievements/')

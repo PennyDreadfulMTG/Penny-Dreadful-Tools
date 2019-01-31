@@ -1,0 +1,15 @@
+{{> banner}}
+<section>
+    {{#achievements}}
+        {{#legend}}
+            <b>{{title}}</b>
+            <p class="detail">
+                <span class="earned">🏆</span>
+                <span class="text">{{legend}}</span>
+            </p>
+            {{#detail}}
+                {{> decktable}}
+            {{/detail}}
+        {{/legend}}
+    {{/achievements}}
+</section>

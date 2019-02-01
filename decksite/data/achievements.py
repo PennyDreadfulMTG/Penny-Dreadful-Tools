@@ -102,6 +102,7 @@ class Achievement:
     in_db = True
     key: Optional[str] = None
     title = ''
+    flags: List[str] = []
 
     @property
     def description_safe(self) -> str:
@@ -195,6 +196,8 @@ class Achievement:
         ids = db().value(sql)
         result = Container()
         result.decks = deck.load_decks(where=f'd.id IN ({ids})') if ids is not None else []
+        for f in self.flags:
+            result[f] = True
         return result
 
     def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Container]]:
@@ -326,6 +329,7 @@ class TournamentPlayer(CountedAchievement):
     title = 'Tournament Player'
     sql = "COUNT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
     detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
+    flags = ['hide_person', 'hide_source']
 
     @property
     def description_safe(self) -> str:
@@ -343,6 +347,7 @@ class TournamentWinner(CountedAchievement):
     description_safe = 'Win a tournament.'
     sql = "COUNT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
     detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN d.finish = 1 AND ct.name = 'Gatherling' THEN d.id ELSE NULL END)"
+    flags = ['hide_person', 'hide_source']
 
     def leaderboard_heading(self) -> str:
         return gettext('Victories')
@@ -355,6 +360,7 @@ class LeaguePlayer(CountedAchievement):
     title = 'League Player'
     sql = "COUNT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END)"
     detail_sql = "GROUP_CONCAT(DISTINCT CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END)"
+    flags = ['hide_person', 'hide_source', 'hide_top8']
 
     @property
     def description_safe(self) -> str:
@@ -372,6 +378,7 @@ class PerfectRun(CountedAchievement):
     description_safe = 'Complete a 5–0 run in the league.'
     sql = "SUM(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses = 0 THEN 1 ELSE 0 END)"
     detail_sql = "GROUP_CONCAT(CASE WHEN ct.name = 'League' AND dc.wins >= 5 AND dc.losses = 0 THEN d.id ELSE NULL END)"
+    flags = ['hide_person', 'hide_source', 'hide_top8']
 
     def leaderboard_heading(self) -> str:
         return gettext('Runs')
@@ -385,6 +392,7 @@ class FlawlessRun(CountedAchievement):
     description_safe = 'Complete a 5–0 run in the league without losing a game.'
     sql = 'SUM(CASE WHEN d.id IN (SELECT id FROM flawless_decks1) THEN 1 ELSE 0 END)'
     detail_sql = 'GROUP_CONCAT(CASE WHEN d.id IN (SELECT id FROM flawless_decks2) THEN d.id ELSE NULL END)'
+    flags = ['hide_person', 'hide_source', 'hide_top8']
 
     def leaderboard_heading(self) -> str:
         return gettext('Runs')
@@ -450,6 +458,7 @@ class PerfectRunCrusher(CountedAchievement):
     sql = 'SUM(CASE WHEN crush_records.crush_count IS NULL THEN 0 ELSE crush_records.crush_count END)'
     detail_sql = 'GROUP_CONCAT(crush_records.crushee_ids)'
     join_sql = 'LEFT JOIN crush_records ON d.id = crush_records.crusher_id'
+    flags = ['hide_source', 'hide_top8']
     @property
     def with_sql(self) -> str:
         return """
@@ -491,9 +500,10 @@ class AncientGrudge(CountedAchievement):
         return gettext('grudges repaid')
     def localised_display(self, n: int) -> str:
         return ngettext('1 grudge repaid', '%(num)d grudges repaid', n)
-    sql = """COUNT(DISTINCT CASE WHEN agdi.id IS NOT NULL THEN d.id ELSE NULL END)"""
+    sql = """COUNT(DISTINCT agdi.grudge_id)"""
     detail_sql = """GROUP_CONCAT(DISTINCT CASE WHEN agdi.id IS NOT NULL THEN agdi.both_ids ELSE NULL END)"""
     join_sql = 'LEFT JOIN ancient_grudge_deck_ids AS agdi ON d.id = agdi.id'
+    flags = ['hide_source']
     @property
     def with_sql(self) -> str:
         return """knockouts AS
@@ -539,6 +549,7 @@ class AncientGrudge(CountedAchievement):
             (
                 SELECT
                     k2.winner_deck_id AS id,
+                    k1.winner_deck_id AS grudge_id,
                     CONCAT(k1.winner_deck_id, ",", k2.winner_deck_id) AS both_ids
                 FROM
                     knockouts AS k1
@@ -557,11 +568,13 @@ class BurningVengeance(CountedAchievement):
     def localised_display(self, n: int) -> str:
         return ngettext('1 defeat avenged', '%(num)d defeats avenged', n)
     sql = 'COUNT(DISTINCT CASE WHEN d.id IN (SELECT id FROM burning_vengeance_decks) THEN d.id ELSE NULL END)'
-    detail_sql = 'GROUP_CONCAT(DISTINCT CASE WHEN d.id IN (SELECT id FROM burning_vengeance_decks) THEN d.id ELSE NULL END)'
+    detail_sql = 'GROUP_CONCAT(bvd.both_ids)'
+    join_sql = 'LEFT JOIN burning_vengeance_decks AS bvd ON d.id = bvd.id'
     with_sql = """burning_vengeance_decks AS
                 (
                     SELECT
-                        distinct(dm1.deck_id) AS id
+                        distinct(dm1.deck_id) AS id,
+                        CONCAT(dm1.deck_id, ",", odm1.deck_id) AS both_ids
                     FROM
                         deck_match AS dm1
                     INNER JOIN
@@ -589,6 +602,7 @@ class BurningVengeance(CountedAchievement):
                     ORDER BY
                         id
                 )"""
+    flags = ['hide_source']
 
 class Deckbuilder(CountedAchievement):
     key = 'deckbuilder'
@@ -637,6 +651,7 @@ class Pioneer(CountedAchievement):
             WHERE
                 d2.created_date IS NULL and d.archetype_id IS NOT NULL
         )"""
+    flags = ['hide_person', 'show_archetype']
 
     def leaderboard_heading(self) -> str:
         return gettext('Archetypes')
@@ -681,6 +696,7 @@ class VarietyPlayer(BooleanAchievement):
                             archetype_id
                     )""".format(season_join=query.season_join(), competition_join=query.competition_join())
     join_sql = 'LEFT JOIN first_arch_league_runs AS falr ON d.id = falr.deck_id'
+    flags = ['hide_person', 'hide_source', 'hide_top8', 'show_archetype']
 
     @staticmethod
     def alltime_text(n: int) -> str:
@@ -722,6 +738,7 @@ class Specialist(BooleanAchievement):
                         SELECT person_id, season_id, archetype_id, COUNT(DISTINCT deck_id) AS n FROM top_ns GROUP BY person_id, season_id, archetype_id
                     )
                 """.format(season_join=query.season_join(), competition_join=query.competition_join())
+    flags = ['hide_person', 'hide_source', 'show_archetype']
     @staticmethod
     def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
@@ -742,7 +759,7 @@ class Generalist(BooleanAchievement):
                         NULL
                     END"""
     with_sql = 'first_arch_top_ns AS (SELECT MIN(deck_id) AS deck_id, person_id, season_id FROM top_ns GROUP BY person_id, season_id, archetype_id)'
-
+    flags = ['hide_person', 'hide_source', 'show_archetype']
     @staticmethod
     def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)

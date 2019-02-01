@@ -28,6 +28,7 @@ class Person(View):
         self.show_seasons = True
         self.displayed_achievements = [{'title': a.title, 'detail': titlecase.titlecase(a.display(self.person))} for a in Achievement.all_achievements if a.display(self.person)]
         self.achievements_url = url_for('achievements')
+        self.person_achievements_url = url_for('person_achievements', person_id=person.id)
         colors: Dict[str, int] = {}
         for d in self.decks:
             for c in d.colors:

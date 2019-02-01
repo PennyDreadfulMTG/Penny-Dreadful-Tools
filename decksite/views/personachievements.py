@@ -12,6 +12,7 @@ class PersonAchievements(View):
         self.person = person
         self.achievements = achievements
         self.show_seasons = True
+        self.show_active_runs_text = False
         self.decks = []
         for a in achievements:
             if a.detail is not None:

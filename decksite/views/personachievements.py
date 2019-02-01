@@ -17,6 +17,8 @@ class PersonAchievements(View):
         for a in achievements:
             if a.detail is not None:
                 self.decks += a.detail.decks
+        if len([a for a in achievements if a.legend]) == 0:
+            self.no_achievements = True
 
     def page_title(self):
         return f'Achievement details: {self.person.name}'

@@ -491,7 +491,7 @@ class AncientGrudge(CountedAchievement):
         return gettext('grudges repaid')
     def localised_display(self, n: int) -> str:
         return ngettext('1 grudge repaid', '%(num)d grudges repaid', n)
-    sql = """COUNT(DISTINCT CASE WHEN agdi.id IS NOT NULL THEN d.id ELSE NULL END)"""
+    sql = """COUNT(DISTINCT agdi.grudge_id)"""
     detail_sql = """GROUP_CONCAT(DISTINCT CASE WHEN agdi.id IS NOT NULL THEN agdi.both_ids ELSE NULL END)"""
     join_sql = 'LEFT JOIN ancient_grudge_deck_ids AS agdi ON d.id = agdi.id'
     @property
@@ -539,6 +539,7 @@ class AncientGrudge(CountedAchievement):
             (
                 SELECT
                     k2.winner_deck_id AS id,
+                    k1.winner_deck_id AS grudge_id,
                     CONCAT(k1.winner_deck_id, ",", k2.winner_deck_id) AS both_ids
                 FROM
                     knockouts AS k1

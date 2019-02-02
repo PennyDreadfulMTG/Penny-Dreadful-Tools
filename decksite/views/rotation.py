@@ -18,7 +18,7 @@ class Rotation(View):
         self.playability = card.playability()
         until_full_rotation = rotation.next_rotation() - dtutil.now()
         until_supplemental_rotation = rotation.next_supplemental() - dtutil.now()
-        in_rotation = False
+        in_rotation = configuration.get_bool('always_show_rotation')
         if until_full_rotation < datetime.timedelta(7):
             in_rotation = True
             self.rotation_msg = 'Full rotation is in progress, ends ' + dtutil.display_date(rotation.next_rotation(), 2)

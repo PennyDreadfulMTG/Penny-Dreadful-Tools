@@ -36,7 +36,11 @@ def all_sets() -> List[Dict[str, Any]]:
     return d['data']
 
 def bugged_cards() -> Optional[List[Dict[str, Any]]]:
-    bugs = internal.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
+    try:
+        bugs = internal.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
+    except FetchException:
+        print("WARNING: Couldn't fetch bugs")
+        bugs = None
     if bugs is None:
         return None
     return bugs

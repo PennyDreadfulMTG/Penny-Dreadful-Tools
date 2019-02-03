@@ -1037,6 +1037,14 @@ header.season-10:before {
     background-image: url("/banner/10.png");
 }
 
+header.season-11:before {
+    background-image: url("/banner/11.png");
+}
+
+header.season-12:before {
+    background-image: url("/banner/12.png");
+}
+
 /*
 
 z-index

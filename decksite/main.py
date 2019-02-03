@@ -449,7 +449,9 @@ def banner(seasonnum: str) -> Response:
     elif seasonnum == '6':
         cardnames = ['Chain Lightning', 'Compulsive Research', 'Bogardan Hellkite', 'Grand Coliseum', 'Cartouche of Solidarity', 'Lagonna-Band Trailblazer', 'Felidar Guardian']
         background = 'Parallax Wave'
-
+    elif seasonnum == '11':
+        cardnames = ['Rampaging Ferocidon', 'Frantic Search', 'Whip of Erebos', "Gaea's Revenge", 'Doomed Traveler', 'Muraganda Petroglyphs', 'Pyroclasm']
+        background = 'Temple of Mystery'
 
     path = image_fetcher.generate_banner(cardnames, background)
     return send_file(os.path.abspath(path))

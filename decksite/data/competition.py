@@ -69,7 +69,8 @@ def load_competitions(where: str = '1 = 1', having: str = '1 = 1', season_id: Op
             COUNT(d.id) AS num_decks,
             SUM(CASE WHEN d.reviewed THEN 1 ELSE 0 END) AS num_reviewed,
             sp.name AS sponsor_name,
-            ct.name AS type
+            ct.name AS type,
+            cs.name AS series_name
         FROM
             competition AS c
         LEFT JOIN

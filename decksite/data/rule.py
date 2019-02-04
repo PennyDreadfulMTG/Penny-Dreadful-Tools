@@ -6,6 +6,22 @@ from magic.models import Deck
 from shared.container import Container
 from shared.decorators import retry_after_calling
 
+IGNORE: List[str] = ['Commander', 'Unclassified']
+
+def excluded_archetype_names() -> List[str]:
+    return IGNORE
+
+def excluded_archetype_ids() -> List[int]:
+    if len(IGNORE) == 0:
+        return []
+    sql = 'SELECT id FROM archetype WHERE name IN ("{n}")'.format(n='","'.join(IGNORE))
+    return db().values(sql)
+
+def excluded_archetype_info() -> List[Container]:
+    if len(IGNORE) == 0:
+        return []
+    sql = 'SELECT name, id FROM archetype WHERE name IN ("{n}")'.format(n='","'.join(IGNORE))
+    return [Container(row) for row in db().select(sql)]
 
 def apply_rules_to_decks(decks: List[Deck]) -> None:
     if len(decks) == 0:
@@ -42,7 +58,7 @@ def cache_all_rules() -> None:
                 FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
             ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
             {apply_rules_query}
-        """.format(apply_rules_query=apply_rules_query())
+        """.format(apply_rules_query=apply_rules_query(deck_query=classified_decks_query()))
     db().execute(sql)
     db().execute('DROP TABLE IF EXISTS _old_applied_rules')
     db().execute('CREATE TABLE IF NOT EXISTS _applied_rules (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
@@ -51,7 +67,7 @@ def cache_all_rules() -> None:
 
 @retry_after_calling(cache_all_rules)
 def num_classified_decks() -> int:
-    sql = 'SELECT COUNT(DISTINCT(deck_id)) AS c FROM _applied_rules'.format(apply_rules_query=apply_rules_query())
+    sql = 'SELECT COUNT(DISTINCT(deck_id)) AS c FROM _applied_rules'
     return db().value(sql)
 
 @retry_after_calling(cache_all_rules)
@@ -78,7 +94,7 @@ def mistagged_decks() -> List[Deck]:
                 tagged_archetype.id = deck.archetype_id
             WHERE
                 rule_archetype.id != tagged_archetype.id
-            """.format(apply_rules_query=apply_rules_query())
+            """
     rule_archetypes = {}
     for r in (Container(row) for row in db().select(sql)):
         rule_archetypes[r.deck_id] = (r.rule_archetype_id, r.rule_archetype_name)
@@ -103,7 +119,7 @@ def doubled_decks() -> List[Deck]:
             deck_id
         HAVING
             COUNT(DISTINCT archetype_id) > 1
-        """.format(apply_rules_query=apply_rules_query())
+        """
     archetypes_from_rules: Dict[int, List[Container]] = {}
     for r in [Container(row) for row in db().select(sql)]:
         matching_archetypes = zip(r.archetype_ids.split(','), r.archetype_names.split('|'))
@@ -135,7 +151,7 @@ def overlooked_decks() -> List[Deck]:
                         FROM
                             rule
                     )
-            """.format(apply_rules_query=apply_rules_query())
+            """
     deck_ids = [str(row['deck_id']) for row in db().select(sql)]
     if not deck_ids:
         return []
@@ -164,7 +180,7 @@ def load_all_rules() -> List[Container]:
             rule.id = _applied_rules.rule_id
         GROUP BY
             id
-        """.format(apply_rules_query=apply_rules_query())
+        """
     for r in (Container(row) for row in db().select(sql)):
         result.append(r)
         result_by_id[r.id] = r
@@ -193,6 +209,9 @@ def update_cards(rule_id: int, inc: List[Tuple[int, str]], exc: List[Tuple[int, 
         sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, %s, FALSE)'
         db().execute(sql, [rule_id, card, n])
     db().commit('update_rule_cards')
+
+def classified_decks_query() -> str:
+    return 'reviewed=FALSE OR deck.archetype_id NOT IN ({ex})'.format(ex=','.join(str(aid) for aid in excluded_archetype_ids()))
 
 def apply_rules_query(deck_query: str = '1 = 1') -> str:
     return f"""

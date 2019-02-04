@@ -66,11 +66,12 @@ def load_competitions(where: str = '1 = 1', having: str = '1 = 1', season_id: Op
             c.start_date,
             c.end_date,
             c.url,
+            c.top_n,
             COUNT(d.id) AS num_decks,
             SUM(CASE WHEN d.reviewed THEN 1 ELSE 0 END) AS num_reviewed,
             sp.name AS sponsor_name,
-            ct.name AS type,
-            cs.name AS series_name
+            cs.name AS series_name,
+            ct.name AS type
         FROM
             competition AS c
         LEFT JOIN

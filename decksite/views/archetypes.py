@@ -77,6 +77,12 @@ class Archetypes(View):
                         mu.opponent_archetype = b
                     a.matchups.append(mu)
 
+        self.show_matchup_grid = False
+        for a in self.archetypes:
+            if a.show_in_matchups_grid:
+                self.show_matchup_grid = True
+                break
+
         # Now we have traversed the tree and worked out which archetypes we are going to show, annotate matchups with that information.
         for a in self.archetypes:
             for mu in a.matchups:

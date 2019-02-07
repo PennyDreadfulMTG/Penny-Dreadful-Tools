@@ -23,8 +23,8 @@ from shared_web import logger
 class SignUpForm(Form):
     def __init__(self,
                  form: ImmutableMultiDict,
-                 person_id: int = None,
-                 mtgo_username: str = None) -> None:
+                 person_id: Optional[int],
+                 mtgo_username: Optional[str]) -> None:
         super().__init__(form)
         if person_id is not None:
             ps = person.load_person_by_id(person_id)

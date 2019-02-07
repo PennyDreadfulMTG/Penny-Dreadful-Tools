@@ -225,28 +225,36 @@ def insert_face(p: CardDescription, card_id: int, position: int = 1) -> None:
     sql += ') VALUES (%s, %s, '
     sql += ', '.join('%s' for name, prop in card.face_properties().items() if prop['scryfall'])
     sql += ')'
-    values = [card_id, position] + [p.get(database2json(name)) for name, prop in card.face_properties().items() if prop['scryfall']] # type: ignore
+    values: List[Any] = [card_id, position]
+    values += [p.get(database2json(name)) for name, prop in card.face_properties().items() if prop['scryfall']]
     db().execute(sql, values)
 
 def insert_card_faces(p: CardDescription, card_id: int) -> None:
+    card_faces = p.get('card_faces')
+    if card_faces is None:
+        raise InvalidArgumentException(f'Tried to insert_card_faces on a card without card_faces: {p} ({card_id})')
+    first_face_cmc = mana.cmc(card_faces[0]['mana_cost'])
     position = 1
-    first_face_cmc = mana.cmc(p['card_faces'][0]['mana_cost']) # type: ignore
-    for face in p['card_faces']: # type: ignore
+    for face in card_faces:
         # Scryfall doesn't provide cmc on card_faces currently. See #5939.
         face['cmc'] = mana.cmc(face['mana_cost']) if face['mana_cost'] else first_face_cmc
         insert_face(face, card_id, position)
         position += 1
 
 def insert_meld_result_faces(p: CardDescription, cards: Dict[str, int]) -> None:
-    front_face_names = [part['name'] for part in p['all_parts'] if part['component'] == 'meld_part'] # type: ignore
+    all_parts = p.get('all_parts')
+    if all_parts is None:
+        raise InvalidArgumentException(f'Tried to insert_meld_result_faces on a card without all_parts: {p}')
+    front_face_names = [part['name'] for part in all_parts if part['component'] == 'meld_part']
     card_ids = [cards[name] for name in front_face_names]
-    for card_id in card_ids: # type: ignore
+    for card_id in card_ids:
         insert_face(p, card_id, 2)
 
 def is_meld_result(p: CardDescription) -> bool:
-    if not p['layout'] == 'meld' or not p.get('all_parts'):
+    all_parts = p.get('all_parts')
+    if all_parts is None or not p['layout'] == 'meld':
         return False
-    meld_result_name = next(part['name'] for part in p['all_parts'] if part['component'] == 'meld_result') # type: ignore
+    meld_result_name = next(part['name'] for part in all_parts if part['component'] == 'meld_result')
     return p['name'] == meld_result_name
 
 def insert_set(s: Any) -> int:
@@ -267,7 +275,8 @@ def insert_printing(p: CardDescription, card_id: int, set_id: int) -> None:
     sql += ') VALUES (%s, %s, '
     sql += ', '.join('%s' for name, prop in card.printing_properties().items() if prop['scryfall'])
     sql += ')'
-    cards_values = [card_id, set_id] + [p.get(database2json(name)) for name, prop in card.printing_properties().items() if prop['scryfall']] # type: ignore
+    cards_values: List[Any] = [card_id, set_id]
+    cards_values += [p.get(database2json(name)) for name, prop in card.printing_properties().items() if prop['scryfall']]
     db().execute(sql, cards_values)
 
 def set_legal_cards(season: str = None) -> List[str]:

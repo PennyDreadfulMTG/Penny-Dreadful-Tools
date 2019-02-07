@@ -244,7 +244,7 @@ def insert_card_faces(p: CardDescription, card_id: int) -> None:
 def insert_meld_result_faces(p: CardDescription, cards: Dict[str, int]) -> None:
     all_parts = p.get('all_parts')
     if all_parts is None:
-        raise InvalidArgumentException(f'Tried to insert_meld_result_faces on a card without all_parts: {p} ({card_id})')
+        raise InvalidArgumentException(f'Tried to insert_meld_result_faces on a card without all_parts: {p}')
     front_face_names = [part['name'] for part in all_parts if part['component'] == 'meld_part']
     card_ids = [cards[name] for name in front_face_names]
     for card_id in card_ids:

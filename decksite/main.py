@@ -335,7 +335,7 @@ def signup(form: Optional[SignUpForm] = None) -> str:
 @APP.route('/signup/', methods=['POST'])
 @cached()
 def add_signup() -> str:
-    form = SignUpForm(request.form)
+    form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
     if form.validate():
         d = lg.signup(form)
         response = make_response(redirect(url_for('deck', deck_id=d.id)))
@@ -354,7 +354,7 @@ def deck_check(form: Optional[DeckCheckForm] = None) -> str:
 @APP.route('/deckcheck/', methods=['POST'])
 @cached()
 def do_deck_check() -> str:
-    form = DeckCheckForm(request.form)
+    form = DeckCheckForm(request.form, auth.person_id(), auth.mtgo_username())
     form.validate()
     return deck_check(form)
 

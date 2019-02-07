@@ -23,12 +23,12 @@ from shared_web import logger
 class SignUpForm(Form):
     def __init__(self,
                  form: ImmutableMultiDict,
-                 person_id: int = None,
-                 mtgo_username: str = None) -> None:
+                 person_id: int,
+                 mtgo_username: str) -> None:
         super().__init__(form)
         if person_id is not None:
             ps = person.load_person_by_id(person_id)
-            self.recent_decks: List[Dict[str, Any]] = []
+             self.recent_decks: List[Dict[str, Any]] = []
             for d in sorted(ps.decks, key=lambda deck: deck['created_date'], reverse=True)[0:10]:
                 recent_deck = {'name': d['name'], 'main': [], 'sb':[]}
                 for c in d.maindeck:

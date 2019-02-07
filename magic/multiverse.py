@@ -252,9 +252,7 @@ def insert_meld_result_faces(p: CardDescription, cards: Dict[str, int]) -> None:
 
 def is_meld_result(p: CardDescription) -> bool:
     all_parts = p.get('all_parts')
-    if all_parts is None:
-        raise InvalidArgumentException('BAKERT')
-    if not p['layout'] == 'meld' or not p.get('all_parts'):
+    if all_parts is None or not p['layout'] == 'meld':
         return False
     meld_result_name = next(part['name'] for part in all_parts if part['component'] == 'meld_result')
     return p['name'] == meld_result_name

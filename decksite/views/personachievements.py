@@ -16,6 +16,7 @@ class PersonAchievements(View):
         self.decks = []
         for a in achievements:
             if a.detail is not None:
+                a.detail.decks = [d for d in a.detail.decks if not d.is_in_current_run()]
                 self.decks += a.detail.decks
         if len([a for a in achievements if a.legend]) == 0:
             self.no_achievements = True

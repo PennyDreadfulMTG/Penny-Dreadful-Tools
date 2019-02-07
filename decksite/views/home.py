@@ -54,7 +54,7 @@ class Home(View):
             self.deck_tables.append(
                 {
                     'title': gettext('Latest Tournament Top 8'),
-                    'url': url_for('competitions', competition_id=tournament_id),
+                    'url': url_for('competition', competition_id=tournament_id),
                     'link_text': gettext('View Tournament…'),
                     'decks': tournament_decks
                 }

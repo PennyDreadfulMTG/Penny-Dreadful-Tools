@@ -13,7 +13,9 @@
             <tr class="wide">
                 <td>{{subject}}</td>
                 <td>{{creator}}</td>
-                <td>{{display_date}}</td>
+                <td data-text="{{date_sort}}">
+                    {{display_date}}
+                </td>
                 <td class="wide">{{note}}</td>
             </tr>
         {{/notes}}

@@ -11,6 +11,7 @@ class PlayerNotes(View):
     def __init__(self, notes: Iterable[Container], people: Iterable[Person]) -> None:
         super().__init__()
         for n in notes:
+            n.date_sort = dtutil.dt2ts(n.created_date)
             n.display_date = dtutil.display_date(n.created_date)
         self.notes = notes
         self.people = people

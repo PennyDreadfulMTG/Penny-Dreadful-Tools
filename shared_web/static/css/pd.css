@@ -715,6 +715,10 @@ th.angled .inner {
     width: 1em;
 }
 
+.matchup-grid {
+    padding-right: 5rem; /* Accomodate the angled headers so we don't get a scroll bar on small (early season) matchup grids. See #5991. */
+}
+
 /*
 
 Mobile Tables

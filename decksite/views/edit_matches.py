@@ -21,7 +21,7 @@ class EditMatches(View):
             m.left_deck = decks_by_id.get(int(m.left_id))
             m.right_deck = decks_by_id.get(int(m.right_id))
             m.left_url = url_for('deck', deck_id=m.left_id)
-            if m.get('right_url'):
+            if m.get('right_id'):
                 m.right_url = url_for('deck', deck_id=m.right_id)
             else:
                 m.right_url = None

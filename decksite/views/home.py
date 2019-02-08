@@ -71,7 +71,6 @@ class Home(View):
                 }
             )
         self.decks = league_decks + tournament_decks + latest_decks
-        self.show_active_runs_text = False
 
     def setup_cards(self, cards: List[Card]) -> None:
         cards = [c for c in cards if 'Basic Land' not in c.type_line]

@@ -238,7 +238,7 @@ Even though "normal" is the default list cases where it is known to be the desir
 
 */
 
-p, .subtitle, .news .item {
+p, .subtitle, .news .item, .person {
     font-variant-numeric: oldstyle-nums;
 }
 

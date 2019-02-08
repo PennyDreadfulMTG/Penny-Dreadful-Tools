@@ -13,7 +13,7 @@ class EditMatches(View):
     def __init__(self, decks: List[Deck], matches: List[Container]) -> None:
         super().__init__()
         self.matches = matches
-        self.do_not_hide_active_runs = True
+        self.hide_active_runs = False
         self.decks = sorted(decks, key=lambda d: d.person + str(d.created_date))
         decks_by_id = {d.id: d for d in decks}
         for m in self.matches:

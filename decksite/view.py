@@ -39,9 +39,8 @@ NUM_MOST_COMMON_CARDS_TO_LIST = 10
 class View(BaseView):
     def __init__(self) -> None:
         self.decks: List[Deck] = []
-        self.show_active_runs_text: bool = True
         self.active_runs_text: Optional[str] = None
-        self.do_not_hide_active_runs = False
+        self.hide_active_runs = True
         self.is_very_large: Optional[bool] = None
         self.show_seasons: bool = False
         self.legal_formats: Optional[List[str]] = None
@@ -153,11 +152,7 @@ class View(BaseView):
 
     def prepare_decks(self) -> None:
         self.is_very_large = self.is_very_large or len(getattr(self, 'decks', [])) > 500
-        # The 'list' here is just to get past codacy and is a no-op.
-        active_runs = [d for d in list(getattr(self, 'decks', [])) if d.is_in_current_run()]
-        if len(active_runs) > 0 and not self.do_not_hide_active_runs:
-            self.active_runs_text = ngettext('%(num)d active league run', '%(num)d active league runs', len(active_runs))
-            self.decks = [d for d in self.decks if not d.is_in_current_run()]
+        self.remove_active_runs_and_set_active_run_text(self)
         for d in getattr(self, 'decks', []):
             self.prepare_deck(d)
 
@@ -345,6 +340,14 @@ class View(BaseView):
     def prepare_legal_formats(self) -> None:
         if getattr(self, 'legal_formats', None) is not None:
             self.legal_formats = list(map(add_season_num, list(sorted(self.legal_formats, key=legality.order_score)))) # type: ignore
+
+    def remove_active_runs_and_set_active_run_text(self, o):
+        decks = getattr(o, 'decks', [])
+        active, other = [], []
+        [active.append(d) if d.is_in_current_run() else other.append(d) for d in decks]
+        if len(active) > 0 and o.hide_active_runs:
+            o.active_runs_text = ngettext('%(num)d active league run', '%(num)d active league runs', len(active)) if len(active) > 0 else ''
+            o.decks = other
 
     def babel_languages(self) -> List[Locale]:
         return APP.babel.list_translations()

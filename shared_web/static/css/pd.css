@@ -72,6 +72,7 @@ html {
         With this base font size 1px is 0.05rem. If you change the base font size change the 1px width throughout and in calculations including the mana-bar outside of CSS.
     */
     font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: normal;
 }
 
 body {
@@ -490,6 +491,7 @@ main a:hover, main table.calendar a:hover, .details a:hover {
 /* There are a lot of places we want undecorated links, though, even in the main content area. */
 main table a, main h1 a, main h2 a, main h3 a, main li a, .decklist a {
     font-family: inherit;
+    font-variant-numeric: normal;
     text-transform: none;
 }
 
@@ -599,6 +601,7 @@ main table.very-large {
 /* Turn off small caps link style in tables. */
 main table a {
     font-family: inherit;
+    font-variant-numeric: normal;
     text-transform: none;
 }
 
@@ -1735,6 +1738,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 .gsc-input {
     background: none !important; /* csslint allow: important */
     font-family: inherit !important; /* csslint allow: important */
+    font-variant-numeric: normal;
     font-size: inherit !important; /* csslint allow: important */
     margin-bottom: 6px !important; /* csslint allow: important */
 }
@@ -1757,6 +1761,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
     color: #502828 !important; /* csslint allow: important */
     font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.75rem !important; /* csslint allow: important */
+    font-variant-numeric: normal;
 }
 
 .gs-visibleUrl {
@@ -1820,6 +1825,7 @@ td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
 .gsc-result-info-container, .gs-snippet {
     /* Not sure why it doesn't pick up the definiton on HTML but it doesn't. */
     font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: normal;
 }
 
 .gs-snippet, .gsc-result-info {
@@ -1916,6 +1922,7 @@ News
 
 .news li.item a {
     font-family: main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: normal;
     text-transform: none;
 }
 
@@ -1933,6 +1940,7 @@ News
     color: #999;
     display: inline-block;
     font-family: main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: normal;
     float: right;
     margin-left: 1rem;
 }

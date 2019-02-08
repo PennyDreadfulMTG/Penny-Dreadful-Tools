@@ -182,10 +182,12 @@ class View(BaseView):
         d.comp_row_len = len('{comp_name} (Piloted by {person}'.format(comp_name=d.competition_name, person=d.person))
         if d.get('archetype_id', None):
             d.archetype_url = '/archetypes/{id}/'.format(id=d.archetype_id)
-        if d.get('omw') is not None and '%' not in str(d.omw):
-            d.omw = str(int(d.omw)) + '%'
-        else:
+        # We might be getting '43%'/'' from cache or '43'/None from the db. Cope with all possibilities.
+        # It might be better to use display_omw and omw as separate properties rather than overwriting the numeric value.
+        if d.get('omw') is None or d.omw == '':
             d.omw = ''
+        elif '%' not in str(d.omw):
+            d.omw = str(int(d.omw)) + '%'
         d.has_legal_format = len(d.legal_formats) > 0
         d.pd_legal = 'Penny Dreadful' in d.legal_formats
         d.legal_icons = ''

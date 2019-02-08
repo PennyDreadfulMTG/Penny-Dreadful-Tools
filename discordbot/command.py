@@ -325,6 +325,12 @@ class Commands:
                     'More Info': fetcher.decksite_url('/tournaments/')
                 }
             ),
+            'replay': (
+                """
+                You can play the same person a second time on your league run as long as they have started a new run. The same two runs cannot play each other twice.
+                """,
+                {}
+            ),
             'reporting': (
                 """
                 """,

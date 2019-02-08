@@ -98,6 +98,7 @@ i, em /* em to support markdown conversion to HTML, prefer i */ {
 
 nav {
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: oldstyle-nums;
     border-bottom: 0.05rem solid #999;
 }
 
@@ -130,6 +131,7 @@ main li {
 
 footer a {
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: oldstyle-nums;
     text-transform: lowercase;
 }
 
@@ -236,7 +238,7 @@ Even though "normal" is the default list cases where it is known to be the desir
 
 */
 
-p, .subtitle, .news .item {
+p, .subtitle, .news .item, .person {
     font-variant-numeric: oldstyle-nums;
 }
 
@@ -430,6 +432,7 @@ header h1 {
     border: 0;
     float: left; /* To accommodate search bar on right. */
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: oldstyle-nums;
     font-weight: normal;
     font-size: 1.333rem;
     margin-bottom: 0;
@@ -472,6 +475,7 @@ Links in text are underlined in such a way as to break on descenders like those 
 a, main table.calendar a, main .intro .details a, .details a {
     color: inherit;
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: oldstyle-nums;
     text-decoration: none;
     text-transform: lowercase;
 }
@@ -612,6 +616,7 @@ main th {
     cursor: pointer;
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 1em;
+    font-variant-numeric: oldstyle-nums;
     text-align: left;
     text-transform: lowercase;
 }
@@ -1160,6 +1165,7 @@ Calendar
 .date .month {
     display: block;
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: oldstyle-nums;
     text-align: left;
     text-transform: lowercase;
 }
@@ -1759,6 +1765,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 
 .gsc-wrapper a, .gs-title, .gs-title * {
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: oldstyle-nums;
     text-decoration: none !important; /* csslint allow: important */
 }
 

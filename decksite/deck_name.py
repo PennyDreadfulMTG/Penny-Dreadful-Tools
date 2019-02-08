@@ -70,6 +70,7 @@ def normalize(d: Deck) -> str:
         name = remove_hashtags(name)
         name = remove_brackets(name)
         name = strip_leading_punctuation(name)
+        name = remove_leading_deck(name)
         unabbreviated = expand_common_abbreviations(name)
         if unabbreviated != name or name in ABBREVIATIONS.values():
             name = unabbreviated
@@ -212,6 +213,10 @@ def ucase_trailing_roman_numerals(name: str) -> str:
 
 def strip_leading_punctuation(name: str) -> str:
     return re.sub('^[^a-z0-9"\']*', '', name, flags=re.IGNORECASE)
+
+# See #6041.
+def remove_leading_deck(name: str) -> str:
+    return re.sub('^deck - ', '', name, flags=re.IGNORECASE)
 
 def correct_case_of_color_names(name: str) -> str:
     for k in COLOR_COMBINATIONS:

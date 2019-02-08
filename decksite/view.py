@@ -344,7 +344,11 @@ class View(BaseView):
     def prepare_active_runs(self, o):
         decks = getattr(o, 'decks', [])
         active, other = [], []
-        [active.append(d) if d.is_in_current_run() else other.append(d) for d in decks]
+        for d in decks:
+            if d.is_in_current_run():
+                active.append(d)
+            else:
+                other.append(d)
         if len(active) > 0 and o.hide_active_runs:
             o.active_runs_text = ngettext('%(num)d active league run', '%(num)d active league runs', len(active)) if len(active) > 0 else ''
             o.decks = other

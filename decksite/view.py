@@ -152,7 +152,7 @@ class View(BaseView):
 
     def prepare_decks(self) -> None:
         self.is_very_large = self.is_very_large or len(getattr(self, 'decks', [])) > 500
-        self.remove_active_runs_and_set_active_run_text(self)
+        self.prepare_active_runs(self)
         for d in getattr(self, 'decks', []):
             self.prepare_deck(d)
 
@@ -341,7 +341,7 @@ class View(BaseView):
         if getattr(self, 'legal_formats', None) is not None:
             self.legal_formats = list(map(add_season_num, list(sorted(self.legal_formats, key=legality.order_score)))) # type: ignore
 
-    def remove_active_runs_and_set_active_run_text(self, o):
+    def prepare_active_runs(self, o):
         decks = getattr(o, 'decks', [])
         active, other = [], []
         [active.append(d) if d.is_in_current_run() else other.append(d) for d in decks]

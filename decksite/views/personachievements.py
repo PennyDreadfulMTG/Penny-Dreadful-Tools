@@ -16,7 +16,7 @@ class PersonAchievements(View):
         for a in achievements:
             if a.detail is not None:
                 a.detail.hide_active_runs = True
-                self.remove_active_runs_and_set_active_run_text(a.detail)
+                self.prepare_active_runs(a.detail)
                 self.decks += a.detail.decks
         if len([a for a in achievements if a.legend]) == 0:
             self.no_achievements = True

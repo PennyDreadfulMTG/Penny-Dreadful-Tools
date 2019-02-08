@@ -39,7 +39,7 @@ class Person(View):
                 'type': 'horizontalBar',
                 'labels': json.dumps(['White', 'Blue', 'Black', 'Red', 'Green', 'Colorless']),
                 'series': json.dumps([colors.get('W'), colors.get('U'), colors.get('B'), colors.get('R'), colors.get('G'), colors.get('C')]),
-                'options': json.dumps({'responsive': True})
+                'options': json.dumps({'responsive': True, 'scales': {'xAxes': [{'ticks': {'precision': 0}}]}}) # Only display whole numbers on x axis.
             }
         ]
         self.add_note_url = url_for('post_player_note')

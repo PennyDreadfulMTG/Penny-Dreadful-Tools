@@ -1900,7 +1900,7 @@ Fix the width of the column to prevent the table "jump"-ing around the screen as
     width: 13rem;
 }
 
-@media screen only and max-width(640px) {
+@media only screen and (max-width: 640px) {
     .archetype-name-header {
         max-width: 10rem;
         width: 10rem;
@@ -1953,6 +1953,13 @@ News
     text-overflow: ellipsis;
     white-space: nowrap;
     vertical-align: top; /* Otherwise overflow: hidden makes it rise upwards */
+}
+
+/* 33em at 0.75 font-size is 495px + the 40px of padding is way too much for 320-640px displays. */
+@media only screen and (max-width: 640px) {
+    .news .story {
+        max-width: 15em /* (320px screen width - 40px padding) / 15px per em = 18.666666667, and let's leave some room for the date. */
+    }
 }
 
 .news li.site-news:before, .news li.subreddit-post:before {

@@ -1,6 +1,6 @@
 import html
 from collections import Counter
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 import inflect
 from anytree.iterators import PreOrderIter
@@ -341,7 +341,7 @@ class View(BaseView):
         if getattr(self, 'legal_formats', None) is not None:
             self.legal_formats = list(map(add_season_num, list(sorted(self.legal_formats, key=legality.order_score)))) # type: ignore
 
-    def prepare_active_runs(self, o):
+    def prepare_active_runs(self, o: Any) -> None:
         decks = getattr(o, 'decks', [])
         active, other = [], []
         for d in decks:

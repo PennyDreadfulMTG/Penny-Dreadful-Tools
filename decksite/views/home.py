@@ -47,7 +47,9 @@ class Home(View):
                     'title': gettext('Recent Top League Decks'),
                     'url': url_for('current_league'),
                     'link_text': gettext('Current League…'),
-                    'decks': league_decks
+                    'decks': league_decks,
+                    'show_omw': True,
+                    'hide_top8': True
                 }
             )
         if tournament_decks:

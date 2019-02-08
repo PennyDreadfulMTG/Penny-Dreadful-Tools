@@ -2,7 +2,9 @@ import unittest
 from typing import List
 
 import pytest
+import whoosh
 
+from magic import multiverse
 from magic.whoosh_search import WhooshSearcher
 
 
@@ -10,7 +12,12 @@ from magic.whoosh_search import WhooshSearcher
 class WhooshSearchTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.searcher = WhooshSearcher()
+        try:
+            cls.searcher = WhooshSearcher()
+        except whoosh.index.EmptyIndexError: # Whoosh hasn't been initialized yet!
+            multiverse.reindex()
+            cls.searcher = WhooshSearcher()
+
 
     def best_match_is(self, query: str, expected_best_match: str, *additional_matches: str) -> None:
         result = self.searcher.search(query) # type: ignore

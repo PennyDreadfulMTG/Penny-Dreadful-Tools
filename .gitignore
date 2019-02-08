@@ -35,3 +35,4 @@ test_results.xml
 whoosh_index/
 /modo_bugs_repo/
 /*.config.json
+/TestResults.xml

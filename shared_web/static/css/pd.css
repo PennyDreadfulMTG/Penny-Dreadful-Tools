@@ -110,6 +110,7 @@ article {
         https://practicaltypography.com/line-length.html
     */
     max-width: 30em;
+    padding-top: 1rem; /* Consistent with section */
 }
 
 blockquote {

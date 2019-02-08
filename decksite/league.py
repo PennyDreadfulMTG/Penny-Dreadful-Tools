@@ -183,7 +183,7 @@ def identifier(params: Dict[str, str]) -> str:
     # Current timestamp is part of identifier here because we don't need to defend against dupes in league – it's fine to enter the same league with the same deck, later.
     return json.dumps([params['mtgo_username'], params['competition_id'], str(round(time.time()))])
 
-def deck_options(decks: List[deck.Deck], v: str, viewer_id: int) -> List[Dict[str, Any]]:
+def deck_options(decks: List[deck.Deck], v: str, viewer_id: Optional[int]) -> List[Dict[str, Any]]:
     if (v is None or v == '') and len(decks) == 1:
         v = str(decks[0].id)
     return [{'text': d.name if d.person_id == viewer_id else d.person, 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]

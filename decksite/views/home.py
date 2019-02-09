@@ -79,7 +79,7 @@ class Home(View):
         self.cards = self.top_cards # To get prepare_card treatment
         self.cards_url = url_for('cards')
 
-    def setup_stats(self, matches_stats: Dict[str, int]):
+    def setup_stats(self, matches_stats: Dict[str, int]) -> None:
         self.community_stats = [
             {
                 'heading': 'Matches Played',

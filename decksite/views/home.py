@@ -82,7 +82,7 @@ class Home(View):
     def setup_stats(self, matches_stats: Dict[str, int]) -> None:
         self.community_stats = [
             {
-                'heading': 'Matches Played',
+                'heading': 'League and Tournament Matches Played',
                 'stats': [
                     {
                         'text': f"{matches_stats['num_matches_today']} matches played today"

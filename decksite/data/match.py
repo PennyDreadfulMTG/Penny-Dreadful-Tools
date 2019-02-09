@@ -1,8 +1,9 @@
 import datetime
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from decksite.data import deck, elo, query
 from decksite.database import db
+from magic import rotation
 from shared import dtutil, redis
 from shared.container import Container
 from shared.database import sqlescape
@@ -70,3 +71,16 @@ def get_matches(d: deck.Deck, should_load_decks: bool = False) -> List[Container
         elif should_load_decks:
             m.opponent_deck = None
     return matches
+
+def stats() -> Dict[str, int]:
+    sql = """
+        SELECT
+            SUM(CASE WHEN FROM_UNIXTIME(`date`) >= NOW() - INTERVAL 1 DAY THEN 1 ELSE 0 END) AS num_matches_today,
+            SUM(CASE WHEN FROM_UNIXTIME(`date`) >= NOW() - INTERVAL 7 DAY THEN 1 ELSE 0 END) AS num_matches_this_week,
+            SUM(CASE WHEN FROM_UNIXTIME(`date`) >= NOW() - INTERVAL 30 DAY THEN 1 ELSE 0 END) AS num_matches_this_month,
+            SUM(CASE WHEN `date` >= %s THEN 1 ELSE 0 END) AS num_matches_this_season,
+            COUNT(*) AS num_matches_all_time
+        FROM
+            `match`
+    """
+    return db().select(sql, [dtutil.dt2ts(rotation.last_rotation())])[0]

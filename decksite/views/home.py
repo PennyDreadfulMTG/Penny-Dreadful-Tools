@@ -10,11 +10,12 @@ from shared.container import Container
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Home(View):
-    def __init__(self, news: List[Container], decks: List[Deck], cards: List[Card]) -> None:
+    def __init__(self, news: List[Container], decks: List[Deck], cards: List[Card], matches_stats: Dict[str, int]) -> None:
         super().__init__()
         self.setup_news(news)
         self.setup_decks(decks)
         self.setup_cards(cards)
+        self.setup_stats(matches_stats)
 
     def setup_news(self, news: List[Container]) -> None:
         self.news = news
@@ -77,3 +78,27 @@ class Home(View):
         self.top_cards = cards[0:8]
         self.cards = self.top_cards # To get prepare_card treatment
         self.cards_url = url_for('cards')
+
+    def setup_stats(self, matches_stats: Dict[str, int]):
+        self.community_stats = [
+            {
+                'heading': 'Matches Played',
+                'stats': [
+                    {
+                        'text': f"{matches_stats['num_matches_today']} matches played today."
+                    },
+                    {
+                        'text': f"{matches_stats['num_matches_this_week']} matches played this week."
+                    },
+                    {
+                        'text': f"{matches_stats['num_matches_this_month']} matches played this month."
+                    },
+                    {
+                        'text': f"{matches_stats['num_matches_this_season']} matches played this season."
+                    },
+                    {
+                        'text': f"{matches_stats['num_matches_all_time']} matches played all time."
+                    }
+                ]
+            }
+        ]

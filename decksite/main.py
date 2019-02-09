@@ -17,6 +17,7 @@ from decksite.data import archetype as archs
 from decksite.data import card as cs
 from decksite.data import competition as comp
 from decksite.data import deck as ds
+from decksite.data import match as ms
 from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.database import db
@@ -39,7 +40,7 @@ from shared.pd_exception import (DoesNotExistException, InvalidDataException,
 @APP.route('/')
 @cached()
 def home() -> str:
-    view = Home(ns.all_news(max_items=10), ds.latest_decks(), cs.load_cards(season_id=get_season_id()))
+    view = Home(ns.all_news(max_items=10), ds.latest_decks(), cs.load_cards(season_id=get_season_id()), ms.stats())
     return view.page()
 
 @APP.route('/decks/')

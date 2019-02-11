@@ -46,7 +46,7 @@ def competition_join() -> str:
     """
 
 def season_query(season_id: Optional[int], column_name: str = 'season_id') -> str:
-    if season_id is None or season_id == 'all':
+    if season_id is None or season_id == 'all' or season_id == 0:
         return 'TRUE'
     try:
         return '{column_name} = {season_id}'.format(column_name=column_name, season_id=int(season_id))

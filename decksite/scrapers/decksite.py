@@ -23,7 +23,7 @@ def tournament(comp: Dict[str, Any]) -> None:
         for d in comp['decks']:
             store_deck(d)
 
-def store_deck(d: Dict[str, Any]) -> deck.Deck:
+def store_deck(d: deck.Deck) -> deck.Deck:
     d['source'] = d['source_name']
     d['url'] = d['source_url']
     existing = deck.get_deck_id(d['source'], d['identifier'])

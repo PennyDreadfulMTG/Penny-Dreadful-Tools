@@ -147,6 +147,10 @@ def get_bool(key: str) -> bool:
         return val
     if isinstance(val, str):
         # required so that we can pass bool-values in environment variables
+        if val.tolower() in ['true', 'yes', '1']:
+            val = 'True'
+        if val.tolower() in ['false', 'no', '0']:
+            val = 'False'
         val2 = ast.literal_eval(val)
         if isinstance(val2, bool):
             CONFIG[key] = val2

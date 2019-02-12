@@ -1,5 +1,5 @@
 import json
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import titlecase
 from flask import url_for
@@ -12,7 +12,7 @@ from magic.models import Card
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Person(View):
-    def __init__(self, person: ps.Person, cards: List[Card], only_played_cards: List[Card]) -> None:
+    def __init__(self, person: ps.Person, cards: List[Card], only_played_cards: List[Card], season_id: Optional[int]) -> None:
         super().__init__()
         self.person = person
         self.people = [person]
@@ -43,6 +43,7 @@ class Person(View):
             }
         ]
         self.add_note_url = url_for('post_player_note')
+        self.matches_url = url_for('person_matches', person_id=person.id, season_id=season_id)
 
     def __getattr__(self, attr):
         return getattr(self.person, attr)

@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 
 from flask import url_for
 
-from decksite.data import deck, elo, person, query
+from decksite.data import deck, elo, query
 from decksite.database import db
 from magic import rotation
 from magic.models import Deck

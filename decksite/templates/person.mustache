@@ -22,8 +22,8 @@
                 <li title="{{detail}}">{{title}}</li>
             {{/displayed_achievements}}
         </ul>
-        <p><a href="{{achievements_url}}">See global achievement stats</a></p>
-        <p><a href="{{person_achievements_url}}">See full achievement details for {{person.name}}</a></p>
+        <p><a href="{{person_achievements_url}}">Achievement Details…</a></p>
+        <p><a href="{{achievements_url}}">Everyone's Achievements…</a></p>
     </section>
 {{/num_achievements}}
 {{#show_head_to_head}}
@@ -51,6 +51,7 @@
                 {{/head_to_head}}
             </tbody>
         </table>
+        <p><a href="{{matches_url}}">Matches List…</a></p>
     </section>
 {{/show_head_to_head}}
 <section>

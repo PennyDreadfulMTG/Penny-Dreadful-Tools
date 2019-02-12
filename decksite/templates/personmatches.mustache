@@ -19,7 +19,11 @@
                 <tr>
                     <td><a href="{{deck_url}}">{{deck_name}}</a></td>
                     <td><a href="{{opponent_url}}">{{opponent}}</a></td>
-                    <td><a href="{{opponent_deck_url}}">{{opponent_deck_name}}</a></td>
+                    <td>
+                        {{#opponent_deck_url}}
+                            <a href="{{opponent_deck_url}}">{{opponent_deck_name}}</a>
+                        {{/opponent_deck_url}}
+                    </td>
                     <td class="n">{{game_wins}}–{{game_losses}}</td>
                     <td><a href="{{competition_url}}">{{competition_type_name}}</a></td>
                     <td data-text="{{date_sort}}">{{display_date}}</td>

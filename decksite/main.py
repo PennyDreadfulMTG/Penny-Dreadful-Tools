@@ -27,9 +27,9 @@ from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
                             Competition, Competitions, Deck, DeckCheck, Decks,
                             Faqs, Home, LeagueInfo, LinkAccounts, News, People,
                             Person, PersonAchievements, PersonMatches, Report,
-                            Resources, Retire, Rotation, RotationChanges, Season,
-                            Seasons, SignUp, TournamentHosting, TournamentLeaderboards,
-                            Tournaments)
+                            Resources, Retire, Rotation, RotationChanges,
+                            Season, Seasons, SignUp, TournamentHosting,
+                            TournamentLeaderboards, Tournaments)
 from magic import card as mc
 from magic import fetcher, image_fetcher, oracle
 from shared import perf

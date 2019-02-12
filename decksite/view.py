@@ -149,6 +149,7 @@ class View(BaseView):
         self.prepare_archetypes()
         self.prepare_leaderboards()
         self.prepare_legal_formats()
+        self.prepare_matches()
 
     def prepare_decks(self) -> None:
         self.is_very_large = self.is_very_large or len(getattr(self, 'decks', [])) > 500
@@ -340,6 +341,16 @@ class View(BaseView):
     def prepare_legal_formats(self) -> None:
         if getattr(self, 'legal_formats', None) is not None:
             self.legal_formats = list(map(add_season_num, list(sorted(self.legal_formats, key=legality.order_score)))) # type: ignore
+
+    def prepare_matches(self) -> None:
+        # BAKERT rewrite the names of active league runs to "(Active League Run)" and don't make them links except for admins but keep an entry.
+        for m in getattr(self, 'matches', []):
+            m.display_date = dtutil.display_date(m.date)
+            m.date_sort = dtutil.dt2ts(m.date)
+            m.deck_url = url_for('deck', deck_id=m.deck_id)
+            if m.opponent: # Might be the BYE.
+                m.opponent_deck_url = url_for('deck', deck_id=m.opponent_deck_id)
+                m.opponent_url = url_for('person', person_id=m.opponent)
 
     def prepare_active_runs(self, o: Any) -> None:
         decks = getattr(o, 'decks', [])

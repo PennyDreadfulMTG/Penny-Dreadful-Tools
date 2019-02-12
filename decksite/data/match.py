@@ -1,9 +1,12 @@
 import datetime
 from typing import Dict, List, Optional
 
+from flask import url_for
+
 from decksite.data import deck, elo, query
 from decksite.database import db
 from magic import rotation
+from magic.models import Deck
 from shared import dtutil, redis
 from shared.container import Container
 from shared.database import sqlescape
@@ -40,21 +43,35 @@ def insert_match(dt: datetime.datetime,
         redis.clear(f'decksite:deck:{right_id}')
     return match_id
 
+# BAKERT unify with load_matches, probably?
 def get_matches(d: deck.Deck, should_load_decks: bool = False) -> List[Container]:
     sql = """
         SELECT
-            m.`date`, m.id, m.round, m.elimination,
+            m.`date`,
+            m.id,
+            m.`round`,
+            m.elimination,
+            d1.id AS deck_id,
             dm1.games AS game_wins,
-            dm2.deck_id AS opponent_deck_id, IFNULL(dm2.games, 0) AS game_losses,
+            dm2.deck_id AS opponent_deck_id,
+            IFNULL(dm2.games, 0) AS game_losses,
             d2.name AS opponent_deck_name,
             {person_query} AS opponent
-        FROM `match` AS m
-        INNER JOIN deck_match AS dm1 ON m.id = dm1.match_id AND dm1.deck_id = %s
-        LEFT JOIN deck_match AS dm2 ON m.id = dm2.match_id AND dm2.deck_id <> %s
-        INNER JOIN deck AS d1 ON dm1.deck_id = d1.id
-        LEFT JOIN deck AS d2 ON dm2.deck_id = d2.id
-        LEFT JOIN person AS p ON p.id = d2.person_id
-        ORDER BY m.date, round
+        FROM
+            `match` AS m
+        INNER JOIN
+            deck_match AS dm1 ON m.id = dm1.match_id AND dm1.deck_id = %s
+        LEFT JOIN
+            deck_match AS dm2 ON m.id = dm2.match_id AND dm2.deck_id <> %s
+        INNER JOIN
+            deck AS d1 ON dm1.deck_id = d1.id
+        LEFT JOIN
+            deck AS d2 ON dm2.deck_id = d2.id
+        LEFT JOIN
+            person AS p ON p.id = d2.person_id
+        ORDER BY
+            m.date,
+            m.`round`
     """.format(person_query=query.person_query())
     matches = [Container(m) for m in db().select(sql, [d.id, d.id])]
     if should_load_decks:
@@ -84,3 +101,59 @@ def stats() -> Dict[str, int]:
             `match`
     """
     return db().select(sql, [dtutil.dt2ts(rotation.last_rotation())])[0]
+
+def load_matches(person_id: int, season_id: Optional[int] = None) -> List[Container]:
+    person_query = query.person_query(table='o')
+    competition_join = query.competition_join()
+    season_join = query.season_join()
+    season_query = query.season_query(season_id, 'season.id')
+    sql = f"""
+        SELECT
+            m.`date`,
+            d.id AS deck_id,
+            dc.normalized_name AS deck_name,
+            od.id AS opponent_deck_id,
+            odc.normalized_name AS opponent_deck_name,
+            dm.games AS game_wins,
+            odm.games AS game_losses,
+            c.id AS competition_id,
+            ct.name AS competition_type_name,
+            c.end_date AS competition_end_date,
+            {person_query} AS opponent,
+            odc.wins,
+            odc.draws,
+            odc.losses,
+            od.retired
+        FROM
+            `match` AS m
+        INNER JOIN
+            deck_match AS dm ON m.id = dm.match_id
+        INNER JOIN
+            deck AS d ON dm.deck_id = d.id
+        INNER JOIN
+            deck_cache AS dc ON d.id = dc.deck_id
+        INNER JOIN
+            deck_match AS odm ON dm.match_id = odm.match_id AND odm.deck_id <> d.id
+        INNER JOIN
+            deck AS od ON odm.deck_id = od.id
+        INNER JOIN
+            deck_cache AS odc ON od.id = odc.deck_id
+        INNER JOIN
+            person AS o ON od.person_id = o.id
+        {competition_join}
+        {season_join}
+        WHERE
+            d.person_id = %s
+        AND
+            {season_query}
+        ORDER BY
+            m.`date` DESC
+    """
+    matches = [Container(r) for r in db().select(sql, [person_id])]
+    for m in matches:
+        m.date = dtutil.ts2dt(m.date)
+        m.competition_end_date = dtutil.ts2dt(m.competition_end_date)
+        m.competition_url = url_for('competition', competition_id=m.competition_id)
+        if Deck(m).is_in_current_run():
+            m.opponent_deck_name = '(Active League Run)'
+    return matches

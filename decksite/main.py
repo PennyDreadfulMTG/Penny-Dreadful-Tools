@@ -26,10 +26,10 @@ from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
                             Archetypes, Bugs, Card, Cards, CommunityGuidelines,
                             Competition, Competitions, Deck, DeckCheck, Decks,
                             Faqs, Home, LeagueInfo, LinkAccounts, News, People,
-                            Person, PersonAchievements, Report, Resources,
-                            Retire, Rotation, RotationChanges, Season, Seasons,
-                            SignUp, TournamentHosting, TournamentLeaderboards,
-                            Tournaments)
+                            Person, PersonAchievements, PersonMatches, Report,
+                            Resources, Retire, Rotation, RotationChanges,
+                            Season, Seasons, SignUp, TournamentHosting,
+                            TournamentLeaderboards, Tournaments)
 from magic import card as mc
 from magic import fetcher, image_fetcher, oracle
 from shared import perf
@@ -87,8 +87,18 @@ def person(person_id: str) -> str:
     p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
     person_cards = cs.load_cards(person_id=p.id, season_id=get_season_id())
     only_played_cards: List[cs.Card] = []
-    view = Person(p, person_cards, only_played_cards)
+    view = Person(p, person_cards, only_played_cards, get_season_id())
     return view.page()
+
+@APP.route('/people/<person_id>/matches/')
+@SEASONS.route('/people/<person_id>/matches/')
+@cached()
+def person_matches(person_id: str) -> str:
+    p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
+    matches = ms.load_matches(person_id=p.id, season_id=get_season_id())
+    view = PersonMatches(p, matches)
+    return view.page()
+
 
 @APP.route('/achievements/')
 @SEASONS.route('/achievements/')

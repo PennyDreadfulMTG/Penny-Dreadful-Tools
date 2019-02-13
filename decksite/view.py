@@ -344,14 +344,15 @@ class View(BaseView):
 
     def prepare_matches(self) -> None:
         for m in getattr(self, 'matches', []):
-            m.display_date = dtutil.display_date(m.date)
-            m.date_sort = dtutil.dt2ts(m.date)
-            m.deck_url = url_for('deck', deck_id=m.deck_id)
-            if m.opponent: # Might be the BYE.
+            if m.get('date'):
+                m.display_date = dtutil.display_date(m.date)
+                m.date_sort = dtutil.dt2ts(m.date)
+            if m.get('deck_id'):
+                m.deck_url = url_for('deck', deck_id=m.deck_id)
+            if m.get('opponent'):
                 m.opponent_url = url_for('person', person_id=m.opponent)
-            if m.opponent_deck_id: # Some self.matches lists don't have opponent deck ids. We added prepare_matches late and matches is an obvious name for a var.
+            if m.get('opponent_deck_id'):
                 m.opponent_deck_url = url_for('deck', deck_id=m.opponent_deck_id)
-
 
     def prepare_active_runs(self, o: Any) -> None:
         decks = getattr(o, 'decks', [])

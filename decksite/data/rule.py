@@ -198,8 +198,11 @@ def add_rule(archetype_id: int) -> None:
     sql = 'INSERT INTO rule (archetype_id) VALUES (%s)'
     db().insert(sql, [archetype_id])
 
+#@retry_after_calling(cache_all_rules)
 def update_cards(rule_id: int, inc: List[Tuple[int, str]], exc: List[Tuple[int, str]]) -> None:
     db().begin('update_rule_cards')
+    sql = 'DELETE FROM _applied_rules WHERE rule_id = %s'
+    db().execute(sql, [rule_id])
     sql = 'DELETE FROM rule_card WHERE rule_id = %s'
     db().execute(sql, [rule_id])
     for n, card in inc:
@@ -208,12 +211,14 @@ def update_cards(rule_id: int, inc: List[Tuple[int, str]], exc: List[Tuple[int, 
     for n, card in exc:
         sql = 'INSERT INTO rule_card (rule_id, card, n, include) VALUES (%s, %s, %s, FALSE)'
         db().execute(sql, [rule_id, card, n])
+    sql = 'INSERT INTO _applied_rules (deck_id, rule_id, archetype_id, archetype_name) {arq}'.format(arq=apply_rules_query(rule_query=f'rule.id = {rule_id}'))
+    db().execute(sql)
     db().commit('update_rule_cards')
 
 def classified_decks_query() -> str:
     return 'reviewed=FALSE OR deck.archetype_id NOT IN ({ex})'.format(ex=','.join(str(aid) for aid in excluded_archetype_ids()))
 
-def apply_rules_query(deck_query: str = '1 = 1') -> str:
+def apply_rules_query(deck_query: str = '1 = 1', rule_query: str = '1 = 1') -> str:
     return f"""
         WITH rule_card_count AS
         (
@@ -226,7 +231,7 @@ def apply_rules_query(deck_query: str = '1 = 1') -> str:
             ON
                 rule.id = rule_card.rule_id
             WHERE
-                rule_card.include = TRUE
+                rule_card.include = TRUE AND {rule_query}
             GROUP BY
                 rule.id
         ),
@@ -263,7 +268,7 @@ def apply_rules_query(deck_query: str = '1 = 1') -> str:
             ON
                 rule.id = rule_card_count.id
             WHERE
-                deck_card.sideboard = FALSE AND deck_card.n >= inclusions.n AND {deck_query}
+                deck_card.sideboard = FALSE AND deck_card.n >= inclusions.n AND {deck_query} AND {rule_query}
             GROUP BY
                 deck.id, rule.id
             HAVING

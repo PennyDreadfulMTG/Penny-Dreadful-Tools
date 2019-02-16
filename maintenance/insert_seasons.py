@@ -11,7 +11,7 @@ def run() -> None:
             try:
                 info = rotation.get_set_info(setcode)
             except DoesNotExistException as e:
-                print(f'Unable to get info for set with code `{setcode}` as it does not exist in rotatation data. Not inserting.')
+                print(f'Unable to get info for set with code `{setcode}` as it does not exist in rotatation data. Not inserting. {e}')
                 continue
             if info['enter_date_dt'] < dtutil.now():
                 print('Inserting {} into season table.'.format(setcode))

@@ -94,7 +94,6 @@ def edit_rules() -> str:
     cnum = rs.num_classified_decks()
     tnum = ds.num_decks(rs.classified_decks_query())
     archetypes = archs.load_archetypes_deckless(order_by='a.name')
-    rs.cache_all_rules()
     view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks(), rs.overlooked_decks(), rs.load_all_rules(), archetypes, rs.excluded_archetype_info())
     return view.page()
 

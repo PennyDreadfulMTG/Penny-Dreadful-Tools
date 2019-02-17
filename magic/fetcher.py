@@ -246,8 +246,15 @@ def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
     if cached is not None:
         return cached
 
-    info = internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json')
+    try:
+        info = internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json')
+    except FetchException:
+        cached = redis.get_container('magic:fetcher:whatisinstandard_noex')
+        if cached is not None:
+            return cached
+        raise
     redis.store('magic:fetcher:whatisinstandard', info, ex=86400)
+    redis.store('magic:fetcher:whatisinstandard_noex', info)
     return info
 
 def subreddit() -> Container:

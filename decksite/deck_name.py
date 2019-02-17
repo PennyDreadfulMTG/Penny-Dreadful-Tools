@@ -100,13 +100,13 @@ def replace_space_alternatives(name: str) -> str:
     return name.replace('_', ' ').replace('.', ' ')
 
 def remove_pd(name: str) -> str:
-    name = re.sub(r'(^| )[\[\(]?pd[hmstf]?[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(]?pd-?[0-9]+[\[\(]?', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(]?pd[hmstf]?[\]\)]?([ -]|$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny ?dreadful (sunday|monday|thursday)[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny ?dreadful[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?season ?[0-9]+[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?S[0-9]+[\[\(]?', '', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(]?pd-?[0-9]+[\[\(]?', '', name, flags=re.IGNORECASE).strip()
     return name
 
 def remove_hashtags(name: str) -> str:

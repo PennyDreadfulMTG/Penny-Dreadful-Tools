@@ -110,3 +110,9 @@ def vivify(decklist: DecklistType) -> Deck:
         for name, n in validated[section].items():
             d[section].append(CardRef(name, n))
     return d
+
+def unvivify(deck: Deck) -> DecklistType:
+    decklist: DecklistType = {}
+    decklist['maindeck'] = {c['name']:c['n'] for c in deck['maindeck']}
+    decklist['sideboard'] = {c['name']: c['n'] for c in deck['sideboard']}
+    return decklist

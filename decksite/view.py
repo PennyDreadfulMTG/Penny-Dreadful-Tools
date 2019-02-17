@@ -205,6 +205,8 @@ class View(BaseView):
             d.decklist = ''
         total, num_cards = 0, 0
         for c in d.maindeck:
+            if c.card.cmc is None:
+                c.card.cmc = 0
             if 'Land' not in c.card.type_line:
                 num_cards += c['n']
                 total += c['n'] * c.card.cmc

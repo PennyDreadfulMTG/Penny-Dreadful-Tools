@@ -2,6 +2,7 @@ import csv
 import datetime
 import json
 import os
+import re
 from collections import OrderedDict
 from time import sleep
 from typing import Any, Dict, List, Optional, Tuple, Union, cast
@@ -12,7 +13,7 @@ import pytz
 
 import shared.fetcher_internal as internal
 from magic.card_description import CardDescription
-from magic.models import Card
+from magic.models import Card, Deck
 from shared import configuration, dtutil, redis
 from shared.container import Container
 from shared.fetcher_internal import FetchException
@@ -260,3 +261,12 @@ def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
 def subreddit() -> Container:
     url = 'https://www.reddit.com/r/pennydreadfulMTG/.rss'
     return feedparser.parse(url)
+
+def gatherling_deck_comments(d: Deck) -> List[str]:
+    url = f'http://gatherling.com/deck.php?mode=view&id={d.identifier}'
+    s = internal.fetch(url)
+    result = re.search('COMMENTS</td></tr><tr><td>(.*)</td></tr></table></div><div class="clear"></div><center>', s, re.MULTILINE | re.DOTALL)
+    if not result:
+        return []
+    else:
+        return result.group(1).replace('<br />', '\n').split('\n')

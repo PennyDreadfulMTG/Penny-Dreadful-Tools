@@ -1,4 +1,5 @@
 import datetime
+import sys
 
 from decksite.data import deck
 from decksite.database import db
@@ -9,8 +10,8 @@ from shared import dtutil
 
 def ad_hoc() -> None:
     try:
-        start = dtutil.parse(sys.argv[2], '%Y-%m-%d')
-    except:
+        start = dtutil.parse(sys.argv[2], '%Y-%m-%d', dtutil.GATHERLING_TZ)
+    except (IndexError, TypeError, ValueError):
         start = dtutil.now() - datetime.timedelta(days=7)
     print(f'Checking all Gatherling decks from {start}. To check from a different date supply it as a commandline arg in the form YYYY-MM-DD')
     decks = deck.load_decks(f"d.created_date >= UNIX_TIMESTAMP('{start}') AND ct.name = 'Gatherling'")

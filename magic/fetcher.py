@@ -266,7 +266,6 @@ def gatherling_deck_comments(d: Deck) -> List[str]:
     url = f'http://gatherling.com/deck.php?mode=view&id={d.identifier}'
     s = internal.fetch(url)
     result = re.search('COMMENTS</td></tr><tr><td>(.*)</td></tr></table></div><div class="clear"></div><center>', s, re.MULTILINE | re.DOTALL)
-    if not result:
-        return []
-    else:
+    if result:
         return result.group(1).replace('<br />', '\n').split('\n')
+    return []

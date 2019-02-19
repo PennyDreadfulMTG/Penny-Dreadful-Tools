@@ -25,7 +25,7 @@ def load_person_by_mtgo_username(username: str, season_id: Optional[int] = None)
     return load_person('p.mtgo_username = {username}'.format(username=sqlescape(username, force_string=True)), season_id=season_id)
 
 def load_person_by_discord_id(discord_id: int) -> Person:
-    return guarantee.exactly_one(load_people(f'p.discord_id = {discord_id}'))
+    return load_person(f'p.discord_id = {discord_id}')
 
 # pylint: disable=invalid-name
 def load_person_by_id_or_mtgo_username(person: str, season_id: Optional[int] = None) -> Person:

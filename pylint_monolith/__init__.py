@@ -1,5 +1,6 @@
 from pylint.lint import PyLinter
 
+from .await_checker import AsyncAwaitChecker
 from .l18n_check import TranslationStringConstantsChecker
 from .monolith_checker import MonolithChecker
 
@@ -12,3 +13,4 @@ def register(linter: PyLinter) -> None:
     """
     linter.register_checker(MonolithChecker(linter))
     linter.register_checker(TranslationStringConstantsChecker(linter))
+    linter.register_checker(AsyncAwaitChecker(linter))

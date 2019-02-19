@@ -73,7 +73,7 @@ def person_api(person: str, season_id: int = -1) -> Response:
 @APP.route('/api/person/<person>/decks')
 @fill_args('season_id')
 def person_decks_api(person: str, season_id: int = 0) -> Response:
-    p = ps.load_person_by_discord_id_or_username(person)
+    p = ps.load_person_by_discord_id_or_username(person, season_id=season_id)
     blob = {
         'name': p.name,
         'decks': p.decks,
@@ -83,7 +83,7 @@ def person_decks_api(person: str, season_id: int = 0) -> Response:
 @APP.route('/api/person/<person>/h2h')
 @fill_args('season_id')
 def person_h2h_api(person: str, season_id: int = 0) -> Response:
-    p = ps.load_person_by_discord_id_or_username(person)
+    p = ps.load_person_by_discord_id_or_username(person, season_id=season_id)
     return return_json(p.head_to_head)
 
 @APP.route('/api/league/run/<person>')

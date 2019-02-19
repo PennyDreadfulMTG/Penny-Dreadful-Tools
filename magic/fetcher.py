@@ -124,7 +124,7 @@ async def mtgo_status() -> str:
 
 async def person_data_async(person: Union[str, int]) -> Dict[str, Any]:
     try:
-        data = await internal.fetch_json_async('https://pennydreadfulmagic.com/api/person/{0}'.format(person))
+        data = await internal.fetch_json_async(decksite_url('/api/person/{0}'.format(person)))
     except (FetchException, json.decoder.JSONDecodeError):
         return {}
     return data

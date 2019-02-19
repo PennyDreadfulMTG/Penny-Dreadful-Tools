@@ -1,13 +1,12 @@
 import asyncio
 import re
 import sys
-from typing import Any
+from typing import Any, List, Optional
 
 import discord
-from discord import VoiceState
+from discord import VoiceState, Guild, Role
 from discord.activity import Streaming
 from discord.errors import Forbidden, NotFound
-from discord.guild import Guild
 from discord.member import Member
 from discord.message import Message
 from discord.reaction import Reaction
@@ -16,7 +15,7 @@ from github.GithubException import GithubException
 
 from discordbot import command
 from magic import fetcher, multiverse, oracle, tournaments
-from shared import configuration, dtutil, repo
+from shared import configuration, dtutil, redis, repo
 from shared.container import Container
 from shared.pd_exception import InvalidDataException, TooFewItemsException
 
@@ -61,9 +60,9 @@ class Bot(discord.Client):
 
     async def on_member_join(self, member: Member) -> None:
         print('{0} joined {1} ({2})'.format(member.mention, member.guild.name, member.guild.id))
-        is_pd_server = member.guild.id == 207281932214599682
+
         # is_test_server = member.guild.id == 226920619302715392
-        if is_pd_server: # or is_test_server:
+        if is_pd_server(member.guild): # or is_test_server:
             greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
             chan = member.guild.get_channel(207281932214599682) #general (Yes, the guild ID is the same as the ID of it's first channel.  It's not a typo)
             print(f'Greeting in {chan}')
@@ -73,9 +72,8 @@ class Bot(discord.Client):
         if before.bot:
             return
         # streamers.
-        roles = [r for r in before.guild.roles if r.name == 'Currently Streaming']
-        if roles:
-            streaming_role = roles[0]
+        streaming_role = get_role(before.guild, 'Currently Streaming')
+        if streaming_role:
             if not isinstance(after.activity, Streaming) and streaming_role in before.roles:
                 print('{user} no longer streaming'.format(user=after.name))
                 await after.remove_roles(streaming_role)
@@ -86,12 +84,37 @@ class Bot(discord.Client):
         if before.status == Status.offline and after.status == Status.online:
             data = None
             # Linked to PDM
-            roles = [r for r in before.guild.roles if r.name == 'Linked Magic Online']
-            if roles and not roles[0] in before.roles:
+            role = get_role(before.guild, 'Linked Magic Online')
+            if role is not None and not role in before.roles:
                 if data is None:
                     data = await fetcher.person_data_async(before.id)
                 if data.get('id', None):
-                    await after.add_roles(roles[0])
+                    await after.add_roles(role)
+
+            key = f'discordbot:achivements:players:{before.id}'
+            if not redis.get_bool(key) and not data:
+                data = await fetcher.person_data_async(before.id)
+                redis.store(key, True, ex=14400)
+
+            # Trophies
+            if is_pd_server(before.guild) and data is not None and data.get('achievements', None) is not None:
+                expected: List[Role] = []
+                remove: List[Role] = []
+                for name, count in data['achievements'].items():
+                    if int(count) > 0:
+                        trophy = f'🏆 {name}'
+                        role = get_role(before.guild, trophy)
+                        if role is None:
+                            role = await before.guild.create_role(name=trophy)
+                        expected.append(role)
+                for role in before.roles:
+                    if role in expected:
+                        expected.remove(role)
+                    elif '🏆' in role.name:
+                        remove.append(role)
+                await before.remove_roles(*remove)
+                await before.add_roles(*expected)
+
 
     async def on_guild_join(self, server: Guild) -> None:
         for channel in server.text_channels:
@@ -211,3 +234,12 @@ def init() -> None:
     asyncio.ensure_future(client.background_task_tournaments(), loop=client.loop)
     asyncio.ensure_future(client.background_task_spoiler_season(), loop=client.loop)
     client.init()
+
+def is_pd_server(guild: Guild) -> bool:
+    return guild.id == 207281932214599682 # or guild.id == 226920619302715392
+
+def get_role(guild: Guild, rolename: str) -> Optional[Role]:
+    for r in guild.roles:
+        if r.name == rolename:
+            return r
+    return None

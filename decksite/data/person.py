@@ -24,8 +24,9 @@ def load_person_by_id(person_id: int, season_id: Optional[int] = None) -> Person
 def load_person_by_mtgo_username(username: str, season_id: Optional[int] = None) -> Person:
     return load_person('p.mtgo_username = {username}'.format(username=sqlescape(username, force_string=True)), season_id=season_id)
 
-def load_person_by_discord_id(discord_id: int) -> Person:
-    return load_person(f'p.discord_id = {discord_id}')
+
+def load_person_by_discord_id(discord_id: int, season_id: Optional[int] = None) -> Person:
+    return load_person(f'p.discord_id = {discord_id}', season_id=season_id)
 
 # pylint: disable=invalid-name
 def load_person_by_id_or_mtgo_username(person: str, season_id: Optional[int] = None) -> Person:
@@ -37,7 +38,9 @@ def load_person_by_id_or_mtgo_username(person: str, season_id: Optional[int] = N
     return load_person_by_mtgo_username(person, season_id)
 
 # pylint: disable=invalid-name
-def load_person_by_discord_id_or_username(person: str) -> Person:
+
+
+def load_person_by_discord_id_or_username(person: str, season_id: int = 0) -> Person:
     # It would probably be better if this method did not exist but for now it's required by the API.
     # The problem is that Magic Online usernames can be integers so we cannot be completely unambiguous here.
     # We can make a really good guess, though.
@@ -59,8 +62,8 @@ def load_person_by_discord_id_or_username(person: str) -> Person:
     MIN_DISCORD_ID = 11234023833600000
     MAX_DISCORD_ID = 5625346837708800000
     if person.isdigit() and int(person) >= MIN_DISCORD_ID and int(person) <= MAX_DISCORD_ID:
-        return load_person_by_discord_id(int(person))
-    return load_person_by_mtgo_username(person)
+        return load_person_by_discord_id(int(person), season_id=season_id)
+    return load_person_by_mtgo_username(person, season_id=season_id)
 
 # pylint: disable=invalid-name
 def maybe_load_person_by_discord_id(discord_id: Optional[int]) -> Optional[Person]:

@@ -22,9 +22,9 @@ class EditRules(View):
         super().__init__()
         self.num_classified = num_classified
         self.num_total = num_total
-        self.doubled_decks = doubled_decks
-        self.mistagged_decks = mistagged_decks
-        self.overlooked_decks = overlooked_decks
+        self.doubled_decks = doubled_decks[0:10]
+        self.mistagged_decks = mistagged_decks[0:10]
+        self.overlooked_decks = overlooked_decks[0:10]
         self.rules = rules
         self.archetypes = archetypes
         self.rules.sort(key=lambda c: c.archetype_name)

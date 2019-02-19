@@ -1,4 +1,4 @@
-anytree==2.4.3 # rq.filter: != 2.6.0
+anytree==2.5.0 # rq.filter: != 2.6.0
 bs4==0.0.1
 cachecontrol[filecache]==0.12.5
 changelogs==0.14.0

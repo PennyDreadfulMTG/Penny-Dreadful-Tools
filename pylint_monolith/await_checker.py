@@ -4,7 +4,6 @@ https://gist.github.com/matangover/5e95be78f95e340aae9c4071f0d2834f
 """
 
 import astroid
-
 from pylint.checkers import BaseChecker, utils
 from pylint.interfaces import IAstroidChecker
 

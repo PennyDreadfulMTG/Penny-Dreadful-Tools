@@ -54,37 +54,42 @@ def run() -> None:
     sys.exit(0)
 
 def task(args: List[str]) -> None:
-    module = args[1]
-    if module == 'scraper':
-        module = 'scrapers'
-    if module == 'scrapers':
-        module = 'decksite.scrapers'
-    name = args[2]
-    from magic import oracle, multiverse
-    multiverse.init()
-    if name != 'reprime_cache':
-        oracle.init()
-    if name == 'all':
-        run_all_tasks(module)
-    elif name == 'hourly':
-        run_all_tasks(module, 'HOURLY')
-    else:
-        s = importlib.import_module('{module}.{name}'.format(name=name, module=module))
-        use_app_conext = getattr(s, 'REQUIRES_APP_CONTEXT', True)
-        if use_app_conext:
-            from decksite.main import APP
-            APP.config['SERVER_NAME'] = configuration.server_name()
-            app_context = APP.app_context()
-            app_context.__enter__()
-        if getattr(s, 'scrape', None) is not None:
-            s.scrape() # type: ignore
-        elif getattr(s, 'run', None) is not None:
-            s.run() # type: ignore
-        # Only when called directly, not in 'all'
-        elif getattr(s, 'ad_hoc', None) is not None:
-            s.ad_hoc() # type: ignore
-        if use_app_conext:
-            app_context.__exit__(None, None, None)
+    try:
+        module = args[1]
+        if module == 'scraper':
+            module = 'scrapers'
+        if module == 'scrapers':
+            module = 'decksite.scrapers'
+        name = args[2]
+        from magic import oracle, multiverse
+        multiverse.init()
+        if name != 'reprime_cache':
+            oracle.init()
+        if name == 'all':
+            run_all_tasks(module)
+        elif name == 'hourly':
+            run_all_tasks(module, 'HOURLY')
+        else:
+            s = importlib.import_module('{module}.{name}'.format(name=name, module=module))
+            use_app_conext = getattr(s, 'REQUIRES_APP_CONTEXT', True)
+            if use_app_conext:
+                from decksite.main import APP
+                APP.config['SERVER_NAME'] = configuration.server_name()
+                app_context = APP.app_context()
+                app_context.__enter__()
+            if getattr(s, 'scrape', None) is not None:
+                s.scrape() # type: ignore
+            elif getattr(s, 'run', None) is not None:
+                s.run() # type: ignore
+            # Only when called directly, not in 'all'
+            elif getattr(s, 'ad_hoc', None) is not None:
+                s.ad_hoc() # type: ignore
+            if use_app_conext:
+                app_context.__exit__(None, None, None)
+    except Exception as c:
+        from shared import repo
+        repo.create_issue(f'Error running task {args}', 'CLI', 'CLI', 'PennyDreadfulMTG/perf-reports', exception=c)
+        raise
 
 def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
 

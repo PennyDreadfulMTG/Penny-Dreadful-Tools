@@ -31,7 +31,7 @@ def scrape(limit: int = 50) -> None:
             return
 
 def tournament(url: str, name: str) -> int:
-    s = fetcher.internal.fetch(url, character_encoding='utf-8')
+    s = fetcher.internal.fetch(url, character_encoding='utf-8', retry=True)
 
     # Tournament details
     soup = BeautifulSoup(s, 'html.parser')
@@ -188,7 +188,7 @@ def tournament_deck(cells: ResultSet, competition_id: int, date: datetime.dateti
 
 def tournament_matches(d: deck.Deck) -> List[bs4.element.Tag]:
     url = 'https://gatherling.com/deck.php?mode=view&id={identifier}'.format(identifier=d.identifier)
-    s = fetcher.internal.fetch(url, character_encoding='utf-8')
+    s = fetcher.internal.fetch(url, character_encoding='utf-8', retry=True)
     soup = BeautifulSoup(s, 'html.parser')
     anchor = soup.find(string='MATCHUPS')
     if anchor is None:

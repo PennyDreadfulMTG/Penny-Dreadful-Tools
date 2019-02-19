@@ -9,6 +9,7 @@ from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps
 from decksite.data import rule as rs
+from decksite.data.achievements import Achievement
 from decksite.views import DeckEmbed
 from magic import oracle, rotation
 from magic.decklist import parse_line
@@ -242,3 +243,9 @@ def test_500() -> Response:
     if configuration.get_bool('production'):
         return return_json(generate_error('ON_PROD', 'This only works on test environments'), status=404)
     raise TooManyItemsException()
+
+@APP.route('/api/achievements')
+def all_achievements() -> Response:
+    data = {}
+    data['achievements'] = [{'key': a.key, 'title': a.title, 'description': a.description_safe} for a in Achievement.all_achievements]
+    return return_json(data)

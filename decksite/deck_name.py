@@ -97,7 +97,9 @@ def file_name(d: Deck) -> str:
     return safe_name.strip('-')
 
 def replace_space_alternatives(name: str) -> str:
-    return name.replace('_', ' ').replace('.', ' ')
+    name = re.sub(r'(\d)\.(\d)', r'\1TEMPORARYMARKER\2', name)
+    name = name.replace('_', ' ').replace('.', ' ')
+    return name.replace('TEMPORARYMARKER', '.')
 
 def remove_pd(name: str) -> str:
     name = re.sub(r'(^| )[\[\(]?pd ?-? ?[0-9]+[\[\(]?', '', name, flags=re.IGNORECASE).strip()

@@ -4,7 +4,7 @@ import sys
 from typing import Any, List, Optional
 
 import discord
-from discord import VoiceState, Guild, Role
+from discord import Guild, Role, VoiceState
 from discord.activity import Streaming
 from discord.errors import Forbidden, NotFound
 from discord.member import Member

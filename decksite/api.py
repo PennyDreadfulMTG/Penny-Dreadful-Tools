@@ -9,6 +9,7 @@ from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps
 from decksite.data import rule as rs
+from decksite.data.achievements import Achievement
 from decksite.views import DeckEmbed
 from magic import oracle, rotation
 from magic.decklist import parse_line
@@ -18,6 +19,7 @@ from shared.pd_exception import (DoesNotExistException, InvalidDataException,
                                  TooManyItemsException)
 from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
+from shared_web.decorators import fill_args
 
 
 @APP.route('/api/decks/<int:deck_id>/')
@@ -57,18 +59,22 @@ def league_api() -> Response:
     return return_json(league.active_league())
 
 @APP.route('/api/person/<person>/')
-def person_api(person: str) -> Response:
+@fill_args('season_id')
+def person_api(person: str, season_id: int = -1) -> Response:
+    if season_id == -1:
+        season_id = rotation.current_season_num()
     try:
-        p = ps.load_person_by_discord_id_or_username(person)
-        p.decks_url = url_for('person_decks_api', person=person)
-        p.head_to_head = url_for('person_h2h_api', person=person)
+        p = ps.load_person_by_discord_id_or_username(person, season_id)
+        p.decks_url = url_for('person_decks_api', person=person, season_id=season_id)
+        p.head_to_head = url_for('person_h2h_api', person=person, season_id=season_id)
         return return_json(p)
     except DoesNotExistException:
         return return_json(generate_error('NOTFOUND', 'Person does not exist'))
 
 @APP.route('/api/person/<person>/decks')
-def person_decks_api(person: str) -> Response:
-    p = ps.load_person_by_discord_id_or_username(person)
+@fill_args('season_id')
+def person_decks_api(person: str, season_id: int = 0) -> Response:
+    p = ps.load_person_by_discord_id_or_username(person, season_id=season_id)
     blob = {
         'name': p.name,
         'decks': p.decks,
@@ -76,8 +82,9 @@ def person_decks_api(person: str) -> Response:
     return return_json(blob)
 
 @APP.route('/api/person/<person>/h2h')
-def person_h2h_api(person: str) -> Response:
-    p = ps.load_person_by_discord_id_or_username(person)
+@fill_args('season_id')
+def person_h2h_api(person: str, season_id: int = 0) -> Response:
+    p = ps.load_person_by_discord_id_or_username(person, season_id=season_id)
     return return_json(p.head_to_head)
 
 @APP.route('/api/league/run/<person>')
@@ -236,3 +243,9 @@ def test_500() -> Response:
     if configuration.get_bool('production'):
         return return_json(generate_error('ON_PROD', 'This only works on test environments'), status=404)
     raise TooManyItemsException()
+
+@APP.route('/api/achievements')
+def all_achievements() -> Response:
+    data = {}
+    data['achievements'] = [{'key': a.key, 'title': a.title, 'description': a.description_safe} for a in Achievement.all_achievements]
+    return return_json(data)

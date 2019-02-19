@@ -50,6 +50,14 @@ def get_str(key: str, ex: Optional[int] = None) -> Optional[str]:
                 return val
     return None
 
+def get_bool(key: str, ex: Optional[int] = None) -> bool:
+    if REDIS is not None:
+        blob = _get(key, ex)
+        if blob is None:
+            return False
+        return bool(json.loads(blob))
+    return False
+
 def get_container(key: str, ex: Optional[int] = None) -> Optional[Container]:
     if REDIS is not None:
         blob = _get(key, ex)
@@ -75,7 +83,7 @@ def get_container_list(key: str) -> Optional[List[Container]]:
             return [Container(d) for d in val]
     return None
 
-T = TypeVar('T', dict, list, str, covariant=True)
+T = TypeVar('T', dict, list, str, bool, covariant=True)
 
 def store(key: str, val: T, **kwargs: Any) -> T:
     if REDIS is not None:

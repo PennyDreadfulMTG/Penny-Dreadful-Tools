@@ -72,7 +72,7 @@ class Bot(discord.Client):
         if before.bot:
             return
         # streamers.
-        streaming_role = get_role(before.guild, 'Currently Streaming')
+        streaming_role = await get_role(before.guild, 'Currently Streaming')
         if streaming_role:
             if not isinstance(after.activity, Streaming) and streaming_role in before.roles:
                 print('{user} no longer streaming'.format(user=after.name))
@@ -84,7 +84,7 @@ class Bot(discord.Client):
         if before.status == Status.offline and after.status == Status.online:
             data = None
             # Linked to PDM
-            role = get_role(before.guild, 'Linked Magic Online')
+            role = await get_role(before.guild, 'Linked Magic Online')
             if role is not None and not role in before.roles:
                 if data is None:
                     data = await fetcher.person_data_async(before.id)
@@ -103,9 +103,7 @@ class Bot(discord.Client):
                 for name, count in data['achievements'].items():
                     if int(count) > 0:
                         trophy = f'🏆 {name}'
-                        role = get_role(before.guild, trophy)
-                        if role is None:
-                            role = await before.guild.create_role(name=trophy)
+                        role = await get_role(before.guild, trophy, create=True)
                         expected.append(role)
                 for role in before.roles:
                     if role in expected:
@@ -238,8 +236,10 @@ def init() -> None:
 def is_pd_server(guild: Guild) -> bool:
     return guild.id == 207281932214599682 # or guild.id == 226920619302715392
 
-def get_role(guild: Guild, rolename: str) -> Optional[Role]:
+async def get_role(guild: Guild, rolename: str, create: bool = False) -> Optional[Role]:
     for r in guild.roles:
         if r.name == rolename:
             return r
+    if create:
+        return await guild.create_role(name=rolename)
     return None

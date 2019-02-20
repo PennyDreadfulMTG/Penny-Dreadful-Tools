@@ -224,7 +224,7 @@ def report(form: ReportForm) -> bool:
         db().get_lock('deck_id:{id}'.format(id=form.entry))
         db().get_lock('deck_id:{id}'.format(id=form.opponent))
 
-        for m in match.get_matches(form):
+        for m in match.load_matches_by_deck(form):
             if int(form.opponent) == m.opponent_deck_id:
                 form.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=m.game_wins, game_losses=m.game_losses, opponent=m.opponent, date=dtutil.display_date(m.date))
                 return False

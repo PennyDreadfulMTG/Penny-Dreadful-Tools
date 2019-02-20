@@ -230,12 +230,11 @@ def report(form: ReportForm) -> bool:
         ds = {d.id: d for d in deck.load_decks(f'd.id IN ({entry_deck_id}, {opponent_deck_id})')}
         entry_deck = ds.get(entry_deck_id)
         opponent_deck = ds.get(opponent_deck_id)
-        print(entry_deck)
 
-        if entry_deck.retired:
+        if not entry_deck or entry_deck.retired:
             form.errors['entry'] = 'This deck is retired, you cannot report results for it. If you need to do this, contact a mod on the Discord.'
             return False
-        if opponent_deck.retired:
+        if not opponent_deck or opponent_deck.retired:
             form.errors['opponent'] = "Your opponent's deck is retired, you cannot report results against it. If you need to do this, please contact a mod on the Discord."
             return False
 

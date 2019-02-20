@@ -92,7 +92,7 @@ def add_decks(dt: datetime.datetime, competition_id: int, final: Dict[str, int],
         cells = BeautifulSoup(row, 'html.parser').find_all('td')
         d = tournament_deck(cells, competition_id, dt, final)
         if d is not None:
-            if d.get('id') is None or not match.get_matches(d):
+            if d.get('id') is None or not match.load_matches_by_deck(d):
                 decks_added += 1
                 ds.append(d)
                 matches += tournament_matches(d)

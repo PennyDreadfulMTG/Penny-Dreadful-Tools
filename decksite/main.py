@@ -95,7 +95,8 @@ def person(person_id: str) -> str:
 @cached()
 def person_matches(person_id: str) -> str:
     p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
-    matches = ms.load_matches(person_id=p.id, season_id=get_season_id())
+    matches = ms.load_matches_by_person(person_id=p.id, season_id=get_season_id())
+    matches.reverse() # We want the latest at the top.
     view = PersonMatches(p, matches)
     return view.page()
 

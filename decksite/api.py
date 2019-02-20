@@ -98,7 +98,7 @@ def league_run_api(person: str) -> Response:
         return return_json(None)
 
     decks = league.active_decks()
-    already_played = [m.opponent_deck_id for m in match.get_matches(run)]
+    already_played = [m.opponent_deck_id for m in match.load_matches_by_deck(run)]
     run.can_play = [d.person for d in decks if d.person != person and d.id not in already_played]
 
     return return_json(run)

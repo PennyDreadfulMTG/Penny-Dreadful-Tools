@@ -26,7 +26,7 @@ class Deck(View):
         else:
             self.decks = []
         self.has_similar = len(self.decks) > 0
-        self.matches = match.get_matches(d, True)
+        self.matches = match.load_matches_by_deck(d, should_load_decks=True)
         for m in self.matches:
             m.display_date = dtutil.display_date(m.date)
             if m.opponent:

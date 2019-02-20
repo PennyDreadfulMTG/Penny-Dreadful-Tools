@@ -224,6 +224,20 @@ def report(form: ReportForm) -> bool:
         db().get_lock('deck_id:{id}'.format(id=form.entry))
         db().get_lock('deck_id:{id}'.format(id=form.opponent))
 
+        entry_deck_id = int(form.entry)
+        opponent_deck_id = int(form.opponent)
+
+        ds = {d.id: d for d in deck.load_decks(f'd.id IN ({entry_deck_id}, {opponent_deck_id})')}
+        entry_deck = ds.get(entry_deck_id)
+        opponent_deck = ds.get(opponent_deck_id)
+
+        if not entry_deck or entry_deck.retired:
+            form.errors['entry'] = 'This deck is retired, you cannot report results for it. If you need to do this, contact a mod on the Discord.'
+            return False
+        if not opponent_deck or opponent_deck.retired:
+            form.errors['opponent'] = "Your opponent's deck is retired, you cannot report results against it. If you need to do this, please contact a mod on the Discord."
+            return False
+
         for m in match.load_matches_by_deck(form):
             if int(form.opponent) == m.opponent_deck_id:
                 form.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=m.game_wins, game_losses=m.game_losses, opponent=m.opponent, date=dtutil.display_date(m.date))
@@ -243,13 +257,11 @@ def report(form: ReportForm) -> bool:
             mtgo_match_id = None
         match.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games, None, None, mtgo_match_id)
         if not pdbot:
-            entry_name = deck.load_deck(int(form.entry)).person
-            opp_name = deck.load_deck(int(form.opponent)).person
             if configuration.get('league_webhook_id') and configuration.get('league_webhook_token'):
                 fetcher.post_discord_webhook(
                     configuration.get_str('league_webhook_id'),
                     configuration.get_str('league_webhook_token'),
-                    '{entry} reported {f.entry_games}-{f.opponent_games} vs {opponent}'.format(f=form, entry=entry_name, opponent=opp_name)
+                    '{entry} reported {f.entry_games}-{f.opponent_games} vs {opponent}'.format(f=form, entry=entry_deck.person, opponent=opponent_deck.person)
                 )
             else:
                 logger.warning('Not posting manual report to discord because not configured.')

@@ -12,6 +12,8 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException
 RE_SUBKEY = re.compile(r'(\w+)\.(\w+)')
 
 DEFAULTS = {
+    # On production, /rotation/ turns off when not active.
+    'always_show_rotation': False,
     # Discord Webhook endpoint
     'bugs_webhook_id': None,
     'bugs_webhook_token': None,
@@ -145,6 +147,10 @@ def get_bool(key: str) -> bool:
         return val
     if isinstance(val, str):
         # required so that we can pass bool-values in environment variables
+        if val.lower() in ['true', 'yes', '1']:
+            val = 'True'
+        if val.lower() in ['false', 'no', '0']:
+            val = 'False'
         val2 = ast.literal_eval(val)
         if isinstance(val2, bool):
             CONFIG[key] = val2

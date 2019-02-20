@@ -72,6 +72,7 @@ html {
         With this base font size 1px is 0.05rem. If you change the base font size change the 1px width throughout and in calculations including the mana-bar outside of CSS.
     */
     font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: normal;
 }
 
 body {
@@ -98,6 +99,7 @@ i, em /* em to support markdown conversion to HTML, prefer i */ {
 
 nav {
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: oldstyle-nums;
     border-bottom: 0.05rem solid #999;
 }
 
@@ -108,6 +110,7 @@ article {
         https://practicaltypography.com/line-length.html
     */
     max-width: 30em;
+    padding-top: 1rem; /* Consistent with section */
 }
 
 blockquote {
@@ -130,6 +133,7 @@ main li {
 
 footer a {
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: oldstyle-nums;
     text-transform: lowercase;
 }
 
@@ -236,11 +240,11 @@ Even though "normal" is the default list cases where it is known to be the desir
 
 */
 
-p, .subtitle, .news .item {
+p, .subtitle, .news .item, .person {
     font-variant-numeric: oldstyle-nums;
 }
 
-table, ul.decklist.li, .news .date {
+table, ul.decklist.li, .news .date, .deck-name {
     font-variant-numeric: normal;
 }
 
@@ -430,6 +434,7 @@ header h1 {
     border: 0;
     float: left; /* To accommodate search bar on right. */
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: oldstyle-nums;
     font-weight: normal;
     font-size: 1.333rem;
     margin-bottom: 0;
@@ -472,6 +477,7 @@ Links in text are underlined in such a way as to break on descenders like those 
 a, main table.calendar a, main .intro .details a, .details a {
     color: inherit;
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: oldstyle-nums;
     text-decoration: none;
     text-transform: lowercase;
 }
@@ -486,6 +492,7 @@ main a:hover, main table.calendar a:hover, .details a:hover {
 /* There are a lot of places we want undecorated links, though, even in the main content area. */
 main table a, main h1 a, main h2 a, main h3 a, main li a, .decklist a {
     font-family: inherit;
+    font-variant-numeric: normal;
     text-transform: none;
 }
 
@@ -595,6 +602,7 @@ main table.very-large {
 /* Turn off small caps link style in tables. */
 main table a {
     font-family: inherit;
+    font-variant-numeric: normal;
     text-transform: none;
 }
 
@@ -612,6 +620,7 @@ main th {
     cursor: pointer;
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 1em;
+    font-variant-numeric: oldstyle-nums;
     text-align: left;
     text-transform: lowercase;
 }
@@ -713,6 +722,10 @@ th.angled {
 th.angled .inner {
     transform: translate(1rem, 5rem) rotate(315deg);
     width: 1em;
+}
+
+.matchup-grid {
+    padding-right: 5rem; /* Accomodate the angled headers so we don't get a scroll bar on small (early season) matchup grids. See #5991. */
 }
 
 /*
@@ -1037,6 +1050,14 @@ header.season-10:before {
     background-image: url("/banner/10.png");
 }
 
+header.season-11:before {
+    background-image: url("/banner/11.png");
+}
+
+header.season-12:before {
+    background-image: url("/banner/12.png");
+}
+
 /*
 
 z-index
@@ -1148,6 +1169,7 @@ Calendar
 .date .month {
     display: block;
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: oldstyle-nums;
     text-align: left;
     text-transform: lowercase;
 }
@@ -1717,6 +1739,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 .gsc-input {
     background: none !important; /* csslint allow: important */
     font-family: inherit !important; /* csslint allow: important */
+    font-variant-numeric: normal;
     font-size: inherit !important; /* csslint allow: important */
     margin-bottom: 6px !important; /* csslint allow: important */
 }
@@ -1739,6 +1762,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
     color: #502828 !important; /* csslint allow: important */
     font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.75rem !important; /* csslint allow: important */
+    font-variant-numeric: normal;
 }
 
 .gs-visibleUrl {
@@ -1747,6 +1771,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 
 .gsc-wrapper a, .gs-title, .gs-title * {
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: oldstyle-nums;
     text-decoration: none !important; /* csslint allow: important */
 }
 
@@ -1801,6 +1826,7 @@ td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
 .gsc-result-info-container, .gs-snippet {
     /* Not sure why it doesn't pick up the definiton on HTML but it doesn't. */
     font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: normal;
 }
 
 .gs-snippet, .gsc-result-info {
@@ -1874,7 +1900,7 @@ Fix the width of the column to prevent the table "jump"-ing around the screen as
     width: 13rem;
 }
 
-@media screen only and max-width(640px) {
+@media only screen and (max-width: 640px) {
     .archetype-name-header {
         max-width: 10rem;
         width: 10rem;
@@ -1897,6 +1923,7 @@ News
 
 .news li.item a {
     font-family: main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: normal;
     text-transform: none;
 }
 
@@ -1914,6 +1941,7 @@ News
     color: #999;
     display: inline-block;
     font-family: main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-variant-numeric: normal;
     float: right;
     margin-left: 1rem;
 }
@@ -1925,6 +1953,13 @@ News
     text-overflow: ellipsis;
     white-space: nowrap;
     vertical-align: top; /* Otherwise overflow: hidden makes it rise upwards */
+}
+
+/* 33em at 0.75 font-size is 495px + the 40px of padding is way too much for 320-640px displays. */
+@media only screen and (max-width: 640px) {
+    .news .story {
+        max-width: 15em /* (320px screen width - 40px padding) / 15px per em = 18.666666667, and let's leave some room for the date. */
+    }
 }
 
 .news li.site-news:before, .news li.subreddit-post:before {

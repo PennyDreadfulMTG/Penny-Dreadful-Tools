@@ -17,13 +17,14 @@ class EditRules(View):
                  mistagged_decks: List[Deck],
                  overlooked_decks: List[Deck],
                  rules: List[Container],
-                 archetypes: List[Archetype]) -> None:
+                 archetypes: List[Archetype],
+                 excluded_archetype_info: List[Container]) -> None:
         super().__init__()
         self.num_classified = num_classified
         self.num_total = num_total
-        self.doubled_decks = doubled_decks
-        self.mistagged_decks = mistagged_decks
-        self.overlooked_decks = overlooked_decks
+        self.doubled_decks = doubled_decks[0:10]
+        self.mistagged_decks = mistagged_decks[0:10]
+        self.overlooked_decks = overlooked_decks[0:10]
         self.rules = rules
         self.archetypes = archetypes
         self.rules.sort(key=lambda c: c.archetype_name)
@@ -39,7 +40,11 @@ class EditRules(View):
         self.has_doubled_decks = len(self.doubled_decks) > 0
         self.has_mistagged_decks = len(self.mistagged_decks) > 0
         self.has_overlooked_decks = len(self.overlooked_decks) > 0
-        self.do_not_hide_active_runs = True
+        self.hide_active_runs = False
+        for ai in excluded_archetype_info:
+            ai.url = url_for('archetype', archetype_id=ai.id)
+        self.excluded_archetypes = excluded_archetype_info
+        self.has_excluded_archetypes = len(self.excluded_archetypes) > 0
 
     def page_title(self):
         return 'Edit Rules'

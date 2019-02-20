@@ -1,5 +1,13 @@
 <h1>Deck Classification Rules</h1>
 <p>{{num_classified}} out of {{num_total}} decks currently covered by a rule.</p>
+{{#has_excluded_archetypes}}
+    <p>Decks manually assigned to one of the following archetypes are hidden from this report:</p>
+    <ul>
+        {{#excluded_archetypes}}
+            <li><a href="{{url}}">{{name}}</a></li>
+        {{/excluded_archetypes}}
+    </ul>
+{{/has_excluded_archetypes}}
 {{#has_doubled_decks}}
     <section>
         <h2>Doubled Decks</h2>

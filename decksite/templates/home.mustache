@@ -35,3 +35,14 @@
 {{#has_news}}
     {{> news}}
 {{/has_news}}
+<section>
+    <h1>Community Stats</h1>
+    {{#community_stats}}
+        <h2>{{header}}</h2>
+        <ul>
+            {{#stats}}
+                <li>{{text}}</li>
+            {{/stats}}
+        </ul>
+    {{/community_stats}}
+</section>

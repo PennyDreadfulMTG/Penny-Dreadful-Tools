@@ -10,11 +10,12 @@ from shared.container import Container
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Home(View):
-    def __init__(self, news: List[Container], decks: List[Deck], cards: List[Card]) -> None:
+    def __init__(self, news: List[Container], decks: List[Deck], cards: List[Card], matches_stats: Dict[str, int]) -> None:
         super().__init__()
         self.setup_news(news)
         self.setup_decks(decks)
         self.setup_cards(cards)
+        self.setup_stats(matches_stats)
 
     def setup_news(self, news: List[Container]) -> None:
         self.news = news
@@ -47,14 +48,16 @@ class Home(View):
                     'title': gettext('Recent Top League Decks'),
                     'url': url_for('current_league'),
                     'link_text': gettext('Current League…'),
-                    'decks': league_decks
+                    'decks': league_decks,
+                    'show_omw': True,
+                    'hide_top8': True
                 }
             )
         if tournament_decks:
             self.deck_tables.append(
                 {
                     'title': gettext('Latest Tournament Top 8'),
-                    'url': url_for('competitions', competition_id=tournament_id),
+                    'url': url_for('competition', competition_id=tournament_id),
                     'link_text': gettext('View Tournament…'),
                     'decks': tournament_decks
                 }
@@ -69,10 +72,33 @@ class Home(View):
                 }
             )
         self.decks = league_decks + tournament_decks + latest_decks
-        self.show_active_runs_text = False
 
     def setup_cards(self, cards: List[Card]) -> None:
         cards = [c for c in cards if 'Basic Land' not in c.type_line]
         self.top_cards = cards[0:8]
         self.cards = self.top_cards # To get prepare_card treatment
         self.cards_url = url_for('cards')
+
+    def setup_stats(self, matches_stats: Dict[str, int]) -> None:
+        self.community_stats = [
+            {
+                'header': 'League and Tournament Matches Played',
+                'stats': [
+                    {
+                        'text': f"{matches_stats['num_matches_today']} matches played today"
+                    },
+                    {
+                        'text': f"{matches_stats['num_matches_this_week']} matches played this week"
+                    },
+                    {
+                        'text': f"{matches_stats['num_matches_this_month']} matches played this month"
+                    },
+                    {
+                        'text': f"{matches_stats['num_matches_this_season']} matches played this season"
+                    },
+                    {
+                        'text': f"{matches_stats['num_matches_all_time']} matches played all time"
+                    }
+                ]
+            }
+        ]

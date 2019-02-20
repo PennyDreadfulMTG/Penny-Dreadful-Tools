@@ -73,7 +73,13 @@ TESTDATA = [
     ('Blue Burn', 'Blue Burn', ['U', 'R'], None),
     ('WB', 'Orzhov Aristocrats', ['W', 'B'], 'Orzhov Aristocrats'),
     ("Bob's R Us", "Bob's R Us", ['B'], 'Mono Black Aggro'),
-    ('PD ""Affinity""', '""Affinity""', ['W'], 'Tempered Steel')
+    ('PD ""Affinity""', '""Affinity""', ['W'], 'Tempered Steel'),
+    ('PD10 Killer', 'Killer', ['R'], 'Red Deck Wins'),
+    ('PD-10 Killer', 'Killer', ['R'], 'Red Deck Wins'),
+    ('PD-10 Killer', 'Killer', ['R'], 'Red Deck Wins'),
+    ('Deck - Mono Black Aristocrats (1)', 'Mono Black Aristocrats (1)', '[B]', 'Mono Black Aristocrats'),
+    ('PD-GB', 'Golgari the Rock', ['G', 'B'], 'The Rock'),
+    ('PD 11 WW', 'White Weenie', ['W'], None)
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

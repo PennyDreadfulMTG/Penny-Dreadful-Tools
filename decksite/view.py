@@ -1,6 +1,6 @@
 import html
 from collections import Counter
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 import inflect
 from anytree.iterators import PreOrderIter
@@ -39,9 +39,8 @@ NUM_MOST_COMMON_CARDS_TO_LIST = 10
 class View(BaseView):
     def __init__(self) -> None:
         self.decks: List[Deck] = []
-        self.show_active_runs_text: bool = True
         self.active_runs_text: Optional[str] = None
-        self.do_not_hide_active_runs = False
+        self.hide_active_runs = True
         self.is_very_large: Optional[bool] = None
         self.show_seasons: bool = False
         self.legal_formats: Optional[List[str]] = None
@@ -150,14 +149,11 @@ class View(BaseView):
         self.prepare_archetypes()
         self.prepare_leaderboards()
         self.prepare_legal_formats()
+        self.prepare_matches()
 
     def prepare_decks(self) -> None:
         self.is_very_large = self.is_very_large or len(getattr(self, 'decks', [])) > 500
-        # The 'list' here is just to get past codacy and is a no-op.
-        active_runs = [d for d in list(getattr(self, 'decks', [])) if d.is_in_current_run()]
-        if len(active_runs) > 0 and not self.do_not_hide_active_runs:
-            self.active_runs_text = ngettext('%(num)d active league run', '%(num)d active league runs', len(active_runs))
-            self.decks = [d for d in self.decks if not d.is_in_current_run()]
+        self.prepare_active_runs(self)
         for d in getattr(self, 'decks', []):
             self.prepare_deck(d)
 
@@ -182,10 +178,12 @@ class View(BaseView):
         d.comp_row_len = len('{comp_name} (Piloted by {person}'.format(comp_name=d.competition_name, person=d.person))
         if d.get('archetype_id', None):
             d.archetype_url = '/archetypes/{id}/'.format(id=d.archetype_id)
-        if d.get('omw') is not None and '%' not in str(d.omw):
-            d.omw = str(int(d.omw)) + '%'
-        else:
+        # We might be getting '43%'/'' from cache or '43'/None from the db. Cope with all possibilities.
+        # It might be better to use display_omw and omw as separate properties rather than overwriting the numeric value.
+        if d.get('omw') is None or d.omw == '':
             d.omw = ''
+        elif '%' not in str(d.omw):
+            d.omw = str(int(d.omw)) + '%'
         d.has_legal_format = len(d.legal_formats) > 0
         d.pd_legal = 'Penny Dreadful' in d.legal_formats
         d.legal_icons = ''
@@ -207,6 +205,8 @@ class View(BaseView):
             d.decklist = ''
         total, num_cards = 0, 0
         for c in d.maindeck:
+            if c.card.cmc is None:
+                c.card.cmc = 0
             if 'Land' not in c.card.type_line:
                 num_cards += c['n']
                 total += c['n'] * c.card.cmc
@@ -343,6 +343,30 @@ class View(BaseView):
     def prepare_legal_formats(self) -> None:
         if getattr(self, 'legal_formats', None) is not None:
             self.legal_formats = list(map(add_season_num, list(sorted(self.legal_formats, key=legality.order_score)))) # type: ignore
+
+    def prepare_matches(self) -> None:
+        for m in getattr(self, 'matches', []):
+            if m.get('date'):
+                m.display_date = dtutil.display_date(m.date)
+                m.date_sort = dtutil.dt2ts(m.date)
+            if m.get('deck_id'):
+                m.deck_url = url_for('deck', deck_id=m.deck_id)
+            if m.get('opponent'):
+                m.opponent_url = url_for('person', person_id=m.opponent)
+            if m.get('opponent_deck_id'):
+                m.opponent_deck_url = url_for('deck', deck_id=m.opponent_deck_id)
+
+    def prepare_active_runs(self, o: Any) -> None:
+        decks = getattr(o, 'decks', [])
+        active, other = [], []
+        for d in decks:
+            if d.is_in_current_run():
+                active.append(d)
+            else:
+                other.append(d)
+        if len(active) > 0 and o.hide_active_runs:
+            o.active_runs_text = ngettext('%(num)d active league run', '%(num)d active league runs', len(active)) if len(active) > 0 else ''
+            o.decks = other
 
     def babel_languages(self) -> List[Locale]:
         return APP.babel.list_translations()

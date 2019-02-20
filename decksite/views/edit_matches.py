@@ -13,7 +13,7 @@ class EditMatches(View):
     def __init__(self, decks: List[Deck], matches: List[Container]) -> None:
         super().__init__()
         self.matches = matches
-        self.do_not_hide_active_runs = True
+        self.hide_active_runs = False
         self.decks = sorted(decks, key=lambda d: d.person + str(d.created_date))
         decks_by_id = {d.id: d for d in decks}
         for m in self.matches:
@@ -21,7 +21,7 @@ class EditMatches(View):
             m.left_deck = decks_by_id.get(int(m.left_id))
             m.right_deck = decks_by_id.get(int(m.right_id))
             m.left_url = url_for('deck', deck_id=m.left_id)
-            if m.get('right_url'):
+            if m.get('right_id'):
                 m.right_url = url_for('deck', deck_id=m.right_id)
             else:
                 m.right_url = None

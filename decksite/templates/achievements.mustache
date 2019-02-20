@@ -3,9 +3,9 @@
     {{#achievements}}
         <div class="achievement-category">
             <div class="achievement-bar has-more-info">
-                {{#detail}}
-                    <span class="earned" title="{{detail}}">🏆</span>
-                {{/detail}}
+                {{#legend}}
+                    <span class="earned" title="{{legend}}">🏆</span>
+                {{/legend}}
                 <span class="background"></span>
                 <span class="bar" style="width: {{percent}}%"></span>
                 <span class="summary"><b>{{title}}</b> {{summary}}</span>
@@ -29,19 +29,19 @@
                                     <td class="n marginalia">
                                         {{position}}
                                     </td>
-                                    <td><a href="{{url}}">{{person}}</a></td>
+                                    <td><a href="{{url}}" class="person">{{person}}</a></td>
                                     <td class="n">{{points}}</td>
                                 </tr>
                             {{/leaderboard}}
                         </tbody>
                     </table>
                 {{/has_leaderboard}}
-                {{#detail}}
+                {{#legend}}
                     <p class="detail">
                         <span class="earned">🏆</span>
-                        <span class="text">{{detail}}</span>
+                        <span class="text">{{legend}}</span>
                     </p>
-                {{/detail}}
+                {{/legend}}
             </div>
         </div>
     {{/achievements}}
@@ -49,6 +49,6 @@
 <section>
     <h2>Key</h2>
     <ul>
-        <li>🏆 = earned.</li>
+        <li>🏆 = earned</li>
     </ul>
 </section>

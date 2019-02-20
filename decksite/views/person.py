@@ -1,5 +1,5 @@
 import json
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import titlecase
 from flask import url_for
@@ -12,7 +12,7 @@ from magic.models import Card
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Person(View):
-    def __init__(self, person: ps.Person, cards: List[Card], only_played_cards: List[Card]) -> None:
+    def __init__(self, person: ps.Person, cards: List[Card], only_played_cards: List[Card], season_id: Optional[int]) -> None:
         super().__init__()
         self.person = person
         self.people = [person]
@@ -28,6 +28,7 @@ class Person(View):
         self.show_seasons = True
         self.displayed_achievements = [{'title': a.title, 'detail': titlecase.titlecase(a.display(self.person))} for a in Achievement.all_achievements if a.display(self.person)]
         self.achievements_url = url_for('achievements')
+        self.person_achievements_url = url_for('person_achievements', person_id=person.id)
         colors: Dict[str, int] = {}
         for d in self.decks:
             for c in d.colors:
@@ -38,10 +39,11 @@ class Person(View):
                 'type': 'horizontalBar',
                 'labels': json.dumps(['White', 'Blue', 'Black', 'Red', 'Green', 'Colorless']),
                 'series': json.dumps([colors.get('W'), colors.get('U'), colors.get('B'), colors.get('R'), colors.get('G'), colors.get('C')]),
-                'options': json.dumps({'responsive': True})
+                'options': json.dumps({'responsive': True, 'scales': {'xAxes': [{'ticks': {'precision': 0}}]}}) # Only display whole numbers on x axis.
             }
         ]
         self.add_note_url = url_for('post_player_note')
+        self.matches_url = url_for('person_matches', person_id=person.id, season_id=season_id)
 
     def __getattr__(self, attr):
         return getattr(self.person, attr)

@@ -12,13 +12,13 @@ def run() -> None:
         print('No entry point specified.')
         sys.exit(1)
 
-    if 'discordbot' in sys.argv:
+    if sys.argv[1] == 'discordbot':
         from discordbot import bot
         bot.init()
-    elif 'decksite' in sys.argv:
+    elif sys.argv[1] == 'decksite':
         from decksite import main
         main.init()
-    elif 'decksite-profiler' in sys.argv:
+    elif sys.argv[1] == 'decksite-profiler':
         from werkzeug.contrib.profiler import ProfilerMiddleware
         from decksite import main
         main.APP.config['PROFILE'] = True
@@ -59,7 +59,7 @@ def task(args: List[str]) -> None:
         module = 'scrapers'
     if module == 'scrapers':
         module = 'decksite.scrapers'
-    name = args.pop()
+    name = args[2]
     from magic import oracle, multiverse
     multiverse.init()
     if name != 'reprime_cache':

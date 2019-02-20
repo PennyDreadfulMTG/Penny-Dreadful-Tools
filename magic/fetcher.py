@@ -2,6 +2,7 @@ import csv
 import datetime
 import json
 import os
+import re
 from collections import OrderedDict
 from time import sleep
 from typing import Any, Dict, List, Optional, Tuple, Union, cast
@@ -12,7 +13,7 @@ import pytz
 
 import shared.fetcher_internal as internal
 from magic.card_description import CardDescription
-from magic.models import Card
+from magic.models import Card, Deck
 from shared import configuration, dtutil, redis
 from shared.container import Container
 from shared.fetcher_internal import FetchException
@@ -36,7 +37,11 @@ def all_sets() -> List[Dict[str, Any]]:
     return d['data']
 
 def bugged_cards() -> Optional[List[Dict[str, Any]]]:
-    bugs = internal.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
+    try:
+        bugs = internal.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
+    except FetchException:
+        print("WARNING: Couldn't fetch bugs")
+        bugs = None
     if bugs is None:
         return None
     return bugs
@@ -119,7 +124,7 @@ async def mtgo_status() -> str:
 
 async def person_data_async(person: Union[str, int]) -> Dict[str, Any]:
     try:
-        data = await internal.fetch_json_async('https://pennydreadfulmagic.com/api/person/{0}'.format(person))
+        data = await internal.fetch_json_async(decksite_url('/api/person/{0}'.format(person)))
     except (FetchException, json.decoder.JSONDecodeError):
         return {}
     return data
@@ -242,10 +247,25 @@ def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
     if cached is not None:
         return cached
 
-    info = internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json')
+    try:
+        info = internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json')
+    except FetchException:
+        cached = redis.get_container('magic:fetcher:whatisinstandard_noex')
+        if cached is not None:
+            return cached
+        raise
     redis.store('magic:fetcher:whatisinstandard', info, ex=86400)
+    redis.store('magic:fetcher:whatisinstandard_noex', info)
     return info
 
 def subreddit() -> Container:
     url = 'https://www.reddit.com/r/pennydreadfulMTG/.rss'
     return feedparser.parse(url)
+
+def gatherling_deck_comments(d: Deck) -> List[str]:
+    url = f'http://gatherling.com/deck.php?mode=view&id={d.identifier}'
+    s = internal.fetch(url)
+    result = re.search('COMMENTS</td></tr><tr><td>(.*)</td></tr></table></div><div class="clear"></div><center>', s, re.MULTILINE | re.DOTALL)
+    if result:
+        return result.group(1).replace('<br />', '\n').split('\n')
+    return []

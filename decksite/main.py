@@ -17,6 +17,7 @@ from decksite.data import archetype as archs
 from decksite.data import card as cs
 from decksite.data import competition as comp
 from decksite.data import deck as ds
+from decksite.data import match as ms
 from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.database import db
@@ -25,10 +26,10 @@ from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
                             Archetypes, Bugs, Card, Cards, CommunityGuidelines,
                             Competition, Competitions, Deck, DeckCheck, Decks,
                             Faqs, Home, LeagueInfo, LinkAccounts, News, People,
-                            Person, Report, Resources, Retire, Rotation,
-                            RotationChanges, Season, Seasons, SignUp,
-                            TournamentHosting, TournamentLeaderboards,
-                            Tournaments)
+                            Person, PersonAchievements, PersonMatches, Report,
+                            Resources, Retire, Rotation, RotationChanges,
+                            Season, Seasons, SignUp, TournamentHosting,
+                            TournamentLeaderboards, Tournaments)
 from magic import card as mc
 from magic import fetcher, image_fetcher, oracle
 from shared import perf
@@ -39,7 +40,7 @@ from shared.pd_exception import (DoesNotExistException, InvalidDataException,
 @APP.route('/')
 @cached()
 def home() -> str:
-    view = Home(ns.all_news(max_items=10), ds.latest_decks(), cs.load_cards(season_id=get_season_id()))
+    view = Home(ns.all_news(max_items=10), ds.latest_decks(), cs.load_cards(season_id=get_season_id()), ms.stats())
     return view.page()
 
 @APP.route('/decks/')
@@ -86,8 +87,18 @@ def person(person_id: str) -> str:
     p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
     person_cards = cs.load_cards(person_id=p.id, season_id=get_season_id())
     only_played_cards: List[cs.Card] = []
-    view = Person(p, person_cards, only_played_cards)
+    view = Person(p, person_cards, only_played_cards, get_season_id())
     return view.page()
+
+@APP.route('/people/<person_id>/matches/')
+@SEASONS.route('/people/<person_id>/matches/')
+@cached()
+def person_matches(person_id: str) -> str:
+    p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
+    matches = ms.load_matches(person_id=p.id, season_id=get_season_id())
+    view = PersonMatches(p, matches)
+    return view.page()
+
 
 @APP.route('/achievements/')
 @SEASONS.route('/achievements/')
@@ -97,6 +108,13 @@ def achievements() -> str:
     if username is not None:
         p = ps.load_person_by_mtgo_username(username, season_id=get_season_id())
     view = Achievements(achs.load_achievements(p, season_id=get_season_id()))
+    return view.page()
+
+@APP.route('/people/<person_id>/achievements')
+@SEASONS.route('/people/<person_id>/achievements')
+def person_achievements(person_id: str) -> str:
+    p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
+    view = PersonAchievements(p, achs.load_achievements(p, season_id=get_season_id(), with_detail=True))
     return view.page()
 
 @APP.route('/person/achievements/')
@@ -328,7 +346,7 @@ def signup(form: Optional[SignUpForm] = None) -> str:
 @APP.route('/signup/', methods=['POST'])
 @cached()
 def add_signup() -> str:
-    form = SignUpForm(request.form)
+    form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
     if form.validate():
         d = lg.signup(form)
         response = make_response(redirect(url_for('deck', deck_id=d.id)))
@@ -347,7 +365,7 @@ def deck_check(form: Optional[DeckCheckForm] = None) -> str:
 @APP.route('/deckcheck/', methods=['POST'])
 @cached()
 def do_deck_check() -> str:
-    form = DeckCheckForm(request.form)
+    form = DeckCheckForm(request.form, auth.person_id(), auth.mtgo_username())
     form.validate()
     return deck_check(form)
 
@@ -449,7 +467,9 @@ def banner(seasonnum: str) -> Response:
     elif seasonnum == '6':
         cardnames = ['Chain Lightning', 'Compulsive Research', 'Bogardan Hellkite', 'Grand Coliseum', 'Cartouche of Solidarity', 'Lagonna-Band Trailblazer', 'Felidar Guardian']
         background = 'Parallax Wave'
-
+    elif seasonnum == '11':
+        cardnames = ['Rampaging Ferocidon', 'Frantic Search', 'Whip of Erebos', "Gaea's Revenge", 'Doomed Traveler', 'Muraganda Petroglyphs', 'Pyroclasm']
+        background = 'Temple of Mystery'
 
     path = image_fetcher.generate_banner(cardnames, background)
     return send_file(os.path.abspath(path))

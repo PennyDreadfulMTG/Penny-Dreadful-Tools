@@ -78,10 +78,10 @@ PD.initTables = function () {
 
     $.tablesorter.addParser({
         "id": "record",
-        "is": function(s) {
+        "is": function (s) {
             return s.match(/^\d+–\d+(–\d+)?$/);
         },
-        "format": function(s) {
+        "format": function (s) {
             var parts, wins, losses;
             if (s == "") {
                 return "";
@@ -95,10 +95,10 @@ PD.initTables = function () {
     });
     $.tablesorter.addParser({
         "id": "colors",
-        "is": function(_s, _table, _td, $td) {
+        "is": function (_s, _table, _td, $td) {
             return $td.find("span.mana").length > 0;
         },
-        "format": function(_s, _table, td) {
+        "format": function (_s, _table, td) {
             var i,
                 score = 0,
                 symbols = ["_", "W", "U", "B", "R", "G"];
@@ -114,10 +114,10 @@ PD.initTables = function () {
     PD.bugCategories = ["Game Breaking", "Avoidable Game Breaking", "Advantageous", "Disadvantageous", "Graphical", "Non-Functional ability", "Unclassified"];
     $.tablesorter.addParser({
         "id": "bugseverity",
-        "is": function(s) {
+        "is": function (s) {
             return PD.bugCategories.indexOf(s) > -1;
         },
-        "format": function(s) {
+        "format": function (s) {
             return PD.bugCategories.indexOf(s);
         },
         "type": "numeric"
@@ -127,7 +127,7 @@ PD.initTables = function () {
         is: function (_s, _table, _td, $td) {
             return $td.hasClass("initial");
         },
-        "format": function(s, table, td) {
+        "format": function (s, table, td) {
             return $(td).data("sort");
         },
         "type": "numeric"
@@ -148,10 +148,10 @@ PD.initDetails = function () {
 };
 // Disable tooltips on touch devices where they are awkward but enable on others where they are useful.
 PD.initTooltips = function () {
-    $("body").on("touchstart", function() {
+    $("body").on("touchstart", function () {
         $("body").off();
     });
-    $("body").on("mouseover", function() {
+    $("body").on("mouseover", function () {
         if (typeof Deckbox != "undefined") {
             Deckbox._.enable();
         }
@@ -202,7 +202,7 @@ PD.loadDeck = function () {
 };
 PD.toggleDrawDropdown = function () {
     var can_draw = false;
-    $(document).find(".deckselect").each(function(_, select) {
+    $(document).find(".deckselect").each(function (_, select) {
         can_draw = can_draw || select.selectedOptions[0].classList.contains("deck-can-draw");
     });
     if (can_draw) {
@@ -216,7 +216,7 @@ PD.toggleDrawDropdown = function () {
 };
 PD.toggleIllegalCards = function () {
     // Fix the width of the table columns so that it does not "jump" when rows are added or removed.
-    $(".bugtable tr td").each(function() {
+    $(".bugtable tr td").each(function () {
         $(this).css({"width": $(this).width() + "px"});
     });
     $(".bugtable").not(".footable-details").each(function () { FooTable.get(this).rows.collapse(); });
@@ -264,7 +264,7 @@ PD.getUrlParam = function (name) {
 };
 
 PD.initSignupDeckChooser = function () {
-    $("#signup_recent_decks").on("change", function() {
+    $("#signup_recent_decks").on("change", function () {
         var data = JSON.parse($("option:selected", this).attr("data"));
         $("#name").val(data.name);
         var textarea = $("#decklist");

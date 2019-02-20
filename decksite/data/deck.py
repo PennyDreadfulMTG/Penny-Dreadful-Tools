@@ -621,6 +621,6 @@ def nwdl_join() -> str:
             ) AS dsum ON d.id = dsum.id
     """
 
-def num_decks() -> int:
-    sql = 'SELECT COUNT(id) AS c FROM deck'
+def num_decks(deck_query: str = '1 = 1') -> int:
+    sql = f'SELECT COUNT(id) AS c FROM deck WHERE {deck_query}'
     return db().value(sql)

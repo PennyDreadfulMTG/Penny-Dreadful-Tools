@@ -1,7 +1,7 @@
 import logging
 import os
 import urllib.parse
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, session, url_for)

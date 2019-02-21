@@ -216,8 +216,6 @@ class View(BaseView):
         self.is_very_large = self.is_very_large or len(getattr(self, 'cards', [])) > 500
         for c in getattr(self, 'cards', []):
             self.prepare_card(c)
-        for c in getattr(self, 'only_played_cards', []):
-            self.prepare_card(c)
 
     def prepare_card(self, c: Card) -> None:
         c.url = '/cards/{id}/'.format(id=c.name)

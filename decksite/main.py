@@ -1,7 +1,7 @@
 import logging
 import os
 import urllib.parse
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, session, url_for)
@@ -86,8 +86,7 @@ def people() -> str:
 def person(person_id: str) -> str:
     p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
     person_cards = cs.load_cards(person_id=p.id, season_id=get_season_id())
-    only_played_cards: List[cs.Card] = []
-    view = Person(p, person_cards, only_played_cards, get_season_id())
+    view = Person(p, person_cards, get_season_id())
     return view.page()
 
 @APP.route('/people/<person_id>/matches/')

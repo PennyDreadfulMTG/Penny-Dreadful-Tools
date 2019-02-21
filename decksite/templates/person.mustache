@@ -4,16 +4,6 @@
     {{> decktable}}
 </section>
 {{> stats}}
-{{#has_only_played_cards}}
-    <section>
-        <h2>Unique Cards Played</h2>
-        <ul>
-            {{#only_played_cards}}
-                <li>{{> singlecard}}</li>
-            {{/only_played_cards}}
-        </ul>
-    </section>
-{{/has_only_played_cards}}
 {{#num_achievements}}
     <section>
         <h2>Achievements</h2>

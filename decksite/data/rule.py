@@ -216,7 +216,7 @@ def update_cards(rule_id: int, inc: List[Tuple[int, str]], exc: List[Tuple[int, 
     db().commit('update_rule_cards')
 
 def classified_decks_query() -> str:
-    return 'NOT reviewed OR deck.archetype_id NOT IN ({ex})'.format(ex=','.join(str(aid) for aid in excluded_archetype_ids()))
+    return '(NOT reviewed OR deck.archetype_id NOT IN ({ex}))'.format(ex=','.join(str(aid) for aid in excluded_archetype_ids()))
 
 def apply_rules_query(deck_query: str = '1 = 1', rule_query: str = '1 = 1') -> str:
     return f"""

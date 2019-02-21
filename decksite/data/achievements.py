@@ -608,8 +608,8 @@ class Deckbuilder(CountedAchievement):
     key = 'deckbuilder'
     title = 'Deck Builder'
     description_safe = 'Have someone else register an exact copy of a deck you registered first.'
-    sql = 'COUNT(DISTINCT CASE WHEN d.id IN (SELECT original FROM repeats WHERE newplayer = TRUE) AND d.id NOT IN (SELECT copy FROM repeats) THEN d.id ELSE NULL END)'
-    detail_sql = "GROUP_CONCAT(CASE WHEN d.id IN (SELECT original FROM repeats WHERE newplayer = TRUE) AND d.id NOT IN (SELECT copy FROM repeats) THEN CONCAT(d.id, ',', imitators.imitator_ids) ELSE NULL END)"
+    sql = 'COUNT(DISTINCT CASE WHEN d.id IN (SELECT original FROM repeats WHERE newplayer) AND d.id NOT IN (SELECT copy FROM repeats) THEN d.id ELSE NULL END)'
+    detail_sql = "GROUP_CONCAT(CASE WHEN d.id IN (SELECT original FROM repeats WHERE newplayer) AND d.id NOT IN (SELECT copy FROM repeats) THEN CONCAT(d.id, ',', imitators.imitator_ids) ELSE NULL END)"
     join_sql = 'LEFT JOIN imitators ON imitators.original = d.id'
     with_sql = """
         repeats AS
@@ -622,7 +622,7 @@ class Deckbuilder(CountedAchievement):
                     deck AS d2
                 ON d1.decklist_hash = d2.decklist_hash AND d1.created_date < d2.created_date
             ),
-        imitators AS (SELECT original, GROUP_CONCAT(copy) AS imitator_ids FROM repeats WHERE newplayer = TRUE GROUP BY original)
+        imitators AS (SELECT original, GROUP_CONCAT(copy) AS imitator_ids FROM repeats WHERE newplayer GROUP BY original)
     """
 
     def leaderboard_heading(self) -> str:

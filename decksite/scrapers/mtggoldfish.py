@@ -58,7 +58,7 @@ def parse_created_date(soup: BeautifulSoup) -> int:
     try:
         date_s = re.findall(r'([A-Z][a-z][a-z] \d+, \d\d\d\d)', description)[0]
     except IndexError as e:
-        raise InvalidDataException(f'Unable to find a date in {description}')
+        raise InvalidDataException(f'Unable to find a date in {description} because of {e}')
     return dtutil.parse_to_ts(date_s, '%b %d, %Y', dtutil.MTGGOLDFISH_TZ)
 
 def scrape_decklist(d: Container) -> decklist.DecklistType:

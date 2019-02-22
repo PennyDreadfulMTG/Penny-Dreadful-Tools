@@ -224,6 +224,8 @@ def report(form: ReportForm) -> bool:
         db().get_lock('deck_id:{id}'.format(id=form.entry))
         db().get_lock('deck_id:{id}'.format(id=form.opponent))
 
+        pdbot = form.get('api_token', None) == configuration.get('pdbot_api_token')
+
         entry_deck_id = int(form.entry)
         opponent_deck_id = int(form.opponent)
 
@@ -231,17 +233,18 @@ def report(form: ReportForm) -> bool:
         entry_deck = ds.get(entry_deck_id)
         opponent_deck = ds.get(opponent_deck_id)
 
-        if not entry_deck or entry_deck.retired:
-            form.errors['entry'] = 'This deck is retired, you cannot report results for it. If you need to do this, contact a mod on the Discord.'
-            return False
-        if not opponent_deck or opponent_deck.retired:
-            form.errors['opponent'] = "Your opponent's deck is retired, you cannot report results against it. If you need to do this, please contact a mod on the Discord."
-            return False
-
-        for m in match.load_matches_by_deck(form):
-            if int(form.opponent) == m.opponent_deck_id:
-                form.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=m.game_wins, game_losses=m.game_losses, opponent=m.opponent, date=dtutil.display_date(m.date))
+        if not pdbot:
+            if not entry_deck or entry_deck.retired:
+                form.errors['entry'] = 'This deck is retired, you cannot report results for it. If you need to do this, contact a mod on the Discord.'
                 return False
+            if not opponent_deck or opponent_deck.retired:
+                form.errors['opponent'] = "Your opponent's deck is retired, you cannot report results against it. If you need to do this, please contact a mod on the Discord."
+                return False
+
+            for m in match.load_matches_by_deck(form):
+                if int(form.opponent) == m.opponent_deck_id:
+                    form.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=m.game_wins, game_losses=m.game_losses, opponent=m.opponent, date=dtutil.display_date(m.date))
+                    return False
 
         counts = deck.count_matches(form.entry, form.opponent)
         if counts[int(form.entry)] >= 5:
@@ -250,7 +253,7 @@ def report(form: ReportForm) -> bool:
         if counts[int(form.opponent)] >= 5:
             form.errors['opponent'] = 'Your opponent already has 5 matches reported'
             return False
-        pdbot = form.get('api_token', None) == configuration.get('pdbot_api_token')
+
         if pdbot:
             mtgo_match_id = form.get('matchID', None)
         else:

@@ -233,18 +233,26 @@ def report(form: ReportForm) -> bool:
         entry_deck = ds.get(entry_deck_id)
         opponent_deck = ds.get(opponent_deck_id)
 
+        if not entry_deck:
+            form.errors['entry'] = 'This deck does not appear to exist. Please try again.'
+            return False
+
+        if not opponent_deck:
+            form.errors['opponent'] = 'This deck does not appear to exist. Please try again.'
+            return False
+
         if not pdbot:
-            if not entry_deck or entry_deck.retired:
-                form.errors['entry'] = 'This deck is retired, you cannot report results for it. If you need to do this, contact a mod on the Discord.'
+            if entry_deck.retired:
+                form.errors['entry'] = 'Your deck is retired, you cannot report results for it. If you need to do this, contact a mod on the Discord.'
                 return False
-            if not opponent_deck or opponent_deck.retired:
+            if opponent_deck.retired:
                 form.errors['opponent'] = "Your opponent's deck is retired, you cannot report results against it. If you need to do this, please contact a mod on the Discord."
                 return False
 
-            for m in match.load_matches_by_deck(form):
-                if int(form.opponent) == m.opponent_deck_id:
-                    form.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=m.game_wins, game_losses=m.game_losses, opponent=m.opponent, date=dtutil.display_date(m.date))
-                    return False
+        for m in match.load_matches_by_deck(form):
+            if int(form.opponent) == m.opponent_deck_id:
+                form.errors['result'] = 'This match was reported as You {game_wins}–{game_losses} {opponent} {date}'.format(game_wins=m.game_wins, game_losses=m.game_losses, opponent=m.opponent, date=dtutil.display_date(m.date))
+                return False
 
         counts = deck.count_matches(form.entry, form.opponent)
         if counts[int(form.entry)] >= 5:

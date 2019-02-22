@@ -89,7 +89,10 @@ def scrape_one(url: str) -> Container:
     d.name = str(soup.select_one('h2.deck-view-title').contents[0]).strip()
     d.mtggoldfish_username = without_by(str(soup.select_one('span.deck-view-author').contents[0].strip()))
     d.created_date = parse_created_date(soup)
-    d.cards = scrape_decklist(d)
+    try:
+        d.cards = scrape_decklist(d)
+    except InvalidDataException as e:
+        raise InvalidDataException(f'Unable to scrape decklist for {d} because of {e}')
     error = vivify_or_error(d)
     if error:
         raise InvalidDataException(error)

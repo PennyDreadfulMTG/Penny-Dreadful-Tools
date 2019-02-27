@@ -31,7 +31,7 @@ def scrape(limit: int = 255) -> None:
             try:
                 d.created_date = scrape_created_date(d)
             except InvalidDataException as e:
-                msg = f'Got {e} trying to find a created_date in {d}'
+                msg = f'Got {e} trying to find a created_date in {d}, {raw_deck}'
                 logger.error(msg)
                 raise InvalidDataException(msg)
             time.sleep(1)

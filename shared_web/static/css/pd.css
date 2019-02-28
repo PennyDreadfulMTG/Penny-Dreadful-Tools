@@ -2187,6 +2187,12 @@ p.detail .earned {
     position: absolute;
 }
 
+@media only screen and (max-width: 640px) {
+    p.detail .earned {
+        display: none;
+    }
+}
+
 p.detail .text {
     display: inline-block;
     position: relative;

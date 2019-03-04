@@ -764,6 +764,27 @@ Want to contribute? Send a Pull Request."""
         scryfall = database.last_updated()
         return await send(channel, 'I am currently running mtgbot version `{commit}`, and scryfall last updated `{scryfall}`'.format(commit=commit, scryfall=scryfall))
 
+    @cmd_header('Commands')
+    async def whois(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
+        """Who is a person?"""
+        mention = re.match(r'<@(\d+)>', args)
+        if mention:
+            async with channel.typing():
+                person = await fetcher.person_data_async(mention.group(1))
+            if person is None:
+                await send(channel, f"I don't know who {mention.group(0)} is :frowning:")
+                return
+            await send(channel, f"{mention.group(0)} is `{person['name']}` on MTGO")
+        else:
+            async with channel.typing():
+                person = await fetcher.person_data_async(args)
+            if person is None or person['discord_id'] is None:
+                await send(channel, f"I don't know who `{args}` is :frowning:")
+                return
+            await send(channel, f"`{person['name']}` is <@{person['discord_id']}>")
+
+
+
 
 def parse_queries(content: str) -> List[str]:
     to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, re.DOTALL) # Ignore angle brackets inside backticks. It's annoying in #code.

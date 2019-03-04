@@ -36,3 +36,4 @@ whoosh_index/
 /modo_bugs_repo/
 /*.config.json
 /TestResults.xml
+.mypy_cache

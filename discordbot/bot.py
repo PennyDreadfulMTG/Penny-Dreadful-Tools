@@ -81,10 +81,10 @@ class Bot(discord.Client):
                 print('{user} started streaming'.format(user=after.name))
                 await after.add_roles(streaming_role)
         # Achievements
-        if before.status == Status.offline and after.status == Status.online:
+        role = await get_role(before.guild, 'Linked Magic Online')
+        if role and before.status == Status.offline and after.status == Status.online:
             data = None
             # Linked to PDM
-            role = await get_role(before.guild, 'Linked Magic Online')
             if role is not None and not role in before.roles:
                 if data is None:
                     data = await fetcher.person_data_async(before.id)

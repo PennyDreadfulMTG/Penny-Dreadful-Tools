@@ -16,7 +16,6 @@ def exactly_one(l: Sequence[T], noun: str = 'items') -> T:
 def at_most_one(l: Sequence[T], noun: str = 'items') -> Optional[T]:
     if len(l) > 1:
         raise TooManyItemsException('Found {n} {noun} when expecting at most 1 in `{l}`.'.format(n=len(l), l=l, noun=noun))
-    elif len(l) == 0:
+    if len(l) == 0:
         return None
-    else:
-        return l[0]
+    return l[0]

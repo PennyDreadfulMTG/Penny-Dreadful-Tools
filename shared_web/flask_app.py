@@ -1,7 +1,7 @@
 import os
 import subprocess
 import urllib
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
 from flask import (Flask, Request, Response, redirect, request,
                    send_from_directory, session, url_for)
@@ -47,7 +47,7 @@ class PDFlask(Flask):
         self.babel = Babel(self)
         localization.init(self.babel)
 
-    def not_found(self, e: Exception) -> Tuple[str, int]:
+    def not_found(self, e: Exception) -> Union[Response, Tuple[str, int]]:
         if request.path.startswith('/error/HTTP_BAD_GATEWAY'):
             return return_json(generate_error('BADGATEWAY', 'Bad Gateway'), status=502)
         log_exception(request, e)

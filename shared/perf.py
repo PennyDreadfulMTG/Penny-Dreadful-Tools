@@ -18,7 +18,7 @@ def check(start_time: float, kind: str, detail: Any, location: str) -> None:
         try:
             flask_location = current_app.name
         except RuntimeError: # Working outside of application context
-            flask_location = None
+            flask_location = ''
         repo.create_issue(msg, f'{location}-perf', flask_location or location, 'PennyDreadfulMTG/perf-reports')
 
 def test(f: Callable, limit: float) -> None:

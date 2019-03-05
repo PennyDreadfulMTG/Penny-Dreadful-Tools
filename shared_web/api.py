@@ -1,6 +1,6 @@
 import json
 import subprocess
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from flask import Response, current_app, request
 
@@ -37,7 +37,7 @@ def process_github_webhook() -> Response:
 def commit_id() -> Response:
     return return_json(current_app.config['commit-id'])
 
-def validate_api_key() -> Response:
+def validate_api_key() -> Optional[Response]:
     if request.form.get('api_token', None) == configuration.get('pdbot_api_token'):
         return None
     return return_json(generate_error('UNAUTHORIZED', 'Invalid API key'), status=403)

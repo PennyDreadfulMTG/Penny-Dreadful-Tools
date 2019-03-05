@@ -771,14 +771,14 @@ Want to contribute? Send a Pull Request."""
         if mention:
             async with channel.typing():
                 person = await fetcher.person_data_async(mention.group(1))
-            if person is None:
+            if person.get('error'):
                 await send(channel, f"I don't know who {mention.group(0)} is :frowning:")
                 return
             await send(channel, f"{mention.group(0)} is `{person['name']}` on MTGO")
         else:
             async with channel.typing():
                 person = await fetcher.person_data_async(args)
-            if person is None or person.get('discord_id') is None:
+            if person.get('error'):
                 await send(channel, f"I don't know who `{args}` is :frowning:")
                 return
             await send(channel, f"`{person['name']}` is <@{person['discord_id']}>")

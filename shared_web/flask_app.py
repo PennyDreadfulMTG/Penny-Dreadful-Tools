@@ -1,7 +1,7 @@
 import os
 import subprocess
 import urllib
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
 from flask import (Flask, Request, Response, redirect, request,
                    send_from_directory, session, url_for)

@@ -11,7 +11,7 @@ from shared.pd_exception import InvalidDataException
 from shared_web import logger
 
 
-def scrape(limit: int = 255) -> None:
+def scrape(limit: int = 1) -> None:
     page = 1
     while page <= limit:
         time.sleep(0.1)

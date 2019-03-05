@@ -93,8 +93,7 @@ def scrape_url(url: str) -> deck.Deck:
     if 'Penny Dreadful' not in legality.legal_formats(vivified, None, errors):
         print(repr(raw_deck['cards']))
         raise InvalidDataException('Deck is not legal in Penny Dreadful - {error}'.format(error=errors.get('Penny Dreadful')))
-    else:
-        return deck.add_deck(raw_deck)
+    return deck.add_deck(raw_deck)
 
 def parse_printable(raw_deck: DeckType) -> DeckType:
     """If we're not authorized for the TappedOut API, this method will collect name and author of a deck.

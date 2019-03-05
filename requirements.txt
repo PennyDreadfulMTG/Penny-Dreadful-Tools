@@ -1,4 +1,4 @@
-anytree==2.4.3 # rq.filter: != 2.6.0
+anytree==2.4.3 # rq.filter: <2.5.0
 bs4==0.0.1
 cachecontrol[filecache]==0.12.5
 changelogs==0.14.0
@@ -26,7 +26,7 @@ poeditor==1.1.0
 profanity==1.1
 pygithub==1.43.5
 pygtrie==2.3
-pylint==2.2.2
+pylint==2.3.1
 pylint-quotes==0.2.1
 pystache==0.5.4
 pytest==4.3.0

@@ -3,7 +3,7 @@ from decksite.data import archetype, deck
 HOURLY = True
 
 def run() -> None:
-    decks = deck.load_decks('reviewed = FALSE')
+    decks = deck.load_decks('NOT reviewed')
     deck.calculate_similar_decks(decks)
     for d in decks:
         for s in d.similar_decks:

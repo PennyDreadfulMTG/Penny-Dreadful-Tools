@@ -28,7 +28,12 @@ def scrape(limit: int = 255) -> None:
             d.url = 'https://www.mtggoldfish.com/deck/{identifier}#online'.format(identifier=d.identifier)
             d.name = a.contents[0].strip()
             d.mtggoldfish_username = without_by(raw_deck.select_one('div.deck-tile-author').contents[0].strip())
-            d.created_date = scrape_created_date(d)
+            try:
+                d.created_date = scrape_created_date(d)
+            except InvalidDataException as e:
+                msg = f'Got {e} trying to find a created_date in {d}, {raw_deck}'
+                logger.error(msg)
+                raise InvalidDataException(msg)
             time.sleep(1)
             d.cards = scrape_decklist(d)
             err = vivify_or_error(d)
@@ -50,7 +55,10 @@ def scrape_created_date(d: Container) -> int:
 
 def parse_created_date(soup: BeautifulSoup) -> int:
     description = str(soup.select_one('div.deck-view-description'))
-    date_s = re.findall(r'([A-Z][a-z][a-z] \d+, \d\d\d\d)', description)[0]
+    try:
+        date_s = re.findall(r'([A-Z][a-z][a-z] \d+, \d\d\d\d)', description)[0]
+    except IndexError as e:
+        raise InvalidDataException(f'Unable to find a date in {description} because of {e}')
     return dtutil.parse_to_ts(date_s, '%b %d, %Y', dtutil.MTGGOLDFISH_TZ)
 
 def scrape_decklist(d: Container) -> decklist.DecklistType:
@@ -81,7 +89,10 @@ def scrape_one(url: str) -> Container:
     d.name = str(soup.select_one('h2.deck-view-title').contents[0]).strip()
     d.mtggoldfish_username = without_by(str(soup.select_one('span.deck-view-author').contents[0].strip()))
     d.created_date = parse_created_date(soup)
-    d.cards = scrape_decklist(d)
+    try:
+        d.cards = scrape_decklist(d)
+    except InvalidDataException as e:
+        raise InvalidDataException(f'Unable to scrape decklist for {d} because of {e}')
     error = vivify_or_error(d)
     if error:
         raise InvalidDataException(error)

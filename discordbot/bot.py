@@ -1,13 +1,12 @@
 import asyncio
 import re
 import sys
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 import discord
-from discord import Guild, Role, VoiceState
+from discord import Guild, Member, Role, VoiceState
 from discord.activity import Streaming
 from discord.errors import Forbidden, NotFound
-from discord.member import Member
 from discord.message import Message
 from discord.reaction import Reaction
 from discord.state import Status
@@ -24,6 +23,7 @@ class Bot(discord.Client):
     def __init__(self) -> None:
         super().__init__()
         self.voice = None
+        self.achievement_cache: Dict[str, Dict[str, str]] = {}
 
     def init(self) -> None:
         multiverse.init()
@@ -81,18 +81,18 @@ class Bot(discord.Client):
                 print('{user} started streaming'.format(user=after.name))
                 await after.add_roles(streaming_role)
         # Achievements
-        if before.status == Status.offline and after.status == Status.online:
+        role = await get_role(before.guild, 'Linked Magic Online')
+        if role and before.status == Status.offline and after.status == Status.online:
             data = None
             # Linked to PDM
-            role = await get_role(before.guild, 'Linked Magic Online')
             if role is not None and not role in before.roles:
                 if data is None:
                     data = await fetcher.person_data_async(before.id)
                 if data.get('id', None):
                     await after.add_roles(role)
 
-            key = f'discordbot:achivements:players:{before.id}'
-            if not redis.get_bool(key) and not data:
+            key = f'discordbot:achievements:players:{before.id}'
+            if is_pd_server(before.guild) and not redis.get_bool(key) and not data:
                 data = await fetcher.person_data_async(before.id)
                 redis.store(key, True, ex=14400)
 
@@ -100,9 +100,16 @@ class Bot(discord.Client):
             if is_pd_server(before.guild) and data is not None and data.get('achievements', None) is not None:
                 expected: List[Role] = []
                 remove: List[Role] = []
+                async def achievement_name(key: str) -> str:
+                    name = self.achievement_cache.get(key, None)
+                    if name is None:
+                        self.achievement_cache.update(await fetcher.achievement_cache_async())
+                        name = self.achievement_cache[key]
+                    return f'🏆 {name["title"]}'
+
                 for name, count in data['achievements'].items():
                     if int(count) > 0:
-                        trophy = f'🏆 {name}'
+                        trophy = await achievement_name(name)
                         role = await get_role(before.guild, trophy, create=True)
                         expected.append(role)
                 for role in before.roles:

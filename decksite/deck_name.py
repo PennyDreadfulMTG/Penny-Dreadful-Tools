@@ -97,7 +97,9 @@ def file_name(d: Deck) -> str:
     return safe_name.strip('-')
 
 def replace_space_alternatives(name: str) -> str:
-    return name.replace('_', ' ').replace('.', ' ')
+    name = re.sub(r'(\d)\.(\d)', r'\1TEMPORARYMARKER\2', name)
+    name = name.replace('_', ' ').replace('.', ' ')
+    return name.replace('TEMPORARYMARKER', '.')
 
 def remove_pd(name: str) -> str:
     name = re.sub(r'(^| )[\[\(]?pd ?-? ?[0-9]+[\[\(]?', '', name, flags=re.IGNORECASE).strip()
@@ -197,7 +199,7 @@ def remove_mono_if_not_first_word(name: str) -> str:
     return re.sub('(.+) mono ', '\\1 ', name)
 
 def remove_profanity(name: str) -> str:
-    profanity.load_words(['bitch', 'penis', 'anal'])
+    profanity.load_words(['bitch', 'penis', 'anal', 'crap'])
     profanity.set_censor_characters(' ')
     name = profanity.censor(name).strip()
     name = re.sub(' +', ' ', name) # We just replaced profanity with a space so compress spaces.

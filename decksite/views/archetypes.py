@@ -77,6 +77,10 @@ class Archetypes(View):
                         mu.opponent_archetype = b
                     a.matchups.append(mu)
 
+        # Remove archetypes that have no tournament decks.
+        if tournament_only:
+            self.archetypes = [a for a in self.archetypes if a.num_decks_tournament > 0]
+
         self.show_matchup_grid = False
         for a in self.archetypes:
             if a.show_in_matchups_grid:

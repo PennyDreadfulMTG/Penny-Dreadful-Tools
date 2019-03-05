@@ -18,7 +18,7 @@ SESSION.mount(
     'http://whatsinstandard.com',
     CacheControlAdapter(heuristic=ExpiresAfter(days=14)))
 
-def fetch(url: str, character_encoding: Optional[str] = None, force: bool = False) -> str:
+def fetch(url: str, character_encoding: Optional[str] = None, force: bool = False, retry: bool = False) -> str:
     headers = {}
     if force:
         headers['Cache-Control'] = 'no-cache'
@@ -38,6 +38,8 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
             print('Getting text from response was very slow. Setting an explicit character_encoding may help.')
         return t
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
+        if retry:
+            return fetch(url, character_encoding, force, retry=False)
         raise FetchException(e)
 
 async def fetch_async(url: str) -> str:

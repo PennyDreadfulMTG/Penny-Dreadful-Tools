@@ -216,7 +216,7 @@ def update_cards(rule_id: int, inc: List[Tuple[int, str]], exc: List[Tuple[int, 
     db().commit('update_rule_cards')
 
 def classified_decks_query() -> str:
-    return 'reviewed=FALSE OR deck.archetype_id NOT IN ({ex})'.format(ex=','.join(str(aid) for aid in excluded_archetype_ids()))
+    return '(NOT reviewed OR deck.archetype_id NOT IN ({ex}))'.format(ex=','.join(str(aid) for aid in excluded_archetype_ids()))
 
 def apply_rules_query(deck_query: str = '1 = 1', rule_query: str = '1 = 1') -> str:
     return f"""
@@ -231,7 +231,7 @@ def apply_rules_query(deck_query: str = '1 = 1', rule_query: str = '1 = 1') -> s
             ON
                 rule.id = rule_card.rule_id
             WHERE
-                rule_card.include = TRUE AND {rule_query}
+                rule_card.include AND {rule_query}
             GROUP BY
                 rule.id
         ),
@@ -255,7 +255,7 @@ def apply_rules_query(deck_query: str = '1 = 1', rule_query: str = '1 = 1') -> s
                     FROM
                         rule_card
                     WHERE
-                        include = TRUE
+                        include
                 ) AS inclusions
             ON
                 deck_card.card = inclusions.card
@@ -268,7 +268,7 @@ def apply_rules_query(deck_query: str = '1 = 1', rule_query: str = '1 = 1') -> s
             ON
                 rule.id = rule_card_count.id
             WHERE
-                deck_card.sideboard = FALSE AND deck_card.n >= inclusions.n AND {deck_query} AND {rule_query}
+                NOT deck_card.sideboard AND deck_card.n >= inclusions.n AND {deck_query} AND {rule_query}
             GROUP BY
                 deck.id, rule.id
             HAVING
@@ -296,7 +296,7 @@ def apply_rules_query(deck_query: str = '1 = 1', rule_query: str = '1 = 1') -> s
                 FROM
                     rule_card
                 WHERE
-                    include = FALSE
+                    NOT include
             ) AS exclusions
         ON
             candidates.rule_id = exclusions.rule_id

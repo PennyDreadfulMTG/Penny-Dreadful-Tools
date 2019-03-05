@@ -15,9 +15,8 @@ def parse_line(line: str) -> Tuple[int, str]:
     match = re.match(r'(\d+)\s+(.*)', line)
     if match is None:
         raise InvalidDataException('No number specified with `{line}`'.format(line=line))
-    else:
-        n, name = match.groups()
-        return (int(n), name)
+    n, name = match.groups()
+    return (int(n), name)
 
 def parse_chunk(chunk: str, section: SectionType) -> None:
     for line in chunk.splitlines():

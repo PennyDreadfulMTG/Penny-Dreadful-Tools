@@ -778,7 +778,7 @@ Want to contribute? Send a Pull Request."""
         else:
             async with channel.typing():
                 person = await fetcher.person_data_async(args)
-            if person is None or person['discord_id'] is None:
+            if person is None or person.get('discord_id') is None:
                 await send(channel, f"I don't know who `{args}` is :frowning:")
                 return
             await send(channel, f"`{person['name']}` is <@{person['discord_id']}>")

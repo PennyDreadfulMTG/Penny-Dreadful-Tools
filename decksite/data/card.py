@@ -28,10 +28,16 @@ def load_cards(season_id: Optional[int] = None, person_id: Optional[int] = None,
             SUM(losses) AS losses,
             SUM(draws) AS draws,
             SUM(wins - losses) AS record,
+            SUM(num_decks_tournament) AS num_decks_tournament,
+            SUM(wins_tournament) AS wins_tournament,
+            SUM(losses_tournament) AS losses_tournament,
+            SUM(draws_tournament) AS draws_tournament,
+            SUM(wins_tournament - losses_tournament) AS record_tournament,
             SUM(perfect_runs) AS perfect_runs,
             SUM(tournament_wins) AS tournament_wins,
             SUM(tournament_top8s) AS tournament_top8s,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
+            IFNULL(ROUND((SUM(wins_tournament) / NULLIF(SUM(wins_tournament + losses_tournament), 0)) * 100, 1), '') AS win_percent_tournament
         FROM
             {table} AS cs
         WHERE
@@ -61,6 +67,8 @@ def load_card(name: str, season_id: Optional[int] = None) -> Card:
     c = guarantee.exactly_one(oracle.load_cards([name]))
     c.decks = deck.load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name)), season_id=season_id)
     c.wins, c.losses, c.draws, c.tournament_wins, c.tournament_top8s, c.perfect_runs = 0, 0, 0, 0, 0, 0
+    c.wins_tournament, c.losses_tournament, c.draws_tournament = 0, 0, 0
+    c.decks_tournament = []
     for d in c.decks:
         c.wins += d.get('wins', 0)
         c.losses += d.get('losses', 0)
@@ -68,11 +76,21 @@ def load_card(name: str, season_id: Optional[int] = None) -> Card:
         c.tournament_wins += 1 if d.get('finish') == 1 else 0
         c.tournament_top8s += 1 if (d.get('finish') or sys.maxsize) <= 8 else 0
         c.perfect_runs += 1 if d.get('source_name') == 'League' and d.get('wins', 0) >= 5 and d.get('losses', 0) == 0 else 0
+        if d.competition_type_name == 'Gatherling':
+            c.decks_tournament.append(d)
+            c.wins_tournament += (d.get('wins') or 0)
+            c.losses_tournament += (d.get('losses') or 0)
+            c.draws_tournament += (d.get('draws') or 0)
     if c.wins or c.losses:
         c.win_percent = round((c.wins / (c.wins + c.losses)) * 100, 1)
     else:
         c.win_percent = ''
+    if c.wins_tournament or c.losses_tournament:
+        c.win_percent_tournament = round((c.wins_tournament / (c.wins_tournament + c.losses_tournament)) * 100, 1)
+    else:
+        c.win_percent_tournament = ''
     c.num_decks = len(c.decks)
+    c.num_decks_tournament = len(c.decks_tournament)
     c.played_competitively = c.wins or c.losses or c.draws
     return c
 
@@ -112,6 +130,9 @@ def preaggregate_card() -> None:
             perfect_runs INT NOT NULL,
             tournament_wins INT NOT NULL,
             tournament_top8s INT NOT NULL,
+            wins_tournament INT NOT NULL,
+            losses_tournament INT NOT NULL,
+            draws_tournament INT NOT NULL,
             PRIMARY KEY (season_id, name),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
@@ -124,17 +145,24 @@ def preaggregate_card() -> None:
             IFNULL(SUM(draws), 0) AS draws,
             SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
             SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
-            SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s
+            SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
+            SUM(CASE WHEN (d.id IS NOT NULL) AND (ct.name = 'Gatherling') THEN 1 ELSE 0 END) AS num_decks_tournament,
+            IFNULL(SUM(CASE WHEN ct.name = 'Gatherling' THEN wins ELSE 0 END), 0) AS wins_tournament,
+            IFNULL(SUM(CASE WHEN ct.name = 'Gatherling' THEN losses ELSE 0 END), 0) AS losses_tournament,
+            IFNULL(SUM(CASE WHEN ct.name = 'Gatherling' THEN draws ELSE 0 END), 0) AS draws_tournament
         FROM
             deck AS d
         INNER JOIN
             deck_card AS dc ON d.id = dc.deck_id
+        {competition_join}
         {season_join}
         {nwdl_join}
         GROUP BY
             card,
             season.id
-    """.format(season_join=query.season_join(), nwdl_join=deck.nwdl_join()))
+    """.format(competition_join=query.competition_join(),
+               season_join=query.season_join(),
+               nwdl_join=deck.nwdl_join()))
     db().execute('DROP TABLE IF EXISTS _old_card_stats')
     db().execute('CREATE TABLE IF NOT EXISTS _card_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
     db().execute('RENAME TABLE _card_stats TO _old_card_stats, _new_card_stats TO _card_stats')
@@ -153,6 +181,9 @@ def preaggregate_card_person() -> None:
             perfect_runs INT NOT NULL,
             tournament_wins INT NOT NULL,
             tournament_top8s INT NOT NULL,
+            wins_tournament INT NOT NULL,
+            losses_tournament INT NOT NULL,
+            draws_tournament INT NOT NULL,
             PRIMARY KEY (season_id, person_id, name),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
             INDEX idx_person_id_name (person_id, name)
@@ -167,18 +198,25 @@ def preaggregate_card_person() -> None:
             IFNULL(SUM(draws), 0) AS draws,
             SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
             SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
-            SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s
+            SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
+            SUM(CASE WHEN (d.id IS NOT NULL) AND (ct.name = 'Gatherling') THEN 1 ELSE 0 END) AS num_decks_tournament,
+            IFNULL(SUM(CASE WHEN ct.name = 'Gatherling' THEN wins ELSE 0 END), 0) AS wins_tournament,
+            IFNULL(SUM(CASE WHEN ct.name = 'Gatherling' THEN losses ELSE 0 END), 0) AS losses_tournament,
+            IFNULL(SUM(CASE WHEN ct.name = 'Gatherling' THEN draws ELSE 0 END), 0) AS draws_tournament
         FROM
             deck AS d
         INNER JOIN
             deck_card AS dc ON d.id = dc.deck_id
+        {competition_join}
         {season_join}
         {nwdl_join}
         GROUP BY
             card,
             d.person_id,
             season.id
-    """.format(season_join=query.season_join(), nwdl_join=deck.nwdl_join()))
+    """.format(competition_join=query.competition_join(),
+               season_join=query.season_join(),
+               nwdl_join=deck.nwdl_join()))
     db().execute('DROP TABLE IF EXISTS _old_card_person_stats')
     db().execute('CREATE TABLE IF NOT EXISTS _card_person_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
     db().execute('RENAME TABLE _card_person_stats TO _old_card_person_stats, _new_card_person_stats TO _card_person_stats')

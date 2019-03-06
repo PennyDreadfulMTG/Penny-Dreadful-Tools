@@ -30,8 +30,9 @@ def create_issue(content: str,
         title = content
     body += 'Reported on {location} by {author}\n\n'.format(location=location, author=author)
     if request:
-        body += textwrap.dedent("""```
-            --------------------------------------------------------------------------------
+        body += '--------------------------------------------------------------------------------\n'
+        body += '<details><summary><strong>Request Data</strong></summary>\n```'
+        body += textwrap.dedent("""
             Request Method: {method}
             Path: {full_path}
             Cookies: {cookies}
@@ -42,7 +43,7 @@ def create_issue(content: str,
             Request Data: {safe_data}
         """.format(method=request.method, full_path=request.full_path, cookies=request.cookies, endpoint=request.endpoint, view_args=request.view_args, id=session.get('id', 'logged_out'), referrer=request.referrer, safe_data=str(safe_data(request.form))))
         body += '\n'.join(['{k}: {v}'.format(k=k, v=v) for k, v in request.headers])
-        body += '\n```\n'
+        body += '\n```\n</details>\n'
         ua = request.headers.get('User-Agent', '')
         if ua == 'pennydreadfulmagic.com cache renewer':
             labels.append(ua)
@@ -51,13 +52,16 @@ def create_issue(content: str,
 
     if exception:
         body += '--------------------------------------------------------------------------------\n'
+        body += '<details><summary>\n'
         body += exception.__class__.__name__ + '\n'
         body += str(exception) + '\n'
+        body += '</summary>\n'
         stack = traceback.extract_stack()[:-3] + traceback.extract_tb(exception.__traceback__)
         pretty = traceback.format_list(stack)
-        body += 'Stack Trace:\n```Python traceback\n' + ''.join(pretty) + '\n```\n'
+        body += 'Stack Trace:\n```Python traceback\n' + ''.join(pretty) + '\n```\n</details>\n'
         issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
         body += f'Exception_hash: {issue_hash}\n'
+
     elif repo_name == 'PennyDreadfulMTG/perf-reports':
         stack = traceback.extract_stack()[:-3]
         pretty = traceback.format_list(stack)

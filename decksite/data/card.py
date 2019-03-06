@@ -67,6 +67,8 @@ def load_card(name: str, season_id: Optional[int] = None) -> Card:
     c = guarantee.exactly_one(oracle.load_cards([name]))
     c.decks = deck.load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name)), season_id=season_id)
     c.wins, c.losses, c.draws, c.tournament_wins, c.tournament_top8s, c.perfect_runs = 0, 0, 0, 0, 0, 0
+    c.wins_tournament, c.losses_tournament, c.draws_tournament = 0, 0, 0
+    c.decks_tournament = []
     for d in c.decks:
         c.wins += d.get('wins', 0)
         c.losses += d.get('losses', 0)
@@ -74,10 +76,6 @@ def load_card(name: str, season_id: Optional[int] = None) -> Card:
         c.tournament_wins += 1 if d.get('finish') == 1 else 0
         c.tournament_top8s += 1 if (d.get('finish') or sys.maxsize) <= 8 else 0
         c.perfect_runs += 1 if d.get('source_name') == 'League' and d.get('wins', 0) >= 5 and d.get('losses', 0) == 0 else 0
-        c.decks_tournament = c.get('decks_tournament', [])
-        c.wins_tournament = c.get('wins_tournament', 0)
-        c.losses_tournament = c.get('losses_tournament', 0)
-        c.draws_tournament = c.get('draws_tournament', 0)
         if d.competition_type_name == 'Gatherling':
             c.decks_tournament.append(d)
             c.wins_tournament += (d.get('wins') or 0)

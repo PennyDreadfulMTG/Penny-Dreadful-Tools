@@ -86,12 +86,18 @@ def build_changelog(change: File) -> List[str]:
         if len(p) > 1:
             if p[1] is None:
                 req = Requirement.parse(p[2])
-                oldversions[req.name] = req.specs[0][1]
+                if req.specs:
+                    oldversions[req.name] = req.specs[0][1]
+                else:
+                    lines.append(f'> Warning: {p[0]} is pinned to a specific version.')
             elif p[0] is None:
                 req = Requirement.parse(p[2])
-                newversions[req.name] = req.specs[0][1]
+                if req.specs:
+                    newversions[req.name] = req.specs[0][1]
+                else:
+                    lines.append(f'> Warning: {p[0]} is pinned to a specific version.')
         else:
-            lines.append(f'> Warning: {p[0]} is pinned to a specific version.')
+            lines.append(f'> Warning: Unknown error.')
     for package in newversions:
         old = packaging.version.parse(oldversions.get(package))
         new = packaging.version.parse(newversions.get(package))

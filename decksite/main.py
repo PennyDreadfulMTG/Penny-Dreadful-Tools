@@ -128,6 +128,25 @@ def cards() -> str:
     view = Cards(cs.load_cards(season_id=get_season_id()))
     return view.page()
 
+@APP.route('/cards/tournament/')
+@SEASONS.route('/cards/tournament/')
+@cached()
+def cards_tournament() -> str:
+    view = Cards(cs.load_cards(season_id=get_season_id()), tournament_only=True)
+    return view.page()
+
+
+@APP.route('/cards/tournament/<path:name>/')
+@SEASONS.route('/cards/tournament/<path:name>/')
+@cached()
+def card_tournament(name: str) -> str:
+    try:
+        c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)), season_id=get_season_id())
+        view = Card(c, tournament_only=True)
+        return view.page()
+    except InvalidDataException as e:
+        raise DoesNotExistException(e)
+
 @APP.route('/cards/<path:name>/')
 @SEASONS.route('/cards/<path:name>/')
 @cached()

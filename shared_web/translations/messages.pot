@@ -525,7 +525,7 @@ msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1
 msgid ""
-"They are hosted on [Gatherling](https://gatherling.com/) along with a lot"
+"They are hosted on [Gatherling](https://gatherling.one/) along with a lot"
 " of other player-run Magic Online events."
 msgstr ""
 
@@ -716,7 +716,7 @@ msgstr ""
 #: decksite/templates/tournaments.mustache:1
 msgid ""
 "There are {num_tournaments} weekly Penny Dreadful tournaments hosted on "
-"[Gatherling.com](https://gatherling.com). They are all free to enter and "
+"[Gatherling.com](https://gatherling.one). They are all free to enter and "
 "some offer prizes from [Cardhoarder](https://www.cardhoarder.com/). Be "
 "sure to also check out the [league](/league/) for a play-when-you-like "
 "competition."
@@ -740,7 +740,7 @@ msgstr ""
 
 #: decksite/templates/tournaments.mustache:1
 msgid ""
-"[Sign Up](https://gatherling.com/player.php) under \"Preregister for "
+"[Sign Up](https://gatherling.one/player.php) under \"Preregister for "
 "Events\""
 msgstr ""
 

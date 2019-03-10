@@ -21,7 +21,7 @@ TOP_8 = 't8'
 ALIASES: Dict[str, str] = {}
 
 def scrape(limit: int = 50) -> None:
-    soup = BeautifulSoup(fetcher.internal.fetch('https://gatherling.com/eventreport.php?format=Penny+Dreadful&series=&season=&mode=Filter+Events', character_encoding='utf-8'), 'html.parser')
+    soup = BeautifulSoup(fetcher.internal.fetch('https://gatherling.one/eventreport.php?format=Penny+Dreadful&series=&season=&mode=Filter+Events', character_encoding='utf-8'), 'html.parser')
     tournaments = [(gatherling_url(link['href']), link.string) for link in soup.find_all('a') if link['href'].find('eventreport.php?') >= 0]
     n = 0
     for (url, name) in tournaments:
@@ -187,7 +187,7 @@ def tournament_deck(cells: ResultSet, competition_id: int, date: datetime.dateti
     return deck.add_deck(d)
 
 def tournament_matches(d: deck.Deck) -> List[bs4.element.Tag]:
-    url = 'https://gatherling.com/deck.php?mode=view&id={identifier}'.format(identifier=d.identifier)
+    url = 'https://gatherling.one/deck.php?mode=view&id={identifier}'.format(identifier=d.identifier)
     s = fetcher.internal.fetch(url, character_encoding='utf-8', retry=True)
     soup = BeautifulSoup(s, 'html.parser')
     anchor = soup.find(string='MATCHUPS')
@@ -261,7 +261,7 @@ def add_ids(matches: MatchListType, ds: List[deck.Deck]) -> None:
 def gatherling_url(href: str) -> str:
     if href.startswith('http'):
         return href
-    return 'https://gatherling.com/{href}'.format(href=href)
+    return 'https://gatherling.one/{href}'.format(href=href)
 
 def aliased(username: str) -> str:
     if not ALIASES:

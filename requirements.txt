@@ -2,7 +2,7 @@ anytree==2.4.3 # rq.filter: <2.5.0
 bs4==0.0.1
 cachecontrol[filecache]==0.12.5
 changelogs==0.14.0
-coverage==4.5.2
+coverage==4.5.3
 git+https://github.com/Rapptz/discord.py@00a659c6526b2445162b52eaf970adbd22c6d35d#egg=discord.py[voice]
 feedparser==5.2.1
 flask==1.0.2
@@ -14,7 +14,7 @@ ftfy==5.5.1
 google-api-python-client==1.7.8
 github_webhook==1.0.2
 inflect==2.1.0
-isort==4.3.14
+isort==4.3.15
 matplotlib==3.0.3
 markdown==3.0.1
 munch==2.3.2

@@ -199,7 +199,7 @@ def remove_mono_if_not_first_word(name: str) -> str:
     return re.sub('(.+) mono ', '\\1 ', name)
 
 def remove_profanity(name: str) -> str:
-    profanity.load_words(['bitch', 'penis', 'anal', 'crap'])
+    profanity.load_words(['bitch', 'penis', 'anal', 'crap', 'cancer'])
     profanity.set_censor_characters(' ')
     name = profanity.censor(name).strip()
     name = re.sub(' +', ' ', name) # We just replaced profanity with a space so compress spaces.

@@ -3,7 +3,7 @@ from typing import Dict, List, Union
 from decksite.data.archetype import Archetype
 from decksite.data.person import Person
 from decksite.view import View
-from magic.models import Card, Deck
+from magic.models import Card
 
 # pylint: disable=no-self-use
 class Matchups(View):

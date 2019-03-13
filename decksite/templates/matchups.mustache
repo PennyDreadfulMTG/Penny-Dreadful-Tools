@@ -1,0 +1,28 @@
+<h1>Matchup Calculator</h1>
+{{#results}}
+    <section>
+        <h2>Results</h2>
+        <p>{{results.wins}}–{{results.losses}}–{{results.draws}}</p>
+    </section>
+{{/results}}
+<section>
+    <h2>Query</h2>
+    <form>
+        <div>
+            <label for="season">Season</label>
+            <select name="season">
+                <option value="">[Select]</option>
+                {{#all_seasons}}
+                    <option value="{{code}}">{{name}}</option>
+                {{/all_seasons}}
+            </select>
+        </div>
+        {{#criteria}}
+            <div>
+                <p>Criteria {{n}}</p>
+                {{> chooser}}
+            </div>
+        {{/criteria}}
+        <button type="submit">Calculate</button>
+    </form>
+</section>

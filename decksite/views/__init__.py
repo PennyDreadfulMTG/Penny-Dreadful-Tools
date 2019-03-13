@@ -24,6 +24,7 @@ from .home import Home
 from .league_form import LeagueForm
 from .league_info import LeagueInfo
 from .link_accounts import LinkAccounts
+from .matchups import Matchups
 from .news import News
 from .people import People
 from .person import Person

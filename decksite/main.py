@@ -26,11 +26,12 @@ from decksite.league import DeckCheckForm, ReportForm, RetireForm, SignUpForm
 from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
                             Archetypes, Bugs, Card, Cards, CommunityGuidelines,
                             Competition, Competitions, Deck, DeckCheck, Decks,
-                            Faqs, Home, LeagueInfo, LinkAccounts, Matchups, News,
-                            People, Person, PersonAchievements, PersonMatches,
-                            Report, Resources, Retire, Rotation, RotationChanges,
-                            Season, Seasons, SignUp, TournamentHosting,
-                            TournamentLeaderboards, Tournaments)
+                            Faqs, Home, LeagueInfo, LinkAccounts, Matchups,
+                            News, People, Person, PersonAchievements,
+                            PersonMatches, Report, Resources, Retire, Rotation,
+                            RotationChanges, Season, Seasons, SignUp,
+                            TournamentHosting, TournamentLeaderboards,
+                            Tournaments)
 from magic import card as mc
 from magic import fetcher, image_fetcher, oracle
 from magic import rotation as rot

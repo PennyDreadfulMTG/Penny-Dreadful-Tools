@@ -4,6 +4,7 @@ from decksite.data import query
 from decksite.database import db
 from shared import guarantee
 
+
 def matchup(hero: Dict[str, str], enemy: Dict[str, str], season_id: int = None) -> Dict[str, Union[str, int]]:
     where = 'TRUE'
     prefix = None

@@ -992,12 +992,13 @@ async def send_image_with_retry(channel: TextChannel, image_file: str, text: str
 def single_card_text_internal(client: Client, requested_card: Card, disable_emoji: bool) -> str:
     mana = emoji.replace_emoji(''.join(requested_card.mana_cost or []), client)
     legal = ' — ' + emoji.info_emoji(requested_card, verbose=True)
+    url = fetcher.decksite_url('cards/{name}'.format(name=fetcher.internal.escape(requested_card.name)))
     if disable_emoji:
         legal = ''
     if requested_card.get('mode', None) == '$':
-        text = '{name} {legal} — {price}'.format(name=requested_card.name, price=fetcher.card_price_string(requested_card), legal=legal)
+        text = '{name} {legal} — {price} — <{url}>'.format(name=requested_card.name, price=fetcher.card_price_string(requested_card), legal=legal, url=url)
     else:
-        text = '{name} {mana} — {type}{legal}'.format(name=requested_card.name, mana=mana, type=requested_card.type_line, legal=legal)
+        text = '{name} {mana} — {type}{legal} — <{url}>'.format(name=requested_card.name, mana=mana, type=requested_card.type_line, legal=legal, url=url)
     if requested_card.bugs:
         for bug in requested_card.bugs:
             text += '\n:beetle:{rank} bug: {bug}'.format(bug=bug['description'], rank=bug['classification'])

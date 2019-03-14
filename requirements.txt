@@ -22,7 +22,7 @@ mysqlclient==1.4.2.post1
 mypy==0.600 # rq.filter: <=0.600
 mypy-extensions==0.4.1
 pillow==5.4.1
-poeditor==1.1.0
+poeditor==1.1.2
 profanity==1.1
 pygithub==1.43.5
 pygtrie==2.3

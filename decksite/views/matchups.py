@@ -11,11 +11,9 @@ class Matchups(View):
     def __init__(self, hero: Dict[str, Union[str, int]], enemy: Dict[str, Union[str, int]], season_id: Optional[int], archetypes: List[Archetype], people: List[Person], cards: List[Card], results: Dict[str, Union[str, int, List[int]]]) -> None:
         super().__init__()
         self.results = results
-        self.results['num_decks'] = len(results['hero_deck_ids']) # type: ignore
-        if results['wins']:
-            self.results['win_percent'] = str(round((results['wins'] / (results['wins'] + results['losses'])) * 100, 1)) # type: ignore
-        else:
-            self.results['win_percent'] = ''
+        if results:
+            self.results['num_decks'] = len(results['hero_deck_ids']) # type: ignore
+            self.results['win_percent'] = str(round((results['wins'] / (results['wins'] + results['losses'])) * 100, 1)) if results.get('wins') else ''# type: ignore
         self.criteria = [
             {'n': 1, 'prefix': 'hero_', 'choices': hero},
             {'n': 2, 'prefix': 'enemy_', 'choices': enemy}

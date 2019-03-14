@@ -2,7 +2,22 @@
 {{#results}}
     <section>
         <h2>Results</h2>
-        <p>{{results.wins}}–{{results.losses}}–{{results.draws}}</p>
+        <table>
+            <thead>
+                <tr>
+                    <th class="n"># Decks</th>
+                    <th class="n">Record</th>
+                    <th class="n">Win %</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="n">{{results.num_decks}}</td>
+                    <td class="n">{{results.wins}}–{{results.losses}}{{#results.draws}}–{{results.draws}}{{/results.draws}}</td>
+                    <td class="n">{{results.win_percent}}</td>
+                </tr>
+            </tbody>
+        </table>
     </section>
 {{/results}}
 <section>
@@ -11,7 +26,6 @@
         <div>
             <label for="season_id">Season</label>
             <select name="season_id">
-                <option value="">[Select]</option>
                 {{#seasons}}
                     <option value="{{num}}" {{#selected}}selected="selected"{{/selected}}>{{name}}</option>
                 {{/seasons}}

@@ -26,9 +26,9 @@ def matchup(hero: Dict[str, str], enemy: Dict[str, str], season_id: int = None) 
     season_join = query.season_join()
     sql = f"""
         SELECT
-            GROUP_CONCAT(d.id) AS hero_decks,
-            GROUP_CONCAT(od.id) AS enemy_decks,
-            GROUP_CONCAT(m.id) AS matches,
+            GROUP_CONCAT(DISTINCT d.id) AS hero_deck_ids,
+            GROUP_CONCAT(DISTINCT od.id) AS enemy_deck_ids,
+            GROUP_CONCAT(DISTINCT m.id) AS matches,
             IFNULL(SUM(CASE WHEN dm.games > odm.games THEN 1 ELSE 0 END), 0) AS wins,
             IFNULL(SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END), 0) AS draws,
             IFNULL(SUM(CASE WHEN odm.games > dm.games THEN 1 ELSE 0 END), 0) AS losses
@@ -46,4 +46,7 @@ def matchup(hero: Dict[str, str], enemy: Dict[str, str], season_id: int = None) 
         WHERE
             {where}
     """
-    return guarantee.exactly_one(db().select(sql, args))
+    results = guarantee.exactly_one(db().select(sql, args))
+    results['hero_deck_ids'] = results['hero_deck_ids'].split(',') if results['hero_deck_ids'] else []
+    results['enemy_deck_ids'] = results['enemy_deck_ids'].split(',') if results['enemy_deck_ids'] else []
+    return results

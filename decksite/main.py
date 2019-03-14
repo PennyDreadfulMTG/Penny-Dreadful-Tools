@@ -34,7 +34,6 @@ from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
                             Tournaments)
 from magic import card as mc
 from magic import fetcher, image_fetcher, oracle
-from magic import rotation as rot
 from shared import perf
 from shared.pd_exception import (DoesNotExistException, InvalidDataException,
                                  TooFewItemsException)

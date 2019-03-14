@@ -382,6 +382,15 @@ div:after, header:after, nav:after, main:after, footer:after, section:after, .to
     max-width: 100%;
 }
 
+.matchup-calculator button {
+    margin-top: 4rem;
+}
+
+.matchup-calculator p {
+    margin-bottom: 0;
+    margin-top: 2rem;
+}
+
 /*
 
 Colors

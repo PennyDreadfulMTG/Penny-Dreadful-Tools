@@ -7,7 +7,7 @@
     <select name="{{prefix}}person_id">
         <option value="">[Select]</option>
         {{#people}}
-            <option value="{{id}}">{{mtgo_username}}</option>
+            <option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{mtgo_username}}</option>
         {{/people}}
     </select>
 </div>
@@ -16,7 +16,7 @@
     <select name="{{prefix}}card">
         <option value="">[Select]</option>
         {{#cards}}
-            <option>{{name}}</option>
+            <option {{#selected}}selected="selected"{{/selected}}>{{name}}</option>
         {{/cards}}
     </select>
 </div>

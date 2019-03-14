@@ -276,11 +276,7 @@ def matchups() -> str:
         else:
             k = k.replace('enemy_', '')
             enemy[k] = v
-    season_id = None
-    try:
-        season_id = rot.season_num(request.args.get('season'))
-    except InvalidDataException:
-        pass
+    season_id = request.args.get('season_id')
     results = mus.matchup(hero, enemy, season_id=season_id) if request.args else {}
     matchup_archetypes = archs.load_archetypes_deckless()
     matchup_archetypes.sort(key=lambda a: a.name)
@@ -288,7 +284,7 @@ def matchups() -> str:
     matchup_people.sort(key=lambda p: p.name)
     matchup_cards = cs.load_cards()
     matchup_cards.sort(key=lambda c: c.name)
-    view = Matchups(matchup_archetypes, matchup_people, matchup_cards, results)
+    view = Matchups(hero, enemy, season_id, matchup_archetypes, matchup_people, matchup_cards, results)
     return view.page()
 
 @APP.route('/about/')

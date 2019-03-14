@@ -22,7 +22,7 @@
 {{/results}}
 <section>
     <h2>Query</h2>
-    <form>
+    <form class="matchup-calculator">
         <div>
             <label for="season_id">Season</label>
             <select name="season_id">
@@ -33,7 +33,7 @@
         </div>
         {{#criteria}}
             <div>
-                <p>Criteria {{n}}</p>
+                <p>{{name}}</p>
                 {{> chooser}}
             </div>
         {{/criteria}}

@@ -40,3 +40,15 @@
         <button type="submit">Calculate</button>
     </form>
 </section>
+{{#show_decks}}
+    <section>
+        <h2>Decks</h2>
+        {{> decktable}}
+    </section>
+{{/show_decks}}
+{{#show_matches}}
+    <section>
+        <h2>Matches</h2>
+        {{> matchestable}}
+    </section>
+{{/show_matches}}

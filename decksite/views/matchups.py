@@ -24,3 +24,7 @@ class Matchups(View):
             c['people'] = [{'mtgo_username': p.mtgo_username, 'id': p.id, 'selected': str(c['choices'].get('person_id')) == str(p.id)} for p in people] # type: ignore
             c['cards'] = [{'name': card.name, 'selected': c['choices'].get('card') == card.name} for card in cards] # type: ignore
         self.seasons = [{'season_id': s['num'] or '', 'name': s['name'], 'selected': str(season_id) == str(s['num'])} for s in self.all_seasons()]
+        self.decks = results['hero_decks']
+        self.show_decks = len(self.decks) > 0
+        self.matches = results['matches']
+        self.show_matches = False

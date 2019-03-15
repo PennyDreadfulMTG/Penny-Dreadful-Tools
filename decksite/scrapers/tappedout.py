@@ -20,7 +20,11 @@ def scrape() -> None:
     for raw_deck in raw_decks:
         try:
             if is_authorised():
-                raw_deck.update(fetch_deck_details(raw_deck)) # type: ignore
+                details = fetch_deck_details(raw_deck)
+                if details is None:
+                    logger.warning(f'Failed to get details for {raw_deck}')
+                else:
+                    raw_deck.update(details) # type: ignore
             raw_deck = set_values(raw_deck)
             deck.add_deck(raw_deck)
         except InvalidDataException as e:

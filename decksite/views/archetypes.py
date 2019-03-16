@@ -33,17 +33,17 @@ class Archetypes(View):
         for r in self.roots:
             self.prepare_archetype(r, self.archetypes)
 
+        # helper function to move the tournament data into the appropriate slots for the view
+        def convert(m: Container) -> Container:
+            if tournament_only:
+                m.win_percent = m.win_percent_tournament
+                m.wins = m.wins_tournament
+                m.losses = m.losses_tournament
+                m.draws = m.draws_tournament
+            return m
+
         for a in self.archetypes:
             a.matchups = []
-
-            # if tournament_only, move the tournament data into the appropriate slots for the view
-            def convert(m: Container) -> Container:
-                if tournament_only:
-                    m.win_percent = m.win_percent_tournament
-                    m.wins = m.wins_tournament
-                    m.losses = m.losses_tournament
-                    m.draws = m.draws_tournament
-                return m
 
             # in one pass, filter out matchups with no data so we can determine which
             #   archetypes to include on the table, and convert matchups appropriately

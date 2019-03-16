@@ -59,7 +59,8 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
             {'name': gettext('Archetypes'), 'url': url_for('archetypes'), 'badge': archetypes_badge},
             {'name': gettext('People'), 'url': url_for('people')},
             {'name': gettext('Cards'), 'url': url_for('cards')},
-            {'name': gettext('Past Seasons'), 'url': url_for('seasons')}
+            {'name': gettext('Past Seasons'), 'url': url_for('seasons')},
+            {'name': gettext('Matchups'), 'url': url_for('matchups')},
         ]},
         {'name': gettext('League'), 'url': url_for('league'), 'submenu': [
             {'name': gettext('League Info'), 'url': url_for('league')},

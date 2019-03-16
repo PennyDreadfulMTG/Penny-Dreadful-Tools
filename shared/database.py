@@ -127,7 +127,7 @@ class Database():
             return self.values(sql, args)[0]
         except IndexError:
             if fail_on_missing:
-                raise DatabaseMissingException('Failed to get a value from `{sql}`'.format(sql=sql))
+                raise DatabaseMissingException('Failed to get a value from `{sql}` with `{args}'.format(sql=sql, args=args))
             return default
 
     def values(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[Any]:

@@ -218,7 +218,18 @@ class View(BaseView):
             self.prepare_card(c)
 
     def prepare_card(self, c: Card) -> None:
-        c.url = '/cards/{id}/'.format(id=c.name)
+        try:
+            tournament_only = self.tournament_only #type: ignore
+            # mypy complains we haven't declared tournament_only, but that's fine since we're
+            # catching the error if it isn't defined by a subclass
+        except AttributeError:
+            tournament_only = False
+
+        if tournament_only:
+            c.url = url_for('.card_tournament', name=c.name)
+        else:
+            c.url = url_for('.card', name=c.name)
+
         c.img_url = url_for('image', c=c.name)
         c.card_img_class = 'two-faces' if c.layout in ['transform', 'meld'] else ''
         c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'

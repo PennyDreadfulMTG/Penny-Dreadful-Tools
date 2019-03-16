@@ -1,0 +1,22 @@
+<div>
+    <label for="{{prefix}}archetype">Archetype</label>
+    {{> archetypedropdown}}
+</div>
+<div>
+    <label for="{{prefix}}person_id">Person</label>
+    <select name="{{prefix}}person_id">
+        <option value="">[Select]</option>
+        {{#people}}
+            <option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{mtgo_username}}</option>
+        {{/people}}
+    </select>
+</div>
+<div>
+    <label for="{{prefix}}card">Card</label>
+    <select name="{{prefix}}card">
+        <option value="">[Select]</option>
+        {{#cards}}
+            <option {{#selected}}selected="selected"{{/selected}}>{{name}}</option>
+        {{/cards}}
+    </select>
+</div>

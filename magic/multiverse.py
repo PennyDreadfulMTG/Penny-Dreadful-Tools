@@ -203,7 +203,7 @@ def insert_card(p: Any, update_index: bool = True) -> Optional[int]:
     for subtype in subtypes(p.get('type_line', '')):
         # INSERT IGNORE INTO because some cards have multiple faces with the same subtype. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT IGNORE INTO card_subtype (card_id, subtype) VALUES (%s, %s)', [card_id, subtype])
-    for f, status in p.get('legalities', []).items():
+    for f, status in p.get('legalities', {}).items():
         if status == 'not_legal':
             continue
         # Strictly speaking we could drop all this capitalizing and use what Scryfall sends us as the canonical name as it's just a holdover from mtgjson.
@@ -212,6 +212,7 @@ def insert_card(p: Any, update_index: bool = True) -> Optional[int]:
         # INSERT IGNORE INTO because some cards have multiple faces with the same legality. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT IGNORE INTO card_legality (card_id, format_id, legality) VALUES (%s, %s, %s)', [card_id, format_id, status.capitalize()])
     if update_index:
+        p.id = card_id
         writer = WhooshWriter()
         writer.update_card(p)
     return card_id

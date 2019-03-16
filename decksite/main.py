@@ -18,6 +18,7 @@ from decksite.data import card as cs
 from decksite.data import competition as comp
 from decksite.data import deck as ds
 from decksite.data import match as ms
+from decksite.data import matchup as mus
 from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.database import db
@@ -25,11 +26,12 @@ from decksite.league import DeckCheckForm, ReportForm, RetireForm, SignUpForm
 from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
                             Archetypes, Bugs, Card, Cards, CommunityGuidelines,
                             Competition, Competitions, Deck, DeckCheck, Decks,
-                            Faqs, Home, LeagueInfo, LinkAccounts, News, People,
-                            Person, PersonAchievements, PersonMatches, Report,
-                            Resources, Retire, Rotation, RotationChanges,
-                            Season, Seasons, SignUp, TournamentHosting,
-                            TournamentLeaderboards, Tournaments)
+                            Faqs, Home, LeagueInfo, LinkAccounts, Matchups,
+                            News, People, Person, PersonAchievements,
+                            PersonMatches, Report, Resources, Retire, Rotation,
+                            RotationChanges, Season, Seasons, SignUp,
+                            TournamentHosting, TournamentLeaderboards,
+                            Tournaments)
 from magic import card as mc
 from magic import fetcher, image_fetcher, oracle
 from shared import perf
@@ -128,6 +130,25 @@ def cards() -> str:
     view = Cards(cs.load_cards(season_id=get_season_id()))
     return view.page()
 
+@APP.route('/cards/tournament/')
+@SEASONS.route('/cards/tournament/')
+@cached()
+def cards_tournament() -> str:
+    view = Cards(cs.load_cards(season_id=get_season_id()), tournament_only=True)
+    return view.page()
+
+
+@APP.route('/cards/tournament/<path:name>/')
+@SEASONS.route('/cards/tournament/<path:name>/')
+@cached()
+def card_tournament(name: str) -> str:
+    try:
+        c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)), season_id=get_season_id())
+        view = Card(c, tournament_only=True)
+        return view.page()
+    except InvalidDataException as e:
+        raise DoesNotExistException(e)
+
 @APP.route('/cards/<path:name>/')
 @SEASONS.route('/cards/<path:name>/')
 @cached()
@@ -179,8 +200,8 @@ def archetype(archetype_id: str) -> str:
     season_id = get_season_id()
     a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id)
     deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id)
-    matchups = archs.load_matchups(a.id, season_id=season_id)
-    view = Archetype(a, deckless_archetypes, matchups, season_id)
+    archetype_matchups = archs.load_matchups(a.id, season_id=season_id)
+    view = Archetype(a, deckless_archetypes, archetype_matchups, season_id)
     return view.page()
 
 @APP.route('/archetypes/<archetype_id>/tournament/')
@@ -190,8 +211,8 @@ def archetype_tournament(archetype_id: str) -> str:
     season_id = get_season_id()
     a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id)
     deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id)
-    matchups = archs.load_matchups(a.id, season_id=season_id)
-    view = Archetype(a, deckless_archetypes, matchups, season_id, tournament_only=True)
+    archetype_matchups = archs.load_matchups(a.id, season_id=season_id)
+    view = Archetype(a, deckless_archetypes, archetype_matchups, season_id, tournament_only=True)
     return view.page()
 
 @APP.route('/tournaments/')
@@ -243,6 +264,27 @@ def add_deck() -> Response:
         view.error = error
         return view.page(), 409
     return redirect(url_for('deck', deck_id=deck_id))
+
+@APP.route('/matchups/')
+def matchups() -> str:
+    hero, enemy = {}, {}
+    for k, v in request.args.items():
+        if k.startswith('hero_'):
+            k = k.replace('hero_', '')
+            hero[k] = v
+        else:
+            k = k.replace('enemy_', '')
+            enemy[k] = v
+    season_id = request.args.get('season_id')
+    results = mus.matchup(hero, enemy, season_id=season_id) if request.args else {}
+    matchup_archetypes = archs.load_archetypes_deckless()
+    matchup_archetypes.sort(key=lambda a: a.name)
+    matchup_people = list(ps.load_people(where='p.mtgo_username IS NOT NULL'))
+    matchup_people.sort(key=lambda p: p.name)
+    matchup_cards = cs.load_cards()
+    matchup_cards.sort(key=lambda c: c.name)
+    view = Matchups(hero, enemy, season_id, matchup_archetypes, matchup_people, matchup_cards, results)
+    return view.page()
 
 @APP.route('/about/')
 @cached()

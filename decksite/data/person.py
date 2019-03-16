@@ -312,6 +312,7 @@ def load_notes(person_id: int = None) -> List[Container]:
     notes = [Container(r) for r in db().select(sql)]
     for n in notes:
         n.created_date = dtutil.ts2dt(n.created_date)
+        n.display_date = dtutil.display_date(n.created_date)
     return notes
 
 def add_note(creator_id: int, subject_id: int, note: str) -> None:

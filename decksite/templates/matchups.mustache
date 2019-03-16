@@ -1,0 +1,54 @@
+<h1>Matchup Calculator</h1>
+{{#results}}
+    <section>
+        <h2>Results</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th class="n"># Decks</th>
+                    <th class="n">Record</th>
+                    <th class="n">Win %</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="n">{{results.num_decks}}</td>
+                    <td class="n">{{results.wins}}–{{results.losses}}{{#results.draws}}–{{results.draws}}{{/results.draws}}</td>
+                    <td class="n">{{results.win_percent}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+{{/results}}
+<section>
+    <h2>Query</h2>
+    <form class="matchup-calculator">
+        <div>
+            <label for="season_id">Season</label>
+            <select name="season_id">
+                {{#seasons}}
+                    <option value="{{season_id}}" {{#selected}}selected="selected"{{/selected}}>{{name}}</option>
+                {{/seasons}}
+            </select>
+        </div>
+        {{#criteria}}
+            <div>
+                <p>{{name}}</p>
+                {{> chooser}}
+            </div>
+        {{/criteria}}
+        <button type="submit">Calculate</button>
+    </form>
+</section>
+{{#show_decks}}
+    <section>
+        <h2>Decks</h2>
+        {{> decktable}}
+    </section>
+{{/show_decks}}
+{{#show_matches}}
+    <section>
+        <h2>Matches</h2>
+        {{> matchestable}}
+    </section>
+{{/show_matches}}

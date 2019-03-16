@@ -105,6 +105,7 @@ nav {
 
 article {
     float: left; /* Wrap as sections do when there's enough screen space. */
+    margin: 0 3.8445rem /* Width of .marginalia + left-padding + right-padding * font-size */ 1rem 0;
     /*
         Aim for an average line length of 45-90 characters, including spaces.
         https://practicaltypography.com/line-length.html
@@ -380,6 +381,15 @@ div:after, header:after, nav:after, main:after, footer:after, section:after, .to
 .sponsor-logo {
     width: 20rem;
     max-width: 100%;
+}
+
+.matchup-calculator button {
+    margin-top: 4rem;
+}
+
+.matchup-calculator p {
+    margin-bottom: 0;
+    margin-top: 2rem;
 }
 
 /*

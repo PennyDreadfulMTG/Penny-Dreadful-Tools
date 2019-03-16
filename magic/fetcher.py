@@ -21,6 +21,10 @@ from shared.pd_exception import (InvalidDataException, NotConfiguredException,
                                  TooFewItemsException)
 
 
+async def achievement_cache_async() -> Dict[str, Dict[str, str]]:
+    data = await internal.fetch_json_async(decksite_url('/api/achievements'))
+    return {a['key']: a for a in data['achievements']}
+
 def all_cards() -> List[CardDescription]:
     try:
         f = open('all-default-cards.json')

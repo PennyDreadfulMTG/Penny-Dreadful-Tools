@@ -515,7 +515,7 @@ def load_conflicted_decks() -> List[Deck]:
     return load_decks(where, order_by='d.decklist_hash')
 
 def load_queue_similarity(decks: List[Deck]) -> None:
-    sql = 'SELECT deck.id, deck_cache.similarity FROM deck JOIN deck_cache ON deck.id = deck_cache.deck_id WHERE deck.reviewed = FALSE'
+    sql = 'SELECT deck.id, deck_cache.similarity FROM deck JOIN deck_cache ON deck.id = deck_cache.deck_id WHERE NOT deck.reviewed'
     sim = {}
     for row in (Container(r) for r in db().select(sql)):
         sim[row.id] = row.similarity

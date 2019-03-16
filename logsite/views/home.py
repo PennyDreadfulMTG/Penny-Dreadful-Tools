@@ -7,7 +7,7 @@ from ..data import match
 
 
 @APP.route('/')
-def home():
+def home() -> str:
     view = Home()
     return view.page()
 

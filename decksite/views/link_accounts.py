@@ -18,7 +18,7 @@ class LinkAccounts(View):
         self.person = person.maybe_load_person_by_discord_id(auth.discord_id())
         self.form = Container()
         for k in request.form.keys():
-            self.form[k] = request.form[k]
+            self.form[k] = request.form[k].strip()
         self.form.errors = Container()
         if self.person and self.person.mtgo_username:
             if self.form.get('to_username', None) is None and self.person.tappedout_username is not None:

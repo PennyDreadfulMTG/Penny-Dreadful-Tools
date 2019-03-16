@@ -320,7 +320,7 @@ PD.initPersonNotes = function() {
             if (data.notes.length > 0) {
                 s = '<article>';
                 for (i = 0; i < data.notes.length; i++) {
-                    s += '<p>' + data.notes[i].note + '</p>'
+                    s += '<p><span class="subtitle">' + data.notes[i].display_date + '</span> ' + data.notes[i].note + '</p>'
                 }
                 s += '</article>';
                 $('.person-notes').html(s);

@@ -88,7 +88,7 @@ def load_matches(where: str = '1 = 1', season_id: Optional[int] = None, should_l
             deck_match AS odm ON dm.match_id = odm.match_id AND odm.deck_id <> d.id
         LEFT JOIN
             deck AS od ON odm.deck_id = od.id
-        INNER JOIN
+        LEFT JOIN
             deck_cache AS odc ON od.id = odc.deck_id
         LEFT JOIN
             person AS o ON od.person_id = o.id

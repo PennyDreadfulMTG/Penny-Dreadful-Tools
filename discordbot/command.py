@@ -361,6 +361,7 @@ class Commands:
                 """
                 Spectating tournament and league matches is allowed and encouraged.
                 Please do not write anything in chat except to call PDBot's `!record` command to find out the current score in games.
+                Note that a current (March 2019) MTGO bug means the program will crash if you don't exit the match during sideboarding.
                 """,
                 {}
             ),
@@ -767,21 +768,21 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def whois(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
         """Who is a person?"""
-        mention = re.match(r'<@(\d+)>', args)
+        mention = re.match(r'<@!?(\d+)>', args)
         if mention:
             async with channel.typing():
                 person = await fetcher.person_data_async(mention.group(1))
             if person is None:
                 await send(channel, f"I don't know who {mention.group(0)} is :frowning:")
                 return
-            await send(channel, f"{mention.group(0)} is `{person['name']}` on MTGO")
+            await send(channel, f"{mention.group(0)} is **{person['name']}** on MTGO")
         else:
             async with channel.typing():
                 person = await fetcher.person_data_async(args)
-            if person is None or person['discord_id'] is None:
-                await send(channel, f"I don't know who `{args}` is :frowning:")
+            if person is None or person.get('discord_id') is None:
+                await send(channel, f"I don't know who **{args}** is :frowning:")
                 return
-            await send(channel, f"`{person['name']}` is <@{person['discord_id']}>")
+            await send(channel, f"**{person['name']}** is <@{person['discord_id']}>")
 
 
 

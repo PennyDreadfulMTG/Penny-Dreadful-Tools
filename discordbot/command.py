@@ -768,7 +768,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def whois(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
         """Who is a person?"""
-        mention = re.match(r'<@(\d+)>', args)
+        mention = re.match(r'<@!?(\d+)>', args)
         if mention:
             async with channel.typing():
                 person = await fetcher.person_data_async(mention.group(1))

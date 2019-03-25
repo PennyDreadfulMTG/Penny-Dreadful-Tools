@@ -42,6 +42,7 @@ class Person(View):
         ]
         self.add_note_url = url_for('post_player_note')
         self.matches_url = url_for('person_matches', person_id=person.id, season_id=season_id)
+        self.is_person_page = True
 
     def __getattr__(self, attr):
         return getattr(self.person, attr)

@@ -361,6 +361,7 @@ class Commands:
                 """
                 Spectating tournament and league matches is allowed and encouraged.
                 Please do not write anything in chat except to call PDBot's `!record` command to find out the current score in games.
+                Note that a current (March 2019) MTGO bug means the program will crash if you don't exit the match during sideboarding.
                 """,
                 {}
             ),
@@ -375,11 +376,11 @@ class Commands:
             'tournament': (
                 """
                 We have {num_tournaments} free-to-enter weekly tournaments that award trade credit prizes from Cardhoarder.
-                They are hosted on gatherling.one along with a lot of other player-run Magic Online events.
+                They are hosted on gatherling.com along with a lot of other player-run Magic Online events.
                 """.format(num_tournaments=num_tournaments),
                 {
                     'More Info': fetcher.decksite_url('/tournaments/'),
-                    'Sign Up': 'https://gatherling.one/',
+                    'Sign Up': 'https://gatherling.com/',
                 }
             ),
             'username': (
@@ -397,7 +398,7 @@ class Commands:
                 For tournaments PDBot is information-only, *both* players must report near the top of Player CP (or follow the link at the top of any Gatherling page).
                 """,
                 {
-                    'Gatherling': 'https://gatherling.one/player.php',
+                    'Gatherling': 'https://gatherling.com/player.php',
                 }
             ),
             'league': (
@@ -744,7 +745,7 @@ Want to contribute? Send a Pull Request."""
             started = ''
         prev_message = 'The last tournament was {name}, {started}{time} ago'.format(name=prev['next_tournament_name'], started=started, time=prev['next_tournament_time'])
         next_time = 'in ' + t['next_tournament_time'] if t['next_tournament_time'] != dtutil.display_time(0, 0) else t['next_tournament_time']
-        await send(channel, 'The next tournament is {name} {next_time}.\nSign up on <http://gatherling.one/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], next_time=next_time, prev_message=prev_message, url=fetcher.decksite_url('/tournaments/')))
+        await send(channel, 'The next tournament is {name} {next_time}.\nSign up on <http://gatherling.com/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], next_time=next_time, prev_message=prev_message, url=fetcher.decksite_url('/tournaments/')))
 
     @cmd_header('Developer')
     async def update(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
@@ -767,21 +768,21 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def whois(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
         """Who is a person?"""
-        mention = re.match(r'<@(\d+)>', args)
+        mention = re.match(r'<@!?(\d+)>', args)
         if mention:
             async with channel.typing():
                 person = await fetcher.person_data_async(mention.group(1))
             if person is None:
                 await send(channel, f"I don't know who {mention.group(0)} is :frowning:")
                 return
-            await send(channel, f"{mention.group(0)} is `{person['name']}` on MTGO")
+            await send(channel, f"{mention.group(0)} is **{person['name']}** on MTGO")
         else:
             async with channel.typing():
                 person = await fetcher.person_data_async(args)
-            if person is None or person['discord_id'] is None:
-                await send(channel, f"I don't know who `{args}` is :frowning:")
+            if person is None or person.get('discord_id') is None:
+                await send(channel, f"I don't know who **{args}** is :frowning:")
                 return
-            await send(channel, f"`{person['name']}` is <@{person['discord_id']}>")
+            await send(channel, f"**{person['name']}** is <@{person['discord_id']}>")
 
 
 

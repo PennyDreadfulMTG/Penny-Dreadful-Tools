@@ -1,6 +1,6 @@
 <section>
     <h2>Legality</h2>
-    <p><span class="deck-name">{{name}}</span> is {{^pd_legal}}<b>not</b> {{/pd_legal}} currently Penny Dreadful legal.</p>
+    <p><span class="deck-name">{{#public}}{{name}}{{/public}}{{^public}}This deck{{/public}}</span> is {{^pd_legal}}<b>not</b> {{/pd_legal}} currently Penny Dreadful legal.</p>
     {{#has_legal_format}}
         <ul>
             {{#legal_formats}}<li>{{.}}</li>{{/legal_formats}}

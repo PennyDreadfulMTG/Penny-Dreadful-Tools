@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 from magic import card, database, fetcher, mana, rotation
 from magic.card_description import CardDescription
@@ -19,9 +19,13 @@ def init() -> None:
         last_updated = fetcher.scryfall_last_updated()
         if last_updated > database.last_updated():
             print('Database update required')
-            update_database(last_updated)
+            try:
+                update_database(datetime.datetime.now(tz=datetime.timezone.utc))
+            finally:
+                # if the above fails for some reason, then things are probably bad
+                # but we can't even start up a shell to fix unless the _cache_card table exists
+                update_cache()
             set_legal_cards()
-            update_cache()
             reindex()
     except fetcher.FetchException:
         print('Unable to connect to Scryfall.')
@@ -98,51 +102,156 @@ def base_query(where: str = '(1 = 1)') -> str:
         face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),
         where=where)
 
+def base_query_lite() -> str:
+    return """
+        SELECT
+            {base_query_props}
+        FROM (
+            SELECT {card_props}, {face_props}, f.name AS face_name
+            FROM
+                card AS c
+            INNER JOIN
+                face AS f ON c.id = f.card_id
+            GROUP BY
+                f.id
+            ORDER BY
+                f.card_id, f.position
+        ) AS u
+        GROUP BY u.id
+    """.format(
+        base_query_props=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.base_query_lite_properties().items()),
+        card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
+        face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),)
+
+
 def update_database(new_date: datetime.datetime) -> None:
+    # pylint: disable=too-many-locals
     db().begin('update_database')
     db().execute('DELETE FROM scryfall_version')
-    db().execute('DROP TABLE IF EXISTS _cache_card') # We can't delete our data if we have FKs referencing it.
+    # In order to rebuild the card table, we must delete (and rebuild) all tables with a FK to it
+    db().execute('DROP TABLE IF EXISTS _cache_card')
     db().execute("""
-        DELETE FROM card_alias;
         DELETE FROM card_color;
         DELETE FROM card_color_identity;
         DELETE FROM card_legality;
-        DELETE FROM card_subtype;
-        DELETE FROM card_supertype;
         DELETE FROM card_bug;
         DELETE FROM face;
         DELETE FROM printing;
         DELETE FROM card;
         DELETE FROM `set`;
     """)
-    raw_sets = fetcher.all_sets()
+
     sets = {}
-    for s in raw_sets:
+    for s in fetcher.all_sets():
         sets[s['code']] = insert_set(s)
+
     every_card_printing = fetcher.all_cards()
+
+    rarity_ids = {x['name']:x['id'] for x in db().select('SELECT id, name FROM rarity;')}
+    scryfall_to_internal_rarity = {'common':('Common', rarity_ids['Common']),
+                                   'uncommon':('Uncommon', rarity_ids['Uncommon']),
+                                   'rare':('Rare', rarity_ids['Rare']),
+                                   'mythic':('Mythic Rare', rarity_ids['Mythic Rare'])}
+
+    # Strategy:
+    # Iterate through all printings of each cards, building several queries to be executed at the end.
+    # If we hit a new card, add it to the queries the several tables tracking cards:
+    #      card, face, card_color, card_color_identity, printing
+    # If it's a printing of a card we already have, just add to the printing query
+    # We need to special case the result (melded) side of meld cards, due to their general weirdness.
+
     cards: Dict[str, int] = {}
-    meld_results = []
-    for p in [p for p in every_card_printing if p['name'] != 'Little Girl']: # Exclude little girl because hw mana is a problem rn.
-        card_id: Optional[int] = None
-        if p['name'] in cards:
-            card_id = cards[p['name']]
-        elif is_meld_result(p):
-            meld_results.append(p)
-        else:
-            card_id = insert_card(p, update_index=False)
-            if card_id:
-                cards[p['name']] = card_id
+
+    meld_result_printings = []
+
+    card_query = 'INSERT INTO `card` (id, layout) VALUES '
+    card_values = []
+
+    card_color_query = 'INSERT IGNORE INTO `card_color` (card_id, color_id) VALUES '
+    card_color_values = []
+
+    card_color_identity_query = 'INSERT IGNORE INTO `card_color_identity` (card_id, color_id) VALUES '
+    card_color_identity_values = []
+
+    face_query = 'INSERT INTO `face` (card_id, position, '
+    face_query += ', '.join(name for name, prop in card.face_properties().items() if prop['scryfall'])
+    face_query += ') VALUES '
+    face_values = []
+
+    printing_query = 'INSERT INTO `printing` (card_id, set_id, '
+    printing_query += 'system_id, rarity, flavor, artist, number, multiverseid, watermark, border, timeshifted, reserved, mci_number, rarity_id'
+    printing_query += ') VALUES'
+    printing_values = []
+
+    colors_raw = db().select('SELECT id, symbol FROM color GROUP BY name ORDER BY id;')
+    colors = {c['symbol'].upper(): c['id'] for c in colors_raw}
+
+    next_card_id = 1
+
+    for p in every_card_printing:
+        # Exclude little girl because {hw} mana is a problem rn.
+        if p['name'] == 'Little Girl':
+            continue
+
+        if is_meld_result(p):
+            meld_result_printings.append(p)
+
+        rarity, rarity_id = scryfall_to_internal_rarity[p['rarity']]
+
         try:
             set_id = sets[p['set']]
         except KeyError:
             raise InvalidDataException(f"We think we should have set {p['set']} but it's not in {sets} (from {p})")
-        if card_id:
-            insert_printing(p, card_id, set_id)
-    for p in meld_results:
+
+        # If we already have the card, all we need is to record the next printing of it
+        if p['name'] in cards:
+            card_id = cards[p['name']]
+            printing_values.append(printing_value(p, card_id, set_id, rarity_id, rarity))
+            continue
+
+        card_id = next_card_id
+        next_card_id += 1
+
+        cards[p['name']] = card_id
+        card_values.append("({i},'{l}')".format(i=card_id, l=p['layout']))
+
+        if p['layout'] in ['augment', 'emblem', 'host', 'leveler', 'meld', 'normal', 'planar', 'saga', 'scheme', 'token', 'vanguard']:
+            face_values.append(single_face_value(p, card_id))
+        elif p['layout'] in ['double_faced_token', 'flip', 'split', 'transform']:
+            face_values += multiple_faces_values(p, card_id)
+
+        for color in p.get('colors', []):
+            color_id = colors[color]
+            card_color_values.append(f'({card_id}, {color_id})')
+
+        for color in p.get('color_identity', []):
+            color_id = colors[color]
+            card_color_identity_values.append(f'({card_id}, {color_id})')
+
+        cards[p['name']] = card_id
+
+        printing_values.append(printing_value(p, card_id, set_id, rarity_id, rarity))
+
+    card_query += ',\n'.join(card_values)
+    card_query += ';'
+    db().execute(card_query)
+
+    card_color_query += ',\n'.join(card_color_values) + ';'
+    db().execute(card_color_query)
+    card_color_identity_query += ',\n'.join(card_color_identity_values) + ';'
+    db().execute(card_color_identity_query)
+
+    for p in meld_result_printings:
         insert_meld_result_faces(p, cards)
-    rs = db().select('SELECT id, name FROM rarity')
-    for row in rs:
-        db().execute('UPDATE printing SET rarity_id = %s WHERE rarity = %s', [row['id'], row['name']])
+
+    printing_query += ',\n'.join(printing_values)
+    printing_query += ';'
+    db().execute(printing_query)
+
+    face_query += ',\n'.join(face_values)
+    face_query += ';'
+    db().execute(face_query)
+
     # Create the current Penny Dreadful format.
     get_format_id('Penny Dreadful', True)
     update_bugged_cards()
@@ -150,27 +259,6 @@ def update_database(new_date: datetime.datetime) -> None:
     db().execute('INSERT INTO scryfall_version (last_updated) VALUES (%s)', [dtutil.dt2ts(new_date)])
     db().commit('update_database')
 
-def update_bugged_cards() -> None:
-    bugs = fetcher.bugged_cards()
-    if bugs is None:
-        return
-    db().begin('update_bugged_cards')
-    db().execute('DELETE FROM card_bug')
-    for bug in bugs:
-        last_confirmed_ts = dtutil.parse_to_ts(bug['last_updated'], '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
-        name = bug['card'].split(' // ')[0] # We need a face name from split cards - we don't have combined card names yet.
-        card_id = db().value('SELECT card_id FROM face WHERE name = %s', [name])
-        if card_id is None:
-            print('UNKNOWN BUGGED CARD: {card}'.format(card=bug['card']))
-            continue
-        db().execute('INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog, bannable) VALUES (%s, %s, %s, %s, %s, %s, %s)', [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog'], bug['bannable']])
-    db().commit('update_bugged_cards')
-
-def update_pd_legality() -> None:
-    for s in rotation.SEASONS:
-        if s == rotation.current_season_code():
-            break
-        set_legal_cards(season=s)
 
 def insert_card(p: Any, update_index: bool = True) -> Optional[int]:
     # Preprocess card partly for sanity but partly just to match what we used to get from mtgjson to make migration easier.
@@ -203,7 +291,7 @@ def insert_card(p: Any, update_index: bool = True) -> Optional[int]:
     for subtype in subtypes(p.get('type_line', '')):
         # INSERT IGNORE INTO because some cards have multiple faces with the same subtype. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT IGNORE INTO card_subtype (card_id, subtype) VALUES (%s, %s)', [card_id, subtype])
-    for f, status in p.get('legalities', []).items():
+    for f, status in p.get('legalities', {}).items():
         if status == 'not_legal':
             continue
         # Strictly speaking we could drop all this capitalizing and use what Scryfall sends us as the canonical name as it's just a holdover from mtgjson.
@@ -212,9 +300,32 @@ def insert_card(p: Any, update_index: bool = True) -> Optional[int]:
         # INSERT IGNORE INTO because some cards have multiple faces with the same legality. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT IGNORE INTO card_legality (card_id, format_id, legality) VALUES (%s, %s, %s)', [card_id, format_id, status.capitalize()])
     if update_index:
+        p.id = card_id
         writer = WhooshWriter()
         writer.update_card(p)
     return card_id
+
+def update_bugged_cards() -> None:
+    bugs = fetcher.bugged_cards()
+    if bugs is None:
+        return
+    db().begin('update_bugged_cards')
+    db().execute('DELETE FROM card_bug')
+    for bug in bugs:
+        last_confirmed_ts = dtutil.parse_to_ts(bug['last_updated'], '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
+        name = bug['card'].split(' // ')[0] # We need a face name from split cards - we don't have combined card names yet.
+        card_id = db().value('SELECT card_id FROM face WHERE name = %s', [name])
+        if card_id is None:
+            print('UNKNOWN BUGGED CARD: {card}'.format(card=bug['card']))
+            continue
+        db().execute('INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog, bannable) VALUES (%s, %s, %s, %s, %s, %s, %s)', [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog'], bug['bannable']])
+    db().commit('update_bugged_cards')
+
+def update_pd_legality() -> None:
+    for s in rotation.SEASONS:
+        if s == rotation.current_season_code():
+            break
+        set_legal_cards(season=s)
 
 def insert_face(p: CardDescription, card_id: int, position: int = 1) -> None:
     if not card_id:
@@ -240,6 +351,46 @@ def insert_card_faces(p: CardDescription, card_id: int) -> None:
         face['cmc'] = mana.cmc(face['mana_cost']) if face['mana_cost'] else first_face_cmc
         insert_face(face, card_id, position)
         position += 1
+
+def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> str:
+    # pylint: disable=too-many-locals
+    if not card_id:
+        raise InvalidDataException(f'Cannot insert a face without a card_id: {p}')
+
+    name = sqlescape(p['name']) # always present in scryfall
+    mana_cost = sqlescape(p['mana_cost']) #always present in scryfall
+    cmc = p['cmc'] # always present
+    def sqlescape_or_null(arg: Any) -> str:
+        if arg:
+            return sqlescape(arg)
+        return 'NULL'
+    power = sqlescape_or_null(p.get('power'))
+    toughness = sqlescape_or_null(p.get('toughness'))
+    loyalty = sqlescape_or_null(p.get('loyalty'))
+    type_line = sqlescape(p['type_line']) # always present
+    oracle_text = sqlescape(p.get('oracle_text', ''))
+    image_name = 'NULL'
+    hand = sqlescape_or_null(p.get('hand_modifier'))
+    life = sqlescape_or_null(p.get('life_modifier'))
+    starter = 'NULL'
+
+    return f'({card_id}, {position}, {name}, {mana_cost}, {cmc}, {power}, {toughness}, {loyalty}, {type_line}, {oracle_text}, {image_name}, {hand}, {life}, {starter})'
+
+def multiple_faces_values(p: CardDescription, card_id: int) -> List[str]:
+    card_faces = p.get('card_faces')
+    if card_faces is None:
+        raise InvalidArgumentException(f'Tried to insert_card_faces on a card without card_faces: {p} ({card_id})')
+    first_face_cmc = mana.cmc(card_faces[0]['mana_cost'])
+    position = 1
+
+    face_values = []
+    for face in card_faces:
+        # Scryfall doesn't provide cmc on card_faces currently. See #5939.
+        face['cmc'] = mana.cmc(face['mana_cost']) if face['mana_cost'] else first_face_cmc
+        face_values.append(single_face_value(face, card_id, position))
+        position += 1
+
+    return face_values
 
 def insert_meld_result_faces(p: CardDescription, cards: Dict[str, int]) -> None:
     all_parts = p.get('all_parts')
@@ -267,22 +418,35 @@ def insert_set(s: Any) -> int:
     db().execute(sql, values)
     return db().last_insert_rowid()
 
-def insert_printing(p: CardDescription, card_id: int, set_id: int) -> None:
+def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int, rarity: str) -> str:
+    # pylint: disable=too-many-locals
     if not card_id or not set_id:
         raise InvalidDataException(f'Cannot insert printing without card_id and set_id: {card_id}, {set_id}, {p}')
-    sql = 'INSERT INTO printing (card_id, set_id, '
-    sql += ', '.join(name for name, prop in card.printing_properties().items() if prop['scryfall'])
-    sql += ') VALUES (%s, %s, '
-    sql += ', '.join('%s' for name, prop in card.printing_properties().items() if prop['scryfall'])
-    sql += ')'
-    cards_values: List[Any] = [card_id, set_id]
-    cards_values += [p.get(database2json(name)) for name, prop in card.printing_properties().items() if prop['scryfall']]
-    db().execute(sql, cards_values)
+    system_id = p.get('id')
+    raw_flavor_text = p.get('flavor_text')
+    if raw_flavor_text:
+        flavor = sqlescape(raw_flavor_text)
+    else:
+        flavor = 'NULL'
+    artist = sqlescape(p.get('artist'))
+    number = p.get('collector_number')
+    multiverseid = 'NULL'
+    raw_watermark = p.get('watermark')
+    if raw_watermark:
+        watermark = sqlescape(raw_watermark)
+    else:
+        watermark = 'NULL'
+    border = 'NULL'
+    timeshifted = 'NULL'
+    reserved = 1 if p.get('reserved') else 0 # replace True and False with 1 and 0
+    mci_number = 'NULL'
+    sql = f"('{card_id}', '{set_id}', '{system_id}', '{rarity}', {flavor}, {artist}, '{number}', '{multiverseid}', {watermark}, {border}, {timeshifted}, {reserved}, {mci_number}, '{rarity_id}')"
+    return sql
 
-def set_legal_cards(season: str = None) -> List[str]:
-    new_list = ['']
+def set_legal_cards(season: str = None) -> Set[str]:
+    new_list: Set[str] = set()
     try:
-        new_list = fetcher.legal_cards(force=True, season=season)
+        new_list = set(fetcher.legal_cards(force=True, season=season))
     except fetcher.FetchException:
         pass
     if season is None:
@@ -290,16 +454,21 @@ def set_legal_cards(season: str = None) -> List[str]:
     else:
         format_id = get_format_id('Penny Dreadful {season}'.format(season=season), True)
 
-    if new_list == [''] or new_list is None:
-        return []
+    if new_list == set() or new_list is None:
+        return set()
     db().begin('set_legal_cards')
     db().execute('DELETE FROM card_legality WHERE format_id = %s', [format_id])
     db().execute('SET group_concat_max_len=100000')
+
+    all_cards = db().select(base_query_lite())
+    legal_cards = []
+    for row in all_cards:
+        if row['name'] in new_list:
+            legal_cards.append("({format_id}, {card_id}, 'Legal')".format(format_id=format_id,
+                                                                          card_id=row['id']))
     sql = """INSERT INTO card_legality (format_id, card_id, legality)
-        SELECT {format_id}, bq.id, 'Legal'
-        FROM ({base_query}) AS bq
-        WHERE name IN ({names})
-    """.format(format_id=format_id, base_query=base_query(), names=', '.join(sqlescape(name) for name in new_list))
+             VALUES {values};""".format(values=',\n'.join(legal_cards))
+
     db().execute(sql)
     db().commit('set_legal_cards')
     # Check we got the right number of legal cards.

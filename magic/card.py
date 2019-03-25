@@ -50,6 +50,15 @@ def base_query_properties() -> TableDescription:
     props.update(base_query_specific_properties())
     return props
 
+def base_query_lite_properties() -> TableDescription:
+    # Important that these are in this order so that 'id' from card overwrites 'id' from face.
+    props = face_properties()
+    props.update(card_properties())
+    props['names'] = copy.deepcopy(BASE)
+    props['names']['type'] = TEXT
+    props['names']['query'] = "GROUP_CONCAT(face_name SEPARATOR '|') AS names"
+    return props
+
 def base_query_specific_properties() -> TableDescription:
     props = {}
     for k in ['legalities', 'names', 'pd_legal', 'bugs']:

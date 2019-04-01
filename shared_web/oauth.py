@@ -14,7 +14,7 @@ OAUTH2_CLIENT_ID = configuration.get('oauth2_client_id')
 OAUTH2_CLIENT_SECRET = configuration.get('oauth2_client_secret')
 
 def setup_authentication() -> Tuple[str, str]:
-    scope = ['identify', 'guilds']
+    scope = ['identify', 'guilds', 'guilds.join']
     discord = make_session(scope=scope)
     return discord.authorization_url(AUTHORIZATION_BASE_URL)
 
@@ -25,6 +25,7 @@ def setup_session(url: str) -> None:
         TOKEN_URL,
         client_secret=OAUTH2_CLIENT_SECRET,
         authorization_response=url)
+    session.permanent = True
     session['oauth2_token'] = token
     discord = make_session(token=session.get('oauth2_token'))
     user = discord.get(API_BASE_URL + '/users/@me').json()
@@ -45,6 +46,12 @@ def setup_session(url: str) -> None:
             wrong_guilds = True
     if wrong_guilds:
         logger.warning('auth.py: unexpected discord response. Guilds: {g}'.format(g=guilds))
+
+def add_to_guild() -> None:
+    discord = make_session(token=session.get('oauth2_token'))
+    if not session['in_guild']:
+        discord.put('/guilds/{guild}/members/{user}'.format(guild=configuration.get('guild_id'), user=session['discord_id']))
+
 
 def make_session(token: str = None,
                  state: str = None,

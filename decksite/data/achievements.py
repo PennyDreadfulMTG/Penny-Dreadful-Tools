@@ -333,7 +333,7 @@ class TournamentPlayer(CountedAchievement):
 
     @property
     def description_safe(self) -> str:
-        return 'Play in an official Penny Dreadful tournament on <a href="https://gatherling.com/">gatherling.com</a>'
+        return 'Play in an official Penny Dreadful tournament on <a href="https://gatherling.one/">gatherling.one</a>'
 
     def leaderboard_heading(self) -> str:
         return gettext('Tournaments')

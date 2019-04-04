@@ -351,7 +351,7 @@ class Commands:
                 Any version of a card on the legal cards list is legal.
                 """,
                 {
-                    'Deck Checker': 'http://pdmtgo.com/deck_check.html',
+                    'Deck Checker': 'https://pennydreadfulmagic.com/deckcheck/',
                     'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt',
                     'Rotation Speculation': fetcher.decksite_url('/rotation/speculation/'),
                     'Rotation Changes': fetcher.decksite_url('/rotation/changes/')
@@ -376,11 +376,11 @@ class Commands:
             'tournament': (
                 """
                 We have {num_tournaments} free-to-enter weekly tournaments that award trade credit prizes from Cardhoarder.
-                They are hosted on gatherling.com along with a lot of other player-run Magic Online events.
+                They are hosted on gatherling.one along with a lot of other player-run Magic Online events.
                 """.format(num_tournaments=num_tournaments),
                 {
                     'More Info': fetcher.decksite_url('/tournaments/'),
-                    'Sign Up': 'https://gatherling.com/',
+                    'Sign Up': 'https://gatherling.one/',
                 }
             ),
             'username': (
@@ -398,7 +398,7 @@ class Commands:
                 For tournaments PDBot is information-only, *both* players must report near the top of Player CP (or follow the link at the top of any Gatherling page).
                 """,
                 {
-                    'Gatherling': 'https://gatherling.com/player.php',
+                    'Gatherling': 'https://gatherling.one/player.php',
                 }
             ),
             'league': (
@@ -745,7 +745,7 @@ Want to contribute? Send a Pull Request."""
             started = ''
         prev_message = 'The last tournament was {name}, {started}{time} ago'.format(name=prev['next_tournament_name'], started=started, time=prev['next_tournament_time'])
         next_time = 'in ' + t['next_tournament_time'] if t['next_tournament_time'] != dtutil.display_time(0, 0) else t['next_tournament_time']
-        await send(channel, 'The next tournament is {name} {next_time}.\nSign up on <http://gatherling.com/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], next_time=next_time, prev_message=prev_message, url=fetcher.decksite_url('/tournaments/')))
+        await send(channel, 'The next tournament is {name} {next_time}.\nSign up on <http://gatherling.one/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], next_time=next_time, prev_message=prev_message, url=fetcher.decksite_url('/tournaments/')))
 
     @cmd_header('Developer')
     async def update(self, channel: TextChannel, **_: Dict[str, Any]) -> None:

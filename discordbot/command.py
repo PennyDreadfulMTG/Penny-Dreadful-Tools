@@ -351,7 +351,7 @@ class Commands:
                 Any version of a card on the legal cards list is legal.
                 """,
                 {
-                    'Deck Checker': 'http://pdmtgo.com/deck_check.html',
+                    'Deck Checker': 'https://pennydreadfulmagic.com/deckcheck/',
                     'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt',
                     'Rotation Speculation': fetcher.decksite_url('/rotation/speculation/'),
                     'Rotation Changes': fetcher.decksite_url('/rotation/changes/')

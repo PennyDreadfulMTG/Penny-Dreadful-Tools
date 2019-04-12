@@ -51,8 +51,8 @@ def parse_downtimes(h: Tag) -> None:
     for n in h.next_elements:
         if isinstance(n, Tag) and n.text:
             with open('downtimes.txt', 'w', encoding='utf-8') as f:
-                txt = txt.replace("Please note that there are no more 'extended' or 'normal' downtimes; in the new world with fewer downtimes, they're all the same length of time.", '')
                 txt = n.text.strip()
+                txt = txt.replace("Please note that there are no more 'extended' or 'normal' downtimes; in the new world with fewer downtimes, they're all the same length of time.", '')
                 print(txt)
                 f.write(txt)
             break

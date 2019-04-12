@@ -56,10 +56,10 @@ class LinkAccounts(View):
         if self.person is None:
             return
         mtggoldfish_name = self.form.get('gf_username', None)
-        if mtggoldfish_name is not None and self.person.mtggoldfish_username != mtggoldfish_name:
+        if mtggoldfish_name and self.person.mtggoldfish_username != mtggoldfish_name:
             mtggoldfish_user = person.maybe_load_person_by_mtggoldfish_name(mtggoldfish_name)
             if mtggoldfish_user is None:
-                self.form.errors.gf_username = 'Could not find a MTGGoldfish user called "{mtggoldfish_name}" in our database'.format(mtggoldfish_name=mtggoldfish_name)
+                self.form.errors.gf_username = 'Could not find an MTGGoldfish user called "{mtggoldfish_name}" in our database'.format(mtggoldfish_name=mtggoldfish_name)
             elif mtggoldfish_user.mtgo_username is not None:
                 self.form.errors.gf_username = '"{mtggoldfish_name}" is already associated to another user.  If you believe this is in error, contact us.'.format(mtggoldfish_name=mtggoldfish_name)
             else:
@@ -70,7 +70,7 @@ class LinkAccounts(View):
         if self.person is None:
             return
         tapped_name = self.form.get('to_username', None)
-        if tapped_name is not None and self.person.tappedout_username != tapped_name:
+        if tapped_name and self.person.tappedout_username != tapped_name:
             tapped_user = person.maybe_load_person_by_tappedout_name(tapped_name)
             if tapped_user is None:
                 self.form.errors.to_username = 'Could not find a TappedOut user called "{tapped_name}" in our database'.format(tapped_name=tapped_name)

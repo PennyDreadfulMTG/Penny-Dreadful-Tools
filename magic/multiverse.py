@@ -20,12 +20,12 @@ def init() -> None:
         if last_updated > database.last_updated():
             print('Database update required')
             try:
-                update_database(datetime.datetime.now(tz=datetime.timezone.utc))
+                update_database(last_updated)
+                set_legal_cards()
             finally:
                 # if the above fails for some reason, then things are probably bad
                 # but we can't even start up a shell to fix unless the _cache_card table exists
                 update_cache()
-            set_legal_cards()
             reindex()
     except fetcher.FetchException:
         print('Unable to connect to Scryfall.')
@@ -188,6 +188,9 @@ def update_database(new_date: datetime.datetime) -> None:
 
     next_card_id = 1
 
+    card_legality_query = 'INSERT IGNORE INTO `card_legality` (card_id, format_id, legality) VALUES '
+    card_legality_values = []
+
     for p in every_card_printing:
         # Exclude little girl because {hw} mana is a problem rn.
         if p['name'] == 'Little Girl':
@@ -228,6 +231,14 @@ def update_database(new_date: datetime.datetime) -> None:
             color_id = colors[color]
             card_color_identity_values.append(f'({card_id}, {color_id})')
 
+        for format_, status in p.get('legalities', {}).items():
+            if status == 'not_legal':
+                continue
+            # Strictly speaking we could drop all this capitalizing and use what Scryfall sends us as the canonical name as it's just a holdover from mtgjson.
+            format_id = get_format_id(format_.capitalize(), True)
+            internal_status = status.capitalize()
+            card_legality_values.append(f"({card_id}, {format_id}, '{internal_status}')")
+
         cards[p['name']] = card_id
 
         printing_values.append(printing_value(p, card_id, set_id, rarity_id, rarity))
@@ -251,6 +262,10 @@ def update_database(new_date: datetime.datetime) -> None:
     face_query += ',\n'.join(face_values)
     face_query += ';'
     db().execute(face_query)
+
+    card_legality_query += ',\n'.join(card_legality_values)
+    card_legality_query += ';'
+    db().execute(card_legality_query)
 
     # Create the current Penny Dreadful format.
     get_format_id('Penny Dreadful', True)
@@ -285,12 +300,6 @@ def insert_card(p: Any, update_index: bool = True) -> Optional[int]:
         color_id = db().value('SELECT id FROM color WHERE symbol = %s', [symbol])
         # INSERT IGNORE INTO because some cards have multiple faces with the same color identity. See DFCs and What // When // Where // Who // Why.
         db().execute('INSERT IGNORE INTO card_color_identity (card_id, color_id) VALUES (%s, %s)', [card_id, color_id])
-    for supertype in supertypes(p.get('type', '')):
-        # INSERT IGNORE INTO because some cards have multiple faces with the same supertype. See DFCs and What // When // Where // Who // Why.
-        db().execute('INSERT IGNORE INTO card_supertype (card_id, supertype) VALUES (%s, %s)', [card_id, supertype])
-    for subtype in subtypes(p.get('type_line', '')):
-        # INSERT IGNORE INTO because some cards have multiple faces with the same subtype. See DFCs and What // When // Where // Who // Why.
-        db().execute('INSERT IGNORE INTO card_subtype (card_id, subtype) VALUES (%s, %s)', [card_id, subtype])
     for f, status in p.get('legalities', {}).items():
         if status == 'not_legal':
             continue
@@ -369,10 +378,10 @@ def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> st
     loyalty = sqlescape_or_null(p.get('loyalty'))
     type_line = sqlescape(p['type_line']) # always present
     oracle_text = sqlescape(p.get('oracle_text', ''))
-    image_name = 'NULL'
+    image_name = 'NULL' # deprecated
     hand = sqlescape_or_null(p.get('hand_modifier'))
     life = sqlescape_or_null(p.get('life_modifier'))
-    starter = 'NULL'
+    starter = 'NULL' # deprecated
 
     return f'({card_id}, {position}, {name}, {mana_cost}, {cmc}, {power}, {toughness}, {loyalty}, {type_line}, {oracle_text}, {image_name}, {hand}, {life}, {starter})'
 

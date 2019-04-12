@@ -18,7 +18,7 @@ CardDescription = TypedDict('CardDescription', {
     'id': str,
     'imageName': str,
     'layout': str,
-    'legalities': List[Dict[str, Any]],
+    'legalities': Dict[str, str],
     'life_modifier': int,
     'loyalty': int,
     'mana_cost': str,

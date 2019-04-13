@@ -1,3 +1,5 @@
+from typing import List
+
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
@@ -6,10 +8,12 @@ from shared import configuration, fetcher_internal
 from . import fetcher
 
 
-def main() -> None:
+def main(changes: List[str]) -> None:
     (link, new) = fetcher.find_announcements()
     if new:
         scrape(link)
+        changes.append('* New Magic Online Announcements')
+
 
 def scrape(url: str) -> None:
     soup = BeautifulSoup(fetcher_internal.fetch(url), 'html.parser')

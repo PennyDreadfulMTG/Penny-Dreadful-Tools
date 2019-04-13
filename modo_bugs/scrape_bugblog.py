@@ -10,10 +10,11 @@ from . import fetcher, repo, strings
 from .strings import BBT_REGEX, strip_squarebrackets
 
 
-def main() -> None:
+def main(changes: List[str]) -> None:
     (link, new) = fetcher.find_bug_blog()
     if new:
         scrape_bb(link)
+        changes.append('* New Bug Blog')
 
 
 def scrape_bb(url: str) -> None:
@@ -223,6 +224,3 @@ def find_issue_by_name(name: str) -> Issue:
         if issue.title == name:
             return issue
     return None
-
-if __name__ == '__main__':
-    main()

@@ -58,7 +58,7 @@ def create_issue(content: str,
         body += '</summary>\n'
         stack = traceback.extract_stack()[:-3] + traceback.extract_tb(exception.__traceback__)
         pretty = traceback.format_list(stack)
-        body += 'Stack Trace:\n```\nPython traceback\n' + ''.join(pretty) + '\n```\n</details>\n'
+        body += 'Stack Trace:\n\n```\nPython traceback\n' + ''.join(pretty) + '\n```\n\n</details>\n'
         issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
         body += f'Exception_hash: {issue_hash}\n'
 

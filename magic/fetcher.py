@@ -93,7 +93,7 @@ def decksite_url(path: str = '/') -> str:
     return url
 
 def downtimes() -> str:
-    return internal.fetch("https://pennydreadfulmtg.github.io/modo-bugs/downtimes.txt")
+    return internal.fetch('https://pennydreadfulmtg.github.io/modo-bugs/downtimes.txt')
 
 def legal_cards(force: bool = False, season: str = None) -> List[str]:
     if season is None:

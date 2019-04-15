@@ -288,14 +288,26 @@ PD.initPersonalization = function() {
             }
             if (data.deck) {
                 text += " <span class=\"division\"></span> " + data.deck.wins + "–" + data.deck.losses + " with <a href=\"" + PD.htmlEscape(data.deck.url) + "\">" + PD.htmlEscape(data.deck.name) + "</a> <span class=\"division\"></span> <a href=\"/retire/\">Retire</a>";
-                if (data.league_ends_soon) {
-                    text += "<span class=\"division\"></span> <a href=\"/league/current/\">Current league</a> ends in ";
-                    if (data.days_until_league_end){
-                        text += data.days_until_league_end +" days, " + data.hours_until_league_end + " hours, " + data.minutes_until_league_end + " mins";
-                    } else if (data.hours_until_league_end) {
-                        text += data.hours_until_league_end + " hours, " + data.minutes_until_league_end + " mins";
+                if (data.league_end) {
+                    text += "<span class=\"division\"></span> <a href=\"/league/current/\">Current league</a> ends in "; 
+                    day_text = data.league_end.days + " day"
+                    if (data.league_end.days != 1){
+                        day_text += "s"
+                    }
+                    hour_text = data.league_end.hours + " hour"
+                    if (data.league_end.hours != 1){
+                        hour_text += "s"
+                    }
+                    min_text = data.league_end.mins + " min"
+                    if (data.league_end.mins != 1){
+                        min_text += "s"
+                    }
+                    if (data.league_end.days){
+                        text += day_text + ", " + hour_text + ", " + min_text
+                    } else if (data.league_end.hours) {
+                        text += hour_text + ", " + min_text
                     } else {
-                        text += data.minutes_until_league_end + " mins";
+                        text += min_text
                     }
                 }
             } else if (data.mtgo_username != null) {

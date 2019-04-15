@@ -216,13 +216,8 @@ def person_status() -> Response:
             time_until_league_end -= datetime.timedelta(days=days)
             hours = math.floor(time_until_league_end / datetime.timedelta(hours=1))
             time_until_league_end -= datetime.timedelta(hours=hours)
-            minutes = math.floor(time_until_league_end / datetime.timedelta(minutes=1))
-            r['days_until_league_end'] = days
-            r['hours_until_league_end'] = hours
-            r['minutes_until_league_end'] = minutes
-            r['league_ends_soon'] = True
-        else:
-            r['league_ends_soon'] = False
+            mins = math.floor(time_until_league_end / datetime.timedelta(minutes=1))
+            r['league_end'] = {'days': days, 'hours': hours, 'mins': mins}
     return return_json(r)
 
 def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:

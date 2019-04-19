@@ -1,5 +1,4 @@
 import datetime
-import math
 from typing import List, Optional
 
 from flask import Response, request, session, url_for
@@ -212,12 +211,7 @@ def person_status() -> Response:
     if active_league:
         time_until_league_end = active_league.end_date - datetime.datetime.now(tz=datetime.timezone.utc)
         if time_until_league_end <= datetime.timedelta(days=2):
-            days = time_until_league_end.days
-            time_until_league_end -= datetime.timedelta(days=days)
-            hours = math.floor(time_until_league_end / datetime.timedelta(hours=1))
-            time_until_league_end -= datetime.timedelta(hours=hours)
-            mins = math.floor(time_until_league_end / datetime.timedelta(minutes=1))
-            r['league_end'] = {'days': days, 'hours': hours, 'mins': mins}
+            r['league_end'] = dtutil.display_time(time_until_league_end/datetime.timedelta(seconds=1), granularity=2)
     return return_json(r)
 
 def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:

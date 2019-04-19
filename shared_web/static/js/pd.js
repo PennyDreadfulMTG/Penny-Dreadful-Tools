@@ -289,26 +289,7 @@ PD.initPersonalization = function() {
             if (data.deck) {
                 text += " <span class=\"division\"></span> " + data.deck.wins + "–" + data.deck.losses + " with <a href=\"" + PD.htmlEscape(data.deck.url) + "\">" + PD.htmlEscape(data.deck.name) + "</a> <span class=\"division\"></span> <a href=\"/retire/\">Retire</a>";
                 if (data.league_end) {
-                    text += "<span class=\"division\"></span> <a href=\"/league/current/\">Current league</a> ends in "; 
-                    day_text = data.league_end.days + " day"
-                    if (data.league_end.days != 1){
-                        day_text += "s"
-                    }
-                    hour_text = data.league_end.hours + " hour"
-                    if (data.league_end.hours != 1){
-                        hour_text += "s"
-                    }
-                    min_text = data.league_end.mins + " min"
-                    if (data.league_end.mins != 1){
-                        min_text += "s"
-                    }
-                    if (data.league_end.days){
-                        text += day_text + ", " + hour_text + ", " + min_text
-                    } else if (data.league_end.hours) {
-                        text += hour_text + ", " + min_text
-                    } else {
-                        text += min_text
-                    }
+                    text += "<span class=\"division\"></span> <a href=\"/league/current/\">Current league</a> ends in " + data.league_end;
                 }
             } else if (data.mtgo_username != null) {
                 text += " <span class=\"division\"></span> You do not have an active league run — <a href=\"/signup/\">Sign Up</a>";

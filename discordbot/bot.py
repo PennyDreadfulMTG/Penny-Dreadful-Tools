@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import re
 import sys
 from typing import Any, Dict, List, Optional
@@ -14,7 +15,9 @@ from github.GithubException import GithubException
 
 from discordbot import command
 from magic import fetcher, multiverse, oracle, tournaments
-from shared import configuration, dtutil, redis, repo
+from shared import configuration, dtutil
+from shared import fetcher_internal as internal
+from shared import redis, repo
 from shared.container import Container
 from shared.pd_exception import InvalidDataException, TooFewItemsException
 
@@ -218,7 +221,7 @@ class Bot(discord.Client):
                     # One hour.  Sleep until half-hour warning.
                     timer = diff - 1800
                 else:
-                    # Wait until four hours before tournament.
+                    # Sleep for one hour plus enough to have a whole number of hours left.
                     timer = 3600 + diff % 3600
                     if diff > 3600 * 6:
                         # The timer can afford to get off-balance by doing other background work.
@@ -233,10 +236,65 @@ class Bot(discord.Client):
         except Exception: # pylint: disable=broad-except
             await self.on_error('background_task_tournaments')
 
+    async def background_task_league_end(self) -> None:
+        try:
+            await self.wait_until_ready()
+            tournament_channel_id = configuration.get_int('tournament_reminders_channel_id')
+            if not tournament_channel_id:
+                print('tournament channel is not configured')
+                return
+            channel = self.get_channel(tournament_channel_id)
+            while self.is_ready:
+                try:
+                    league = await internal.fetch_json_async(fetcher.decksite_url('/api/league'))
+                except internal.FetchException as e:
+                    print("Couldn't reach decksite or decode league json with error message(s) {0}".format(
+                        '; '.join(str(x) for x in e.args)
+                        ))
+                    print('Sleeping for 5 minutes and trying again.')
+                    await asyncio.sleep(300)
+                    continue
+
+                if not league:
+                    await asyncio.sleep(300)
+                    continue
+
+                diff = round((datetime.datetime.fromtimestamp(league['end_date'], tz=datetime.timezone.utc)
+                              - datetime.datetime.now(tz=datetime.timezone.utc))
+                             / datetime.timedelta(seconds=1))
+
+                embed = discord.Embed(title=league['name'], description='League ending soon - any active runs will be cut short.')
+                if diff <= 60 * 60 * 24:
+                    embed.add_field(name='Ending in:', value=dtutil.display_time(diff, 2))
+                    embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))
+                    # See #2809.
+                    # pylint: disable=no-value-for-parameter,unexpected-keyword-arg
+                    await channel.send(embed=embed)
+                if diff <= 5 * 60:
+                    # Five minutes, final warning.
+                    timer = 301
+                elif diff <= 1 * 60 * 60:
+                    # 1 hour. Sleep until five minute warning.
+                    timer = diff - 300
+                elif diff <= 24 * 60 * 60:
+                    # 1 day.  Sleep until one hour warning.
+                    timer = diff - 1800
+                else:
+                    # Sleep for 1 day, plus enough to leave us with a whole number of days
+                    timer = 24 * 60 * 60 + diff % 24 * 60 * 60
+
+                if timer < 300:
+                    timer = 300
+                print('diff={0}, timer={1}'.format(diff, timer))
+                await asyncio.sleep(timer)
+            print('naturally stopping tournament reminders')
+        except Exception: # pylint: disable=broad-except
+            await self.on_error('background_task_tournaments')
 
 def init() -> None:
     client = Bot()
     asyncio.ensure_future(client.background_task_tournaments(), loop=client.loop)
+    asyncio.ensure_future(client.background_task_league_end(), loop=client.loop)
     asyncio.ensure_future(client.background_task_spoiler_season(), loop=client.loop)
     client.init()
 

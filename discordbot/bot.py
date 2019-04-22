@@ -281,15 +281,15 @@ class Bot(discord.Client):
                     timer = diff - 1800
                 else:
                     # Sleep for 1 day, plus enough to leave us with a whole number of days
-                    timer = 24 * 60 * 60 + diff % 24 * 60 * 60
+                    timer = 24 * 60 * 60 + diff % (24 * 60 * 60)
 
                 if timer < 300:
                     timer = 300
                 print('diff={0}, timer={1}'.format(diff, timer))
                 await asyncio.sleep(timer)
-            print('naturally stopping tournament reminders')
+            print('naturally stopping league reminders')
         except Exception: # pylint: disable=broad-except
-            await self.on_error('background_task_tournaments')
+            await self.on_error('background_task_league_end')
 
 def init() -> None:
     client = Bot()

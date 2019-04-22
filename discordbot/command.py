@@ -231,6 +231,10 @@ class Commands:
 
         configuration.write(f'{configuring}.{key}', value)
 
+    @cmd_header('Commands')
+    async def downtimes(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
+        await send(channel, fetcher.downtimes())
+
     @cmd_header('Developer')
     async def echo(self, client: Client, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
         """Repeat after me…"""

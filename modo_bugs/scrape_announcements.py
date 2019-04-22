@@ -1,3 +1,5 @@
+from typing import List
+
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
@@ -6,10 +8,12 @@ from shared import configuration, fetcher_internal
 from . import fetcher
 
 
-def main() -> None:
+def main(changes: List[str]) -> None:
     (link, new) = fetcher.find_announcements()
     if new:
         scrape(link)
+        changes.append('* New Magic Online Announcements')
+
 
 def scrape(url: str) -> None:
     soup = BeautifulSoup(fetcher_internal.fetch(url), 'html.parser')
@@ -51,8 +55,8 @@ def parse_downtimes(h: Tag) -> None:
     for n in h.next_elements:
         if isinstance(n, Tag) and n.text:
             with open('downtimes.txt', 'w', encoding='utf-8') as f:
-                txt = txt.replace("Please note that there are no more 'extended' or 'normal' downtimes; in the new world with fewer downtimes, they're all the same length of time.", '')
                 txt = n.text.strip()
+                txt = txt.replace("Please note that there are no more 'extended' or 'normal' downtimes; in the new world with fewer downtimes, they're all the same length of time.", '')
                 print(txt)
                 f.write(txt)
             break

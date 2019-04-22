@@ -12,7 +12,6 @@ def home() -> str:
     return view.page()
 
 
-# pylint: disable=no-self-use
 class Home(View):
     def __init__(self) -> None:
         pd = db.get_or_insert_format('PennyDreadful')

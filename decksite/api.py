@@ -1,3 +1,4 @@
+import datetime
 from typing import List, Optional
 
 from flask import Response, request, session, url_for
@@ -206,6 +207,11 @@ def person_status() -> Response:
             r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}
     if r['admin'] or r['demimod']:
         r['archetypes_to_tag'] = len(deck.load_decks('NOT d.reviewed'))
+    active_league = league.active_league()
+    if active_league:
+        time_until_league_end = active_league.end_date - datetime.datetime.now(tz=datetime.timezone.utc)
+        if time_until_league_end <= datetime.timedelta(days=2):
+            r['league_end'] = dtutil.display_time(time_until_league_end/datetime.timedelta(seconds=1), granularity=2)
     return return_json(r)
 
 def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:

@@ -513,7 +513,7 @@ def banner(seasonnum: str) -> Response:
         cardnames = ['Rampaging Ferocidon', 'Frantic Search', 'Whip of Erebos', "Gaea's Revenge", 'Doomed Traveler', 'Muraganda Petroglyphs', 'Pyroclasm']
         background = 'Temple of Mystery'
     elif seasonnum == '12':
-        cardnames = ['Aether Hub', 'Seige Rhino', 'Greater Good', "Mind's Desire", "God-Pharoh's Gift", 'Kiln Fiend', 'Akroma, Angel of Wrath', 'Reanimate']
+        cardnames = ['Aether Hub', 'Siege Rhino', 'Greater Good', "Mind's Desire", "God-Pharaoh's Gift", 'Kiln Fiend', 'Akroma, Angel of Wrath', 'Reanimate']
         background = 'Rofellos, Llanowar Emissary'
 
     path = image_fetcher.generate_banner(cardnames, background)

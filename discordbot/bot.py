@@ -174,7 +174,7 @@ class Bot(discord.Client):
                     oracle.valid_name(c['name'])
                     await asyncio.sleep(1)
                 except InvalidDataException:
-                    oracle.insert_scryfall_card(c, True)
+                    multiverse.insert_card(c, True)
                     print('Imported {0} from Scryfall'.format(c['name']))
                     await asyncio.sleep(5)
                 except TooFewItemsException:

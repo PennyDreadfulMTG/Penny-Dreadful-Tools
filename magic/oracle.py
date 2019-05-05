@@ -3,7 +3,6 @@ from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 from magic import card, fetcher, mana, multiverse, rotation
 from magic.database import db
 from magic.models import Card
-from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import (InvalidArgumentException,
                                  InvalidDataException, TooFewItemsException)
@@ -99,41 +98,8 @@ def scryfall_import(name: str) -> bool:
         valid_name(sfcard['name'])
         return False
     except InvalidDataException:
-        insert_scryfall_card(sfcard)
+        multiverse.insert_card(sfcard)
         return True
-
-def insert_scryfall_card(sfcard: Dict, rebuild_cache: bool = True) -> None:
-    imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
-    c = Container({
-        'layout': sfcard['layout'],
-        'cmc': int(float(sfcard['cmc'])),
-        'imageName': imagename,
-        'legalities': {},
-        'printings': [sfcard['set']],
-        'rarity': sfcard['rarity'],
-        'names': []
-    })
-    faces = sfcard.get('card_faces', [sfcard])
-    names = [face['name'] for face in faces]
-    for face in faces:
-        tl = face['type_line'].split('—')
-        types = tl[0]
-        subtypes = tl[1] if len(tl) > 1 else []
-
-        c.update({
-            'name': face['name'],
-            'type_line': face['type_line'],
-            'types': types, # This technically includes supertypes.
-            'subtypes': subtypes,
-            'oracle_text': face.get('oracle_text', ''),
-            'manaCost': face.get('mana_cost', None)
-        })
-        c.names = names
-        multiverse.insert_card(c)
-    if rebuild_cache:
-        multiverse.update_cache()
-        CARDS_BY_NAME[sfcard['name']] = load_card(sfcard['name'])
-
 
 def pd_rotation_changes(season_id: int) -> Tuple[Sequence[Card], Sequence[Card]]:
     # It doesn't really make sense to do this for 'all' so just show current season in that case.

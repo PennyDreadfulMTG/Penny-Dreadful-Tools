@@ -6,8 +6,6 @@ HEADER = """
 # Penny-Dreadful-Discord-Bot
 Displays info about quoted cards in a discord channel
 
-[![Bot Issues](https://badge.waffle.io/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot.svg?label=bot&title=Issues)](http://waffle.io/PennyDreadfulMTG/Penny-Dreadful-Tools)
-
 """
 
 USAGE = """

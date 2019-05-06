@@ -101,7 +101,7 @@ def edit_rules() -> str:
 @auth.demimod_required
 def post_rules() -> str:
     if request.form.get('archetype_id') is not None:
-        rs.add_rule(request.form.get('archetype_id'))
+        rs.add_rule(int(request.form.get('archetype_id')))
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/rules: {f}'.format(f=request.form))
     return edit_rules()

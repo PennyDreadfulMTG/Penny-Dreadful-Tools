@@ -1,12 +1,13 @@
 import logging
 import os
 import urllib.parse
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, session, url_for)
 from requests.exceptions import RequestException
 from werkzeug.exceptions import InternalServerError
+from werkzeug import wrappers
 
 from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite import league as lg
@@ -241,7 +242,7 @@ def add_form() -> str:
     return view.page()
 
 @APP.route('/add/', methods=['POST'])
-def add_deck() -> Response:
+def add_deck() -> Union[wrappers.Response, Tuple[str, int]]:
     url = request.form['url']
     error = None
     if 'tappedout' in url:
@@ -463,11 +464,11 @@ def cmc_chart(deck_id: int) -> Response:
     return send_file(chart.cmc(int(deck_id)))
 
 @APP.route('/discord/')
-def discord() -> Response:
+def discord() -> wrappers.Response:
     return redirect('https://discord.gg/RxhTEEP')
 
 @APP.route('/image/<path:c>/')
-def image(c: str = '') -> Response:
+def image(c: str = '') -> wrappers.Response:
     names = c.split('|')
     try:
         requested_cards = oracle.load_cards(names)

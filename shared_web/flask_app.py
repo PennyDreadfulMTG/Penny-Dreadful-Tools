@@ -7,7 +7,7 @@ from flask import (Flask, Request, Response, redirect, request,
                    send_from_directory, session, url_for)
 from flask_babel import Babel
 from github.GithubException import GithubException
-from werkzeug import exceptions
+from werkzeug import exceptions, wrappers
 
 from shared import configuration, repo
 from shared.pd_exception import DoesNotExistException
@@ -56,7 +56,7 @@ class PDFlask(Flask):
         view = NotFound(e)
         return view.page(), 404
 
-    def internal_server_error(self, e: Exception) -> Tuple[str, int]:
+    def internal_server_error(self, e: Exception) -> Union[Tuple[str, int], Response]:
         log_exception(request, e)
         path = request.path
         try:
@@ -72,14 +72,14 @@ class PDFlask(Flask):
         view = Unauthorized(error)
         return view.page()
 
-    def logout(self) -> Response:
+    def logout(self) -> wrappers.Response:
         oauth.logout()
         target = request.args.get('target', 'home')
         if bool(urllib.parse.urlparse(target).netloc):
             return redirect(target)
         return redirect(url_for(target))
 
-    def authenticate(self) -> Response:
+    def authenticate(self) -> wrappers.Response:
         target = request.args.get('target')
         authorization_url, state = oauth.setup_authentication()
         session['oauth2_state'] = state

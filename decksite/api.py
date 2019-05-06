@@ -144,8 +144,8 @@ def card_api(card: str) -> Response:
 @APP.route('/api/archetype/reassign', methods=['POST'])
 @auth.demimod_required
 def post_reassign() -> str:
-    deck_id = request.form.get('deck_id')
-    archetype_id = request.form.get('archetype_id')
+    deck_id = int(request.form.get('deck_id'))
+    archetype_id = int(request.form.get('archetype_id'))
     archs.assign(deck_id, archetype_id)
     redis.clear(f'decksite:deck:{deck_id}')
     return return_json({'success':True, 'deck_id':deck_id})

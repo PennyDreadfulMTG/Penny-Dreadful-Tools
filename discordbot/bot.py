@@ -191,6 +191,9 @@ class Bot(discord.Client):
                 print('tournament channel is not configured')
                 return
             channel = self.get_channel(tournament_channel_id)
+            if channel is None:
+                print(f'ERROR: could not find tournament_channel_id {tournament_channel_id}')
+                return
             while self.is_ready:
                 info = tournaments.next_tournament_info()
                 diff = info['next_tournament_time_precise']

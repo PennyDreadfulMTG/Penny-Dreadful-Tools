@@ -74,6 +74,7 @@ DEFAULTS = {
     'slow_fetch': 10.0,
     'slow_page': 10.0,
     'slow_query': 5.0,
+    'slow_bot_start': 30,
     'spellfix': './spellfix',
     'test_vcr_record_mode': 'new_episodes', # https://vcrpy.readthedocs.io/en/latest/usage.html#record-modes
     'to_password': '',

@@ -39,7 +39,7 @@ class Bot(discord.Client):
         print('Logged in as {username} ({id})'.format(username=self.user.name, id=self.user.id))
         print('Connected to {0}'.format(', '.join([guild.name for guild in self.guilds])))
         print('--------')
-        perf.check(self.start_time, 'bot_start', '', 'discordbot')
+        perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
 
     async def on_message(self, message: Message) -> None:
         # We do not want the bot to reply to itself.

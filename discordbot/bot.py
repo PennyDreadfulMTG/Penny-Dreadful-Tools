@@ -17,13 +17,14 @@ from discordbot import command
 from magic import fetcher, multiverse, oracle, tournaments
 from shared import configuration, dtutil
 from shared import fetcher_internal as internal
-from shared import redis, repo
+from shared import perf, redis, repo
 from shared.container import Container
 from shared.pd_exception import InvalidDataException, TooFewItemsException
 
 
 class Bot(discord.Client):
     def __init__(self) -> None:
+        self.launch_time = perf.start()
         super().__init__()
         self.voice = None
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
@@ -38,6 +39,7 @@ class Bot(discord.Client):
         print('Logged in as {username} ({id})'.format(username=self.user.name, id=self.user.id))
         print('Connected to {0}'.format(', '.join([guild.name for guild in self.guilds])))
         print('--------')
+        perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
 
     async def on_message(self, message: Message) -> None:
         # We do not want the bot to reply to itself.

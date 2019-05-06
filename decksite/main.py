@@ -6,8 +6,8 @@ from typing import Optional, Tuple, Union
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, session, url_for)
 from requests.exceptions import RequestException
-from werkzeug.exceptions import InternalServerError
 from werkzeug import wrappers
+from werkzeug.exceptions import InternalServerError
 
 from decksite import APP, SEASONS, auth, deck_name, get_season_id
 from decksite import league as lg
@@ -468,7 +468,7 @@ def discord() -> wrappers.Response:
     return redirect('https://discord.gg/RxhTEEP')
 
 @APP.route('/image/<path:c>/')
-def image(c: str = '') -> wrappers.Response:
+def image(c: str = '') -> Union[Tuple[str, int], wrappers.Response]:
     names = c.split('|')
     try:
         requested_cards = oracle.load_cards(names)

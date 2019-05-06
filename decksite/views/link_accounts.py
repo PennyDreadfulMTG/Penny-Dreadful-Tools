@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any, cast, List
 
 from flask import request
 from flask_babel import gettext

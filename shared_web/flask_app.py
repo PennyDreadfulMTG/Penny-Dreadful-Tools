@@ -91,7 +91,7 @@ class PDFlask(Flask):
         response.headers['X-Robots-Tag'] = 'noindex'
         return response
 
-    def authenticate_callback(self) -> Response:
+    def authenticate_callback(self) -> wrappers.Response:
         if request.values.get('error'):
             return redirect(url_for('unauthorized', error=request.values['error']))
         oauth.setup_session(request.url)

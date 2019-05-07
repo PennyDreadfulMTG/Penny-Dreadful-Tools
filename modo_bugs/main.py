@@ -16,7 +16,7 @@ def run() -> None:
     subprocess.run(['git', 'pull'])
     args = sys.argv[2:]
     if not args:
-        args.extend(['scrape', 'update', 'verify'])
+        args.extend(['scrape', 'update', 'verify', 'commit'])
     print('modo_bugs invoked with modes: ' + repr(args))
 
     changes: List[str] = []
@@ -32,3 +32,9 @@ def run() -> None:
         update.main()
     if 'verify' in args:
         verification.main()
+    if 'commit' in args:
+        subprocess.run(['git', 'add', '.'])
+        subprocess.run(['git', 'commit', '-m', 'Updated'])
+        user = configuration.get('github_user')
+        pword = configuration.get('github_password')
+        subprocess.run(['git', 'push', f'https://{user}:{pword}@github.com/PennyDreadfulMTG/modo-bugs.git'])

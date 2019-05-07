@@ -21,4 +21,5 @@ def main() -> None:
     project = repo.get_verification_project()
     current = [c for c in project.get_columns() if c.name == version]
     if not current:
-        print(f'We need a column for {version}')
+        print(f'Creating column for {version}')
+        project.create_column(version)

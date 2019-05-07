@@ -4,6 +4,8 @@ import re
 import shutil
 from typing import List, Optional
 
+from shared import fetcher_internal
+
 from .data import game, match, tournament
 
 REGEX_GAME_HEADER = r'== Game \d \((?P<id>\d+)\) =='
@@ -22,6 +24,11 @@ def load_from_file() -> None:
                 import_log(lines, match_id)
             shutil.move(fname, 'import/processed/{0}.txt'.format(match_id))
             return
+
+def import_from_pdbot(match_id: int) -> None:
+    url = f'https://pdbot.pennydreadfulmagic.com/logs/{match_id}'
+    lines = fetcher_internal.fetch(url).split('\n')
+    import_log(lines, match_id)
 
 def import_log(lines: List[str], match_id: int) -> match.Match:
     """Processes a log"""

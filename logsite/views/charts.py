@@ -1,5 +1,6 @@
-from flask import Response, redirect, url_for
+from flask import redirect, url_for
 from flask_babel import gettext
+from werkzeug.wrappers import Response
 
 from logsite.view import View
 from shared import dtutil

@@ -24,15 +24,13 @@ from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.database import db
 from decksite.league import DeckCheckForm, ReportForm, RetireForm, SignUpForm
-from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
-                            Archetypes, Bugs, Card, Cards, CommunityGuidelines,
-                            Competition, Competitions, Deck, DeckCheck, Decks,
-                            Faqs, Home, LeagueInfo, LinkAccounts, Matchups,
-                            News, People, Person, PersonAchievements,
-                            PersonMatches, Report, Resources, Retire, Rotation,
-                            RotationChanges, Season, Seasons, SignUp,
-                            TournamentHosting, TournamentLeaderboards,
-                            Tournaments)
+from decksite.views import (
+    About, AboutPdm, Achievements, AddForm, Archetype, Archetypes, Bugs, Card,
+    Cards, CommunityGuidelines, Competition, Competitions, Deck, DeckCheck,
+    Decks, Faqs, Home, LeagueInfo, LinkAccounts, Matchups, News, People,
+    Person, PersonAchievements, PersonMatches, Report, Resources, Retire,
+    Rotation, RotationChanges, Season, Seasons, SignUp, TournamentHosting,
+    TournamentLeaderboards, Tournaments)
 from magic import card as mc
 from magic import fetcher, image_fetcher, oracle
 from shared import perf

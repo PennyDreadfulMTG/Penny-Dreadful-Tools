@@ -66,7 +66,7 @@ def cached_impl(cacheable: bool = False,
 
             client_etag = request.headers.get('If-None-Match')
 
-            response = CACHE.get(cache_key)
+            response = CACHE.get(cache_key)  # type: ignore
             # respect the hard-refresh
             if response is not None and request.headers.get('Cache-Control', '') != 'no-cache':
                 headers['X-Cache'] = 'HIT from Server'

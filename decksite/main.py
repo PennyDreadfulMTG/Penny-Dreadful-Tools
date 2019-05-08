@@ -121,7 +121,7 @@ def person_achievements(person_id: str) -> str:
     return view.page()
 
 @APP.route('/person/achievements/')
-def achievements_redirect() -> Response:
+def achievements_redirect() -> wrappers.Response:
     return redirect(url_for('achievements'))
 
 @APP.route('/cards/')

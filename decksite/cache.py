@@ -11,7 +11,7 @@ from decksite import get_season_id
 from magic import rotation
 from shared_web import localization
 
-CACHE = SimpleCache()
+CACHE = SimpleCache() # type: ignore
 
 def cached() -> Callable:
     return cached_impl(cacheable=True, must_revalidate=True, client_only=False, client_timeout=1 * 60 * 60, server_timeout=5 * 60)
@@ -66,7 +66,7 @@ def cached_impl(cacheable: bool = False,
 
             client_etag = request.headers.get('If-None-Match')
 
-            response = CACHE.get(cache_key) # type: ignore
+            response = CACHE.get(cache_key)  # type: ignore
             # respect the hard-refresh
             if response is not None and request.headers.get('Cache-Control', '') != 'no-cache':
                 headers['X-Cache'] = 'HIT from Server'

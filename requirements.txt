@@ -16,7 +16,7 @@ github_webhook==1.0.2
 inflect==2.1.0
 isort==4.3.20
 matplotlib==3.1.0
-markdown==3.1
+markdown==3.1.1
 munch==2.3.2
 mysqlclient==1.4.2.post1
 mypy==0.600 # rq.filter: <=0.600

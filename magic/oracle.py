@@ -35,17 +35,25 @@ def load_cards(names: Iterable[str] = None, where: Optional[str] = None) -> List
     else:
         setnames = set()
     if setnames:
-        names_clause = 'c.name IN ({names})'.format(names=', '.join(sqlescape(name) for name in setnames))
+        names_clause = 'name IN ({names})'.format(names=', '.join(sqlescape(name) for name in setnames))
     else:
         names_clause = '(1 = 1)'
     if where is None:
         where = '(1 = 1)'
     sql = multiverse.cached_base_query('({where} AND {names})'.format(where=where, names=names_clause))
-    rs = db().select(sql)
-    if setnames and len(setnames) != len(rs):
-        missing = setnames.symmetric_difference([r['name'] for r in rs])
-        raise TooFewItemsException('Expected `{namelen}` and got `{rslen}` with `{names}`.  missing=`{missing}`'.format(namelen=len(setnames), rslen=len(rs), names=setnames, missing=missing))
-    return [Card(r) for r in rs]
+    rows = db().select(sql)
+    if setnames and len(setnames) != len(rows):
+        missing = setnames.symmetric_difference([row['name'] for row in rows])
+        raise TooFewItemsException('Expected `{namelen}` and got `{rowslen}` with `{names}`.  missing=`{missing}`'.format(namelen=len(setnames), rowslen=len(rows), names=setnames, missing=missing))
+    ret = []
+    for row in rows:
+        c = Card(row)
+        if c.colors:
+            c.colors = c.colors.split(',')
+        else:
+            c.colors = []
+        ret.append(c)
+    return ret
 
 def cards_by_name() -> Dict[str, Card]:
     return CARDS_BY_NAME

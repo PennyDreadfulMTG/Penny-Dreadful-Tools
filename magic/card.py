@@ -48,6 +48,9 @@ def base_query_properties() -> TableDescription:
     props = face_properties()
     props.update(card_properties())
     props.update(base_query_specific_properties())
+    props['colors'] = copy.deepcopy(BASE)
+    props['colors']['type'] = TEXT
+    props['colors']['query'] = 'colors'
     return props
 
 def base_query_lite_properties() -> TableDescription:

@@ -367,6 +367,23 @@ PD.htmlEscape = function (s) {
     return $("<div>").text(s).html();
 };
 
+PD.constrainColors = function (colors) {
+    allColors = ["White", "Blue", "Black", "Red", "Green"];
+
+    // show all cards with any of the colors we want
+    // this will include too much IE ["Blue"] would show blue red cards
+    colors.forEach( function(color){
+        $('.color-' + color).show();
+    });
+                    
+    // fix it by hiding all cards with a color outside of the given one
+    allColors.forEach( function(color) {
+        if (!colors.includes(color)){
+            $('.color-' + color).hide();
+        }
+    });
+};
+
 $(document).ready(function () {
     PD.init();
 });

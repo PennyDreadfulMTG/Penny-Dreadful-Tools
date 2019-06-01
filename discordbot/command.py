@@ -365,7 +365,6 @@ class Commands:
                 """
                 Spectating tournament and league matches is allowed and encouraged.
                 Please do not write anything in chat except to call PDBot's `!record` command to find out the current score in games.
-                Note that a current (March 2019) MTGO bug means the program will crash if you don't exit the match during sideboarding.
                 """,
                 {}
             ),

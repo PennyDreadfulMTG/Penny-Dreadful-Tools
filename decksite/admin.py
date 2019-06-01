@@ -46,7 +46,7 @@ def edit_aliases() -> str:
 @APP.route('/admin/aliases/', methods=['POST'])
 @auth.admin_required
 def post_aliases() -> str:
-    if request.form.get('person_id') is not None and request.form.get('alias') is not None and len(request.form.get('alias')) > 0:
+    if request.form.get('person_id') is not None and request.form.get('alias') is not None and len(request.form.get('alias', '')) > 0:
         ps.add_alias(request.form.get('person_id'), request.form.get('alias'))
     return edit_aliases()
 

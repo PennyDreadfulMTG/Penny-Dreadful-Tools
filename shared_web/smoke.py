@@ -13,9 +13,9 @@ class SmokeTester:
         self.response_test('/doesnotexist', 404)
 
     def data_test(self, path: str, expected: str) -> None:
-        result = self.test_client.get(path)
+        result = self.test_client.get(path) # type: ignore
         assert expected in result.data.decode('utf-8')
 
     def response_test(self, path: str, expected_code: int) -> None:
-        result = self.test_client.get(path)
+        result = self.test_client.get(path) # type: ignore
         assert result.status_code == expected_code

@@ -17,7 +17,7 @@ TEST_VCR = vcr.VCR(
 def test_tappedout() -> None:
     prev = APP.config['SERVER_NAME']
     APP.config['SERVER_NAME'] = configuration.server_name()
-    with APP.app_context():
+    with APP.app_context(): # type: ignore
         tappedout.scrape()
     APP.config['SERVER_NAME'] = prev
 
@@ -26,7 +26,7 @@ def test_tappedout() -> None:
 @pytest.mark.external
 @TEST_VCR.use_cassette
 def test_gatherling() -> None:
-    with APP.app_context():
+    with APP.app_context(): # type: ignore
         gatherling.scrape(5)
 
 @pytest.mark.functional
@@ -34,7 +34,7 @@ def test_gatherling() -> None:
 @pytest.mark.external
 @TEST_VCR.use_cassette
 def test_manual_tappedout() -> None:
-    with APP.app_context():
+    with APP.app_context(): # type: ignore
         tappedout.scrape_url('https://tappedout.net/mtg-decks/60-island/') # Best deck
 
 @pytest.mark.functional
@@ -42,5 +42,5 @@ def test_manual_tappedout() -> None:
 @pytest.mark.external
 @TEST_VCR.use_cassette
 def test_goldfish() -> None:
-    with APP.app_context():
+    with APP.app_context(): # type: ignore
         mtggoldfish.scrape(1)

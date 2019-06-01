@@ -6,7 +6,7 @@ from shared.pd_exception import ParseException
 
 START = ''
 DIGIT = '[0-9]'
-COLOR = '[WURBGC]'
+COLOR = '[WURBGCS]'
 X = '[XYZ]'
 SLASH = '/'
 MODIFIER = 'P'

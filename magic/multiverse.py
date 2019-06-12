@@ -199,7 +199,7 @@ def update_database(new_date: datetime.datetime) -> None:
         if is_meld_result(p):
             meld_result_printings.append(p)
 
-        rarity, rarity_id = scryfall_to_internal_rarity[p['rarity']]
+        rarity, rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]
 
         try:
             set_id = sets[p['set']]

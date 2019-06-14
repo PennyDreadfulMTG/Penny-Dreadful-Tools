@@ -95,7 +95,7 @@ class _GettextNode():
         return pystache.parser._format(self)
 
     def render(self, engine: pystache.renderengine.RenderEngine, context: ContextStack) -> str:
-        s = gettext(self.key)  # The key is popilated in messages.pot via generate_translations.py - pylint: disable=translation-of-non-string
+        s = gettext(self.key)  # The key is populated in messages.pot via generate_translations.py - pylint: disable=translation-of-non-string
         def lookup(match: Match) -> str:
             return engine.fetch_string(context, match.group(1))
         s = re.sub(r'\{([a-z_]+)\}', lookup, s)

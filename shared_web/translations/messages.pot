@@ -1,15 +1,15 @@
 # Translations template for Penny-Dreadful-Tools.
-# Copyright (C) 2018 ORGANIZATION
+# Copyright (C) 2019 ORGANIZATION
 # This file is distributed under the same license as the
 # Penny-Dreadful-Tools project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-11-03 12:50+1100\n"
+"POT-Creation-Date: 2019-06-13 17:36-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,11 +54,11 @@ msgstr ""
 msgid "Metagame"
 msgstr ""
 
-#: decksite/__init__.py:58 decksite/templates/home.mustache:1
+#: decksite/__init__.py:58 decksite/views/home.py:68
 msgid "Latest Decks"
 msgstr ""
 
-#: decksite/__init__.py:59 decksite/data/achievements.py:533
+#: decksite/__init__.py:59 decksite/data/achievements.py:657
 msgid "Archetypes"
 msgstr ""
 
@@ -74,210 +74,225 @@ msgstr ""
 msgid "Past Seasons"
 msgstr ""
 
-#: decksite/__init__.py:64 decksite/templates/tournaments.mustache:1
+#: decksite/__init__.py:63
+msgid "Matchups"
+msgstr ""
+
+#: decksite/__init__.py:65 decksite/templates/tournaments.mustache:1
 msgid "League"
 msgstr ""
 
-#: decksite/__init__.py:65
+#: decksite/__init__.py:66
 msgid "League Info"
 msgstr ""
 
-#: decksite/__init__.py:66 decksite/templates/faqsbody.mustache:1
+#: decksite/__init__.py:67 decksite/templates/faqsbody.mustache:1
 #: decksite/views/signup.py:27
 msgid "Sign Up"
 msgstr ""
 
-#: decksite/__init__.py:67 decksite/views/report.py:22
+#: decksite/__init__.py:68 decksite/views/report.py:22
 msgid "Report"
 msgstr ""
 
-#: decksite/__init__.py:68 decksite/templates/leagueinfo.mustache:1
+#: decksite/__init__.py:69 decksite/templates/leagueinfo.mustache:1
 msgid "Records"
 msgstr ""
 
-#: decksite/__init__.py:69 decksite/templates/leagueinfo.mustache:1
+#: decksite/__init__.py:70 decksite/templates/leagueinfo.mustache:1
 msgid "Retire"
 msgstr ""
 
-#: decksite/__init__.py:71
+#: decksite/__init__.py:72
 msgid "Competitions"
 msgstr ""
 
-#: decksite/__init__.py:72
+#: decksite/__init__.py:73
 msgid "Competition Results"
 msgstr ""
 
-#: decksite/__init__.py:73
+#: decksite/__init__.py:74
 msgid "Tournament Info"
 msgstr ""
 
-#: decksite/__init__.py:74
+#: decksite/__init__.py:75
 msgid "Leaderboards"
 msgstr ""
 
-#: decksite/__init__.py:75
+#: decksite/__init__.py:76
 msgid "Gatherling"
 msgstr ""
 
-#: decksite/__init__.py:76
+#: decksite/__init__.py:77
 msgid "Achievements"
 msgstr ""
 
-#: decksite/__init__.py:77
+#: decksite/__init__.py:78
 msgid "Hosting"
 msgstr ""
 
-#: decksite/__init__.py:79
+#: decksite/__init__.py:80
 msgid "Resources"
 msgstr ""
 
-#: decksite/__init__.py:80 decksite/views/about_pdm.py:16
+#: decksite/__init__.py:81 decksite/views/about_pdm.py:16
 #: logsite/views/about.py:16
 msgid "About"
 msgstr ""
 
-#: decksite/__init__.py:81
+#: decksite/__init__.py:82
 msgid "What is Penny Dreadful?"
 msgstr ""
 
-#: decksite/__init__.py:82
+#: decksite/__init__.py:83
 msgid "About pennydreadfulmagic.com"
 msgstr ""
 
-#: decksite/__init__.py:83
+#: decksite/__init__.py:84
 msgid "FAQs"
 msgstr ""
 
-#: decksite/__init__.py:84
+#: decksite/__init__.py:85
 msgid "Community Guidelines"
 msgstr ""
 
-#: decksite/__init__.py:86
+#: decksite/__init__.py:87
 msgid "Admin"
 msgstr ""
 
-#: decksite/view.py:156
+#: decksite/view.py:378
 #, python-format
 msgid "%(num)d active league run"
 msgid_plural "%(num)d active league runs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/view.py:319 logsite/templates/about.mustache:1
+#: decksite/view.py:385 logsite/templates/about.mustache:1
 msgid "Help us translate the site into your language"
 msgstr ""
 
-#: decksite/data/achievements.py:121
+#: decksite/data/achievements.py:167
 #, python-format
 msgid " once"
 msgid_plural " %(num)d times"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:122
+#: decksite/data/achievements.py:168
 #, python-format
 msgid "1 player"
 msgid_plural "%(num)d players"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:225
+#: decksite/data/achievements.py:297
 msgid "Seasons"
 msgstr ""
 
-#: decksite/data/achievements.py:265 decksite/templates/tournaments.mustache:1
+#: decksite/data/achievements.py:339 decksite/templates/tournaments.mustache:1
 msgid "Tournaments"
 msgstr ""
 
-#: decksite/data/achievements.py:268
+#: decksite/data/achievements.py:342
 #, python-format
 msgid "1 tournament entered"
 msgid_plural "%(num)d tournaments entered"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:277
+#: decksite/data/achievements.py:353
 msgid "Victories"
 msgstr ""
 
-#: decksite/data/achievements.py:280
+#: decksite/data/achievements.py:356
 #, python-format
 msgid "1 victory"
 msgid_plural "%(num)d victories"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:292
+#: decksite/data/achievements.py:370
 msgid "Entries"
 msgstr ""
 
-#: decksite/data/achievements.py:295
+#: decksite/data/achievements.py:373
 #, python-format
 msgid "1 league entry"
 msgid_plural "%(num)d league entries"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:304 decksite/data/achievements.py:315
+#: decksite/data/achievements.py:384 decksite/data/achievements.py:398
 msgid "Runs"
 msgstr ""
 
-#: decksite/data/achievements.py:307
+#: decksite/data/achievements.py:387
 #, python-format
 msgid "1 perfect run"
 msgid_plural "%(num)d perfect runs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:318
+#: decksite/data/achievements.py:401
 #, python-format
 msgid "1 flawless run"
 msgid_plural "%(num)d flawless runs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:353
+#: decksite/data/achievements.py:455
 msgid "Crushes"
 msgstr ""
 
-#: decksite/data/achievements.py:356
+#: decksite/data/achievements.py:457
 #, python-format
 msgid "1 perfect run crush"
 msgid_plural "%(num)d perfect run crushes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:395 decksite/data/achievements.py:451
+#: decksite/data/achievements.py:500
 msgid "grudges repaid"
 msgstr ""
 
-#: decksite/data/achievements.py:397 decksite/data/achievements.py:453
+#: decksite/data/achievements.py:502
 #, python-format
 msgid "1 grudge repaid"
 msgid_plural "%(num)d grudges repaid"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:505
+#: decksite/data/achievements.py:567
+msgid "defeats avenged"
+msgstr ""
+
+#: decksite/data/achievements.py:569
+#, python-format
+msgid "1 defeat avenged"
+msgid_plural "%(num)d defeats avenged"
+msgstr[0] ""
+msgstr[1] ""
+
+#: decksite/data/achievements.py:629
 msgid "Decks"
 msgstr ""
 
-#: decksite/data/achievements.py:508
+#: decksite/data/achievements.py:632
 #, python-format
 msgid "1 deck played by others"
 msgid_plural "%(num)d decks played by others"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:536
+#: decksite/data/achievements.py:660
 #, python-format
 msgid "1 archetype pioneered"
 msgid_plural "%(num)d archetypes pioneered"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:547 decksite/data/achievements.py:587
-#: decksite/data/achievements.py:599 decksite/data/achievements.py:611
+#: decksite/data/achievements.py:703 decksite/data/achievements.py:744
+#: decksite/data/achievements.py:765 decksite/data/achievements.py:777
 #, python-format
 msgid "1 season"
 msgid_plural "%(num)d different seasons"
@@ -342,7 +357,19 @@ msgid ""
 msgstr ""
 
 #: decksite/templates/bugpolicy.mustache:1
+msgid ""
+"Your opponents have no obligation to accomodate your bugged cards and "
+"cannot be penalized for not doing so."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
 msgid "The Tournament Organizer's decision is final."
+msgstr ""
+
+#: decksite/templates/bugpolicy.mustache:1
+msgid ""
+"Note for examples: Living Lore used to have a bug whereby it would count "
+"double the (combined) CMC of a split card when imprinted."
 msgstr ""
 
 #: decksite/templates/bugpolicy.mustache:1
@@ -462,9 +489,9 @@ msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1
 msgid ""
-"To get a match in Magic Online go to Constructed Open Play, Just for Fun "
-"on Magic Online and create a Freeform game with \"Penny Dreadful\" in the"
-" comments."
+"To get a match in Magic Online go to Constructed, Specialty, Freeform "
+"Tournament Practice on Magic Online and create a Freeform game with "
+"\"Penny Dreadful\" in the comments."
 msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1
@@ -489,8 +516,9 @@ msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1
 msgid ""
-"To find a game sign up and then create a game in Just for Fun with "
-"\"Penny Dreadful League\" as the comment."
+"To find a game sign up and then create a game in Constructed, Specialty, "
+"Freeform Tournament Practice with \"Penny Dreadful League\" as the "
+"comment."
 msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1
@@ -556,10 +584,6 @@ msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1
 msgid "Any version of a card on the legal cards list is legal."
-msgstr ""
-
-#: decksite/templates/home.mustache:1
-msgid "More decks…"
 msgstr ""
 
 #: decksite/templates/home.mustache:1
@@ -645,6 +669,12 @@ msgid ""
 msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
+msgid ""
+"Please do not report \"non-games\" such as your opponent timing out "
+"without ever deciding whether to mulligan or not."
+msgstr ""
+
+#: decksite/templates/leagueinfo.mustache:1
 #: decksite/templates/tournaments.mustache:1
 msgid "Prizes"
 msgstr ""
@@ -674,8 +704,9 @@ msgstr ""
 msgid ""
 "The easiest way to find a match to to simply play PD games with your "
 "league deck.  PDBot will alert you if both players are registered in "
-"league. Add \"Penny Dreadful League\" in a comment on your match in Just "
-"for Fun, Freeform to make your intentions clear."
+"league. Add \"Penny Dreadful League\" in a comment on your match in "
+"Constructed, Specialty, Freeform Tournament Practice to make your "
+"intentions clear."
 msgstr ""
 
 #: decksite/templates/leagueinfo.mustache:1
@@ -823,6 +854,26 @@ msgstr ""
 msgid "Check your deck"
 msgstr ""
 
+#: decksite/views/home.py:48
+msgid "Recent Top League Decks"
+msgstr ""
+
+#: decksite/views/home.py:50
+msgid "Current League…"
+msgstr ""
+
+#: decksite/views/home.py:59
+msgid "Latest Tournament Top 8"
+msgstr ""
+
+#: decksite/views/home.py:61
+msgid "View Tournament…"
+msgstr ""
+
+#: decksite/views/home.py:70
+msgid "More Decks…"
+msgstr ""
+
 #: decksite/views/report.py:25
 msgid "Your Deck"
 msgstr ""
@@ -865,7 +916,7 @@ msgstr ""
 msgid "More matches…"
 msgstr ""
 
-#: logsite/views/charts.py:17
+#: logsite/views/charts.py:23
 msgid "Stats"
 msgstr ""
 

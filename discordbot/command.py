@@ -286,7 +286,7 @@ class Commands:
                 """
                 Leagues last for roughly a month. You may enter any number of times but only one deck at a time.
                 You play five matches per run. You can join the league at any time.
-                To find a game sign up and then create a game in Just for Fun with "Penny Dreadful League" as the comment.
+                To find a game sign up and then create a game in Constructed, Specialty, Freeform Tournament Practice with "Penny Dreadful League" as the comment.
                 Top 8 finishers on each month's league leaderboard win credit with MTGO Traders.
                 When you complete a five match league run for the first time ever you will get 1 tik credit with MTGO Traders.
                 """,
@@ -306,7 +306,7 @@ class Commands:
             ),
             'playing': (
                 """
-                To get a match go to Constructed Open Play, Just for Fun on MTGO and create a Freeform game with "Penny Dreadful" in the comments.
+                To get a match go to Constructed, Specialty, Freeform Tournament Practice on MTGO and create a match with "Penny Dreadful" in the comments.
                 """,
                 {}
             ),

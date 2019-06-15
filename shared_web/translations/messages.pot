@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-06-13 17:36-0700\n"
+"POT-Creation-Date: 2019-06-15 10:33-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -784,7 +784,9 @@ msgid "Wait for announcements from the Tournament Organizer"
 msgstr ""
 
 #: decksite/templates/tournaments.mustache:1
-msgid "Matches will be played in the Getting Serious room"
+msgid ""
+"Matches will be played in Constructed, Specialty, Freeform Tournament "
+"Practice room"
 msgstr ""
 
 #: decksite/templates/tournaments.mustache:1

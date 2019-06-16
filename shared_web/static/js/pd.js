@@ -10,6 +10,7 @@ PD.init = function () {
     PD.initTooltips();
     PD.initReassign();
     PD.initRuleForms();
+    PD.initCardsFilters();
     $("input[type=file]").on("change", PD.loadDeck).on("change", PD.toggleDrawDropdown);
     $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
@@ -368,21 +369,48 @@ PD.htmlEscape = function (s) {
 };
 
 PD.constrainColors = function (colors) {
-    allColors = ["White", "Blue", "Black", "Red", "Green"];
+    allColors = ["white", "blue", "black", "red", "green"];
 
     // show all cards with any of the colors we want
-    // this will include too much IE ["Blue"] would show blue red cards
-    colors.forEach( function(color){
+    // this will include too much IE ["blue"] would show blue red cards
+    colors.forEach( function (color){
         $('.color-' + color).show();
     });
                     
     // fix it by hiding all cards with a color outside of the given one
-    allColors.forEach( function(color) {
+    allColors.forEach( function (color) {
         if (!colors.includes(color)){
             $('.color-' + color).hide();
         }
     });
 };
+
+PD.initCardsFilters = function () {
+    allColors = ["white", "blue", "black", "red", "green"];
+
+    function applyColorFilter () {
+        activeColors = [];
+        activeButtons = $("span.filtertype-color.filter-active");
+        for(i=0; i<activeButtons.length; i++){
+            activeColors[i] = activeButtons[i].id.split('-')[1];
+        }
+        PD.constrainColors(activeColors);
+    }
+
+    function deactivate (event) {
+        $(this).removeClass("filter-active").addClass("filter-inactive");
+        $(this).off("click").on("click",activate);
+        applyColorFilter();
+    }
+
+    function activate (event) {
+        $(this).removeClass("filter-inactive").addClass("filter-active");
+        $(this).off("click").on("click",deactivate);
+        applyColorFilter();
+    }
+
+    $("span.filter-active.filtertype-color").on("click", deactivate);
+}
 
 $(document).ready(function () {
     PD.init();

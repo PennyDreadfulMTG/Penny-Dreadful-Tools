@@ -5,3 +5,15 @@
 <section>
     {{> cardsfilter}}
 </section>
+<section>
+    <h1>Search</h1>
+    <form>
+        <p>Search using Scryfall syntax.</p>
+        <div>
+            <label>Query</label>
+            <input type="text" name="rq" value="{{rotation_query}}">
+        </div>
+        <button type="submit">Search</button>
+        <p>Warning: can be very slow.</p>
+    </form>
+</section>

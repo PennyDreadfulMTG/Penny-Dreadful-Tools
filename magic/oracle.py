@@ -49,7 +49,7 @@ def load_cards(names: Iterable[str] = None, where: Optional[str] = None) -> List
     for row in rows:
         c = Card(row)
         if c.colors:
-            c.colors = c.colors.split(',')
+            c.colors = c.colors.lower().split(',')
         else:
             c.colors = []
         ret.append(c)

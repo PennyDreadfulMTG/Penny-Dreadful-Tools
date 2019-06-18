@@ -1,7 +1,7 @@
 <h1>{{_ Cardhoarder Tournaments}}</h2>
 <article>
     <section>
-        <p><a class="external" href="https://gatherling.one/player.php">{{next_tournament_name}}</a> is in {{next_tournament_time}}.</p>
+        <p><a class="external" href="https://gatherling.com/player.php">{{next_tournament_name}}</a> is in {{next_tournament_time}}.</p>
         {{> spinner}}
         <table class="calendar">
             <thead>
@@ -21,7 +21,7 @@
                         <td>
                             <p>{{name}}</p>
                             <time datetime="{{time}}" data-format="dddd LT z">{{display_time}}</time>
-                            <p><a href="https://gatherling.one/player.php">{{_ Sign Up}}</a></p>
+                            <p><a href="https://gatherling.com/player.php">{{_ Sign Up}}</a></p>
                         </td>
                         {{#league}}
                             <td class="league {{class}}">
@@ -35,15 +35,15 @@
                 {{/tournaments}}
             </tbody>
         </table>
-        <p>{{_ There are {num_tournaments} weekly Penny Dreadful tournaments hosted on [Gatherling.com](https://gatherling.one). They are all free to enter and some offer prizes from [Cardhoarder](https://www.cardhoarder.com/). Be sure to also check out the [league](/league/) for a play-when-you-like competition.}}</p>
+        <p>{{_ There are {num_tournaments} weekly Penny Dreadful tournaments hosted on [Gatherling.com](https://gatherling.com). They are all free to enter and some offer prizes from [Cardhoarder](https://www.cardhoarder.com/). Be sure to also check out the [league](/league/) for a play-when-you-like competition.}}</p>
         <p>{{_ Each tournament series has a [leaderboard]({leaderboards_url}).}}</p>
     </section>
     <section>
         <h2>{{_ Joining a Tournament}}</h2>
         <ul>
-            <li><a class="external" href="https://gatherling.one/register.php">{{_ Register}}</a></li>
-            <li><a class="external" href="https://gatherling.one/login.php">{{_ Sign In}}</a></li>
-            <li>{{_ [Sign Up](https://gatherling.one/player.php) under "Preregister for Events"}}</li>
+            <li><a class="external" href="https://gatherling.com/register.php">{{_ Register}}</a></li>
+            <li><a class="external" href="https://gatherling.com/login.php">{{_ Sign In}}</a></li>
+            <li>{{_ [Sign Up](https://gatherling.com/player.php) under "Preregister for Events"}}</li>
             <li>{{_ [Join #tournament-room](https://discord.gg/KK866Pe) on Discord}}</li>
             <li>{{_ Wait for announcements from the Tournament Organizer}}</li>
             <li>{{_ Matches will be played in Constructed, Specialty, Freeform Tournament Practice room}}</li>

@@ -270,7 +270,7 @@ def subreddit() -> Container:
     return feedparser.parse(url)
 
 def gatherling_deck_comments(d: Deck) -> List[str]:
-    url = f'http://gatherling.one/deck.php?mode=view&id={d.identifier}'
+    url = f'http://gatherling.com/deck.php?mode=view&id={d.identifier}'
     s = internal.fetch(url)
     result = re.search('COMMENTS</td></tr><tr><td>(.*)</td></tr></table></div><div class="clear"></div><center>', s, re.MULTILINE | re.DOTALL)
     if result:

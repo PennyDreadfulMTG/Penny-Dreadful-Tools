@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-06-15 10:33-0700\n"
+"POT-Creation-Date: 2019-06-18 09:57-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -530,7 +530,8 @@ msgstr ""
 #: decksite/templates/faqsbody.mustache:1
 msgid ""
 "When you complete a five match league run for the first time ever you "
-"will get 1 tik credit with [MTGO Traders](https://www.mtgotraders.com/)."
+"will get 1 tik credit with [MTGO Traders](https://www.mtgotraders.com/) "
+"(at the end of the month)."
 msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1
@@ -612,7 +613,7 @@ msgstr ""
 msgid "You can [sign up]({signup_url}) at any time."
 msgstr ""
 
-#: decksite/templates/leagueinfo.mustache:1
+#: decksite/templates/leagueinfo.mustache:1 decksite/views/signup.py:12
 msgid ""
 "When you complete a five match league run for the first time ever you "
 "will get 1 tik credit with MTGO Traders (at the end of the month). This "
@@ -878,13 +879,6 @@ msgstr ""
 
 #: decksite/views/report.py:25
 msgid "Your Deck"
-msgstr ""
-
-#: decksite/views/signup.py:12
-msgid ""
-"When you complete a five match league run for the first time ever you "
-"will get 1 tik credit with MTGO Traders. This credit will appear when you"
-" trade with one of their bots on Magic Online."
 msgstr ""
 
 #: decksite/views/signup.py:15

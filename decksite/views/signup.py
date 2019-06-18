@@ -9,7 +9,7 @@ class SignUp(DecklistForm):
         return '{league} Sign Up'.format(league=self.league['name'])
 
     def TT_MTGOTRADERS_SIGNUP_TIK(self) -> str:
-        return gettext('When you complete a five match league run for the first time ever you will get 1 tik credit with MTGO Traders. This credit will appear when you trade with one of their bots on Magic Online.')
+        return gettext('When you complete a five match league run for the first time ever you will get 1 tik credit with MTGO Traders (at the end of the month). This credit will appear when you trade with one of their bots on Magic Online.')
 
     def TT_MTGO_USERNAME(self) -> str:
         return gettext('Magic Online Username')

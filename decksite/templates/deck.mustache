@@ -126,7 +126,7 @@
 <section class="admin demimod">
     <h2>Admin</h2>
         <p>
-            <p>Original name: {{original_name}}</p>
+            <p>Original name: <span class="deck-name">{{original_name}}</span></p>
             <form class="inline" method="post" action="{{edit_archetype_url}}">
                 <input type="hidden" name="deck_id" value="{{id}}">
                 {{> archetypedropdown}}

@@ -208,7 +208,7 @@ class Bot(discord.Client):
                     embed.add_field(name='Starting now', value='Check <#334220558159970304> for further annoucements')
                 elif diff <= 14400:
                     embed.add_field(name='Starting in:', value=dtutil.display_time(diff, 2))
-                    embed.add_field(name='Pre-register now:', value='https://gatherling.one')
+                    embed.add_field(name='Pre-register now:', value='https://gatherling.com')
 
                 if diff <= 14400:
                     embed.set_image(url=fetcher.decksite_url('/favicon-152.png'))

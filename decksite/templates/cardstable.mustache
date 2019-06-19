@@ -15,7 +15,7 @@
     </thead>
     <tbody>
         {{#cards}}
-            <tr class="{{#colors}}color-{{.}} {{/colors}}">
+            <tr class="cardrow" id="cardrow-{{name}}">
                 <td>{{> singlecard}}</td>
                 <td class="n">{{num_decks}}</td>
                 <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>

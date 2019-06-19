@@ -1,19 +1,17 @@
 {{> banner}}
 <section>
-    {{> cardstable}}
-</section>
-<section>
-    {{> cardsfilter}}
-</section>
-<section>
     <h1>Search</h1>
     <form>
         <p>Search using Scryfall syntax.</p>
         <div>
             <label>Query</label>
-            <input type="text" name="rq" value="{{rotation_query}}">
+            <input type="text" name="fq"  id="scryfall-filter-input" value="{{query}}">
         </div>
-        <button type="submit">Search</button>
+        <button id="scryfall-filter-submit" type="button">Search</button>
+        <button id="scryfall-filter-reset" type="button">Reset</button>
         <p>Warning: can be very slow.</p>
     </form>
+</section>
+<section>
+    {{> cardstable}}
 </section>

@@ -18,6 +18,7 @@ PD.init = function () {
     PD.initSignupDeckChooser();
     PD.initPersonalization();
     PD.renderCharts();
+    PD.Filter.init();
 };
 PD.scrollToContent = function () {
     if (window.matchMedia("only screen and (max-width: 640px)").matches && document.referrer.indexOf(window.location.hostname) > 0 && document.location.href.indexOf('#content') === -1) {
@@ -410,6 +411,58 @@ PD.initCardsFilters = function () {
     }
 
     $("span.filter-active.filtertype-color").on("click", deactivate);
+}
+
+PD.Filter = {};
+
+PD.Filter.init = function () {
+    PD.Filter.scryfallFilter($("#scryfall-filter-input").val())
+    $("#scryfall-filter-submit").click(function () {
+        PD.Filter.scryfallFilter($("#scryfall-filter-input").val())
+    });
+    $("#scryfall-filter-reset").click(PD.Filter.reset);
+}
+
+PD.Filter.scryfallFilter = function (query) {
+    if (query == ""){
+        PD.Filter.reset();
+        return;
+    }
+
+    query = "f:pd and (" + query + ")";
+    card_names = [];
+
+    function doFilter () {
+        $("tr.cardrow").each( function () {
+            jqEle = $(this)
+            if (card_names.indexOf(this.id.split('-')[1]) == -1){
+                jqEle.hide();
+            }
+            else {
+                jqEle.show();
+            }
+        });
+    }
+
+    function parse_and_continue (blob) {
+        // TODO: error handling
+
+        for (i=0; i<blob.data.length; i++) {
+            card_names.push(blob["data"][i]["name"])
+        }
+        if (blob["has_more"]) {
+            $.getJSON(blob["next_page"], parse_and_continue)
+        }
+        else {
+            doFilter();
+        }
+    }
+
+    $.getJSON("https://api.scryfall.com/cards/search?q=" + query, parse_and_continue);
+}
+
+PD.Filter.reset = function () {
+    $("tr.cardrow").show();
 }
 
 $(document).ready(function () {

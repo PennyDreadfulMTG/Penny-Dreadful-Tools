@@ -12,6 +12,7 @@ import traceback
 from copy import copy
 from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple
 
+import discord
 import inflect
 from discord import FFmpegPCMAudio, File
 from discord.channel import TextChannel
@@ -496,14 +497,17 @@ Suggestions/bug reports: <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Dis
 
 Want to contribute? Send a Pull Request."""
 
-        channel = author.dm_channel
-        if channel is None:
-            channel = await author.create_dm()
+        dm_channel = author.dm_channel
+        if dm_channel is None:
+            dm_channel = await author.create_dm()
 
-        if len(msg) > 2000:
-            await send(channel, msg[0:1999] + '…')
-        else:
-            await send(channel, msg)
+        try:
+            if len(msg) > 2000:
+                await send(dm_channel, msg[0:1999] + '…')
+            else:
+                await send(dm_channel, msg)
+        except discord.errors.Forbidden:
+            await send(channel, f"{author.mention}: I can't send you the help text because you have blocked me.")
 
     @cmd_header('Commands')
     async def history(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:

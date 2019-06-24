@@ -2,7 +2,7 @@
 - Install python3.6+
 - Install pip3
 - pip3 install -r requirements.txt # If your default python is python2 try `python3 -m pip install -r requirements.txt` instead.
-- Note that the Makefile needs python3 and pylint to be in your PATH to function correctly. You may need to do something to make that true.
+- Note that the Makefile needs python3 to be in your PATH to function correctly. You may need to do something to make that true.
 - Add a bot at https://discordapp.com/developers/applications/me
 - Add a bot user for the bot
 - Add the bot to your server with https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot

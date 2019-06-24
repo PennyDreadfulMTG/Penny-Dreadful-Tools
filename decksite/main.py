@@ -129,6 +129,8 @@ def achievements_redirect() -> wrappers.Response:
 @cached()
 def cards() -> str:
     query = request.args.get('fq')
+    if query is None:
+        query = ''
     cardlist = cs.load_cards(season_id=get_season_id())
     view = Cards(cardlist, query=query)
     return view.page()

@@ -29,6 +29,7 @@ class Cards(View):
         def convert(c: Container) -> Container:
             if tournament_only:
                 c.num_decks = c.num_decks_tournament
+                c.num_decks_sideboard = c.num_decks_sideboard_tournament
                 c.win_percent = c.win_percent_tournament
                 c.wins = c.wins_tournament
                 c.losses = c.losses_tournament

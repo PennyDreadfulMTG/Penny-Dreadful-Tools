@@ -1,7 +1,6 @@
 import hashlib
 import json
 import time
-from collections import defaultdict
 from typing import Dict, List, Optional, Set
 
 from mypy_extensions import TypedDict
@@ -386,13 +385,10 @@ def add_cards(deck_id: int, cards: CardsDescription) -> None:
         deckhash = hashlib.sha1(repr(cards).encode('utf-8')).hexdigest()
         db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [deckhash, deck_id])
         db().execute('DELETE FROM deck_card WHERE deck_id = %s', [deck_id])
-        d: defaultdict = defaultdict(dict)
         for name, n in cards['maindeck'].items():
-            d[name]['n_main'] = n
+            insert_deck_card(deck_id, name, n, False)
         for name, n in cards['sideboard'].items():
-            d[name]['n_side'] = n
-        for name, ns in d.items():
-            insert_deck_card(deck_id, name, ns.get('n_main', 0), ns.get('n_side', 0))
+            insert_deck_card(deck_id, name, n, True)
         db().commit('add_cards')
     except InvalidDataException as e:
         logger.warning('Unable to add_cards to {deck_id} with {cards}', e)
@@ -404,10 +400,10 @@ def get_deck_id(source_name: str, identifier: str) -> Optional[int]:
     sql = 'SELECT id FROM deck WHERE source_id = %s AND identifier = %s'
     return db().value(sql, [source_id, identifier])
 
-def insert_deck_card(deck_id: int, name: str, n_main: int, n_side: int) -> None:
+def insert_deck_card(deck_id: int, name: str, n: int, in_sideboard: bool) -> None:
     name = oracle.valid_name(name)
-    sql = 'INSERT INTO deck_card (deck_id, card, n_main, n_side) VALUES (%s, %s, %s, %s)'
-    db().execute(sql, [deck_id, name, n_main, n_side])
+    sql = 'INSERT INTO deck_card (deck_id, card, n, sideboard) VALUES (%s, %s, %s, %s)'
+    db().execute(sql, [deck_id, name, n, in_sideboard])
 
 def get_or_insert_person_id(mtgo_username: Optional[str], tappedout_username: Optional[str], mtggoldfish_username: Optional[str]) -> int:
     sql = 'SELECT id FROM person WHERE LOWER(mtgo_username) = LOWER(%s) OR LOWER(tappedout_username) = LOWER(%s) OR LOWER(mtggoldfish_username) = LOWER(%s)'
@@ -492,18 +488,15 @@ def load_cards(decks: List[Deck]) -> None:
         return
     decks_by_id = {d.id: d for d in decks}
     sql = """
-        SELECT deck_id, card, n_main, n_side FROM deck_card WHERE deck_id IN ({deck_ids})
+        SELECT deck_id, card, n, sideboard FROM deck_card WHERE deck_id IN ({deck_ids})
     """.format(deck_ids=', '.join(map(sqlescape, map(str, decks_by_id.keys()))))
     rs = db().select(sql)
     for row in rs:
+        location = 'sideboard' if row['sideboard'] else 'maindeck'
         name = row['card']
         d = decks_by_id[row['deck_id']]
-        for (column, location) in [('n_main', 'maindeck'), ('n_side', 'sideboard')]:
-            quantity = row[column]
-            if not quantity:
-                continue
-            d[location] = d.get(location, [])
-            d[location].append(CardRef(name, row[column]))
+        d[location] = d.get(location, [])
+        d[location].append(CardRef(name, row['n']))
 
 def load_conflicted_decks() -> List[Deck]:
     where = """d.decklist_hash in

@@ -2561,12 +2561,3 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 /* links */
 .tpd-skin-dark a,
 .tpd-skin-dark a:hover { color: #ccc; }
-
-
-.filter-inactive {
-    color: lightgray;
-}
-
-.filter-active {
-    color: black;
-}

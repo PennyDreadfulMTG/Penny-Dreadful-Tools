@@ -156,7 +156,7 @@ def if_todays_prices(out: bool = True) -> List[Card]:
     cards = [Card(r) for r in rs]
     return sorted(cards, key=lambda card: card['name'])
 
-def add_cards_and_update(printings: List[CardDescription]):
+def add_cards_and_update(printings: List[CardDescription]) -> None:
     multiverse.insert_cards(printings)
     multiverse.update_cache()
     multiverse.reindex()

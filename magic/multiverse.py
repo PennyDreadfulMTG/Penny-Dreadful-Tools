@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any, Dict, List, Set, Union
 
 from magic import card, database, fetcher, mana, rotation
 from magic.card_description import CardDescription
@@ -149,6 +149,7 @@ def update_database(new_date: datetime.datetime) -> None:
 
 # Take Scryfall card descriptions and add them to the database. See also oracle.add_cards_and_update to also rebuild cache/reindex/etc.
 def insert_cards(printings: List[CardDescription]) -> None:
+    # pylint: disable=too-many-locals
     rarity_ids = {x['name']:x['id'] for x in db().select('SELECT id, name FROM rarity;')}
     scryfall_to_internal_rarity = {'common':('Common', rarity_ids['Common']),
                                    'uncommon':('Uncommon', rarity_ids['Uncommon']),

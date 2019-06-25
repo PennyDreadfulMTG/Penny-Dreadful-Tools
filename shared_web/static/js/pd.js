@@ -17,6 +17,7 @@ PD.init = function () {
     PD.initSignupDeckChooser();
     PD.initPersonalization();
     PD.renderCharts();
+    PD.Filter.init();
 };
 PD.scrollToContent = function () {
     if (window.matchMedia("only screen and (max-width: 640px)").matches && document.referrer.indexOf(window.location.hostname) > 0 && document.location.href.indexOf('#content') === -1) {
@@ -365,6 +366,70 @@ PD.renderCharts = function () {
 
 PD.htmlEscape = function (s) {
     return $("<div>").text(s).html();
+};
+
+PD.Filter = {};
+
+PD.Filter.init = function () {
+    // Apply the filter with the initial value of the form
+    PD.Filter.scryfallFilter($("#scryfall-filter-input").val())
+
+    // set up the event handlers for the form
+    $("#scryfall-filter-form").submit(function () {
+        PD.Filter.scryfallFilter($("#scryfall-filter-input").val());
+        return false;
+    });
+    $("#scryfall-filter-reset").click(PD.Filter.reset);
+};
+
+PD.Filter.scryfallFilter = function (query) {
+    if (query == ""){
+        PD.Filter.reset();
+        return;
+    }
+
+    $("#scryfall-filter-submit").attr("disabled", "disabled").text("Loading...");
+    $("#scryfall-filter-reset").attr("disabled", "disabled").text("Loading...");
+    $("#scryfall-filter-form").submit(function () { return false; })
+
+    query = "f:pd and (" + query + ")";
+    card_names = [];
+
+    function doFilter () {
+        $("tr.cardrow").each( function () {
+            jqEle = $(this)
+            if (card_names.indexOf(this.id.split('-')[1]) == -1){
+                jqEle.hide();
+            }
+            else {
+                jqEle.show();
+            }
+        });
+        $("#scryfall-filter-submit").removeAttr("disabled").text("Search");
+        $("#scryfall-filter-reset").removeAttr("disabled").text("Reset");
+        $("#scryfall-filter-form").submit(function () { return false; })
+    }
+
+    function parse_and_continue (blob) {
+        // TODO: error handling
+
+        for (i=0; i<blob.data.length; i++) {
+            card_names.push(blob["data"][i]["name"])
+        }
+        if (blob["has_more"]) {
+            $.getJSON(blob["next_page"], parse_and_continue)
+        }
+        else {
+            doFilter();
+        }
+    }
+
+    $.getJSON("https://api.scryfall.com/cards/search?q=" + query, parse_and_continue);
+
+};
+
+PD.Filter.reset = function () {
+    $("tr.cardrow").show();
 };
 
 $(document).ready(function () {

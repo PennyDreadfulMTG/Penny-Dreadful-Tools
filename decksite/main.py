@@ -128,7 +128,11 @@ def achievements_redirect() -> wrappers.Response:
 @SEASONS.route('/cards/')
 @cached()
 def cards() -> str:
-    view = Cards(cs.load_cards(season_id=get_season_id()))
+    query = request.args.get('fq')
+    if query is None:
+        query = ''
+    cardlist = cs.load_cards(season_id=get_season_id())
+    view = Cards(cardlist, query=query)
     return view.page()
 
 @APP.route('/cards/tournament/')

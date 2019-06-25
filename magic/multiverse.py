@@ -62,7 +62,6 @@ def base_query(where: str = '(1 = 1)') -> str:
         FROM (
             SELECT {card_props}, {face_props}, f.name AS face_name,
                 pd_legal,
-                colors,
                 legalities
             FROM
                 card AS c
@@ -71,7 +70,6 @@ def base_query(where: str = '(1 = 1)') -> str:
             LEFT JOIN (
                  SELECT
                      card_id,
-                     GROUP_CONCAT(color.name SEPARATOR ",") as colors
                  FROM
                      card_color JOIN color ON card_color.color_id=color.id
                  GROUP BY

@@ -45,15 +45,7 @@ def load_cards(names: Iterable[str] = None, where: Optional[str] = None) -> List
     if setnames and len(setnames) != len(rows):
         missing = setnames.symmetric_difference([row['name'] for row in rows])
         raise TooFewItemsException('Expected `{namelen}` and got `{rowslen}` with `{names}`.  missing=`{missing}`'.format(namelen=len(setnames), rowslen=len(rows), names=setnames, missing=missing))
-    ret = []
-    for row in rows:
-        c = Card(row)
-        if c.colors:
-            c.colors = c.colors.lower().split(',')
-        else:
-            c.colors = []
-        ret.append(c)
-    return ret
+    return [Card(row) for row in rows]
 
 def cards_by_name() -> Dict[str, Card]:
     return CARDS_BY_NAME

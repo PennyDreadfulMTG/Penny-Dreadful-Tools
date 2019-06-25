@@ -1,15 +1,14 @@
 {{> banner}}
 <section>
-    <h1>Search</h1>
-    <form>
-        <p>Search using Scryfall syntax.</p>
+    <h2>Search</h2>
+    <form id="scryfall-filter-form">
+        <p>Search using Scryfall syntax. Results are restricted to PD-legal cards automatically. Warning: can be very slow.</p>
         <div>
             <label>Query</label>
             <input type="text" name="fq"  id="scryfall-filter-input" value="{{query}}">
         </div>
-        <button id="scryfall-filter-submit" type="button">Search</button>
+        <button id="scryfall-filter-submit" type="submit">Search</button>
         <button id="scryfall-filter-reset" type="button">Reset</button>
-        <p>Warning: can be very slow.</p>
     </form>
 </section>
 <section>

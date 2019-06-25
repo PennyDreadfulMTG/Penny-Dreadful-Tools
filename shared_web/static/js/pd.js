@@ -10,7 +10,6 @@ PD.init = function () {
     PD.initTooltips();
     PD.initReassign();
     PD.initRuleForms();
-    PD.initCardsFilters();
     $("input[type=file]").on("change", PD.loadDeck).on("change", PD.toggleDrawDropdown);
     $(".bugtable").trigger("sorton", [[[2,0],[0,0]]]);
     $(".toggle-illegal").on("change", PD.toggleIllegalCards);
@@ -369,65 +368,29 @@ PD.htmlEscape = function (s) {
     return $("<div>").text(s).html();
 };
 
-PD.constrainColors = function (colors) {
-    allColors = ["white", "blue", "black", "red", "green"];
-
-    // show all cards with any of the colors we want
-    // this will include too much IE ["blue"] would show blue red cards
-    colors.forEach( function (color){
-        $('.color-' + color).show();
-    });
-                    
-    // fix it by hiding all cards with a color outside of the given one
-    allColors.forEach( function (color) {
-        if (!colors.includes(color)){
-            $('.color-' + color).hide();
-        }
-    });
-};
-
-PD.initCardsFilters = function () {
-    allColors = ["white", "blue", "black", "red", "green"];
-
-    function applyColorFilter () {
-        activeColors = [];
-        activeButtons = $("span.filtertype-color.filter-active");
-        for(i=0; i<activeButtons.length; i++){
-            activeColors[i] = activeButtons[i].id.split('-')[1];
-        }
-        PD.constrainColors(activeColors);
-    }
-
-    function deactivate (event) {
-        $(this).removeClass("filter-active").addClass("filter-inactive");
-        $(this).off("click").on("click",activate);
-        applyColorFilter();
-    }
-
-    function activate (event) {
-        $(this).removeClass("filter-inactive").addClass("filter-active");
-        $(this).off("click").on("click",deactivate);
-        applyColorFilter();
-    }
-
-    $("span.filter-active.filtertype-color").on("click", deactivate);
-}
-
 PD.Filter = {};
 
 PD.Filter.init = function () {
+    // Apply the filter with the initial value of the form
     PD.Filter.scryfallFilter($("#scryfall-filter-input").val())
-    $("#scryfall-filter-submit").click(function () {
-        PD.Filter.scryfallFilter($("#scryfall-filter-input").val())
+
+    // set up the event handlers for the form
+    $("#scryfall-filter-form").submit(function () {
+        PD.Filter.scryfallFilter($("#scryfall-filter-input").val());
+        return false;
     });
     $("#scryfall-filter-reset").click(PD.Filter.reset);
-}
+};
 
 PD.Filter.scryfallFilter = function (query) {
     if (query == ""){
         PD.Filter.reset();
         return;
     }
+
+    $("#scryfall-filter-submit").attr("disabled", "disabled").text("Loading...");
+    $("#scryfall-filter-reset").attr("disabled", "disabled").text("Loading...");
+    $("#scryfall-filter-form").submit(function () { return false; })
 
     query = "f:pd and (" + query + ")";
     card_names = [];
@@ -442,6 +405,9 @@ PD.Filter.scryfallFilter = function (query) {
                 jqEle.show();
             }
         });
+        $("#scryfall-filter-submit").removeAttr("disabled").text("Search");
+        $("#scryfall-filter-reset").removeAttr("disabled").text("Reset");
+        $("#scryfall-filter-form").submit(function () { return false; })
     }
 
     function parse_and_continue (blob) {
@@ -459,11 +425,12 @@ PD.Filter.scryfallFilter = function (query) {
     }
 
     $.getJSON("https://api.scryfall.com/cards/search?q=" + query, parse_and_continue);
-}
+
+};
 
 PD.Filter.reset = function () {
     $("tr.cardrow").show();
-}
+};
 
 $(document).ready(function () {
     PD.init();

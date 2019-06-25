@@ -14,7 +14,8 @@ class EditMatches(View):
         super().__init__()
         self.matches = matches
         self.hide_active_runs = False
-        self.decks = sorted(decks, key=lambda d: d.person + str(d.created_date))
+        far_future = dtutil.parse('2100-01-01', '%Y-%m-%d', dtutil.UTC_TZ)
+        self.decks = sorted(decks, key=lambda d: d.person + str(far_future - d.created_date))
         decks_by_id = {d.id: d for d in decks}
         for m in self.matches:
             m.display_date = dtutil.display_date(m.date)

@@ -394,7 +394,14 @@ class Commands:
                 This will not affect any other Discord channel.
                 """,
                 {}
-            )
+            ),
+            'verification': (
+                """
+                Gatherling verification is currently broken.
+                It no longer does anything except put a green tick by your name anyway.
+                """,
+                {}
+            ),
         }
         reporting_explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
             'tournament': (
@@ -421,6 +428,7 @@ class Commands:
         explanations['tournaments'] = explanations['tournament']
         explanations['watching'] = explanations['spectating']
         explanations['spectate'] = explanations['spectating']
+        explanations['verify'] = explanations['verification']
         # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
         word = args.lower().replace(' ', '').rstrip('s')
         if len(word) > 0:

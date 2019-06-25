@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, Dict, List, Optional, Set, Union
+from typing import Any, Dict, List, Set, Union
 
 from magic import card, database, fetcher, mana, rotation
 from magic.card_description import CardDescription
@@ -125,7 +125,6 @@ def base_query_lite() -> str:
 
 
 def update_database(new_date: datetime.datetime) -> None:
-    # pylint: disable=too-many-locals
     db().begin('update_database')
     db().execute('DELETE FROM scryfall_version')
     # In order to rebuild the card table, we must delete (and rebuild) all tables with a FK to it
@@ -140,13 +139,17 @@ def update_database(new_date: datetime.datetime) -> None:
         DELETE FROM card;
         DELETE FROM `set`;
     """)
-
-    sets = {}
     for s in fetcher.all_sets():
-        sets[s['code']] = insert_set(s)
-
+        insert_set(s)
     every_card_printing = fetcher.all_cards()
+    insert_cards(every_card_printing)
+    update_pd_legality()
+    db().execute('INSERT INTO scryfall_version (last_updated) VALUES (%s)', [dtutil.dt2ts(new_date)])
+    db().commit('update_database')
 
+# Take Scryfall card descriptions and add them to the database. See also oracle.add_cards_and_update to also rebuild cache/reindex/etc.
+def insert_cards(printings: List[CardDescription]) -> None:
+    # pylint: disable=too-many-locals
     rarity_ids = {x['name']:x['id'] for x in db().select('SELECT id, name FROM rarity;')}
     scryfall_to_internal_rarity = {'common':('Common', rarity_ids['Common']),
                                    'uncommon':('Uncommon', rarity_ids['Uncommon']),
@@ -183,15 +186,17 @@ def update_database(new_date: datetime.datetime) -> None:
     printing_query += ') VALUES'
     printing_values = []
 
-    colors_raw = db().select('SELECT id, symbol FROM color GROUP BY name ORDER BY id;')
+    colors_raw = db().select('SELECT id, symbol FROM color ORDER BY id;')
     colors = {c['symbol'].upper(): c['id'] for c in colors_raw}
 
-    next_card_id = 1
+    sets = {s['code']: s['id'] for s in db().select('SELECT id, code FROM `set`')}
+
+    next_card_id = (db().value('SELECT MAX(id) FROM card') or 0) + 1
 
     card_legality_query = 'INSERT IGNORE INTO `card_legality` (card_id, format_id, legality) VALUES '
     card_legality_values = []
 
-    for p in every_card_printing:
+    for p in printings:
         # Exclude little girl because {hw} mana is a problem rn.
         if p['name'] == 'Little Girl':
             continue
@@ -222,6 +227,8 @@ def update_database(new_date: datetime.datetime) -> None:
             face_values.append(single_face_value(p, card_id))
         elif p['layout'] in ['double_faced_token', 'flip', 'split', 'transform']:
             face_values += multiple_faces_values(p, card_id)
+        else:
+            raise InvalidDataException(f"Found unexpected layout `{p['layout']}` in {p}")
 
         for color in p.get('colors', []):
             color_id = colors[color]
@@ -247,10 +254,11 @@ def update_database(new_date: datetime.datetime) -> None:
     card_query += ';'
     db().execute(card_query)
 
-    card_color_query += ',\n'.join(card_color_values) + ';'
-    db().execute(card_color_query)
-    card_color_identity_query += ',\n'.join(card_color_identity_values) + ';'
-    db().execute(card_color_identity_query)
+    if card_color_values: # We should not issue this query if we are only inserting colorless cards as they don't have an entry in this table.
+        card_color_query += ',\n'.join(card_color_values) + ';'
+        db().execute(card_color_query)
+        card_color_identity_query += ',\n'.join(card_color_identity_values) + ';'
+        db().execute(card_color_identity_query)
 
     for p in meld_result_printings:
         insert_meld_result_faces(p, cards)
@@ -263,56 +271,14 @@ def update_database(new_date: datetime.datetime) -> None:
     face_query += ';'
     db().execute(face_query)
 
-    card_legality_query += ',\n'.join(card_legality_values)
-    card_legality_query += ';'
-    db().execute(card_legality_query)
+    if card_legality_values:
+        card_legality_query += ',\n'.join(card_legality_values)
+        card_legality_query += ';'
+        db().execute(card_legality_query)
 
-    # Create the current Penny Dreadful format.
+    # Create the current Penny Dreadful format if necessary.
     get_format_id('Penny Dreadful', True)
     update_bugged_cards()
-    update_pd_legality()
-    db().execute('INSERT INTO scryfall_version (last_updated) VALUES (%s)', [dtutil.dt2ts(new_date)])
-    db().commit('update_database')
-
-
-def insert_card(p: Any, update_index: bool = True) -> Optional[int]:
-    # Preprocess card partly for sanity but partly just to match what we used to get from mtgjson to make migration easier.
-    sql = 'INSERT INTO card ('
-    sql += ', '.join(name for name, prop in card.card_properties().items() if prop['scryfall'])
-    sql += ') VALUES ('
-    sql += ', '.join('%s' for name, prop in card.card_properties().items() if prop['scryfall'])
-    sql += ')'
-    values = [p.get(database2json(name)) for name, prop in card.card_properties().items() if prop['scryfall']]
-    db().execute(sql, values)
-    card_id = db().last_insert_rowid()
-    # 'meld' is in the list of normal cards here but is handled differently at a higher level. See above.
-    if p['layout'] in ['augment', 'emblem', 'host', 'leveler', 'meld', 'normal', 'planar', 'saga', 'scheme', 'token', 'vanguard']:
-        insert_face(p, card_id)
-    elif p['layout'] in ['double_faced_token', 'flip', 'split', 'transform']:
-        insert_card_faces(p, card_id)
-    else:
-        raise InvalidDataException(f"Unknown layout {p['layout']}")
-    for color in p.get('colors', []):
-        color_id = db().value('SELECT id FROM color WHERE symbol = %s', [color.capitalize()])
-        # INSERT IGNORE INTO because some cards have multiple faces with the same color. See DFCs and What // When // Where // Who // Why.
-        db().execute('INSERT IGNORE INTO card_color (card_id, color_id) VALUES (%s, %s)', [card_id, color_id])
-    for symbol in p.get('color_identity', []):
-        color_id = db().value('SELECT id FROM color WHERE symbol = %s', [symbol])
-        # INSERT IGNORE INTO because some cards have multiple faces with the same color identity. See DFCs and What // When // Where // Who // Why.
-        db().execute('INSERT IGNORE INTO card_color_identity (card_id, color_id) VALUES (%s, %s)', [card_id, color_id])
-    for f, status in p.get('legalities', {}).items():
-        if status == 'not_legal':
-            continue
-        # Strictly speaking we could drop all this capitalizing and use what Scryfall sends us as the canonical name as it's just a holdover from mtgjson.
-        name = f.capitalize()
-        format_id = get_format_id(name, True)
-        # INSERT IGNORE INTO because some cards have multiple faces with the same legality. See DFCs and What // When // Where // Who // Why.
-        db().execute('INSERT IGNORE INTO card_legality (card_id, format_id, legality) VALUES (%s, %s, %s)', [card_id, format_id, status.capitalize()])
-    if update_index:
-        p.id = card_id
-        writer = WhooshWriter()
-        writer.update_card(p)
-    return card_id
 
 def update_bugged_cards() -> None:
     bugs = fetcher.bugged_cards()
@@ -348,18 +314,6 @@ def insert_face(p: CardDescription, card_id: int, position: int = 1) -> None:
     values: List[Any] = [card_id, position]
     values += [p.get(database2json(name)) for name, prop in card.face_properties().items() if prop['scryfall']]
     db().execute(sql, values)
-
-def insert_card_faces(p: CardDescription, card_id: int) -> None:
-    card_faces = p.get('card_faces')
-    if card_faces is None:
-        raise InvalidArgumentException(f'Tried to insert_card_faces on a card without card_faces: {p} ({card_id})')
-    first_face_cmc = mana.cmc(card_faces[0]['mana_cost'])
-    position = 1
-    for face in card_faces:
-        # Scryfall doesn't provide cmc on card_faces currently. See #5939.
-        face['cmc'] = mana.cmc(face['mana_cost']) if face['mana_cost'] else first_face_cmc
-        insert_face(face, card_id, position)
-        position += 1
 
 def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> str:
     # pylint: disable=too-many-locals

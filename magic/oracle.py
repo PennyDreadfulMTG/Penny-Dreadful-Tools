@@ -1,6 +1,7 @@
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
 from magic import card, fetcher, mana, multiverse, rotation
+from magic.card_description import CardDescription
 from magic.database import db
 from magic.models import Card
 from shared.database import sqlescape
@@ -96,9 +97,11 @@ def scryfall_import(name: str) -> bool:
         raise Exception()
     try:
         valid_name(sfcard['name'])
+        print(f"Not adding {sfcard['name']} to the database as we already have it.")
         return False
     except InvalidDataException:
-        multiverse.insert_card(sfcard)
+        print(f"Adding {sfcard['name']} to the database as we don't have it.")
+        add_cards_and_update([sfcard])
         return True
 
 def pd_rotation_changes(season_id: int) -> Tuple[Sequence[Card], Sequence[Card]]:
@@ -152,3 +155,9 @@ def if_todays_prices(out: bool = True) -> List[Card]:
     rs = db().select(multiverse.cached_base_query(where=where))
     cards = [Card(r) for r in rs]
     return sorted(cards, key=lambda card: card['name'])
+
+def add_cards_and_update(printings: List[CardDescription]):
+    multiverse.insert_cards(printings)
+    multiverse.update_cache()
+    multiverse.reindex()
+    init(force=True) # Get the new cards into CARDS_BY_NAME in memory.

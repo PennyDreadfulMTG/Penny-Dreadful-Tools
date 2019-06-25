@@ -15,11 +15,12 @@ from github.GithubException import GithubException
 
 from discordbot import command
 from magic import fetcher, multiverse, oracle, tournaments
+from magic.card_description import CardDescription
 from shared import configuration, dtutil
 from shared import fetcher_internal as internal
 from shared import perf, redis, repo
 from shared.container import Container
-from shared.pd_exception import InvalidDataException, TooFewItemsException
+from shared.pd_exception import InvalidDataException
 
 
 class Bot(discord.Client):
@@ -168,22 +169,18 @@ class Bot(discord.Client):
         'Poll Scryfall for the latest 250 cards, and add them to our db if missing'
         try:
             await self.wait_until_ready()
-            new_cards = await fetcher.scryfall_cards_async()
-            for c in new_cards['data']:
-                if c['layout'] == 'double_faced_token':
-                    continue # These cause issues for little benefit.  Let's just ignore them for now.
+            latest_cards = await fetcher.scryfall_cards_async()
+            cards_not_currently_in_db: List[CardDescription] = []
+            for c in latest_cards['data']:
                 try:
                     oracle.valid_name(c['name'])
-                    await asyncio.sleep(1)
                 except InvalidDataException:
-                    multiverse.insert_card(c, True)
-                    print('Imported {0} from Scryfall'.format(c['name']))
-                    await asyncio.sleep(5)
-                except TooFewItemsException:
-                    pass
+                    print(f"Planning to add {c['name']} to database in background_task_spoiler_season.")
+                    cards_not_currently_in_db.append(c)
+            if len(cards_not_currently_in_db) > 0:
+                oracle.add_cards_and_update(cards_not_currently_in_db)
         except Exception: # pylint: disable=broad-except
             await self.on_error('background_task_spoiler_season')
-
 
     async def background_task_tournaments(self) -> None:
         try:

@@ -1723,7 +1723,6 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 /* When search wraps under the logo it needs different behavior. */
 @media only screen and (max-width: 800px) {
     .search {
-        float: none;
         margin-bottom: 1rem;
         margin-left: 0;
         padding-top: 1rem;

@@ -9,11 +9,13 @@ from shared.container import Container
 
 # pylint: disable=no-self-use
 class Cards(View):
-    def __init__(self, cards: List[Card], tournament_only: bool = False) -> None:
+    def __init__(self, cards: List[Card], tournament_only: bool = False, query: str = '') -> None:
         super().__init__()
         self.show_seasons = True
         self.show_tournament_toggle = True
         self.tournament_only = tournament_only
+        self.query = query
+        self.cards = cards
 
         if tournament_only:
             self.toggle_results_url = url_for('.cards')

@@ -372,7 +372,7 @@ PD.filter = {};
 
 PD.filter.init = function () {
     // Apply the filter with the initial value of the form
-    PD.filter.scryfallFilter($("#scryfall-filter-input").val())
+    PD.filter.scryfallFilter($("#scryfall-filter-input").val());
 
     // set up the event handlers for the form
     $("#scryfall-filter-form").submit(function () {
@@ -380,6 +380,82 @@ PD.filter.init = function () {
         return false;
     });
     $("#scryfall-filter-reset").click(PD.filter.reset);
+
+    window.onpopstate = function (event) {
+        // TODO - incorporate warnings into this
+        if (event && event.state && "cardNames" in event.state) {
+            PD.filter.applyCardNames(event.state["cardNames"]);
+        } else {
+            PD.filter.reset();
+        }
+    };
+};
+
+PD.filter.applyCardNames = function (cardNames) {
+    $("tr.cardrow").each( function () {
+        let jqEle = $(this);
+        if (cardNames.indexOf(this.id.split('-')[1]) == -1){
+            jqEle.hide();
+        } else {
+            jqEle.show();
+        }
+    });
+}
+
+// input url returns a promise to {success: true/false, cardNames: [...], error message: {...}
+PD.filter.retrieveAllCards = function (url) {
+    function succeed (blob) {
+        let cards = blob.data.map(x => x["name"]);
+        if (blob["has_more"]) {
+            return PD.filter.retrieveAllCards(blob["next_page"]).then( function (new_blob) {
+                // Simplifying assumption: if the first page didn't produce scryfall-level errors, neither will the later ones
+                // and warnings are the same on all pages
+                return {success: true,
+                        cardNames: cards.concat(new_blob["cardNames"]),
+                        warnings: new_blob["warnings"]
+                };
+            });
+        } else {
+            return {
+                success: true,
+                cardNames: cards,
+                warnings: blob["warnings"]
+            };
+        }
+    }
+
+    function fail (jqXHR) { 
+        // we may have failed via a scryfall error, or via a connection error
+        if (jqXHR.status == 400 && "responseJSON" in jqXHR) {
+            // Scryfall gave us a Bad Request - there were issues with the query
+            return {success: false,
+                    details: jqXHR.responseJSON.details,
+                    warnings: jqXHR.responseJSON.warnings
+                   };
+        } else {
+            // We had a 5xx or some other error we don't handle
+            return { success: false,
+                     details: "Error connecting to Scryfall",
+                     warnings: []
+            };
+        }
+    }
+    return $.getJSON(url).then(succeed, fail);
+};
+
+PD.filter.disableForm = function () {
+    $("#scryfall-filter-submit").attr("disabled", "disabled").text("Loading…");
+    $("#scryfall-filter-reset").attr("disabled", "disabled").text("Loading…");
+    $("#scryfall-filter-form").submit(function () { return false; });
+};
+
+PD.filter.enableForm = function () {
+    $("#scryfall-filter-submit").removeAttr("disabled").text("Search");
+    $("#scryfall-filter-reset").removeAttr("disabled").text("Reset");
+    $("#scryfall-filter-form").submit(function () {
+        PD.filter.scryfallFilter($("#scryfall-filter-input").val());
+        return false;
+    });
 };
 
 PD.filter.scryfallFilter = function (query) {
@@ -388,51 +464,55 @@ PD.filter.scryfallFilter = function (query) {
         return;
     }
 
-    $("#scryfall-filter-submit").attr("disabled", "disabled").text("Loading…");
-    $("#scryfall-filter-reset").attr("disabled", "disabled").text("Loading…");
-    $("#scryfall-filter-form").submit(function () { return false; })
+    PD.filter.disableForm();
+    PD.filter.clearErrorsAndWarnings();
 
-    // TODO: determine if we are in current season or not
+    // TODO: determine if we are in current season or not - server side?
     // query = "f:pd and (" + query + ")";
-    card_names = [];
 
-    function doFilter () {
-        $("tr.cardrow").each( function () {
-            jqEle = $(this)
-            if (card_names.indexOf(this.id.split('-')[1]) == -1){
-                jqEle.hide();
-            }
-            else {
-                jqEle.show();
-            }
-        });
-        $("#scryfall-filter-submit").removeAttr("disabled").text("Search");
-        $("#scryfall-filter-reset").removeAttr("disabled").text("Reset");
-        $("#scryfall-filter-form").submit(function () { return false; })
-        // TODO: use history.pushState and history.onpopstate to make back/forward/permalinks work well
-    }
+    let url = "https://api.scryfall.com/cards/search?q=" + query;
 
-    function parse_and_continue (blob) {
-        // TODO: error handling
-
-        for (i=0; i<blob.data.length; i++) {
-            card_names.push(blob["data"][i]["name"])
-        }
-        if (blob["has_more"]) {
-            $.getJSON(blob["next_page"], parse_and_continue);
-        } else {
-            doFilter();
-        }
-    }
-
-    $.getJSON("https://api.scryfall.com/cards/search?q=" + query, parse_and_continue);
-
+    PD.filter.retrieveAllCards(url)
+        .done( function (o) {
+            let cardNames = o.cardNames;
+            PD.filter.applyCardNames(cardNames);
+            history.pushState({cardNames:cardNames}, "", "?fq="+query);
+            PD.filter.showErrorsAndWarnings(o);
+        })
+        .fail(PD.filter.showErrorsAndWarnings)
+        .always(PD.filter.enableForm);
 };
 
 PD.filter.reset = function () {
     $("tr.cardrow").show();
+    $("#errors-and-warnings").empty().hide();
+};
+
+PD.filter.showErrorsAndWarnings = function (o) {
+    let p = $("#errors-and-warnings");
+    p.empty();
+    // use .append() to add new elements
+    if ("details" in o) {
+        let error = document.createElement("div");
+        error.innerText = "Error (query failed) - " + o["details"];
+        p.append(error);
+    }
+    if ("warnings" in o){
+        for (let i in o["warnings"]) {
+            let warning = document.createElement("div");
+            warning.innerText = "Warning: " + o["warnings"][i];
+            p.append(warning);
+        }
+    }
+    p.show();
+};
+
+PD.filter.clearErrorsAndWarnings = function () {
+    $("#errors-and-warnings").empty().hide();
 };
 
 $(document).ready(function () {
     PD.init();
 });
+
+

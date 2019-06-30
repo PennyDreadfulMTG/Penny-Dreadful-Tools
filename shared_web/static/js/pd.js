@@ -382,11 +382,14 @@ PD.filter.init = function () {
     $("#scryfall-filter-reset").click(PD.filter.reset);
 
     window.onpopstate = function (event) {
-        // TODO - incorporate warnings into this
-        if (event && event.state && "cardNames" in event.state) {
+        if (event && event.state) {
             PD.filter.applyCardNames(event.state["cardNames"]);
+            PD.filter.showErrorsAndWarnings(event.state);
+            $("#scryfall-filter-input").val(event.state.query);
         } else {
             PD.filter.reset();
+            PD.filter.clearErrorsAndWarnings();
+            $("#scryfall-filter-input").val("");
         }
     };
 };
@@ -446,13 +449,13 @@ PD.filter.retrieveAllCards = function (url) {
 PD.filter.disableForm = function () {
     $("#scryfall-filter-submit").attr("disabled", "disabled").text("Loading…");
     $("#scryfall-filter-reset").attr("disabled", "disabled").text("Loading…");
-    $("#scryfall-filter-form").submit(function () { return false; });
+    $("#scryfall-filter-form").off("submit").submit(function () { return false; });
 };
 
 PD.filter.enableForm = function () {
     $("#scryfall-filter-submit").removeAttr("disabled").text("Search");
     $("#scryfall-filter-reset").removeAttr("disabled").text("Reset");
-    $("#scryfall-filter-form").submit(function () {
+    $("#scryfall-filter-form").off("submit").submit(function () {
         PD.filter.scryfallFilter($("#scryfall-filter-input").val());
         return false;
     });
@@ -474,9 +477,9 @@ PD.filter.scryfallFilter = function (query) {
 
     PD.filter.retrieveAllCards(url)
         .done( function (o) {
-            let cardNames = o.cardNames;
+            let cardNames = o["cardNames"];
             PD.filter.applyCardNames(cardNames);
-            history.pushState({cardNames:cardNames}, "", "?fq="+query);
+            history.pushState({cardNames:cardNames, warnings:o["warnings"], query:query}, "", "?fq="+query);
             PD.filter.showErrorsAndWarnings(o);
         })
         .fail(PD.filter.showErrorsAndWarnings)
@@ -485,13 +488,12 @@ PD.filter.scryfallFilter = function (query) {
 
 PD.filter.reset = function () {
     $("tr.cardrow").show();
-    $("#errors-and-warnings").empty().hide();
+    PD.filter.clearErrorsAndWarnings();
 };
 
 PD.filter.showErrorsAndWarnings = function (o) {
     let p = $("#errors-and-warnings");
     p.empty();
-    // use .append() to add new elements
     if ("details" in o) {
         let error = document.createElement("div");
         error.innerText = "Error (query failed) - " + o["details"];

@@ -1,17 +1,8 @@
 {{> banner}}
 <section>
-    <h2>Search</h2>
-    <form id="scryfall-filter-form">
-        <p>Search using Scryfall syntax. Warning: can be very slow.</p>
-        <div>
-            <label>Query</label>
-            <input type="text" name="fq"  id="scryfall-filter-input" value="{{query}}">
-        </div>
-        <button id="scryfall-filter-submit" type="submit">Search</button>
-        <button id="scryfall-filter-reset" type="button">Reset</button>
-        <p id="errors-and-warnings" hidden></p>
-    </form>
-</section>
-<section>
+    <button id="toggle-filters-button" onclick="PD.filter.toggleDisplayFilter()">Show filters</button>
+    <div id="filters-container" hidden>
+        {{> scryfallfilter}}
+    </div>
     {{> cardstable}}
 </section>

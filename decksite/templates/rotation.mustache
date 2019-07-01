@@ -4,14 +4,12 @@
     {{#runs}}
         <p>{{runs}} ({{runs_percent}}%) of 168 runs completed. {{num_cards}} cards have hits.</p>
         <p>Stats on undecided cards are redacted to reduce rampant market manipulation.</p>
-        {{#rotation_query}}
-            <p>
-                <form class="inline">
-                    <input type="text" name="rq" value="{{rotation_query}}">
-                    <button type="submit">Search</button>
-                </form>
-            </p>
-        {{/rotation_query}}
+        {{#in_rotation}}
+            <button id="toggle-filters-button" onclick="PD.filter.toggleDisplayFilter()">Show filters</button>
+            <div id="filters-container" hidden>
+                {{> scryfallfilter}}
+            </div>
+        {{/in_rotation}}
         {{> spinner}}
         <table class="highlights">{{! Allow overflow-x so highlighting shows in left margin.}}
             <thead>
@@ -24,7 +22,7 @@
             </thead>
             <tbody>
                 {{#cards}}
-                    <tr>
+                    <tr class="cardrow" id="cardrow-{{name}}">
                         <td>{{#hit_in_last_run}}↑{{/hit_in_last_run}}{{^hit_in_last_run}}↓{{/hit_in_last_run}}</td>
                         <td>{{> singlecard}}</td>
                         <td class="n">{{hits}} ({{percent}}%)</td>
@@ -37,19 +35,3 @@
         {{> rotationkey}}
     {{/runs}}
 </section>
-{{#in_rotation}}
-    {{^rotation_query}}
-        <section>
-            <h2>Search</h2>
-            <form>
-                <p>Search using Scryfall syntax.</p>
-                <div>
-                    <label>Query</label>
-                    <input type="text" name="rq" value="{{rotation_query}}">
-                </div>
-                <button type="submit">Search</button>
-                <p>Warning: can be very slow.</p>
-            </form>
-        </section>
-    {{/rotation_query}}
-{{/in_rotation}}

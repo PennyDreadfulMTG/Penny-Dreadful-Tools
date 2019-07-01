@@ -31,6 +31,7 @@ class Rotation(View):
             self.rotation_msg = 'Supplemental rotation is ' + dtutil.display_date(rotation.next_supplemental(), 2)
         self.cards: List[Card] = []
         if in_rotation:
+            self.in_rotation = in_rotation
             self.read_rotation_files()
         self.show_interesting = True
         if interestingness:

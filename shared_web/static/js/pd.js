@@ -383,7 +383,11 @@ PD.filter.init = function () {
 
     window.onpopstate = function (event) {
         if (event && event.state) {
-            PD.filter.applyCardNames(event.state["cardNames"]);
+            if (event.state["cardNames"] !== null) {
+                PD.filter.applyCardNames(event.state["cardNames"]);
+            } else {
+                $("tr.cardrow").show();
+            }
             PD.filter.showErrorsAndWarnings(event.state);
             $("#scryfall-filter-input").val(event.state.query);
         } else {
@@ -403,7 +407,7 @@ PD.filter.applyCardNames = function (cardNames) {
             jqEle.show();
         }
     });
-}
+};
 
 // input url returns a promise to {success: true/false, cardNames: [...], error message: {...}
 PD.filter.retrieveAllCards = function (url) {
@@ -461,6 +465,15 @@ PD.filter.enableForm = function () {
     });
 };
 
+PD.filter.toggleDisplayFilter = function () {
+    $("#filters-container").slideToggle();
+    if ($("#toggle-filters-button").text() == "Show filters") {
+        $("#toggle-filters-button").text("Hide filters");
+    } else {
+        $("#toggle-filters-button").text("Show filters");
+    }
+};
+
 PD.filter.scryfallFilter = function (query) {
     if (query === ""){
         PD.filter.reset();
@@ -489,6 +502,7 @@ PD.filter.scryfallFilter = function (query) {
 PD.filter.reset = function () {
     $("tr.cardrow").show();
     PD.filter.clearErrorsAndWarnings();
+    history.pushState({cardNames:null, warnings:[], query:""}, "", "?fq=");
 };
 
 PD.filter.showErrorsAndWarnings = function (o) {

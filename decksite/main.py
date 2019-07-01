@@ -34,7 +34,7 @@ from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
                             TournamentHosting, TournamentLeaderboards,
                             Tournaments)
 from magic import card as mc
-from magic import fetcher, image_fetcher, oracle
+from magic import image_fetcher, oracle
 from shared import perf
 from shared.pd_exception import (DoesNotExistException, InvalidDataException,
                                  TooFewItemsException)
@@ -323,9 +323,10 @@ def community_guidelines() -> str:
 @APP.route('/rotation/<interestingness>/')
 @cached()
 def rotation(interestingness: Optional[str] = None) -> str:
-    rotation_query = request.args.get('rq')
-    _, cardnames = fetcher.search_scryfall(rotation_query, exhaustive=True) if rotation_query else (None, None)
-    view = Rotation(interestingness, rotation_query, cardnames)
+    query = request.args.get('fq')
+    if query is None:
+        query = ''
+    view = Rotation(interestingness, query)
     return view.page()
 
 @APP.route('/export/<deck_id>/')

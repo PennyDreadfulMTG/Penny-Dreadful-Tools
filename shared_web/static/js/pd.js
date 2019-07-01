@@ -483,9 +483,6 @@ PD.filter.scryfallFilter = function (query) {
     PD.filter.disableForm();
     PD.filter.clearErrorsAndWarnings();
 
-    // TODO: determine if we are in current season or not - server side?
-    // query = "f:pd and (" + query + ")";
-
     let url = "https://api.scryfall.com/cards/search?q=" + query;
 
     PD.filter.retrieveAllCards(url)

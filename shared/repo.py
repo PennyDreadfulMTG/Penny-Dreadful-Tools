@@ -7,6 +7,7 @@ from typing import Dict, List, Optional
 
 from flask import request, session
 from github import Github, Issue, PullRequest
+from github.GithubException import GithubException
 from requests.exceptions import RequestException
 
 from shared import configuration, dtutil
@@ -127,7 +128,9 @@ def get_pull_requests(start_date: datetime.datetime,
             if len(pulls) >= max_pull_requests:
                 return pulls
     except RequestException as e:
-        print('Github pulls error', e)
+        print('Github pulls error (request)', e)
+    except GithubException as e:
+        print('Gihub pulls error (github)', e)
     return pulls
 
 def format_exception(e: Exception) -> str:

@@ -116,7 +116,6 @@ def code_merges(start_date: datetime.datetime, end_date: datetime.datetime, max_
     except ConnectionError:
         return []
 
-
 def subreddit(start_date: datetime.datetime, end_date: datetime.datetime, max_items: int = sys.maxsize) -> List[Container]:
     try:
         redis_key = 'decksite:news:subreddit'

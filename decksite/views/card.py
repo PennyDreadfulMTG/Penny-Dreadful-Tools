@@ -11,7 +11,8 @@ class Card(View):
     def __init__(self, card: CardContainer, tournament_only: bool = False) -> None:
         super().__init__()
         self.decks = card.decks
-        self.legal_formats = card.legalities.keys()
+        self.legal_formats = ([x for x, y in card.legalities.items() if y == 'Legal'] +
+                              [x + ' (restricted)' for x, y in card.legalities.items() if y == 'Restricted'])
         self.show_seasons = True
         self.show_archetype = True
         self.show_tournament_toggle = True

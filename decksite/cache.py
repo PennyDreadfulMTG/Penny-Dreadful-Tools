@@ -67,7 +67,8 @@ def cached_impl(cacheable: bool = False,
             client_etag = request.headers.get('If-None-Match')
 
             response = CACHE.get(cache_key)  # type: ignore
-            # respect the hard-refresh
+            # Respect a hard refresh from the client, if sent.
+            # Note: Safari/OSX does not send a Cache-Control (or any additional) header on a hard refresh so people using Safari can't bypass/refresh server cache.
             if response is not None and request.headers.get('Cache-Control', '') != 'no-cache':
                 headers['X-Cache'] = 'HIT from Server'
                 cached_etag = response.headers.get('ETag')

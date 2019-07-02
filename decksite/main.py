@@ -359,13 +359,6 @@ def bugs() -> str:
     view = Bugs()
     return view.page()
 
-@APP.route('/news/')
-@cached()
-def news() -> str:
-    news_items = ns.all_news()
-    view = News(news_items)
-    return view.page()
-
 # League
 
 @APP.route('/league/')

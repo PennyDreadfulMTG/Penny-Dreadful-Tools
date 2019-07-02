@@ -15,7 +15,6 @@ class Cards(View):
         self.show_tournament_toggle = True
         self.tournament_only = tournament_only
         self.query = query
-        self.cards = cards
 
         if tournament_only:
             self.toggle_results_url = url_for('.cards')

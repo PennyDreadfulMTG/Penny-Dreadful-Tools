@@ -371,15 +371,18 @@ PD.htmlEscape = function (s) {
 PD.filter = {};
 
 PD.filter.init = function () {
-    // Apply the filter with the initial value of the form
-    PD.filter.scryfallFilter($("#scryfall-filter-input").val());
 
-    // set up the event handlers for the form
-    $("#scryfall-filter-form").submit(function () {
-        PD.filter.scryfallFilter($("#scryfall-filter-input").val());
+    $(".toggle-filters-button").click(PD.filter.toggleDisplayFilter);
+
+    // Apply the filter with the initial value of the form
+    PD.filter.scryfallFilter($(".scryfall-filter-input").val());
+
+    // set up the Event handlers for the form
+    $(".scryfall-filter-form").submit(function () {
+        PD.filter.scryfallFilter($(".scryfall-filter-input").val());
         return false;
     });
-    $("#scryfall-filter-reset").click(PD.filter.reset);
+    $(".scryfall-filter-reset").click(PD.filter.reset);
 
     window.onpopstate = function (event) {
         if (event && event.state) {
@@ -389,19 +392,19 @@ PD.filter.init = function () {
                 $("tr.cardrow").show();
             }
             PD.filter.showErrorsAndWarnings(event.state);
-            $("#scryfall-filter-input").val(event.state.query);
+            $(".scryfall-filter-input").val(event.state.query);
         } else {
             PD.filter.reset();
             PD.filter.clearErrorsAndWarnings();
-            $("#scryfall-filter-input").val("");
+            $(".scryfall-filter-input").val("");
         }
     };
 };
 
 PD.filter.applyCardNames = function (cardNames) {
-    $("tr.cardrow").each( function () {
+    $("tr[class|=cardrow]").each( function () {
         let jqEle = $(this);
-        if (cardNames.indexOf(this.id.split('-')[1]) == -1){
+        if (cardNames.indexOf(this.dataset.cardname) == -1){
             jqEle.hide();
         } else {
             jqEle.show();
@@ -409,7 +412,7 @@ PD.filter.applyCardNames = function (cardNames) {
     });
 };
 
-// input url returns a promise to {success: true/false, cardNames: [...], error message: {...}
+// input url returns a promise to {success: true/false, cardNames: [...], error message: {...}}
 PD.filter.retrieveAllCards = function (url) {
     function succeed (blob) {
         let cards = blob.data.map(x => x["name"]);
@@ -451,26 +454,26 @@ PD.filter.retrieveAllCards = function (url) {
 };
 
 PD.filter.disableForm = function () {
-    $("#scryfall-filter-submit").attr("disabled", "disabled").text("Loading…");
-    $("#scryfall-filter-reset").attr("disabled", "disabled").text("Loading…");
-    $("#scryfall-filter-form").off("submit").submit(function () { return false; });
+    $(".scryfall-filter-submit").attr("disabled", "disabled").text("Loading…");
+    $(".scryfall-filter-reset").attr("disabled", "disabled").text("Loading…");
+    $(".scryfall-filter-form").off("submit").submit(function () { return false; });
 };
 
 PD.filter.enableForm = function () {
-    $("#scryfall-filter-submit").removeAttr("disabled").text("Search");
-    $("#scryfall-filter-reset").removeAttr("disabled").text("Reset");
-    $("#scryfall-filter-form").off("submit").submit(function () {
-        PD.filter.scryfallFilter($("#scryfall-filter-input").val());
+    $(".scryfall-filter-submit").removeAttr("disabled").text("Search");
+    $(".scryfall-filter-reset").removeAttr("disabled").text("Reset");
+    $(".scryfall-filter-form").off("submit").submit(function () {
+        PD.filter.scryfallFilter($(".scryfall-filter-input").val());
         return false;
     });
 };
 
 PD.filter.toggleDisplayFilter = function () {
-    $("#filters-container").slideToggle();
-    if ($("#toggle-filters-button").text() == "Show filters") {
-        $("#toggle-filters-button").text("Hide filters");
+    $(".filters-container").slideToggle();
+    if ($(".toggle-filters-button").text() == "Show filters") {
+        $(".toggle-filters-button").text("Hide filters");
     } else {
-        $("#toggle-filters-button").text("Show filters");
+        $(".toggle-filters-button").text("Show filters");
     }
 };
 
@@ -503,7 +506,7 @@ PD.filter.reset = function () {
 };
 
 PD.filter.showErrorsAndWarnings = function (o) {
-    let p = $("#errors-and-warnings");
+    let p = $(".errors-and-warnings");
     p.empty();
     if ("details" in o) {
         let error = document.createElement("div");
@@ -521,7 +524,7 @@ PD.filter.showErrorsAndWarnings = function (o) {
 };
 
 PD.filter.clearErrorsAndWarnings = function () {
-    $("#errors-and-warnings").empty().hide();
+    $(".errors-and-warnings").empty().hide();
 };
 
 $(document).ready(function () {

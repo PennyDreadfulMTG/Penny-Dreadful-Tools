@@ -8,9 +8,15 @@
             {{/is_matchups}}
             <th data-sortInitialOrder="desc">Record</th>
             <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">Win %</th>
-            {{^is_matchups}}<th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">①</th>{{/is_matchups}}
-            {{^is_matchups}}<th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">⑧</th>{{/is_matchups}}
-            {{^is_matchups}}<th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">5-0s</th>{{/is_matchups}}
+            {{^is_matchups}}<th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">
+                <abbr title="Tournament wins">①</abbr>
+            </th>{{/is_matchups}}
+            {{^is_matchups}}<th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">
+                <abbr title="Tournament top-8s">⑧</abbr>
+            </th>{{/is_matchups}}
+            {{^is_matchups}}<th class="n" data-breakpoints="xs sm md" data-sortInitialOrder="desc">
+                <abbr title="League 5-0 runs">5–0s</abbr>
+            </th>{{/is_matchups}}
             {{! Empty column to hold the toggle when footable kicks in.}}
             <td></td>
         </tr>

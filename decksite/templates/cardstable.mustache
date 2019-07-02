@@ -15,16 +15,13 @@
             <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">
                 <abbr title="League 5-0 runs">5–0s</abbr>
             </th>
-            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">
-                <abbr title="Number of decks with card in the sideboard"> # SBs</abbr>
-            </th>
             {{! Empty column to hold the toggle when footable kicks in.}}
             <td></td>
         </tr>
     </thead>
     <tbody>
         {{#cards}}
-            <tr class="cardrow" id="cardrow-{{name}}">
+            <tr class="cardrow" data-cardname="{{name}}">
                 <td>{{> singlecard}}</td>
                 <td class="n">{{num_decks}}</td>
                 <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
@@ -32,7 +29,6 @@
                 <td class="n">{{#tournament_wins}}{{tournament_wins}}{{/tournament_wins}}</td>
                 <td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>
                 <td class="n">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>
-                <td class="n">{{#num_decks_sideboard}}{{num_decks_sideboard}}{{/num_decks_sideboard}}</td>
                 {{! Empty column to hold the toggle when footable kicks in.}}
                 <td></td>
             </tr>

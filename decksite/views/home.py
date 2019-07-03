@@ -20,7 +20,6 @@ class Home(View):
     def setup_news(self, news: List[Container]) -> None:
         self.news = news
         self.has_news = len(news) > 0
-        self.all_news_url = url_for('news')
 
     def setup_decks(self, decks: List[Deck]) -> None:
         min_decks = 20

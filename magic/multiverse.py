@@ -240,7 +240,7 @@ def insert_cards(printings: List[CardDescription]) -> None:
             card_color_identity_values.append(f'({card_id}, {color_id})')
 
         for format_, status in p.get('legalities', {}).items():
-            if status == 'not_legal':
+            if status == 'not_legal' or format_.capitalize() == 'Penny': # Skip 'Penny' from Scryfall as we'll create our own 'Penny Dreadful' format and set legality for it from legal_cards.txt.
                 continue
             # Strictly speaking we could drop all this capitalizing and use what Scryfall sends us as the canonical name as it's just a holdover from mtgjson.
             format_id = get_format_id(format_.capitalize(), True)

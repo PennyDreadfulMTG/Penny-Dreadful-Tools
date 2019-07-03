@@ -69,6 +69,8 @@ DEFAULTS = {
     'redis_enabled': True,
     'redis_host': 'localhost',
     'redis_port': 6379,
+    # Discord channel id to emit rotation-in-progress messages to.
+    'rotation_hype_channel_id': '207281932214599682',
     'save_historic_legal_lists': False,
     'scratch_dir': '.',
     'slow_fetch': 10.0,

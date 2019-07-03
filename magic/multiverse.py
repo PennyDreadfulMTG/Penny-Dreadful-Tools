@@ -127,8 +127,7 @@ def base_query_lite() -> str:
 def update_database(new_date: datetime.datetime) -> None:
     db().begin('update_database')
     db().execute('DELETE FROM scryfall_version')
-    # In order to rebuild the card table, we must delete (and rebuild) all tables with a FK to it
-    db().execute('DROP TABLE IF EXISTS _cache_card')
+    db().execute('SET FOREIGN_KEY_CHECKS=0') # Avoid needing to drop _cache_card (which has an FK relationship with card) so that the database continues to function while we perform the update.
     db().execute("""
         DELETE FROM card_color;
         DELETE FROM card_color_identity;
@@ -145,6 +144,8 @@ def update_database(new_date: datetime.datetime) -> None:
     insert_cards(every_card_printing)
     update_pd_legality()
     db().execute('INSERT INTO scryfall_version (last_updated) VALUES (%s)', [dtutil.dt2ts(new_date)])
+    db().execute('SET FOREIGN_KEY_CHECKS=1') # OK we are done monkeying with the db put the FK checks back in place and recreate _cache_card.
+    update_cache()
     db().commit('update_database')
 
 # Take Scryfall card descriptions and add them to the database. See also oracle.add_cards_and_update to also rebuild cache/reindex/etc.

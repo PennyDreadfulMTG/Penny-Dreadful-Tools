@@ -4,6 +4,7 @@ from magic import card, fetcher, mana, multiverse, rotation
 from magic.card_description import CardDescription
 from magic.database import db
 from magic.models import Card
+from shared import configuration
 from shared.database import sqlescape
 from shared.pd_exception import (InvalidArgumentException,
                                  InvalidDataException, TooFewItemsException)
@@ -148,9 +149,10 @@ def if_todays_prices(out: bool = True) -> List[Card]:
         c.id {not_clause} IN
             (SELECT card_id FROM card_legality
                 WHERE format_id = {format})
-        AND c.name in (SELECT name FROM prices.cache WHERE week {compare} 0.5)
+        AND c.name in (SELECT name FROM `{prices_database}`.cache WHERE week {compare} 0.5)
         AND c.layout IN ({layouts})
-    """.format(not_clause=not_clause, format=current_format, compare=compare, layouts=', '.join([sqlescape(k) for k, v in multiverse.layouts().items() if v]))
+    """.format(not_clause=not_clause, format=current_format, prices_database=configuration.get('prices_database'),
+               compare=compare, layouts=', '.join([sqlescape(k) for k, v in multiverse.layouts().items() if v]))
 
     rs = db().select(multiverse.cached_base_query(where=where))
     cards = [Card(r) for r in rs]

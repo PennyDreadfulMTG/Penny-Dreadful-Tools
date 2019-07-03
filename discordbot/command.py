@@ -683,7 +683,7 @@ Want to contribute? Send a Pull Request."""
     @cmd_header('Commands')
     async def rotation(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """`!rotation` Date of the next Penny Dreadful rotation."""
-        await send(channel, rotation.text())
+        await send(channel, rotation.message())
 
     @cmd_header('Commands')
     async def rulings(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:

@@ -14,8 +14,9 @@ from discord.state import Status
 from github.GithubException import GithubException
 
 from discordbot import command
-from magic import fetcher, multiverse, oracle, tournaments
+from magic import fetcher, multiverse, oracle, rotation, tournaments
 from magic.card_description import CardDescription
+from magic.models import Card
 from shared import configuration, dtutil
 from shared import fetcher_internal as internal
 from shared import perf, redis, repo
@@ -293,8 +294,30 @@ class Bot(discord.Client):
         except Exception: # pylint: disable=broad-except
             await self.on_error('background_task_league_end')
 
+    async def background_task_rotation_hype(self) -> None:
+        try:
+            await self.wait_until_ready()
+            rotation_hype_channel_id = configuration.get_int('rotation_hype_channel_id')
+            if not rotation_hype_channel_id:
+                print('rotation hype channel is not configured')
+                return
+            channel = self.get_channel(rotation_hype_channel_id)
+            while self.is_ready():
+                until_rotation = rotation.next_rotation_any_kind() - dtutil.now()
+                last_run_time = rotation.last_run_time()
+                if until_rotation < datetime.timedelta(7) and last_run_time is not None:
+                    if dtutil.now() - last_run_time < datetime.timedelta(minutes=5):
+                        await channel.send(rotation_hype_message())
+                    timer = 5 * 60
+                else:
+                    timer = int((until_rotation - datetime.timedelta(7)).total_seconds())
+                await asyncio.sleep(timer)
+        except Exception: # pylint: disable=broad-except
+            await self.on_error('background_task_rotation_hype')
+
 def init() -> None:
     client = Bot()
+    asyncio.ensure_future(client.background_task_rotation_hype(), loop=client.loop)
     asyncio.ensure_future(client.background_task_tournaments(), loop=client.loop)
     asyncio.ensure_future(client.background_task_league_end(), loop=client.loop)
     asyncio.ensure_future(client.background_task_spoiler_season(), loop=client.loop)
@@ -310,3 +333,26 @@ async def get_role(guild: Guild, rolename: str, create: bool = False) -> Optiona
     if create:
         return await guild.create_role(name=rolename)
     return None
+
+def rotation_hype_message() -> str:
+    runs, runs_percent, cs = rotation.read_rotation_files()
+    runs_remaining = rotation.TOTAL_RUNS - runs
+    newly_legal = [c for c in cs if c.hit_in_last_run and c.hits == rotation.TOTAL_RUNS / 2]
+    newly_eliminated = [c for c in cs if not c.hit_in_last_run and c.status == 'Not Legal' and c.hits_needed == runs_remaining + 1]
+    num_undecided = len([c for c in cs if c.status == 'Undecided'])
+    s = f'Rotation run number {runs} completed. Rotation is {runs_percent}% complete.'
+    if len(newly_legal) > 0:
+        newly_legal_s = list_of_most_interesting(newly_legal)
+        s += f'\nConfirmed legal: {newly_legal_s}.'
+    if len(newly_eliminated) > 0:
+        newly_eliminated_s = list_of_most_interesting(newly_eliminated)
+        s += f'\nEliminated: {newly_eliminated_s}.'
+    s += f"\nUndecided: {num_undecided} cards.\n<{fetcher.decksite_url('/rotation/')}>"
+    return s
+
+# This does not currently actually find the most interesting just max 10 – only decksite knows about interestingness for now.
+def list_of_most_interesting(cs: List[Card]) -> str:
+    max_shown = 4
+    if len(cs) > max_shown:
+        return ', '.join(c.name for c in cs[0:max_shown]) + f' and {len(cs) - max_shown} more'
+    return ', '.join(c.name for c in cs)

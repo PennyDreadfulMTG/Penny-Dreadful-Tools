@@ -14,8 +14,6 @@ from shared import configuration, dtutil, fetcher_internal, text
 BLACKLIST: Set[str] = set()
 WHITELIST: Set[str] = set()
 
-TOTAL_RUNS = 168
-
 TIME_UNTIL_FULL_ROTATION = rotation.next_rotation() - dtutil.now()
 TIME_UNTIL_SUPPLEMENTAL_ROTATION = rotation.next_supplemental() - dtutil.now()
 TIME_SINCE_SUPPLEMENTAL_ROTATION = dtutil.now() - rotation.this_supplemental()
@@ -24,7 +22,7 @@ def run() -> None:
     files = rotation.files()
     n = len(files)
     time_until = min(TIME_UNTIL_FULL_ROTATION, TIME_UNTIL_SUPPLEMENTAL_ROTATION) - datetime.timedelta(weeks=1)
-    if n >= TOTAL_RUNS:
+    if n >= rotation.TOTAL_RUNS:
         print('It is the moment of discovery, the triumph of the mind, and the end of this rotation.')
         return
 
@@ -44,7 +42,7 @@ def run() -> None:
         all_prices['mtgotraders'] = parse_mtgotraders_prices(s)
 
     run_number = process(all_prices)
-    if run_number == TOTAL_RUNS:
+    if run_number == rotation.TOTAL_RUNS:
         make_final_list()
 
 def process(all_prices: Dict[str, PriceListType]) -> int:
@@ -109,7 +107,7 @@ def make_final_list() -> None:
 
     passed: List[str] = []
     for name, count in scores:
-        if count >= TOTAL_RUNS / 2:
+        if count >= rotation.TOTAL_RUNS / 2:
             passed.append(name)
     final = list(passed)
     if is_supplemental():

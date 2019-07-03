@@ -119,7 +119,7 @@ class View(BaseView):
         return inflect.engine().number_to_words(len(tournaments.all_series_info()))
 
     def rotation_text(self) -> str:
-        return rotation.text()
+        return rotation.message()
 
     def learn_more_url(self) -> str:
         return url_for('about', hide_intro=True)

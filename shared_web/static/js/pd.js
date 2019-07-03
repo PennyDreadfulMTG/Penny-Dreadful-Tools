@@ -375,8 +375,12 @@ PD.filter.init = function () {
     $(".toggle-filters-button").click(PD.filter.toggleDisplayFilter);
 
     // Apply the filter with the initial value of the form
-    PD.filter.scryfallFilter($(".scryfall-filter-input").val());
-
+    // The initial value is recieved by the template from the backend
+    let initial_value = $(".scryfall-filter-input").val();
+    if (initial_value) {
+        PD.filter.toggleDisplayFilter();
+        PD.filter.scryfallFilter(initial_value);
+    }
     // set up the Event handlers for the form
     $(".scryfall-filter-form").submit(function () {
         PD.filter.scryfallFilter($(".scryfall-filter-input").val());
@@ -389,7 +393,7 @@ PD.filter.init = function () {
             if (event.state["cardNames"] !== null) {
                 PD.filter.applyCardNames(event.state["cardNames"]);
             } else {
-                $("tr.cardrow").show();
+                $(".cardrow").show();
             }
             PD.filter.showErrorsAndWarnings(event.state);
             $(".scryfall-filter-input").val(event.state.query);
@@ -402,7 +406,7 @@ PD.filter.init = function () {
 };
 
 PD.filter.applyCardNames = function (cardNames) {
-    $("tr[class|=cardrow]").each( function () {
+    $("[class|=cardrow]").each( function () {
         let jqEle = $(this);
         if (cardNames.indexOf(this.dataset.cardname) == -1){
             jqEle.hide();
@@ -469,7 +473,7 @@ PD.filter.enableForm = function () {
 };
 
 PD.filter.toggleDisplayFilter = function () {
-    $(".filters-container").slideToggle();
+    $(".filters-container").slideToggle(200);
     if ($(".toggle-filters-button").text() == "Show filters") {
         $(".toggle-filters-button").text("Hide filters");
     } else {
@@ -500,7 +504,7 @@ PD.filter.scryfallFilter = function (query) {
 };
 
 PD.filter.reset = function () {
-    $("tr.cardrow").show();
+    $(".cardrow").show();
     PD.filter.clearErrorsAndWarnings();
     history.pushState({cardNames:null, warnings:[], query:""}, "", "?fq=");
 };

@@ -33,6 +33,8 @@ class Rotation(View):
             c: Card
             for c in self.cards:
                 c.interestingness = rotation.interesting(playability, c)
+        else:
+            self.cards = []
         self.show_interesting = True
         if interestingness:
             self.cards = [c for c in self.cards if c.get('interestingness') == interestingness]

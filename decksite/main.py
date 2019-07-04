@@ -448,12 +448,18 @@ def retire_deck() -> Union[str, Response]:
 @APP.route('/rotation/changes/')
 @SEASONS.route('/rotation/changes/')
 def rotation_changes() -> str:
-    view = RotationChanges(*oracle.pd_rotation_changes(get_season_id()), cs.playability())
+    query = request.args.get('fq')
+    if query is None:
+        query = ''
+    view = RotationChanges(*oracle.pd_rotation_changes(get_season_id()), cs.playability(), query=query)
     return view.page()
 
 @APP.route('/rotation/speculation/')
 def rotation_speculation() -> str:
-    view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), cs.playability(), speculation=True)
+    query = request.args.get('fq')
+    if query is None:
+        query = ''
+    view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), cs.playability(), speculation=True, query=query)
     return view.page()
 
 @APP.route('/charts/cmc/<deck_id>-cmc.png')

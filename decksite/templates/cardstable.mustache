@@ -6,16 +6,22 @@
             <th class="n" data-sortInitialOrder="desc"># Decks</th>
             <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">Record</th>
             <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">Win %</th>
-            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">①</th>
-            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">⑧</th>
-            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">5–0s</th>
+            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">
+                <abbr title="Tournament wins">①</abbr>
+            </th>
+            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">
+                <abbr title="Tournament top-8s">⑧</abbr>
+            </th>
+            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">
+                <abbr title="League 5-0 runs">5–0s</abbr>
+            </th>
             {{! Empty column to hold the toggle when footable kicks in.}}
             <td></td>
         </tr>
     </thead>
     <tbody>
         {{#cards}}
-            <tr>
+            <tr class="cardrow" data-cardname="{{name}}">
                 <td>{{> singlecard}}</td>
                 <td class="n">{{num_decks}}</td>
                 <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>

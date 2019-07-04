@@ -28,8 +28,8 @@ from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
                             Archetypes, Bugs, Card, Cards, CommunityGuidelines,
                             Competition, Competitions, Deck, DeckCheck, Decks,
                             Faqs, Home, LeagueInfo, LinkAccounts, Matchups,
-                            News, People, Person, PersonAchievements,
-                            PersonMatches, Report, Resources, Retire, Rotation,
+                            People, Person, PersonAchievements, PersonMatches,
+                            Report, Resources, Retire, Rotation,
                             RotationChanges, Season, Seasons, SignUp,
                             TournamentHosting, TournamentLeaderboards,
                             Tournaments)
@@ -361,13 +361,6 @@ def resources() -> str:
 @cached()
 def bugs() -> str:
     view = Bugs()
-    return view.page()
-
-@APP.route('/news/')
-@cached()
-def news() -> str:
-    news_items = ns.all_news()
-    view = News(news_items)
     return view.page()
 
 # League

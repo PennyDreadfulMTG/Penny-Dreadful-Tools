@@ -1,14 +1,17 @@
 import datetime
 import glob
 import os
-from typing import Dict, List, Optional, Union, cast
+from collections import Counter
+from typing import Dict, List, Optional, Tuple, Union, cast
 
 from mypy_extensions import TypedDict
 
-from magic import fetcher
+from magic import fetcher, multiverse, oracle
 from magic.models import Card
-from shared import configuration, dtutil
+from shared import configuration, dtutil, redis, text
 from shared.pd_exception import DoesNotExistException, InvalidDataException
+
+TOTAL_RUNS = 168
 
 SetInfoType = TypedDict('SetInfoType', {
     'name': str,
@@ -55,6 +58,9 @@ def last_rotation() -> datetime.datetime:
 def next_rotation() -> datetime.datetime:
     return next_rotation_ex()['enter_date_dt']
 
+def next_rotation_any_kind() -> datetime.datetime:
+    return min(next_rotation(), next_supplemental())
+
 def last_rotation_ex() -> SetInfoType:
     return max([s for s in sets() if s['enter_date_dt'] < dtutil.now()], key=lambda s: s['enter_date_dt'])
 
@@ -88,7 +94,7 @@ def interesting(playability: Dict[str, float], c: Card, speculation: bool = True
         return 'moderately-played'
     return None
 
-def text() -> str:
+def message() -> str:
     full = next_rotation()
     supplemental = next_supplemental()
     now = dtutil.now()
@@ -145,3 +151,75 @@ def get_set_info(code: str) -> SetInfoType:
         if setinfo['code'] == code:
             return setinfo
     raise DoesNotExistException('Could not find Set Info about {code}'.format(code=code))
+
+def last_run_time() -> Optional[datetime.datetime]:
+    try:
+        return dtutil.ts2dt(int(os.path.getmtime(files()[-1])))
+    except (IndexError, OSError):
+        return None
+
+def read_rotation_files() -> Tuple[int, int, List[Card]]:
+    lines = []
+    fs = files()
+    if len(fs) == 0:
+        if not os.path.isdir(configuration.get_str('legality_dir')):
+            raise DoesNotExistException('Invalid configuration.  Could not find legality_dir.')
+        return (0, 0, [])
+    latest_list = open(fs[-1], 'r').read().splitlines()
+    for filename in fs:
+        for line in get_file_contents(filename):
+            line = text.sanitize(line)
+            lines.append(line.strip())
+    scores = Counter(lines).most_common()
+    runs = scores[0][1]
+    runs_percent = round(round(runs / TOTAL_RUNS, 2) * 100)
+    cs = oracle.cards_by_name()
+    cards = []
+    for name, hits in scores:
+        c = process_score(name, hits, cs, runs, latest_list)
+        if c is not None:
+            cards.append(c)
+    return (runs, runs_percent, cards)
+
+def get_file_contents(file: str) -> List[str]:
+    key = f'decksite:rotation:{file}'
+    contents = redis.get_list(key)
+    if contents is not None:
+        return contents
+    with open(file) as f:
+        contents = f.readlines()
+    redis.store(key, contents, ex=3600)
+    return contents
+
+def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_list: List[str]) -> Optional[Card]:
+    remaining_runs = TOTAL_RUNS - runs
+    hits_needed = max(TOTAL_RUNS / 2 - hits, 0)
+    c = cs[name]
+    if c.layout not in multiverse.playable_layouts():
+        return None
+    percent = round(round(hits / runs, 2) * 100)
+    if remaining_runs == 0:
+        percent_needed = '0'
+    else:
+        percent_needed = str(round(round(hits_needed / remaining_runs, 2) * 100))
+    if c is None:
+        raise DoesNotExistException("Legality list contains unknown card '{name}'".format(name=name))
+    if remaining_runs + hits < TOTAL_RUNS / 2:
+        status = 'Not Legal'
+    elif hits >= TOTAL_RUNS / 2:
+        status = 'Legal'
+    else:
+        status = 'Undecided'
+    hit_in_last_run = name in latest_list
+    c.update({
+        'hits': redact(hits) if status == 'Undecided' else hits,
+        'hits_needed': redact(hits_needed) if status == 'Undecided' else hits_needed,
+        'percent': redact(percent) if status == 'Undecided' else percent,
+        'percent_hits_needed': redact(percent_needed) if status == 'Undecided' else percent_needed,
+        'status': status,
+        'hit_in_last_run': hit_in_last_run
+    })
+    return c
+
+def redact(num: Union[str, int, float]) -> str:
+    return ''.join(['█' for _ in str(num)])

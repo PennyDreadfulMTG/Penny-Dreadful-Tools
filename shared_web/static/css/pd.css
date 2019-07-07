@@ -345,6 +345,7 @@ section {
     float: left;
     margin: 0 3.8445rem /* Width of .marginalia + left-padding + right-padding * font-size */ 1rem 0;
     max-width: 100%; /* So that overflow-x on contained table clips overly wide content, otherwise the fact that sections are floated means it is ignored. */
+    overflow-x: auto;
     padding-top: 1rem;
 }
 

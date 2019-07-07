@@ -212,14 +212,11 @@ def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_l
         status = 'Undecided'
     hit_in_last_run = name in latest_list
     c.update({
-        'hits': redact(hits) if status == 'Undecided' else hits,
-        'hits_needed': redact(hits_needed) if status == 'Undecided' else hits_needed,
-        'percent': redact(percent) if status == 'Undecided' else percent,
-        'percent_hits_needed': redact(percent_needed) if status == 'Undecided' else percent_needed,
+        'hits': hits,
+        'hits_needed': hits_needed,
+        'percent': percent,
+        'percent_needed': percent_needed,
         'status': status,
         'hit_in_last_run': hit_in_last_run
     })
     return c
-
-def redact(num: Union[str, int, float]) -> str:
-    return ''.join(['█' for _ in str(num)])

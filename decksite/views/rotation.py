@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from decksite.data import card
 from decksite.view import View
@@ -38,6 +38,16 @@ class Rotation(View):
             self.cards = [c for c in self.cards if c.name in only_these]
         self.num_cards = len(self.cards)
         self.rotation_query = rotation_query or ''
+        for c in self.cards:
+            if c.status != 'Undecided':
+                continue
+            c.hits = redact(c.hits)
+            c.hits_needed = redact(c.hits_needed)
+            c.percent = redact(c.percent)
+            c.percent_needed = redact(c.percent_needed)
 
     def page_title(self) -> str:
         return 'Rotation'
+
+def redact(num: Union[str, int, float]) -> str:
+    return ''.join(['█' for _ in str(num)])

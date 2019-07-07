@@ -57,7 +57,11 @@ def competition_api(competition_id: int) -> Response:
 
 @APP.route('/api/league')
 def league_api() -> Response:
-    return return_json(league.active_league())
+    lg = league.active_league()
+    pdbot = request.form.get('api_token', None) == configuration.get('pdbot_api_token')
+    if not pdbot:
+        lg.decks = [d for d in lg.decks if not d.is_in_current_run()]
+    return return_json(lg)
 
 @APP.route('/api/person/<person>/')
 @fill_args('season_id')

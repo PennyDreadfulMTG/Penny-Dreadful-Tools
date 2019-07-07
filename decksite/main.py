@@ -34,7 +34,7 @@ from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
                             TournamentHosting, TournamentLeaderboards,
                             Tournaments)
 from magic import card as mc
-from magic import fetcher, image_fetcher, oracle
+from magic import image_fetcher, oracle
 from shared import perf
 from shared.pd_exception import (DoesNotExistException, InvalidDataException,
                                  TooFewItemsException)
@@ -128,7 +128,10 @@ def achievements_redirect() -> wrappers.Response:
 @SEASONS.route('/cards/')
 @cached()
 def cards() -> str:
-    view = Cards(cs.load_cards(season_id=get_season_id()))
+    query = request.args.get('fq')
+    if query is None:
+        query = ''
+    view = Cards(cs.load_cards(season_id=get_season_id()), query=query)
     return view.page()
 
 @APP.route('/cards/tournament/')
@@ -320,9 +323,10 @@ def community_guidelines() -> str:
 @APP.route('/rotation/<interestingness>/')
 @cached()
 def rotation(interestingness: Optional[str] = None) -> str:
-    rotation_query = request.args.get('rq')
-    _, cardnames = fetcher.search_scryfall(rotation_query, exhaustive=True) if rotation_query else (None, None)
-    view = Rotation(interestingness, rotation_query, cardnames)
+    query = request.args.get('fq')
+    if query is None:
+        query = ''
+    view = Rotation(interestingness, query)
     return view.page()
 
 @APP.route('/export/<deck_id>/')
@@ -444,12 +448,18 @@ def retire_deck() -> Union[str, Response]:
 @APP.route('/rotation/changes/')
 @SEASONS.route('/rotation/changes/')
 def rotation_changes() -> str:
-    view = RotationChanges(*oracle.pd_rotation_changes(get_season_id()), cs.playability())
+    query = request.args.get('fq')
+    if query is None:
+        query = ''
+    view = RotationChanges(*oracle.pd_rotation_changes(get_season_id()), cs.playability(), query=query)
     return view.page()
 
 @APP.route('/rotation/speculation/')
 def rotation_speculation() -> str:
-    view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), cs.playability(), speculation=True)
+    query = request.args.get('fq')
+    if query is None:
+        query = ''
+    view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), cs.playability(), speculation=True, query=query)
     return view.page()
 
 @APP.route('/charts/cmc/<deck_id>-cmc.png')

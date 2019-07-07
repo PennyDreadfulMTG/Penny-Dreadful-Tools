@@ -5,9 +5,9 @@ from magic import rotation
 from magic.models import Card
 
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, too-many-arguments
 class RotationChanges(View):
-    def __init__(self, cards_in: Sequence[Card], cards_out: Sequence[Card], playability: Dict[str, float], speculation: bool = False) -> None:
+    def __init__(self, cards_in: Sequence[Card], cards_out: Sequence[Card], playability: Dict[str, float], speculation: bool = False, query: str = '') -> None:
         super().__init__()
         self.sections: List[Dict[str, Any]] = []
         self.cards = list(cards_in) + list(cards_out)
@@ -18,6 +18,7 @@ class RotationChanges(View):
         self.speculation = speculation
         self.show_interesting = True
         self.show_seasons = not speculation
+        self.query = query
 
     def page_title(self) -> str:
         if self.speculation:

@@ -17,6 +17,7 @@ PD.init = function () {
     PD.initSignupDeckChooser();
     PD.initPersonalization();
     PD.renderCharts();
+    PD.filter.init();
 };
 PD.scrollToContent = function () {
     if (window.matchMedia("only screen and (max-width: 640px)").matches && document.referrer.indexOf(window.location.hostname) > 0 && document.location.href.indexOf('#content') === -1) {
@@ -367,6 +368,171 @@ PD.htmlEscape = function (s) {
     return $("<div>").text(s).html();
 };
 
+PD.filter = {};
+
+PD.filter.init = function () {
+
+    $(".toggle-filters-button").click(PD.filter.toggleDisplayFilter);
+
+    // Apply the filter with the initial value of the form
+    // The initial value is recieved by the template from the backend
+    let initial_value = $(".scryfall-filter-input").val();
+    if (initial_value) {
+        PD.filter.toggleDisplayFilter();
+        PD.filter.scryfallFilter(initial_value);
+    }
+    // set up the Event handlers for the form
+    $(".scryfall-filter-form").submit(function () {
+        PD.filter.scryfallFilter($(".scryfall-filter-input").val());
+        return false;
+    });
+    $(".scryfall-filter-reset").click(PD.filter.reset);
+
+    window.onpopstate = function (event) {
+        if (event && event.state) {
+            if (event.state["cardNames"] !== null) {
+                PD.filter.applyCardNames(event.state["cardNames"]);
+            } else {
+                $(".cardrow").show();
+            }
+            PD.filter.showErrorsAndWarnings(event.state);
+            $(".scryfall-filter-input").val(event.state.query);
+        } else {
+            PD.filter.reset();
+            PD.filter.clearErrorsAndWarnings();
+            $(".scryfall-filter-input").val("");
+        }
+    };
+};
+
+PD.filter.applyCardNames = function (cardNames) {
+    $("[class|=cardrow]").each( function () {
+        let jqEle = $(this);
+        if (cardNames.indexOf(this.dataset.cardname) == -1){
+            jqEle.hide();
+        } else {
+            jqEle.show();
+        }
+    });
+};
+
+// input url returns a promise to {success: true/false, cardNames: [...], error message: {...}}
+PD.filter.retrieveAllCards = function (url) {
+    function succeed (blob) {
+        let cards = blob.data.map(x => x["name"]);
+        if (blob["has_more"]) {
+            return PD.filter.retrieveAllCards(blob["next_page"]).then( function (new_blob) {
+                // Simplifying assumption: if the first page didn't produce scryfall-level errors, neither will the later ones
+                // and warnings are the same on all pages
+                return {success: true,
+                        cardNames: cards.concat(new_blob["cardNames"]),
+                        warnings: new_blob["warnings"]
+                };
+            });
+        } else {
+            return {
+                success: true,
+                cardNames: cards,
+                warnings: blob["warnings"]
+            };
+        }
+    }
+
+    function fail (jqXHR) { 
+        // we may have failed via a scryfall error, or via a connection error
+        if (jqXHR.status == 400 && "responseJSON" in jqXHR) {
+            // Scryfall gave us a Bad Request - there were issues with the query
+            return {success: false,
+                    details: jqXHR.responseJSON.details,
+                    warnings: jqXHR.responseJSON.warnings
+                   };
+        } else {
+            // We had a 5xx or some other error we don't handle
+            return { success: false,
+                     details: "Error connecting to Scryfall",
+                     warnings: []
+            };
+        }
+    }
+    return $.getJSON(url).then(succeed, fail);
+};
+
+PD.filter.disableForm = function () {
+    $(".scryfall-filter-submit").attr("disabled", "disabled").text("Loading…");
+    $(".scryfall-filter-reset").attr("disabled", "disabled").text("Loading…");
+    $(".scryfall-filter-form").off("submit").submit(function () { return false; });
+};
+
+PD.filter.enableForm = function () {
+    $(".scryfall-filter-submit").removeAttr("disabled").text("Search");
+    $(".scryfall-filter-reset").removeAttr("disabled").text("Reset");
+    $(".scryfall-filter-form").off("submit").submit(function () {
+        PD.filter.scryfallFilter($(".scryfall-filter-input").val());
+        return false;
+    });
+};
+
+PD.filter.toggleDisplayFilter = function () {
+    $(".filters-container").slideToggle(200);
+    if ($(".toggle-filters-button").text() == "Show filters") {
+        $(".toggle-filters-button").text("Hide filters");
+    } else {
+        $(".toggle-filters-button").text("Show filters");
+    }
+};
+
+PD.filter.scryfallFilter = function (query) {
+    if (query === ""){
+        PD.filter.reset();
+        return;
+    }
+
+    PD.filter.disableForm();
+    PD.filter.clearErrorsAndWarnings();
+
+    let url = "https://api.scryfall.com/cards/search?q=" + query;
+
+    PD.filter.retrieveAllCards(url)
+        .done( function (o) {
+            let cardNames = o["cardNames"];
+            PD.filter.applyCardNames(cardNames);
+            history.pushState({cardNames:cardNames, warnings:o["warnings"], query:query}, "", "?fq="+query);
+            PD.filter.showErrorsAndWarnings(o);
+        })
+        .fail(PD.filter.showErrorsAndWarnings)
+        .always(PD.filter.enableForm);
+};
+
+PD.filter.reset = function () {
+    $(".cardrow").show();
+    PD.filter.clearErrorsAndWarnings();
+    history.pushState({cardNames:null, warnings:[], query:""}, "", "?fq=");
+};
+
+PD.filter.showErrorsAndWarnings = function (o) {
+    let p = $(".errors-and-warnings");
+    p.empty();
+    if ("details" in o) {
+        let error = document.createElement("div");
+        error.innerText = "Error (query failed) - " + o["details"];
+        p.append(error);
+    }
+    if ("warnings" in o){
+        for (let i in o["warnings"]) {
+            let warning = document.createElement("div");
+            warning.innerText = "Warning: " + o["warnings"][i];
+            p.append(warning);
+        }
+    }
+    p.show();
+};
+
+PD.filter.clearErrorsAndWarnings = function () {
+    $(".errors-and-warnings").empty().hide();
+};
+
 $(document).ready(function () {
     PD.init();
 });
+
+

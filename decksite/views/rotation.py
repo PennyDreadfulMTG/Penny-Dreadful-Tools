@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 from decksite.data import card
 from decksite.view import View
@@ -10,7 +10,7 @@ from shared import configuration, dtutil
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Rotation(View):
-    def __init__(self, interestingness: Optional[str] = None, rotation_query: Optional[str] = None, only_these: Optional[List[str]] = None) -> None:
+    def __init__(self, interestingness: Optional[str] = None, rotation_query: Optional[str] = '') -> None:
         super().__init__()
         until_full_rotation = rotation.next_rotation() - dtutil.now()
         until_supplemental_rotation = rotation.next_supplemental() - dtutil.now()
@@ -26,16 +26,18 @@ class Rotation(View):
         else:
             self.rotation_msg = 'Supplemental rotation is ' + dtutil.display_date(rotation.next_supplemental(), 2)
         if in_rotation:
+            self.in_rotation = in_rotation
             self.runs, self.runs_percent, self.cards = rotation.read_rotation_files()
             # Now add interestingness to the cards, which only decksite knows not magic.rotation.
             playability = card.playability()
-            for c in self.cards: # type: Card
+            c: Card
+            for c in self.cards:
                 c.interestingness = rotation.interesting(playability, c)
+        else:
+            self.cards = []
         self.show_interesting = True
         if interestingness:
             self.cards = [c for c in self.cards if c.get('interestingness') == interestingness]
-        if only_these:
-            self.cards = [c for c in self.cards if c.name in only_these]
         self.num_cards = len(self.cards)
         self.rotation_query = rotation_query or ''
         for c in self.cards:

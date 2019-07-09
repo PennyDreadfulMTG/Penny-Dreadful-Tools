@@ -406,9 +406,9 @@ PD.filter.init = function () {
 };
 
 PD.filter.applyCardNames = function (cardNames) {
-    $("[class|=cardrow]").each( function () {
+    $(".cardrow").each( function () {
         let jqEle = $(this);
-        if (cardNames.indexOf(this.dataset.cardname) == -1){
+        if (cardNames.indexOf(this.dataset.cardname) == -1) {
             jqEle.hide();
         } else {
             jqEle.show();
@@ -440,7 +440,7 @@ PD.filter.retrieveAllCards = function (url) {
 
     function fail (jqXHR) { 
         // we may have failed via a scryfall error, or via a connection error
-        if (jqXHR.status == 400 && "responseJSON" in jqXHR) {
+        if ((jqXHR.status == 400 || jqXHR.status == 404) && "responseJSON" in jqXHR) {
             // Scryfall gave us a Bad Request - there were issues with the query
             return {success: false,
                     details: jqXHR.responseJSON.details,
@@ -482,7 +482,7 @@ PD.filter.toggleDisplayFilter = function () {
 };
 
 PD.filter.scryfallFilter = function (query) {
-    if (query === ""){
+    if (query === "") {
         PD.filter.reset();
         return;
     }
@@ -517,7 +517,7 @@ PD.filter.showErrorsAndWarnings = function (o) {
         error.innerText = "Error (query failed) - " + o["details"];
         p.append(error);
     }
-    if ("warnings" in o){
+    if ("warnings" in o) {
         for (let i in o["warnings"]) {
             let warning = document.createElement("div");
             warning.innerText = "Warning: " + o["warnings"][i];

@@ -406,9 +406,9 @@ PD.filter.init = function () {
 };
 
 PD.filter.applyCardNames = function (cardNames) {
-    $("[class|=cardrow]").each( function () {
+    $(".cardrow").each( function () {
         let jqEle = $(this);
-        if (cardNames.indexOf(this.dataset.cardname) == -1){
+        if (cardNames.indexOf(this.dataset.cardname) == -1) {
             jqEle.hide();
         } else {
             jqEle.show();
@@ -442,10 +442,17 @@ PD.filter.retrieveAllCards = function (url) {
         // we may have failed via a scryfall error, or via a connection error
         if (jqXHR.status == 400 && "responseJSON" in jqXHR) {
             // Scryfall gave us a Bad Request - there were issues with the query
-            return {success: false,
-                    details: jqXHR.responseJSON.details,
-                    warnings: jqXHR.responseJSON.warnings
+            return { success: false,
+                     details: jqXHR.responseJSON.details,
+                     warnings: jqXHR.responseJSON.warnings
                    };
+        } else if (jqXHR.status == 404 && "responseJSON" in jqXHR) {
+            // Scryfall returned no cards - that's not a fail, we just display nothing
+            // Since this is not a true failure, return a resolved Deffered object
+            return $.Deferred().resolve({ success: true,
+                                     cardNames: [],
+                                     warnings: jqXHR.responseJSON.warnings
+                                   });
         } else {
             // We had a 5xx or some other error we don't handle
             return { success: false,
@@ -482,7 +489,7 @@ PD.filter.toggleDisplayFilter = function () {
 };
 
 PD.filter.scryfallFilter = function (query) {
-    if (query === ""){
+    if (query === "") {
         PD.filter.reset();
         return;
     }
@@ -490,7 +497,13 @@ PD.filter.scryfallFilter = function (query) {
     PD.filter.disableForm();
     PD.filter.clearErrorsAndWarnings();
 
-    let url = "https://api.scryfall.com/cards/search?q=" + query;
+    let url;
+    if ("optimize" in $(".scryfall-filter-input").data()) {
+        let faster_query = "f:pd (" + query + ")";
+        url = "https://api.scryfall.com/cards/search?q=" + encodeURIComponent(faster_query);
+    } else {
+        url = "https://api.scryfall.com/cards/search?q=" + encodeURIComponent(query);
+    }
 
     PD.filter.retrieveAllCards(url)
         .done( function (o) {
@@ -505,6 +518,7 @@ PD.filter.scryfallFilter = function (query) {
 
 PD.filter.reset = function () {
     $(".cardrow").show();
+    $(".scryfall-filter-input").val("");
     PD.filter.clearErrorsAndWarnings();
     history.pushState({cardNames:null, warnings:[], query:""}, "", "?fq=");
 };
@@ -517,7 +531,7 @@ PD.filter.showErrorsAndWarnings = function (o) {
         error.innerText = "Error (query failed) - " + o["details"];
         p.append(error);
     }
-    if ("warnings" in o){
+    if ("warnings" in o) {
         for (let i in o["warnings"]) {
             let warning = document.createElement("div");
             warning.innerText = "Warning: " + o["warnings"][i];

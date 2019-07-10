@@ -10,7 +10,7 @@ from shared import configuration, dtutil
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Rotation(View):
-    def __init__(self, interestingness: Optional[str] = None, rotation_query: Optional[str] = '') -> None:
+    def __init__(self, interestingness: Optional[str] = None, query: Optional[str] = '') -> None:
         super().__init__()
         until_full_rotation = rotation.next_rotation() - dtutil.now()
         until_supplemental_rotation = rotation.next_supplemental() - dtutil.now()
@@ -39,7 +39,7 @@ class Rotation(View):
         if interestingness:
             self.cards = [c for c in self.cards if c.get('interestingness') == interestingness]
         self.num_cards = len(self.cards)
-        self.rotation_query = rotation_query or ''
+        self.query = query
         for c in self.cards:
             if c.status != 'Undecided':
                 continue

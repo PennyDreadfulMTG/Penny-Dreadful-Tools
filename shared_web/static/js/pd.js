@@ -497,7 +497,13 @@ PD.filter.scryfallFilter = function (query) {
     PD.filter.disableForm();
     PD.filter.clearErrorsAndWarnings();
 
-    let url = "https://api.scryfall.com/cards/search?q=" + encodeURIComponent(query);
+    let url;
+    if ("optimize" in $(".scryfall-filter-input").data()) {
+        let faster_query = "f:pd (" + query + ")";
+        url = "https://api.scryfall.com/cards/search?q=" + encodeURIComponent(faster_query);
+    } else {
+        url = "https://api.scryfall.com/cards/search?q=" + encodeURIComponent(query);
+    }
 
     PD.filter.retrieveAllCards(url)
         .done( function (o) {

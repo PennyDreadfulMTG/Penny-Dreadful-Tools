@@ -4,6 +4,7 @@ from flask import url_for
 
 from decksite.view import View
 from magic.models import Card
+from magic.rotation import current_season_num
 from shared.container import Container
 
 
@@ -15,6 +16,10 @@ class Cards(View):
         self.show_tournament_toggle = True
         self.tournament_only = tournament_only
         self.query = query
+
+        # if it's the current season, allow the scryfall filter to add "f:pd" to speed up results
+        if self.season_id() == current_season_num():
+            self.filter_current_season = True
 
         if tournament_only:
             self.toggle_results_url = url_for('.cards')

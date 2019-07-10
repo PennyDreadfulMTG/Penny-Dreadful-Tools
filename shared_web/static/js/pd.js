@@ -438,7 +438,7 @@ PD.filter.retrieveAllCards = function (url) {
         }
     }
 
-    function fail (jqXHR) { 
+    function fail (jqXHR) {
         // we may have failed via a scryfall error, or via a connection error
         if (jqXHR.status == 400 && "responseJSON" in jqXHR) {
             // Scryfall gave us a Bad Request - there were issues with the query

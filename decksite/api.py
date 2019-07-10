@@ -23,7 +23,7 @@ from shared_web.api import generate_error, return_json, validate_api_key
 from shared_web.decorators import fill_args
 
 
-@APP.route('/api/decks/<int:deck_id>/')
+@APP.route('/api/decks/<int:deck_id>')
 def deck_api(deck_id: int) -> Response:
     blob = deck.load_deck(deck_id)
     return return_json(blob)
@@ -63,7 +63,7 @@ def league_api() -> Response:
         lg.decks = [d for d in lg.decks if not d.is_in_current_run()]
     return return_json(lg)
 
-@APP.route('/api/person/<person>/')
+@APP.route('/api/person/<person>')
 @fill_args('season_id')
 def person_api(person: str, season_id: int = -1) -> Response:
     if season_id == -1:

@@ -339,8 +339,12 @@ def rotation_hype_message() -> str:
     runs_remaining = rotation.TOTAL_RUNS - runs
     newly_legal = [c for c in cs if c.hit_in_last_run and c.hits == rotation.TOTAL_RUNS / 2]
     newly_eliminated = [c for c in cs if not c.hit_in_last_run and c.status == 'Not Legal' and c.hits_needed == runs_remaining + 1]
+    newly_hit = [c for c in cs if c.hit_in_last_run and c.hits == 1]
     num_undecided = len([c for c in cs if c.status == 'Undecided'])
     s = f'Rotation run number {runs} completed. Rotation is {runs_percent}% complete.'
+    if len(newly_hit) > 0 and runs_remaining > runs:
+        newly_hit_s = list_of_most_interesting(newly_hit)
+        s += f'\nFirst hit for: {newly_hit_s}.'
     if len(newly_legal) > 0:
         newly_legal_s = list_of_most_interesting(newly_legal)
         s += f'\nConfirmed legal: {newly_legal_s}.'

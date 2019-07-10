@@ -8,7 +8,7 @@
             {{> scryfallfilterwithtoggle}}
         {{/in_rotation}}
         {{> spinner}}
-        <table class="highlights">{{! Allow overflow-x so highlighting shows in left margin.}}
+        <table {{#is_very_large}}class="very-large"{{/is_very_large}}>
             <thead>
                 <tr>
                     <th>⇅</th>
@@ -23,7 +23,7 @@
                         <td>{{#hit_in_last_run}}↑{{/hit_in_last_run}}{{^hit_in_last_run}}↓{{/hit_in_last_run}}</td>
                         <td>{{> singlecard}}</td>
                         <td class="n">{{hits}} ({{percent}}%)</td>
-                        <td class="n">{{hits_needed}} ({{percent_hits_needed}}%)</td>
+                        <td class="n">{{hits_needed}} ({{percent_needed}}%)</td>
                         <td>{{status}}</td>
                     </tr>
                 {{/cards}}

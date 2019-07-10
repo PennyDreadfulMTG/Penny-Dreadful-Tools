@@ -1,5 +1,5 @@
 import datetime
-from typing import Optional
+from typing import Optional, Union
 
 from decksite.data import card
 from decksite.view import View
@@ -10,7 +10,7 @@ from shared import configuration, dtutil
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Rotation(View):
-    def __init__(self, interestingness: Optional[str] = None, query: Optional[str] = '') -> None:
+    def __init__(self, interestingness: Optional[str] = None, rotation_query: Optional[str] = '') -> None:
         super().__init__()
         until_full_rotation = rotation.next_rotation() - dtutil.now()
         until_supplemental_rotation = rotation.next_supplemental() - dtutil.now()
@@ -39,7 +39,17 @@ class Rotation(View):
         if interestingness:
             self.cards = [c for c in self.cards if c.get('interestingness') == interestingness]
         self.num_cards = len(self.cards)
-        self.query = query
+        self.rotation_query = rotation_query or ''
+        for c in self.cards:
+            if c.status != 'Undecided':
+                continue
+            c.hits = redact(c.hits)
+            c.hits_needed = redact(c.hits_needed)
+            c.percent = redact(c.percent)
+            c.percent_needed = redact(c.percent_needed)
 
     def page_title(self) -> str:
         return 'Rotation'
+
+def redact(num: Union[str, int, float]) -> str:
+    return ''.join(['█' for _ in str(num)])

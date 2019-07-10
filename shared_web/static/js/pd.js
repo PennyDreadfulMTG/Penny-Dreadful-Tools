@@ -440,12 +440,19 @@ PD.filter.retrieveAllCards = function (url) {
 
     function fail (jqXHR) { 
         // we may have failed via a scryfall error, or via a connection error
-        if ((jqXHR.status == 400 || jqXHR.status == 404) && "responseJSON" in jqXHR) {
+        if (jqXHR.status == 400 && "responseJSON" in jqXHR) {
             // Scryfall gave us a Bad Request - there were issues with the query
-            return {success: false,
-                    details: jqXHR.responseJSON.details,
-                    warnings: jqXHR.responseJSON.warnings
+            return { success: false,
+                     details: jqXHR.responseJSON.details,
+                     warnings: jqXHR.responseJSON.warnings
                    };
+        } else if (jqXHR.status == 404 && "responseJSON" in jqXHR) {
+            // Scryfall returned no cards - that's not a fail, we just display nothing
+            // Since this is not a true failure, return a resolved Deffered object
+            return $.Deferred().resolve({ success: true,
+                                     cardNames: [],
+                                     warnings: jqXHR.responseJSON.warnings
+                                   });
         } else {
             // We had a 5xx or some other error we don't handle
             return { success: false,
@@ -490,7 +497,7 @@ PD.filter.scryfallFilter = function (query) {
     PD.filter.disableForm();
     PD.filter.clearErrorsAndWarnings();
 
-    let url = "https://api.scryfall.com/cards/search?q=" + query;
+    let url = "https://api.scryfall.com/cards/search?q=" + encodeURIComponent(query);
 
     PD.filter.retrieveAllCards(url)
         .done( function (o) {
@@ -505,6 +512,7 @@ PD.filter.scryfallFilter = function (query) {
 
 PD.filter.reset = function () {
     $(".cardrow").show();
+    $(".scryfall-filter-input").val("");
     PD.filter.clearErrorsAndWarnings();
     history.pushState({cardNames:null, warnings:[], query:""}, "", "?fq=");
 };

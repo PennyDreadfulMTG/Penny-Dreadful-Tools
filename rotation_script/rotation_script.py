@@ -101,7 +101,6 @@ def make_final_list() -> None:
     for line in fileinput.input(files):
         line = text.sanitize(line)
         if line.strip() in plane_names:
-            print(f'DISCARDED: [{line.strip()}] is a plane.')
             continue
         lines.append(line)
     scores = Counter(lines).most_common()

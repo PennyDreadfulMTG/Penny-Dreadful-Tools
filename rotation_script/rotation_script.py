@@ -78,8 +78,7 @@ def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignor
 
 def is_good_set(setname: str) -> bool:
     if not BLACKLIST and not WHITELIST:
-        supplimental = is_supplemental()
-        if supplimental:
+        if is_supplemental():
             WHITELIST.add(rotation.last_rotation_ex()['mtgo_code'])
         else:
             BLACKLIST.add(rotation.next_rotation_ex()['mtgo_code'])
@@ -99,8 +98,7 @@ def make_final_list() -> None:
     lines: List[str] = []
     for line in fileinput.input(files):
         line = text.sanitize(line)
-        if line in plane_names:
-            print(f'DISCARDED: [{line}] is a plane.')
+        if line.strip() in plane_names:
             continue
         lines.append(line)
     scores = Counter(lines).most_common()
@@ -118,3 +116,12 @@ def make_final_list() -> None:
     h.write(''.join(final))
     h.close()
     print('Generated legal_cards.txt.  {0}/{1} cards.'.format(len(passed), len(scores)))
+
+    if is_supplemental():
+        setcode = rotation.last_rotation_ex()['mtgo_code']
+    else:
+        setcode = rotation.next_rotation_ex()['mtgo_code']
+
+    h = open(os.path.join(configuration.get_str('legality_dir'), f'{setcode}_legal_cards.txt'), mode='w', encoding='utf-8')
+    h.write(''.join(final))
+    h.close()

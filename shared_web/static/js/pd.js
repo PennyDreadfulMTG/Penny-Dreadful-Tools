@@ -565,5 +565,3 @@ PD.filter.clearErrorsAndWarnings = function () {
 $(document).ready(function () {
     PD.init();
 });
-
-

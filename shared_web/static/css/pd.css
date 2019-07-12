@@ -1549,6 +1549,26 @@ form.inline, input.inline, select.inline, textarea.inline, label.inline, button.
     }
 }
 
+label.radio-label {
+    display: inline;
+    float: none;
+}
+
+input[type="radio"] {
+    width: auto;
+}
+
+.hidden-by-scryfall-filter, .hidden-by-interestingness-filter {
+    display: none;
+}
+
+.filter-fieldset {
+	border: 1px;
+	border-style: solid;
+	padding: 5px;
+	margin: 5px;
+}
+
 /*
 
 Intro
@@ -2553,23 +2573,3 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 /* links */
 .tpd-skin-dark a,
 .tpd-skin-dark a:hover { color: #ccc; }
-
-label.radio-label {
-    display: inline;
-    float: none;
-}
-
-input[type="radio"] {
-    width: auto;
-}
-
-.hidden-by-scryfall-filter, .hidden-by-interestingness-filter {
-    display: none;
-}
-
-.filter-fieldset {
-	border: 1px;
-	border-style: solid;
-	padding: 5px;
-	margin: 5px;
-}

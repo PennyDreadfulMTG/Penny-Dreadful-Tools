@@ -12,6 +12,7 @@ from shared import configuration, dtutil, redis, text
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 TOTAL_RUNS = 168
+WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
 
 SetInfoType = TypedDict('SetInfoType', {
     'name': str,
@@ -68,13 +69,20 @@ def next_rotation_ex() -> SetInfoType:
     try:
         return min([s for s in sets() if s['enter_date_dt'] > dtutil.now()], key=lambda s: s['enter_date_dt'])
     except ValueError:
-        fake = {
+        fake_enter_date_dt = last_rotation() + datetime.timedelta(days=90)
+        fake_exit_date_dt = last_rotation() + datetime.timedelta(days=90+365+365)
+        fake_exit_year = fake_exit_date_dt.year
+        fake_enter_date = fake_enter_date_dt.strftime(WIS_DATE_FORMAT)
+        fake_exit_date = fake_exit_date_dt.strftime(WIS_DATE_FORMAT)
+        fake: SetInfoType = {
             'name': 'Unannounced Set',
             'block': None,
             'code': '???',
-            'enter_date_dt': last_rotation() + datetime.timedelta(days=90),
-            'exit_date': None,
-            'rough_exit_date': 'Q4 2099'
+            'mtgo_code': '???',
+            'enter_date': fake_enter_date,
+            'enter_date_dt': fake_enter_date_dt,
+            'exit_date': fake_exit_date,
+            'rough_exit_date': f'Q4 {fake_exit_year}'
         }
         return fake
 
@@ -88,7 +96,7 @@ def this_supplemental() -> datetime.datetime:
     return last_rotation() + datetime.timedelta(weeks=3)
 
 def postprocess(setinfo: SetInfoType) -> SetInfoType:
-    setinfo['enter_date_dt'] = dtutil.parse(setinfo['enter_date'], '%Y-%m-%dT%H:%M:%S.%f', dtutil.WOTC_TZ)
+    setinfo['enter_date_dt'] = dtutil.parse(setinfo['enter_date'], WIS_DATE_FORMAT, dtutil.WOTC_TZ)
     if setinfo['code'] == 'DOM': # !quality
         setinfo['mtgo_code'] = 'DAR'
     else:

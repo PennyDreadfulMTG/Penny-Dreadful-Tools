@@ -73,7 +73,7 @@ def next_rotation_ex() -> SetInfoType:
             'block': None,
             'code': '???',
             'enter_date_dt': last_rotation() + datetime.timedelta(days=90),
-            'exit_date': null,
+            'exit_date': None,
             'rough_exit_date': 'Q4 2099'
         }
         return fake

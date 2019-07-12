@@ -92,8 +92,11 @@ def create_issue(content: str,
             return issue
         except IndexError:
             pass
-    issue = git_repo.create_issue(title=title, body=body, labels=labels)
-    return issue
+    try:
+        issue = git_repo.create_issue(title=title, body=body, labels=labels)
+        return issue
+    except GithubException:
+        return None
 
 def safe_data(data: Dict[str, str]) -> Dict[str, str]:
     safe = {}

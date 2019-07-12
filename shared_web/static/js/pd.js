@@ -388,12 +388,18 @@ PD.filter.init = function () {
     });
     $(".scryfall-filter-reset").click(PD.filter.reset);
 
+    $(".interestingness-filter-radio").change(function () {
+        if (this.checked) {
+            PD.filter.applyInterestingness(this.value);
+        }
+    });
+
     window.onpopstate = function (event) {
         if (event && event.state) {
             if (event.state["cardNames"] !== null) {
                 PD.filter.applyCardNames(event.state["cardNames"]);
             } else {
-                $(".cardrow").show();
+                $(".cardrow").removeClass("hidden-by-scryfall-filter");
             }
             PD.filter.showErrorsAndWarnings(event.state);
             $(".scryfall-filter-input").val(event.state.query);
@@ -409,12 +415,23 @@ PD.filter.applyCardNames = function (cardNames) {
     $(".cardrow").each( function () {
         let jqEle = $(this);
         if (cardNames.indexOf(this.dataset.cardname) == -1) {
-            jqEle.hide();
+            jqEle.addClass("hidden-by-scryfall-filter");
         } else {
-            jqEle.show();
+            jqEle.removeClass("hidden-by-scryfall-filter");
         }
     });
 };
+
+PD.filter.applyInterestingness = function (interestingness) {
+    $(".cardrow").each( function () {
+        let jqEle = $(this);
+        if (interestingness != "all" && !jqEle.children("a").hasClass("interestingness-" + interestingness)) {
+            jqEle.addClass("hidden-by-interestingness-filter");
+        } else {
+            jqEle.removeClass("hidden-by-interestingness-filter");
+        }
+    });
+}
 
 // input url returns a promise to {success: true/false, cardNames: [...], error message: {...}}
 PD.filter.retrieveAllCards = function (url) {
@@ -517,7 +534,7 @@ PD.filter.scryfallFilter = function (query) {
 };
 
 PD.filter.reset = function () {
-    $(".cardrow").show();
+    $(".cardrow").removeClass("hidden-by-scryfall-filter");
     $(".scryfall-filter-input").val("");
     PD.filter.clearErrorsAndWarnings();
     history.pushState({cardNames:null, warnings:[], query:""}, "", "?fq=");

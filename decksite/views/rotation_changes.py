@@ -19,6 +19,7 @@ class RotationChanges(View):
         self.show_interesting = True
         self.show_seasons = not speculation
         self.query = query
+        self.show_interestingness_filter = True
 
     def page_title(self) -> str:
         if self.speculation:

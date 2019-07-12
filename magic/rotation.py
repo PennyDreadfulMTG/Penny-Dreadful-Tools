@@ -65,7 +65,18 @@ def last_rotation_ex() -> SetInfoType:
     return max([s for s in sets() if s['enter_date_dt'] < dtutil.now()], key=lambda s: s['enter_date_dt'])
 
 def next_rotation_ex() -> SetInfoType:
-    return min([s for s in sets() if s['enter_date_dt'] > dtutil.now()], key=lambda s: s['enter_date_dt'])
+    try:
+        return min([s for s in sets() if s['enter_date_dt'] > dtutil.now()], key=lambda s: s['enter_date_dt'])
+    except ValueError:
+        fake = {
+            "name": "Unannounced Set",
+            "block": None,
+            "code": "???",
+            "enter_date_dt": last_rotation() + datetime.timedelta(days=90),
+            "exit_date": null,
+            "rough_exit_date": "Q4 2099"
+        }
+        return fake
 
 def next_supplemental() -> datetime.datetime:
     last = last_rotation() + datetime.timedelta(weeks=3)

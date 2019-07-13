@@ -52,7 +52,7 @@ DEFAULTS = {
     'logsite_database': 'pdlogs',
     'magic_database': 'cards',
     'modo_bugs_dir': 'modo_bugs_repo',
-    'mtgotraders_url': None,
+    'mtgotraders_url': 'http://www.mtgotraders.com/pennydreadfull.php',
     'mysql_host': 'localhost',
     'mysql_passwd': '',
     'mysql_port': 3306,

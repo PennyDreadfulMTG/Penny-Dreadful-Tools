@@ -35,10 +35,10 @@ def fetch() -> None:
         all_prices['mtgotraders'] = parser.parse_mtgotraders_prices(s)
     if not timestamps:
         raise TooFewItemsException('Did not get any prices when fetching {urls} ({all_prices})'.format(urls=itertools.chain(configuration.get_list('cardhoarder_urls'), [configuration.get_str('mtgotraders_url')]), all_prices=all_prices))
-    store(min(timestamps), all_prices)
-    cleanup()
+    count = store(min(timestamps), all_prices)
+    cleanup(count)
 
-def store(timestamp: float, all_prices: Dict[str, parser.PriceListType]) -> None:
+def store(timestamp: float, all_prices: Dict[str, parser.PriceListType]) -> int:
     DATABASE.begin('store')
     lows: Dict[str, int] = {}
     for code in all_prices:
@@ -47,7 +47,9 @@ def store(timestamp: float, all_prices: Dict[str, parser.PriceListType]) -> None
             cents = int(float(p) * 100)
             if cents < lows.get(name, sys.maxsize):
                 lows[name] = cents
+    count = 0
     while lows:
+        count = count + 1
         sql = 'INSERT INTO low_price (`time`, name, price) VALUES '
         chunk = []
         try:
@@ -61,12 +63,16 @@ def store(timestamp: float, all_prices: Dict[str, parser.PriceListType]) -> None
             values.extend([timestamp, name, cents])
         execute(sql, values)
     DATABASE.commit('store')
+    return count * 20
 
-def cleanup() -> None:
+def cleanup(count: int = 0) -> None:
     beginning_of_season = rotation.last_rotation()
     one_month_ago = dtutil.now(dtutil.WOTC_TZ) - datetime.timedelta(31)
     oldest_needed = min(beginning_of_season, one_month_ago)
-    execute('DELETE FROM low_price WHERE `time` < %s', [dtutil.dt2ts(oldest_needed)])
+    limit = ''
+    if count > 0:
+        limit = f'LIMIT {count * 2}'
+    execute('DELETE FROM low_price WHERE `time` < %s ' + limit, [dtutil.dt2ts(oldest_needed)])
 
 def execute(sql: str, values: Optional[List[object]] = None) -> None:
     if values is None:

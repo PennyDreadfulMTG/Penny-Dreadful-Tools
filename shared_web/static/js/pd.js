@@ -420,6 +420,7 @@ PD.filter.applyCardNames = function (cardNames) {
             jqEle.removeClass("hidden-by-scryfall-filter");
         }
     });
+    PD.filter.updateCardCounts();
 };
 
 PD.filter.applyInterestingness = function (interestingness) {
@@ -431,6 +432,7 @@ PD.filter.applyInterestingness = function (interestingness) {
             jqEle.removeClass("hidden-by-interestingness-filter");
         }
     });
+    PD.filter.updateCardCounts();
 }
 
 // input url returns a promise to {success: true/false, cardNames: [...], error message: {...}}
@@ -538,6 +540,7 @@ PD.filter.reset = function () {
     $(".scryfall-filter-input").val("");
     PD.filter.clearErrorsAndWarnings();
     history.pushState({cardNames:null, warnings:[], query:""}, "", "?fq=");
+    PD.filter.updateCardCounts();
 };
 
 PD.filter.showErrorsAndWarnings = function (o) {
@@ -561,6 +564,13 @@ PD.filter.showErrorsAndWarnings = function (o) {
 PD.filter.clearErrorsAndWarnings = function () {
     $(".errors-and-warnings").empty().hide();
 };
+
+PD.filter.updateCardCounts = function () {
+    $("span.total").parent().parent().each(function () {
+        let l = $(this).find(".cardrow").filter(":visible").length;
+        $(this).find("span.total").text(l);
+    });
+}
 
 $(document).ready(function () {
     PD.init();

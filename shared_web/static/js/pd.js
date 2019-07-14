@@ -372,6 +372,11 @@ PD.filter = {};
 
 PD.filter.init = function () {
 
+    // if there are no filter-forms on the page, don't try to set anything up
+    if ($(".scryfall-filter-form").length == 0) {
+        return false;
+    }
+
     $(".toggle-filters-button").click(PD.filter.toggleDisplayFilter);
 
     // Apply the filter with the initial value of the form

@@ -80,7 +80,8 @@ TESTDATA = [
     ('Deck - Mono Black Aristocrats (1)', 'Mono Black Aristocrats (1)', '[B]', 'Mono Black Aristocrats'),
     ('PD-GB', 'Golgari the Rock', ['G', 'B'], 'The Rock'),
     ('PD 11 WW', 'White Weenie', ['W'], None),
-    ('Bad Esper 2.0', 'Bad Esper 2.0', ['W', 'U', 'B'], 'Esper Control')
+    ('Bad Esper 2.0', 'Bad Esper 2.0', ['W', 'U', 'B'], 'Esper Control'),
+    ('BBB', 'Mono Black', ['B'], 'Zombies')
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

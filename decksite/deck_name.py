@@ -152,9 +152,9 @@ def normalize_colors(name: str) -> str:
     return name.strip()
 
 def canonicalize_colors(colors: List[str]) -> List[str]:
-    color_words = []
+    color_words: Set[str] = set()
     for color in colors:
-        color_words.append(standardize_color_string(color))
+        color_words.add(standardize_color_string(color))
     canonical_colors: Set[str] = set()
     for color in color_words:
         for name, symbols in COLOR_COMBINATIONS.items():
@@ -170,7 +170,7 @@ def standardize_color_string(s: str) -> str:
     for k in COLOR_COMBINATIONS:
         find = k.lower()
         colors = colors.replace(find, ''.join(COLOR_COMBINATIONS[k]))
-    return name_from_colors(list(colors.upper()))
+    return name_from_colors(set(colors.upper()))
 
 def name_from_colors(colors: List[str]) -> str:
     ordered = mana.order(colors)

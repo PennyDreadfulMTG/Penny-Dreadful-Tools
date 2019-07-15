@@ -107,6 +107,6 @@ def test_invalid_color() -> None:
         assert True
 
 def test_canonicalize_colors() -> None:
-    assert deck_name.canonicalize_colors([]) == []
-    assert deck_name.canonicalize_colors(['White', 'Black', 'Orzhov', 'Abzan']) == ['B', 'G', 'W']
-    assert deck_name.canonicalize_colors(['White', 'White', 'White']) == ['W']
+    assert deck_name.canonicalize_colors([]) == set()
+    assert deck_name.canonicalize_colors(['White', 'Black', 'Orzhov', 'Abzan']) == set(['B', 'G', 'W'])
+    assert deck_name.canonicalize_colors(['White', 'White', 'White']) == set(['W'])

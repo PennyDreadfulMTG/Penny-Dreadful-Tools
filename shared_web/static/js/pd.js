@@ -372,6 +372,11 @@ PD.filter = {};
 
 PD.filter.init = function () {
 
+    // if there are no filter-forms on the page, don't try to set anything up
+    if ($(".scryfall-filter-form").length == 0) {
+        return false;
+    }
+
     $(".toggle-filters-button").click(PD.filter.toggleDisplayFilter);
 
     // Apply the filter with the initial value of the form
@@ -388,12 +393,18 @@ PD.filter.init = function () {
     });
     $(".scryfall-filter-reset").click(PD.filter.reset);
 
+    $(".interestingness-filter-radio").change(function () {
+        if (this.checked) {
+            PD.filter.applyInterestingness(this.value);
+        }
+    });
+
     window.onpopstate = function (event) {
         if (event && event.state) {
             if (event.state["cardNames"] !== null) {
                 PD.filter.applyCardNames(event.state["cardNames"]);
             } else {
-                $(".cardrow").show();
+                $(".cardrow").removeClass("hidden-by-scryfall-filter");
             }
             PD.filter.showErrorsAndWarnings(event.state);
             $(".scryfall-filter-input").val(event.state.query);
@@ -409,12 +420,25 @@ PD.filter.applyCardNames = function (cardNames) {
     $(".cardrow").each( function () {
         let jqEle = $(this);
         if (cardNames.indexOf(this.dataset.cardname) == -1) {
-            jqEle.hide();
+            jqEle.addClass("hidden-by-scryfall-filter");
         } else {
-            jqEle.show();
+            jqEle.removeClass("hidden-by-scryfall-filter");
         }
     });
+    PD.filter.updateCardCounts();
 };
+
+PD.filter.applyInterestingness = function (interestingness) {
+    $(".cardrow").each( function () {
+        let jqEle = $(this);
+        if (interestingness != "all" && !jqEle.children("a").hasClass("interestingness-" + interestingness)) {
+            jqEle.addClass("hidden-by-interestingness-filter");
+        } else {
+            jqEle.removeClass("hidden-by-interestingness-filter");
+        }
+    });
+    PD.filter.updateCardCounts();
+}
 
 // input url returns a promise to {success: true/false, cardNames: [...], error message: {...}}
 PD.filter.retrieveAllCards = function (url) {
@@ -517,10 +541,11 @@ PD.filter.scryfallFilter = function (query) {
 };
 
 PD.filter.reset = function () {
-    $(".cardrow").show();
+    $(".cardrow").removeClass("hidden-by-scryfall-filter");
     $(".scryfall-filter-input").val("");
     PD.filter.clearErrorsAndWarnings();
     history.pushState({cardNames:null, warnings:[], query:""}, "", "?fq=");
+    PD.filter.updateCardCounts();
 };
 
 PD.filter.showErrorsAndWarnings = function (o) {
@@ -545,8 +570,13 @@ PD.filter.clearErrorsAndWarnings = function () {
     $(".errors-and-warnings").empty().hide();
 };
 
+PD.filter.updateCardCounts = function () {
+    $("span.total").parent().parent().each(function () {
+        let l = $(this).find(".cardrow").filter(":visible").length;
+        $(this).find("span.total").text(l);
+    });
+}
+
 $(document).ready(function () {
     PD.init();
 });
-
-

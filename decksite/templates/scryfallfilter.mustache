@@ -1,14 +1,25 @@
 <form class="scryfall-filter-form">
-    <p>Search using Scryfall syntax. Warning: can be very slow.</p>
     <div>
-        <label>Query</label>
-        <input type="text" name="fq"  class="scryfall-filter-input" {{# filter_current_season }}data-optimize{{/ filter_current_season }} value="{{query}}">
+        <fieldset class="filter-fieldset">
+            <p>Search using Scryfall syntax. Warning: can be very slow.</p>
+            <label>Query</label>
+            <input type="text" name="fq"  class="scryfall-filter-input" {{# filter_current_season }}data-optimize{{/ filter_current_season }} value="{{query}}">
+            <button class="scryfall-filter-submit" type="submit">Search</button>
+            <button class="scryfall-filter-reset" type="button">Reset</button>
+        </fieldset>
+        <p class="errors-and-warnings" hidden></p>
     </div>
-    <div>
-        <button class="scryfall-filter-submit" type="submit">Search</button>
+    {{# show_interestingness_filter }}
+        <fieldset class="filter-fieldset">
+            <input class="interestingness-filter-radio" type="radio"  name="interest" value="all" id="all" checked>
+            <label class="radio-label" for="all">Any History</label>
+            <input class="interestingness-filter-radio" type="radio"  name="interest" value="new" id="new">
+            <label class="radio-label" for="new">Newly Legal</label>
+            <input class="interestingness-filter-radio" type="radio"  name="interest" value="heavily-played" id="heavily-played">
+            <label class="radio-label" for="heavily-played">Heavily Played</label>
+            <input class="interestingness-filter-radio" type="radio"  name="interest" value="moderately-played" id="moderately-played">
+            <label class="radio-label" for="moderately-played">Moderately Played</label>
+        </fieldset>
+    {{/ show_interestingness_filter }}
     </div>
-    <div>
-        <button class="scryfall-filter-reset" type="button">Reset</button>
-    </div>
-    <p class="errors-and-warnings" hidden></p>
 </form>

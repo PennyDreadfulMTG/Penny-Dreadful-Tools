@@ -151,16 +151,16 @@ def normalize_colors(name: str) -> str:
         name = 'mono {name}'.format(name=name)
     return name.strip()
 
-def canonicalize_colors(colors: List[str]) -> List[str]:
-    color_words = []
+def canonicalize_colors(colors: List[str]) -> Set[str]:
+    color_words: Set[str] = set()
     for color in colors:
-        color_words.append(standardize_color_string(color))
+        color_words.add(standardize_color_string(color))
     canonical_colors: Set[str] = set()
     for color in color_words:
         for name, symbols in COLOR_COMBINATIONS.items():
             if name == color:
                 canonical_colors = canonical_colors | set(symbols)
-    return mana.order(canonical_colors)
+    return set(mana.order(canonical_colors))
 
 def regex_pattern(pattern: str) -> str:
     return '(^| )(mono[ -]?)?{pattern}( |$)'.format(pattern=pattern)
@@ -170,16 +170,16 @@ def standardize_color_string(s: str) -> str:
     for k in COLOR_COMBINATIONS:
         find = k.lower()
         colors = colors.replace(find, ''.join(COLOR_COMBINATIONS[k]))
-    return name_from_colors(list(colors.upper()))
+    return name_from_colors(set(colors.upper()))
 
-def name_from_colors(colors: List[str]) -> str:
+def name_from_colors(colors: Set[str]) -> str:
     ordered = mana.order(colors)
     for name, symbols in COLOR_COMBINATIONS.items():
         if mana.order(symbols) == ordered:
             return name
     return 'colorless'
 
-def add_colors_if_no_deckname(name: str, colors: List[str]) -> str:
+def add_colors_if_no_deckname(name: str, colors: Set[str]) -> str:
     if not name:
         name = name_from_colors(colors).strip()
     return name

@@ -595,8 +595,7 @@ Want to contribute? Send a Pull Request."""
             await post_cards(client, cards[10:], channel, None, '')
             Commands.isPack1Pick1Ready = True
         else:
-            print("Pack1Pick1 was denied as it was still processing another one.")  #This command will be heavy enough by itself, make sure the bot doesn't process it too much.
-        
+            print('Pack1Pick1 was denied as it was still processing another one.')  #This command will be heavy enough by itself, make sure the bot doesn't process it too much.
 
     @cmd_header('Aliases')
     async def pdm(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:

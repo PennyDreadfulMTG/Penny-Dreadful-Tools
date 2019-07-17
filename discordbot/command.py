@@ -579,6 +579,24 @@ Want to contribute? Send a Pull Request."""
         """`!oracle {name}` Oracle text of a card."""
         await single_card_text(client, channel, args, author, oracle_text, 'oracle')
 
+    isPack1Pick1Ready = True
+
+    @cmd_header('Commands')
+    async def p1p1(self, client: Client, channel: TextChannel, **_: Dict[str, Any]) -> None:
+        """`!p1p1` Summon a pack 1, pick 1 game."""
+
+        if Commands.isPack1Pick1Ready:
+            Commands.isPack1Pick1Ready = False #Do not allow more than one p1p1 at the same time.
+            cards = [oracle.cards_by_name()[name] for name in random.sample(oracle.legal_cards(), 15)]
+            image_fetcher.download_image(cards) #Preload the cards to reduce the delay encountered between introduction and the cards.
+            await send(channel, "Let's play the pack 1, pick 1 game. The rules are simple. You are drafting and you open this as your first pack. What do you take?")
+            await post_cards(client, cards[0:5], channel, None, '')
+            await post_cards(client, cards[5:10], channel, None, '')
+            await post_cards(client, cards[10:], channel, None, '')
+            Commands.isPack1Pick1Ready = True
+        else:
+            print('Pack1Pick1 was denied as it was still processing another one.')  #This command will be heavy enough by itself, make sure the bot doesn't process it too much.
+
     @cmd_header('Aliases')
     async def pdm(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """Alias for `!resources`."""

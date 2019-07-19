@@ -261,8 +261,6 @@ def times_from_location(q: str, twentyfour: bool) -> Dict[str, List[str]]:
         raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}')
     return {current_time(timezone, twentyfour): [q]}
 
-
-
 def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
     cached = redis.get_container('magic:fetcher:whatisinstandard')
     if cached is not None:

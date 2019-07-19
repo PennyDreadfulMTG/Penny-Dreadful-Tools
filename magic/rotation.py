@@ -82,7 +82,7 @@ def next_rotation_ex() -> SetInfoType:
         }
         fake_exit_date = {
             'exact': fake_exit_date_dt.strftime(WIS_DATE_FORMAT),
-            'rough': 'Unknown'
+            'rough': f'Q4 {fake_exit_year}'
         }
         fake: SetInfoType = {
             'name': 'Unannounced Set',
@@ -90,8 +90,7 @@ def next_rotation_ex() -> SetInfoType:
             'mtgo_code': '???',
             'enterDate': fake_enter_date,
             'enter_date_dt': fake_enter_date_dt,
-            'exitDate': fake_exit_date,
-            'rough_exit_date': f'Q4 {fake_exit_year}'
+            'exitDate': fake_exit_date
         }
         return fake
 

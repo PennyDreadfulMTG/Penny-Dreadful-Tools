@@ -90,7 +90,8 @@ def next_rotation_ex() -> SetInfoType:
             'mtgo_code': '???',
             'enterDate': fake_enter_date,
             'enter_date_dt': fake_enter_date_dt,
-            'exitDate': fake_exit_date
+            'exitDate': fake_exit_date,
+            'codename': 'Unannounced'
         }
         return fake
 

@@ -269,7 +269,7 @@ def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
         return cached
 
     try:
-        info = internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json')
+        info = internal.fetch_json('http://whatsinstandard.com/api/v6/standard.json')
     except FetchException:
         cached = redis.get_container('magic:fetcher:whatisinstandard_noex')
         if cached is not None:

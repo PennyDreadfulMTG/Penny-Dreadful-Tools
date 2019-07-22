@@ -76,11 +76,11 @@ def next_rotation_ex() -> SetInfoType:
         fake_enter_date_dt = last_rotation() + datetime.timedelta(days=90)
         fake_exit_date_dt = last_rotation() + datetime.timedelta(days=90+365+365)
         fake_exit_year = fake_exit_date_dt.year
-        fake_enter_date = {
+        fake_enter_date: DateType = {
             'exact': fake_enter_date_dt.strftime(WIS_DATE_FORMAT),
             'rough': 'Unknown'
         }
-        fake_exit_date = {
+        fake_exit_date: DateType = {
             'exact': fake_exit_date_dt.strftime(WIS_DATE_FORMAT),
             'rough': f'Q4 {fake_exit_year}'
         }

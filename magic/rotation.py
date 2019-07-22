@@ -14,14 +14,18 @@ from shared.pd_exception import DoesNotExistException, InvalidDataException
 TOTAL_RUNS = 168
 WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
 
+DateType = TypedDict('DateType', {
+    'exact': str,
+    'rough': str,
+})
+
 SetInfoType = TypedDict('SetInfoType', {
     'name': str,
-    'block': Optional[str],
     'code': str,
+    'codename': str,
     'mtgo_code': str,
-    'enter_date': str,
-    'exit_date': str,
-    'rough_exit_date': str,
+    'enterDate': DateType,
+    'exitDate': DateType,
     'enter_date_dt': datetime.datetime,
     })
 
@@ -72,17 +76,22 @@ def next_rotation_ex() -> SetInfoType:
         fake_enter_date_dt = last_rotation() + datetime.timedelta(days=90)
         fake_exit_date_dt = last_rotation() + datetime.timedelta(days=90+365+365)
         fake_exit_year = fake_exit_date_dt.year
-        fake_enter_date = fake_enter_date_dt.strftime(WIS_DATE_FORMAT)
-        fake_exit_date = fake_exit_date_dt.strftime(WIS_DATE_FORMAT)
+        fake_enter_date: DateType = {
+            'exact': fake_enter_date_dt.strftime(WIS_DATE_FORMAT),
+            'rough': 'Unknown'
+        }
+        fake_exit_date: DateType = {
+            'exact': fake_exit_date_dt.strftime(WIS_DATE_FORMAT),
+            'rough': f'Q4 {fake_exit_year}'
+        }
         fake: SetInfoType = {
             'name': 'Unannounced Set',
-            'block': None,
             'code': '???',
             'mtgo_code': '???',
-            'enter_date': fake_enter_date,
+            'enterDate': fake_enter_date,
             'enter_date_dt': fake_enter_date_dt,
-            'exit_date': fake_exit_date,
-            'rough_exit_date': f'Q4 {fake_exit_year}'
+            'exitDate': fake_exit_date,
+            'codename': 'Unannounced'
         }
         return fake
 
@@ -96,7 +105,7 @@ def this_supplemental() -> datetime.datetime:
     return last_rotation() + datetime.timedelta(weeks=3)
 
 def postprocess(setinfo: SetInfoType) -> SetInfoType:
-    setinfo['enter_date_dt'] = dtutil.parse(setinfo['enter_date'], WIS_DATE_FORMAT, dtutil.WOTC_TZ)
+    setinfo['enter_date_dt'] = dtutil.parse(setinfo['enterDate']['exact'], WIS_DATE_FORMAT, dtutil.WOTC_TZ)
     if setinfo['code'] == 'DOM': # !quality
         setinfo['mtgo_code'] = 'DAR'
     else:

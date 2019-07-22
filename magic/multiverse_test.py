@@ -11,15 +11,6 @@ def test_base_query_legalities() -> None:
     assert 'Penny Dreadful EMN:Legal' in legalities
     assert 'Penny Dreadful AKH:Legal' not in legalities
 
-def test_seasons_enum_uptodate() -> None:
-    """If this is failing, go append new set codes to rotation.SEASONS.
-       This needs to be done every few months.
-
-       This test is purely for futureproofing, and failing it does not mean anything is currently broken"""
-    if rotation.next_rotation_ex()['code'] == '???':
-        return
-    assert rotation.next_rotation_ex()['code'] in rotation.SEASONS
-
 def test_supertypes() -> None:
     assert multiverse.supertypes('Legendary Enchantment Creature - God') == ['Legendary']
     assert multiverse.supertypes('Artifact Creature - Construct') == []

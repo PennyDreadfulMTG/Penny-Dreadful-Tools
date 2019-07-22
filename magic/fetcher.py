@@ -83,6 +83,14 @@ def card_price_string(card: Card, short: bool = False) -> str:
         return '{dollars}.{cents}'.format(dollars=dollars, cents=cents.ljust(2, '0'))
     return price_info(card)
 
+def current_time(timezone: datetime.tzinfo, twentyfour: bool) -> str:
+    if twentyfour:
+        return dtutil.now(timezone).strftime('%H:%M')
+    try:
+        return dtutil.now(timezone).strftime('%l:%M %p')
+    except ValueError: # %l is not a univerally supported argument.  Fall back to %I on other platforms.
+        return dtutil.now(timezone).strftime('%I:%M %p')
+
 def decksite_url(path: str = '/') -> str:
     hostname = configuration.get_str('decksite_hostname')
     port = configuration.get_int('decksite_port')
@@ -94,6 +102,14 @@ def decksite_url(path: str = '/') -> str:
 
 def downtimes() -> str:
     return internal.fetch('https://pennydreadfulmtg.github.io/modo-bugs/downtimes.txt')
+
+def gatherling_deck_comments(d: Deck) -> List[str]:
+    url = f'http://gatherling.com/deck.php?mode=view&id={d.identifier}'
+    s = internal.fetch(url)
+    result = re.search('COMMENTS</td></tr><tr><td>(.*)</td></tr></table></div><div class="clear"></div><center>', s, re.MULTILINE | re.DOTALL)
+    if result:
+        return result.group(1).replace('<br />', '\n').split('\n')
+    return []
 
 def legal_cards(force: bool = False, season: str = None) -> List[str]:
     if season is None:
@@ -115,13 +131,6 @@ def legal_cards(force: bool = False, season: str = None) -> List[str]:
             h.write(legal_txt)
 
     return legal_txt.strip().split('\n')
-
-def scryfall_last_updated() -> datetime.datetime:
-    d = internal.fetch_json('https://api.scryfall.com/bulk-data')
-    for o in d['data']:
-        if o['type'] == 'default_cards':
-            return dtutil.parse_rfc3339(o['updated_at'])
-    raise InvalidDataException(f'Could not get the last updated date from Scryfall: {d}')
 
 async def mtgo_status() -> str:
     try:
@@ -154,6 +163,13 @@ def resources() -> Dict[str, Dict[str, str]]:
 async def scryfall_cards_async() -> Dict[str, Any]:
     url = 'https://api.scryfall.com/cards'
     return await internal.fetch_json_async(url)
+
+def scryfall_last_updated() -> datetime.datetime:
+    d = internal.fetch_json('https://api.scryfall.com/bulk-data')
+    for o in d['data']:
+        if o['type'] == 'default_cards':
+            return dtutil.parse_rfc3339(o['updated_at'])
+    raise InvalidDataException(f'Could not get the last updated date from Scryfall: {d}')
 
 def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str]]:
     """Returns a tuple. First member is an integer indicating how many cards match the query total,
@@ -203,6 +219,10 @@ def rulings(cardname: str) -> List[Dict[str, str]]:
 def sitemap() -> List[str]:
     return internal.fetch_json(decksite_url('/api/sitemap/'))['urls']
 
+def subreddit() -> Container:
+    url = 'https://www.reddit.com/r/pennydreadfulMTG/.rss'
+    return feedparser.parse(url)
+
 def time(q: str, twentyfour: bool) -> Dict[str, List[str]]:
     return times_from_timezone_code(q, twentyfour) if len(q) <= 3 else times_from_location(q, twentyfour)
 
@@ -241,21 +261,13 @@ def times_from_location(q: str, twentyfour: bool) -> Dict[str, List[str]]:
         raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}')
     return {current_time(timezone, twentyfour): [q]}
 
-def current_time(timezone: datetime.tzinfo, twentyfour: bool) -> str:
-    if twentyfour:
-        return dtutil.now(timezone).strftime('%H:%M')
-    try:
-        return dtutil.now(timezone).strftime('%l:%M %p')
-    except ValueError: # %l is not a univerally supported argument.  Fall back to %I on other platforms.
-        return dtutil.now(timezone).strftime('%I:%M %p')
-
 def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
     cached = redis.get_container('magic:fetcher:whatisinstandard')
     if cached is not None:
         return cached
 
     try:
-        info = internal.fetch_json('http://whatsinstandard.com/api/v5/sets.json')
+        info = internal.fetch_json('http://whatsinstandard.com/api/v6/standard.json')
     except FetchException:
         cached = redis.get_container('magic:fetcher:whatisinstandard_noex')
         if cached is not None:
@@ -264,15 +276,3 @@ def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
     redis.store('magic:fetcher:whatisinstandard', info, ex=86400)
     redis.store('magic:fetcher:whatisinstandard_noex', info)
     return info
-
-def subreddit() -> Container:
-    url = 'https://www.reddit.com/r/pennydreadfulMTG/.rss'
-    return feedparser.parse(url)
-
-def gatherling_deck_comments(d: Deck) -> List[str]:
-    url = f'http://gatherling.com/deck.php?mode=view&id={d.identifier}'
-    s = internal.fetch(url)
-    result = re.search('COMMENTS</td></tr><tr><td>(.*)</td></tr></table></div><div class="clear"></div><center>', s, re.MULTILINE | re.DOTALL)
-    if result:
-        return result.group(1).replace('<br />', '\n').split('\n')
-    return []

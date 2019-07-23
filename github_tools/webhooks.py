@@ -131,7 +131,6 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
             if status.state != 'success' and not blocked:
                 commit.create_status(state='pending', description=f'Waiting for {status.context}', context=PDM_CHECK_CONTEXT)
                 blocked = True
-                status = f'Merge blocked by {status.context}'
 
     if blocked:
         # We should only merge master into the PR if it's gonna do something.
@@ -162,7 +161,7 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
         return 'good to merge'
 
     if not whitelisted and not 'merge when ready' in labels:
-        commit.create_status(state='pending', description='Waiting for "merge when ready"', context=PDM_CHECK_CONTEXT)
+        commit.create_status(state='success', description='Waiting for "merge when ready"', context=PDM_CHECK_CONTEXT)
         return 'Waiting for label'
 
     if 'beta test' in labels:

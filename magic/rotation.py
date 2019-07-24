@@ -32,8 +32,8 @@ SetInfoType = TypedDict('SetInfoType', {
 SEASONS = [
     'EMN', 'KLD', # 2016
     'AER', 'AKH', 'HOU', 'XLN', # 2017
-    'RIX', 'DOM', 'M19', 'GRN', #2018
-    'RNA', 'WAR', 'M20', # 2019
+    'RIX', 'DOM', 'M19', 'GRN', # 2018
+    'RNA', 'WAR', 'M20', 'ELD', # 2019
     ]
 
 def init() -> List[SetInfoType]:

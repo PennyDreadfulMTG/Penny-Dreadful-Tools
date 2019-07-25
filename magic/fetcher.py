@@ -259,7 +259,7 @@ def times_from_location(q: str, twentyfour: bool) -> Dict[str, List[str]]:
         timezone = dtutil.timezone(timezone_info['timeZoneId'])
     except KeyError as e:
         raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}')
-    return {current_time(timezone, twentyfour): [q]}
+    return {current_time(timezone, twentyfour): [info['results'][0]['formatted_address']]}
 
 def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
     cached = redis.get_container('magic:fetcher:whatisinstandard')

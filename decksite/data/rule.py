@@ -144,6 +144,8 @@ def overlooked_decks() -> List[Deck]:
             ON
                 deck.id = _applied_rules.deck_id
             WHERE
+                deck.created_date < UNIX_TIMESTAMP(NOW() - INTERVAL 1 DAY) -- Very new decks won't be in _applied_rules yet, but that doesn't mean they have been overlooked just that the caching hasn't run since they were created.
+            AND
                 _applied_rules.rule_id IS NULL AND deck.archetype_id IN
                     (
                         SELECT

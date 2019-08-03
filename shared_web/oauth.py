@@ -31,6 +31,7 @@ def setup_session(url: str) -> None:
     user = discord.get(API_BASE_URL + '/users/@me').json()
     session['id'] = user['id']
     session['discord_id'] = user['id']
+    session['discord_locale'] = user['locale']
     guilds = discord.get(API_BASE_URL + '/users/@me/guilds').json()
     wrong_guilds = False # protect against an unexpected response from discord
     session['in_guild'] = False
@@ -86,3 +87,4 @@ def logout() -> None:
     session['logged_person_id'] = None
     session['person_id'] = None
     session['mtgo_username'] = None
+    session['discord_locale'] = None

@@ -37,3 +37,4 @@ whoosh_index/
 /*.config.json
 /TestResults.xml
 .mypy_cache
+/codecov.sh

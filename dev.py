@@ -111,8 +111,19 @@ def tests(argv: List[str]) -> None:
     multiverse.init()
     oracle.init()
     code = pytest.main(argv)
+    if os.environ.get('TRAVIS') == 'true':
+        upload_coverage()
     if code:
         sys.exit(code)
+
+def upload_coverage() -> None:
+    from shared import fetcher_internal
+    fetcher_internal.store('https://codecov.io/bash', 'codecov.sh')
+    from plumbum import local, FG
+    python3 = local['python3']
+    python3['-m', 'coverage', 'xml', '-i']
+    bash = local['bash']
+    bash['codecov.sh'] & FG
 
 def sort(fix: bool = False) -> None:
     """

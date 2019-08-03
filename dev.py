@@ -116,6 +116,7 @@ def tests(argv: List[str]) -> None:
     if code:
         sys.exit(code)
 
+# pylint: disable=pointless-statement
 def upload_coverage() -> None:
     from shared import fetcher_internal
     fetcher_internal.store('https://codecov.io/bash', 'codecov.sh')

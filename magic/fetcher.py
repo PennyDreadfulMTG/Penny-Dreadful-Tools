@@ -262,7 +262,7 @@ def times_from_location(q: str, twentyfour: bool) -> Dict[str, List[str]]:
     return {current_time(timezone, twentyfour): [info['results'][0]['formatted_address']]}
 
 def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
-    cached = redis.get_container('magic:fetcher:whatisinstandard')
+    cached = redis.get_container('magic:fetcher:whatisinstandard_6')
     if cached is not None:
         return cached
 
@@ -273,6 +273,6 @@ def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
         if cached is not None:
             return cached
         raise
-    redis.store('magic:fetcher:whatisinstandard', info, ex=86400)
+    redis.store('magic:fetcher:whatisinstandard_6', info, ex=86400)
     redis.store('magic:fetcher:whatisinstandard_noex', info)
     return info

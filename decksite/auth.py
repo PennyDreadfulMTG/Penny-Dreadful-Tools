@@ -56,6 +56,8 @@ def login(p: person.Person) -> None:
     session['person_id'] = p.id
     session['mtgo_username'] = p.name
     session.permanent = True
+    if p.locale != session.get('discord_locale'):
+        person.set_locale(p.id, session.get('discord_locale'))
 
 def hide_intro() -> bool:
     return session.get('hide_intro', False)

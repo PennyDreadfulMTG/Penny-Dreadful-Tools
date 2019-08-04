@@ -97,6 +97,7 @@ def load_people(where: str = '1 = 1',
             p.mtggoldfish_username,
             p.discord_id,
             p.elo,
+            p.locale,
             num_decks,
             wins,
             losses,
@@ -347,3 +348,6 @@ def squash(p1id: int, p2id: int, col1: str, col2: str) -> None:
     db().execute('DELETE FROM person WHERE id = %s', [p2id])
     db().execute('UPDATE person SET {col2} = %s WHERE id = %s'.format(col2=col2), [new_value, p1id])
     db().commit('squash')
+
+def set_locale(person_id: int, locale: str) -> None:
+    db().execute('UPDATE person SET locale = %s WHERE id = %s', [locale, person_id])

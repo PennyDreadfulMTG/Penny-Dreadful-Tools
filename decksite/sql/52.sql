@@ -1,0 +1,1 @@
+ALTER TABLE `person` ADD COLUMN `locale` VARCHAR(8) NULL;

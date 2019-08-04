@@ -3,7 +3,7 @@ from collections import OrderedDict
 from typing import List, Optional, Set
 
 import titlecase
-from profanity import profanity
+from better_profanity import profanity
 
 from magic import mana
 from magic.models import Deck
@@ -199,9 +199,8 @@ def remove_mono_if_not_first_word(name: str) -> str:
     return re.sub('(.+) mono ', '\\1 ', name)
 
 def remove_profanity(name: str) -> str:
-    profanity.load_words(['bitch', 'penis', 'anal', 'crap', 'cancer', 'supremacia ariana', 'handjob'])
-    profanity.set_censor_characters(' ')
-    name = profanity.censor(name).strip()
+    profanity.add_censor_words(['supremacia ariana'])
+    name = profanity.censor(name, ' ').strip()
     name = re.sub(' +', ' ', name) # We just replaced profanity with a space so compress spaces.
     return name
 

@@ -8,7 +8,7 @@ from magic.rotation import current_season_num
 from shared.container import Container
 
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use, too-many-instance-attributes
 class Cards(View):
     def __init__(self, cards: List[Card], tournament_only: bool = False, query: str = '') -> None:
         super().__init__()

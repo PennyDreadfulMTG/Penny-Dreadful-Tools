@@ -5,7 +5,7 @@
         <p>{{runs}} ({{runs_percent}}%) of 168 runs completed. {{num_cards}} cards have hits.</p>
         <p>Stats on undecided cards are redacted to reduce rampant market manipulation.</p>
         {{#in_rotation}}
-            {{> scryfallfilterwithtoggle}}
+            {{> scryfallfilter}}
         {{/in_rotation}}
         {{> spinner}}
         <table {{#is_very_large}}class="very-large"{{/is_very_large}}>

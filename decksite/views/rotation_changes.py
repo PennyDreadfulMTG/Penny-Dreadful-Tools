@@ -5,7 +5,7 @@ from magic import rotation
 from magic.models import Card
 
 
-# pylint: disable=no-self-use, too-many-arguments
+# pylint: disable=no-self-use, too-many-arguments, too-many-instance-attributes
 class RotationChanges(View):
     def __init__(self, cards_in: Sequence[Card], cards_out: Sequence[Card], playability: Dict[str, float], speculation: bool = False, query: str = '') -> None:
         super().__init__()
@@ -20,6 +20,7 @@ class RotationChanges(View):
         self.show_seasons = not speculation
         self.query = query
         self.show_interestingness_filter = True
+        self.show_filters_toggle = True
 
     def page_title(self) -> str:
         if self.speculation:

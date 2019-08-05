@@ -1,25 +1,35 @@
-<form class="scryfall-filter-form">
-    <div>
-        <fieldset class="filter-fieldset">
-            <p>Search using Scryfall syntax. Warning: can be very slow.</p>
-            <label>Query</label>
+<div class="filters-container" hidden>
+    <form class="scryfall-filter-form">
+        <div>
+            <p>Search this list using <a href="https://scryfall.com/docs/syntax">Scryfall syntax</a>. Warning: can be very slow.</p>
+            <label for="fq">Query</label>
             <input type="text" name="fq"  class="scryfall-filter-input" {{# filter_current_season }}data-optimize{{/ filter_current_season }} value="{{query}}">
             <button class="scryfall-filter-submit" type="submit">Search</button>
-            <button class="scryfall-filter-reset" type="button">Reset</button>
-        </fieldset>
-        <p class="errors-and-warnings" hidden></p>
-    </div>
-    {{# show_interestingness_filter }}
-        <fieldset class="filter-fieldset">
-            <input class="interestingness-filter-radio" type="radio"  name="interest" value="all" id="all" checked>
-            <label class="radio-label" for="all">Any History</label>
-            <input class="interestingness-filter-radio" type="radio"  name="interest" value="new" id="new">
-            <label class="radio-label" for="new">Newly Legal</label>
-            <input class="interestingness-filter-radio" type="radio"  name="interest" value="heavily-played" id="heavily-played">
-            <label class="radio-label" for="heavily-played">Heavily Played</label>
-            <input class="interestingness-filter-radio" type="radio"  name="interest" value="moderately-played" id="moderately-played">
-            <label class="radio-label" for="moderately-played">Moderately Played</label>
-        </fieldset>
-    {{/ show_interestingness_filter }}
-    </div>
-</form>
+            <p class="form-field"><a class="scryfall-filter-reset" type="button" href="#">Reset</a></p>
+            {{# show_interestingness_filter }}
+                <p class="label">Show</p>
+                <div>
+                    <div class="form-field">
+                        <div>
+                            <input class="interestingness-filter-radio" type="radio" name="interest" value="all" id="all" checked>
+                            <label class="radio-label" for="all">All</label>
+                        </div>
+                        <div>
+                            <input class="interestingness-filter-radio" type="radio" name="interest" value="new" id="new">
+                            <label class="radio-label" for="new">Never Before Legal</label>
+                        </div>
+                        <div>
+                            <input class="interestingness-filter-radio" type="radio" name="interest" value="heavily-played" id="heavily-played">
+                            <label class="radio-label" for="heavily-played">Heavily Played</label>
+                        </div>
+                        <div>
+                            <input class="interestingness-filter-radio" type="radio" name="interest" value="moderately-played" id="moderately-played">
+                            <label class="radio-label" for="moderately-played">Moderately Played</label>
+                        </div>
+                    </div>
+                </div>
+            {{/ show_interestingness_filter }}
+            <ul class="error errors-and-warnings" hidden></ui>
+        </div>
+    </form>
+</div>

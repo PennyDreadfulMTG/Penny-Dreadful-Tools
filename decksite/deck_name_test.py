@@ -81,7 +81,10 @@ TESTDATA = [
     ('PD-GB', 'Golgari the Rock', ['G', 'B'], 'The Rock'),
     ('PD 11 WW', 'White Weenie', ['W'], None),
     ('Bad Esper 2.0', 'Bad Esper 2.0', ['W', 'U', 'B'], 'Esper Control'),
-    ('BBB', 'Mono Black', ['B'], 'Zombies')
+    ('BBB', 'Mono Black', ['B'], 'Zombies'),
+    ('Manaless Dredge', 'Manaless Dredge', ['B'], 'Graveyard Value'),
+    ('Deep Anal', 'Deep', ['U'], 'Control'),
+    ('Supremacia Ariana', 'Mono White', ['W'], None)
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

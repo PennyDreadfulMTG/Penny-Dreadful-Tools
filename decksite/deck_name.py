@@ -3,7 +3,7 @@ from collections import OrderedDict
 from typing import List, Optional, Set
 
 import titlecase
-from profanity import profanity
+from better_profanity import profanity
 
 from magic import mana
 from magic.models import Deck
@@ -79,11 +79,11 @@ def normalize(d: Deck) -> str:
         elif name and d.get('archetype_name') and name == d.get('archetype_name', '').lower():
             pass
         else:
+            name = remove_profanity(name)
             name = add_colors_if_no_deckname(name, d.get('colors'))
             name = normalize_colors(name)
             name = add_archetype_if_just_colors(name, d.get('archetype_name'))
             name = remove_mono_if_not_first_word(name)
-            name = remove_profanity(name)
         name = ucase_trailing_roman_numerals(name)
         name = titlecase.titlecase(name)
         return correct_case_of_color_names(name)
@@ -199,9 +199,8 @@ def remove_mono_if_not_first_word(name: str) -> str:
     return re.sub('(.+) mono ', '\\1 ', name)
 
 def remove_profanity(name: str) -> str:
-    profanity.load_words(['bitch', 'penis', 'anal', 'crap', 'cancer', 'supremacia ariana', 'handjob'])
-    profanity.set_censor_characters(' ')
-    name = profanity.censor(name).strip()
+    profanity.add_censor_words(['supremacia ariana'])
+    name = profanity.censor(name, ' ').strip()
     name = re.sub(' +', ' ', name) # We just replaced profanity with a space so compress spaces.
     return name
 

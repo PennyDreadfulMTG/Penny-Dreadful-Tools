@@ -79,11 +79,11 @@ def normalize(d: Deck) -> str:
         elif name and d.get('archetype_name') and name == d.get('archetype_name', '').lower():
             pass
         else:
+            name = remove_profanity(name)
             name = add_colors_if_no_deckname(name, d.get('colors'))
             name = normalize_colors(name)
             name = add_archetype_if_just_colors(name, d.get('archetype_name'))
             name = remove_mono_if_not_first_word(name)
-            name = remove_profanity(name)
         name = ucase_trailing_roman_numerals(name)
         name = titlecase.titlecase(name)
         return correct_case_of_color_names(name)

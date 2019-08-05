@@ -84,7 +84,7 @@ TESTDATA = [
     ('BBB', 'Mono Black', ['B'], 'Zombies'),
     ('Manaless Dredge', 'Manaless Dredge', ['B'], 'Graveyard Value'),
     ('Deep Anal', 'Deep', ['U'], 'Control'),
-    ('Supremacia Ariana', 'White Weenie', ['W'], 'White Weenie')
+    ('Supremacia Ariana', 'Mono White', ['W'], None)
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

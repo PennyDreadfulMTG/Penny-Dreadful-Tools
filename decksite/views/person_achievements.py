@@ -22,4 +22,4 @@ class PersonAchievements(View):
             self.no_achievements = True
 
     def page_title(self):
-        return f'Achievement details: {self.person.name}'
+        return f'{self.person.name} Achievements'

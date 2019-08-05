@@ -165,7 +165,7 @@ def test_parse5() -> None:
     s = textwrap.dedent(s)
     d = decklist.parse(s)
     assert len(d['maindeck']) == 13
-    assert len(d['sideboard']) == 1
+    assert len(d['sideboard']) == 0
 
 # Test that a 71 card deck includes the last 15 as sideboard
 def test_parse6() -> None:
@@ -417,3 +417,40 @@ def test_parse12() -> None:
     d = decklist.parse(s)
     assert sum(d['maindeck'].values()) == 85
     assert sum(d['sideboard'].values()) == 15
+
+# Test some zeroes as are sometimes given to us by mtggoldfish.
+def test_parse13() -> None:
+    s = """
+        0 Feast of Blood
+        3 Barter in Blood
+        4 Consume Spirit
+        4 Demonic Rising
+        4 Devour Flesh
+        2 Distress
+        0 Rhox Faithmender
+        2 Dread Statuary
+        4 Haunted Plate Mail
+        3 Homicidal Seclusion
+        4 Hymn to Tourach
+        2 Infest
+        4 Quicksand
+        4 Spawning Pool
+        14 Swamp
+        2 Ultimate Price
+        4 Underworld Connections
+        0 Island
+
+        Sideboard
+        1 Distress
+        2 Dystopia
+        1 Infest
+        0 Scrabbling Claws
+        4 Memoricide
+        2 Nature's Ruin
+        1 Pharika's Cure
+        4 Scrabbling Claws"""
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    assert sum(d['maindeck'].values()) == 60
+    assert len(d['maindeck']) == 15
+    assert len(d['sideboard']) == 7

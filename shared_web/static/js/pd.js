@@ -546,19 +546,20 @@ PD.filter.reset = function () {
     PD.filter.clearErrorsAndWarnings();
     history.pushState({cardNames:null, warnings:[], query:""}, "", "?fq=");
     PD.filter.updateCardCounts();
+    return false;
 };
 
 PD.filter.showErrorsAndWarnings = function (o) {
     let p = $(".errors-and-warnings");
     p.empty();
     if ("details" in o) {
-        let error = document.createElement("div");
+        let error = document.createElement("li");
         error.innerText = "Error (query failed) - " + o["details"];
         p.append(error);
     }
     if ("warnings" in o) {
         for (let i in o["warnings"]) {
-            let warning = document.createElement("div");
+            let warning = document.createElement("li");
             warning.innerText = "Warning: " + o["warnings"][i];
             p.append(warning);
         }

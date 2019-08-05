@@ -1452,25 +1452,24 @@ input[type=number] {
     width: 2rem;
 }
 
-form label {
+form label, .label {
     display: block;
     float: left;
     margin-right: 1rem;
     text-align: right;
-    width: 8rem;
+    width: 10rem;
 }
 
 textarea {
     height: 10rem;
 }
 
-form label {
-    margin-right: 1rem;
-    width: 10rem;
-}
-
 input, select, textarea {
     margin-left: 1rem;
+}
+
+input[type=radio] {
+    margin-left: 0;
 }
 
 button {
@@ -1479,20 +1478,16 @@ button {
     -webkit-appearance: button;
 }
 
-button, div.error, .uploader-label, div.logout, .instructions, div.validation-ok {
+button, div.error, .uploader-label, div.logout, .instructions, div.validation-ok, .form-field {
     margin-left: 12rem;
 }
 
-div.logout {
+div.logout, div.error, div.validation-ok, .form-field, .errors-and-warnings {
     margin-top: 1rem;
 }
 
-div.error {
-    margin-top: 1em;
-}
-
-div.validation-ok {
-    margin-top: 1rem;
+.form-field {
+    margin-bottom: 0;
 }
 
 input.error, select.error, textarea.error {
@@ -1544,7 +1539,7 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
         margin-top: 0.5625rem;
         max-width: 80%;
     }
-    button, div.error, .uploader-label, .instructions, div.validation-ok {
+    button, div.error, .uploader-label, .instructions, div.validation-ok, .form-field {
         margin-left: 0;
     }
 }
@@ -1560,13 +1555,6 @@ input[type="radio"] {
 
 .hidden-by-scryfall-filter, .hidden-by-interestingness-filter {
     display: none;
-}
-
-.filter-fieldset {
-	border: 1px;
-	border-style: solid;
-	padding: 5px;
-	margin: 5px;
 }
 
 /*

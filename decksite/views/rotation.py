@@ -47,6 +47,7 @@ class Rotation(View):
             c.hits_needed = redact(c.hits_needed)
             c.percent = redact(c.percent)
             c.percent_needed = redact(c.percent_needed)
+        self.show_filters_toggle = True
 
     def page_title(self) -> str:
         return 'Rotation'

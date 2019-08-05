@@ -81,7 +81,7 @@ def normalize(d: Deck) -> str:
         else:
             name = remove_profanity(name)
             name = add_colors_if_no_deckname(name, d.get('colors'))
-            name = normalize_colors(name)
+            name = normalize_colors(name, d.get('colors'))
             name = add_archetype_if_just_colors(name, d.get('archetype_name'))
             name = remove_mono_if_not_first_word(name)
         name = ucase_trailing_roman_numerals(name)
@@ -129,7 +129,7 @@ def whitelisted(name: str) -> bool:
             return True
     return False
 
-def normalize_colors(name: str) -> str:
+def normalize_colors(name: str, colors: List[str]) -> str:
     patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*']
     patterns += ['(White|Blue|Black|Red|Green)(/(White|Blue|Black|Red|Green))+']
     patterns += list(COLOR_COMBINATIONS.keys())
@@ -147,7 +147,7 @@ def normalize_colors(name: str) -> str:
     name = name.replace(color_words[0], true_color, 1)
     for color_word in color_words[1:]:
         name = name.replace(color_word, '')
-    if len(canonical_colors) == 1 and name.startswith(true_color):
+    if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color):
         name = 'mono {name}'.format(name=name)
     return name.strip()
 

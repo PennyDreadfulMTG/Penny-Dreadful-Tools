@@ -38,7 +38,7 @@ TESTDATA = [
     ('.ur control', 'Izzet Control', ['U', 'R'], None),
     ('mono g aggro', 'Mono Green Aggro', ['G'], 'Aggro'),
     ('monog ramp', 'Mono Green Ramp', ['G'], 'Aggro'),
-    ('Monogreen Creatures', 'Mono Green Creatures', ['G', 'W'], None),
+    ('Monogreen Creatures', 'Green Creatures', ['G', 'W'], None),
     ('S6 red Deck Wins', 'Red Deck Wins', ['R'], None),
     ('S6red Deck Wins', 'Red Deck Wins', ['R'], None),
     ('Mono-W Soldiers', 'Mono White Soldiers', ['W'], None),
@@ -50,7 +50,7 @@ TESTDATA = [
     ('Rise like a golgari', 'Rise Like a Golgari', ['W', 'U', 'B', 'R', 'G'], None),
     ('BIG RED', 'Big Red', None, None),
     ('big Green', 'Big Green', None, None),
-    ('Black Power', 'Mono Black Power', ['U', 'B'], None),
+    ('Black Power', 'Black Power', ['U', 'B'], None),
     ('PD', 'Mono Green', ['G'], None),
     ('PD', 'Azorius Control', ['U', 'W'], 'Control'),
     ('PD', 'Azorius', ['U', 'W'], 'Unclassified'),
@@ -77,14 +77,15 @@ TESTDATA = [
     ('PD10 Killer', 'Killer', ['R'], 'Red Deck Wins'),
     ('PD-10 Killer', 'Killer', ['R'], 'Red Deck Wins'),
     ('PD-10 Killer', 'Killer', ['R'], 'Red Deck Wins'),
-    ('Deck - Mono Black Aristocrats (1)', 'Mono Black Aristocrats (1)', '[B]', 'Mono Black Aristocrats'),
+    ('Deck - Mono Black Aristocrats (1)', 'Mono Black Aristocrats (1)', ['B'], 'Mono Black Aristocrats'),
     ('PD-GB', 'Golgari the Rock', ['G', 'B'], 'The Rock'),
     ('PD 11 WW', 'White Weenie', ['W'], None),
     ('Bad Esper 2.0', 'Bad Esper 2.0', ['W', 'U', 'B'], 'Esper Control'),
     ('BBB', 'Mono Black', ['B'], 'Zombies'),
     ('Manaless Dredge', 'Manaless Dredge', ['B'], 'Graveyard Value'),
     ('Deep Anal', 'Deep', ['U'], 'Control'),
-    ('Supremacia Ariana', 'Mono White', ['W'], None)
+    ('Supremacia Ariana', 'Mono White', ['W'], None),
+    ('Blue Bois', 'Blue Bois', ['U', 'B'], None)
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

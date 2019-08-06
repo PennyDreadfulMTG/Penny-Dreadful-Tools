@@ -6,7 +6,7 @@ from decksite.view import View
 from magic.models import Card, Deck
 
 
-# pylint: disable=no-self-use,too-many-arguments
+# pylint: disable=no-self-use,too-many-arguments,too-many-instance-attributes
 class Matchups(View):
     def __init__(self, hero: Dict[str, Union[str, int]], enemy: Dict[str, Union[str, int]], season_id: Optional[int], archetypes: List[Archetype], people: List[Person], cards: List[Card], results: Mapping[str, Union[str, int, List[int], List[Deck]]]) -> None:
         super().__init__()

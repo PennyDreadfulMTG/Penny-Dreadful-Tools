@@ -132,6 +132,15 @@ def message() -> str:
         return 'The supplemental rotation is in {sdiff} (The next full rotation is in {diff})'.format(diff=dtutil.display_time(diff.total_seconds()), sdiff=dtutil.display_time(sdiff.total_seconds()))
     return 'The next rotation is in {diff}'.format(diff=dtutil.display_time(diff.total_seconds()))
 
+def next_rotation_is_supplemental() -> bool:
+    full = next_rotation()
+    supplemental = next_supplemental()
+    now = dtutil.now()
+    sdiff = supplemental - now
+    diff = full - now
+    return sdiff < diff
+
+
 __SETS: List[SetInfoType] = []
 def sets() -> List[SetInfoType]:
     if not __SETS:

@@ -23,7 +23,7 @@ def parse_chunk(chunk: str, section: SectionType) -> None:
         if line.lower().strip() == 'sideboard':
             continue
         n, name = parse_line(line)
-        section[name] = int(n) + section.get(name, 0)
+        add_card(section, int(n), name)
 
 # Read a text decklist into an intermediate dict form.
 def parse(s: str) -> DecklistType:
@@ -43,21 +43,21 @@ def parse(s: str) -> DecklistType:
         lines = s.splitlines()
         while sum(maindeck.values()) < 60 and len(lines) > 0:
             n, name = parse_line(lines.pop(0))
-            maindeck[name] = n + maindeck.get(name, 0)
+            add_card(maindeck, n, name)
 
         while len(lines) > 0:
             n, name = parse_line(lines.pop(-1))
             if sum(sideboard.values()) + n <= 15:
-                sideboard[name] = n + sideboard.get(name, 0)
+                add_card(sideboard, n, name)
                 if sum(sideboard.values()) == 15:
                     break
             else:
-                maindeck[name] = n + maindeck.get(name, 0)
+                add_card(maindeck, n, name)
                 break
 
         while len(lines) > 0:
             n, name = parse_line(lines.pop(0))
-            maindeck[name] = n + maindeck.get(name, 0)
+            add_card(maindeck, n, name)
 
         # But Commander decks are special so undo our trickery if we have exactly 100 cards and it is singleton except basics.
         if sum(maindeck.values()) + sum(sideboard.values()) == 100:
@@ -115,3 +115,7 @@ def unvivify(deck: Deck) -> DecklistType:
     decklist['maindeck'] = {c['name']:c['n'] for c in deck['maindeck']}
     decklist['sideboard'] = {c['name']: c['n'] for c in deck['sideboard']}
     return decklist
+
+def add_card(section: Dict[str, Any], n: int, name: str) -> None:
+    if n > 0:
+        section[name] = n + section.get(name, 0)

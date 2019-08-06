@@ -67,14 +67,18 @@ def card_price_string(card: Card, short: bool = False) -> str:
             return 'Not available online'
         # Currently disabled
         s = '{price}'.format(price=format_price(p['price']))
-        if float(p['low']) <= 0.05:
-            s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))
-            if float(p['low']) <= 0.01 and not short:
-                s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(float(p['week']) * 100.0), month=round(float(p['month']) * 100.0), season=round(float(p['season']) * 100.0))
-            s += ')'
-        age = dtutil.dt2ts(dtutil.now()) - p['time']
-        if age > 60 * 60 * 2:
-            s += '\nWARNING: price information is {display} old'.format(display=dtutil.display_time(age, 1))
+        try:
+            if float(p['low']) <= 0.05:
+                s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))
+                if float(p['low']) <= 0.01 and not short:
+                    s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(float(p['week']) * 100.0), month=round(float(p['month']) * 100.0), season=round(float(p['season']) * 100.0))
+                s += ')'
+            age = dtutil.dt2ts(dtutil.now()) - p['time']
+            if age > 60 * 60 * 2:
+                s += '\nWARNING: price information is {display} old'.format(display=dtutil.display_time(age, 1))
+        except TypeError as e:
+            print(f'Unable to get price info string from {p} because of {e}')
+            return 'Price information is incomplete'
         return s
     def format_price(p: Optional[str]) -> str:
         if p is None:

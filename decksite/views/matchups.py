@@ -28,3 +28,4 @@ class Matchups(View):
         self.show_decks = len(self.decks) > 0
         self.matches = results.get('matches', [])
         self.show_matches = False
+        self.show_legal_seasons = not season_id

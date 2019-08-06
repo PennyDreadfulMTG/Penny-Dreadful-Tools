@@ -230,7 +230,7 @@ def get_file_contents(file: str) -> List[str]:
 
 def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_list: List[str]) -> Optional[Card]:
     remaining_runs = TOTAL_RUNS - runs
-    hits_needed = max(TOTAL_RUNS / 2 - hits, 0)
+    hits_needed = max(round(TOTAL_RUNS / 2 - hits), 0)
     c = cs[name]
     if c.layout not in multiverse.playable_layouts():
         return None

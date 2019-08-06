@@ -116,6 +116,6 @@ def unvivify(deck: Deck) -> DecklistType:
     decklist['sideboard'] = {c['name']: c['n'] for c in deck['sideboard']}
     return decklist
 
-def add_card(section: Dict[str, Any], n: int, name: str):
+def add_card(section: Dict[str, Any], n: int, name: str) -> None:
     if n > 0:
         section[name] = n + section.get(name, 0)

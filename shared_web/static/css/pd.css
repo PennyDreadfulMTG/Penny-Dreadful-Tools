@@ -53,6 +53,10 @@ table {
     border-spacing: 0;
 }
 
+abbr {
+    text-decoration: none;
+}
+
 /*
 
 Typography

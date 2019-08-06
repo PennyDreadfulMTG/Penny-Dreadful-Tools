@@ -89,14 +89,14 @@ def all_series_info() -> List[Container]:
     return [
         Container({
             'name': 'Penny Dreadful Saturdays',
-            'hosts': ['pseudodude', 'j_meka'],
+            'hosts': ['crazybaloth', 'j_meka'],
             'display_time': '1:30pm Eastern',
             'time': info[0][1],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
             'name': 'APAC Penny Dreadful Sundays',
-            'hosts': ['silasary', 'jgabrielygalan'],
+            'hosts': ['jgabrielygalan', 'silasary'],
             'display_time': '4pm Japan Standard Time',
             'time': info[1][1],
             'sponsor_name': 'Cardhoarder'

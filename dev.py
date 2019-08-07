@@ -3,6 +3,9 @@ import subprocess
 import sys
 from typing import List
 
+from plumbum import local, FG
+from plumbum.commands.processes import ProcessExecutionError
+
 from shared import configuration
 
 LINT_PATHS = [o for o in os.listdir('.') if os.path.isdir(o) and os.path.exists(os.path.join(o, '__init__.py'))]
@@ -119,12 +122,14 @@ def tests(argv: List[str]) -> None:
 # pylint: disable=pointless-statement
 def upload_coverage() -> None:
     from shared import fetcher_internal
-    fetcher_internal.store('https://codecov.io/bash', 'codecov.sh')
-    from plumbum import local, FG
-    python3 = local['python3']
-    python3['-m', 'coverage', 'xml', '-i']
-    bash = local['bash']
-    bash['codecov.sh'] & FG
+    try:
+        fetcher_internal.store('https://codecov.io/bash', 'codecov.sh')
+        python3 = local['python3']
+        python3['-m', 'coverage', 'xml', '-i']
+        bash = local['bash']
+        bash['codecov.sh'] & FG
+    except ProcessExecutionError as e:
+        print(e)
 
 def sort(fix: bool = False) -> None:
     """

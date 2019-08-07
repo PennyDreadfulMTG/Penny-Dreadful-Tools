@@ -407,7 +407,7 @@ def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int
     sql = f"('{card_id}', '{set_id}', '{system_id}', '{rarity}', {flavor}, {artist}, '{number}', '{multiverseid}', {watermark}, {border}, {timeshifted}, {reserved}, {mci_number}, '{rarity_id}')"
     return sql
 
-def set_legal_cards(season: str = None) -> Set[str]:
+def set_legal_cards(season: str = None) -> None:
     new_list: Set[str] = set()
     try:
         new_list = set(fetcher.legal_cards(force=True, season=season))
@@ -419,7 +419,13 @@ def set_legal_cards(season: str = None) -> Set[str]:
         format_id = get_format_id('Penny Dreadful {season}'.format(season=season), True)
 
     if new_list == set() or new_list is None:
-        return set()
+        return
+    if season is not None:
+        # Older formats don't change
+        populated = db().select('SELECT id from card_legality WHERE format_id = %s LIMIT 1', [format_id])
+        if populated:
+            return
+
     db().begin('set_legal_cards')
     db().execute('DELETE FROM card_legality WHERE format_id = %s', [format_id])
     db().execute('SET group_concat_max_len=100000')
@@ -442,7 +448,6 @@ def set_legal_cards(season: str = None) -> Set[str]:
         sql = 'SELECT bq.name FROM ({base_query}) AS bq WHERE bq.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id})'.format(base_query=base_query(), format_id=format_id)
         db_legal_list = [row['name'] for row in db().select(sql)]
         print(set(new_list).symmetric_difference(set(db_legal_list)))
-    return new_list
 
 def update_cache() -> None:
     db().execute('DROP TABLE IF EXISTS _new_cache_card')

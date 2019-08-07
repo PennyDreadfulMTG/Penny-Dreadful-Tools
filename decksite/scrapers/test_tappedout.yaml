@@ -1,0 +1,3791 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: https://tappedout.net/api/deck/latest/penny-dreadful/
+  response:
+    body:
+      string: !!binary |
+        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
+        y+a/igi836+T+ft//x+dXTYDW34AAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026656b89e6df1c-MEL]
+      Cache-Control: [no-cache]
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['4411']
+      Content-Type: [application/json]
+      Date: ['Wed, 07 Aug 2019 04:09:39 GMT']
+      Expect-CT: ['max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"']
+      Server: [cloudflare]
+      Set-Cookie: ['__cfduid=d080eadc93e4459df06e6a3491747174d1565150977; expires=Thu,
+          06-Aug-20 04:09:37 GMT; path=/; domain=.tappedout.net; HttpOnly']
+      Vary: ['Accept, Accept-Encoding, Accept-Language, Cookie, Origin']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/ur-self-mill-spells/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/x2OzQrCMBCE74W+w9w8+wM+QBXxIIhVPK/t2iwmm5Kkgn16k7K3b5jZb4fGaxId
+        WLsfrpa0rnaZTZo4fElsjvAU7ePCw29M0qHlMLKmgo4qgyMcAn24rtZbnGMe6Ut0nmdOOE1i+4FS
+        Tve4lGGS/GSLm0TGO3iHZBh36TkW3BrffUq9HdlawxQSGiOOAxV6JxnIrSLazrDLdnW1wUPj5Jxf
+        3BdZ+Ddu/JqKU7k/GmU16OcAAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665734e32df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=ur-self-mill-spells.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['191']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:39 GMT']
+      ETag: ['d:0:5ed6792d7b8c3029468d8d0adca2cc36']
+      Last-Modified: ['Sun, 23 Sep 2018 17:24:28 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/infinite-sacrifice-penny-dreadful/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/22SwW7bMAyG7wbyDrz10hzaDBiw25I66QYECOpsPdMWEwulRYOSkmVPPyo2dhh2
+        k6if5PeTeoY1S4wy+HCGBoOLi+oJ1orexUfYYIsMex+8hEX1ye6qdoQtkSNdVM/w4rEV9h3Uznep
+        aP5GjjnJrBm8wqvkSLDLqG6SleAeu94HTFY0Fml9Eb4UlHfPE8oWmSnA13Amvt+ZYr+sMZHCt2Fc
+        VCvYilJM5XGHFwk3OMo1xN6Ppc9OxC1NkXIg+BF8JxruUsXbSJzgjU75TCX0SswPsZikhB+Tv+85
+        nJkMnlmuJbDPatbNiyW6DseSeOhvSr88BjgwnjOxFI+rcvOTr0NO6p3BtOxDCbz5RCAn2JjxPIxp
+        HnCDJ+qFHdRsglK7waFIa54H3nSSlRysbRVUin+G5orDneNIgdpHSL0Bo15sKCXnCX6iCv+eHpoO
+        ddkYzUjGuKga76gVW8qX+4LV6GFDTK1iSKXhRm8zqCVNnCt4Qf2ANSUbIvL//sG/4Ct4t0WWQvN/
+        i6X5HyD5m9V+AgAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665770ce9df89-MEL]
+      Cache-Control: ['public,s-maxage=3600,max-age=3600']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=infinite-sacrifice-penny-dreadful.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['411']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:40 GMT']
+      ETag: ['d:0:1c32b49cce9266f38090378302102c87']
+      Last-Modified: ['Fri, 19 Jul 2019 06:48:35 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/draw-grow-2/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/22Qy07EMAxF95X6D96xhxELlnSmBYmHoJFYu42ntSaPyklmYL6eJGzZWdfX9vHd
+        QScYVnYLKNbUNjvYE23ifYRuRbuxd0U8nL05F9cXGx3a5h56LxRi6fWCLvIMI6HMa9vcQZ/IwNEL
+        xJWgwxTy4lt4Qo0ObwJ0hu1UdjwHg06XiZeybUaT7R6jKfZXsl4YDUQPAzlOoajvjlj8tuJSYT8S
+        S0aEvfygLsLINqMMKWMuGKtH0fVKQjFfHtBOXKFV/vkE6sJzZVMc0eXBR8FLva6EMCTJPJK48LfN
+        mAOaPIp+qDFx0MjumAyMUfyJyhuH79kkXctPiklcgX/DXFXtDy7nKvafo23zCyqhQoaOAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026657abab1df89-MEL]
+      Cache-Control: ['public,s-maxage=3600,max-age=3600']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=draw-grow-2.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['282']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:40 GMT']
+      ETag: ['d:0:f922c12f9768b7973f7de847a5da1707']
+      Last-Modified: ['Mon, 15 Jul 2019 03:59:08 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/worming-vengeance/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/yWPwWrDMBBE7wb/w956KrQhh9JjSZxSmjbEIT6vrY29IGnNSjbN31dSjjv7hpnZ
+        wseinv0IV/IjoR+orrawX8WuWe3YmpCVhpV6sbGuNtBYdARf2NfVGzSiFGJGvnFF2KGm4/UFjrL4
+        iOyz4YdDwKcAJ7ajssOxhPwqPbcDWoLDgmoYC3te2GNk8XBmiaSZbDHeFTq839ibLG2gnTCmLxk4
+        kQ40Z0dBo/CQRqXeD/BCquhE5ynp+78ZfaCiTwRH8iavlBvsxKVcZcy/TtTBJ+paltVVyyaNTx3f
+        S0OxNrsu5HormoF/omWezkcBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026657e681fdf89-MEL]
+      Cache-Control: ['public,s-maxage=3600,max-age=3600']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=worming-vengeance.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['248']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:41 GMT']
+      ETag: ['d:0:f940e365e19b8cbe6e086fdcfc6e1171']
+      Last-Modified: ['Thu, 18 Jul 2019 16:08:38 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/gruesome-dimir-1/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/22QMW8CMQyF95PuP3hjYqAgterWHhViAKEeLbN7CXdWk/jkJCD66+scHbs+Pz9/
+        zyt4iTeXPXxSpMRSVyt4xR9EgaOgsR57O2mO2UTGb2ugGdCPxKHojeNszhTgHce/9TV5EthkcqbH
+        pNtLlWJHo7PAZ1jbzlIqxrcLuwuFHk5qjcW3kWwjews7G/SwkG4/wjY6DKauHmCHYc6z+Qn10AL2
+        dhzQEcJa+BpuKKak7qkf0sWSg3YUut8/xFs3YOK+rp6gvSp+STuKxZjFQiOZ4mT8cIm8QsNBqFOl
+        rloy9os1+7nMdwoXUqnRCBb2KZ3cWVm1yPYe3JJ+tEeZRWjY+wl+qWqgmKxAi1+cpr+qyNmVWjRm
+        h2l66uIfil/z21rZpwEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [50266581bd50df89-MEL]
+      Cache-Control: ['public,s-maxage=3600,max-age=3600']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=gruesome-dimir-1.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['301']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:41 GMT']
+      ETag: ['d:0:649b0413c1bb7819587b554e5b168be3']
+      Last-Modified: ['Sat, 27 Jul 2019 17:38:27 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/ug-pummeler/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/2WQu27DMAxFdwP+B26dm2bqlhh5IUlT2AY6MxFjEaClQI8E6dfXVLt1pY7uPeQc
+        FpQsBdjmc13NYZFSdgQPTvbvRafLwDEJuwG2TxNQRw2G5PPFEvgr7J1/CJmB9GUldEnBx4SJL/CZ
+        x5FEY95gdfdy15QvFhOVXftAMdXVDLYYLd3ghJGjsrso6IwyBwzDJNhbdHDga+k48mCTNp/EwH4q
+        Q81o0U3kS4RNZilc64dM0NKVnSrMoMOhGHcWWXBCG0EeFe0o3NGV0GltaLwzmYtax+O0SGMxFLC3
+        PriH9wbWKBKV6IO/2SccUS9QVx0bOnsM5r1cyrJIXb3CBkkbl0IxTlfQjzuXfKlrPYsOPjDlgMLf
+        9Ovk0mQu0PtE4z+XuvoBdFVerr8BAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665864cb1df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=ug-pummeler.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['308']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:42 GMT']
+      ETag: ['d:0:11173d35e42505c3db9199b4d3c28211']
+      Last-Modified: ['Tue, 28 May 2019 20:53:23 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/08-05-19-penny-elves/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/12PPW/CQAyG90j5D966wERVsYJoERKqIkAwm9ThTtzZwb4Q8e/JhS6tvFjP88of
+        M1gGMvN8MZAGvjF1SmXxDqv+wcQTWPuQplvCBlZIXBYz+Ax3bw4qlUiMP2P6lx29eWHUR1nM4UuU
+        LGW7HlBQkQQHxbYlzXATh8ZLZ1CRNlSPyW1Alh41DyT7Q05o6YX2DiNyPjc5ggrra1l8wL7H2GZ9
+        cKJ8lh4WWrvXrpMSvxnsOh7jMY/6L47It254IotcTyvEDagaAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [50266589392edf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=08-05-19-penny-elves.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['210']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:43 GMT']
+      ETag: ['d:0:bf0266836f8ee4a1442180448431c399']
+      Last-Modified: ['Wed, 08 May 2019 12:59:18 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/penny-bots/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/zVRTU/DMAy9V+p/8I0LF2DiwJHCBkJIiO4PuK3XRnXjyknotl+P08LRL34fftnB
+        s/iOOqjEh6ipjWWxg2pwdAI5QRwI9pJ8p5eyeLClfhEdSW8CfKXrlWn0sjEkaYQ3mZJvE6dQFvew
+        Z6K4DEQMlSYXSFd0k/tXz76JQ9Y4sPOmgcsI751wWdw9whej8/Z6B994FYWDME15rM1mjs73UEdz
+        WCFqOeVbDJlnypI16Y/A63lwjYtO/IrNztvScZA55kg7ONI0k27ETeooU/Of0PbVRXhR7DeBowi3
+        iqdowsZk1JWieJZwa8Gsip4y+0NF+rIoi9p11Ahq95Q3K4zY8iVMroUDoQ6JxxVfq8BopSi2YyeL
+        z/ArqSN49xY2n5c7/KSIzNkmJ7r/82QMYZsUm4ZzNxXjEvLP1Va66Rh0UFni8Icx+pZywl+mV/t9
+        CAIAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026658da822df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=penny-bots.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['346']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:43 GMT']
+      ETag: ['d:0:0c411b685969ac11e46529ad8144196f']
+      Last-Modified: ['Wed, 01 May 2019 20:19:24 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-4c-midrange/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        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
+    headers:
+      Access-Control-Allow-Headers: ['*']
+      CF-RAY: [502665918e9adf89-MEL]
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Type: [text/html; charset=utf-8]
+      Date: ['Wed, 07 Aug 2019 04:09:44 GMT']
+      Server: [cloudflare]
+      Transfer-Encoding: [chunked]
+      Vary: ['Accept-Encoding, Accept-Language, Cookie']
+    status: {code: 404, message: Not Found}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-saprolings-1/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/2WQQWrEMAxF94XeQQcYugiz6AE6SUMHOpCSvRorscG2gqxMmDl97XQWoUWbz/sC
+        ff0jvBGqTTMLwZdF7515fjpC7ZIm4BFa4bgyZ/gKdV5Kutm8ePiUwaJkp4J6iRN6uHjWVPyG/YTi
+        oFmcNxMqlaUPFr4b/IUBpw2e3UiA0WQRvgu4pNtgWYXnXaAKOpQZjcMIpzC7nOMAPfsX6Nu2HOy8
+        CzQy6wHUEnTKK65426zy2yC8xv2D/2Vu4sqLkOxZQxJcROUHJc+x1PKOV3r0UkHvFP80WOYH6SGI
+        I1wBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665940b02df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-saprolings-1.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['233']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:44 GMT']
+      ETag: ['d:0:0df52dcd86021f7b58002eab3f1597eb']
+      Last-Modified: ['Fri, 25 Jan 2019 03:35:37 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-black-aggro/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/22QO2/CUAyFdyT+g7fOFKZuJFVLJWiRQrs7iUmuuLGR7+WRf187LB26HX3Hj2Ov
+        oFAMDDvsOsnz2RJeUU8pE0VY32k+W/0BhV7yA1GiRjEHYdOD8ATDlVJ2taGgIEd4w3gitrre6ed4
+        NxVa11/C+JRgr3KLpE72/RixyaQjbENjDc9LqG44nE3Bd8xhwEzWEBpLMJ9VoaVaUNsX99dtGw0v
+        oBROlyFwBz94Fk1ulkre6/a7Yjp7Mr+JKSWHH3ycci9giyMUqAS5JzsCdaI7GYizd5WKV5vtsLLz
+        6zr6pjLibRpUWVlg+9NBMg0PciWdphVRpLVy8hcfFDl1avsnbxe49aAHDbU9GLLA5sKd/2Xxz+m/
+        VEYY7LMBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [50266599ed73df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-black-aggro.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['293']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:45 GMT']
+      ETag: ['d:0:df6274e62cf13239dd5f26ce9027ad0d']
+      Last-Modified: ['Fri, 25 Jan 2019 02:14:52 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/13-12-18-pd-reanimator/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/zVQy07EMAy8R8o/+MadBSFxY3d5SqwQLXB2E28T0SYrx1FZvp64EqdoPOPMjDew
+        xUSQj+2dEB7JW7OBLWNM8MBEv2TNFexC/iYP90Uq8lkneyb08E5SOf3jGfolFlH4hDVJ29g3lTU3
+        8FwmTF6ZlwVZIbXlYx1J7V5xbHvEGuMrswQVHpBdnjMNqJLuFGL6UcGHhFpXz06iuAB9HkkCsTXX
+        0C04n5Tr80zQuVx5RS1dqUyw4xpL87Smi56GjOxv9fu75KhI5ouiXQslHe7JTcgoMSc1PmAdgyjx
+        Vs4uRNdCRcbJmssWhWiCDocsOK4n+4xrxSGudaz5A5Mcse9pAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665a149ebdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=13-12-18-pd-reanimator.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['267']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:46 GMT']
+      ETag: ['d:0:a62386f0ea43b4b6850db5d7c6403ff8']
+      Last-Modified: ['Fri, 25 Jan 2019 04:54:42 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/24-10-18-abzan-outlast/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/02QQW7CQAxF95G4g3ddsSjlAhBBK9EW1HABk3ETK4MneDxtw+mbCZWovPn6Y703
+        8hJWpysKrGJN4lDqYVYs/7o1mnmCgzJFu9db9HUQ0qlhCR2sg7j5jmVWPME26LS9yCliRwLViLWE
+        Otza5GGvdYvqZsUjPAffoDLsaNAklKGvQZrYBoPqktDl5o10vungnZvWTh4dZdJeHaGH8Akv5DlM
+        tL1e2/B1hy3gMIq4w4cIZdIJf/DIEnP6IFM+JeMgGWMtwUpqJrHpefy3i0Z9T1CyjVafFRV5ijLg
+        f0l1ZruFbzz3ORwV5ZLYw+anR4mT+Jhi14x3cFBib5jvlecXz1TXO4MBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665a8be1edf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=24-10-18-abzan-outlast.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['272']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:48 GMT']
+      ETag: ['d:0:36214dc49ddf56d9217e673bb1cdd645']
+      Last-Modified: ['Sat, 27 Oct 2018 05:51:34 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-gw-tokens-1/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/1WOsU7DQAxA90j5B29dQAjowAqRmjJUjaAqs7m4iYVzV/kuQeHrOSdTdds7+/lt
+        4XVCN/tNhIalUx7KYgsVikC4QOoJquCd4ERl8XTD96Ttyq4J2QT2WxaPeUOEXOKJ4E0oRvbdItUx
+        YktqgmOr7MriBXZBKSbz1Bp+8yR8oP+JBvaEsk7buUa5JdO8+4S+428hOLOmcQk7hDH18AA7ohz1
+        vPrv4IAxZcUJc41j9HaxkVwbzfRJuc7PCFWPOtyQemRpO0yL/MxpvK97/OOVD9gtJV84X1Ct+UTD
+        VTKz9w8UJGYqUgEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665ad2d28df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-gw-tokens-1.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['241']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:48 GMT']
+      ETag: ['d:0:a6fe17521cf69ad1bf09a1e4a9a8b5a5']
+      Last-Modified: ['Fri, 25 Jan 2019 13:22:49 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-second-sun/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/0VPy04DMQy8V9p/8I0zqD+wAioqEK265QPSdrqJyNorO+mDryeJhJAv9ng8M15S
+        P88q7uhJzpQ8aMBR+ERD5m7xRP2PaMhGzzHDkjC6xSO9KNzUJnrDSYUruAoxjApQzyNit1j+Iys3
+        ldZpFVyJwoDarqc5YgKnal0GlUsbi1pZWnR8qrT3YPYXrp9g3lV06++KW3BMOxyCJt+uttEFtrYv
+        505pk9Mhq6UK7XCBGuiVx8BAizMcJesYnbWjQUogps35DA081reG2Qe+Vf8PsUR7zclb/W7vZU7Q
+        QrjTJ9JV9Lvy93ItYKGXR1NmNN2vYvhgtGYLoy9Zav0CaOFkdnoBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665b18c14df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-second-sun.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['269']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:49 GMT']
+      ETag: ['d:0:ea0bfe84fddfda634f20c70f9c6da30c']
+      Last-Modified: ['Fri, 14 Sep 2018 15:51:24 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/branchbender-1/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/02QwU7DMBBE75HyD3vjEiQgnLgFEtpDqSpaqedNsmmWOHa1thuFr8dOkOBkaTye
+        55kcCh5hy5c+TR6hkNpIjc0AR2fGK0maPMOrMtaaEUqZsY3CG2mHXu4sbElQBS2Hcpo16Qw2rNz9
+        jrCDEklHd6W6HkcKzz0v1ndzSZOnh3AKWRexmx6tq1EGOE2sbTRtvXasL3ASXqE7mv8iPlACLwPX
+        E+y9OC/xqznsjUzGtHAQDtFkbUw/kMJhQDh7GaPp03SkQqcMdgq1mVCgGtlalDmCjlcWClxs1swT
+        fnnxIZIsyW3VzsGygEK5NEmTI7dUG5T2Jd5W6sa2hwP/Dlh9e+GwViFNT7LU2yDhv/3S5Ac2k+TQ
+        iAEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665b4c97bdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=branchbender-1.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['289']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:49 GMT']
+      ETag: ['d:0:6f445ec135f9110f48e9a1decebaaef8']
+      Last-Modified: ['Thu, 27 Sep 2018 23:24:10 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/colorless-golem-foundry/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/3VRO0/DMBDeK+U/3MZM6cRIRMNDAoRTdje5JlYdX7DPqcKv5y6BDTb70/e0t1B6
+        as5AJ3gdMKRis1MktyMlLjZb2HtEvvSIHsqYXcKolD3l0MZZZdwjlBRS9kn5lY0dzV4wm9hjsbmB
+        ijwOvxJVVzFnD8Z1AVkJD+RbygwGWSRSY0Efh3G9aEpJwzEndhQ05DmLgHsrprHDQZLWWm90wZiY
+        AoLpbWzVxuBnRiVgC4Zt6pVoME4EpulFzK5RTzPKyXrdwhTXJFFnCYAXamXJNdR2cDNdJXiiHIP1
+        yqj7qHnSsULu1al2bMNaTUWH4CZpJdaG/LSM28Ehflnx2dtGwpZH+SDP1jVLNaukYmNci0eSHbdK
+        uItOnwfuTyfXzf/9jQyRCBcEq4lxWJBgI0pRGvmH8vfW2U90hnccvWusFvgG8LjwtR4CAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665b79e92df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=colorless-golem-foundry.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['338']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:50 GMT']
+      ETag: ['d:0:d064d5a3c5a20262b8bfe197445fefee']
+      Last-Modified: ['Thu, 07 Jun 2018 00:18:27 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/17-09-18-pd-infect/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/yWQMW8CMQyFdyT+g7dODEWo+91R0EntUqoyG+LmLIJzTRyq8usbB2VI4rzvPTsb
+        6NyNREti8bAnTMvFM/QYXLkxCnygp+ViXSvpRK5uqoF8k22gDzE6eCtZ7TagTuQSBojfcHwoBhZH
+        yehEks1oCBEvgOJgi95TixuiKHqOUl8xzwZui/6t+lhMR+istOOs2bxrDHRy42B+u0B5Wr2i1pjx
+        2tjxPMVUO9cWOMpP4cwa01OuajTsBd6rtSKLnQ+/aOAaPul+p0RahXu8nriN9UXnykL36Os4cZ6p
+        fdZhri82gK1//4+jfEgBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665bacc89df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=17-09-18-pd-infect.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['245']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:50 GMT']
+      ETag: ['d:0:ec84c0584fc697cc2e3f2dc1d7f0e2a2']
+      Last-Modified: ['Tue, 18 Sep 2018 03:03:00 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/baleful-bloodstained/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/zWRzU7DMBCE75HyDnvjAgfaHhC30lIh9YfSVNyXeElM3d1obacqT4+dkqPX345n
+        xjOYk1p0cCDfCRvSsniE+Q+yvfOwRQ6KZTGDedepYN2CfENoCSqqEw1V5LKYwosj78nAxjZtyPgC
+        nYMgA7oi9CFTixa5JudER5WlivcD31pn8nQ3Krz6GrskuYvO5fNK1OOJGKokEiLqNU83wgQH+297
+        i70mYkWW72EZ/SnZFh8cZfRdf1vpYU1XjZwmT7B3aHl4/iMSccq7kPPZem+F8311wXNXFhM4aioH
+        U0LNTFRPOc5RI6UN7m0dho0pfKYFq3RL0eLlVBZlUSV7X4Jqnm9ViZiHQcTAmm9xJ7kbbQbZN4lD
+        PwfqyeGovEeHxvJY3KDiQ/JPJl9X6Zu4cZYbqDpJdvPDf8t79r3cAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665be0a00df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=baleful-bloodstained.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['327']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:51 GMT']
+      ETag: ['d:0:f8a058b0b4880c18229db898186a4e92']
+      Last-Modified: ['Mon, 10 Sep 2018 21:46:38 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/cycling-deck-wins/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/yWPsW7DMAxEdwP+B35C0Wbq1rRA3SJeIqCeGYu2hSiiQNEp8vcV1ZHvjsfjAd5k
+        3pZAyQMv8LWkIH13gIFFWAzpRnAUvlKCEyZfTP3e0xoJJsI7NfsJH3BEoeYeCEUbDfeQVvgg1K3N
+        e71l5Mx6ISzNNDImYxPGaPMZbxlXI0PImfvu+Qncb4Um/oR6dqwLCxVFDZyMTjWKYi0HbmbJjfad
+        C54ujOJfzfPOqey3/4Ij0bUxQV/zlOFT6ieGWldwag/33UsVQokPcJlmxTmSBf8BSbfiKzQBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665c17fc8df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=cycling-deck-wins.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['227']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:51 GMT']
+      ETag: ['d:0:329ddf3b67babe519229a1995a2baa84']
+      Last-Modified: ['Tue, 04 Sep 2018 00:21:40 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/aegis-ethereal/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/yWQMW/CQAyF90j5D966MAFD1Y1CqVpBU5G2zA5xiMXlHPkuifLve4bxPfve93xr
+        2OnANUgDsSXYyuTybA1vo7iR/RXO7OqQZ8+wF6UQbbaXwUGhlxa1Nv2h4qMS1rDVIbSkebaEI+o0
+        +8U99GvQOKj5azjytY1GK/AWbLHQKpg+p7QEtJ1iJNXB59kKvpF9k3AHCkG87Z+QA8Eu4e5KGnJO
+        wgIODr1MqPDWcQios43L29xhagqvTqR2FOOjXdlbX7vvJNGuKyfsemP/KFfo4NdznE3/8YVlCFA0
+        Dem93zJ5yjWjh09hb4ErOItrKmXDO+rIR0zfmGcl11RJuuzFsjZaiVZ4uUEZpesfL7eKnhNxk2ry
+        SA+LqLdyR3G1Ge9I+BTgRCP5K1nwP4knj523AQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665c41c10df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=aegis-ethereal.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['315']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:52 GMT']
+      ETag: ['d:0:5149b1952581b0f4dc76668bca4deda4']
+      Last-Modified: ['Mon, 10 Sep 2018 21:46:35 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/rofellos-ramp-2/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/0WPsU7DQBBEe0v+h+1oKFBIRYcSsIQIRDYpKCd4fT7l7tbaO2yZr8cXC1Hum5md
+        3S09jviaw02ko3VGrS+LzR09i3JMZbGlCoxFrHnkYDiTF7Stpfeui73I1fNmY8T/Bqy+P1pz4Aku
+        oxp+QEhUqUypvxLp2DmJt/TqEGSC0pPPQZ2z3Fxmh9iz5uGDVUFNEj+s4BPj0jaD9jqjLYuyaGzL
+        Z4G2D1nfSYjWBEpC++/1nZ0yDzYYOohbEhs6IvWKH1aSjk4OXkzGzQWqhipxFvnSezr5s8LRYbnf
+        ce76BXqWlYM7AQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665c708a2df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=rofellos-ramp-2.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['240']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:52 GMT']
+      ETag: ['d:0:4aac7bfba9e48e99148837de3a0ab597']
+      Last-Modified: ['Mon, 10 Sep 2018 21:46:38 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/dreadful-zombies-1/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/zVPTU/DMAy9R8p/8F8YQxw4jrINiSG0HCZxc1uviZo0lZMA/ffEkbjZz8/vYw8d
+        05QGXAm+YugdafUIR0qZ2C0TXEoIm1YPcGK8wxn5u5602sueVoh36JDnhVKSv3fc4IBMkC3BmZCz
+        oBcKkR16yBGO0futgQ5TcMO/wa4OPBLHkuCltLeP6iQGZkDGvul/epwKwYH8YIklhrEYei9JTzYW
+        LyQzO57h6saJ4PXXliDM3ROYHwyrEG6uxmMa4caUB6uVVsaN1Efk8VkIUqmaZMYNm2RHmG2oqCxv
+        3ktfcEurecVlTqLxBy9XoNxLAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665c9bcc9df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=dreadful-zombies-1.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['249']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:53 GMT']
+      ETag: ['d:0:d8ce44b6861308dfd16406a4a1aa2f4c']
+      Last-Modified: ['Sun, 26 Aug 2018 23:58:09 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/overrun-for-fun/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/1WOvQ6CUAxGdxLeoZuLi8oL+IMuGAmLc5EiN/Teml7A8PbSGAfT7Zx+X5vBfsLH
+        HFYRSsdPdT5NMjipTATSQs4TRSM5k6cwIMNBQpMm2x2cRSkOJi+oOvZLxVH8C4OT8EdLfPRM2JAa
+        LtDXnfBg2LXu23CbaFleYhuoOgkYl9hVwmg3zVfSErPENRSMQd6okHsXI+ps+i7c1uqM/v5ME5sP
+        Ocd39t8AAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665ce9c98df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=overrun-for-fun.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['179']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:53 GMT']
+      ETag: ['d:0:91bbc3f890bc2d1f9d2d801423c8a98e']
+      Last-Modified: ['Mon, 10 Sep 2018 21:46:00 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/mimic-witch/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/02QPW7DMAyFdwO6A6/QNku72W5RZAg62EVnWWJsIpRkUJID376Sgf5sfOTjxwee
+        oDUmS0QLX5TMopoTtHnOssPHnavqOZc+hCukBeHTWxRDaVfNI/TBrUxGJ6zGV3Ik0C9a3J98z8R2
+        /nXESOs/EXg76retVOTnkoFtVM0znCNrb1XzBBcdbz/XL4Vp6sKQJ4cyl9Rd8LhrKdYHGO7arXU8
+        InPFjeSwMsYgDn2qmMFo0VOs8UdBHbMg9JIpFqNqBrI4hYJ7qYZOM14zQ+scpaNBjNAxzUuqZ85+
+        05E2LHFKFjl+Mmbx0MbCqbxvyyVJFF8BAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665d22983df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=mimic-witch.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['254']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:54 GMT']
+      ETag: ['d:0:f9ebfae1fd86e66022f06df3eb306764']
+      Last-Modified: ['Fri, 25 Jan 2019 08:35:16 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/penny-legends/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/yVQy27CMBC8I/EPe+OSQ0v7BahAKIWigNrzFm8Si7WXrm1F6dfXDsrFmRl7HktY
+        MV5vP4yGoKFWtCMznz3DSgaQFo4jE+b/J9iIUojz2QtsFb2Bb1QWNdCg6bPiNcMpMWyTZdNhpKKs
+        kRm1gtgTbKxSyxSvPWkxqNE50uJxSnrvRSXMZ0uoSYXCAk5ibHLlkV1AqWDt2XZ9JE8GVin0tojf
+        ccRFgJ1zwhit72DnW1Ivhdyjw54z/abJGnuFLxkmXExminGJdRSNPVyUpsAH1GH0j8DHpDFpCZtx
+        ST6i9eX+5816rOBC7s4EUSbxtEmL+aihjNFIS8wSKvhg9DKgwtrZEFDHiU5d3hnqXCnTZmp+vqFq
+        9/BusCM42RiK+fk3ET3w0lQj8qSP4ulHZahgn8dDP21XmAv5v5xwK0Zy/QOmrC/fPyGXDPbtAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665d52ecfdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=penny-legends.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['342']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:55 GMT']
+      ETag: ['d:0:7e063b40830b4733560e693bfb8c2768']
+      Last-Modified: ['Mon, 10 Sep 2018 21:45:23 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/20-06-18-Hwa-rw-madness/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/0WQMU/EMAyF90r9D95YWA463HpXRA9BJURP3a3W11pN4pOTgvrvicuAvNjfe096
+        SQUn5yPIDdJM0BOHsniGU9zc6qHnyEnUyNmJjDM6B5/KFJOx2k6L7aLjQGVxgBfFgI/wjg5jUsY/
+        dZiZbmVRwSu6hYJimqERnUh3yKQbXMnf7T5AwxEfIpx5HDlM5rgQq7X8j5uvxclj4gHqGaO3Ti3n
+        JYN29X4riyO0soaE9qwKvnAZJUKzshsnTGSBjgPHRAq1hEGGxJKtT9AtHOAtfGPcwRG6H/R3U66i
+        nkLKvaAXHshYnzVWgg8cKHezL7P5BXZF2pNdAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665dbd909df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=20-06-18-Hwa-rw-madness.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['258']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:56 GMT']
+      ETag: ['d:0:725c479ea879ada8f9f14aecc7d70d27']
+      Last-Modified: ['Wed, 20 Jun 2018 16:22:43 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/golgari-midmad/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/yWQzU7DQAyE75HyDn6FFi5wg9IfCQpVI+Bssm5radeOvI6q9OnJbo+eGX8azSO8
+        mOkZxeF3tNQ2j7DCGMEvBK9RNUQWapsHeDM6wx7lHMnaZrGAjRplL9bGNMG3BLL6tpnf7E/RQi64
+        ncqcDLCbgmER3mkC1xpdsU9F+ogoekWDPYmrFelrGON8wAEj9rXBYXSj05xfwnGmg54q4157AR1K
+        yE7DULEYKLbNE3RXTEPh/bBxYBRYJ84Zbea0TceBatPnQt3ijQp1ayjsVKB7Smrcz7ES+EQfDSPf
+        7n3imBJ5MQ556i/q3MN64Kyh+sfRL5Fyhk54KKMt7yNd1WKAlYpQ76ySS5N//SwJ8YgBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665df8f6ddf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=golgari-midmad.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['281']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:56 GMT']
+      ETag: ['d:0:e676e4e2fed69d5f78eb2b91b9546a33']
+      Last-Modified: ['Wed, 20 Jun 2018 11:41:33 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/05-06-18-pd-infect/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/02PMU/DUAyE90j5D946EzpUbDRSWaqqIgVmh5jG6ouNbAeRf897gYHRd/Z35y3s
+        0W4+UkqwT+TOcq2rLbSLR09oZGU6IMe4cehGpjSsCmGAfsAzOXugvFNd7eCgRh7FP6oHHEmFpa7u
+        GjgnZPHinI0GDLWCC+Mb/YqcD70QT2pSpI5yHVkQ2hFtqqsGOr7y/5YNXGaT4KkngyfTrxX1IoIx
+        G6a/JNaMq6uOB+oVbXgoS49zzJPkCq/Eaf0XRT8XaDMkf3yf0zNYKMFFg6ay8YbfhfMDRfZJrTEB
+        AAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665e39ef4df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=05-06-18-pd-infect.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['230']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:57 GMT']
+      ETag: ['d:0:f99b301a05855968e114c64777410086']
+      Last-Modified: ['Fri, 25 Jan 2019 10:51:42 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/gw-populate-aggro/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/12OT0/DMAzF75XyHXzbBQ6wivs0lXJjohM9e43bRXKT4fwR5dOTBCEk5Iv983t+
+        buGgE9kAboZwJRijrKpp4SAXJ9DxXIeE02Z3Hk6GFzFVcETmX9PR2Ykx0X/+QqIL65LjZOwCo2Ht
+        VfMEz07IB9XsoWcUKoYhXnREVs0jvCYSibasT4zG+tINE4ZAUg8PROVOm6FxtrjfTYj3/RW/TMXE
+        5O2G0MecuGCor50F7UcG0H3e0HoqUX++H+2KS9WOuM0o5eczrTfO7AFGJ+Gu5r+h0avLnaim1DfU
+        bPTYRgEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665e9c902df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=gw-populate-aggro.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['235']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:58 GMT']
+      ETag: ['d:0:bf5b22a4de42190b97b75bf39787e990']
+      Last-Modified: ['Wed, 06 Jun 2018 07:51:02 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-elementals/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/1WRQU/DMAyF75X6H3zjTNmJG2wDJjE0rUhI3NLOW6w6SeUkhe3XE68H4OgX+/nz
+        SwMP0TL5EySLsCM+Cbm6amBJ/oACu7MEZ3yPUle3sOSQD8kKRjsLK4zYi0kUPKwZHfpkuK7uYEUx
+        lgLlJpYmpglFXXTmJbuOi3U4wjZI6Y91tYCN703ZGPsyBW3IHFMYUEleaVK+jT+i+KBKGYvINhg5
+        KEazKEoum8mr/86eU0iUjFeQvTkhvJHrctTHfSD+S9pAayZteSLB3iRFaV3Z3Imh2R3akRJ2yBy+
+        rh5tHqUYwPob3cjmGsS7zZpXxzkmrT8MD/ONmuuzhOl6yycOyQi0VsirwYgH0vDqqq7asq/Tm+6V
+        +7GA6tlrI8mqsC0fEkcjg0JpeblQdnOEElX6z/BbB07q/wPTOpIl6wEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665ed2ef3df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-elementals.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['328']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:58 GMT']
+      ETag: ['d:0:b021ee32788be6b1e711e5add01d3237']
+      Last-Modified: ['Mon, 07 May 2018 04:30:31 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/27-04-18-temur-aggro/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/02QQU4DMQxF90jcwWeg5QC0A6iLsiCIvdu4mageO3ISRvT0TWZYIK/8/fX87S3s
+        CI0M9AIuMsmZHh+2sFezmgp52JvmbIo+L7rV6cRRAnzQ2TQpx6ZvYNApChY1GExlQQw1F3AF+UrW
+        +1f2hrcI7vqbE86yqm/alleRvwSMNYxlHb2PmsslGsGO0S/MQ2YU3xceY6MfpFj13f0MR61SMEq3
+        fRL+0L8ojmOCr9G0wcEl7Dc+NbX6QO0knHlluBmn1Eff7RPwEoJRwNLMve40Vy5iKgEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665f0ac2adf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=27-04-18-temur-aggro.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['223']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:59 GMT']
+      ETag: ['d:0:6d08d13ac066f1e17fdd6867d4e764a7']
+      Last-Modified: ['Fri, 25 Jan 2019 12:13:01 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/penny-populate-v2/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/22QQWvDMAyF74H8B992XlcG2620W1tYoTSwnZVYdcRcechO2vz7yR4tDHozz0/f
+        e9LcLOyInEw4mtSj+RrkVFdzsxihm/ghmj15J1S0JXh/9S0Ddx5GrKvZP32DYosm1JrmDD919WRW
+        MpBV1go9jSjAnc69mPcgGFN2r0FcmLxiISZfoGsJI16p6wHEEnCG6ceZ2JkD8HfMtbacgB21Ov5J
+        kgbMrl0YUp8f+34SvOisOWCr3yo+m70H4jLcoMfIE2gEeesglfCb2mjXpOFTRjUDW5ScnTtkUl01
+        ZLEN2u61bB3YCf5RHu+vPTNvE8bbuSnq8bO6PZ2Ch1ToHqQ4P8Il2MBmQzotXdlnR5bJ9clsYOBs
+        z8ZDCKkNwhp1RI4Yc/y9ur83xwF87wEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665f34807df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=penny-populate-v2.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['310']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:09:59 GMT']
+      ETag: ['d:0:5529ea2d4345d12c6eb01c986ee082b0']
+      Last-Modified: ['Fri, 25 Jan 2019 13:27:57 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/penny-fungus-tribal-v1/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/02Oyw6CMBBF9yT8w+xc+0hM3BmMujGSCB8wwGCblE7TDhL4eikuZHdzcu+ZOcCF
+        UFRw7AkKhcboJk22R7jOIEiaHODpekNWIEeDNUWSh7FWLJ7dajPjXjy1Y4yv6As8kP8X9gtlw6Lg
+        bGs9Oxc4YOdiKGiayJNsAtywq/RyfKUvFBm2wC3c8UN2YJ7xDkojukMhyL3+vVcKO43wGGu2aZIm
+        L91QxeibU+xnvg9K2zdkaNmNsfAF6RgNngUBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665f90945df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=penny-fungus-tribal-v1.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['200']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:00 GMT']
+      ETag: ['d:0:ee0c4e2442369ef9a22bb2a3a40d5f73']
+      Last-Modified: ['Fri, 30 Mar 2018 03:20:43 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/definitely-not-sultai/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/22QP0/DMBDF90j5Drcx0wIDW/qHAgIRNQPzJb6mVm1fdLYb5dtjJ4AY2M4/vXf3
+        /NZQKWWoLFZQmYBy4+FIOJTFHWyEL+Sgsq0Omp3Pmi26CwlULVvtMOOZsgva9eS6CWqDC4uiOXp4
+        ZhtdF01M/jXsyFMnszHNdrHvtNUCh6iN6jHQrNOebMsjmUXgyQW2bVncwxML+ZDxgU2Pov86V/Di
+        UwCVp1eO4mgCPuUFHV9Jpsw/hmjSOqjRYDdfq2MQOk15POLFn9FjSofhrAgNycLtgMl0EB7DOZOm
+        i4HgndufRzCpA9gxW9i7Xru0+gGaMRnL4hY+mVVOBk26hbYsyqLRilpGUY851kZQO6hljrHVkjpD
+        gTfudfd/x0klkQzsle7Cd02ezXWuYcejG1IB+fTv98riC+n+zqzvAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665fbee1fdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=definitely-not-sultai.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['327']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:01 GMT']
+      ETag: ['d:0:1d567140bba68814c5ddfe15625e4bbf']
+      Last-Modified: ['Sat, 24 Mar 2018 14:15:29 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/hypnotic-torment/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/2VQMW7DMAzcDegP/EITD0XHJnXToUUQJd1li4kJy5JBUQjy+4pwl6Ibdac73rGF
+        10C3UdBDh9E0G9hxwQBvngYxTVufD0hX2KUoTEKp/tnCO7u8KLx3PEXMWYWHxxKT0AB2wUGQVf2J
+        eUauWEcYvSJHRxEsKr2Bk5OR4MxuWX6BImOofnCiFWrBTiUE6NgNUhhN8/QM9u7mRblz4hmjaBI7
+        OHZ91nSXIDQ7QTjWzai2l9gX9mu/76olRvjS2qO7T6YxjSWPfXLsX9bOqPp/19jCHmviuZZW7iNe
+        MYtOtvjqXosnChRvf1ea5geXwQMYZQEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502665ff2baadf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=hypnotic-torment.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['253']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:01 GMT']
+      ETag: ['d:0:0cfcea90433d1cc6473ed2b00d7d4117']
+      Last-Modified: ['Wed, 21 Mar 2018 22:41:36 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/birthday-stax-sagu-version/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/x1Qu27DMAzcDfgfuHVumi7dgrR5AAkaxC060zYdE6Ell5JS+O8rahHEuyPvyDVs
+        pBtp4hCfAmzmWclF7qiunmErPvWdUohwwnuG1vDOEys0fHMUrd7zEMEPcJwmrxGF42LwMQi63n4n
+        70gWaHLZotbVCs7eq7FwwOTKkAsKdgQ7nFjYRK9wEWQXCpm1qPCZYps0RMt1pYeXFNlnYslVm4bB
+        pA2yeLU4Z0LrfoGGMHBPsOWIPUlRTf6eV8LubmmapA9iEXY3aGblWNb8UnS/iQX2qD05g75dSG1u
+        y9dBE63gh10fzO2KcayrumqyU+tzx5tZfyiGcsadYBjz6325yN42w6WY4y3BGZOQmjCHFZu3FYuf
+        E5W480hKBp/wz1z+AfH0rAqyAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026660228addf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=birthday-stax-sagu-version.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['306']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:02 GMT']
+      ETag: ['d:0:17a5dda9347a3fbaa0d754b06c200327']
+      Last-Modified: ['Fri, 16 Mar 2018 14:11:48 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/zada-infect-penny-dreadful/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/z2QQU8DIRCF75vsf5ibFy+6/QO12jYmjc3uwcTbuIxAOg5mgDXrrxeoMRyAL+89
+        5jHAdsF5lZsIZ89W/WffDfCgORFMSUlscn23gR2q+iBlZ273NaZ3QiWt+kfC5Gb8gl3m5BdMoeB7
+        2BcM4QNGij4mlJkaDUoxVdt+FeOCCjzxQrHGHr11jGLglZBNJc9ZLJdZnHpp9lORtNQXvDTPKWRJ
+        6KXv7uDM5dDoiGJJS61D9kxX8hMUpu+WM8CYrSXz/2K8suhq9NaU5sh/yskRp1p0A29o8BaOZLT8
+        xaGMZCqv6xdNCeZNSQEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666055ddadf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=zada-infect-penny-dreadful.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['244']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:02 GMT']
+      ETag: ['d:0:61a1fffb3500b46a844ef9ff45a0afb4']
+      Last-Modified: ['Fri, 25 Jan 2019 14:28:48 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/boundless-burst/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/zWOsU4DMQyG90h5B2/MpTDAdpVoGWDpVR26pY3pWZfEp8QG8fY4J7FZv+3v+7cw
+        zKwZ3jGlmQS9e4ShUKYmDw2GnzBjoXL37gl2rCUmbA2OGFJua6a1CXzQfZL/sz1h/YUT5gWrdy+w
+        54pNOvdQ+RvhqPma+mrzDJ+GlEDFu61BI4xazHoxpUydNU58m/tw4pqxiCngzHTDNdNSMPXogLxg
+        XLufiZMdwlvVRYiN7N1IEa8canw1qXkShoYgE1ojzEZo/XPU9KWVtcEuhV7Yuz8WYAl3HQEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666086b9adf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=boundless-burst.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['226']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:03 GMT']
+      ETag: ['d:0:dd2eeff6b4b6515e90e9df9e412920b7']
+      Last-Modified: ['Fri, 26 Jan 2018 07:43:14 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-gaea-gains/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/02QzW4CMQyE70i8g2+99ALqC1BEoT+ilCL1bHa9mxRjS052V/TpG/MjoVyiLzPO
+        jKcwkwxfHZGMR1OYh8g1aANLJHSw4D6mACu0fZSWzNkLZqrhVTJZT5KjurVgNUrZBW5+SD450PEO
+        LI57w4rGo8mNbKlMaK/EWpTcocBSLTLjxWnWHYpypVZfdMSYo2iXylUoxXSmjDUFtAxz7JHt5OaV
+        DuxlSgxYxzZk2GB18Jc3qmOGz18UElcsGis2H/SOrBJLiN1QCpv25Po15s6Q4985wpawCm57NpQq
+        UEnwBFttiFnTI3wwig5opW9MCT3LBL5P3JepG4vH0iQiu2enAxnM9tdfdkbUKB/u1z2BH8JSwBKV
+        pd8U45Gff2kPn2y9AQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026660f696bdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-gaea-gains.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['300']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:04 GMT']
+      ETag: ['d:0:8413bd6858be4b37e7ce65c38031cdef']
+      Last-Modified: ['Wed, 24 Jan 2018 00:30:12 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/20-01-18-hexproof/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/1WQwW7CQAxE75HyD771DEVV1VtAAiq1KlKgnM3GSVYNduR1oPn7rrn16NGM39hL
+        qIaxR6gm60WjzWWxgjWmhIpwlDspVBp60oeueCOwnqBGblJZPMMGWcYZNnJzi89qMuUASAu1KXFn
+        fVksYYvRejjxReWHuCxeYStKyTy007ltnxKsRdg5e1Lx/LsKZsoCvkbiB7fSq2ju+AKHASMnd9c0
+        UOIZYTfFoenQ6J+aqwab0FMLqEcKli87ozbuOqoMA1QpkMXgwonbIXLoI3f5qEmxI2/4LXcvdM4A
+        ppSxZVHHhi6S97y54UN+pRGGfSTF/DDf9RmThcks/3A/N4quHTDENqbro+LEDamTdip3f1NZ/AGE
+        FSagkAEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [50266612ff51df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=20-01-18-hexproof.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['292']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:04 GMT']
+      ETag: ['d:0:8bcb1876fd140efe3e48ed851ab9cb90']
+      Last-Modified: ['Sat, 20 Jan 2018 22:16:10 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/a-dreadful-reanimation/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/02OwU7DQAxE75HyD/6AXoAcKm4NOSBBJdQIcTZZJ7Gyuy7eTRH9erypkLjZbzwz
+        buAQOWAm6AhdXTXQccpKKdXVPXRqEE6UV41FexZVHn84TgYv5DGzbMIRF0ozj9mmGOlr5Q2/YZ4V
+        r6QgI7x7DDJt2JzLgvCxath28X7N5ODISgX0PEXgCK0XcTcQ7S3LeZI4yPBX22fRkNkRvNKFrQwN
+        3+2h/8Zwrqu66k37FFT3WM5bj9fy+0GH+RbQUTpzss4HeCFHSkv+H9XAyRy4g1ZU0ubDOJEv0b/m
+        GrMhOgEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666160c68df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=a-dreadful-reanimation.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['235']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:05 GMT']
+      ETag: ['d:0:b3806fb10d4747ce7b7394038c7c71f1']
+      Last-Modified: ['Wed, 20 Dec 2017 15:32:20 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/bw-astral-slide-1/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/5WQQU4DMQxF9yPNHXwFWiQEu6KBUkRFxZQDuBNPYzWTVE7SUk5PHNQVK3bxj/+3
+        /eawkMGOTN5AGGE1epa2mcEiJkEHvWNDbXMDHQ1CpC2vOSYeijgvYiRJKiZLsJVMan1KJL54O8F9
+        8Ko8Iyd7bevoFBKZqju8sN/DtkwXdrFqQSIeyEOPfkgZ5aKTXoJIkGvEowTteENvov6upik4TBq1
+        dCh1t3UWQ/WUd/m24QTLzM7sMZXfe9g4ZF+9m+BcLvvAmtV4Cx/k6VzqurR29AkjR+h9Tb6D/ozT
+        UYO3NhzLrYWgUEzq/XSJpzICNlIRtU1f+O0CinlQin+pYrITykHjOhpL+fs6hSzABYJFE86V6pfe
+        lzlaWDhXgBxrwn/QrvxY95xBP6DgDp4JtW6bH8GicJoGAgAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666199a36df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=bw-astral-slide-1.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['321']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:06 GMT']
+      ETag: ['d:0:eb32967b3c770276a52346d5e93d4060']
+      Last-Modified: ['Mon, 09 Oct 2017 19:20:17 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/featherflick/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/22QvW4CQQyE+5PuHdylSaSQoBTpCAiUHwQKNCl9t4az8O0i7x4RPH1slCJFuvV4
+        dvSNRzBpuqRKscDqRCpJQ12NYUKlI4V14pwiaV09wIvwvisUYE7RLdMUi2KDMcA7x/2RTR39qm0x
+        TcTkunqEGWVqFQunaO8+RY+bMcFXGtwxtqFnhcXAEvZY6CopHgjm2LMwqscsLJpvMiyx7The43Jd
+        PcFrFoPwTOfwNeotGL/9kHA3HTTTtdSSCko2UGtkOevhchE6xFQcfMkhekFYsVzNqWGxCFT1G7hl
+        haWDtIM3bA1xdA+bb+yPbt4qo/hq0jfsYHVVVxsO1CTU8OyWuWDudkp0IS9j49lptxSDsmTP/7+g
+        c/dJubW4vxQffpiI3vuTTkkG96OebWqG3c4JfgAO+u1Z3gEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026661d7934df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=featherflick.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['322']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:06 GMT']
+      ETag: ['d:0:bf279443e708736a02fbed82c937fb1c']
+      Last-Modified: ['Tue, 19 Dec 2017 22:22:46 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/19-10-17-mono-green-aggro/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/yWOywrCQAxF94L/kJ0bF75+wAdWEB/oQlyGNraDNZFMpkP/3plKdoebe+4KNiIM
+        d7Rex6MV7IJ/R7SygRuVGpxRwosZ7EXJW04USDjxsGZr6PMHquGd0FY+X2QnPB4toXDIBoVKtGZI
+        MWobRSrYaY9VRkfy3tVwTZl20MDJeSuDJSkc+koxs0tHqZ/zwz2KVtF5gi2xYRgWP6R9OYV1R1zn
+        ljk8qcMpnNGCUpp1IMU2CfP9ACKR++nvAAAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666212efadf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=19-10-17-mono-green-aggro.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['198']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:07 GMT']
+      ETag: ['d:0:a849b3232d24dd90ab2bd2e1c18bbd6d']
+      Last-Modified: ['Thu, 19 Oct 2017 09:23:47 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/golgari-deathdealers-1/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/z1Q207DMAx9r9R/8C/ABg+8jY1WQpqY1vEBXuu11pIYOQmjfD1xEbw5Jz4+lxVs
+        AntMBDvCoa5WsMVwJYXNWTwHTCzB0B1F6nV5ltkbuIbG4cxhhBOFQdnFunqARpRiMkoj2cGb9hNq
+        OXwPLeoos6OiEJMjW2nFjagMbWY3jMWFga+SNdAMcoEdx14+SWfjH1QuGApdvMeweD3kpHSZbTzi
+        NU4Y0XKkaSB0pObxiP4DQ4JW5ZamZbMEhTQRPEugaEjX51LAXs51dQcdx0QaTb5LZeP3YF09Qncr
+        t8zJSQljVhqgYTOyhneXfls8KPclRV11PNBZSvSnpVQJMXtaZPdEV+NsFQOjg5evpNj/Fd3iN5l2
+        a79WyLoQRmVv3v7z1tUPGwKpzrkBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [50266624dbdfdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=golgari-deathdealers-1.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['308']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:07 GMT']
+      ETag: ['d:0:d44efc58f4c5e14300a8876d796e30ff']
+      Last-Modified: ['Sun, 15 Oct 2017 13:44:29 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/09-10-17-mono-blue-prism/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/3WQPU/DMBCG90j5D7cxN3RiqwqoRUCrJgyMF+eaWPgj8tkV6a/HZ5AQA1OUV4/v
+        /VjDxkWt9IyR6moNW2/nZFhfCE7EhEFNddXANgXtE8PO2+RUMomz2sCeDbpBgCdUdMPQolMx2bq6
+        hWevPiiCP8M7caQw4MKiv+I4ajdCN/k0TrFoR02KWNg4ERzT9Wqo6D4QHC4UvnUcSXzhGDRbOOUr
+        dbXKuDFwDt4W6J5olqftYntv5OSb42StdwVvoCM7+4AGHjVzCqV1l4LD3qcogPA9R8y7lFHqqtUD
+        9R7DcCd+W8x+0cOLluoreDD6Uwdx2mebENHouMjV3TIEb5AnyXPombjs2v6s+l/t9Z9+Tf4y/fbr
+        cpYygmSGDedfifgF2UN9ycgBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [50266627e8ffdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=09-10-17-mono-blue-prism.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['305']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:08 GMT']
+      ETag: ['d:0:dc058c9b63604f2b92d2428f4d1ccc74']
+      Last-Modified: ['Mon, 09 Oct 2017 23:55:32 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/alignmenttrial/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/3WRu27DMAxF9wD+B26d02bq5jyKtAgQI+5jZmwmJipRBiWnSL++ooJ26yZdkkeX
+        Vw9QUxpIoQkcg5BWswXU2qEQtChdmnw1u4clCZ2wSxwEwgkOQxCM1ewBVkoeE92O15jQOf5G6zNp
+        zRHHkVBZzlB3yeBrxU+CJ/TsGNXga+VTMmwzoCSMPpq6cReOA7xzzDDUq2m/U3cRDlOkIgWlWMBb
+        6jXbqx2fxZMU7Tk6lN6s7DEN9sYLdnlu/nffGVDQmvfj5PIcNOhK0wIahyzFTUs5jKK1X+hHO7wq
+        ozNE7Y9827iatdzTMaD2jzZVn42XWzaa1RJYLTK5UtNu4ERdqecvgLe8u6feaqsgcXI5V2gnvRA7
+        d3t9/k/Ioxm2neEDLyWWHV5hiUqFvM0/kMzdD2WJSsHuAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026662aee1bdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=alignmenttrial.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['321']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:08 GMT']
+      ETag: ['d:0:4ca20a59beabee30688abef2f88ce79c']
+      Last-Modified: ['Wed, 25 Oct 2017 21:56:24 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-tribal-vampires/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/02PQWrDQAxF9wbfQYcIpXTXBEoLSRZx6F71KDPCtuRq5AR6+s7YFLoSel/6+trB
+        flQNveEPBTiTCjq1zW7DNxpHOOCdckWHhCxw5JhcWGJFb4TZQW/beCUfEpYxkji8GmfX4uyVH1Wn
+        sgTdzFbtnuCki3hxrOoFB84J3oltbUkoYiC4Yu/cr9c7J8mMcML8vZAVdaOm08A2lJjzn9s/qBJo
+        EirRnqF74DRX/bPUkgLO9ZWEj6Ft2qbjQF+KFl7WXw1LnmsyXWKq8i/hqSo4KQEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026662f3dbcdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-tribal-vampires.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['220']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:09 GMT']
+      ETag: ['d:0:7c4bcdbfcb312d377d2aec4aa1a6a7a0']
+      Last-Modified: ['Wed, 04 Oct 2017 08:56:45 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/the-towns-on-fire-s6-rdw/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/02QQVLDMAxF95nJHXQBFlAWDDsSpi0M2ZATKLFqa2LLHVsh09tjpyzYfj/J7+sA
+        HZF6mnBeoHdMl7Z5hs7HaPyaFT5kZqXUNk/QpRJCx0kdi61Y75AFvtg6lb/oPaGNAsdozH3quCbB
+        mWCcMVwrcUbZiBN0qOXfQKL5f3zClDhHaZtHOMes7FlvFRjQBoRP0rp1wJz5h+Ab2RTyBYa4ihab
+        +jgyWXo4oVjoYwgou8oBxitu1bM0IVS3RxoXAnUER4+BiknbjGxoipjMayXeLqV+dnFeqkRpc6u1
+        U7gvLLeZyPu47ZO/i8D5WE0BAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [50266631fa76df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=the-towns-on-fire-s6-rdw.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['248']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:09 GMT']
+      ETag: ['d:0:edce669427612aacac42e494dab1683b']
+      Last-Modified: ['Tue, 03 Oct 2017 20:49:33 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/parallax-wave-combo/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/y1QTU/DMAy9V+p/8I0rgx0QN0BbhcSkaUVw9hK3seQ64KRl+/ck1Y5+fl/2Fl4W
+        dFe9S3BkGY2nttkUjNGucCAXUNm1zSO8ktKALnNUiAOcQlRMbbOFtzhNsxL8cQ6QA0EXfaqKnSyc
+        AnxxKppiV8l7EvZo0M1onlHb5gn20Sjlun2fpiiYWUfoBI1WTH/n4pCjwe6C5kIFj2goghf4xqWw
+        NvdwFGRdY3tXK/Zz8VKyyu5JKOkVSyqLHzHTDRWyeksfdTyz1dZt07OncyztnqtZVwTk4YPHUBo+
+        QGdxVl+0KHV9QB2FQjSt04kGu33o0/BnDWEhdVSN/wGAZEJwagEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [50266634debbdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=parallax-wave-combo.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['268']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:10 GMT']
+      ETag: ['d:0:5bd0f8ceab2973a046a1d403a3d43869']
+      Last-Modified: ['Tue, 03 Oct 2017 01:01:35 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/marchon/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/4WRzW7bMBCE7wb0Drz1kh7yc8rNjZ3EQJMKVvoAa2otLUxxiSXp1Hn67rII0J56
+        E0armflGd24dJwzkXV9lwm5159biIaIbIPpSl251q0qhI3mUL9ltE6UZ4sUuH2bCo+OjKzO6R65x
+        lD86T+8sp3bf14+PgKfIpVtd65t4JFncUHMiTxxzt7pxmxoxf/psEEYTn2hEjuqwxyQMfjbnXQ4Q
+        R3t6gQm/7ilO7hWLpdk3ryCeA6bcavxINWAsrocAHi2+hxFxubIauQZL3MXIZyjaxED7AGSV9DJf
+        /KyrDEXohOY9wIw6lBayOXIx1Gs3eNbdAuRsiQPKmVWbcVFP3w4o1GUCm+KBl6W1VzUhiOU/qyU3
+        3qGw5u3xUEuBYMrbzKmg6PHlb8g3Xg6fYw2JhIrbCExGcON+hkKaja4XMuZuNeiOBwYZ741wG+gX
+        teTdsrBoEpUGso1nDJzM4ztc3DcQbAnPWrT8f7t/lzAaXbIZvJAh3+ovjyOK/bAn4fcyN5Qq0a2z
+        NrSmvwG3CjcUjAIAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [50266637ab53df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=marchon.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['412']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:10 GMT']
+      ETag: ['d:0:2107c3f609890df65f584e2ebe7427a2']
+      Last-Modified: ['Wed, 29 Nov 2017 09:30:23 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-mardu-sunforger-control/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/3VPu27CQBDsLfkftktNIE06XhJFgAgTqBdusU8+36L1HYS/z66jSCmS7mZudh4j
+        mDoXqCzGMMtSBxTYYSqLEcwFz23wsYYFc1cWz7AgdHAkXzfJ4PLG4Wb/Rx9cbycrzDGRg/eAiWCN
+        PpTFBN7sIJqwSuJbMm6N4jLMGxR1foE16yH6aF8b7jRmm9OV+2S9tleKkBqCqXQsD9NogI9DpL6i
+        dlb5KYvpJ7CzmqafcaTemlbtA/aklAwoxwtLbWAM1R27q7EfKZHAMjpjD0p6IdhY9Qbvrfke/M07
+        a943g+YbahjfzeCIEhSQPPWwouA/y6IsKu/oxDr21Rzm3P2M2mDKQirdZZv9xxClHsLngH1nYM/S
+        UUzAF6jOKHga5v9q/U+DL8F8oTbhAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026663ae856df89-MEL]
+      Cache-Control: ['public,s-maxage=3600,max-age=3600']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-mardu-sunforger-control.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['309']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:11 GMT']
+      ETag: ['d:0:1c676a8772bef38cbc39e33547e016a6']
+      Last-Modified: ['Tue, 25 Jun 2019 16:56:21 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-gw-challenge/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/yWQMU/DQAyF90r9D96YWKALbKUVHShQkUJnJ3FTq44v+O5ahV/POZ1Oeuf36b23
+        gOUFm1HvIuxYOuN+PlvAKmhn1GHioIAJ1nhV19e55pAjrE4oQtqRi69C1FCPSrAt9/PZE7wGo5jm
+        swfYCPc92RBYE1QJO3dsDMeBJMEXHbNDHmFLmE5kNTZneEEJ6eTuD9SUzwHeg2JMZKOLu3Jp+EcG
+        4Qjfgn3onLATZI2Or0go6ohQcaeUJmmUCyqs0MZSqnXM3lB/Mwts0FpSR3xrbdwKtSVhuN4i/FAD
+        +3DVeOJhoh9Y0n2Jeyy0CwqTFXk+q7ilOhTUs7uWVnO6JXzTIFKw3vOheHJM3JS3fA8sgjYN7pET
+        o8Au222RT6uj+w+FydpNzbPxcYQylE94mYBV7vug5cALDZ7kH2tH/lLTAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026663dfd83df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-gw-challenge.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['330']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:11 GMT']
+      ETag: ['d:0:938c354eec1db9f749a83b475e85f8c2']
+      Last-Modified: ['Fri, 11 Aug 2017 15:18:52 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/31-07-17-mOB-elves/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/zWPsU7DUAxF90j5B28ssDRMbAWCGAiqGkRnp3Ebq35+wm4aha/nvZRu1tH19fEK
+        armwD/CO1rEeycpidWMbi4EUe0qsgrdo5OeyqKBBP1EP6z6wkXlZPEIzCrzijPAyoCrJgiv4ZHe8
+        80Sjk+bgxjigwDOJxCmDbTzk2e/hQ1DjhAZ1yGs254Z2lgsqNOSp4F/vy7hLHUloTwGPtLCJtZPk
+        Cq2gD9fgLsrhoT2NItAOGFBvsDPOd4TSf2eU7LEz0mS6HRW+UX9GvpaURcs9dRGtf8qx+nc0Trm1
+        7YflybL4AwixpGREAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [50266640da0cdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=31-07-17-mOB-elves.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['243']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:12 GMT']
+      ETag: ['d:0:b13b5cedfa368f9452372f4f79895149']
+      Last-Modified: ['Wed, 02 Aug 2017 09:53:31 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/the-silent-realm-razer/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/2VRMXIbMQzsb+b+gC61ElfpbNly4li2RqdxjzsidxiRhAckpTCvD3Eq0xG7XO5i
+        eQf3F5xq/JLgwH5WDn13Bw9FU4ZXnpccOc599xV2pJk9wWnh6Uy5777BTpRSNvKlxLlxw6IcyR54
+        lTjDUdDBDwkrspcSM3Lsuw28j+Q5nUF+wxtWNPo9L6RXUe98hRcpGqmax8E3TVpPVTk3j0/yfpQw
+        mqphMnlMa+gjoQ9wxL+kNg4tbZxW76HENIlOCzl4pNQ2WdHqLxhhi1oxszPo1HwhC+z5ttcHX9jB
+        ntDJte/6bmBHo6C678beP1lo2LUAi80POJ1N/Ya5KBmyJd8aYvRwKDrfIOURhit+WhFbLWFsxTXR
+        YzHLDTx5/sNq1fwMQTSj51yN+IUa0A7/F7GBAeOUOUhcrw6lSe3j4KQ3ow9hl7JEgmfUWaonW+cf
+        HrOJjP0BAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666436ed5df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=the-silent-realm-razer.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['350']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:12 GMT']
+      ETag: ['d:0:3f185cd3ff6a20037a5b42bfa3a9d35d']
+      Last-Modified: ['Sat, 05 Aug 2017 23:28:02 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-snipers/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/1WQPU/EMAyG90r9D95YGIC7iQ1Vxx2gQkUHxOg2Vmo1iSunLfTfk5QBsSWPP95H
+        PkK1hMDBQjuhjh4tlcVdgsoSed7K4ggn35HmCpylcxx2topb89gHOxMzOYtaCfDokN3f/yrChdCU
+        xQGeosNgcumZ4ogM1YDqc9rL4jHINdQYZ1L4RI/dEgcui9sbqGUJM/6m1lucuU8o7J273dtEAeaB
+        4EG9ZHSAJjmEXapRMWzRQbOppJCe9B9uRRPKsCxaNtQJqrnfbf1EyqklSY155pUszpRf77TKSHD6
+        5iSRVmbW9opdPo6FyuFXzAt/AKWbM+FcAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026664a2a8bdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-snipers.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['255']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:13 GMT']
+      ETag: ['d:0:d2f2e35715b623927d8603a6140976bc']
+      Last-Modified: ['Fri, 21 Sep 2018 22:48:29 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/invisibly-inspired/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/4WRwW7CMAyG75X6Dr7tDGzStNsYsCFtUFEmzm5iqEWaREnK1LdfnF2Rdovt/7c/
+        Owt4DYnPrCg8RFh79j3aqa5msGRDsDR86ZOEb2EkA2vNKocLWHFU7LPCnWFFiriIctYbVDSQTXDC
+        G9XVXJLRGXk/wvqWX2wvcGKjo1Q3qBK4AJvcmJ2VLhuDk2iOZHVgU2TvHDEDLlnrXJJWH85oNyZo
+        KSVTJpbsNFhIDo5uDKh6sW7tjSN3mbVNaK4U6uoJttGg1eL4osGFCT7Rx4K7k41vxAZaTyqJfA57
+        PxrZqUFZT2wNss2zpbyAw2hJ5cOlcsWGr1nyDO0PDl7c3ybxgImgCSzuumpZU+cw6Jf/Tn3/HAWa
+        Ve5SIrY69oHp+ke7wzQGyiSHka3w7eiSx99DmeWfSKrv0BLsQydsv8olp5ITAgAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026664e08bbdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=invisibly-inspired.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['333']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:14 GMT']
+      ETag: ['d:0:557473cdff2063ab142649675097d698']
+      Last-Modified: ['Mon, 05 Jun 2017 16:54:49 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/sands-of-amonkhet-1/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/y1RQW7CMBC8R8of9tZLe4BWldpbGyhUAgk1EZyXeIlXNTbaOEH09bU33Lzj8czO
+        eA4f1j9VEi5QCfaWpCxe4BNjdHRicgbqFkfy3f1C0gDREtToTa/QIH2EDXc2evZdhiqL7MlADEr9
+        Ce2vUpckTPDtI4kbDCk0BjemZ3Bgl/WeYcvGZzFY4+CjKr7CNqRzEi2LN9i5dEjUOdQkgg89fDrq
+        e2XOoB68DWd6hK8gURIO4aRbbKjj4LNDg3ZKvHQcSZEgZ1Iz2AduKYs3MpAllAjNVf1msOeRTe6p
+        y4Rp2hKacJ3mPybJdgs6kQqWRVnUbOgYUMx7dlpw3/LFUaatBCerVcqe6tIOdXYoylhTSnDL7+pW
+        8Hh0ecPK4XWKbyXVnHmbcEN3T6glHlBgl8pOP5OuGzt4yrv8A62DL2TuAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666533928df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=sands-of-amonkhet-1.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['330']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:15 GMT']
+      ETag: ['d:0:814cf6bee522676be89c7a1af97064cf']
+      Last-Modified: ['Mon, 05 Jun 2017 01:57:06 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/mardu-ascend-pd/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/y2QTU/DMAyG75X6H3zjAkKMjwO3qYwiscFExzh7jddGS+MqcTvt3xMHbv56X/vx
+        ApZOMFxF+CIcy2IBLzSzkIEq8HizQaGyuIdXG2hAT7CcyXcUdHCNUaDGmFVr2/Xire+gkWBPSfQA
+        GwxmgmVsyRv07aUsHmHDkxe0XvsfPKCBz0lGjqKFbWpAQ2r/BFuXsqje28BHK3ALa45Rr2kIQ141
+        pkCFSXOiAHwE6Ql+8KIGzRmHUbs7DgN5UcWebZuBvp3YIcEl81y5g2+RZLHyRlfu7WyNAsRee/8p
+        oeFzWZRFYw0dOOE963AVJnKwMrYVTWvrTPpf/oiuqvngElfidOjN3+/ecTigu4aKfZycHr50jlsU
+        yz4jT8EeL5mmDjiT1hJ1nqwcoY+JRou7nqe0B95o4BB67Ejv+wW07JBY1gEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666576897df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=mardu-ascend-pd.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['331']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:15 GMT']
+      ETag: ['d:0:ae038db408f993aee6134bd9be71885a']
+      Last-Modified: ['Sat, 03 Jun 2017 04:31:50 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/penny-d-tainted-love/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/02QMU/DQAyF90j5D966E2Bgo2lRByqiJoLZzbmppeRc+S6p+PfYLUhs5/eeP9tX
+        wYbxKCP30M1ZtCwq2C4yLhwH+OIxJFfeRCnlsniEHeHo1g7j3foTWhwXuidUKK3gQHNkiS6984lg
+        PasjKtizqgSOqwS1cT3woYEU5AT5TNBm1ORqQ8oTZXNqvGRkYz1BM9rjZh8Iw61hLZFMeYb2itPF
+        rc4ymYJFJgrfZfEAneJgNzZC2ctPXjjA3gad/5UGlGtZlEXLgY6CGl584VrioDRgJq82nLL9xm2F
+        rWIiB+xpEuXe2jzyO+zV7hww9uTIH3tx4oJpAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026665e7c5adf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=penny-d-tainted-love.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['258']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:17 GMT']
+      ETag: ['d:0:2bc4d56b1913cbb01a07bd6496eb655f']
+      Last-Modified: ['Fri, 21 Sep 2018 23:00:37 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/rg-penny-madness/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/x2QvW7DMAyEdwN+B26d63Zpt6RFgP64Q1Ik6MjYjExYJg1KSuC3r5mVuPvujg1s
+        rtgt8pDgs/RhIsl19QxbTCNLgL1qvmGMWFcNbA1vUldPsC2WMnxzGLKsKjfsmGyBX5pmsrp6gZ0a
+        peyuXbHlHLEnOOI0s5ETPqRTMw58jgR/WvKQnNJiKAn0AnkgOHSmMdbVYwOtFsnI4pof1UTwppKy
+        cZfV/LinboyUEpyKTR7gTVb0itqcUXq9W08c+5UlwWjl1tWBezorWv/qRb9ME4qjIk6YWe9bW5QQ
+        aVAT17QsfZrRRl/ZwFFjh8IdHGbDxSOOJaZBx5VyKYHIRaeBLfoz38munAZP/gfaaG0KdwEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [50266662bb74df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=rg-penny-madness.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['283']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:17 GMT']
+      ETag: ['d:0:489422147e374e2b11ca03bc755bb50d']
+      Last-Modified: ['Thu, 27 Jul 2017 02:23:46 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/dreadful-disease/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/z2QzW7CQAyE75HyDr71TEFq1VuBAr0g1KiRejRZN7tif5DXS5S37xqkHmf8aezx
+        CjYphBIJJicWjiiFqW1W8OFvlCH9wpboCp1Fkyb1d55iJg5OKvYKu8SURQd7h1Fgz2kSe9fJj8gO
+        9sV5M6Liz3DAaDRULMGJkSRxbpsFHAhZdPCDNxdwRk34HGxi+ELJqo40cLqSuV93YpqfMvQUR8I4
+        VG9ZwSq4urqxOi/QTRiuilfOkAgq1rv4KNZjlikl0zZt0zlD54Rs3hR5L1JCvOc7r8YahwtI+n/P
+        EjZcwlm3LGCLfIE1CdezvZbcEooN1X005myhG7iIi7Py315qRdEHOL28bf4AbH52A4UBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [50266665c8a7df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=dreadful-disease.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['281']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:18 GMT']
+      ETag: ['d:0:5ac633e36d3c7bbb197dc5082114697e']
+      Last-Modified: ['Wed, 20 Jun 2018 20:58:26 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/22-12-16-biovisionary/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/21QsU7DQAzdK/UfvDEDndhKlSKGINQUdXZzbmJxZ1e+S2n79ZzDyub3bL/37BWs
+        YyGjAM2gy8UK1lY4o4CeYKuWsnOvrBfOrIJ2Wy6eYBNVyItGelPsR5YBDpgL1fFnaC4aLzPFMcwC
+        VYly8eo9R5TgVcv3O08Jum8W12pvufDp5nst3slHPiNeE0pBBzuUgewhw9vEcW7v9Eies2Uztewi
+        3Uh+zmyuFjxNx4l72IxoyeGezDCpncfKNtczSp7F9qOa/KgG2GKM8x2HijwtdMUI6/Zy0XGgo6KF
+        l/kPZFOk+qwD5/Pf6TmT9ARdj6XmcOqDBizV4vG/cPvJBNa5qjr6kjylpOJOv7LydQCZAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666687d11df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=22-12-16-biovisionary.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['282']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:19 GMT']
+      ETag: ['d:0:cbbe69588c46f520a79b0d4d49a9caa0']
+      Last-Modified: ['Fri, 21 Sep 2018 23:02:00 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/uw-elixir-2/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/3VQPW/CMBDdI+U/3NaZlC7dUEoQElURGZC6XZMjOWH70NlpC7++vgyoQ7tZ796n
+        l7C6ifIUoR5RfVks78BmYtcPmKgsHqFG1/FJ1MNexMUZktCTDyZ54RjFfWbmAtaOv1lBTrD1XjSh
+        43Q1UoNdAlFouEssWbd4gm10GHpze6VMvsIOLzHbVPA2xWSqvUMOcX7JFym0HM52P9CF0Flgm1TO
+        ZIEbCrm4XY8jJ4J2Cg8R3jOaRnM4cuijEQ9oQFm03NOHoPbPJlqt00jqOAzzNyjGkQPUjpQ7C7oP
+        /ndkBY3i4Ckkvv1akTvmrsbOZhjinFD9UbwsfgCg2ykhkAEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [50266672dcaedf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=uw-elixir-2.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['265']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:20 GMT']
+      ETag: ['d:0:88575f82240ab17dc444c01a12286ebc']
+      Last-Modified: ['Fri, 21 Sep 2018 23:01:11 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/penny-d-fog-azors-elocutors/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/zVRu1LDMBDsPeN/uI4eUtGBiYEZQjLYA7ViXewjsiROUkj4enQyNJp77u6tVnD3
+        4/gqwNq4IUXHoa5uoMnJMXiyluxYCm6e0Q6YnwjuAC2GSCeKhHn+Gh5ybFUkZ+tqBa0bpdg6zlOy
+        3SY0cHAMcUJoVAoo/UdWF48mwhse0oiy+RyMslqaL0njiYYsrM8g0KX9Jw4FbEPMTpPNrSYzSGnL
+        GllkCX4X1XLENi3sO6PIhiVKM56QjDB0OJhMovMCel9wuonQZOhRds4iqEdjJO9pLpp7ZFazYz/R
+        AOuzV3a55T0boKFhxKMALekGlXbfdVVXHWncO8X6VoabSXnRlC+4NxjCv8dGhUmu+CBjQrHDfiUK
+        FMsHdVZxMWmnLvDq4AmxONWpmSJmWyyFyH+fUFe/8fXOsNkBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [50266677bc2adf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=penny-d-fog-azors-elocutors.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['323']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:21 GMT']
+      ETag: ['d:0:2b3670cf34c90b795a2e1b7823a0e091']
+      Last-Modified: ['Fri, 21 Sep 2018 22:53:02 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-black-artifacts-matter/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/2WQu27DMAxFdwP+B26dmwYduhVx4CBoA6MeOqs2bRORRIOS4ujvK8Uo+trEg8vD
+        C21gN5FBoQ5ar4ahLLaw0xz6mZ0viw1USs7OI2p4vuJvUCsZOWrMO9/0GMYRxaqQ1h9+8AZtr+wf
+        Z4vWk0V9Uwg7BzVrNHmsNZlUbO2xhRNeyEYRpe8cVOTOWXQiAxUqP5lkXos0U9Sq8ygRXqibcqoR
+        7II4li95RuzZxxmhYfEq3b+HN6QLSvIZtml+hHZRZs7p94lm4AH2gh/syqIsWurTU0n/tDbH0eVA
+        yyK8ZLS/zsGOt0YHlSHZEY4cxGLMyldKUBZOH/H/dll8ApvcucaXAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026667a7964df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-black-artifacts-matter.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['270']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:21 GMT']
+      ETag: ['d:0:dda75446e0d9b12d68cdbee454df1193']
+      Last-Modified: ['Fri, 21 Sep 2018 23:00:40 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-goblin-tribal/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        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
+        bC7Y8upwoycDEe9iGvo0JMhnLEJBIoj3hFjHmCXcJermh/G4mg+Z9pctawbR7qMuflBzkITx2J6q
+        cB6pjTm/3yJrJc1bt6AfqrswdjlcID3dk9gXEnCcfuDNvjh5bf9y/O4UTSbyOoguytCmJwpa87FM
+        eOR4W314r6bl68NfpehDE+LekybEiNMANhfzyVGbnzU+0ZgKFOHhajNeSaXEI3bzgYOH/Qp9Nh7/
+        II+u0jswV6j50Lyfu8vmzZSqJWtr9p7KJ8reo5T6FTmw6HisPuXlo+jqDvpB0qZi+Y7A8lecPvYJ
+        F6uSW3tQ/ccud1jLkQJaaoc/almw8npgY7X5P7UKOy15f97GkkH2kIG2shEmLa+yFfYnGV0PyeR/
+        1Hh6jIH032cE/QGGzlJjZqnB8lcySpbpyMMoI3nAQqGkvN1Zunh7zFy52vx42J+d2w6b/aO5+S2l
+        RJUjtwKS7mvNDPUmu6X8W3h0WFvZ19HriZ/eOBpiK74L+sxXN7qUbmCCGwtncxdq0Mxtorh+QlaW
+        98WUwWTB53LXATIc7eVMUHm5eBxxOBCVSf08umbrh87zXhFP+xikr2siHa4T6VlNpHydSD/WRJqs
+        E+nnmkhv1om0VRNpa51I2zWRtteJtFMTaWedSHdqIt1ZJ9Ldmkh314l0rybSvXUifVYT6bN1In1e
+        E+nzdSLdr4l0f51ID2oiPVircqirktrr1Um1ldJatVK7rlpqr1UvtesqpvZaNVO7rmpqr1U3tesq
+        p/ZatVO7rnpqr1U/tesqqPZaNVS7ropqr1VHtesqqfZatVSnrpbqrFVL/VYT6+06kd7VRHq3TqTf
+        ayL9vk6kNBzAl45ITdyl4msj4WXdVVZ/rcus13VXH8O1Lj/O6raWr7W1H+uuKpO1Lis/112236x1
+        3f6ybmv7a23t67qr6OFal9FndSWZr1WSP9bt22Stffu5LpNv1srkTt3Wdtba2k5dddFZq7ro1B1A
+        nbUOoE7dvu2st2/rDqDOWgfQh7oiFa1VpD7UFalorSL1oa5IRWsVqQ91RSpaq0h9qCtS0VpF6qQm
+        VnedSElI+LCuyZwXXht6UROzWCfSpC7W5Klos/hUyJkiIQ7BVbQWEWnRtbU+xkO1V10LuUoakVuc
+        JmS110tP50n0dP6wbgLoO0+iba07Uj67w764syI/iVejStZUKTNA1k5c+tngJ9NXwFk7iQEN18DA
+        DMrayftOOHsydSmQOeKmrxueupgMXN6hANyPcLTx/wEAAP//AwA316mxAsUAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*']
+      CF-RAY: [5026667d7ecadf89-MEL]
+      Connection: [keep-alive]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Type: [text/html; charset=utf-8]
+      Date: ['Wed, 07 Aug 2019 04:10:21 GMT']
+      Server: [cloudflare]
+      Transfer-Encoding: [chunked]
+      Vary: ['Accept-Encoding, Accept-Language, Cookie']
+    status: {code: 404, message: Not Found}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/penny-d-remember-theros-standard/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/2WQT0/DMAzF75X6HXzjvDEJidva/QGJsYoicfZar7WWJpWTboNPj11x45a8vPf8
+        i1dQhO4kdIMvTk2fZ0soptPJse+gxMm1EryJJUoiB2vhmEIjmPLsETaCHh8ibAeOEeU7z1awo5hI
+        LP5Ot9m1CxLxQh5q9E2a/nx7PicIZ3gdhiAJHadZfuGuh0pYW+y1Iq8hMoK34Ak+uCWx20FD3DB6
+        KIiSU8di1qweDixkZUf56cMVyh5lsNBxijNRpQJfjLyczPkElUP20Tw1dx5Ya10IrbYuoL7hMFr/
+        J4mg0o49N7C9j+ijhvOsVqhTQGmfbWjhKEZqoRDC1Nu4klRKjA52DmVGLXVzJqyl6fk6/2+jmxWN
+        2vPW8Z3l33qWxulRoHSkw3XJpikWxp71N3s9jEb0CyDmmv7WAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026667f7a02df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=penny-d-remember-theros-standard.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['324']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:22 GMT']
+      ETag: ['d:0:0b9d7535cd1b98ad2dc067a599985cb3']
+      Last-Modified: ['Fri, 21 Sep 2018 22:53:16 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-aristocrats/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/22QMU/DQAyF90j5D95YWKBMbG1BQYKW0lTsbs5NTnHiyOdT+fncJQtCHe/z8/m9
+        9wgbFnHWqYwE3zhMXqksHmGT3/XEfjTSUBarRFQCVNGza9FoRlGDwYdvOxv92C7Imo4Uqk4i/wVy
+        AesI3kRd2n2CLar6xE+dIs/KRIwY1uqDSaNo2ccLag+nmAbYzjcrlqt6R5o/2UkcDf2YlbuYflaJ
+        AY7kGpzyfC8DOviMNkmwDA6c1HOcL9TgoUbn82QFR+zd/3xHwhBoOKcWWqh7YjKZb9We+6suN+pr
+        ai2rT7G32M8pX38mFs0ey6JOZs+C6p5v9fpwq8QqeSC3sLz0jsMZ+R62MobIuco1szRofrGzS1m6
+        1F+IyOYpZLZHi0p3qY2Y+1lBHS+X1He2d8CcuSx+Aevhi7L+AQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666824ef9df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-aristocrats.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['324']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:22 GMT']
+      ETag: ['d:0:2d918ad1bcb68ae85491b0eec02a1559']
+      Last-Modified: ['Fri, 21 Sep 2018 23:00:59 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-uw-control-v4/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/22RPW7DMAyF9wC5A7fOSToU3Yr8IUDbuImBzLRDW0RkyaAk5+cAvVgvVklJt04i
+        H8in90kzeLtZ4eBgHVgfW/Q0Hk1hrsQa26HxXMPS1dhHeQYLdo77PPOcG6uHWE9gYWsyHmwDBUlD
+        tWdrkr7UfGFJ+qbrrHjU7K/JaYV1HBdY8WP2BTZOozmmrQ8Uz6jhHc9p9pPOUAiq4Z6xwzbfuZXK
+        JecDypFNm2JvBxIJmpJdoZGNS2qsDApsg6+COJ+kHTuCRmwHXhGUfCSXkMq4jjFnrxL2pUfjMmqp
+        2JygPHP9aG1ola84xZ3CIZ45yQ69SsLPd3QVnUONR/voXtkY8jW/LGlyma4IcgdZCLbWPDmY6wQ8
+        hZVGpxohuv0POvlDmmuKER/w0Y+bawZaCw75H79CdMrA1NmBYG+DvreDPVFEZOfJJKrx6BcWCyaS
+        CwIAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666850d66df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-uw-control-v4.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['346']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:23 GMT']
+      ETag: ['d:0:b52886213b8ba63ebc6a089f16ad89f4']
+      Last-Modified: ['Fri, 21 Sep 2018 23:00:55 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/30-01-17-mono-green-aggro/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/yWPsW7DMAxEdwP+B/5Cm0wdjbYJ0Lgw4DQ7JTE2YUUERLqB/76WOvL4eLw7QhdJ
+        ldOkIHf4Rlsztc0ROpEEI9qWy/QRf1ln6Dc19m3zeoBPyaRWdl/lfoIhyzNSpS/4cLNEgwE93/kf
+        uxDaTNmhX6DDKDYXdSjjacUcGFMRRr/tGFx5Kl4v8LMYOob3jEvNdeNENeoN1Z4ioW3aZuRATnaT
+        t4KcOQRKcGLnJGnbHKDfM/jVjDKct5Cxfl6jUjHq14xapZFs74IJruj3nlqs/wDHyAkfIQEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026668e0e71df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=30-01-17-mono-green-aggro.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['226']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:24 GMT']
+      ETag: ['d:0:1fc0e0b57aa14b53efaecd5d97017678']
+      Last-Modified: ['Fri, 21 Sep 2018 22:48:21 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/dont-be-a-copy-cat-copy/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/12Qu27DMAxFdwH+B25dG8dTtyRo4gB9oRk6MzIdE1HFgpJduF9fMQlQoJt07+Hj
+        soHVhH6OdwneOJyUPyvXwJpl4sQSUWf7bwKmAaSHDw4hVa4uikQy6zEUcoDnOWX2lVvcw1aUUjZo
+        h4Sl8TtNFE8Xeiehowgtx86AFlXl24xWYinrikOK6gfT9rHnyJlKgz6Qz2Wfy4B9Cmj1zW0qHL7I
+        jwGvQA2vE6mO5Vm5A3d0FNTuwYyVeowET3gUxSyWbQFr9GfIAi+YRy1LLmGD0VMw75ayhq0doFei
+        HzL9f7C/JMtrHwxsZOV+AXUFKopgAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666949abcdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=dont-be-a-copy-cat-copy.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['252']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:25 GMT']
+      ETag: ['d:0:a7876901f34e85a5bd6d45378aa45367']
+      Last-Modified: ['Fri, 21 Sep 2018 22:52:41 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-minotaurs/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/0WQPW7DMAxGdwG6A6/QNlPHOvDSFAmi/sy0TUuCZTGgJBu9fa0YbUc+Pn4keIAX
+        KZmgZelJq0doAuFCAlfPWasDNMJrBB6hLfJdhZaC8wNtc7gGkur8ogtl8aOv8N8zNy8+dz4Ou/wq
+        aGeEL5QeQ9jdE8tQdxiHOZOkqYQAF0xJq4cDvHGJGX2s01e01AXmoboz/rGZo93zDS5bDedxpJj8
+        Qne24nzT6gnehVIicSwRjI9TqvBDOhYLnxx6jKyVVmY7vGOU4bn2GynJ1ZgjYXYzylSLk7cuRx8t
+        HFHurzJl2ymQHdXbcw36AX94NapfAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [50266698e9abdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-minotaurs.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['252']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:26 GMT']
+      ETag: ['d:0:35b3d0b432934fca7a672f6f63ba55da']
+      Last-Modified: ['Fri, 21 Sep 2018 23:00:44 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/05-01-17-abzan-tokens/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/2VRvXLCMAzeueMd9AIdKCztBuFvSGmvKe0sYhF851g+20nK21fySDdb1vfrJayN
+        cTSfPcM6JeovjiDfCGrqLPv5bAkbjJkiWA8bx2x0s0LnylaZOOsFv4Iq4iTnDhryCXOBL2BLaGAb
+        OSjXlkYeIuwdpZsS7X7D4LuCPt57D5nhSxawLa81elH2T7XNcIg40h1j0T9xL6TvQw6csoIb9CZl
+        CoGgshkNuTKl1g2GDDTlqYxsZx3wtbg/4R09HNgk9dYEG0WoQhvF+As0E/ZB1c7eUJw4OgMVe0+t
+        Rkua7Zy1mZ03iv+2ozXwJnF5UtgPxx6OGEdSj/NZYw1dWBK8KvRfq9IfX69y/xiiNrJ4KGsJte1t
+        ljSflGTeUlKVpqWgRBJpP3QDlSSEJWPlCH2SH1G2Rzt/BqJjl/kBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [5026669fec7bdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=05-01-17-abzan-tokens.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['326']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:27 GMT']
+      ETag: ['d:0:237bbd82d132e9a07c4d8ac54afb4fdc']
+      Last-Modified: ['Fri, 21 Sep 2018 23:01:01 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-eldrazi/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/3WQvW7CQBCEe0t+h+1SQ6jSQfhJFIUgQRQp3Zpb7JXPt2jvjCWePrcmVUSaK06z
+        M9/MBOaaOGIAOcGbXNlTWxZTmA/YUuBQw7cEKosZLLyIq5RRy2ICS4riMbEEOAwcyuIRlkro8jvq
+        J7DyTvHKWXnBmDCJ3c1gLUoxmeFaeg8femxQnUVuxNeoDJuevasxjakblSE1sD9j7Mz1BYMz1FWn
+        2PbeJL/UDxF2Su4WNIN3yb2OnIstiJIfzbY5GV7DBR2NJXaYmsxIao6fHjupTbZvOSVSK2/imEsa
+        X2YYQmSlP+oBu3NZlMWeHVWSyzyNA96Z9c5sU9hKMtGh4Qhfon7c4j+yo2JVeSN79jjE8a8P7gZ7
+        28pQfgB/+gBK1gEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666a3ba7adf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-eldrazi.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['298']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:28 GMT']
+      ETag: ['d:0:a30b8f903648033420c82fcdc77078c0']
+      Last-Modified: ['Fri, 21 Sep 2018 22:53:10 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-infiltrators/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/1WOPU/DMBCG90j5D7ext1WF2FCBKAtUNdD5iK/xqWc7cuym8OvJZWq3+3jejw08
+        BwSDocsF029dbeCFPSdow4klJ8wx6fH1EuXCoYcjix3ragVvMdGY62oNDWPI0KQ4ZadsG84nzC76
+        e5PVzePIuZvZR2hHwWDV5Z16zKT6j6EIzY57FOyWy57SIHTV8YB+uI1bg3Fo4+Sxp/u8LZhphhX5
+        ZEsuisQJTE581TLfZFHOFKBxsUhd1ZWZqZ+IyT6pZpfIL4XmaphLQuE/UuGy0cMIh8JBK5kiGRl2
+        DpNX/CuMxfsY1PMffe/0PGABAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666a6cf22df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-infiltrators.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['248']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:29 GMT']
+      ETag: ['d:0:0e2802fdac709462a6b3ccd0388f9812']
+      Last-Modified: ['Fri, 21 Sep 2018 22:48:38 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-contaminated-filth/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/yWQsXLCQAxEe8/4H9SlJ6lSgsG9IUktfMLW+Cwx0gG/n5Pp7lYraZ92sOdSyGCg
+        J2UsrNI2X7DPOC5wwBKfg0rBlQULJehNH5LaZldluztFVZTd6WGb2fQFeoMObYELJ5bJQ+/YaDK8
+        QT/rI0f/UVImdxhQFo+WMhN0hCnsJ85l3h6mK/xIqhGjfsqqdlW05DGjZ8cPrwwpFoX/zMIeQDXX
+        qOMbaFf1F673tmmbMyfaBnyHfcDFZ3SsXPikEXOmivFZx0wCLPUQqlugX85Uj3Rle+f6m9nvZFvw
+        42q4BFTb/APFimxDUAEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666ad8adbdf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-contaminated-filth.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['244']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:29 GMT']
+      ETag: ['d:0:b842e7c3ded05c6cc13c8cdbd8c4cbed']
+      Last-Modified: ['Fri, 21 Sep 2018 23:00:34 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-composite-deathmantle/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/yWOsW7CQAyG90j3Dt66Vi1T16BmaRECCWaHuIlV3xn5fCDenruwWPL3//rsDfQa
+        r5rZCQYViqHbwJZuLG8Z9oKPdb+j3SjBoXDKDXwj+yKUM/yoOqe5wYE0F5spdB/v8KslOXJqwY5j
+        VaIvEZMLNbR/mEZ0vqy64xXtv057nTtVMQnoH5xUaknYV35mmWAoNQ1d6I480aho01fLeit5Cd0n
+        bFUNXGGnvtTH0tquJy6G4yiVQC94fzHBObtabLonuw0McAkBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666b02f72df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-composite-deathmantle.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['209']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:30 GMT']
+      ETag: ['d:0:fb93ef29b832a53693c51bfca36fb790']
+      Last-Modified: ['Fri, 21 Sep 2018 22:53:19 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-werewolves-kld-pd/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/3WRP2/CMBDF90h8h9s60zK03aB/SFWgFVR0viSHc+JiI/uSiH76+mDo1M16vnf+
+        vecpzFOirhJqYC6nFtOkmMIijBAOsDkL4aS4hUUkPHqqj7DlhqJJz3iuTIUtemfSFF6GIAN7B98s
+        Td7zAK8hUtJJMYMlMUXYEtYtLNA3rOYo0Y/EEb5R6/ZIdLLRkmLHau9rS7BBVYpHH0TS5TaMckIj
+        odRHR74mw3nzSdmhhgjLDGTSe+zZw0evgqM5V9hVbRCFT6z5wMZ1B+sQvLBrFcreZ+U+K/mA7G3F
+        hpxQrbmbMmNKCJ0t2vbOmZRtkqMkm9ydOP5BX3fNYM8i6AjWlEu+1jQpdrnCKmBsHs0477Xv/E2C
+        PbFcurZwGix4H8laeoroGQXmsW55oH/atyQdX9u+eFH45+Lf4WAQX2O+vX7eTrO5M9oVH8igfgF/
+        +Q1+CAIAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666b3ac82df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-werewolves-kld-pd.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['349']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:30 GMT']
+      ETag: ['d:0:be9531ac5d79a24d573d22e7bc7484b0']
+      Last-Modified: ['Fri, 21 Sep 2018 22:53:13 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/ur-knowledge-and-power/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/z2PQU7DQAxF95FyB+9YU1ixS1sVoYIUkV7AZNzEysRTbIeI2zOTSmzfvP/newfN
+        90JpMTglnevqGfYpOqQrnElRktXVDg4Y+yWiU4Aj28xmGAs/ok7mRBFakoDiJX+KOJPdCCdSaALd
+        vKivxLbV+kjQaD/yD+Xuxx28WUQJdfUEZ0lrpDAQZABtWkk34yMt4shSetqkTrI17ckVf+9LPjmE
+        SIW+8zC6sAxlS8cD50boJpapfPEPHPXKNpZs5/nyfkTLew8jz/nugi/sKA+Wn5Vk8E29KKEtSnDQ
+        hY3qqq46DvSVUMNLERp1tnssqaa1GH9Nc23CYwEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666b6f937df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=ur-knowledge-and-power.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['259']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:31 GMT']
+      ETag: ['d:0:97eaa9e917a9ad560665d78e8e2acd7f']
+      Last-Modified: ['Fri, 21 Sep 2018 22:53:14 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-pro-red/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/zWPTU7DQAyF95FyB1+ARUs3sCuFBglVRASJtdNxEgt3HNkTpNyemSCW78ef9fZw
+        7HtaoUEbdRXyujrA8SVNZHAW9KnoJyP85jhCqxxTXe3hhBLIEF5JhDWW0jO5CqasoGEstd0OLrrE
+        hBzLzfuMAs2CFnJcVw/QSk68RO1inNZC6Vh+8uu3yOOUNkNw9KR224RKQmNojcn/4qVPZIaRMEI3
+        c+YU+4tjuOuuaEYBToZjXdVVx4F6zf8ft1GiGgY2gpOKui/b9HMxPuk2b/x7uKB7WXvlYf0HO+gA
+        H5imAv0FFFtCn0EBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666bb2fa2df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-pro-red.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['242']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:31 GMT']
+      ETag: ['d:0:5c1d055804f2062b479221b23d9b000e']
+      Last-Modified: ['Fri, 21 Sep 2018 22:52:07 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-goyf/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/x2OwU7DQAxE75HyD/4G6AVuLYEKCRWkVFTi5nbd7qredeTsJoSvZ53b+I09ng1s
+        U4iYCTpC1zYPsC25xIQMexaJRnaKc2qbDbz4wAxyhTdROosL6Wb4dRKeqoZTYDe2zdPqj9m8fULl
+        WcRBp4s9eIT3kTE5Mz980Zss11VLZsoejirM9vWw/MKJcCI1+3MoTCnDFzJeyEhfOGOonVDjOs8Y
+        BxNHiQT9RYpazHddKyplhB+J51BP26YPrtZHdc+236HeYUdZcUFeAWH2sVIbDljPkcMfWfc+8J1x
+        9NAPNUMt7B+x7/JCQgEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666c0c87ddf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-goyf.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['244']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:32 GMT']
+      ETag: ['d:0:3e6faf4386d69f440c2a7a7271aad6c5']
+      Last-Modified: ['Fri, 21 Sep 2018 22:52:30 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-the-rock/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/z2Qy07EMAxF95X6D96xYQNU7Jm3QFOqKYK1p7Faq3kUJ5nX15N0JJRFlOvc62NX
+        8GbZYCBYEaqyeIKFxICabySwvqB0Q1lUsEQ5kc3XFQOrLK3YsMDORU+wjSizeYN6JCsYBqjdUVNZ
+        vMLGCfmQLRsXNXymyPl3BVunexROdtaqTxBl8QxbYQML7Mazc8rn0B1GG0j9E77HHu0jhIHgwJ5t
+        D21AyZUPd2NN44OHRkhhcJIT905CArzCnmVuUVMnbtLoTTbVNCZgRH1/pFg5OrHQDKjRXrLakMZx
+        RPiJkiwv0MRpokBpRUvNv5GydqAuimSamvshGJRZbgdhGg2e8yraM5opB7ZXfcLUIs3qRPG99xeb
+        I8ndWME3C6eKhbVh7xN+WeTzB75h/o2xAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666c3ad76df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-the-rock.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['312']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:33 GMT']
+      ETag: ['d:0:89aa1015434c67122adcb890f5ec8c9b']
+      Last-Modified: ['Fri, 21 Sep 2018 22:52:34 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/28-11-16-temur-morph/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/21Qy07DQAy8R8o/+Bdo4cKtLVRCVSVEEEjc3I1JrDrryPuo+vfsBpA4cJuxZ8cz
+        ewO70XSiMJII7AxPbXMLj5I5jHC8hshuGWQtIz/AO0sf2uYO9moUYt3tTX1kMthy1oSL/ikI+r6i
+        g2lADzvR1AdnOJPV8VGTj8i+4heMUcgJXv5c7HBIcMQkVb+GjpxRhOdiGxbOE7uSHW1a1Ge2M2yk
+        UK6p1vBKU7JfQaGGLKCfywWya330ptxPOBBs5tmodHDUNiv4UIrVGzNZydc2Hfd0UrT+vjpt2OsZ
+        umSZM8pybfXPJ67h4YKWycNWMMSJ/Xfxw0iWoJuLMniMbvzpNwv7WHHbfAEMD8H/lAEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666c6aa09df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=28-11-16-temur-morph.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['280']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:33 GMT']
+      ETag: ['d:0:aa325bdbbc3dd379b188ca84bed3c2ce']
+      Last-Modified: ['Fri, 21 Sep 2018 22:52:44 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/elvish-piper-combo/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/zWQu27DMAxFdwP6B26dnRQduqXOoyiSIoCBZGYsxiYiSwYl2/Df13TSSbhXfJzL
+        HDZSNZSmjiDcYedtL+grMlkOX0FuQaa6DdFkKyh44AquON3ZWxKTvcN2nDz5twg7x4nU2bmBok7a
+        EnVQNmjD+PI5NnCaYuLKZOt/48zdc9RLXzhy8CiTenuSIcy/+Qr2QSgmpTo4tNSgJChwQKeVORxn
+        Nl/DNw8LxdGhDyPKE8dkH3AKvU/IXovP5PDxQLj20i7aYSILhfSxUZi1crfoNUZqCM5YPRaXa49u
+        sYp5QdTecsS2M5nJSrZ0Cyj2UwE2fepbPcyF2Glvgb0mn99E0rFzuKQ+yMxloSR0euIfFcUcrlX1
+        OznCecaWY8WdI13zB1ivGmiwAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666cbd9e3df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=elvish-piper-combo.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['306']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:34 GMT']
+      ETag: ['d:0:353a18aa4b58186c7cc1b1baff2d662a']
+      Last-Modified: ['Fri, 21 Sep 2018 22:48:46 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/magic-the-combat-mathing/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/21RsU7DMBDdI+UfbmOBgQILGw20RdAK1ZUqsV3ra3KSY0dnp1X4enxJ2Zh8st97
+        997zDF7k2JAMsBNkz74ui3uYhwuEE2wGR1gWM5gLnglSQ2DQ2zhdcc32FlYkQbEf7OMB2dH42EtM
+        8Ml1kybJR6gkxHjIuu/+hD7JoLi3c3DnDIA9O5V9gkUQiqksHmApOHTkEmzp1NekGkshTKrxGgby
+        Cl+H3qfsW+cvl4fR25Y64YhunDk1NxGqBqXVaNu+rsnCKntzf1kMHsm5vr12EXWXSb0H47kjGSF9
+        7MhHDh4WTM6qw10TxF8Inb0S9XLP3t6ZI4rkLZXgGP4bLaqJ0LZ5ZyiLsjBs6RBQ7PNYWMhWtMZ1
+        kISO0/DfN1TkcjmMDhYOhaaWcgMWDE1pN5h6yfwfuuZSF2uKI90o3Q/4V8YM9vlMjdr5BRxKWB0I
+        AgAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666cf7fc2df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=magic-the-combat-mathing.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['345']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:35 GMT']
+      ETag: ['d:0:22db4d5a27ffe322d2d1cb485520dbda']
+      Last-Modified: ['Fri, 21 Sep 2018 23:00:48 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/pd-red-madness/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/zVPPU8DMQzdI+U/eGMGOiA2StV2KBLqVbo5vXNzVn0xchwk/j1JBKOf3+cG3nha
+        cKVsDxkOimiUoncb2GoxhMEUU7SlIbtKwvULFeQGtiBsWWRun30gWxhzhpPIv8GeUH/g0hXePcER
+        mUkSvGuZ6Mro3eMLfEhJFig1wRmnezcZi64NGCYpGhFG4Vu/MWXsjHOI2JBL7YtaA+ETwz03aCSe
+        4VAqyzvvBprxKkHn176paDY4UVws/bXc4SpMuQ58hj2HtaaF7+49cIjZpFXx7he4FG8zKAEAAA==
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666d34daedf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=pd-red-madness.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['226']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:35 GMT']
+      ETag: ['d:0:78e91a811a6382165a25c39de5f3cf98']
+      Last-Modified: ['Fri, 21 Sep 2018 23:00:50 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/gruul-slivers-3/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/12PPYsCMRCG+4X9D9NZWZxsIXbecWqhgqxonTODDpvNyGSygr/eBOGMlsk871cD
+        vwO7gfwZjuRsqKsGFiR4Mx1C62hAqaspLFgwaD6u0Ij+Xyaw4j6LX+iGo1dDPsObGE7u5dPALtKp
+        K9TtlTzaAmhVqCsNG9jfeJxS7Rt3QM99+SaJDr0WX0cjQixhBGsMgVOhumrJ4h8bsbOcPo8aez8K
+        yY1clnxHCQprOl/UpxKZ+eH+ys/pS0nTUgk0Cf76XD6BrdEoxtEdc9QD9LJ3/FoBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666d70c3adf89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=gruul-slivers-3.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['221']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:36 GMT']
+      ETag: ['d:0:f94f6ebf607bfdc0a2906d8fde71e687']
+      Last-Modified: ['Fri, 21 Sep 2018 22:52:32 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/mono-black-low-drop-aggro/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/yVPy2rDQAy8G/wP+oEc2oYcemts+oAGQm3as7Ire5espSB7bfr3XTUnMaOZ0WgP
+        R2FPHhrhedHslrraQ4PKcgs4Ul09QkurZIXI0AX0spmijUqj4gBvQXIy5rXMXS88Zio6jXQ17ynO
+        pL/QBNTJVGe0GCL9BznNBL2iu96JL8KVFFoVJsNdHNnuHpOIr6uHA3QbTjdb9aIT8VKav5OKMd9l
+        U1rBJzpSXKQk1lUXPV0E1T/X1VM5nIbdBw8pOnP+SGZvLfsgyhfZ4EVduFfpJbsAMsBJyk9JVrK4
+        P66ajUIvAQAA
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666daaa97df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=mono-black-low-drop-aggro.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['237']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:36 GMT']
+      ETag: ['d:0:b7e1ab8f2f72ad21de09122c1f8ee94f']
+      Last-Modified: ['Fri, 21 Sep 2018 22:52:28 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [__cfduid=d080eadc93e4459df06e6a3491747174d1565150977]
+      User-Agent: [python-requests/2.22.0]
+    method: GET
+    uri: http://tappedout.net/mtg-decks/penny-dreadful-rack/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAC/22PPU/EMAyG90r9D95uRdCJjSugGwCBchKz2/oa69Iksh2d+Pc0kdjY7MfvhzzA
+        MwUWLhu4K3HUvht2pJmV2shqQtrw6WeLYAnOqQjOvqI3DowRDwoj/sneOS5wLKLWtiILSd/dwyeW
+        TKKHXbq27K9CanBJAuYJPthzAGcpUlW7mbKRQLrAa1lLZXfgbrjlav32RKHezkmsyH7tO8cLTQll
+        eayKp5zJ2KjlHwXbaw8w+nTluILDuGjteYmzpPbNf53DzgSnKVTPGPCmtekXlVh2CTUBAAA=
+    headers:
+      Access-Control-Allow-Headers: ['*', 'Content-Type,Accept']
+      Access-Control-Allow-Methods: ['POST, GET, OPTIONS']
+      CF-RAY: [502666de9857df89-MEL]
+      Cache-Control: ['public,s-maxage=10800,max-age=10800']
+      Connection: [keep-alive]
+      Content-Disposition: [attachment;filename=penny-dreadful-rack.txt]
+      Content-Encoding: [gzip]
+      Content-Language: [en]
+      Content-Length: ['224']
+      Content-Type: [text/plain]
+      Date: ['Wed, 07 Aug 2019 04:10:37 GMT']
+      ETag: ['d:0:490cd72cfc1f9b33f2ebc4a9e45331c8']
+      Last-Modified: ['Fri, 21 Sep 2018 23:00:29 GMT']
+      Server: [cloudflare]
+      Vary: ['Accept-Encoding, Accept-language']
+      p3p: [CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT]
+    status: {code: 200, message: OK}
+version: 1

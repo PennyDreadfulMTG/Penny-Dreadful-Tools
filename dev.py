@@ -3,7 +3,7 @@ import subprocess
 import sys
 from typing import List
 
-from plumbum import local, FG
+from plumbum import FG, local
 from plumbum.commands.processes import ProcessExecutionError
 
 from shared import configuration

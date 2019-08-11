@@ -9,8 +9,20 @@ from .data import match
 
 
 @APP.route('/api/admin/')
+@APP.route('/api/admin')
 def admin() -> Response:
     return return_json(session.get('admin'))
+
+@APP.route('/api/status/')
+@APP.route('/api/status')
+def person_status() -> Response:
+    r = {
+        'mtgo_username': session.get('mtgo_username'),
+        'discord_id': session.get('discord_id'),
+        'admin': session.get('admin', False),
+        'hide_intro': request.cookies.get('hide_intro', False),
+    }
+    return return_json(r)
 
 @APP.route('/api/matchExists/<match_id>')
 def match_exists(match_id: int) -> Response:
@@ -52,13 +64,3 @@ def export(match_id: int) -> Tuple[str, int, Dict[str, str]]:
         'Content-type': 'text/plain; charset=utf-8',
         'Content-Disposition': 'attachment; filename={match_id}.txt'.format(match_id=match_id)
         })
-
-@APP.route('/api/status/')
-def person_status() -> Response:
-    r = {
-        'mtgo_username': session.get('mtgo_username'),
-        'discord_id': session.get('discord_id'),
-        'admin': session.get('admin', False),
-        'hide_intro': request.cookies.get('hide_intro', False),
-        }
-    return return_json(r)

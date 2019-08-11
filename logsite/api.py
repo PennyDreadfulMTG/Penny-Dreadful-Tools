@@ -28,6 +28,10 @@ def person_status() -> Response:
 def match_exists(match_id: int) -> Response:
     return return_json(match.get_match(match_id) is not None)
 
+@APP.route('/api/match/<match_id>')
+def match_data(match_id: int) -> Response:
+    return return_json(match.get_match(match_id))
+
 @APP.route('/api/upload', methods=['POST'])
 def upload() -> Response:
     error = validate_api_key()

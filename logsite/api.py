@@ -5,7 +5,7 @@ from flask import Response, request, session
 from shared_web.api import return_json, validate_api_key
 
 from . import APP, importing
-from .data import match
+from .data import game, match
 
 
 @APP.route('/api/admin/')
@@ -31,6 +31,10 @@ def match_exists(match_id: int) -> Response:
 @APP.route('/api/match/<match_id>')
 def match_data(match_id: int) -> Response:
     return return_json(match.get_match(match_id))
+
+@APP.route('/api/game/<game_id>')
+def game_data(game_id: int) -> Response:
+    return return_json(game.get_game(game_id))
 
 @APP.route('/api/upload', methods=['POST'])
 def upload() -> Response:

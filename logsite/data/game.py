@@ -22,10 +22,21 @@ class Game(fsa.Model): # type: ignore
         # If we want to remove chat, or OOB messages, do that here.
         return self.log.strip()
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'match_id': self.match_id,
+            'winner': self.winner,
+            'log': self.log,
+        }
+
 def insert_game(game_id: int, match_id: int, game_lines: str) -> None:
     local = Game(id=game_id, match_id=match_id, log=game_lines)
     db.merge(local) # This will replace an old version of the game, if one exists.
     db.commit()
+
+def get_game(game_id: int) -> Game:
+    return Game.query.filter_by(id=game_id).one_or_none()
 
 class Line(fsa.Model): #type: ignore
     id = sa.Column(fsa.Integer, primary_key=True, autoincrement=True)

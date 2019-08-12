@@ -62,10 +62,10 @@ def export(match_id: int) -> Tuple[str, int, Dict[str, str]]:
         mods=','.join([m.name for m in local.modules]),
         players=','.join([p.name for p in local.players]))
     n = 1
-    for game in local.games:
-        text += '== Game {n} ({id}) ==\n'.format(n=n, id=game.id)
+    for g in local.games:
+        text += '== Game {n} ({id}) ==\n'.format(n=n, id=g.id)
         n = n + 1
-        text += game.sanitized_log().strip()
+        text += g.sanitized_log().strip()
         text += '\n\n'
     text = text.replace('\n', '\r\n')
     return (text, 200, {

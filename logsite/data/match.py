@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, List
+from typing import Any, Dict, List
 
 import pytz
 import sqlalchemy as sa  # type: ignore
@@ -62,7 +62,7 @@ class Match(fsa.Model): # type: ignore
             return ''
         return dtutil.display_date(self.start_time_aware())
 
-    def to_dict(self) -> str:
+    def to_dict(self) -> Dict:
         return {
             'id': self.id,
             'format': self.format.get_name(),

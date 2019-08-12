@@ -29,7 +29,7 @@ class User(DB.Model): # type: ignore
     name = sa.Column(sa.String(60))
     discord_id = sa.Column(sa.String(200))
 
-    def url(self):
+    def url(self) -> str:
         return url_for('show_person', person=self.name)
 
 class Format(DB.Model): # type: ignore
@@ -38,7 +38,7 @@ class Format(DB.Model): # type: ignore
     name = sa.Column(sa.String(40))
     friendly_name = sa.Column(sa.String(40))
 
-    def get_name(self):
+    def get_name(self) -> str:
         if self.friendly_name:
             return self.friendly_name
         return self.name

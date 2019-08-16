@@ -130,6 +130,8 @@ def upload_coverage() -> None:
         bash['codecov.sh'] & FG
     except ProcessExecutionError as e:
         print(e)
+    except fetcher_internal.FetchException as e:
+        print(e)
 
 def sort(fix: bool = False) -> None:
     """

@@ -1,0 +1,9 @@
+pull_request_rules:
+  - name: automatic merge pyup-bot
+    conditions:
+      - status-success=pdm/automerge
+      - author=pyup-bot
+    actions:
+      merge:
+        method: rebase
+      delete_head_branch: {}

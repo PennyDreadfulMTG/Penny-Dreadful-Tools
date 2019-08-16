@@ -5,5 +5,6 @@ pull_request_rules:
       - author=pyup-bot
     actions:
       merge:
-        method: rebase
+        method: merge
+        strict: true
       delete_head_branch: {}

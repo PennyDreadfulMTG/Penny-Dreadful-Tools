@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, List
+from typing import Any, Dict, List
 
 import pytz
 import sqlalchemy as sa  # type: ignore
@@ -54,10 +54,25 @@ class Match(fsa.Model): # type: ignore
     def start_time_aware(self) -> datetime.datetime:
         return pytz.utc.localize(self.start_time)
 
+    def end_time_aware(self) -> datetime.datetime:
+        return pytz.utc.localize(self.end_time)
+
     def display_date(self) -> str:
         if self.start_time is None:
             return ''
         return dtutil.display_date(self.start_time_aware())
+
+    def to_dict(self) -> Dict:
+        return {
+            'id': self.id,
+            'format': self.format.get_name(),
+            'comment': self.comment,
+            'start_time': self.start_time_aware(),
+            'end_time': self.end_time_aware(),
+            'players': [p.name for p in self.players],
+            'games': [g.id for g in self.games],
+            'tournament': self.tournament if self.tournament is not None else None,
+        }
 
 def create_match(match_id: int, format_name: str, comment: str, modules: List[str], players: List[str]) -> Match:
     format_id = db.get_or_insert_format(format_name).id

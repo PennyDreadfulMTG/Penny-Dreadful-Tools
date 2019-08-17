@@ -37,7 +37,7 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
         if took > 1:
             print('Getting text from response was very slow. Setting an explicit character_encoding may help.')
         return t
-    except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
+    except (urllib.error.HTTPError, requests.exceptions.ConnectionError, TimeoutError) as e: # type: ignore # urllib isn't fully stubbed
         if retry:
             return fetch(url, character_encoding, force, retry=False)
         raise FetchException(e)

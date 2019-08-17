@@ -1,3 +1,5 @@
+from typing import Dict
+
 import sqlalchemy as sa  # type: ignore
 
 from .. import db
@@ -11,6 +13,14 @@ class TournamentInfo(fsa.Model):  # type: ignore
     tournament_id = sa.Column(sa.Integer, sa.ForeignKey(
         'tournament.id'), nullable=False)
     round_num = sa.Column(sa.Integer)
+
+    def to_dict(self) -> Dict:
+        return {
+            'id': self.id,
+            'match_id': self.match_id,
+            'tournament_id': self.tournament_id,
+            'rount_num': self.round_num,
+        }
 
 
 class Tournament(fsa.Model):  # type: ignore

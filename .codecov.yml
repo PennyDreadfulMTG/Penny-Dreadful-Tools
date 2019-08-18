@@ -1,0 +1,6 @@
+coverage:
+  status:
+    patch: off
+ignore:
+  - dev.py
+  - run.py

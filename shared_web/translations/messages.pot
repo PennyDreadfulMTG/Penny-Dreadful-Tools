@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-06-18 09:57-0700\n"
+"POT-Creation-Date: 2019-08-14 17:22+1000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +54,7 @@ msgstr ""
 msgid "Metagame"
 msgstr ""
 
-#: decksite/__init__.py:58 decksite/views/home.py:68
+#: decksite/__init__.py:58 decksite/views/home.py:67
 msgid "Latest Decks"
 msgstr ""
 
@@ -837,6 +837,12 @@ msgid ""
 "and do not allow draws, unlike some other player-run events."
 msgstr ""
 
+#: decksite/templates/tournaments.mustache:1
+msgid ""
+"Dropping from the tournament in the elimination rounds will result in the"
+" forfeit of your next match."
+msgstr ""
+
 #: decksite/views/deck_check.py:12 decksite/views/signup.py:21
 msgid "Decklist"
 msgstr ""
@@ -857,23 +863,23 @@ msgstr ""
 msgid "Check your deck"
 msgstr ""
 
-#: decksite/views/home.py:48
+#: decksite/views/home.py:47
 msgid "Recent Top League Decks"
 msgstr ""
 
-#: decksite/views/home.py:50
+#: decksite/views/home.py:49
 msgid "Current League…"
 msgstr ""
 
-#: decksite/views/home.py:59
+#: decksite/views/home.py:58
 msgid "Latest Tournament Top 8"
 msgstr ""
 
-#: decksite/views/home.py:61
+#: decksite/views/home.py:60
 msgid "View Tournament…"
 msgstr ""
 
-#: decksite/views/home.py:70
+#: decksite/views/home.py:69
 msgid "More Decks…"
 msgstr ""
 

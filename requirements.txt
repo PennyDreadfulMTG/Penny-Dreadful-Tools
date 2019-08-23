@@ -20,7 +20,7 @@ matplotlib==3.1.1
 markdown==3.1.1
 munch==2.3.2
 mysqlclient==1.4.4
-mypy==0.600 # rq.filter: <=0.600
+mypy==0.720
 mypy-extensions==0.4.1
 pillow==6.1.0
 poeditor==1.1.2

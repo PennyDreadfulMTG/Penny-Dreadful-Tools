@@ -11,4 +11,4 @@ def ad_hoc() -> None:
     reprime_cache.run() # Update deck legalities
     insert_seasons.run() # Make sure Season table is up to date
     if redis.REDIS:
-        redis.REDIS.flushdb() # Clear the redis cache
+        redis.REDIS.flushdb() # type: ignore, Clear the redis cache

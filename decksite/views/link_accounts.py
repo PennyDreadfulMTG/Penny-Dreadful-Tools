@@ -17,7 +17,7 @@ class LinkAccounts(View):
         self.mtgo_name = auth.mtgo_username()
         self.person = person.maybe_load_person_by_discord_id(auth.discord_id())
         self.form = Container()
-        for k in request.form.keys():
+        for k in request.form.keys():  # type: ignore
             self.form[k] = request.form[k].strip()
         self.form.errors = Container()
         if self.person and self.person.mtgo_username:

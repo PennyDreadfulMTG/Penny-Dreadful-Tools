@@ -11,7 +11,7 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
 RE_SUBKEY = re.compile(r'(\w+)\.(\w+)')
 
-DEFAULTS = {
+DEFAULTS: Dict[str, Any] = {
     # On production, /rotation/ turns off when not active.
     'always_show_rotation': False,
     # Discord Webhook endpoint

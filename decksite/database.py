@@ -9,7 +9,7 @@ from shared_web import logger
 
 
 def db() -> Database:
-    if has_request_context():
+    if has_request_context():  # type: ignore
         ctx = request
     elif g:
         ctx = g
@@ -21,7 +21,7 @@ def db() -> Database:
 
 def setup() -> None:
     from decksite import APP
-    with APP.app_context():
+    with APP.app_context():  # type: ignore
         db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER UNIQUE NOT NULL)')
         version = db_version()
         patches = os.listdir('decksite/sql')

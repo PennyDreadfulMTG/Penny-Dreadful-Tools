@@ -1,7 +1,7 @@
 import logging
 import os
 import urllib.parse
-from typing import Optional, Union
+from typing import Optional
 
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, session, url_for)
@@ -38,7 +38,7 @@ from magic import image_fetcher, oracle
 from shared import perf
 from shared.pd_exception import (DoesNotExistException, InvalidDataException,
                                  TooFewItemsException)
-
+from shared_web.decorators import fill_cookies
 
 @APP.route('/')
 @cached()
@@ -411,9 +411,10 @@ def do_deck_check() -> str:
 
 @APP.route('/report/')
 @auth.load_person
-def report(form: Optional[ReportForm] = None) -> str:
+@fill_cookies('deck_id')
+def report(form: Optional[ReportForm] = None, deck_id: int = None) -> str:
     if form is None:
-        form = ReportForm(request.form, request.cookies.get('deck_id', ''), auth.person_id())
+        form = ReportForm(request.form, deck_id, auth.person_id())
     view = Report(form, auth.person_id())
     return view.page()
 
@@ -428,15 +429,16 @@ def add_report() -> str:
 
 @APP.route('/retire/')
 @auth.login_required
-def retire(form: Optional[RetireForm] = None) -> str:
+@fill_cookies('deck_id')
+def retire(form: Optional[RetireForm] = None, deck_id: int = None) -> str:
     if form is None:
-        form = RetireForm(request.form, request.cookies.get('deck_id', ''), session.get('id'))
+        form = RetireForm(request.form, deck_id, session.get('id'))
     view = Retire(form)
     return view.page()
 
 @APP.route('/retire/', methods=['POST'])
 @auth.login_required
-def retire_deck() -> Union[str, Response]:
+def retire_deck() -> wrappers.Response:
     form = RetireForm(request.form, discord_user=session.get('id'))
     if form.validate():
         d = ds.load_deck(form.entry)
@@ -487,7 +489,7 @@ def image(c: str = '') -> wrappers.Response:
 
 @APP.route('/banner/<seasonnum>.png')
 def banner(seasonnum: str) -> Response:
-    nice_path = os.path.join(APP.static_folder, 'images', 'banners', f'{seasonnum}.png')
+    nice_path = os.path.join(str(APP.static_folder), 'images', 'banners', f'{seasonnum}.png')
     if os.path.exists(nice_path):
         return send_file(os.path.abspath(nice_path))
     cardnames = ['Enter the Unknown', 'Unknown Shores', 'Peer through Depths']
@@ -527,7 +529,7 @@ def banner(seasonnum: str) -> Response:
 def before_request() -> None:
     g.p = perf.start()
 
-@APP.teardown_request
+@APP.teardown_request # type: ignore
 def teardown_request(response: Response) -> Response:
     if g.get('p') is not None:
         perf.check(g.p, 'slow_page', request.path, 'decksite')

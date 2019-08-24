@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Optional, Any, cast
+from typing import List, Optional, cast
 
 from flask import Response, request, session, url_for
 
@@ -20,7 +20,7 @@ from shared.pd_exception import (DoesNotExistException, InvalidDataException,
                                  TooManyItemsException)
 from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
-from shared_web.decorators import fill_args
+from shared_web.decorators import fill_args, fill_form
 
 
 @APP.route('/api/decks/<int:deck_id>')
@@ -147,17 +147,17 @@ def card_api(card: str) -> Response:
 
 @APP.route('/api/archetype/reassign', methods=['POST'])
 @auth.demimod_required
-def post_reassign() -> Response:
-    deck_id = cast_int(request.form.get('deck_id'))
-    archetype_id = cast_int(request.form.get('archetype_id'))
+@fill_form('deck_id', 'archetype_id')
+def post_reassign(deck_id: int, archetype_id: int) -> Response:
     archs.assign(deck_id, archetype_id)
     redis.clear(f'decksite:deck:{deck_id}')
     return return_json({'success':True, 'deck_id':deck_id})
 
 @APP.route('/api/rule/update', methods=['POST'])
 @auth.demimod_required
-def post_rule_update() -> Response:
-    if request.form.get('rule_id') is not None and request.form.get('include') is not None and request.form.get('exclude') is not None:
+@fill_form('rule_id')
+def post_rule_update(rule_id: int = None) -> Response:
+    if rule_id is not None and request.form.get('include') is not None and request.form.get('exclude') is not None:
         inc = []
         exc = []
         for line in cast(str, request.form.get('include')).strip().splitlines():
@@ -174,7 +174,7 @@ def post_rule_update() -> Response:
                 return return_json({'success':False, 'msg':f"Couldn't find a card count and name on line: {line}"})
             if not cs.card_exists(exc[-1][1]):
                 return return_json({'success':False, 'msg':f'Card not found in any deck {line}'})
-        rs.update_cards(cast_int(request.form.get('rule_id')), inc, exc)
+        rs.update_cards(rule_id, inc, exc)
         return return_json({'success':True})
     return return_json({'success':False, 'msg':'Required keys not found'})
 
@@ -259,7 +259,3 @@ def all_achievements() -> Response:
     data = {}
     data['achievements'] = [{'key': a.key, 'title': a.title, 'description': a.description_safe} for a in Achievement.all_achievements]
     return return_json(data)
-
-
-def cast_int(param: Optional[Any]) -> int:
-    return int(cast(str, param))

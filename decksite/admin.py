@@ -18,7 +18,7 @@ from magic.models import Deck
 from shared import dtutil, redis
 from shared.container import Container
 from shared.pd_exception import InvalidArgumentException
-
+from shared_web.decorators import fill_form
 
 def admin_menu() -> List[Dict[str, str]]:
     m = []
@@ -45,9 +45,10 @@ def edit_aliases() -> str:
 
 @APP.route('/admin/aliases/', methods=['POST'])
 @auth.admin_required
-def post_aliases() -> str:
-    if request.form.get('person_id') is not None and request.form.get('alias') is not None and len(request.form.get('alias', '')) > 0:
-        ps.add_alias(cast_int(request.form.get('person_id')), str(request.form.get('alias')))
+@fill_form('person_id')
+def post_aliases(person_id: int = None, alias: str = None) -> str:
+    if person_id is not None and alias is not None and len(alias) > 0:
+        ps.add_alias(person_id, alias)
     return edit_aliases()
 
 @APP.route('/admin/archetypes/')
@@ -101,7 +102,7 @@ def edit_rules() -> str:
 @auth.demimod_required
 def post_rules() -> str:
     if request.form.get('archetype_id') is not None:
-        rs.add_rule(int(request.form.get('archetype_id')))
+        rs.add_rule(cast_int(request.form.get('archetype_id')))
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/rules: {f}'.format(f=request.form))
     return edit_rules()
@@ -139,12 +140,14 @@ def edit_news() -> str:
 
 @APP.route('/admin/news/', methods=['POST'])
 @auth.admin_required
-def post_news() -> str:
+@fill_form('news_id', 'title', 'url')
+def post_news(news_id: int, title: str = None, url: str = None, date: str = None) -> str:
     if request.form.get('action') == 'delete':
-        ns.delete(cast_int(request.form.get('id')))
+        ns.delete(news_id)
     else:
-        date = dtutil.parse(request.form.get('date'), dtutil.FORM_FORMAT, dtutil.WOTC_TZ)
-        ns.add_or_update_news(cast_int(request.form.get('id')), date, request.form.get('title'), request.form.get('url'))
+        if date is not None and title is not None and url is not None:
+            date_dt = dtutil.parse(date, dtutil.FORM_FORMAT, dtutil.WOTC_TZ)
+            ns.add_or_update_news(news_id, date_dt, title, url)
     return edit_news()
 
 @APP.route('/admin/prizes/')
@@ -169,9 +172,10 @@ def player_notes() -> str:
 
 @APP.route('/admin/people/notes/', methods=['POST'])
 @auth.admin_required
-def post_player_note() -> str:
+@fill_form('person_id', 'note')
+def post_player_note(person_id: int, note: str) -> str:
     creator = ps.load_person_by_discord_id(session['id'])
-    ps.add_note(creator.id, request.form.get('person_id'), request.form.get('note'))
+    ps.add_note(creator.id, person_id, note)
     return player_notes()
 
 @APP.route('/admin/unlink/')
@@ -196,6 +200,7 @@ def post_unlink() -> str:
         except ValueError:
             errors.append('Discord ID must be an integer.')
     return unlink(n, errors)
+
 
 def cast_int(param: Optional[Any]) -> int:
     return int(cast(str, param))

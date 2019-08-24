@@ -1,7 +1,7 @@
 import logging
 import os
 import urllib.parse
-from typing import Optional, Tuple, Union
+from typing import Optional, Union
 
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, session, url_for)
@@ -245,7 +245,7 @@ def add_form() -> str:
     return view.page()
 
 @APP.route('/add/', methods=['POST'])
-def add_deck() -> Union[wrappers.Response, Tuple[str, int]]:
+def add_deck() -> wrappers.Response:
     url = request.form['url']
     error = None
     if 'tappedout' in url:
@@ -266,7 +266,7 @@ def add_deck() -> Union[wrappers.Response, Tuple[str, int]]:
     if error is not None:
         view = AddForm()
         view.error = error
-        return view.page(), 409
+        return make_response(view.page(), 409)
     return redirect(url_for('deck', deck_id=deck_id))
 
 @APP.route('/matchups/')
@@ -337,7 +337,7 @@ def export(deck_id: int) -> Response:
         if not auth.person_id() or auth.person_id() != d.person_id:
             abort(403)
     safe_name = deck_name.file_name(d)
-    return (mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
+    return make_response(mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 
 @APP.route('/link/')
 @auth.login_required
@@ -471,7 +471,7 @@ def discord() -> wrappers.Response:
     return redirect('https://discord.gg/RxhTEEP')
 
 @APP.route('/image/<path:c>/')
-def image(c: str = '') -> Union[Tuple[str, int], wrappers.Response]:
+def image(c: str = '') -> wrappers.Response:
     names = c.split('|')
     try:
         requested_cards = oracle.load_cards(names)
@@ -483,7 +483,7 @@ def image(c: str = '') -> Union[Tuple[str, int], wrappers.Response]:
         print(e)
         if len(names) == 1:
             return redirect(f'https://api.scryfall.com/cards/named?exact={c}&format=image', code=303)
-        return '', 400
+        return make_response('', 400)
 
 @APP.route('/banner/<seasonnum>.png')
 def banner(seasonnum: str) -> Response:

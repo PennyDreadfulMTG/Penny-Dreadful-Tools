@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Optional
+from typing import List, Optional, Any, cast
 
 from flask import Response, request, session, url_for
 
@@ -147,34 +147,34 @@ def card_api(card: str) -> Response:
 
 @APP.route('/api/archetype/reassign', methods=['POST'])
 @auth.demimod_required
-def post_reassign() -> str:
-    deck_id = int(request.form.get('deck_id'))
-    archetype_id = int(request.form.get('archetype_id'))
+def post_reassign() -> Response:
+    deck_id = cast_int(request.form.get('deck_id'))
+    archetype_id = cast_int(request.form.get('archetype_id'))
     archs.assign(deck_id, archetype_id)
     redis.clear(f'decksite:deck:{deck_id}')
     return return_json({'success':True, 'deck_id':deck_id})
 
 @APP.route('/api/rule/update', methods=['POST'])
 @auth.demimod_required
-def post_rule_update() -> str:
+def post_rule_update() -> Response:
     if request.form.get('rule_id') is not None and request.form.get('include') is not None and request.form.get('exclude') is not None:
         inc = []
         exc = []
-        for line in request.form.get('include').strip().splitlines():
+        for line in cast(str, request.form.get('include')).strip().splitlines():
             try:
                 inc.append(parse_line(line))
             except InvalidDataException:
                 return return_json({'success':False, 'msg':f"Couldn't find a card count and name on line: {line}"})
             if not cs.card_exists(inc[-1][1]):
                 return return_json({'success':False, 'msg':f'Card not found in any deck: {line}'})
-        for line in request.form.get('exclude').strip().splitlines():
+        for line in cast(str, request.form.get('exclude')).strip().splitlines():
             try:
                 exc.append(parse_line(line))
             except InvalidDataException:
                 return return_json({'success':False, 'msg':f"Couldn't find a card count and name on line: {line}"})
             if not cs.card_exists(exc[-1][1]):
                 return return_json({'success':False, 'msg':f'Card not found in any deck {line}'})
-        rs.update_cards(request.form.get('rule_id'), inc, exc)
+        rs.update_cards(cast_int(request.form.get('rule_id')), inc, exc)
         return return_json({'success':True})
     return return_json({'success':False, 'msg':'Required keys not found'})
 
@@ -208,7 +208,7 @@ def person_status() -> Response:
     if username:
         d = guarantee_at_most_one_or_retire(league.active_decks_by(username))
         if d is not None:
-            r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}
+            r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)} # type: ignore
     if r['admin'] or r['demimod']:
         r['archetypes_to_tag'] = len(deck.load_decks('NOT d.reviewed'))
     active_league = league.active_league()
@@ -259,3 +259,7 @@ def all_achievements() -> Response:
     data = {}
     data['achievements'] = [{'key': a.key, 'title': a.title, 'description': a.description_safe} for a in Achievement.all_achievements]
     return return_json(data)
+
+
+def cast_int(param: Optional[Any]) -> int:
+    return int(cast(str, param))

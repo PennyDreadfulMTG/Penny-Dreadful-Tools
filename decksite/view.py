@@ -1,6 +1,6 @@
 import html
 from collections import Counter
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Union, cast
 
 import inflect
 from anytree.iterators import PreOrderIter
@@ -428,10 +428,10 @@ def seasonized_url(season_id: Union[int, str]) -> str:
     args = request.view_args.copy()
     if season_id == rotation.current_season_num():
         args.pop('season_id', None)
-        endpoint = request.endpoint.replace('seasons.', '')
+        endpoint = cast(str, request.endpoint).replace('seasons.', '')
     else:
         args['season_id'] = season_id
-        prefix = '' if request.endpoint.startswith('seasons.') else 'seasons.'
+        prefix = '' if cast(str, request.endpoint).startswith('seasons.') else 'seasons.'
         endpoint = '{prefix}{endpoint}'.format(prefix=prefix, endpoint=request.endpoint)
     try:
         return url_for(endpoint, **args)

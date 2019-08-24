@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 
 from decksite.data.deck import RawDeckDescription
 
@@ -10,7 +10,7 @@ TAPPEDOUT = {
 def translate(mappings: Dict[str, str], data: RawDeckDescription) -> RawDeckDescription:
     result = data.copy() # type: ignore
     for k, v in data.items():
-        our_key = mappings.get(k)
-        if our_key:
-            result[our_key] = v
+        our_key: Optional[str] = mappings.get(k)
+        if our_key is not None:
+            result[our_key] = v # type: ignore
     return result

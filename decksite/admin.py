@@ -20,6 +20,7 @@ from shared.container import Container
 from shared.pd_exception import InvalidArgumentException
 from shared_web.decorators import fill_form
 
+
 def admin_menu() -> List[Dict[str, str]]:
     m = []
     urls = sorted([url_for(rule.endpoint) for rule in APP.url_map.iter_rules() if 'GET' in rule.methods and rule.rule.startswith('/admin')])

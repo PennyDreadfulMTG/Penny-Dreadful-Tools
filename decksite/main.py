@@ -40,6 +40,7 @@ from shared.pd_exception import (DoesNotExistException, InvalidDataException,
                                  TooFewItemsException)
 from shared_web.decorators import fill_cookies
 
+
 @APP.route('/')
 @cached()
 def home() -> str:

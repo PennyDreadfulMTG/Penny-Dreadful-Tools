@@ -1,7 +1,7 @@
 import logging
 import os
 import urllib.parse
-from typing import Optional, Tuple, Union
+from typing import Optional
 
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, session, url_for)
@@ -38,6 +38,7 @@ from magic import image_fetcher, oracle
 from shared import perf
 from shared.pd_exception import (DoesNotExistException, InvalidDataException,
                                  TooFewItemsException)
+from shared_web.decorators import fill_cookies
 
 
 @APP.route('/')
@@ -245,7 +246,7 @@ def add_form() -> str:
     return view.page()
 
 @APP.route('/add/', methods=['POST'])
-def add_deck() -> Union[wrappers.Response, Tuple[str, int]]:
+def add_deck() -> wrappers.Response:
     url = request.form['url']
     error = None
     if 'tappedout' in url:
@@ -266,7 +267,7 @@ def add_deck() -> Union[wrappers.Response, Tuple[str, int]]:
     if error is not None:
         view = AddForm()
         view.error = error
-        return view.page(), 409
+        return make_response(view.page(), 409)
     return redirect(url_for('deck', deck_id=deck_id))
 
 @APP.route('/matchups/')
@@ -337,7 +338,7 @@ def export(deck_id: int) -> Response:
         if not auth.person_id() or auth.person_id() != d.person_id:
             abort(403)
     safe_name = deck_name.file_name(d)
-    return (mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
+    return make_response(mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
 
 @APP.route('/link/')
 @auth.login_required
@@ -411,9 +412,10 @@ def do_deck_check() -> str:
 
 @APP.route('/report/')
 @auth.load_person
-def report(form: Optional[ReportForm] = None) -> str:
+@fill_cookies('deck_id')
+def report(form: Optional[ReportForm] = None, deck_id: int = None) -> str:
     if form is None:
-        form = ReportForm(request.form, request.cookies.get('deck_id', ''), auth.person_id())
+        form = ReportForm(request.form, deck_id, auth.person_id())
     view = Report(form, auth.person_id())
     return view.page()
 
@@ -428,15 +430,16 @@ def add_report() -> str:
 
 @APP.route('/retire/')
 @auth.login_required
-def retire(form: Optional[RetireForm] = None) -> str:
+@fill_cookies('deck_id')
+def retire(form: Optional[RetireForm] = None, deck_id: int = None) -> str:
     if form is None:
-        form = RetireForm(request.form, request.cookies.get('deck_id', ''), session.get('id'))
+        form = RetireForm(request.form, deck_id, session.get('id'))
     view = Retire(form)
     return view.page()
 
 @APP.route('/retire/', methods=['POST'])
 @auth.login_required
-def retire_deck() -> Union[str, Response]:
+def retire_deck() -> wrappers.Response:
     form = RetireForm(request.form, discord_user=session.get('id'))
     if form.validate():
         d = ds.load_deck(form.entry)
@@ -471,7 +474,7 @@ def discord() -> wrappers.Response:
     return redirect('https://discord.gg/RxhTEEP')
 
 @APP.route('/image/<path:c>/')
-def image(c: str = '') -> Union[Tuple[str, int], wrappers.Response]:
+def image(c: str = '') -> wrappers.Response:
     names = c.split('|')
     try:
         requested_cards = oracle.load_cards(names)
@@ -483,11 +486,11 @@ def image(c: str = '') -> Union[Tuple[str, int], wrappers.Response]:
         print(e)
         if len(names) == 1:
             return redirect(f'https://api.scryfall.com/cards/named?exact={c}&format=image', code=303)
-        return '', 400
+        return make_response('', 400)
 
 @APP.route('/banner/<seasonnum>.png')
 def banner(seasonnum: str) -> Response:
-    nice_path = os.path.join(APP.static_folder, 'images', 'banners', f'{seasonnum}.png')
+    nice_path = os.path.join(str(APP.static_folder), 'images', 'banners', f'{seasonnum}.png')
     if os.path.exists(nice_path):
         return send_file(os.path.abspath(nice_path))
     cardnames = ['Enter the Unknown', 'Unknown Shores', 'Peer through Depths']
@@ -527,7 +530,7 @@ def banner(seasonnum: str) -> Response:
 def before_request() -> None:
     g.p = perf.start()
 
-@APP.teardown_request
+@APP.teardown_request # type: ignore
 def teardown_request(response: Response) -> Response:
     if g.get('p') is not None:
         perf.check(g.p, 'slow_page', request.path, 'decksite')

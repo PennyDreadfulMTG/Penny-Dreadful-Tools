@@ -75,7 +75,7 @@ def task(args: List[str]) -> None:
             if use_app_conext:
                 from decksite.main import APP
                 APP.config['SERVER_NAME'] = configuration.server_name()
-                app_context = APP.app_context()
+                app_context = APP.app_context()  # type: ignore
                 app_context.__enter__()
             if getattr(s, 'scrape', None) is not None:
                 s.scrape() # type: ignore
@@ -102,7 +102,7 @@ def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
         if use_app_conext and not setup_app_context:
             from decksite.main import APP
             APP.config['SERVER_NAME'] = configuration.server_name()
-            app_context = APP.app_context()
+            app_context = APP.app_context() # type: ignore
             app_context.__enter__()
 
         if with_flag and not getattr(s, with_flag, False):

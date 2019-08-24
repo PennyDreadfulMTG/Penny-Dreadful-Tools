@@ -5,7 +5,7 @@ class SmokeTester:
     def __init__(self, app: PDFlask) -> None:
         self.test_client = app.test_client()
         # Propagate the exceptions to the test client
-        self.test_client.testing = True
+        self.test_client.testing = True  # type: ignore
         self.base_tests()
 
     def base_tests(self) -> None:

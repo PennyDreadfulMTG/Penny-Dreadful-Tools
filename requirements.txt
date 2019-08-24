@@ -4,7 +4,7 @@ bs4==0.0.1
 cachecontrol[filecache]==0.12.5
 changelogs==0.14.0
 coverage==4.5.4
-git+https://github.com/Rapptz/discord.py@00a659c6526b2445162b52eaf970adbd22c6d35d#egg=discord.py[voice]
+discord.py[voice]==1.2.3
 feedparser==5.2.1
 flask==1.1.1
 flask-babel==0.12.2
@@ -20,7 +20,7 @@ matplotlib==3.1.1
 markdown==3.1.1
 munch==2.3.2
 mysqlclient==1.4.4
-mypy==0.600 # rq.filter: <=0.600
+mypy==0.720
 mypy-extensions==0.4.1
 pillow==6.1.0
 poeditor==1.1.2

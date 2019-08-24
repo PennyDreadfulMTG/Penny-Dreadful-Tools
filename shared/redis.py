@@ -17,7 +17,7 @@ def init() -> Optional[redislib.Redis]:
         db=configuration.get_int('redis_db'),
         )
     try:
-        instance.ping()
+        instance.ping() # type: ignore
     except redislib.exceptions.ConnectionError:
         return None
     return instance
@@ -27,7 +27,7 @@ REDIS = init()
 def enabled() -> bool:
     return REDIS is not None
 
-def _get(key: str, ex: Optional[int] = None) -> Optional[str]:
+def _get(key: str, ex: Optional[int] = None) -> Optional[bytes]:
     try:
         if REDIS is not None:
             blob = REDIS.get(key)
@@ -97,4 +97,4 @@ def store(key: str, val: T, **kwargs: Any) -> T:
 
 def clear(*keys: str) -> None:
     if REDIS is not None:
-        REDIS.delete(*keys)
+        REDIS.delete(*keys) # type: ignore

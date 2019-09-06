@@ -41,7 +41,7 @@ def init() -> List[SetInfoType]:
     if info['deprecated']:
         print('Current whatsinstandard API version is DEPRECATED.')
     set_info = cast(List[SetInfoType], info['sets'])
-    return [postprocess(release) for release in set_info]
+    return [postprocess(release) for release in set_info if release['enterDate']['exact'] is not None]
 
 def current_season_code() -> str:
     return last_rotation_ex()['code']

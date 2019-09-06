@@ -92,6 +92,8 @@ def store(url: str, path: str) -> requests.Response:
         return response
     except urllib.error.HTTPError as e: # type: ignore
         raise FetchException(e)
+    except requests.exceptions.ConnectionError as e: # type: ignore
+        raise FetchException(e)
 
 class FetchException(OperationalException):
     pass

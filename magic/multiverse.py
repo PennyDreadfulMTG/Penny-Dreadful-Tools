@@ -32,6 +32,7 @@ def init() -> None:
 
 def layouts() -> Dict[str, bool]:
     return {
+        'adventure': True,
         'augment': False,
         'double_faced_token': False,
         'emblem': False,
@@ -226,7 +227,7 @@ def insert_cards(printings: List[CardDescription]) -> None:
 
         if p['layout'] in ['augment', 'emblem', 'host', 'leveler', 'meld', 'normal', 'planar', 'saga', 'scheme', 'token', 'vanguard']:
             face_values.append(single_face_value(p, card_id))
-        elif p['layout'] in ['double_faced_token', 'flip', 'split', 'transform']:
+        elif p['layout'] in ['adventure', 'double_faced_token', 'flip', 'split', 'transform']:
             face_values += multiple_faces_values(p, card_id)
         else:
             raise InvalidDataException(f"Found unexpected layout `{p['layout']}` in {p}")

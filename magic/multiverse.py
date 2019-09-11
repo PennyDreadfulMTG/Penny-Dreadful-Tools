@@ -98,7 +98,7 @@ def base_query(where: str = '(1 = 1)') -> str:
         GROUP BY u.id
     """.format(
         base_query_props=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.base_query_properties().items()),
-        format_id=get_format_id('Penny Dreadful'),
+        format_id=get_format_id('Penny Dreadful', True),
         card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
         face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),
         where=where)
@@ -181,7 +181,7 @@ def insert_cards(printings: List[CardDescription]) -> None:
     face_query = 'INSERT INTO `face` (card_id, position, '
     face_query += ', '.join(name for name, prop in card.face_properties().items() if prop['scryfall'])
     face_query += ') VALUES '
-    face_values = []
+    face_values: List[str] = []
 
     printing_query = 'INSERT INTO `printing` (card_id, set_id, '
     printing_query += 'system_id, rarity, flavor, artist, number, multiverseid, watermark, border, timeshifted, reserved, mci_number, rarity_id'
@@ -225,12 +225,10 @@ def insert_cards(printings: List[CardDescription]) -> None:
         cards[p['name']] = card_id
         card_values.append("({i},'{l}')".format(i=card_id, l=p['layout']))
 
-        if p['layout'] in ['augment', 'emblem', 'host', 'leveler', 'meld', 'normal', 'planar', 'saga', 'scheme', 'token', 'vanguard']:
-            face_values.append(single_face_value(p, card_id))
-        elif p['layout'] in ['adventure', 'double_faced_token', 'flip', 'split', 'transform']:
+        if p.get('card_faces'):
             face_values += multiple_faces_values(p, card_id)
         else:
-            raise InvalidDataException(f"Found unexpected layout `{p['layout']}` in {p}")
+            face_values.append(single_face_value(p, card_id))
 
         for color in p.get('colors', []):
             color_id = colors[color]
@@ -332,7 +330,7 @@ def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> st
     power = sqlescape_or_null(p.get('power'))
     toughness = sqlescape_or_null(p.get('toughness'))
     loyalty = sqlescape_or_null(p.get('loyalty'))
-    type_line = sqlescape(p['type_line']) # always present
+    type_line = sqlescape(p.get('type_line', ''))
     oracle_text = sqlescape(p.get('oracle_text', ''))
     image_name = 'NULL' # deprecated
     hand = sqlescape_or_null(p.get('hand_modifier'))

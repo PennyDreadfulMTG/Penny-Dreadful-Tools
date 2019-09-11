@@ -181,7 +181,7 @@ def insert_cards(printings: List[CardDescription]) -> None:
     face_query = 'INSERT INTO `face` (card_id, position, '
     face_query += ', '.join(name for name, prop in card.face_properties().items() if prop['scryfall'])
     face_query += ') VALUES '
-    face_values = []
+    face_values: List[str] = []
 
     printing_query = 'INSERT INTO `printing` (card_id, set_id, '
     printing_query += 'system_id, rarity, flavor, artist, number, multiverseid, watermark, border, timeshifted, reserved, mci_number, rarity_id'

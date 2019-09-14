@@ -82,9 +82,15 @@ def test_order() -> None:
     assert mana.order(['W', 'G', 'B']) == ['B', 'G', 'W']
     assert mana.order(['G', 'R', 'B']) == ['B', 'R', 'G']
     assert mana.order(['W', 'G', 'R', 'B']) == ['B', 'R', 'G', 'W']
+    assert mana.order(['W', 'G', 'R', 'B']) == ['B', 'R', 'G', 'W']
+    assert mana.order(['C']) == ['C']
+    assert mana.order(['S']) == ['S']
 
 def test_colorless() -> None:
     assert mana.colored_symbols(['C']) == {'required': ['C'], 'also': []}
+
+def test_snow() -> None:
+    assert mana.colored_symbols(['S']) == {'required': ['S'], 'also': []}
 
 def do_test(s: str, expected: List[str]) -> None:
     symbols = mana.parse(s)

@@ -33,6 +33,7 @@ def init() -> None:
 def layouts() -> Dict[str, bool]:
     return {
         'adventure': True,
+        'art_series': False,
         'augment': False,
         'double_faced_token': False,
         'emblem': False,
@@ -202,8 +203,6 @@ def insert_cards(printings: List[CardDescription]) -> None:
         # Exclude little girl because {hw} mana is a problem rn.
         if p['name'] == 'Little Girl':
             continue
-        if p['layout'] == 'art_series':
-            continue # We don't need these.
 
         if is_meld_result(p):
             meld_result_printings.append(p)

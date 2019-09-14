@@ -137,7 +137,7 @@ def order(symbols: Iterable[str]) -> List[str]:
     return list(sorted(permutations, key=order_score)[0])
 
 def order_score(initial_symbols: Tuple[str, ...]) -> int:
-    symbols = [symbol for symbol in initial_symbols if symbol != 'C' and symbol != 'S']
+    symbols = [symbol for symbol in initial_symbols if symbol not in ('C', 'S')]
     if not symbols:
         return 0
     score = 0

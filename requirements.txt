@@ -9,7 +9,7 @@ feedparser==5.2.1
 flask==1.1.1
 flask-babel==0.12.2
 flask-session==0.3.1
-Flask-SQLAlchemy==2.4.0
+Flask-SQLAlchemy==2.4.1
 Flask-Migrate==2.5.2
 ftfy==5.6
 google-api-python-client==1.7.11

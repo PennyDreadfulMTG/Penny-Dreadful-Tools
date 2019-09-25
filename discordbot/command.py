@@ -19,6 +19,7 @@ from discord.channel import TextChannel
 from discord.client import Client
 from discord.member import Member
 from discord.message import Message
+from discord.ext import commands
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
@@ -60,7 +61,7 @@ async def respond_to_card_names(message: Message, client: Client) -> None:
                 cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode))
         await post_cards(client, cards, message.channel, message.author)
 
-async def handle_command(message: Message, client: Client) -> None:
+async def handle_command(message: Message, client: commands.Bot) -> None:
     parts = message.content.split(' ', 1)
     method = find_method(parts[0])
     args = ''
@@ -77,6 +78,9 @@ async def handle_command(message: Message, client: Client) -> None:
             print(tb)
             await send(message.channel, '{author}: I know the command `{cmd}` but encountered an error while executing it.'.format(cmd=parts[0], author=message.author.mention))
             await getattr(Commands, 'bug')(Commands, channel=message.channel, args='Command failed with {c}: {cmd}\n\n```\n{tb}\n```'.format(c=e.__class__.__name__, cmd=message.content, tb=tb), author=message.author)
+    else:
+        ctx = await client.get_context(message, cls=MtgContext)
+        await client.invoke(ctx)
 
 def find_method(name: str) -> Optional[Callable]:
     cmd = name.lstrip('!').lower()
@@ -1070,3 +1074,6 @@ def uniqify_cards(cards: List[Card]) -> List[Card]:
 
 def guild_or_channel_id(channel: TextChannel) -> int:
     return getattr(channel, 'guild', channel).id
+
+class MtgContext(commands.Context):
+    pass

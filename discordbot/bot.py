@@ -8,6 +8,7 @@ import discord
 from discord import Guild, Member, Role, VoiceState
 from discord.activity import Streaming
 from discord.errors import Forbidden, NotFound
+from discord.ext import commands
 from discord.message import Message
 from discord.reaction import Reaction
 from discord.state import Status
@@ -35,10 +36,11 @@ def background_task(func: Callable) -> Callable:
     TASKS.append(wrapper)
     return wrapper
 
-class Bot(discord.Client):
+
+class Bot(commands.Bot):
     def __init__(self) -> None:
         self.launch_time = perf.start()
-        super().__init__()
+        super().__init__(command_prefix='!')
         self.voice = None
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:

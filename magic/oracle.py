@@ -120,6 +120,7 @@ def pd_rotation_changes(season_id: int) -> Tuple[Sequence[Card], Sequence[Card]]
     return changes_between_formats(from_format_id, to_format_id)
 
 
+# pylint: disable=arguments-out-of-order
 def changes_between_formats(f1: int, f2: int) -> Tuple[Sequence[Card], Sequence[Card]]:
     return (query_diff_formats(f2, f1), query_diff_formats(f1, f2))
 

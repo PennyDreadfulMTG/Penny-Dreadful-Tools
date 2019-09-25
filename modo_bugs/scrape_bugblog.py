@@ -88,9 +88,8 @@ def parse_knownbugs(b: Tag) -> None:
                 if not repo.is_issue_from_bug_blog(issue):
                     issue.add_to_labels('From Bug Blog')
             continue
-        else:
-            if 'Invalid Bug Blog' in [i.name for i in issue.labels]:
-                issue.remove_from_labels('Invalid Bug Blog')
+        if 'Invalid Bug Blog' in [i.name for i in issue.labels]:
+            issue.remove_from_labels('Invalid Bug Blog')
 
         if repo.is_issue_from_bug_blog(issue):
             # Don't check for Bug Blog Text if it's not marked as a BB issue (Maybe because it was reopened)
@@ -106,7 +105,7 @@ def check_if_removed_from_bugblog(bbt: Match, b: Tag, issue: Issue) -> None:
             rowtext = strings.remove_smartquotes(data[1].text.strip())
             if rowtext == text:
                 break
-            elif strip_squarebrackets(rowtext) == strip_squarebrackets(text):
+            if strip_squarebrackets(rowtext) == strip_squarebrackets(text):
                 # Fix this
                 print("Issue #{id}'s bug blog text has differing autocard notation.".format(id=issue.number))
                 old_bbt = strings.get_body_field(issue.body, 'Bug Blog Text')

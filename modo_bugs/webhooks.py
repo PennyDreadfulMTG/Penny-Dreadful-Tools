@@ -15,7 +15,7 @@ def home() -> str:
 @APP.route('/api/reset/')
 def reset() -> str:
     try:
-        import uwsgi
+        import uwsgi # pylint: disable=import-outside-toplevel
         uwsgi.reload()
         return 'Ok'
     except ImportError:

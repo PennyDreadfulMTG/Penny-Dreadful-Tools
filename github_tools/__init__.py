@@ -54,7 +54,7 @@ def on_pull_request(data):
             # We can't actually reboot when `master` is pushed like the other sites.
             # So this is a lovely hack to reboot ourselves when we absolutely need to.
             try:
-                import uwsgi
+                import uwsgi  # pylint: disable=import-outside-toplevel
                 uwsgi.reload()
             except ImportError:
                 pass

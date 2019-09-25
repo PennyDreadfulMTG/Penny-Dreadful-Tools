@@ -15,7 +15,7 @@ def ad_hoc() -> None:
 def validate_pofile(path: str) -> None:
     with open(path, mode='rb+') as f:
         catalog = pofile.read_po(f)
-        messages = [message for message in catalog]
+        messages = list(catalog)
         for message in messages:
             if message.id and message.string:
                 validate_string(message, catalog)

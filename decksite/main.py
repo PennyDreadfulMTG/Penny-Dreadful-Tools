@@ -5,7 +5,6 @@ from typing import Optional
 
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, session, url_for)
-from requests.exceptions import RequestException
 from werkzeug import wrappers
 from werkzeug.exceptions import InternalServerError
 
@@ -24,7 +23,7 @@ from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.database import db
 from decksite.league import DeckCheckForm, ReportForm, RetireForm, SignUpForm
-from decksite.views import (About, AboutPdm, Achievements, AddForm, Archetype,
+from decksite.views import (About, AboutPdm, Achievements, Archetype,
                             Archetypes, Bugs, Card, Cards, CommunityGuidelines,
                             Competition, Competitions, Deck, DeckCheck, Decks,
                             Faqs, Home, LeagueInfo, LinkAccounts, Matchups,
@@ -238,37 +237,6 @@ def tournament_leaderboards() -> str:
     leaderboards = comp.leaderboards(season_id=get_season_id())
     view = TournamentLeaderboards(leaderboards)
     return view.page()
-
-@APP.route('/add/')
-@cached()
-def add_form() -> str:
-    view = AddForm()
-    return view.page()
-
-@APP.route('/add/', methods=['POST'])
-def add_deck() -> wrappers.Response:
-    url = request.form['url']
-    error = None
-    if 'tappedout' in url:
-        import decksite.scrapers.tappedout
-        try:
-            deck_id = decksite.scrapers.tappedout.scrape_url(url).id
-        except (InvalidDataException, RequestException) as e:
-            error = e.args[0]
-    elif 'mtggoldfish' in url:
-        import decksite.scrapers.mtggoldfish
-        try:
-            d = decksite.scrapers.mtggoldfish.scrape_one(url)
-            deck_id = d.id
-        except InvalidDataException as e:
-            error = e.args[0]
-    else:
-        error = 'Deck host is not supported.'
-    if error is not None:
-        view = AddForm()
-        view.error = error
-        return make_response(view.page(), 409)
-    return redirect(url_for('deck', deck_id=deck_id))
 
 @APP.route('/matchups/')
 def matchups() -> str:

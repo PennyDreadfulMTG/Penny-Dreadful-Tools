@@ -36,7 +36,7 @@ if sys.stdout.encoding != 'utf-8':
 def main() -> None:
     if configuration.get('github_user') is None or configuration.get('github_password') is None:
         print('Invalid Config')
-        exit(1)
+        sys.exit(1)
 
     verification_numbers()
 
@@ -193,7 +193,6 @@ def fix_user_errors(issue: Issue) -> None:
     affects = strings.get_body_field(body, 'Affects')
     if affects is None:
         cards = re.findall(REGEX_CARDREF, issue.title)
-        cards = [c for c in cards]
         body = strings.set_body_field(body, 'Affects', ''.join(['[' + c + ']' for c in cards]))
     if re.search(strings.REGEX_SEARCHREF, body):
         def do_search(m):

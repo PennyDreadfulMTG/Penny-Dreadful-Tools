@@ -7,6 +7,7 @@ from typing import Any, List, Optional
 from shared import configuration
 
 
+# pylint: disable=import-outside-toplevel
 def run() -> None:
     if len(sys.argv) < 2:
         print('No entry point specified.')

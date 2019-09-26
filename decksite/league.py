@@ -101,10 +101,10 @@ class SignUpForm(Form):
         playable_bugs = {c.name for c in self.deck.all_cards() if c.pd_legal and any([not b.get('bannable', False) for b in c.bugs or []])}
         if len(banned_for_bugs) > 0:
             self.errors['decklist'] = 'Deck contains cards with game-breaking bugs'
-            self.card_errors['Legality_Bugs'] = [name for name in banned_for_bugs]
+            self.card_errors['Legality_Bugs'] = banned_for_bugs
         if len(playable_bugs) > 0:
             self.warnings['decklist'] = 'Deck contains playable bugs'
-            self.card_warnings['Warnings_Bugs'] = [name for name in playable_bugs]
+            self.card_warnings['Warnings_Bugs'] = playable_bugs
 
 
 class DeckCheckForm(SignUpForm):

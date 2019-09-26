@@ -60,11 +60,6 @@ async def respond_to_card_names(message: Message, client: Client) -> None:
                 cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode))
         await post_cards(client, cards, message.channel, message.author)
 
-    matches = re.findall(r'https?://(?:www.)?tappedout.net/mtg-decks/(?P<slug>[\w-]+)/?', message.content, flags=re.IGNORECASE)
-    for match in matches:
-        data = {'url': 'https://tappedout.net/mtg-decks/{slug}'.format(slug=match)}
-        fetcher.internal.post(fetcher.decksite_url('/add/'), data)
-
 async def handle_command(message: Message, client: Client) -> None:
     parts = message.content.split(' ', 1)
     method = find_method(parts[0])

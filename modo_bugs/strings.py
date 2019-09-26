@@ -35,7 +35,6 @@ def grouper(n: int, iterable: Iterable, fillvalue: Any = None) -> Iterable:
 
 def get_cards_from_string(item: str) -> List[str]:
     cards = re.findall(REGEX_CARDREF, item)
-    cards = [c for c in cards]
     return cards
 
 def set_body_field(body: str, field: str, value: str) -> str:

@@ -21,7 +21,7 @@ def process_github_webhook() -> Response:
                     subprocess.check_output(['pip', 'install', '-U', '--user', '-r', 'requirements.txt', '--no-cache'])
                 except subprocess.CalledProcessError:
                     pass
-                import uwsgi
+                import uwsgi  # pylint: disable=import-outside-toplevel
                 uwsgi.reload()
                 return return_json({'rebooting': True})
             except ImportError:

@@ -73,7 +73,7 @@ def download_scryfall_art_crop(card: Card) -> Optional[str]:
     file_path = re.sub('.jpg$', '.art_crop.jpg', determine_filepath([card]))
     if not internal.acceptable_file(file_path):
         download_scryfall_card_image(card, file_path, version='art_crop')
-    if internal.acceptable_file:
+    if internal.acceptable_file(file_path):
         return file_path
     return None
 
@@ -81,7 +81,7 @@ def download_scryfall_png(card: Card) -> Optional[str]:
     file_path = re.sub('.jpg$', '.png', determine_filepath([card]))
     if not internal.acceptable_file(file_path):
         download_scryfall_card_image(card, file_path, version='png')
-    if internal.acceptable_file:
+    if internal.acceptable_file(file_path):
         return file_path
     return None
 
@@ -102,27 +102,6 @@ def download_scryfall_card_image(card: Card, filepath: str, version: str = '') -
         print('Error: {e}'.format(e=e))
     return internal.acceptable_file(filepath)
 
-def download_mci_image(cards: List[Card], filepath: str) -> bool:
-    printings = oracle.get_printings(cards[0])
-    for p in printings:
-        print('Trying to get MCI image for {imagename}'.format(imagename=os.path.basename(filepath)))
-        try:
-            internal.store(mci_image(p), filepath)
-            if internal.acceptable_file(filepath):
-                return True
-        except FetchException as e:
-            print('Error: {e}'.format(e=e))
-        print('Trying to get fallback image for {imagename}'.format(imagename=os.path.basename(filepath)))
-        try:
-            img = gatherer_image(p)
-            if img:
-                internal.store(img, filepath)
-            if internal.acceptable_file(filepath):
-                return True
-        except FetchException as e:
-            print('Error: {e}'.format(e=e))
-    return False
-
 def determine_filepath(cards: List[Card], prefix: str = '') -> str:
     imagename = basename(cards)
     # Hash the filename if it's otherwise going to be too large to use.
@@ -139,8 +118,6 @@ def download_image(cards: List[Card]) -> Optional[str]:
     if download_scryfall_image(cards, filepath, version='border_crop'):
         return filepath
     if download_bluebones_image(cards, filepath):
-        return filepath
-    if download_mci_image(cards, filepath):
         return filepath
     return None
 

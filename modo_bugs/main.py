@@ -11,9 +11,9 @@ from shared import configuration
 def run() -> None:
     wd = configuration.get_str('modo_bugs_dir')
     if not os.path.exists(wd):
-        subprocess.run(['git', 'clone', 'https://github.com/PennyDreadfulMTG/modo-bugs.git', wd])
+        subprocess.run(['git', 'clone', 'https://github.com/PennyDreadfulMTG/modo-bugs.git', wd], check=True)
     os.chdir(wd)
-    subprocess.run(['git', 'pull'])
+    subprocess.run(['git', 'pull'], check=True)
     args = sys.argv[2:]
     if not args:
         args.extend(['scrape', 'update', 'verify', 'commit'])
@@ -33,8 +33,8 @@ def run() -> None:
     if 'verify' in args:
         verification.main()
     if 'commit' in args:
-        subprocess.run(['git', 'add', '.'])
-        subprocess.run(['git', 'commit', '-m', 'Updated'])
+        subprocess.run(['git', 'add', '.'], check=True)
+        subprocess.run(['git', 'commit', '-m', 'Updated'], check=True)
         user = configuration.get('github_user')
         pword = configuration.get('github_password')
-        subprocess.run(['git', 'push', f'https://{user}:{pword}@github.com/PennyDreadfulMTG/modo-bugs.git'])
+        subprocess.run(['git', 'push', f'https://{user}:{pword}@github.com/PennyDreadfulMTG/modo-bugs.git'], check=True)

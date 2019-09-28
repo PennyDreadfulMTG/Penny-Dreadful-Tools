@@ -3,10 +3,10 @@
         <div>
             <p>Search this list using <a href="https://scryfall.com/docs/syntax">Scryfall syntax</a>. Warning: can be very slow.</p>
             <label for="fq">Query</label>
-            <input type="text" name="fq"  class="scryfall-filter-input" {{# filter_current_season }}data-optimize{{/ filter_current_season }} value="{{query}}">
+            <input type="text" name="fq"  class="scryfall-filter-input" {{#filter_current_season}}data-optimize{{/filter_current_season}} value="{{query}}">
             <button class="scryfall-filter-submit" type="submit">Search</button>
             <p class="form-field"><a class="scryfall-filter-reset" type="button" href="#">Reset</a></p>
-            {{# show_interestingness_filter }}
+            {{#show_interestingness_filter}}
                 <p class="label">Show</p>
                 <div>
                     <div class="form-field">
@@ -28,7 +28,7 @@
                         </div>
                     </div>
                 </div>
-            {{/ show_interestingness_filter }}
+            {{/show_interestingness_filter}}
             <ul class="error errors-and-warnings" hidden></ui>
         </div>
     </form>

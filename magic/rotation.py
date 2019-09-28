@@ -231,7 +231,11 @@ def get_file_contents(file: str) -> List[str]:
 def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_list: List[str]) -> Optional[Card]:
     remaining_runs = TOTAL_RUNS - runs
     hits_needed = max(round(TOTAL_RUNS / 2 - hits), 0)
-    c = cs[name]
+    try:
+        c = cs[name]
+    except KeyError:
+        print(f'Unable to find {name} in process_score but returning None instead of exploding.')
+        return None
     if c.layout not in multiverse.playable_layouts():
         return None
     percent = round(round(hits / runs, 2) * 100)

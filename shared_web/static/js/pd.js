@@ -431,7 +431,7 @@ PD.filter.applyCardNames = function (cardNames) {
 PD.filter.applyInterestingness = function (interestingness) {
     $(".cardrow").each( function () {
         let jqEle = $(this);
-        if (interestingness != "all" && !jqEle.children("a").hasClass("interestingness-" + interestingness)) {
+        if (interestingness != "all" && !jqEle.find("a").hasClass("interestingness-" + interestingness)) {
             jqEle.addClass("hidden-by-interestingness-filter");
         } else {
             jqEle.removeClass("hidden-by-interestingness-filter");

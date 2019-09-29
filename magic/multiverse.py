@@ -201,7 +201,8 @@ def insert_cards(printings: List[CardDescription]) -> None:
 
     for p in printings:
         # Exclude little girl because {hw} mana is a problem rn.
-        if p['name'] == 'Little Girl':
+        # Exclude art_series because they have the same name as real cards and that breaks things.
+        if p['name'] == 'Little Girl' or p['layout'] == 'art_series':
             continue
 
         if is_meld_result(p):

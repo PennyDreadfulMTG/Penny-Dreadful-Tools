@@ -798,6 +798,9 @@ Want to contribute? Send a Pull Request."""
             if person is None:
                 await send(channel, f"I don't know who {mention.group(0)} is :frowning:")
                 return
+            if person.get('name') is None:
+                await send(channel, f"I know this person but I don't know their name. That's weird. Here's what I know: {person}")
+                return
             await send(channel, f"{mention.group(0)} is **{person['name']}** on MTGO")
         else:
             async with channel.typing():

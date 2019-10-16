@@ -117,7 +117,8 @@ def edit_matches() -> str:
 @APP.route('/admin/matches/', methods=['POST'])
 @auth.admin_required
 def post_matches() -> str:
-    match_id = cast_int(request.form.get('match_id'))
+    if request.form.get('match_id'):
+        match_id = cast_int(request.form.get('match_id'))
     if request.form.get('action') == 'delete':
         lg.delete_match(match_id)
         return edit_matches()

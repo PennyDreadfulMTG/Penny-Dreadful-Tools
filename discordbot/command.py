@@ -350,12 +350,7 @@ class Commands:
                 Cards from the just-released set are added (nothing removed) three weeks later via a supplemental rotation after prices have settled a little.
                 Any version of a card on the legal cards list is legal.
                 """,
-                {
-                    'Deck Checker': 'https://pennydreadfulmagic.com/deckcheck/',
-                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt',
-                    'Rotation Speculation': fetcher.decksite_url('/rotation/speculation/'),
-                    'Rotation Changes': fetcher.decksite_url('/rotation/changes/')
-                }
+                {}
             ),
             'spectating': (
                 """
@@ -802,6 +797,9 @@ Want to contribute? Send a Pull Request."""
                 person = await fetcher.person_data_async(mention.group(1))
             if person is None:
                 await send(channel, f"I don't know who {mention.group(0)} is :frowning:")
+                return
+            if person.get('name') is None:
+                await send(channel, f"I know this person but I don't know their name. That's weird. Here's what I know: {person}")
                 return
             await send(channel, f"{mention.group(0)} is **{person['name']}** on MTGO")
         else:

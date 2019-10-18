@@ -15,6 +15,7 @@ from discord.state import Status
 from github.GithubException import GithubException
 
 from discordbot import command
+import discordbot.commands
 from magic import fetcher, multiverse, oracle, rotation, tournaments
 from magic.card_description import CardDescription
 from magic.models import Card
@@ -50,6 +51,7 @@ class Bot(commands.Bot):
         multiverse.init()
         multiverse.update_bugged_cards()
         oracle.init()
+        discordbot.commands.setup(self)
         self.run(configuration.get('token'))
 
     async def on_ready(self) -> None:
@@ -168,7 +170,7 @@ class Bot(commands.Bot):
                     if search:
                         previous_command, suggestions = search.group(1, 2)
                         card = re.findall(r':[^:]*?: ([^:]*) ', suggestions + ' ')[command.DISAMBIGUATION_NUMBERS_BY_EMOJI[reaction.emoji]-1]
-                        message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[])
+                        message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[], _state=reaction.message._state)
                         await self.on_message(message)
                         await reaction.message.delete()
 

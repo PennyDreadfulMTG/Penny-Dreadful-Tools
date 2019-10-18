@@ -149,18 +149,6 @@ class Commands:
     """
 
     @cmd_header('Commands')
-    async def art(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!art {name}` Art (only) of the most recent printing of a card."""
-        c = await single_card_or_send_error(channel, args, author, 'art')
-        if c is not None:
-            file_path = re.sub('.jpg$', '.art_crop.jpg',
-                               image_fetcher.determine_filepath([c]))
-            if image_fetcher.download_scryfall_card_image(c, file_path, version='art_crop'):
-                await send_image_with_retry(channel, file_path)
-            else:
-                await send(channel, '{author}: Could not get image.'.format(author=author.mention))
-
-    @cmd_header('Commands')
     async def barbs(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """`!barbs` Volvary's advice for when to board in Aura Barbs."""
         msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
@@ -1076,4 +1064,10 @@ def guild_or_channel_id(channel: TextChannel) -> int:
     return getattr(channel, 'guild', channel).id
 
 class MtgContext(commands.Context):
-    pass
+    async def send_image_with_retry(self, image_file: str, text: str = '') -> None:
+        message = await self.send(file=File(image_file), content=text)
+        if message and message.attachments and message.attachments[0].size == 0:
+            print('Message size is zero so resending')
+            await message.delete()
+            await self.send(file=File(image_file), content=text)
+

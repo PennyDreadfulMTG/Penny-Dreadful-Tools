@@ -14,8 +14,8 @@ from discord.reaction import Reaction
 from discord.state import Status
 from github.GithubException import GithubException
 
-from discordbot import command
 import discordbot.commands
+from discordbot import command
 from magic import fetcher, multiverse, oracle, rotation, tournaments
 from magic.card_description import CardDescription
 from magic.models import Card

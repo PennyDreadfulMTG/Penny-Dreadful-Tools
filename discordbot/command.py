@@ -17,9 +17,9 @@ import inflect
 from discord import FFmpegPCMAudio, File
 from discord.channel import TextChannel
 from discord.client import Client
+from discord.ext import commands
 from discord.member import Member
 from discord.message import Message
-from discord.ext import commands
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
@@ -1070,4 +1070,3 @@ class MtgContext(commands.Context):
             print('Message size is zero so resending')
             await message.delete()
             await self.send(file=File(image_file), content=text)
-

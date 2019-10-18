@@ -1,15 +1,16 @@
 import glob
-import inspect
 import importlib
+import inspect
 import logging
 from os import path
 from typing import List
 
-from discord.ext.commands import Bot, Context, Command
+from discord.ext.commands import Bot, Command, Context
 from discord.ext.commands.errors import BadArgument
 
 from discordbot import command
 from magic.models import Card
+
 
 def setup(bot: Bot) -> None:
     Card.convert = CardConverter.convert

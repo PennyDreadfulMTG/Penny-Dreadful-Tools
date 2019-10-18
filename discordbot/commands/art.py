@@ -1,8 +1,9 @@
 import re
-from magic import image_fetcher
+
 from discord.ext import commands
 
 from discordbot.command import MtgContext
+from magic import image_fetcher
 from magic.models import Card
 
 

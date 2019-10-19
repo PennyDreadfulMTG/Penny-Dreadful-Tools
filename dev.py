@@ -54,7 +54,7 @@ def run() -> None:
 
     else:
         print('Unrecognised command {cmd}.'.format(cmd=cmd))
-        exit(1)
+        sys.exit(1)
 
 def lint(argv: List[str]) -> None:
     """
@@ -68,7 +68,7 @@ def lint(argv: List[str]) -> None:
             '-j', '4' # Use four cores for speed.
            ]
     args.extend(argv or LINT_PATHS)
-    import pylint.lint
+    import pylint.lint  # pylint: disable=import-outside-toplevel
     linter = pylint.lint.Run(args, do_exit=False)
     if linter.linter.msg_status:
         sys.exit(linter.linter.msg_status)
@@ -109,7 +109,7 @@ def tests(argv: List[str]) -> None:
     """
     Literally just prepare the DB and then invoke pytest.
     """
-    import pytest
+    import pytest  # pylint: disable=import-outside-toplevel
     from magic import multiverse, oracle
     multiverse.init()
     oracle.init()
@@ -133,6 +133,7 @@ def upload_coverage() -> None:
     except fetcher_internal.FetchException as e:
         print(e)
 
+# pylint: disable=import-outside-toplevel
 def sort(fix: bool = False) -> None:
     """
     This method is messy, and is a reduced form of isort.main.main()
@@ -160,6 +161,7 @@ def sort(fix: bool = False) -> None:
     if wrong_sorted_files:
         sys.exit(2)
 
+# pylint: disable=import-outside-toplevel
 def reset_db() -> None:
     """
     Handle with care.

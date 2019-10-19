@@ -141,28 +141,6 @@ def cmd_header(group: str) -> Callable:
 
 # pylint: disable=too-many-public-methods, too-many-lines
 class Commands:
-    """To define a new command, simply add a new method to this class.
-    If you want !help to show the message, add a docstring to the method.
-    Method parameters should be in the format:
-    `async def commandname(self, client, channel, args, author)`
-    Where any argument after self is optional. (Although at least channel is usually needed)
-    """
-
-    @cmd_header('Commands')
-    async def barbs(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!barbs` Volvary's advice for when to board in Aura Barbs."""
-        msg = "Heroic doesn't get that affected by Barbs. Bogles though. Kills their creature, kills their face."
-        await send(channel, msg)
-
-    @cmd_header('Commands')
-    async def bug(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """Report a bug/task for the Penny Dreadful Tools team. For Magic Online bugs see `!modobug`."""
-        issue = repo.create_issue(args, author)
-        if issue is None:
-            await send(channel, 'Report issues at <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/new>')
-        else:
-            await send(channel, 'Issue has been reported at <{url}>'.format(url=issue.html_url))
-
     @cmd_header('Commands')
     async def buglink(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) ->  None:
         """Link to the modo-bugs page for a card."""

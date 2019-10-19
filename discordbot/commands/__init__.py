@@ -3,7 +3,7 @@ import importlib
 import inspect
 import logging
 from os import path
-from typing import List
+from typing import List, Optional
 
 from discord.ext.commands import Bot, Command, Context
 from discord.ext.commands.errors import BadArgument
@@ -27,7 +27,7 @@ def setup(bot: Bot) -> None:
 
 class CardConverter:
     @classmethod
-    async def convert(cls, ctx: Context, argument: str) -> Card:
+    async def convert(cls, ctx: Context, argument: str) -> Optional[Card]:
         try:
             result, mode = command.results_from_queries([argument])[0]
             if result.has_match() and not result.is_ambiguous():

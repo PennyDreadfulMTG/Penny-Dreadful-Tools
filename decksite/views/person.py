@@ -19,7 +19,7 @@ class Person(View):
         self.people = [person]
         self.decks = person.decks
         self.archetypes = archetypes
-        self.roots = [a for a in self.archetypes if a.is_root] # BAKERT should this be in view prep?
+        self.roots = [a for a in self.archetypes if a.is_root]
         self.hide_person = True
         self.cards = cards
         for record in person.head_to_head:

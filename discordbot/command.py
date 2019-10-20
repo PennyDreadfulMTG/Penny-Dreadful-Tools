@@ -1,19 +1,14 @@
 import collections
 import datetime
-import glob
 import logging
-import os
 import random
 import re
-import subprocess
-import textwrap
 import time
 import traceback
 from copy import copy
 from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple
 
 import discord
-import inflect
 from discord import FFmpegPCMAudio, File
 from discord.channel import TextChannel
 from discord.client import Client
@@ -24,11 +19,10 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 from discordbot import emoji
-from magic import (card, database, fetcher, image_fetcher, multiverse, oracle,
-                   rotation, tournaments)
+from magic import card, fetcher, image_fetcher, multiverse, oracle
 from magic.models import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher
-from shared import configuration, dtutil, repo
+from shared import configuration, dtutil
 from shared.lazy import lazy_property
 from shared.pd_exception import NotConfiguredException, TooFewItemsException
 
@@ -141,34 +135,6 @@ def cmd_header(group: str) -> Callable:
 
 # pylint: disable=too-many-public-methods, too-many-lines
 class Commands:
-    @cmd_header('Commands')
-    async def buglink(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) ->  None:
-        """Link to the modo-bugs page for a card."""
-        base_url = 'https://github.com/PennyDreadfulMTG/modo-bugs/issues'
-        if args == '':
-            await send(channel, base_url)
-            return
-        result, mode = results_from_queries([args])[0]
-        if result.has_match() and not result.is_ambiguous():
-            c = cards_from_names_with_mode([result.get_best_match()], mode)[0]
-            msg = '<{base_url}?utf8=%E2%9C%93&q=is%3Aissue+%22{name}%22>'.format(base_url=base_url, name=fetcher.internal.escape(args))
-            if not c.bugs or len(c.bugs) == 0:
-                msg = "I don't know of a bug for {name} but here's the link: {link}".format(name=c.name, link=msg)
-        else:
-            msg = "{author}: I'm not quite sure what you mean by '{args}'".format(author=author.mention, args=args)
-        await send(channel, msg)
-
-    @cmd_header('Developer')
-    async def clearimagecache(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """Deletes all the cached images.  Use sparingly"""
-        image_dir = configuration.get('image_dir')
-        if not image_dir:
-            return await send(channel, 'Cowardly refusing to delete from unknown image_dir.')
-        files = glob.glob('{dir}/*.jpg'.format(dir=image_dir))
-        for file in files:
-            os.remove(file)
-        await send(channel, '{n} cleared.'.format(n=len(files)))
-
     @cmd_header('Configuration')
     async def configure(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         try:
@@ -197,10 +163,6 @@ class Commands:
 
         configuration.write(f'{configuring}.{key}', value)
 
-    @cmd_header('Commands')
-    async def downtimes(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        await send(channel, fetcher.downtimes())
-
     @cmd_header('Developer')
     async def echo(self, client: Client, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
         """Repeat after me…"""
@@ -208,225 +170,6 @@ class Commands:
         if not s:
             s = "I'm afraid I can't do that, Dave"
         await send(channel, s)
-
-    @cmd_header('Commands')
-    async def explain(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
-        """`!explain`. Get a list of things the bot knows how to explain.
-`!explain {thing}`. Print commonly needed explanation for 'thing'."""
-        num_tournaments = inflect.engine().number_to_words(
-            len(tournaments.all_series_info()))
-        explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
-            'bugs': (
-                'We keep track of cards that are bugged on Magic Online. We allow the playing of cards with known bugs in Penny Dreadful under certain conditions. See the full rules on the website.',
-                {
-                    'Known Bugs List': fetcher.decksite_url('/bugs/'),
-                    'Tournament Rules': fetcher.decksite_url('/tournaments/#bugs'),
-                    'Bugged Cards Database': 'https://github.com/PennyDreadfulMTG/modo-bugs/issues/'
-                }
-
-            ),
-            'deckbuilding': (
-                """
-                The best way to build decks is to use a search engine that supports Penny Dreadful legality (`f:pd`) like Scryfall.
-                You can find Penny Dreadful decklists from tournaments, leagues and elsewhere at pennydreadfulmagic.com.
-                """,
-                {
-                    'Scryfall': 'https://scryfall.com/',
-                    'Latest Decks': fetcher.decksite_url('/'),
-                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt'
-                }
-            ),
-            'decklists': (
-                """
-                You can find Penny Dreadful decklists from tournaments, leagues and elsewhere at pennydreadfulmagic.com
-                """,
-                {
-                    'Latest Decks': fetcher.decksite_url('/')
-                }
-            ),
-            'doorprize': (
-                "The door prize is 1 tik credit with Cardhoarder, awarded to one randomly-selected player that completes the Swiss rounds but doesn't make top 8.",
-                {}
-            ),
-            'league': (
-                """
-                Leagues last for roughly a month. You may enter any number of times but only one deck at a time.
-                You play five matches per run. You can join the league at any time.
-                To find a game sign up and then create a game in Constructed, Specialty, Freeform Tournament Practice with "Penny Dreadful League" as the comment.
-                Top 8 finishers on each month's league leaderboard win credit with MTGO Traders.
-                When you complete a five match league run for the first time ever you will get 1 tik credit with MTGO Traders (at the end of the month).
-                """,
-                {
-                    'More Info': fetcher.decksite_url('/league/'),
-                    'Sign Up': fetcher.decksite_url('/signup/'),
-                    'Current League': fetcher.decksite_url('/league/current/')
-                }
-            ),
-            'noshow': (
-                """
-                If your opponent does not join your game please @-message them on Discord and contact them on Magic Online.
-                If you haven't heard from them by 10 minutes after the start of the round let the Tournament Organizer know.
-                You will receive a 2-0 win and your opponent will be dropped from the competition.
-                """,
-                {}
-            ),
-            'playing': (
-                """
-                To get a match go to Constructed, Specialty, Freeform Tournament Practice on MTGO and create a match with "Penny Dreadful" in the comments.
-                """,
-                {}
-            ),
-            'prices': (
-                """
-                The price output contains current price.
-                If the price is low enough it will show season-low and season-high also.
-                If the card has been 1c at any point this season it will also include the amount of time (as a percentage) the card has spent at 1c or below this week, month and season.
-                """,
-                {}
-            ),
-            'prizes': (
-                """
-                Gatherling tournaments pay prizes to the Top 8 in Cardhoarder credit.
-                This credit will appear when you trade with one of their bots on Magic Online.
-                One player not making Top 8 but playing all the Swiss rounds will be randomly allocated the door prize.
-                Prizes are credited once a week usually on the Friday or Saturday following the tournament but may sometimes take longer.
-                """,
-                {
-                    'More Info': fetcher.decksite_url('/tournaments/')
-                }
-            ),
-            'replay': (
-                """
-                You can play the same person a second time on your league run as long as they have started a new run. The same two runs cannot play each other twice.
-                """,
-                {}
-            ),
-            'reporting': (
-                """
-                """,
-                {
-                }
-            ),
-            'retire': (
-                'To retire from a league run message PDBot on MTGO with `!retire`. If you have authenticated with Discord on pennydreadfulmagic.com you can say `!retire` on Discord or retire on the website.',
-                {
-                    'Retire': fetcher.decksite_url('/retire/')
-                }
-            ),
-            'rotation': (
-                """
-                Legality is set at the release of a Standard-legal set on Magic Online.
-                Prices are checked every hour for a week beforehand. Anything 1c or less for half or more of all checks is legal for the season.
-                Cards from the just-released set are added (nothing removed) three weeks later via a supplemental rotation after prices have settled a little.
-                Any version of a card on the legal cards list is legal.
-                """,
-                {
-                    'Deck Checker': 'https://pennydreadfulmagic.com/deckcheck/',
-                    'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt',
-                    'Rotation Speculation': fetcher.decksite_url('/rotation/speculation/'),
-                    'Rotation Changes': fetcher.decksite_url('/rotation/changes/')
-                }
-            ),
-            'spectating': (
-                """
-                Spectating tournament and league matches is allowed and encouraged.
-                Please do not write anything in chat except to call PDBot's `!record` command to find out the current score in games.
-                """,
-                {}
-            ),
-            'supplemental': (
-                """
-                Legality for the cards in the newly-released set ONLY is determined three weeks after the normal rotation to allow prices to settle.
-                Prices are checked every hour for a week. Anything in the newly-released set that is 1c or less for half or more of all checks is legal for the rest of the season.
-                Cards are only ever added to the legal list by the supplemental rotation, never removed.
-                """,
-                {}
-            ),
-            'tournament': (
-                """
-                We have {num_tournaments} free-to-enter weekly tournaments that award trade credit prizes from Cardhoarder.
-                They are hosted on gatherling.com along with a lot of other player-run Magic Online events.
-                """.format(num_tournaments=num_tournaments),
-                {
-                    'More Info': fetcher.decksite_url('/tournaments/'),
-                    'Sign Up': 'https://gatherling.com/',
-                }
-            ),
-            'username': (
-                """
-                Please change your Discord username to include your MTGO username so we can know who you are.
-                To change, right-click your username.
-                This will not affect any other Discord channel.
-                """,
-                {}
-            ),
-            'verification': (
-                """
-                Gatherling verification is currently broken.
-                It no longer does anything except put a green tick by your name anyway.
-                """,
-                {}
-            ),
-        }
-        reporting_explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
-            'tournament': (
-                """
-                For tournaments PDBot is information-only, *both* players must report near the top of Player CP (or follow the link at the top of any Gatherling page).
-                """,
-                {
-                    'Gatherling': 'https://gatherling.com/player.php',
-                }
-            ),
-            'league': (
-                """
-                If PDBot reports your league match in #league in Discord you don't need to do anything. If not, either player can report.
-                """,
-                {
-                    'League Report': fetcher.decksite_url('/report/')
-                }
-            )
-        }
-        keys = sorted(explanations.keys())
-        explanations['drop'] = explanations['retire']
-        explanations['legality'] = explanations['rotation']
-        explanations['spectate'] = explanations['spectating']
-        explanations['tournaments'] = explanations['tournament']
-        explanations['watching'] = explanations['spectating']
-        explanations['spectate'] = explanations['spectating']
-        explanations['verify'] = explanations['verification']
-        # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
-        word = args.lower().replace(' ', '').rstrip('s')
-        if len(word) > 0:
-            for k in explanations:
-                if k.startswith(word):
-                    word = k
-        try:
-            if word == 'reporting':
-                if is_tournament_channel(channel):
-                    explanation = reporting_explanations['tournament']
-                else:
-                    explanation = reporting_explanations['league']
-            else:
-                explanation = explanations[word]
-
-            s = '{text}\n'.format(text=textwrap.dedent(explanation[0]))
-        except KeyError:
-            usage = 'I can explain any of these things: {things}'.format(
-                things=', '.join(sorted(keys)))
-            return await send(channel, usage)
-        for k in sorted(explanation[1].keys()):
-            s += '{k}: <{v}>\n'.format(k=k, v=explanation[1][k])
-        await send(channel, s)
-
-    @cmd_header('Developer')
-    async def gbug(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """Report a Gatherling bug."""
-        issue = repo.create_issue(
-            args, author, 'Discord', 'PennyDreadfulMTG/gatherling')
-        if issue is None:
-            await send(channel, 'Report Gatherling issues at <https://github.com/PennyDreadfulMTG/gatherling/issues/new>')
-        else:
-            await send(channel, 'Issue has been reported at <{url}>.'.format(url=issue.html_url))
 
     @cmd_header('Commands')
     async def google(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
@@ -481,11 +224,6 @@ Want to contribute? Send a Pull Request."""
                 await send(dm_channel, msg)
         except discord.errors.Forbidden:
             await send(channel, f"{author.mention}: I can't send you the help text because you have blocked me.")
-
-    @cmd_header('Commands')
-    async def history(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """Show the legality history of the specified card and a link to its all time page."""
-        await single_card_text(client, channel, args, author, card_history, 'history', show_legality=False)
 
     @cmd_header('Commands')
     async def invite(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
@@ -568,11 +306,6 @@ Want to contribute? Send a Pull Request."""
         # Because of the weird way we call and use methods on Commands we need…
         # pylint: disable=too-many-function-args
         await self.resources(self, channel, args, author)
-
-    @cmd_header('Commands')
-    async def price(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!price {name}` Price information for a card."""
-        await single_card_text(client, channel, args, author, fetcher.card_price_string, 'price')
 
     @cmd_header('Commands')
     async def quality(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
@@ -663,16 +396,6 @@ Want to contribute? Send a Pull Request."""
         msg += " And then we have {search}. It's a bit of a stretch, but that's a rhino too.".format(search=rhinos[3].name)
         await post_cards(client, rhinos, channel, additional_text=msg)
 
-    @cmd_header('Commands')
-    async def rotation(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!rotation` Date of the next Penny Dreadful rotation."""
-        await send(channel, rotation.message())
-
-    @cmd_header('Commands')
-    async def rulings(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!rulings {name}`Rulings for a card."""
-        await single_card_text(client, channel, args, author, card_rulings, 'rulings')
-
     @cmd_header('Aliases')
     async def scryfall(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!scryfall {query}` Alias for `!search`."""
@@ -708,12 +431,6 @@ Want to contribute? Send a Pull Request."""
         oracle.scryfall_import(sfcard['name'])
 
     @cmd_header('Commands')
-    async def status(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!status` Status of Magic Online."""
-        status = await fetcher.mtgo_status()
-        await send(channel, 'MTGO is {status}'.format(status=status))
-
-    @cmd_header('Commands')
     async def time(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!time {location}` Current time in location."""
         if len(args) == 0:
@@ -732,19 +449,6 @@ Want to contribute? Send a Pull Request."""
             logging.exception('Exception trying to get the time for %s.', args)
             await send(channel, '{author}: Location not found.'.format(author=author.mention))
 
-    @cmd_header('Commands')
-    async def tournament(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!tournament` Information about the next tournament."""
-        t = tournaments.next_tournament_info()
-        prev = tournaments.previous_tournament_info()
-        if prev['near']:
-            started = 'it started '
-        else:
-            started = ''
-        prev_message = 'The last tournament was {name}, {started}{time} ago'.format(name=prev['next_tournament_name'], started=started, time=prev['next_tournament_time'])
-        next_time = 'in ' + t['next_tournament_time'] if t['next_tournament_time'] != dtutil.display_time(0, 0) else t['next_tournament_time']
-        await send(channel, 'The next tournament is {name} {next_time}.\nSign up on <http://gatherling.com/>\nMore information: {url}\n{prev_message}'.format(name=t['next_tournament_name'], next_time=next_time, prev_message=prev_message, url=fetcher.decksite_url('/tournaments/')))
-
     @cmd_header('Developer')
     async def update(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
         """Forces an update to legal cards and bugs."""
@@ -755,13 +459,6 @@ Want to contribute? Send a Pull Request."""
         multiverse.reindex()
         oracle.init(force=True)
         await send(channel, 'Reloaded legal cards and bugs.')
-
-    @cmd_header('Developer')
-    async def version(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """Display the current version numbers"""
-        commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], universal_newlines=True).strip('\n').strip('"')
-        scryfall = database.last_updated()
-        return await send(channel, 'I am currently running mtgbot version `{commit}`, and scryfall last updated `{scryfall}`'.format(commit=commit, scryfall=scryfall))
 
     @cmd_header('Commands')
     async def whois(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
@@ -863,31 +560,6 @@ async def single_card_text(client: Client, channel: TextChannel, args: str, auth
 
 def oracle_text(c: Card) -> str:
     return c.oracle_text
-
-def card_rulings(c: Card) -> str:
-    raw_rulings = fetcher.rulings(c.name)
-    rulings = [r['comment'] for r in raw_rulings]
-    if len(rulings) > 3:
-        n = len(rulings) - 2
-        rulings = rulings[:2]
-        rulings.append('And {n} others.  See <https://scryfall.com/search?q=%21%22{cardname}%22#rulings>'.format(n=n, cardname=fetcher.internal.escape(c.name)))
-    return '\n'.join(rulings) or 'No rulings available.'
-
-def card_history(c: Card) -> str:
-    seasons = {}
-    for format_name, status in c.legalities.items():
-        if 'Penny Dreadful ' in format_name and status == 'Legal':
-            season_id = rotation.SEASONS.index(format_name.replace('Penny Dreadful ', '')) + 1
-            seasons[season_id] = True
-    seasons[rotation.current_season_num()] = c.legalities.get('Penny Dreadful', None) == 'Legal'
-    s = '   '
-    for i in range(1, rotation.current_season_num() + 1):
-        s += f'{i} '
-        s += ':white_check_mark:' if seasons.get(i, False) else ':no_entry_sign:'
-        s += '   '
-    s = s.strip()
-    s += '\n' + fetcher.decksite_url('/seasons/all/cards/{name}/'.format(name=fetcher.internal.escape(c.name, skip_double_slash=True)))
-    return s
 
 def site_resources(args: str) -> Dict[str, str]:
     results = {}
@@ -1024,12 +696,6 @@ def escape_underscores(s: str) -> str:
             new_s += char
     return new_s
 
-def is_tournament_channel(channel: TextChannel) -> bool:
-    tournament_channel_id = configuration.get_int('tournament_channel_id')
-    if not tournament_channel_id:
-        return False
-    return channel.id == tournament_channel_id
-
 # Given a list of cards return one (aribtrarily) for each unique name in the list.
 def uniqify_cards(cards: List[Card]) -> List[Card]:
     # Remove multiple printings of the same card from the result set.
@@ -1048,3 +714,10 @@ class MtgContext(commands.Context):
             print('Message size is zero so resending')
             await message.delete()
             await self.send(file=File(image_file), content=text)
+
+    async def single_card_text(self, c: Card, f: Callable, show_legality: bool = True) -> None:
+        name = c.name
+        info_emoji = emoji.info_emoji(c, show_legality=show_legality)
+        text = emoji.replace_emoji(f(c), self.bot)
+        message = f'**{name}** {info_emoji} {text}'
+        await self.send(message)

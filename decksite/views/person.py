@@ -6,17 +6,20 @@ from flask import url_for
 
 from decksite.data import person as ps
 from decksite.data.achievements import Achievement
+from decksite.data.archetype import Archetype
 from decksite.view import View
 from magic.models import Card
 
 
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Person(View):
-    def __init__(self, person: ps.Person, cards: List[Card], season_id: Optional[int]) -> None:
+    def __init__(self, person: ps.Person, cards: List[Card], archetypes: List[Archetype], season_id: Optional[int]) -> None:
         super().__init__()
         self.person = person
         self.people = [person]
         self.decks = person.decks
+        self.archetypes = archetypes
+        self.roots = [a for a in self.archetypes if a.is_root] # BAKERT should this be in view prep?
         self.hide_person = True
         self.cards = cards
         for record in person.head_to_head:

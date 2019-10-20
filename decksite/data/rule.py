@@ -220,7 +220,7 @@ def update_cards(rule_id: int, inc: List[Tuple[int, str]], exc: List[Tuple[int, 
 def classified_decks_query() -> str:
     return '(NOT reviewed OR deck.archetype_id NOT IN ({ex}))'.format(ex=','.join(str(aid) for aid in excluded_archetype_ids()))
 
-def apply_rules_query(deck_query: str = '1 = 1', rule_query: str = '1 = 1') -> str:
+def apply_rules_query(deck_query: str = 'TRUE', rule_query: str = 'TRUE') -> str:
     return f"""
         WITH rule_card_count AS
         (

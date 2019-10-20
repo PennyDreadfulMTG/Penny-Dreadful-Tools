@@ -188,7 +188,7 @@ def deck_options(decks: List[deck.Deck], v: str, viewer_id: Optional[int]) -> Li
         v = str(decks[0].id)
     return [{'text': d.name if d.person_id == viewer_id else d.person, 'value': d.id, 'selected': v == str(d.id), 'can_draw': d.can_draw} for d in decks]
 
-def active_decks(additional_where: str = '1 = 1') -> List[deck.Deck]:
+def active_decks(additional_where: str = 'TRUE') -> List[deck.Deck]:
     where = """
         d.id IN (
             SELECT
@@ -356,7 +356,7 @@ def load_latest_league_matches() -> List[Container]:
     where = 'dm.deck_id IN (SELECT id FROM deck WHERE competition_id = {competition_id})'.format(competition_id=competition_id)
     return load_matches(where)
 
-def load_matches(where: str = '1 = 1') -> List[Container]:
+def load_matches(where: str = 'TRUE') -> List[Container]:
     sql = """
         SELECT m.date, m.id, GROUP_CONCAT(dm.deck_id) AS deck_ids, GROUP_CONCAT(dm.games) AS games, mtgo_id
         FROM `match` AS m

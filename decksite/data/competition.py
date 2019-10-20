@@ -58,7 +58,7 @@ def get_or_insert_competition(start_date: datetime.datetime,
 def load_competition(competition_id: int) -> Competition:
     return guarantee.exactly_one(load_competitions('c.id = {competition_id}'.format(competition_id=sqlescape(competition_id)), should_load_decks=True))
 
-def load_competitions(where: str = '1 = 1', having: str = '1 = 1', season_id: Optional[int] = None, should_load_decks: Optional[bool] = False) -> List[Competition]:
+def load_competitions(where: str = 'TRUE', having: str = 'TRUE', season_id: Optional[int] = None, should_load_decks: Optional[bool] = False) -> List[Competition]:
     sql = """
         SELECT
             c.id,

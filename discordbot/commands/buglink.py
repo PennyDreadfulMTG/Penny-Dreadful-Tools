@@ -1,8 +1,9 @@
 from discord.ext import commands
 
 from discordbot.command import MtgContext
-from magic.models import Card
 from magic import fetcher
+from magic.models import Card
+
 
 @commands.command(aliases=['bl'])
 async def art(ctx: MtgContext, *, c: Card) -> None:

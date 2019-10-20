@@ -3,6 +3,7 @@ from discord.ext import commands
 from discordbot.command import MtgContext
 from magic import fetcher
 
+
 @commands.command(aliases=['mtgostatus', 'modostatus'])
 async def status(ctx: MtgContext) -> None:
     """`!status` Status of Magic Online."""

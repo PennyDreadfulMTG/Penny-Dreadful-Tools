@@ -1,13 +1,14 @@
+import textwrap
 from typing import Dict, Tuple
 
+import inflect
 from discord import TextChannel
 from discord.ext import commands
-import inflect
-import textwrap
 
 from discordbot.command import MtgContext
 from magic import fetcher, tournaments
 from shared import configuration
+
 
 @commands.command
 async def explain(ctx: MtgContext, *, args: str) -> None:

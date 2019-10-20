@@ -1,8 +1,10 @@
 import subprocess
+
 from discord.ext import commands
 
 from discordbot.command import MtgContext
 from magic import database
+
 
 @commands.command(hidden=True)
 async def version(ctx: MtgContext) -> None:

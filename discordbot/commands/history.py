@@ -1,7 +1,7 @@
 from discord.ext import commands
 
 from discordbot.command import MtgContext
-from magic import rotation, fetcher
+from magic import fetcher, rotation
 from magic.models import Card
 
 

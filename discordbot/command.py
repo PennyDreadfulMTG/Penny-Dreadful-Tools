@@ -1,6 +1,5 @@
 import collections
 import datetime
-import logging
 import random
 import re
 import time
@@ -15,16 +14,13 @@ from discord.client import Client
 from discord.ext import commands
 from discord.member import Member
 from discord.message import Message
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 
 from discordbot import emoji
-from magic import card, fetcher, image_fetcher, multiverse, oracle
+from magic import card, fetcher, image_fetcher, oracle
 from magic.models import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher
 from shared import configuration, dtutil
 from shared.lazy import lazy_property
-from shared.pd_exception import NotConfiguredException, TooFewItemsException
 
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10
@@ -163,41 +159,6 @@ class Commands:
 
         configuration.write(f'{configuring}.{key}', value)
 
-    @cmd_header('Developer')
-    async def echo(self, client: Client, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
-        """Repeat after me…"""
-        s = emoji.replace_emoji(args, client)
-        if not s:
-            s = "I'm afraid I can't do that, Dave"
-        await send(channel, s)
-
-    @cmd_header('Commands')
-    async def google(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!google {args}` Google for `args`."""
-        api_key = configuration.get('cse_api_key')
-        cse_id = configuration.get('cse_engine_id')
-        if api_key is None or cse_id is None:
-            return await send(channel, 'The google command has not been configured.')
-
-        if len(args) == 0:
-            return await send(channel, '{author}: No search term provided. Please type !google followed by what you would like to search.'.format(author=author.mention))
-
-        try:
-            service = build('customsearch', 'v1', developerKey=api_key)
-            res = service.cse().list(q=args, cx=cse_id, num=1).execute() # pylint: disable=no-member
-            if 'items' in res:
-                r = res['items'][0]
-                s = '{title} <{url}> {abstract}'.format(title=r['title'], url=r['link'], abstract=r['snippet'])
-            else:
-                s = '{author}: Nothing found on Google.'.format(author=author.mention)
-        except HttpError as e:
-            if e.resp['status'] == '403':
-                s = 'We have reached the allowed limits of Google API'
-            else:
-                raise e
-
-        await send(channel, s)
-
     @cmd_header('Commands')
     async def help(self, channel: TextChannel, args: str, author: Member, ** _: Dict[str, Any]) -> None:
         """`!help` Bot commands help."""
@@ -224,21 +185,6 @@ Want to contribute? Send a Pull Request."""
                 await send(dm_channel, msg)
         except discord.errors.Forbidden:
             await send(channel, f"{author.mention}: I can't send you the help text because you have blocked me.")
-
-    @cmd_header('Commands')
-    async def invite(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """Invite me to your server."""
-        await send(channel, 'Invite me to your discord server by clicking this link: <https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=268757056>')
-
-    @cmd_header('Commands')
-    async def legal(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """Announce whether the specified card is legal or not."""
-        await single_card_text(client, channel, args, author, lambda c: '', 'legal')
-
-    @cmd_header('Commands')
-    async def modobug(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """Report a Magic Online bug."""
-        await send(channel, 'Report Magic Online issues at <https://github.com/PennyDreadfulMTG/modo-bugs/issues/new>. Please follow the instructions there. Thanks!')
 
     @cmd_header('Commands')
     async def modofail(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
@@ -277,11 +223,6 @@ Want to contribute? Send a Pull Request."""
         else:
             await send(channel, 'Disable PD legality marks for this channel. If you wanted to disable for the entire server, use `!notpenny server` instead.')
 
-    @cmd_header('Commands')
-    async def _oracle(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!oracle {name}` Oracle text of a card."""
-        await single_card_text(client, channel, args, author, oracle_text, 'oracle')
-
     isPack1Pick1Ready = True
 
     @cmd_header('Commands')
@@ -306,12 +247,6 @@ Want to contribute? Send a Pull Request."""
         # Because of the weird way we call and use methods on Commands we need…
         # pylint: disable=too-many-function-args
         await self.resources(self, channel, args, author)
-
-    @cmd_header('Commands')
-    async def quality(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!quality` A reminder about everyone's favorite way to play digital Magic"""
-        msg = '**Magic Online** is a Quality™ Program.'
-        await send(channel, msg)
 
     @cmd_header('Commands')
     async def random(self, client: Client, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
@@ -375,43 +310,6 @@ Want to contribute? Send a Pull Request."""
         await client.logout()
 
     @cmd_header('Commands')
-    async def rhinos(self, client: Client, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!rhinos` Anything can be a rhino if you try hard enough"""
-        rhinos = []
-        rhino_name = 'Siege Rhino'
-        if random.random() < 0.05:
-            rhino_name = 'Abundant Maw'
-        rhinos.extend([oracle.cards_by_name()[rhino_name]])
-        def find_rhino(query: str) -> Card:
-            cards = complex_search('f:pd {0}'.format(query))
-            if len(cards) == 0:
-                cards = complex_search(query)
-            return random.choice(cards)
-        rhinos.append(find_rhino('o:"copy of target creature"'))
-        rhinos.append(find_rhino('o:"return target creature card from your graveyard to the battlefield"'))
-        rhinos.append(find_rhino('o:"search your library for a creature"'))
-        msg = '\nSo of course we have {rhino}.'.format(rhino=rhinos[0].name)
-        msg += " And we have {copy}. It can become a rhino, so that's a rhino.".format(copy=rhinos[1].name)
-        msg += " Then there's {reanimate}. It can get back one of our rhinos, so that's a rhino.".format(reanimate=rhinos[2].name)
-        msg += " And then we have {search}. It's a bit of a stretch, but that's a rhino too.".format(search=rhinos[3].name)
-        await post_cards(client, rhinos, channel, additional_text=msg)
-
-    @cmd_header('Aliases')
-    async def scryfall(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!scryfall {query}` Alias for `!search`."""
-        # Because of the weird way we call and use methods on Commands we need…
-        # pylint: disable=too-many-function-args
-        await self.search(self, client, channel, args, author)
-
-    @cmd_header('Commands')
-    async def search(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!search {query}` Card search using Scryfall."""
-        how_many, cardnames = fetcher.search_scryfall(args)
-        cbn = oracle.cards_by_name()
-        cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]
-        await post_cards(client, cards, channel, author, more_results_link(args, how_many))
-
-    @cmd_header('Commands')
     async def spoiler(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
         """`!spoiler {cardname}`: Request a card from an upcoming set."""
         if len(args) == 0:
@@ -429,58 +327,6 @@ Want to contribute? Send a Pull Request."""
         text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=c['mana_cost']), client)
         await send(channel, file=File(imagepath), content=text)
         oracle.scryfall_import(sfcard['name'])
-
-    @cmd_header('Commands')
-    async def time(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!time {location}` Current time in location."""
-        if len(args) == 0:
-            return await send(channel, '{author}: No location provided. Please type !time followed by the location you want the time for.'.format(author=author.mention))
-        try:
-            twentyfour = configuration.get_bool(f'{guild_or_channel_id(channel)}.use_24h') or configuration.get_bool(f'{channel.id}.use_24h')
-            ts = fetcher.time(args, twentyfour)
-            times_s = ''
-            for t, zones in ts.items():
-                cities = sorted(set(re.sub('.*/(.*)', '\\1', zone).replace('_', ' ') for zone in zones))
-                times_s += '{cities}: {t}\n'.format(cities=', '.join(cities), t=t)
-            await send(channel, times_s)
-        except NotConfiguredException:
-            await send(channel, 'The time command has not been configured.')
-        except TooFewItemsException:
-            logging.exception('Exception trying to get the time for %s.', args)
-            await send(channel, '{author}: Location not found.'.format(author=author.mention))
-
-    @cmd_header('Developer')
-    async def update(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """Forces an update to legal cards and bugs."""
-        multiverse.set_legal_cards()
-        oracle.legal_cards(force=True)
-        multiverse.update_bugged_cards()
-        multiverse.update_cache()
-        multiverse.reindex()
-        oracle.init(force=True)
-        await send(channel, 'Reloaded legal cards and bugs.')
-
-    @cmd_header('Commands')
-    async def whois(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
-        """Who is a person?"""
-        mention = re.match(r'<@!?(\d+)>', args)
-        if mention:
-            async with channel.typing():
-                person = await fetcher.person_data_async(mention.group(1))
-            if person is None:
-                await send(channel, f"I don't know who {mention.group(0)} is :frowning:")
-                return
-            await send(channel, f"{mention.group(0)} is **{person['name']}** on MTGO")
-        else:
-            async with channel.typing():
-                person = await fetcher.person_data_async(args)
-            if person is None or person.get('discord_id') is None:
-                await send(channel, f"I don't know who **{args}** is :frowning:")
-                return
-            await send(channel, f"**{person['name']}** is <@{person['discord_id']}>")
-
-
-
 
 def parse_queries(content: str) -> List[str]:
     to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, re.DOTALL) # Ignore angle brackets inside backticks. It's annoying in #code.
@@ -558,9 +404,6 @@ async def single_card_text(client: Client, channel: TextChannel, args: str, auth
         message = f'**{name}** {info_emoji} {text}'
         await send(channel, message)
 
-def oracle_text(c: Card) -> str:
-    return c.oracle_text
-
 def site_resources(args: str) -> Dict[str, str]:
     results = {}
     match = re.match('^s? ?([0-9]*|all) +', args)
@@ -601,9 +444,6 @@ def resources_resources(args: str) -> Dict[str, str]:
             if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only or the_whole_thing_sounds_right or the_url_matches:
                 results[url] = text
     return results
-
-def more_results_link(args: str, total: int) -> str:
-    return 'and {n} more.\n<https://scryfall.com/search/?q={q}>'.format(n=total - 4, q=fetcher.internal.escape(args)) if total > MAX_CARDS_SHOWN else ''
 
 async def post_cards(
         client: Client,
@@ -721,3 +561,7 @@ class MtgContext(commands.Context):
         text = emoji.replace_emoji(f(c), self.bot)
         message = f'**{name}** {info_emoji} {text}'
         await self.send(message)
+
+    async def post_cards(self, cards: List[Card], replying_to: Optional[Member] = None, additional_text: str = '') -> None:
+        # this feels awkward, but shrug
+        await post_cards(self.bot, cards, self.channel, replying_to, additional_text)

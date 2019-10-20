@@ -1,11 +1,11 @@
 from discord.ext import commands
 
+from discordbot.command import MtgContext
 from magic import fetcher, tournaments
 from shared import dtutil
-from discordbot.command import MtgContext
 
 
-@commands.command('Commands', aliases=['tournaments'])
+@commands.command('Commands', aliases=['to', 'tournaments'])
 async def tournament(ctx: MtgContext) -> None:
     """`!tournament` Information about the next tournament."""
     t = tournaments.next_tournament_info()

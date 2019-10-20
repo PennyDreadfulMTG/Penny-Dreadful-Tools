@@ -86,7 +86,8 @@ TESTDATA = [
     ('Deep Anal', 'Deep', ['U'], 'Control'),
     ('Supremacia Ariana', 'Mono White', ['W'], None),
     ('Blue Bois', 'Blue Bois', ['U', 'B'], None),
-    ('Analog Drake', 'Analog Drake', ['U', 'W'], 'Peregrine Drake')
+    ('Analog Drake', 'Analog Drake', ['U', 'W'], 'Peregrine Drake'),
+    ('R Deck Wins', 'Red Deck Wins', ['R'], 'Red Deck Wins')
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

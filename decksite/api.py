@@ -40,7 +40,7 @@ def random_deck_api() -> Response:
 def competitions_api() -> Response:
     # Don't send competitions with any decks that do not have their correct archetype to third parties otherwise they
     # will store it and be wrong forever.
-    comps = comp.load_competitions(having='num_reviewed = num_decks')
+    comps = comp.load_competitions(having='num_reviewed = num_decks', should_load_decks=True)
     r = []
     for c in comps:
         if c.decks:

@@ -37,7 +37,7 @@ def load_archetype(archetype: Union[int, str], season_id: int = None) -> Archety
     arch.decks_tournament = arch.get('decks_tournament', [])
     return arch
 
-def load_archetypes(where: str = '1 = 1', merge: bool = False, season_id: int = None) -> List[Archetype]:
+def load_archetypes(where: str = 'TRUE', merge: bool = False, season_id: int = None) -> List[Archetype]:
     decks = deck.load_decks(where, season_id=season_id)
     archetypes: Dict[str, Archetype] = {}
     for d in decks:

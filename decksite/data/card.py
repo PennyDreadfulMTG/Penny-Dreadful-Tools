@@ -186,6 +186,7 @@ def preaggregate_card_person() -> None:
             draws_tournament INT NOT NULL,
             PRIMARY KEY (season_id, person_id, name),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (person_id) REFERENCES person (id)  ON UPDATE CASCADE ON DELETE CASCADE,
             INDEX idx_person_id_name (person_id, name)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT

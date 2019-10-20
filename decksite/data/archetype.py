@@ -127,8 +127,8 @@ def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, nam
     except DatabaseException as e:
         if not retry:
             print(f"Got {e} trying to load_archetypes_deckless so trying to preaggregate. If this is happening on user time that's undesirable.")
-            preaggregate_archetypes()
-            return load_archetypes_deckless(order_by=order_by, season_id=season_id, retry=True)
+            preaggregate()
+            return load_archetypes_deckless(order_by=order_by, person_id=person_id, season_id=season_id, retry=True)
         print(f'Failed to preaggregate. Giving up.')
         raise e
 

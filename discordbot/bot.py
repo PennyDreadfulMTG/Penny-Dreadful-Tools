@@ -340,8 +340,9 @@ def rotation_hype_message() -> str:
     newly_eliminated = [c for c in cs if not c.hit_in_last_run and c.status == 'Not Legal' and c.hits_needed == runs_remaining + 1]
     newly_hit = [c for c in cs if c.hit_in_last_run and c.hits == 1]
     num_undecided = len([c for c in cs if c.status == 'Undecided'])
+    num_legal_cards = len([c for c in cs if c.status == 'Legal'])
     name = 'Supplemental rotation' if rotation.next_rotation_is_supplemental() else 'Rotation'
-    s = f'{name} run number {runs} completed. {name} is {runs_percent}% complete.'
+    s = f'{name} run number {runs} completed. {name} is {runs_percent}% complete. {num_legal_cards} cards confirmed.'
     if len(newly_hit) > 0 and runs_remaining > runs:
         newly_hit_s = list_of_most_interesting(newly_hit)
         s += f'\nFirst hit for: {newly_hit_s}.'

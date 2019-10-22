@@ -302,9 +302,9 @@ def active_competition_id_query() -> str:
             id IN ({competition_ids_by_type_select})
         """.format(now=dtutil.dt2ts(dtutil.now()), competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
 
-def active_league() -> competition.Competition:
+def active_league(should_load_decks: bool = False) -> competition.Competition:
     where = 'c.id = ({id_query})'.format(id_query=active_competition_id_query())
-    leagues = competition.load_competitions(where)
+    leagues = competition.load_competitions(where, should_load_decks=should_load_decks)
     if len(leagues) == 0:
         start_date = dtutil.now(tz=dtutil.WOTC_TZ)
         end_date = determine_end_of_league(start_date, rotation.next_rotation())

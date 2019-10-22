@@ -111,7 +111,7 @@ def post_rules() -> str:
 @APP.route('/admin/matches/')
 @auth.admin_required
 def edit_matches() -> str:
-    view = EditMatches(lg.active_league().decks, lg.load_latest_league_matches())
+    view = EditMatches(lg.active_league(should_load_decks=True).decks, lg.load_latest_league_matches())
     return view.page()
 
 @APP.route('/admin/matches/', methods=['POST'])

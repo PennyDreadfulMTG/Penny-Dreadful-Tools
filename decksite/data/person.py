@@ -116,7 +116,7 @@ def load_people(where: str = 'TRUE',
         people.sort(key=lambda p: (-p.get('num_decks', 0), p.get('name')))
     return people
 
-def load_people_stats(where, season_id: Optional[int] = None) -> Dict[int, Dict[str, int]]:
+def load_people_stats(where: str, season_id: Optional[int] = None) -> Dict[int, Dict[str, int]]:
     season_join = query.season_join() if season_id else ''
     sql = """
         SELECT

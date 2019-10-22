@@ -40,7 +40,7 @@ def admin_home() -> str:
 @auth.admin_required
 def edit_aliases() -> str:
     aliases = ps.load_aliases()
-    all_people = ps.load_people(order_by='p.mtgo_username')
+    all_people = ps.load_people(order_by_name=True)
     view = EditAliases(aliases, all_people)
     return view.page()
 
@@ -168,7 +168,7 @@ def rotation_checklist() -> str:
 @auth.admin_required
 def player_notes() -> str:
     notes = ps.load_notes()
-    all_people = ps.load_people(order_by='p.mtgo_username')
+    all_people = ps.load_people(order_by_name=True)
     view = PlayerNotes(notes, all_people)
     return view.page()
 
@@ -183,7 +183,7 @@ def post_player_note(person_id: int, note: str) -> str:
 @APP.route('/admin/unlink/')
 @auth.admin_required
 def unlink(num_affected_people: Optional[int] = None, errors: List[str] = None) -> str:
-    all_people = ps.load_people(order_by='p.mtgo_username')
+    all_people = ps.load_people(order_by_name=True)
     view = Unlink(all_people, num_affected_people, errors)
     return view.page()
 

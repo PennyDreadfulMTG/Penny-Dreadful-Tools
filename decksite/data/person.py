@@ -106,7 +106,7 @@ def load_people(where: str = 'TRUE',
             {where}
     """.format(person_query=query.person_query(), where=where)
     people = [Person(r) for r in db().select(sql)]
-    stats = load_people_stats(where, order_by_name, season_id) # BAKERT make this an optional flag
+    stats = load_people_stats(where, season_id) # BAKERT make this an optional flag
     for p in people:
         p.update(stats.get(p.id, {}))
         p.season_id = season_id
@@ -116,7 +116,7 @@ def load_people(where: str = 'TRUE',
         people.sort(key=lambda p: (-p.get('num_decks', 0), p.get('name')))
     return people
 
-def load_people_stats(where, order_by_name: bool = False, season_id: Optional[int] = None) -> Dict[int, Dict[str, int]]:
+def load_people_stats(where, season_id: Optional[int] = None) -> Dict[int, Dict[str, int]]:
     season_join = query.season_join() if season_id else ''
     sql = """
         SELECT

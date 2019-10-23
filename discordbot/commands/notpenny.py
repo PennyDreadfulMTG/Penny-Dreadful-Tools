@@ -4,6 +4,7 @@ from discord.ext import commands
 from discordbot.command import MtgContext
 from shared import configuration
 
+
 @commands.command
 async def notpenny(ctx: MtgContext, args: str) -> None:
     """Don't show PD Legality in this channel"""

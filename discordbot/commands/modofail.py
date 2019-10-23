@@ -4,6 +4,7 @@ from discord.ext import commands
 from discordbot.command import MtgContext
 from shared import redis
 
+
 @commands.command
 async def modofail(ctx: MtgContext, args: str) -> None:
     """Ding!"""

@@ -1,10 +1,8 @@
 import collections
 import datetime
-import random
 import re
-import traceback
 from copy import copy
-from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple
+from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple
 
 from discord import File
 from discord.channel import TextChannel
@@ -50,189 +48,8 @@ async def respond_to_card_names(message: Message, client: Client) -> None:
         await post_cards(client, cards, message.channel, message.author)
 
 async def handle_command(message: Message, client: commands.Bot) -> None:
-    parts = message.content.split(' ', 1)
-    method = find_method(parts[0])
-    args = ''
-    if len(parts) > 1:
-        args = parts[1].strip()
-    if method is not None:
-        try:
-            async with message.channel.typing():
-                pass
-            await method(Commands, client=client, channel=message.channel, args=args, author=message.author)
-        except Exception as e: # pylint: disable=broad-except
-            print('Caught exception processing command `{cmd}`'.format(cmd=message.content))
-            tb = traceback.format_exc()
-            print(tb)
-            await send(message.channel, '{author}: I know the command `{cmd}` but encountered an error while executing it.'.format(cmd=parts[0], author=message.author.mention))
-            await getattr(Commands, 'bug')(Commands, channel=message.channel, args='Command failed with {c}: {cmd}\n\n```\n{tb}\n```'.format(c=e.__class__.__name__, cmd=message.content, tb=tb), author=message.author)
-    else:
-        ctx = await client.get_context(message, cls=MtgContext)
-        await client.invoke(ctx)
-
-def find_method(name: str) -> Optional[Callable]:
-    cmd = name.lstrip('!').lower()
-    if len(cmd) == 0:
-        return None
-    method = [m for m in dir(Commands) if m in (cmd, '_' + cmd)]
-    if len(method) == 0:
-        method = [m for m in dir(Commands) if m.startswith(cmd) or m.startswith('_{cmd}'.format(cmd=cmd))]
-    if len(method) > 0:
-        return getattr(Commands, method[0])
-    return None
-
-def build_help(readme: bool = False, cmd: str = None) -> str:
-    def print_group(group: str) -> str:
-        msg = ''
-        for methodname in dir(Commands):
-            if methodname.startswith('__'):
-                continue
-            method = getattr(Commands, methodname)
-            if getattr(method, 'group', None) != group:
-                continue
-            msg += '\n' + print_cmd(method, readme)
-        return msg
-
-    def print_cmd(method: Callable, verbose: bool) -> str:
-        if method.__doc__:
-            if not method.__doc__.startswith('`'):
-                return '`!{0}` {1}'.format(method.__name__, method.__doc__)
-            return '{0}'.format(method.__doc__)
-        if verbose:
-            return '`!{0}` No Help Available'.format(method.__name__)
-        return '`!{0}`'.format(method.__name__)
-
-    if cmd:
-        method = find_method(cmd)
-        if method:
-            return print_cmd(method, True)
-        if cmd in HELP_GROUPS:
-            return print_group(cmd)
-        return '`{cmd}` is not a valid command.'.format(cmd=cmd)
-
-    msg = print_group('Commands')
-    if readme:
-        msg += '\n# Aliases'
-        msg += print_group('Aliases')
-        msg += '\n# Developer Commands'
-        msg += print_group('Developer')
-    return msg
-
-def cmd_header(group: str) -> Callable:
-    HELP_GROUPS.add(group)
-    def decorator(func: Callable) -> Callable:
-        setattr(func, 'group', group)
-        return func
-    return decorator
-
-
-
-# pylint: disable=too-many-public-methods, too-many-lines
-class Commands:
-    isPack1Pick1Ready = True
-
-    @cmd_header('Commands')
-    async def p1p1(self, client: Client, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!p1p1` Summon a pack 1, pick 1 game."""
-
-        if Commands.isPack1Pick1Ready:
-            Commands.isPack1Pick1Ready = False #Do not allow more than one p1p1 at the same time.
-            cards = [oracle.cards_by_name()[name] for name in random.sample(oracle.legal_cards(), 15)]
-            image_fetcher.download_image(cards) #Preload the cards to reduce the delay encountered between introduction and the cards.
-            await send(channel, "Let's play the pack 1, pick 1 game. The rules are simple. You are drafting and you open this as your first pack. What do you take?")
-            await post_cards(client, cards[0:5], channel, None, '')
-            await post_cards(client, cards[5:10], channel, None, '')
-            await post_cards(client, cards[10:], channel, None, '')
-            Commands.isPack1Pick1Ready = True
-        else:
-            print('Pack1Pick1 was denied as it was still processing another one.')  #This command will be heavy enough by itself, make sure the bot doesn't process it too much.
-
-    @cmd_header('Aliases')
-    async def pdm(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """Alias for `!resources`."""
-        # Because of the weird way we call and use methods on Commands we need…
-        # pylint: disable=too-many-function-args
-        await self.resources(self, channel, args, author)
-
-    @cmd_header('Commands')
-    async def random(self, client: Client, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
-        """`!random` A random PD legal card.
-`!random X` X random PD legal cards."""
-        number = 1
-        additional_text = ''
-        if len(args) > 0:
-            try:
-                number = int(args)
-                if number > 10:
-                    additional_text = "{number}? Tsk. Here's ten.".format(number=number)
-                    number = 10
-            except ValueError:
-                pass
-        cards = [oracle.cards_by_name()[name] for name in random.sample(oracle.legal_cards(), number)]
-        await post_cards(client, cards, channel, None, additional_text)
-
-    @cmd_header('Commands')
-    async def randomdeck(self, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """`!randomdeck` A random deck from the current season."""
-        blob = fetcher.internal.fetch_json(fetcher.decksite_url('/api/randomlegaldeck'))
-        if 'error' in blob or 'url' not in blob:
-            await send(channel, blob.get('msg', ''))
-        else:
-            ctn = blob.get('competition_type_name', None)
-            if ctn is not None:
-                if ctn == 'Gatherling' and blob['finish'] == 1:
-                    record = 'won'
-                elif ctn == 'Gatherling' and blob['finish'] <= blob['competition_top_n']:
-                    record = f"made Top {blob['competition_top_n']} of"
-                else:
-                    draws = f"-{blob['draws']}" if blob['draws'] > 0 else ''
-                    record = f"went {blob['wins']}-{blob['losses']}{draws} in"
-                preamble = f"{blob['person']} {record} {blob['competition_name']} with this:\n"
-            else:
-                preamble = f"{blob['person']} posted this on {blob['source_name']}:\n"
-            await send(channel, preamble + blob['url'])
-
-    @cmd_header('Commands')
-    async def resources(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!resources {args}` Useful pages related to `args`. Examples: 'tournaments', 'card Naturalize', 'deckcheck', 'league'."""
-        results = {}
-        if len(args) > 0:
-            results.update(resources_resources(args))
-            results.update(site_resources(args))
-        s = ''
-        if len(results) == 0:
-            s = 'PD resources: <{url}>'.format(url=fetcher.decksite_url('/resources/'))
-        elif len(results) > 10:
-            s = '{author}: Too many results, please be more specific.'.format(author=author.mention)
-        else:
-            for url, text in results.items():
-                s += '{text}: <{url}>\n'.format(text=text, url=url)
-        await send(channel, s)
-
-    @cmd_header('Developer')
-    async def restartbot(self, client: Client, channel: TextChannel, **_: Dict[str, Any]) -> None:
-        """Restart the bot."""
-        await send(channel, 'Rebooting!')
-        await client.logout()
-
-    @cmd_header('Commands')
-    async def spoiler(self, client: Client, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """`!spoiler {cardname}`: Request a card from an upcoming set."""
-        if len(args) == 0:
-            return await send(channel, '{author}: Please specify a card name.'.format(author=author.mention))
-        sfcard = fetcher.internal.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=args))
-        if sfcard['object'] == 'error':
-            return await send(channel, '{author}: {details}'.format(author=author.mention, details=sfcard['details']))
-        imagename = '{set}_{number}'.format(set=sfcard['set'], number=sfcard['collector_number'])
-        imagepath = '{image_dir}/{imagename}.jpg'.format(image_dir=configuration.get('image_dir'), imagename=imagename)
-        if sfcard.get('card_faces') and sfcard.get('layout', '') != 'split':
-            c = sfcard['card_faces'][0]
-        else:
-            c = sfcard
-        fetcher.internal.store(c['image_uris']['normal'], imagepath)
-        text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=c['mana_cost']), client)
-        await send(channel, file=File(imagepath), content=text)
-        oracle.scryfall_import(sfcard['name'])
+    ctx = await client.get_context(message, cls=MtgContext)
+    await client.invoke(ctx)
 
 def parse_queries(content: str) -> List[str]:
     to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, re.DOTALL) # Ignore angle brackets inside backticks. It's annoying in #code.
@@ -310,46 +127,7 @@ async def single_card_text(client: Client, channel: TextChannel, args: str, auth
         message = f'**{name}** {info_emoji} {text}'
         await send(channel, message)
 
-def site_resources(args: str) -> Dict[str, str]:
-    results = {}
-    match = re.match('^s? ?([0-9]*|all) +', args)
-    if match:
-        season_prefix = 'seasons/' + match.group(1)
-        args = args.replace(match.group(0), '', 1).strip()
-    else:
-        season_prefix = ''
-    if ' ' in args:
-        area, detail = args.split(' ', 1)
-    else:
-        area, detail = args, ''
-    if area == 'archetype':
-        area = 'archetypes'
-    if area == 'card':
-        area = 'cards'
-    if area == 'person':
-        area = 'people'
-    sitemap = fetcher.sitemap()
-    matches = [endpoint for endpoint in sitemap if endpoint.startswith('/{area}/'.format(area=area))]
-    if len(matches) > 0:
-        detail = '{detail}/'.format(detail=fetcher.internal.escape(detail, True)) if detail else ''
-        url = fetcher.decksite_url('{season_prefix}/{area}/{detail}'.format(season_prefix=season_prefix, area=fetcher.internal.escape(area), detail=detail))
-        results[url] = args
-    return results
 
-def resources_resources(args: str) -> Dict[str, str]:
-    results = {}
-    words = args.split()
-    resources = fetcher.resources()
-    for title, items in resources.items():
-        for text, url in items.items():
-            asked_for_this_section_only = len(words) == 1 and roughly_matches(title, words[0])
-            asked_for_this_section_and_item = len(words) == 2 and roughly_matches(title, words[0]) and roughly_matches(text, words[1])
-            asked_for_this_item_only = len(words) == 1 and roughly_matches(text, words[0])
-            the_whole_thing_sounds_right = roughly_matches(text, ' '.join(words))
-            the_url_matches = roughly_matches(url, ' '.join(words))
-            if asked_for_this_section_only or asked_for_this_section_and_item or asked_for_this_item_only or the_whole_thing_sounds_right or the_url_matches:
-                results[url] = text
-    return results
 
 async def post_cards(
         client: Client,

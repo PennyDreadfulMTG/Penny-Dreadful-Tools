@@ -4,6 +4,7 @@ from discord.ext import commands
 from discordbot.command import MtgContext
 from shared import configuration
 
+
 @commands.command
 async def configure(ctx: MtgContext, scope: str, setting: str) -> None:
     if scope == 'channel':

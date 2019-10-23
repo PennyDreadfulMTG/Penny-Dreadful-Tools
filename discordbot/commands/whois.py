@@ -23,4 +23,7 @@ async def whois(ctx: MtgContext, *, args: str) -> None:
         if person is None or person.get('discord_id') is None:
             await ctx.send(f"I don't know who **{args}** is :frowning:")
             return
+        if person.get('name') is None:
+            await ctx.send(f"I know this person but I don't know their name. That's weird. Here's what I know: {person}")
+            return
         await ctx.send(f"**{person['name']}** is <@{person['discord_id']}>")

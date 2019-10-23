@@ -83,7 +83,7 @@ def get_container_list(key: str) -> Optional[List[Container]]:
             return [Container(d) for d in val]
     return None
 
-T = TypeVar('T', dict, list, str, bool, covariant=True)
+T = TypeVar('T', dict, list, str, bool, int, covariant=True)
 
 def store(key: str, val: T, **kwargs: Any) -> T:
     if REDIS is not None:
@@ -95,6 +95,38 @@ def store(key: str, val: T, **kwargs: Any) -> T:
             pass
     return val
 
+
+def set_raw(key: str, val: T, **kwargs: Any) -> T:
+    if REDIS is not None:
+        try:
+            REDIS.set(key, val, **kwargs)
+        except redislib.exceptions.BusyLoadingError:
+            pass
+        except redislib.exceptions.ConnectionError:
+            pass
+    return val
+
+
+def increment(key: str, **kwargs: Any) -> Optional[int]:
+    if REDIS is not None:
+        try:
+            return REDIS.incr(key, **kwargs) # type: ignore
+        except redislib.exceptions.BusyLoadingError:
+            pass
+        except redislib.exceptions.ConnectionError:
+            pass
+    return None
+
 def clear(*keys: str) -> None:
     if REDIS is not None:
         REDIS.delete(*keys) # type: ignore
+
+
+def expire(key: str, time: int) -> None:
+    if REDIS is not None:
+        try:
+            REDIS.expire(key, time) # type: ignore
+        except redislib.exceptions.BusyLoadingError:
+            pass
+        except redislib.exceptions.ConnectionError:
+            pass

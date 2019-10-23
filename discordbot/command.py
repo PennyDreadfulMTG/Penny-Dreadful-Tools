@@ -2,13 +2,11 @@ import collections
 import datetime
 import random
 import re
-import time
 import traceback
 from copy import copy
 from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple
 
-import discord
-from discord import FFmpegPCMAudio, File
+from discord import File
 from discord.channel import TextChannel
 from discord.client import Client
 from discord.ext import commands
@@ -131,98 +129,6 @@ def cmd_header(group: str) -> Callable:
 
 # pylint: disable=too-many-public-methods, too-many-lines
 class Commands:
-    @cmd_header('Configuration')
-    async def configure(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        try:
-            mode, args = args.split(' ', 1)
-        except ValueError:
-            await send(channel, '`!configure {server|channel} {SETTING=VALUE}.')
-            return
-        if mode == 'channel':
-            if not author.permissions_in(channel).manage_channels:
-                await send(channel, "You don't have permsssion to configure this channel.")
-                return
-            configuring = channel.id
-        elif mode in ['server', 'guild']:
-            if not author.guild_permissions.manage_channels:
-                await send(channel, "You don't have permsssion to configure this server.")
-                return
-            configuring = channel.guild.id
-        else:
-            await send(channel, 'You need to configure one of `server` or `channel`.')
-            return
-        try:
-            key, value = args.split('=', 1)
-        except ValueError:
-            await send(channel, '`!configure {server|channel} {SETTING=VALUE}.')
-            return
-
-        configuration.write(f'{configuring}.{key}', value)
-
-    @cmd_header('Commands')
-    async def help(self, channel: TextChannel, args: str, author: Member, ** _: Dict[str, Any]) -> None:
-        """`!help` Bot commands help."""
-        if args:
-            msg = build_help(cmd=args)
-        else:
-            msg = """[cardname] to get card details.
-"""
-            msg += build_help()
-            msg += """
-
-Suggestions/bug reports: <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Discord-Bot/issues/>
-
-Want to contribute? Send a Pull Request."""
-
-        dm_channel = author.dm_channel
-        if dm_channel is None:
-            dm_channel = await author.create_dm()
-
-        try:
-            if len(msg) > 2000:
-                await send(dm_channel, msg[0:1999] + '…')
-            else:
-                await send(dm_channel, msg)
-        except discord.errors.Forbidden:
-            await send(channel, f"{author.mention}: I can't send you the help text because you have blocked me.")
-
-    @cmd_header('Commands')
-    async def modofail(self, channel: TextChannel, args: str, author: Member, **_: Dict[str, Any]) -> None:
-        """Ding!"""
-        if args.lower() == 'reset':
-            self.modofail.count = 0
-        if hasattr(author, 'voice') and author.voice is not None and author.voice.channel is not None:
-            voice_channel = author.voice.channel
-            voice = channel.guild.voice_client
-            if voice is None:
-                voice = await voice_channel.connect()
-            elif voice.channel != voice_channel:
-                voice.move_to(voice_channel)
-            voice.play(FFmpegPCMAudio('ding.ogg'))
-        if time.time() > self.modofail.last_fail + 60 * 60:
-            self.modofail.count = 0
-        self.modofail.count += 1
-        self.modofail.last_fail = time.time()
-        await send(channel, ':bellhop: **MODO fail** {0}'.format(self.modofail.count))
-    modofail.count = 0
-    modofail.last_fail = time.time()
-
-    @cmd_header('Configuration')
-    async def notpenny(self, channel: TextChannel, args: str, **_: Dict[str, Any]) -> None:
-        """Don't show PD Legality in this channel"""
-        existing = configuration.get_list('not_pd')
-        if args == 'server' and getattr(channel, 'guild', None) is not None:
-            cid = channel.guild.id
-        else:
-            cid = channel.id
-        if str(cid) not in existing:
-            existing.append(str(cid))
-            configuration.write('not_pd', set(existing))
-        if args == 'server':
-            await send(channel, 'Disable PD legality marks for the entire server')
-        else:
-            await send(channel, 'Disable PD legality marks for this channel. If you wanted to disable for the entire server, use `!notpenny server` instead.')
-
     isPack1Pick1Ready = True
 
     @cmd_header('Commands')

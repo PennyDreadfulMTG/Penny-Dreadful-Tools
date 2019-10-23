@@ -1,7 +1,8 @@
 from discord.ext import commands
 
-from discordbot.command import MtgContext, MAX_CARDS_SHOWN
-from magic import oracle, fetcher
+from discordbot.command import MAX_CARDS_SHOWN, MtgContext
+from magic import fetcher, oracle
+
 
 @commands.command(aliases=['s', 'scry', 'scryfall', 'se'])
 async def search(ctx: MtgContext, *, args: str) -> None:

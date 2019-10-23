@@ -1,7 +1,8 @@
 from discord.ext import commands
 
-from discordbot.command import MtgContext
 from discordbot import emoji
+from discordbot.command import MtgContext
+
 
 @commands.command
 async def echo(ctx: MtgContext, *, args: str) -> None:

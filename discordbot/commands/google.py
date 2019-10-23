@@ -5,6 +5,7 @@ from googleapiclient.errors import HttpError
 from discordbot.command import MtgContext
 from shared import configuration
 
+
 @commands.command(aliases=['g'])
 async def google(ctx: MtgContext, *, args: str) -> None:
     """`!google {args}` Google for `args`."""

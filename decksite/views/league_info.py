@@ -16,6 +16,7 @@ class LeagueInfo(View):
         self.report_url = url_for('report')
         self.records_url = url_for('current_league')
         self.retire_url = url_for('retire')
+        self.bugs_url = url_for('tournaments', _anchor='bugs')
 
     def page_title(self):
         return 'League'

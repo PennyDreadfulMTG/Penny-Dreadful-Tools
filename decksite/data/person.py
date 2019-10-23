@@ -85,7 +85,7 @@ def load_person(where: str, season_id: Optional[int] = None) -> Person:
     set_head_to_head([person], season_id)
     return person
 
-def load_people(where: str = '1 = 1',
+def load_people(where: str = 'TRUE',
                 order_by: str = '`num_decks` DESC, name',
                 season_id: Optional[int] = None) -> Sequence[Person]:
     sql = """

@@ -34,8 +34,8 @@ def load_season(season_id: int = None, league_only: bool = False) -> Container:
     return season
 
 # pylint: disable=attribute-defined-outside-init
-def load_decks(where: str = '1 = 1',
-               having: str = '1 = 1',
+def load_decks(where: str = 'TRUE',
+               having: str = 'TRUE',
                order_by: Optional[str] = None,
                limit: str = '',
                season_id: Optional[int] = None
@@ -126,8 +126,8 @@ def deserialize_deck(sdeck: Container) -> Deck:
     deck.sideboard = [CardRef(ref['name'], ref['n']) for ref in deck.sideboard]
     return deck
 
-def load_decks_heavy(where: str = '1 = 1',
-                     having: str = '1 = 1',
+def load_decks_heavy(where: str = 'TRUE',
+                     having: str = 'TRUE',
                      order_by: Optional[str] = None,
                      limit: str = '',
                      season_id: Optional[int] = None
@@ -621,6 +621,6 @@ def nwdl_join() -> str:
             ) AS dsum ON d.id = dsum.id
     """
 
-def num_decks(deck_query: str = '1 = 1') -> int:
+def num_decks(deck_query: str = 'TRUE') -> int:
     sql = f'SELECT COUNT(id) AS c FROM deck WHERE {deck_query}'
     return db().value(sql)

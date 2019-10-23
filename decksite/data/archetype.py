@@ -37,7 +37,7 @@ def load_archetype(archetype: Union[int, str], season_id: int = None) -> Archety
     arch.decks_tournament = arch.get('decks_tournament', [])
     return arch
 
-def load_archetypes(where: str = '1 = 1', merge: bool = False, season_id: int = None) -> List[Archetype]:
+def load_archetypes(where: str = 'TRUE', merge: bool = False, season_id: int = None) -> List[Archetype]:
     decks = deck.load_decks(where, season_id=season_id)
     archetypes: Dict[str, Archetype] = {}
     for d in decks:
@@ -72,7 +72,15 @@ def load_archetypes(where: str = '1 = 1', merge: bool = False, season_id: int = 
     archetype_list = list(archetypes.values())
     return archetype_list
 
-def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, name', season_id: int = None, retry: bool = False) -> List[Archetype]:
+def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, name', person_id: Optional[int] = None, season_id: Optional[int] = None, retry: bool = False) -> List[Archetype]:
+    if person_id:
+        table = '_archetype_person_stats'
+        where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
+        group_by = 'ars.person_id, a.id'
+    else:
+        table = '_archetype_stats'
+        where = 'TRUE'
+        group_by = 'a.id'
     sql = """
         SELECT
             a.id,
@@ -97,17 +105,17 @@ def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, nam
         FROM
             archetype AS a
         LEFT JOIN
-            _archetype_stats AS ars ON a.id = ars.archetype_id
+            {table} AS ars ON a.id = ars.archetype_id
         LEFT JOIN
             archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
         WHERE
-            {season_query}
+            ({where}) AND ({season_query})
         GROUP BY
-            a.id,
+            {group_by},
             aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
         ORDER BY
             {order_by}
-    """.format(season_query=query.season_query(season_id), order_by=order_by)
+    """.format(table=table, where=where, group_by=group_by, season_query=query.season_query(season_id), order_by=order_by)
     try:
         archetypes = [Archetype(a) for a in db().select(sql)]
         archetypes_by_id = {a.id: a for a in archetypes}
@@ -119,8 +127,8 @@ def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, nam
     except DatabaseException as e:
         if not retry:
             print(f"Got {e} trying to load_archetypes_deckless so trying to preaggregate. If this is happening on user time that's undesirable.")
-            preaggregate_archetypes()
-            return load_archetypes_deckless(order_by=order_by, season_id=season_id, retry=True)
+            preaggregate()
+            return load_archetypes_deckless(order_by=order_by, person_id=person_id, season_id=season_id, retry=True)
         print(f'Failed to preaggregate. Giving up.')
         raise e
 
@@ -236,6 +244,7 @@ def rebuild_archetypes() -> None:
 
 def preaggregate() -> None:
     preaggregate_archetypes()
+    preaggregate_archetype_person()
     preaggregate_matchups()
 
 def preaggregate_archetypes() -> None:
@@ -244,12 +253,14 @@ def preaggregate_archetypes() -> None:
         CREATE TABLE IF NOT EXISTS _new_archetype_stats (
             archetype_id INT NOT NULL,
             season_id INT NOT NULL,
+            num_decks INT NOT NULL,
             wins INT NOT NULL,
             losses INT NOT NULL,
             draws INT NOT NULL,
             perfect_runs INT NOT NULL,
             tournament_wins INT NOT NULL,
             tournament_top8s INT NOT NULL,
+            num_decks_tournament INT NOT NULL,
             wins_tournament INT NOT NULL,
             losses_tournament INT NOT NULL,
             draws_tournament INT NOT NULL,
@@ -295,6 +306,71 @@ def preaggregate_archetypes() -> None:
     db().execute('DROP TABLE IF EXISTS _old_archetype_stats')
     db().execute('CREATE TABLE IF NOT EXISTS _archetype_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
     db().execute('RENAME TABLE _archetype_stats TO _old_archetype_stats, _new_archetype_stats TO _archetype_stats')
+    db().execute('DROP TABLE IF EXISTS _old_archetype_stats')
+
+def preaggregate_archetype_person() -> None:
+    # This preaggregation fails if I use the obvious name _new_archetype_person_stats but works with any other name. It's confusing.
+    db().execute('DROP TABLE IF EXISTS _new_ap_stats')
+    sql = """
+        CREATE TABLE IF NOT EXISTS _new_ap_stats (
+            archetype_id INT NOT NULL,
+            person_id INT NOT NULL,
+            season_id INT NOT NULL,
+            num_decks INT NOT NULL,
+            wins INT NOT NULL,
+            losses INT NOT NULL,
+            draws INT NOT NULL,
+            perfect_runs INT NOT NULL,
+            tournament_wins INT NOT NULL,
+            tournament_top8s INT NOT NULL,
+            num_decks_tournament INT NOT NULL,
+            wins_tournament INT NOT NULL,
+            losses_tournament INT NOT NULL,
+            draws_tournament INT NOT NULL,
+            PRIMARY KEY (person_id, season_id, archetype_id),
+            FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+        SELECT
+            a.id AS archetype_id,
+            d.person_id,
+            season.id AS season_id,
+            SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
+            IFNULL(SUM(wins), 0) AS wins,
+            IFNULL(SUM(losses), 0) AS losses,
+            IFNULL(SUM(draws), 0) AS draws,
+            SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
+            SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
+            SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
+            SUM(CASE WHEN (d.id IS NOT NULL) AND (ct.name = 'Gatherling') THEN 1 ELSE 0 END) AS num_decks_tournament,
+            IFNULL(SUM(CASE WHEN ct.name = 'Gatherling' THEN wins ELSE 0 END), 0) AS wins_tournament,
+            IFNULL(SUM(CASE WHEN ct.name = 'Gatherling' THEN losses ELSE 0 END), 0) AS losses_tournament,
+            IFNULL(SUM(CASE WHEN ct.name = 'Gatherling' THEN draws ELSE 0 END), 0) AS draws_tournament
+        FROM
+            archetype AS a
+        LEFT JOIN
+            archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
+        LEFT JOIN
+            archetype_closure AS acd ON a.id = acd.ancestor
+        LEFT JOIN
+            deck AS d ON acd.descendant = d.archetype_id
+        {competition_join}
+        {season_join}
+        {nwdl_join}
+        GROUP BY
+            a.id,
+            d.person_id,
+            season.id
+        HAVING
+            season.id IS NOT NULL
+    """.format(competition_join=query.competition_join(),
+               season_join=query.season_join(),
+               nwdl_join=deck.nwdl_join())
+    db().execute(sql)
+    db().execute('DROP TABLE IF EXISTS _old_archetype_person_stats')
+    db().execute('CREATE TABLE IF NOT EXISTS _archetype_person_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
+    db().execute('RENAME TABLE _archetype_person_stats TO _old_archetype_person_stats, _new_ap_stats TO _archetype_person_stats')
     db().execute('DROP TABLE IF EXISTS _old_archetype_stats')
 
 def preaggregate_matchups() -> None:

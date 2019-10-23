@@ -68,7 +68,8 @@ def lint(argv: List[str]) -> None:
             '-j', '4' # Use four cores for speed.
            ]
     args.extend(argv or LINT_PATHS)
-    import pylint.lint  # pylint: disable=import-outside-toplevel
+    # pylint: disable=import-outside-toplevel
+    import pylint.lint
     linter = pylint.lint.Run(args, do_exit=False)
     if linter.linter.msg_status:
         sys.exit(linter.linter.msg_status)
@@ -90,6 +91,7 @@ def mypy(argv: List[str], strict: bool = False) -> None:
     args.extend(argv or [
         '.'                             # Invoke on the entire project.
         ])
+    # pylint: disable=import-outside-toplevel
     from mypy import api
     result = api.run(args)
 
@@ -109,7 +111,8 @@ def tests(argv: List[str]) -> None:
     """
     Literally just prepare the DB and then invoke pytest.
     """
-    import pytest  # pylint: disable=import-outside-toplevel
+    # pylint: disable=import-outside-toplevel
+    import pytest
     from magic import multiverse, oracle
     multiverse.init()
     oracle.init()
@@ -121,6 +124,7 @@ def tests(argv: List[str]) -> None:
 
 # pylint: disable=pointless-statement
 def upload_coverage() -> None:
+    # pylint: disable=import-outside-toplevel
     from shared import fetcher_internal
     try:
         fetcher_internal.store('https://codecov.io/bash', 'codecov.sh')

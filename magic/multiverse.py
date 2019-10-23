@@ -192,7 +192,7 @@ def insert_cards(printings: List[CardDescription]) -> None:
     colors_raw = db().select('SELECT id, symbol FROM color ORDER BY id;')
     colors = {c['symbol'].upper(): c['id'] for c in colors_raw}
 
-    sets = {s['code']: s['id'] for s in db().select('SELECT id, code FROM `set`')}
+    sets = load_sets()
 
     next_card_id = (db().value('SELECT MAX(id) FROM card') or 0) + 1
 
@@ -213,7 +213,9 @@ def insert_cards(printings: List[CardDescription]) -> None:
         try:
             set_id = sets[p['set']]
         except KeyError:
-            raise InvalidDataException(f"We think we should have set {p['set']} but it's not in {sets} (from {p})")
+            print(f"We think we should have set {p['set']} but it's not in {sets} (from {p}) so updating sets")
+            sets = update_sets()
+            set_id = sets[p['set']]
 
         # If we already have the card, all we need is to record the next printing of it
         if p['name'] in cards:
@@ -373,6 +375,9 @@ def is_meld_result(p: CardDescription) -> bool:
     meld_result_name = next(part['name'] for part in all_parts if part['component'] == 'meld_result')
     return p['name'] == meld_result_name
 
+def load_sets() -> dict:
+    return {s['code']: s['id'] for s in db().select('SELECT id, code FROM `set`')}
+
 def insert_set(s: Any) -> int:
     sql = 'INSERT INTO `set` ('
     sql += ', '.join(name for name, prop in card.set_properties().items() if prop['scryfall'])
@@ -382,6 +387,13 @@ def insert_set(s: Any) -> int:
     values = [date2int(s.get(database2json(name)), name) for name, prop in card.set_properties().items() if prop['scryfall']]
     db().execute(sql, values)
     return db().last_insert_rowid()
+
+def update_sets() -> dict:
+    sets = load_sets()
+    for s in fetcher.all_sets():
+        if s['code'] not in sets.keys():
+            insert_set(s)
+    return load_sets()
 
 def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int, rarity: str) -> str:
     # pylint: disable=too-many-locals

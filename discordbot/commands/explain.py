@@ -120,12 +120,7 @@ async def explain(ctx: MtgContext, *, args: str) -> None:
             Cards from the just-released set are added (nothing removed) three weeks later via a supplemental rotation after prices have settled a little.
             Any version of a card on the legal cards list is legal.
             """,
-            {
-                'Deck Checker': 'https://pennydreadfulmagic.com/deckcheck/',
-                'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt',
-                'Rotation Speculation': fetcher.decksite_url('/rotation/speculation/'),
-                'Rotation Changes': fetcher.decksite_url('/rotation/changes/')
-            }
+            {}
         ),
         'spectating': (
             """

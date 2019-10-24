@@ -315,7 +315,9 @@ class Bot(commands.Bot):
             last_run_time = rotation.last_run_time()
             if until_rotation < datetime.timedelta(7) and last_run_time is not None:
                 if dtutil.now() - last_run_time < datetime.timedelta(minutes=5):
-                    await channel.send(rotation_hype_message())
+                    hype = rotation_hype_message()
+                    if hype:
+                        await channel.send(hype)
                 timer = 5 * 60
             else:
                 timer = int((until_rotation - datetime.timedelta(7)).total_seconds())
@@ -336,7 +338,7 @@ async def get_role(guild: Guild, rolename: str, create: bool = False) -> Optiona
         return await guild.create_role(name=rolename)
     return None
 
-def rotation_hype_message() -> str:
+def rotation_hype_message() -> Optional[str]:
     runs, runs_percent, cs = rotation.read_rotation_files()
     if rotation.next_rotation_is_supplemental():
         cs = [c for c in cs if not c.pd_legal]
@@ -348,6 +350,8 @@ def rotation_hype_message() -> str:
     num_legal_cards = len([c for c in cs if c.status == 'Legal'])
     name = 'Supplemental rotation' if rotation.next_rotation_is_supplemental() else 'Rotation'
     s = f'{name} run number {runs} completed. {name} is {runs_percent}% complete. {num_legal_cards} cards confirmed.'
+    if newly_hit == 0 and newly_legal == 0 and newly_eliminated == 0 and runs not in [1, rotation.TOTAL_RUNS] and runs % 5 != 0:
+        return None # Sometimes there's nothing to report
     if len(newly_hit) > 0 and runs_remaining > runs:
         newly_hit_s = list_of_most_interesting(newly_hit)
         s += f'\nFirst hit for: {newly_hit_s}.'

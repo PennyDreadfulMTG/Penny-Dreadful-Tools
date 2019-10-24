@@ -95,18 +95,6 @@ def store(key: str, val: T, **kwargs: Any) -> T:
             pass
     return val
 
-
-def set_raw(key: str, val: T, **kwargs: Any) -> T:
-    if REDIS is not None:
-        try:
-            REDIS.set(key, val, **kwargs)
-        except redislib.exceptions.BusyLoadingError:
-            pass
-        except redislib.exceptions.ConnectionError:
-            pass
-    return val
-
-
 def increment(key: str, **kwargs: Any) -> Optional[int]:
     if REDIS is not None:
         try:

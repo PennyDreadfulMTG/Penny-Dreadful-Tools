@@ -11,7 +11,7 @@ from shared import redis
 async def modofail(ctx: MtgContext, args: Optional[str]) -> None:
     """Ding!"""
     if args is not None and args.lower() == 'reset':
-        redis.set_raw(f'modofail:{ctx.guild}', 0, ex=3600)
+        redis.clear(f'modofail:{ctx.guild}')
     if hasattr(ctx.author, 'voice') and ctx.author.voice is not None and ctx.author.voice.channel is not None:
         voice_channel = ctx.author.voice.channel
         voice = ctx.channel.guild.voice_client

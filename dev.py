@@ -103,8 +103,6 @@ def mypy(argv: List[str], strict: bool = False) -> None:
 
     print('Exit status: {code} ({english})'.format(code=result[2], english='Failure' if result[2] else 'Success'))
     if result[2]:
-        n = len(result[0].strip().split('\n'))
-        print(f'{n} issues')
         sys.exit(result[2])
 
 def tests(argv: List[str]) -> None:

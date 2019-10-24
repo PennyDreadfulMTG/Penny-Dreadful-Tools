@@ -7,7 +7,7 @@ from magic.models import Card
 
 @commands.command(aliases=['ru', 'rule'])
 async def rulings(ctx: MtgContext, *, c: Card) -> None:
-    """`!rulings {name}`Rulings for a card."""
+    """Rulings for a card."""
     await ctx.single_card_text(c, card_rulings)
 
 

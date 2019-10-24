@@ -11,8 +11,9 @@ from shared import configuration
 
 
 @commands.command()
-async def explain(ctx: MtgContext, *, args: Optional[str]) -> None:
-    """`!explain`. Get a list of things the bot knows how to explain.
+async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
+    """Answers for Frequently Asked Questions
+`!explain`. Get a list of things the bot knows how to explain.
 `!explain {thing}`. Print commonly needed explanation for 'thing'."""
     num_tournaments = inflect.engine().number_to_words(len(tournaments.all_series_info()))
     explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
@@ -190,9 +191,9 @@ async def explain(ctx: MtgContext, *, args: Optional[str]) -> None:
     explanations['spectate'] = explanations['spectating']
     explanations['verify'] = explanations['verification']
     # strip trailing 's' to make 'leagues' match 'league' and simliar without affecting the output of `!explain` to be unnecessarily plural.
-    if args is None:
-        args = ''
-    word = args.lower().replace(' ', '').rstrip('s')
+    if thing is None:
+        thing = ''
+    word = thing.lower().replace(' ', '').rstrip('s')
     if len(word) > 0:
         for k in explanations:
             if k.startswith(word):

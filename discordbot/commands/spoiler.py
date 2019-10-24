@@ -9,7 +9,7 @@ from shared import configuration
 
 @commands.command(aliases=['sp', 'spoil'])
 async def spoiler(ctx: MtgContext, *, args: str) -> None:
-    """`!spoiler {cardname}`: Request a card from an upcoming set."""
+    """Request a card from an upcoming set."""
     if len(args) == 0:
         return await ctx.send('{author}: Please specify a card name.'.format(author=ctx.author.mention))
     sfcard = fetcher.internal.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=args))

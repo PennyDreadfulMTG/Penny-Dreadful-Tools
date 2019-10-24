@@ -9,7 +9,7 @@ from magic import fetcher
 
 @commands.command(aliases=['res', 'pdm'])
 async def resources(ctx: MtgContext, *, args: Optional[str]) -> None:
-    """`!resources {args}` Useful pages related to `args`. Examples: 'tournaments', 'card Naturalize', 'deckcheck', 'league'."""
+    """Useful pages related to `args`. Examples: 'tournaments', 'card Naturalize', 'deckcheck', 'league'."""
     results = {}
     if args is None:
         args = ''

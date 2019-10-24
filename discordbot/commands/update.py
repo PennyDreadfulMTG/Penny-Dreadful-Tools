@@ -4,7 +4,7 @@ from discordbot.command import MtgContext
 from magic import multiverse, oracle
 
 
-@commands.command()
+@commands.command(hidden=True)
 async def update(ctx: MtgContext) -> None:
     """Forces an update to legal cards and bugs."""
     multiverse.set_legal_cards()

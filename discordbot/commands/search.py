@@ -6,7 +6,7 @@ from magic import fetcher, oracle
 
 @commands.command(aliases=['s', 'scry', 'scryfall', 'se'])
 async def search(ctx: MtgContext, *, args: str) -> None:
-    """`!search {query}` Card search using Scryfall."""
+    """Card search using Scryfall."""
     how_many, cardnames = fetcher.search_scryfall(args)
     cbn = oracle.cards_by_name()
     cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]

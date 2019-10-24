@@ -7,5 +7,5 @@ from magic.models import Card
 
 @commands.command(aliases=['p', 'pr'])
 async def price(ctx: MtgContext, *, c: Card) -> None:
-    """`!price {name}` Price information for a card."""
+    """Price information for a card."""
     await ctx.single_card_text(c, fetcher.card_price_string)

@@ -8,7 +8,7 @@ from shared import configuration
 
 @commands.command(aliases=['g'])
 async def google(ctx: MtgContext, *, args: str) -> None:
-    """`!google {args}` Google for `args`."""
+    """Google search"""
     api_key = configuration.get('cse_api_key')
     cse_id = configuration.get('cse_engine_id')
     if api_key is None or cse_id is None:

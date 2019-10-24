@@ -5,9 +5,9 @@ from magic import fetcher, tournaments
 from shared import dtutil
 
 
-@commands.command('Commands', aliases=['to', 'tournaments'])
+@commands.command(aliases=['to', 'tournaments'])
 async def tournament(ctx: MtgContext) -> None:
-    """`!tournament` Information about the next tournament."""
+    """Information about the next tournament."""
     t = tournaments.next_tournament_info()
     prev = tournaments.previous_tournament_info()
     if prev['near']:

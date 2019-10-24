@@ -11,7 +11,7 @@ from shared.pd_exception import NotConfiguredException, TooFewItemsException
 
 @commands.command(aliases=['t'])
 async def time(ctx: MtgContext, *, args: str) -> None:
-    """`!time {location}` Current time in location."""
+    """Current time in location."""
     if len(args) == 0:
         return await ctx.send('{author}: No location provided. Please type !time followed by the location you want the time for.'.format(author=ctx.author.mention))
     try:

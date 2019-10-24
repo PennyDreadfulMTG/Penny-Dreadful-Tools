@@ -1,4 +1,5 @@
 import random
+
 from discord.ext import commands
 
 from discordbot.command import MtgContext
@@ -7,7 +8,7 @@ from magic import oracle
 
 @commands.command(aliases=['r', 'rand', 'random'])
 async def randomcard(ctx: MtgContext, number: int = 1) -> None:
-    """`!random` A random PD legal card.
+    """A random PD legal card.
 `!random X` X random PD legal cards."""
     additional_text = ''
     if number > 10:

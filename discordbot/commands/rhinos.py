@@ -9,7 +9,7 @@ from magic.models import Card
 
 @commands.command(aliases=['rhino'])
 async def rhinos(ctx: MtgContext) -> None:
-    """`!rhinos` Anything can be a rhino if you try hard enough"""
+    """Anything can be a rhino if you try hard enough"""
     rhino_name = 'Siege Rhino'
     if random.random() < 0.05:
         rhino_name = 'Abundant Maw'

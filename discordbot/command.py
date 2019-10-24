@@ -151,7 +151,8 @@ async def post_cards(
     if len(cards) > MAX_CARDS_SHOWN:
         image_file = None
     else:
-        image_file = image_fetcher.download_image(cards)
+        with channel.typing():
+            image_file = await image_fetcher.download_image_async(cards)
     if image_file is None:
         text += '\n\n'
         if len(cards) == 1:

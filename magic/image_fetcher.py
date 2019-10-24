@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 import math
 import os
@@ -55,14 +56,14 @@ def download_bluebones_image(cards: List[Card], filepath: str) -> bool:
         print('Error: {e}'.format(e=e))
     return internal.acceptable_file(filepath)
 
-def download_scryfall_image(cards: List[Card], filepath: str, version: str = '') -> bool:
+async def download_scryfall_image(cards: List[Card], filepath: str, version: str = '') -> bool:
     card_names = ', '.join(card.name for card in cards)
     print(f'Trying to get scryfall images for {card_names}')
     image_filepaths = []
     for card in cards:
         card_filepath = determine_filepath([card])
         if not internal.acceptable_file(card_filepath):
-            download_scryfall_card_image(card, card_filepath, version)
+            await download_scryfall_card_image(card, card_filepath, version)
         if internal.acceptable_file(card_filepath):
             image_filepaths.append(card_filepath)
     if len(image_filepaths) > 1:
@@ -85,19 +86,19 @@ def download_scryfall_png(card: Card) -> Optional[str]:
         return file_path
     return None
 
-def download_scryfall_card_image(card: Card, filepath: str, version: str = '') -> bool:
+async def download_scryfall_card_image(card: Card, filepath: str, version: str = '') -> bool:
     try:
         if card.is_double_sided():
             paths = [re.sub('.jpg$', '.a.jpg', filepath), re.sub('.jpg$', '.b.jpg', filepath)]
-            internal.store(scryfall_image(card, version=version), paths[0])
+            await internal.store_async(scryfall_image(card, version=version), paths[0])
             if card.layout == 'transform':
-                internal.store(scryfall_image(card, version=version, face='back'), paths[1])
+                await internal.store_async(scryfall_image(card, version=version, face='back'), paths[1])
             if card.layout == 'meld':
-                internal.store(scryfall_image(card, version=version, face='meld'), paths[1])
+                await internal.store_async(scryfall_image(card, version=version, face='meld'), paths[1])
             if (internal.acceptable_file(paths[0]) and internal.acceptable_file(paths[1])):
                 save_composite_image(paths, filepath)
         else:
-            internal.store(scryfall_image(card, version=version), filepath)
+            await internal.store_async(scryfall_image(card, version=version), filepath)
     except FetchException as e:
         print('Error: {e}'.format(e=e))
     return internal.acceptable_file(filepath)
@@ -111,11 +112,21 @@ def determine_filepath(cards: List[Card], prefix: str = '') -> str:
     directory = configuration.get('image_dir')
     return f'{directory}/{prefix}{filename}'
 
+
 def download_image(cards: List[Card]) -> Optional[str]:
+    event_loop = None
+    try:
+        event_loop = asyncio.get_event_loop()
+    except RuntimeError:
+        event_loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(event_loop)
+    return event_loop.run_until_complete(download_image_async(cards))
+
+async def download_image_async(cards: List[Card]) -> Optional[str]:
     filepath = determine_filepath(cards)
     if internal.acceptable_file(filepath):
         return filepath
-    if download_scryfall_image(cards, filepath, version='border_crop'):
+    if await download_scryfall_image(cards, filepath, version='border_crop'):
         return filepath
     if download_bluebones_image(cards, filepath):
         return filepath

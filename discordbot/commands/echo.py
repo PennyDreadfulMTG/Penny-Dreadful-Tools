@@ -4,7 +4,7 @@ from discordbot import emoji
 from discordbot.command import MtgContext
 
 
-@commands.command
+@commands.command()
 async def echo(ctx: MtgContext, *, args: str) -> None:
     """Repeat after me…"""
     s = emoji.replace_emoji(args, ctx.bot)

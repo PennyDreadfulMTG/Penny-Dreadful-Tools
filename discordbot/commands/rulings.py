@@ -18,4 +18,4 @@ def card_rulings(c: Card) -> str:
         n = len(comments) - 2
         comments = comments[:2]
         comments.append('And {n} others.  See <https://scryfall.com/search?q=%21%22{cardname}%22#rulings>'.format(n=n, cardname=fetcher.internal.escape(c.name)))
-    return '\n'.join(rulings) or 'No rulings available.'
+    return '\n'.join(comments) or 'No rulings available.'

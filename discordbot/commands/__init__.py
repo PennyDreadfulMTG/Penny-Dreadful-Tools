@@ -18,11 +18,15 @@ def setup(bot: Bot) -> None:
     files = [path.basename(f)[:-3] for f in modules if path.isfile(f) and not f.endswith('__init__.py')]
 
     for mod in files:
+        n = 0
         m = importlib.import_module(f'.{mod}', package=__name__)
         for name, obj in inspect.getmembers(m):
             if isinstance(obj, Command):
-                logging.info('Loaded !%s', name)
+                print('Loaded !%s' % name)
                 bot.add_command(obj)
+                n += 1
+        if n == 0:
+            print(f'No command found in {m.__name__}')
 
 
 class CardConverter:

@@ -1,5 +1,5 @@
 import re
-from typing import Dict
+from typing import Dict, Optional
 
 from discord.ext import commands
 
@@ -8,9 +8,11 @@ from magic import fetcher
 
 
 @commands.command(aliases=['res', 'pdm'])
-async def resources(ctx: MtgContext, *, args: str) -> None:
+async def resources(ctx: MtgContext, *, args: Optional[str]) -> None:
     """`!resources {args}` Useful pages related to `args`. Examples: 'tournaments', 'card Naturalize', 'deckcheck', 'league'."""
     results = {}
+    if args is None:
+        args = ''
     if len(args) > 0:
         results.update(resources_resources(args))
         results.update(site_resources(args))

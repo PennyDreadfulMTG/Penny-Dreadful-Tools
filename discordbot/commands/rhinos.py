@@ -23,8 +23,8 @@ async def rhinos(ctx: MtgContext) -> None:
     copy_rhino = find_rhino('o:"copy of target creature"')
     zombie_rhino = find_rhino('o:"return target creature card from your graveyard to the battlefield"')
     tutor_rhino = find_rhino('o:"search your library for a creature"')
-    msg = f'\nSo of course we have {og_rhino}.'
-    msg += f" And we have {copy_rhino}. It can become a rhino, so that's a rhino."
-    msg += f" Then there's {zombie_rhino}. It can get back one of our rhinos, so that's a rhino."
-    msg += f" And then we have {tutor_rhino}. It's a bit of a stretch, but that's a rhino too."
-    await ctx.post_cards(rhinos, additional_text=msg)
+    msg = f'\nSo of course we have {og_rhino.name}.'
+    msg += f" And we have {copy_rhino.name}. It can become a rhino, so that's a rhino."
+    msg += f" Then there's {zombie_rhino.name}. It can get back one of our rhinos, so that's a rhino."
+    msg += f" And then we have {tutor_rhino.name}. It's a bit of a stretch, but that's a rhino too."
+    await ctx.post_cards([og_rhino, copy_rhino, zombie_rhino, tutor_rhino], additional_text=msg)

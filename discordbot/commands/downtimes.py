@@ -4,6 +4,6 @@ from discordbot.command import MtgContext
 from magic import fetcher
 
 
-@commands.command
+@commands.command(aliases=['downtime', 'nextdowntime'])
 async def downtimes(ctx: MtgContext) -> None:
     await ctx.send(fetcher.downtimes())

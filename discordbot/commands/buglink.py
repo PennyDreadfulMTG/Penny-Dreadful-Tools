@@ -6,7 +6,7 @@ from magic.models import Card
 
 
 @commands.command(aliases=['bl'])
-async def art(ctx: MtgContext, *, c: Card) -> None:
+async def buglink(ctx: MtgContext, *, c: Card) -> None:
     """Link to the modo-bugs page for a card."""
     base_url = 'https://github.com/PennyDreadfulMTG/modo-bugs/issues'
     if c is None:

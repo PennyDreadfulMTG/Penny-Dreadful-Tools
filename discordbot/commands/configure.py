@@ -5,7 +5,7 @@ from discordbot.command import MtgContext
 from shared import configuration
 
 
-@commands.command
+@commands.command()
 async def configure(ctx: MtgContext, scope: str, setting: str) -> None:
     if scope == 'channel':
         if not ctx.author.permissions_in(ctx.channel).manage_channels:

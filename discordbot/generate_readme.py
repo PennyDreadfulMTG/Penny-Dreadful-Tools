@@ -1,8 +1,8 @@
 import os
 from typing import Set
 
-from discordbot.bot import Bot
 from discordbot import commands
+from discordbot.bot import Bot
 
 HEADER = """
 # Penny-Dreadful-Discord-Bot

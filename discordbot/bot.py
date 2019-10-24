@@ -8,11 +8,13 @@ import discord
 from discord import Guild, Member, Role, VoiceState
 from discord.activity import Streaming
 from discord.errors import Forbidden, NotFound
+from discord.ext import commands
 from discord.message import Message
 from discord.reaction import Reaction
 from discord.state import Status
 from github.GithubException import GithubException
 
+import discordbot.commands
 from discordbot import command
 from magic import fetcher, multiverse, oracle, rotation, tournaments
 from magic.card_description import CardDescription
@@ -35,10 +37,11 @@ def background_task(func: Callable) -> Callable:
     TASKS.append(wrapper)
     return wrapper
 
-class Bot(discord.Client):
-    def __init__(self) -> None:
+
+class Bot(commands.Bot):
+    def __init__(self, **kwargs: Any) -> None:
         self.launch_time = perf.start()
-        super().__init__()
+        super().__init__(command_prefix='!', **kwargs)
         self.voice = None
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:
@@ -48,6 +51,7 @@ class Bot(discord.Client):
         multiverse.init()
         multiverse.update_bugged_cards()
         oracle.init()
+        discordbot.commands.setup(self)
         self.run(configuration.get('token'))
 
     async def on_ready(self) -> None:
@@ -166,7 +170,8 @@ class Bot(discord.Client):
                     if search:
                         previous_command, suggestions = search.group(1, 2)
                         card = re.findall(r':[^:]*?: ([^:]*) ', suggestions + ' ')[command.DISAMBIGUATION_NUMBERS_BY_EMOJI[reaction.emoji]-1]
-                        message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[])
+                        # pylint: disable=protected-access
+                        message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[], _state=reaction.message._state)
                         await self.on_message(message)
                         await reaction.message.delete()
 

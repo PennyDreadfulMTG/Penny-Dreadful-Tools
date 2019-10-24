@@ -1,11 +1,8 @@
-import asyncio
 import types
 from typing import Any
 
 import discord
-import pytest
 
-from discordbot import command
 from shared import fetcher_internal
 
 
@@ -38,36 +35,36 @@ def generate_fakechannel() -> Any:
     fakechannel.id = 0 # type: ignore
     return fakechannel
 
-@pytest.mark.functional
-@pytest.mark.xfail(reason='API changes.  Needs full rewrite')
-def test_commands() -> None:
-    fakebot = generate_fakebot()
+# @pytest.mark.functional
+# @pytest.mark.xfail(reason='API changes.  Needs full rewrite')
+# def test_commands() -> None:
+#     fakebot = generate_fakebot()
 
-    loop = asyncio.get_event_loop()
-    for cmd in dir(command.Commands):
-        if cmd.startswith('_'):
-            continue
-        if cmd in ['restartbot', 'updateprices', 'clearimagecache', 'bug', 'gbug']:
-            continue
+#     loop = asyncio.get_event_loop()
+#     for cmd in dir(command.Commands):
+#         if cmd.startswith('_'):
+#             continue
+#         if cmd in ['restartbot', 'updateprices', 'clearimagecache', 'bug', 'gbug']:
+#             continue
 
-        channel = generate_fakechannel()
-        calls = channel.calls # type: ignore
+#         channel = generate_fakechannel()
+#         calls = channel.calls # type: ignore
 
-        message = types.new_class('Message')
-        message.content = '!{0} args'.format(cmd) # type: ignore
-        message.channel = channel # type: ignore
+#         message = types.new_class('Message')
+#         message.content = '!{0} args'.format(cmd) # type: ignore
+#         message.channel = channel # type: ignore
 
-        if cmd == 'time':
-            message.content = '!time Melbourne' # type: ignore
+#         if cmd == 'time':
+#             message.content = '!time Melbourne' # type: ignore
 
-        message.author = types.new_class('User') # type: ignore
-        message.author.mention = '@nobody' # type: ignore
-        message.author.voice = types.new_class('VoiceState') # type: ignore
-        message.author.voice.voice_channel = None # type: ignore
+#         message.author = types.new_class('User') # type: ignore
+#         message.author.mention = '@nobody' # type: ignore
+#         message.author.voice = types.new_class('VoiceState') # type: ignore
+#         message.author.voice.voice_channel = None # type: ignore
 
-        print('Calling {0}'.format(message.content)) # type: ignore
-        loop.run_until_complete(command.handle_command(message, fakebot))
-        assert channel.calls > calls # type: ignore
-        calls = channel.calls # type: ignore
+#         print('Calling {0}'.format(message.content)) # type: ignore
+#         loop.run_until_complete(command.handle_command(message, fakebot))
+#         assert channel.calls > calls # type: ignore
+#         calls = channel.calls # type: ignore
 
-    loop.close()
+#     loop.close()

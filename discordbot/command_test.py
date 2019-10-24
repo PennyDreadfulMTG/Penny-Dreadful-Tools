@@ -1,4 +1,5 @@
 from discordbot import command
+from discordbot.commands import resources
 
 
 def test_roughly_matches() -> None:
@@ -48,10 +49,10 @@ def test_do_not_choke_on_unicode() -> None:
         assert not result.has_match()
 
 def test_resources_matching_in_url() -> None:
-    results = command.resources_resources('github')
+    results = resources.resources_resources('github')
     assert results['https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/'] == 'Penny Dreadful Tools'
 
-    results = command.resources_resources('starcitygames')
+    results = resources.resources_resources('starcitygames')
     assert results['https://www.starcitygames.com/article/33860_Penny-Dreadful.html'] == 'Mrs. Mulligan SCG'
 
 def test_escape_underscores() -> None:

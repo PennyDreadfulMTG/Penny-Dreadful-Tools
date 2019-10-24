@@ -228,7 +228,7 @@ def subreddit() -> Container:
     return feedparser.parse(url)
 
 def time(q: str, twentyfour: bool) -> Dict[str, List[str]]:
-    return times_from_timezone_code(q, twentyfour) if len(q) <= 3 else times_from_location(q, twentyfour)
+    return times_from_timezone_code(q, twentyfour) if len(q) <= 4 else times_from_location(q, twentyfour)
 
 def times_from_timezone_code(q: str, twentyfour: bool) ->  Dict[str, List[str]]:
     possibles = list(filter(lambda x: datetime.datetime.now(pytz.timezone(x)).strftime('%Z') == q.upper(), pytz.common_timezones))

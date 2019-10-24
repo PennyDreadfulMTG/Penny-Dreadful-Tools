@@ -95,6 +95,23 @@ def store(url: str, path: str) -> requests.Response:
     except requests.exceptions.ConnectionError as e: # type: ignore
         raise FetchException(e)
 
+
+async def store_async(url: str, path: str) -> aiohttp.ClientResponse:
+    print('Async storing {url} in {path}'.format(url=url, path=path))
+    try:
+        async with aiohttp.ClientSession() as aios:
+            response = await aios.get(url)
+            with open(path, 'wb') as fout:
+                while True:
+                    chunk = await response.content.read(1024)
+                    if not chunk:
+                        break
+                    fout.write(chunk)
+            return response
+    # type: ignore # urllib isn't fully stubbed
+    except (urllib.error.HTTPError, aiohttp.ClientError) as e:
+        raise FetchException(e)
+
 class FetchException(OperationalException):
     pass
 

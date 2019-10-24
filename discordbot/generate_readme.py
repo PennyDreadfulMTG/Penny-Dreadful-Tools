@@ -1,6 +1,8 @@
 import os
+from typing import Set
 
-from discordbot import command
+from discordbot import commands
+from discordbot.bot import Bot
 
 HEADER = """
 # Penny-Dreadful-Discord-Bot
@@ -9,14 +11,14 @@ Displays info about quoted cards in a discord channel
 """
 
 USAGE = """
-#Usage
+# Usage
 Basic bot usage: Include [cardname] in your regular messages.
 
 The bot will search for any quoted cards, and respond with the card details.
 """
 
 FOOTER = """
-#Installation
+# Installation
 To add this bot to your servers use this <a href='https://discordapp.com/oauth2/authorize?client_id=224755717767299072&scope=bot&permissions=0'>link</a>
 """
 
@@ -25,9 +27,10 @@ def generate_readme() -> int:
     readme += HEADER
     readme += USAGE
     readme += """
-#Commands
+# Commands
 """
-    readme += command.build_help(True).replace('\n', '\n\n')
+    readme += print_commands()
+
     readme += '\n'
     readme += FOOTER
 
@@ -42,3 +45,18 @@ def generate_readme() -> int:
         print('Readme updated.')
         return 1
     return 0
+
+def print_commands() -> str:
+    bot = Bot()
+    commands.setup(bot)
+    text = ''
+    done: Set[str] = set()
+    for c in bot.walk_commands():
+        if not c.name in done:
+            text += f'## {c.name}'
+            if c.aliases:
+                aliases = ', '.join(c.aliases)
+                text += f' ({aliases})'
+            done.add(c.name)
+            text += f'\n\n{c.help}\n\n'
+    return text

@@ -1,4 +1,8 @@
+from typing import List
+
 from decksite.data import deck
+from shared.container import Container
+
 
 class Person(Container):
     __decks = None

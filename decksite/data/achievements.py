@@ -1,5 +1,5 @@
 import re
-from typing import TYPE_CHECKING, Dict, List, Optional, cast
+from typing import Dict, List, Optional, cast
 
 from flask import url_for
 from flask_babel import gettext, ngettext
@@ -12,7 +12,6 @@ from magic import tournaments
 from magic.models import Deck
 from shared.container import Container
 from shared.decorators import retry_after_calling
-
 
 LEADERBOARD_TOP_N = 5
 LEADERBOARD_LIMIT = 12

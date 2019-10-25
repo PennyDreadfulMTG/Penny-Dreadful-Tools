@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional, Sequence
 
 from decksite.data import achievements, deck, query
+from decksite.data.models.person import Person
 from decksite.database import db
 from shared import dtutil, guarantee
 from shared.container import Container

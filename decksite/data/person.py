@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional, Sequence
 
 from decksite.data import achievements, deck, query
+from decksite.data.models.person import Person
 from decksite.database import db
 from shared import dtutil, guarantee
 from shared.container import Container
@@ -9,14 +10,6 @@ from shared.decorators import retry_after_calling
 from shared.pd_exception import AlreadyExistsException, DoesNotExistException
 from shared_web import logger
 
-
-class Person(Container):
-    __decks = None
-    @property
-    def decks(self) -> List[deck.Deck]:
-        if self.__decks is None:
-            self.__decks = deck.load_decks(f'd.person_id = {self.id}', season_id=self.season_id)
-        return self.__decks
 
 def load_person_by_id(person_id: int, season_id: Optional[int] = None) -> Person:
     return load_person(f'p.id = {person_id}', season_id=season_id)

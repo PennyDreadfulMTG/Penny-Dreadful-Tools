@@ -41,7 +41,7 @@ def background_task(func: Callable) -> Callable:
 class Bot(commands.Bot):
     def __init__(self, **kwargs: Any) -> None:
         self.launch_time = perf.start()
-        super().__init__(command_prefix='!', **kwargs)
+        super().__init__(command_prefix='!', help_command=commands.DefaultHelpCommand(dm_help=True), **kwargs)
         self.voice = None
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:

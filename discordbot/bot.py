@@ -41,7 +41,7 @@ def background_task(func: Callable) -> Callable:
 class Bot(commands.Bot):
     def __init__(self, **kwargs: Any) -> None:
         self.launch_time = perf.start()
-        super().__init__(command_prefix='!', **kwargs)
+        super().__init__(command_prefix='!', help_command=commands.DefaultHelpCommand(dm_help=True), **kwargs)
         self.voice = None
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:
@@ -350,7 +350,7 @@ def rotation_hype_message() -> Optional[str]:
     num_legal_cards = len([c for c in cs if c.status == 'Legal'])
     name = 'Supplemental rotation' if rotation.next_rotation_is_supplemental() else 'Rotation'
     s = f'{name} run number {runs} completed. {name} is {runs_percent}% complete. {num_legal_cards} cards confirmed.'
-    if newly_hit == 0 and newly_legal == 0 and newly_eliminated == 0 and runs not in [1, rotation.TOTAL_RUNS] and runs % 5 != 0:
+    if newly_hit + newly_legal + newly_eliminated == 0 and runs != 1 and runs % 5 != 0 and runs < rotation.TOTAL_RUNS / 2:
         return None # Sometimes there's nothing to report
     if len(newly_hit) > 0 and runs_remaining > runs:
         newly_hit_s = list_of_most_interesting(newly_hit)

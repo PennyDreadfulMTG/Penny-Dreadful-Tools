@@ -439,6 +439,9 @@ def set_legal_cards(season: str = None) -> None:
         if populated:
             return
 
+    # In case we get windows line endings.
+    new_list = set(c.rstrip() for c in new_list)
+
     db().begin('set_legal_cards')
     db().execute('DELETE FROM card_legality WHERE format_id = %s', [format_id])
     db().execute('SET group_concat_max_len=100000')

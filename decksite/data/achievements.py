@@ -1,24 +1,22 @@
 import re
-from typing import TYPE_CHECKING, Dict, List, Optional, cast
+from typing import Dict, List, Optional, cast
 
 from flask import url_for
 from flask_babel import gettext, ngettext
 
 import decksite
 from decksite.data import deck, query
+from decksite.data.models.person import Person
 from decksite.database import db
 from magic import tournaments
 from magic.models import Deck
 from shared.container import Container
 from shared.decorators import retry_after_calling
 
-if TYPE_CHECKING:
-    from decksite.data import person # pylint:disable=unused-import
-
 LEADERBOARD_TOP_N = 5
 LEADERBOARD_LIMIT = 12
 
-def load_achievements(p: Optional['person.Person'], season_id: Optional[int], with_detail: bool = False) -> List[Container]:
+def load_achievements(p: Optional[Person], season_id: Optional[int], with_detail: bool = False) -> List[Container]:
     achievements = []
     for a in Achievement.all_achievements:
         desc = Container({'title': a.title, 'description_safe': a.description_safe})
@@ -35,7 +33,7 @@ def load_achievements(p: Optional['person.Person'], season_id: Optional[int], wi
         return achievements
     return sorted(achievements, key=lambda ad: -ad.percent)
 
-def load_query(people_by_id: Dict[int, 'person.Person'], season_id: Optional[int]) -> str:
+def load_query(people_by_id: Dict[int, Person], season_id: Optional[int]) -> str:
     # keys have been normalised earlier but could still be reserved words
     columns = ', '.join(f'SUM(`{a.key}`) as `{a.key}`' for a in Achievement.all_achievements if a.in_db)
     return """
@@ -152,7 +150,7 @@ class Achievement:
             cls.all_achievements.append(cls())
 
     # pylint: disable=no-self-use, unused-argument
-    def display(self, p: 'person.Person') -> str:
+    def display(self, p: Person) -> str:
         return ''
 
     # Note: load_summary must be overridden if in_db=False!
@@ -180,7 +178,7 @@ class Achievement:
             return 0
 
     @retry_after_calling(preaggregate_achievements)
-    def detail(self, p: 'person.Person', season_id: Optional[int] = None) -> Optional[List[Deck]]:
+    def detail(self, p: Person, season_id: Optional[int] = None) -> Optional[List[Deck]]:
         if self.detail_sql is None:
             return None
         sql = """
@@ -259,7 +257,7 @@ class Achievement:
         return ''
 
 class CountedAchievement(Achievement):
-    def display(self, p: 'person.Person') -> str:
+    def display(self, p: Person) -> str:
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
             return self.localised_display(n)
@@ -279,7 +277,7 @@ class BooleanAchievement(Achievement):
     def alltime_text(_: int) -> str:
         return ''
 
-    def display(self, p: 'person.Person') -> str:
+    def display(self, p: Person) -> str:
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
             if decksite.get_season_id() == 'all':
@@ -305,7 +303,7 @@ class TournamentOrganizer(Achievement):
     def __init__(self) -> None:
         self.hosts = [host for series in tournaments.all_series_info() for host in series['hosts']]
 
-    def display(self, p: 'person.Person') -> str:
+    def display(self, p: Person) -> str:
         if p.name in self.hosts:
             return 'Tournament Run'
         return ''

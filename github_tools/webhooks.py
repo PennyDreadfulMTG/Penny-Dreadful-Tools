@@ -179,15 +179,14 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
 
 def update_pr(pull: PullRequest) -> None:
     repo = pull.base.repo
-    if 'update me' in [l.name for l in pull.as_issue().labels]:
-        print(f'Checking if #{pull.number} is up to date with master.')
-        master = repo.get_branch('master')
-        base, head = get_common_tree(repo, master.commit.sha, pull.head.sha)
-        if head.issuperset(base):
-            print('Up to date')
-            return
-        print(f'#{pull.number}: {pull.head.ref} is behind.')
-        repo.merge(pull.head.ref, 'master', f'Merge master into #{pull.number}')
+    print(f'Checking if #{pull.number} is up to date with master.')
+    master = repo.get_branch('master')
+    base, head = get_common_tree(repo, master.commit.sha, pull.head.sha)
+    if head.issuperset(base):
+        print('Up to date')
+        return
+    print(f'#{pull.number}: {pull.head.ref} is behind.')
+    repo.merge(pull.head.ref, 'master', f'Merge master into #{pull.number}')
 
 
 def get_parents(repo: Repository, sha: str) -> List[str]:

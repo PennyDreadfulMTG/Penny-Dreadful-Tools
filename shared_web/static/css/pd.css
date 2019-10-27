@@ -915,6 +915,10 @@ Desktop Menu
         display: none;
         left: 0;
         position: absolute;
+        width: 100%;
+    }
+
+    .language-switcher .submenu-container {
         width: 100vw; /* Use this rather than the more obvious "100%" because the language switcher is absolutely positioned and yet contains a submenu which thinks 100% means 100% of the language switcher element, not of the whole page. */
     }
 

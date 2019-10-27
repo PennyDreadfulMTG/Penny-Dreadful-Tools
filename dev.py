@@ -54,7 +54,7 @@ def run() -> None:
 
     else:
         print('Unrecognised command {cmd}.'.format(cmd=cmd))
-        exit(1)
+        sys.exit(1)
 
 def lint(argv: List[str]) -> None:
     """
@@ -68,6 +68,7 @@ def lint(argv: List[str]) -> None:
             '-j', '4' # Use four cores for speed.
            ]
     args.extend(argv or LINT_PATHS)
+    # pylint: disable=import-outside-toplevel
     import pylint.lint
     linter = pylint.lint.Run(args, do_exit=False)
     if linter.linter.msg_status:
@@ -90,6 +91,7 @@ def mypy(argv: List[str], strict: bool = False) -> None:
     args.extend(argv or [
         '.'                             # Invoke on the entire project.
         ])
+    # pylint: disable=import-outside-toplevel
     from mypy import api
     result = api.run(args)
 
@@ -101,14 +103,13 @@ def mypy(argv: List[str], strict: bool = False) -> None:
 
     print('Exit status: {code} ({english})'.format(code=result[2], english='Failure' if result[2] else 'Success'))
     if result[2]:
-        n = len(result[0].strip().split('\n'))
-        print(f'{n} issues')
         sys.exit(result[2])
 
 def tests(argv: List[str]) -> None:
     """
     Literally just prepare the DB and then invoke pytest.
     """
+    # pylint: disable=import-outside-toplevel
     import pytest
     from magic import multiverse, oracle
     multiverse.init()
@@ -121,6 +122,7 @@ def tests(argv: List[str]) -> None:
 
 # pylint: disable=pointless-statement
 def upload_coverage() -> None:
+    # pylint: disable=import-outside-toplevel
     from shared import fetcher_internal
     try:
         fetcher_internal.store('https://codecov.io/bash', 'codecov.sh')
@@ -133,6 +135,7 @@ def upload_coverage() -> None:
     except fetcher_internal.FetchException as e:
         print(e)
 
+# pylint: disable=import-outside-toplevel
 def sort(fix: bool = False) -> None:
     """
     This method is messy, and is a reduced form of isort.main.main()
@@ -160,6 +163,7 @@ def sort(fix: bool = False) -> None:
     if wrong_sorted_files:
         sys.exit(2)
 
+# pylint: disable=import-outside-toplevel
 def reset_db() -> None:
     """
     Handle with care.

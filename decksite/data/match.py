@@ -51,7 +51,7 @@ def load_matches_by_person(person_id: int, season_id: Optional[int] = None) -> L
     where = f'd.person_id = {person_id}'
     return load_matches(where, season_id)
 
-def load_matches(where: str = '1 = 1', season_id: Optional[int] = None, should_load_decks: bool = False) -> List[Container]:
+def load_matches(where: str = 'TRUE', season_id: Optional[int] = None, should_load_decks: bool = False) -> List[Container]:
     person_query = query.person_query(table='o')
     competition_join = query.competition_join()
     season_join = query.season_join()

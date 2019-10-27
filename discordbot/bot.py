@@ -8,11 +8,13 @@ import discord
 from discord import Guild, Member, Role, VoiceState
 from discord.activity import Streaming
 from discord.errors import Forbidden, NotFound
+from discord.ext import commands
 from discord.message import Message
 from discord.reaction import Reaction
 from discord.state import Status
 from github.GithubException import GithubException
 
+import discordbot.commands
 from discordbot import command
 from magic import fetcher, multiverse, oracle, rotation, tournaments
 from magic.card_description import CardDescription
@@ -35,10 +37,11 @@ def background_task(func: Callable) -> Callable:
     TASKS.append(wrapper)
     return wrapper
 
-class Bot(discord.Client):
-    def __init__(self) -> None:
+
+class Bot(commands.Bot):
+    def __init__(self, **kwargs: Any) -> None:
         self.launch_time = perf.start()
-        super().__init__()
+        super().__init__(command_prefix='!', help_command=commands.DefaultHelpCommand(dm_help=True), **kwargs)
         self.voice = None
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:
@@ -48,6 +51,7 @@ class Bot(discord.Client):
         multiverse.init()
         multiverse.update_bugged_cards()
         oracle.init()
+        discordbot.commands.setup(self)
         self.run(configuration.get('token'))
 
     async def on_ready(self) -> None:
@@ -166,7 +170,8 @@ class Bot(discord.Client):
                     if search:
                         previous_command, suggestions = search.group(1, 2)
                         card = re.findall(r':[^:]*?: ([^:]*) ', suggestions + ' ')[command.DISAMBIGUATION_NUMBERS_BY_EMOJI[reaction.emoji]-1]
-                        message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[])
+                        # pylint: disable=protected-access
+                        message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[], _state=reaction.message._state)
                         await self.on_message(message)
                         await reaction.message.delete()
 
@@ -310,7 +315,9 @@ class Bot(discord.Client):
             last_run_time = rotation.last_run_time()
             if until_rotation < datetime.timedelta(7) and last_run_time is not None:
                 if dtutil.now() - last_run_time < datetime.timedelta(minutes=5):
-                    await channel.send(rotation_hype_message())
+                    hype = rotation_hype_message()
+                    if hype:
+                        await channel.send(hype)
                 timer = 5 * 60
             else:
                 timer = int((until_rotation - datetime.timedelta(7)).total_seconds())
@@ -331,7 +338,7 @@ async def get_role(guild: Guild, rolename: str, create: bool = False) -> Optiona
         return await guild.create_role(name=rolename)
     return None
 
-def rotation_hype_message() -> str:
+def rotation_hype_message() -> Optional[str]:
     runs, runs_percent, cs = rotation.read_rotation_files()
     if rotation.next_rotation_is_supplemental():
         cs = [c for c in cs if not c.pd_legal]
@@ -340,8 +347,11 @@ def rotation_hype_message() -> str:
     newly_eliminated = [c for c in cs if not c.hit_in_last_run and c.status == 'Not Legal' and c.hits_needed == runs_remaining + 1]
     newly_hit = [c for c in cs if c.hit_in_last_run and c.hits == 1]
     num_undecided = len([c for c in cs if c.status == 'Undecided'])
+    num_legal_cards = len([c for c in cs if c.status == 'Legal'])
     name = 'Supplemental rotation' if rotation.next_rotation_is_supplemental() else 'Rotation'
-    s = f'{name} run number {runs} completed. {name} is {runs_percent}% complete.'
+    s = f'{name} run number {runs} completed. {name} is {runs_percent}% complete. {num_legal_cards} cards confirmed.'
+    if newly_hit + newly_legal + newly_eliminated == 0 and runs != 1 and runs % 5 != 0 and runs < rotation.TOTAL_RUNS / 2:
+        return None # Sometimes there's nothing to report
     if len(newly_hit) > 0 and runs_remaining > runs:
         newly_hit_s = list_of_most_interesting(newly_hit)
         s += f'\nFirst hit for: {newly_hit_s}.'

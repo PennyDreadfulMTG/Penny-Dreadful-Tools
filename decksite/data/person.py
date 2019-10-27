@@ -1,6 +1,7 @@
-from typing import List, Optional, Sequence
+from typing import Dict, List, Optional, Sequence
 
 from decksite.data import achievements, deck, query
+from decksite.data.models.person import Person
 from decksite.database import db
 from shared import dtutil, guarantee
 from shared.container import Container
@@ -9,14 +10,6 @@ from shared.decorators import retry_after_calling
 from shared.pd_exception import AlreadyExistsException, DoesNotExistException
 from shared_web import logger
 
-
-class Person(Container):
-    __decks = None
-    @property
-    def decks(self) -> List[deck.Deck]:
-        if self.__decks is None:
-            self.__decks = deck.load_decks(f'd.person_id = {self.id}', season_id=self.season_id)
-        return self.__decks
 
 def load_person_by_id(person_id: int, season_id: Optional[int] = None) -> Person:
     return load_person(f'p.id = {person_id}', season_id=season_id)
@@ -85,9 +78,11 @@ def load_person(where: str, season_id: Optional[int] = None) -> Person:
     set_head_to_head([person], season_id)
     return person
 
-def load_people(where: str = '1 = 1',
-                order_by: str = '`num_decks` DESC, name',
+def load_people(where: str = 'TRUE',
+                order_by_name: bool = False,
                 season_id: Optional[int] = None) -> Sequence[Person]:
+    # First we retrieve the people because we want to return a Person for each person that exists even if they have no decks.
+    # This is two separate queries for performance reasons. See #5564.
     sql = """
         SELECT
             p.id,
@@ -97,52 +92,50 @@ def load_people(where: str = '1 = 1',
             p.mtggoldfish_username,
             p.discord_id,
             p.elo,
-            p.locale,
-            num_decks,
-            wins,
-            losses,
-            draws,
-            perfect_runs,
-            tournament_wins,
-            tournament_top8s,
-            win_percent,
-            num_competitions
+            p.locale
+        FROM
+            person AS p
+        WHERE
+            {where}
+    """.format(person_query=query.person_query(), where=where)
+    people = [Person(r) for r in db().select(sql)]
+    stats = load_people_stats(where, season_id) # BAKERT make this an optional flag
+    for p in people:
+        p.update(stats.get(p.id, {}))
+        p.season_id = season_id
+    if order_by_name:
+        people.sort(key=lambda p: p.get('name') or 'ZZZZZZZZZZ')
+    else:
+        people.sort(key=lambda p: (-p.get('num_decks', 0), p.get('name')))
+    return people
+
+def load_people_stats(where: str, season_id: Optional[int] = None) -> Dict[int, Dict[str, int]]:
+    season_join = query.season_join() if season_id else ''
+    sql = """
+        SELECT
+            p.id,
+            COUNT(d.id) AS num_decks,
+            SUM(dc.wins) AS wins,
+            SUM(dc.losses) AS losses,
+            SUM(dc.draws) AS draws,
+            SUM(CASE WHEN dc.wins >= 5 AND dc.losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
+            SUM(CASE WHEN d.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
+            SUM(CASE WHEN d.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
+            IFNULL(ROUND((SUM(dc.wins) / NULLIF(SUM(dc.wins + dc.losses), 0)) * 100, 1), '') AS win_percent,
+            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS num_competitions
         FROM
             person AS p
         LEFT JOIN
-            (
-                SELECT
-                    d.person_id,
-                    COUNT(d.id) AS num_decks,
-                    SUM(wins) AS wins,
-                    SUM(losses) AS losses,
-                    SUM(draws) AS draws,
-                    SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
-                    SUM(CASE WHEN d.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
-                    SUM(CASE WHEN d.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
-                    IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
-                    SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS num_competitions
-                FROM
-                    deck AS d
-                LEFT JOIN
-                    deck_cache AS dc ON d.id = dc.deck_id
-                {season_join}
-                WHERE
-                    {season_query}
-                GROUP BY
-                    d.person_id
-            ) AS stats ON p.id = stats.person_id
+            deck AS d ON d.person_id = p.id
+        LEFT JOIN
+            deck_cache AS dc ON d.id = dc.deck_id
+        {season_join}
         WHERE
-            {where}
+            {where} AND {season_query}
         GROUP BY
             p.id
-        ORDER BY
-            {order_by}
-    """.format(person_query=query.person_query(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id, 'season.id'), order_by=order_by)
-    people = [Person(r) for r in db().select(sql)]
-    for p in people:
-        p.season_id = season_id
-    return people
+    """.format(season_join=season_join, where=where, season_query=query.season_query(season_id, 'season.id'))
+    return {r['id']: r for r in db().select(sql)}
 
 def preaggregate() -> None:
     achievements.preaggregate_achievements()

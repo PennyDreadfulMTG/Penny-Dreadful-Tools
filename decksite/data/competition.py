@@ -56,9 +56,9 @@ def get_or_insert_competition(start_date: datetime.datetime,
     return competition_id
 
 def load_competition(competition_id: int) -> Competition:
-    return guarantee.exactly_one(load_competitions('c.id = {competition_id}'.format(competition_id=sqlescape(competition_id))))
+    return guarantee.exactly_one(load_competitions('c.id = {competition_id}'.format(competition_id=sqlescape(competition_id)), should_load_decks=True))
 
-def load_competitions(where: str = '1 = 1', having: str = '1 = 1', season_id: Optional[int] = None) -> List[Competition]:
+def load_competitions(where: str = 'TRUE', having: str = 'TRUE', season_id: Optional[int] = None, should_load_decks: Optional[bool] = False) -> List[Competition]:
     sql = """
         SELECT
             c.id,
@@ -97,10 +97,12 @@ def load_competitions(where: str = '1 = 1', having: str = '1 = 1', season_id: Op
     for c in competitions:
         c.start_date = dtutil.ts2dt(c.start_date)
         c.end_date = dtutil.ts2dt(c.end_date)
-    set_decks(competitions)
+        c.decks = []
+    if should_load_decks:
+        load_decks(competitions)
     return competitions
 
-def set_decks(competitions: List[Competition]) -> None:
+def load_decks(competitions: List[Competition]) -> None:
     if competitions == []:
         return
     competitions_by_id = {c.id: c for c in competitions}
@@ -121,7 +123,7 @@ def tournaments_with_prizes() -> List[Competition]:
         AND
             c.start_date > (UNIX_TIMESTAMP(NOW() - INTERVAL 26 WEEK))
         """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
-    return load_competitions(where)
+    return load_competitions(where, should_load_decks=True)
 
 def leaderboards(where: str = "ct.name = 'Gatherling'", season_id: Optional[int] = None) -> List[Dict[str, Any]]:
     sql = """

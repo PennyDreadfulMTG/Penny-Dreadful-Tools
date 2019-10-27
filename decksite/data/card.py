@@ -11,7 +11,7 @@ from shared.database import sqlescape
 from shared.pd_exception import DatabaseException
 
 
-def load_cards(season_id: Optional[int] = None, person_id: Optional[int] = None, retry: bool = False) -> List[Card]:
+def load_cards(person_id: Optional[int] = None, season_id: Optional[int] = None, retry: bool = False) -> List[Card]:
     if person_id:
         table = '_card_person_stats'
         where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
@@ -59,7 +59,7 @@ def load_cards(season_id: Optional[int] = None, person_id: Optional[int] = None,
         if not retry:
             print(f"Got {e} trying to load_cards so trying to preaggregate. If this is happening on user time that's undesirable.")
             preaggregate()
-            return load_cards(season_id, person_id, retry=True)
+            return load_cards(person_id, season_id, retry=True)
         print(f'Failed to preaggregate. Giving up.')
         raise e
 
@@ -186,6 +186,7 @@ def preaggregate_card_person() -> None:
             draws_tournament INT NOT NULL,
             PRIMARY KEY (season_id, person_id, name),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (person_id) REFERENCES person (id)  ON UPDATE CASCADE ON DELETE CASCADE,
             INDEX idx_person_id_name (person_id, name)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT

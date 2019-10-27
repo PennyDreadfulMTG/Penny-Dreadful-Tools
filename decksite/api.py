@@ -40,7 +40,7 @@ def random_deck_api() -> Response:
 def competitions_api() -> Response:
     # Don't send competitions with any decks that do not have their correct archetype to third parties otherwise they
     # will store it and be wrong forever.
-    comps = comp.load_competitions(having='num_reviewed = num_decks')
+    comps = comp.load_competitions(having='num_reviewed = num_decks', should_load_decks=True)
     r = []
     for c in comps:
         if c.decks:
@@ -57,7 +57,7 @@ def competition_api(competition_id: int) -> Response:
 
 @APP.route('/api/league')
 def league_api() -> Response:
-    lg = league.active_league()
+    lg = league.active_league(should_load_decks=True)
     pdbot = request.form.get('api_token', None) == configuration.get('pdbot_api_token')
     if not pdbot:
         lg.decks = [d for d in lg.decks if not d.is_in_current_run()]

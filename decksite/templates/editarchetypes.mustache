@@ -13,10 +13,11 @@
                     <th class="n" data-sortInitialOrder="desc">Similarity</th>
                     <th>Matches Rule</th>
                     <th>Assign To</th>
+                    <th><!-- Placeholder for response to POST saveone --></th>
             </thead>
             <tbody>
                 {{#queue}}
-                    <tr>
+                    <tr class="archetype_select_row" data-deckid="{{id}}">
                         <td>{{{colors_safe}}}</td>
                         <td><a href="{{url}}" title="{{decklist}}">{{name}} ({{id}})</a></td>
                         <td><a href="{{source_url}}">{{source_name}}</a></td>
@@ -26,6 +27,9 @@
                         <td>
                             <input type="hidden" name="deck_id" value="{{id}}">
                             {{> archetypedropdown}}
+                        </td>
+                        <td>
+                          <div class="archetype_message"></div>
                         </td>
                     </tr>
                 {{/queue}}

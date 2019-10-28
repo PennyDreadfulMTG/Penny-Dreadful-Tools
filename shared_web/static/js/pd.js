@@ -18,6 +18,7 @@ PD.init = function () {
     PD.initPersonalization();
     PD.renderCharts();
     PD.filter.init();
+    PD.archetypes.init();
 };
 PD.scrollToContent = function () {
     if (window.matchMedia("only screen and (max-width: 640px)").matches && document.referrer.indexOf(window.location.hostname) > 0 && document.location.href.indexOf('#content') === -1) {
@@ -576,7 +577,42 @@ PD.filter.updateCardCounts = function () {
         let l = $(this).find(".cardrow").filter(":visible").length;
         $(this).find("span.total").text(l);
     });
-}
+};
+
+PD.archetypes = {};
+
+PD.archetypes.init = function () {
+    $("tr.archetype_select_row").each( function() {
+        let deck_id = this.dataset.deckid;
+        $(this).find("select").change( function () {
+            PD.archetypes.postOne(deck_id);
+        });
+    });
+};
+
+PD.archetypes.postOne = function(deck_id) {
+    let archetype_id = $(`tr.archetype_select_row[data-deckid=${deck_id}] select`).val();
+    if (!archetype_id) {
+        console.log("No option selected");
+        return false;
+    }
+
+    function setSavedMessage(deck_id, msg){
+        let message_div = $(`tr.archetype_select_row[data-deckid=${deck_id}] .archetype_message`);
+        message_div.text(msg);
+    }
+
+    console.log(`Selected ${archetype_id} for ${deck_id}`);
+    $.post("/admin/archetypes/save-one/", {
+        deck_id,
+        archetype_id,
+    }).then( () => setSavedMessage(deck_id, "Saved!"),
+             jqXHR => setSavedMessage(deck_id, "Error!")
+             // TODO: maybe have hover or click on error for full error message?
+    );
+
+    return false;
+};
 
 $(document).ready(function () {
     PD.init();

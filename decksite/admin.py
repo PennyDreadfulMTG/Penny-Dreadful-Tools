@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Dict, List, Optional, Tuple, cast
 
 from flask import request, session, url_for
 
@@ -59,6 +59,17 @@ def edit_archetypes(search_results: Optional[List[Deck]] = None, q: str = '', no
         search_results = []
     view = EditArchetypes(archs.load_archetypes_deckless(order_by='a.name'), search_results, q, notq)
     return view.page()
+
+@APP.route('/admin/archetypes/save-one/', methods=['POST'])
+@auth.demimod_required
+def post_one_archetype() -> Tuple[Dict[str, Any], int]:
+    deck_id = request.form.get('deck_id')
+    archetype_id = request.form.get('archetype_id')
+    if not (deck_id and archetype_id):
+        return {'success': False}, 404
+    archs.assign(deck_id, archetype_id)
+    redis.clear(f'decksite:deck:{deck_id}')
+    return {'success': True}, 200
 
 @APP.route('/admin/archetypes/', methods=['POST'])
 @auth.demimod_required

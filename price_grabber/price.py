@@ -40,7 +40,7 @@ def cache() -> None:
 
     now = round(time.time())
     week = now - 60 * 60 * 24 * 7
-    month = now - 60 * 60 * 24 * 7 * 30
+    month = now - 60 * 60 * 24 * 30
     last_rotation = int(rotation.last_rotation().timestamp())
 
     sql = 'SELECT MAX(`time`) FROM low_price'

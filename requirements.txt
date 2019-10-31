@@ -18,7 +18,7 @@ inflect==3.0.1
 isort==4.3.21
 matplotlib==3.1.1
 markdown==3.1.1
-munch==2.4.0
+munch==2.5.0
 mysqlclient==1.4.4
 mypy==0.730
 mypy-extensions==0.4.3

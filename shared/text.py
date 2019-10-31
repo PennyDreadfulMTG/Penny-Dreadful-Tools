@@ -1,5 +1,5 @@
-from typing import List
 import html
+from typing import List
 
 
 def sanitize(s: str) -> str:

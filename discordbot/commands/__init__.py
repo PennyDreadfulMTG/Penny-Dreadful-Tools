@@ -22,7 +22,7 @@ def setup(bot: Bot) -> None:
     for mod in files:
         n = 0
         m = importlib.import_module(f'.{mod}', package=__name__)
-        for name, obj in inspect.getmembers(m):
+        for _, obj in inspect.getmembers(m):
             if isinstance(obj, Command):
                 names.append(obj.name)
                 names += obj.aliases

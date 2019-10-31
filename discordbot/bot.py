@@ -190,10 +190,11 @@ class Bot(commands.Bot):
         latest_cards = await fetcher.scryfall_cards_async()
         cards_not_currently_in_db: List[CardDescription] = []
         for c in latest_cards['data']:
+            name = multiverse.name_from_card_description(c)
             try:
-                oracle.valid_name(c['name'])
+                oracle.valid_name(name)
             except InvalidDataException:
-                print(f"Planning to add {c['name']} to database in background_task_spoiler_season.")
+                print(f"Planning to add {name} to database in background_task_spoiler_season.")
                 cards_not_currently_in_db.append(c)
         if len(cards_not_currently_in_db) > 0:
             oracle.add_cards_and_update(cards_not_currently_in_db)

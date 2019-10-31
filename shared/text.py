@@ -10,7 +10,7 @@ def sanitize(s: str) -> str:
         pass
     return html.unescape(s)
 
-def unambiguous_prefixes(words: List[str]) -> str:
+def unambiguous_prefixes(words: List[str]) -> List[str]:
     prefixes = []
     for w in words:
         for i in range(1, len(w)):

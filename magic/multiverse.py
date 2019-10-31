@@ -531,9 +531,9 @@ def subtypes(type_line: str) -> List[str]:
     return type_line.split(' - ')[1].split(' ')
 
 # If you change this you probably need to change magic.card.name_query too.
-def name_from_card_description(c: CardDescription):
+def name_from_card_description(c: CardDescription) -> str:
     if c['layout'] in ['transform', 'flip', 'adventure']: # 'meld' has 'all_parts' not 'card_faces' so does not need to be included here despite having very similar behavior.
         return c['card_faces'][0]['name']
     if c.get('card_faces'):
-        return ' // '.join([f['name'] for f in c.get('card_faces')])
+        return ' // '.join([f['name'] for f in c.get('card_faces', [])])
     return c['name']

@@ -931,10 +931,6 @@ Desktop Menu
         color: #999;
     }
 
-    .submenu-container > ul {
-        margin-left: -2rem; /* So that first item text lines up with the left edge of the page. */
-    }
-
     /* Slide-out caret at top of submenu dropdown. */
 
     /* Don't drop the opacity of the caret when menu item is selected because it's not semantically part of the menu item even though technically it is. */

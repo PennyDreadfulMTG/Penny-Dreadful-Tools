@@ -158,7 +158,9 @@ def get_database(location: str) -> Database:
     return Database(location)
 
 def sqlescape(s: ValidSqlArgumentDescription, force_string: bool = False, backslashed_escaped: bool = False) -> ValidSqlArgumentDescription:
-    if str(s).isdecimal() and not force_string:
+    if s is None:
+        return 'NULL'
+    if (str(s).isdecimal() or isinstance(s, float)) and not force_string:
         return s
     if isinstance(s, str):
         encodable = s.encode('utf-8', 'strict').decode('utf-8')

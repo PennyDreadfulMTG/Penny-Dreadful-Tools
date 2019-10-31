@@ -231,6 +231,7 @@ def card_bug_properties() -> TableDescription:
     props['bannable']['type'] = BOOLEAN
     return props
 
+# If you change this you probably need to change multiverse.name_from_card_description too.
 def name_query(column: str = 'face_name') -> str:
     return """
         CASE

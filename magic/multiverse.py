@@ -205,9 +205,6 @@ def insert_cards(printings: List[CardDescription]) -> None:
         if p['name'] == 'Little Girl' or p['layout'] == 'art_series':
             continue
 
-        if is_meld_result(p):
-            meld_result_printings.append(p)
-
         rarity, rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]
 
         try:
@@ -229,7 +226,9 @@ def insert_cards(printings: List[CardDescription]) -> None:
         cards[p['name']] = card_id
         card_values.append("({i},'{l}')".format(i=card_id, l=p['layout']))
 
-        if p.get('card_faces'):
+        if is_meld_result(p): # We don't make entries for a meld result until we know the card_ids of the front faces.
+            meld_result_printings.append(p)
+        elif p.get('card_faces') and p.get('layout') != 'meld':
             face_values += multiple_faces_values(p, card_id)
         else:
             face_values.append(single_face_value(p, card_id))
@@ -255,29 +254,25 @@ def insert_cards(printings: List[CardDescription]) -> None:
         printing_values.append(printing_value(p, card_id, set_id, rarity_id, rarity))
 
     card_query += ',\n'.join(card_values)
-    card_query += ';'
     db().execute(card_query)
 
     if card_color_values: # We should not issue this query if we are only inserting colorless cards as they don't have an entry in this table.
-        card_color_query += ',\n'.join(card_color_values) + ';'
+        card_color_query += ',\n'.join(card_color_values)
         db().execute(card_color_query)
-        card_color_identity_query += ',\n'.join(card_color_identity_values) + ';'
+        card_color_identity_query += ',\n'.join(card_color_identity_values)
         db().execute(card_color_identity_query)
 
     for p in meld_result_printings:
         insert_meld_result_faces(p, cards)
 
     printing_query += ',\n'.join(printing_values)
-    printing_query += ';'
     db().execute(printing_query)
 
     face_query += ',\n'.join(face_values)
-    face_query += ';'
     db().execute(face_query)
 
     if card_legality_values:
         card_legality_query += ',\n'.join(card_legality_values)
-        card_legality_query += ';'
         db().execute(card_legality_query)
 
     # Create the current Penny Dreadful format if necessary.
@@ -534,3 +529,11 @@ def subtypes(type_line: str) -> List[str]:
     if ' - ' not in type_line:
         return []
     return type_line.split(' - ')[1].split(' ')
+
+# If you change this you probably need to change magic.card.name_query too.
+def name_from_card_description(c: CardDescription) -> str:
+    if c['layout'] in ['transform', 'flip', 'adventure']: # 'meld' has 'all_parts' not 'card_faces' so does not need to be included here despite having very similar behavior.
+        return c['card_faces'][0]['name']
+    if c.get('card_faces'):
+        return ' // '.join([f['name'] for f in c.get('card_faces', [])])
+    return c['name']

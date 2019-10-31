@@ -5,7 +5,7 @@ from magic import fetcher, rotation
 from magic.models import Card
 
 
-@commands.command(aliases=['h', 'hi', 'his'])
+@commands.command(aliases=['h', 'hi'])
 async def history(ctx: MtgContext, *, c: Card) -> None:
     """Show the legality history of the specified card and a link to its all time page."""
     await ctx.single_card_text(c, card_history, show_legality=False)

@@ -97,33 +97,38 @@ Deckbox._ = {
 
     pointerX: function(event) {
         var docElement = document.documentElement,
-            body = document.body || { scrollLeft: 0 };
+            body = document.body || {
+                scrollLeft: 0
+            };
 
         return event.pageX ||
             (event.clientX +
-             (docElement.scrollLeft || body.scrollLeft) -
-             (docElement.clientLeft || 0));
+                (docElement.scrollLeft || body.scrollLeft) -
+                (docElement.clientLeft || 0));
     },
 
     pointerY: function(event) {
         var docElement = document.documentElement,
-            body = document.body || { scrollTop: 0 };
+            body = document.body || {
+                scrollTop: 0
+            };
 
-        return  event.pageY ||
+        return event.pageY ||
             (event.clientY +
-             (docElement.scrollTop || body.scrollTop) -
-             (docElement.clientTop || 0));
+                (docElement.scrollTop || body.scrollTop) -
+                (docElement.clientTop || 0));
     },
 
     scrollOffsets: function() {
         return [
             window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft,
-            window.pageYOffset || document.documentElement.scrollTop  || document.body.scrollTop
+            window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
         ];
     },
 
     viewportSize: function() {
-        var ua = navigator.userAgent, rootElement;
+        var ua = navigator.userAgent,
+            rootElement;
         if (ua.indexOf("AppleWebKit/") > -1 && !document.evaluate) {
             rootElement = document;
         } else if (Object.prototype.toString.call(window.opera) == "[object Opera]" && window.parseFloat(window.opera.version()) < 9.5) {
@@ -142,11 +147,12 @@ Deckbox._ = {
     },
 
     fitToScreen: function(posX, posY, el) {
-        var scroll = Deckbox._.scrollOffsets(), viewport = Deckbox._.viewportSize();
+        var scroll = Deckbox._.scrollOffsets(),
+            viewport = Deckbox._.viewportSize();
 
         /* decide if wee need to switch sides for the tooltip */
         /* too big for X */
-        if ((el.offsetWidth + posX) >= (viewport[0] - 15) ) {
+        if ((el.offsetWidth + posX) >= (viewport[0] - 15)) {
             posX = posX - el.offsetWidth - 20;
         }
 
@@ -165,22 +171,24 @@ Deckbox._ = {
     addEvent: function(obj, type, fn) {
         if (obj.addEventListener) {
             if (type == "mousewheel") obj.addEventListener("DOMMouseScroll", fn, false);
-            obj.addEventListener( type, fn, false );
+            obj.addEventListener(type, fn, false);
         } else if (obj.attachEvent) {
-            obj["e"+type+fn] = fn;
-            obj[type+fn] = function() { obj["e"+type+fn]( window.event ); };
-            obj.attachEvent( "on"+type, obj[type+fn] );
+            obj["e" + type + fn] = fn;
+            obj[type + fn] = function() {
+                obj["e" + type + fn](window.event);
+            };
+            obj.attachEvent("on" + type, obj[type + fn]);
         }
     },
 
     removeEvent: function(obj, type, fn) {
         if (obj.removeEventListener) {
-            if(type == "mousewheel") obj.removeEventListener("DOMMouseScroll", fn, false);
-            obj.removeEventListener( type, fn, false );
+            if (type == "mousewheel") obj.removeEventListener("DOMMouseScroll", fn, false);
+            obj.removeEventListener(type, fn, false);
         } else if (obj.detachEvent) {
-            obj.detachEvent( "on"+type, obj[type+fn] );
-            obj[type+fn] = null;
-            obj["e"+type+fn] = null;
+            obj.detachEvent("on" + type, obj[type + fn]);
+            obj[type + fn] = null;
+            obj["e" + type + fn] = null;
         }
     },
 
@@ -203,7 +211,7 @@ Deckbox._ = {
         if ($(el).hasClass("card")) return true;
     },
 
-    tooltip: function(which)  {
+    tooltip: function(which) {
         if (which == "image") return this._iT = this._iT || new Deckbox.ui.Tooltip("deckbox_i_tooltip", "image");
         if (which == "text") return this._tT = this._tT || new Deckbox.ui.Tooltip("deckbox_t_tooltip", "text");
     },
@@ -218,8 +226,10 @@ Deckbox._ = {
     onmouseover: function(event) {
         var el = Deckbox._.target(event);
         if (Deckbox._.needsTooltip(el)) {
-            var no = el.getAttribute("data-nott"), url, img,
-                posX = Deckbox._.pointerX(event), posY = Deckbox._.pointerY(event);
+            var no = el.getAttribute("data-nott"),
+                url, img,
+                posX = Deckbox._.pointerX(event),
+                posY = Deckbox._.pointerY(event);
             if (!no) {
                 el._shown = true;
                 if (url = $(el).data("tt")) {
@@ -241,7 +251,9 @@ Deckbox._ = {
     },
 
     onmousemove: function(event) {
-        var el = Deckbox._.target(event), posX = Deckbox._.pointerX(event), posY = Deckbox._.pointerY(event);
+        var el = Deckbox._.target(event),
+            posX = Deckbox._.pointerX(event),
+            posY = Deckbox._.pointerY(event);
         if (Deckbox._.needsTooltip(el)) {
             Deckbox._.tooltip("image").move(posX, posY);
         }
@@ -280,11 +292,11 @@ Deckbox._ = {
 
     /* Preload the tooltip images. */
     Deckbox._.onDocumentLoad(function() {
-        $(".card").each(function () {
+        $(".card").each(function() {
             $(this).data("tt", "https://deckbox.org/mtg/" + $(this).text().replace(/^[0-9 ]*/, "") + "/tooltip");
         });
         var allLinks = document.getElementsByTagName("a");
-        for (var i = 0; i < allLinks.length; i ++) {
+        for (var i = 0; i < allLinks.length; i++) {
             var link = allLinks[i];
             if (Deckbox._.needsTooltip(link)) {
                 document.body.appendChild(Deckbox._.preloadImg(link));

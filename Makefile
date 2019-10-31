@@ -13,7 +13,7 @@ push:
 test: check unit
 
 # Run all typechecking and linting.
-check: lint types imports
+check: lint jslint types imports
 
 # Create a pull request, requies 'hub' from github.
 pr:
@@ -53,6 +53,13 @@ lint:
 	@echo "******************************** Lint *****************************************"
 	@echo
 	@python3 dev.py pylint
+	@echo
+
+jslint:
+	@echo
+	@echo "******************************** Lint *****************************************"
+	@echo
+	@find . -name "*.js" | xargs js-beautify
 	@echo
 
 types:

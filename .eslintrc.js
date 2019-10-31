@@ -143,8 +143,7 @@ module.exports = {
         "no-param-reassign": "off",
         "no-path-concat": "error",
         "no-plusplus": [
-            "error",
-            {
+            "error", {
                 "allowForLoopAfterthoughts": true
             }
         ],
@@ -221,8 +220,7 @@ module.exports = {
         "rest-spread-spacing": "error",
         "semi": "off",
         "semi-spacing": [
-            "error",
-            {
+            "error", {
                 "after": true,
                 "before": false
             }

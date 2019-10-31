@@ -57,9 +57,9 @@ lint:
 
 jslint:
 	@echo
-	@echo "******************************** Lint *****************************************"
+	@echo "******************************** JS Lint **************************************"
 	@echo
-	@find . -name "*.js" | xargs js-beautify
+	@! find . -name "*.js" | xargs  js-beautify `fn *.js` | grep -v unchanged
 	@echo
 
 types:

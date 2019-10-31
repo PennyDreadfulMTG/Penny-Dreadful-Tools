@@ -2214,6 +2214,87 @@ p.detail .text {
 
 /*
 
+Toggles
+
+From https://codepen.io/mallendeo/pen/eLIiG
+
+*/
+
+/* Our changes from the Codepen. */
+.toggle-button {
+    border: 0;
+    float: right;
+    margin-left: 1rem;
+}
+
+.toggle {
+    display: none;
+}
+
+.toggle, .toggle:after, .toggle:before, .toggle *, .toggle *:after, .toggle *:before, .toggle + .toggle-button {
+    box-sizing: border-box;
+}
+
+.toggle::-moz-selection, .toggle:after::-moz-selection, .toggle:before::-moz-selection, .toggle *::-moz-selection, .toggle *:after::-moz-selection, .toggle *:before::-moz-selection, .toggle + .toggle-button::-moz-selection {
+    background: none;
+}
+
+.toggle::selection, .toggle:after::selection, .toggle:before::selection, .toggle *::selection, .toggle *:after::selection, .toggle *:before::selection, .toggle + .toggle-button::selection {
+    background: none;
+}
+
+.toggle + .toggle-button {
+    outline: 0;
+    display: block;
+    width: 2rem;
+    height: 1rem;
+    position: relative;
+    cursor: pointer;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+.toggle + .toggle-button:after, .toggle + .toggle-button:before {
+    position: relative;
+    display: block;
+    content: "";
+    width: 50%;
+    height: 100%;
+}
+
+.toggle + .toggle-button:after {
+    left: 0;
+}
+
+.toggle + .toggle-button:before {
+    display: none;
+}
+
+.toggle-right + .toggle-button:after {
+    left: 50%;
+}
+
+.toggle + .toggle-button {
+    background: #eee;
+    border-radius: 2em;
+    padding: 2px;
+    transition: all .4s ease;
+}
+
+.toggle + .toggle-button:after {
+    border-radius: 50%;
+    background: #f9f9f9;
+    transition: all .2s ease;
+}
+
+.toggle-right + .toggle-button {
+    background: #999;
+}
+
+/*
+
 Tooltips
 
 We used tippedjs for tooltips but we don't want to load their CSS separately so here are the parts we need.

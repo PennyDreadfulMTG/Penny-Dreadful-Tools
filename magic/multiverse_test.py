@@ -36,4 +36,4 @@ def test_name_from_card_description() -> None:
     assert multiverse.name_from_card_description(hanweir_garrison) == 'Hanweir Garrison'
     assert multiverse.name_from_card_description(giant_killer) == 'Giant Killer'
     assert multiverse.name_from_card_description(delver_of_secrets) == 'Delver of Secrets'
-    assert multiverse.name_from_card_description(life_from_the_loam) == 'Life From the Loam'
+    assert multiverse.name_from_card_description(life_from_the_loam) == 'Life from the Loam'

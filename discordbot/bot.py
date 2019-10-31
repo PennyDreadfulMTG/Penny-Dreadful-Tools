@@ -194,7 +194,7 @@ class Bot(commands.Bot):
             try:
                 oracle.valid_name(name)
             except InvalidDataException:
-                print(f"Planning to add {name} to database in background_task_spoiler_season.")
+                print(f'Planning to add {name} to database in background_task_spoiler_season.')
                 cards_not_currently_in_db.append(c)
         if len(cards_not_currently_in_db) > 0:
             oracle.add_cards_and_update(cards_not_currently_in_db)

@@ -228,7 +228,7 @@ def insert_cards(printings: List[CardDescription]) -> None:
 
         if is_meld_result(p): # We don't make entries for a meld result until we know the card_ids of the front faces.
             meld_result_printings.append(p)
-        elif p.get('card_faces') and p.get('layout') is not 'meld':
+        elif p.get('card_faces') and p.get('layout') != 'meld':
             face_values += multiple_faces_values(p, card_id)
         else:
             face_values.append(single_face_value(p, card_id))
@@ -534,6 +534,6 @@ def subtypes(type_line: str) -> List[str]:
 def name_from_card_description(c: CardDescription):
     if c['layout'] in ['transform', 'flip', 'adventure']: # 'meld' has 'all_parts' not 'card_faces' so does not need to be included here despite having very similar behavior.
         return c['card_faces'][0]['name']
-    elif c.get('card_faces'):
+    if c.get('card_faces'):
         return ' // '.join([f['name'] for f in c.get('card_faces')])
     return c['name']

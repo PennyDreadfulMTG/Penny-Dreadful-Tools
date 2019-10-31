@@ -32,16 +32,16 @@ def setup(bot: Bot) -> None:
             print(f'No command found in {m.__name__}')
 
     aliases = text.unambiguous_prefixes(names)
-    for command in commands:
+    for cmd in commands:
         to_add = []
         for prefix in aliases:
-            if command.name.startswith(prefix):
+            if cmd.name.startswith(prefix):
                 to_add.append(prefix)
-            for alias in command.aliases:
+            for alias in cmd.aliases:
                 if alias.startswith(prefix):
                     to_add.append(prefix)
-        command.aliases += to_add
-        bot.add_command(command)
+        cmd.aliases += to_add
+        bot.add_command(cmd)
 
 class CardConverter:
     @classmethod

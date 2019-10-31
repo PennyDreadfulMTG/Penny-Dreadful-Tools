@@ -162,7 +162,8 @@ def sqlescape(s: ValidSqlArgumentDescription, force_string: bool = False, backsl
         return 'NULL'
     if (str(s).isdecimal() or isinstance(s, float)) and not force_string:
         return s
-    if isinstance(s, str):
+    if isinstance(s, (str, int, float)):
+        s = str(s)
         encodable = s.encode('utf-8', 'strict').decode('utf-8')
         if encodable.find('\x00') >= 0:
             raise Exception('NUL not allowed in SQL string.')

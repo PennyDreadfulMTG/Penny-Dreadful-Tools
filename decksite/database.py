@@ -20,6 +20,7 @@ def db() -> Database:
     return ctx.database
 
 def setup() -> None:
+    # pylint: disable=import-outside-toplevel
     from decksite import APP
     with APP.app_context():  # type: ignore
         db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER UNIQUE NOT NULL)')

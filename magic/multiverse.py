@@ -254,29 +254,25 @@ def insert_cards(printings: List[CardDescription]) -> None:
         printing_values.append(printing_value(p, card_id, set_id, rarity_id, rarity))
 
     card_query += ',\n'.join(card_values)
-    card_query += ';'
     db().execute(card_query)
 
     if card_color_values: # We should not issue this query if we are only inserting colorless cards as they don't have an entry in this table.
-        card_color_query += ',\n'.join(card_color_values) + ';'
+        card_color_query += ',\n'.join(card_color_values)
         db().execute(card_color_query)
-        card_color_identity_query += ',\n'.join(card_color_identity_values) + ';'
+        card_color_identity_query += ',\n'.join(card_color_identity_values)
         db().execute(card_color_identity_query)
 
     for p in meld_result_printings:
         insert_meld_result_faces(p, cards)
 
     printing_query += ',\n'.join(printing_values)
-    printing_query += ';'
     db().execute(printing_query)
 
     face_query += ',\n'.join(face_values)
-    face_query += ';'
     db().execute(face_query)
 
     if card_legality_values:
         card_legality_query += ',\n'.join(card_legality_values)
-        card_legality_query += ';'
         db().execute(card_legality_query)
 
     # Create the current Penny Dreadful format if necessary.

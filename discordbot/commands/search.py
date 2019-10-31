@@ -4,7 +4,7 @@ from discordbot.command import MAX_CARDS_SHOWN, MtgContext
 from magic import fetcher, oracle
 
 
-@commands.command(aliases=['s', 'scry', 'scryfall', 'se'])
+@commands.command(aliases=['s', 'scry', 'scryfall'])
 async def search(ctx: MtgContext, *, args: str) -> None:
     """Card search using Scryfall."""
     how_many, cardnames = fetcher.search_scryfall(args)

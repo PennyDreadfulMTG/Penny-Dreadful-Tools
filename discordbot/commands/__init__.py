@@ -10,6 +10,7 @@ from discord.ext.commands.errors import BadArgument
 
 from discordbot import command
 from magic.models import Card
+from shared import text
 
 
 def setup(bot: Bot) -> None:
@@ -17,17 +18,30 @@ def setup(bot: Bot) -> None:
     modules = glob.glob(path.join(path.dirname(__file__), '*.py'))
     files = [path.basename(f)[:-3] for f in modules if path.isfile(f) and not f.endswith('__init__.py')]
 
+    commands, names = [], []
     for mod in files:
         n = 0
         m = importlib.import_module(f'.{mod}', package=__name__)
         for name, obj in inspect.getmembers(m):
             if isinstance(obj, Command):
-                print('Loaded !%s' % name)
-                bot.add_command(obj)
+                names.append(obj.name)
+                names += obj.aliases
+                commands.append(obj)
                 n += 1
         if n == 0:
             print(f'No command found in {m.__name__}')
 
+    aliases = text.unambiguous_prefixes(names)
+    for command in commands:
+        to_add = []
+        for prefix in aliases:
+            if command.name.startswith(prefix):
+                to_add.append(prefix)
+            for alias in command.aliases:
+                if alias.startswith(prefix):
+                    to_add.append(prefix)
+        command.aliases += to_add
+        bot.add_command(command)
 
 class CardConverter:
     @classmethod

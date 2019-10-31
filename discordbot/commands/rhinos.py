@@ -7,7 +7,7 @@ from magic import oracle
 from magic.models import Card
 
 
-@commands.command(aliases=['rhino'])
+@commands.command()
 async def rhinos(ctx: MtgContext) -> None:
     """Anything can be a rhino if you try hard enough"""
     rhino_name = 'Siege Rhino'

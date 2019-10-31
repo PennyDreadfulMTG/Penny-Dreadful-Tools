@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 from magic import card, database, fetcher, mana, rotation
 from magic.card import TableDescription
@@ -171,8 +171,16 @@ def insert_cards(printings: List[CardDescription]) -> None:
     get_format_id('Penny Dreadful', True)
     update_bugged_cards()
 
-def determine_values(printings: List[CardDescription], next_card_id: int) -> Tuple[Dict[str, int], Dict[str, List[str]]]:
-    cards, meld_result_printings, card_values, card_color_values, card_color_identity_values, face_values, printing_values, card_legality_values = {}, [], [], [], [], [], [], []
+def determine_values(printings: List[CardDescription], next_card_id: int) -> Dict[str, List[Dict[str, Any]]]:
+    # pylint: disable=too-many-locals
+    cards: Dict[str, int] = {}
+    card_values: List[Dict[str, Any]] = []
+    face_values: List[Dict[str, Any]] = []
+    meld_result_printings: List[CardDescription] = []
+    card_color_values: List[Dict[str, Any]] = []
+    card_color_identity_values: List[Dict[str, Any]] = []
+    printing_values: List[Dict[str, Any]] = []
+    card_legality_values: List[Dict[str, Any]] = []
     rarity_ids = {x['name']: x['id'] for x in db().select('SELECT id, name FROM rarity')}
     scryfall_to_internal_rarity = {
         'common': ('Common', rarity_ids['Common']),
@@ -244,7 +252,7 @@ def determine_values(printings: List[CardDescription], next_card_id: int) -> Tup
     }
     return (cards, values)
 
-def insert_many(table: str, properties: TableDescription, values: Dict[str, List[str]], additional_columns: Optional[List[str]] = None) -> None:
+def insert_many(table: str, properties: TableDescription, values: List[Dict[str, Any]], additional_columns: Optional[List[str]] = None) -> None:
     columns = additional_columns or []
     columns += [k for k, v in properties.items() if v.get('foreign_key')]
     columns += [name for name, prop in properties.items() if prop['scryfall']]
@@ -277,10 +285,10 @@ def update_pd_legality() -> None:
             break
         set_legal_cards(season=s)
 
-def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> str:
+def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> Dict[str, Any]:
     if not card_id:
         raise InvalidDataException(f'Cannot insert a face without a card_id: {p}')
-    result = {}
+    result: Dict[str, Any] = {}
     result['card_id'] = card_id
     result['name'] = p['name'] # always present in scryfall
     result['mana_cost'] = p['mana_cost'] #always present in scryfall
@@ -295,7 +303,7 @@ def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> st
     result['position'] = position
     return result
 
-def multiple_faces_values(p: CardDescription, card_id: int) -> List[str]:
+def multiple_faces_values(p: CardDescription, card_id: int) -> List[Dict[str, Any]]:
     card_faces = p.get('card_faces')
     if card_faces is None:
         raise InvalidArgumentException(f'Tried to insert_card_faces on a card without card_faces: {p} ({card_id})')
@@ -309,7 +317,7 @@ def multiple_faces_values(p: CardDescription, card_id: int) -> List[str]:
         position += 1
     return face_values
 
-def meld_face_values(p: CardDescription, cards: Dict[str, int]) -> None:
+def meld_face_values(p: CardDescription, cards: Dict[str, int]) -> List[Dict[str, Any]]:
     values = []
     all_parts = p.get('all_parts')
     if all_parts is None:
@@ -347,11 +355,11 @@ def update_sets() -> dict:
             insert_set(s)
     return load_sets()
 
-def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int) -> str:
+def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int) -> Dict[str, Any]:
     # pylint: disable=too-many-locals
     if not card_id or not set_id:
         raise InvalidDataException(f'Cannot insert printing without card_id and set_id: {card_id}, {set_id}, {p}')
-    result = {}
+    result: Dict[str, Any] = {}
     result['card_id'] = card_id
     result['set_id'] = set_id
     result['rarity_id'] = rarity_id

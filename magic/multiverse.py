@@ -205,9 +205,6 @@ def insert_cards(printings: List[CardDescription]) -> None:
         if p['name'] == 'Little Girl' or p['layout'] == 'art_series':
             continue
 
-        if is_meld_result(p):
-            meld_result_printings.append(p)
-
         rarity, rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]
 
         try:
@@ -229,7 +226,9 @@ def insert_cards(printings: List[CardDescription]) -> None:
         cards[p['name']] = card_id
         card_values.append("({i},'{l}')".format(i=card_id, l=p['layout']))
 
-        if p.get('card_faces'):
+        if is_meld_result(p): # We don't make entries for a meld result until we know the card_ids of the front faces.
+            meld_result_printings.append(p)
+        elif p.get('card_faces') and p.get('layout') is not 'meld':
             face_values += multiple_faces_values(p, card_id)
         else:
             face_values.append(single_face_value(p, card_id))

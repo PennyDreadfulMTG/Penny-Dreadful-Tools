@@ -8,7 +8,7 @@ from typing import List, Optional
 from PIL import Image
 
 import shared.fetcher_internal as internal
-from magic import oracle
+from magic import card, oracle
 from magic.card import Printing
 from magic.models import Card
 from shared import configuration
@@ -18,20 +18,19 @@ if not os.path.exists(configuration.get_str('image_dir')):
     os.mkdir(configuration.get_str('image_dir'))
 
 def basename(cards: List[Card]) -> str:
-    from magic import card
     return '_'.join(re.sub('[^a-z-]', '-', card.canonicalize(c.name)) for c in cards)
 
 def bluebones_image(cards: List[Card]) -> str:
-    c = '|'.join(card.name for card in cards)
+    c = '|'.join(c.name for c in cards)
     return 'http://magic.bluebones.net/proxies/index2.php?c={c}'.format(c=escape(c))
 
-def scryfall_image(card: Card, version: str = '', face: str = None) -> str:
+def scryfall_image(c: Card, version: str = '', face: str = None) -> str:
     if face == 'meld':
-        name = card.names[1]
-    elif ' // ' in card.name:
-        name = card.name.replace(' // ', '/')
+        name = c.names[1]
+    elif ' // ' in c.name:
+        name = c.name.replace(' // ', '/')
     else:
-        name = card.name
+        name = c.name
     u = 'https://api.scryfall.com/cards/named?exact={c}&format=image'.format(c=escape(name))
     if version:
         u += '&version={v}'.format(v=escape(version))
@@ -49,7 +48,7 @@ def gatherer_image(printing: Printing) -> Optional[str]:
     return None
 
 def download_bluebones_image(cards: List[Card], filepath: str) -> bool:
-    print('Trying to get image for {cards}'.format(cards=', '.join(card.name for card in cards)))
+    print('Trying to get image for {cards}'.format(cards=', '.join(c.name for c in cards)))
     try:
         internal.store(bluebones_image(cards), filepath)
     except FetchException as e:
@@ -57,48 +56,48 @@ def download_bluebones_image(cards: List[Card], filepath: str) -> bool:
     return internal.acceptable_file(filepath)
 
 async def download_scryfall_image(cards: List[Card], filepath: str, version: str = '') -> bool:
-    card_names = ', '.join(card.name for card in cards)
+    card_names = ', '.join(c.name for c  in cards)
     print(f'Trying to get scryfall images for {card_names}')
     image_filepaths = []
-    for card in cards:
-        card_filepath = determine_filepath([card])
+    for c in cards:
+        card_filepath = determine_filepath([c])
         if not internal.acceptable_file(card_filepath):
-            await download_scryfall_card_image(card, card_filepath, version)
+            await download_scryfall_card_image(c, card_filepath, version)
         if internal.acceptable_file(card_filepath):
             image_filepaths.append(card_filepath)
     if len(image_filepaths) > 1:
         save_composite_image(image_filepaths, filepath)
     return internal.acceptable_file(filepath)
 
-def download_scryfall_art_crop(card: Card) -> Optional[str]:
-    file_path = re.sub('.jpg$', '.art_crop.jpg', determine_filepath([card]))
+def download_scryfall_art_crop(c: Card) -> Optional[str]:
+    file_path = re.sub('.jpg$', '.art_crop.jpg', determine_filepath([c]))
     if not internal.acceptable_file(file_path):
-        download_scryfall_card_image(card, file_path, version='art_crop')
+        download_scryfall_card_image(c, file_path, version='art_crop')
     if internal.acceptable_file(file_path):
         return file_path
     return None
 
-def download_scryfall_png(card: Card) -> Optional[str]:
-    file_path = re.sub('.jpg$', '.png', determine_filepath([card]))
+def download_scryfall_png(c: Card) -> Optional[str]:
+    file_path = re.sub('.jpg$', '.png', determine_filepath([c]))
     if not internal.acceptable_file(file_path):
-        download_scryfall_card_image(card, file_path, version='png')
+        download_scryfall_card_image(c, file_path, version='png')
     if internal.acceptable_file(file_path):
         return file_path
     return None
 
-async def download_scryfall_card_image(card: Card, filepath: str, version: str = '') -> bool:
+async def download_scryfall_card_image(c: Card, filepath: str, version: str = '') -> bool:
     try:
-        if card.is_double_sided():
+        if c.is_double_sided():
             paths = [re.sub('.jpg$', '.a.jpg', filepath), re.sub('.jpg$', '.b.jpg', filepath)]
-            await internal.store_async(scryfall_image(card, version=version), paths[0])
-            if card.layout == 'transform':
-                await internal.store_async(scryfall_image(card, version=version, face='back'), paths[1])
-            if card.layout == 'meld':
-                await internal.store_async(scryfall_image(card, version=version, face='meld'), paths[1])
+            await internal.store_async(scryfall_image(c, version=version), paths[0])
+            if c.layout == 'transform':
+                await internal.store_async(scryfall_image(c, version=version, face='back'), paths[1])
+            if c.layout == 'meld':
+                await internal.store_async(scryfall_image(c, version=version, face='meld'), paths[1])
             if (internal.acceptable_file(paths[0]) and internal.acceptable_file(paths[1])):
                 save_composite_image(paths, filepath)
         else:
-            await internal.store_async(scryfall_image(card, version=version), filepath)
+            await internal.store_async(scryfall_image(c, version=version), filepath)
     except FetchException as e:
         print('Error: {e}'.format(e=e))
     return internal.acceptable_file(filepath)
@@ -164,15 +163,15 @@ def generate_banner(names: List[str], background: str, v_crop: int = 33) -> str:
 
     n = math.ceil(len(cards) / 2)
     x = 800
-    for card in cards[:n]:
-        ip = download_scryfall_png(card)
+    for c in cards[:n]:
+        ip = download_scryfall_png(c)
         with Image.open(ip) as img:
             img = img.resize((160, 213), Image.LANCZOS)
             canvas.paste(img, (x, 30))
             x = x + img.width + 10
     x = 900
-    for card in cards[n:]:
-        ip = download_scryfall_png(card)
+    for c in cards[n:]:
+        ip = download_scryfall_png(c)
         with Image.open(ip) as img:
             img = img.resize((160, 213), Image.LANCZOS)
             canvas.paste(img, (x, 60))

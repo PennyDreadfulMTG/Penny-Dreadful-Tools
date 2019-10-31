@@ -158,7 +158,7 @@ def update_database(new_date: datetime.datetime) -> None:
 # We need to wait until the end to add the meld results faces because they need to know the id of the card they are the reverse of before we can know their appropriate values.
 def insert_cards(printings: List[CardDescription]) -> None:
     next_card_id = (db().value('SELECT MAX(id) FROM card') or 0) + 1
-    cards, values = determine_values(printings, next_card_id)
+    values = determine_values(printings, next_card_id)
     insert_many('card', card.card_properties(), values['card'], ['id'])
     if values['card_color']: # We should not issue this query if we are only inserting colorless cards as they don't have an entry in this table.
         insert_many('card_color', card.card_color_properties(), values['card_color'])
@@ -183,10 +183,10 @@ def determine_values(printings: List[CardDescription], next_card_id: int) -> Dic
     card_legality_values: List[Dict[str, Any]] = []
     rarity_ids = {x['name']: x['id'] for x in db().select('SELECT id, name FROM rarity')}
     scryfall_to_internal_rarity = {
-        'common': ('Common', rarity_ids['Common']),
-        'uncommon': ('Uncommon', rarity_ids['Uncommon']),
-        'rare': ('Rare', rarity_ids['Rare']),
-        'mythic': ('Mythic Rare', rarity_ids['Mythic Rare'])
+        'common': rarity_ids['Common'],
+        'uncommon': rarity_ids['Uncommon'],
+        'rare':  rarity_ids['Rare'],
+        'mythic': rarity_ids['Mythic Rare']
     }
     sets = load_sets()
     colors = {c['symbol'].upper(): c['id'] for c in db().select('SELECT id, symbol FROM color ORDER BY id')}
@@ -197,7 +197,7 @@ def determine_values(printings: List[CardDescription], next_card_id: int) -> Dic
         if p['name'] == 'Little Girl' or p['layout'] == 'art_series':
             continue
 
-        rarity, rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]
+        rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]
 
         try:
             set_id = sets[p['set']]
@@ -242,7 +242,7 @@ def determine_values(printings: List[CardDescription], next_card_id: int) -> Dic
     for p in meld_result_printings:
         face_values += meld_face_values(p, cards)
 
-    values = {
+    return {
         'card': card_values,
         'card_color': card_color_values,
         'card_color_identity': card_color_identity_values,
@@ -250,7 +250,6 @@ def determine_values(printings: List[CardDescription], next_card_id: int) -> Dic
         'printing': printing_values,
         'card_legality': card_legality_values
     }
-    return (cards, values)
 
 def insert_many(table: str, properties: TableDescription, values: List[Dict[str, Any]], additional_columns: Optional[List[str]] = None) -> None:
     columns = additional_columns or []

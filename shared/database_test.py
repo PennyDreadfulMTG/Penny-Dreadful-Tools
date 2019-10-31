@@ -1,5 +1,6 @@
 from shared.database import sqlescape
 
+
 def test_sqlescape():
     assert sqlescape("There's an apostrophe.") == "There''s an apostrophe."
     assert sqlescape('a') == 'a'

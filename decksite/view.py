@@ -317,7 +317,7 @@ class View(BaseView):
             a.most_common_cards_tournament.append(cs[v[0]])
         a.has_most_common_cards_tournament = len(a.most_common_cards_tournament) > 0
 
-        a.archetype_tree = PreOrderIter(a)
+        a.archetype_tree = list(PreOrderIter(a))
         for r in a.archetype_tree:
             # Prune branches we don't want to show
             if r.id not in [a.id for a in archetypes]:

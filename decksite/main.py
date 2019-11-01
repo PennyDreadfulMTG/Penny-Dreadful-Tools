@@ -50,7 +50,7 @@ def home() -> str:
 @SEASONS.route('/decks/')
 @cached()
 def decks() -> str:
-    view = Decks(ds.load_decks(limit='LIMIT 500', season_id=get_season_id()))
+    view = Decks(season_id=get_season_id())
     return view.page()
 
 @APP.route('/decks/<int:deck_id>/')

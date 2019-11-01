@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional, Union
 
 from flask import url_for
 
@@ -9,10 +9,9 @@ from decksite.view import View
 
 # pylint: disable=no-self-use
 class Decks(View):
-    def __init__(self, decks: List[Deck]) -> None:
+    def __init__(self, season_id: Union[int, str]) -> None:
         super().__init__()
-        self.decks = decks
-        self.season_url = url_for('seasons.season', season_id=get_season_id())
+        self.season_id = season_id
         self.show_seasons = True
 
     def page_title(self):

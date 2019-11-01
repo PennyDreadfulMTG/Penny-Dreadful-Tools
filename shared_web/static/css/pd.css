@@ -489,6 +489,10 @@ Links in text are underlined in such a way as to break on descenders like those 
 
 */
 
+a {
+    cursor: pointer; /* For pagination links in Reactt tables, they don't have an href attribute. */
+}
+
 a, main table.calendar a, main .intro .details a, .details a {
     color: inherit;
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;

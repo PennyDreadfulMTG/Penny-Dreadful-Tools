@@ -3,6 +3,7 @@ import subprocess
 from typing import Any, Dict, List, Optional, Union
 
 from flask import Response, current_app, request
+import humps
 
 from shared import configuration
 from shared.container import Container
@@ -45,7 +46,9 @@ def validate_api_key() -> Optional[Response]:
 def generate_error(code: str, msg: str, **more: Any) -> Dict[str, Any]:
     return {'error': True, 'code': code, 'msg': msg, **more}
 
-def return_json(content: Union[bool, Dict[str, Any], None, List[Container]], status: int = 200) -> Response:
+def return_json(content: Union[bool, Dict[str, Any], None, List[Container]], status: int = 200, camelize = False) -> Response:
+    if camelize:
+        content = humps.camelize(content)
     s = json.dumps(content, default=extra_serializer)
     r = Response(response=s, status=status, mimetype='application/json')
     return r

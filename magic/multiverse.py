@@ -192,9 +192,8 @@ def determine_values(printings: List[CardDescription], next_card_id: int) -> Dic
     colors = {c['symbol'].upper(): c['id'] for c in db().select('SELECT id, symbol FROM color ORDER BY id')}
 
     for p in printings:
-        # Exclude little girl because {hw} mana is a problem rn.
         # Exclude art_series because they have the same name as real cards and that breaks things.
-        if p['name'] == 'Little Girl' or p['layout'] == 'art_series':
+        if p['layout'] == 'art_series':
             continue
 
         rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]

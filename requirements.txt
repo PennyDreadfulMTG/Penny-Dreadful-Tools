@@ -1,4 +1,4 @@
-anytree==2.7.2
+anytree==2.4.3 # rq.filter: <2.5.0
 better_profanity==0.5.0
 bs4==0.0.1
 cachecontrol[filecache]==0.12.5

@@ -1,6 +1,6 @@
 from typing import List
 
-from flask import request, session, url_for
+from flask import session
 
 from magic import rotation
 from magic.models.deck import Deck

@@ -82,7 +82,7 @@ def decks_order_by(key: str) -> str:
              ELSE 99
          END)
     """
-    sortOptions = {
+    sort_options = {
         'marginalia': marginalia_order_by,
         'name': 'cache.normalized_name',
         'person': person_query(),
@@ -94,4 +94,4 @@ def decks_order_by(key: str) -> str:
         'date': 'cache.active_date',
         'season': 'cache.active_date'
     }
-    return sortOptions[key]
+    return sort_options[key]

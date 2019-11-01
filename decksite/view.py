@@ -5,7 +5,7 @@ from typing import Any, List, Optional, Union, cast
 import inflect
 from anytree.iterators import PreOrderIter
 from babel import Locale
-from flask import request, session, url_for
+from flask import request, url_for
 from flask_babel import gettext, ngettext
 from mypy_extensions import TypedDict
 from werkzeug.routing import BuildError

@@ -33,7 +33,7 @@ def load_season(season_id: int = None, league_only: bool = False) -> Container:
     season.number = season_id
     return season
 
-# pylint: disable=attribute-defined-outside-init
+# pylint: disable=attribute-defined-outside-init,too-many-arguments,too-many-locals
 def load_decks(where: str = 'TRUE',
                having: str = 'TRUE',
                order_by: Optional[str] = None,

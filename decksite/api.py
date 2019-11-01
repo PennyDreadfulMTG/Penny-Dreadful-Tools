@@ -1,5 +1,4 @@
 import datetime
-from math import ceil
 from typing import List, Optional, cast
 
 from flask import Response, request, session, url_for
@@ -19,8 +18,7 @@ from magic import oracle, rotation
 from magic.decklist import parse_line
 from magic.models import Deck
 from shared import configuration, dtutil, guarantee, redis
-from shared.pd_exception import (DoesNotExistException, InvalidArgumentException,
-                                 InvalidDataException, TooManyItemsException)
+from shared.pd_exception import (DoesNotExistException, InvalidDataException, TooManyItemsException)
 from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
@@ -48,11 +46,7 @@ def decks_api() -> Response:
     pages = round(total / page_size)
     ds = deck.load_decks(order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
-    r = {
-        'page': page,
-        'pages': pages,
-        'decks': ds
-    }
+    r = { 'page': page, 'pages': pages, 'decks': ds }
     return return_json(r, camelize=True)
 
 @APP.route('/api/decks/<int:deck_id>')

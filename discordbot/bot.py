@@ -340,7 +340,6 @@ async def get_role(guild: Guild, rolename: str, create: bool = False) -> Optiona
     return None
 
 async def rotation_hype_message() -> Optional[str]:
-    start = time.time()
     runs, runs_percent, cs = rotation.read_rotation_files()
     if rotation.next_rotation_is_supplemental():
         cs = [c for c in cs if not c.pd_legal]

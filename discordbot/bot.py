@@ -316,7 +316,7 @@ class Bot(commands.Bot):
             last_run_time = rotation.last_run_time()
             if until_rotation < datetime.timedelta(7) and last_run_time is not None:
                 if dtutil.now() - last_run_time < datetime.timedelta(minutes=5):
-                    hype = rotation_hype_message()
+                    hype = await rotation_hype_message()
                     if hype:
                         await channel.send(hype)
                 timer = 5 * 60
@@ -339,7 +339,7 @@ async def get_role(guild: Guild, rolename: str, create: bool = False) -> Optiona
         return await guild.create_role(name=rolename)
     return None
 
-def rotation_hype_message() -> Optional[str]:
+async def rotation_hype_message() -> Optional[str]:
     runs, runs_percent, cs = rotation.read_rotation_files()
     if rotation.next_rotation_is_supplemental():
         cs = [c for c in cs if not c.pd_legal]

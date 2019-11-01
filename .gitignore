@@ -34,6 +34,7 @@ meta.sqlite
 my_doodle.py
 node_modules/
 prices.db
+shared_web/static/dist/
 spellfix.*
 sqlite3.h
 sqlite3ext.h

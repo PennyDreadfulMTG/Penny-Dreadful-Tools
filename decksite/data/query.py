@@ -68,3 +68,30 @@ def season_join() -> str:
                     season AS `end` ON `end`.id = `start`.id + 1
             ) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
     """
+
+def decks_order_by(key: str) -> str:
+    # This is not quite right because 5th place in tournaments with top 4 (no stars) get the same score as 5th place in tournaments with top 8 (1 star)
+    # but we don't load tournament_top_n in load_decks, only in load_decks_heavy. See #6648.
+    marginalia_order_by = """
+        (CASE WHEN d.finish = 1 THEN 1
+             WHEN d.finish = 2 THEN 2
+             WHEN d.finish = 3 THEN 3
+             WHEN cache.wins - 5 >= cache.losses THEN 4
+             WHEN cache.wins - 3 >= cache.losses THEN 5
+             WHEN d.finish = 5 THEN 6
+             ELSE 99
+         END)
+    """
+    sortOptions = {
+        'marginalia': marginalia_order_by,
+        'name': 'cache.normalized_name',
+        'person': person_query(),
+        'archetype': 'a.name',
+        'sourceName': 's.name',
+        'record': '(cache.wins - cache.losses)',
+        'omw': 'cache.omw IS NOT NULL DESC, cache.omw',
+        'top8': 'd.finish IS NOT NULL DESC, d.finish',
+        'date': 'cache.active_date',
+        'season': 'cache.active_date'
+    }
+    return sortOptions[key]

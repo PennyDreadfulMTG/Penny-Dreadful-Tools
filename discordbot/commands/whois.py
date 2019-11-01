@@ -1,4 +1,5 @@
 import re
+from typing import Any, Dict
 
 from discord.ext import commands
 
@@ -25,5 +26,5 @@ async def whois(ctx: MtgContext, *, args: str) -> None:
                 msg = f"**{person['name']}** is <@{person['discord_id']}>"
         await ctx.send(msg)
 
-def not_found(person):
-    return person is None or (person.get('error') and person.get('code') == 'NOTFOUND')
+def not_found(person: Dict[str, Any]) -> bool:
+    return person is None or (person.get('error') is not None and person.get('code') == 'NOTFOUND')

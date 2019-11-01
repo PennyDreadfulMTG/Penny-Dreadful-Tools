@@ -1,21 +1,33 @@
 {
-  "name": "penny-dreadful-tools",
-  "version": "1.0.0",
-  "description": "A suite of tools for the Penny Dreadful MTGO community.",
-  "main": "None",
+  "author": {
+    "email": "bakert@gmail.com",
+    "name": "Thomas David Baker"
+  },
+  "bugs": {
+    "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues"
+  },
   "dependencies": {
+    "@babel/core": "^7.6.4",
+    "@babel/preset-env": "^7.6.3",
+    "@babel/preset-react": "^7.6.3",
+    "axios": "^0.19.0",
+    "babel-preset-env": "^1.7.0"
+  },
+  "description": "A suite of tools for the Penny Dreadful MTGO community.",
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.6",
+    "babel-preset-stage-2": "^6.24.1",
+    "css-loader": "^3.2.0",
     "react": "^16.11.0",
-    "react-table": "^6.10.3",
-    "react-dom": "^16.11.0"
+    "react-dom": "^16.11.0",
+    "style-loader": "^1.0.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   },
-  "devDependencies": {},
-  "scripts": {
-    "test": "make test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git"
-  },
+  "homepage": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools#readme",
   "keywords": [
     "pd",
     "pennydreadful",
@@ -23,13 +35,33 @@
     "mtgo",
     "magic"
   ],
-  "author": {
-    "name": "Thomas David Baker",
-    "email": "bakert@gmail.com"
-  },
   "license": "GPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues"
+  "main": "None",
+  "name": "penny-dreadful-tools",
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ],
+    "plugins": [
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ]
+    ]
   },
-  "homepage": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools#readme"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git"
+  },
+  "scripts": {
+    "babel": "babel --presets es2015 js/main.js -o build/main.bundle.js",
+    "build": "webpack -p --progress --config shared_web/static/webpack.config.js",
+    "dev-build": "webpack --progress -d --config shared_web/static/webpack.config.js",
+    "test": "make test",
+    "watch": "webpack --progress -d --config shared_web/static/webpack.config.js --watch"
+  },
+  "version": "1.0.0"
 }

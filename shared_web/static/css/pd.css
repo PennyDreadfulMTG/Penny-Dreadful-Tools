@@ -607,7 +607,9 @@ main table {
     overflow-x: auto;
 }
 
-main table.very-large {
+/* Very large tables are too expensive to hide with js and then show.
+Live tables don't use tablesorter and are never shown without pagination working. */
+main table.very-large, main table.live {
     visibility: visible;
 }
 

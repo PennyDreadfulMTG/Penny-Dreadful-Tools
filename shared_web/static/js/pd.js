@@ -64,9 +64,10 @@ PD.onMoreInfoClick = function() {
 }
 PD.initTables = function() {
     var selector = "main table";
+    var exclude = "table.live";
 
     // Apply footable to all reasonably-sized tables for a nice mobile layout.
-    $(selector).filter(function() {
+    $(selector).not(exclude).filter(function() {
         return $(this).find("> tbody > tr").length <= 1000;
     }).footable({
         "toggleColumn": "last",

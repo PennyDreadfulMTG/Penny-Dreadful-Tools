@@ -39,7 +39,7 @@ NUM_MOST_COMMON_CARDS_TO_LIST = 10
 class View(BaseView):
     def __init__(self) -> None:
         self.decks: List[Deck] = []
-        self.active_runs_text: Optional[str] = None
+        self.active_runs_text: str = ''
         self.hide_active_runs = True
         self.is_very_large: Optional[bool] = None
         self.show_seasons: bool = False

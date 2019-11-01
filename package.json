@@ -58,10 +58,10 @@
   },
   "scripts": {
     "babel": "babel --presets es2015 js/main.js -o build/main.bundle.js",
-    "build": "webpack -p --progress --config shared_web/static/webpack.config.js",
-    "dev-build": "webpack --progress -d --config shared_web/static/webpack.config.js",
+    "build": "webpack -p --progress --config decksite/webpack.config.js",
+    "dev-build": "webpack --progress -d --config decksite/webpack.config.js",
     "test": "make test",
-    "watch": "webpack --progress -d --config shared_web/static/webpack.config.js --watch"
+    "watch": "webpack --progress -d --config decksite/webpack.config.js --watch"
   },
   "version": "1.0.0"
 }

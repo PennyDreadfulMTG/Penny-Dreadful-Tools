@@ -23,7 +23,7 @@ pr:
 release: push pr
 
 buildjs:
-	webpack --config=shared_web/static/webpack.config.js
+	webpack --config=decksite/webpack.config.js
 
 # Run unit tests.
 TEST=.

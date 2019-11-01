@@ -22,6 +22,9 @@ pr:
 # Run all tests, push and create pull request.
 release: push pr
 
+buildjs:
+	webpack --config=shared_web/static/webpack.config.js
+
 # Run unit tests.
 TEST=.
 unit:

@@ -42,6 +42,9 @@ def test_norns_annex() -> None:
 def test_slitherhead() -> None:
     do_test('{B/G}', ['B/G'])
 
+def test_little_girl() -> None:
+    do_test('{HW}', ['HW'])
+
 def test_everything() -> None:
     rs = database.db().select('SELECT name, mana_cost FROM face')
     for row in rs:
@@ -91,6 +94,12 @@ def test_colorless() -> None:
 
 def test_snow() -> None:
     assert mana.colored_symbols(['S']) == {'required': ['S'], 'also': []}
+
+def test_cmc() -> None:
+    assert mana.cmc('{HW}') == 0.5
+    assert mana.cmc('{HG}') == 0.5
+    assert mana.cmc('{1}{U}{B}') == 3
+    assert mana.cmc('{X}{R}') == 1
 
 def do_test(s: str, expected: List[str]) -> None:
     symbols = mana.parse(s)

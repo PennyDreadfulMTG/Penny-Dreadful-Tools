@@ -2,8 +2,8 @@ import json
 import subprocess
 from typing import Any, Dict, List, Optional, Union
 
-from flask import Response, current_app, request
 import humps
+from flask import Response, current_app, request
 
 from shared import configuration
 from shared.container import Container

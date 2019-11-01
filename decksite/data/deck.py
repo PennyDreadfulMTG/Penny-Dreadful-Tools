@@ -438,10 +438,6 @@ def get_archetype_id(archetype: Optional[str]) -> Optional[int]:
     sql = 'SELECT id FROM archetype WHERE name = %s'
     return db().value(sql, [archetype])
 
-def load_similar_decks(ds: List[Deck]) -> None:
-    for d in ds:
-        d.similar_decks = []
-
 def calculate_similar_decks(ds: List[Deck]) -> None:
     threshold = 20
     cards_escaped = ', '.join(sqlescape(name) for name in all_card_names(ds))

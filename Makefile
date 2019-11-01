@@ -98,6 +98,10 @@ coverage:
 	@coverage report
 	@echo
 
+# Watch jsx files for changes and rebuild dist.js constantly while developing.
+watch:
+	npm run watch
+
 # Make a branch based off of current (remote) master with all your local changes preserved (but not added).
 branch:
 	@if test "$(BRANCH)" = ""; then echo 'Usage: make branch BRANCH=branchname'; exit 1; fi

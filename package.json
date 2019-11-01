@@ -1,0 +1,35 @@
+{
+  "name": "penny-dreadful-tools",
+  "version": "1.0.0",
+  "description": "A suite of tools for the Penny Dreadful MTGO community.",
+  "main": "None",
+  "dependencies": {
+    "react": "^16.11.0",
+    "react-table": "^6.10.3",
+    "react-dom": "^16.11.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git"
+  },
+  "keywords": [
+    "pd",
+    "pennydreadful",
+    "mtg",
+    "mtgo",
+    "magic"
+  ],
+  "author": {
+    "name": "Thomas David Baker",
+    "email": "bakert@gmail.com"
+  },
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues"
+  },
+  "homepage": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools#readme"
+}

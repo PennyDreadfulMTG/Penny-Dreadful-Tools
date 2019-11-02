@@ -10,8 +10,8 @@ class DeckTable extends React.Component {
       decks: [],
       page: 0,
       items: 50,
-      sortBy: 'date',
-      sortOrder: 'DESC'
+      sortBy: "date",
+      sortOrder: "DESC"
     };
   }
 
@@ -27,15 +27,15 @@ class DeckTable extends React.Component {
 
   loadDecks() {
     const {page, items, sortBy, sortOrder} = this.state;
-    Axios.get('/api/decks/', {'params': { 'page': page, 'items': items, 'sortBy': sortBy, 'sortOrder': sortOrder, 'seasonId': this.props.seasonId }})
+    Axios.get("/api/decks/", {"params": { "page": page, "items": items, "sortBy": sortBy, "sortOrder": sortOrder, "seasonId": this.props.seasonId }})
       .then(
-        (response) => { this.setState({'decks': response.data.decks}) },
+        (response) => { this.setState({"decks": response.data.decks}) },
         (error) => console.log(error)
       );
   }
 
   render() {
-    const className = "live with-marginalia" + (this.props.isVeryLarge ? ' very-large' : '');
+    const className = "live with-marginalia" + (this.props.isVeryLarge ? "very-large" : "");
     const { decks, sortBy, sortOrder } = this.state;
     this.renderDeckRow = this.renderDeckRow.bind(this);
     const deckRows = decks.map(this.renderDeckRow);
@@ -44,33 +44,33 @@ class DeckTable extends React.Component {
         <table className={className}>
           <thead>
               <tr>
-                  <th data-breakpoints="xs" className="marginalia" onClick={this.sort.bind(this, 'marginalia', 'ASC')}>⇅</th>
+                  <th data-breakpoints="xs" className="marginalia" onClick={this.sort.bind(this, "marginalia", "ASC")}>⇅</th>
                   <th data-breakpoints="xs sm">Colors</th>
-                  <th onClick={this.sort.bind(this, 'name', 'ASC')}>Name</th>
+                  <th onClick={this.sort.bind(this, "name", "ASC")}>Name</th>
                   { this.props.hidePerson
                     ? null
-                    : <th data-breakpoints="xs" onClick={this.sort.bind(this, 'person', 'ASC')}>Person</th>
+                    : <th data-breakpoints="xs" onClick={this.sort.bind(this, "person", "ASC")}>Person</th>
                   }
                   { this.props.showArchetype
-                    ? <th data-breakpoints="xs sm md" onClick={this.sort.bind(this, 'archetype', 'ASC')}>Archetype</th>
+                    ? <th data-breakpoints="xs sm md" onClick={this.sort.bind(this, "archetype", "ASC")}>Archetype</th>
                     : null
                   }
                   { this.props.hideSource
                     ? null
-                    : <th data-breakpoints="xs sm md" onClick={this.sort.bind(this, 'sourceName', 'ASC')}>Source</th>
+                    : <th data-breakpoints="xs sm md" onClick={this.sort.bind(this, "sourceName", "ASC")}>Source</th>
                   }
-                  <th className="n" onClick={this.sort.bind(this, 'record', 'DESC')}>Record</th>
+                  <th className="n" onClick={this.sort.bind(this, "record", "DESC")}>Record</th>
                   { this.props.showOmw
-                    ? <th data-breakpoints="xs sm md" title="Opponent's Match Win" onClick={this.sort.bind(this, 'omw', 'DESC')}>OMW</th>
+                    ? <th data-breakpoints="xs sm md" title="Opponent's Match Win" onClick={this.sort.bind(this, "omw", "DESC")}>OMW</th>
                     : null
                     }
                   { this.props.hideTop8
                     ? null
-                    : <th className="c" data-breakpoints="xs sm" onClick={this.sort.bind(this, 'top8', 'ASC')}>Top 8</th>
+                    : <th className="c" data-breakpoints="xs sm" onClick={this.sort.bind(this, "top8", "ASC")}>Top 8</th>
                   }
-                  <th data-breakpoints="xs" onClick={this.sort.bind(this, 'date', 'DESC')}>Date</th>
+                  <th data-breakpoints="xs" onClick={this.sort.bind(this, "date", "DESC")}>Date</th>
                   { this.props.showLegalSeasons
-                    ? <th data-breakpoints="xs sm md" onClick={this.sort.bind(this, 'season', 'DESC')}>Season</th>
+                    ? <th data-breakpoints="xs sm md" onClick={this.sort.bind(this, "season", "DESC")}>Season</th>
                     : null
                     }
                   {/* Empty column to hold the toggle when footable kicks in. */}
@@ -151,18 +151,18 @@ class DeckTable extends React.Component {
   }
   renderRecord(deck) {
     if (deck.showRecord && (deck.wins + deck.losses + deck.draws > 0)) {
-        return deck.wins + '–' + deck.losses + (deck.draws ? '–' + deck.draws : '');
+        return deck.wins + "–" + deck.losses + (deck.draws ? "–" + deck.draws : "");
     }
-    return '';
+    return "";
   }
   movePage(page) {
-    this.setState({ 'page': page })
+    this.setState({ "page": page })
   }
-  sort(sortBy, sortOrder = 'ASC') {
+  sort(sortBy, sortOrder = "ASC") {
     if (this.state.sortBy === sortBy) {
-      sortOrder = (this.state.sortOrder === 'ASC' ? 'DESC' : 'ASC');
+      sortOrder = (this.state.sortOrder === "ASC" ? "DESC" : "ASC");
     }
-    this.setState({ 'sortBy': sortBy, 'sortOrder': sortOrder, 'page': 0 });
+    this.setState({ "sortBy": sortBy, "sortOrder": sortOrder, "page": 0 });
   }
 }
 

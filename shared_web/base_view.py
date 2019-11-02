@@ -3,8 +3,9 @@ from typing import Dict, List, Optional, Union
 
 from flask import current_app, url_for
 
-from . import template
 from shared import configuration
+
+from . import template
 
 
 # pylint: disable=no-self-use, too-many-public-methods

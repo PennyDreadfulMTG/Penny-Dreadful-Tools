@@ -493,10 +493,10 @@ def banner(seasonnum: str) -> Response:
         cardnames = ['Aether Hub', 'Siege Rhino', 'Greater Good', "Mind's Desire", "God-Pharaoh's Gift", 'Kiln Fiend', 'Akroma, Angel of Wrath', 'Reanimate']
         background = 'Rofellos, Llanowar Emissary'
     elif seasonnum == '13':
-        cardnames = ['Day of Judgment', 'Ephemerate', 'Mana Leak', 'Dig Through Time', 'Duress', 'Lake of the Dead', 'Rampaging Ferocidon', 'Evolutionary Leap', 'Gavony Township', 'Soulherder']
-        background = 'Frantic Search'
+        cardnames = ['Day of Judgment', 'Mana Leak', 'Duress', 'Rampaging Ferocidon', 'Evolutionary Leap', 'Gavony Township', 'Ephemerate', 'Dig Through Time', 'Lake of the Dead', 'Soulherder']
+        background = 'Fact or Fiction'
     elif seasonnum == '14':
-        cardnames = ["Orim's Chant", 'Gitaxian Probe', 'Gush', 'Laboratory Maniac', 'Dark Ritual', 'Chain Lightning', 'Viashino Pyromancer', 'Channel', "Rofellos, Llanowar Emissary"]
+        cardnames = ['Gitaxian Probe', "Orim's Chant", 'Dark Ritual', 'Chain Lightning', 'Channel', 'Gush', "Rofellos, Llanowar Emissary", 'Laboratory Maniac']
         background = "God-Pharaoh's Statue"
 
 

@@ -47,6 +47,7 @@ def decks_api() -> Response:
     pages = round(total / page_size)
     ds = deck.load_decks(order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
+    ds = [d for d in ds if not d.is_in_current_run()]
     r = {'page': page, 'pages': pages, 'decks': ds}
     return return_json(r, camelize=True)
 

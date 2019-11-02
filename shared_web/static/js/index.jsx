@@ -27,9 +27,9 @@ class DeckTable extends React.Component {
 
   loadDecks() {
     const {page, items, sortBy, sortOrder} = this.state;
-    Axios.get("/api/decks/", {"params": { "page": page, "items": items, "sortBy": sortBy, "sortOrder": sortOrder, "seasonId": this.props.seasonId }})
+    Axios.get("/api/decks/", {"params": { page, items, sortBy, sortOrder, "seasonId": this.props.seasonId }})
       .then(
-        (response) => { this.setState({"decks": response.data.decks}) },
+        (response) => { this.setState({"decks": response.data.decks}); PD.initTables() },
         (error) => console.log(error)
       );
   }
@@ -40,7 +40,7 @@ class DeckTable extends React.Component {
     this.renderDeckRow = this.renderDeckRow.bind(this);
     const deckRows = decks.map(this.renderDeckRow);
     return (
-      <div>
+      <React.Fragment>
         <table className={className}>
           <thead>
               <tr>
@@ -90,7 +90,7 @@ class DeckTable extends React.Component {
          </tbody>
         </table>
         <p><a onClick={this.movePage.bind(this, this.state.page - 1)}>Previous Page</a> | <a onClick={this.movePage.bind(this, this.state.page + 1)}>Next Page</a></p>
-      </div>
+      </React.Fragment>
     )
   }
   renderDeckRow(deck) {
@@ -150,19 +150,19 @@ class DeckTable extends React.Component {
     );
   }
   renderRecord(deck) {
-    if (deck.showRecord && (deck.wins + deck.losses + deck.draws > 0)) {
+    if (deck.showRecord && deck.wins + deck.losses + deck.draws > 0) {
         return deck.wins + "–" + deck.losses + (deck.draws ? "–" + deck.draws : "");
     }
     return "";
   }
   movePage(page) {
-    this.setState({ "page": page })
+    this.setState({ "page": page });
   }
   sort(sortBy, sortOrder = "ASC") {
     if (this.state.sortBy === sortBy) {
-      sortOrder = (this.state.sortOrder === "ASC" ? "DESC" : "ASC");
+      sortOrder = this.state.sortOrder === "ASC" ? "DESC" : "ASC";
     }
-    this.setState({ "sortBy": sortBy, "sortOrder": sortOrder, "page": 0 });
+    this.setState({ sortBy, sortOrder, "page": 0 });
   }
 }
 

@@ -64,10 +64,10 @@ PD.onMoreInfoClick = function() {
 }
 PD.initTables = function() {
     var selector = "main table";
-    var exclude = "table.live";
+    var noTablesorter = "table.live";
 
     // Apply footable to all reasonably-sized tables for a nice mobile layout.
-    $(selector).not(exclude).filter(function() {
+    $(selector).filter(function() {
         return $(this).find("> tbody > tr").length <= 1000;
     }).footable({
         "toggleColumn": "last",
@@ -155,7 +155,7 @@ PD.initTables = function() {
             "columns": ["primary", "secondary"]
         }
     });
-    $(selector).tablesorter({});
+    $(selector).not(noTablesorter).tablesorter({});
 };
 PD.initDetails = function() {
     $(".details").siblings("p.question").click(function() {

@@ -78,7 +78,7 @@ class DeckTable extends React.Component {
               </tr>
           </thead>
           <tbody>
-            { this.props.activeRunsText
+            { this.props.activeRunsText && this.state.page == 0
                 ? <tr>
                       <td className="marginalia"><span className="active" title="Active in the current league">⊕</span></td>
                       <td></td>

@@ -70,6 +70,7 @@ PD.initTables = function() {
     $(selector).filter(function() {
         return $(this).find("> tbody > tr").length <= 1000;
     }).footable({
+        "empty": '', // Don't show any default text in empty table – in interacts badly with React deck table.
         "toggleColumn": "last",
         "breakpoints": {
             "xs": 359,

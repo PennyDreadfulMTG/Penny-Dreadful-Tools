@@ -1,7 +1,7 @@
 import hashlib
 import json
 import time
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set, Union
 
 from mypy_extensions import TypedDict
 
@@ -33,39 +33,74 @@ def load_season(season_id: int = None, league_only: bool = False) -> Container:
     season.number = season_id
     return season
 
-# pylint: disable=attribute-defined-outside-init,too-many-arguments,too-many-locals
+def load_decks_count(where: str = 'TRUE',
+                     having: str = 'TRUE',
+                     season_id: Optional[Union[str, int]] = None) -> int:
+    columns = 'COUNT(*) AS n'
+    group_by = ''
+    order_by = 'TRUE'
+    sql = load_decks_query(columns, where=where, group_by=None, having=having, order_by='TRUE', limit='', season_id=season_id)
+    return int(db().value(sql))
+
 def load_decks(where: str = 'TRUE',
-               having: str = 'TRUE',
-               order_by: Optional[str] = None,
-               limit: str = '',
-               season_id: Optional[int] = None,
-               count_only: bool = False
-              ) -> List[Deck]:
-    if not redis.enabled() and not count_only:
+                 having: str = 'TRUE',
+                 order_by: Optional[str] = None,
+                 limit: str = '',
+                 season_id: Optional[Union[str, int]] = None
+                ) -> List[Deck]:
+    if not redis.enabled():
         return load_decks_heavy(where, having, order_by, limit, season_id)
+    columns = """
+        d.id,
+        d.finish,
+        d.decklist_hash,
+        cache.active_date,
+        cache.wins,
+        cache.losses,
+        cache.draws,
+        ct.name AS competition_type_name
+    """
+    group_by = """
+            d.id,
+            d.competition_id, -- Every deck has only one competition_id but if we want to use competition_id in the HAVING clause we need this.
+            season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
+    """
+    sql = load_decks_query(columns, where=where, having=having, order_by=order_by, limit=limit, season_id=season_id)
+    db().execute('SET group_concat_max_len=100000')
+    rows = db().select(sql)
+    decks_by_id = {}
+    heavy = []
+    for row in rows:
+        d = redis.get_container('decksite:deck:{id}'.format(id=row['id']))
+        if d is None or d.name is None:
+            heavy.append(row['id'])
+        else:
+            decks_by_id[row['id']] = deserialize_deck(d)
+    if heavy:
+        where = 'd.id IN ({deck_ids})'.format(deck_ids=', '.join(map(sqlescape, map(str, heavy))))
+        loaded_decks = load_decks_heavy(where)
+        for d in loaded_decks:
+            decks_by_id[d.id] = d
+    decks = []
+    for row in rows:
+        decks.append(decks_by_id[row['id']])
+    return decks
+
+# pylint: disable=attribute-defined-outside-init
+def load_decks_query(columns: str,
+                     where: str = 'TRUE',
+                     group_by: Optional[str] = None,
+                     having: str = 'TRUE',
+                     order_by: Optional[str] = None,
+                     limit: str = '',
+                     season_id: Optional[Union[str, int]] = None,
+                    ) -> str:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
-    if count_only:
-        columns = 'COUNT(*) AS n'
+    if group_by is None:
         group_by = ''
-        order_by = 'TRUE'
     else:
-        columns = """
-            d.id,
-            d.finish,
-            d.decklist_hash,
-            cache.active_date,
-            cache.wins,
-            cache.losses,
-            cache.draws,
-            ct.name AS competition_type_name
-        """
-        group_by = """
-            GROUP BY
-                d.id,
-                d.competition_id, -- Every deck has only one competition_id but if we want to use competition_id in the HAVING clause we need this.
-                season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
-        """
+        group_by = f'GROUP BY {group_by}'
     sql = """
         SELECT
             {columns}
@@ -102,27 +137,7 @@ def load_decks(where: str = 'TRUE',
         {limit}
     """
     sql = sql.format(columns=columns, person_query=query.person_query(), competition_join=query.competition_join(), season_query=query.season_query(season_id, 'season.id'), season_join=query.season_join(), where=where, group_by=group_by, having=having, order_by=order_by, limit=limit)
-    if count_only:
-        return db().value(sql)
-    db().execute('SET group_concat_max_len=100000')
-    rows = db().select(sql)
-    decks_by_id = {}
-    heavy = []
-    for row in rows:
-        d = redis.get_container('decksite:deck:{id}'.format(id=row['id']))
-        if d is None or d.name is None:
-            heavy.append(row['id'])
-        else:
-            decks_by_id[row['id']] = deserialize_deck(d)
-    if heavy:
-        where = 'd.id IN ({deck_ids})'.format(deck_ids=', '.join(map(sqlescape, map(str, heavy))))
-        loaded_decks = load_decks_heavy(where)
-        for d in loaded_decks:
-            decks_by_id[d.id] = d
-    decks = []
-    for row in rows:
-        decks.append(decks_by_id[row['id']])
-    return decks
+    return sql
 
 def deserialize_deck(sdeck: Container) -> Deck:
     deck = Deck(sdeck)
@@ -144,7 +159,7 @@ def load_decks_heavy(where: str = 'TRUE',
                      having: str = 'TRUE',
                      order_by: Optional[str] = None,
                      limit: str = '',
-                     season_id: Optional[int] = None
+                     season_id: Optional[Union[str, int]] = None
                     ) -> List[Deck]:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'

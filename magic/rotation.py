@@ -147,7 +147,7 @@ def sets() -> List[SetInfoType]:
         __SETS.extend(init())
     return __SETS
 
-def season_id(v: Union[int, str]) -> Union[int, str]:
+def season_id(v: Union[int, str], all_return_value: Optional[Union[int, str]] = 'all') -> Optional[Union[int, str]]:
     """From any value return the season id which is the integer representing the season, or 'all' for all time."""
     if v is None:
         return current_season_num()
@@ -160,7 +160,7 @@ def season_id(v: Union[int, str]) -> Union[int, str]:
     try:
         if isinstance(v, str):
             if v.lower() == 'all':
-                return 'all'
+                return all_return_value
             return SEASONS.index(v.upper()) + 1
     except (ValueError, AttributeError):
         pass
@@ -169,7 +169,7 @@ def season_id(v: Union[int, str]) -> Union[int, str]:
 def season_code(v: Union[int, str]) -> str:
     """From any value return the season code which is a three letter string representing the season, or 'ALL' for all time."""
     sid = season_id(v)
-    if sid == 'all':
+    if sid == 'all' or sid is None:
         return 'ALL'
     return SEASONS[int(sid) - 1]
 

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from shared.pd_exception import InvalidArgumentException
 
@@ -45,7 +45,7 @@ def competition_join() -> str:
             competition_type AS ct ON ct.id = cs.competition_type_id
     """
 
-def season_query(season_id: Optional[int], column_name: str = 'season_id') -> str:
+def season_query(season_id: Optional[Union[str, int]], column_name: str = 'season_id') -> str:
     if season_id is None or season_id == 'all' or season_id == 0:
         return 'TRUE'
     try:

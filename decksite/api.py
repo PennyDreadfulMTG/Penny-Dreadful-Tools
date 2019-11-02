@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Optional, cast
+from typing import List, Optional, Union, cast
 
 from flask import Response, request, session, url_for
 
@@ -42,8 +42,8 @@ def decks_api() -> Response:
     page = int(request.args.get('page', 0))
     start = page * page_size
     limit = f'LIMIT {start}, {page_size}'
-    season_id = rotation.season_id(request.args.get('seasonId'))
-    total = deck.load_decks(season_id=season_id, count_only=True)
+    season_id = rotation.season_id(str(request.args.get('seasonId')), None)
+    total = deck.load_decks_count(season_id=season_id)
     pages = round(total / page_size)
     ds = deck.load_decks(order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)

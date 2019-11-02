@@ -18,6 +18,8 @@ env:
     - CMD="isort --check-only"
 install:
   - travis_retry pip install -r requirements.txt
+  - npm install
+  - npm run-script build
 script:
   - echo $CMD
   - $CMD

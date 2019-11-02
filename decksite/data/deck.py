@@ -37,17 +37,16 @@ def load_decks_count(where: str = 'TRUE',
                      having: str = 'TRUE',
                      season_id: Optional[Union[str, int]] = None) -> int:
     columns = 'COUNT(*) AS n'
-    group_by = ''
-    order_by = 'TRUE'
     sql = load_decks_query(columns, where=where, group_by=None, having=having, order_by='TRUE', limit='', season_id=season_id)
     return int(db().value(sql))
 
+# BAKERT need to enable redis to test this
 def load_decks(where: str = 'TRUE',
-                 having: str = 'TRUE',
-                 order_by: Optional[str] = None,
-                 limit: str = '',
-                 season_id: Optional[Union[str, int]] = None
-                ) -> List[Deck]:
+               having: str = 'TRUE',
+               order_by: Optional[str] = None,
+               limit: str = '',
+               season_id: Optional[Union[str, int]] = None
+              ) -> List[Deck]:
     if not redis.enabled():
         return load_decks_heavy(where, having, order_by, limit, season_id)
     columns = """
@@ -65,7 +64,7 @@ def load_decks(where: str = 'TRUE',
             d.competition_id, -- Every deck has only one competition_id but if we want to use competition_id in the HAVING clause we need this.
             season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
     """
-    sql = load_decks_query(columns, where=where, having=having, order_by=order_by, limit=limit, season_id=season_id)
+    sql = load_decks_query(columns, where=where, group_by=group_by, having=having, order_by=order_by, limit=limit, season_id=season_id)
     db().execute('SET group_concat_max_len=100000')
     rows = db().select(sql)
     decks_by_id = {}
@@ -86,7 +85,7 @@ def load_decks(where: str = 'TRUE',
         decks.append(decks_by_id[row['id']])
     return decks
 
-# pylint: disable=attribute-defined-outside-init
+# pylint: disable=attribute-defined-outside-init,too-many-arguments
 def load_decks_query(columns: str,
                      where: str = 'TRUE',
                      group_by: Optional[str] = None,

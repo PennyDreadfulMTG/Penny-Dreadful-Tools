@@ -1,5 +1,3 @@
-from typing import Union
-
 from decksite.view import View
 
 

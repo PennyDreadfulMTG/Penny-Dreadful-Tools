@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Optional, Union, cast
+from typing import List, Optional, cast
 
 from flask import Response, request, session, url_for
 
@@ -47,7 +47,7 @@ def decks_api() -> Response:
     pages = round(total / page_size)
     ds = deck.load_decks(order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
-    r = { 'page': page, 'pages': pages, 'decks': ds }
+    r = {'page': page, 'pages': pages, 'decks': ds}
     return return_json(r, camelize=True)
 
 @APP.route('/api/decks/<int:deck_id>')

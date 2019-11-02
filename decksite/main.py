@@ -496,7 +496,7 @@ def banner(seasonnum: str) -> Response:
         cardnames = ['Day of Judgment', 'Mana Leak', 'Duress', 'Rampaging Ferocidon', 'Evolutionary Leap', 'Gavony Township', 'Ephemerate', 'Dig Through Time', 'Lake of the Dead', 'Soulherder']
         background = 'Fact or Fiction'
     elif seasonnum == '14':
-        cardnames = ['Gitaxian Probe', "Orim's Chant", 'Dark Ritual', 'Chain Lightning', 'Channel', 'Gush', "Rofellos, Llanowar Emissary", 'Laboratory Maniac']
+        cardnames = ['Gitaxian Probe', "Orim's Chant", 'Dark Ritual', 'Chain Lightning', 'Channel', 'Gush', 'Rofellos, Llanowar Emissary', 'Laboratory Maniac']
         background = "God-Pharaoh's Statue"
 
 

@@ -72,7 +72,7 @@ async def download_scryfall_image(cards: List[Card], filepath: str, version: str
 def download_scryfall_art_crop(c: Card) -> Optional[str]:
     file_path = re.sub('.jpg$', '.art_crop.jpg', determine_filepath([c]))
     if not internal.acceptable_file(file_path):
-        download_scryfall_card_image(c, file_path, version='art_crop')
+        await download_scryfall_card_image(c, file_path, version='art_crop')
     if internal.acceptable_file(file_path):
         return file_path
     return None
@@ -80,7 +80,7 @@ def download_scryfall_art_crop(c: Card) -> Optional[str]:
 def download_scryfall_png(c: Card) -> Optional[str]:
     file_path = re.sub('.jpg$', '.png', determine_filepath([c]))
     if not internal.acceptable_file(file_path):
-        download_scryfall_card_image(c, file_path, version='png')
+        await download_scryfall_card_image(c, file_path, version='png')
     if internal.acceptable_file(file_path):
         return file_path
     return None

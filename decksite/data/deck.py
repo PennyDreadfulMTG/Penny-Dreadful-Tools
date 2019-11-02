@@ -56,6 +56,7 @@ def load_decks(where: str = 'TRUE',
         cache.wins,
         cache.losses,
         cache.draws,
+        cache.color_sort,
         ct.name AS competition_type_name
     """
     group_by = """
@@ -191,6 +192,7 @@ def load_decks_heavy(where: str = 'TRUE',
             cache.normalized_name AS name,
             cache.colors,
             cache.colored_symbols,
+            cache.color_sort,
             cache.legal_formats,
             ROUND(cache.omw * 100, 2) AS omw,
             season.id AS season_id,
@@ -391,18 +393,19 @@ def prime_cache(d: Deck) -> None:
     set_colors(d)
     colors_s = json.dumps(d.colors)
     colored_symbols_s = json.dumps(d.colored_symbols)
+    color_sort = mana.order_score(d.colors)
     set_legality(d)
     legal_formats_s = json.dumps(list(d.legal_formats))
     normalized_name = deck_name.normalize(d)
     # If this is a new deck we're going to make a new record. If it's an existing deck we might as well update a few things that might have changed implementation but should otherwise be static. But leave wins/draws/losses/active date alone.
     sql = """
         INSERT INTO
-            deck_cache (deck_id, normalized_name, colors, colored_symbols, legal_formats, wins, draws, losses, active_date)
+            deck_cache (deck_id, normalized_name, colors, colored_symbols, color_sort, legal_formats, wins, draws, losses, active_date)
         VALUES
-            (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-        ON DUPLICATE KEY UPDATE normalized_name = %s, colors = %s, colored_symbols = %s, legal_formats = %s
+            (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE normalized_name = %s, colors = %s, colored_symbols = %s, color_sort = %s, legal_formats = %s
     """
-    db().execute(sql, [d.id, normalized_name, colors_s, colored_symbols_s, legal_formats_s, 0, 0, 0, dtutil.dt2ts(d.created_date), normalized_name, colors_s, colored_symbols_s, legal_formats_s])
+    db().execute(sql, [d.id, normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s, 0, 0, 0, dtutil.dt2ts(d.created_date), normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s])
     # If it was worth priming the in-db cache it's worth busting the in-memory cache to pick up the changes.
     redis.clear(f'decksite:deck:{d.id}')
 

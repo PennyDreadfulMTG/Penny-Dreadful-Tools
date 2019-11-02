@@ -84,6 +84,7 @@ def decks_order_by(key: str) -> str:
     """
     sort_options = {
         'marginalia': marginalia_order_by,
+        'colors': 'cache.color_sort',
         'name': 'cache.normalized_name',
         'person': person_query(),
         'archetype': 'a.name',

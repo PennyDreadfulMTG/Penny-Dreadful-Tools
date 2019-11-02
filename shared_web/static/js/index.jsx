@@ -45,7 +45,7 @@ class DeckTable extends React.Component {
           <thead>
               <tr>
                   <th data-breakpoints="xs" className="marginalia" onClick={this.sort.bind(this, "marginalia", "ASC")}>⇅</th>
-                  <th data-breakpoints="xs sm">Colors</th>
+                  <th data-breakpoints="xs sm" onClick={this.sort.bind(this, "colors", "ASC")}>Colors</th>
                   <th onClick={this.sort.bind(this, "name", "ASC")}>Name</th>
                   { this.props.hidePerson
                     ? null

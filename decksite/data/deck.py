@@ -40,7 +40,6 @@ def load_decks_count(where: str = 'TRUE',
     sql = load_decks_query(columns, where=where, group_by=None, having=having, order_by='TRUE', limit='', season_id=season_id)
     return int(db().value(sql))
 
-# BAKERT need to enable redis to test this
 def load_decks(where: str = 'TRUE',
                having: str = 'TRUE',
                order_by: Optional[str] = None,

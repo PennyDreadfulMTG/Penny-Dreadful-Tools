@@ -490,7 +490,7 @@ Links in text are underlined in such a way as to break on descenders like those 
 */
 
 a {
-    cursor: pointer; /* For pagination links in Reactt tables, they don't have an href attribute. */
+    cursor: pointer; /* For pagination links in React tables, they don't have an href attribute. */
 }
 
 a, main table.calendar a, main .intro .details a, .details a {
@@ -859,7 +859,7 @@ table.with-marginalia .footable-empty td {
 
 Pagination
 
-Mostly we just send giant tables of all the data but on logsite we have pagination.
+A lot of pages still send giant tables of data but logsite and deck table have pagination.
 
 */
 

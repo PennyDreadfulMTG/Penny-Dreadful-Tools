@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 import urllib.parse
@@ -491,8 +492,16 @@ def banner(seasonnum: str) -> Response:
     elif seasonnum == '12':
         cardnames = ['Aether Hub', 'Siege Rhino', 'Greater Good', "Mind's Desire", "God-Pharaoh's Gift", 'Kiln Fiend', 'Akroma, Angel of Wrath', 'Reanimate']
         background = 'Rofellos, Llanowar Emissary'
+    elif seasonnum == '13':
+        cardnames = ['Day of Judgment', 'Ephemerate', 'Mana Leak', 'Dig Through Time', 'Duress', 'Lake of the Dead', 'Rampaging Ferocidon', 'Evolutionary Leap', 'Gavony Township', 'Soulherder']
+        background = 'Frantic Search'
+    elif seasonnum == '14':
+        cardnames = ["Orim's Chant", 'Gitaxian Probe', 'Gush', 'Laboratory Maniac', 'Dark Ritual', 'Chain Lightning', 'Viashino Pyromancer', 'Channel', "Rofellos, Llanowar Emissary"]
+        background = "God-Pharaoh's Statue"
 
-    path = image_fetcher.generate_banner(cardnames, background)
+
+    loop = asyncio.new_event_loop()
+    path = loop.run_until_complete(image_fetcher.generate_banner(cardnames, background))
     return send_file(os.path.abspath(path))
 
 @APP.before_request

@@ -97,7 +97,7 @@ def decks_order_by(key: str) -> str:
     }
     return sort_options[key]
 
-def exclude_active_league_runs_clause():
+def exclude_active_league_runs() -> str:
     return """
         d.retired
         OR

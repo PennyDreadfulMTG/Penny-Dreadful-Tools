@@ -62,7 +62,7 @@ jslint:
 	@echo
 	@echo "******************************** JS Lint **************************************"
 	@echo
-	@! git ls-files | egrep 'jsx?$$'  | grep -v '\.config\.js' | grep -v .eslintrc.js | xargs ./node_modules/.bin/eslint | grep error
+	@! git ls-files | egrep 'jsx?$$'  | grep -v .eslintrc.js | xargs ./node_modules/.bin/eslint | grep error
 	@echo
 
 types:

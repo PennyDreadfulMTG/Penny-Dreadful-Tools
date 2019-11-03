@@ -1,3 +1,4 @@
+/* eslint-disable */
 const webpack = require("webpack");
 const config = {
     entry: __dirname + "/../shared_web/static/js/index.jsx",

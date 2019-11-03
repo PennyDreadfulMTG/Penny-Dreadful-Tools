@@ -830,13 +830,19 @@ table.with-marginalia .footable-empty td:first-child {
     padding-left: 5.126em; /* Width of .marginalia + left-padding + right-padding */
 }
 
+/* We don't want these unused cells making the table wider. */
+.footable-empty td:not(first-child) {
+    margin: 0;
+    padding: 0;
+    width: 0;
+}
 
 @media only screen and (max-width: 640px) {
     /* When we aren't showing marginalia, don't have the unshown column mess display up. */
     table.with-marginalia, table.with-marginalia.footable-details {
         margin: 0;
     }
-    table.with-marginalia .footable-empty td {
+    table.with-marginalia .footable-empty td:first-child {
         padding-left: 0.563em;
     }
     td.marginalia {

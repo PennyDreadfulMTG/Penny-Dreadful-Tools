@@ -317,11 +317,9 @@ class View(BaseView):
             a.most_common_cards_tournament.append(cs[v[0]])
         a.has_most_common_cards_tournament = len(a.most_common_cards_tournament) > 0
 
-        a.archetype_tree = list(PreOrderIter(a))
+        # Set up archetype tree, pruning siblings that we don't want to show.
+        a.archetype_tree = [r for r in PreOrderIter(a) if r.id in [a.id for a in archetypes]]
         for r in a.archetype_tree:
-            # Prune branches we don't want to show
-            if r.id not in [a.id for a in archetypes]:
-                r.parent = None
             r['url'] = url_for('.archetype', archetype_id=r['id'])
             r['url_tournament'] = url_for('.archetype_tournament', archetype_id=r['id'])
             # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.

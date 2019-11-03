@@ -33,11 +33,20 @@ class DeckTable extends React.Component {
     Axios.get("/api/decks/", {"params": { page, pageSize, sortBy, sortOrder, "seasonId": this.props.seasonId }})
       .then(
         (response) => { this.setState({"decks": response.data.decks, "pages": response.data.pages}); PD.initTables() },
-        (error) => console.log(error)
+        (error) => { this.setState({ "error": response }) }
       );
   }
 
+  renderError(error) {
+    return (
+      <p className="error">Unable to load decks: {error}</p>
+    );
+  }
+
   render() {
+    if (this.state.error) {
+      return this.renderError(JSON.stringify(this.state.error));
+    }
     const className = "live with-marginalia" + (this.props.isVeryLarge ? "very-large" : "");
     const { decks, sortBy, sortOrder } = this.state;
     this.renderDeckRow = this.renderDeckRow.bind(this);
@@ -100,6 +109,7 @@ class DeckTable extends React.Component {
       </React.Fragment>
     )
   }
+
   renderDeckRow(deck) {
     return (
       <tr key={deck.id}>
@@ -156,12 +166,14 @@ class DeckTable extends React.Component {
       </tr>
     );
   }
+
   renderRecord(deck) {
     if (deck.showRecord && deck.wins + deck.losses + deck.draws > 0) {
         return deck.wins + "–" + deck.losses + (deck.draws ? "–" + deck.draws : "");
     }
     return "";
   }
+
   renderPagination() {
     return (
       <div className="pagination">
@@ -179,15 +191,18 @@ class DeckTable extends React.Component {
       </div>
     );
   }
+
   movePage(page) {
     this.setState({ "page": page });
   }
+
   sort(sortBy, sortOrder = "ASC") {
     if (this.state.sortBy === sortBy) {
       sortOrder = this.state.sortOrder === "ASC" ? "DESC" : "ASC";
     }
     this.setState({ sortBy, sortOrder, "page": 0 });
   }
+
   changePageSize(pageSize) {
     console.log('pageSize', pageSize)
     this.setState({ pageSize, "page": 0 });

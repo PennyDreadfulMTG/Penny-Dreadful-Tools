@@ -6,7 +6,7 @@ node{
     env.decksite_database = 'jenkins_decksite'
     env.logsite_database = 'jenkins_logsite'
     env.redis_db = '9'
-    env.save_historic_legal_lists = 'True'
+    // env.save_historic_legal_lists = 'True'
 
     stage('Clone') {
         sh 'git config user.email "jenkins@katelyngigante.com"'

@@ -38,7 +38,9 @@ class DeckTable extends React.Component {
     const className = "live with-marginalia" + (this.props.isVeryLarge ? "very-large" : "");
     const { decks, sortBy, sortOrder } = this.state;
     this.renderDeckRow = this.renderDeckRow.bind(this);
+    this.renderPagination = this.renderPagination.bind(this);
     const deckRows = decks.map(this.renderDeckRow);
+    const pagination = this.renderPagination();
     // Prevent content jumping by setting a min-height.
     document.getElementById('decktable').style.minHeight = decks.length + 'em';
     return (
@@ -91,7 +93,7 @@ class DeckTable extends React.Component {
             {deckRows}
          </tbody>
         </table>
-        <p><a onClick={this.movePage.bind(this, this.state.page - 1)}>Previous Page</a> | <a onClick={this.movePage.bind(this, this.state.page + 1)}>Next Page</a></p>
+        {pagination}
       </React.Fragment>
     )
   }
@@ -156,6 +158,23 @@ class DeckTable extends React.Component {
         return deck.wins + "–" + deck.losses + (deck.draws ? "–" + deck.draws : "");
     }
     return "";
+  }
+  renderPagination() {
+    return (
+      <div className="pagination">
+        <p className="pagination-links">
+          { this.state.page > 0
+            ? <a className="prev" onClick={this.movePage.bind(this, this.state.page - 1)}>← Previous Page</a>
+            : null
+          }
+          { this.state.page < this.state.pages
+            ? <a className="next" onClick={this.movePage.bind(this, this.state.page + 1)}>Next Page →</a>
+            : null
+          }
+        </p>
+        <p className="page-size-options"><a className={'page-size' + (this.state.pageSize === 20 ? ' selected' : '')} onClick={this.changePageSize.bind(this, 20)}>20</a> <a className={'page-size' + (this.state.pageSize === 100 ? ' selected' : '')} onClick={this.changePageSize.bind(this, 100)}>100</a> per page</p>
+      </div>
+    );
   }
   movePage(page) {
     this.setState({ "page": page });

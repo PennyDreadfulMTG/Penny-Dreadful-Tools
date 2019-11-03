@@ -869,12 +869,37 @@ A lot of pages still send giant tables of data but logsite and deck table have p
 
 */
 
+.pagination-links {
+    display: flex;
+}
+
 .pagination a {
     display: inline-block;
 }
 
 .pagination .next {
-    float: right;
+    margin-left: auto;
+}
+
+.pagination .page-size-options {
+    font-size: 0.75em;
+    height: 1rem;
+    margin-right: 1rem;
+    /*BAKERTvertical-align: baseline;*/
+}
+
+.pagination .page-size {
+    border: 0.05rem #ccc solid;
+    text-align: center;
+    width: 2em;
+}
+
+.pagination .page-size:last-child {
+    margin-right: 0.33rem;
+}
+
+.pagination .page-size.selected {
+    background-color: #eee;
 }
 
 /*

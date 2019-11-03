@@ -890,8 +890,7 @@ A lot of pages still send giant tables of data but logsite and deck table have p
 .pagination .page-size-options {
     font-size: 0.75em;
     height: 1rem;
-    margin-right: 1rem;
-    /*BAKERTvertical-align: baseline;*/
+    text-align: right;
 }
 
 .pagination .page-size {

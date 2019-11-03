@@ -730,11 +730,6 @@ th.legend {
     min-height: 20em;
 }
 
-/* Prevent horizontal scrollbars due to interaction between react and footable. */
-#decktable table {
-    overflow-x: hidden;
-}
-
 /* Angled headers */
 
 th.angled {
@@ -831,9 +826,10 @@ table.with-marginalia.footable-details {
     margin-left: 7.126em; /* Width of .marginalia + left-padding + right-padding + desired margin to show subordinate relationship to parent row. */
 }
 
-table.with-marginalia .footable-empty td {
+table.with-marginalia .footable-empty td:first-child {
     padding-left: 5.126em; /* Width of .marginalia + left-padding + right-padding */
 }
+
 
 @media only screen and (max-width: 640px) {
     /* When we aren't showing marginalia, don't have the unshown column mess display up. */

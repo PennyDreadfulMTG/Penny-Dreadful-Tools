@@ -498,8 +498,6 @@ def banner(seasonnum: str) -> Response:
     elif seasonnum == '14':
         cardnames = ['Gitaxian Probe', "Orim's Chant", 'Dark Ritual', 'Chain Lightning', 'Channel', 'Gush', 'Rofellos, Llanowar Emissary', 'Laboratory Maniac']
         background = "God-Pharaoh's Statue"
-
-
     loop = asyncio.new_event_loop()
     path = loop.run_until_complete(image_fetcher.generate_banner(cardnames, background))
     return send_file(os.path.abspath(path))

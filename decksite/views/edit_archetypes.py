@@ -2,6 +2,7 @@ from typing import List
 
 from flask import url_for
 
+from decksite import prepare
 from decksite.data import deck, rule
 from decksite.data.archetype import Archetype
 from decksite.view import View
@@ -18,14 +19,14 @@ class EditArchetypes(View):
         deck.load_queue_similarity(self.queue)
         rule.apply_rules_to_decks(self.queue)
         for d in self.queue:
-            self.prepare_deck(d)
+            prepare.prepare_deck(d)
             d.archetype_url = url_for('archetype', archetype_id=d.archetype_name)
             if d.get('rule_archetype_name'):
                 d.rule_archetype_url = url_for('archetype', archetype_id=d.rule_archetype_name)
         self.has_search_results = len(search_results) > 0
         self.search_results = search_results
         for d in self.search_results:
-            self.prepare_deck(d)
+            prepare.prepare_deck(d)
         self.query = q
         self.notquery = notq
 

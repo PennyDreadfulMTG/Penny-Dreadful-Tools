@@ -193,7 +193,7 @@ Symbols provided by our main font are:
     ★ U+2605 BLACK STAR (deck quality)
     + U+002B PLUS SIGN (expand row in mobile view table)
     − U+2212 MINUS SIGN (close expanded row in mobile view table)
-    … U+2026 HORIZONTAL ELLIPSIS (in some link text like "all decks this season…", "More new…", and in dropdowns in "Choose…"). Note: our style is no space before ellipsis.
+    … U+2026 HORIZONTAL ELLIPSIS (in some link text like More new…", and in dropdowns in "Choose…"). Note: our style is no space before ellipsis.
     → U+2192 RIGHT-POINTING ARROW (paginate right)
     ← U+2190 LEFT-POINTING ARROW (paginate left)
     ↑ U+2191 UPWARDS ARROW (currently hitting in rotation)
@@ -489,6 +489,10 @@ Links in text are underlined in such a way as to break on descenders like those 
 
 */
 
+a {
+    cursor: pointer; /* For pagination links in React tables, they don't have an href attribute. */
+}
+
 a, main table.calendar a, main .intro .details a, .details a {
     color: inherit;
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -603,7 +607,9 @@ main table {
     overflow-x: auto;
 }
 
-main table.very-large {
+/* Very large tables are too expensive to hide with js and then show.
+Live tables don't use tablesorter and are never shown without pagination working. */
+main table.very-large, main table.live {
     visibility: visible;
 }
 
@@ -719,6 +725,11 @@ th.legend {
     line-height: 0; /* Don't mess up row spacing because the star is big. */
 }
 
+/* Prevent content jumping while deck table loads in data. */
+#decktable {
+    min-height: 20em;
+}
+
 /* Angled headers */
 
 th.angled {
@@ -815,8 +826,15 @@ table.with-marginalia.footable-details {
     margin-left: 7.126em; /* Width of .marginalia + left-padding + right-padding + desired margin to show subordinate relationship to parent row. */
 }
 
-table.with-marginalia .footable-empty td {
+table.with-marginalia .footable-empty td:first-child {
     padding-left: 5.126em; /* Width of .marginalia + left-padding + right-padding */
+}
+
+/* We don't want these unused cells making the table wider. */
+.footable-empty td:not(first-child) {
+    margin: 0;
+    padding: 0;
+    width: 0;
 }
 
 @media only screen and (max-width: 640px) {
@@ -824,7 +842,7 @@ table.with-marginalia .footable-empty td {
     table.with-marginalia, table.with-marginalia.footable-details {
         margin: 0;
     }
-    table.with-marginalia .footable-empty td {
+    table.with-marginalia .footable-empty td:first-child {
         padding-left: 0.563em;
     }
     td.marginalia {
@@ -853,16 +871,40 @@ table.with-marginalia .footable-empty td {
 
 Pagination
 
-Mostly we just send giant tables of all the data but on logsite we have pagination.
+A lot of pages still send giant tables of data but logsite and deck table have pagination.
 
 */
+
+.pagination-links {
+    display: flex;
+}
 
 .pagination a {
     display: inline-block;
 }
 
 .pagination .next {
-    float: right;
+    margin-left: auto;
+}
+
+.pagination .page-size-options {
+    font-size: 0.75em;
+    height: 1rem;
+    text-align: right;
+}
+
+.pagination .page-size {
+    border: 0.05rem #ccc solid;
+    text-align: center;
+    width: 2em;
+}
+
+.pagination .page-size:last-child {
+    margin-right: 0.33rem;
+}
+
+.pagination .page-size.selected {
+    background-color: #eee;
 }
 
 /*

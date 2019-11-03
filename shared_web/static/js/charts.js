@@ -1,14 +1,14 @@
 /*global PD,Chart, moment, $ */
 var ctx = document.getElementById("pdChart").getContext("2d");
 
-function ts2str(ts) {
+const ts2str = function(ts) {
     var t = moment.unix(ts),
         tz = moment.tz.guess(),
         s = t.tz(tz).format("dddd LT z");
     return s;
-}
+};
 
-function build() {
+const build = function() {
     var data = PD.recent.formats.PennyDreadful;
     PD.Chart = new Chart(ctx, {
         type: "bar",
@@ -30,12 +30,11 @@ function build() {
             }
         }
     });
-}
+};
 
-
-function makeChart(data) {
+const makeChart = function(data) {
     PD.recent = data;
     build();
-}
+};
 
 $.get("/recent.json", makeChart);

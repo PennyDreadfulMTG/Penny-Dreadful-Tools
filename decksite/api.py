@@ -9,8 +9,10 @@ from decksite.data import card as cs
 from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps
+from decksite.data import query
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
+from decksite.prepare import prepare_decks
 from decksite.views import DeckEmbed
 from magic import oracle, rotation
 from magic.decklist import parse_line
@@ -22,6 +24,32 @@ from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
 
+
+@APP.route('/api/decks/')
+def decks_api() -> Response:
+    """
+    Grab a slice of results from a 0-indexed resultset of decks.
+    Input:
+        {'page': <int>, 'sortBy': <str>, 'sortOrder': <'ASC'|'DESC'>, 'seasonId': <int>}
+    Output:
+        {'page': <int>, 'pages': <int>, 'decks': [<deck>]}
+    """
+    sort_by = query.decks_order_by(request.args.get('sortBy', 'date'))
+    sort_order = request.args.get('sortOrder', 'DESC')
+    assert sort_order in ['ASC', 'DESC']
+    order_by = f'{sort_by} {sort_order}'
+    page_size = int(request.args.get('pageSize', 20))
+    page = int(request.args.get('page', 0))
+    start = page * page_size + 1 # SQL recordset is 1-indexed but our pages are 0-indexed.
+    limit = f'LIMIT {start}, {page_size}'
+    season_id = rotation.season_id(str(request.args.get('seasonId')), None)
+    total = deck.load_decks_count(season_id=season_id)
+    pages = round(total / page_size)
+    ds = deck.load_decks(order_by=order_by, limit=limit, season_id=season_id)
+    prepare_decks(ds)
+    ds = [d for d in ds if not d.is_in_current_run()]
+    r = {'page': page, 'pages': pages, 'decks': ds}
+    return return_json(r, camelize=True)
 
 @APP.route('/api/decks/<int:deck_id>')
 def deck_api(deck_id: int) -> Response:

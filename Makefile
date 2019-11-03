@@ -22,6 +22,9 @@ pr:
 # Run all tests, push and create pull request.
 release: push pr
 
+buildjs:
+	webpack --config=decksite/webpack.config.js
+
 # Run unit tests.
 TEST=.
 unit:
@@ -59,7 +62,7 @@ jslint:
 	@echo
 	@echo "******************************** JS Lint **************************************"
 	@echo
-	@! find . -name "*.js" | xargs  js-beautify | grep -v unchanged
+	@! git ls-files | egrep 'jsx?$$'  | grep -v .eslintrc.js | xargs ./node_modules/.bin/eslint | grep error
 	@echo
 
 types:
@@ -97,6 +100,10 @@ coverage:
 	@coverage xml
 	@coverage report
 	@echo
+
+# Watch jsx files for changes and rebuild dist.js constantly while developing.
+watch:
+	npm run watch
 
 # Make a branch based off of current (remote) master with all your local changes preserved (but not added).
 branch:

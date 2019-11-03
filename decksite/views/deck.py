@@ -4,6 +4,7 @@ import inflect
 import titlecase
 from flask import session, url_for
 
+from decksite import prepare
 from decksite.data import archetype, deck, match
 from decksite.view import View
 from magic import card, fetcher, oracle
@@ -17,15 +18,8 @@ class Deck(View):
     def __init__(self, d: deck.Deck, person_id: Optional[int] = None, discord_id: Optional[int] = None) -> None:
         super().__init__()
         self.deck = d
-        self.prepare_deck(self.deck)
+        prepare.prepare_deck(self.deck)
         self.cards = d.all_cards()
-        if not self.deck.is_in_current_run():
-            deck.load_similar_decks([d])
-            # This is called 'decks' and not something more sane because of limitations of Mustache and our desire to use a partial for decktable.
-            self.decks = [sd for sd in d.similar_decks if not sd.is_in_current_run()]
-        else:
-            self.decks = []
-        self.has_similar = len(self.decks) > 0
         self.matches = match.load_matches_by_deck(d, should_load_decks=True)
         for m in self.matches:
             m.display_date = dtutil.display_date(m.date)

@@ -1,5 +1,13 @@
 {{> banner}}
-<section>
-    {{> decktable}}
-    <p><a href="{{season_url}}">All decks this season…</a></p>
+<section
+    id="decktable"
+    data-active-runs-text="{{active_runs_text}}"
+    data-hide-person="{{#hide_person}}1{{/hide_person}}"
+    data-hide-source="{{#hide_source}}1{{/hide_source}}"
+    data-hide-top8="{{#hide_top8}}1{{/hide_top8}}"
+    data-is-very-large="{{#is_very_large}}1{{/is_very_large}}"
+    data-show-archetype="{{#show_archetype}}1{{/show_archetype}}"
+    data-show-legal-seasons="{{#show_legal_seasons}}1{{/show_legal_seasons}}"
+    data-show-omw="{{#show_omw}}1{{/show_omw}}"
+    data-season-id="{{season_id}}"
 </section>

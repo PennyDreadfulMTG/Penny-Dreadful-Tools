@@ -3,6 +3,8 @@ from typing import Dict, List, Optional, Union
 
 from flask import current_app, url_for
 
+from shared import configuration
+
 from . import template
 
 
@@ -55,3 +57,6 @@ class BaseView:
 
     def menu(self) -> List[Dict[str, Union[str, Dict[str, str]]]]:
         return current_app.config['menu']()
+
+    def js_type(self):
+        return 'production.min' if configuration.get_bool('production') else 'development'

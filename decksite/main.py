@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 import urllib.parse
@@ -50,7 +51,7 @@ def home() -> str:
 @SEASONS.route('/decks/')
 @cached()
 def decks() -> str:
-    view = Decks(ds.load_decks(limit='LIMIT 500', season_id=get_season_id()))
+    view = Decks()
     return view.page()
 
 @APP.route('/decks/<int:deck_id>/')
@@ -491,8 +492,14 @@ def banner(seasonnum: str) -> Response:
     elif seasonnum == '12':
         cardnames = ['Aether Hub', 'Siege Rhino', 'Greater Good', "Mind's Desire", "God-Pharaoh's Gift", 'Kiln Fiend', 'Akroma, Angel of Wrath', 'Reanimate']
         background = 'Rofellos, Llanowar Emissary'
-
-    path = image_fetcher.generate_banner(cardnames, background)
+    elif seasonnum == '13':
+        cardnames = ['Day of Judgment', 'Mana Leak', 'Duress', 'Rampaging Ferocidon', 'Evolutionary Leap', 'Gavony Township', 'Ephemerate', 'Dig Through Time', 'Lake of the Dead', 'Soulherder']
+        background = 'Fact or Fiction'
+    elif seasonnum == '14':
+        cardnames = ['Gitaxian Probe', "Orim's Chant", 'Dark Ritual', 'Chain Lightning', 'Channel', 'Gush', 'Rofellos, Llanowar Emissary', 'Laboratory Maniac']
+        background = "God-Pharaoh's Statue"
+    loop = asyncio.new_event_loop()
+    path = loop.run_until_complete(image_fetcher.generate_banner(cardnames, background))
     return send_file(os.path.abspath(path))
 
 @APP.before_request

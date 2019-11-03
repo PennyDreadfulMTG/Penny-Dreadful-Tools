@@ -9,7 +9,7 @@ class DeckTable extends React.Component {
     this.state = {
       decks: [],
       page: 0,
-      items: 50,
+      pageSize: 20,
       sortBy: "date",
       sortOrder: "DESC"
     };
@@ -20,16 +20,19 @@ class DeckTable extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.page !== this.state.page || prevState.sortBy !== this.state.sortBy || prevState.sortOrder !== this.state.sortOrder) {
-      this.loadDecks();
+    for (let attr of ['pageSize', 'page', 'sortBy', 'sortOrder']) {
+      if (prevState[attr] !== this.state[attr]) {
+        this.loadDecks();
+        break;
+      }
     }
   }
 
   loadDecks() {
-    const {page, items, sortBy, sortOrder} = this.state;
-    Axios.get("/api/decks/", {"params": { page, items, sortBy, sortOrder, "seasonId": this.props.seasonId }})
+    const {page, pageSize, sortBy, sortOrder} = this.state;
+    Axios.get("/api/decks/", {"params": { page, pageSize, sortBy, sortOrder, "seasonId": this.props.seasonId }})
       .then(
-        (response) => { this.setState({"decks": response.data.decks}); PD.initTables() },
+        (response) => { this.setState({"decks": response.data.decks, "pages": response.data.pages}); PD.initTables() },
         (error) => console.log(error)
       );
   }
@@ -184,6 +187,10 @@ class DeckTable extends React.Component {
       sortOrder = this.state.sortOrder === "ASC" ? "DESC" : "ASC";
     }
     this.setState({ sortBy, sortOrder, "page": 0 });
+  }
+  changePageSize(pageSize) {
+    console.log('pageSize', pageSize)
+    this.setState({ pageSize, "page": 0 });
   }
 }
 

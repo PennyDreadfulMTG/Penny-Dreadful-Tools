@@ -469,7 +469,6 @@ def calculate_similar_decks(ds: List[Deck]) -> None:
         d.similar_decks.sort(key=lambda d: -(d.similarity_score))
         redis.store('decksite:deck:{id}:similar'.format(id=d.id), d.similar_decks, ex=172800)
 
-
 def all_card_names(ds: List[Deck]) -> Set[str]:
     basic_lands = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest']
     names = set()

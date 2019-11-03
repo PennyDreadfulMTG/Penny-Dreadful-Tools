@@ -725,6 +725,16 @@ th.legend {
     line-height: 0; /* Don't mess up row spacing because the star is big. */
 }
 
+/* Prevent content jumping while deck table loads in data. */
+#decktable {
+    min-height: 20em;
+}
+
+/* Prevent horizontal scrollbars due to interaction between react and footable. */
+#decktable table {
+    overflow-x: hidden;
+}
+
 /* Angled headers */
 
 th.angled {

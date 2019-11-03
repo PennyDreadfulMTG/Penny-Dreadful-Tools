@@ -39,6 +39,8 @@ class DeckTable extends React.Component {
     const { decks, sortBy, sortOrder } = this.state;
     this.renderDeckRow = this.renderDeckRow.bind(this);
     const deckRows = decks.map(this.renderDeckRow);
+    // Prevent content jumping by setting a min-height.
+    document.getElementById('decktable').style.minHeight = decks.length + 'em';
     return (
       <React.Fragment>
         <table className={className}>

@@ -1,12 +1,11 @@
-import json
-from typing import Any, List, Optional, TypeVar
+from typing import Any, AnyStr, List, Optional, TypeVar
 
 import redis as redislib
+import json
 
 from . import configuration
 from .container import Container
 from .serialization import extra_serializer
-
 
 def init() -> Optional[redislib.Redis]:
     if not configuration.get_bool('redis_enabled'):
@@ -105,9 +104,9 @@ def increment(key: str, **kwargs: Any) -> Optional[int]:
             pass
     return None
 
-def clear(*keys: str) -> None:
+def clear(*keys_list: AnyStr) -> None:
     if REDIS is not None:
-        REDIS.delete(*keys) # type: ignore
+        REDIS.delete(*keys_list) # type: ignore
 
 
 def expire(key: str, time: int) -> None:
@@ -118,3 +117,8 @@ def expire(key: str, time: int) -> None:
             pass
         except redislib.exceptions.ConnectionError:
             pass
+
+def keys(pattern: str) -> List[bytes]:
+    if REDIS is not None:
+        return REDIS.keys(pattern) # type: ignore
+    return []

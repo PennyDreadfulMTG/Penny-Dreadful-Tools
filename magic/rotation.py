@@ -196,6 +196,11 @@ def last_run_time() -> Optional[datetime.datetime]:
         return None
 
 def read_rotation_files() -> Tuple[int, int, List[Card]]:
+    runs_str = redis.get_str('decksite:rotation:summary:runs')
+    runs_percent_str = redis.get_str('decksite:rotation:summary:runs_percent')
+    cards = redis.get_container_list('decksite:rotation:summary:cards')
+    if runs_str is not None and runs_percent_str is not None and cards is not None:
+        return int(runs_str), int(runs_percent_str), [Card(c) for c in cards]
     lines = []
     fs = files()
     if len(fs) == 0:
@@ -216,17 +221,25 @@ def read_rotation_files() -> Tuple[int, int, List[Card]]:
         c = process_score(name, hits, cs, runs, latest_list)
         if c is not None:
             cards.append(c)
+    redis.store('decksite:rotation:summary:runs', runs)
+    redis.store('decksite:rotation:summary:runs_percent', runs_percent)
+    redis.store('decksite:rotation:summary:cards', cards)
     return (runs, runs_percent, cards)
 
 def get_file_contents(file: str) -> List[str]:
-    key = f'decksite:rotation:{file}'
+    key = f'decksite:rotation:file:{file}'
     contents = redis.get_list(key)
     if contents is not None:
         return contents
     with open(file) as f:
         contents = f.readlines()
-    redis.store(key, contents, ex=3600)
+    redis.store(key, contents)
     return contents
+
+def clear_redis(clear_files: bool = True) -> None:
+    redis.clear(*redis.keys('decksite:rotation:summary:*'))
+    if clear_files:
+        redis.clear(*redis.keys('decksite:rotation:file:*'))
 
 def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_list: List[str]) -> Optional[Card]:
     remaining_runs = TOTAL_RUNS - runs

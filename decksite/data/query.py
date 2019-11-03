@@ -96,3 +96,14 @@ def decks_order_by(key: str) -> str:
         'season': 'cache.active_date'
     }
     return sort_options[key]
+
+def exclude_active_league_runs() -> str:
+    return """
+        d.retired
+        OR
+        ct.name <> 'League'
+        OR
+        IFNULL(cache.wins, 0) + IFNULL(cache.draws, 0) + IFNULL(cache.losses, 0) >= 5
+        OR
+        c.end_date < UNIX_TIMESTAMP(NOW())
+    """

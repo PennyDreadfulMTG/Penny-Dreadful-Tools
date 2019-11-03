@@ -28,7 +28,7 @@ module.exports = {
         ],
         "brace-style": "off",
         "callback-return": "error",
-        "camelcase": "off",
+        "camelcase": "error",
         "capitalized-comments": "off",
         "class-methods-use-this": "error",
         "comma-dangle": "error",
@@ -106,6 +106,7 @@ module.exports = {
         "no-caller": "error",
         "no-catch-shadow": "error",
         "no-confusing-arrow": "error",
+        "no-console": "error",
         "no-continue": "error",
         "no-div-regex": "error",
         "no-duplicate-imports": "error",
@@ -200,7 +201,7 @@ module.exports = {
         "nonblock-statement-body-position": "error",
         "object-curly-newline": "error",
         "object-curly-spacing": "off",
-        "object-shorthand": "off",
+        "object-shorthand": ["error", "properties"],
         "one-var": "off",
         "one-var-declaration-per-line": "off",
         "operator-assignment": [
@@ -220,7 +221,13 @@ module.exports = {
         "prefer-spread": "error",
         "prefer-template": "off",
         "quote-props": "off",
-        "quotes": "off",
+        "quotes": [
+            "error",
+            "double",
+            {
+                "avoidEscape": true
+            }
+        ],
         "radix": [
             "error",
             "always"

@@ -35,7 +35,7 @@ class DeckTable extends React.Component {
         Axios.get("/api/decks/", {"params": { page, pageSize, sortBy, sortOrder, "seasonId": this.props.seasonId }})
             .then(
                 (response) => { this.setState({"decks": response.data.decks, "pages": response.data.pages}); PD.initTables(); },
-                (error) => { this.setState({ "error": error }); }
+                (error) => { this.setState({ error }); }
             );
     }
 
@@ -148,14 +148,12 @@ class DeckTable extends React.Component {
                 }
                 { this.props.hideTop8
                     ? null
-                    : (
-                        <td className="c">
-                            { deck.competitionUrl
-                                ? <a href={deck.competitionUrl} dangerouslySetInnerHTML={{__html: deck.top8Safe}}></a>
-                                : <span dangerouslySetInnerHTML={{__html: deck.top8Safe}}></span>
-                            }
-                        </td>
-                    )
+                    : <td className="c">
+                        { deck.competitionUrl
+                            ? <a href={deck.competitionUrl} dangerouslySetInnerHTML={{__html: deck.top8Safe}}></a>
+                            : <span dangerouslySetInnerHTML={{__html: deck.top8Safe}}></span>
+                        }
+                    </td>
                 }
                 <td data-text={deck.dateSort}>
                     {deck.displayDate}
@@ -208,7 +206,6 @@ class DeckTable extends React.Component {
     }
 
     changePageSize(pageSize) {
-        console.log("pageSize", pageSize);
         this.setState({ pageSize, "page": 0 });
     }
 }

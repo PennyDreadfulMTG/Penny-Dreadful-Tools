@@ -3,7 +3,7 @@ const config = {
     entry: __dirname + "/../shared_web/static/js/index.jsx",
     output: {
         path: __dirname + "/../shared_web/static//dist",
-        filename: "bundle.js",
+        filename: "bundle.js"
     },
     resolve: {
         extensions: [".js", ".jsx", ".css"]
@@ -16,8 +16,8 @@ const config = {
         }, {
             test: /\.css$/,
             exclude: /node_modules/,
-            loaders: ["style-loader", "css-loader"],
+            loaders: ["style-loader", "css-loader"]
         }]
-    },
+    }
 };
 module.exports = config;

@@ -27,7 +27,7 @@ PD.init = function() {
 };
 
 PD.scrollToContent = function() {
-    if (window.matchMedia("only screen and (max-width: 640px)").matches && document.referrer.indexOf(window.location.hostname) > 0 && document.location.href.indexOf('#content') === -1) {
+    if (window.matchMedia("only screen and (max-width: 640px)").matches && document.referrer.indexOf(window.location.hostname) > 0 && document.location.href.indexOf("#content") === -1) {
         window.location = location.href + "#content";
     }
 };
@@ -64,11 +64,11 @@ PD.onDropdownLeave = function() {
 };
 
 PD.initAchievements = function() {
-    $('.has-more-info').click(PD.onMoreInfoClick);
+    $(".has-more-info").click(PD.onMoreInfoClick);
 };
 
 PD.onMoreInfoClick = function() {
-    $(this).siblings('.more-info').slideToggle();
+    $(this).siblings(".more-info").slideToggle();
 };
 
 PD.initTables = function() {
@@ -79,7 +79,7 @@ PD.initTables = function() {
     $(selector).filter(function() {
         return $(this).find("> tbody > tr").length <= 1000;
     }).footable({
-        "empty": '', // Don't show any default text in empty table – in interacts badly with React deck table.
+        "empty": "", // Don't show any default text in empty table – in interacts badly with React deck table.
         "toggleColumn": "last",
         "breakpoints": {
             "xs": 359,
@@ -197,8 +197,8 @@ PD.initReassign = function() {
     $(".reassign").click(function() {
         $(this).hide();
         $.post("/api/archetype/reassign", {
-            'deck_id': $(this).data('deck_id'),
-            'archetype_id': $(this).data('rule_archetype_id')
+            "deck_id": $(this).data("deck_id"),
+            "archetype_id": $(this).data("rule_archetype_id")
         }, PD.afterReassign);
         return false;
     });
@@ -225,8 +225,6 @@ PD.initRuleForms = function() {
 PD.afterRuleUpdate = function(data) {
     if (data.success) {
         window.location = location.href; // make sure it's a GET refresh and not a duplicate of a previous POST
-    } else {
-        console.log(data.msg);
     }
 };
 
@@ -240,17 +238,17 @@ PD.loadDeck = function() {
 };
 
 PD.toggleDrawDropdown = function() {
-    var can_draw = false;
+    var canDraw = false;
     $(document).find(".deckselect").each(function(_, select) {
-        can_draw = can_draw || select.selectedOptions[0].classList.contains("deck-can-draw");
+        canDraw = canDraw || select.selectedOptions[0].classList.contains("deck-can-draw");
     });
-    if (can_draw) {
+    if (canDraw) {
         $(".draw-report").css("visibility", "visible");
     } else {
         $(".draw-report").css("visibility", "hidden");
         $("#draws").val(0);
     }
-    return can_draw;
+    return canDraw;
 };
 
 PD.toggleIllegalCards = function() {
@@ -356,7 +354,7 @@ PD.initPersonalization = function() {
             $(".demimod").show();
         }
         if ((data.admin || data.demimod) && (data.archetypes_to_tag > 0)) {
-            $('.edit_archetypes').children()[0].text = data.archetypes_to_tag;
+            $(".edit_archetypes").children()[0].text = data.archetypes_to_tag;
         }
         if (!data.hide_intro && !PD.getUrlParam("hide_intro")) {
             $(".intro-container").show();
@@ -365,19 +363,19 @@ PD.initPersonalization = function() {
 };
 
 PD.initPersonNotes = function() {
-    var i, personId = $('.person-notes').data('person_id');
+    var i, personId = $(".person-notes").data("person_id");
     // Only do the work if we're on a page that should show the notes.
     if (personId) {
-        $.get('/api/admin/people/' + personId + '/notes/', function(data) {
+        $.get("/api/admin/people/" + personId + "/notes/", function(data) {
             if (data.notes.length > 0) {
-                let s = '<article>';
+                let s = "<article>";
                 for (i = 0; i < data.notes.length; i++) {
-                    s += '<p><span class="subtitle">' + data.notes[i].display_date + '</span> ' + data.notes[i].note + '</p>';
+                    s += '<p><span class="subtitle">' + data.notes[i].display_date + "</span> " + data.notes[i].note + "</p>";
                 }
-                s += '</article>';
-                $('.person-notes').html(s);
+                s += "</article>";
+                $(".person-notes").html(s);
             } else {
-                $('.person-notes').html('<p>None</p>');
+                $(".person-notes").html("<p>None</p>");
             }
         });
     }
@@ -392,7 +390,7 @@ PD.renderCharts = function() {
     Chart.defaults.global.title.display = false;
     Chart.defaults.global.tooltips.displayColors = false;
     Chart.defaults.scale.ticks.beginAtZero = true;
-    $('.chart').each(function() {
+    $(".chart").each(function() {
         var type = $(this).data("type"),
             labels = $(this).data("labels"),
             series = $(this).data("series"),
@@ -400,12 +398,12 @@ PD.renderCharts = function() {
             ctx = this.getContext("2d");
         // eslint-disable-next-line new-cap
         Chart(ctx, {
-            'type': type,
-            'data': {
-                labels: labels,
+            type,
+            "data": {
+                labels,
                 datasets: [{ data: series }]
             },
-            options: options
+            options
         });
     });
 };
@@ -427,10 +425,10 @@ PD.filter.init = function() {
 
     // Apply the filter with the initial value of the form
     // The initial value is recieved by the template from the backend
-    const initial_value = $(".scryfall-filter-input").val();
-    if (initial_value) {
+    const initialValue = $(".scryfall-filter-input").val();
+    if (initialValue) {
         PD.filter.toggleDisplayFilter();
-        PD.filter.scryfallFilter(initial_value);
+        PD.filter.scryfallFilter(initialValue);
     }
     // set up the Event handlers for the form
     $(".scryfall-filter-form").submit(function() {
@@ -491,13 +489,13 @@ PD.filter.retrieveAllCards = function(url) {
     const succeed = function(blob) {
         const cards = blob.data.map((x) => x["name"]);
         if (blob["has_more"]) {
-            return PD.filter.retrieveAllCards(blob["next_page"]).then(function(new_blob) {
+            return PD.filter.retrieveAllCards(blob["next_page"]).then(function(newBlob) {
                 // Simplifying assumption: if the first page didn't produce scryfall-level errors, neither will the later ones
                 // and warnings are the same on all pages
                 return {
                     success: true,
-                    cardNames: cards.concat(new_blob["cardNames"]),
-                    warnings: new_blob["warnings"]
+                    cardNames: cards.concat(newBlob["cardNames"]),
+                    warnings: newBlob["warnings"]
                 };
             });
         } else {
@@ -575,8 +573,8 @@ PD.filter.scryfallFilter = function(query) {
 
     let url;
     if ("optimize" in $(".scryfall-filter-input").data()) {
-        const faster_query = "f:pd (" + query + ")";
-        url = "https://api.scryfall.com/cards/search?q=" + encodeURIComponent(faster_query);
+        const fasterQuery = "f:pd (" + query + ")";
+        url = "https://api.scryfall.com/cards/search?q=" + encodeURIComponent(fasterQuery);
     } else {
         url = "https://api.scryfall.com/cards/search?q=" + encodeURIComponent(query);
     }
@@ -586,9 +584,9 @@ PD.filter.scryfallFilter = function(query) {
             const cardNames = o["cardNames"];
             PD.filter.applyCardNames(cardNames);
             history.pushState({
-                cardNames: cardNames,
+                cardNames,
                 warnings: o["warnings"],
-                query: query
+                query
             }, "", "?fq=" + query);
             PD.filter.showErrorsAndWarnings(o);
         })

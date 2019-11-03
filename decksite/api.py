@@ -38,9 +38,9 @@ def decks_api() -> Response:
     sort_order = request.args.get('sortOrder', 'DESC')
     assert sort_order in ['ASC', 'DESC']
     order_by = f'{sort_by} {sort_order}'
-    page_size = 20
+    page_size = int(request.args.get('pageSize', 20))
     page = int(request.args.get('page', 0))
-    start = page * page_size
+    start = page * page_size + 1 # SQL recordset is 1-indexed but our pages are 0-indexed.
     limit = f'LIMIT {start}, {page_size}'
     season_id = rotation.season_id(str(request.args.get('seasonId')), None)
     total = deck.load_decks_count(season_id=season_id)

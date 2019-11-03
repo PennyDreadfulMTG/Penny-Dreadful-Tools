@@ -220,10 +220,8 @@ class View(BaseView):
         for a in getattr(self, 'archetypes', []):
             self.prepare_archetype(a, getattr(self, 'archetypes', []))
 
-    def prepare_archetype(self,
-                          a: archetype.Archetype,
-                          archetypes: List[archetype.Archetype]
-                         ) -> None:
+    def prepare_archetype(self, a: archetype.Archetype, archetypes: List[archetype.Archetype]) -> None:
+
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
 
         a.show_record = a.get('num_decks') is not None and (a.get('wins') or a.get('draws') or a.get('losses'))

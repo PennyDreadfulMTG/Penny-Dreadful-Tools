@@ -1,11 +1,12 @@
+import json
 from typing import Any, AnyStr, List, Optional, TypeVar
 
 import redis as redislib
-import json
 
 from . import configuration
 from .container import Container
 from .serialization import extra_serializer
+
 
 def init() -> Optional[redislib.Redis]:
     if not configuration.get_bool('redis_enabled'):
@@ -106,6 +107,9 @@ def increment(key: str, **kwargs: Any) -> Optional[int]:
 
 def clear(*keys_list: AnyStr) -> None:
     if REDIS is not None:
+        if len(keys_list) == 0:
+            # redis errors on a delete with no arguments, but we don't have to
+            return
         REDIS.delete(*keys_list) # type: ignore
 
 

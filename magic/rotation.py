@@ -198,9 +198,9 @@ def last_run_time() -> Optional[datetime.datetime]:
 def read_rotation_files() -> Tuple[int, int, List[Card]]:
     runs_str = redis.get_str('decksite:rotation:summary:runs')
     runs_percent_str = redis.get_str('decksite:rotation:summary:runs_percent')
-    cards = redis.get_container_list('decksite:rotation:summary:cards')
+    cards = redis.get_list('decksite:rotation:summary:cards')
     if runs_str is not None and runs_percent_str is not None and cards is not None:
-        return int(runs_str), int(runs_percent_str), [Card(c) for c in cards]
+        return int(runs_str), int(runs_percent_str), [Card(c, predetermined_values=True) for c in cards]
     lines = []
     fs = files()
     if len(fs) == 0:

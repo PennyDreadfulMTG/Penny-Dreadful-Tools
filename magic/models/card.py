@@ -5,10 +5,13 @@ from shared.container import Container
 
 
 class Card(Container):
-    def __init__(self, params: Dict[str, Any]) -> None:
+    def __init__(self, params: Dict[str, Any], predetermined_values: bool = False) -> None:
         super().__init__()
         for k in params.keys():
-            setattr(self, k, determine_value(k, params))
+            if predetermined_values:
+                setattr(self, k, params[k])
+            else:
+                setattr(self, k, determine_value(k, params))
         if not hasattr(self, 'names'):
             setattr(self, 'names', [self.name])
 

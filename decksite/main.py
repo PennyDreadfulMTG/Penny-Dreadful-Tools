@@ -73,7 +73,7 @@ def seasons() -> str:
 
 @SEASONS.route('/')
 @cached()
-def season() -> str:
+def season() -> wrappers.Response:
     return redirect(url_for('seasons.decks'))
 
 @APP.route('/people/')

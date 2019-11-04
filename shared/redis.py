@@ -1,5 +1,5 @@
 import json
-from typing import Any, List, Optional, TypeVar
+from typing import Any, AnyStr, List, Optional, TypeVar
 
 import redis as redislib
 
@@ -105,9 +105,12 @@ def increment(key: str, **kwargs: Any) -> Optional[int]:
             pass
     return None
 
-def clear(*keys: str) -> None:
+def clear(*keys_list: AnyStr) -> None:
     if REDIS is not None:
-        REDIS.delete(*keys) # type: ignore
+        if len(keys_list) == 0:
+            # redis errors on a delete with no arguments, but we don't have to
+            return
+        REDIS.delete(*keys_list) # type: ignore
 
 
 def expire(key: str, time: int) -> None:
@@ -118,3 +121,8 @@ def expire(key: str, time: int) -> None:
             pass
         except redislib.exceptions.ConnectionError:
             pass
+
+def keys(pattern: str) -> List[bytes]:
+    if REDIS is not None:
+        return REDIS.keys(pattern) # type: ignore
+    return []

@@ -30,9 +30,8 @@ from decksite.views import (About, AboutPdm, Achievements, Archetype,
                             Faqs, Home, LeagueInfo, LinkAccounts, Matchups,
                             People, Person, PersonAchievements, PersonMatches,
                             Report, Resources, Retire, Rotation,
-                            RotationChanges, Season, Seasons, SignUp,
-                            TournamentHosting, TournamentLeaderboards,
-                            Tournaments)
+                            RotationChanges, Seasons, SignUp, TournamentHosting,
+                            TournamentLeaderboards, Tournaments)
 from magic import card as mc
 from magic import image_fetcher, oracle
 from shared import perf
@@ -52,7 +51,7 @@ def home() -> str:
 @SEASONS.route('/decks/')
 @SEASONS.route('/decks/<deck_type>/')
 @cached()
-def decks(deck_type = None) -> str:
+def decks(deck_type: Optional[str] = None) -> str:
     if deck_type not in [None, 'league']:
         raise DoesNotExistException('Unrecognized deck_type: `{deck_type}`'.format(deck_type=deck_type))
     league_only = deck_type == 'league'
@@ -74,7 +73,7 @@ def seasons() -> str:
 
 @SEASONS.route('/')
 @cached()
-def season(deck_type: str = None) -> str:
+def season() -> str:
     return redirect(url_for('seasons.decks'))
 
 @APP.route('/people/')

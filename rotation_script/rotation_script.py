@@ -31,6 +31,11 @@ def run() -> None:
         print('ETA: {t}'.format(t=dtutil.display_time(time_until.total_seconds())))
         return
 
+    if n == 0:
+        rotation.clear_redis(clear_files=True)
+    else:
+        rotation.clear_redis()
+
     all_prices = {}
     for url in configuration.get_list('cardhoarder_urls'):
         s = fetcher_internal.fetch(url)

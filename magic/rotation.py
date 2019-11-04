@@ -236,7 +236,7 @@ def get_file_contents(file: str) -> List[str]:
     redis.store(key, contents)
     return contents
 
-def clear_redis(clear_files: bool = True) -> None:
+def clear_redis(clear_files: bool = False) -> None:
     redis.clear(*redis.keys('decksite:rotation:summary:*'))
     if clear_files:
         redis.clear(*redis.keys('decksite:rotation:file:*'))

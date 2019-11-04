@@ -48,10 +48,15 @@ def home() -> str:
     return view.page()
 
 @APP.route('/decks/')
+@APP.route('/decks/<deck_type>/')
 @SEASONS.route('/decks/')
+@SEASONS.route('/decks/<deck_type>/')
 @cached()
-def decks() -> str:
-    view = Decks()
+def decks(deck_type = None) -> str:
+    if deck_type not in [None, 'league']:
+        raise DoesNotExistException('Unrecognized deck_type: `{deck_type}`'.format(deck_type=deck_type))
+    league_only = deck_type == 'league'
+    view = Decks(league_only)
     return view.page()
 
 @APP.route('/decks/<int:deck_id>/')
@@ -68,14 +73,9 @@ def seasons() -> str:
     return view.page()
 
 @SEASONS.route('/')
-@SEASONS.route('/<deck_type>/')
 @cached()
 def season(deck_type: str = None) -> str:
-    if deck_type not in [None, 'league']:
-        raise DoesNotExistException('Unrecognized deck_type: `{deck_type}`'.format(deck_type=deck_type))
-    league_only = deck_type == 'league'
-    view = Season(ds.load_season(get_season_id(), league_only), league_only)
-    return view.page()
+    return redirect(url_for('seasons.decks'))
 
 @APP.route('/people/')
 @SEASONS.route('/people/')

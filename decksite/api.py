@@ -30,7 +30,7 @@ def decks_api() -> Response:
     """
     Grab a slice of results from a 0-indexed resultset of decks.
     Input:
-        {'page': <int>, 'sortBy': <str>, 'sortOrder': <'ASC'|'DESC'>, 'seasonId': <int>}
+        {'page': <int>, 'sortBy': <str>, 'sortOrder': <'ASC'|'DESC'>, 'seasonId': <int>, 'deckType': <str>}
     Output:
         {'page': <int>, 'pages': <int>, 'decks': [<deck>]}
     """
@@ -45,7 +45,10 @@ def decks_api() -> Response:
     season_id = rotation.season_id(str(request.args.get('seasonId')), None)
     total = deck.load_decks_count(where=query.exclude_active_league_runs(), season_id=season_id)
     pages = round(total / page_size)
-    ds = deck.load_decks(where=query.exclude_active_league_runs(), order_by=order_by, limit=limit, season_id=season_id)
+    where = query.exclude_active_league_runs()
+    if request.args.get('deckType') == 'league':
+        where = f"({where}) AND ct.name = 'League'"
+    ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
     r = {'page': page, 'pages': pages, 'decks': ds}
     return return_json(r, camelize=True)

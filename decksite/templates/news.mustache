@@ -1,8 +1,8 @@
-<article class="news">
+<section class="news">
     <h2>News</h2>
         <ul>
             {{#news}}
                 <li class="item {{type}}">{{#url}}<a href="{{url}}">{{/url}} <span class="story">{{title}}</span> <span class="date">{{display_date}}</span>{{#url}}</a>{{/url}}</li>
             {{/news}}
         </ul>
-</article>
+</section>

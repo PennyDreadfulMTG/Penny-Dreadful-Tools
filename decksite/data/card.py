@@ -8,60 +8,10 @@ from magic.models import Card
 from shared import guarantee
 from shared.container import Container
 from shared.database import sqlescape
+from shared.decorators import retry_after_calling
 from shared.pd_exception import DatabaseException
 
 
-def load_cards(person_id: Optional[int] = None, season_id: Optional[int] = None, retry: bool = False) -> List[Card]:
-    if person_id:
-        table = '_card_person_stats'
-        where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
-        group_by = 'person_id, name'
-    else:
-        table = '_card_stats'
-        where = 'TRUE'
-        group_by = 'name'
-    sql = """
-        SELECT
-            name,
-            SUM(num_decks) AS num_decks,
-            SUM(wins) AS wins,
-            SUM(losses) AS losses,
-            SUM(draws) AS draws,
-            SUM(wins - losses) AS record,
-            SUM(num_decks_tournament) AS num_decks_tournament,
-            SUM(wins_tournament) AS wins_tournament,
-            SUM(losses_tournament) AS losses_tournament,
-            SUM(draws_tournament) AS draws_tournament,
-            SUM(wins_tournament - losses_tournament) AS record_tournament,
-            SUM(perfect_runs) AS perfect_runs,
-            SUM(tournament_wins) AS tournament_wins,
-            SUM(tournament_top8s) AS tournament_top8s,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
-            IFNULL(ROUND((SUM(wins_tournament) / NULLIF(SUM(wins_tournament + losses_tournament), 0)) * 100, 1), '') AS win_percent_tournament
-        FROM
-            {table} AS cs
-        WHERE
-            ({where}) AND ({season_query})
-        GROUP BY
-            {group_by}
-        ORDER BY
-            num_decks DESC,
-            record,
-            name
-    """.format(table=table, season_query=query.season_query(season_id), where=where, group_by=group_by)
-    try:
-        cs = [Container(r) for r in db().select(sql)]
-        cards = oracle.cards_by_name()
-        for c in cs:
-            c.update(cards[c.name])
-        return cs
-    except DatabaseException as e:
-        if not retry:
-            print(f"Got {e} trying to load_cards so trying to preaggregate. If this is happening on user time that's undesirable.")
-            preaggregate()
-            return load_cards(person_id, season_id, retry=True)
-        print(f'Failed to preaggregate. Giving up.')
-        raise e
 
 def load_card(name: str, season_id: Optional[int] = None) -> Card:
     c = guarantee.exactly_one(oracle.load_cards([name]))
@@ -93,24 +43,6 @@ def load_card(name: str, season_id: Optional[int] = None) -> Card:
     c.num_decks_tournament = len(c.decks_tournament)
     c.played_competitively = c.wins or c.losses or c.draws
     return c
-
-def playability(retry: bool = False) -> Dict[str, float]:
-    sql = """
-        SELECT
-            name,
-            playability
-        FROM
-            _playability
-    """
-    try:
-        return {r['name']: r['playability'] for r in db().select(sql)}
-    except DatabaseException as e:
-        if not retry:
-            print(f"Got {e} trying to get playability so trying to preaggregate. If this is happening on user time that's undesirable.")
-            preaggregate_playability()
-            return playability(retry=True)
-        print(f'Failed to preaggregate. Giving up.')
-        raise e
 
 def preaggregate() -> None:
     preaggregate_card()
@@ -168,7 +100,7 @@ def preaggregate_card() -> None:
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_card_person() -> None:
-    table = '_new_card_person_stats'
+    table = '_card_person_stats'
     sql = """
         CREATE TABLE IF NOT EXISTS _new{table} (
             name VARCHAR(190) NOT NULL,
@@ -249,6 +181,62 @@ def preaggregate_playability() -> None:
             card
     """.format(table=table, high=high)
     preaggregation.preaggregate(table, sql)
+
+@retry_after_calling(preaggregate)
+def load_cards(person_id: Optional[int] = None, season_id: Optional[int] = None, retry: bool = False) -> List[Card]:
+    if person_id:
+        table = '_card_person_stats'
+        where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
+        group_by = 'person_id, name'
+    else:
+        table = '_card_stats'
+        where = 'TRUE'
+        group_by = 'name'
+    sql = """
+        SELECT
+            name,
+            SUM(num_decks) AS num_decks,
+            SUM(wins) AS wins,
+            SUM(losses) AS losses,
+            SUM(draws) AS draws,
+            SUM(wins - losses) AS record,
+            SUM(num_decks_tournament) AS num_decks_tournament,
+            SUM(wins_tournament) AS wins_tournament,
+            SUM(losses_tournament) AS losses_tournament,
+            SUM(draws_tournament) AS draws_tournament,
+            SUM(wins_tournament - losses_tournament) AS record_tournament,
+            SUM(perfect_runs) AS perfect_runs,
+            SUM(tournament_wins) AS tournament_wins,
+            SUM(tournament_top8s) AS tournament_top8s,
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
+            IFNULL(ROUND((SUM(wins_tournament) / NULLIF(SUM(wins_tournament + losses_tournament), 0)) * 100, 1), '') AS win_percent_tournament
+        FROM
+            {table} AS cs
+        WHERE
+            ({where}) AND ({season_query})
+        GROUP BY
+            {group_by}
+        ORDER BY
+            num_decks DESC,
+            record,
+            name
+    """.format(table=table, season_query=query.season_query(season_id), where=where, group_by=group_by)
+    cs = [Container(r) for r in db().select(sql)]
+    cards = oracle.cards_by_name()
+    for c in cs:
+        c.update(cards[c.name])
+    return cs
+
+@retry_after_calling(preaggregate_playability)
+def playability(retry: bool = False) -> Dict[str, float]:
+    sql = """
+        SELECT
+            name,
+            playability
+        FROM
+            _playability
+    """
+    return {r['name']: r['playability'] for r in db().select(sql)}
 
 def card_exists(name: str) -> bool:
     sql = 'SELECT EXISTS(SELECT * FROM deck_card WHERE card = %s LIMIT 1)'

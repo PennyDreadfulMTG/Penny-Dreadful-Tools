@@ -9,6 +9,7 @@ from decksite.database import db
 from shared import guarantee
 from shared.container import Container
 from shared.database import sqlescape
+from shared.decorators import retry_after_calling
 from shared.pd_exception import DatabaseException, DoesNotExistException
 
 
@@ -72,65 +73,7 @@ def load_archetypes(where: str = 'TRUE', merge: bool = False, season_id: int = N
     archetype_list = list(archetypes.values())
     return archetype_list
 
-def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, name', person_id: Optional[int] = None, season_id: Optional[int] = None, retry: bool = False) -> List[Archetype]:
-    if person_id:
-        table = '_archetype_person_stats'
-        where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
-        group_by = 'ars.person_id, a.id'
-    else:
-        table = '_archetype_stats'
-        where = 'TRUE'
-        group_by = 'a.id'
-    sql = """
-        SELECT
-            a.id,
-            a.name,
-            a.description,
-            aca.ancestor AS parent_id,
-            SUM(num_decks) AS num_decks,
-            SUM(wins) AS wins,
-            SUM(losses) AS losses,
-            SUM(draws) AS draws,
-            SUM(wins - losses) AS record,
-            SUM(num_decks_tournament) AS num_decks_tournament,
-            SUM(wins_tournament) AS wins_tournament,
-            SUM(losses_tournament) AS losses_tournament,
-            SUM(draws_tournament) AS draws_tournament,
-            SUM(wins_tournament - losses_tournament) AS record_tournament,
-            SUM(perfect_runs) AS perfect_runs,
-            SUM(tournament_wins) AS tournament_wins,
-            SUM(tournament_top8s) AS tournament_top8s,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
-            IFNULL(ROUND((SUM(wins_tournament) / NULLIF(SUM(wins_tournament + losses_tournament), 0)) * 100, 1), '') AS win_percent_tournament
-        FROM
-            archetype AS a
-        LEFT JOIN
-            {table} AS ars ON a.id = ars.archetype_id
-        LEFT JOIN
-            archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
-        WHERE
-            ({where}) AND ({season_query})
-        GROUP BY
-            {group_by},
-            aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
-        ORDER BY
-            {order_by}
-    """.format(table=table, where=where, group_by=group_by, season_query=query.season_query(season_id), order_by=order_by)
-    try:
-        archetypes = [Archetype(a) for a in db().select(sql)]
-        archetypes_by_id = {a.id: a for a in archetypes}
-        for a in archetypes:
-            a.decks = []
-            a.decks_tournament = []
-            a.parent = archetypes_by_id.get(a.parent_id, None)
-        return archetypes
-    except DatabaseException as e:
-        if not retry:
-            print(f"Got {e} trying to load_archetypes_deckless so trying to preaggregate. If this is happening on user time that's undesirable.")
-            preaggregate()
-            return load_archetypes_deckless(order_by=order_by, person_id=person_id, season_id=season_id, retry=True)
-        print(f'Failed to preaggregate. Giving up.')
-        raise e
+
 
 def load_archetypes_deckless_for(archetype_id: int, season_id: int = None) -> List[Archetype]:
     archetypes = load_archetypes_deckless(season_id=season_id)
@@ -153,46 +96,6 @@ def assign(deck_id: int, archetype_id: int, reviewed: bool = True, similarity: O
     db().execute(f'UPDATE deck SET reviewed = %s, archetype_id = %s WHERE id = %s {and_clause}', [reviewed, archetype_id, deck_id])
     if not reviewed and similarity is not None:
         db().execute(f'UPDATE deck_cache SET similarity = %s WHERE deck_id = %s', [similarity, deck_id])
-
-def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retry: bool = False) -> List[Container]:
-    sql = """
-        SELECT
-            archetype_id,
-            a.name AS archetype_name,
-            opponent_archetype_id AS id,
-            oa.name AS name,
-            SUM(wins) AS wins,
-            SUM(losses) AS losses,
-            SUM(draws) AS draws,
-            SUM(wins_tournament) AS wins_tournament,
-            SUM(losses_tournament) AS losses_tournament,
-            SUM(draws_tournament) AS draws_tournament,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
-            IFNULL(ROUND((SUM(wins_tournament) / NULLIF(SUM(wins_tournament + losses_tournament), 0)) * 100, 1), '') AS win_percent_tournament
-        FROM
-            _matchup_stats AS ms
-        INNER JOIN
-            archetype AS a ON archetype_id = a.id
-        INNER JOIN
-            archetype AS oa ON opponent_archetype_id = oa.id
-        WHERE
-            ({where}) AND ({season_query})
-        GROUP BY
-            archetype_id,
-            opponent_archetype_id
-        ORDER BY
-            wins DESC,
-            oa.name
-    """.format(where=where, season_query=query.season_query(season_id))
-    try:
-        return [Container(m) for m in db().select(sql)]
-    except DatabaseException as e:
-        if not retry:
-            print(f"Got {e} trying to load_all_matchups so trying to preaggregate. If this is happening on user time that's undesirable.")
-            preaggregate_matchups()
-            return load_all_matchups(where=where, season_id=season_id, retry=True)
-        print(f'Failed to preaggregate. Giving up.')
-        raise e
 
 def load_matchups(archetype_id: int, season_id: int = None) -> List[Container]:
     where = 'a.id = {archetype_id}'.format(archetype_id=archetype_id)
@@ -415,3 +318,89 @@ def preaggregate_matchups() -> None:
             season.id
     """.format(table=table, competition_join=query.competition_join(), season_join=query.season_join())
     preaggregation.preaggregate(table, sql)
+
+@retry_after_calling(preaggregate_matchups)
+def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retry: bool = False) -> List[Container]:
+    sql = """
+        SELECT
+            archetype_id,
+            a.name AS archetype_name,
+            opponent_archetype_id AS id,
+            oa.name AS name,
+            SUM(wins) AS wins,
+            SUM(losses) AS losses,
+            SUM(draws) AS draws,
+            SUM(wins_tournament) AS wins_tournament,
+            SUM(losses_tournament) AS losses_tournament,
+            SUM(draws_tournament) AS draws_tournament,
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
+            IFNULL(ROUND((SUM(wins_tournament) / NULLIF(SUM(wins_tournament + losses_tournament), 0)) * 100, 1), '') AS win_percent_tournament
+        FROM
+            _matchup_stats AS ms
+        INNER JOIN
+            archetype AS a ON archetype_id = a.id
+        INNER JOIN
+            archetype AS oa ON opponent_archetype_id = oa.id
+        WHERE
+            ({where}) AND ({season_query})
+        GROUP BY
+            archetype_id,
+            opponent_archetype_id
+        ORDER BY
+            wins DESC,
+            oa.name
+    """.format(where=where, season_query=query.season_query(season_id))
+    return [Container(m) for m in db().select(sql)]
+
+@retry_after_calling(preaggregate)
+def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, name', person_id: Optional[int] = None, season_id: Optional[int] = None, retry: bool = False) -> List[Archetype]:
+    if person_id:
+        table = '_archetype_person_stats'
+        where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
+        group_by = 'ars.person_id, a.id'
+    else:
+        table = '_archetype_stats'
+        where = 'TRUE'
+        group_by = 'a.id'
+    sql = """
+        SELECT
+            a.id,
+            a.name,
+            a.description,
+            aca.ancestor AS parent_id,
+            SUM(num_decks) AS num_decks,
+            SUM(wins) AS wins,
+            SUM(losses) AS losses,
+            SUM(draws) AS draws,
+            SUM(wins - losses) AS record,
+            SUM(num_decks_tournament) AS num_decks_tournament,
+            SUM(wins_tournament) AS wins_tournament,
+            SUM(losses_tournament) AS losses_tournament,
+            SUM(draws_tournament) AS draws_tournament,
+            SUM(wins_tournament - losses_tournament) AS record_tournament,
+            SUM(perfect_runs) AS perfect_runs,
+            SUM(tournament_wins) AS tournament_wins,
+            SUM(tournament_top8s) AS tournament_top8s,
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
+            IFNULL(ROUND((SUM(wins_tournament) / NULLIF(SUM(wins_tournament + losses_tournament), 0)) * 100, 1), '') AS win_percent_tournament
+        FROM
+            archetype AS a
+        LEFT JOIN
+            {table} AS ars ON a.id = ars.archetype_id
+        LEFT JOIN
+            archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
+        WHERE
+            ({where}) AND ({season_query})
+        GROUP BY
+            {group_by},
+            aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
+        ORDER BY
+            {order_by}
+    """.format(table=table, where=where, group_by=group_by, season_query=query.season_query(season_id), order_by=order_by)
+    archetypes = [Archetype(a) for a in db().select(sql)]
+    archetypes_by_id = {a.id: a for a in archetypes}
+    for a in archetypes:
+        a.decks = []
+        a.decks_tournament = []
+        a.parent = archetypes_by_id.get(a.parent_id, None)
+    return archetypes

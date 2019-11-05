@@ -1,6 +1,7 @@
 node{
     def FailedTests = false
     def DoNotMerge = false
+    def POUpdated = false
     env.mysql_user = 'jenkins'
     env.magic_database = 'jenkins_cards'
     env.decksite_database = 'jenkins_decksite'
@@ -44,11 +45,25 @@ node{
         }
     }
 
+    stage('Translations') {
+        withCredentials([string(credentialsId: 'poeditor_api_key', variable: 'poeditor_api_key')]) {
+            po_updated = sh(returnStatus: true, script: 'python3 run.py maintenance generate_translations')
+        }
+        if (po_updated) {
+            POUpdated = true
+        }
+    }
+
     stage('Fix') {
-        if (FailedTests) {
+        if (FailedTests || POUpdated) {
             sh(returnStatus: true, script: 'git branch -D jenkins_results')
             sh 'git checkout -b jenkins_results'
-            sh 'git commit -am "Automated update"'
+            if (!FailedTests) {
+                sh 'git commit -am "Update POFile"'
+            }
+            else {
+                sh 'git commit -am "Automated update"'
+            }
             withCredentials([usernamePassword(credentialsId: 'd61f34a1-4929-406d-b4c5-ec380d823780', passwordVariable: 'github_password', usernameVariable: 'github_user')]) {
                 sh 'git push https://$github_user:$github_password@github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git jenkins_results --force'
             }

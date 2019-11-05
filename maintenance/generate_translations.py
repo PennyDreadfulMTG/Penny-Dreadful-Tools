@@ -34,10 +34,10 @@ def ad_hoc() -> int:
 
     api_key = configuration.get('poeditor_api_key')
     if api_key is None:
-        return exitcode
+        return exitcode()
     client = POEditorAPI(api_token=api_key)
     client.update_terms('162959', './shared_web/translations/messages.pot')
-    return exitcode
+    return exitcode()
 
 def exitcode() -> int:
     numstat = subprocess.check_output(['git', 'diff', '--numstat']).strip().decode().split('\n')

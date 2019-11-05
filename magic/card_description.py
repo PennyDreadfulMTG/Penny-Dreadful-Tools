@@ -32,7 +32,7 @@ CardDescription = TypedDict('CardDescription', {
     'type_line': str,
     'watermark': str,
 
-    # … and parts we don't. Some of these are typed other than str because of the usage in mutliverse_test which uses real data from Scryfall.
+    # …and parts we don't. Some of these are typed other than str because of the usage in mutliverse_test which uses real data from Scryfall.
     'arena_id': str,
     'artist_ids': List[str],
     'booster': bool,

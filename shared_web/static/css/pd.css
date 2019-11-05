@@ -1919,7 +1919,7 @@ tr.current, tr.current td {
     background-color: #eee;
 }
 
-/* … unless you are in an expanded row which displays more like a table. */
+/* …unless you are in an expanded row which displays more like a table. */
 .footable-details tr.current, .footable-details tr.current td {
     background-color: inherit;
 }

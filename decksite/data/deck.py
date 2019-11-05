@@ -24,15 +24,6 @@ def latest_decks() -> List[Deck]:
 def load_deck(deck_id: int) -> Deck:
     return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))
 
-def load_season(season_id: int = None, league_only: bool = False) -> Container:
-    season = Container()
-    where = 'TRUE'
-    if league_only:
-        where = 'd.competition_id IN ({competition_ids_by_type_select})'.format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
-    season.decks = load_decks(where, season_id=season_id)
-    season.number = season_id
-    return season
-
 def load_decks_count(where: str = 'TRUE',
                      having: str = 'TRUE',
                      season_id: Optional[Union[str, int]] = None) -> int:

@@ -153,7 +153,8 @@ def preaggregate_card() -> None:
         FROM
             deck AS d
         INNER JOIN
-            deck_card AS dc ON d.id = dc.deck_id
+            -- Eiliminate maindeck/sideboard double-counting with DISTINCT. See #5493.
+            (SELECT DISTINCT card, deck_id FROM deck_card) AS dc ON d.id = dc.deck_id
         {competition_join}
         {season_join}
         {nwdl_join}
@@ -207,7 +208,8 @@ def preaggregate_card_person() -> None:
         FROM
             deck AS d
         INNER JOIN
-            deck_card AS dc ON d.id = dc.deck_id
+            -- Eiliminate maindeck/sideboard double-counting with DISTINCT. See #5493.
+            (SELECT DISTINCT card, deck_id FROM deck_card) AS dc ON d.id = dc.deck_id
         {competition_join}
         {season_join}
         {nwdl_join}

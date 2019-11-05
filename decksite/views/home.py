@@ -81,7 +81,7 @@ class Home(View):
         self.cards = self.top_cards # To get prepare_card treatment
         self.cards_url = url_for('cards')
 
-    def setup_rotation(self):
+    def setup_rotation(self) -> None:
         self.season_start_display = dtutil.display_date(rotation.last_rotation())
         self.season_end_display = dtutil.display_date(rotation.next_rotation())
         self.scryfall_url = 'https://scryfall.com/search?q=f%3Apd'

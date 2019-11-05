@@ -132,6 +132,13 @@ def message() -> str:
         return 'The supplemental rotation is in {sdiff} (The next full rotation is in {diff})'.format(diff=dtutil.display_time(diff.total_seconds()), sdiff=dtutil.display_time(sdiff.total_seconds()))
     return 'The next rotation is in {diff}'.format(diff=dtutil.display_time(diff.total_seconds()))
 
+def in_rotation() -> Tuple[bool, str]:
+    if configuration.get_bool('always_show_rotation'):
+        return True
+    until_full_rotation = next_rotation() - dtutil.now()
+    until_supplemental_rotation = next_supplemental() - dtutil.now()
+    return until_full_rotation < datetime.timedelta(7) or until_supplemental_rotation < datetime.timedelta(7)
+
 def next_rotation_is_supplemental() -> bool:
     full = next_rotation()
     supplemental = next_supplemental()

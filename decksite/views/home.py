@@ -5,6 +5,8 @@ from flask_babel import gettext
 
 from decksite.view import View
 from magic.models import Card, Deck
+from magic import rotation
+from shared import dtutil
 from shared.container import Container
 
 
@@ -15,6 +17,7 @@ class Home(View):
         self.setup_news(news)
         self.setup_decks(decks)
         self.setup_cards(cards)
+        self.setup_rotation()
         self.setup_stats(matches_stats)
 
     def setup_news(self, news: List[Container]) -> None:
@@ -77,6 +80,15 @@ class Home(View):
         self.top_cards = cards[0:8]
         self.cards = self.top_cards # To get prepare_card treatment
         self.cards_url = url_for('cards')
+
+    def setup_rotation(self):
+        self.season_start_display = dtutil.display_date(rotation.last_rotation())
+        self.season_end_display = dtutil.display_date(rotation.next_rotation())
+        self.scryfall_url = 'https://scryfall.com/search?q=f%3Apd'
+        self.legal_cards_url = 'http://pdmtgo.com/legal_cards.txt'
+        self.in_rotation = rotation.in_rotation()
+        self.rotation_msg = 'Supplemental' if rotation.next_rotation_is_supplemental() else 'Full' + ' rotation is in progress.'
+        self.rotation_url = url_for('rotation')
 
     def setup_stats(self, matches_stats: Dict[str, int]) -> None:
         self.community_stats = [

@@ -42,11 +42,11 @@ def ad_hoc() -> int:
 def exitcode() -> int:
     numstat = subprocess.check_output(['git', 'diff', '--numstat']).strip().decode().split('\n')
     for line in numstat:
-        if line.endswith('messages.pot'):
-            added, deleted, path = line.split('\t')
-            if added > 1:
+        added, deleted, path = line.split('\t')
+        if path.endswith('messages.pot'):
+            if int(added) > 1:
                 # POT-Creation-Date will always change, we need to check for an additional change.
-                return max(added, deleted) - 1
+                return max(int(added), int(deleted)) - 1
     return 0
 
 # pylint: disable=protected-access, unused-argument

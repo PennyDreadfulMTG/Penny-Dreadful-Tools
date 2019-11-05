@@ -1,4 +1,3 @@
-from decksite import league
 from decksite.view import View
 
 

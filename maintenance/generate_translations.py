@@ -1,3 +1,4 @@
+import subprocess
 from distutils.dist import \
     Distribution  # pylint: disable=no-name-in-module,import-error
 from typing import Any, Dict, Generator, List
@@ -10,7 +11,7 @@ from shared import configuration
 from shared_web import template
 
 
-def ad_hoc() -> None:
+def ad_hoc() -> int:
     dist = Distribution(dict(
         name='Penny-Dreadful-Tools'
     ))
@@ -33,9 +34,20 @@ def ad_hoc() -> None:
 
     api_key = configuration.get('poeditor_api_key')
     if api_key is None:
-        return
+        return exitcode()
     client = POEditorAPI(api_token=api_key)
     client.update_terms('162959', './shared_web/translations/messages.pot')
+    return exitcode()
+
+def exitcode() -> int:
+    numstat = subprocess.check_output(['git', 'diff', '--numstat']).strip().decode().split('\n')
+    for line in numstat:
+        added, deleted, path = line.split('\t')
+        if path.endswith('messages.pot'):
+            if int(added) > 1:
+                # POT-Creation-Date will always change, we need to check for an additional change.
+                return max(int(added), int(deleted)) - 1
+    return 0
 
 # pylint: disable=protected-access, unused-argument
 def extract_mustache(fileobj: Any, keywords: List[str], comment_tags: List[str], options: Dict[str, str]) -> Generator:

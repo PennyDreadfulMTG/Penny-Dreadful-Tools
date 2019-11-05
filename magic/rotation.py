@@ -221,9 +221,9 @@ def read_rotation_files() -> Tuple[int, int, List[Card]]:
         c = process_score(name, hits, cs, runs, latest_list)
         if c is not None:
             cards.append(c)
-    redis.store('decksite:rotation:summary:runs', runs)
-    redis.store('decksite:rotation:summary:runs_percent', runs_percent)
-    redis.store('decksite:rotation:summary:cards', cards)
+    redis.store('decksite:rotation:summary:runs', runs, ex=604800)
+    redis.store('decksite:rotation:summary:runs_percent', runs_percent, ex=604800)
+    redis.store('decksite:rotation:summary:cards', cards, ex=604800)
     return (runs, runs_percent, cards)
 
 def get_file_contents(file: str) -> List[str]:
@@ -233,7 +233,7 @@ def get_file_contents(file: str) -> List[str]:
         return contents
     with open(file) as f:
         contents = f.readlines()
-    redis.store(key, contents)
+    redis.store(key, contents, ex=604800)
     return contents
 
 def clear_redis(clear_files: bool = False) -> None:

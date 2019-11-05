@@ -47,6 +47,7 @@ def exitcode() -> int:
             if added > 1:
                 # POT-Creation-Date will always change, we need to check for an additional change.
                 return max(added, deleted) - 1
+    return 0
 
 # pylint: disable=protected-access, unused-argument
 def extract_mustache(fileobj: Any, keywords: List[str], comment_tags: List[str], options: Dict[str, str]) -> Generator:

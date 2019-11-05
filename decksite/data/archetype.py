@@ -10,7 +10,7 @@ from shared import guarantee
 from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import retry_after_calling
-from shared.pd_exception import DatabaseException, DoesNotExistException
+from shared.pd_exception import DoesNotExistException
 
 
 class Archetype(Container, NodeMixin):
@@ -320,7 +320,7 @@ def preaggregate_matchups() -> None:
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(preaggregate_matchups)
-def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retry: bool = False) -> List[Container]:
+def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None) -> List[Container]:
     sql = """
         SELECT
             archetype_id,
@@ -353,7 +353,7 @@ def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None, retr
     return [Container(m) for m in db().select(sql)]
 
 @retry_after_calling(preaggregate)
-def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, name', person_id: Optional[int] = None, season_id: Optional[int] = None, retry: bool = False) -> List[Archetype]:
+def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, name', person_id: Optional[int] = None, season_id: Optional[int] = None) -> List[Archetype]:
     if person_id:
         table = '_archetype_person_stats'
         where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))

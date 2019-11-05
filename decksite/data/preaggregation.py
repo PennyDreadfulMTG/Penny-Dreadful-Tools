@@ -2,7 +2,7 @@ from decksite.database import db
 from shared.pd_exception import DatabaseException
 from shared_web import logger
 
-def preaggregate(table, sql) -> None:
+def preaggregate(table: str, sql: str) -> None:
     lock_key = f'preaggregation:{table}'
     try:
         db().get_lock(lock_key, 60 * 5)

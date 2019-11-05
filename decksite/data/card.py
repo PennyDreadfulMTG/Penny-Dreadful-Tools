@@ -9,8 +9,6 @@ from shared import guarantee
 from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import retry_after_calling
-from shared.pd_exception import DatabaseException
-
 
 
 def load_card(name: str, season_id: Optional[int] = None) -> Card:
@@ -183,7 +181,7 @@ def preaggregate_playability() -> None:
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(preaggregate)
-def load_cards(person_id: Optional[int] = None, season_id: Optional[int] = None, retry: bool = False) -> List[Card]:
+def load_cards(person_id: Optional[int] = None, season_id: Optional[int] = None) -> List[Card]:
     if person_id:
         table = '_card_person_stats'
         where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
@@ -228,7 +226,7 @@ def load_cards(person_id: Optional[int] = None, season_id: Optional[int] = None,
     return cs
 
 @retry_after_calling(preaggregate_playability)
-def playability(retry: bool = False) -> Dict[str, float]:
+def playability() -> Dict[str, float]:
     sql = """
         SELECT
             name,

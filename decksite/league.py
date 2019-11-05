@@ -458,3 +458,13 @@ def random_legal_deck() -> Optional[Deck]:
     except IndexError:
         # For a short while at the start of a season there are no decks that match the WHERE/HAVING clauses.
         return None
+
+def get_status() -> bool:
+    sql = 'SELECT is_locked FROM competition WHERE id IN ({active_competition_id_query})'.format(active_competition_id_query=active_competition_id_query())
+    is_locked = db().value(sql)
+    return 'closed' if is_locked else 'open'
+
+def set_status(action: str) -> None:
+    sql = 'UPDATE competition SET is_locked = %s WHERE id IN ({active_competition_id_query})'.format(active_competition_id_query=active_competition_id_query())
+    print(sql, action, [1 if action == 'close' else 0])
+    db().execute(sql, [1 if action == 'close' else 0])

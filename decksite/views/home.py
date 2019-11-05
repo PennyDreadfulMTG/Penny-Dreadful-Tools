@@ -19,6 +19,7 @@ class Home(View):
         self.setup_cards(cards)
         self.setup_rotation()
         self.setup_stats(matches_stats)
+        self.setup_tournaments()
 
     def setup_news(self, news: List[Container]) -> None:
         self.news = news

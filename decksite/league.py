@@ -464,7 +464,7 @@ def random_legal_deck() -> Optional[Deck]:
         # For a short while at the start of a season there are no decks that match the WHERE/HAVING clauses.
         return None
 
-def get_status() -> bool:
+def get_status() -> Status:
     sql = 'SELECT is_locked FROM competition WHERE id IN ({active_competition_id_query})'.format(active_competition_id_query=active_competition_id_query())
     is_locked = db().value(sql)
     return Status.CLOSED if is_locked else Status.OPEN

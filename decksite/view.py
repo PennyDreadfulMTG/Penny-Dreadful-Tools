@@ -49,7 +49,7 @@ class View(BaseView):
         self.is_person_page: Optional[bool] = None
         self.next_tournament_name = None
         self.next_tournament_time = None
-        self.tournaments = []
+        self.tournaments: List[Container] = []
 
     def season_id(self) -> int:
         return get_season_id()
@@ -327,7 +327,7 @@ class View(BaseView):
     def TT_HELP_TRANSLATE(self) -> str:
         return gettext('Help us translate the site into your language')
 
-    def setup_tournaments(self):
+    def setup_tournaments(self) -> None:
         info = tournaments.next_tournament_info()
         self.next_tournament_name = info['next_tournament_name']
         self.next_tournament_time = info['next_tournament_time']

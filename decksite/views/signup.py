@@ -2,12 +2,12 @@ from typing import Optional
 
 from flask_babel import gettext
 
-from decksite.views.decklist_form import DecklistForm
+from decksite.data.form import Form
 
 
 # pylint: disable=no-self-use
 class SignUp(DecklistForm):
-    def __init__(self, form: DecklistForm, is_closed: bool, person_id: Optional[int]) -> None:
+    def __init__(self, form: Form, is_closed: bool, person_id: Optional[int]) -> None:
         super().__init__(form, person_id)
         self.is_closed = is_closed
 

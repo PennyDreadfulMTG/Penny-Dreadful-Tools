@@ -1,7 +1,7 @@
 import sys
 from typing import Dict, List, Optional
 
-from decksite.data import deck, query
+from decksite.data import deck, preaggregation, query
 from decksite.database import db
 from magic import oracle
 from magic.models import Card
@@ -118,9 +118,9 @@ def preaggregate() -> None:
     preaggregate_playability()
 
 def preaggregate_card() -> None:
-    db().execute('DROP TABLE IF EXISTS _new_card_stats')
-    db().execute("""
-        CREATE TABLE IF NOT EXISTS _new_card_stats (
+    table = '_card_stats'
+    sql = """
+        CREATE TABLE IF NOT EXISTS _new{table} (
             name VARCHAR(190) NOT NULL,
             season_id INT NOT NULL,
             num_decks INT NOT NULL,
@@ -161,18 +161,16 @@ def preaggregate_card() -> None:
         GROUP BY
             card,
             season.id
-    """.format(competition_join=query.competition_join(),
+    """.format(table=table,
+               competition_join=query.competition_join(),
                season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join()))
-    db().execute('DROP TABLE IF EXISTS _old_card_stats')
-    db().execute('CREATE TABLE IF NOT EXISTS _card_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
-    db().execute('RENAME TABLE _card_stats TO _old_card_stats, _new_card_stats TO _card_stats')
-    db().execute('DROP TABLE IF EXISTS _old_card_stats')
+               nwdl_join=deck.nwdl_join())
+    preaggregation.preaggregate(table, sql)
 
 def preaggregate_card_person() -> None:
-    db().execute('DROP TABLE IF EXISTS _new_card_person_stats')
-    db().execute("""
-        CREATE TABLE IF NOT EXISTS _new_card_person_stats (
+    table = '_new_card_person_stats'
+    sql = """
+        CREATE TABLE IF NOT EXISTS _new{table} (
             name VARCHAR(190) NOT NULL,
             season_id INT NOT NULL,
             person_id INT NOT NULL,
@@ -217,13 +215,11 @@ def preaggregate_card_person() -> None:
             card,
             d.person_id,
             season.id
-    """.format(competition_join=query.competition_join(),
+    """.format(table=table,
+               competition_join=query.competition_join(),
                season_join=query.season_join(),
-               nwdl_join=deck.nwdl_join()))
-    db().execute('DROP TABLE IF EXISTS _old_card_person_stats')
-    db().execute('CREATE TABLE IF NOT EXISTS _card_person_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
-    db().execute('RENAME TABLE _card_person_stats TO _old_card_person_stats, _new_card_person_stats TO _card_person_stats')
-    db().execute('DROP TABLE IF EXISTS _old_card_person_stats')
+               nwdl_join=deck.nwdl_join())
+    preaggregation.preaggregate(table, sql)
 
 def preaggregate_playability() -> None:
     sql = """
@@ -237,9 +233,9 @@ def preaggregate_playability() -> None:
     """
     rs = db().select(sql)
     high = max([r['played'] for r in rs] + [0])
-    db().execute('DROP TABLE IF EXISTS _new_playability')
-    sql = """
-        CREATE TABLE IF NOT EXISTS _new_playability (
+    table = '_playability'
+    sql = f"""
+        CREATE TABLE IF NOT EXISTS _new{table} (
             name VARCHAR(190) NOT NULL,\
             playability DECIMAL(3,2),
             PRIMARY KEY (name)
@@ -251,12 +247,8 @@ def preaggregate_playability() -> None:
             deck_card
         GROUP BY
             card
-    """.format(high=high)
-    db().execute(sql)
-    db().execute('DROP TABLE IF EXISTS _old_playability')
-    db().execute('CREATE TABLE IF NOT EXISTS _playability (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
-    db().execute('RENAME TABLE _playability TO _old_playability, _new_playability TO _playability')
-    db().execute('DROP TABLE IF EXISTS _old_playability')
+    """.format(table=table, high=high)
+    preaggregation.preaggregate(table, sql)
 
 def card_exists(name: str) -> bool:
     sql = 'SELECT EXISTS(SELECT * FROM deck_card WHERE card = %s LIMIT 1)'

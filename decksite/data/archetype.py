@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Union
 import titlecase
 from anytree import NodeMixin
 
-from decksite.data import deck, query
+from decksite.data import deck, preaggregation, query
 from decksite.database import db
 from shared import guarantee
 from shared.container import Container
@@ -248,9 +248,9 @@ def preaggregate() -> None:
     preaggregate_matchups()
 
 def preaggregate_archetypes() -> None:
-    db().execute('DROP TABLE IF EXISTS _new_archetype_stats')
+    table = '_archetype_stats'
     sql = """
-        CREATE TABLE IF NOT EXISTS _new_archetype_stats (
+        CREATE TABLE IF NOT EXISTS _new{table} (
             archetype_id INT NOT NULL,
             season_id INT NOT NULL,
             num_decks INT NOT NULL,
@@ -299,20 +299,17 @@ def preaggregate_archetypes() -> None:
             season.id
         HAVING
             season.id IS NOT NULL
-    """.format(competition_join=query.competition_join(),
+    """.format(table=table,
+               competition_join=query.competition_join(),
                season_join=query.season_join(),
                nwdl_join=deck.nwdl_join())
-    db().execute(sql)
-    db().execute('DROP TABLE IF EXISTS _old_archetype_stats')
-    db().execute('CREATE TABLE IF NOT EXISTS _archetype_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
-    db().execute('RENAME TABLE _archetype_stats TO _old_archetype_stats, _new_archetype_stats TO _archetype_stats')
-    db().execute('DROP TABLE IF EXISTS _old_archetype_stats')
+    preaggregation.preaggregate(table, sql)
 
 def preaggregate_archetype_person() -> None:
     # This preaggregation fails if I use the obvious name _new_archetype_person_stats but works with any other name. It's confusing.
-    db().execute('DROP TABLE IF EXISTS _new_ap_stats')
+    table = '_ap_stats'
     sql = """
-        CREATE TABLE IF NOT EXISTS _new_ap_stats (
+        CREATE TABLE IF NOT EXISTS _new{table} (
             archetype_id INT NOT NULL,
             person_id INT NOT NULL,
             season_id INT NOT NULL,
@@ -364,19 +361,16 @@ def preaggregate_archetype_person() -> None:
             season.id
         HAVING
             season.id IS NOT NULL
-    """.format(competition_join=query.competition_join(),
+    """.format(table=table,
+               competition_join=query.competition_join(),
                season_join=query.season_join(),
                nwdl_join=deck.nwdl_join())
-    db().execute(sql)
-    db().execute('DROP TABLE IF EXISTS _old_archetype_person_stats')
-    db().execute('CREATE TABLE IF NOT EXISTS _archetype_person_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
-    db().execute('RENAME TABLE _archetype_person_stats TO _old_archetype_person_stats, _new_ap_stats TO _archetype_person_stats')
-    db().execute('DROP TABLE IF EXISTS _old_archetype_stats')
+    preaggregation.preaggregate(table, sql)
 
 def preaggregate_matchups() -> None:
-    db().execute('DROP TABLE IF EXISTS _new_matchup_stats')
+    table = '_matchup_stats'
     sql = """
-        CREATE TABLE IF NOT EXISTS _new_matchup_stats (
+        CREATE TABLE IF NOT EXISTS _new{table} (
             archetype_id INT NOT NULL,
             opponent_archetype_id INT NOT NULL,
             season_id INT NOT NULL,
@@ -419,9 +413,5 @@ def preaggregate_matchups() -> None:
             a.id,
             oa.id,
             season.id
-    """.format(competition_join=query.competition_join(), season_join=query.season_join())
-    db().execute(sql)
-    db().execute('DROP TABLE IF EXISTS _old_matchup_stats')
-    db().execute('CREATE TABLE IF NOT EXISTS _matchup_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
-    db().execute('RENAME TABLE _matchup_stats TO _old_matchup_stats, _new_matchup_stats TO _matchup_stats')
-    db().execute('DROP TABLE IF EXISTS _old_matchup_stats')
+    """.format(table=table, competition_join=query.competition_join(), season_join=query.season_join())
+    preaggregation.preaggregate(table, sql)

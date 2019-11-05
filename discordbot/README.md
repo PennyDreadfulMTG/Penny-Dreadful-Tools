@@ -25,7 +25,11 @@ None
 
 Deletes all the cached images.  Use sparingly
 
-## nextrotation (ro, rot, rotation, nextr, nextro, nextrot, nextrota, nextrotat, nextrotati, nextrotatio, rota, rotat, rotati, rotatio)
+## rotate
+
+Perform all necessary post-rotation tasks.
+
+## nextrotation (ro, rot, rotation, nextr, nextro, nextrot, nextrota, nextrotat, nextrotati, nextrotatio, rotati, rotatio)
 
 Date of the next Penny Dreadful rotation.
 

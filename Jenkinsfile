@@ -29,7 +29,7 @@ node{
         if (!FailedTests) {
             // Don't update the scraper recordings unless they failed.
             sh(returnStatus: true, script: 'git reset --hard HEAD')
-            DoNotMerge = true
+            // DoNotMerge = true
         }
     }
 
@@ -70,7 +70,7 @@ node{
             sleep(30) // Lovely race condition where we make a PR before the push has propogated.
             cmd = 'hub pull-request -b master -h jenkins_results -m "Automated PR from Jenkins" -f'
             if (DoNotMerge) {
-                cmd = cmd + ' --labels "do not merge"'
+                cmd = cmd + ' -l "do not merge"'
             }
             sh(returnStatus: true, script: cmd)
         }

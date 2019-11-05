@@ -186,7 +186,8 @@ async def send_image_with_retry(channel: TextChannel, image_file: str, text: str
         await send(channel, file=File(image_file), content=text)
 
 def single_card_text_internal(client: Client, requested_card: Card, disable_emoji: bool) -> str:
-    mana = emoji.replace_emoji(''.join(requested_card.mana_cost or []), client)
+    mana = emoji.replace_emoji('|'.join(requested_card.mana_cost or []), client)
+    mana = mana.replace('|', ' // ')
     legal = ' — ' + emoji.info_emoji(requested_card, verbose=True)
     if disable_emoji:
         legal = ''

@@ -4,8 +4,8 @@ from flask import url_for
 from flask_babel import gettext
 
 from decksite.view import View
-from magic.models import Card, Deck
 from magic import rotation
+from magic.models import Card, Deck
 from shared import dtutil
 from shared.container import Container
 

@@ -1,6 +1,6 @@
-from discordbot.command import MtgContext
 from discord.ext import commands
 
+from discordbot.command import MtgContext
 from magic import multiverse
 from shared import redis
 

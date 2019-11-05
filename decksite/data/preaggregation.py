@@ -2,6 +2,7 @@ from decksite.database import db
 from shared.pd_exception import DatabaseException
 from shared_web import logger
 
+
 def preaggregate(table: str, sql: str) -> None:
     lock_key = f'preaggregation:{table}'
     try:

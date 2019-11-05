@@ -206,13 +206,14 @@ def post_unlink() -> str:
 @APP.route('/admin/league/')
 @auth.admin_required
 def edit_league() -> str:
-    view = EditLeague(lg.get_status() == 'open')
+    view = EditLeague(lg.get_status())
     return view.page()
 
 @APP.route('/admin/league/', methods=['POST'])
 @auth.admin_required
 def post_league() -> str:
-    lg.set_status(request.form.get('action'))
+    status = lg.Status.CLOSED if request.form.get('action') == 'close' else lg.Status.OPEN
+    lg.set_status(status)
     return edit_league()
 
 def cast_int(param: Optional[Any]) -> int:

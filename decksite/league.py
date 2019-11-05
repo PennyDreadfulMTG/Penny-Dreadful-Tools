@@ -1,5 +1,6 @@
 import calendar
 import datetime
+from enum import Enum
 import json
 import time
 from typing import Any, Dict, List, Optional
@@ -18,6 +19,10 @@ from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException, LockNotAcquiredException
 from shared_web import logger
 
+
+class Status(Enum):
+    CLOSED = 0
+    OPEN = 1
 
 # pylint: disable=attribute-defined-outside-init,too-many-instance-attributes
 class SignUpForm(Form):
@@ -462,9 +467,8 @@ def random_legal_deck() -> Optional[Deck]:
 def get_status() -> bool:
     sql = 'SELECT is_locked FROM competition WHERE id IN ({active_competition_id_query})'.format(active_competition_id_query=active_competition_id_query())
     is_locked = db().value(sql)
-    return 'closed' if is_locked else 'open'
+    return Status.CLOSED if is_locked else Status.OPEN
 
-def set_status(action: str) -> None:
+def set_status(status: Status) -> None:
     sql = 'UPDATE competition SET is_locked = %s WHERE id IN ({active_competition_id_query})'.format(active_competition_id_query=active_competition_id_query())
-    print(sql, action, [1 if action == 'close' else 0])
-    db().execute(sql, [1 if action == 'close' else 0])
+    db().execute(sql, [1 if status == Status.CLOSED else 0])

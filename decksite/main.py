@@ -351,13 +351,13 @@ def current_league() -> str:
 def signup(form: Optional[SignUpForm] = None) -> str:
     if form is None:
         form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
-    view = SignUp(form, lg.get_status() == 'closed', auth.person_id())
+    view = SignUp(form, lg.get_status() == lg.Status.CLOSED, auth.person_id())
     return view.page()
 
 @APP.route('/signup/', methods=['POST'])
 @cached()
 def add_signup() -> str:
-    if lg.get_status() == 'closed':
+    if lg.get_status() == lg.Status.CLOSED:
         return signup()
     form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
     if form.validate():

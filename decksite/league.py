@@ -394,13 +394,6 @@ def load_matches(where: str = 'TRUE') -> List[Container]:
             m.loser = None
     return matches
 
-def delete_match(match_id: int) -> None:
-    deck_ids = db().values('SELECT deck_id FROM deck_match WHERE match_id = %s', [match_id])
-    sql = 'DELETE FROM `match` WHERE id = %s'
-    db().execute(sql, [match_id])
-    for deck_id in deck_ids:
-        redis.clear(f'decksite:deck:{deck_id}')
-
 def first_runs() -> List[Container]:
     sql = """
         SELECT
@@ -442,18 +435,6 @@ def first_runs() -> List[Container]:
             p.mtgo_username
     """.format(league_competition_type_id=query.competition_type_id_select('League'))
     return [Container(r) for r in db().select(sql)]
-
-def update_match(match_id: int, left_id: int, left_games: int, right_id: int, right_games: int) -> None:
-    db().begin('update_match')
-    update_games(match_id, left_id, left_games)
-    update_games(match_id, right_id, right_games)
-    db().commit('update_match')
-    redis.clear(f'decksite:deck:{left_id}', f'decksite:deck:{right_id}')
-
-def update_games(match_id: int, deck_id: int, games: int) -> int:
-    sql = 'UPDATE deck_match SET games = %s WHERE match_id = %s AND deck_id = %s'
-    args = [games, match_id, deck_id]
-    return db().execute(sql, args)
 
 def random_legal_deck() -> Optional[Deck]:
     where = 'd.reviewed AND d.created_date > (SELECT start_date FROM season WHERE number = {current_season_num})'.format(current_season_num=rotation.current_season_num())

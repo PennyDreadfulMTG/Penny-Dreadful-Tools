@@ -66,6 +66,7 @@ def normalize(d: Deck) -> str:
         name = d.original_name
         name = name.lower()
         name = replace_space_alternatives(name)
+        name = remove_extra_spaces(name)
         name = remove_pd(name)
         name = remove_hashtags(name)
         name = remove_brackets(name)
@@ -100,6 +101,9 @@ def replace_space_alternatives(name: str) -> str:
     name = re.sub(r'(\d)\.(\d)', r'\1TEMPORARYMARKER\2', name)
     name = name.replace('_', ' ').replace('.', ' ')
     return name.replace('TEMPORARYMARKER', '.')
+
+def remove_extra_spaces(name: str) -> str:
+    return re.sub(r'\s+', ' ', name)
 
 def remove_pd(name: str) -> str:
     name = re.sub(r'(^| )[\[\(]?pd ?-? ?[0-9]+[\[\(]?', '', name, flags=re.IGNORECASE).strip()

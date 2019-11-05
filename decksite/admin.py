@@ -120,14 +120,14 @@ def post_matches() -> str:
     if request.form.get('match_id'):
         match_id = cast_int(request.form.get('match_id'))
     if request.form.get('action') == 'delete':
-        lg.delete_match(match_id)
+        ms.delete_match(match_id)
         return edit_matches()
     left_id = cast_int(request.form.get('left_id'))
     left_games = cast_int(request.form.get('left_games'))
     right_id = cast_int(request.form.get('right_id'))
     right_games = cast_int(request.form.get('right_games'))
     if request.form.get('action') == 'change':
-        lg.update_match(match_id, left_id, left_games, right_id, right_games)
+        ms.update_match(match_id, left_id, left_games, right_id, right_games)
     elif request.form.get('action') == 'add':
         ms.insert_match(dtutil.now(), left_id, left_games, right_id, right_games, None, None, None)
     return edit_matches()

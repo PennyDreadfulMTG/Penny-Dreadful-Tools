@@ -249,7 +249,7 @@ p, .subtitle, .news .item, .person {
     font-variant-numeric: oldstyle-nums;
 }
 
-table, ul.decklist.li, .news .date, .deck-name {
+table, ul.decklist.li, .news .date, .deck-name, .rotation p {
     font-variant-numeric: normal;
 }
 
@@ -484,9 +484,6 @@ main h1 a:visited, main h2 a:visited {
 
 Links
 
-Links in tables and the menu are not underlined (although menu highlights on hover).
-Links in text are underlined in such a way as to break on descenders like those found in lowercase g and y.
-
 */
 
 a {
@@ -508,8 +505,8 @@ main a:hover, main table.calendar a:hover, .details a:hover {
     transition-property: background;
 }
 
-/* There are a lot of places we want undecorated links, though, even in the main content area. */
-main table a, main h1 a, main h2 a, main h3 a, main li a, .decklist a {
+/* There are a lot of places we plain links not heading-caps, even in the main content area. */
+main table a, main h1 a, main h2 a, main h3 a, main li a, .decklist a, .rotation a {
     font-family: inherit;
     font-variant-numeric: normal;
     text-transform: none;
@@ -1922,7 +1919,7 @@ tr.current, tr.current td {
     background-color: #eee;
 }
 
-/* … unless you are in an expanded row which displays more like a table. */
+/* …unless you are in an expanded row which displays more like a table. */
 .footable-details tr.current, .footable-details tr.current td {
     background-color: inherit;
 }

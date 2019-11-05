@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional, Sequence
 
-from decksite.data import achievements, deck, query
+from decksite.data import achievements, deck, preaggregation, query
 from decksite.data.models.person import Person
 from decksite.database import db
 from shared import dtutil, guarantee
@@ -142,9 +142,9 @@ def preaggregate() -> None:
     preaggregate_head_to_head()
 
 def preaggregate_head_to_head() -> None:
-    db().execute('DROP TABLE IF EXISTS _new_head_to_head_stats')
+    table = '_head_to_head_stats'
     sql = """
-        CREATE TABLE IF NOT EXISTS _new_head_to_head_stats (
+        CREATE TABLE IF NOT EXISTS _new{table} (
             person_id INT NOT NULL,
             opponent_id INT NOT NULL,
             season_id INT NOT NULL,
@@ -182,12 +182,8 @@ def preaggregate_head_to_head() -> None:
             p.id,
             opp.id,
             season.id
-    """.format(season_join=query.season_join())
-    db().execute(sql)
-    db().execute('DROP TABLE IF EXISTS _old_head_to_head_stats')
-    db().execute('CREATE TABLE IF NOT EXISTS _head_to_head_stats (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
-    db().execute('RENAME TABLE _head_to_head_stats TO _old_head_to_head_stats, _new_head_to_head_stats TO _head_to_head_stats')
-    db().execute('DROP TABLE IF EXISTS _old_head_to_head_stats')
+    """.format(table=table, season_join=query.season_join())
+    preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(achievements.preaggregate_achievements)
 def set_achievements(people: List[Person], season_id: int = None) -> None:

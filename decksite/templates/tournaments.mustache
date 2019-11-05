@@ -1,40 +1,7 @@
 <h1>{{_ Cardhoarder Tournaments}}</h2>
 <article>
     <section>
-        <p><a class="external" href="https://gatherling.com/player.php">{{next_tournament_name}}</a> is in {{next_tournament_time}}.</p>
-        {{> spinner}}
-        <table class="calendar">
-            <thead>
-                <tr>
-                    <th>{{_ Date}}</th>
-                    <th>{{_ Tournaments}}</th>
-                    <th>{{_ League}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#tournaments}}
-                    <tr>
-                        <td class="date">
-                            <time class="month" datetime="{{time}}" data-format="MMM">{{month}}</time>
-                            <time class="day" datetime="{{time}}" data-format="D">{{date}}</time>
-                        </td>
-                        <td>
-                            <p>{{name}}</p>
-                            <time datetime="{{time}}" data-format="dddd LT z">{{display_time}}</time>
-                            <p><a href="https://gatherling.com/player.php">{{_ Sign Up}}</a></p>
-                        </td>
-                        {{#league}}
-                            <td class="league {{class}}">
-                                {{#display}}
-                                    <p>{{name}}</p>
-                                    <p><a href="/signup/">{{_ Sign Up}}</a></p>
-                                {{/display}}
-                            </td>
-                        {{/league}}
-                    </tr>
-                {{/tournaments}}
-            </tbody>
-        </table>
+        {{> tournamentcalendar}}
         <p>{{_ There are {num_tournaments} weekly Penny Dreadful tournaments hosted on [Gatherling.com](https://gatherling.com). They are all free to enter and some offer prizes from [Cardhoarder](https://www.cardhoarder.com/). Be sure to also check out the [league](/league/) for a play-when-you-like competition.}}</p>
         <p>{{_ Each tournament series has a [leaderboard]({leaderboards_url}).}}</p>
     </section>

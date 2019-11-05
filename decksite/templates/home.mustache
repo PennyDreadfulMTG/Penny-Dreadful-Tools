@@ -32,9 +32,24 @@
     </table>
     <p><a href="{{cards_url}}">{{_ More cards…}}</a></p>
 </section>
+<section>
+    <h1>{{_ Tournaments}}</h1>
+    {{> tournamentcalendar}}
+</h1>
 {{#has_news}}
     {{> news}}
 {{/has_news}}
+<section class="rotation">
+    <h1>Season {{season_id}}</h1>
+    <p>Season {{season_id}} began {{season_start_display}} and ends {{season_end_display}}.</p>
+    <ul>
+        <li><a href="{{scryfall_url}}">Legal cards (scryfall)</a></li>
+        <li><a href="{{legal_cards_url}}">Legal cards (text)</a></li>
+    </ul>
+    {{#in_rotation}}
+        <p><a href="{{rotation_url}}">{{rotation_msg}}</a></p>
+    {{/in_rotation}}
+</section>
 <section>
     <h1>Community Stats</h1>
     {{#community_stats}}

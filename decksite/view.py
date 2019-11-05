@@ -11,7 +11,7 @@ from mypy_extensions import TypedDict
 from werkzeug.routing import BuildError
 
 from decksite import APP, get_season_id, prepare
-from decksite.data import archetype
+from decksite.data import archetype, competition
 from magic import legality, oracle, rotation, tournaments
 from magic.models import Card, Deck
 from shared import dtutil
@@ -47,6 +47,9 @@ class View(BaseView):
         self.cardhoarder_logo_url = url_for('static', filename='images/cardhoarder.png')
         self.mtgotraders_logo_url = url_for('static', filename='images/mtgotraders.png')
         self.is_person_page: Optional[bool] = None
+        self.next_tournament_name = None
+        self.next_tournament_time = None
+        self.tournaments: List[Container] = []
 
     def season_id(self) -> int:
         return get_season_id()
@@ -323,6 +326,30 @@ class View(BaseView):
 
     def TT_HELP_TRANSLATE(self) -> str:
         return gettext('Help us translate the site into your language')
+
+    def setup_tournaments(self) -> None:
+        info = tournaments.next_tournament_info()
+        self.next_tournament_name = info['next_tournament_name']
+        self.next_tournament_time = info['next_tournament_time']
+        self.tournaments = sorted(tournaments.all_series_info(), key=lambda t: t.time)
+        leagues = competition.load_competitions("c.competition_series_id IN (SELECT id FROM competition_series WHERE name = 'League') AND c.end_date > UNIX_TIMESTAMP(NOW())")
+        end_date, prev_month, shown_end = None, None, False
+        for t in self.tournaments:
+            month = t.time.strftime('%b')
+            if month != prev_month:
+                t.month = month
+                prev_month = month
+            t.date = t.time.day
+            if len(leagues) > 0 and t.time >= leagues[-1].start_date and t.time < leagues[-1].end_date:
+                t.league = leagues.pop(-1)
+                t.league.display = True
+                end_date = t.league.end_date
+            elif not shown_end and end_date and t.time >= end_date:
+                t.league = {'class': 'begin', 'display': False}
+                shown_end = True
+            elif end_date:
+                t.league = {'class': 'ongoing', 'display': False}
+
 
 def seasonized_url(season_id: Union[int, str]) -> str:
     args = request.view_args.copy()

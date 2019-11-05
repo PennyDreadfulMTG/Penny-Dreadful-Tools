@@ -3,6 +3,7 @@ from typing import Optional
 from flask_babel import gettext
 
 from decksite.data.form import Form
+from decksite.views.decklist_form import DecklistForm
 
 
 # pylint: disable=no-self-use

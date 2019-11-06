@@ -1,0 +1,7 @@
+jquery.hoverIntent
+jquery.tablesorter
+moment.js
+moment-timezone
+Chart.js
+react
+react-dom

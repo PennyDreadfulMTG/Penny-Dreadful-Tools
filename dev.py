@@ -123,16 +123,16 @@ def tests(argv: List[str]) -> None:
 # pylint: disable=pointless-statement
 def upload_coverage() -> None:
     # pylint: disable=import-outside-toplevel
-    from shared import fetcher_internal
+    from shared import fetch_tools
     try:
-        fetcher_internal.store('https://codecov.io/bash', 'codecov.sh')
+        fetch_tools.store('https://codecov.io/bash', 'codecov.sh')
         python3 = local['python3']
         python3['-m', 'coverage', 'xml', '-i']
         bash = local['bash']
         bash['codecov.sh'] & FG
     except ProcessExecutionError as e:
         print(e)
-    except fetcher_internal.FetchException as e:
+    except fetch_tools.FetchException as e:
         print(e)
 
 # pylint: disable=import-outside-toplevel

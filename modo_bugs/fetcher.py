@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Tuple
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-import shared.fetcher_internal as internal
+from shared import fetch_tools
 from shared import lazy
 
 
@@ -15,7 +15,7 @@ def search_scryfall(query: str) -> Tuple[int, List[str], List[str]]:
     if query == '':
         return 0, [], []
     print(f'Searching scryfall for `{query}`')
-    result_json = internal.fetch_json('https://api.scryfall.com/cards/search?q=' + internal.escape(query), character_encoding='utf-8')
+    result_json = fetch_tools.fetch_json('https://api.scryfall.com/cards/search?q=' + fetch_tools.escape(query), character_encoding='utf-8')
     if 'code' in result_json.keys(): # The API returned an error
         if result_json['status'] == 404: # No cards found
             return 0, [], []
@@ -37,7 +37,7 @@ def search_scryfall(query: str) -> Tuple[int, List[str], List[str]]:
     return result_json['total_cards'], result_cardnames, result_json.get('warnings', [])
 
 def catalog_cardnames() -> List[str]:
-    result_json = internal.fetch_json('https://api.scryfall.com/catalog/card-names')
+    result_json = fetch_tools.fetch_json('https://api.scryfall.com/catalog/card-names')
     names: List[str] = result_json['data']
     for n in names:
         if ' // ' in n:
@@ -78,7 +78,7 @@ def find_announcements() -> Tuple[str, bool]:
     articles = [a for a in get_article_archive() if str(a[0].string).startswith('Magic Online Announcements')]
     (title, link) = articles[0]
     print('Found: {0} ({1})'.format(title, link))
-    bn = 'Build Notes' in internal.fetch(link)
+    bn = 'Build Notes' in fetch_tools.fetch(link)
     new = update_redirect('announcements', title.text, link, has_build_notes=str(bn))
     return (link, new)
 
@@ -90,9 +90,9 @@ def parse_article_item_extended(a: Tag) -> Tuple[Tag, str]:
 @lazy.lazy_property
 def get_article_archive() -> List[Tuple[Tag, str]]:
     try:
-        html = internal.fetch('http://magic.wizards.com/en/articles/archive/184956')
-    except internal.FetchException:
-        html = internal.fetch('http://magic.wizards.com/en/articles/archive/')
+        html = fetch_tools.fetch('http://magic.wizards.com/en/articles/archive/184956')
+    except fetch_tools.FetchException:
+        html = fetch_tools.fetch('http://magic.wizards.com/en/articles/archive/')
     soup = BeautifulSoup(html, 'html.parser')
     return [parse_article_item_extended(a) for a in soup.find_all('div', class_='article-item-extended')]
 
@@ -107,7 +107,7 @@ def post_discord_webhook(webhook_id: str,
     if webhook_id is None or webhook_token is None:
         return False
     url = 'https://discordapp.com/api/webhooks/{id}/{token}'.format(id=webhook_id, token=webhook_token)
-    internal.post(url, json_data={
+    fetch_tools.post(url, json_data={
         'content': message,
         'username': username,
         'avatar_url': avatar_url,

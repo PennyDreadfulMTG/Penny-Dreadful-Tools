@@ -11,18 +11,18 @@ from urllib import parse
 import feedparser
 import pytz
 
-import shared.fetcher_internal as internal
+import shared.fetch_tools
 from magic.card_description import CardDescription
 from magic.models import Card, Deck
 from shared import configuration, dtutil, redis
 from shared.container import Container
-from shared.fetcher_internal import FetchException
+from shared.fetch_tools import FetchException
 from shared.pd_exception import (InvalidDataException, NotConfiguredException,
                                  TooFewItemsException)
 
 
 async def achievement_cache_async() -> Dict[str, Dict[str, str]]:
-    data = await internal.fetch_json_async(decksite_url('/api/achievements'))
+    data = await fetch_tools.fetch_json_async(decksite_url('/api/achievements'))
     return {a['key']: a for a in data['achievements']}
 
 def all_cards() -> List[CardDescription]:
@@ -30,19 +30,19 @@ def all_cards() -> List[CardDescription]:
         f = open('all-default-cards.json')
         return json.load(f)
     except FileNotFoundError:
-        return internal.fetch_json('https://archive.scryfall.com/json/scryfall-default-cards.json', character_encoding='utf-8')
+        return fetch_tools.fetch_json('https://archive.scryfall.com/json/scryfall-default-cards.json', character_encoding='utf-8')
 
 def all_sets() -> List[Dict[str, Any]]:
     try:
         d = json.load(open('sets.json'))
     except FileNotFoundError:
-        d = internal.fetch_json('https://api.scryfall.com/sets')
+        d = fetch_tools.fetch_json('https://api.scryfall.com/sets')
     assert not d['has_more']
     return d['data']
 
 def bugged_cards() -> Optional[List[Dict[str, Any]]]:
     try:
-        bugs = internal.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
+        bugs = fetch_tools.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
     except FetchException:
         print("WARNING: Couldn't fetch bugs")
         bugs = None
@@ -55,7 +55,7 @@ def card_aliases() -> List[List[str]]:
         return list(csv.reader(f, dialect='excel-tab'))
 
 def card_price(cardname: str) -> Dict[str, Any]:
-    return internal.fetch_json('http://vorpald20.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
+    return fetch_tools.fetch_json('http://vorpald20.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
 
 def card_price_string(card: Card, short: bool = False) -> str:
     def price_info(c: Card) -> str:
@@ -105,11 +105,11 @@ def decksite_url(path: str = '/') -> str:
     return url
 
 def downtimes() -> str:
-    return internal.fetch('https://pennydreadfulmtg.github.io/modo-bugs/downtimes.txt')
+    return fetch_tools.fetch('https://pennydreadfulmtg.github.io/modo-bugs/downtimes.txt')
 
 def gatherling_deck_comments(d: Deck) -> List[str]:
     url = f'http://gatherling.com/deck.php?mode=view&id={d.identifier}'
-    s = internal.fetch(url)
+    s = fetch_tools.fetch(url)
     result = re.search('COMMENTS</td></tr><tr><td>(.*)</td></tr></table></div><div class="clear"></div><center>', s, re.MULTILINE | re.DOTALL)
     if result:
         return result.group(1).replace('<br />', '\n').split('\n')
@@ -129,7 +129,7 @@ def legal_cards(force: bool = False, season: str = None) -> List[str]:
         return [l.strip() for l in legal]
 
     url = 'http://pdmtgo.com/' + url
-    legal_txt = internal.fetch(url, encoding, force=force)
+    legal_txt = fetch_tools.fetch(url, encoding, force=force)
     if season is not None and configuration.get_bool('save_historic_legal_lists'):
         with open(os.path.join(cached_path, f'{season}_legal_cards.txt'), 'w', encoding=encoding) as h:
             h.write(legal_txt)
@@ -138,13 +138,13 @@ def legal_cards(force: bool = False, season: str = None) -> List[str]:
 
 async def mtgo_status() -> str:
     try:
-        return cast(str, (await internal.fetch_json_async('https://s3-us-west-2.amazonaws.com/s3-mtgo-greendot/status.json'))['status'])
+        return cast(str, (await fetch_tools.fetch_json_async('https://s3-us-west-2.amazonaws.com/s3-mtgo-greendot/status.json'))['status'])
     except (FetchException, json.decoder.JSONDecodeError):
         return 'UNKNOWN'
 
 async def person_data_async(person: Union[str, int]) -> Dict[str, Any]:
     try:
-        data = await internal.fetch_json_async(decksite_url('/api/person/{0}'.format(person)))
+        data = await fetch_tools.fetch_json_async(decksite_url('/api/person/{0}'.format(person)))
     except (FetchException, json.decoder.JSONDecodeError):
         return {}
     return data
@@ -153,7 +153,7 @@ def post_discord_webhook(webhook_id: str, webhook_token: str, message: str, name
     if webhook_id is None or webhook_token is None:
         return False
     url = 'https://discordapp.com/api/webhooks/{id}/{token}'.format(id=webhook_id, token=webhook_token)
-    internal.post(url, json_data={
+    fetch_tools.post(url, json_data={
         'content': message,
         'username': name,
         })
@@ -166,10 +166,10 @@ def resources() -> Dict[str, Dict[str, str]]:
 
 async def scryfall_cards_async() -> Dict[str, Any]:
     url = 'https://api.scryfall.com/cards'
-    return await internal.fetch_json_async(url)
+    return await fetch_tools.fetch_json_async(url)
 
 def scryfall_last_updated() -> datetime.datetime:
-    d = internal.fetch_json('https://api.scryfall.com/bulk-data')
+    d = fetch_tools.fetch_json('https://api.scryfall.com/bulk-data')
     for o in d['data']:
         if o['type'] == 'default_cards':
             return dtutil.parse_rfc3339(o['updated_at'])
@@ -187,10 +187,10 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str
     if cached:
         total_cards, result_data = int(cached[0]), cached[1]
     else:
-        url = 'https://api.scryfall.com/cards/search?q=' + internal.escape(query)
+        url = 'https://api.scryfall.com/cards/search?q=' + fetch_tools.escape(query)
         result_data = []
         while True:
-            result_json = internal.fetch_json(url, character_encoding='utf-8')
+            result_json = fetch_tools.fetch_json(url, character_encoding='utf-8')
             if 'code' in result_json.keys(): # The API returned an error
                 if result_json['status'] == 404: # No cards found
                     return False, []
@@ -217,11 +217,11 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str
     return total_cards, result_cardnames
 
 def rulings(cardname: str) -> List[Dict[str, str]]:
-    card = internal.fetch_json('https://api.scryfall.com/cards/named?exact={name}'.format(name=cardname))
-    return internal.fetch_json(card['uri'] + '/rulings')['data']
+    card = fetch_tools.fetch_json('https://api.scryfall.com/cards/named?exact={name}'.format(name=cardname))
+    return fetch_tools.fetch_json(card['uri'] + '/rulings')['data']
 
 def sitemap() -> List[str]:
-    return internal.fetch_json(decksite_url('/api/sitemap/'))['urls']
+    return fetch_tools.fetch_json(decksite_url('/api/sitemap/'))['urls']
 
 def subreddit() -> Container:
     url = 'https://www.reddit.com/r/pennydreadfulMTG/.rss'
@@ -245,16 +245,16 @@ def times_from_location(q: str, twentyfour: bool) -> Dict[str, List[str]]:
     api_key = configuration.get('google_maps_api_key')
     if not api_key:
         raise NotConfiguredException('No value found for google_maps_api_key')
-    url = 'https://maps.googleapis.com/maps/api/geocode/json?address={q}&key={api_key}&sensor=false'.format(q=internal.escape(q), api_key=api_key)
-    info = internal.fetch_json(url)
+    url = 'https://maps.googleapis.com/maps/api/geocode/json?address={q}&key={api_key}&sensor=false'.format(q=fetch_tools.escape(q), api_key=api_key)
+    info = fetch_tools.fetch_json(url)
     if 'error_message' in info:
         return info['error_message']
     try:
         location = info['results'][0]['geometry']['location']
     except IndexError as e:
         raise TooFewItemsException(e)
-    url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&key={api_key}&sensor=false'.format(lat=internal.escape(str(location['lat'])), lng=internal.escape(str(location['lng'])), timestamp=internal.escape(str(dtutil.dt2ts(dtutil.now()))), api_key=api_key)
-    timezone_info = internal.fetch_json(url)
+    url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&key={api_key}&sensor=false'.format(lat=fetch_tools.escape(str(location['lat'])), lng=fetch_tools.escape(str(location['lng'])), timestamp=fetch_tools.escape(str(dtutil.dt2ts(dtutil.now()))), api_key=api_key)
+    timezone_info = fetch_tools.fetch_json(url)
     if 'error_message' in timezone_info:
         return timezone_info['error_message']
     if timezone_info['status'] == 'ZERO_RESULTS':
@@ -271,7 +271,7 @@ def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
         return cached
 
     try:
-        info = internal.fetch_json('http://whatsinstandard.com/api/v6/standard.json')
+        info = fetch_tools.fetch_json('http://whatsinstandard.com/api/v6/standard.json')
     except FetchException:
         cached = redis.get_container('magic:fetcher:whatisinstandard_noex')
         if cached is not None:

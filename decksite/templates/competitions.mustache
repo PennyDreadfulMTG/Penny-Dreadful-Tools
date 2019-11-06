@@ -3,10 +3,8 @@
     <table>
         <thead>
             <th>Competition</th>
-            <th class="n" data-breakpoints="xs">Entries</th>
-            <th data-breakpoints="xs">Date</th>
-            {{! Empty column to hold the toggle when footable kicks in. }}
-            <td></td>
+            <th class="n">Entries</th>
+            <th>Date</th>
         </thead>
         <tbody>
             {{#competitions}}
@@ -15,8 +13,6 @@
                         <td><a href="{{competition_url}}">{{{name}}}</a></td>
                         <td class="n"><a href="{{competition_url}}">{{{num_decks}}}</a></td>
                         <td data-text="{{date_sort}}"><a href="{{competition_url}}">{{{display_date}}}</a></td>
-                        {{! Empty column to hold the toggle when footable kicks in. }}
-                        <td></td>
                     </tr>
                 {{/num_decks}}
             {{/competitions}}

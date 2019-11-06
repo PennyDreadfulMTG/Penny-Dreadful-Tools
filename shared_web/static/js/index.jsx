@@ -63,37 +63,35 @@ class DeckTable extends React.Component {
                 <table className={className}>
                     <thead>
                         <tr>
-                            <th data-breakpoints="xs" className="marginalia" onClick={this.sort.bind(this, "marginalia", "ASC")}>⇅</th>
-                            <th data-breakpoints="xs sm" onClick={this.sort.bind(this, "colors", "ASC")}>Colors</th>
+                            <th className="marginalia" onClick={this.sort.bind(this, "marginalia", "ASC")}>⇅</th>
+                            <th onClick={this.sort.bind(this, "colors", "ASC")}>Colors</th>
                             <th onClick={this.sort.bind(this, "name", "ASC")}>Name</th>
                             { this.props.hidePerson
                                 ? null
-                                : <th data-breakpoints="xs" onClick={this.sort.bind(this, "person", "ASC")}>Person</th>
+                                : <th onClick={this.sort.bind(this, "person", "ASC")}>Person</th>
                             }
                             { this.props.showArchetype
-                                ? <th data-breakpoints="xs sm md" onClick={this.sort.bind(this, "archetype", "ASC")}>Archetype</th>
+                                ? <th onClick={this.sort.bind(this, "archetype", "ASC")}>Archetype</th>
                                 : null
                             }
                             { this.props.hideSource
                                 ? null
-                                : <th data-breakpoints="xs sm md" onClick={this.sort.bind(this, "sourceName", "ASC")}>Source</th>
+                                : <th onClick={this.sort.bind(this, "sourceName", "ASC")}>Source</th>
                             }
                             <th className="n" onClick={this.sort.bind(this, "record", "DESC")}>Record</th>
                             { this.props.showOmw
-                                ? <th data-breakpoints="xs sm md" title="Opponent's Match Win" onClick={this.sort.bind(this, "omw", "DESC")}>OMW</th>
+                                ? <th title="Opponent's Match Win" onClick={this.sort.bind(this, "omw", "DESC")}>OMW</th>
                                 : null
                             }
                             { this.props.hideTop8
                                 ? null
-                                : <th className="c" data-breakpoints="xs sm" onClick={this.sort.bind(this, "top8", "ASC")}>Top 8</th>
+                                : <th className="c" onClick={this.sort.bind(this, "top8", "ASC")}>Top 8</th>
                             }
-                            <th data-breakpoints="xs" onClick={this.sort.bind(this, "date", "DESC")}>Date</th>
+                            <th onClick={this.sort.bind(this, "date", "DESC")}>Date</th>
                             { this.props.showLegalSeasons
-                                ? <th data-breakpoints="xs sm md" onClick={this.sort.bind(this, "season", "DESC")}>Season</th>
+                                ? <th onClick={this.sort.bind(this, "season", "DESC")}>Season</th>
                                 : null
                             }
-                            {/* Empty column to hold the toggle when footable kicks in. */}
-                            <td></td>
                         </tr>
                     </thead>
                     <tbody>
@@ -162,8 +160,6 @@ class DeckTable extends React.Component {
                     ? <td dangerouslySetInnerHTML={{__html: deck.legalIcons}}></td>
                     : null
                 }
-                {/* Empty column to hold the toggle when footable kicks in. */}
-                <td></td>
             </tr>
         );
     }

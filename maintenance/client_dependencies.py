@@ -13,6 +13,7 @@ def run() -> None:
     write_dependencies(output)
     subprocess.call(['git', 'add', PATH])
     subprocess.call(['git', 'commit', '-m', '"Update client dependencies."'])
+    subprocess.call(['git', 'push'])
     subprocess.call(['hub', 'pull-request', '-b', 'master', '-m', '"Update client dependencies."' '-f'])
 
 def get_dependencies() -> List[str]:

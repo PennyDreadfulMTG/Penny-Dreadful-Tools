@@ -11,7 +11,7 @@ def ad_hoc() -> None:
     output = ''.join(tags)
     write_dependencies(output)
     subprocess.call(['git', 'add', PATH])
-    if subprocess.call(['git', 'commit', '-m', '"Update client dependencies."']) == 0:
+    if subprocess.call(['git', 'commit', '-m', 'Update client dependencies.']) == 0:
         subprocess.call(['git', 'push'])
         subprocess.call(['hub', 'pull-request', '-b', 'master', '-m', 'Update client dependencies.', '-f'])
 

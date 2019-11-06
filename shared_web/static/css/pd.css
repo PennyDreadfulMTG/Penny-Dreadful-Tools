@@ -621,6 +621,16 @@ table.with-marginalia {
     margin-right: 0.5em;
 }
 
+@media only screen and (max-width: 640px) {
+    .marginalia {
+        display: none;
+    }
+    table.with-marginalia {
+        margin-left: 0; /* Width of .marginalia + left-padding + right-padding */
+        margin-right: 0;
+    }
+}
+
 main th {
     cursor: pointer;
     font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;

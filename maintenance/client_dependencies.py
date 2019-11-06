@@ -19,7 +19,7 @@ def write_dependencies(s: str) -> None:
     f = open(PATH, 'w')
     f.write(s)
 
-def send_pr_if_updated():
+def send_pr_if_updated() -> None:
     return # Don't do this until this is in a better state.
 
 def fetch_script_tag(library: str) -> str:

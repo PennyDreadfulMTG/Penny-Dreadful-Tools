@@ -193,7 +193,8 @@ def determine_values(printings: List[CardDescription], next_card_id: int) -> Dic
 
     for p in printings:
         # Exclude art_series because they have the same name as real cards and that breaks things.
-        if p['layout'] == 'art_series':
+        # Exclude token because named tokens like "Ajani's Pridemate" and "Storm Crow" conflict with the cards with the same name. See #6156.
+        if p['layout'] in ['art_series', 'token']:
             continue
 
         rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]

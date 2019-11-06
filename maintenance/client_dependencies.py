@@ -7,7 +7,7 @@ from shared import fetcher_internal
 
 PATH = 'shared_web/templates/jsdependencies.mustache'
 
-def run() -> None:
+def ad_hoc() -> None:
     tags = [fetch_script_tag(library) + '\n' for library in get_dependencies()]
     output = ''.join(tags)
     write_dependencies(output)
@@ -57,5 +57,3 @@ def test_path(path, library, required=''):
     regex = fr"{name_without_js}(.js)?(.production)?{required}.js$"
     if re.search(regex, path, re.IGNORECASE):
         return True
-
-

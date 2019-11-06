@@ -728,6 +728,59 @@ th.legend {
     min-height: 20em;
 }
 
+/*
+
+Force a consistent size of each column in react decktable otherwise things "jump" as you paginate.
+
+*/
+
+.live .name {
+    min-width: 10em;
+    max-width: 10em;
+}
+
+.live .person {
+    min-width: 8em;
+    max-width: 8em;
+}
+
+.live .archetype {
+    min-width: 8em;
+    max-width: 8em;
+}
+
+.live .source {
+    min-width: 5em;
+    max-width: 5em;
+}
+
+.live .record {
+    min-width: 4em;
+    max-width: 4em;
+}
+
+.live .omw {
+    min-width: 4em;
+    max-width: 4em;
+}
+
+.live .top8 {
+    min-width: 3em;
+    max-width: 3em;
+}
+
+.live .date {
+    min-width: 5em;
+    max-width: 5em;
+}
+
+@media only screen and (max-width: 640px) {
+    .live .name {
+        min-width: 7em;
+        max-width: 7em;
+    }
+}
+
 /* Angled headers */
 
 th.angled {

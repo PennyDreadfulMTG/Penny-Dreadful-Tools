@@ -4,7 +4,6 @@ from typing import List
 
 from shared import fetcher_internal
 
-
 PATH = 'shared_web/templates/jsdependencies.mustache'
 
 def ad_hoc() -> None:

@@ -1,5 +1,4 @@
 import re
-import subprocess
 from typing import List
 
 from shared import fetch_tools
@@ -22,10 +21,6 @@ def write_dependencies(s: str) -> None:
 
 def send_pr_if_updated():
     return # Don't do this until this is in a better state.
-    subprocess.call(['git', 'add', PATH])
-    if subprocess.call(['git', 'commit', '-m', 'Update client dependencies.']) == 0:
-        subprocess.call(['git', 'push'])
-        subprocess.call(['hub', 'pull-request', '-b', 'master', '-m', 'Update client dependencies.', '-f'])
 
 def fetch_script_tag(library: str) -> str:
     info = fetch_tools.fetch_json(f'https://api.cdnjs.com/libraries/{library}')

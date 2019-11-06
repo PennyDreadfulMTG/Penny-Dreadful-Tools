@@ -42,7 +42,7 @@ def fetch_script_tag(library: str) -> str:
                     path = f
     if not path:
         raise Exception(f'Could not find file for {library}') # BAKERT exception type
-    return f'<script defer src="//cdnjs.cloudflare.com/umd/libs/{library}/{version}/{path}"></script>'
+    return f'<script defer src="//cdnjs.cloudflare.com/ajax/libs/{library}/{version}/{path}"></script>'
 
 def minified_path(path: str, library: str) -> bool:
     return test_path(path, library, '.min')

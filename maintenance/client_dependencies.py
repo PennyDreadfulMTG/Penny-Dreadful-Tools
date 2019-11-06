@@ -14,7 +14,7 @@ def run() -> None:
     subprocess.call(['git', 'add', PATH])
     if subprocess.call(['git', 'commit', '-m', '"Update client dependencies."']) == 0:
         subprocess.call(['git', 'push'])
-        subprocess.call(['hub', 'pull-request', '-b', 'master', '-m', '"Update client dependencies."' '-f'])
+        subprocess.call(['hub', 'pull-request', '-b', 'master', '-m', 'Update client dependencies.' '-f'])
 
 def get_dependencies() -> List[str]:
     f = open('shared_web/jsrequirements.txt', 'r')

@@ -28,7 +28,7 @@ def ad_hoc() -> int:
     compiler = frontend.extract_messages(dist)
     compiler.initialize_options()
     compiler.output_file = './shared_web/translations/messages.pot'
-    compiler.input_paths = ['decksite', 'logsite']
+    compiler.input_paths = ['decksite', 'logsite', 'shared_web']
     compiler.finalize_options()
     compiler.run()
 

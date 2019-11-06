@@ -65,6 +65,14 @@ jslint:
 	@! git ls-files | egrep 'jsx?$$'  | grep -v .eslintrc.js | xargs ./node_modules/.bin/eslint | grep error
 	@echo
 
+jsfix:
+	@echo
+	@echo "******************************** JS Lint **************************************"
+	@echo
+	@git ls-files | egrep 'jsx?$$'  | grep -v .eslintrc.js | xargs ./node_modules/.bin/eslint --fix
+	@echo
+
+
 types:
 	@echo
 	@echo "******************************** Typechecking *********************************"

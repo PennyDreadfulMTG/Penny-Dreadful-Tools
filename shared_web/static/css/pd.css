@@ -621,7 +621,7 @@ table.with-marginalia {
     margin-right: 0.5em;
 }
 
-@media only screen and (max-width: 900px) {
+@media only screen and (max-width: 1000px) {
     .marginalia {
         display: none;
     }

@@ -10,7 +10,10 @@
             {{display_date}}
         </div>
         <div class="subtitle">
-            <a href="{{competition_url}}">{{source_name}} {{> record}}</a> {{{active_safe}}}
+            <a href="{{#competition_url}}{{competition_url}}{{/competition_url}}{{^competition_url}}{{source_url}}{{/competition_url}}">
+                {{source_name}} {{> record}}
+            </a>
+            {{{active_safe}}}
         </div>
     </div>
     {{#public}}

@@ -14,7 +14,7 @@ def ad_hoc() -> None:
     subprocess.call(['git', 'add', PATH])
     if subprocess.call(['git', 'commit', '-m', '"Update client dependencies."']) == 0:
         subprocess.call(['git', 'push'])
-        subprocess.call(['hub', 'pull-request', '-b', 'master', '-m', 'Update client dependencies.' '-f'])
+        subprocess.call(['hub', 'pull-request', '-b', 'master', '-m', 'Update client dependencies.', '-f'])
 
 def get_dependencies() -> List[str]:
     f = open('shared_web/jsrequirements.txt', 'r')
@@ -33,27 +33,25 @@ def fetch_script_tag(library: str) -> str:
     if not version:
         raise Exception(f'Could not get version for {library}') # BAKER exception type
     path = None
-    library_nojs = library.replace('.js', '')
     for a in info['assets']:
         if a.get('version') == version:
             for f in a['files']:
                 if minified_path(f, library):
                     path = f
                     break
-                elif unminified_path(f, library):
+                if unminified_path(f, library):
                     path = f
     if not path:
         raise Exception(f'Could not find file for {library}') # BAKERT exception type
     return f'<script defer src="//cdnjs.cloudflare.com/umd/libs/{library}/{version}/{path}"></script>'
 
-def minified_path(path, library):
+def minified_path(path, library) -> bool:
     return test_path(path, library, '.min')
 
-def unminified_path(path, library):
+def unminified_path(path, library) -> bool:
     return test_path(path, library)
 
-def test_path(path, library, required=''):
+def test_path(path, library, required='') -> bool:
     name_without_js = library.replace('.js', '')
-    regex = fr"{name_without_js}(.js)?(.production)?{required}.js$"
-    if re.search(regex, path, re.IGNORECASE):
-        return True
+    regex = fr'{name_without_js}(.js)?(.production)?{required}.js$'
+    return bool(re.search(regex, path, re.IGNORECASE))

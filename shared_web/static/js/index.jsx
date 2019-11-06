@@ -205,7 +205,7 @@ class DeckTable extends React.Component {
         const gotShorter = pageSize < this.state.pageSize;
         this.setState({ pageSize, "page": 0 });
         if (gotShorter) {
-            document.getElementById('decktable').scrollIntoView();
+            document.getElementById("decktable").scrollIntoView();
         }
     }
 }

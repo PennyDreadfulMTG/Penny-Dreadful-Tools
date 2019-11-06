@@ -2,7 +2,6 @@ import html
 from collections import Counter
 from typing import Any, List, Optional, Union, cast
 
-import humps
 import inflect
 from anytree.iterators import PreOrderIter
 from babel import Locale

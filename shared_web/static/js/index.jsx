@@ -18,7 +18,7 @@ class DeckTable extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({'pageSize': this.props.pageSize}); // This will trigger a call to loadDecks to get the initial data.
+        this.setState({"pageSize": this.props.pageSize}); // This will trigger a call to loadDecks to get the initial data.
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -65,29 +65,29 @@ class DeckTable extends React.Component {
                         <tr>
                             <th className="marginalia" onClick={this.sort.bind(this, "marginalia", "ASC")}>⇅</th>
                             <th onClick={this.sort.bind(this, "colors", "ASC")}>Colors</th>
-                            <th onClick={this.sort.bind(this, "name", "ASC")}>Name</th>
+                            <th className="name" onClick={this.sort.bind(this, "name", "ASC")}>Name</th>
                             { this.props.hidePerson
                                 ? null
-                                : <th onClick={this.sort.bind(this, "person", "ASC")}>Person</th>
+                                : <th className="person" onClick={this.sort.bind(this, "person", "ASC")}>Person</th>
                             }
                             { this.props.showArchetype
-                                ? <th onClick={this.sort.bind(this, "archetype", "ASC")}>Archetype</th>
+                                ? <th className="archetype" onClick={this.sort.bind(this, "archetype", "ASC")}>Archetype</th>
                                 : null
                             }
                             { this.props.hideSource
                                 ? null
-                                : <th onClick={this.sort.bind(this, "sourceName", "ASC")}>Source</th>
+                                : <th className="source" onClick={this.sort.bind(this, "sourceName", "ASC")}>Source</th>
                             }
-                            <th className="n" onClick={this.sort.bind(this, "record", "DESC")}>Record</th>
+                            <th className="n record" onClick={this.sort.bind(this, "record", "DESC")}>Record</th>
                             { this.props.showOmw
-                                ? <th title="Opponent's Match Win" onClick={this.sort.bind(this, "omw", "DESC")}>OMW</th>
+                                ? <th className="omw" title="Opponent's Match Win" onClick={this.sort.bind(this, "omw", "DESC")}>OMW</th>
                                 : null
                             }
                             { this.props.hideTop8
                                 ? null
-                                : <th className="c" onClick={this.sort.bind(this, "top8", "ASC")}>Top 8</th>
+                                : <th className="c top8" onClick={this.sort.bind(this, "top8", "ASC")}>Top 8</th>
                             }
-                            <th onClick={this.sort.bind(this, "date", "DESC")}>Date</th>
+                            <th className="date" onClick={this.sort.bind(this, "date", "DESC")}>Date</th>
                             { this.props.showLegalSeasons
                                 ? <th onClick={this.sort.bind(this, "season", "DESC")}>Season</th>
                                 : null
@@ -116,44 +116,44 @@ class DeckTable extends React.Component {
             <tr key={deck.id}>
                 <td className="marginalia" dangerouslySetInnerHTML={{__html: deck.starsSafe}}></td>
                 <td dangerouslySetInnerHTML={{__html: deck.colorsSafe}} ></td>
-                <td><a title={deck.decklist || null} href={deck.url}>{deck.name}</a></td>
+                <td className="name"><a title={deck.decklist || null} href={deck.url}>{deck.name}</a></td>
                 { this.props.hidePerson
                     ? null
-                    : <td><a href={deck.personUrl} className="person">{deck.person}</a></td>
+                    : <td className="person"><a href={deck.personUrl} className="person">{deck.person}</a></td>
                 }
                 { this.props.showArchetype
-                    ? <td><a href={deck.archetypeUrl}>{deck.archetypeName}</a></td>
+                    ? <td className="archetype"><a href={deck.archetypeUrl}>{deck.archetypeName}</a></td>
                     : null
                 }
                 { this.props.hideSource
                     ? null
-                    : <td data-text={deck.sourceSort}>{/* are we displaying an empty data-text here now? */}
+                    : <td className="source">
                         { deck.competitionUrl
                             ? <a href={deck.competitionUrl}>{deck.sourceName}</a>
                             : <React.Fragment>{deck.sourceName}</React.Fragment>
                         }
                     </td>
                 }
-                <td className="n">
+                <td className="record n">
                     { deck.competitionUrl
                         ? <a href={deck.competitionUrl}>{this.renderRecord(deck)}</a>
                         : this.renderRecord(deck)
                     }
                 </td>
                 { this.props.showOmw
-                    ? <td className="n">{deck.omw}</td>
+                    ? <td className="omw n">{deck.omw}</td>
                     : null
                 }
                 { this.props.hideTop8
                     ? null
-                    : <td className="c">
+                    : <td className="top8 c">
                         { deck.competitionUrl
                             ? <a href={deck.competitionUrl} dangerouslySetInnerHTML={{__html: deck.top8Safe}}></a>
                             : <span dangerouslySetInnerHTML={{__html: deck.top8Safe}}></span>
                         }
                     </td>
                 }
-                <td data-text={deck.dateSort}>
+                <td className="date">
                     {deck.displayDate}
                 </td>
                 { this.props.showLegalSeasons

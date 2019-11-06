@@ -1,5 +1,4 @@
 import re
-import subprocess
 from typing import List
 
 from shared import fetch_tools
@@ -10,10 +9,7 @@ def ad_hoc() -> None:
     tags = [fetch_script_tag(library) + '\n' for library in get_dependencies()]
     output = ''.join(tags)
     write_dependencies(output)
-    subprocess.call(['git', 'add', PATH])
-    if subprocess.call(['git', 'commit', '-m', '"Update client dependencies."']) == 0:
-        subprocess.call(['git', 'push'])
-        subprocess.call(['hub', 'pull-request', '-b', 'master', '-m', 'Update client dependencies.', '-f'])
+    send_pr_if_updated()
 
 def get_dependencies() -> List[str]:
     f = open('shared_web/jsrequirements.txt', 'r')
@@ -23,11 +19,15 @@ def write_dependencies(s: str) -> None:
     f = open(PATH, 'w')
     f.write(s)
 
+def send_pr_if_updated() -> None:
+    return # Don't do this until this is in a better state.
+
 def fetch_script_tag(library: str) -> str:
     info = fetch_tools.fetch_json(f'https://api.cdnjs.com/libraries/{library}')
     version = info.get('version')
     if not version and library.lower() != library:
-        info = fetch_tools.fetch_json(f'https://api.cdnjs.com/libraries/{library.lower()}')
+        library = library.lower()
+        info = fetch_tools.fetch_json(f'https://api.cdnjs.com/libraries/{library}')
         version = info.get('version')
     if not version:
         raise Exception(f'Could not get version for {library}') # BAKER exception type
@@ -41,7 +41,7 @@ def fetch_script_tag(library: str) -> str:
                 if unminified_path(f, library):
                     path = f
     if not path:
-        raise Exception(f'Could not find file for {library}') # BAKERT exception type
+        raise Exception(f'Could not find file for {library}')
     return f'<script defer src="//cdnjs.cloudflare.com/ajax/libs/{library}/{version}/{path}"></script>'
 
 def minified_path(path: str, library: str) -> bool:

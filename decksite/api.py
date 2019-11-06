@@ -1,7 +1,7 @@
 import datetime
 from typing import List, Optional, cast
 
-from flask import Response, make_response, request, session, url_for
+from flask import Response, request, session, url_for
 
 from decksite import APP, auth, league
 from decksite.data import archetype as archs
@@ -52,7 +52,7 @@ def decks_api() -> Response:
     prepare_decks(ds)
     r = {'page': page, 'pages': pages, 'decks': ds}
     resp = return_json(r, camelize=True)
-    resp.set_cookie('page_size', str(page_size)) # BAKERT still need to read it
+    resp.set_cookie('page_size', str(page_size))
     return resp
 
 @APP.route('/api/decks/<int:deck_id>')

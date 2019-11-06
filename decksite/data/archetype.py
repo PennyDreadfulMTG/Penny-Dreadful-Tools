@@ -210,7 +210,7 @@ def preaggregate_archetypes() -> None:
 
 def preaggregate_archetype_person() -> None:
     # This preaggregation fails if I use the obvious name _new_archetype_person_stats but works with any other name. It's confusing.
-    table = '_ap_stats'
+    table = '_arch_person_stats'
     sql = """
         CREATE TABLE IF NOT EXISTS _new{table} (
             archetype_id INT NOT NULL,
@@ -355,7 +355,7 @@ def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None) -> L
 @retry_after_calling(preaggregate)
 def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, name', person_id: Optional[int] = None, season_id: Optional[int] = None) -> List[Archetype]:
     if person_id:
-        table = '_archetype_person_stats'
+        table = '_arch_person_stats'
         where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
         group_by = 'ars.person_id, a.id'
     else:

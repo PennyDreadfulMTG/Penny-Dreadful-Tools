@@ -621,7 +621,7 @@ table.with-marginalia {
     margin-right: 0.5em;
 }
 
-@media only screen and (max-width: 640px) {
+@media only screen and (max-width: 800px) {
     .marginalia {
         display: none;
     }
@@ -651,7 +651,7 @@ main th, main td {
 /* Drop max-width of a column on x-small viewports to fit more columns in. */
 @media only screen and (max-width: 640px) {
     main th, main td {
-        max-width: 10em;
+        max-width: 7em;
     }
 }
 

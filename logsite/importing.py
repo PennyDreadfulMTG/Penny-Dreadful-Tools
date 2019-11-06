@@ -4,7 +4,7 @@ import re
 import shutil
 from typing import List, Optional
 
-from shared import fetcher_internal
+from shared import fetch_tools
 
 from .data import game, match, tournament
 
@@ -27,7 +27,7 @@ def load_from_file() -> None:
 
 def import_from_pdbot(match_id: int) -> None:
     url = f'https://pdbot.pennydreadfulmagic.com/logs/{match_id}'
-    lines = fetcher_internal.fetch(url).split('\n')
+    lines = fetch_tools.fetch(url).split('\n')
     import_log(lines, match_id)
 
 def import_log(lines: List[str], match_id: int) -> match.Match:

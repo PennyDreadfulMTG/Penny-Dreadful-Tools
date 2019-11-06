@@ -7,7 +7,7 @@ from typing import List, Optional
 
 from PIL import Image
 
-import shared.fetch_tools
+from shared import fetch_tools
 from magic import card, oracle
 from magic.card import Printing
 from magic.models import Card

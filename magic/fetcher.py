@@ -11,7 +11,7 @@ from urllib import parse
 import feedparser
 import pytz
 
-import shared.fetch_tools
+from shared import fetch_tools
 from magic.card_description import CardDescription
 from magic.models import Card, Deck
 from shared import configuration, dtutil, redis

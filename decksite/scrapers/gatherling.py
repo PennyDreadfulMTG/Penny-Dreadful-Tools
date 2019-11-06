@@ -31,7 +31,7 @@ def scrape(limit: int = 50) -> None:
             return
 
 def tournament(url: str, name: str) -> int:
-    s = fetcher_tools.fetch(url, character_encoding='utf-8', retry=True)
+    s = fetch_tools.fetch(url, character_encoding='utf-8', retry=True)
 
     # Tournament details
     soup = BeautifulSoup(s, 'html.parser')

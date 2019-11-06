@@ -652,6 +652,7 @@ main th, main td {
 @media only screen and (max-width: 640px) {
     main th, main td {
         max-width: 7em;
+        padding: 0.178em 0.32em;
     }
 }
 

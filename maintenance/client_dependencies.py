@@ -45,13 +45,13 @@ def fetch_script_tag(library: str) -> str:
         raise Exception(f'Could not find file for {library}') # BAKERT exception type
     return f'<script defer src="//cdnjs.cloudflare.com/umd/libs/{library}/{version}/{path}"></script>'
 
-def minified_path(path, library) -> bool:
+def minified_path(path: str, library: str) -> bool:
     return test_path(path, library, '.min')
 
-def unminified_path(path, library) -> bool:
+def unminified_path(path: str, library: str) -> bool:
     return test_path(path, library)
 
-def test_path(path, library, required='') -> bool:
+def test_path(path: str, library: str, required: str = '') -> bool:
     name_without_js = library.replace('.js', '')
     regex = fr'{name_without_js}(.js)?(.production)?{required}.js$'
     return bool(re.search(regex, path, re.IGNORECASE))

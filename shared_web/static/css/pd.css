@@ -595,20 +595,12 @@ main table {
     font-size: 0.75rem;
     font-weight: 400;
     margin-bottom: 1em;
-    visibility: hidden;
-
     /*
     Tables horizontal-scroll by default but if they are not huge we override that with footable in js.
     Important to override the inline style that footable adds.
     */
     display: block !important; /* csslint allow: important */;
     overflow-x: auto;
-}
-
-/* Very large tables are too expensive to hide with js and then show.
-Live tables don't use tablesorter and are never shown without pagination working. */
-main table.very-large, main table.live {
-    visibility: visible;
 }
 
 /* Turn off small caps link style in tables. */
@@ -807,7 +799,6 @@ See also breakpoints for footable in pd.js.
 table.footable-details {
     margin-top: 0.75em;
     margin-bottom: 2em;
-    visibility: visible;
 }
 
 /* Always right align the key when displaying as key-value pairs rather than tabular. */

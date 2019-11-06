@@ -41,7 +41,6 @@ class View(BaseView):
         self.decks: List[Deck] = []
         self.active_runs_text: str = ''
         self.hide_active_runs = True
-        self.is_very_large: Optional[bool] = None
         self.show_seasons: bool = False
         self.legal_formats: Optional[List[str]] = None
         self.cardhoarder_logo_url = url_for('static', filename='images/cardhoarder.png')
@@ -156,12 +155,10 @@ class View(BaseView):
         self.prepare_matches()
 
     def prepare_decks(self) -> None:
-        self.is_very_large = self.is_very_large or len(getattr(self, 'decks', [])) > 500
         self.prepare_active_runs(self)
         prepare.prepare_decks(getattr(self, 'decks', []))
 
     def prepare_cards(self) -> None:
-        self.is_very_large = self.is_very_large or len(getattr(self, 'cards', [])) > 500
         for c in getattr(self, 'cards', []):
             self.prepare_card(c)
 

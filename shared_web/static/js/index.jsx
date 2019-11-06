@@ -50,7 +50,7 @@ class DeckTable extends React.Component {
         if (this.state.error) {
             return this.renderError(JSON.stringify(this.state.error));
         }
-        const className = "live with-marginalia" + (this.props.isVeryLarge ? "very-large" : "");
+        const className = "live with-marginalia";
         const { decks } = this.state;
         this.renderDeckRow = this.renderDeckRow.bind(this);
         this.renderPagination = this.renderPagination.bind(this);

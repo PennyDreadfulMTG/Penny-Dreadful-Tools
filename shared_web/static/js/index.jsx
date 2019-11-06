@@ -219,7 +219,6 @@ if (e !== null) {
             hidePerson={e.dataset.hidePerson}
             hideSource={e.dataset.hideSource}
             hideTop8={e.dataset.hideTop8}
-            isVeryLarge={e.dataset.isVeryLarge}
             leagueOnly={e.dataset.leagueOnly}
             pageSize={e.dataset.pageSize}
             seasonId={e.dataset.seasonId}

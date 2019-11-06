@@ -19,9 +19,7 @@ from discordbot import command
 from magic import fetcher, multiverse, oracle, rotation, tournaments
 from magic.card_description import CardDescription
 from magic.models import Card
-from shared import configuration, dtutil
-from shared import fetch_tools
-from shared import perf, redis, repo
+from shared import configuration, dtutil, fetch_tools, perf, redis, repo
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
 

@@ -7,11 +7,10 @@ from typing import List, Optional
 
 from PIL import Image
 
-from shared import fetch_tools
 from magic import card, oracle
 from magic.card import Printing
 from magic.models import Card
-from shared import configuration
+from shared import configuration, fetch_tools
 from shared.fetch_tools import FetchException, escape
 
 if not os.path.exists(configuration.get_str('image_dir')):

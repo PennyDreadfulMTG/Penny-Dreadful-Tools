@@ -5,8 +5,7 @@ from typing import Any, Dict, List, Tuple
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from shared import fetch_tools
-from shared import lazy
+from shared import fetch_tools, lazy
 
 
 def search_scryfall(query: str) -> Tuple[int, List[str], List[str]]:

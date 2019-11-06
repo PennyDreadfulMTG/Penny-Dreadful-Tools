@@ -1,7 +1,7 @@
 {{> banner}}
 <section
     id="decktable"
-    data-active-runs-text="{{active_runs_text}}"
+    data-active-runs-text="{{^tournament_only}}{{active_runs_text}}{{/tournament_only}}"
     data-hide-person="{{#hide_person}}1{{/hide_person}}"
     data-hide-source="{{#hide_source}}1{{/hide_source}}"
     data-hide-top8="{{#hide_top8}}1{{/hide_top8}}"

@@ -477,6 +477,10 @@ main h2 {
     padding-top: 1rem;
 }
 
+#content.home section:first-of-type h2 {
+    border: 0;
+}
+
 main h1 a:visited, main h2 a:visited {
     color: inherit;
 }

@@ -50,6 +50,7 @@ class View(BaseView):
         self.next_tournament_time = None
         self.tournaments: List[Container] = []
         self.content_class = self.__class__.__name__.lower()
+        self.page_size = request.cookies.get('page_size', 20)
 
     def season_id(self) -> int:
         return get_season_id()

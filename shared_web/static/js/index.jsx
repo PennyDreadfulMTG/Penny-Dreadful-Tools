@@ -18,7 +18,7 @@ class DeckTable extends React.Component {
     }
 
     componentDidMount() {
-        this.loadDecks();
+        this.setState({'pageSize': this.props.pageSize}); // This will trigger a call to loadDecks to get the initial data.
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -221,6 +221,7 @@ if (e !== null) {
             hideTop8={e.dataset.hideTop8}
             isVeryLarge={e.dataset.isVeryLarge}
             leagueOnly={e.dataset.leagueOnly}
+            pageSize={e.dataset.pageSize}
             seasonId={e.dataset.seasonId}
             showArchetype={e.dataset.showArchetype}
             showLegalSeasons={e.dataset.showLegalSeasons}

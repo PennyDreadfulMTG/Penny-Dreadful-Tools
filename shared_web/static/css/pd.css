@@ -621,12 +621,12 @@ table.with-marginalia {
     margin-right: 0.5em;
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 900px) {
     .marginalia {
         display: none;
     }
     table.with-marginalia {
-        margin-left: 0; /* Width of .marginalia + left-padding + right-padding */
+        margin-left: 0;
         margin-right: 0;
     }
 }

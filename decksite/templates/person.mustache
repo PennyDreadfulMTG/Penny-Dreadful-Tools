@@ -22,11 +22,9 @@
         <table>
             <thead>
                 <th>Opponent</th>
-                <th class="n" data-breakpoints="xs"># Matches</th>
+                <th class="n"># Matches</th>
                 <th class="n" data-sortInitialOrder="desc">Record</th>
-                <th class="n" data-breakpoints="xs"data-sortInitialOrder="desc">Win %</th>
-                {{! Empty column to hold the toggle when footable kicks in.}}
-                <td></td>
+                <th class="n"data-sortInitialOrder="desc">Win %</th>
             </thead>
             <tbody>
                 {{#head_to_head}}
@@ -35,8 +33,6 @@
                         <td class="n">{{num_matches}}</td>
                         <td class="n">{{> record}}</td>
                         <td class="n">{{win_percent}}</td>
-                        {{! Empty column to hold the toggle when footable kicks in.}}
-                        <td></td>
                     </tr>
                 {{/head_to_head}}
             </tbody>

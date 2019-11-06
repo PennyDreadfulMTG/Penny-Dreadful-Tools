@@ -11,10 +11,8 @@
         <thead>
             <th>Card</th>
             <th># Decks</th>
-            <th data-breakpoints="xs">Record</th>
-            <th data-breakpoints="xs">Win %</th>
-            {{! Empty column to hold the toggle when footable kicks in.}}
-            <td></td>
+            <th>Record</th>
+            <th>Win %</th>
         </thead>
         <tbody>
             {{#top_cards}}
@@ -23,8 +21,6 @@
                     <td class="n">{{num_decks}}</td>
                     <td class="n">{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}</td>
                     <td class="n">{{win_percent}}</td>
-                    {{! Empty column to hold the toggle when footable kicks in.}}
-                    <td></td>
                 </tr>
             {{/top_cards}}
         </tbody>

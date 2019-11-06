@@ -1,4 +1,4 @@
-/*global PD:true Deckbox:false FooTable:false, moment:false, $, Tipped, Chart */
+/*global PD:true, Deckbox:false, moment:false, $, Tipped, Chart */
 window.PD = {};
 
 PD.init = function() {
@@ -74,25 +74,6 @@ PD.onMoreInfoClick = function() {
 PD.initTables = function() {
     var selector = "main table";
     var noTablesorter = "table.live";
-
-    // Apply footable to all reasonably-sized tables for a nice mobile layout.
-    $(selector).filter(function() {
-        return $(this).find("> tbody > tr").length <= 1000;
-    }).footable({
-        "empty": "", // Don't show any default text in empty table – in interacts badly with React deck table.
-        "toggleColumn": "last",
-        "breakpoints": {
-            "xs": 359,
-            "sm": 639,
-            "md": 799,
-            "lg": 1119
-        }
-    }).bind("sortStart", function() {
-        // Prevent expanded information from sorting first and not staying with parent row by collapsing all expanded rows before sorting.
-        FooTable.get(this).rows.collapse();
-    }).css({
-        "display": "table"
-    });
 
     $.tablesorter.addParser({
         "id": "record",
@@ -253,9 +234,6 @@ PD.toggleIllegalCards = function() {
             "width": $(this).width() + "px"
         });
     });
-    $(".bugtable").not(".footable-details").each(function() {
-        FooTable.get(this).rows.collapse();
-    });
     $("tr").find(".illegal").closest("tr").toggle(!this.checked);
 };
 
@@ -378,7 +356,7 @@ PD.initPersonNotes = function() {
 
 PD.renderCharts = function() {
     Chart.defaults.global.defaultFontFamily = $("body").css("font-family");
-    if ($("td").size() > 0) {
+    if ($("td").length > 0) {
         Chart.defaults.global.defaultFontSize = parseInt($("td").css("font-size"), 10);
     }
     Chart.defaults.global.legend.display = false;

@@ -1,31 +1,29 @@
 <table class="with-marginalia">
     <thead>
         <tr>
-            <th data-breakpoints="xs" class="marginalia" data-sortInitialOrder="desc">⇅</th>
-            <th data-breakpoints="xs sm">Colors</th>
+            <th class="marginalia" data-sortInitialOrder="desc">⇅</th>
+            <th>Colors</th>
             <th>Name</th>
             {{^hide_person}}
-                <th data-breakpoints="xs">Person</th>
+                <th>Person</th>
             {{/hide_person}}
             {{#show_archetype}}
-                <th data-breakpoints="xs sm md">Archetype</th>
+                <th>Archetype</th>
             {{/show_archetype}}
             {{^hide_source}}
-                <th data-breakpoints="xs sm md">Source</th>
+                <th>Source</th>
             {{/hide_source}}
             <th class="n" data-sortInitialOrder="desc">Record</th>
             {{#show_omw}}
-                <th data-breakpoints="xs sm md" title="Opponent's Match Win" data-sortInitialOrder="desc">OMW</th>
+                <th title="Opponent's Match Win" data-sortInitialOrder="desc">OMW</th>
             {{/show_omw}}
             {{^hide_top8}}
-                <th class="c" data-breakpoints="xs sm">Top 8</th>
+                <th class="c">Top 8</th>
             {{/hide_top8}}
-            <th data-breakpoints="xs" data-sortInitialOrder="desc">Date</th>
+            <th data-sortInitialOrder="desc">Date</th>
             {{#show_legal_seasons}}
-                <th data-breakpoints="xs sm md">Season</th>
+                <th>Season</th>
             {{/show_legal_seasons}}
-            {{! Empty column to hold the toggle when footable kicks in. }}
-            <td></td>
         </tr>
     </thead>
     <tbody>

@@ -10,14 +10,12 @@
         {{/other_players}}
     </td>
     {{^hide_format}}
-        <td data-breakpoints="xs">{{format_name}}</td>
+        <td>{{format_name}}</td>
     {{/hide_format}}
     {{^hide_comment}}
-        <td data-breakpoints="xs">{{comment}}</td>
+        <td>{{comment}}</td>
     {{/hide_comment}}
     <td data-text="{{date_sort}}">
         {{display_date}}
     </td>
-    {{! Empty column to hold the toggle when footable kicks in.}}
-    <td></td>
 </tr>

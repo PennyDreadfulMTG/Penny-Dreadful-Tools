@@ -12,9 +12,9 @@ def run() -> None:
     output = ''.join(tags)
     write_dependencies(output)
     subprocess.call(['git', 'add', PATH])
-    subprocess.call(['git', 'commit', '-m', '"Update client dependencies."'])
-    subprocess.call(['git', 'push'])
-    subprocess.call(['hub', 'pull-request', '-b', 'master', '-m', '"Update client dependencies."' '-f'])
+    if subprocess.call(['git', 'commit', '-m', '"Update client dependencies."']) == 0:
+        subprocess.call(['git', 'push'])
+        subprocess.call(['hub', 'pull-request', '-b', 'master', '-m', '"Update client dependencies."' '-f'])
 
 def get_dependencies() -> List[str]:
     f = open('shared_web/jsrequirements.txt', 'r')

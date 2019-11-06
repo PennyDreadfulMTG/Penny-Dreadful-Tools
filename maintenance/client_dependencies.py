@@ -10,10 +10,7 @@ def ad_hoc() -> None:
     tags = [fetch_script_tag(library) + '\n' for library in get_dependencies()]
     output = ''.join(tags)
     write_dependencies(output)
-    subprocess.call(['git', 'add', PATH])
-    if subprocess.call(['git', 'commit', '-m', 'Update client dependencies.']) == 0:
-        subprocess.call(['git', 'push'])
-        subprocess.call(['hub', 'pull-request', '-b', 'master', '-m', 'Update client dependencies.', '-f'])
+    send_pr_if_updated()
 
 def get_dependencies() -> List[str]:
     f = open('shared_web/jsrequirements.txt', 'r')
@@ -22,6 +19,13 @@ def get_dependencies() -> List[str]:
 def write_dependencies(s: str) -> None:
     f = open(PATH, 'w')
     f.write(s)
+
+def send_pr_if_updated():
+    return # Don't do this until this is in a better state.
+    subprocess.call(['git', 'add', PATH])
+    if subprocess.call(['git', 'commit', '-m', 'Update client dependencies.']) == 0:
+        subprocess.call(['git', 'push'])
+        subprocess.call(['hub', 'pull-request', '-b', 'master', '-m', 'Update client dependencies.', '-f'])
 
 def fetch_script_tag(library: str) -> str:
     info = fetch_tools.fetch_json(f'https://api.cdnjs.com/libraries/{library}')

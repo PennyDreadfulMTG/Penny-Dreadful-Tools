@@ -27,7 +27,8 @@ def fetch_script_tag(library: str) -> str:
     info = fetch_tools.fetch_json(f'https://api.cdnjs.com/libraries/{library}')
     version = info.get('version')
     if not version and library.lower() != library:
-        info = fetch_tools.fetch_json(f'https://api.cdnjs.com/libraries/{library.lower()}')
+        library = library.lower()
+        info = fetch_tools.fetch_json(f'https://api.cdnjs.com/libraries/{library}')
         version = info.get('version')
     if not version:
         raise Exception(f'Could not get version for {library}') # BAKER exception type

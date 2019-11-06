@@ -18,7 +18,7 @@ class DeckTable extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({'pageSize': this.props.pageSize}); // This will trigger a call to loadDecks to get the initial data.
+        this.setState({"pageSize": this.props.pageSize}); // This will trigger a call to loadDecks to get the initial data.
     }
 
     componentDidUpdate(prevProps, prevState) {

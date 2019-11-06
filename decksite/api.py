@@ -1,7 +1,7 @@
 import datetime
 from typing import List, Optional, cast
 
-from flask import Response, make_response, request, session, url_for
+from flask import Response, request, session, url_for
 
 from decksite import APP, auth, league
 from decksite.data import archetype as archs

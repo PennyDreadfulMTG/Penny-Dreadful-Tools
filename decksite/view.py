@@ -49,6 +49,7 @@ class View(BaseView):
         self.next_tournament_name = None
         self.next_tournament_time = None
         self.tournaments: List[Container] = []
+        self.content_class = self.__class__.__name__.lower()
 
     def season_id(self) -> int:
         return get_season_id()

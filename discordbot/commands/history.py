@@ -3,6 +3,7 @@ from discord.ext import commands
 from discordbot.command import MtgContext
 from magic import fetcher, rotation
 from magic.models import Card
+from shared import fetch_tools
 
 
 @commands.command(aliases=['h', 'hi'])
@@ -25,5 +26,5 @@ def card_history(c: Card) -> str:
         s += '   '
     s = s.strip()
     s += '\n' + fetcher.decksite_url('/seasons/all/cards/{name}/'.format(
-        name=fetcher.internal.escape(c.name, skip_double_slash=True)))
+        name=fetch_tools.escape(c.name, skip_double_slash=True)))
     return s

@@ -2,7 +2,7 @@ import re
 import subprocess
 from typing import List
 
-from shared import fetcher_internal
+from shared import fetch_tools
 
 PATH = 'shared_web/templates/jsdependencies.mustache'
 
@@ -24,10 +24,10 @@ def write_dependencies(s: str) -> None:
     f.write(s)
 
 def fetch_script_tag(library: str) -> str:
-    info = fetcher_internal.fetch_json(f'https://api.cdnjs.com/libraries/{library}')
+    info = fetch_tools.fetch_json(f'https://api.cdnjs.com/libraries/{library}')
     version = info.get('version')
     if not version and library.lower() != library:
-        info = fetcher_internal.fetch_json(f'https://api.cdnjs.com/libraries/{library.lower()}')
+        info = fetch_tools.fetch_json(f'https://api.cdnjs.com/libraries/{library.lower()}')
         version = info.get('version')
     if not version:
         raise Exception(f'Could not get version for {library}') # BAKER exception type

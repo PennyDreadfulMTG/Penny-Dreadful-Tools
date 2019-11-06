@@ -2,12 +2,13 @@ from discord.ext import commands
 
 from discordbot.command import MtgContext
 from magic import fetcher
+from shared import fetch_tools
 
 
 @commands.command(aliases=['rd'])
 async def randomdeck(ctx: MtgContext) -> None:
     """A random deck from the current season."""
-    blob = fetcher.internal.fetch_json(fetcher.decksite_url('/api/randomlegaldeck'))
+    blob = fetch_tools.fetch_json(fetcher.decksite_url('/api/randomlegaldeck'))
     if 'error' in blob or 'url' not in blob:
         await ctx.send(blob.get('msg', ''))
     else:

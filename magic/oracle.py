@@ -1,10 +1,10 @@
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
-from magic import card, fetcher, mana, multiverse, rotation
+from magic import card, mana, multiverse, rotation
 from magic.card_description import CardDescription
 from magic.database import db
 from magic.models import Card
-from shared import configuration
+from shared import configuration, fetch_tools
 from shared.database import sqlescape
 from shared.pd_exception import (InvalidArgumentException,
                                  InvalidDataException, TooFewItemsException)
@@ -93,7 +93,7 @@ def deck_sort(c: Card) -> str:
     return s
 
 def scryfall_import(name: str) -> bool:
-    sfcard = fetcher.internal.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=name))
+    sfcard = fetch_tools.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=name))
     if sfcard['object'] == 'error':
         raise Exception()
     try:

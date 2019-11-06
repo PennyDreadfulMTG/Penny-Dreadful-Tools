@@ -93,11 +93,6 @@ PD.initTables = function() {
     }).css({
         "display": "table"
     });
-    $("div.loading").addClass("loaded");
-    // This operation is very expensive on large tables so we show them on load by default despite it being less pretty.
-    $(selector).not(".very-large").css({
-        "visibility": "visible"
-    });
 
     $.tablesorter.addParser({
         "id": "record",

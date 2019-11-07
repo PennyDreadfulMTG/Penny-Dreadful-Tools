@@ -3,8 +3,6 @@ from typing import Dict, List, Optional, Union
 
 from flask import current_app, url_for
 
-from shared import configuration
-
 from . import template
 
 
@@ -52,11 +50,11 @@ class BaseView:
     def js_url(self) -> str:
         return current_app.config['js_url'] or url_for('static', filename='js/pd.js', v=self.commit_id('shared_web/static/js/pd.js'))
 
+    def bundle_url(self) -> str:
+        return url_for('static', filename='dist/bundle.js', v=self.commit_id('shared_web/static/js/index.jsx'))
+
     def language_icon(self) -> str:
         return url_for('static', filename='images/language_icon.svg')
 
     def menu(self) -> List[Dict[str, Union[str, Dict[str, str]]]]:
         return current_app.config['menu']()
-
-    def js_type(self):
-        return 'production.min' if configuration.get_bool('production') else 'development'

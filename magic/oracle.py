@@ -160,7 +160,11 @@ def if_todays_prices(out: bool = True) -> List[Card]:
     return sorted(cards, key=lambda card: card['name'])
 
 def add_cards_and_update(printings: List[CardDescription]) -> None:
-    multiverse.insert_cards(printings)
-    multiverse.update_cache()
-    multiverse.reindex()
-    init(force=True) # Get the new cards into CARDS_BY_NAME in memory.
+    if not printings:
+        return
+    ids = multiverse.insert_cards(printings)
+    multiverse.add_to_cache(ids)
+    cs = [Card(r) for r in db().select(multiverse.cached_base_query('c.id IN (' + ','.join([str(id) for id in ids]) + ')'))]
+    multiverse.reindex_specific_cards(cs)
+    for c in cs:
+        CARDS_BY_NAME[c.name] = c

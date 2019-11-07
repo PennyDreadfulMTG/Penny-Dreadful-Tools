@@ -4,7 +4,7 @@ from shared import redis
 
 
 def run() -> None:
-    multiverse.update_cache()
+    multiverse.rebuild_cache()
     oracle.init()
     ds = deck.load_decks()
     for d in ds:

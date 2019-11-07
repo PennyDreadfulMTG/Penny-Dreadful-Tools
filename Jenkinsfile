@@ -54,6 +54,11 @@ node{
         }
     }
 
+    stage('JS deps') {
+        // sh(returnStatus: true, script: 'python3 run.py maintenance client_dependencies')
+    }
+
+
     stage('Fix') {
         if (FailedTests || POUpdated) {
             sh(returnStatus: true, script: 'git branch -D jenkins_results')
@@ -68,7 +73,13 @@ node{
                 sh 'git push https://$github_user:$github_password@github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git jenkins_results --force'
             }
             sleep(30) // Lovely race condition where we make a PR before the push has propogated.
-            cmd = 'hub pull-request -b master -h jenkins_results -m "Automated PR from Jenkins" -f'
+            cmd = 'hub pull-request -b master -h jenkins_results -f'
+            if (!FailedTests && POUpdated) {
+                cmd = cmd + ' -m "Update POFile"'
+            }
+            else {
+                cmd = cmd + ' -m "Automated PR from Jenkins"'
+            }
             if (DoNotMerge) {
                 cmd = cmd + ' -l "do not merge"'
             }

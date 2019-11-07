@@ -1,5 +1,6 @@
 from decksite.data import query
 
+
 def test_decks_where_deck_type() -> None:
     args = {'deckType': 'league'}
     assert "= 'League'" in query.decks_where(args, 1)

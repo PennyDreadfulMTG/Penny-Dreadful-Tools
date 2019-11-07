@@ -1,7 +1,7 @@
 import datetime
 from typing import Any, Dict, List, Optional, Set, Union
 
-from magic import card, database, fetcher, mana, rotation
+from magic import card, database, fetcher, mana, rotation, whoosh_write
 from magic.card import TableDescription
 from magic.card_description import CardDescription
 from magic.database import create_table_def, db
@@ -440,6 +440,11 @@ def reindex() -> None:
             if c.name == name:
                 c.names.append(alias)
     writer.rewrite_index(cs)
+
+def reindex_specific_cards(cs: List[Card]):
+    writer = WhooshWriter()
+    for c in cs:
+        writer.update_card(c)
 
 def database2json(propname: str) -> str:
     if propname == 'system_id':

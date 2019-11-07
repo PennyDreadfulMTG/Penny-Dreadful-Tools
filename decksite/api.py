@@ -43,11 +43,11 @@ def decks_api() -> Response:
     start = page * page_size + 1 # SQL recordset is 1-indexed but our pages are 0-indexed.
     limit = f'LIMIT {start}, {page_size}'
     season_id = rotation.season_id(str(request.args.get('seasonId')), None)
-    total = deck.load_decks_count(where=query.exclude_active_league_runs(), season_id=season_id)
-    pages = round(total / page_size)
     where = query.exclude_active_league_runs()
     if request.args.get('deckType') == 'league':
         where = f"({where}) AND ct.name = 'League'"
+    total = deck.load_decks_count(where=where, season_id=season_id)
+    pages = round(total / page_size)
     ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
     r = {'page': page, 'pages': pages, 'decks': ds}

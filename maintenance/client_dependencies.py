@@ -4,7 +4,6 @@ from typing import List
 from shared import fetch_tools
 from shared.pd_exception import DoesNotExistException
 
-
 PATH = 'shared_web/templates/jsdependencies.mustache'
 
 def ad_hoc() -> None:

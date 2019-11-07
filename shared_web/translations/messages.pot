@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-11-07 11:45+1100\n"
+"POT-Creation-Date: 2019-11-07 12:46+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -152,7 +152,7 @@ msgstr ""
 msgid "FAQs"
 msgstr ""
 
-#: decksite/__init__.py:85
+#: decksite/__init__.py:85 decksite/templates/communityguidelines.mustache:1
 msgid "Community Guidelines"
 msgstr ""
 
@@ -437,6 +437,53 @@ msgstr ""
 
 #: decksite/templates/bugpolicy.mustache:1
 msgid "List of all known bugged cards"
+msgstr ""
+
+#: decksite/templates/chooser.mustache:1
+msgid "Archetype"
+msgstr ""
+
+#: decksite/templates/chooser.mustache:1
+msgid "Person"
+msgstr ""
+
+#: decksite/templates/chooser.mustache:1
+msgid "Card"
+msgstr ""
+
+#: decksite/templates/communityguidelines.mustache:1
+msgid ""
+"We respect the Wizards of the Coast [\"Commitment to Each "
+"Other\"](https://magic.wizards.com/en/articles/archive/news/commitment-"
+"each-other-building-community-together-2017-12-19)."
+msgstr ""
+
+#: decksite/templates/communityguidelines.mustache:1
+msgid "**Put fun first**. Keep it friendly, respectful and fun."
+msgstr ""
+
+#: decksite/templates/communityguidelines.mustache:1
+msgid ""
+"**Welcome everyone**. Magic Online first-timers, people coming back to "
+"the game for the first time in a long time, children, j_meka… everyone!"
+msgstr ""
+
+#: decksite/templates/communityguidelines.mustache:1
+msgid ""
+"**Respect your environment**. This means no \"bad manners\" in Magic "
+"Online chat. No unpleasantness in Discord. No going to Discord to talk "
+"about how terrible your last opponent was (they are probably there "
+"reading what you are saying!) If you've made a point don't argue it for "
+"hours. Don't be unrelentingly negative. In general be the kind of player "
+"you'd like to see in the community. Go easy on \"ban chat\"."
+msgstr ""
+
+#: decksite/templates/communityguidelines.mustache:1
+msgid ""
+"**Follow the rules**. Although Magic Online enforces a lot of the rules "
+"for us there are still bugs and other issues that require players to "
+"cooperate to resolve. If in doubt talk to the Tournament Organizer or a "
+"Discord moderator."
 msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1

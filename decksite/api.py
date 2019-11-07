@@ -40,7 +40,7 @@ def decks_api() -> Response:
     order_by = f'{sort_by} {sort_order}, d.name'
     page_size = int(request.args.get('pageSize', 20))
     page = int(request.args.get('page', 0))
-    start = page * page_size + 1 # SQL recordset is 1-indexed but our pages are 0-indexed.
+    start = page * page_size
     limit = f'LIMIT {start}, {page_size}'
     season_id = rotation.season_id(str(request.args.get('seasonId')), None)
     where = query.exclude_active_league_runs()

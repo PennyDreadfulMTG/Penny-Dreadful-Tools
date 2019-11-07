@@ -4,5 +4,5 @@ jquery.tablesorter:jquery.tablesorter.widgets
 moment.js
 moment-timezone
 Chart.js
-react==4.3.0
+react
 react-dom

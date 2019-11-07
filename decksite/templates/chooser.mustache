@@ -1,9 +1,9 @@
 <div>
-    <label for="{{prefix}}archetype">Archetype</label>
+    <label for="{{prefix}}archetype">{{_ Archetype}}</label>
     {{> archetypedropdown}}
 </div>
 <div>
-    <label for="{{prefix}}person_id">Person</label>
+    <label for="{{prefix}}person_id">{{_ Person}}</label>
     <select name="{{prefix}}person_id">
         <option value="">[Select]</option>
         {{#people}}
@@ -12,7 +12,7 @@
     </select>
 </div>
 <div>
-    <label for="{{prefix}}card">Card</label>
+    <label for="{{prefix}}card">{{_ Card}}</label>
     <select name="{{prefix}}card">
         <option value="">[Select]</option>
         {{#cards}}

@@ -41,15 +41,10 @@ class Archetype(View):
             'is_matchups': True,
             'roots': [m for m in matchup_archetypes if m.is_root],
         }]
-
         self.show_seasons = True
         self.show_tournament_toggle = True
-
-        if tournament_only:
-            self.toggle_results_url = url_for('.archetype', archetype_id=self.archetype.id)
-        else:
-            self.toggle_results_url = url_for('.archetype_tournament', archetype_id=self.archetype.id)
-
+        results_template = '.archetype_tournament' if tournament_only else '.archetype'
+        self.toggle_results_url = url_for(results_template, archetype_id=self.archetype.id)
         self.show_archetype = any(d.archetype_id != self.archetype.id for d in self.decks)
         self.show_archetype_tree = len(self.archetypes) > 0
 

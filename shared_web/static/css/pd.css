@@ -1840,11 +1840,11 @@ Archetypes
 
 /* Styling for the admin archetype updater on the deck page. */
 
-.archetype {
+.archetype-tree .archetype {
     padding: 0.563rem 1rem;
 }
 
-.archetype input {
+.archetype-tree .archetype input {
     width: 45%;
 }
 

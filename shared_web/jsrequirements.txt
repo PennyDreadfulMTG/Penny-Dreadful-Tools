@@ -2,7 +2,7 @@ jquery.hoverIntent
 jquery.tablesorter
 jquery.tablesorter:jquery.tablesorter.widgets
 moment.js
-moment-timezone
+moment-timezone:moment-timezone-with-data
 Chart.js
 react
 react-dom

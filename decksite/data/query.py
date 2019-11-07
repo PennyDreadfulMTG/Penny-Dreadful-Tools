@@ -120,8 +120,11 @@ def decks_where(args: Dict[str, str], viewer_id: Optional[int]) -> str:
         parts.append("ct.name = 'Gatherling'")
     if args.get('archetypeId'):
         archetype_id = int(args.get('archetypeId'))
-        parts.append(f'd.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})')
+        parts.append(archetype_where(int(args.get('archetypeId'))))
     if args.get('personId'):
         person_id = int(args.get('personId'))
         parts.append(f'd.person_id = {person_id}')
     return ') AND ('.join(parts)
+
+def archetype_where(archetype_id: int):
+    return f'd.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'

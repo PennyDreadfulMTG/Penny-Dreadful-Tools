@@ -31,9 +31,22 @@ def decks_api() -> Response:
     """
     Grab a slice of results from a 0-indexed resultset of decks.
     Input:
-        {'page': <int>, 'sortBy': <str>, 'sortOrder': <'ASC'|'DESC'>, 'seasonId': <int>, 'deckType': <str>}
+        {
+            'archetypeId': <int?>,
+            'personId': <int?>,
+            'deckType': <'league'|'tournament'|'all'>,
+            'page': <int>,
+            'pageSize': <int>,
+            'sortBy': <str>,
+            'sortOrder': <'ASC'|'DESC'>,
+            'seasonId': <int|'all'>
+        }
     Output:
-        {'page': <int>, 'pages': <int>, 'decks': [<deck>]}
+        {
+            'page': <int>,
+            'pages': <int>,
+            'decks': [<deck>]
+        }
     """
     sort_order = request.args.get('sortOrder', 'DESC')
     assert sort_order in ['ASC', 'DESC']
@@ -43,7 +56,7 @@ def decks_api() -> Response:
     start = page * page_size
     limit = f'LIMIT {start}, {page_size}'
     season_id = rotation.season_id(str(request.args.get('seasonId')), None)
-    where = query.decks_where(request.args)
+    where = query.decks_where(request.args, session.get('person_id'))
     total = deck.load_decks_count(where=where, season_id=season_id)
     pages = ceil(total / page_size) - 1 # 0-indexed
     ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)

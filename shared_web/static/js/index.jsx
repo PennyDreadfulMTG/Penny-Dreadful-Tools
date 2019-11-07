@@ -38,7 +38,17 @@ class DeckTable extends React.Component {
         } else if (this.props.tournamentOnly) {
             deckType = "tournament";
         }
-        Axios.get("/api/decks/", {"params": { "archetypeId": this.props.archetypeId, deckType, page, pageSize, sortBy, sortOrder, "seasonId": this.props.seasonId }})
+        const params = {
+            "archetypeId": this.props.archetypeId,
+            deckType,
+            page,
+            pageSize,
+            "personId": this.props.personId,
+            sortBy,
+            sortOrder,
+            "seasonId": this.props.seasonId
+        };
+        Axios.get("/api/decks/", { params })
             .then(
                 (response) => { this.setState({"decks": response.data.decks, "pages": response.data.pages}); PD.initTables(); },
                 (error) => { this.setState({ error }); }
@@ -228,6 +238,7 @@ if (e !== null) {
             hideTop8={e.dataset.hideTop8}
             leagueOnly={e.dataset.leagueOnly}
             pageSize={e.dataset.pageSize}
+            personId={e.dataset.personId}
             seasonId={e.dataset.seasonId}
             showArchetype={e.dataset.showArchetype}
             showLegalSeasons={e.dataset.showLegalSeasons}

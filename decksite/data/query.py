@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 
 from shared.pd_exception import InvalidArgumentException
 
@@ -97,8 +97,8 @@ def decks_order_by(key: str, sort_order: str) -> str:
     }
     return sort_options[key] + f' {sort_order}, d.name ASC, {person_query()} ASC'
 
-def exclude_active_league_runs() -> str:
-    return """
+def exclude_active_league_runs(except_person_id: Optional[int]) -> str:
+    clause = """
         d.retired
         OR
         ct.name <> 'League'
@@ -107,10 +107,13 @@ def exclude_active_league_runs() -> str:
         OR
         c.end_date < UNIX_TIMESTAMP(NOW())
     """
+    if except_person_id:
+        clause += f'OR d.person_id = {except_person_id}'
+    return clause
 
-def decks_where(args) -> str:
+def decks_where(args: Dict[str, str], viewer_id: Optional[int]) -> str:
     parts = []
-    parts.append(exclude_active_league_runs())
+    parts.append(exclude_active_league_runs(viewer_id))
     if args.get('deckType') == 'league':
         parts.append("ct.name = 'League'")
     elif args.get('deckType') == 'tournament':
@@ -118,4 +121,7 @@ def decks_where(args) -> str:
     if args.get('archetypeId'):
         archetype_id = int(args.get('archetypeId'))
         parts.append(f'd.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})')
+    if args.get('personId'):
+        person_id = int(args.get('personId'))
+        parts.append(f'd.person_id = {person_id}')
     return ') AND ('.join(parts)

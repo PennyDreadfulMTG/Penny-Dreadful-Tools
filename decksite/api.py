@@ -1,4 +1,5 @@
 import datetime
+from math import ceil
 from typing import List, Optional, cast
 
 from flask import Response, request, session, url_for
@@ -34,10 +35,9 @@ def decks_api() -> Response:
     Output:
         {'page': <int>, 'pages': <int>, 'decks': [<deck>]}
     """
-    sort_by = query.decks_order_by(request.args.get('sortBy', 'date'))
     sort_order = request.args.get('sortOrder', 'DESC')
     assert sort_order in ['ASC', 'DESC']
-    order_by = f'{sort_by} {sort_order}, d.name'
+    order_by = query.decks_order_by(request.args.get('sortBy', 'date'), sort_order)
     page_size = int(request.args.get('pageSize', 20))
     page = int(request.args.get('page', 0))
     start = page * page_size
@@ -47,7 +47,7 @@ def decks_api() -> Response:
     if request.args.get('deckType') == 'league':
         where = f"({where}) AND ct.name = 'League'"
     total = deck.load_decks_count(where=where, season_id=season_id)
-    pages = round(total / page_size)
+    pages = ceil(total / page_size) - 1 # 0-indexed
     ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
     r = {'page': page, 'pages': pages, 'decks': ds}

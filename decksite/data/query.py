@@ -69,7 +69,7 @@ def season_join() -> str:
             ) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
     """
 
-def decks_order_by(key: str) -> str:
+def decks_order_by(key: str, sort_order: str) -> str:
     # This is not quite right because 5th place in tournaments with top 4 (no stars) get the same score as 5th place in tournaments with top 8 (1 star)
     # but we don't load tournament_top_n in load_decks, only in load_decks_heavy. See #6648.
     marginalia_order_by = """
@@ -89,13 +89,13 @@ def decks_order_by(key: str) -> str:
         'person': person_query(),
         'archetype': 'a.name',
         'sourceName': 's.name',
-        'record': '(cache.wins - cache.losses)',
+        'record': f'(cache.wins - cache.losses) {sort_order}, cache.wins',
         'omw': 'cache.omw IS NOT NULL DESC, cache.omw',
         'top8': 'd.finish IS NOT NULL DESC, d.finish',
         'date': 'cache.active_date',
         'season': 'cache.active_date'
     }
-    return sort_options[key]
+    return sort_options[key] + f' {sort_order}, d.name ASC, person ASC'
 
 def exclude_active_league_runs() -> str:
     return """

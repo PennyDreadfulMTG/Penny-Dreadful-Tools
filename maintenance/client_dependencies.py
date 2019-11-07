@@ -2,6 +2,7 @@ import re
 from typing import List
 
 from shared import fetch_tools
+from shared.pd_exception import DoesNotExistException
 
 PATH = 'shared_web/templates/jsdependencies.mustache'
 
@@ -30,7 +31,7 @@ def fetch_script_tag(library: str) -> str:
         info = fetch_tools.fetch_json(f'https://api.cdnjs.com/libraries/{library}')
         version = info.get('version')
     if not version:
-        raise Exception(f'Could not get version for {library}') # BAKER exception type
+        raise DoesNotExistException(f'Could not get version for {library}')
     path = None
     for a in info['assets']:
         if a.get('version') == version:
@@ -41,7 +42,7 @@ def fetch_script_tag(library: str) -> str:
                 if unminified_path(f, library):
                     path = f
     if not path:
-        raise Exception(f'Could not find file for {library}')
+        raise DoesNotExistException(f'Could not find file for {library}')
     return f'<script defer src="//cdnjs.cloudflare.com/ajax/libs/{library}/{version}/{path}"></script>'
 
 def minified_path(path: str, library: str) -> bool:

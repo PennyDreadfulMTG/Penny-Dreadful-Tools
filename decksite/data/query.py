@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, cast
 
 from shared.pd_exception import InvalidArgumentException
 
@@ -119,12 +119,12 @@ def decks_where(args: Dict[str, str], viewer_id: Optional[int]) -> str:
     elif args.get('deckType') == 'tournament':
         parts.append("ct.name = 'Gatherling'")
     if args.get('archetypeId'):
-        archetype_id = int(args.get('archetypeId'))
+        archetype_id = cast(int, args.get('archetypeId'))
         parts.append(archetype_where(archetype_id))
     if args.get('personId'):
-        person_id = int(args.get('personId'))
+        person_id = cast(int, args.get('personId'))
         parts.append(f'd.person_id = {person_id}')
     return ') AND ('.join(parts)
 
-def archetype_where(archetype_id: int):
+def archetype_where(archetype_id: int) -> str:
     return f'd.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'

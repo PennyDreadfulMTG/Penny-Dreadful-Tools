@@ -26,7 +26,7 @@ def init() -> None:
             finally:
                 # if the above fails for some reason, then things are probably bad
                 # but we can't even start up a shell to fix unless the _cache_card table exists
-                update_cache()
+                rebuild_cache()
             reindex()
     except fetcher.FetchException:
         print('Unable to connect to Scryfall.')
@@ -148,7 +148,7 @@ def update_database(new_date: datetime.datetime) -> None:
     update_pd_legality()
     db().execute('INSERT INTO scryfall_version (last_updated) VALUES (%s)', [dtutil.dt2ts(new_date)])
     db().execute('SET FOREIGN_KEY_CHECKS=1') # OK we are done monkeying with the db put the FK checks back in place and recreate _cache_card.
-    update_cache()
+    rebuild_cache()
     db().commit('update_database')
 
 # Take Scryfall card descriptions and add them to the database. See also oracle.add_cards_and_update to also rebuild cache/reindex/etc.
@@ -411,7 +411,7 @@ def set_legal_cards(season: str = None) -> None:
         db_legal_list = [row['name'] for row in db().select(sql)]
         print(set(new_list).symmetric_difference(set(db_legal_list)))
 
-def update_cache() -> None:
+def rebuild_cache() -> None:
     db().execute('DROP TABLE IF EXISTS _new_cache_card')
     db().execute('SET group_concat_max_len=100000')
     db().execute(create_table_def('_new_cache_card', card.base_query_properties(), base_query()))
@@ -422,6 +422,15 @@ def update_cache() -> None:
     db().execute('CREATE TABLE IF NOT EXISTS _cache_card (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
     db().execute('RENAME TABLE _cache_card TO _old_cache_card, _new_cache_card TO _cache_card')
     db().execute('DROP TABLE IF EXISTS _old_cache_card')
+
+def add_to_cache(ids: List[int]) -> None:
+    if not ids:
+        return
+    values = ', '.join([str(id) for id in ids])
+    query = base_query(f'c.id IN ({values})')
+    sql = f'INSERT INTO _cache_card {query}'
+    print(sql)
+    db().execute(sql)
 
 def reindex() -> None:
     writer = WhooshWriter()

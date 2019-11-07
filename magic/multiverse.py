@@ -152,10 +152,6 @@ def update_database(new_date: datetime.datetime) -> None:
     db().commit('update_database')
 
 # Take Scryfall card descriptions and add them to the database. See also oracle.add_cards_and_update to also rebuild cache/reindex/etc.
-# Iterate through all printings of each cards, building several sets of values to be provided to queries at the end.
-# If we hit a new card, add it to the queries the several tables tracking cards: card, face, card_color, card_color_identity, printing
-# If it's a printing of a card we already have, just add to the printing query.
-# We need to wait until the end to add the meld results faces because they need to know the id of the card they are the reverse of before we can know their appropriate values.
 def insert_cards(printings: List[CardDescription]) -> None:
     next_card_id = (db().value('SELECT MAX(id) FROM card') or 0) + 1
     values = determine_values(printings, next_card_id)

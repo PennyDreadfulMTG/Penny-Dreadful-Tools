@@ -51,7 +51,9 @@ def decks_api() -> Response:
     ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
     r = {'page': page, 'pages': pages, 'decks': ds}
-    return return_json(r, camelize=True)
+    resp = return_json(r, camelize=True)
+    resp.set_cookie('page_size', str(page_size))
+    return resp
 
 @APP.route('/api/decks/<int:deck_id>')
 def deck_api(deck_id: int) -> Response:

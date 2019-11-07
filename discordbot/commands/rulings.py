@@ -3,6 +3,7 @@ from discord.ext import commands
 from discordbot.command import MtgContext
 from magic import fetcher
 from magic.models import Card
+from shared import fetch_tools
 
 
 @commands.command(aliases=['ru', 'rule'])
@@ -17,5 +18,5 @@ def card_rulings(c: Card) -> str:
     if len(comments) > 3:
         n = len(comments) - 2
         comments = comments[:2]
-        comments.append('And {n} others.  See <https://scryfall.com/search?q=%21%22{cardname}%22#rulings>'.format(n=n, cardname=fetcher.internal.escape(c.name)))
+        comments.append('And {n} others.  See <https://scryfall.com/search?q=%21%22{cardname}%22#rulings>'.format(n=n, cardname=fetch_tools.escape(c.name)))
     return '\n'.join(comments) or 'No rulings available.'

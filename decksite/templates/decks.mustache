@@ -1,11 +1,12 @@
 {{> banner}}
 <section
     id="decktable"
-    data-active-runs-text="{{active_runs_text}}"
+    data-active-runs-text="{{^tournament_only}}{{active_runs_text}}{{/tournament_only}}"
     data-hide-person="{{#hide_person}}1{{/hide_person}}"
     data-hide-source="{{#hide_source}}1{{/hide_source}}"
     data-hide-top8="{{#hide_top8}}1{{/hide_top8}}"
     data-league-only="{{#league_only}}1{{/league_only}}"
+    data-page-size="{{page_size}}"
     data-show-archetype="{{#show_archetype}}1{{/show_archetype}}"
     data-show-legal-seasons="{{#show_legal_seasons}}1{{/show_legal_seasons}}"
     data-show-omw="{{#show_omw}}1{{/show_omw}}"

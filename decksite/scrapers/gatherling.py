@@ -8,8 +8,8 @@ from bs4 import BeautifulSoup, ResultSet
 
 from decksite.data import archetype, competition, deck, match, person
 from decksite.database import db
-from magic import decklist, fetcher
-from shared import dtutil
+from magic import decklist
+from shared import dtutil, fetch_tools
 from shared.pd_exception import InvalidDataException
 from shared_web import logger
 
@@ -21,7 +21,7 @@ TOP_8 = 't8'
 ALIASES: Dict[str, str] = {}
 
 def scrape(limit: int = 50) -> None:
-    soup = BeautifulSoup(fetcher.internal.fetch('https://gatherling.com/eventreport.php?format=Penny+Dreadful&series=&season=&mode=Filter+Events', character_encoding='utf-8'), 'html.parser')
+    soup = BeautifulSoup(fetch_tools.fetch('https://gatherling.com/eventreport.php?format=Penny+Dreadful&series=&season=&mode=Filter+Events', character_encoding='utf-8'), 'html.parser')
     tournaments = [(gatherling_url(link['href']), link.string) for link in soup.find_all('a') if link['href'].find('eventreport.php?') >= 0]
     n = 0
     for (url, name) in tournaments:
@@ -31,7 +31,7 @@ def scrape(limit: int = 50) -> None:
             return
 
 def tournament(url: str, name: str) -> int:
-    s = fetcher.internal.fetch(url, character_encoding='utf-8', retry=True)
+    s = fetch_tools.fetch(url, character_encoding='utf-8', retry=True)
 
     # Tournament details
     soup = BeautifulSoup(s, 'html.parser')
@@ -179,7 +179,7 @@ def tournament_deck(cells: ResultSet, competition_id: int, date: datetime.dateti
     existing = deck.get_deck_id(d['source'], d['identifier'])
     if existing is not None:
         return deck.load_deck(existing)
-    dlist = decklist.parse(fetcher.internal.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
+    dlist = decklist.parse(fetch_tools.post(gatherling_url('deckdl.php'), {'id': gatherling_id}))
     d['cards'] = dlist
     if len(dlist['maindeck']) + len(dlist['sideboard']) == 0:
         logger.warning('Rejecting deck with id {id} because it has no cards.'.format(id=gatherling_id))
@@ -188,7 +188,7 @@ def tournament_deck(cells: ResultSet, competition_id: int, date: datetime.dateti
 
 def tournament_matches(d: deck.Deck) -> List[bs4.element.Tag]:
     url = 'https://gatherling.com/deck.php?mode=view&id={identifier}'.format(identifier=d.identifier)
-    s = fetcher.internal.fetch(url, character_encoding='utf-8', retry=True)
+    s = fetch_tools.fetch(url, character_encoding='utf-8', retry=True)
     soup = BeautifulSoup(s, 'html.parser')
     anchor = soup.find(string='MATCHUPS')
     if anchor is None:

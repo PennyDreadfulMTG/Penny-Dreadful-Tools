@@ -5,6 +5,7 @@ from discord.ext import commands
 
 from discordbot.command import MtgContext, roughly_matches
 from magic import fetcher
+from shared import fetch_tools
 
 
 @commands.command(aliases=['res', 'pdm'])
@@ -48,9 +49,9 @@ def site_resources(args: str) -> Dict[str, str]:
     matches = [endpoint for endpoint in sitemap if endpoint.startswith('/{area}/'.format(area=area))]
     if len(matches) > 0:
         detail = '{detail}/'.format(
-            detail=fetcher.internal.escape(detail, True)) if detail else ''
+            detail=fetch_tools.escape(detail, True)) if detail else ''
         url = fetcher.decksite_url('{season_prefix}/{area}/{detail}'.format(
-            season_prefix=season_prefix, area=fetcher.internal.escape(area), detail=detail))
+            season_prefix=season_prefix, area=fetch_tools.escape(area), detail=detail))
         results[url] = args
     return results
 

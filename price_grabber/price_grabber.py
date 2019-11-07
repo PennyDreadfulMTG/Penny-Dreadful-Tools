@@ -7,7 +7,7 @@ import ftfy
 
 from magic import multiverse, oracle, rotation
 from price_grabber import parser, price
-from shared import configuration, dtutil, fetcher_internal
+from shared import configuration, dtutil, fetch_tools
 from shared.database import get_database
 from shared.pd_exception import DatabaseException, TooFewItemsException
 
@@ -24,13 +24,13 @@ def fetch() -> None:
     ch_urls = configuration.get_list('cardhoarder_urls')
     if ch_urls:
         for _, url in enumerate(ch_urls):
-            s = fetcher_internal.fetch(url)
+            s = fetch_tools.fetch(url)
             s = ftfy.fix_encoding(s)
             timestamps.append(dtutil.parse_to_ts(s.split('\n', 1)[0].replace('UPDATED ', ''), '%Y-%m-%dT%H:%M:%S+00:00', dtutil.CARDHOARDER_TZ))
             all_prices[url] = parser.parse_cardhoarder_prices(s)
     url = configuration.get_str('mtgotraders_url')
     if url:
-        s = fetcher_internal.fetch(url)
+        s = fetch_tools.fetch(url)
         timestamps.append(dtutil.dt2ts(dtutil.now()))
         all_prices['mtgotraders'] = parser.parse_mtgotraders_prices(s)
     if not timestamps:

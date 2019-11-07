@@ -7,8 +7,8 @@ from flask import session, url_for
 from decksite import prepare
 from decksite.data import archetype, deck, match
 from decksite.view import View
-from magic import card, fetcher, oracle
-from shared import dtutil
+from magic import card, oracle
+from shared import dtutil, fetch_tools
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
 
@@ -129,7 +129,7 @@ class Deck(View):
             name = entry.name
             cs[name] = cs.get(name, 0) + entry['n']
         deck_s = '||'.join([str(v) + ' ' + card.to_mtgo_format(k).replace('"', '') for k, v in cs.items()])
-        return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=fetcher.internal.escape(deck_s))
+        return 'https://www.cardhoarder.com/decks/upload?deck={deck}'.format(deck=fetch_tools.escape(deck_s))
 
 def display_round(m: Container) -> str:
     if not m.get('elimination'):

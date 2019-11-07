@@ -80,7 +80,7 @@ def decks_order_by(key: str, sort_order: str) -> str:
              WHEN cache.wins - 3 >= cache.losses THEN 5
              WHEN d.finish = 5 THEN 6
              ELSE 99
-         END)
+         END) {sort_order}'
     """
     sort_options = {
         'marginalia': marginalia_order_by,
@@ -107,3 +107,15 @@ def exclude_active_league_runs() -> str:
         OR
         c.end_date < UNIX_TIMESTAMP(NOW())
     """
+
+def decks_where(args) -> str:
+    parts = []
+    parts.append(exclude_active_league_runs())
+    if args.get('deckType') == 'league':
+        parts.append("ct.name = 'League'")
+    elif args.get('deckType') == 'tournament':
+        parts.append("ct.name = 'Gatherling'")
+    if args.get('archetypeId'):
+        archetype_id = int(args.get('archetypeId'))
+        parts.append(f'd.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})')
+    return ') AND ('.join(parts)

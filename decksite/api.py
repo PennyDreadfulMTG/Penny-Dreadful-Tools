@@ -43,11 +43,7 @@ def decks_api() -> Response:
     start = page * page_size
     limit = f'LIMIT {start}, {page_size}'
     season_id = rotation.season_id(str(request.args.get('seasonId')), None)
-    where = query.exclude_active_league_runs()
-    if request.args.get('deckType') == 'league':
-        where = f"({where}) AND ct.name = 'League'"
-    elif request.args.get('deckType') == 'tournament':
-        where = f"({where}) AND ct.name = 'Gatherling'"
+    where = query.decks_where(request.args)
     total = deck.load_decks_count(where=where, season_id=season_id)
     pages = ceil(total / page_size) - 1 # 0-indexed
     ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)

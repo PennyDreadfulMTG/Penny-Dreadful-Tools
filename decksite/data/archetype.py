@@ -73,8 +73,6 @@ def load_archetypes(where: str = 'TRUE', merge: bool = False, season_id: int = N
     archetype_list = list(archetypes.values())
     return archetype_list
 
-
-
 def load_archetypes_deckless_for(archetype_id: int, season_id: int = None) -> List[Archetype]:
     archetypes = load_archetypes_deckless(season_id=season_id)
     for a in archetypes:

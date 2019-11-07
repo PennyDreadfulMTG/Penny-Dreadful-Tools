@@ -23,7 +23,10 @@ def write_dependencies(s: str) -> None:
 def send_pr_if_updated() -> None:
     return # Don't do this until this is in a better state.
 
-def fetch_script_tag(library: str) -> str:
+def fetch_script_tag(entry: str) -> str:
+    parts = entry.split(':')
+    library = parts[0]
+    file = parts[0] if len(parts) == 1 else parts[1]
     info = fetch_tools.fetch_json(f'https://api.cdnjs.com/libraries/{library}')
     version = info.get('version')
     if not version and library.lower() != library:
@@ -36,10 +39,10 @@ def fetch_script_tag(library: str) -> str:
     for a in info['assets']:
         if a.get('version') == version:
             for f in a['files']:
-                if minified_path(f, library):
+                if minified_path(f, file):
                     path = f
                     break
-                if unminified_path(f, library):
+                if unminified_path(f, file):
                     path = f
     if not path:
         raise DoesNotExistException(f'Could not find file for {library}')

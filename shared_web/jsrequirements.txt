@@ -1,5 +1,6 @@
 jquery.hoverIntent
 jquery.tablesorter
+jquery.tablesorter:jquery.tablesorter.widgets
 moment.js
 moment-timezone
 Chart.js

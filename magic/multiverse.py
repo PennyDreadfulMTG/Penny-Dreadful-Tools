@@ -442,7 +442,7 @@ def reindex() -> None:
                 c.names.append(alias)
     writer.rewrite_index(cs)
 
-def reindex_specific_cards(cs: List[Card]):
+def reindex_specific_cards(cs: List[Card]) -> None:
     writer = WhooshWriter()
     for c in cs:
         writer.update_card(c)

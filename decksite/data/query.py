@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Dict, Optional, Union, cast
 
 from shared.pd_exception import InvalidArgumentException
 
@@ -80,7 +80,7 @@ def decks_order_by(key: str, sort_order: str) -> str:
              WHEN cache.wins - 3 >= cache.losses THEN 5
              WHEN d.finish = 5 THEN 6
              ELSE 99
-         END)
+         END) {sort_order}'
     """
     sort_options = {
         'marginalia': marginalia_order_by,
@@ -97,8 +97,8 @@ def decks_order_by(key: str, sort_order: str) -> str:
     }
     return sort_options[key] + f' {sort_order}, d.name ASC, {person_query()} ASC'
 
-def exclude_active_league_runs() -> str:
-    return """
+def exclude_active_league_runs(except_person_id: Optional[int]) -> str:
+    clause = """
         d.retired
         OR
         ct.name <> 'League'
@@ -107,3 +107,24 @@ def exclude_active_league_runs() -> str:
         OR
         c.end_date < UNIX_TIMESTAMP(NOW())
     """
+    if except_person_id:
+        clause += f'OR d.person_id = {except_person_id}'
+    return clause
+
+def decks_where(args: Dict[str, str], viewer_id: Optional[int]) -> str:
+    parts = []
+    parts.append(exclude_active_league_runs(viewer_id))
+    if args.get('deckType') == 'league':
+        parts.append("ct.name = 'League'")
+    elif args.get('deckType') == 'tournament':
+        parts.append("ct.name = 'Gatherling'")
+    if args.get('archetypeId'):
+        archetype_id = cast(int, args.get('archetypeId'))
+        parts.append(archetype_where(archetype_id))
+    if args.get('personId'):
+        person_id = cast(int, args.get('personId'))
+        parts.append(f'd.person_id = {person_id}')
+    return ') AND ('.join(parts)
+
+def archetype_where(archetype_id: int) -> str:
+    return f'd.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'

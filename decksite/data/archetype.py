@@ -28,7 +28,7 @@ def load_archetype(archetype: Union[int, str], season_id: int = None) -> Archety
         archetype_id = db().value("SELECT id FROM archetype WHERE REPLACE(name, '-', ' ') = %s", [name_without_dashes])
         if not archetype_id:
             raise DoesNotExistException('Did not find archetype with name of `{name}`'.format(name=name))
-    archetypes = load_archetypes(where='d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'.format(archetype_id=sqlescape(archetype_id)), merge=True, season_id=season_id)
+    archetypes = load_archetypes(where=query.archetype_where(archetype_id), merge=True, season_id=season_id)
     arch = guarantee.exactly_one(archetypes, 'archetypes') if archetypes else Archetype()
     # Because load_archetypes loads the root archetype and all below merged the id and name might not be those of the root archetype. Overwrite.
     arch.id = int(archetype_id)
@@ -72,8 +72,6 @@ def load_archetypes(where: str = 'TRUE', merge: bool = False, season_id: int = N
         archetypes[key] = archetype
     archetype_list = list(archetypes.values())
     return archetype_list
-
-
 
 def load_archetypes_deckless_for(archetype_id: int, season_id: int = None) -> List[Archetype]:
     archetypes = load_archetypes_deckless(season_id=season_id)

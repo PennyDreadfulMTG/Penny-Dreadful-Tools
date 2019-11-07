@@ -152,7 +152,7 @@ def update_database(new_date: datetime.datetime) -> None:
     db().commit('update_database')
 
 # Take Scryfall card descriptions and add them to the database. See also oracle.add_cards_and_update to also rebuild cache/reindex/etc.
-def insert_cards(printings: List[CardDescription]) -> None:
+def insert_cards(printings: List[CardDescription]) -> List[int]:
     next_card_id = (db().value('SELECT MAX(id) FROM card') or 0) + 1
     values = determine_values(printings, next_card_id)
     insert_many('card', card.card_properties(), values['card'], ['id'])
@@ -166,6 +166,7 @@ def insert_cards(printings: List[CardDescription]) -> None:
     # Create the current Penny Dreadful format if necessary.
     get_format_id('Penny Dreadful', True)
     update_bugged_cards()
+    return [c['id'] for c in values['card']]
 
 def determine_values(printings: List[CardDescription], next_card_id: int) -> Dict[str, List[Dict[str, Any]]]:
     # pylint: disable=too-many-locals

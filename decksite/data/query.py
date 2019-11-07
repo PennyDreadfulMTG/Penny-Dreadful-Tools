@@ -126,7 +126,7 @@ def decks_where(args: Dict[str, str], viewer_id: Optional[int]) -> str:
         person_id = cast(int, args.get('personId'))
         parts.append(f'd.person_id = {person_id}')
     if args.get('cardName'):
-        parts.append(card_where(args.get('cardName')))
+        parts.append(card_where(cast(str, args.get('cardName'))))
     return ') AND ('.join(parts)
 
 def archetype_where(archetype_id: int) -> str:

@@ -55,7 +55,7 @@ node{
     }
 
     stage('JS deps') {
-        sh(returnStatus: true, script: 'python3 run.py maintenance client_dependencies')
+        // sh(returnStatus: true, script: 'python3 run.py maintenance client_dependencies')
     }
 
 

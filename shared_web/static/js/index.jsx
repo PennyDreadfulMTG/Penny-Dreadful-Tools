@@ -40,6 +40,7 @@ class DeckTable extends React.Component {
         }
         const params = {
             "archetypeId": this.props.archetypeId,
+            "cardName": this.props.cardName,
             deckType,
             page,
             pageSize,
@@ -189,6 +190,7 @@ class DeckTable extends React.Component {
     }
 
     renderPagination() {
+        const { decks, page } = this.state;
         return (
             <div className="pagination">
                 <p className="pagination-links">
@@ -201,7 +203,14 @@ class DeckTable extends React.Component {
                         : null
                     }
                 </p>
-                <p className="page-size-options"><a className={"page-size" + (this.state.pageSize === 20 ? " selected" : "")} onClick={this.changePageSize.bind(this, 20)}>20</a> <a className={"page-size" + (this.state.pageSize === 100 ? " selected" : "")} onClick={this.changePageSize.bind(this, 100)}>100</a> per page</p>
+                { decks.length < 20 && page === 0
+                    ? null
+                    : <p className="page-size-options">
+                        <a className={"page-size" + (this.state.pageSize === 20 ? " selected" : "")} onClick={this.changePageSize.bind(this, 20)}>20</a>
+                        <a className={"page-size" + (this.state.pageSize === 100 ? " selected" : "")} onClick={this.changePageSize.bind(this, 100)}>100</a>
+                        per page
+                    </p>
+                }
             </div>
         );
     }
@@ -232,6 +241,7 @@ if (e !== null) {
         <DeckTable
             activeRunsText={e.dataset.activeRunsText}
             archetypeId={e.dataset.archetypeId}
+            cardName={e.dataset.cardName}
             hidePerson={e.dataset.hidePerson}
             hidePerson={e.dataset.hidePerson}
             hideSource={e.dataset.hideSource}

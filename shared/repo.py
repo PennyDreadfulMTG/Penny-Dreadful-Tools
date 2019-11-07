@@ -30,9 +30,26 @@ def create_issue(content: str,
     else:
         title = content
     body += 'Reported on {location} by {author}\n\n'.format(location=location, author=author)
+    if exception:
+        body += '<details><summary>\n'
+        body += exception.__class__.__name__ + '\n'
+        body += str(exception) + '\n'
+        body += '</summary>\n\n'
+        stack = traceback.extract_stack()[:-3] + traceback.extract_tb(exception.__traceback__)
+        pretty = traceback.format_list(stack)
+        body += 'Stack Trace:\n\n```\n\nPython traceback\n\n' + ''.join(pretty) + '\n\n```\n\n</details>\n\n'
+        issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
+        body += f'Exception_hash: {issue_hash}\n'
+    elif repo_name == 'PennyDreadfulMTG/perf-reports':
+        stack = traceback.extract_stack()[:-3]
+        pretty = traceback.format_list(stack)
+        if request:
+            pretty.append(request.full_path)
+        issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
+        body += f'Location Hash: {issue_hash}\n'
+
     if request:
-        body += '--------------------------------------------------------------------------------\n'
-        body += '<details><summary><strong>Request Data</strong></summary>\n```\n'
+        body += '<details><summary><strong>Request Data</strong></summary>\n\n```\n'
         body += textwrap.dedent("""
             Request Method: {method}
             Path: {full_path}
@@ -44,32 +61,12 @@ def create_issue(content: str,
             Request Data: {safe_data}
         """.format(method=request.method, full_path=request.full_path, cookies=request.cookies, endpoint=request.endpoint, view_args=request.view_args, id=session.get('id', 'logged_out'), referrer=request.referrer, safe_data=str(safe_data(request.form))))
         body += '\n'.join(['{k}: {v}'.format(k=k, v=v) for k, v in request.headers])
-        body += '\n```\n</details>\n'
+        body += '\n```\n\n</details>\n\n'
         ua = request.headers.get('User-Agent', '')
         if ua == 'pennydreadfulmagic.com cache renewer':
             labels.append(ua)
         elif 'YandexBot' in ua or 'Googlebot' in ua or 'bingbot' in ua:
             labels.append('Search Engine')
-
-    if exception:
-        body += '--------------------------------------------------------------------------------\n'
-        body += '<details><summary>\n'
-        body += exception.__class__.__name__ + '\n'
-        body += str(exception) + '\n'
-        body += '</summary>\n'
-        stack = traceback.extract_stack()[:-3] + traceback.extract_tb(exception.__traceback__)
-        pretty = traceback.format_list(stack)
-        body += 'Stack Trace:\n\n```Python traceback\n' + ''.join(pretty) + '\n```\n\n</details>\n'
-        issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
-        body += f'Exception_hash: {issue_hash}\n'
-
-    elif repo_name == 'PennyDreadfulMTG/perf-reports':
-        stack = traceback.extract_stack()[:-3]
-        pretty = traceback.format_list(stack)
-        if request:
-            pretty.append(request.full_path)
-        issue_hash = hashlib.sha1(''.join(pretty).encode()).hexdigest()
-        body += f'Location Hash: {issue_hash}\n'
 
     print(title + '\n' + body, file=sys.stderr)
     # Only check for github details at the last second to get log output even if github not configured.

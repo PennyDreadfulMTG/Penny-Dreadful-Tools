@@ -33,10 +33,12 @@ def decks_api() -> Response:
     Input:
         {
             'archetypeId': <int?>,
+            'cardName': <str?>,
             'personId': <int?>,
             'deckType': <'league'|'tournament'|'all'>,
             'page': <int>,
             'pageSize': <int>,
+            'personId': <int?>,
             'sortBy': <str>,
             'sortOrder': <'ASC'|'DESC'>,
             'seasonId': <int|'all'>

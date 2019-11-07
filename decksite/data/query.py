@@ -1,5 +1,6 @@
 from typing import Dict, Optional, Union, cast
 
+from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException
 
 
@@ -124,7 +125,12 @@ def decks_where(args: Dict[str, str], viewer_id: Optional[int]) -> str:
     if args.get('personId'):
         person_id = cast(int, args.get('personId'))
         parts.append(f'd.person_id = {person_id}')
+    if args.get('cardName'):
+        parts.append(card_where(cast(str, args.get('cardName'))))
     return ') AND ('.join(parts)
 
 def archetype_where(archetype_id: int) -> str:
     return f'd.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'
+
+def card_where(name: str) -> str:
+    return 'd.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name))

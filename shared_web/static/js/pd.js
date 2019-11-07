@@ -370,7 +370,8 @@ PD.renderCharts = function() {
             options = $(this).data("options"),
             ctx = this.getContext("2d");
         // eslint-disable-next-line new-cap
-        Chart(ctx, {
+        // eslint-disable-next-line no-new
+        new Chart(ctx, {
             type,
             "data": {
                 labels,

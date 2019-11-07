@@ -32,7 +32,13 @@ class DeckTable extends React.Component {
 
     loadDecks() {
         const {page, pageSize, sortBy, sortOrder} = this.state;
-        Axios.get("/api/decks/", {"params": { deckType: this.props.leagueOnly ? "league" : "all", page, pageSize, sortBy, sortOrder, "seasonId": this.props.seasonId }})
+        let deckType = "all";
+        if (this.props.leagueOnly) {
+            deckType = "league";
+        } else if (this.props.tournamentOnly) {
+            deckType = "tournament";
+        }
+        Axios.get("/api/decks/", {"params": { deckType, page, pageSize, sortBy, sortOrder, "seasonId": this.props.seasonId }})
             .then(
                 (response) => { this.setState({"decks": response.data.decks, "pages": response.data.pages}); PD.initTables(); },
                 (error) => { this.setState({ error }); }

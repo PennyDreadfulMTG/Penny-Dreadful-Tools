@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-11-06 18:46+1100\n"
+"POT-Creation-Date: 2019-11-07 11:45+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -160,14 +160,14 @@ msgstr ""
 msgid "Admin"
 msgstr ""
 
-#: decksite/view.py:319
+#: decksite/view.py:320
 #, python-format
 msgid "%(num)d active league run"
 msgid_plural "%(num)d active league runs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/view.py:326 logsite/templates/about.mustache:1
+#: decksite/view.py:327 logsite/templates/about.mustache:1
 msgid "Help us translate the site into your language"
 msgstr ""
 

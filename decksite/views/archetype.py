@@ -26,11 +26,9 @@ class Archetype(View):
         self.archetype.decks_tournament = archetype.decks_tournament
         # Load the deck information from archetype into skinny archetype loaded by load_archetypes_deckless_for with tree information.
         self.archetypes = archetypes
-        self.decks = self.archetype.decks
-        self.decks_tournament = self.archetype.decks_tournament
-
         self.roots = [a for a in self.archetypes if a.is_root]
         self.tournament_only = tournament_only
+        self.hide_source = self.tournament_only
         matchup_archetypes = archs.load_archetypes_deckless(season_id=season_id)
         matchups_by_id = {m.id: m for m in matchups}
         for m in matchup_archetypes:

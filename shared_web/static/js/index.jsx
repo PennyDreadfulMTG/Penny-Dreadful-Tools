@@ -40,6 +40,7 @@ class DeckTable extends React.Component {
         }
         const params = {
             "archetypeId": this.props.archetypeId,
+            "cardName": this.props.cardName,
             deckType,
             page,
             pageSize,
@@ -232,6 +233,7 @@ if (e !== null) {
         <DeckTable
             activeRunsText={e.dataset.activeRunsText}
             archetypeId={e.dataset.archetypeId}
+            cardName={e.dataset.cardName}
             hidePerson={e.dataset.hidePerson}
             hidePerson={e.dataset.hidePerson}
             hideSource={e.dataset.hideSource}

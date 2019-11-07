@@ -13,7 +13,7 @@ from shared.decorators import retry_after_calling
 
 def load_card(name: str, season_id: Optional[int] = None) -> Card:
     c = guarantee.exactly_one(oracle.load_cards([name]))
-    c.decks = deck.load_decks('d.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name)), season_id=season_id)
+    c.decks = deck.load_decks(query.card_where(name), season_id=season_id)
     c.wins, c.losses, c.draws, c.tournament_wins, c.tournament_top8s, c.perfect_runs = 0, 0, 0, 0, 0, 0
     c.wins_tournament, c.losses_tournament, c.draws_tournament = 0, 0, 0
     c.decks_tournament = []

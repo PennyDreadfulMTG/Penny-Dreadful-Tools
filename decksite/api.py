@@ -37,7 +37,7 @@ def decks_api() -> Response:
     sort_by = query.decks_order_by(request.args.get('sortBy', 'date'))
     sort_order = request.args.get('sortOrder', 'DESC')
     assert sort_order in ['ASC', 'DESC']
-    order_by = f'{sort_by} {sort_order}'
+    order_by = f'{sort_by} {sort_order}, d.name'
     page_size = int(request.args.get('pageSize', 20))
     page = int(request.args.get('page', 0))
     start = page * page_size + 1 # SQL recordset is 1-indexed but our pages are 0-indexed.

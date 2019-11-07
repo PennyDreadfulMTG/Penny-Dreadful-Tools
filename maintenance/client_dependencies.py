@@ -55,6 +55,9 @@ def unminified_path(path: str, library: str) -> bool:
     return test_path(path, library)
 
 def test_path(path: str, library: str, required: str = '') -> bool:
+    # CommonJS libs get us the error 'require is not defined' in the browser. See #6731.
+    if 'cjs/' in path:
+        return False
     name_without_js = library.replace('.js', '')
     regex = fr'{name_without_js}(.js)?(.production)?{required}.js$'
     return bool(re.search(regex, path, re.IGNORECASE))

@@ -190,6 +190,7 @@ class DeckTable extends React.Component {
     }
 
     renderPagination() {
+        const { decks, page, pageSize } = this.state;
         return (
             <div className="pagination">
                 <p className="pagination-links">
@@ -202,7 +203,14 @@ class DeckTable extends React.Component {
                         : null
                     }
                 </p>
-                <p className="page-size-options"><a className={"page-size" + (this.state.pageSize === 20 ? " selected" : "")} onClick={this.changePageSize.bind(this, 20)}>20</a> <a className={"page-size" + (this.state.pageSize === 100 ? " selected" : "")} onClick={this.changePageSize.bind(this, 100)}>100</a> per page</p>
+                { decks.length < 20 && page == 0
+                    ? null
+                    : <p className="page-size-options">
+                        <a className={"page-size" + (this.state.pageSize === 20 ? " selected" : "")} onClick={this.changePageSize.bind(this, 20)}>20</a>
+                        <a className={"page-size" + (this.state.pageSize === 100 ? " selected" : "")} onClick={this.changePageSize.bind(this, 100)}>100</a>
+                        per page
+                    </p>
+                }
             </div>
         );
     }

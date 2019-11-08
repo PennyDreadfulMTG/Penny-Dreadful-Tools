@@ -11,9 +11,7 @@ class DeckTable extends React.Component {
         this.state = {
             decks: [],
             page: 0,
-            pageSize: 20,
-            sortBy: "date",
-            sortOrder: "DESC"
+            pageSize: 20
         };
     }
 
@@ -41,6 +39,7 @@ class DeckTable extends React.Component {
         const params = {
             "archetypeId": this.props.archetypeId,
             "cardName": this.props.cardName,
+            "competitionId": this.props.competitionId,
             deckType,
             page,
             pageSize,
@@ -242,6 +241,7 @@ if (e !== null) {
             activeRunsText={e.dataset.activeRunsText}
             archetypeId={e.dataset.archetypeId}
             cardName={e.dataset.cardName}
+            competitionId={e.dataset.competitionId}
             hidePerson={e.dataset.hidePerson}
             hidePerson={e.dataset.hidePerson}
             hideSource={e.dataset.hideSource}

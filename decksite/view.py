@@ -49,7 +49,7 @@ class View(BaseView):
         self.next_tournament_name = None
         self.next_tournament_time = None
         self.tournaments: List[Container] = []
-        self.content_class = self.__class__.__name__.lower()
+        self.content_class = 'content-' + self.__class__.__name__.lower()
         self.page_size = request.cookies.get('page_size', 20)
         self.tournament_only = False
 

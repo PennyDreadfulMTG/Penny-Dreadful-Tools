@@ -478,7 +478,7 @@ main h2 {
 }
 
 /* Don't show a top border on the first subheading if there is no h1 to avoid a double border. */
-#content.home section:first-of-type h2 {
+.content-home section:first-of-type h2 {
     border: 0;
 }
 

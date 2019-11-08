@@ -253,6 +253,7 @@ if (e !== null) {
             showArchetype={e.dataset.showArchetype}
             showLegalSeasons={e.dataset.showLegalSeasons}
             showOmw={e.dataset.showOmw}
+            tournamentOnly={e.dataset.tournamentOnly}
         />;
     render(table, e);
 }

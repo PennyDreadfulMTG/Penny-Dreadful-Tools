@@ -157,7 +157,6 @@ async def post_cards(
         text += '\n\n'
         if len(cards) == 1:
             text += emoji.replace_emoji(cards[0].oracle_text, client)
-            pass
         else:
             text += 'No image available.'
     text += additional_text

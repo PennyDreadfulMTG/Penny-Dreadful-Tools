@@ -1,7 +1,6 @@
 import unittest
 from typing import List
 
-import pytest
 import whoosh
 
 from magic import multiverse

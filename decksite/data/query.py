@@ -71,17 +71,15 @@ def season_join() -> str:
     """
 
 def decks_order_by(key: str, sort_order: str) -> str:
-    # This is not quite right because 5th place in tournaments with top 4 (no stars) get the same score as 5th place in tournaments with top 8 (1 star)
-    # but we don't load tournament_top_n in load_decks, only in load_decks_heavy. See #6648.
-    marginalia_order_by = """
+    marginalia_order_by = f"""
         (CASE WHEN d.finish = 1 THEN 1
-             WHEN d.finish = 2 THEN 2
-             WHEN d.finish = 3 THEN 3
+             WHEN d.finish = 2 AND c.top_n >= 2 THEN 2
+             WHEN d.finish = 3 AND c.top_n >= 3 THEN 3
              WHEN cache.wins - 5 >= cache.losses THEN 4
              WHEN cache.wins - 3 >= cache.losses THEN 5
-             WHEN d.finish = 5 THEN 6
+             WHEN d.finish = 5 AND c.top_n >= 5 THEN 6
              ELSE 99
-         END) {sort_order}'
+         END)
     """
     sort_options = {
         'marginalia': marginalia_order_by,
@@ -102,7 +100,7 @@ def exclude_active_league_runs(except_person_id: Optional[int]) -> str:
     clause = """
         d.retired
         OR
-        ct.name <> 'League'
+        IFNULL(ct.name, '') <> 'League'
         OR
         IFNULL(cache.wins, 0) + IFNULL(cache.draws, 0) + IFNULL(cache.losses, 0) >= 5
         OR

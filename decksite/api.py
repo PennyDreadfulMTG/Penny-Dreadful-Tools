@@ -60,7 +60,7 @@ def decks_api() -> Response:
     season_id = rotation.season_id(str(request.args.get('seasonId')), None)
     where = query.decks_where(request.args, session.get('person_id'))
     total = deck.load_decks_count(where=where, season_id=season_id)
-    pages = ceil(total / page_size) - 1 # 0-indexed
+    pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
     ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
     r = {'page': page, 'pages': pages, 'decks': ds}

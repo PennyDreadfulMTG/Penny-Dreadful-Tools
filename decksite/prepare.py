@@ -55,7 +55,7 @@ def prepare_deck(d: Deck) -> None:
     if 'Commander' in d.legal_formats: # I think C16 looks the nicest.
         d.legal_icons += '<i class="ss ss-c16 ss-uncommon ss-grad">CMDR</i>'
     if session.get('admin') or session.get('demimod') or not d.is_in_current_run():
-        d.decklist = str(d).replace('\n', '<br>')
+        d.decklist = str(d)
     else:
         d.decklist = ''
     total, num_cards = 0, 0

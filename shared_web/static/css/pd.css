@@ -478,7 +478,7 @@ main h2 {
 }
 
 /* Don't show a top border on the first subheading if there is no h1 to avoid a double border. */
-#content.home section:first-of-type h2 {
+.content-home section:first-of-type h2 {
     border: 0;
 }
 
@@ -2277,6 +2277,7 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 
 .tpd-tooltip {
     position: absolute;
+    white-space: pre-line;
 }
 
 /* Fix for CSS frameworks that don't keep the use of box-sizing: border-box

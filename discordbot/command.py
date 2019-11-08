@@ -156,7 +156,7 @@ async def post_cards(
     if image_file is None:
         text += '\n\n'
         if len(cards) == 1:
-            text += emoji.replace_emoji(cards[0].text, client)
+            text += emoji.replace_emoji(cards[0].oracle_text, client)
         else:
             text += 'No image available.'
     text += additional_text

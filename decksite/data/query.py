@@ -102,7 +102,7 @@ def exclude_active_league_runs(except_person_id: Optional[int]) -> str:
     clause = """
         d.retired
         OR
-        ct.name <> 'League'
+        IFNULL(ct.name, '') <> 'League'
         OR
         IFNULL(cache.wins, 0) + IFNULL(cache.draws, 0) + IFNULL(cache.losses, 0) >= 5
         OR

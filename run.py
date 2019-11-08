@@ -20,7 +20,7 @@ def run() -> None:
         from decksite import main
         main.init()
     elif sys.argv[1] == 'decksite-profiler':
-        from werkzeug.contrib.profiler import ProfilerMiddleware
+        from werkzeug.middleware.profiler import ProfilerMiddleware
         from decksite import main
         main.APP.config['PROFILE'] = True
         main.APP.wsgi_app = ProfilerMiddleware(main.APP.wsgi_app, restrictions=[30]) # type: ignore

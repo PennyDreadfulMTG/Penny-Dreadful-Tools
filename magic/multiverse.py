@@ -430,7 +430,6 @@ def add_to_cache(ids: List[int]) -> None:
     values = ', '.join([str(id) for id in ids])
     query = base_query(f'c.id IN ({values})')
     sql = f'INSERT INTO _cache_card {query}'
-    print(sql)
     db().execute(sql)
 
 def reindex() -> None:

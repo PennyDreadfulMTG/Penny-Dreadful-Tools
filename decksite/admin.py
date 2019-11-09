@@ -1,5 +1,6 @@
 from typing import Any, Dict, List, Optional, cast
 
+import titlecase
 from flask import request, session, url_for
 
 from decksite import APP, auth
@@ -23,11 +24,10 @@ from shared_web.decorators import fill_form
 
 def admin_menu() -> List[Dict[str, str]]:
     m = []
-    urls = sorted([url_for(rule.endpoint) for rule in APP.url_map.iter_rules() if 'GET' in rule.methods and rule.rule.startswith('/admin')])
-    for url in urls:
-        name = url.replace('/admin/', '').strip('/')
-        name = name if name else 'Admin Home'
-        m.append({'name': name, 'url': url})
+    endpoints = sorted([rule.endpoint for rule in APP.url_map.iter_rules() if 'GET' in rule.methods and rule.rule.startswith('/admin')])
+    for endpoint in endpoints:
+        name = titlecase.titlecase(endpoint.replace('_', ' ')) if endpoint else 'Admin Home'
+        m.append({'name': name, 'endpoint': endpoint, 'url': url_for(endpoint)})
     return m
 
 @APP.route('/admin/')

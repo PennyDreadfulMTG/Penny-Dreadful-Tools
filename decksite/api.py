@@ -58,16 +58,16 @@ def decks_api() -> Response:
         sort_by = 'date'
         sort_order = 'DESC'
     else:
-        sort_by = request.args.get('sortBy')
-        sort_order = request.args.get('sortOrder')
+        sort_by = str(request.args.get('sortBy'))
+        sort_order = str(request.args.get('sortOrder'))
     assert sort_order in ['ASC', 'DESC']
     order_by = query.decks_order_by(sort_by, sort_order)
     page_size = int(request.args.get('pageSize', 20))
     page = int(request.args.get('page', 0))
     start = page * page_size
     limit = f'LIMIT {start}, {page_size}'
-    if list(set(request.args.keys()) & set(['archetypeId', 'competitionId', 'personId'])):
-        season_id = 'all' # Don't restrict by season if we're loading a specific thing by its id.
+    if request.args.get('competitionId'):
+        season_id = 'all' # Don't restrict by season if we're loading something with a date by its id.
     else:
         season_id = rotation.season_id(str(request.args.get('seasonId')), None)
     where = query.decks_where(request.args, session.get('person_id'))

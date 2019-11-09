@@ -1,6 +1,6 @@
 import datetime
 import logging
-from typing import Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union, cast
 
 from flask import Blueprint, g, request, url_for
 from flask_babel import gettext, ngettext
@@ -19,18 +19,18 @@ def get_season_id() -> int:
     return g.get('season_id', rotation.current_season_num())
 
 @SEASONS.url_defaults
-def add_season_id(_endpoint, values) -> None:
+def add_season_id(_endpoint: str, values: Dict[str, Any]) -> None:
     values.setdefault('season_id', get_season_id())
 
 @SEASONS.url_value_preprocessor
-def pull_season_id(_endpoint, values) -> None:
+def pull_season_id(_endpoint: str, values: Dict[str, Any]) -> None:
     v = values.pop('season_id')
     g.season_id = rotation.season_id(v)
 
 APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
 
 def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
-    current_template = request.endpoint.replace('seasons.', '')
+    current_template = (request.endpoint or '').replace('seasons.', '')
     archetypes_badge = {'endpoint': 'edit_archetypes', 'text': '', 'badge_class': 'edit_archetypes'}
     resources_submenu: List[Dict[str, str]] = []
     if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7) or (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
@@ -44,7 +44,7 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
         {'name': gettext('Link Accounts'), 'endpoint': 'link'},
         {'name': gettext('Bugs'), 'endpoint': 'bugs'}
     ]
-    menu: List[MenuEntry] = [
+    menu = [
         {'name': gettext('Metagame'), 'endpoint': 'home', 'badge': archetypes_badge, 'submenu': [
             {'name': gettext('Decks'), 'endpoint': '.decks'},
             {'name': gettext('Archetypes'), 'endpoint': 'archetypes', 'badge': archetypes_badge},
@@ -83,11 +83,11 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
         item['has_submenu'] = item.get('submenu') is not None
     return menu
 
-def setup_links(menu: List[Dict[str, Union[str, Dict[str, str]]]]) -> None:
+def setup_links(menu: List[Dict[str, Any]]) -> None:
     for item in menu:
         if item.get('endpoint'):
             item['url'] = url_for(item.get('endpoint', ''))
-        item['is_external'] = item.get('url', '').startswith('http') and '://pennydreadfulmagic.com/' not in item['url']
+        item['is_external'] = cast(str, item.get('url', '')).startswith('http') and '://pennydreadfulmagic.com/' not in item['url']
         setup_links(item.get('submenu', []))
 
 try:

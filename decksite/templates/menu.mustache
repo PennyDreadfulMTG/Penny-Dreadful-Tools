@@ -6,7 +6,10 @@
                     <span class="admin demimod badge {{badge_class}}"><a href="{{url}}">{{text}}</a></span>
                 </div>
             {{/badge}}
-            <a class="menuitem" href="{{url}}">{{name}}</a>
+            <a class="menuitem {{#current}}current{{/current}}" href="{{url}}">
+                <div class="icon {{endpoint}}"></div>
+                {{name}}
+            </a>
             {{#has_submenu}}
                 <div class="submenu-container">
                     <ul>

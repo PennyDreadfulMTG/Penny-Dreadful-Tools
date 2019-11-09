@@ -2,7 +2,6 @@
 window.PD = {};
 
 PD.init = function() {
-    PD.scrollToContent();
     PD.initDismiss();
     PD.initMenu();
     PD.initAchievements();
@@ -24,12 +23,6 @@ PD.init = function() {
     PD.initPersonalization();
     PD.renderCharts();
     PD.filter.init();
-};
-
-PD.scrollToContent = function() {
-    if (window.matchMedia("only screen and (max-width: 640px)").matches && document.referrer.indexOf(window.location.hostname) > 0 && document.location.href.indexOf("#content") === -1) {
-        window.location = location.href + "#content";
-    }
 };
 
 PD.initDismiss = function() {

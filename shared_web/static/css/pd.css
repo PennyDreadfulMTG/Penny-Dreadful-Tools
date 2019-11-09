@@ -191,8 +191,6 @@ Symbols provided by our main font are:
     — U+2012 EM DASH (Used in status bar to break up various pieces of info, also used from Scryfall info and in discord bot output)
     – U+2013 EN DASH (for records like “4–1”) 
     ★ U+2605 BLACK STAR (deck quality)
-    + U+002B PLUS SIGN (expand row in mobile view table)
-    − U+2212 MINUS SIGN (close expanded row in mobile view table)
     … U+2026 HORIZONTAL ELLIPSIS (in some link text like More new…", and in dropdowns in "Choose…"). Note: our style is no space before ellipsis.
     → U+2192 RIGHT-POINTING ARROW (paginate right)
     ← U+2190 LEFT-POINTING ARROW (paginate left)
@@ -287,8 +285,11 @@ header, nav, main, footer, .status-bar, .submenu-container {
 
 /* Minimal spacing around the content on extra-small displays. */
 @media only screen and (max-width: 640px) {
-    header, nav, main, footer, .status-bar, .submenu-container {
+    header, nav, main, footer, .status-bar {
         padding: 0 1rem;
+    }
+    .submenu-container {
+        padding: 0;
     }
 }
 
@@ -339,10 +340,18 @@ footer {
 
 /* Because the status bar takes a reasonable amount of vertical real estate in the default version we also check height for this one. See #6068. */
 @media only screen and (max-width: 640px), only screen and (max-height: 640px) {
+    /* Move status-bar to the top so it doesn't conflict with bottom nav. */
     .status-bar {
+        border-bottom: 0.05rem solid #ccc;
+        border-top: 0;
+        bottom: inherit;
         font-size: 0.75rem;
         padding-bottom: 0;
         padding-top: 1em;
+        top: 0;
+    }
+    header {
+        padding-top: 2rem; /* Shift the whole page down to accomodate the status-bar at the top. */
     }
 }
 
@@ -843,30 +852,15 @@ A lot of pages still send giant tables of data but logsite and deck table have p
 Menu
 
 The main menu consists of a handful of top-level items.
-Ideally the number of top-level items will never exceed five.
-Menu items can have submenus. These are "mega menus" that stretch across the whole screen and might contain more than just links.
-
-*/
-
-/*
-
-Desktop Menu
+The number of top-level items must never exceed five because of mobile bottom bar view.
+Menu items can have submenus. At wider widths these are "mega menus" that stretch across the whole screen and might contain more than just links.
 
 */
 
 @media only screen and (min-width: 641px) {
-
-    .menu li {
+    .menu > li {
         float: left;
     }
-
-    .menu li > a, .submenu-container li > a {
-        display: block;
-        padding: 2em; /* Matches negative margin of nav so when it aligns left (even wrapped under). */
-        text-decoration: none;
-        text-transform: lowercase;
-    }
-
     .menu a:hover {
         color: #999;
         transition-duration: 1s;
@@ -878,30 +872,8 @@ Desktop Menu
         content: "";
         display: table;
     }
-
-    /* Submenu. */
-
-    .submenu-container {
-        background: #502828;
-        box-sizing: border-box; /* So we can position the first menu item's text flush-left with the page text without worrying about the padding used for page margin. */;
-        color: #f9f9f9;
-        display: none;
-        left: 0;
-        position: absolute;
-        width: 100%;
-    }
-
     .language-switcher .submenu-container {
         width: 100vw; /* Use this rather than the more obvious "100%" because the language switcher is absolutely positioned and yet contains a submenu which thinks 100% means 100% of the language switcher element, not of the whole page. */
-    }
-
-    .submenu-container li {
-        float: left;
-    }
-
-    .submenu-container a:hover {
-        background-color: #502828;
-        color: #999;
     }
 
     /* Slide-out caret at top of submenu dropdown. */
@@ -948,19 +920,138 @@ Desktop Menu
     }
 }
 
+.menu > li > a, .submenu-container li > a {
+    display: block;
+    padding: 2em; /* Matches negative margin of nav so when it aligns left (even wrapped under). */
+    text-decoration: none;
+}
+
+
+/* Submenu. */
+
+.submenu-container {
+    background: #502828;
+    box-sizing: border-box; /* So we can position the first menu item's text flush-left with the page text without worrying about the padding used for page margin. */;
+    color: #f9f9f9;
+    display: none;
+    left: 0;
+    position: absolute;
+    width: 100%;
+}
+
+.submenu-container li {
+    float: left;
+}
+
+.submenu-container a:hover {
+    background-color: #502828;
+    color: #999;
+}
+
+
 /*
 
 Mobile Menu
 
 */
 
-@media only screen and (max-width: 640px) {
+@media only screen and (hover: none) {
+    body {
+        background: red
+    }
     .language-switcher {
         display: none;
     }
+    .menu {
+        background-color: #ccc;
+        border-top: 0.05rem solid #502828;
+        bottom: 0;
+        box-sizing: border-box; /* So we can just say 100% width and have the status bar with padding fit the screen. */
+        color: #502828;
+        display: flex;
+        justify-content: space-around;
+        left: 0;
+        padding: 0;
+        position: fixed;
+        text-align: left;
+        width: 100%;
+    }
 
-    .submenu-container ul {
-        margin-left: 1em;
+    .menu, .menu > li {
+        box-sizing: border-box;
+    }
+
+    .menu > li {
+        border-left: 0.05rem solid #502828;
+        flex: 1 1 0; /* Evenly spaced and sized menu items. */
+        float: left;
+        font-size: 0.75rem;
+        margin: 0;
+        overflow: hidden;
+        padding: 0;
+        text-align: center;
+    }
+
+    .menu > li:first-child {
+        border-left: 0;
+    }
+
+    .menu a.menuitem {
+        box-sizing: border-box;
+        display: inline-block;
+        margin: 0;
+        padding: 1em 0;
+        width: 100%;
+    }
+
+    .menu a.menuitem:hover {
+        background-color: #eee;
+    }
+
+    .menu .current {
+        background: #eee;
+    }
+
+    nav .icon {
+        display: none;
+    }
+
+    .menu .icon {
+        display: block;
+    }
+
+    .current + .submenu-container {
+        display: block;
+        bottom: 3.825rem /* 0.75rem (padding-top 15) + 1rem (icon font-size) * 1.33 (line-height 27) + 0.75rem (label font-size) * 1.33 (line-height 20) + 0.75rem (paddding-bottom) 15 + 0 (hide the border don't accommodate it) with some slight adjustments for browser rounding. */
+    }
+
+    .submenu-container li a {
+        padding-left: 1rem; /* Matches padding on main. */
+        padding-bottom: 0.75em;
+        padding-top: 0.75em;
+    }
+
+    .menuitem .icon {
+        font-size: 1rem;
+    }
+
+    .menuitem .icon.home::before {
+        content: "△";
+    }
+    .menuitem .icon.league::before {
+        content: "⊕";
+    }
+    .menuitem .icon.competitions::before {
+        content: "🏆";
+    }
+    .menuitem .icon.resources::before {
+        content: "↑";
+    }
+    .icon.about::before {
+        content: "ℹ";
+    }
+    .icon.admin_home:before {
+        content: "A";
     }
 }
 
@@ -2035,6 +2126,13 @@ Notification Badges
     right: 1.333rem;
     text-align: center;
     top: 1.777rem;
+}
+
+@media only screen and (max-width: 640px) {
+    .badge {
+        right: 0.75em;
+        top: 0.75em;
+    }
 }
 
 .badge a, .badge a:hover {

@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 import urllib.parse
@@ -29,7 +30,7 @@ from decksite.views import (About, AboutPdm, Achievements, Archetype,
                             Faqs, Home, LeagueInfo, LinkAccounts, Matchups,
                             People, Person, PersonAchievements, PersonMatches,
                             Report, Resources, Retire, Rotation,
-                            RotationChanges, Season, Seasons, SignUp,
+                            RotationChanges, Seasons, SignUp,
                             TournamentHosting, TournamentLeaderboards,
                             Tournaments)
 from magic import card as mc
@@ -47,10 +48,15 @@ def home() -> str:
     return view.page()
 
 @APP.route('/decks/')
+@APP.route('/decks/<deck_type>/')
 @SEASONS.route('/decks/')
+@SEASONS.route('/decks/<deck_type>/')
 @cached()
-def decks() -> str:
-    view = Decks(ds.load_decks(limit='LIMIT 500', season_id=get_season_id()))
+def decks(deck_type: Optional[str] = None) -> str:
+    if deck_type not in [None, 'league']:
+        raise DoesNotExistException('Unrecognized deck_type: `{deck_type}`'.format(deck_type=deck_type))
+    league_only = deck_type == 'league'
+    view = Decks(league_only)
     return view.page()
 
 @APP.route('/decks/<int:deck_id>/')
@@ -67,14 +73,9 @@ def seasons() -> str:
     return view.page()
 
 @SEASONS.route('/')
-@SEASONS.route('/<deck_type>/')
 @cached()
-def season(deck_type: str = None) -> str:
-    if deck_type not in [None, 'league']:
-        raise DoesNotExistException('Unrecognized deck_type: `{deck_type}`'.format(deck_type=deck_type))
-    league_only = deck_type == 'league'
-    view = Season(ds.load_season(get_season_id(), league_only), league_only)
-    return view.page()
+def season() -> wrappers.Response:
+    return redirect(url_for('seasons.decks'))
 
 @APP.route('/people/')
 @SEASONS.route('/people/')
@@ -350,12 +351,14 @@ def current_league() -> str:
 def signup(form: Optional[SignUpForm] = None) -> str:
     if form is None:
         form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
-    view = SignUp(form, auth.person_id())
+    view = SignUp(form, lg.get_status() == lg.Status.CLOSED, auth.person_id())
     return view.page()
 
 @APP.route('/signup/', methods=['POST'])
 @cached()
 def add_signup() -> str:
+    if lg.get_status() == lg.Status.CLOSED:
+        return signup()
     form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
     if form.validate():
         d = lg.signup(form)
@@ -491,8 +494,14 @@ def banner(seasonnum: str) -> Response:
     elif seasonnum == '12':
         cardnames = ['Aether Hub', 'Siege Rhino', 'Greater Good', "Mind's Desire", "God-Pharaoh's Gift", 'Kiln Fiend', 'Akroma, Angel of Wrath', 'Reanimate']
         background = 'Rofellos, Llanowar Emissary'
-
-    path = image_fetcher.generate_banner(cardnames, background)
+    elif seasonnum == '13':
+        cardnames = ['Day of Judgment', 'Mana Leak', 'Duress', 'Rampaging Ferocidon', 'Evolutionary Leap', 'Gavony Township', 'Ephemerate', 'Dig Through Time', 'Lake of the Dead', 'Soulherder']
+        background = 'Fact or Fiction'
+    elif seasonnum == '14':
+        cardnames = ['Gitaxian Probe', "Orim's Chant", 'Dark Ritual', 'Chain Lightning', 'Channel', 'Gush', 'Rofellos, Llanowar Emissary', 'Laboratory Maniac']
+        background = "God-Pharaoh's Statue"
+    loop = asyncio.new_event_loop()
+    path = loop.run_until_complete(image_fetcher.generate_banner(cardnames, background))
     return send_file(os.path.abspath(path))
 
 @APP.before_request

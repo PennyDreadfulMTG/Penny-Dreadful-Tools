@@ -1,5 +1,6 @@
-/*global PD:true Deckbox:false FooTable:false, moment:false, $, Tipped */
+/*global PD:true, Deckbox:false, moment:false, $, Tipped, Chart */
 window.PD = {};
+
 PD.init = function() {
     PD.scrollToContent();
     PD.initDismiss();
@@ -24,11 +25,13 @@ PD.init = function() {
     PD.renderCharts();
     PD.filter.init();
 };
+
 PD.scrollToContent = function() {
-    if (window.matchMedia("only screen and (max-width: 640px)").matches && document.referrer.indexOf(window.location.hostname) > 0 && document.location.href.indexOf('#content') === -1) {
-        window.location.href = window.location.href + "#content";
+    if (window.matchMedia("only screen and (max-width: 640px)").matches && document.referrer.indexOf(window.location.hostname) > 0 && document.location.href.indexOf("#content") === -1) {
+        window.location = location.href + "#content";
     }
 };
+
 PD.initDismiss = function() {
     $(".dismiss").click(function() {
         $(this).closest(".intro-container").hide();
@@ -36,6 +39,7 @@ PD.initDismiss = function() {
         return false;
     });
 };
+
 PD.initMenu = function() {
     $(".has-submenu").hoverIntent({
         over: PD.onDropdownHover,
@@ -44,49 +48,32 @@ PD.initMenu = function() {
         timeout: 250
     });
 };
+
 PD.onDropdownHover = function() {
     if (window.matchMedia("only screen and (min-width: 641px)").matches) {
         $(this).addClass("hovering");
         $(this).find(".submenu-container").slideDown("fast");
     }
 };
+
 PD.onDropdownLeave = function() {
     if (window.matchMedia("only screen and (min-width: 641px)").matches) {
         $(this).removeClass("hovering");
         $(this).find(".submenu-container").slideUp("fast");
     }
 };
+
 PD.initAchievements = function() {
-    $('.has-more-info').click(PD.onMoreInfoClick);
-}
+    $(".has-more-info").click(PD.onMoreInfoClick);
+};
+
 PD.onMoreInfoClick = function() {
-    $(this).siblings('.more-info').slideToggle();
-}
+    $(this).siblings(".more-info").slideToggle();
+};
+
 PD.initTables = function() {
     var selector = "main table";
-
-    // Apply footable to all reasonably-sized tables for a nice mobile layout.
-    $(selector).filter(function() {
-        return $(this).find("> tbody > tr").length <= 1000;
-    }).footable({
-        "toggleColumn": "last",
-        "breakpoints": {
-            "xs": 359,
-            "sm": 639,
-            "md": 799,
-            "lg": 1119
-        }
-    }).bind("sortStart", function() {
-        // Prevent expanded information from sorting first and not staying with parent row by collapsing all expanded rows before sorting.
-        FooTable.get(this).rows.collapse();
-    }).css({
-        "display": "table"
-    });
-    $("div.loading").addClass("loaded");
-    // This operation is very expensive on large tables so we show them on load by default despite it being less pretty.
-    $(selector).not(".very-large").css({
-        "visibility": "visible"
-    });
+    var noTablesorter = "table.live";
 
     $.tablesorter.addParser({
         "id": "record",
@@ -95,12 +82,12 @@ PD.initTables = function() {
         },
         "format": function(s) {
             var parts, wins, losses;
-            if (s == "") {
+            if (s === "") {
                 return "";
             }
             parts = s.split("–");
-            wins = parseInt(parts[0]);
-            losses = parseInt(parts[1]);
+            wins = parseInt(parts[0], 10);
+            losses = parseInt(parts[1], 10);
             return ((wins - losses) * 1000 + wins).toString();
         },
         "type": "numeric"
@@ -143,7 +130,7 @@ PD.initTables = function() {
             return $(td).data("sort");
         },
         "type": "numeric"
-    })
+    });
     /* Give archetype columns the classes primary and secondary so that we can nest when sorted by first column but not otherwise. */
     $("table.archetypes").tablesorter({
         "sortList": [
@@ -154,21 +141,23 @@ PD.initTables = function() {
             "columns": ["primary", "secondary"]
         }
     });
-    $(selector).tablesorter({});
+    $(selector).not(noTablesorter).tablesorter({});
 };
+
 PD.initDetails = function() {
     $(".details").siblings("p.question").click(function() {
         $(this).siblings(".details").toggle();
         return false;
     });
 };
+
 // Disable tooltips on touch devices where they are awkward but enable on others where they are useful.
 PD.initTooltips = function() {
     $("body").on("touchstart", function() {
         $("body").off();
     });
     $("body").on("mouseover", function() {
-        if (typeof Deckbox != "undefined") {
+        if (typeof Deckbox !== "undefined") {
             Deckbox._.enable();
         }
         Tipped.create("main [title]", {
@@ -179,21 +168,24 @@ PD.initTooltips = function() {
         $("body").off();
     });
 };
+
 PD.initReassign = function() {
     $(".reassign").click(function() {
         $(this).hide();
         $.post("/api/archetype/reassign", {
-            'deck_id': $(this).data('deck_id'),
-            'archetype_id': $(this).data('rule_archetype_id')
+            "deck_id": $(this).data("deck_id"),
+            "archetype_id": $(this).data("rule_archetype_id")
         }, PD.afterReassign);
         return false;
     });
 };
+
 PD.afterReassign = function(data) {
-    $('tr:has(a[data-deck_id="' + data.deck_id + '"])').hide()
-}
+    $('tr:has(a[data-deck_id="' + data.deck_id + '"])').hide();
+};
+
 PD.initRuleForms = function() {
-    $(".rule-form").submit(function(e) {
+    $(".rule-form").submit(function() {
         var form = $(this);
         var url = form.attr("action");
         $.ajax({
@@ -204,14 +196,14 @@ PD.initRuleForms = function() {
         });
         return false;
     });
-}
+};
+
 PD.afterRuleUpdate = function(data) {
     if (data.success) {
-        location.href = location.href; // make sure it's a GET refresh and not a duplicate of a previous POST
-    } else {
-        alert(data.msg);
+        window.location = location.href; // make sure it's a GET refresh and not a duplicate of a previous POST
     }
-}
+};
+
 PD.loadDeck = function() {
     var file = this.files[0],
         reader = new FileReader();
@@ -220,19 +212,21 @@ PD.loadDeck = function() {
     };
     reader.readAsText(file);
 };
+
 PD.toggleDrawDropdown = function() {
-    var can_draw = false;
+    var canDraw = false;
     $(document).find(".deckselect").each(function(_, select) {
-        can_draw = can_draw || select.selectedOptions[0].classList.contains("deck-can-draw");
+        canDraw = canDraw || select.selectedOptions[0].classList.contains("deck-can-draw");
     });
-    if (can_draw) {
+    if (canDraw) {
         $(".draw-report").css("visibility", "visible");
     } else {
         $(".draw-report").css("visibility", "hidden");
         $("#draws").val(0);
     }
-    return can_draw;
+    return canDraw;
 };
+
 PD.toggleIllegalCards = function() {
     // Fix the width of the table columns so that it does not "jump" when rows are added or removed.
     $(".bugtable tr td").each(function() {
@@ -240,15 +234,14 @@ PD.toggleIllegalCards = function() {
             "width": $(this).width() + "px"
         });
     });
-    $(".bugtable").not(".footable-details").each(function() {
-        FooTable.get(this).rows.collapse();
-    });
     $("tr").find(".illegal").closest("tr").toggle(!this.checked);
 };
+
 PD.localizeTimes = function() {
     PD.localizeTimeElements();
     PD.hideRepetitionInCalendar();
 };
+
 PD.localizeTimeElements = function() {
     $("time").each(function() {
         var t = moment($(this).attr("datetime")),
@@ -258,10 +251,12 @@ PD.localizeTimeElements = function() {
         $(this).html(s).show();
     });
 };
+
 PD.hideRepetitionInCalendar = function() {
     PD.hideRepetition(".calendar time.month");
     PD.hideRepetition(".calendar time.day");
 };
+
 PD.hideRepetition = function(selector) {
     var v;
     $(selector).each(function() {
@@ -272,6 +267,7 @@ PD.hideRepetition = function(selector) {
         }
     });
 };
+
 PD.getUrlParams = function() {
     var vars = [],
         hash, i,
@@ -297,7 +293,7 @@ PD.initSignupDeckChooser = function() {
             buffer += "\nSideboard:\n" + data.sb.join("\n");
         }
         textarea.val(buffer);
-    })
+    });
 };
 
 PD.initPersonalization = function() {
@@ -305,7 +301,7 @@ PD.initPersonalization = function() {
         var text = "";
         if (data.discord_id) {
             text += "You are logged in";
-            if (data.mtgo_username != null) {
+            if (data.mtgo_username !== null) {
                 text += " as <a href=\"/people/" + PD.htmlEscape(data.mtgo_username) + "\">" + PD.htmlEscape(data.mtgo_username) + "</a>";
             } else {
                 text += " <span class=\"division\"></span> <a href=\"/link/\">Link</a> your Magic Online account";
@@ -315,7 +311,7 @@ PD.initPersonalization = function() {
                 if (data.league_end) {
                     text += "<span class=\"division\"></span> <a href=\"/league/current/\">Current league</a> ends in " + data.league_end;
                 }
-            } else if (data.mtgo_username != null) {
+            } else if (data.mtgo_username !== null) {
                 text += " <span class=\"division\"></span> You do not have an active league run — <a href=\"/signup/\">Sign Up</a>";
             }
             text += " <span class=\"division\"></span> <a href=\"/logout/\">Log Out</a>";
@@ -331,58 +327,57 @@ PD.initPersonalization = function() {
             $(".demimod").show();
         }
         if ((data.admin || data.demimod) && (data.archetypes_to_tag > 0)) {
-            $('.edit_archetypes').children()[0].text = data.archetypes_to_tag
+            $(".edit_archetypes").children()[0].text = data.archetypes_to_tag;
         }
         if (!data.hide_intro && !PD.getUrlParam("hide_intro")) {
             $(".intro-container").show();
         }
-    })
+    });
 };
 
 PD.initPersonNotes = function() {
-    var i, personId = $('.person-notes').data('person_id');
+    var i, personId = $(".person-notes").data("person_id");
     // Only do the work if we're on a page that should show the notes.
     if (personId) {
-        $.get('/api/admin/people/' + personId + '/notes/', function(data) {
+        $.get("/api/admin/people/" + personId + "/notes/", function(data) {
             if (data.notes.length > 0) {
-                s = '<article>';
+                let s = "<article>";
                 for (i = 0; i < data.notes.length; i++) {
-                    s += '<p><span class="subtitle">' + data.notes[i].display_date + '</span> ' + data.notes[i].note + '</p>'
+                    s += '<p><span class="subtitle">' + data.notes[i].display_date + "</span> " + data.notes[i].note + "</p>";
                 }
-                s += '</article>';
-                $('.person-notes').html(s);
+                s += "</article>";
+                $(".person-notes").html(s);
             } else {
-                $('.person-notes').html('<p>None</p>');
+                $(".person-notes").html("<p>None</p>");
             }
         });
     }
-}
+};
 
 PD.renderCharts = function() {
     Chart.defaults.global.defaultFontFamily = $("body").css("font-family");
-    if ($("td").size() > 0) {
+    if ($("td").length > 0) {
         Chart.defaults.global.defaultFontSize = parseInt($("td").css("font-size"), 10);
     }
     Chart.defaults.global.legend.display = false;
     Chart.defaults.global.title.display = false;
     Chart.defaults.global.tooltips.displayColors = false;
     Chart.defaults.scale.ticks.beginAtZero = true;
-    $('.chart').each(function() {
-        var id = $(this).attr("id"),
-            type = $(this).data("type"),
+    $(".chart").each(function() {
+        var type = $(this).data("type"),
             labels = $(this).data("labels"),
             series = $(this).data("series"),
             options = $(this).data("options"),
             ctx = this.getContext("2d");
+        // eslint-disable-next-line new-cap
+        // eslint-disable-next-line no-new
         new Chart(ctx, {
-            'type': type,
-            'data': {
-                labels: labels,
-                datasets: [{
-                    data: series
-                }]
+            type,
+            "data": {
+                labels,
+                datasets: [{ data: series }]
             },
-            options: options
+            options
         });
     });
 };
@@ -396,7 +391,7 @@ PD.filter = {};
 PD.filter.init = function() {
 
     // if there are no filter-forms on the page, don't try to set anything up
-    if ($(".scryfall-filter-form").length == 0) {
+    if ($(".scryfall-filter-form").length === 0) {
         return false;
     }
 
@@ -404,10 +399,10 @@ PD.filter.init = function() {
 
     // Apply the filter with the initial value of the form
     // The initial value is recieved by the template from the backend
-    let initial_value = $(".scryfall-filter-input").val();
-    if (initial_value) {
+    const initialValue = $(".scryfall-filter-input").val();
+    if (initialValue) {
         PD.filter.toggleDisplayFilter();
-        PD.filter.scryfallFilter(initial_value);
+        PD.filter.scryfallFilter(initialValue);
     }
     // set up the Event handlers for the form
     $(".scryfall-filter-form").submit(function() {
@@ -441,8 +436,8 @@ PD.filter.init = function() {
 
 PD.filter.applyCardNames = function(cardNames) {
     $(".cardrow").each(function() {
-        let jqEle = $(this);
-        if (cardNames.indexOf(this.dataset.cardname) == -1) {
+        const jqEle = $(this);
+        if (cardNames.indexOf(this.dataset.cardname) === -1) {
             jqEle.addClass("hidden-by-scryfall-filter");
         } else {
             jqEle.removeClass("hidden-by-scryfall-filter");
@@ -453,28 +448,28 @@ PD.filter.applyCardNames = function(cardNames) {
 
 PD.filter.applyInterestingness = function(interestingness) {
     $(".cardrow").each(function() {
-        let jqEle = $(this);
-        if (interestingness != "all" && !jqEle.find("a").hasClass("interestingness-" + interestingness)) {
+        const jqEle = $(this);
+        if (interestingness !== "all" && !jqEle.find("a").hasClass("interestingness-" + interestingness)) {
             jqEle.addClass("hidden-by-interestingness-filter");
         } else {
             jqEle.removeClass("hidden-by-interestingness-filter");
         }
     });
     PD.filter.updateCardCounts();
-}
+};
 
 // input url returns a promise to {success: true/false, cardNames: [...], error message: {...}}
 PD.filter.retrieveAllCards = function(url) {
-    function succeed(blob) {
-        let cards = blob.data.map(x => x["name"]);
+    const succeed = function(blob) {
+        const cards = blob.data.map((x) => x["name"]);
         if (blob["has_more"]) {
-            return PD.filter.retrieveAllCards(blob["next_page"]).then(function(new_blob) {
+            return PD.filter.retrieveAllCards(blob["next_page"]).then(function(newBlob) {
                 // Simplifying assumption: if the first page didn't produce scryfall-level errors, neither will the later ones
                 // and warnings are the same on all pages
                 return {
                     success: true,
-                    cardNames: cards.concat(new_blob["cardNames"]),
-                    warnings: new_blob["warnings"]
+                    cardNames: cards.concat(newBlob["cardNames"]),
+                    warnings: newBlob["warnings"]
                 };
             });
         } else {
@@ -484,21 +479,21 @@ PD.filter.retrieveAllCards = function(url) {
                 warnings: blob["warnings"]
             };
         }
-    }
+    };
 
-    function fail(jqXHR) {
+    const fail = function(jqXHR) {
         // we may have failed via a scryfall error, or via a connection error
-        if (jqXHR.status == 400 && "responseJSON" in jqXHR) {
+        if (jqXHR.status === 400 && "responseJSON" in jqXHR) {
             // Scryfall gave us a Bad Request - there were issues with the query
             return {
                 success: false,
                 details: jqXHR.responseJSON.details,
                 warnings: jqXHR.responseJSON.warnings
             };
-        } else if (jqXHR.status == 404 && "responseJSON" in jqXHR) {
+        } else if (jqXHR.status === 404 && "responseJSON" in jqXHR) {
             // Scryfall returned no cards - that's not a fail, we just display nothing
             // Since this is not a true failure, return a resolved Deffered object
-            return $.Deferred().resolve({
+            return $.Deferred().resolve({ // eslint-disable-line new-cap
                 success: true,
                 cardNames: [],
                 warnings: jqXHR.responseJSON.warnings
@@ -511,7 +506,7 @@ PD.filter.retrieveAllCards = function(url) {
                 warnings: []
             };
         }
-    }
+    };
     return $.getJSON(url).then(succeed, fail);
 };
 
@@ -534,7 +529,7 @@ PD.filter.enableForm = function() {
 
 PD.filter.toggleDisplayFilter = function() {
     $(".filters-container").slideToggle(200);
-    if ($(".toggle-filters-button").text() == "Show filters") {
+    if ($(".toggle-filters-button").text() === "Show filters") {
         $(".toggle-filters-button").text("Hide filters");
     } else {
         $(".toggle-filters-button").text("Show filters");
@@ -552,20 +547,20 @@ PD.filter.scryfallFilter = function(query) {
 
     let url;
     if ("optimize" in $(".scryfall-filter-input").data()) {
-        let faster_query = "f:pd (" + query + ")";
-        url = "https://api.scryfall.com/cards/search?q=" + encodeURIComponent(faster_query);
+        const fasterQuery = "f:pd (" + query + ")";
+        url = "https://api.scryfall.com/cards/search?q=" + encodeURIComponent(fasterQuery);
     } else {
         url = "https://api.scryfall.com/cards/search?q=" + encodeURIComponent(query);
     }
 
     PD.filter.retrieveAllCards(url)
         .done(function(o) {
-            let cardNames = o["cardNames"];
+            const cardNames = o["cardNames"];
             PD.filter.applyCardNames(cardNames);
             history.pushState({
-                cardNames: cardNames,
+                cardNames,
                 warnings: o["warnings"],
-                query: query
+                query
             }, "", "?fq=" + query);
             PD.filter.showErrorsAndWarnings(o);
         })
@@ -587,16 +582,16 @@ PD.filter.reset = function() {
 };
 
 PD.filter.showErrorsAndWarnings = function(o) {
-    let p = $(".errors-and-warnings");
+    const p = $(".errors-and-warnings");
     p.empty();
     if ("details" in o) {
-        let error = document.createElement("li");
+        const error = document.createElement("li");
         error.innerText = "Error (query failed) - " + o["details"];
         p.append(error);
     }
     if ("warnings" in o) {
-        for (let i in o["warnings"]) {
-            let warning = document.createElement("li");
+        for (let i = 0; i < o["warnings"].length; i++) {
+            const warning = document.createElement("li");
             warning.innerText = "Warning: " + o["warnings"][i];
             p.append(warning);
         }
@@ -610,10 +605,10 @@ PD.filter.clearErrorsAndWarnings = function() {
 
 PD.filter.updateCardCounts = function() {
     $("span.total").parent().parent().each(function() {
-        let l = $(this).find(".cardrow").filter(":visible").length;
+        const l = $(this).find(".cardrow").filter(":visible").length;
         $(this).find("span.total").text(l);
     });
-}
+};
 
 $(document).ready(function() {
     PD.init();

@@ -3,8 +3,8 @@ from discord.ext import commands
 
 from discordbot import emoji
 from discordbot.command import MtgContext
-from magic import fetcher, oracle
-from shared import configuration
+from magic import oracle
+from shared import configuration, fetch_tools
 
 
 @commands.command(aliases=['sp', 'spoil'])
@@ -12,7 +12,7 @@ async def spoiler(ctx: MtgContext, *, args: str) -> None:
     """Request a card from an upcoming set."""
     if len(args) == 0:
         return await ctx.send('{author}: Please specify a card name.'.format(author=ctx.author.mention))
-    sfcard = fetcher.internal.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=args))
+    sfcard = fetch_tools.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=args))
     if sfcard['object'] == 'error':
         return await ctx.send('{author}: {details}'.format(author=ctx.author.mention, details=sfcard['details']))
     imagename = '{set}_{number}'.format(
@@ -22,7 +22,7 @@ async def spoiler(ctx: MtgContext, *, args: str) -> None:
         c = sfcard['card_faces'][0]
     else:
         c = sfcard
-    fetcher.internal.store(c['image_uris']['normal'], imagepath)
+    fetch_tools.store(c['image_uris']['normal'], imagepath)
     text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=c['mana_cost']), ctx.bot)
     await ctx.send(file=File(imagepath), content=text)
     oracle.scryfall_import(sfcard['name'])

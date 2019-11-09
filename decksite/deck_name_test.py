@@ -87,7 +87,9 @@ TESTDATA = [
     ('Supremacia Ariana', 'Mono White', ['W'], None),
     ('Blue Bois', 'Blue Bois', ['U', 'B'], None),
     ('Analog Drake', 'Analog Drake', ['U', 'W'], 'Peregrine Drake'),
-    ('R Deck Wins', 'Red Deck Wins', ['R'], 'Red Deck Wins')
+    ('R Deck Wins', 'Red Deck Wins', ['R'], 'Red Deck Wins'),
+    ('HAND　DEATH', 'Hand Death', ['B'], 'Mono Black Midrange'),
+    ('(Penny) Boros Soldiers', 'Boros Soldiers', ['W', 'R'], 'Soldiers')
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)
@@ -101,6 +103,7 @@ def test_remove_pd() -> None:
     assert deck_name.remove_pd('Penny Dreadful Knights') == 'Knights'
     assert deck_name.remove_pd('biovisionary pd') == 'biovisionary'
     assert deck_name.remove_pd('[PD] Mono Black Control') == 'Mono Black Control'
+    assert deck_name.remove_pd('(Penny) Boros Soliders') == 'Boros Soliders'
 
 def test_invalid_color() -> None:
     d = Container({'original_name': 'PD',

@@ -20,7 +20,7 @@ def run() -> None:
         from decksite import main
         main.init()
     elif sys.argv[1] == 'decksite-profiler':
-        from werkzeug.contrib.profiler import ProfilerMiddleware
+        from werkzeug.middleware.profiler import ProfilerMiddleware
         from decksite import main
         main.APP.config['PROFILE'] = True
         main.APP.wsgi_app = ProfilerMiddleware(main.APP.wsgi_app, restrictions=[30]) # type: ignore
@@ -79,14 +79,16 @@ def task(args: List[str]) -> None:
                 app_context = APP.app_context()  # type: ignore
                 app_context.__enter__()
             if getattr(s, 'scrape', None) is not None:
-                s.scrape() # type: ignore
+                exitcode = s.scrape() # type: ignore
             elif getattr(s, 'run', None) is not None:
-                s.run() # type: ignore
+                exitcode = s.run() # type: ignore
             # Only when called directly, not in 'all'
             elif getattr(s, 'ad_hoc', None) is not None:
-                s.ad_hoc() # type: ignore
+                exitcode = s.ad_hoc()  # type: ignore
             if use_app_conext:
                 app_context.__exit__(None, None, None)
+            if exitcode is not None:
+                sys.exit(exitcode)
     except Exception as c:
         from shared import repo
         repo.create_issue(f'Error running task {args}', 'CLI', 'CLI', 'PennyDreadfulMTG/perf-reports', exception=c)

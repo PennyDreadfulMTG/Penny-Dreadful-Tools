@@ -1,22 +1,19 @@
-{{> spinner}}
-<table {{#is_very_large}}class="very-large"{{/is_very_large}}>
+<table>
     <thead>
         <tr>
             <th>Card</th>
             <th class="n" data-sortInitialOrder="desc"># Decks</th>
-            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">Record</th>
-            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">Win %</th>
-            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">
+            <th class="n" data-sortInitialOrder="desc">Record</th>
+            <th class="n" data-sortInitialOrder="desc">Win %</th>
+            <th class="n" data-sortInitialOrder="desc">
                 <abbr title="Tournament wins">①</abbr>
             </th>
-            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">
+            <th class="n" data-sortInitialOrder="desc">
                 <abbr title="Tournament top-8s">⑧</abbr>
             </th>
-            <th class="n" data-breakpoints="xs" data-sortInitialOrder="desc">
+            <th class="n" data-sortInitialOrder="desc">
                 <abbr title="League 5-0 runs">5–0s</abbr>
             </th>
-            {{! Empty column to hold the toggle when footable kicks in.}}
-            <td></td>
         </tr>
     </thead>
     <tbody>
@@ -29,8 +26,6 @@
                 <td class="n">{{#tournament_wins}}{{tournament_wins}}{{/tournament_wins}}</td>
                 <td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>
                 <td class="n">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>
-                {{! Empty column to hold the toggle when footable kicks in.}}
-                <td></td>
             </tr>
         {{/cards}}
     </tbody>

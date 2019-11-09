@@ -156,7 +156,7 @@ async def post_cards(
     if image_file is None:
         text += '\n\n'
         if len(cards) == 1:
-            text += emoji.replace_emoji(cards[0].text, client)
+            text += emoji.replace_emoji(cards[0].oracle_text, client)
         else:
             text += 'No image available.'
     text += additional_text
@@ -186,7 +186,8 @@ async def send_image_with_retry(channel: TextChannel, image_file: str, text: str
         await send(channel, file=File(image_file), content=text)
 
 def single_card_text_internal(client: Client, requested_card: Card, disable_emoji: bool) -> str:
-    mana = emoji.replace_emoji(''.join(requested_card.mana_cost or []), client)
+    mana = emoji.replace_emoji('|'.join(requested_card.mana_cost or []), client)
+    mana = mana.replace('|', ' // ')
     legal = ' — ' + emoji.info_emoji(requested_card, verbose=True)
     if disable_emoji:
         legal = ''

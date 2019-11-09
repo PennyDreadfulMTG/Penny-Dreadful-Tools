@@ -11,9 +11,9 @@ from decksite.data import match as ms
 from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.data import rule as rs
-from decksite.views import (Admin, EditAliases, EditArchetypes, EditMatches,
-                            EditNews, EditRules, PlayerNotes, Prizes,
-                            RotationChecklist, Unlink)
+from decksite.views import (Admin, EditAliases, EditArchetypes, EditLeague,
+                            EditMatches, EditNews, EditRules, PlayerNotes,
+                            Prizes, RotationChecklist, Unlink)
 from magic.models import Deck
 from shared import dtutil, redis
 from shared.container import Container
@@ -120,14 +120,14 @@ def post_matches() -> str:
     if request.form.get('match_id'):
         match_id = cast_int(request.form.get('match_id'))
     if request.form.get('action') == 'delete':
-        lg.delete_match(match_id)
+        ms.delete_match(match_id)
         return edit_matches()
     left_id = cast_int(request.form.get('left_id'))
     left_games = cast_int(request.form.get('left_games'))
     right_id = cast_int(request.form.get('right_id'))
     right_games = cast_int(request.form.get('right_games'))
     if request.form.get('action') == 'change':
-        lg.update_match(match_id, left_id, left_games, right_id, right_games)
+        ms.update_match(match_id, left_id, left_games, right_id, right_games)
     elif request.form.get('action') == 'add':
         ms.insert_match(dtutil.now(), left_id, left_games, right_id, right_games, None, None, None)
     return edit_matches()
@@ -203,6 +203,18 @@ def post_unlink() -> str:
             errors.append('Discord ID must be an integer.')
     return unlink(n, errors)
 
+@APP.route('/admin/league/')
+@auth.admin_required
+def edit_league() -> str:
+    view = EditLeague(lg.get_status())
+    return view.page()
+
+@APP.route('/admin/league/', methods=['POST'])
+@auth.admin_required
+def post_league() -> str:
+    status = lg.Status.CLOSED if request.form.get('action') == 'close' else lg.Status.OPEN
+    lg.set_status(status)
+    return edit_league()
 
 def cast_int(param: Optional[Any]) -> int:
     return int(cast(str, param))

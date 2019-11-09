@@ -1,15 +1,12 @@
 <section>
     <h1>People</h1>
-    {{> spinner}}
     <table class="with-marginalia">
         <thead>
             <tr>
-                <th data-breakpoints="xs" class="marginalia" data-sortInitialOrder="desc">⇅</th>
+                <th class="marginalia" data-sortInitialOrder="desc">⇅</th>
                 <th>Name</th>
                 <th># of Matches</th>
                 <th>Favorite Format</th>
-                {{! Empty column to hold the toggle when footable kicks in. }}
-                <td></td>
             </tr>
         </thead>
         <tbody>
@@ -19,8 +16,6 @@
                     <td><a href="{{url}}">{{name}}</a></td>
                     <td>{{num_matches}}</td>
                     <td>{{fav_format}}</td>
-                    {{! Empty column to hold the toggle when footable kicks in.}}
-                    <td></td>
                 </tr>
             {{/people}}
         </tbody>

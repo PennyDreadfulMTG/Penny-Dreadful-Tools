@@ -11,7 +11,7 @@ async def update(ctx: MtgContext) -> None:
     multiverse.set_legal_cards()
     oracle.legal_cards(force=True)
     multiverse.update_bugged_cards()
-    multiverse.update_cache()
+    multiverse.rebuild_cache()
     multiverse.reindex()
     oracle.init(force=True)
     await ctx.send('Reloaded legal cards and bugs.')

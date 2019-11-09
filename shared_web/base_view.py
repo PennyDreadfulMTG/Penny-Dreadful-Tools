@@ -50,6 +50,9 @@ class BaseView:
     def js_url(self) -> str:
         return current_app.config['js_url'] or url_for('static', filename='js/pd.js', v=self.commit_id('shared_web/static/js/pd.js'))
 
+    def bundle_url(self) -> str:
+        return url_for('static', filename='dist/bundle.js', v=self.commit_id('shared_web/static/js/index.jsx'))
+
     def language_icon(self) -> str:
         return url_for('static', filename='images/language_icon.svg')
 

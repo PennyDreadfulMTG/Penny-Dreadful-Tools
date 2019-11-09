@@ -5,13 +5,13 @@ from typing import Any, List, Optional, Union, cast
 import inflect
 from anytree.iterators import PreOrderIter
 from babel import Locale
-from flask import request, session, url_for
+from flask import request, url_for
 from flask_babel import gettext, ngettext
 from mypy_extensions import TypedDict
 from werkzeug.routing import BuildError
 
-from decksite import APP, get_season_id
-from decksite.data import archetype
+from decksite import APP, get_season_id, prepare
+from decksite.data import archetype, competition
 from magic import legality, oracle, rotation, tournaments
 from magic.models import Card, Deck
 from shared import dtutil
@@ -39,18 +39,22 @@ NUM_MOST_COMMON_CARDS_TO_LIST = 10
 class View(BaseView):
     def __init__(self) -> None:
         self.decks: List[Deck] = []
-        self.active_runs_text: Optional[str] = None
+        self.active_runs_text: str = ''
         self.hide_active_runs = True
-        self.is_very_large: Optional[bool] = None
         self.show_seasons: bool = False
         self.legal_formats: Optional[List[str]] = None
         self.cardhoarder_logo_url = url_for('static', filename='images/cardhoarder.png')
         self.mtgotraders_logo_url = url_for('static', filename='images/mtgotraders.png')
         self.is_person_page: Optional[bool] = None
-        self.tournament_only: bool = False
         self._card_image_template: Optional[str] = None
         self._card_url_template: Optional[str] = None
 
+        self.next_tournament_name = None
+        self.next_tournament_time = None
+        self.tournaments: List[Container] = []
+        self.content_class = 'content-' + self.__class__.__name__.lower()
+        self.page_size = request.cookies.get('page_size', 20)
+        self.tournament_only = False
 
     def season_id(self) -> int:
         return get_season_id()
@@ -68,8 +72,8 @@ class View(BaseView):
             'code_lower': 'all',
             'num': None,
             'url': seasonized_url('all'),
-            'decks_url': url_for('seasons.season', season_id='all'),
-            'league_decks_url': url_for('seasons.season', season_id='all', deck_type='league'),
+            'decks_url': url_for('seasons.decks', season_id='all'),
+            'league_decks_url': url_for('seasons.decks', season_id='all', deck_type='league'),
             'competitions_url': url_for('seasons.competitions', season_id='all'),
             'archetypes_url': url_for('seasons.archetypes', season_id='all'),
             'people_url': url_for('seasons.people', season_id='all'),
@@ -87,8 +91,8 @@ class View(BaseView):
                 'code_lower': code.lower(),
                 'num': num,
                 'url': seasonized_url(num),
-                'decks_url': url_for('seasons.season', season_id=num),
-                'league_decks_url': url_for('seasons.season', season_id=num, deck_type='league'),
+                'decks_url': url_for('seasons.decks', season_id=num),
+                'league_decks_url': url_for('seasons.decks', season_id=num, deck_type='league'),
                 'competitions_url': url_for('seasons.competitions', season_id=num),
                 'archetypes_url': url_for('seasons.archetypes', season_id=num),
                 'people_url': url_for('seasons.people', season_id=num),
@@ -157,71 +161,12 @@ class View(BaseView):
         self.prepare_matches()
 
     def prepare_decks(self) -> None:
-        self.is_very_large = self.is_very_large or len(getattr(self, 'decks', [])) > 500
         self.prepare_active_runs(self)
-        for d in getattr(self, 'decks', []):
-            self.prepare_deck(d)
-
-    def prepare_deck(self, d: Deck) -> None:
-        set_stars_and_top8(d)
-        if d.get('colors') is not None:
-            d.colors_safe = colors_html(d.colors, d.colored_symbols)
-        d.person_url = '/people/{id}/'.format(id=d.person_id)
-        d.date_sort = dtutil.dt2ts(d.active_date)
-        d.display_date = dtutil.display_date(d.active_date)
-        d.show_record = d.wins or d.losses or d.draws
-        if d.competition_id:
-            d.competition_url = '/competitions/{id}/'.format(id=d.competition_id)
-        d.url = '/decks/{id}/'.format(id=d.id)
-        d.export_url = '/export/{id}/'.format(id=d.id)
-        d.cmc_chart_url = '/charts/cmc/{id}-cmc.png'.format(id=d.id)
-        if d.is_in_current_run():
-            d.active_safe = '<span class="active" title="Active in the current league">⊕</span>'
-            d.stars_safe = '{active} {stars}'.format(active=d.active_safe, stars=d.stars_safe).strip()
-            d.source_sort = '1'
-        d.source_is_external = not d.source_name == 'League'
-        d.comp_row_len = len('{comp_name} (Piloted by {person}'.format(comp_name=d.competition_name, person=d.person))
-        if d.get('archetype_id', None):
-            d.archetype_url = '/archetypes/{id}/'.format(id=d.archetype_id)
-        # We might be getting '43%'/'' from cache or '43'/None from the db. Cope with all possibilities.
-        # It might be better to use display_omw and omw as separate properties rather than overwriting the numeric value.
-        if d.get('omw') is None or d.omw == '':
-            d.omw = ''
-        elif '%' not in str(d.omw):
-            d.omw = str(int(d.omw)) + '%'
-        d.has_legal_format = len(d.legal_formats) > 0
-        d.pd_legal = 'Penny Dreadful' in d.legal_formats
-        d.legal_icons = ''
-        sets = rotation.SEASONS
-        if 'Penny Dreadful' in d.legal_formats:
-            icon = rotation.current_season_code().lower()
-            n = sets.index(icon.upper()) + 1
-            d.legal_icons += '<a href="{url}"><i class="ss ss-{code} ss-rare ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), code=icon, n=n)
-        past_pd_formats = [fmt.replace('Penny Dreadful ', '') for fmt in d.legal_formats if 'Penny Dreadful ' in fmt]
-        past_pd_formats.sort(key=lambda code: -sets.index(code))
-        for code in past_pd_formats:
-            n = sets.index(code.upper()) + 1
-            d.legal_icons += '<a href="{url}"><i class="ss ss-{set} ss-common ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), set=code.lower(), n=n)
-        if 'Commander' in d.legal_formats: # I think C16 looks the nicest.
-            d.legal_icons += '<i class="ss ss-c16 ss-uncommon ss-grad">CMDR</i>'
-        if session.get('admin') or session.get('demimod') or not d.is_in_current_run():
-            d.decklist = str(d).replace('\n', '<br>')
-        else:
-            d.decklist = ''
-        total, num_cards = 0, 0
-        for c in d.maindeck:
-            if c.card.cmc is None:
-                c.card.cmc = 0
-            if 'Land' not in c.card.type_line:
-                num_cards += c['n']
-                total += c['n'] * c.card.cmc
-        d.average_cmc = round(total / max(1, num_cards), 2)
+        prepare.prepare_decks(getattr(self, 'decks', []))
 
     def prepare_cards(self) -> None:
-        self.is_very_large = self.is_very_large or len(getattr(self, 'cards', [])) > 500
         for c in getattr(self, 'cards', []):
             self.prepare_card(c)
-
 
     def url_for_image(self, name: str) -> str:
         if self._card_image_template is None:
@@ -291,10 +236,8 @@ class View(BaseView):
         for a in getattr(self, 'archetypes', []):
             self.prepare_archetype(a, getattr(self, 'archetypes', []))
 
-    def prepare_archetype(self,
-                          a: archetype.Archetype,
-                          archetypes: List[archetype.Archetype]
-                         ) -> None:
+    def prepare_archetype(self, a: archetype.Archetype, archetypes: List[archetype.Archetype]) -> None:
+
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
 
         a.show_record = a.get('num_decks') is not None and (a.get('wins') or a.get('draws') or a.get('losses'))
@@ -332,11 +275,9 @@ class View(BaseView):
             a.most_common_cards_tournament.append(cs[v[0]])
         a.has_most_common_cards_tournament = len(a.most_common_cards_tournament) > 0
 
-        a.archetype_tree = list(PreOrderIter(a))
+        # Set up archetype tree, pruning siblings that we don't want to show.
+        a.archetype_tree = [r for r in PreOrderIter(a) if r.id in [a.id for a in archetypes]]
         for r in a.archetype_tree:
-            # Prune branches we don't want to show
-            if r.id not in [a.id for a in archetypes]:
-                r.parent = None
             r['url'] = url_for('.archetype', archetype_id=r['id'])
             r['url_tournament'] = url_for('.archetype_tournament', archetype_id=r['id'])
             # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
@@ -399,45 +340,29 @@ class View(BaseView):
     def TT_HELP_TRANSLATE(self) -> str:
         return gettext('Help us translate the site into your language')
 
-def colors_html(colors: List[str], colored_symbols: List[str]) -> str:
-    total = len(colored_symbols)
-    if total == 0:
-        return '<span class="mana" style="width: 3rem"></span>'
-    s = ''
-    for color in colors:
-        n = colored_symbols.count(color)
-        one_pixel_in_rem = 0.05 # See pd.css base font size for the derivation of this value.
-        width = (3.0 - one_pixel_in_rem * len(colors)) / total * n
-        s += '<span class="mana mana-{color}" style="width: {width}rem"></span>'.format(color=color, width=width)
-    return s
+    def setup_tournaments(self) -> None:
+        info = tournaments.next_tournament_info()
+        self.next_tournament_name = info['next_tournament_name']
+        self.next_tournament_time = info['next_tournament_time']
+        self.tournaments = sorted(tournaments.all_series_info(), key=lambda t: t.time)
+        leagues = competition.load_competitions("c.competition_series_id IN (SELECT id FROM competition_series WHERE name = 'League') AND c.end_date > UNIX_TIMESTAMP(NOW())")
+        end_date, prev_month, shown_end = None, None, False
+        for t in self.tournaments:
+            month = t.time.strftime('%b')
+            if month != prev_month:
+                t.month = month
+                prev_month = month
+            t.date = t.time.day
+            if len(leagues) > 0 and t.time >= leagues[-1].start_date and t.time < leagues[-1].end_date:
+                t.league = leagues.pop(-1)
+                t.league.display = True
+                end_date = t.league.end_date
+            elif not shown_end and end_date and t.time >= end_date:
+                t.league = {'class': 'begin', 'display': False}
+                shown_end = True
+            elif end_date:
+                t.league = {'class': 'ongoing', 'display': False}
 
-def set_stars_and_top8(d: Deck) -> None:
-    if d.finish == 1 and d.competition_top_n >= 1:
-        d.top8_safe = '<span title="Winner">①</span>'
-        d.stars_safe = '★★★'
-    elif d.finish == 2 and d.competition_top_n >= 2:
-        d.top8_safe = '<span title="Losing Finalist">②</span>'
-        d.stars_safe = '★★'
-    elif d.finish == 3 and d.competition_top_n >= 3:
-        d.top8_safe = '<span title="Losing Semifinalist">④</span>'
-        d.stars_safe = '★★'
-    elif d.finish == 5 and d.competition_top_n >= 5:
-        d.top8_safe = '<span title="Losing Quarterfinalist">⑧</span>'
-        d.stars_safe = '★'
-    else:
-        d.top8_safe = ''
-        if d.get('wins') is not None and d.get('losses') is not None:
-            if d.wins - 5 >= d.losses:
-                d.stars_safe = '★★'
-            elif d.wins - 3 >= d.losses:
-                d.stars_safe = '★'
-            else:
-                d.stars_safe = ''
-        else:
-            d.stars_safe = ''
-
-    if len(d.stars_safe) > 0:
-        d.stars_safe = '<span class="stars" title="Success Rating">{stars}</span>'.format(stars=d.stars_safe)
 
 def seasonized_url(season_id: Union[int, str]) -> str:
     args = request.view_args.copy()

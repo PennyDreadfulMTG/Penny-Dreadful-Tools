@@ -3,7 +3,7 @@ from typing import List
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from shared import configuration, fetcher_internal
+from shared import configuration, fetch_tools
 
 from . import fetcher
 
@@ -16,7 +16,7 @@ def main(changes: List[str]) -> None:
 
 
 def scrape(url: str) -> None:
-    soup = BeautifulSoup(fetcher_internal.fetch(url), 'html.parser')
+    soup = BeautifulSoup(fetch_tools.fetch(url), 'html.parser')
     for b in soup.find_all('h2'):
         parse_header(b)
 

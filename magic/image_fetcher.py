@@ -7,12 +7,11 @@ from typing import List, Optional
 
 from PIL import Image
 
-import shared.fetcher_internal as internal
 from magic import card, oracle
 from magic.card import Printing
 from magic.models import Card
-from shared import configuration
-from shared.fetcher_internal import FetchException, escape
+from shared import configuration, fetch_tools
+from shared.fetch_tools import FetchException, escape
 
 if not os.path.exists(configuration.get_str('image_dir')):
     os.mkdir(configuration.get_str('image_dir'))
@@ -50,10 +49,10 @@ def gatherer_image(printing: Printing) -> Optional[str]:
 def download_bluebones_image(cards: List[Card], filepath: str) -> bool:
     print('Trying to get image for {cards}'.format(cards=', '.join(c.name for c in cards)))
     try:
-        internal.store(bluebones_image(cards), filepath)
+        fetch_tools.store(bluebones_image(cards), filepath)
     except FetchException as e:
         print('Error: {e}'.format(e=e))
-    return internal.acceptable_file(filepath)
+    return fetch_tools.acceptable_file(filepath)
 
 async def download_scryfall_image(cards: List[Card], filepath: str, version: str = '') -> bool:
     card_names = ', '.join(c.name for c  in cards)
@@ -61,27 +60,27 @@ async def download_scryfall_image(cards: List[Card], filepath: str, version: str
     image_filepaths = []
     for c in cards:
         card_filepath = determine_filepath([c])
-        if not internal.acceptable_file(card_filepath):
+        if not fetch_tools.acceptable_file(card_filepath):
             await download_scryfall_card_image(c, card_filepath, version)
-        if internal.acceptable_file(card_filepath):
+        if fetch_tools.acceptable_file(card_filepath):
             image_filepaths.append(card_filepath)
     if len(image_filepaths) > 1:
         save_composite_image(image_filepaths, filepath)
-    return internal.acceptable_file(filepath)
+    return fetch_tools.acceptable_file(filepath)
 
-def download_scryfall_art_crop(c: Card) -> Optional[str]:
+async def download_scryfall_art_crop(c: Card) -> Optional[str]:
     file_path = re.sub('.jpg$', '.art_crop.jpg', determine_filepath([c]))
-    if not internal.acceptable_file(file_path):
-        download_scryfall_card_image(c, file_path, version='art_crop')
-    if internal.acceptable_file(file_path):
+    if not fetch_tools.acceptable_file(file_path):
+        await download_scryfall_card_image(c, file_path, version='art_crop')
+    if fetch_tools.acceptable_file(file_path):
         return file_path
     return None
 
-def download_scryfall_png(c: Card) -> Optional[str]:
+async def download_scryfall_png(c: Card) -> Optional[str]:
     file_path = re.sub('.jpg$', '.png', determine_filepath([c]))
-    if not internal.acceptable_file(file_path):
-        download_scryfall_card_image(c, file_path, version='png')
-    if internal.acceptable_file(file_path):
+    if not fetch_tools.acceptable_file(file_path):
+        await download_scryfall_card_image(c, file_path, version='png')
+    if fetch_tools.acceptable_file(file_path):
         return file_path
     return None
 
@@ -89,18 +88,18 @@ async def download_scryfall_card_image(c: Card, filepath: str, version: str = ''
     try:
         if c.is_double_sided():
             paths = [re.sub('.jpg$', '.a.jpg', filepath), re.sub('.jpg$', '.b.jpg', filepath)]
-            await internal.store_async(scryfall_image(c, version=version), paths[0])
+            await fetch_tools.store_async(scryfall_image(c, version=version), paths[0])
             if c.layout == 'transform':
-                await internal.store_async(scryfall_image(c, version=version, face='back'), paths[1])
+                await fetch_tools.store_async(scryfall_image(c, version=version, face='back'), paths[1])
             if c.layout == 'meld':
-                await internal.store_async(scryfall_image(c, version=version, face='meld'), paths[1])
-            if (internal.acceptable_file(paths[0]) and internal.acceptable_file(paths[1])):
+                await fetch_tools.store_async(scryfall_image(c, version=version, face='meld'), paths[1])
+            if (fetch_tools.acceptable_file(paths[0]) and fetch_tools.acceptable_file(paths[1])):
                 save_composite_image(paths, filepath)
         else:
-            await internal.store_async(scryfall_image(c, version=version), filepath)
+            await fetch_tools.store_async(scryfall_image(c, version=version), filepath)
     except FetchException as e:
         print('Error: {e}'.format(e=e))
-    return internal.acceptable_file(filepath)
+    return fetch_tools.acceptable_file(filepath)
 
 def determine_filepath(cards: List[Card], prefix: str = '') -> str:
     imagename = basename(cards)
@@ -123,7 +122,7 @@ def download_image(cards: List[Card]) -> Optional[str]:
 
 async def download_image_async(cards: List[Card]) -> Optional[str]:
     filepath = determine_filepath(cards)
-    if internal.acceptable_file(filepath):
+    if fetch_tools.acceptable_file(filepath):
         return filepath
     if await download_scryfall_image(cards, filepath, version='border_crop'):
         return filepath
@@ -146,16 +145,16 @@ def save_composite_image(in_filepaths: List[str], out_filepath: str) -> None:
         x_offset += image.size[0]
     new_image.save(out_filepath)
 
-def generate_banner(names: List[str], background: str, v_crop: int = 33) -> str:
+async def generate_banner(names: List[str], background: str, v_crop: int = 33) -> str:
     cards = [oracle.load_card(name) for name in names]
     out_filepath = determine_filepath(cards, f'banner-{background}{v_crop}-')
 
-    if internal.acceptable_file(out_filepath):
+    if fetch_tools.acceptable_file(out_filepath):
         return out_filepath
 
     canvas = Image.new('RGB', (1920, 210))
     c = oracle.load_card(background)
-    file_path = download_scryfall_art_crop(c)
+    file_path = await download_scryfall_art_crop(c)
     if file_path:
         with Image.open(file_path) as img:
             h = v_crop / 100 * 1315
@@ -164,14 +163,14 @@ def generate_banner(names: List[str], background: str, v_crop: int = 33) -> str:
     n = math.ceil(len(cards) / 2)
     x = 800
     for c in cards[:n]:
-        ip = download_scryfall_png(c)
+        ip = await download_scryfall_png(c)
         with Image.open(ip) as img:
             img = img.resize((160, 213), Image.LANCZOS)
             canvas.paste(img, (x, 30))
             x = x + img.width + 10
     x = 900
     for c in cards[n:]:
-        ip = download_scryfall_png(c)
+        ip = await download_scryfall_png(c)
         with Image.open(ip) as img:
             img = img.resize((160, 213), Image.LANCZOS)
             canvas.paste(img, (x, 60))

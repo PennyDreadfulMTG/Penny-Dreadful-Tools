@@ -19,9 +19,7 @@ from discordbot import command
 from magic import fetcher, multiverse, oracle, rotation, tournaments
 from magic.card_description import CardDescription
 from magic.models import Card
-from shared import configuration, dtutil
-from shared import fetcher_internal as internal
-from shared import perf, redis, repo
+from shared import configuration, dtutil, fetch_tools, perf, redis, repo
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
 
@@ -41,7 +39,7 @@ def background_task(func: Callable) -> Callable:
 class Bot(commands.Bot):
     def __init__(self, **kwargs: Any) -> None:
         self.launch_time = perf.start()
-        super().__init__(command_prefix='!', help_command=commands.DefaultHelpCommand(dm_help=True), **kwargs)
+        super().__init__(command_prefix='!', help_command=commands.DefaultHelpCommand(dm_help=True), case_insensitive=True, **kwargs)
         self.voice = None
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:
@@ -261,8 +259,8 @@ class Bot(commands.Bot):
         channel = self.get_channel(tournament_channel_id)
         while self.is_ready:
             try:
-                league = await internal.fetch_json_async(fetcher.decksite_url('/api/league'))
-            except internal.FetchException as e:
+                league = await fetch_tools.fetch_json_async(fetcher.decksite_url('/api/league'))
+            except fetch_tools.FetchException as e:
                 print("Couldn't reach decksite or decode league json with error message(s) {0}".format(
                     '; '.join(str(x) for x in e.args)
                     ))

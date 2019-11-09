@@ -4,8 +4,8 @@ import time
 from bs4 import BeautifulSoup
 
 from decksite.data import deck
-from magic import decklist, fetcher, legality
-from shared import dtutil
+from magic import decklist, legality
+from shared import dtutil, fetch_tools
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
 from shared_web import logger
@@ -16,7 +16,7 @@ def scrape(limit: int = 1) -> None:
     while page <= limit:
         time.sleep(0.1)
         url = 'https://www.mtggoldfish.com/deck/custom/penny_dreadful?page={n}#online'.format(n=page)
-        soup = BeautifulSoup(fetcher.internal.fetch(url, character_encoding='utf-8'), 'html.parser')
+        soup = BeautifulSoup(fetch_tools.fetch(url, character_encoding='utf-8'), 'html.parser')
         raw_decks = soup.find_all('div', {'class': 'deck-tile'})
         if len(raw_decks) == 0:
             logger.warning('No decks found in {url} so stopping.'.format(url=url))
@@ -50,7 +50,7 @@ def without_by(s: str) -> str:
     return s
 
 def scrape_created_date(d: Container) -> int:
-    soup = BeautifulSoup(fetcher.internal.fetch(d.url, character_encoding='utf-8'), 'html.parser')
+    soup = BeautifulSoup(fetch_tools.fetch(d.url, character_encoding='utf-8'), 'html.parser')
     return parse_created_date(soup)
 
 def parse_created_date(soup: BeautifulSoup) -> int:
@@ -63,7 +63,7 @@ def parse_created_date(soup: BeautifulSoup) -> int:
 
 def scrape_decklist(d: Container) -> decklist.DecklistType:
     url = 'https://www.mtggoldfish.com/deck/download/{identifier}'.format(identifier=d.identifier)
-    return decklist.parse(fetcher.internal.fetch(url))
+    return decklist.parse(fetch_tools.fetch(url))
 
 # Empty str return value = success, like Unix.
 def vivify_or_error(d: Container) -> str:
@@ -85,7 +85,7 @@ def scrape_one(url: str) -> Container:
         raise InvalidDataException('Cannot find identifier in URL. Is it a valid MTG Goldfish decklist URL?')
     d.identifier = identifier_match.group(1)
     d.url = url
-    soup = BeautifulSoup(fetcher.internal.fetch(d.url, character_encoding='utf-8'), 'html.parser')
+    soup = BeautifulSoup(fetch_tools.fetch(d.url, character_encoding='utf-8'), 'html.parser')
     d.name = str(soup.select_one('h2.deck-view-title').contents[0]).strip()
     d.mtggoldfish_username = without_by(str(soup.select_one('span.deck-view-author').contents[0].strip()))
     d.created_date = parse_created_date(soup)

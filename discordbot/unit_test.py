@@ -3,13 +3,13 @@ import os
 from discordbot import command, emoji
 from magic import image_fetcher, oracle
 from magic.models import Card
-from shared import configuration, fetcher_internal
+from shared import configuration, fetch_tools
 
 
 # Check that we can fetch card images.
 def test_imagedownload() -> None:
     filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='island.jpg')
-    if fetcher_internal.acceptable_file(filepath):
+    if fetch_tools.acceptable_file(filepath):
         os.remove(filepath)
     c = [oracle.load_card('Island')]
     assert image_fetcher.download_image(c) is not None
@@ -18,14 +18,14 @@ def test_imagedownload() -> None:
 # Note: bluebones doesn't have Nalathni Dragon, while Gatherer does, which makes it useful here.
 def test_fallbackimagedownload() -> None:
     filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='nalathni-dragon.jpg')
-    if fetcher_internal.acceptable_file(filepath):
+    if fetch_tools.acceptable_file(filepath):
         os.remove(filepath)
     c = [oracle.load_card('Nalathni Dragon')]
     assert image_fetcher.download_image(c) is not None
 
 # Check that we can succesfully fail at getting an image.
 def test_noimageavailable() -> None:
-    c = Card({'name': "Barry's Land", 'id': 0, 'multiverseid': 0, 'names': "Barry's Land", 'layout': 'normal'})
+    c = Card({'name': 'Made Up Card Name', 'id': 0, 'multiverseid': 0, 'names': 'Made Up Card Name', 'layout': 'normal'})
     assert image_fetcher.download_image([c]) is None
 
 # Search for a single card via full name,

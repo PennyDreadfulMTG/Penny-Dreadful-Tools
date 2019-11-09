@@ -33,9 +33,6 @@
     <td data-text="{{date_sort}}">
         {{display_date}}
     </td>
-    {{#similarity_score}}
-        <td class="n">{{similarity_score}}%</td>
-    {{/similarity_score}}
     {{#show_legal_seasons}}
         <td>
             {{#has_legal_format}}
@@ -43,6 +40,4 @@
             {{/has_legal_format}}
         </td>
     {{/show_legal_seasons}}
-    {{! Empty column to hold the toggle when footable kicks in.}}
-    <td></td>
 </tr>

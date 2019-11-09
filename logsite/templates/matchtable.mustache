@@ -1,24 +1,21 @@
-{{> spinner}}
 <table class="with-marginalia">
     <thead>
         <tr>
-            <th data-breakpoints="xs" class="marginalia" data-sortInitialOrder="desc">⇅</th>
+            <th class="marginalia" data-sortInitialOrder="desc">⇅</th>
             <th>ID</th>
             {{^hide_host}}
-                <th data-breakpoints="xs">Host</th>
+                <th>Host</th>
             {{/hide_host}}
             {{^hide_opponent}}
-                <th data-breakpoints="xs sm md" data-sortInitialOrder="desc">Opponent</th>
+                <th data-sortInitialOrder="desc">Opponent</th>
             {{/hide_opponent}}
             {{^hide_format}}
-                <th data-breakpoints="xs sm md" data-sortInitialOrder="desc">Format</th>
+                <th data-sortInitialOrder="desc">Format</th>
             {{/hide_format}}
             {{^hide_comment}}
-                <th data-breakpoints="xs">Comment</th>
+                <th>Comment</th>
             {{/hide_comment}}
-            <th data-breakpoints="xs" data-sortInitialOrder="desc">Date</th>
-            {{! Empty column to hold the toggle when footable kicks in. }}
-            <td></td>
+            <th data-sortInitialOrder="desc">Date</th>
         </tr>
     </thead>
     <tbody>

@@ -1,21 +1,18 @@
 {{#deck_tables}}
     <section>
-        <h1>{{title}}</h1>
+        <h2>{{title}}</h2>
         {{> decktable}}
         <a href="{{url}}">{{link_text}}</a>
     </section>
 {{/deck_tables}}
 <section>
-    <h1>{{_ Top Cards}}</h1>
-    {{> spinner}}
+    <h2>{{_ Top Cards}}</h2>
     <table>
         <thead>
             <th>Card</th>
             <th># Decks</th>
-            <th data-breakpoints="xs">Record</th>
-            <th data-breakpoints="xs">Win %</th>
-            {{! Empty column to hold the toggle when footable kicks in.}}
-            <td></td>
+            <th>Record</th>
+            <th>Win %</th>
         </thead>
         <tbody>
             {{#top_cards}}
@@ -24,21 +21,34 @@
                     <td class="n">{{num_decks}}</td>
                     <td class="n">{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}</td>
                     <td class="n">{{win_percent}}</td>
-                    {{! Empty column to hold the toggle when footable kicks in.}}
-                    <td></td>
                 </tr>
             {{/top_cards}}
         </tbody>
     </table>
     <p><a href="{{cards_url}}">{{_ More cards…}}</a></p>
 </section>
+<section>
+    <h2>{{_ Tournaments}}</h2>
+    {{> tournamentcalendar}}
+</section>
 {{#has_news}}
     {{> news}}
 {{/has_news}}
+<section class="rotation">
+    <h2>Season {{season_id}}</h2>
+    <p>Season {{season_id}} began {{season_start_display}} and ends {{season_end_display}}.</p>
+    <ul>
+        <li><a href="{{scryfall_url}}">Legal cards (scryfall)</a></li>
+        <li><a href="{{legal_cards_url}}">Legal cards (text)</a></li>
+    </ul>
+    {{#in_rotation}}
+        <p><a href="{{rotation_url}}">{{rotation_msg}}</a></p>
+    {{/in_rotation}}
+</section>
 <section>
-    <h1>Community Stats</h1>
+    <h2>Community Stats</h2>
     {{#community_stats}}
-        <h2>{{header}}</h2>
+        <p>{{header}}</p>
         <ul>
             {{#stats}}
                 <li>{{text}}</li>

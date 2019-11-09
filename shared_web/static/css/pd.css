@@ -193,7 +193,7 @@ Symbols provided by our main font are:
     ★ U+2605 BLACK STAR (deck quality)
     + U+002B PLUS SIGN (expand row in mobile view table)
     − U+2212 MINUS SIGN (close expanded row in mobile view table)
-    … U+2026 HORIZONTAL ELLIPSIS (in some link text like "all decks this season…", "More new…", and in dropdowns in "Choose…"). Note: our style is no space before ellipsis.
+    … U+2026 HORIZONTAL ELLIPSIS (in some link text like More new…", and in dropdowns in "Choose…"). Note: our style is no space before ellipsis.
     → U+2192 RIGHT-POINTING ARROW (paginate right)
     ← U+2190 LEFT-POINTING ARROW (paginate left)
     ↑ U+2191 UPWARDS ARROW (currently hitting in rotation)
@@ -249,7 +249,7 @@ p, .subtitle, .news .item, .person {
     font-variant-numeric: oldstyle-nums;
 }
 
-table, ul.decklist.li, .news .date, .deck-name {
+table, ul.decklist.li, .news .date, .deck-name, .rotation p {
     font-variant-numeric: normal;
 }
 
@@ -340,6 +340,7 @@ footer {
 /* Because the status bar takes a reasonable amount of vertical real estate in the default version we also check height for this one. See #6068. */
 @media only screen and (max-width: 640px), only screen and (max-height: 640px) {
     .status-bar {
+        font-size: 0.75rem;
         padding-bottom: 0;
         padding-top: 1em;
     }
@@ -476,6 +477,11 @@ main h2 {
     padding-top: 1rem;
 }
 
+/* Don't show a top border on the first subheading if there is no h1 to avoid a double border. */
+.content-home section:first-of-type h2 {
+    border: 0;
+}
+
 main h1 a:visited, main h2 a:visited {
     color: inherit;
 }
@@ -484,10 +490,11 @@ main h1 a:visited, main h2 a:visited {
 
 Links
 
-Links in tables and the menu are not underlined (although menu highlights on hover).
-Links in text are underlined in such a way as to break on descenders like those found in lowercase g and y.
-
 */
+
+a {
+    cursor: pointer; /* For pagination links in React tables, they don't have an href attribute. */
+}
 
 a, main table.calendar a, main .intro .details a, .details a {
     color: inherit;
@@ -504,8 +511,8 @@ main a:hover, main table.calendar a:hover, .details a:hover {
     transition-property: background;
 }
 
-/* There are a lot of places we want undecorated links, though, even in the main content area. */
-main table a, main h1 a, main h2 a, main h3 a, main li a, .decklist a {
+/* There are a lot of places we plain links not heading-caps, even in the main content area. */
+main table a, main h1 a, main h2 a, main h3 a, main li a, .decklist a, .rotation a {
     font-family: inherit;
     font-variant-numeric: normal;
     text-transform: none;
@@ -593,18 +600,8 @@ main table {
     font-size: 0.75rem;
     font-weight: 400;
     margin-bottom: 1em;
-    visibility: hidden;
-
-    /*
-    Tables horizontal-scroll by default but if they are not huge we override that with footable in js.
-    Important to override the inline style that footable adds.
-    */
-    display: block !important; /* csslint allow: important */;
+    display: block; /* Make the body as wide as the table rather than overflowing over background. */
     overflow-x: auto;
-}
-
-main table.very-large {
-    visibility: visible;
 }
 
 /* Turn off small caps link style in tables. */
@@ -622,6 +619,16 @@ main table a:hover {
 table.with-marginalia {
     margin-left: -5.126em; /* Width of .marginalia + left-padding + right-padding */
     margin-right: 0.5em;
+}
+
+@media only screen and (max-width: 1000px) {
+    .marginalia {
+        display: none;
+    }
+    table.with-marginalia {
+        margin-left: 0;
+        margin-right: 0;
+    }
 }
 
 main th {
@@ -644,7 +651,8 @@ main th, main td {
 /* Drop max-width of a column on x-small viewports to fit more columns in. */
 @media only screen and (max-width: 640px) {
     main th, main td {
-        max-width: 10em;
+        max-width: 7em;
+        padding: 0.178em 0.32em;
     }
 }
 
@@ -681,10 +689,6 @@ tr.wide+tr td {
     border-top: 0.05rem #999 solid;
 }
 
-.footable-details tr.wide td {
-    border-top: 0;
-}
-
 tr.wide td.wide {
     padding-right: 1em;
     max-width: 50em;
@@ -719,6 +723,64 @@ th.legend {
     line-height: 0; /* Don't mess up row spacing because the star is big. */
 }
 
+/* Prevent content jumping while deck table loads in data. */
+#decktable {
+    min-height: 20em;
+}
+
+/*
+
+Force a consistent size of each column in react decktable otherwise things "jump" as you paginate.
+
+*/
+
+.live .name {
+    min-width: 10em;
+    max-width: 10em;
+}
+
+.live .person {
+    min-width: 8em;
+    max-width: 8em;
+}
+
+.live .archetype {
+    min-width: 8em;
+    max-width: 8em;
+}
+
+.live .source {
+    min-width: 5em;
+    max-width: 5em;
+}
+
+.live .record {
+    min-width: 4em;
+    max-width: 4em;
+}
+
+.live .omw {
+    min-width: 4em;
+    max-width: 4em;
+}
+
+.live .top8 {
+    min-width: 3em;
+    max-width: 3em;
+}
+
+.live .date {
+    min-width: 5em;
+    max-width: 5em;
+}
+
+@media only screen and (max-width: 640px) {
+    .live .name {
+        min-width: 7em;
+        max-width: 7em;
+    }
+}
+
 /* Angled headers */
 
 th.angled {
@@ -738,131 +800,42 @@ th.angled .inner {
 
 /*
 
-Mobile Tables
-
-Shrink tables when the viewport is not wide enough for their full glory using footable.
-
-Deck tables:
-
-v ------  0 ------ v    0
-left-margin  40
-name        150  190 (columns have a max-width of 10em at smallest size)
-record       68  258
-(toggle)     44  302
-^ ------ xs ------ ^    18rem (360px)
-margin(2)   +37  339 (here and above we expand the left margin to accomodate marginalia)
-date         91  430
-person      132  562
-^ ------ sm ------ ^    32rem (640px)
-margin(3)  +51+  613 (here and above margins are 10% of viewport width)
-name(2)     +50  663 (columns have a max-widht of 13em at this size and above)
-colors       70  733
-top 8        55  788
-(similarity)
-^ ------ md ------ ^    40rem (800px)
-margin(3)  +32+  820 (margins are still 10% of viewport width)
-source      130  950
-season      212 1162
-(omw)
--(toggle)   -44 1118
-…
-^ ------ lg ------ ^    56rem (1120px)
-
-Card tables:
-
-v ------  0 ------ v    0
-name                211
-# decks              70  281
-(toggle)             44  325
-^ ------ xs ------ ^    18rem (360px)
-record              104  429
-win %                58  487
-tournament wins      40  527
-tournament top 8s    40  567
-5–0s                 52  619
--(toggle)           -44  575
-^ ------ sm ------ ^    32rem (640px)
-(same)
-^ ------ md ------ ^    40rem (800px)
-(same)
-^ ------ lg ------ ^    53rem (1120px)
-
-See also breakpoints for footable in pd.js.
-
-*/
-
-.footable-toggle {
-    cursor: pointer;
-}
-
-table.footable-details {
-    margin-top: 0.75em;
-    margin-bottom: 2em;
-    visibility: visible;
-}
-
-/* Always right align the key when displaying as key-value pairs rather than tabular. */
-.footable-details th {
-    text-align: right;
-}
-
-.footable-details .tablesorter-header-inner {
-    text-align: right;
-    margin-right: 0.1rem;
-}
-
-table.with-marginalia.footable-details {
-    margin-left: 7.126em; /* Width of .marginalia + left-padding + right-padding + desired margin to show subordinate relationship to parent row. */
-}
-
-table.with-marginalia .footable-empty td {
-    padding-left: 5.126em; /* Width of .marginalia + left-padding + right-padding */
-}
-
-@media only screen and (max-width: 640px) {
-    /* When we aren't showing marginalia, don't have the unshown column mess display up. */
-    table.with-marginalia, table.with-marginalia.footable-details {
-        margin: 0;
-    }
-    table.with-marginalia .footable-empty td {
-        padding-left: 0.563em;
-    }
-    td.marginalia {
-        /* Override the inline style `display: table-cell` added by footable */
-        display: none !important; /* csslint allow: important */
-    }
-    table.footable-details.with-marginalia tbody tr:first-child th:first-child {
-        /* Override the inline style `display: table-cell` added by footable */
-        display: none !important; /* csslint allow: important */
-    }
-}
-
-.fooicon {
-    color: #999;
-}
-
-.fooicon-minus:before {
-    content: "–";
-}
-
-.fooicon-plus:before {
-    content: "+";
-}
-
-/*
-
 Pagination
 
-Mostly we just send giant tables of all the data but on logsite we have pagination.
+A lot of pages still send giant tables of data but logsite and deck table have pagination.
 
 */
+
+.pagination-links {
+    display: flex;
+}
 
 .pagination a {
     display: inline-block;
 }
 
 .pagination .next {
-    float: right;
+    margin-left: auto;
+}
+
+.pagination .page-size-options {
+    font-size: 0.75em;
+    height: 1rem;
+    text-align: right;
+}
+
+.pagination .page-size {
+    border: 0.05rem #ccc solid;
+    text-align: center;
+    width: 2em;
+}
+
+.pagination .page-size:last-child {
+    margin-right: 0.33rem;
+}
+
+.pagination .page-size.selected {
+    background-color: #eee;
 }
 
 /*
@@ -1867,22 +1840,17 @@ Archetypes
 
 /* Styling for the admin archetype updater on the deck page. */
 
-.archetype {
+.archetype-tree .archetype {
     padding: 0.563rem 1rem;
 }
 
-.archetype input {
+.archetype-tree .archetype input {
     width: 45%;
 }
 
 /* Highlight the currently selected row … */
 tr.current, tr.current td {
     background-color: #eee;
-}
-
-/* … unless you are in an expanded row which displays more like a table. */
-.footable-details tr.current, .footable-details tr.current td {
-    background-color: inherit;
 }
 
 /* Pad to the left of the archetype name based on its depth in the hierarchy.
@@ -2309,6 +2277,7 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 
 .tpd-tooltip {
     position: absolute;
+    white-space: pre-line;
 }
 
 /* Fix for CSS frameworks that don't keep the use of box-sizing: border-box

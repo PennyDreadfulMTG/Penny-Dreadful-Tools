@@ -9,7 +9,7 @@ import ftfy
 from magic import fetcher, rotation
 from price_grabber.parser import (PriceListType, parse_cardhoarder_prices,
                                   parse_mtgotraders_prices)
-from shared import configuration, dtutil, fetcher_internal, text
+from shared import configuration, dtutil, fetch_tools, text
 
 BLACKLIST: Set[str] = set()
 WHITELIST: Set[str] = set()
@@ -38,12 +38,12 @@ def run() -> None:
 
     all_prices = {}
     for url in configuration.get_list('cardhoarder_urls'):
-        s = fetcher_internal.fetch(url)
+        s = fetch_tools.fetch(url)
         s = ftfy.fix_encoding(s)
         all_prices[url] = parse_cardhoarder_prices(s)
     url = configuration.get_str('mtgotraders_url')
     if url:
-        s = fetcher_internal.fetch(url)
+        s = fetch_tools.fetch(url)
         all_prices['mtgotraders'] = parse_mtgotraders_prices(s)
 
     run_number = process(all_prices)
@@ -97,7 +97,7 @@ def is_supplemental() -> bool:
     return TIME_UNTIL_SUPPLEMENTAL_ROTATION < datetime.timedelta(7) or abs(TIME_SINCE_SUPPLEMENTAL_ROTATION) < datetime.timedelta(1)
 
 def make_final_list() -> None:
-    planes = fetcher_internal.fetch_json('https://api.scryfall.com/cards/search?q=t:plane%20or%20t:phenomenon')['data']
+    planes = fetch_tools.fetch_json('https://api.scryfall.com/cards/search?q=t:plane%20or%20t:phenomenon')['data']
     plane_names = [p['name'] for p in planes]
     files = rotation.files()
     lines: List[str] = []

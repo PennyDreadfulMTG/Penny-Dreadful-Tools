@@ -3,7 +3,7 @@ from typing import Any
 
 import discord
 
-from shared import fetcher_internal
+from shared import fetch_tools
 
 
 # Mock up assertions within the discord client.
@@ -18,7 +18,7 @@ def generate_fakebot() -> discord.Client:
         print('Uploading "{0}", with additional text "{1}"'.format(image_file, content))
         channel.calls += 1
         assert channel is not None
-        assert image_file is not None and fetcher_internal.acceptable_file(image_file)
+        assert image_file is not None and fetch_tools.acceptable_file(image_file)
         assert content != ''
     async def fake_send_typing(channel):
         assert channel is not None

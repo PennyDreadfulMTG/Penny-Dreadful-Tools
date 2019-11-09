@@ -14,7 +14,7 @@ class Cards(View):
         super().__init__()
         self.show_seasons = True
         self.show_tournament_toggle = True
-        self.tournament_only = tournament_only
+        self.tournament_only = self.hide_source = tournament_only
         self.query = query
 
         # if it's the current season, allow the scryfall filter to add "f:pd" to speed up results

@@ -10,7 +10,10 @@
             {{display_date}}
         </div>
         <div class="subtitle">
-            <a href="{{competition_url}}">{{source_name}} {{> record}}</a> {{{active_safe}}}
+            <a href="{{#competition_url}}{{competition_url}}{{/competition_url}}{{^competition_url}}{{source_url}}{{/competition_url}}">
+                {{source_name}} {{> record}}
+            </a>
+            {{{active_safe}}}
         </div>
     </div>
     {{#public}}
@@ -53,7 +56,6 @@
 {{#has_matches}}
     <section>
         <h2>Competition</h2>
-        {{> spinner}}
         <table class="with-marginalia">
             <thead>
                 <tr>
@@ -114,14 +116,6 @@
         </table>
     </section>
 {{/has_matches}}
-{{#public}}
-{{#has_similar}}
-    <section>
-        <h2>Similar Decks</h2>
-        {{> decktable}}
-    </section>
-{{/has_similar}}
-{{/public}}
 {{> legal}}
 <section class="admin demimod">
     <h2>Admin</h2>

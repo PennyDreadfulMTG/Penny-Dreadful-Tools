@@ -1,10 +1,10 @@
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
-from magic import card, fetcher, mana, multiverse, rotation
+from magic import card, mana, multiverse, rotation
 from magic.card_description import CardDescription
 from magic.database import db
 from magic.models import Card
-from shared import configuration
+from shared import configuration, fetch_tools
 from shared.database import sqlescape
 from shared.pd_exception import (InvalidArgumentException,
                                  InvalidDataException, TooFewItemsException)
@@ -93,7 +93,7 @@ def deck_sort(c: Card) -> str:
     return s
 
 def scryfall_import(name: str) -> bool:
-    sfcard = fetcher.internal.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=name))
+    sfcard = fetch_tools.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=name))
     if sfcard['object'] == 'error':
         raise Exception()
     try:
@@ -160,7 +160,11 @@ def if_todays_prices(out: bool = True) -> List[Card]:
     return sorted(cards, key=lambda card: card['name'])
 
 def add_cards_and_update(printings: List[CardDescription]) -> None:
-    multiverse.insert_cards(printings)
-    multiverse.update_cache()
-    multiverse.reindex()
-    init(force=True) # Get the new cards into CARDS_BY_NAME in memory.
+    if not printings:
+        return
+    ids = multiverse.insert_cards(printings)
+    multiverse.add_to_cache(ids)
+    cs = [Card(r) for r in db().select(multiverse.cached_base_query('c.id IN (' + ','.join([str(id) for id in ids]) + ')'))]
+    multiverse.reindex_specific_cards(cs)
+    for c in cs:
+        CARDS_BY_NAME[c.name] = c

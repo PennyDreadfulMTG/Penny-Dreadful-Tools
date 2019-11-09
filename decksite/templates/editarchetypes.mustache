@@ -1,7 +1,6 @@
 <h1>Archetypes</h1>
 <section>
     <h2>Queue</h2>
-    {{> spinner}}
     <form method="post" class="inline">
         <table>
             <thead>
@@ -99,7 +98,6 @@
 
     {{#has_search_results}}
         <form method="post" class="inline">
-            {{> spinner}}
             <table>
                 <thead>
                     <tr>
@@ -132,8 +130,7 @@
 </section>
 <section>
     <h2>Add Archetype</h2>
-    {{> spinner}}
-    <table>
+    <table class="archetype-tree">
         {{#roots}}
             {{#archetype_tree}}
                 <tr class="archetype archetype-{{depth}}">

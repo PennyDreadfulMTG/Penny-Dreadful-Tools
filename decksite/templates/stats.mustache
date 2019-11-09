@@ -1,36 +1,31 @@
 <section>
     <h2>Record</h2>
-    {{> spinner}}
     <table>
         <thead>
             <tr>
                 <th># Decks</th>
                 <th>Record</th>
-                <th data-breakpoints="xs sm">Win %</th>
-                <th class="n" data-breakpoints="xs sm">
+                <th>Win %</th>
+                <th class="n">
                     <abbr title="Tournament wins">①</abbr>
                 </th>
-                <th class="n" data-breakpoints="xs sm">
+                <th class="n">
                     <abbr title="Tournament top-8s">⑧</abbr>
                 </th>
-                <th class="n" data-breakpoints="xs sm">
+                <th class="n">
                     <abbr title="League 5-0 runs">5–0s</abbr>
                 </th>
-                {{#elo}}<th class="n" data-breakpoints="xs sm">Elo</th>{{/elo}}
-                {{! Empty column to hold the toggle when footable kicks in.}}
-                <td></td>
+                {{#elo}}<th class="n">Elo</th>{{/elo}}
             </tr>
         </thead>
         <tbody>
             <td class="n">{{num_decks}}</td>
             <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
-            <td class="n" data-breakpoints="xs sm">{{win_percent}}</td>
-            <td class="n" data-breakpoints="xs sm">{{#tournament_wins}}{{tournament_wins}}{{/tournament_wins}}</td>
-            <td class="n" data-breakpoints="xs sm">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>
-            <td class="n" data-breakpoints="xs sm">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>
-            {{#elo}}<td class="n" data-breakpoints="xs sm">{{elo}}</th>{{/elo}}
-            {{! Empty column to hold the toggle when footable kicks in.}}
-            <td></td>
+            <td class="n">{{win_percent}}</td>
+            <td class="n">{{#tournament_wins}}{{tournament_wins}}{{/tournament_wins}}</td>
+            <td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>
+            <td class="n">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>
+            {{#elo}}<td class="n">{{elo}}</th>{{/elo}}
         </tbody>
     </table>
 </section>

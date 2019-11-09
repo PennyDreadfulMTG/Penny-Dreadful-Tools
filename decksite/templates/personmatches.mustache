@@ -5,13 +5,11 @@
         <thead>
             <tr>
                 <th>Deck</th>
-                <th data-breakpoints="xs">Opponent</th>
-                <th data-breakpoints="xs sm md">Opponent's Deck</th>
+                <th>Opponent</th>
+                <th>Opponent's Deck</th>
                 <th class="n">Result</th>
-                <th data-breakpoints="xs sm md">Competition</th>
-                <th data-breakpoints="xs sm md">Date</th>
-                {{! Empty column to hold the toggle when footable kicks in.}}
-                <td></td>
+                <th>Competition</th>
+                <th>Date</th>
             </tr>
         </thead>
         <tbody>
@@ -27,8 +25,6 @@
                     <td class="n">{{game_wins}}–{{game_losses}}</td>
                     <td><a href="{{competition_url}}">{{competition_type_name}}</a></td>
                     <td data-text="{{date_sort}}">{{display_date}}</td>
-                    {{! Empty column to hold the toggle when footable kicks in.}}
-                    <td></td>
                 </tr>
             {{/matches}}
         </tbody>

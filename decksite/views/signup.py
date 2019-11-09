@@ -1,10 +1,17 @@
+from typing import Optional
+
 from flask_babel import gettext
 
+from decksite.data.form import Form
 from decksite.views.decklist_form import DecklistForm
 
 
 # pylint: disable=no-self-use
 class SignUp(DecklistForm):
+    def __init__(self, form: Form, is_closed: bool, person_id: Optional[int]) -> None:
+        super().__init__(form, person_id)
+        self.is_closed = is_closed
+
     def page_title(self) -> str:
         return '{league} Sign Up'.format(league=self.league['name'])
 

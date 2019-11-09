@@ -5,7 +5,7 @@ from flask import url_for
 from flask_babel import gettext, ngettext
 
 import decksite
-from decksite.data import deck, query
+from decksite.data import deck, preaggregation, query
 from decksite.data.models.person import Person
 from decksite.database import db
 from magic import tournaments
@@ -49,12 +49,7 @@ def load_query(people_by_id: Dict[int, Person], season_id: Optional[int]) -> str
     """.format(columns=columns, ids=', '.join(str(k) for k in people_by_id.keys()), season_query=query.season_query(season_id))
 
 def preaggregate_achievements() -> None:
-    db().execute('DROP TABLE IF EXISTS _new_achievements')
-    db().execute(preaggregate_query())
-    db().execute('DROP TABLE IF EXISTS _old_achievements')
-    db().execute('CREATE TABLE IF NOT EXISTS _achievements (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
-    db().execute('RENAME TABLE _achievements TO _old_achievements, _new_achievements TO _achievements')
-    db().execute('DROP TABLE IF EXISTS _old_achievements')
+    preaggregation.preaggregate('_achievements', preaggregate_query())
 
 def preaggregate_query() -> str:
     # mypy doesn't understand our contract that a.create_columns etc. are only None if in_db is False

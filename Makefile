@@ -22,13 +22,16 @@ pr:
 # Run all tests, push and create pull request.
 release: push pr
 
+buildjs:
+	webpack --config=decksite/webpack.config.js
+
 # Run unit tests.
 TEST=.
 unit:
 	@echo
 	@echo "******************************** Unit Tests ***********************************"
 	@echo
-	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 dev.py tests -x -m "not functional and not perf"
+	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 dev.py tests --cov-report= -x -m "not functional and not perf"
 	@echo
 
 # Run functional tests.
@@ -36,7 +39,7 @@ functional:
 	@echo
 	@echo "******************************** Functional Tests ******************************"
 	@echo
-	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 dev.py tests -x -m "functional"
+	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 dev.py tests --cov-report= -x -m "functional"
 	@echo
 
 # Run perf tests.
@@ -44,7 +47,7 @@ perf:
 	@echo
 	@echo "******************************** Performance Tests *****************************"
 	@echo
-	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 dev.py tests -x -m "perf"
+	@find . -name "*$(TEST)*" | grep _test.py$$ | xargs python3 dev.py tests --cov-report= -x -m "perf"
 	@echo
 
 # Run lint on all python files.
@@ -59,8 +62,16 @@ jslint:
 	@echo
 	@echo "******************************** JS Lint **************************************"
 	@echo
-	@! find . -name "*.js" | xargs  js-beautify | grep -v unchanged
+	@! git ls-files | egrep 'jsx?$$'  | grep -v .eslintrc.js | xargs ./node_modules/.bin/eslint | grep error
 	@echo
+
+jsfix:
+	@echo
+	@echo "******************************** JS Lint **************************************"
+	@echo
+	@git ls-files | egrep 'jsx?$$'  | grep -v .eslintrc.js | xargs ./node_modules/.bin/eslint --fix
+	@echo
+
 
 types:
 	@echo
@@ -97,6 +108,10 @@ coverage:
 	@coverage xml
 	@coverage report
 	@echo
+
+# Watch jsx files for changes and rebuild dist.js constantly while developing.
+watch:
+	npm run watch
 
 # Make a branch based off of current (remote) master with all your local changes preserved (but not added).
 branch:

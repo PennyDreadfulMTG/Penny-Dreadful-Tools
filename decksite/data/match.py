@@ -10,7 +10,7 @@ from magic.models import Deck
 from shared import dtutil, redis
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import InvalidDataException
+from shared.pd_exception import InvalidDataException, TooFewItemsException
 
 
 # pylint: disable=too-many-arguments
@@ -28,10 +28,8 @@ def insert_match(dt: datetime.datetime,
     loser_id = left_id if left_games < right_games else right_id
     db().begin('insert_match')
     match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
-    sql = 'UPDATE deck_cache SET wins = IFNULL(wins, 0) + 1, active_date = %s WHERE deck_id = %s'
-    db().execute(sql, [dtutil.dt2ts(dt), winner_id])
-    sql = 'UPDATE deck_cache SET losses = IFNULL(losses, 0) + 1, active_date = %s WHERE deck_id = %s'
-    db().execute(sql, [dtutil.dt2ts(dt), loser_id])
+    update_cache(left_id, left_games, right_games)
+    update_cache(right_id, right_games, left_games)
     sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
     db().execute(sql, [left_id, match_id, left_games])
     if right_id is not None: # Don't insert matches or adjust Elo for the bye.
@@ -134,3 +132,50 @@ def stats() -> Dict[str, int]:
             `match`
     """
     return db().select(sql, [dtutil.dt2ts(rotation.last_rotation())])[0]
+
+
+def update_match(match_id: int, left_id: int, left_games: int, right_id: int, right_games: int) -> None:
+    db().begin('update_match')
+    update_games(match_id, left_id, left_games)
+    update_games(match_id, right_id, right_games)
+    update_cache(left_id, left_games, right_games)
+    update_cache(right_id, right_games, left_games)
+    db().commit('update_match')
+    redis.clear(f'decksite:deck:{left_id}', f'decksite:deck:{right_id}')
+
+def update_games(match_id: int, deck_id: int, games: int) -> int:
+    sql = 'UPDATE deck_match SET games = %s WHERE match_id = %s AND deck_id = %s'
+    args = [games, match_id, deck_id]
+    return db().execute(sql, args)
+
+def update_cache(deck_id: int, games: int, opponent_games: int, delete: Optional[bool] = False) -> None:
+    if games > opponent_games:
+        args = [1, 0, 0]
+    elif opponent_games > games:
+        args = [0, 1, 0]
+    else:
+        args = [0, 0, 1]
+    args.append(deck_id)
+    symbol = '-' if delete else '+'
+    sql = f'UPDATE deck_cache SET wins = wins {symbol} %s, losses = losses {symbol} %s, draws = draws {symbol} %s WHERE deck_id = %s'
+    db().execute(sql, args)
+
+def delete_match(match_id: int) -> None:
+    db().begin('delete_match')
+    rs = db().select('SELECT deck_id, games FROM deck_match WHERE match_id = %s', [match_id])
+    if not rs:
+        raise TooFewItemsException('No deck_match entries found for match_id `{match_id}`')
+    left_id = rs[0]['deck_id']
+    left_games = rs[0]['games']
+    if len(rs) > 1:
+        right_id = rs[1]['deck_id']
+        right_games = rs[1]['games']
+    else:
+        right_id, right_games = 0, 0
+    update_cache(left_id, left_games, right_games, delete=True)
+    update_cache(right_id, right_games, left_games, delete=True)
+    sql = 'DELETE FROM `match` WHERE id = %s'
+    db().execute(sql, [match_id])
+    db().commit('delete_match')
+    if rs:
+        redis.clear(f'decksite:deck:{left_id}', f'decksite:deck:{right_id}')

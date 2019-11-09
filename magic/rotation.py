@@ -132,6 +132,13 @@ def message() -> str:
         return 'The supplemental rotation is in {sdiff} (The next full rotation is in {diff})'.format(diff=dtutil.display_time(diff.total_seconds()), sdiff=dtutil.display_time(sdiff.total_seconds()))
     return 'The next rotation is in {diff}'.format(diff=dtutil.display_time(diff.total_seconds()))
 
+def in_rotation() -> bool:
+    if configuration.get_bool('always_show_rotation'):
+        return True
+    until_full_rotation = next_rotation() - dtutil.now()
+    until_supplemental_rotation = next_supplemental() - dtutil.now()
+    return until_full_rotation < datetime.timedelta(7) or until_supplemental_rotation < datetime.timedelta(7)
+
 def next_rotation_is_supplemental() -> bool:
     full = next_rotation()
     supplemental = next_supplemental()
@@ -147,7 +154,7 @@ def sets() -> List[SetInfoType]:
         __SETS.extend(init())
     return __SETS
 
-def season_id(v: Union[int, str]) -> Union[int, str]:
+def season_id(v: Union[int, str], all_return_value: Optional[Union[int, str]] = 'all') -> Optional[Union[int, str]]:
     """From any value return the season id which is the integer representing the season, or 'all' for all time."""
     if v is None:
         return current_season_num()
@@ -160,7 +167,7 @@ def season_id(v: Union[int, str]) -> Union[int, str]:
     try:
         if isinstance(v, str):
             if v.lower() == 'all':
-                return 'all'
+                return all_return_value
             return SEASONS.index(v.upper()) + 1
     except (ValueError, AttributeError):
         pass
@@ -169,7 +176,7 @@ def season_id(v: Union[int, str]) -> Union[int, str]:
 def season_code(v: Union[int, str]) -> str:
     """From any value return the season code which is a three letter string representing the season, or 'ALL' for all time."""
     sid = season_id(v)
-    if sid == 'all':
+    if sid == 'all' or sid is None:
         return 'ALL'
     return SEASONS[int(sid) - 1]
 
@@ -221,9 +228,9 @@ def read_rotation_files() -> Tuple[int, int, List[Card]]:
         c = process_score(name, hits, cs, runs, latest_list)
         if c is not None:
             cards.append(c)
-    redis.store('decksite:rotation:summary:runs', runs)
-    redis.store('decksite:rotation:summary:runs_percent', runs_percent)
-    redis.store('decksite:rotation:summary:cards', cards)
+    redis.store('decksite:rotation:summary:runs', runs, ex=604800)
+    redis.store('decksite:rotation:summary:runs_percent', runs_percent, ex=604800)
+    redis.store('decksite:rotation:summary:cards', cards, ex=604800)
     return (runs, runs_percent, cards)
 
 def get_file_contents(file: str) -> List[str]:
@@ -233,7 +240,7 @@ def get_file_contents(file: str) -> List[str]:
         return contents
     with open(file) as f:
         contents = f.readlines()
-    redis.store(key, contents)
+    redis.store(key, contents, ex=604800)
     return contents
 
 def clear_redis(clear_files: bool = False) -> None:

@@ -1,7 +1,7 @@
 import hashlib
 import json
 import time
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set, Union
 
 from mypy_extensions import TypedDict
 
@@ -24,36 +24,76 @@ def latest_decks() -> List[Deck]:
 def load_deck(deck_id: int) -> Deck:
     return guarantee.exactly_one(load_decks('d.id = {deck_id}'.format(deck_id=sqlescape(deck_id))))
 
-def load_season(season_id: int = None, league_only: bool = False) -> Container:
-    season = Container()
-    where = 'TRUE'
-    if league_only:
-        where = 'd.competition_id IN ({competition_ids_by_type_select})'.format(competition_ids_by_type_select=query.competition_ids_by_type_select('League'))
-    season.decks = load_decks(where, season_id=season_id)
-    season.number = season_id
-    return season
+def load_decks_count(where: str = 'TRUE',
+                     having: str = 'TRUE',
+                     season_id: Optional[Union[str, int]] = None) -> int:
+    columns = 'COUNT(*) AS n'
+    sql = load_decks_query(columns, where=where, group_by=None, having=having, order_by='TRUE', limit='', season_id=season_id)
+    return int(db().value(sql))
 
-# pylint: disable=attribute-defined-outside-init
 def load_decks(where: str = 'TRUE',
                having: str = 'TRUE',
                order_by: Optional[str] = None,
                limit: str = '',
-               season_id: Optional[int] = None
+               season_id: Optional[Union[str, int]] = None
               ) -> List[Deck]:
     if not redis.enabled():
         return load_decks_heavy(where, having, order_by, limit, season_id)
+    columns = """
+        d.id,
+        d.finish,
+        d.decklist_hash,
+        cache.active_date,
+        cache.wins,
+        cache.losses,
+        cache.draws,
+        cache.color_sort,
+        ct.name AS competition_type_name
+    """
+    group_by = """
+            d.id,
+            d.competition_id, -- Every deck has only one competition_id but if we want to use competition_id in the HAVING clause we need this.
+            season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
+    """
+    sql = load_decks_query(columns, where=where, group_by=group_by, having=having, order_by=order_by, limit=limit, season_id=season_id)
+    db().execute('SET group_concat_max_len=100000')
+    rows = db().select(sql)
+    decks_by_id = {}
+    heavy = []
+    for row in rows:
+        d = redis.get_container('decksite:deck:{id}'.format(id=row['id']))
+        if d is None or d.name is None:
+            heavy.append(row['id'])
+        else:
+            decks_by_id[row['id']] = deserialize_deck(d)
+    if heavy:
+        where = 'd.id IN ({deck_ids})'.format(deck_ids=', '.join(map(sqlescape, map(str, heavy))))
+        loaded_decks = load_decks_heavy(where)
+        for d in loaded_decks:
+            decks_by_id[d.id] = d
+    decks = []
+    for row in rows:
+        decks.append(decks_by_id[row['id']])
+    return decks
+
+# pylint: disable=attribute-defined-outside-init,too-many-arguments
+def load_decks_query(columns: str,
+                     where: str = 'TRUE',
+                     group_by: Optional[str] = None,
+                     having: str = 'TRUE',
+                     order_by: Optional[str] = None,
+                     limit: str = '',
+                     season_id: Optional[Union[str, int]] = None,
+                    ) -> str:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
+    if group_by is None:
+        group_by = ''
+    else:
+        group_by = f'GROUP BY {group_by}'
     sql = """
         SELECT
-            d.id,
-            d.finish,
-            d.decklist_hash,
-            cache.active_date,
-            cache.wins,
-            cache.losses,
-            cache.draws,
-            ct.name AS competition_type_name
+            {columns}
         FROM
             deck AS d
         """
@@ -79,36 +119,15 @@ def load_decks(where: str = 'TRUE',
         {season_join}
         WHERE
             ({where}) AND ({season_query})
-        GROUP BY
-            d.id,
-            d.competition_id, -- Every deck has only one competition_id but if we want to use competition_id in the HAVING clause we need this.
-            season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
+        {group_by}
         HAVING
             {having}
         ORDER BY
             {order_by}
         {limit}
     """
-    sql = sql.format(person_query=query.person_query(), competition_join=query.competition_join(), season_query=query.season_query(season_id, 'season.id'), season_join=query.season_join(), where=where, having=having, order_by=order_by, limit=limit)
-    db().execute('SET group_concat_max_len=100000')
-    rows = db().select(sql)
-    decks_by_id = {}
-    heavy = []
-    for row in rows:
-        d = redis.get_container('decksite:deck:{id}'.format(id=row['id']))
-        if d is None or d.name is None:
-            heavy.append(row['id'])
-        else:
-            decks_by_id[row['id']] = deserialize_deck(d)
-    if heavy:
-        where = 'd.id IN ({deck_ids})'.format(deck_ids=', '.join(map(sqlescape, map(str, heavy))))
-        loaded_decks = load_decks_heavy(where)
-        for d in loaded_decks:
-            decks_by_id[d.id] = d
-    decks = []
-    for row in rows:
-        decks.append(decks_by_id[row['id']])
-    return decks
+    sql = sql.format(columns=columns, person_query=query.person_query(), competition_join=query.competition_join(), season_query=query.season_query(season_id, 'season.id'), season_join=query.season_join(), where=where, group_by=group_by, having=having, order_by=order_by, limit=limit)
+    return sql
 
 def deserialize_deck(sdeck: Container) -> Deck:
     deck = Deck(sdeck)
@@ -130,7 +149,7 @@ def load_decks_heavy(where: str = 'TRUE',
                      having: str = 'TRUE',
                      order_by: Optional[str] = None,
                      limit: str = '',
-                     season_id: Optional[int] = None
+                     season_id: Optional[Union[str, int]] = None
                     ) -> List[Deck]:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
@@ -164,6 +183,7 @@ def load_decks_heavy(where: str = 'TRUE',
             cache.normalized_name AS name,
             cache.colors,
             cache.colored_symbols,
+            cache.color_sort,
             cache.legal_formats,
             ROUND(cache.omw * 100, 2) AS omw,
             season.id AS season_id,
@@ -364,18 +384,19 @@ def prime_cache(d: Deck) -> None:
     set_colors(d)
     colors_s = json.dumps(d.colors)
     colored_symbols_s = json.dumps(d.colored_symbols)
+    color_sort = mana.order_score(d.colors)
     set_legality(d)
     legal_formats_s = json.dumps(list(d.legal_formats))
     normalized_name = deck_name.normalize(d)
     # If this is a new deck we're going to make a new record. If it's an existing deck we might as well update a few things that might have changed implementation but should otherwise be static. But leave wins/draws/losses/active date alone.
     sql = """
         INSERT INTO
-            deck_cache (deck_id, normalized_name, colors, colored_symbols, legal_formats, wins, draws, losses, active_date)
+            deck_cache (deck_id, normalized_name, colors, colored_symbols, color_sort, legal_formats, wins, draws, losses, active_date)
         VALUES
-            (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-        ON DUPLICATE KEY UPDATE normalized_name = %s, colors = %s, colored_symbols = %s, legal_formats = %s
+            (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE normalized_name = %s, colors = %s, colored_symbols = %s, color_sort = %s, legal_formats = %s
     """
-    db().execute(sql, [d.id, normalized_name, colors_s, colored_symbols_s, legal_formats_s, 0, 0, 0, dtutil.dt2ts(d.created_date), normalized_name, colors_s, colored_symbols_s, legal_formats_s])
+    db().execute(sql, [d.id, normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s, 0, 0, 0, dtutil.dt2ts(d.created_date), normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s])
     # If it was worth priming the in-db cache it's worth busting the in-memory cache to pick up the changes.
     redis.clear(f'decksite:deck:{d.id}')
 
@@ -424,10 +445,6 @@ def get_archetype_id(archetype: Optional[str]) -> Optional[int]:
     sql = 'SELECT id FROM archetype WHERE name = %s'
     return db().value(sql, [archetype])
 
-def load_similar_decks(ds: List[Deck]) -> None:
-    for d in ds:
-        d.similar_decks = []
-
 def calculate_similar_decks(ds: List[Deck]) -> None:
     threshold = 20
     cards_escaped = ', '.join(sqlescape(name) for name in all_card_names(ds))
@@ -442,7 +459,6 @@ def calculate_similar_decks(ds: List[Deck]) -> None:
         d.similar_decks = [psd for psd in potentially_similar if psd.similarity_score >= threshold and psd.id != d.id]
         d.similar_decks.sort(key=lambda d: -(d.similarity_score))
         redis.store('decksite:deck:{id}:similar'.format(id=d.id), d.similar_decks, ex=172800)
-
 
 def all_card_names(ds: List[Deck]) -> Set[str]:
     basic_lands = ['Plains', 'Island', 'Swamp', 'Mountain', 'Forest']

@@ -7,16 +7,13 @@
             <label for="toggle_illegal">Hide cards not legal in Penny Dreadful</label>
         </span>
     </p>
-    {{> spinner}}
     <table class="bugtable">
         <thead>
             <tr class="wide">
                 <th>Card</th>
-                <th data-breakpoints="xs sm md">Bug</th>
-                <th data-breakpoints="xs" data-sortInitialOrder="desc">Severity</th>
-                <th data-breakpoints="xs">Read More</th>
-                {{! Empty column to hold the toggle when footable kicks in.}}
-                <td></td>
+                <th>Bug</th>
+                <th data-sortInitialOrder="desc">Severity</th>
+                <th>Read More</th>
             </tr>
         </thead>
         <tbody>
@@ -32,8 +29,6 @@
                                 <a href="{{bug_blog_url}}" title="Bug Blog"><i class="ss ss-pmei ss-2x"></i></a>
                             {{/from_bug_blog}}
                         </td>
-                        {{! Empty column to hold the toggle when footable kicks in.}}
-                        <td></td>
                     </tr>
                 {{/bugs}}
             {{/cards}}

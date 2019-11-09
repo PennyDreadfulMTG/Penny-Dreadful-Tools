@@ -26,7 +26,7 @@ def init() -> None:
             finally:
                 # if the above fails for some reason, then things are probably bad
                 # but we can't even start up a shell to fix unless the _cache_card table exists
-                update_cache()
+                rebuild_cache()
             reindex()
     except fetcher.FetchException:
         print('Unable to connect to Scryfall.')
@@ -148,15 +148,11 @@ def update_database(new_date: datetime.datetime) -> None:
     update_pd_legality()
     db().execute('INSERT INTO scryfall_version (last_updated) VALUES (%s)', [dtutil.dt2ts(new_date)])
     db().execute('SET FOREIGN_KEY_CHECKS=1') # OK we are done monkeying with the db put the FK checks back in place and recreate _cache_card.
-    update_cache()
+    rebuild_cache()
     db().commit('update_database')
 
 # Take Scryfall card descriptions and add them to the database. See also oracle.add_cards_and_update to also rebuild cache/reindex/etc.
-# Iterate through all printings of each cards, building several sets of values to be provided to queries at the end.
-# If we hit a new card, add it to the queries the several tables tracking cards: card, face, card_color, card_color_identity, printing
-# If it's a printing of a card we already have, just add to the printing query.
-# We need to wait until the end to add the meld results faces because they need to know the id of the card they are the reverse of before we can know their appropriate values.
-def insert_cards(printings: List[CardDescription]) -> None:
+def insert_cards(printings: List[CardDescription]) -> List[int]:
     next_card_id = (db().value('SELECT MAX(id) FROM card') or 0) + 1
     values = determine_values(printings, next_card_id)
     insert_many('card', card.card_properties(), values['card'], ['id'])
@@ -170,6 +166,7 @@ def insert_cards(printings: List[CardDescription]) -> None:
     # Create the current Penny Dreadful format if necessary.
     get_format_id('Penny Dreadful', True)
     update_bugged_cards()
+    return [c['id'] for c in values['card']]
 
 def determine_values(printings: List[CardDescription], next_card_id: int) -> Dict[str, List[Dict[str, Any]]]:
     # pylint: disable=too-many-locals
@@ -193,7 +190,8 @@ def determine_values(printings: List[CardDescription], next_card_id: int) -> Dic
 
     for p in printings:
         # Exclude art_series because they have the same name as real cards and that breaks things.
-        if p['layout'] == 'art_series':
+        # Exclude token because named tokens like "Ajani's Pridemate" and "Storm Crow" conflict with the cards with the same name. See #6156.
+        if p['layout'] in ['art_series', 'token']:
             continue
 
         rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]
@@ -414,7 +412,7 @@ def set_legal_cards(season: str = None) -> None:
         db_legal_list = [row['name'] for row in db().select(sql)]
         print(set(new_list).symmetric_difference(set(db_legal_list)))
 
-def update_cache() -> None:
+def rebuild_cache() -> None:
     db().execute('DROP TABLE IF EXISTS _new_cache_card')
     db().execute('SET group_concat_max_len=100000')
     db().execute(create_table_def('_new_cache_card', card.base_query_properties(), base_query()))
@@ -426,6 +424,15 @@ def update_cache() -> None:
     db().execute('RENAME TABLE _cache_card TO _old_cache_card, _new_cache_card TO _cache_card')
     db().execute('DROP TABLE IF EXISTS _old_cache_card')
 
+def add_to_cache(ids: List[int]) -> None:
+    if not ids:
+        return
+    values = ', '.join([str(id) for id in ids])
+    query = base_query(f'c.id IN ({values})')
+    sql = f'INSERT INTO _cache_card {query}'
+    print(sql)
+    db().execute(sql)
+
 def reindex() -> None:
     writer = WhooshWriter()
     cs = get_all_cards()
@@ -434,6 +441,11 @@ def reindex() -> None:
             if c.name == name:
                 c.names.append(alias)
     writer.rewrite_index(cs)
+
+def reindex_specific_cards(cs: List[Card]) -> None:
+    writer = WhooshWriter()
+    for c in cs:
+        writer.update_card(c)
 
 def database2json(propname: str) -> str:
     if propname == 'system_id':

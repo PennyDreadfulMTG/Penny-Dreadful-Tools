@@ -34,6 +34,7 @@ def decks_api() -> Response:
         {
             'archetypeId': <int?>,
             'cardName': <str?>,
+            'competitionId': <int?>,
             'personId': <int?>,
             'deckType': <'league'|'tournament'|'all'>,
             'page': <int>,
@@ -50,14 +51,23 @@ def decks_api() -> Response:
             'decks': [<deck>]
         }
     """
-    sort_order = request.args.get('sortOrder', 'DESC')
+    if not request.args.get('sortBy') and request.args.get('competitionId'):
+        sort_by = 'top8'
+        sort_order = 'ASC'
+    elif not request.args.get('sortBy'):
+        sort_by = 'date'
+        sort_order = 'DESC'
+    else:
+        sort_by = str(request.args.get('sortBy'))
+        sort_order = str(request.args.get('sortOrder'))
     assert sort_order in ['ASC', 'DESC']
-    order_by = query.decks_order_by(request.args.get('sortBy', 'date'), sort_order)
+    order_by = query.decks_order_by(sort_by, sort_order)
     page_size = int(request.args.get('pageSize', 20))
     page = int(request.args.get('page', 0))
     start = page * page_size
     limit = f'LIMIT {start}, {page_size}'
-    season_id = rotation.season_id(str(request.args.get('seasonId')), None)
+    # Don't restrict by season if we're loading something with a date by its id.
+    season_id = 'all' if request.args.get('competitionId') else rotation.season_id(str(request.args.get('seasonId')), None)
     where = query.decks_where(request.args, session.get('person_id'))
     total = deck.load_decks_count(where=where, season_id=season_id)
     pages = max(ceil(total / page_size) - 1, 0) # 0-indexed

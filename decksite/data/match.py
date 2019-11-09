@@ -28,8 +28,8 @@ def insert_match(dt: datetime.datetime,
     loser_id = left_id if left_games < right_games else right_id
     db().begin('insert_match')
     match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
-    update_cache(left_id, left_games, right_games)
-    update_cache(right_id, right_games, left_games)
+    update_cache(left_id, left_games, right_games, dt=dt)
+    update_cache(right_id, right_games, left_games, dt=dt)
     sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
     db().execute(sql, [left_id, match_id, left_games])
     if right_id is not None: # Don't insert matches or adjust Elo for the bye.
@@ -148,7 +148,7 @@ def update_games(match_id: int, deck_id: int, games: int) -> int:
     args = [games, match_id, deck_id]
     return db().execute(sql, args)
 
-def update_cache(deck_id: int, games: int, opponent_games: int, delete: Optional[bool] = False) -> None:
+def update_cache(deck_id: int, games: int, opponent_games: int, delete: Optional[bool] = False, dt: Optional[datetime.datetime] = None) -> None:
     if games > opponent_games:
         args = [1, 0, 0]
     elif opponent_games > games:
@@ -157,7 +157,15 @@ def update_cache(deck_id: int, games: int, opponent_games: int, delete: Optional
         args = [0, 0, 1]
     args.append(deck_id)
     symbol = '-' if delete else '+'
-    sql = f'UPDATE deck_cache SET wins = wins {symbol} %s, losses = losses {symbol} %s, draws = draws {symbol} %s WHERE deck_id = %s'
+    active_date = dtutil.dt2ts(dt) if dt else 'active_date'
+    sql = f"""
+        UPDATE
+            deck_cache
+        SET
+            wins = wins {symbol} %s, losses = losses {symbol} %s, draws = draws {symbol} %s, active_date = {active_date}
+        WHERE
+            deck_id = %s
+    """
     db().execute(sql, args)
 
 def delete_match(match_id: int) -> None:

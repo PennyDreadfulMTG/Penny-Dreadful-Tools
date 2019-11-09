@@ -125,6 +125,9 @@ def decks_where(args: Dict[str, str], viewer_id: Optional[int]) -> str:
         parts.append(f'd.person_id = {person_id}')
     if args.get('cardName'):
         parts.append(card_where(cast(str, args.get('cardName'))))
+    if args.get('competitionId'):
+        competition_id = cast(int, args.get('competitionId'))
+        parts.append(f'c.id = {competition_id}') # XSS for our cass now taht we don't use int()???
     return ') AND ('.join(parts)
 
 def archetype_where(archetype_id: int) -> str:

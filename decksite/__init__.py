@@ -34,48 +34,48 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
     archetypes_badge = { 'endpoint': 'edit_archetypes', 'text': '', 'badge_class': 'edit_archetypes'}
     resources_submenu: List[Dict[str, str]] = []
     if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7) or (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
-        resources_submenu += [{'name': gettext('Rotation Tracking'),  'endpoint': 'rotation'}]
+        resources_submenu += [{'name': gettext('Rotation Tracking'), 'endpoint': 'rotation'}]
     resources_submenu += [
-        {'name': gettext('Rotation Changes'),  'endpoint': 'rotation_changes'},
-        {'name': gettext('Rotation Speculation'),  'endpoint': 'rotation_speculation'},
-        {'name': gettext('Deck Check'),  'endpoint': 'deck_check'},
+        {'name': gettext('Rotation Changes'), 'endpoint': 'rotation_changes'},
+        {'name': gettext('Rotation Speculation'), 'endpoint': 'rotation_speculation'},
+        {'name': gettext('Deck Check'), 'endpoint': 'deck_check'},
         {'name': gettext('Discord Chat'), 'url': 'https://discord.gg/H6EHdHu'},
-        {'name': gettext('External Links'),  'endpoint': 'resources'},
-        {'name': gettext('Link Accounts'),  'endpoint': 'link'},
-        {'name': gettext('Bugs'),  'endpoint': 'bugs'}
+        {'name': gettext('External Links'), 'endpoint': 'resources'},
+        {'name': gettext('Link Accounts'), 'endpoint': 'link'},
+        {'name': gettext('Bugs'), 'endpoint': 'bugs'}
     ]
     menu = [
-        {'name': gettext('Metagame'),  'endpoint': 'home', 'badge': archetypes_badge, 'key': 'home', 'submenu': [
-            {'name': gettext('Decks'),  'endpoint': '.decks'},
-            {'name': gettext('Archetypes'),  'endpoint': 'archetypes', 'badge': archetypes_badge},
-            {'name': gettext('People'),  'endpoint': 'people'},
-            {'name': gettext('Cards'),  'endpoint': 'cards'},
-            {'name': gettext('Past Seasons'),  'endpoint': 'seasons'},
-            {'name': gettext('Matchups'),  'endpoint': 'matchups'},
+        {'name': gettext('Metagame'), 'endpoint': 'home', 'badge': archetypes_badge, 'key': 'home', 'submenu': [
+            {'name': gettext('Decks'), 'endpoint': '.decks'},
+            {'name': gettext('Archetypes'), 'endpoint': 'archetypes', 'badge': archetypes_badge},
+            {'name': gettext('People'), 'endpoint': 'people'},
+            {'name': gettext('Cards'), 'endpoint': 'cards'},
+            {'name': gettext('Past Seasons'), 'endpoint': 'seasons'},
+            {'name': gettext('Matchups'), 'endpoint': 'matchups'},
         ]},
-        {'name': gettext('League'),  'endpoint': 'league', 'key': 'league', 'submenu': [
-            {'name': gettext('League Info'),  'endpoint': 'league'},
-            {'name': gettext('Sign Up'),  'endpoint': 'signup'},
-            {'name': gettext('Report'),  'endpoint': 'report'},
-            {'name': gettext('Records'),  'endpoint': 'current_league'},
-            {'name': gettext('Retire'),  'endpoint': 'retire'},
+        {'name': gettext('League'), 'endpoint': 'league', 'key': 'league', 'submenu': [
+            {'name': gettext('League Info'), 'endpoint': 'league'},
+            {'name': gettext('Sign Up'), 'endpoint': 'signup'},
+            {'name': gettext('Report'), 'endpoint': 'report'},
+            {'name': gettext('Records'), 'endpoint': 'current_league'},
+            {'name': gettext('Retire'), 'endpoint': 'retire'},
         ]},
-        {'name': gettext('Competitions'),  'endpoint': 'competitions', 'key': 'competitions', 'submenu': [
-            {'name': gettext('Competition Results'),  'endpoint': 'competitions'},
-            {'name': gettext('Tournament Info'),  'endpoint': 'tournaments'},
-            {'name': gettext('Leaderboards'),  'endpoint': 'tournament_leaderboards'},
+        {'name': gettext('Competitions'), 'endpoint': 'competitions', 'key': 'competitions', 'submenu': [
+            {'name': gettext('Competition Results'), 'endpoint': 'competitions'},
+            {'name': gettext('Tournament Info'), 'endpoint': 'tournaments'},
+            {'name': gettext('Leaderboards'), 'endpoint': 'tournament_leaderboards'},
             {'name': gettext('Gatherling'), 'url': 'https://gatherling.com/'},
-            {'name': gettext('Achievements'),  'endpoint': 'achievements'},
-            {'name': gettext('Hosting'),  'endpoint': 'hosting'}
+            {'name': gettext('Achievements'), 'endpoint': 'achievements'},
+            {'name': gettext('Hosting'), 'endpoint': 'hosting'}
         ]},
-        {'name': gettext('Resources'),  'endpoint': 'resources', 'key': 'resources', 'submenu': resources_submenu},
-        {'name': gettext('About'),  'endpoint': 'about', 'submenu': [
-            {'name': gettext('What is Penny Dreadful?'),  'endpoint': 'about'},
-            {'name': gettext('About pennydreadfulmagic.com'),  'endpoint': 'about_pdm'},
-            {'name': gettext('FAQs'),  'endpoint': 'faqs'},
-            {'name': gettext('Community Guidelines'),  'endpoint': 'community_guidelines'}
+        {'name': gettext('Resources'), 'endpoint': 'resources', 'key': 'resources', 'submenu': resources_submenu},
+        {'name': gettext('About'), 'endpoint': 'about', 'submenu': [
+            {'name': gettext('What is Penny Dreadful?'), 'endpoint': 'about'},
+            {'name': gettext('About pennydreadfulmagic.com'), 'endpoint': 'about_pdm'},
+            {'name': gettext('FAQs'), 'endpoint': 'faqs'},
+            {'name': gettext('Community Guidelines'), 'endpoint': 'community_guidelines'}
         ]},
-        {'name': gettext('Admin'), 'admin_only': True,  'endpoint': 'admin_home', 'key': 'admin', 'submenu': admin.admin_menu()}
+        {'name': gettext('Admin'), 'admin_only': True, 'endpoint': 'admin_home', 'key': 'admin', 'submenu': admin.admin_menu()}
     ]
     setup_links(menu)
     for item in menu:

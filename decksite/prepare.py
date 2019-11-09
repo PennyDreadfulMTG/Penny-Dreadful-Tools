@@ -1,9 +1,9 @@
-from typing import List
+from typing import List, Union
 
 from flask import session
 
 from magic import rotation
-from magic.models.deck import Deck
+from magic.models import Card, Deck
 from shared import dtutil
 
 # Take 'raw' items from the database and decorate them for use and display.
@@ -41,19 +41,8 @@ def prepare_deck(d: Deck) -> None:
         d.omw = str(int(d.omw)) + '%'
     d.has_legal_format = len(d.legal_formats) > 0
     d.pd_legal = 'Penny Dreadful' in d.legal_formats
-    d.legal_icons = ''
-    sets = rotation.SEASONS
-    if 'Penny Dreadful' in d.legal_formats:
-        icon = rotation.current_season_code().lower()
-        n = sets.index(icon.upper()) + 1
-        d.legal_icons += '<a href="{url}"><i class="ss ss-{code} ss-rare ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), code=icon, n=n)
-    past_pd_formats = [fmt.replace('Penny Dreadful ', '') for fmt in d.legal_formats if 'Penny Dreadful ' in fmt]
-    past_pd_formats.sort(key=lambda code: -sets.index(code))
-    for code in past_pd_formats:
-        n = sets.index(code.upper()) + 1
-        d.legal_icons += '<a href="{url}"><i class="ss ss-{set} ss-common ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), set=code.lower(), n=n)
-    if 'Commander' in d.legal_formats: # I think C16 looks the nicest.
-        d.legal_icons += '<i class="ss ss-c16 ss-uncommon ss-grad">CMDR</i>'
+    d.non_pd_legal_formats = {f for f in d.legal_formats if 'Penny Dreadful' not in f}
+    set_legal_icons(d)
     if session.get('admin') or session.get('demimod') or not d.is_in_current_run():
         d.decklist = str(d)
     else:
@@ -106,3 +95,16 @@ def colors_html(colors: List[str], colored_symbols: List[str]) -> str:
         width = (3.0 - one_pixel_in_rem * len(colors)) / total * n
         s += '<span class="mana mana-{color}" style="width: {width}rem"></span>'.format(color=color, width=width)
     return s
+
+def set_legal_icons(o: Union[Card, Deck]):
+    o.legal_icons = ''
+    sets = rotation.SEASONS
+    if 'Penny Dreadful' in o.legal_formats:
+        icon = rotation.current_season_code().lower()
+        n = sets.index(icon.upper()) + 1
+        o.legal_icons += '<a href="{url}"><i class="ss ss-{code} ss-rare ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), code=icon, n=n)
+    past_pd_formats = [fmt.replace('Penny Dreadful ', '') for fmt in o.legal_formats if 'Penny Dreadful ' in fmt]
+    past_pd_formats.sort(key=lambda code: -sets.index(code))
+    for code in past_pd_formats:
+        n = sets.index(code.upper()) + 1
+        o.legal_icons += '<a href="{url}"><i class="ss ss-{set} ss-common ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), set=code.lower(), n=n)

@@ -44,8 +44,8 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
         {'name': gettext('Link Accounts'), 'endpoint': 'link'},
         {'name': gettext('Bugs'), 'endpoint': 'bugs'}
     ]
-    menu = [
-        {'name': gettext('Metagame'), 'endpoint': 'home', 'badge': archetypes_badge, 'key': 'home', 'submenu': [
+    menu: List[MenuEntry] = [
+        {'name': gettext('Metagame'), 'endpoint': 'home', 'badge': archetypes_badge, 'submenu': [
             {'name': gettext('Decks'), 'endpoint': '.decks'},
             {'name': gettext('Archetypes'), 'endpoint': 'archetypes', 'badge': archetypes_badge},
             {'name': gettext('People'), 'endpoint': 'people'},
@@ -53,14 +53,14 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
             {'name': gettext('Past Seasons'), 'endpoint': 'seasons'},
             {'name': gettext('Matchups'), 'endpoint': 'matchups'},
         ]},
-        {'name': gettext('League'), 'endpoint': 'league', 'key': 'league', 'submenu': [
+        {'name': gettext('League'), 'endpoint': 'league', 'submenu': [
             {'name': gettext('League Info'), 'endpoint': 'league'},
             {'name': gettext('Sign Up'), 'endpoint': 'signup'},
             {'name': gettext('Report'), 'endpoint': 'report'},
             {'name': gettext('Records'), 'endpoint': 'current_league'},
             {'name': gettext('Retire'), 'endpoint': 'retire'},
         ]},
-        {'name': gettext('Competitions'), 'endpoint': 'competitions', 'key': 'competitions', 'submenu': [
+        {'name': gettext('Competitions'), 'endpoint': 'competitions', 'submenu': [
             {'name': gettext('Competition Results'), 'endpoint': 'competitions'},
             {'name': gettext('Tournament Info'), 'endpoint': 'tournaments'},
             {'name': gettext('Leaderboards'), 'endpoint': 'tournament_leaderboards'},
@@ -68,14 +68,14 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
             {'name': gettext('Achievements'), 'endpoint': 'achievements'},
             {'name': gettext('Hosting'), 'endpoint': 'hosting'}
         ]},
-        {'name': gettext('Resources'), 'endpoint': 'resources', 'key': 'resources', 'submenu': resources_submenu},
+        {'name': gettext('Resources'), 'endpoint': 'resources', 'submenu': resources_submenu},
         {'name': gettext('About'), 'endpoint': 'about', 'submenu': [
             {'name': gettext('What is Penny Dreadful?'), 'endpoint': 'about'},
             {'name': gettext('About pennydreadfulmagic.com'), 'endpoint': 'about_pdm'},
             {'name': gettext('FAQs'), 'endpoint': 'faqs'},
             {'name': gettext('Community Guidelines'), 'endpoint': 'community_guidelines'}
         ]},
-        {'name': gettext('Admin'), 'admin_only': True, 'endpoint': 'admin_home', 'key': 'admin', 'submenu': admin.admin_menu()}
+        {'name': gettext('Admin'), 'admin_only': True, 'endpoint': 'admin_home', 'submenu': admin.admin_menu()}
     ]
     setup_links(menu)
     for item in menu:

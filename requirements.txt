@@ -14,7 +14,7 @@ Flask-Migrate==2.5.2
 ftfy==5.6
 google-api-python-client==1.7.11
 github_webhook==1.0.2
-inflect==3.0.1
+inflect==3.0.2
 isort==4.3.21
 jsbeautifier==1.10.2
 matplotlib==3.1.1

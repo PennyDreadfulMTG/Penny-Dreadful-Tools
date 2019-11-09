@@ -10,7 +10,6 @@ from shared import configuration, dtutil
 from shared.pd_exception import DatabaseException
 from shared_web.flask_app import PDFlask
 
-
 APP = PDFlask(__name__)
 APP.logger.setLevel(logging.WARN) # pylint: disable=no-member,no-name-in-module
 SEASONS = Blueprint('seasons', __name__, url_prefix='/seasons/<season_id>')

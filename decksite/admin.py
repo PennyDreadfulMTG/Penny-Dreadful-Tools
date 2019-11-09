@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, cast
 
-from flask import request, session, url_for
 import titlecase
+from flask import request, session, url_for
 
 from decksite import APP, auth
 from decksite import league as lg

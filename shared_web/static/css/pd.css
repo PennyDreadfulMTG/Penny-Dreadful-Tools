@@ -194,7 +194,7 @@ Symbols provided by our main font are:
     … U+2026 HORIZONTAL ELLIPSIS (in some link text like More new…", and in dropdowns in "Choose…"). Note: our style is no space before ellipsis.
     → U+2192 RIGHT-POINTING ARROW (paginate right)
     ← U+2190 LEFT-POINTING ARROW (paginate left)
-    ↑ U+2191 UPWARDS ARROW (currently hitting in rotation)
+    ↑ U+2191 UPWARDS ARROW (currently hitting in rotation, external links)
     ↓ U+2193 DOWNARDS ARROW (currently missing in rotation)
 
 The characters included in our subsetted font are:
@@ -211,7 +211,6 @@ The characters included in our subsetted font are:
     ⊕ U+2295 CIRCLED PLUS (active league run, maybe cut this)
     █ U+2588 FULL BLOCK (redacted info on in-progress rotation, this is a mostly-standardized extended ASCII char 219 but not always and is not present in many fonts)
     ⸺ U+2E3A TWO-EM DASH (for fav_format when there isn’t one, could use U+2014 EM DASH)
-    ↑ U+2191 UPWARDS ARROW (for external links)
     ▪ U+25AA BLACK SMALL SQUARE (bullet point, could switch to U+2022 BULLET which Concourse has)
     🐞 U+1F41E LADY BEETLE (bug)
     🚫 U+1F6AB NO ENTRY SIGN (card is illegal this season)

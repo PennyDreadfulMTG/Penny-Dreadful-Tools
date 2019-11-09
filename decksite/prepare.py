@@ -96,7 +96,7 @@ def colors_html(colors: List[str], colored_symbols: List[str]) -> str:
         s += '<span class="mana mana-{color}" style="width: {width}rem"></span>'.format(color=color, width=width)
     return s
 
-def set_legal_icons(o: Union[Card, Deck]):
+def set_legal_icons(o: Union[Card, Deck]) -> None:
     o.legal_icons = ''
     sets = rotation.SEASONS
     if 'Penny Dreadful' in o.legal_formats:

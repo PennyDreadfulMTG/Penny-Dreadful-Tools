@@ -11,9 +11,7 @@ class DeckTable extends React.Component {
         this.state = {
             decks: [],
             page: 0,
-            pageSize: 20,
-            sortBy: "date",
-            sortOrder: "DESC"
+            pageSize: 20
         };
     }
 
@@ -32,7 +30,25 @@ class DeckTable extends React.Component {
 
     loadDecks() {
         const {page, pageSize, sortBy, sortOrder} = this.state;
-        Axios.get("/api/decks/", {"params": { deckType: this.props.leagueOnly ? "league" : "all", page, pageSize, sortBy, sortOrder, "seasonId": this.props.seasonId }})
+        let deckType = "all";
+        if (this.props.leagueOnly) {
+            deckType = "league";
+        } else if (this.props.tournamentOnly) {
+            deckType = "tournament";
+        }
+        const params = {
+            "archetypeId": this.props.archetypeId,
+            "cardName": this.props.cardName,
+            "competitionId": this.props.competitionId,
+            deckType,
+            page,
+            pageSize,
+            "personId": this.props.personId,
+            sortBy,
+            sortOrder,
+            "seasonId": this.props.seasonId
+        };
+        Axios.get("/api/decks/", { params })
             .then(
                 (response) => { this.setState({"decks": response.data.decks, "pages": response.data.pages}); PD.initTables(); },
                 (error) => { this.setState({ error }); }
@@ -173,6 +189,7 @@ class DeckTable extends React.Component {
     }
 
     renderPagination() {
+        const { decks, page } = this.state;
         return (
             <div className="pagination">
                 <p className="pagination-links">
@@ -185,7 +202,14 @@ class DeckTable extends React.Component {
                         : null
                     }
                 </p>
-                <p className="page-size-options"><a className={"page-size" + (this.state.pageSize === 20 ? " selected" : "")} onClick={this.changePageSize.bind(this, 20)}>20</a> <a className={"page-size" + (this.state.pageSize === 100 ? " selected" : "")} onClick={this.changePageSize.bind(this, 100)}>100</a> per page</p>
+                { decks.length < 20 && page === 0
+                    ? null
+                    : <p className="page-size-options">
+                        <a className={"page-size" + (this.state.pageSize === 20 ? " selected" : "")} onClick={this.changePageSize.bind(this, 20)}>20</a>
+                        <a className={"page-size" + (this.state.pageSize === 100 ? " selected" : "")} onClick={this.changePageSize.bind(this, 100)}>100</a>
+                        per page
+                    </p>
+                }
             </div>
         );
     }
@@ -215,16 +239,21 @@ if (e !== null) {
     const table =
         <DeckTable
             activeRunsText={e.dataset.activeRunsText}
+            archetypeId={e.dataset.archetypeId}
+            cardName={e.dataset.cardName}
+            competitionId={e.dataset.competitionId}
             hidePerson={e.dataset.hidePerson}
             hidePerson={e.dataset.hidePerson}
             hideSource={e.dataset.hideSource}
             hideTop8={e.dataset.hideTop8}
             leagueOnly={e.dataset.leagueOnly}
             pageSize={e.dataset.pageSize}
+            personId={e.dataset.personId}
             seasonId={e.dataset.seasonId}
             showArchetype={e.dataset.showArchetype}
             showLegalSeasons={e.dataset.showLegalSeasons}
             showOmw={e.dataset.showOmw}
+            tournamentOnly={e.dataset.tournamentOnly}
         />;
     render(table, e);
 }

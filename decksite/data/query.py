@@ -1,5 +1,6 @@
-from typing import Optional, Union
+from typing import Dict, Optional, Union, cast
 
+from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException
 
 
@@ -69,16 +70,14 @@ def season_join() -> str:
             ) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
     """
 
-def decks_order_by(key: str) -> str:
-    # This is not quite right because 5th place in tournaments with top 4 (no stars) get the same score as 5th place in tournaments with top 8 (1 star)
-    # but we don't load tournament_top_n in load_decks, only in load_decks_heavy. See #6648.
-    marginalia_order_by = """
+def decks_order_by(key: str, sort_order: str) -> str:
+    marginalia_order_by = f"""
         (CASE WHEN d.finish = 1 THEN 1
-             WHEN d.finish = 2 THEN 2
-             WHEN d.finish = 3 THEN 3
+             WHEN d.finish = 2 AND c.top_n >= 2 THEN 2
+             WHEN d.finish = 3 AND c.top_n >= 3 THEN 3
              WHEN cache.wins - 5 >= cache.losses THEN 4
              WHEN cache.wins - 3 >= cache.losses THEN 5
-             WHEN d.finish = 5 THEN 6
+             WHEN d.finish = 5 AND c.top_n >= 5 THEN 6
              ELSE 99
          END)
     """
@@ -89,21 +88,50 @@ def decks_order_by(key: str) -> str:
         'person': person_query(),
         'archetype': 'a.name',
         'sourceName': 's.name',
-        'record': '(cache.wins - cache.losses)',
+        'record': f'(cache.wins - cache.losses) {sort_order}, cache.wins',
         'omw': 'cache.omw IS NOT NULL DESC, cache.omw',
         'top8': 'd.finish IS NOT NULL DESC, d.finish',
         'date': 'cache.active_date',
         'season': 'cache.active_date'
     }
-    return sort_options[key]
+    return sort_options[key] + f' {sort_order}, d.name ASC, {person_query()} ASC'
 
-def exclude_active_league_runs() -> str:
-    return """
+def exclude_active_league_runs(except_person_id: Optional[int]) -> str:
+    clause = """
         d.retired
         OR
-        ct.name <> 'League'
+        IFNULL(ct.name, '') <> 'League'
         OR
         IFNULL(cache.wins, 0) + IFNULL(cache.draws, 0) + IFNULL(cache.losses, 0) >= 5
         OR
         c.end_date < UNIX_TIMESTAMP(NOW())
     """
+    if except_person_id:
+        clause += f'OR d.person_id = {except_person_id}'
+    return clause
+
+def decks_where(args: Dict[str, str], viewer_id: Optional[int]) -> str:
+    parts = []
+    parts.append(exclude_active_league_runs(viewer_id))
+    if args.get('deckType') == 'league':
+        parts.append("ct.name = 'League'")
+    elif args.get('deckType') == 'tournament':
+        parts.append("ct.name = 'Gatherling'")
+    if args.get('archetypeId'):
+        archetype_id = cast(int, args.get('archetypeId'))
+        parts.append(archetype_where(archetype_id))
+    if args.get('personId'):
+        person_id = cast(int, args.get('personId'))
+        parts.append(f'd.person_id = {person_id}')
+    if args.get('cardName'):
+        parts.append(card_where(cast(str, args.get('cardName'))))
+    if args.get('competitionId'):
+        competition_id = cast(int, args.get('competitionId'))
+        parts.append(f'c.id = {competition_id}') # XSS for our cass now taht we don't use int()???
+    return ') AND ('.join(parts)
+
+def archetype_where(archetype_id: int) -> str:
+    return f'd.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'
+
+def card_where(name: str) -> str:
+    return 'd.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name))

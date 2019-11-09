@@ -1,7 +1,6 @@
 import unittest
 from typing import List
 
-import pytest
 import whoosh
 
 from magic import multiverse
@@ -93,7 +92,6 @@ class WhooshSearchTest(unittest.TestCase):
     def test_flip(self) -> None:
         self.best_match_is('Dokai, Weaver of Life', 'Budoka Gardener')
 
-    @pytest.mark.xfail(reason='Switch to Scryfall data not quite complete.')
     def test_meld(self) -> None:
         self.best_match_is('Graf Rats', 'Graf Rats')
         self.best_match_is('Midnight Scavengers', 'Midnight Scavengers')

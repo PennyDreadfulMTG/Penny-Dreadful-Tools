@@ -49,8 +49,9 @@ class View(BaseView):
         self.next_tournament_name = None
         self.next_tournament_time = None
         self.tournaments: List[Container] = []
-        self.content_class = self.__class__.__name__.lower()
+        self.content_class = 'content-' + self.__class__.__name__.lower()
         self.page_size = request.cookies.get('page_size', 20)
+        self.tournament_only = False
 
     def season_id(self) -> int:
         return get_season_id()
@@ -165,14 +166,7 @@ class View(BaseView):
             self.prepare_card(c)
 
     def prepare_card(self, c: Card) -> None:
-        try:
-            tournament_only = self.tournament_only #type: ignore
-            # mypy complains we haven't declared tournament_only, but that's fine since we're
-            # catching the error if it isn't defined by a subclass
-        except AttributeError:
-            tournament_only = False
-
-        if tournament_only:
+        if self.tournament_only:
             c.url = url_for('.card_tournament', name=c.name)
         else:
             c.url = url_for('.card', name=c.name)

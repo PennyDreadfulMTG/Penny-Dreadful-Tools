@@ -66,10 +66,8 @@ def decks_api() -> Response:
     page = int(request.args.get('page', 0))
     start = page * page_size
     limit = f'LIMIT {start}, {page_size}'
-    if request.args.get('competitionId'):
-        season_id = 'all' # Don't restrict by season if we're loading something with a date by its id.
-    else:
-        season_id = rotation.season_id(str(request.args.get('seasonId')), None)
+    # Don't restrict by season if we're loading something with a date by its id.
+    season_id = 'all' if request.args.get('competitionId') else rotation.season_id(str(request.args.get('seasonId')), None)
     where = query.decks_where(request.args, session.get('person_id'))
     total = deck.load_decks_count(where=where, season_id=season_id)
     pages = max(ceil(total / page_size) - 1, 0) # 0-indexed

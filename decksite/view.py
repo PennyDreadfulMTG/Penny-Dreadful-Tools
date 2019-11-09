@@ -175,7 +175,9 @@ class View(BaseView):
         c.card_img_class = 'two-faces' if c.layout in ['transform', 'meld'] else ''
         c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
         c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}
+        c.non_pd_legal_formats = {k for k, v in c.legalities.items() if 'Penny Dreadful' not in k and v != 'Banned'}
         c.has_legal_format = len(c.legal_formats) > 0
+        prepare.set_legal_icons(c)
         if c.get('num_decks') is not None:
             c.show_record = c.get('wins') or c.get('losses') or c.get('draws')
         c.has_decks = len(c.get('decks', [])) > 0

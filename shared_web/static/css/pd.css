@@ -102,7 +102,7 @@ i, em /* em to support markdown conversion to HTML, prefer i */ {
 }
 
 nav {
-    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: heading-caps, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-variant-numeric: oldstyle-nums;
     border-bottom: 0.05rem solid #999;
 }
@@ -137,7 +137,7 @@ main li {
 }
 
 footer a {
-    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: heading-caps, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-variant-numeric: oldstyle-nums;
     text-transform: lowercase;
 }
@@ -449,7 +449,7 @@ Currently there is no h3 and nesting that deeply should be pondered but it may b
 header h1 {
     border: 0;
     float: left; /* To accommodate search bar on right. */
-    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: heading-caps, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-variant-numeric: oldstyle-nums;
     font-weight: normal;
     font-size: 1.333rem;
@@ -498,7 +498,7 @@ a {
 
 a, main table.calendar a, main .intro .details a, .details a {
     color: inherit;
-    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: heading-caps, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-variant-numeric: oldstyle-nums;
     text-decoration: none;
     text-transform: lowercase;
@@ -633,7 +633,7 @@ table.with-marginalia {
 
 main th {
     cursor: pointer;
-    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: heading-caps, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 1em;
     font-variant-numeric: oldstyle-nums;
     text-align: left;
@@ -1149,7 +1149,7 @@ Calendar
 
 .date .month {
     display: block;
-    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: heading-caps, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-variant-numeric: oldstyle-nums;
     text-align: left;
     text-transform: lowercase;
@@ -1758,7 +1758,7 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 }
 
 .gsc-wrapper a, .gs-title, .gs-title * {
-    font-family: heading-caps, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: heading-caps, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-variant-numeric: oldstyle-nums;
     text-decoration: none !important; /* csslint allow: important */
 }

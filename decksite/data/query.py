@@ -94,7 +94,7 @@ def decks_order_by(key: str, sort_order: str) -> str:
         'date': 'cache.active_date',
         'season': 'cache.active_date'
     }
-    return sort_options[key] + f' {sort_order}, d.name ASC, {person_query()} ASC'
+    return sort_options[key] + f' {sort_order}, d.finish ASC, cache.active_date DESC'
 
 def exclude_active_league_runs(except_person_id: Optional[int]) -> str:
     clause = """

@@ -14,7 +14,7 @@ from shared.pd_exception import InvalidArgumentException, TestFailedException
 
 ON_PROD = configuration.get_bool('production')
 if ON_PROD:
-    sys.stderr.write('DO NOT RUN dev.py ON PROD')
+    sys.stderr.write('DO NOT RUN dev.py ON PROD\n')
     sys.exit(1)
 
 def run() -> None:

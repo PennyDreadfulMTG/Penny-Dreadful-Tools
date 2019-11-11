@@ -90,7 +90,7 @@ def lint(argv: List[str]) -> None:
     """
     Invoke Pylint with our preferred options
     """
-    print('> Running pylint')
+    print('>>>> Running pylint')
     args = ['--rcfile=.pylintrc', # Load rcfile first.
             '--ignored-modules=alembic,MySQLdb,flask_sqlalchemy,distutils.dist', # override ignored-modules (codacy hack)
             '--load-plugins', 'pylint_quotes, pylint_monolith', # Plugins
@@ -110,6 +110,7 @@ def mypy(argv: List[str], strict: bool = False) -> None:
     Invoke mypy with our preferred options.
     Strict Mode enables additional checks that are currently failing (that we plan on integrating once they pass)
     """
+    print('>>>> Typechecking')
     args = [
         '--ignore-missing-imports',     # Don't complain about 3rd party libs with no stubs
         '--disallow-untyped-calls',     # Strict Mode.  All function calls must have a return type.
@@ -140,7 +141,7 @@ def unit(argv: List[str], m: str = 'not functional and not perf') -> None:
     """
     Literally just prepare the DB and then invoke pytest.
     """
-    print(f'> Running unit tests with "{m}"')
+    print(f'>>>> Running unit tests with "{m}"')
     # pylint: disable=import-outside-toplevel
     import pytest
     from magic import multiverse, oracle
@@ -158,6 +159,7 @@ def unit(argv: List[str], m: str = 'not functional and not perf') -> None:
 
 # pylint: disable=pointless-statement
 def upload_coverage() -> None:
+    print('>>>> Upload coverage')
     # pylint: disable=import-outside-toplevel
     from shared import fetch_tools
     fetch_tools.store('https://codecov.io/bash', 'codecov.sh')
@@ -171,6 +173,7 @@ def sort(fix: bool = False) -> None:
     """
     This method is messy, and is a reduced form of isort.main.main()
     """
+    print('>>>> Checking imports')
     from isort import SortImports
     import isort.main
     config = isort.main.from_path('.')
@@ -180,7 +183,6 @@ def sort(fix: bool = False) -> None:
         config['ask_to_apply'] = False
     else:
         config['check'] = True
-
     file_names = isort.main.iter_source_code(['.'], config, [])
     wrong_sorted_files = False
     for file_name in file_names:
@@ -199,36 +201,39 @@ def reset_db() -> None:
     """
     Handle with care.
     """
+    print('>>>> Reset db')
     import decksite.database
     decksite.database.db().nuke_database()
     import magic.database
     magic.database.db().nuke_database()
 
 def push(args: List[str]) -> None:
-    print('> Stashing local changes')
+    print('>>>> Stashing local changes')
     label = 'dev-py-stash-at-' + str(time.time())
     subprocess.check_call(['git', 'stash', 'save', label])
-    print('> Rebasing branch on Master')
+    print('>>>> Rebasing branch on Master')
     subprocess.check_call(['git', 'pull', 'origin', 'master', '--rebase'])
-    print('> Checking')
+    print('>>>> Checking')
     test(args)
-    print('> Pushing')
+    print('>>>> Pushing')
     branch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
     subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch])
-    print('> Checking for stashed changes')
+    print('>>>> Checking for stashed changes')
     output = subprocess.check_output(['git', 'stash', 'list'], stderr=subprocess.STDOUT)
     if label in str(output):
-        print('> Popping stashed changes')
+        print('>>>> Popping stashed changes')
         subprocess.call(['git', 'stash', 'pop'])
 
 def pull_request(argv: List[str]) -> None:
+    print('>>>> Pull request')
     subprocess.check_call(['hub', 'pull-request', *argv])
 
 def buildjs() -> None:
-    print('> Building javascript')
+    print('>>>> Building javascript')
     subprocess.check_call(['webpack', '--config=decksite/webpack.config.js'])
 
 def jslint(fix: bool = False) -> None:
+    print('>>>> Linting javascript')
     files = find_files(file_extension='js') + find_files(file_extension='jsx')
     cmd = ['./node_modules/.bin/eslint']
     if fix:
@@ -236,14 +241,17 @@ def jslint(fix: bool = False) -> None:
     subprocess.check_call(cmd + files)
 
 def jsfix() -> None:
+    print('>>>> Fixing js')
     jslint(fix=True)
 
 def coverage() -> None:
+    print('>>>> Coverage')
     subprocess.check_call(['coverage', 'run', 'dev.py', 'tests'])
     subprocess.check_call(['coverage', 'xml'])
     subprocess.check_call(['coverage', 'report'])
 
 def watch() -> None:
+    print('>>>> Watching')
     subprocess.check_call(['npm', 'run', 'watch'])
 
 # Make a branch based off of current (remote) master with all your local changes preserved (but not added).
@@ -252,6 +260,7 @@ def branch(args: List[str]) -> None:
         print('Usage: dev.py branch <branch_name>')
         return
     branch = args.pop(0)
+    print('>>>> Creating branch {branch}')
     subprocess.check_call(['git', 'stash', '-a'])
     subprocess.check_call(['git', 'clean', '-fxd'])
     subprocess.check_call(['git', 'checkout', 'master'])
@@ -265,6 +274,7 @@ def branch(args: List[str]) -> None:
 # If you try and git stash and then git stash pop when decksite is running locally you get in a mess.
 # This cleans up for you.
 def popclean() -> None:
+    print('>>>> Popping safely into messy directory.')
     output = subprocess.check_output(['git', 'stash', 'pop'], stderr=subprocess.STDOUT)
     lines = output.decode().split('\n')
     already = [line.split(' ')[1] for line in lines if 'already' in line]

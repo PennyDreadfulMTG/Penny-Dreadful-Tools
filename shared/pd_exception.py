@@ -36,3 +36,6 @@ class AlreadyExistsException(PDException):
 
 class NotConfiguredException(PDException):
     pass
+
+class TestFailedException(PDException):
+    pass

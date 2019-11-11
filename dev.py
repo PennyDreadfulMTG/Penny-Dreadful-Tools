@@ -239,7 +239,7 @@ def jsfix() -> None:
     jslint(fix=True)
 
 def coverage() -> None:
-    subprocess.check_call(['coverage', 'run', 'run.py', 'test'])
+    subprocess.check_call(['coverage', 'run', 'dev.py', 'tests'])
     subprocess.check_call(['coverage', 'xml'])
     subprocess.check_call(['coverage', 'report'])
 

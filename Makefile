@@ -7,7 +7,7 @@ default:
 
 # Push your commits (safely) to the remote branch.
 push:
-	@git pull origin master && make test && git push --set-upstream origin `git rev-parse --abbrev-ref HEAD`
+	@python3 dev.py push
 
 # Run all unit and syntax tests.
 test: check unit

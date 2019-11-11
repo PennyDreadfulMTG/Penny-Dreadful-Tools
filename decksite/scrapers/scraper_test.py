@@ -10,6 +10,7 @@ TEST_VCR = vcr.VCR(
     path_transformer=vcr.VCR.ensure_suffix('.yaml'),
     )
 
+@pytest.mark.xfail(reason='Tappedout temporarily disabled due to rate limiting.')
 @pytest.mark.functional
 @pytest.mark.tappedout
 @pytest.mark.external
@@ -21,6 +22,7 @@ def test_tappedout() -> None:
         tappedout.scrape()
     APP.config['SERVER_NAME'] = prev
 
+@pytest.mark.xfail(reason='Tappedout temporarily disabled due to rate limiting.')
 @pytest.mark.functional
 @pytest.mark.gatherling
 @pytest.mark.external

@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+import time
 from typing import List
 
 from plumbum import FG, local
@@ -174,6 +175,9 @@ def reset_db() -> None:
     magic.database.db().nuke_database()
 
 def push() -> None:
+    print('> Stashing local changes')
+    label = 'dev-py-stash-at-' + str(time.time())
+    subprocess.check_call(['git', 'stash', 'save', label])
     print('> Rebasing branch on Master')
     subprocess.check_call(['git', 'pull', 'origin', 'master', '--rebase'])
     print('> Linting')
@@ -187,6 +191,11 @@ def push() -> None:
     print('> Pushing')
     branch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
     subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch])
+    print('> Checking for stashed changes')
+    output = subprocess.check_output(['git', 'stash', 'list'], stderr=subprocess.STDOUT)
+    if label in str(output):
+        print('> Popping stashed changes')
+        subprocess.call(['git', 'stash', 'pop'])
 
 def pull_request(argv: List[str]) -> None:
     subprocess.check_call(['hub', 'pull-request', *argv])

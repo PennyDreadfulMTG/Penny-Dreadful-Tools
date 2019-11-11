@@ -19,7 +19,8 @@ def test_tappedout() -> None:
     prev = APP.config['SERVER_NAME']
     APP.config['SERVER_NAME'] = configuration.server_name()
     with APP.app_context(): # type: ignore
-        tappedout.scrape()
+        # pylint: disable=no-member
+        tappedout.scrape() # type: ignore
     APP.config['SERVER_NAME'] = prev
 
 @pytest.mark.xfail(reason='Tappedout temporarily disabled due to rate limiting.')
@@ -37,7 +38,7 @@ def test_gatherling() -> None:
 @TEST_VCR.use_cassette
 def test_manual_tappedout() -> None:
     with APP.app_context(): # type: ignore
-        tappedout.scrape_url('https://tappedout.net/mtg-decks/60-island/') # Best deck
+        tappedout.scrape_url('https://tappedout.net/mtg-decks/60-island/')
 
 @pytest.mark.functional
 @pytest.mark.goldfish

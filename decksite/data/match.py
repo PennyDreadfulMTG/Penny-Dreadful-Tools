@@ -7,7 +7,7 @@ from decksite.data import deck, elo, query
 from decksite.database import db
 from magic import rotation
 from magic.models import Deck
-from shared import dtutil, redis
+from shared import dtutil, guarantee, redis
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException, TooFewItemsException
@@ -40,6 +40,9 @@ def insert_match(dt: datetime.datetime,
     if right_id is not None:
         redis.clear(f'decksite:deck:{right_id}')
     return match_id
+
+def load_match(match_id: int, deck_id: int) -> Container:
+    return guarantee.exactly_one(load_matches(f'm.id = {match_id} AND d.id = {deck_id}'))
 
 def load_matches_by_deck(d: deck.Deck, should_load_decks: bool = False) -> List[Container]:
     where = f'd.id = {d.id}'
@@ -136,10 +139,16 @@ def stats() -> Dict[str, int]:
 
 def update_match(match_id: int, left_id: int, left_games: int, right_id: int, right_games: int) -> None:
     db().begin('update_match')
+    m = load_match(match_id, left_id)
+    prev_winner = winner(m.deck_id, m.game_wins, m.opponent_deck_id, m.game_losses)
+    new_winner = winner(left_id, left_games, right_id, right_games)
     update_games(match_id, left_id, left_games)
     update_games(match_id, right_id, right_games)
-    update_cache(left_id, left_games, right_games)
-    update_cache(right_id, right_games, left_games)
+    if new_winner != prev_winner:
+        update_cache(m.deck_id, m.game_wins, m.game_losses, delete=True)
+        update_cache(m.opponent_deck_id, m.game_losses, m.game_wins, delete=True)
+        update_cache(left_id, left_games, right_games)
+        update_cache(right_id, right_games, left_games)
     db().commit('update_match')
     redis.clear(f'decksite:deck:{left_id}', f'decksite:deck:{right_id}')
 
@@ -187,3 +196,10 @@ def delete_match(match_id: int) -> None:
     db().commit('delete_match')
     if rs:
         redis.clear(f'decksite:deck:{left_id}', f'decksite:deck:{right_id}')
+
+def winner(left_id: int, left_games: int, right_id: int, right_games: int):
+    if left_games > right_games:
+        return left_id
+    if right_games > left_id:
+        return right_id
+    return None

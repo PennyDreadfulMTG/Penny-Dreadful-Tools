@@ -197,7 +197,7 @@ def delete_match(match_id: int) -> None:
     if rs:
         redis.clear(f'decksite:deck:{left_id}', f'decksite:deck:{right_id}')
 
-def winner(left_id: int, left_games: int, right_id: int, right_games: int):
+def winner(left_id: int, left_games: int, right_id: int, right_games: int) -> Optional[int]:
     if left_games > right_games:
         return left_id
     if right_games > left_id:

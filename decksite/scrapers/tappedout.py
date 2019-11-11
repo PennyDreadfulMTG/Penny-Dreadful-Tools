@@ -13,7 +13,7 @@ from shared_web import logger
 
 DeckType = deck.RawDeckDescription
 
-def scrape() -> None:
+def ad_hoc() -> None:
     login()
     logger.warning('Logged in to TappedOut: {is_authorised}'.format(is_authorised=is_authorised()))
     raw_decks = fetch_decks()

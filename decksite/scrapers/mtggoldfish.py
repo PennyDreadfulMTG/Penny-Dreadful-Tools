@@ -23,7 +23,7 @@ def scrape(limit: int = 1) -> None:
             break
         for raw_deck in raw_decks:
             d = Container({'source': 'MTG Goldfish'})
-            a = raw_deck.select_one('h2 > span.deck-price-online > a')
+            a = raw_deck.select_one('.title > span.deck-price-online > a')
             d.identifier = re.findall(r'/deck/(\d+)#online', a.get('href'))[0]
             d.url = 'https://www.mtggoldfish.com/deck/{identifier}#online'.format(identifier=d.identifier)
             d.name = a.contents[0].strip()
@@ -34,7 +34,7 @@ def scrape(limit: int = 1) -> None:
                 msg = f'Got {e} trying to find a created_date in {d}, {raw_deck}'
                 logger.error(msg)
                 raise InvalidDataException(msg)
-            time.sleep(1)
+            time.sleep(5)
             d.cards = scrape_decklist(d)
             err = vivify_or_error(d)
             if err:

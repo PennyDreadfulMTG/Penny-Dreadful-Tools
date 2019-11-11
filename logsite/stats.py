@@ -4,6 +4,7 @@ from flask import Response
 from sqlalchemy import func, text
 
 from shared import dtutil
+from shared_web import logger
 
 from . import APP, db
 from .api import return_json
@@ -14,9 +15,12 @@ from .db import Format
 @APP.route('/stats.json')
 def stats() -> Response:
     val: Dict[str, Any] = {}
-    last_switcheroo = calc_last_switcheroo()
-    if last_switcheroo:
-        val['last_switcheroo'] = dtutil.dt2ts(last_switcheroo.start_time_aware())
+    try:
+        last_switcheroo = calc_last_switcheroo()
+        if last_switcheroo:
+            val['last_switcheroo'] = dtutil.dt2ts(last_switcheroo.start_time_aware())
+    except AttributeError as e:
+        logger.warning(f'Unable to calculate last_switcheroo: {e}')
 
     val['formats'] = {}
     base_query = db.DB.session.query(match.Match.format_id, Format.name, func.count(match.Match.format_id)).join(match.Match.format).group_by(match.Match.format_id)

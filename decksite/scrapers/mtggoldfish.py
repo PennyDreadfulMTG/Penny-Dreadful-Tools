@@ -34,7 +34,7 @@ def scrape(limit: int = 1) -> None:
                 msg = f'Got {e} trying to find a created_date in {d}, {raw_deck}'
                 logger.error(msg)
                 raise InvalidDataException(msg)
-            time.sleep(1)
+            time.sleep(5)
             d.cards = scrape_decklist(d)
             err = vivify_or_error(d)
             if err:

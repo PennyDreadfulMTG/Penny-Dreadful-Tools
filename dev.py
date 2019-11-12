@@ -49,7 +49,7 @@ def run_dangerously() -> None:
         unit(args, 'perf')
     elif cmd in ('lint', 'pylint'):
         lint(args)
-    elif cmd in ('types', 'mypy', 'mypy-strict'):
+    elif cmd in ('types', 'mypy'):
         mypy(args)
     elif cmd == 'mypy-strict':
         mypy(args, strict=True)
@@ -109,7 +109,7 @@ def lint(argv: List[str]) -> None:
     if linter.linter.msg_status:
         raise TestFailedException(linter.linter.msg_status)
 
-def mypy(argv: List[str]) -> None:
+def mypy(argv: List[str], strict: bool = False) -> None:
     """
     Invoke mypy with our preferred options.
     Strict Mode enables additional checks that are currently failing (that we plan on integrating once they pass)

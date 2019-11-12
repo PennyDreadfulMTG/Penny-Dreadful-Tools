@@ -92,7 +92,7 @@ def lint(argv: List[str]) -> None:
     print('>>>> Running pylint')
     args = ['--rcfile=.pylintrc', # Load rcfile first.
             '--ignored-modules=alembic,MySQLdb,flask_sqlalchemy,distutils.dist', # override ignored-modules (codacy hack)
-            '--load-plugins', 'pylint_quotes, pylint_monolith', # Plugins
+            '--load-plugins', 'pylint_quotes,pylint_monolith', # Plugins
             '--reports=n', # Don't show reports.
             '-f', 'parseable', # Machine-readable output.
             '-j', '4' # Use four cores for speed.

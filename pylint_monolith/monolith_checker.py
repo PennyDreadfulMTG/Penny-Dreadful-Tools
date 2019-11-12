@@ -21,7 +21,7 @@ ACCEPTABLE_IMPORTS: Dict[str, List[str]] = {
     'shared': [],
     'shared_web': ['shared', 'shared_web'],
 
-    'dev': ['magic', 'shared'],
+    'dev': ['generate_readme', 'magic', 'shared'],
     'generate_readme': ['discordbot'],
     'run': ['discordbot', 'decksite', 'price_grabber', 'rotation_script', 'magic', 'shared'],
 }

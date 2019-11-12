@@ -9,5 +9,5 @@ class Admin(View):
         super().__init__()
         self.admin_menu = admin_menu
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Admin Menu'

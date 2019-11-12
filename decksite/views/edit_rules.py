@@ -46,5 +46,5 @@ class EditRules(View):
         self.excluded_archetypes = excluded_archetype_info
         self.has_excluded_archetypes = len(self.excluded_archetypes) > 0
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Edit Rules'

@@ -235,7 +235,7 @@ def associate(d: deck.Deck, discord_id: int) -> int:
     sql = 'UPDATE person SET discord_id = %s WHERE id = %s'
     return db().execute(sql, [discord_id, person_id])
 
-def is_allowed_to_retire(deck_id: int, discord_id: int) -> bool:
+def is_allowed_to_retire(deck_id: Optional[int], discord_id: Optional[int]) -> bool:
     if not deck_id:
         return False
     if not discord_id:

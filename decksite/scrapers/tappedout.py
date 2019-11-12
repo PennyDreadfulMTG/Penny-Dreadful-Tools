@@ -1,6 +1,6 @@
 import re
 import urllib
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Set
 
 from bs4 import BeautifulSoup
 
@@ -93,7 +93,7 @@ def scrape_url(url: str) -> deck.Deck:
         raw_deck.update(parse_printable(raw_deck)) # type: ignore
     raw_deck = set_values(raw_deck)
     vivified = decklist.vivify(raw_deck['cards'])
-    errors: Dict[str, Dict[str, List[str]]] = {}
+    errors: Dict[str, Dict[str, Set[str]]] = {}
     if 'Penny Dreadful' not in legality.legal_formats(vivified, None, errors):
         print(repr(raw_deck['cards']))
         raise InvalidDataException('Deck is not legal in Penny Dreadful - {error}'.format(error=errors.get('Penny Dreadful')))

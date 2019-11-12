@@ -18,10 +18,10 @@ class LeagueInfo(View):
         self.retire_url = url_for('retire')
         self.bugs_url = url_for('tournaments', _anchor='bugs')
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'League'
 
-    def discord_url(self):
+    def discord_url(self) -> str:
         return 'https://discord.gg/Yekrz3s' # Invite directly into #league channel
 
 def suffix(d: int) -> str:

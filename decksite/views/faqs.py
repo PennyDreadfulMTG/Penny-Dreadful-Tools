@@ -7,5 +7,5 @@ class Faqs(View):
         super().__init__()
         self.hide_intro = True # It has the same content as this page so don't repeat.
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Frequently Asked Questions'

@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, List
 
 from flask import url_for
 
@@ -56,7 +56,7 @@ class Archetype(View):
     def og_description(self) -> str:
         return 'Penny Dreadful {name} archetype'.format(name=self.archetype.name)
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> Any:
         return getattr(self.archetype, attr)
 
     def page_title(self) -> str:

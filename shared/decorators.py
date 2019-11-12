@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Any, Callable, Dict, List
 
 from shared.pd_exception import DatabaseException
 
@@ -6,7 +6,7 @@ FuncType = Callable[..., Any]
 
 def retry_after_calling(retry_func: Callable[[], None]) -> Callable[[FuncType], FuncType]:
     def decorator(decorated_func: FuncType) -> FuncType:
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: List[Any], **kwargs: Dict[str, Any]) -> None:
             try:
                 return decorated_func(*args, **kwargs)
             except DatabaseException as e:

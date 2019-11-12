@@ -4,11 +4,12 @@ https://gist.github.com/matangover/5e95be78f95e340aae9c4071f0d2834f
 """
 
 import astroid
+from astroid.node_classes import NodeNG
 from pylint.checkers import BaseChecker, utils
 from pylint.interfaces import IAstroidChecker
 
 
-def register(linter):
+def register(linter: BaseChecker) -> None:
     linter.register_checker(AsyncAwaitChecker(linter))
 
 
@@ -39,7 +40,7 @@ class AsyncAwaitChecker(BaseChecker):
 
     # pylint: disable=protected-access
     @utils.check_messages(MESSAGE_ID)
-    def visit_callfunc(self, node):
+    def visit_callfunc(self, node: NodeNG) -> None:
         """Called for every function call in the source code."""
         if not self.linter.is_message_enabled(self.MESSAGE_ID):
             return

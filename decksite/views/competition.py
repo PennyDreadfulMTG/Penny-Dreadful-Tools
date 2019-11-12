@@ -40,8 +40,8 @@ class Competition(View):
         self.date = dtutil.display_date(competition.start_date)
         self.sponsor_name = competition.sponsor_name
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> Any:
         return getattr(self.competition, attr)
 
-    def page_title(self):
+    def page_title(self) -> str:
         return self.competition.name

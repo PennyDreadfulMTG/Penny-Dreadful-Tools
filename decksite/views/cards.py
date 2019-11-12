@@ -38,5 +38,5 @@ class Cards(View):
         self.cards = [convert(c) for c in cards]
         self.show_filters_toggle = True
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Cards'

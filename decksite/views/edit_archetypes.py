@@ -30,5 +30,5 @@ class EditArchetypes(View):
         self.query = q
         self.notquery = notq
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Edit Archetypes'

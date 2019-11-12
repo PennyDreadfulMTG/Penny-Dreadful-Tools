@@ -18,7 +18,7 @@ class About(View):
         self.cards = exciting_cards()
         self.num_tournaments_title_case = self.num_tournaments().title()
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'About Penny Dreadful'
 
 def exciting_cards() -> List[Card]:

@@ -2,7 +2,7 @@ from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException
 
 
-def test_sqlescape():
+def test_sqlescape() -> None:
     assert sqlescape("There's an apostrophe.") == "'There''s an apostrophe.'"
     assert sqlescape('a') == "'a'"
     assert sqlescape(6) == 6

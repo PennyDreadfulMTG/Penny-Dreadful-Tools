@@ -22,6 +22,7 @@ from decksite.data import match as ms
 from decksite.data import matchup as mus
 from decksite.data import news as ns
 from decksite.data import person as ps
+from decksite.data import season as ss
 from decksite.database import db
 from decksite.league import DeckCheckForm, ReportForm, RetireForm, SignUpForm
 from decksite.views import (About, AboutPdm, Achievements, Archetype,
@@ -69,7 +70,8 @@ def deck(deck_id: int) -> str:
 @APP.route('/seasons/')
 @cached()
 def seasons() -> str:
-    view = Seasons()
+    stats = ss.season_stats()
+    view = Seasons(stats)
     return view.page()
 
 @SEASONS.route('/')

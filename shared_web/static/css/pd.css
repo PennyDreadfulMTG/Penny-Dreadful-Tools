@@ -248,7 +248,7 @@ p, .subtitle, .news .item, .person {
     font-variant-numeric: oldstyle-nums;
 }
 
-table, ul.decklist.li, .news .date, .deck-name, .rotation p {
+table, ul.decklist.li, .news .date, .deck-name, .rotation p, .seasons p {
     font-variant-numeric: normal;
 }
 
@@ -1361,6 +1361,21 @@ section.legal {
 
 .legal-format {
     margin: 0 1em 1em 0;
+}
+
+/*
+
+Seasons
+
+*/
+
+.seasons p {
+    font-size: 0.75rem;
+}
+
+.seasons li {
+    list-style-type: none;
+    text-align: right;
 }
 
 /*

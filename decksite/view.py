@@ -31,7 +31,8 @@ SeasonInfoDescription = TypedDict('SeasonInfoDescription', {
     'people_url': str,
     'cards_url': str,
     'rotation_changes_url': str,
-})
+    'legal_cards_url': Optional[str]
+}, total=False)
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10
 
@@ -80,7 +81,8 @@ class View(BaseView):
             'archetypes_url': url_for('seasons.archetypes', season_id='all'),
             'people_url': url_for('seasons.people', season_id='all'),
             'cards_url': url_for('seasons.cards', season_id='all'),
-            'rotation_changes_url': url_for('seasons.rotation_changes', season_id='all')
+            'rotation_changes_url': url_for('seasons.rotation_changes', season_id='all'),
+            'legal_cards_url': None
         }]
         num = 1
         next_rotation_set_code = rotation.next_rotation_ex()['code']
@@ -99,7 +101,8 @@ class View(BaseView):
                 'archetypes_url': url_for('seasons.archetypes', season_id=num),
                 'people_url': url_for('seasons.people', season_id=num),
                 'cards_url': url_for('seasons.cards', season_id=num),
-                'rotation_changes_url': url_for('seasons.rotation_changes', season_id=num)
+                'rotation_changes_url': url_for('seasons.rotation_changes', season_id=num),
+                'legal_cards_url': f'https://pdmtgo.com/{code}_legal_cards.txt'
             })
             num += 1
         seasons.reverse()

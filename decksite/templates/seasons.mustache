@@ -1,15 +1,18 @@
 <h1>Past Seasons</h1>
 {{#seasons}}
-    <section>
+    <section class="seasons">
         <h2>Season {{num}} ({{code}})</h2>
+        <p>{{start_date_display}}–{{end_date_display}} ({{length_in_days}})</p>
         <ul>
-            <li><a href="{{decks_url}}">All Decks</a></li>
-            <li><a href="{{league_decks_url}}">League Decks</a></li>
-            <li><a href="{{competitions_url}}">Competitions</a></li>
-            <li><a href="{{archetypes_url}}">Archetypes</a></li>
-            <li><a href="{{people_url}}">People</a></li>
-            <li><a href="{{cards_url}}">Cards</a></li>
+            <li><a href="{{decks_url}}">{{num_decks}} Decks</a></li>
+            <li><a href="{{league_decks_url}}">{{num_league_decks}} League Decks</a></li>
+            <li><a href="{{competitions_url}}">{{num_competitions}} Competitions</a></li>
+            <li><a href="{{archetypes_url}}">{{num_archetypes}} Archetypes</a></li>
+            <li><a href="{{people_url}}">{{num_people}} People</a></li>
+            <li><a href="{{cards_url}}">{{num_cards}} Cards</a></li>
             <li><a href="{{rotation_changes_url}}">Rotation Changes</a></li>
+            <li><a href="{{legal_cards_url}}">Legal Cards List</a></li>
+            <li>{{num_matches}} matches</li>
         </ul>
     </section>
 {{/seasons}}

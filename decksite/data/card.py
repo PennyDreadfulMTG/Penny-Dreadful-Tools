@@ -46,6 +46,8 @@ def preaggregate() -> None:
     preaggregate_card()
     preaggregate_card_person()
     preaggregate_playability()
+    preaggregate_unique()
+    preaggregate_trailblazer()
 
 def preaggregate_card() -> None:
     table = '_card_stats'
@@ -180,6 +182,57 @@ def preaggregate_playability() -> None:
     """.format(table=table, high=high)
     preaggregation.preaggregate(table, sql)
 
+def preaggregate_unique() -> None:
+    table = '_unique_cards'
+    sql = """
+        CREATE TABLE IF NOT EXISTS _new{table} (
+            card VARCHAR(100) NOT NULL,
+            person_id INT NOT NULL,
+            PRIMARY KEY (card, person_id),
+            FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE
+        )
+        SELECT
+            card, person_id
+        FROM
+            deck_card AS dc
+        INNER JOIN
+            deck AS d ON dc.deck_id = d.id
+        WHERE
+            d.id IN (SELECT deck_id FROM deck_match GROUP BY deck_id HAVING COUNT(*) >= 3)
+        GROUP BY
+            card
+        HAVING
+            COUNT(DISTINCT person_id) = 1
+    """.format(table=table)
+    preaggregation.preaggregate(table, sql)
+
+def preaggregate_trailblazer() -> None:
+    table = '_trailblazer_cards'
+    sql = """
+        CREATE TABLE IF NOT EXISTS _new{table} (
+            card VARCHAR(100) NOT NULL,
+            deck_id INT NOT NULL,
+            PRIMARY KEY (card, deck_id),
+            FOREIGN KEY (deck_id) REFERENCES deck (id) ON UPDATE CASCADE ON DELETE CASCADE
+        )
+        SELECT
+            d.id AS deck_id,
+            card,
+            MIN(d.created_date) AS `date`
+        FROM
+            deck_card AS dc
+        INNER JOIN
+            deck AS d ON dc.deck_id = d.id
+        INNER JOIN
+            deck_match AS dm ON dm.deck_id = d.id
+        {competition_join}
+        WHERE
+            d.id IN (SELECT deck_id FROM deck_match GROUP BY deck_id HAVING COUNT(*) >= 3)
+        GROUP BY
+            card
+    """.format(table=table, competition_join=query.competition_join())
+    preaggregation.preaggregate(table, sql)
+
 @retry_after_calling(preaggregate)
 def load_cards(person_id: Optional[int] = None, season_id: Optional[int] = None) -> List[Card]:
     if person_id:
@@ -235,6 +288,32 @@ def playability() -> Dict[str, float]:
             _playability
     """
     return {r['name']: r['playability'] for r in db().select(sql)}
+
+@retry_after_calling(preaggregate_unique)
+def unique_cards_played(person_id: int) -> List[str]:
+    sql = """
+        SELECT
+            card
+        FROM
+            _unique_cards
+        WHERE
+            person_id = %s
+    """
+    return db().values(sql, [person_id])
+
+@retry_after_calling(preaggregate_trailblazer)
+def trailblazer_cards(person_id: int) -> List[str]:
+    sql = """
+        SELECT
+            card
+        FROM
+            _trailblazer_cards AS tc
+        INNER JOIN
+            deck AS d ON tc.deck_id = d.id
+        WHERE
+            d.person_id = %s
+    """
+    return db().values(sql, [person_id])
 
 def card_exists(name: str) -> bool:
     sql = 'SELECT EXISTS(SELECT * FROM deck_card WHERE card = %s LIMIT 1)'

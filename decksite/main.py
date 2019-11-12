@@ -93,7 +93,10 @@ def person(person_id: str) -> str:
     p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
     person_cards = cs.load_cards(person_id=p.id, season_id=get_season_id())
     person_archetypes = archs.load_archetypes_deckless(person_id=p.id, season_id=get_season_id())
-    view = Person(p, person_cards, person_archetypes, get_season_id())
+    trailblazer_cards = cs.trailblazer_cards(p.id)
+    unique_cards = cs.unique_cards_played(p.id)
+    your_cards = {'unique': unique_cards, 'trailblazer': trailblazer_cards}
+    view = Person(p, person_cards, person_archetypes, your_cards, get_season_id())
     return view.page()
 
 @APP.route('/people/<person_id>/matches/')

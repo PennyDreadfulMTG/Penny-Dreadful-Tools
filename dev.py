@@ -202,7 +202,7 @@ def safe_push(args: List[str]) -> None:
         print('>>>> Popping stashed changes')
         subprocess.call(['git', 'stash', 'pop'])
 
-def push():
+def push() -> None:
     print('>>>> Pushing')
     branch_name = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
     subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch_name])

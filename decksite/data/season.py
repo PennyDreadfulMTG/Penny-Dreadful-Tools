@@ -8,6 +8,9 @@ from shared.database import sqlescape
 from shared.decorators import retry_after_calling
 
 
+def preaggregate() -> None:
+    preaggregate_season_stats()
+
 # All of this takes about 8s so let's not do it on user time. Split into multiple queries because it's much faster.
 def preaggregate_season_stats() -> None:
     sql = """

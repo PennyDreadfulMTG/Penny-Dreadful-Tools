@@ -2,7 +2,6 @@ import os
 import subprocess
 import sys
 import time
-from pathlib import Path
 from typing import List
 
 from plumbum import FG, local
@@ -29,7 +28,7 @@ def run() -> None:
     except ProcessExecutionError as e:
         sys.stderr.write('Process failed: ' + str(e) + '\n')
         sys.exit(3)
-    except Exception as e:
+    except Exception as e: # pylint: disable=broad-except
         sys.stderr.write('Unexpected problem: ' + str(e) + '\n')
         sys.exit(4)
 
@@ -170,31 +169,11 @@ def upload_coverage() -> None:
 
 # pylint: disable=import-outside-toplevel
 def sort(fix: bool = False) -> None:
-    """
-    This method is messy, and is a reduced form of isort.main.main()
-    """
     print('>>>> Checking imports')
-    from isort import SortImports
-    import isort.main
-    config = isort.main.from_path('.')
     if fix:
-        config['recursive'] = True
-        config['check'] = False
-        config['ask_to_apply'] = False
+        subprocess.check_call(['isort', '-rc', '.'])
     else:
-        config['check'] = True
-    file_names = isort.main.iter_source_code(['.'], config, [])
-    wrong_sorted_files = False
-    for file_name in file_names:
-        try:
-            sort_attempt = SortImports(file_name, check=config['check'])
-            incorrectly_sorted = sort_attempt.incorrectly_sorted
-            if incorrectly_sorted:
-                wrong_sorted_files = True
-        except IOError as e:
-            print('WARNING: Unable to parse file {0} due to {1}'.format(file_name, e))
-    if wrong_sorted_files:
-        raise TestFailedException(2)
+        subprocess.check_call(['isort', '--check-only'])
 
 # pylint: disable=import-outside-toplevel
 def reset_db() -> None:
@@ -216,8 +195,8 @@ def push(args: List[str]) -> None:
     print('>>>> Checking')
     test(args)
     print('>>>> Pushing')
-    branch = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
-    subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch])
+    branch_name = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
+    subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch_name])
     print('>>>> Checking for stashed changes')
     output = subprocess.check_output(['git', 'stash', 'list'], stderr=subprocess.STDOUT)
     if label in str(output):
@@ -259,13 +238,13 @@ def branch(args: List[str]) -> None:
     if not args:
         print('Usage: dev.py branch <branch_name>')
         return
-    branch = args.pop(0)
-    print('>>>> Creating branch {branch}')
+    branch_name = args.pop(0)
+    print('>>>> Creating branch {branch_name}')
     subprocess.check_call(['git', 'stash', '-a'])
     subprocess.check_call(['git', 'clean', '-fxd'])
     subprocess.check_call(['git', 'checkout', 'master'])
     subprocess.check_call(['git', 'pull'])
-    subprocess.check_call(['git', 'checkout', '-b', branch])
+    subprocess.check_call(['git', 'checkout', '-b', branch_name])
     try:
         subprocess.check_call(['git', 'stash', 'pop'])
     except subprocess.CalledProcessError:

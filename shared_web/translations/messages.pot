@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-11-07 22:45+1100\n"
+"POT-Creation-Date: 2019-11-12 13:43+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,156 +18,156 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.5.3\n"
 
-#: decksite/__init__.py:46
+#: decksite/__init__.py:36
 msgid "Rotation Tracking"
 msgstr ""
 
-#: decksite/__init__.py:48
+#: decksite/__init__.py:38
 msgid "Rotation Changes"
 msgstr ""
 
-#: decksite/__init__.py:49
+#: decksite/__init__.py:39
 msgid "Rotation Speculation"
 msgstr ""
 
-#: decksite/__init__.py:50
+#: decksite/__init__.py:40
 msgid "Deck Check"
 msgstr ""
 
-#: decksite/__init__.py:51
+#: decksite/__init__.py:41
 msgid "Discord Chat"
 msgstr ""
 
-#: decksite/__init__.py:52
+#: decksite/__init__.py:42
 msgid "External Links"
 msgstr ""
 
-#: decksite/__init__.py:53 decksite/views/link_accounts.py:36
+#: decksite/__init__.py:43 decksite/views/link_accounts.py:36
 msgid "Link Accounts"
 msgstr ""
 
-#: decksite/__init__.py:54
+#: decksite/__init__.py:44
 msgid "Bugs"
 msgstr ""
 
-#: decksite/__init__.py:57
+#: decksite/__init__.py:47
 msgid "Metagame"
 msgstr ""
 
-#: decksite/__init__.py:58 decksite/views/home.py:71
-msgid "Latest Decks"
+#: decksite/__init__.py:48 decksite/data/achievements.py:622
+msgid "Decks"
 msgstr ""
 
-#: decksite/__init__.py:59 decksite/data/achievements.py:650
+#: decksite/__init__.py:49 decksite/data/achievements.py:650
 msgid "Archetypes"
 msgstr ""
 
-#: decksite/__init__.py:60
+#: decksite/__init__.py:50
 msgid "People"
 msgstr ""
 
-#: decksite/__init__.py:61
+#: decksite/__init__.py:51
 msgid "Cards"
 msgstr ""
 
-#: decksite/__init__.py:62
+#: decksite/__init__.py:52
 msgid "Past Seasons"
 msgstr ""
 
-#: decksite/__init__.py:63
+#: decksite/__init__.py:53
 msgid "Matchups"
 msgstr ""
 
-#: decksite/__init__.py:65 decksite/templates/tournamentcalendar.mustache:1
+#: decksite/__init__.py:55 decksite/templates/tournamentcalendar.mustache:1
 msgid "League"
 msgstr ""
 
-#: decksite/__init__.py:66
+#: decksite/__init__.py:56
 msgid "League Info"
 msgstr ""
 
-#: decksite/__init__.py:67 decksite/templates/faqsbody.mustache:1
+#: decksite/__init__.py:57 decksite/templates/faqsbody.mustache:1
 #: decksite/views/signup.py:34
 msgid "Sign Up"
 msgstr ""
 
-#: decksite/__init__.py:68 decksite/views/report.py:22
+#: decksite/__init__.py:58 decksite/views/report.py:22
 msgid "Report"
 msgstr ""
 
-#: decksite/__init__.py:69 decksite/templates/leagueinfo.mustache:1
+#: decksite/__init__.py:59 decksite/templates/leagueinfo.mustache:1
 msgid "Records"
 msgstr ""
 
-#: decksite/__init__.py:70 decksite/templates/leagueinfo.mustache:1
+#: decksite/__init__.py:60 decksite/templates/leagueinfo.mustache:1
 msgid "Retire"
 msgstr ""
 
-#: decksite/__init__.py:72
+#: decksite/__init__.py:62
 msgid "Competitions"
 msgstr ""
 
-#: decksite/__init__.py:73
+#: decksite/__init__.py:63
 msgid "Competition Results"
 msgstr ""
 
-#: decksite/__init__.py:74
+#: decksite/__init__.py:64
 msgid "Tournament Info"
 msgstr ""
 
-#: decksite/__init__.py:75
+#: decksite/__init__.py:65
 msgid "Leaderboards"
 msgstr ""
 
-#: decksite/__init__.py:76
+#: decksite/__init__.py:66
 msgid "Gatherling"
 msgstr ""
 
-#: decksite/__init__.py:77
+#: decksite/__init__.py:67
 msgid "Achievements"
 msgstr ""
 
-#: decksite/__init__.py:78
+#: decksite/__init__.py:68
 msgid "Hosting"
 msgstr ""
 
-#: decksite/__init__.py:80
+#: decksite/__init__.py:70
 msgid "Resources"
 msgstr ""
 
-#: decksite/__init__.py:81 decksite/views/about_pdm.py:16
+#: decksite/__init__.py:71 decksite/views/about_pdm.py:16
 #: logsite/views/about.py:16
 msgid "About"
 msgstr ""
 
-#: decksite/__init__.py:82
+#: decksite/__init__.py:72
 msgid "What is Penny Dreadful?"
 msgstr ""
 
-#: decksite/__init__.py:83
+#: decksite/__init__.py:73
 msgid "About pennydreadfulmagic.com"
 msgstr ""
 
-#: decksite/__init__.py:84
+#: decksite/__init__.py:74
 msgid "FAQs"
 msgstr ""
 
-#: decksite/__init__.py:85 decksite/templates/communityguidelines.mustache:1
+#: decksite/__init__.py:75 decksite/templates/communityguidelines.mustache:1
 msgid "Community Guidelines"
 msgstr ""
 
-#: decksite/__init__.py:87
+#: decksite/__init__.py:77
 msgid "Admin"
 msgstr ""
 
-#: decksite/view.py:314
+#: decksite/view.py:316
 #, python-format
 msgid "%(num)d active league run"
 msgid_plural "%(num)d active league runs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/view.py:321 logsite/templates/about.mustache:1
+#: decksite/view.py:323 logsite/templates/about.mustache:1
 msgid "Help us translate the site into your language"
 msgstr ""
 
@@ -273,10 +273,6 @@ msgid "1 defeat avenged"
 msgid_plural "%(num)d defeats avenged"
 msgstr[0] ""
 msgstr[1] ""
-
-#: decksite/data/achievements.py:622
-msgid "Decks"
-msgstr ""
 
 #: decksite/data/achievements.py:625
 #, python-format
@@ -801,7 +797,7 @@ msgstr ""
 msgid ""
 "There are {num_tournaments} weekly Penny Dreadful tournaments hosted on "
 "[Gatherling.com](https://gatherling.com). They are all free to enter and "
-"offer prizes from [Cardhoarder](https://www.cardhoarder.com/). Be "
+"some offer prizes from [Cardhoarder](https://www.cardhoarder.com/). Be "
 "sure to also check out the [league](/league/) for a play-when-you-like "
 "competition."
 msgstr ""
@@ -943,6 +939,10 @@ msgstr ""
 
 #: decksite/views/home.py:64
 msgid "View Tournament…"
+msgstr ""
+
+#: decksite/views/home.py:71
+msgid "Latest Decks"
 msgstr ""
 
 #: decksite/views/home.py:73

@@ -54,7 +54,9 @@ class View(BaseView):
         self.tournaments: List[Container] = []
         self.content_class = 'content-' + self.__class__.__name__.lower()
         self.page_size = request.cookies.get('page_size', 20)
-        self.tournament_only = False
+        self.tournament_only: bool = False
+        self._card_image_template: Optional[str] = None
+        self._card_url_template: Optional[str] = None
 
     def season_id(self) -> int:
         return get_season_id()

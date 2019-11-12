@@ -75,12 +75,14 @@ def run_dangerously() -> None:
         watch()
     elif cmd == 'branch':
         branch(args)
+    elif cmd == 'push':
+        push()
     elif cmd == 'check':
         check(args)
     elif cmd in ('test', 'tests'):
         test(args)
-    elif cmd == 'push':
-        push(args)
+    elif cmd in ('safe_push', 'safepush'):
+        safe_push(args)
     elif cmd == 'release':
         release(args)
     else:
@@ -181,7 +183,7 @@ def reset_db() -> None:
     import magic.database
     magic.database.db().nuke_database()
 
-def push(args: List[str]) -> None:
+def safe_push(args: List[str]) -> None:
     print('>>>> Stashing local changes')
     label = 'dev-py-stash-at-' + str(time.time())
     subprocess.check_call(['git', 'stash', 'save', label])
@@ -189,14 +191,17 @@ def push(args: List[str]) -> None:
     subprocess.check_call(['git', 'pull', 'origin', 'master', '--rebase'])
     print('>>>> Checking')
     test(args)
-    print('>>>> Pushing')
-    branch_name = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
-    subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch_name])
+    push()
     print('>>>> Checking for stashed changes')
     output = subprocess.check_output(['git', 'stash', 'list'], stderr=subprocess.STDOUT)
     if label in str(output):
         print('>>>> Popping stashed changes')
         subprocess.call(['git', 'stash', 'pop'])
+
+def push():
+    print('>>>> Pushing')
+    branch_name = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
+    subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch_name])
 
 def pull_request(argv: List[str]) -> None:
     print('>>>> Pull request')
@@ -269,7 +274,7 @@ def test(args: List[str]) -> None:
     unit(args)
 
 def release(args: List[str]) -> None:
-    push(args)
+    safe_push(args)
     pull_request(args)
 
 def find_files(needle: str = '', file_extension: str = '') -> List[str]:

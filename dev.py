@@ -147,11 +147,12 @@ def unit(argv: List[str], m: str = 'not functional and not perf') -> None:
     from magic import multiverse, oracle
     multiverse.init()
     oracle.init()
-    if argv and not argv[0].startswith('-'):
-        to_find = argv.pop(0)
-        argv.extend(find_files(to_find, 'py'))
-    argv.extend(['--cov-report=', '-x', '-m', m])
-    code = pytest.main(argv)
+    args = argv.copy()
+    if args and not args[0].startswith('-'):
+        to_find = args.pop(0)
+        args.extend(find_files(to_find, 'py'))
+    args.extend(['--cov-report=', '-x', '-m', m])
+    code = pytest.main(args)
     if os.environ.get('TRAVIS') == 'true':
         upload_coverage()
     if code:
@@ -242,7 +243,7 @@ def branch(args: List[str]) -> None:
     if not args:
         print('Usage: dev.py branch <branch_name>')
         return
-    branch_name = args.pop(0)
+    branch_name = args[0]
     print('>>>> Creating branch {branch_name}')
     subprocess.check_call(['git', 'stash', '-a'])
     subprocess.check_call(['git', 'clean', '-fxd'])

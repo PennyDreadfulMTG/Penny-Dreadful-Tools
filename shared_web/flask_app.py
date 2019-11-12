@@ -1,7 +1,7 @@
 import os
 import subprocess
 import urllib
-from typing import Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 from flask import (Flask, Request, Response, redirect, request,
                    send_from_directory, session, url_for)
@@ -114,7 +114,7 @@ class PDFlask(Flask):
             raise DoesNotExistException()
         return send_from_directory(os.path.join(self.static_folder, 'images', 'favicon'), 'favicon{rest}'.format(rest=rest))
 
-    def external_url_handler(self, error, endpoint, values):
+    def external_url_handler(self, error: Exception, endpoint: str, values: Dict[str, Any]) -> str:
         """Looks up an external URL when `url_for` cannot build a URL."""
         url = self.lookup_external_url(endpoint, **values)
         if url is None:
@@ -124,7 +124,7 @@ class PDFlask(Flask):
         # url_for will use this result, instead of raising BuildError.
         return url
 
-    def lookup_external_url(self, endpoint, **values):
+    def lookup_external_url(self, endpoint: str, **values: Dict[str, Any]) -> Optional[str]:
         if endpoint == 'card': # The error pages make a /cards/<name> reference, but only decksite implements it.
             return 'https://pennydreadfulmagic.com/cards/{name}/'.format(name=values['name'])
         return None

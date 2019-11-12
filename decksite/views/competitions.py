@@ -11,5 +11,5 @@ class Competitions(View):
         self.competitions = competitions
         self.show_seasons = True
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Competitions'

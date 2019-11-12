@@ -1,14 +1,15 @@
 from functools import wraps
-from typing import Callable, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from flask import redirect, request, session, url_for
+from werkzeug import wrappers
 
 from decksite.data import person
 
 
 def login_required(f: Callable) -> Callable:
     @wraps(f)
-    def decorated_function(*args, **kwargs):
+    def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> wrappers.Response:
         if session.get('id') is None:
             return redirect(url_for('authenticate', target=request.url))
         return f(*args, **kwargs)
@@ -16,7 +17,7 @@ def login_required(f: Callable) -> Callable:
 
 def demimod_required(f: Callable) -> Callable:
     @wraps(f)
-    def decorated_function(*args, **kwargs):
+    def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> wrappers.Response:
         if session.get('admin') is None and session.get('demimod') is None:
             return redirect(url_for('authenticate', target=request.url))
         if session.get('admin') is False and session.get('demimod') is False:
@@ -26,7 +27,7 @@ def demimod_required(f: Callable) -> Callable:
 
 def admin_required(f: Callable) -> Callable:
     @wraps(f)
-    def decorated_function(*args, **kwargs):
+    def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> wrappers.Response:
         if session.get('admin') is None:
             return redirect(url_for('authenticate', target=request.url))
         if session.get('admin') is False:
@@ -36,7 +37,7 @@ def admin_required(f: Callable) -> Callable:
 
 def admin_required_no_redirect(f: Callable) -> Callable:
     @wraps(f)
-    def decorated_function(*args, **kwargs):
+    def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> Tuple[str, int]:
         if not session.get('admin'):
             return '', 403
         return f(*args, **kwargs)
@@ -64,7 +65,7 @@ def hide_intro() -> bool:
 
 def load_person(f: Callable) -> Callable:
     @wraps(f)
-    def decorated_function(*args, **kwargs):
+    def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> Any:
         if discord_id() is not None:
             p = person.maybe_load_person_by_discord_id(discord_id())
             if p:

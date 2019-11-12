@@ -3,7 +3,7 @@ import datetime
 import json
 import time
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 from flask import url_for
 from werkzeug.datastructures import ImmutableMultiDict
@@ -12,6 +12,7 @@ from decksite.data import competition, deck, match, person, query
 from decksite.data.form import Form
 from decksite.database import db
 from magic import card, decklist, fetcher, legality, rotation
+from magic.decklist import DecklistType
 from magic.models import Deck
 from shared import configuration, dtutil, guarantee, redis
 from shared.container import Container
@@ -43,11 +44,11 @@ class SignUpForm(Form):
                 self.recent_decks.append({'name':d['name'], 'list':json.dumps(recent_deck)})
         if mtgo_username is not None:
             self.mtgo_username = mtgo_username
-        self.deck = None
-        self.card_errors: Dict[str, List[str]] = {}
-        self.card_warnings: Dict[str, List[str]] = {}
+        self.deck = Container()
+        self.card_errors: Dict[str, Set[str]] = {}
+        self.card_warnings: Dict[str, Set[str]] = {}
 
-    def do_validation(self):
+    def do_validation(self) -> None:
         if len(self.mtgo_username) == 0:
             self.errors['mtgo_username'] = 'Magic Online Username is required'
         elif len(self.mtgo_username) > card.MAX_LEN_VARCHAR:
@@ -67,8 +68,8 @@ class SignUpForm(Form):
             self.url = url_for('competition', competition_id=self.competition_id, _external=True)
         self.parse_and_validate_decklist()
 
-    def parse_and_validate_decklist(self):
-        self.decklist = self.decklist.strip()
+    def parse_and_validate_decklist(self) -> None:
+        self.decklist: str = self.decklist.strip()
         if len(self.decklist) == 0:
             self.errors['decklist'] = 'Decklist is required'
         else:
@@ -78,8 +79,8 @@ class SignUpForm(Form):
             if self.deck is not None:
                 self.check_deck_legality()
 
-    def parse_decklist(self):
-        self.cards = None
+    def parse_decklist(self) -> None:
+        self.cards: DecklistType = {}
         if self.decklist.startswith('<?xml'):
             try:
                 self.cards = decklist.parse_xml(self.decklist)
@@ -91,17 +92,17 @@ class SignUpForm(Form):
             except InvalidDataException as e:
                 self.errors['decklist'] = '{specific}. Try exporting from Magic Online as Text and pasting the result.'.format(specific=str(e))
 
-    def vivify_deck(self):
+    def vivify_deck(self) -> None:
         try:
             self.deck = decklist.vivify(self.cards)
         except InvalidDataException as e:
             self.errors['decklist'] = str(e)
 
-    def check_deck_legality(self):
-        errors: Dict[str, Dict[str, List[str]]] = {}
+    def check_deck_legality(self) -> None:
+        errors: Dict[str, Dict[str, Set[str]]] = {}
         if 'Penny Dreadful' not in legality.legal_formats(self.deck, None, errors):
             self.errors['decklist'] = ' '.join(errors.get('Penny Dreadful', {}).pop('Legality_General', ['Not a legal deck']))
-            self.card_errors = errors.get('Penny Dreadful')
+            self.card_errors = errors.get('Penny Dreadful', {})
         banned_for_bugs = {c.name for c in self.deck.all_cards() if any([b.get('bannable', False) for b in c.bugs or []])}
         playable_bugs = {c.name for c in self.deck.all_cards() if c.pd_legal and any([not b.get('bannable', False) for b in c.bugs or []])}
         if len(banned_for_bugs) > 0:
@@ -113,7 +114,7 @@ class SignUpForm(Form):
 
 
 class DeckCheckForm(SignUpForm):
-    def do_validation(self):
+    def do_validation(self) -> None:
         self.parse_and_validate_decklist()
         if len(self.errors) == 0:
             self.validation_ok_message = 'The deck is legal'
@@ -140,7 +141,7 @@ class ReportForm(Form):
             {'text': 'Lose 0–2', 'value': '0–2', 'selected': self.get('result', None) == '0–2'},
         ]
 
-    def do_validation(self):
+    def do_validation(self) -> None:
         self.id = self.entry
         if len(self.entry) == 0:
             self.errors['entry'] = 'Please select your deck'
@@ -171,7 +172,7 @@ class RetireForm(Form):
         if len(self.decks) == 0:
             self.errors['entry'] = "You don't have any decks to retire"
 
-    def do_validation(self):
+    def do_validation(self) -> None:
         if len(self.decks) == 0:
             self.errors['entry'] = "You don't have any decks to retire"
         elif len(self.entry) == 0:
@@ -289,7 +290,7 @@ def report(form: ReportForm) -> bool:
         db().release_lock('deck_id:{id}'.format(id=form.opponent))
         db().release_lock('deck_id:{id}'.format(id=form.entry))
 
-def winner_and_loser(params):
+def winner_and_loser(params: Container) -> Tuple[Optional[int], Optional[int]]:
     if params.entry_games > params.opponent_games:
         return (params.entry, params.opponent)
     if params.opponent_games > params.entry_games:

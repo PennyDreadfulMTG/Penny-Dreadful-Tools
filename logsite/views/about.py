@@ -6,7 +6,7 @@ from .. import APP
 
 
 @APP.route('/about/')
-def about():
+def about() -> str:
     view = About()
     return view.page()
 

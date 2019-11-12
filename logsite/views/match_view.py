@@ -11,8 +11,8 @@ from ..data import match
 from ..view import View
 
 
-@APP.route('/match/<match_id>/')
-def show_match(match_id):
+@APP.route('/match/<int:match_id>/')
+def show_match(match_id: int) -> str:
     view = Match(match.get_match(match_id))
     return view.page()
 
@@ -47,13 +47,13 @@ class Match(View):
             importing.reimport(viewed_match)
         self.is_tournament = viewed_match.is_tournament
 
-    def og_title(self):
+    def og_title(self) -> str:
         return self.players_string
 
-    def og_url(self):
+    def og_url(self) -> str:
         return url_for('show_match', match_id=self.id, _external=True)
 
-    def og_description(self):
+    def og_description(self) -> str:
         p = inflect.engine()
         fmt = titlecase.titlecase(p.a(self.format_name))
         description = '{fmt} match.'.format(fmt=fmt)

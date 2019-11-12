@@ -1,3 +1,5 @@
+from typing import Any
+
 from magic import oracle
 from shared.container import Container
 
@@ -17,7 +19,7 @@ class CardRef(Container):
             return True
         return super().__contains__(key)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> Any:
         if key == 'card':
             return self.card
         return super().__getitem__(key)

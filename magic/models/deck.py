@@ -20,7 +20,7 @@ class Deck(Container):
             cards += [entry.card] * entry['n']
         return cards
 
-    def sort(self):
+    def sort(self) -> None:
         if not self.sorted and (len(self.maindeck) > 0 or len(self.sideboard) > 0):
             self.maindeck.sort(key=lambda x: oracle.deck_sort(x.card))
             self.sideboard.sort(key=lambda x: oracle.deck_sort(x.card))
@@ -35,7 +35,7 @@ class Deck(Container):
             return False
         return True
 
-    def __str__(self):
+    def __str__(self) -> str:
         self.sort()
         s = ''
         for entry in self.maindeck:
@@ -45,5 +45,5 @@ class Deck(Container):
             s += '{n} {name}\n'.format(n=entry['n'], name=entry['name'])
         return s.strip()
 
-    def is_person_associated(self):
+    def is_person_associated(self) -> bool:
         return self.discord_id is not None

@@ -8,5 +8,5 @@ class Seasons(View):
         self.seasons = self.all_seasons()
         self.seasons.pop() # Don't show "all time" on this page as it is not fully supported yet.
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Past Seasons'

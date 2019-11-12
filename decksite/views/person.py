@@ -1,5 +1,5 @@
 import json
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import titlecase
 from flask import url_for
@@ -47,7 +47,7 @@ class Person(View):
         self.matches_url = url_for('person_matches', person_id=person.id, season_id=season_id)
         self.is_person_page = True
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> Any:
         return getattr(self.person, attr)
 
     def page_title(self) -> str:

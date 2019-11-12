@@ -9,7 +9,7 @@ from ..data import match
 
 
 @APP.route('/people/')
-def people():
+def people() -> str:
     view = People()
     return view.page()
 
@@ -26,7 +26,7 @@ class People(View):
         if people_query.has_prev:
             self.prev_url = url_for('people', page=people_query.prev_num)
 
-    def prepare(self):
+    def prepare(self) -> None:
         for p in self.people:
             key = f'logsite:people:{p.id}'
             data = redis.get_container(key, ex=3600)

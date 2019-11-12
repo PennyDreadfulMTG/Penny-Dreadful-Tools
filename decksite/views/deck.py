@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 import inflect
 import titlecase
@@ -85,7 +85,7 @@ class Deck(View):
     def page_title(self) -> str:
         return self.deck.name if self.public() else '(Active League Run)'
 
-    def sections(self):
+    def sections(self) -> List[Dict[str, Any]]:
         sections = []
         if self.creatures():
             sections.append({'name': 'Creatures', 'entries': self.creatures(), 'num_entries': sum([c['n'] for c in self.creatures()])})
@@ -97,16 +97,16 @@ class Deck(View):
             sections.append({'name': 'Sideboard', 'entries': self.sideboard(), 'num_entries': sum([c['n'] for c in self.sideboard()])})
         return sections
 
-    def creatures(self):
+    def creatures(self) -> List[Dict[str, Any]]:
         return [entry for entry in self.deck.maindeck if entry.card.is_creature()]
 
-    def spells(self):
+    def spells(self) -> List[Dict[str, Any]]:
         return [entry for entry in self.deck.maindeck if entry.card.is_spell()]
 
-    def lands(self):
+    def lands(self) -> List[Dict[str, Any]]:
         return [entry for entry in self.deck.maindeck if entry.card.is_land()]
 
-    def sideboard(self):
+    def sideboard(self) -> List[Dict[str, Any]]:
         return self.deck.sideboard
 
     def public(self) -> bool:

@@ -46,10 +46,8 @@ def run_dangerously() -> None:
         unit(args, 'perf')
     elif cmd in ('lint', 'pylint'):
         lint(args)
-    elif cmd in ('types', 'mypy'):
+    elif cmd in ('types', 'mypy', 'mypy-strict'):
         mypy(args)
-    elif cmd == 'mypy-strict':
-        mypy(args, True)
     elif cmd == 'jslint':
         jslint()
     elif cmd == 'jsfix':
@@ -104,7 +102,7 @@ def lint(argv: List[str]) -> None:
     if linter.linter.msg_status:
         raise TestFailedException(linter.linter.msg_status)
 
-def mypy(argv: List[str], strict: bool = False) -> None:
+def mypy(argv: List[str]) -> None:
     """
     Invoke mypy with our preferred options.
     Strict Mode enables additional checks that are currently failing (that we plan on integrating once they pass)
@@ -115,23 +113,17 @@ def mypy(argv: List[str], strict: bool = False) -> None:
         '--disallow-untyped-calls',     # Strict Mode.  All function calls must have a return type.
         '--warn-redundant-casts',
         '--disallow-incomplete-defs',   # All parameters must have type definitions.
-        '--check-untyped-defs'          # Typecheck on all methods, not just typed ones.
+        '--check-untyped-defs',         # Typecheck on all methods, not just typed ones.
+        '--disallow-untyped-defs',      # All methods must be typed.
         ]
-    if strict:
-        args.append('--disallow-untyped-defs') # All methods must be typed.
-    args.extend(argv or [
-        '.'                             # Invoke on the entire project.
-        ])
+    args.extend(argv or ['.']) # Invoke on the entire project.
     # pylint: disable=import-outside-toplevel
     from mypy import api
     result = api.run(args)
-
     if result[0]:
         print(result[0])  # stdout
-
     if result[1]:
         sys.stderr.write(result[1])  # stderr
-
     print('Exit status: {code} ({english})'.format(code=result[2], english='Failure' if result[2] else 'Success'))
     if result[2]:
         raise TestFailedException(result[2])

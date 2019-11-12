@@ -47,9 +47,6 @@ class View(BaseView):
         self.cardhoarder_logo_url = url_for('static', filename='images/cardhoarder.png')
         self.mtgotraders_logo_url = url_for('static', filename='images/mtgotraders.png')
         self.is_person_page: Optional[bool] = None
-        self._card_image_template: Optional[str] = None
-        self._card_url_template: Optional[str] = None
-
         self.next_tournament_name = None
         self.next_tournament_time = None
         self.tournaments: List[Container] = []

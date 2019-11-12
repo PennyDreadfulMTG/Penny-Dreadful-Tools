@@ -4,7 +4,7 @@ from magic import multiverse
 
 REQUIRES_APP_CONTEXT = False
 
-def run():
+def run() -> None:
     start = time.time()
     multiverse.reindex()
     end = time.time()

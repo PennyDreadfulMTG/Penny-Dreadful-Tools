@@ -37,5 +37,5 @@ class Card(View):
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.card, attr)
 
-    def page_title(self):
+    def page_title(self) -> str:
         return self.card.name

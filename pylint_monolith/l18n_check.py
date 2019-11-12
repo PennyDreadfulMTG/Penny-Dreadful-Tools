@@ -4,13 +4,15 @@
 
 import astroid
 import six
+from astroid.node_classes import NodeNG
 from pylint.checkers import BaseChecker, utils
 from pylint.interfaces import IAstroidChecker
+from pylint.lint import PyLinter
 
 BASE_ID = 76
 
 
-def register_checkers(linter):
+def register_checkers(linter: PyLinter) -> None:
     """Register checkers."""
     linter.register_checker(TranslationStringConstantsChecker(linter))
 
@@ -56,7 +58,7 @@ class TranslationStringConstantsChecker(BaseChecker):
     }
 
     @utils.check_messages(*(msgs.keys()))
-    def visit_call(self, node):
+    def visit_call(self, node: NodeNG) -> None:
         """Called for every function call in the source code."""
         if not isinstance(node.func, astroid.Name):
             # It isn't a simple name, can't deduce what function it is.

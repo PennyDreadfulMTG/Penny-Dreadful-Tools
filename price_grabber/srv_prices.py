@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 
 from flask import Flask
 
@@ -8,8 +9,8 @@ from shared.serialization import extra_serializer
 
 SRV = Flask(__name__)
 
-@SRV.route('/<card>/')
-def cardprice(card):
+@SRV.route('/<card>/') # type: ignore
+def cardprice(card: str) -> Optional[str]:
     if card == 'favicon.ico':
         return None
     card = card.replace('-split-', '//')

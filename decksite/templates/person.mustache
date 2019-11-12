@@ -54,6 +54,22 @@
         <canvas class="chart" data-type="{{type}}" data-labels="{{labels}}" data-series="{{series}}" data-options="{{options}}"></canvas>
     </section>
 {{/charts}}
+{{#has_unique_cards}}
+    <section class="card-lists">
+        <h2>Unique Cards Played</h2>
+        <ul>
+            {{#unique_cards}}
+                <li>{{.}}</li>
+            {{/unique_cards}}
+        </ul>
+        <h2>Cards Played First</h2>
+        <ul>
+            {{#trailblazer_cards}}
+                <li>{{.}}</li>
+            {{/trailblazer_cards}}
+        </ul>
+    </section>
+{{/has_unique_cards}}
 <section class="admin">
     <h2>Notes</h2>
     <div class="person-notes" data-person_id="{{person.id}}">

@@ -18,19 +18,22 @@ if ON_PROD:
 
 def run() -> None:
     try:
-        run_dangerously()
-    except InvalidArgumentException as e:
-        sys.stderr.write(str(e) + '\n')
-        sys.exit(1)
-    except TestFailedException as e:
-        sys.stderr.write(str(e) + '\n')
-        sys.exit(2)
-    except ProcessExecutionError as e:
-        sys.stderr.write('Process failed: ' + str(e) + '\n')
-        sys.exit(3)
+        try:
+            exit_code = None
+            run_dangerously()
+        except InvalidArgumentException as e:
+            exit_code = 1
+            raise
+        except TestFailedException as e:
+            exit_code = 2
+            raise
+        except ProcessExecutionError as e:
+            exit_code = 3
+            raise
     except Exception as e: # pylint: disable=broad-except
-        sys.stderr.write('Unexpected problem: ' + str(e) + '\n')
-        sys.exit(4)
+        msg = type(e).__name__ + ' running ' + str(sys.argv) + ': ' + ' [' + str(e.args) + '] ' + str(e) + '\n'
+        sys.stderr.write(msg)
+        sys.exit(exit_code if exit_code else 4)
 
 def run_dangerously() -> None:
     try:
@@ -49,7 +52,7 @@ def run_dangerously() -> None:
     elif cmd in ('types', 'mypy'):
         mypy(args)
     elif cmd == 'mypy-strict':
-        mypy(args, True)
+        mypy(args, strict=True)
     elif cmd == 'jslint':
         jslint()
     elif cmd == 'jsfix':
@@ -74,12 +77,14 @@ def run_dangerously() -> None:
         watch()
     elif cmd == 'branch':
         branch(args)
+    elif cmd == 'push':
+        push()
     elif cmd == 'check':
         check(args)
     elif cmd in ('test', 'tests'):
         test(args)
-    elif cmd == 'push':
-        push(args)
+    elif cmd in ('safe_push', 'safepush'):
+        safe_push(args)
     elif cmd == 'release':
         release(args)
     else:
@@ -115,23 +120,19 @@ def mypy(argv: List[str], strict: bool = False) -> None:
         '--disallow-untyped-calls',     # Strict Mode.  All function calls must have a return type.
         '--warn-redundant-casts',
         '--disallow-incomplete-defs',   # All parameters must have type definitions.
-        '--check-untyped-defs'          # Typecheck on all methods, not just typed ones.
+        '--check-untyped-defs',         # Typecheck on all methods, not just typed ones.
+        '--disallow-untyped-defs',      # All methods must be typed.
         ]
     if strict:
-        args.append('--disallow-untyped-defs') # All methods must be typed.
-    args.extend(argv or [
-        '.'                             # Invoke on the entire project.
-        ])
+        args.extend(['--warn-return-any'])
+    args.extend(argv or ['.']) # Invoke on the entire project.
     # pylint: disable=import-outside-toplevel
     from mypy import api
     result = api.run(args)
-
     if result[0]:
         print(result[0])  # stdout
-
     if result[1]:
         sys.stderr.write(result[1])  # stderr
-
     print('Exit status: {code} ({english})'.format(code=result[2], english='Failure' if result[2] else 'Success'))
     if result[2]:
         raise TestFailedException(result[2])
@@ -186,7 +187,7 @@ def reset_db() -> None:
     import magic.database
     magic.database.db().nuke_database()
 
-def push(args: List[str]) -> None:
+def safe_push(args: List[str]) -> None:
     print('>>>> Stashing local changes')
     label = 'dev-py-stash-at-' + str(time.time())
     subprocess.check_call(['git', 'stash', 'save', label])
@@ -194,14 +195,17 @@ def push(args: List[str]) -> None:
     subprocess.check_call(['git', 'pull', 'origin', 'master', '--rebase'])
     print('>>>> Checking')
     test(args)
-    print('>>>> Pushing')
-    branch_name = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
-    subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch_name])
+    push()
     print('>>>> Checking for stashed changes')
     output = subprocess.check_output(['git', 'stash', 'list'], stderr=subprocess.STDOUT)
     if label in str(output):
         print('>>>> Popping stashed changes')
         subprocess.call(['git', 'stash', 'pop'])
+
+def push() -> None:
+    print('>>>> Pushing')
+    branch_name = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
+    subprocess.check_call(['git', 'push', '--set-upstream', 'origin', branch_name])
 
 def pull_request(argv: List[str]) -> None:
     print('>>>> Pull request')
@@ -274,7 +278,7 @@ def test(args: List[str]) -> None:
     unit(args)
 
 def release(args: List[str]) -> None:
-    push(args)
+    safe_push(args)
     pull_request(args)
 
 def find_files(needle: str = '', file_extension: str = '') -> List[str]:

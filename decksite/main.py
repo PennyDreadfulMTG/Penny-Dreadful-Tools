@@ -22,6 +22,7 @@ from decksite.data import match as ms
 from decksite.data import matchup as mus
 from decksite.data import news as ns
 from decksite.data import person as ps
+from decksite.data import season as ss
 from decksite.database import db
 from decksite.league import DeckCheckForm, ReportForm, RetireForm, SignUpForm
 from decksite.views import (About, AboutPdm, Achievements, Archetype,
@@ -69,7 +70,8 @@ def deck(deck_id: int) -> str:
 @APP.route('/seasons/')
 @cached()
 def seasons() -> str:
-    view = Seasons()
+    stats = ss.season_stats()
+    view = Seasons(stats)
     return view.page()
 
 @SEASONS.route('/')
@@ -91,7 +93,10 @@ def person(person_id: str) -> str:
     p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
     person_cards = cs.load_cards(person_id=p.id, season_id=get_season_id())
     person_archetypes = archs.load_archetypes_deckless(person_id=p.id, season_id=get_season_id())
-    view = Person(p, person_cards, person_archetypes, get_season_id())
+    trailblazer_cards = cs.trailblazer_cards(p.id)
+    unique_cards = cs.unique_cards_played(p.id)
+    your_cards = {'unique': unique_cards, 'trailblazer': trailblazer_cards}
+    view = Person(p, person_cards, person_archetypes, your_cards, get_season_id())
     return view.page()
 
 @APP.route('/people/<person_id>/matches/')

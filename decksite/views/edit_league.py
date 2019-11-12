@@ -11,5 +11,5 @@ class EditLeague(View):
         self.action_display = 'Close' if is_open else 'Open'
         self.action = self.action_display.lower()
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Edit League'

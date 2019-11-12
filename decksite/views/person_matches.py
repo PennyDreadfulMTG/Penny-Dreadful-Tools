@@ -12,5 +12,5 @@ class PersonMatches(View):
         self.person = person
         self.matches = matches
 
-    def page_title(self):
+    def page_title(self) -> str:
         return f'{self.person.name} Matches'

@@ -15,5 +15,5 @@ class EditAliases(View):
         self.people = all_people
         self.aliases = aliases
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Edit Aliases'

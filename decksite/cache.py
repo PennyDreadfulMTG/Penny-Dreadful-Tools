@@ -2,7 +2,7 @@ import binascii
 import datetime
 import functools
 import os
-from typing import Callable
+from typing import Any, Callable, Dict, List
 
 from flask import make_response, request
 from werkzeug.contrib.cache import SimpleCache
@@ -29,7 +29,7 @@ def cached_impl(cacheable: bool = False,
     """
     def decorator(f: Callable) -> Callable:
         @functools.wraps(f)
-        def decorated_function(*args, **kwargs):
+        def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> Callable:
             cache_key = key.format(id=request.full_path, locale=localization.get_locale()) # include querystring
             cache_policy = ''
             if not cacheable:

@@ -195,7 +195,7 @@ def fix_user_errors(issue: Issue) -> None:
         cards = re.findall(REGEX_CARDREF, issue.title)
         body = strings.set_body_field(body, 'Affects', ''.join(['[' + c + ']' for c in cards]))
     if re.search(strings.REGEX_SEARCHREF, body):
-        def do_search(m):
+        def do_search(m) -> str: # type: ignore
             search = m.group(1)
             n, cards, warnings = fetcher.search_scryfall(search)
             if n == 0 or warnings:

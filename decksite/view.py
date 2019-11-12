@@ -31,7 +31,8 @@ SeasonInfoDescription = TypedDict('SeasonInfoDescription', {
     'people_url': str,
     'cards_url': str,
     'rotation_changes_url': str,
-})
+    'legal_cards_url': Optional[str]
+}, total=False)
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10
 
@@ -46,15 +47,14 @@ class View(BaseView):
         self.cardhoarder_logo_url = url_for('static', filename='images/cardhoarder.png')
         self.mtgotraders_logo_url = url_for('static', filename='images/mtgotraders.png')
         self.is_person_page: Optional[bool] = None
-        self._card_image_template: Optional[str] = None
-        self._card_url_template: Optional[str] = None
-
         self.next_tournament_name = None
         self.next_tournament_time = None
         self.tournaments: List[Container] = []
         self.content_class = 'content-' + self.__class__.__name__.lower()
         self.page_size = request.cookies.get('page_size', 20)
-        self.tournament_only = False
+        self.tournament_only: bool = False
+        self._card_image_template: Optional[str] = None
+        self._card_url_template: Optional[str] = None
 
     def season_id(self) -> int:
         return get_season_id()
@@ -78,7 +78,8 @@ class View(BaseView):
             'archetypes_url': url_for('seasons.archetypes', season_id='all'),
             'people_url': url_for('seasons.people', season_id='all'),
             'cards_url': url_for('seasons.cards', season_id='all'),
-            'rotation_changes_url': url_for('seasons.rotation_changes', season_id='all')
+            'rotation_changes_url': url_for('seasons.rotation_changes', season_id='all'),
+            'legal_cards_url': None
         }]
         num = 1
         next_rotation_set_code = rotation.next_rotation_ex()['code']
@@ -97,7 +98,8 @@ class View(BaseView):
                 'archetypes_url': url_for('seasons.archetypes', season_id=num),
                 'people_url': url_for('seasons.people', season_id=num),
                 'cards_url': url_for('seasons.cards', season_id=num),
-                'rotation_changes_url': url_for('seasons.rotation_changes', season_id=num)
+                'rotation_changes_url': url_for('seasons.rotation_changes', season_id=num),
+                'legal_cards_url': f'https://pdmtgo.com/{code}_legal_cards.txt'
             })
             num += 1
         seasons.reverse()

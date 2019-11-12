@@ -1,5 +1,5 @@
 import json
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import titlecase
 from flask import url_for
@@ -11,9 +11,9 @@ from decksite.view import View
 from magic.models import Card
 
 
-# pylint: disable=no-self-use,too-many-instance-attributes
+# pylint: disable=no-self-use,too-many-instance-attributes,too-many-arguments
 class Person(View):
-    def __init__(self, person: ps.Person, cards: List[Card], archetypes: List[Archetype], season_id: Optional[int]) -> None:
+    def __init__(self, person: ps.Person, cards: List[Card], archetypes: List[Archetype], your_cards: Dict[str, List[str]], season_id: Optional[int]) -> None:
         super().__init__()
         self.person = person
         self.people = [person]
@@ -46,8 +46,12 @@ class Person(View):
         self.add_note_url = url_for('post_player_note')
         self.matches_url = url_for('person_matches', person_id=person.id, season_id=season_id)
         self.is_person_page = True
+        self.trailblazer_cards = your_cards['trailblazer']
+        self.has_trailblazer_cards = len(self.trailblazer_cards) > 0
+        self.unique_cards = your_cards['unique']
+        self.has_unique_cards = len(self.unique_cards) > 0
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> Any:
         return getattr(self.person, attr)
 
     def page_title(self) -> str:

@@ -1,5 +1,8 @@
+from typing import Any, Dict, Union
+
 from flask import redirect
 from github_webhook import Webhook
+from werkzeug import wrappers
 
 from shared_web.flask_app import PDFlask
 
@@ -9,17 +12,17 @@ APP = PDFlask(__name__)
 WEBHOOK = Webhook(APP, endpoint='/api/github')
 
 @APP.route('/')
-def home():
+def home() -> str:
     return 'build-commit-id: ' + APP.config['commit-id']
 
 @WEBHOOK.hook()
-def on_push(data):
+def on_push(data: Dict[str, Any]) -> Dict[str, Any]:
     ref = data['ref']
     print(f'Got push on {ref}')
     return data
 
 @WEBHOOK.hook(event_type='status')
-def on_status(data):
+def on_status(data: Dict[str, Any]) -> Union[Dict[str, Any], str]:
     sha = data.get('sha')
     context = data.get('context')
     state = data.get('state')
@@ -34,12 +37,12 @@ def on_status(data):
     return data
 
 @WEBHOOK.hook(event_type='check_suite')
-def on_check_suite(data):
+def on_check_suite(data: Dict[str, Any]) -> Dict[str, Any]:
     print('Got check_suite')
     return data
 
 @WEBHOOK.hook(event_type='pull_request')
-def on_pull_request(data):
+def on_pull_request(data: Dict[str, Any]) -> str:
     org, repo, pr_number = webhooks.parse_pr_url(data['pull_request']['url'])
     print([org, repo, pr_number])
     if data['action'] == 'synchronize' or data['action'] == 'opened':
@@ -62,5 +65,5 @@ def on_pull_request(data):
     return ''
 
 @APP.route('/cards/<path:name>/')
-def card(name):
+def card(name: str) -> wrappers.Response:
     return redirect('https://pennydreadfulmagic.com/cards/{name}/'.format(name=name))

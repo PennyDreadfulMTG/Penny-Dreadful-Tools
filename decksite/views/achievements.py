@@ -16,5 +16,5 @@ class Achievements(View):
                 a.has_leaderboard = True
         self.show_seasons = True
 
-    def page_title(self):
+    def page_title(self) -> str:
         return 'Achievements'

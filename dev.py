@@ -18,19 +18,22 @@ if ON_PROD:
 
 def run() -> None:
     try:
-        run_dangerously()
-    except InvalidArgumentException as e:
-        sys.stderr.write(str(e) + '\n')
-        sys.exit(1)
-    except TestFailedException as e:
-        sys.stderr.write(str(e) + '\n')
-        sys.exit(2)
-    except ProcessExecutionError as e:
-        sys.stderr.write('Process failed: ' + str(e) + '\n')
-        sys.exit(3)
+        try:
+            exit_code = None
+            run_dangerously()
+        except InvalidArgumentException as e:
+            exit_code = 1
+            raise
+        except TestFailedException as e:
+            exit_code = 2
+            raise
+        except ProcessExecutionError as e:
+            exit_code = 3
+            raise
     except Exception as e: # pylint: disable=broad-except
-        sys.stderr.write('Unexpected problem: ' + str(e) + '\n')
-        sys.exit(4)
+        msg = type(e).__name__ + ' running ' + str(sys.argv) + ': ' + ' [' + str(e.args) + '] ' + str(e) + '\n'
+        sys.stderr.write(msg)
+        sys.exit(exit_code if exit_code else 4)
 
 def run_dangerously() -> None:
     try:

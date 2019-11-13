@@ -259,14 +259,15 @@ def branch(args: List[str]) -> None:
 # This cleans up for you.
 def popclean() -> None:
     print('>>>> Popping safely into messy directory.')
-    output = subprocess.check_output(['git', 'stash', 'pop'], stderr=subprocess.STDOUT)
-    lines = output.decode().split('\n')
-    already = [line.split(' ')[1] for line in lines if 'already' in line]
-    if not already:
+    try:
+        subprocess.check_output(['git', 'stash', 'pop'], stderr=subprocess.STDOUT)
         return
-    for f in already:
-        os.remove(f)
-    subprocess.check_call(['git', 'stash', 'pop'])
+    except subprocess.CalledProcessError as e:
+        lines = e.output.decode().split('\n')
+        already = [line.split(' ')[0] for line in lines if 'already' in line]
+        for f in already:
+            os.remove(f)
+        subprocess.check_call(['git', 'stash', 'pop'])
 
 def check(args: List[str]) -> None:
     lint(args)

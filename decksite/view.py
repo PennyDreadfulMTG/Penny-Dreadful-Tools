@@ -53,6 +53,8 @@ class View(BaseView):
         self.content_class = 'content-' + self.__class__.__name__.lower()
         self.page_size = request.cookies.get('page_size', 20)
         self.tournament_only: bool = False
+        self._card_image_template: Optional[str] = None
+        self._card_url_template: Optional[str] = None
 
     def season_id(self) -> int:
         return get_season_id()
@@ -168,20 +170,25 @@ class View(BaseView):
         for c in getattr(self, 'cards', []):
             self.prepare_card(c)
 
+    def url_for_image(self, name: str) -> str:
+        if self._card_image_template is None:
+            self._card_image_template = url_for('image', c='{cardname}')
+        return self._card_image_template.format(name=name)
+
+    def url_for_card(self, c: Card) -> str:
+        if self._card_url_template is None:
+            if self.tournament_only:
+                self._card_url_template = url_for('.card_tournament', name='{cardname}')
+            else:
+                self._card_url_template = url_for('.card', name='{cardname}')
+        return self._card_url_template.format(cardname=c.name)
+
+    def prepare_card_urls(self, c: Card) -> None:
+        c.url = self.url_for_card(c)
+        c.img_url = self.url_for_image(c.name)
+
     def prepare_card(self, c: Card) -> None:
-        try:
-            tournament_only = self.tournament_only #type: ignore
-            # mypy complains we haven't declared tournament_only, but that's fine since we're
-            # catching the error if it isn't defined by a subclass
-        except AttributeError:
-            tournament_only = False
-
-        if tournament_only:
-            c.url = url_for('.card_tournament', name=c.name)
-        else:
-            c.url = url_for('.card', name=c.name)
-
-        c.img_url = url_for('image', c=c.name)
+        self.prepare_card_urls(c)
         c.card_img_class = 'two-faces' if c.layout in ['transform', 'meld'] else ''
         c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
         c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}
@@ -190,7 +197,12 @@ class View(BaseView):
         prepare.set_legal_icons(c)
         if c.get('num_decks') is not None:
             c.show_record = c.get('wins') or c.get('losses') or c.get('draws')
+
         c.has_decks = len(c.get('decks', [])) > 0
+        if not c.has_decks:
+            c.has_most_common_cards = False
+            return
+
         counter = Counter() # type: ignore
         for d in c.get('decks', []):
             for c2 in d.maindeck:

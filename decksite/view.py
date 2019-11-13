@@ -172,16 +172,16 @@ class View(BaseView):
 
     def url_for_image(self, name: str) -> str:
         if self._card_image_template is None:
-            self._card_image_template = url_for('image', c='{cardname}')
-        return self._card_image_template.format(name=name)
+            self._card_image_template = url_for('image', c='--cardname--')
+        return self._card_image_template.replace('--cardname--', name)
 
     def url_for_card(self, c: Card) -> str:
         if self._card_url_template is None:
             if self.tournament_only:
-                self._card_url_template = url_for('.card_tournament', name='{cardname}')
+                self._card_url_template = url_for('.card_tournament', name='--cardname--')
             else:
-                self._card_url_template = url_for('.card', name='{cardname}')
-        return self._card_url_template.format(cardname=c.name)
+                self._card_url_template = url_for('.card', name='--cardname--')
+        return self._card_url_template.replace('--cardname--', c.name)
 
     def prepare_card_urls(self, c: Card) -> None:
         c.url = self.url_for_card(c)

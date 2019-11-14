@@ -422,7 +422,7 @@ def load_archetypes_deckless(order_by: Optional[str] = None, person_id: Optional
             aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
         ORDER BY
             {order_by}
-    """.format(table=table, where=where, group_by=group_by, season_query=query.season_query(season_id), order_by=order_by)
+    """.format(table=table, where=where, group_by=group_by, season_query=query.season_query(season_id), order_by=order_by or 'TRUE')
     archetypes = [Archetype(a) for a in db().select(sql)]
     archetypes_by_id = {a.id: a for a in archetypes}
     for a in archetypes:

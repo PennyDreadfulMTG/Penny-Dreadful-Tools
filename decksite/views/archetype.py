@@ -42,7 +42,7 @@ class Archetype(View):
         }]
         self.show_seasons = True
         self.show_tournament_toggle = True
-        self.toggle_results_url = url_for('archetype', archetype_id=self.archetype.id, deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
+        self.toggle_results_url = url_for('.archetype', archetype_id=self.archetype.id, deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
         self.show_archetype = any(d.archetype_id != self.archetype.id for d in self.decks)
         self.show_archetype_tree = len(self.archetypes) > 0
 
@@ -50,7 +50,7 @@ class Archetype(View):
         return self.archetype.name
 
     def og_url(self) -> str:
-        return url_for('archetype', archetype_id=self.archetype.id, _external=True)
+        return url_for('.archetype', archetype_id=self.archetype.id, _external=True)
 
     def og_description(self) -> str:
         return 'Penny Dreadful {name} archetype'.format(name=self.archetype.name)

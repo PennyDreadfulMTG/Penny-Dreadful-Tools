@@ -80,7 +80,7 @@ class Home(View):
         cards = [c for c in cards if 'Basic Land' not in c.type_line]
         self.top_cards = cards[0:8]
         self.cards = self.top_cards # To get prepare_card treatment
-        self.cards_url = url_for('cards')
+        self.cards_url = url_for('.cards')
 
     def setup_rotation(self) -> None:
         self.season_start_display = dtutil.display_date(rotation.last_rotation())

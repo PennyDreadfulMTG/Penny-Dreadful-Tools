@@ -26,12 +26,12 @@ class Person(View):
         self.cards = cards
         for record in person.head_to_head:
             record.show_record = True
-            record.opp_url = url_for('person', person_id=record.opp_mtgo_username)
+            record.opp_url = url_for('.person', person_id=record.opp_mtgo_username)
         self.show_head_to_head = len(person.head_to_head) > 0
         self.show_seasons = True
         self.displayed_achievements = [{'title': a.title, 'detail': titlecase.titlecase(a.display(self.person))} for a in Achievement.all_achievements if a.display(self.person)]
-        self.achievements_url = url_for('achievements')
-        self.person_achievements_url = url_for('person_achievements', person_id=person.id)
+        self.achievements_url = url_for('.achievements')
+        self.person_achievements_url = url_for('.person_achievements', person_id=person.id)
         colors: Dict[str, int] = {}
         for d in self.decks:
             for c in d.colors:
@@ -46,7 +46,7 @@ class Person(View):
             }
         ]
         self.add_note_url = url_for('post_player_note')
-        self.matches_url = url_for('person_matches', person_id=person.id, season_id=season_id)
+        self.matches_url = url_for('.person_matches', person_id=person.id, season_id=season_id)
         self.is_person_page = True
         self.trailblazer_cards = your_cards['trailblazer']
         self.has_trailblazer_cards = len(self.trailblazer_cards) > 0

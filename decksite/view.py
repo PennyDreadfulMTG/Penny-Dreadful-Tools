@@ -33,6 +33,7 @@ SeasonInfoDescription = TypedDict('SeasonInfoDescription', {
     'people_url': str,
     'cards_url': str,
     'rotation_changes_url': str,
+    'tournament_leaderboards_url': str,
     'legal_cards_url': Optional[str]
 }, total=False)
 
@@ -83,6 +84,7 @@ class View(BaseView):
             'people_url': url_for('seasons.people', season_id='all'),
             'cards_url': url_for('seasons.cards', season_id='all'),
             'rotation_changes_url': url_for('seasons.rotation_changes', season_id='all'),
+            'tournament_leaderboards_url': url_for('seasons.tournament_leaderboards', season_id='all'),
             'legal_cards_url': None
         }]
         num = 1
@@ -103,6 +105,7 @@ class View(BaseView):
                 'people_url': url_for('seasons.people', season_id=num),
                 'cards_url': url_for('seasons.cards', season_id=num),
                 'rotation_changes_url': url_for('seasons.rotation_changes', season_id=num),
+                'tournament_leaderboards_url': url_for('seasons.tournament_leaderboards', season_id=num),
                 'legal_cards_url': f'https://pdmtgo.com/{code}_legal_cards.txt'
             })
             num += 1
@@ -299,7 +302,7 @@ class View(BaseView):
             if m.get('deck_id'):
                 m.deck_url = url_for('deck', deck_id=m.deck_id)
             if m.get('opponent'):
-                m.opponent_url = url_for('person', person_id=m.opponent)
+                m.opponent_url = url_for('.person', person_id=m.opponent)
             if m.get('opponent_deck_id'):
                 m.opponent_deck_url = url_for('deck', deck_id=m.opponent_deck_id)
 

@@ -180,10 +180,7 @@ class View(BaseView):
 
     def url_for_card(self, c: Card) -> str:
         if self._card_url_template is None:
-            if self.tournament_only:
-                self._card_url_template = url_for('.card_tournament', name='--cardname--')
-            else:
-                self._card_url_template = url_for('.card', name='--cardname--')
+            self._card_url_template = url_for('.card', name='--cardname--', deck_type='tournament' if self.tournament_only else None)
         return self._card_url_template.replace('--cardname--', c.name)
 
     def prepare_card_urls(self, c: Card) -> None:
@@ -244,51 +241,27 @@ class View(BaseView):
             self.prepare_archetype(a, getattr(self, 'archetypes', []))
 
     def prepare_archetype(self, a: archetype.Archetype, archetypes: List[archetype.Archetype]) -> None:
-
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
-
         a.show_record = a.get('num_decks') is not None and (a.get('wins') or a.get('draws') or a.get('losses'))
-        a.show_record_tournament = a.get('num_decks_tournament') is not None and (a.get('wins_tournament') or a.get('draws_tournament') or a.get('losses_tournament'))
-
         counter = Counter() # type: ignore
         a.cards = []
         a.most_common_cards = []
-
-        counter_tournament = Counter() # type: ignore
-        a.cards_tournament = []
-        a.most_common_cards_tournament = []
-
         # Make a pass, collecting card counts for all decks and for tournament decks
         for d in a.get('decks', []):
             a.cards += d.maindeck + d.sideboard
             for c in d.maindeck:
                 if not c.card.type_line.startswith('Basic Land'):
                     counter[c['name']] += c['n']
-                    if d.competition_type_name == 'Gatherling':
-                        counter_tournament[c['name']] += c['n']
-
         most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
-        most_common_cards_tournament = counter_tournament.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
-
         cs = oracle.cards_by_name()
-
         for v in most_common_cards:
             self.prepare_card(cs[v[0]])
             a.most_common_cards.append(cs[v[0]])
         a.has_most_common_cards = len(a.most_common_cards) > 0
-
-        for v in most_common_cards_tournament:
-            self.prepare_card(cs[v[0]])
-            a.most_common_cards_tournament.append(cs[v[0]])
-        a.has_most_common_cards_tournament = len(a.most_common_cards_tournament) > 0
-
-        # Set up archetype tree, pruning siblings that we don't want to show.
-        a.archetype_tree = [r for r in PreOrderIter(a) if r.id in [a.id for a in archetypes]]
-        for r in a.archetype_tree:
-            r['url'] = url_for('.archetype', archetype_id=r['id'])
-            r['url_tournament'] = url_for('.archetype_tournament', archetype_id=r['id'])
+        for b in [b for b in PreOrderIter(a) if b.id in [a.id for a in archetypes]]:
+            b['url'] = url_for('.archetype', archetype_id=b['id'])
             # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
-            r['depth'] = r.depth
+            b['depth'] = b.depth
 
     def prepare_leaderboards(self) -> None:
         for l in getattr(self, 'leaderboards', []):

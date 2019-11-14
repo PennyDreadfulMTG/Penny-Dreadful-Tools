@@ -11,9 +11,11 @@
             <th class="n" data-sortInitialOrder="desc">
                 <abbr title="Tournament top-8s">⑧</abbr>
             </th>
-            <th class="n" data-sortInitialOrder="desc">
-                <abbr title="League 5-0 runs">5–0s</abbr>
-            </th>
+            {{^tournament_only}}
+                <th class="n" data-sortInitialOrder="desc">
+                    <abbr title="League 5-0 runs">5–0s</abbr>
+                </th>
+            {{/tournament_only}}
         </tr>
     </thead>
     <tbody>
@@ -25,7 +27,9 @@
                 <td class="n">{{#show_record}}{{win_percent}}{{/show_record}}</td>
                 <td class="n">{{#tournament_wins}}{{tournament_wins}}{{/tournament_wins}}</td>
                 <td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>
-                <td class="n">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>
+                {{^tournament_only}}
+                    <td class="n">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>
+                {{/tournament_only}}
             </tr>
         {{/cards}}
     </tbody>

@@ -49,9 +49,9 @@ def home() -> str:
     return view.page()
 
 @APP.route('/decks/')
-@APP.route('/decks/<deck_type>/')
+@APP.route('/decks/<any(tournament,league):deck_type>/')
 @SEASONS.route('/decks/')
-@SEASONS.route('/decks/<deck_type>/')
+@SEASONS.route('/decks/<any(tournament,league):deck_type>/')
 @cached()
 def decks(deck_type: Optional[str] = None) -> str:
     if deck_type not in [None, 'league']:
@@ -134,41 +134,29 @@ def achievements_redirect() -> wrappers.Response:
     return redirect(url_for('achievements'))
 
 @APP.route('/cards/')
+@APP.route('/cards/<any(tournament,league):deck_type>/')
 @SEASONS.route('/cards/')
+@SEASONS.route('/cards/<any(tournament,league):deck_type>/')
 @cached()
-def cards() -> str:
+def cards(deck_type: Optional[str] = None) -> str:
+    tournament_only = deck_type == 'tournament'
     query = request.args.get('fq')
     if query is None:
         query = ''
-    view = Cards(cs.load_cards(season_id=get_season_id()), query=query)
+    all_cards = cs.load_cards(season_id=get_season_id(), tournament_only=tournament_only)
+    view = Cards(all_cards, query=query, tournament_only=tournament_only)
     return view.page()
-
-@APP.route('/cards/tournament/')
-@SEASONS.route('/cards/tournament/')
-@cached()
-def cards_tournament() -> str:
-    view = Cards(cs.load_cards(season_id=get_season_id()), tournament_only=True)
-    return view.page()
-
-
-@APP.route('/cards/tournament/<path:name>/')
-@SEASONS.route('/cards/tournament/<path:name>/')
-@cached()
-def card_tournament(name: str) -> str:
-    try:
-        c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)), season_id=get_season_id())
-        view = Card(c, tournament_only=True)
-        return view.page()
-    except InvalidDataException as e:
-        raise DoesNotExistException(e)
 
 @APP.route('/cards/<path:name>/')
+@APP.route('/cards/<path:name>/<any(tournament,league):deck_type>/')
 @SEASONS.route('/cards/<path:name>/')
+@SEASONS.route('/cards/<path:name>/<any(tournament,league):deck_type>/')
 @cached()
-def card(name: str) -> str:
+def card(name: str, deck_type: Optional[str] = None) -> str:
+    tournament_only = deck_type == 'tournament'
     try:
         c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)), season_id=get_season_id())
-        view = Card(c)
+        view = Card(c, tournament_only)
         return view.page()
     except InvalidDataException as e:
         raise DoesNotExistException(e)
@@ -187,45 +175,31 @@ def competition(competition_id: int) -> str:
     return view.page()
 
 @APP.route('/archetypes/')
+@APP.route('/archetypes/<any(tournament,league):deck_type>/')
 @SEASONS.route('/archetypes/')
+@SEASONS.route('/archetypes/<any(tournament,league):deck_type>/')
 @cached()
-def archetypes() -> str:
+def archetypes(deck_type: Optional[str] = None) -> str:
+    tournament_only = deck_type == 'tournament'
+    print('tournament_only', tournament_only)
     season_id = get_season_id()
-    deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id)
-    all_matchups = archs.load_matchups(season_id=season_id)
-    view = Archetypes(deckless_archetypes, all_matchups)
-    return view.page()
-
-@APP.route('/archetypes/tournament/')
-@SEASONS.route('/archetypes/tournament/')
-@cached()
-def archetypes_tournament() -> str:
-    season_id = get_season_id()
-    deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id)
-    all_matchups = archs.load_matchups(season_id=season_id)
-    view = Archetypes(deckless_archetypes, all_matchups, tournament_only=True)
+    deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id, tournament_only=tournament_only)
+    all_matchups = archs.load_matchups(season_id=season_id, tournament_only=tournament_only)
+    view = Archetypes(deckless_archetypes, all_matchups, tournament_only=tournament_only)
     return view.page()
 
 @APP.route('/archetypes/<archetype_id>/')
+@APP.route('/archetypes/<archetype_id>/<any(tournament,league):deck_type>/')
 @SEASONS.route('/archetypes/<archetype_id>/')
+@SEASONS.route('/archetypes/<archetype_id>/<any(tournament,league):deck_type>/')
 @cached()
-def archetype(archetype_id: str) -> str:
+def archetype(archetype_id: str, deck_type: Optional[str] = None) -> str:
+    tournament_only = deck_type == 'tournament'
     season_id = get_season_id()
-    a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id)
-    deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id)
-    archetype_matchups = archs.load_matchups(archetype_id=a.id, season_id=season_id)
-    view = Archetype(a, deckless_archetypes, archetype_matchups, season_id)
-    return view.page()
-
-@APP.route('/archetypes/<archetype_id>/tournament/')
-@SEASONS.route('/archetypes/<archetype_id>/tournament/')
-@cached()
-def archetype_tournament(archetype_id: str) -> str:
-    season_id = get_season_id()
-    a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id)
-    deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id)
-    archetype_matchups = archs.load_matchups(archetype_id=a.id, season_id=season_id)
-    view = Archetype(a, deckless_archetypes, archetype_matchups, season_id, tournament_only=True)
+    a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id, tournament_only=tournament_only)
+    deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id, tournament_only=tournament_only)
+    archetype_matchups = archs.load_matchups(archetype_id=a.id, season_id=season_id, tournament_only=tournament_only)
+    view = Archetype(a, deckless_archetypes, archetype_matchups, tournament_only=tournament_only, season_id=season_id)
     return view.page()
 
 @APP.route('/tournaments/')
@@ -307,7 +281,7 @@ def rotation(interestingness: Optional[str] = None) -> str:
     view = Rotation(interestingness, query)
     return view.page()
 
-@APP.route('/export/<deck_id>/')
+@APP.route('/export/<int:deck_id>/')
 @auth.load_person
 def export(deck_id: int) -> Response:
     d = ds.load_deck(deck_id)

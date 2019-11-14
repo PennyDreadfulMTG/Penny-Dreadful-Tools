@@ -22,28 +22,15 @@
         {{#archetypes}}
             {{^hide_archetype}}
                 <tr class="archetype archetype-{{depth}}{{#current}} current{{/current}}">
-                    {{^tournament_only}}
-                        <td data-sort="{{sort}}" class="primary initial"><a href="{{url}}">{{name}}</a></td>
-                        {{^is_matchups}}
-                            <td class="n">{{num_decks}}</td>
-                        {{/is_matchups}}
-                        <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
-                        <td class="n">{{#show_record}}{{win_percent}}{{/show_record}}</td>
-                        {{^is_matchups}}<td class="n">{{#tournament_top8s}}{{tournament_wins}}{{/tournament_top8s}}</td>{{/is_matchups}}
-                        {{^is_matchups}}<td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>{{/is_matchups}}
-                        {{^is_matchups}}<td class="n">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>{{/is_matchups}}
-                    {{/tournament_only}}
-                    {{#tournament_only}}
-                        <td data-sort="{{sort}}" class="primary initial"><a href="{{url_tournament}}">{{name}}</a></td>
-                        {{^is_matchups}}
-                            <td class="n">{{num_decks_tournament}}</td>
-                        {{/is_matchups}}
-                        <td class="n">{{#show_record_tournament}}{{wins_tournament}}–{{losses_tournament}}{{#draws_tournament}}–{{draws_tournament}}{{/draws_tournament}}{{/show_record_tournament}}</td>
-                        <td class="n">{{#show_record_tournament}}{{win_percent_tournament}}{{/show_record_tournament}}</td>
-                        {{^is_matchups}}<td class="n">{{#tournament_top8s}}{{tournament_wins}}{{/tournament_top8s}}</td>{{/is_matchups}}
-                        {{^is_matchups}}<td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>{{/is_matchups}}
-                        {{^is_matchups}}<td class="n">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>{{/is_matchups}}
-                    {{/tournament_only}}
+                    <td data-sort="{{sort}}" class="primary initial"><a href="{{url}}">{{name}}</a></td>
+                    {{^is_matchups}}
+                        <td class="n">{{num_decks}}</td>
+                    {{/is_matchups}}
+                    <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
+                    <td class="n">{{#show_record}}{{win_percent}}{{/show_record}}</td>
+                    {{^is_matchups}}<td class="n">{{#tournament_top8s}}{{tournament_wins}}{{/tournament_top8s}}</td>{{/is_matchups}}
+                    {{^is_matchups}}<td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>{{/is_matchups}}
+                    {{^is_matchups}}<td class="n">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>{{/is_matchups}}
                 </tr>
             {{/hide_archetype}}
         {{/archetypes}}

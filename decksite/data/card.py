@@ -15,8 +15,6 @@ def load_card(name: str, season_id: Optional[int] = None) -> Card:
     c = guarantee.exactly_one(oracle.load_cards([name]))
     c.decks = deck.load_decks(query.card_where(name), season_id=season_id)
     c.wins, c.losses, c.draws, c.tournament_wins, c.tournament_top8s, c.perfect_runs = 0, 0, 0, 0, 0, 0
-    c.wins_tournament, c.losses_tournament, c.draws_tournament = 0, 0, 0
-    c.decks_tournament = []
     for d in c.decks:
         c.wins += d.get('wins', 0)
         c.losses += d.get('losses', 0)
@@ -24,21 +22,11 @@ def load_card(name: str, season_id: Optional[int] = None) -> Card:
         c.tournament_wins += 1 if d.get('finish') == 1 else 0
         c.tournament_top8s += 1 if (d.get('finish') or sys.maxsize) <= 8 else 0
         c.perfect_runs += 1 if d.get('source_name') == 'League' and d.get('wins', 0) >= 5 and d.get('losses', 0) == 0 else 0
-        if d.competition_type_name == 'Gatherling':
-            c.decks_tournament.append(d)
-            c.wins_tournament += (d.get('wins') or 0)
-            c.losses_tournament += (d.get('losses') or 0)
-            c.draws_tournament += (d.get('draws') or 0)
     if c.wins or c.losses:
         c.win_percent = round((c.wins / (c.wins + c.losses)) * 100, 1)
     else:
         c.win_percent = ''
-    if c.wins_tournament or c.losses_tournament:
-        c.win_percent_tournament = round((c.wins_tournament / (c.wins_tournament + c.losses_tournament)) * 100, 1)
-    else:
-        c.win_percent_tournament = ''
     c.num_decks = len(c.decks)
-    c.num_decks_tournament = len(c.decks_tournament)
     c.played_competitively = c.wins or c.losses or c.draws
     return c
 
@@ -62,10 +50,8 @@ def preaggregate_card() -> None:
             perfect_runs INT NOT NULL,
             tournament_wins INT NOT NULL,
             tournament_top8s INT NOT NULL,
-            wins_tournament INT NOT NULL,
-            losses_tournament INT NOT NULL,
-            draws_tournament INT NOT NULL,
-            PRIMARY KEY (season_id, name),
+            deck_type VARCHAR(10) NOT NULL,
+            PRIMARY KEY (season_id, name, deck_type),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
@@ -78,10 +64,7 @@ def preaggregate_card() -> None:
             SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
             SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
             SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
-            SUM(CASE WHEN (d.id IS NOT NULL) AND (ct.name = 'Gatherling') THEN 1 ELSE 0 END) AS num_decks_tournament,
-            IFNULL(SUM(CASE WHEN ct.name = 'Gatherling' THEN wins ELSE 0 END), 0) AS wins_tournament,
-            IFNULL(SUM(CASE WHEN ct.name = 'Gatherling' THEN losses ELSE 0 END), 0) AS losses_tournament,
-            IFNULL(SUM(CASE WHEN ct.name = 'Gatherling' THEN draws ELSE 0 END), 0) AS draws_tournament
+            (CASE WHEN ct.name = 'League' THEN 'league' WHEN ct.name = 'Gatherling' THEN 'tournament' ELSE 'other' END) AS deck_type
         FROM
             deck AS d
         INNER JOIN
@@ -92,7 +75,8 @@ def preaggregate_card() -> None:
         {nwdl_join}
         GROUP BY
             card,
-            season.id
+            season.id,
+            deck_type
     """.format(table=table,
                competition_join=query.competition_join(),
                season_join=query.season_join(),
@@ -112,10 +96,8 @@ def preaggregate_card_person() -> None:
             perfect_runs INT NOT NULL,
             tournament_wins INT NOT NULL,
             tournament_top8s INT NOT NULL,
-            wins_tournament INT NOT NULL,
-            losses_tournament INT NOT NULL,
-            draws_tournament INT NOT NULL,
-            PRIMARY KEY (season_id, person_id, name),
+            deck_type VARCHAR(10) NOT NULL,
+            PRIMARY KEY (season_id, person_id, name, deck_type),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
             FOREIGN KEY (person_id) REFERENCES person (id)  ON UPDATE CASCADE ON DELETE CASCADE,
             INDEX idx_person_id_name (person_id, name)
@@ -131,10 +113,7 @@ def preaggregate_card_person() -> None:
             SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
             SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
             SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
-            SUM(CASE WHEN (d.id IS NOT NULL) AND (ct.name = 'Gatherling') THEN 1 ELSE 0 END) AS num_decks_tournament,
-            IFNULL(SUM(CASE WHEN ct.name = 'Gatherling' THEN wins ELSE 0 END), 0) AS wins_tournament,
-            IFNULL(SUM(CASE WHEN ct.name = 'Gatherling' THEN losses ELSE 0 END), 0) AS losses_tournament,
-            IFNULL(SUM(CASE WHEN ct.name = 'Gatherling' THEN draws ELSE 0 END), 0) AS draws_tournament
+            (CASE WHEN ct.name = 'League' THEN 'league' WHEN ct.name = 'Gatherling' THEN 'tournament' ELSE 'other' END) AS deck_type
         FROM
             deck AS d
         INNER JOIN
@@ -234,7 +213,7 @@ def preaggregate_trailblazer() -> None:
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(preaggregate)
-def load_cards(person_id: Optional[int] = None, season_id: Optional[int] = None) -> List[Card]:
+def load_cards(person_id: Optional[int] = None, season_id: Optional[int] = None, tournament_only: bool = False) -> List[Card]:
     if person_id:
         table = '_card_person_stats'
         where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
@@ -243,6 +222,8 @@ def load_cards(person_id: Optional[int] = None, season_id: Optional[int] = None)
         table = '_card_stats'
         where = 'TRUE'
         group_by = 'name'
+    if tournament_only:
+        where = f"({where}) AND deck_type = 'tournament'"
     sql = """
         SELECT
             name,
@@ -251,16 +232,10 @@ def load_cards(person_id: Optional[int] = None, season_id: Optional[int] = None)
             SUM(losses) AS losses,
             SUM(draws) AS draws,
             SUM(wins - losses) AS record,
-            SUM(num_decks_tournament) AS num_decks_tournament,
-            SUM(wins_tournament) AS wins_tournament,
-            SUM(losses_tournament) AS losses_tournament,
-            SUM(draws_tournament) AS draws_tournament,
-            SUM(wins_tournament - losses_tournament) AS record_tournament,
             SUM(perfect_runs) AS perfect_runs,
             SUM(tournament_wins) AS tournament_wins,
             SUM(tournament_top8s) AS tournament_top8s,
-            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
-            IFNULL(ROUND((SUM(wins_tournament) / NULLIF(SUM(wins_tournament + losses_tournament), 0)) * 100, 1), '') AS win_percent_tournament
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
         FROM
             {table} AS cs
         WHERE

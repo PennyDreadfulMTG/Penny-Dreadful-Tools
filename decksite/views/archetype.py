@@ -23,7 +23,6 @@ class Archetype(View):
             raise DoesNotExistException('No archetype supplied to view.')
         self.archetype = next(a for a in archetypes if a.id == archetype.id) if archetypes else archetype
         self.archetype.decks = archetype.decks
-        self.archetype.decks_tournament = archetype.decks_tournament
         # Load the deck information from archetype into skinny archetype loaded by load_archetypes_deckless_for with tree information.
         self.archetypes = archetypes
         self.tournament_only = self.hide_source = tournament_only
@@ -42,7 +41,7 @@ class Archetype(View):
         }]
         self.show_seasons = True
         self.show_tournament_toggle = True
-        self.toggle_results_url = url_for(results_template, archetype_id=self.archetype.id, deck_type=None if tournament_only else 'tournament')
+        self.toggle_results_url = url_for('archetype', archetype_id=self.archetype.id, deck_type=None if tournament_only else 'tournament')
         self.show_archetype = any(d.archetype_id != self.archetype.id for d in self.decks)
         self.show_archetype_tree = len(self.archetypes) > 0
 

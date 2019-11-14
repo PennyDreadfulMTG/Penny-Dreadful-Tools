@@ -135,3 +135,6 @@ def archetype_where(archetype_id: int) -> str:
 
 def card_where(name: str) -> str:
     return 'd.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name))
+
+def tournament_only_clause() -> str:
+    return "ct.name = 'Gatherling'"

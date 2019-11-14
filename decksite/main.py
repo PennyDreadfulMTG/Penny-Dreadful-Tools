@@ -49,9 +49,9 @@ def home() -> str:
     return view.page()
 
 @APP.route('/decks/')
-@APP.route('/decks/<deck_type>/')
+@APP.route('/decks/<any(tournament,league):deck_type>/')
 @SEASONS.route('/decks/')
-@SEASONS.route('/decks/<deck_type>/')
+@SEASONS.route('/decks/<any(tournament,league):deck_type>/')
 @cached()
 def decks(deck_type: Optional[str] = None) -> str:
     if deck_type not in [None, 'league']:
@@ -134,22 +134,23 @@ def achievements_redirect() -> wrappers.Response:
     return redirect(url_for('achievements'))
 
 @APP.route('/cards/')
-@APP.route('/cards/<deck_type>/')
+@APP.route('/cards/<any(tournament,league):deck_type>/')
 @SEASONS.route('/cards/')
-@SEASONS.route('/cards/<deck_type>/')
+@SEASONS.route('/cards/<any(tournament,league):deck_type>/')
 @cached()
 def cards(deck_type: Optional[str] = None) -> str:
     tournament_only = deck_type == 'tournament'
     query = request.args.get('fq')
     if query is None:
         query = ''
-    view = Cards(cs.load_cards(season_id=get_season_id()), query=query, tournament_only=tournament_only)
+    all_cards = cs.load_cards(season_id=get_season_id(), tournament_only=tournament_only)
+    view = Cards(all_cards, query=query, tournament_only=tournament_only)
     return view.page()
 
 @APP.route('/cards/<path:name>/')
-@APP.route('/cards/<path:name>/<deck_type>/')
+@APP.route('/cards/<path:name>/<any(tournament,league):deck_type>/')
 @SEASONS.route('/cards/<path:name>/')
-@SEASONS.route('/cards/<path:name>/<deck_type>/')
+@SEASONS.route('/cards/<path:name>/<any(tournament,league):deck_type>/')
 @cached()
 def card(name: str, deck_type: Optional[str] = None) -> str:
     tournament_only = deck_type == 'tournament'
@@ -174,30 +175,31 @@ def competition(competition_id: int) -> str:
     return view.page()
 
 @APP.route('/archetypes/')
-@APP.route('/archetypes/<deck_type>/')
+@APP.route('/archetypes/<any(tournament,league):deck_type>/')
 @SEASONS.route('/archetypes/')
-@SEASONS.route('/archetypes/<deck_type>/')
+@SEASONS.route('/archetypes/<any(tournament,league):deck_type>/')
 @cached()
 def archetypes(deck_type: Optional[str] = None) -> str:
     tournament_only = deck_type == 'tournament'
+    print('tournament_only', tournament_only)
     season_id = get_season_id()
-    deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id)
-    all_matchups = archs.load_matchups(season_id=season_id)
+    deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id, tournament_only=tournament_only)
+    all_matchups = archs.load_matchups(season_id=season_id, tournament_only=tournament_only)
     view = Archetypes(deckless_archetypes, all_matchups, tournament_only=tournament_only)
     return view.page()
 
 @APP.route('/archetypes/<archetype_id>/')
-@APP.route('/archetypes/<archetype_id>/<deck_type>/')
+@APP.route('/archetypes/<archetype_id>/<any(tournament,league):deck_type>/')
 @SEASONS.route('/archetypes/<archetype_id>/')
-@SEASONS.route('/archetypes/<archetype_id>/<deck_type>/')
+@SEASONS.route('/archetypes/<archetype_id>/<any(tournament,league):deck_type>/')
 @cached()
 def archetype(archetype_id: str, deck_type: Optional[str] = None) -> str:
     tournament_only = deck_type == 'tournament'
     season_id = get_season_id()
-    a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id)
-    deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id)
-    archetype_matchups = archs.load_matchups(archetype_id=a.id, season_id=season_id)
-    view = Archetype(a, deckless_archetypes, archetype_matchups, season_id, tournament_only=tournament_only)
+    a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id, tournament_only=tournament_only)
+    deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id, tournament_only=tournament_only)
+    archetype_matchups = archs.load_matchups(archetype_id=a.id, season_id=season_id, tournament_only=tournament_only)
+    view = Archetype(a, deckless_archetypes, archetype_matchups, tournament_only=tournament_only, season_id=season_id)
     return view.page()
 
 @APP.route('/tournaments/')

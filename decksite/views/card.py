@@ -2,6 +2,7 @@ from typing import Any
 
 from flask import url_for
 
+from decksite.deck_type import DeckType
 from decksite.view import View
 from magic.models import Card as CardContainer
 
@@ -18,8 +19,7 @@ class Card(View):
         self.show_tournament_toggle = True
         self.tournament_only = self.hide_source = tournament_only
         self.public = True # Mark this as 'public' so it can share legality section code with deck.
-        print('setting toggle', card.name)
-        self.toggle_results_url = url_for('.card', name=card.name, deck_type=None if tournament_only else 'tournament')
+        self.toggle_results_url = url_for('.card', name=card.name, deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
         self.card = card
         self.cards = [self.card]
 

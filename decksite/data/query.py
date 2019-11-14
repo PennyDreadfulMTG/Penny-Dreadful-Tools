@@ -1,5 +1,6 @@
 from typing import Dict, Optional, Union, cast
 
+from decksite.deck_type import DeckType
 from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException
 
@@ -113,9 +114,9 @@ def exclude_active_league_runs(except_person_id: Optional[int]) -> str:
 def decks_where(args: Dict[str, str], viewer_id: Optional[int]) -> str:
     parts = []
     parts.append(exclude_active_league_runs(viewer_id))
-    if args.get('deckType') == 'league':
+    if args.get('deckType') == DeckType.LEAGUE.value:
         parts.append("ct.name = 'League'")
-    elif args.get('deckType') == 'tournament':
+    elif args.get('deckType') == DeckType.TOURNAMENT.value:
         parts.append("ct.name = 'Gatherling'")
     if args.get('archetypeId'):
         archetype_id = cast(int, args.get('archetypeId'))

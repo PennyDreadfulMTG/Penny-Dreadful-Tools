@@ -2,7 +2,7 @@ import asyncio
 import logging
 import os
 import urllib.parse
-from typing import Optional
+from typing import List, Optional
 
 from flask import (Response, abort, g, make_response, redirect, request,
                    send_file, session, url_for)
@@ -24,6 +24,7 @@ from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.data import season as ss
 from decksite.database import db
+from decksite.deck_type import DeckType
 from decksite.league import DeckCheckForm, ReportForm, RetireForm, SignUpForm
 from decksite.views import (About, AboutPdm, Achievements, Archetype,
                             Archetypes, Bugs, Card, Cards, CommunityGuidelines,
@@ -54,9 +55,7 @@ def home() -> str:
 @SEASONS.route('/decks/<any(tournament,league):deck_type>/')
 @cached()
 def decks(deck_type: Optional[str] = None) -> str:
-    if deck_type not in [None, 'league']:
-        raise DoesNotExistException('Unrecognized deck_type: `{deck_type}`'.format(deck_type=deck_type))
-    league_only = deck_type == 'league'
+    league_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.LEAGUE]) == DeckType.LEAGUE
     view = Decks(league_only)
     return view.page()
 
@@ -139,7 +138,7 @@ def achievements_redirect() -> wrappers.Response:
 @SEASONS.route('/cards/<any(tournament,league):deck_type>/')
 @cached()
 def cards(deck_type: Optional[str] = None) -> str:
-    tournament_only = deck_type == 'tournament'
+    tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     query = request.args.get('fq')
     if query is None:
         query = ''
@@ -153,7 +152,7 @@ def cards(deck_type: Optional[str] = None) -> str:
 @SEASONS.route('/cards/<path:name>/<any(tournament,league):deck_type>/')
 @cached()
 def card(name: str, deck_type: Optional[str] = None) -> str:
-    tournament_only = deck_type == 'tournament'
+    tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     try:
         c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)), season_id=get_season_id())
         view = Card(c, tournament_only)
@@ -180,8 +179,7 @@ def competition(competition_id: int) -> str:
 @SEASONS.route('/archetypes/<any(tournament,league):deck_type>/')
 @cached()
 def archetypes(deck_type: Optional[str] = None) -> str:
-    tournament_only = deck_type == 'tournament'
-    print('tournament_only', tournament_only)
+    tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     season_id = get_season_id()
     deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id, tournament_only=tournament_only)
     all_matchups = archs.load_matchups(season_id=season_id, tournament_only=tournament_only)
@@ -194,7 +192,7 @@ def archetypes(deck_type: Optional[str] = None) -> str:
 @SEASONS.route('/archetypes/<archetype_id>/<any(tournament,league):deck_type>/')
 @cached()
 def archetype(archetype_id: str, deck_type: Optional[str] = None) -> str:
-    tournament_only = deck_type == 'tournament'
+    tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     season_id = get_season_id()
     a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id, tournament_only=tournament_only)
     deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id, tournament_only=tournament_only)
@@ -495,6 +493,17 @@ def teardown_request(response: Response) -> Response:
         perf.check(g.p, 'slow_page', request.path, 'decksite')
     db().close()
     return response
+
+def validate_deck_type(s: Optional[str], allowed_values: List[DeckType] = None) -> DeckType:
+    if not s:
+        return DeckType.ALL
+    try:
+        deck_type = DeckType(s)
+        if allowed_values and deck_type not in allowed_values:
+            raise DoesNotExistException(f'Invalid deck_type for this endpoint: {deck_type}')
+    except ValueError as e:
+        raise DoesNotExistException(e)
+    return deck_type
 
 def init(debug: bool = True, port: Optional[int] = None) -> None:
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""

@@ -50,7 +50,7 @@ def preaggregate_card() -> None:
             perfect_runs INT NOT NULL,
             tournament_wins INT NOT NULL,
             tournament_top8s INT NOT NULL,
-            deck_type VARCHAR(10) NOT NULL,
+            deck_type ENUM('league', 'tournament', 'other') NOT NULL,
             PRIMARY KEY (season_id, name, deck_type),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
@@ -96,7 +96,7 @@ def preaggregate_card_person() -> None:
             perfect_runs INT NOT NULL,
             tournament_wins INT NOT NULL,
             tournament_top8s INT NOT NULL,
-            deck_type VARCHAR(10) NOT NULL,
+            deck_type ENUM('league', 'tournament', 'other') NOT NULL,
             PRIMARY KEY (season_id, person_id, name, deck_type),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
             FOREIGN KEY (person_id) REFERENCES person (id)  ON UPDATE CASCADE ON DELETE CASCADE,

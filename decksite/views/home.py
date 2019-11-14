@@ -92,24 +92,26 @@ class Home(View):
         self.rotation_url = url_for('rotation')
 
     def setup_stats(self, matches_stats: Dict[str, int]) -> None:
+        # Human-friendly number formatting like "29,000".
+        matches_stats_display = {k: '{:,}'.format(v) for k, v in matches_stats.items()}
         self.community_stats = [
             {
                 'header': 'League and Tournament Matches Played',
                 'stats': [
                     {
-                        'text': f"{matches_stats['num_matches_today']} matches played today"
+                        'text': f"{matches_stats_display['num_matches_today']} matches played today"
                     },
                     {
-                        'text': f"{matches_stats['num_matches_this_week']} matches played this week"
+                        'text': f"{matches_stats_display['num_matches_this_week']} matches played this week"
                     },
                     {
-                        'text': f"{matches_stats['num_matches_this_month']} matches played this month"
+                        'text': f"{matches_stats_display['num_matches_this_month']} matches played this month"
                     },
                     {
-                        'text': f"{matches_stats['num_matches_this_season']} matches played this season"
+                        'text': f"{matches_stats_display['num_matches_this_season']} matches played this season"
                     },
                     {
-                        'text': f"{matches_stats['num_matches_all_time']} matches played all time"
+                        'text': f"{matches_stats_display['num_matches_all_time']} matches played all time"
                     }
                 ]
             }

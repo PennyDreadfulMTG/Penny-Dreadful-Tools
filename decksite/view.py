@@ -282,13 +282,11 @@ class View(BaseView):
             a.most_common_cards_tournament.append(cs[v[0]])
         a.has_most_common_cards_tournament = len(a.most_common_cards_tournament) > 0
 
-        # Set up archetype tree, pruning siblings that we don't want to show.
-        a.archetype_tree = [r for r in PreOrderIter(a) if r.id in [a.id for a in archetypes]]
-        for r in a.archetype_tree:
-            r['url'] = url_for('.archetype', archetype_id=r['id'])
-            r['url_tournament'] = url_for('.archetype_tournament', archetype_id=r['id'])
+        for b in [b for b in PreOrderIter(a) if b.id in [a.id for a in archetypes]]:
+            b['url'] = url_for('.archetype', archetype_id=b['id'])
+            b['url_tournament'] = url_for('.archetype_tournament', archetype_id=b['id'])
             # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
-            r['depth'] = r.depth
+            b['depth'] = b.depth
 
     def prepare_leaderboards(self) -> None:
         for l in getattr(self, 'leaderboards', []):

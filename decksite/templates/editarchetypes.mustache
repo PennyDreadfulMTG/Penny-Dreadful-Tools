@@ -131,22 +131,20 @@
 <section>
     <h2>Add Archetype</h2>
     <table class="archetype-tree">
-        {{#roots}}
-            {{#archetype_tree}}
-                <tr class="archetype archetype-{{depth}}">
-                    <td class="initial primary"><a href="{{url}}">{{name}}</a></td>
-                    <td class="archetype-description" title="{{description}}">{{description}}</td>
-                    <td>
-                        <form method="post" class="inline">
-                            <input type="hidden" name="parent" value="{{id}}">
-                            <div>
-                                <input type="text" name="name">
-                                <button type="submit">Add</button>
-                            </div>
-                        </form>
-                    </td>
-                </tr>
-            {{/archetype_tree}}
-        {{/roots}}
+        {{#archetypes}}
+            <tr class="archetype archetype-{{depth}}">
+                <td class="initial primary"><a href="{{url}}">{{name}}</a></td>
+                <td class="archetype-description" title="{{description}}">{{description}}</td>
+                <td>
+                    <form method="post" class="inline">
+                        <input type="hidden" name="parent" value="{{id}}">
+                        <div>
+                            <input type="text" name="name">
+                            <button type="submit">Add</button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        {{/archetypes}}
     </table>
 </section>

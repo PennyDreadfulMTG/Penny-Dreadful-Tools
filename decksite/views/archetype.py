@@ -26,19 +26,19 @@ class Archetype(View):
         self.archetype.decks_tournament = archetype.decks_tournament
         # Load the deck information from archetype into skinny archetype loaded by load_archetypes_deckless_for with tree information.
         self.archetypes = archetypes
-        self.roots = [a for a in self.archetypes if a.is_root]
         self.tournament_only = self.hide_source = tournament_only
         matchup_archetypes = archs.load_archetypes_deckless(season_id=season_id)
         matchups_by_id = {m.id: m for m in matchups}
         for m in matchup_archetypes:
             # Overwite totals with vs-archetype specific details. Wipe out if there are none.
             m.update(matchups_by_id.get(m.id, {'hide_archetype': True}))
+        # Prepare the second archetype tree manually becuase its archetypes don't have the standard name.
         for m in matchup_archetypes:
             self.prepare_archetype(m, matchup_archetypes)
         # Storing this in matchups_container like this lets us include two different archetype trees on the same page without collision.
         self.matchups_container = [{
             'is_matchups': True,
-            'roots': [m for m in matchup_archetypes if m.is_root],
+            'archetypes': matchup_archetypes,
         }]
         self.show_seasons = True
         self.show_tournament_toggle = True

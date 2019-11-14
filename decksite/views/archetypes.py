@@ -14,7 +14,6 @@ class Archetypes(View):
         super().__init__()
         self.archetypes = archetypes
         self.decks = []
-        self.roots = [a for a in self.archetypes if a.is_root]
         self.show_seasons = True
         self.tournament_only = self.hide_source = tournament_only
         self.show_tournament_toggle = True

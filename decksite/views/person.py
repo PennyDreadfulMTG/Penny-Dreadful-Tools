@@ -22,7 +22,6 @@ class Person(View):
         self.people = [person]
         self.decks = person.decks
         self.archetypes = archetypes
-        self.roots = [a for a in self.all_archetypes if a.is_root]
         self.hide_person = True
         self.cards = cards
         for record in person.head_to_head:

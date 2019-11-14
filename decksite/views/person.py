@@ -9,17 +9,20 @@ from decksite.data.achievements import Achievement
 from decksite.data.archetype import Archetype
 from decksite.view import View
 from magic.models import Card
+from shared.container import Container
 
 
 # pylint: disable=no-self-use,too-many-instance-attributes,too-many-arguments
 class Person(View):
-    def __init__(self, person: ps.Person, cards: List[Card], archetypes: List[Archetype], your_cards: Dict[str, List[str]], season_id: Optional[int]) -> None:
+    def __init__(self, person: ps.Person, cards: List[Card], archetypes: List[Archetype], all_archetypes: List[Archetype], matchups: List[Container], your_cards: Dict[str, List[str]], season_id: Optional[int]) -> None:
         super().__init__()
+        min_matches_for_matchups_grid = 10
+        self.all_archetypes = all_archetypes
         self.person = person
         self.people = [person]
         self.decks = person.decks
         self.archetypes = archetypes
-        self.roots = [a for a in self.archetypes if a.is_root]
+        self.roots = [a for a in self.all_archetypes if a.is_root]
         self.hide_person = True
         self.cards = cards
         for record in person.head_to_head:
@@ -50,6 +53,7 @@ class Person(View):
         self.has_trailblazer_cards = len(self.trailblazer_cards) > 0
         self.unique_cards = your_cards['unique']
         self.has_unique_cards = len(self.unique_cards) > 0
+        self.setup_matchups(self.all_archetypes, matchups, min_matches_for_matchups_grid)
 
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.person, attr)

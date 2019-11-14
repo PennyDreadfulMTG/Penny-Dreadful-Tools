@@ -3,6 +3,7 @@ from typing import Dict, List, Optional, Union
 
 import titlecase
 from anytree import NodeMixin
+from anytree.iterators import PreOrderIter
 
 from decksite.data import deck, preaggregation, query
 from decksite.database import db
@@ -402,3 +403,11 @@ def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, nam
         a.decks_tournament = []
         a.parent = archetypes_by_id.get(a.parent_id, None)
     return archetypes
+
+def preorder(archetypes: List[Archetype]):
+    archs = []
+    roots = [a for a in archetypes if a.is_root]
+    for r in roots:
+        for a in PreOrderIter(r):
+            archs.append(a)
+    return archs

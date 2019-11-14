@@ -93,10 +93,12 @@ def person(person_id: str) -> str:
     p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
     person_cards = cs.load_cards(person_id=p.id, season_id=get_season_id())
     person_archetypes = archs.load_archetypes_deckless(person_id=p.id, season_id=get_season_id())
+    all_archetypes = archs.load_archetypes_deckless(season_id=get_season_id())
     trailblazer_cards = cs.trailblazer_cards(p.id)
     unique_cards = cs.unique_cards_played(p.id)
     your_cards = {'unique': unique_cards, 'trailblazer': trailblazer_cards}
-    view = Person(p, person_cards, person_archetypes, your_cards, get_season_id())
+    person_matchups = archs.load_matchups(person_id=p.id, season_id=get_season_id())
+    view = Person(p, person_cards, person_archetypes, all_archetypes, person_matchups, your_cards, get_season_id())
     return view.page()
 
 @APP.route('/people/<person_id>/matches/')
@@ -190,7 +192,7 @@ def competition(competition_id: int) -> str:
 def archetypes() -> str:
     season_id = get_season_id()
     deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id)
-    all_matchups = archs.load_all_matchups(season_id=season_id)
+    all_matchups = archs.load_matchups(season_id=season_id)
     view = Archetypes(deckless_archetypes, all_matchups)
     return view.page()
 
@@ -200,7 +202,7 @@ def archetypes() -> str:
 def archetypes_tournament() -> str:
     season_id = get_season_id()
     deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id)
-    all_matchups = archs.load_all_matchups(season_id=season_id)
+    all_matchups = archs.load_matchups(season_id=season_id)
     view = Archetypes(deckless_archetypes, all_matchups, tournament_only=True)
     return view.page()
 
@@ -211,7 +213,7 @@ def archetype(archetype_id: str) -> str:
     season_id = get_season_id()
     a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id)
     deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id)
-    archetype_matchups = archs.load_matchups(a.id, season_id=season_id)
+    archetype_matchups = archs.load_matchups(archetype_id=a.id, season_id=season_id)
     view = Archetype(a, deckless_archetypes, archetype_matchups, season_id)
     return view.page()
 
@@ -222,7 +224,7 @@ def archetype_tournament(archetype_id: str) -> str:
     season_id = get_season_id()
     a = archs.load_archetype(archetype_id.replace('+', ' '), season_id=season_id)
     deckless_archetypes = archs.load_archetypes_deckless_for(a.id, season_id=season_id)
-    archetype_matchups = archs.load_matchups(a.id, season_id=season_id)
+    archetype_matchups = archs.load_matchups(archetype_id=a.id, season_id=season_id)
     view = Archetype(a, deckless_archetypes, archetype_matchups, season_id, tournament_only=True)
     return view.page()
 

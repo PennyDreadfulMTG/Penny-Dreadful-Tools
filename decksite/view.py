@@ -180,10 +180,7 @@ class View(BaseView):
 
     def url_for_card(self, c: Card) -> str:
         if self._card_url_template is None:
-            if self.tournament_only:
-                self._card_url_template = url_for('.card_tournament', name='--cardname--')
-            else:
-                self._card_url_template = url_for('.card', name='--cardname--')
+            self._card_url_template = url_for('.card', name='--cardname--', decktype='tournament' if self.tournament_only else None)
         return self._card_url_template.replace('--cardname--', c.name)
 
     def prepare_card_urls(self, c: Card) -> None:
@@ -284,7 +281,7 @@ class View(BaseView):
 
         for b in [b for b in PreOrderIter(a) if b.id in [a.id for a in archetypes]]:
             b['url'] = url_for('.archetype', archetype_id=b['id'])
-            b['url_tournament'] = url_for('.archetype_tournament', archetype_id=b['id'])
+            b['url_tournament'] = url_for('.archetype', archetype_id=b['id'], deck_type='tournament')
             # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
             b['depth'] = b.depth
 

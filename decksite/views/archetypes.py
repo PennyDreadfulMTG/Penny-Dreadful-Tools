@@ -17,11 +17,9 @@ class Archetypes(View):
         self.show_seasons = True
         self.tournament_only = self.hide_source = tournament_only
         self.show_tournament_toggle = True
+        self.toggle_results_url = url_for('.archetypes', deck_type=None if tournament_only else 'tournament')
         if tournament_only:
-            self.toggle_results_url = url_for('.archetypes')
             self.archetypes = [a for a in self.archetypes if a.num_decks_tournament > 0]
-        else:
-            self.toggle_results_url = url_for('.archetypes_tournament')
         self.setup_matchups(archetypes, all_matchups, min_matches_for_matchups_grid)
 
     def page_title(self) -> str:

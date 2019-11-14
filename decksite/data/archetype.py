@@ -402,7 +402,7 @@ def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, nam
         a.decks = []
         a.decks_tournament = []
         a.parent = archetypes_by_id.get(a.parent_id, None)
-    return archetypes
+    return preorder(archetypes)
 
 def preorder(archetypes: List[Archetype]):
     archs = []

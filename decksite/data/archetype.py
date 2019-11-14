@@ -205,7 +205,7 @@ def preaggregate_archetypes() -> None:
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_archetype_person() -> None:
-    # This preaggregation fails if I use the obvious name _new_archetype_person_stats but works with any other name. It's confusing.
+    # This preaggregation fails if I use the obvious name _archetype_person_stats but works with any other name. It's confusing.
     table = '_arch_person_stats'
     sql = """
         CREATE TABLE IF NOT EXISTS _new{table} (

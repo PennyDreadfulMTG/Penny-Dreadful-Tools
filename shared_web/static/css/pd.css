@@ -255,7 +255,7 @@ p, .subtitle, .news .item, .person {
     font-variant-numeric: oldstyle-nums;
 }
 
-table, ul.decklist.li, .news .date, .deck-name, .rotation p, .seasons p {
+table, ul.decklist.li, .news .date, .deck-name, .rotation p, .stats p {
     font-variant-numeric: normal;
 }
 
@@ -1372,15 +1372,17 @@ section.legal {
 
 /*
 
-Seasons
+Stats
+
+For /seasons/ and the stats section on the homepage.
 
 */
 
-.seasons p {
+.stats p {
     font-size: 0.75rem;
 }
 
-.seasons li {
+.stats li {
     list-style-type: none;
     text-align: right;
 }

@@ -13,6 +13,7 @@ from werkzeug.routing import BuildError
 from decksite import APP, get_season_id, prepare
 from decksite.data import archetype, competition
 from decksite.data.archetype import Archetype
+from decksite.deck_type import DeckType
 from magic import legality, oracle, rotation, tournaments
 from magic.models import Card, Deck
 from shared import dtutil
@@ -76,7 +77,7 @@ class View(BaseView):
             'num': None,
             'url': seasonized_url('all'),
             'decks_url': url_for('seasons.decks', season_id='all'),
-            'league_decks_url': url_for('seasons.decks', season_id='all', deck_type='league'),
+            'league_decks_url': url_for('seasons.decks', season_id='all', deck_type=DeckType.LEAGUE.value),
             'competitions_url': url_for('seasons.competitions', season_id='all'),
             'archetypes_url': url_for('seasons.archetypes', season_id='all'),
             'people_url': url_for('seasons.people', season_id='all'),
@@ -96,7 +97,7 @@ class View(BaseView):
                 'num': num,
                 'url': seasonized_url(num),
                 'decks_url': url_for('seasons.decks', season_id=num),
-                'league_decks_url': url_for('seasons.decks', season_id=num, deck_type='league'),
+                'league_decks_url': url_for('seasons.decks', season_id=num, deck_type=DeckType.LEAGUE.value),
                 'competitions_url': url_for('seasons.competitions', season_id=num),
                 'archetypes_url': url_for('seasons.archetypes', season_id=num),
                 'people_url': url_for('seasons.people', season_id=num),
@@ -180,7 +181,7 @@ class View(BaseView):
 
     def url_for_card(self, c: Card) -> str:
         if self._card_url_template is None:
-            self._card_url_template = url_for('.card', name='--cardname--', deck_type='tournament' if self.tournament_only else None)
+            self._card_url_template = url_for('.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if self.tournament_only else None)
         return self._card_url_template.replace('--cardname--', c.name)
 
     def prepare_card_urls(self, c: Card) -> None:

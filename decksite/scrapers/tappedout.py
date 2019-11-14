@@ -11,7 +11,7 @@ from shared import configuration, fetch_tools
 from shared.pd_exception import InvalidDataException
 from shared_web import logger
 
-DeckType = deck.RawDeckDescription
+RawDeckType = deck.RawDeckDescription
 
 def ad_hoc() -> None:
     login()
@@ -30,13 +30,13 @@ def ad_hoc() -> None:
         except InvalidDataException as e:
             logger.warning('Skipping {slug} because of {e}'.format(slug=raw_deck.get('slug', '-no slug-'), e=e))
 
-def fetch_decks() -> List[DeckType]:
+def fetch_decks() -> List[RawDeckType]:
     return fetch_tools.fetch_json('https://tappedout.net/api/deck/latest/penny-dreadful/')
 
-def fetch_deck_details(raw_deck: DeckType) -> DeckType:
+def fetch_deck_details(raw_deck: RawDeckType) -> RawDeckType:
     return fetch_tools.fetch_json('https://tappedout.net/api/collection/collection:deck/{slug}/'.format(slug=raw_deck['slug']))
 
-def set_values(raw_deck: DeckType) -> DeckType:
+def set_values(raw_deck: RawDeckType) -> RawDeckType:
     raw_deck = translation.translate(translation.TAPPEDOUT, raw_deck)
     raw_decklist = fetch_tools.fetch('{base_url}?fmt=txt'.format(base_url=raw_deck['url']))
     raw_deck['cards'] = decklist.parse(raw_decklist)
@@ -84,7 +84,7 @@ def scrape_url(url: str) -> deck.Deck:
         url += '/'
     path = urllib.parse.urlparse(url).path
     slug = path.split('/')[2]
-    raw_deck: DeckType = {}
+    raw_deck: RawDeckType = {}
     raw_deck['slug'] = slug
     raw_deck['url'] = url
     if is_authorised():
@@ -99,7 +99,7 @@ def scrape_url(url: str) -> deck.Deck:
         raise InvalidDataException('Deck is not legal in Penny Dreadful - {error}'.format(error=errors.get('Penny Dreadful')))
     return deck.add_deck(raw_deck)
 
-def parse_printable(raw_deck: DeckType) -> DeckType:
+def parse_printable(raw_deck: RawDeckType) -> RawDeckType:
     """If we're not authorized for the TappedOut API, this method will collect name and author of a deck.
     It could also grab a date, but I haven't implemented that yet."""
     s = fetch_tools.fetch(raw_deck['url'] + '?fmt=printable')

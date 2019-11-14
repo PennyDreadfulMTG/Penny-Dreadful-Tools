@@ -3,6 +3,7 @@ from typing import Any, List
 from flask import url_for
 
 from decksite.data import archetype as archs
+from decksite.deck_type import DeckType
 from decksite.view import View
 from shared.container import Container
 from shared.pd_exception import DoesNotExistException
@@ -41,7 +42,7 @@ class Archetype(View):
         }]
         self.show_seasons = True
         self.show_tournament_toggle = True
-        self.toggle_results_url = url_for('archetype', archetype_id=self.archetype.id, deck_type=None if tournament_only else 'tournament')
+        self.toggle_results_url = url_for('archetype', archetype_id=self.archetype.id, deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
         self.show_archetype = any(d.archetype_id != self.archetype.id for d in self.decks)
         self.show_archetype_tree = len(self.archetypes) > 0
 

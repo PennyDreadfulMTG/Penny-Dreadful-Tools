@@ -3,6 +3,7 @@ from typing import Dict, List, Optional, Union
 
 import titlecase
 from anytree import NodeMixin
+from anytree.iterators import PreOrderIter
 
 from decksite.data import deck, preaggregation, query
 from decksite.database import db
@@ -95,10 +96,6 @@ def assign(deck_id: int, archetype_id: int, reviewed: bool = True, similarity: O
     if not reviewed and similarity is not None:
         db().execute(f'UPDATE deck_cache SET similarity = %s WHERE deck_id = %s', [similarity, deck_id])
 
-def load_matchups(archetype_id: int, season_id: int = None) -> List[Container]:
-    where = 'a.id = {archetype_id}'.format(archetype_id=archetype_id)
-    return load_all_matchups(where=where, season_id=season_id)
-
 def move(archetype_id: int, parent_id: int) -> None:
     db().begin('move_archetype')
     remove_sql = """
@@ -147,6 +144,7 @@ def preaggregate() -> None:
     preaggregate_archetypes()
     preaggregate_archetype_person()
     preaggregate_matchups()
+    preaggregate_matchups_person()
 
 def preaggregate_archetypes() -> None:
     table = '_archetype_stats'
@@ -207,7 +205,7 @@ def preaggregate_archetypes() -> None:
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_archetype_person() -> None:
-    # This preaggregation fails if I use the obvious name _new_archetype_person_stats but works with any other name. It's confusing.
+    # This preaggregation fails if I use the obvious name _archetype_person_stats but works with any other name. It's confusing.
     table = '_arch_person_stats'
     sql = """
         CREATE TABLE IF NOT EXISTS _new{table} (
@@ -317,8 +315,69 @@ def preaggregate_matchups() -> None:
     """.format(table=table, competition_join=query.competition_join(), season_join=query.season_join())
     preaggregation.preaggregate(table, sql)
 
-@retry_after_calling(preaggregate_matchups)
-def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None) -> List[Container]:
+def preaggregate_matchups_person() -> None:
+    # Obvious name `_matchup_person_stats` fails with (1005, 'Can\'t create table `decksite`.`_new_matchup_person_stats` (errno: 121 "Duplicate key on write or update")'). Odd.
+    table = '_matchup_ps_stats'
+    sql = """
+        CREATE TABLE IF NOT EXISTS _new{table} (
+            archetype_id INT NOT NULL,
+            opponent_archetype_id INT NOT NULL,
+            person_id INT NOT NULL,
+            season_id INT NOT NULL,
+            wins INT NOT NULL,
+            losses INT NOT NULL,
+            draws INT NOT NULL,
+            wins_tournament INT NOT NULL,
+            losses_tournament INT NOT NULL,
+            draws_tournament INT NOT NULL,
+            PRIMARY KEY (season_id, archetype_id, opponent_archetype_id, person_id),
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (opponent_archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+        SELECT
+            a.id AS archetype_id,
+            oa.id AS opponent_archetype_id,
+            d.person_id,
+            season.id AS season_id,
+            SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins, -- IFNULL so we still count byes as wins.
+            SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
+            SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws,
+            SUM(CASE WHEN (dm.games > IFNULL(odm.games, 0)) AND (ct.name = 'Gatherling') THEN 1 ELSE 0 END) AS wins_tournament,
+            SUM(CASE WHEN (dm.games < IFNULL(odm.games, 0)) AND (ct.name = 'Gatherling') THEN 1 ELSE 0 END) AS losses_tournament,
+            SUM(CASE WHEN (dm.games = IFNULL(odm.games, 0)) AND (ct.name = 'Gatherling') THEN 1 ELSE 0 END) AS draws_tournament
+        FROM
+            archetype AS a
+        INNER JOIN
+            deck AS d ON d.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = a.id)
+        INNER JOIN
+            deck_match AS dm ON d.id = dm.deck_id
+        INNER JOIN
+            deck_match AS odm ON dm.match_id = odm.match_id AND odm.deck_id <> d.id
+        INNER JOIN
+            deck AS od ON od.id = odm.deck_id
+        INNER JOIN
+            archetype AS oa ON od.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = oa.id)
+        {competition_join}
+        {season_join}
+        GROUP BY
+            a.id,
+            oa.id,
+            d.person_id,
+            season.id
+    """.format(table=table, competition_join=query.competition_join(), season_join=query.season_join())
+    preaggregation.preaggregate(table, sql)
+
+@retry_after_calling(preaggregate)
+def load_matchups(where: str = 'TRUE', archetype_id: Optional[int] = None, person_id: Optional[int] = None, season_id: Optional[int] = None) -> List[Container]:
+    if person_id:
+        table = '_matchup_ps_stats'
+        where = f'({where}) AND (mps.person_id = {person_id})'
+    else:
+        table = '_matchup_stats'
+    if archetype_id:
+        where = f'({where}) AND (a.id = {archetype_id})'
     sql = """
         SELECT
             archetype_id,
@@ -334,7 +393,7 @@ def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None) -> L
             IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent,
             IFNULL(ROUND((SUM(wins_tournament) / NULLIF(SUM(wins_tournament + losses_tournament), 0)) * 100, 1), '') AS win_percent_tournament
         FROM
-            _matchup_stats AS ms
+            {table} AS mps
         INNER JOIN
             archetype AS a ON archetype_id = a.id
         INNER JOIN
@@ -347,7 +406,7 @@ def load_all_matchups(where: str = 'TRUE', season_id: Optional[int] = None) -> L
         ORDER BY
             wins DESC,
             oa.name
-    """.format(where=where, season_query=query.season_query(season_id))
+    """.format(table=table, where=where, season_query=query.season_query(season_id))
     return [Container(m) for m in db().select(sql)]
 
 @retry_after_calling(preaggregate)
@@ -401,4 +460,12 @@ def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, nam
         a.decks = []
         a.decks_tournament = []
         a.parent = archetypes_by_id.get(a.parent_id, None)
-    return archetypes
+    return preorder(archetypes)
+
+def preorder(archetypes: List[Archetype]) -> List[Archetype]:
+    archs = []
+    roots = [a for a in archetypes if a.is_root]
+    for r in roots:
+        for a in PreOrderIter(r):
+            archs.append(a)
+    return archs

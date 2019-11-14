@@ -279,7 +279,7 @@ def rotation(interestingness: Optional[str] = None) -> str:
     view = Rotation(interestingness, query)
     return view.page()
 
-@APP.route('/export/<deck_id>/')
+@APP.route('/export/<int:deck_id>/')
 @auth.load_person
 def export(deck_id: int) -> Response:
     d = ds.load_deck(deck_id)

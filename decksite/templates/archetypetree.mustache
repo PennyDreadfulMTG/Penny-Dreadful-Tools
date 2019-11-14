@@ -13,9 +13,9 @@
             {{^is_matchups}}<th class="n" data-sortInitialOrder="desc">
                 <abbr title="Tournament top-8s">⑧</abbr>
             </th>{{/is_matchups}}
-            {{^is_matchups}}<th class="n" data-sortInitialOrder="desc">
+            {{^is_matchups}}{{^hide_perfect_runs}}<th class="n" data-sortInitialOrder="desc">
                 <abbr title="League 5-0 runs">5–0s</abbr>
-            </th>{{/is_matchups}}
+            </th>{{/hide_perfect_runs}}{{/is_matchups}}
         </tr>
     </thead>
     <tbody>
@@ -30,7 +30,7 @@
                     <td class="n">{{#show_record}}{{win_percent}}{{/show_record}}</td>
                     {{^is_matchups}}<td class="n">{{#tournament_top8s}}{{tournament_wins}}{{/tournament_top8s}}</td>{{/is_matchups}}
                     {{^is_matchups}}<td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>{{/is_matchups}}
-                    {{^is_matchups}}<td class="n">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>{{/is_matchups}}
+                    {{^is_matchups}}{{^hide_perfect_runs}}<td class="n">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>{{/hide_perfect_runs}}{{/is_matchups}}
                 </tr>
             {{/hide_archetype}}
         {{/archetypes}}

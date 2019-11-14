@@ -27,22 +27,15 @@
         </tr>
     </thead>
     <tbody>
-        {{^tournament_only}}
-            {{#active_runs_text}}
-                <tr>
-                    <td class="marginalia"><span class="active" title="Active in the current league">⊕</span></td>
-                    <td></td>
-                    <td>{{active_runs_text}}</td>
-                </tr>
-            {{/active_runs_text}}
-            {{#decks}}
-                {{> deckrow}}
-            {{/decks}}
-        {{/tournament_only}}
-        {{#tournament_only}}
-            {{#decks_tournament}}
-                {{> deckrow}}
-            {{/decks_tournament}}
-        {{/tournament_only}}
+        {{#active_runs_text}}
+            <tr>
+                <td class="marginalia"><span class="active" title="Active in the current league">⊕</span></td>
+                <td></td>
+                <td>{{active_runs_text}}</td>
+            </tr>
+        {{/active_runs_text}}
+        {{#decks}}
+            {{> deckrow}}
+        {{/decks}}
     </tbody>
 </table>

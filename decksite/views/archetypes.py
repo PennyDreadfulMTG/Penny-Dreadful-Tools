@@ -15,7 +15,7 @@ class Archetypes(View):
         self.archetypes = archetypes
         self.decks = []
         self.show_seasons = True
-        self.tournament_only = self.hide_source = tournament_only
+        self.tournament_only = self.hide_source = self.hide_perfect_runs = tournament_only
         self.show_tournament_toggle = True
         self.toggle_results_url = url_for('.archetypes', deck_type=None if tournament_only else 'tournament')
         self.setup_matchups(archetypes, all_matchups, min_matches_for_matchups_grid)

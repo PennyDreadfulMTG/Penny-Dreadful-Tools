@@ -383,7 +383,7 @@ def load_matchups(where: str = 'TRUE', archetype_id: Optional[int] = None, perso
     return [Container(m) for m in db().select(sql)]
 
 @retry_after_calling(preaggregate)
-def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, name', person_id: Optional[int] = None, season_id: Optional[int] = None, tournament_only: bool = False) -> List[Archetype]:
+def load_archetypes_deckless(order_by: Optional[str] = None, person_id: Optional[int] = None, season_id: Optional[int] = None, tournament_only: bool = False) -> List[Archetype]:
     if person_id:
         table = '_arch_person_stats'
         where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
@@ -429,7 +429,9 @@ def load_archetypes_deckless(order_by: str = '`num_decks` DESC, `wins` DESC, nam
         a.decks = []
         a.decks_tournament = []
         a.parent = archetypes_by_id.get(a.parent_id, None)
-    return preorder(archetypes)
+    if order_by is None:
+        archetypes = preorder(archetypes)
+    return archetypes
 
 def preorder(archetypes: List[Archetype]) -> List[Archetype]:
     archs = []

@@ -17,7 +17,7 @@ class ErrorView(BaseView):
             return c
         container = Container({
             'name': c,
-            'url': url_for('card', name=c),
+            'url': url_for('.card', name=c),
             'img_url': 'https://pennydreadfulmagic.com/image/{name}/'.format(name=urllib.parse.quote(c))
         })
         return container

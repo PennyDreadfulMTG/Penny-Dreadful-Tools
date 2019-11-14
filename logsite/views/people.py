@@ -22,9 +22,9 @@ class People(View):
         self.has_prev = people_query.has_prev
         self.has_pagination = self.has_next or self.has_prev
         if people_query.has_next:
-            self.next_url = url_for('people', page=people_query.next_num)
+            self.next_url = url_for('.people', page=people_query.next_num)
         if people_query.has_prev:
-            self.prev_url = url_for('people', page=people_query.prev_num)
+            self.prev_url = url_for('.people', page=people_query.prev_num)
 
     def prepare(self) -> None:
         for p in self.people:

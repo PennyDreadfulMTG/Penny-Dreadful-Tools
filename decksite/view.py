@@ -299,7 +299,7 @@ class View(BaseView):
             if m.get('deck_id'):
                 m.deck_url = url_for('deck', deck_id=m.deck_id)
             if m.get('opponent'):
-                m.opponent_url = url_for('person', person_id=m.opponent)
+                m.opponent_url = url_for('.person', person_id=m.opponent)
             if m.get('opponent_deck_id'):
                 m.opponent_deck_url = url_for('deck', deck_id=m.opponent_deck_id)
 

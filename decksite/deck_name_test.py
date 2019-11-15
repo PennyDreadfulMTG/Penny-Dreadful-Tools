@@ -89,7 +89,8 @@ TESTDATA = [
     ('Analog Drake', 'Analog Drake', ['U', 'W'], 'Peregrine Drake'),
     ('R Deck Wins', 'Red Deck Wins', ['R'], 'Red Deck Wins'),
     ('HAND　DEATH', 'Hand Death', ['B'], 'Mono Black Midrange'),
-    ('(Penny) Boros Soldiers', 'Boros Soldiers', ['W', 'R'], 'Soldiers')
+    ('(Penny) Boros Soldiers', 'Boros Soldiers', ['W', 'R'], 'Soldiers'),
+    ('Red Deck Wins byvci', 'Red Deck Wins Byvci', ['R'], 'Red Deck Wins')
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

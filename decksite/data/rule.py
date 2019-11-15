@@ -126,6 +126,7 @@ def doubled_decks() -> List[Deck]:
     result = deck.load_decks(where=f'd.id IN ({ids_list})')
     for d in result:
         d.archetypes_from_rules = archetypes_from_rules[d.id]
+        d.archetypes_from_rules_names = ', '.join(a.archetype_name for a in archetypes_from_rules[d.id])
     return result
 
 @retry_after_calling(cache_all_rules)

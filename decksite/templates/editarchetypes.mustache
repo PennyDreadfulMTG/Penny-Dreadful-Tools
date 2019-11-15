@@ -131,7 +131,7 @@
 <section>
     <h2>Add Archetype</h2>
     <table class="archetype-tree">
-        {{#archetypes}}
+        {{#archetypes_preordered}}
             <tr class="archetype archetype-{{depth}}">
                 <td class="initial primary"><a href="{{url}}">{{name}}</a></td>
                 <td class="archetype-description" title="{{description}}">{{description}}</td>
@@ -145,6 +145,6 @@
                     </form>
                 </td>
             </tr>
-        {{/archetypes}}
+        {{/archetypes_preordered}}
     </table>
 </section>

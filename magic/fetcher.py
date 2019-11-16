@@ -95,11 +95,17 @@ def current_time(timezone: datetime.tzinfo, twentyfour: bool) -> str:
         return dtutil.now(timezone).strftime('%I:%M %p')
 
 def decksite_url(path: str = '/') -> str:
-    hostname = configuration.get_str('decksite_hostname')
-    port = configuration.get_int('decksite_port')
+    return site_url(configuration.get_str('decksite_protocol'), configuration.get_str('decksite_hostname'), configuration.get_int('decksite_port'), path)
+
+def logsite_url(path: str = '/') -> str:
+    return site_url(configuration.get_str('logsite_protocol'), configuration.get_str('logsite_hostname'), configuration.get_int('logsite_port'), path)
+
+def site_url(protocol: str, hostname: str, port: int, path: str) -> str:
     if port != 80:
-        hostname = '{hostname}:{port}'.format(hostname=hostname, port=port)
-    url = parse.urlunparse((configuration.get_str('decksite_protocol'), hostname, path, '', '', ''))
+        base = '{hostname}:{port}'.format(hostname=hostname, port=port)
+    else:
+        base = hostname
+    url = parse.urlunparse((protocol, base, path, '', '', ''))
     assert url is not None
     return url
 

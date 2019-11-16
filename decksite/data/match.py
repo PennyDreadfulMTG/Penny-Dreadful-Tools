@@ -63,6 +63,7 @@ def load_matches(where: str = 'TRUE', season_id: Optional[int] = None, should_lo
             m.id,
             m.`round`,
             m.elimination,
+            m.mtgo_id,
             d.id AS deck_id,
             dc.normalized_name AS deck_name,
             od.id AS opponent_deck_id,

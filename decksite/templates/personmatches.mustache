@@ -10,6 +10,7 @@
                 <th class="n">Result</th>
                 <th>Competition</th>
                 <th>Date</th>
+                <th>MTGO Log</th>
             </tr>
         </thead>
         <tbody>
@@ -25,6 +26,7 @@
                     <td class="n">{{game_wins}}–{{game_losses}}</td>
                     <td><a href="{{competition_url}}">{{competition_type_name}}</a></td>
                     <td data-text="{{date_sort}}">{{display_date}}</td>
+                    <td>{{#mtgo_id}}<a href="{{log_url}}">{{mtgo_id}}</a>{{/mtgo_id}}</td>
                 </tr>
             {{/matches}}
         </tbody>

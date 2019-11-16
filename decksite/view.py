@@ -14,7 +14,7 @@ from decksite import APP, get_season_id, prepare
 from decksite.data import archetype, competition
 from decksite.data.archetype import Archetype
 from decksite.deck_type import DeckType
-from magic import legality, oracle, rotation, tournaments
+from magic import fetcher, legality, oracle, rotation, tournaments
 from magic.models import Card, Deck
 from shared import dtutil
 from shared.container import Container
@@ -305,6 +305,8 @@ class View(BaseView):
                 m.opponent_url = url_for('.person', person_id=m.opponent)
             if m.get('opponent_deck_id'):
                 m.opponent_deck_url = url_for('deck', deck_id=m.opponent_deck_id)
+            if m.get('mtgo_id'):
+                m.log_url = fetcher.logsite_url('/match/{id}/'.format(id=m.get('mtgo_id')))
 
     def prepare_active_runs(self, o: Any) -> None:
         decks = getattr(o, 'decks', [])

@@ -195,19 +195,12 @@ def reset_db() -> None:
     magic.database.db().nuke_database()
 
 def safe_push(args: List[str]) -> None:
-    print('>>>> Stashing local changes')
-    label = 'dev-py-stash-at-' + str(time.time())
-    subprocess.check_call(['git', 'stash', 'save', label])
+    label = stash_if_any()
     print('>>>> Rebasing branch on Master')
     subprocess.check_call(['git', 'pull', 'origin', 'master', '--rebase'])
-    print('>>>> Checking')
     test(args)
     push()
-    print('>>>> Checking for stashed changes')
-    output = subprocess.check_output(['git', 'stash', 'list'], stderr=subprocess.STDOUT)
-    if label in str(output):
-        print('>>>> Popping stashed changes')
-        subprocess.call(['git', 'stash', 'pop'])
+    pop_if_any(label)
 
 def push() -> None:
     print('>>>> Pushing')
@@ -251,18 +244,28 @@ def branch(args: List[str]) -> None:
         return
     branch_name = args[0]
     print('>>>> Creating branch {branch_name}')
-    subprocess.check_call(['git', 'stash', '-a'])
-    subprocess.check_call(['git', 'clean', '-fxd'])
+    label = stash_if_any()
+    subprocess.check_call(['git', 'clean', '-fd'])
     subprocess.check_call(['git', 'checkout', 'master'])
     subprocess.check_call(['git', 'pull'])
     subprocess.check_call(['git', 'checkout', '-b', branch_name])
-    try:
-        subprocess.check_call(['git', 'stash', 'pop'])
-    except subprocess.CalledProcessError:
-        popclean()
+    pop_if_any(label)
+
+def stash_if_any() -> str:
+    print('>>>> Stashing local changes')
+    label = 'dev-py-stash-at-' + str(time.time())
+    subprocess.check_call(['git', 'stash', 'save', '--include-untracked', label])
+    return label
+
+def pop_if_any(label: str) -> None:
+    print('>>>> Checking for stashed changes')
+    output = subprocess.check_output(['git', 'stash', 'list'], stderr=subprocess.STDOUT)
+    if label in str(output):
+        print('>>>> Popping stashed changes')
+        subprocess.call(['git', 'stash', 'pop'])
 
 # If you try and git stash and then git stash pop when decksite is running locally you get in a mess.
-# This cleans up for you.
+# This cleans up for you. With the newer better behavior of --include-untracked this should now be unncessary.
 def popclean() -> None:
     print('>>>> Popping safely into messy directory.')
     try:

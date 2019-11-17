@@ -210,7 +210,8 @@ def preaggregate_trailblazer() -> None:
         WHERE
             d.id IN (SELECT deck_id FROM deck_match GROUP BY deck_id HAVING COUNT(*) >= 3)
         GROUP BY
-            card
+            card,
+            deck_id
     """.format(table=table, competition_join=query.competition_join())
     preaggregation.preaggregate(table, sql)
 

@@ -160,14 +160,20 @@ def unit(argv: List[str], m: str = 'not functional and not perf') -> None:
 
 # pylint: disable=pointless-statement
 def upload_coverage() -> None:
-    print('>>>> Upload coverage')
-    # pylint: disable=import-outside-toplevel
-    from shared import fetch_tools
-    fetch_tools.store('https://codecov.io/bash', 'codecov.sh')
-    python3 = local['python3']
-    python3['-m', 'coverage', 'xml', '-i']
-    bash = local['bash']
-    bash['codecov.sh'] & FG
+    try:
+        print('>>>> Upload coverage')
+        # pylint: disable=import-outside-toplevel
+        from shared import fetch_tools
+        fetch_tools.store('https://codecov.io/bash', 'codecov.sh')
+        python3 = local['python3']
+        python3['-m', 'coverage', 'xml', '-i']
+        bash = local['bash']
+        bash['codecov.sh'] & FG
+        # Sometimes the coverage uploader has issues.  Just fail silently, it's not that important
+    except ProcessExecutionError as e:
+        print(e)
+    except fetch_tools.FetchException as e:
+        print(e)
 
 # pylint: disable=import-outside-toplevel
 def sort(fix: bool = False) -> None:

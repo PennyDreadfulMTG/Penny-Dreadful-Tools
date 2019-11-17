@@ -44,11 +44,11 @@ def run_dangerously() -> None:
     if cmd == 'unit':
         unit(args)
     elif cmd == 'functional':
-        test(args, 'functional')
+        pytest(args, 'functional')
     elif cmd == 'perf':
-        test(args, 'perf')
+        pytest(args, 'perf')
     elif cmd in ('test', 'tests'):
-        test(args, '')
+        pytest(args, '')
     elif cmd in ('lint', 'pylint'):
         lint(args)
     elif cmd in ('types', 'mypy'):
@@ -139,10 +139,10 @@ def mypy(argv: List[str], strict: bool = False) -> None:
     if result[2]:
         raise TestFailedException(result[2])
 
-def unit(argv: List[str]) -> None:
-    test(argv, 'not functional and not perf')
+def unit(argv: List[str]):
+    pytest(argv, 'not functional and not perf')
 
-def test(argv: List[str], m: str) -> None:
+def pytest(argv: List[str], m: str) -> None:
     """
     Literally just prepare the DB and then invoke pytest.
     """

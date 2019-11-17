@@ -133,7 +133,7 @@ class ReportForm(Form):
             entry_decks = decks
 
         self.entry_options = deck_options(entry_decks, self.get('entry', deck_id), person_id)
-        self.opponent_options = deck_options(decks, self.get('opponent', None), person_id)
+        self.opponent_options = deck_options([d for d in decks if d.person_id != person_id], self.get('opponent', None), person_id)
         self.result_options = [
             {'text': 'Win 2–0', 'value': '2–0', 'selected': self.get('result', None) == '2–0'},
             {'text': 'Win 2–1', 'value': '2–1', 'selected': self.get('result', None) == '2–1'},

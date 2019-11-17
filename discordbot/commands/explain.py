@@ -17,6 +17,14 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
 `!explain {thing}`. Print commonly needed explanation for 'thing'."""
     num_tournaments = inflect.engine().number_to_words(len(tournaments.all_series_info()))
     explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
+        'archetype': (
+            """
+            Archetypes are manually reviewed by a human on an irregular basis.
+            Prior to that a deck will have either its assigned archetype on Gatherling (tournament decks), nothing, or a best-guess based on the most similar reviewed deck (league decks).
+            If you want to help out let us know.
+            """,
+            {}
+        ),
         'bugs': (
             'We keep track of cards that are bugged on Magic Online. We allow the playing of cards with known bugs in Penny Dreadful under certain conditions. See the full rules on the website.',
             {

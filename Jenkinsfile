@@ -24,13 +24,17 @@ node{
     }
 
     stage('External Data Tests') {
-        sh 'rm decksite/scrapers/test_*.yaml'
-        FailedTests = sh(returnStatus: true, script: 'python3 dev.py tests -m "external"')
-        if (!FailedTests) {
-            // Don't update the scraper recordings unless they failed.
-            sh(returnStatus: true, script: 'git reset --hard HEAD')
-            // DoNotMerge = true
-        }
+        // sh 'rm decksite/scrapers/test_*.yaml'
+        // FailedTests = sh(returnStatus: true, script: 'python3 dev.py tests -m "external"')
+        // if (FailedTests) {
+        //     // Check if files are still there
+        //     sh(returnStatus: true, script: 'git reset --hard HEAD')
+        // }
+        // else {
+        //     // Don't update the scraper recordings unless they failed.
+        //     sh(returnStatus: true, script: 'git reset --hard HEAD')
+        //     // DoNotMerge = true
+        // }
     }
 
     // stage('Pylint') {

@@ -41,12 +41,14 @@ def run_dangerously() -> None:
         args = sys.argv[2:]
     except IndexError:
         raise InvalidArgumentException('Please supply an argument.')
-    if cmd in ('unit', 'pytest'):
+    if cmd == 'unit':
         unit(args)
     elif cmd == 'functional':
-        unit(args, 'functional')
+        test(args, 'functional')
     elif cmd == 'perf':
-        unit(args, 'perf')
+        test(args, 'perf')
+    elif cmd in ('test', 'tests'):
+        test(args, '')
     elif cmd in ('lint', 'pylint'):
         lint(args)
     elif cmd in ('types', 'mypy'):
@@ -81,8 +83,8 @@ def run_dangerously() -> None:
         push()
     elif cmd == 'check':
         check(args)
-    elif cmd in ('test', 'tests'):
-        test(args)
+    elif cmd == 'ready':
+        ready(args)
     elif cmd in ('safe_push', 'safepush'):
         safe_push(args)
     elif cmd == 'release':
@@ -137,11 +139,14 @@ def mypy(argv: List[str], strict: bool = False) -> None:
     if result[2]:
         raise TestFailedException(result[2])
 
-def unit(argv: List[str], m: str = 'not functional and not perf') -> None:
+def unit(argv: List[str]) -> None:
+    test(argv, 'not functional and not perf')
+
+def test(argv: List[str], m: str) -> None:
     """
     Literally just prepare the DB and then invoke pytest.
     """
-    print(f'>>>> Running unit tests with "{m}"')
+    print(f'>>>> Running tests with "{m}"')
     # pylint: disable=import-outside-toplevel
     import pytest
     from magic import multiverse, oracle
@@ -198,7 +203,7 @@ def safe_push(args: List[str]) -> None:
     label = stash_if_any()
     print('>>>> Rebasing branch on Master')
     subprocess.check_call(['git', 'pull', 'origin', 'master', '--rebase'])
-    test(args)
+    unit(args)
     push()
     pop_if_any(label)
 
@@ -284,7 +289,7 @@ def check(args: List[str]) -> None:
     mypy(args)
     sort()
 
-def test(args: List[str]) -> None:
+def ready(args: List[str]) -> None:
     check(args)
     unit(args)
 

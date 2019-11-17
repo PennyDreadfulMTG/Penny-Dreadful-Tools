@@ -239,7 +239,7 @@ def preaggregate_archetype_person() -> None:
             a.id,
             d.person_id,
             season.id,
-            deck_type
+            ct.name
         HAVING
             season.id IS NOT NULL
     """.format(table=table,
@@ -290,7 +290,7 @@ def preaggregate_matchups() -> None:
             a.id,
             oa.id,
             season.id,
-            deck_type
+            ct.name
     """.format(table=table, competition_join=query.competition_join(), season_join=query.season_join())
     preaggregation.preaggregate(table, sql)
 
@@ -340,7 +340,8 @@ def preaggregate_matchups_person() -> None:
             a.id,
             oa.id,
             d.person_id,
-            season.id
+            season.id,
+            ct.name
     """.format(table=table, competition_join=query.competition_join(), season_join=query.season_join())
     preaggregation.preaggregate(table, sql)
 

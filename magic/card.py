@@ -186,6 +186,7 @@ def format_properties() -> TableDescription:
         props[k]['nullable'] = False
     props['id']['type'] = INTEGER
     props['id']['primary_key'] = True
+    props['name']['unique'] = True
     return props
 
 def card_legality_properties() -> TableDescription:

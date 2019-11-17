@@ -80,7 +80,6 @@ def played_cards_by_person(person_id: int, season_id: int) -> List[Card]:
         WHERE
             person_id = %s
     """
-<<<<<<< HEAD
     logsite_db().select(sql)
 
 def process_logs() -> None:

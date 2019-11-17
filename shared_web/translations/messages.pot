@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-11-12 13:43+1100\n"
+"POT-Creation-Date: 2019-11-17 20:45+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -160,14 +160,14 @@ msgstr ""
 msgid "Admin"
 msgstr ""
 
-#: decksite/view.py:316
+#: decksite/view.py:320
 #, python-format
 msgid "%(num)d active league run"
 msgid_plural "%(num)d active league runs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/view.py:323 logsite/templates/about.mustache:1
+#: decksite/view.py:327 logsite/templates/about.mustache:1
 msgid "Help us translate the site into your language"
 msgstr ""
 
@@ -494,6 +494,10 @@ msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1
 msgid "Which cards are legal?"
+msgstr ""
+
+#: decksite/templates/faqsbody.mustache:1
+msgid "Card legality is set quarterly based on which cards are 1¢ at that time."
 msgstr ""
 
 #: decksite/templates/faqsbody.mustache:1

@@ -76,7 +76,7 @@ def preaggregate_card() -> None:
         GROUP BY
             card,
             season.id,
-            deck_type
+            ct.name
     """.format(table=table,
                competition_join=query.competition_join(),
                season_join=query.season_join(),
@@ -125,7 +125,8 @@ def preaggregate_card_person() -> None:
         GROUP BY
             card,
             d.person_id,
-            season.id
+            season.id,
+            ct.name
     """.format(table=table,
                competition_join=query.competition_join(),
                season_join=query.season_join(),

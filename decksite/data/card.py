@@ -179,7 +179,8 @@ def preaggregate_unique() -> None:
         WHERE
             d.id IN (SELECT deck_id FROM deck_match GROUP BY deck_id HAVING COUNT(*) >= 3)
         GROUP BY
-            card
+            card,
+            person_id
         HAVING
             COUNT(DISTINCT person_id) = 1
     """.format(table=table)

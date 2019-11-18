@@ -106,7 +106,7 @@ def display_time(seconds: float, granularity: int = 2) -> str:
                 result = round_up_preceeding_unit(result, intervals)
                 seconds -= value * seconds_per_unit
                 value = 0
-        if value > 0 or len(result):
+        if value > 0 or result:
             result.append((value, unit))
             seconds -= value * seconds_per_unit
     return ', '.join(['{} {}'.format(value, unit.rstrip('s') if value == 1 else unit) for (value, unit) in result[:granularity] if value > 0])

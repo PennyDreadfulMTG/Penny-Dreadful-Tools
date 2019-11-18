@@ -12,6 +12,7 @@ from magic import tournaments
 from magic.models import Deck
 from shared.container import Container
 from shared.decorators import retry_after_calling
+from shared_web import logger
 
 LEADERBOARD_TOP_N = 5
 LEADERBOARD_LIMIT = 12
@@ -138,10 +139,10 @@ class Achievement:
             # in case anyone ever makes a poor sportsmanship achievement called DROP TABLE
             cls.key = re.sub('[^A-Za-z0-9_]+', '', cls.key)
             if cls.key in [c.key for c in cls.all_achievements]:
-                print(f"Warning: Two achievements have the same normalised key {cls.key}. This won't do any permanent damage to the database but the results are almost certainly not as intended.")
+                logger.warning(f"Two achievements have the same normalised key {cls.key}. This won't do any permanent damage to the database but the results are almost certainly not as intended.")
             # pylint can't determine that we have verified cls.key to be a str
-            if cls.key[-7:] == '_detail': #pylint: disable=unsubscriptable-object
-                print(f"Warning: achievement key {cls.key} should not end with the string '_detail'.")
+            if cls.key[-7:] == '_detail': # pylint: disable=unsubscriptable-object
+                logger.warning(f"Achievement key {cls.key} should not end with the string '_detail'.")
             cls.all_achievements.append(cls())
 
     # pylint: disable=no-self-use, unused-argument

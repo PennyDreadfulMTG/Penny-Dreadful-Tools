@@ -40,6 +40,7 @@ from magic import image_fetcher, oracle
 from shared import perf
 from shared.pd_exception import (DoesNotExistException, InvalidDataException,
                                  TooFewItemsException)
+from shared_web import logger
 from shared_web.decorators import fill_cookies
 
 
@@ -408,6 +409,13 @@ def rotation_changes() -> str:
     view = RotationChanges(*oracle.pd_rotation_changes(get_season_id()), cs.playability(), query=query)
     return view.page()
 
+@APP.route('/rotation/changes/files/<any(new,out):changes_type>/')
+@SEASONS.route('/rotation/changes/files/<any(new,out):changes_type>/')
+def rotation_changes_files(changes_type: str) -> Response:
+    changes = oracle.pd_rotation_changes(get_season_id())[0 if changes_type == 'new' else 1]
+    s = '\n'.join('4 {name}'.format(name=c.name) for c in changes)
+    return make_response(s, 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': f'attachment; filename={changes_type}.txt'})
+
 @APP.route('/rotation/speculation/')
 def rotation_speculation() -> str:
     query = request.args.get('fq')
@@ -434,7 +442,7 @@ def image(c: str = '') -> wrappers.Response:
             raise InternalServerError(f'Failed to get image for {c}') # type: ignore
         return send_file(os.path.abspath(path)) # Send abspath to work around monolith root versus web root.
     except TooFewItemsException as e:
-        print(e)
+        logger.info(f'Did not find an image for {c}: {e}')
         if len(names) == 1:
             return redirect(f'https://api.scryfall.com/cards/named?exact={c}&format=image', code=303)
         return make_response('', 400)

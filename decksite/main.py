@@ -40,6 +40,7 @@ from magic import image_fetcher, oracle
 from shared import perf
 from shared.pd_exception import (DoesNotExistException, InvalidDataException,
                                  TooFewItemsException)
+from shared_web import logger
 from shared_web.decorators import fill_cookies
 
 
@@ -441,7 +442,7 @@ def image(c: str = '') -> wrappers.Response:
             raise InternalServerError(f'Failed to get image for {c}') # type: ignore
         return send_file(os.path.abspath(path)) # Send abspath to work around monolith root versus web root.
     except TooFewItemsException as e:
-        print(e)
+        logger.info(f'Did not find an image for {c}: {e}')
         if len(names) == 1:
             return redirect(f'https://api.scryfall.com/cards/named?exact={c}&format=image', code=303)
         return make_response('', 400)

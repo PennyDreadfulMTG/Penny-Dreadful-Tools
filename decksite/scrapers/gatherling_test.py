@@ -53,7 +53,6 @@ def test_rankings() -> None:
 
     soup = get_soup('gatherling.top8.html')
     rankings = gatherling.rankings(soup)
-    print(rankings)
     assert len(rankings) == 27
     assert rankings[0] == 'bakert99'
     assert rankings[1] == 'FSkura'
@@ -85,7 +84,6 @@ def test_rankings() -> None:
 
     soup = get_soup('gatherling.drop.html')
     rankings = gatherling.rankings(soup)
-    print(rankings)
     assert len(rankings) == 14
     assert rankings[0] == 'The_Wolf'
     assert rankings[1] == 'jackslagel'

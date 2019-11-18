@@ -65,19 +65,8 @@ confidence=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use"--disable=all --enable=classes
 # --disable=W"
-disable=long-builtin,backtick,old-raise-syntax,unichr-builtin,old-octal-literal,dict-view-method,
-        unicode-builtin,dict-iter-method,long-suffix,using-cmp-argument,cmp-method,
-        standarderror-builtin,input-builtin,no-absolute-import,zip-builtin-not-iterating,
-        old-ne-operator,cmp-builtin,old-division,delslice-method,raising-string,reload-builtin,
-        intern-builtin,xrange-builtin,basestring-builtin,metaclass-assignment,suppressed-message,
-        useless-suppression,hex-method,round-builtin,filter-builtin-not-iterating,nonzero-method,
-        map-builtin-not-iterating,reduce-builtin,execfile-builtin,setslice-method,unpacking-in-except,
-        getslice-method,coerce-builtin,indexing-exception,buffer-builtin,apply-builtin,
-        import-star-module-level,raw_input-builtin,file-builtin,coerce-method,next-method-called,
-        oct-method,range-builtin-not-iterating,parameter-unpacking,missing-docstring,
-        too-few-public-methods,too-many-return-statements,too-many-branches,too-many-statements,
-        locally-disabled,invalid-sequence-index,len-as-condition,wrong-import-order,line-too-long,
-        ungrouped-imports,wrong-import-position,
+disable=missing-docstring,too-few-public-methods,too-many-return-statements,too-many-branches,
+        too-many-statements,locally-disabled,invalid-sequence-index,line-too-long
 
 [REPORTS]
 

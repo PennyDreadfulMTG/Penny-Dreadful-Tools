@@ -408,6 +408,13 @@ def rotation_changes() -> str:
     view = RotationChanges(*oracle.pd_rotation_changes(get_season_id()), cs.playability(), query=query)
     return view.page()
 
+@APP.route('/rotation/changes/files/<any(new,out):type>/')
+@SEASONS.route('/rotation/changes/files/<any(new,out):type>/')
+def rotation_changes_files(type: str):
+    changes = oracle.pd_rotation_changes(get_season_id())[0 if type == 'new' else 1]
+    s = '\n'.join('4 {name}'.format(name=c.name) for c in changes)
+    return make_response(s, 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': f'attachment; filename={type}.txt'})
+
 @APP.route('/rotation/speculation/')
 def rotation_speculation() -> str:
     query = request.args.get('fq')

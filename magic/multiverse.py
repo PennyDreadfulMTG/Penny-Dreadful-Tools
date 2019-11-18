@@ -336,7 +336,7 @@ def load_sets() -> dict:
 
 def insert_set(s: Any) -> int:
     sql = 'INSERT INTO `set` ('
-    sql += ', '.join(name for name, prop in card.set_properties().items() if prop['scryfall'])
+    sql += ', '.join(name for name, prop in card.set_properties().items() if prop['scryfall']) # pylint: disable=invalid-sequence-index
     sql += ') VALUES ('
     sql += ', '.join('%s' for name, prop in card.set_properties().items() if prop['scryfall'])
     sql += ')'

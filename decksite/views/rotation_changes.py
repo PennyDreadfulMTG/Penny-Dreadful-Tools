@@ -23,8 +23,8 @@ class RotationChanges(View):
         self.query = query
         self.show_interestingness_filter = True
         self.show_filters_toggle = True
-        self.new_cards_deck_url = url_for('rotation_changes_files', type='new')
-        self.rotated_out_cards_deck_url = url_for('rotation_changes_files', type='out')
+        self.new_cards_deck_url = url_for('rotation_changes_files', changes_type='new')
+        self.rotated_out_cards_deck_url = url_for('rotation_changes_files', changes_type='out')
 
     def page_title(self) -> str:
         if self.speculation:

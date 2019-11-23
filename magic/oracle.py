@@ -5,8 +5,8 @@ from magic.card_description import CardDescription
 from magic.database import db
 from magic.models import Card
 from shared import configuration, fetch_tools, guarantee
-from shared.database import sqlescape
 from shared.container import Container
+from shared.database import sqlescape
 from shared.pd_exception import (InvalidArgumentException,
                                  InvalidDataException, TooFewItemsException)
 

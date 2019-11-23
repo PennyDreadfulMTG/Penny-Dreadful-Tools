@@ -1,17 +1,17 @@
 from discord.ext import commands
 
 from discordbot.command import MtgContext
-from magic.models import Card
 from magic import oracle
+from magic.models import Card
 
 
-@commands.command(aliases=["flavour"])
+@commands.command(aliases=['flavour'])
 async def flavor(ctx: MtgContext, *, c: Card) -> None:
-        """Flavor text of a card"""
-        await ctx.single_card_text(c, flavor_text)
+    """Flavor text of a card"""
+    await ctx.single_card_text(c, flavor_text)
 
 def flavor_text(c: Card) -> str:
-    for print in oracle.get_printings(c):
-        if print.flavor is not None:
-            return '\n' + print.flavor + "\n-**" + oracle.get_set(print.set_id).name + '**'
-    return "No flavor text available"
+    for printing in oracle.get_printings(c):
+        if printing.flavor is not None:
+            return '\n' + printing.flavor + '\n-**' + oracle.get_set(printing.set_id).name + '**'
+    return 'No flavor text available'

@@ -25,6 +25,10 @@ None
 
 Deletes all the cached images.  Use sparingly
 
+## flavor (flavour, flavou)
+
+Flavor text of a card
+
 ## rotate
 
 Perform all necessary post-rotation tasks.

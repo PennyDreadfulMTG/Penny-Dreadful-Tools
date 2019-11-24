@@ -1,8 +1,7 @@
 import urllib.parse
-from typing import Optional, List
+from typing import List, Optional
 
-from flask import (redirect, request,
-                   url_for)
+from flask import redirect, request, url_for
 from werkzeug import wrappers
 
 from decksite import APP, SEASONS, auth, get_season_id
@@ -16,10 +15,10 @@ from decksite.data import person as ps
 from decksite.data import season as ss
 from decksite.deck_type import DeckType
 from decksite.views import (Archetype, Archetypes, Card, Cards, Deck, Decks,
-                            Matchups, People, Person, PersonMatches,
-                            Seasons)
+                            Matchups, People, Person, PersonMatches, Seasons)
 from magic import oracle
-from shared.pd_exception import (DoesNotExistException, InvalidDataException)
+from shared.pd_exception import DoesNotExistException, InvalidDataException
+
 
 @APP.route('/decks/')
 @APP.route('/decks/<any(tournament,league):deck_type>/')

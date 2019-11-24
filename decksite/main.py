@@ -5,18 +5,15 @@ import urllib.parse
 from typing import List, Optional
 
 from flask import (Response, abort, g, make_response, redirect, request,
-                   send_file, session, url_for)
+                   send_file, url_for)
 from werkzeug import wrappers
 from werkzeug.exceptions import InternalServerError
 
 from decksite import APP, SEASONS, auth, deck_name, get_season_id
-from decksite import league as lg
 from decksite.cache import cached
 from decksite.charts import chart
-from decksite.data import achievements as achs
 from decksite.data import archetype as archs
 from decksite.data import card as cs
-from decksite.data import competition as comp
 from decksite.data import deck as ds
 from decksite.data import match as ms
 from decksite.data import matchup as mus
@@ -25,23 +22,17 @@ from decksite.data import person as ps
 from decksite.data import season as ss
 from decksite.database import db
 from decksite.deck_type import DeckType
-from decksite.league import DeckCheckForm, ReportForm, RetireForm, SignUpForm
-from decksite.views import (About, AboutPdm, Achievements, Archetype,
-                            Archetypes, Bugs, Card, Cards, CommunityGuidelines,
-                            Competition, Competitions, Deck, DeckCheck, Decks,
-                            Faqs, Home, LeagueInfo, LinkAccounts, Matchups,
-                            People, Person, PersonAchievements, PersonMatches,
-                            Report, Resources, Retire, Rotation,
-                            RotationChanges, Seasons, SignUp,
-                            TournamentHosting, TournamentLeaderboards,
-                            Tournaments)
+from decksite.views import (Archetype,
+                            Archetypes, Card, Cards,
+                            Deck, Decks,
+                            Home, Matchups,
+                            People, Person, PersonMatches,
+                            Seasons)
 from magic import card as mc
 from magic import image_fetcher, oracle
 from shared import perf
 from shared.pd_exception import (DoesNotExistException, InvalidDataException,
                                  TooFewItemsException)
-from shared_web.decorators import fill_cookies
-
 
 @APP.route('/')
 @cached()
@@ -110,28 +101,6 @@ def person_matches(person_id: str) -> str:
     view = PersonMatches(p, matches)
     return view.page()
 
-
-@APP.route('/achievements/')
-@SEASONS.route('/achievements/')
-def achievements() -> str:
-    username = auth.mtgo_username()
-    p = None
-    if username is not None:
-        p = ps.load_person_by_mtgo_username(username, season_id=get_season_id())
-    view = Achievements(achs.load_achievements(p, season_id=get_season_id()))
-    return view.page()
-
-@APP.route('/people/<person_id>/achievements')
-@SEASONS.route('/people/<person_id>/achievements')
-def person_achievements(person_id: str) -> str:
-    p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
-    view = PersonAchievements(p, achs.load_achievements(p, season_id=get_season_id(), with_detail=True))
-    return view.page()
-
-@APP.route('/person/achievements/')
-def achievements_redirect() -> wrappers.Response:
-    return redirect(url_for('achievements'))
-
 @APP.route('/cards/')
 @APP.route('/cards/<any(tournament,league):deck_type>/')
 @SEASONS.route('/cards/')
@@ -160,18 +129,6 @@ def card(name: str, deck_type: Optional[str] = None) -> str:
     except InvalidDataException as e:
         raise DoesNotExistException(e)
 
-@APP.route('/competitions/')
-@SEASONS.route('/competitions/')
-@cached()
-def competitions() -> str:
-    view = Competitions(comp.load_competitions(season_id=get_season_id()))
-    return view.page()
-
-@APP.route('/competitions/<competition_id>/')
-@cached()
-def competition(competition_id: int) -> str:
-    view = Competition(comp.load_competition(competition_id))
-    return view.page()
 
 @APP.route('/archetypes/')
 @APP.route('/archetypes/<any(tournament,league):deck_type>/')
@@ -200,24 +157,6 @@ def archetype(archetype_id: str, deck_type: Optional[str] = None) -> str:
     view = Archetype(a, deckless_archetypes, archetype_matchups, tournament_only=tournament_only, season_id=season_id)
     return view.page()
 
-@APP.route('/tournaments/')
-def tournaments() -> str:
-    view = Tournaments()
-    return view.page()
-
-@APP.route('/tournaments/hosting/')
-@cached()
-def hosting() -> str:
-    view = TournamentHosting()
-    return view.page()
-
-@APP.route('/tournaments/leaderboards/')
-@SEASONS.route('/tournaments/leaderboards/')
-@cached()
-def tournament_leaderboards() -> str:
-    leaderboards = comp.leaderboards(season_id=get_season_id())
-    view = TournamentLeaderboards(leaderboards)
-    return view.page()
 
 @APP.route('/matchups/')
 def matchups() -> str:
@@ -240,45 +179,6 @@ def matchups() -> str:
     view = Matchups(hero, enemy, season_id, matchup_archetypes, matchup_people, matchup_cards, results)
     return view.page()
 
-@APP.route('/about/')
-@cached()
-def about_pdm() -> str:
-    view = AboutPdm()
-    return view.page()
-
-@APP.route('/gp/')
-@cached()
-def about_gp() -> Response:
-    return make_response(redirect(url_for('about', src='gp')))
-
-@APP.route('/about/pd/')
-@cached()
-def about() -> str:
-    view = About(request.args.get('src'))
-    return view.page()
-
-@APP.route('/faqs/')
-@cached()
-def faqs() -> str:
-    view = Faqs()
-    return view.page()
-
-@APP.route('/community/guidelines/')
-@cached()
-def community_guidelines() -> str:
-    view = CommunityGuidelines()
-    return view.page()
-
-@APP.route('/rotation/')
-@APP.route('/rotation/<interestingness>/')
-@cached()
-def rotation(interestingness: Optional[str] = None) -> str:
-    query = request.args.get('fq')
-    if query is None:
-        query = ''
-    view = Rotation(interestingness, query)
-    return view.page()
-
 @APP.route('/export/<int:deck_id>/')
 @auth.load_person
 def export(deck_id: int) -> Response:
@@ -288,133 +188,6 @@ def export(deck_id: int) -> Response:
             abort(403)
     safe_name = deck_name.file_name(d)
     return make_response(mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})
-
-@APP.route('/link/')
-@auth.login_required
-def link() -> str:
-    view = LinkAccounts()
-    return view.page()
-
-@APP.route('/link/', methods=['POST'])
-@auth.login_required
-def link_post() -> str:
-    view = LinkAccounts()
-    return view.page()
-
-@APP.route('/resources/')
-@cached()
-def resources() -> str:
-    view = Resources()
-    return view.page()
-
-@APP.route('/bugs/')
-@cached()
-def bugs() -> str:
-    view = Bugs()
-    return view.page()
-
-# League
-
-@APP.route('/league/')
-def league() -> str:
-    view = LeagueInfo()
-    return view.page()
-
-@APP.route('/league/current/')
-@cached()
-def current_league() -> str:
-    return competition(lg.active_league().id)
-
-@APP.route('/signup/')
-@auth.load_person
-def signup(form: Optional[SignUpForm] = None) -> str:
-    if form is None:
-        form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
-    view = SignUp(form, lg.get_status() == lg.Status.CLOSED, auth.person_id())
-    return view.page()
-
-@APP.route('/signup/', methods=['POST'])
-@cached()
-def add_signup() -> str:
-    if lg.get_status() == lg.Status.CLOSED:
-        return signup()
-    form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
-    if form.validate():
-        d = lg.signup(form)
-        response = make_response(redirect(url_for('deck', deck_id=d.id)))
-        response.set_cookie('deck_id', str(d.id))
-        return response
-    return signup(form)
-
-@APP.route('/deckcheck/')
-@auth.load_person
-def deck_check(form: Optional[DeckCheckForm] = None) -> str:
-    if form is None:
-        form = DeckCheckForm(request.form, auth.person_id(), auth.mtgo_username())
-    view = DeckCheck(form, auth.person_id())
-    return view.page()
-
-@APP.route('/deckcheck/', methods=['POST'])
-@cached()
-def do_deck_check() -> str:
-    form = DeckCheckForm(request.form, auth.person_id(), auth.mtgo_username())
-    form.validate()
-    return deck_check(form)
-
-@APP.route('/report/')
-@auth.load_person
-@fill_cookies('deck_id')
-def report(form: Optional[ReportForm] = None, deck_id: int = None) -> str:
-    if form is None:
-        form = ReportForm(request.form, deck_id, auth.person_id())
-    view = Report(form, auth.person_id())
-    return view.page()
-
-@APP.route('/report/', methods=['POST'])
-def add_report() -> str:
-    form = ReportForm(request.form)
-    if form.validate() and lg.report(form):
-        response = make_response(redirect(url_for('deck', deck_id=form.entry)))
-        response.set_cookie('deck_id', form.entry)
-        return response
-    return report(form)
-
-@APP.route('/retire/')
-@auth.login_required
-@fill_cookies('deck_id')
-def retire(form: Optional[RetireForm] = None, deck_id: int = None) -> str:
-    if form is None:
-        form = RetireForm(request.form, deck_id, session.get('id'))
-    view = Retire(form)
-    return view.page()
-
-@APP.route('/retire/', methods=['POST'])
-@auth.login_required
-def retire_deck() -> wrappers.Response:
-    form = RetireForm(request.form, discord_user=session.get('id'))
-    if form.validate():
-        d = ds.load_deck(form.entry)
-        ps.associate(d, session['id'])
-        lg.retire_deck(d)
-        return redirect(url_for('signup'))
-    return retire(form)
-
-@APP.route('/rotation/changes/')
-@SEASONS.route('/rotation/changes/')
-def rotation_changes() -> str:
-    query = request.args.get('fq')
-    if query is None:
-        query = ''
-    view = RotationChanges(*oracle.pd_rotation_changes(get_season_id()), cs.playability(), query=query)
-    return view.page()
-
-@APP.route('/rotation/speculation/')
-def rotation_speculation() -> str:
-    query = request.args.get('fq')
-    if query is None:
-        query = ''
-    view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(out=True), cs.playability(), speculation=True, query=query)
-    return view.page()
 
 @APP.route('/charts/cmc/<deck_id>-cmc.png')
 def cmc_chart(deck_id: int) -> Response:
@@ -431,7 +204,7 @@ def image(c: str = '') -> wrappers.Response:
         requested_cards = oracle.load_cards(names)
         path = image_fetcher.download_image(requested_cards)
         if path is None:
-            raise InternalServerError(f'Failed to get image for {c}') # type: ignore
+            raise InternalServerError(f'Failed to get image for {c}')
         return send_file(os.path.abspath(path)) # Send abspath to work around monolith root versus web root.
     except TooFewItemsException as e:
         print(e)

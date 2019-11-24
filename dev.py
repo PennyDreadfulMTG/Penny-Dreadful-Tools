@@ -304,7 +304,7 @@ def find_files(needle: str = '', file_extension: str = '') -> List[str]:
         paths = [p for p in paths if p.endswith(file_extension)]
     if needle:
         paths = [p for p in paths if needle in os.path.basename(p)]
-    return paths
+    return paths # type: ignore
 
 if __name__ == '__main__':
     run()

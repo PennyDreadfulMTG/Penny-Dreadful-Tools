@@ -43,6 +43,18 @@ def admin_required_no_redirect(f: Callable) -> Callable:
         return f(*args, **kwargs)
     return decorated_function
 
+
+def load_person(f: Callable) -> Callable:
+    @wraps(f)
+    def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> Any:
+        if discord_id() is not None:
+            p = person.maybe_load_person_by_discord_id(discord_id())
+            if p:
+                login(p)
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 def discord_id() -> Optional[int]:
     return session.get('id')
 
@@ -62,13 +74,3 @@ def login(p: person.Person) -> None:
 
 def hide_intro() -> bool:
     return session.get('hide_intro', False)
-
-def load_person(f: Callable) -> Callable:
-    @wraps(f)
-    def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> Any:
-        if discord_id() is not None:
-            p = person.maybe_load_person_by_discord_id(discord_id())
-            if p:
-                login(p)
-        return f(*args, **kwargs)
-    return decorated_function

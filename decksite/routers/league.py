@@ -1,16 +1,17 @@
-from flask import (make_response, redirect, request,
-                   url_for, session)
+from typing import Optional
+
+from flask import make_response, redirect, request, session, url_for
+from werkzeug import wrappers
 
 from decksite import APP, auth
+from decksite import league as lg
 from decksite.cache import cached
 from decksite.data import deck as ds
 from decksite.data import person as ps
-from decksite import league as lg
-from decksite.views import LeagueInfo, SignUp, Retire, Report
 from decksite.league import ReportForm, RetireForm, SignUpForm
+from decksite.views import LeagueInfo, Report, Retire, SignUp
 from shared_web.decorators import fill_cookies
-from werkzeug import wrappers
-from typing import Optional
+
 
 @APP.route('/league/')
 def league() -> str:

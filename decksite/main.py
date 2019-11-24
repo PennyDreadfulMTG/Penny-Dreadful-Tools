@@ -22,17 +22,15 @@ from decksite.data import person as ps
 from decksite.data import season as ss
 from decksite.database import db
 from decksite.deck_type import DeckType
-from decksite.views import (Archetype,
-                            Archetypes, Card, Cards,
-                            Deck, Decks,
-                            Home, Matchups,
-                            People, Person, PersonMatches,
+from decksite.views import (Archetype, Archetypes, Card, Cards, Deck, Decks,
+                            Home, Matchups, People, Person, PersonMatches,
                             Seasons)
 from magic import card as mc
 from magic import image_fetcher, oracle
 from shared import perf
 from shared.pd_exception import (DoesNotExistException, InvalidDataException,
                                  TooFewItemsException)
+
 
 @APP.route('/')
 @cached()

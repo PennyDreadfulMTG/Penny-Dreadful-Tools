@@ -1,7 +1,7 @@
-from typing import Any, Dict, List, Optional, cast, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 import titlecase
-from flask import request, session, url_for, redirect
+from flask import redirect, request, session, url_for
 from werkzeug import wrappers
 
 from decksite import APP, auth
@@ -176,7 +176,7 @@ def player_notes() -> str:
 @auth.admin_required
 @fill_form('person_id', 'note')
 @APP.route('/admin/people/notes/', methods=['POST'])
-def post_player_note(person_id: int, note: str) -> str:
+def post_player_note(person_id: int, note: str) -> wrappers.Response:
     creator = ps.load_person_by_discord_id(session['id'])
     ps.add_note(creator.id, person_id, note)
     return redirect(url_for('player_notes'))

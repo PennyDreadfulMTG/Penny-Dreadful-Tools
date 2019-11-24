@@ -1,10 +1,8 @@
-from flask import (Response, make_response, redirect, request,
-                   url_for)
+from flask import Response, make_response, redirect, request, url_for
 
 from decksite import APP
 from decksite.cache import cached
-from decksite.views import (About, AboutPdm, CommunityGuidelines,
-                            Faqs)
+from decksite.views import About, AboutPdm, CommunityGuidelines, Faqs
 
 
 @APP.route('/about/')

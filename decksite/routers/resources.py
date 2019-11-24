@@ -1,14 +1,13 @@
 from typing import Optional
-from flask import request
-from decksite import APP, SEASONS, auth, get_season_id
 
+from flask import request
+
+from decksite import APP, SEASONS, auth, get_season_id
 from decksite.cache import cached
 from decksite.data import card as cs
 from decksite.league import DeckCheckForm
-from decksite.views import (Bugs, DeckCheck,
-                            LinkAccounts,
-                            Resources, Rotation,
-                            RotationChanges)
+from decksite.views import (
+    Bugs, DeckCheck, LinkAccounts, Resources, Rotation, RotationChanges)
 from magic import oracle
 
 

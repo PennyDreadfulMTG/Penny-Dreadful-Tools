@@ -4,8 +4,10 @@ from typing import List, Tuple
 from decksite.data import preaggregation, query
 from decksite.database import db as decksite_db
 from logsite.database import db as logsite_db
+from magic import oracle
 from magic.models.card import Card
 from shared import configuration
+from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import retry_after_calling
 
@@ -20,6 +22,7 @@ def preaggregate_played_cards_by_person():
             name VARCHAR(190) NOT NULL,
             season_id INT NOT NULL,
             person_id INT NOT NULL,
+            num_decks INT NOT NULL,
             wins INT NOT NULL,
             losses INT NOT NULL,
             draws INT NOT NULL,
@@ -31,6 +34,7 @@ def preaggregate_played_cards_by_person():
             name,
             season_id AS season_id,
             person_id,
+            COUNT(*) AS num_decks,
             SUM(CASE WHEN my_games > your_games THEN 1 ELSE 0 END) AS wins,
             SUM(CASE WHEN my_games < your_games THEN 1 ELSE 0 END) AS losses,
             SUM(CASE WHEN my_games = your_games THEN 1 ELSE 0 END) AS draws
@@ -79,8 +83,20 @@ def played_cards_by_person(person_id: int, season_id: int) -> List[Card]:
             _played_card_person_stats
         WHERE
             person_id = %s
-    """
-    logsite_db().select(sql)
+        AND
+            {season_query}
+        GROUP BY
+            name
+        HAVING
+            name IS NOT NULL
+    """.format(season_query=query.season_query(season_id))
+    print(sql)
+    cs = [Container(r) for r in decksite_db().select(sql, [person_id])]
+    print(len(cs))
+    cards = oracle.cards_by_name()
+    for c in cs:
+        c.update(cards[c.name])
+    return cs
 
 def process_logs() -> None:
     init()

@@ -12,10 +12,10 @@ from shared.database import sqlescape
 from shared.decorators import retry_after_calling
 
 
-def preaggregate():
+def preaggregate() -> None:
     preaggregate_played_person()
 
-def preaggregate_played_person():
+def preaggregate_played_person() -> None:
     table = '_played_card_person_stats'
     sql = """
         CREATE TABLE IF NOT EXISTS _new{table} (
@@ -121,7 +121,7 @@ def process_logs() -> None:
     sql += ', '.join('(' + ', '.join(str(sqlescape(v)) for v in vs) + ')' for vs in values)
     logsite_db().execute(sql)
 
-def next_ids():
+def next_ids() -> List[int]:
     sql = """
         SELECT
             id AS game_id
@@ -144,7 +144,7 @@ def next_ids():
 def process_log(log: str) -> List[Tuple[str, str]]:
     return re.findall(r'(\w+) (?:casts|plays) \[([^\]]+)\]', log, re.MULTILINE)
 
-def init():
+def init() -> None:
     sql = """
         CREATE TABLE IF NOT EXISTS _game_card_person (
             game_id INT NOT NULL,

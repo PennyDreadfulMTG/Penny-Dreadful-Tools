@@ -139,7 +139,7 @@ def mypy(argv: List[str], strict: bool = False) -> None:
     if result[2]:
         raise TestFailedException(result[2])
 
-def unit(argv: List[str]):
+def unit(argv: List[str]) -> None:
     runtests(argv, 'not functional and not perf')
 
 def runtests(argv: List[str], m: str) -> None:

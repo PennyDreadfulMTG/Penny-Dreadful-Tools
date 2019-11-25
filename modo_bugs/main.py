@@ -3,8 +3,7 @@ import subprocess
 import sys
 from typing import List
 
-from modo_bugs import (scrape_announcements, scrape_bugblog, update,
-                       verification)
+from modo_bugs import scrape_announcements, scrape_bugblog, update, verification
 from shared import configuration
 
 

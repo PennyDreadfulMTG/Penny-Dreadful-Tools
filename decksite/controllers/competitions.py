@@ -6,9 +6,8 @@ from decksite.cache import cached
 from decksite.data import achievements as achs
 from decksite.data import competition as comp
 from decksite.data import person as ps
-from decksite.views import (Achievements, Competition, Competitions,
-                            PersonAchievements, TournamentHosting,
-                            TournamentLeaderboards, Tournaments)
+from decksite.views import (Achievements, Competition, Competitions, PersonAchievements,
+                            TournamentHosting, TournamentLeaderboards, Tournaments)
 
 
 @APP.route('/competitions/')

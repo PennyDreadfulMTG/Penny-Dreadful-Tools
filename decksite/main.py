@@ -3,8 +3,7 @@ import logging
 import os
 from typing import Optional
 
-from flask import (Response, abort, g, make_response, redirect, request,
-                   send_file)
+from flask import Response, abort, g, make_response, redirect, request, send_file
 from werkzeug import wrappers
 from werkzeug.exceptions import InternalServerError
 

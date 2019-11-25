@@ -7,8 +7,7 @@ from typing import Dict, List, Set
 import ftfy
 
 from magic import fetcher, rotation
-from price_grabber.parser import (PriceListType, parse_cardhoarder_prices,
-                                  parse_mtgotraders_prices)
+from price_grabber.parser import PriceListType, parse_cardhoarder_prices, parse_mtgotraders_prices
 from shared import configuration, dtutil, fetch_tools, text
 
 BLACKLIST: Set[str] = set()

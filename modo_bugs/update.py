@@ -13,8 +13,7 @@ from shared import configuration
 from shared.lazy import lazy_property
 
 from . import fetcher, repo, strings
-from .strings import (BAD_AFFECTS_REGEX, BADCATS, CATEGORIES, IMAGES_REGEX,
-                      REGEX_CARDREF)
+from .strings import BAD_AFFECTS_REGEX, BADCATS, CATEGORIES, IMAGES_REGEX, REGEX_CARDREF
 
 
 @lazy_property

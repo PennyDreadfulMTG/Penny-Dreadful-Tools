@@ -13,9 +13,9 @@ from shared.decorators import retry_after_calling
 
 
 def preaggregate():
-    preaggregate_played_cards_by_person()
+    preaggregate_played_cards_person()
 
-def preaggregate_played_cards_by_person():
+def preaggregate_played_cards_person():
     table = '_played_card_person_stats'
     sql = """
         CREATE TABLE IF NOT EXISTS _new{table} (
@@ -68,7 +68,7 @@ def preaggregate_played_cards_by_person():
     print(sql)
     preaggregation.preaggregate(table, sql)
 
-@retry_after_calling(preaggregate_played_cards_by_person)
+@retry_after_calling(preaggregate_played_cards_person)
 def played_cards_by_person(person_id: int, season_id: int) -> List[Card]:
     sql = """
         SELECT

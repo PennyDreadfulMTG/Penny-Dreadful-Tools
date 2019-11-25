@@ -8,6 +8,7 @@ from pylint.interfaces import IAstroidChecker
 from pylint.lint import PyLinter
 
 ACCEPTABLE_IMPORTS: Dict[str, List[str]] = {
+    'analysis': ['decksite', 'logsite', 'magic', 'shared'],
     'decksite': ['decksite', 'magic', 'shared', 'shared_web'],
     'discordbot': ['discordbot', 'magic', 'shared'],
     'github_tools': ['github_tools', 'shared', 'shared_web'],

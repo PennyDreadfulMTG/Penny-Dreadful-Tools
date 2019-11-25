@@ -453,8 +453,7 @@ def database2json(propname: str) -> str:
 
 def date2int(s: str, name: str) -> Union[str, float]:
     if name == 'released_at':
-        print(f'parsing {s}')
-        return dtutil.parse_to_ts(s.replace('2109', '2019'), '%Y-%m-%d', dtutil.WOTC_TZ)
+        return dtutil.parse_to_ts(s, '%Y-%m-%d', dtutil.WOTC_TZ)
     return s
 
 # I'm not sure this belong here, but it's here for now.

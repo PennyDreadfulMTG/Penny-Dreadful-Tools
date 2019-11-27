@@ -42,9 +42,9 @@ def upload() -> Response:
     if error:
         return error
     match_id = int(request.form['match_id'])
+    if match_id == 219603564:
+        return_json({'success': True}) # Prevent infinite 500 errors.
     if request.form.get('lines'):
-        if request.form.get('lines') == 'PennyDreadful\\r\\npd test s13\\r\\n':
-            return_json({'success': True}) # Prevent infinite 500 errors.
         lines = request.form['lines']
         importing.import_log(lines.split('\n'), match_id)
     else:

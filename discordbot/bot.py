@@ -188,6 +188,8 @@ class Bot(commands.Bot):
         latest_cards = await fetcher.scryfall_cards_async()
         cards_not_currently_in_db: List[CardDescription] = []
         for c in latest_cards['data']:
+            if not multiverse.valid_layout(c):
+                continue
             name = multiverse.name_from_card_description(c)
             try:
                 oracle.valid_name(name)

@@ -246,7 +246,7 @@ def determine_values(printings: List[CardDescription], next_card_id: int) -> Dic
         'card_legality': card_legality_values
     }
 
-def valid_layout(p: CardDescription):
+def valid_layout(p: CardDescription) -> bool:
     # Exclude art_series because they have the same name as real cards and that breaks things.
     # Exclude token because named tokens like "Ajani's Pridemate" and "Storm Crow" conflict with the cards with the same name. See #6156.
     return p['layout'] not in ['art_series', 'token']

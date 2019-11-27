@@ -1,5 +1,6 @@
 from analysis import analysis
 
+
 def test_process_log() -> None:
     s = """
         bakert99 plays [Island].

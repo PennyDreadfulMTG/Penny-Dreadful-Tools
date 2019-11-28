@@ -1,5 +1,7 @@
 from typing import Any, Dict, List, Sequence
 
+from flask import url_for
+
 from decksite.view import View
 from magic import rotation
 from magic.models import Card
@@ -21,6 +23,8 @@ class RotationChanges(View):
         self.query = query
         self.show_interestingness_filter = True
         self.show_filters_toggle = True
+        self.new_cards_deck_url = url_for('rotation_changes_files', changes_type='new')
+        self.rotated_out_cards_deck_url = url_for('rotation_changes_files', changes_type='out')
 
     def page_title(self) -> str:
         if self.speculation:

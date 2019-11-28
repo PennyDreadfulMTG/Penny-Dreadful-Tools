@@ -111,7 +111,7 @@ async def single_card_or_send_error(channel: TextChannel, args: str, author: Mem
     if result.has_match() and not result.is_ambiguous():
         return cards_from_names_with_mode([result.get_best_match()], mode)[0]
     if result.is_ambiguous():
-        message = await send(channel, '{author}: Ambiguous name for {c}. Suggestions: {s}'.format(author=author.mention, c=command, s=disambiguation(result.get_ambiguous_matches()[0:5])))
+        message = await send(channel, '{author}: Ambiguous name for {c}. Suggestions: {s} (click number below)'.format(author=author.mention, c=command, s=disambiguation(result.get_ambiguous_matches()[0:5])))
         await disambiguation_reactions(message, result.get_ambiguous_matches()[0:5])
     else:
         await send(channel, '{author}: No matches.'.format(author=author.mention))

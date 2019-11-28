@@ -189,9 +189,7 @@ def determine_values(printings: List[CardDescription], next_card_id: int) -> Dic
     colors = {c['symbol'].upper(): c['id'] for c in db().select('SELECT id, symbol FROM color ORDER BY id')}
 
     for p in printings:
-        # Exclude art_series because they have the same name as real cards and that breaks things.
-        # Exclude token because named tokens like "Ajani's Pridemate" and "Storm Crow" conflict with the cards with the same name. See #6156.
-        if p['layout'] in ['art_series', 'token']:
+        if not valid_layout(p):
             continue
 
         rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]
@@ -247,6 +245,11 @@ def determine_values(printings: List[CardDescription], next_card_id: int) -> Dic
         'printing': printing_values,
         'card_legality': card_legality_values
     }
+
+def valid_layout(p: CardDescription) -> bool:
+    # Exclude art_series because they have the same name as real cards and that breaks things.
+    # Exclude token because named tokens like "Ajani's Pridemate" and "Storm Crow" conflict with the cards with the same name. See #6156.
+    return p['layout'] not in ['art_series', 'token']
 
 def insert_many(table: str, properties: TableDescription, values: List[Dict[str, Any]], additional_columns: Optional[List[str]] = None) -> None:
     columns = additional_columns or []
@@ -336,7 +339,7 @@ def load_sets() -> dict:
 
 def insert_set(s: Any) -> int:
     sql = 'INSERT INTO `set` ('
-    sql += ', '.join(name for name, prop in card.set_properties().items() if prop['scryfall'])
+    sql += ', '.join(name for name, prop in card.set_properties().items() if prop['scryfall']) # pylint: disable=invalid-sequence-index
     sql += ') VALUES ('
     sql += ', '.join('%s' for name, prop in card.set_properties().items() if prop['scryfall'])
     sql += ')'
@@ -453,7 +456,8 @@ def database2json(propname: str) -> str:
 
 def date2int(s: str, name: str) -> Union[str, float]:
     if name == 'released_at':
-        return dtutil.parse_to_ts(s, '%Y-%m-%d', dtutil.WOTC_TZ)
+        print(f'parsing {s}')
+        return dtutil.parse_to_ts(s.replace('2109', '2019'), '%Y-%m-%d', dtutil.WOTC_TZ)
     return s
 
 # I'm not sure this belong here, but it's here for now.

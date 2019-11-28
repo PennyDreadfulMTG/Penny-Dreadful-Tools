@@ -20,6 +20,7 @@ from magic import card as mc
 from magic import image_fetcher, oracle
 from shared import perf
 from shared.pd_exception import TooFewItemsException
+from shared_web import logger
 
 
 @APP.route('/')
@@ -56,7 +57,7 @@ def image(c: str = '') -> wrappers.Response:
             raise InternalServerError(f'Failed to get image for {c}')
         return send_file(os.path.abspath(path)) # Send abspath to work around monolith root versus web root.
     except TooFewItemsException as e:
-        print(e)
+        logger.info(f'Did not find an image for {c}: {e}')
         if len(names) == 1:
             return redirect(f'https://api.scryfall.com/cards/named?exact={c}&format=image', code=303)
         return make_response('', 400)

@@ -4,7 +4,8 @@ from magic import card, mana, multiverse, rotation
 from magic.card_description import CardDescription
 from magic.database import db
 from magic.models import Card
-from shared import configuration, fetch_tools
+from shared import configuration, fetch_tools, guarantee
+from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import (InvalidArgumentException, InvalidDataException,
                                  TooFewItemsException)
@@ -74,6 +75,10 @@ def get_printings(generalized_card: Card) -> List[card.Printing]:
         + ' WHERE card_id = %s '
     rs = db().select(sql, [generalized_card.id])
     return [card.Printing(r) for r in rs]
+
+def get_set(set_id: int) -> Container:
+    rs = db().select('SELECT ' + (', '.join(property for property in card.set_properties())) + ' FROM `set` WHERE id = %s', [set_id])
+    return guarantee.exactly_one([Container(r) for r in rs])
 
 def deck_sort(c: Card) -> str:
     s = ''

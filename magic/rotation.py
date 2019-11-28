@@ -34,6 +34,7 @@ SEASONS = [
     'AER', 'AKH', 'HOU', 'XLN', # 2017
     'RIX', 'DOM', 'M19', 'GRN', # 2018
     'RNA', 'WAR', 'M20', 'ELD', # 2019
+    'THB', # 2020
     ]
 
 def init() -> List[SetInfoType]:

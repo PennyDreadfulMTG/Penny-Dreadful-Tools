@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Penny-Dreadful-Tools 0.0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-11-17 20:45+1100\n"
+"POT-Creation-Date: 2019-11-23 20:43+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,11 +54,11 @@ msgstr ""
 msgid "Metagame"
 msgstr ""
 
-#: decksite/__init__.py:48 decksite/data/achievements.py:622
+#: decksite/__init__.py:48 decksite/data/achievements.py:623
 msgid "Decks"
 msgstr ""
 
-#: decksite/__init__.py:49 decksite/data/achievements.py:650
+#: decksite/__init__.py:49 decksite/data/achievements.py:651
 msgid "Archetypes"
 msgstr ""
 
@@ -171,125 +171,125 @@ msgstr[1] ""
 msgid "Help us translate the site into your language"
 msgstr ""
 
-#: decksite/data/achievements.py:160
+#: decksite/data/achievements.py:161
 #, python-format
 msgid " once"
 msgid_plural " %(num)d times"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:161
+#: decksite/data/achievements.py:162
 #, python-format
 msgid "1 player"
 msgid_plural "%(num)d players"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:290
+#: decksite/data/achievements.py:291
 msgid "Seasons"
 msgstr ""
 
-#: decksite/data/achievements.py:332 decksite/templates/home.mustache:1
+#: decksite/data/achievements.py:333 decksite/templates/home.mustache:1
 #: decksite/templates/tournamentcalendar.mustache:1
 msgid "Tournaments"
 msgstr ""
 
-#: decksite/data/achievements.py:335
+#: decksite/data/achievements.py:336
 #, python-format
 msgid "1 tournament entered"
 msgid_plural "%(num)d tournaments entered"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:346
+#: decksite/data/achievements.py:347
 msgid "Victories"
 msgstr ""
 
-#: decksite/data/achievements.py:349
+#: decksite/data/achievements.py:350
 #, python-format
 msgid "1 victory"
 msgid_plural "%(num)d victories"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:363
+#: decksite/data/achievements.py:364
 msgid "Entries"
 msgstr ""
 
-#: decksite/data/achievements.py:366
+#: decksite/data/achievements.py:367
 #, python-format
 msgid "1 league entry"
 msgid_plural "%(num)d league entries"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:377 decksite/data/achievements.py:391
+#: decksite/data/achievements.py:378 decksite/data/achievements.py:392
 msgid "Runs"
 msgstr ""
 
-#: decksite/data/achievements.py:380
+#: decksite/data/achievements.py:381
 #, python-format
 msgid "1 perfect run"
 msgid_plural "%(num)d perfect runs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:394
+#: decksite/data/achievements.py:395
 #, python-format
 msgid "1 flawless run"
 msgid_plural "%(num)d flawless runs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:448
+#: decksite/data/achievements.py:449
 msgid "Crushes"
 msgstr ""
 
-#: decksite/data/achievements.py:450
+#: decksite/data/achievements.py:451
 #, python-format
 msgid "1 perfect run crush"
 msgid_plural "%(num)d perfect run crushes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:493
+#: decksite/data/achievements.py:494
 msgid "grudges repaid"
 msgstr ""
 
-#: decksite/data/achievements.py:495
+#: decksite/data/achievements.py:496
 #, python-format
 msgid "1 grudge repaid"
 msgid_plural "%(num)d grudges repaid"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:560
+#: decksite/data/achievements.py:561
 msgid "defeats avenged"
 msgstr ""
 
-#: decksite/data/achievements.py:562
+#: decksite/data/achievements.py:563
 #, python-format
 msgid "1 defeat avenged"
 msgid_plural "%(num)d defeats avenged"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:625
+#: decksite/data/achievements.py:626
 #, python-format
 msgid "1 deck played by others"
 msgid_plural "%(num)d decks played by others"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:653
+#: decksite/data/achievements.py:654
 #, python-format
 msgid "1 archetype pioneered"
 msgid_plural "%(num)d archetypes pioneered"
 msgstr[0] ""
 msgstr[1] ""
 
-#: decksite/data/achievements.py:696 decksite/data/achievements.py:737
-#: decksite/data/achievements.py:758 decksite/data/achievements.py:770
+#: decksite/data/achievements.py:697 decksite/data/achievements.py:738
+#: decksite/data/achievements.py:759 decksite/data/achievements.py:771
 #, python-format
 msgid "1 season"
 msgid_plural "%(num)d different seasons"

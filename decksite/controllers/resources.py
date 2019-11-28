@@ -1,6 +1,6 @@
 from typing import Optional
 
-from flask import request
+from flask import Response, make_response, request
 
 from decksite import APP, SEASONS, auth, get_season_id
 from decksite.cache import cached

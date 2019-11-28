@@ -96,7 +96,7 @@ except DatabaseException as e:
     multiverse.init()
     oracle.init()
 
-from . import api as API, admin # isort:skip # pylint: disable=wrong-import-position, unused-import
+from decksite.controllers import admin  # isort:skip # pylint: disable=wrong-import-position
+from . import api as API # isort:skip # pylint: disable=wrong-import-position, unused-import
 from .data import deck # isort:skip # pylint: disable=wrong-import-position
-
 APP.config['menu'] = build_menu

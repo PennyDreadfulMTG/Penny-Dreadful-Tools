@@ -7,8 +7,8 @@ from magic.models import Card
 from shared import configuration, fetch_tools, guarantee
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import (InvalidArgumentException,
-                                 InvalidDataException, TooFewItemsException)
+from shared.pd_exception import (InvalidArgumentException, InvalidDataException,
+                                 TooFewItemsException)
 
 # Primary public interface to the magic package. Call `oracle.init()` after setting up application context and before using any methods.
 

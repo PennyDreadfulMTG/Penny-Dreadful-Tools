@@ -3,8 +3,8 @@ import subprocess
 import urllib
 from typing import Any, Dict, Optional, Tuple, Union
 
-from flask import (Flask, Request, Response, redirect, request,
-                   send_from_directory, session, url_for)
+from flask import (Flask, Request, Response, redirect, request, send_from_directory, session,
+                   url_for)
 from flask_babel import Babel
 from github.GithubException import GithubException
 from werkzeug import exceptions, wrappers

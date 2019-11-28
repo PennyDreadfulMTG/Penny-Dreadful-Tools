@@ -97,7 +97,7 @@ def vivify(decklist: DecklistType) -> Deck:
     validated: DecklistType = {'maindeck': {}, 'sideboard': {}}
     invalid_names = set()
     for section in ['maindeck', 'sideboard']:
-        for name, n in decklist[section].items():
+        for name, n in decklist.get(section, {}).items():
             try:
                 validated[section][oracle.valid_name(name)] = n
             except InvalidDataException:
@@ -106,7 +106,7 @@ def vivify(decklist: DecklistType) -> Deck:
         raise InvalidDataException('Invalid cards: {invalid_names}'.format(invalid_names='; '.join(invalid_names)))
     d = Deck({'maindeck': [], 'sideboard': []})
     for section in ['maindeck', 'sideboard']:
-        for name, n in validated[section].items():
+        for name, n in validated.get(section, {}).items():
             d[section].append(CardRef(name, n))
     return d
 

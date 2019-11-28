@@ -406,9 +406,9 @@ def add_cards(deck_id: int, cards: CardsDescription) -> None:
         deckhash = hashlib.sha1(repr(cards).encode('utf-8')).hexdigest()
         db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [deckhash, deck_id])
         db().execute('DELETE FROM deck_card WHERE deck_id = %s', [deck_id])
-        for name, n in cards['maindeck'].items():
+        for name, n in cards.get('maindeck', {}).items():
             insert_deck_card(deck_id, name, n, False)
-        for name, n in cards['sideboard'].items():
+        for name, n in cards.get('sideboard', {}).items():
             insert_deck_card(deck_id, name, n, True)
         db().commit('add_cards')
     except InvalidDataException as e:

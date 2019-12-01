@@ -14,5 +14,5 @@ async def rotate(ctx: MtgContext) -> None:
     multiverse.set_legal_cards() # PD current list
     multiverse.update_pd_legality() # PD previous lists
     if redis.REDIS:
-        redis.REDIS.flushdb() # type: ignore, Clear the redis cache
+        redis.REDIS.flushdb() # clear the redis cache
     await ctx.send('Rotation complete. You probably want to restart me.')

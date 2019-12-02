@@ -67,6 +67,8 @@ def run_dangerously() -> None:
         sort(True)
     elif cmd in ('pr', 'pull-request'):
         pull_request(args)
+    elif cmd == 'build':
+        build()
     elif cmd == 'buildjs':
         buildjs()
     elif cmd == 'popclean':
@@ -216,9 +218,17 @@ def pull_request(argv: List[str]) -> None:
     print('>>>> Pull request')
     subprocess.check_call(['hub', 'pull-request', *argv])
 
+def build() -> None:
+    print('>>>> Installing Requirements')
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+    print('>>>> Installing node modules')
+    subprocess.check_call(['npm', 'install'], shell=True)
+    buildjs()
+
+
 def buildjs() -> None:
     print('>>>> Building javascript')
-    subprocess.check_call(['webpack', '--config=decksite/webpack.config.js'])
+    subprocess.check_call(['npm', 'run-script', 'build'], shell=True)
 
 def jslint(fix: bool = False) -> None:
     print('>>>> Linting javascript')

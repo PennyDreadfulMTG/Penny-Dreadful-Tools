@@ -8,7 +8,7 @@ from shared.pd_exception import InvalidArgumentException
 def run() -> None:
     """Make a 'safe' (no personal info) copy of the current prod db for download by devs."""
     host = configuration.get_str('mysql_host')
-    port = configuration.get_str('mysql_port')
+    port = configuration.get_int('mysql_port')
     usr = configuration.get_str('mysql_user')
     pwd = configuration.get_str('mysql_passwd')
     db = configuration.get_str('decksite_database')

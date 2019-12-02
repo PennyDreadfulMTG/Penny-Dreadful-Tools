@@ -316,8 +316,8 @@ class View(BaseView):
                 active.append(d)
             else:
                 other.append(d)
-        if len(active) > 0 and o.hide_active_runs:
-            o.active_runs_text = ngettext('%(num)d active league run', '%(num)d active league runs', len(active)) if len(active) > 0 else ''
+        if active and o.hide_active_runs:
+            o.active_runs_text = ngettext('%(num)d active league run', '%(num)d active league runs', len(active)) if active else ''
             o.decks = other
 
     def babel_languages(self) -> List[Locale]:
@@ -339,7 +339,7 @@ class View(BaseView):
                 t.month = month
                 prev_month = month
             t.date = t.time.day
-            if len(leagues) > 0 and t.time >= leagues[-1].start_date and t.time < leagues[-1].end_date:
+            if leagues and t.time >= leagues[-1].start_date and t.time < leagues[-1].end_date:
                 t.league = leagues.pop(-1)
                 t.league.display = True
                 end_date = t.league.end_date

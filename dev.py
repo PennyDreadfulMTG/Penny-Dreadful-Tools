@@ -305,6 +305,7 @@ def ready(args: List[str]) -> None:
 
 def release(args: List[str]) -> None:
     safe_push(args)
+    check(args)
     pull_request(args)
 
 def find_files(needle: str = '', file_extension: str = '') -> List[str]:

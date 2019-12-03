@@ -120,6 +120,7 @@ def mypy(argv: List[str], strict: bool = False) -> None:
     """
     print('>>>> Typechecking')
     args = [
+        '--show-error-codes',
         '--ignore-missing-imports',     # Don't complain about 3rd party libs with no stubs
         '--disallow-untyped-calls',     # Strict Mode.  All function calls must have a return type.
         '--warn-redundant-casts',
@@ -128,7 +129,12 @@ def mypy(argv: List[str], strict: bool = False) -> None:
         '--disallow-untyped-defs',      # All methods must be typed.
         ]
     if strict:
-        args.extend(['--warn-return-any'])
+        args.extend([
+            '--strict-equality',        # Don't allow us to say "0" == 0 or other always false comparisons
+            # '--disallow-any-generics',  # Generic types like List or Dict need [T]
+            # '--warn-return-any',        # Functions shouldn't return Any if we're expecting something better
+            # '--disallow-any-unimported', # Catch import errors
+            ])
     args.extend(argv or ['.']) # Invoke on the entire project.
     # pylint: disable=import-outside-toplevel
     from mypy import api
@@ -232,11 +238,11 @@ def buildjs() -> None:
 
 def jslint(fix: bool = False) -> None:
     print('>>>> Linting javascript')
-    files = find_files(file_extension='js') + find_files(file_extension='jsx')
-    cmd = ['./node_modules/.bin/eslint']
+    files = find_files(file_extension='js', exclude=['.eslintrc.js']) + find_files(file_extension='jsx')
+    cmd = [os.path.join('.', 'node_modules', '.bin', 'eslint')]
     if fix:
         cmd.append('--fix')
-    subprocess.check_call(cmd + files)
+    subprocess.check_call(cmd + files, shell=True)
 
 def jsfix() -> None:
     print('>>>> Fixing js')
@@ -250,7 +256,7 @@ def coverage() -> None:
 
 def watch() -> None:
     print('>>>> Watching')
-    subprocess.check_call(['npm', 'run', 'watch'])
+    subprocess.check_call(['npm', 'run', 'watch'], shell=True)
 
 # Make a branch based off of current (remote) master with all your local changes preserved (but not added).
 def branch(args: List[str]) -> None:
@@ -308,13 +314,15 @@ def release(args: List[str]) -> None:
     check(args)
     pull_request(args)
 
-def find_files(needle: str = '', file_extension: str = '') -> List[str]:
+def find_files(needle: str = '', file_extension: str = '', exclude: List[str] = None)  -> List[str]:
     paths = subprocess.check_output(['git', 'ls-files']).strip().decode().split('\n')
     paths = [p for p in paths if 'logsite_migrations' not in p]
     if file_extension:
         paths = [p for p in paths if p.endswith(file_extension)]
     if needle:
         paths = [p for p in paths if needle in os.path.basename(p)]
+    if exclude:
+        paths = [p for p in paths if p not in exclude]
     return paths # type: ignore
 
 if __name__ == '__main__':

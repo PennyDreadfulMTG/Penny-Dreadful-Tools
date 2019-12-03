@@ -12,6 +12,6 @@ def ad_hoc() -> None:
     multiverse.update_pd_legality() # PD previous lists
     reprime_cache.run() # Update deck legalities
     insert_seasons.run() # Make sure Season table is up to date
-    if redis.REDIS:
-        redis.REDIS.flushdb() # type: ignore, Clear the redis cache
+    if redis.REDIS: # Clear the redis cache
+        redis.REDIS.flushdb() # type: ignore[no-untyped-call]
     league.set_status(league.Status.OPEN)

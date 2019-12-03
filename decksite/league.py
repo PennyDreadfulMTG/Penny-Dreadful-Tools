@@ -85,7 +85,7 @@ class SignUpForm(Form):
             try:
                 self.cards = decklist.parse_xml(self.decklist)
             except InvalidDataException as e:
-                self.errors['decklist'] = 'Unable to read .dek decklist. Try exporting from Magic Online as Text and pasting the result.'.format(specific=str(e))
+                self.errors['decklist'] = 'Unable to read .dek decklist. Try exporting from Magic Online as Text and pasting the result.'
         else:
             try:
                 self.cards = decklist.parse(self.decklist)

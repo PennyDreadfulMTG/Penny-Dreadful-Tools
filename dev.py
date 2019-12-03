@@ -120,7 +120,7 @@ def mypy(argv: List[str], strict: bool = False) -> None:
     """
     print('>>>> Typechecking')
     args = [
-        '--show-error-codes'
+        '--show-error-codes',
         '--ignore-missing-imports',     # Don't complain about 3rd party libs with no stubs
         '--disallow-untyped-calls',     # Strict Mode.  All function calls must have a return type.
         '--warn-redundant-casts',

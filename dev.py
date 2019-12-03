@@ -232,11 +232,11 @@ def buildjs() -> None:
 
 def jslint(fix: bool = False) -> None:
     print('>>>> Linting javascript')
-    files = find_files(file_extension='js') + find_files(file_extension='jsx')
-    cmd = ['./node_modules/.bin/eslint']
+    files = find_files(file_extension='js', exclude=['.eslintrc.js']) + find_files(file_extension='jsx')
+    cmd = [os.path.join('.', 'node_modules', '.bin', 'eslint')]
     if fix:
         cmd.append('--fix')
-    subprocess.check_call(cmd + files)
+    subprocess.check_call(cmd + files, shell=True)
 
 def jsfix() -> None:
     print('>>>> Fixing js')
@@ -308,13 +308,15 @@ def release(args: List[str]) -> None:
     check(args)
     pull_request(args)
 
-def find_files(needle: str = '', file_extension: str = '') -> List[str]:
+def find_files(needle: str = '', file_extension: str = '', exclude: List[str] = None)  -> List[str]:
     paths = subprocess.check_output(['git', 'ls-files']).strip().decode().split('\n')
     paths = [p for p in paths if 'logsite_migrations' not in p]
     if file_extension:
         paths = [p for p in paths if p.endswith(file_extension)]
     if needle:
         paths = [p for p in paths if needle in os.path.basename(p)]
+    if exclude:
+        paths = [p for p in paths if p not in exclude]
     return paths # type: ignore
 
 if __name__ == '__main__':

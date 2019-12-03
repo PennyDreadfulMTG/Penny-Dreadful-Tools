@@ -120,6 +120,7 @@ def mypy(argv: List[str], strict: bool = False) -> None:
     """
     print('>>>> Typechecking')
     args = [
+        '--show-error-codes'
         '--ignore-missing-imports',     # Don't complain about 3rd party libs with no stubs
         '--disallow-untyped-calls',     # Strict Mode.  All function calls must have a return type.
         '--warn-redundant-casts',
@@ -250,7 +251,7 @@ def coverage() -> None:
 
 def watch() -> None:
     print('>>>> Watching')
-    subprocess.check_call(['npm', 'run', 'watch'])
+    subprocess.check_call(['npm', 'run', 'watch'], shell=True)
 
 # Make a branch based off of current (remote) master with all your local changes preserved (but not added).
 def branch(args: List[str]) -> None:

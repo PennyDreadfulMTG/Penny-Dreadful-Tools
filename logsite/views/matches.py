@@ -24,22 +24,23 @@ def matches() -> str:
 
 # pylint: disable=no-self-use
 class Matches(View):
-    @fill_args('person', 'format_name')
-    def __init__(self, person: str = None, format_name: str = None) -> None:
-        query = match.Match.query
+    @fill_args('person', 'format_name', 'page')
+    def __init__(self, person: str = None, format_name: str = None, page: str = '1') -> None:
+        pagenum = int(page)
+        query = match.Match.select()
         if person is not None:
-            query = query.filter(match.Match.players.any(db.User.name == person))
+            query = query.join(db.MatchPlayers).join(db.User).where(db.User.name == person)
         if format_name is not None:
             fmt = db.get_format(format_name)
             if fmt is not None:
-                query = query.filter(match.Match.format_id == fmt.id)
-        recent = query.order_by(match.Match.id.desc()).paginate()
+                query = query.where(match.Match.format_id == fmt.id)
+        recent = query.order_by(match.Match.id.desc()).paginate(pagenum, 20)
 
-        self.matches = recent.items
-        self.has_next = recent.has_next
-        self.has_prev = recent.has_prev
+        self.matches = recent
+        self.has_next = bool(recent)
+        self.has_prev = pagenum > 1
         self.has_pagination = self.has_next or self.has_prev
-        if recent.has_next:
-            self.next_url = url_for(request.endpoint, person=person, format_name=format_name, page=recent.next_num)
-        if recent.has_prev:
-            self.prev_url = url_for(request.endpoint, person=person, format_name=format_name, page=recent.prev_num)
+        if self.has_next:
+            self.next_url = url_for(request.endpoint, person=person, format_name=format_name, page=pagenum + 1)
+        if self.has_prev:
+            self.prev_url = url_for(request.endpoint, person=person, format_name=format_name, page=pagenum - 1)

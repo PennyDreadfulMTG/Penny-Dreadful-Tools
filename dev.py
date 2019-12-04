@@ -44,11 +44,11 @@ def run_dangerously() -> None:
     if cmd == 'unit':
         unit(args)
     elif cmd == 'functional':
-        runtests(args, 'functional')
+        runtests(args, 'functional', True)
     elif cmd == 'perf':
-        runtests(args, 'perf')
+        runtests(args, 'perf', True)
     elif cmd in ('test', 'tests'):
-        runtests(args, '')
+        runtests(args, '', False)
     elif cmd in ('lint', 'pylint'):
         lint(args)
     elif cmd in ('types', 'mypy'):
@@ -148,23 +148,27 @@ def mypy(argv: List[str], strict: bool = False) -> None:
         raise TestFailedException(result[2])
 
 def unit(argv: List[str]) -> None:
-    runtests(argv, 'not functional and not perf')
+    runtests(argv, 'not functional and not perf', True)
 
-def runtests(argv: List[str], m: str) -> None:
+def runtests(argv: List[str], m: str, mark: bool) -> None:
     """
     Literally just prepare the DB and then invoke pytest.
     """
-    print(f'>>>> Running tests with "{m}"')
+    args = argv.copy()
+    if mark:
+        if args and not args[0].startswith('-'):
+            to_find = args.pop(0)
+            args.extend(find_files(to_find, 'py'))
+        args.extend(['--cov-report=', '-x', '-m', m])
+
+    argstr = ' '.join(args)
+    print(f'>>>> Running tests with "{argstr}"')
     # pylint: disable=import-outside-toplevel
     import pytest
     from magic import multiverse, oracle
     multiverse.init()
     oracle.init()
-    args = argv.copy()
-    if args and not args[0].startswith('-'):
-        to_find = args.pop(0)
-        args.extend(find_files(to_find, 'py'))
-    args.extend(['--cov-report=', '-x', '-m', m])
+
     code = pytest.main(args)
     if os.environ.get('TRAVIS') == 'true':
         upload_coverage()

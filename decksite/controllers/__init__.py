@@ -1,1 +1,1 @@
-from . import about, admin, competitions, league, metagame, resources
+from . import about, admin, api, competitions, league, metagame, resources

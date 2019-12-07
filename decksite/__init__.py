@@ -30,7 +30,7 @@ APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
 
 def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
     current_template = (request.endpoint or '').replace('seasons.', '')
-    archetypes_badge = {'endpoint': 'edit_archetypes', 'text': '', 'badge_class': 'edit_archetypes'}
+    archetypes_badge = {'url': url_for('edit_archetypes'), 'text': '', 'badge_class': 'edit_archetypes'}
     resources_submenu: List[Dict[str, str]] = []
     if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7) or (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
         resources_submenu += [{'name': gettext('Rotation Tracking'), 'endpoint': 'rotation'}]

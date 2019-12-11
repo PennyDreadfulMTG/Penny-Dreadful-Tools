@@ -1,8 +1,8 @@
 from flask import url_for
 
 from logsite.view import View
-from shared_web.decorators import fill_args
 from shared import redis
+from shared_web.decorators import fill_args
 
 from .. import APP, db
 from ..data import match

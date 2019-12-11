@@ -1,0 +1,164 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.22.0
+    method: GET
+    uri: https://tappedout.net/mtg-decks/60-island/?fmt=printable
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA9xaW3PbOLJ+jn8FjQcWEEGUZMfZhBLsk3E8m+xOJhnbceaMRpWCyKaECQVwAFCy
+        SuJ/3wIvkhzbcTY7m1N1/CAJQAPd6MvX3Sjv7Q2mdpYe7z0aTIHHxwMTaZFZzy4zYMjCte38wee8
+        mkXHeCFkrBbBz+dn79+s17j8ZquCkCBVPAb9MVIyERO2SkUE0sA/YRmi6Onz6EnyjD/tIcqzLBUR
+        t0LJ1y9D9Kz77OlB7/lzVPTvO5p+/Cj1Rw1/5kIDS3IZuc0YqKSWrJqxp7ElK5HgfTm0I7Kac+0p
+        5n6zFVxnSlsTroqiD0M7GnZHQcTTFKugXqKbY2WztSTsjYZy1Ndgc+04qPVakoIqutlIinrRcWom
+        C5Fg1JyIGHPKVIm3ew9Sb9ud6ydK44p5t68GNkhBTuy0r1otorEdqhHZiFLgVS8cfkEZZFVsRqpZ
+        r3dvtm1mBAY6jAKpFpiMgkjJiFucY64n+QykNYRQeSLzNA3tVBhq3XCuROx1y4micGILBhhNuYxT
+        QIRyBviQ0JwBfkJo4tYAEAkmYDGymkegEaGRm69cBxFqWGn1PsplDImQEG+1V7uHhIWGVES+j5uf
+        zJC+45+xITJg3/EJXAlY/MxngKibOc2NVbMX1moxzm09eaa10q9KaTWiKBFSmCnEiCIex5fq0kmI
+        KBIyFRJeCVstnEMK3AAa0Zghnok2oimLW0hcyzbqc5zRXZuQlRnKEVM4bkm636VuByIFoSbgcewE
+        fVHSlhToxhSi+11HV4qvNUh7rnIL7lIVtW6GFaVsnI81aqEmENKC5hWLW0Z3+vN0ZRBSlBqcMR1k
+        WllVhv8q0sAtlJrQ4c17OWrLVgXVrPQIxe5weNnfuFfaamy+8TMK1I6oJnRHMpHgJICZsBirE4RC
+        JFUbkRZKZNtYru3Obk3VyDmiIlYvGz+WgcOXJS5l2npvEXEbTTGQlZ1qtfBqHu5Y0E6kDSktd0J5
+        MhSJkDxNl6tdehlvhXBkRVEUfY5RpeZLuLbUgHWGcd8bp6OGz4GKiVQaqJJnMqYTsKdKOoylUA1R
+        YLLUMaKIfOZIs8qR0pZ0/tPYOJDKighKX2Y3NyBjtZCTrTXA9zE47/BKcgyEUIFRpQCgjV73e1SO
+        SFHQVTGiB1/EmJKPg1xVw9l+ry8SDPuM3ZzZl82wWw7FdrXBPMtEc/kAEaqZ3B1y1u3zgW4Qkbda
+        RCRYD/lonzE75KPtgQ2jos4AeZpSUX1x1rkCbYSSv3fw7xct8rtpXfCEa9FxYkk+FxNulQ5yA/rF
+        BKStHD1ndyzRhOXBrPQrTvqJ7+eBkDFcv00wOp1qNQNEGGPt3u0Vkc82a1gxVMmAqGDJsDcixTaW
+        V9yxChWdV3KHgpYsQ10b6PBhA1XaHY6oZsjx6JY6156QHhBVJUKgmvg+tkMxYhJrCkM9IlS0WG+T
+        cmyt0LfjPyCyW5gIpty8Xch3WmWg7bK/FV5XIj55SEQ3I9drLFmX0Lug3zrRGJxAbf+wSzZ+o1m7
+        RxWzbbled6lgL7TmS6wG3ZNuqEi/1dID1SdiqEcMhrKlN9lcFLckPbot6Y4p4FoYa8IdAfc/y00Z
+        6ETpGZcR+P7tucCKmZAT3/+6I2ryoPY9oeSFg8Da8AD/TvrfWZNuVOsAfB88IY11/FTi6RMI4STB
+        QHMqSCgw2Z5isXWYS0UV8nHAx0pbiNdrQVbuoGp9axnOJFauAJhjS8poqaxHI9btR4OkH7VaJB9G
+        oxqzOdVNHjfD5dCONqbKfD8LstxM8XBMHRc+IpQXW9nSytOnQxixOQbSVDByR/7ZbjQ4Shfylmz9
+        qNvX25pLt1rEOqdhTPq+LbEoAqxpb+fI+Y4q3Ynr9XC0XZ3srGZOsqwkUdjuHLGopIow7OK9czwm
+        12uUALe5BkSdPpik0kWtWa9xWVcMR6QgZVhOXSpeuo8xWykZppTH8dkcpP1JGAsSdJhSDTM1h5uz
+        M+oyW2hd9gknNK3nTTinUZWbQknHeZKADhe0NHnIaW36cL9XNDYab+8ktnVlWWJsVzgmK2wCnon1
+        2gT15RzwbLyJ7XepYXEw5tGnVE1c/V9UEIyk/p9aJFSVkxNl6gry0JWOq4Jm7iNm26BVmPS3h5kq
+        dCbKfA0kiQRv0FGSpmAH1xBUDmMxcT5UA2IV0Q0M+n49/QmWZrdCuZO6ZLma8zSHUNOFFpaPUwj3
+        uxRkPgNdjXoFobouZQRZFTsSMU31t+JzVbE/rBGqyUoFlS/gIZSlm6oKo2pHLcCNQr9pB3bZUh0A
+        MFVxF/GXOVcRKzdFTJPfYb1Gqrwq2i9jdFt/uvFJuxcCY6yC1ZNuyDFQQW93PqrVKhrJe1SUbiZi
+        VLYvlYfd1ljVrzyAvw4kz1qtSn5g14GQiar6m/InlSx1OjpLoaw8f1he8okrGzGqu20y7JYgZcBe
+        ihmo3LrYcXFCD+EJofvYwW6w7bTd6EZ/7ftbx623YtKP8HKn33WCOxdar3HpSdbVlwlGM64/ITpE
+        SrrrIsoxaV0HKkkM2BEt66mqnelXkJoGVbtQ32d7i74NjI4YmlqbmbDTQS0IyrKGyiDjrrP5WcUQ
+        CGlA2x8gUdqlEkmK3QxGVihSsywFC4gxlgYaeLy8sNyC79/IUw59dsSP1awssqX9whVuIlQTqUGV
+        8X1/NylLtTh5w+000CqXMf5sCRMS4pyVBDN+jcse6yW3UIaDsyImNCek3YhRg9uddMmNfnqDc3V8
+        0YwBPiA0rn3c9aFBrKKyj6Ezhj7PAIjOGeLW8mhaziM6YXHw65ufXlmbncOfORhLF2zi+5MtevQr
+        h1VsdXEZbh2RXrwOY9ebvp7NIBbcAj29DKMUuG4ofn11Hk7o+dkvYRw0p59dhXFQMqfvzsM4eOeK
+        YQP0zdswDt7ktnTbt2MDeg66akmnDKFWqiqPdiluDDxSMkRjPgukbsfc8kCCRRRcV/PDfatVIY3+
+        MO3y1+YdIYjUrCN1u9c77AYzIYM/DHJZdOL7C99fDGcj39/vnGrx9qITWDD2zjaBXu8knVVl2jCn
+        Ui1CTpUWEyHDKa0TnnuIotdT/UHzLCuhfUw3R4VZ0QfcIzQdzkYn2H1i9PLtm9qJf3LQEyMq6H6P
+        0LhcreJTuxkS4nQ4H2GkZBkgxgVINOVyAogqt6FarLeQG5GeCG3seOkeSPLbEX7GuvQtA3xEShB0
+        H3TYPN2MSH/QqQL+oSfE+575+ltoZCtUWRndYUj0Zw45OC9DYZeiLfqhmw+NqLQzChGi7ulBmqpB
+        L19MQvTbjz/w395fXfz63n74cP1jcnrV5cmn89/en8XnH3787Z+/TOKX51e9q79fxR8+9BYfznrP
+        Xp6f/e9pfPWPXz68ur64fHGenE57F7++f88cr13URTvPmhTtuOWd19nZWl2qd/Ss2Chzz6v/BqmQ
+        n3Z1GhmDvKmGhKFOx9lZRIHlWQaxyp17247pLGCc8ehTZw4yVrr9PD7s8Wj87AgODp49gSN+dHDY
+        NnaZggnK4zSkDFUTUwCLvM7x3qNHAytsCsdPu95rk3IZe++0kGWF4v3osM8OOhXF3qNBp3xF3ns0
+        GKt4WW6OxdyLUm4MQ65848JB0fZe5d12aLRafLb6OUWk0vYsbvcO7qKbHhyjjaBo0Jke3Ca6Y9fh
+        8ePH7xrMe/x40Jkefs2+7PhyKownjMc9hw1eDNEnL1Hae/HutaeBGyVNMOhkx3t7g+z4tfWm3HhP
+        u96wEnBEPafPhUhTj6cLvjTeGLwUJjwt2/M56KVX5hdbn3JLhE4s5p9p846pv0zBJW1l+5q6HLQ1
+        mExJI+aAPBEz5ML441hdI690J4YWIrbT8LDbza7vOfYeXvpu6moxPr6IlIZBx8ZfJrt30f0d3r/1
+        3oMHnfsk+7Z7vDegH77GgDch7xKG6RiRcsP1soOOm5+DDj/+fmJvAOABwd/LT1It5ONvkexBIU65
+        js3DMjzt/le4u7LtYeb/4DLwDo6od9Dt/Y16vV7YfeJlwSz4S2w16JRhePyN+PCfg8Xz+7DiwcO+
+        6H/ftnCPjIfoyzBQJ5Bml5H5BB3/5AAaP+2Su3PJV8vT615/cb1KCIOxdjn3m7n87XswOfoeTHpH
+        /2+u8l2YHHwXo3wXJt8lUu5Awf8SGu39G+zr6UePHoCxRzsUnyPWhYhhrLiOK8SqSW9sScXxz0rC
+        oJOKWwS7zP8visuvSxh7f5Gm71R+82PQqbqYQaf6H5l/AQAA//8DAGsyaBstIwAA
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - HIT
+      CF-RAY:
+      - 53715a411c8ddf30-MEL
+      Cache-Control:
+      - public,s-maxage=1080,max-age=10800
+      - public,s-maxage=1080,max-age=10800
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html
+      Date:
+      - Sun, 17 Nov 2019 11:26:56 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Last-Modified:
+      - Thu, 26 Jan 2017 12:35:14 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d66bae42dd413182a367201223b351bac1573990016; expires=Mon, 16-Nov-20
+        11:26:56 GMT; path=/; domain=.tappedout.net; HttpOnly
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding, Accept-language
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - __cfduid=d66bae42dd413182a367201223b351bac1573990016
+      User-Agent:
+      - python-requests/2.22.0
+    method: GET
+    uri: https://tappedout.net/mtg-decks/60-island/?fmt=txt
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAAzM0UPAszknMS+HlMoezTOEsQ1MsggiWEUIhgoUwEQQBmY63UmEAAAA=
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - HIT
+      CF-RAY:
+      - 53715a43486adf30-MEL
+      Cache-Control:
+      - public,s-maxage=1080,max-age=10800
+      - public,s-maxage=1080,max-age=10800
+      Connection:
+      - keep-alive
+      Content-Disposition:
+      - attachment;filename=60-island.txt
+      Content-Encoding:
+      - gzip
+      Content-Language:
+      - en
+      Content-Type:
+      - text/plain
+      Date:
+      - Sun, 17 Nov 2019 11:26:56 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Last-Modified:
+      - Thu, 26 Jan 2017 12:35:14 GMT
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding, Accept-language
+    status:
+      code: 200
+      message: OK
+version: 1

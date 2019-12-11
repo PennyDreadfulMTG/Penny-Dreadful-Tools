@@ -1,16 +1,40 @@
 import datetime
 from typing import Any, Dict, List
 
-import pytz
 import peewee
+import pytz
 from flask import url_for
 
 from shared import dtutil
 
 from .. import db
-# pylint: disable=no-member
 
-class Match(db.BaseModel): # type: ignore
+class Matchmodules(db.BaseModel):
+    match = peewee.DeferredForeignKey('Match', column_name='match_id', field='id')
+    module = peewee.ForeignKeyField(model=db.Module, column_name='module_id', field='id')
+
+    class Meta:
+        table_name = 'matchmodules'
+        indexes = (
+            (('match', 'module'), True),
+        )
+        primary_key = peewee.CompositeKey('match', 'module')
+
+
+class Matchplayers(db.BaseModel):
+    match = peewee.DeferredForeignKey('Match', column_name='match_id', field='id')
+    user = peewee.ForeignKeyField(db.User, column_name='user_id', field='id')
+
+    class Meta:
+        table_name = 'matchplayers'
+        indexes = (
+            (('match', 'user'), True),
+        )
+        primary_key = peewee.CompositeKey('match', 'user')
+
+# pylint: disable=no--member
+
+class Match(db.BaseModel):
     id = peewee.IntegerField(primary_key=True)
     format_id = peewee.ForeignKeyField(db.Format)
     comment = peewee.CharField(max_length=200)
@@ -22,8 +46,7 @@ class Match(db.BaseModel): # type: ignore
     is_tournament = peewee.BooleanField(null=True)
     # is_timeout = peewee.BooleanField()
 
-    # players = fsa.relationship('User', secondary=db.MATCH_PLAYERS)
-    # modules = fsa.relationship('Module', secondary=db.MATCH_MODULES)
+
     # tournament = fsa.relationship('TournamentInfo', backref='match')
 
     def url(self) -> str:
@@ -58,8 +81,12 @@ class Match(db.BaseModel): # type: ignore
         return dtutil.display_date(self.start_time_aware())
 
     @property
-    def players(self):
-        return db.User.select().join(db.MatchPlayers).join(Match).where(Match.id == self.id)
+    def players(self) -> List[db.User]:
+        return db.User.select().join(MatchPlayers).join(Match).where(Match.id == self.id)
+
+    @property
+    def modules(self) -> List[db.Module]:
+        return db.Module.select().join(MatchModules).join(Match).where(Match.id == self.id)
 
     def to_dict(self) -> Dict:
         return {

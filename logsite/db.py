@@ -1,9 +1,9 @@
 from typing import Optional
 
 import peewee
+import peeweedbevolve # pylint: disable=unused-import
 from flask import url_for
 from playhouse import db_url
-import peeweedbevolve
 
 from . import APP
 
@@ -15,24 +15,15 @@ class BaseModel(peewee.Model):
     class Meta:
         database = DB
 
-class MatchPlayers(BaseModel):
-    match_id = peewee.DeferredForeignKey('Match')
-    user_id = peewee.DeferredForeignKey('User')
-
-
-class MatchModules(BaseModel):
-    match_id = peewee.DeferredForeignKey('Match')
-    user_id = peewee.DeferredForeignKey('Module')
-
-class User(BaseModel): # type: ignore
+class User(BaseModel):
     id = peewee.AutoField()
-    name = peewee.CharField(max_length=60, unique=True)
-    discord_id = peewee.CharField(max_length=200)
+    name = peewee.CharField(unique=True)
+    discord_id = peewee.CharField(null=True)
 
     def url(self) -> str:
         return url_for('show_person', person=self.name)
 
-class Format(BaseModel): # type: ignore
+class Format(BaseModel):
     id = peewee.AutoField()
     name = peewee.CharField(max_length=40, unique=True)
     friendly_name = peewee.CharField(max_length=40)
@@ -42,21 +33,9 @@ class Format(BaseModel): # type: ignore
             return self.friendly_name
         return self.name
 
-class Module(BaseModel): # type: ignore
+class Module(BaseModel):
     id = peewee.AutoField()
     name = peewee.CharField(max_length=50)
-
-# def commit() -> None:
-#     return DB.session.commit()
-
-# def add(item: Any) -> None:
-#     return DB.session.add(item)
-
-# def merge(item: Any) -> None:
-#     return DB.session.merge(item)
-
-# def delete(item: Any) -> None:
-#     return DB.session.delete(item)
 
 def get_format(name: str) -> Optional[Format]:
     return Format.get_or_none(Format.name == name)

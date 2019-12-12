@@ -6,8 +6,8 @@ branches:
 python:
   - "3.6"
 cache: pip
-services:
-  - mysql
+addons:
+  mariadb: '10.5'
 env:
   global:
     - mysql_user=root

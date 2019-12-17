@@ -242,6 +242,10 @@ class MtgContext(commands.Context):
             await self.send(file=File(image_file), content=text)
 
     async def single_card_text(self, c: Card, f: Callable, show_legality: bool = True) -> None:
+        not_pd = configuration.get_list('not_pd')
+        if str(self.channel.id) in not_pd or (getattr(self.channel, 'guild', None) is not None and str(self.channel.guild.id) in not_pd):
+            show_legality = False
+
         name = c.name
         info_emoji = emoji.info_emoji(c, show_legality=show_legality)
         text = emoji.replace_emoji(f(c), self.bot)

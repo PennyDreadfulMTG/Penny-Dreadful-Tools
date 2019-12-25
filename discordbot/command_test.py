@@ -38,6 +38,11 @@ def test_results_from_queries() -> None:
     assert result.has_match()
     assert not result.is_ambiguous()
     assert result.get_best_match() == 'Upheaval'
+    result = command.results_from_queries(['Llanowar Elves|7ED'])[0][0]
+    assert result.has_match()
+    assert not result.is_ambiguous()
+    assert result.get_best_match() == 'Llanowar Elves'
+
 
 def test_do_not_choke_on_unicode() -> None:
     s = '①②④⑧⇅⊕█↑▪🐞🚫🏆⏩⏪︎📰💻▾'
@@ -45,7 +50,7 @@ def test_do_not_choke_on_unicode() -> None:
     result = command.results_from_queries([s])[0][0]
     assert not result.has_match()
     # …and for each char individually.
-    for result, _ in command.results_from_queries(list(s)):
+    for result, _, _ in command.results_from_queries(list(s)):
         assert not result.has_match()
 
 def test_resources_matching_in_url() -> None:

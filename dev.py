@@ -327,7 +327,7 @@ def find_files(needle: str = '', file_extension: str = '', exclude: List[str] = 
         paths = [p for p in paths if needle in os.path.basename(p)]
     if exclude:
         paths = [p for p in paths if p not in exclude]
-    return paths # type: ignore
+    return paths
 
 if __name__ == '__main__':
     run()

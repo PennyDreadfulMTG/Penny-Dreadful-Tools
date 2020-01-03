@@ -76,6 +76,16 @@ def get_printings(generalized_card: Card) -> List[card.Printing]:
     rs = db().select(sql, [generalized_card.id])
     return [card.Printing(r) for r in rs]
 
+def get_printing(generalized_card: Card, setcode: str) -> card.Printing:
+    sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code' \
+        + ' FROM printing AS p' \
+        + ' LEFT OUTER JOIN `set` AS s ON p.set_id = s.id' \
+        + ' WHERE card_id = %s AND s.code = %s'
+    rs = db().select(sql, [generalized_card.id, setcode])
+    if rs:
+        return [card.Printing(r) for r in rs][0]
+    return None
+
 def get_set(set_id: int) -> Container:
     rs = db().select('SELECT ' + (', '.join(property for property in card.set_properties())) + ' FROM `set` WHERE id = %s', [set_id])
     return guarantee.exactly_one([Container(r) for r in rs])

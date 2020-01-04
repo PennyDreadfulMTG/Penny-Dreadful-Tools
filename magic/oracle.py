@@ -77,6 +77,8 @@ def get_printings(generalized_card: Card) -> List[card.Printing]:
     return [card.Printing(r) for r in rs]
 
 def get_printing(generalized_card: Card, setcode: str) -> Optional[card.Printing]:
+    if setcode is None:
+        return None
     sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code' \
         + ' FROM printing AS p' \
         + ' LEFT OUTER JOIN `set` AS s ON p.set_id = s.id' \

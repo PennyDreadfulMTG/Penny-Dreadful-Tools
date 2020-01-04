@@ -4,8 +4,8 @@ import functools
 import os
 from typing import Any, Callable, Dict, List
 
-from flask import make_response, request
 from cachelib.simple import SimpleCache
+from flask import make_response, request
 
 from decksite import get_season_id
 from magic import rotation

@@ -116,7 +116,7 @@ def clear(*keys_list: AnyStr) -> None:
 def expire(key: str, time: int) -> None:
     if REDIS is not None:
         try:
-            REDIS.expire(key, time) # type: ignore
+            REDIS.expire(key, time)
         except redislib.exceptions.BusyLoadingError:
             pass
         except redislib.exceptions.ConnectionError:

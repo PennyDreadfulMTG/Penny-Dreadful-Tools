@@ -51,12 +51,10 @@ def current_season_num() -> int:
     return season_num(current_season_code())
 
 def season_num(code_to_look_for: str) -> int:
-    n = 0
-    for code in SEASONS:
-        n += 1
-        if code == code_to_look_for:
-            return n
-    raise InvalidDataException('I did not find the season code (`{code}`) in the list of seasons ({seasons}) and I am confused.'.format(code=code_to_look_for, seasons=','.join(SEASONS)))
+    try:
+        return SEASONS.index(code_to_look_for) + 1
+    except KeyError:
+        raise InvalidDataException('I did not find the season code (`{code}`) in the list of seasons ({seasons}) and I am confused.'.format(code=code_to_look_for, seasons=','.join(SEASONS)))
 
 def last_rotation() -> datetime.datetime:
     return last_rotation_ex()['enter_date_dt']

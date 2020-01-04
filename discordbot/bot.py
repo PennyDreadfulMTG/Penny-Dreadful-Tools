@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import re
+import subprocess
 import sys
 from typing import Any, Callable, Dict, List, Optional
 
@@ -39,7 +40,10 @@ def background_task(func: Callable) -> Callable:
 class Bot(commands.Bot):
     def __init__(self, **kwargs: Any) -> None:
         self.launch_time = perf.start()
-        super().__init__(command_prefix='!', help_command=commands.DefaultHelpCommand(dm_help=True), case_insensitive=True, **kwargs)
+        commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode()
+        redis.store('discordbot:commit_id', commit_id)
+
+        super().__init__(command_prefix=commands.when_mentioned_or('!'), help_command=commands.DefaultHelpCommand(dm_help=True), case_insensitive=True, **kwargs)
         self.voice = None
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:
@@ -351,7 +355,7 @@ async def rotation_hype_message() -> Optional[str]:
     num_legal_cards = len([c for c in cs if c.status == 'Legal'])
     name = 'Supplemental rotation' if rotation.next_rotation_is_supplemental() else 'Rotation'
     s = f'{name} run number {runs} completed. {name} is {runs_percent}% complete. {num_legal_cards} cards confirmed.'
-    if newly_hit + newly_legal + newly_eliminated == 0 and runs != 1 and runs % 5 != 0 and runs < rotation.TOTAL_RUNS / 2:
+    if not newly_hit + newly_legal + newly_eliminated and runs != 1 and runs % 5 != 0 and runs < rotation.TOTAL_RUNS / 2:
         return None # Sometimes there's nothing to report
     if len(newly_hit) > 0 and runs_remaining > runs:
         newly_hit_s = list_of_most_interesting(newly_hit)

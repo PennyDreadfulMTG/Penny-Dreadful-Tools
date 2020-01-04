@@ -127,11 +127,11 @@ def mypy(argv: List[str], strict: bool = False) -> None:
         '--disallow-incomplete-defs',   # All parameters must have type definitions.
         '--check-untyped-defs',         # Typecheck on all methods, not just typed ones.
         '--disallow-untyped-defs',      # All methods must be typed.
+        '--strict-equality',        # Don't allow us to say "0" == 0 or other always false comparisons
         ]
     if strict:
         args.extend([
-            '--strict-equality',        # Don't allow us to say "0" == 0 or other always false comparisons
-            # '--disallow-any-generics',  # Generic types like List or Dict need [T]
+            '--disallow-any-generics',  # Generic types like List or Dict need [T]
             # '--warn-return-any',        # Functions shouldn't return Any if we're expecting something better
             # '--disallow-any-unimported', # Catch import errors
             ])

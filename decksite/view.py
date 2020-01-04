@@ -123,7 +123,7 @@ class View(BaseView):
             return 'pennydreadfulmagic.com'
         if get_season_id() == rotation.current_season_num():
             season = ''
-        elif get_season_id() == 'all':
+        elif get_season_id() == 0:
             season = ' - All Time'
         else:
             season = ' - Season {n}'.format(n=get_season_id())
@@ -157,7 +157,7 @@ class View(BaseView):
         return url_for('tournaments')
 
     def show_legal_seasons(self) -> bool:
-        return get_season_id() == 'all'
+        return get_season_id() == 0
 
     def prepare(self) -> None:
         self.prepare_decks()

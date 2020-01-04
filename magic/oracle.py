@@ -122,7 +122,7 @@ def scryfall_import(name: str) -> bool:
 
 def pd_rotation_changes(season_id: int) -> Tuple[Sequence[Card], Sequence[Card]]:
     # It doesn't really make sense to do this for 'all' so just show current season in that case.
-    if season_id == 'all':
+    if season_id == 0:
         season_id = rotation.current_season_num()
     try:
         from_format_id = multiverse.get_format_id_from_season_id(int(season_id) - 1)

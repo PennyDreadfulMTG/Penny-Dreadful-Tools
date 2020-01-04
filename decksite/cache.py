@@ -5,7 +5,7 @@ import os
 from typing import Any, Callable, Dict, List
 
 from flask import make_response, request
-from werkzeug.contrib.cache import SimpleCache
+from cachelib.simple import SimpleCache
 
 from decksite import get_season_id
 from magic import rotation

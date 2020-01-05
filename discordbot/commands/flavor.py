@@ -12,6 +12,8 @@ async def flavor(ctx: MtgContext, *, c: Card) -> None:
 
 def flavor_text(c: Card) -> str:
     for printing in oracle.get_printings(c):
+        if c.preferred_printing is not None and c.preferred_printing != printing.set_code:
+            continue
         if printing.flavor is not None:
             return '\n' + printing.flavor + '\n-**' + oracle.get_set(printing.set_id).name + '**'
     return 'No flavor text available'

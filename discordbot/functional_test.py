@@ -1,37 +1,75 @@
-import types
-from typing import Any, Optional
+import asyncio
 
 import discord
-from discord.channel import TextChannel
+import pytest
 
-from shared import fetch_tools
+from discordbot.bot import Bot
+from discordbot.command import MtgContext
+from discordbot.commands import Card, CardConverter
+from shared.container import Container
 
 
-# Mock up assertions within the discord client.
-# I love that Python lets us just ruin 3rd-party libraries like this.
-def generate_fakebot() -> discord.Client:
-    async def fake_send_message(channel: TextChannel, text: str) -> None:
-        print('Responding with "{0}"'.format(text))
-        channel.calls += 1
-        assert channel is not None
-        assert text is not None and text != ''
-    async def fake_send_file(channel: TextChannel, image_file: str, content: Optional[str]) -> None:
-        print('Uploading "{0}", with additional text "{1}"'.format(image_file, content))
-        channel.calls += 1
-        assert channel is not None
-        assert image_file is not None and fetch_tools.acceptable_file(image_file)
-        assert content != ''
-    async def fake_send_typing(channel: TextChannel) -> None:
-        assert channel is not None
-    fakebot = discord.Client()
-    fakebot.send_message = fake_send_message
-    fakebot.send_file = fake_send_file
-    fakebot.send_typing = fake_send_typing
-    return fakebot
+@pytest.fixture(scope='module')
+def discordbot() -> Bot:
+    bot = Bot()
+    bot.init()
+    return bot
 
-def generate_fakechannel() -> Any:
-    fakechannel = types.new_class('Channel')
-    fakechannel.is_private = True # type: ignore
-    fakechannel.calls = 0 # type: ignore
-    fakechannel.id = 0 # type: ignore
-    return fakechannel
+class TestContext(MtgContext):
+    def __init__(self, **attrs) -> None:
+        self.sent = False
+
+    async def send(self, *args, **kwargs) -> None:
+        self.sent = True
+
+    def typing(self) -> 'TestContext':
+        return self
+
+    def __enter__(self) -> None:
+        pass
+
+    def __exit__(self, _, __, ___):
+        pass
+
+async def card(param: str) -> Card:
+    ctx = TestContext()
+    return await CardConverter.convert(ctx, param)
+
+
+def get_params():
+    async def params():
+        return [
+            ('art', {'c': await card('Island')}),
+            ('barbs', {}),
+            # ('downtimes', {}),
+            ('echo', {'args': 'test string!'}),
+            ('explain', {'thing': None}),
+            ('explain', {'thing': 'bugs'}),
+            ('flavor', {'c': await card('Island')}), # No flavor
+            ('flavor', {'c': await card('Horned Turtle')}),  # Tasty Flavor
+            ('flavor', {'c': await card('Gruesome Menagerie|RNA')}),  # Spicy Flavor
+            ('history', {'c': await card('Necropotence')}),
+            ('legal', {'c': await card('Island')}),
+            ('legal', {'c': await card('Black Lotus')}),
+            ('oracle', {'c': await card('Dark Ritual')}),
+            ('p1p1', {}),
+            ('patreon', {}),
+            ('price', {'c': await card('Gleemox')}),
+            ('rotation', {}),
+            # ('rulings', {'c': await card('Worldknit')}),
+
+
+        ]
+    loop = asyncio.new_event_loop()
+    return loop.run_until_complete(params())
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('cmd, kwargs', get_params())
+async def test_command(discordbot: Bot, cmd: str, kwargs) -> None:
+    command: discord.ext.commands.Command = discordbot.all_commands[cmd]
+    ctx = TestContext()
+    ctx.bot = discordbot
+    ctx.message = Container()
+    ctx.message.channel = Container({'id': '1'})
+    await command.callback(ctx, **kwargs)
+    assert ctx.sent

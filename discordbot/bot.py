@@ -54,7 +54,6 @@ class Bot(commands.Bot):
         multiverse.update_bugged_cards()
         oracle.init()
         discordbot.commands.setup(self)
-        self.run(configuration.get('token'))
 
     async def on_ready(self) -> None:
         print('Logged in as {username} ({id})'.format(username=self.user.name, id=self.user.id))
@@ -331,6 +330,7 @@ class Bot(commands.Bot):
 def init() -> None:
     client = Bot()
     client.init()
+    client.run(configuration.get('token'))
 
 def is_pd_server(guild: Guild) -> bool:
     return guild.id == 207281932214599682 # or guild.id == 226920619302715392

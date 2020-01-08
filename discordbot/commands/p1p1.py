@@ -15,7 +15,7 @@ async def p1p1(ctx: MtgContext) -> None:
         with ctx.typing():
             lock(ctx.channel.id) #Do not allow more than one p1p1 at the same time.
             cards = [oracle.cards_by_name()[name] for name in random.sample(oracle.legal_cards(), 15)]
-            image_fetcher.download_image(cards) #Preload the cards to reduce the delay encountered between introduction and the cards.
+            await image_fetcher.download_image_async(cards) #Preload the cards to reduce the delay encountered between introduction and the cards.
             await ctx.send("Let's play the pack 1, pick 1 game. The rules are simple. You are drafting and you open this as your first pack. What do you take?")
             await ctx.post_cards(cards[0:5])
             await ctx.post_cards(cards[5:10])

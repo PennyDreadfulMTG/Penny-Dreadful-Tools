@@ -99,8 +99,8 @@ def build_changelog(change: File) -> List[str]:
         else:
             lines.append(f'> Warning: Unknown error.')
     for package in newversions:
-        old = packaging.version.parse(oldversions.get(package))
-        new = packaging.version.parse(newversions.get(package))
+        old = packaging.version.parse(oldversions.get(package, ''))
+        new = packaging.version.parse(newversions.get(package, ''))
         changes = changelogs.get(package)
         logged = False
         for version_string in changes.keys():

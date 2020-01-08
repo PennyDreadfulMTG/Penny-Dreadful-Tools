@@ -159,7 +159,7 @@ def runtests(argv: List[str], m: str, mark: bool) -> None:
         if args and not args[0].startswith('-'):
             to_find = args.pop(0)
             args.extend(find_files(to_find, 'py'))
-        args.extend(['--cov-report=', '-x', '-m', m])
+        args.extend(['-x', '-m', m])
 
     argstr = ' '.join(args)
     print(f'>>>> Running tests with "{argstr}"')

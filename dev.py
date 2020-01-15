@@ -44,11 +44,11 @@ def run_dangerously() -> None:
     if cmd == 'unit':
         unit(args)
     elif cmd == 'functional':
-        runtests(args, 'functional')
+        runtests(args, 'functional', True)
     elif cmd == 'perf':
-        runtests(args, 'perf')
+        runtests(args, 'perf', True)
     elif cmd in ('test', 'tests'):
-        runtests(args, '')
+        runtests(args, '', False)
     elif cmd in ('lint', 'pylint'):
         lint(args)
     elif cmd in ('types', 'mypy'):
@@ -127,11 +127,11 @@ def mypy(argv: List[str], strict: bool = False) -> None:
         '--disallow-incomplete-defs',   # All parameters must have type definitions.
         '--check-untyped-defs',         # Typecheck on all methods, not just typed ones.
         '--disallow-untyped-defs',      # All methods must be typed.
+        '--strict-equality',        # Don't allow us to say "0" == 0 or other always false comparisons
         ]
     if strict:
         args.extend([
-            '--strict-equality',        # Don't allow us to say "0" == 0 or other always false comparisons
-            # '--disallow-any-generics',  # Generic types like List or Dict need [T]
+            '--disallow-any-generics',  # Generic types like List or Dict need [T]
             # '--warn-return-any',        # Functions shouldn't return Any if we're expecting something better
             # '--disallow-any-unimported', # Catch import errors
             ])
@@ -148,23 +148,27 @@ def mypy(argv: List[str], strict: bool = False) -> None:
         raise TestFailedException(result[2])
 
 def unit(argv: List[str]) -> None:
-    runtests(argv, 'not functional and not perf')
+    runtests(argv, 'not functional and not perf', True)
 
-def runtests(argv: List[str], m: str) -> None:
+def runtests(argv: List[str], m: str, mark: bool) -> None:
     """
     Literally just prepare the DB and then invoke pytest.
     """
-    print(f'>>>> Running tests with "{m}"')
+    args = argv.copy()
+    if mark:
+        if args and not args[0].startswith('-'):
+            to_find = args.pop(0)
+            args.extend(find_files(to_find, 'py'))
+        args.extend(['-x', '-m', m])
+
+    argstr = ' '.join(args)
+    print(f'>>>> Running tests with "{argstr}"')
     # pylint: disable=import-outside-toplevel
     import pytest
     from magic import multiverse, oracle
     multiverse.init()
     oracle.init()
-    args = argv.copy()
-    if args and not args[0].startswith('-'):
-        to_find = args.pop(0)
-        args.extend(find_files(to_find, 'py'))
-    args.extend(['--cov-report=', '-x', '-m', m])
+
     code = pytest.main(args)
     if os.environ.get('TRAVIS') == 'true':
         upload_coverage()
@@ -323,7 +327,7 @@ def find_files(needle: str = '', file_extension: str = '', exclude: List[str] = 
         paths = [p for p in paths if needle in os.path.basename(p)]
     if exclude:
         paths = [p for p in paths if p not in exclude]
-    return paths # type: ignore
+    return paths
 
 if __name__ == '__main__':
     run()

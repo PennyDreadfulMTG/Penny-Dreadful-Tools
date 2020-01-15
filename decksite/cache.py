@@ -4,8 +4,8 @@ import functools
 import os
 from typing import Any, Callable, Dict, List
 
+from cachelib.simple import SimpleCache
 from flask import make_response, request
-from werkzeug.contrib.cache import SimpleCache
 
 from decksite import get_season_id
 from magic import rotation
@@ -53,7 +53,7 @@ def cached_impl(cacheable: bool = False,
 
                 actual_client_timeout = client_timeout
                 actual_server_timeout = server_timeout
-                if get_season_id() and get_season_id() != 'all' and get_season_id() < rotation.current_season_num():
+                if get_season_id() and get_season_id() != 0 and get_season_id() < rotation.current_season_num():
                     actual_client_timeout = 7 * 24 * 60 * 60
                     actual_server_timeout = 7 * 24 * 60 * 60
 

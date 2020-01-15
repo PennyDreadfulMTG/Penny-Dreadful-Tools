@@ -15,7 +15,10 @@ APP.logger.setLevel(logging.WARN) # pylint: disable=no-member,no-name-in-module
 SEASONS = Blueprint('seasons', __name__, url_prefix='/seasons/<season_id>')
 
 def get_season_id() -> int:
-    return g.get('season_id', rotation.current_season_num())
+    season_id = g.get('season_id', rotation.current_season_num())
+    if season_id == 'new':
+        return 0
+    return season_id
 
 @SEASONS.url_defaults
 def add_season_id(_endpoint: str, values: Dict[str, Any]) -> None:
@@ -97,6 +100,5 @@ except DatabaseException as e:
     oracle.init()
 
 from decksite.controllers import admin  # isort:skip # pylint: disable=wrong-import-position
-from . import api as API # isort:skip # pylint: disable=wrong-import-position, unused-import
 from .data import deck # isort:skip # pylint: disable=wrong-import-position
 APP.config['menu'] = build_menu

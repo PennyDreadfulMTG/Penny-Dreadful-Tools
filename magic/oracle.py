@@ -76,6 +76,18 @@ def get_printings(generalized_card: Card) -> List[card.Printing]:
     rs = db().select(sql, [generalized_card.id])
     return [card.Printing(r) for r in rs]
 
+def get_printing(generalized_card: Card, setcode: str) -> Optional[card.Printing]:
+    if setcode is None:
+        return None
+    sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code' \
+        + ' FROM printing AS p' \
+        + ' LEFT OUTER JOIN `set` AS s ON p.set_id = s.id' \
+        + ' WHERE card_id = %s AND s.code = %s'
+    rs = db().select(sql, [generalized_card.id, setcode])
+    if rs:
+        return [card.Printing(r) for r in rs][0]
+    return None
+
 def get_set(set_id: int) -> Container:
     rs = db().select('SELECT ' + (', '.join(property for property in card.set_properties())) + ' FROM `set` WHERE id = %s', [set_id])
     return guarantee.exactly_one([Container(r) for r in rs])
@@ -112,7 +124,7 @@ def scryfall_import(name: str) -> bool:
 
 def pd_rotation_changes(season_id: int) -> Tuple[Sequence[Card], Sequence[Card]]:
     # It doesn't really make sense to do this for 'all' so just show current season in that case.
-    if season_id == 'all':
+    if season_id == 0:
         season_id = rotation.current_season_num()
     try:
         from_format_id = multiverse.get_format_id_from_season_id(int(season_id) - 1)

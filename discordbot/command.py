@@ -40,11 +40,11 @@ async def respond_to_card_names(message: Message, client: Client) -> None:
         results = results_from_queries(queries)
         cards = []
         for i in results:
-            (r, mode) = i
+            (r, mode, preferred_printing) = i
             if r.has_match() and not r.is_ambiguous():
-                cards.extend(cards_from_names_with_mode([r.get_best_match()], mode))
+                cards.extend(cards_from_names_with_mode([r.get_best_match()], mode, preferred_printing))
             elif r.is_ambiguous():
-                cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode))
+                cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode, preferred_printing))
         await post_cards(client, cards, message.channel, message.author)
 
 async def handle_command(message: Message, client: commands.Bot) -> None:
@@ -56,28 +56,34 @@ def parse_queries(content: str) -> List[str]:
     queries = re.findall(r'\[?\[([^\]]*)\]\]?', to_scan)
     return [card.canonicalize(query) for query in queries if len(query) > 2]
 
-def cards_from_names_with_mode(cards: Sequence[Optional[str]], mode: str) -> List[Card]:
+def cards_from_names_with_mode(cards: Sequence[Optional[str]], mode: str, preferred_printing: str = None) -> List[Card]:
     oracle_cards = oracle.cards_by_name()
-    return [copy_with_mode(oracle_cards[c], mode) for c in cards if c is not None]
+    return [copy_with_mode(oracle_cards[c], mode, preferred_printing) for c in cards if c is not None]
 
-def copy_with_mode(oracle_card: Card, mode: str) -> Card:
+def copy_with_mode(oracle_card: Card, mode: str, preferred_printing: str = None) -> Card:
     c = copy(oracle_card)
     c['mode'] = mode
+    c['preferred_printing'] = preferred_printing
     return c
 
-def parse_mode(query: str) -> List[str]:
+def parse_mode(query: str) -> Tuple[str, str, Optional[str]]:
     mode = ''
+    preferred_printing = None
     if query.startswith('$'):
         mode = '$'
         query = query[1:]
-    return [mode, query]
 
-def results_from_queries(queries: List[str]) -> List[Tuple[SearchResult, str]]:
+    if '|' in query:
+        query, preferred_printing = query.split('|')
+
+    return (mode, query, preferred_printing)
+
+def results_from_queries(queries: List[str]) -> List[Tuple[SearchResult, str, Optional[str]]]:
     all_results = []
     for query in queries:
-        mode, query = parse_mode(query)
+        mode, query, preferred_printing = parse_mode(query)
         result = searcher().search(query)
-        all_results.append((result, mode))
+        all_results.append((result, mode, preferred_printing))
     return all_results
 
 def complex_search(query: str) -> List[Card]:
@@ -107,9 +113,9 @@ async def single_card_or_send_error(channel: TextChannel, args: str, author: Mem
     if not args:
         await send(channel, '{author}: Please specify a card name.'.format(author=author.mention))
         return None
-    result, mode = results_from_queries([args])[0]
+    result, mode, preferred_printing = results_from_queries([args])[0]
     if result.has_match() and not result.is_ambiguous():
-        return cards_from_names_with_mode([result.get_best_match()], mode)[0]
+        return cards_from_names_with_mode([result.get_best_match()], mode, preferred_printing)[0]
     if result.is_ambiguous():
         message = await send(channel, '{author}: Ambiguous name for {c}. Suggestions: {s} (click number below)'.format(author=author.mention, c=command, s=disambiguation(result.get_ambiguous_matches()[0:5])))
         await disambiguation_reactions(message, result.get_ambiguous_matches()[0:5])
@@ -242,6 +248,10 @@ class MtgContext(commands.Context):
             await self.send(file=File(image_file), content=text)
 
     async def single_card_text(self, c: Card, f: Callable, show_legality: bool = True) -> None:
+        not_pd = configuration.get_list('not_pd')
+        if str(self.channel.id) in not_pd or (getattr(self.channel, 'guild', None) is not None and str(self.channel.guild.id) in not_pd):
+            show_legality = False
+
         name = c.name
         info_emoji = emoji.info_emoji(c, show_legality=show_legality)
         text = emoji.replace_emoji(f(c), self.bot)

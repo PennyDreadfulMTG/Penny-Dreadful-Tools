@@ -276,14 +276,14 @@ class BooleanAchievement(Achievement):
     def display(self, p: Person) -> str:
         n = p.get('achievements', {}).get(self.key, 0)
         if n > 0:
-            if decksite.get_season_id() == 'all':
+            if decksite.get_season_id() == 0:
                 return self.alltime_text(n)
             return self.season_text
         return ''
 
     # No point showing a leaderboard for these on single-season page because no-one can have more than 1
     def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Container]]:
-        if season_id == 'all':
+        if season_id == 0:
             return super(BooleanAchievement, self).leaderboard(season_id=season_id)
         return None
 
@@ -306,7 +306,7 @@ class TournamentOrganizer(Achievement):
 
     def load_summary(self, season_id: Optional[int] = None) -> Optional[str]:
         # We can't give per-season stats for this because they don't exist
-        clarification = ' (all-time)' if season_id != 'all' else ''
+        clarification = ' (all-time)' if season_id != 0 else ''
         return f'Earned by {len(self.hosts)} players{clarification}.'
 
     @retry_after_calling(preaggregate_achievements)

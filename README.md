@@ -23,4 +23,3 @@ View individual subdirectories for details
 **shared** contains a bunch of general purpose helper classes. Things that could be used in any project.
 
 **shared_web** contains a bunch of web-specific helper classes.
-

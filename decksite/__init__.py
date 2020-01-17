@@ -16,7 +16,7 @@ SEASONS = Blueprint('seasons', __name__, url_prefix='/seasons/<season_id>')
 
 def get_season_id() -> int:
     season_id = g.get('season_id', rotation.current_season_num())
-    if season_id == 'new':
+    if season_id == 'all':
         return 0
     return season_id
 

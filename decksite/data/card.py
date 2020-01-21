@@ -171,19 +171,30 @@ def preaggregate_unique() -> None:
             PRIMARY KEY (card, person_id),
             FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE
         )
-        SELECT
-            card, person_id
+        SELECT DISTINCT
+            card,
+            person_id
         FROM
             deck_card AS dc
         INNER JOIN
             deck AS d ON dc.deck_id = d.id
         WHERE
-            d.id IN (SELECT deck_id FROM deck_match GROUP BY deck_id HAVING COUNT(*) >= 3)
-        GROUP BY
-            card,
-            person_id
-        HAVING
-            COUNT(DISTINCT person_id) = 1
+            card IN
+            (
+                -- We use a subquery here rather than putting this HAVING clause on the main query to avoid false positives from MySQL's ONLY_FULL_GROUP_BY setting.
+                SELECT
+                    card
+                FROM
+                    deck_card AS dc
+                INNER JOIN
+                    deck AS d ON dc.deck_id = d.id
+                WHERE
+                    d.id IN (SELECT deck_id FROM deck_match GROUP BY deck_id HAVING COUNT(*) >= 3)
+                GROUP BY
+                    card
+                HAVING
+                    COUNT(DISTINCT person_id) = 1
+            )
     """.format(table=table)
     preaggregation.preaggregate(table, sql)
 
@@ -196,22 +207,32 @@ def preaggregate_trailblazer() -> None:
             PRIMARY KEY (card, deck_id),
             FOREIGN KEY (deck_id) REFERENCES deck (id) ON UPDATE CASCADE ON DELETE CASCADE
         )
-        SELECT
+        SELECT DISTINCT
             d.id AS deck_id,
             card,
-            MIN(d.created_date) AS `date`
+            d.created_date AS `date`
         FROM
-            deck_card AS dc
+            deck AS d
         INNER JOIN
-            deck AS d ON dc.deck_id = d.id
-        INNER JOIN
-            deck_match AS dm ON dm.deck_id = d.id
-        {competition_join}
+            deck_card AS dc ON dc.deck_id = d.id
         WHERE
-            d.id IN (SELECT deck_id FROM deck_match GROUP BY deck_id HAVING COUNT(*) >= 3)
-        GROUP BY
-            card,
-            deck_id
+            (dc.card, d.created_date) IN
+                (
+                    SELECT
+                        card,
+                        MIN(d.created_date)
+                    FROM
+                        deck_card AS dc
+                    INNER JOIN
+                        deck AS d ON dc.deck_id = d.id
+                    INNER JOIN
+                        deck_match AS dm ON dm.deck_id = d.id
+                    {competition_join}
+                    WHERE
+                        d.id IN (SELECT deck_id FROM deck_match GROUP BY deck_id HAVING COUNT(*) >= 3)
+                    GROUP BY
+                        card
+                )
     """.format(table=table, competition_join=query.competition_join())
     preaggregation.preaggregate(table, sql)
 

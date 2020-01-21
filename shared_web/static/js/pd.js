@@ -582,7 +582,7 @@ PD.filter.showErrorsAndWarnings = function(o) {
         error.innerText = "Error (query failed) - " + o["details"];
         p.append(error);
     }
-    if ("warnings" in o) {
+    if ("warnings" in o && typeof o["warnings"] !== "undefined") {
         for (let i = 0; i < o["warnings"].length; i++) {
             const warning = document.createElement("li");
             warning.innerText = "Warning: " + o["warnings"][i];

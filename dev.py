@@ -230,7 +230,10 @@ def pull_request(argv: List[str]) -> None:
 
 def build() -> None:
     print('>>>> Installing Requirements')
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+    pipargs = [sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt']
+    if not hasattr(sys, 'real_prefix'):
+        pipargs.append('--user')
+    subprocess.check_call(pipargs)
     print('>>>> Installing node modules')
     subprocess.check_call(['npm', 'install'], shell=True)
     buildjs()

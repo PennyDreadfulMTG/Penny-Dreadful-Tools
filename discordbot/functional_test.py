@@ -52,7 +52,6 @@ def get_params() -> List[Tuple]:
         return [
             ('art', {'c': await card('Island')}),
             ('barbs', {}),
-            ('downtimes', {}),
             ('echo', {'args': 'test string!'}),
             ('explain', {'thing': None}),
             ('explain', {'thing': 'bugs'}),

@@ -30,7 +30,7 @@
             <script defer src="{{tooltips_url}}"></script>
         {{/tooltips_url}}
         {{> jsdependencies}}
-        <script defer src="//cdn.jsdelivr.net/g/tipped@4.0.10(js/tipped/tipped.js+js/imagesloaded/imagesloaded.pkgd.min.js)"></script>
+        <script defer src="/static/js/tipped.min.js"></script> {{* The latest, open source (pro) version of Tipped is not on any CDN. }}
         <script defer src="{{js_url}}"></script>
         <script defer src="{{bundle_url}}"></script> {{* React components use pd.js but not vice versa so load this after *}}
         <script async src="//www.googletagmanager.com/gtag/js?id=UA-109131120-1"></script>

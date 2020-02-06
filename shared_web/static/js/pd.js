@@ -153,7 +153,7 @@ PD.initTooltips = function() {
         if (typeof Deckbox !== "undefined") {
             Deckbox._.enable();
         }
-        Tipped.create("main [title]", {
+        Tipped.delegate("main [title]", {
             "showDelay": 500,
             "size": "large",
             maxWidth: "200"

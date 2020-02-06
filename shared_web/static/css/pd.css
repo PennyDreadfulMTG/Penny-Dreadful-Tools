@@ -2416,342 +2416,455 @@ A reasonable amount has been cut which we'll need to restore if we ever want dif
 }
 
 .tpd-tooltip {
-    position: absolute;
     white-space: pre-line;
 }
 
+.tpd-tooltip {
+  position: absolute;
+}
+
 /* Fix for CSS frameworks that don't keep the use of box-sizing: border-box
-     within their own namespace */
-.tpd-tooltip,
+   within their own namespace */
+.tpd-tooltip {
+  box-sizing: content-box;
+}
 .tpd-tooltip [class^="tpd-"] {
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
+  box-sizing: inherit;
 }
 
 /* Content */
 .tpd-content-wrapper {
-    position: absolute;
-    top: 0;
-    left: 0;
-    float: left;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  float: left;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
-
 .tpd-content-spacer,
 .tpd-content-relative,
 .tpd-content-relative-padder {
-    float: left;
-    position: relative;
+  float: left;
+  position: relative;
 }
-
 .tpd-content-relative {
-    width: 100%;
+  width: 100%;
 }
 
 .tpd-content {
-    float: left;
-    clear: both;
-    position: relative;
-    padding: 10px;
-    font-size: 11px;
-    line-height: 16px;
-    color: #fff;
+  float: left;
+  clear: both;
+  position: relative;
+  padding: 10px;
+  font-size: 11px;
+  line-height: 16px;
+  color: #fff;
+  box-sizing: border-box !important;
 }
-
-.tpd-has-inner-close .tpd-content-relative .tpd-content { padding-right: 0 !important; /* csslint allow: important */ }
-
-.tpd-tooltip .tpd-content-no-padding { padding: 0 !important; /* csslint allow: important */ }
+.tpd-has-inner-close .tpd-content-relative .tpd-content {
+  padding-right: 0 !important;
+}
+.tpd-tooltip .tpd-content-no-padding {
+  padding: 0 !important;
+}
 
 /* Skin */
 .tpd-skin {
-    position: absolute;
-    top: 0;
-    left: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .tpd-frames {
-    position: absolute;
-    top: 0;
-    left: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .tpd-frames .tpd-frame {
-    float: left;
-    width: 100%;
-    height: 100%;
-    clear: both;
+  float: left;
+  width: 100%;
+  height: 100%;
+  clear: both;
+  display: none;
+}
+
+.tpd-visible-frame-top .tpd-frame-top {
+  display: block;
+}
+.tpd-visible-frame-bottom .tpd-frame-bottom {
+  display: block;
+}
+.tpd-visible-frame-left .tpd-frame-left {
+  display: block;
+}
+.tpd-visible-frame-right .tpd-frame-right {
+  display: block;
 }
 
 .tpd-backgrounds {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    -webkit-transform-origin: 0% 0%;
-    transform-origin: 0% 0%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-transform-origin: 0% 0%;
+  transform-origin: 0% 0%;
 }
 .tpd-background-shadow {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: transparent;
-    pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  pointer-events: none;
 }
-.tpd-no-shadow .tpd-skin .tpd-background-shadow { box-shadow: none !important; /* csslint allow: important */ }
+.tpd-no-shadow .tpd-skin .tpd-background-shadow {
+  box-shadow: none !important;
+}
 
 .tpd-background-box {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
+/* only the top background box should be shown when not using a stem */
+.tpd-no-stem .tpd-background-box,
+.tpd-no-stem .tpd-shift-stem {
+  display: none;
+}
+.tpd-no-stem .tpd-background-box-top {
+  display: block;
+}
+
 .tpd-background-box-shift,
 .tpd-background-box-shift-further {
-    position: relative;
-    float: left;
-    width: 100%;
-    height: 100%;
+  position: relative;
+  float: left;
+  width: 100%;
+  height: 100%;
 }
 .tpd-background {
-    border-radius: 10px;
-    float: left;
-    clear: both;
-    background: none;
-    border-style: solid;
-    border-width: 0px;
-    border-color: #fff; /* for browsers that don't support rgba */
-    border-color: rgba(255,255,255, 1);
-    -webkit-background-clip: padding-box; /* Safari */
-    background-clip: padding-box; /* IE9+, Firefox 4+, Opera, Chrome */
-
-    border-width: 1px;
-    border-color: #808080;
-    border-color: rgba(0,0,0,.4); /* opacity here bugs out in firefox, .tpd-background-content should have no opacity if this opacity is less than 1 */
+  border-radius: 10px;
+  float: left;
+  clear: both;
+  background: none;
+  -webkit-background-clip: padding-box; /* Safari */
+  background-clip: padding-box; /* IE9+, Firefox 4+, Opera, Chrome */
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ); /* opacity here bugs out in firefox, .tpd-background-content should have no opacity if this opacity is less than 1 */
 }
-
+.tpd-background-loading {
+  display: none;
+}
 /* no radius */
-.tpd-no-radius .tpd-skin .tpd-frames .tpd-frame .tpd-backgrounds .tpd-background { border-radius: 0; }
-
+.tpd-no-radius
+  .tpd-skin
+  .tpd-frames
+  .tpd-frame
+  .tpd-backgrounds
+  .tpd-background {
+  border-radius: 0;
+}
+.tpd-background-title {
+  float: left;
+  clear: both;
+  width: 100%;
+  background-color: #282828;
+}
 .tpd-background-content {
-    float: left;
-    clear: both;
-    width: 100%;
-    background-color: #101010;
-    background-color: rgba(16,16,16,.9);
+  float: left;
+  clear: both;
+  width: 100%;
+  background-color: #282828;
 }
-
 .tpd-background-border-hack {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-style: solid;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-style: solid;
 }
 
-.tpd-background-box-top { top: 0; }
-.tpd-background-box-bottom { bottom: 0; }
-.tpd-background-box-left { left: 0; }
-.tpd-background-box-right { right: 0; }
+.tpd-background-box-top {
+  top: 0;
+}
+.tpd-background-box-bottom {
+  bottom: 0;
+}
+.tpd-background-box-left {
+  left: 0;
+}
+.tpd-background-box-right {
+  right: 0;
+}
 
+/* Skin / Stems */
 .tpd-shift-stem {
-    position: absolute;
-    top: 0;
-    left: 0;
-    overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
 }
 .tpd-shift-stem-side {
-    position: absolute;
+  position: absolute;
 }
 .tpd-frame-top .tpd-shift-stem-side,
-.tpd-frame-bottom .tpd-shift-stem-side { width: 100%; }
+.tpd-frame-bottom .tpd-shift-stem-side {
+  width: 100%;
+}
 .tpd-frame-left .tpd-shift-stem-side,
-.tpd-frame-right .tpd-shift-stem-side { height: 100%; }
+.tpd-frame-right .tpd-shift-stem-side {
+  height: 100%;
+}
 
 .tpd-stem {
-    position: absolute;
-    top: 0;
-    left: 0;
-    overflow: hidden; /* shows possible invalid subpx rendering */
-    width: 16px; /* best cross browser stem: width = 2 x height (90deg angle) */
-    height: 8px;
-    margin-left: 3px; /* space from the side */
-    margin-top: 3px; /* space between target and stem */
-    -webkit-transform-origin: 0% 0%;
-    transform-origin: 0% 0%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden; /* shows possible invalid subpx rendering */
+  width: 16px; /* best cross browser stem: width = 2 x height (90deg angle) */
+  height: 8px;
+  margin-left: 3px; /* space from the side */
+  margin-top: 2px; /* space between target and stem */
+  -webkit-transform-origin: 0% 0%;
+  transform-origin: 0% 0%;
 }
-
 /* remove margins once we're done measuring */
-.tpd-tooltip .tpd-skin .tpd-frames .tpd-frame .tpd-shift-stem .tpd-stem-reset { margin: 0 !important; /* csslint allow: important */ }
+.tpd-tooltip .tpd-skin .tpd-frames .tpd-frame .tpd-shift-stem .tpd-stem-reset {
+  margin: 0 !important;
+}
 
 .tpd-stem-spacer {
-    float: left;
-    position: relative;
-    width: 100%;
-    height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
-
-.tpd-stem-reset .tpd-stem-spacer { margin-top: 0; }
+.tpd-stem-reset .tpd-stem-spacer {
+  margin-top: 0;
+}
 
 .tpd-stem-point {
-    width: 100px;
-    position: absolute;
-    top: 0;
-    left: 50%;
+  width: 100px;
+  position: absolute;
+  top: 0;
+  left: 50%;
 }
-
 .tpd-stem-downscale,
 .tpd-stem-transform {
-    float: left;
-    width: 100%;
-    height: 100%;
-    -webkit-transform-origin: 0% 0%;
-    transform-origin: 0% 0%;
-    position: relative;
+  float: left;
+  width: 100%;
+  height: 100%;
+  -webkit-transform-origin: 0% 0%;
+  transform-origin: 0% 0%;
+  position: relative;
 }
 
 .tpd-stem-side {
-    width: 50%;
-    height: 100%;
-    float: left;
-    position: relative;
-    overflow: hidden;
+  width: 50%;
+  height: 100%;
+  float: left;
+  position: relative;
+  overflow: hidden;
 }
 .tpd-stem-side-inversed {
-    -webkit-transform: scale(-1,1);
-    transform: scale(-1,1);
+  -webkit-transform: scale(-1, 1);
+  transform: scale(-1, 1);
 }
 .tpd-stem-triangle {
-    width: 0;
-    height: 0;
-    border-bottom-style: solid;
-    border-left-color: transparent;
-    border-left-style: solid;
-    position: absolute;
-    top: 0;
-    left: 0;
+  width: 0;
+  height: 0;
+  border-bottom-style: solid;
+  border-left-color: transparent;
+  border-left-style: solid;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .tpd-stem-border {
-    width: 20px;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    background-color: #fff; /* will become transparent */
-    border-right-color: #fff;
-    border-right-style: solid;
-    border-right-width: 0;
+  width: 20px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  background-color: #fff; /* will become transparent */
+  border-right-color: #fff;
+  border-right-style: solid;
+  border-right-width: 0;
 }
 
 .tpd-stem-border-corner {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    height: 100%;
-    border-right-style: solid;
-    border-right-width: 0;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  border-right-style: solid;
+  border-right-width: 0;
 }
 
 /* fixes rendering issue in IE */
-.tpd-stem * { z-index: 0; zoom: 1; }
+.tpd-stem * {
+  z-index: 0;
+  zoom: 1;
+}
 
 /* used by IE < 9 */
 .tpd-stem-border-center-offset,
 .tpd-stem-border-center-offset-inverse {
-    float: left;
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+  float: left;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 .tpd-stem-notransform {
-    float: left;
-    width: 100%;
-    height: 100%;
-    position: relative;
+  float: left;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 .tpd-stem-notransform .tpd-stem-border {
-    height: 100%;
-    position: relative;
-    float: left;
-    top: 0;
-    left: 0;
-    margin: 0;
+  height: 100%;
+  position: relative;
+  float: left;
+  top: 0;
+  left: 0;
+  margin: 0;
 }
 .tpd-stem-notransform .tpd-stem-border-center {
-    position: absolute;
+  position: absolute;
 }
 .tpd-stem-notransform .tpd-stem-border-corner {
-    background: #fff;
-    border: 0;
-    top: auto;
-    left: auto;
+  background: #fff;
+  border: 0;
+  top: auto;
+  left: auto;
 }
 .tpd-stem-notransform .tpd-stem-border-center,
 .tpd-stem-notransform .tpd-stem-triangle {
-    height: 0;
-    border: 0;
-    left: 50%;
+  height: 0;
+  border: 0;
+  left: 50%;
 }
 
 /* transformations for left/right/bottom */
 .tpd-stem-transform-left {
-    -webkit-transform: rotate(-90deg) scale(-1,1);
-    transform: rotate(-90deg) scale(-1,1);
+  -webkit-transform: rotate(-90deg) scale(-1, 1);
+  transform: rotate(-90deg) scale(-1, 1);
 }
 .tpd-stem-transform-right {
-    -webkit-transform: rotate(90deg) translate(0, -100%);
-    transform: rotate(90deg) translate(0, -100%);
+  -webkit-transform: rotate(90deg) translate(0, -100%);
+  transform: rotate(90deg) translate(0, -100%);
 }
 .tpd-stem-transform-bottom {
-    -webkit-transform: scale(1,-1) translate(0, -100%);
-    transform: scale(1,-1) translate(0, -100%);
+  -webkit-transform: scale(1, -1) translate(0, -100%);
+  transform: scale(1, -1) translate(0, -100%);
 }
 
+/* Resets while measuring content */
+.tpd-tooltip-measuring {
+  top: 0;
+  left: 0;
+  position: absolute;
+  max-width: 100%;
+  width: 100%;
+}
+.tpd-tooltip-measuring .tpd-skin,
+.tpd-tooltip-measuring .tpd-spinner {
+  display: none;
+}
+
+.tpd-tooltip-measuring .tpd-content-wrapper,
+.tpd-tooltip-measuring .tpd-title-wrapper {
+  display: block;
+}
+
+/* Links */
+.tpd-tooltip a,
+.tpd-tooltip a:hover {
+  color: #808080;
+  text-decoration: underline;
+}
+.tpd-tooltip a:hover {
+  color: #6c6c6c;
+}
+
+/* large */
 .tpd-size-large .tpd-content,
 .tpd-size-large .tpd-title {
-    padding: 10px;
-    font-size: 13px;
-    line-height: 18px;
+  padding: 10px;
+  font-size: 13px;
+  line-height: 18px;
 }
-.tpd-size-large .tpd-background { border-radius: 8px; }
+.tpd-size-large .tpd-background {
+  border-radius: 8px;
+}
 .tpd-size-large .tpd-stem {
-    width: 18px;
-    height: 9px;
-    margin-left: 7px;
-    margin-top: 2px;
+  width: 18px;
+  height: 9px;
+  margin-left: 7px;
+  margin-top: 2px; /* space between target and stem */
 }
-.tpd-size-large.tpd-no-radius .tpd-stem { margin-left: 10px; }
-.tpd-size-large .tpd-loading-icon { width: 50px; height: 50px; }
-.tpd-size-large .tpd-loading-line {
-    z-index: 12;        /* amount of lines */
-    margin-bottom: 5px; /* radius of the inner circle */
-    height: 5px;        /* length of a line */
-    width: 2px;         /* width of a line */
+.tpd-size-large.tpd-no-radius .tpd-stem {
+  margin-left: 10px;
 }
-.tpd-size-large .tpd-close { margin: 5px 2px 5px 2px; }
+.tpd-size-large .tpd-close {
+  margin: 5px 2px 5px 2px;
+}
+.tpd-size-large .tpd-spinner {
+  width: 54px;
+  height: 38px;
+}
+.tpd-size-large .tpd-spinner-spin {
+  margin: 9px 0 0 17px;
+}
+.tpd-size-large .tpd-spinner-spin,
+.tpd-size-large .tpd-spinner-spin:after {
+  width: 20px;
+  height: 20px;
+}
 
+/* Skins */
+/* default (dark) */
 .tpd-skin-dark .tpd-content,
 .tpd-skin-dark .tpd-title,
-.tpd-skin-dark .tpd-close { color: #fff; }
+.tpd-skin-dark .tpd-close {
+  color: #fff;
+}
 .tpd-skin-dark .tpd-background-content,
 .tpd-skin-dark .tpd-background-title {
-    background-color: #282828;
+  background-color: #282828;
 }
 .tpd-skin-dark .tpd-background {
-    border-width: 1px;
-    border-color: #282828;
-    border-color: rgba(255,255,255,.1);
+  border-width: 1px;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 /* line below the title */
-.tpd-skin-dark .tpd-title-wrapper { border-bottom: 1px solid #404040; }
+.tpd-skin-dark .tpd-title-wrapper {
+  border-bottom: 1px solid #404040;
+}
+/* spinner */
+.tpd-skin-dark .tpd-spinner-spin {
+  border-color: rgba(255, 255, 255, 0.2);
+  border-left-color: #fff;
+}
 /* links */
-.tpd-skin-dark a,
-.tpd-skin-dark a:hover { color: #ccc; }
+.tpd-skin-dark a {
+  color: #ccc;
+}
+.tpd-skin-dark a:hover {
+  color: #c0c0c0;
+}

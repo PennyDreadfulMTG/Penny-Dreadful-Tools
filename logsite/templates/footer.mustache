@@ -1,6 +1,6 @@
         </main>
         {{> jsdependencies}}
-        <script defer src="//cdn.jsdelivr.net/g/tipped@4.0.10(js/tipped/tipped.js+js/imagesloaded/imagesloaded.pkgd.min.js)"></script>
+        <script defer src="/static/js/tipped.min.js"></script> {{* The latest, open source (pro) version of Tipped is not on any CDN. }}
         <script defer src="{{js_url}}"></script>
         {{#js_extra_url}}<script defer src="{{js_extra_url}}"></script>{{/js_extra_url}}
     </body>

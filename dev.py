@@ -85,8 +85,6 @@ def run_dangerously() -> None:
         push()
     elif cmd == 'check':
         check(args)
-    elif cmd == 'ready':
-        ready(args)
     elif cmd in ('safe_push', 'safepush'):
         safe_push(args)
     elif cmd == 'release':
@@ -312,12 +310,8 @@ def check(args: List[str]) -> None:
     mypy(args)
     sort()
 
-def ready(args: List[str]) -> None:
-    check(args)
-    unit(args)
-
 def release(args: List[str]) -> None:
-    ready(args)
+    check(args)
     safe_push(args)
     pull_request(args)
 

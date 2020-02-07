@@ -175,14 +175,15 @@ def season_id(v: Union[int, str], all_return_value: Optional[Union[int, str]] = 
 def season_code(v: Union[int, str]) -> str:
     """From any value return the season code which is a three letter string representing the season, or 'ALL' for all time."""
     sid = season_id(v)
-    if sid == 'all' or sid is None:
+    if sid in ('all', 0, None):
         return 'ALL'
+    assert sid is not None # For typechecking which can't understand the above if statement.
     return SEASONS[int(sid) - 1]
 
 def season_name(v: Union[int, str]) -> str:
     """From any value return the person-friendly name of the season, or 'All Time' for all time."""
     sid = season_id(v)
-    if sid == 'all':
+    if sid in ('all', 0):
         return 'All Time'
     return 'Season {num}'.format(num=sid)
 

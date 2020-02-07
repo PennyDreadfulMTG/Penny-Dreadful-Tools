@@ -85,8 +85,6 @@ def run_dangerously() -> None:
         push()
     elif cmd == 'check':
         check(args)
-    elif cmd == 'ready':
-        ready(args)
     elif cmd in ('safe_push', 'safepush'):
         safe_push(args)
     elif cmd == 'release':
@@ -245,11 +243,11 @@ def buildjs() -> None:
 
 def jslint(fix: bool = False) -> None:
     print('>>>> Linting javascript')
-    files = find_files(file_extension='js', exclude=['.eslintrc.js']) + find_files(file_extension='jsx')
+    files = find_files(file_extension='js', exclude=['.eslintrc.js', 'shared_web/static/js/tipped.min.js']) + find_files(file_extension='jsx')
     cmd = [os.path.join('.', 'node_modules', '.bin', 'eslint')]
     if fix:
         cmd.append('--fix')
-    subprocess.check_call(cmd + files, shell=True)
+    subprocess.check_call(cmd + files)
 
 def jsfix() -> None:
     print('>>>> Fixing js')
@@ -312,12 +310,8 @@ def check(args: List[str]) -> None:
     mypy(args)
     sort()
 
-def ready(args: List[str]) -> None:
-    check(args)
-    unit(args)
-
 def release(args: List[str]) -> None:
-    ready(args)
+    check(args)
     safe_push(args)
     pull_request(args)
 

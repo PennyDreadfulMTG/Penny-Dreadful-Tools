@@ -8,7 +8,7 @@ from flask_babel import gettext
 from markdown import Markdown, markdown
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
-from markdown.util import etree
+import xml.etree.ElementTree as etree
 from pystache.common import TemplateNotFoundError
 from pystache.context import ContextStack
 

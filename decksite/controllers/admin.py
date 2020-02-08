@@ -30,14 +30,14 @@ def admin_menu() -> List[Dict[str, str]]:
         m.append({'name': name, 'endpoint': endpoint, 'url': url_for(endpoint)})
     return m
 
-@auth.admin_required
 @APP.route('/admin/')
+@auth.admin_required
 def admin_home() -> str:
     view = Admin(admin_menu())
     return view.page()
 
-@auth.admin_required
 @APP.route('/admin/aliases/')
+@auth.admin_required
 def edit_aliases() -> str:
     aliases = ps.load_aliases()
     all_people = ps.load_people(order_by_name=True)
@@ -45,23 +45,23 @@ def edit_aliases() -> str:
     return view.page()
 
 @fill_form('person_id')
-@auth.admin_required
 @APP.route('/admin/aliases/', methods=['POST'])
+@auth.admin_required
 def post_aliases(person_id: int = None, alias: str = None) -> Union[str, wrappers.Response]:
     if person_id is not None and alias is not None and len(alias) > 0:
         ps.add_alias(person_id, alias)
     return edit_aliases()
 
-@auth.demimod_required
 @APP.route('/admin/archetypes/')
+@auth.demimod_required
 def edit_archetypes(search_results: Optional[List[Deck]] = None, q: str = '', notq: str = '') -> str:
     if search_results is None:
         search_results = []
     view = EditArchetypes(archs.load_archetypes_deckless(order_by='a.name'), search_results, q, notq)
     return view.page()
 
-@auth.demimod_required
 @APP.route('/admin/archetypes/', methods=['POST'])
+@auth.demimod_required
 def post_archetypes() -> wrappers.Response:
     search_results: List[Deck] = []
     if request.form.get('deck_id') is not None:
@@ -90,8 +90,8 @@ def post_archetypes() -> wrappers.Response:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/archetypes: {f}'.format(f=request.form))
     return edit_archetypes(search_results, request.form.get('q', ''), request.form.get('notq', ''))
 
-@auth.demimod_required
 @APP.route('/admin/rules/')
+@auth.demimod_required
 def edit_rules() -> str:
     cnum = rs.num_classified_decks()
     tnum = ds.num_decks(rs.classified_decks_query())
@@ -99,8 +99,8 @@ def edit_rules() -> str:
     view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks(), rs.overlooked_decks(), rs.load_all_rules(), archetypes, rs.excluded_archetype_info())
     return view.page()
 
-@auth.demimod_required
 @APP.route('/admin/rules/', methods=['POST'])
+@auth.demimod_required
 def post_rules() -> wrappers.Response:
     if request.form.get('archetype_id') is not None:
         rs.add_rule(cast_int(request.form.get('archetype_id')))
@@ -114,8 +114,8 @@ def edit_matches() -> str:
     view = EditMatches(lg.active_league(should_load_decks=True).decks, lg.load_latest_league_matches())
     return view.page()
 
-@auth.admin_required
 @APP.route('/admin/matches/', methods=['POST'])
+@auth.admin_required
 def post_matches() -> wrappers.Response:
     if request.form.get('match_id'):
         match_id = cast_int(request.form.get('match_id'))
@@ -132,17 +132,17 @@ def post_matches() -> wrappers.Response:
         ms.insert_match(dtutil.now(), left_id, left_games, right_id, right_games, None, None, None)
     return redirect(url_for('edit_matches'))
 
-@auth.admin_required
 @APP.route('/admin/news/')
+@auth.admin_required
 def edit_news() -> str:
     new_item = Container({'form_date': dtutil.form_date(dtutil.now(dtutil.WOTC_TZ), dtutil.WOTC_TZ), 'title': '', 'url': ''})
     news_items = [new_item] + ns.load_news()
     view = EditNews(news_items)
     return view.page()
 
-@auth.admin_required
 @fill_form('news_id', 'title', 'url')
 @APP.route('/admin/news/', methods=['POST'])
+@auth.admin_required
 def post_news(news_id: int, title: str = None, url: str = None, date: str = None) -> wrappers.Response:
     if request.form.get('action') == 'delete':
         ns.delete(news_id)
@@ -164,16 +164,16 @@ def rotation_checklist() -> str:
     view = RotationChecklist()
     return view.page()
 
-@auth.admin_required
 @APP.route('/admin/people/notes/')
+@auth.admin_required
 def player_notes() -> str:
     notes = ps.load_notes()
     all_people = ps.load_people(order_by_name=True)
     view = PlayerNotes(notes, all_people)
     return view.page()
 
-@auth.admin_required
 @APP.route('/admin/people/notes/', methods=['POST'])
+@auth.admin_required
 def post_player_note() -> wrappers.Response:
     if not request.form.get('person_id') or not request.form.get('note'):
         raise InvalidArgumentException(f'Did not find any of the expected keys in POST to /admin/people/notes: {request.form}')
@@ -181,15 +181,15 @@ def post_player_note() -> wrappers.Response:
     ps.add_note(creator.id, request.form['person_id'], request.form['note'])
     return redirect(url_for('player_notes'))
 
-@auth.admin_required
 @APP.route('/admin/unlink/')
+@auth.admin_required
 def unlink(num_affected_people: Optional[int] = None, errors: List[str] = None) -> str:
     all_people = ps.load_people(order_by_name=True)
     view = Unlink(all_people, num_affected_people, errors)
     return view.page()
 
-@auth.admin_required
 @APP.route('/admin/unlink/', methods=['POST'])
+@auth.admin_required
 def post_unlink() -> str:
     n, errors = 0, []
     person_id = request.form.get('person_id')
@@ -204,14 +204,14 @@ def post_unlink() -> str:
             errors.append('Discord ID must be an integer.')
     return unlink(n, errors)
 
-@auth.admin_required
 @APP.route('/admin/league/')
+@auth.admin_required
 def edit_league() -> str:
     view = EditLeague(lg.get_status())
     return view.page()
 
-@auth.admin_required
 @APP.route('/admin/league/', methods=['POST'])
+@auth.admin_required
 def post_league() -> str:
     status = lg.Status.CLOSED if request.form.get('action') == 'close' else lg.Status.OPEN
     lg.set_status(status)

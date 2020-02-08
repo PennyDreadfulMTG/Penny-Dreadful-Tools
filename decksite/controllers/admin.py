@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Union, cast
 
 import titlecase
-from flask import redirect, request, session, url_for
+from flask import make_response, redirect, request, session, url_for
 from werkzeug import wrappers
 
 from decksite import APP, auth
@@ -13,7 +13,8 @@ from decksite.data import match as ms
 from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.data import rule as rs
-from decksite.views import (Admin, EditAliases, EditArchetypes, EditLeague, EditMatches, EditNews,
+from decksite.league import RetireForm
+from decksite.views import (Admin, AdminRetire, EditAliases, EditArchetypes, EditLeague, EditMatches, EditNews,
                             EditRules, PlayerNotes, Prizes, RotationChecklist, Unlink)
 from magic.models import Deck
 from shared import dtutil, redis
@@ -108,8 +109,26 @@ def post_rules() -> wrappers.Response:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/rules: {f}'.format(f=request.form))
     return edit_rules()
 
+@APP.route('/admin/retire/')
 @auth.admin_required
+def admin_retire_deck(form: Optional[RetireForm] = None) -> wrappers.Response:
+    if form is None:
+        form = RetireForm(request.form)
+    view = AdminRetire(form)
+    return view.page()
+
+@APP.route('/admin/retire/', methods=['POST'])
+@auth.admin_required
+def do_admin_retire_deck() -> wrappers.Response:
+    form = RetireForm(request.form)
+    if form.validate():
+        d = ds.load_deck(form.entry)
+        lg.retire_deck(d)
+        return redirect(url_for('admin_retire_deck'))
+    return make_response(admin_retire_deck(form))
+
 @APP.route('/admin/matches/')
+@auth.admin_required
 def edit_matches() -> str:
     view = EditMatches(lg.active_league(should_load_decks=True).decks, lg.load_latest_league_matches())
     return view.page()

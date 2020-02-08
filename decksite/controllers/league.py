@@ -68,9 +68,9 @@ def add_report() -> str:
     return report(form)
 
 
-@auth.login_required
 @APP.route('/retire/')
 @fill_cookies('deck_id')
+@auth.login_required
 def retire(form: Optional[RetireForm] = None, deck_id: int = None) -> str:
     if form is None:
         form = RetireForm(request.form, deck_id, session.get('id'))
@@ -78,8 +78,8 @@ def retire(form: Optional[RetireForm] = None, deck_id: int = None) -> str:
     return view.page()
 
 
-@auth.login_required
 @APP.route('/retire/', methods=['POST'])
+@auth.login_required
 def retire_deck() -> wrappers.Response:
     form = RetireForm(request.form, discord_user=session.get('id'))
     if form.validate():

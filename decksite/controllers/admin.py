@@ -14,8 +14,9 @@ from decksite.data import news as ns
 from decksite.data import person as ps
 from decksite.data import rule as rs
 from decksite.league import RetireForm
-from decksite.views import (Admin, AdminRetire, EditAliases, EditArchetypes, EditLeague, EditMatches, EditNews,
-                            EditRules, PlayerNotes, Prizes, RotationChecklist, Unlink)
+from decksite.views import (Admin, AdminRetire, EditAliases, EditArchetypes, EditLeague,
+                            EditMatches, EditNews, EditRules, PlayerNotes, Prizes,
+                            RotationChecklist, Unlink)
 from magic.models import Deck
 from shared import dtutil, redis
 from shared.container import Container
@@ -111,7 +112,7 @@ def post_rules() -> wrappers.Response:
 
 @APP.route('/admin/retire/')
 @auth.admin_required
-def admin_retire_deck(form: Optional[RetireForm] = None) -> wrappers.Response:
+def admin_retire_deck(form: Optional[RetireForm] = None) -> str:
     if form is None:
         form = RetireForm(request.form)
     view = AdminRetire(form)

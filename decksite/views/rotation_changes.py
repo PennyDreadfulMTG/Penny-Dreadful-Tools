@@ -25,6 +25,7 @@ class RotationChanges(View):
         self.show_filters_toggle = True
         self.new_cards_deck_url = url_for('rotation_changes_files', changes_type='new')
         self.rotated_out_cards_deck_url = url_for('rotation_changes_files', changes_type='out')
+        self.show_downloads = True
 
     def page_title(self) -> str:
         if self.speculation:

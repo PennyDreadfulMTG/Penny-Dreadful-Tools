@@ -25,6 +25,6 @@ def card_history(c: Card) -> str:
         s += ':white_check_mark:' if seasons.get(i, False) else ':no_entry_sign:'
         s += '   '
     s = s.strip()
-    s += '\n' + fetcher.decksite_url('/seasons/all/cards/{name}/'.format(
-        name=fetch_tools.escape(c.name, skip_double_slash=True)))
+    s += '\n<' + fetcher.decksite_url('/seasons/all/cards/{name}/'.format(
+        name=fetch_tools.escape(c.name, skip_double_slash=True))) + '>'
     return s

@@ -1,6 +1,8 @@
 import datetime
 import fileinput
 import os
+import shutil
+import subprocess
 from collections import Counter
 from typing import Dict, List, Set
 
@@ -129,3 +131,25 @@ def make_final_list() -> None:
     h = open(os.path.join(configuration.get_str('legality_dir'), f'{setcode}_legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))
     h.close()
+
+    do_push()
+
+def do_push() -> None:
+    gh_repo = os.path.join(configuration.get_str('legality_dir'), 'gh_pages')
+    if not os.path.exists(gh_repo):
+        subprocess.run(['git', 'clone', 'https://github.com/PennyDreadfulMTG/pennydreadfulmtg.github.io.git', gh_repo], check=True)
+    if is_supplemental():
+        setcode = rotation.last_rotation_ex()['mtgo_code']
+        rottype = 'supplemental'
+    else:
+        setcode = rotation.next_rotation_ex()['mtgo_code']
+        rottype = 'rotation'
+    files = ['legal_cards.txt', f'{setcode}_legal_cards.txt']
+    for fn in files:
+        source = os.path.join(configuration.get_str('legality_dir'), fn)
+        dest = os.path.join(gh_repo, fn)
+        shutil.copy(source, dest)
+    os.chdir(gh_repo)
+    subprocess.run(['git', 'add'] + files, check=True)
+    subprocess.run(['git', 'commit', '-m', f'{setcode} {rottype}'], check=True)
+    subprocess.run(['git', 'push'] + files, check=True)

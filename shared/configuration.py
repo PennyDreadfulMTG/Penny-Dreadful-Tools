@@ -133,6 +133,11 @@ def get_float(key: str) -> Optional[float]:
         return val
     if isinstance(val, int):
         return write(key, float(val))
+    if isinstance(val, str):
+        # required so that we can pass int-values in environment variables
+        CONFIG[key] = float(val)
+        return CONFIG[key]
+
     raise fail(key, val, float)
 
 def get_list(key: str) -> List[str]:

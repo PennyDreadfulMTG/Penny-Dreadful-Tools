@@ -1,10 +1,10 @@
 import datetime
 import fileinput
 import os
+import shutil
 import subprocess
 from collections import Counter
 from typing import Dict, List, Set
-import shutil
 
 import ftfy
 

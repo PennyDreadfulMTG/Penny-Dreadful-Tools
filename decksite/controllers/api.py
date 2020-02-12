@@ -203,7 +203,7 @@ def card_api(card: str) -> Response:
 @auth.demimod_required
 @fill_form('deck_id', 'archetype_id')
 def post_reassign(deck_id: int, archetype_id: int) -> Response:
-    archs.assign(deck_id, archetype_id)
+    archs.assign(deck_id, archetype_id, auth.person_id())
     redis.clear(f'decksite:deck:{deck_id}')
     return return_json({'success':True, 'deck_id':deck_id})
 

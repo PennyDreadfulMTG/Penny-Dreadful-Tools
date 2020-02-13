@@ -1,6 +1,6 @@
 from decksite import league
 from magic import multiverse
-from shared import redis
+from shared import dtutil, redis
 
 from . import insert_seasons, reprime_cache
 
@@ -14,4 +14,7 @@ def ad_hoc() -> None:
     insert_seasons.run() # Make sure Season table is up to date
     if redis.REDIS: # Clear the redis cache
         redis.REDIS.flushdb() # type: ignore[no-untyped-call]
-    league.set_status(league.Status.OPEN)
+    league_end = league.active_league().end_date
+    diff = league_end - dtutil.now()
+    if diff.days > 0:
+        league.set_status(league.Status.OPEN)

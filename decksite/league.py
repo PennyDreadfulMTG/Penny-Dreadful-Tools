@@ -452,5 +452,6 @@ def get_status() -> Status:
     return Status.CLOSED if is_locked else Status.OPEN
 
 def set_status(status: Status) -> None:
-    sql = 'UPDATE competition SET is_locked = %s WHERE id IN ({active_competition_id_query})'.format(active_competition_id_query=active_competition_id_query())
-    db().execute(sql, [1 if status == Status.CLOSED else 0])
+    current = active_league()
+    sql = 'UPDATE competition SET is_locked = %s WHERE id = %s'
+    db().execute(sql, [1 if status == Status.CLOSED else 0, current.id])

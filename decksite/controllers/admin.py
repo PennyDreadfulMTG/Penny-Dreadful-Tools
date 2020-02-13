@@ -74,7 +74,7 @@ def post_archetypes() -> wrappers.Response:
         for deck_id in request.form.getlist('deck_id'):
             archetype_id = archetype_ids.pop(0)
             if archetype_id:
-                archs.assign(deck_id, archetype_id)
+                archs.assign(deck_id, archetype_id, auth.person_id())
                 redis.clear(f'decksite:deck:{deck_id}')
     elif request.form.get('q') is not None and request.form.get('notq') is not None:
         search_results = ds.load_decks_by_cards(cast(str, request.form.get('q')).splitlines(), cast(str, request.form.get('notq')).splitlines())

@@ -105,7 +105,7 @@ def guess_archetypes(ds: List[deck.Deck]) -> None:
     deck.calculate_similar_decks(ds)
     for d in ds:
         if d.similar_decks:
-            archetype.assign(d.id, d.similar_decks[0].archetype_id, False)
+            archetype.assign(d.id, d.similar_decks[0].archetype_id, None, False)
 
 def rankings(soup: BeautifulSoup) -> List[str]:
     rows = soup.find(text='Current Standings').find_parent('table').find_all('tr')

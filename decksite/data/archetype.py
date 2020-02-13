@@ -82,11 +82,14 @@ def add(name: str, parent: int) -> None:
     sql += '({ancestor}, {descendant}, {depth})'.format(ancestor=archetype_id, descendant=archetype_id, depth=0)
     db().execute(sql)
 
-def assign(deck_id: int, archetype_id: int, reviewed: bool = True, similarity: Optional[int] = None) -> None:
+def assign(deck_id: int, archetype_id: int, person_id: Optional[int], reviewed: bool = True, similarity: Optional[int] = None) -> None:
+    db().begin('assign_archetype')
+    db().execute('INSERT INTO deck_archetype_change (changed_date, deck_id, archetype_id, person_id) VALUES (UNIX_TIMESTAMP(NOW()), %s, %s, %s)', [deck_id, archetype_id, person_id])
     and_clause = '' if reviewed else 'AND reviewed is FALSE'
     db().execute(f'UPDATE deck SET reviewed = %s, archetype_id = %s WHERE id = %s {and_clause}', [reviewed, archetype_id, deck_id])
     if not reviewed and similarity is not None:
         db().execute(f'UPDATE deck_cache SET similarity = %s WHERE deck_id = %s', [similarity, deck_id])
+    db().commit('assign_archetype')
 
 def move(archetype_id: int, parent_id: int) -> None:
     db().begin('move_archetype')

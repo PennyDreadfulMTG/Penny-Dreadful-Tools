@@ -124,7 +124,7 @@ def legal_cards(force: bool = False, season: str = None) -> List[str]:
         url = 'legal_cards.txt'
     else:
         url = '{season}_legal_cards.txt'.format(season=season)
-    encoding = 'utf-8' if season != 'EMN' else 'latin-1' # EMN was encoded weirdly.
+    encoding = 'utf-8'
     cached_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'legal_cards')
     if os.path.exists(os.path.join(cached_path, url)):
         h = open(os.path.join(cached_path, url), encoding=encoding)
@@ -132,7 +132,7 @@ def legal_cards(force: bool = False, season: str = None) -> List[str]:
         h.close()
         return [l.strip() for l in legal]
 
-    url = 'http://pdmtgo.com/' + url
+    url = 'https://pennydreadfulmtg.github.io/' + url
     legal_txt = fetch_tools.fetch(url, encoding, force=force)
     if season is not None and configuration.get_bool('save_historic_legal_lists'):
         with open(os.path.join(cached_path, f'{season}_legal_cards.txt'), 'w', encoding=encoding) as h:

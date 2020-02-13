@@ -153,3 +153,7 @@ def do_push() -> None:
     subprocess.run(['git', 'add'] + files, check=True)
     subprocess.run(['git', 'commit', '-m', f'{setcode} {rottype}'], check=True)
     subprocess.run(['git', 'push'] + files, check=True)
+    ds = os.path.expanduser('~/decksite/')
+    if os.path.exists(ds):
+        os.chdir(ds)
+        subprocess.run(['python3', 'maintenance', 'post_rotation'], check=True)

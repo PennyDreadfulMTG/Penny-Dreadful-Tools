@@ -13,7 +13,7 @@ def ad_hoc() -> None:
     reprime_cache.run() # Update deck legalities
     insert_seasons.run() # Make sure Season table is up to date
     if redis.REDIS: # Clear the redis cache
-        redis.REDIS.flushdb() # type: ignore[no-untyped-call]
+        redis.REDIS.flushdb()
     league_end = league.active_league().end_date
     diff = league_end - dtutil.now()
     if diff.days > 0:

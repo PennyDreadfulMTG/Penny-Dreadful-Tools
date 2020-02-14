@@ -1,6 +1,6 @@
 import os
 import sys
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 from bs4 import BeautifulSoup
 from bs4.element import Tag
@@ -94,22 +94,3 @@ def get_article_archive() -> List[Tuple[Tag, str]]:
         html = fetch_tools.fetch('http://magic.wizards.com/en/articles/archive/')
     soup = BeautifulSoup(html, 'html.parser')
     return [parse_article_item_extended(a) for a in soup.find_all('div', class_='article-item-extended')]
-
-#pylint: disable=R0913
-def post_discord_webhook(webhook_id: str,
-                         webhook_token: str,
-                         message: str = None,
-                         username: str = None,
-                         avatar_url: str = None,
-                         embeds: List[Dict[str, Any]] = None
-                        ) -> bool:
-    if webhook_id is None or webhook_token is None:
-        return False
-    url = 'https://discordapp.com/api/webhooks/{id}/{token}'.format(id=webhook_id, token=webhook_token)
-    fetch_tools.post(url, json_data={
-        'content': message,
-        'username': username,
-        'avatar_url': avatar_url,
-        'embeds': embeds,
-        })
-    return True

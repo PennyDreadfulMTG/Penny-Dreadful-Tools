@@ -11,10 +11,10 @@ from werkzeug.datastructures import ImmutableMultiDict
 from decksite.data import competition, deck, match, person, query
 from decksite.data.form import Form
 from decksite.database import db
-from magic import card, decklist, fetcher, legality, rotation
+from magic import card, decklist, legality, rotation
 from magic.decklist import DecklistType
 from magic.models import Deck
-from shared import configuration, dtutil, guarantee, redis
+from shared import configuration, dtutil, fetch_tools, guarantee, redis
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException, LockNotAcquiredException
@@ -275,7 +275,7 @@ def report(form: ReportForm) -> bool:
         match.insert_match(dtutil.now(), form.entry, form.entry_games, form.opponent, form.opponent_games, None, None, mtgo_match_id)
         if not pdbot:
             if configuration.get('league_webhook_id') and configuration.get('league_webhook_token'):
-                fetcher.post_discord_webhook(
+                fetch_tools.post_discord_webhook(
                     configuration.get_str('league_webhook_id'),
                     configuration.get_str('league_webhook_token'),
                     '{entry} reported {f.entry_games}-{f.opponent_games} vs {opponent}'.format(f=form, entry=entry_deck.person, opponent=opponent_deck.person)

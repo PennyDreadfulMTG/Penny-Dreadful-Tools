@@ -1,6 +1,7 @@
 import datetime
 import fileinput
 import os
+import pathlib
 import shutil
 import subprocess
 from collections import Counter
@@ -10,7 +11,7 @@ import ftfy
 
 from magic import fetcher, rotation
 from price_grabber.parser import PriceListType, parse_cardhoarder_prices, parse_mtgotraders_prices
-from shared import configuration, dtutil, fetch_tools, text
+from shared import configuration, dtutil, fetch_tools, repo, text
 
 BLACKLIST: Set[str] = set()
 WHITELIST: Set[str] = set()
@@ -152,8 +153,31 @@ def do_push() -> None:
     os.chdir(gh_repo)
     subprocess.run(['git', 'add'] + files, check=True)
     subprocess.run(['git', 'commit', '-m', f'{setcode} {rottype}'], check=True)
-    subprocess.run(['git', 'push'] + files, check=True)
+    subprocess.run(['git', 'push'], check=True)
+    checklist = f"""{setcode} {rottype} checklist
+
+https://pennydreadfulmagic.com/admin/rotation/
+
+- [ ] upload legal_cards.txt to S3
+- [ ] upload {setcode}_legal_cards.txt to S3
+- [ ] restart discordbot
+- [ ] ping scryfall
+- [ ] email mtggoldfish
+- [ ] ping tappedout
+"""
     ds = os.path.expanduser('~/decksite/')
     if os.path.exists(ds):
         os.chdir(ds)
         subprocess.run(['python3', 'maintenance', 'post_rotation'], check=True)
+    else:
+        checklist += '- [ ] run post_rotation\n'
+    try:
+        fetch_tools.post('https://gatherling.com/util/updateDefaultFormats.php')
+    except fetch_tools.FetchException:
+        checklist += '- [ ] Update Gatherling legal cards list'
+    srv = pathlib.Path('/etc/uwsgi/vassals/decksite.ini')
+    if srv.exists():
+        srv.touch()
+    else:
+        checklist += '- [ ] touch /etc/uwsgi/vassals/decksite.ini\n'
+    repo.create_issue(checklist, 'rotation script', 'rotation')

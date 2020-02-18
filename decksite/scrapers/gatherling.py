@@ -104,7 +104,7 @@ def add_decks(dt: datetime.datetime, competition_id: int, final: Dict[str, int],
 def guess_archetypes(ds: List[deck.Deck]) -> None:
     deck.calculate_similar_decks(ds)
     for d in ds:
-        if d.similar_decks:
+        if d.similar_decks and d.similar_decks[0].archetype_id is not None:
             archetype.assign(d.id, d.similar_decks[0].archetype_id, None, False)
 
 def rankings(soup: BeautifulSoup) -> List[str]:

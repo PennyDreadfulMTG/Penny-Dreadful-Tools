@@ -1,7 +1,7 @@
 import json
 import os
 import urllib.request
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 import aiohttp
 import requests
@@ -129,3 +129,23 @@ def escape(str_input: str, skip_double_slash: bool = False) -> str:
     if skip_double_slash:
         s = s.replace('-split-', '//')
     return s
+
+#pylint: disable=R0913
+def post_discord_webhook(webhook_id: str,
+                         webhook_token: str,
+                         message: str = None,
+                         username: str = None,
+                         avatar_url: str = None,
+                         embeds: List[Dict[str, Any]] = None
+                         ) -> bool:
+    if webhook_id is None or webhook_token is None:
+        return False
+    url = 'https://discordapp.com/api/webhooks/{id}/{token}'.format(
+        id=webhook_id, token=webhook_token)
+    post(url, json_data={
+        'content': message,
+        'username': username,
+        'avatar_url': avatar_url,
+        'embeds': embeds,
+    })
+    return True

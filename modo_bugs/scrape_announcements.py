@@ -43,7 +43,7 @@ def parse_build_notes(h: Tag) -> None:
         'url': fetcher.find_announcements()[0],
     }
     if configuration.get_optional_str('bugs_webhook_id') is not None:
-        fetcher.post_discord_webhook(
+        fetch_tools.post_discord_webhook(
             configuration.get_str('bugs_webhook_id'),
             configuration.get_str('bugs_webhook_token'),
             embeds=[embed],

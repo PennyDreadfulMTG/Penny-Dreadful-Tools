@@ -76,7 +76,7 @@ class SignUpForm(Form):
             self.parse_decklist()
             if self.cards is not None:
                 self.vivify_deck()
-            if self.deck is not None:
+            if self.deck:
                 self.check_deck_legality()
 
     def parse_decklist(self) -> None:
@@ -97,7 +97,6 @@ class SignUpForm(Form):
             self.deck = decklist.vivify(self.cards)
         except InvalidDataException as e:
             self.errors['decklist'] = str(e)
-            self.deck = None
 
     def check_deck_legality(self) -> None:
         errors: Dict[str, Dict[str, Set[str]]] = {}

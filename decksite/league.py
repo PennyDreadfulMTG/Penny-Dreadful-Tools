@@ -97,6 +97,7 @@ class SignUpForm(Form):
             self.deck = decklist.vivify(self.cards)
         except InvalidDataException as e:
             self.errors['decklist'] = str(e)
+            self.deck = None
 
     def check_deck_legality(self) -> None:
         errors: Dict[str, Dict[str, Set[str]]] = {}

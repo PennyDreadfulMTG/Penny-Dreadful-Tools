@@ -4,9 +4,7 @@ import re
 from copy import copy
 from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple
 
-from discord import File
-from discord.channel import TextChannel
-from discord.client import Client
+from discord import Client, File, TextChannel, User
 from discord.ext import commands
 from discord.member import Member
 from discord.message import Message
@@ -34,7 +32,8 @@ async def respond_to_card_names(message: Message, client: Client) -> None:
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
     if 'gatherer.wizards.com' in message.content.lower():
         return
-    queries = parse_queries(message.content)
+    compat = client.get_user(268547439714238465) in message.channel.members
+    queries = parse_queries(message.content, compat)
     if len(queries) > 0:
         await message.channel.trigger_typing()
         results = results_from_queries(queries)
@@ -51,9 +50,12 @@ async def handle_command(message: Message, client: commands.Bot) -> None:
     ctx = await client.get_context(message, cls=MtgContext)
     await client.invoke(ctx)
 
-def parse_queries(content: str) -> List[str]:
+def parse_queries(content: str, scryfall_compatability_mode: bool) -> List[str]:
     to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, re.DOTALL) # Ignore angle brackets inside backticks. It's annoying in #code.
-    queries = re.findall(r'\[?\[([^\]]*)\]\]?', to_scan)
+    if scryfall_compatability_mode:
+        queries = re.findall(r'(?<!\[)\[([^\]]*)\](?!\])', to_scan) # match [card] but not [[card]]
+    else:
+        queries = re.findall(r'\[?\[([^\]]*)\]\]?', to_scan)
     return [card.canonicalize(query) for query in queries if len(query) > 2]
 
 def cards_from_names_with_mode(cards: Sequence[Optional[str]], mode: str, preferred_printing: str = None) -> List[Card]:

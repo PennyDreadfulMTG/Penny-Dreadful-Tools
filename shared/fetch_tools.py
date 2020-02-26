@@ -30,7 +30,7 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
         if character_encoding is not None:
             response.encoding = character_encoding
         if response.status_code in [500, 502, 503]:
-            raise FetchException(f'Server returned a {response.status_code}')
+            raise FetchException(f'Server returned a {response.status_code} from {url}')
         p = perf.start()
         t = response.text
         took = round(perf.took(p), 2)

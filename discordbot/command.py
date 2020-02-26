@@ -4,7 +4,7 @@ import re
 from copy import copy
 from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple
 
-from discord import Client, File, TextChannel, User
+from discord import Client, File, TextChannel
 from discord.ext import commands
 from discord.member import Member
 from discord.message import Message

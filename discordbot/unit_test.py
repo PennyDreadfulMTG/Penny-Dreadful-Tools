@@ -30,7 +30,7 @@ def test_noimageavailable() -> None:
 
 # Search for a single card via full name,
 def test_solo_query() -> None:
-    names = command.parse_queries('[Gilder Bairn]')
+    names = command.parse_queries('[Gilder Bairn]', False)
     assert len(names) == 1
     assert names[0] == 'gilder bairn'
     results = command.results_from_queries(names)
@@ -38,7 +38,7 @@ def test_solo_query() -> None:
 
 # Two cards, via full name
 def test_double_query() -> None:
-    names = command.parse_queries('[Mother of Runes] [Ghostfire]')
+    names = command.parse_queries('[Mother of Runes] [Ghostfire]', False)
     assert len(names) == 2
     results = command.results_from_queries(names)
     assert len(results) == 2
@@ -46,13 +46,13 @@ def test_double_query() -> None:
 # The following two sets assume that Ertai is a long dead character, and is getting no new cards.
 # If wizards does an Invasion block throwback in some supplemental product, they may start failing.
 def test_legend_query() -> None:
-    names = command.parse_queries('[Ertai]')
+    names = command.parse_queries('[Ertai]', False)
     assert len(names) == 1
     results = command.results_from_queries(names)[0][0]
     assert len(results.get_ambiguous_matches()) == 2
 
 def test_partial_query() -> None:
-    names = command.parse_queries("[Ertai's]")
+    names = command.parse_queries("[Ertai's]", False)
     assert len(names) == 1
     results = command.results_from_queries(names)[0][0]
     assert len(results.get_ambiguous_matches()) == 3
@@ -84,7 +84,7 @@ def test_split_cards() -> None:
     cards = oracle.load_cards(['Armed // Dangerous'])
     assert len(cards) == 1
     assert image_fetcher.download_image(cards) is not None
-    names = command.parse_queries('[Toil // Trouble]')
+    names = command.parse_queries('[Toil // Trouble]', False)
     assert len(names) == 1
     results = command.results_from_queries(names)
     assert len(results) == 1

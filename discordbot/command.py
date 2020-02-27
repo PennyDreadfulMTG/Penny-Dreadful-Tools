@@ -4,7 +4,7 @@ import re
 from copy import copy
 from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple
 
-from discord import Client, File, TextChannel
+from discord import Client, ChannelType, File, TextChannel
 from discord.ext import commands
 from discord.member import Member
 from discord.message import Message
@@ -32,7 +32,7 @@ async def respond_to_card_names(message: Message, client: Client) -> None:
     # Don't parse messages with Gatherer URLs because they use square brackets in the querystring.
     if 'gatherer.wizards.com' in message.content.lower():
         return
-    compat = client.get_user(268547439714238465) in message.channel.members
+    compat = message.channel.type == ChannelType.text and client.get_user(268547439714238465) in message.channel.members
     queries = parse_queries(message.content, compat)
     if len(queries) > 0:
         await message.channel.trigger_typing()

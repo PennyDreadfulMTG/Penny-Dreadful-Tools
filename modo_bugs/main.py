@@ -33,7 +33,11 @@ def run() -> None:
         verification.main()
     if 'commit' in args:
         subprocess.run(['git', 'add', '.'], check=True)
-        subprocess.run(['git', 'commit', '-m', 'Updated'], check=True)
+        changestr = '\n'.join(changes)
+        try:
+            subprocess.run(['git', 'commit', '-m', f'Updated\n\n{changestr}'], check=True)
+        except subprocess.CalledProcessError:
+            return
         user = configuration.get('github_user')
         pword = configuration.get('github_password')
         subprocess.run(['git', 'push', f'https://{user}:{pword}@github.com/PennyDreadfulMTG/modo-bugs.git'], check=True)

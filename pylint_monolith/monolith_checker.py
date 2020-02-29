@@ -11,6 +11,7 @@ ACCEPTABLE_IMPORTS: Dict[str, List[str]] = {
     'analysis': ['decksite', 'logsite', 'magic', 'shared'],
     'decksite': ['decksite', 'magic', 'shared', 'shared_web'],
     'discordbot': ['discordbot', 'magic', 'shared'],
+    'discordsite': ['shared', 'shared_web'],
     'github_tools': ['github_tools', 'shared', 'shared_web'],
     'logsite': ['logsite', 'shared', 'shared_web'],
     'magic': ['magic', 'shared'],

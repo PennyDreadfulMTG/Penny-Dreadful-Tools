@@ -327,6 +327,17 @@ class Bot(commands.Bot):
                 timer = int((until_rotation - datetime.timedelta(7)).total_seconds())
             await asyncio.sleep(timer)
 
+    @background_task
+    async def background_task_reboot(self) -> None:
+        do_reboot_key = 'discordbot:do_reboot'
+        if redis.get_bool(do_reboot_key):
+            redis.clear(do_reboot_key)
+        while self.is_ready():
+            if redis.get_bool(do_reboot_key):
+                print('Got request to reboot from redis')
+                await self.logout()
+            await asyncio.sleep(60)
+
 def init() -> None:
     client = Bot()
     client.init()

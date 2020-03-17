@@ -4,7 +4,7 @@ bs4==0.0.1
 cachecontrol[filecache]==0.12.6
 cachelib==0.1
 changelogs==0.14.0
-coverage==5.0.3
+coverage==5.0.4
 discord.py[voice]==1.3.2
 feedparser==5.2.1
 flask==1.1.1

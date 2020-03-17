@@ -2,6 +2,7 @@ import hashlib
 
 from decksite.data import deck
 from decksite.database import db
+from shared import redis
 
 
 def run() -> None:
@@ -10,4 +11,7 @@ def run() -> None:
         # Recalculate all hashes, in case they've changed.  Or we've changed the default sort order.
         cards = {'maindeck': d['maindeck'], 'sideboard': d['sideboard']}
         deckhash = hashlib.sha1(repr(cards).encode('utf-8')).hexdigest()
-        db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [deckhash, d['id']])
+        if d['decklist_hash'] != deckhash:
+            print(f"{d.id}: hash was {d['decklist_hash']} now {deckhash}")
+            db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [deckhash, d['id']])
+            redis.clear(f'decksite:deck:{d.id}')

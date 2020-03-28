@@ -67,6 +67,10 @@ def get_dt_and_series(name: str, day_s: str) -> Tuple[datetime.datetime, str]:
         competition_series = 'Penny Dreadful FNM - EU'
         start_time = '13:30'
         dt = get_dt(day_s, start_time, dtutil.GATHERLING_TZ)
+    elif 'Penny Dreadful FNM Mar 20' in name:
+        competition_series = 'Penny Dreadful FNM - EU' # Dubious but this was a one-off competition let's not fret.
+        start_time = '20:00'
+        dt = get_dt(day_s, start_time, dtutil.GATHERLING_TZ)
     else:
         if 'Saturday' in name or 'Sunday' in name or 'PDS' in name:
             start_time = '13:30'

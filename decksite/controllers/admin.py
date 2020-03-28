@@ -46,8 +46,8 @@ def edit_aliases() -> str:
     view = EditAliases(aliases, all_people)
     return view.page()
 
-@fill_form('person_id')
 @APP.route('/admin/aliases/', methods=['POST'])
+@fill_form('person_id', 'alias')
 @auth.admin_required
 def post_aliases(person_id: int = None, alias: str = None) -> Union[str, wrappers.Response]:
     if person_id is not None and alias is not None and len(alias) > 0:
@@ -160,8 +160,8 @@ def edit_news() -> str:
     view = EditNews(news_items)
     return view.page()
 
-@fill_form('news_id', 'title', 'url')
 @APP.route('/admin/news/', methods=['POST'])
+@fill_form('news_id', 'title', 'url')
 @auth.admin_required
 def post_news(news_id: int, title: str = None, url: str = None, date: str = None) -> wrappers.Response:
     if request.form.get('action') == 'delete':

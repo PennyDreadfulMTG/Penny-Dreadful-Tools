@@ -56,11 +56,11 @@ def post_aliases(person_id: int = None, alias: str = None) -> Union[str, wrapper
 
 @APP.route('/admin/archetypes/')
 @auth.demimod_required
-def edit_archetypes(search_results: Optional[List[Deck]] = None, q: str = '', notq: str = '') -> str:
+def edit_archetypes(search_results: Optional[List[Deck]] = None, q: str = '', notq: str = '') -> wrappers.Response:
     if search_results is None:
         search_results = []
     view = EditArchetypes(archs.load_archetypes_deckless(order_by='a.name'), search_results, q, notq)
-    return view.page()
+    return view.response()
 
 @APP.route('/admin/archetypes/', methods=['POST'])
 @auth.demimod_required
@@ -94,12 +94,12 @@ def post_archetypes() -> wrappers.Response:
 
 @APP.route('/admin/rules/')
 @auth.demimod_required
-def edit_rules() -> str:
+def edit_rules() -> wrappers.Response:
     cnum = rs.num_classified_decks()
     tnum = ds.num_decks(rs.classified_decks_query())
     archetypes = archs.load_archetypes_deckless(order_by='a.name')
     view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks(), rs.overlooked_decks(), rs.load_all_rules(), archetypes, rs.excluded_archetype_info())
-    return view.page()
+    return view.response()
 
 @APP.route('/admin/rules/', methods=['POST'])
 @auth.demimod_required

@@ -44,7 +44,7 @@ class TestContext(MtgContext):
 
 async def card(param: str) -> Card:
     ctx = TestContext()
-    return await cast(Card, CardConverter.convert(ctx, param))
+    return cast(Card, await CardConverter.convert(ctx, param))
 
 
 def get_params() -> List[Tuple]:

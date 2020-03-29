@@ -9,8 +9,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union, cast
 from urllib import parse
 
 import feedparser
-from mypy_extensions import TypedDict
 import pytz
+from mypy_extensions import TypedDict
 
 from magic.card_description import CardDescription
 from magic.models import Card, Deck

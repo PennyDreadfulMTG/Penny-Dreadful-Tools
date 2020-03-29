@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union, cast
 from urllib import parse
 
 import feedparser
+from mypy_extensions import TypedDict
 import pytz
 
 from magic.card_description import CardDescription
@@ -269,7 +270,27 @@ def times_from_location(q: str, twentyfour: bool) -> Dict[str, List[str]]:
         raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}')
     return {current_time(timezone, twentyfour): [info['results'][0]['formatted_address']]}
 
-def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
+WISDateType = TypedDict('WISDateType', {
+    'exact': str,
+    'rough': str,
+})
+
+WISSetInfoType = TypedDict('WISSetInfoType', {
+    'name': str,
+    'code': str,
+    'codename': str,
+    'mtgo_code': str,
+    'symbol': str,
+    'enterDate': WISDateType,
+    'exitDate': WISDateType,
+    })
+
+WISSchemaType = TypedDict('WISSchemaType', {
+    'deprecated': bool,
+    'sets': List[WISSetInfoType],
+})
+
+def whatsinstandard() -> WISSchemaType:
     cached = redis.get_container('magic:fetcher:whatisinstandard_6')
     if cached is not None:
         return cached

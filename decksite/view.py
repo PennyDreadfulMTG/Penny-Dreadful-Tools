@@ -88,7 +88,7 @@ class View(BaseView):
             'legal_cards_url': None
         }]
         num = 1
-        next_rotation_set_code = rotation.next_rotation_ex()['code']
+        next_rotation_set_code = rotation.next_rotation_ex().code
         for code in rotation.SEASONS:
             if code == next_rotation_set_code:
                 break

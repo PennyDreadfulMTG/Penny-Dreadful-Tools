@@ -17,6 +17,8 @@ class Seasons(View):
             season.update(season_info)
             season_stats = stats.get(cast(int, season['num']), {})
             season.update(season_stats)
+            if season.get('start_date') is None:
+                continue
             for k, v in season.items():
                 if isinstance(v, int):
                     season[k] = '{:,}'.format(v) # Human-friendly number formatting like "29,000".

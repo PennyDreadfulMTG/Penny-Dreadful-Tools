@@ -2,8 +2,8 @@ import datetime
 from typing import Any, Dict, List, Optional, Set, Union
 
 from magic import card, database, fetcher, mana, rotation
+from magic.abc import CardDescription
 from magic.card import TableDescription
-from magic.card_description import CardDescription
 from magic.database import create_table_def, db
 from magic.models import Card
 from magic.whoosh_write import WhooshWriter

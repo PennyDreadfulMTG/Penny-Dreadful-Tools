@@ -88,7 +88,7 @@ class View(BaseView):
             'legal_cards_url': None
         }]
         num = 1
-        next_rotation_set_code = rotation.next_rotation_ex()['code']
+        next_rotation_set_code = rotation.next_rotation_ex().code
         for code in rotation.SEASONS:
             if code == next_rotation_set_code:
                 break
@@ -399,7 +399,7 @@ def seasonized_url(season_id: Union[int, str]) -> str:
     try:
         return url_for(endpoint, **args)
     except BuildError:
-        return url_for(request.endpoint)
+        return url_for(cast(str, request.endpoint))
 
 def add_season_num(f: str) -> str:
     if not 'Penny Dreadful ' in f:

@@ -1,7 +1,7 @@
 import subprocess
 from typing import Dict, List, Optional, Union
 
-from flask import current_app, url_for
+from flask import current_app, make_response, url_for, wrappers
 
 from . import template
 
@@ -19,6 +19,9 @@ class BaseView:
 
     def page(self) -> str:
         return template.render_name('page', self)
+
+    def response(self) -> wrappers.Response:
+        return make_response(self.page())
 
     def prepare(self) -> None:
         pass

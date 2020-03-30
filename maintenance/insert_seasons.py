@@ -13,6 +13,6 @@ def run() -> None:
             except DoesNotExistException as e:
                 print(f'Unable to get info for set with code `{setcode}` as it does not exist in rotatation data. Not inserting. {e}')
                 continue
-            if info['enter_date_dt'] < dtutil.now():
+            if info.enter_date_dt < dtutil.now():
                 print('Inserting {} into season table.'.format(setcode))
-                db().execute('INSERT INTO season (`number`, code, start_date) VALUES (%s, %s, %s);', [season, setcode, dtutil.dt2ts(info['enter_date_dt'])])
+                db().execute('INSERT INTO season (`number`, code, start_date) VALUES (%s, %s, %s);', [season, setcode, dtutil.dt2ts(info.enter_date_dt)])

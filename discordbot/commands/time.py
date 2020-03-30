@@ -13,7 +13,8 @@ from shared.pd_exception import NotConfiguredException, TooFewItemsException
 async def time(ctx: MtgContext, *, args: str) -> None:
     """Current time in location."""
     if len(args) == 0:
-        return await ctx.send('{author}: No location provided. Please type !time followed by the location you want the time for.'.format(author=ctx.author.mention))
+        await ctx.send('{author}: No location provided. Please type !time followed by the location you want the time for.'.format(author=ctx.author.mention))
+        return
     try:
         twentyfour = configuration.get_bool(f'{guild_or_channel_id(ctx.channel)}.use_24h') or configuration.get_bool(f'{ctx.channel.id}.use_24h')
         ts = fetcher.time(args, twentyfour)

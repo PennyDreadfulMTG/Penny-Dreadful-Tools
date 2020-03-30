@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 import time
-from typing import List
+from typing import List, Optional
 
 from plumbum import FG, local
 from plumbum.commands.processes import ProcessExecutionError
@@ -55,6 +55,8 @@ def run_dangerously() -> None:
         mypy(args)
     elif cmd == 'mypy-strict':
         mypy(args, strict=True)
+    elif cmd == 'typeshed':
+        mypy(args, typeshedding=True)
     elif cmd == 'jslint':
         jslint()
     elif cmd == 'jsfix':
@@ -111,7 +113,7 @@ def lint(argv: List[str]) -> None:
     if linter.linter.msg_status:
         raise TestFailedException(linter.linter.msg_status)
 
-def mypy(argv: List[str], strict: bool = False) -> None:
+def mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -> None:
     """
     Invoke mypy with our preferred options.
     Strict Mode enables additional checks that are currently failing (that we plan on integrating once they pass)
@@ -133,6 +135,11 @@ def mypy(argv: List[str], strict: bool = False) -> None:
             # '--warn-return-any',        # Functions shouldn't return Any if we're expecting something better
             # '--disallow-any-unimported', # Catch import errors
             ])
+    if typeshedding:
+        args.extend([
+            '--warn-return-any',
+            '--custom-typeshed', '../typeshed',
+        ])
     args.extend(argv or ['.']) # Invoke on the entire project.
     # pylint: disable=import-outside-toplevel
     from mypy import api
@@ -315,7 +322,7 @@ def release(args: List[str]) -> None:
     safe_push(args)
     pull_request(args)
 
-def find_files(needle: str = '', file_extension: str = '', exclude: List[str] = None)  -> List[str]:
+def find_files(needle: str = '', file_extension: str = '', exclude: Optional[List[str]] = None)  -> List[str]:
     paths = subprocess.check_output(['git', 'ls-files']).strip().decode().split('\n')
     paths = [p for p in paths if 'logsite_migrations' not in p]
     if file_extension:

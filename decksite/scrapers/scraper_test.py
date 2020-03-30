@@ -1,7 +1,7 @@
 import pytest
 import vcr
 
-from decksite.main import APP
+from decksite import APP
 from decksite.scrapers import gatherling, mtggoldfish, tappedout
 from shared import configuration
 
@@ -20,7 +20,7 @@ def test_tappedout() -> None:
     APP.config['SERVER_NAME'] = configuration.server_name()
     with APP.app_context(): # type: ignore
         # pylint: disable=no-member
-        tappedout.scrape() # type: ignore
+        tappedout.ad_hoc()
     APP.config['SERVER_NAME'] = prev
 
 @pytest.mark.xfail(reason='Tappedout temporarily disabled due to rate limiting.')

@@ -39,7 +39,7 @@ class SetInfo():
     enter_date_dt: datetime.datetime
 
     @classmethod
-    def parse(cls, json: fetcher.WISSetInfoType) -> 'SetInfo':
+    def parse(cls, json: 'fetcher.WISSetInfoType') -> 'SetInfo':
         if json['code'] == 'DOM': # !quality
             json['mtgo_code'] = 'DAR'
         else:

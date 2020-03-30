@@ -69,7 +69,7 @@ def card_price_string(card: Card, short: bool = False) -> str:
         try:
             if float(p['low']) <= 0.05:
                 s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))
-                if float(p['low']) <= 0.01 and not short:
+                if float(p['low']) <= 0.02 and not short:
                     s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(float(p['week']) * 100.0), month=round(float(p['month']) * 100.0), season=round(float(p['season']) * 100.0))
                 s += ')'
             age = dtutil.dt2ts(dtutil.now()) - p['time']

@@ -13,7 +13,7 @@ K_FACTOR = 12
 
 def adjustment(elo1: int, elo2: int) -> int:
     e = expected(elo1, elo2)
-    return round(K_FACTOR * (1 - e))
+    return max(round(K_FACTOR * (1 - e)), 1)
 
 def expected(elo1: int, elo2: int) -> float:
     return 1.0 / (1 + 10**((elo2 - elo1) / ELO_WIDTH))

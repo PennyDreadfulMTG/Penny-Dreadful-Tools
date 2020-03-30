@@ -13,7 +13,7 @@ K_FACTOR = 12
 
 def adjustment(elo1: int, elo2: int) -> int:
     e = expected(elo1, elo2)
-    return round(K_FACTOR * (1 - e))
+    return max(round(K_FACTOR * (1 - e)), 1)
 
 def expected(elo1: int, elo2: int) -> float:
     return 1.0 / (1 + 10**((elo2 - elo1) / ELO_WIDTH))
@@ -25,5 +25,9 @@ def adjust_elo(winning_deck_id: int, losing_deck_id: int) -> None:
     loser = guarantee.exactly_one(person.load_people('p.id IN (SELECT person_id FROM deck WHERE id = {losing_deck_id})'.format(losing_deck_id=sqlescape(losing_deck_id))))
     adj = adjustment(winner.elo or STARTING_ELO, loser.elo or STARTING_ELO)
     sql = 'UPDATE person SET elo = IFNULL(elo, {starting_elo}) + %s WHERE id = %s'.format(starting_elo=sqlescape(STARTING_ELO))
+    db().begin('per-match-elo-adjustment')
+    print('Elo (winner) ', adj, winner.id, winner.mtgo_username, winner.elo, sql)
+    print('Elo (loser) ', -adj, loser.id, loser.mtgo_username, loser.elo, sql)
     db().execute(sql, [adj, winner.id])
     db().execute(sql, [-adj, loser.id])
+    db().commit('per-match-elo-adjustment')

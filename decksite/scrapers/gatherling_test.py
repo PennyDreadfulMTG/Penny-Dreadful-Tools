@@ -71,7 +71,7 @@ def test_rankings() -> None:
     assert rankings[14] == 'pumpkinwavy'
     assert rankings[15] == 'Yuin'
     assert rankings[16] == 'crazybaloth'
-    assert rankings[17] == 'MrSad'
+    assert rankings[17] == 'Cody_'
     assert rankings[18] == 'insan3_'
     assert rankings[19] == 'Renner'
     assert rankings[20] == 'Daesik'

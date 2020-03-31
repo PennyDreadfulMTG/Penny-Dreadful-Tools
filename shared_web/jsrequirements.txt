@@ -1,9 +1,9 @@
+Chart.js
 jquery==1.2.3
 jquery.hoverIntent
 jquery.tablesorter
 jquery.tablesorter:jquery.tablesorter.widgets
-moment.js
 moment-timezone:moment-timezone-with-data
-Chart.js
+moment.js
 react==4.3.0
 react-dom

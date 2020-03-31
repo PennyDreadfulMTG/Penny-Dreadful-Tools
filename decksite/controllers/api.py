@@ -208,8 +208,8 @@ def post_reassign(deck_id: int, archetype_id: int) -> Response:
     return return_json({'success':True, 'deck_id':deck_id})
 
 @APP.route('/api/rule/update', methods=['POST'])
-@auth.demimod_required
 @fill_form('rule_id')
+@auth.demimod_required
 def post_rule_update(rule_id: int = None) -> Response:
     if rule_id is not None and request.form.get('include') is not None and request.form.get('exclude') is not None:
         inc = []

@@ -10,8 +10,9 @@ from urllib import parse
 
 import feedparser
 import pytz
+from mypy_extensions import TypedDict
 
-from magic.card_description import CardDescription
+from magic.abc import CardDescription, PriceDataType
 from magic.models import Card, Deck
 from shared import configuration, dtutil, fetch_tools, redis
 from shared.container import Container
@@ -52,7 +53,7 @@ def card_aliases() -> List[List[str]]:
     with open(configuration.get_str('card_alias_file'), newline='', encoding='utf-8') as f:
         return list(csv.reader(f, dialect='excel-tab'))
 
-def card_price(cardname: str) -> Dict[str, Any]:
+def card_price(cardname: str) -> PriceDataType:
     return fetch_tools.fetch_json('http://vorpald20.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
 
 def card_price_string(card: Card, short: bool = False) -> str:
@@ -68,7 +69,7 @@ def card_price_string(card: Card, short: bool = False) -> str:
         try:
             if float(p['low']) <= 0.05:
                 s += ' (low {low}, high {high}'.format(low=format_price(p['low']), high=format_price(p['high']))
-                if float(p['low']) <= 0.01 and not short:
+                if float(p['low']) <= 0.02 and not short:
                     s += ', {week}% this week, {month}% this month, {season}% this season'.format(week=round(float(p['week']) * 100.0), month=round(float(p['month']) * 100.0), season=round(float(p['season']) * 100.0))
                 s += ')'
             age = dtutil.dt2ts(dtutil.now()) - p['time']
@@ -269,7 +270,27 @@ def times_from_location(q: str, twentyfour: bool) -> Dict[str, List[str]]:
         raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}')
     return {current_time(timezone, twentyfour): [info['results'][0]['formatted_address']]}
 
-def whatsinstandard() -> Dict[str, Union[bool, List[Dict[str, str]]]]:
+WISDateType = TypedDict('WISDateType', {
+    'exact': str,
+    'rough': str,
+})
+
+WISSetInfoType = TypedDict('WISSetInfoType', {
+    'name': str,
+    'code': str,
+    'codename': str,
+    'mtgo_code': str,
+    'symbol': str,
+    'enterDate': WISDateType,
+    'exitDate': WISDateType,
+    })
+
+WISSchemaType = TypedDict('WISSchemaType', {
+    'deprecated': bool,
+    'sets': List[WISSetInfoType],
+})
+
+def whatsinstandard() -> WISSchemaType:
     cached = redis.get_container('magic:fetcher:whatisinstandard_6')
     if cached is not None:
         return cached

@@ -2,9 +2,9 @@ import datetime
 import glob
 import os
 from collections import Counter
-from typing import Dict, List, Optional, Tuple, Union, cast
+from typing import Dict, List, Optional, Tuple, Union
 
-from mypy_extensions import TypedDict
+import attr
 
 from magic import fetcher, multiverse, oracle
 from magic.models import Card
@@ -14,38 +14,55 @@ from shared.pd_exception import DoesNotExistException, InvalidDataException
 TOTAL_RUNS = 168
 WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
 
-DateType = TypedDict('DateType', {
-    'exact': str,
-    'rough': str,
-})
-
-SetInfoType = TypedDict('SetInfoType', {
-    'name': str,
-    'code': str,
-    'codename': str,
-    'mtgo_code': str,
-    'enterDate': DateType,
-    'exitDate': DateType,
-    'enter_date_dt': datetime.datetime,
-    })
-
 SEASONS = [
     'EMN', 'KLD', # 2016
     'AER', 'AKH', 'HOU', 'XLN', # 2017
     'RIX', 'DOM', 'M19', 'GRN', # 2018
     'RNA', 'WAR', 'M20', 'ELD', # 2019
-    'THB', 'IKO', # 2020
+    'THB', 'IKO', 'M21', # 2020
     ]
 
-def init() -> List[SetInfoType]:
+@attr.s(auto_attribs=True, slots=True)
+class DateType():
+    exact: str
+    rough: str
+
+
+@attr.s(auto_attribs=True, slots=True)
+class SetInfo():
+    name: str
+    code: str
+    codename: str
+    mtgo_code: str
+    enter_date: DateType
+    exit_date: DateType
+    enter_date_dt: datetime.datetime
+
+    @classmethod
+    def parse(cls, json: 'fetcher.WISSetInfoType') -> 'SetInfo':
+        if json['code'] == 'DOM': # !quality
+            json['mtgo_code'] = 'DAR'
+        else:
+            json['mtgo_code'] = json['code']
+
+        return cls(name=json['name'],
+                   code=json['code'],
+                   codename=json['codename'],
+                   mtgo_code=json['mtgo_code'],
+                   enter_date=DateType(**json['enterDate']),
+                   exit_date=DateType(**json['exitDate']),
+                   enter_date_dt=dtutil.parse(json['enterDate']['exact'], WIS_DATE_FORMAT, dtutil.WOTC_TZ) if json['enterDate']['exact'] else dtutil.ts2dt(0)
+                   )
+
+def init() -> List[SetInfo]:
     info = fetcher.whatsinstandard()
     if info['deprecated']:
         print('Current whatsinstandard API version is DEPRECATED.')
-    set_info = cast(List[SetInfoType], info['sets'])
-    return [postprocess(release) for release in set_info if release['enterDate']['exact'] is not None]
+    set_info = [SetInfo.parse(s) for s in info['sets']]
+    return [release for release in set_info if release.enter_date.exact is not None]
 
 def current_season_code() -> str:
-    return last_rotation_ex()['code']
+    return last_rotation_ex().code
 
 def current_season_num() -> int:
     return season_num(current_season_code())
@@ -57,41 +74,28 @@ def season_num(code_to_look_for: str) -> int:
         raise InvalidDataException('I did not find the season code (`{code}`) in the list of seasons ({seasons}) and I am confused.'.format(code=code_to_look_for, seasons=','.join(SEASONS)))
 
 def last_rotation() -> datetime.datetime:
-    return last_rotation_ex()['enter_date_dt']
+    return last_rotation_ex().enter_date_dt + datetime.timedelta(days=7)
 
 def next_rotation() -> datetime.datetime:
-    return next_rotation_ex()['enter_date_dt']
+    return next_rotation_ex().enter_date_dt + datetime.timedelta(days=7)
 
 def next_rotation_any_kind() -> datetime.datetime:
     return min(next_rotation(), next_supplemental())
 
-def last_rotation_ex() -> SetInfoType:
-    return max([s for s in sets() if s['enter_date_dt'] < dtutil.now()], key=lambda s: s['enter_date_dt'])
+def last_rotation_ex() -> SetInfo:
+    return max([s for s in sets() if s.enter_date_dt < dtutil.now()], key=lambda s: s.enter_date_dt)
 
-def next_rotation_ex() -> SetInfoType:
+def next_rotation_ex() -> SetInfo:
     try:
-        return min([s for s in sets() if s['enter_date_dt'] > dtutil.now()], key=lambda s: s['enter_date_dt'])
+        return min([s for s in sets() if s.enter_date_dt > dtutil.now()], key=lambda s: s.enter_date_dt)
     except ValueError:
         fake_enter_date_dt = last_rotation() + datetime.timedelta(days=90)
         fake_exit_date_dt = last_rotation() + datetime.timedelta(days=90+365+365)
         fake_exit_year = fake_exit_date_dt.year
-        fake_enter_date: DateType = {
-            'exact': fake_enter_date_dt.strftime(WIS_DATE_FORMAT),
-            'rough': 'Unknown'
-        }
-        fake_exit_date: DateType = {
-            'exact': fake_exit_date_dt.strftime(WIS_DATE_FORMAT),
-            'rough': f'Q4 {fake_exit_year}'
-        }
-        fake: SetInfoType = {
-            'name': 'Unannounced Set',
-            'code': '???',
-            'mtgo_code': '???',
-            'enterDate': fake_enter_date,
-            'enter_date_dt': fake_enter_date_dt,
-            'exitDate': fake_exit_date,
-            'codename': 'Unannounced'
-        }
+        fake_enter_date = DateType(fake_enter_date_dt.strftime(WIS_DATE_FORMAT), 'Unknown')
+        fake_exit_date = DateType(fake_exit_date_dt.strftime(WIS_DATE_FORMAT), f'Q4 {fake_exit_year}')
+
+        fake = SetInfo('Unannounced Set', '???', '???', 'Unannounced', fake_enter_date, fake_exit_date, fake_enter_date_dt)
         return fake
 
 def next_supplemental() -> datetime.datetime:
@@ -102,14 +106,6 @@ def next_supplemental() -> datetime.datetime:
 
 def this_supplemental() -> datetime.datetime:
     return last_rotation() + datetime.timedelta(weeks=3)
-
-def postprocess(setinfo: SetInfoType) -> SetInfoType:
-    setinfo['enter_date_dt'] = dtutil.parse(setinfo['enterDate']['exact'], WIS_DATE_FORMAT, dtutil.WOTC_TZ)
-    if setinfo['code'] == 'DOM': # !quality
-        setinfo['mtgo_code'] = 'DAR'
-    else:
-        setinfo['mtgo_code'] = setinfo['code']
-    return setinfo
 
 def interesting(playability: Dict[str, float], c: Card, speculation: bool = True, new: bool = True) -> Optional[str]:
     if new and len({k: v for (k, v) in c['legalities'].items() if 'Penny Dreadful' in k}) == (0 if speculation else 1):
@@ -147,8 +143,8 @@ def next_rotation_is_supplemental() -> bool:
     return sdiff < diff
 
 
-__SETS: List[SetInfoType] = []
-def sets() -> List[SetInfoType]:
+__SETS: List[SetInfo] = []
+def sets() -> List[SetInfo]:
     if not __SETS:
         __SETS.extend(init())
     return __SETS
@@ -190,9 +186,9 @@ def season_name(v: Union[int, str]) -> str:
 def files() -> List[str]:
     return sorted(glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt')))
 
-def get_set_info(code: str) -> SetInfoType:
+def get_set_info(code: str) -> SetInfo:
     for setinfo in sets():
-        if setinfo['code'] == code:
+        if setinfo.code == code:
             return setinfo
     raise DoesNotExistException('Could not find Set Info about {code}'.format(code=code))
 

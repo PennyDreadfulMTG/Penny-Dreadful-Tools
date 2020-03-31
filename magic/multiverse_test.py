@@ -1,5 +1,5 @@
 from magic import multiverse
-from magic.card_description import CardDescription
+from magic.abc import CardDescription
 from magic.database import db
 
 

@@ -1,21 +1,11 @@
 import time
 from typing import Optional
 
-from mypy_extensions import TypedDict
-
 from magic import rotation
+from magic.abc import PriceDataType
 from magic.models import Card
 from shared import configuration, database
 
-PriceDataType = TypedDict('PriceDataType', {
-    'time': int,
-    'low': str,
-    'high': str,
-    'price': str,
-    'week': float,
-    'month': float,
-    'season': float,
-    })
 
 def info(card: Card, force: bool = False) -> Optional[PriceDataType]:
     if not force:

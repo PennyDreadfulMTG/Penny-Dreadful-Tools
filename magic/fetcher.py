@@ -12,7 +12,7 @@ import feedparser
 import pytz
 from mypy_extensions import TypedDict
 
-from magic.card_description import CardDescription
+from magic.abc import CardDescription, PriceDataType
 from magic.models import Card, Deck
 from shared import configuration, dtutil, fetch_tools, redis
 from shared.container import Container
@@ -53,7 +53,7 @@ def card_aliases() -> List[List[str]]:
     with open(configuration.get_str('card_alias_file'), newline='', encoding='utf-8') as f:
         return list(csv.reader(f, dialect='excel-tab'))
 
-def card_price(cardname: str) -> Dict[str, Any]:
+def card_price(cardname: str) -> PriceDataType:
     return fetch_tools.fetch_json('http://vorpald20.com:5800/{0}/'.format(cardname.replace('//', '-split-')))
 
 def card_price_string(card: Card, short: bool = False) -> str:

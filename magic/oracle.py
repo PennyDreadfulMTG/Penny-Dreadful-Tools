@@ -1,7 +1,7 @@
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
 from magic import card, mana, multiverse, rotation
-from magic.card_description import CardDescription
+from magic.abc import CardDescription
 from magic.database import db
 from magic.models import Card
 from shared import configuration, fetch_tools, guarantee

@@ -3,6 +3,20 @@
     "email": "bakert@gmail.com",
     "name": "Thomas David Baker"
   },
+  "babel": {
+    "plugins": [
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ]
+    ],
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
+  },
   "bugs": {
     "url": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues"
   },
@@ -40,20 +54,6 @@
   "license": "GPL-3.0-or-later",
   "main": "None",
   "name": "penny-dreadful-tools",
-  "babel": {
-    "presets": [
-      "@babel/preset-env",
-      "@babel/preset-react"
-    ],
-    "plugins": [
-      [
-        "@babel/plugin-proposal-class-properties",
-        {
-          "loose": true
-        }
-      ]
-    ]
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git"

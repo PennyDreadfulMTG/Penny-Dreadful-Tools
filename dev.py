@@ -33,6 +33,8 @@ def run() -> None:
     except Exception as e: # pylint: disable=broad-except
         msg = type(e).__name__ + ' running ' + str(sys.argv) + ': ' + ' [' + str(e.args) + '] ' + str(e) + '\n'
         sys.stderr.write(msg)
+        if not exit_code:
+            raise
         sys.exit(exit_code if exit_code else 4)
 
 def run_dangerously() -> None:

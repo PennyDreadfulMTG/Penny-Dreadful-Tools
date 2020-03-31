@@ -1,12 +1,12 @@
 {
   "checkpoints": {
     "LOGS": {
-      "url": "https://logs.pennydreadfulmagic.com/api/commit",
-      "overdue": "1H"
+      "overdue": "1H",
+      "url": "https://logs.pennydreadfulmagic.com/api/commit"
     },
     "PROD": {
-      "url": "https://pennydreadfulmagic.com/api/commit",
-      "overdue": "1H"
+      "overdue": "1H",
+      "url": "https://pennydreadfulmagic.com/api/commit"
     }
   }
 }

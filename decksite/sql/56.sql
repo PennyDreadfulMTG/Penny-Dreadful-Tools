@@ -8,4 +8,3 @@ CREATE TABLE IF NOT EXISTS deck_archetype_change (
     FOREIGN KEY(archetype_id) REFERENCES archetype(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY(person_id) REFERENCES person(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
-

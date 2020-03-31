@@ -3,7 +3,7 @@ from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 from magic import card, mana, multiverse, rotation
 from magic.abc import CardDescription
 from magic.database import db
-from magic.models import Card
+from magic.models import Card, Printing
 from shared import configuration, fetch_tools, guarantee
 from shared.container import Container
 from shared.database import sqlescape
@@ -68,15 +68,15 @@ def legal_cards(force: bool = False) -> List[str]:
             LEGAL_CARDS.append(name)
     return LEGAL_CARDS
 
-def get_printings(generalized_card: Card) -> List[card.Printing]:
+def get_printings(generalized_card: Card) -> List[Printing]:
     sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code' \
         + ' FROM printing AS p' \
         + ' LEFT OUTER JOIN `set` AS s ON p.set_id = s.id' \
         + ' WHERE card_id = %s '
     rs = db().select(sql, [generalized_card.id])
-    return [card.Printing(r) for r in rs]
+    return [Printing(r) for r in rs]
 
-def get_printing(generalized_card: Card, setcode: str) -> Optional[card.Printing]:
+def get_printing(generalized_card: Card, setcode: str) -> Optional[Printing]:
     if setcode is None:
         return None
     sql = 'SELECT ' + (', '.join('p.' + property for property in card.printing_properties())) + ', s.code AS set_code' \
@@ -85,7 +85,7 @@ def get_printing(generalized_card: Card, setcode: str) -> Optional[card.Printing
         + ' WHERE card_id = %s AND s.code = %s'
     rs = db().select(sql, [generalized_card.id, setcode])
     if rs:
-        return [card.Printing(r) for r in rs][0]
+        return [Printing(r) for r in rs][0]
     return None
 
 def get_set(set_id: int) -> Container:

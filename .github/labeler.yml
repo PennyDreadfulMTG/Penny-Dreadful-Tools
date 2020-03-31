@@ -1,0 +1,30 @@
+'* monolith':
+  - ./*
+
+'* decks':
+  - ./decksite/**
+
+'* logsite':
+  - ./logsite/**
+
+'* discord bot':
+  - ./discordbot/**
+
+'* magic':
+  - ./magic/**
+
+'* shared':
+  - ./shared/**
+  - ./shared_web/**
+
+'* prices':
+  - ./price_grabber/**
+
+'* rotation':
+  - ./rotation/**
+
+'* maintenance':
+  - ./maintenance/**
+
+'* tests':
+  - ./**/*_test.py

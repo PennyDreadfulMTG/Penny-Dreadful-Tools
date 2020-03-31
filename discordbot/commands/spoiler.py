@@ -14,8 +14,7 @@ async def spoiler(ctx: MtgContext, *, args: str) -> None:
         return await ctx.send('{author}: Please specify a card name.'.format(author=ctx.author.mention))
     sfcard = fetch_tools.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=args))
     if sfcard['object'] == 'error':
-        await ctx.send('{author}: {details}'.format(author=ctx.author.mention, details=sfcard['details']))
-        return
+        return await ctx.send('{author}: {details}'.format(author=ctx.author.mention, details=sfcard['details']))
     imagename = '{set}_{number}'.format(
         set=sfcard['set'], number=sfcard['collector_number'])
     imagepath = '{image_dir}/{imagename}.jpg'.format(image_dir=configuration.get('image_dir'), imagename=imagename)

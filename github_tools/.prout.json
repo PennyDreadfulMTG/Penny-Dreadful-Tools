@@ -1,8 +1,8 @@
 {
   "checkpoints": {
     "GH": {
-      "overdue": "10M",
-      "url": "https://gh.pennydreadfulmagic.com/api/commit"
+      "url": "https://gh.pennydreadfulmagic.com/api/commit",
+      "overdue": "10M"
     }
   }
 }

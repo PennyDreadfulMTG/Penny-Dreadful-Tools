@@ -12,8 +12,7 @@ async def clearimagecache(ctx: MtgContext) -> None:
     """Deletes all the cached images.  Use sparingly"""
     image_dir = configuration.get('image_dir')
     if not image_dir:
-        await ctx.send('Cowardly refusing to delete from unknown image_dir.')
-        return
+        return await ctx.send('Cowardly refusing to delete from unknown image_dir.')
     files = glob.glob('{dir}/*.jpg'.format(dir=image_dir))
     for file in files:
         os.remove(file)

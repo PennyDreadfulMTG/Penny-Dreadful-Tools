@@ -5,8 +5,6 @@ from typing import Dict, List, Optional, Tuple
 
 from mypy_extensions import TypedDict
 
-from shared.container import Container
-
 # Properties of the various aspects of cards with information about how to store and retrieve them from the database.
 ColumnDescription = TypedDict('ColumnDescription', {
     'type': str,
@@ -284,6 +282,3 @@ def canonicalize(name: str) -> str:
 
 def to_mtgo_format(s: str) -> str:
     return s.replace(' // ', '/').replace('\n', '\r\n')
-
-class Printing(Container):
-    pass

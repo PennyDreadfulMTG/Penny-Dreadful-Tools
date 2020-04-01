@@ -5,7 +5,6 @@ from magic.models import Card
 from shared import dtutil
 from shared.fetch_tools import FetchException
 
-
 MAX_PRICE_CENTS = 2
 MAX_PRICE_TIX = MAX_PRICE_CENTS / 100
 MAX_PRICE_TEXT = '2¢'

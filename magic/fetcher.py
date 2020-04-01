@@ -13,7 +13,7 @@ import pytz
 from mypy_extensions import TypedDict
 
 from magic.abc import CardDescription, PriceDataType
-from magic.models import Card, Deck
+from magic.models import Deck
 from shared import configuration, dtutil, fetch_tools, redis
 from shared.container import Container
 from shared.fetch_tools import FetchException

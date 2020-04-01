@@ -9,28 +9,21 @@ from typing import Dict, List, Set
 
 import ftfy
 
-from magic import card_price, fetcher, rotation
+from magic import card_price, rotation
 from price_grabber.parser import PriceListType, parse_cardhoarder_prices, parse_mtgotraders_prices
 from shared import configuration, dtutil, fetch_tools, repo, text
 
-NO_SUPPLEMENTAL = True
-
-BLACKLIST: Set[str] = set()
-WHITELIST: Set[str] = set()
-
-TIME_UNTIL_FULL_ROTATION = rotation.next_rotation() - dtutil.now()
-TIME_UNTIL_SUPPLEMENTAL_ROTATION = rotation.next_supplemental() - dtutil.now()
-TIME_SINCE_SUPPLEMENTAL_ROTATION = dtutil.now() - rotation.this_supplemental()
+TIME_UNTIL_ROTATION = rotation.next_rotation() - dtutil.now()
 
 def run() -> None:
     files = rotation.files()
     n = len(files)
-    time_until = min(TIME_UNTIL_FULL_ROTATION, TIME_UNTIL_SUPPLEMENTAL_ROTATION) - datetime.timedelta(weeks=1)
+    time_until = TIME_UNTIL_ROTATION - datetime.timedelta(weeks=1)
     if n >= rotation.TOTAL_RUNS:
         print('It is the moment of discovery, the triumph of the mind, and the end of this rotation.')
         return
 
-    if n == 0 and TIME_UNTIL_FULL_ROTATION > datetime.timedelta(7) and TIME_UNTIL_SUPPLEMENTAL_ROTATION > datetime.timedelta(7):
+    if n == 0 and TIME_UNTIL_ROTATION > datetime.timedelta(7):
         print('The monks of the North Tree rarely saw their kodama until the rotation, when it woke like a slumbering, angry bear.')
         print('ETA: {t}'.format(t=dtutil.display_time(time_until.total_seconds())))
         return
@@ -64,7 +57,7 @@ def process(all_prices: Dict[str, PriceListType]) -> int:
         for name, p, mtgo_set in prices:
             cents = int(float(p) * 100)
             seen_sets.add(mtgo_set)
-            if cents <= card_price.MAX_PRICE_CENTS and is_good_set(mtgo_set):
+            if cents <= card_price.MAX_PRICE_CENTS:
                 hits.add(name)
                 used_sets.add(mtgo_set)
     ignored = seen_sets - used_sets
@@ -85,23 +78,6 @@ def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignor
     print('Missed:  {sets}'.format(sets=repr(ignored)))
     return n
 
-def is_good_set(setname: str) -> bool:
-    if NO_SUPPLEMENTAL:
-        return True
-    if not BLACKLIST and not WHITELIST:
-        if is_supplemental():
-            WHITELIST.add(rotation.last_rotation_ex().mtgo_code)
-        else:
-            BLACKLIST.add(rotation.next_rotation_ex().mtgo_code)
-    if setname in BLACKLIST:
-        return False
-    if setname in WHITELIST:
-        return True
-    return not WHITELIST
-
-def is_supplemental() -> bool:
-    return TIME_UNTIL_SUPPLEMENTAL_ROTATION < datetime.timedelta(7) or abs(TIME_SINCE_SUPPLEMENTAL_ROTATION) < datetime.timedelta(1)
-
 def make_final_list() -> None:
     planes = fetch_tools.fetch_json('https://api.scryfall.com/cards/search?q=t:plane%20or%20t:phenomenon')['data']
     plane_names = [p['name'] for p in planes]
@@ -119,20 +95,12 @@ def make_final_list() -> None:
         if count >= rotation.TOTAL_RUNS / 2:
             passed.append(name)
     final = list(passed)
-    if is_supplemental():
-        temp = set(passed)
-        final = list(temp.union([c + '\n' for c in fetcher.legal_cards()]))
     final.sort()
     h = open(os.path.join(configuration.get_str('legality_dir'), 'legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))
     h.close()
     print('Generated legal_cards.txt.  {0}/{1} cards.'.format(len(passed), len(scores)))
-
-    if is_supplemental():
-        setcode = rotation.last_rotation_ex().mtgo_code
-    else:
-        setcode = rotation.next_rotation_ex().mtgo_code
-
+    setcode = rotation.next_rotation_ex().mtgo_code
     h = open(os.path.join(configuration.get_str('legality_dir'), f'{setcode}_legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))
     h.close()
@@ -143,12 +111,7 @@ def do_push() -> None:
     gh_repo = os.path.join(configuration.get_str('legality_dir'), 'gh_pages')
     if not os.path.exists(gh_repo):
         subprocess.run(['git', 'clone', 'https://github.com/PennyDreadfulMTG/pennydreadfulmtg.github.io.git', gh_repo], check=True)
-    if is_supplemental():
-        setcode = rotation.last_rotation_ex().mtgo_code
-        rottype = 'supplemental'
-    else:
-        setcode = rotation.next_rotation_ex().mtgo_code
-        rottype = 'rotation'
+    setcode = rotation.next_rotation_ex().mtgo_code
     files = ['legal_cards.txt', f'{setcode}_legal_cards.txt']
     for fn in files:
         source = os.path.join(configuration.get_str('legality_dir'), fn)
@@ -156,9 +119,9 @@ def do_push() -> None:
         shutil.copy(source, dest)
     os.chdir(gh_repo)
     subprocess.run(['git', 'add'] + files, check=True)
-    subprocess.run(['git', 'commit', '-m', f'{setcode} {rottype}'], check=True)
+    subprocess.run(['git', 'commit', '-m', f'{setcode} rotation'], check=True)
     subprocess.run(['git', 'push'], check=True)
-    checklist = f"""{setcode} {rottype} checklist
+    checklist = f"""{setcode} rotation checklist
 
 https://pennydreadfulmagic.com/admin/rotation/
 

@@ -2,12 +2,12 @@ import datetime
 import decimal
 import traceback
 from collections.abc import KeysView
-from typing import Any, List, Union
+from typing import Any, Dict, List, Union
 
 from shared import dtutil
 
 
-def extra_serializer(obj: Any) -> Union[int, str, List[Any]]:
+def extra_serializer(obj: Any) -> Union[int, str, List[Any], Dict[str, Any]]:
     """JSON serializer for objects not serializable by default json code"""
 
     if isinstance(obj, datetime.datetime):
@@ -24,7 +24,7 @@ def extra_serializer(obj: Any) -> Union[int, str, List[Any]]:
     if hasattr(obj, 'to_dict'):
         return obj.to_dict()
     if hasattr(obj, '__attrs_attrs__'):
-        val = {}
+        val: Dict[str, Any] = {}
         for a in obj.__attrs_attrs__:
             val[a.name] = getattr(obj, a.name)
         return val

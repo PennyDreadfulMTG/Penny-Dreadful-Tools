@@ -9,7 +9,7 @@ from typing import Dict, List, Set
 
 import ftfy
 
-from magic import fetcher, rotation
+from magic import card_price, fetcher, rotation
 from price_grabber.parser import PriceListType, parse_cardhoarder_prices, parse_mtgotraders_prices
 from shared import configuration, dtutil, fetch_tools, repo, text
 
@@ -64,7 +64,7 @@ def process(all_prices: Dict[str, PriceListType]) -> int:
         for name, p, mtgo_set in prices:
             cents = int(float(p) * 100)
             seen_sets.add(mtgo_set)
-            if cents <= 2 and is_good_set(mtgo_set):
+            if cents <= card_price.MAX_PRICE_CENTS and is_good_set(mtgo_set):
                 hits.add(name)
                 used_sets.add(mtgo_set)
     ignored = seen_sets - used_sets

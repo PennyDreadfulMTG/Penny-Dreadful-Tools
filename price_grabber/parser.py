@@ -3,7 +3,7 @@ import re
 import traceback
 from typing import Dict, List, Tuple
 
-from magic import card, multiverse
+from magic import card, card_price, multiverse
 from magic.database import db
 from shared.pd_exception import DatabaseException, InvalidDataException
 
@@ -35,7 +35,7 @@ def parse_mtgotraders_prices(s: str) -> PriceListType:
         in_stock = in_stock_str == 'Yes'
         if name.endswith('(a)') or name.endswith('(b)'): # Guildgates
             name = name[:-4]
-        if float(p) <= 0.02 and in_stock and not is_exceptional_name(name):
+        if float(p) <= card_price.MAX_PRICE_TIX and in_stock and not is_exceptional_name(name):
             details.append((name, p, mtgo_set))
     return [(name_lookup(name), p, mtgo_set) for name, p, mtgo_set in details if name_lookup(name) is not None]
 

@@ -8,7 +8,7 @@
     <li>
         <p class="question"><a href="#">{{_ Which cards are legal?}}</a></p>
         <div class="details">
-            <p>{{_ Card legality is set quarterly based on which cards are 1¢ at that time. }}
+            <p>{{_ Card legality is set quarterly based on which cards are {max_price_text} or less at that time. }}
             <p>{{_ The best way to search legal cards is with [Scryfall](https://scryfall.com/search?q=f%3Apd).}}</p>
             <p>{{_ You can view the full [legal cards list](http://pdmtgo.com/legal_cards.txt).}}</p>
         </div>
@@ -51,10 +51,10 @@
         </div>
     </li>
     <li>
-        <p class="question"><a href="#">{{_ What happens if a card goes above 1¢? How does rotation work? When is the next rotation? How long are cards legal for?}}</a></p>
+        <p class="question"><a href="#">{{_ What happens if a card goes above {max_price_text}? How does rotation work? When is the next rotation? How long are cards legal for?}}</a></p>
         <div class="details">
             <p>{{_ Legality is determined at the release of a Standard-legal set on Magic Online.}}</p>
-            <p>{{_ Prices are checked every hour for a week. Anything 1c or less for half or more of all checks is legal for the season.}}</p>
+            <p>{{_ Prices are checked every hour for a week. Anything {max_price_text} or less for half or more of all checks is legal for the season.}}</p>
             <p>{{_ Cards from the just-released set are added (nothing removed) a couple of weeks later via a supplemental rotation after prices have settled a little.}}</p>
             <p>{{_ Any version of a card on the legal cards list is legal.}}</p>
             <p>{{rotation_text}}.</p>

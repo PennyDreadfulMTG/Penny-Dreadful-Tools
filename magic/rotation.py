@@ -52,7 +52,7 @@ class SetInfo():
     @classmethod
     def parse(cls, json: 'fetcher.WISSetInfoType') -> 'SetInfo':
         json['mtgo_code'] = json['code']
-        json.update(OVERRIDES.get(json['code'], {}))
+        json.update(OVERRIDES.get(json['code'], {})) # type: ignore
 
         return cls(name=json['name'],
                    code=json['code'],

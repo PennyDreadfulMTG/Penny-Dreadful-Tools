@@ -1,5 +1,6 @@
 import json
 import subprocess
+import sys
 from typing import Any, Dict, List, Optional, Union
 
 import humps
@@ -19,7 +20,7 @@ def process_github_webhook() -> Response:
                 subprocess.check_output(['git', 'fetch'])
                 subprocess.check_output(['git', 'reset', '--hard', 'origin/{0}'.format(current_app.config['branch'])])
                 try:
-                    subprocess.check_output(['pip', 'install', '-U', '--user', '-r', 'requirements.txt', '--no-cache'])
+                    subprocess.check_output([sys.executable, '-m', 'pip', 'install', '-U', '--user', '-r', 'requirements.txt', '--no-cache'])
                 except subprocess.CalledProcessError:
                     pass
                 try:

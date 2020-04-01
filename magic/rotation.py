@@ -27,6 +27,17 @@ class DateType():
     exact: str
     rough: str
 
+OVERRIDES = {
+    'DOM': { # Dominaria had a weird setcode in MTGO/Arena
+        'mtgo_code': 'DAR'
+    },
+    'IKO': { # Ikoria was delayed in NA because of Covid-19
+        'enterDate': {
+            'exact': '2020-04-17T00:00:00.000',
+            'rough': 'April 2020'
+        }
+    },
+}
 
 @attr.s(auto_attribs=True, slots=True)
 class SetInfo():
@@ -40,10 +51,8 @@ class SetInfo():
 
     @classmethod
     def parse(cls, json: 'fetcher.WISSetInfoType') -> 'SetInfo':
-        if json['code'] == 'DOM': # !quality
-            json['mtgo_code'] = 'DAR'
-        else:
-            json['mtgo_code'] = json['code']
+        json['mtgo_code'] = json['code']
+        json.update(OVERRIDES.get(json['code'], {}))
 
         return cls(name=json['name'],
                    code=json['code'],

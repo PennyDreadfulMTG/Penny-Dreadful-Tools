@@ -23,4 +23,9 @@ def extra_serializer(obj: Any) -> Union[int, str, List[Any]]:
         return traceback.format_list(stack)
     if hasattr(obj, 'to_dict'):
         return obj.to_dict()
+    if hasattr(obj, '__attrs_attrs__'):
+        val = {}
+        for a in obj.__attrs_attrs__:
+            val[a.name] = getattr(obj, a.name)
+        return val
     raise TypeError('Type {t} not serializable - {obj}'.format(t=type(obj), obj=obj))

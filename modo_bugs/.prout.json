@@ -1,8 +1,8 @@
 {
   "checkpoints": {
     "Bughooks": {
-      "url": "https://modo_bugs.pennydreadfulmagic.com/",
-      "overdue": "1H"
+      "overdue": "1H",
+      "url": "https://modo_bugs.pennydreadfulmagic.com/"
     }
   }
 }

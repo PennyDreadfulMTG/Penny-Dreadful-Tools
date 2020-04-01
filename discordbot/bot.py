@@ -262,6 +262,10 @@ class Bot(commands.Bot):
             print('tournament channel is not configured')
             return
         channel = self.get_channel(tournament_channel_id)
+        if not channel:
+            print('tournament channel could not be found')
+            return
+
         while self.is_ready:
             try:
                 league = await fetch_tools.fetch_json_async(fetcher.decksite_url('/api/league'))

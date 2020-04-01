@@ -124,9 +124,8 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
         ),
         'rotation': (
             f"""
-            Legality is set at the release of a Standard-legal set on Magic Online.
-            Prices are checked every hour for a week beforehand. Anything {card_price.MAX_PRICE_TEXT} or less for half or more of all checks is legal for the season.
-            Cards from the just-released set are added (nothing removed) three weeks later via a supplemental rotation after prices have settled a little.
+            Legality is set a week after the release of a Standard-legal set on Magic Online.
+            Prices are checked every hour for a week from the set release. Anything {card_price.MAX_PRICE_TEXT} or less for half or more of all checks is legal for the season.
             Any version of a card on the legal cards list is legal.
             """,
             {}
@@ -135,14 +134,6 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             """
             Spectating tournament and league matches is allowed and encouraged.
             Please do not write anything in chat except to call PDBot's `!record` command to find out the current score in games.
-            """,
-            {}
-        ),
-        'supplemental': (
-            f"""
-            Legality for the cards in the newly-released set ONLY is determined three weeks after the normal rotation to allow prices to settle.
-            Prices are checked every hour for a week. Anything in the newly-released set that is {card_price.MAX_PRICE_TEXT} or less for half or more of all checks is legal for the rest of the season.
-            Cards are only ever added to the legal list by the supplemental rotation, never removed.
             """,
             {}
         ),

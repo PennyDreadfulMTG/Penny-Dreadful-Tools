@@ -14,7 +14,7 @@ from decksite import APP, get_season_id, prepare
 from decksite.data import archetype, competition
 from decksite.data.archetype import Archetype
 from decksite.deck_type import DeckType
-from magic import fetcher, legality, oracle, rotation, tournaments
+from magic import card_price, fetcher, legality, oracle, rotation, tournaments
 from magic.models import Card, Deck
 from shared import dtutil
 from shared.container import Container
@@ -42,6 +42,7 @@ NUM_MOST_COMMON_CARDS_TO_LIST = 10
 # pylint: disable=no-self-use, too-many-instance-attributes, too-many-public-methods
 class View(BaseView):
     def __init__(self) -> None:
+        self.max_price_text = card_price.MAX_PRICE_TEXT
         self.decks: List[Deck] = []
         self.active_runs_text: str = ''
         self.hide_active_runs = True

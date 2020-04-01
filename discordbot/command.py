@@ -10,7 +10,7 @@ from discord.member import Member
 from discord.message import Message
 
 from discordbot import emoji
-from magic import card, fetcher, image_fetcher, oracle
+from magic import card, card_price, fetcher, image_fetcher, oracle
 from magic.models import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher
 from shared import configuration, dtutil
@@ -155,7 +155,7 @@ async def post_cards(
     if len(cards) == 1:
         text = single_card_text_internal(client, cards[0], disable_emoji)
     else:
-        text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.info_emoji(card)) if not disable_emoji else ''), price=((fetcher.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
+        text = ', '.join('{name} {legal} {price}'.format(name=card.name, legal=((emoji.info_emoji(card)) if not disable_emoji else ''), price=((card_price.card_price_string(card, True)) if card.get('mode', None) == '$' else '')) for card in cards)
     if len(cards) > MAX_CARDS_SHOWN:
         image_file = None
     else:
@@ -200,7 +200,7 @@ def single_card_text_internal(client: Client, requested_card: Card, disable_emoj
     if disable_emoji:
         legal = ''
     if requested_card.get('mode', None) == '$':
-        text = '{name} {legal} — {price}'.format(name=requested_card.name, price=fetcher.card_price_string(requested_card), legal=legal)
+        text = '{name} {legal} — {price}'.format(name=requested_card.name, price=card_price.card_price_string(requested_card), legal=legal)
     else:
         text = '{name} {mana} — {type}{legal}'.format(name=requested_card.name, mana=mana, type=requested_card.type_line, legal=legal)
     if requested_card.bugs:

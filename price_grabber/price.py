@@ -1,7 +1,7 @@
 import time
 from typing import Optional
 
-from magic import rotation
+from magic import card_price, rotation
 from magic.abc import PriceDataType
 from magic.models import Card
 from shared import configuration, database
@@ -38,7 +38,7 @@ def cache() -> None:
 
     db.begin('cache')
     db.execute('DELETE FROM cache')
-    sql = """
+    sql = f"""
         INSERT INTO cache (`time`, name, price, low, high, week, month, season)
             SELECT
                 MAX(`time`) AS `time`,
@@ -46,9 +46,9 @@ def cache() -> None:
                 MIN(CASE WHEN `time` = %s THEN price END) AS price,
                 MIN(CASE WHEN `time` > %s THEN price END) AS low,
                 MAX(CASE WHEN `time` > %s THEN price END) AS high,
-                AVG(CASE WHEN `time` > %s AND price <= 2 THEN 1 WHEN `time` > %s THEN 0 END) AS week,
-                AVG(CASE WHEN `time` > %s AND price <= 2 THEN 1 WHEN `time` > %s THEN 0 END) AS month,
-                AVG(CASE WHEN `time` > %s AND price <= 2 THEN 1 WHEN `time` > %s THEN 0 END) AS season
+                AVG(CASE WHEN `time` > %s AND price <= {card_price.MAX_PRICE_CENTS} THEN 1 WHEN `time` > %s THEN 0 END) AS week,
+                AVG(CASE WHEN `time` > %s AND price <= {card_price.MAX_PRICE_CENTS} THEN 1 WHEN `time` > %s THEN 0 END) AS month,
+                AVG(CASE WHEN `time` > %s AND price <= {card_price.MAX_PRICE_CENTS} THEN 1 WHEN `time` > %s THEN 0 END) AS season
             FROM low_price
             GROUP BY name;
     """

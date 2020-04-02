@@ -55,11 +55,22 @@ class Bot(commands.Bot):
         oracle.init()
         discordbot.commands.setup(self)
 
+    async def close(self) -> None:
+        try:
+            p = await asyncio.create_subprocess_shell('git pull')
+            await p.wait()
+            p = await asyncio.create_subprocess_shell(f'{sys.executable} -m pip install -U -r requirements.txt --no-cache')
+            await p.wait()
+        except Exception as c: # pylint: disable=broad-except
+            repo.create_issue(f'Bot error while closing', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=c)
+        await super().close()
+
     async def on_ready(self) -> None:
         print('Logged in as {username} ({id})'.format(username=self.user.name, id=self.user.id))
         print('Connected to {0}'.format(', '.join([guild.name for guild in self.guilds])))
         print('--------')
         perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
+
 
     async def on_message(self, message: Message) -> None:
         # We do not want the bot to reply to itself.

@@ -249,7 +249,7 @@ WISSetInfoType = TypedDict('WISSetInfoType', {
     'name': str,
     'code': str,
     'codename': str,
-    'mtgo_code': str,
+    'mtgoCode': str,
     'symbol': str,
     'enterDate': WISDateType,
     'exitDate': WISDateType,

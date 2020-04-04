@@ -351,13 +351,10 @@ class Bot(commands.Bot):
 
 def init() -> None:
     client = Bot()
-    asyncio.ensure_future(init_async())
-    client.run(configuration.get('token'))
-
-async def init_async() -> None:
-    await multiverse.init_async()
-    await multiverse.update_bugged_cards_async()
+    multiverse.init()
+    asyncio.ensure_future(multiverse.update_bugged_cards_async())
     oracle.init()
+    client.run(configuration.get('token'))
 
 def is_pd_server(guild: Guild) -> bool:
     return guild.id == 207281932214599682 # or guild.id == 226920619302715392

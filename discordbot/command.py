@@ -58,9 +58,8 @@ def parse_queries(content: str, scryfall_compatability_mode: bool) -> List[str]:
         queries = re.findall(r'\[?\[([^\]]*)\]\]?', to_scan)
     return [card.canonicalize(query) for query in queries if len(query) > 2]
 
-def cards_from_names_with_mode(cards: Sequence[Optional[str]], mode: str, preferred_printing: str = None) -> List[Card]:
-    oracle_cards = oracle.cards_by_name()
-    return [copy_with_mode(oracle_cards[c], mode, preferred_printing) for c in cards if c is not None]
+def cards_from_names_with_mode(cards: Sequence[Optional[str]], mode: str, preferred_printing: Optional[str] = None) -> List[Card]:
+    return [copy_with_mode(oracle.load_card(c), mode, preferred_printing) for c in cards if c is not None]
 
 def copy_with_mode(oracle_card: Card, mode: str, preferred_printing: str = None) -> Card:
     c = copy(oracle_card)

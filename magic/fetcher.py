@@ -29,7 +29,6 @@ async def all_cards_async() -> List[CardDescription]:
         f = open('scryfall-default-cards.json')
         return json.load(f)
     except FileNotFoundError:
-        raise
         return await fetch_tools.fetch_json_async('https://archive.scryfall.com/json/scryfall-default-cards.json', character_encoding='utf-8')
 
 async def all_sets_async() -> List[Dict[str, Any]]:

@@ -10,7 +10,7 @@ from shared import redis
 async def rotate(ctx: MtgContext) -> None:
     """Perform all necessary post-rotation tasks."""
     await ctx.send('Rotating. This may take a while…')
-    multiverse.init() # New Cards?
+    await multiverse.init_async() # New Cards?
     await multiverse.set_legal_cards_async() # PD current list
     await multiverse.update_pd_legality_async() # PD previous lists
     if redis.REDIS: # Clear the redis cache

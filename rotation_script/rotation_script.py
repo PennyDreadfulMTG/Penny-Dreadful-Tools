@@ -12,7 +12,7 @@ import ftfy
 
 from magic import card_price, fetcher, rotation
 from price_grabber.parser import PriceListType, parse_cardhoarder_prices, parse_mtgotraders_prices
-from shared import configuration, dtutil, fetch_tools, repo, text
+from shared import configuration, dtutil, fetch_tools, redis, repo, text
 
 NO_SUPPLEMENTAL = True
 
@@ -156,6 +156,7 @@ def do_push() -> None:
         source = os.path.join(configuration.get_str('legality_dir'), fn)
         dest = os.path.join(gh_repo, fn)
         shutil.copy(source, dest)
+
     os.chdir(gh_repo)
     subprocess.run(['git', 'add'] + files, check=True)
     subprocess.run(['git', 'commit', '-m', f'{setcode} {rottype}'], check=True)
@@ -166,11 +167,14 @@ https://pennydreadfulmagic.com/admin/rotation/
 
 - [ ] upload legal_cards.txt to S3
 - [ ] upload {setcode}_legal_cards.txt to S3
-- [ ] restart discordbot
 - [ ] ping scryfall
 - [ ] email mtggoldfish
 - [ ] ping tappedout
 """
+    if redis.get_str('discordbot:commit_id'):
+        redis.store('discordbot:do_reboot', True)
+    else:
+        checklist += '- [ ] restart discordbot'
     ds = os.path.expanduser('~/decksite/')
     if os.path.exists(ds):
         os.chdir(ds)

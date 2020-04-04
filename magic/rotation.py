@@ -28,10 +28,10 @@ class DateType():
     rough: str
 
 OVERRIDES = {
-    'DOM': { # Dominaria had a weird setcode in MTGO/Arena
-        'mtgo_code': 'DAR'
+    'Dominaria': { # Dominaria had a weird setcode in MTGO/Arena
+        'mtgoCode': 'DAR'
     },
-    'IKO': { # Ikoria was delayed in NA because of Covid-19
+    'Ikoria: Lair of Behemoths': {  # Ikoria was delayed in NA because of Covid-19
         'enterDate': {
             'exact': '2020-04-17T00:00:00.000',
             'rough': 'April 2020'
@@ -51,13 +51,13 @@ class SetInfo():
 
     @classmethod
     def parse(cls, json: 'fetcher.WISSetInfoType') -> 'SetInfo':
-        json['mtgo_code'] = json['code']
-        json.update(OVERRIDES.get(json['code'], {})) # type: ignore
+        json['mtgoCode'] = json['code']
+        json.update(OVERRIDES.get(json['name'], {})) # type: ignore
 
         return cls(name=json['name'],
                    code=json['code'],
                    codename=json['codename'],
-                   mtgo_code=json['mtgo_code'],
+                   mtgo_code=json['mtgoCode'],
                    enter_date=DateType(**json['enterDate']),
                    exit_date=DateType(**json['exitDate']),
                    enter_date_dt=dtutil.parse(json['enterDate']['exact'], WIS_DATE_FORMAT, dtutil.WOTC_TZ) if json['enterDate']['exact'] else dtutil.ts2dt(0)

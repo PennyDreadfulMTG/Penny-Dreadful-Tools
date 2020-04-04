@@ -1,3 +1,5 @@
+import asyncio
+
 from decksite import league
 from magic import multiverse
 from shared import dtutil, redis
@@ -6,10 +8,16 @@ from . import insert_seasons, reprime_cache
 
 
 def ad_hoc() -> None:
+    try:
+        event_loop = asyncio.get_event_loop()
+    except RuntimeError:
+        event_loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(event_loop)
+
     league.set_status(league.Status.CLOSED)
     multiverse.init() # New Cards?
-    multiverse.set_legal_cards() # PD current list
-    multiverse.update_pd_legality() # PD previous lists
+    event_loop.run_until_complete(multiverse.set_legal_cards_async()) # PD current list
+    event_loop.run_until_complete(multiverse.update_pd_legality_async()) # PD previous lists
     reprime_cache.run() # Update deck legalities
     insert_seasons.run() # Make sure Season table is up to date
     if redis.REDIS: # Clear the redis cache

@@ -48,18 +48,24 @@ class Bot(commands.Bot):
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:
             asyncio.ensure_future(task(self), loop=self.loop)
-
-    def init(self) -> None:
-        multiverse.init()
-        multiverse.update_bugged_cards()
-        oracle.init()
         discordbot.commands.setup(self)
+
+    async def close(self) -> None:
+        try:
+            p = await asyncio.create_subprocess_shell('git pull')
+            await p.wait()
+            p = await asyncio.create_subprocess_shell(f'{sys.executable} -m pip install -U -r requirements.txt --no-cache')
+            await p.wait()
+        except Exception as c: # pylint: disable=broad-except
+            repo.create_issue(f'Bot error while closing', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=c)
+        await super().close()
 
     async def on_ready(self) -> None:
         print('Logged in as {username} ({id})'.format(username=self.user.name, id=self.user.id))
         print('Connected to {0}'.format(', '.join([guild.name for guild in self.guilds])))
         print('--------')
         perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
+
 
     async def on_message(self, message: Message) -> None:
         # We do not want the bot to reply to itself.
@@ -200,7 +206,7 @@ class Bot(commands.Bot):
                 print(f'Planning to add {name} to database in background_task_spoiler_season.')
                 cards_not_currently_in_db.append(c)
         if len(cards_not_currently_in_db) > 0:
-            oracle.add_cards_and_update(cards_not_currently_in_db)
+            await oracle.add_cards_and_update_async(cards_not_currently_in_db)
 
     @background_task
     async def background_task_tournaments(self) -> None:
@@ -247,7 +253,7 @@ class Bot(commands.Bot):
                 if diff > 3600 * 6:
                     # The timer can afford to get off-balance by doing other background work.
                     await self.background_task_spoiler_season()
-                    multiverse.update_bugged_cards()
+                    await multiverse.update_bugged_cards_async()
 
             if timer < 300:
                 timer = 300
@@ -344,7 +350,9 @@ class Bot(commands.Bot):
 
 def init() -> None:
     client = Bot()
-    client.init()
+    multiverse.init()
+    asyncio.ensure_future(multiverse.update_bugged_cards_async())
+    oracle.init()
     client.run(configuration.get('token'))
 
 def is_pd_server(guild: Guild) -> bool:

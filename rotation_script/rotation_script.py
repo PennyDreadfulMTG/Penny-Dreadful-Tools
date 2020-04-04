@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 import fileinput
 import os
@@ -121,7 +122,8 @@ def make_final_list() -> None:
     final = list(passed)
     if is_supplemental():
         temp = set(passed)
-        final = list(temp.union([c + '\n' for c in fetcher.legal_cards()]))
+        legal_cards = asyncio.get_event_loop().run_until_complete(fetcher.legal_cards_async())
+        final = list(temp.union([c + '\n' for c in legal_cards]))
     final.sort()
     h = open(os.path.join(configuration.get_str('legality_dir'), 'legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))

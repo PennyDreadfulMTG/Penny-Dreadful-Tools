@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 from typing import Any, Dict, List, Optional, Set, Union
 
@@ -16,13 +17,22 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException
 FORMAT_IDS: Dict[str, int] = {}
 
 def init() -> None:
+    event_loop = None
     try:
-        last_updated = fetcher.scryfall_last_updated()
+        event_loop = asyncio.get_event_loop()
+    except RuntimeError:
+        event_loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(event_loop)
+    return event_loop.run_until_complete(init_async())
+
+async def init_async() -> None:
+    try:
+        last_updated = await fetcher.scryfall_last_updated_async()
         if last_updated > database.last_updated():
             print('Database update required')
             try:
-                update_database(last_updated)
-                set_legal_cards()
+                await update_database_async(last_updated)
+                await set_legal_cards_async()
             finally:
                 # if the above fails for some reason, then things are probably bad
                 # but we can't even start up a shell to fix unless the _cache_card table exists
@@ -127,7 +137,7 @@ def base_query_lite() -> str:
         face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),)
 
 
-def update_database(new_date: datetime.datetime) -> None:
+async def update_database_async(new_date: datetime.datetime) -> None:
     db().begin('update_database')
     db().execute('DELETE FROM scryfall_version')
     db().execute('SET FOREIGN_KEY_CHECKS=0') # Avoid needing to drop _cache_card (which has an FK relationship with card) so that the database continues to function while we perform the update.
@@ -141,20 +151,20 @@ def update_database(new_date: datetime.datetime) -> None:
         DELETE FROM card;
         DELETE FROM `set`;
     """)
-    for s in fetcher.all_sets():
+    for s in await fetcher.all_sets_async():
         insert_set(s)
-    every_card_printing = fetcher.all_cards()
-    insert_cards(every_card_printing)
-    update_pd_legality()
+    every_card_printing = await fetcher.all_cards_async()
+    await insert_cards_async(every_card_printing)
+    await update_pd_legality_async()
     db().execute('INSERT INTO scryfall_version (last_updated) VALUES (%s)', [dtutil.dt2ts(new_date)])
     db().execute('SET FOREIGN_KEY_CHECKS=1') # OK we are done monkeying with the db put the FK checks back in place and recreate _cache_card.
     rebuild_cache()
     db().commit('update_database')
 
-# Take Scryfall card descriptions and add them to the database. See also oracle.add_cards_and_update to also rebuild cache/reindex/etc.
-def insert_cards(printings: List[CardDescription]) -> List[int]:
+# Take Scryfall card descriptions and add them to the database. See also oracle.add_cards_and_update_async to also rebuild cache/reindex/etc.
+async def insert_cards_async(printings: List[CardDescription]) -> List[int]:
     next_card_id = (db().value('SELECT MAX(id) FROM card') or 0) + 1
-    values = determine_values(printings, next_card_id)
+    values = await determine_values_async(printings, next_card_id)
     insert_many('card', card.card_properties(), values['card'], ['id'])
     if values['card_color']: # We should not issue this query if we are only inserting colorless cards as they don't have an entry in this table.
         insert_many('card_color', card.card_color_properties(), values['card_color'])
@@ -165,10 +175,10 @@ def insert_cards(printings: List[CardDescription]) -> List[int]:
         insert_many('card_legality', card.card_legality_properties(), values['card_legality'], ['legality'])
     # Create the current Penny Dreadful format if necessary.
     get_format_id('Penny Dreadful', True)
-    update_bugged_cards()
+    await update_bugged_cards_async()
     return [c['id'] for c in values['card']]
 
-def determine_values(printings: List[CardDescription], next_card_id: int) -> Dict[str, List[Dict[str, Any]]]:
+async def determine_values_async(printings: List[CardDescription], next_card_id: int) -> Dict[str, List[Dict[str, Any]]]:
     # pylint: disable=too-many-locals
     cards: Dict[str, int] = {}
     card_values: List[Dict[str, Any]] = []
@@ -198,7 +208,7 @@ def determine_values(printings: List[CardDescription], next_card_id: int) -> Dic
             set_id = sets[p['set']]
         except KeyError:
             print(f"We think we should have set {p['set']} but it's not in {sets} (from {p}) so updating sets")
-            sets = update_sets()
+            sets = await update_sets_async()
             set_id = sets[p['set']]
 
         # If we already have the card, all we need is to record the next printing of it
@@ -262,8 +272,8 @@ def insert_many(table: str, properties: TableDescription, values: List[Dict[str,
     query += ')'
     db().execute(query)
 
-def update_bugged_cards() -> None:
-    bugs = fetcher.bugged_cards()
+async def update_bugged_cards_async() -> None:
+    bugs = await fetcher.bugged_cards_async()
     if bugs is None:
         return
     db().begin('update_bugged_cards')
@@ -278,11 +288,11 @@ def update_bugged_cards() -> None:
         db().execute('INSERT INTO card_bug (card_id, description, classification, last_confirmed, url, from_bug_blog, bannable) VALUES (%s, %s, %s, %s, %s, %s, %s)', [card_id, bug['description'], bug['category'], last_confirmed_ts, bug['url'], bug['bug_blog'], bug['bannable']])
     db().commit('update_bugged_cards')
 
-def update_pd_legality() -> None:
+async def update_pd_legality_async() -> None:
     for s in rotation.SEASONS:
         if s == rotation.current_season_code():
             break
-        set_legal_cards(season=s)
+        await set_legal_cards_async(season=s)
 
 def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> Dict[str, Any]:
     if not card_id:
@@ -347,9 +357,9 @@ def insert_set(s: Any) -> int:
     db().execute(sql, values)
     return db().last_insert_rowid()
 
-def update_sets() -> dict:
+async def update_sets_async() -> dict:
     sets = load_sets()
-    for s in fetcher.all_sets():
+    for s in await fetcher.all_sets_async():
         if s['code'] not in sets.keys():
             insert_set(s)
     return load_sets()
@@ -370,10 +380,10 @@ def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int
     result['reserved'] = 1 if p.get('reserved') else 0 # replace True and False with 1 and 0
     return result
 
-def set_legal_cards(season: str = None) -> None:
+async def set_legal_cards_async(season: str = None) -> None:
     new_list: Set[str] = set()
     try:
-        new_list = set(fetcher.legal_cards(force=True, season=season))
+        new_list = set(await fetcher.legal_cards_async(force=True, season=season))
     except fetcher.FetchException:
         pass
     if season is None:

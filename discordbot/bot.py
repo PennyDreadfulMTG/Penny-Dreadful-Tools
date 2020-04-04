@@ -48,12 +48,8 @@ class Bot(commands.Bot):
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:
             asyncio.ensure_future(task(self), loop=self.loop)
-
-    def init(self) -> None:
-        multiverse.init()
-        multiverse.update_bugged_cards()
-        oracle.init()
         discordbot.commands.setup(self)
+
 
     async def close(self) -> None:
         try:
@@ -211,7 +207,7 @@ class Bot(commands.Bot):
                 print(f'Planning to add {name} to database in background_task_spoiler_season.')
                 cards_not_currently_in_db.append(c)
         if len(cards_not_currently_in_db) > 0:
-            oracle.add_cards_and_update(cards_not_currently_in_db)
+            await oracle.add_cards_and_update_async(cards_not_currently_in_db)
 
     @background_task
     async def background_task_tournaments(self) -> None:
@@ -258,7 +254,7 @@ class Bot(commands.Bot):
                 if diff > 3600 * 6:
                     # The timer can afford to get off-balance by doing other background work.
                     await self.background_task_spoiler_season()
-                    multiverse.update_bugged_cards()
+                    await multiverse.update_bugged_cards_async()
 
             if timer < 300:
                 timer = 300
@@ -355,8 +351,13 @@ class Bot(commands.Bot):
 
 def init() -> None:
     client = Bot()
-    client.init()
+    asyncio.ensure_future(init_async())
     client.run(configuration.get('token'))
+
+async def init_async() -> None:
+    await multiverse.init_async()
+    await multiverse.update_bugged_cards_async()
+    oracle.init()
 
 def is_pd_server(guild: Guild) -> bool:
     return guild.id == 207281932214599682 # or guild.id == 226920619302715392

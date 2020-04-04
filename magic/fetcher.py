@@ -24,22 +24,23 @@ async def achievement_cache_async() -> Dict[str, Dict[str, str]]:
     data = await fetch_tools.fetch_json_async(decksite_url('/api/achievements'))
     return {a['key']: a for a in data['achievements']}
 
-def all_cards() -> List[CardDescription]:
+async def all_cards_async() -> List[CardDescription]:
     try:
-        f = open('all-default-cards.json')
+        f = open('scryfall-default-cards.json')
         return json.load(f)
     except FileNotFoundError:
-        return fetch_tools.fetch_json('https://archive.scryfall.com/json/scryfall-default-cards.json', character_encoding='utf-8')
+        raise
+        return await fetch_tools.fetch_json_async('https://archive.scryfall.com/json/scryfall-default-cards.json', character_encoding='utf-8')
 
-def all_sets() -> List[Dict[str, Any]]:
+async def all_sets_async() -> List[Dict[str, Any]]:
     try:
         d = json.load(open('sets.json'))
     except FileNotFoundError:
-        d = fetch_tools.fetch_json('https://api.scryfall.com/sets')
+        d = await fetch_tools.fetch_json_async('https://api.scryfall.com/sets')
     assert not d['has_more']
     return d['data']
 
-def bugged_cards() -> Optional[List[Dict[str, Any]]]:
+async def bugged_cards_async() -> Optional[List[Dict[str, Any]]]:
     try:
         bugs = fetch_tools.fetch_json('https://pennydreadfulmtg.github.io/modo-bugs/bugs.json')
     except FetchException:
@@ -90,7 +91,7 @@ def gatherling_deck_comments(d: Deck) -> List[str]:
         return result.group(1).replace('<br />', '\n').split('\n')
     return []
 
-def legal_cards(force: bool = False, season: str = None) -> List[str]:
+async def legal_cards_async(force: bool = False, season: str = None) -> List[str]:
     if season is None:
         url = 'legal_cards.txt'
     else:
@@ -104,7 +105,7 @@ def legal_cards(force: bool = False, season: str = None) -> List[str]:
         return [l.strip() for l in legal]
 
     url = 'https://pennydreadfulmtg.github.io/' + url
-    legal_txt = fetch_tools.fetch(url, encoding, force=force)
+    legal_txt = await fetch_tools.fetch_async(url)
     if season is not None and configuration.get_bool('save_historic_legal_lists'):
         with open(os.path.join(cached_path, f'{season}_legal_cards.txt'), 'w', encoding=encoding) as h:
             h.write(legal_txt)
@@ -143,8 +144,8 @@ async def scryfall_cards_async() -> Dict[str, Any]:
     url = 'https://api.scryfall.com/cards'
     return await fetch_tools.fetch_json_async(url)
 
-def scryfall_last_updated() -> datetime.datetime:
-    d = fetch_tools.fetch_json('https://api.scryfall.com/bulk-data')
+async def scryfall_last_updated_async() -> datetime.datetime:
+    d = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
     for o in d['data']:
         if o['type'] == 'default_cards':
             return dtutil.parse_rfc3339(o['updated_at'])

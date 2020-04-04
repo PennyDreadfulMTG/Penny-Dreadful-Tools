@@ -50,7 +50,6 @@ class Bot(commands.Bot):
             asyncio.ensure_future(task(self), loop=self.loop)
         discordbot.commands.setup(self)
 
-
     async def close(self) -> None:
         try:
             p = await asyncio.create_subprocess_shell('git pull')

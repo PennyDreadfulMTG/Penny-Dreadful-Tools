@@ -69,3 +69,4 @@ def test_season_name() -> None:
     assert rotation.season_name('hou') == 'Season 5'
     assert rotation.season_name('ALL') == 'All Time'
     assert rotation.season_name('all') == 'All Time'
+    assert rotation.season_name(0) == 'All Time'

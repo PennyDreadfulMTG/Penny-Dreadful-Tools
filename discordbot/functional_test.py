@@ -13,7 +13,6 @@ from shared.container import Container
 @pytest.fixture(scope='module')
 def discordbot() -> Bot:
     bot = Bot()
-    bot.init()
     return bot
 
 class TestContext(MtgContext):

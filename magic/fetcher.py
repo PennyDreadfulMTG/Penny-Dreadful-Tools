@@ -90,7 +90,7 @@ def gatherling_deck_comments(d: Deck) -> List[str]:
         return result.group(1).replace('<br />', '\n').split('\n')
     return []
 
-async def legal_cards_async(force: bool = False, season: str = None) -> List[str]:
+async def legal_cards_async(season: str = None) -> List[str]:
     if season is None:
         url = 'legal_cards.txt'
     else:

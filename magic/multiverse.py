@@ -383,7 +383,7 @@ def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int
 async def set_legal_cards_async(season: str = None) -> None:
     new_list: Set[str] = set()
     try:
-        new_list = set(await fetcher.legal_cards_async(force=True, season=season))
+        new_list = set(await fetcher.legal_cards_async(season=season))
     except fetcher.FetchException:
         pass
     if season is None:

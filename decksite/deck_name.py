@@ -12,7 +12,8 @@ from shared.pd_exception import InvalidDataException
 WHITELIST = [
     '#justnayathings',
     'blue burn', # deck_id = 24089
-    "bob's r us"
+    "bob's r us",
+    'gg con'
 ]
 
 ABBREVIATIONS = {

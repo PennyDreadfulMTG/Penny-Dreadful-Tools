@@ -1,5 +1,6 @@
 from maintenance import validate_translations
 
+
 def test_has_missing_var() -> None:
     english_s = '%(num)d victories'
     correct_s = '%(num)d побед'

@@ -4,8 +4,11 @@ import sys
 import time
 from typing import List, Optional
 
-from plumbum import FG, local
-from plumbum.commands.processes import ProcessExecutionError
+try:
+    from plumbum import FG, local
+    from plumbum.commands.processes import ProcessExecutionError
+except ImportError:
+    sys.stderr.write('Please run ./dev.py build\n')
 
 from generate_readme import generate_readme
 from shared import configuration

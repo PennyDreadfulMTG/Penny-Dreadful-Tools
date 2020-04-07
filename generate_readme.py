@@ -1,7 +1,10 @@
 import subprocess
 import sys
 
-from discordbot import generate_readme as bot_readme
+try:
+    from discordbot import generate_readme as bot_readme
+except ImportError:
+    bot_readme = lambda : ...
 
 HEADER = """
 # Penny Dreadful Tools

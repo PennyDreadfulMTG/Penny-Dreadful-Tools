@@ -21,6 +21,7 @@ install:
   - travis_retry pip install -r requirements.txt
   - npm install
   - npm run-script build
+  - echo "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));" | mysql
 script:
   - echo $CMD
   - $CMD

@@ -3,7 +3,7 @@ import logging
 import os
 from typing import Optional
 
-from flask import Response, abort, g, make_response, redirect, request, send_file
+from flask import Response, abort, g, make_response, redirect, request, send_file, session
 from werkzeug import wrappers
 from werkzeug.exceptions import InternalServerError
 
@@ -34,7 +34,7 @@ def home() -> str:
 def export(deck_id: int) -> Response:
     d = ds.load_deck(deck_id)
     if d.is_in_current_run():
-        if not auth.person_id() or auth.person_id() != d.person_id:
+        if not session.get('admin') and (not auth.person_id() or auth.person_id() != d.person_id):
             abort(403)
     safe_name = deck_name.file_name(d)
     return make_response(mc.to_mtgo_format(str(d)), 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': 'attachment; filename={name}.txt'.format(name=safe_name)})

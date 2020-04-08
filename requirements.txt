@@ -1,6 +1,6 @@
 anytree==2.7.3
 attrs==19.3.0
-better_profanity==0.6.0
+better_profanity==0.6.1
 bs4==0.0.1
 cachecontrol[filecache]==0.12.6
 cachelib==0.1

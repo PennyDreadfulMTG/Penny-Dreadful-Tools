@@ -4,7 +4,7 @@ import sys
 try:
     from discordbot import generate_readme as bot_readme
 except ImportError:
-    bot_readme = lambda : ...
+    pass
 
 HEADER = """
 # Penny Dreadful Tools

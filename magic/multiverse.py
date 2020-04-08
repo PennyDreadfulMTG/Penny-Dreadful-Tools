@@ -380,7 +380,7 @@ def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int
     result['reserved'] = 1 if p.get('reserved') else 0 # replace True and False with 1 and 0
     return result
 
-async def set_legal_cards_async(season: str = None) -> None:
+async def set_legal_cards_async(season: Optional[str] = None) -> None:
     new_list: Set[str] = set()
     try:
         new_list = set(await fetcher.legal_cards_async(season=season))

@@ -72,7 +72,7 @@ Contributions are very welcome. Please join the Discord at https://pennydreadful
     - gunzip /tmp/dev-db.sql.gz
     - mysql -u <mysql_user> -p<mysql_password> <decksite_database> </tmp/dev-db.sql
 - Some very minor parts of the bot (the "modofail" command) use libopus and ffmpeg which are not in pip and must be installed in a your-OS-specific way separately. Very optional.
-- You will want to investigate the various targets in dev.py that acts as a Makefile.
+- You will want to investigate the various targets in dev.py that acts as a Makefile. Some of these utilities use GitHub's commandline git-enchancer, hub: https://github.com/github/hub
 
 ### Windows
 

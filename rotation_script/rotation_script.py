@@ -33,7 +33,7 @@ def run() -> None:
 
     if n == 0 and TIME_UNTIL_FULL_ROTATION > datetime.timedelta(7) and TIME_UNTIL_SUPPLEMENTAL_ROTATION > datetime.timedelta(7):
         print('The monks of the North Tree rarely saw their kodama until the rotation, when it woke like a slumbering, angry bear.')
-        print('ETA: {t}'.format(t=dtutil.display_time(time_until.total_seconds())))
+        print('ETA: {t}'.format(t=dtutil.display_time(int(time_until.total_seconds()))))
         return
 
     if n == 0:

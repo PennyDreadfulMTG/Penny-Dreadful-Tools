@@ -186,7 +186,7 @@ def rotation_api() -> Response:
         'last': rotation.last_rotation_ex(),
         'next': rotation.next_rotation_ex(),
         'diff': diff.total_seconds(),
-        'friendly_diff': dtutil.display_time(diff.total_seconds())
+        'friendly_diff': dtutil.display_time(int(diff.total_seconds()))
     }
     return return_json(result)
 

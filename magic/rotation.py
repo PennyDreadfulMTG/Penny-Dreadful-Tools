@@ -133,8 +133,8 @@ def message() -> str:
     sdiff = supplemental - now
     diff = full - now
     if sdiff < diff:
-        return 'The supplemental rotation is in {sdiff} (The next full rotation is in {diff})'.format(diff=dtutil.display_time(diff.total_seconds()), sdiff=dtutil.display_time(sdiff.total_seconds()))
-    return 'The next rotation is in {diff}'.format(diff=dtutil.display_time(diff.total_seconds()))
+        return 'The supplemental rotation is in {sdiff} (The next full rotation is in {diff})'.format(diff=dtutil.display_time(int(diff.total_seconds())), sdiff=dtutil.display_time(int(sdiff.total_seconds())))
+    return 'The next rotation is in {diff}'.format(diff=dtutil.display_time(int(diff.total_seconds())))
 
 def in_rotation() -> bool:
     if configuration.get_bool('always_show_rotation'):

@@ -82,7 +82,7 @@ def day2ordinal(m: Match) -> str:
     p = inflect.engine()
     return p.ordinal(int(m.group(1)))
 
-IntervalsType = Dict[str, Tuple[Optional[int], int, int]]
+IntervalsType = Dict[str, Tuple[Optional[int], int, Optional[int]]]
 ResultsType = List[Tuple[int, str]]
 
 def get_intervals() -> IntervalsType:
@@ -94,7 +94,7 @@ def get_intervals() -> IntervalsType:
     intervals['seconds'] = (60, 1, 31)
     return intervals
 
-def display_time(seconds: float, granularity: int = 2) -> str:
+def display_time(seconds: int, granularity: int = 2) -> str:
     intervals = get_intervals()
     result: ResultsType = []
     seconds = round(seconds) # in case we've been handed a decimal not an int
@@ -103,7 +103,7 @@ def display_time(seconds: float, granularity: int = 2) -> str:
     for unit, details in intervals.items():
         max_units, seconds_per_unit, rounding_threshold = details
         if len(result) < granularity: # We don't want to consider rounding up yet.
-            value = seconds // seconds_per_unit # floor preceeding units
+            value = int(seconds // seconds_per_unit) # floor preceeding units, int just to please typing
         else:
             value = round_value_appropriately(seconds, seconds_per_unit, max_units, rounding_threshold)
             if value == max_units and seconds < (value * seconds_per_unit): # rounding off bumped us up to one of the *preceeding* unit.
@@ -115,8 +115,8 @@ def display_time(seconds: float, granularity: int = 2) -> str:
             seconds -= value * seconds_per_unit
     return ', '.join(['{} {}'.format(value, unit.rstrip('s') if value == 1 else unit) for (value, unit) in result[:granularity] if value > 0])
 
-def round_value_appropriately(seconds: float, seconds_per_unit: int, max_units: int, rounding_threshold: int) -> int:
-    if not rounding_threshold:
+def round_value_appropriately(seconds: int, seconds_per_unit: int, max_units: Optional[int], rounding_threshold: Optional[int]) -> int:
+    if rounding_threshold is None or max_units is None:
         return round(seconds / seconds_per_unit)
     value = seconds // seconds_per_unit
     if value >= rounding_threshold:

@@ -82,12 +82,12 @@ def day2ordinal(m: Match) -> str:
     p = inflect.engine()
     return p.ordinal(int(m.group(1)))
 
-IntervalsType = Dict[str, Tuple[Optional[int], int]]
+IntervalsType = Dict[str, Tuple[Optional[int], int, int]]
 ResultsType = List[Tuple[int, str]]
 
 def get_intervals() -> IntervalsType:
     intervals: IntervalsType = OrderedDict()
-    intervals['weeks'] = (None, 60 * 60 * 24 * 7, 1000)
+    intervals['weeks'] = (None, 60 * 60 * 24 * 7, None)
     intervals['days'] = (7, 60 * 60 * 24, 7)
     intervals['hours'] = (24, 60 * 60, 24)
     intervals['minutes'] = (60, 60, 45)

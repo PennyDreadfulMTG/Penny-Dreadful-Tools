@@ -74,6 +74,8 @@ def test_display_date() -> None:
     assert dtutil.display_date(dt).find('from now') == -1
     dt = datetime.datetime.now(dtutil.WOTC_TZ) + datetime.timedelta(days=28, hours=15, minutes=35)
     assert dtutil.display_date(dt) == '4 weeks from now'
+    dt = datetime.datetime.now(dtutil.WOTC_TZ) + datetime.timedelta(days=6)
+    assert dtutil.display_date(dt) == '6 days from now'
 
 def test_rounding() -> None:
     assert dtutil.display_time(121, granularity=1) == '2 minutes'
@@ -89,9 +91,24 @@ def test_rounding() -> None:
     assert dtutil.display_time(0.4, 2) == 'now'
     assert dtutil.display_time(0.9, 2) == '1 second'
 
+def test_round_up_preceeding_unit() -> None:
+    results = [(1, 'hours'), (59, 'minutes'), (59, 'seconds')]
+    dtutil.round_up_preceeding_unit(results)
+    assert results == [(2, 'hours'), (0, 'minutes'), (0, 'seconds')]
+
 def test_display_time() -> None:
+    assert dtutil.display_time(60 * 60 * 2 - 1 * 60) == '1 hour, 59 minutes'
+    assert dtutil.display_time(60 * 60 * 2 + 1 * 60) == '2 hours, 1 minute'
     assert dtutil.display_time(60 * 60 * 2 - 1) == '2 hours'
     assert dtutil.display_time(60 * 60 * 2 + 1) == '2 hours'
+    assert dtutil.display_time(60 * 60 * 2 - 1, 1) == '2 hours'
+    assert dtutil.display_time(60 * 60 * 2 + 1, 1) == '2 hours'
     assert dtutil.display_time((24 * 60 * 60 * 3) + (60 * 60 * 2) + (60 * 59)) == '3 days, 3 hours'
     assert dtutil.display_time((24 * 60 * 60 * 3) + (60 * 60 * 2) + (60 * 29)) == '3 days, 2 hours'
-    assert dtutil.display_time(2417366.810318) == '4 weeks'
+    assert dtutil.display_time(2417366.810318) == '3 weeks, 6 days'
+
+def test_round_value_appropriately() -> None:
+    assert dtutil.round_value_appropriately(59, 1, 60, 30) == 60
+    assert dtutil.round_value_appropriately(29, 1, 60, 30) == 29
+    assert dtutil.round_value_appropriately(6 * 24 * 60 * 60, 24 * 60 * 60, 7, 7) == 6
+    assert dtutil.round_value_appropriately(7 * 24 * 60 * 60, 24 * 60 * 60, 7, 7) == 7

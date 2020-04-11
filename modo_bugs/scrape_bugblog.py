@@ -12,7 +12,7 @@ from .strings import BBT_REGEX, strip_squarebrackets
 
 def main(changes: List[str]) -> None:
     (link, new) = fetcher.find_bug_blog()
-    if new:
+    if new and link is not None:
         scrape_bb(link)
         changes.append('* New Bug Blog')
 

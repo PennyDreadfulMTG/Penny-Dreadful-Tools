@@ -1,6 +1,6 @@
 import os
 import sys
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from bs4 import BeautifulSoup
 from bs4.element import Tag
@@ -66,8 +66,10 @@ def update_redirect(file: str, title: str, redirect: str, **kwargs: str) -> bool
         return True
     return False
 
-def find_bug_blog() -> Tuple[str, bool]:
+def find_bug_blog() -> Tuple[Optional[str], bool]:
     bug_blogs = [a for a in get_article_archive() if str(a[0].string).startswith('Magic Online Bug Blog')]
+    if not bug_blogs:
+        return (None, False)
     (title, link) = bug_blogs[0]
     print('Found: {0} ({1})'.format(title, link))
     new = update_redirect('bug_blog', title.text, link)

@@ -1,13 +1,13 @@
 import re
 from typing import Optional
 
-from discord.client import Client
+from discord import Client, Emoji
 
 from magic import oracle
 from magic.models import Card
 
 
-def find_emoji(emoji: str, client: Client) -> Optional[str]:
+def find_emoji(emoji: str, client: Client) -> Optional[Emoji]:
     try:
         for guild in client.guilds:
             emojis = guild.emojis

@@ -8,11 +8,11 @@ from typing import Any, Callable, Dict, List, Optional
 import discord
 from discord import Guild, Member, Role, VoiceState
 from discord.activity import Streaming
+from discord.enums import Status
 from discord.errors import Forbidden, NotFound
 from discord.ext import commands
 from discord.message import Message
 from discord.reaction import Reaction
-from discord.state import Status
 from github.GithubException import GithubException
 
 import discordbot.commands
@@ -142,7 +142,8 @@ class Bot(commands.Bot):
                     if int(count) > 0:
                         trophy = await achievement_name(name)
                         role = await get_role(before.guild, trophy, create=True)
-                        expected.append(role)
+                        if role is not None:
+                            expected.append(role)
                 for role in before.roles:
                     if role in expected:
                         expected.remove(role)
@@ -353,7 +354,7 @@ def init() -> None:
     multiverse.init()
     asyncio.ensure_future(multiverse.update_bugged_cards_async())
     oracle.init()
-    client.run(configuration.get('token'))
+    client.run(configuration.get_str('token'))
 
 def is_pd_server(guild: Guild) -> bool:
     return guild.id == 207281932214599682 # or guild.id == 226920619302715392

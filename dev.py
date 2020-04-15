@@ -176,9 +176,15 @@ def runtests(argv: List[str], m: str, mark: bool) -> None:
     print(f'>>>> Running tests with "{argstr}"')
     # pylint: disable=import-outside-toplevel
     import pytest
-    from magic import multiverse, oracle
+    from magic import fetcher, multiverse, oracle
     multiverse.init()
     oracle.init()
+    try:
+        fetcher.sitemap()
+    except fetcher.FetchException:
+        print(f'Config was pointed at {fetcher.decksite_url()}, but it doesnt appear to be listening.')
+        for k in ['decksite_hostname', 'decksite_port', 'decksite_protocol']:
+            configuration.CONFIG[k] = configuration.DEFAULTS[k]
 
     code = pytest.main(args)
     if os.environ.get('TRAVIS') == 'true':

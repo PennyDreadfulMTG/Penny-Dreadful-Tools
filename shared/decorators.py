@@ -1,3 +1,4 @@
+import functools
 from typing import Any, Callable, Dict, List
 
 from shared.pd_exception import DatabaseException
@@ -6,7 +7,7 @@ FuncType = Callable[..., Any]
 
 def retry_after_calling(retry_func: Callable[[], None]) -> Callable[[FuncType], FuncType]:
     def decorator(decorated_func: FuncType) -> FuncType:
-        def wrapper(*args: List[Any], **kwargs: Dict[str, Any]) -> None:
+        def wrapper(*args: List[Any], **kwargs: Dict[str, Any]) -> Any:
             try:
                 return decorated_func(*args, **kwargs)
             except DatabaseException as e:
@@ -19,3 +20,13 @@ def retry_after_calling(retry_func: Callable[[], None]) -> Callable[[FuncType], 
                     raise e
         return wrapper
     return decorator
+
+def memoize(obj: FuncType) -> FuncType:
+    cache = obj.cache = {} # type: ignore
+
+    @functools.wraps(obj)
+    def memoizer(*args, **kwargs): # type: ignore
+        if args not in cache:
+            cache[args] = obj(*args, **kwargs)
+        return cache[args]
+    return memoizer

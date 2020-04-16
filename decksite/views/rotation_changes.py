@@ -23,7 +23,7 @@ class RotationChanges(View):
         self.query = query
         self.show_interestingness_filter = True
         self.show_filters_toggle = True
-        rotation_type = "speculation" if speculation else "changes"
+        rotation_type = 'speculation' if speculation else 'changes'
         self.new_cards_deck_url = url_for(f'rotation_{rotation_type}_files', changes_type='new')
         self.rotated_out_cards_deck_url = url_for(f'rotation_{rotation_type}_files', changes_type='out')
         self.show_downloads = True

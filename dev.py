@@ -252,13 +252,13 @@ def build() -> None:
         pipargs.append('--user')
     subprocess.check_call(pipargs)
     print('>>>> Installing node modules')
-    subprocess.check_call(['npm', 'install'], shell=True)
+    subprocess.check_call(['npm', 'install'])
     buildjs()
 
 
 def buildjs() -> None:
     print('>>>> Building javascript')
-    subprocess.check_call(['npm', 'run-script', 'build'], shell=True)
+    subprocess.check_call(['npm', 'run-script', 'build'])
 
 def jslint(fix: bool = False) -> None:
     print('>>>> Linting javascript')
@@ -280,7 +280,7 @@ def coverage() -> None:
 
 def watch() -> None:
     print('>>>> Watching')
-    subprocess.check_call(['npm', 'run', 'watch'], shell=True)
+    subprocess.check_call(['npm', 'run', 'watch'])
 
 # Make a branch based off of current (remote) master with all your local changes preserved (but not added).
 def branch(args: List[str]) -> None:

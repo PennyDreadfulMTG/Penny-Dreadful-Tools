@@ -79,6 +79,13 @@ def rotation_speculation() -> str:
         out=True), cs.playability(), speculation=True, query=query)
     return view.page()
 
+@APP.route('/rotation/speculation/files/<any(new,out):changes_type>/')
+def rotation_speculation_files(changes_type: str) -> Response:
+    out = changes_type != 'new'
+    changes = oracle.if_todays_prices(out=out)
+    s = '\n'.join('4 {name}'.format(name=c.name) for c in changes)
+    return make_response(s, 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': f'attachment; filename={changes_type}.txt'})
+
 
 @APP.route('/link/')
 @auth.login_required

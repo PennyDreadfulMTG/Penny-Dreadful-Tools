@@ -15,7 +15,7 @@ def login_required(f: Callable) -> Callable:
         return f(*args, **kwargs)
     return decorated_function
 
-def demimod_required(f: Callable[..., wrappers.Response]) -> Callable[..., wrappers.Response]:
+def demimod_required(f: Callable) -> Callable:
     @wraps(f)
     def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> wrappers.Response:
         if session.get('admin') is None and session.get('demimod') is None:

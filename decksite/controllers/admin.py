@@ -33,10 +33,10 @@ def admin_menu() -> List[Dict[str, str]]:
     return m
 
 @APP.route('/admin/')
-@auth.admin_required
-def admin_home() -> str:
+@auth.demimod_required
+def admin_home() -> wrappers.Response:
     view = Admin(admin_menu())
-    return view.page()
+    return view.response()
 
 @APP.route('/admin/aliases/')
 @auth.admin_required

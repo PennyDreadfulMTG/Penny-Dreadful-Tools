@@ -96,7 +96,7 @@ def last_rotation_ex() -> SetInfo:
 
 def next_rotation_ex() -> SetInfo:
     try:
-        return min([s for s in sets() if s.enter_date_dt > dtutil.now()], key=lambda s: s.enter_date_dt)
+        return min([s for s in sets() if s.enter_date_dt > (dtutil.now() - datetime.timedelta(days=7))], key=lambda s: s.enter_date_dt)
     except ValueError:
         fake_enter_date_dt = last_rotation() + datetime.timedelta(days=90)
         fake_exit_date_dt = last_rotation() + datetime.timedelta(days=90+365+365)

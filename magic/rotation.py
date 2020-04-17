@@ -13,6 +13,7 @@ from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 TOTAL_RUNS = 168
 WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
+ROTATION_OFFSET = datetime.timedelta(days=7) # We rotate seven days after a set is released.
 
 SEASONS = [
     'EMN', 'KLD', # 2016
@@ -83,20 +84,20 @@ def season_num(code_to_look_for: str) -> int:
         raise InvalidDataException('I did not find the season code (`{code}`) in the list of seasons ({seasons}) and I am confused.'.format(code=code_to_look_for, seasons=','.join(SEASONS)))
 
 def last_rotation() -> datetime.datetime:
-    return last_rotation_ex().enter_date_dt + datetime.timedelta(days=7)
+    return last_rotation_ex().enter_date_dt + ROTATION_OFFSET
 
 def next_rotation() -> datetime.datetime:
-    return next_rotation_ex().enter_date_dt + datetime.timedelta(days=7)
+    return next_rotation_ex().enter_date_dt + ROTATION_OFFSET
 
 def next_rotation_any_kind() -> datetime.datetime:
     return min(next_rotation(), next_supplemental())
 
 def last_rotation_ex() -> SetInfo:
-    return max([s for s in sets() if s.enter_date_dt < dtutil.now()], key=lambda s: s.enter_date_dt)
+    return max([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) < dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
 
 def next_rotation_ex() -> SetInfo:
     try:
-        return min([s for s in sets() if s.enter_date_dt > (dtutil.now() - datetime.timedelta(days=7))], key=lambda s: s.enter_date_dt)
+        return min([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) > dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
     except ValueError:
         fake_enter_date_dt = last_rotation() + datetime.timedelta(days=90)
         fake_exit_date_dt = last_rotation() + datetime.timedelta(days=90+365+365)

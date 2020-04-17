@@ -20,6 +20,8 @@ if ON_PROD:
     sys.stderr.write('DO NOT RUN dev.py ON PROD\n')
     sys.exit(1)
 
+ON_WINDOWS = sys.platform == 'win32'
+
 def run() -> None:
     try:
         try:
@@ -252,13 +254,13 @@ def build() -> None:
         pipargs.append('--user')
     subprocess.check_call(pipargs)
     print('>>>> Installing node modules')
-    subprocess.check_call(['npm', 'install'], shell=True)
+    subprocess.check_call(['npm', 'install'], shell=ON_WINDOWS)
     buildjs()
 
 
 def buildjs() -> None:
     print('>>>> Building javascript')
-    subprocess.check_call(['npm', 'run-script', 'build'], shell=True)
+    subprocess.check_call(['npm', 'run-script', 'build'], shell=ON_WINDOWS)
 
 def jslint(fix: bool = False) -> None:
     print('>>>> Linting javascript')
@@ -280,7 +282,7 @@ def coverage() -> None:
 
 def watch() -> None:
     print('>>>> Watching')
-    subprocess.check_call(['npm', 'run', 'watch'], shell=True)
+    subprocess.check_call(['npm', 'run', 'watch'], shell=ON_WINDOWS)
 
 # Make a branch based off of current (remote) master with all your local changes preserved (but not added).
 def branch(args: List[str]) -> None:

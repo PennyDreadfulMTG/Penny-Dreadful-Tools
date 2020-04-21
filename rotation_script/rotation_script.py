@@ -55,6 +55,8 @@ def run() -> None:
     if run_number == rotation.TOTAL_RUNS:
         make_final_list()
 
+    rotation.rotation_redis_store()
+
 def process(all_prices: Dict[str, PriceListType]) -> int:
     seen_sets: Set[str] = set()
     used_sets: Set[str] = set()

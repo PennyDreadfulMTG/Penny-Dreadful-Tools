@@ -214,6 +214,9 @@ def read_rotation_files() -> Tuple[int, int, List[Card]]:
     cards = redis.get_list('decksite:rotation:summary:cards')
     if runs_str is not None and runs_percent_str is not None and cards is not None:
         return int(runs_str), int(runs_percent_str), [Card(c, predetermined_values=True) for c in cards]
+    return rotation_redis_store()
+
+def rotation_redis_store() -> Tuple[int, int, List[Card]]:
     lines = []
     fs = files()
     if len(fs) == 0:
@@ -230,13 +233,22 @@ def read_rotation_files() -> Tuple[int, int, List[Card]]:
     runs_percent = round(round(runs / TOTAL_RUNS, 2) * 100)
     cs = oracle.cards_by_name()
     cards = []
+    card_ids_by_status = {}
     for name, hits in scores:
         c = process_score(name, hits, cs, runs, latest_list)
         if c is not None:
             cards.append(c)
+            classify_by_status(c, card_ids_by_status)
+    print(card_ids_by_status)
     redis.store('decksite:rotation:summary:runs', runs, ex=604800)
     redis.store('decksite:rotation:summary:runs_percent', runs_percent, ex=604800)
     redis.store('decksite:rotation:summary:cards', cards, ex=604800)
+    if 'Undecided' in card_ids_by_status:
+        redis.sadd('decksite:rotation:summary:undecided', *card_ids_by_status['Undecided'], ex=604800)
+    if 'Legal' in card_ids_by_status:
+        redis.sadd('decksite:rotation:summary:legal', *card_ids_by_status['Legal'], ex=604800)
+    if 'Not Legal' in card_ids_by_status:
+        redis.sadd('decksite:rotation:summary:notlegal', *card_ids_by_status['Not Legal'], ex=604800)
     return (runs, runs_percent, cards)
 
 def get_file_contents(file: str) -> List[str]:
@@ -283,3 +295,8 @@ def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_l
         'hit_in_last_run': hit_in_last_run
     })
     return c
+
+def classify_by_status(c: Card, card_ids_by_status: Dict[str, str]):
+    if not c.status in card_ids_by_status:
+        card_ids_by_status[c.status] = []
+    card_ids_by_status[c.status].append(c.id)

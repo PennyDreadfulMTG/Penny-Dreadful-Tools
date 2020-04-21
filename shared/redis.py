@@ -126,3 +126,14 @@ def keys(pattern: str) -> List[bytes]:
     if REDIS is not None:
         return REDIS.keys(pattern) # type: ignore
     return []
+
+def sadd(key: str, *values: Any, ex: Optional[int] = None) -> None:
+    if REDIS is not None:
+        REDIS.sadd(key, *values) # type: ignore
+        if ex is not None:
+            REDIS.expire(key, ex)
+
+def sismember(key: str, value: str) -> bool:
+    if REDIS is not None:
+        return REDIS.sismember(key, value) # type: ignore
+

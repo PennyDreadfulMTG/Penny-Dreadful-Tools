@@ -267,7 +267,7 @@ class MtgContext(commands.Context):
         # this feels awkward, but shrug
         await post_cards(self.bot, cards, self.channel, replying_to, additional_text)
 
-def get_future_legality(c: Card):
+def get_future_legality(c: Card) -> str:
     for status, symbol in {'undecided':':question:', 'legal':':green_circle:', 'notlegal':':red_circle:'}.items():
         if redis.sismember(f'decksite:rotation:summary:{status}', c.id):
             return symbol

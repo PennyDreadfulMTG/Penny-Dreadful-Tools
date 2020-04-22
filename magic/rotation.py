@@ -233,7 +233,7 @@ def rotation_redis_store() -> Tuple[int, int, List[Card]]:
     runs_percent = round(round(runs / TOTAL_RUNS, 2) * 100)
     cs = oracle.cards_by_name()
     cards = []
-    card_ids_by_status = {}
+    card_ids_by_status: Dict[str, List[str]] = {}
     for name, hits in scores:
         c = process_score(name, hits, cs, runs, latest_list)
         if c is not None:
@@ -295,7 +295,7 @@ def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_l
     })
     return c
 
-def classify_by_status(c: Card, card_ids_by_status: Dict[str, str]):
+def classify_by_status(c: Card, card_ids_by_status: Dict[str, List[str]]) -> None:
     if not c.status in card_ids_by_status:
         card_ids_by_status[c.status] = []
     card_ids_by_status[c.status].append(c.id)

@@ -79,6 +79,7 @@ def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignor
     files = rotation.files()
     n = len(files) + 1
     path = os.path.join(configuration.get_str('legality_dir'), 'Run_{n}.txt').format(n=str(n).zfill(3))
+    path = os.path.expanduser(path)
     h = open(path, mode='w', encoding='utf-8')
     for card in hits:
         line = card + '\n'

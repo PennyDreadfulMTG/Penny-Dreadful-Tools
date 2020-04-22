@@ -10,10 +10,10 @@ from discord.member import Member
 from discord.message import Message
 
 from discordbot import emoji
-from magic import card, card_price, fetcher, image_fetcher, oracle, rotation
+from magic import card, card_price, fetcher, image_fetcher, oracle
 from magic.models import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher
-from shared import configuration, dtutil, redis
+from shared import configuration, dtutil
 from shared.lazy import lazy_property
 
 DEFAULT_CARDS_SHOWN = 4
@@ -177,7 +177,7 @@ async def post_no_cards(channel: TextChannel, replying_to: Member) -> None:
     await message.add_reaction('❎')
 
 
-async def send(channel: TextChannel, content: str, file: File = None) -> Message:
+async def send(channel: TextChannel, content: str, file: Optional[File] = None) -> Message:
     new_s = escape_underscores(content)
     return await channel.send(file=file, content=new_s)
 
@@ -192,8 +192,6 @@ def single_card_text_internal(client: Client, requested_card: Card, disable_emoj
     mana = emoji.replace_emoji('|'.join(requested_card.mana_cost or []), client)
     mana = mana.replace('|', ' // ')
     legal = ' — ' + emoji.info_emoji(requested_card, verbose=True)
-    if rotation.in_rotation():
-        legal = f'{legal} {get_future_legality(requested_card)}'
     if disable_emoji:
         legal = ''
     if requested_card.get('mode', None) == '$':
@@ -254,17 +252,9 @@ class MtgContext(commands.Context):
         name = c.name
         info_emoji = emoji.info_emoji(c, show_legality=show_legality)
         text = emoji.replace_emoji(f(c), self.bot)
-        if rotation.in_rotation():
-            info_emoji = f'{info_emoji} {get_future_legality(c)}'
         message = f'**{name}** {info_emoji} {text}'
         await self.send(message)
 
     async def post_cards(self, cards: List[Card], replying_to: Optional[Member] = None, additional_text: str = '') -> None:
         # this feels awkward, but shrug
         await post_cards(self.bot, cards, self.channel, replying_to, additional_text)
-
-def get_future_legality(c: Card) -> str:
-    for status, symbol in {'undecided':':question:', 'legal':':green_circle:', 'notlegal':':red_circle:'}.items():
-        if redis.sismember(f'decksite:rotation:summary:{status}', c.id):
-            return symbol
-    return ':zero:'

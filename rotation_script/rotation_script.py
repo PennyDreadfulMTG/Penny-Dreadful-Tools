@@ -58,8 +58,8 @@ def run() -> None:
     try:
         url = f'{fetcher.decksite_url()}/api/rotation/clear_cache'
         fetch_tools.fetch(url)
-    except:
-        pass
+    except Exception as c: # pylint: disable=broad-except
+        print(c)
 
 def process(all_prices: Dict[str, PriceListType]) -> int:
     seen_sets: Set[str] = set()

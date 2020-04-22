@@ -190,6 +190,12 @@ def rotation_api() -> Response:
     }
     return return_json(result)
 
+@APP.route('/api/rotation/clear_cache')
+def rotation_clear_cache() -> Response:
+    rotation.clear_redis()
+    rotation.rotation_redis_store()
+    return return_json({'success':True})
+
 @APP.route('/api/cards')
 def cards_api() -> Response:
     blob = {'cards': cs.load_cards()}

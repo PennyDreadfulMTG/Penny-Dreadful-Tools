@@ -38,8 +38,8 @@ def run() -> None:
 
     if n == 0:
         rotation.clear_redis(clear_files=True)
-    else:
-        rotation.clear_redis()
+    #else:
+    #    rotation.clear_redis()
 
     all_prices = {}
     for url in configuration.get_list('cardhoarder_urls'):
@@ -54,6 +54,9 @@ def run() -> None:
     run_number = process(all_prices)
     if run_number == rotation.TOTAL_RUNS:
         make_final_list()
+
+    url = f'{fetcher.decksite_url()}/api/rotation/clear_cache'
+    fetch_tools.fetch(url)
 
 def process(all_prices: Dict[str, PriceListType]) -> int:
     seen_sets: Set[str] = set()

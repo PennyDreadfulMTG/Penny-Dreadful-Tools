@@ -46,10 +46,6 @@ async def respond_to_card_names(message: Message, client: Client) -> None:
                 cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode, preferred_printing))
         await post_cards(client, cards, message.channel, message.author)
 
-async def handle_command(message: Message, client: commands.Bot) -> None:
-    ctx = await client.get_context(message, cls=MtgContext)
-    await client.invoke(ctx)
-
 def parse_queries(content: str, scryfall_compatability_mode: bool) -> List[str]:
     to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, re.DOTALL) # Ignore angle brackets inside backticks. It's annoying in #code.
     if scryfall_compatability_mode:

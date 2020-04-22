@@ -61,10 +61,10 @@ def test_info_emoji() -> None:
     legal_cards = oracle.legal_cards()
     assert len(legal_cards) > 0
     legal_card = oracle.load_card('island')
-    assert emoji.info_emoji(legal_card) == ':white_check_mark:'
+    assert emoji.info_emoji(legal_card, no_rotation_hype=True) == ':white_check_mark:'
     illegal_card = oracle.load_card('black lotus')
-    assert emoji.info_emoji(illegal_card) == ':no_entry_sign:'
-    assert emoji.info_emoji(illegal_card, verbose=True) == ':no_entry_sign: (not legal in PD)'
+    assert emoji.info_emoji(illegal_card, no_rotation_hype=True) == ':no_entry_sign:'
+    assert emoji.info_emoji(illegal_card, verbose=True, no_rotation_hype=True) == ':no_entry_sign: (not legal in PD)'
 
 def test_accents() -> None:
     c = oracle.load_card('Lim-Dûl the Necromancer')

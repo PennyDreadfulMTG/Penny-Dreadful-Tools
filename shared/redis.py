@@ -136,4 +136,4 @@ def sadd(key: str, *values: Any, ex: Optional[int] = None) -> None:
 def sismember(key: str, value: str) -> bool:
     if REDIS is not None:
         return REDIS.sismember(key, value) # type: ignore
-
+    return False

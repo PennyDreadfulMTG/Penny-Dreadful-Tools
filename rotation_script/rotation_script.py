@@ -185,9 +185,12 @@ https://pennydreadfulmagic.com/admin/rotation/
         fetch_tools.post('https://gatherling.com/util/updateDefaultFormats.php')
     except fetch_tools.FetchException:
         checklist += '- [ ] Update Gatherling legal cards list'
-    srv = pathlib.Path('/home/discord/vassals/decksite.ini')
-    if srv.exists():
-        srv.touch()
+
+    for path in ['/etc/uwsgi/vassals/decksite.ini', '/home/discord/vassals/decksite.ini']:
+        srv = pathlib.Path(path)
+        if srv.exists():
+            srv.touch()
+            break
     else:
-        checklist += '- [ ] touch /home/discord/vassals/decksite.ini\n'
+        checklist += '- [ ] touch /etc/uwsgi/vassals/decksite.ini\n'
     repo.create_issue(checklist, 'rotation script', 'rotation')

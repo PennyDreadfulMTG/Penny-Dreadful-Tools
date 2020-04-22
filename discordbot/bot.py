@@ -73,17 +73,19 @@ class Bot(commands.Bot):
             return
         if message.author.bot:
             return
-        if message.content.startswith('!') and len(message.content.replace('!', '')) > 0:
-            await command.handle_command(message, self)
+        ctx = await self.get_context(message, cls=command.MtgContext)
+        if ctx.valid:
+            await self.invoke(ctx)
         else:
             await command.respond_to_card_names(message, self)
 
     async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:
         # pylint: disable=unused-argument
         # If we're the only one left in a voice chat, leave the channel
-        if getattr(after.channel, 'guild', None) is None:
+        guild = getattr(after.channel, 'guild', None)
+        if guild is None:
             return
-        voice = after.channel.guild.voice_client
+        voice = guild.voice_client
         if voice is None or not voice.is_connected():
             return
         if len(voice.channel.voice_members) == 1:

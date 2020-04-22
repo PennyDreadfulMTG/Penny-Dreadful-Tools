@@ -37,7 +37,7 @@ def replace_emoji(text: str, client: Client) -> str:
             output = output.replace('{' + symbol + '}', str(emoji))
     return output
 
-def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True, no_rotation_hype = False) -> str:
+def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True, no_rotation_hype: bool = False) -> str:
     s = ''
     if show_legality:
         legal = c.name in oracle.legal_cards()

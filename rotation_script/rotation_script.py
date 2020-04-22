@@ -55,8 +55,11 @@ def run() -> None:
     if run_number == rotation.TOTAL_RUNS:
         make_final_list()
 
-    url = f'{fetcher.decksite_url()}/api/rotation/clear_cache'
-    fetch_tools.fetch(url)
+    try:
+        url = f'{fetcher.decksite_url()}/api/rotation/clear_cache'
+        fetch_tools.fetch(url)
+    except:
+        pass
 
 def process(all_prices: Dict[str, PriceListType]) -> int:
     seen_sets: Set[str] = set()

@@ -1,7 +1,9 @@
+import datetime
 from typing import Any, Dict, List, Optional, Union, cast
 
 import titlecase
 from flask import make_response, redirect, request, session, url_for
+from flask_babel import gettext
 from werkzeug import wrappers
 
 from decksite import APP, auth
@@ -17,6 +19,7 @@ from decksite.league import RetireForm
 from decksite.views import (Admin, AdminRetire, EditAliases, EditArchetypes, EditLeague,
                             EditMatches, EditNews, EditRules, PlayerNotes, Prizes,
                             RotationChecklist, Unlink)
+from magic import rotation
 from magic.models import Deck
 from shared import dtutil, redis
 from shared.container import Container
@@ -30,6 +33,9 @@ def admin_menu() -> List[Dict[str, str]]:
     for endpoint in endpoints:
         name = titlecase.titlecase(endpoint.replace('_', ' ')) if endpoint else 'Admin Home'
         m.append({'name': name, 'endpoint': endpoint, 'url': url_for(endpoint)})
+    if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7) or (rotation.next_supplemental() - dtutil.now()) < datetime.timedelta(7):
+        m.append({'name': gettext('Rotation Tracking'), 'endpoint': 'rotation'})
+    m.append({'name': gettext('Rotation Speculation'), 'endpoint': 'rotation_speculation'})
     return m
 
 @APP.route('/admin/')

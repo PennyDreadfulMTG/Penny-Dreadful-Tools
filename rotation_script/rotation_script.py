@@ -55,8 +55,11 @@ def run() -> None:
     if run_number == rotation.TOTAL_RUNS:
         make_final_list()
 
-    url = f'{fetcher.decksite_url()}/api/rotation/clear_cache'
-    fetch_tools.fetch(url)
+    try:
+        url = f'{fetcher.decksite_url()}/api/rotation/clear_cache'
+        fetch_tools.fetch(url)
+    except Exception as c: # pylint: disable=broad-except
+        print(c)
 
 def process(all_prices: Dict[str, PriceListType]) -> int:
     seen_sets: Set[str] = set()
@@ -79,6 +82,7 @@ def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignor
     files = rotation.files()
     n = len(files) + 1
     path = os.path.join(configuration.get_str('legality_dir'), 'Run_{n}.txt').format(n=str(n).zfill(3))
+    path = os.path.expanduser(path)
     h = open(path, mode='w', encoding='utf-8')
     for card in hits:
         line = card + '\n'

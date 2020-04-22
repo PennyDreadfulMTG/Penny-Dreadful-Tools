@@ -13,6 +13,7 @@ from magic import oracle
 @cached()
 @APP.route('/rotation/')
 @APP.route('/rotation/<interestingness>/')
+@auth.admin_required
 def rotation(interestingness: Optional[str] = None) -> str:
     query = request.args.get('fq')
     if query is None:
@@ -71,6 +72,7 @@ def rotation_changes_files(changes_type: str) -> Response:
     return make_response(s, 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': f'attachment; filename={changes_type}.txt'})
 
 @APP.route('/rotation/speculation/')
+@auth.admin_required
 def rotation_speculation() -> str:
     query = request.args.get('fq')
     if query is None:
@@ -80,6 +82,7 @@ def rotation_speculation() -> str:
     return view.page()
 
 @APP.route('/rotation/speculation/files/<any(new,out):changes_type>/')
+@auth.admin_required
 def rotation_speculation_files(changes_type: str) -> Response:
     out = changes_type != 'new'
     changes = oracle.if_todays_prices(out=out)

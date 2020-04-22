@@ -10,10 +10,10 @@ from discord.member import Member
 from discord.message import Message
 
 from discordbot import emoji
-from magic import card, card_price, fetcher, image_fetcher, oracle, rotation
+from magic import card, card_price, fetcher, image_fetcher, oracle
 from magic.models import Card
 from magic.whoosh_search import SearchResult, WhooshSearcher
-from shared import configuration, dtutil, redis
+from shared import configuration, dtutil
 from shared.lazy import lazy_property
 
 DEFAULT_CARDS_SHOWN = 4

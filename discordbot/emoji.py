@@ -37,7 +37,7 @@ def replace_emoji(text: str, client: Client) -> str:
             output = output.replace('{' + symbol + '}', str(emoji))
     return output
 
-def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True) -> str:
+def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True, no_rotation_hype = False) -> str:
     s = ''
     if show_legality:
         legal = c.name in oracle.legal_cards()
@@ -45,7 +45,7 @@ def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True) -> st
             s += ':white_check_mark:'
         else:
             s += ':no_entry_sign:'
-        if rotation.in_rotation():
+        if rotation.in_rotation() and not no_rotation_hype:
             rot_emoji = get_future_legality(c, legal)
             s += rot_emoji
         if not legal and verbose and not rot_emoji:

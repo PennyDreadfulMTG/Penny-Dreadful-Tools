@@ -267,4 +267,4 @@ def get_future_legality(c: Card) -> str:
     for status, symbol in {'undecided':':question:', 'legal':':green_circle:', 'notlegal':':red_circle:'}.items():
         if redis.sismember(f'decksite:rotation:summary:{status}', c.id):
             return symbol
-    return ':00:'
+    return ':zero:'

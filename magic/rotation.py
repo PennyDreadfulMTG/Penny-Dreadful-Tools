@@ -221,7 +221,7 @@ def rotation_redis_store() -> Tuple[int, int, List[Card]]:
     fs = files()
     if len(fs) == 0:
         if not os.path.isdir(os.path.expanduser(configuration.get_str('legality_dir'))):
-            raise DoesNotExistException('Invalid configuration.  Could not find legality_dir.')
+            print('WARNING: Could not find legality_dir.')
         return (0, 0, [])
     latest_list = open(fs[-1], 'r').read().splitlines()
     for filename in fs:

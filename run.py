@@ -10,6 +10,7 @@ import click
 
 from shared import configuration
 
+
 @click.group()
 def cli() -> None:
     pass
@@ -34,8 +35,8 @@ def profiler() -> None:
 
 @cli.command()
 def price_grabber() -> None:
-    from price_grabber import price_grabber
-    price_grabber.run()
+    from price_grabber import price_grabber as grabber
+    grabber.run()
 
 @cli.command()
 def srv_price() -> None:
@@ -59,18 +60,18 @@ def rotation() -> None:
 
 @cli.command()
 def logsite() -> None:
-    import logsite
-    logsite.APP.run(host='0.0.0.0', port=5001, debug=True)
+    import logsite as site
+    site.APP.run(host='0.0.0.0', port=5001, debug=True)
 
 @cli.command()
 def github_tools() -> None:
-    import github_tools
-    github_tools.APP.run(host='0.0.0.0', port=5002, debug=True)
+    import github_tools as site
+    site.APP.run(host='0.0.0.0', port=5002, debug=True)
 
 @cli.command()
 def modo_bugs() -> None:
-    import modo_bugs
-    modo_bugs.main.run()
+    import modo_bugs as site
+    site.main.run()
 
 def task(args: List[str]) -> None:
     try:
@@ -113,7 +114,7 @@ def task(args: List[str]) -> None:
         raise
 
 def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
-    error = None
+    c = None
     setup_app_context = False
     m = importlib.import_module('{module}'.format(module=module))
     # pylint: disable=unused-variable
@@ -140,15 +141,14 @@ def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
                 s.run() # type: ignore
                 t = time.perf_counter() - timer
                 print(f'{s.__name__} completed in {t}')
-        except Exception as c:
+        except Exception as c: # pylint: disable=broad-except
             from shared import repo
             repo.create_issue(f'Error running task {s.__name__}', 'CLI', 'CLI', 'PennyDreadfulMTG/perf-reports', exception=c)
-            error = c
 
     if setup_app_context:
         app_context.__exit__(None, None, None)
-    if error:
-        raise error
+    if c:
+        raise c
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     cli()

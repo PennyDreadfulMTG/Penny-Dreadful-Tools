@@ -1,86 +1,68 @@
 #!/usr/bin/env python3
-# pylint: disable=import-outside-toplevel
 import importlib
 import pkgutil
 import sys
 import time
 from typing import Any, List, Optional
 
-import click
-
 from shared import configuration
 
 
-@click.group()
-def cli() -> None:
-    pass
+# pylint: disable=import-outside-toplevel
+def run() -> None:
+    if len(sys.argv) < 2:
+        print('No entry point specified.')
+        sys.exit(1)
 
-@cli.command()
-def discordbot() -> None:
-    from discordbot import bot
-    bot.init()
-
-@cli.command()
-def decksite() -> None:
-    from decksite import main
-    main.init()
-
-@cli.command()
-def profiler() -> None:
-    from werkzeug.middleware.profiler import ProfilerMiddleware
-    from decksite import main
-    main.APP.config['PROFILE'] = True
-    main.APP.wsgi_app = ProfilerMiddleware(main.APP.wsgi_app, restrictions=[30]) # type: ignore
-    main.init()
-
-@cli.command()
-def price_grabber() -> None:
-    from price_grabber import price_grabber as grabber
-    grabber.run()
-
-@cli.command()
-def srv_price() -> None:
-    from price_grabber import srv_prices
-    srv_prices.init()
-
-@cli.command()
-@click.argument('source')
-def scraper(source: str) -> None:
-    task(['scraper', source])
-
-@cli.command()
-@click.argument('script')
-def maintenance(script: str) -> None:
-    task(['maintenance', script])
-
-@cli.command()
-def rotation() -> None:
-    from rotation_script import rotation_script
-    rotation_script.run()
-
-@cli.command()
-def logsite() -> None:
-    import logsite as site
-    site.APP.run(host='0.0.0.0', port=5001, debug=True)
-
-@cli.command()
-def github_tools() -> None:
-    import github_tools as site
-    site.APP.run(host='0.0.0.0', port=5002, debug=True)
-
-@cli.command()
-def modo_bugs() -> None:
-    import modo_bugs as site
-    site.main.run()
+    if sys.argv[1] == 'discordbot':
+        from discordbot import bot
+        bot.init()
+    elif sys.argv[1] == 'decksite':
+        from decksite import main
+        main.init()
+    elif sys.argv[1] == 'decksite-profiler':
+        from werkzeug.middleware.profiler import ProfilerMiddleware
+        from decksite import main
+        main.APP.config['PROFILE'] = True
+        main.APP.wsgi_app = ProfilerMiddleware(main.APP.wsgi_app, restrictions=[30]) # type: ignore
+        main.init()
+    elif 'price_grabber' in sys.argv:
+        from price_grabber import price_grabber
+        price_grabber.run()
+    elif 'srv_price' in sys.argv:
+        from price_grabber import srv_prices
+        srv_prices.init()
+    elif sys.argv[1] in ['scraper', 'scrapers', 'maintenance']:
+        task(sys.argv)
+    elif sys.argv[1] == 'tests':
+        print('Call `dev.py tests` instead.')
+        sys.exit(1)
+    elif sys.argv[1] == 'rotation':
+        from rotation_script import rotation_script
+        rotation_script.run()
+    elif sys.argv[1] == 'logsite':
+        import logsite
+        logsite.APP.run(host='0.0.0.0', port=5001, debug=True)
+    elif sys.argv[1] == 'github_tools':
+        import github_tools
+        github_tools.APP.run(host='0.0.0.0', port=5002, debug=True)
+    else:
+        try:
+            m = importlib.import_module('{module}.main'.format(module=sys.argv[1]))
+            m.run() # type: ignore
+        except ImportError:
+            print("I don't recognize `{0}`".format(sys.argv[1]))
+            sys.exit(1)
+    sys.exit(0)
 
 def task(args: List[str]) -> None:
     try:
-        module = args[0]
+        module = args[1]
         if module == 'scraper':
             module = 'scrapers'
         if module == 'scrapers':
             module = 'decksite.scrapers'
-        name = args[1]
+        name = args[2]
         from magic import oracle, multiverse
         multiverse.init()
         if name != 'reprime_cache':
@@ -114,42 +96,34 @@ def task(args: List[str]) -> None:
         raise
 
 def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
-    error = None
-    app_context = None
+
+    setup_app_context = False
     m = importlib.import_module('{module}'.format(module=module))
     # pylint: disable=unused-variable
     for importer, modname, ispkg in pkgutil.iter_modules(m.__path__): # type: ignore
-        try:
-            s = importlib.import_module('{module}.{name}'.format(name=modname, module=module))
-            use_app_conext = getattr(s, 'REQUIRES_APP_CONTEXT', True)
-            if use_app_conext and app_context is None:
-                from decksite import APP
-                APP.config['SERVER_NAME'] = configuration.server_name()
-                app_context = APP.app_context() # type: ignore
-                app_context.__enter__()
+        s = importlib.import_module('{module}.{name}'.format(name=modname, module=module))
+        use_app_conext = getattr(s, 'REQUIRES_APP_CONTEXT', True)
+        if use_app_conext and not setup_app_context:
+            from decksite.main import APP
+            APP.config['SERVER_NAME'] = configuration.server_name()
+            app_context = APP.app_context() # type: ignore
+            app_context.__enter__()
 
-            if with_flag and not getattr(s, with_flag, False):
-                continue
-            if getattr(s, 'scrape', None) is not None:
-                timer = time.perf_counter()
-                s.scrape() # type: ignore
-                t = time.perf_counter() - timer
-                print(f'{s.__name__} completed in {t}')
+        if with_flag and not getattr(s, with_flag, False):
+            continue
+        if getattr(s, 'scrape', None) is not None:
+            timer = time.perf_counter()
+            s.scrape() # type: ignore
+            t = time.perf_counter() - timer
+            print(f'{s.__name__} completed in {t}')
 
-            elif getattr(s, 'run', None) is not None:
-                timer = time.perf_counter()
-                s.run() # type: ignore
-                t = time.perf_counter() - timer
-                print(f'{s.__name__} completed in {t}')
-        except Exception as c: # pylint: disable=broad-except
-            from shared import repo
-            repo.create_issue(f'Error running task {s.__name__}', 'CLI', 'CLI', 'PennyDreadfulMTG/perf-reports', exception=c)
-            error = c
+        elif getattr(s, 'run', None) is not None:
+            timer = time.perf_counter()
+            s.run() # type: ignore
+            t = time.perf_counter() - timer
+            print(f'{s.__name__} completed in {t}')
 
-    if app_context is not None:
+    if setup_app_context:
         app_context.__exit__(None, None, None)
-    if error:
-        raise error
 
-if __name__ == '__main__':
-    cli()
+run()

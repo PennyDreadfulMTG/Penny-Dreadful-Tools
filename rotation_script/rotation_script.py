@@ -183,11 +183,18 @@ https://pennydreadfulmagic.com/admin/rotation/
     else:
         checklist += '- [ ] restart discordbot'
     ds = os.path.expanduser('~/decksite/')
-    if os.path.exists(ds):
-        os.chdir(ds)
-        subprocess.run(['python3', 'maintenance', 'post_rotation'], check=True)
-    else:
+    failed = False
+    try:
+        if os.path.exists(ds):
+            os.chdir(ds)
+            subprocess.run(['python3', 'run.py', 'maintenance', 'post_rotation'], check=True)
+        else:
+            failed = True
+    except Exception: # pylint: disable=broad-except
+        failed = True
+    if failed:
         checklist += '- [ ] run post_rotation\n'
+
     try:
         fetch_tools.post('https://gatherling.com/util/updateDefaultFormats.php')
     except fetch_tools.FetchException:

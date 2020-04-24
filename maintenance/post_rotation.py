@@ -18,7 +18,6 @@ def ad_hoc() -> None:
     multiverse.init() # New Cards?
     event_loop.run_until_complete(multiverse.set_legal_cards_async()) # PD current list
     event_loop.run_until_complete(multiverse.update_pd_legality_async()) # PD previous lists
-    reprime_cache.run() # Update deck legalities
     insert_seasons.run() # Make sure Season table is up to date
     if redis.REDIS: # Clear the redis cache
         redis.REDIS.flushdb()
@@ -26,3 +25,7 @@ def ad_hoc() -> None:
     diff = league_end - dtutil.now()
     if diff.days > 0:
         league.set_status(league.Status.OPEN)
+    print('Open the gates here')
+    reprime_cache.run() # Update deck legalities
+    if redis.REDIS: # Clear the redis cache
+        redis.REDIS.flushdb()

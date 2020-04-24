@@ -114,16 +114,16 @@ def task(args: List[str]) -> None:
         raise
 
 def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
-    c = None
-    setup_app_context = False
+    error = None
+    app_context = None
     m = importlib.import_module('{module}'.format(module=module))
     # pylint: disable=unused-variable
     for importer, modname, ispkg in pkgutil.iter_modules(m.__path__): # type: ignore
         try:
             s = importlib.import_module('{module}.{name}'.format(name=modname, module=module))
             use_app_conext = getattr(s, 'REQUIRES_APP_CONTEXT', True)
-            if use_app_conext and not setup_app_context:
-                from decksite.main import APP
+            if use_app_conext and app_context is None:
+                from decksite import APP
                 APP.config['SERVER_NAME'] = configuration.server_name()
                 app_context = APP.app_context() # type: ignore
                 app_context.__enter__()
@@ -144,11 +144,12 @@ def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
         except Exception as c: # pylint: disable=broad-except
             from shared import repo
             repo.create_issue(f'Error running task {s.__name__}', 'CLI', 'CLI', 'PennyDreadfulMTG/perf-reports', exception=c)
+            error = c
 
-    if setup_app_context:
+    if app_context is not None:
         app_context.__exit__(None, None, None)
-    if c:
-        raise c
+    if error:
+        raise error
 
 if __name__ == '__main__':
     cli()

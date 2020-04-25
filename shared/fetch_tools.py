@@ -12,12 +12,6 @@ from cachecontrol.heuristics import ExpiresAfter
 from shared import configuration, perf
 from shared.pd_exception import OperationalException
 
-SESSION = CacheControl(requests.Session(),
-                       cache=FileCache(configuration.get('web_cache')))
-SESSION.mount(
-    'http://whatsinstandard.com',
-    CacheControlAdapter(heuristic=ExpiresAfter(days=14)))
-
 def fetch(url: str, character_encoding: Optional[str] = None, force: bool = False, retry: bool = False) -> str:
     headers = {}
     if force:
@@ -25,7 +19,7 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
     print('Fetching {url} ({cache})'.format(url=url, cache='no cache' if force else 'cache ok'))
     try:
         p = perf.start()
-        response = SESSION.get(url, headers=headers)
+        response = requests.get(url, headers=headers)
         perf.check(p, 'slow_fetch', (url, headers), 'fetch')
         if character_encoding is not None:
             response.encoding = character_encoding
@@ -77,7 +71,7 @@ def post(url: str,
         ) -> str:
     print('POSTing to {url} with {data} / {json_data}'.format(url=url, data=data, json_data=json_data))
     try:
-        response = SESSION.post(url, data=data, json=json_data)
+        response = requests.post(url, data=data, json=json_data)
         return response.text
     except requests.exceptions.ConnectionError as e:
         raise FetchException(e)

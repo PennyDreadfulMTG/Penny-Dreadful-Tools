@@ -1,6 +1,6 @@
 from typing import Optional
 
-from discord import FFmpegPCMAudio
+from discord import FFmpegPCMAudio, Member
 from discord.ext import commands
 
 from discordbot.command import MtgContext
@@ -12,7 +12,8 @@ async def modofail(ctx: MtgContext, args: Optional[str]) -> None:
     """Ding!"""
     if args is not None and args.lower() == 'reset':
         redis.clear(f'modofail:{ctx.guild}')
-    if hasattr(ctx.author, 'voice') and ctx.author.voice is not None and ctx.author.voice.channel is not None:
+    author = ctx.author
+    if isinstance(author, Member) and hasattr(author, 'voice') and author.voice is not None and author.voice.channel is not None:
         voice_channel = ctx.author.voice.channel
         voice = ctx.channel.guild.voice_client
         if voice is None:

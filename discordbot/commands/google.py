@@ -12,10 +12,12 @@ async def google(ctx: MtgContext, *, args: str) -> None:
     api_key = configuration.get('cse_api_key')
     cse_id = configuration.get('cse_engine_id')
     if api_key is None or cse_id is None:
-        return await ctx.send('The google command has not been configured.')
+        await ctx.send('The google command has not been configured.')
+        return
 
     if len(args) == 0:
-        return await ctx.send('{author}: No search term provided. Please type !google followed by what you would like to search.'.format(author=ctx.author.mention))
+        await ctx.send('{author}: No search term provided. Please type !google followed by what you would like to search.'.format(author=ctx.author.mention))
+        return
 
     try:
         service = build('customsearch', 'v1', developerKey=api_key)

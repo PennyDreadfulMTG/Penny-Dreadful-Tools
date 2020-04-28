@@ -72,7 +72,7 @@ def season_join() -> str:
     """
 
 def decks_order_by(key: str, sort_order: str) -> str:
-    marginalia_order_by = f"""
+    marginalia_order_by = """
         (CASE WHEN d.finish = 1 THEN 1
              WHEN d.finish = 2 AND c.top_n >= 2 THEN 2
              WHEN d.finish = 3 AND c.top_n >= 3 THEN 3

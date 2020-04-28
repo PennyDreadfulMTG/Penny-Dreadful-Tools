@@ -6,19 +6,19 @@ from github.IssueComment import IssueComment
 from github.Project import Project
 from github.Repository import Repository
 
-from shared import configuration, lazy, redis
+from shared import configuration, decorators, redis
 
 from . import strings
 
 ISSUE_CODES: Dict[int, str] = {}
 
-@lazy.lazy_property
+@decorators.memoize
 def get_github() -> Github:
     if not configuration.get_str('github_user') or not configuration.get_str('github_password'):
         return None
     return Github(configuration.get('github_user'), configuration.get('github_password'))
 
-@lazy.lazy_property
+@decorators.memoize
 def get_repo() -> Repository:
     gh = get_github()
     if gh is not None:

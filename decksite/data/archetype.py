@@ -88,7 +88,7 @@ def assign(deck_id: int, archetype_id: int, person_id: Optional[int], reviewed: 
     and_clause = '' if reviewed else 'AND reviewed is FALSE'
     db().execute(f'UPDATE deck SET reviewed = %s, archetype_id = %s WHERE id = %s {and_clause}', [reviewed, archetype_id, deck_id])
     if not reviewed and similarity is not None:
-        db().execute(f'UPDATE deck_cache SET similarity = %s WHERE deck_id = %s', [similarity, deck_id])
+        db().execute('UPDATE deck_cache SET similarity = %s WHERE deck_id = %s', [similarity, deck_id])
     db().commit('assign_archetype')
 
 def move(archetype_id: int, parent_id: int) -> None:

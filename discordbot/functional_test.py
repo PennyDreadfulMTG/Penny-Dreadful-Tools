@@ -21,7 +21,7 @@ class TestContext(MtgContext):
         self.sent_args = False
         self.sent_file = False
 
-    async def send(self, *args: Any, **kwargs: Any) -> None: # pylint: disable=arguments-differ
+    async def send(self, *args: Any, **kwargs: Any) -> None: # pylint: disable=signature-differs
         self.sent = True
         self.sent_args = bool(args)
         self.sent_file = 'file' in kwargs.keys()

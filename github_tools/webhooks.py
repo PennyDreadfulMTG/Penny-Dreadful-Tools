@@ -12,11 +12,11 @@ from github.PullRequest import PullRequest
 from github.Repository import Repository
 from requirements.requirement import Requirement
 
-from shared import configuration, lazy, redis
+from shared import configuration, decorators, redis
 
 PDM_CHECK_CONTEXT = 'pdm/automerge'
 
-@lazy.lazy_property
+@decorators.memoize
 def get_github() -> Github:
     if not configuration.get_str('github_user') or not configuration.get_str('github_password'):
         return None
@@ -97,7 +97,7 @@ def build_changelog(change: File) -> List[str]:
                 else:
                     lines.append(f'> Warning: {p[0]} is pinned to a specific version.')
         else:
-            lines.append(f'> Warning: Unknown error.')
+            lines.append('> Warning: Unknown error.')
     for package in newversions:
         old = packaging.version.parse(oldversions.get(package, ''))
         new = packaging.version.parse(newversions.get(package, ''))

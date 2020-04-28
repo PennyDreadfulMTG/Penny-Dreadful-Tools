@@ -57,7 +57,7 @@ class Bot(commands.Bot):
             p = await asyncio.create_subprocess_shell(f'{sys.executable} -m pip install -U -r requirements.txt --no-cache')
             await p.wait()
         except Exception as c: # pylint: disable=broad-except
-            repo.create_issue(f'Bot error while closing', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=c)
+            repo.create_issue('Bot error while closing', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=c)
         await super().close()
 
     async def on_ready(self) -> None:

@@ -26,4 +26,4 @@ async def spoiler(ctx: MtgContext, *, args: str) -> None:
     fetch_tools.store(c['image_uris']['normal'], imagepath)
     text = emoji.replace_emoji('{name} {mana}'.format(name=sfcard['name'], mana=c['mana_cost']), ctx.bot)
     await ctx.send(file=File(imagepath), content=text)
-    oracle.scryfall_import(sfcard['name'])
+    await oracle.scryfall_import_async(sfcard['name'])

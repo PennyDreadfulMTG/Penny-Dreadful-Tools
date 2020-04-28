@@ -33,6 +33,7 @@ def apply_rules_to_decks(decks: List[Deck]) -> None:
     sql = """
             SELECT
                 deck_id,
+                archetype_id,
                 archetype_name
             FROM
                 ({apply_rules_query}) AS applied_rules
@@ -42,6 +43,7 @@ def apply_rules_to_decks(decks: List[Deck]) -> None:
                 COUNT(DISTINCT archetype_id) = 1
         """.format(apply_rules_query=apply_rules_query(f'deck_id IN ({id_list})'))
     for r in (Container(row) for row in db().select(sql)):
+        decks_by_id[r.deck_id].rule_archetype_id = r.archetype_id
         decks_by_id[r.deck_id].rule_archetype_name = r.archetype_name
 
 def cache_all_rules() -> None:

@@ -14,7 +14,7 @@ def ad_hoc() -> None:
     send_pr_if_updated()
 
 def get_dependencies() -> List[str]:
-    f = open('shared_web/jsrequirements.txt', 'r')
+    f = open('shared_web/jsdependencies.txt', 'r')
     return [line.strip() for line in f.readlines()]
 
 def write_dependencies(s: str) -> None:

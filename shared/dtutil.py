@@ -82,40 +82,54 @@ def day2ordinal(m: Match) -> str:
     p = inflect.engine()
     return p.ordinal(int(m.group(1)))
 
-IntervalsType = Dict[str, Tuple[Optional[int], int]]
+IntervalsType = Dict[str, Tuple[Optional[int], int, Optional[int]]]
 ResultsType = List[Tuple[int, str]]
 
-def display_time(seconds: float, granularity: int = 2) -> str:
+def get_intervals() -> IntervalsType:
     intervals: IntervalsType = OrderedDict()
-    intervals['weeks'] = (None, 60 * 60 * 24 * 7)
-    intervals['days'] = (7, 60 * 60 * 24)
-    intervals['hours'] = (24, 60 * 60)
-    intervals['minutes'] = (60, 60)
-    intervals['seconds'] = (60, 1)
+    intervals['weeks'] = (None, 60 * 60 * 24 * 7, None)
+    intervals['days'] = (7, 60 * 60 * 24, 7)
+    intervals['hours'] = (24, 60 * 60, 24)
+    intervals['minutes'] = (60, 60, 45)
+    intervals['seconds'] = (60, 1, 31)
+    return intervals
+
+def display_time(seconds: int, granularity: int = 2) -> str:
+    intervals = get_intervals()
     result: ResultsType = []
     seconds = round(seconds) # in case we've been handed a decimal not an int
     if seconds == 0:
         return 'now'
     for unit, details in intervals.items():
-        max_units, seconds_per_unit = details
-        if len(result) < granularity - 1:
-            value = seconds // seconds_per_unit # floor preceeding units
+        max_units, seconds_per_unit, rounding_threshold = details
+        if len(result) < granularity: # We don't want to consider rounding up yet.
+            value = int(seconds // seconds_per_unit) # floor preceeding units, int just to please typing
         else:
-            value = round(seconds / seconds_per_unit) # round off last unit
-            if value == max_units and seconds < (value * seconds_per_unit) and unit != 'seconds': # rounding off bumped us up to one of the *preceeding* unit.
-                result = round_up_preceeding_unit(result, intervals)
+            value = round_value_appropriately(seconds, seconds_per_unit, max_units, rounding_threshold)
+            if value == max_units and seconds < (value * seconds_per_unit): # rounding off bumped us up to one of the *preceeding* unit.
+                result = round_up_preceeding_unit(result)
                 seconds -= value * seconds_per_unit
                 value = 0
-        if value > 0 or result:
+        if value > 0 or result: # Either we have the first significant value or we're recording each level because we already did.
             result.append((value, unit))
             seconds -= value * seconds_per_unit
     return ', '.join(['{} {}'.format(value, unit.rstrip('s') if value == 1 else unit) for (value, unit) in result[:granularity] if value > 0])
 
-def round_up_preceeding_unit(result: ResultsType, intervals: IntervalsType) -> ResultsType:
+def round_value_appropriately(seconds: int, seconds_per_unit: int, max_units: Optional[int], rounding_threshold: Optional[int]) -> int:
+    if rounding_threshold is None or max_units is None:
+        return round(seconds / seconds_per_unit)
+    value = seconds // seconds_per_unit
+    if value >= rounding_threshold:
+        return max_units
+    return value
+
+def round_up_preceeding_unit(result: ResultsType) -> ResultsType:
+    intervals = get_intervals()
     # Send the rounding up back up the chain until we find a value that does not need the previous value rounding up.
-    for i in range(0, len(result)):
+    for i in range(1, len(result) + 1):
         prev_value, prev_unit = result[-i]
         result[-i] = (prev_value + 1, prev_unit)
         if result[-i][0] < intervals[prev_unit][1]:
             break
+        result[-i] = (0, result[-i][1])
     return result

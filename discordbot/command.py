@@ -46,10 +46,6 @@ async def respond_to_card_names(message: Message, client: Client) -> None:
                 cards.extend(cards_from_names_with_mode(r.get_ambiguous_matches(), mode, preferred_printing))
         await post_cards(client, cards, message.channel, message.author)
 
-async def handle_command(message: Message, client: commands.Bot) -> None:
-    ctx = await client.get_context(message, cls=MtgContext)
-    await client.invoke(ctx)
-
 def parse_queries(content: str, scryfall_compatability_mode: bool) -> List[str]:
     to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, re.DOTALL) # Ignore angle brackets inside backticks. It's annoying in #code.
     if scryfall_compatability_mode:
@@ -58,9 +54,8 @@ def parse_queries(content: str, scryfall_compatability_mode: bool) -> List[str]:
         queries = re.findall(r'\[?\[([^\]]*)\]\]?', to_scan)
     return [card.canonicalize(query) for query in queries if len(query) > 2]
 
-def cards_from_names_with_mode(cards: Sequence[Optional[str]], mode: str, preferred_printing: str = None) -> List[Card]:
-    oracle_cards = oracle.cards_by_name()
-    return [copy_with_mode(oracle_cards[c], mode, preferred_printing) for c in cards if c is not None]
+def cards_from_names_with_mode(cards: Sequence[Optional[str]], mode: str, preferred_printing: Optional[str] = None) -> List[Card]:
+    return [copy_with_mode(oracle.load_card(c), mode, preferred_printing) for c in cards if c is not None]
 
 def copy_with_mode(oracle_card: Card, mode: str, preferred_printing: str = None) -> Card:
     c = copy(oracle_card)
@@ -182,7 +177,7 @@ async def post_no_cards(channel: TextChannel, replying_to: Member) -> None:
     await message.add_reaction('❎')
 
 
-async def send(channel: TextChannel, content: str, file: File = None) -> Message:
+async def send(channel: TextChannel, content: str, file: Optional[File] = None) -> Message:
     new_s = escape_underscores(content)
     return await channel.send(file=file, content=new_s)
 

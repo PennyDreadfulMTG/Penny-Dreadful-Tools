@@ -109,8 +109,8 @@ def deck_sort(c: Card) -> str:
     s += c.name
     return s
 
-def scryfall_import(name: str) -> bool:
-    sfcard = fetch_tools.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=name))
+async def scryfall_import_async(name: str) -> bool:
+    sfcard = await fetch_tools.fetch_json_async('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=name))
     if sfcard['object'] == 'error':
         raise Exception()
     try:
@@ -119,7 +119,7 @@ def scryfall_import(name: str) -> bool:
         return False
     except InvalidDataException:
         print(f"Adding {sfcard['name']} to the database as we don't have it.")
-        add_cards_and_update([sfcard])
+        await add_cards_and_update_async([sfcard])
         return True
 
 def pd_rotation_changes(season_id: int) -> Tuple[Sequence[Card], Sequence[Card]]:
@@ -176,10 +176,10 @@ def if_todays_prices(out: bool = True) -> List[Card]:
     cards = [Card(r) for r in rs]
     return sorted(cards, key=lambda card: card['name'])
 
-def add_cards_and_update(printings: List[CardDescription]) -> None:
+async def add_cards_and_update_async(printings: List[CardDescription]) -> None:
     if not printings:
         return
-    ids = multiverse.insert_cards(printings)
+    ids = await multiverse.insert_cards_async(printings)
     multiverse.add_to_cache(ids)
     cs = [Card(r) for r in db().select(multiverse.cached_base_query('c.id IN (' + ','.join([str(id) for id in ids]) + ')'))]
     multiverse.reindex_specific_cards(cs)

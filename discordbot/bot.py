@@ -8,11 +8,11 @@ from typing import Any, Callable, Dict, List, Optional
 import discord
 from discord import Guild, Member, Role, VoiceState
 from discord.activity import Streaming
+from discord.enums import Status
 from discord.errors import Forbidden, NotFound
 from discord.ext import commands
 from discord.message import Message
 from discord.reaction import Reaction
-from discord.state import Status
 from github.GithubException import GithubException
 
 import discordbot.commands
@@ -48,12 +48,17 @@ class Bot(commands.Bot):
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:
             asyncio.ensure_future(task(self), loop=self.loop)
-
-    def init(self) -> None:
-        multiverse.init()
-        multiverse.update_bugged_cards()
-        oracle.init()
         discordbot.commands.setup(self)
+
+    async def close(self) -> None:
+        try:
+            p = await asyncio.create_subprocess_shell('git pull')
+            await p.wait()
+            p = await asyncio.create_subprocess_shell(f'{sys.executable} -m pip install -U -r requirements.txt --no-cache')
+            await p.wait()
+        except Exception as c: # pylint: disable=broad-except
+            repo.create_issue(f'Bot error while closing', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=c)
+        await super().close()
 
     async def on_ready(self) -> None:
         print('Logged in as {username} ({id})'.format(username=self.user.name, id=self.user.id))
@@ -61,23 +66,26 @@ class Bot(commands.Bot):
         print('--------')
         perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
 
+
     async def on_message(self, message: Message) -> None:
         # We do not want the bot to reply to itself.
         if message.author == self.user:
             return
         if message.author.bot:
             return
-        if message.content.startswith('!') and len(message.content.replace('!', '')) > 0:
-            await command.handle_command(message, self)
+        ctx = await self.get_context(message, cls=command.MtgContext)
+        if ctx.valid:
+            await self.invoke(ctx)
         else:
             await command.respond_to_card_names(message, self)
 
     async def on_voice_state_update(self, member: Member, before: VoiceState, after: VoiceState) -> None:
         # pylint: disable=unused-argument
         # If we're the only one left in a voice chat, leave the channel
-        if getattr(after.channel, 'guild', None) is None:
+        guild = getattr(after.channel, 'guild', None)
+        if guild is None:
             return
-        voice = after.channel.guild.voice_client
+        voice = guild.voice_client
         if voice is None or not voice.is_connected():
             return
         if len(voice.channel.voice_members) == 1:
@@ -86,6 +94,8 @@ class Bot(commands.Bot):
     async def on_member_join(self, member: Member) -> None:
         print('{0} joined {1} ({2})'.format(member.mention, member.guild.name, member.guild.id))
 
+        if member.bot:
+            return
         # is_test_server = member.guild.id == 226920619302715392
         if is_pd_server(member.guild): # or is_test_server:
             greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
@@ -136,7 +146,8 @@ class Bot(commands.Bot):
                     if int(count) > 0:
                         trophy = await achievement_name(name)
                         role = await get_role(before.guild, trophy, create=True)
-                        expected.append(role)
+                        if role is not None:
+                            expected.append(role)
                 for role in before.roles:
                     if role in expected:
                         expected.remove(role)
@@ -200,7 +211,7 @@ class Bot(commands.Bot):
                 print(f'Planning to add {name} to database in background_task_spoiler_season.')
                 cards_not_currently_in_db.append(c)
         if len(cards_not_currently_in_db) > 0:
-            oracle.add_cards_and_update(cards_not_currently_in_db)
+            await oracle.add_cards_and_update_async(cards_not_currently_in_db)
 
     @background_task
     async def background_task_tournaments(self) -> None:
@@ -247,7 +258,7 @@ class Bot(commands.Bot):
                 if diff > 3600 * 6:
                     # The timer can afford to get off-balance by doing other background work.
                     await self.background_task_spoiler_season()
-                    multiverse.update_bugged_cards()
+                    await multiverse.update_bugged_cards_async()
 
             if timer < 300:
                 timer = 300
@@ -344,8 +355,10 @@ class Bot(commands.Bot):
 
 def init() -> None:
     client = Bot()
-    client.init()
-    client.run(configuration.get('token'))
+    multiverse.init()
+    asyncio.ensure_future(multiverse.update_bugged_cards_async())
+    oracle.init()
+    client.run(configuration.get_str('token'))
 
 def is_pd_server(guild: Guild) -> bool:
     return guild.id == 207281932214599682 # or guild.id == 226920619302715392

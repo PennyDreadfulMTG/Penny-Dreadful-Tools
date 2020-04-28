@@ -13,6 +13,7 @@ from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 TOTAL_RUNS = 168
 WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
+ROTATION_OFFSET = datetime.timedelta(days=7) # We rotate seven days after a set is released.
 
 SEASONS = [
     'EMN', 'KLD', # 2016
@@ -28,10 +29,10 @@ class DateType():
     rough: str
 
 OVERRIDES = {
-    'DOM': { # Dominaria had a weird setcode in MTGO/Arena
-        'mtgo_code': 'DAR'
+    'Dominaria': { # Dominaria had a weird setcode in MTGO/Arena
+        'mtgoCode': 'DAR'
     },
-    'IKO': { # Ikoria was delayed in NA because of Covid-19
+    'Ikoria: Lair of Behemoths': {  # Ikoria was delayed in NA because of Covid-19
         'enterDate': {
             'exact': '2020-04-17T00:00:00.000',
             'rough': 'April 2020'
@@ -51,13 +52,13 @@ class SetInfo():
 
     @classmethod
     def parse(cls, json: 'fetcher.WISSetInfoType') -> 'SetInfo':
-        json['mtgo_code'] = json['code']
-        json.update(OVERRIDES.get(json['code'], {})) # type: ignore
+        json['mtgoCode'] = json['code']
+        json.update(OVERRIDES.get(json['name'], {})) # type: ignore
 
         return cls(name=json['name'],
                    code=json['code'],
                    codename=json['codename'],
-                   mtgo_code=json['mtgo_code'],
+                   mtgo_code=json['mtgoCode'],
                    enter_date=DateType(**json['enterDate']),
                    exit_date=DateType(**json['exitDate']),
                    enter_date_dt=dtutil.parse(json['enterDate']['exact'], WIS_DATE_FORMAT, dtutil.WOTC_TZ) if json['enterDate']['exact'] else dtutil.ts2dt(0)
@@ -83,17 +84,17 @@ def season_num(code_to_look_for: str) -> int:
         raise InvalidDataException('I did not find the season code (`{code}`) in the list of seasons ({seasons}) and I am confused.'.format(code=code_to_look_for, seasons=','.join(SEASONS)))
 
 def last_rotation() -> datetime.datetime:
-    return last_rotation_ex().enter_date_dt + datetime.timedelta(days=7)
+    return last_rotation_ex().enter_date_dt + ROTATION_OFFSET
 
 def next_rotation() -> datetime.datetime:
-    return next_rotation_ex().enter_date_dt + datetime.timedelta(days=7)
+    return next_rotation_ex().enter_date_dt + ROTATION_OFFSET
 
 def last_rotation_ex() -> SetInfo:
-    return max([s for s in sets() if s.enter_date_dt < dtutil.now()], key=lambda s: s.enter_date_dt)
+    return max([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) < dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
 
 def next_rotation_ex() -> SetInfo:
     try:
-        return min([s for s in sets() if s.enter_date_dt > dtutil.now()], key=lambda s: s.enter_date_dt)
+        return min([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) > dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
     except ValueError:
         fake_enter_date_dt = last_rotation() + datetime.timedelta(days=90)
         fake_exit_date_dt = last_rotation() + datetime.timedelta(days=90+365+365)
@@ -167,7 +168,7 @@ def season_name(v: Union[int, str]) -> str:
     return 'Season {num}'.format(num=sid)
 
 def files() -> List[str]:
-    return sorted(glob.glob(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt')))
+    return sorted(glob.glob(os.path.expanduser(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))))
 
 def get_set_info(code: str) -> SetInfo:
     for setinfo in sets():
@@ -187,10 +188,13 @@ def read_rotation_files() -> Tuple[int, int, List[Card]]:
     cards = redis.get_list('decksite:rotation:summary:cards')
     if runs_str is not None and runs_percent_str is not None and cards is not None:
         return int(runs_str), int(runs_percent_str), [Card(c, predetermined_values=True) for c in cards]
+    return rotation_redis_store()
+
+def rotation_redis_store() -> Tuple[int, int, List[Card]]:
     lines = []
     fs = files()
     if len(fs) == 0:
-        if not os.path.isdir(configuration.get_str('legality_dir')):
+        if not os.path.isdir(os.path.expanduser(configuration.get_str('legality_dir'))):
             raise DoesNotExistException('Invalid configuration.  Could not find legality_dir.')
         return (0, 0, [])
     latest_list = open(fs[-1], 'r').read().splitlines()
@@ -203,13 +207,21 @@ def read_rotation_files() -> Tuple[int, int, List[Card]]:
     runs_percent = round(round(runs / TOTAL_RUNS, 2) * 100)
     cs = oracle.cards_by_name()
     cards = []
+    card_ids_by_status: Dict[str, List[str]] = {}
     for name, hits in scores:
         c = process_score(name, hits, cs, runs, latest_list)
         if c is not None:
             cards.append(c)
+            classify_by_status(c, card_ids_by_status)
     redis.store('decksite:rotation:summary:runs', runs, ex=604800)
     redis.store('decksite:rotation:summary:runs_percent', runs_percent, ex=604800)
     redis.store('decksite:rotation:summary:cards', cards, ex=604800)
+    if 'Undecided' in card_ids_by_status:
+        redis.sadd('decksite:rotation:summary:undecided', *card_ids_by_status['Undecided'], ex=604800)
+    if 'Legal' in card_ids_by_status:
+        redis.sadd('decksite:rotation:summary:legal', *card_ids_by_status['Legal'], ex=604800)
+    if 'Not Legal' in card_ids_by_status:
+        redis.sadd('decksite:rotation:summary:notlegal', *card_ids_by_status['Not Legal'], ex=604800)
     return (runs, runs_percent, cards)
 
 def get_file_contents(file: str) -> List[str]:
@@ -256,3 +268,8 @@ def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_l
         'hit_in_last_run': hit_in_last_run
     })
     return c
+
+def classify_by_status(c: Card, card_ids_by_status: Dict[str, List[str]]) -> None:
+    if not c.status in card_ids_by_status:
+        card_ids_by_status[c.status] = []
+    card_ids_by_status[c.status].append(c.id)

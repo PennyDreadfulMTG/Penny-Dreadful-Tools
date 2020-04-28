@@ -4,17 +4,23 @@ import sys
 import time
 from typing import List, Optional
 
-from plumbum import FG, local
-from plumbum.commands.processes import ProcessExecutionError
-
 from generate_readme import generate_readme
 from shared import configuration
 from shared.pd_exception import InvalidArgumentException, TestFailedException
+
+try:
+    from plumbum import FG, local
+    from plumbum.commands.processes import ProcessExecutionError
+except ImportError:
+    sys.stderr.write('Please run ./dev.py build\n')
+
 
 ON_PROD = configuration.get_bool('production')
 if ON_PROD:
     sys.stderr.write('DO NOT RUN dev.py ON PROD\n')
     sys.exit(1)
+
+ON_WINDOWS = sys.platform == 'win32'
 
 def run() -> None:
     try:
@@ -172,9 +178,15 @@ def runtests(argv: List[str], m: str, mark: bool) -> None:
     print(f'>>>> Running tests with "{argstr}"')
     # pylint: disable=import-outside-toplevel
     import pytest
-    from magic import multiverse, oracle
+    from magic import fetcher, multiverse, oracle
     multiverse.init()
     oracle.init()
+    try:
+        fetcher.sitemap()
+    except fetcher.FetchException:
+        print(f'Config was pointed at {fetcher.decksite_url()}, but it doesnt appear to be listening.')
+        for k in ['decksite_hostname', 'decksite_port', 'decksite_protocol']:
+            configuration.CONFIG[k] = configuration.DEFAULTS[k]
 
     code = pytest.main(args)
     if os.environ.get('TRAVIS') == 'true':
@@ -242,13 +254,13 @@ def build() -> None:
         pipargs.append('--user')
     subprocess.check_call(pipargs)
     print('>>>> Installing node modules')
-    subprocess.check_call(['npm', 'install'], shell=True)
+    subprocess.check_call(['npm', 'install'], shell=ON_WINDOWS)
     buildjs()
 
 
 def buildjs() -> None:
     print('>>>> Building javascript')
-    subprocess.check_call(['npm', 'run-script', 'build'], shell=True)
+    subprocess.check_call(['npm', 'run-script', 'build'], shell=ON_WINDOWS)
 
 def jslint(fix: bool = False) -> None:
     print('>>>> Linting javascript')
@@ -270,7 +282,7 @@ def coverage() -> None:
 
 def watch() -> None:
     print('>>>> Watching')
-    subprocess.check_call(['npm', 'run', 'watch'], shell=True)
+    subprocess.check_call(['npm', 'run', 'watch'], shell=ON_WINDOWS)
 
 # Make a branch based off of current (remote) master with all your local changes preserved (but not added).
 def branch(args: List[str]) -> None:

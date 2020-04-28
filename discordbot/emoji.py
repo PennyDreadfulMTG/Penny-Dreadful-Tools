@@ -1,13 +1,14 @@
 import re
 from typing import Optional
 
-from discord.client import Client
+from discord import Client, Emoji
 
-from magic import oracle
+from magic import oracle, rotation
 from magic.models import Card
+from shared import redis
 
 
-def find_emoji(emoji: str, client: Client) -> Optional[str]:
+def find_emoji(emoji: str, client: Client) -> Optional[Emoji]:
     try:
         for guild in client.guilds:
             emojis = guild.emojis
@@ -36,15 +37,29 @@ def replace_emoji(text: str, client: Client) -> str:
             output = output.replace('{' + symbol + '}', str(emoji))
     return output
 
-def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True) -> str:
+def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True, no_rotation_hype: bool = False) -> str:
     s = ''
+    rot_emoji = ''
     if show_legality:
-        if c.name in oracle.legal_cards():
+        legal = c.name in oracle.legal_cards()
+        if legal:
             s += ':white_check_mark:'
         else:
             s += ':no_entry_sign:'
-            if verbose:
-                s += ' (not legal in PD)'
+        if rotation.in_rotation() and not no_rotation_hype:
+            rot_emoji = get_future_legality(c, legal)
+            s += rot_emoji
+        if not legal and verbose and not rot_emoji:
+            s += ' (not legal in PD)'
+
     if c.bugs:
         s += ':beetle:'
     return s
+
+def get_future_legality(c: Card, legal: bool) -> str:
+    for status, symbol in {'undecided':':question:', 'legal':'<:rotating_in:702545611597021204>', 'notlegal':'<:rotating_out:702545628882010183>'}.items():
+        if redis.sismember(f'decksite:rotation:summary:{status}', c.id):
+            if (legal and status == 'legal') or (not legal and status == 'notlegal'):
+                return '' # No need for double symbols
+            return symbol
+    return ':question:'

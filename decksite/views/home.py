@@ -95,7 +95,7 @@ class Home(View):
         # Human-friendly number formatting like "29,000".
         matches_stats_display = {}
         for k, v in matches_stats.items():
-            matches_stats_display[k] = '{:,}'.format(v) if v else ''
+            matches_stats_display[k] = '{:,}'.format(v) if v is not None else ''
         self.community_stats = [
             {
                 'header': 'League and Tournament Matches Played',

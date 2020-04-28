@@ -9,3 +9,22 @@ coverage:
 ignore:
   - dev.py
   - run.py
+flags:
+  decksite:
+    paths:
+      - decksite
+  discordbot:
+    paths:
+      - discordbot
+  magic:
+    paths:
+      - magic
+  price_grabber:
+    paths:
+      - price_grabber
+  shared:
+    paths:
+      - shared
+  shared_web:
+    paths:
+      - shared_web

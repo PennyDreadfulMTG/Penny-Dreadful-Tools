@@ -12,7 +12,8 @@ from shared.pd_exception import InvalidDataException
 WHITELIST = [
     '#justnayathings',
     'blue burn', # deck_id = 24089
-    "bob's r us"
+    "bob's r us",
+    'gg con'
 ]
 
 ABBREVIATIONS = {
@@ -72,6 +73,7 @@ def normalize(d: Deck) -> str:
         name = remove_brackets(name)
         name = strip_leading_punctuation(name)
         name = remove_leading_deck(name)
+        name = remove_extraneous_hyphens(name)
         unabbreviated = expand_common_abbreviations(name)
         if unabbreviated != name or name in ABBREVIATIONS.values():
             name = unabbreviated
@@ -203,7 +205,7 @@ def remove_mono_if_not_first_word(name: str) -> str:
     return re.sub('(.+) mono ', '\\1 ', name)
 
 def remove_profanity(name: str) -> str:
-    profanity.add_censor_words(['supremacia ariana'])
+    profanity.add_censor_words(['supremacia ariana', 'fisting'])
     name = profanity.censor(name, ' ').strip()
     name = re.sub(' +', ' ', name) # We just replaced profanity with a space so compress spaces.
     return name
@@ -222,6 +224,10 @@ def strip_leading_punctuation(name: str) -> str:
 # See #6041.
 def remove_leading_deck(name: str) -> str:
     return re.sub('^deck - ', '', name, flags=re.IGNORECASE)
+
+def remove_extraneous_hyphens(name: str) -> str:
+    s = re.sub('^ ?- ?', '', name)
+    return re.sub(' ?- ?$', '', s)
 
 def correct_case_of_color_names(name: str) -> str:
     for k in COLOR_COMBINATIONS:

@@ -87,4 +87,3 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
 
 - python3 run.py discordbot
 - Visit your Discord server.
-

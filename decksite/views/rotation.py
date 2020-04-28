@@ -14,19 +14,13 @@ from shared import configuration, dtutil
 class Rotation(View):
     def __init__(self, interestingness: Optional[str] = None, query: Optional[str] = '') -> None:
         super().__init__()
-        until_full_rotation = rotation.next_rotation() - dtutil.now()
-        until_supplemental_rotation = rotation.next_supplemental() - dtutil.now()
+        until_rotation = rotation.next_rotation() - dtutil.now()
         in_rotation = configuration.get_bool('always_show_rotation')
-        if until_full_rotation < datetime.timedelta(7):
+        if until_rotation < datetime.timedelta(7):
             in_rotation = True
-            self.rotation_msg = 'Full rotation is in progress, ends ' + dtutil.display_date(rotation.next_rotation(), 2)
-        elif until_supplemental_rotation < datetime.timedelta(7):
-            in_rotation = True
-            self.rotation_msg = 'Supplemental rotation is in progress, ends ' + dtutil.display_date(rotation.next_supplemental(), 2)
-        elif until_full_rotation < until_supplemental_rotation:
-            self.rotation_msg = 'Full rotation is ' + dtutil.display_date(rotation.next_rotation(), 2)
+            self.rotation_msg = 'Totation is in progress, ends ' + dtutil.display_date(rotation.next_rotation(), 2)
         else:
-            self.rotation_msg = 'Supplemental rotation is ' + dtutil.display_date(rotation.next_supplemental(), 2)
+            self.rotation_msg = 'Rotation is ' + dtutil.display_date(rotation.next_rotation(), 2)
         if in_rotation:
             self.in_rotation = in_rotation
             self.show_interestingness_filter = True

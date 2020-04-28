@@ -12,6 +12,13 @@ from cachecontrol.heuristics import ExpiresAfter
 from shared import configuration, perf
 from shared.pd_exception import OperationalException
 
+
+SESSION = CacheControl(requests.Session(),
+                       cache=FileCache(configuration.get('web_cache')))
+SESSION.mount(
+    'http://whatsinstandard.com',
+    CacheControlAdapter(heuristic=ExpiresAfter(days=14)))
+
 def fetch(url: str, character_encoding: Optional[str] = None, force: bool = False, retry: bool = False) -> str:
     headers = {}
     if force:

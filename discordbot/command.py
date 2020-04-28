@@ -4,7 +4,7 @@ import re
 from copy import copy
 from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 
-from discord import ChannelType, Client, File, TextChannel, DMChannel, GroupChannel
+from discord import ChannelType, Client, DMChannel, File, GroupChannel, TextChannel
 from discord.ext import commands
 from discord.member import Member
 from discord.message import Message

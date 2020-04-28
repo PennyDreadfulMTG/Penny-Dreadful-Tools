@@ -158,8 +158,8 @@ class Achievement:
             res = Container(r)
             if res.num is None:
                 return 'Not earned by any players.'
-            times_text = ngettext(' once', f' %(num)d times', res.num) if res.num > res.pnum else ''
-            players_text = ngettext('1 player', f'%(num)d players', res.pnum)
+            times_text = ngettext(' once', ' %(num)d times', res.num) if res.num > res.pnum else ''
+            players_text = ngettext('1 player', '%(num)d players', res.pnum)
             return f'Earned{times_text} by {players_text}.'
         return None
 
@@ -311,7 +311,7 @@ class TournamentOrganizer(Achievement):
 
     @retry_after_calling(preaggregate_achievements)
     def percent(self, season_id: Optional[int] = None) -> float: # pylint: disable=unused-argument
-        sql = f'SELECT COUNT(*) AS mnum FROM _achievements'
+        sql = 'SELECT COUNT(*) AS mnum FROM _achievements'
         r = db().select(sql)[0]
         return len(self.hosts) * 100.0 / int(r['mnum'])
 

@@ -1,6 +1,8 @@
 import datetime
 from typing import Optional, Union
 
+from flask import session
+
 from decksite.data import card
 from decksite.view import View
 from magic import rotation
@@ -35,6 +37,10 @@ class Rotation(View):
             self.cards = [c for c in self.cards if c.get('interestingness') == interestingness]
         self.num_cards = len(self.cards)
         self.query = query
+        self.show_filters_toggle = True
+        if session.get('admin'):
+            return
+        self.cards = [c for c in self.cards if c.status != 'Legal']
         for c in self.cards:
             if c.status != 'Undecided':
                 continue
@@ -42,7 +48,6 @@ class Rotation(View):
             c.hits_needed = redact(c.hits_needed)
             c.percent = redact(c.percent)
             c.percent_needed = redact(c.percent_needed)
-        self.show_filters_toggle = True
 
     def page_title(self) -> str:
         return 'Rotation'

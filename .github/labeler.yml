@@ -2,29 +2,38 @@ monolith:
   - ./*
 
 decks:
-  - ./decksite/**
+  - ./decksite/*
+  - ./decksite/**/*
 
 logsite:
-  - ./logsite/**
+  - ./logsite/*
+  - ./logsite/**/*
 
 discord bot:
-  - ./discordbot/**
+  - ./discordbot/*
+  - ./discordbot/**/*
 
 magic:
-  - ./magic/**
+  - ./magic/*
+  - ./magic/**/*
 
 shared:
-  - ./shared/**
-  - ./shared_web/**
+  - ./shared/*
+  - ./shared/**/*
+  - ./shared_web/*
+  - ./shared_web/**/*
 
 prices:
-  - ./price_grabber/**
+  - ./price_grabber/*
+  - ./price_grabber/**/*
 
 rotation:
-  - ./rotation/**
+  - ./rotation/*
+  - ./rotation/**/*
 
 maintenance:
-  - ./maintenance/**
+  - ./maintenance/*
+  - ./maintenance/**/*
 
 tests:
   - ./**/*_test.py

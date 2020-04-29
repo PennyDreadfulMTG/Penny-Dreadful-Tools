@@ -1,12 +1,30 @@
 import logging
 from typing import Any, List
+from typing_extensions import Protocol
 
 from flask import current_app, has_app_context
 
-def logger(): # type: ignore
-    if has_app_context():
-        return current_app.logger
-    return logging
+class SupportsLogging(Protocol):
+    def debug(self, msg: str) -> None:
+        ...
+
+    def info(self, msg: str) -> None:
+        ...
+
+    def warning(self, msg: str) -> None:
+        ...
+
+    def error(self, msg: str) -> None:
+        ...
+
+    def fatal(self, msg: str) -> None:
+        ...
+
+
+def logger() -> SupportsLogging:
+    if has_app_context(): # type: ignore
+        return current_app.logger # type: ignore
+    return logging # type: ignore
 
 def fatal(*args: List[Any]) -> None:
     """Panic stations! Data is being irretrievably lost or other truly terrible things."""

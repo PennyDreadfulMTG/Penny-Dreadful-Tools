@@ -12,7 +12,6 @@ from cachecontrol.heuristics import ExpiresAfter
 from shared import configuration, perf
 from shared.pd_exception import OperationalException
 
-
 SESSION = CacheControl(requests.Session(),
                        cache=FileCache(configuration.get('web_cache')))
 SESSION.mount(
@@ -52,7 +51,7 @@ async def fetch_async(url: str) -> str:
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
         raise FetchException(e)
 
-def fetch_json(url: str, character_encoding: str = None) -> Any:
+def fetch_json(url: str, character_encoding: Optional[str] = None) -> Any:
     try:
         blob = fetch(url, character_encoding)
         if blob:
@@ -62,7 +61,7 @@ def fetch_json(url: str, character_encoding: str = None) -> Any:
         print('Failed to load JSON:\n{0}'.format(blob))
         raise FetchException(e)
 
-async def fetch_json_async(url: str, character_encoding: str = None) -> Any:
+async def fetch_json_async(url: str, character_encoding: Optional[str] = None) -> Any:
     try:
         blob = await fetch_async(url)
         if blob:

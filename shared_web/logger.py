@@ -1,8 +1,9 @@
 import logging
 from typing import Any, List
-from typing_extensions import Protocol
 
 from flask import current_app, has_app_context
+from typing_extensions import Protocol
+
 
 class SupportsLogging(Protocol):
     def debug(self, msg: str) -> None:

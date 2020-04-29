@@ -2,9 +2,9 @@ import collections
 import datetime
 import re
 from copy import copy
-from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple
+from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 
-from discord import ChannelType, Client, File, TextChannel
+from discord import ChannelType, Client, DMChannel, File, GroupChannel, TextChannel
 from discord.ext import commands
 from discord.member import Member
 from discord.message import Message
@@ -121,7 +121,7 @@ async def single_card_or_send_error(channel: TextChannel, args: str, author: Mem
     return None
 
 # pylint: disable=too-many-arguments
-async def single_card_text(client: Client, channel: TextChannel, args: str, author: Member, f: Callable, command: str, show_legality: bool = True) -> None:
+async def single_card_text(client: Client, channel: TextChannel, args: str, author: Member, f: Callable[[Card], str], command: str, show_legality: bool = True) -> None:
     c = await single_card_or_send_error(channel, args, author, command)
     if c is not None:
         name = c.name
@@ -168,7 +168,7 @@ async def post_cards(
     else:
         await send_image_with_retry(channel, image_file, text)
 
-async def post_no_cards(channel: TextChannel, replying_to: Member) -> None:
+async def post_no_cards(channel: TextChannel, replying_to: Optional[Member] = None) -> None:
     if replying_to is not None:
         text = '{author}: No matches.'.format(author=replying_to.mention)
     else:
@@ -233,7 +233,7 @@ def uniqify_cards(cards: List[Card]) -> List[Card]:
         results[card.canonicalize(c.name)] = c
     return list(results.values())
 
-def guild_or_channel_id(channel: TextChannel) -> int:
+def guild_or_channel_id(channel: Union[TextChannel, DMChannel, GroupChannel]) -> int:
     return getattr(channel, 'guild', channel).id
 
 class MtgContext(commands.Context):

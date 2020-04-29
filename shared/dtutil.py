@@ -94,7 +94,7 @@ def get_intervals() -> IntervalsType:
     intervals['seconds'] = (60, 1, 31)
     return intervals
 
-def display_time(seconds: int, granularity: int = 2) -> str:
+def display_time(seconds: float, granularity: int = 2) -> str:
     intervals = get_intervals()
     result: ResultsType = []
     seconds = round(seconds) # in case we've been handed a decimal not an int

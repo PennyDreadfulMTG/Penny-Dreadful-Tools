@@ -25,7 +25,7 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
     print('Fetching {url} ({cache})'.format(url=url, cache='no cache' if force else 'cache ok'))
     try:
         p = perf.start()
-        response = SESSION.get(url, headers=headers)
+        response = requests.get(url, headers=headers)
         perf.check(p, 'slow_fetch', (url, headers), 'fetch')
         if character_encoding is not None:
             response.encoding = character_encoding
@@ -51,7 +51,7 @@ async def fetch_async(url: str) -> str:
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
         raise FetchException(e)
 
-def fetch_json(url: str, character_encoding: str = None) -> Any:
+def fetch_json(url: str, character_encoding: Optional[str] = None) -> Any:
     try:
         blob = fetch(url, character_encoding)
         if blob:
@@ -61,7 +61,7 @@ def fetch_json(url: str, character_encoding: str = None) -> Any:
         print('Failed to load JSON:\n{0}'.format(blob))
         raise FetchException(e)
 
-async def fetch_json_async(url: str, character_encoding: str = None) -> Any:
+async def fetch_json_async(url: str, character_encoding: Optional[str] = None) -> Any:
     try:
         blob = await fetch_async(url)
         if blob:
@@ -77,7 +77,7 @@ def post(url: str,
         ) -> str:
     print('POSTing to {url} with {data} / {json_data}'.format(url=url, data=data, json_data=json_data))
     try:
-        response = SESSION.post(url, data=data, json=json_data)
+        response = requests.post(url, data=data, json=json_data)
         return response.text
     except requests.exceptions.ConnectionError as e:
         raise FetchException(e)
@@ -133,7 +133,7 @@ def escape(str_input: str, skip_double_slash: bool = False) -> str:
 #pylint: disable=R0913
 def post_discord_webhook(webhook_id: str,
                          webhook_token: str,
-                         message: str = None,
+                         message: Optional[str] = None,
                          username: str = None,
                          avatar_url: str = None,
                          embeds: List[Dict[str, Any]] = None

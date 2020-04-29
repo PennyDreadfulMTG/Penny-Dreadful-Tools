@@ -1,4 +1,3 @@
-import asyncio
 import datetime
 import fileinput
 import os
@@ -10,7 +9,7 @@ from typing import Dict, List, Set
 
 import ftfy
 
-from magic import card_price, rotation
+from magic import card_price, fetcher, rotation
 from price_grabber.parser import PriceListType, parse_cardhoarder_prices, parse_mtgotraders_prices
 from shared import configuration, dtutil, fetch_tools, redis, repo, text
 

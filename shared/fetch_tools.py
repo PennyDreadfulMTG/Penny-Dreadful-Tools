@@ -133,7 +133,7 @@ def escape(str_input: str, skip_double_slash: bool = False) -> str:
 #pylint: disable=R0913
 def post_discord_webhook(webhook_id: str,
                          webhook_token: str,
-                         message: str = None,
+                         message: Optional[str] = None,
                          username: str = None,
                          avatar_url: str = None,
                          embeds: List[Dict[str, Any]] = None

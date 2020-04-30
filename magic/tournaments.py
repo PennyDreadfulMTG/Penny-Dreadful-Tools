@@ -89,7 +89,7 @@ def all_series_info() -> List[Container]:
     return [
         Container({
             'name': 'Penny Dreadful Saturdays',
-            'hosts': ['crazybaloth', 'j_meka'],
+            'hosts': ['j_meka', 'crazybaloth'],
             'display_time': '1:30pm Eastern',
             'time': info[0][1],
             'sponsor_name': 'Cardhoarder'
@@ -103,7 +103,7 @@ def all_series_info() -> List[Container]:
         }),
         Container({
             'name': 'Penny Dreadful Sundays',
-            'hosts': ['mrsad', 'bakert99'],
+            'hosts': ['cody_', 'bakert99'],
             'display_time': '1:30pm Eastern',
             'time': info[2][1],
             'sponsor_name': 'Cardhoarder'
@@ -117,7 +117,7 @@ def all_series_info() -> List[Container]:
         }),
         Container({
             'name': 'Penny Dreadful Thursdays',
-            'hosts': ['silasary', 'j_meka'],
+            'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
             'time': info[4][1],
             'sponsor_name': 'Cardhoarder'

@@ -5,6 +5,7 @@ from decksite.database import db
 from magic.models import Deck
 from shared.container import Container
 from shared.decorators import retry_after_calling
+from shared_web import logger
 
 IGNORE: List[str] = ['Commander', 'Unclassified']
 
@@ -48,6 +49,7 @@ def apply_rules_to_decks(decks: List[Deck]) -> None:
 
 def cache_all_rules() -> None:
     table = '_applied_rules'
+    logger.warning(f'Creating {table}')
     sql = """
             CREATE TABLE IF NOT EXISTS _new{table} (
                 deck_id INT NOT NULL,
@@ -62,6 +64,7 @@ def cache_all_rules() -> None:
             {apply_rules_query}
         """.format(table=table, apply_rules_query=apply_rules_query(deck_query=classified_decks_query()))
     preaggregation.preaggregate(table, sql)
+    logger.warning(f'Done creating {table}')
 
 @retry_after_calling(cache_all_rules)
 def num_classified_decks() -> int:

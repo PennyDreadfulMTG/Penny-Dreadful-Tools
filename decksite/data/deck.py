@@ -413,7 +413,7 @@ def add_cards(deck_id: int, cards: CardsDescription) -> None:
         db().commit('add_cards')
     except InvalidDataException as e:
         logger.warning('Unable to add_cards to {deck_id} with {cards}', e)
-        db().rollback('add_deck')
+        db().rollback('add_cards')
         raise
 
 def get_deck_id(source_name: str, identifier: str) -> Optional[int]:

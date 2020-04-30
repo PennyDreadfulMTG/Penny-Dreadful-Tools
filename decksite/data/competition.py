@@ -71,7 +71,8 @@ def load_competitions(where: str = 'TRUE', having: str = 'TRUE', season_id: Opti
             SUM(CASE WHEN d.reviewed THEN 1 ELSE 0 END) AS num_reviewed,
             sp.name AS sponsor_name,
             cs.name AS series_name,
-            ct.name AS type
+            ct.name AS type,
+            season.id AS season_id
         FROM
             competition AS c
         LEFT JOIN

@@ -330,7 +330,7 @@ class Bot(commands.Bot):
             return
         channel = self.get_channel(rotation_hype_channel_id)
         while self.is_ready():
-            until_rotation = rotation.next_rotation_any_kind() - dtutil.now()
+            until_rotation = rotation.next_rotation() - dtutil.now()
             last_run_time = rotation.last_run_time()
             if until_rotation < datetime.timedelta(7) and last_run_time is not None:
                 if dtutil.now() - last_run_time < datetime.timedelta(minutes=5):
@@ -373,16 +373,13 @@ async def get_role(guild: Guild, rolename: str, create: bool = False) -> Optiona
 
 async def rotation_hype_message() -> Optional[str]:
     runs, runs_percent, cs = rotation.read_rotation_files()
-    if rotation.next_rotation_is_supplemental():
-        cs = [c for c in cs if not c.pd_legal]
     runs_remaining = rotation.TOTAL_RUNS - runs
     newly_legal = [c for c in cs if c.hit_in_last_run and c.hits == rotation.TOTAL_RUNS / 2]
     newly_eliminated = [c for c in cs if not c.hit_in_last_run and c.status == 'Not Legal' and c.hits_needed == runs_remaining + 1]
     newly_hit = [c for c in cs if c.hit_in_last_run and c.hits == 1]
     num_undecided = len([c for c in cs if c.status == 'Undecided'])
     num_legal_cards = len([c for c in cs if c.status == 'Legal'])
-    name = 'Supplemental rotation' if rotation.next_rotation_is_supplemental() else 'Rotation'
-    s = f'{name} run number {runs} completed. {name} is {runs_percent}% complete. {num_legal_cards} cards confirmed.'
+    s = f'Rotation run number {runs} completed. Rotation is {runs_percent}% complete. {num_legal_cards} cards confirmed.'
     if not newly_hit + newly_legal + newly_eliminated and runs != 1 and runs % 5 != 0 and runs < rotation.TOTAL_RUNS / 2:
         return None # Sometimes there's nothing to report
     if len(newly_hit) > 0 and runs_remaining > runs:

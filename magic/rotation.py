@@ -89,9 +89,6 @@ def last_rotation() -> datetime.datetime:
 def next_rotation() -> datetime.datetime:
     return next_rotation_ex().enter_date_dt + ROTATION_OFFSET
 
-def next_rotation_any_kind() -> datetime.datetime:
-    return min(next_rotation(), next_supplemental())
-
 def last_rotation_ex() -> SetInfo:
     return max([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) < dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
 
@@ -108,15 +105,6 @@ def next_rotation_ex() -> SetInfo:
         fake = SetInfo('Unannounced Set', '???', '???', 'Unannounced', fake_enter_date, fake_exit_date, fake_enter_date_dt)
         return fake
 
-def next_supplemental() -> datetime.datetime:
-    last = last_rotation() + datetime.timedelta(weeks=3)
-    if last > dtutil.now():
-        return last
-    return next_rotation() + datetime.timedelta(weeks=3)
-
-def this_supplemental() -> datetime.datetime:
-    return last_rotation() + datetime.timedelta(weeks=3)
-
 def interesting(playability: Dict[str, float], c: Card, speculation: bool = True, new: bool = True) -> Optional[str]:
     if new and len({k: v for (k, v) in c['legalities'].items() if 'Penny Dreadful' in k}) == (0 if speculation else 1):
         return 'new'
@@ -128,29 +116,15 @@ def interesting(playability: Dict[str, float], c: Card, speculation: bool = True
     return None
 
 def message() -> str:
-    full = next_rotation()
-    supplemental = next_supplemental()
-    now = dtutil.now()
-    sdiff = supplemental - now
-    diff = full - now
-    if sdiff < diff:
-        return 'The supplemental rotation is in {sdiff} (The next full rotation is in {diff})'.format(diff=dtutil.display_time(int(diff.total_seconds())), sdiff=dtutil.display_time(int(sdiff.total_seconds())))
-    return 'The next rotation is in {diff}'.format(diff=dtutil.display_time(int(diff.total_seconds())))
+    diff = next_rotation() - dtutil.now()
+    s = dtutil.display_time(diff.total_seconds())
+    return f'The next rotation is in {s}'
 
 def in_rotation() -> bool:
     if configuration.get_bool('always_show_rotation'):
         return True
-    until_full_rotation = next_rotation() - dtutil.now()
-    until_supplemental_rotation = next_supplemental() - dtutil.now()
-    return until_full_rotation < datetime.timedelta(7) or until_supplemental_rotation < datetime.timedelta(7)
-
-def next_rotation_is_supplemental() -> bool:
-    full = next_rotation()
-    supplemental = next_supplemental()
-    now = dtutil.now()
-    sdiff = supplemental - now
-    diff = full - now
-    return sdiff < diff
+    until_rotation = next_rotation() - dtutil.now()
+    return until_rotation < datetime.timedelta(7)
 
 
 __SETS: List[SetInfo] = []

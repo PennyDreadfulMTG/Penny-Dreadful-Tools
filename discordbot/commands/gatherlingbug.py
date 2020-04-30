@@ -7,7 +7,7 @@ from shared import repo
 @commands.command(aliases=['gbug'], hidden=True)
 async def gatherlingbug(ctx: MtgContext, *, text: str) -> None:
     """Report a Gatherling bug."""
-    issue = repo.create_issue(text, ctx.author, 'Discord', 'PennyDreadfulMTG/gatherling')
+    issue = repo.create_issue(text, str(ctx.author), 'Discord', 'PennyDreadfulMTG/gatherling')
     if issue is None:
         await ctx.send('Report Gatherling issues at <https://github.com/PennyDreadfulMTG/gatherling/issues/new>')
     else:

@@ -20,7 +20,7 @@ class Archetype(Container, NodeMixin):
 BASE_ARCHETYPES: Dict[Archetype, Archetype] = {}
 
 # pylint: disable=attribute-defined-outside-init
-def load_archetype(archetype: Union[int, str], season_id: int = None, tournament_only: bool = False) -> Archetype:
+def load_archetype(archetype: Union[int, str], season_id: Optional[int] = None, tournament_only: bool = False) -> Archetype:
     try:
         archetype_id = int(archetype)
     except ValueError:
@@ -66,7 +66,7 @@ def load_archetypes(where: str = 'TRUE', merge: bool = False, season_id: int = N
     archetype_list = list(archetypes.values())
     return archetype_list
 
-def load_archetypes_deckless_for(archetype_id: int, season_id: int = None, tournament_only: bool = False) -> List[Archetype]:
+def load_archetypes_deckless_for(archetype_id: int, season_id: Optional[int] = None, tournament_only: bool = False) -> List[Archetype]:
     archetypes = load_archetypes_deckless(season_id=season_id, tournament_only=tournament_only)
     for a in archetypes:
         if int(a.id) == int(archetype_id):

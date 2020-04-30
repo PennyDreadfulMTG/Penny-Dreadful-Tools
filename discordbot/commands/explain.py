@@ -210,7 +210,8 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
     except KeyError:
         usage = 'I can explain any of these things: {things}'.format(
             things=', '.join(sorted(keys)))
-        return await ctx.send(usage)
+        await ctx.send(usage)
+        return
     for k in sorted(explanation[1].keys()):
         s += '{k}: <{v}>\n'.format(k=k, v=explanation[1][k])
     await ctx.send(s)

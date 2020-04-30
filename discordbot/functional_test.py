@@ -6,7 +6,8 @@ import pytest
 
 from discordbot.bot import Bot
 from discordbot.command import MtgContext
-from discordbot.commands import Card, CardConverter
+from discordbot.commands import CardConverter
+from magic.models import Card
 from shared.container import Container
 
 

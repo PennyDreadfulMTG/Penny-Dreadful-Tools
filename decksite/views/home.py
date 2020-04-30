@@ -88,7 +88,7 @@ class Home(View):
         self.scryfall_url = 'https://scryfall.com/search?q=f%3Apd'
         self.legal_cards_url = 'http://pdmtgo.com/legal_cards.txt'
         self.in_rotation = rotation.in_rotation()
-        self.rotation_msg = 'Supplemental' if rotation.next_rotation_is_supplemental() else 'Full' + ' rotation is in progress.'
+        self.rotation_msg = 'Rotation is in progress.'
         self.rotation_url = url_for('rotation')
 
     def setup_stats(self, matches_stats: Dict[str, int]) -> None:

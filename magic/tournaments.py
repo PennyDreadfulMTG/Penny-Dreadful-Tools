@@ -50,12 +50,13 @@ def get_nearest_tournament(time_direction: TimeDirection = TimeDirection.AFTER) 
 def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> List[TournamentDateType]:
     apac_start = start.astimezone(tz=dtutil.APAC_SERIES_TZ)
     until = start + datetime.timedelta(days=7)
+    pdfnm_time = ('Penny Dreadful FNM', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index]) # type: ignore
     pdsat_time = ('Penny Dreadful Saturdays', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index]) # type: ignore
     apds_time = ('APAC Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=16, byminute=0, bysecond=0, dtstart=apac_start, until=until, byweekday=rrule.SU)[index]) # type: ignore
     pds_time = ('Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index]) # type: ignore
     pdm_time = ('Penny Dreadful Mondays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index]) # type: ignore
     pdt_time = ('Penny Dreadful Thursdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index]) # type: ignore
-    return [pdsat_time, apds_time, pds_time, pdm_time, pdt_time]
+    return [pdfnm_time, pdsat_time, apds_time, pds_time, pdm_time, pdt_time]
 
 def prize(d: Deck) -> int:
     return prize_by_finish(d.get('finish') or sys.maxsize)
@@ -88,38 +89,46 @@ def all_series_info() -> List[Container]:
     info = get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))
     return [
         Container({
+            'name': 'Penny Dreadful FNM',
+            'hosts': ['flac0', 'j_meka'],
+            'display_time': '7pm Eastern',
+            'time': info[0][1],
+            'sponsoer_name': 'flac0'
+
+        }),
+        Container({
             'name': 'Penny Dreadful Saturdays',
             'hosts': ['j_meka', 'crazybaloth'],
             'display_time': '1:30pm Eastern',
-            'time': info[0][1],
+            'time': info[1][1],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
             'name': 'APAC Penny Dreadful Sundays',
             'hosts': ['jgabrielygalan', 'silasary'],
             'display_time': '4pm Japan Standard Time',
-            'time': info[1][1],
+            'time': info[2][1],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
             'name': 'Penny Dreadful Sundays',
             'hosts': ['cody_', 'bakert99'],
             'display_time': '1:30pm Eastern',
-            'time': info[2][1],
+            'time': info[3][1],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
             'name': 'Penny Dreadful Mondays',
             'hosts': ['briar_moss', 'j_meka'],
             'display_time': '7pm Eastern',
-            'time': info[3][1],
+            'time': info[4][1],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
             'name': 'Penny Dreadful Thursdays',
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
-            'time': info[4][1],
+            'time': info[5][1],
             'sponsor_name': 'Cardhoarder'
         })
     ]

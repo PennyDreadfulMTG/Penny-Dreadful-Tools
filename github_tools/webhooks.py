@@ -131,15 +131,15 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
             if status.state != 'success' and not blocked:
                 commit.create_status(state='pending', description=f'Waiting for {status.context}', context=PDM_CHECK_CONTEXT)
                 blocked = True
-
+    travis_push = 'continuous-integration/travis-ci/push'
+    travis_pr = 'continuous-integration/travis-ci/pr'
     if blocked:
         # We should only merge master into the PR if it's gonna do something.
-        if checks.get('continuous-integration/travis-ci/push') == 'failure' and checks.get('continuous-integration/travis-ci/pr') == 'success':
+        if checks.get(travis_push) == 'failure' and checks.get(travis_pr) == 'success':
             update_pr(pr)
         return 'blocked'
 
-    travis_pr = 'continuous-integration/travis-ci/pr'
-    if travis_pr not in checks.keys():
+    if travis_pr not in checks.keys() and travis_push in checks.keys():
         # There's a lovely race condition where, if:
         # 1. travis/push has completed before the PR was made
         # 2. And the label is applied on creation (or author is whitelisted)

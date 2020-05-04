@@ -1,4 +1,4 @@
-from typing import Dict, List, Set, Tuple, Optional
+from typing import Dict, List, Optional, Set, Tuple
 
 import changelogs
 import packaging.version

@@ -334,8 +334,8 @@ def check(args: List[str]) -> None:
     sort()
 
 def release(args: List[str]) -> None:
-    check(args)
-    safe_push(args)
+    check([])
+    safe_push([])
     pull_request(args)
 
 def find_files(needle: str = '', file_extension: str = '', exclude: Optional[List[str]] = None)  -> List[str]:

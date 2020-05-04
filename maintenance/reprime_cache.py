@@ -1,4 +1,4 @@
-from decksite.data import archetype, card, deck, person, rule, season
+from decksite.data import archetype, card, deck, person, season
 from magic import multiverse, oracle
 from shared import redis
 
@@ -16,4 +16,4 @@ def run() -> None:
     card.preaggregate()
     deck.preaggregate()
     season.preaggregate()
-    rule.cache_all_rules()
+    # rule.cache_all_rules()

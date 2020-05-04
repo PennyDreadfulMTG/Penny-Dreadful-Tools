@@ -220,7 +220,7 @@ class Bot(commands.Bot):
             print('tournament channel is not configured')
             return
         channel = self.get_channel(tournament_channel_id)
-        if channel is None:
+        if not isinstance(channel, discord.abc.Messageable):
             print(f'ERROR: could not find tournament_channel_id {tournament_channel_id}')
             return
         while self.is_ready:
@@ -273,7 +273,7 @@ class Bot(commands.Bot):
             print('tournament channel is not configured')
             return
         channel = self.get_channel(tournament_channel_id)
-        if not channel:
+        if not isinstance(channel, discord.abc.Messageable):
             print('tournament channel could not be found')
             return
 
@@ -329,6 +329,9 @@ class Bot(commands.Bot):
             print('rotation hype channel is not configured')
             return
         channel = self.get_channel(rotation_hype_channel_id)
+        if not isinstance(channel, discord.abc.Messageable):
+            print('rotation hype channel is not a text channel')
+            return
         while self.is_ready():
             until_rotation = rotation.next_rotation() - dtutil.now()
             last_run_time = rotation.last_run_time()

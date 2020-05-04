@@ -67,6 +67,15 @@ def get_container(key: str, ex: Optional[int] = None) -> Optional[Container]:
                 return Container(val)
     return None
 
+def get_int(key: str, ex: Optional[int] = None) -> Optional[int]:
+    if REDIS is not None:
+        blob = _get(key, ex)
+        if blob is not None:
+            val = json.loads(blob)
+            if val is not None:
+                return val
+    return None
+
 def get_list(key: str) -> Optional[List[Any]]:
     if REDIS is not None:
         blob = _get(key)

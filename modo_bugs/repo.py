@@ -13,13 +13,13 @@ from . import strings
 ISSUE_CODES: Dict[int, str] = {}
 
 @decorators.memoize
-def get_github() -> Github:
+def get_github() -> Optional[Github]:
     if not configuration.get_str('github_user') or not configuration.get_str('github_password'):
         return None
-    return Github(configuration.get('github_user'), configuration.get('github_password'))
+    return Github(configuration.get_str('github_user'), configuration.get_str('github_password'))
 
 @decorators.memoize
-def get_repo() -> Repository:
+def get_repo() -> Optional[Repository]:
     gh = get_github()
     if gh is not None:
         return gh.get_repo('PennyDreadfulMTG/modo-bugs')

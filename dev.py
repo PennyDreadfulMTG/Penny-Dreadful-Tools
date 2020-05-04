@@ -14,6 +14,7 @@ try:
     from plumbum.commands.processes import ProcessExecutionError
 except ImportError:
     sys.stderr.write('Please run ./dev.py build\n')
+    ProcessExecutionError = subprocess.CalledProcessError
 
 
 ON_PROD = configuration.get_bool('production')

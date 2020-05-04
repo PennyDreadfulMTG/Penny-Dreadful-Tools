@@ -67,7 +67,9 @@ def verification_numbers() -> None:
             continue
         print(f'... {col.name}')
         for card in col.get_cards():
-            VERIFICATION_BY_ISSUE[card.get_content().number] = col.name
+            content = card.get_content()
+            if content is not None:
+                VERIFICATION_BY_ISSUE[content.number] = col.name
     print('... Done')
 
 
@@ -135,10 +137,10 @@ def process_issue(issue: Issue) -> None:
         if 'Deck Building' in labels:
             bug['cade_bug'] = True
 
-        age = datetime.datetime.now() - issue.updated_at
+        age = (datetime.datetime.now() - issue.updated_at).days
         if 'Help Wanted' in labels:
             bug['help_wanted'] = True
-        elif age.days > 60:
+        elif age > 60:
             bug['help_wanted'] = True
 
         bug['last_verified'] = VERIFICATION_BY_ISSUE.get(issue.number, None)

@@ -107,7 +107,7 @@ def code_merges(start_date: datetime.datetime, end_date: datetime.datetime, max_
     try:
         merges = redis.get_container_list('decksite:news:merges')
         if merges is None:
-            merges = [Container({'date': pull.merged_dt, 'title': pull.title, 'url': pull.html_url, 'type': 'code-release'}) for pull in repo.get_pull_requests(start_date, end_date, max_items) if not 'Not News' in [l.name for l in pull.as_issue().labels]]
+            merges = [Container({'date': dtutil.UTC_TZ.localize(pull.merged_at), 'title': pull.title, 'url': pull.html_url, 'type': 'code-release'}) for pull in repo.get_pull_requests(start_date, end_date, max_items) if not 'Not News' in [l.name for l in pull.as_issue().labels]]
             redis.store('decksite:news:merges', merges, ex=3600)
         else:
             for merge in merges:

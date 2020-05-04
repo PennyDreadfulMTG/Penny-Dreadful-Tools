@@ -14,6 +14,7 @@ try:
     from plumbum.commands.processes import ProcessExecutionError
 except ImportError:
     sys.stderr.write('Please run ./dev.py build\n')
+    ProcessExecutionError = subprocess.CalledProcessError
 
 
 ON_PROD = configuration.get_bool('production')
@@ -333,8 +334,8 @@ def check(args: List[str]) -> None:
     sort()
 
 def release(args: List[str]) -> None:
-    check(args)
-    safe_push(args)
+    check([])
+    safe_push([])
     pull_request(args)
 
 def find_files(needle: str = '', file_extension: str = '', exclude: Optional[List[str]] = None)  -> List[str]:

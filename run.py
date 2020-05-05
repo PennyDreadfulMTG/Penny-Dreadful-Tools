@@ -70,8 +70,8 @@ def github_tools() -> None:
 
 @cli.command()
 def modo_bugs() -> None:
-    import modo_bugs as site
-    site.main.run()
+    from modo_bugs import main
+    main.run()
 
 def task(args: List[str]) -> None:
     try:

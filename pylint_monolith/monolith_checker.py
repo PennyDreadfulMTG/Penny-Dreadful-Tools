@@ -25,7 +25,7 @@ ACCEPTABLE_IMPORTS: Dict[str, List[str]] = {
 
     'dev': ['generate_readme', 'magic', 'shared'],
     'generate_readme': ['discordbot'],
-    'run': ['discordbot', 'decksite', 'price_grabber', 'rotation_script', 'magic', 'shared'],
+    'run': ['discordbot', 'decksite', 'price_grabber', 'rotation_script', 'magic', 'shared', 'modo_bugs'],
 }
 
 class MonolithChecker(BaseChecker):

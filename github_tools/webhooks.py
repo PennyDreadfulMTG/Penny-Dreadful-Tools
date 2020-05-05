@@ -1,11 +1,10 @@
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 import changelogs
 import packaging.version
 import whatthepatch
 from github import Github
 from github.Commit import Commit
-from github.CommitStatus import CommitStatus
 from github.File import File
 from github.GithubException import UnknownObjectException
 from github.PullRequest import PullRequest
@@ -17,10 +16,10 @@ from shared import configuration, decorators, redis
 PDM_CHECK_CONTEXT = 'pdm/automerge'
 
 @decorators.memoize
-def get_github() -> Github:
+def get_github() -> Optional[Github]:
     if not configuration.get_str('github_user') or not configuration.get_str('github_password'):
         return None
-    return Github(configuration.get('github_user'), configuration.get('github_password'))
+    return Github(configuration.get_str('github_user'), configuration.get_str('github_password'))
 
 def parse_pr_url(url: str) -> Tuple[str, str, int]:
     split_url = url.split('/')
@@ -31,7 +30,7 @@ def load_pr(data: dict) -> PullRequest:
     g = get_github()
     return g.get_repo(f'{org}/{repo}').get_pull(pr_number)
 
-def load_commit(data: dict) -> Commit:
+def load_commit(data: dict) -> Optional[Commit]:
     pr_data = data.get('pull_request')
     if pr_data is None:
         return None
@@ -40,13 +39,13 @@ def load_commit(data: dict) -> Commit:
     g = get_github()
     return g.get_repo(f'{org}/{repo}').get_commit(head.get('sha'))
 
-def get_pr_from_status(data: dict) -> PullRequest:
+def get_pr_from_status(data: dict) -> Optional[PullRequest]:
     g = get_github()
     repo = g.get_repo(data['name'])
     return get_pr_from_commit(repo, data['sha'])
 
-def get_pr_from_commit(repo: Repository, sha: str) -> PullRequest:
-    cached = redis.get_list(f'github:head:{sha}')
+def get_pr_from_commit(repo: Repository, sha: str) -> Optional[PullRequest]:
+    cached = redis.get_int(f'github:head:{sha}')
     if cached:
         try:
             pr = repo.get_pull(cached)
@@ -61,9 +60,10 @@ def get_pr_from_commit(repo: Repository, sha: str) -> PullRequest:
             return pr
     return None
 
-def set_check(data: dict, status: str, message: str) -> CommitStatus:
+def set_check(data: dict, status: str, message: str) -> None:
     commit = load_commit(data)
-    return commit.create_status(state=status, description=message, context=PDM_CHECK_CONTEXT)
+    if commit is not None:
+        commit.create_status(state=status, description=message, context=PDM_CHECK_CONTEXT)
 
 def check_for_changelogs(pr: PullRequest) -> None:
     for change in pr.get_files():
@@ -131,15 +131,15 @@ def check_pr_for_mergability(pr: PullRequest) -> str:
             if status.state != 'success' and not blocked:
                 commit.create_status(state='pending', description=f'Waiting for {status.context}', context=PDM_CHECK_CONTEXT)
                 blocked = True
-
+    travis_push = 'continuous-integration/travis-ci/push'
+    travis_pr = 'continuous-integration/travis-ci/pr'
     if blocked:
         # We should only merge master into the PR if it's gonna do something.
-        if checks.get('continuous-integration/travis-ci/push') == 'failure' and checks.get('continuous-integration/travis-ci/pr') == 'success':
+        if checks.get(travis_push) == 'failure' and checks.get(travis_pr) == 'success':
             update_pr(pr)
         return 'blocked'
 
-    travis_pr = 'continuous-integration/travis-ci/pr'
-    if travis_pr not in checks.keys():
+    if travis_pr not in checks.keys() and travis_push in checks.keys():
         # There's a lovely race condition where, if:
         # 1. travis/push has completed before the PR was made
         # 2. And the label is applied on creation (or author is whitelisted)

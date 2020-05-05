@@ -169,7 +169,7 @@ def handle_autocards(soup: Tag) -> None:
         name = link.get_text()
         link.replace_with('[{0}]'.format(name))
 
-def find_issue_by_code(code: str) -> Issue:
+def find_issue_by_code(code: str) -> Optional[Issue]:
     if code is None:
         return None
     def scan(issue_list: List[Issue]) -> Optional[Issue]:
@@ -195,10 +195,13 @@ def find_issue_by_code(code: str) -> Issue:
                 repo.set_issue_bbt(issue.number, code)
                 return issue
         return None
-    res = scan(repo.get_repo().get_issues(state='open'))
+    _repo = repo.get_repo()
+    if _repo is None:
+        return None
+    res = scan(_repo.get_issues(state='open'))
     if res:
         return res
-    return scan(repo.get_repo().get_issues(state='closed'))
+    return scan(_repo.get_issues(state='closed'))
 
 def find_bbt_in_body_or_comments(issue: Issue) -> Optional[str]:
     body = issue.body
@@ -215,7 +218,7 @@ def find_bbt_in_body_or_comments(issue: Issue) -> Optional[str]:
         return bbt.groups()[0].strip()
     return None
 
-def find_issue_by_name(name: str) -> Issue:
+def find_issue_by_name(name: str) -> Optional[Issue]:
     if name is None: #What?
         return None
     all_issues = repo.get_repo().get_issues(state='all')

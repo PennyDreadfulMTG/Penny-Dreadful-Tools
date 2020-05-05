@@ -18,7 +18,7 @@ def create_issue(content: str,
                  author: str,
                  location: str = 'Discord',
                  repo_name: str = 'PennyDreadfulMTG/Penny-Dreadful-Tools',
-                 exception: Optional[BaseException] = None) -> Issue:
+                 exception: Optional[BaseException] = None) -> Optional[Issue.Issue]:
     labels: List[str] = []
     issue_hash = None
     if content is None or content == '':
@@ -75,7 +75,7 @@ def create_issue(content: str,
     if not configuration.get_bool('create_github_issues'):
         print(f'Not creating github issue:\n{title}\n\n{body}')
         return None
-    g = Github(configuration.get('github_user'), configuration.get('github_password'))
+    g = Github(configuration.get_str('github_user'), configuration.get_str('github_password'))
     git_repo = g.get_repo(repo_name)
     if repo_name == 'PennyDreadfulMTG/perf-reports':
         labels.append(location)
@@ -113,16 +113,16 @@ def get_pull_requests(start_date: datetime.datetime,
         return []
     g = Github(gh_user, gh_pass)
     git_repo = g.get_repo(repo_name)
-    pulls: List[PullRequest] = []
+    pulls: List[PullRequest.PullRequest] = []
     try:
         for pull in git_repo.get_pulls(state='closed', sort='updated', direction='desc'):
             if not pull.merged_at:
                 continue
-            pull.merged_dt = dtutil.UTC_TZ.localize(pull.merged_at)
-            pull.updated_dt = dtutil.UTC_TZ.localize(pull.updated_at)
-            if pull.merged_dt > end_date:
+            merged_dt = dtutil.UTC_TZ.localize(pull.merged_at)
+            updated_dt = dtutil.UTC_TZ.localize(pull.updated_at)
+            if merged_dt > end_date:
                 continue
-            if pull.updated_dt < start_date:
+            if updated_dt < start_date:
                 return pulls
             pulls.append(pull)
             if len(pulls) >= max_pull_requests:

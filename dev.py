@@ -247,7 +247,10 @@ def push() -> None:
 
 def pull_request(argv: List[str]) -> None:
     print('>>>> Pull request')
-    subprocess.check_call(['hub', 'pull-request', *argv])
+    try:
+        subprocess.check_call(['gh', 'pr', 'create'])
+    except subprocess.CalledProcessError:
+        subprocess.check_call(['hub', 'pull-request', *argv])
 
 def build() -> None:
     print('>>>> Installing Requirements')

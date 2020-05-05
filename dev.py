@@ -119,7 +119,7 @@ def lint(argv: List[str]) -> None:
     args.extend(argv or find_files(file_extension='py'))
     # pylint: disable=import-outside-toplevel
     import pylint.lint
-    linter = pylint.lint.Run(args, do_exit=False)
+    linter = pylint.lint.Run(args, exit=False)
     if linter.linter.msg_status:
         raise TestFailedException(linter.linter.msg_status)
 

@@ -324,8 +324,13 @@ def add_deck(params: RawDeckDescription) -> Deck:
         raise InvalidDataException('Did not find a username in {params}'.format(params=params))
     person_id = get_or_insert_person_id(params.get('mtgo_username'), params.get('tappedout_username'), params.get('mtggoldfish_username'))
     deck_id = get_deck_id(params['source'], params['identifier'])
+    cards = params['cards']
     if deck_id:
-        add_cards(deck_id, params['cards'])
+        db().begin("replace_deck_cards")
+        db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [get_deckhash(cards), deck_id])
+        db().execute('DELETE FROM deck_card WHERE deck_id = %s', [deck_id])
+        add_cards(deck_id, cards)
+        db().commit("replace_deck_cards")
         d = load_deck(deck_id)
         prime_cache(d)
         return d
@@ -352,9 +357,10 @@ def add_deck(params: RawDeckDescription) -> Deck:
         thumbnail_url,
         small_thumbnail_url,
         finish,
+        decklist_hash,
         reviewed
     ) VALUES (
-         IFNULL(%s, UNIX_TIMESTAMP()), UNIX_TIMESTAMP(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, FALSE
+         IFNULL(%s, UNIX_TIMESTAMP()), UNIX_TIMESTAMP(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, FALSE
     )"""
     values = [
         created_date,
@@ -370,11 +376,12 @@ def add_deck(params: RawDeckDescription) -> Deck:
         params.get('score'),
         params.get('thumbnail_url'),
         params.get('small_thumbnail_url'),
-        params.get('finish')
+        params.get('finish'),
+        get_deckhash(cards)
     ]
     db().begin('add_deck')
     deck_id = db().insert(sql, values)
-    add_cards(deck_id, params['cards'])
+    add_cards(deck_id, cards)
     d = load_deck(deck_id)
     prime_cache(d)
     db().commit('add_deck')
@@ -403,9 +410,6 @@ def prime_cache(d: Deck) -> None:
 def add_cards(deck_id: int, cards: CardsDescription) -> None:
     try:
         db().begin('add_cards')
-        deckhash = hashlib.sha1(repr(cards).encode('utf-8')).hexdigest()
-        db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [deckhash, deck_id])
-        db().execute('DELETE FROM deck_card WHERE deck_id = %s', [deck_id])
         for name, n in cards.get('maindeck', {}).items():
             insert_deck_card(deck_id, name, n, False)
         for name, n in cards.get('sideboard', {}).items():
@@ -643,3 +647,7 @@ def nwdl_join() -> str:
 def num_decks(deck_query: str = 'TRUE') -> int:
     sql = f'SELECT COUNT(id) AS c FROM deck WHERE {deck_query}'
     return db().value(sql)
+
+
+def get_deckhash(cards: CardsDescription) -> str:
+    return hashlib.sha1(repr(cards).encode('utf-8')).hexdigest()

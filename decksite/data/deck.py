@@ -326,11 +326,11 @@ def add_deck(params: RawDeckDescription) -> Deck:
     deck_id = get_deck_id(params['source'], params['identifier'])
     cards = params['cards']
     if deck_id:
-        db().begin("replace_deck_cards")
+        db().begin('replace_deck_cards')
         db().execute('UPDATE deck SET decklist_hash = %s WHERE id = %s', [get_deckhash(cards), deck_id])
         db().execute('DELETE FROM deck_card WHERE deck_id = %s', [deck_id])
         add_cards(deck_id, cards)
-        db().commit("replace_deck_cards")
+        db().commit('replace_deck_cards')
         d = load_deck(deck_id)
         prime_cache(d)
         return d

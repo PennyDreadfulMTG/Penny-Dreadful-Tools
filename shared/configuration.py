@@ -68,6 +68,7 @@ DEFAULTS: Dict[str, Any] = {
     'poeditor_api_key': None,
     'prices_database': 'prices',
     'production': False, # Block some of the more dangerous things from running if this is true
+    'pylint_threads': 4,
     'redis_db': 0,
     'redis_enabled': True,
     'redis_host': 'localhost',

@@ -4,6 +4,7 @@ import subprocess
 import sys
 import time
 from typing import List, Optional
+from pickle import PicklingError
 
 from generate_readme import generate_readme
 from shared import configuration
@@ -112,14 +113,20 @@ def lint(argv: List[str]) -> None:
     args = ['--rcfile=.pylintrc', # Load rcfile first.
             '--ignored-modules=alembic,MySQLdb,flask_sqlalchemy,distutils.dist', # override ignored-modules (codacy hack)
             '--load-plugins', 'pylint_quotes,pylint_monolith', # Plugins
-            '--reports=n', # Don't show reports.
             '-f', 'parseable', # Machine-readable output.
-            '-j', '4' # Use four cores for speed.
+            '-j', str(configuration.get_int('pylint_threads')), # Use four cores for speed.
            ]
     args.extend(argv or find_files(file_extension='py'))
     # pylint: disable=import-outside-toplevel
     import pylint.lint
-    linter = pylint.lint.Run(args, exit=False)
+    try:
+        linter = pylint.lint.Run(args, exit=False)
+    except PicklingError:
+        print('Error while running pylint with multiprocessing')
+        configuration.write('pylint_threads', 1)
+        lint(argv)
+        return
+
     if linter.linter.msg_status:
         raise TestFailedException(linter.linter.msg_status)
 

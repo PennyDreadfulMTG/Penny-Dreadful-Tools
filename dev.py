@@ -118,7 +118,7 @@ def lint(argv: List[str]) -> None:
             '-f', 'parseable', # Machine-readable output.
             '-j', str(configuration.get_int('pylint_threads')), # Use four cores for speed.
            ]
-    args.extend(argv or find_files(file_extension='py'))
+    args.extend(argv or find_files(file_extension='py', exclude=['docs/conf.py']))
     # pylint: disable=import-outside-toplevel
     import pylint.lint
     try:

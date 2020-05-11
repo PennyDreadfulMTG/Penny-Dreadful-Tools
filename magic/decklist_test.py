@@ -580,3 +580,37 @@ def test_parse_scryfall() -> None:
     d = decklist.parse(s)
     assert sum(d['maindeck'].values()) == 60
     assert sum(d['sideboard'].values()) == 15
+
+def test_parse_double_blank_line() -> None:
+    s = """
+        4 Deeproot Champion
+        2 Quench
+        1 Spell Rupture
+        3 Terramorphic Expanse
+        4 Quirion Dryad
+        3 Hooting Mandrills
+        1 Snapback
+        4 Forest
+        1 Unsummon
+        4 Gitaxian Probe
+        2 Prohibit
+        3 Gush
+        4 Peek
+        2 Censor
+        4 Mental Note
+        2 Negate
+        3 Treasure Cruise
+        4 Evolving Wilds
+        9 Island
+
+
+        4 Scrabbling Claws
+        3 Naturalize
+        3 Snapback
+        4 Invasive Surgery
+        1 Boomerang
+    """
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    assert sum(d['maindeck'].values()) == 60
+    assert sum(d['sideboard'].values()) == 15

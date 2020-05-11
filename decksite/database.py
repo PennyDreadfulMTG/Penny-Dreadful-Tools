@@ -25,10 +25,11 @@ def setup() -> None:
     with APP.app_context():  # type: ignore
         db().execute('CREATE TABLE IF NOT EXISTS db_version (version INTEGER UNIQUE NOT NULL)')
         version = db_version()
-        patches = os.listdir('decksite/sql')
+        sqldir = os.path.join(os.path.dirname(__file__), 'sql')
+        patches = os.listdir(sqldir)
         patches.sort(key=lambda n: int(n.split('.')[0]))
         for fn in patches:
-            path = os.path.join('decksite/sql', fn)
+            path = os.path.join(sqldir, fn)
             n = int(fn.split('.')[0])
             if version < n:
                 logger.warning('Patching database to v{0}'.format(n))

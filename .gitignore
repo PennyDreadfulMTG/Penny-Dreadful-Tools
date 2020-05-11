@@ -42,3 +42,4 @@ sqlite3ext.h
 test_results.xml
 whoosh_index/
 /scryfall-default-cards.json
+/docs/_build/

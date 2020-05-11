@@ -102,6 +102,8 @@ def run_dangerously() -> None:
         safe_push(args)
     elif cmd == 'release':
         release(args)
+    elif cmd == 'docs':
+        docs()
     else:
         raise InvalidArgumentException('Unrecognised command {cmd}.'.format(cmd=cmd))
 
@@ -358,6 +360,11 @@ def find_files(needle: str = '', file_extension: str = '', exclude: Optional[Lis
     if exclude:
         paths = [p for p in paths if p not in exclude]
     return paths
+
+def docs() -> None:
+    subprocess.check_call(['sphinx-apidoc', '-f', '-o', 'docs/source', '.'])
+    os.chdir('docs')
+    subprocess.check_call(['make', 'html'], shell=True)
 
 if __name__ == '__main__':
     run()

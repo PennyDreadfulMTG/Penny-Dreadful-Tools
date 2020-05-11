@@ -280,7 +280,7 @@ def jslint(fix: bool = False) -> None:
     cmd = [os.path.join('.', 'node_modules', '.bin', 'eslint')]
     if fix:
         cmd.append('--fix')
-    subprocess.check_call(cmd + files)
+    subprocess.check_call(cmd + files, shell=ON_WINDOWS)
 
 def jsfix() -> None:
     print('>>>> Fixing js')

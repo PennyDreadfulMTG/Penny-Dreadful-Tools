@@ -16,7 +16,6 @@ env:
     - CMD="python dev.py mypy"
     - CMD="python dev.py lint"
     - CMD="python dev.py jslint"
-    - CMD="python dev.py isort"
 install:
   - travis_retry pip install -r requirements.txt
   - npm install

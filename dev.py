@@ -14,6 +14,7 @@ try:
     from plumbum.commands.processes import ProcessExecutionError
 except ImportError:
     sys.stderr.write('Please run ./dev.py build\n')
+    ProcessExecutionError = subprocess.CalledProcessError
 
 
 ON_PROD = configuration.get_bool('production')
@@ -118,7 +119,7 @@ def lint(argv: List[str]) -> None:
     args.extend(argv or find_files(file_extension='py'))
     # pylint: disable=import-outside-toplevel
     import pylint.lint
-    linter = pylint.lint.Run(args, do_exit=False)
+    linter = pylint.lint.Run(args, exit=False)
     if linter.linter.msg_status:
         raise TestFailedException(linter.linter.msg_status)
 
@@ -246,7 +247,10 @@ def push() -> None:
 
 def pull_request(argv: List[str]) -> None:
     print('>>>> Pull request')
-    subprocess.check_call(['hub', 'pull-request', *argv])
+    try:
+        subprocess.check_call(['gh', 'pr', 'create'])
+    except subprocess.CalledProcessError:
+        subprocess.check_call(['hub', 'pull-request', *argv])
 
 def build() -> None:
     print('>>>> Installing Requirements')
@@ -333,8 +337,8 @@ def check(args: List[str]) -> None:
     sort()
 
 def release(args: List[str]) -> None:
-    check(args)
-    safe_push(args)
+    check([])
+    safe_push([])
     pull_request(args)
 
 def find_files(needle: str = '', file_extension: str = '', exclude: Optional[List[str]] = None)  -> List[str]:

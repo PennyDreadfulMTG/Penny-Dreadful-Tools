@@ -15,7 +15,7 @@ from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
 from decksite.prepare import prepare_decks
 from decksite.views import DeckEmbed
-from magic import oracle, rotation
+from magic import oracle, rotation, tournaments
 from magic.decklist import parse_line
 from magic.models import Deck
 from shared import configuration, dtutil, guarantee, redis
@@ -318,4 +318,10 @@ def test_500() -> Response:
 def all_achievements() -> Response:
     data = {}
     data['achievements'] = [{'key': a.key, 'title': a.title, 'description': a.description_safe} for a in Achievement.all_achievements]
+    return return_json(data)
+
+@APP.route('/api/tournaments')
+def all_tournaments() -> Response:
+    data = {}
+    data['tournaments'] = (tournaments.all_series_info())
     return return_json(data)

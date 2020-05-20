@@ -20,7 +20,7 @@ def parse_line(line: str) -> Tuple[int, str]:
 
 def parse_chunk(chunk: str, section: SectionType) -> None:
     for line in chunk.splitlines():
-        if line.lower().strip() == 'sideboard':
+        if 'sideboard' in line.lower().strip() or line.strip() == '':
             continue
         n, name = parse_line(line)
         add_card(section, int(n), name)

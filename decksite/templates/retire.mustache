@@ -1,4 +1,8 @@
 <h1>{{page_title}}</h1>
+{{#show_matches}}
+    <section>Before you retire your deck, please check that all of your matches have been reported correctly.</section>
+    <section>{{> deckmatches}}</section>
+{{/show_matches}}
 <section>
     <form method="post">
         <div>

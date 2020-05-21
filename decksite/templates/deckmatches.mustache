@@ -1,0 +1,38 @@
+<table>
+    <thead>
+        <tr>
+            {{#has_rounds}}
+                <th>Round</th>
+            {{/has_rounds}}
+            <th data-sortInitialOrder="desc">Result</th>
+            <th>Versus</th>
+            <th>Opponent</th>
+            {{^has_rounds}}
+                <th>Date</th>
+            {{/has_rounds}}
+        </tr>
+    </thead>
+    <tbody>
+        {{#matches}}
+            <tr>
+                {{#has_rounds}}
+                    <td class="n">{{display_round}}</td>
+                {{/has_rounds}}
+                <td class="n">{{game_wins}}–{{game_losses}}</td>
+                <td>
+                    {{#opponent_deck_url}}<a href="{{opponent_deck_url}}">{{/opponent_deck_url}}
+                        {{opponent_deck_name}}
+                    {{#opponent_deck_url}}</a>{{/opponent_deck_url}}</td>
+                <td>
+                    {{#opponent_url}}<a href="{{opponent_url}}">{{/opponent_url}}
+                    {{^opponent_url}}<span class="bye">{{/opponent_url}}
+                        {{opponent}}
+                    {{^opponent_url}}</span>{{/opponent_url}}
+                    {{#opponent_url}}</a>{{/opponent_url}}</td>
+                {{^has_rounds}}
+                    <td data-text="{{date_sort}}">{{display_date}}</td>
+                {{/has_rounds}}
+            </tr>
+        {{/matches}}
+    </tbody>
+</table>

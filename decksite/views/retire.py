@@ -13,6 +13,8 @@ class Retire(LeagueForm):
         if len(form.decks) == 1:
             self.show_matches = True
             self.matches = match.load_matches_by_deck(form.decks[0], should_load_decks=True)
+            self.has_matches = len(self.matches) > 0
+        self.report_url = url_for('report')
 
     def page_title(self) -> str:
         return 'Retire'

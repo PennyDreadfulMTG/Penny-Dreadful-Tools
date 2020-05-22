@@ -8,7 +8,7 @@ from shared.pd_exception import DoesNotExistException
 PATH = 'shared_web/templates/jsdependencies.mustache'
 
 def ad_hoc() -> None:
-    tags = [fetch_script_tag(library) + '\n' for library in get_dependencies()]
+    tags = [fetch_script_tag(library) + '\n' for library in get_dependencies() if len(library) > 0]
     output = ''.join(tags)
     write_dependencies(output)
     send_pr_if_updated()

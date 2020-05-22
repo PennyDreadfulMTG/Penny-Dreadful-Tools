@@ -1617,7 +1617,8 @@ textarea {
     height: 10rem;
 }
 
-input, select, textarea {
+input, select, textarea, .tt-suggestion {
+    font-size: 0.75rem;
     margin-left: 1rem;
 }
 
@@ -1811,37 +1812,37 @@ div.loading {
 
 @-webkit-keyframes rotation {
     from {
-    -webkit-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
     }
     to {
-    -webkit-transform: rotate(359deg);
+        -webkit-transform: rotate(359deg);
     }
 }
 
 @-moz-keyframes rotation {
     from {
-    -moz-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
     }
     to {
-    -moz-transform: rotate(359deg);
+        -moz-transform: rotate(359deg);
     }
 }
 
 @-o-keyframes rotation {
     from {
-    -o-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
     }
     to {
-    -o-transform: rotate(359deg);
+        -o-transform: rotate(359deg);
     }
 }
 
 @keyframes rotation {
     from {
-    transform: rotate(0deg);
+        transform: rotate(0deg);
     }
     to {
-    transform: rotate(359deg);
+        transform: rotate(359deg);
     }
 }
 
@@ -1849,29 +1850,14 @@ div.loading {
 
 Search
 
-Styles for the Google search box.
-We need to override a lot of Google's inline styles hence a lot of !important.
-
 */
-
-/* Search Box */
 
 .search {
     float: right;
-    margin-left: 1rem;
-    padding: 3rem 0 0; /* matches h1 as it floats alongside the logo */
-}
-
-/* Hide the placeholder text "Google Custom Search". */
-.search ::-webkit-input-placeholder {
-    color: transparent;
-}
-.search ::-moz-placeholder {
-   color: transparent;
-   opacity:  1;
-}
-.search :-ms-input-placeholder {
-   color: transparent;
+    /* Mirror h1 margins and padding as this floats alongside the logo. */
+    margin-bottom: 0;
+    margin-left: 0;
+    padding: 3rem 0 1rem 0;
 }
 
 /* When search wraps under the logo it needs different behavior. */
@@ -1884,128 +1870,40 @@ We need to override a lot of Google's inline styles hence a lot of !important.
 }
 
 .search input {
-    margin-bottom: 0 !important; /* csslint allow: important */;
+    box-sizing: border-box; /* Lets us specify width the same as the search results below it without having to account for padding. */
+    font-size: 1rem;
+    margin-bottom: 0;
+    margin-top: 0;
+    width: 20rem;
 }
 
-.gsc-search-box td {
-    /* Stop the input box text hugging the bottom. */
-    vertical-align: top !important; /* ccslint allow: important */
+.tt-menu {
+    margin-left: 0;
 }
 
-.gsc-control-cse {
-    background: transparent !important; /* csslint allow: important */
-    border: 0 !important; /* csslint allow: important */
-    color: #502828 !important; /* csslint allow: important */
-    max-width: 100% !important; /* csslint allow: important */
-    width: 15rem !important; /* csslint allow: important */
+.tt-suggestion {
+    background-color: #f9f9f9;
+    border: 0.05rem solid #ccc;
+    border-top: 0;
+    box-sizing: border-box; /* Lets us specify width the same as the search input above it without having to account for padding. */
+    color: #502828;
+    font-size: 0.9rem;
+    padding: 0.563rem 0.563em;
+    width: 20rem;
 }
 
-.gsc-input {
-    background: none !important; /* csslint allow: important */
-    font-family: inherit !important; /* csslint allow: important */
-    font-variant-numeric: normal;
-    font-size: inherit !important; /* csslint allow: important */
-    margin-bottom: 6px !important; /* csslint allow: important */
+.tt-highlight {
+    background-color: #eee;
 }
 
-/* Search Results */
-
-.gsc-wrapper, .gsc-results-wrapper-overlay, .gsc-results-root {
-    background: #f9f9f9 !important; /* csslint allow: important */
-    color: #502828 !important; /* csslint allow: important */
-    font-size: 1em !important; /* csslint allow: important */
-    line-height: 1.333 !important; /* csslint allow: important */
+.tt-suggestion:hover, .tt-cursor {
+    background-color: #eee;
+    color:;
 }
 
-.gsc-results-wrapper-overlay {
-    height: 75vh !important; /* csslint allow: important */
-    max-width: 30rem !important; /* csslint allow: important */
-}
-
-.gsc-results-wrapper-overlay * {
-    color: #502828 !important; /* csslint allow: important */
-    font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 0.75rem !important; /* csslint allow: important */
-    font-variant-numeric: normal;
-}
-
-.gs-visibleUrl {
-    display: none !important; /* csslint allow: important */
-}
-
-.gsc-wrapper a, .gs-title, .gs-title * {
-    font-family: heading-caps, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-variant-numeric: oldstyle-nums;
-    text-decoration: none !important; /* csslint allow: important */
-}
-
-.gs-title {
-    margin-bottom: 1rem;
-}
-
-.gsc-snippet {
-    white-space: normal !important; /* csslint allow: important */
-}
-
-td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
-    padding-left: 8px !important; /* csslint allow: important */
-}
-
-.gsc-cursor-page:hover {
-    text-decoration: none !important; /* csslint allow: important */
-}
-
-.gs-title, .gs-title * {
-    height: inherit !important; /* csslint allow: important */
-    line-height: 1 !important; /* csslint allow: important */
-    text-decoration: none !important; /* csslint allow: important */
-}
-
-.gsc-orderby-container {
-    display: none;
-}
-
-.gsc-wrapper div:after {
-    display: inherit;
-}
-
-.gsc-control-cse {
-    padding: 0 !important; /* csslint allow: important */
-}
-
-.gsc-search-button {
-    height: 1.33rem;
-    margin-top: 0 !important; /* csslint allow: important */
-    width: 0.75rem;
-}
-
-.gsc-webResult.gsc-result {
-    border-bottom: 0.05rem solid #eee !important; /* csslint allow: important */
-}
-
-.search tr {
-    border-bottom: 0;
-}
-
-.gsc-result-info-container, .gs-snippet {
-    /* Not sure why it doesn't pick up the definiton on HTML but it doesn't. */
-    font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-variant-numeric: normal;
-}
-
-.gs-snippet, .gsc-result-info {
-    color: #999 !important; /* csslint allow: important */
-    margin-bottom: 1rem;
-    margin-top: 1rem;
-}
-
-.gsc-control-cse .gs-result .gs-title, .gsc-control-cse .gs-result .gs-title * {
-    font-size: 1rem !important; /* csslint allow: important */
-}
-
-.gs-no-results-result .gs-snippet, .gs-error-result .gs-snippet {
-    background-color: #eee !important; /* csslint allow: important */
-    border-color: #999 !important; /* csslint allow: important */
+/* Prevent weird double border from the javsacript making this transparent and overlaying two inputs. */
+.tt-input {
+    background-color: #f9f9f9 !important;
 }
 
 /*

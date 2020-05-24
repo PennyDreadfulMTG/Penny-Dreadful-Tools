@@ -249,7 +249,7 @@ def pull_request(argv: List[str]) -> None:
     print('>>>> Pull request')
     try:
         subprocess.check_call(['gh', 'pr', 'create'])
-    except subprocess.CalledProcessError:
+    except (subprocess.CalledProcessError, FileNotFoundError):
         subprocess.check_call(['hub', 'pull-request', *argv])
 
 def build() -> None:

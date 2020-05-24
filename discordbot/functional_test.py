@@ -16,7 +16,7 @@ def discordbot() -> Bot:
     bot = Bot()
     return bot
 
-class TestContext(MtgContext):
+class ContextForTests(MtgContext):
     def __init__(self, **attrs: Any) -> None:  # pylint: disable=super-init-not-called
         self.sent = False
         self.sent_args = False
@@ -27,13 +27,13 @@ class TestContext(MtgContext):
         self.sent_args = bool(args)
         self.sent_file = 'file' in kwargs.keys()
 
-    def typing(self) -> 'TestContext':
+    def typing(self) -> 'ContextForTests':
         return self
 
     def __enter__(self) -> None:
         pass
 
-    async def __aenter__(self) -> 'TestContext':
+    async def __aenter__(self) -> 'ContextForTests':
         return self
 
     def __exit__(self, exc_type, exc, tb):  # type: ignore
@@ -43,7 +43,7 @@ class TestContext(MtgContext):
         pass
 
 async def card(param: str) -> Card:
-    ctx = TestContext()
+    ctx = ContextForTests()
     return cast(Card, await CardConverter.convert(ctx, param))
 
 
@@ -85,7 +85,7 @@ def get_params() -> List[Tuple]:
 @pytest.mark.parametrize('cmd, kwargs', get_params())
 async def test_command(discordbot: Bot, cmd: str, kwargs: Dict[str, Any]) -> None: # pylint: disable=redefined-outer-name
     command: discord.ext.commands.Command = discordbot.all_commands[cmd]
-    ctx = TestContext()
+    ctx = ContextForTests()
     ctx.bot = discordbot
     ctx.message = Container()
     ctx.message.channel = Container({'id': '1'})

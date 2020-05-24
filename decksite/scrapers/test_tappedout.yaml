@@ -1062,8 +1062,6 @@ interactions:
       Set-Cookie:
       - csrftoken=iTjr8vbVgZQWUtxqaqQ4sXZ4mbvrJOP89XMMwogxUppel8qGTa5AfuvgCVaNBVG1;
         expires=Tue, 06-Apr-2021 09:13:46 GMT; Max-Age=31449600; Path=/
-      Transfer-Encoding:
-      - chunked
       Vary:
       - Accept-Encoding, Accept-Language, Cookie
     status:
@@ -5114,8 +5112,6 @@ interactions:
       Set-Cookie:
       - csrftoken=iTjr8vbVgZQWUtxqaqQ4sXZ4mbvrJOP89XMMwogxUppel8qGTa5AfuvgCVaNBVG1;
         expires=Tue, 06-Apr-2021 09:15:15 GMT; Max-Age=31449600; Path=/
-      Transfer-Encoding:
-      - chunked
       Vary:
       - Accept-Encoding, Accept-Language, Cookie
     status:
@@ -6603,4 +6599,5082 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/accounts/login/
+  response:
+    body:
+      string: !!binary |
+        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
+        d+ShaB86wOe5uxv/BwAA//8DABgTs0jJkAAA
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      - Content-Type,Accept
+      Access-Control-Allow-Methods:
+      - POST, GET, OPTIONS
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598227f7bd2204f3-LAX
+      Cache-Control:
+      - no-cache, no-store, must-revalidate, max-age=0
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:01 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Expires:
+      - Sat, 23 May 2020 22:19:01 GMT
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d2c4942489e404dad21d4684a447f06be1590272341; expires=Mon, 22-Jun-20
+        22:19:01 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      - csrftoken=Z1EG609dMnqjO0nFqQMud72vTf4obtTAJMVGdxeYBMdG2glOzCuCNVuNavJmio8y;
+        expires=Sat, 22-May-2021 22:19:01 GMT; Max-Age=31449600; Path=/
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Cookie, Accept-Encoding, Accept-Language
+      cf-request-id:
+      - 02e5374ed4000004f36bb37200000001
+      p3p:
+      - CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: csrfmiddlewaretoken=eeo9fEkDJcR0TDiHkDUMVH989wfKMqfiYZF9mbpoyBEn7TgQtpCUvvBqqMUITlug&next=%2F&username=bakert&password=sleague
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '126'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - __cfduid=d2c4942489e404dad21d4684a447f06be1590272341; csrftoken=Z1EG609dMnqjO0nFqQMud72vTf4obtTAJMVGdxeYBMdG2glOzCuCNVuNavJmio8y
+      User-Agent:
+      - python-requests/2.23.0
+      referer:
+      - https://tappedout.net/accounts/login/
+    method: POST
+    uri: https://tappedout.net/accounts/login/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      - Content-Type,Accept
+      Access-Control-Allow-Methods:
+      - POST, GET, OPTIONS
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598227f9294c04f3-LAX
+      Cache-Control:
+      - no-cache, no-store, must-revalidate, max-age=0
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:03 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Expires:
+      - Sat, 23 May 2020 22:19:02 GMT
+      Location:
+      - /
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - csrftoken=orsuGhWnjDfkcgYovO9Iwyl4mD3KGkI4byqdaSV14KlaO0IMH7xGd4acoq2dzyyq;
+        expires=Sat, 22-May-2021 22:19:03 GMT; Max-Age=31449600; Path=/
+      - tapped=68n9lqg7qwugkgp5pq2cq5z5pn5ai10w; Domain=.tappedout.net; expires=Sat,
+        06-Jun-2020 22:19:03 GMT; httponly; Max-Age=1209600; Path=/
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Cookie, Accept-Language
+      cf-request-id:
+      - 02e5374fbb000004f36bb54200000001
+      p3p:
+      - CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT
+      set-cookie:
+      - csrftoken=orsuGhWnjDfkcgYovO9Iwyl4mD3KGkI4byqdaSV14KlaO0IMH7xGd4acoq2dzyyq;
+        expires=Sat, 22-May-2021 22:19:03 GMT; Max-Age=31449600; Path=/
+      - tapped=68n9lqg7qwugkgp5pq2cq5z5pn5ai10w; Domain=.tappedout.net; expires=Sat,
+        06-Jun-2020 22:19:03 GMT; httponly; Max-Age=1209600; Path=/
+    status:
+      code: 302
+      message: Found
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - __cfduid=d2c4942489e404dad21d4684a447f06be1590272341; tapped=68n9lqg7qwugkgp5pq2cq5z5pn5ai10w;
+        csrftoken=orsuGhWnjDfkcgYovO9Iwyl4mD3KGkI4byqdaSV14KlaO0IMH7xGd4acoq2dzyyq
+      User-Agent:
+      - python-requests/2.23.0
+      referer:
+      - https://tappedout.net/accounts/login/
+    method: GET
+    uri: https://tappedout.net/
+  response:
+    body:
+      string: !!binary |
+        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
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      - Content-Type,Accept
+      Access-Control-Allow-Methods:
+      - POST, GET, OPTIONS
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228004d9b04f3-LAX
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:03 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - csrftoken=orsuGhWnjDfkcgYovO9Iwyl4mD3KGkI4byqdaSV14KlaO0IMH7xGd4acoq2dzyyq;
+        expires=Sat, 22-May-2021 22:19:03 GMT; Max-Age=31449600; Path=/
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding, Accept-Language, Cookie
+      cf-request-id:
+      - 02e5375431000004f36bbb0200000001
+      p3p:
+      - CP=IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/28-03-19-share-the-pain/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228030b86e516-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:03 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d02e8863800f3e4f3cafa66b61d1d94681590272343; expires=Mon, 22-Jun-20
+        22:19:03 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53755e50000e516e0945200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/penny-merfolk-1/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228070ee40575-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:04 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d73d21dfc30d42260cf47215cb5bb37021590272344; expires=Mon, 22-Jun-20
+        22:19:04 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537586300000575e31c7200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/ur-self-mill-spells/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982280a6b330544-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:04 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=de9db335661a39a0669cc4e9d502234c41590272344; expires=Mon, 22-Jun-20
+        22:19:04 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5375a7c00000544eea03200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/infinite-sacrifice-penny-dreadful/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982280d2e94eb19-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:05 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d75fc6101deed22e7b7cd2cd42ae11a0c1590272345; expires=Mon, 22-Jun-20
+        22:19:05 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5375c3c0000eb1966967200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/draw-grow-2/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982280ed9e0e7d1-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:06 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d747883686a4c68310734109b59711abf1590272345; expires=Mon, 22-Jun-20
+        22:19:05 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5375d490000e7d143a65200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/worming-vengeance/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982281788da04c0-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:06 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=de9cad9f4ffa80575b7cf55c9c643bf861590272346; expires=Mon, 22-Jun-20
+        22:19:06 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53762b4000004c0d9ad1200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/gruesome-dimir-1/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822818f804d34e-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:07 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=db3145ad636e5855c63f39e800de440c31590272347; expires=Mon, 22-Jun-20
+        22:19:07 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537639e0000d34eac06d200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/ug-pummeler/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982281a7e3aebad-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:07 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d4942be3638805cee7bcdc35fa88045b31590272347; expires=Mon, 22-Jun-20
+        22:19:07 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53764880000ebad851f0200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/08-05-19-penny-elves/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982281bda45d37a-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:07 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d9b5be37af71268b8de52e36421953e771590272347; expires=Mon, 22-Jun-20
+        22:19:07 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53765640000d37a24364200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/penny-bots/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982281d1ec7eaf0-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:07 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d57ea42f46d02cf1706b4a7d1236dc9471590272347; expires=Mon, 22-Jun-20
+        22:19:07 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537662d0000eaf0c73c2200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-4c-midrange/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982281f8d62eb91-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:08 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d98f0b981409c881f02625281344440051590272348; expires=Mon, 22-Jun-20
+        22:19:08 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53767b00000eb91a3964200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-saprolings-1/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822820bd80e81d-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:09 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d5418c1c5789b967c831f3e2624a7aadb1590272348; expires=Mon, 22-Jun-20
+        22:19:08 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53768740000e81dce2a7200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-black-aggro/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228297be4050b-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:11 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dfc14e349c7b98b919377f18a8fd9817c1590272349; expires=Mon, 22-Jun-20
+        22:19:09 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5376de80000050b2c9d2200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/13-12-18-pd-reanimator/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822834dfa9e798-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:11 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d16be24b6038f8dd717b9fd99adf26fd91590272351; expires=Mon, 22-Jun-20
+        22:19:11 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53775070000e7985d900200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-gw-tokens-1/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228364893e4ea-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:13 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d2613d4b088b394a9229ae72e63cae4a81590272351; expires=Mon, 22-Jun-20
+        22:19:11 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53775ee0000e4ea3e818200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-second-sun/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228437e03eb5d-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:13 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d6d8f70ee214d7fce3e5d37720bab80621590272353; expires=Mon, 22-Jun-20
+        22:19:13 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5377e2e0000eb5d5aaa5200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/branchbender-1/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822844ea7c98c3-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:14 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dc6286d7e0b9c14c7eec4670509e661cd1590272354; expires=Mon, 22-Jun-20
+        22:19:14 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5377f10000098c3b0910200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/colorless-golem-foundry/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228469cb6eb19-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:17 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d99e9c518b7bdb679450734865632733f1590272354; expires=Mon, 22-Jun-20
+        22:19:14 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537801b0000eb195717c200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/17-09-18-pd-infect/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982285a3abad396-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:17 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dd7c84fd7b2503092c408d1d80f527dd71590272357; expires=Mon, 22-Jun-20
+        22:19:17 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5378c670000d396fabc5200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/baleful-bloodstained/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982285bb8170550-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:17 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=df51850bd4b95c870b9844b1213a45fa21590272357; expires=Mon, 22-Jun-20
+        22:19:17 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5378d5500000550bf079200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/cycling-deck-wins/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982285d4f2b05aa-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:19 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dceb9d70c1e14d83028132063e44acbef1590272357; expires=Mon, 22-Jun-20
+        22:19:17 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5378e4d000005aaa1bea200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/aegis-ethereal/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982286a281eeb25-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:20 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d881b7d94ef7d22b8bcd8e252471964aa1590272360; expires=Mon, 22-Jun-20
+        22:19:20 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53796590000eb252a25f200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/rofellos-ramp-2/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982286bbbf6e811-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:23 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dfbc143c3e910ff2975b9316eb23bdcf51590272360; expires=Mon, 22-Jun-20
+        22:19:20 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53797560000e811d611e200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/dreadful-zombies-1/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982287f482f04cc-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:26 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=da94c1a4c940ca0470b1b45103fa867d01590272363; expires=Mon, 22-Jun-20
+        22:19:23 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537a388000004cca9812200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/overrun-for-fun/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228926f810513-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:28 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d29df09b8dc689cfb9d85c61c9f706e571590272366; expires=Mon, 22-Jun-20
+        22:19:26 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537af8400000513772b7200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/mimic-witch/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982289d7a6fe4e2-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:30 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d4a7a374e22f4fee26e87b64772bef7981590272368; expires=Mon, 22-Jun-20
+        22:19:28 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537b6660000e4e241035200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/penny-legends/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228ae0b3298bd-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:30 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d17261e802fd4f5285e9a34915d7a92341590272370; expires=Mon, 22-Jun-20
+        22:19:30 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537c0c4000098bd239f7200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/20-06-18-Hwa-rw-madness/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228af9f9f98f3-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:31 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dc78b3a31134162fb741731fcbf6682f21590272371; expires=Mon, 22-Jun-20
+        22:19:31 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537c1bd000098f37a0c2200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/golgari-midmad/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228b11e7904db-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:31 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dd940fe7e4140c99e23b882a38c4445a81590272371; expires=Mon, 22-Jun-20
+        22:19:31 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537c2ae000004db028e2200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/05-06-18-pd-infect/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228b2bcdbe7a0-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:31 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dd130287816b155244be783fab134cb231590272371; expires=Mon, 22-Jun-20
+        22:19:31 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537c3ae0000e7a0252d2200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/gw-populate-aggro/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228b61880eb29-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:32 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d44728d6db9adabaec4728934553073ae1590272372; expires=Mon, 22-Jun-20
+        22:19:32 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537c5cd0000eb2984bff200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-elementals/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228b78fadd392-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:34 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d4b83139517c26338a0d4a9bd12d875841590272372; expires=Mon, 22-Jun-20
+        22:19:32 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537c6b60000d3926fb23200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/27-04-18-temur-aggro/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228c32bb9eb10-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:34 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d926b4501a3243e4d63dfddec3dcc0ddf1590272374; expires=Mon, 22-Jun-20
+        22:19:34 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537cdfd0000eb103a079200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/penny-populate-v2/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228c4994feb55-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:36 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d47da6f136e5e32cb6e65e3c56283a97a1590272374; expires=Mon, 22-Jun-20
+        22:19:34 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537cedc0000eb55343c4200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/penny-fungus-tribal-v1/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228d49cafd376-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:38 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d0a9d53b004ee55800ced761b0e9034d31590272377; expires=Mon, 22-Jun-20
+        22:19:37 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537d8df0000d3765f045200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/definitely-not-sultai/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228de0f3fe4fa-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:38 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d1fb7ef49744ee69742e46792217bb4d71590272378; expires=Mon, 22-Jun-20
+        22:19:38 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537dec90000e4fa712b4200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/hypnotic-torment/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228df8a870503-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:39 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d1abea17c1c2364536e8568f1132a337b1590272378; expires=Mon, 22-Jun-20
+        22:19:38 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537dfb600000503e016c200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/birthday-stax-sagu-version/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228e66e69052c-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:40 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d6bea243d9ae5873fb827c06c56ed37c11590272379; expires=Mon, 22-Jun-20
+        22:19:39 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537e4010000052cbf1e9200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/zada-infect-penny-dreadful/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228eb8d72e7b9-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:41 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d233f1fd4881637306557d5f20fcb0e4e1590272380; expires=Mon, 22-Jun-20
+        22:19:40 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537e7310000e7b9c5ae9200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/boundless-burst/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228ee78ff04e7-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:41 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=db5e8c8d80bba529a35cc0bfc5d9ece0e1590272381; expires=Mon, 22-Jun-20
+        22:19:41 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537e90f000004e73db28200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-gaea-gains/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228f00bd7d36e-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:41 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=debd42e9023c973815db953dce22e03eb1590272381; expires=Mon, 22-Jun-20
+        22:19:41 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537ea020000d36e20a4e200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/20-01-18-hexproof/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228f17c729953-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:41 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d57bb3728593fb641ca3f285ad63eeb8e1590272381; expires=Mon, 22-Jun-20
+        22:19:41 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537eae900009953f505e200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/a-dreadful-reanimation/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228f3384704d4-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:42 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d6dfceb3f7e65453d9aeea6059e908b6f1590272381; expires=Mon, 22-Jun-20
+        22:19:41 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537ec03000004d4d50e5200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/bw-astral-slide-1/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228f508207878-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:42 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=da222d7be65e7b59610c859d718b5dd5f1590272382; expires=Mon, 22-Jun-20
+        22:19:42 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537ed2200007878410a4200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/featherflick/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228f72f04d35e-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:42 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d3802432e21fe557cad6776656af5a19b1590272382; expires=Mon, 22-Jun-20
+        22:19:42 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537ee790000d35e298a7200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/19-10-17-mono-green-aggro/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228f8dd5e053c-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:42 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dfd37f4eb6c5b62624e5e6193161461f81590272382; expires=Mon, 22-Jun-20
+        22:19:42 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537ef820000053cc1a18200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/golgari-deathdealers-1/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228faad93e79c-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:43 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d3b6c3b378681e7aa7bafd771e45f80921590272383; expires=Mon, 22-Jun-20
+        22:19:43 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537f0a40000e79c25809200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/09-10-17-mono-blue-prism/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598228fc2c75ebb5-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:44 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=da184b13fdcdcce8593f418c2fbbf5d341590272383; expires=Mon, 22-Jun-20
+        22:19:43 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537f1980000ebb5d3ac2200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/alignmenttrial/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598229025b309989-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:44 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=da4e5c231ae8978d0300a5c5db783a93c1590272384; expires=Mon, 22-Jun-20
+        22:19:44 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537f575000099894c03b200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-tribal-vampires/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982290689cceafc-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:45 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d3949ef8e7b51f15784c23f218e210f7f1590272385; expires=Mon, 22-Jun-20
+        22:19:45 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537f8140000eafc01a25200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/the-towns-on-fire-s6-rdw/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598229080bbe053c-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:45 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=df0bce009e748046c811d83fec8af44641590272385; expires=Mon, 22-Jun-20
+        22:19:45 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537f9050000053cc634b200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/parallax-wave-combo/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822909eabae4c4-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:45 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d1fb8d6dfdd3f9f5b2892692881eb186e1590272385; expires=Mon, 22-Jun-20
+        22:19:45 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537fa300000e4c4b2b7a200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/marchon/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982290b7dcee7e9-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:45 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d5160d9ce313b1121f121d994f7b578aa1590272385; expires=Mon, 22-Jun-20
+        22:19:45 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537fb290000e7e93191e200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-mardu-sunforger-control/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982290d482c055c-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:46 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d6d932d37c405afcf08dca2704efc87ce1590272386; expires=Mon, 22-Jun-20
+        22:19:46 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537fc490000055c090e3200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-gw-challenge/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982290edb89eb51-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:46 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=db8c28c291d2593803e3cbd04d440af531590272386; expires=Mon, 22-Jun-20
+        22:19:46 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537fd460000eb5191b93200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/31-07-17-mOB-elves/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598229108e7d04f7-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:46 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=da5c12abeaa33b94b1816cba966d65d371590272386; expires=Mon, 22-Jun-20
+        22:19:46 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537fe53000004f749a7b200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/the-silent-realm-razer/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822911ee0bd366-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:46 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=da6221cfe83581e08dc7b021bc0a404f91590272386; expires=Mon, 22-Jun-20
+        22:19:46 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e537ff300000d36653ac2200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-snipers/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598229151acd050f-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:47 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dbf977e4724b8d9ad0c09d7f07bb78db71590272387; expires=Mon, 22-Jun-20
+        22:19:47 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e538012f0000050f6301e200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/invisibly-inspired/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598229168bead36e-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:47 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d167a2a34371acab13278419e1dc25b1f1590272387; expires=Mon, 22-Jun-20
+        22:19:47 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53802170000d36e28377200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/sands-of-amonkhet-1/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822918dd49d33e-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:48 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d108620ffeba5a831c1d2536cde7533ec1590272387; expires=Mon, 22-Jun-20
+        22:19:47 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53803870000d33e7e311200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/mardu-ascend-pd/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982291a5fbce4dd-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:48 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d95321b7d23741cea5f4c4caa90000af81590272388; expires=Mon, 22-Jun-20
+        22:19:48 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53804750000e4dd3b291200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/penny-d-tainted-love/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822920ccbc0591-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:49 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d6a6ed09faab47b06a577982feb01c0861590272389; expires=Mon, 22-Jun-20
+        22:19:49 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e538088000000591c22c3200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/rg-penny-madness/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598229223dc6999b-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:49 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d81b5892c0ffe1b71ecde211f8e289f461590272389; expires=Mon, 22-Jun-20
+        22:19:49 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53809640000999b5a1de200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/dreadful-disease/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822923cbd30570-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:49 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d7fcbf55e9f0f1576f816c50465a7f1e81590272389; expires=Mon, 22-Jun-20
+        22:19:49 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5380a6100000570fb820200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/22-12-16-biovisionary/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598229254c9105a6-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:50 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d730a937ecae0c35c65b1c2f738c57cfe1590272389; expires=Mon, 22-Jun-20
+        22:19:49 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5380b50000005a6c2329200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/uw-elixir-2/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822926ecaee4e2-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:50 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d582373de3182aa6a08d94ca5fe1b35641590272390; expires=Mon, 22-Jun-20
+        22:19:50 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5380c4e0000e4e24da63200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/penny-d-fog-azors-elocutors/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822929bea7eb25-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:50 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d1aa069ad4e0c765847bb385d31f354361590272390; expires=Mon, 22-Jun-20
+        22:19:50 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5380e0e0000eb2543bd8200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-black-artifacts-matter/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982292b8a4b0540-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:51 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dac72c8feba051c3a5b36b4ffd8dded4e1590272390; expires=Mon, 22-Jun-20
+        22:19:50 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5380f3200000540eda8c200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-goblin-tribal/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982292d4bcde7f1-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:51 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d99e551f4867983bc67dcc535c7484a981590272391; expires=Mon, 22-Jun-20
+        22:19:51 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53810490000e7f115aa4200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/penny-d-remember-theros-standard/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598229323885eb5d-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:52 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=db5bdaeaaad8a836fbafc498ad996c9fb1590272392; expires=Mon, 22-Jun-20
+        22:19:52 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53813600000eb5d5d97f200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-aristocrats/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822933cfe4d382-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:52 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dce4027a3423e936c216c19cf186200b71590272392; expires=Mon, 22-Jun-20
+        22:19:52 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53814590000d382f2914200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-uw-control-v4/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598229356f790581-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:52 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=ddf385fcfe866f524ec4f3a8ca76b23d01590272392; expires=Mon, 22-Jun-20
+        22:19:52 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e538156400000581358b8200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/30-01-17-mono-green-aggro/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822938ab91eabb-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:53 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d517eb47052867146ad41aa87193aa9971590272393; expires=Mon, 22-Jun-20
+        22:19:53 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53817680000eabb36b6b200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/dont-be-a-copy-cat-copy/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982293a1c7604c0-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:53 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=de32342130c8b0534b0d0b39d2e4f10391590272393; expires=Mon, 22-Jun-20
+        22:19:53 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e538184c000004c0d2a8c200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-minotaurs/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982293b9dceeb08-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:53 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d2b28feb65acf7078e15e385be2e101451590272393; expires=Mon, 22-Jun-20
+        22:19:53 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e538193a0000eb08f1a3e200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/05-01-17-abzan-tokens/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982293eaf4a0595-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:54 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=da403b92d85a69e3c811c13231a8fc41d1590272394; expires=Mon, 22-Jun-20
+        22:19:54 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5381b290000059552276200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-eldrazi/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982294028de051f-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:54 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d17edc7b19e122f468afdda655027079b1590272394; expires=Mon, 22-Jun-20
+        22:19:54 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5381c190000051f3d829200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-infiltrators/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598229418cb4eb61-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:55 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d11f6066eabaf47c7c958fbd5e31e315d1590272394; expires=Mon, 22-Jun-20
+        22:19:54 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5381cf40000eb61dd12d200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-contaminated-filth/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822949af7ee4cc-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:56 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d278729952957a04bfa57966245291c511590272395; expires=Mon, 22-Jun-20
+        22:19:55 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e538220b0000e4cc91ad2200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-composite-deathmantle/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598229508fc7eb1d-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:57 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d6403f54a365855e426167464d8063cbd1590272396; expires=Mon, 22-Jun-20
+        22:19:56 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53826580000eb1de00b8200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-werewolves-kld-pd/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598229551aa0d33e-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:57 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d2ad1cb5f6bee34dc6bd2de514bedb43b1590272397; expires=Mon, 22-Jun-20
+        22:19:57 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e538292f0000d33e8f23d200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/ur-knowledge-and-power/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822956985ee7c5-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:57 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dae150d8f685187fe3f83c248245884101590272397; expires=Mon, 22-Jun-20
+        22:19:57 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5382a220000e7c59cbda200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-pro-red/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982295819d60560-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:58 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=def70ad5d8997f3eb385fd44b8e1f5dee1590272398; expires=Mon, 22-Jun-20
+        22:19:58 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5382b0e000005608b8bf200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-goyf/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982295b2bd7d342-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:58 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d3ea4f59b1e0f35d327b589074c0918111590272398; expires=Mon, 22-Jun-20
+        22:19:58 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5382cfc0000d342d4aad200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-the-rock/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982295cbe7504b8-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:58 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d2fee35ad620cf545237a7ca3116b153d1590272398; expires=Mon, 22-Jun-20
+        22:19:58 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5382df3000004b8a415f200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/28-11-16-temur-morph/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982295e4be3eb85-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:59 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dce6c5e64b86b4ea615c3a991933d66c51590272399; expires=Mon, 22-Jun-20
+        22:19:59 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5382eef0000eb8583248200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/elvish-piper-combo/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598229603fac04c0-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:59 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=df7d2324f41e2d85ab17f2f841b1ede851590272399; expires=Mon, 22-Jun-20
+        22:19:59 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e5383027000004c0f50ea200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/magic-the-combat-mathing/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822961cc3feae7-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:59 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dfa7104a9280a34b7af1e65caf58b7fe41590272399; expires=Mon, 22-Jun-20
+        22:19:59 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e538311f0000eae7bb2ec200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/pd-red-madness/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982296358010558-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:19:59 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d26cc31fd00dd10b2e8c9a72839a4d5ee1590272399; expires=Mon, 22-Jun-20
+        22:19:59 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e538321800000558a0bf4200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/gruul-slivers-3/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 598229651f059857-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:20:00 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d5fcee8909fe871357a644a8c6b9764fd1590272400; expires=Mon, 22-Jun-20
+        22:20:00 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e538333100009857eb850200000001
+    status:
+      code: 401
+      message: Unauthorized
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/mono-black-low-drop-aggro/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 59822966dd50e4ea-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:20:00 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=d87b00b33cf35c6e970aee9caec010fef1590272400; expires=Mon, 22-Jun-20
+        22:20:00 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e538344a0000e4ea3584d200000001
+    status:
+      code: 401
+      message: Unauthorized
 version: 1

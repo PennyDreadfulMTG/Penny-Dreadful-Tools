@@ -29,7 +29,11 @@ async def all_cards_async() -> List[CardDescription]:
         f = open('scryfall-default-cards.json')
         return json.load(f)
     except FileNotFoundError:
-        return await fetch_tools.fetch_json_async('https://archive.scryfall.com/json/scryfall-default-cards.json', character_encoding='utf-8')
+        endpoints = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
+        for e in endpoints['data']:
+            if e['type'] == 'default_cards':
+                return await fetch_tools.fetch_json_async(e['download_uri'], character_encoding='utf-8')
+        raise FetchException('Unable to find Default Cards')
 
 async def all_sets_async() -> List[Dict[str, Any]]:
     try:

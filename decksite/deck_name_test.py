@@ -93,7 +93,8 @@ TESTDATA = [
     ('Red Deck Wins byvci', 'Red Deck Wins Byvci', ['R'], 'Red Deck Wins'),
     ('ABZAN - PD', 'Abzan Lifegain Midrange', ['W', 'B', 'G'], 'Lifegain Midrange'),
     ('Food - PD', 'Food', ['B', 'R', 'G'], 'Food'),
-    ('Storm (PD S16)', 'Storm', ['U', 'B'], 'Storm')
+    ('Storm (PD S16)', 'Storm', ['U', 'B'], 'Storm'),
+    ('Black-Red Midrange', 'Rakdos Midrange', ['R', 'B'], 'Rakdos Midrange')
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

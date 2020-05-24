@@ -13,7 +13,8 @@ WHITELIST = [
     '#justnayathings',
     'blue burn', # deck_id = 24089
     "bob's r us",
-    'gg con'
+    'gg con',
+    'happy b day adriana'
 ]
 
 ABBREVIATIONS = {

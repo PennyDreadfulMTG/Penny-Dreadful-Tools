@@ -5,6 +5,8 @@ branches:
     - trying.tmp
 python:
   - "3.8"
+node_js:
+  - node
 cache: pip
 services:
   - mysql

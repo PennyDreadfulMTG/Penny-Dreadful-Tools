@@ -6,7 +6,7 @@ branches:
 python:
   - "3.8"
 node_js:
-  - node
+  - 12
 cache: pip
 services:
   - mysql

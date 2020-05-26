@@ -15,7 +15,7 @@ flask-session==0.3.2
 Flask-SQLAlchemy==2.4.3
 ftfy==5.7
 github_webhook==1.0.4
-google-api-python-client==1.8.3
+google-api-python-client==1.8.4
 inflect==4.1.0
 isort==4.3.21
 jsbeautifier==1.11.0

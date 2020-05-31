@@ -40,7 +40,7 @@ def run() -> None:
             raise
     except Exception as e: # pylint: disable=broad-except
         msg = type(e).__name__ + ' running ' + str(sys.argv) + ': ' + ' [' + str(e.args) + '] ' + str(e) + '\n'
-        sys.stderr.write(msg)
+        # sys.stderr.write(msg)
         if not exit_code:
             raise
         sys.exit(exit_code if exit_code else 4)
@@ -101,6 +101,8 @@ def run_dangerously() -> None:
         safe_push(args)
     elif cmd == 'release':
         release(args)
+    elif cmd == "check-reqs":
+        check_requirements()
     else:
         raise InvalidArgumentException('Unrecognised command {cmd}.'.format(cmd=cmd))
 
@@ -352,5 +354,10 @@ def find_files(needle: str = '', file_extension: str = '', exclude: Optional[Lis
         paths = [p for p in paths if p not in exclude]
     return paths
 
+
+def check_requirements() -> None:
+    files = find_files(file_extension='py')
+    subprocess.check_call(['pip-missing-reqs'] + files)
+    subprocess.check_call(['pip-extra-reqs'] + files)
 if __name__ == '__main__':
     run()

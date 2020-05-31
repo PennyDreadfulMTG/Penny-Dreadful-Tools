@@ -101,7 +101,7 @@ def run_dangerously() -> None:
         safe_push(args)
     elif cmd == 'release':
         release(args)
-    elif cmd == "check-reqs":
+    elif cmd == 'check-reqs':
         check_requirements()
     else:
         raise InvalidArgumentException('Unrecognised command {cmd}.'.format(cmd=cmd))

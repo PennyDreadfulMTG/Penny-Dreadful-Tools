@@ -56,5 +56,5 @@ typing-extensions
 untangle==1.1.1
 vcrpy==4.0.2
 werkzeug
-whatthepatch==0.0.6
+whatthepatch==1.0.0
 whoosh==2.7.4

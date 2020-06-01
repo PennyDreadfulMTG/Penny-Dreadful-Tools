@@ -52,9 +52,13 @@ class Match(fsa.Model): # type: ignore
         db.commit()
 
     def start_time_aware(self) -> datetime.datetime:
+        if self.start_time is None:
+            return None
         return pytz.utc.localize(self.start_time)
 
     def end_time_aware(self) -> datetime.datetime:
+        if self.end_time is None:
+            return None
         return pytz.utc.localize(self.end_time)
 
     def display_date(self) -> str:
@@ -70,8 +74,10 @@ class Match(fsa.Model): # type: ignore
             'start_time': self.start_time_aware(),
             'end_time': self.end_time_aware(),
             'players': [p.name for p in self.players],
-            'games': [g.id for g in self.games],
+            'games': [{'id': g.id, 'uri': url_for('game_data', game_id=g.id, _external=True)} for g in self.games],
             'tournament': self.tournament if self.tournament is not None else None,
+            'uri': url_for('match_data', match_id=self.id, _external=True),
+            'html_url': url_for('show_match', match_id=self.id, _external=True),
         }
 
 def create_match(match_id: int, format_name: str, comment: str, modules: List[str], players: List[str]) -> Match:

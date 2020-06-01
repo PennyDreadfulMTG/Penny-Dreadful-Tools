@@ -29,13 +29,13 @@ def run() -> None:
         try:
             exit_code = None
             run_dangerously()
-        except InvalidArgumentException as e:
+        except InvalidArgumentException:
             exit_code = 1
             raise
-        except TestFailedException as e:
+        except TestFailedException:
             exit_code = 2
             raise
-        except ProcessExecutionError as e:
+        except ProcessExecutionError:
             exit_code = 3
             raise
     except Exception: # pylint: disable=broad-except

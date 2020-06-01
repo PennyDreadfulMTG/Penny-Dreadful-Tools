@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import pytz
 import sqlalchemy as sa  # type: ignore
@@ -51,12 +51,12 @@ class Match(fsa.Model): # type: ignore
         self.end_time = dtutil.ts2dt(end_time)
         db.commit()
 
-    def start_time_aware(self) -> datetime.datetime:
+    def start_time_aware(self) -> Optional[datetime.datetime]:
         if self.start_time is None:
             return None
         return pytz.utc.localize(self.start_time)
 
-    def end_time_aware(self) -> datetime.datetime:
+    def end_time_aware(self) -> Optional[datetime.datetime]:
         if self.end_time is None:
             return None
         return pytz.utc.localize(self.end_time)

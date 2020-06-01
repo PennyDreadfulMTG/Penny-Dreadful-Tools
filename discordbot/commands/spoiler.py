@@ -11,7 +11,8 @@ from shared import configuration, fetch_tools
 async def spoiler(ctx: MtgContext, *, args: str) -> None:
     """Request a card from an upcoming set."""
     if len(args) == 0:
-        return await ctx.send('{author}: Please specify a card name.'.format(author=ctx.author.mention))
+        await ctx.send('{author}: Please specify a card name.'.format(author=ctx.author.mention))
+        return
     sfcard = fetch_tools.fetch_json('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=args))
     if sfcard['object'] == 'error':
         await ctx.send('{author}: {details}'.format(author=ctx.author.mention, details=sfcard['details']))

@@ -62,9 +62,10 @@ class Match(fsa.Model): # type: ignore
         return pytz.utc.localize(self.end_time)
 
     def display_date(self) -> str:
-        if self.start_time is None:
+        start = self.start_time_aware()
+        if start is None:
             return ''
-        return dtutil.display_date(self.start_time_aware())
+        return dtutil.display_date(start)
 
     def to_dict(self) -> Dict:
         return {

@@ -16,7 +16,10 @@ def prepare_deck(d: Deck) -> None:
     set_stars_and_top8(d)
     if d.get('colors') is not None:
         d.colors_safe = colors_html(d.colors, d.colored_symbols)
-    d.person_url = '/people/{id}/'.format(id=d.person_id)
+    if d.get('mtgo_username'):
+        d.person_url = f'/people/{d.mtgo_username}/'
+    else:
+        d.person_url = f'/people/id/{d.person_id}/'
     d.date_sort = dtutil.dt2ts(d.active_date)
     d.display_date = dtutil.display_date(d.active_date)
     d.show_record = d.wins or d.losses or d.draws

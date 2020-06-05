@@ -56,11 +56,18 @@ def people() -> str:
     view = People(ps.load_people(season_id=get_season_id()))
     return view.page()
 
-@APP.route('/people/<person_id>/')
-@SEASONS.route('/people/<person_id>/')
+@APP.route('/people/<mtgo_username>/')
+@APP.route('/people/id/<int:person_id>/')
+@SEASONS.route('/people/<mtgo_username>/')
+@SEASONS.route('/people/id/<int:person_id>/')
 @cached()
-def person(person_id: str) -> str:
-    p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
+def person(mtgo_username: Optional[str] = None, person_id: Optional[int] = None) -> str:
+    if mtgo_username:
+        p = ps.load_person_by_mtgo_username(mtgo_username, season_id=get_season_id())
+    elif person_id:
+        p = ps.load_person_by_id(person_id, season_id=get_season_id())
+    else:
+        raise DoesNotExistException(f"Can't load a person with `{mtgo_username}` and `{person_id}`.")
     person_cards = cs.load_cards(person_id=p.id, season_id=get_season_id())
     person_archetypes = archs.load_archetypes_deckless(person_id=p.id, season_id=get_season_id())
     all_archetypes = archs.load_archetypes_deckless(season_id=get_season_id())
@@ -71,11 +78,18 @@ def person(person_id: str) -> str:
     view = Person(p, person_cards, person_archetypes, all_archetypes, person_matchups, your_cards, get_season_id())
     return view.page()
 
-@APP.route('/people/<person_id>/matches/')
-@SEASONS.route('/people/<person_id>/matches/')
+@APP.route('/people/<mtgo_username>/matches/')
+@APP.route('/people/id/<int:person_id>/matches/')
+@SEASONS.route('/people/<mtgo_username>/matches/')
+@SEASONS.route('/people/id/<int:person_id>/matches/')
 @cached()
-def person_matches(person_id: str) -> str:
-    p = ps.load_person_by_id_or_mtgo_username(person_id, season_id=get_season_id())
+def person_matches(mtgo_username: Optional[str] = None, person_id: Optional[int] = None) -> str:
+    if mtgo_username:
+        p = ps.load_person_by_mtgo_username(mtgo_username, season_id=get_season_id())
+    elif person_id:
+        p = ps.load_person_by_id(person_id, season_id=get_season_id())
+    else:
+        raise DoesNotExistException(f"Can't load a person with `{mtgo_username}` and `{person_id}`.")
     matches = ms.load_matches_by_person(person_id=p.id, season_id=get_season_id())
     matches.reverse() # We want the latest at the top.
     view = PersonMatches(p, matches)

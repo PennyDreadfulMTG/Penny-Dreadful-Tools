@@ -238,7 +238,10 @@ class View(BaseView):
 
     def prepare_people(self) -> None:
         for p in getattr(self, 'people', []):
-            p.url = '/people/{id}/'.format(id=p.id)
+            if p.get('mtgo_username'):
+                p.url = f'/people/{p.mtgo_username}/'
+            else:
+                p.url = f'/people/id/{p.id}/'
             p.show_record = p.get('wins', None) or p.get('losses', None) or p.get('draws', None)
 
     def prepare_archetypes(self) -> None:
@@ -303,7 +306,7 @@ class View(BaseView):
             if m.get('deck_id'):
                 m.deck_url = url_for('deck', deck_id=m.deck_id)
             if m.get('opponent'):
-                m.opponent_url = url_for('.person', person_id=m.opponent)
+                m.opponent_url = url_for('.person', mtgo_username=m.opponent)
             if m.get('opponent_deck_id'):
                 m.opponent_deck_url = url_for('deck', deck_id=m.opponent_deck_id)
             if m.get('mtgo_id'):

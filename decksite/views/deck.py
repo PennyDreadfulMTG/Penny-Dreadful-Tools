@@ -24,7 +24,7 @@ class Deck(View):
         for m in self.matches:
             m.display_date = dtutil.display_date(m.date)
             if m.opponent:
-                m.opponent_url = url_for('.person', person_id=m.opponent)
+                m.opponent_url = url_for('.person', mtgo_username=m.opponent)
             else:
                 m.opponent = 'BYE'
                 m.opponent_url = False

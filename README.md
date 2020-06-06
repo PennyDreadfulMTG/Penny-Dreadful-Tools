@@ -64,7 +64,7 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
   - GRANT ALL ON <decksite_database>.* TO '<mysql_user>'@'<mysql_host>';
   - GRANT ALL ON <prices_database>.* TO '<mysql_user>'@'<mysql_host>';
   - GRANT ALL ON <magic_database>.* TO '<mysql_user>'@'<mysql_host>';
-- GRANT ALL ON <logsite_database>.* TO '<mysql_user>'@'<mysql_host>';
+  - GRANT ALL ON <logsite_database>.* TO '<mysql_user>'@'<mysql_host>';
 - Download a copy of the production decksite database (with personal information stripped):
   - mysql -u <mysql_user> -p<mysql_password> -e "CREATE DATABASE <decksite_database>"
   - curl <https://pennydreadfulmagic.com/static/dev-db.sql.gz> >/tmp/dev-db.sql.gz

@@ -3,8 +3,8 @@ import os
 import subprocess
 import sys
 import time
-from typing import List, Optional
 from pickle import PicklingError
+from typing import List, Optional
 
 from generate_readme import generate_readme
 from shared import configuration

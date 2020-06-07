@@ -16,6 +16,8 @@ env:
     - CMD="python dev.py mypy"
     - CMD="python dev.py lint"
     - CMD="python dev.py jslint"
+before_install:
+  - nvm install 12
 install:
   - travis_retry pip install -r requirements.txt
   - npm install

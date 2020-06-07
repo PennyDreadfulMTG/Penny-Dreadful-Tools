@@ -96,7 +96,7 @@ def task(args: List[str]) -> None:
                 from decksite.main import APP
                 APP.config['SERVER_NAME'] = configuration.server_name()
                 app_context = APP.app_context()  # type: ignore
-                app_context.__enter__()
+                app_context.__enter__() # type: ignore
             if getattr(s, 'scrape', None) is not None:
                 exitcode = s.scrape() # type: ignore
             elif getattr(s, 'run', None) is not None:
@@ -126,7 +126,7 @@ def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
                 from decksite import APP
                 APP.config['SERVER_NAME'] = configuration.server_name()
                 app_context = APP.app_context() # type: ignore
-                app_context.__enter__()
+                app_context.__enter__() # type: ignore
 
             if with_flag and not getattr(s, with_flag, False):
                 continue

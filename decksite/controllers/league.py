@@ -1,6 +1,6 @@
 from typing import Optional
 
-from flask import make_response, redirect, request, session, url_for
+from flask import make_response, redirect, request, session, url_for, Response
 from werkzeug import wrappers
 
 from decksite import APP, auth
@@ -36,7 +36,7 @@ def signup(form: Optional[SignUpForm] = None) -> str:
 
 @APP.route('/signup/', methods=['POST'])
 @cached()
-def add_signup() -> str:
+def add_signup() -> Response:
     if lg.get_status() == lg.Status.CLOSED:
         return signup()
     form = SignUpForm(request.form, auth.person_id(), auth.mtgo_username())
@@ -59,7 +59,7 @@ def report(form: Optional[ReportForm] = None, deck_id: int = None) -> str:
 
 
 @APP.route('/report/', methods=['POST'])
-def add_report() -> str:
+def add_report() -> Response:
     form = ReportForm(request.form)
     if form.validate() and lg.report(form):
         response = make_response(redirect(url_for('deck', deck_id=form.entry)))

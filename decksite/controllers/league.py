@@ -1,6 +1,6 @@
 from typing import Optional
 
-from flask import make_response, redirect, request, session, url_for, Response
+from flask import Response, make_response, redirect, request, session, url_for
 from werkzeug import wrappers
 
 from decksite import APP, auth

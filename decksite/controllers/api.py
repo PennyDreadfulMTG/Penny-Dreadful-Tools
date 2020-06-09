@@ -3,6 +3,7 @@ from math import ceil
 from typing import List, Optional, cast
 
 from flask import Response, request, session, url_for
+from flask_restx import Resource, fields
 
 from decksite import APP, auth, league
 from decksite.data import archetype as archs
@@ -24,6 +25,20 @@ from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
 
+
+competition = APP.api.model('Competition', {
+    'id': fields.Integer(readonly=True),
+    'name': fields.String(),
+    'start_date': fields.DateTime(),
+    'end_date': fields.DateTime(),
+    # 'url': fields.Url('competition'),
+    'top_n': fields.Integer(),
+    'num_decks': fields.Integer(),
+    'num_reviewed': fields.Integer(),
+    'sponsor_name': fields.String(),
+    'type': fields.String(),
+    'season_id': fields.Integer(),
+})
 
 @APP.route('/api/decks/')
 def decks_api() -> Response:
@@ -109,13 +124,15 @@ def competitions_api() -> Response:
 def competition_api(competition_id: int) -> Response:
     return return_json(comp.load_competition(competition_id))
 
-@APP.route('/api/league')
-def league_api() -> Response:
-    lg = league.active_league(should_load_decks=True)
-    pdbot = request.form.get('api_token', None) == configuration.get('pdbot_api_token')
-    if not pdbot:
-        lg.decks = [d for d in lg.decks if not d.is_in_current_run()]
-    return return_json(lg)
+@APP.api.route('/league')
+class League(Resource):
+    @APP.api.marshal_with(competition)
+    def get(self):
+        lg = league.active_league(should_load_decks=True)
+        pdbot = request.form.get('api_token', None) == configuration.get('pdbot_api_token')
+        if not pdbot:
+            lg.decks = [d for d in lg.decks if not d.is_in_current_run()]
+        return lg
 
 @APP.route('/api/person/<person>')
 @fill_args('season_id')

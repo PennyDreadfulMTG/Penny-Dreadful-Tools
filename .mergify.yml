@@ -3,7 +3,7 @@ pull_request_rules:
     conditions:
       - status-success=pdm/automerge
       - status-success=Travis CI - Pull Request
-      - author=pyup-bot
+      - author~=(pyup-bot|dependabot)
     actions:
       merge:
         method: rebase

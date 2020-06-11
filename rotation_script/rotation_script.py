@@ -14,6 +14,7 @@ from price_grabber.parser import PriceListType, parse_cardhoarder_prices, parse_
 from shared import configuration, dtutil, fetch_tools, redis, repo, text
 
 TIME_UNTIL_ROTATION = rotation.next_rotation() - dtutil.now()
+BANNED_CARDS = ['Cleanse', 'Crusade'] # These cards are banned, even in Freeform
 
 def run() -> None:
     files = rotation.files()
@@ -88,11 +89,12 @@ def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignor
 def make_final_list() -> None:
     planes = fetch_tools.fetch_json('https://api.scryfall.com/cards/search?q=t:plane%20or%20t:phenomenon')['data']
     plane_names = [p['name'] for p in planes]
+    bad_names = plane_names.extend(BANNED_CARDS)
     files = rotation.files()
     lines: List[str] = []
     for line in fileinput.input(files):
         line = text.sanitize(line)
-        if line.strip() in plane_names:
+        if line.strip() in bad_names:
             continue
         lines.append(line)
     scores = Counter(lines).most_common()

@@ -88,8 +88,8 @@ def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignor
 
 def make_final_list() -> None:
     planes = fetch_tools.fetch_json('https://api.scryfall.com/cards/search?q=t:plane%20or%20t:phenomenon')['data']
-    plane_names = [p['name'] for p in planes]
-    bad_names = plane_names.extend(BANNED_CARDS)
+    bad_names = [p['name'] for p in planes]
+    bad_names.extend(BANNED_CARDS)
     files = rotation.files()
     lines: List[str] = []
     for line in fileinput.input(files):

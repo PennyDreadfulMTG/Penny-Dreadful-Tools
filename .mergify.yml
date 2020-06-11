@@ -1,5 +1,5 @@
 pull_request_rules:
-  - name: automatic merge pyup-bot
+  - name: automatic merge dependency updates
     conditions:
       - status-success=pdm/automerge
       - status-success=Travis CI - Pull Request
@@ -21,7 +21,7 @@ pull_request_rules:
       merge:
         method: rebase
         strict: true
-  - name: automatic merge for master when CI passes and approved
+  - name: automatic merge for master when CI passes and trusted comitter
     conditions:
       - author=@PennyDreadfulMTG/automerge
       - status-success=Travis CI - Pull Request

@@ -1,4 +1,4 @@
-name: Python application
+name: Sort python imports
 
 on:
   push:
@@ -27,4 +27,4 @@ jobs:
         commit-message: Sort Imports
         title: Sort Imports
         branch: sort
-
+        labels: merge when ready

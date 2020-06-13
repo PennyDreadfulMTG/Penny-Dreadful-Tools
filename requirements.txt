@@ -51,7 +51,7 @@ seaborn==0.10.1
 six==1.15.0
 SQLAlchemy==1.3.17
 sqlalchemy-utils==0.36.6
-titlecase==0.12.0
+titlecase==1.1.1
 typing-extensions
 untangle==1.1.1
 vcrpy==4.0.2

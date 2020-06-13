@@ -25,8 +25,9 @@ from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
 
-DECK_ENTRY = APP.api.model('DecklistEntry',
-{
+#pylint: disable=no-self-use
+
+DECK_ENTRY = APP.api.model('DecklistEntry', {
     'n': fields.Integer(),
     'name': fields.String()
 })
@@ -122,11 +123,11 @@ def decks_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
-@APP.api.route('/decks/<int:id>')
+@APP.api.route('/decks/<int:deck_id>')
 class LoadDeck(Resource):
     @APP.api.marshal_with(DECK)
-    def get(self, id: int) -> Deck:
-        return deck.load_deck(id)
+    def get(self, deck_id: int) -> Deck:
+        return deck.load_deck(deck_id)
 
 @APP.route('/api/randomlegaldeck')
 def random_deck_api() -> Response:

@@ -25,13 +25,13 @@ from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
 
-decklist_entry = APP.api.model('DecklistEntry',
+DECK_ENTRY = APP.api.model('DecklistEntry',
 {
     'n': fields.Integer(),
     'name': fields.String()
 })
 
-deck = APP.api.model('Deck', {
+DECK = APP.api.model('Deck', {
     'id': fields.Integer(readonly=True),
     'name': fields.String(),
     'created_date': fields.DateTime(),
@@ -50,11 +50,11 @@ deck = APP.api.model('Deck', {
     'colors': fields.List(fields.String()),
     'omw': fields.Integer(),
     'season_id': fields.Integer(),
-    'maindeck': fields.List(fields.Nested(decklist_entry)),
-    'sideboard': fields.List(fields.Nested(decklist_entry)),
+    'maindeck': fields.List(fields.Nested(DECK_ENTRY)),
+    'sideboard': fields.List(fields.Nested(DECK_ENTRY)),
 })
 
-competition = APP.api.model('Competition', {
+COMPETITION = APP.api.model('Competition', {
     'id': fields.Integer(readonly=True),
     'name': fields.String(),
     'start_date': fields.DateTime(),
@@ -67,7 +67,7 @@ competition = APP.api.model('Competition', {
     'series_name': fields.String(),
     'type': fields.String(),
     'season_id': fields.Integer(),
-    'decks': fields.List(fields.Nested(deck))
+    'decks': fields.List(fields.Nested(DECK))
 })
 
 @APP.route('/api/decks/')
@@ -122,10 +122,11 @@ def decks_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
-@APP.route('/api/decks/<int:deck_id>')
-def deck_api(deck_id: int) -> Response:
-    blob = deck.load_deck(deck_id)
-    return return_json(blob)
+@APP.api.route('/decks/<int:id>')
+class LoadDeck(Resource):
+    @APP.api.marshal_with(DECK)
+    def get(self, id: int) -> Deck:
+        return deck.load_deck(id)
 
 @APP.route('/api/randomlegaldeck')
 def random_deck_api() -> Response:
@@ -156,8 +157,8 @@ def competition_api(competition_id: int) -> Response:
 
 @APP.api.route('/league')
 class League(Resource):
-    @APP.api.marshal_with(competition)
-    def get(self):
+    @APP.api.marshal_with(COMPETITION)
+    def get(self) -> comp.Competition:
         lg = league.active_league(should_load_decks=True)
         pdbot = request.form.get('api_token', None) == configuration.get('pdbot_api_token')
         if not pdbot:

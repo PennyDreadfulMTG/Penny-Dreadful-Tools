@@ -1,5 +1,5 @@
 anytree==2.8.0
-astroid
+astroid==2.4.2
 attrs==19.3.0
 babel
 beautifulsoup4==4.9.1

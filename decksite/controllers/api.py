@@ -25,6 +25,34 @@ from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
 
+decklist_entry = APP.api.model('DecklistEntry',
+{
+    'n': fields.Integer(),
+    'name': fields.String()
+})
+
+deck = APP.api.model('Deck', {
+    'id': fields.Integer(readonly=True),
+    'name': fields.String(),
+    'created_date': fields.DateTime(),
+    'updated_date': fields.DateTime(),
+    'wins': fields.Integer(),
+    'losses': fields.Integer(),
+    'finish': fields.Integer(),
+    'archetype_id': fields.Integer(),
+    'archetype_name': fields.String(),
+    'source_url': fields.String(),
+    'competition_id': fields.Integer(),
+    'competition_name': fields.String(),
+    'person': fields.String(),
+    'decklist_hash': fields.String(),
+    'retired': fields.Boolean(),
+    'colors': fields.List(fields.String()),
+    'omw': fields.Integer(),
+    'season_id': fields.Integer(),
+    'maindeck': fields.List(fields.Nested(decklist_entry)),
+    'sideboard': fields.List(fields.Nested(decklist_entry)),
+})
 
 competition = APP.api.model('Competition', {
     'id': fields.Integer(readonly=True),
@@ -36,8 +64,10 @@ competition = APP.api.model('Competition', {
     'num_decks': fields.Integer(),
     'num_reviewed': fields.Integer(),
     'sponsor_name': fields.String(),
+    'series_name': fields.String(),
     'type': fields.String(),
     'season_id': fields.Integer(),
+    'decks': fields.List(fields.Nested(deck))
 })
 
 @APP.route('/api/decks/')

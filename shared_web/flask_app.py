@@ -3,9 +3,10 @@ import subprocess
 import urllib
 from typing import Any, Dict, Optional, Tuple, Union
 
-from flask import (Flask, Request, Response, redirect, request, send_from_directory, session,
+from flask import (Blueprint, Flask, Request, Response, redirect, request, send_from_directory, session,
                    url_for)
 from flask_babel import Babel
+from flask_restx import Api
 from github.GithubException import GithubException
 from werkzeug import exceptions, wrappers
 
@@ -46,6 +47,9 @@ class PDFlask(Flask):
         self.config['BABEL_TRANSLATION_DIRECTORIES'] = translations
         self.babel = Babel(self)
         localization.init(self.babel)
+        self.api_root = Blueprint('api', import_name, url_prefix='/api/')
+        self.api = Api(self.api_root, title=f'{import_name} API')
+        self.register_blueprint(self.api_root)
 
     def not_found(self, e: Exception) -> Union[Response, Tuple[str, int]]:
         if request.path.startswith('/error/HTTP_BAD_GATEWAY'):

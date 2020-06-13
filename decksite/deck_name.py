@@ -151,7 +151,9 @@ def normalize_colors(name: str, colors: List[str]) -> str:
     color_words = list(unique_color_words.keys())
     canonical_colors = canonicalize_colors(color_words)
     true_color = name_from_colors(canonical_colors)
-    name = name.replace(color_words[0], true_color, 1)
+    word = color_words[0]
+    pattern = r'(^| )' + word + '( |$)'
+    name = re.sub(pattern, ' ' + true_color + ' ', name).strip()
     for color_word in color_words[1:]:
         name = name.replace(color_word, '')
     if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color) and not [True for abbrev in ABBREVIATIONS.values() if name.lower().startswith(abbrev)]:
@@ -206,7 +208,7 @@ def remove_mono_if_not_first_word(name: str) -> str:
     return re.sub('(.+) mono ', '\\1 ', name)
 
 def remove_profanity(name: str) -> str:
-    profanity.add_censor_words(['supremacia ariana', 'fisting'])
+    profanity.add_censor_words(['supremacia ariana', 'fisting', 'retarded'])
     name = profanity.censor(name, ' ').strip()
     name = re.sub(' +', ' ', name) # We just replaced profanity with a space so compress spaces.
     return name

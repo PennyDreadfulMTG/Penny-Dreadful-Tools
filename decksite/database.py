@@ -16,8 +16,8 @@ def db() -> Database:
     else:
         ctx = Container() # Fallback context for testing.
     if not hasattr(ctx, 'database'):
-        ctx.database = get_database(configuration.get_str('decksite_database'))
-    return ctx.database
+        ctx.database = get_database(configuration.get_str('decksite_database')) # type: ignore
+    return ctx.database # type: ignore
 
 def setup() -> None:
     # pylint: disable=import-outside-toplevel

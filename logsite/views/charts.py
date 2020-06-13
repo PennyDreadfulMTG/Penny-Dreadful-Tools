@@ -28,6 +28,9 @@ class Charts(View):
     def last_switcheroo(self) -> str:
         last_switcheroo = stats.calc_last_switcheroo()
         if last_switcheroo:
-            diff = dtutil.dt2ts(dtutil.now()) - dtutil.dt2ts(last_switcheroo.start_time_aware())
+            start = last_switcheroo.start_time_aware()
+            diff = -1
+            if start is not None:
+                diff = dtutil.dt2ts(dtutil.now()) - dtutil.dt2ts(start)
             return dtutil.display_time(diff)
         return 'unknown'

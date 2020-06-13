@@ -1,4 +1,4 @@
-name: Python application
+name: Sort python imports
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.8
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2.0.1
       with:
         python-version: 3.8
     - name: Install dependencies
@@ -22,9 +22,9 @@ jobs:
     - name: Sort Imports
       run: python dev.py fix-imports
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v2.7.2
+      uses: peter-evans/create-pull-request@v2.8.0
       with:
         commit-message: Sort Imports
         title: Sort Imports
         branch: sort
-
+        labels: merge when ready

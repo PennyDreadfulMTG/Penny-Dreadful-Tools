@@ -101,6 +101,8 @@ def played_cards_by_person(person_id: int, season_id: int) -> List[Card]:
 def process_logs() -> None:
     init()
     ids_to_process = next_ids()
+    if not ids_to_process:
+        return
     placeholders = ', '.join('%s' for v in ids_to_process)
     sql = f"""
         SELECT

@@ -4,7 +4,7 @@ from flask import Response, request, session
 
 from shared_web.api import return_json, validate_api_key
 
-from . import APP, importing
+from . import APP, db, importing
 from .data import game, match
 
 
@@ -27,6 +27,10 @@ def person_status() -> Response:
 @APP.route('/api/matchExists/<match_id>')
 def match_exists(match_id: int) -> Response:
     return return_json(match.get_match(match_id) is not None)
+
+@APP.route('/api/person/<person>')
+def person_data(person: str) -> Response:
+    return return_json(list(match.Match.query.filter(match.Match.players.any(db.User.name == person))))
 
 @APP.route('/api/match/<match_id>')
 def match_data(match_id: int) -> Response:

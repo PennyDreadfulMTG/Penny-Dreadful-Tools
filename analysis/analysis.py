@@ -98,6 +98,7 @@ def played_cards_by_person(person_id: int, season_id: int) -> List[Card]:
         c.update(cards[c.name])
     return cs
 
+# BUG: This code will forever try to process logs that don't contain "plays" or "casts". There are quite a lot of those - matches where one player has wandered off and the match never really starts and mispairs, etc.
 def process_logs() -> None:
     init()
     ids_to_process = next_ids()

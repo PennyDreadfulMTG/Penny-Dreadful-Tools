@@ -13,7 +13,6 @@ from magic import oracle
 @cached()
 @APP.route('/rotation/')
 @APP.route('/rotation/<interestingness>/')
-@auth.admin_required
 def rotation(interestingness: Optional[str] = None) -> str:
     query = request.args.get('fq')
     if query is None:

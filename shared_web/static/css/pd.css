@@ -216,7 +216,6 @@ The characters included in our subsetted font are:
     ⑧ U+2467 CIRCLED DIGIT EIGHT (losing quarterfinalist, league eighth place)
     ⇅ U+21C5 UPWARDS ARROW LEFT OF DOWNWARDS ARROW (sort column)
     ⊕ U+2295 CIRCLED PLUS (active league run, maybe cut this)
-    █ U+2588 FULL BLOCK (redacted info on in-progress rotation, this is a mostly-standardized extended ASCII char 219 but not always and is not present in many fonts)
     ⸺ U+2E3A TWO-EM DASH (for fav_format when there isn’t one, could use U+2014 EM DASH)
     ▪ U+25AA BLACK SMALL SQUARE (bullet point, could switch to U+2022 BULLET which Concourse has)
     🐞 U+1F41E LADY BEETLE (bug)

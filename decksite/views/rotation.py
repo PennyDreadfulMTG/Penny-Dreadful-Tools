@@ -1,5 +1,5 @@
 import datetime
-from typing import Optional, Union
+from typing import Optional
 
 from flask import session
 
@@ -44,5 +44,5 @@ class Rotation(View):
         return 'Rotation'
 
 
-def visible(c: Card):
+def visible(c: Card) -> bool:
     return c.status != 'Undecided' or session.get('admin')

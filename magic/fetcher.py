@@ -1,3 +1,7 @@
+"""
+Helper methods for fetching resources.
+This is the High-Level equivelent of shared.fetch_tools
+"""
 import csv
 import datetime
 import json

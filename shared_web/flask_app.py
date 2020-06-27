@@ -36,6 +36,8 @@ class PDFlask(Flask):
         super().route('/robots.txt')(self.robots_txt)
         super().route('/favicon<rest>')(self.favicon)
         self.url_build_error_handlers.append(self.external_url_handler)
+        if self.config.get('SERVER_NAME') is None:
+            self.config['SERVER_NAME'] = configuration.get_optional_str('flask_server_name')
         self.config['menu'] = []
         self.config['js_url'] = ''
         self.config['css_url'] = ''

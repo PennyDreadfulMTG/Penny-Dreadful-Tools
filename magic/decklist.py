@@ -1,3 +1,6 @@
+"""
+Interprets decklists of various formats, and converts it into a usable structure
+"""
 import re
 import xml
 from typing import Any, Dict, Tuple

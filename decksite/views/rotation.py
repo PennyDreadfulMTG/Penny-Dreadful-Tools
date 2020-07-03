@@ -18,7 +18,7 @@ class Rotation(View):
         in_rotation = configuration.get_bool('always_show_rotation')
         if until_rotation < datetime.timedelta(7):
             in_rotation = True
-            self.rotation_msg = 'Totation is in progress, ends ' + dtutil.display_date(rotation.next_rotation(), 2)
+            self.rotation_msg = 'Rotation is in progress, ends ' + dtutil.display_date(rotation.next_rotation(), 2)
         else:
             self.rotation_msg = 'Rotation is ' + dtutil.display_date(rotation.next_rotation(), 2)
         if in_rotation:

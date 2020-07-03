@@ -129,15 +129,18 @@ class LoadDeck(Resource):
     def get(self, deck_id: int) -> Deck:
         return deck.load_deck(deck_id)
 
-@APP.route('/api/randomlegaldeck')
-def random_deck_api() -> Response:
-    blob = league.random_legal_deck()
-    if blob is None:
-        return return_json({'error': True, 'msg': 'No legal decks could be found'})
-    blob['url'] = url_for('deck', deck_id=blob['id'], _external=True)
-    return return_json(blob)
+@APP.api.route('/randomlegaldeck')
+class LoadRandomDeck(Resource):
+    @APP.api.marshal_with(DECK)
+    def get(self) -> Optional[Deck]:
+        blob = league.random_legal_deck()
+        if blob is None:
+            APP.api.abort(404, 'No legal decks could be found')
+            return None
+        blob['url'] = url_for('deck', deck_id=blob['id'], _external=True)
+        return blob
 
-@APP.route('/api/competitions/')
+@APP.route('/api/competitions')
 def competitions_api() -> Response:
     # Don't send competitions with any decks that do not have their correct archetype to third parties otherwise they
     # will store it and be wrong forever.

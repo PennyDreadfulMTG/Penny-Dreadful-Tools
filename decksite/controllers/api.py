@@ -132,10 +132,11 @@ class LoadDeck(Resource):
 @APP.api.route('/randomlegaldeck')
 class LoadRandomDeck(Resource):
     @APP.api.marshal_with(DECK)
-    def get(self) -> Deck:
+    def get(self) -> Optional[Deck]:
         blob = league.random_legal_deck()
         if blob is None:
             APP.api.abort(404, 'No legal decks could be found')
+            return None
         blob['url'] = url_for('deck', deck_id=blob['id'], _external=True)
         return blob
 

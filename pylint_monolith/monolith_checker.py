@@ -44,16 +44,13 @@ class MonolithChecker(BaseChecker):
 
     def __init__(self, linter: Optional[PyLinter] = None) -> None:
         BaseChecker.__init__(self, linter)
-        self.isort_obj = isort.SortImports(
-            file_contents='',
-        )
 
     @check_messages(*(msgs.keys()))
     def visit_importfrom(self, node: astroid.nodes.ImportFrom) -> None:
         """triggered when a from statement is seen"""
         # We only care about imports within the monolith.
         basename = get_basename(node.modname)
-        import_category = self.isort_obj.place_module(basename)
+        import_category = isort.place.module(basename)
         if import_category != 'FIRSTPARTY':
             return
         # Get the name of the module that's doing the importing.

@@ -33,8 +33,6 @@ def admin_menu() -> List[Dict[str, str]]:
     for endpoint in endpoints:
         name = titlecase.titlecase(endpoint.replace('_', ' ')) if endpoint else 'Admin Home'
         m.append({'name': name, 'endpoint': endpoint, 'url': url_for(endpoint)})
-    if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7):
-        m.append({'name': gettext('Rotation Tracking'), 'endpoint': 'rotation'})
     m.append({'name': gettext('Rotation Speculation'), 'endpoint': 'rotation_speculation'})
     return m
 

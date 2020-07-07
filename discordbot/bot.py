@@ -18,11 +18,9 @@ from github.GithubException import GithubException
 import discordbot.commands
 from discordbot import command
 from magic import fetcher, multiverse, oracle, rotation, tournaments
-from magic.abc import CardDescription
 from magic.models import Card
 from shared import configuration, dtutil, fetch_tools, perf, redis, repo
 from shared.container import Container
-from shared.pd_exception import InvalidDataException
 
 TASKS = []
 

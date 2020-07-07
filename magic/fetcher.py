@@ -147,10 +147,6 @@ def resources() -> Dict[str, Dict[str, str]]:
     with open('decksite/resources.json') as resources_file:
         return json.load(resources_file, object_pairs_hook=OrderedDict)
 
-async def scryfall_cards_async() -> Dict[str, Any]:
-    url = 'https://api.scryfall.com/cards'
-    return await fetch_tools.fetch_json_async(url)
-
 async def scryfall_last_updated_async() -> datetime.datetime:
     d = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
     for o in d['data']:

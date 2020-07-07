@@ -18,11 +18,9 @@ from github.GithubException import GithubException
 import discordbot.commands
 from discordbot import command
 from magic import fetcher, multiverse, oracle, rotation, tournaments
-from magic.abc import CardDescription
 from magic.models import Card
 from shared import configuration, dtutil, fetch_tools, perf, redis, repo
 from shared.container import Container
-from shared.pd_exception import InvalidDataException
 
 TASKS = []
 
@@ -197,23 +195,6 @@ class Bot(commands.Bot):
             print('Github error', e, file=sys.stderr)
 
     @background_task
-    async def background_task_spoiler_season(self) -> None:
-        'Poll Scryfall for the latest 250 cards, and add them to our db if missing'
-        latest_cards = await fetcher.scryfall_cards_async()
-        cards_not_currently_in_db: List[CardDescription] = []
-        for c in latest_cards['data']:
-            if not multiverse.valid_layout(c):
-                continue
-            name = multiverse.name_from_card_description(c)
-            try:
-                oracle.valid_name(name)
-            except InvalidDataException:
-                print(f'Planning to add {name} to database in background_task_spoiler_season.')
-                cards_not_currently_in_db.append(c)
-        if len(cards_not_currently_in_db) > 0:
-            await oracle.add_cards_and_update_async(cards_not_currently_in_db)
-
-    @background_task
     async def background_task_tournaments(self) -> None:
         tournament_channel_id = configuration.get_int('tournament_reminders_channel_id')
         if not tournament_channel_id:
@@ -257,7 +238,6 @@ class Bot(commands.Bot):
                 timer = 3600 + diff % 3600
                 if diff > 3600 * 6:
                     # The timer can afford to get off-balance by doing other background work.
-                    await self.background_task_spoiler_season()
                     await multiverse.update_bugged_cards_async()
 
             if timer < 300:

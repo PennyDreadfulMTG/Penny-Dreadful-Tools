@@ -292,7 +292,7 @@ class Bot(commands.Bot):
                 await asyncio.sleep(300)
                 continue
 
-            diff = round((datetime.datetime.fromtimestamp(league['end_date'], tz=datetime.timezone.utc)
+            diff = round((dtutil.parse_rfc3339(league['end_date'])
                           - datetime.datetime.now(tz=datetime.timezone.utc))
                          / datetime.timedelta(seconds=1))
 

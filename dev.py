@@ -226,7 +226,7 @@ def upload_coverage() -> None:
 def sort(fix: bool = False) -> None:
     print('>>>> Checking imports')
     if fix:
-        subprocess.check_call(['isort', '-rc', '.'])
+        subprocess.check_call(['isort', '.'])
     else:
         subprocess.check_call(['isort', '--check-only'])
 

@@ -1,4 +1,3 @@
-import datetime
 from typing import Any, Dict, List, Optional, Union, cast
 
 import titlecase
@@ -19,7 +18,6 @@ from decksite.league import RetireForm
 from decksite.views import (Admin, AdminRetire, EditAliases, EditArchetypes, EditLeague,
                             EditMatches, EditNews, EditRules, PlayerNotes, Prizes,
                             RotationChecklist, Unlink)
-from magic import rotation
 from magic.models import Deck
 from shared import dtutil, redis
 from shared.container import Container

@@ -202,6 +202,9 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
         if not valid_layout(p):
             continue
 
+        if p['type_line'] == 'Card':
+            continue
+
         rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]
 
         try:

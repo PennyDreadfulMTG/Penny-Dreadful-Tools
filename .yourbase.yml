@@ -5,6 +5,7 @@ dependencies:
 build_targets:
   - name: default
     commands:
+      - npm install
       - pip install -r requirements.txt
       - python dev.py jslint
       - python dev.py mypy

@@ -1,0 +1,17 @@
+dependencies:
+  build:
+    - python:3.6.3
+
+build_targets:
+  - name: default
+    commands:
+      - pip install -r requirements.txt
+      - python dev.py jslint
+      - python dev.py mypy
+      - python dev.py lint
+      - python dev.py tests
+
+ci:
+  builds:
+    - name: default
+      build_target: default

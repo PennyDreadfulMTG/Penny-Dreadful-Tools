@@ -35,7 +35,7 @@ plumbum==1.6.9
 poeditor==1.1.2
 pygithub==1.51
 pygtrie==2.3.3
-pyhumps==1.6.0
+pyhumps==1.6.1
 pyjwt==1.7.1
 pylint==2.5.3
 pylint-quotes==0.2.1

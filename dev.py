@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import json
 import os
 import subprocess
 import sys
@@ -6,7 +7,6 @@ import time
 from pickle import PicklingError
 from typing import List, Optional
 
-from generate_readme import generate_readme
 from shared import configuration
 from shared.pd_exception import InvalidArgumentException, TestFailedException
 
@@ -87,6 +87,7 @@ def run_dangerously() -> None:
     elif cmd == 'popclean':
         popclean()
     elif cmd == 'readme':
+        from generate_readme import generate_readme
         generate_readme()
     elif cmd == 'coverage':
         coverage()
@@ -104,6 +105,8 @@ def run_dangerously() -> None:
         release(args)
     elif cmd == 'check-reqs':
         check_requirements()
+    elif cmd == 'swagger':
+        swagger()
     else:
         raise InvalidArgumentException('Unrecognised command {cmd}.'.format(cmd=cmd))
 
@@ -343,7 +346,6 @@ def check(args: List[str]) -> None:
     lint(args)
     jslint()
     mypy(args)
-    sort()
 
 def release(args: List[str]) -> None:
     check([])
@@ -366,5 +368,13 @@ def check_requirements() -> None:
     files = find_files(file_extension='py')
     subprocess.check_call(['pip-missing-reqs'] + files)
     subprocess.check_call(['pip-extra-reqs'] + files)
+
+def swagger() -> None:
+    import decksite
+    decksite.APP.config['SERVER_NAME'] = configuration.server_name()
+    with decksite.APP.app_context():
+        with open('decksite_api.yml', 'w') as f:
+            f.write(json.dumps(decksite.APP.api.__schema__))
+
 if __name__ == '__main__':
     run()

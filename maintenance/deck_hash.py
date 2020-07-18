@@ -2,7 +2,7 @@ import hashlib
 
 from decksite.data import deck
 from decksite.database import db
-from shared import redis
+from shared import redis_wrapper as redis
 
 
 def run() -> None:

@@ -18,7 +18,7 @@ from mypy_extensions import TypedDict
 
 from magic.abc import CardDescription, PriceDataType
 from magic.models import Deck
-from shared import configuration, dtutil, fetch_tools, redis
+from shared import configuration, dtutil, fetch_tools, redis_wrapper as redis
 from shared.container import Container
 from shared.fetch_tools import FetchException
 from shared.pd_exception import InvalidDataException, NotConfiguredException, TooFewItemsException

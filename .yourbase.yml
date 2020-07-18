@@ -1,7 +1,7 @@
 dependencies:
   build:
-    - python:3.6.3
-
+    - python:3.8.2
+    - node:12.18.2
 build_targets:
   - name: default
     commands:

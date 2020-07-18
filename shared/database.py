@@ -5,7 +5,7 @@ import MySQLdb
 from MySQLdb import OperationalError
 
 from shared import configuration, perf
-from shared.pd_exception import (DatabaseException, DatabaseMissingException,
+from shared.pd_exception import (DatabaseException, DatabaseMissingException, DatabaseConnectionRefusedException,
                                  InvalidArgumentException, LockNotAcquiredException)
 
 ValidSqlArgumentDescription = Any
@@ -33,8 +33,11 @@ class Database():
                 print('Creating database {db}'.format(db=self.name))
                 self.execute('CREATE DATABASE {db} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'.format(db=self.name))
                 self.execute('USE {db}'.format(db=self.name))
-        except MySQLdb.Error:
-            raise DatabaseException('Failed to initialize database in `{location}`'.format(location=self.name))
+        except MySQLdb.Error as c:
+            msg = 'Failed to initialize database in `{location}`'.format(location=self.name)
+            if c.args[0] in [2002, 2003]:
+                raise DatabaseConnectionRefusedException(msg)
+            raise DatabaseException(msg)
 
     def select(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[Dict[str, ValidSqlArgumentDescription]]:
         [_, rows] = self.execute_anything(sql, args)
@@ -50,7 +53,7 @@ class Database():
         try:
             return self.execute_with_reconnect(sql, args, fetch_rows)
         except MySQLdb.Warning as e:
-            if e.args[0] == 1050 or e.args[0] == 1051:
+            if e.args[0] in [1050, 1051]:
                 return (0, []) # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or DROP TABLE IF NOT EXISTS raises an "unknown table" warning.
             if e.args[0] == 1062:
                 return (0, []) # We don't care if an INSERT IGNORE INTO didn't do anything.

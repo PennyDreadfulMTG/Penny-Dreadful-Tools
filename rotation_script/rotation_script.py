@@ -11,7 +11,7 @@ import ftfy
 
 from magic import card_price, fetcher, rotation
 from price_grabber.parser import PriceListType, parse_cardhoarder_prices, parse_mtgotraders_prices
-from shared import configuration, dtutil, fetch_tools, redis, repo, text
+from shared import configuration, dtutil, fetch_tools, redis_wrapper as redis, repo, text
 
 TIME_UNTIL_ROTATION = rotation.next_rotation() - dtutil.now()
 BANNED_CARDS = ['Cleanse', 'Crusade'] # These cards are banned, even in Freeform

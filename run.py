@@ -11,7 +11,25 @@ import click
 from shared import configuration
 
 
+def wait_for_db(ctx, attr, value) -> None:
+    if not value:
+        return
+    print('waiting for db')
+    def attempt(interval: int = 1) -> bool:
+        from shared import database, pd_exception
+        try:
+            database.get_database(configuration.get_str('magic_database'))
+            return True
+        except pd_exception.DatabaseConnectionRefusedException:
+            print(f'DB not accepting connections.  Sleeping for {interval}.')
+            time.sleep(interval)
+            return False
+    i = 1
+    while not attempt(i) and i < 30:
+        i = i + 1
+
 @click.group()
+@click.option('--wait-for-db', is_flag=True, callback=wait_for_db, expose_value=False, help='Idle until the mySQL server starts accepting connections')
 def cli() -> None:
     pass
 

@@ -7,7 +7,7 @@ from decksite.data import deck, elo, query
 from decksite.database import db
 from magic import rotation
 from magic.models import Deck
-from shared import dtutil, guarantee, redis
+from shared import dtutil, guarantee, redis_wrapper as redis
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import TooFewItemsException

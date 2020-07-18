@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from discordbot.command import MtgContext
 from magic import image_fetcher, oracle
-from shared import redis
+from shared import redis_wrapper as redis
 
 
 @commands.command()

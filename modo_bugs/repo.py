@@ -6,7 +6,7 @@ from github.IssueComment import IssueComment
 from github.Project import Project
 from github.Repository import Repository
 
-from shared import configuration, decorators, redis
+from shared import configuration, decorators, redis_wrapper as redis
 
 from . import strings
 

@@ -19,7 +19,7 @@ from decksite.views import (Admin, AdminRetire, EditAliases, EditArchetypes, Edi
                             EditMatches, EditNews, EditRules, PlayerNotes, Prizes,
                             RotationChecklist, Unlink)
 from magic.models import Deck
-from shared import dtutil, redis
+from shared import dtutil, redis_wrapper as redis
 from shared.container import Container
 from shared.pd_exception import InvalidArgumentException
 from shared_web.decorators import fill_form

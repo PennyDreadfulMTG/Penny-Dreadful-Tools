@@ -24,7 +24,7 @@ inflect==4.1.0
 isort==4.3.21
 jsbeautifier==1.11.0
 markdown==3.2.2
-matplotlib==3.2.2
+matplotlib==3.3.0
 munch==2.5.0
 mypy==0.782
 mypy-extensions==0.4.3

@@ -20,7 +20,7 @@ SEASONS = [
     'AER', 'AKH', 'HOU', 'XLN', # 2017
     'RIX', 'DOM', 'M19', 'GRN', # 2018
     'RNA', 'WAR', 'M20', 'ELD', # 2019
-    'THB', 'IKO', 'M21', # 2020
+    'THB', 'IKO', 'M21', 'ZNR', # 2020
     ]
 
 @attr.s(auto_attribs=True, slots=True)

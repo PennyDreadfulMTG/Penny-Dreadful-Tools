@@ -11,7 +11,7 @@ import click
 from shared import configuration
 
 
-def wait_for_db(ctx, attr, value) -> None:
+def wait_for_db(_: Any, __: Any, value: bool) -> None:
     if not value:
         return
     print('waiting for db')

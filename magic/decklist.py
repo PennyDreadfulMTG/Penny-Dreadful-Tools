@@ -15,7 +15,7 @@ SectionType = Dict[str, int]
 DecklistType = Dict[str, SectionType]
 
 def parse_line(line: str) -> Tuple[int, str]:
-    match = re.match(r'(\d+)\s+(.*)', line)
+    match = re.match(r'(?:SB: ?)?(\d+)\s+(.*)', line)
     if match is None:
         raise InvalidDataException('No number specified with `{line}`'.format(line=line))
     n, name = match.groups()
@@ -23,7 +23,9 @@ def parse_line(line: str) -> Tuple[int, str]:
 
 def parse_chunk(chunk: str, section: SectionType) -> None:
     for line in chunk.splitlines():
-        if 'sideboard' in line.lower().strip() or line.strip() == '':
+        if 'sideboard' in line.lower().strip().strip(':') or line.strip() == '':
+            continue
+        if line.lower().strip().strip(':') == 'main':
             continue
         n, name = parse_line(line)
         add_card(section, int(n), name)

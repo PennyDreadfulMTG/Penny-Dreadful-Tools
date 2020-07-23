@@ -8,6 +8,7 @@ import string
 from typing import Any, Dict, List, Match, Optional, Set, Union, overload
 
 import dotenv
+
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
 dotenv.load_dotenv('.')

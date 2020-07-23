@@ -11,7 +11,8 @@ from decksite.data.top import Top
 from decksite.database import db
 from magic import legality, mana, oracle
 from magic.models import CardRef, Deck
-from shared import dtutil, guarantee, redis_wrapper as redis
+from shared import dtutil, guarantee
+from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException

@@ -8,7 +8,9 @@ import attr
 
 from magic import fetcher, multiverse, oracle
 from magic.models import Card
-from shared import configuration, dtutil, redis_wrapper as redis, text
+from shared import configuration, dtutil
+from shared import redis_wrapper as redis
+from shared import text
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 TOTAL_RUNS = 168

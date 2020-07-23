@@ -19,7 +19,8 @@ from decksite.views import DeckEmbed
 from magic import oracle, rotation, tournaments
 from magic.decklist import parse_line
 from magic.models import Deck
-from shared import configuration, dtutil, guarantee, redis_wrapper as redis
+from shared import configuration, dtutil, guarantee
+from shared import redis_wrapper as redis
 from shared.pd_exception import DoesNotExistException, InvalidDataException, TooManyItemsException
 from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key

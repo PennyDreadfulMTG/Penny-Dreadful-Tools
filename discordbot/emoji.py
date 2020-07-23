@@ -5,7 +5,7 @@ from discord import Client, Emoji
 
 from magic import oracle, rotation
 from magic.models import Card
-from shared import redis
+from shared import redis_wrapper as redis
 
 
 def find_emoji(emoji: str, client: Client) -> Optional[Emoji]:

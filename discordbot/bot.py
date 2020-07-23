@@ -19,7 +19,7 @@ import discordbot.commands
 from discordbot import command
 from magic import fetcher, multiverse, oracle, rotation, tournaments
 from magic.models import Card
-from shared import configuration, dtutil, fetch_tools, perf, redis, repo
+from shared import configuration, dtutil, fetch_tools, perf, redis_wrapper as redis, repo
 from shared.container import Container
 
 TASKS = []

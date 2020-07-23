@@ -8,7 +8,7 @@ from decksite.data import deck
 from decksite.database import db
 from magic import fetcher
 from magic.models import Deck
-from shared import dtutil, redis, repo
+from shared import dtutil, redis_wrapper as redis, repo
 from shared.container import Container
 from shared.database import sqlescape
 

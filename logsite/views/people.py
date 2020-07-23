@@ -2,7 +2,7 @@ from flask import url_for
 from sqlalchemy import text
 
 from logsite.view import View
-from shared import redis
+from shared import redis_wrapper as redis
 
 from .. import APP, db
 from ..data import match

@@ -16,4 +16,6 @@ def flavor_text(c: Card) -> str:
             continue
         if printing.flavor is not None:
             return '\n' + printing.flavor + '\n-**' + oracle.get_set(printing.set_id).name + '**'
+    if c.preferred_printing is not None:
+        return f'No flavor text for {c.preferred_printing}'
     return 'No flavor text available'

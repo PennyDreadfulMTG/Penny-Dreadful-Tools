@@ -70,11 +70,10 @@ def parse_mode(query: str) -> Tuple[str, str, Optional[str]]:
     if query.startswith('$'):
         mode = '$'
         query = query[1:]
-
     if '|' in query:
         query, preferred_printing = query.split('|')
-
-    return (mode, query, preferred_printing.lower().strip()[0:3])
+        preferred_printing.lower().strip()[0:3]
+    return (mode, query, preferred_printing)
 
 def results_from_queries(queries: List[str]) -> List[Tuple[SearchResult, str, Optional[str]]]:
     all_results = []

@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any, Dict, List, Tuple, cast, Optional
+from typing import Any, Dict, List, Optional, Tuple, cast
 
 import discord
 import pytest

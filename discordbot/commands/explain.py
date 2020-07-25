@@ -79,6 +79,16 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             """,
             {}
         ),
+        'onegame': (
+            """
+            If your opponent concedes or disconnects before the match is completed PDBot will not report the match automatically.
+            If you feel enough of a match was played to count as a win, rather than your opponent losing internet or similar
+            then you can report the match manually 2-x where x is the number of games your opponent won before conceding/disconnecting.
+            """,
+            {
+                'Report': fetcher.decksite_url('/report/')
+            }
+        ),
         'playing': (
             """
             To get a match go to Constructed, Specialty, Freeform Tournament Practice on MTGO and create a match with "Penny Dreadful" in the comments.

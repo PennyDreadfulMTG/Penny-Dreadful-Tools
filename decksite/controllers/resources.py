@@ -7,7 +7,7 @@ from decksite.cache import cached
 from decksite.data import card as cs
 from decksite.league import DeckCheckForm
 from decksite.views import Bugs, DeckCheck, LinkAccounts, Resources, Rotation, RotationChanges
-from magic import oracle
+from magic import card, oracle
 
 
 @cached()
@@ -67,7 +67,7 @@ def rotation_changes() -> str:
 @SEASONS.route('/rotation/changes/files/<any(new,out):changes_type>/')
 def rotation_changes_files(changes_type: str) -> Response:
     changes = oracle.pd_rotation_changes(get_season_id())[0 if changes_type == 'new' else 1]
-    s = '\n'.join('4 {name}'.format(name=c.name) for c in changes)
+    s = '\n'.join('4 {name}'.format(name=card.to_mtgo_format(c.name)) for c in changes)
     return make_response(s, 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': f'attachment; filename={changes_type}.txt'})
 
 @APP.route('/rotation/speculation/')
@@ -85,7 +85,7 @@ def rotation_speculation() -> str:
 def rotation_speculation_files(changes_type: str) -> Response:
     out = changes_type != 'new'
     changes = oracle.if_todays_prices(out=out)
-    s = '\n'.join('4 {name}'.format(name=c.name) for c in changes)
+    s = '\n'.join('4 {name}'.format(name=card.to_mtgo_format(c.name)) for c in changes)
     return make_response(s, 200, {'Content-type': 'text/plain; charset=utf-8', 'Content-Disposition': f'attachment; filename={changes_type}.txt'})
 
 

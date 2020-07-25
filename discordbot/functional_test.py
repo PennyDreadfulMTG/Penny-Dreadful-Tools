@@ -21,9 +21,9 @@ class ContextForTests(MtgContext):
         self.sent = False
         self.sent_args = False
         self.sent_file = False
-        self.content = None
+        self.content: Optional[str] = None
 
-    async def send(self, content: Optional[str] = None, *args: Any, **kwargs: Any) -> None: # pylint: disable=signature-differs
+    async def send(self, content: Optional[str], *args: Any, **kwargs: Any) -> None: # pylint: disable=signature-differs
         self.sent = True
         self.sent_args = bool(args)
         self.sent_file = 'file' in kwargs.keys()
@@ -99,5 +99,5 @@ async def test_command(discordbot: Bot, cmd: str, kwargs: Dict[str, Any], expect
     ctx.author.mention = '<@111111111111>'
     await command.callback(ctx, **kwargs)
     assert ctx.sent
-    if expected_content is not None:
+    if expected_content is not None and ctx.content is not None:
         assert expected_content in ctx.content

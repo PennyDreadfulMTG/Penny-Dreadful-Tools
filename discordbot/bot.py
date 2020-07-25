@@ -376,7 +376,9 @@ async def rotation_hype_message() -> Optional[str]:
     if len(newly_eliminated) > 0:
         newly_eliminated_s = list_of_most_interesting(newly_eliminated)
         s += f'\nEliminated: {newly_eliminated_s}.'
-    s += f"\nUndecided: {num_undecided}.\n<{fetcher.decksite_url('/rotation/')}>"
+    s += f'\nUndecided: {num_undecided}.\n'
+    if runs_percent >= 50:
+        s += f"<{fetcher.decksite_url('/rotation/')}>"
     return s
 
 # This does not currently actually find the most interesting just max 10 – only decksite knows about interestingness for now.

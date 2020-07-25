@@ -62,7 +62,7 @@ class Bot(commands.Bot):
 
     async def on_ready(self) -> None:
         print('Logged in as {username} ({id})'.format(username=self.user.name, id=self.user.id))
-        print('Connected to {0}'.format(', '.join([guild.name for guild in self.guilds])))
+        print('Connected to {0}'.format(', '.join([guild.name or '' for guild in self.guilds])))
         print('--------')
         perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
 

@@ -112,10 +112,10 @@ def before_request() -> None:
 
 @APP.after_request
 def after_request(response: Response) -> Response:
-    requests_until_we_hide_intro_box = 20 # Typically ten page views because of async requests for the status bar.
+    requests_until_no_intro = 20 # Typically ten page views because of async requests for the status bar.
     views = int(request.cookies.get('views', 0)) + 1
     response.set_cookie('views', str(views))
-    if views >= requests_until_we_hide_intro_box:
+    if views >= requests_until_no_intro:
         response.set_cookie('hide_intro', value=str(True), expires=dtutil.dt2ts(dtutil.now()) + 60 *  60 * 24 * 365 * 10)
     return response
 

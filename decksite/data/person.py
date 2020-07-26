@@ -94,7 +94,7 @@ def load_people(where: str = 'TRUE',
     if order_by_name:
         people.sort(key=lambda p: p.get('name') or 'ZZZZZZZZZZ')
     else:
-        people.sort(key=lambda p: (-p.get('num_decks', 0), p.get('name')))
+        people.sort(key=lambda p: (-p.get('num_decks', 0), 1)) # (, p.get('name')))
     return people
 
 def load_people_stats(where: str, season_id: Optional[int] = None) -> Dict[int, Dict[str, int]]:

@@ -1,16 +1,10 @@
-from typing import Optional
-
-from flask import redirect, url_for
-from werkzeug import wrappers
-
 from decksite import APP, SEASONS, auth, get_season_id
 from decksite.cache import cached
 from decksite.data import achievements as achs
 from decksite.data import competition as comp
 from decksite.data import person as ps
-from decksite.views import (Achievements, Competition, Competitions, PersonAchievements,
-                            TournamentHosting, TournamentLeaderboards, Tournaments)
-from shared.pd_exception import DoesNotExistException
+from decksite.views import (Achievements, Competition, Competitions, TournamentHosting,
+                            TournamentLeaderboards, Tournaments)
 
 
 @APP.route('/competitions/')
@@ -58,21 +52,3 @@ def achievements() -> str:
         p = ps.load_person_by_mtgo_username(username, season_id=get_season_id())
     view = Achievements(achs.load_achievements(p, season_id=get_season_id()))
     return view.page()
-
-@APP.route('/people/<mtgo_username>/achievements')
-@APP.route('/people/id/<int:person_id>/achievements')
-@SEASONS.route('/people/<mtgo_username>/achievements')
-@SEASONS.route('/people/id/<int:person_id>/achievements')
-def person_achievements(mtgo_username: Optional[str] = None, person_id: Optional[int] = None) -> str:
-    if mtgo_username:
-        p = ps.load_person_by_mtgo_username(mtgo_username, season_id=get_season_id())
-    elif person_id:
-        p = ps.load_person_by_id(person_id, season_id=get_season_id())
-    else:
-        raise DoesNotExistException(f"Can't load a person with `{mtgo_username}` and `{person_id}`.")
-    view = PersonAchievements(p, achs.load_achievements(p, season_id=get_season_id(), with_detail=True))
-    return view.page()
-
-@APP.route('/person/achievements/')
-def achievements_redirect() -> wrappers.Response:
-    return redirect(url_for('achievements'))

@@ -96,7 +96,8 @@ TESTDATA = [
     ('Storm (PD S16)', 'Storm', ['U', 'B'], 'Storm'),
     ('Black-Red Midrange', 'Rakdos Midrange', ['R', 'B'], 'Rakdos Midrange'),
     ('Happy B DAY Adriana', 'Happy B Day Adriana', ['W', 'R'], 'AggroSlide'),
-    ('braids b', 'Braids Black', ['B'], 'Midrange')
+    ('braids b', 'Braids Black', ['B'], 'Midrange'),
+    ('[Penny Dreadful] UR Cycling', 'Izzet Cycling', ['U', 'R'], 'Midrange')
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

@@ -5,7 +5,11 @@ from werkzeug import wrappers
 
 from decksite import APP, SEASONS, get_season_id
 from decksite.cache import cached
-from decksite.data import achievements as achs, archetype as archs, card as cs, match as ms, person as ps
+from decksite.data import achievements as achs
+from decksite.data import archetype as archs
+from decksite.data import card as cs
+from decksite.data import match as ms
+from decksite.data import person as ps
 from decksite.views import People, Person, PersonAchievements, PersonMatches
 from shared.pd_exception import DoesNotExistException
 

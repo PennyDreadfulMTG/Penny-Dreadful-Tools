@@ -614,3 +614,65 @@ def test_parse_double_blank_line() -> None:
     d = decklist.parse(s)
     assert sum(d['maindeck'].values()) == 60
     assert sum(d['sideboard'].values()) == 15
+
+def test_explicit_main_sb() -> None:
+    s = """
+        Main:
+        4 Teferi, Mage of Zhalfir
+        2 Knowledge Pool
+        4 Mana Leak
+        4 Memory Lapse
+        4 Miscast
+        4 Swan Song
+        4 Fact or Fiction
+        4 Engulf the Shore
+        4 Everflowing Chalice
+        4 Frantic Inventory
+        4 Mystic Sanctuary
+        18 Island
+
+        Sideboard:
+        2 Nezahal, Primal Tide
+        4 Soul-Guide Lantern
+        3 Marrow Shards
+        4 Flashfreeze
+        2 Control Magic
+    """
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    assert sum(d['maindeck'].values()) == 60
+    assert sum(d['sideboard'].values()) == 15
+
+def test_sideboard_with_sb() -> None:
+    s = """
+        Main
+        4 Bastion of Remembrance
+        4 Bloodthrone Vampire
+        4 Cauldron Familiar
+        3 Dark Prophecy
+        4 Dark Ritual
+        4 Mayhem Devil
+        4 Mogg War Marshal
+        2 Putrid Goblin
+        4 Sling-Gang Lieutenant
+        3 Unearth
+        4 Witch's Oven
+        1 Barbarian Ring
+        4 Bloodfell Caves
+        3 Mountain
+        7 Swamp
+        4 Temple of Malice
+        1 Tomb of Urami
+
+        Sideboard
+        SB: 3 Claim the Firstborn
+        SB: 3 Duress
+        SB: 2 Slagstorm
+        SB: 2 Slaughter Games
+        SB: 3 Soul-Guide Lantern
+        SB: 2 Goblin Cratermaker
+    """
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    assert sum(d['maindeck'].values()) == 60
+    assert sum(d['sideboard'].values()) == 15

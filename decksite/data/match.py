@@ -7,10 +7,11 @@ from decksite.data import deck, elo, query
 from decksite.database import db
 from magic import rotation
 from magic.models import Deck
-from shared import dtutil, guarantee, redis
+from shared import dtutil, guarantee
+from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.database import sqlescape
-from shared.pd_exception import InvalidDataException, TooFewItemsException
+from shared.pd_exception import TooFewItemsException
 
 
 # pylint: disable=too-many-arguments
@@ -22,10 +23,6 @@ def insert_match(dt: datetime.datetime,
                  round_num: Optional[int] = None,
                  elimination: Optional[int] = None,
                  mtgo_match_id: Optional[int] = None) -> int:
-    if left_games == right_games:
-        raise InvalidDataException('`insert_match` does not support draws.')
-    winner_id = left_id if left_games > right_games else right_id
-    loser_id = left_id if left_games < right_games else right_id
     db().begin('insert_match')
     match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
     update_cache(left_id, left_games, right_games, dt=dt)
@@ -34,7 +31,10 @@ def insert_match(dt: datetime.datetime,
     db().execute(sql, [left_id, match_id, left_games])
     if right_id is not None: # Don't insert matches or adjust Elo for the bye.
         db().execute(sql, [right_id, match_id, right_games])
-        elo.adjust_elo(winner_id, loser_id)
+        if left_games == right_games: # Don't adjust Elo for a draw. This is not quite right but we have so few it's not important.
+            winner_id = left_id if left_games > right_games else right_id
+            loser_id = left_id if left_games < right_games else right_id
+            elo.adjust_elo(winner_id, loser_id)
     db().commit('insert_match')
     redis.clear(f'decksite:deck:{left_id}')
     if right_id is not None:

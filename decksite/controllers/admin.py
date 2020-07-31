@@ -1,4 +1,3 @@
-import datetime
 from typing import Any, Dict, List, Optional, Union, cast
 
 import titlecase
@@ -19,9 +18,9 @@ from decksite.league import RetireForm
 from decksite.views import (Admin, AdminRetire, EditAliases, EditArchetypes, EditLeague,
                             EditMatches, EditNews, EditRules, PlayerNotes, Prizes,
                             RotationChecklist, Unlink)
-from magic import rotation
 from magic.models import Deck
-from shared import dtutil, redis
+from shared import dtutil
+from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.pd_exception import InvalidArgumentException
 from shared_web.decorators import fill_form
@@ -33,8 +32,6 @@ def admin_menu() -> List[Dict[str, str]]:
     for endpoint in endpoints:
         name = titlecase.titlecase(endpoint.replace('_', ' ')) if endpoint else 'Admin Home'
         m.append({'name': name, 'endpoint': endpoint, 'url': url_for(endpoint)})
-    if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7):
-        m.append({'name': gettext('Rotation Tracking'), 'endpoint': 'rotation'})
     m.append({'name': gettext('Rotation Speculation'), 'endpoint': 'rotation_speculation'})
     return m
 

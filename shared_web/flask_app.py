@@ -3,9 +3,10 @@ import subprocess
 import urllib
 from typing import Any, Dict, Optional, Tuple, Union
 
-from flask import (Flask, Request, Response, redirect, request, send_from_directory, session,
-                   url_for)
+from flask import (Blueprint, Flask, Request, Response, redirect, request, send_from_directory,
+                   session, url_for)
 from flask_babel import Babel
+from flask_restx import Api
 from github.GithubException import GithubException
 from werkzeug import exceptions, wrappers
 
@@ -35,6 +36,8 @@ class PDFlask(Flask):
         super().route('/robots.txt')(self.robots_txt)
         super().route('/favicon<rest>')(self.favicon)
         self.url_build_error_handlers.append(self.external_url_handler)
+        if self.config.get('SERVER_NAME') is None:
+            self.config['SERVER_NAME'] = configuration.get_optional_str('flask_server_name')
         self.config['menu'] = []
         self.config['js_url'] = ''
         self.config['css_url'] = ''
@@ -46,6 +49,9 @@ class PDFlask(Flask):
         self.config['BABEL_TRANSLATION_DIRECTORIES'] = translations
         self.babel = Babel(self)
         localization.init(self.babel)
+        self.api_root = Blueprint('api', import_name, url_prefix='/api/')
+        self.api = Api(self.api_root, title=f'{import_name} API', default=import_name)
+        self.register_blueprint(self.api_root)
 
     def not_found(self, e: Exception) -> Union[Response, Tuple[str, int]]:
         if request.path.startswith('/error/HTTP_BAD_GATEWAY'):

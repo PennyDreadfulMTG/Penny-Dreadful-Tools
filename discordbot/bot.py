@@ -18,11 +18,11 @@ from github.GithubException import GithubException
 import discordbot.commands
 from discordbot import command
 from magic import fetcher, multiverse, oracle, rotation, tournaments
-from magic.abc import CardDescription
 from magic.models import Card
-from shared import configuration, dtutil, fetch_tools, perf, redis, repo
+from shared import configuration, dtutil, fetch_tools, perf
+from shared import redis_wrapper as redis
+from shared import repo
 from shared.container import Container
-from shared.pd_exception import InvalidDataException
 
 TASKS = []
 
@@ -62,7 +62,7 @@ class Bot(commands.Bot):
 
     async def on_ready(self) -> None:
         print('Logged in as {username} ({id})'.format(username=self.user.name, id=self.user.id))
-        print('Connected to {0}'.format(', '.join([guild.name for guild in self.guilds])))
+        print('Connected to {0}'.format(', '.join([guild.name or '' for guild in self.guilds])))
         print('--------')
         perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
 
@@ -197,23 +197,6 @@ class Bot(commands.Bot):
             print('Github error', e, file=sys.stderr)
 
     @background_task
-    async def background_task_spoiler_season(self) -> None:
-        'Poll Scryfall for the latest 250 cards, and add them to our db if missing'
-        latest_cards = await fetcher.scryfall_cards_async()
-        cards_not_currently_in_db: List[CardDescription] = []
-        for c in latest_cards['data']:
-            if not multiverse.valid_layout(c):
-                continue
-            name = multiverse.name_from_card_description(c)
-            try:
-                oracle.valid_name(name)
-            except InvalidDataException:
-                print(f'Planning to add {name} to database in background_task_spoiler_season.')
-                cards_not_currently_in_db.append(c)
-        if len(cards_not_currently_in_db) > 0:
-            await oracle.add_cards_and_update_async(cards_not_currently_in_db)
-
-    @background_task
     async def background_task_tournaments(self) -> None:
         tournament_channel_id = configuration.get_int('tournament_reminders_channel_id')
         if not tournament_channel_id:
@@ -257,7 +240,6 @@ class Bot(commands.Bot):
                 timer = 3600 + diff % 3600
                 if diff > 3600 * 6:
                     # The timer can afford to get off-balance by doing other background work.
-                    await self.background_task_spoiler_season()
                     await multiverse.update_bugged_cards_async()
 
             if timer < 300:
@@ -292,7 +274,7 @@ class Bot(commands.Bot):
                 await asyncio.sleep(300)
                 continue
 
-            diff = round((datetime.datetime.fromtimestamp(league['end_date'], tz=datetime.timezone.utc)
+            diff = round((dtutil.parse_rfc3339(league['end_date'])
                           - datetime.datetime.now(tz=datetime.timezone.utc))
                          / datetime.timedelta(seconds=1))
 
@@ -394,7 +376,9 @@ async def rotation_hype_message() -> Optional[str]:
     if len(newly_eliminated) > 0:
         newly_eliminated_s = list_of_most_interesting(newly_eliminated)
         s += f'\nEliminated: {newly_eliminated_s}.'
-    s += f"\nUndecided: {num_undecided}.\n<{fetcher.decksite_url('/rotation/')}>"
+    s += f'\nUndecided: {num_undecided}.\n'
+    if runs_percent >= 50:
+        s += f"<{fetcher.decksite_url('/rotation/')}>"
     return s
 
 # This does not currently actually find the most interesting just max 10 – only decksite knows about interestingness for now.

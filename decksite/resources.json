@@ -23,6 +23,7 @@
     "Card search": "https://scryfall.com/search/?q=f:pd",
     "Chat": "https://discord.gg/H6EHdHu",
     "Legal cards list": "http://pdmtgo.com/legal_cards.txt",
+    "Cardhoard loan program": "https://www.cardhoarder.com/free-loan-program-faq",
     "Magic Online guide": "https://docs.google.com/document/d/1GGvhaISyESrrvPAkauP5LWKAixh6rcH1Q2jfbfpUOoA/edit",
     "Official site": "http://pdmtgo.com/",
     "Reddit": "https://reddit.com/r/PennyDreadfulMTG/"
@@ -48,13 +49,11 @@
     "Weekly Tournaments": "https://pennydreadfulmagic.com/tournaments/"
   },
   "Video": {
-    "Dragonas77": "https://twitch.tv/dragonas77",
-    "Merawder": "https://www.twitch.tv/itstumbles",
-    "Mrs. Mulligan": "https://twitch.tv/mrs_mulligan",
-    "crazybaloth": "https://twitch.tv/the_dark_hand",
     "j_meka (Twitch)": "https://twitch.tv/j_meka",
     "j_meka (YouTube)": "https://www.youtube.com/jmeka",
-    "silasary": "https://twitch.tv/silasary",
-    "testingpennydreadful": "https://www.youtube.com/channel/UCNMDcnME6vo8YOFnW4dRskQ"
+    "厳かな守護者P": "https://www.youtube.com/channel/UCsR9_jIizAKXdPLWeeFXjUw",
+    "Tournament commentary": "https://www.twitch.tv/griffin888",
+    "Caleb Gannon": "https://www.youtube.com/channel/UCg1tU3i6z52tAZunIPhCS4w",
+    "earterms123": "https://www.twitch.tv/earterms123"
   }
 }

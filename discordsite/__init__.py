@@ -1,4 +1,4 @@
-from shared import redis
+from shared import redis_wrapper as redis
 from shared_web.flask_app import PDFlask
 
 APP = PDFlask(__name__)

@@ -19,13 +19,11 @@ View individual subdirectories for details
 
 **github_tools** are some GitHub integration utillities.
 
-**magic** knows everything about all magic cards and how to fetch that information from the internet and model it.
-
 **logsite** is the code for [logs.pennydreadfulmagic.com](https://logs.pennydreadfulmagic.com/).
 
 **logsite_migrations** are alembic database migrations for logsite.
 
-**magic** is for information about Magic: the Gathering such as cards, decklists, card images, legality, etc.
+**magic** is for information about Magic – cards, decklists, card images, legality, etc.
 
 **maintenance** is for useful scripts, usually run via cron.
 

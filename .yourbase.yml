@@ -1,0 +1,18 @@
+dependencies:
+  build:
+    - python:3.8.2
+    - node:12.18.2
+build_targets:
+  - name: default
+    commands:
+      - npm install
+      - pip install -r requirements.txt
+      - python dev.py jslint
+      - python dev.py mypy
+      - python dev.py lint
+      - python dev.py tests
+
+ci:
+  builds:
+    - name: default
+      build_target: default

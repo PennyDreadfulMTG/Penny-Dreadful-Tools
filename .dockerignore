@@ -1,0 +1,4 @@
+# .git/objects
+images/
+node_modules/
+woosh_index/

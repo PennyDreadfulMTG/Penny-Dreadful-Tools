@@ -1,3 +1,7 @@
+"""
+Helper methods for fetching resources.
+This is the High-Level equivelent of shared.fetch_tools
+"""
 import csv
 import datetime
 import json
@@ -14,7 +18,8 @@ from mypy_extensions import TypedDict
 
 from magic.abc import CardDescription, PriceDataType
 from magic.models import Deck
-from shared import configuration, dtutil, fetch_tools, redis
+from shared import configuration, dtutil, fetch_tools
+from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.fetch_tools import FetchException
 from shared.pd_exception import InvalidDataException, NotConfiguredException, TooFewItemsException
@@ -143,10 +148,6 @@ def resources() -> Dict[str, Dict[str, str]]:
     with open('decksite/resources.json') as resources_file:
         return json.load(resources_file, object_pairs_hook=OrderedDict)
 
-async def scryfall_cards_async() -> Dict[str, Any]:
-    url = 'https://api.scryfall.com/cards'
-    return await fetch_tools.fetch_json_async(url)
-
 async def scryfall_last_updated_async() -> datetime.datetime:
     d = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
     for o in d['data']:
@@ -194,7 +195,7 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str
         """If card is transform, returns first name. Otherwise, returns name.
         This is to make sure cards are later found in the database"""
         #not sure how to handle meld cards
-        if scr_card['layout'] in ['transform', 'flip']:
+        if scr_card['layout'] in ['transform', 'flip', 'adventure']:
             return scr_card['card_faces'][0]['name']
         return scr_card['name']
     result_cardnames = [get_frontside(obj) for obj in result_data]

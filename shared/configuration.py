@@ -7,7 +7,11 @@ import re
 import string
 from typing import Any, Dict, List, Match, Optional, Set, Union, overload
 
+import dotenv
+
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
+
+dotenv.load_dotenv('.')
 
 RE_SUBKEY = re.compile(r'(\w+)\.(\w+)')
 
@@ -41,6 +45,7 @@ DEFAULTS: Dict[str, Any] = {
     'google_maps_api_key': None,
     # Required if you want to share cookies between subdomains
     'flask_cookie_domain': None,
+    'flask_server_name': None,
     # Discord server id.  Used for admin verification.  Used by decksite.
     'guild_id': '207281932214599682',
     'image_dir': './images',

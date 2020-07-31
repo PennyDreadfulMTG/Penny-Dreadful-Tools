@@ -14,7 +14,8 @@ from decksite.database import db
 from magic import card, decklist, legality, rotation
 from magic.decklist import DecklistType
 from magic.models import Deck
-from shared import configuration, dtutil, fetch_tools, guarantee, redis
+from shared import configuration, dtutil, fetch_tools, guarantee
+from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException, LockNotAcquiredException

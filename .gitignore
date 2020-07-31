@@ -10,7 +10,7 @@
 .pylintrc.tmp
 .pytest_cache/
 .vs/
-.vscode
+.vscode/.ropeproject
 .web_cache/
 /*.config.json
 /.mypy_cache/

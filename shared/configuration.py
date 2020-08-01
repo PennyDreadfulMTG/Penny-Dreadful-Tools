@@ -7,11 +7,13 @@ import re
 import string
 from typing import Any, Dict, List, Match, Optional, Set, Union, overload
 
-import dotenv
-
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
-dotenv.load_dotenv('.')
+try:
+    import dotenv
+    dotenv.load_dotenv('.')
+except ImportError:
+    pass
 
 RE_SUBKEY = re.compile(r'(\w+)\.(\w+)')
 

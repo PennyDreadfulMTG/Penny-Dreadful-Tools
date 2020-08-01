@@ -58,16 +58,16 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
 - Copy config.json.example to config.json and alter the value for "token" to this value
 - Optionally take a look at configuration.py and enter any required non-default information into config.json.
 - Using the values from your config.json issue the following commands in MySQL (you don't need to create the databases):
-  - CREATE USER '<mysql_user>'@'<mysql_host>' IDENTIFIED BY '<mysql_password>';
+  - CREATE USER '<mysql_user>'@'<mysql_host>' IDENTIFIED BY '<mysql_passwd>';
   - GRANT ALL ON <decksite_database>.* TO '<mysql_user>'@'<mysql_host>';
   - GRANT ALL ON <prices_database>.* TO '<mysql_user>'@'<mysql_host>';
   - GRANT ALL ON <magic_database>.* TO '<mysql_user>'@'<mysql_host>';
   - GRANT ALL ON <logsite_database>.* TO '<mysql_user>'@'<mysql_host>';
 - Download a copy of the production decksite database (with personal information stripped):
-  - mysql -u <mysql_user> -p<mysql_password> -e "CREATE DATABASE <decksite_database>"
+  - mysql -u <mysql_user> -p<mysql_passwd> -e "CREATE DATABASE <decksite_database>"
   - curl <https://pennydreadfulmagic.com/static/dev-db.sql.gz> >/tmp/dev-db.sql.gz
   - gunzip /tmp/dev-db.sql.gz
-  - mysql -u <mysql_user> -p<mysql_password> <decksite_database> </tmp/dev-db.sql
+  - mysql -u <mysql_user> -p<mysql_passwd> <decksite_database> </tmp/dev-db.sql
 - Some very minor parts of the bot (the "modofail" command) use libopus and ffmpeg which are not in pip and must be installed in a your-OS-specific way separately. Very optional.
 - You will want to investigate the various targets in dev.py that acts as a Makefile. Some of these utilities use GitHub's commandline git-enchancer, hub: <https://github.com/github/hub>
 

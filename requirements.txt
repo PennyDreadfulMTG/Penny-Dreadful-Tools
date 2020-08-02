@@ -57,7 +57,7 @@ sqlalchemy-utils==0.36.8
 titlecase==1.1.1
 typing-extensions==3.7.4.2
 untangle==1.1.1
-vcrpy==4.0.2
+vcrpy==4.1.0
 werkzeug==1.0.1
 whatthepatch==1.0.0
 whoosh==2.7.4

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3 -X utf8
 # pylint: disable=import-outside-toplevel
 import importlib
 import pkgutil

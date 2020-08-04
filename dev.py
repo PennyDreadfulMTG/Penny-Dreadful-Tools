@@ -367,8 +367,8 @@ def find_files(needle: str = '', file_extension: str = '', exclude: Optional[Lis
 
 def check_requirements() -> None:
     files = find_files(file_extension='py')
-    subprocess.check_call(['pip-missing-reqs'] + files)
-    subprocess.check_call(['pip-extra-reqs'] + files)
+    r = subprocess.call([sys.executable, '-X', 'utf-8', '-m', 'pip_check_reqs.find_extra_reqs'] + files)
+    r = subprocess.call([sys.executable, '-X', 'utf-8', '-m', 'pip_check_reqs.find_missing_reqs'] + files) or r
 
 def swagger() -> None:
     import decksite

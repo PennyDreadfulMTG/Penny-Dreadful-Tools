@@ -7,7 +7,6 @@ pull_request_rules:
     actions:
       merge:
         method: rebase
-        strict: true
       delete_head_branch: {}
   - name: automatic merge for master when CI passes and approved
     conditions:

@@ -1,3 +1,4 @@
+aiohttp
 anytree==2.8.0
 astroid==2.4.2
 attrs==19.3.0
@@ -17,12 +18,13 @@ flask-restx==0.2.0
 flask-session==0.3.2
 Flask-SQLAlchemy==2.4.4
 ftfy==5.8
-git+https://github.com/Czaki/pip-check-reqs.git@master
+pip-check-reqs
 github_webhook==1.0.4
 google-api-python-client==1.10.0
 inflect==4.1.0
 isort==4.3.21
 jsbeautifier==1.11.0
+lxml
 markdown==3.2.2
 matplotlib==3.3.0
 munch==2.5.0

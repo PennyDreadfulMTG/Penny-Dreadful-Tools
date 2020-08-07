@@ -7,9 +7,11 @@ services:
       - "5001:5001"
     depends_on:
       - db
+      - redis
     env_file: .env
     environment:
       - mysql_host=db
+      - redis_host=redis
     volumes:
       - ./decksite:/pdm/decksite
       - ./logsite:/pdm/logsite
@@ -28,3 +30,5 @@ services:
     image: adminer
     ports:
       - 8080:8080
+  redis:
+    image: redis

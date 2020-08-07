@@ -8,6 +8,8 @@ services:
     depends_on:
       - db
     env_file: .env
+    environment:
+      - mysql_host=db
     volumes:
       - ./decksite:/pdm/decksite
       - ./logsite:/pdm/logsite
@@ -17,7 +19,8 @@ services:
       - ./shared_web:/pdm/shared_web
   db:
     build: docker_dev/mysql
-    env_file: .env
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
     ports:
       - "3306:3306"
   adminer:

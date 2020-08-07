@@ -93,7 +93,7 @@ def all_series_info() -> List[Container]:
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
             'time': info[0][1],
-            'sponsor_name': 'flac0'
+            'sponsor_name': 'Cardhoarder'
 
         }),
         Container({

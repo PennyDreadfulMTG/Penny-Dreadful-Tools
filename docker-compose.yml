@@ -19,6 +19,7 @@ services:
       - ./shared_web:/pdm/shared_web
   db:
     build: docker_dev/mysql
+    env_file: .env
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=true
     ports:

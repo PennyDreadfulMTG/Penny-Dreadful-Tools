@@ -25,7 +25,7 @@ def wait_for_db(_: Any, __: Any, value: bool) -> None:
             time.sleep(interval)
             return False
     i = 1
-    while not attempt(i) and i < 30:
+    while not attempt(i) and i < 60:
         i = i + 1
 
 @click.group()

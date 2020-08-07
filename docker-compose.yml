@@ -7,9 +7,11 @@ services:
       - "5001:5001"
     depends_on:
       - db
+      - redis
     env_file: .env
     environment:
       - mysql_host=db
+      - redis_host=redis
     volumes:
       - ./decksite:/pdm/decksite
       - ./logsite:/pdm/logsite
@@ -19,6 +21,7 @@ services:
       - ./shared_web:/pdm/shared_web
   db:
     build: docker_dev/mysql
+    env_file: .env
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=true
     ports:
@@ -27,3 +30,5 @@ services:
     image: adminer
     ports:
       - 8080:8080
+  redis:
+    image: redis

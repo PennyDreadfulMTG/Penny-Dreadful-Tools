@@ -17,6 +17,17 @@ def legal_formats(d: Container, formats_to_check: Set[str] = None, errors: Dict[
     if errors is None:
         errors = {}
     formats_to_discard = set()
+
+    # When the formatting of the deck cannot be read, the decklist reader will return an empty deck.
+    # When the text box is empty, a different error will pop up.
+    # So if the text box is not empty, but no cards are read, it must be a formatting issue.
+    if (sum(e['n'] for e in d.maindeck) + sum(e['n'] for e in d.sideboard)) <= 0:
+        for f in formats_to_check:
+            add_error(errors, f, 'Legality_General', 'Deck\'s formatting cannot be read.')
+            formats_to_discard.add(f)
+        # I returned here because I want to skip all other checks.
+        return formats_to_check - formats_to_discard
+
     if sum(e['n'] for e in d.maindeck) < 60:
         for f in formats_to_check:
             add_error(errors, f, 'Legality_General', 'You have less than 60 cards.')

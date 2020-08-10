@@ -4,6 +4,7 @@ pull_request_rules:
       - status-success=pdm/automerge
       - status-success=Travis CI - Pull Request
       - author~=(pyup-bot|dependabot)
+      - -files~=^(!?.github/workflows/)
     actions:
       merge:
         method: rebase

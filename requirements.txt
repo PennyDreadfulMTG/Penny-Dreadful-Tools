@@ -46,7 +46,7 @@ pytest==6.0.1
 pytest-asyncio==0.14.0
 pytest-cov==2.10.0
 python-dateutil==2.8.1
-python-dotenv
+python-dotenv==0.14.0
 pytz==2020.1
 redis==3.5.3
 requests==2.24.0

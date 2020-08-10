@@ -81,9 +81,8 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
         ),
         'onegame': (
             """
-            If your opponent concedes or disconnects before the match is completed PDBot will not report the match automatically.
-            If you feel enough of a match was played to count as a win, rather than your opponent losing internet or similar
-            then you can report the match manually 2-x where x is the number of games your opponent won before conceding/disconnecting.
+            If your opponent concedes or times out before the match completes, PDBot will not report automatically.
+            If you feel enough of a match was played you may manually report 2-x where x is the number of games your opponent won.
             """,
             {
                 'Report': fetcher.decksite_url('/report/')

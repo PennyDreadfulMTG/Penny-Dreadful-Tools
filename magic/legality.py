@@ -23,7 +23,7 @@ def legal_formats(d: Container, formats_to_check: Set[str] = None, errors: Dict[
     # So if the text box is not empty, but no cards are read, it must be a formatting issue.
     if (sum(e['n'] for e in d.maindeck) + sum(e['n'] for e in d.sideboard)) <= 0:
         for f in formats_to_check:
-            add_error(errors, f, 'Legality_General', 'Deck\'s formatting cannot be read.')
+            add_error(errors, f, 'Legality_General', "I'm afraid I don't recognize that decklist format. Try exporting from MTGO.")
             formats_to_discard.add(f)
         # I returned here because I want to skip all other checks.
         return formats_to_check - formats_to_discard

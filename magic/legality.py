@@ -108,6 +108,7 @@ def init() -> None:
     if FORMATS:
         return
     print('Updating Legalities…')
+    oracle.legal_cards()
 
     FORMATS.clear()
     for v in db().values('SELECT name FROM format'):

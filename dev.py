@@ -193,6 +193,7 @@ def runtests(argv: List[str], m: str, mark: bool) -> None:
     print(f'>>>> Running tests with "{argstr}"')
     # pylint: disable=import-outside-toplevel
     import pytest
+
     from magic import fetcher, multiverse, oracle
     multiverse.init()
     oracle.init()

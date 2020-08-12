@@ -46,6 +46,7 @@ def decksite() -> None:
 @cli.command()
 def profiler() -> None:
     from werkzeug.middleware.profiler import ProfilerMiddleware
+
     from decksite import main
     main.APP.config['PROFILE'] = True
     main.APP.wsgi_app = ProfilerMiddleware(main.APP.wsgi_app, restrictions=[30]) # type: ignore
@@ -99,7 +100,7 @@ def task(args: List[str]) -> None:
         if module == 'scrapers':
             module = 'decksite.scrapers'
         name = args[1]
-        from magic import oracle, multiverse
+        from magic import multiverse, oracle
         multiverse.init()
         if name != 'reprime_cache':
             oracle.init()

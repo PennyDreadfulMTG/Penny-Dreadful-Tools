@@ -71,6 +71,15 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
                 'Current League': fetcher.decksite_url('/league/current/')
             }
         ),
+        'netdecking': (
+            """
+            If you are having trouble coming up with an original decklist, feel free to start by learning from the best!
+            You can find the best tournament winning decks in the link below. Sort by stars to get decks that won tournaments or did well in tournaments and leagues.
+            """,
+            {
+                'Decks': fetcher.decksite_url('/decks/'),
+            }
+        ),
         'noshow': (
             """
             If your opponent does not join your game please @-message them on Discord and contact them on Magic Online.
@@ -95,7 +104,7 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             {}
         ),
         'prices': (
-            f"""
+            """
             The price output contains current price.
             If the price is low enough it will show season-low and season-high also.
             If the card has been {card_price.MAX_PRICE_TEXT} or less at any point this season it will also include the amount of time (as a percentage) the card has spent at {card_price.MAX_PRICE_TEXT} or below this week, month and season.

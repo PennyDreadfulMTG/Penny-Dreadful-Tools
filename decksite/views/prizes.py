@@ -45,7 +45,7 @@ def split_by_week(competitions: List[Competition]) -> List[Container]:
     while True:
         week = Container()
         week.start_date = dt
-        week.end_date = dt + datetime.timedelta(weeks=1)
+        week.end_date = dt + datetime.timedelta(weeks=1) - datetime.timedelta(seconds=1)
         week.competitions = []
         while len(competitions) > 0 and competitions[0].start_date > dt:
             week.competitions = week.competitions + [competitions.pop(0)]

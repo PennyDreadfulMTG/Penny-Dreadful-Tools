@@ -45,8 +45,8 @@ def tournament(url: str, name: str) -> int:
 
     dt, competition_series = get_dt_and_series(name, day_s)
     top_n = find_top_n(soup)
-    # Tournaments that currently advertise a "top 0" are unstarted/in progress and should be ignored for now.
-    if top_n == competition.Top.NONE:
+    if top_n == competition.Top.NONE: # Tournament is in progress.
+        logger.info("Skipping an in-progress tournament.")
         return 0
     db().begin('tournament')
     competition_id = competition.get_or_insert_competition(dt, dt, name, competition_series, url, top_n)
@@ -81,7 +81,10 @@ def get_dt(day_s: str, start_time: str, timezone: Any) -> datetime.datetime:
     return dtutil.parse(date_s, '%d %B %Y %H:%M', timezone)
 
 def find_top_n(soup: BeautifulSoup) -> competition.Top:
-    return competition.Top(int(soup.find('div', {'id': 'EventReport'}).find_all('table')[1].find_all('td')[1].string.strip().replace('TOP ', '')))
+    event_tables = soup.find('div', {'id': 'EventReport'}).find_all('table')
+    if len(event_tables) < 4: # Tournament is in progress, we don't have the Top N table yet.
+        return competition.Top.NONE
+    return competition.Top(int(event_tables[1].find_all('td')[1].string.strip().replace('TOP ', '')))
 
 def add_decks(dt: datetime.datetime, competition_id: int, final: Dict[str, int], s: str) -> int:
     # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.

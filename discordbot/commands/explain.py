@@ -57,6 +57,14 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             "The door prize is 1 tik credit with Cardhoarder, awarded to one randomly-selected player that completes the Swiss rounds but doesn't make top 8.",
             {}
         ),
+        'language': (
+            """
+            To change the language you see the site in use the language switcher in the top-left hand corner (desktop only) or follow the link below for English.
+            """,
+            {
+                'PDM in English': fetcher.decksite_url('/?locale=en')
+            }
+        ),
         'league': (
             """
             Leagues last for roughly a month. You may enter any number of times but only one deck at a time.

@@ -26,7 +26,7 @@ from shared_web import logger
 @APP.route('/')
 @cached()
 def home() -> str:
-    view = Home(ns.all_news(max_items=10), ds.latest_decks(), cs.load_cards(season_id=get_season_id()), ms.stats())
+    view = Home(ns.all_news(max_items=10), ds.latest_decks(season_id=get_season_id()), cs.load_cards(season_id=get_season_id()), ms.stats())
     return view.page()
 
 @APP.route('/export/<int:deck_id>/')

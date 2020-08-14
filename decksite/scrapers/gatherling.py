@@ -46,7 +46,7 @@ def tournament(url: str, name: str) -> int:
     dt, competition_series = get_dt_and_series(name, day_s)
     top_n = find_top_n(soup)
     if top_n == competition.Top.NONE: # Tournament is in progress.
-        logger.info("Skipping an in-progress tournament.")
+        logger.info('Skipping an in-progress tournament.')
         return 0
     db().begin('tournament')
     competition_id = competition.get_or_insert_competition(dt, dt, name, competition_series, url, top_n)

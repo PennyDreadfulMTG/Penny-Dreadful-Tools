@@ -79,6 +79,15 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
                 'Current League': fetcher.decksite_url('/league/current/')
             }
         ),
+        'netdecking': (
+            """
+            Netdecking is not only allowed, it is encouraged! Deck creators are flattered not annoyed when others play their decks!
+            You can find the best tournament winning decks in the link below. Sort by stars to find the best performing decks.
+            """,
+            {
+                'Decklists': fetcher.decksite_url('/decks/'),
+            }
+        ),
         'noshow': (
             """
             If your opponent does not join your game please @-message them on Discord and contact them on Magic Online.

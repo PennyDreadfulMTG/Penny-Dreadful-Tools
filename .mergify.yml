@@ -1,7 +1,6 @@
 pull_request_rules:
   - name: automatic merge dependency updates
     conditions:
-      - status-success=pdm/automerge
       - status-success=Travis CI - Pull Request
       - author~=(pyup-bot|dependabot)
       - -files~=^(!?.github/workflows/)

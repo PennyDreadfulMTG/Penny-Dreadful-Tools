@@ -35,7 +35,7 @@ packaging==20.4
 pillow==7.2.0
 plumbum==1.6.9
 poeditor==1.1.2
-pygithub==1.51
+pygithub==1.53
 pygtrie==2.3.3
 pyhumps==1.6.1
 pyjwt==1.7.1

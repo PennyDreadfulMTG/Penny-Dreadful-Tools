@@ -15,7 +15,9 @@ WHITELIST = [
     "bob's r us",
     'gg con',
     'happy b day adriana',
-    'basically rakdos version of burn'
+    'basically rakdos version of burn',
+    's15 is a meme',
+    'i will make combo work in season 15'
 ]
 
 ABBREVIATIONS = {

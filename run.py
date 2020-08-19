@@ -110,8 +110,8 @@ def task(args: List[str]) -> None:
             run_all_tasks(module, 'HOURLY')
         else:
             s = importlib.import_module('{module}.{name}'.format(name=name, module=module))
-            use_app_conext = getattr(s, 'REQUIRES_APP_CONTEXT', True)
-            if use_app_conext:
+            use_app_context = getattr(s, 'REQUIRES_APP_CONTEXT', True)
+            if use_app_context:
                 from decksite.main import APP
                 APP.config['SERVER_NAME'] = configuration.server_name()
                 app_context = APP.app_context()  # type: ignore
@@ -123,7 +123,7 @@ def task(args: List[str]) -> None:
             # Only when called directly, not in 'all'
             elif getattr(s, 'ad_hoc', None) is not None:
                 exitcode = s.ad_hoc()  # type: ignore
-            if use_app_conext:
+            if use_app_context:
                 app_context.__exit__(None, None, None)
             if exitcode is not None:
                 sys.exit(exitcode)
@@ -140,8 +140,8 @@ def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
     for importer, modname, ispkg in pkgutil.iter_modules(m.__path__): # type: ignore
         try:
             s = importlib.import_module('{module}.{name}'.format(name=modname, module=module))
-            use_app_conext = getattr(s, 'REQUIRES_APP_CONTEXT', True)
-            if use_app_conext and app_context is None:
+            use_app_context = getattr(s, 'REQUIRES_APP_CONTEXT', True)
+            if use_app_context and app_context is None:
                 from decksite import APP
                 APP.config['SERVER_NAME'] = configuration.server_name()
                 app_context = APP.app_context() # type: ignore

@@ -82,7 +82,7 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
         'netdecking': (
             """
             Netdecking is not only allowed, it is encouraged! Most deck creators are happy when others play their decks!
-            You can find the best tournament winning decks in the link below. Sort by ratings to find the best performing decks.
+            You can find the best tournament winning decks in the link below. Sort by records to find the best tournament winning decks!
             """,
             {
                 'Decklists': fetcher.decksite_url('/decks/'),

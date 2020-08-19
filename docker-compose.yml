@@ -19,6 +19,20 @@ services:
       - ./maintenance:/pdm/maintenance
       - ./shared:/pdm/shared
       - ./shared_web:/pdm/shared_web
+  discordbot:
+    build: .
+    command: ["python3", "run.py", "--wait-for-db", "discordbot"]
+    depends_on:
+      - db
+      - redis
+    env_file: .env
+    environment:
+      - mysql_host=db
+      - redis_host=redis
+    volumes:
+      - ./discordbot:/pdm/discordbot
+      - ./magic:/pdm/magic
+      - ./shared:/pdm/shared
   db:
     build: docker_dev/mysql
     env_file: .env

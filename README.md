@@ -45,19 +45,38 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
 
 ## Development Environment Setup
 
-- Install MariaDB 10.0+ (alternative MySQL 8.0+)
-- Install python3.6+
+- Install Docker (https://www.docker.com/get-started)
+- git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
+- docker-compose build
+- docker-compose up
+
+If you plan on running things outside of the containers (eg: dev.py or logsite):
+- Install python3.7+
 - Install pip3
 - Install npm
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - python3 dev.py build
+
+## Configuring Environment
 - Add a bot at <https://discordapp.com/developers/applications/me>
 - Add a bot user for the bot
 - Add the bot to your server with `https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot`
 - Click to reveal the token (not secret) on <https://discordapp.com/developers/applications/me>
-- Copy config.json.example to config.json and alter the value for "token" to this value
-- Optionally take a look at configuration.py and enter any required non-default information into config.json.
-- Using the values from your config.json issue the following commands in MySQL (you don't need to create the databases):
+- Copy `.env.example` to `.env` and alter the value for "token" to this value
+- Do the same for the discord client_id and client_secret
+- Optionally take a look at shared/configuration.py and enter any required non-default information into `.env`
+- You will want to investigate the various targets in dev.py that acts as a Makefile. Some of these utilities use GitHub's commandline git-enchancer, hub: <https://github.com/github/hub>
+
+
+## Manual Development Environment Setup (Non-docker instructions)
+
+- Install MariaDB 10.0+ (alternative MySQL 8.0+)
+- Install python3.7+
+- Install pip3
+- Install npm
+- git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
+- python3 dev.py build
+- Using the values from your `.env` issue the following commands in MySQL (you don't need to create the databases):
   - CREATE USER '<mysql_user>'@'<mysql_host>' IDENTIFIED BY '<mysql_passwd>';
   - GRANT ALL ON <decksite_database>.* TO '<mysql_user>'@'<mysql_host>';
   - GRANT ALL ON <prices_database>.* TO '<mysql_user>'@'<mysql_host>';
@@ -69,7 +88,7 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
   - gunzip /tmp/dev-db.sql.gz
   - mysql -u <mysql_user> -p<mysql_passwd> <decksite_database> </tmp/dev-db.sql
 - Some very minor parts of the bot (the "modofail" command) use libopus and ffmpeg which are not in pip and must be installed in a your-OS-specific way separately. Very optional.
-- You will want to investigate the various targets in dev.py that acts as a Makefile. Some of these utilities use GitHub's commandline git-enchancer, hub: <https://github.com/github/hub>
+
 
 ## Running Decksite
 

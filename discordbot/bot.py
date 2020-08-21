@@ -43,7 +43,8 @@ class Bot(commands.Bot):
         commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode()
         redis.store('discordbot:commit_id', commit_id)
 
-        super().__init__(command_prefix=commands.when_mentioned_or('!'), help_command=commands.DefaultHelpCommand(dm_help=True), case_insensitive=True, **kwargs)
+        help_command = commands.DefaultHelpCommand(dm_help=None)
+        super().__init__(command_prefix=commands.when_mentioned_or('!'), help_command=help_command, case_insensitive=True, **kwargs)
         self.voice = None
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:

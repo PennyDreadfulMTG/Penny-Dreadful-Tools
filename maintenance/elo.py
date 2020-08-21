@@ -2,7 +2,7 @@ from typing import Dict
 
 from decksite.data import elo, person
 from decksite.database import db
-from shared_web import logger
+from shared import logger
 
 PEOPLE: Dict[str, int] = {}
 

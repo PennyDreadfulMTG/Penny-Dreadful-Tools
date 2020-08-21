@@ -4,7 +4,7 @@ from flask import Response
 from sqlalchemy import func, text
 
 from shared import dtutil
-from shared_web import logger
+from shared import logger
 
 from . import APP, db
 from .api import return_json

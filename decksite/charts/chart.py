@@ -9,7 +9,7 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from shared_web import logger
+from shared import logger
 from decksite.data import deck
 from shared import configuration
 from shared.pd_exception import DoesNotExistException, OperationalException

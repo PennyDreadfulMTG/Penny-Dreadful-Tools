@@ -8,7 +8,7 @@ from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import retry_after_calling
 from shared.pd_exception import AlreadyExistsException, DoesNotExistException
-from shared_web import logger
+from shared import logger
 
 
 def load_person_by_id(person_id: int, season_id: Optional[int] = None) -> Person:

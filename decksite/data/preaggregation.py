@@ -1,6 +1,6 @@
 from decksite.database import db
 from shared.pd_exception import DatabaseException
-from shared_web import logger
+from shared import logger
 
 
 def preaggregate(table: str, sql: str) -> None:

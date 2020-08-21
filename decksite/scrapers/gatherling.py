@@ -11,7 +11,7 @@ from decksite.database import db
 from magic import decklist
 from shared import dtutil, fetch_tools
 from shared.pd_exception import InvalidDataException
-from shared_web import logger
+from shared import logger
 
 WINNER = '1st'
 SECOND = '2nd'

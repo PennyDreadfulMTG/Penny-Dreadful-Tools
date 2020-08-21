@@ -5,7 +5,7 @@ from decksite.database import db
 from magic.models import Deck
 from shared.container import Container
 from shared.decorators import retry_after_calling
-from shared_web import logger
+from shared import logger
 
 IGNORE: List[str] = ['Commander', 'Unclassified']
 

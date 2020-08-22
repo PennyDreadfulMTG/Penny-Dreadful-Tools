@@ -8,7 +8,7 @@ from magic import decklist, legality
 from shared import dtutil, fetch_tools
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
-from shared_web import logger
+from shared import logger
 
 
 def scrape(limit: int = 1) -> None:

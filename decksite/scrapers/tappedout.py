@@ -9,7 +9,7 @@ from decksite.data import deck
 from magic import decklist, legality
 from shared import configuration, fetch_tools
 from shared.pd_exception import InvalidDataException
-from shared_web import logger
+from shared import logger
 
 RawDeckType = deck.RawDeckDescription
 

@@ -16,7 +16,7 @@ from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
-from shared_web import logger
+from shared import logger
 
 
 def latest_decks(season_id: Optional[Union[str, int]] = None,) -> List[Deck]:

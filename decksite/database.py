@@ -5,7 +5,7 @@ from flask import g, has_request_context, request
 from shared import configuration
 from shared.container import Container
 from shared.database import Database, get_database
-from shared_web import logger
+from shared import logger
 
 
 def db() -> Database:

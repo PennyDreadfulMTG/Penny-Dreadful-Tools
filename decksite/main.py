@@ -20,7 +20,7 @@ from magic import card as mc
 from magic import image_fetcher, oracle
 from shared import dtutil, perf
 from shared.pd_exception import TooFewItemsException
-from shared_web import logger
+from shared import logger
 
 
 @APP.route('/')

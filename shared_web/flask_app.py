@@ -10,7 +10,7 @@ from flask_restx import Api
 from github.GithubException import GithubException
 from werkzeug import exceptions, wrappers
 
-from shared import configuration, repo, logger
+from shared import configuration, logger, repo
 from shared.pd_exception import DoesNotExistException
 
 from . import api, localization, oauth

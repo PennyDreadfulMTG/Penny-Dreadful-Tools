@@ -1,10 +1,10 @@
 import asyncio
 import datetime
+import logging
 import re
 import subprocess
 import sys
 from typing import Any, Callable, Dict, List, Optional
-import logging
 
 import discord
 from discord import Guild, Member, Role, VoiceState

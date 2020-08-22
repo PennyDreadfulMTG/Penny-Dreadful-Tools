@@ -1,7 +1,7 @@
 from decksite.data import person
 from decksite.database import db
-from shared.container import Container
 from shared import logger
+from shared.container import Container
 
 from . import elo
 

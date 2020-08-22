@@ -9,9 +9,8 @@ from bs4 import BeautifulSoup, ResultSet
 from decksite.data import archetype, competition, deck, match, person
 from decksite.database import db
 from magic import decklist
-from shared import dtutil, fetch_tools
+from shared import dtutil, fetch_tools, logger
 from shared.pd_exception import InvalidDataException
-from shared import logger
 
 WINNER = '1st'
 SECOND = '2nd'

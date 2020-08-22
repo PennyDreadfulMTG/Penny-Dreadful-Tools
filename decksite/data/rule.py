@@ -3,9 +3,9 @@ from typing import Dict, List, Tuple
 from decksite.data import deck, preaggregation
 from decksite.database import db
 from magic.models import Deck
+from shared import logger
 from shared.container import Container
 from shared.decorators import retry_after_calling
-from shared import logger
 
 IGNORE: List[str] = ['Commander', 'Unclassified']
 

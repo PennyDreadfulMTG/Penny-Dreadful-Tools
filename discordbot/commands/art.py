@@ -9,7 +9,7 @@ from magic.models import Card
 
 @commands.command(aliases=['a'])
 async def art(ctx: MtgContext, *, c: Card) -> None:
-    """Art (only) of the most recent printing of a card."""
+    """Display the artwork of the requested card."""
     if c is not None:
         file_path = re.sub('.jpg$', '.art_crop.jpg', image_fetcher.determine_filepath([c]))
         success = await image_fetcher.download_scryfall_card_image(c, file_path, version='art_crop')

@@ -5,7 +5,7 @@ from magic import multiverse
 from shared import redis_wrapper as redis
 
 
-@commands.check(commands.is_owner())
+@commands.is_owner()
 @commands.command()
 async def rotate(ctx: MtgContext) -> None:
     """Perform all necessary post-rotation tasks."""

@@ -38,7 +38,8 @@ def rotation_redis_store() -> Tuple[int, int, List[Card]]:
         if not os.path.isdir(os.path.expanduser(configuration.get_str('legality_dir'))):
             print('WARNING: Could not find legality_dir.')
         return (0, 0, [])
-    latest_list = open(fs[-1], 'r').read().splitlines()
+    with open(fs[-1], 'r') as f:
+        latest_list = f.read().splitlines()
     for filename in fs:
         for line in get_file_contents(filename):
             line = text.sanitize(line)

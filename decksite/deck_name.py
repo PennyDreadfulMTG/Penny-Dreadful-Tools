@@ -144,14 +144,17 @@ def normalize_colors(name: str, colors: List[str]) -> str:
     patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*']
     patterns += ['(White|Blue|Black|Red|Green)([/-](White|Blue|Black|Red|Green))+']
     patterns += list(COLOR_COMBINATIONS.keys())
+
     unique_color_words: OrderedDict = OrderedDict()
     for pattern in patterns:
         regex = regex_pattern(pattern)
         found = re.search(regex, name, flags=re.IGNORECASE)
         if found:
             unique_color_words[found.group().strip()] = True
+
     if len(unique_color_words) == 0:
         return name
+
     color_words = list(unique_color_words.keys())
     canonical_colors = canonicalize_colors(color_words)
     true_color = name_from_colors(canonical_colors)
@@ -159,6 +162,7 @@ def normalize_colors(name: str, colors: List[str]) -> str:
     pattern = r'(^| )' + word + '( |$)'
     name = re.sub(pattern, ' ' + true_color + ' ', name).strip()
     for color_word in color_words[1:]:
+        print(color_word, file=sys.stderr)
         name = name.replace(color_word, '')
     if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color) and not [True for abbrev in ABBREVIATIONS.values() if name.lower().startswith(abbrev)]:
         name = 'mono {name}'.format(name=name)

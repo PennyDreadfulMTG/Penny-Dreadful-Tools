@@ -284,7 +284,7 @@ class BooleanAchievement(Achievement):
     # No point showing a leaderboard for these on single-season page because no-one can have more than 1
     def leaderboard(self, season_id: Optional[int] = None) -> Optional[List[Container]]:
         if season_id == 0:
-            return super(BooleanAchievement, self).leaderboard(season_id=season_id)
+            return super().leaderboard(season_id=season_id)
         return None
 
     def leaderboard_heading(self) -> str:

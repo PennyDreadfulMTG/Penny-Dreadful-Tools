@@ -32,7 +32,7 @@ def scrape(limit: int = 1) -> None:
             except InvalidDataException as e:
                 msg = f'Got {e} trying to find a created_date in {d}, {raw_deck}'
                 logger.error(msg)
-                raise InvalidDataException(msg)
+                raise InvalidDataException(msg) from e
             time.sleep(5)
             d.cards = scrape_decklist(d)
             err = vivify_or_error(d)
@@ -57,7 +57,7 @@ def parse_created_date(soup: BeautifulSoup) -> int:
     try:
         date_s = re.findall(r'([A-Z][a-z][a-z] \d+, \d\d\d\d)', description)[0]
     except IndexError as e:
-        raise InvalidDataException(f'Unable to find a date in {description} because of {e}')
+        raise InvalidDataException(f'Unable to find a date in {description} because of {e}') from e
     return dtutil.parse_to_ts(date_s, '%b %d, %Y', dtutil.MTGGOLDFISH_TZ)
 
 def scrape_decklist(d: Container) -> decklist.DecklistType:
@@ -91,7 +91,7 @@ def scrape_one(url: str) -> Container:
     try:
         d.cards = scrape_decklist(d)
     except InvalidDataException as e:
-        raise InvalidDataException(f'Unable to scrape decklist for {d} because of {e}')
+        raise InvalidDataException(f'Unable to scrape decklist for {d} because of {e}') from e
     error = vivify_or_error(d)
     if error:
         raise InvalidDataException(error)

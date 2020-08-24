@@ -52,8 +52,8 @@ def season_query(season_id: Optional[Union[str, int]], column_name: str = 'seaso
         return 'TRUE'
     try:
         return '{column_name} = {season_id}'.format(column_name=column_name, season_id=int(season_id))
-    except ValueError:
-        raise InvalidArgumentException('No season with id `{season_id}`'.format(season_id=season_id))
+    except ValueError as e:
+        raise InvalidArgumentException('No season with id `{season_id}`'.format(season_id=season_id)) from e
 
 def season_join() -> str:
     return """

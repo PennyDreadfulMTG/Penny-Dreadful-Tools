@@ -12,5 +12,5 @@ class Container(Munch):
         except KeyError:
             try:
                 return object.__getattribute__(self, k)
-            except AttributeError:
-                raise AttributeError(k)
+            except AttributeError as e:
+                raise AttributeError(k) from e

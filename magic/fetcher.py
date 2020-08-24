@@ -17,7 +17,6 @@ import pytz
 from mypy_extensions import TypedDict
 
 from magic.abc import CardDescription, PriceDataType
-from magic.models import Deck
 from shared import configuration, dtutil, fetch_tools
 from shared import redis_wrapper as redis
 from shared.container import Container
@@ -91,8 +90,8 @@ def site_url(protocol: str, hostname: str, port: int, path: str) -> str:
 def downtimes() -> str:
     return fetch_tools.fetch('https://pennydreadfulmtg.github.io/modo-bugs/downtimes.txt')
 
-def gatherling_deck_comments(d: Deck) -> List[str]:
-    url = f'http://gatherling.com/deck.php?mode=view&id={d.identifier}'
+def gatherling_deck_comments(deck_id: str) -> List[str]:
+    url = f'http://gatherling.com/deck.php?mode=view&id={deck_id}'
     s = fetch_tools.fetch(url)
     result = re.search('COMMENTS</td></tr><tr><td>(.*)</td></tr></table></div><div class="clear"></div><center>', s, re.MULTILINE | re.DOTALL)
     if result:

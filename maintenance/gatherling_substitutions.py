@@ -18,7 +18,7 @@ def ad_hoc() -> None:
     print(f'Found {len(decks)} decks.')
     searcher = WhooshSearcher()
     for d in decks:
-        comments = fetcher.gatherling_deck_comments(d)
+        comments = fetcher.gatherling_deck_comments(d.identifier)
         for c in comments:
             if '=' not in c:
                 print(f'Ignoring {c}')

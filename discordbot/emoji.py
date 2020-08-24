@@ -3,7 +3,7 @@ from typing import Optional
 
 from discord import Client, Emoji
 
-from magic import oracle, rotation
+from magic import oracle, rotation, rotation_info
 from magic.models import Card
 from shared import redis_wrapper as redis
 
@@ -61,7 +61,7 @@ def get_future_legality(c: Card, legal: bool) -> str:
     for status, symbol in {'undecided':':question:', 'legal':'<:rotating_in:702545611597021204>', 'notlegal':out_emoji}.items():
         if redis.sismember(f'decksite:rotation:summary:{status}', c.name):
             return symbol
-    if rotation.read_rotation_files()[0] <= (rotation.TOTAL_RUNS / 2):
+    if rotation_info.read_rotation_files()[0] <= (rotation_info.TOTAL_RUNS / 2):
         return ':question:'
     if legal:
         return out_emoji

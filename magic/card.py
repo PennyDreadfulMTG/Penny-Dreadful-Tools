@@ -281,3 +281,27 @@ def canonicalize(name: str) -> str:
 
 def to_mtgo_format(s: str) -> str:
     return s.replace(' // ', '/').replace('\n', '\r\n')
+
+def layouts() -> Dict[str, bool]:
+    return {
+        'adventure': True,
+        'art_series': False,
+        'augment': False,
+        'double_faced_token': False,
+        'emblem': False,
+        'flip': True,
+        'host': False,
+        'leveler': True,
+        'meld': True,
+        'normal': True,
+        'planar': False,
+        'saga': True,
+        'scheme': False,
+        'split': True,
+        'token': False,
+        'transform': True,
+        'vanguard': False
+    }
+
+def playable_layouts() -> List[str]:
+    return [k for k, v in layouts().items() if v]

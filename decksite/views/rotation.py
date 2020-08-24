@@ -5,7 +5,7 @@ from flask import session
 
 from decksite.data import card
 from decksite.view import View
-from magic import rotation
+from magic import rotation, rotation_info
 from magic.models import Card
 from shared import configuration, dtutil
 
@@ -24,7 +24,7 @@ class Rotation(View):
         if in_rotation:
             self.in_rotation = in_rotation
             self.show_interestingness_filter = True
-            self.runs, self.runs_percent, self.cards = rotation.read_rotation_files()
+            self.runs, self.runs_percent, self.cards = rotation_info.read_rotation_files()
             # Now add interestingness to the cards, which only decksite knows not magic.rotation.
             playability = card.playability()
             c: Card

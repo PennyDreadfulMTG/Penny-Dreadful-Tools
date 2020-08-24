@@ -18,7 +18,7 @@ from github.GithubException import GithubException
 
 import discordbot.commands
 from discordbot import command
-from magic import fetcher, multiverse, oracle, rotation, tournaments
+from magic import fetcher, multiverse, oracle, rotation, rotation_info, tournaments
 from magic.models import Card
 from shared import configuration, dtutil, fetch_tools, perf
 from shared import redis_wrapper as redis
@@ -310,7 +310,7 @@ class Bot(commands.Bot):
             return
         while self.is_ready():
             until_rotation = rotation.next_rotation() - dtutil.now()
-            last_run_time = rotation.last_run_time()
+            last_run_time = rotation_info.last_run_time()
             if until_rotation < datetime.timedelta(7) and last_run_time is not None:
                 if dtutil.now() - last_run_time < datetime.timedelta(minutes=5):
                     hype = await rotation_hype_message()
@@ -353,15 +353,15 @@ async def get_role(guild: Guild, rolename: str, create: bool = False) -> Optiona
     return None
 
 async def rotation_hype_message() -> Optional[str]:
-    runs, runs_percent, cs = rotation.read_rotation_files()
-    runs_remaining = rotation.TOTAL_RUNS - runs
-    newly_legal = [c for c in cs if c.hit_in_last_run and c.hits == rotation.TOTAL_RUNS / 2]
+    runs, runs_percent, cs = rotation_info.read_rotation_files()
+    runs_remaining = rotation_info.TOTAL_RUNS - runs
+    newly_legal = [c for c in cs if c.hit_in_last_run and c.hits == rotation_info.TOTAL_RUNS / 2]
     newly_eliminated = [c for c in cs if not c.hit_in_last_run and c.status == 'Not Legal' and c.hits_needed == runs_remaining + 1]
     newly_hit = [c for c in cs if c.hit_in_last_run and c.hits == 1]
     num_undecided = len([c for c in cs if c.status == 'Undecided'])
     num_legal_cards = len([c for c in cs if c.status == 'Legal'])
     s = f'Rotation run number {runs} completed. Rotation is {runs_percent}% complete. {num_legal_cards} cards confirmed.'
-    if not newly_hit + newly_legal + newly_eliminated and runs != 1 and runs % 5 != 0 and runs < rotation.TOTAL_RUNS / 2:
+    if not newly_hit + newly_legal + newly_eliminated and runs != 1 and runs % 5 != 0 and runs < rotation_info.TOTAL_RUNS / 2:
         return None # Sometimes there's nothing to report
     if len(newly_hit) > 0 and runs_remaining > runs:
         newly_hit_s = list_of_most_interesting(newly_hit)

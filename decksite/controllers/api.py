@@ -16,7 +16,7 @@ from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
 from decksite.prepare import prepare_decks
 from decksite.views import DeckEmbed
-from magic import oracle, rotation, tournaments
+from magic import oracle, rotation, rotation_info, tournaments
 from magic.decklist import parse_line
 from magic.models import Deck
 from shared import configuration, dtutil, guarantee
@@ -245,8 +245,8 @@ def rotation_api() -> Response:
 
 @APP.route('/api/rotation/clear_cache')
 def rotation_clear_cache() -> Response:
-    rotation.clear_redis()
-    rotation.rotation_redis_store()
+    rotation_info.clear_redis()
+    rotation_info.rotation_redis_store()
     return return_json({'success':True})
 
 @APP.route('/api/cards')

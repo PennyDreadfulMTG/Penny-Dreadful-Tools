@@ -51,8 +51,8 @@ def run_dangerously() -> None:
     try:
         cmd = sys.argv[1].lower()
         args = sys.argv[2:]
-    except IndexError:
-        raise InvalidArgumentException('Please supply an argument.')
+    except IndexError as e:
+        raise InvalidArgumentException('Please supply an argument.') from e
     if cmd == 'unit':
         unit(args)
     elif cmd == 'functional':

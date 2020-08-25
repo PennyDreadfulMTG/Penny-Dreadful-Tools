@@ -9,7 +9,7 @@ from typing import Dict, List, Set
 
 import ftfy
 
-from magic import card_price, fetcher, rotation
+from magic import card_price, fetcher, rotation, rotation_info
 from price_grabber.parser import PriceListType, parse_cardhoarder_prices, parse_mtgotraders_prices
 from shared import configuration, dtutil, fetch_tools
 from shared import redis_wrapper as redis
@@ -19,10 +19,10 @@ TIME_UNTIL_ROTATION = rotation.next_rotation() - dtutil.now()
 BANNED_CARDS = ['Cleanse', 'Crusade'] # These cards are banned, even in Freeform
 
 def run() -> None:
-    files = rotation.files()
+    files = rotation_info.files()
     n = len(files)
     time_until = TIME_UNTIL_ROTATION - datetime.timedelta(weeks=1)
-    if n >= rotation.TOTAL_RUNS:
+    if n >= rotation_info.TOTAL_RUNS:
         print('It is the moment of discovery, the triumph of the mind, and the end of this rotation.')
         return
 
@@ -32,7 +32,7 @@ def run() -> None:
         return
 
     if n == 0:
-        rotation.clear_redis(clear_files=True)
+        rotation_info.clear_redis(clear_files=True)
     #else:
     #    rotation.clear_redis()
 
@@ -47,7 +47,7 @@ def run() -> None:
         all_prices['mtgotraders'] = parse_mtgotraders_prices(s)
 
     run_number = process(all_prices)
-    if run_number == rotation.TOTAL_RUNS:
+    if run_number == rotation_info.TOTAL_RUNS:
         make_final_list()
 
     try:
@@ -74,7 +74,7 @@ def process(all_prices: Dict[str, PriceListType]) -> int:
 
 
 def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignored: Set[str]) -> int:
-    files = rotation.files()
+    files = rotation_info.files()
     n = len(files) + 1
     path = os.path.join(configuration.get_str('legality_dir'), 'Run_{n}.txt').format(n=str(n).zfill(3))
     path = os.path.expanduser(path)
@@ -92,7 +92,7 @@ def make_final_list() -> None:
     planes = fetch_tools.fetch_json('https://api.scryfall.com/cards/search?q=t:plane%20or%20t:phenomenon')['data']
     bad_names = [p['name'] for p in planes]
     bad_names.extend(BANNED_CARDS)
-    files = rotation.files()
+    files = rotation_info.files()
     lines: List[str] = []
     for line in fileinput.input(files):
         line = text.sanitize(line)
@@ -103,7 +103,7 @@ def make_final_list() -> None:
 
     passed: List[str] = []
     for name, count in scores:
-        if count >= rotation.TOTAL_RUNS / 2:
+        if count >= rotation_info.TOTAL_RUNS / 2:
             passed.append(name)
     final = list(passed)
     final.sort()

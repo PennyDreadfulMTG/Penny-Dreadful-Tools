@@ -9,9 +9,8 @@ from bs4 import BeautifulSoup, ResultSet
 from decksite.data import archetype, competition, deck, match, person
 from decksite.database import db
 from magic import decklist
-from shared import dtutil, fetch_tools
+from shared import dtutil, fetch_tools, logger
 from shared.pd_exception import InvalidDataException
-from shared import logger
 
 WINNER = '1st'
 SECOND = '2nd'
@@ -255,8 +254,8 @@ def add_ids(matches: MatchListType, ds: List[deck.Deck]) -> None:
     def lookup(gatherling_id: int) -> deck.Deck:
         try:
             return decks_by_identifier[gatherling_id]
-        except KeyError:
-            raise InvalidDataException("Unable to find deck with gatherling id '{0}'".format(gatherling_id))
+        except KeyError as e:
+            raise InvalidDataException("Unable to find deck with gatherling id '{0}'".format(gatherling_id)) from e
     for m in matches:
         m['left_id'] = lookup(m['left_identifier']).id
         m['right_id'] = lookup(m['right_identifier']).id if m['right_identifier'] else None

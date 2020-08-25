@@ -2,10 +2,9 @@ import os
 
 from flask import g, has_request_context, request
 
-from shared import configuration
+from shared import configuration, logger
 from shared.container import Container
 from shared.database import Database, get_database
-from shared import logger
 
 
 def db() -> Database:

@@ -18,9 +18,8 @@ from decksite.database import db
 from decksite.views import Home
 from magic import card as mc
 from magic import image_fetcher, oracle
-from shared import dtutil, perf
+from shared import dtutil, logger, perf
 from shared.pd_exception import TooFewItemsException
-from shared import logger
 
 
 @APP.route('/')

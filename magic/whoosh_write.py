@@ -2,9 +2,9 @@ import os
 from typing import List
 
 from whoosh.fields import NUMERIC, STORED, TEXT, Schema
-from whoosh.index import Index, create_in, open_dir
+from whoosh.index import FileIndex, create_in, open_dir
 
-from magic import multiverse
+from magic import card as cs
 from magic.models import Card
 from magic.whoosh_constants import WhooshConstants
 
@@ -28,11 +28,11 @@ def ensure_dir_exists(directory: str) -> None:
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-def update_index(index: Index, cards: List[Card]) -> None:
+def update_index(index: FileIndex, cards: List[Card]) -> None:
     writer = index.writer()
     # We exclude tokens here because they can have the exact same name as cards.
     # We exclude emblems here to stop them showing up as
-    cards = [c for c in cards if c.layout in multiverse.playable_layouts()]
+    cards = [c for c in cards if c.layout in cs.playable_layouts()]
     for card in cards:
         names = card.names
         if card.name not in names:

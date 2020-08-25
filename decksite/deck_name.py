@@ -94,8 +94,8 @@ def normalize(d: Deck) -> str:
         name = ucase_trailing_roman_numerals(name)
         name = titlecase.titlecase(name)
         return correct_case_of_color_names(name)
-    except ValueError:
-        raise InvalidDataException('Failed to normalize {d}'.format(d=repr(d)))
+    except ValueError as e:
+        raise InvalidDataException('Failed to normalize {d}'.format(d=repr(d))) from e
 
 def file_name(d: Deck) -> str:
     safe_name = normalize(d).replace(' ', '-')

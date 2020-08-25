@@ -17,7 +17,6 @@ import pytz
 from mypy_extensions import TypedDict
 
 from magic.abc import CardDescription, PriceDataType
-from magic.models import Deck
 from shared import configuration, dtutil, fetch_tools
 from shared import redis_wrapper as redis
 from shared.container import Container
@@ -33,12 +32,12 @@ async def all_cards_async() -> List[CardDescription]:
     try:
         f = open('scryfall-default-cards.json')
         return json.load(f)
-    except FileNotFoundError:
+    except FileNotFoundError as c:
         endpoints = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
         for e in endpoints['data']:
             if e['type'] == 'default_cards':
                 return await fetch_tools.fetch_json_async(e['download_uri'], character_encoding='utf-8')
-        raise FetchException('Unable to find Default Cards')
+        raise FetchException('Unable to find Default Cards') from c
 
 async def all_sets_async() -> List[Dict[str, Any]]:
     try:
@@ -91,8 +90,8 @@ def site_url(protocol: str, hostname: str, port: int, path: str) -> str:
 def downtimes() -> str:
     return fetch_tools.fetch('https://pennydreadfulmtg.github.io/modo-bugs/downtimes.txt')
 
-def gatherling_deck_comments(d: Deck) -> List[str]:
-    url = f'http://gatherling.com/deck.php?mode=view&id={d.identifier}'
+def gatherling_deck_comments(deck_id: str) -> List[str]:
+    url = f'http://gatherling.com/deck.php?mode=view&id={deck_id}'
     s = fetch_tools.fetch(url)
     result = re.search('COMMENTS</td></tr><tr><td>(.*)</td></tr></table></div><div class="clear"></div><center>', s, re.MULTILINE | re.DOTALL)
     if result:
@@ -237,7 +236,7 @@ def times_from_location(q: str, twentyfour: bool) -> Dict[str, List[str]]:
     try:
         location = info['results'][0]['geometry']['location']
     except IndexError as e:
-        raise TooFewItemsException(e)
+        raise TooFewItemsException(e) from e
     url = 'https://maps.googleapis.com/maps/api/timezone/json?location={lat},{lng}&timestamp={timestamp}&key={api_key}&sensor=false'.format(lat=fetch_tools.escape(str(location['lat'])), lng=fetch_tools.escape(str(location['lng'])), timestamp=fetch_tools.escape(str(dtutil.dt2ts(dtutil.now()))), api_key=api_key)
     timezone_info = fetch_tools.fetch_json(url)
     if 'error_message' in timezone_info:
@@ -247,7 +246,7 @@ def times_from_location(q: str, twentyfour: bool) -> Dict[str, List[str]]:
     try:
         timezone = dtutil.timezone(timezone_info['timeZoneId'])
     except KeyError as e:
-        raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}')
+        raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}') from e
     return {current_time(timezone, twentyfour): [info['results'][0]['formatted_address']]}
 
 WISDateType = TypedDict('WISDateType', {

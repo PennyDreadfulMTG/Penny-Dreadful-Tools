@@ -170,7 +170,7 @@ def if_todays_prices(out: bool = True) -> List[Card]:
         AND c.name in (SELECT name FROM `{prices_database}`.cache WHERE week {compare} 0.5)
         AND c.layout IN ({layouts})
     """.format(not_clause=not_clause, format=current_format, prices_database=configuration.get('prices_database'),
-               compare=compare, layouts=', '.join([sqlescape(k) for k, v in multiverse.layouts().items() if v]))
+               compare=compare, layouts=', '.join([sqlescape(k) for k, v in card.layouts().items() if v]))
 
     rs = db().select(multiverse.cached_base_query(where=where))
     cards = [Card(r) for r in rs]

@@ -41,30 +41,6 @@ async def init_async() -> None:
     except fetcher.FetchException:
         print('Unable to connect to Scryfall.')
 
-def layouts() -> Dict[str, bool]:
-    return {
-        'adventure': True,
-        'art_series': False,
-        'augment': False,
-        'double_faced_token': False,
-        'emblem': False,
-        'flip': True,
-        'host': False,
-        'leveler': True,
-        'meld': True,
-        'normal': True,
-        'planar': False,
-        'saga': True,
-        'scheme': False,
-        'split': True,
-        'token': False,
-        'transform': True,
-        'vanguard': False
-    }
-
-def playable_layouts() -> List[str]:
-    return [k for k, v in layouts().items() if v]
-
 def cached_base_query(where: str = '(1 = 1)') -> str:
     return 'SELECT * FROM _cache_card AS c WHERE {where}'.format(where=where)
 
@@ -347,7 +323,7 @@ def is_meld_result(p: CardDescription) -> bool:
     meld_result_name = next(part['name'] for part in all_parts if part['component'] == 'meld_result')
     return p['name'] == meld_result_name
 
-def load_sets() -> dict:
+def load_sets() -> Dict[str, int]:
     return {s['code']: s['id'] for s in db().select('SELECT id, code FROM `set`')}
 
 def insert_set(s: Any) -> int:
@@ -360,7 +336,7 @@ def insert_set(s: Any) -> int:
     db().execute(sql, values)
     return db().last_insert_rowid()
 
-async def update_sets_async() -> dict:
+async def update_sets_async() -> Dict[str, int]:
     sets = load_sets()
     for s in await fetcher.all_sets_async():
         if s['code'] not in sets.keys():

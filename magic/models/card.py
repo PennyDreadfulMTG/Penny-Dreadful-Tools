@@ -38,6 +38,9 @@ class Card(Container):
             return self.name == other.name
         return False
 
+class Printing(Container):
+    pass
+
 def determine_value(k: str, params: Dict[str, Any]) -> Any:
     v = params[k]
     if k in ('names', 'mana_cost'):

@@ -21,7 +21,8 @@ WHITELIST = [
 ]
 
 WHITELIST_PATTERNS = [
-    '(BRR+)'
+    'BRR+',
+    'UWU'
 ]
 
 ABBREVIATIONS = {

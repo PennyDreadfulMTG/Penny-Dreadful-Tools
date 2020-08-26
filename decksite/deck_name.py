@@ -1,6 +1,6 @@
 import re
 from collections import OrderedDict
-from typing import List, Optional, Set
+from typing import List, Optional, Set, Any
 
 import titlecase
 from better_profanity import profanity
@@ -8,6 +8,8 @@ from better_profanity import profanity
 from magic import mana
 from magic.models import Deck
 from shared.pd_exception import InvalidDataException
+
+import sys
 
 WHITELIST = [
     '#justnayathings',
@@ -18,6 +20,10 @@ WHITELIST = [
     'basically rakdos version of burn',
     's15 is a meme',
     'i will make combo work in season 15'
+]
+
+WHITELIST_PATTERNS = [
+    '(BRR+)'
 ]
 
 ABBREVIATIONS = {
@@ -146,11 +152,20 @@ def normalize_colors(name: str, colors: List[str]) -> str:
     patterns += list(COLOR_COMBINATIONS.keys())
 
     unique_color_words: OrderedDict = OrderedDict()
+    print(unique_color_words)
+
     for pattern in patterns:
         regex = regex_pattern(pattern)
-        found = re.search(regex, name, flags=re.IGNORECASE)
-        if found:
-            unique_color_words[found.group().strip()] = True
+        # print("Type of regex is ")
+        # print(type(regex))
+        found_text = find_regex_respect_wl(regex, name)
+        # print("Type of found_text is ")
+        # print(type(found_text))
+
+        if found_text:
+            unique_color_words[found_text] = True
+
+    print(unique_color_words)
 
     if len(unique_color_words) == 0:
         return name
@@ -167,6 +182,26 @@ def normalize_colors(name: str, colors: List[str]) -> str:
     if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color) and not [True for abbrev in ABBREVIATIONS.values() if name.lower().startswith(abbrev)]:
         name = 'mono {name}'.format(name=name)
     return name.strip()
+
+def find_regex_respect_wl(regex: str, s: str) -> str:
+    found = re.search(regex, s, flags=re.IGNORECASE)
+    if found:
+        print("Type of found is ")
+        print(type(found))
+        print(found)
+        print("found.group()")
+        print(found.group())
+        print("end")
+        print(found.end())
+        print(s[found.end()-1:]) # This is what we fucking need.
+
+        found_text = found.group().strip()
+        for w in WHITELIST_PATTERNS:
+            if re.search(w, found_text, flags=re.IGNORECASE):
+                return find_regex_respect_wl(regex, s[found.end()-1:])
+
+        return found.group().strip()
+    return ""
 
 def canonicalize_colors(colors: List[str]) -> Set[str]:
     color_words: Set[str] = set()

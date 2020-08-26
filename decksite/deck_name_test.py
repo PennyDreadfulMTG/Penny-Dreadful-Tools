@@ -132,3 +132,4 @@ def test_canonicalize_colors() -> None:
 def test_normalize_colors() -> None:
     assert deck_name.normalize_colors('Braids B', ['B']) == 'Braids Black'
     assert deck_name.normalize_colors('Haha Zombie Army Goes Brrr', ['B', 'R']) == 'Haha Zombie Army Goes Brrr'
+    assert deck_name.normalize_colors('Haha Zombie Army Goes Brrr BR', ['B', 'R']) == 'Haha Zombie Army Goes Brrr Rakdos'

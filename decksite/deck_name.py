@@ -9,8 +9,6 @@ from magic import mana
 from magic.models import Deck
 from shared.pd_exception import InvalidDataException
 
-import sys
-
 WHITELIST = [
     '#justnayathings',
     'blue burn', # deck_id = 24089
@@ -151,25 +149,16 @@ def normalize_colors(name: str, colors: List[str]) -> str:
     patterns += ['(White|Blue|Black|Red|Green)([/-](White|Blue|Black|Red|Green))+']
     patterns += list(COLOR_COMBINATIONS.keys())
 
+    # Find unique color words and add them into a dict.
     unique_color_words: OrderedDict = OrderedDict()
-    print(unique_color_words)
-
     for pattern in patterns:
         regex = regex_pattern(pattern)
-        # print("Type of regex is ")
-        # print(type(regex))
         found_text = find_regex_respect_wl(regex, name)
-        # print("Type of found_text is ")
-        # print(type(found_text))
-
         if found_text:
             unique_color_words[found_text] = True
-
-    print(unique_color_words)
-
+    # If no color words are found then we are done.
     if len(unique_color_words) == 0:
         return name
-
     color_words = list(unique_color_words.keys())
     canonical_colors = canonicalize_colors(color_words)
     true_color = name_from_colors(canonical_colors)
@@ -177,7 +166,6 @@ def normalize_colors(name: str, colors: List[str]) -> str:
     pattern = r'(^| )' + word + '( |$)'
     name = re.sub(pattern, ' ' + true_color + ' ', name).strip()
     for color_word in color_words[1:]:
-        print(color_word, file=sys.stderr)
         name = name.replace(color_word, '')
     if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color) and not [True for abbrev in ABBREVIATIONS.values() if name.lower().startswith(abbrev)]:
         name = 'mono {name}'.format(name=name)
@@ -186,20 +174,11 @@ def normalize_colors(name: str, colors: List[str]) -> str:
 def find_regex_respect_wl(regex: str, s: str) -> str:
     found = re.search(regex, s, flags=re.IGNORECASE)
     if found:
-        print("Type of found is ")
-        print(type(found))
-        print(found)
-        print("found.group()")
-        print(found.group())
-        print("end")
-        print(found.end())
-        print(s[found.end()-1:]) # This is what we fucking need.
-
         found_text = found.group().strip()
         for w in WHITELIST_PATTERNS:
             if re.search(w, found_text, flags=re.IGNORECASE):
+                # s[found.end()-1:] is the substring after where we found what we need
                 return find_regex_respect_wl(regex, s[found.end()-1:])
-
         return found.group().strip()
     return ""
 

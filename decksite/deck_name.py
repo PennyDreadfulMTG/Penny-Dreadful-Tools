@@ -21,7 +21,11 @@ WHITELIST = [
 ]
 
 WHITELIST_PATTERNS = [
-    'BRR+',
+    'WW+',
+    'UU+',
+    'BB+',
+    'RR+',
+    'GG+',
     'UWU'
 ]
 

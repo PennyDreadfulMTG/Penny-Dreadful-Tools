@@ -81,7 +81,7 @@ TESTDATA = [
     ('PD-GB', 'Golgari the Rock', ['G', 'B'], 'The Rock'),
     ('PD 11 WW', 'White Weenie', ['W'], None),
     ('Bad Esper 2.0', 'Bad Esper 2.0', ['W', 'U', 'B'], 'Esper Control'),
-    ('BBB', 'Mono Black', ['B'], 'Zombies'),
+    ('B', 'Mono Black', ['B'], 'Zombies'),
     ('Manaless Dredge', 'Manaless Dredge', ['B'], 'Graveyard Value'),
     ('Deep Anal', 'Deep', ['U'], 'Control'),
     ('Supremacia Ariana', 'Mono White', ['W'], None),
@@ -131,6 +131,7 @@ def test_canonicalize_colors() -> None:
 
 def test_normalize_colors() -> None:
     assert deck_name.normalize_colors('Braids B', ['B']) == 'Braids Black'
+    assert deck_name.normalize_colors('Haha Zombie Army Goes BR', ['B', 'R']) == 'Haha Zombie Army Goes Rakdos'
     assert deck_name.normalize_colors('Haha Zombie Army Goes Brrr', ['B', 'R']) == 'Haha Zombie Army Goes Brrr'
     assert deck_name.normalize_colors('Haha Zombie Army Goes Brrr BR', ['B', 'R']) == 'Haha Zombie Army Goes Brrr Rakdos'
     assert deck_name.normalize_colors('Meme Deck uwu', ['B', 'R']) == 'Meme Deck uwu'

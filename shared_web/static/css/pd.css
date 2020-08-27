@@ -132,6 +132,7 @@ main p, footer p {
     margin: 0 0 1em 0;
 }
 
+/* House style is no periods on the ends of the last sentence in a list item. */
 main li {
     margin: 0 0 0.422em;
 }

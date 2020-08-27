@@ -17,7 +17,7 @@
 !.vscode/extensions.json
 .web_cache/
 /*.config.json
-/.mypy_cache/
+.mypy_cache/
 /TestResults.xml
 /codecov.sh
 /images/*.jpg

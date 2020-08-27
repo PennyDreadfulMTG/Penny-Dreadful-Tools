@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Tuple
 import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
 
+from magic import rotation
 from magic.models import Deck
 from shared import dtutil, guarantee
 from shared.container import Container
@@ -51,12 +52,24 @@ def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> L
     apac_start = start.astimezone(tz=dtutil.APAC_SERIES_TZ)
     until = start + datetime.timedelta(days=7)
     pdfnm_time = ('Penny Dreadful FNM', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index]) # type: ignore
-    pdsat_time = ('Penny Dreadful Saturdays', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index]) # type: ignore
+    if is_pd500_week(start):
+        pdsat_name = 'The Penny Dreadful 500'
+    else:
+        pdsat_name = 'Penny Dreadful Saturdays'
+    pdsat_time = (pdsat_name, rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index]) # type: ignore
     apds_time = ('APAC Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=16, byminute=0, bysecond=0, dtstart=apac_start, until=until, byweekday=rrule.SU)[index]) # type: ignore
     pds_time = ('Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index]) # type: ignore
     pdm_time = ('Penny Dreadful Mondays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index]) # type: ignore
     pdt_time = ('Penny Dreadful Thursdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index]) # type: ignore
     return [pdfnm_time, pdsat_time, apds_time, pds_time, pdm_time, pdt_time]
+
+def next_pd500_date():
+    end_of_season = rotation.next_rotation()
+    return end_of_season - datetime.timedelta(days=11, hours=13, minutes=30) # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
+
+def is_pd500_week(start: datetime.datetime):
+    date_of_pd500 = next_pd500_date()
+    return start < date_of_pd500 and start + datetime.timedelta(days=7) > date_of_pd500
 
 def prize(d: Deck) -> int:
     return prize_by_finish(d.get('finish') or sys.maxsize)
@@ -89,7 +102,7 @@ def all_series_info() -> List[Container]:
     info = get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))
     return [
         Container({
-            'name': 'Penny Dreadful FNM',
+            'name': info[0][0],
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
             'time': info[0][1],
@@ -97,35 +110,35 @@ def all_series_info() -> List[Container]:
 
         }),
         Container({
-            'name': 'Penny Dreadful Saturdays',
+            'name': info[1][0],
             'hosts': ['j_meka', 'crazybaloth'],
             'display_time': '1:30pm Eastern',
             'time': info[1][1],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'name': 'APAC Penny Dreadful Sundays',
+            'name': info[2][0],
             'hosts': ['jgabrielygalan', 'silasary'],
             'display_time': '4pm Japan Standard Time',
             'time': info[2][1],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'name': 'Penny Dreadful Sundays',
+            'name': info[3][0],
             'hosts': ['cody_', 'bakert99'],
             'display_time': '1:30pm Eastern',
             'time': info[3][1],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'name': 'Penny Dreadful Mondays',
+            'name': info[4][0],
             'hosts': ['briar_moss', 'j_meka'],
             'display_time': '7pm Eastern',
             'time': info[4][1],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'name': 'Penny Dreadful Thursdays',
+            'name': info[5][0],
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
             'time': info[5][1],

@@ -1,6 +1,6 @@
 import re
 from collections import OrderedDict
-from typing import List, Optional, Set, Any
+from typing import List, Optional, Set
 
 import titlecase
 from better_profanity import profanity
@@ -185,7 +185,7 @@ def find_regex_respect_wl(regex: str, s: str) -> str:
                 # s[found.end()-1:] is the substring after where we found what we need
                 return find_regex_respect_wl(regex, s[found.end()-1:])
         return found.group().strip()
-    return ""
+    return ''
 
 def canonicalize_colors(colors: List[str]) -> Set[str]:
     color_words: Set[str] = set()

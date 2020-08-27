@@ -3,7 +3,7 @@ from decksite.cache import cached
 from decksite.data import achievements as achs
 from decksite.data import competition as comp
 from decksite.data import person as ps
-from decksite.views import (Achievements, Competition, Competitions, PD500, TournamentHosting,
+from decksite.views import (PD500, Achievements, Competition, Competitions, TournamentHosting,
                             TournamentLeaderboards, Tournaments)
 
 

@@ -63,13 +63,13 @@ def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> L
     pdt_time = ('Penny Dreadful Thursdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index]) # type: ignore
     return [pdfnm_time, pdsat_time, apds_time, pds_time, pdm_time, pdt_time]
 
-def next_pd500_date():
+def next_pd500_date() -> datetime.datetime:
     end_of_season = rotation.next_rotation()
     return end_of_season - datetime.timedelta(days=11, hours=13, minutes=30) # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
 
-def is_pd500_week(start: datetime.datetime):
+def is_pd500_week(start: datetime.datetime) -> bool:
     date_of_pd500 = next_pd500_date()
-    return start < date_of_pd500 and start + datetime.timedelta(days=7) > date_of_pd500
+    return start <= date_of_pd500 <= start + datetime.timedelta(days=7)
 
 def prize(d: Deck) -> int:
     return prize_by_finish(d.get('finish') or sys.maxsize)

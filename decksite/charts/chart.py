@@ -9,9 +9,8 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from shared_web import logger
 from decksite.data import deck
-from shared import configuration
+from shared import configuration, logger
 from shared.pd_exception import DoesNotExistException, OperationalException
 
 def cmc(deck_id: int, attempts: int = 0) -> str:

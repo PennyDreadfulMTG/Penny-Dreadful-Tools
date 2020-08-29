@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import logging
 import re
 import subprocess
 import sys
@@ -43,7 +44,8 @@ class Bot(commands.Bot):
         commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode()
         redis.store('discordbot:commit_id', commit_id)
 
-        super().__init__(command_prefix=commands.when_mentioned_or('!'), help_command=commands.DefaultHelpCommand(dm_help=True), case_insensitive=True, **kwargs)
+        help_command = commands.DefaultHelpCommand(dm_help=None, no_category='Commands')
+        super().__init__(command_prefix=commands.when_mentioned_or('!'), help_command=help_command, case_insensitive=True, **kwargs)
         self.voice = None
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:
@@ -61,9 +63,9 @@ class Bot(commands.Bot):
         await super().close()
 
     async def on_ready(self) -> None:
-        print('Logged in as {username} ({id})'.format(username=self.user.name, id=self.user.id))
-        print('Connected to {0}'.format(', '.join([guild.name or '' for guild in self.guilds])))
-        print('--------')
+        logging.info('Logged in as {username} ({id})', username=self.user.name, id=self.user.id)
+        logging.info('Connected to {names}', names=', '.join([guild.name or '' for guild in self.guilds]))
+        logging.info('--------')
         perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
 
 
@@ -92,15 +94,12 @@ class Bot(commands.Bot):
             await voice.disconnect()
 
     async def on_member_join(self, member: Member) -> None:
-        print('{0} joined {1} ({2})'.format(member.mention, member.guild.name, member.guild.id))
-
         if member.bot:
             return
         # is_test_server = member.guild.id == 226920619302715392
         if is_pd_server(member.guild): # or is_test_server:
             greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
             chan = member.guild.get_channel(207281932214599682) #general (Yes, the guild ID is the same as the ID of it's first channel.  It's not a typo)
-            print(f'Greeting in {chan}')
             await chan.send(greeting)
 
     async def on_member_update(self, before: Member, after: Member) -> None:
@@ -110,10 +109,8 @@ class Bot(commands.Bot):
         streaming_role = await get_role(before.guild, 'Currently Streaming')
         if streaming_role:
             if not isinstance(after.activity, Streaming) and streaming_role in before.roles:
-                print('{user} no longer streaming'.format(user=after.name))
                 await after.remove_roles(streaming_role)
             if isinstance(after.activity, Streaming) and not streaming_role in before.roles:
-                print('{user} started streaming'.format(user=after.name))
                 await after.add_roles(streaming_role)
         # Achievements
         role = await get_role(before.guild, 'Linked Magic Online')
@@ -194,17 +191,17 @@ class Bot(commands.Bot):
             content = [arg.content for arg in args if hasattr(arg, 'content')] # The default string representation of a Message does not include the message content.
             repo.create_issue(f'Bot error {event_method}\n{args}\n{kwargs}\n{content}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=exception)
         except GithubException as e:
-            print('Github error', e, file=sys.stderr)
+            logging.error('Github error\n{e}', e=e)
 
     @background_task
     async def background_task_tournaments(self) -> None:
         tournament_channel_id = configuration.get_int('tournament_reminders_channel_id')
         if not tournament_channel_id:
-            print('tournament channel is not configured')
+            logging.warning('tournament channel is not configured')
             return
         channel = self.get_channel(tournament_channel_id)
         if not isinstance(channel, discord.abc.Messageable):
-            print(f'ERROR: could not find tournament_channel_id {tournament_channel_id}')
+            logging.warning('ERROR: could not find tournament_channel_id {id}', id=tournament_channel_id)
             return
         while self.is_ready:
             info = tournaments.next_tournament_info()
@@ -244,29 +241,27 @@ class Bot(commands.Bot):
 
             if timer < 300:
                 timer = 300
-            print('diff={0}, timer={1}'.format(diff, timer))
             await asyncio.sleep(timer)
-        print('naturally stopping tournament reminders')
+        logging.warning('naturally stopping tournament reminders')
 
     @background_task
     async def background_task_league_end(self) -> None:
         tournament_channel_id = configuration.get_int('tournament_reminders_channel_id')
         if not tournament_channel_id:
-            print('tournament channel is not configured')
+            logging.warning('tournament channel is not configured')
             return
         channel = self.get_channel(tournament_channel_id)
         if not isinstance(channel, discord.abc.Messageable):
-            print('tournament channel could not be found')
+            logging.warning('tournament channel could not be found')
             return
 
         while self.is_ready:
             try:
                 league = await fetch_tools.fetch_json_async(fetcher.decksite_url('/api/league'))
             except fetch_tools.FetchException as e:
-                print("Couldn't reach decksite or decode league json with error message(s) {0}".format(
-                    '; '.join(str(x) for x in e.args)
-                    ))
-                print('Sleeping for 5 minutes and trying again.')
+                logging.error("Couldn't reach decksite or decode league json with error message(s) {e}",
+                              e='; '.join(str(x) for x in e.args))
+                logging.info('Sleeping for 5 minutes and trying again.')
                 await asyncio.sleep(300)
                 continue
 
@@ -300,19 +295,18 @@ class Bot(commands.Bot):
 
             if timer < 300:
                 timer = 300
-            print('diff={0}, timer={1}'.format(diff, timer))
             await asyncio.sleep(timer)
-        print('naturally stopping league reminders')
+        logging.warning('naturally stopping league reminders')
 
     @background_task
     async def background_task_rotation_hype(self) -> None:
         rotation_hype_channel_id = configuration.get_int('rotation_hype_channel_id')
         if not rotation_hype_channel_id:
-            print('rotation hype channel is not configured')
+            logging.warning('rotation hype channel is not configured')
             return
         channel = self.get_channel(rotation_hype_channel_id)
         if not isinstance(channel, discord.abc.Messageable):
-            print('rotation hype channel is not a text channel')
+            logging.warning('rotation hype channel is not a text channel')
             return
         while self.is_ready():
             until_rotation = rotation.next_rotation() - dtutil.now()
@@ -334,15 +328,17 @@ class Bot(commands.Bot):
             redis.clear(do_reboot_key)
         while self.is_ready():
             if redis.get_bool(do_reboot_key):
-                print('Got request to reboot from redis')
+                logging.info('Got request to reboot from redis')
                 await self.logout()
             await asyncio.sleep(60)
 
 def init() -> None:
     client = Bot()
+    logging.info('Initializing Cards DB')
     multiverse.init()
     asyncio.ensure_future(multiverse.update_bugged_cards_async())
     oracle.init()
+    logging.info('Connecting to Discord')
     client.run(configuration.get_str('token'))
 
 def is_pd_server(guild: Guild) -> bool:

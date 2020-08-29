@@ -10,9 +10,9 @@ from decksite.data.models.person import Person
 from decksite.database import db
 from magic import tournaments
 from magic.models import Deck
+from shared import logger
 from shared.container import Container
 from shared.decorators import retry_after_calling
-from shared_web import logger
 
 LEADERBOARD_TOP_N = 5
 LEADERBOARD_LIMIT = 12

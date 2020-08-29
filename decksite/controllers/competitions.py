@@ -3,7 +3,7 @@ from decksite.cache import cached
 from decksite.data import achievements as achs
 from decksite.data import competition as comp
 from decksite.data import person as ps
-from decksite.views import (Achievements, Competition, Competitions, TournamentHosting,
+from decksite.views import (PD500, Achievements, Competition, Competitions, TournamentHosting,
                             TournamentLeaderboards, Tournaments)
 
 
@@ -14,13 +14,11 @@ def competitions() -> str:
     view = Competitions(comp.load_competitions(season_id=get_season_id()))
     return view.page()
 
-
 @APP.route('/competitions/<competition_id>/')
 @cached()
 def competition(competition_id: int) -> str:
     view = Competition(comp.load_competition(competition_id))
     return view.page()
-
 
 @APP.route('/tournaments/')
 def tournaments() -> str:
@@ -34,13 +32,18 @@ def hosting() -> str:
     view = TournamentHosting()
     return view.page()
 
-
 @APP.route('/tournaments/leaderboards/')
 @SEASONS.route('/tournaments/leaderboards/')
 @cached()
 def tournament_leaderboards() -> str:
     leaderboards = comp.leaderboards(season_id=get_season_id())
     view = TournamentLeaderboards(leaderboards)
+    return view.page()
+
+@APP.route('/tournaments/pd500/')
+@cached()
+def pd500() -> str:
+    view = PD500()
     return view.page()
 
 @APP.route('/achievements/')

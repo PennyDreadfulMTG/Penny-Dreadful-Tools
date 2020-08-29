@@ -141,7 +141,7 @@ def whitelisted(name: str) -> bool:
     return False
 
 def normalize_colors(name: str, colors: List[str]) -> str:
-    patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*']
+    patterns = ['[WUBRG]+', '[WUBRG](/[WUBRG])*']
     patterns += ['(White|Blue|Black|Red|Green)([/-](White|Blue|Black|Red|Green))+']
     patterns += list(COLOR_COMBINATIONS.keys())
     unique_color_words: OrderedDict = OrderedDict()
@@ -149,7 +149,9 @@ def normalize_colors(name: str, colors: List[str]) -> str:
         regex = regex_pattern(pattern)
         found = re.search(regex, name, flags=re.IGNORECASE)
         if found:
-            unique_color_words[found.group().strip()] = True
+            color_word = found.group().strip()
+            if is_true_match(color_word):
+                unique_color_words[color_word] = True
     if len(unique_color_words) == 0:
         return name
     color_words = list(unique_color_words.keys())
@@ -164,6 +166,12 @@ def normalize_colors(name: str, colors: List[str]) -> str:
         name = 'mono {name}'.format(name=name)
     return name.strip()
 
+# Don't let things like 'BRRR' and 'UWU' match [WUBRG]+ searches.
+def is_true_match(color_word: str) -> bool:
+    if not re.search('^[WUBRG]+$', color_word, flags=re.IGNORECASE):
+        return True
+    return len(set(color_word)) == len(color_word)
+
 def canonicalize_colors(colors: List[str]) -> Set[str]:
     color_words: Set[str] = set()
     for color in colors:
@@ -176,7 +184,7 @@ def canonicalize_colors(colors: List[str]) -> Set[str]:
     return set(mana.order(canonical_colors))
 
 def regex_pattern(pattern: str) -> str:
-    return '(^| )(mono[ -]?)?{pattern}( |$)'.format(pattern=pattern)
+    return '(?:^| )(?:mono[ -]?)?({pattern})(?: |$)'.format(pattern=pattern)
 
 def standardize_color_string(s: str) -> str:
     colors = re.sub('mono|/|-', '', s, re.IGNORECASE).strip().lower()

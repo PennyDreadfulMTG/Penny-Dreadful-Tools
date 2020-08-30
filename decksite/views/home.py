@@ -4,7 +4,7 @@ from flask import url_for
 from flask_babel import gettext
 
 from decksite.view import View
-from magic import rotation
+from magic import rotation, tournaments
 from magic.models import Card, Deck
 from shared import dtutil
 from shared.container import Container
@@ -20,6 +20,8 @@ class Home(View):
         self.setup_rotation()
         self.setup_stats(matches_stats)
         self.setup_tournaments()
+        self.pd500_url = url_for('pd500')
+        self.pd500_date = dtutil.display_date_with_date_and_year(tournaments.next_pd500_date())
 
     def setup_news(self, news: List[Container]) -> None:
         self.news = news

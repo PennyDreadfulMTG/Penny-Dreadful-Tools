@@ -43,7 +43,8 @@ def tournament_leaderboards() -> str:
 @APP.route('/tournaments/pd500/')
 @cached()
 def pd500() -> str:
-    view = PD500()
+    leaderboard = comp.overall_leaderboard(season_id=get_season_id())
+    view = PD500(leaderboard)
     return view.page()
 
 @APP.route('/achievements/')

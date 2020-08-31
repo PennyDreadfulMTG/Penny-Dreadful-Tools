@@ -22,7 +22,7 @@ pip-check-reqs==2.1.1
 github_webhook==1.0.4
 google-api-python-client==1.11.0
 inflect==4.1.0
-isort==4.3.21
+isort==5.4.2
 jsbeautifier==1.13.0
 lxml
 markdown==3.2.2

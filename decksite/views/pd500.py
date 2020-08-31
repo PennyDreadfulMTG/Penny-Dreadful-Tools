@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 from flask import url_for
 
 from decksite.view import View
@@ -7,7 +9,7 @@ from shared import dtutil
 
 # pylint: disable=no-self-use
 class PD500(View):
-    def __init__(self, leaderboard) -> None:
+    def __init__(self, leaderboard: Dict[str, Any]) -> None:
         super().__init__()
         self.entries = leaderboard['entries']
         self.leaderboards = [self.entries] # This will be prepared in View.

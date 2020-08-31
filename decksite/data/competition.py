@@ -126,7 +126,7 @@ def tournaments_with_prizes() -> List[Competition]:
         """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
     return load_competitions(where, should_load_decks=True)
 
-def overall_leaderboard(season_id: Optional[int] = None) -> List[Dict[str, Any]]:
+def overall_leaderboard(season_id: Optional[int] = None) -> Dict[str, Any]:
     rs = load_leaderboards(group_by='1', order_by='NULL', season_id=season_id)
     entries = []
     for r in rs:
@@ -145,7 +145,7 @@ def leaderboards(season_id: Optional[int] = None) -> List[Dict[str, Any]]:
     # current holds the currently-being-processed competition before it's added to results
     current: Dict[str, Any] = {}
 
-    for row in load_leaderboards(where, 'competition_series_name', season_id):
+    for row in load_leaderboards(season_id=season_id):
         k = row['competition_series_name']
         if current.get('competition_series_name', None) != k:
             if len(current) > 0:
@@ -165,7 +165,7 @@ def leaderboards(season_id: Optional[int] = None) -> List[Dict[str, Any]]:
         results.append(current)
     return results
 
-def load_leaderboards(where: str = "ct.name = 'Gatherling'", group_by = 'cs.id', order_by='cs.id', season_id: Optional[int] = None) -> List[Dict[str, Any]]:
+def load_leaderboards(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.id', order_by: str = 'cs.id', season_id: Optional[int] = None) -> List[Dict[str, Any]]:
     sql = """
         SELECT
             p.id AS person_id,

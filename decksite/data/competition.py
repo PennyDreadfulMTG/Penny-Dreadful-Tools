@@ -126,7 +126,46 @@ def tournaments_with_prizes() -> List[Competition]:
         """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
     return load_competitions(where, should_load_decks=True)
 
-def leaderboards(where: str = "ct.name = 'Gatherling'", season_id: Optional[int] = None) -> List[Dict[str, Any]]:
+def overall_leaderboard(season_id: Optional[int] = None) -> Dict[str, Any]:
+    rs = load_leaderboards(group_by='1', order_by='NULL', season_id=season_id)
+    entries = []
+    for r in rs:
+        c = Container(r)
+        c.score = (c.wins, c.points)
+        entries.append(c)
+    return {
+        'competition_series_name': 'Overall',
+        'entries': entries,
+        'sponsor_name': 'Cardhoarder'
+    }
+
+def leaderboards(season_id: Optional[int] = None) -> List[Dict[str, Any]]:
+    # results is the returned list of leaderboards for each competition
+    results = []
+    # current holds the currently-being-processed competition before it's added to results
+    current: Dict[str, Any] = {}
+
+    for row in load_leaderboards(season_id=season_id):
+        k = row['competition_series_name']
+        if current.get('competition_series_name', None) != k:
+            if len(current) > 0:
+                results.append(current)
+            current = {
+                'competition_series_name': row['competition_series_name'],
+                'entries': [],
+                'sponsor_name': row['sponsor_name']
+            }
+
+        row.pop('competition_series_name')
+        c = Container(row)
+        c.score = (c.wins, c.points)
+        current['entries'].append(c)
+
+    if len(current) > 0:
+        results.append(current)
+    return results
+
+def load_leaderboards(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.id', order_by: str = 'cs.id', season_id: Optional[int] = None) -> List[Dict[str, Any]]:
     sql = """
         SELECT
             p.id AS person_id,
@@ -156,37 +195,13 @@ def leaderboards(where: str = "ct.name = 'Gatherling'", season_id: Optional[int]
         WHERE
             ({where}) AND ({season_query})
         GROUP BY
-            cs.id,
+            {group_by},
             p.id
         ORDER BY
-            cs.id,
+            {order_by},
             points DESC,
             wins DESC,
             tournaments DESC,
             person
-    """.format(person_query=query.person_query(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id, 'season.id'))
-
-    # results is the returned list of leaderboards for each competition
-    results = []
-    # current holds the currently-being-processed competition before it's added to results
-    current: Dict[str, Any] = {}
-
-    for row in db().select(sql):
-        k = row['competition_series_name']
-        if current.get('competition_series_name', None) != k:
-            if len(current) > 0:
-                results.append(current)
-            current = {
-                'competition_series_name': row['competition_series_name'],
-                'entries': [],
-                'sponsor_name': row['sponsor_name']
-            }
-
-        row.pop('competition_series_name')
-        c = Container(row)
-        c.score = (c.wins, c.points)
-        current['entries'].append(c)
-
-    if len(current) > 0:
-        results.append(current)
-    return results
+    """.format(person_query=query.person_query(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id, 'season.id'), group_by=group_by, order_by=order_by)
+    return db().select(sql)

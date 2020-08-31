@@ -5,11 +5,12 @@
         <ul>
             <li>End of season tournament</li>
             <li>500 tix in prizes</li>
-            <li>The next Penny Dreadful 500 is {{next_pd500_date}}</li>
+            <li>Free entry</li>
+            <li>The next Penny Dreadful 500 is on {{next_pd500_date}}</li>
         </ul>
     </section>
     <section>
-        <p>Any player in the Top 8 of any <a href="{{leaderboards_url}}">season leaderboard</a> will receive a round one bye.</p>
+        <p>Players in the Top 8 tournament performers for the season receive a round one bye.</p>
         <p>Sign up on <a class="external" href="https://gatherling.com/register.php">Gatherling</a></p>
     </section>
     <section>
@@ -45,5 +46,34 @@
             </tbody>
         </table>
         <p>Prizes from our sponsor <a class="external" href="https://www.cardhoarder.com/">Cardhoarder</a> in credit.</p>
+    </section>
+    <section>
+        <h2>Season Tournament Leaderboard</h2>
+        <p>Top 8 get a round one bye in the Penny Dreadful 500.</p>
+        <table class="with-marginalia">
+            <thead>
+                <tr>
+                    <td></td>
+                    <th>Person</th>
+                    <th class="n" data-sortInitialOrder="desc">#</th>
+                    <th class="n" data-sortInitialOrder="desc">Wins</th>
+                    <th class="n" data-sortInitialOrder="desc">Pts</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#entries}}
+                    <tr class="pos-{{pos}}">
+                        <td class="n marginalia">
+                            {{position}}
+                        </td>
+                        <td><a href="{{url}}" class="person">{{person}}</a></td>
+                        <td class="n">{{tournaments}}</td>
+                        <td class="n">{{wins}}</td>
+                        <td class="n">{{points}}</td>
+                    </tr>
+                {{/entries}}
+            </tbody>
+        </table>
+        {{#sponsor_name}}<p>Sponsored by {{sponsor_name}}</p>{{/sponsor_name}}
     </section>
 </article>

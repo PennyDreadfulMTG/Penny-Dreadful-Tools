@@ -67,13 +67,16 @@ def display_date(dt: datetime.datetime, granularity: int = 1) -> str:
         s = '{:%b %Y}'.format(dt.astimezone(WOTC_TZ))
         return replace_day_with_ordinal(s)
     if (start - dt) > datetime.timedelta(28):
-        s = '{:%b _%d_}'.format(dt.astimezone(WOTC_TZ))
-        return replace_day_with_ordinal(s)
+        return display_date_with_date_and_year(dt)
     suffix = 'ago' if start > dt else 'from now'
     diff = round(abs(start - dt).total_seconds())
     if diff == 0:
         return 'just now'
     return '{duration} {suffix}'.format(duration=display_time(diff, granularity), suffix=suffix)
+
+def display_date_with_date_and_year(dt: datetime.datetime, tz: Any = WOTC_TZ) -> str:
+    s = '{:%b _%d_}'.format(dt.astimezone(tz))
+    return replace_day_with_ordinal(s)
 
 def replace_day_with_ordinal(s: str) -> str:
     return re.sub(r'_(.*)_', day2ordinal, s)

@@ -276,7 +276,6 @@ def build() -> None:
     subprocess.check_call(['npm', 'install'], shell=ON_WINDOWS)
     buildjs()
 
-
 def buildjs() -> None:
     print('>>>> Building javascript')
     subprocess.check_call(['npm', 'run-script', 'build'], shell=ON_WINDOWS)

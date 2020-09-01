@@ -3,12 +3,11 @@ from typing import Dict, List, Optional, Sequence
 from decksite.data import achievements, deck, preaggregation, query
 from decksite.data.models.person import Person
 from decksite.database import db
-from shared import dtutil, guarantee
+from shared import dtutil, guarantee, logger
 from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import retry_after_calling
 from shared.pd_exception import AlreadyExistsException, DoesNotExistException
-from shared_web import logger
 
 
 def load_person_by_id(person_id: int, season_id: Optional[int] = None) -> Person:

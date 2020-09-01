@@ -5,10 +5,9 @@ from bs4 import BeautifulSoup
 
 from decksite.data import deck
 from magic import decklist, legality
-from shared import dtutil, fetch_tools
+from shared import dtutil, fetch_tools, logger
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
-from shared_web import logger
 
 
 def scrape(limit: int = 1) -> None:

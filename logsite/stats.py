@@ -3,8 +3,7 @@ from typing import Any, Dict
 from flask import Response
 from sqlalchemy import func, text
 
-from shared import dtutil
-from shared_web import logger
+from shared import dtutil, logger
 
 from . import APP, db
 from .api import return_json

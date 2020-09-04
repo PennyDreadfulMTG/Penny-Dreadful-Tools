@@ -2,6 +2,7 @@ from decksite import APP, SEASONS, auth, get_season_id
 from decksite.cache import cached
 from decksite.data import achievements as achs
 from decksite.data import competition as comp
+from decksite.data import deck as ds
 from decksite.data import person as ps
 from decksite.views import (PD500, Achievements, Competition, Competitions, TournamentHosting,
                             TournamentLeaderboards, Tournaments)
@@ -43,8 +44,8 @@ def tournament_leaderboards() -> str:
 @APP.route('/tournaments/pd500/')
 @cached()
 def pd500() -> str:
-    leaderboard = comp.overall_leaderboard(season_id=get_season_id())
-    view = PD500(leaderboard)
+    tournament_winning_decks = ds.load_decks(where='d.finish = 1', season_id=get_season_id())
+    view = PD500(tournament_winning_decks)
     return view.page()
 
 @APP.route('/achievements/')

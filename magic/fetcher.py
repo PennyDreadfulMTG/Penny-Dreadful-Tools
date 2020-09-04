@@ -37,7 +37,7 @@ async def all_cards_async() -> List[CardDescription]:
         endpoints = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
         for e in endpoints['data']:
             if e['type'] == 'default_cards':
-                return await fetch_tools.fetch_json_async(e['download_uri'], character_encoding='utf-8')
+                return await fetch_tools.fetch_json_async(e['download_uri'])
         raise FetchException('Unable to find Default Cards')
 
 async def all_sets_async() -> List[Dict[str, Any]]:
@@ -172,7 +172,7 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str
         while True:
             for _ in range(3):
                 try:
-                    result_json = fetch_tools.fetch_json(url, character_encoding='utf-8')
+                    result_json = fetch_tools.fetch_json(url)
                     break
                 except FetchException as c:
                     print(c)

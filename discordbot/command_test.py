@@ -58,7 +58,7 @@ def test_resources_matching_in_url() -> None:
     assert results['https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/'] == 'Penny Dreadful Tools'
 
     results = resources.resources_resources('starcitygames')
-    assert results['https://www.starcitygames.com/article/33860_Penny-Dreadful.html'] == 'Mrs. Mulligan SCG'
+    assert results['https://old.starcitygames.com/article/33860_Penny-Dreadful.html'] == 'Mrs. Mulligan SCG'
 
 def test_escape_underscores() -> None:
     r = command.escape_underscores('simple_test')

@@ -16,6 +16,21 @@
         <p><a href="{{achievements_url}}">Everyone's Achievements…</a></p>
     </section>
 {{/num_achievements}}
+<section>
+    <h2>Archetype Tree</h2>
+    {{> archetypetree}}
+</section>
+<section>
+    <h2>Cards</h2>
+    {{> livecardtable}}
+</section>
+{{> matchupgrid}}
+{{#charts}}
+    <section>
+        <h2>{{title}}</h2>
+        <canvas class="chart" data-type="{{type}}" data-labels="{{labels}}" data-series="{{series}}" data-options="{{options}}"></canvas>
+    </section>
+{{/charts}}
 {{#show_head_to_head}}
     <section>
         <h2>Head to Head</h2>
@@ -40,21 +55,6 @@
         <p><a href="{{matches_url}}">Matches List…</a></p>
     </section>
 {{/show_head_to_head}}
-<section>
-    <h2>Cards</h2>
-    {{> livecardtable}}
-</section>
-{{#charts}}
-    <section>
-        <h2>{{title}}</h2>
-        <canvas class="chart" data-type="{{type}}" data-labels="{{labels}}" data-series="{{series}}" data-options="{{options}}"></canvas>
-    </section>
-{{/charts}}
-<section>
-    <h2>Archetype Tree</h2>
-    {{> archetypetree}}
-</section>
-{{> matchupgrid}}
 {{#has_unique_cards}}
     <section class="card-lists">
         <h2>Unique Cards Played</h2>

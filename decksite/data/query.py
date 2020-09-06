@@ -97,6 +97,18 @@ def decks_order_by(key: str, sort_order: str) -> str:
     }
     return sort_options[key] + f' {sort_order}, d.finish ASC, cache.active_date DESC'
 
+def cards_order_by(key: str, sort_order: str) -> str:
+    sort_options = {
+        'name': 'name',
+        'numDecks': 'num_decks',
+        'record': f'wins - losses {sort_order}, wins',
+        'winPercent': 'win_percent',
+        'tournamentWins': 'tournament_wins',
+        'tournamentTop8s': 'tournament_top8s',
+        'perfectRuns': 'perfect_runs'
+    }
+    return sort_options[key] + f' {sort_order}, num_decks DESC, record, name'
+
 def exclude_active_league_runs(except_person_id: Optional[int]) -> str:
     clause = """
         d.retired

@@ -183,7 +183,7 @@ class DeckTable extends React.Component {
     // eslint-disable-next-line class-methods-use-this
     renderRecord(deck) {
         if (deck.showRecord && deck.wins + deck.losses + deck.draws > 0) {
-            return deck.wins + "–" + deck.losses + (deck.draws ? "–" + deck.draws : "");
+            return deck.wins + "–" + deck.losses + (deck.draws > 0 ? "–" + deck.draws : "");
         }
         return "";
     }
@@ -242,7 +242,6 @@ if (e !== null) {
             archetypeId={e.dataset.archetypeId}
             cardName={e.dataset.cardName}
             competitionId={e.dataset.competitionId}
-            hidePerson={e.dataset.hidePerson}
             hidePerson={e.dataset.hidePerson}
             hideSource={e.dataset.hideSource}
             hideTop8={e.dataset.hideTop8}

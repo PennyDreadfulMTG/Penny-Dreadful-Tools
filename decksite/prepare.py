@@ -1,12 +1,64 @@
-from typing import List, Union
+from typing import List, Optional, Union
 
-from flask import session
+from flask import session, url_for
 
 from magic import rotation
 from magic.models import Card, Deck
 from shared import dtutil
 
 # Take 'raw' items from the database and decorate them for use and display.
+
+_card_image_template: Optional[str] = None
+_card_url_template: Optional[str] = None
+
+def prepare_cards(cs: List[Card], tournament_only: bool = False) -> None:
+    for c in cs:
+        prepare_card(c, tournament_only)
+
+def prepare_card(c: Card, tournament_only: bool = False) -> None:
+    prepare_card_urls(c, tournament_only)
+    c.card_img_class = 'two-faces' if c.layout in ['transform', 'meld'] else ''
+    c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
+    c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}
+    c.non_pd_legal_formats = {k for k, v in c.legalities.items() if 'Penny Dreadful' not in k and v != 'Banned'}
+    c.has_legal_format = len(c.legal_formats) > 0
+    set_legal_icons(c)
+    if c.get('num_decks') is not None:
+        c.show_record = c.get('wins') or c.get('losses') or c.get('draws')
+
+    c.has_decks = len(c.get('decks', [])) > 0
+    if not c.has_decks:
+        c.has_most_common_cards = False
+        return
+
+    counter = Counter() # type: ignore
+    for d in c.get('decks', []):
+        for c2 in d.maindeck:
+            if not c2.card.type_line.startswith('Basic Land') and not c2['name'] == c.name:
+                counter[c2['name']] += c2['n']
+    most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
+    c.most_common_cards = []
+    cs = oracle.cards_by_name()
+    for v in most_common_cards:
+        prepare_card(cs[v[0]])
+        c.most_common_cards.append(cs[v[0]])
+    c.has_most_common_cards = len(c.most_common_cards) > 0
+
+def prepare_card_urls(c: Card, tournament_only: bool = False) -> None:
+    c.url = url_for_card(c)
+    c.img_url = url_for_image(c.name)
+
+def url_for_image(name: str) -> str:
+    global _card_image_template
+    if _card_image_template is None:
+        _card_image_template = url_for('image', c='--cardname--')
+    return _card_image_template.replace('--cardname--', name)
+
+def url_for_card(c: Card, tournament_only: bool = False) -> str:
+    global _card_url_template
+    if _card_url_template is None:
+        _card_url_template = url_for('.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if tournament_only else None)
+    return _card_url_template.replace('--cardname--', c.name)
 
 def prepare_decks(ds: List[Deck]) -> None:
     for d in ds:

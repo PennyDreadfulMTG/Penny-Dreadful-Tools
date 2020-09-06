@@ -1,7 +1,10 @@
 /* eslint-disable */
 const webpack = require("webpack");
 const config = {
-    entry: __dirname + "/../shared_web/static/js/index.jsx",
+    entry: [
+        __dirname + "/../shared_web/static/js/index.jsx",
+        __dirname + "/../shared_web/static/js/cardtable.jsx"
+    ],
     output: {
         path: __dirname + "/../shared_web/static//dist",
         filename: "bundle.js"

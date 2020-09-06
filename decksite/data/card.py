@@ -237,7 +237,7 @@ def preaggregate_trailblazer() -> None:
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(preaggregate)
-def load_cards_count(person_id: Optional[int], season_id: Optional[int] = None):
+def load_cards_count(person_id: Optional[int], season_id: Optional[int] = None) -> int:
     if person_id:
         table = '_card_person_stats'
         where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))

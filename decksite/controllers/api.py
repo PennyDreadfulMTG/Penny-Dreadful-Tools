@@ -301,8 +301,8 @@ def cards_api() -> Response:
     return return_json(blob)
 
 @APP.route('/api/card/<card>')
-def card_api(card: str) -> Response:
-    return return_json(oracle.load_card(card))
+def card_api(c: str) -> Response:
+    return return_json(oracle.load_card(c))
 
 @APP.route('/api/archetype/reassign', methods=['POST'])
 @auth.demimod_required
@@ -324,14 +324,14 @@ def post_rule_update(rule_id: int = None) -> Response:
                 inc.append(parse_line(line))
             except InvalidDataException:
                 return return_json({'success':False, 'msg':f"Couldn't find a card count and name on line: {line}"})
-            if not cs.card_exists(inc[-1][1]):
+            if not card.card_exists(inc[-1][1]):
                 return return_json({'success':False, 'msg':f'Card not found in any deck: {line}'})
         for line in cast(str, request.form.get('exclude')).strip().splitlines():
             try:
                 exc.append(parse_line(line))
             except InvalidDataException:
                 return return_json({'success':False, 'msg':f"Couldn't find a card count and name on line: {line}"})
-            if not cs.card_exists(exc[-1][1]):
+            if not card.card_exists(exc[-1][1]):
                 return return_json({'success':False, 'msg':f'Card not found in any deck {line}'})
         rs.update_cards(rule_id, inc, exc)
         return return_json({'success':True})

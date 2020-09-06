@@ -15,7 +15,7 @@ from decksite.data import archetype, competition
 from decksite.data.archetype import Archetype
 from decksite.deck_type import DeckType
 from magic import card_price, fetcher, legality, oracle, rotation, tournaments
-from magic.models import Card, Deck
+from magic.models import Deck
 from shared import dtutil
 from shared.container import Container
 from shared_web.base_view import BaseView
@@ -36,8 +36,6 @@ SeasonInfoDescription = TypedDict('SeasonInfoDescription', {
     'tournament_leaderboards_url': str,
     'legal_cards_url': Optional[str]
 }, total=False)
-
-NUM_MOST_COMMON_CARDS_TO_LIST = 10
 
 # pylint: disable=no-self-use, too-many-instance-attributes, too-many-public-methods
 class View(BaseView):
@@ -173,7 +171,7 @@ class View(BaseView):
         prepare.prepare_decks(getattr(self, 'decks', []))
 
     def prepare_cards(self) -> None:
-        prepare.prepare_cards(getattr(self, 'cards', []), self.tournament_only)
+        prepare.prepare_cards(getattr(self, 'cards', []), getattr(self, 'tournament_only', False))
 
     def prepare_competitions(self) -> None:
         for c in getattr(self, 'competitions', []):
@@ -214,10 +212,10 @@ class View(BaseView):
             for c in d.maindeck:
                 if not c.card.type_line.startswith('Basic Land'):
                     counter[c['name']] += c['n']
-        most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
+        most_common_cards = counter.most_common(prepare.NUM_MOST_COMMON_CARDS_TO_LIST)
         cs = oracle.cards_by_name()
         for v in most_common_cards:
-            self.prepare_card(cs[v[0]])
+            prepare.prepare_card(cs[v[0]], getattr(self, 'tournament_only', False))
             a.most_common_cards.append(cs[v[0]])
         a.has_most_common_cards = len(a.most_common_cards) > 0
         for b in [b for b in PreOrderIter(a) if b.id in [a.id for a in archetypes]]:

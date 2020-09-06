@@ -250,11 +250,11 @@ def load_cards_count(person_id: Optional[int], season_id: Optional[int] = None):
 
 @retry_after_calling(preaggregate)
 def load_cards(
-    order_by: str = 'num_decks DESC, record, name',
-    limit: str = '',
-    person_id: Optional[int] = None,
-    season_id: Optional[int] = None,
-    tournament_only: bool = False
+        order_by: str = 'num_decks DESC, record, name',
+        limit: str = '',
+        person_id: Optional[int] = None,
+        season_id: Optional[int] = None,
+        tournament_only: bool = False
 ) -> List[Card]:
     if person_id:
         table = '_card_person_stats'

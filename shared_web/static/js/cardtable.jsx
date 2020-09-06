@@ -102,6 +102,7 @@ class CardTable extends React.Component {
         );
     }
 
+    // eslint-disable-next-line class-methods-use-this
     renderCardRow(card) {
         return (
             <tr key={card.name} className="cardrow" data-cardname={card.name}>
@@ -121,12 +122,10 @@ class CardTable extends React.Component {
                         : ""
                     }
                 </td>
-                {
-                    this.props.tournamentOnly
+                { this.props.tournamentOnly
                     ? null
                     : <td className="n">
-                        {
-                            card.perfectRuns > 0
+                        { card.perfectRuns > 0
                             ? card.perfectRuns
                             : ""
                         }
@@ -136,12 +135,12 @@ class CardTable extends React.Component {
         );
     }
 
+    // eslint-disable-next-line class-methods-use-this
     renderCard(card) {
         return (
             <React.Fragment>
                 <a href={card.url} className="card">{card.name}</a>
-                {
-                    card.pdLegal
+                { card.pdLegal
                     ? ""
                     : <span className="illegal"></span>
                 }
@@ -158,6 +157,7 @@ class CardTable extends React.Component {
         return "";
     }
 
+    // eslint-disable-next-line class-methods-use-this
     renderWinPercent(card) {
         if (card.showRecord) {
             return card.winPercent;

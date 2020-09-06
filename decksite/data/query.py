@@ -102,7 +102,7 @@ def cards_order_by(key: str, sort_order: str) -> str:
         'name': 'name',
         'numDecks': 'num_decks',
         'record': f'wins - losses {sort_order}, wins',
-        'winPercent': 'win_percent',
+        'winPercent': 'ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1)',
         'tournamentWins': 'tournament_wins',
         'tournamentTop8s': 'tournament_top8s',
         'perfectRuns': 'perfect_runs'

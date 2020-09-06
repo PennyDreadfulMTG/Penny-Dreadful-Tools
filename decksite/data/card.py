@@ -237,7 +237,25 @@ def preaggregate_trailblazer() -> None:
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(preaggregate)
-def load_cards(person_id: Optional[int] = None, season_id: Optional[int] = None, tournament_only: bool = False) -> List[Card]:
+def load_cards_count(person_id: Optional[int], season_id: Optional[int] = None) -> int:
+    if person_id:
+        table = '_card_person_stats'
+        where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
+    else:
+        table = '_card_stats'
+        where = 'TRUE'
+    season_query = query.season_query(season_id)
+    sql = f'SELECT COUNT(DISTINCT name) AS n FROM {table} WHERE {where} AND {season_query}'
+    return int(db().value(sql))
+
+@retry_after_calling(preaggregate)
+def load_cards(
+        order_by: str = 'num_decks DESC, record, name',
+        limit: str = '',
+        person_id: Optional[int] = None,
+        season_id: Optional[int] = None,
+        tournament_only: bool = False
+) -> List[Card]:
     if person_id:
         table = '_card_person_stats'
         where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
@@ -267,10 +285,9 @@ def load_cards(person_id: Optional[int] = None, season_id: Optional[int] = None,
         GROUP BY
             {group_by}
         ORDER BY
-            num_decks DESC,
-            record,
-            name
-    """.format(table=table, season_query=query.season_query(season_id), where=where, group_by=group_by)
+            {order_by}
+        {limit}
+    """.format(table=table, season_query=query.season_query(season_id), where=where, group_by=group_by, order_by=order_by, limit=limit)
     cs = [Container(r) for r in db().select(sql)]
     cards = oracle.cards_by_name()
     for c in cs:

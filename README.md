@@ -37,7 +37,7 @@ View individual subdirectories for details
 
 **shared** contains a bunch of general purpose helper classes. Things that could be used in any project.
 
-**shared_web** contains a bunch of web-specific helper classes.
+**shared_web** contains a bunch of web-specific helper classes. It also contains our React code for "live" data tables.
 
 # Contributing
 
@@ -105,3 +105,7 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - python3 run.py discordbot
 - Visit your Discord server.
 
+## Working on React components
+
+- Run logsite
+- python3 dev.py watch # Builds bundle.js after every file change.

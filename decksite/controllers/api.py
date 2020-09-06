@@ -7,14 +7,14 @@ from flask_restx import Resource, fields
 
 from decksite import APP, auth, league
 from decksite.data import archetype as archs
-from decksite.data import card as cs
+from decksite.data import card
 from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps
 from decksite.data import query
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
-from decksite.prepare import prepare_decks
+from decksite.prepare import prepare_cards, prepare_decks
 from decksite.views import DeckEmbed
 from magic import oracle, rotation, tournaments
 from magic.decklist import parse_line
@@ -27,6 +27,8 @@ from shared_web.api import generate_error, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
 
 #pylint: disable=no-self-use
+
+DEFAULT_LIVE_TABLE_PAGE_SIZE = 20
 
 DECK_ENTRY = APP.api.model('DecklistEntry', {
     'n': fields.Integer(),
@@ -81,7 +83,6 @@ def decks_api() -> Response:
             'archetypeId': <int?>,
             'cardName': <str?>,
             'competitionId': <int?>,
-            'personId': <int?>,
             'deckType': <'league'|'tournament'|'all'>,
             'page': <int>,
             'pageSize': <int>,
@@ -106,9 +107,9 @@ def decks_api() -> Response:
     else:
         sort_by = str(request.args.get('sortBy'))
         sort_order = str(request.args.get('sortOrder'))
-    assert sort_order in ['ASC', 'DESC']
+    assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     order_by = query.decks_order_by(sort_by, sort_order)
-    page_size = int(request.args.get('pageSize', 20))
+    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
     page = int(request.args.get('page', 0))
     start = page * page_size
     limit = f'LIMIT {start}, {page_size}'
@@ -120,6 +121,51 @@ def decks_api() -> Response:
     ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
     r = {'page': page, 'pages': pages, 'decks': ds}
+    resp = return_json(r, camelize=True)
+    resp.set_cookie('page_size', str(page_size))
+    return resp
+
+@APP.route('/api/cards2/')
+def cards2_api() -> Response:
+    """
+    Grab a slice of results from a 0-indexed resultset of cards.
+    Input:
+        {
+            'deckType': <'league'|'tournament'|'all'>,
+            'page': <int>,
+            'pageSize': <int>,
+            'personId': <int?>,
+            'sortBy': <str>,
+            'sortOrder': <'ASC'|'DESC'>,
+            'seasonId': <int|'all'>,
+        }
+    Output:
+        {
+            'page': <int>,
+            'pages': <int>,
+            'cards': [<card>]
+        }
+    """
+    if not request.args.get('sortBy'):
+        sort_by = 'numDecks'
+        sort_order = 'DESC'
+    else:
+        sort_by = str(request.args.get('sortBy'))
+        sort_order = str(request.args.get('sortOrder'))
+    assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
+    order_by = query.cards_order_by(sort_by, sort_order)
+    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
+    page = int(request.args.get('page', 0))
+    start = page * page_size
+    limit = f'LIMIT {start}, {page_size}'
+    person_id = request.args.get('personId') or None
+    tournament_only = request.args.get('deckType') == 'tournament'
+    season_id = rotation.season_id(str(request.args.get('seasonId')), None)
+    cs = card.load_cards(order_by=order_by, limit=limit, person_id=person_id, tournament_only=tournament_only, season_id=season_id)
+    prepare_cards(cs, tournament_only=tournament_only)
+    total = card.load_cards_count(person_id=person_id, season_id=season_id)
+    pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
+    r = {'page': page, 'pages': pages, 'cards': cs}
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))
     return resp
@@ -251,12 +297,12 @@ def rotation_clear_cache() -> Response:
 
 @APP.route('/api/cards')
 def cards_api() -> Response:
-    blob = {'cards': cs.load_cards()}
+    blob = {'cards': card.load_cards()}
     return return_json(blob)
 
 @APP.route('/api/card/<card>')
-def card_api(card: str) -> Response:
-    return return_json(oracle.load_card(card))
+def card_api(c: str) -> Response:
+    return return_json(oracle.load_card(c))
 
 @APP.route('/api/archetype/reassign', methods=['POST'])
 @auth.demimod_required
@@ -278,14 +324,14 @@ def post_rule_update(rule_id: int = None) -> Response:
                 inc.append(parse_line(line))
             except InvalidDataException:
                 return return_json({'success':False, 'msg':f"Couldn't find a card count and name on line: {line}"})
-            if not cs.card_exists(inc[-1][1]):
+            if not card.card_exists(inc[-1][1]):
                 return return_json({'success':False, 'msg':f'Card not found in any deck: {line}'})
         for line in cast(str, request.form.get('exclude')).strip().splitlines():
             try:
                 exc.append(parse_line(line))
             except InvalidDataException:
                 return return_json({'success':False, 'msg':f"Couldn't find a card count and name on line: {line}"})
-            if not cs.card_exists(exc[-1][1]):
+            if not card.card_exists(exc[-1][1]):
                 return return_json({'success':False, 'msg':f'Card not found in any deck {line}'})
         rs.update_cards(rule_id, inc, exc)
         return return_json({'success':True})

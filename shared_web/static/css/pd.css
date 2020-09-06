@@ -740,16 +740,18 @@ th.legend {
     line-height: 0; /* Don't mess up row spacing because the star is big. */
 }
 
-/* Prevent content jumping while deck table loads in data. */
-#decktable {
+/* Prevent content jumping while React tables load in data. */
+#cardtable, #decktable {
     min-height: 20em;
 }
 
 /*
 
-Force a consistent size of each column in react decktable otherwise things "jump" as you paginate.
+Force a consistent size of each column in react tables otherwise things "jump" as you paginate.
 
 */
+
+/* Deck Table. */
 
 .live .name {
     min-width: 10em;
@@ -793,6 +795,47 @@ Force a consistent size of each column in react decktable otherwise things "jump
 
 @media only screen and (max-width: 640px) {
     .live .name {
+        min-width: 7em;
+        max-width: 7em;
+    }
+}
+
+/* Card Table. */
+
+.live .card {
+    min-width: 10em;
+    max-width: 10em;
+}
+
+.live .num-decks {
+    min-width: 4em;
+    max-width: 4em;
+}
+
+/* We use the name 'card-record' for this rule not 'record' because Deck Table already has a .record.
+Although it displays a similar thing that maxes out around 7-1-1 for a long tournament run but a card's all time record size is unbounded. */
+.live .card-record {
+    min-width: 8em;
+    max-width: 8em;
+}
+
+.live .win-percent {
+    min-width: 3em;
+    max-width: 3em;
+}
+
+.live .tournament-wins, .live .tournament-top-8s {
+    min-width: 3em;
+    max-width: 3em;
+}
+
+.live .perfect-runs {
+    min-width: 3em;
+    max-width: 3em;
+}
+
+@media only screen and (max-width: 640px) {
+    .live .card {
         min-width: 7em;
         max-width: 7em;
     }

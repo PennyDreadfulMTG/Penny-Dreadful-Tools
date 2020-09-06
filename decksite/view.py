@@ -15,7 +15,7 @@ from decksite.data import archetype, competition
 from decksite.data.archetype import Archetype
 from decksite.deck_type import DeckType
 from magic import card_price, fetcher, legality, oracle, rotation, tournaments
-from magic.models import Card, Deck
+from magic.models import Deck
 from shared import dtutil
 from shared.container import Container
 from shared_web.base_view import BaseView
@@ -37,8 +37,6 @@ SeasonInfoDescription = TypedDict('SeasonInfoDescription', {
     'legal_cards_url': Optional[str]
 }, total=False)
 
-NUM_MOST_COMMON_CARDS_TO_LIST = 10
-
 # pylint: disable=no-self-use, too-many-instance-attributes, too-many-public-methods
 class View(BaseView):
     def __init__(self) -> None:
@@ -57,8 +55,6 @@ class View(BaseView):
         self.content_class = 'content-' + self.__class__.__name__.lower()
         self.page_size = request.cookies.get('page_size', 20)
         self.tournament_only: bool = False
-        self._card_image_template: Optional[str] = None
-        self._card_url_template: Optional[str] = None
         self.show_matchup_grid = False
         self.matchup_archetypes: List[Archetype] = []
 
@@ -175,51 +171,7 @@ class View(BaseView):
         prepare.prepare_decks(getattr(self, 'decks', []))
 
     def prepare_cards(self) -> None:
-        for c in getattr(self, 'cards', []):
-            self.prepare_card(c)
-
-    def url_for_image(self, name: str) -> str:
-        if self._card_image_template is None:
-            self._card_image_template = url_for('image', c='--cardname--')
-        return self._card_image_template.replace('--cardname--', name)
-
-    def url_for_card(self, c: Card) -> str:
-        if self._card_url_template is None:
-            self._card_url_template = url_for('.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if self.tournament_only else None)
-        return self._card_url_template.replace('--cardname--', c.name)
-
-    def prepare_card_urls(self, c: Card) -> None:
-        c.url = self.url_for_card(c)
-        c.img_url = self.url_for_image(c.name)
-
-    def prepare_card(self, c: Card) -> None:
-        self.prepare_card_urls(c)
-        c.card_img_class = 'two-faces' if c.layout in ['transform', 'meld'] else ''
-        c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
-        c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}
-        c.non_pd_legal_formats = {k for k, v in c.legalities.items() if 'Penny Dreadful' not in k and v != 'Banned'}
-        c.has_legal_format = len(c.legal_formats) > 0
-        prepare.set_legal_icons(c)
-        if c.get('num_decks') is not None:
-            c.show_record = c.get('wins') or c.get('losses') or c.get('draws')
-
-        c.has_decks = len(c.get('decks', [])) > 0
-        if not c.has_decks:
-            c.has_most_common_cards = False
-            return
-
-        counter = Counter() # type: ignore
-        for d in c.get('decks', []):
-            for c2 in d.maindeck:
-                if not c2.card.type_line.startswith('Basic Land') and not c2['name'] == c.name:
-                    counter[c2['name']] += c2['n']
-        most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
-        c.most_common_cards = []
-        cs = oracle.cards_by_name()
-        for v in most_common_cards:
-            self.prepare_card(cs[v[0]])
-            c.most_common_cards.append(cs[v[0]])
-        c.has_most_common_cards = len(c.most_common_cards) > 0
+        prepare.prepare_cards(getattr(self, 'cards', []), getattr(self, 'tournament_only', False))
 
     def prepare_competitions(self) -> None:
         for c in getattr(self, 'competitions', []):
@@ -260,10 +212,10 @@ class View(BaseView):
             for c in d.maindeck:
                 if not c.card.type_line.startswith('Basic Land'):
                     counter[c['name']] += c['n']
-        most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
+        most_common_cards = counter.most_common(prepare.NUM_MOST_COMMON_CARDS_TO_LIST)
         cs = oracle.cards_by_name()
         for v in most_common_cards:
-            self.prepare_card(cs[v[0]])
+            prepare.prepare_card(cs[v[0]], getattr(self, 'tournament_only', False))
             a.most_common_cards.append(cs[v[0]])
         a.has_most_common_cards = len(a.most_common_cards) > 0
         for b in [b for b in PreOrderIter(a) if b.id in [a.id for a in archetypes]]:

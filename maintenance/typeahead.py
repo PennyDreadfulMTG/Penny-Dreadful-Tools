@@ -29,7 +29,7 @@ def archetypes() -> Dict[str, str]:
     urls = []
     archs = archetype.load_archetypes()
     for a in archs:
-        urls.append({'name': a.name, 'type': 'Archetype', 'url': url_for('.archetype', archetype_id=a.name)})
+        urls.append({'name': a.name, 'type': 'Archetype', 'url': url_for('archetype', archetype_id=a.name)})
     return urls
 
 def write_typeahead(urls):

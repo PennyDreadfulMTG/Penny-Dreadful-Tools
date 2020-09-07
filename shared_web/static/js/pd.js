@@ -1,4 +1,4 @@
-/*global PD:true, Deckbox:false, moment:false, $, Tipped, Chart */
+/*global PD:true, Deckbox:false, moment:false, $, Tipped, Chart, Bloodhound */
 window.PD = {};
 
 PD.init = function() {
@@ -8,6 +8,7 @@ PD.init = function() {
     PD.initTables();
     PD.initDetails();
     PD.initTooltips();
+    PD.initTypeahead();
     PD.initReassign();
     PD.initRuleForms();
     $("input[type=file]").on("change", PD.loadDeck).on("change", PD.toggleDrawDropdown);
@@ -162,6 +163,33 @@ PD.initTooltips = function() {
     });
 };
 
+PD.initTypeahead = function() {
+    var corpus = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace("name"),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            "url": "/api/search/?q={q}",
+            "wildcard": "{q}"
+        }
+    });
+    var options = {
+        "highlight": true,
+        "hint": true
+    };
+    var dataSource = {
+        "display": "name",
+        "limit": 10,
+        "source": corpus,
+        "templates": {
+            "suggestion": function (o) { return "<div><strong>{{name}}</strong> – {{type}}</div>".replace("{{name}}", o.name).replace("{{type}}", o.type); }
+        }
+    };
+    $(".typeahead").typeahead(options, dataSource);
+    $(".typeahead").bind("typeahead:select", function(event, suggestion) {
+        window.location.href = suggestion.url;
+    });
+};
+
 PD.initReassign = function() {
     $(".reassign").click(function() {
         $(this).hide();
@@ -200,8 +228,8 @@ PD.afterRuleUpdate = function(data) {
 PD.loadDeck = function() {
     var file = this.files[0],
         reader = new FileReader();
-    reader.onload = function(e) {
-        $("textarea").val(e.target.result);
+    reader.onload = function(event) {
+        $("textarea").val(event.target.result);
     };
     reader.readAsText(file);
 };

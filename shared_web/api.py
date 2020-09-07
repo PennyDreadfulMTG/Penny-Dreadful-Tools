@@ -51,7 +51,7 @@ def validate_api_key() -> Optional[Response]:
 def generate_error(code: str, msg: str, **more: Any) -> Dict[str, Any]:
     return {'error': True, 'code': code, 'msg': msg, **more}
 
-def return_json(content: Union[bool, Dict[str, Any], None, List[Container]], status: int = 200, camelize: bool = False) -> Response:
+def return_json(content: Union[bool, Dict[str, Any], None, List[Container], List[Dict[str, str]]], status: int = 200, camelize: bool = False) -> Response:
     if camelize:
         content = humps.camelize(content)
     s = json.dumps(content, default=extra_serializer)

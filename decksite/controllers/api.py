@@ -1,6 +1,7 @@
 import datetime
+import json
 from math import ceil
-from typing import List, Optional, cast
+from typing import Dict, List, Optional, cast
 
 from flask import Response, request, session, url_for
 from flask_restx import Resource, fields
@@ -28,7 +29,10 @@ from shared_web.decorators import fill_args, fill_form
 
 #pylint: disable=no-self-use
 
+SearchItem = Dict[str, str]
+
 DEFAULT_LIVE_TABLE_PAGE_SIZE = 20
+SEARCH_CACHE: List[SearchItem] = []
 
 DECK_ENTRY = APP.api.model('DecklistEntry', {
     'n': fields.Integer(),
@@ -424,3 +428,22 @@ def all_tournaments() -> Response:
     data = {}
     data['tournaments'] = (tournaments.all_series_info())
     return return_json(data)
+
+@APP.route('/api/search/')
+def search() -> Response:
+    init_search_cache()
+    q = request.args.get('q', '').lower()
+    results: List[SearchItem] = []
+    if len(q) < 2:
+        return return_json(results)
+    for item in SEARCH_CACHE:
+        if q in item['name'].lower():
+            results.append(item)
+    return return_json(results)
+
+def init_search_cache() -> None:
+    if len(SEARCH_CACHE) > 0:
+        return
+    with open(configuration.get_str('typeahead_data_path')) as f:
+        for item in json.load(f):
+            SEARCH_CACHE.append(item)

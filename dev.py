@@ -41,8 +41,8 @@ def run() -> None:
             exit_code = 3
             raise
     except Exception: # pylint: disable=broad-except
-        # msg = type(e).__name__ + ' running ' + str(sys.argv) + ': ' + ' [' + str(e.args) + '] ' + str(e) + '\n'
-        # sys.stderr.write(msg)
+        msg = type(e).__name__ + ' running ' + str(sys.argv) + ': ' + ' [' + str(e.args) + '] ' + str(e) + '\n'
+        sys.stderr.write(msg)
         if not exit_code:
             raise
         sys.exit(exit_code if exit_code else 4)

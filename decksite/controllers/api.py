@@ -433,7 +433,11 @@ def all_tournaments() -> Response:
 def search() -> Response:
     init_search_cache()
     q = request.args.get('q', '').lower()
+<<<<<<< HEAD
     results: List[SearchItem] = []
+=======
+    results = []
+>>>>>>> fddc350c0aefba342abb9d2e884fb4f70ab46e5a
     if len(q) < 2:
         return return_json(results)
     for item in SEARCH_CACHE:
@@ -441,9 +445,16 @@ def search() -> Response:
             results.append(item)
     return return_json(results)
 
+<<<<<<< HEAD
 def init_search_cache() -> None:
     if len(SEARCH_CACHE) > 0:
         return
     with open(configuration.get_str('typeahead_data_path')) as f:
+=======
+def init_search_cache():
+    if len(SEARCH_CACHE) > 0:
+        return
+    with open(configuration.get('typeahead_data_path')) as f:
+>>>>>>> fddc350c0aefba342abb9d2e884fb4f70ab46e5a
         for item in json.load(f):
             SEARCH_CACHE.append(item)

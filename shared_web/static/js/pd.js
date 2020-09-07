@@ -198,7 +198,7 @@ PD.initSearchShortcut = function() {
             $(".typeahead").focus();
         }
     });
-}
+};
 
 PD.initReassign = function() {
     $(".reassign").click(function() {

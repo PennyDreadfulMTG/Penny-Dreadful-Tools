@@ -1,10 +1,10 @@
 import json
-
-from flask import url_for
 from typing import Dict
 
-from decksite.data import archetype, competition, deck, person
-from magic import fetcher, oracle
+from flask import url_for
+
+from decksite.data import archetype, person
+from magic import oracle
 from shared import configuration
 
 REQUIRES_APP_CONTEXT = True
@@ -15,7 +15,7 @@ def run() -> None:
 
 def cards() -> [Dict[str, Dict[str, str]]]:
     urls = []
-    for name in oracle.cards_by_name().keys():
+    for name in oracle.cards_by_name():
         urls.append({'name': name, 'type': 'Card', 'url': url_for('card', name=name)})
     return urls
 

@@ -40,7 +40,7 @@ def run() -> None:
         except ProcessExecutionError:
             exit_code = 3
             raise
-    except Exception: # pylint: disable=broad-except
+    except Exception as e: # pylint: disable=broad-except
         msg = type(e).__name__ + ' running ' + str(sys.argv) + ': ' + ' [' + str(e.args) + '] ' + str(e) + '\n'
         sys.stderr.write(msg)
         if not exit_code:

@@ -1618,7 +1618,6 @@ textarea {
 }
 
 input, select, textarea, .tt-suggestion {
-    font-size: 0.75rem;
     margin-left: 1rem;
 }
 

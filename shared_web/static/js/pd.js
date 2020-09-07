@@ -1,4 +1,4 @@
-/*global PD:true, Deckbox:false, moment:false, $, Tipped, Chart */
+/*global PD:true, Deckbox:false, moment:false, $, Tipped, Chart, Bloodhound */
 window.PD = {};
 
 PD.init = function() {
@@ -165,27 +165,27 @@ PD.initTooltips = function() {
 
 PD.initTypeahead = function() {
     var corpus = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace("name"),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            'url': '/api/search/?q={q}',
-            'wildcard': '{q}'
+            "url": "/api/search/?q={q}",
+            "wildcard": "{q}"
         }
     });
     var options = {
         "highlight": true,
-        "hint": true,
+        "hint": true
     };
     var dataSource = {
         "display": "name",
         "limit": 10,
         "source": corpus,
         "templates": {
-            "suggestion": function (o) { return "<div><strong>{{name}}</strong> – {{type}}</div>".replace('{{name}}', o.name).replace('{{type}}', o.type) }
+            "suggestion": function (o) { return "<div><strong>{{name}}</strong> – {{type}}</div>".replace("{{name}}", o.name).replace("{{type}}", o.type); }
         }
     };
-    $('.typeahead').typeahead(options, dataSource);
-    $('.typeahead').bind('typeahead:select', function(event, suggestion) {
+    $(".typeahead").typeahead(options, dataSource);
+    $(".typeahead").bind("typeahead:select", function(event, suggestion) {
         window.location.href = suggestion.url;
     });
 };

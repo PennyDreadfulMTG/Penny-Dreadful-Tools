@@ -9,6 +9,7 @@ PD.init = function() {
     PD.initDetails();
     PD.initTooltips();
     PD.initTypeahead();
+    PD.initSearchShortcut();
     PD.initReassign();
     PD.initRuleForms();
     $("input[type=file]").on("change", PD.loadDeck).on("change", PD.toggleDrawDropdown);
@@ -189,6 +190,15 @@ PD.initTypeahead = function() {
         window.location.href = suggestion.url;
     });
 };
+
+PD.initSearchShortcut = function() {
+    $(document).keypress(function(e) {
+        if (!$(e.target).is(":input")) {
+            $(".typeahead").val("");
+            $(".typeahead").focus();
+        }
+    });
+}
 
 PD.initReassign = function() {
     $(".reassign").click(function() {

@@ -182,7 +182,7 @@ PD.initTypeahead = function() {
         "limit": 10,
         "source": corpus,
         "templates": {
-            "empty": function(o) { return '<div class="tt-suggestion">No results found</div>'; },
+            "empty": function() { return '<div class="tt-suggestion">No results found</div>'; },
             "suggestion": function (o) { return "<div><strong>{{name}}</strong> – {{type}}</div>".replace("{{name}}", o.name).replace("{{type}}", o.type); }
         }
     };

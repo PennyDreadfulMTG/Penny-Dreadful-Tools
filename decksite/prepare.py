@@ -1,7 +1,7 @@
 from collections import Counter
 from typing import Dict, List, Union
 
-from flask import session, url_for
+from flask import g, session, url_for
 
 from decksite.deck_type import DeckType
 from magic import oracle, rotation
@@ -11,7 +11,6 @@ from shared import dtutil
 # Take 'raw' items from the database and decorate them for use and display.
 
 NUM_MOST_COMMON_CARDS_TO_LIST = 10
-URL_CACHE: Dict[str, str] = {}
 
 def prepare_cards(cs: List[Card], tournament_only: bool = False) -> None:
     for c in cs:
@@ -51,14 +50,18 @@ def prepare_card_urls(c: Card, tournament_only: bool = False) -> None:
     c.img_url = url_for_image(c.name)
 
 def url_for_image(name: str) -> str:
-    if URL_CACHE.get('card_image') is None:
-        URL_CACHE['card_image'] = url_for('image', c='--cardname--')
-    return URL_CACHE['card_image'].replace('--cardname--', name)
+    if g.get('url_cache') is None:
+        g.url_cache: Dict[str, str] = {}
+    if g.url_cache.get('card_image') is None:
+        g.url_cache['card_image'] = url_for('image', c='--cardname--')
+    return g.url_cache['card_image'].replace('--cardname--', name)
 
 def url_for_card(c: Card, tournament_only: bool = False) -> str:
-    if URL_CACHE.get('card_page') is None:
-        URL_CACHE['card_page'] = url_for('.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if tournament_only else None)
-    return URL_CACHE['card_page'].replace('--cardname--', c.name)
+    if g.get('url_cache') is None:
+        g.url_cache: Dict[str, str] = {}
+    if g.url_cache.get('card_page') is None:
+        g.url_cache['card_page'] = url_for('.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if tournament_only else None)
+    return g.url_cache['card_page'].replace('--cardname--', c.name)
 
 def prepare_decks(ds: List[Deck]) -> None:
     for d in ds:

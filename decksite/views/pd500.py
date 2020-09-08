@@ -19,6 +19,7 @@ class PD500(View):
         self.faqs_url = url_for('faqs')
         self.cardhoarder_loan_url = 'https://www.cardhoarder.com/free-loan-program-faq'
         self.tournaments_url = url_for('tournaments')
+        self.discord_url = url_for('discord')
 
     def page_title(self) -> str:
         return 'The Penny Dreadful 500'

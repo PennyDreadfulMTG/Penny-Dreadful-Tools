@@ -1,7 +1,8 @@
 from flask import Response, make_response, redirect, request, url_for
 
-from decksite import APP
+from decksite import APP, get_season_id
 from decksite.cache import cached
+from decksite.data import deck
 from decksite.views import About, AboutPdm, CommunityGuidelines, Faqs
 
 
@@ -19,7 +20,9 @@ def about_gp() -> Response:
 @APP.route('/about/pd/')
 @cached()
 def about() -> str:
-    view = About(request.args.get('src'))
+    season_id = max(get_season_id() - 1, 0)
+    last_season_tournament_winners = deck.load_decks('d.finish = 1', season_id=season_id)
+    view = About(request.args.get('src'), last_season_tournament_winners)
     return view.page()
 
 @APP.route('/faqs/')

@@ -10,7 +10,7 @@ from shared import configuration
 REQUIRES_APP_CONTEXT = True
 
 def run() -> None:
-    urls = archetypes() + cards() + people()
+    urls = archetypes() + cards() + people() + resources()
     write_typeahead(urls)
 
 def archetypes() -> List[Dict[str, str]]:
@@ -36,7 +36,7 @@ def resources() -> List[Dict[str, str]]:
     urls = []
     for category, entries in fetcher.resources().items():
         for name, url in entries.items():
-            urls.append({'name': f'{category} – {name}', 'type': 'Resource', 'url': url})
+            urls.append({'name': f'Resources – {category} – {name}', 'type': 'Resource', 'url': url})
     return urls
 
 def write_typeahead(urls: List[Dict[str, str]]) -> None:

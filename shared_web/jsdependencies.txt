@@ -7,4 +7,4 @@ moment.js
 moment-timezone:moment-timezone-with-data
 react
 react-dom
-typeahead.js:typeahead.bundle
+corejs-typeahead:typeahead.bundle

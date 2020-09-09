@@ -1,4 +1,5 @@
 /*global PD:true, Deckbox:false, moment:false, $, Tipped, Chart, Bloodhound */
+/* eslint-disable max-lines */
 window.PD = {};
 
 PD.init = function() {
@@ -650,6 +651,7 @@ $(document).ready(function() {
 
 // Shift-click checkboxes behavior.
 // Inlining https://raw.githubusercontent.com/rmariuzzo/checkboxes.js/master/src/jquery.checkboxes.js because it's not very big and there's no CDN version.
+/* eslint-disable */
 (($) => {
 
     /**

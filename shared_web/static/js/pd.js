@@ -174,6 +174,7 @@ PD.initTypeahead = function() {
         }
     });
     var options = {
+        "autoselect": true,
         "highlight": true,
         "hint": true
     };

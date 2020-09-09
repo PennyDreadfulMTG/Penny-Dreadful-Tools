@@ -98,13 +98,16 @@
 
     {{#has_search_results}}
         <form method="post" class="inline">
-            <table>
+            <table id="search-results" data-toggle="checkboxes" data-range="true">
                 <thead>
                     <tr>
                         <th>Colors</th>
                         <th>Name</th>
                         <th>Archetype</th>
-                        <th>Select</th>
+                        <th>
+                            <a href="#search-results" data-toggle="checkboxes" data-action="check">☑</a> |
+                            <a href="#search-results" data-toggle="checkboxes" data-action="uncheck">☐</a>
+                        </th>
                         <th>Season</th>
                     </tr>
                 </thead>

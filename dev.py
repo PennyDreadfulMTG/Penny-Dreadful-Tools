@@ -344,9 +344,10 @@ def popclean() -> None:
         subprocess.check_call(['git', 'stash', 'pop'])
 
 def check(args: List[str]) -> None:
+    sort()
+    mypy(args)
     lint(args)
     jslint()
-    mypy(args)
 
 def release(args: List[str]) -> None:
     check([])

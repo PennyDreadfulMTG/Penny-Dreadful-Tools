@@ -1,7 +1,7 @@
 import datetime
 import json
 from math import ceil
-from typing import Dict, List, Optional, cast
+from typing import Any, Dict, List, Optional, cast
 
 from flask import Response, request, session, url_for
 from flask_restx import Resource, fields
@@ -459,13 +459,13 @@ def init_search_cache() -> None:
         for item in json.load(f):
             SEARCH_CACHE.append(item)
 
-def menu_item_to_search_item(menu_item, parent_name = None):
+def menu_item_to_search_item(menu_item: Dict[str, Any], parent_name: Optional[str] = None) -> Dict[str, Any]:
     name = ''
     if parent_name:
         name += f'{parent_name} – '
-    name += menu_item.get('name')
+    name += menu_item.get('name', '')
     if menu_item.get('url'):
         url = menu_item.get('url')
     else:
-        url = url_for(menu_item.get('endpoint'))
+        url = url_for(menu_item.get('endpoint', ''))
     return {'name': name, 'type': 'Page', 'url': url}

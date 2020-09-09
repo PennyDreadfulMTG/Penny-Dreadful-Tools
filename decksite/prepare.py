@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Dict, List, Union
+from typing import List, Union
 
 from flask import g, session, url_for
 
@@ -51,14 +51,14 @@ def prepare_card_urls(c: Card, tournament_only: bool = False) -> None:
 
 def url_for_image(name: str) -> str:
     if g.get('url_cache') is None:
-        g.url_cache: Dict[str, str] = {}
+        g.url_cache = {}
     if g.url_cache.get('card_image') is None:
         g.url_cache['card_image'] = url_for('image', c='--cardname--')
     return g.url_cache['card_image'].replace('--cardname--', name)
 
 def url_for_card(c: Card, tournament_only: bool = False) -> str:
     if g.get('url_cache') is None:
-        g.url_cache: Dict[str, str] = {}
+        g.url_cache = {}
     if g.url_cache.get('card_page') is None:
         g.url_cache['card_page'] = url_for('.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if tournament_only else None)
     return g.url_cache['card_page'].replace('--cardname--', c.name)

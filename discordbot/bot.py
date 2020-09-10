@@ -63,9 +63,9 @@ class Bot(commands.Bot):
         await super().close()
 
     async def on_ready(self) -> None:
-        logging.info(f'Logged in as %s (%d)', self.user.name, self.user.id)
+        logging.info('Logged in as %s (%d)', self.user.name, self.user.id)
         names = ', '.join([guild.name or '' for guild in self.guilds])
-        logging.info(f'Connected to %s', names)
+        logging.info('Connected to %s', names)
         logging.info('--------')
         perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
 
@@ -192,7 +192,7 @@ class Bot(commands.Bot):
             content = [arg.content for arg in args if hasattr(arg, 'content')] # The default string representation of a Message does not include the message content.
             repo.create_issue(f'Bot error {event_method}\n{args}\n{kwargs}\n{content}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=exception)
         except GithubException as e:
-            logging.error(f'Github error\n%s', e)
+            logging.error('Github error\n%s', e)
 
     @background_task
     async def background_task_tournaments(self) -> None:
@@ -202,7 +202,7 @@ class Bot(commands.Bot):
             return
         channel = self.get_channel(tournament_channel_id)
         if not isinstance(channel, discord.abc.Messageable):
-            logging.warning(f'ERROR: could not find tournament_channel_id %d', tournament_channel_id)
+            logging.warning('ERROR: could not find tournament_channel_id %d', tournament_channel_id)
             return
         while self.is_ready:
             info = tournaments.next_tournament_info()

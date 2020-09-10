@@ -692,6 +692,10 @@ td.n, th.n {
     text-align: right;
 }
 
+td.n {
+    font-variant-numeric: tabular-nums;
+}
+
 tr.wide td, tr.wide th {
     padding-bottom: 0.5em;
     padding-top: 0.5em;

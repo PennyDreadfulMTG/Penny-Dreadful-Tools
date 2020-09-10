@@ -2,13 +2,15 @@ import asyncio
 import datetime
 from typing import Any, Dict, List, Optional, Set, Union
 
+from github.GithubException import GithubException
+
 from magic import card, database, fetcher, mana, rotation
 from magic.abc import CardDescription
 from magic.card import TableDescription
 from magic.database import create_table_def, db
 from magic.models import Card
 from magic.whoosh_write import WhooshWriter
-from shared import dtutil
+from shared import dtutil, repo
 from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
@@ -63,7 +65,19 @@ def layouts() -> Dict[str, bool]:
     }
 
 def playable_layouts() -> List[str]:
-    return [k for k, v in layouts().items() if v]
+    return [layout for layout, playable in layouts().items() if playable]
+
+def is_playable_layout(layout: str) -> bool:
+    v = layouts().get(layout)
+    if v is not None:
+        return v
+    if not hasattr(is_playable_layout, 'mising_layout_logged'):  # A little hack to prevent swamping github – see https://stackoverflow.com/a/422198/375262
+        try:
+            repo.create_issue(f'Did not recognize layout `{layout}` – need to add it', 'multiverse', 'multiverse', 'PennyDreadfulMTG/perf-reports')
+        except GithubException:
+            pass # We tried. Not gonna break the world because we couldn't log it.
+        setattr(is_playable_layout, 'missing_layout_logged', list()) # The other half of the hack.
+    return False
 
 def cached_base_query(where: str = '(1 = 1)') -> str:
     return 'SELECT * FROM _cache_card AS c WHERE {where}'.format(where=where)

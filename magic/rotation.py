@@ -245,7 +245,7 @@ def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_l
     remaining_runs = TOTAL_RUNS - runs
     hits_needed = max(round(TOTAL_RUNS / 2 - hits), 0)
     c = cs[name]
-    if c.layout not in multiverse.playable_layouts():
+    if not multiverse.is_playable_layout(c.layout):
         return None
     percent = round(round(hits / runs, 2) * 100)
     if remaining_runs == 0:

@@ -32,7 +32,7 @@ def update_index(index: Index, cards: List[Card]) -> None:
     writer = index.writer()
     # We exclude tokens here because they can have the exact same name as cards.
     # We exclude emblems here to stop them showing up as
-    cards = [c for c in cards if c.layout in multiverse.playable_layouts()]
+    cards = [c for c in cards if multiverse.is_playable_layout(c.layout)]
     for card in cards:
         names = card.names
         if card.name not in names:

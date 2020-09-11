@@ -1,8 +1,8 @@
 /*global PD:true*/
 import Axios from "axios";
 import React from "react";
-import { render } from "react-dom";
 import { debounce } from "lodash";
+import { render } from "react-dom";
 
 // eslint-disable-next-line no-unused-vars
 class CardTable extends React.Component {
@@ -13,7 +13,7 @@ class CardTable extends React.Component {
             cards: [],
             page: 0,
             pageSize: 20,
-            q: ''
+            q: ""
         };
         this.debouncedLoadCards = debounce(this.loadCards, 250);
     }
@@ -75,7 +75,7 @@ class CardTable extends React.Component {
             }
             this.setState({q: e.target.value, "page": 0});
             this.debouncedLoadCards.apply(this);
-        }
+        };
         this.renderCardRow = this.renderCardRow.bind(this);
         this.renderPagination = this.renderPagination.bind(this);
         const cardRows = cards.map(this.renderCardRow);
@@ -85,8 +85,8 @@ class CardTable extends React.Component {
 
         return (
             <div className={className}>
-                <form className="inline" onSubmit={e => { e.preventDefault(); }}>
-                    <input className="name" placedholder="Card name" type="text" onChange={queryChanged.bind(this)} value={this.state.q}/>
+                <form className="inline" onSubmit={(e) => { e.preventDefault(); }}>
+                    <input className="name" placeholder="Card name" type="text" onChange={queryChanged.bind(this)} value={this.state.q}/>
                 </form>
                 <table className={className}>
                     <thead>

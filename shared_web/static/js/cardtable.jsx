@@ -2,6 +2,7 @@
 import Axios from "axios";
 import React from "react";
 import { render } from "react-dom";
+import { debounce } from "lodash";
 
 // eslint-disable-next-line no-unused-vars
 class CardTable extends React.Component {
@@ -11,8 +12,10 @@ class CardTable extends React.Component {
         this.state = {
             cards: [],
             page: 0,
-            pageSize: 20
+            pageSize: 20,
+            q: ''
         };
+        this.debouncedLoadCards = debounce(this.loadCards, 250);
     }
 
     componentDidMount() {
@@ -29,7 +32,7 @@ class CardTable extends React.Component {
     }
 
     loadCards() {
-        const {page, pageSize, sortBy, sortOrder} = this.state;
+        const {page, pageSize, q, sortBy, sortOrder} = this.state;
         let deckType = "all";
         if (this.props.leagueOnly) {
             deckType = "league";
@@ -41,6 +44,7 @@ class CardTable extends React.Component {
             page,
             pageSize,
             "personId": this.props.personId,
+            q,
             sortBy,
             sortOrder,
             "seasonId": this.props.seasonId
@@ -65,6 +69,13 @@ class CardTable extends React.Component {
         }
         const className = "live";
         const { cards } = this.state;
+        const queryChanged = (e) => {
+            if (this.state.q === e.target.value) {
+                return;
+            }
+            this.setState({q: e.target.value});
+            this.debouncedLoadCards.apply(this);
+        }
         this.renderCardRow = this.renderCardRow.bind(this);
         this.renderPagination = this.renderPagination.bind(this);
         const cardRows = cards.map(this.renderCardRow);
@@ -73,7 +84,10 @@ class CardTable extends React.Component {
         document.getElementById("cardtable").style.minHeight = cards.length + "em";
 
         return (
-            <React.Fragment>
+            <div className={className}>
+                <form className="inline" onSubmit={e => { e.preventDefault(); }}>
+                    <input className="name" type="text" onChange={queryChanged.bind(this)} value={this.state.q}/>
+                </form>
                 <table className={className}>
                     <thead>
                         <tr>
@@ -98,7 +112,7 @@ class CardTable extends React.Component {
                     </tbody>
                 </table>
                 {pagination}
-            </React.Fragment>
+            </div>
         );
     }
 

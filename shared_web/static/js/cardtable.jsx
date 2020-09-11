@@ -77,7 +77,7 @@ class CardTable extends React.Component {
                 <table className={className}>
                     <thead>
                         <tr>
-                            <th className="card" onClick={this.sort.bind(this, "name", "ASC")}>Card</th>
+                            <th onClick={this.sort.bind(this, "name", "ASC")}>Card</th>
                             <th className="n num-decks" onClick={this.sort.bind(this, "numDecks", "DESC")}># Decks</th>
                             <th className="n card-record" onClick={this.sort.bind(this, "record", "DESC")}>Record</th>
                             <th className="n win-percent" onClick={this.sort.bind(this, "winPercent", "DESC")}>Win %</th>

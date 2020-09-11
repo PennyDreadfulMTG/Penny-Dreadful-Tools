@@ -54,6 +54,7 @@ def layouts() -> Dict[str, bool]:
         'host': False,
         'leveler': True,
         'meld': True,
+        'modal_dfc': True,
         'normal': True,
         'planar': False,
         'saga': True,

@@ -18,7 +18,7 @@ def prepare_cards(cs: List[Card], tournament_only: bool = False) -> None:
 
 def prepare_card(c: Card, tournament_only: bool = False) -> None:
     prepare_card_urls(c, tournament_only)
-    c.card_img_class = 'two-faces' if c.layout in ['transform', 'meld'] else ''
+    c.card_img_class = 'two-faces' if c.layout in ['transform', 'meld', 'modal_dfc'] else ''
     c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
     c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}
     c.non_pd_legal_formats = {k for k, v in c.legalities.items() if 'Penny Dreadful' not in k and v != 'Banned'}

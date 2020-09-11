@@ -310,6 +310,20 @@ header, nav, main, footer, .status-bar, .submenu-container {
     }
 }
 
+header {
+    display: flex;
+}
+
+header h1 {
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+header .search {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
 main, nav {
     background: #f9f9f9;
     color: #502828;
@@ -467,13 +481,12 @@ Currently there is no h3 and nesting that deeply should be pondered but it may b
    See: https://webdesign.tutsplus.com/articles/the-truth-about-multiple-h1-tags-in-the-html5-era--webdesign-16824 */
 header h1 {
     border: 0;
-    float: left; /* To accommodate search bar on right. */
     font-family: heading-caps, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-variant-numeric: oldstyle-nums;
     font-weight: normal;
     font-size: 1.333rem;
     margin-bottom: 0;
-    margin-right: 1rem;
+    margin-right: 3rem;
     padding: 3rem 0 1rem 0;
     text-transform: lowercase;
 }
@@ -1573,6 +1586,8 @@ p.bug-desc {
 
 Forms
 
+To avoid affecting the search box most rules for input are prefixed with main.
+
 */
 
 form {
@@ -1583,7 +1598,7 @@ button, form, input, select, textarea {
     font-size: inherit;
 }
 
-button, input, select, textarea, .uploader-label, .instructions {
+button, main input, select, textarea, .uploader-label, .instructions {
     width: 20rem;
 }
 
@@ -1620,7 +1635,7 @@ textarea {
     height: 10rem;
 }
 
-input, select, textarea, .tt-suggestion {
+main input, select, textarea {
     margin-left: 1rem;
 }
 
@@ -1689,7 +1704,7 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
         float: none;
         text-align: left;
     }
-    button, input, select, textarea {
+    button, main input, select, textarea {
         margin-bottom: 1rem;
         margin-left: 0;
         margin-top: 0.5625rem;
@@ -1855,43 +1870,56 @@ Search
 */
 
 .search {
-    float: right;
     /* Mirror h1 margins and padding as this floats alongside the logo. */
     margin-bottom: 0;
-    margin-left: 0;
+    margin-left: 3rem;
     padding: 3rem 0 1rem 0;
+    text-align: right; /* Make the search box appear on the right. */
 }
 
-/* When search wraps under the logo it needs different behavior. */
-@media only screen and (max-width: 800px) {
-    .search {
-        margin-bottom: 1rem;
-        margin-left: 0;
-        padding-top: 1rem;
-    }
+/* The js inserts a span with display:inline-block in between .search. We have to tell it to take up all the remaining space to get a bigger input. */
+.twitter-typeahead {
+    width: 100%;
 }
 
 .search input {
+    border: 0;
     box-sizing: border-box; /* Lets us specify width the same as the search results below it without having to account for padding. */
     font-size: 1rem;
-    margin-bottom: 0;
-    margin-top: 0;
-    width: 20rem;
+    line-height: 1.333; /* Give the search text a little room to breathe. */
+    /*
+        The heading we are lining up with here has font-size: 1.333rem and line-height 1.333rem to be 1.777rem tall.
+        We have font-size 1rem and line-height 1.333 for a height of 1.333rem.
+        We add half the missing height above as margins to line up perfectly.
+        We do NOT do the same for the bottom because we want the search results to line up with the bottom of the input not have a gap.
+    */
+
+    margin-top: 0.222rem;
+    max-width: 20rem;
+    min-width: 6rem; /* This gets us down to 480px before we start to break the right margin rather than make the search box smaller. */
+    width: 100%;
+}
+
+/* The js uses position:absolute and left:0 to place these in relation to the search input. But we are right-aligned so the fixed spot is the top-right corner. */
+.tt-hint, .tt-menu {
+    right: 0 !important; /* Position in the correct place. */
+    left: auto !important; /* Undo the js's inline style. */
 }
 
 .tt-menu {
-    margin-left: 0;
+    text-align: left; /* Override the right-alignment that we use to get the search box flush with the right margin. */
+    max-width: 20rem;
+    min-width: 6rem; /* This gets us down to 480px before we start to break the right margin rather than make the search box smaller. */
+    width: 100%;
 }
 
 .tt-suggestion {
     background-color: #f9f9f9;
-    border: 0.05rem solid #ccc;
-    border-top: 0;
-    box-sizing: border-box; /* Lets us specify width the same as the search input above it without having to account for padding. */
+    outline: 0.05rem solid #ccc;
     color: #502828;
     font-size: 0.9rem;
     padding: 0.563rem 0.563em;
-    width: 20rem;
+
 }
 
 .tt-highlight {

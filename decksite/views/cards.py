@@ -16,12 +16,8 @@ class Cards(View):
         self.show_tournament_toggle = True
         self.tournament_only = self.hide_source = tournament_only
         self.query = query
-        # if it's the current season, allow the scryfall filter to add "f:pd" to speed up results
-        if self.season_id() == current_season_num():
-            self.filter_current_season = True
         self.toggle_results_url = url_for('.cards', deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
         self.cards = cards
-        self.show_filters_toggle = True
 
     def page_title(self) -> str:
         return 'Cards'

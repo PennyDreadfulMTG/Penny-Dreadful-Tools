@@ -73,7 +73,7 @@ class CardTable extends React.Component {
             if (this.state.q === e.target.value) {
                 return;
             }
-            this.setState({q: e.target.value});
+            this.setState({q: e.target.value, "page": 0});
             this.debouncedLoadCards.apply(this);
         }
         this.renderCardRow = this.renderCardRow.bind(this);
@@ -86,7 +86,7 @@ class CardTable extends React.Component {
         return (
             <div className={className}>
                 <form className="inline" onSubmit={e => { e.preventDefault(); }}>
-                    <input className="name" type="text" onChange={queryChanged.bind(this)} value={this.state.q}/>
+                    <input className="name" placedholder="Card name" type="text" onChange={queryChanged.bind(this)} value={this.state.q}/>
                 </form>
                 <table className={className}>
                     <thead>

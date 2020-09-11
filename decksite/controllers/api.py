@@ -22,7 +22,6 @@ from magic.decklist import parse_line
 from magic.models import Deck
 from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
-from shared.database import sqlescape
 from shared.pd_exception import DoesNotExistException, InvalidDataException, TooManyItemsException
 from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
@@ -103,17 +102,7 @@ def decks_api() -> Response:
             'decks': [<deck>]
         }
     """
-    if not request.args.get('sortBy') and request.args.get('competitionId'):
-        sort_by = 'top8'
-        sort_order = 'ASC'
-    elif not request.args.get('sortBy'):
-        sort_by = 'date'
-        sort_order = 'DESC'
-    else:
-        sort_by = str(request.args.get('sortBy'))
-        sort_order = str(request.args.get('sortOrder'))
-    assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
-    order_by = query.decks_order_by(sort_by, sort_order)
+    order_by = query.decks_order_by(request.args.get('sortBy'), request.args.get('sortOrder'), request.args.get('competitionId'))
     page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
     page = int(request.args.get('page', 0))
     start = page * page_size
@@ -152,14 +141,7 @@ def cards2_api() -> Response:
             'cards': [<card>]
         }
     """
-    if not request.args.get('sortBy'):
-        sort_by = 'numDecks'
-        sort_order = 'DESC'
-    else:
-        sort_by = str(request.args.get('sortBy'))
-        sort_order = str(request.args.get('sortOrder'))
-    assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
-    order_by = query.cards_order_by(sort_by, sort_order)
+    order_by = query.cards_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
     page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
     page = int(request.args.get('page', 0))
     start = page * page_size
@@ -167,8 +149,7 @@ def cards2_api() -> Response:
     person_id = request.args.get('personId') or None
     tournament_only = request.args.get('deckType') == 'tournament'
     season_id = rotation.season_id(str(request.args.get('seasonId')), None)
-    q = request.args.get('q', '').strip()
-    additional_where = "name LIKE '%%" + '%%'.join(c.replace("'", "''").replace('%', '%%') for c in list(q)) + "%%'"
+    additional_where = query.card_name_where(request.args.get('q', '').strip())
     cs = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, person_id=person_id, tournament_only=tournament_only, season_id=season_id)
     prepare_cards(cs, tournament_only=tournament_only)
     total = card.load_cards_count(additional_where=additional_where, person_id=person_id, season_id=season_id)

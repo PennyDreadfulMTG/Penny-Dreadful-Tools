@@ -5,7 +5,6 @@ from flask import url_for
 from decksite.deck_type import DeckType
 from decksite.view import View
 from magic.models import Card
-from magic.rotation import current_season_num
 
 
 # pylint: disable=no-self-use, too-many-instance-attributes

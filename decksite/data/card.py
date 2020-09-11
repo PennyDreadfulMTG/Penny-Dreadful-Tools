@@ -249,6 +249,7 @@ def load_cards_count(additional_where: str = 'TRUE', person_id: Optional[int] = 
     return int(db().value(sql))
 
 @retry_after_calling(preaggregate)
+# pylint disable=too-many-arguments
 def load_cards(
         additional_where: str = 'TRUE',
         order_by: str = 'num_decks DESC, record, name',

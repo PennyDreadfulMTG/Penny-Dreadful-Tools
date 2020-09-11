@@ -250,7 +250,7 @@ def load_cards_count(additional_where: str = 'TRUE', person_id: Optional[int] = 
 
 @retry_after_calling(preaggregate)
 def load_cards(
-        additional_where = 'TRUE',
+        additional_where: str = 'TRUE',
         order_by: str = 'num_decks DESC, record, name',
         limit: str = '',
         person_id: Optional[int] = None,

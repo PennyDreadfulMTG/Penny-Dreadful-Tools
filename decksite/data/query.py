@@ -160,7 +160,7 @@ def decks_where(args: Dict[str, str], viewer_id: Optional[int]) -> str:
         parts.append(f'c.id = {competition_id}') # XSS for our cass now taht we don't use int()???
     return ') AND ('.join(parts)
 
-def card_name_where(q: str):
+def card_name_where(q: str) -> str:
     return "name LIKE '%%" + '%%'.join(c.replace("'", "''").replace('%', '%%') for c in list(q)) + "%%'"
 
 def archetype_where(archetype_id: int) -> str:

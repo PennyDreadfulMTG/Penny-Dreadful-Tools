@@ -237,7 +237,7 @@ def preaggregate_trailblazer() -> None:
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(preaggregate)
-def load_cards_count(person_id: Optional[int], season_id: Optional[int] = None) -> int:
+def load_cards_count(additional_where: str = 'TRUE', person_id: Optional[int] = None, season_id: Optional[int] = None) -> int:
     if person_id:
         table = '_card_person_stats'
         where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
@@ -245,11 +245,13 @@ def load_cards_count(person_id: Optional[int], season_id: Optional[int] = None) 
         table = '_card_stats'
         where = 'TRUE'
     season_query = query.season_query(season_id)
-    sql = f'SELECT COUNT(DISTINCT name) AS n FROM {table} WHERE {where} AND {season_query}'
+    sql = f'SELECT COUNT(DISTINCT name) AS n FROM {table} WHERE ({where}) AND ({additional_where}) AND ({season_query})'
     return int(db().value(sql))
 
+# pylint: disable=too-many-arguments
 @retry_after_calling(preaggregate)
 def load_cards(
+        additional_where: str = 'TRUE',
         order_by: str = 'num_decks DESC, record, name',
         limit: str = '',
         person_id: Optional[int] = None,
@@ -281,13 +283,13 @@ def load_cards(
         FROM
             {table} AS cs
         WHERE
-            ({where}) AND ({season_query})
+            ({where}) AND ({additional_where}) AND ({season_query})
         GROUP BY
             {group_by}
         ORDER BY
             {order_by}
         {limit}
-    """.format(table=table, season_query=query.season_query(season_id), where=where, group_by=group_by, order_by=order_by, limit=limit)
+    """.format(table=table, season_query=query.season_query(season_id), where=where, additional_where=additional_where, group_by=group_by, order_by=order_by, limit=limit)
     cs = [Container(r) for r in db().select(sql)]
     cards = oracle.cards_by_name()
     for c in cs:

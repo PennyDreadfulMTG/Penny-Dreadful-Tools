@@ -65,7 +65,6 @@ def preaggregate_played_person() -> None:
         GROUP BY
             name, person_id, season_id
     """.format(table=table, logsite_database=configuration.get('logsite_database'), season_join=query.season_join())
-    print(sql)
     preaggregation.preaggregate(table, sql)
 
 @retry_after_calling(preaggregate_played_person)
@@ -90,7 +89,6 @@ def played_cards_by_person(person_id: int, season_id: int) -> List[Card]:
         HAVING
             name IS NOT NULL
     """.format(season_query=query.season_query(season_id))
-    print(sql)
     cs = [Container(r) for r in decksite_db().select(sql, [person_id])]
     print(len(cs))
     cards = oracle.cards_by_name()

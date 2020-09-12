@@ -92,7 +92,7 @@ async def download_scryfall_card_image(c: Card, filepath: str, version: str = ''
         if c.is_double_sided():
             paths = [re.sub('.jpg$', '.a.jpg', filepath), re.sub('.jpg$', '.b.jpg', filepath)]
             await fetch_tools.store_async(scryfall_image(c, version=version), paths[0])
-            if c.layout == 'transform':
+            if c.layout == 'transform' or c.layout == 'modal_dfc':
                 await fetch_tools.store_async(scryfall_image(c, version=version, face='back'), paths[1])
             if c.layout == 'meld':
                 await fetch_tools.store_async(scryfall_image(c, version=version, face='meld'), paths[1])

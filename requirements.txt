@@ -10,7 +10,7 @@ cachelib==0.1.1
 changelogs==0.14.0
 coverage==5.3
 discord.py[voice]==1.4.1
-feedparser==5.2.1
+feedparser==6.0.0
 flask==1.1.2
 flask-babel==2.0.0
 Flask-Migrate==2.5.3

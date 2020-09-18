@@ -259,7 +259,7 @@ def is_tournament_channel(channel: TextChannel) -> bool:
     return channel.id == tournament_channel_id
 
 def promo_explanation() -> Tuple[str, Dict[str, str]]:
-    explanation = "Some cards have promos that are much cheaper than all other versions. The bot reports the cheapest version in stock.\nOther bot chains will have copies."
+    explanation = 'Some cards have promos that are much cheaper than all other versions. The bot reports the cheapest version in stock.\nOther bot chains will have copies.'
     have_cheap_promos = [
         'Barbarian Ring',
         'Buried Alive',

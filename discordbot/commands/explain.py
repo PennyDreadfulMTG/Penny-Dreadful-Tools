@@ -6,7 +6,7 @@ from discord import TextChannel
 from discord.ext import commands
 
 from discordbot.command import MtgContext
-from magic import card_price, fetcher, tournaments
+from magic import card_price, fetcher, oracle, tournaments
 from shared import configuration
 
 
@@ -131,6 +131,12 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
                 'More Info': fetcher.decksite_url('/tournaments/')
             }
         ),
+        'promos': (
+            """
+            """,
+            {}
+
+        ),
         'replay': (
             """
             You can play the same person a second time on your league run as long as they have started a new run. The same two runs cannot play each other twice.
@@ -230,6 +236,8 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
                 explanation = reporting_explanations['tournament']
             else:
                 explanation = reporting_explanations['league']
+        elif word == 'promos':
+            explanation = promo_explanation()
         else:
             explanation = explanations[word]
 
@@ -249,3 +257,18 @@ def is_tournament_channel(channel: TextChannel) -> bool:
     if not tournament_channel_id:
         return False
     return channel.id == tournament_channel_id
+
+def promo_explanation() -> Tuple[str, Dict[str, str]]:
+    explanation = 'Some cards have promos that are much cheaper than all other versions. The bot reports the cheapest version in stock.\nOther bot chains will have copies.'
+    have_cheap_promos = [
+        'Barbarian Ring',
+        'Buried Alive',
+        'Crystal Vein',
+        'Eureka',
+        'Figure of Destiny',
+        'Lake of the Dead',
+    ]
+    legal_cheap_promos = [c for c in oracle.load_cards(have_cheap_promos) if c.pd_legal]
+    if len(legal_cheap_promos) > 0:
+        explanation += ' Affected cards include: ' + ', '.join(c.name for c in legal_cheap_promos)
+    return(explanation, {})

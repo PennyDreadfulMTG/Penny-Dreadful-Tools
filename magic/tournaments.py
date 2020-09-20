@@ -63,13 +63,23 @@ def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> L
     pdt_time = ('Penny Dreadful Thursdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index]) # type: ignore
     return [pdfnm_time, pdsat_time, apds_time, pds_time, pdm_time, pdt_time]
 
-def next_pd500_date() -> datetime.datetime:
+# Note: this may be in the past. It always gives the date for the current season.
+def pd500_date() -> datetime.datetime:
     end_of_season = rotation.next_rotation()
     return end_of_season - datetime.timedelta(days=12, hours=13, minutes=30) # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
 
 def is_pd500_week(start: datetime.datetime) -> bool:
-    date_of_pd500 = next_pd500_date()
+    date_of_pd500 = pd500_date()
     return start <= date_of_pd500 <= start + datetime.timedelta(days=7)
+
+# Note: this may be in the past. It always gives the date for the current season.
+def kick_off_date() -> datetime.datetime:
+    start_of_season = rotation.last_rotation()
+    return start_of_season - datetime.timedelta(days=8, hours=13, minutes=30) # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
+
+def is_kick_off_week(start: datetime.datetime) -> bool:
+    date_of_kick_off = kick_off_date()
+    return start <= date_of_kick_off <= start + datetime.timedelta(days=7)
 
 def prize(d: Deck) -> int:
     return prize_by_finish(d.get('finish') or sys.maxsize)

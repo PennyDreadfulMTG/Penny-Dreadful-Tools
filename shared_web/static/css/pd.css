@@ -132,6 +132,7 @@ main p, footer p {
     margin: 0 0 1em 0;
 }
 
+/* House style is no periods on the ends of the last sentence in a list item. */
 main li {
     margin: 0 0 0.422em;
 }
@@ -216,7 +217,6 @@ The characters included in our subsetted font are:
     ⑧ U+2467 CIRCLED DIGIT EIGHT (losing quarterfinalist, league eighth place)
     ⇅ U+21C5 UPWARDS ARROW LEFT OF DOWNWARDS ARROW (sort column)
     ⊕ U+2295 CIRCLED PLUS (active league run, maybe cut this)
-    █ U+2588 FULL BLOCK (redacted info on in-progress rotation, this is a mostly-standardized extended ASCII char 219 but not always and is not present in many fonts)
     ⸺ U+2E3A TWO-EM DASH (for fav_format when there isn’t one, could use U+2014 EM DASH)
     ▪ U+25AA BLACK SMALL SQUARE (bullet point, could switch to U+2022 BULLET which Concourse has)
     🐞 U+1F41E LADY BEETLE (bug)
@@ -228,6 +228,8 @@ The characters included in our subsetted font are:
     △ U+25B3 WHITE UP-POINTING TRIANGLE (homepage icon on bottom menu)
     🛈 U+1F6C8 CIRCLED INFORMATION SOURCE (about icon on bottom menu)
     ✅ U+2705 HEAVY WHITE CHECK MARK (deck/card is legal indicator)
+    ☐ U+2610 BALLOT BOX (uncheck all checkboxes in this table)
+    ☑ U+2611 BALLOT BOX WITH CHECK (check all checkboxes in this table)
 
 The subsetted font is generated with transfonter.org.
 
@@ -236,7 +238,7 @@ For more information see #5215.
 */
 @font-face {
     font-family: symbols;
-    src: url(data:application/font-woff;charset=utf-8;base64,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) format('woff');
+    src: url('data:application/font-woff;charset=utf-8;base64,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') format('woff');
     font-weight: normal;
     font-style: normal;
 }
@@ -306,6 +308,20 @@ header, nav, main, footer, .status-bar, .submenu-container {
     header, nav, main, footer, .status-bar, .submenu-container {
         padding: 0 1rem 0 3.845rem; /* (width of .marginalia (4em) + padding-left + padding-right) * font-size (0.75) */
     }
+}
+
+header {
+    display: flex;
+}
+
+header h1 {
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+header .search {
+    flex-grow: 1;
+    flex-shrink: 1;
 }
 
 main, nav {
@@ -465,13 +481,12 @@ Currently there is no h3 and nesting that deeply should be pondered but it may b
    See: https://webdesign.tutsplus.com/articles/the-truth-about-multiple-h1-tags-in-the-html5-era--webdesign-16824 */
 header h1 {
     border: 0;
-    float: left; /* To accommodate search bar on right. */
     font-family: heading-caps, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-variant-numeric: oldstyle-nums;
     font-weight: normal;
     font-size: 1.333rem;
     margin-bottom: 0;
-    margin-right: 1rem;
+    margin-right: 3rem;
     padding: 3rem 0 1rem 0;
     text-transform: lowercase;
 }
@@ -529,7 +544,7 @@ main a:hover, main table.calendar a:hover, .details a:hover {
 }
 
 /* There are a lot of places we plain links not heading-caps, even in the main content area. */
-main table a, main h1 a, main h2 a, main h3 a, main li a, .decklist a, .rotation a {
+main td a, main h1 a, main h2 a, main h3 a, main li a, .decklist a, .rotation a {
     font-family: inherit;
     font-variant-numeric: normal;
     text-transform: none;
@@ -621,13 +636,6 @@ main table {
     overflow-x: auto;
 }
 
-/* Turn off small caps link style in tables. */
-main table a {
-    font-family: inherit;
-    font-variant-numeric: normal;
-    text-transform: none;
-}
-
 /* Turn off hover highlight in tables. */
 main table a:hover {
     background-color: transparent;
@@ -697,6 +705,10 @@ td.n, th.n {
     text-align: right;
 }
 
+td.n {
+    font-variant-numeric: tabular-nums;
+}
+
 tr.wide td, tr.wide th {
     padding-bottom: 0.5em;
     padding-top: 0.5em;
@@ -740,16 +752,18 @@ th.legend {
     line-height: 0; /* Don't mess up row spacing because the star is big. */
 }
 
-/* Prevent content jumping while deck table loads in data. */
-#decktable {
+/* Prevent content jumping while React tables load in data. */
+#cardtable, #decktable {
     min-height: 20em;
 }
 
 /*
 
-Force a consistent size of each column in react decktable otherwise things "jump" as you paginate.
+Force a consistent size of each column in react tables otherwise things "jump" as you paginate.
 
 */
+
+/* Deck Table. */
 
 .live .name {
     min-width: 10em;
@@ -793,6 +807,51 @@ Force a consistent size of each column in react decktable otherwise things "jump
 
 @media only screen and (max-width: 640px) {
     .live .name {
+        min-width: 7em;
+        max-width: 7em;
+    }
+}
+
+/* Card Table. */
+
+.live input.name {
+    font-size: 0.75rem; /* So that the input is the same size as the card name column once width of 10em is applied via `.live .name`. */
+}
+
+.live .card {
+    min-width: 10em;
+    max-width: 10em;
+}
+
+.live .num-decks {
+    min-width: 4em;
+    max-width: 4em;
+}
+
+/* We use the name 'card-record' for this rule not 'record' because Deck Table already has a .record.
+Although it displays a similar thing that maxes out around 7-1-1 for a long tournament run but a card's all time record size is unbounded. */
+.live .card-record {
+    min-width: 8em;
+    max-width: 8em;
+}
+
+.live .win-percent {
+    min-width: 3em;
+    max-width: 3em;
+}
+
+.live .tournament-wins, .live .tournament-top-8s {
+    min-width: 3em;
+    max-width: 3em;
+}
+
+.live .perfect-runs {
+    min-width: 3em;
+    max-width: 3em;
+}
+
+@media only screen and (max-width: 640px) {
+    .live .card {
         min-width: 7em;
         max-width: 7em;
     }
@@ -1531,6 +1590,8 @@ p.bug-desc {
 
 Forms
 
+To avoid affecting the search box most rules for input are prefixed with main.
+
 */
 
 form {
@@ -1541,11 +1602,15 @@ button, form, input, select, textarea {
     font-size: inherit;
 }
 
-button, input, select, textarea, .uploader-label, .instructions {
+button, main input, select, textarea, .uploader-label, .instructions {
     width: 20rem;
 }
 
-input[type=checkbox].toggle-illegal {
+table input {
+    width: 100%; /* Don't make super-wide columns for checkboxes. */
+}
+
+input[type=checkbox] {
     width: 1rem;
 }
 
@@ -1574,7 +1639,7 @@ textarea {
     height: 10rem;
 }
 
-input, select, textarea {
+main input, select, textarea {
     margin-left: 1rem;
 }
 
@@ -1643,7 +1708,7 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
         float: none;
         text-align: left;
     }
-    button, input, select, textarea {
+    button, main input, select, textarea {
         margin-bottom: 1rem;
         margin-left: 0;
         margin-top: 0.5625rem;
@@ -1768,37 +1833,37 @@ div.loading {
 
 @-webkit-keyframes rotation {
     from {
-    -webkit-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
     }
     to {
-    -webkit-transform: rotate(359deg);
+        -webkit-transform: rotate(359deg);
     }
 }
 
 @-moz-keyframes rotation {
     from {
-    -moz-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
     }
     to {
-    -moz-transform: rotate(359deg);
+        -moz-transform: rotate(359deg);
     }
 }
 
 @-o-keyframes rotation {
     from {
-    -o-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
     }
     to {
-    -o-transform: rotate(359deg);
+        -o-transform: rotate(359deg);
     }
 }
 
 @keyframes rotation {
     from {
-    transform: rotate(0deg);
+        transform: rotate(0deg);
     }
     to {
-    transform: rotate(359deg);
+        transform: rotate(359deg);
     }
 }
 
@@ -1806,163 +1871,73 @@ div.loading {
 
 Search
 
-Styles for the Google search box.
-We need to override a lot of Google's inline styles hence a lot of !important.
-
 */
 
-/* Search Box */
-
 .search {
-    float: right;
-    margin-left: 1rem;
-    padding: 3rem 0 0; /* matches h1 as it floats alongside the logo */
+    /* Mirror h1 margins and padding as this floats alongside the logo. */
+    margin-bottom: 0;
+    margin-left: 3rem;
+    padding: 3rem 0 1rem 0;
+    text-align: right; /* Make the search box appear on the right. */
 }
 
-/* Hide the placeholder text "Google Custom Search". */
-.search ::-webkit-input-placeholder {
-    color: transparent;
-}
-.search ::-moz-placeholder {
-   color: transparent;
-   opacity:  1;
-}
-.search :-ms-input-placeholder {
-   color: transparent;
-}
-
-/* When search wraps under the logo it needs different behavior. */
-@media only screen and (max-width: 800px) {
-    .search {
-        margin-bottom: 1rem;
-        margin-left: 0;
-        padding-top: 1rem;
-    }
+/* The js inserts a span with display:inline-block in between .search. We have to tell it to take up all the remaining space to get a bigger input. */
+.twitter-typeahead {
+    width: 100%;
 }
 
 .search input {
-    margin-bottom: 0 !important; /* csslint allow: important */;
+    border: 0;
+    box-sizing: border-box; /* Lets us specify width the same as the search results below it without having to account for padding. */
+    font-size: 1rem;
+    line-height: 1.333; /* Give the search text a little room to breathe. */
+    /*
+        The heading we are lining up with here has font-size: 1.333rem and line-height 1.333rem to be 1.777rem tall.
+        We have font-size 1rem and line-height 1.333 for a height of 1.333rem.
+        We add half the missing height above as margins to line up perfectly.
+        We do NOT do the same for the bottom because we want the search results to line up with the bottom of the input not have a gap.
+    */
+
+    margin-top: 0.222rem;
+    max-width: 20rem;
+    min-width: 6rem; /* This gets us down to 480px before we start to break the right margin rather than make the search box smaller. */
+    width: 100%;
 }
 
-.gsc-search-box td {
-    /* Stop the input box text hugging the bottom. */
-    vertical-align: top !important; /* ccslint allow: important */
+/* The js uses position:absolute and left:0 to place these in relation to the search input. But we are right-aligned so the fixed spot is the top-right corner. */
+.tt-hint, .tt-menu {
+    right: 0 !important; /* Position in the correct place. */
+    left: auto !important; /* Undo the js's inline style. */
 }
 
-.gsc-control-cse {
-    background: transparent !important; /* csslint allow: important */
-    border: 0 !important; /* csslint allow: important */
-    color: #502828 !important; /* csslint allow: important */
-    max-width: 100% !important; /* csslint allow: important */
-    width: 15rem !important; /* csslint allow: important */
+.tt-menu {
+    text-align: left; /* Override the right-alignment that we use to get the search box flush with the right margin. */
+    max-width: 20rem;
+    min-width: 6rem; /* This gets us down to 480px before we start to break the right margin rather than make the search box smaller. */
+    width: 100%;
 }
 
-.gsc-input {
-    background: none !important; /* csslint allow: important */
-    font-family: inherit !important; /* csslint allow: important */
-    font-variant-numeric: normal;
-    font-size: inherit !important; /* csslint allow: important */
-    margin-bottom: 6px !important; /* csslint allow: important */
+.tt-suggestion {
+    background-color: #f9f9f9;
+    outline: 0.05rem solid #ccc;
+    color: #502828;
+    font-size: 0.9rem;
+    padding: 0.563rem 0.563em;
+
 }
 
-/* Search Results */
-
-.gsc-wrapper, .gsc-results-wrapper-overlay, .gsc-results-root {
-    background: #f9f9f9 !important; /* csslint allow: important */
-    color: #502828 !important; /* csslint allow: important */
-    font-size: 1em !important; /* csslint allow: important */
-    line-height: 1.333 !important; /* csslint allow: important */
+.tt-highlight {
+    background-color: #eee;
 }
 
-.gsc-results-wrapper-overlay {
-    height: 75vh !important; /* csslint allow: important */
-    max-width: 30rem !important; /* csslint allow: important */
+.tt-suggestion:hover, .tt-cursor {
+    background-color: #eee;
+    color:;
 }
 
-.gsc-results-wrapper-overlay * {
-    color: #502828 !important; /* csslint allow: important */
-    font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 0.75rem !important; /* csslint allow: important */
-    font-variant-numeric: normal;
-}
-
-.gs-visibleUrl {
-    display: none !important; /* csslint allow: important */
-}
-
-.gsc-wrapper a, .gs-title, .gs-title * {
-    font-family: heading-caps, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-variant-numeric: oldstyle-nums;
-    text-decoration: none !important; /* csslint allow: important */
-}
-
-.gs-title {
-    margin-bottom: 1rem;
-}
-
-.gsc-snippet {
-    white-space: normal !important; /* csslint allow: important */
-}
-
-td.gsc-table-cell-snippet-close, td.gsc-table-cell-thumbnail {
-    padding-left: 8px !important; /* csslint allow: important */
-}
-
-.gsc-cursor-page:hover {
-    text-decoration: none !important; /* csslint allow: important */
-}
-
-.gs-title, .gs-title * {
-    height: inherit !important; /* csslint allow: important */
-    line-height: 1 !important; /* csslint allow: important */
-    text-decoration: none !important; /* csslint allow: important */
-}
-
-.gsc-orderby-container {
-    display: none;
-}
-
-.gsc-wrapper div:after {
-    display: inherit;
-}
-
-.gsc-control-cse {
-    padding: 0 !important; /* csslint allow: important */
-}
-
-.gsc-search-button {
-    height: 1.33rem;
-    margin-top: 0 !important; /* csslint allow: important */
-    width: 0.75rem;
-}
-
-.gsc-webResult.gsc-result {
-    border-bottom: 0.05rem solid #eee !important; /* csslint allow: important */
-}
-
-.search tr {
-    border-bottom: 0;
-}
-
-.gsc-result-info-container, .gs-snippet {
-    /* Not sure why it doesn't pick up the definiton on HTML but it doesn't. */
-    font: 400 20px main-text, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-variant-numeric: normal;
-}
-
-.gs-snippet, .gsc-result-info {
-    color: #999 !important; /* csslint allow: important */
-    margin-bottom: 1rem;
-    margin-top: 1rem;
-}
-
-.gsc-control-cse .gs-result .gs-title, .gsc-control-cse .gs-result .gs-title * {
-    font-size: 1rem !important; /* csslint allow: important */
-}
-
-.gs-no-results-result .gs-snippet, .gs-error-result .gs-snippet {
-    background-color: #eee !important; /* csslint allow: important */
-    border-color: #999 !important; /* csslint allow: important */
+/* Prevent weird double border from the javsacript making this transparent and overlaying two inputs. */
+.tt-input {
+    background-color: #f9f9f9 !important;
 }
 
 /*

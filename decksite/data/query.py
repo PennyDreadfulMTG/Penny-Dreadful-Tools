@@ -71,7 +71,17 @@ def season_join() -> str:
             ) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
     """
 
-def decks_order_by(key: str, sort_order: str) -> str:
+def decks_order_by(sort_by: Optional[str], sort_order: Optional[str], competition_id: Optional[str]) -> str:
+    if not sort_by and competition_id:
+        sort_by = 'top8'
+        sort_order = 'ASC'
+    elif not sort_by:
+        sort_by = 'date'
+        sort_order = 'DESC'
+    else:
+        sort_by = str(sort_by)
+        sort_order = str(sort_order)
+    assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     marginalia_order_by = """
         (CASE WHEN d.finish = 1 THEN 1
              WHEN d.finish = 2 AND c.top_n >= 2 THEN 2
@@ -95,7 +105,26 @@ def decks_order_by(key: str, sort_order: str) -> str:
         'date': 'cache.active_date',
         'season': 'cache.active_date'
     }
-    return sort_options[key] + f' {sort_order}, d.finish ASC, cache.active_date DESC'
+    return sort_options[sort_by] + f' {sort_order}, d.finish ASC, cache.active_date DESC'
+
+def cards_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
+    if not sort_by:
+        sort_by = 'numDecks'
+        sort_order = 'DESC'
+    else:
+        sort_by = str(sort_by)
+        sort_order = str(sort_order)
+    assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
+    sort_options = {
+        'name': 'name',
+        'numDecks': 'num_decks',
+        'record': f'(SUM(wins) - SUM(losses)) {sort_order}, SUM(wins)',
+        'winPercent': 'ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1)',
+        'tournamentWins': 'tournament_wins',
+        'tournamentTop8s': 'tournament_top8s',
+        'perfectRuns': 'perfect_runs'
+    }
+    return sort_options[sort_by] + f' {sort_order}, num_decks DESC, record, name'
 
 def exclude_active_league_runs(except_person_id: Optional[int]) -> str:
     clause = """
@@ -130,6 +159,9 @@ def decks_where(args: Dict[str, str], viewer_id: Optional[int]) -> str:
         competition_id = cast(int, args.get('competitionId'))
         parts.append(f'c.id = {competition_id}') # XSS for our cass now taht we don't use int()???
     return ') AND ('.join(parts)
+
+def card_name_where(q: str) -> str:
+    return "name LIKE '%%" + '%%'.join(c.replace("'", "''").replace('%', '%%') for c in list(q)) + "%%'"
 
 def archetype_where(archetype_id: int) -> str:
     return f'd.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'

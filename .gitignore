@@ -10,10 +10,14 @@
 .pylintrc.tmp
 .pytest_cache/
 .vs/
-.vscode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 .web_cache/
 /*.config.json
-/.mypy_cache/
+.mypy_cache/
 /TestResults.xml
 /codecov.sh
 /images/*.jpg
@@ -42,3 +46,4 @@ sqlite3ext.h
 test_results.xml
 whoosh_index/
 /scryfall-default-cards.json
+/.env

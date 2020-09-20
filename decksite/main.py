@@ -18,15 +18,14 @@ from decksite.database import db
 from decksite.views import Home
 from magic import card as mc
 from magic import image_fetcher, oracle
-from shared import perf
+from shared import dtutil, logger, perf
 from shared.pd_exception import TooFewItemsException
-from shared_web import logger
 
 
 @APP.route('/')
 @cached()
 def home() -> str:
-    view = Home(ns.all_news(max_items=10), ds.latest_decks(), cs.load_cards(season_id=get_season_id()), ms.stats())
+    view = Home(ns.all_news(max_items=10), ds.latest_decks(season_id=get_season_id()), cs.load_cards(season_id=get_season_id()), ms.stats())
     return view.page()
 
 @APP.route('/export/<int:deck_id>/')
@@ -110,13 +109,20 @@ def banner(seasonnum: str) -> Response:
 def before_request() -> None:
     g.p = perf.start()
 
-@APP.teardown_request # type: ignore
-def teardown_request(response: Response) -> Response:
+@APP.after_request
+def after_request(response: Response) -> Response:
+    requests_until_no_intro = 20 # Typically ten page views because of async requests for the status bar.
+    views = int(request.cookies.get('views', 0)) + 1
+    response.set_cookie('views', str(views))
+    if views >= requests_until_no_intro:
+        response.set_cookie('hide_intro', value=str(True), expires=dtutil.dt2ts(dtutil.now()) + 60 *  60 * 24 * 365 * 10)
+    return response
+
+@APP.teardown_request
+def teardown_request(_: Optional[Exception]) -> None:
     if g.get('p') is not None:
         perf.check(g.p, 'slow_page', request.path, 'decksite')
     db().close()
-    return response
-
 
 def init(debug: bool = True, port: Optional[int] = None) -> None:
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""

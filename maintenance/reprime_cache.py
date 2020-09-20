@@ -1,6 +1,6 @@
 from decksite.data import archetype, card, deck, person, season
 from magic import multiverse, oracle
-from shared import redis
+from shared import redis_wrapper as redis
 
 
 def run() -> None:

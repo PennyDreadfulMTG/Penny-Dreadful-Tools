@@ -16,7 +16,7 @@ class Card(Container):
             setattr(self, 'names', [self.name])
 
     def is_double_sided(self) -> bool:
-        return self.layout in ['transform', 'meld']
+        return self.layout in ['transform', 'meld', 'modal_dfc']
 
     def is_creature(self) -> bool:
         return 'Creature' in self.type_line

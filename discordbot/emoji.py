@@ -5,7 +5,7 @@ from discord import Client, Emoji
 
 from magic import oracle, rotation
 from magic.models import Card
-from shared import redis
+from shared import redis_wrapper as redis
 
 
 def find_emoji(emoji: str, client: Client) -> Optional[Emoji]:
@@ -59,9 +59,7 @@ def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True, no_ro
 def get_future_legality(c: Card, legal: bool) -> str:
     out_emoji = '<:rotating_out:702545628882010183>'
     for status, symbol in {'undecided':':question:', 'legal':'<:rotating_in:702545611597021204>', 'notlegal':out_emoji}.items():
-        if redis.sismember(f'decksite:rotation:summary:{status}', c.id):
-            if (legal and status == 'legal') or (not legal and status == 'notlegal'):
-                return '' # No need for double symbols
+        if redis.sismember(f'decksite:rotation:summary:{status}', c.name):
             return symbol
     if rotation.read_rotation_files()[0] <= (rotation.TOTAL_RUNS / 2):
         return ':question:'

@@ -2,10 +2,9 @@ import os
 
 from flask import g, has_request_context, request
 
-from shared import configuration
+from shared import configuration, logger
 from shared.container import Container
 from shared.database import Database, get_database
-from shared_web import logger
 
 
 def db() -> Database:
@@ -16,8 +15,8 @@ def db() -> Database:
     else:
         ctx = Container() # Fallback context for testing.
     if not hasattr(ctx, 'database'):
-        ctx.database = get_database(configuration.get_str('decksite_database'))
-    return ctx.database
+        ctx.database = get_database(configuration.get_str('decksite_database')) # type: ignore
+    return ctx.database # type: ignore
 
 def setup() -> None:
     # pylint: disable=import-outside-toplevel

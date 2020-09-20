@@ -1,5 +1,5 @@
 import datetime
-from typing import Optional, Union
+from typing import Optional
 
 from flask import session
 
@@ -18,7 +18,7 @@ class Rotation(View):
         in_rotation = configuration.get_bool('always_show_rotation')
         if until_rotation < datetime.timedelta(7):
             in_rotation = True
-            self.rotation_msg = 'Totation is in progress, ends ' + dtutil.display_date(rotation.next_rotation(), 2)
+            self.rotation_msg = 'Rotation is in progress, ends ' + dtutil.display_date(rotation.next_rotation(), 2)
         else:
             self.rotation_msg = 'Rotation is ' + dtutil.display_date(rotation.next_rotation(), 2)
         if in_rotation:
@@ -38,19 +38,11 @@ class Rotation(View):
         self.num_cards = len(self.cards)
         self.query = query
         self.show_filters_toggle = True
-        if session.get('admin'):
-            return
-        self.cards = [c for c in self.cards if c.status != 'Legal']
-        for c in self.cards:
-            if c.status != 'Undecided':
-                continue
-            c.hits = redact(c.hits)
-            c.hits_needed = redact(c.hits_needed)
-            c.percent = redact(c.percent)
-            c.percent_needed = redact(c.percent_needed)
+        self.cards = [c for c in self.cards if visible(c)]
 
     def page_title(self) -> str:
         return 'Rotation'
 
-def redact(num: Union[str, int, float]) -> str:
-    return ''.join(['█' for _ in str(num)])
+
+def visible(c: Card) -> bool:
+    return c.status != 'Undecided' or session.get('admin')

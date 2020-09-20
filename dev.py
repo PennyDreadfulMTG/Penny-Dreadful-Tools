@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
+# pylint: disable=import-outside-toplevel
+import json
 import os
 import subprocess
 import sys
 import time
+from pickle import PicklingError
 from typing import List, Optional
 
-from generate_readme import generate_readme
 from shared import configuration
 from shared.pd_exception import InvalidArgumentException, TestFailedException
 
@@ -29,13 +31,13 @@ def run() -> None:
         try:
             exit_code = None
             run_dangerously()
-        except InvalidArgumentException as e:
+        except InvalidArgumentException:
             exit_code = 1
             raise
-        except TestFailedException as e:
+        except TestFailedException:
             exit_code = 2
             raise
-        except ProcessExecutionError as e:
+        except ProcessExecutionError:
             exit_code = 3
             raise
     except Exception as e: # pylint: disable=broad-except
@@ -86,6 +88,7 @@ def run_dangerously() -> None:
     elif cmd == 'popclean':
         popclean()
     elif cmd == 'readme':
+        from generate_readme import generate_readme
         generate_readme()
     elif cmd == 'coverage':
         coverage()
@@ -101,6 +104,10 @@ def run_dangerously() -> None:
         safe_push(args)
     elif cmd == 'release':
         release(args)
+    elif cmd == 'check-reqs':
+        check_requirements()
+    elif cmd == 'swagger':
+        swagger()
     else:
         raise InvalidArgumentException('Unrecognised command {cmd}.'.format(cmd=cmd))
 
@@ -112,14 +119,20 @@ def lint(argv: List[str]) -> None:
     args = ['--rcfile=.pylintrc', # Load rcfile first.
             '--ignored-modules=alembic,MySQLdb,flask_sqlalchemy,distutils.dist', # override ignored-modules (codacy hack)
             '--load-plugins', 'pylint_quotes,pylint_monolith', # Plugins
-            '--reports=n', # Don't show reports.
             '-f', 'parseable', # Machine-readable output.
-            '-j', '4' # Use four cores for speed.
+            '-j', str(configuration.get_int('pylint_threads')), # Use four cores for speed.
            ]
     args.extend(argv or find_files(file_extension='py'))
     # pylint: disable=import-outside-toplevel
     import pylint.lint
-    linter = pylint.lint.Run(args, exit=False)
+    try:
+        linter = pylint.lint.Run(args, exit=False)
+    except PicklingError:
+        print('Error while running pylint with multiprocessing')
+        configuration.write('pylint_threads', 1)
+        lint(argv)
+        return
+
     if linter.linter.msg_status:
         raise TestFailedException(linter.linter.msg_status)
 
@@ -180,6 +193,7 @@ def runtests(argv: List[str], m: str, mark: bool) -> None:
     print(f'>>>> Running tests with "{argstr}"')
     # pylint: disable=import-outside-toplevel
     import pytest
+
     from magic import fetcher, multiverse, oracle
     multiverse.init()
     oracle.init()
@@ -249,7 +263,7 @@ def pull_request(argv: List[str]) -> None:
     print('>>>> Pull request')
     try:
         subprocess.check_call(['gh', 'pr', 'create'])
-    except subprocess.CalledProcessError:
+    except (subprocess.CalledProcessError, FileNotFoundError):
         subprocess.check_call(['hub', 'pull-request', *argv])
 
 def build() -> None:
@@ -262,7 +276,6 @@ def build() -> None:
     subprocess.check_call(['npm', 'install'], shell=ON_WINDOWS)
     buildjs()
 
-
 def buildjs() -> None:
     print('>>>> Building javascript')
     subprocess.check_call(['npm', 'run-script', 'build'], shell=ON_WINDOWS)
@@ -273,7 +286,7 @@ def jslint(fix: bool = False) -> None:
     cmd = [os.path.join('.', 'node_modules', '.bin', 'eslint')]
     if fix:
         cmd.append('--fix')
-    subprocess.check_call(cmd + files)
+    subprocess.check_call(cmd + files, shell=ON_WINDOWS)
 
 def jsfix() -> None:
     print('>>>> Fixing js')
@@ -331,10 +344,10 @@ def popclean() -> None:
         subprocess.check_call(['git', 'stash', 'pop'])
 
 def check(args: List[str]) -> None:
+    sort()
+    mypy(args)
     lint(args)
     jslint()
-    mypy(args)
-    sort()
 
 def release(args: List[str]) -> None:
     check([])
@@ -351,6 +364,19 @@ def find_files(needle: str = '', file_extension: str = '', exclude: Optional[Lis
     if exclude:
         paths = [p for p in paths if p not in exclude]
     return paths
+
+
+def check_requirements() -> None:
+    files = find_files(file_extension='py')
+    r = subprocess.call([sys.executable, '-X', 'utf-8', '-m', 'pip_check_reqs.find_extra_reqs'] + files)
+    r = subprocess.call([sys.executable, '-X', 'utf-8', '-m', 'pip_check_reqs.find_missing_reqs'] + files) or r
+
+def swagger() -> None:
+    import decksite
+    decksite.APP.config['SERVER_NAME'] = configuration.server_name()
+    with decksite.APP.app_context():
+        with open('decksite_api.yml', 'w') as f:
+            f.write(json.dumps(decksite.APP.api.__schema__))
 
 if __name__ == '__main__':
     run()

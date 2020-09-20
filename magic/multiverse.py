@@ -2,13 +2,15 @@ import asyncio
 import datetime
 from typing import Any, Dict, List, Optional, Set, Union
 
+from github.GithubException import GithubException
+
 from magic import card, database, fetcher, mana, rotation
 from magic.abc import CardDescription
 from magic.card import TableDescription
 from magic.database import create_table_def, db
 from magic.models import Card
 from magic.whoosh_write import WhooshWriter
-from shared import dtutil
+from shared import dtutil, repo
 from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
@@ -52,6 +54,7 @@ def layouts() -> Dict[str, bool]:
         'host': False,
         'leveler': True,
         'meld': True,
+        'modal_dfc': True,
         'normal': True,
         'planar': False,
         'saga': True,
@@ -63,7 +66,20 @@ def layouts() -> Dict[str, bool]:
     }
 
 def playable_layouts() -> List[str]:
-    return [k for k, v in layouts().items() if v]
+    return [layout for layout, playable in layouts().items() if playable]
+
+def is_playable_layout(layout: str) -> bool:
+    v = layouts().get(layout)
+    if v is not None:
+        return v
+    cache_key = 'missing_layout_logged'
+    if not hasattr(is_playable_layout, cache_key):  # A little hack to prevent swamping github – see https://stackoverflow.com/a/422198/375262
+        try:
+            repo.create_issue(f'Did not recognize layout `{layout}` – need to add it', 'multiverse', 'multiverse', 'PennyDreadfulMTG/perf-reports')
+        except GithubException:
+            pass # We tried. Not gonna break the world because we couldn't log it.
+        setattr(is_playable_layout, cache_key, list()) # The other half of the hack.
+    return False
 
 def cached_base_query(where: str = '(1 = 1)') -> str:
     return 'SELECT * FROM _cache_card AS c WHERE {where}'.format(where=where)
@@ -200,6 +216,9 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
 
     for p in printings:
         if not valid_layout(p):
+            continue
+
+        if p['type_line'] == 'Card':
             continue
 
         rarity_id = scryfall_to_internal_rarity[p['rarity'].strip()]
@@ -507,11 +526,3 @@ def subtypes(type_line: str) -> List[str]:
     if ' - ' not in type_line:
         return []
     return type_line.split(' - ')[1].split(' ')
-
-# If you change this you probably need to change magic.card.name_query too.
-def name_from_card_description(c: CardDescription) -> str:
-    if c['layout'] in ['transform', 'flip', 'adventure']: # 'meld' has 'all_parts' not 'card_faces' so does not need to be included here despite having very similar behavior.
-        return c['card_faces'][0]['name']
-    if c.get('card_faces'):
-        return ' // '.join([f['name'] for f in c.get('card_faces', [])])
-    return c['name']

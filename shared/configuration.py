@@ -9,6 +9,12 @@ from typing import Any, Dict, List, Match, Optional, Set, Union, overload
 
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
+try:
+    import dotenv
+    dotenv.load_dotenv('.')
+except ImportError:
+    pass
+
 RE_SUBKEY = re.compile(r'(\w+)\.(\w+)')
 
 DEFAULTS: Dict[str, Any] = {
@@ -41,6 +47,7 @@ DEFAULTS: Dict[str, Any] = {
     'google_maps_api_key': None,
     # Required if you want to share cookies between subdomains
     'flask_cookie_domain': None,
+    'flask_server_name': None,
     # Discord server id.  Used for admin verification.  Used by decksite.
     'guild_id': '207281932214599682',
     'image_dir': './images',
@@ -68,6 +75,7 @@ DEFAULTS: Dict[str, Any] = {
     'poeditor_api_key': None,
     'prices_database': 'prices',
     'production': False, # Block some of the more dangerous things from running if this is true
+    'pylint_threads': 4,
     'redis_db': 0,
     'redis_enabled': True,
     'redis_host': 'localhost',
@@ -86,6 +94,7 @@ DEFAULTS: Dict[str, Any] = {
     'to_username': '',
     'tournament_channel_id': '334220558159970304',
     'tournament_reminders_channel_id': '207281932214599682',
+    'typeahead_data_path': 'shared_web/static/dist/typeahead.json',
     'use_24h': False,
     'web_cache': '.web_cache',
     'whoosh_index_dir': 'whoosh_index',

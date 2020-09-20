@@ -231,11 +231,10 @@ def card_bug_properties() -> TableDescription:
     props['bannable']['type'] = BOOLEAN
     return props
 
-# If you change this you probably need to change multiverse.name_from_card_description too.
 def name_query(column: str = 'face_name') -> str:
     return """
         CASE
-        WHEN layout = 'transform' OR layout = 'flip' OR layout = 'meld' OR layout = 'adventure' THEN
+        WHEN layout = 'transform' OR layout = 'flip' OR layout = 'meld' OR layout = 'adventure' OR layout = 'modal_dfc' THEN
             GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END SEPARATOR '')
         ELSE
             GROUP_CONCAT({column} SEPARATOR ' // ' )

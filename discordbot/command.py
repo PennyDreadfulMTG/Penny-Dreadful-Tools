@@ -5,6 +5,7 @@ from copy import copy
 from typing import Callable, Dict, List, Optional, Sequence, Set, Tuple, Union
 
 from discord import ChannelType, Client, DMChannel, File, GroupChannel, TextChannel
+from discord.abc import Messageable
 from discord.ext import commands
 from discord.member import Member
 from discord.message import Message
@@ -69,10 +70,9 @@ def parse_mode(query: str) -> Tuple[str, str, Optional[str]]:
     if query.startswith('$'):
         mode = '$'
         query = query[1:]
-
     if '|' in query:
         query, preferred_printing = query.split('|')
-
+        preferred_printing = preferred_printing.lower().strip()
     return (mode, query, preferred_printing)
 
 def results_from_queries(queries: List[str]) -> List[Tuple[SearchResult, str, Optional[str]]]:
@@ -135,7 +135,7 @@ async def single_card_text(client: Client, channel: TextChannel, args: str, auth
 async def post_cards(
         client: Client,
         cards: List[Card],
-        channel: TextChannel,
+        channel: Messageable,
         replying_to: Optional[Member] = None,
         additional_text: str = ''
 ) -> None:
@@ -168,7 +168,7 @@ async def post_cards(
     else:
         await send_image_with_retry(channel, image_file, text)
 
-async def post_no_cards(channel: TextChannel, replying_to: Optional[Member] = None) -> None:
+async def post_no_cards(channel: Messageable, replying_to: Optional[Member] = None) -> None:
     if replying_to is not None:
         text = '{author}: No matches.'.format(author=replying_to.mention)
     else:

@@ -14,11 +14,11 @@ from decksite.database import db
 from magic import card, decklist, legality, rotation
 from magic.decklist import DecklistType
 from magic.models import Deck
-from shared import configuration, dtutil, fetch_tools, guarantee, redis
+from shared import configuration, dtutil, fetch_tools, guarantee, logger
+from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException, LockNotAcquiredException
-from shared_web import logger
 
 
 class Status(Enum):
@@ -56,7 +56,7 @@ class SignUpForm(Form):
         elif active_decks_by(self.mtgo_username):
             self.errors['mtgo_username'] = "You already have an active league run.  If you wish to retire your run early, private message '!retire' to PDBot or visit the retire page."
         elif person.is_banned(self.mtgo_username):
-            self.errors['mtgo_username'] = 'You are currently banned from Penny Dreadful'
+            self.errors['mtgo_username'] = 'You are currently banned from Penny Dreadful. Visit the Discord to appeal – pennydreadfulmagic.com/discord'
         if len(self.name) == 0:
             self.errors['name'] = 'Deck Name is required'
         elif len(self.name) > card.MAX_LEN_TEXT:

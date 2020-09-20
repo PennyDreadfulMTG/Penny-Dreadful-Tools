@@ -19,13 +19,11 @@ View individual subdirectories for details
 
 **github_tools** are some GitHub integration utillities.
 
-**magic** knows everything about all magic cards and how to fetch that information from the internet and model it.
-
 **logsite** is the code for [logs.pennydreadfulmagic.com](https://logs.pennydreadfulmagic.com/).
 
 **logsite_migrations** are alembic database migrations for logsite.
 
-**magic** is for information about Magic: the Gathering such as cards, decklists, card images, legality, etc.
+**magic** is for information about Magic – cards, decklists, card images, legality, etc.
 
 **maintenance** is for useful scripts, usually run via cron.
 
@@ -39,7 +37,7 @@ View individual subdirectories for details
 
 **shared** contains a bunch of general purpose helper classes. Things that could be used in any project.
 
-**shared_web** contains a bunch of web-specific helper classes.
+**shared_web** contains a bunch of web-specific helper classes. It also contains our React code for "live" data tables.
 
 # Contributing
 
@@ -47,31 +45,50 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
 
 ## Development Environment Setup
 
-- Install MariaDB 10.0+ (alternative MySQL 8.0+)
-- Install python3.6+
+- Install Docker (https://www.docker.com/get-started)
+- git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
+- docker-compose build
+- docker-compose up
+
+If you plan on running things outside of the containers (eg: dev.py or logsite):
+- Install python3.7+
 - Install pip3
 - Install npm
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - python3 dev.py build
+
+## Configuring Environment
 - Add a bot at <https://discordapp.com/developers/applications/me>
 - Add a bot user for the bot
 - Add the bot to your server with `https://discordapp.com/oauth2/authorize?client_id=<your client id here>&scope=bot`
 - Click to reveal the token (not secret) on <https://discordapp.com/developers/applications/me>
-- Copy config.json.example to config.json and alter the value for "token" to this value
-- Optionally take a look at configuration.py and enter any required non-default information into config.json.
-- Using the values from your config.json issue the following commands in MySQL (you don't need to create the databases):
-  - CREATE USER '<mysql_user>'@'<mysql_host>' IDENTIFIED BY '<mysql_password>';
+- Copy `.env.example` to `.env` and alter the value for "token" to this value
+- Do the same for the discord client_id and client_secret
+- Optionally take a look at shared/configuration.py and enter any required non-default information into `.env`
+- You will want to investigate the various targets in dev.py that acts as a Makefile. Some of these utilities use GitHub's commandline git-enchancer, hub: <https://github.com/github/hub>
+
+
+## Manual Development Environment Setup (Non-docker instructions)
+
+- Install MariaDB 10.0+ (alternative MySQL 8.0+)
+- Install python3.7+
+- Install pip3
+- Install npm
+- git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
+- python3 dev.py build
+- Using the values from your `.env` issue the following commands in MySQL (you don't need to create the databases):
+  - CREATE USER '<mysql_user>'@'<mysql_host>' IDENTIFIED BY '<mysql_passwd>';
   - GRANT ALL ON <decksite_database>.* TO '<mysql_user>'@'<mysql_host>';
   - GRANT ALL ON <prices_database>.* TO '<mysql_user>'@'<mysql_host>';
   - GRANT ALL ON <magic_database>.* TO '<mysql_user>'@'<mysql_host>';
-- GRANT ALL ON <logsite_database>.* TO '<mysql_user>'@'<mysql_host>';
+  - GRANT ALL ON <logsite_database>.* TO '<mysql_user>'@'<mysql_host>';
 - Download a copy of the production decksite database (with personal information stripped):
-  - mysql -u <mysql_user> -p<mysql_password> -e "CREATE DATABASE <decksite_database>"
+  - mysql -u <mysql_user> -p<mysql_passwd> -e "CREATE DATABASE <decksite_database>"
   - curl <https://pennydreadfulmagic.com/static/dev-db.sql.gz> >/tmp/dev-db.sql.gz
   - gunzip /tmp/dev-db.sql.gz
-  - mysql -u <mysql_user> -p<mysql_password> <decksite_database> </tmp/dev-db.sql
+  - mysql -u <mysql_user> -p<mysql_passwd> <decksite_database> </tmp/dev-db.sql
 - Some very minor parts of the bot (the "modofail" command) use libopus and ffmpeg which are not in pip and must be installed in a your-OS-specific way separately. Very optional.
-- You will want to investigate the various targets in dev.py that acts as a Makefile. Some of these utilities use GitHub's commandline git-enchancer, hub: <https://github.com/github/hub>
+
 
 ## Running Decksite
 
@@ -88,3 +105,7 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
 - python3 run.py discordbot
 - Visit your Discord server.
 
+## Working on React components
+
+- Run logsite
+- python3 dev.py watch # Builds bundle.js after every file change.

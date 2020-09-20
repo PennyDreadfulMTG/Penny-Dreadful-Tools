@@ -161,4 +161,51 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.23.0
+    method: GET
+    uri: https://tappedout.net/api/collection/collection:deck/60-island/
+  response:
+    body:
+      string: ''
+    headers:
+      Access-Control-Allow-Headers:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 5982297c9c49e7c9-LAX
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 23 May 2020 22:20:04 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=dc979c676748782f2bcd6f43719d1caa61590272403; expires=Mon, 22-Jun-20
+        22:20:03 GMT; path=/; domain=.tappedout.net; HttpOnly; SameSite=Lax
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Language, Cookie, Origin
+      cf-request-id:
+      - 02e53841da0000e7c9f52db200000001
+    status:
+      code: 401
+      message: Unauthorized
 version: 1

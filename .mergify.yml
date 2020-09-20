@@ -1,13 +1,12 @@
 pull_request_rules:
-  - name: automatic merge pyup-bot
+  - name: automatic merge dependency updates
     conditions:
-      - status-success=pdm/automerge
       - status-success=Travis CI - Pull Request
-      - author=pyup-bot
+      - author~=(pyup-bot|dependabot)
+      - -files~=^(!?.github/workflows/)
     actions:
       merge:
         method: rebase
-        strict: true
       delete_head_branch: {}
   - name: automatic merge for master when CI passes and approved
     conditions:
@@ -21,12 +20,12 @@ pull_request_rules:
       merge:
         method: rebase
         strict: true
-  - name: automatic merge for master when CI passes and approved
+  - name: automatic merge for master when CI passes and trusted comitter
     conditions:
       - author=@PennyDreadfulMTG/automerge
       - status-success=Travis CI - Pull Request
       - base=master
     actions:
       merge:
-        method: rebase
+        method: merge
         strict: true

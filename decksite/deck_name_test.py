@@ -81,7 +81,7 @@ TESTDATA = [
     ('PD-GB', 'Golgari the Rock', ['G', 'B'], 'The Rock'),
     ('PD 11 WW', 'White Weenie', ['W'], None),
     ('Bad Esper 2.0', 'Bad Esper 2.0', ['W', 'U', 'B'], 'Esper Control'),
-    ('BBB', 'Mono Black', ['B'], 'Zombies'),
+    ('BBB', 'BBB', ['B'], 'Zombies'),
     ('Manaless Dredge', 'Manaless Dredge', ['B'], 'Graveyard Value'),
     ('Deep Anal', 'Deep', ['U'], 'Control'),
     ('Supremacia Ariana', 'Mono White', ['W'], None),
@@ -92,7 +92,14 @@ TESTDATA = [
     ('(Penny) Boros Soldiers', 'Boros Soldiers', ['W', 'R'], 'Soldiers'),
     ('Red Deck Wins byvci', 'Red Deck Wins Byvci', ['R'], 'Red Deck Wins'),
     ('ABZAN - PD', 'Abzan Lifegain Midrange', ['W', 'B', 'G'], 'Lifegain Midrange'),
-    ('Food - PD', 'Food', ['B', 'R', 'G'], 'Food')
+    ('Food - PD', 'Food', ['B', 'R', 'G'], 'Food'),
+    ('Storm (PD S16)', 'Storm', ['U', 'B'], 'Storm'),
+    ('Black-Red Midrange', 'Rakdos Midrange', ['R', 'B'], 'Rakdos Midrange'),
+    ('Happy B DAY Adriana', 'Happy B Day Adriana', ['W', 'R'], 'AggroSlide'),
+    ('braids b', 'Braids Black', ['B'], 'Midrange'),
+    ('[Penny Dreadful] UR Cycling', 'Izzet Cycling', ['U', 'R'], 'Midrange'),
+    ('Penny-Zombies', 'Zombies', ['B'], 'Zombies'),
+    ('Something Goes Brrrr', 'Something Goes BRRRR', ['B', 'R'], 'Aggro')
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)
@@ -122,3 +129,6 @@ def test_canonicalize_colors() -> None:
     assert deck_name.canonicalize_colors([]) == set()
     assert deck_name.canonicalize_colors(['White', 'Black', 'Orzhov', 'Abzan']) == {'B', 'G', 'W'}
     assert deck_name.canonicalize_colors(['White', 'White', 'White']) == {'W'}
+
+def test_normalize_colors() -> None:
+    assert deck_name.normalize_colors('Braids B', ['B']) == 'Braids Black'

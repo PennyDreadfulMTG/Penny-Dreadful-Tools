@@ -6,7 +6,7 @@ from discord import TextChannel
 from discord.ext import commands
 
 from discordbot.command import MtgContext
-from magic import card_price, fetcher, tournaments
+from magic import card_price, fetcher, oracle, tournaments
 from shared import configuration
 
 
@@ -57,6 +57,14 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             "The door prize is 1 tik credit with Cardhoarder, awarded to one randomly-selected player that completes the Swiss rounds but doesn't make top 8.",
             {}
         ),
+        'language': (
+            """
+            To change the language you see the site in use the language switcher in the top-left hand corner (desktop only) or follow the link below for English.
+            """,
+            {
+                'PDM in English': fetcher.decksite_url('/?locale=en')
+            }
+        ),
         'league': (
             """
             Leagues last for roughly a month. You may enter any number of times but only one deck at a time.
@@ -71,6 +79,16 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
                 'Current League': fetcher.decksite_url('/league/current/')
             }
         ),
+        'netdecking': (
+            """
+            Netdecking is both allowed and encouraged. Most deck creators are happy when others play their decks.
+            You can get a glimpse of the meta via the archetypes link below. Sort by win percent to find the best-performing decks.
+            """,
+            {
+                'Archetypes': fetcher.decksite_url('/archetypes/'),
+                'All Decklists': fetcher.decksite_url('/decks/'),
+            }
+        ),
         'noshow': (
             """
             If your opponent does not join your game please @-message them on Discord and contact them on Magic Online.
@@ -78,6 +96,15 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             You will receive a 2-0 win and your opponent will be dropped from the competition.
             """,
             {}
+        ),
+        'onegame': (
+            """
+            If your opponent concedes or times out before the match completes, PDBot will not report automatically.
+            If you feel enough of a match was played you may manually report 2-x where x is the number of games your opponent won.
+            """,
+            {
+                'Report': fetcher.decksite_url('/report/')
+            }
         ),
         'playing': (
             """
@@ -103,6 +130,12 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             {
                 'More Info': fetcher.decksite_url('/tournaments/')
             }
+        ),
+        'promos': (
+            """
+            """,
+            {}
+
         ),
         'replay': (
             """
@@ -203,6 +236,8 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
                 explanation = reporting_explanations['tournament']
             else:
                 explanation = reporting_explanations['league']
+        elif word == 'promos':
+            explanation = promo_explanation()
         else:
             explanation = explanations[word]
 
@@ -222,3 +257,18 @@ def is_tournament_channel(channel: TextChannel) -> bool:
     if not tournament_channel_id:
         return False
     return channel.id == tournament_channel_id
+
+def promo_explanation() -> Tuple[str, Dict[str, str]]:
+    explanation = 'Some cards have promos that are much cheaper than all other versions. The bot reports the cheapest version in stock.\nOther bot chains will have copies.'
+    have_cheap_promos = [
+        'Barbarian Ring',
+        'Buried Alive',
+        'Crystal Vein',
+        'Eureka',
+        'Figure of Destiny',
+        'Lake of the Dead',
+    ]
+    legal_cheap_promos = [c for c in oracle.load_cards(have_cheap_promos) if c.pd_legal]
+    if len(legal_cheap_promos) > 0:
+        explanation += ' Affected cards include: ' + ', '.join(c.name for c in legal_cheap_promos)
+    return(explanation, {})

@@ -11,7 +11,8 @@ from github.PullRequest import PullRequest
 from github.Repository import Repository
 from requirements.requirement import Requirement
 
-from shared import configuration, decorators, redis
+from shared import configuration, decorators
+from shared import redis_wrapper as redis
 
 PDM_CHECK_CONTEXT = 'pdm/automerge'
 

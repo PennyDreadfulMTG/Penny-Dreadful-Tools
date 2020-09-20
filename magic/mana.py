@@ -1,3 +1,6 @@
+"""
+This module parses Mana Costs
+"""
 import itertools
 import re
 from typing import Dict, Iterable, List, Set, Tuple

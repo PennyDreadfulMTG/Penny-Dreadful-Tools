@@ -1,0 +1,63 @@
+<article>
+    <h1>The Penny Dreadful 500</h1>
+    <section>
+        <ul>
+            <li>End of season tournament</li>
+            <li>500 tix in prizes</li>
+            <li>Free entry</li>
+            <li>The next Penny Dreadful 500 is on {{next_pd500_date}}</li>
+            <li>Sign up is on <a class="external" href="https://gatherling.com/eventreport.php?event=The%20Penny%20Dreadful%20500">Gatherling</a></li>
+        </ul>
+    </section>
+    <section>
+        <h2>New to Penny Dreadful?</h2>
+        <ul>
+            <li>Check out the <a href="{{faqs_url}}">FAQs</a></li>
+            <li>Play for free with the <a href="{{cardhoarder_loan_url}}">Cardhoarder Free Loan Program</a></li>
+            <li>Join the Penny Dreadful community on <a href="{{discord_url}}">Discord</a></li>
+    </section>
+    <section>
+        <h2>{{_ Prizes}}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th class="n">Finish</th>
+                    <th class="n">Prize</th>
+                </tr>
+            </thead>
+            <tbody>
+                    <tr>
+                        <td class="n">1st</td>
+                        <td class="n">130 tix</td>
+                    </tr>
+                    <tr>
+                        <td class="n">2nd</td>
+                        <td class="n">90 tix</td>
+                    </tr>
+                    <tr>
+                        <td class="n">3rd-4th</td>
+                        <td class="n">60 tix</td>
+                    </tr>
+                    <tr>
+                        <td class="n">5th-8th</td>
+                        <td class="n">30 tix</td>
+                    </tr>
+                    <tr>
+                        <td class="n">9th-16th</td>
+                        <td class="n">10 tix</td>
+                    </tr>
+            </tbody>
+        </table>
+        <p>Prizes from our sponsor <a class="external" href="https://www.cardhoarder.com/">Cardhoarder</a> in credit.</p>
+    </section>
+    <section>
+        <h2>Byes</h2>
+        <p>Players who win a <a href="{{tournaments_url}}">tournament</a> this season receive a round one bye.</p>
+        <p>The following players have earned a bye in the Penny Dreadful 500.</p>
+        <ul>
+            {{#people_with_byes}}
+                <li><a href="{{url}}">{{person}}</a></li>
+            {{/people_with_byes}}
+        </ul>
+    </section>
+</article>

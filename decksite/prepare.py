@@ -1,12 +1,67 @@
+from collections import Counter
 from typing import List, Union
 
-from flask import session
+from flask import g, session, url_for
 
-from magic import rotation
+from decksite.deck_type import DeckType
+from magic import oracle, rotation
 from magic.models import Card, Deck
 from shared import dtutil
 
 # Take 'raw' items from the database and decorate them for use and display.
+
+NUM_MOST_COMMON_CARDS_TO_LIST = 10
+
+def prepare_cards(cs: List[Card], tournament_only: bool = False) -> None:
+    for c in cs:
+        prepare_card(c, tournament_only)
+
+def prepare_card(c: Card, tournament_only: bool = False) -> None:
+    prepare_card_urls(c, tournament_only)
+    c.card_img_class = 'two-faces' if c.layout in ['transform', 'meld', 'modal_dfc'] else ''
+    c.pd_legal = c.legalities.get('Penny Dreadful', False) and c.legalities['Penny Dreadful'] != 'Banned'
+    c.legal_formats = {k for k, v in c.legalities.items() if v != 'Banned'}
+    c.non_pd_legal_formats = {k for k, v in c.legalities.items() if 'Penny Dreadful' not in k and v != 'Banned'}
+    c.has_legal_format = len(c.legal_formats) > 0
+    set_legal_icons(c)
+    if c.get('num_decks') is not None:
+        c.show_record = c.get('wins') or c.get('losses') or c.get('draws')
+
+    c.has_decks = len(c.get('decks', [])) > 0
+    if not c.has_decks:
+        c.has_most_common_cards = False
+        return
+
+    counter = Counter() # type: ignore
+    for d in c.get('decks', []):
+        for c2 in d.maindeck:
+            if not c2.card.type_line.startswith('Basic Land') and not c2['name'] == c.name:
+                counter[c2['name']] += c2['n']
+    most_common_cards = counter.most_common(NUM_MOST_COMMON_CARDS_TO_LIST)
+    c.most_common_cards = []
+    cs = oracle.cards_by_name()
+    for v in most_common_cards:
+        prepare_card(cs[v[0]], tournament_only)
+        c.most_common_cards.append(cs[v[0]])
+    c.has_most_common_cards = len(c.most_common_cards) > 0
+
+def prepare_card_urls(c: Card, tournament_only: bool = False) -> None:
+    c.url = url_for_card(c, tournament_only)
+    c.img_url = url_for_image(c.name)
+
+def url_for_image(name: str) -> str:
+    if g.get('url_cache') is None:
+        g.url_cache = {}
+    if g.url_cache.get('card_image') is None:
+        g.url_cache['card_image'] = url_for('image', c='--cardname--')
+    return g.url_cache['card_image'].replace('--cardname--', name)
+
+def url_for_card(c: Card, tournament_only: bool = False) -> str:
+    if g.get('url_cache') is None:
+        g.url_cache = {}
+    if g.url_cache.get('card_page') is None:
+        g.url_cache['card_page'] = url_for('.card', name='--cardname--', deck_type=DeckType.TOURNAMENT.value if tournament_only else None)
+    return g.url_cache['card_page'].replace('--cardname--', c.name)
 
 def prepare_decks(ds: List[Deck]) -> None:
     for d in ds:
@@ -16,7 +71,10 @@ def prepare_deck(d: Deck) -> None:
     set_stars_and_top8(d)
     if d.get('colors') is not None:
         d.colors_safe = colors_html(d.colors, d.colored_symbols)
-    d.person_url = '/people/{id}/'.format(id=d.person_id)
+    if d.get('mtgo_username'):
+        d.person_url = f'/people/{d.mtgo_username}/'
+    else:
+        d.person_url = f'/people/id/{d.person_id}/'
     d.date_sort = dtutil.dt2ts(d.active_date)
     d.display_date = dtutil.display_date(d.active_date)
     d.show_record = d.wins or d.losses or d.draws

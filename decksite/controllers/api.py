@@ -1,29 +1,82 @@
 import datetime
+import json
 from math import ceil
-from typing import List, Optional, cast
+from typing import Any, Dict, List, Optional, cast
 
 from flask import Response, request, session, url_for
+from flask_restx import Resource, fields
 
 from decksite import APP, auth, league
 from decksite.data import archetype as archs
-from decksite.data import card as cs
+from decksite.data import card
 from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps
 from decksite.data import query
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
-from decksite.prepare import prepare_decks
+from decksite.prepare import prepare_cards, prepare_decks
 from decksite.views import DeckEmbed
-from magic import oracle, rotation
+from magic import oracle, rotation, tournaments
 from magic.decklist import parse_line
 from magic.models import Deck
-from shared import configuration, dtutil, guarantee, redis
+from shared import configuration, dtutil, guarantee
+from shared import redis_wrapper as redis
 from shared.pd_exception import DoesNotExistException, InvalidDataException, TooManyItemsException
 from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
 
+#pylint: disable=no-self-use
+
+SearchItem = Dict[str, str]
+
+DEFAULT_LIVE_TABLE_PAGE_SIZE = 20
+SEARCH_CACHE: List[SearchItem] = []
+
+DECK_ENTRY = APP.api.model('DecklistEntry', {
+    'n': fields.Integer(),
+    'name': fields.String()
+})
+
+DECK = APP.api.model('Deck', {
+    'id': fields.Integer(readonly=True),
+    'name': fields.String(),
+    'created_date': fields.DateTime(),
+    'updated_date': fields.DateTime(),
+    'wins': fields.Integer(),
+    'losses': fields.Integer(),
+    'finish': fields.Integer(),
+    'archetype_id': fields.Integer(),
+    'archetype_name': fields.String(),
+    'source_url': fields.String(),
+    'competition_id': fields.Integer(),
+    'competition_name': fields.String(),
+    'person': fields.String(),
+    'decklist_hash': fields.String(),
+    'retired': fields.Boolean(),
+    'colors': fields.List(fields.String()),
+    'omw': fields.Integer(),
+    'season_id': fields.Integer(),
+    'maindeck': fields.List(fields.Nested(DECK_ENTRY)),
+    'sideboard': fields.List(fields.Nested(DECK_ENTRY)),
+})
+
+COMPETITION = APP.api.model('Competition', {
+    'id': fields.Integer(readonly=True),
+    'name': fields.String(),
+    'start_date': fields.DateTime(),
+    'end_date': fields.DateTime(),
+    # 'url': fields.Url('competition'),
+    'top_n': fields.Integer(),
+    'num_decks': fields.Integer(),
+    'num_reviewed': fields.Integer(),
+    'sponsor_name': fields.String(),
+    'series_name': fields.String(),
+    'type': fields.String(),
+    'season_id': fields.Integer(),
+    'decks': fields.List(fields.Nested(DECK))
+})
 
 @APP.route('/api/decks/')
 def decks_api() -> Response:
@@ -34,7 +87,6 @@ def decks_api() -> Response:
             'archetypeId': <int?>,
             'cardName': <str?>,
             'competitionId': <int?>,
-            'personId': <int?>,
             'deckType': <'league'|'tournament'|'all'>,
             'page': <int>,
             'pageSize': <int>,
@@ -50,18 +102,8 @@ def decks_api() -> Response:
             'decks': [<deck>]
         }
     """
-    if not request.args.get('sortBy') and request.args.get('competitionId'):
-        sort_by = 'top8'
-        sort_order = 'ASC'
-    elif not request.args.get('sortBy'):
-        sort_by = 'date'
-        sort_order = 'DESC'
-    else:
-        sort_by = str(request.args.get('sortBy'))
-        sort_order = str(request.args.get('sortOrder'))
-    assert sort_order in ['ASC', 'DESC']
-    order_by = query.decks_order_by(sort_by, sort_order)
-    page_size = int(request.args.get('pageSize', 20))
+    order_by = query.decks_order_by(request.args.get('sortBy'), request.args.get('sortOrder'), request.args.get('competitionId'))
+    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
     page = int(request.args.get('page', 0))
     start = page * page_size
     limit = f'LIMIT {start}, {page_size}'
@@ -77,20 +119,64 @@ def decks_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
-@APP.route('/api/decks/<int:deck_id>')
-def deck_api(deck_id: int) -> Response:
-    blob = deck.load_deck(deck_id)
-    return return_json(blob)
+@APP.route('/api/cards2/')
+def cards2_api() -> Response:
+    """
+    Grab a slice of results from a 0-indexed resultset of cards.
+    Input:
+        {
+            'deckType': <'league'|'tournament'|'all'>,
+            'page': <int>,
+            'pageSize': <int>,
+            'personId': <int?>,
+            'sortBy': <str>,
+            'sortOrder': <'ASC'|'DESC'>,
+            'seasonId': <int|'all'>,
+            'q': <str>
+        }
+    Output:
+        {
+            'page': <int>,
+            'pages': <int>,
+            'cards': [<card>]
+        }
+    """
+    order_by = query.cards_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
+    page = int(request.args.get('page', 0))
+    start = page * page_size
+    limit = f'LIMIT {start}, {page_size}'
+    person_id = request.args.get('personId') or None
+    tournament_only = request.args.get('deckType') == 'tournament'
+    season_id = rotation.season_id(str(request.args.get('seasonId')), None)
+    additional_where = query.card_name_where(request.args.get('q', '').strip())
+    cs = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, person_id=person_id, tournament_only=tournament_only, season_id=season_id)
+    prepare_cards(cs, tournament_only=tournament_only)
+    total = card.load_cards_count(additional_where=additional_where, person_id=person_id, season_id=season_id)
+    pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
+    r = {'page': page, 'pages': pages, 'cards': cs}
+    resp = return_json(r, camelize=True)
+    resp.set_cookie('page_size', str(page_size))
+    return resp
 
-@APP.route('/api/randomlegaldeck')
-def random_deck_api() -> Response:
-    blob = league.random_legal_deck()
-    if blob is None:
-        return return_json({'error': True, 'msg': 'No legal decks could be found'})
-    blob['url'] = url_for('deck', deck_id=blob['id'], _external=True)
-    return return_json(blob)
+@APP.api.route('/decks/<int:deck_id>')
+class LoadDeck(Resource):
+    @APP.api.marshal_with(DECK)
+    def get(self, deck_id: int) -> Deck:
+        return deck.load_deck(deck_id)
 
-@APP.route('/api/competitions/')
+@APP.api.route('/randomlegaldeck')
+class LoadRandomDeck(Resource):
+    @APP.api.marshal_with(DECK)
+    def get(self) -> Optional[Deck]:
+        blob = league.random_legal_deck()
+        if blob is None:
+            APP.api.abort(404, 'No legal decks could be found')
+            return None
+        blob['url'] = url_for('deck', deck_id=blob['id'], _external=True)
+        return blob
+
+@APP.route('/api/competitions')
 def competitions_api() -> Response:
     # Don't send competitions with any decks that do not have their correct archetype to third parties otherwise they
     # will store it and be wrong forever.
@@ -109,13 +195,15 @@ def competitions_api() -> Response:
 def competition_api(competition_id: int) -> Response:
     return return_json(comp.load_competition(competition_id))
 
-@APP.route('/api/league')
-def league_api() -> Response:
-    lg = league.active_league(should_load_decks=True)
-    pdbot = request.form.get('api_token', None) == configuration.get('pdbot_api_token')
-    if not pdbot:
-        lg.decks = [d for d in lg.decks if not d.is_in_current_run()]
-    return return_json(lg)
+@APP.api.route('/league')
+class League(Resource):
+    @APP.api.marshal_with(COMPETITION)
+    def get(self) -> comp.Competition:
+        lg = league.active_league(should_load_decks=True)
+        pdbot = request.form.get('api_token', None) == configuration.get('pdbot_api_token')
+        if not pdbot:
+            lg.decks = [d for d in lg.decks if not d.is_in_current_run()]
+        return lg
 
 @APP.route('/api/person/<person>')
 @fill_args('season_id')
@@ -198,12 +286,12 @@ def rotation_clear_cache() -> Response:
 
 @APP.route('/api/cards')
 def cards_api() -> Response:
-    blob = {'cards': cs.load_cards()}
+    blob = {'cards': card.load_cards()}
     return return_json(blob)
 
 @APP.route('/api/card/<card>')
-def card_api(card: str) -> Response:
-    return return_json(oracle.load_card(card))
+def card_api(c: str) -> Response:
+    return return_json(oracle.load_card(c))
 
 @APP.route('/api/archetype/reassign', methods=['POST'])
 @auth.demimod_required
@@ -225,14 +313,14 @@ def post_rule_update(rule_id: int = None) -> Response:
                 inc.append(parse_line(line))
             except InvalidDataException:
                 return return_json({'success':False, 'msg':f"Couldn't find a card count and name on line: {line}"})
-            if not cs.card_exists(inc[-1][1]):
+            if not card.card_exists(inc[-1][1]):
                 return return_json({'success':False, 'msg':f'Card not found in any deck: {line}'})
         for line in cast(str, request.form.get('exclude')).strip().splitlines():
             try:
                 exc.append(parse_line(line))
             except InvalidDataException:
                 return return_json({'success':False, 'msg':f"Couldn't find a card count and name on line: {line}"})
-            if not cs.card_exists(exc[-1][1]):
+            if not card.card_exists(exc[-1][1]):
                 return return_json({'success':False, 'msg':f'Card not found in any deck {line}'})
         rs.update_cards(rule_id, inc, exc)
         return return_json({'success':True})
@@ -319,3 +407,50 @@ def all_achievements() -> Response:
     data = {}
     data['achievements'] = [{'key': a.key, 'title': a.title, 'description': a.description_safe} for a in Achievement.all_achievements]
     return return_json(data)
+
+@APP.route('/api/tournaments')
+def all_tournaments() -> Response:
+    data = {}
+    data['tournaments'] = (tournaments.all_series_info())
+    return return_json(data)
+
+@APP.route('/api/search/')
+def search() -> Response:
+    init_search_cache()
+    q = request.args.get('q', '').lower()
+    results: List[SearchItem] = []
+    if len(q) < 2:
+        return return_json(results)
+    for item in SEARCH_CACHE:
+        if q in item['name'].lower():
+            results.append(item)
+    return return_json(results)
+
+def init_search_cache() -> None:
+    if len(SEARCH_CACHE) > 0:
+        return
+    submenu_entries = [] # Accumulate the submenu entries and add them after the top-level entries as they are less important.
+    for entry in APP.config.get('menu', lambda: [])():
+        if entry.get('admin_only'):
+            continue
+        SEARCH_CACHE.append(menu_item_to_search_item(entry))
+        for subentry in entry.get('submenu', []):
+            submenu_entries.append(menu_item_to_search_item(subentry, entry.get('name')))
+    for entry in submenu_entries:
+        if entry.get('admin_only'):
+            continue
+        SEARCH_CACHE.append(menu_item_to_search_item(entry))
+    with open(configuration.get_str('typeahead_data_path')) as f:
+        for item in json.load(f):
+            SEARCH_CACHE.append(item)
+
+def menu_item_to_search_item(menu_item: Dict[str, Any], parent_name: Optional[str] = None) -> Dict[str, Any]:
+    name = ''
+    if parent_name:
+        name += f'{parent_name} – '
+    name += menu_item.get('name', '')
+    if menu_item.get('url'):
+        url = menu_item.get('url')
+    else:
+        url = url_for(menu_item.get('endpoint', ''))
+    return {'name': name, 'type': 'Page', 'url': url}

@@ -8,7 +8,9 @@ import attr
 
 from magic import fetcher, multiverse, oracle
 from magic.models import Card
-from shared import configuration, dtutil, redis, text
+from shared import configuration, dtutil
+from shared import redis_wrapper as redis
+from shared import text
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 TOTAL_RUNS = 168
@@ -20,7 +22,7 @@ SEASONS = [
     'AER', 'AKH', 'HOU', 'XLN', # 2017
     'RIX', 'DOM', 'M19', 'GRN', # 2018
     'RNA', 'WAR', 'M20', 'ELD', # 2019
-    'THB', 'IKO', 'M21', # 2020
+    'THB', 'IKO', 'M21', 'ZNR', # 2020
     ]
 
 @attr.s(auto_attribs=True, slots=True)
@@ -207,21 +209,21 @@ def rotation_redis_store() -> Tuple[int, int, List[Card]]:
     runs_percent = round(round(runs / TOTAL_RUNS, 2) * 100)
     cs = oracle.cards_by_name()
     cards = []
-    card_ids_by_status: Dict[str, List[str]] = {}
+    card_names_by_status: Dict[str, List[str]] = {}
     for name, hits in scores:
         c = process_score(name, hits, cs, runs, latest_list)
         if c is not None:
             cards.append(c)
-            classify_by_status(c, card_ids_by_status)
+            classify_by_status(c, card_names_by_status)
     redis.store('decksite:rotation:summary:runs', runs, ex=604800)
     redis.store('decksite:rotation:summary:runs_percent', runs_percent, ex=604800)
     redis.store('decksite:rotation:summary:cards', cards, ex=604800)
-    if 'Undecided' in card_ids_by_status:
-        redis.sadd('decksite:rotation:summary:undecided', *card_ids_by_status['Undecided'], ex=604800)
-    if 'Legal' in card_ids_by_status:
-        redis.sadd('decksite:rotation:summary:legal', *card_ids_by_status['Legal'], ex=604800)
-    if 'Not Legal' in card_ids_by_status:
-        redis.sadd('decksite:rotation:summary:notlegal', *card_ids_by_status['Not Legal'], ex=604800)
+    if 'Undecided' in card_names_by_status:
+        redis.sadd('decksite:rotation:summary:undecided', *card_names_by_status['Undecided'], ex=604800)
+    if 'Legal' in card_names_by_status:
+        redis.sadd('decksite:rotation:summary:legal', *card_names_by_status['Legal'], ex=604800)
+    if 'Not Legal' in card_names_by_status:
+        redis.sadd('decksite:rotation:summary:notlegal', *card_names_by_status['Not Legal'], ex=604800)
     return (runs, runs_percent, cards)
 
 def get_file_contents(file: str) -> List[str]:
@@ -243,7 +245,7 @@ def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_l
     remaining_runs = TOTAL_RUNS - runs
     hits_needed = max(round(TOTAL_RUNS / 2 - hits), 0)
     c = cs[name]
-    if c.layout not in multiverse.playable_layouts():
+    if not multiverse.is_playable_layout(c.layout):
         return None
     percent = round(round(hits / runs, 2) * 100)
     if remaining_runs == 0:
@@ -269,7 +271,7 @@ def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_l
     })
     return c
 
-def classify_by_status(c: Card, card_ids_by_status: Dict[str, List[str]]) -> None:
-    if not c.status in card_ids_by_status:
-        card_ids_by_status[c.status] = []
-    card_ids_by_status[c.status].append(c.id)
+def classify_by_status(c: Card, card_names_by_status: Dict[str, List[str]]) -> None:
+    if not c.status in card_names_by_status:
+        card_names_by_status[c.status] = []
+    card_names_by_status[c.status].append(c.name)

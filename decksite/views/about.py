@@ -5,18 +5,20 @@ from flask import url_for
 
 from decksite.view import View
 from magic import legality, oracle
-from magic.models import Card
+from magic.models import Card, Deck
 
 
 # pylint: disable=no-self-use
 class About(View):
-    def __init__(self, src: Optional[str]) -> None:
+    def __init__(self, src: Optional[str], last_season_tournament_winners: List[Deck]) -> None:
         super().__init__()
         if src == 'gp':
             self.show_gp_card = True
             self.gp_card_url = url_for('static', filename='images/gp_card.png')
         self.cards = exciting_cards()
         self.num_tournaments_title_case = self.num_tournaments().title()
+        s = ' and '.join(set(d.archetype_name for d in last_season_tournament_winners))
+        self.tournament_winning_archetypes_s = s.replace(' and', ',', s.count(' and') - 1)
 
     def page_title(self) -> str:
         return 'About Penny Dreadful'

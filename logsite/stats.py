@@ -3,8 +3,7 @@ from typing import Any, Dict
 from flask import Response
 from sqlalchemy import func, text
 
-from shared import dtutil
-from shared_web import logger
+from shared import dtutil, logger
 
 from . import APP, db
 from .api import return_json
@@ -18,7 +17,9 @@ def stats() -> Response:
     try:
         last_switcheroo = calc_last_switcheroo()
         if last_switcheroo:
-            val['last_switcheroo'] = dtutil.dt2ts(last_switcheroo.start_time_aware())
+            start = last_switcheroo.start_time_aware()
+            if start:
+                val['last_switcheroo'] = dtutil.dt2ts(start)
     except AttributeError as e:
         logger.warning(f'Unable to calculate last_switcheroo: {e}')
 

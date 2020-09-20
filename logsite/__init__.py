@@ -31,7 +31,7 @@ APP.config['commit-id'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
 APP.config['branch'] = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip().decode()
 APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
 
-def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
+def build_menu() -> List[Dict[str, str]]:
     menu = [
         {'name': 'Home', 'url': url_for('home')},
         {'name': 'Matches', 'url': url_for('matches')},

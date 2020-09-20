@@ -3,12 +3,11 @@ from typing import Dict, List, Optional, Sequence
 from decksite.data import achievements, deck, preaggregation, query
 from decksite.data.models.person import Person
 from decksite.database import db
-from shared import dtutil, guarantee
+from shared import dtutil, guarantee, logger
 from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import retry_after_calling
 from shared.pd_exception import AlreadyExistsException, DoesNotExistException
-from shared_web import logger
 
 
 def load_person_by_id(person_id: int, season_id: Optional[int] = None) -> Person:
@@ -17,22 +16,10 @@ def load_person_by_id(person_id: int, season_id: Optional[int] = None) -> Person
 def load_person_by_mtgo_username(username: str, season_id: Optional[int] = None) -> Person:
     return load_person('p.mtgo_username = {username}'.format(username=sqlescape(username, force_string=True)), season_id=season_id)
 
-
 def load_person_by_discord_id(discord_id: int, season_id: Optional[int] = None) -> Person:
     return load_person(f'p.discord_id = {discord_id}', season_id=season_id)
 
 # pylint: disable=invalid-name
-def load_person_by_id_or_mtgo_username(person: str, season_id: Optional[int] = None) -> Person:
-    if person.isdigit():
-        try:
-            return load_person_by_id(int(person), season_id)
-        except DoesNotExistException:
-            pass # If we failed to load by id we want to try and load as a Magic Online username for people with Magic Online usernames that are integers like '4423'.
-    return load_person_by_mtgo_username(person, season_id)
-
-# pylint: disable=invalid-name
-
-
 def load_person_by_discord_id_or_username(person: str, season_id: int = 0) -> Person:
     # It would probably be better if this method did not exist but for now it's required by the API.
     # The problem is that Magic Online usernames can be integers so we cannot be completely unambiguous here.
@@ -106,7 +93,7 @@ def load_people(where: str = 'TRUE',
     if order_by_name:
         people.sort(key=lambda p: p.get('name') or 'ZZZZZZZZZZ')
     else:
-        people.sort(key=lambda p: (-p.get('num_decks', 0), p.get('name')))
+        people.sort(key=lambda p: (-p.get('num_decks', 0), 1)) # (, p.get('name')))
     return people
 
 def load_people_stats(where: str, season_id: Optional[int] = None) -> Dict[int, Dict[str, int]]:

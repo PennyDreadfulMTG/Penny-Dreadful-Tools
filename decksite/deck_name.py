@@ -13,7 +13,11 @@ WHITELIST = [
     '#justnayathings',
     'blue burn', # deck_id = 24089
     "bob's r us",
-    'gg con'
+    'gg con',
+    'happy b day adriana',
+    'basically rakdos version of burn',
+    's15 is a meme',
+    'i will make combo work in season 15'
 ]
 
 ABBREVIATIONS = {
@@ -108,13 +112,14 @@ def remove_extra_spaces(name: str) -> str:
     return re.sub(r'\s+', ' ', name)
 
 def remove_pd(name: str) -> str:
-    name = re.sub(r'(^| )[\[\(]?pd ?-? ?[0-9]+[\[\)]?', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(]?pd ?-? ?S?[0-9]+[\]\)]?', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?pd[hmstf]?[\]\)]?([ -]|$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny ?dreadful (sunday|monday|thursday)[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(]?penny ?dreadful[\[\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(]?penny ?dreadful[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'(^| )[\[\(]?penny[\[\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(]?season ?[0-9]+[\[\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(]?S[0-9]+[\[\)]?', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'penny-', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(]?season ?[0-9]+[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(]?S[0-9]+[\]\)]?', '', name, flags=re.IGNORECASE).strip()
     return name
 
 def remove_hashtags(name: str) -> str:
@@ -136,26 +141,36 @@ def whitelisted(name: str) -> bool:
     return False
 
 def normalize_colors(name: str, colors: List[str]) -> str:
-    patterns = ['[WUBRG][WUBRG]*', '[WUBRG](/[WUBRG])*']
-    patterns += ['(White|Blue|Black|Red|Green)(/(White|Blue|Black|Red|Green))+']
+    patterns = ['[WUBRG]+', '[WUBRG](/[WUBRG])*']
+    patterns += ['(White|Blue|Black|Red|Green)([/-](White|Blue|Black|Red|Green))+']
     patterns += list(COLOR_COMBINATIONS.keys())
     unique_color_words: OrderedDict = OrderedDict()
     for pattern in patterns:
         regex = regex_pattern(pattern)
         found = re.search(regex, name, flags=re.IGNORECASE)
         if found:
-            unique_color_words[found.group().strip()] = True
+            color_word = found.group().strip()
+            if is_true_match(color_word):
+                unique_color_words[color_word] = True
     if len(unique_color_words) == 0:
         return name
     color_words = list(unique_color_words.keys())
     canonical_colors = canonicalize_colors(color_words)
     true_color = name_from_colors(canonical_colors)
-    name = name.replace(color_words[0], true_color, 1)
+    word = color_words[0]
+    pattern = r'(^| )' + word + '( |$)'
+    name = re.sub(pattern, ' ' + true_color + ' ', name).strip()
     for color_word in color_words[1:]:
         name = name.replace(color_word, '')
     if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color) and not [True for abbrev in ABBREVIATIONS.values() if name.lower().startswith(abbrev)]:
         name = 'mono {name}'.format(name=name)
     return name.strip()
+
+# Don't let things like 'BRRR' and 'UWU' match [WUBRG]+ searches.
+def is_true_match(color_word: str) -> bool:
+    if not re.search('^[WUBRG]+$', color_word, flags=re.IGNORECASE):
+        return True
+    return len(set(color_word)) == len(color_word)
 
 def canonicalize_colors(colors: List[str]) -> Set[str]:
     color_words: Set[str] = set()
@@ -169,7 +184,7 @@ def canonicalize_colors(colors: List[str]) -> Set[str]:
     return set(mana.order(canonical_colors))
 
 def regex_pattern(pattern: str) -> str:
-    return '(^| )(mono[ -]?)?{pattern}( |$)'.format(pattern=pattern)
+    return '(?:^| )(?:mono[ -]?)?({pattern})(?: |$)'.format(pattern=pattern)
 
 def standardize_color_string(s: str) -> str:
     colors = re.sub('mono|/|-', '', s, re.IGNORECASE).strip().lower()
@@ -205,7 +220,7 @@ def remove_mono_if_not_first_word(name: str) -> str:
     return re.sub('(.+) mono ', '\\1 ', name)
 
 def remove_profanity(name: str) -> str:
-    profanity.add_censor_words(['supremacia ariana', 'fisting'])
+    profanity.add_censor_words(['supremacia ariana', 'fisting', 'retarded', 'erection'])
     name = profanity.censor(name, ' ').strip()
     name = re.sub(' +', ' ', name) # We just replaced profanity with a space so compress spaces.
     return name

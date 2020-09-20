@@ -2,7 +2,8 @@ import asyncio
 
 from decksite import league
 from magic import multiverse
-from shared import dtutil, redis
+from shared import dtutil
+from shared import redis_wrapper as redis
 
 from . import insert_seasons, reprime_cache
 

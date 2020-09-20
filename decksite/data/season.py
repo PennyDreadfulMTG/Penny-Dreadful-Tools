@@ -18,8 +18,8 @@ def preaggregate_season_stats() -> None:
             season.id AS season_id,
             season.start_date,
             season.end_date,
-            COUNT(*) AS num_decks,
-            SUM(CASE WHEN ct.name = 'League' THEN 1 ELSE 0 END) AS num_league_decks,
+            COUNT(DISTINCT d.id) AS num_decks,
+            COUNT(DISTINCT (CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END)) AS num_league_decks,
             COUNT(DISTINCT d.person_id) AS num_people,
             COUNT(DISTINCT c.id) AS num_competitions,
             COUNT(DISTINCT d.archetype_id) AS num_archetypes

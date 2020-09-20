@@ -1,3 +1,7 @@
+"""
+Helper methods for fetching resources.
+This is the High-Level equivelent of shared.fetch_tools
+"""
 import csv
 import datetime
 import json
@@ -14,7 +18,8 @@ from mypy_extensions import TypedDict
 
 from magic.abc import CardDescription, PriceDataType
 from magic.models import Deck
-from shared import configuration, dtutil, fetch_tools, redis
+from shared import configuration, dtutil, fetch_tools
+from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.fetch_tools import FetchException
 from shared.pd_exception import InvalidDataException, NotConfiguredException, TooFewItemsException
@@ -29,7 +34,11 @@ async def all_cards_async() -> List[CardDescription]:
         f = open('scryfall-default-cards.json')
         return json.load(f)
     except FileNotFoundError:
-        return await fetch_tools.fetch_json_async('https://archive.scryfall.com/json/scryfall-default-cards.json', character_encoding='utf-8')
+        endpoints = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
+        for e in endpoints['data']:
+            if e['type'] == 'default_cards':
+                return await fetch_tools.fetch_json_async(e['download_uri'])
+        raise FetchException('Unable to find Default Cards')
 
 async def all_sets_async() -> List[Dict[str, Any]]:
     try:
@@ -139,10 +148,6 @@ def resources() -> Dict[str, Dict[str, str]]:
     with open('decksite/resources.json') as resources_file:
         return json.load(resources_file, object_pairs_hook=OrderedDict)
 
-async def scryfall_cards_async() -> Dict[str, Any]:
-    url = 'https://api.scryfall.com/cards'
-    return await fetch_tools.fetch_json_async(url)
-
 async def scryfall_last_updated_async() -> datetime.datetime:
     d = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
     for o in d['data']:
@@ -167,7 +172,7 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str
         while True:
             for _ in range(3):
                 try:
-                    result_json = fetch_tools.fetch_json(url, character_encoding='utf-8')
+                    result_json = fetch_tools.fetch_json(url)
                     break
                 except FetchException as c:
                     print(c)
@@ -190,7 +195,7 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str
         """If card is transform, returns first name. Otherwise, returns name.
         This is to make sure cards are later found in the database"""
         #not sure how to handle meld cards
-        if scr_card['layout'] in ['transform', 'flip']:
+        if scr_card['layout'] in ['transform', 'flip', 'adventure', 'modal_dfc']:
             return scr_card['card_faces'][0]['name']
         return scr_card['name']
     result_cardnames = [get_frontside(obj) for obj in result_data]

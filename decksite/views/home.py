@@ -21,7 +21,13 @@ class Home(View):
         self.setup_stats(matches_stats)
         self.setup_tournaments()
         self.pd500_url = url_for('pd500')
-        self.pd500_date = dtutil.display_date_with_date_and_year(tournaments.next_pd500_date())
+        pd500_date = tournaments.pd500_date()
+        if pd500_date > dtutil.now():
+            self.pd500_date = dtutil.display_date_with_date_and_year(pd500_date)
+        self.kick_off_url = url_for('kickoff')
+        kick_off_date = tournaments.kick_off_date()
+        if kick_off_date > dtutil.now() or True:
+            self.kick_off_date = dtutil.display_date_with_date_and_year(kick_off_date)
 
     def setup_news(self, news: List[Container]) -> None:
         self.news = news

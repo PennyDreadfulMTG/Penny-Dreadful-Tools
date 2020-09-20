@@ -15,7 +15,11 @@ class PD500(View):
         people = set(d.person for d in tournament_winning_decks)
         self.people_with_byes = [{'person': person, 'url': url_for('.person', mtgo_username=person)} for person in people]
         self.people_with_byes = sorted(self.people_with_byes, key=lambda k: k['person'])
-        self.next_pd500_date = dtutil.display_date_with_date_and_year(tournaments.next_pd500_date())
+        pd500_date = tournaments.pd500_date()
+        if dtutil.now() > pd500_date:
+            self.date_info = 'The Penny Dreadful 500 is on the second-last Saturday of the season'
+        else:
+            self.date_info = 'The next Penny Dreadful 500 is on ' + dtutil.display_date_with_date_and_year(pd500_date)
         self.faqs_url = url_for('faqs')
         self.cardhoarder_loan_url = 'https://www.cardhoarder.com/free-loan-program-faq'
         self.tournaments_url = url_for('tournaments')

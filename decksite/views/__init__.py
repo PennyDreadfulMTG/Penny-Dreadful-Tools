@@ -23,6 +23,7 @@ from .edit_news import EditNews
 from .edit_rules import EditRules
 from .faqs import Faqs
 from .home import Home
+from .kickoff import KickOff
 from .league_form import LeagueForm
 from .league_info import LeagueInfo
 from .link_accounts import LinkAccounts

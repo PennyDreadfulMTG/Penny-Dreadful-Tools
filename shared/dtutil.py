@@ -40,7 +40,7 @@ def parse(s: str, date_format: str, tz: Any) -> datetime.datetime:
 
 def parse_rfc3339(s: str) -> datetime.datetime:
     # pylint: disable=protected-access
-    struct = feedparser._parse_date(s)
+    struct = feedparser.datetimes._parse_date(s)
     return ts2dt(int(timegm(struct)))
 
 def parse_to_ts(s: str, date_format: str, tz: Any) -> int:

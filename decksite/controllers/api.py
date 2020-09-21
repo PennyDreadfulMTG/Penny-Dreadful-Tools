@@ -99,7 +99,7 @@ def decks_api() -> Response:
         {
             'page': <int>,
             'pages': <int>,
-            'decks': [<deck>]
+            'objects': [<deck>]
         }
     """
     order_by = query.decks_order_by(request.args.get('sortBy'), request.args.get('sortOrder'), request.args.get('competitionId'))
@@ -114,7 +114,7 @@ def decks_api() -> Response:
     pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
     ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
-    r = {'page': page, 'pages': pages, 'decks': ds}
+    r = {'page': page, 'pages': pages, 'objects': ds}
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))
     return resp

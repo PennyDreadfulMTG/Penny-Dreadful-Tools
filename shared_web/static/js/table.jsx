@@ -1,9 +1,8 @@
 /*global PD:true*/
 import Axios from "axios";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import React from "react";
 import { debounce } from "lodash";
-import { render } from "react-dom";
 
 /*
 
@@ -16,7 +15,7 @@ For properties see concrete uses in decktable, cardtable, etc.
 */
 
 // eslint-disable-next-line no-unused-vars
-export default class Table extends React.Component {
+export class Table extends React.Component {
 
     constructor() {
         super();
@@ -62,7 +61,7 @@ export default class Table extends React.Component {
         };
         Axios.get(this.props.endpoint, { params })
             .then(
-                (response) => { this.setState({"objects": response.data.objects, "pages": response.data.pages}); PD.initTables(); }, // BAKERT need to change what we return to be objects not cards?
+                (response) => { this.setState({"objects": response.data.objects, "pages": response.data.pages}); PD.initTables(); },
                 (error) => { this.setState({ error }); }
             );
     }
@@ -78,7 +77,6 @@ export default class Table extends React.Component {
         if (this.state.error) {
             return this.renderError(JSON.stringify(this.state.error));
         }
-        const className = "live";
         const { objects } = this.state;
         const queryChanged = (e) => {
             if (this.state.q === e.target.value) {
@@ -87,16 +85,15 @@ export default class Table extends React.Component {
             this.setState({q: e.target.value, "page": 0});
             this.debouncedLoad.apply(this);
         };
-        this.renderPagination = this.renderPagination.bind(this); // BAKERT this is just bizarre. Why?
-        const rows = objects.map(o => this.props.renderRow(this, o));
-        const pagination = this.renderPagination();
+        const rows = objects.map((o) => this.props.renderRow(this, o));
+        const className = ("live " + this.props.className).trim();
 
         return (
-            <div ref="table" className={className} style={{ minHeight: objects.lenght + "em" }}> {/* Prevent content jumping by setting a min-height. */}
+            <div className={className} style={{ minHeight: objects.lenght + "em" }}> {/* Prevent content jumping by setting a min-height. */}
                 { this.props.showSearch
                     ? <form className="inline" onSubmit={(e) => { e.preventDefault(); }}>
                         <input className="name" placeholder={this.props.type + " name"} type="text" onChange={queryChanged.bind(this)} value={this.state.q}/>
-                      </form>
+                    </form>
                     : null
                 }
                 <table className={className}>
@@ -104,10 +101,19 @@ export default class Table extends React.Component {
                         {this.props.renderHeaderRow(this)}
                     </thead>
                     <tbody>
+                        { this.props.activeRunsText && this.state.page === 0
+                            ? <tr>
+                                <td className="marginalia"><span className="active" title="Active in the current league">⊕</span></td>
+                                <td></td>
+                                <td>{this.props.activeRunsText}</td>
+                            </tr>
+                            : null
+                        }
+
                         {rows}
                     </tbody>
                 </table>
-                {pagination}
+                {this.renderPagination()}
             </div>
         );
     }
@@ -143,7 +149,6 @@ export default class Table extends React.Component {
     }
 
     sort(sortBy, sortOrder = "ASC") {
-        console.log(sortBy + ' ' + sortOrder);
         if (this.state.sortBy === sortBy) {
             sortOrder = this.state.sortOrder === "ASC" ? "DESC" : "ASC";
         }
@@ -154,26 +159,40 @@ export default class Table extends React.Component {
         const gotShorter = pageSize < this.state.pageSize;
         this.setState({ pageSize, "page": 0 });
         if (gotShorter) {
-            this.refs.table.scrollIntoView();
+            this.scrollIntoView();
         }
     }
 }
 
+export const renderRecord = (object) => {
+    if (object.showRecord && object.wins + object.losses + object.draws > 0) {
+        return object.wins + "–" + object.losses + (object.draws > 0 ? "–" + object.draws : "");
+    }
+    return "";
+};
+
+// Most of these are PropTypes.string because they come (originally) from data-* on the HTML element so this isn't very good typechecking.
+// It would be nice to check what they "really" are.
 Table.propTypes = {
     "activeRunsText": PropTypes.string,
-    "archetypeId": PropTypes.int,
+    "archetypeId": PropTypes.string,
     "cardName": PropTypes.string,
-    "competitionId": PropTypes.int,
-    "hidePerson": PropTypes.bool,
-    "hideSource": PropTypes.bool,
-    "hideTop8": PropTypes.bool,
-    "leagueOnly": PropTypes.bool,
-    "pageSize": PropTypes.int,
-    "personId": PropTypes.int,
-    "seasonId": PropTypes.int,
-    "showArchetype": PropTypes.bool,
-    "showLegalSeasons": PropTypes.bool,
-    "showOmw": PropTypes.bool,
+    "className": PropTypes.oneOf(["", "with-marginalia"]),
+    "competitionId": PropTypes.string,
+    "endpoint": PropTypes.string.isRequired,
+    "hidePerson": PropTypes.string,
+    "hideSource": PropTypes.string,
+    "hideTop8": PropTypes.string,
+    "leagueOnly": PropTypes.string,
+    "pageSize": PropTypes.string.isRequired,
+    "personId": PropTypes.string,
+    "renderHeaderRow": PropTypes.func.isRequired,
+    "renderRow": PropTypes.func.isRequired,
+    "seasonId": PropTypes.string.isRequired,
+    "showArchetype": PropTypes.string,
+    "showLegalSeasons": PropTypes.string,
+    "showOmw": PropTypes.string,
     "showSearch": PropTypes.bool,
-    "tournamentOnly": PropTypes.bool,
-}
+    "tournamentOnly": PropTypes.string,
+    "type": PropTypes.oneOf(["Card", "Deck"]).isRequired
+};

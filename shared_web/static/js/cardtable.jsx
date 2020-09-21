@@ -1,5 +1,5 @@
+import { Table, renderRecord } from "./table";
 import React from "react";
-import Table from "./table";
 import { render } from "react-dom";
 
 const renderCard = (card) => (
@@ -11,13 +11,6 @@ const renderCard = (card) => (
         }
     </React.Fragment>
 );
-
-const renderRecord = (card) => {
-    if (card.showRecord && card.wins + card.losses + card.draws > 0) {
-        return card.wins + "–" + card.losses + (card.draws > 0 ? "–" + card.draws : "");
-    }
-    return "";
-};
 
 const renderWinPercent = (card) => {
     if (card.showRecord) {

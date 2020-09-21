@@ -50,6 +50,9 @@ export class Table extends React.Component {
             deckType = "tournament";
         }
         const params = {
+            "archetypeId": this.props.archetypeId,
+            "cardName": this.props.cardName,
+            "competitionId": this.props.competitionId,
             deckType,
             page,
             pageSize,

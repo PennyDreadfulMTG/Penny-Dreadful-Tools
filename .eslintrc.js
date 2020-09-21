@@ -8,7 +8,10 @@ module.exports = {
         "browser": true,
         "es6": true
     },
-    "extends": "eslint:recommended",
+    "extends": [
+			"eslint:recommended",
+			"plugin:react/recommended"
+		],
     "rules": {
         "accessor-pairs": "error",
         "array-bracket-newline": "off",
@@ -272,5 +275,10 @@ module.exports = {
             "error",
             "never"
         ]
-    }
+    },
+		"settings": {
+			"react": {
+				"version": "detect"
+			}
+		}
 };

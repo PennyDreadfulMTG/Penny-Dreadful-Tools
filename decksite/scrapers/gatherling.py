@@ -254,8 +254,8 @@ def add_ids(matches: MatchListType, ds: List[deck.Deck]) -> None:
     def lookup(gatherling_id: int) -> deck.Deck:
         try:
             return decks_by_identifier[gatherling_id]
-        except KeyError:
-            raise InvalidDataException("Unable to find deck with gatherling id '{0}'".format(gatherling_id))
+        except KeyError as c:
+            raise InvalidDataException("Unable to find deck with gatherling id '{0}'".format(gatherling_id)) from c
     for m in matches:
         m['left_id'] = lookup(m['left_identifier']).id
         m['right_id'] = lookup(m['right_identifier']).id if m['right_identifier'] else None

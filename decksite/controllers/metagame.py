@@ -73,7 +73,7 @@ def card(name: str, deck_type: Optional[str] = None) -> str:
         view = Card(c, tournament_only)
         return view.page()
     except InvalidDataException as e:
-        raise DoesNotExistException(e)
+        raise DoesNotExistException(e) from e
 
 
 @APP.route('/archetypes/')
@@ -135,5 +135,5 @@ def validate_deck_type(s: Optional[str], allowed_values: List[DeckType] = None) 
             raise DoesNotExistException(
                 f'Invalid deck_type for this endpoint: {deck_type}')
     except ValueError as e:
-        raise DoesNotExistException(e)
+        raise DoesNotExistException(e) from e
     return deck_type

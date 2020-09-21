@@ -40,7 +40,7 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError, TimeoutError) as e: # type: ignore # urllib isn't fully stubbed
         if retry:
             return fetch(url, character_encoding, force, retry=False)
-        raise FetchException(e)
+        raise FetchException(e) from e
 
 async def fetch_async(url: str) -> str:
     print(f'Async fetching {url}')
@@ -49,7 +49,7 @@ async def fetch_async(url: str) -> str:
             response = await aios.get(url)
             return await response.text()
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
-        raise FetchException(e)
+        raise FetchException(e) from e
 
 def fetch_json(url: str, character_encoding: Optional[str] = None) -> Any:
     try:
@@ -59,7 +59,7 @@ def fetch_json(url: str, character_encoding: Optional[str] = None) -> Any:
         return None
     except json.decoder.JSONDecodeError as e:
         print('Failed to load JSON:\n{0}'.format(blob))
-        raise FetchException(e)
+        raise FetchException(e) from e
 
 async def fetch_json_async(url: str) -> Any:
     try:
@@ -80,7 +80,7 @@ def post(url: str,
         response = requests.post(url, data=data, json=json_data)
         return response.text
     except requests.exceptions.ConnectionError as e:
-        raise FetchException(e)
+        raise FetchException(e) from e
 
 def store(url: str, path: str) -> requests.Response:
     print('Storing {url} in {path}'.format(url=url, path=path))
@@ -91,9 +91,9 @@ def store(url: str, path: str) -> requests.Response:
                 fout.write(chunk)
         return response
     except urllib.error.HTTPError as e: # type: ignore
-        raise FetchException(e)
+        raise FetchException(e) from e
     except requests.exceptions.ConnectionError as e: # type: ignore
-        raise FetchException(e)
+        raise FetchException(e) from e
 
 
 async def store_async(url: str, path: str) -> aiohttp.ClientResponse:
@@ -110,7 +110,7 @@ async def store_async(url: str, path: str) -> aiohttp.ClientResponse:
             return response
     # type: ignore # urllib isn't fully stubbed
     except (urllib.error.HTTPError, aiohttp.ClientError) as e:
-        raise FetchException(e)
+        raise FetchException(e) from e
 
 class FetchException(OperationalException):
     pass

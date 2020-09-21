@@ -22,7 +22,7 @@ pip-check-reqs
 github_webhook==1.0.4
 google-api-python-client==1.12.1
 inflect==4.1.0
-isort==4.3.21
+isort==5.5.3
 jsbeautifier==1.13.0
 lxml
 markdown==3.2.2
@@ -39,7 +39,7 @@ pygithub==1.53
 pygtrie==2.3.3
 pyhumps==1.6.1
 pyjwt==1.7.1
-pylint==2.5.3
+pylint==2.6.0
 pylint-quotes==0.2.1
 pystache==0.5.4
 pytest==6.0.2

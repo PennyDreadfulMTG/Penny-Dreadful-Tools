@@ -37,8 +37,8 @@ class Database():
         except MySQLdb.Error as c:
             msg = 'Failed to initialize database in `{location}`'.format(location=self.name)
             if c.args[0] in [2002, 2003]:
-                raise DatabaseConnectionRefusedException(msg)
-            raise DatabaseException(msg)
+                raise DatabaseConnectionRefusedException(msg) from c
+            raise DatabaseException(msg) from c
 
     def select(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[Dict[str, ValidSqlArgumentDescription]]:
         [_, rows] = self.execute_anything(sql, args)
@@ -58,9 +58,9 @@ class Database():
                 return (0, []) # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or DROP TABLE IF NOT EXISTS raises an "unknown table" warning.
             if e.args[0] == 1062:
                 return (0, []) # We don't care if an INSERT IGNORE INTO didn't do anything.
-            raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
+            raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e)) from e
         except MySQLdb.Error as e:
-            raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e))
+            raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e)) from e
 
     def execute_with_reconnect(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, fetch_rows: Optional[bool] = False) -> Tuple[int, List[ValidSqlArgumentDescription]]:
         result = None
@@ -128,9 +128,9 @@ class Database():
     def value(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None, default: Any = None, fail_on_missing: bool = False) -> Any:
         try:
             return self.values(sql, args)[0]
-        except IndexError:
+        except IndexError as c:
             if fail_on_missing:
-                raise DatabaseMissingException('Failed to get a value from `{sql}` with `{args}'.format(sql=sql, args=args))
+                raise DatabaseMissingException('Failed to get a value from `{sql}` with `{args}'.format(sql=sql, args=args)) from c
             return default
 
     def values(self, sql: str, args: Optional[List[ValidSqlArgumentDescription]] = None) -> List[Any]:

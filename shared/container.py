@@ -9,8 +9,8 @@ class Container(Munch):
     def __getattr__(self, k: str) -> Any:
         try:
             return self[k]
-        except KeyError:
+        except KeyError as e:
             try:
                 return object.__getattribute__(self, k)
             except AttributeError:
-                raise AttributeError(k)
+                raise AttributeError(k) from e

@@ -1,5 +1,6 @@
 /*global PD:true*/
 import Axios from "axios";
+import PropTypes from "prop-types";
 import React from "react";
 import { render } from "react-dom";
 
@@ -256,3 +257,22 @@ if (e !== null) {
         />;
     render(table, e);
 }
+
+
+DeckTable.propTypes = {
+    "activeRunsText": PropTypes.string,
+    "archetypeId": PropTypes.int,
+    "cardName": PropTypes.string,
+    "competitionId": PropTypes.int,
+    "hidePerson": PropTypes.bool,
+    "hideSource": PropTypes.bool,
+    "hideTop8": PropTypes.bool,
+    "leagueOnly": PropTypes.bool,
+    "pageSize": PropTypes.int,
+    "personId": PropTypes.int,
+    "seasonId": PropTypes.int,
+    "showArchetype": PropTypes.bool,
+    "showLegalSeasons": PropTypes.bool,
+    "showOmw": PropTypes.bool,
+    "tournamentOnly": PropTypes.bool
+};

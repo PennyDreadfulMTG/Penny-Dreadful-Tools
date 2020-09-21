@@ -138,7 +138,7 @@ def cards2_api() -> Response:
         {
             'page': <int>,
             'pages': <int>,
-            'cards': [<card>]
+            'objects': [<card>]
         }
     """
     order_by = query.cards_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
@@ -154,7 +154,7 @@ def cards2_api() -> Response:
     prepare_cards(cs, tournament_only=tournament_only)
     total = card.load_cards_count(additional_where=additional_where, person_id=person_id, season_id=season_id)
     pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
-    r = {'page': page, 'pages': pages, 'cards': cs}
+    r = {'page': page, 'pages': pages, 'objects': cs}
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))
     return resp

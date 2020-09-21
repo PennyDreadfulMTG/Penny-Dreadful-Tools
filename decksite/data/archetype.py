@@ -23,12 +23,12 @@ BASE_ARCHETYPES: Dict[Archetype, Archetype] = {}
 def load_archetype(archetype: Union[int, str], season_id: Optional[int] = None, tournament_only: bool = False) -> Archetype:
     try:
         archetype_id = int(archetype)
-    except ValueError:
+    except ValueError as c:
         name = titlecase.titlecase(archetype)
         name_without_dashes = name.replace('-', ' ')
         archetype_id = db().value("SELECT id FROM archetype WHERE REPLACE(name, '-', ' ') = %s", [name_without_dashes])
         if not archetype_id:
-            raise DoesNotExistException('Did not find archetype with name of `{name}`'.format(name=name))
+            raise DoesNotExistException('Did not find archetype with name of `{name}`'.format(name=name)) from c
     where = query.archetype_where(archetype_id)
     if tournament_only:
         where = '({where}) AND ({tournament_only_clause})'.format(where=where, tournament_only_clause=query.tournament_only_clause())

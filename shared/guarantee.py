@@ -10,8 +10,8 @@ def exactly_one(l: Sequence[T], noun: str = 'items') -> T:
         raise TooManyItemsException('Found {n} {noun} when expecting 1 in `{l}`.'.format(n=len(l), l=l, noun=noun))
     try:
         return l[0]
-    except IndexError:
-        raise DoesNotExistException('Did not find an item when expecting one.')
+    except IndexError as e:
+        raise DoesNotExistException('Did not find an item when expecting one.') from e
 
 def at_most_one(l: Sequence[T], noun: str = 'items') -> Optional[T]:
     if len(l) > 1:

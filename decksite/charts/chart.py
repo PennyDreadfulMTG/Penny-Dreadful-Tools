@@ -45,7 +45,7 @@ def image(path: str, costs: Dict[str, int]) -> str:
     xs = [costs.get(k, 0) for k in ys]
     sns.set_style('white')
     sns.set(font='Concourse C3', font_scale=3)
-    g = sns.barplot(ys, xs, palette=['#cccccc'] * len(ys))
+    g = sns.barplot(x=ys, y=xs, palette=['#cccccc'] * len(ys))
     g.axes.yaxis.set_ticklabels([])
     rects = g.patches
     sns.set(font='Concourse C3', font_scale=2)

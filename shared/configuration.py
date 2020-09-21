@@ -13,7 +13,7 @@ try:
     import dotenv
     dotenv.load_dotenv('.')
 except ImportError:
-    pass
+    print("Couldn't load .env")
 
 RE_SUBKEY = re.compile(r'(\w+)\.(\w+)')
 

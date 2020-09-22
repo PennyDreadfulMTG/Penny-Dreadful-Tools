@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import List, Union
+from typing import List, Sequence, Union
 
 from flask import g, session, url_for
 
@@ -115,7 +115,7 @@ def prepare_deck(d: Deck) -> None:
             total += c['n'] * c.card.cmc
     d.average_cmc = round(total / max(1, num_cards), 2)
 
-def prepare_people(ps: List[Person]) -> None:
+def prepare_people(ps: Sequence[Person]) -> None:
     for p in ps:
         if p.get('mtgo_username'):
             p.url = f'/people/{p.mtgo_username}/'

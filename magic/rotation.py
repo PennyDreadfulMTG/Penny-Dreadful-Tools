@@ -136,7 +136,7 @@ def sets() -> List[SetInfo]:
     return __SETS
 
 def season_id(v: Union[int, str], all_return_value: Optional[Union[int, str]] = 'all') -> Optional[Union[int, str]]:
-    """From any value return the season id which is the integer representing the season, or 'all' for all time."""
+    """From any value return the season id which is the integer representing the season, or all_return_value (default 'all') for all time."""
     if v is None:
         return current_season_num()
     try:

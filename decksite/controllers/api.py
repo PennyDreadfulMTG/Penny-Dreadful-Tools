@@ -8,9 +8,9 @@ from flask_restx import Resource, fields
 
 from decksite import APP, auth, league
 from decksite.data import archetype as archs
-from decksite.data import card, deck, match, person
+from decksite.data import card
 from decksite.data import competition as comp
-from decksite.data import query
+from decksite.data import deck, match, person, query
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
 from decksite.prepare import prepare_cards, prepare_decks, prepare_people
@@ -247,38 +247,38 @@ class League(Resource):
             lg.decks = [d for d in lg.decks if not d.is_in_current_run()]
         return lg
 
-@APP.route('/api/person/<person>')
+@APP.route('/api/person/<identifier>')
 @fill_args('season_id')
-def person_api(person: str, season_id: int = -1) -> Response:
+def person_api(identifier: str, season_id: int = -1) -> Response:
     if season_id == -1:
         season_id = rotation.current_season_num()
     try:
-        p = person.load_person_by_discord_id_or_username(person, season_id)
-        p.decks_url = url_for('person_decks_api', person=person, season_id=season_id)
-        p.head_to_head = url_for('person_h2h_api', person=person, season_id=season_id)
+        p = person.load_person_by_discord_id_or_username(identifier, season_id)
+        p.decks_url = url_for('person_decks_api', person=identifier, season_id=season_id)
+        p.head_to_head = url_for('person_h2h_api', person=identifier, season_id=season_id)
         return return_json(p)
     except DoesNotExistException:
         return return_json(generate_error('NOTFOUND', 'Person does not exist'))
 
-@APP.route('/api/person/<person>/decks')
+@APP.route('/api/person/<identifier>/decks')
 @fill_args('season_id')
-def person_decks_api(person: str, season_id: int = 0) -> Response:
-    p = person.load_person_by_discord_id_or_username(person, season_id=season_id)
+def person_decks_api(identifier: str, season_id: int = 0) -> Response:
+    p = person.load_person_by_discord_id_or_username(identifier, season_id=season_id)
     blob = {
         'name': p.name,
         'decks': p.decks,
     }
     return return_json(blob)
 
-@APP.route('/api/person/<person>/h2h')
+@APP.route('/api/person/<identifier>/h2h')
 @fill_args('season_id')
-def person_h2h_api(person: str, season_id: int = 0) -> Response:
-    p = person.load_person_by_discord_id_or_username(person, season_id=season_id)
+def person_h2h_api(identifier: str, season_id: int = 0) -> Response:
+    p = person.load_person_by_discord_id_or_username(identifier, season_id=season_id)
     return return_json(p.head_to_head)
 
-@APP.route('/api/league/run/<person>')
-def league_run_api(person: str) -> Response:
-    decks = league.active_decks_by(person)
+@APP.route('/api/league/run/<identifier>')
+def league_run_api(identifier: str) -> Response:
+    decks = league.active_decks_by(identifier)
     if len(decks) == 0:
         return return_json(None)
 
@@ -288,17 +288,17 @@ def league_run_api(person: str) -> Response:
 
     decks = league.active_decks()
     already_played = [m.opponent_deck_id for m in match.load_matches_by_deck(run)]
-    run.can_play = [d.person for d in decks if d.person != person and d.id not in already_played]
+    run.can_play = [d.person for d in decks if d.person != identifier and d.id not in already_played]
 
     return return_json(run)
 
-@APP.route('/api/league/drop/<person>', methods=['POST'])
-def drop(person: str) -> Response:
+@APP.route('/api/league/drop/<identifier>', methods=['POST'])
+def drop(identifier: str) -> Response:
     error = validate_api_key()
     if error:
         return error
 
-    decks = league.active_decks_by(person)
+    decks = league.active_decks_by(identifier)
     if len(decks) == 0:
         return return_json(generate_error('NO_ACTIVE_RUN', 'That person does not have an active run'))
 

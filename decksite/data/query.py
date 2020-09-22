@@ -126,7 +126,7 @@ def cards_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
     }
     return sort_options[sort_by] + f' {sort_order}, num_decks DESC, record, name'
 
-def people_order_by(sort_by: Optional[str], sort_order: Optional[str]):
+def people_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
     if not sort_by:
         sort_by = 'numDecks'
         sort_order = 'DESC'
@@ -135,6 +135,7 @@ def people_order_by(sort_by: Optional[str], sort_order: Optional[str]):
         sort_order = str(sort_order)
     assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     sort_options = {
+        'elo': 'elo',
         'name': 'name',
         'numDecks': 'num_decks',
         'record': f'(SUM(wins) - SUM(losses)) {sort_order}, SUM(wins)',

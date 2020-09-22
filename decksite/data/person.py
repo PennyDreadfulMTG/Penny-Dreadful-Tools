@@ -1,4 +1,4 @@
-from typing import List, Optional, Sequence
+from typing import List, Optional, Sequence, Union
 
 from decksite.data import achievements, deck, preaggregation, query
 from decksite.data.models.person import Person
@@ -92,7 +92,7 @@ def load_person_statless(where: str = 'TRUE', season_id: Optional[int] = None) -
         p.season_id = season_id
     return guarantee.exactly_one(people)
 
-def load_people_count(where: str = 'TRUE', season_id: Optional[int] = None) -> int:
+def load_people_count(where: str = 'TRUE', season_id: Optional[Union[str, int]] = None) -> int:
     season_join = query.season_join() if season_id else ''
     season_query = query.season_query(season_id, 'season.id')
     sql = f"""
@@ -107,8 +107,6 @@ def load_people_count(where: str = 'TRUE', season_id: Optional[int] = None) -> i
         {season_join}
         WHERE
             ({where}) AND ({season_query})
-        GROUP BY
-            p.id
     """
     return db().value(sql) or 0
 
@@ -116,7 +114,7 @@ def load_people_count(where: str = 'TRUE', season_id: Optional[int] = None) -> i
 def load_people(where: str = 'TRUE',
                 order_by: str = 'num_decks DESC, p.name',
                 limit: str = '',
-                season_id: Optional[int] = None) -> Sequence[Person]:
+                season_id: Optional[Union[str, int]] = None) -> Sequence[Person]:
     person_query = query.person_query()
     season_join = query.season_join() if season_id else ''
     season_query = query.season_query(season_id, 'season.id')

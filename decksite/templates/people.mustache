@@ -1,35 +1,8 @@
 {{> banner}}
 <section>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th class="n" data-sortInitialOrder="desc">Decks</th>
-                <th class="n" data-sortInitialOrder="desc">Record</th>
-                <th class="n" data-sortInitialOrder="desc">Win %</th>
-                <th class="n" data-sortInitialOrder="desc">
-                    <abbr title="Tournament wins">①</abbr>
-                </th>
-                <th class="n" data-sortInitialOrder="desc">
-                    <abbr title="Tournament top-8s">⑧</abbr>
-                </th>
-                <th class="n divider" data-sortInitialOrder="desc">
-                    <abbr title="League 5-0 runs">5–0s</abbr>
-                </th>
-                <th class="n" data-sortInitialOrder="desc">Elo</th>
-            </tr>
-        </thead>
-        {{#people}}
-            <tr>
-                <td><a href="{{url}}">{{name}}</a></td>
-                <td class="n"><a href="{{url}}">{{num_decks}}</a></td>
-                <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
-                <td class="n">{{#show_record}}<a href="{{url}}">{{win_percent}}</a>{{/show_record}}</td>
-                <td class="n">{{#tournament_top8s}}{{tournament_wins}}{{/tournament_top8s}}</td>
-                <td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>
-                <td class="n divider">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>
-                <td class="n">{{#show_record}}<a href="{{url}}">{{elo}}</a>{{/show_record}}</td>
-            </tr>
-        {{/people}}
-    </table>
+    <div
+        class="persontable"
+        data-page-size="{{page_size}}"
+        data-season-id="{{season_id}}">
+    </div>
 </section>

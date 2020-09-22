@@ -26,6 +26,7 @@ export class Table extends React.Component {
             q: ""
         };
         this.debouncedLoad = debounce(this.load, 250);
+        this.divRef = React.createRef();
     }
 
     componentDidMount() {
@@ -92,7 +93,7 @@ export class Table extends React.Component {
         const className = ("live " + this.props.className).trim();
 
         return (
-            <div className={className} style={{ minHeight: objects.lenght + "em" }}> {/* Prevent content jumping by setting a min-height. */}
+            <div ref={this.divRef} className={className} style={{ minHeight: objects.lenght + "em" }}> {/* Prevent content jumping by setting a min-height. */}
                 { this.props.showSearch
                     ? <form className="inline" onSubmit={(e) => { e.preventDefault(); }}>
                         <input className="name" placeholder={this.props.type + " name"} type="text" onChange={queryChanged.bind(this)} value={this.state.q}/>
@@ -162,7 +163,7 @@ export class Table extends React.Component {
         const gotShorter = pageSize < this.state.pageSize;
         this.setState({ pageSize, "page": 0 });
         if (gotShorter) {
-            this.scrollIntoView();
+            this.divRef.current.scrollIntoView();
         }
     }
 }
@@ -174,7 +175,7 @@ export const renderRecord = (object) => {
     return "";
 };
 
-const renderWinPercent = (card) => {
+export const renderWinPercent = (card) => {
     if (card.showRecord) {
         return card.winPercent;
     }
@@ -203,5 +204,5 @@ Table.propTypes = {
     "showOmw": PropTypes.string,
     "showSearch": PropTypes.bool,
     "tournamentOnly": PropTypes.string,
-    "type": PropTypes.oneOf(["Card", "Deck"]).isRequired
+    "type": PropTypes.oneOf(["Card", "Deck", "Person"]).isRequired
 };

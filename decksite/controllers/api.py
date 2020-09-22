@@ -149,7 +149,11 @@ def cards2_api() -> Response:
     person_id = request.args.get('personId') or None
     tournament_only = request.args.get('deckType') == 'tournament'
     season_id = rotation.season_id(str(request.args.get('seasonId')), None)
-    additional_where = query.card_name_where(request.args.get('q', '').strip())
+    q = request.args.get('q', '').strip()
+    if q:
+        additional_where = query.text_match_where('name', q)
+    else:
+        additional_where = 'TRUE'
     cs = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, person_id=person_id, tournament_only=tournament_only, season_id=season_id)
     prepare_cards(cs, tournament_only=tournament_only)
     total = card.load_cards_count(additional_where=additional_where, person_id=person_id, season_id=season_id)

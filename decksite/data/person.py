@@ -90,8 +90,7 @@ def load_people(where: str = 'TRUE',
             SUM(CASE WHEN d.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
             SUM(CASE WHEN d.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
             IFNULL(ROUND((SUM(dc.wins) / NULLIF(SUM(dc.wins + dc.losses), 0)) * 100, 1), '') AS win_percent,
-            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS num_competitions,
-            {season_id} AS season_id -- BAKERT does this work on /all/?
+            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS num_competitions
         FROM
             person AS p
         LEFT JOIN
@@ -107,7 +106,10 @@ def load_people(where: str = 'TRUE',
             {order_by}
         {limit}
     """
-    return [Person(r) for r in db().select(sql)]
+    people = [Person(r) for r in db().select(sql)]
+    for p in people:
+        p.season_id = season_id
+    return people
 
 def preaggregate() -> None:
     achievements.preaggregate_achievements()

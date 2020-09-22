@@ -82,14 +82,14 @@ def load_people(where: str = 'TRUE',
             p.discord_id,
             p.elo,
             p.locale,
-            COUNT(d.id) AS num_decks,
-            SUM(dc.wins) AS wins,
-            SUM(dc.losses) AS losses,
-            SUM(dc.draws) AS draws,
-            SUM(CASE WHEN dc.wins >= 5 AND dc.losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
-            SUM(CASE WHEN d.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
-            SUM(CASE WHEN d.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
-            IFNULL(ROUND((SUM(dc.wins) / NULLIF(SUM(dc.wins + dc.losses), 0)) * 100, 1), '') AS win_percent,
+            SUM(CASE WHEN {season_query} THEN 1 ELSE 0 END) AS num_decks,
+            SUM(CASE WHEN {season_query} THEN dc.wins ELSE 0 END) AS wins,
+            SUM(CASE WHEN {season_query} THEN dc.losses ELSE 0 END) AS losses,
+            SUM(CASE WHEN {season_query} THEN dc.draws ELSE 0 END) AS draws,
+            SUM(CASE WHEN {season_query} AND dc.wins >= 5 AND dc.losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
+            SUM(CASE WHEN {season_query} AND d.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
+            SUM(CASE WHEN {season_query} AND d.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
+            IFNULL(ROUND((SUM(CASE WHEN {season_query} THEN dc.wins ELSE 0 END) / NULLIF(SUM(CASE WHEN {season_query} THEN dc.wins ELSE 0 END + CASE WHEN {season_query} THEN dc.losses ELSE 0 END), 0)) * 100, 1), '') AS win_percent,
             SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS num_competitions
         FROM
             person AS p
@@ -99,7 +99,7 @@ def load_people(where: str = 'TRUE',
             deck_cache AS dc ON d.id = dc.deck_id
         {season_join}
         WHERE
-            {where} AND {season_query}
+            {where}
         GROUP BY
             p.id
         ORDER BY

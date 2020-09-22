@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Sequence
+from typing import List, Optional, Sequence
 
 from decksite.data import achievements, deck, preaggregation, query
 from decksite.data.models.person import Person
@@ -66,11 +66,13 @@ def load_person(where: str, season_id: Optional[int] = None) -> Person:
     return person
 
 def load_people(where: str = 'TRUE',
-                order_by_name: bool = False,
+                order_by: str = 'num_decks DESC, p.name',
+                limit: str = '',
                 season_id: Optional[int] = None) -> Sequence[Person]:
-    # First we retrieve the people because we want to return a Person for each person that exists even if they have no decks.
-    # This is two separate queries for performance reasons. See #5564.
-    sql = """
+    person_query = query.person_query()
+    season_join = query.season_join() if season_id else ''
+    season_query = query.season_query(season_id, 'season.id')
+    sql = f"""
         SELECT
             p.id,
             {person_query} AS name,
@@ -79,28 +81,7 @@ def load_people(where: str = 'TRUE',
             p.mtggoldfish_username,
             p.discord_id,
             p.elo,
-            p.locale
-        FROM
-            person AS p
-        WHERE
-            {where}
-    """.format(person_query=query.person_query(), where=where)
-    people = [Person(r) for r in db().select(sql)]
-    stats = load_people_stats(where, season_id)
-    for p in people:
-        p.update(stats.get(p.id, {}))
-        p.season_id = season_id
-    if order_by_name:
-        people.sort(key=lambda p: p.get('name') or 'ZZZZZZZZZZ')
-    else:
-        people.sort(key=lambda p: (-p.get('num_decks', 0), 1)) # (, p.get('name')))
-    return people
-
-def load_people_stats(where: str, season_id: Optional[int] = None) -> Dict[int, Dict[str, int]]:
-    season_join = query.season_join() if season_id else ''
-    sql = """
-        SELECT
-            p.id,
+            p.locale,
             COUNT(d.id) AS num_decks,
             SUM(dc.wins) AS wins,
             SUM(dc.losses) AS losses,
@@ -109,7 +90,8 @@ def load_people_stats(where: str, season_id: Optional[int] = None) -> Dict[int, 
             SUM(CASE WHEN d.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
             SUM(CASE WHEN d.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
             IFNULL(ROUND((SUM(dc.wins) / NULLIF(SUM(dc.wins + dc.losses), 0)) * 100, 1), '') AS win_percent,
-            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS num_competitions
+            SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS num_competitions,
+            {season_id} AS season_id -- BAKERT does this work on /all/?
         FROM
             person AS p
         LEFT JOIN
@@ -121,8 +103,11 @@ def load_people_stats(where: str, season_id: Optional[int] = None) -> Dict[int, 
             {where} AND {season_query}
         GROUP BY
             p.id
-    """.format(season_join=season_join, where=where, season_query=query.season_query(season_id, 'season.id'))
-    return {r['id']: r for r in db().select(sql)}
+        ORDER BY
+            {order_by}
+        {limit}
+    """
+    return [Person(r) for r in db().select(sql)]
 
 def preaggregate() -> None:
     achievements.preaggregate_achievements()

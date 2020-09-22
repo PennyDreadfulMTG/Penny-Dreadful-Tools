@@ -92,6 +92,26 @@ def load_person_statless(where: str = 'TRUE', season_id: Optional[int] = None) -
         p.season_id = season_id
     return guarantee.exactly_one(people)
 
+def load_people_count(where: str = 'TRUE', season_id: Optional[int] = None) -> int:
+    season_join = query.season_join() if season_id else ''
+    season_query = query.season_query(season_id, 'season.id')
+    sql = f"""
+        SELECT
+            COUNT(DISTINCT p.id)
+        FROM
+            person AS p
+        LEFT JOIN
+            deck AS d ON d.person_id = p.id
+        LEFT JOIN
+            deck_cache AS dc ON d.id = dc.deck_id
+        {season_join}
+        WHERE
+            ({where}) AND ({season_query})
+        GROUP BY
+            p.id
+    """
+    return db().value(sql) or 0
+
 # Note: This only loads people who have decks in the specified season.
 def load_people(where: str = 'TRUE',
                 order_by: str = 'num_decks DESC, p.name',
@@ -114,6 +134,7 @@ def load_people(where: str = 'TRUE',
             SUM(dc.wins) AS wins,
             SUM(dc.losses) AS losses,
             SUM(dc.draws) AS draws,
+            SUM(wins - losses) AS record,
             SUM(CASE WHEN dc.wins >= 5 AND dc.losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
             SUM(CASE WHEN d.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
             SUM(CASE WHEN d.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,

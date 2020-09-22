@@ -118,6 +118,25 @@ def cards_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
     sort_options = {
         'name': 'name',
         'numDecks': 'num_decks',
+        'record': f'record {sort_order}, wins',
+        'winPercent': 'win_percent',
+        'tournamentWins': 'tournament_wins',
+        'tournamentTop8s': 'tournament_top8s',
+        'perfectRuns': 'perfect_runs'
+    }
+    return sort_options[sort_by] + f' {sort_order}, num_decks DESC, record, name'
+
+def people_order_by(sort_by: Optional[str], sort_order: Optional[str]):
+    if not sort_by:
+        sort_by = 'numDecks'
+        sort_order = 'DESC'
+    else:
+        sort_by = str(sort_by)
+        sort_order = str(sort_order)
+    assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
+    sort_options = {
+        'name': 'name',
+        'numDecks': 'num_decks',
         'record': f'(SUM(wins) - SUM(losses)) {sort_order}, SUM(wins)',
         'winPercent': 'ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1)',
         'tournamentWins': 'tournament_wins',
@@ -160,8 +179,8 @@ def decks_where(args: Dict[str, str], viewer_id: Optional[int]) -> str:
         parts.append(f'c.id = {competition_id}') # XSS for our cass now taht we don't use int()???
     return ') AND ('.join(parts)
 
-def card_name_where(q: str) -> str:
-    return "name LIKE '%%" + '%%'.join(c.replace("'", "''").replace('%', '%%') for c in list(q)) + "%%'"
+def text_match_where(field: str, q: str) -> str:
+    return f"{field} LIKE '%%" + '%%'.join(c.replace("'", "''").replace('%', '%%') for c in list(q)) + "%%'"
 
 def archetype_where(archetype_id: int) -> str:
     return f'd.archetype_id IN (SELECT descendant FROM archetype_closure WHERE ancestor = {archetype_id})'

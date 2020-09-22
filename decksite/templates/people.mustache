@@ -20,18 +20,16 @@
             </tr>
         </thead>
         {{#people}}
-            {{#num_decks}}
-                <tr>
-                    <td><a href="{{url}}">{{name}}</a></td>
-                        <td class="n"><a href="{{url}}">{{num_decks}}</a></td>
-                        <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
-                        <td class="n">{{#show_record}}<a href="{{url}}">{{win_percent}}</a>{{/show_record}}</td>
-                        <td class="n">{{#tournament_top8s}}{{tournament_wins}}{{/tournament_top8s}}</td>
-                        <td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>
-                        <td class="n divider">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>
-                        <td class="n">{{#show_record}}<a href="{{url}}">{{elo}}</a>{{/show_record}}</td>
-                </tr>
-            {{/num_decks}}
+            <tr>
+                <td><a href="{{url}}">{{name}}</a></td>
+                <td class="n"><a href="{{url}}">{{num_decks}}</a></td>
+                <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
+                <td class="n">{{#show_record}}<a href="{{url}}">{{win_percent}}</a>{{/show_record}}</td>
+                <td class="n">{{#tournament_top8s}}{{tournament_wins}}{{/tournament_top8s}}</td>
+                <td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>
+                <td class="n divider">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>
+                <td class="n">{{#show_record}}<a href="{{url}}">{{elo}}</a>{{/show_record}}</td>
+            </tr>
         {{/people}}
     </table>
 </section>

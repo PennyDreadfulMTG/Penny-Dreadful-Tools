@@ -3,6 +3,7 @@ from typing import List, Union
 
 from flask import g, session, url_for
 
+from decksite.data.models.person import Person
 from decksite.deck_type import DeckType
 from magic import oracle, rotation
 from magic.models import Card, Deck
@@ -113,6 +114,14 @@ def prepare_deck(d: Deck) -> None:
             num_cards += c['n']
             total += c['n'] * c.card.cmc
     d.average_cmc = round(total / max(1, num_cards), 2)
+
+def prepare_people(ps: List[Person]) -> None:
+    for p in ps:
+        if p.get('mtgo_username'):
+            p.url = f'/people/{p.mtgo_username}/'
+        else:
+            p.url = f'/people/id/{p.id}/'
+        p.show_record = p.get('wins', None) or p.get('losses', None) or p.get('draws', None)
 
 def set_stars_and_top8(d: Deck) -> None:
     if d.finish == 1 and d.competition_top_n >= 1:

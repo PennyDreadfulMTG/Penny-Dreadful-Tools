@@ -194,11 +194,11 @@ def people_api() -> Response:
         where = query.text_match_where(query.person_query(), q)
     else:
         where = 'TRUE'
-    ps = ps.load_people(where=where, order_by=order_by, limit=limit, season_id=season_id)
-    prepare_people(ps)
+    people = ps.load_people(where=where, order_by=order_by, limit=limit, season_id=season_id)
+    prepare_people(people)
     total = ps.load_people_count(where=where, season_id=season_id)
     pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
-    r = {'page': page, 'pages': pages, 'objects': ps}
+    r = {'page': page, 'pages': pages, 'objects': people}
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))
     return resp

@@ -6,7 +6,7 @@ const config = {
         __dirname + "/../shared_web/static/js/decktable.jsx"
     ],
     output: {
-        path: __dirname + "/../shared_web/static//dist",
+        path: __dirname + "/../shared_web/static/dist",
         filename: "bundle.js"
     },
     resolve: {

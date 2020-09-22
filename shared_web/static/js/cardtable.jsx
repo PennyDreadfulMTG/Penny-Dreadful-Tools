@@ -1,4 +1,4 @@
-import { Table, renderRecord } from "./table";
+import { Table, renderRecord, renderWinPercent } from "./table";
 import React from "react";
 import { render } from "react-dom";
 
@@ -11,12 +11,6 @@ const renderCard = (card) => (
         }
     </React.Fragment>
 );
-
-const renderWinPercent = (card) => {
-    if (card.showRecord) {
-        return card.winPercent;
-    }
-};
 
 const renderHeaderRow = (table) => (
     <tr>

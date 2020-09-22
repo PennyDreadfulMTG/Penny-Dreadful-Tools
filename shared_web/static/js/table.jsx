@@ -174,6 +174,12 @@ export const renderRecord = (object) => {
     return "";
 };
 
+const renderWinPercent = (card) => {
+    if (card.showRecord) {
+        return card.winPercent;
+    }
+};
+
 // Most of these are PropTypes.string because they come (originally) from data-* on the HTML element so this isn't very good typechecking.
 // It would be nice to check what they "really" are.
 Table.propTypes = {

@@ -60,11 +60,39 @@ def maybe_load_person_by_mtggoldfish_name(username: str) -> Optional[Person]:
     return guarantee.at_most_one(load_people('p.mtggoldfish_username = {username}'.format(username=sqlescape(username))))
 
 def load_person(where: str, season_id: Optional[int] = None) -> Person:
-    person = guarantee.exactly_one(load_people(where, season_id=season_id))
+    people = load_people(where, season_id=season_id)
+    if len(people) == 0: # We didn't find an entry for that person with decks, what about without?
+        person = load_person_statless(where, season_id)
+    else:
+        person = guarantee.exactly_one(people)
     set_achievements([person], season_id)
     set_head_to_head([person], season_id)
     return person
 
+# Sometimes (person detail page) we want to load what we know about a person even though they had no decks in the specified season.
+def load_person_statless(where: str = 'TRUE', season_id: Optional[int] = None) -> Person:
+    person_query = query.person_query()
+    sql = f"""
+        SELECT
+            p.id,
+            {person_query} AS name,
+            p.mtgo_username,
+            p.tappedout_username,
+            p.mtggoldfish_username,
+            p.discord_id,
+            p.elo,
+            p.locale
+        FROM
+            person AS p
+        WHERE
+            {where}
+        """
+    people = [Person(r) for r in db().select(sql)]
+    for p in people:
+        p.season_id = season_id
+    return guarantee.exactly_one(people)
+
+# Note: This only loads people who have decks in the specified season.
 def load_people(where: str = 'TRUE',
                 order_by: str = 'num_decks DESC, p.name',
                 limit: str = '',
@@ -82,14 +110,14 @@ def load_people(where: str = 'TRUE',
             p.discord_id,
             p.elo,
             p.locale,
-            SUM(CASE WHEN {season_query} THEN 1 ELSE 0 END) AS num_decks,
-            SUM(CASE WHEN {season_query} THEN dc.wins ELSE 0 END) AS wins,
-            SUM(CASE WHEN {season_query} THEN dc.losses ELSE 0 END) AS losses,
-            SUM(CASE WHEN {season_query} THEN dc.draws ELSE 0 END) AS draws,
-            SUM(CASE WHEN {season_query} AND dc.wins >= 5 AND dc.losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
-            SUM(CASE WHEN {season_query} AND d.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
-            SUM(CASE WHEN {season_query} AND d.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
-            IFNULL(ROUND((SUM(CASE WHEN {season_query} THEN dc.wins ELSE 0 END) / NULLIF(SUM(CASE WHEN {season_query} THEN dc.wins ELSE 0 END + CASE WHEN {season_query} THEN dc.losses ELSE 0 END), 0)) * 100, 1), '') AS win_percent,
+            SUM(1) AS num_decks,
+            SUM(dc.wins) AS wins,
+            SUM(dc.losses) AS losses,
+            SUM(dc.draws) AS draws,
+            SUM(CASE WHEN dc.wins >= 5 AND dc.losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
+            SUM(CASE WHEN d.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
+            SUM(CASE WHEN d.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
+            IFNULL(ROUND((SUM(dc.wins) / NULLIF(SUM(dc.wins + dc.losses), 0)) * 100, 1), '') AS win_percent,
             SUM(DISTINCT CASE WHEN d.competition_id IS NOT NULL THEN 1 ELSE 0 END) AS num_competitions
         FROM
             person AS p
@@ -99,7 +127,7 @@ def load_people(where: str = 'TRUE',
             deck_cache AS dc ON d.id = dc.deck_id
         {season_join}
         WHERE
-            {where}
+            ({where}) AND ({season_query})
         GROUP BY
             p.id
         ORDER BY

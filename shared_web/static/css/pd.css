@@ -757,13 +757,15 @@ th.legend {
     min-height: 20em;
 }
 
+.live input.name {
+    font-size: 0.75rem; /* So that the input is the same size as the card name column once width of 10em is applied via `.live .name`. */
+}
+
 /*
 
 Force a consistent size of each column in react tables otherwise things "jump" as you paginate.
 
 */
-
-/* Deck Table. */
 
 .live .name {
     min-width: 10em;
@@ -812,12 +814,6 @@ Force a consistent size of each column in react tables otherwise things "jump" a
     }
 }
 
-/* Card Table. */
-
-.live input.name {
-    font-size: 0.75rem; /* So that the input is the same size as the card name column once width of 10em is applied via `.live .name`. */
-}
-
 .live .card {
     min-width: 10em;
     max-width: 10em;
@@ -856,6 +852,12 @@ Although it displays a similar thing that maxes out around 7-1-1 for a long tour
         max-width: 7em;
     }
 }
+
+.live .elo {
+    min-width: 3em;
+    max-width: 3em;
+}
+
 
 /* Angled headers */
 

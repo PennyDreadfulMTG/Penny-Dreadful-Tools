@@ -3,7 +3,8 @@ const webpack = require("webpack");
 const config = {
     entry: [
         __dirname + "/../shared_web/static/js/cardtable.jsx",
-        __dirname + "/../shared_web/static/js/decktable.jsx"
+        __dirname + "/../shared_web/static/js/decktable.jsx",
+        __dirname + "/../shared_web/static/js/persontable.jsx",
     ],
     output: {
         path: __dirname + "/../shared_web/static/dist",

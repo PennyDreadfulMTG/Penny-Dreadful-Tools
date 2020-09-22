@@ -10,12 +10,10 @@ from decksite import APP, auth, league
 from decksite.data import archetype as archs
 from decksite.data import card
 from decksite.data import competition as comp
-from decksite.data import deck, match
-from decksite.data import person as ps
-from decksite.data import query
+from decksite.data import deck, match, person, query
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
-from decksite.prepare import prepare_cards, prepare_decks
+from decksite.prepare import prepare_cards, prepare_decks, prepare_people
 from decksite.views import DeckEmbed
 from magic import oracle, rotation, tournaments
 from magic.decklist import parse_line
@@ -149,12 +147,56 @@ def cards2_api() -> Response:
     person_id = request.args.get('personId') or None
     tournament_only = request.args.get('deckType') == 'tournament'
     season_id = rotation.season_id(str(request.args.get('seasonId')), None)
-    additional_where = query.card_name_where(request.args.get('q', '').strip())
+    q = request.args.get('q', '').strip()
+    if q:
+        additional_where = query.text_match_where('name', q)
+    else:
+        additional_where = 'TRUE'
     cs = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, person_id=person_id, tournament_only=tournament_only, season_id=season_id)
     prepare_cards(cs, tournament_only=tournament_only)
     total = card.load_cards_count(additional_where=additional_where, person_id=person_id, season_id=season_id)
     pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
     r = {'page': page, 'pages': pages, 'objects': cs}
+    resp = return_json(r, camelize=True)
+    resp.set_cookie('page_size', str(page_size))
+    return resp
+
+@APP.route('/api/people/')
+def people_api() -> Response:
+    """
+    Grab a slice of results from a 0-indexed resultset of cards.
+    Input:
+        {
+            'page': <int>,
+            'pageSize': <int>,
+            'sortBy': <str>,
+            'sortOrder': <'ASC'|'DESC'>,
+            'seasonId': <int|'all'>,
+            'q': <str>
+        }
+    Output:
+        {
+            'page': <int>,
+            'pages': <int>,
+            'objects': [<person>]
+        }
+    """
+    order_by = query.people_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
+    page = int(request.args.get('page', 0))
+    start = page * page_size
+    limit = f'LIMIT {start}, {page_size}'
+    season_id = rotation.season_id(str(request.args.get('seasonId')), None)
+    q = request.args.get('q', '').strip()
+    if q:
+        where = query.text_match_where(query.person_query(), q)
+    else:
+        where = 'TRUE'
+    ps = person.load_people(where=where, order_by=order_by, limit=limit, season_id=season_id)
+    prepare_people(ps)
+    total = person.load_people_count(where=where, season_id=season_id)
+    pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
+    r = {'page': page, 'pages': pages, 'objects': ps}
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))
     return resp
@@ -205,38 +247,38 @@ class League(Resource):
             lg.decks = [d for d in lg.decks if not d.is_in_current_run()]
         return lg
 
-@APP.route('/api/person/<person>')
+@APP.route('/api/person/<identifier>')
 @fill_args('season_id')
-def person_api(person: str, season_id: int = -1) -> Response:
+def person_api(identifier: str, season_id: int = -1) -> Response:
     if season_id == -1:
         season_id = rotation.current_season_num()
     try:
-        p = ps.load_person_by_discord_id_or_username(person, season_id)
-        p.decks_url = url_for('person_decks_api', person=person, season_id=season_id)
-        p.head_to_head = url_for('person_h2h_api', person=person, season_id=season_id)
+        p = person.load_person_by_discord_id_or_username(identifier, season_id)
+        p.decks_url = url_for('person_decks_api', person=identifier, season_id=season_id)
+        p.head_to_head = url_for('person_h2h_api', person=identifier, season_id=season_id)
         return return_json(p)
     except DoesNotExistException:
         return return_json(generate_error('NOTFOUND', 'Person does not exist'))
 
-@APP.route('/api/person/<person>/decks')
+@APP.route('/api/person/<identifier>/decks')
 @fill_args('season_id')
-def person_decks_api(person: str, season_id: int = 0) -> Response:
-    p = ps.load_person_by_discord_id_or_username(person, season_id=season_id)
+def person_decks_api(identifier: str, season_id: int = 0) -> Response:
+    p = person.load_person_by_discord_id_or_username(identifier, season_id=season_id)
     blob = {
         'name': p.name,
         'decks': p.decks,
     }
     return return_json(blob)
 
-@APP.route('/api/person/<person>/h2h')
+@APP.route('/api/person/<identifier>/h2h')
 @fill_args('season_id')
-def person_h2h_api(person: str, season_id: int = 0) -> Response:
-    p = ps.load_person_by_discord_id_or_username(person, season_id=season_id)
+def person_h2h_api(identifier: str, season_id: int = 0) -> Response:
+    p = person.load_person_by_discord_id_or_username(identifier, season_id=season_id)
     return return_json(p.head_to_head)
 
-@APP.route('/api/league/run/<person>')
-def league_run_api(person: str) -> Response:
-    decks = league.active_decks_by(person)
+@APP.route('/api/league/run/<identifier>')
+def league_run_api(identifier: str) -> Response:
+    decks = league.active_decks_by(identifier)
     if len(decks) == 0:
         return return_json(None)
 
@@ -246,17 +288,17 @@ def league_run_api(person: str) -> Response:
 
     decks = league.active_decks()
     already_played = [m.opponent_deck_id for m in match.load_matches_by_deck(run)]
-    run.can_play = [d.person for d in decks if d.person != person and d.id not in already_played]
+    run.can_play = [d.person for d in decks if d.person != identifier and d.id not in already_played]
 
     return return_json(run)
 
-@APP.route('/api/league/drop/<person>', methods=['POST'])
-def drop(person: str) -> Response:
+@APP.route('/api/league/drop/<identifier>', methods=['POST'])
+def drop(identifier: str) -> Response:
     error = validate_api_key()
     if error:
         return error
 
-    decks = league.active_decks_by(person)
+    decks = league.active_decks_by(identifier)
     if len(decks) == 0:
         return return_json(generate_error('NO_ACTIVE_RUN', 'That person does not have an active run'))
 
@@ -377,7 +419,7 @@ def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:
 @APP.route('/api/admin/people/<int:person_id>/notes/')
 @auth.admin_required_no_redirect
 def person_notes(person_id: int) -> Response:
-    return return_json({'notes': ps.load_notes(person_id)})
+    return return_json({'notes': person.load_notes(person_id)})
 
 @APP.route('/decks/<int:deck_id>/oembed')
 def deck_embed(deck_id: int) -> Response:

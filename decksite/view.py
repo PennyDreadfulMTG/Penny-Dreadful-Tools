@@ -189,12 +189,7 @@ class View(BaseView):
                 archetype.rebuild_archetypes()
 
     def prepare_people(self) -> None:
-        for p in getattr(self, 'people', []):
-            if p.get('mtgo_username'):
-                p.url = f'/people/{p.mtgo_username}/'
-            else:
-                p.url = f'/people/id/{p.id}/'
-            p.show_record = p.get('wins', None) or p.get('losses', None) or p.get('draws', None)
+        prepare.prepare_people(getattr(self, 'people', []))
 
     def prepare_archetypes(self) -> None:
         for a in getattr(self, 'archetypes', []):

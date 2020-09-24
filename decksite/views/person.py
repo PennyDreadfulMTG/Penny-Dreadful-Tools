@@ -1,6 +1,6 @@
 import json
 import math
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any, Dict, List, Optional, Sequence
 
 import titlecase
 from flask import url_for
@@ -64,7 +64,7 @@ class Person(View):
     def page_title(self) -> str:
         return self.person.name
 
-    def setup_active_seasons(self, seasons_active: Sequence[int]) -> List[Dict[str, Union[str, int]]]:
+    def setup_active_seasons(self, seasons_active: Sequence[int]) -> None:
         total_seasons = len(rotation.SEASONS)
         cube_side_length = round(math.sqrt(total_seasons))
         self.seasons_active = []

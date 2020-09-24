@@ -158,6 +158,20 @@ def load_people(where: str = 'TRUE',
         p.season_id = season_id
     return people
 
+def seasons_active(person_id: int) -> List[int]:
+    sql = f"""
+        SELECT
+            DISTINCT season.id
+        FROM
+            deck AS d
+        {query.season_join()}
+        WHERE
+            d.person_id = {person_id}
+        ORDER BY
+            season.id
+    """
+    return db().values(sql)
+
 def preaggregate() -> None:
     achievements.preaggregate_achievements()
     preaggregate_head_to_head()

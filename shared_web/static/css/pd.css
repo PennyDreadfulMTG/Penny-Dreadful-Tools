@@ -554,6 +554,11 @@ main td a, main h1 a, main h2 a, main h3 a, main li a, .decklist a, .rotation a 
     text-transform: none;
 }
 
+/* And special-cases of those. */
+main td.name a {
+    font-variant-numeric: oldstyle-nums;
+}
+
 main table a:hover, main h1 a:hover, main h2 a:hover, main h3 a:hover, main li a:hover, .decklist a:hover {
     background-color: transparent;
 }

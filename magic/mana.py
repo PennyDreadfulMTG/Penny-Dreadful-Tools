@@ -3,7 +3,7 @@ This module parses Mana Costs
 """
 import itertools
 import re
-from typing import Dict, Iterable, List, Set, Tuple
+from typing import Dict, Iterable, List, Sequence, Set, Tuple
 
 from shared.pd_exception import ParseException
 
@@ -167,7 +167,7 @@ def order_score(initial_symbols: Tuple[str, ...]) -> int:
 
 # Gives an integer sort ordering for a set of colors already in min(order_score) ordering.
 # Use on unsorted lists of color symbols will produce undesirable results.
-def sort_score(symbols: Tuple[str, ...]) -> int:
+def sort_score(symbols: Sequence[str]) -> int:
     positions = [None, 'C', 'S', 'W', 'U', 'B', 'R', 'G']
     score = 0
     for i, symbol in enumerate(reversed(symbols), start=1):

@@ -13,7 +13,7 @@ from shared import configuration, fetch_tools
 from shared.fetch_tools import FetchException, escape
 
 if not os.path.exists(configuration.get_str('image_dir')):
-    os.mkdir(configuration.get_str('image_dir'))
+    os.makedirs(configuration.get_str('image_dir'), exist_ok=True)
 
 def basename(cards: List[Card]) -> str:
     return '_'.join(re.sub('[^a-z-]', '-', card.canonicalize(c.name)) + (c.get('preferred_printing', '') or '') for c in cards)

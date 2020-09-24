@@ -1,6 +1,6 @@
 import json
 import math
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence
 
 import titlecase
 from flask import url_for
@@ -16,7 +16,7 @@ from shared.container import Container
 
 # pylint: disable=no-self-use,too-many-instance-attributes,too-many-arguments
 class Person(View):
-    def __init__(self, person: ps.Person, cards: List[Card], archetypes: List[Archetype], all_archetypes: List[Archetype], matchups: List[Container], your_cards: Dict[str, List[str]], seasons_active: List[int], season_id: Optional[int]) -> None:
+    def __init__(self, person: ps.Person, cards: List[Card], archetypes: List[Archetype], all_archetypes: List[Archetype], matchups: List[Container], your_cards: Dict[str, List[str]], seasons_active: Sequence[int], season_id: Optional[int]) -> None:
         super().__init__()
         min_matches_for_matchups_grid = 10
         self.all_archetypes = all_archetypes

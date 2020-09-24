@@ -196,7 +196,7 @@ PD.initTypeahead = function() {
 
 PD.initSearchShortcut = function() {
     $(document).keypress(function(e) {
-        if (!$(e.target).is(":input") && String.fromCharCode(e.which) == '/') {
+        if (!$(e.target).is(":input") && String.fromCharCode(e.which) === "/") {
             $(".typeahead").val("");
             $(".typeahead").focus();
             e.preventDefault();

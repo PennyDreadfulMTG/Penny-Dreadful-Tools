@@ -56,7 +56,7 @@ class PDFlask(Flask):
     def not_found(self, e: Exception) -> Union[Response, Tuple[str, int]]:
         if request.path.startswith('/error/HTTP_BAD_GATEWAY'):
             return return_json(generate_error('BADGATEWAY', 'Bad Gateway'), status=502)
-        log_exception(request, e)
+        logger.warning('404 Not Found ' + request.path)
         if request.path.startswith('/api/'):
             return return_json(generate_error('NOTFOUND', 'Endpoint not found'), status=404)
         view = NotFound(e)

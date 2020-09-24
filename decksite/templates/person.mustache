@@ -67,10 +67,10 @@
 {{/show_head_to_head}}
 <section>
     <h2>Seasons</h2>
-    {{#seasons}}
+    {{#seasons_active}}
         {{#url}}<a href="{{url}}">{{/url}}<i title="Season {{season_id}}" class="ss {{className}}"></i>{{#url}}</a>{{/url}}
         {{#edge}}<br>{{/edge}}
-    {{/seasons}}
+    {{/seasons_active}}
 </section>
 {{#has_unique_cards}}
     <section class="card-lists">

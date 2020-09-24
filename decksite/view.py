@@ -34,6 +34,7 @@ SeasonInfoDescription = TypedDict('SeasonInfoDescription', {
     'cards_url': str,
     'rotation_changes_url': str,
     'tournament_leaderboards_url': str,
+    'legality_name': Optional[str],
     'legal_cards_url': Optional[str]
 }, total=False)
 
@@ -82,9 +83,11 @@ class View(BaseView):
             'cards_url': url_for('seasons.cards', season_id='all'),
             'rotation_changes_url': url_for('seasons.rotation_changes', season_id='all'),
             'tournament_leaderboards_url': url_for('seasons.tournament_leaderboards', season_id='all'),
+            'legality_name': None,
             'legal_cards_url': None
         }]
         num = 1
+        current_code = rotation.current_season_code()
         next_rotation_set_code = rotation.next_rotation_ex().code
         for code in rotation.SEASONS:
             if code == next_rotation_set_code:
@@ -103,7 +106,8 @@ class View(BaseView):
                 'cards_url': url_for('seasons.cards', season_id=num),
                 'rotation_changes_url': url_for('seasons.rotation_changes', season_id=num),
                 'tournament_leaderboards_url': url_for('seasons.tournament_leaderboards', season_id=num),
-                'legal_cards_url': f'https://pdmtgo.com/{code}_legal_cards.txt'
+                'legality_name': 'Penny Dreadful' + ('' if code == current_code else f' {code}'),
+                'legal_cards_url': 'https://pdmtgo.com/legal_cards.txt' if code == current_code else f'https://pdmtgo.com/{code}_legal_cards.txt'
             })
             num += 1
         seasons.reverse()

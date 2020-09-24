@@ -391,7 +391,7 @@ def prime_cache(d: Deck) -> None:
     set_colors(d)
     colors_s = json.dumps(d.colors)
     colored_symbols_s = json.dumps(d.colored_symbols)
-    color_sort = mana.order_score(d.colors)
+    color_sort = mana.sort_score(d.colors)
     set_legality(d)
     legal_formats_s = json.dumps(list(d.legal_formats))
     normalized_name = deck_name.normalize(d)

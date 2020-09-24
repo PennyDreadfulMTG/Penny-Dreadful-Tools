@@ -466,6 +466,10 @@ Color attributes are mostly found with their related structural elements in this
     color: red;
 }
 
+.inactive {
+    color: #999;
+}
+
 /*
 
 Headings

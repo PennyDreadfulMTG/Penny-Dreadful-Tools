@@ -1,8 +1,10 @@
 {{> banner}}
-<section>
-    <h2>Decks</h2>
-    {{> livedecktable}}
-</section>
+{{#has_decks}}
+    <section>
+        <h2>Decks</h2>
+        {{> livedecktable}}
+    </section>
+{{/has_decks}}
 {{> stats}}
 {{#num_achievements}}
     <section>
@@ -16,21 +18,29 @@
         <p><a href="{{achievements_url}}">Everyone's Achievements…</a></p>
     </section>
 {{/num_achievements}}
-<section>
-    <h2>Archetype Tree</h2>
-    {{> archetypetree}}
-</section>
-<section>
-    <h2>Cards</h2>
-    {{> livecardtable}}
-</section>
-{{> matchupgrid}}
-{{#charts}}
+{{#has_decks}}
     <section>
-        <h2>{{title}}</h2>
-        <canvas class="chart" data-type="{{type}}" data-labels="{{labels}}" data-series="{{series}}" data-options="{{options}}"></canvas>
+        <h2>Archetype Tree</h2>
+        {{> archetypetree}}
     </section>
-{{/charts}}
+{{/has_decks}}
+{{#has_decks}}
+    <section>
+        <h2>Cards</h2>
+        {{> livecardtable}}
+    </section>
+{{/has_decks}}
+{{#has_decks}}
+    {{> matchupgrid}}
+{{/has_decks}}
+{{#has_decks}}
+    {{#charts}}
+        <section>
+            <h2>{{title}}</h2>
+            <canvas class="chart" data-type="{{type}}" data-labels="{{labels}}" data-series="{{series}}" data-options="{{options}}"></canvas>
+        </section>
+    {{/charts}}
+{{/has_decks}}
 {{#show_head_to_head}}
     <section>
         <h2>Head to Head</h2>
@@ -55,6 +65,13 @@
         <p><a href="{{matches_url}}">Matches List…</a></p>
     </section>
 {{/show_head_to_head}}
+<section>
+    <h2>Seasons</h2>
+    {{#seasons}}
+        {{#url}}<a href="{{url}}">{{/url}}<i title="Season {{season_id}}" class="ss {{className}}"></i>{{#url}}</a>{{/url}}
+        {{#edge}}<br>{{/edge}}
+    {{/seasons}}
+</section>
 {{#has_unique_cards}}
     <section class="card-lists">
         <h2>Unique Cards Played</h2>

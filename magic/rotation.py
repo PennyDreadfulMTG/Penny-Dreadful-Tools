@@ -215,7 +215,7 @@ def rotation_redis_store() -> Tuple[int, int, List[Card]]:
         if c is not None:
             cards.append(c)
             classify_by_status(c, card_names_by_status)
-    redis.store('decksite:rotation:summary:runs', runs, ex=604800)
+    redis.store('decksite:rotation:summary:runs', runs, ex=1800)
     redis.store('decksite:rotation:summary:runs_percent', runs_percent, ex=604800)
     redis.store('decksite:rotation:summary:cards', cards, ex=604800)
     if 'Undecided' in card_names_by_status:

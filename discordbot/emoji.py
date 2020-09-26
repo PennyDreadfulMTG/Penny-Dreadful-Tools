@@ -53,7 +53,7 @@ def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True, no_ro
             s += ' (not legal in PD)'
 
     if c.bugs:
-        s += ':beetle:'
+        s += ':lady_beetle:'
     return s
 
 def get_future_legality(c: Card, legal: bool) -> str:

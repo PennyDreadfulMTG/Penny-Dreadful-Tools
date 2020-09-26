@@ -17,12 +17,12 @@ For properties see concrete uses in decktable, cardtable, etc.
 // eslint-disable-next-line no-unused-vars
 export class Table extends React.Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             objects: [],
             page: 0,
-            pageSize: 20,
+            pageSize: props.pageSize,
             q: ""
         };
         this.debouncedLoad = debounce(this.load, 250);
@@ -30,7 +30,7 @@ export class Table extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({"pageSize": this.props.pageSize}); // This will trigger a call to load to get the initial data.
+        this.load();
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -93,7 +93,7 @@ export class Table extends React.Component {
         const className = ("live " + this.props.className).trim();
 
         return (
-            <div ref={this.divRef} className={className} style={{ minHeight: objects.lenght + "em" }}> {/* Prevent content jumping by setting a min-height. */}
+            <div ref={this.divRef} className={className} style={{ minHeight: objects.length + "em" }}> {/* Prevent content jumping by setting a min-height. */}
                 { this.props.showSearch
                     ? <form className="inline" onSubmit={(e) => { e.preventDefault(); }}>
                         <input className="name" placeholder={this.props.type + " name"} type="text" onChange={queryChanged.bind(this)} value={this.state.q}/>
@@ -175,9 +175,9 @@ export const renderRecord = (object) => {
     return "";
 };
 
-export const renderWinPercent = (card) => {
-    if (card.showRecord) {
-        return card.winPercent;
+export const renderWinPercent = (object) => {
+    if (object.showRecord) {
+        return object.winPercent;
     }
 };
 

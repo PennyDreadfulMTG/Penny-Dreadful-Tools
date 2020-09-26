@@ -2,7 +2,7 @@ import datetime
 
 from discord.ext import commands
 
-from discordbot import bot # This is a circular import
+from discordbot import bot  # This is a circular import
 from discordbot.command import MtgContext
 from magic import rotation
 from shared import dtutil

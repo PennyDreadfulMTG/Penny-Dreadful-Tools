@@ -146,6 +146,22 @@ def people_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
     }
     return sort_options[sort_by] + f' {sort_order}, num_decks DESC, record, name'
 
+def head_to_head_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
+    if not sort_by:
+        sort_by = 'numMatches'
+        sort_order = 'DESC'
+    else:
+        sort_by = str(sort_by)
+        sort_order = str(sort_order)
+    assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
+    sort_options = {
+        'name': 'name',
+        'numMatches': 'num_matches',
+        'record': f'(SUM(wins) - SUM(losses)) {sort_order}, SUM(wins)',
+        'winPercent': 'ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1)'
+    }
+    return sort_options[sort_by] + f' {sort_order}, num_matches DESC, record, name'
+
 def exclude_active_league_runs(except_person_id: Optional[int]) -> str:
     clause = """
         d.retired

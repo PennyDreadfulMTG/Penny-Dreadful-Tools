@@ -62,6 +62,7 @@ class View(BaseView):
         self.show_tournament_toggle = False
         self.is_deck_page = False
         self.has_external_source = False
+        self.is_home_page = False
 
     def season_id(self) -> int:
         return get_season_id()

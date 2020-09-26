@@ -28,6 +28,7 @@ class Home(View):
         kick_off_date = tournaments.kick_off_date()
         if kick_off_date > dtutil.now() or True:
             self.kick_off_date = dtutil.display_date_with_date_and_year(kick_off_date)
+        self.is_home_page = True
 
     def setup_news(self, news: List[Container]) -> None:
         self.news = news

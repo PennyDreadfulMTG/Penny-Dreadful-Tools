@@ -66,7 +66,6 @@ def load_person(where: str, season_id: Optional[int] = None) -> Person:
     else:
         person = guarantee.exactly_one(people)
     set_achievements([person], season_id)
-    set_head_to_head([person], season_id)
     return person
 
 # Sometimes (person detail page) we want to load what we know about a person even though they had no decks in the specified season.
@@ -231,13 +230,20 @@ def set_achievements(people: List[Person], season_id: int = None) -> None:
         people_by_id[result['id']].achievements.pop('id')
 
 @retry_after_calling(preaggregate_head_to_head)
-def set_head_to_head(people: List[Person], season_id: int = None) -> None:
-    people_by_id = {person.id: person for person in people}
-    sql = """
+def load_head_to_head_count(person_id: int, where: str = 'TRUE', season_id: Optional[int] = None) -> int:
+    season_query = query.season_query(season_id)
+    sql = f'SELECT COUNT(*) FROM _head_to_head_stats AS hths INNER JOIN person AS opp ON hths.opponent_id = opp.id WHERE ({where}) AND (hths.person_id = {person_id}) AND ({season_query})'
+    return db().value(sql)
+
+@retry_after_calling(preaggregate_head_to_head)
+def load_head_to_head(person_id: int, where: str = 'TRUE', order_by: str = 'num_matches DESC, record DESC, win_percent DESC, wins DESC, opp_mtgo_username', limit: str = '', season_id: int = None) -> Sequence[Container]:
+    season_query = query.season_query(season_id)
+    sql = f"""
         SELECT
             hths.person_id AS id,
             LOWER(opp.mtgo_username) AS opp_mtgo_username,
             SUM(num_matches) AS num_matches,
+            SUM(wins) - SUM(losses) AS record,
             SUM(wins) AS wins,
             SUM(losses) AS losses,
             SUM(draws) AS draws,
@@ -247,23 +253,15 @@ def set_head_to_head(people: List[Person], season_id: int = None) -> None:
         INNER JOIN
             person AS opp ON hths.opponent_id = opp.id
         WHERE
-            hths.person_id IN ({ids}) AND ({season_query})
+            ({where}) AND (hths.person_id = {person_id}) AND ({season_query})
         GROUP BY
             hths.person_id,
             hths.opponent_id
         ORDER BY
-            SUM(num_matches) DESC,
-            SUM(wins - losses) DESC,
-            win_percent DESC,
-            SUM(wins) DESC,
-            opp_mtgo_username
-    """.format(ids=', '.join(str(k) for k in people_by_id.keys()), season_query=query.season_query(season_id))
-    results = [Container(r) for r in db().select(sql)]
-    for result in results:
-        people_by_id[result.id].head_to_head = people_by_id[result.id].get('head_to_head', []) + [result]
-    for person in people:
-        if person.get('head_to_head') is None:
-            person.head_to_head = []
+            {order_by}
+        {limit}
+    """
+    return [Container(r) for r in db().select(sql)]
 
 def associate(d: deck.Deck, discord_id: int) -> int:
     person_id = db().value('SELECT person_id FROM deck WHERE id = %s', [d.id], fail_on_missing=True)

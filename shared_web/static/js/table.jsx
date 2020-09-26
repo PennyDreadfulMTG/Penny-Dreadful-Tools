@@ -175,9 +175,9 @@ export const renderRecord = (object) => {
     return "";
 };
 
-export const renderWinPercent = (card) => {
-    if (card.showRecord) {
-        return card.winPercent;
+export const renderWinPercent = (object) => {
+    if (object.showRecord) {
+        return object.winPercent;
     }
 };
 

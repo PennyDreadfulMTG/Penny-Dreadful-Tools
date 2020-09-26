@@ -41,30 +41,13 @@
         </section>
     {{/charts}}
 {{/has_decks}}
-{{#show_head_to_head}}
+{{#has_decks}}
     <section>
         <h2>Head to Head</h2>
-        <table>
-            <thead>
-                <th>Opponent</th>
-                <th class="n"># Matches</th>
-                <th class="n" data-sortInitialOrder="desc">Record</th>
-                <th class="n"data-sortInitialOrder="desc">Win %</th>
-            </thead>
-            <tbody>
-                {{#head_to_head}}
-                    <tr>
-                        <td><a href="{{opp_url}}">{{opp_mtgo_username}}</a></td>
-                        <td class="n">{{num_matches}}</td>
-                        <td class="n">{{> record}}</td>
-                        <td class="n">{{win_percent}}</td>
-                    </tr>
-                {{/head_to_head}}
-            </tbody>
-        </table>
+        {{> liveheadtoheadtable}}
         <p><a href="{{matches_url}}">Matches List…</a></p>
     </section>
-{{/show_head_to_head}}
+{{/has_decks}}
 <section>
     <h2>Seasons</h2>
     {{#seasons_active}}

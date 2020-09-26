@@ -166,7 +166,7 @@ def cards2_api() -> Response:
 @APP.route('/api/people/')
 def people_api() -> Response:
     """
-    Grab a slice of results from a 0-indexed resultset of cards.
+    Grab a slice of results from a 0-indexed resultset of people.
     Input:
         {
             'page': <int>,
@@ -199,6 +199,49 @@ def people_api() -> Response:
     total = ps.load_people_count(where=where, season_id=season_id)
     pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
     r = {'page': page, 'pages': pages, 'objects': people}
+    resp = return_json(r, camelize=True)
+    resp.set_cookie('page_size', str(page_size))
+    return resp
+
+@APP.route('/api/h2h/')
+def h2h_api() -> Response:
+    """
+    Grab a slice of results from a 0-indexed resultset of head-to-head entries.
+    Input:
+        {
+            'page': <int>,
+            'pageSize': <int>,
+            'personId': <int>,
+            'sortBy': <str>,
+            'sortOrder': <'ASC'|'DESC'>,
+            'seasonId': <int|'all'>,
+            'q': <str>
+        }
+    Output:
+        {
+            'page': <int>,
+            'pages': <int>,
+            'objects': [<entry>]
+        }
+    """
+    order_by = query.head_to_head_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
+    page = int(request.args.get('page', 0))
+    start = page * page_size
+    limit = f'LIMIT {start}, {page_size}'
+    season_id = rotation.season_id(str(request.args.get('seasonId')), None)
+    person_id = int(request.args.get('personId', 0))
+    q = request.args.get('q', '').strip()
+    if q:
+        where = query.text_match_where('opp.mtgo_username', q)
+    else:
+        where = 'TRUE'
+    entries = ps.load_head_to_head(person_id, where=where, order_by=order_by, limit=limit, season_id=season_id)
+    for entry in entries:
+        entry.opp_url = url_for('.person', mtgo_username=entry.opp_mtgo_username, season_id=None if season_id == rotation.current_season_num() else season_id)
+    total = ps.load_head_to_head_count(person_id=person_id, where=where, season_id=season_id)
+    pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
+    r = {'page': page, 'pages': pages, 'objects': entries}
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))
     return resp
@@ -257,7 +300,6 @@ def person_api(person: str, season_id: int = -1) -> Response:
     try:
         p = ps.load_person_by_discord_id_or_username(person, season_id)
         p.decks_url = url_for('person_decks_api', person=person, season_id=season_id)
-        p.head_to_head = url_for('person_h2h_api', person=person, season_id=season_id)
         return return_json(p)
     except DoesNotExistException:
         return return_json(generate_error('NOTFOUND', 'Person does not exist'))
@@ -271,12 +313,6 @@ def person_decks_api(person: str, season_id: int = 0) -> Response:
         'decks': p.decks,
     }
     return return_json(blob)
-
-@APP.route('/api/person/<person>/h2h')
-@fill_args('season_id')
-def person_h2h_api(person: str, season_id: int = 0) -> Response:
-    p = ps.load_person_by_discord_id_or_username(person, season_id=season_id)
-    return return_json(p.head_to_head)
 
 @APP.route('/api/league/run/<person>')
 def league_run_api(person: str) -> Response:

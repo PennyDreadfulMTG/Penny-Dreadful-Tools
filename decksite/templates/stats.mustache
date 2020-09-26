@@ -19,13 +19,15 @@
             </tr>
         </thead>
         <tbody>
-            <td class="n">{{num_decks}}</td>
-            <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
-            <td class="n">{{win_percent}}</td>
-            <td class="n">{{#tournament_wins}}{{tournament_wins}}{{/tournament_wins}}</td>
-            <td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>
-            <td class="n">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>
-            {{#elo}}<td class="n">{{elo}}</th>{{/elo}}
+            <tr>
+                <td class="n">{{num_decks}}</td>
+                <td class="n">{{#show_record}}{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}{{/show_record}}</td>
+                <td class="n">{{win_percent}}</td>
+                <td class="n">{{#tournament_wins}}{{tournament_wins}}{{/tournament_wins}}</td>
+                <td class="n">{{#tournament_top8s}}{{tournament_top8s}}{{/tournament_top8s}}</td>
+                <td class="n">{{#perfect_runs}}{{perfect_runs}}{{/perfect_runs}}</td>
+                {{#elo}}<td class="n">{{elo}}</th>{{/elo}}
+            </tr>
         </tbody>
     </table>
 </section>

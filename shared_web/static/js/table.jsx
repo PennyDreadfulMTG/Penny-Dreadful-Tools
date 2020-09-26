@@ -93,7 +93,7 @@ export class Table extends React.Component {
         const className = ("live " + this.props.className).trim();
 
         return (
-            <div ref={this.divRef} className={className} style={{ minHeight: objects.lenght + "em" }}> {/* Prevent content jumping by setting a min-height. */}
+            <div ref={this.divRef} className={className} style={{ minHeight: objects.length + "em" }}> {/* Prevent content jumping by setting a min-height. */}
                 { this.props.showSearch
                     ? <form className="inline" onSubmit={(e) => { e.preventDefault(); }}>
                         <input className="name" placeholder={this.props.type + " name"} type="text" onChange={queryChanged.bind(this)} value={this.state.q}/>

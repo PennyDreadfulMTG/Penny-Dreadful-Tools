@@ -17,12 +17,12 @@ For properties see concrete uses in decktable, cardtable, etc.
 // eslint-disable-next-line no-unused-vars
 export class Table extends React.Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             objects: [],
             page: 0,
-            pageSize: 20,
+            pageSize: props.pageSize,
             q: ""
         };
         this.debouncedLoad = debounce(this.load, 250);
@@ -30,7 +30,7 @@ export class Table extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({"pageSize": this.props.pageSize}); // This will trigger a call to load to get the initial data.
+        this.load();
     }
 
     componentDidUpdate(prevProps, prevState) {

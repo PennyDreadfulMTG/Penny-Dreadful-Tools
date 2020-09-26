@@ -27,10 +27,6 @@ class Person(View):
         self.archetypes = archetypes
         self.hide_person = True
         self.cards = cards
-        for record in person.head_to_head:
-            record.show_record = True
-            record.opp_url = url_for('.person', mtgo_username=record.opp_mtgo_username)
-        self.show_head_to_head = len(person.head_to_head) > 0
         self.show_seasons = True
         self.displayed_achievements = [{'title': a.title, 'detail': titlecase.titlecase(a.display(self.person))} for a in Achievement.all_achievements if a.display(self.person)]
         self.achievements_url = url_for('.achievements')
@@ -49,7 +45,7 @@ class Person(View):
             }
         ]
         self.add_note_url = url_for('post_player_note')
-        self.matches_url = url_for('.person_matches', person_id=person.id, season_id=season_id)
+        self.matches_url = url_for('.person_matches', person_id=person.id, season_id=None if season_id == rotation.current_season_num()  else season_id)
         self.is_person_page = True
         self.trailblazer_cards = your_cards['trailblazer']
         self.has_trailblazer_cards = len(self.trailblazer_cards) > 0

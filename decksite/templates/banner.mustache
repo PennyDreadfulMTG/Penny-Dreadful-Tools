@@ -1,10 +1,13 @@
 <div class="banner">
     <div class="title">
-        <h1 {{#is_person_page}}class="person"{{/is_person_page}}>{{page_title}}</h1>
+        <h1
+            {{#is_error_page}}class="error"{{/is_error_page}}
+            {{#is_person_page}}class="person"{{/is_person_page}}
+            {{#is_deck_page}}class="deck-name"{{/is_deck_page}}
+        >{{page_title}}</h1>
+        {{> subtitle}}
     </div>
-    <ul class="buttons">
-        <li>{{> filterstoggle}}</li>
-        <li>{{> tournamenttoggle}}</li>
-        <li>{{> seasonchooser}}</li>
-    </ul>
+    {{#has_buttons}}
+        {{> buttons}}
+    {{/has_buttons}}
 </div>

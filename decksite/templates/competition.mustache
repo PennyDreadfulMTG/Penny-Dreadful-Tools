@@ -1,17 +1,3 @@
-<div class="banner">
-    <div class="title">
-        <h1>{{name}}</h1>
-        <div class="subtitle">
-            {{date}}
-        </div>
-    </div>
-    {{^league}}
-        <ul class="buttons">
-            <li><a title="View competition source ({{type}})" class="external" href="{{url}}">Source</a></li>
-        </ul>
-    {{/league}}
-</div>
-{{#ends}}<p><p>Ends {{ends}}.</p>{{/ends}}
 <section>
     <h2>Decks</h2>
     {{> livedecktable}}

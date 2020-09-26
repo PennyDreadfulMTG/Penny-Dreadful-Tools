@@ -26,6 +26,7 @@ def matches() -> str:
 class Matches(View):
     @fill_args('person', 'format_name')
     def __init__(self, person: str = None, format_name: str = None) -> None:
+        super().__init__()
         query = match.Match.query
         if person is not None:
             query = query.filter(match.Match.players.any(db.User.name == person))

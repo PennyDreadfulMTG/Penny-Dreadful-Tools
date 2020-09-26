@@ -32,3 +32,6 @@ class Matchups(View):
 
     def show_legal_seasons(self) -> bool:
         return not self.search_season_id
+
+    def page_title(self) -> str:
+        return 'Matchups Calculator'

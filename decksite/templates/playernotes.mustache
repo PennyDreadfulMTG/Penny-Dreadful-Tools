@@ -1,26 +1,27 @@
-<h1>Player Notes</h1>
-<table>
-    <thead>
-        <tr>
-            <th>Subject</th>
-            <th>Creator</th>
-            <th>Date</th>
-            <th>Note</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#notes}}
-            <tr class="wide">
-                <td>{{subject}}</td>
-                <td>{{creator}}</td>
-                <td data-text="{{date_sort}}">
-                    {{display_date}}
-                </td>
-                <td class="wide">{{note}}</td>
+<section>
+    <table>
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Creator</th>
+                <th>Date</th>
+                <th>Note</th>
             </tr>
-        {{/notes}}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            {{#notes}}
+                <tr class="wide">
+                    <td>{{subject}}</td>
+                    <td>{{creator}}</td>
+                    <td data-text="{{date_sort}}">
+                        {{display_date}}
+                    </td>
+                    <td class="wide">{{note}}</td>
+                </tr>
+            {{/notes}}
+        </tbody>
+    </table>
+</section>
 <section>
     <h2>Add Note</h2>
     <form method="post">

@@ -15,4 +15,4 @@ class Tournaments(View):
         self.pd500_url = url_for('pd500')
 
     def page_title(self) -> str:
-        return 'Tournaments'
+        return 'Cardhoarder Tournaments'

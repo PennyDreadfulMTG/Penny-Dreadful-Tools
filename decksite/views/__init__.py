@@ -1,7 +1,6 @@
 from .about import About
 from .about_pdm import AboutPdm
 from .achievements import Achievements
-from .add_form import AddForm
 from .admin import Admin
 from .admin_retire import AdminRetire
 from .archetype import Archetype

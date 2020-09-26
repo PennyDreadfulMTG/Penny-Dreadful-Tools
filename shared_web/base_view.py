@@ -8,16 +8,22 @@ from . import template
 
 # pylint: disable=no-self-use, too-many-public-methods
 class BaseView:
+    def __init__(self) -> None:
+        super().__init__()
+        self.content = ''
+
     def home_url(self) -> str:
         return url_for('home')
 
     def template(self) -> str:
         return self.__class__.__name__.lower()
 
-    def content(self) -> str:
+    def render_content(self) -> str:
         return template.render(self)
 
     def page(self) -> str:
+        # Force prepare to happen before header and footer are rendered.
+        self.content = self.render_content()
         return template.render_name('page', self)
 
     def response(self) -> wrappers.Response:

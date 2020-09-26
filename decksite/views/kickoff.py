@@ -20,4 +20,4 @@ class KickOff(View):
         self.discord_url = url_for('discord')
 
     def page_title(self) -> str:
-        return 'Season Kick Off'
+        return 'The Season Kick Off'

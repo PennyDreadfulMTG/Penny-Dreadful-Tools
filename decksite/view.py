@@ -41,6 +41,7 @@ SeasonInfoDescription = TypedDict('SeasonInfoDescription', {
 # pylint: disable=no-self-use, too-many-instance-attributes, too-many-public-methods
 class View(BaseView):
     def __init__(self) -> None:
+        super().__init__()
         self.max_price_text = card_price.MAX_PRICE_TEXT
         self.decks: List[Deck] = []
         self.active_runs_text: str = ''
@@ -58,6 +59,9 @@ class View(BaseView):
         self.tournament_only: bool = False
         self.show_matchup_grid = False
         self.matchup_archetypes: List[Archetype] = []
+        self.show_tournament_toggle = False
+        self.is_deck_page = False
+        self.has_external_source = False
 
     def season_id(self) -> int:
         return get_season_id()
@@ -67,6 +71,9 @@ class View(BaseView):
 
     def season_code_lower(self) -> str:
         return rotation.season_code(get_season_id()).lower()
+
+    def has_buttons(self) -> bool:
+        return self.show_tournament_toggle or self.show_seasons or self.is_deck_page or self.has_external_source
 
     def all_seasons(self) -> List[SeasonInfoDescription]:
         seasons: List[SeasonInfoDescription] = [{
@@ -181,7 +188,7 @@ class View(BaseView):
         for c in getattr(self, 'competitions', []):
             c.competition_url = '/competitions/{id}/'.format(id=c.id)
             c.display_date = dtutil.display_date(c.start_date)
-            c.ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
+            c.competition_ends = '' if c.end_date < dtutil.now() else dtutil.display_date(c.end_date)
             c.date_sort = dtutil.dt2ts(c.start_date)
             c.league = c.type == 'League'
             title_safe = ''

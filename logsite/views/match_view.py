@@ -19,6 +19,7 @@ def show_match(match_id: int) -> str:
 # pylint: disable=no-self-use,too-many-instance-attributes
 class Match(View):
     def __init__(self, viewed_match: match.Match) -> None:
+        super().__init__()
         if not viewed_match:
             raise DoesNotExistException()
         self.match = viewed_match

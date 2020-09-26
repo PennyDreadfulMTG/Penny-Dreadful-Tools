@@ -48,6 +48,7 @@ class Deck(View):
         self.is_in_current_run = d.is_in_current_run()
         self.person_id = person_id
         self.discord_id = discord_id
+        self.is_deck_page = True
 
     def has_matches(self) -> bool:
         return len(self.matches) > 0

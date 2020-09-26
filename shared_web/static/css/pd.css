@@ -271,7 +271,8 @@ html
         header
         nav
         main
-            h1
+            .banner
+                h1
             (content)
                 article (0+)
                     section (0+)
@@ -501,7 +502,6 @@ h1, h2 {
 
 main h1 {
     font-size: 1.333rem;
-    margin-bottom: 2rem;
     padding-top: 2rem;
 }
 
@@ -520,6 +520,11 @@ main h2 {
 
 main h1 a:visited, main h2 a:visited {
     color: inherit;
+}
+
+/* Once we are done with title and subtitle give us a nice margin to the main content. */
+.banner {
+    margin-bottom: 2rem;
 }
 
 /*

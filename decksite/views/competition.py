@@ -37,8 +37,11 @@ class Competition(View):
                 for p in self.leaderboard:
                     p.score = (p.points, p.played, p.retirements)
                 self.leaderboards = [self.leaderboard] # Will be prepared in View.
+        else:
+            self.has_external_source = True
         self.date = dtutil.display_date(competition.start_date)
         self.sponsor_name = competition.sponsor_name
+
 
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.competition, attr)

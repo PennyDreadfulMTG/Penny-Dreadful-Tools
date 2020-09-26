@@ -1,11 +1,10 @@
-<h1>{{page_title}}</h1>
-{{#message}}
-    <p>{{message}}</p>
-{{/message}}
-{{#errors}}
-    <p class="error">{{.}}</p>
-{{/errors}}
 <section>
+    {{#message}}
+        <p>{{message}}</p>
+    {{/message}}
+    {{#errors}}
+        <p class="error">{{.}}</p>
+    {{/errors}}
     <h2>Remove any discord id from specific person</h2>
     <form method="post">
         {{> persondropdown}}

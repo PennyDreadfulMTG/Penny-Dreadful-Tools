@@ -19,7 +19,7 @@ class LeagueInfo(View):
         self.bugs_url = url_for('tournaments', _anchor='bugs')
 
     def page_title(self) -> str:
-        return 'League'
+        return 'MTGO Traders League'
 
     def discord_url(self) -> str:
         return 'https://discord.gg/Yekrz3s' # Invite directly into #league channel

@@ -1,11 +1,9 @@
-{{#show_seasons}}
-    <label class="dropdown seasonchooser">
-        <div class="dd-button"><i class="ss ss-{{season_code_lower}}"></i> {{season_name}} ▾</div>
-        <input type="checkbox" class="dd-input">
-        <ul class="dd-menu">
-            {{#all_seasons}}
-                <li><a href="{{url}}"><i class="ss ss-{{code_lower}}"></i>{{name}}</a></li>
-            {{/all_seasons}}
-        </ul>
-    </label>
-{{/show_seasons}}
+<label class="dropdown seasonchooser">
+    <div class="dd-button"><i class="ss ss-{{season_code_lower}}"></i> {{season_name}} ▾</div>
+    <input type="checkbox" class="dd-input">
+    <ul class="dd-menu">
+        {{#all_seasons}}
+            <li><a href="{{url}}"><i class="ss ss-{{code_lower}}"></i>{{name}}</a></li>
+        {{/all_seasons}}
+    </ul>
+</label>

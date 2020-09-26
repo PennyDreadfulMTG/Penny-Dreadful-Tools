@@ -10,6 +10,10 @@ from ..base_view import BaseView
 
 # pylint: disable=no-self-use
 class ErrorView(BaseView):
+    def __init__(self) -> None:
+        super().__init__()
+        self.is_error_page = True
+
     def make_card(self, c: Union[str, Container]) -> Container:
         # If the server is throwing errors, we don't want to rely on oracle.
         # Make a minimal viable Card-alike object

@@ -1400,13 +1400,12 @@ Deck
     font-size: 0.8rem;
 }
 
-h2.section {
+section section, h2.section {
     float: left;
-    width: 100%;
 }
 
-main .banner h1 {
-    margin-bottom: 0; /* This is in case the button bar wraps under. We don't want it too far from the title. */
+h2.section {
+    width: 100%; /* So that the header bar is the width of the Creatures/Spells/Lands/Sideboard section even if it has longer card names. */
 }
 
 .title {

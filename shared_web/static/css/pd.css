@@ -107,13 +107,16 @@ nav {
     border-bottom: 0.05rem solid #999;
 }
 
-article {
-    margin: 0 3.8445rem /* Width of .marginalia + left-padding + right-padding * font-size */ 1rem 0;
+article, section p {
     /*
         Aim for an average line length of 45-90 characters, including spaces.
         https://practicaltypography.com/line-length.html
     */
     max-width: 30em;
+}
+
+article {
+    margin: 0 3.8445rem /* Width of .marginalia + left-padding + right-padding * font-size */ 1rem 0;
     padding-top: 1rem; /* Consistent with section */
 }
 
@@ -349,6 +352,8 @@ main {
 }
 
 footer {
+    display: flex;
+    flex-wrap: wrap;
     padding-bottom: 7rem; /* This is especially large to account for the status bar and still make it really obvious you have reached the bottom. */
     padding-top: 2rem;
 }
@@ -523,11 +528,6 @@ main h2 {
 
 main h1 a:visited, main h2 a:visited {
     color: inherit;
-}
-
-/* Once we are done with title and subtitle give us a nice margin to the main content. */
-.banner {
-    margin-bottom: 2rem;
 }
 
 /*

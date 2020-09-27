@@ -354,6 +354,7 @@ async def get_role(guild: Guild, rolename: str, create: bool = False) -> Optiona
     return None
 
 async def rotation_hype_message() -> Optional[str]:
+    rotation.clear_redis()
     runs, runs_percent, cs = rotation.read_rotation_files()
     runs_remaining = rotation.TOTAL_RUNS - runs
     newly_legal = [c for c in cs if c.hit_in_last_run and c.hits == rotation.TOTAL_RUNS / 2]

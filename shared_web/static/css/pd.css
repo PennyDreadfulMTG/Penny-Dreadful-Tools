@@ -108,7 +108,6 @@ nav {
 }
 
 article {
-    float: left; /* Wrap as sections do when there's enough screen space. */
     margin: 0 3.8445rem /* Width of .marginalia + left-padding + right-padding * font-size */ 1rem 0;
     /*
         Aim for an average line length of 45-90 characters, including spaces.
@@ -273,16 +272,16 @@ html
         main
             .banner
                 h1
-            (content)
+            .content
                 article (0+)
-                    section (0+)
+                section (0+)
                     h2 (0+)
                     (content)
         footer
         footer (status bar)
         (javascript)
 
-Main page does not have to use sections if it concerns only one subject.
+Main page does not have to use sections if it concerns only one subject (use article to get the right text width).
 Where multiple areas exist or wrapping is desired content is a series of <section> elements which float to use available space.
 There is currently no grid in place.
 
@@ -344,6 +343,11 @@ main {
     padding-bottom: 2rem;
 }
 
+.content {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 footer {
     padding-bottom: 7rem; /* This is especially large to account for the status bar and still make it really obvious you have reached the bottom. */
     padding-top: 2rem;
@@ -381,7 +385,6 @@ footer {
 }
 
 section {
-    float: left;
     margin: 0 3.8445rem /* Width of .marginalia + left-padding + right-padding * font-size */ 1rem 0;
     max-width: 100%; /* So that overflow-x on contained table clips overly wide content, otherwise the fact that sections are floated means it is ignored. */
     padding-top: 1rem;

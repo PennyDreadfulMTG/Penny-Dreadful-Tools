@@ -39,7 +39,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "css-loader": "^4.3.0",
     "eslint": "^7.10.0",
-    "eslint-plugin-react": "^7.21.1",
+    "eslint-plugin-react": "^7.21.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "style-loader": "^1.2.1",

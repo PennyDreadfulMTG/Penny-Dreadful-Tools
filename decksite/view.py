@@ -63,6 +63,7 @@ class View(BaseView):
         self.is_deck_page = False
         self.has_external_source = False
         self.is_home_page = False
+        self.show_filters_toggle = False
 
     def season_id(self) -> int:
         return get_season_id()
@@ -74,7 +75,7 @@ class View(BaseView):
         return rotation.season_code(get_season_id()).lower()
 
     def has_buttons(self) -> bool:
-        return self.show_tournament_toggle or self.show_seasons or self.is_deck_page or self.has_external_source
+        return self.show_tournament_toggle or self.show_seasons or self.is_deck_page or self.has_external_source or self.show_filters_toggle
 
     def all_seasons(self) -> List[SeasonInfoDescription]:
         seasons: List[SeasonInfoDescription] = [{

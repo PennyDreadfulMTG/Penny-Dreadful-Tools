@@ -21,4 +21,4 @@ async def hype(ctx: MtgContext) -> None:
     if msg:
         await ctx.send(msg)
     else:
-        await ctx.send('{ctx.author.mention}: No rotation hype message.')
+        await ctx.send(f'{ctx.author.mention}: No rotation hype message.')

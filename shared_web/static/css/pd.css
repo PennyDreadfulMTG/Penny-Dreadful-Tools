@@ -1919,10 +1919,8 @@ Search
         We add half the missing height above as margins to line up perfectly.
         We do NOT do the same for the bottom because we want the search results to line up with the bottom of the input not have a gap.
     */
-
     margin-top: 0.222rem;
     max-width: 20rem;
-    min-width: 6rem; /* This gets us down to 480px before we start to break the right margin rather than make the search box smaller. */
     width: 100%;
 }
 

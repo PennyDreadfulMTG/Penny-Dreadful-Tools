@@ -353,7 +353,7 @@ async def get_role(guild: Guild, rolename: str, create: bool = False) -> Optiona
         return await guild.create_role(name=rolename)
     return None
 
-async def rotation_hype_message() -> Optional[str]:
+async def rotation_hype_message(force=True) -> Optional[str]:
     rotation.clear_redis()
     runs, runs_percent, cs = rotation.read_rotation_files()
     runs_remaining = rotation.TOTAL_RUNS - runs
@@ -363,7 +363,7 @@ async def rotation_hype_message() -> Optional[str]:
     num_undecided = len([c for c in cs if c.status == 'Undecided'])
     num_legal_cards = len([c for c in cs if c.status == 'Legal'])
     s = f'Rotation run number {runs} completed. Rotation is {runs_percent}% complete. {num_legal_cards} cards confirmed.'
-    if not newly_hit + newly_legal + newly_eliminated and runs != 1 and runs % 5 != 0 and runs < rotation.TOTAL_RUNS / 2:
+    if not force and not newly_hit + newly_legal + newly_eliminated and runs != 1 and runs % 5 != 0 and runs < rotation.TOTAL_RUNS / 2:
         return None # Sometimes there's nothing to report
     if len(newly_hit) > 0 and runs_remaining > runs:
         newly_hit_s = list_of_most_interesting(newly_hit)

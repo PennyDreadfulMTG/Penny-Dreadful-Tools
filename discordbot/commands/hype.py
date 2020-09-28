@@ -12,10 +12,9 @@ from shared import dtutil
 async def hype(ctx: MtgContext) -> None:
     """Display the latest rotation hype message."""
     until_rotation = rotation.next_rotation() - dtutil.now()
-    last_run_time = rotation.last_run_time()
     msg = None
-    if until_rotation < datetime.timedelta(7) and last_run_time is not None:
-        msg = await bot.rotation_hype_message()
+    if until_rotation < datetime.timedelta(7) and rotation.last_run_time() is not None:
+        msg = await bot.rotation_hype_message(force=True)
     if msg:
         await ctx.send(msg)
     else:

@@ -119,8 +119,7 @@ class Bot(commands.Bot):
             data = None
             # Linked to PDM
             if role is not None and not role in before.roles:
-                if data is None:
-                    data = await fetcher.person_data_async(before.id)
+                data = await fetcher.person_data_async(before.id)
                 if data.get('id', None):
                     await after.add_roles(role)
 

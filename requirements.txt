@@ -9,7 +9,7 @@ cachecontrol[filecache]==0.12.6
 cachelib==0.1.1
 changelogs==0.14.0
 coverage==5.3
-discord.py[voice]==1.4.1
+discord.py[voice]==1.5.0
 feedparser==6.0.1
 flask==1.1.2
 flask-babel==2.0.0

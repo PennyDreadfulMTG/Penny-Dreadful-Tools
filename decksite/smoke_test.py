@@ -25,6 +25,6 @@ class DecksiteSmokeTest(unittest.TestCase):
     @pytest.mark.xfail('We need to fix this')
     def test_api_no_trailing_slashes(self) -> None:
         urls = [url_for(rule.endpoint) for rule in APP.url_map.iter_rules()]
-        for rule in APP.url_map.iter_rules():
+        for url in urls:
             if url.startswith('/api/'):
                 assert not url.endswith('/')

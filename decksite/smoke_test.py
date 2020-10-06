@@ -7,6 +7,7 @@ from decksite import APP
 from shared_web.smoke import SmokeTester
 
 
+# pylint: disable=no-self-use
 class DecksiteSmokeTest(unittest.TestCase):
     def setUp(self) -> None:
         self.tester: SmokeTester = SmokeTester(APP)

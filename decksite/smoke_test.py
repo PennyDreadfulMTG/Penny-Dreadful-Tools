@@ -21,9 +21,10 @@ class DecksiteSmokeTest(unittest.TestCase):
     def test_trailing_slashes(self) -> None:
         with APP.app_context():
             for rule in self.tester.url_map.iter_rules():
-                url = rule.rule
-                if not url.startswith('/api/'):
-                    assert url.endswith('/')
+                if "GET" in rule.methods:
+                    url = rule.rule
+                    if not url.startswith('/api/') and rule.endpoint not in ['favicon', 'robots_txt']:
+                        assert url.endswith('/')
 
     @pytest.mark.xfail(reason='We need to fix this')
     def test_api_no_trailing_slashes(self) -> None:

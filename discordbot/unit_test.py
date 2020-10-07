@@ -43,6 +43,10 @@ def test_double_query() -> None:
     results = command.results_from_queries(names)
     assert len(results) == 2
 
+def test_compat() -> None:
+    names = command.parse_queries('[[Mother of Runes]]', True)
+    assert len(names) == 0
+
 # The following two sets assume that Ertai is a long dead character, and is getting no new cards.
 # If wizards does an Invasion block throwback in some supplemental product, they may start failing.
 def test_legend_query() -> None:

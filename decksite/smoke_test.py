@@ -17,14 +17,16 @@ class DecksiteSmokeTest(unittest.TestCase):
             self.tester.response_test(path, 200)
 
     def test_trailing_slashes(self) -> None:
-        urls = [url_for(rule.endpoint) for rule in self.tester.url_map.iter_rules()]
+        with APP.app_context():
+            urls = [url_for(rule.endpoint) for rule in self.tester.url_map.iter_rules()]
         for url in urls:
             if not url.startswith('/api/'):
                 assert url.endswith('/')
 
     @pytest.mark.xfail(reason='We need to fix this')
     def test_api_no_trailing_slashes(self) -> None:
-        urls = [url_for(rule.endpoint) for rule in self.tester.url_map.iter_rules()]
+        with APP.app_context():
+            urls = [url_for(rule.endpoint) for rule in self.tester.url_map.iter_rules()]
         for url in urls:
             if url.startswith('/api/'):
                 assert not url.endswith('/')

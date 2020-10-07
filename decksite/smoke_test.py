@@ -4,8 +4,10 @@ from flask.helpers import url_for
 import pytest
 
 from decksite import APP
+from shared import configuration
 from shared_web.smoke import SmokeTester
 
+APP.config['SERVER_NAME'] = configuration.server_name()
 
 class DecksiteSmokeTest(unittest.TestCase):
     def setUp(self) -> None:

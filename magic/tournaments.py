@@ -1,7 +1,7 @@
 import datetime
 import sys
 from enum import Enum
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Union
 
 import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
@@ -16,6 +16,10 @@ TournamentDateType = Tuple[str, datetime.datetime]
 class TimeDirection(Enum):
     BEFORE = 1
     AFTER = 2
+
+class StageType(Enum):
+    SWISS_ROUNDS = 'swiss_rounds'
+    ELIMINATION_ROUNDS = 'elimination_rounds'
 
 def next_tournament_info() -> Dict[str, Any]:
     return tournament_info(TimeDirection.AFTER)
@@ -155,3 +159,49 @@ def all_series_info() -> List[Container]:
             'sponsor_name': 'Cardhoarder'
         })
     ]
+
+def rounds_info() -> List[Dict[Union[str, StageType], int]]:
+    return [
+        {
+            'min_players': 2,
+            'max_players': 2,
+            StageType.SWISS_ROUNDS: 0,
+            StageType.ELIMINATION_ROUNDS: 1
+        },
+        {
+            'min_players': 3,
+            'max_players': 7,
+            StageType.SWISS_ROUNDS: 3,
+            StageType.ELIMINATION_ROUNDS: 0
+        },
+        {
+            'min_players': 8,
+            'max_players': 8,
+            StageType.SWISS_ROUNDS: 3,
+            StageType.ELIMINATION_ROUNDS: 2
+        },
+        {
+            'min_players': 9,
+            'max_players': 15,
+            StageType.SWISS_ROUNDS: 4,
+            StageType.ELIMINATION_ROUNDS: 2
+        },
+        {
+            'min_players': 16,
+            'max_players': 31,
+            StageType.SWISS_ROUNDS: 4,
+            StageType.ELIMINATION_ROUNDS: 3
+        },
+        {
+            'min_players': 32,
+            'max_players': sys.maxsize,
+            StageType.SWISS_ROUNDS: 5,
+            StageType.ELIMINATION_ROUNDS: 3
+        }
+    ]
+
+def num_rounds_info(num_players: int, k: StageType) -> int:
+    for entry in rounds_info():
+        if (entry['min_players'] is not None and num_players >= entry['min_players']) and (entry['max_players'] is None or num_players <= entry['max_players']):
+            return entry[k]
+    return 0

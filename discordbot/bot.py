@@ -45,6 +45,11 @@ class Bot(commands.Bot):
         redis.store('discordbot:commit_id', commit_id)
 
         help_command = commands.DefaultHelpCommand(dm_help=None, no_category='Commands')
+        intents = discord.Intents.default()
+        intents.members = True
+        intents.presences = True
+        intents.typing = False
+
         super().__init__(command_prefix=commands.when_mentioned_or('!'), help_command=help_command, case_insensitive=True, **kwargs)
         self.voice = None
         self.achievement_cache: Dict[str, Dict[str, str]] = {}

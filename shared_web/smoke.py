@@ -1,3 +1,5 @@
+from typing import Any
+
 from shared_web.flask_app import PDFlask
 
 
@@ -19,3 +21,7 @@ class SmokeTester:
     def response_test(self, path: str, expected_code: int) -> None:
         result = self.test_client.get(path) # type: ignore
         assert result.status_code == expected_code
+
+    @property
+    def url_map(self) -> Any:
+        return self.test_client.application.url_map

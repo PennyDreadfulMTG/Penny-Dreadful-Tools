@@ -54,7 +54,7 @@ def run() -> None:
         url = f'{fetcher.decksite_url()}/api/rotation/clear_cache'
         fetch_tools.fetch(url)
     except Exception as c: # pylint: disable=broad-except
-        print(c)
+        print(c, flush=True)
 
 def process(all_prices: Dict[str, PriceListType]) -> int:
     seen_sets: Set[str] = set()
@@ -83,9 +83,9 @@ def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignor
         line = card + '\n'
         h.write(line)
     h.close()
-    print('Run {n} completed, with {ccards} cards from {csets}/{tsets} sets'.format(n=n, ccards=len(hits), csets=len(used_sets), tsets=len(seen_sets)))
-    print('Used:    {sets}'.format(sets=repr(used_sets)))
-    print('Missed:  {sets}'.format(sets=repr(ignored)))
+    print('Run {n} completed, with {ccards} cards from {csets}/{tsets} sets'.format(n=n, ccards=len(hits), csets=len(used_sets), tsets=len(seen_sets)), flush=True)
+    print('Used:    {sets}'.format(sets=repr(used_sets)), flush=True)
+    print('Missed:  {sets}'.format(sets=repr(ignored)), flush=True)
     return n
 
 def make_final_list() -> None:
@@ -110,7 +110,7 @@ def make_final_list() -> None:
     h = open(os.path.join(configuration.get_str('legality_dir'), 'legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))
     h.close()
-    print('Generated legal_cards.txt.  {0}/{1} cards.'.format(len(passed), len(scores)))
+    print('Generated legal_cards.txt.  {0}/{1} cards.'.format(len(passed), len(scores)), flush=True)
     setcode = rotation.next_rotation_ex().mtgo_code
     h = open(os.path.join(configuration.get_str('legality_dir'), f'{setcode}_legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))
@@ -119,6 +119,7 @@ def make_final_list() -> None:
     do_push()
 
 def do_push() -> None:
+    print('Pushing to Github...', flush=True)
     gh_repo = os.path.join(configuration.get_str('legality_dir'), 'gh_pages')
     if not os.path.exists(gh_repo):
         subprocess.run(['git', 'clone', 'https://github.com/PennyDreadfulMTG/pennydreadfulmtg.github.io.git', gh_repo], check=True)
@@ -133,6 +134,7 @@ def do_push() -> None:
     subprocess.run(['git', 'add'] + files, check=True)
     subprocess.run(['git', 'commit', '-m', f'{setcode} rotation'], check=True)
     subprocess.run(['git', 'push'], check=True)
+    print('done!\nGoing through checklist...', flush=True)
     checklist = f"""{setcode} rotation checklist
 
 https://pennydreadfulmagic.com/admin/rotation/
@@ -143,14 +145,18 @@ https://pennydreadfulmagic.com/admin/rotation/
 - [ ] email mtggoldfish
 - [ ] ping tappedout
 """
+    print('Rebooting Discord bot...', flush=True)
     if redis.get_str('discordbot:commit_id'):
         redis.store('discordbot:do_reboot', True)
+        print('Done!', flush=True)
     else:
-        checklist += '- [ ] restart discordbot'
-    ds = os.path.expanduser('~/decksite/')
+        checklist += '- [ ] restart discordbot\n'
+        print('Added to checklist!', flush=True)
+    ds = os.path.expanduser('/penny/decksite/')
     failed = False
     try:
         if os.path.exists(ds):
+            print('Calling Post Rotation...', flush=True)
             os.chdir(ds)
             subprocess.run(['python3', 'run.py', 'maintenance', 'post_rotation'], check=True)
         else:
@@ -161,15 +167,19 @@ https://pennydreadfulmagic.com/admin/rotation/
         checklist += '- [ ] run post_rotation\n'
 
     try:
+        print('Updating Gatherling...', flush=True)
         fetch_tools.post('https://gatherling.com/util/updateDefaultFormats.php')
     except fetch_tools.FetchException:
-        checklist += '- [ ] Update Gatherling legal cards list'
+        checklist += '- [ ] Update Gatherling legal cards list\n'
 
     for path in ['/etc/uwsgi/vassals/decksite.ini', '/home/discord/vassals/decksite.ini']:
         srv = pathlib.Path(path)
         if srv.exists():
+            print(f'touching {path}', flush=True)
             srv.touch()
             break
     else:
         checklist += '- [ ] touch /etc/uwsgi/vassals/decksite.ini\n'
+    print('Sending checklist to Github...', flush=True)
     repo.create_issue(checklist, 'rotation script', 'rotation')
+    print('Done!', flush=True)

@@ -177,11 +177,11 @@ async def post_no_cards(channel: Messageable, replying_to: Optional[Member] = No
     await message.add_reaction('❎')
 
 
-async def send(channel: TextChannel, content: str, file: Optional[File] = None) -> Message:
+async def send(channel: Messageable, content: str, file: Optional[File] = None) -> Message:
     new_s = escape_underscores(content)
     return await channel.send(file=file, content=new_s)
 
-async def send_image_with_retry(channel: TextChannel, image_file: str, text: str = '') -> None:
+async def send_image_with_retry(channel: Messageable, image_file: str, text: str = '') -> None:
     message = await send(channel, file=File(image_file), content=text)
     if message and message.attachments and message.attachments[0].size == 0:
         print('Message size is zero so resending')

@@ -66,7 +66,7 @@ export class Table extends React.Component {
         };
         Axios.get(this.props.endpoint, { params })
             .then(
-                (response) => { this.setState({"objects": response.data.objects, "pages": response.data.pages, "total": response.data.total}); PD.initTables(); },
+                (response) => { this.setState({"objects": response.data.objects, "total": response.data.total}); PD.initTables(); },
                 (error) => { this.setState({ error }); }
             );
     }
@@ -159,7 +159,7 @@ export class Table extends React.Component {
                         ? <a className="prev paginate" onClick={this.movePage.bind(this, this.state.page - 1)}>←</a>
                         : <span className="inactive prev paginate">←</span>
                     }
-                    { this.state.page < this.state.pages
+                    { end < this.state.total
                         ? <a className="next paginate" onClick={this.movePage.bind(this, this.state.page + 1)}>→</a>
                         : <span className="inactive next paginate">→</span>
                     }

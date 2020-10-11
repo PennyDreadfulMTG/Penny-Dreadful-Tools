@@ -26,7 +26,7 @@ class Home(View):
             self.pd500_date = dtutil.display_date_with_date_and_year(pd500_date)
         self.kick_off_url = url_for('kickoff')
         kick_off_date = tournaments.kick_off_date()
-        if kick_off_date > dtutil.now() or True:
+        if kick_off_date > dtutil.now():
             self.kick_off_date = dtutil.display_date_with_date_and_year(kick_off_date)
         self.is_home_page = True
 

@@ -59,6 +59,7 @@ class View(BaseView):
         self.page_size = request.cookies.get('page_size', 20)
         self.tournament_only: bool = False
         self.show_matchup_grid = False
+        self.num_enemy_archetypes = 0
         self.matchup_archetypes: List[Archetype] = []
         self.show_tournament_toggle = False
         self.is_deck_page = False
@@ -323,6 +324,7 @@ class View(BaseView):
             })
 
     def setup_matchups(self, archetypes: List[Archetype], matchups: List[Container], min_matches: int) -> None:
+        enemy_archetypes = set()
         for hero in archetypes:
             hero.matchups = []
             matchups_by_enemy_id = {mu.id: mu for mu in matchups if mu.archetype_id == hero.id}
@@ -331,6 +333,7 @@ class View(BaseView):
                 if mu.wins + mu.losses >= min_matches:
                     hero.show_as_hero = True
                     enemy.show_as_enemy = True
+                    enemy_archetypes.add(enemy.name)
                     self.show_matchup_grid = True
                 if mu and mu.wins + mu.losses > 0:
                     prepare_matchup(mu, enemy)
@@ -340,6 +343,7 @@ class View(BaseView):
         for hero in archetypes:
             for mu in hero.matchups:
                 mu.show_as_enemy = mu.opponent_archetype.get('show_as_enemy', False)
+        self.num_enemy_archetypes = len(enemy_archetypes)
         self.matchup_archetypes = archetypes
 
 

@@ -873,6 +873,12 @@ Although it displays a similar thing that maxes out around 7-1-1 for a long tour
     }
 }
 
+/* This doesn't need to be as big as a card's record (no person plays as many matches as Swamp) but bigger than a deck's record (which maxes out around 10-2). */
+.live .person-record {
+    min-width: 6em;
+    max-width: 6em;
+}
+
 .live .elo {
     min-width: 3em;
     max-width: 3em;

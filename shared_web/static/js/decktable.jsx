@@ -6,7 +6,7 @@ const renderHeaderRow = (table) => (
     <tr>
         <th className="marginalia" onClick={table.sort.bind(table, "marginalia", "ASC")}>⇅</th>
         <th onClick={table.sort.bind(table, "colors", "ASC")}>Colors</th>
-        <th className="name" onClick={table.sort.bind(table, "name", "ASC")}>Name</th>
+        <th className="deck-name" onClick={table.sort.bind(table, "name", "ASC")}>Name</th>
         { table.props.hidePerson
             ? null
             : <th className="person" onClick={table.sort.bind(table, "person", "ASC")}>Person</th>
@@ -40,7 +40,7 @@ const renderRow = (table, deck) => (
     <tr key={deck.id}>
         <td className="marginalia" dangerouslySetInnerHTML={{__html: deck.starsSafe}}></td>
         <td dangerouslySetInnerHTML={{__html: deck.colorsSafe}} ></td>
-        <td className="name"><a title={deck.decklist || null} href={deck.url}>{deck.name}</a></td>
+        <td className="deck-name"><a title={deck.decklist || null} href={deck.url}>{deck.name}</a></td>
         { table.props.hidePerson
             ? null
             : <td className="person"><a href={deck.personUrl} className="person">{deck.person}</a></td>

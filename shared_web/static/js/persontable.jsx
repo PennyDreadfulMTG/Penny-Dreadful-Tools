@@ -6,7 +6,7 @@ const renderHeaderRow = (table) => (
     <tr>
         <th className="name" onClick={table.sort.bind(table, "name", "ASC")}>Name</th>
         <th className="n num-decks" onClick={table.sort.bind(table, "numDecks", "DESC")}>Decks</th>
-        <th className="n record" onClick={table.sort.bind(table, "record", "DESC")}>Record</th>
+        <th className="n person-record" onClick={table.sort.bind(table, "record", "DESC")}>Record</th>
         <th className="n win-percent" onClick={table.sort.bind(table, "winPercent", "DESC")}>Win %</th>
         <th className="n tournament-wins" onClick={table.sort.bind(table, "tournamentWins", "DESC")}>
             <abbr title="Tournament wins">①</abbr>

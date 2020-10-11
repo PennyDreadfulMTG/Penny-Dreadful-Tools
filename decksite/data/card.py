@@ -11,9 +11,12 @@ from shared.database import sqlescape
 from shared.decorators import retry_after_calling
 
 
-def load_card(name: str, season_id: Optional[int] = None) -> Card:
+def load_card(name: str, tournament_only: bool = False, season_id: Optional[int] = None) -> Card:
     c = guarantee.exactly_one(oracle.load_cards([name]))
-    c.decks = deck.load_decks(query.card_where(name), season_id=season_id)
+    deck_where = query.card_where(name)
+    if tournament_only:
+        deck_where = f"({deck_where}) AND (ct.name <> 'League')"
+    c.decks = deck.load_decks(deck_where, season_id=season_id)
     c.wins, c.losses, c.draws, c.tournament_wins, c.tournament_top8s, c.perfect_runs = 0, 0, 0, 0, 0, 0
     for d in c.decks:
         c.wins += d.get('wins', 0)

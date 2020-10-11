@@ -69,7 +69,7 @@ def cards(deck_type: Optional[str] = None) -> str:
 def card(name: str, deck_type: Optional[str] = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     try:
-        c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)), season_id=get_season_id())
+        c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)), tournament_only=tournament_only, season_id=get_season_id())
         view = Card(c, tournament_only)
         return view.page()
     except InvalidDataException as e:

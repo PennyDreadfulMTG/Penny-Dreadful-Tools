@@ -22,7 +22,7 @@ export class Table extends React.Component {
         this.state = {
             objects: [],
             page: 0,
-            pageSize: parseInt(props.pageSize),
+            pageSize: parseInt(props.pageSize, 10),
             q: ""
         };
         this.debouncedLoad = debounce(this.load, 250);
@@ -87,7 +87,7 @@ export class Table extends React.Component {
             if (this.state.pageSize === e.target.value) {
                 return;
             }
-            this.setState({"pageSize": parseInt(e.target.value), "page": 0});
+            this.setState({"pageSize": parseInt(e.target.value, 10), "page": 0});
         };
         const queryChanged = (e) => {
             if (this.state.q === e.target.value) {
@@ -117,7 +117,7 @@ export class Table extends React.Component {
                                     <option value="20">20</option>
                                     <option value="100">100</option>
                                 </select>
-                              </form>
+                            </form>
                             : null
                         }
                     </span>
@@ -146,7 +146,7 @@ export class Table extends React.Component {
     renderPagination() {
         // Some of the look here stolen from https://material-ui.com/components/tables/.
         const { objects, page } = this.state;
-        const start = objects.length == 0 ? 0 : page * this.state.pageSize + 1;
+        const start = objects.length === 0 ? 0 : page * this.state.pageSize + 1;
         const end = Math.min(start + this.state.pageSize - 1, this.state.total);
         const total = this.state.total;
         return (
@@ -201,6 +201,7 @@ Table.propTypes = {
     "cardName": PropTypes.string,
     "className": PropTypes.oneOf(["", "with-marginalia"]),
     "competitionId": PropTypes.string,
+    "competitionSeriesId": PropTypes.string,
     "endpoint": PropTypes.string.isRequired,
     "hidePerson": PropTypes.string,
     "hideSource": PropTypes.string,

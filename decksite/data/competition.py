@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence, Union
 
 from flask import url_for
 
@@ -148,7 +148,7 @@ def series(season_id: Optional[int] = None) -> List[Dict[str, Any]]:
     """
     return [Container(r) for r in db().select(sql)]
 
-def load_leaderboard_count(where: str, group_by: str, season_id: Optional[int] = None) -> int:
+def load_leaderboard_count(where: str, season_id: Optional[Union[str, int]] = None) -> int:
     season_join = query.season_join()
     season_query = query.season_query(season_id, 'season.id')
     sql = f"""
@@ -176,7 +176,7 @@ def load_leaderboard_count(where: str, group_by: str, season_id: Optional[int] =
     """
     return db().value(sql, [], 0)
 
-def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.id, p.id', order_by: str = 'cs.id', limit = '', season_id: Optional[int] = None) -> List[Dict[str, Any]]:
+def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.id, p.id', order_by: str = 'cs.id', limit: str = '', season_id: Optional[Union[str, int]] = None) -> Sequence[Container]:
     person_query = query.person_query()
     season_join = query.season_join()
     season_query = query.season_query(season_id, 'season.id')

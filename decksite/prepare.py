@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Dict, List, Sequence, Union
+from typing import List, Sequence, Union
 
 from flask import g, session, url_for
 
@@ -124,7 +124,7 @@ def prepare_people(ps: Sequence[Person]) -> None:
             p.url = f'/people/id/{p.id}/'
         p.show_record = p.get('wins', None) or p.get('losses', None) or p.get('draws', None)
 
-def prepare_leaderboard(leaderboard: List[Container]) -> None:
+def prepare_leaderboard(leaderboard: Sequence[Container]) -> None:
     for entry in leaderboard:
         if entry.get('finish', 9) <= 8:
             entry.position = chr(9311 + entry.finish) # ①, ②, ③, …

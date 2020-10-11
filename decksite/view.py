@@ -1,7 +1,7 @@
 import html
 import sys
 from collections import Counter
-from typing import Any, List, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union, cast
 
 import inflect
 from anytree.iterators import PreOrderIter
@@ -65,6 +65,7 @@ class View(BaseView):
         self.has_external_source = False
         self.is_home_page = False
         self.show_filters_toggle = False
+        self.tournament_rounds_info: List[Dict[str, Union[int, str]]] = []
 
     def season_id(self) -> int:
         return get_season_id()
@@ -295,8 +296,7 @@ class View(BaseView):
             elif end_date:
                 t.league = {'class': 'ongoing', 'display': False}
 
-    def setup_tournament_rounds(self):
-        self.tournament_rounds_info = []
+    def setup_tournament_rounds(self) -> None:
         last_elimination_rounds = 0
         for entry in tournaments.rounds_info():
             if entry['min_players'] == entry['max_players']:

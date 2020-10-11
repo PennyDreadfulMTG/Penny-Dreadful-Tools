@@ -277,7 +277,7 @@ def leaderboards_api() -> Response:
         season_id = rotation.season_id(str(request.args.get('seasonId')), None)
     entries = comp.load_leaderboard(where=where, group_by='p.id', order_by=order_by, limit=limit, season_id=season_id)
     prepare_leaderboard(entries)
-    total = comp.load_leaderboard_count(where=where, group_by='p.id', season_id=season_id)
+    total = comp.load_leaderboard_count(where=where, season_id=season_id)
     pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
     r = {'page': page, 'pages': pages, 'total': total, 'objects': entries}
     resp = return_json(r, camelize=True)

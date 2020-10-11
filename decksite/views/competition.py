@@ -1,9 +1,8 @@
-from typing import Any, Dict
+from typing import Any
 
 from decksite.data.competition import Competition as Comp
 from decksite.view import View
 from shared import dtutil
-from shared.container import Container
 
 
 # pylint: disable=no-self-use, too-many-instance-attributes

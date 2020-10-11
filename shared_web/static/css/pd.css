@@ -478,6 +478,7 @@ Color attributes are mostly found with their related structural elements in this
 
 .inactive {
     color: #999;
+    cursor: default;
 }
 
 /*
@@ -1652,6 +1653,7 @@ form {
 
 button, form, input, select, textarea {
     color: inherit;
+    font-family: main-text;
     font-size: inherit;
 }
 
@@ -1673,6 +1675,7 @@ input[disabled=true] {
 }
 
 button, input, form label, select, textarea {
+    box-sizing: border-box; /* Ignore padding when sizing so we can get elements the same height more easily. */
     margin-top: 1rem;
 }
 
@@ -1749,7 +1752,6 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
 }
 
 .inline input, .inline select, .inline textarea, .inline label, .inline button {
-    box-sizing: border-box; /* Ignore padding when sizing so we can get elements the same height more easily. */
     height: 1rem;
 }
 

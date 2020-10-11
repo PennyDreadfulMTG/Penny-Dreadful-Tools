@@ -22,7 +22,7 @@ export class Table extends React.Component {
         this.state = {
             objects: [],
             page: 0,
-            pageSize: props.pageSize,
+            pageSize: parseInt(props.pageSize),
             q: ""
         };
         this.debouncedLoad = debounce(this.load, 250);
@@ -54,6 +54,7 @@ export class Table extends React.Component {
             "archetypeId": this.props.archetypeId,
             "cardName": this.props.cardName,
             "competitionId": this.props.competitionId,
+            "competitionSeriesId": this.props.competitionSeriesId,
             deckType,
             page,
             pageSize,
@@ -65,7 +66,7 @@ export class Table extends React.Component {
         };
         Axios.get(this.props.endpoint, { params })
             .then(
-                (response) => { this.setState({"objects": response.data.objects, "pages": response.data.pages}); PD.initTables(); },
+                (response) => { this.setState({"objects": response.data.objects, "pages": response.data.pages, "total": response.data.total}); PD.initTables(); },
                 (error) => { this.setState({ error }); }
             );
     }
@@ -82,24 +83,45 @@ export class Table extends React.Component {
             return this.renderError(JSON.stringify(this.state.error));
         }
         const { objects } = this.state;
+        const pageSizeChanged = (e) => {
+            if (this.state.pageSize === e.target.value) {
+                return;
+            }
+            this.setState({"pageSize": parseInt(e.target.value), "page": 0});
+        };
         const queryChanged = (e) => {
             if (this.state.q === e.target.value) {
                 return;
             }
-            this.setState({q: e.target.value, "page": 0});
+            this.setState({"q": e.target.value, "page": 0});
             this.debouncedLoad.apply(this);
         };
         const rows = objects.map((o) => this.props.renderRow(this, o));
         const className = ("live " + this.props.className).trim();
 
         return (
-            <div ref={this.divRef} className={className} style={{ minHeight: objects.length + "em" }}> {/* Prevent content jumping by setting a min-height. */}
-                { this.props.showSearch
-                    ? <form className="inline" onSubmit={(e) => { e.preventDefault(); }}>
-                        <input className="name" placeholder={this.props.type + " name"} type="text" onChange={queryChanged.bind(this)} value={this.state.q}/>
-                    </form>
-                    : null
-                }
+            <div ref={this.divRef} className={className}>
+                <div className="table-header">
+                    <span>
+                        { this.props.showSearch
+                            ? <form className="inline" onSubmit={(e) => { e.preventDefault(); }}>
+                                <input className="name" placeholder={this.props.type + " name"} type="text" onChange={queryChanged.bind(this)} value={this.state.q}/>
+                            </form>
+                            : null
+                        }
+                    </span>
+                    <span>
+                        { this.state.total > 20
+                            ? <form className="inline" onSubmit={(e) => { e.preventDefault(); }}>
+                                <select value={this.state.pageSize} onChange={pageSizeChanged.bind(this)}>
+                                    <option value="20">20</option>
+                                    <option value="100">100</option>
+                                </select>
+                              </form>
+                            : null
+                        }
+                    </span>
+                </div>
                 <table className={className}>
                     <thead>
                         {this.props.renderHeaderRow(this)}
@@ -113,7 +135,6 @@ export class Table extends React.Component {
                             </tr>
                             : null
                         }
-
                         {rows}
                     </tbody>
                 </table>
@@ -123,27 +144,26 @@ export class Table extends React.Component {
     }
 
     renderPagination() {
+        // Some of the look here stolen from https://material-ui.com/components/tables/.
         const { objects, page } = this.state;
+        const start = objects.length == 0 ? 0 : page * this.state.pageSize + 1;
+        const end = Math.min(start + this.state.pageSize - 1, this.state.total);
+        const total = this.state.total;
         return (
             <div className="pagination">
-                <p className="pagination-links">
+                <span className="pages section">
+                    {start}-{end} of {total}
+                </span>
+                <span className="links section">
                     { this.state.page > 0
-                        ? <a className="prev" onClick={this.movePage.bind(this, this.state.page - 1)}>← Previous Page</a>
-                        : null
+                        ? <a className="prev paginate" onClick={this.movePage.bind(this, this.state.page - 1)}>←</a>
+                        : <span className="inactive prev paginate">←</span>
                     }
                     { this.state.page < this.state.pages
-                        ? <a className="next" onClick={this.movePage.bind(this, this.state.page + 1)}>Next Page →</a>
-                        : null
+                        ? <a className="next paginate" onClick={this.movePage.bind(this, this.state.page + 1)}>→</a>
+                        : <span className="inactive next paginate">→</span>
                     }
-                </p>
-                { objects.length < 20 && page === 0
-                    ? null
-                    : <p className="page-size-options">
-                        <a className={"page-size" + (this.state.pageSize === 20 ? " selected" : "")} onClick={this.changePageSize.bind(this, 20)}>20</a>
-                        <a className={"page-size" + (this.state.pageSize === 100 ? " selected" : "")} onClick={this.changePageSize.bind(this, 100)}>100</a>
-                        per page
-                    </p>
-                }
+                </span>
             </div>
         );
     }
@@ -157,14 +177,6 @@ export class Table extends React.Component {
             sortOrder = this.state.sortOrder === "ASC" ? "DESC" : "ASC";
         }
         this.setState({ sortBy, sortOrder, "page": 0 });
-    }
-
-    changePageSize(pageSize) {
-        const gotShorter = pageSize < this.state.pageSize;
-        this.setState({ pageSize, "page": 0 });
-        if (gotShorter) {
-            this.divRef.current.scrollIntoView();
-        }
     }
 }
 

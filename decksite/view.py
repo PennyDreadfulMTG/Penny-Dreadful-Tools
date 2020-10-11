@@ -1,4 +1,5 @@
 import html
+import sys
 from collections import Counter
 from typing import Any, List, Optional, Union, cast
 
@@ -233,26 +234,7 @@ class View(BaseView):
 
     def prepare_leaderboards(self) -> None:
         for l in getattr(self, 'leaderboards', []):
-            self.prepare_leaderboard(l)
-
-    def prepare_leaderboard(self, leaderboard: List[Container]) -> None:
-        # each Container in leaderboard is expected to have attributes:
-        #   - person_id: the id of the person
-        #   - person: the name to display for that person (see data/query.py:person_query)
-        #   - score: a value such that two rows are tied if and only if they have the same score
-        # leaderboard is expected to be sorted such that leaderboard[0] is winning
-        # Depending on the view, the containers may have other attributes as well
-
-        finish = 0
-        score = None
-        for i, p in enumerate(leaderboard, start=1):
-            if finish == 0 or p.score != score:
-                score = p.score
-                finish = i
-            p.finish = finish
-            if p.finish <= 8:
-                p.position = chr(9311 + p.finish) # ①, ②, ③, …
-            p.url = url_for('.person', person_id=p.person_id)
+            prepare.prepare_leaderboard(l)
 
     def prepare_legal_formats(self) -> None:
         if getattr(self, 'legal_formats', None) is not None:
@@ -312,6 +294,33 @@ class View(BaseView):
                 shown_end = True
             elif end_date:
                 t.league = {'class': 'ongoing', 'display': False}
+
+    def setup_tournament_rounds(self):
+        self.tournament_rounds_info = []
+        last_elimination_rounds = 0
+        for entry in tournaments.rounds_info():
+            if entry['min_players'] == entry['max_players']:
+                num_players = str(entry['min_players'])
+            elif entry['max_players'] == sys.maxsize:
+                num_players = str(entry['min_players']) + '+'
+            else:
+                num_players = str(entry['min_players']) + '-' + str(entry['max_players'])
+            note = ''
+            if entry[tournaments.StageType.ELIMINATION_ROUNDS] != last_elimination_rounds:
+                if entry[tournaments.StageType.ELIMINATION_ROUNDS] == 0:
+                    note = '(swiss only)'
+                elif entry['max_players'] == 2:
+                    note = '(single match)'
+                else:
+                    n = 2 ** entry[tournaments.StageType.ELIMINATION_ROUNDS]
+                    note = f'(top {n})'
+                last_elimination_rounds = entry[tournaments.StageType.ELIMINATION_ROUNDS]
+            self.tournament_rounds_info.append({
+                'num_players': num_players,
+                'swiss_rounds': entry[tournaments.StageType.SWISS_ROUNDS],
+                'elimination_rounds': entry[tournaments.StageType.ELIMINATION_ROUNDS],
+                'note': note
+            })
 
     def setup_matchups(self, archetypes: List[Archetype], matchups: List[Container], min_matches: int) -> None:
         for hero in archetypes:

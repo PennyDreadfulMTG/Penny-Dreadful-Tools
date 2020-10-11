@@ -46,7 +46,7 @@ class PDFlask(Flask):
         self.config['SESSION_COOKIE_DOMAIN'] = configuration.get_optional_str('flask_cookie_domain')
         # Set some sensible cookie options. See https://flask.palletsprojects.com/en/master/security/
         self.config['SESSION_COOKIE_SECURE'] = True
-        self.config['SESSION_COOKIE_HTTPONLY'] = True
+        self.config['SESSION_COOKIE_HTTPONLY'] = False # We want to be able to set the page_size cookie in an API response.
         self.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
         translations = os.path.abspath(os.path.join(shared_web_path, 'translations'))

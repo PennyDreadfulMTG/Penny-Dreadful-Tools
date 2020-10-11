@@ -126,55 +126,34 @@ def tournaments_with_prizes() -> List[Competition]:
         """.format(competition_type_id_select=query.competition_type_id_select('Gatherling'))
     return load_competitions(where, should_load_decks=True)
 
-def overall_leaderboard(season_id: Optional[int] = None) -> Dict[str, Any]:
-    rs = load_leaderboards(group_by='1', order_by='NULL', season_id=season_id)
-    entries = []
-    for r in rs:
-        c = Container(r)
-        c.score = (c.wins, c.points)
-        entries.append(c)
-    return {
-        'competition_series_name': 'Overall',
-        'entries': entries,
-        'sponsor_name': 'Cardhoarder'
-    }
-
-def leaderboards(season_id: Optional[int] = None) -> List[Dict[str, Any]]:
-    # results is the returned list of leaderboards for each competition
-    results = []
-    # current holds the currently-being-processed competition before it's added to results
-    current: Dict[str, Any] = {}
-
-    for row in load_leaderboards(season_id=season_id):
-        k = row['competition_series_name']
-        if current.get('competition_series_name', None) != k:
-            if len(current) > 0:
-                results.append(current)
-            current = {
-                'competition_series_name': row['competition_series_name'],
-                'entries': [],
-                'sponsor_name': row['sponsor_name']
-            }
-
-        row.pop('competition_series_name')
-        c = Container(row)
-        c.score = (c.wins, c.points)
-        current['entries'].append(c)
-
-    if len(current) > 0:
-        results.append(current)
-    return results
-
-def load_leaderboards(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.id', order_by: str = 'cs.id', season_id: Optional[int] = None) -> List[Dict[str, Any]]:
-    sql = """
+def series(season_id: Optional[int] = None) -> List[Dict[str, Any]]:
+    competition_join = query.competition_join()
+    season_join = query.season_join()
+    season_query = query.season_query(season_id, 'season.id')
+    sql = f"""
         SELECT
-            p.id AS person_id,
-            {person_query} AS person,
+            cs.id AS competition_series_id,
             cs.name AS competition_series_name,
-            sp.name AS sponsor_name,
-            COUNT(DISTINCT d.id) AS tournaments,
-            SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins,
-            COUNT(DISTINCT d.id) + SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS points
+            s.name AS sponsor_name
+        FROM
+            deck AS d
+        {competition_join}
+        LEFT JOIN
+            sponsor AS s ON cs.sponsor_id = s.id
+        {season_join}
+        WHERE
+            ({season_query}) AND (ct.name = 'Gatherling')
+        GROUP BY
+            cs.id
+    """
+    return [Container(r) for r in db().select(sql)]
+
+def load_leaderboard_count(where: str, group_by: str, season_id: Optional[int] = None) -> int:
+    season_join = query.season_join()
+    season_query = query.season_query(season_id, 'season.id')
+    sql = f"""
+        SELECT
+            COUNT(DISTINCT p.id)
         FROM
             competition AS c
         INNER JOIN
@@ -194,14 +173,64 @@ def load_leaderboards(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs
         {season_join}
         WHERE
             ({where}) AND ({season_query})
+    """
+    return db().value(sql, [], 0)
+
+def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.id, p.id', order_by: str = 'cs.id', limit = '', season_id: Optional[int] = None) -> List[Dict[str, Any]]:
+    person_query = query.person_query()
+    season_join = query.season_join()
+    season_query = query.season_query(season_id, 'season.id')
+    sql = f"""
+        SELECT
+            p.id AS person_id,
+            {person_query} AS person,
+            cs.id AS competition_series_id,
+            cs.name AS competition_series_name,
+            sp.name AS sponsor_name,
+            COUNT(DISTINCT d.id) AS num_decks,
+            SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins,
+            -- Points are complicated because tournaments count entries while leagues do not and leagues count 5-0s but tournaments do not.
+            (CASE WHEN ct.name <> 'League' THEN COUNT(DISTINCT d.id) ELSE 0 END) + SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) + COUNT(DISTINCT CASE WHEN five_ohs.five_oh AND ct.name = 'League' THEN d.id ELSE NULL END) AS points,
+            ROW_NUMBER() OVER (ORDER BY points DESC, wins DESC, person) AS finish
+        FROM
+            competition AS c
+        INNER JOIN
+            competition_series AS cs ON cs.id = c.competition_series_id
+        LEFT JOIN
+            sponsor AS sp ON sp.id = cs.sponsor_id
+        INNER JOIN
+            competition_type AS ct ON ct.id = cs.competition_type_id
+        INNER JOIN
+            deck AS d ON d.competition_id = c.id
+        INNER JOIN
+            person AS p ON d.person_id = p.id
+        LEFT JOIN
+            deck_match AS dm ON dm.deck_id = d.id
+        LEFT JOIN
+            deck_match AS odm ON odm.match_id = dm.match_id AND odm.deck_id <> d.id
+        {season_join}
+        -- Make a special join table so we can know if each deck 5-0'ed or not. Note this doesn't check that it's a League run that's done in the SELECT.
+        LEFT JOIN
+            (
+                SELECT
+                    d.id AS deck_id,
+                    (CASE WHEN cache.wins >= 5 AND cache.losses = 0 THEN 1 ELSE 0 END) AS five_oh
+                FROM
+                    deck AS d
+                INNER JOIN
+                    deck_cache AS cache ON d.id = cache.deck_id
+            ) AS five_ohs ON d.id = five_ohs.deck_id
+        WHERE
+            ({where}) AND ({season_query})
         GROUP BY
-            {group_by},
-            p.id
+            {group_by}
         ORDER BY
             {order_by},
             points DESC,
             wins DESC,
-            tournaments DESC,
+            num_decks DESC,
             person
-    """.format(person_query=query.person_query(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id, 'season.id'), group_by=group_by, order_by=order_by)
-    return db().select(sql)
+        {limit}
+    """
+    entries = [Container(r) for r in db().select(sql)]
+    return entries

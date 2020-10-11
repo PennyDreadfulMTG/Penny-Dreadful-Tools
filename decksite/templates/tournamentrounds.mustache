@@ -14,41 +14,13 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td class="n">2</td>
-            <td class="n">0</td>
-            <td class="n">1</td>
-            <td>(single match)</td>
-        </tr>
-        <tr>
-            <td class="n">3-7</td>
-            <td class="n">3</td>
-            <td class="n">0</td>
-            <td>(swiss only)</td>
-        </tr>
-        <tr>
-            <td class="n">8</td>
-            <td class="n">3</td>
-            <td class="n">2</td>
-            <td>(top 4)</td>
-        </tr>
-        <tr>
-            <td class="n">9-15</td>
-            <td class="n">4</td>
-            <td class="n">2</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td class="n">16-31</td>
-            <td class="n">4</td>
-            <td class="n">3</td>
-            <td>(top 8)</td>
-        </tr>
-        <tr>
-            <td class="n">32+</td>
-            <td class="n">5</td>
-            <td class="n">3</td>
-            <td></td>
-        </tr>
+        {{#tournament_rounds_info}}
+            <tr>
+                <td class="n">{{num_players}}</td>
+                <td class="n">{{swiss_rounds}}</td>
+                <td class="n">{{elimination_rounds}}</td>
+                <td>{{note}}</td>
+            </tr>
+        {{/tournament_rounds_info}}
     </tbody>
 </table>

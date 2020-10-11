@@ -6,25 +6,6 @@
 {{#has_leaderboard}}
     <section>
         <h2>Leaderboard</h2>
-        <table class="with-marginalia">
-            <thead>
-                <tr>
-                    <td class="marginalia"></td>
-                    <th>Person</th>
-                    <th data-sortInitialOrder="desc">Points</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#leaderboard}}
-                    <tr class="pos-{{pos}}">
-                        <td class="n marginalia">
-                            {{position}}
-                        </td>
-                        <td><a href="{{url}}" class="person">{{person}}</a></td>
-                        <td class="n">{{points}}</td>
-                    </tr>
-                {{/leaderboard}}
-            </tbody>
-        </table>
+        {{> liveleaderboardtable}}
     </section>
 {{/has_leaderboard}}

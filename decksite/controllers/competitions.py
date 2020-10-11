@@ -37,8 +37,8 @@ def hosting() -> str:
 @SEASONS.route('/tournaments/leaderboards/')
 @cached()
 def tournament_leaderboards() -> str:
-    leaderboards = comp.leaderboards(season_id=get_season_id())
-    view = TournamentLeaderboards(leaderboards)
+    series = comp.series(season_id=get_season_id())
+    view = TournamentLeaderboards(series)
     return view.page()
 
 @APP.route('/tournaments/pd500/')

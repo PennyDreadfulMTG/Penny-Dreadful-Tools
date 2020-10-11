@@ -1,5 +1,5 @@
 import React from "react";
-import Table from "./table";
+import { Table } from "./table";
 import { render } from "react-dom";
 
 const renderHeaderRow = (table) => (

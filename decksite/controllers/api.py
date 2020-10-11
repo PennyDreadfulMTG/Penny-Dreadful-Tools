@@ -1,6 +1,5 @@
 import datetime
 import json
-from math import ceil
 from typing import Any, Dict, List, Optional, cast
 
 from flask import Response, request, session, url_for
@@ -98,8 +97,8 @@ def decks_api() -> Response:
     Output:
         {
             'page': <int>,
-            'pages': <int>,
             'objects': [<deck>]
+            'total': <int>
         }
     """
     order_by = query.decks_order_by(request.args.get('sortBy'), request.args.get('sortOrder'), request.args.get('competitionId'))
@@ -111,10 +110,9 @@ def decks_api() -> Response:
     season_id = 'all' if request.args.get('competitionId') else rotation.season_id(str(request.args.get('seasonId')), None)
     where = query.decks_where(request.args, session.get('person_id'))
     total = deck.load_decks_count(where=where, season_id=season_id)
-    pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
     ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)
-    r = {'page': page, 'pages': pages, 'total': total, 'objects': ds}
+    r = {'page': page, 'total': total, 'objects': ds}
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))
     return resp
@@ -137,8 +135,8 @@ def cards2_api() -> Response:
     Output:
         {
             'page': <int>,
-            'pages': <int>,
-            'objects': [<card>]
+            'objects': [<card>],
+            'total': <int>
         }
     """
     order_by = query.cards_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
@@ -154,8 +152,7 @@ def cards2_api() -> Response:
     cs = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, person_id=person_id, tournament_only=tournament_only, season_id=season_id)
     prepare_cards(cs, tournament_only=tournament_only)
     total = card.load_cards_count(additional_where=additional_where, person_id=person_id, season_id=season_id)
-    pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
-    r = {'page': page, 'pages': pages, 'total': total, 'objects': cs}
+    r = {'page': page, 'total': total, 'objects': cs}
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))
     return resp
@@ -176,8 +173,8 @@ def people_api() -> Response:
     Output:
         {
             'page': <int>,
-            'pages': <int>,
-            'objects': [<person>]
+            'objects': [<person>],
+            'total': <int>
         }
     """
     order_by = query.people_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
@@ -191,8 +188,7 @@ def people_api() -> Response:
     people = ps.load_people(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_people(people)
     total = ps.load_people_count(where=where, season_id=season_id)
-    pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
-    r = {'page': page, 'pages': pages, 'total': total, 'objects': people}
+    r = {'page': page, 'total': total, 'objects': people}
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))
     return resp
@@ -214,8 +210,8 @@ def h2h_api() -> Response:
     Output:
         {
             'page': <int>,
-            'pages': <int>,
-            'objects': [<entry>]
+            'objects': [<entry>],
+            'total': <int>
         }
     """
     order_by = query.head_to_head_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
@@ -231,8 +227,7 @@ def h2h_api() -> Response:
     for entry in entries:
         entry.opp_url = url_for('.person', mtgo_username=entry.opp_mtgo_username, season_id=None if season_id == rotation.current_season_num() else season_id)
     total = ps.load_head_to_head_count(person_id=person_id, where=where, season_id=season_id)
-    pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
-    r = {'page': page, 'pages': pages, 'total': total, 'objects': entries}
+    r = {'page': page, 'total': total, 'objects': entries}
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))
     return resp
@@ -255,8 +250,8 @@ def leaderboards_api() -> Response:
     Output:
         {
             'page': <int>,
-            'pages': <int>,
-            'objects': [<entry>]
+            'objects': [<entry>],
+            'total': <int>
         }
     """
     order_by = query.leaderboard_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
@@ -278,8 +273,7 @@ def leaderboards_api() -> Response:
     entries = comp.load_leaderboard(where=where, group_by='p.id', order_by=order_by, limit=limit, season_id=season_id)
     prepare_leaderboard(entries)
     total = comp.load_leaderboard_count(where=where, season_id=season_id)
-    pages = max(ceil(total / page_size) - 1, 0) # 0-indexed
-    r = {'page': page, 'pages': pages, 'total': total, 'objects': entries}
+    r = {'page': page, 'total': total, 'objects': entries}
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))
     return resp

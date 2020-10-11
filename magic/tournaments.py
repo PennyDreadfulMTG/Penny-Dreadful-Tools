@@ -79,7 +79,7 @@ def is_pd500_week(start: datetime.datetime) -> bool:
 # Note: this may be in the past. It always gives the date for the current season.
 def kick_off_date() -> datetime.datetime:
     start_of_season = rotation.last_rotation()
-    return start_of_season - datetime.timedelta(days=8, hours=13, minutes=30) # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
+    return start_of_season + datetime.timedelta(days=8, hours=13, minutes=30) # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
 
 def is_kick_off_week(start: datetime.datetime) -> bool:
     date_of_kick_off = kick_off_date()

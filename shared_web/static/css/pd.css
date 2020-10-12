@@ -1947,6 +1947,12 @@ Search
     text-align: right; /* Make the search box appear on the right. */
 }
 
+@media only screen and (max-width: 640px) {
+    .search {
+        display: none;
+    }
+}
+
 /* The js inserts a span with display:inline-block in between .search. We have to tell it to take up all the remaining space to get a bigger input. */
 .twitter-typeahead {
     width: 100%;

@@ -181,6 +181,20 @@ def preaggregate_unique() -> None:
             deck_card AS dc
         INNER JOIN
             deck AS d ON dc.deck_id = d.id
+        WHERE
+            card IN (
+                SELECT
+                    card
+                FROM
+                    deck_card AS dc
+                WHERE
+                    deck_id IN (
+                        SELECT
+                            deck_id
+                        FROM
+                            deck_match
+                    )
+            )
         GROUP BY
             card
         HAVING

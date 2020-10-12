@@ -167,7 +167,7 @@ def preaggregate_playability() -> None:
 
 def preaggregate_unique() -> None:
     table = '_unique_cards'
-    sql = """
+    sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             card VARCHAR(100) NOT NULL,
             person_id INT NOT NULL,
@@ -182,24 +182,12 @@ def preaggregate_unique() -> None:
         INNER JOIN
             deck AS d ON dc.deck_id = d.id
         WHERE
-            card IN (
-                SELECT
-                    card
-                FROM
-                    deck_card AS dc
-                WHERE
-                    deck_id IN (
-                        SELECT
-                            deck_id
-                        FROM
-                            deck_match
-                    )
-            )
+            d.id IN (SELECT deck_id FROM deck_match)
         GROUP BY
             card
         HAVING
             COUNT(DISTINCT person_id) = 1
-    """.format(table=table)
+    """
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_trailblazer() -> None:

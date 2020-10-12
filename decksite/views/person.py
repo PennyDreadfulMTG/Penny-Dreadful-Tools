@@ -73,5 +73,5 @@ class Person(View):
                 'season_id': season_id,
                 'className': f'ss-{setcode.lower()} ' + ('ss-common' if active else 'inactive'),
                 'url': url_for('seasons.person', person_id=self.person.id, season_id=season_id) if active else '',
-                'edge': i % cube_side_length == 0
+                'edge': (i + 1) % cube_side_length == 0
             })

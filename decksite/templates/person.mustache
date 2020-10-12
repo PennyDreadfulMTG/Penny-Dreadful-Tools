@@ -62,6 +62,10 @@
                 <li>{{.}}</li>
             {{/unique_cards}}
         </ul>
+    </section>
+{{/has_unique_cards}}
+{{#has_trailblazer_cards}}
+    <section class="card-lists">
         <h2>Cards Played First</h2>
         <ul>
             {{#trailblazer_cards}}
@@ -69,7 +73,7 @@
             {{/trailblazer_cards}}
         </ul>
     </section>
-{{/has_unique_cards}}
+{{/has_trailblazer_cards}}
 <section class="admin">
     <h2>Notes</h2>
     <div class="person-notes" data-person_id="{{person.id}}">

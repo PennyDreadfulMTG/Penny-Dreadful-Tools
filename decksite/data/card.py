@@ -174,7 +174,7 @@ def preaggregate_unique() -> None:
             PRIMARY KEY (card, person_id),
             FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE
         )
-        SELECT DISTINCT
+        SELECT
             card,
             person_id
         FROM
@@ -182,22 +182,23 @@ def preaggregate_unique() -> None:
         INNER JOIN
             deck AS d ON dc.deck_id = d.id
         WHERE
-            card IN
-            (
-                -- We use a subquery here rather than putting this HAVING clause on the main query to avoid false positives from MySQL's ONLY_FULL_GROUP_BY setting.
+            card IN (
                 SELECT
                     card
                 FROM
                     deck_card AS dc
-                INNER JOIN
-                    deck AS d ON dc.deck_id = d.id
                 WHERE
-                    d.id IN (SELECT deck_id FROM deck_match GROUP BY deck_id HAVING COUNT(*) >= 3)
-                GROUP BY
-                    card
-                HAVING
-                    COUNT(DISTINCT person_id) = 1
+                    deck_id IN (
+                        SELECT
+                            deck_id
+                        FROM
+                            deck_match
+                    )
             )
+        GROUP BY
+            card
+        HAVING
+            COUNT(DISTINCT person_id) = 1
     """.format(table=table)
     preaggregation.preaggregate(table, sql)
 

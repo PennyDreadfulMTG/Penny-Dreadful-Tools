@@ -1663,6 +1663,10 @@ button, form, input, select, textarea {
     font-size: inherit;
 }
 
+header input {
+    color: #502828;
+}
+
 button, main input, select, textarea, .uploader-label, .instructions {
     width: 20rem;
 }

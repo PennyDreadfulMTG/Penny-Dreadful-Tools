@@ -109,6 +109,7 @@ def task(args: List[str]) -> None:
         elif name == 'hourly':
             run_all_tasks(module, 'HOURLY')
         else:
+            exitcode = None
             s = importlib.import_module('{module}.{name}'.format(name=name, module=module))
             use_app_context = getattr(s, 'REQUIRES_APP_CONTEXT', True)
             if use_app_context:

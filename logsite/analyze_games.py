@@ -1,6 +1,8 @@
+# from decksite.database import db
 import json
 import re
 from typing import List
+
 
 def analyze_game(lines: List[str]) -> None:
     game = {'mulligans': {}, 'plays': {}}    
@@ -41,6 +43,7 @@ def analyze_game(lines: List[str]) -> None:
             game['plays'][player].append(card_play)
 
     # Public tutors
+    # 
 
 
         m = re.search(r'Winner: ([^ ]*)', line)
@@ -53,11 +56,13 @@ def get_mulligans(number: str) -> int:
     nums = {'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7}
     return 7 - nums[number]
 
-with open('/home/jesus/personal/programacion/temp/log2.txt') as f:
-    lines = f.readlines()
-    print(json.dumps(analyze_game(lines), sort_keys=True, indent=4))
 
 
+ with open('/home/jesus/personal/programacion/temp/log2.txt') as f:
+     lines = f.readlines()
+     print(json.dumps(analyze_game(lines), sort_keys=True, indent=4))
+
+#get_batch_of_matches()
 
 # Tables to populate
 
@@ -65,10 +70,28 @@ with open('/home/jesus/personal/programacion/temp/log2.txt') as f:
 # id, deck_id, match_id, game_number, result, mulligans
 # card_played
 # id, deck_game_played_id, card, turn
-# one to many to: 
-# id, card_played_id, related_card
+# one to many to cards_affected: 
+# id, card_played_id, affected_card
 
 
+def get_batch_of_matches() -> List[int]:
+    sql = """
+        SELECT 
+            a.id, a.mtgo_id 
+        FROM 
+            `match` a 
+        LEFT JOIN 
+            deck_game_played b 
+        ON 
+            a.id=b.match_id 
+        WHERE 
+                a.mtgo_id IS NOT NULL 
+            AND 
+                b.id IS NULL 
+        LIMIT 10;
+    """
+    matches = db().select(sql)
+    print(matches)
 
 
 

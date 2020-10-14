@@ -1762,7 +1762,14 @@ form.inline, .inline input, .inline select, .inline textarea, .inline label, .in
 }
 
 .inline input, .inline select, .inline textarea, .inline label, .inline button {
-    height: 1rem;
+    height: 1.1rem; /* Nonstandard height because of the padding the browser adds. */
+    font-size: 0.75rem;
+    line-height: 1.2; /* Nonstandard line-height because of nonstandard height. */
+    padding: 0;
+}
+
+.inline select {
+    font-size: 0.75rem;
 }
 
 .inline button {

@@ -221,7 +221,7 @@ def preaggregate_trailblazer() -> None:
                         deck_match AS dm ON dm.deck_id = d.id
                     {competition_join}
                     WHERE
-                        d.id IN (SELECT deck_id FROM deck_match GROUP BY deck_id HAVING COUNT(*) >= 3)
+                        d.id IN (SELECT deck_id FROM deck_match GROUP BY deck_id HAVING COUNT(*) >= 1)
                     GROUP BY
                         card
                 )

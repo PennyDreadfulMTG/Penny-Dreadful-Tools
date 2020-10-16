@@ -9,7 +9,7 @@ from decksite.data import person as ps
 from decksite.data.achievements import Achievement
 from decksite.data.archetype import Archetype
 from decksite.view import View
-from magic import rotation
+from magic import oracle, rotation
 from magic.models import Card
 from shared.container import Container
 
@@ -47,10 +47,11 @@ class Person(View):
         self.add_note_url = url_for('post_player_note')
         self.matches_url = url_for('.person_matches', person_id=person.id, season_id=None if season_id == rotation.current_season_num()  else season_id)
         self.is_person_page = True
-        self.trailblazer_cards = your_cards['trailblazer']
+        self.trailblazer_cards = oracle.load_cards(your_cards['trailblazer'])
         self.has_trailblazer_cards = len(self.trailblazer_cards) > 0
-        self.unique_cards = your_cards['unique']
+        self.unique_cards = oracle.load_cards(your_cards['unique'])
         self.has_unique_cards = len(self.unique_cards) > 0
+        self.cards += self.trailblazer_cards + self.unique_cards
         self.setup_matchups(self.all_archetypes, matchups, min_matches_for_matchups_grid)
         self.setup_active_seasons(seasons_active)
 

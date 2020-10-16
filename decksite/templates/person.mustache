@@ -59,7 +59,7 @@
         <h2>Unique Cards Played</h2>
         <ul>
             {{#unique_cards}}
-                <li>{{.}}</li>
+                <li><a href="{{url}}">{{name}}</a></li>
             {{/unique_cards}}
         </ul>
     </section>
@@ -69,7 +69,7 @@
         <h2>Cards Played First</h2>
         <ul>
             {{#trailblazer_cards}}
-                <li>{{.}}</li>
+                <li><a href="{{url}}">{{name}}</a></li>
             {{/trailblazer_cards}}
         </ul>
     </section>

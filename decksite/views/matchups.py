@@ -29,9 +29,27 @@ class Matchups(View):
         self.matches = results.get('matches', [])
         self.show_matches = False
         self.search_season_id = season_id
+        if self.results:
+            self.hero_summary = summary_text(hero, archetypes, people)
+            self.enemy_summary = summary_text(enemy, archetypes, people)
+            self.season_summary = f'Season {season_id}' if season_id else 'All Time'
 
     def show_legal_seasons(self) -> bool:
         return not self.search_season_id
 
     def page_title(self) -> str:
         return 'Matchups Calculator'
+
+
+def summary_text(choices, archetypes, people):
+    s = ''
+    if choices.get('archetype_id'):
+        s += next(a.name for a in archetypes if a.id == int(choices['archetype_id'])) + ', '
+    if choices.get('person_id'):
+        s += next(p.name for p in people if p.id == int(choices['person_id'])) + ', '
+    if choices.get('card'):
+        s += choices['card'] + ', '
+    s = s.strip(', ')
+    if not s:
+        s = 'All Decks'
+    return s

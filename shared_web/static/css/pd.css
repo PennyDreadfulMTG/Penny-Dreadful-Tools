@@ -2195,14 +2195,6 @@ Language Switcher
     vertical-align: middle;
 }
 
-/* Override the negative margin that would be applied to get text to line up flush-left with page text because we're out in the margin here already as the language switcher is absolutely positioned in the top left of the screen.
-In the narrower view the margin is small enough that we actually DO want to line up as the normal submenu behavior does. */
-@media only screen and (min-width: 641px) {
-    .language-switcher .submenu-container ul {
-        margin-left: -1.563rem;
-    }
-}
-
 /*
 
 Notification Badges

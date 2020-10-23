@@ -44,7 +44,7 @@
     "react-dom": "^17.0.1",
     "style-loader": "^2.0.0",
     "webpack": "^4.44.2",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^4.1.0"
   },
   "homepage": "https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools#readme",
   "keywords": [
@@ -63,10 +63,10 @@
   },
   "scripts": {
     "babel": "babel --presets es2015 js/main.js -o build/main.bundle.js",
-    "build": "webpack -p --progress --config decksite/webpack.config.js",
-    "dev-build": "webpack --progress -d --config decksite/webpack.config.js",
+    "build": "webpack --mode=production --progress --config decksite/webpack.config.js",
+    "dev-build": "webpack --progress --mode=development --config decksite/webpack.config.js",
     "test": "make test",
-    "watch": "webpack --progress -d --config decksite/webpack.config.js --watch"
+    "watch": "webpack --progress --mode=development --config decksite/webpack.config.js --watch"
   },
   "version": "1.0.0"
 }

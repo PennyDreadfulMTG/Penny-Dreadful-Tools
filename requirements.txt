@@ -1,4 +1,4 @@
-aiohttp==3.6.3
+aiohttp==3.7.2
 anytree==2.8.0
 astroid==2.4.2
 attrs==20.2.0

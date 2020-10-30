@@ -50,7 +50,7 @@ class Bot(commands.Bot):
         intents.presences = True
         intents.typing = False
 
-        super().__init__(command_prefix=commands.when_mentioned_or('!'), help_command=help_command, case_insensitive=True, intents=intents, **kwargs)
+        super().__init__(command_prefix=commands.when_mentioned_or('!'), help_command=help_command, case_insensitive=True, **kwargs)
         self.voice = None
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:

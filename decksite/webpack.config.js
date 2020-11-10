@@ -23,7 +23,11 @@ const config = {
         }, {
             test: /\.css$/,
             exclude: /node_modules/,
-            loaders: ["style-loader", "css-loader"]
+            use: [{
+                loader: 'style-loader'
+            }, {
+                loader: 'css-loader'
+            }]
         }]
     }
 };

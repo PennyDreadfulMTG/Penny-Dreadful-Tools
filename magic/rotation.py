@@ -18,11 +18,12 @@ WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
 ROTATION_OFFSET = datetime.timedelta(days=7) # We rotate seven days after a set is released.
 
 SEASONS = [
-    'EMN', 'KLD', # 2016
+    'EMN', 'KLD',               # 2016
     'AER', 'AKH', 'HOU', 'XLN', # 2017
     'RIX', 'DOM', 'M19', 'GRN', # 2018
     'RNA', 'WAR', 'M20', 'ELD', # 2019
     'THB', 'IKO', 'M21', 'ZNR', # 2020
+    'KHM',                      # 2121
     ]
 
 @attr.s(auto_attribs=True, slots=True)

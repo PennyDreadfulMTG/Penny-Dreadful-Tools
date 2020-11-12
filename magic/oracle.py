@@ -33,6 +33,8 @@ def load_card(name: str) -> Card:
     return CARDS_BY_NAME.get(name, load_cards([name])[0])
 
 def load_cards(names: Iterable[str] = None, where: Optional[str] = None) -> List[Card]:
+    if names == []:
+        return []
     if names:
         setnames = set(names)
     else:

@@ -13,7 +13,6 @@ from werkzeug.routing import BuildError
 
 from decksite import APP, get_season_id, prepare
 from decksite.data import archetype, competition
-from decksite.data.archetype import Archetype
 from decksite.deck_type import DeckType
 from magic import card_price, fetcher, legality, oracle, rotation, tournaments
 from magic.models import Deck
@@ -58,9 +57,6 @@ class View(BaseView):
         self.content_class = 'content-' + self.__class__.__name__.lower()
         self.page_size = request.cookies.get('page_size', 20)
         self.tournament_only: bool = False
-        self.show_matchup_grid = False
-        self.num_enemy_archetypes = 0
-        self.matchup_archetypes: List[Archetype] = []
         self.show_tournament_toggle = False
         self.is_deck_page = False
         self.has_external_source = False
@@ -323,46 +319,6 @@ class View(BaseView):
                 'note': note
             })
 
-    def setup_matchups(self, archetypes: List[Archetype], matchups: List[Container], min_matches: int) -> None:
-        enemy_archetypes = set()
-        for hero in archetypes:
-            hero.matchups = []
-            matchups_by_enemy_id = {mu.id: mu for mu in matchups if mu.archetype_id == hero.id}
-            for enemy in archetypes:
-                mu = matchups_by_enemy_id.get(enemy.id, Container({'wins': 0, 'losses': 0}))
-                if mu.wins + mu.losses >= min_matches:
-                    hero.show_as_hero = True
-                    enemy.show_as_enemy = True
-                    enemy_archetypes.add(enemy.name)
-                    self.show_matchup_grid = True
-                if mu and mu.wins + mu.losses > 0:
-                    prepare_matchup(mu, enemy)
-                    hero.matchups.append(mu)
-                else:
-                    hero.matchups.append(empty_matchup(enemy))
-        for hero in archetypes:
-            for mu in hero.matchups:
-                mu.show_as_enemy = mu.opponent_archetype.get('show_as_enemy', False)
-        self.num_enemy_archetypes = len(enemy_archetypes)
-        self.matchup_archetypes = archetypes
-
-
-def prepare_matchup(mu: Container, opponent_archetype: Archetype) -> None:
-    mu.has_data = True
-    mu.win_percent = float(mu.win_percent)
-    mu.color_cell = True
-    mu.hue = 120 if mu.win_percent >= 50 else 0
-    mu.saturation = abs(mu.win_percent - 50) + 50
-    mu.lightness = 80
-    mu.opponent_archetype = opponent_archetype
-
-def empty_matchup(opponent_archetype: Archetype) -> Container:
-    mu = Container()
-    mu.has_data = False
-    mu.win_percent = None
-    mu.color_cell = False
-    mu.opponent_archetype = opponent_archetype
-    return mu
 
 def seasonized_url(season_id: Union[int, str]) -> str:
     args = request.view_args.copy()

@@ -11,14 +11,12 @@ from decksite.data.archetype import Archetype
 from decksite.view import View
 from magic import oracle, rotation
 from magic.models import Card
-from shared.container import Container
 
 
 # pylint: disable=no-self-use,too-many-instance-attributes,too-many-arguments
 class Person(View):
-    def __init__(self, person: ps.Person, cards: List[Card], archetypes: List[Archetype], all_archetypes: List[Archetype], matchups: List[Container], your_cards: Dict[str, List[str]], seasons_active: Sequence[int], season_id: Optional[int]) -> None:
+    def __init__(self, person: ps.Person, cards: List[Card], archetypes: List[Archetype], all_archetypes: List[Archetype], your_cards: Dict[str, List[str]], seasons_active: Sequence[int], season_id: Optional[int]) -> None:
         super().__init__()
-        min_matches_for_matchups_grid = 10
         self.all_archetypes = all_archetypes
         self.person = person
         self.people = [person]
@@ -52,7 +50,6 @@ class Person(View):
         self.unique_cards = oracle.load_cards(your_cards['unique'])
         self.has_unique_cards = len(self.unique_cards) > 0
         self.cards += self.trailblazer_cards + self.unique_cards
-        self.setup_matchups(self.all_archetypes, matchups, min_matches_for_matchups_grid)
         self.setup_active_seasons(seasons_active)
 
     def __getattr__(self, attr: str) -> Any:

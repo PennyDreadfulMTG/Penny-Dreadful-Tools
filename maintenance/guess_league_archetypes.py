@@ -1,5 +1,6 @@
 from decksite.data import archetype, deck
 
+
 def ad_hoc() -> None:
     decks = deck.load_decks('NOT reviewed')
     deck.calculate_similar_decks(decks)

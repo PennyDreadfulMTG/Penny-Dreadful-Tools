@@ -85,8 +85,7 @@ def archetypes(deck_type: Optional[str] = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     season_id = get_season_id()
     deckless_archetypes = archs.load_archetypes_deckless(season_id=season_id, tournament_only=tournament_only)
-    all_matchups = archs.load_matchups(season_id=season_id, tournament_only=tournament_only)
-    view = Archetypes(deckless_archetypes, all_matchups, tournament_only=tournament_only)
+    view = Archetypes(deckless_archetypes, tournament_only=tournament_only)
     return view.page()
 
 @APP.route('/archetypes/<archetype_id>/')

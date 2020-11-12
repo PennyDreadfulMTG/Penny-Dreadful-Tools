@@ -105,7 +105,7 @@ export class Table extends React.Component {
                     <span>
                         { this.props.showSearch
                             ? <form className="inline" onSubmit={(e) => { e.preventDefault(); }}>
-                                <input className="name" placeholder={this.props.type + " name"} type="text" onChange={queryChanged.bind(this)} value={this.state.q}/>
+                                <input className="name" placeholder={this.props.searchPrompt} type="text" onChange={queryChanged.bind(this)} value={this.state.q}/>
                             </form>
                             : null
                         }
@@ -211,11 +211,11 @@ Table.propTypes = {
     "personId": PropTypes.string,
     "renderHeaderRow": PropTypes.func.isRequired,
     "renderRow": PropTypes.func.isRequired,
+    "searchPrompt": PropTypes.string,
     "seasonId": PropTypes.string.isRequired,
     "showArchetype": PropTypes.string,
     "showLegalSeasons": PropTypes.string,
     "showOmw": PropTypes.string,
     "showSearch": PropTypes.bool,
-    "tournamentOnly": PropTypes.string,
-    "type": PropTypes.oneOf(["Card", "Deck", "Person"]).isRequired
+    "tournamentOnly": PropTypes.string
 };

@@ -69,8 +69,8 @@ const renderRow = (table, card) => (
                 endpoint="/api/cards2/"
                 renderHeaderRow={renderHeaderRow}
                 renderRow={renderRow}
+                searchPrompt={"Card name"}
                 showSearch={true}
-                type="Card"
                 {...e.dataset}
             />;
         render(table, e);

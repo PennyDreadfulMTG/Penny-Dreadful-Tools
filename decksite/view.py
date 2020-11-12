@@ -239,18 +239,7 @@ class View(BaseView):
             self.legal_formats = list(map(add_season_num, list(sorted(self.legal_formats, key=legality.order_score)))) # type: ignore
 
     def prepare_matches(self) -> None:
-        for m in getattr(self, 'matches', []):
-            if m.get('date'):
-                m.display_date = dtutil.display_date(m.date)
-                m.date_sort = dtutil.dt2ts(m.date)
-            if m.get('deck_id'):
-                m.deck_url = url_for('deck', deck_id=m.deck_id)
-            if m.get('opponent'):
-                m.opponent_url = url_for('.person', mtgo_username=m.opponent)
-            if m.get('opponent_deck_id'):
-                m.opponent_deck_url = url_for('deck', deck_id=m.opponent_deck_id)
-            if m.get('mtgo_id'):
-                m.log_url = fetcher.logsite_url('/match/{id}/'.format(id=m.get('mtgo_id')))
+        prepare.prepare_matches(getattr(self, 'matches', []))
 
     def prepare_active_runs(self, o: Any) -> None:
         decks = getattr(o, 'decks', [])

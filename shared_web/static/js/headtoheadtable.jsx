@@ -27,8 +27,8 @@ const renderRow = (table, entry) => (
                 endpoint="/api/h2h/"
                 renderHeaderRow={renderHeaderRow}
                 renderRow={renderRow}
+                searchPrompt="Opponent name"
                 showSearch={true}
-                type="Person"
                 {...e.dataset}
             />;
         render(table, e);

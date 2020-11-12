@@ -134,7 +134,8 @@ def do_admin_retire_deck() -> wrappers.Response:
 @APP.route('/admin/matches/')
 @auth.admin_required
 def edit_matches() -> str:
-    view = EditMatches(lg.active_league(should_load_decks=True).decks, lg.load_latest_league_matches())
+    l = lg.active_league(should_load_decks=True)
+    view = EditMatches(l.id, l.decks)
     return view.page()
 
 @APP.route('/admin/matches/', methods=['POST'])

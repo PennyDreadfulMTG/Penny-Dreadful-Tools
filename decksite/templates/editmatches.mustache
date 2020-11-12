@@ -17,54 +17,6 @@
     </form>
 </section>
 <section>
-    <h2>Recent Matches</h2>
-    <table>
-        <tbody>
-            {{#matches}}
-                <tr class="wide">
-                    <td>
-                        {{display_date}}
-                    </td>
-                    <td class="wide">
-                        <a href="{{left_url}}">
-                            {{#left_deck}}
-                                {{name}} (<span class="person">{{person}}</span>)
-                            {{/left_deck}}
-                        </a>
-                        {{left_games}} – {{right_games}}
-                        <a href="{{right_url}}">
-                            {{#right_deck}}
-                                {{name}} (<span class="person">{{person}}</span>)
-                            {{/right_deck}}
-                        </a>
-                    </td>
-                    <td>
-                        {{#mtgo_id}}
-                            <a href="https://logs.pennydreadfulmagic.com/match/{{mtgo_id}}">{{mtgo_id}}</a>
-                        {{/mtgo_id}}
-                        {{^mtgo_id}}
-                            Manually Reported
-                        {{/mtgo_id}}
-                    </td>
-                    <td>
-                        <form method="post" class="inline">
-                            <input type="hidden" name="match_id" value="{{id}}">
-                            <input type="hidden" name="left_id" value="{{left_id}}">
-                            <input type="hidden" name="right_id" value="{{right_id}}">
-                            <input type="number" name="left_games" value="{{left_games}}">
-                            <input type="number" name="right_games" value="{{right_games}}">
-                            <button name="action" value="change" type="submit">Change</button>
-                        </form>
-                    </td>
-                    <td>
-                        <form method="post" class="inline">
-                            <input type="hidden" name="match_id" value="{{id}}">
-                            <button name="action" value="delete" type="submit">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            {{/matches}}
-        </tbody>
-    </table>
-    </form>
+    <h2>Current League Matches</h2>
+    {{> livematchtable}}
 </section>

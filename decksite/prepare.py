@@ -1,11 +1,11 @@
 from collections import Counter
-from typing import List, Sequence, Union
+from typing import Any, Dict, List, Sequence, Union
 
 from flask import g, session, url_for
 
 from decksite.data.models.person import Person
 from decksite.deck_type import DeckType
-from magic import oracle, rotation
+from magic import fetcher, oracle, rotation
 from magic.models import Card, Deck
 from shared import dtutil
 from shared.container import Container
@@ -129,6 +129,22 @@ def prepare_leaderboard(leaderboard: Sequence[Container]) -> None:
         if entry.get('finish', 9) <= 8:
             entry.position = chr(9311 + entry.finish) # ①, ②, ③, …
         entry.url = url_for('.person', person_id=entry.person_id)
+
+def prepare_matches(ms: Sequence[Dict[str, Any]]):
+    for m in ms:
+        if m.get('date'):
+            m.display_date = dtutil.display_date(m.date)
+            m.date_sort = dtutil.dt2ts(m.date)
+        if m.get('person'):
+            m.person_url = url_for('person', mtgo_username=m.person)
+        if m.get('deck_id'):
+            m.deck_url = url_for('deck', deck_id=m.deck_id)
+        if m.get('opponent'):
+            m.opponent_url = url_for('.person', mtgo_username=m.opponent)
+        if m.get('opponent_deck_id'):
+            m.opponent_deck_url = url_for('deck', deck_id=m.opponent_deck_id)
+        if m.get('mtgo_id'):
+            m.log_url = fetcher.logsite_url('/match/{id}/'.format(id=m.get('mtgo_id')))
 
 def set_stars_and_top8(d: Deck) -> None:
     if d.finish == 1 and d.competition_top_n >= 1:

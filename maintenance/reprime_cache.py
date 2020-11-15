@@ -6,11 +6,6 @@ from shared import redis_wrapper as redis
 def run() -> None:
     multiverse.rebuild_cache()
     oracle.init()
-    ds = deck.load_decks()
-    for d in ds:
-        redis.clear(f'decksite:deck:{d.id}')
-        deck.prime_cache(d)
-        redis.clear(f'decksite:deck:{d.id}')
     archetype.preaggregate()
     person.preaggregate()
     card.preaggregate()

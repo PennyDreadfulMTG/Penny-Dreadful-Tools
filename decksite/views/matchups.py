@@ -41,14 +41,14 @@ class Matchups(View):
         return 'Matchups Calculator'
 
 
-def summary_text(choices, archetypes, people):
+def summary_text(choices: Dict[str, Union[str, int]], archetypes: List[Archetype], people: List[Person]) -> str:
     s = ''
     if choices.get('archetype_id'):
         s += next(a.name for a in archetypes if a.id == int(choices['archetype_id'])) + ', '
     if choices.get('person_id'):
         s += next(p.name for p in people if p.id == int(choices['person_id'])) + ', '
     if choices.get('card'):
-        s += choices['card'] + ', '
+        s += str(choices['card']) + ', '
     s = s.strip(', ')
     if not s:
         s = 'All Decks'

@@ -431,6 +431,10 @@ div:not(.table-header):after, header:after, nav:after, main:after, footer:after,
     max-width: 100%;
 }
 
+.versus {
+    text-align: center;
+}
+
 .matchup-calculator button {
     margin-top: 4rem;
 }

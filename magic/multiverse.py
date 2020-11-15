@@ -10,7 +10,7 @@ from magic.card import TableDescription
 from magic.database import create_table_def, db
 from magic.models import Card
 from magic.whoosh_write import WhooshWriter
-from shared import dtutil, repo
+from shared import configuration, dtutil, repo
 from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
@@ -31,6 +31,9 @@ async def init_async() -> None:
     try:
         last_updated = await fetcher.scryfall_last_updated_async()
         if last_updated > database.last_updated():
+            if configuration.get_bool('prevent_cards_db_updates'):
+                print('Not updating cards db because prevent_cards_db_updates is True')
+                return
             print('Database update required')
             try:
                 await update_database_async(last_updated)

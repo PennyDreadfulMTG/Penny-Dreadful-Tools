@@ -73,6 +73,7 @@ DEFAULTS: Dict[str, Any] = {
     'oauth2_client_secret': '',
     'pdbot_api_token': lambda: ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(32)),
     'poeditor_api_key': None,
+    'prevent_cards_db_updates': False,
     'prices_database': 'prices',
     'production': False, # Block some of the more dangerous things from running if this is true
     'pylint_threads': 4,

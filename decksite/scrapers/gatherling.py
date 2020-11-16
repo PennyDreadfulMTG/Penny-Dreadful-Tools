@@ -19,7 +19,7 @@ TOP_8 = 't8'
 
 ALIASES: Dict[str, str] = {}
 
-def scrape(limit: int = 50) -> None:
+def scrape(limit: int = 5) -> None:
     soup = BeautifulSoup(fetch_tools.fetch('https://gatherling.com/eventreport.php?format=Penny+Dreadful&series=&season=&mode=Filter+Events', character_encoding='utf-8'), 'html.parser')
     tournaments = [(gatherling_url(link['href']), link.string) for link in soup.find_all('a') if link['href'].find('eventreport.php?') >= 0]
     n = 0

@@ -70,7 +70,7 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 
 ## Manual Development Environment Setup (Non-docker instructions)
 
-- Install MariaDB 10.0+ (alternative MySQL 8.0+)
+- Install MariaDB 10.0+
 - Install python3.7+
 - Install pip3
 - Install npm

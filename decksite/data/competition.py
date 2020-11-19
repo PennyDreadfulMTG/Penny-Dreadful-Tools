@@ -58,7 +58,7 @@ def get_or_insert_competition(start_date: datetime.datetime,
 def load_competition(competition_id: int) -> Competition:
     return guarantee.exactly_one(load_competitions('c.id = {competition_id}'.format(competition_id=sqlescape(competition_id)), should_load_decks=True))
 
-def load_competitions(where: str = 'TRUE', having: str = 'TRUE', season_id: Optional[int] = None, should_load_decks: Optional[bool] = False) -> List[Competition]:
+def load_competitions(where: str = 'TRUE', having: str = 'TRUE', limit: str = '', season_id: Optional[int] = None, should_load_decks: Optional[bool] = False) -> List[Competition]:
     sql = """
         SELECT
             c.id,
@@ -93,7 +93,8 @@ def load_competitions(where: str = 'TRUE', having: str = 'TRUE', season_id: Opti
         ORDER BY
             c.start_date DESC,
             c.name
-    """.format(season_join=query.season_join(), where=where, season_query=query.season_query(season_id, 'season.id'), having=having)
+        {limit}
+    """.format(season_join=query.season_join(), where=where, season_query=query.season_query(season_id, 'season.id'), having=having, limit=limit)
     competitions = [Competition(r) for r in db().select(sql)]
     for c in competitions:
         c.start_date = dtutil.ts2dt(c.start_date)

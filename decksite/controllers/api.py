@@ -299,7 +299,7 @@ class LoadRandomDeck(Resource):
 def competitions_api() -> Response:
     # Don't send competitions with any decks that do not have their correct archetype to third parties otherwise they
     # will store it and be wrong forever.
-    comps = comp.load_competitions(having='num_reviewed = num_decks', should_load_decks=True)
+    comps = comp.load_competitions(having='num_reviewed = num_decks', limit='LIMIT 50', should_load_decks=True)
     r = []
     for c in comps:
         if c.decks:

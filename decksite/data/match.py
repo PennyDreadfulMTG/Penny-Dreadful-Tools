@@ -86,6 +86,7 @@ def load_matches_count(where: str = 'TRUE', season_id: Union[int, str, None] = N
     """
     return int(db().value(sql))
 
+# pylint: disable=too-many-locals
 def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', limit: str = '', season_id: Union[int, str, None] = None, should_load_decks: bool = False, show_active_deck_names: bool = False) -> List[Container]:
     person_query = query.person_query()
     opponent_person_query = query.person_query(table='o')

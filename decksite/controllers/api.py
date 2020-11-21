@@ -264,13 +264,13 @@ def leaderboards_api() -> Response:
     q = request.args.get('q', '').strip()
     where = query.text_match_where(query.person_query(), q) if q else 'TRUE'
     try:
-        competition_id = int(request.args.get('competitionId', ""))
+        competition_id = int(request.args.get('competitionId', ''))
         where += f' AND (c.id = {competition_id})'
         season_id = None
     except ValueError:
         season_id = rotation.season_id(str(request.args.get('seasonId')), None)
     try:
-        competition_series_id = int(request.args.get('competitionSeriesId', ""))
+        competition_series_id = int(request.args.get('competitionSeriesId', ''))
         where += f' AND (cs.id = {competition_series_id})'
     except ValueError:
         pass
@@ -309,11 +309,11 @@ def matches_api() -> Response:
     start = page * page_size
     limit = f'LIMIT {start}, {page_size}'
     q = request.args.get('q', '').strip()
-    personWhere = query.text_match_where(query.person_query(), q) if q else 'TRUE'
-    opponentWhere = query.text_match_where(query.person_query('o'), q) if q else 'TRUE'
-    where = f'({personWhere} OR {opponentWhere})'
+    person_where = query.text_match_where(query.person_query(), q) if q else 'TRUE'
+    opponent_where = query.text_match_where(query.person_query('o'), q) if q else 'TRUE'
+    where = f'({person_where} OR {opponent_where})'
     try:
-        competition_id = int(request.args.get('competitionId', ""))
+        competition_id = int(request.args.get('competitionId', ''))
         where += f' AND (c.id = {competition_id})'
         season_id = None
     except ValueError:

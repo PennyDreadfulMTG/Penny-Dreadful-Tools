@@ -1,11 +1,8 @@
 from typing import Sequence
 
-from flask import url_for
-
 from decksite.view import View
 from magic.models import Deck
 from shared import dtutil
-from shared.container import Container
 
 
 # pylint: disable=no-self-use

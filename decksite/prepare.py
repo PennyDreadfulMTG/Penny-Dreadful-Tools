@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Any, Dict, List, Sequence, Union
+from typing import List, Sequence, Union
 
 from flask import g, session, url_for
 

@@ -51,5 +51,5 @@ def matchup(hero: Dict[str, str], enemy: Dict[str, str], season_id: int = None) 
     results['hero_decks'] = deck.load_decks('d.id IN (' + ', '.join(results['hero_deck_ids']) + ')') if results['hero_deck_ids'] else []
     results['enemy_deck_ids'] = results['enemy_deck_ids'].split(',') if results['enemy_deck_ids'] else []
     results['match_ids'] = results['match_ids'].split(',') if results['match_ids'] else []
-    results['matches'] = match.load_matches('m.id IN (' + ', '.join(results['match_ids']) + ')') if results['match_ids'] else []
+    results['matches'] = match.load_matches(where='m.id IN (' + ', '.join(results['match_ids']) + ')') if results['match_ids'] else []
     return results

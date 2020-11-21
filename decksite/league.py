@@ -360,7 +360,7 @@ def retire_deck(d: Deck) -> None:
 def load_latest_league_matches() -> List[Container]:
     competition_id = active_league().id
     where = 'dm.deck_id IN (SELECT id FROM deck WHERE competition_id = {competition_id})'.format(competition_id=competition_id)
-    return load_matches(where)
+    return load_matches(where=where)
 
 def load_matches(where: str = 'TRUE') -> List[Container]:
     sql = """

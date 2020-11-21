@@ -130,7 +130,7 @@ def prepare_leaderboard(leaderboard: Sequence[Container]) -> None:
             entry.position = chr(9311 + entry.finish) # ①, ②, ③, …
         entry.url = url_for('.person', person_id=entry.person_id)
 
-def prepare_matches(ms: Sequence[Dict[str, Any]]):
+def prepare_matches(ms: Sequence[Container]) -> None:
     for m in ms:
         if m.get('date'):
             m.display_date = dtutil.display_date(m.date)

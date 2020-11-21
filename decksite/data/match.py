@@ -1,5 +1,5 @@
 import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from flask import url_for
 
@@ -42,17 +42,17 @@ def insert_match(dt: datetime.datetime,
     return match_id
 
 def load_match(match_id: int, deck_id: int) -> Container:
-    return guarantee.exactly_one(load_matches(f'm.id = {match_id} AND d.id = {deck_id}'))
+    return guarantee.exactly_one(load_matches(where=f'm.id = {match_id} AND d.id = {deck_id}'))
 
 def load_matches_by_deck(d: deck.Deck, should_load_decks: bool = False) -> List[Container]:
     where = f'd.id = {d.id}'
-    return load_matches(where, season_id=None, should_load_decks=should_load_decks)
+    return load_matches(where=where, season_id=None, should_load_decks=should_load_decks)
 
 def load_matches_by_person(person_id: int, season_id: Optional[int] = None) -> List[Container]:
     where = f'd.person_id = {person_id}'
-    return load_matches(where, season_id)
+    return load_matches(where=where, season_id=season_id)
 
-def load_matches_count(where: str = 'TRUE', season_id: Optional[int] = None):
+def load_matches_count(where: str = 'TRUE', season_id: Union[int, str, None] = None) -> int:
     competition_join = query.competition_join()
     season_join = query.season_join()
     season_query = query.season_query(season_id, 'season.id')
@@ -84,9 +84,9 @@ def load_matches_count(where: str = 'TRUE', season_id: Optional[int] = None):
         AND
             {season_query}
     """
-    return db().value(sql)
+    return int(db().value(sql))
 
-def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', limit: str = '', season_id: Optional[int] = None, should_load_decks: bool = False, show_active_deck_names: bool = False) -> List[Container]:
+def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', limit: str = '', season_id: Union[int, str, None] = None, should_load_decks: bool = False, show_active_deck_names: bool = False) -> List[Container]:
     person_query = query.person_query()
     opponent_person_query = query.person_query(table='o')
     competition_join = query.competition_join()

@@ -61,8 +61,8 @@ const renderRow = (table, person) => (
                 endpoint="/api/people/"
                 renderHeaderRow={renderHeaderRow}
                 renderRow={renderRow}
+                searchPrompt="Person name"
                 showSearch={true}
-                type="Person"
                 {...e.dataset}
             />;
         render(table, e);

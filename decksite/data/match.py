@@ -1,5 +1,5 @@
 import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from flask import url_for
 
@@ -42,42 +42,23 @@ def insert_match(dt: datetime.datetime,
     return match_id
 
 def load_match(match_id: int, deck_id: int) -> Container:
-    return guarantee.exactly_one(load_matches(f'm.id = {match_id} AND d.id = {deck_id}'))
+    return guarantee.exactly_one(load_matches(where=f'm.id = {match_id} AND d.id = {deck_id}'))
 
 def load_matches_by_deck(d: deck.Deck, should_load_decks: bool = False) -> List[Container]:
     where = f'd.id = {d.id}'
-    return load_matches(where, season_id=None, should_load_decks=should_load_decks)
+    return load_matches(where=where, season_id=None, should_load_decks=should_load_decks)
 
 def load_matches_by_person(person_id: int, season_id: Optional[int] = None) -> List[Container]:
     where = f'd.person_id = {person_id}'
-    return load_matches(where, season_id)
+    return load_matches(where=where, season_id=season_id)
 
-def load_matches(where: str = 'TRUE', season_id: Optional[int] = None, should_load_decks: bool = False) -> List[Container]:
-    person_query = query.person_query(table='o')
+def load_matches_count(where: str = 'TRUE', season_id: Union[int, str, None] = None) -> int:
     competition_join = query.competition_join()
     season_join = query.season_join()
     season_query = query.season_query(season_id, 'season.id')
     sql = f"""
         SELECT
-            m.`date`,
-            m.id,
-            m.`round`,
-            m.elimination,
-            m.mtgo_id,
-            d.id AS deck_id,
-            dc.normalized_name AS deck_name,
-            od.id AS opponent_deck_id,
-            odc.normalized_name AS opponent_deck_name,
-            dm.games AS game_wins,
-            IFNULL(odm.games, 0) AS game_losses,
-            c.id AS competition_id,
-            ct.name AS competition_type_name,
-            c.end_date AS competition_end_date,
-            {person_query} AS opponent,
-            odc.wins,
-            odc.draws,
-            odc.losses,
-            od.retired
+            COUNT(DISTINCT m.id)
         FROM
             `match` AS m
         INNER JOIN
@@ -86,6 +67,8 @@ def load_matches(where: str = 'TRUE', season_id: Optional[int] = None, should_lo
             deck AS d ON dm.deck_id = d.id
         INNER JOIN
             deck_cache AS dc ON d.id = dc.deck_id
+        INNER JOIN
+            person AS p ON d.person_id = p.id
         LEFT JOIN
             deck_match AS odm ON dm.match_id = odm.match_id AND odm.deck_id <> d.id
         LEFT JOIN
@@ -100,9 +83,67 @@ def load_matches(where: str = 'TRUE', season_id: Optional[int] = None, should_lo
             {where}
         AND
             {season_query}
-        ORDER BY
+    """
+    return int(db().value(sql))
+
+# pylint: disable=too-many-locals
+def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', limit: str = '', season_id: Union[int, str, None] = None, should_load_decks: bool = False, show_active_deck_names: bool = False) -> List[Container]:
+    person_query = query.person_query()
+    opponent_person_query = query.person_query(table='o')
+    competition_join = query.competition_join()
+    season_join = query.season_join()
+    season_query = query.season_query(season_id, 'season.id')
+    sql = f"""
+        SELECT
             m.`date`,
-            m.`round`
+            m.id,
+            m.`round`,
+            m.elimination,
+            m.mtgo_id,
+            d.id AS deck_id,
+            {person_query} AS person,
+            dc.normalized_name AS deck_name,
+            od.id AS opponent_deck_id,
+            odc.normalized_name AS opponent_deck_name,
+            dm.games AS game_wins,
+            IFNULL(odm.games, 0) AS game_losses,
+            c.id AS competition_id,
+            ct.name AS competition_type_name,
+            c.end_date AS competition_end_date,
+            {opponent_person_query} AS opponent,
+            odc.wins,
+            odc.draws,
+            odc.losses,
+            od.retired
+        FROM
+            `match` AS m
+        INNER JOIN
+            deck_match AS dm ON m.id = dm.match_id
+        INNER JOIN
+            deck AS d ON dm.deck_id = d.id
+        INNER JOIN
+            deck_cache AS dc ON d.id = dc.deck_id
+        INNER JOIN
+            person AS p ON d.person_id = p.id
+        LEFT JOIN
+            deck_match AS odm ON dm.match_id = odm.match_id AND odm.deck_id <> d.id
+        LEFT JOIN
+            deck AS od ON odm.deck_id = od.id
+        LEFT JOIN
+            deck_cache AS odc ON od.id = odc.deck_id
+        LEFT JOIN
+            person AS o ON od.person_id = o.id
+        {competition_join}
+        {season_join}
+        WHERE
+            {where}
+        AND
+            {season_query}
+        GROUP BY
+            m.id -- We don't want an row for each deck in a match (when the WHERE doesn't include a person)
+        ORDER BY
+            {order_by}
+        {limit}
     """
     matches = [Container(r) for r in db().select(sql)]
     if should_load_decks:
@@ -116,7 +157,7 @@ def load_matches(where: str = 'TRUE', season_id: Optional[int] = None, should_lo
         m.date = dtutil.ts2dt(m.date)
         m.competition_end_date = dtutil.ts2dt(m.competition_end_date)
         m.competition_url = url_for('competition', competition_id=m.competition_id)
-        if Deck(m).is_in_current_run():
+        if Deck(m).is_in_current_run() and not show_active_deck_names:
             m.opponent_deck_name = '(Active League Run)'
         if should_load_decks and m.opponent_deck_id is not None and decks_by_id.get(m.opponent_deck_id):
             m.opponent_deck = decks_by_id[m.opponent_deck_id]

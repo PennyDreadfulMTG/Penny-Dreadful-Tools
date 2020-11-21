@@ -96,7 +96,6 @@ const renderRow = (table, deck) => (
                 renderHeaderRow={renderHeaderRow}
                 renderRow={renderRow}
                 showSearch={false}
-                type="Deck"
                 {...e.dataset}
             />;
         render(table, e);

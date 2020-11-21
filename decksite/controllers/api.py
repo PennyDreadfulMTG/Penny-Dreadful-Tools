@@ -14,7 +14,8 @@ from decksite.data import person as ps
 from decksite.data import query
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
-from decksite.prepare import prepare_cards, prepare_decks, prepare_leaderboard, prepare_people
+from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches,
+                              prepare_people)
 from decksite.views import DeckEmbed
 from magic import oracle, rotation, tournaments
 from magic.decklist import parse_line
@@ -263,16 +264,63 @@ def leaderboards_api() -> Response:
     q = request.args.get('q', '').strip()
     where = query.text_match_where(query.person_query(), q) if q else 'TRUE'
     try:
-        competition_id = int(request.args.get('competitionId', 0))
+        competition_id = int(request.args.get('competitionId', ''))
         where += f' AND (c.id = {competition_id})'
         season_id = None
     except ValueError:
-        competition_series_id = int(request.args.get('competitionSeriesId', 0))
-        where += f' AND (cs.id = {competition_series_id})'
         season_id = rotation.season_id(str(request.args.get('seasonId')), None)
+    try:
+        competition_series_id = int(request.args.get('competitionSeriesId', ''))
+        where += f' AND (cs.id = {competition_series_id})'
+    except ValueError:
+        pass
     entries = comp.load_leaderboard(where=where, group_by='p.id', order_by=order_by, limit=limit, season_id=season_id)
     prepare_leaderboard(entries)
     total = comp.load_leaderboard_count(where=where, season_id=season_id)
+    r = {'page': page, 'total': total, 'objects': entries}
+    resp = return_json(r, camelize=True)
+    resp.set_cookie('page_size', str(page_size))
+    return resp
+
+@APP.route('/api/matches/')
+def matches_api() -> Response:
+    """
+    Grab a slice of results from a 0-indexed resultset of matches.
+    Input:
+        {
+            'competitionId': <int?>,
+            'page': <int>,
+            'pageSize': <int>,
+            'q': <str>,
+            'sortBy': <str>,
+            'sortOrder': <'ASC'|'DESC'>,
+            'seasonId': <int|'all'?>
+        }
+    Output:
+        {
+            'page': <int>,
+            'objects': [<entry>],
+            'total': <int>
+        }
+    """
+    order_by = query.matches_order_by(request.args.get('sortBy'), request.args.get('sortOrder'))
+    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
+    page = int(request.args.get('page', 0))
+    start = page * page_size
+    limit = f'LIMIT {start}, {page_size}'
+    q = request.args.get('q', '').strip()
+    person_where = query.text_match_where(query.person_query(), q) if q else 'TRUE'
+    opponent_where = query.text_match_where(query.person_query('o'), q) if q else 'TRUE'
+    where = f'({person_where} OR {opponent_where})'
+    try:
+        competition_id = int(request.args.get('competitionId', ''))
+        where += f' AND (c.id = {competition_id})'
+        season_id = None
+    except ValueError:
+        season_id = rotation.season_id(str(request.args.get('seasonId')), None)
+    entries = match.load_matches(where=where, order_by=order_by, limit=limit, season_id=season_id, show_active_deck_names=session.get('admin', False))
+    prepare_matches(entries)
+    total = match.load_matches_count(where=where, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': entries}
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))

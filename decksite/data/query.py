@@ -178,6 +178,24 @@ def leaderboard_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> s
     }
     return sort_options[sort_by] + f' {sort_order}, points DESC, wins DESC, person'
 
+def matches_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
+    if not sort_by:
+        sort_by = 'date'
+        sort_order = 'DESC'
+    else:
+        sort_by = str(sort_by)
+        sort_order = str(sort_order)
+    assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
+    sort_options = {
+        'date': 'date',
+        'person': 'person',
+        'deckName': 'deck_name',
+        'mtgoId': 'mtgo_id',
+        'opponent': 'opponent',
+        'opponentDeckName': 'opponent_deck_name'
+    }
+    return sort_options[sort_by] + f' {sort_order}, person'
+
 def exclude_active_league_runs(except_person_id: Optional[int]) -> str:
     clause = """
         d.retired
@@ -209,7 +227,7 @@ def decks_where(args: Dict[str, str], viewer_id: Optional[int]) -> str:
         parts.append(card_where(cast(str, args.get('cardName'))))
     if args.get('competitionId'):
         competition_id = cast(int, args.get('competitionId'))
-        parts.append(f'c.id = {competition_id}') # XSS for our cass now taht we don't use int()???
+        parts.append(f'c.id = {competition_id}')
     return ') AND ('.join(parts)
 
 def text_match_where(field: str, q: str) -> str:

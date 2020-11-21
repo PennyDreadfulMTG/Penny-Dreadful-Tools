@@ -14,7 +14,8 @@ from decksite.data import person as ps
 from decksite.data import query
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
-from decksite.prepare import prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches, prepare_people
+from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches,
+                              prepare_people)
 from decksite.views import DeckEmbed
 from magic import oracle, rotation, tournaments
 from magic.decklist import parse_line

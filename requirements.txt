@@ -36,7 +36,7 @@ pillow==8.0.1
 plumbum==1.6.9
 poeditor==1.1.2
 pygithub==1.53
-pygtrie==2.4.0
+pygtrie==2.4.1
 pyhumps==1.6.1
 pyjwt==1.7.1
 pylint==2.6.0

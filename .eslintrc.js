@@ -9,9 +9,9 @@ module.exports = {
         "es6": true
     },
     "extends": [
-			"eslint:recommended",
-			"plugin:react/recommended"
-		],
+            "eslint:recommended",
+            "plugin:react/recommended"
+        ],
     "rules": {
         "accessor-pairs": "error",
         "array-bracket-newline": "off",
@@ -276,9 +276,9 @@ module.exports = {
             "never"
         ]
     },
-		"settings": {
-			"react": {
-				"version": "detect"
-			}
-		}
+        "settings": {
+            "react": {
+                "version": "detect"
+            }
+        }
 };

@@ -26,6 +26,7 @@ WHITELIST = [
     's15 is a meme',
     'blue man group',
     'no green jeskai asc',
+    'ub or not ub? that is the question',
 ]
 
 PROFANITY_WHITELIST = [

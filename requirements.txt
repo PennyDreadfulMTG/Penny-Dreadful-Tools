@@ -24,7 +24,7 @@ google-api-python-client==1.12.8
 inflect==5.0.2
 isort==5.6.4
 jsbeautifier==1.13.0
-lxml==4.6.1
+lxml==4.6.2
 markdown==3.3.3
 matplotlib==3.3.3
 munch==2.5.0

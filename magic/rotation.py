@@ -119,8 +119,12 @@ def interesting(playability: Dict[str, float], c: Card, speculation: bool = True
     return None
 
 def message() -> str:
+    upcoming = next_rotation_ex()
     diff = next_rotation() - dtutil.now()
     s = dtutil.display_time(int(diff.total_seconds()))
+    if upcoming.code == '???':
+        s = dtutil.display_time(int(diff.total_seconds()), 1)
+        return f'The next rotation is roughly {s} away'
     return f'The next rotation is in {s}'
 
 def in_rotation() -> bool:

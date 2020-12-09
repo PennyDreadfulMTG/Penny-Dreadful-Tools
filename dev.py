@@ -127,7 +127,7 @@ def lint(argv: List[str]) -> None:
     import pylint.lint
     try:
         linter = pylint.lint.Run(args, exit=False)
-    except PicklingError:
+    except (PicklingError, RecursionError):
         print('Error while running pylint with multiprocessing')
         configuration.write('pylint_threads', 1)
         lint(argv)

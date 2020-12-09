@@ -10,7 +10,7 @@ services:
   - mysql
 env:
   global:
-    - mysql_user=root slow_query=999.0
+    - mysql_user=root slow_query=999.0 pylint_threads=1
   matrix:
     - CMD="python dev.py tests"
     - CMD="python dev.py mypy"

@@ -17,14 +17,13 @@ import pytz
 from mypy_extensions import TypedDict
 
 from magic.abc import CardDescription, PriceDataType
+from magic.models import Deck
 from shared import configuration, dtutil, fetch_tools
 from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.fetch_tools import FetchException
 from shared.pd_exception import InvalidDataException, NotConfiguredException, TooFewItemsException
 
-if TYPE_CHECKING:
-    from magic.models import Deck
 
 async def achievement_cache_async() -> Dict[str, Dict[str, str]]:
     data = await fetch_tools.fetch_json_async(decksite_url('/api/achievements'))
@@ -92,7 +91,7 @@ def site_url(protocol: str, hostname: str, port: int, path: str) -> str:
 def downtimes() -> str:
     return fetch_tools.fetch('https://pennydreadfulmtg.github.io/modo-bugs/downtimes.txt')
 
-def gatherling_deck_comments(d: 'Deck') -> List[str]:
+def gatherling_deck_comments(d: Deck) -> List[str]:
     url = f'http://gatherling.com/deck.php?mode=view&id={d.identifier}'
     s = fetch_tools.fetch(url)
     result = re.search('COMMENTS</td></tr><tr><td>(.*)</td></tr></table></div><div class="clear"></div><center>', s, re.MULTILINE | re.DOTALL)

@@ -1,3 +1,4 @@
+from decksite.scrapers.tappedout import SESSION
 import json
 import os
 import urllib.request
@@ -6,17 +7,20 @@ from typing import Any, Dict, List, Optional
 import aiohttp
 import requests
 
-from shared import configuration, perf
+from shared import perf
 from shared.pd_exception import OperationalException
 
-def fetch(url: str, character_encoding: Optional[str] = None, force: bool = False, retry: bool = False) -> str:
+def fetch(url: str, character_encoding: Optional[str] = None, force: bool = False, retry: bool = False, session: Optional[requests.Session] = None) -> str:
     headers = {}
     if force:
         headers['Cache-Control'] = 'no-cache'
     print('Fetching {url} ({cache})'.format(url=url, cache='no cache' if force else 'cache ok'))
     try:
         p = perf.start()
-        response = requests.get(url, headers=headers)
+        if session is not None:
+            response = SESSION.get(url, headers=headers)
+        else:
+            response = requests.get(url, headers=headers)
         perf.check(p, 'slow_fetch', (url, headers), 'fetch')
         if character_encoding is not None:
             response.encoding = character_encoding
@@ -42,9 +46,9 @@ async def fetch_async(url: str) -> str:
     except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
         raise FetchException(e) from e
 
-def fetch_json(url: str, character_encoding: Optional[str] = None) -> Any:
+def fetch_json(url: str, character_encoding: Optional[str] = None, session: Optional[requests.Session] = None) -> Any:
     try:
-        blob = fetch(url, character_encoding)
+        blob = fetch(url, character_encoding, session=session)
         if blob:
             return json.loads(blob)
         return None

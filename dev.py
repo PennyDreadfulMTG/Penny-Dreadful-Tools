@@ -269,10 +269,9 @@ def pull_request(argv: List[str]) -> None:
 def build() -> None:
     print('>>>> Installing Requirements')
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pipenv'])
-    pipargs = ['pipenv', 'sync']
+    subprocess.check_call(['pipenv', 'sync'])
     if sys.prefix == sys.base_prefix:
-        pipargs = [sys.executable, '-m', 'pipenv', 'install', '--system']
-    subprocess.check_call(pipargs)
+        subprocess.check_call([sys.executable, '-m', 'pipenv', 'install', '--system'])
     print('>>>> Installing node modules')
     subprocess.check_call(['npm', 'install'], shell=ON_WINDOWS)
     buildjs()

@@ -2,6 +2,7 @@ pull_request_rules:
   - name: automatic merge dependency updates
     conditions:
       - status-success=Travis CI - Pull Request
+      - status-success=mypy
       - author~=(pyup-bot|dependabot)
       - -files~=^(!?.github/workflows/)
     actions:
@@ -15,6 +16,7 @@ pull_request_rules:
       - "#changes-requested-reviews-by=0"
       - "#commented-reviews-by=0"
       - status-success=Travis CI - Pull Request
+      - status-success=mypy
       - base=master
     actions:
       merge:
@@ -24,6 +26,7 @@ pull_request_rules:
     conditions:
       - author=@PennyDreadfulMTG/automerge
       - status-success=Travis CI - Pull Request
+      - status-success=mypy
       - base=master
     actions:
       merge:

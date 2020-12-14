@@ -12,5 +12,5 @@ fi
 echo $APP
 cd $(dirname $0)
 git pull
-pip install -r requirements.txt
+python3 run.py build
 python3 run.py $APP

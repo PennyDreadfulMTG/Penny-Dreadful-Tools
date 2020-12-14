@@ -268,9 +268,10 @@ def pull_request(argv: List[str]) -> None:
 
 def build() -> None:
     print('>>>> Installing Requirements')
-    pipargs = [sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt']
-    if not hasattr(sys, 'real_prefix'):
-        pipargs.append('--user')
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'pipenv'])
+    pipargs = ['pipenv', 'sync']
+    if sys.prefix == sys.base_prefix:
+        pipargs = [sys.executable, '-m', 'pipenv', 'install', '--system']
     subprocess.check_call(pipargs)
     print('>>>> Installing node modules')
     subprocess.check_call(['npm', 'install'], shell=ON_WINDOWS)

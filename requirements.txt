@@ -8,6 +8,7 @@ better_profanity==0.7.0
 cachecontrol[filecache]==0.12.6
 cachelib==0.1.1
 changelogs==0.14.0
+click==7.1.2
 coverage==5.3
 discord.py[voice]==1.5.1
 feedparser==6.0.2

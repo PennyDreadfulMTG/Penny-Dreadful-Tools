@@ -2,11 +2,9 @@ from typing import Dict, List, Optional, Set, Tuple
 
 from github import Github
 from github.Commit import Commit
-from github.File import File
 from github.GithubException import UnknownObjectException
 from github.PullRequest import PullRequest
 from github.Repository import Repository
-from requirements.requirement import Requirement
 
 from shared import configuration, decorators
 from shared import redis_wrapper as redis

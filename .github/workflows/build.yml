@@ -32,7 +32,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip pipenv wheel
         if [ -f Pipfile ]; then pipenv sync; fi
-    - name: Run mypy
+    - name: Run pylint
       run: pipenv run python dev.py lint
   test:
     name: test
@@ -48,7 +48,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip pipenv wheel
         if [ -f Pipfile ]; then pipenv sync; fi
-    - name: Run mypy
+    - name: Run pytest
       run: pipenv run python dev.py tests
   jslint:
     name: jslint
@@ -64,5 +64,5 @@ jobs:
       run: |
         python -m pip install --upgrade pip pipenv wheel
         if [ -f Pipfile ]; then pipenv sync; fi
-    - name: Run mypy
+    - name: Run jslint
       run: pipenv run python dev.py jslint

@@ -1,4 +1,3 @@
-from decksite.scrapers.tappedout import SESSION
 import json
 import os
 import urllib.request
@@ -18,7 +17,7 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
     try:
         p = perf.start()
         if session is not None:
-            response = SESSION.get(url, headers=headers)
+            response = session.get(url, headers=headers)
         else:
             response = requests.get(url, headers=headers)
         perf.check(p, 'slow_fetch', (url, headers), 'fetch')

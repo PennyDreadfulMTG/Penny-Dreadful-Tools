@@ -1,8 +1,5 @@
 from typing import Dict, List, Optional, Set, Tuple
 
-import changelogs
-import packaging.version
-import whatthepatch
 from github import Github
 from github.Commit import Commit
 from github.File import File
@@ -65,55 +62,6 @@ def set_check(data: dict, status: str, message: str) -> None:
     commit = load_commit(data)
     if commit is not None:
         commit.create_status(state=status, description=message, context=PDM_CHECK_CONTEXT)
-
-def check_for_changelogs(pr: PullRequest) -> None:
-    for change in pr.get_files():
-        if change.filename == 'requirements.txt':
-            lines = build_changelog(change)
-            for comment in pr.get_issue_comments():
-                if comment.body.startswith('# Changelogs'):
-                    # Changelog comment
-                    comment.edit(body='\n'.join(lines))
-                    break
-            else:
-                pr.create_issue_comment('\n'.join(lines))
-
-def build_changelog(change: File) -> List[str]:
-    lines = ['# Changelogs']
-    patch = whatthepatch.parse_patch(change.patch).__next__()
-    oldversions: Dict[str, str] = {}
-    newversions: Dict[str, str] = {}
-    for p in patch.changes:
-        if len(p) > 1:
-            if p[1] is None:
-                req = Requirement.parse(p[2])
-                if req.specs:
-                    oldversions[req.name] = req.specs[0][1]
-                else:
-                    lines.append(f'> Warning: {p[0]} is pinned to a specific version.')
-            elif p[0] is None:
-                req = Requirement.parse(p[2])
-                if req.specs:
-                    newversions[req.name] = req.specs[0][1]
-                else:
-                    lines.append(f'> Warning: {p[0]} is pinned to a specific version.')
-        else:
-            lines.append('> Warning: Unknown error.')
-    for package in newversions:
-        old = packaging.version.parse(oldversions.get(package, ''))
-        new = packaging.version.parse(newversions.get(package, ''))
-        changes = changelogs.get(package)
-        logged = False
-        for version_string in changes.keys():
-            v = packaging.version.parse(version_string)
-            if old < v <= new:
-                lines.append(f'## {package} {version_string}')
-                lines.append(changes[version_string])
-                logged = True
-        if not logged:
-            lines.append(f'## {package} {new}')
-            lines.append('No release notes found.')
-    return lines
 
 def check_pr_for_mergability(pr: PullRequest) -> str:
     repo = pr.base.repo

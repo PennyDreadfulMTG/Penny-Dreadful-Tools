@@ -47,8 +47,6 @@ def on_pull_request(data: Dict[str, Any]) -> str:
     print([org, repo, pr_number])
     if data['action'] == 'synchronize' or data['action'] == 'opened':
         webhooks.set_check(data, 'pending', 'Waiting for tests')
-        pr = webhooks.load_pr(data)
-        webhooks.check_for_changelogs(pr)
     if data['action'] == 'labeled' or data['action'] == 'unlabeled':
         pr = webhooks.load_pr(data)
         if pr.state == 'open':

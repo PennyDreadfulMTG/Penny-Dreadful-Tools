@@ -7,7 +7,6 @@ beautifulsoup4==4.9.3
 better_profanity==0.7.0
 cachecontrol[filecache]==0.12.6
 cachelib==0.1.1
-changelogs==0.14.0
 click==7.1.2
 coverage==5.3
 discord.py[voice]==1.5.1
@@ -62,5 +61,4 @@ typing-extensions==3.7.4.3
 untangle==1.1.1
 vcrpy==4.1.1
 werkzeug==1.0.1
-whatthepatch==1.0.1
 whoosh==2.7.4

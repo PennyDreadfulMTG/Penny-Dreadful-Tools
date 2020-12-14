@@ -41,6 +41,7 @@ jobs:
     env:
       mysql_user: root
       mysql_passwd: bad-password
+      mysql_host: 127.0.0.1
 
     steps:
     - uses: actions/checkout@v2.3.2

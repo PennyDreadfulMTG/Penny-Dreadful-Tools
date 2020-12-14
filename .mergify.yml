@@ -1,8 +1,10 @@
 pull_request_rules:
   - name: automatic merge dependency updates
     conditions:
-      - status-success=Travis CI - Pull Request
       - status-success=mypy
+      - status-success=lint
+      - status-success=test
+      - status-success=jslint
       - author~=(pyup-bot|dependabot)
       - -files~=^(!?.github/workflows/)
     actions:
@@ -15,8 +17,10 @@ pull_request_rules:
       - "#review-requested=0"
       - "#changes-requested-reviews-by=0"
       - "#commented-reviews-by=0"
-      - status-success=Travis CI - Pull Request
       - status-success=mypy
+      - status-success=lint
+      - status-success=test
+      - status-success=jslint
       - base=master
     actions:
       merge:
@@ -25,8 +29,10 @@ pull_request_rules:
   - name: automatic merge for master when CI passes and trusted comitter
     conditions:
       - author=@PennyDreadfulMTG/automerge
-      - status-success=Travis CI - Pull Request
       - status-success=mypy
+      - status-success=lint
+      - status-success=test
+      - status-success=jslint
       - base=master
     actions:
       merge:

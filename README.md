@@ -52,7 +52,7 @@ Contributions are very welcome. Please join the Discord at <https://pennydreadfu
 
 If you plan on running things outside of the containers (eg: dev.py or logsite):
 - Install python3.7+
-- Install pip3
+- Install pipenv
 - Install npm
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - python3 dev.py build
@@ -72,7 +72,7 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 
 - Install MariaDB 10.0+
 - Install python3.7+
-- Install pip3
+- Install pipenv
 - Install npm
 - git clone <https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools.git>
 - python3 dev.py build
@@ -92,17 +92,17 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 
 ## Running Decksite
 
-- python3 run.py decksite
+- pipenv run python run.py decksite
 - Visit <http://localhost:5000/>
 
 ## Running Logsite
 
-- python3 run.py logsite
+- pipenv run python run.py logsite
 - Visit <http://localhost:5001/>
 
 ## Running Discordbot
 
-- python3 run.py discordbot
+- pipenv run python run.py discordbot
 - Visit your Discord server.
 
 ## Working on React components

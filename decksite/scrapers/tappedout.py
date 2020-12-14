@@ -3,12 +3,15 @@ import urllib
 from typing import Dict, List, Optional, Set
 
 from bs4 import BeautifulSoup
+import requests
 
 from decksite import translation
 from decksite.data import deck
 from magic import decklist, legality
 from shared import configuration, fetch_tools, logger
 from shared.pd_exception import InvalidDataException
+
+SESSION = requests.Session()
 
 RawDeckType = deck.RawDeckDescription
 
@@ -30,21 +33,21 @@ def ad_hoc() -> None:
             logger.warning('Skipping {slug} because of {e}'.format(slug=raw_deck.get('slug', '-no slug-'), e=e))
 
 def fetch_decks() -> List[RawDeckType]:
-    return fetch_tools.fetch_json('https://tappedout.net/api/deck/latest/penny-dreadful/')
+    return fetch_tools.fetch_json('https://tappedout.net/api/deck/latest/penny-dreadful/', session=SESSION)
 
 def fetch_deck_details(raw_deck: RawDeckType) -> RawDeckType:
-    return fetch_tools.fetch_json('https://tappedout.net/api/collection/collection:deck/{slug}/'.format(slug=raw_deck['slug']))
+    return fetch_tools.fetch_json('https://tappedout.net/api/collection/collection:deck/{slug}/'.format(slug=raw_deck['slug']), session=SESSION)
 
 def set_values(raw_deck: RawDeckType) -> RawDeckType:
     raw_deck = translation.translate(translation.TAPPEDOUT, raw_deck)
-    raw_decklist = fetch_tools.fetch('{base_url}?fmt=txt'.format(base_url=raw_deck['url']))
+    raw_decklist = fetch_tools.fetch('{base_url}?fmt=txt'.format(base_url=raw_deck['url']), session=SESSION)
     raw_deck['cards'] = decklist.parse(raw_decklist)
     raw_deck['source'] = 'Tapped Out'
     raw_deck['identifier'] = raw_deck['url']
     return raw_deck
 
 def is_authorised() -> bool:
-    return fetch_tools.SESSION.cookies.get('tapped') is not None
+    return SESSION.cookies.get('tapped') is not None # type: ignore
 
 def login(user: Optional[str] = None, password: Optional[str] = None) -> None:
     if user is None:
@@ -55,7 +58,7 @@ def login(user: Optional[str] = None, password: Optional[str] = None) -> None:
         logger.warning('No TappedOut credentials provided')
         return
     url = 'https://tappedout.net/accounts/login/'
-    session = fetch_tools.SESSION
+    session = SESSION
     response = session.get(url)
 
     match = re.search(r"<input type='hidden' name='csrfmiddlewaretoken' value='(\w+)' />", response.text)
@@ -100,7 +103,7 @@ def scrape_url(url: str) -> deck.Deck:
 def parse_printable(raw_deck: RawDeckType) -> RawDeckType:
     """If we're not authorized for the TappedOut API, this method will collect name and author of a deck.
     It could also grab a date, but I haven't implemented that yet."""
-    s = fetch_tools.fetch(raw_deck['url'] + '?fmt=printable')
+    s = fetch_tools.fetch(raw_deck['url'] + '?fmt=printable', session=SESSION)
     soup = BeautifulSoup(s, 'html.parser')
     raw_deck['name'] = soup.find('h2').string.strip('"')
     infobox = soup.find('table', {'id': 'info_box'})
@@ -115,7 +118,7 @@ def parse_printable(raw_deck: RawDeckType) -> RawDeckType:
 def scrape_user(username: str) -> Dict[str, Optional[str]]:
     parsed: Dict[str, Optional[str]] = {}
     parsed['username'] = username
-    s = fetch_tools.fetch('https://tappedout.net/users/{0}/'.format(username))
+    s = fetch_tools.fetch('https://tappedout.net/users/{0}/'.format(username), session=SESSION)
     soup = BeautifulSoup(s, 'html.parser')
     mtgo = soup.find('td', string='MTGO Username')
     if mtgo is not None:

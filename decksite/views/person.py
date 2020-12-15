@@ -9,7 +9,7 @@ from decksite.data import person as ps
 from decksite.data.achievements import Achievement
 from decksite.data.archetype import Archetype
 from decksite.view import View
-from magic import oracle, rotation
+from magic import oracle, seasons
 from magic.models import Card
 
 
@@ -43,7 +43,7 @@ class Person(View):
             }
         ]
         self.add_note_url = url_for('post_player_note')
-        self.matches_url = url_for('.person_matches', person_id=person.id, season_id=None if season_id == rotation.current_season_num()  else season_id)
+        self.matches_url = url_for('.person_matches', person_id=person.id, season_id=None if season_id == seasons.current_season_num()  else season_id)
         self.is_person_page = True
         self.trailblazer_cards = oracle.load_cards(your_cards['trailblazer'])
         self.has_trailblazer_cards = len(self.trailblazer_cards) > 0
@@ -59,12 +59,12 @@ class Person(View):
         return self.person.name
 
     def setup_active_seasons(self, seasons_active: Sequence[int]) -> None:
-        total_seasons = len(rotation.SEASONS)
+        total_seasons = len(seasons.SEASONS)
         cube_side_length = round(math.sqrt(total_seasons))
         self.seasons_active = []
-        for i, setcode in enumerate(reversed(rotation.SEASONS)):
+        for i, setcode in enumerate(reversed(seasons.SEASONS)):
             season_id = total_seasons - i
-            if season_id > rotation.current_season_num():
+            if season_id > seasons.current_season_num():
                 continue
             active = season_id in seasons_active
             self.seasons_active.append({

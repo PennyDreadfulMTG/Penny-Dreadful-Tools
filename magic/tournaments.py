@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Tuple, Union
 import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
 
-from magic import rotation
+from magic import rotation, seasons
 from magic.models import Deck
 from shared import dtutil, guarantee
 from shared.container import Container
@@ -69,7 +69,7 @@ def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> L
 
 # Note: this may be in the past. It always gives the date for the current season.
 def pd500_date() -> datetime.datetime:
-    end_of_season = rotation.next_rotation()
+    end_of_season = seasons.next_rotation()
     return end_of_season - datetime.timedelta(days=12, hours=13, minutes=30) # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
 
 def is_pd500_week(start: datetime.datetime) -> bool:
@@ -78,7 +78,7 @@ def is_pd500_week(start: datetime.datetime) -> bool:
 
 # Note: this may be in the past. It always gives the date for the current season.
 def kick_off_date() -> datetime.datetime:
-    start_of_season = rotation.last_rotation()
+    start_of_season = seasons.last_rotation()
     return start_of_season + datetime.timedelta(days=8, hours=13, minutes=30) # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
 
 def is_kick_off_week(start: datetime.datetime) -> bool:

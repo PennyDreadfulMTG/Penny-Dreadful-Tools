@@ -17,7 +17,7 @@ from decksite.data.achievements import Achievement
 from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches,
                               prepare_people)
 from decksite.views import DeckEmbed
-from magic import oracle, rotation, tournaments
+from magic import oracle, rotation, seasons, tournaments
 from magic.decklist import parse_line
 from magic.models import Deck
 from shared import configuration, dtutil, guarantee
@@ -108,7 +108,7 @@ def decks_api() -> Response:
     start = page * page_size
     limit = f'LIMIT {start}, {page_size}'
     # Don't restrict by season if we're loading something with a date by its id.
-    season_id = 'all' if request.args.get('competitionId') else rotation.season_id(str(request.args.get('seasonId')), None)
+    season_id = 'all' if request.args.get('competitionId') else seasons.season_id(str(request.args.get('seasonId')), None)
     where = query.decks_where(request.args, session.get('person_id'))
     total = deck.load_decks_count(where=where, season_id=season_id)
     ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
@@ -147,7 +147,7 @@ def cards2_api() -> Response:
     limit = f'LIMIT {start}, {page_size}'
     person_id = request.args.get('personId') or None
     tournament_only = request.args.get('deckType') == 'tournament'
-    season_id = rotation.season_id(str(request.args.get('seasonId')), None)
+    season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     q = request.args.get('q', '').strip()
     additional_where = query.text_match_where('name', q) if q else 'TRUE'
     cs = card.load_cards(additional_where=additional_where, order_by=order_by, limit=limit, person_id=person_id, tournament_only=tournament_only, season_id=season_id)
@@ -183,7 +183,7 @@ def people_api() -> Response:
     page = int(request.args.get('page', 0))
     start = page * page_size
     limit = f'LIMIT {start}, {page_size}'
-    season_id = rotation.season_id(str(request.args.get('seasonId')), None)
+    season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     q = request.args.get('q', '').strip()
     where = query.text_match_where(query.person_query(), q) if q else 'TRUE'
     people = ps.load_people(where=where, order_by=order_by, limit=limit, season_id=season_id)
@@ -220,13 +220,13 @@ def h2h_api() -> Response:
     page = int(request.args.get('page', 0))
     start = page * page_size
     limit = f'LIMIT {start}, {page_size}'
-    season_id = rotation.season_id(str(request.args.get('seasonId')), None)
+    season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     person_id = int(request.args.get('personId', 0))
     q = request.args.get('q', '').strip()
     where = query.text_match_where('opp.mtgo_username', q) if q else 'TRUE'
     entries = ps.load_head_to_head(person_id, where=where, order_by=order_by, limit=limit, season_id=season_id)
     for entry in entries:
-        entry.opp_url = url_for('.person', mtgo_username=entry.opp_mtgo_username, season_id=None if season_id == rotation.current_season_num() else season_id)
+        entry.opp_url = url_for('.person', mtgo_username=entry.opp_mtgo_username, season_id=None if season_id == seasons.current_season_num() else season_id)
     total = ps.load_head_to_head_count(person_id=person_id, where=where, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': entries}
     resp = return_json(r, camelize=True)
@@ -268,7 +268,7 @@ def leaderboards_api() -> Response:
         where += f' AND (c.id = {competition_id})'
         season_id = None
     except ValueError:
-        season_id = rotation.season_id(str(request.args.get('seasonId')), None)
+        season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     try:
         competition_series_id = int(request.args.get('competitionSeriesId', ''))
         where += f' AND (cs.id = {competition_series_id})'
@@ -317,7 +317,7 @@ def matches_api() -> Response:
         where += f' AND (c.id = {competition_id})'
         season_id = None
     except ValueError:
-        season_id = rotation.season_id(str(request.args.get('seasonId')), None)
+        season_id = seasons.season_id(str(request.args.get('seasonId')), None)
     entries = match.load_matches(where=where, order_by=order_by, limit=limit, season_id=season_id, show_active_deck_names=session.get('admin', False))
     prepare_matches(entries)
     total = match.load_matches_count(where=where, season_id=season_id)
@@ -376,7 +376,7 @@ class League(Resource):
 @fill_args('season_id')
 def person_api(person: str, season_id: int = -1) -> Response:
     if season_id == -1:
-        season_id = rotation.current_season_num()
+        season_id = seasons.current_season_num()
     try:
         p = ps.load_person_by_discord_id_or_username(person, season_id)
         p.decks_url = url_for('person_decks_api', person=person, season_id=season_id)
@@ -429,10 +429,10 @@ def drop(person: str) -> Response:
 @APP.route('/api/rotation')
 def rotation_api() -> Response:
     now = dtutil.now()
-    diff = rotation.next_rotation() - now
+    diff = seasons.next_rotation() - now
     result = {
-        'last': rotation.last_rotation_ex(),
-        'next': rotation.next_rotation_ex(),
+        'last': seasons.last_rotation_ex(),
+        'next': seasons.next_rotation_ex(),
         'diff': diff.total_seconds(),
         'friendly_diff': dtutil.display_time(int(diff.total_seconds()))
     }

@@ -1,7 +1,7 @@
 import time
 from typing import Optional
 
-from magic import card_price, rotation
+from magic import card_price, rotation, seasons
 from magic.abc import PriceDataType
 from magic.models import Card
 from shared import configuration, database
@@ -31,7 +31,7 @@ def cache() -> None:
     now = round(time.time())
     week = now - 60 * 60 * 24 * 7
     month = now - 60 * 60 * 24 * 30
-    last_rotation = int(rotation.last_rotation().timestamp())
+    last_rotation = int(seasons.last_rotation().timestamp())
 
     sql = 'SELECT MAX(`time`) FROM low_price'
     latest = db.value(sql)

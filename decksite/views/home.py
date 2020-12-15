@@ -4,7 +4,7 @@ from flask import url_for
 from flask_babel import gettext
 
 from decksite.view import View
-from magic import rotation, tournaments
+from magic import rotation, tournaments, seasons
 from magic.models import Card, Deck
 from shared import dtutil
 from shared.container import Container
@@ -92,8 +92,8 @@ class Home(View):
         self.cards_url = url_for('.cards')
 
     def setup_rotation(self) -> None:
-        self.season_start_display = dtutil.display_date(rotation.last_rotation())
-        self.season_end_display = dtutil.display_date(rotation.next_rotation())
+        self.season_start_display = dtutil.display_date(seasons.last_rotation())
+        self.season_end_display = dtutil.display_date(seasons.next_rotation())
         self.scryfall_url = 'https://scryfall.com/search?q=f%3Apd'
         self.legal_cards_url = 'http://pdmtgo.com/legal_cards.txt'
         self.in_rotation = rotation.in_rotation()

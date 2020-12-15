@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Tuple, Union, cast
 from flask import Blueprint, g, request, url_for
 from flask_babel import gettext, ngettext
 
-from magic import multiverse, oracle, rotation
+from magic import multiverse, oracle, seasons
 from shared import configuration, dtutil
 from shared.pd_exception import DatabaseException
 from shared_web.flask_app import PDFlask
@@ -15,7 +15,7 @@ APP.logger.setLevel(logging.WARN) # pylint: disable=no-member,no-name-in-module
 SEASONS = Blueprint('seasons', __name__, url_prefix='/seasons/<season_id>')
 
 def get_season_id() -> int:
-    season_id = g.get('season_id', rotation.current_season_num())
+    season_id = g.get('season_id', seasons.current_season_num())
     if season_id == 'all':
         return 0
     return season_id
@@ -27,7 +27,7 @@ def add_season_id(_endpoint: str, values: Dict[str, Any]) -> None:
 @SEASONS.url_value_preprocessor
 def pull_season_id(_endpoint: str, values: Dict[str, Any]) -> None:
     v = values.pop('season_id')
-    g.season_id = rotation.season_id(v)
+    g.season_id = seasons.season_id(v)
 
 APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
 
@@ -35,7 +35,7 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
     current_template = (request.endpoint or '').replace('seasons.', '')
     archetypes_badge = {'url': url_for('edit_archetypes'), 'text': '', 'badge_class': 'edit_archetypes'}
     resources_submenu: List[Dict[str, str]] = []
-    if (rotation.next_rotation() - dtutil.now()) < datetime.timedelta(7):
+    if (seasons.next_rotation() - dtutil.now()) < datetime.timedelta(7):
         resources_submenu.append({'name': gettext('Rotation Tracking'), 'endpoint': 'rotation'})
     resources_submenu += [
         {'name': gettext('Rotation Changes'), 'endpoint': 'rotation_changes'},

@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Set, Union
 
 from github.GithubException import GithubException
 
-from magic import card, database, fetcher, mana, rotation
+from magic import card, database, fetcher, mana, rotation, seasons
 from magic.abc import CardDescription
 from magic.card import TableDescription
 from magic.database import create_table_def, db
@@ -311,8 +311,8 @@ async def update_bugged_cards_async() -> None:
     db().commit('update_bugged_cards')
 
 async def update_pd_legality_async() -> None:
-    for s in rotation.SEASONS:
-        if s == rotation.current_season_code():
+    for s in seasons.SEASONS:
+        if s == seasons.current_season_code():
             break
         await set_legal_cards_async(season=s)
 
@@ -505,8 +505,8 @@ def get_format_id(name: str, allow_create: bool = False) -> int:
     return FORMAT_IDS[name]
 
 def get_format_id_from_season_id(season_id: int) -> int:
-    season_code = rotation.SEASONS[int(season_id) - 1]
-    if season_code == rotation.current_season_code():
+    season_code = seasons.SEASONS[int(season_id) - 1]
+    if season_code == seasons.current_season_code():
         format_name = 'Penny Dreadful'
     else:
         format_name = 'Penny Dreadful {f}'.format(f=season_code)

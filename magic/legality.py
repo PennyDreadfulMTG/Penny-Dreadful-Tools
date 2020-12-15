@@ -1,6 +1,6 @@
 from typing import Dict, List, Set
 
-from magic import oracle, rotation
+from magic import oracle, rotation, seasons
 from magic.database import db
 from magic.models import Card
 from shared.container import Container
@@ -89,7 +89,7 @@ def order_score(fmt: str) -> int:
     if fmt == 'Penny Dreadful':
         return 1
     if 'Penny Dreadful' in fmt:
-        return 1000 - rotation.SEASONS.index(fmt.replace('Penny Dreadful ', ''))
+        return 1000 - seasons.SEASONS.index(fmt.replace('Penny Dreadful ', ''))
     if fmt == 'Vintage':
         return 10000
     if fmt == 'Legacy':

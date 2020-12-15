@@ -5,7 +5,7 @@ from flask import url_for
 
 from decksite.data import deck, elo, query
 from decksite.database import db
-from magic import rotation
+from magic import seasons
 from magic.models import Deck
 from shared import dtutil, guarantee
 from shared import redis_wrapper as redis
@@ -176,7 +176,7 @@ def stats() -> Dict[str, int]:
         FROM
             `match`
     """
-    return db().select(sql, [dtutil.dt2ts(rotation.last_rotation())])[0]
+    return db().select(sql, [dtutil.dt2ts(seasons.last_rotation())])[0]
 
 
 def update_match(match_id: int, left_id: int, left_games: int, right_id: int, right_games: int) -> None:

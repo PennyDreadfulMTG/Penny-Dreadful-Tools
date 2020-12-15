@@ -11,7 +11,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 from decksite.data import competition, deck, match, person, query
 from decksite.data.form import Form
 from decksite.database import db
-from magic import card, decklist, legality, rotation
+from magic import card, decklist, legality, rotation, seasons
 from magic.decklist import DecklistType
 from magic.models import Deck
 from shared import configuration, dtutil, fetch_tools, guarantee, logger
@@ -313,7 +313,7 @@ def active_league(should_load_decks: bool = False) -> competition.Competition:
     leagues = competition.load_competitions(where, should_load_decks=should_load_decks)
     if len(leagues) == 0:
         start_date = dtutil.now(tz=dtutil.WOTC_TZ)
-        end_date = determine_end_of_league(start_date, rotation.next_rotation())
+        end_date = determine_end_of_league(start_date, seasons.next_rotation())
         name = determine_league_name(start_date, end_date)
         comp_id = competition.get_or_insert_competition(start_date, end_date, name, 'League', None, competition.Top.EIGHT)
         if not comp_id:
@@ -438,7 +438,7 @@ def first_runs() -> List[Container]:
     return [Container(r) for r in db().select(sql)]
 
 def random_legal_deck() -> Optional[Deck]:
-    where = 'd.reviewed AND d.created_date > (SELECT start_date FROM season WHERE number = {current_season_num})'.format(current_season_num=rotation.current_season_num())
+    where = 'd.reviewed AND d.created_date > (SELECT start_date FROM season WHERE number = {current_season_num})'.format(current_season_num=seasons.current_season_num())
     having = '(d.competition_id NOT IN ({active_competition_id_query}) OR SUM(cache.wins + cache.draws + cache.losses) >= 5)'.format(active_competition_id_query=active_competition_id_query())
     try:
         return deck.load_decks(where=where, having=having, order_by='RAND()', limit='LIMIT 1')[0]

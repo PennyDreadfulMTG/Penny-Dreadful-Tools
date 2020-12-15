@@ -5,7 +5,7 @@ from flask import g, session, url_for
 
 from decksite.data.models.person import Person
 from decksite.deck_type import DeckType
-from magic import fetcher, oracle, rotation
+from magic import fetcher, oracle, rotation, seasons
 from magic.models import Card, Deck
 from shared import dtutil
 from shared.container import Container
@@ -188,9 +188,9 @@ def colors_html(colors: List[str], colored_symbols: List[str]) -> str:
 
 def set_legal_icons(o: Union[Card, Deck]) -> None:
     o.legal_icons = ''
-    sets = rotation.SEASONS
+    sets = seasons.SEASONS
     if 'Penny Dreadful' in o.legal_formats:
-        icon = rotation.current_season_code().lower()
+        icon = seasons.current_season_code().lower()
         n = sets.index(icon.upper()) + 1
         o.legal_icons += '<a href="{url}"><i class="ss ss-{code} ss-rare ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), code=icon, n=n)
     past_pd_formats = [fmt.replace('Penny Dreadful ', '') for fmt in o.legal_formats if 'Penny Dreadful ' in fmt]

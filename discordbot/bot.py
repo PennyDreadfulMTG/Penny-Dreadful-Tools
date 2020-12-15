@@ -18,7 +18,7 @@ from github.GithubException import GithubException
 
 import discordbot.commands
 from discordbot import command
-from magic import fetcher, multiverse, oracle, rotation, tournaments
+from magic import fetcher, multiverse, oracle, rotation, seasons, tournaments
 from magic.models import Card
 from shared import configuration, dtutil, fetch_tools, perf
 from shared import redis_wrapper as redis
@@ -315,7 +315,7 @@ class Bot(commands.Bot):
             logging.warning('rotation hype channel is not a text channel')
             return
         while self.is_ready():
-            until_rotation = rotation.next_rotation() - dtutil.now()
+            until_rotation = seasons.next_rotation() - dtutil.now()
             last_run_time = rotation.last_run_time()
             if until_rotation < datetime.timedelta(7) and last_run_time is not None:
                 if dtutil.now() - last_run_time < datetime.timedelta(minutes=5):

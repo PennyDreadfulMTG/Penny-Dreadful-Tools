@@ -8,7 +8,7 @@ from cachelib.simple import SimpleCache
 from flask import make_response, request
 
 from decksite import get_season_id
-from magic import rotation
+from magic import seasons
 from shared_web import localization
 
 CACHE = SimpleCache() # type: ignore
@@ -53,7 +53,7 @@ def cached_impl(cacheable: bool = False,
 
                 actual_client_timeout = client_timeout
                 actual_server_timeout = server_timeout
-                if get_season_id() and get_season_id() != 0 and get_season_id() < rotation.current_season_num():
+                if get_season_id() and get_season_id() != 0 and get_season_id() < seasons.current_season_num():
                     actual_client_timeout = 7 * 24 * 60 * 60
                     actual_server_timeout = 7 * 24 * 60 * 60
 

@@ -14,7 +14,7 @@ from werkzeug.routing import BuildError
 from decksite import APP, get_season_id, prepare
 from decksite.data import archetype, competition
 from decksite.deck_type import DeckType
-from magic import card_price, legality, oracle, rotation, tournaments
+from magic import card_price, legality, oracle, rotation, seasons, tournaments
 from magic.models import Deck
 from shared import dtutil
 from shared.container import Container
@@ -68,16 +68,16 @@ class View(BaseView):
         return get_season_id()
 
     def season_name(self) -> str:
-        return rotation.season_name(get_season_id())
+        return seasons.season_name(get_season_id())
 
     def season_code_lower(self) -> str:
-        return rotation.season_code(get_season_id()).lower()
+        return seasons.season_code(get_season_id()).lower()
 
     def has_buttons(self) -> bool:
         return self.show_tournament_toggle or self.show_seasons or self.is_deck_page or self.has_external_source or self.show_filters_toggle
 
     def all_seasons(self) -> List[SeasonInfoDescription]:
-        seasons: List[SeasonInfoDescription] = [{
+        seasonlist: List[SeasonInfoDescription] = [{
             'name': 'All Time',
             'code': 'all',
             'code_lower': 'all',
@@ -95,13 +95,13 @@ class View(BaseView):
             'legal_cards_url': None
         }]
         num = 1
-        current_code = rotation.current_season_code()
-        next_rotation_set_code = rotation.next_rotation_ex().code
-        for code in rotation.SEASONS:
+        current_code = seasons.current_season_code()
+        next_rotation_set_code = seasons.next_rotation_ex().code
+        for code in seasons.SEASONS:
             if code == next_rotation_set_code:
                 break
-            seasons.append({
-                'name': rotation.season_name(num),
+            seasonlist.append({
+                'name': seasons.season_name(num),
                 'code': code,
                 'code_lower': code.lower(),
                 'num': num,
@@ -118,8 +118,8 @@ class View(BaseView):
                 'legal_cards_url': 'https://pdmtgo.com/legal_cards.txt' if code == current_code else f'https://pdmtgo.com/{code}_legal_cards.txt'
             })
             num += 1
-        seasons.reverse()
-        return seasons
+        seasonlist.reverse()
+        return seasonlist
 
     def favicon_url(self) -> str:
         return url_for('favicon', rest='.ico')
@@ -130,7 +130,7 @@ class View(BaseView):
     def title(self) -> str:
         if not self.page_title():
             return 'pennydreadfulmagic.com'
-        if get_season_id() == rotation.current_season_num():
+        if get_season_id() == seasons.current_season_num():
             season = ''
         elif get_season_id() == 0:
             season = ' - All Time'
@@ -145,7 +145,7 @@ class View(BaseView):
         return inflect.engine().number_to_words(len(tournaments.all_series_info()))
 
     def rotation_text(self) -> str:
-        return rotation.message()
+        return seasons.message()
 
     def learn_more_url(self) -> str:
         return url_for('about', hide_intro=True)
@@ -311,7 +311,7 @@ class View(BaseView):
 
 def seasonized_url(season_id: Union[int, str]) -> str:
     args = request.view_args.copy()
-    if season_id == rotation.current_season_num():
+    if season_id == seasons.current_season_num():
         args.pop('season_id', None)
         endpoint = cast(str, request.endpoint).replace('seasons.', '')
     else:
@@ -327,5 +327,5 @@ def add_season_num(f: str) -> str:
     if not 'Penny Dreadful ' in f:
         return f
     code = f.replace('Penny Dreadful ', '')
-    num = rotation.season_num(code)
+    num = seasons.season_num(code)
     return f.replace(code, f'{code} (Season {num})')

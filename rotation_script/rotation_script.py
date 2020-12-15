@@ -9,13 +9,13 @@ from typing import Dict, List, Set
 
 import ftfy
 
-from magic import card_price, fetcher, rotation
+from magic import card_price, fetcher, rotation, seasons
 from price_grabber.parser import PriceListType, parse_cardhoarder_prices, parse_mtgotraders_prices
 from shared import configuration, dtutil, fetch_tools
 from shared import redis_wrapper as redis
 from shared import repo, text
 
-TIME_UNTIL_ROTATION = rotation.next_rotation() - dtutil.now()
+TIME_UNTIL_ROTATION = seasons.next_rotation() - dtutil.now()
 BANNED_CARDS = ['Cleanse', 'Crusade'] # These cards are banned, even in Freeform
 
 def run() -> None:
@@ -111,7 +111,7 @@ def make_final_list() -> None:
     h.write(''.join(final))
     h.close()
     print('Generated legal_cards.txt.  {0}/{1} cards.'.format(len(passed), len(scores)), flush=True)
-    setcode = rotation.next_rotation_ex().mtgo_code
+    setcode = seasons.next_rotation_ex().mtgo_code
     h = open(os.path.join(configuration.get_str('legality_dir'), f'{setcode}_legal_cards.txt'), mode='w', encoding='utf-8')
     h.write(''.join(final))
     h.close()
@@ -123,7 +123,7 @@ def do_push() -> None:
     gh_repo = os.path.join(configuration.get_str('legality_dir'), 'gh_pages')
     if not os.path.exists(gh_repo):
         subprocess.run(['git', 'clone', 'https://github.com/PennyDreadfulMTG/pennydreadfulmtg.github.io.git', gh_repo], check=True)
-    setcode = rotation.next_rotation_ex().mtgo_code
+    setcode = seasons.next_rotation_ex().mtgo_code
     files = ['legal_cards.txt', f'{setcode}_legal_cards.txt']
     for fn in files:
         source = os.path.join(configuration.get_str('legality_dir'), fn)

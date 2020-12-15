@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 
 import ftfy
 
-from magic import multiverse, oracle, rotation
+from magic import multiverse, oracle, seasons
 from price_grabber import parser, price
 from shared import configuration, dtutil, fetch_tools
 from shared.database import get_database
@@ -66,7 +66,7 @@ def store(timestamp: float, all_prices: Dict[str, parser.PriceListType]) -> int:
     return count * 20
 
 def cleanup(count: int = 0) -> None:
-    beginning_of_season = rotation.last_rotation()
+    beginning_of_season = seasons.last_rotation()
     one_month_ago = dtutil.now(dtutil.WOTC_TZ) - datetime.timedelta(31)
     oldest_needed = min(beginning_of_season, one_month_ago)
     limit = ''

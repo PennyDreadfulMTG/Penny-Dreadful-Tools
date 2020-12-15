@@ -5,7 +5,7 @@ from flask import session
 
 from decksite.data import card
 from decksite.view import View
-from magic import rotation
+from magic import rotation, seasons
 from magic.models import Card
 from shared import configuration, dtutil
 
@@ -14,13 +14,13 @@ from shared import configuration, dtutil
 class Rotation(View):
     def __init__(self, interestingness: Optional[str] = None, query: Optional[str] = '') -> None:
         super().__init__()
-        until_rotation = rotation.next_rotation() - dtutil.now()
+        until_rotation = seasons.next_rotation() - dtutil.now()
         in_rotation = configuration.get_bool('always_show_rotation')
         if until_rotation < datetime.timedelta(7):
             in_rotation = True
-            self.rotation_msg = 'Rotation is in progress, ends ' + dtutil.display_date(rotation.next_rotation(), 2)
+            self.rotation_msg = 'Rotation is in progress, ends ' + dtutil.display_date(seasons.next_rotation(), 2)
         else:
-            self.rotation_msg = 'Rotation is ' + dtutil.display_date(rotation.next_rotation(), 2)
+            self.rotation_msg = 'Rotation is ' + dtutil.display_date(seasons.next_rotation(), 2)
         if in_rotation:
             self.in_rotation = in_rotation
             self.show_interestingness_filter = True

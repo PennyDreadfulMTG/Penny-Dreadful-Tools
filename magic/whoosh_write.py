@@ -2,9 +2,9 @@ import os
 from typing import List
 
 from whoosh.fields import NUMERIC, STORED, TEXT, Schema
-from whoosh.index import Index, create_in, open_dir
+from whoosh.index import FileIndex, create_in, open_dir
 
-from magic import multiverse
+from magic import multiverse, fetcher
 from magic.models import Card
 from magic.whoosh_constants import WhooshConstants
 
@@ -28,7 +28,7 @@ def ensure_dir_exists(directory: str) -> None:
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-def update_index(index: Index, cards: List[Card]) -> None:
+def update_index(index: FileIndex, cards: List[Card]) -> None:
     writer = index.writer()
     # We exclude tokens here because they can have the exact same name as cards.
     # We exclude emblems here to stop them showing up as
@@ -47,3 +47,17 @@ def update_index(index: Index, cards: List[Card]) -> None:
             document['name_normalized'] = name
             writer.update_document(**document)
     writer.commit()
+
+def reindex() -> None:
+    writer = WhooshWriter()
+    cs = multiverse.get_all_cards()
+    for alias, name in fetcher.card_aliases():
+        for c in cs:
+            if c.name == name:
+                c.names.append(alias)
+    writer.rewrite_index(cs)
+
+def reindex_specific_cards(cs: List[Card]) -> None:
+    writer = WhooshWriter()
+    for c in cs:
+        writer.update_card(c)

@@ -1,17 +1,19 @@
-FROM nikolaik/python-nodejs:latest AS python
+FROM nikolaik/python-nodejs:python3.8-nodejs12 AS python
 
 WORKDIR /restore
-COPY requirements.txt ./
+RUN pip install pipenv
+COPY Pipfile Pipfile.lock ./
+RUN pipenv lock -r > requirements.txt
 RUN pip install -r requirements.txt
 CMD ["/bin/bash"]
 
-FROM nikolaik/python-nodejs:latest AS js
+FROM nikolaik/python-nodejs:python3.8-nodejs12 AS js
 
 WORKDIR /restore
 COPY package*.json ./
 RUN npm ci --verbose
 
-FROM nikolaik/python-nodejs:latest
+FROM nikolaik/python-nodejs:python3.8-nodejs12
 
 COPY --from=python /usr/local/lib/python3.8/site-packages/ /usr/local/lib/python3.8/site-packages/
 COPY --from=js /restore/node_modules /pdm/node_modules

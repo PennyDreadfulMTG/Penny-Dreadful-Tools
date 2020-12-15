@@ -28,5 +28,4 @@ jobs:
         title: Sort Imports
         branch: sort
         labels: merge when ready
-      env:
-        GITHUB_TOKEN: ${{ secrets.VORPAL_PAT }}
+        token: ${{ secrets.VORPAL_PAT }}

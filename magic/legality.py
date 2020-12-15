@@ -1,6 +1,6 @@
 from typing import Dict, List, Set
 
-from magic import oracle, rotation, seasons
+from magic import oracle, seasons
 from magic.database import db
 from magic.models import Card
 from shared.container import Container

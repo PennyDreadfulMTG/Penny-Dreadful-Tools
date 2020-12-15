@@ -1,7 +1,7 @@
 import time
 from typing import Optional
 
-from magic import card_price, rotation, seasons
+from magic import card_price, seasons
 from magic.abc import PriceDataType
 from magic.models import Card
 from shared import configuration, database

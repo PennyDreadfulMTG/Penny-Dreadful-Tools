@@ -5,7 +5,7 @@ from flask import g, session, url_for
 
 from decksite.data.models.person import Person
 from decksite.deck_type import DeckType
-from magic import fetcher, oracle, rotation, seasons
+from magic import fetcher, oracle, seasons
 from magic.models import Card, Deck
 from shared import dtutil
 from shared.container import Container

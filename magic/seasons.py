@@ -7,7 +7,6 @@ from magic import fetcher
 from shared import dtutil
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
-
 WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
 ROTATION_OFFSET = datetime.timedelta(days=7) # We rotate seven days after a set is released.
 

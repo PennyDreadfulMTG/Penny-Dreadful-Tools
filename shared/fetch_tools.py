@@ -9,6 +9,7 @@ import requests
 from shared import perf
 from shared.pd_exception import OperationalException
 
+
 def fetch(url: str, character_encoding: Optional[str] = None, force: bool = False, retry: bool = False, session: Optional[requests.Session] = None) -> str:
     headers = {}
     if force:

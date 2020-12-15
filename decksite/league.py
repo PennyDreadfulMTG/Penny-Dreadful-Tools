@@ -11,7 +11,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 from decksite.data import competition, deck, match, person, query
 from decksite.data.form import Form
 from decksite.database import db
-from magic import card, decklist, legality, rotation, seasons
+from magic import card, decklist, legality, seasons
 from magic.decklist import DecklistType
 from magic.models import Deck
 from shared import configuration, dtutil, fetch_tools, guarantee, logger

@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Tuple, Union
 import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
 
-from magic import rotation, seasons
+from magic import seasons
 from magic.models import Deck
 from shared import dtutil, guarantee
 from shared.container import Container

@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Set, Union
 
 from github.GithubException import GithubException
 
-from magic import card, database, fetcher, mana, rotation, seasons
+from magic import card, database, fetcher, mana, seasons
 from magic.abc import CardDescription
 from magic.card import TableDescription
 from magic.database import create_table_def, db

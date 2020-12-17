@@ -2,8 +2,8 @@ import re
 import urllib
 from typing import Dict, List, Optional, Set
 
-from bs4 import BeautifulSoup
 import requests
+from bs4 import BeautifulSoup
 
 from decksite import translation
 from decksite.data import deck

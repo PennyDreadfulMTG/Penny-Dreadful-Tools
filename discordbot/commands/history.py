@@ -1,4 +1,5 @@
 from typing import Dict
+
 from discord.ext import commands
 
 from discordbot.command import MtgContext

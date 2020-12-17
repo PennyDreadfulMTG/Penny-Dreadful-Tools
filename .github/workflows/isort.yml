@@ -28,3 +28,4 @@ jobs:
         title: Sort Imports
         branch: sort
         labels: merge when ready
+        token: ${{ secrets.VORPAL_PAT }}

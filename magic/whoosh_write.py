@@ -4,7 +4,7 @@ from typing import List
 from whoosh.fields import NUMERIC, STORED, TEXT, Schema
 from whoosh.index import FileIndex, create_in, open_dir
 
-from magic import multiverse, fetcher
+from magic import fetcher, multiverse
 from magic.models import Card
 from magic.whoosh_constants import WhooshConstants
 

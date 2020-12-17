@@ -21,7 +21,7 @@ services:
       - ./shared_web:/pdm/shared_web
   discordbot:
     build: .
-    command: ["python3", "run.py", "--wait-for-db", "discordbot"]
+    command: ["pipenv", "run", "python", "run.py", "--wait-for-db", "discordbot"]
     depends_on:
       - db
       - redis

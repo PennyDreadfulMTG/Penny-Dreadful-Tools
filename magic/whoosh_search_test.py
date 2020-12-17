@@ -3,7 +3,7 @@ from typing import List
 
 import whoosh
 
-from magic import multiverse
+from magic import whoosh_write
 from magic.whoosh_search import WhooshSearcher
 
 
@@ -14,7 +14,7 @@ class WhooshSearchTest(unittest.TestCase):
         try:
             cls.searcher = WhooshSearcher() # type: ignore
         except whoosh.index.EmptyIndexError: # Whoosh hasn't been initialized yet!
-            multiverse.reindex()
+            whoosh_write.reindex()
             cls.searcher = WhooshSearcher() # type: ignore
 
 

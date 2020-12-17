@@ -1,7 +1,7 @@
 from discord.ext import commands
 
 from discordbot.command import MtgContext
-from magic import multiverse, oracle
+from magic import multiverse, oracle, whoosh_write
 
 
 @commands.command(hidden=True)
@@ -12,6 +12,6 @@ async def update(ctx: MtgContext) -> None:
     oracle.legal_cards(force=True)
     await multiverse.update_bugged_cards_async()
     multiverse.rebuild_cache()
-    multiverse.reindex()
+    whoosh_write.reindex()
     oracle.init(force=True)
     await ctx.send('Reloaded legal cards and bugs.')

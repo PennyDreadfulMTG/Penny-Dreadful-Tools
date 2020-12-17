@@ -18,7 +18,7 @@ from github.GithubException import GithubException
 
 import discordbot.commands
 from discordbot import command
-from magic import fetcher, multiverse, oracle, rotation, seasons, tournaments
+from magic import fetcher, multiverse, oracle, rotation, seasons, tournaments, whoosh_write
 from magic.models import Card
 from shared import configuration, dtutil, fetch_tools, perf
 from shared import redis_wrapper as redis
@@ -341,7 +341,9 @@ class Bot(commands.Bot):
 def init() -> None:
     client = Bot()
     logging.info('Initializing Cards DB')
-    multiverse.init()
+    updated = multiverse.init()
+    if updated:
+        whoosh_write.reindex()
     asyncio.ensure_future(multiverse.update_bugged_cards_async())
     oracle.init()
     logging.info('Connecting to Discord')

@@ -9,7 +9,6 @@ from magic.abc import CardDescription
 from magic.card import TableDescription
 from magic.database import create_table_def, db
 from magic.models import Card
-from magic.whoosh_write import WhooshWriter
 from shared import configuration, dtutil, repo
 from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
@@ -18,7 +17,7 @@ from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
 FORMAT_IDS: Dict[str, int] = {}
 
-def init() -> None:
+def init() -> bool:
     event_loop = None
     try:
         event_loop = asyncio.get_event_loop()
@@ -27,13 +26,13 @@ def init() -> None:
         asyncio.set_event_loop(event_loop)
     return event_loop.run_until_complete(init_async())
 
-async def init_async() -> None:
+async def init_async() -> bool:
     try:
         last_updated = await fetcher.scryfall_last_updated_async()
         if last_updated > database.last_updated():
             if configuration.get_bool('prevent_cards_db_updates'):
                 print('Not updating cards db because prevent_cards_db_updates is True')
-                return
+                return False
             print('Database update required')
             try:
                 await update_database_async(last_updated)
@@ -42,9 +41,10 @@ async def init_async() -> None:
                 # if the above fails for some reason, then things are probably bad
                 # but we can't even start up a shell to fix unless the _cache_card table exists
                 rebuild_cache()
-            reindex()
+            return True
     except fetcher.FetchException:
         print('Unable to connect to Scryfall.')
+    return False
 
 def layouts() -> Dict[str, bool]:
     return {
@@ -466,20 +466,6 @@ def add_to_cache(ids: List[int]) -> None:
     query = base_query(f'c.id IN ({values})')
     sql = f'INSERT INTO _cache_card {query}'
     db().execute(sql)
-
-def reindex() -> None:
-    writer = WhooshWriter()
-    cs = get_all_cards()
-    for alias, name in fetcher.card_aliases():
-        for c in cs:
-            if c.name == name:
-                c.names.append(alias)
-    writer.rewrite_index(cs)
-
-def reindex_specific_cards(cs: List[Card]) -> None:
-    writer = WhooshWriter()
-    for c in cs:
-        writer.update_card(c)
 
 def database2json(propname: str) -> str:
     if propname == 'system_id':

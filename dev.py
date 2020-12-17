@@ -194,8 +194,9 @@ def runtests(argv: List[str], m: str, mark: bool) -> None:
     # pylint: disable=import-outside-toplevel
     import pytest
 
-    from magic import fetcher, multiverse, oracle
-    multiverse.init()
+    from magic import fetcher, multiverse, oracle, whoosh_write
+    if multiverse.init():
+        whoosh_write.reindex()
     oracle.init()
     try:
         fetcher.sitemap()

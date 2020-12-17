@@ -1,6 +1,6 @@
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
-from magic import card, mana, multiverse, seasons
+from magic import card, mana, multiverse, seasons, whoosh_write
 from magic.abc import CardDescription
 from magic.database import db
 from magic.models import Card, Printing
@@ -184,6 +184,6 @@ async def add_cards_and_update_async(printings: List[CardDescription]) -> None:
     ids = await multiverse.insert_cards_async(printings)
     multiverse.add_to_cache(ids)
     cs = [Card(r) for r in db().select(multiverse.cached_base_query('c.id IN (' + ','.join([str(id) for id in ids]) + ')'))]
-    multiverse.reindex_specific_cards(cs)
+    whoosh_write.reindex_specific_cards(cs)
     for c in cs:
         CARDS_BY_NAME[c.name] = c

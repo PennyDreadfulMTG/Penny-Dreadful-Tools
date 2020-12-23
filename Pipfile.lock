@@ -265,10 +265,11 @@
         },
         "editorconfig": {
             "hashes": [
-                "sha256:1b0ef345f9c3a673e492cfe608ed644b236139f7fceab5c6f513a71bcaf8a56c",
-                "sha256:60d6f10b87d2572ac1581cb8c9f018163e2b13a9e49588f9fb6dc8c715a1744c"
+                "sha256:57f8ce78afcba15c8b18d46b5170848c88d56fd38f05c2ec60dbbfcb8996e89e",
+                "sha256:6b0851425aa875b08b16789ee0eeadbd4ab59666e9ebe728e526314c4a2e52c1"
             ],
-            "version": "==0.12.2"
+            "index": "pypi",
+            "version": "==0.12.3"
         },
         "feedparser": {
             "hashes": [

@@ -13,24 +13,11 @@ from werkzeug import exceptions, wrappers
 
 from shared import configuration, logger, repo
 from shared.pd_exception import DoesNotExistException
-import sentry_sdk
-from flask import Flask
-from sentry_sdk.integrations.flask import FlaskIntegration
 
 from . import api, localization, oauth
 from .api import generate_error, return_json
 from .views import InternalServerError, NotFound, Unauthorized
 
-sentry_token = configuration.get_optional_str('sentry_token')
-if sentry_token:
-    try:
-        sentry_sdk.init(
-            dsn=sentry_token,
-            integrations=[FlaskIntegration()],
-            traces_sample_rate=0.01
-        )
-    except Exception as c: # pylint: disable=broad-except
-        print(c)
 
 # pylint: disable=no-self-use, too-many-public-methods
 class PDFlask(Flask):

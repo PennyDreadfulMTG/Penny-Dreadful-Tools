@@ -11,11 +11,6 @@ services:
 env:
   global:
     - mysql_user=root slow_query=999.0
-  matrix:
-    - CMD="python dev.py tests"
-    - CMD="python dev.py mypy"
-    - CMD="python dev.py lint"
-    - CMD="python dev.py jslint"
 before_install:
   - nvm install 12
 install:
@@ -24,8 +19,7 @@ install:
   - npm run-script build
   - echo "SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));" | mysql
 script:
-  - echo $CMD
-  - pipenv run $CMD
+  - pipenv run python dev.py tests
 notifications:
     webhooks: https://www.travisbuddy.com/?insertMode=update
     on_success: never

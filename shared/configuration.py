@@ -85,6 +85,7 @@ DEFAULTS: Dict[str, Any] = {
     'rotation_hype_channel_id': '207281932214599682',
     'save_historic_legal_lists': False,
     'scratch_dir': '.',
+    'sentry_token': None,
     'slow_fetch': 10.0,
     'slow_page': 10.0,
     'slow_query': 5.0,

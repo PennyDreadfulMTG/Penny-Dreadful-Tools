@@ -9,11 +9,13 @@ from flask import (Blueprint, Flask, Request, Response, redirect, request, send_
 from flask_babel import Babel
 from flask_restx import Api
 from github.GithubException import GithubException
-from sentry_sdk.integrations.flask import FlaskIntegration
 from werkzeug import exceptions, wrappers
 
 from shared import configuration, logger, repo
 from shared.pd_exception import DoesNotExistException
+import sentry_sdk
+from flask import Flask
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 from . import api, localization, oauth
 from .api import generate_error, return_json

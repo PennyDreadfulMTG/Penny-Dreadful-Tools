@@ -3,7 +3,6 @@ import subprocess
 import urllib
 from typing import Any, Dict, Optional, Tuple, Union
 
-import sentry_sdk
 from flask import (Blueprint, Flask, Request, Response, redirect, request, send_from_directory,
                    session, url_for)
 from flask_babel import Babel

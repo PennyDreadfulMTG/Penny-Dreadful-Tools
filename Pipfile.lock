@@ -253,10 +253,11 @@
         },
         "deprecated": {
             "hashes": [
-                "sha256:525ba66fb5f90b07169fdd48b6373c18f1ee12728ca277ca44567a367d9d7f74",
-                "sha256:a766c1dccb30c5f6eb2b203f87edd1d8588847709c78589e1521d769addc8218"
+                "sha256:471ec32b2755172046e28102cd46c481f21c6036a0ec027521eba8521aa4ef35",
+                "sha256:924b6921f822b64ec54f49be6700a126bab0640cfafca78f22c9d429ed590560"
             ],
-            "version": "==1.2.10"
+            "index": "pypi",
+            "version": "==1.2.11"
         },
         "discord.py": {
             "extras": [
@@ -349,10 +350,10 @@
         },
         "google-api-core": {
             "hashes": [
-                "sha256:0f1dee446db2685863c3c493a90fefa5fc7f4defaf8e1a320b50ccaddfb5d469",
-                "sha256:a7f5794446a22ff7d36764959ba5f319f37628faf4da04fdc0dedf1598b556c1"
+                "sha256:4656345cba9627ab1290eab51300a6397cc50370d99366133df1ae64b744e1eb",
+                "sha256:d967beae8d8acdb88fb2f6f769e2ee0ee813042576a08891bded3b8e234150ae"
             ],
-            "version": "==1.24.1"
+            "version": "==1.25.0"
         },
         "google-api-python-client": {
             "hashes": [
@@ -556,10 +557,9 @@
         },
         "mako": {
             "hashes": [
-                "sha256:8195c8c1400ceb53496064314c6736719c6f25e7479cd24c77be3d9361cddc27",
-                "sha256:93729a258e4ff0747c876bd9e20df1b9758028946e976324ccd2d68245c7b6a9"
+                "sha256:17831f0b7087c313c0ffae2bcbbd3c1d5ba9eeac9c38f2eb7b50e8c99fe9d5ab"
             ],
-            "version": "==1.1.3"
+            "version": "==1.1.4"
         },
         "markdown": {
             "hashes": [

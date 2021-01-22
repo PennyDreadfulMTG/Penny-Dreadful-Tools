@@ -31,7 +31,7 @@ def pull_season_id(_endpoint: str, values: Dict[str, Any]) -> None:
     g.season_id = seasons.season_id(v)
 
 @SEASONS.before_request
-def redirect_current_and_future_seasons():
+def fixup_paths():
     if get_season_id() >= seasons.current_season_num():
         return redirect(re.sub('/seasons/[^/]*', '', request.path))
     if request.path.startswith('/seasons/0'):

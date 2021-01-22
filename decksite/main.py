@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import re
 from typing import Optional
 
 from flask import Response, abort, g, make_response, redirect, request, send_file, session
@@ -17,7 +18,7 @@ from decksite.data import news as ns
 from decksite.database import db
 from decksite.views import Home
 from magic import card as mc
-from magic import image_fetcher, oracle
+from magic import image_fetcher, oracle, seasons
 from shared import dtutil, logger, perf
 from shared.pd_exception import TooFewItemsException
 
@@ -106,8 +107,14 @@ def banner(seasonnum: str) -> Response:
     return send_file(os.path.abspath(path))
 
 @APP.before_request
-def before_request() -> None:
+def before_request() -> Optional[wrappers.Response]:
+    print(get_season_id())
+    if request.path.startswith('/seasons') and get_season_id() >= seasons.current_season_num():
+        return redirect(re.sub('/seasons/[^/]*', '', request.path))
+    if request.path.startswith('/seasons/0'):
+        return redirect(request.path.replace('/seasons/0', '/seasons/all'))
     g.p = perf.start()
+    return None
 
 @APP.after_request
 def after_request(response: Response) -> Response:

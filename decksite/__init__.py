@@ -1,6 +1,6 @@
 import datetime
 import logging
-from typing import Any, Dict, List, Tuple, Union, cast
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from flask import Blueprint, g, request, url_for
 from flask_babel import gettext, ngettext

@@ -1,9 +1,8 @@
 import datetime
 import logging
-import re
-from typing import Any, Dict, List, Tuple, Union, cast
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
-from flask import Blueprint, g, redirect, request, url_for
+from flask import Blueprint, g, request, url_for
 from flask_babel import gettext, ngettext
 
 from magic import multiverse, oracle, seasons
@@ -29,13 +28,6 @@ def add_season_id(_endpoint: str, values: Dict[str, Any]) -> None:
 def pull_season_id(_endpoint: str, values: Dict[str, Any]) -> None:
     v = values.pop('season_id')
     g.season_id = seasons.season_id(v)
-
-@SEASONS.before_request
-def fixup_paths():
-    if get_season_id() >= seasons.current_season_num():
-        return redirect(re.sub('/seasons/[^/]*', '', request.path))
-    if request.path.startswith('/seasons/0'):
-        return redirect(request.path.replace('/seasons/0', '/seasons/all'))
 
 APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
 

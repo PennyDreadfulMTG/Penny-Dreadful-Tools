@@ -108,7 +108,6 @@ def banner(seasonnum: str) -> Response:
 
 @APP.before_request
 def before_request() -> Optional[wrappers.Response]:
-    print(get_season_id())
     if request.path.startswith('/seasons') and get_season_id() >= seasons.current_season_num():
         return redirect(re.sub('/seasons/[^/]*', '', request.path))
     if request.path.startswith('/seasons/0'):

@@ -35,7 +35,7 @@ def previous_tournament_info() -> Dict[str, Any]:
     return tournament_info(TimeDirection.BEFORE, units=1)
 
 def tournament_info(time_direction: TimeDirection, units: int = 2) -> Dict[str, Any]:
-    id, name, time = get_nearest_tournament(time_direction)
+    tournament_id, name, time = get_nearest_tournament(time_direction)
     next_tournament_time_precise = abs(dtutil.dt2ts(time) - dtutil.dt2ts(dtutil.now()))
     near = next_tournament_time_precise < 18000 # Threshold for near: 5 hours in seconds
     next_tournament_time = dtutil.display_time(next_tournament_time_precise, units)
@@ -45,7 +45,7 @@ def tournament_info(time_direction: TimeDirection, units: int = 2) -> Dict[str, 
         'next_tournament_time_precise': next_tournament_time_precise,
         'near': near
     }
-    info.update(series_info(id))
+    info.update(series_info(tournament_id))
     return info
 
 def get_nearest_tournament(time_direction: TimeDirection = TimeDirection.AFTER) -> TournamentDateType:
@@ -116,14 +116,14 @@ def prizes_by_finish(multiplier: int = 1) -> List[Dict[str, Any]]:
         finish += 1
     return prizes
 
-def series_info(id: int) -> Container:
-    return guarantee.exactly_one([s for s in all_series_info() if s.id == id])
+def series_info(tournament_id: int) -> Container:
+    return guarantee.exactly_one([s for s in all_series_info() if s.id == tournament_id])
 
 def all_series_info() -> List[Container]:
     info = get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))
     return [
         Container({
-            'id': FNM,
+            'tournament_id': FNM,
             'name': info[0][0],
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
@@ -132,7 +132,7 @@ def all_series_info() -> List[Container]:
 
         }),
         Container({
-            'id': SAT,
+            'tournament_id': SAT,
             'name': info[1][0],
             'hosts': ['j_meka', 'crazybaloth'],
             'display_time': '1:30pm Eastern',
@@ -140,7 +140,7 @@ def all_series_info() -> List[Container]:
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'id': APAC,
+            'tournament_id': APAC,
             'name': info[2][0],
             'hosts': ['jgabrielygalan', 'silasary'],
             'display_time': '4pm Japan Standard Time',
@@ -148,7 +148,7 @@ def all_series_info() -> List[Container]:
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'id': SUN,
+            'tournament_id': SUN,
             'name': info[3][0],
             'hosts': ['cody_', 'bakert99'],
             'display_time': '1:30pm Eastern',
@@ -156,7 +156,7 @@ def all_series_info() -> List[Container]:
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'id': MON,
+            'tournament_id': MON,
             'name': info[4][0],
             'hosts': ['briar_moss', 'j_meka'],
             'display_time': '7pm Eastern',
@@ -164,7 +164,7 @@ def all_series_info() -> List[Container]:
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'id': THU,
+            'tournament_id': THU,
             'name': info[5][0],
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',

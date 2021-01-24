@@ -152,7 +152,7 @@ def all_series_info() -> List[Container]:
             'name': info[3][1],
             'hosts': ['cody_', 'bakert99'],
             'display_time': '1:30pm Eastern',
-            'time': info[3][1],
+            'time': info[3][2],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({

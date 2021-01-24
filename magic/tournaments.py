@@ -11,7 +11,14 @@ from magic.models import Deck
 from shared import dtutil, guarantee
 from shared.container import Container
 
-TournamentDateType = Tuple[str, datetime.datetime]
+TournamentDateType = Tuple[int, str, datetime.datetime]
+
+FNM = 1
+SAT = 2
+APAC = 3
+SUN = 4
+MON = 5
+THU = 6
 
 class TimeDirection(Enum):
     BEFORE = 1
@@ -28,7 +35,7 @@ def previous_tournament_info() -> Dict[str, Any]:
     return tournament_info(TimeDirection.BEFORE, units=1)
 
 def tournament_info(time_direction: TimeDirection, units: int = 2) -> Dict[str, Any]:
-    name, time = get_nearest_tournament(time_direction)
+    tournament_id, name, time = get_nearest_tournament(time_direction)
     next_tournament_time_precise = abs(dtutil.dt2ts(time) - dtutil.dt2ts(dtutil.now()))
     near = next_tournament_time_precise < 18000 # Threshold for near: 5 hours in seconds
     next_tournament_time = dtutil.display_time(next_tournament_time_precise, units)
@@ -38,7 +45,7 @@ def tournament_info(time_direction: TimeDirection, units: int = 2) -> Dict[str, 
         'next_tournament_time_precise': next_tournament_time_precise,
         'near': near
     }
-    info.update(series_info(name))
+    info.update(series_info(tournament_id))
     return info
 
 def get_nearest_tournament(time_direction: TimeDirection = TimeDirection.AFTER) -> TournamentDateType:
@@ -50,21 +57,21 @@ def get_nearest_tournament(time_direction: TimeDirection = TimeDirection.AFTER) 
         start = start - datetime.timedelta(days=7)
 
     dates = get_all_next_tournament_dates(start, index=index)
-    return sorted(dates, key=lambda t: t[1])[index]
+    return sorted(dates, key=lambda t: t[2])[index]
 
 def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> List[TournamentDateType]:
     apac_start = start.astimezone(tz=dtutil.APAC_SERIES_TZ)
     until = start + datetime.timedelta(days=7)
-    pdfnm_time = ('Penny Dreadful FNM', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index]) # type: ignore
+    pdfnm_time = (FNM, 'Penny Dreadful FNM', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index]) # type: ignore
     if is_pd500_week(start):
         pdsat_name = 'The Penny Dreadful 500'
     else:
         pdsat_name = 'Penny Dreadful Saturdays'
-    pdsat_time = (pdsat_name, rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index]) # type: ignore
-    apds_time = ('APAC Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=16, byminute=0, bysecond=0, dtstart=apac_start, until=until, byweekday=rrule.SU)[index]) # type: ignore
-    pds_time = ('Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index]) # type: ignore
-    pdm_time = ('Penny Dreadful Mondays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index]) # type: ignore
-    pdt_time = ('Penny Dreadful Thursdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index]) # type: ignore
+    pdsat_time = (SAT, pdsat_name, rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index]) # type: ignore
+    apds_time = (APAC, 'APAC Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=16, byminute=0, bysecond=0, dtstart=apac_start, until=until, byweekday=rrule.SU)[index]) # type: ignore
+    pds_time = (SUN, 'Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index]) # type: ignore
+    pdm_time = (MON, 'Penny Dreadful Mondays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index]) # type: ignore
+    pdt_time = (THU, 'Penny Dreadful Thursdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index]) # type: ignore
     return [pdfnm_time, pdsat_time, apds_time, pds_time, pdm_time, pdt_time]
 
 # Note: this may be in the past. It always gives the date for the current season.
@@ -109,53 +116,59 @@ def prizes_by_finish(multiplier: int = 1) -> List[Dict[str, Any]]:
         finish += 1
     return prizes
 
-def series_info(name: str) -> Container:
-    return guarantee.exactly_one([s for s in all_series_info() if s.name == name])
+def series_info(tournament_id: int) -> Container:
+    return guarantee.exactly_one([s for s in all_series_info() if s.tournament_id == tournament_id])
 
 def all_series_info() -> List[Container]:
     info = get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))
     return [
         Container({
-            'name': info[0][0],
+            'tournament_id': info[0][0],
+            'name': info[0][1],
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
-            'time': info[0][1],
+            'time': info[0][2],
             'sponsor_name': 'Cardhoarder'
 
         }),
         Container({
-            'name': info[1][0],
+            'tournament_id': info[1][0],
+            'name': info[1][1],
             'hosts': ['j_meka', 'crazybaloth'],
             'display_time': '1:30pm Eastern',
-            'time': info[1][1],
+            'time': info[1][2],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'name': info[2][0],
+            'tournament_id': info[0][0],
+            'name': info[2][1],
             'hosts': ['jgabrielygalan', 'silasary'],
             'display_time': '4pm Japan Standard Time',
-            'time': info[2][1],
+            'time': info[2][2],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'name': info[3][0],
+            'tournament_id': info[3][0],
+            'name': info[3][1],
             'hosts': ['cody_', 'bakert99'],
             'display_time': '1:30pm Eastern',
-            'time': info[3][1],
+            'time': info[3][2],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'name': info[4][0],
+            'tournament_id': info[4][0],
+            'name': info[4][1],
             'hosts': ['briar_moss', 'j_meka'],
             'display_time': '7pm Eastern',
-            'time': info[4][1],
+            'time': info[4][2],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'name': info[5][0],
+            'tournament_id': info[5][0],
+            'name': info[5][1],
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
-            'time': info[5][1],
+            'time': info[5][2],
             'sponsor_name': 'Cardhoarder'
         })
     ]

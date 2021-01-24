@@ -123,52 +123,52 @@ def all_series_info() -> List[Container]:
     info = get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))
     return [
         Container({
-            'tournament_id': FNM,
-            'name': info[0][0],
+            'tournament_id': info[0][0],
+            'name': info[0][1],
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
-            'time': info[0][1],
+            'time': info[0][2],
             'sponsor_name': 'Cardhoarder'
 
         }),
         Container({
-            'tournament_id': SAT,
-            'name': info[1][0],
+            'tournament_id': info[1][0],
+            'name': info[1][1],
             'hosts': ['j_meka', 'crazybaloth'],
             'display_time': '1:30pm Eastern',
-            'time': info[1][1],
+            'time': info[1][2],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'tournament_id': APAC,
-            'name': info[2][0],
+            'tournament_id': info[0][0],
+            'name': info[2][1],
             'hosts': ['jgabrielygalan', 'silasary'],
             'display_time': '4pm Japan Standard Time',
-            'time': info[2][1],
+            'time': info[2][2],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'tournament_id': SUN,
-            'name': info[3][0],
+            'tournament_id': info[3][0],
+            'name': info[3][1],
             'hosts': ['cody_', 'bakert99'],
             'display_time': '1:30pm Eastern',
             'time': info[3][1],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'tournament_id': MON,
-            'name': info[4][0],
+            'tournament_id': info[4][0],
+            'name': info[4][1],
             'hosts': ['briar_moss', 'j_meka'],
             'display_time': '7pm Eastern',
-            'time': info[4][1],
+            'time': info[4][2],
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'tournament_id': THU,
-            'name': info[5][0],
+            'tournament_id': info[5][0],
+            'name': info[5][1],
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
-            'time': info[5][1],
+            'time': info[5][2],
             'sponsor_name': 'Cardhoarder'
         })
     ]

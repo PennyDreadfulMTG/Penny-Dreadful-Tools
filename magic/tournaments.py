@@ -117,7 +117,7 @@ def prizes_by_finish(multiplier: int = 1) -> List[Dict[str, Any]]:
     return prizes
 
 def series_info(tournament_id: int) -> Container:
-    return guarantee.exactly_one([s for s in all_series_info() if s.id == tournament_id])
+    return guarantee.exactly_one([s for s in all_series_info() if s.tournament_id == tournament_id])
 
 def all_series_info() -> List[Container]:
     info = get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))

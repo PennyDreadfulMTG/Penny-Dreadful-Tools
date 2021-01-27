@@ -18,6 +18,7 @@ from magic import card_price, legality, oracle, seasons, tournaments
 from magic.models import Deck
 from shared import dtutil
 from shared.container import Container
+from shared_web import template
 from shared_web.base_view import BaseView
 
 SeasonInfoDescription = TypedDict('SeasonInfoDescription', {
@@ -137,6 +138,13 @@ class View(BaseView):
         else:
             season = ' - Season {n}'.format(n=get_season_id())
         return '{page_title}{season} – pennydreadfulmagic.com'.format(page_title=self.page_title(), season=season)
+
+    # Sitewide notice in a banner at the top of every page, for very important things only!
+    def notice_html(self) -> str:
+        if tournaments.is_pd500_week(dtutil.now(dtutil.GATHERLING_TZ)):
+            date = dtutil.display_date_with_date_and_year(tournaments.pd500_date())
+            return template.render_name('pd500notice', {'url': url_for('pd500'), 'date': date})
+        return ''
 
     def page_title(self) -> Optional[str]:
         pass

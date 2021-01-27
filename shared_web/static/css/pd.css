@@ -126,6 +126,13 @@ blockquote {
     margin-bottom: 1rem;
 }
 
+.notice a {
+    background: #eee;
+    display: block;
+    font-size: 1.333rem;
+    padding: 1em;
+}
+
 main p, footer p {
     /*
         A space equal to 50-100% of the body text size will usually suffice. The larger the point size, the more space you'll need between paragraphs to make a visible difference.
@@ -273,6 +280,7 @@ html
         header
         nav
         main
+            .notice
             .banner
                 h1
             .content

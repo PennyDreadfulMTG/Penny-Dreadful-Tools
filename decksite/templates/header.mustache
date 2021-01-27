@@ -37,6 +37,11 @@
         </nav>
         <main>
             {{> intro}}
+            {{#notice_html}}
+                <div class="notice">
+                    {{{notice_html}}}
+                </div>
+            {{/notice_html}}
             {{^is_home_page}}
                 {{> banner}}
             {{/is_home_page}}

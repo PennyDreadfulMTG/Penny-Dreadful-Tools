@@ -140,7 +140,7 @@ def all_series_info() -> List[Container]:
             'sponsor_name': 'Cardhoarder'
         }),
         Container({
-            'tournament_id': info[0][0],
+            'tournament_id': info[2][0],
             'name': info[2][1],
             'hosts': ['jgabrielygalan', 'silasary'],
             'display_time': '4pm Japan Standard Time',

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "296cf67319ed9c6610421d3d8fea2bfe2b8d42dc34867c09acd598a8799adcfd"
+            "sha256": "8fb25c1376dd533402f38fae07d46b7582b80518cc67f7f502a08582eaa61d26"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -758,7 +758,6 @@
                 "sha256:eee454d3aa3955d0c0069a0f265fea47f1e1384c35a110a95efed358eb6e1562",
                 "sha256:f1e9424e9aa3834ea27cc12f9c6ea8ace5da18ee60a720bb3a85b2f733f41782"
             ],
-            "index": "pypi",
             "version": "==1.20.0"
         },
         "oauthlib": {
@@ -1059,11 +1058,11 @@
         },
         "pytz": {
             "hashes": [
-                "sha256:16962c5fb8db4a8f63a26646d8886e9d769b6c511543557bc84e9569fb9a9cb4",
-                "sha256:180befebb1927b16f6b57101720075a984c019ac16b1b7575673bea42c6c3da5"
+                "sha256:83a4a90894bf38e243cf052c8b58f381bfe9a7a483f6a9cab140bc7f702ac4da",
+                "sha256:eb10ce3e7736052ed3623d49975ce333bcd712c7bb19a58b9e2089d4057d0798"
             ],
             "index": "pypi",
-            "version": "==2020.5"
+            "version": "==2021.1"
         },
         "pyyaml": {
             "hashes": [

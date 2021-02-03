@@ -37,9 +37,10 @@
         },
         "alembic": {
             "hashes": [
-                "sha256:04608b6904a6e6bd1af83e1a48f73f50ba214aeddef44b92d498df33818654a8"
+                "sha256:e871118b6174681f7e9a9ea67cfcae954c6d18e05b49c6b17f662d2530c76bf5"
             ],
-            "version": "==1.5.3"
+            "index": "pypi",
+            "version": "==1.5.4"
         },
         "aniso8601": {
             "hashes": [

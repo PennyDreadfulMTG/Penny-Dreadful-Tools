@@ -1,7 +1,8 @@
 from decksite.data import archetype, deck
 
+HOURLY = True
 
-def ad_hoc() -> None:
+def run() -> None:
     decks = deck.load_decks('NOT reviewed')
     deck.calculate_similar_decks(decks)
     for d in decks:

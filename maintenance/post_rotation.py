@@ -20,6 +20,7 @@ def ad_hoc() -> None:
     event_loop.run_until_complete(multiverse.set_legal_cards_async()) # PD current list
     event_loop.run_until_complete(multiverse.update_pd_legality_async()) # PD previous lists
     insert_seasons.run() # Make sure Season table is up to date
+    multiverse.rebuild_cache()
     if redis.REDIS: # Clear the redis cache
         redis.REDIS.flushdb()
     league_end = league.active_league().end_date

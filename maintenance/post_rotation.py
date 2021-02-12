@@ -5,7 +5,7 @@ from magic import multiverse
 from shared import dtutil
 from shared import redis_wrapper as redis
 
-from . import insert_seasons, reprime_cache
+from . import insert_seasons
 
 
 def ad_hoc() -> None:
@@ -27,6 +27,5 @@ def ad_hoc() -> None:
     if diff.days > 0:
         league.set_status(league.Status.OPEN)
     print('Open the gates here')
-    reprime_cache.run() # Update deck legalities
     if redis.REDIS: # Clear the redis cache
         redis.REDIS.flushdb()

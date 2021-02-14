@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "5cf8227f4fda937a653d2cce1813bb4d8fc678c19b5f8e63dbc43699a54eadb7"
+            "sha256": "858fc3d61fd8c260b04205e76505e39806397c71efdf0ad7572f21fac6a401ef"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -334,10 +334,10 @@
         },
         "ftfy": {
             "hashes": [
-                "sha256:51c7767f8c4b47d291fcef30b9625fb5341c06a31e6a3b627039c706c42f3720"
+                "sha256:8c4fb2863c0b82eae2ab3cf353d9ade268dfbde863d322f78d6a9fd5cefb31e9"
             ],
             "index": "pypi",
-            "version": "==5.8"
+            "version": "==5.9"
         },
         "github-webhook": {
             "hashes": [

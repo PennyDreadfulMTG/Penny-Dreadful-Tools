@@ -5,6 +5,7 @@ from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String
 from magic import card, mana, multiverse
 from magic.database import db
+from magic.models import Card
 from shared.database import concat, sqlescape, sqllikeescape
 from shared.pd_exception import ParseException
 
@@ -22,7 +23,7 @@ def search(query):
         ORDER BY pd_legal DESC, name
     """.format(base_query=multiverse.cached_base_query(where))
     rs = db().select(sql)
-    return [card.Card(r) for r in rs]
+    return [Card(r) for r in rs]
 
 def tokenize(s):
     s = s.lower()
@@ -144,7 +145,7 @@ def parse_criterion(key, operator, term):
         return text_where('text', term.value())
     elif key.value() == 'type' or key.value() == 't':
         v = 'planeswalker' if term.value() == 'pw' else term.value()
-        return text_where('type', v)
+        return text_where('type_line', v)
     elif key.value() == 'power' or key.value() == 'pow':
         return math_where('power', operator.value(), term.value())
     elif key.value() == 'toughness' or key.value() == 'tou':
@@ -174,12 +175,12 @@ def parse_criterion(key, operator, term):
 def text_where(column, term):
     q = term
     if column.endswith('name'):
-        column = column.replace('name', 'name_ascii')
+        # BAKERT this might not be enough these days -- revive name_ascii?
         q = card.unaccent(q)
     if column == 'text':
-        column = 'search_text'
+        column = 'oracle_text'
     escaped = sqllikeescape(q)
-    if column == 'search_text' and '~' in escaped:
+    if column == 'oracle_text' and '~' in escaped:
         parts = ["'{text}'".format(text=text) for text in escaped.strip("'").split('~')]
         escaped = concat(intersperse(parts, 'name'))
     return '({column} LIKE {q})'.format(column=column, q=escaped)

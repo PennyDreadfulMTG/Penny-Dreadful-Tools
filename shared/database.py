@@ -178,3 +178,6 @@ def sqlescape(s: ValidSqlArgumentDescription, force_string: bool = False, backsl
 def sqllikeescape(s: str) -> str:
     s = s.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
     return sqlescape('%{s}%'.format(s=s), backslashed_escaped=True)
+
+def concat(parts):
+    return 'CONCAT(' + ', '.join(parts) + ')'

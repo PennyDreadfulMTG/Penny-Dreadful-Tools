@@ -5,7 +5,7 @@ from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String
 from magic import card, mana, multiverse
 from magic.database import db
-from shared.database import sqlescape, sqllikeescape
+from shared.database import concat, sqlescape, sqllikeescape
 from shared.pd_exception import ParseException
 
 EXPECT_EXPRESSION = 'expect_expression'
@@ -21,7 +21,7 @@ def search(query):
     sql = """{base_query}
         ORDER BY pd_legal DESC, name
     """.format(base_query=multiverse.cached_base_query(where))
-    rs = db().execute(sql)
+    rs = db().select(sql)
     return [card.Card(r) for r in rs]
 
 def tokenize(s):
@@ -181,7 +181,7 @@ def text_where(column, term):
     escaped = sqllikeescape(q)
     if column == 'search_text' and '~' in escaped:
         parts = ["'{text}'".format(text=text) for text in escaped.strip("'").split('~')]
-        escaped = db().concat(intersperse(parts, 'name'))
+        escaped = concat(intersperse(parts, 'name'))
     return '({column} LIKE {q})'.format(column=column, q=escaped)
 
 def subtable_where(subtable, value, operator=None):
@@ -308,15 +308,15 @@ def init_value_lookup():
         LOWER(REPLACE(name, ' ', '')) AS spaceless,
         LOWER({initials}) AS initials
     FROM {table}"""
-    nameandspace = db().concat(['TRIM(name)', "' '"])
+    nameandspace = concat(['TRIM(name)', "' '"])
     second_initial = """CASE WHEN INSTR(name, ' ') > 0 THEN
                 SUBSTR(name, INSTR(name, ' ') + 1, 1)
             ELSE
                 ''
             END"""
-    initials = db().concat(['SUBSTR(name, 1, 1)', second_initial])
+    initials = concat(['SUBSTR(name, 1, 1)', second_initial])
     for table in ['color', 'rarity']:
-        rs = db().execute(sql.format(nameandspace=nameandspace, initials=initials, table=table))
+        rs = db().select(sql.format(nameandspace=nameandspace, initials=initials, table=table))
         d = {}
         for row in rs:
             d[row['name']] = row['id']

@@ -1215,10 +1215,11 @@
                 "flask"
             ],
             "hashes": [
-                "sha256:3693cb47ba8d90c004ac002425770b32aaf0c83a846ec48e2d1364e7db1d072d"
+                "sha256:9044b616ec6663cd50794fb3362efd87586e476e7b51ef2439a711d6569aede7",
+                "sha256:efc65e5ffd38324797a7e1dfc8a4e74b62ea6f56a59df5bb03217b84d58dff6a"
             ],
             "index": "pypi",
-            "version": "==0.20.1"
+            "version": "==0.20.2"
         },
         "sgmllib3k": {
             "hashes": [

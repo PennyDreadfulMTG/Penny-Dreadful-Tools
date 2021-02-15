@@ -1,6 +1,7 @@
-from typing import Dict, Optional, Union, cast
+from typing import Dict, List, Optional, Union, cast
 
 from decksite.deck_type import DeckType
+from find import search
 from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException
 
@@ -238,6 +239,11 @@ def archetype_where(archetype_id: int) -> str:
 
 def card_where(name: str) -> str:
     return 'd.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name))
+
+def card_search_where(q: str) -> List[str]:
+    from find import search
+    cs = search.search(q)
+    return 'name IN (' + ', '.join(sqlescape(c.name) for c in cs) + ')'
 
 def tournament_only_clause() -> str:
     return "ct.name = 'Gatherling'"

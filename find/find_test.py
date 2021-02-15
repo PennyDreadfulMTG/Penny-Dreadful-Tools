@@ -18,17 +18,11 @@ def test_special_chars():
     do_test('o:a_c%', "(search_text LIKE '%%a\\_c\\%%%%')")
 
 def test_tilde():
-    if db().is_mysql():
-        expected = "(search_text LIKE CONCAT('%%sacrifice ', name, '%%'))"
-    else:
-        expected = "(search_text LIKE '%%sacrifice ' || name || '%%')"
+    expected = "(search_text LIKE CONCAT('%%sacrifice ', name, '%%'))"
     do_test('o:"sacrifice ~"', expected)
 
 def test_double_tilde():
-    if db().is_mysql():
-        expected = "(search_text LIKE CONCAT('%%sacrifice ', name, ': ', name, ' deals 2 damage to target creature%%'))"
-    else:
-        expected = "(search_text LIKE '%%sacrifice ' || name || ': ' || name || ' deals 2 damage to target creature%%')"
+    expected = "(search_text LIKE CONCAT('%%sacrifice ', name, ': ', name, ' deals 2 damage to target creature%%'))"
     do_test('o:"sacrifice ~: ~ deals 2 damage to target creature"', expected)
 
 def test_only_multicolored():

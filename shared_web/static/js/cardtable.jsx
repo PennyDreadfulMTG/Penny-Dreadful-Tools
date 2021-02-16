@@ -69,7 +69,7 @@ const renderRow = (table, card) => (
                 endpoint="/api/cards2/"
                 renderHeaderRow={renderHeaderRow}
                 renderRow={renderRow}
-                searchPrompt={"Card name"}
+                searchPrompt={"Scryfall search"}
                 showSearch={true}
                 {...e.dataset}
             />;

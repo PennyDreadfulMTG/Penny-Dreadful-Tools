@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union, cast
+from typing import Dict, Optional, Union, cast
 
 from decksite.deck_type import DeckType
 from find import search

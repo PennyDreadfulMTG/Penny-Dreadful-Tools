@@ -38,10 +38,10 @@ def test_exclusivemulitcolored_same() -> None:
     do_test('ci!bm', '(((c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 3)) AND (c.id NOT IN (SELECT card_id FROM card_color_identity WHERE color_id <> 3))) AND (c.id IN (SELECT card_id FROM card_color_identity GROUP BY card_id HAVING COUNT(card_id) > 1)))')
 
 def test_mulitcolored_multiple() -> None:
-    do_test('c:brm', "(((c.id IN (SELECT card_id FROM card_color WHERE color_id = 3)) OR (c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) > 1)))")
+    do_test('c:brm', '(((c.id IN (SELECT card_id FROM card_color WHERE color_id = 3)) OR (c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) > 1)))')
 
 def test_multicolored_exclusive() -> None:
-    do_test('c!brm', "((((c.id IN (SELECT card_id FROM card_color WHERE color_id = 3)) OR (c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (c.id NOT IN (SELECT card_id FROM card_color WHERE color_id <> 3 AND color_id <> 4))) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) > 1)))")
+    do_test('c!brm', '((((c.id IN (SELECT card_id FROM card_color WHERE color_id = 3)) OR (c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (c.id NOT IN (SELECT card_id FROM card_color WHERE color_id <> 3 AND color_id <> 4))) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) > 1)))')
 
 def test_color_identity() -> None:
     do_test('ci:u', '((c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 2)) AND (c.id NOT IN (SELECT card_id FROM card_color_identity WHERE color_id <> 2)))')
@@ -62,7 +62,7 @@ def test_colorless_exclusivity2() -> None:
     do_test('c!cr', '(((c.id NOT IN (SELECT card_id FROM card_color)) OR (c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (c.id NOT IN (SELECT card_id FROM card_color WHERE color_id <> 4)))')
 
 def test_multiple_colors() -> None:
-    do_test('c:rgw', "((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4)) OR (c.id IN (SELECT card_id FROM card_color WHERE color_id = 5)) OR (c.id IN (SELECT card_id FROM card_color WHERE color_id = 1)))")
+    do_test('c:rgw', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4)) OR (c.id IN (SELECT card_id FROM card_color WHERE color_id = 5)) OR (c.id IN (SELECT card_id FROM card_color WHERE color_id = 1)))')
 
 def test_mana() -> None:
     do_test('mana=2WW', "(mana_cost = '{2}{W}{W}')")

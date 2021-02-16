@@ -1,5 +1,5 @@
 import collections
-from typing import Any, Dict, Generator, Iterable, List, Optional, Union
+from typing import Dict, Generator, Iterable, List, Optional, Union
 
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String, Token
@@ -117,8 +117,8 @@ def parse(expression: Expression) -> str:
         elif cls == Key:
             try:
                 s += parse_criterion(token, tokens[i + 1], tokens[i + 2]) # type: ignore
-            except IndexError:
-                raise InvalidSearchException('You cannot provide a key without both an operator and a value')
+            except IndexError as e:
+                raise InvalidSearchException('You cannot provide a key without both an operator and a value') from e
             i += 2
         elif cls == Expression:
             s += '({token})'.format(token=parse(token)) # type: ignore
@@ -144,38 +144,38 @@ def parse(expression: Expression) -> str:
 def parse_criterion(key: Token, operator: Token, term: Token) -> str:
     if key.value() == 'q':
         return text_where('name', term.value())
-    elif key.value() == 'color' or key.value() == 'c':
+    if key.value() == 'color' or key.value() == 'c':
         return color_where('color', operator.value(), term.value())
-    elif key.value() == 'coloridentity' or key.value() == 'identity' or key.value() == 'ci' or key.value() == 'id':
+    if key.value() == 'coloridentity' or key.value() == 'identity' or key.value() == 'ci' or key.value() == 'id':
         return color_where('color_identity', operator.value(), term.value())
-    elif key.value() == 'text' or key.value() == 'o':
+    if key.value() == 'text' or key.value() == 'o':
         return text_where('text', term.value())
-    elif key.value() == 'type' or key.value() == 't':
+    if key.value() == 'type' or key.value() == 't':
         v = 'planeswalker' if term.value() == 'pw' else term.value()
         return text_where('type_line', v)
-    elif key.value() == 'power' or key.value() == 'pow':
+    if key.value() == 'power' or key.value() == 'pow':
         return math_where('power', operator.value(), term.value())
-    elif key.value() == 'toughness' or key.value() == 'tou':
+    if key.value() == 'toughness' or key.value() == 'tou':
         return math_where('toughness', operator.value(), term.value())
-    elif key.value() == 'cmc':
+    if key.value() == 'cmc':
         return math_where('cmc', operator.value(), term.value())
-    elif key.value() == 'loyalty':
+    if key.value() == 'loyalty':
         return math_where('loyalty', operator.value(), term.value())
-    elif key.value() == 'supertype' or key.value() == 'super':
+    if key.value() == 'supertype' or key.value() == 'super':
         return subtable_where('supertype', term.value())
-    elif key.value() == 'subtype' or key.value() == 'sub':
+    if key.value() == 'subtype' or key.value() == 'sub':
         return subtable_where('subtype', term.value())
-    elif key.value() == 'edition' or key.value() == 'set' or key.value() == 'e' or key.value() == 's':
+    if key.value() == 'edition' or key.value() == 'set' or key.value() == 'e' or key.value() == 's':
         return set_where(term.value())
-    elif key.value() == 'format' or key.value() == 'f':
+    if key.value() == 'format' or key.value() == 'f':
         return format_where(term.value())
-    elif key.value() == 'rarity' or key.value() == 'r':
+    if key.value() == 'rarity' or key.value() == 'r':
         return rarity_where(operator.value(), term.value())
-    elif key.value() == 'mana' or key.value() == 'm':
+    if key.value() == 'mana' or key.value() == 'm':
         return mana_where(operator.value(), term.value())
-    elif key.value() == 'is':
+    if key.value() == 'is':
         return is_subquery(term.value())
-    elif key.value() == 'playable' or key.value() == 'p':
+    if key.value() == 'playable' or key.value() == 'p':
         return playable_where(term.value())
     raise InvalidCriterionException
 
@@ -193,7 +193,7 @@ def text_where(column: str, term: str) -> str:
 
 def subtable_where(subtable: str, value: str, operator: Optional[str] = None) -> str:
     # Specialcase colorless because it has no entry in the color table.
-    if (subtable == 'color' or subtable == 'color_identity') and value == 'c':
+    if (subtable in ['color', 'color_identity']) and value == 'c':
         return '(c.id NOT IN (SELECT card_id FROM card_{subtable}))'.format(subtable=subtable)
     v = value_lookup(subtable, value)
     if str(v).isdigit():
@@ -255,7 +255,7 @@ def rarity_where(operator: str, term: str) -> str:
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(1 <> 1)'
-    return "(c.id IN (SELECT card_id FROM printing WHERE rarity_id {operator} {rarity_id}))".format(operator=operator, rarity_id=rarity_id)
+    return '(c.id IN (SELECT card_id FROM printing WHERE rarity_id {operator} {rarity_id}))'.format(operator=operator, rarity_id=rarity_id)
 
 def mana_where(operator: str, term: str) -> str:
     term = term.upper()
@@ -266,7 +266,7 @@ def mana_where(operator: str, term: str) -> str:
         symbols = [term]
     if operator == ':':
         d = collections.Counter(symbols) # Group identical symbols so that UU checks for {U}{U} not just {U} twice.
-        clause = ' AND '.join("mana_cost LIKE {symbol}".format(symbol=sqllikeescape(symbol * n)) for symbol, n in d.items())
+        clause = ' AND '.join('mana_cost LIKE {symbol}'.format(symbol=sqllikeescape(symbol * n)) for symbol, n in d.items())
     elif operator == '=':
         joined = ''.join('{symbol}'.format(symbol=symbol) for symbol in symbols)
         clause = "mana_cost = '{joined}'".format(joined=joined)
@@ -279,7 +279,7 @@ def playable_where(term: str) -> str:
     try:
         colors = set(mana.parse(term))
     except mana.InvalidManaCostException as e:
-        raise InvalidTokenException(e)
+        raise InvalidTokenException(e) from e
     symbols_without_curlies = colors.copy()
     # Colorless
     symbols_without_curlies.add('C')
@@ -292,7 +292,7 @@ def playable_where(term: str) -> str:
         # Hybrid
         symbols_without_curlies.update(['{color}/{other}'.format(color=color, other=other) for other in all_colors if other != color])
         symbols_without_curlies.update(['{other}/{color}'.format(color=color, other=other) for other in all_colors if other != color])
-    where = "mana_cost"
+    where = 'mana_cost'
     for symbol in symbols_without_curlies:
         where = "REPLACE({where}, '{{{symbol}}}', '')".format(where=where, symbol=symbol)
     return "{where} = ''".format(where=where)
@@ -363,7 +363,7 @@ def is_subquery(subquery_name: str) -> str:
     if query == '':
         raise InvalidSearchException('Did not recognize `{subquery_name}` as a value for `is:`'.format(subquery_name=subquery_name))
     query = parse(tokenize(query))
-    query = "({0})".format(query)
+    query = '({0})'.format(query)
     return query
 
 # pylint: disable=stop-iteration-return

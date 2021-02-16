@@ -9,7 +9,6 @@ from magic.models import Card
 from shared.database import concat, sqlescape, sqllikeescape
 from shared.pd_exception import ParseException
 
-
 EXPECT_EXPRESSION = 'expect_expression'
 EXPECT_OPERATOR = 'expect_operator'
 EXPECT_TERM = 'expect_term'

@@ -240,7 +240,7 @@ def archetype_where(archetype_id: int) -> str:
 def card_where(name: str) -> str:
     return 'd.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name))
 
-def card_search_where(q: str) -> List[str]:
+def card_search_where(q: str) -> str:
     from find import search
     cs = search.search(q)
     return 'name IN (' + ', '.join(sqlescape(c.name) for c in cs) + ')'

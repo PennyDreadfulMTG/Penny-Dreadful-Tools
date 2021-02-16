@@ -1,13 +1,14 @@
 import collections
-from typing import Dict
+from typing import Any, Dict, Generator, Iterable, List, Optional, Union
 
 from find.expression import Expression
-from find.tokens import BooleanOperator, Criterion, Key, Operator, String
+from find.tokens import BooleanOperator, Criterion, Key, Operator, String, Token
 from magic import card, mana, multiverse
 from magic.database import db
 from magic.models import Card
 from shared.database import concat, sqlescape, sqllikeescape
 from shared.pd_exception import ParseException
+
 
 EXPECT_EXPRESSION = 'expect_expression'
 EXPECT_OPERATOR = 'expect_operator'
@@ -17,7 +18,7 @@ UNQUOTED_STRING = 'unquoted_string'
 
 VALUE_LOOKUP: Dict[str, Dict[str, int]] = {}
 
-def search(query):
+def search(query: str) -> List[Card]:
     where = parse(tokenize(query))
     sql = """{base_query}
         ORDER BY pd_legal DESC, name
@@ -25,9 +26,10 @@ def search(query):
     rs = db().select(sql)
     return [Card(r) for r in rs]
 
-def tokenize(s):
+# Cut a query string up into tokens and combine them in an Expression, recursively for subexpressisons. Or raise if string is malformed.
+def tokenize(s: str) -> Expression:
     s = s.lower()
-    tokens = {0: []}
+    tokens: Dict[int, List[Union[Expression, Token]]] = {0: []}
     chars = list(s)
     chars.append(' ')
     depth = 0
@@ -102,21 +104,23 @@ def tokenize(s):
         raise InvalidSearchException('Reached end of expression without finding enough closing parentheses in {s}'.format(s=s))
     return Expression(tokens[0])
 
-def parse(expression):
+# Parse an Expression into a SQL WHERE clause or raise if Expression is invalid.
+def parse(expression: Expression) -> str:
     s = ''
     i = 0
     tokens = expression.tokens()
     while i < len(tokens):
         token = tokens[i]
         cls = token.__class__
+        # We check the type then operate on the token, which mypy doesn't understand, so there are some `type: ignores` here.
         if cls == String:
-            s += text_where('name', token.value())
+            s += text_where('name', token.value()) # type: ignore
         elif cls == Key:
-            s += parse_criterion(token, tokens[i + 1], tokens[i + 2])
+            s += parse_criterion(token, tokens[i + 1], tokens[i + 2]) # type: ignore
             i += 2
         elif cls == Expression:
-            s += '({token})'.format(token=parse(token))
-        elif cls == BooleanOperator and i == 0 and token.value().strip() != 'NOT':
+            s += '({token})'.format(token=parse(token)) # type: ignore
+        elif cls == BooleanOperator and i == 0 and token.value().strip() != 'NOT': # type: ignore
             raise InvalidSearchException('You cannot start a search expression with a boolean operator')
         elif cls == BooleanOperator and i == len(tokens) - 1:
             raise InvalidSearchException('You cannot end a search expression with a boolean operator')
@@ -128,13 +132,14 @@ def parse(expression):
         next_cls = next_token.__class__
         if cls == BooleanOperator:
             s = s.rstrip(' ')
-            s += ' {s} '.format(s=token.value())
-        elif next_cls != BooleanOperator or next_token.value() == 'NOT':
+            s += ' {s} '.format(s=token.value()) # type: ignore
+        elif next_cls != BooleanOperator or next_token.value() == 'NOT': # type: ignore
             s += ' AND '
         i += 1
     return s[:-len(' AND ')].replace('    ', ' ').strip()
 
-def parse_criterion(key, operator, term):
+# Parse key, operator and term tokens into a SQL boolean or raise if the tokens are invalid in combination.
+def parse_criterion(key: Token, operator: Token, term: Token) -> str:
     if key.value() == 'q':
         return text_where('name', term.value())
     elif key.value() == 'color' or key.value() == 'c':
@@ -170,12 +175,11 @@ def parse_criterion(key, operator, term):
         return is_subquery(term.value())
     elif key.value() == 'playable' or key.value() == 'p':
         return playable_where(term.value())
-    return None
+    raise InvalidCriterionException
 
-def text_where(column, term):
+def text_where(column: str, term: str) -> str:
     q = term
     if column.endswith('name'):
-        # BAKERT this might not be enough these days -- revive name_ascii?
         q = card.unaccent(q)
     if column == 'text':
         column = 'oracle_text'
@@ -185,7 +189,7 @@ def text_where(column, term):
         escaped = concat(intersperse(parts, 'name'))
     return '({column} LIKE {q})'.format(column=column, q=escaped)
 
-def subtable_where(subtable, value, operator=None):
+def subtable_where(subtable: str, value: str, operator: Optional[str] = None) -> str:
     # Specialcase colorless because it has no entry in the color table.
     if (subtable == 'color' or subtable == 'color_identity') and value == 'c':
         return '(c.id NOT IN (SELECT card_id FROM card_{subtable}))'.format(subtable=subtable)
@@ -195,18 +199,18 @@ def subtable_where(subtable, value, operator=None):
         operator = '=' if not operator else operator
     else:
         column = subtable
-        v = sqllikeescape(v)
+        v = sqllikeescape(v) # type: ignore
         operator = 'LIKE' if not operator else operator
     return '(c.id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {value}))'.format(subtable=subtable, column=column, operator=operator, value=v)
 
-def math_where(column, operator, term):
+def math_where(column: str, operator: str, term: str) -> str:
     if operator == ':':
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(1 <> 1)'
     return "({column} IS NOT NULL AND {column} <> '' AND {column} {operator} {term})".format(column=column, operator=operator, term=sqlescape(term))
 
-def color_where(subtable, operator, term):
+def color_where(subtable: str, operator: str, term: str) -> str:
     if operator == ':' and subtable == 'color_identity':
         operator = '!' # "includes color x" doesn't really make sense in a color identity query and this matches magidex/magiccards behavior.
     colors = list(term)
@@ -232,10 +236,10 @@ def color_where(subtable, operator, term):
         clause = '({clause} AND (c.id IN (SELECT card_id FROM card_{subtable} GROUP BY card_id HAVING COUNT(card_id) > 1)))'.format(clause=clause, subtable=subtable)
     return clause
 
-def set_where(name):
+def set_where(name: str) -> str:
     return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name})))'.format(name_fuzzy=sqllikeescape(name), name=sqlescape(name))
 
-def format_where(term):
+def format_where(term: str) -> str:
     if term == 'pd':
         term = 'Penny Dreadful'
     format_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term=card.unaccent(term))])
@@ -243,7 +247,7 @@ def format_where(term):
         raise InvalidValueException("Invalid format '{term}'".format(term=term))
     return "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {format_id} AND legality <> 'Banned'))".format(format_id=format_id)
 
-def rarity_where(operator, term):
+def rarity_where(operator: str, term: str) -> str:
     rarity_id = value_lookup('rarity', term)
     if operator == ':':
         operator = '='
@@ -251,7 +255,7 @@ def rarity_where(operator, term):
         return '(1 <> 1)'
     return "(c.id IN (SELECT card_id FROM printing WHERE rarity_id {operator} {rarity_id}))".format(operator=operator, rarity_id=rarity_id)
 
-def mana_where(operator, term):
+def mana_where(operator: str, term: str) -> str:
     term = term.upper()
     try:
         symbols = mana.parse(term) # Uppercasing input means you can't search for 1/2 or 1/2 white mana but w should match W.
@@ -268,7 +272,7 @@ def mana_where(operator, term):
         raise InvalidTokenException('mana expects `:` or `=` not `{operator}`. Did you want cmc?'.format(operator=operator))
     return '({clause})'.format(clause=clause)
 
-def playable_where(term):
+def playable_where(term: str) -> str:
     term = term.upper()
     try:
         colors = set(mana.parse(term))
@@ -291,7 +295,10 @@ def playable_where(term):
         where = "REPLACE({where}, '{{{symbol}}}', '')".format(where=where, symbol=symbol)
     return "{where} = ''".format(where=where)
 
-def value_lookup(table, value):
+# Look up the id of a value if we have a lookup table for it.
+# Raise if not found in that table.
+# Return 'value' back if we don't have a a lookup table for this thing ('subtype', for example).
+def value_lookup(table: str, value: str) -> Union[int, str]:
     if not VALUE_LOOKUP:
         init_value_lookup()
     if table in VALUE_LOOKUP and value in VALUE_LOOKUP[table]:
@@ -300,7 +307,7 @@ def value_lookup(table, value):
         raise InvalidValueException("Invalid value '{value}' for {table}".format(value=value, table=table))
     return value
 
-def init_value_lookup():
+def init_value_lookup() -> None:
     sql = """SELECT
         id,
         LOWER(name) AS name,
@@ -333,7 +340,7 @@ def init_value_lookup():
         if table == 'color':
             VALUE_LOOKUP['color_identity'] = d
 
-def is_subquery(subquery_name):
+def is_subquery(subquery_name: str) -> str:
     if subquery_name == 'split':
         return "(c.layout = 'split' OR c.layout = 'aftermath')"
     if subquery_name in multiverse.layouts().keys():
@@ -358,7 +365,7 @@ def is_subquery(subquery_name):
     return query
 
 # pylint: disable=stop-iteration-return
-def intersperse(iterable, delimiter):
+def intersperse(iterable: Iterable, delimiter: str) -> Generator:
     it = iter(iterable)
     yield next(it)
     for x in it:
@@ -375,4 +382,7 @@ class InvalidModeException(InvalidSearchException):
     pass
 
 class InvalidValueException(InvalidSearchException):
+    pass
+
+class InvalidCriterionException(InvalidSearchException):
     pass

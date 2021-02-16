@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 from decksite.data import elo, person
 from decksite.database import db

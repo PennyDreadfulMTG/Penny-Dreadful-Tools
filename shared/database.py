@@ -1,5 +1,5 @@
 import warnings
-from typing import Any, Dict, List, Optional, Tuple, cast
+from typing import Any, Dict, Iterable, List, Optional, Tuple, cast
 
 import MySQLdb
 from MySQLdb import OperationalError
@@ -179,5 +179,5 @@ def sqllikeescape(s: str) -> str:
     s = s.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
     return sqlescape('%{s}%'.format(s=s), backslashed_escaped=True)
 
-def concat(parts):
+def concat(parts: Iterable[str]) -> str:
     return 'CONCAT(' + ', '.join(parts) + ')'

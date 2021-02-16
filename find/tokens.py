@@ -5,31 +5,31 @@ class Token:
     values: List[str] = []
 
     @classmethod
-    def match(cls, chars):
+    def match(cls, chars: str) -> bool:
         return cls.find(chars) != ''
 
     @classmethod
-    def length(cls, chars):
+    def length(cls, chars: str) -> int:
         return len(cls.find(chars))
 
     @classmethod
-    def find(cls, chars):
+    def find(cls, chars: str) -> str:
         s = ''.join(chars)
         for value in cls.values:
             if s.lower().startswith(value.lower()):
                 return value
         return ''
 
-    def __init__(self, chars):
+    def __init__(self, chars: str) -> None:
         self.val = self.find(chars)
 
-    def value(self):
+    def value(self) -> str:
         return self.val
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.value()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.value()
 
 
@@ -38,14 +38,14 @@ class BooleanOperator(Token):
     values = ['AND', 'OR', 'NOT', '-']
 
     @classmethod
-    def find(cls, chars):
+    def find(cls, chars: str) -> str:
         s = ''.join(chars)
         for value in cls.values:
             if s.lower().startswith(value.lower() + ' ') or (s.lower().startswith(value.lower()) and len(s) == len(value)) or (value == '-' and s.startswith('-')):
                 return value
         return ''
 
-    def value(self):
+    def value(self) -> str:
         if self.val == '-':
             return 'NOT'
         return self.val
@@ -53,7 +53,7 @@ class BooleanOperator(Token):
 
 class Criterion(Token):
     @classmethod
-    def match(cls, chars):
+    def match(cls, chars: str) -> bool:
         if not Key.match(chars):
             return False
         rest = chars[Key.length(chars):]
@@ -74,5 +74,5 @@ class Operator(Token):
 
 class String(Token):
     @classmethod
-    def find(cls, chars):
+    def find(cls, chars: str) -> str:
         return chars

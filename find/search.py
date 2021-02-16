@@ -116,7 +116,10 @@ def parse(expression: Expression) -> str:
         if cls == String:
             s += text_where('name', token.value()) # type: ignore
         elif cls == Key:
-            s += parse_criterion(token, tokens[i + 1], tokens[i + 2]) # type: ignore
+            try:
+                s += parse_criterion(token, tokens[i + 1], tokens[i + 2]) # type: ignore
+            except IndexError:
+                raise InvalidSearchException('You cannot provide a key without both an operator and a value')
             i += 2
         elif cls == Expression:
             s += '({token})'.format(token=parse(token)) # type: ignore

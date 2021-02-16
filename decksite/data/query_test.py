@@ -14,7 +14,6 @@ def test_decks_where_deck_type() -> None:
 def test_decks_where_archetype_id() -> None:
     pass
 
-
 def test_card_search_where() -> None:
 	tests = {
 		'Tasigur, the Golden Fang': "name IN ('Tasigur, the Golden Fang')",

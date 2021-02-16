@@ -241,9 +241,11 @@ def card_where(name: str) -> str:
     return 'd.id IN (SELECT deck_id FROM deck_card WHERE card = {name})'.format(name=sqlescape(name))
 
 def card_search_where(q: str) -> str:
-    from find import search
-    cs = search.search(q)
-    return 'name IN (' + ', '.join(sqlescape(c.name) for c in cs) + ')'
+    try:
+        cs = search.search(q)
+        return 'TRUE' if len(cs) == 0 else 'name IN (' + ', '.join(sqlescape(c.name) for c in cs) + ')'
+    except search.InvalidSearchException:
+        return 'TRUE' # Do not apply malformed queries. Future improvement: ignore invalid parts and match the valid parts.
 
 def tournament_only_clause() -> str:
     return "ct.name = 'Gatherling'"

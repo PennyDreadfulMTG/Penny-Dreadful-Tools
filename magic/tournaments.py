@@ -18,7 +18,8 @@ SAT = 2
 APAC = 3
 SUN = 4
 MON = 5
-THU = 6
+TUE = 6
+THU = 7
 
 class TimeDirection(Enum):
     BEFORE = 1
@@ -71,8 +72,9 @@ def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> L
     apds_time = (APAC, 'APAC Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=16, byminute=0, bysecond=0, dtstart=apac_start, until=until, byweekday=rrule.SU)[index]) # type: ignore
     pds_time = (SUN, 'Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index]) # type: ignore
     pdm_time = (MON, 'Penny Dreadful Mondays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index]) # type: ignore
-    pdt_time = (THU, 'Penny Dreadful Thursdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index]) # type: ignore
-    return [pdfnm_time, pdsat_time, apds_time, pds_time, pdm_time, pdt_time]
+    pdtue_time = (TUE, 'Penny Dreadful Tuesdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TU)[index]) # type: ignore
+    pdthu_time = (THU, 'Penny Dreadful Thursdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index]) # type: ignore
+    return [pdfnm_time, pdsat_time, apds_time, pds_time, pdm_time, pdtue_time, pdthu_time]
 
 # Note: this may be in the past. It always gives the date for the current season.
 def pd500_date() -> datetime.datetime:
@@ -166,9 +168,17 @@ def all_series_info() -> List[Container]:
         Container({
             'tournament_id': info[5][0],
             'name': info[5][1],
-            'hosts': ['flac0', 'j_meka'],
+            'hosts': ['swiftwarkite2', 'bakert99'],
             'display_time': '7pm Eastern',
             'time': info[5][2],
+            'sponsor_name': 'Player-supported'
+        }),
+        Container({
+            'tournament_id': info[6][0],
+            'name': info[6][1],
+            'hosts': ['flac0', 'j_meka'],
+            'display_time': '7pm Eastern',
+            'time': info[6][2],
             'sponsor_name': 'Cardhoarder'
         })
     ]

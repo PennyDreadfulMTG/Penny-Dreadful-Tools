@@ -126,6 +126,7 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             This credit will appear when you trade with one of their bots on Magic Online.
             One player not making Top 8 but playing all the Swiss rounds will be randomly allocated the door prize.
             Prizes are credited once a week usually on the Friday or Saturday following the tournament but may sometimes take longer.
+            Note: Penny Dreadful Tuesdays are player-supported, get your tix from a trade with swiftwarkite2 on MTGO.
             """,
             {
                 'More Info': fetcher.decksite_url('/tournaments/')

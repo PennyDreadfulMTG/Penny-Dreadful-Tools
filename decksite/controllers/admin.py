@@ -101,7 +101,7 @@ def edit_rules() -> wrappers.Response:
     cnum = rs.num_classified_decks()
     tnum = ds.num_decks(rs.classified_decks_query())
     archetypes = archs.load_archetypes_deckless(order_by='a.name')
-    view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks(), rs.overlooked_decks(), rs.load_all_rules(), archetypes, rs.excluded_archetype_info())
+    view = EditRules(cnum, tnum, rs.doubled_decks(), rs.mistagged_decks(), [], rs.load_all_rules(), archetypes, rs.excluded_archetype_info())
     return view.response()
 
 @APP.route('/admin/rules/', methods=['POST'])

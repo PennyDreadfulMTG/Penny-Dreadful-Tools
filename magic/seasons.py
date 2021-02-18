@@ -16,7 +16,7 @@ SEASONS = [
     'RIX', 'DOM', 'M19', 'GRN', # 2018
     'RNA', 'WAR', 'M20', 'ELD', # 2019
     'THB', 'IKO', 'M21', 'ZNR', # 2020
-    'KHM',                      # 2121
+    'KHM', 'STX',               # 2121
     ]
 
 OVERRIDES = {

@@ -223,6 +223,7 @@ def classified_decks_query() -> str:
     return '(NOT reviewed OR deck.archetype_id NOT IN ({ex}))'.format(ex=','.join(str(aid) for aid in excluded_archetype_ids()))
 
 def apply_rules_query(deck_query: str = 'TRUE', rule_query: str = 'TRUE') -> str:
+    card_name = "REPLACE(deck_card.card, 'Snow-Covered ', '')"
     return f"""
         WITH rule_card_count AS
         (
@@ -243,7 +244,7 @@ def apply_rules_query(deck_query: str = 'TRUE', rule_query: str = 'TRUE') -> str
         (
             SELECT
                 deck.id AS deck_id,
-                COUNT(DISTINCT deck_card.card) AS included_count,
+                COUNT(DISTINCT {card_name}) AS included_count,
                 MAX(rule_card_count.card_count) AS required_count,-- fake MAX due to aggregate function
                 rule.id AS rule_id
             FROM
@@ -262,7 +263,7 @@ def apply_rules_query(deck_query: str = 'TRUE', rule_query: str = 'TRUE') -> str
                         include
                 ) AS inclusions
             ON
-                deck_card.card = inclusions.card
+                {card_name} = inclusions.card
             JOIN
                 rule
             ON
@@ -307,9 +308,9 @@ def apply_rules_query(deck_query: str = 'TRUE', rule_query: str = 'TRUE') -> str
         LEFT JOIN
             deck_card
         ON
-            candidates.deck_id = deck_card.deck_id AND exclusions.card = deck_card.card AND deck_card.n >= exclusions.n
+            candidates.deck_id = deck_card.deck_id AND exclusions.card = {card_name} AND deck_card.n >= exclusions.n
         GROUP BY
             candidates.deck_id, rule_id
         HAVING
-            COUNT(deck_card.card) = 0
+            COUNT({card_name}) = 0
     """

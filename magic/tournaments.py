@@ -1,7 +1,7 @@
 import datetime
 import sys
 from enum import Enum
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, Sequence, Tuple, Union
 
 import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
@@ -60,7 +60,7 @@ def get_nearest_tournament(time_direction: TimeDirection = TimeDirection.AFTER) 
     dates = get_all_next_tournament_dates(start, index=index)
     return sorted(dates, key=lambda t: t[2])[index]
 
-def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> List[TournamentDateType]:
+def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> Sequence[TournamentDateType]:
     apac_start = start.astimezone(tz=dtutil.APAC_SERIES_TZ)
     until = start + datetime.timedelta(days=7)
     pdfnm_time = (FNM, 'Penny Dreadful FNM', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index]) # type: ignore
@@ -108,7 +108,7 @@ def prize_by_finish(f: int) -> int:
         return 1
     return 0
 
-def prizes_by_finish(multiplier: int = 1) -> List[Dict[str, Any]]:
+def prizes_by_finish(multiplier: int = 1) -> Sequence[Dict[str, Any]]:
     prizes, finish, p = [], 1, inflect.engine()
     while True:
         pz = prize_by_finish(finish)
@@ -121,7 +121,7 @@ def prizes_by_finish(multiplier: int = 1) -> List[Dict[str, Any]]:
 def series_info(tournament_id: int) -> Container:
     return guarantee.exactly_one([s for s in all_series_info() if s.tournament_id == tournament_id])
 
-def all_series_info() -> List[Container]:
+def all_series_info() -> Sequence[Container]:
     info = get_all_next_tournament_dates(dtutil.now(dtutil.GATHERLING_TZ))
     return [
         Container({
@@ -183,7 +183,7 @@ def all_series_info() -> List[Container]:
         })
     ]
 
-def rounds_info() -> List[Dict[Union[str, StageType], int]]:
+def rounds_info() -> Sequence[Dict[Union[str, StageType], int]]:
     return [
         {
             'min_players': 2,

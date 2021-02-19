@@ -280,7 +280,7 @@ class View(BaseView):
                 t.month = month
                 prev_month = month
             t.date = t.time.day
-            if leagues and leagues[-1].start_date <= t.time < leagues[-1].end_date:
+            if leagues and t.time >= leagues[-1].start_date and t.time < leagues[-1].end_date:
                 t.league = leagues.pop(-1)
                 t.league.display = True
                 end_date = t.league.end_date

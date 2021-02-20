@@ -1,4 +1,4 @@
-/*global PD:true*/
+/*global PD,Deckbox:true*/
 import Axios from "axios";
 import PropTypes from "prop-types";
 import React from "react";

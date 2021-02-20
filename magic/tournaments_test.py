@@ -4,6 +4,7 @@ from magic import tournaments
 from shared import dtutil
 
 
+# pylint: disable=invalid-name
 def test_get_all_next_tournament_dates() -> None:
     just_before_s19_kick_off = datetime.datetime(2021, 2, 19).astimezone(tz=dtutil.WOTC_TZ)
     just_after_s19_kick_off = datetime.datetime(2021, 2, 21).astimezone(tz=dtutil.WOTC_TZ)

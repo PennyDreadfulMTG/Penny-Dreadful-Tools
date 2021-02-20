@@ -40,6 +40,7 @@ export class Table extends React.Component {
                 break;
             }
         }
+        Deckbox.load();
     }
 
     load() {
@@ -209,6 +210,7 @@ Table.propTypes = {
     "leagueOnly": PropTypes.string,
     "pageSize": PropTypes.string.isRequired,
     "personId": PropTypes.string,
+    "reloadCards": PropTypes.bool,
     "renderHeaderRow": PropTypes.func.isRequired,
     "renderRow": PropTypes.func.isRequired,
     "searchPrompt": PropTypes.string,

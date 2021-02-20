@@ -99,7 +99,8 @@ TESTDATA = [
     ('braids b', 'Braids Black', ['B'], 'Midrange'),
     ('[Penny Dreadful] UR Cycling', 'Izzet Cycling', ['U', 'R'], 'Midrange'),
     ('Penny-Zombies', 'Zombies', ['B'], 'Zombies'),
-    ('Something Goes Brrrr', 'Something Goes BRRRR', ['B', 'R'], 'Aggro')
+    ('Something Goes Brrrr', 'Something Goes BRRRR', ['B', 'R'], 'Aggro'),
+    ('Very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long deck name', 'Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very …', ['U'], 'Control'),
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

@@ -22,7 +22,7 @@ class Home(View):
         self.setup_tournaments()
         self.pd500_url = url_for('pd500')
         pd500_date = tournaments.pd500_date()
-        if pd500_date > dtutil.now():
+        if pd500_date is not None and pd500_date > dtutil.now():
             self.pd500_date = dtutil.display_date_with_date_and_year(pd500_date)
         self.kick_off_url = url_for('kickoff')
         kick_off_date = tournaments.kick_off_date()
@@ -88,6 +88,7 @@ class Home(View):
     def setup_cards(self, cards: List[Card]) -> None:
         cards = [c for c in cards if 'Basic Land' not in c.type_line]
         self.top_cards = cards[0:8]
+        self.has_top_cards = len(cards) > 0
         self.cards = self.top_cards # To get prepare_card treatment
         self.cards_url = url_for('.cards')
 

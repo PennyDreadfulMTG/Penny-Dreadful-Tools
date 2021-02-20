@@ -109,7 +109,7 @@ def decks_api() -> Response:
     limit = f'LIMIT {start}, {page_size}'
     # Don't restrict by season if we're loading something with a date by its id.
     season_id = 'all' if request.args.get('competitionId') else seasons.season_id(str(request.args.get('seasonId')), None)
-    where = query.decks_where(request.args, session.get('person_id'))
+    where = query.decks_where(request.args, session.get('admin'), session.get('person_id'))
     total = deck.load_decks_count(where=where, season_id=season_id)
     ds = deck.load_decks(where=where, order_by=order_by, limit=limit, season_id=season_id)
     prepare_decks(ds)

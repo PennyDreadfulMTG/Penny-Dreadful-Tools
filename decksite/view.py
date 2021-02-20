@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional, Union, cast
 import inflect
 from anytree.iterators import PreOrderIter
 from babel import Locale
-from flask import request, url_for
+from flask import request, session, url_for
 from flask_babel import gettext, ngettext
 from mypy_extensions import TypedDict
 from werkzeug.routing import BuildError
@@ -46,7 +46,7 @@ class View(BaseView):
         self.max_price_text = card_price.MAX_PRICE_TEXT
         self.decks: List[Deck] = []
         self.active_runs_text: str = ''
-        self.hide_active_runs = True
+        self.hide_active_runs = not session.get('admin', False)
         self.show_seasons: bool = False
         self.legal_formats: Optional[List[str]] = None
         self.cardhoarder_logo_url = url_for('static', filename='images/cardhoarder.png')
@@ -141,9 +141,14 @@ class View(BaseView):
 
     # Sitewide notice in a banner at the top of every page, for very important things only!
     def notice_html(self) -> str:
-        if tournaments.is_pd500_week(dtutil.now(dtutil.GATHERLING_TZ)):
-            date = dtutil.display_date_with_date_and_year(tournaments.pd500_date())
+        now = dtutil.now(dtutil.GATHERLING_TZ)
+        pd500_date = tournaments.pd500_date()
+        if pd500_date is not None and tournaments.is_pd500_week(now):
+            date = dtutil.display_date_with_date_and_year(pd500_date)
             return template.render_name('pd500notice', {'url': url_for('pd500'), 'date': date})
+        if tournaments.is_kick_off_week(now):
+            date = dtutil.display_date_with_date_and_year(tournaments.kick_off_date())
+            return template.render_name('kickoffnotice', {'url': url_for('kickoff'), 'date': date})
         return ''
 
     def page_title(self) -> Optional[str]:

@@ -1,7 +1,7 @@
 import datetime
 import sys
 from enum import Enum
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
@@ -66,6 +66,8 @@ def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> L
     pdfnm_time = (FNM, 'Penny Dreadful FNM', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index]) # type: ignore
     if is_pd500_week(start):
         pdsat_name = 'The Penny Dreadful 500'
+    elif is_kick_off_week(start):
+        pdsat_name = 'Season Kick Off'
     else:
         pdsat_name = 'Penny Dreadful Saturdays'
     pdsat_time = (SAT, pdsat_name, rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index]) # type: ignore
@@ -77,12 +79,15 @@ def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> L
     return [pdfnm_time, pdsat_time, apds_time, pds_time, pdm_time, pdtue_time, pdthu_time]
 
 # Note: this may be in the past. It always gives the date for the current season.
-def pd500_date() -> datetime.datetime:
+# Note: if the start date of next season is not known then the date of the PD 500 cannot be known and in such a case this return None.
+def pd500_date() -> Optional[datetime.datetime]:
     end_of_season = seasons.next_rotation()
     return end_of_season - datetime.timedelta(days=12, hours=13, minutes=30) # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
 
 def is_pd500_week(start: datetime.datetime) -> bool:
     date_of_pd500 = pd500_date()
+    if date_of_pd500 is None:
+        return False
     return start <= date_of_pd500 <= start + datetime.timedelta(days=7)
 
 # Note: this may be in the past. It always gives the date for the current season.

@@ -1,7 +1,7 @@
 import datetime
 import sys
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union
 
 import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
@@ -82,7 +82,7 @@ def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> L
 # Note: if the start date of next season is not known then the date of the PD 500 cannot be known and in such a case this return None.
 def pd500_date() -> datetime.datetime:
     if seasons.next_rotation_ex().codename == '???':
-        return datetime.datetime(1970, 1,1)
+        return datetime.datetime(1970, 1, 1)
 
     end_of_season = seasons.next_rotation()
     return end_of_season - datetime.timedelta(days=12, hours=13, minutes=30) # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.

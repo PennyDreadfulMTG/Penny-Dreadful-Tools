@@ -24,7 +24,7 @@ Deckbox.ui.Tooltip = class ToolTip {
             this.el.appendChild(image);
         } else {
             this.el.innerHTML = "Loading…";
-            image.onload = function() {
+            image.onload = () => {
                 const self = Deckbox._.tooltip("image");
                 self.el.innerHTML = "";
 
@@ -80,6 +80,10 @@ Deckbox.ui.Tooltip = class ToolTip {
             this.el.style.width = (20 + Math.min(330, this.el.childNodes[0].offsetWidth)) + "px";
             this.move(this.posX, this.posY);
         }
+    }
+
+    dispose() {
+        document.body.removeChild(this.el);
     }
 };
 
@@ -281,6 +285,16 @@ Deckbox._ = {
         document.addEventListener("pointermove", Deckbox._.onpointermove);
         document.addEventListener("pointerout", Deckbox._.onpointerout);
         document.addEventListener("click", Deckbox._.click);
+    },
+
+    dispose() {
+        if (this._tT) this._tT.dispose();
+        if (this._iT) this._iT.dispose();
+
+        document.removeEventListener("pointerover", Deckbox._.onpointerover);
+        document.removeEventListener("pointermove", Deckbox._.onpointermove);
+        document.removeEventListener("pointerout", Deckbox._.onpointerout);
+        document.removeEventListener("click", Deckbox._.click);
     }
 };
 

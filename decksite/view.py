@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional, Union, cast
 import inflect
 from anytree.iterators import PreOrderIter
 from babel import Locale
-from flask import request, url_for
+from flask import request, session, url_for
 from flask_babel import gettext, ngettext
 from mypy_extensions import TypedDict
 from werkzeug.routing import BuildError
@@ -46,7 +46,7 @@ class View(BaseView):
         self.max_price_text = card_price.MAX_PRICE_TEXT
         self.decks: List[Deck] = []
         self.active_runs_text: str = ''
-        self.hide_active_runs = True
+        self.hide_active_runs = not session.get('admin', False)
         self.show_seasons: bool = False
         self.legal_formats: Optional[List[str]] = None
         self.cardhoarder_logo_url = url_for('static', filename='images/cardhoarder.png')

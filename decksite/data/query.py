@@ -1,5 +1,7 @@
 from typing import Dict, Optional, Union, cast
 
+from flask import session
+
 from decksite.deck_type import DeckType
 from find import search
 from shared.database import sqlescape
@@ -213,7 +215,8 @@ def exclude_active_league_runs(except_person_id: Optional[int]) -> str:
 
 def decks_where(args: Dict[str, str], viewer_id: Optional[int]) -> str:
     parts = []
-    parts.append(exclude_active_league_runs(viewer_id))
+    if not session.get('admin'):
+        parts.append(exclude_active_league_runs(viewer_id))
     if args.get('deckType') == DeckType.LEAGUE.value:
         parts.append("ct.name = 'League'")
     elif args.get('deckType') == DeckType.TOURNAMENT.value:

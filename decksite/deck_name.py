@@ -66,6 +66,8 @@ COLOR_COMBINATIONS = {
     'Five Color': ['W', 'U', 'B', 'R', 'G']
 }
 
+MAX_NAME_LEN = 100
+
 def normalize(d: Deck) -> str:
     try:
         name = d.original_name
@@ -93,7 +95,9 @@ def normalize(d: Deck) -> str:
             name = remove_mono_if_not_first_word(name)
         name = ucase_trailing_roman_numerals(name)
         name = titlecase.titlecase(name)
-        return correct_case_of_color_names(name)
+        name = correct_case_of_color_names(name)
+        name = enforce_max_len(name)
+        return name
     except ValueError as c:
         raise InvalidDataException('Failed to normalize {d}'.format(d=repr(d))) from c
 
@@ -249,3 +253,6 @@ def correct_case_of_color_names(name: str) -> str:
         titlecase_k = titlecase.titlecase(k)
         name = name.replace(titlecase_k, k)
     return name
+
+def enforce_max_len(name: str) -> str:
+    return name if len(name) <= MAX_NAME_LEN else name[0:MAX_NAME_LEN] + '…'

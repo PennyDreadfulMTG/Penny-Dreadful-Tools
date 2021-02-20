@@ -157,7 +157,7 @@ Deckbox._ = {
 
         /* IE8 in quirks mode returns 0 for these sizes. */
         const size = [rootElement["clientWidth"], rootElement["clientHeight"]];
-        if (!size[1] === 0) return size;
+        if (size[1] !== 0) return size;
 
         return [document.body["clientWidth"], document.body["clientHeight"]];
     },

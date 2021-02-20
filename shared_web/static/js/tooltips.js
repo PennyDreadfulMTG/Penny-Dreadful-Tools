@@ -18,7 +18,7 @@ Deckbox.ui.Tooltip = class ToolTip {
         this.tooltips = {};
     }
 
-    _padContent(content) {
+    static _padContent(content) {
         return `
             <table>
                 <tr>
@@ -85,7 +85,7 @@ Deckbox.ui.Tooltip = class ToolTip {
             this.move(this.posX, this.posY);
         }
     }
-}
+};
 
 Deckbox.ui.Tooltip.hide = () => {
     Deckbox._.tooltip("image").hide();
@@ -235,7 +235,8 @@ Deckbox._ = {
     },
 
     target(event) {
-        const target = event.target || event.srcElement || document;
+        let target = event.target || event.srcElement || document;
+
         /* check if target is a textnode (safari) */
         if (target.nodeType === 3) target = target.parentNode;
 
@@ -315,7 +316,7 @@ Deckbox.load = () => {
     });
 
     const allLinks = Array.from(document.getElementsByTagName("a"));
-    allLinks.forEach(link => {
+    allLinks.forEach((link) => {
         if (Deckbox._.needsTooltip(link)) {
             document.body.appendChild(Deckbox._.preloadImg(link));
         }

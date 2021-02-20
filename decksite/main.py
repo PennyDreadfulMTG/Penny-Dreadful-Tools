@@ -108,6 +108,8 @@ def banner(seasonnum: str) -> Response:
 
 @APP.before_request
 def before_request() -> Optional[wrappers.Response]:
+    if not request.path.endswith('/'):
+        return None # Let flask do the redirect-routes-not-ending-in-slashes thing before we interfere with routing. Avoids #8277.
     if request.path.startswith('/seasons') and len(request.path) > len('/seasons/') and get_season_id() >= seasons.current_season_num():
         return redirect(re.sub('/seasons/[^/]*', '', request.path))
     if request.path.startswith('/seasons/0'):

@@ -22,7 +22,7 @@ class Home(View):
         self.setup_tournaments()
         self.pd500_url = url_for('pd500')
         pd500_date = tournaments.pd500_date()
-        if pd500_date > dtutil.now():
+        if pd500_date is not None and pd500_date > dtutil.now():
             self.pd500_date = dtutil.display_date_with_date_and_year(pd500_date)
         self.kick_off_url = url_for('kickoff')
         kick_off_date = tournaments.kick_off_date()

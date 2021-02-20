@@ -141,9 +141,13 @@ class View(BaseView):
 
     # Sitewide notice in a banner at the top of every page, for very important things only!
     def notice_html(self) -> str:
-        if tournaments.is_pd500_week(dtutil.now(dtutil.GATHERLING_TZ)):
+        now = dtutil.now(dtutil.GATHERLING_TZ)
+        if tournaments.is_pd500_week(now):
             date = dtutil.display_date_with_date_and_year(tournaments.pd500_date())
             return template.render_name('pd500notice', {'url': url_for('pd500'), 'date': date})
+        if tournaments.is_kick_off_week(now):
+            date = dtutil.display_date_with_date_and_year(tournaments.kick_off_date())
+            return template.render_name('kickoffnotice', {'url': url_for('kickoff'), 'date': date})
         return ''
 
     def page_title(self) -> Optional[str]:

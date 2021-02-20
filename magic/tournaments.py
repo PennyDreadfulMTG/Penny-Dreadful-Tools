@@ -66,6 +66,8 @@ def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> L
     pdfnm_time = (FNM, 'Penny Dreadful FNM', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index]) # type: ignore
     if is_pd500_week(start):
         pdsat_name = 'The Penny Dreadful 500'
+    elif is_kick_off_week(start):
+        pdsat_name = 'Season Kick Off'
     else:
         pdsat_name = 'Penny Dreadful Saturdays'
     pdsat_time = (SAT, pdsat_name, rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index]) # type: ignore

@@ -18,21 +18,6 @@ Deckbox.ui.Tooltip = class ToolTip {
         this.tooltips = {};
     }
 
-    static _padContent(content) {
-        return `
-            <table>
-                <tr>
-                    <td>${content}</td>
-                    <th style="background-position: right top;" />
-                </tr>
-                <tr>
-                    <th style="background-position: left bottom;" />
-                    <th style="background-position: right bottom;" />
-                </tr>
-            </table>
-        `;
-    }
-
     showImage(posX, posY, image) {
         if (image.complete) {
             this.el.innerHTML = "";
@@ -80,7 +65,18 @@ Deckbox.ui.Tooltip = class ToolTip {
 
         if (this.tooltips[url].el._shown) {
             this.el.style.width = "";
-            this.el.innerHTML = this._padContent(content);
+            this.el.innerHTML = `
+                <table>
+                    <tr>
+                        <td>${content}</td>
+                        <th style="background-position: right top;" />
+                    </tr>
+                    <tr>
+                        <th style="background-position: left bottom;" />
+                        <th style="background-position: right bottom;" />
+                    </tr>
+                </table>
+            `;
             this.el.style.width = (20 + Math.min(330, this.el.childNodes[0].offsetWidth)) + "px";
             this.move(this.posX, this.posY);
         }

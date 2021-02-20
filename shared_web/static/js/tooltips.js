@@ -223,7 +223,7 @@ Deckbox._ = {
         return target;
     },
 
-    onmouseover(event) {
+    onpointerover(event) {
         const el = Deckbox._.target(event);
 
         if (Deckbox._.needsTooltip(el)) {
@@ -253,7 +253,7 @@ Deckbox._ = {
         }, 200);
     },
 
-    onmousemove(event) {
+    onpointermove(event) {
         const el = Deckbox._.target(event);
         const posX = Deckbox._.pointerX(event);
         const posY = Deckbox._.pointerY(event);
@@ -263,7 +263,7 @@ Deckbox._ = {
         }
     },
 
-    onmouseout(event) {
+    onpointerout(event) {
         const el = Deckbox._.target(event);
 
         if (Deckbox._.needsTooltip(el)) {
@@ -277,12 +277,9 @@ Deckbox._ = {
     },
 
     enable() {
-        document.addEventListener("mouseover", Deckbox._.onmouseover);
-        document.addEventListener("focus", Deckbox._.onmouseover);
-        document.addEventListener("mousemove", Deckbox._.onmousemove);
-        document.addEventListener("touchmove", Deckbox._.onmousemove);
-        document.addEventListener("mouseout", Deckbox._.onmouseout);
-        document.addEventListener("blur", Deckbox._.onmouseout);
+        document.addEventListener("pointerover", Deckbox._.onpointerover);
+        document.addEventListener("pointermove", Deckbox._.onpointermove);
+        document.addEventListener("pointerout", Deckbox._.onpointerout);
         document.addEventListener("click", Deckbox._.click);
     }
 };

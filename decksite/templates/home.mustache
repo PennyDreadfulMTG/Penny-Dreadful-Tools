@@ -5,28 +5,30 @@
         <a href="{{url}}">{{link_text}}</a>
     </section>
 {{/deck_tables}}
-<section>
-    <h2>{{_ Top Cards}}</h2>
-    <table>
-        <thead>
-            <th>Card</th>
-            <th># Decks</th>
-            <th>Record</th>
-            <th>Win %</th>
-        </thead>
-        <tbody>
-            {{#top_cards}}
-                <tr>
-                    <td>{{> singlecard}}</td>
-                    <td class="n">{{num_decks}}</td>
-                    <td class="n">{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}</td>
-                    <td class="n">{{win_percent}}</td>
-                </tr>
-            {{/top_cards}}
-        </tbody>
-    </table>
-    <p><a href="{{cards_url}}">{{_ More cards…}}</a></p>
-</section>
+{{#has_top_cards}}
+    <section>
+        <h2>{{_ Top Cards}}</h2>
+        <table>
+            <thead>
+                <th>Card</th>
+                <th># Decks</th>
+                <th>Record</th>
+                <th>Win %</th>
+            </thead>
+            <tbody>
+                {{#top_cards}}
+                    <tr>
+                        <td>{{> singlecard}}</td>
+                        <td class="n">{{num_decks}}</td>
+                        <td class="n">{{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}</td>
+                        <td class="n">{{win_percent}}</td>
+                    </tr>
+                {{/top_cards}}
+            </tbody>
+        </table>
+        <p><a href="{{cards_url}}">{{_ More cards…}}</a></p>
+    </section>
+{{/has_top_cards}}
 <section>
     <h2>{{_ Tournaments}}</h2>
     {{> tournamentcalendar}}

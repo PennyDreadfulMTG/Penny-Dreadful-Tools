@@ -91,11 +91,7 @@ Deckbox.ui.Tooltip.hide = () => {
 
 Deckbox._ = {
     onDocumentLoad(callback) {
-        if (window.addEventListener) {
-            window.addEventListener("load", callback, false);
-        } else {
-            window.attachEvent && window.attachEvent("onload", callback);
-        }
+        window.addEventListener("load", callback);
     },
 
     preloadImg(link) {
@@ -178,18 +174,6 @@ Deckbox._ = {
         }
 
         return [posX, posY];
-    },
-
-    addEvent(obj, type, fn) {
-        if (obj.addEventListener) {
-            if (type === "mousewheel") obj.addEventListener("DOMMouseScroll", fn, false);
-
-            obj.addEventListener(type, fn, false);
-        } else if (obj.attachEvent) {
-            obj["e" + type + fn] = fn;
-            obj[type + fn] = () => obj["e" + type + fn](window.event);
-            obj.attachEvent("on" + type, obj[type + fn]);
-        }
     },
 
     removeEvent(obj, type, fn) {
@@ -293,13 +277,13 @@ Deckbox._ = {
     },
 
     enable() {
-        Deckbox._.addEvent(document, "mouseover", Deckbox._.onmouseover);
-        Deckbox._.addEvent(document, "focus", Deckbox._.onmouseover);
-        Deckbox._.addEvent(document, "mousemove", Deckbox._.onmousemove);
-        Deckbox._.addEvent(document, "touchmove", Deckbox._.onmousemove);
-        Deckbox._.addEvent(document, "mouseout", Deckbox._.onmouseout);
-        Deckbox._.addEvent(document, "blur", Deckbox._.onmouseout);
-        Deckbox._.addEvent(document, "click", Deckbox._.click);
+        document.addEventListener("mouseover", Deckbox._.onmouseover);
+        document.addEventListener("focus", Deckbox._.onmouseover);
+        document.addEventListener("mousemove", Deckbox._.onmousemove);
+        document.addEventListener("touchmove", Deckbox._.onmousemove);
+        document.addEventListener("mouseout", Deckbox._.onmouseout);
+        document.addEventListener("blur", Deckbox._.onmouseout);
+        document.addEventListener("click", Deckbox._.click);
     }
 };
 

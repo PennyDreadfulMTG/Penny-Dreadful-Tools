@@ -5,8 +5,8 @@ from decksite.deck_type import DeckType
 def test_decks_where() -> None:
     args = {'deckType': DeckType.LEAGUE.value}
     assert "= 'League'" in query.decks_where(args, False, 1)
-    assert "d.retired" in query.decks_where(args, False, 1)
-    assert "d.retired" not in query.decks_where(args, True, 1)
+    assert 'd.retired' in query.decks_where(args, False, 1)
+    assert 'd.retired' not in query.decks_where(args, True, 1)
     args = {'deckType': DeckType.TOURNAMENT.value}
     assert "= 'Gatherling'" in query.decks_where(args, False, 1)
     args = {'deckType': DeckType.ALL.value}

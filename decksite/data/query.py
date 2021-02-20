@@ -1,7 +1,5 @@
 from typing import Dict, Optional, Union, cast
 
-from flask import session
-
 from decksite.deck_type import DeckType
 from find import search
 from shared.database import sqlescape

@@ -16,7 +16,7 @@ class PD500(View):
         self.people_with_byes = [{'person': person, 'url': url_for('.person', mtgo_username=person)} for person in people]
         self.people_with_byes = sorted(self.people_with_byes, key=lambda k: k['person'])
         pd500_date = tournaments.pd500_date()
-        if pd500_date is None or dtutil.now() > pd500_date:
+        if dtutil.now() > pd500_date:
             self.date_info = 'The Penny Dreadful 500 is on the second-last Saturday of the season'
         else:
             self.date_info = 'The next Penny Dreadful 500 is on ' + dtutil.display_date_with_date_and_year(pd500_date)

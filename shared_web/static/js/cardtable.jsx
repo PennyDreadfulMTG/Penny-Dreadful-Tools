@@ -71,6 +71,7 @@ const renderRow = (table, card) => (
                 renderRow={renderRow}
                 searchPrompt={"Scryfall search"}
                 showSearch={true}
+                reloadCards={true}
                 {...e.dataset}
             />;
         render(table, e);

@@ -50,9 +50,8 @@ class BaseView:
         return current_app.config['css_url'] or url_for('static', filename='css/pd.css', v=self.commit_id('shared_web/static/css/pd.css'))
 
     def tooltips_url(self) -> Optional[str]:
-        # Don't preload 10,000 images.
         # pylint: disable=no-member
-        if not hasattr(self, 'cards') or len(getattr(self, 'cards')) > 500:
+        if not hasattr(self, 'cards'):
             return None
         return url_for('static', filename='js/tooltips.js', v=self.commit_id())
 

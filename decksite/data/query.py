@@ -212,7 +212,7 @@ def exclude_active_league_runs(except_person_id: Optional[int]) -> str:
     return clause
 
 def decks_where(args: Dict[str, str], is_admin: bool, viewer_id: Optional[int]) -> str:
-    parts = []
+    parts = ['TRUE']
     if not is_admin:
         parts.append(exclude_active_league_runs(viewer_id))
     if args.get('deckType') == DeckType.LEAGUE.value:

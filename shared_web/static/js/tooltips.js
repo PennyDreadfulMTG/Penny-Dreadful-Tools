@@ -281,6 +281,22 @@ Deckbox._ = {
 };
 
 /**
+ * Call this to initialize or reinitialize (after xhr data load) card mouseover images.
+ */
+Deckbox.load = function() {
+    $(".card").each(function() {
+        $(this).data("tt", "https://deckbox.org/mtg/" + $(this).text().replace(/^[0-9 ]*/, "") + "/tooltip");
+    });
+    var allLinks = document.getElementsByTagName("a");
+    for (var i = 0; i < allLinks.length; i++) {
+        var link = allLinks[i];
+        if (Deckbox._.needsTooltip(link)) {
+            document.body.appendChild(Deckbox._.preloadImg(link));
+        }
+    }
+};
+
+/**
  * Preload images and CSS for maximum responsiveness even though this does unnecessary work on touch devices.
  */
 (function() {
@@ -292,16 +308,5 @@ Deckbox._ = {
     }
 
     /* Preload the tooltip images. */
-    Deckbox._.onDocumentLoad(function() {
-        $(".card").each(function() {
-            $(this).data("tt", "https://deckbox.org/mtg/" + $(this).text().replace(/^[0-9 ]*/, "") + "/tooltip");
-        });
-        var allLinks = document.getElementsByTagName("a");
-        for (var i = 0; i < allLinks.length; i++) {
-            var link = allLinks[i];
-            if (Deckbox._.needsTooltip(link)) {
-                document.body.appendChild(Deckbox._.preloadImg(link));
-            }
-        }
-    });
+    Deckbox._.onDocumentLoad(Deckbox.load);
 })();

@@ -1,4 +1,4 @@
-/*global PD:true*/
+/*global PD,Deckbox:true*/
 import Axios from "axios";
 import PropTypes from "prop-types";
 import React from "react";
@@ -39,6 +39,9 @@ export class Table extends React.Component {
                 this.load();
                 break;
             }
+        }
+        if (this.props.reloadCards && typeof Deckbox !== "undefined") {
+            Deckbox.load();
         }
     }
 
@@ -209,6 +212,7 @@ Table.propTypes = {
     "leagueOnly": PropTypes.string,
     "pageSize": PropTypes.string.isRequired,
     "personId": PropTypes.string,
+    "reloadCards": PropTypes.bool,
     "renderHeaderRow": PropTypes.func.isRequired,
     "renderRow": PropTypes.func.isRequired,
     "searchPrompt": PropTypes.string,

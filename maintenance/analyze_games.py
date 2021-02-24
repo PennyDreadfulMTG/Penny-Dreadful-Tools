@@ -14,9 +14,11 @@ def analyze_game(lines: List[str], players: List[str]) -> Dict[Any, Any]:
     active_player = None
     for line in lines:
         line = line.rstrip('\n')
-
+        # New:
         # [07:56:45] Neiburu chooses to play first.
-        m = re.search(r'] ([^ ]*) chooses to play ([^.]*).', line)
+        # Old (no timestamp): 
+        # Zchinque chooses to play first.
+        m = re.search(r'\]?([^ ]*) chooses to play ([^.]*).', line)
         if m:
             player = m.group(1)
             position = m.group(2)
@@ -82,7 +84,7 @@ def analyze_game(lines: List[str], players: List[str]) -> Dict[Any, Any]:
 
         # Public tutors
 
-        m = re.search(r'Winner: ([^ ]*)', line)
+        m = re.search(r'^Winner: ([^ ]*)', line)
         if m:
             game['winner'] = m.group(1)
     game['number_of_turns'] = game_turn
@@ -210,7 +212,7 @@ def insert_targets_for_card(card_play: Dict[Any, Any], new_id: int) -> None:
         db().insert(sql, [new_id, target])
 
 def ad_hoc() -> None:
-    matches = get_batch_of_matches(1)
+    matches = get_batch_of_matches(10)
     if len(matches) > 0:
         print("Analyzing log games for these matches/mtgo_id: ")
         print([(x['id'],x['mtgo_id']) for x in matches])

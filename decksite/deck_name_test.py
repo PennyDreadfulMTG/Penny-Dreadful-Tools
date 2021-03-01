@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional, Tuple
 
 import pytest
 
@@ -6,7 +6,7 @@ from decksite import deck_name
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
 
-TESTDATA = [
+TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str]]]  = [
     ('Dimir Control', 'Dimir Control', ['U', 'B'], 'Control'),
     ('U/B Control', 'Dimir Control', ['U', 'B'], 'Control'),
     ('dimir Control', 'Dimir Control', ['U', 'B'], 'Control'),

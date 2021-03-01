@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional, Tuple
 
 import pytest
 
@@ -6,7 +6,7 @@ from decksite import deck_name
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
 
-TESTDATA = [
+TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str]]]  = [
     ('Dimir Control', 'Dimir Control', ['U', 'B'], 'Control'),
     ('U/B Control', 'Dimir Control', ['U', 'B'], 'Control'),
     ('dimir Control', 'Dimir Control', ['U', 'B'], 'Control'),
@@ -101,6 +101,9 @@ TESTDATA = [
     ('Penny-Zombies', 'Zombies', ['B'], 'Zombies'),
     ('Something Goes Brrrr', 'Something Goes BRRRR', ['B', 'R'], 'Aggro'),
     ('Very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long deck name', 'Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very …', ['U'], 'Control'),
+    ('Boros Weenie', 'Boros Weenie', ['W', 'R'], 'Aggro'),
+    ('by the power of god and cheap countermagic', 'By the Power of God and Cheap Countermagic', ['U'], 'Trickbind-Dreadnought'),
+    ("Don't Kill Me T2, Teal Sucks", "Don't Kill Me T2, Teal Sucks", [], 'Combo')
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

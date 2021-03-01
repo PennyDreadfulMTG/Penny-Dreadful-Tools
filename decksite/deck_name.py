@@ -21,9 +21,9 @@ WHITELIST = [
 ]
 
 PROFANITY_WHITELIST = [
-    "weenie",
-    "kill",
-    "god"
+    'weenie',
+    'kill',
+    'god'
 ]
 
 ABBREVIATIONS = {

@@ -20,6 +20,12 @@ WHITELIST = [
     'i will make combo work in season 15'
 ]
 
+PROFANITY_WHITELIST = [
+    "weenie",
+    "kill",
+    "god"
+]
+
 ABBREVIATIONS = {
     'rdw': 'red deck wins',
     'ww': 'white weenie',
@@ -224,6 +230,7 @@ def remove_mono_if_not_first_word(name: str) -> str:
     return re.sub('(.+) mono ', '\\1 ', name)
 
 def remove_profanity(name: str) -> str:
+    profanity.load_censor_words(whitelist_words=PROFANITY_WHITELIST)
     profanity.add_censor_words(['supremacia ariana', 'fisting', 'retarded', 'erection'])
     name = profanity.censor(name, ' ').strip()
     name = re.sub(' +', ' ', name) # We just replaced profanity with a space so compress spaces.

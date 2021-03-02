@@ -212,7 +212,10 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
         'common': rarity_ids['Common'],
         'uncommon': rarity_ids['Uncommon'],
         'rare':  rarity_ids['Rare'],
-        'mythic': rarity_ids['Mythic Rare']
+        'mythic': rarity_ids['Mythic Rare'],
+        'special': rarity_ids['Rare'],
+        'bonus': rarity_ids['Mythic Rare'],
+
     }
     sets = load_sets()
     colors = {c['symbol'].upper(): c['id'] for c in db().select('SELECT id, symbol FROM color ORDER BY id')}

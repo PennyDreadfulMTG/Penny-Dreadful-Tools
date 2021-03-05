@@ -23,15 +23,6 @@ def test_tappedout() -> None:
         tappedout.ad_hoc()
     APP.config['SERVER_NAME'] = prev
 
-@pytest.mark.xfail(reason='Tappedout temporarily disabled due to rate limiting.')
-@pytest.mark.functional
-@pytest.mark.gatherling
-@pytest.mark.external
-@TEST_VCR.use_cassette
-def test_gatherling() -> None:
-    with APP.app_context(): # type: ignore
-        gatherling.scrape(5)
-
 @pytest.mark.functional
 @pytest.mark.tappedout
 @pytest.mark.external

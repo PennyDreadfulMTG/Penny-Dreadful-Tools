@@ -17,6 +17,7 @@ services:
       - ./logsite:/pdm/logsite
       - ./magic:/pdm/magic
       - ./maintenance:/pdm/maintenance
+      - ./find:/pdm/find
       - ./shared:/pdm/shared
       - ./shared_web:/pdm/shared_web
   discordbot:

@@ -45,7 +45,7 @@ class Home(View):
                 tournament_id = d.competition_id
             if d.source_name == 'League' and league_id is None:
                 league_id = d.competition_id
-            if d.competition_id is not None and d.competition_id == tournament_id and d.finish <= 8:
+            if d.competition_id is not None and d.competition_id == tournament_id and d.finish is not None and d.finish <= 8:
                 tournament_decks.append(d)
             if d.competition_id is not None and d.competition_id == league_id and d.wins >= 5 and (d.losses + d.draws) == 0 and len(league_decks) < 8:
                 league_decks.append(d)

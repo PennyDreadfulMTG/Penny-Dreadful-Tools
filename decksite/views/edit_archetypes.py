@@ -9,7 +9,7 @@ from decksite.view import View
 from magic.models import Deck
 
 
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use,too-many-instance-attributes
 class EditArchetypes(View):
     def __init__(self, archetypes: List[Archetype], search_results: List[Deck], q: str, notq: str) -> None:
         super().__init__()
@@ -29,6 +29,8 @@ class EditArchetypes(View):
                         d.archetypes.append({'id': a.id, 'name': a.name, 'selected': True})
                     else:
                         d.archetypes.append(a)
+            d.show_add_rule_prompt = d.similarity == '100%' and not d.get('rule_archetype_name')
+        self.edit_rules_url = url_for('edit_rules')
         self.has_search_results = len(search_results) > 0
         self.search_results = search_results
         for d in self.search_results:

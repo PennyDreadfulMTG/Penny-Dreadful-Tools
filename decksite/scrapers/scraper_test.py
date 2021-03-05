@@ -2,7 +2,7 @@ import pytest
 import vcr
 
 from decksite import APP
-from decksite.scrapers import gatherling, mtggoldfish, tappedout
+from decksite.scrapers import mtggoldfish, tappedout
 from shared import configuration
 
 TEST_VCR = vcr.VCR(
@@ -22,15 +22,6 @@ def test_tappedout() -> None:
         # pylint: disable=no-member
         tappedout.ad_hoc()
     APP.config['SERVER_NAME'] = prev
-
-@pytest.mark.xfail(reason='Tappedout temporarily disabled due to rate limiting.')
-@pytest.mark.functional
-@pytest.mark.gatherling
-@pytest.mark.external
-@TEST_VCR.use_cassette
-def test_gatherling() -> None:
-    with APP.app_context(): # type: ignore
-        gatherling.scrape(5)
 
 @pytest.mark.functional
 @pytest.mark.tappedout

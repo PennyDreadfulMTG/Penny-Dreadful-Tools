@@ -2,7 +2,7 @@ import pytest
 import vcr
 
 from decksite import APP
-from decksite.scrapers import gatherling, mtggoldfish, tappedout
+from decksite.scrapers import mtggoldfish, tappedout
 from shared import configuration
 
 TEST_VCR = vcr.VCR(

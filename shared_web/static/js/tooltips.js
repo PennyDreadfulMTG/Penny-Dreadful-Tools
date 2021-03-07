@@ -95,7 +95,11 @@ Deckbox.ui.Tooltip.hide = () => {
 
 Deckbox._ = {
     onDocumentLoad(callback) {
-        window.addEventListener("load", callback);
+        if (window.addEventListener) {
+            window.addEventListener("load", callback, false);
+        } else {
+            window.attachEvent && window.attachEvent("onload", callback);
+        }
     },
 
     preloadImg(link) {

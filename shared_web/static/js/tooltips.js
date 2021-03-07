@@ -156,10 +156,9 @@ Deckbox._ = {
         }
 
         /* IE8 in quirks mode returns 0 for these sizes. */
-        const size = [rootElement["clientWidth"], rootElement["clientHeight"]];
-        if (size[1] !== 0) return size;
+        if (rootElement.clientHeight !== 0) return [rootElement.clientWidth, rootElement.clientHeight];
 
-        return [document.body["clientWidth"], document.body["clientHeight"]];
+        return [document.body.clientWidth, document.body.clientHeight];
     },
 
     fitToScreen(posX, posY, el) {

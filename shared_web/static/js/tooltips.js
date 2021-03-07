@@ -112,7 +112,7 @@ Deckbox._ = {
         const docElement = document.documentElement;
         const body = document.body || { scrollLeft: 0 };
 
-        const input = (event.touches[0] || event);
+        const [input] = (event.touches || [event]);
 
         return input.pageX ||
             (input.clientX +
@@ -124,7 +124,7 @@ Deckbox._ = {
         const docElement = document.documentElement;
         const body = document.body || { scrollTop: 0 };
 
-        const input = (event.touches[0] || event);
+        const [input] = (event.touches || [event]);
 
         return input.pageY ||
             (input.clientY +

@@ -169,6 +169,8 @@ def tournament_deck(cells: ResultSet, competition_id: int, date: datetime.dateti
     username = aliased(player.a.contents[0].string)
     d['mtgo_username'] = username
     d['finish'] = final.get(username)
+    if d['finish'] is None:
+        raise InvalidDataException(f'{username} has no finish')
     link = cells[4].a
     d['url'] = gatherling_url(link['href'])
     d['name'] = link.string

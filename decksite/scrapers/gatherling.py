@@ -9,9 +9,8 @@ from decksite.data import archetype, competition, deck, match, person, top
 from decksite.database import db
 from magic import decklist
 from shared import dtutil, fetch_tools
-from shared.database import  sqlescape
+from shared.database import sqlescape
 from shared.pd_exception import InvalidArgumentException, InvalidDataException
-
 
 Card = str
 Cards = Dict[Card, int]

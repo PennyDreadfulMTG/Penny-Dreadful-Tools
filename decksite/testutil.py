@@ -2,6 +2,7 @@ from decksite import database
 from decksite.database import db
 from shared import configuration
 
+
 def setup_test_db():
     name = configuration.get_str('decksite_test_database')
     configuration.CONFIG['decksite_database'] = name

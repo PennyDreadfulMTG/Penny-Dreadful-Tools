@@ -1,107 +1,291 @@
 import datetime
-import re
 import urllib.parse
-from typing import Any, Dict, List, Optional, Tuple
+from enum import Enum
+from typing import Any, Dict, List, Literal, Optional
 
-import bs4
-from bs4 import BeautifulSoup, ResultSet
+import pydantic
 
-from decksite.data import archetype, competition, deck, match, person
+from decksite.data import archetype, competition, deck, match, person, top
 from decksite.database import db
 from magic import decklist
-from shared import dtutil, fetch_tools, logger
-from shared.pd_exception import InvalidDataException
+from shared import dtutil, fetch_tools
+from shared.database import  sqlescape
+from shared.pd_exception import InvalidArgumentException, InvalidDataException
 
-WINNER = '1st'
-SECOND = '2nd'
-TOP_4 = 't4'
-TOP_8 = 't8'
+
+Card = str
+Cards = Dict[Card, int]
+DeckID = int
+GatherlingUsername = str
+FinalStandings = Dict[GatherlingUsername, int]
+MTGOUsername = str
+
+class Bool(Enum):
+    TRUE = 1
+    FALSE = 0
+
+class Wins(Enum):
+    ZERO = 0
+    ONE = 1
+    TWO = 2
+
+class Timing(Enum):
+    MAIN = 1
+    FINALS = 2
+
+class Structure(Enum):
+    SINGLE_ELIMINATION = 'Single Elimination'
+    SWISS_BLOSSOM = 'Swiss (Blossom)'
+    SWISS = 'Swiss'
+    LEAGUE = 'League'
+    LEAGUE_MATCH = 'League Match'
+
+class Verification(Enum):
+    VERIFIED = "verified"
+    UNVERIFIED = None # Not actually sure what value shows when a match is not verified.
+
+class Medal(Enum):
+    WINNER = '1st'
+    RUNNER_UP = '2nd'
+    TOP_4 = 't4'
+    TOP_8 = 't8'
+
+class Archetype(Enum):
+    AGGRO = "Aggro"
+    CONTROL = "Control"
+    COMBO = "Combo"
+    AGGRO_CONTROL = "Aggro-Control"
+    AGGRO_COMBO = "Aggro-Combo"
+    COMBO_CONTROL = "Combo-Control"
+    RAMP = "Ramp"
+    MIDRANGE = "Midrange"
+    UNCLASSIFIED = "Unclassified"
+
+@pydantic.dataclasses.dataclass
+class GatherlingMatch:
+    id: int
+    playera: GatherlingUsername
+    playera_wins: Wins
+    playerb: GatherlingUsername
+    playerb_wins: Wins
+    timing: Timing
+    round: int
+    verification: Verification
+
+@pydantic.dataclasses.dataclass
+class GatherlingDeck:
+    id: DeckID
+    found: Bool
+    playername: GatherlingUsername
+    name: str
+    archetype: Archetype
+    notes: str
+    maindeck: Cards
+    sideboard: Cards
+
+@pydantic.dataclasses.dataclass
+class Finalist:
+    medal: Medal
+    player: GatherlingUsername
+    deck: DeckID
+
+@pydantic.dataclasses.dataclass
+class Standing:
+    player: GatherlingUsername
+    active: Bool
+    score: int
+    matches_played: int
+    matches_won: int
+    draws: int
+    games_won: int
+    games_played: int
+    byes: int
+    OP_Match: str
+    PL_Game: str
+    OP_Game: str
+    seed: int
+
+@pydantic.dataclasses.dataclass()
+class Player:
+    name: GatherlingUsername
+    verified: Optional[Literal[True]]
+    discord_id: Optional[int]
+    discord_handle: Optional[str]
+    mtga_username: Optional[str]
+    mtgo_username: Optional[MTGOUsername]
+
+@pydantic.dataclasses.dataclass()
+class Event:
+    series: str
+    season: int
+    number: int
+    host: str
+    cohost: Optional[str]
+    active: Bool
+    finalized: Bool
+    current_round: int
+    start: str
+    mainrounds: int
+    mainstruct: str
+    finalrounds: int
+    finalstruct: str
+    mtgo_room: str
+    matches: List[GatherlingMatch]
+    unreported: List[str]
+    decks: List[GatherlingDeck]
+    finalists: List[Finalist]
+    standings: List[Standing]
+    players: Dict[GatherlingUsername, Player]
+
+APIResponse = Dict[str, Event]
 
 ALIASES: Dict[str, str] = {}
 
-def ad_hoc(limit: int = 5) -> None:
-    soup = BeautifulSoup(fetch_tools.fetch('https://gatherling.com/eventreport.php?format=Penny+Dreadful&series=&season=&mode=Filter+Events', character_encoding='utf-8'), 'html.parser')
-    tournaments = [(gatherling_url(link['href']), link.string) for link in soup.find_all('a') if link['href'].find('eventreport.php?') >= 0]
-    n = 0
-    for (url, name) in tournaments:
-        i = tournament(url, name)
-        n = n + i
-        if n > limit:
-            return
+def scrape() -> None:
+    data = fetch_tools.fetch_json(gatherling_url('/api.php?action=recent_events'))
+    response = make_api_response(data)
+    process(response)
 
-def tournament(url: str, name: str) -> int:
-    s = fetch_tools.fetch(url, character_encoding='utf-8', retry=True)
+def make_api_response(data: Dict[str, Dict[Any, Any]]) -> APIResponse:
+    response = {}
+    for k, v in data.items():
+        # First check it's a series we are interested in.
+        if is_interesting_series(v['series']):
+            response[k] = Event(**v)
+    return response
 
-    # Tournament details
-    soup = BeautifulSoup(s, 'html.parser')
-    cell = soup.find('div', {'id': 'EventReport'}).find_all('td')[1]
+def is_interesting_series(name: str):
+    return len(db().select('SELECT id FROM competition_series WHERE name = %s', [name])) > 0
 
-    name = cell.find('a').string.strip()
-    day_s = cell.find('br').next.strip()
-    if '-0001' in day_s:
-        # Tournament has been incorrectly configured.
-        return 0
+def process(response: APIResponse) -> None:
+    for name, event in response.items():
+        process_tournament(name, event)
 
-    dt, competition_series = get_dt_and_series(name, day_s)
-    top_n = find_top_n(soup)
-    if top_n == competition.Top.NONE: # Tournament is in progress.
-        logger.info('Skipping an in-progress tournament.')
-        return 0
+def process_tournament(name: str, event: Event):
     db().begin('tournament')
-    competition_id = competition.get_or_insert_competition(dt, dt, name, competition_series, url, top_n)
-    ranks = rankings(soup)
-    medals = medal_winners(s)
-    final = finishes(medals, ranks)
-    n = add_decks(dt, competition_id, final, s)
+    name_safe = sqlescape(name)
+    cs = competition.load_competitions(f'c.name = {name_safe}')
+    if len(cs) > 0:
+        return # We already have this tournament, no-op out of here.
+    try:
+        date = vivify_date(event.start)
+    except ValueError:
+        raise InvalidDataException(f"Could not parse tournament date `{event.start}`")
+    fs = determine_finishes(event.standings, event.finalists)
+    competition_id = insert_competition(name, date, event)
+    decks_by_gatherling_username = insert_decks(competition_id, date, event.decks, fs, list(event.players.values()))
+    insert_matches(date, decks_by_gatherling_username, event.matches, event.mainrounds + event.finalrounds)
+    guess_archetypes(list(decks_by_gatherling_username.values()))
     db().commit('tournament')
-    return n
 
-# Hack in the known start time and series name because it's not in the page, depending on the series.
-def get_dt_and_series(name: str, day_s: str) -> Tuple[datetime.datetime, str]:
-    if 'APAC' in name:
-        competition_series = 'APAC Penny Dreadful Sundays'
-        start_time = '16:00'
-        dt = get_dt(day_s, start_time, dtutil.APAC_SERIES_TZ)
-    elif 'FNM' in name:
-        competition_series = 'Penny Dreadful FNM'
-        start_time = '19:00'
-        dt = get_dt(day_s, start_time, dtutil.GATHERLING_TZ)
+def determine_finishes(standings: List[Standing], finalists: List[Finalist]) -> FinalStandings:
+    ps = {}
+    for f in finalists:
+        ps[f.player] = medal2finish(f.medal)
+    r = len(ps)
+    for p in standings:
+        if p.player not in ps.keys():
+            r += 1
+            ps[p.player] = r
+    return ps
+
+def medal2finish(m: Medal):
+    if m == Medal.WINNER:
+        return 1
+    elif m == Medal.RUNNER_UP:
+        return 2
+    elif m == Medal.TOP_4:
+        return 3
+    elif m == Medal.TOP_8:
+        return 5
+    raise InvalidArgumentException(f"I don't know what the finish is for `{m}`")
+
+def insert_competition(name: str, date: datetime.datetime, event: Event) -> int:
+    if not name or not event.start or event.finalrounds is None or not event.series:
+        raise InvalidDataException(f'Unable to insert Gatherling tournament `{name}` with `{event}`')
+    url = gatherling_url('/eventreport.php?event=' + urllib.parse.quote(name))
+    if event.finalrounds == 0:
+        top_n = top.Top.NONE
     else:
-        if 'Saturday' in name or 'Sunday' in name or 'PDS' in name:
-            start_time = '13:30'
-        else:
-            start_time = '19:00'
-        dt = get_dt(day_s, start_time, dtutil.GATHERLING_TZ)
-        competition_series = 'Penny Dreadful {day}s'.format(day=dtutil.day_of_week(dt, dtutil.GATHERLING_TZ))
-    return (dt, competition_series)
+        try:
+            top_n = top.Top(pow(2, event.finalrounds))
+        except ValueError:
+            raise InvalidDataException(f'Unexpected number of finalrounds: `{event.finalrounds}`')
+    return competition.get_or_insert_competition(date, date, name, event.series, url, top_n)
 
-def get_dt(day_s: str, start_time: str, timezone: Any) -> datetime.datetime:
-    date_s = day_s + ' {start_time}'.format(start_time=start_time)
-    return dtutil.parse(date_s, '%d %B %Y %H:%M', timezone)
+def insert_decks(competition_id: int, date: datetime.datetime, ds: List[GatherlingDeck], fs: FinalStandings, players: List[Player]) -> Dict[GatherlingUsername, deck.Deck]:
+    return {d.playername: insert_deck(competition_id, date, d, fs, players) for d in ds}
 
-def find_top_n(soup: BeautifulSoup) -> competition.Top:
-    event_tables = soup.find('div', {'id': 'EventReport'}).find_all('table')
-    if len(event_tables) < 4: # Tournament is in progress, we don't have the Top N table yet.
-        return competition.Top.NONE
-    return competition.Top(int(event_tables[1].find_all('td')[1].string.strip().replace('TOP ', '')))
+def insert_deck(competition_id: int, date: datetime.datetime, d: GatherlingDeck, fs: FinalStandings, players: List[Player]) -> deck.Deck:
+    finish = fuzzy_get(fs, d.playername)
+    if not finish:
+        raise InvalidDataException(f"I don't have a finish for `{d.playername}`")
+    mtgo_username = find_mtgo_username(d.playername, players)
+    if not mtgo_username:
+        raise InvalidDataException(f"I don't have an MTGO username for `{d.playername}`")
+    raw = {
+        'name': d.name,
+        'source': 'Gatherling',
+        'competition_id': competition_id,
+        'created_date': dtutil.dt2ts(date),
+        'mtgo_username': mtgo_username,
+        'finish': finish,
+        'url': gatherling_url(f'deck.php?mode=view&id={d.id}'),
+        'archetype': d.archetype,
+        'identifier': d.id,
+        'cards': {'maindeck': d.maindeck, 'sideboard': d.sideboard},
+    }
+    if len(raw['cards']['maindeck']) + len(raw['cards']['sideboard']) == 0:
+        raise InvalidDataException(f'Unable to add deck with no cards `{d.id}`')
+    try:
+        decklist.vivify(raw['cards'])
+    except InvalidDataException:
+        raise
+    if deck.get_deck_id(raw['source'], raw['identifier']):
+        raise InvalidArgumentException("You asked me to insert a deck that already exists `{raw['source']}`, `{raw['identifier']}`")
+    return deck.add_deck(raw)
 
-def add_decks(dt: datetime.datetime, competition_id: int, final: Dict[str, int], s: str) -> int:
-    # The HTML of this page is so badly malformed that BeautifulSoup cannot really help us with this bit.
-    rows = re.findall('<tr style=">(.*?)</tr>', s, re.MULTILINE | re.DOTALL)
-    decks_added, ds = 0, []
-    matches: List[bs4.element.Tag] = []
-    for row in rows:
-        cells = BeautifulSoup(row, 'html.parser').find_all('td')
-        d = tournament_deck(cells, competition_id, dt, final)
-        if d is not None:
-            if d.get('id') is None or not match.load_matches_by_deck(d):
-                decks_added += 1
-                ds.append(d)
-                matches += tournament_matches(d)
-    add_ids(matches, ds)
-    insert_matches_without_dupes(dt, matches)
-    guess_archetypes(ds)
-    return decks_added
+def insert_matches(date: datetime.datetime, decks_by_gatherling_username: Dict[GatherlingUsername, deck.Deck], ms: List[GatherlingMatch], total_rounds: int):
+    for m in ms:
+        insert_match(date, decks_by_gatherling_username, m, total_rounds)
+
+def insert_match(date: datetime.datetime, decks_by_gatherling_username: Dict[GatherlingUsername, deck.Deck], m: GatherlingMatch, total_rounds: int):
+    d1 = fuzzy_get(decks_by_gatherling_username, m.playera)
+    if not d1:
+        raise InvalidDataException(f"I don't have a deck for `{m.playera}`")
+    if is_bye(m):
+        d2_id = None
+        player2_wins = 0
+    else:
+        d2 = fuzzy_get(decks_by_gatherling_username, m.playerb)
+        if not d2:
+            raise InvalidDataException(f"I don't have a deck for `{m.playerb}`")
+        d2_id = d2.id
+        player2_wins = m.playerb_wins.value
+    match.insert_match(date, d1.id, m.playera_wins.value, d2_id, player2_wins, m.round, elimination(m, total_rounds))
+
+# Account for the Gatherling API's slightly eccentric representation of byes.
+def is_bye(m: GatherlingMatch):
+    return m.playera == m.playerb and m.playera_wins == Wins.ZERO and m.playerb_wins == Wins.ZERO
+
+# 'elimination' is an optional int with meaning: NULL = nontournament, 0 = Swiss, 8 = QF, 4 = SF, 2 = F
+def elimination(m: GatherlingMatch, total_rounds: int):
+    if m.timing != Timing.FINALS:
+        return 0
+    remaining_rounds = total_rounds - m.round + 1
+    return pow(2, remaining_rounds) # 1 => 2, 2 => 4, 3 => 8 which are the values 'elimination' expects
+
+def find_mtgo_username(gatherling_username: GatherlingUsername, players: List[Player]):
+    for p in players:
+        if p.name == gatherling_username:
+            if p.mtgo_username is not None:
+                return aliased(p.mtgo_username)
+    return aliased(gatherling_username) # Best guess given that we don't know for certain
+
+def gatherling_url(href: str) -> str:
+    if href.startswith('http'):
+        return href
+    return 'https://gatherling.com{href}'.format(href=href)
 
 def guess_archetypes(ds: List[deck.Deck]) -> None:
     deck.calculate_similar_decks(ds)

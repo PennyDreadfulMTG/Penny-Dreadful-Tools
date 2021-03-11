@@ -22,6 +22,7 @@ UTC_TZ = pytz.timezone('UTC')
 MTGGOLDFISH_TZ = UTC_TZ
 CARDHOARDER_TZ = UTC_TZ
 
+GATHERLING_FORMAT = '%Y-%m-%d %H:%M:%S'
 FORM_FORMAT = '%Y-%m-%d %H:%M'
 
 # Converts a UTC timestamp (seconds) into a timezone-aware UTC datetime.

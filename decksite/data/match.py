@@ -18,7 +18,7 @@ from shared.pd_exception import TooFewItemsException
 def insert_match(dt: datetime.datetime,
                  left_id: int,
                  left_games: int,
-                 right_id: int,
+                 right_id: Optional[int],
                  right_games: int,
                  round_num: Optional[int] = None,
                  elimination: Optional[int] = None,

@@ -1,7 +1,7 @@
 import datetime
 from typing import Dict, List, Optional, Union
 
-from flask import url_for
+from flask import g, url_for
 
 from decksite.data import deck, elo, query
 from decksite.database import db
@@ -156,7 +156,8 @@ def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', lim
     for m in matches:
         m.date = dtutil.ts2dt(m.date)
         m.competition_end_date = dtutil.ts2dt(m.competition_end_date)
-        m.competition_url = url_for('competition', competition_id=m.competition_id)
+        if g: # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8435
+            m.competition_url = url_for('competition', competition_id=m.competition_id)
         if Deck(m).is_in_current_run() and not show_active_deck_names:
             m.opponent_deck_name = '(Active League Run)'
         if should_load_decks and m.opponent_deck_id is not None and decks_by_id.get(m.opponent_deck_id):

@@ -1,6 +1,5 @@
 import datetime
 import urllib.parse
-from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Literal, Optional
 
@@ -41,7 +40,7 @@ class Structure(Enum):
     LEAGUE_MATCH = 'League Match'
 
 class Verification(Enum):
-    VERIFIED = "verified"
+    VERIFIED = 'verified'
     UNVERIFIED = None # Not actually sure what value shows when a match is not verified.
 
 class Medal(Enum):
@@ -51,15 +50,15 @@ class Medal(Enum):
     TOP_8 = 't8'
 
 class Archetype(Enum):
-    AGGRO = "Aggro"
-    CONTROL = "Control"
-    COMBO = "Combo"
-    AGGRO_CONTROL = "Aggro-Control"
-    AGGRO_COMBO = "Aggro-Combo"
-    COMBO_CONTROL = "Combo-Control"
-    RAMP = "Ramp"
-    MIDRANGE = "Midrange"
-    UNCLASSIFIED = "Unclassified"
+    AGGRO = 'Aggro'
+    CONTROL = 'Control'
+    COMBO = 'Combo'
+    AGGRO_CONTROL = 'Aggro-Control'
+    AGGRO_COMBO = 'Aggro-Combo'
+    COMBO_CONTROL = 'Combo-Control'
+    RAMP = 'Ramp'
+    MIDRANGE = 'Midrange'
+    UNCLASSIFIED = 'Unclassified'
 
 @pydantic.dataclasses.dataclass
 class GatherlingMatch:
@@ -169,8 +168,8 @@ def process_tournament(name: str, event: Event) -> None:
         return # We already have this tournament, no-op out of here.
     try:
         date = vivify_date(event.start)
-    except ValueError:
-        raise InvalidDataException(f"Could not parse tournament date `{event.start}`")
+    except ValueError as e:
+        raise InvalidDataException(f'Could not parse tournament date `{event.start}`') from e
     fs = determine_finishes(event.standings, event.finalists)
     competition_id = insert_competition(name, date, event)
     decks_by_gatherling_username = insert_decks(competition_id, date, event.decks, fs, list(event.players.values()))
@@ -192,11 +191,11 @@ def determine_finishes(standings: List[Standing], finalists: List[Finalist]) -> 
 def medal2finish(m: Medal) -> int:
     if m == Medal.WINNER:
         return 1
-    elif m == Medal.RUNNER_UP:
+    if m == Medal.RUNNER_UP:
         return 2
-    elif m == Medal.TOP_4:
+    if m == Medal.TOP_4:
         return 3
-    elif m == Medal.TOP_8:
+    if m == Medal.TOP_8:
         return 5
     raise InvalidArgumentException(f"I don't know what the finish is for `{m}`")
 
@@ -209,8 +208,8 @@ def insert_competition(name: str, date: datetime.datetime, event: Event) -> int:
     else:
         try:
             top_n = top.Top(pow(2, event.finalrounds))
-        except ValueError:
-            raise InvalidDataException(f'Unexpected number of finalrounds: `{event.finalrounds}`')
+        except ValueError as e:
+            raise InvalidDataException(f'Unexpected number of finalrounds: `{event.finalrounds}`') from e
     return competition.get_or_insert_competition(date, date, name, event.series, url, top_n)
 
 def insert_decks(competition_id: int, date: datetime.datetime, ds: List[GatherlingDeck], fs: FinalStandings, players: List[Player]) -> Dict[GatherlingUsername, deck.Deck]:
@@ -237,10 +236,7 @@ def insert_deck(competition_id: int, date: datetime.datetime, d: GatherlingDeck,
     }
     if len(raw['cards']['maindeck']) + len(raw['cards']['sideboard']) == 0:
         raise InvalidDataException(f'Unable to add deck with no cards `{d.id}`')
-    try:
-        decklist.vivify(raw['cards'])
-    except InvalidDataException:
-        raise
+    decklist.vivify(raw['cards'])
     if deck.get_deck_id(raw['source'], raw['identifier']):
         raise InvalidArgumentException("You asked me to insert a deck that already exists `{raw['source']}`, `{raw['identifier']}`")
     return deck.add_deck(raw)

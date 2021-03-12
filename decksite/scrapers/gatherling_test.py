@@ -48,7 +48,7 @@ def test_process() -> None:
 
 def test_find_mtgo_username() -> None:
     data = json.loads(PLAYERS)
-    ps = [gatherling.Player(**p) for k, p in data.items()] # type: ignore
+    ps = [gatherling.Player(**p) for k, p in data.items()]
     assert gatherling.find_mtgo_username("NotGood", ps) == "NotGood" # mtgo is set and the same
     assert gatherling.find_mtgo_username("AlvaroCarvalho", ps) == "AlvaroCarvalho" # mtgo is not set
     assert gatherling.find_mtgo_username("-IceBR-", ps) == "-iceb-"  # mtgo is set and different

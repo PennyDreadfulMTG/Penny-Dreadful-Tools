@@ -151,7 +151,7 @@ def make_api_response(data: Dict[str, Dict[Any, Any]]) -> APIResponse:
     for k, v in data.items():
         # First check it's a series we are interested in.
         if is_interesting_series(v['series']):
-            response[k] = Event(**v) # type: ignore
+            response[k] = Event(**v)
     return response
 
 def is_interesting_series(name: str) -> bool:

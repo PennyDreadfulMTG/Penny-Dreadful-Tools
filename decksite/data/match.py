@@ -26,7 +26,8 @@ def insert_match(dt: datetime.datetime,
     db().begin('insert_match')
     match_id = db().insert('INSERT INTO `match` (`date`, `round`, elimination, mtgo_id) VALUES (%s, %s, %s, %s)', [dtutil.dt2ts(dt), round_num, elimination, mtgo_match_id])
     update_cache(left_id, left_games, right_games, dt=dt)
-    update_cache(right_id, right_games, left_games, dt=dt)
+    if right_id is not None:
+        update_cache(right_id, right_games, left_games, dt=dt)
     sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
     db().execute(sql, [left_id, match_id, left_games])
     if right_id is not None: # Don't insert matches or adjust Elo for the bye.

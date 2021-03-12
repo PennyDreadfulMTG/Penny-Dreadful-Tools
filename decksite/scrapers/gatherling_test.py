@@ -1,4 +1,5 @@
 import json
+from typing import Dict
 
 from decksite.data import competition, match
 from decksite.scrapers import gatherling
@@ -6,11 +7,11 @@ from decksite.testutil import setup_test_db
 from shared.database import sqlescape
 
 
-def test_medal2finish():
+def test_medal2finish() -> None:
     for m in gatherling.Medal:
         assert gatherling.medal2finish(m) > 0
 
-def test_process():
+def test_process() -> None:
     setup_test_db()
     name = 'Penny Dreadful Mondays 19.04'
     where = 'c.name = ' + sqlescape(name)
@@ -30,7 +31,7 @@ def test_process():
     assert len(cs) == 1
     c = cs[0]
     assert len(c.decks) == len(event.decks)
-    finishes = {}
+    finishes: Dict[int, int] = {}
     for d in c.decks:
         finishes[d.finish] = finishes.get(d.finish, 0) + 1
     assert finishes[1] == 1
@@ -45,17 +46,17 @@ def test_process():
     for m in ms:
         assert (m.opponent is None) or (2 <= m.game_wins + m.game_losses <= 3)
 
-def test_find_mtgo_username():
+def test_find_mtgo_username() -> None:
     data = json.loads(PLAYERS)
-    ps = [gatherling.Player(**p) for k, p in data.items()]
+    ps = [gatherling.Player(**p) for k, p in data.items()] # type: ignore
     assert gatherling.find_mtgo_username("NotGood", ps) == "NotGood" # mtgo is set and the same
     assert gatherling.find_mtgo_username("AlvaroCarvalho", ps) == "AlvaroCarvalho" # mtgo is not set
     assert gatherling.find_mtgo_username("-IceBR-", ps) == "-iceb-"  # mtgo is set and different
 
-def test_gatherling_url():
+def test_gatherling_url() -> None:
     assert gatherling.gatherling_url('/') == 'https://gatherling.com/'
 
-def test_vivify_date():
+def test_vivify_date() -> None:
     d = gatherling.vivify_date('2020-12-01 10:11:12')
     assert d.year == 2020
     assert d.month == 12

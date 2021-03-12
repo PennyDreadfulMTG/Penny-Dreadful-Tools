@@ -1,5 +1,6 @@
 import datetime
 import urllib.parse
+from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Literal, Optional
 
@@ -150,17 +151,17 @@ def make_api_response(data: Dict[str, Dict[Any, Any]]) -> APIResponse:
     for k, v in data.items():
         # First check it's a series we are interested in.
         if is_interesting_series(v['series']):
-            response[k] = Event(**v)
+            response[k] = Event(**v) # type: ignore
     return response
 
-def is_interesting_series(name: str):
+def is_interesting_series(name: str) -> bool:
     return len(db().select('SELECT id FROM competition_series WHERE name = %s', [name])) > 0
 
 def process(response: APIResponse) -> None:
     for name, event in response.items():
         process_tournament(name, event)
 
-def process_tournament(name: str, event: Event):
+def process_tournament(name: str, event: Event) -> None:
     db().begin('tournament')
     name_safe = sqlescape(name)
     cs = competition.load_competitions(f'c.name = {name_safe}')
@@ -188,7 +189,7 @@ def determine_finishes(standings: List[Standing], finalists: List[Finalist]) -> 
             ps[p.player] = r
     return ps
 
-def medal2finish(m: Medal):
+def medal2finish(m: Medal) -> int:
     if m == Medal.WINNER:
         return 1
     elif m == Medal.RUNNER_UP:
@@ -222,7 +223,7 @@ def insert_deck(competition_id: int, date: datetime.datetime, d: GatherlingDeck,
     mtgo_username = find_mtgo_username(d.playername, players)
     if not mtgo_username:
         raise InvalidDataException(f"I don't have an MTGO username for `{d.playername}`")
-    raw = {
+    raw: deck.RawDeckDescription = {
         'name': d.name,
         'source': 'Gatherling',
         'competition_id': competition_id,
@@ -230,8 +231,8 @@ def insert_deck(competition_id: int, date: datetime.datetime, d: GatherlingDeck,
         'mtgo_username': mtgo_username,
         'finish': finish,
         'url': gatherling_url(f'deck.php?mode=view&id={d.id}'),
-        'archetype': d.archetype,
-        'identifier': d.id,
+        'archetype': d.archetype.value,
+        'identifier': str(d.id),
         'cards': {'maindeck': d.maindeck, 'sideboard': d.sideboard},
     }
     if len(raw['cards']['maindeck']) + len(raw['cards']['sideboard']) == 0:
@@ -244,11 +245,11 @@ def insert_deck(competition_id: int, date: datetime.datetime, d: GatherlingDeck,
         raise InvalidArgumentException("You asked me to insert a deck that already exists `{raw['source']}`, `{raw['identifier']}`")
     return deck.add_deck(raw)
 
-def insert_matches(date: datetime.datetime, decks_by_gatherling_username: Dict[GatherlingUsername, deck.Deck], ms: List[GatherlingMatch], total_rounds: int):
+def insert_matches(date: datetime.datetime, decks_by_gatherling_username: Dict[GatherlingUsername, deck.Deck], ms: List[GatherlingMatch], total_rounds: int) -> None:
     for m in ms:
         insert_match(date, decks_by_gatherling_username, m, total_rounds)
 
-def insert_match(date: datetime.datetime, decks_by_gatherling_username: Dict[GatherlingUsername, deck.Deck], m: GatherlingMatch, total_rounds: int):
+def insert_match(date: datetime.datetime, decks_by_gatherling_username: Dict[GatherlingUsername, deck.Deck], m: GatherlingMatch, total_rounds: int) -> None:
     d1 = fuzzy_get(decks_by_gatherling_username, m.playera)
     if not d1:
         raise InvalidDataException(f"I don't have a deck for `{m.playera}`")
@@ -264,17 +265,17 @@ def insert_match(date: datetime.datetime, decks_by_gatherling_username: Dict[Gat
     match.insert_match(date, d1.id, m.playera_wins.value, d2_id, player2_wins, m.round, elimination(m, total_rounds))
 
 # Account for the Gatherling API's slightly eccentric representation of byes.
-def is_bye(m: GatherlingMatch):
+def is_bye(m: GatherlingMatch) -> bool:
     return m.playera == m.playerb and m.playera_wins == Wins.ZERO and m.playerb_wins == Wins.ZERO
 
 # 'elimination' is an optional int with meaning: NULL = nontournament, 0 = Swiss, 8 = QF, 4 = SF, 2 = F
-def elimination(m: GatherlingMatch, total_rounds: int):
+def elimination(m: GatherlingMatch, total_rounds: int) -> int:
     if m.timing != Timing.FINALS:
         return 0
     remaining_rounds = total_rounds - m.round + 1
     return pow(2, remaining_rounds) # 1 => 2, 2 => 4, 3 => 8 which are the values 'elimination' expects
 
-def find_mtgo_username(gatherling_username: GatherlingUsername, players: List[Player]):
+def find_mtgo_username(gatherling_username: GatherlingUsername, players: List[Player]) -> str:
     for p in players:
         if p.name == gatherling_username:
             if p.mtgo_username is not None:
@@ -292,12 +293,12 @@ def guess_archetypes(ds: List[deck.Deck]) -> None:
         if d.similar_decks and d.similar_decks[0].archetype_id is not None:
             archetype.assign(d.id, d.similar_decks[0].archetype_id, None, False)
 
-def vivify_date(s: str):
+def vivify_date(s: str) -> datetime.datetime:
     return dtutil.parse(s, dtutil.GATHERLING_FORMAT, dtutil.GATHERLING_TZ)
 
 # Work around some inconsistencies with casing in the API response.
 # https://github.com/PennyDreadfulMTG/gatherling/issues/145
-def fuzzy_get(d: Dict[str, Any], k: str):
+def fuzzy_get(d: Dict[str, Any], k: str) -> Any:
     v = d.get(k)
     if v is not None:
         return v

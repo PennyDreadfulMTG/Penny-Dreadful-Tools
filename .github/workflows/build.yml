@@ -21,6 +21,8 @@ jobs:
   lint:
     name: lint
     runs-on: ubuntu-latest
+    env:
+      pylint_threads: 1
 
     steps:
     - uses: actions/checkout@v2.3.4

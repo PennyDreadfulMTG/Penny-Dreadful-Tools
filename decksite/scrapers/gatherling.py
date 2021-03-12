@@ -3,6 +3,7 @@ import urllib.parse
 from enum import Enum
 from typing import Any, Dict, List, Literal, Optional
 
+# pylint: disable=c-extension-no-member
 import pydantic
 
 from decksite.data import archetype, competition, deck, match, person, top

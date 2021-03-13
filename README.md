@@ -79,6 +79,7 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - Using the values from your `.env` issue the following commands in MySQL (you don't need to create the databases):
   - CREATE USER '<mysql_user>'@'<mysql_host>' IDENTIFIED BY '<mysql_passwd>';
   - GRANT ALL ON <decksite_database>.* TO '<mysql_user>'@'<mysql_host>';
+    GRANT ALL ON <decksite_test_database>.* TO '<mysql_user>'@'<mysql_host>';
   - GRANT ALL ON <prices_database>.* TO '<mysql_user>'@'<mysql_host>';
   - GRANT ALL ON <magic_database>.* TO '<mysql_user>'@'<mysql_host>';
   - GRANT ALL ON <logsite_database>.* TO '<mysql_user>'@'<mysql_host>';
@@ -87,6 +88,7 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
   - curl <https://pennydreadfulmagic.com/static/dev-db.sql.gz> >/tmp/dev-db.sql.gz
   - gunzip /tmp/dev-db.sql.gz
   - mysql -u <mysql_user> -p<mysql_passwd> <decksite_database> </tmp/dev-db.sql
+  - mysql -u <mysql_user> -p<mysql_passwd> -e "CREATE DATABASE <decksite_test_database>"
 - Some very minor parts of the bot (the "modofail" command) use libopus and ffmpeg which are not in pip and must be installed in a your-OS-specific way separately. Very optional.
 
 

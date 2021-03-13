@@ -70,6 +70,7 @@ Werkzeug = "==1.0.1"
 Whoosh = "==2.7.4"
 sentry-sdk = {extras = ["flask"], version = "*"}
 jishaku = "*"
+pydantic = "*"
 
 [requires]
 python_version = "3.8"

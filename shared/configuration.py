@@ -36,6 +36,8 @@ DEFAULTS: Dict[str, Any] = {
     'cse_engine_id': None,
     # mysql database name.  Used by decksite.
     'decksite_database': 'decksite',
+    # mysql database name.  Used by decksite tests.
+    'decksite_test_database': 'decksite_test',
     # URL for decksite API calls.  Used by discordbot.
     'decksite_hostname': 'pennydreadfulmagic.com',
     'decksite_port': 80,

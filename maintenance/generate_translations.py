@@ -14,7 +14,7 @@ def ad_hoc() -> int:
     dist = Distribution(dict(
         name='Penny-Dreadful-Tools'
     ))
-    dist.message_extractors = { # type: ignore
+    dist.message_extractors = {  # type: ignore
         'decksite': [
             ('**.py', 'python', {}),
             ('**.mustache', extract_mustache, {})

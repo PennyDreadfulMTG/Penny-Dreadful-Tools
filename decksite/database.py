@@ -14,10 +14,10 @@ def db() -> Database:
     elif g:
         ctx = g
     else:
-        ctx = TEST_CONTEXT # Fallback context for testing.
+        ctx = TEST_CONTEXT  # Fallback context for testing.
     if not hasattr(ctx, 'database'):
-        ctx.database = get_database(configuration.get_str('decksite_database')) # type: ignore
-    return ctx.database # type: ignore
+        ctx.database = get_database(configuration.get_str('decksite_database'))  # type: ignore
+    return ctx.database  # type: ignore
 
 def setup_in_app_context() -> None:
     # pylint: disable=import-outside-toplevel
@@ -45,5 +45,6 @@ def setup() -> None:
 
 def db_version() -> int:
     return db().value('SELECT version FROM db_version ORDER BY version DESC LIMIT 1', [], 0)
+
 
 setup_in_app_context()

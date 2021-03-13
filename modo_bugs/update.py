@@ -25,12 +25,13 @@ def pd_legal_cards() -> List[str]:
     print('Fetching http://pdmtgo.com/legal_cards.txt')
     return requests.get('http://pdmtgo.com/legal_cards.txt').text.split('\n')
 
+
 ALL_BUGS: List[Dict] = []
 
 VERIFICATION_BY_ISSUE: Dict[int, str] = {}
 
 if sys.stdout.encoding != 'utf-8':
-    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer) # type: ignore
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer)  # type: ignore
 
 def main() -> None:
     if configuration.get('github_user') is None or configuration.get('github_password') is None:
@@ -129,7 +130,7 @@ def process_issue(issue: Issue) -> None:
             'breaking': cat in BADCATS,
             'bannable': bannable,
             'url': issue.html_url,
-            }
+        }
         if 'Multiplayer' in labels:
             bug['multiplayer_only'] = True
         if 'Collection' in labels:
@@ -181,7 +182,7 @@ def check_for_invalid_card_names(issue: Issue, cards: List[str]) -> None:
 def get_affects(issue: Issue) -> List[str]:
     affects = strings.get_body_field(issue.body, 'Affects')
     if affects is None:
-        title = issue.title # type: str
+        title = issue.title  # type: str
         affects = title
 
     return strings.get_cards_from_string(affects)
@@ -196,7 +197,7 @@ def fix_user_errors(issue: Issue) -> None:
         cards = re.findall(REGEX_CARDREF, issue.title)
         body = strings.set_body_field(body, 'Affects', ''.join(['[' + c + ']' for c in cards]))
     if re.search(strings.REGEX_SEARCHREF, body):
-        def do_search(m) -> str: # type: ignore
+        def do_search(m) -> str:  # type: ignore
             search = m.group(1)
             n, cards, warnings = fetcher.search_scryfall(search)
             if n == 0 or warnings:
@@ -255,10 +256,11 @@ def apply_screenshot_labels(issue: Issue) -> None:
     if has_video and 'Needs Screenshot' in labels:
         issue.remove_from_labels('Needs Screenshot')
 
-    if not has_screenshot and not has_video and not 'Needs Screenshot' in labels:
+    if not has_screenshot and not has_video and 'Needs Screenshot' not in labels:
         issue.add_to_labels('Needs Screenshot')
-    if has_screenshot and not has_video and not 'Needs Video' in labels:
+    if has_screenshot and not has_video and 'Needs Video' not in labels:
         issue.add_to_labels('Needs Video')
+
 
 if __name__ == '__main__':
     main()

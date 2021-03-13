@@ -8,19 +8,19 @@ from shared import dtutil
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
-ROTATION_OFFSET = datetime.timedelta(days=7) # We rotate seven days after a set is released.
+ROTATION_OFFSET = datetime.timedelta(days=7)  # We rotate seven days after a set is released.
 
 SEASONS = [
     'EMN', 'KLD',               # 2016
-    'AER', 'AKH', 'HOU', 'XLN', # 2017
-    'RIX', 'DOM', 'M19', 'GRN', # 2018
-    'RNA', 'WAR', 'M20', 'ELD', # 2019
-    'THB', 'IKO', 'M21', 'ZNR', # 2020
+    'AER', 'AKH', 'HOU', 'XLN',  # 2017
+    'RIX', 'DOM', 'M19', 'GRN',  # 2018
+    'RNA', 'WAR', 'M20', 'ELD',  # 2019
+    'THB', 'IKO', 'M21', 'ZNR',  # 2020
     'KHM', 'STX',               # 2121
-    ]
+]
 
 OVERRIDES = {
-    'Dominaria': { # Dominaria had a weird setcode in MTGO/Arena
+    'Dominaria': {  # Dominaria had a weird setcode in MTGO/Arena
         'mtgoCode': 'DAR'
     },
     'Ikoria: Lair of Behemoths': {  # Ikoria was delayed in NA because of Covid-19
@@ -49,7 +49,7 @@ class SetInfo():
     @classmethod
     def parse(cls, json: 'fetcher.WISSetInfoType') -> 'SetInfo':
         json['mtgoCode'] = json['code']
-        json.update(OVERRIDES.get(json['name'], {})) # type: ignore
+        json.update(OVERRIDES.get(json['name'], {}))  # type: ignore
 
         return cls(name=json['name'],
                    code=json['code'],
@@ -93,7 +93,7 @@ def next_rotation_ex() -> SetInfo:
         return min([s for s in sets() if (s.enter_date_dt + ROTATION_OFFSET) > dtutil.now()], key=lambda s: s.enter_date_dt + ROTATION_OFFSET)
     except ValueError:
         fake_enter_date_dt = last_rotation() + datetime.timedelta(days=90)
-        fake_exit_date_dt = last_rotation() + datetime.timedelta(days=90+365+365)
+        fake_exit_date_dt = last_rotation() + datetime.timedelta(days=90 + 365 + 365)
         fake_exit_year = fake_exit_date_dt.year
         fake_enter_date = DateType(fake_enter_date_dt.strftime(WIS_DATE_FORMAT), 'Unknown')
         fake_exit_date = DateType(fake_exit_date_dt.strftime(WIS_DATE_FORMAT), f'Q4 {fake_exit_year}')
@@ -134,7 +134,7 @@ def season_code(v: Union[int, str]) -> str:
     sid = season_id(v)
     if sid in ('all', 0, None):
         return 'ALL'
-    assert sid is not None # For typechecking which can't understand the above if statement.
+    assert sid is not None  # For typechecking which can't understand the above if statement.
     return SEASONS[int(sid) - 1]
 
 def season_name(v: Union[int, str]) -> str:
@@ -149,6 +149,7 @@ def get_set_info(code: str) -> SetInfo:
         if setinfo.code == code:
             return setinfo
     raise DoesNotExistException('Could not find Set Info about {code}'.format(code=code))
+
 
 __SETS: List[SetInfo] = []
 def sets() -> List[SetInfo]:

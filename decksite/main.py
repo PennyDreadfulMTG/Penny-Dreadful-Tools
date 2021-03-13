@@ -55,7 +55,7 @@ def image(c: str = '') -> wrappers.Response:
         path = image_fetcher.download_image(requested_cards)
         if path is None:
             raise InternalServerError(f'Failed to get image for {c}')
-        return send_file(os.path.abspath(path)) # Send abspath to work around monolith root versus web root.
+        return send_file(os.path.abspath(path))  # Send abspath to work around monolith root versus web root.
     except TooFewItemsException as e:
         logger.info(f'Did not find an image for {c}: {e}')
         if len(names) == 1:
@@ -109,7 +109,7 @@ def banner(seasonnum: str) -> Response:
 @APP.before_request
 def before_request() -> Optional[wrappers.Response]:
     if not request.path.endswith('/'):
-        return None # Let flask do the redirect-routes-not-ending-in-slashes thing before we interfere with routing. Avoids #8277.
+        return None  # Let flask do the redirect-routes-not-ending-in-slashes thing before we interfere with routing. Avoids #8277.
     if request.path.startswith('/seasons') and len(request.path) > len('/seasons/') and get_season_id() >= seasons.current_season_num():
         return redirect(re.sub('/seasons/[^/]*', '', request.path))
     if request.path.startswith('/seasons/0'):
@@ -119,11 +119,11 @@ def before_request() -> Optional[wrappers.Response]:
 
 @APP.after_request
 def after_request(response: Response) -> Response:
-    requests_until_no_intro = 20 # Typically ten page views because of async requests for the status bar.
+    requests_until_no_intro = 20  # Typically ten page views because of async requests for the status bar.
     views = int(request.cookies.get('views', 0)) + 1
     response.set_cookie('views', str(views))
     if views >= requests_until_no_intro:
-        response.set_cookie('hide_intro', value=str(True), expires=dtutil.dt2ts(dtutil.now()) + 60 *  60 * 24 * 365 * 10)
+        response.set_cookie('hide_intro', value=str(True), expires=dtutil.dt2ts(dtutil.now()) + 60 * 60 * 24 * 365 * 10)
     return response
 
 @APP.teardown_request
@@ -134,8 +134,9 @@ def teardown_request(_: Optional[Exception]) -> None:
 
 def init(debug: bool = True, port: Optional[int] = None) -> None:
     """This method is only called when initializing the dev server.  uwsgi (prod) doesn't call this method"""
-    APP.logger.setLevel(logging.INFO) # pylint: disable=no-member,no-name-in-module
-    APP.config['SESSION_COOKIE_SECURE'] = False # Allow cookies over HTTP when running locally.
+    APP.logger.setLevel(logging.INFO)  # pylint: disable=no-member,no-name-in-module
+    APP.config['SESSION_COOKIE_SECURE'] = False  # Allow cookies over HTTP when running locally.
     APP.run(host='0.0.0.0', debug=debug, port=port)
+
 
 APP.register_blueprint(SEASONS)

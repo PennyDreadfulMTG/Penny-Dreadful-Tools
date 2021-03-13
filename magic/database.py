@@ -65,7 +65,7 @@ def setup() -> None:
     db().execute(sql)
     sql = create_table_def('card_bug', card.card_bug_properties())
     db().execute(sql)
-    sql = create_table_def('rarity', card.format_properties()) # This has the same profile as `format` (`id`, `name`)
+    sql = create_table_def('rarity', card.format_properties())  # This has the same profile as `format` (`id`, `name`)
     db().execute(sql)
     db().execute("""INSERT INTO color (name, symbol) VALUES
         ('White', 'W'),

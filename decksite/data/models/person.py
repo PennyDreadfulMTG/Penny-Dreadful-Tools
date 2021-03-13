@@ -6,6 +6,7 @@ from shared.container import Container
 
 class Person(Container):
     __decks = None
+
     @property
     def decks(self) -> List[deck.Deck]:
         if self.__decks is None:

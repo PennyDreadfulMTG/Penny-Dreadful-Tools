@@ -22,10 +22,10 @@ class LeagueInfo(View):
         return 'MTGO Traders League'
 
     def discord_url(self) -> str:
-        return 'https://discord.gg/Yekrz3s' # Invite directly into #league channel
+        return 'https://discord.gg/Yekrz3s'  # Invite directly into #league channel
 
 def suffix(d: int) -> str:
-    return 'th' if 11 <= d <= 13 else {1:'st', 2:'nd', 3:'rd'}.get(d % 10, 'th')
+    return 'th' if 11 <= d <= 13 else {1: 'st', 2: 'nd', 3: 'rd'}.get(d % 10, 'th')
 
 def custom_strftime(fmt: str, t: datetime.datetime) -> str:
     return t.strftime(fmt).replace('{S}', str(t.day) + suffix(t.day))

@@ -77,7 +77,7 @@ DEFAULTS: Dict[str, Any] = {
     'poeditor_api_key': None,
     'prevent_cards_db_updates': False,
     'prices_database': 'prices',
-    'production': False, # Block some of the more dangerous things from running if this is true
+    'production': False,  # Block some of the more dangerous things from running if this is true
     'pylint_threads': 4,
     'redis_db': 0,
     'redis_enabled': True,
@@ -93,7 +93,7 @@ DEFAULTS: Dict[str, Any] = {
     'slow_query': 5.0,
     'slow_bot_start': 30,
     'spellfix': './spellfix',
-    'test_vcr_record_mode': 'new_episodes', # https://vcrpy.readthedocs.io/en/latest/usage.html#record-modes
+    'test_vcr_record_mode': 'new_episodes',  # https://vcrpy.readthedocs.io/en/latest/usage.html#record-modes
     'to_password': '',
     'to_username': '',
     'tournament_channel_id': '334220558159970304',
@@ -202,7 +202,7 @@ def get(key: str) -> Optional[Union[str, List[str], int, float]]:
         # Lock in the default value if we use it.
         cfg[key] = DEFAULTS[key]
 
-        if inspect.isfunction(cfg[key]): # If default value is a function, call it.
+        if inspect.isfunction(cfg[key]):  # If default value is a function, call it.
             cfg[key] = cfg[key]()
     else:
         raise InvalidArgumentException('No default or other configuration value available for {key}'.format(key=key))

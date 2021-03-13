@@ -32,7 +32,7 @@ class SearchResult():
             (len(self.prefix_whole_word) > 1) or
             ((len(self.prefix_whole_word) == 0) and (len(self.other_prefixed) > 1)) or
             (len(self.prefix_whole_word) == 0 and len(self.other_prefixed) == 0 and len(self.fuzzy) > 1)
-            ))
+        ))
 
     def get_best_match(self) -> Optional[str]:
         if not self.has_match() or self.is_ambiguous():
@@ -77,6 +77,7 @@ class SearchResult():
 
 class WhooshSearcher():
     DIST = 2
+
     def __init__(self) -> None:
         self.ix = open_dir(WhooshConstants.index_dir)
         self.initialize_trie()
@@ -89,7 +90,7 @@ class WhooshSearcher():
 
     def search(self, w: str) -> SearchResult:
         if not self.ix.up_to_date():
-            self.initialize_trie() # if the index is not up to date, someone has added cards, so we reinitialize the trie
+            self.initialize_trie()  # if the index is not up to date, someone has added cards, so we reinitialize the trie
 
         normalized = list(WhooshConstants.normalized_analyzer(w))[0].text
 
@@ -102,7 +103,7 @@ class WhooshSearcher():
         query_normalized = fuzzy_term(normalized, self.DIST, 'name_normalized')
         query_stemmed = And([Term('name_stemmed', q.text) for q in WhooshConstants.stem_analyzer(w)])
         query_tokenized = And([fuzzy_term(q.text, self.DIST, 'name_tokenized') for q in WhooshConstants.tokenized_analyzer(w)])
-        if len(query_tokenized) == 0: # This can be empty because some unicode chars are ignored. See #4988
+        if len(query_tokenized) == 0:  # This can be empty because some unicode chars are ignored. See #4988
             query = Or([query_normalized, query_stemmed])
         else:
             query = Or([query_normalized, query_tokenized, query_stemmed])
@@ -115,7 +116,7 @@ class WhooshSearcher():
         exact = None
         prefix_as_whole_word = []
         other_prefixed = []
-        if self.trie.has_key(query):
+        if self.trie.has_key(query):  # noqa
             exact = self.trie.get(query)
         if self.trie.has_subtrie(query):
             matches = self.trie.values(query)[(1 if exact else 0):]
@@ -127,11 +128,12 @@ class WhooshSearcher():
 def has(elements: List[str]) -> bool:
     return bool(elements and len(elements) > 0)
 
+
 WordSubwordType = Tuple[List[str], List[str]]
 
 def classify(matches: List[str], word: str) -> WordSubwordType:
     regex = r'{w}( |,)'.format(w=word)
-    acc: WordSubwordType = ([], []) # Name this data structure.
+    acc: WordSubwordType = ([], [])  # Name this data structure.
     for match in matches:
         if re.match(regex, match.lower()):
             acc[0].append(match)

@@ -12,7 +12,7 @@ from ..db import DB as fsa  # type: ignore
 
 # pylint: disable=no-member
 
-class Match(fsa.Model): # type: ignore
+class Match(fsa.Model):  # type: ignore
     __tablename__ = 'match'
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=False)
     format_id = sa.Column(sa.Integer, sa.ForeignKey('format.id'))

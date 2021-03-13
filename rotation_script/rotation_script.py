@@ -16,7 +16,7 @@ from shared import redis_wrapper as redis
 from shared import repo, text
 
 TIME_UNTIL_ROTATION = seasons.next_rotation() - dtutil.now()
-BANNED_CARDS = ['Cleanse', 'Crusade'] # These cards are banned, even in Freeform
+BANNED_CARDS = ['Cleanse', 'Crusade']  # These cards are banned, even in Freeform
 
 def run() -> None:
     files = rotation.files()
@@ -33,7 +33,7 @@ def run() -> None:
 
     if n == 0:
         rotation.clear_redis(clear_files=True)
-    #else:
+    # else:
     #    rotation.clear_redis()
 
     all_prices = {}
@@ -53,7 +53,7 @@ def run() -> None:
     try:
         url = f'{fetcher.decksite_url()}/api/rotation/clear_cache'
         fetch_tools.fetch(url)
-    except Exception as c: # pylint: disable=broad-except
+    except Exception as c:  # pylint: disable=broad-except
         print(c, flush=True)
 
 def process(all_prices: Dict[str, PriceListType]) -> int:
@@ -161,7 +161,7 @@ https://pennydreadfulmagic.com/admin/rotation/
             subprocess.run(['python3', 'run.py', 'maintenance', 'post_rotation'], check=True)
         else:
             failed = True
-    except Exception: # pylint: disable=broad-except
+    except Exception:  # pylint: disable=broad-except
         failed = True
     if failed:
         checklist += '- [ ] run post_rotation\n'

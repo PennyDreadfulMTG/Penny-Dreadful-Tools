@@ -59,7 +59,7 @@ def achievements_redirect() -> wrappers.Response:
 def person_matches(mtgo_username: Optional[str] = None, person_id: Optional[int] = None) -> str:
     p = load_person(mtgo_username, person_id, season_id=get_season_id())
     matches = ms.load_matches_by_person(person_id=p.id, season_id=get_season_id())
-    matches.reverse() # We want the latest at the top.
+    matches.reverse()  # We want the latest at the top.
     view = PersonMatches(p, matches)
     return view.page()
 

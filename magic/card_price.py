@@ -32,6 +32,7 @@ def card_price_string(card: Card, short: bool = False) -> str:
             print(f'Unable to get price info string from {p} because of {e}')
             return 'Price information is incomplete'
         return s
+
     def format_price(p: Optional[str]) -> str:
         if p is None:
             return 'Unknown'

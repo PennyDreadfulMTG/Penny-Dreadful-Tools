@@ -34,7 +34,7 @@ def prepare_card(c: Card, tournament_only: bool = False) -> None:
         c.has_most_common_cards = False
         return
 
-    counter = Counter() # type: ignore
+    counter = Counter()  # type: ignore
     for d in c.get('decks', []):
         for c2 in d.maindeck:
             if not c2.card.type_line.startswith('Basic Land') and not c2['name'] == c.name:
@@ -127,7 +127,7 @@ def prepare_people(ps: Sequence[Person]) -> None:
 def prepare_leaderboard(leaderboard: Sequence[Container]) -> None:
     for entry in leaderboard:
         if entry.get('finish', 9) <= 8:
-            entry.position = chr(9311 + entry.finish) # ①, ②, ③, …
+            entry.position = chr(9311 + entry.finish)  # ①, ②, ③, …
         entry.url = url_for('.person', person_id=entry.person_id)
 
 def prepare_matches(ms: Sequence[Container]) -> None:
@@ -181,7 +181,7 @@ def colors_html(colors: List[str], colored_symbols: List[str]) -> str:
     s = ''
     for color in colors:
         n = colored_symbols.count(color)
-        one_pixel_in_rem = 0.05 # See pd.css base font size for the derivation of this value.
+        one_pixel_in_rem = 0.05  # See pd.css base font size for the derivation of this value.
         width = (3.0 - one_pixel_in_rem * len(colors)) / total * n
         s += '<span class="mana mana-{color}" style="width: {width}rem"></span>'.format(color=color, width=width)
     return s

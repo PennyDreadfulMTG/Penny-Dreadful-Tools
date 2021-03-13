@@ -15,6 +15,7 @@ def wait_for_db(_: Any, __: Any, value: bool) -> None:
     if not value:
         return
     print('waiting for db')
+
     def attempt(interval: int = 1) -> bool:
         from shared import database, pd_exception
         try:
@@ -49,7 +50,7 @@ def profiler() -> None:
 
     from decksite import main
     main.APP.config['PROFILE'] = True
-    main.APP.wsgi_app = ProfilerMiddleware(main.APP.wsgi_app, restrictions=[30]) # type: ignore
+    main.APP.wsgi_app = ProfilerMiddleware(main.APP.wsgi_app, restrictions=[30])  # type: ignore
     main.init()
 
 @cli.command()
@@ -115,11 +116,11 @@ def task(args: List[str]) -> None:
                 from decksite.main import APP
                 APP.config['SERVER_NAME'] = configuration.server_name()
                 app_context = APP.app_context()  # type: ignore
-                app_context.__enter__() # type: ignore
+                app_context.__enter__()  # type: ignore
             if getattr(s, 'scrape', None) is not None:
-                exitcode = s.scrape() # type: ignore
+                exitcode = s.scrape()  # type: ignore
             elif getattr(s, 'run', None) is not None:
-                exitcode = s.run() # type: ignore
+                exitcode = s.run()  # type: ignore
             # Only when called directly, not in 'all'
             elif getattr(s, 'ad_hoc', None) is not None:
                 exitcode = s.ad_hoc()  # type: ignore
@@ -137,30 +138,30 @@ def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
     app_context = None
     m = importlib.import_module('{module}'.format(module=module))
     # pylint: disable=unused-variable
-    for importer, modname, ispkg in pkgutil.iter_modules(m.__path__): # type: ignore
+    for importer, modname, ispkg in pkgutil.iter_modules(m.__path__):  # type: ignore
         try:
             s = importlib.import_module('{module}.{name}'.format(name=modname, module=module))
             use_app_context = getattr(s, 'REQUIRES_APP_CONTEXT', True)
             if use_app_context and app_context is None:
                 from decksite import APP
                 APP.config['SERVER_NAME'] = configuration.server_name()
-                app_context = APP.app_context() # type: ignore
-                app_context.__enter__() # type: ignore
+                app_context = APP.app_context()  # type: ignore
+                app_context.__enter__()  # type: ignore
 
             if with_flag and not getattr(s, with_flag, False):
                 continue
             if getattr(s, 'scrape', None) is not None:
                 timer = time.perf_counter()
-                s.scrape() # type: ignore
+                s.scrape()  # type: ignore
                 t = time.perf_counter() - timer
                 print(f'{s.__name__} completed in {t}')
 
             elif getattr(s, 'run', None) is not None:
                 timer = time.perf_counter()
-                s.run() # type: ignore
+                s.run()  # type: ignore
                 t = time.perf_counter() - timer
                 print(f'{s.__name__} completed in {t}')
-        except Exception as c: # pylint: disable=broad-except
+        except Exception as c:  # pylint: disable=broad-except
             from shared import repo
             repo.create_issue(f'Error running task {s.__name__}', 'CLI', 'CLI', 'PennyDreadfulMTG/perf-reports', exception=c)
             error = c
@@ -169,6 +170,7 @@ def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
         app_context.__exit__(None, None, None)
     if error:
         raise error
+
 
 if __name__ == '__main__':
     cli()

@@ -23,7 +23,7 @@ class ContextForTests(MtgContext):
         self.sent_file = False
         self.content: Optional[str] = None
 
-    async def send(self, content: Optional[str], *args: Any, **kwargs: Any) -> None: # pylint: disable=signature-differs
+    async def send(self, content: Optional[str], *args: Any, **kwargs: Any) -> None:  # pylint: disable=signature-differs
         self.sent = True
         self.sent_args = bool(args)
         self.sent_file = 'file' in kwargs.keys()
@@ -57,7 +57,7 @@ def get_params() -> List[Tuple]:
             ('echo', {'args': 'test string!'}, None),
             ('explain', {'thing': None}, None),
             ('explain', {'thing': 'bugs'}, None),
-            ('flavor', {'c': await card('Falling Star')}, 'No flavor text available'), # No flavor
+            ('flavor', {'c': await card('Falling Star')}, 'No flavor text available'),  # No flavor
             ('flavor', {'c': await card('Dwarven Pony')}, 'likes to eat meat'),  # Meaty flavor
             ('flavor', {'c': await card('Gruesome Menagerie|grn')}, 'Variety is also the spice of death.'),  # Spicy flavor
             ('flavor', {'c': await card('capital offense|UST')}, 'part basket case, all lowercase.'),  # Capital flavor
@@ -87,7 +87,7 @@ def get_params() -> List[Tuple]:
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize('cmd, kwargs, expected_content', get_params())
-async def test_command(discordbot: Bot, cmd: str, kwargs: Dict[str, Any], expected_content: str) -> None: # pylint: disable=redefined-outer-name
+async def test_command(discordbot: Bot, cmd: str, kwargs: Dict[str, Any], expected_content: str) -> None:  # pylint: disable=redefined-outer-name
     command: discord.ext.commands.Command = discordbot.all_commands[cmd]
     ctx = ContextForTests()
     ctx.bot = discordbot

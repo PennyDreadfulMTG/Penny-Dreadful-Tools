@@ -141,7 +141,7 @@ class Achievement:
             if cls.key in [c.key for c in cls.all_achievements]:
                 logger.warning(f"Two achievements have the same normalised key {cls.key}. This won't do any permanent damage to the database but the results are almost certainly not as intended.")
             # pylint can't determine that we have verified cls.key to be a str
-            if cls.key[-7:] == '_detail': # pylint: disable=unsubscriptable-object
+            if cls.key[-7:] == '_detail':  # pylint: disable=unsubscriptable-object
                 logger.warning(f"Achievement key {cls.key} should not end with the string '_detail'.")
             cls.all_achievements.append(cls())
 
@@ -310,7 +310,7 @@ class TournamentOrganizer(Achievement):
         return f'Earned by {len(self.hosts)} players{clarification}.'
 
     @retry_after_calling(preaggregate_achievements)
-    def percent(self, season_id: Optional[int] = None) -> float: # pylint: disable=unused-argument
+    def percent(self, season_id: Optional[int] = None) -> float:  # pylint: disable=unused-argument
         sql = 'SELECT COUNT(*) AS mnum FROM _achievements'
         r = db().select(sql)[0]
         return len(self.hosts) * 100.0 / int(r['mnum'])
@@ -445,14 +445,17 @@ class PerfectRunCrusher(CountedAchievement):
     key = 'perfect_run_crushes'
     title = 'Perfect Run Crusher'
     description_safe = "Beat a player that's 4–0 in the league."
+
     def leaderboard_heading(self) -> str:
         return gettext('Crushes')
+
     def localised_display(self, n: int) -> str:
         return ngettext('1 perfect run crush', '%(num)d perfect run crushes', n)
     sql = 'SUM(CASE WHEN crush_records.crush_count IS NULL THEN 0 ELSE crush_records.crush_count END)'
     detail_sql = 'GROUP_CONCAT(crush_records.crushee_ids)'
     join_sql = 'LEFT JOIN crush_records ON d.id = crush_records.crusher_id'
     flags = ['hide_source', 'hide_top8']
+
     @property
     def with_sql(self) -> str:
         return """
@@ -490,14 +493,17 @@ class AncientGrudge(CountedAchievement):
     key = 'ancient_grudges'
     title = 'Ancient Grudge'
     description_safe = 'Beat a player in the knockout rounds of a tournament after losing to them in the knockout rounds of an earlier tournament in the same season.'
+
     def leaderboard_heading(self) -> str:
         return gettext('grudges repaid')
+
     def localised_display(self, n: int) -> str:
         return ngettext('1 grudge repaid', '%(num)d grudges repaid', n)
     sql = """COUNT(DISTINCT agdi.grudge_id)"""
     detail_sql = """GROUP_CONCAT(DISTINCT CASE WHEN agdi.id IS NOT NULL THEN agdi.both_ids ELSE NULL END)"""
     join_sql = 'LEFT JOIN ancient_grudge_deck_ids AS agdi ON d.id = agdi.id'
     flags = ['hide_source']
+
     @property
     def with_sql(self) -> str:
         return """knockouts AS
@@ -557,8 +563,10 @@ class BurningVengeance(CountedAchievement):
     key = 'burning_vengeances'
     title = 'Burning Vengeance'
     description_safe = 'Beat a player in the knockout rounds of a tournament after losing to them in the Swiss.'
+
     def leaderboard_heading(self) -> str:
         return gettext('defeats avenged')
+
     def localised_display(self, n: int) -> str:
         return ngettext('1 defeat avenged', '%(num)d defeats avenged', n)
     sql = 'COUNT(DISTINCT CASE WHEN d.id IN (SELECT id FROM burning_vengeance_decks) THEN d.id ELSE NULL END)'
@@ -733,6 +741,7 @@ class Specialist(BooleanAchievement):
                     )
                 """.format(season_join=query.season_join(), competition_join=query.competition_join())
     flags = ['hide_person', 'hide_source', 'show_archetype']
+
     @staticmethod
     def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)
@@ -754,6 +763,7 @@ class Generalist(BooleanAchievement):
                     END"""
     with_sql = 'first_arch_top_ns AS (SELECT MIN(deck_id) AS deck_id, person_id, season_id FROM top_ns GROUP BY person_id, season_id, archetype_id)'
     flags = ['hide_person', 'hide_source', 'show_archetype']
+
     @staticmethod
     def alltime_text(n: int) -> str:
         what = ngettext('1 season', '%(num)d different seasons', n)

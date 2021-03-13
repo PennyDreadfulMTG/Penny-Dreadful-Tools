@@ -11,7 +11,7 @@ from shared.pd_exception import DatabaseException
 from shared_web.flask_app import PDFlask
 
 APP = PDFlask(__name__)
-APP.logger.setLevel(logging.WARN) # pylint: disable=no-member,no-name-in-module
+APP.logger.setLevel(logging.WARN)  # pylint: disable=no-member,no-name-in-module
 SEASONS = Blueprint('seasons', __name__, url_prefix='/seasons/<season_id>')
 
 def get_season_id() -> int:
@@ -28,6 +28,7 @@ def add_season_id(_endpoint: str, values: Dict[str, Any]) -> None:
 def pull_season_id(_endpoint: str, values: Dict[str, Any]) -> None:
     v = values.pop('season_id')
     g.season_id = seasons.season_id(v)
+
 
 APP.config['SECRET_KEY'] = configuration.get('oauth2_client_secret')
 
@@ -91,6 +92,7 @@ def setup_links(menu: List[Dict[str, Any]]) -> None:
         item['is_external'] = cast(str, item.get('url', '')).startswith('http') and '://pennydreadfulmagic.com/' not in item['url']
         setup_links(item.get('submenu', []))
 
+
 try:
     oracle.init()
 except DatabaseException as e:
@@ -99,5 +101,5 @@ except DatabaseException as e:
     oracle.init()
 
 from decksite.controllers import admin  # isort:skip # pylint: disable=wrong-import-position
-from .data import deck # isort:skip # pylint: disable=wrong-import-position
+from .data import deck  # isort:skip # pylint: disable=wrong-import-position
 APP.config['menu'] = build_menu

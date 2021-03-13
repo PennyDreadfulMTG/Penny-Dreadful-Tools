@@ -49,7 +49,7 @@ def parse_build_notes(h: Tag) -> None:
             embeds=[embed],
             username='Magic Online Announcements',
             avatar_url='https://magic.wizards.com/sites/mtg/files/styles/auth_small/public/images/person/wizards_authorpic_larger.jpg'
-            )
+        )
 
 def parse_downtimes(h: Tag) -> None:
     for n in h.next_elements:

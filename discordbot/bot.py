@@ -32,7 +32,7 @@ def background_task(func: Callable) -> Callable:
         try:
             await self.wait_until_ready()
             await func(self)
-        except Exception: # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             await self.on_error(func.__name__)
     TASKS.append(wrapper)
     return wrapper
@@ -64,7 +64,7 @@ class Bot(commands.Bot):
             await p.wait()
             p = await asyncio.create_subprocess_shell(f'{sys.executable} -m pip install -U -r requirements.txt --no-cache')
             await p.wait()
-        except Exception as c: # pylint: disable=broad-except
+        except Exception as c:  # pylint: disable=broad-except
             repo.create_issue('Bot error while closing', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=c)
         await super().close()
 
@@ -74,7 +74,6 @@ class Bot(commands.Bot):
         logging.info('Connected to %s', names)
         logging.info('--------')
         perf.check(self.launch_time, 'slow_bot_start', '', 'discordbot')
-
 
     async def on_message(self, message: Message) -> None:
         # We do not want the bot to reply to itself.
@@ -104,9 +103,9 @@ class Bot(commands.Bot):
         if member.bot:
             return
         # is_test_server = member.guild.id == 226920619302715392
-        if is_pd_server(member.guild): # or is_test_server:
+        if is_pd_server(member.guild):  # or is_test_server:
             greeting = "Hey there {mention}, welcome to the Penny Dreadful community!  Be sure to set your nickname to your MTGO username, and check out <{url}> if you haven't already.".format(mention=member.mention, url=fetcher.decksite_url('/'))
-            chan = member.guild.get_channel(207281932214599682) #general (Yes, the guild ID is the same as the ID of it's first channel.  It's not a typo)
+            chan = member.guild.get_channel(207281932214599682)  # general (Yes, the guild ID is the same as the ID of it's first channel.  It's not a typo)
             await chan.send(greeting)
 
     async def on_member_update(self, before: Member, after: Member) -> None:
@@ -139,6 +138,7 @@ class Bot(commands.Bot):
             if is_pd_server(before.guild) and data is not None and data.get('achievements', None) is not None:
                 expected: List[Role] = []
                 remove: List[Role] = []
+
                 async def achievement_name(key: str) -> str:
                     name = self.achievement_cache.get(key, None)
                     if name is None:
@@ -160,7 +160,6 @@ class Bot(commands.Bot):
                 await before.remove_roles(*remove)
                 await before.add_roles(*expected)
 
-
     async def on_guild_join(self, server: Guild) -> None:
         for channel in server.text_channels:
             try:
@@ -178,14 +177,14 @@ class Bot(commands.Bot):
             if c > 0 and not reaction.custom_emoji and reaction.emoji == '❎':
                 try:
                     await reaction.message.delete()
-                except NotFound: # Someone beat us to it?
+                except NotFound:  # Someone beat us to it?
                     pass
             elif c > 0 and 'Ambiguous name for ' in reaction.message.content and reaction.emoji in command.DISAMBIGUATION_EMOJIS_BY_NUMBER.values():
                 async with reaction.message.channel.typing():
                     search = re.search(r'Ambiguous name for ([^\.]*)\. Suggestions: (.*)', reaction.message.content)
                     if search:
                         previous_command, suggestions = search.group(1, 2)
-                        card = re.findall(r':[^:]*?: ([^:]*) ', suggestions + ' ')[command.DISAMBIGUATION_NUMBERS_BY_EMOJI[reaction.emoji]-1]
+                        card = re.findall(r':[^:]*?: ([^:]*) ', suggestions + ' ')[command.DISAMBIGUATION_NUMBERS_BY_EMOJI[reaction.emoji] - 1]
                         # pylint: disable=protected-access
                         message = Container(content='!{c} {a}'.format(c=previous_command, a=card), channel=reaction.message.channel, author=author, reactions=[], _state=reaction.message._state)
                         await self.on_message(message)
@@ -195,7 +194,7 @@ class Bot(commands.Bot):
         await super().on_error(event_method, args, kwargs)
         (_, exception, __) = sys.exc_info()
         try:
-            content = [arg.content for arg in args if hasattr(arg, 'content')] # The default string representation of a Message does not include the message content.
+            content = [arg.content for arg in args if hasattr(arg, 'content')]  # The default string representation of a Message does not include the message content.
             repo.create_issue(f'Bot error {event_method}\n{args}\n{kwargs}\n{content}', 'discord user', 'discordbot', 'PennyDreadfulMTG/perf-reports', exception=exception)
         except GithubException as e:
             logging.error('Github error\n%s', e)
@@ -351,7 +350,7 @@ def init() -> None:
     client.run(configuration.get_str('token'))
 
 def is_pd_server(guild: Guild) -> bool:
-    return guild.id == 207281932214599682 # or guild.id == 226920619302715392
+    return guild.id == 207281932214599682  # or guild.id == 226920619302715392
 
 async def get_role(guild: Guild, rolename: str, create: bool = False) -> Optional[Role]:
     for r in guild.roles:
@@ -372,7 +371,7 @@ async def rotation_hype_message() -> Optional[str]:
     num_legal_cards = len([c for c in cs if c.status == 'Legal'])
     s = f'Rotation run number {runs} completed. Rotation is {runs_percent}% complete. {num_legal_cards} cards confirmed.'
     if not newly_hit + newly_legal + newly_eliminated and runs != 1 and runs % 5 != 0 and runs < rotation.TOTAL_RUNS / 2:
-        return None # Sometimes there's nothing to report
+        return None  # Sometimes there's nothing to report
     if len(newly_hit) > 0 and runs_remaining > runs:
         newly_hit_s = list_of_most_interesting(newly_hit)
         s += f'\nFirst hit for: {newly_hit_s}.'

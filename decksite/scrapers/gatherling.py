@@ -42,7 +42,7 @@ class Structure(Enum):
 
 class Verification(Enum):
     VERIFIED = 'verified'
-    UNVERIFIED = None # Not actually sure what value shows when a match is not verified.
+    UNVERIFIED = None  # Not actually sure what value shows when a match is not verified.
 
 class Medal(Enum):
     WINNER = '1st'
@@ -137,6 +137,7 @@ class Event:
     standings: List[Standing]
     players: Dict[GatherlingUsername, Player]
 
+
 APIResponse = Dict[str, Event]
 
 ALIASES: Dict[str, str] = {}
@@ -166,7 +167,7 @@ def process_tournament(name: str, event: Event) -> None:
     name_safe = sqlescape(name)
     cs = competition.load_competitions(f'c.name = {name_safe}')
     if len(cs) > 0:
-        return # We already have this tournament, no-op out of here.
+        return  # We already have this tournament, no-op out of here.
     try:
         date = vivify_date(event.start)
     except ValueError as e:
@@ -270,14 +271,14 @@ def elimination(m: GatherlingMatch, total_rounds: int) -> int:
     if m.timing != Timing.FINALS:
         return 0
     remaining_rounds = total_rounds - m.round + 1
-    return pow(2, remaining_rounds) # 1 => 2, 2 => 4, 3 => 8 which are the values 'elimination' expects
+    return pow(2, remaining_rounds)  # 1 => 2, 2 => 4, 3 => 8 which are the values 'elimination' expects
 
 def find_mtgo_username(gatherling_username: GatherlingUsername, players: List[Player]) -> str:
     for p in players:
         if p.name == gatherling_username:
             if p.mtgo_username is not None:
                 return aliased(p.mtgo_username)
-    return aliased(gatherling_username) # Best guess given that we don't know for certain
+    return aliased(gatherling_username)  # Best guess given that we don't know for certain
 
 def gatherling_url(href: str) -> str:
     if href.startswith('http'):
@@ -315,6 +316,6 @@ def aliased(username: str) -> str:
     return ALIASES.get(username, username)
 
 def load_aliases() -> None:
-    ALIASES['dummyplaceholder'] = '' # To prevent doing the load on every lookup if there are no aliases in the db.
+    ALIASES['dummyplaceholder'] = ''  # To prevent doing the load on every lookup if there are no aliases in the db.
     for entry in person.load_aliases():
         ALIASES[entry.alias] = entry.mtgo_username

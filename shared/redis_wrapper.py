@@ -15,12 +15,13 @@ def init() -> Optional[redislib.Redis]:
         host=configuration.get_str('redis_host'),
         port=configuration.get_int('redis_port'),
         db=configuration.get_int('redis_db'),
-        )
+    )
     try:
-        instance.ping() # type: ignore
+        instance.ping()  # type: ignore
     except redislib.exceptions.ConnectionError:
         return None
     return instance
+
 
 REDIS = init()
 
@@ -92,6 +93,7 @@ def get_container_list(key: str) -> Optional[List[Container]]:
             return [Container(d) for d in val]
     return None
 
+
 T = TypeVar('T', dict, list, str, bool, int, covariant=True)
 
 def store(key: str, val: T, **kwargs: Any) -> T:
@@ -107,7 +109,7 @@ def store(key: str, val: T, **kwargs: Any) -> T:
 def increment(key: str, **kwargs: Any) -> Optional[int]:
     if REDIS is not None:
         try:
-            return REDIS.incr(key, **kwargs) # type: ignore
+            return REDIS.incr(key, **kwargs)  # type: ignore
         except redislib.exceptions.BusyLoadingError:
             pass
         except redislib.exceptions.ConnectionError:
@@ -119,7 +121,7 @@ def clear(*keys_list: AnyStr) -> None:
         if len(keys_list) == 0:
             # redis errors on a delete with no arguments, but we don't have to
             return
-        REDIS.delete(*keys_list) # type: ignore
+        REDIS.delete(*keys_list)  # type: ignore
 
 
 def expire(key: str, time: int) -> None:
@@ -133,16 +135,16 @@ def expire(key: str, time: int) -> None:
 
 def keys(pattern: str) -> List[bytes]:
     if REDIS is not None:
-        return REDIS.keys(pattern) # type: ignore
+        return REDIS.keys(pattern)  # type: ignore
     return []
 
 def sadd(key: str, *values: Any, ex: Optional[int] = None) -> None:
     if REDIS is not None:
-        REDIS.sadd(key, *values) # type: ignore
+        REDIS.sadd(key, *values)  # type: ignore
         if ex is not None:
             REDIS.expire(key, ex)
 
 def sismember(key: str, value: str) -> bool:
     if REDIS is not None:
-        return REDIS.sismember(key, value) # type: ignore
+        return REDIS.sismember(key, value)  # type: ignore
     return False

@@ -82,7 +82,7 @@ def decks_order_by(sort_by: Optional[str], sort_order: Optional[str], competitio
     else:
         sort_by = str(sort_by)
         sort_order = str(sort_order)
-    assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
+    assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     marginalia_order_by = """
         (CASE WHEN d.finish = 1 THEN 1
              WHEN d.finish = 2 AND c.top_n >= 2 THEN 2
@@ -115,7 +115,7 @@ def cards_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
     else:
         sort_by = str(sort_by)
         sort_order = str(sort_order)
-    assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
+    assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     sort_options = {
         'name': 'name',
         'numDecks': 'num_decks',
@@ -134,7 +134,7 @@ def people_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
     else:
         sort_by = str(sort_by)
         sort_order = str(sort_order)
-    assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
+    assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     sort_options = {
         'elo': 'elo',
         'name': 'name',
@@ -154,7 +154,7 @@ def head_to_head_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> 
     else:
         sort_by = str(sort_by)
         sort_order = str(sort_order)
-    assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
+    assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     sort_options = {
         'name': 'opp_mtgo_username',
         'numMatches': 'num_matches',
@@ -170,7 +170,7 @@ def leaderboard_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> s
     else:
         sort_by = str(sort_by)
         sort_order = str(sort_order)
-    assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
+    assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     sort_options = {
         'name': 'person',
         'numDecks': 'num_decks',
@@ -186,7 +186,7 @@ def matches_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
     else:
         sort_by = str(sort_by)
         sort_order = str(sort_order)
-    assert sort_order in ['ASC', 'DESC'] # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
+    assert sort_order in ['ASC', 'DESC']  # This is a form of SQL injection protection so don't remove it just because you don't like asserts in prod without replacing it with something.
     sort_options = {
         'date': 'date',
         'person': 'person',
@@ -246,7 +246,7 @@ def card_search_where(q: str) -> str:
         cs = search.search(q)
         return 'TRUE' if len(cs) == 0 else 'name IN (' + ', '.join(sqlescape(c.name) for c in cs) + ')'
     except search.InvalidSearchException:
-        return 'TRUE' # Do not apply malformed queries. Future improvement: ignore invalid parts and match the valid parts.
+        return 'TRUE'  # Do not apply malformed queries. Future improvement: ignore invalid parts and match the valid parts.
 
 def tournament_only_clause() -> str:
     return "ct.name = 'Gatherling'"

@@ -6,7 +6,7 @@ from decksite import deck_name
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
 
-TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str]]]  = [
+TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str]]] = [
     ('Dimir Control', 'Dimir Control', ['U', 'B'], 'Control'),
     ('U/B Control', 'Dimir Control', ['U', 'B'], 'Control'),
     ('dimir Control', 'Dimir Control', ['U', 'B'], 'Control'),
@@ -26,7 +26,7 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str]]]  = [
     ('BR Control', 'Rakdos Control', ['B', 'R'], 'Control'),
     ('b ', 'Mono Black', ['B'], None),
     ('muc', 'Mono Blue Control', ['U'], None),
-    ('RDW23', 'Rdw23', ['R'], None), # This isn't ideal but see BWWave for why it's probably right.
+    ('RDW23', 'Rdw23', ['R'], None),  # This isn't ideal but see BWWave for why it's probably right.
     ('Mono B Aristocrats III', 'Mono Black Aristocrats III', ['B'], None),
     ('Mono B Aristocrats IV', 'Mono Black Aristocrats IV', ['B'], None),
     ('Suicide Black', 'Suicide Black', ['B'], None),
@@ -42,7 +42,7 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str]]]  = [
     ('S6 red Deck Wins', 'Red Deck Wins', ['R'], None),
     ('S6red Deck Wins', 'Red Deck Wins', ['R'], None),
     ('Mono-W Soldiers', 'Mono White Soldiers', ['W'], None),
-    ('BWWave', 'Bwwave', ['W'], None), # Not ideal but ok.
+    ('BWWave', 'Bwwave', ['W'], None),  # Not ideal but ok.
     ('PD - Archfiend Cycling', 'Archfiend Cycling', None, None),
     ('a red deck but not a net deck', 'A Red Deck but Not a Net Deck', None, None),
     ('Better red than dead', 'Better Red Than Dead', None, None),

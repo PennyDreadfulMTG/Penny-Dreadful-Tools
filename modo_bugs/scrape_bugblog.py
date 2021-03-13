@@ -172,6 +172,7 @@ def handle_autocards(soup: Tag) -> None:
 def find_issue_by_code(code: str) -> Optional[Issue]:
     if code is None:
         return None
+
     def scan(issue_list: List[Issue]) -> Optional[Issue]:
         for issue in issue_list:
             if not repo.is_issue_from_bug_blog(issue):
@@ -219,7 +220,7 @@ def find_bbt_in_body_or_comments(issue: Issue) -> Optional[str]:
     return None
 
 def find_issue_by_name(name: str) -> Optional[Issue]:
-    if name is None: #What?
+    if name is None:  # What?
         return None
     all_issues = repo.get_repo().get_issues(state='all')
     for issue in all_issues:

@@ -222,7 +222,7 @@ class View(BaseView):
     def prepare_archetype(self, a: archetype.Archetype, archetypes: List[archetype.Archetype]) -> None:
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
         a.show_record = a.get('num_decks') is not None and (a.get('wins') or a.get('draws') or a.get('losses'))
-        counter = Counter() # type: ignore
+        counter = Counter()  # type: ignore
         a.cards = []
         a.most_common_cards = []
         # Make a pass, collecting card counts for all decks and for tournament decks
@@ -243,12 +243,12 @@ class View(BaseView):
             b['depth'] = b.depth
 
     def prepare_leaderboards(self) -> None:
-        for l in getattr(self, 'leaderboards', []):
-            prepare.prepare_leaderboard(l)
+        for leaderboard in getattr(self, 'leaderboards', []):
+            prepare.prepare_leaderboard(leaderboard)
 
     def prepare_legal_formats(self) -> None:
         if getattr(self, 'legal_formats', None) is not None:
-            self.legal_formats = list(map(add_season_num, list(sorted(self.legal_formats, key=legality.order_score)))) # type: ignore
+            self.legal_formats = list(map(add_season_num, list(sorted(self.legal_formats, key=legality.order_score))))  # type: ignore
 
     def prepare_matches(self) -> None:
         prepare.prepare_matches(getattr(self, 'matches', []))

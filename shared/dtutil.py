@@ -86,6 +86,7 @@ def day2ordinal(m: Match) -> str:
     p = inflect.engine()
     return p.ordinal(int(m.group(1)))
 
+
 IntervalsType = Dict[str, Tuple[Optional[int], int, Optional[int]]]
 ResultsType = List[Tuple[int, str]]
 
@@ -101,20 +102,20 @@ def get_intervals() -> IntervalsType:
 def display_time(seconds: float, granularity: int = 2) -> str:
     intervals = get_intervals()
     result: ResultsType = []
-    seconds = round(seconds) # in case we've been handed a decimal not an int
+    seconds = round(seconds)  # in case we've been handed a decimal not an int
     if seconds == 0:
         return 'now'
     for unit, details in intervals.items():
         max_units, seconds_per_unit, rounding_threshold = details
-        if len(result) < granularity: # We don't want to consider rounding up yet.
-            value = int(seconds // seconds_per_unit) # floor preceeding units, int just to please typing
+        if len(result) < granularity:  # We don't want to consider rounding up yet.
+            value = int(seconds // seconds_per_unit)  # floor preceeding units, int just to please typing
         else:
             value = round_value_appropriately(seconds, seconds_per_unit, max_units, rounding_threshold)
-            if value == max_units and seconds < (value * seconds_per_unit): # rounding off bumped us up to one of the *preceeding* unit.
+            if value == max_units and seconds < (value * seconds_per_unit):  # rounding off bumped us up to one of the *preceeding* unit.
                 result = round_up_preceeding_unit(result)
                 seconds -= value * seconds_per_unit
                 value = 0
-        if value > 0 or result: # Either we have the first significant value or we're recording each level because we already did.
+        if value > 0 or result:  # Either we have the first significant value or we're recording each level because we already did.
             result.append((value, unit))
             seconds -= value * seconds_per_unit
     return ', '.join(['{} {}'.format(value, unit.rstrip('s') if value == 1 else unit) for (value, unit) in result[:granularity] if value > 0])

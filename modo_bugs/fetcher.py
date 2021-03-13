@@ -15,12 +15,12 @@ def search_scryfall(query: str) -> Tuple[int, List[str], List[str]]:
         return 0, [], []
     print(f'Searching scryfall for `{query}`')
     result_json = fetch_tools.fetch_json('https://api.scryfall.com/cards/search?q=' + fetch_tools.escape(query), character_encoding='utf-8')
-    if 'code' in result_json.keys(): # The API returned an error
-        if result_json['status'] == 404: # No cards found
+    if 'code' in result_json.keys():  # The API returned an error
+        if result_json['status'] == 404:  # No cards found
             return 0, [], []
         print('Error fetching scryfall data:\n', result_json)
         return 0, [], []
-    for warning in result_json.get('warnings', []): #scryfall-provided human-readable warnings
+    for warning in result_json.get('warnings', []):  # scryfall-provided human-readable warnings
         print(warning)
     result_data = result_json['data']
     result_data.sort(key=lambda x: x['legalities']['penny'])
@@ -28,7 +28,7 @@ def search_scryfall(query: str) -> Tuple[int, List[str], List[str]]:
     def get_frontside(scr_card: Dict) -> str:
         """If card is transform, returns first name. Otherwise, returns name.
         This is to make sure cards are later found in the database"""
-        #not sure how to handle meld cards
+        # not sure how to handle meld cards
         if scr_card['layout'] in ['transform', 'flip', 'modal_dfc']:
             return scr_card['card_faces'][0]['name']
         return scr_card['name']

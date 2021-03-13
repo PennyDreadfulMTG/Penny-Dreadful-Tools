@@ -22,10 +22,10 @@ def retry_after_calling(retry_func: Callable[[], None]) -> Callable[[FuncType], 
     return decorator
 
 def memoize(obj: FuncType) -> FuncType:
-    cache = obj.cache = {} # type: ignore
+    cache = obj.cache = {}  # type: ignore
 
     @functools.wraps(obj)
-    def memoizer(*args, **kwargs): # type: ignore
+    def memoizer(*args, **kwargs):  # type: ignore
         if args not in cache:
             cache[args] = obj(*args, **kwargs)
         return cache[args]

@@ -32,7 +32,7 @@ def fetch(url: str, character_encoding: Optional[str] = None, force: bool = Fals
         if took > 1:
             print('Getting text from response was very slow. Setting an explicit character_encoding may help.')
         return t
-    except (urllib.error.HTTPError, requests.exceptions.ConnectionError, TimeoutError) as e: # type: ignore # urllib isn't fully stubbed
+    except (urllib.error.HTTPError, requests.exceptions.ConnectionError, TimeoutError) as e:  # type: ignore # urllib isn't fully stubbed
         if retry:
             return fetch(url, character_encoding, force, retry=False)
         raise FetchException(e) from e
@@ -43,7 +43,7 @@ async def fetch_async(url: str) -> str:
         async with aiohttp.ClientSession() as aios:
             response = await aios.get(url)
             return await response.text()
-    except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e: # type: ignore # urllib isn't fully stubbed
+    except (urllib.error.HTTPError, requests.exceptions.ConnectionError) as e:  # type: ignore # urllib isn't fully stubbed
         raise FetchException(e) from e
 
 def fetch_json(url: str, character_encoding: Optional[str] = None, session: Optional[requests.Session] = None) -> Any:
@@ -69,7 +69,7 @@ async def fetch_json_async(url: str) -> Any:
 def post(url: str,
          data: Optional[Dict[str, str]] = None,
          json_data: Any = None
-        ) -> str:
+         ) -> str:
     print('POSTing to {url} with {data} / {json_data}'.format(url=url, data=data, json_data=json_data))
     try:
         response = requests.post(url, data=data, json=json_data)
@@ -85,9 +85,9 @@ def store(url: str, path: str) -> requests.Response:
             for chunk in response.iter_content(1024):
                 fout.write(chunk)
         return response
-    except urllib.error.HTTPError as e: # type: ignore
+    except urllib.error.HTTPError as e:  # type: ignore
         raise FetchException(e) from e
-    except requests.exceptions.ConnectionError as e: # type: ignore
+    except requests.exceptions.ConnectionError as e:  # type: ignore
         raise FetchException(e) from e
 
 
@@ -120,12 +120,12 @@ def escape(str_input: str, skip_double_slash: bool = False) -> str:
     s = str_input
     if skip_double_slash:
         s = s.replace('//', '-split-')
-    s = urllib.parse.quote_plus(s.replace(u'Æ', 'AE')).lower() # type: ignore # urllib isn't fully stubbed
+    s = urllib.parse.quote_plus(s.replace(u'Æ', 'AE')).lower()  # type: ignore # urllib isn't fully stubbed
     if skip_double_slash:
         s = s.replace('-split-', '//')
     return s
 
-#pylint: disable=R0913
+# pylint: disable=R0913
 def post_discord_webhook(webhook_id: str,
                          webhook_token: str,
                          message: Optional[str] = None,

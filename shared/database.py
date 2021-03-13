@@ -55,9 +55,9 @@ class Database():
             return self.execute_with_reconnect(sql, args, fetch_rows)
         except MySQLdb.Warning as e:
             if e.args[0] in [1050, 1051]:
-                return (0, []) # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or DROP TABLE IF NOT EXISTS raises an "unknown table" warning.
+                return (0, [])  # we don't care if a CREATE IF NOT EXISTS raises an "already exists" warning or DROP TABLE IF NOT EXISTS raises an "unknown table" warning.
             if e.args[0] == 1062:
-                return (0, []) # We don't care if an INSERT IGNORE INTO didn't do anything.
+                return (0, [])  # We don't care if an INSERT IGNORE INTO didn't do anything.
             raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e)) from e
         except MySQLdb.Error as e:
             raise DatabaseException('Failed to execute `{sql}` with `{args}` because of `{e}`'.format(sql=sql, args=args, e=e)) from e

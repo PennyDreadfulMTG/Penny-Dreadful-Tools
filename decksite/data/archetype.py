@@ -17,6 +17,7 @@ from shared.pd_exception import DoesNotExistException
 class Archetype(Container, NodeMixin):
     pass
 
+
 BASE_ARCHETYPES: Dict[Archetype, Archetype] = {}
 
 # pylint: disable=attribute-defined-outside-init

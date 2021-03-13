@@ -105,7 +105,7 @@ class Standing:
     OP_Game: str
     seed: int
 
-@pydantic.dataclasses.dataclass()
+@pydantic.dataclasses.dataclass
 class Player:
     name: GatherlingUsername
     verified: Optional[Literal[True]]
@@ -114,7 +114,7 @@ class Player:
     mtga_username: Optional[str]
     mtgo_username: Optional[MTGOUsername]
 
-@pydantic.dataclasses.dataclass()
+@pydantic.dataclasses.dataclass
 class Event:
     series: str
     season: int

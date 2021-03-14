@@ -69,6 +69,9 @@ sentry-sdk = {extras = ["flask"], version = "*"}
 jishaku = "*"
 pydantic = "*"
 flake8 = "*"
+# flake8-comprehensions = "*"
+flake8-quotes = "*"
+# flake8-bugbear = "*"
 
 [requires]
 python_version = "3.8"

@@ -138,7 +138,7 @@ def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
     app_context = None
     m = importlib.import_module('{module}'.format(module=module))
     # pylint: disable=unused-variable
-    for importer, modname, ispkg in pkgutil.iter_modules(m.__path__):  # type: ignore
+    for _importer, modname, _ispkg in pkgutil.iter_modules(m.__path__):  # type: ignore
         try:
             s = importlib.import_module('{module}.{name}'.format(name=modname, module=module))
             use_app_context = getattr(s, 'REQUIRES_APP_CONTEXT', True)

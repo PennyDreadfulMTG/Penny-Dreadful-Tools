@@ -125,7 +125,7 @@ def test_invalid_color() -> None:
                    'colors': ['U', 'X']})
     try:
         deck_name.normalize(d)
-        assert False
+        raise AssertionError()
     except InvalidDataException:
         assert True
 

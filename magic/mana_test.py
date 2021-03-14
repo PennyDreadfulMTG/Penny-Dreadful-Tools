@@ -8,7 +8,7 @@ def test_simple() -> None:
     do_test('{U}', ['U'])
     try:
         do_test('Not a mana symbol sequence', [])
-        assert False
+        raise AssertionError()
     except mana.InvalidManaCostException:
         assert True
 

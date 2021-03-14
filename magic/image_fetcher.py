@@ -46,7 +46,7 @@ def mci_image(printing: Printing) -> str:
 def gatherer_image(printing: Printing) -> Optional[str]:
     multiverse_id = printing.multiverseid
     if multiverse_id and int(multiverse_id) > 0:
-        return 'https://image.deckbrew.com/mtg/multiverseid/'+ str(multiverse_id) + '.jpg'
+        return 'https://image.deckbrew.com/mtg/multiverseid/' + str(multiverse_id) + '.jpg'
     return None
 
 def download_bluebones_image(cards: List[Card], filepath: str) -> bool:
@@ -58,7 +58,7 @@ def download_bluebones_image(cards: List[Card], filepath: str) -> bool:
     return fetch_tools.acceptable_file(filepath)
 
 async def download_scryfall_image(cards: List[Card], filepath: str, version: str = '') -> bool:
-    card_names = ', '.join(c.name for c  in cards)
+    card_names = ', '.join(c.name for c in cards)
     print(f'Trying to get scryfall images for {card_names}')
     image_filepaths = []
     for c in cards:

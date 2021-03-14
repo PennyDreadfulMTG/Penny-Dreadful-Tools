@@ -58,7 +58,7 @@ def info_emoji(c: Card, verbose: bool = False, show_legality: bool = True, no_ro
 
 def get_future_legality(c: Card, legal: bool) -> str:
     out_emoji = '<:rotating_out:702545628882010183>'
-    for status, symbol in {'undecided':':question:', 'legal':'<:rotating_in:702545611597021204>', 'notlegal':out_emoji}.items():
+    for status, symbol in {'undecided': ':question:', 'legal': '<:rotating_in:702545611597021204>', 'notlegal': out_emoji}.items():
         if redis.sismember(f'decksite:rotation:summary:{status}', c.name):
             return symbol
     if rotation.read_rotation_files()[0] <= (rotation.TOTAL_RUNS / 2):

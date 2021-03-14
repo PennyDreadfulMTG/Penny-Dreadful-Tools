@@ -18,7 +18,7 @@ class Card(View):
         self.show_archetype = True
         self.show_tournament_toggle = True
         self.tournament_only = self.hide_source = tournament_only
-        self.public = True # Mark this as 'public' so it can share legality section code with deck.
+        self.public = True  # Mark this as 'public' so it can share legality section code with deck.
         self.toggle_results_url = url_for('.card', name=card.name, deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
         self.card = card
         self.cards = [self.card]

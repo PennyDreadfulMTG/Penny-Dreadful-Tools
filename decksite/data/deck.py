@@ -36,7 +36,7 @@ def load_decks(where: str = 'TRUE',
                order_by: Optional[str] = None,
                limit: str = '',
                season_id: Optional[Union[str, int]] = None
-              ) -> List[Deck]:
+               ) -> List[Deck]:
     if not redis.enabled():
         return load_decks_heavy(where, having, order_by, limit, season_id)
     columns = """
@@ -84,7 +84,7 @@ def load_decks_query(columns: str,
                      order_by: Optional[str] = None,
                      limit: str = '',
                      season_id: Optional[Union[str, int]] = None,
-                    ) -> str:
+                     ) -> str:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
     if group_by is None:
@@ -150,7 +150,7 @@ def load_decks_heavy(where: str = 'TRUE',
                      order_by: Optional[str] = None,
                      limit: str = '',
                      season_id: Optional[Union[str, int]] = None
-                    ) -> List[Deck]:
+                     ) -> List[Deck]:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
     sql = """
@@ -254,7 +254,7 @@ def set_colors(d: Deck) -> None:
     for c in [entry.card for entry in d.maindeck + d.sideboard]:
         for cost in c.get('mana_cost') or ():
             if c.layout == 'split':
-                continue # They might only be using one half so ignore it.
+                continue  # They might only be using one half so ignore it.
             card_symbols = mana.parse(cost)
             card_colors = mana.colors(card_symbols)
             deck_colors.update(card_colors['required'])
@@ -266,16 +266,17 @@ def set_colors(d: Deck) -> None:
 def set_legality(d: Deck) -> None:
     d.legal_formats = legality.legal_formats(d)
 
+
 CardsDescription = Dict[str, Dict[str, int]]
 RawDeckDescription = TypedDict('RawDeckDescription',
                                {
-                                   'name': str, # Name of Deck
-                                   'url': str, # Source URL of Deck
-                                   'source': str, # Source name
-                                   'identifier': str, # Unique ID
-                                   'cards': CardsDescription, # Contents of Deck
+                                   'name': str,  # Name of Deck
+                                   'url': str,  # Source URL of Deck
+                                   'source': str,  # Source name
+                                   'identifier': str,  # Unique ID
+                                   'cards': CardsDescription,  # Contents of Deck
                                    'archetype': Optional[str],
-                                   'created_date': float, # Date deck was created.  If null, current time will be used.
+                                   'created_date': float,  # Date deck was created.  If null, current time will be used.
                                    # One of these three usernames is required:
                                    'mtgo_username': Optional[str],
                                    'tappedout_username': Optional[str],
@@ -288,7 +289,7 @@ RawDeckDescription = TypedDict('RawDeckDescription',
                                    'thumbnail_url': Optional[str],
                                    'small_thumbnail_url': Optional[str],
                                    'slug': Optional[str],
-                                   'user': Optional[str], # This is mapped to tappedout_username
+                                   'user': Optional[str],  # This is mapped to tappedout_username
 
                                    # Competition variables (League/Gatherling)
                                    'competition_id': Optional[int],
@@ -340,7 +341,7 @@ def add_deck(params: RawDeckDescription) -> Deck:
     archetype_id = get_archetype_id(params.get('archetype'))
     for result in ['wins', 'losses', 'draws']:
         if params.get('competition_id') and not params.get(result):
-            params[result] = 0 # type: ignore
+            params[result] = 0  # type: ignore
     sql = """INSERT INTO deck (
         created_date,
         updated_date,
@@ -550,7 +551,7 @@ def load_competitive_stats(decks: List[Deck]) -> None:
     if len(decks_by_id) < 1000:
         where = 'd.id IN ({deck_ids})'.format(deck_ids=', '.join(map(sqlescape, map(str, decks_by_id.keys()))))
     else:
-        where = 'TRUE' # MySQL doesn't like to be asked to do IN queries for very long argument lists. Just load everything. (MariaDB doesn't care, interestingly.)
+        where = 'TRUE'  # MySQL doesn't like to be asked to do IN queries for very long argument lists. Just load everything. (MariaDB doesn't care, interestingly.)
     sql = """
         SELECT
             d.id,

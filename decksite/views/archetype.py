@@ -18,7 +18,7 @@ class Archetype(View):
                  matchups: List[Container],
                  season_id: int,
                  tournament_only: bool = False
-                ) -> None:
+                 ) -> None:
         super().__init__()
         if not archetype:
             raise DoesNotExistException('No archetype supplied to view.')

@@ -70,7 +70,7 @@ def current_time(timezone: datetime.tzinfo, twentyfour: bool) -> str:
         return dtutil.now(timezone).strftime('%H:%M')
     try:
         return dtutil.now(timezone).strftime('%l:%M %p')
-    except ValueError: # %l is not a univerally supported argument.  Fall back to %I on other platforms.
+    except ValueError:  # %l is not a univerally supported argument.  Fall back to %I on other platforms.
         return dtutil.now(timezone).strftime('%I:%M %p')
 
 def decksite_url(path: str = '/') -> str:
@@ -100,7 +100,6 @@ def gatherling_deck_comments(d: Deck) -> List[str]:
     return []
 
 
-
 async def legal_cards_async(season: str = None) -> List[str]:
     if season is None:
         url = 'legal_cards.txt'
@@ -112,7 +111,7 @@ async def legal_cards_async(season: str = None) -> List[str]:
         h = open(os.path.join(cached_path, url), encoding=encoding)
         legal = h.readlines()
         h.close()
-        return [l.strip() for l in legal]
+        return [card.strip() for card in legal]
 
     url = 'https://pennydreadfulmtg.github.io/' + url
     legal_txt = await fetch_tools.fetch_async(url)
@@ -142,7 +141,7 @@ def post_discord_webhook(webhook_id: str, webhook_token: str, message: str, name
     fetch_tools.post(url, json_data={
         'content': message,
         'username': name,
-        })
+    })
     return True
 
 # pylint: disable=unsubscriptable-object
@@ -178,13 +177,13 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str
                     break
                 except FetchException as c:
                     print(c)
-            if 'code' in result_json.keys(): # The API returned an error
-                if result_json['status'] == 404: # No cards found
+            if 'code' in result_json.keys():  # The API returned an error
+                if result_json['status'] == 404:  # No cards found
                     return False, []
                 print('Error fetching scryfall data:\n', result_json)
                 return False, []
-            for warning in result_json.get('warnings', []): #scryfall-provided human-readable warnings
-                print(warning) # Why aren't we displaying these to the user?
+            for warning in result_json.get('warnings', []):  # scryfall-provided human-readable warnings
+                print(warning)  # Why aren't we displaying these to the user?
             result_data += result_json['data']
             total_cards = int(result_json['total_cards'])
             if not exhaustive or len(result_data) >= total_cards:
@@ -193,10 +192,11 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str
             url = result_json['next_page']
         redis.store(redis_key, [total_cards, result_data], ex=3600)
     result_data.sort(key=lambda x: x['legalities']['penny'])
+
     def get_frontside(scr_card: Dict) -> str:
         """If card is transform, returns first name. Otherwise, returns name.
         This is to make sure cards are later found in the database"""
-        #not sure how to handle meld cards
+        # not sure how to handle meld cards
         if scr_card['layout'] in ['transform', 'flip', 'adventure', 'modal_dfc']:
             return scr_card['card_faces'][0]['name']
         return scr_card['name']
@@ -217,7 +217,7 @@ def subreddit() -> Container:
 def time(q: str, twentyfour: bool) -> Dict[str, List[str]]:
     return times_from_timezone_code(q, twentyfour) if len(q) <= 4 else times_from_location(q, twentyfour)
 
-def times_from_timezone_code(q: str, twentyfour: bool) ->  Dict[str, List[str]]:
+def times_from_timezone_code(q: str, twentyfour: bool) -> Dict[str, List[str]]:
     possibles = list(filter(lambda x: datetime.datetime.now(pytz.timezone(x)).strftime('%Z') == q.upper(), pytz.common_timezones))
     if not possibles:
         raise TooFewItemsException(f'Not a recognized timezone: {q.upper()}')
@@ -252,6 +252,7 @@ def times_from_location(q: str, twentyfour: bool) -> Dict[str, List[str]]:
         raise TooFewItemsException(f'Unable to find a timezone in {timezone_info}') from e
     return {current_time(timezone, twentyfour): [info['results'][0]['formatted_address']]}
 
+
 WISDateType = TypedDict('WISDateType', {
     'exact': str,
     'rough': str,
@@ -265,7 +266,7 @@ WISSetInfoType = TypedDict('WISSetInfoType', {
     'symbol': str,
     'enterDate': WISDateType,
     'exitDate': WISDateType,
-    })
+})
 
 WISSchemaType = TypedDict('WISSchemaType', {
     'deprecated': bool,

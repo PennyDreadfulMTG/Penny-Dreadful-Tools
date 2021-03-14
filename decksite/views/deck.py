@@ -123,7 +123,7 @@ class Deck(View):
             return False
         return True
 
-    def cardhoarder_url(self) -> str: # This should be a Deck, but we can't import it from here.
+    def cardhoarder_url(self) -> str:  # This should be a Deck, but we can't import it from here.
         d = self.deck
         cs: Dict[str, int] = {}
         for entry in d.maindeck + d.sideboard:

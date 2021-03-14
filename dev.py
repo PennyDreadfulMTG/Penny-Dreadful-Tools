@@ -40,7 +40,7 @@ def run() -> None:
         except ProcessExecutionError:
             exit_code = 3
             raise
-    except Exception as e: # pylint: disable=broad-except
+    except Exception as e:  # pylint: disable=broad-except
         msg = type(e).__name__ + ' running ' + str(sys.argv) + ': ' + ' [' + str(e.args) + '] ' + str(e) + '\n'
         sys.stderr.write(msg)
         if not exit_code:
@@ -61,8 +61,10 @@ def run_dangerously() -> None:
         runtests(args, 'perf', True)
     elif cmd in ('test', 'tests'):
         runtests(args, '', False)
-    elif cmd in ('lint', 'pylint'):
+    elif cmd in ('lint', 'pylint', 'flake8'):
         lint(args)
+    elif cmd in ('autopep', 'stylefix'):
+        stylefix()
     elif cmd in ('types', 'mypy'):
         mypy(args)
     elif cmd == 'mypy-strict':
@@ -115,26 +117,13 @@ def lint(argv: List[str]) -> None:
     """
     Invoke Pylint with our preferred options
     """
-    print('>>>> Running pylint')
-    args = ['--rcfile=.pylintrc', # Load rcfile first.
-            '--ignored-modules=alembic,MySQLdb,flask_sqlalchemy,distutils.dist', # override ignored-modules (codacy hack)
-            '--load-plugins', 'pylint_quotes,pylint_monolith', # Plugins
-            '-f', 'parseable', # Machine-readable output.
-            '-j', str(configuration.get_int('pylint_threads')), # Use four cores for speed.
-           ]
-    args.extend(argv or find_files(file_extension='py'))
-    # pylint: disable=import-outside-toplevel
-    import pylint.lint
-    try:
-        linter = pylint.lint.Run(args, exit=False)
-    except (PicklingError, RecursionError):
-        print('Error while running pylint with multiprocessing')
-        configuration.write('pylint_threads', 1)
-        lint(argv)
-        return
+    print('>>>> Running flake8')
+    pipenv = local['pipenv']
+    pipenv['run', 'flake8'] & FG  # noqa
 
-    if linter.linter.msg_status:
-        raise TestFailedException(linter.linter.msg_status)
+def stylefix() -> None:
+    autopep = local['autopep8']
+    autopep['--select', 'E123,E124,E261,E265,E303,E305,E306', '--in-place', '-r', '.'] & FG  # noqa
 
 def mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -> None:
     """
@@ -151,19 +140,19 @@ def mypy(argv: List[str], strict: bool = False, typeshedding: bool = False) -> N
         '--check-untyped-defs',         # Typecheck on all methods, not just typed ones.
         '--disallow-untyped-defs',      # All methods must be typed.
         '--strict-equality',        # Don't allow us to say "0" == 0 or other always false comparisons
-        ]
+    ]
     if strict:
         args.extend([
             '--disallow-any-generics',  # Generic types like List or Dict need [T]
             # '--warn-return-any',        # Functions shouldn't return Any if we're expecting something better
             # '--disallow-any-unimported', # Catch import errors
-            ])
+        ])
     if typeshedding:
         args.extend([
             '--warn-return-any',
             '--custom-typeshed', '../typeshed',
         ])
-    args.extend(argv or ['.']) # Invoke on the entire project.
+    args.extend(argv or ['.'])  # Invoke on the entire project.
     # pylint: disable=import-outside-toplevel
     from mypy import api
     result = api.run(args)
@@ -355,7 +344,7 @@ def release(args: List[str]) -> None:
     safe_push([])
     pull_request(args)
 
-def find_files(needle: str = '', file_extension: str = '', exclude: Optional[List[str]] = None)  -> List[str]:
+def find_files(needle: str = '', file_extension: str = '', exclude: Optional[List[str]] = None) -> List[str]:
     paths = subprocess.check_output(['git', 'ls-files']).strip().decode().split('\n')
     paths = [p for p in paths if 'logsite_migrations' not in p]
     if file_extension:
@@ -378,6 +367,7 @@ def swagger() -> None:
     with decksite.APP.app_context():
         with open('decksite_api.yml', 'w') as f:
             f.write(json.dumps(decksite.APP.api.__schema__))
+
 
 if __name__ == '__main__':
     run()

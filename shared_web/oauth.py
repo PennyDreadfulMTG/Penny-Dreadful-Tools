@@ -32,15 +32,15 @@ def setup_session(url: str) -> None:
     session['discord_id'] = user['id']
     session['discord_locale'] = user['locale']
     guilds = discord.get(API_BASE_URL + '/users/@me/guilds').json()
-    wrong_guilds = False # protect against an unexpected response from discord
+    wrong_guilds = False  # protect against an unexpected response from discord
     session['in_guild'] = False
     session['admin'] = False
     session['demimod'] = False
     for guild in guilds:
         if isinstance(guild, dict) and 'id' in guild:
             if guild['id'] == configuration.get('guild_id'):
-                session['admin'] = (guild['permissions'] & 0x10000000) != 0 # Check for the MANAGE_ROLES permissions on Discord as a proxy for "is admin".
-                session['demimod'] = (guild['permissions'] & 0x20000) != 0 # Check for the "Mention @everyone" permissions on Discord as a proxy for "is demimod".
+                session['admin'] = (guild['permissions'] & 0x10000000) != 0  # Check for the MANAGE_ROLES permissions on Discord as a proxy for "is admin".
+                session['demimod'] = (guild['permissions'] & 0x20000) != 0  # Check for the "Mention @everyone" permissions on Discord as a proxy for "is demimod".
                 session['in_guild'] = True
         else:
             wrong_guilds = True

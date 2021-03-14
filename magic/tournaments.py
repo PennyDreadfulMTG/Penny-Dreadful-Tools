@@ -38,7 +38,7 @@ def previous_tournament_info() -> Dict[str, Any]:
 def tournament_info(time_direction: TimeDirection, units: int = 2) -> Dict[str, Any]:
     tournament_id, name, time = get_nearest_tournament(time_direction)
     next_tournament_time_precise = abs(dtutil.dt2ts(time) - dtutil.dt2ts(dtutil.now()))
-    near = next_tournament_time_precise < 18000 # Threshold for near: 5 hours in seconds
+    near = next_tournament_time_precise < 18000  # Threshold for near: 5 hours in seconds
     next_tournament_time = dtutil.display_time(next_tournament_time_precise, units)
     info = {
         'next_tournament_name': name,
@@ -63,19 +63,19 @@ def get_nearest_tournament(time_direction: TimeDirection = TimeDirection.AFTER) 
 def get_all_next_tournament_dates(start: datetime.datetime, index: int = 0) -> List[TournamentDateType]:
     apac_start = start.astimezone(tz=dtutil.APAC_SERIES_TZ)
     until = start + datetime.timedelta(days=7)
-    pdfnm_time = (FNM, 'Penny Dreadful FNM', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index]) # type: ignore
+    pdfnm_time = (FNM, 'Penny Dreadful FNM', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.FR)[index])  # type: ignore
     if is_pd500_week(start):
         pdsat_name = 'The Penny Dreadful 500'
     elif is_kick_off_week(start):
         pdsat_name = 'Season Kick Off'
     else:
         pdsat_name = 'Penny Dreadful Saturdays'
-    pdsat_time = (SAT, pdsat_name, rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index]) # type: ignore
-    apds_time = (APAC, 'APAC Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=16, byminute=0, bysecond=0, dtstart=apac_start, until=until, byweekday=rrule.SU)[index]) # type: ignore
-    pds_time = (SUN, 'Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index]) # type: ignore
-    pdm_time = (MON, 'Penny Dreadful Mondays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index]) # type: ignore
-    pdtue_time = (TUE, 'Penny Dreadful Tuesdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TU)[index]) # type: ignore
-    pdthu_time = (THU, 'Penny Dreadful Thursdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index]) # type: ignore
+    pdsat_time = (SAT, pdsat_name, rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SA)[index])  # type: ignore
+    apds_time = (APAC, 'APAC Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=16, byminute=0, bysecond=0, dtstart=apac_start, until=until, byweekday=rrule.SU)[index])  # type: ignore
+    pds_time = (SUN, 'Penny Dreadful Sundays', rrule.rrule(rrule.WEEKLY, byhour=13, byminute=30, bysecond=0, dtstart=start, until=until, byweekday=rrule.SU)[index])  # type: ignore
+    pdm_time = (MON, 'Penny Dreadful Mondays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.MO)[index])  # type: ignore
+    pdtue_time = (TUE, 'Penny Dreadful Tuesdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TU)[index])  # type: ignore
+    pdthu_time = (THU, 'Penny Dreadful Thursdays', rrule.rrule(rrule.WEEKLY, byhour=19, byminute=0, bysecond=0, dtstart=start, until=until, byweekday=rrule.TH)[index])  # type: ignore
     return [pdfnm_time, pdsat_time, apds_time, pds_time, pdm_time, pdtue_time, pdthu_time]
 
 # Note: this may be in the past. It always gives the date for the current season.
@@ -85,7 +85,7 @@ def pd500_date() -> datetime.datetime:
         return datetime.datetime(1970, 1, 1)
 
     end_of_season = seasons.next_rotation()
-    return end_of_season - datetime.timedelta(days=12, hours=13, minutes=30) # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
+    return end_of_season - datetime.timedelta(days=12, hours=13, minutes=30)  # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
 
 def is_pd500_week(start: datetime.datetime) -> bool:
     date_of_pd500 = pd500_date()
@@ -94,7 +94,7 @@ def is_pd500_week(start: datetime.datetime) -> bool:
 # Note: this may be in the past. It always gives the date for the current season.
 def kick_off_date() -> datetime.datetime:
     start_of_season = seasons.last_rotation()
-    return start_of_season + datetime.timedelta(days=8, hours=13, minutes=30) # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
+    return start_of_season + datetime.timedelta(days=8, hours=13, minutes=30)  # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
 
 def is_kick_off_week(start: datetime.datetime) -> bool:
     date_of_kick_off = kick_off_date()

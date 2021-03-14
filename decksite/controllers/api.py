@@ -27,7 +27,7 @@ from shared_web import template
 from shared_web.api import generate_error, return_json, validate_api_key
 from shared_web.decorators import fill_args, fill_form
 
-#pylint: disable=no-self-use
+# pylint: disable=no-self-use
 
 SearchItem = Dict[str, str]
 
@@ -356,7 +356,7 @@ def competitions_api() -> Response:
             cr['name'] = c.name
             cr['url'] = url_for('competition_api', competition_id=c.id, _external=True)
             r.append(cr)
-    return return_json(r) # type: ignore
+    return return_json(r)  # type: ignore
 
 @APP.route('/api/competitions/<competition_id>')
 def competition_api(competition_id: int) -> Response:
@@ -423,7 +423,7 @@ def drop(person: str) -> Response:
     run = guarantee.exactly_one(decks)
 
     league.retire_deck(run)
-    result = {'success':True}
+    result = {'success': True}
     return return_json(result)
 
 @APP.route('/api/rotation')
@@ -442,7 +442,7 @@ def rotation_api() -> Response:
 def rotation_clear_cache() -> Response:
     rotation.clear_redis()
     rotation.rotation_redis_store()
-    return return_json({'success':True})
+    return return_json({'success': True})
 
 @APP.route('/api/cards')
 def cards_api() -> Response:
@@ -459,7 +459,7 @@ def card_api(c: str) -> Response:
 def post_reassign(deck_id: int, archetype_id: int) -> Response:
     archs.assign(deck_id, archetype_id, auth.person_id())
     redis.clear(f'decksite:deck:{deck_id}')
-    return return_json({'success':True, 'deck_id':deck_id})
+    return return_json({'success': True, 'deck_id': deck_id})
 
 @APP.route('/api/rule/update', methods=['POST'])
 @fill_form('rule_id')
@@ -472,19 +472,19 @@ def post_rule_update(rule_id: int = None) -> Response:
             try:
                 inc.append(parse_line(line))
             except InvalidDataException:
-                return return_json({'success':False, 'msg':f"Couldn't find a card count and name on line: {line}"})
+                return return_json({'success': False, 'msg': f"Couldn't find a card count and name on line: {line}"})
             if not card.card_exists(inc[-1][1]):
-                return return_json({'success':False, 'msg':f'Card not found in any deck: {line}'})
+                return return_json({'success': False, 'msg': f'Card not found in any deck: {line}'})
         for line in cast(str, request.form.get('exclude')).strip().splitlines():
             try:
                 exc.append(parse_line(line))
             except InvalidDataException:
-                return return_json({'success':False, 'msg':f"Couldn't find a card count and name on line: {line}"})
+                return return_json({'success': False, 'msg': f"Couldn't find a card count and name on line: {line}"})
             if not card.card_exists(exc[-1][1]):
-                return return_json({'success':False, 'msg':f'Card not found in any deck {line}'})
+                return return_json({'success': False, 'msg': f'Card not found in any deck {line}'})
         rs.update_cards(rule_id, inc, exc)
-        return return_json({'success':True})
-    return return_json({'success':False, 'msg':'Required keys not found'})
+        return return_json({'success': True})
+    return return_json({'success': False, 'msg': 'Required keys not found'})
 
 @APP.route('/api/sitemap/')
 def sitemap() -> Response:
@@ -498,7 +498,7 @@ def intro() -> Response:
 @APP.route('/api/intro/', methods=['POST'])
 def hide_intro() -> Response:
     r = Response(response='')
-    r.set_cookie('hide_intro', value=str(True), expires=dtutil.dt2ts(dtutil.now()) + 60 *  60 * 24 * 365 * 10)
+    r.set_cookie('hide_intro', value=str(True), expires=dtutil.dt2ts(dtutil.now()) + 60 * 60 * 24 * 365 * 10)
     return r
 
 @APP.route('/api/status/')
@@ -512,18 +512,18 @@ def person_status() -> Response:
         'demimod': session.get('demimod', False),
         'hide_intro': request.cookies.get('hide_intro', False) or auth.hide_intro() or username or auth.discord_id(),
         'in_guild': session.get('in_guild', False),
-        }
+    }
     if username:
         d = guarantee_at_most_one_or_retire(league.active_decks_by(username))
         if d is not None:
-            r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)} # type: ignore
+            r['deck'] = {'name': d.name, 'url': url_for('deck', deck_id=d.id), 'wins': d.get('wins', 0), 'losses': d.get('losses', 0)}  # type: ignore
     if r['admin'] or r['demimod']:
         r['archetypes_to_tag'] = len(deck.load_decks('NOT d.reviewed'))
     active_league = league.active_league()
     if active_league:
         time_until_league_end = active_league.end_date - datetime.datetime.now(tz=datetime.timezone.utc)
         if time_until_league_end <= datetime.timedelta(days=2):
-            r['league_end'] = dtutil.display_time(time_until_league_end/datetime.timedelta(seconds=1), granularity=2)
+            r['league_end'] = dtutil.display_time(time_until_league_end / datetime.timedelta(seconds=1), granularity=2)
     return return_json(r)
 
 def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:
@@ -589,7 +589,7 @@ def search() -> Response:
 def init_search_cache() -> None:
     if len(SEARCH_CACHE) > 0:
         return
-    submenu_entries = [] # Accumulate the submenu entries and add them after the top-level entries as they are less important.
+    submenu_entries = []  # Accumulate the submenu entries and add them after the top-level entries as they are less important.
     for entry in APP.config.get('menu', lambda: [])():
         if entry.get('admin_only'):
             continue

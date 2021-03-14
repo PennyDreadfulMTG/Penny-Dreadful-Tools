@@ -30,9 +30,9 @@ def insert_match(dt: datetime.datetime,
         update_cache(right_id, right_games, left_games, dt=dt)
     sql = 'INSERT INTO deck_match (deck_id, match_id, games) VALUES (%s, %s, %s)'
     db().execute(sql, [left_id, match_id, left_games])
-    if right_id is not None: # Don't insert matches or adjust Elo for the bye.
+    if right_id is not None:  # Don't insert matches or adjust Elo for the bye.
         db().execute(sql, [right_id, match_id, right_games])
-        if left_games == right_games: # Don't adjust Elo for a draw. This is not quite right but we have so few it's not important.
+        if left_games == right_games:  # Don't adjust Elo for a draw. This is not quite right but we have so few it's not important.
             winner_id = left_id if left_games > right_games else right_id
             loser_id = left_id if left_games < right_games else right_id
             elo.adjust_elo(winner_id, loser_id)
@@ -157,7 +157,7 @@ def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', lim
     for m in matches:
         m.date = dtutil.ts2dt(m.date)
         m.competition_end_date = dtutil.ts2dt(m.competition_end_date)
-        if g: # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8435
+        if g:  # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8435
             m.competition_url = url_for('competition', competition_id=m.competition_id)
         if Deck(m).is_in_current_run() and not show_active_deck_names:
             m.opponent_deck_name = '(Active League Run)'

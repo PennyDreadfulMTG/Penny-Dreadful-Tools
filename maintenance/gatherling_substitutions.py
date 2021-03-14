@@ -1,5 +1,6 @@
 import datetime
 import sys
+from typing import Optional
 
 from decksite.data import deck
 from decksite.database import db
@@ -24,7 +25,9 @@ def ad_hoc() -> None:
                 print(f'Ignoring {c}')
                 continue
             print(c)
-            best_match_f = lambda s: searcher.search(s.strip()).get_best_match()
+
+            def best_match_f(s: str) -> Optional[str]:
+                return searcher.search(s.strip()).get_best_match()
             placeholder, real = map(best_match_f, c.split('='))
             print(f'I think this means replace {placeholder} with {real}. Go ahead? (Y/n)')
             answer = input()

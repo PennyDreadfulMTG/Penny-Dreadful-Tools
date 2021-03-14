@@ -62,5 +62,6 @@ def git_commit() -> None:
     subprocess.call(['git', 'commit', '-m', 'Updated README.md'])
     subprocess.call(['git', 'push'])
 
+
 if __name__ == '__main__':
     sys.exit(generate_readme())

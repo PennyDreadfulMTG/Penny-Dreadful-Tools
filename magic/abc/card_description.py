@@ -9,7 +9,7 @@ CardDescription = TypedDict('CardDescription', {
     # Parts we currently use …
     'all_parts': List[Dict[str, str]],
     'artist': str,
-    'card_faces': List[Any], # This should be List[CardDescription] but mypy doesn't support nested types yet.
+    'card_faces': List[Any],  # This should be List[CardDescription] but mypy doesn't support nested types yet.
     'cmc': float,
     'collector_number': str,
     'color_identity': List[str],

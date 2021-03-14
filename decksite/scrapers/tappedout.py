@@ -26,7 +26,7 @@ def ad_hoc() -> None:
                 if details is None:
                     logger.warning(f'Failed to get details for {raw_deck}')
                 else:
-                    raw_deck.update(details) # type: ignore
+                    raw_deck.update(details)  # type: ignore
             raw_deck = set_values(raw_deck)
             deck.add_deck(raw_deck)
         except InvalidDataException as e:
@@ -47,7 +47,7 @@ def set_values(raw_deck: RawDeckType) -> RawDeckType:
     return raw_deck
 
 def is_authorised() -> bool:
-    return SESSION.cookies.get('tapped') is not None # type: ignore
+    return SESSION.cookies.get('tapped') is not None  # type: ignore
 
 def login(user: Optional[str] = None, password: Optional[str] = None) -> None:
     if user is None:
@@ -90,9 +90,9 @@ def scrape_url(url: str) -> deck.Deck:
     raw_deck['slug'] = slug
     raw_deck['url'] = url
     if is_authorised():
-        raw_deck.update(fetch_deck_details(raw_deck)) # type: ignore
+        raw_deck.update(fetch_deck_details(raw_deck))  # type: ignore
     else:
-        raw_deck.update(parse_printable(raw_deck)) # type: ignore
+        raw_deck.update(parse_printable(raw_deck))  # type: ignore
     raw_deck = set_values(raw_deck)
     vivified = decklist.vivify(raw_deck['cards'])
     errors: Dict[str, Dict[str, Set[str]]] = {}

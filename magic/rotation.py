@@ -31,8 +31,6 @@ def in_rotation() -> bool:
     return until_rotation < datetime.timedelta(7)
 
 
-
-
 def files() -> List[str]:
     return sorted(glob.glob(os.path.expanduser(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))))
 

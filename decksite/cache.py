@@ -11,7 +11,7 @@ from decksite import get_season_id
 from magic import seasons
 from shared_web import localization
 
-CACHE = SimpleCache() # type: ignore
+CACHE = SimpleCache()  # type: ignore
 
 def cached() -> Callable:
     return cached_impl(cacheable=True, must_revalidate=True, client_only=False, client_timeout=1 * 60 * 60, server_timeout=5 * 60)
@@ -30,12 +30,12 @@ def cached_impl(cacheable: bool = False,
     def decorator(f: Callable) -> Callable:
         @functools.wraps(f)
         def decorated_function(*args: List[Any], **kwargs: Dict[str, Any]) -> Callable:
-            cache_key = key.format(id=request.full_path, locale=localization.get_locale()) # include querystring
+            cache_key = key.format(id=request.full_path, locale=localization.get_locale())  # include querystring
             cache_policy = ''
             if not cacheable:
-                cache_policy += ', no-store' # tells the browser not to cache at all
+                cache_policy += ', no-store'  # tells the browser not to cache at all
             else:
-                if must_revalidate: # this looks contradicting if you haven't read the article.
+                if must_revalidate:  # this looks contradicting if you haven't read the article.
                     # no-cache doesn't mean "don't cache", it means it must check
                     # (or "revalidate" as it calls it) with the server before
                     # using the cached resource

@@ -3,7 +3,7 @@ from typing import List
 from magic import database, mana
 
 
-def  test_simple() -> None:
+def test_simple() -> None:
     do_test('U', ['U'])
     do_test('{U}', ['U'])
     try:
@@ -15,7 +15,7 @@ def  test_simple() -> None:
 def test_twobrid() -> None:
     do_test('2/W2/W2/W', ['2/W', '2/W', '2/W'])
 
-def  test_twodigit() -> None:
+def test_twodigit() -> None:
     do_test('{15}', ['15'])
 
 def test_gleemax() -> None:

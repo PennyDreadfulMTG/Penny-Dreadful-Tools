@@ -10,7 +10,7 @@ CLEARANCE_PLAYERS = 1   # Players in the game can view
 CLEARANCE_MODS = 2      # Mods, TOs, etc
 CLEARANCE_ADMIN = 3     # Debug info, developer eyes only.
 
-class Game(fsa.Model): # type: ignore
+class Game(fsa.Model):  # type: ignore
     __tablename__ = 'game'
     id = sa.Column(fsa.Integer, primary_key=True, autoincrement=False)
     match_id = sa.Column(sa.Integer, sa.ForeignKey('match.id'), nullable=False)
@@ -34,13 +34,13 @@ class Game(fsa.Model): # type: ignore
 
 def insert_game(game_id: int, match_id: int, game_lines: str) -> None:
     local = Game(id=game_id, match_id=match_id, log=game_lines)
-    db.merge(local) # This will replace an old version of the game, if one exists.
+    db.merge(local)  # This will replace an old version of the game, if one exists.
     db.commit()
 
 def get_game(game_id: int) -> Game:
     return Game.query.filter_by(id=game_id).one_or_none()
 
-class Line(fsa.Model): #type: ignore
+class Line(fsa.Model):  # type: ignore
     id = sa.Column(fsa.Integer, primary_key=True, autoincrement=True)
     game_id = sa.Column(sa.Integer, sa.ForeignKey('game.id'), nullable=False)
     clearance = sa.Column(sa.Integer, nullable=True)

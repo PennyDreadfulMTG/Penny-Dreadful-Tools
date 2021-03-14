@@ -58,7 +58,7 @@ def tokenize(s: str) -> Expression:
                 string = []
                 mode = QUOTED_STRING
             elif c == ' ':
-                pass # noop
+                pass  # noop
             elif String.match(c):
                 string = [c]
                 mode = UNQUOTED_STRING
@@ -113,16 +113,16 @@ def parse(expression: Expression) -> str:
         cls = token.__class__
         # We check the type then operate on the token, which mypy doesn't understand, so there are some `type: ignores` here.
         if cls == String:
-            s += text_where('name', token.value()) # type: ignore
+            s += text_where('name', token.value())  # type: ignore
         elif cls == Key:
             try:
-                s += parse_criterion(token, tokens[i + 1], tokens[i + 2]) # type: ignore
+                s += parse_criterion(token, tokens[i + 1], tokens[i + 2])  # type: ignore
             except IndexError as e:
                 raise InvalidSearchException('You cannot provide a key without both an operator and a value') from e
             i += 2
         elif cls == Expression:
-            s += '({token})'.format(token=parse(token)) # type: ignore
-        elif cls == BooleanOperator and i == 0 and token.value().strip() != 'NOT': # type: ignore
+            s += '({token})'.format(token=parse(token))  # type: ignore
+        elif cls == BooleanOperator and i == 0 and token.value().strip() != 'NOT':  # type: ignore
             raise InvalidSearchException('You cannot start a search expression with a boolean operator')
         elif cls == BooleanOperator and i == len(tokens) - 1:
             raise InvalidSearchException('You cannot end a search expression with a boolean operator')
@@ -134,8 +134,8 @@ def parse(expression: Expression) -> str:
         next_cls = next_token.__class__
         if cls == BooleanOperator:
             s = s.rstrip(' ')
-            s += ' {s} '.format(s=token.value()) # type: ignore
-        elif next_cls != BooleanOperator or next_token.value() == 'NOT': # type: ignore
+            s += ' {s} '.format(s=token.value())  # type: ignore
+        elif next_cls != BooleanOperator or next_token.value() == 'NOT':  # type: ignore
             s += ' AND '
         i += 1
     return s[:-len(' AND ')].replace('    ', ' ').strip()
@@ -201,7 +201,7 @@ def subtable_where(subtable: str, value: str, operator: Optional[str] = None) ->
         operator = '=' if not operator else operator
     else:
         column = subtable
-        v = sqllikeescape(v) # type: ignore
+        v = sqllikeescape(v)  # type: ignore
         operator = 'LIKE' if not operator else operator
     return '(c.id IN (SELECT card_id FROM card_{subtable} WHERE {column} {operator} {value}))'.format(subtable=subtable, column=column, operator=operator, value=v)
 
@@ -214,7 +214,7 @@ def math_where(column: str, operator: str, term: str) -> str:
 
 def color_where(subtable: str, operator: str, term: str) -> str:
     if operator == ':' and subtable == 'color_identity':
-        operator = '!' # "includes color x" doesn't really make sense in a color identity query and this matches magidex/magiccards behavior.
+        operator = '!'  # "includes color x" doesn't really make sense in a color identity query and this matches magidex/magiccards behavior.
     colors = list(term)
     try:
         colors.remove('m')
@@ -260,12 +260,12 @@ def rarity_where(operator: str, term: str) -> str:
 def mana_where(operator: str, term: str) -> str:
     term = term.upper()
     try:
-        symbols = mana.parse(term) # Uppercasing input means you can't search for 1/2 or 1/2 white mana but w should match W.
+        symbols = mana.parse(term)  # Uppercasing input means you can't search for 1/2 or 1/2 white mana but w should match W.
         symbols = ['{{{symbol}}}'.format(symbol=symbol) for symbol in symbols]
     except mana.InvalidManaCostException:
         symbols = [term]
     if operator == ':':
-        d = collections.Counter(symbols) # Group identical symbols so that UU checks for {U}{U} not just {U} twice.
+        d = collections.Counter(symbols)  # Group identical symbols so that UU checks for {U}{U} not just {U} twice.
         clause = ' AND '.join('mana_cost LIKE {symbol}'.format(symbol=sqllikeescape(symbol * n)) for symbol, n in d.items())
     elif operator == '=':
         joined = ''.join('{symbol}'.format(symbol=symbol) for symbol in symbols)

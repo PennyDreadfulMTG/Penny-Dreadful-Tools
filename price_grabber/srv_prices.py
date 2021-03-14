@@ -9,7 +9,7 @@ from shared.serialization import extra_serializer
 
 SRV = Flask(__name__)
 
-@SRV.route('/<card>/') # type: ignore
+@SRV.route('/<card>/')  # type: ignore
 def cardprice(card: str) -> Optional[str]:
     if card == 'favicon.ico':
         return None

@@ -11,7 +11,7 @@ class Seasons(View):
     def __init__(self, stats: Dict[int, Dict[str, Union[int, datetime.datetime]]]) -> None:
         super().__init__()
         seasons = self.all_seasons()
-        seasons.pop() # Don't show "all time" on this page as it is not fully supported yet.
+        seasons.pop()  # Don't show "all time" on this page as it is not fully supported yet.
         cards_count: Dict[str, int] = {}
         for c in oracle.CARDS_BY_NAME.values():
             for f, is_legal in c.legalities.items():
@@ -28,7 +28,7 @@ class Seasons(View):
             season['num_legal_cards'] = cards_count[str(season_info['legality_name'])]
             for k, v in season.items():
                 if isinstance(v, int):
-                    season[k] = '{:,}'.format(v) # Human-friendly number formatting like "29,000".
+                    season[k] = '{:,}'.format(v)  # Human-friendly number formatting like "29,000".
             season['start_date_display'] = dtutil.display_date(season['start_date'])
             season['length_in_days'] = season['length_in_days'] + ' days'
             if season.get('end_date'):

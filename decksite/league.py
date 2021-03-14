@@ -36,12 +36,12 @@ class SignUpForm(Form):
             ps = person.load_person_by_id(person_id)
             self.recent_decks: List[Dict[str, Any]] = []
             for d in sorted(ps.decks, key=lambda deck: deck['created_date'], reverse=True)[0:10]:
-                recent_deck = {'name': d['name'], 'main': [], 'sb':[]}
+                recent_deck = {'name': d['name'], 'main': [], 'sb': []}
                 for c in d.maindeck:
                     recent_deck['main'].append('{n} {c}'.format(n=c['n'], c=c['name']))
                 for c in d.sideboard:
                     recent_deck['sb'].append('{n} {c}'.format(n=c['n'], c=c['name']))
-                self.recent_decks.append({'name':d['name'], 'list':json.dumps(recent_deck)})
+                self.recent_decks.append({'name': d['name'], 'list': json.dumps(recent_deck)})
         if mtgo_username is not None:
             self.mtgo_username = mtgo_username
         self.deck = Container()
@@ -84,7 +84,7 @@ class SignUpForm(Form):
         if self.decklist.startswith('<?xml'):
             try:
                 self.cards = decklist.parse_xml(self.decklist)
-            except InvalidDataException as e:
+            except InvalidDataException:
                 self.errors['decklist'] = 'Unable to read .dek decklist. Try exporting from Magic Online as Text and pasting the result.'
         else:
             try:

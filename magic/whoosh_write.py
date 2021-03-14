@@ -36,7 +36,7 @@ def update_index(index: FileIndex, cards: List[Card]) -> None:
     for card in cards:
         names = card.names
         if card.name not in names:
-            names.append(card.name) # Split and aftermath cards
+            names.append(card.name)  # Split and aftermath cards
         for name in names:
             document = {}
             document['id'] = card.id

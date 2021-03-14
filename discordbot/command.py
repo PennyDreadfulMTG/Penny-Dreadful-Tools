@@ -20,8 +20,8 @@ from shared.lazy import lazy_property
 DEFAULT_CARDS_SHOWN = 4
 MAX_CARDS_SHOWN = 10
 DISAMBIGUATION_EMOJIS = [':one:', ':two:', ':three:', ':four:', ':five:']
-DISAMBIGUATION_EMOJIS_BY_NUMBER = {1 : '1⃣', 2 : '2⃣', 3 : '3⃣', 4 : '4⃣', 5 : '5⃣'}
-DISAMBIGUATION_NUMBERS_BY_EMOJI = {'1⃣' : 1, '2⃣' : 2, '3⃣' : 3, '4⃣' : 4, '5⃣' : 5}
+DISAMBIGUATION_EMOJIS_BY_NUMBER = {1: '1⃣', 2: '2⃣', 3: '3⃣', 4: '4⃣', 5: '5⃣'}
+DISAMBIGUATION_NUMBERS_BY_EMOJI = {'1⃣': 1, '2⃣': 2, '3⃣': 3, '4⃣': 4, '5⃣': 5}
 
 HELP_GROUPS: Set[str] = set()
 
@@ -48,9 +48,9 @@ async def respond_to_card_names(message: Message, client: Client) -> None:
         await post_cards(client, cards, message.channel, message.author)
 
 def parse_queries(content: str, scryfall_compatability_mode: bool) -> List[str]:
-    to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, re.DOTALL) # Ignore angle brackets inside backticks. It's annoying in #code.
+    to_scan = re.sub('`{1,3}[^`]*?`{1,3}', '', content, re.DOTALL)  # Ignore angle brackets inside backticks. It's annoying in #code.
     if scryfall_compatability_mode:
-        queries = re.findall(r'(?<!\[)\[([^\]]*)\](?!\])', to_scan) # match [card] but not [[card]]
+        queries = re.findall(r'(?<!\[)\[([^\]]*)\](?!\])', to_scan)  # match [card] but not [[card]]
     else:
         queries = re.findall(r'\[?\[([^\]]*)\]\]?', to_scan)
     return [card.canonicalize(query) for query in queries if len(query) > 2]
@@ -103,7 +103,7 @@ def disambiguation(cards: List[str]) -> str:
     return ' '.join([' '.join(x) for x in zip(DISAMBIGUATION_EMOJIS, cards)])
 
 async def disambiguation_reactions(message: Message, cards: List[str]) -> None:
-    for i in range(1, len(cards)+1):
+    for i in range(1, len(cards) + 1):
         await message.add_reaction(DISAMBIGUATION_EMOJIS_BY_NUMBER[i])
 
 async def single_card_or_send_error(channel: TextChannel, args: str, author: Member, command: str) -> Optional[Card]:
@@ -129,7 +129,6 @@ async def single_card_text(client: Client, channel: TextChannel, args: str, auth
         text = emoji.replace_emoji(f(c), client)
         message = f'**{name}** {info_emoji} {text}'
         await send(channel, message)
-
 
 
 async def post_cards(

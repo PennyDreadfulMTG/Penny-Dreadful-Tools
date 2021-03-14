@@ -202,7 +202,7 @@ def add_rule(archetype_id: int) -> None:
     sql = 'INSERT INTO rule (archetype_id) VALUES (%s)'
     db().insert(sql, [archetype_id])
 
-#@retry_after_calling(cache_all_rules)
+# @retry_after_calling(cache_all_rules)
 def update_cards(rule_id: int, inc: List[Tuple[int, str]], exc: List[Tuple[int, str]]) -> None:
     db().begin('update_rule_cards')
     sql = 'DELETE FROM _applied_rules WHERE rule_id = %s'

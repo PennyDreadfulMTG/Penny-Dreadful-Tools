@@ -47,7 +47,7 @@ def upload() -> Response:
         return error
     match_id = int(request.form['match_id'])
     if match_id == 219603564:
-        return return_json({'success': True}) # Prevent infinite 500 errors.
+        return return_json({'success': True})  # Prevent infinite 500 errors.
     if request.form.get('lines'):
         lines = request.form['lines']
         importing.import_log(lines.split('\n'), match_id)
@@ -77,4 +77,4 @@ def export(match_id: int) -> Tuple[str, int, Dict[str, str]]:
     return (text, 200, {
         'Content-type': 'text/plain; charset=utf-8',
         'Content-Disposition': 'attachment; filename={match_id}.txt'.format(match_id=match_id)
-        })
+    })

@@ -39,11 +39,11 @@ class Person(View):
                 'type': 'horizontalBar',
                 'labels': json.dumps(['White', 'Blue', 'Black', 'Red', 'Green', 'Colorless']),
                 'series': json.dumps([colors.get('W'), colors.get('U'), colors.get('B'), colors.get('R'), colors.get('G'), colors.get('C')]),
-                'options': json.dumps({'responsive': True, 'scales': {'xAxes': [{'ticks': {'precision': 0}}]}}) # Only display whole numbers on x axis.
+                'options': json.dumps({'responsive': True, 'scales': {'xAxes': [{'ticks': {'precision': 0}}]}})  # Only display whole numbers on x axis.
             }
         ]
         self.add_note_url = url_for('post_player_note')
-        self.matches_url = url_for('.person_matches', person_id=person.id, season_id=None if season_id == seasons.current_season_num()  else season_id)
+        self.matches_url = url_for('.person_matches', person_id=person.id, season_id=None if season_id == seasons.current_season_num() else season_id)
         self.is_person_page = True
         self.trailblazer_cards = oracle.load_cards(your_cards['trailblazer'])
         self.has_trailblazer_cards = len(self.trailblazer_cards) > 0

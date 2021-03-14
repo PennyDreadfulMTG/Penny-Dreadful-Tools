@@ -38,7 +38,7 @@ def process_github_webhook() -> Response:
         'current_branch': current_app.config['branch'],
         'ref': payload['ref'],
         'expected': expected
-        })
+    })
 
 def commit_id() -> Response:
     return return_json(current_app.config['commit-id'])

@@ -80,8 +80,8 @@ def is_playable_layout(layout: str) -> bool:
         try:
             repo.create_issue(f'Did not recognize layout `{layout}` – need to add it', 'multiverse', 'multiverse', 'PennyDreadfulMTG/perf-reports')
         except GithubException:
-            pass # We tried. Not gonna break the world because we couldn't log it.
-        setattr(is_playable_layout, cache_key, list()) # The other half of the hack.
+            pass  # We tried. Not gonna break the world because we couldn't log it.
+        setattr(is_playable_layout, cache_key, list())  # The other half of the hack.
     return False
 
 def cached_base_query(where: str = '(1 = 1)') -> str:
@@ -159,7 +159,7 @@ def base_query_lite() -> str:
 async def update_database_async(new_date: datetime.datetime) -> None:
     db().begin('update_database')
     db().execute('DELETE FROM scryfall_version')
-    db().execute('SET FOREIGN_KEY_CHECKS=0') # Avoid needing to drop _cache_card (which has an FK relationship with card) so that the database continues to function while we perform the update.
+    db().execute('SET FOREIGN_KEY_CHECKS=0')  # Avoid needing to drop _cache_card (which has an FK relationship with card) so that the database continues to function while we perform the update.
     db().execute("""
         DELETE FROM card_color;
         DELETE FROM card_color_identity;
@@ -176,7 +176,7 @@ async def update_database_async(new_date: datetime.datetime) -> None:
     await insert_cards_async(every_card_printing)
     await update_pd_legality_async()
     db().execute('INSERT INTO scryfall_version (last_updated) VALUES (%s)', [dtutil.dt2ts(new_date)])
-    db().execute('SET FOREIGN_KEY_CHECKS=1') # OK we are done monkeying with the db put the FK checks back in place and recreate _cache_card.
+    db().execute('SET FOREIGN_KEY_CHECKS=1')  # OK we are done monkeying with the db put the FK checks back in place and recreate _cache_card.
     rebuild_cache()
     db().commit('update_database')
 
@@ -185,7 +185,7 @@ async def insert_cards_async(printings: List[CardDescription]) -> List[int]:
     next_card_id = (db().value('SELECT MAX(id) FROM card') or 0) + 1
     values = await determine_values_async(printings, next_card_id)
     insert_many('card', card.card_properties(), values['card'], ['id'])
-    if values['card_color']: # We should not issue this query if we are only inserting colorless cards as they don't have an entry in this table.
+    if values['card_color']:  # We should not issue this query if we are only inserting colorless cards as they don't have an entry in this table.
         insert_many('card_color', card.card_color_properties(), values['card_color'])
         insert_many('card_color_identity', card.card_color_properties(), values['card_color_identity'])
     insert_many('printing', card.printing_properties(), values['printing'])
@@ -211,7 +211,7 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
     scryfall_to_internal_rarity = {
         'common': rarity_ids['Common'],
         'uncommon': rarity_ids['Uncommon'],
-        'rare':  rarity_ids['Rare'],
+        'rare': rarity_ids['Rare'],
         'mythic': rarity_ids['Mythic Rare'],
         'special': rarity_ids['Rare'],
         'bonus': rarity_ids['Mythic Rare'],
@@ -247,7 +247,7 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
         cards[p['name']] = card_id
         card_values.append({'id': card_id, 'layout': p['layout']})
 
-        if is_meld_result(p): # We don't make entries for a meld result until we know the card_ids of the front faces.
+        if is_meld_result(p):  # We don't make entries for a meld result until we know the card_ids of the front faces.
             meld_result_printings.append(p)
         elif p.get('card_faces') and p.get('layout') != 'meld':
             face_values += multiple_faces_values(p, card_id)
@@ -260,7 +260,7 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
             color_id = colors[color]
             card_color_identity_values.append({'card_id': card_id, 'color_id': color_id})
         for format_, status in p.get('legalities', {}).items():
-            if status == 'not_legal' or format_.capitalize() == 'Penny': # Skip 'Penny' from Scryfall as we'll create our own 'Penny Dreadful' format and set legality for it from legal_cards.txt.
+            if status == 'not_legal' or format_.capitalize() == 'Penny':  # Skip 'Penny' from Scryfall as we'll create our own 'Penny Dreadful' format and set legality for it from legal_cards.txt.
                 continue
             # Strictly speaking we could drop all this capitalizing and use what Scryfall sends us as the canonical name as it's just a holdover from mtgjson.
             format_id = get_format_id(format_.capitalize(), True)
@@ -305,7 +305,7 @@ async def update_bugged_cards_async() -> None:
     db().execute('DELETE FROM card_bug')
     for bug in bugs:
         last_confirmed_ts = dtutil.parse_to_ts(bug['last_updated'], '%Y-%m-%d %H:%M:%S', dtutil.UTC_TZ)
-        name = bug['card'].split(' // ')[0] # We need a face name from split cards - we don't have combined card names yet.
+        name = bug['card'].split(' // ')[0]  # We need a face name from split cards - we don't have combined card names yet.
         card_id = db().value('SELECT card_id FROM face WHERE name = %s', [name])
         if card_id is None:
             print('UNKNOWN BUGGED CARD: {card}'.format(card=bug['card']))
@@ -324,9 +324,9 @@ def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> Di
         raise InvalidDataException(f'Cannot insert a face without a card_id: {p}')
     result: Dict[str, Any] = {}
     result['card_id'] = card_id
-    result['name'] = p['name'] # always present in scryfall
-    result['mana_cost'] = p['mana_cost'] # always present in scryfall
-    result['cmc'] = p['cmc'] # always present
+    result['name'] = p['name']  # always present in scryfall
+    result['mana_cost'] = p['mana_cost']  # always present in scryfall
+    result['cmc'] = p['cmc']  # always present
     result['power'] = p.get('power')
     result['toughness'] = p.get('toughness')
     result['loyalty'] = p.get('loyalty')
@@ -374,7 +374,7 @@ def load_sets() -> dict:
 
 def insert_set(s: Any) -> int:
     sql = 'INSERT INTO `set` ('
-    sql += ', '.join(name for name, prop in card.set_properties().items() if prop['scryfall']) # pylint: disable=invalid-sequence-index
+    sql += ', '.join(name for name, prop in card.set_properties().items() if prop['scryfall'])  # pylint: disable=invalid-sequence-index
     sql += ') VALUES ('
     sql += ', '.join('%s' for name, prop in card.set_properties().items() if prop['scryfall'])
     sql += ')'
@@ -402,7 +402,7 @@ def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int
     result['artist'] = p.get('artist')
     result['number'] = p.get('collector_number')
     result['watermark'] = p.get('watermark')
-    result['reserved'] = 1 if p.get('reserved') else 0 # replace True and False with 1 and 0
+    result['reserved'] = 1 if p.get('reserved') else 0  # replace True and False with 1 and 0
     return result
 
 async def set_legal_cards_async(season: Optional[str] = None) -> None:
@@ -458,7 +458,7 @@ def rebuild_cache() -> None:
     db().execute('CREATE UNIQUE INDEX idx_u_name ON _new_cache_card (name(142))')
     db().execute('CREATE UNIQUE INDEX idx_u_names ON _new_cache_card (names(142))')
     db().execute('DROP TABLE IF EXISTS _old_cache_card')
-    db().execute('CREATE TABLE IF NOT EXISTS _cache_card (_ INT)') # Prevent error in RENAME TABLE below if bootstrapping.
+    db().execute('CREATE TABLE IF NOT EXISTS _cache_card (_ INT)')  # Prevent error in RENAME TABLE below if bootstrapping.
     db().execute('RENAME TABLE _cache_card TO _old_cache_card, _new_cache_card TO _cache_card')
     db().execute('DROP TABLE IF EXISTS _old_cache_card')
 

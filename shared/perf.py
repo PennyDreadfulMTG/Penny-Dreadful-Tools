@@ -17,7 +17,7 @@ def check(start_time: float, kind: str, detail: Any, location: str) -> None:
         msg = 'Exceeded {kind} limit ({run_time} > {limit}) in {location}: {detail_s} ({kind}, {run_time}, {location})'.format(kind=kind, run_time=round(run_time, 1), limit=limit, detail_s=detail_s, location=location)
         try:
             flask_location = current_app.name
-        except RuntimeError: # Working outside of application context
+        except RuntimeError:  # Working outside of application context
             flask_location = ''
         repo.create_issue(msg, f'{location}-perf', flask_location or location, 'PennyDreadfulMTG/perf-reports')
 

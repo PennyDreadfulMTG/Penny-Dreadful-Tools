@@ -37,7 +37,7 @@ def parse(s: str) -> DecklistType:
         s = remove_doublespacing(s)
     maindeck: Dict[str, Any] = {}
     sideboard: Dict[str, Any] = {}
-    chunks = re.split(r'\r?\n\r?\n|^\s*sideboard.*?\n', s, flags=re.IGNORECASE|re.MULTILINE)
+    chunks = re.split(r'\r?\n\r?\n|^\s*sideboard.*?\n', s, flags=re.IGNORECASE | re.MULTILINE)
     if len(chunks) > 1 and (len(chunks[-1]) > 1 or len(chunks[-1][0]) > 0) or 'Sideboard' in s:
         for chunk in chunks[:-1]:
             parse_chunk(chunk, maindeck)
@@ -75,7 +75,7 @@ def parse(s: str) -> DecklistType:
                 maindeck = new_maindeck
                 sideboard = {}
 
-    return {'maindeck':maindeck, 'sideboard':sideboard}
+    return {'maindeck': maindeck, 'sideboard': sideboard}
 
 def looks_doublespaced(s: str) -> bool:
     return len(re.findall(r'\r?\n\r?\n', s)) >= len(re.findall(r'\r?\n', s)) / 2 - 1
@@ -92,10 +92,10 @@ def parse_xml(s: str) -> DecklistType:
             section = 'sideboard' if c['Sideboard'] == 'true' else 'maindeck'
             d[section][c['Name']] = d[section].get(c['Name'], 0) + int(c['Quantity'])
         return d
-    except xml.sax.SAXException as e: # type: ignore
-        raise InvalidDataException(e) from e # pylint: disable=bad-exception-context
+    except xml.sax.SAXException as e:  # type: ignore
+        raise InvalidDataException(e) from e  # pylint: disable=bad-exception-context
     except AttributeError as e:
-        raise InvalidDataException(e) from e # Not valid MTGO .deck format
+        raise InvalidDataException(e) from e  # Not valid MTGO .deck format
 
 # Load the cards in the intermediate dict form.
 def vivify(decklist: DecklistType) -> Deck:
@@ -117,7 +117,7 @@ def vivify(decklist: DecklistType) -> Deck:
 
 def unvivify(deck: Deck) -> DecklistType:
     decklist: DecklistType = {}
-    decklist['maindeck'] = {c['name']:c['n'] for c in deck['maindeck']}
+    decklist['maindeck'] = {c['name']: c['n'] for c in deck['maindeck']}
     decklist['sideboard'] = {c['name']: c['n'] for c in deck['sideboard']}
     return decklist
 

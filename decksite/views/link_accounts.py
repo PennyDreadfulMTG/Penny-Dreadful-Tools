@@ -39,7 +39,7 @@ class LinkAccounts(View):
         if self.person and self.person.mtgo_username:
             self.link_tappedout()
             self.link_mtggoldfish()
-        elif self.form.get('mtgo_username', None): # Not linked
+        elif self.form.get('mtgo_username', None):  # Not linked
             self.link_discord()
 
     def link_discord(self) -> None:

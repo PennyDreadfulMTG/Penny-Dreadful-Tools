@@ -11,7 +11,7 @@ from shared.pd_exception import InvalidDataException
 
 WHITELIST = [
     '#justnayathings',
-    'blue burn', # deck_id = 24089
+    'blue burn',  # deck_id = 24089
     "bob's r us",
     'gg con',
     'happy b day adriana',
@@ -233,7 +233,7 @@ def remove_profanity(name: str) -> str:
     profanity.load_censor_words(whitelist_words=PROFANITY_WHITELIST)
     profanity.add_censor_words(['supremacia ariana', 'fisting', 'retarded', 'erection'])
     name = profanity.censor(name, ' ').strip()
-    name = re.sub(' +', ' ', name) # We just replaced profanity with a space so compress spaces.
+    name = re.sub(' +', ' ', name)  # We just replaced profanity with a space so compress spaces.
     return name
 
 def ucase_trailing_roman_numerals(name: str) -> str:

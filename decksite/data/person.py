@@ -61,7 +61,7 @@ def maybe_load_person_by_mtggoldfish_name(username: str) -> Optional[Person]:
 
 def load_person(where: str, season_id: Optional[int] = None) -> Person:
     people = load_people(where, season_id=season_id)
-    if len(people) == 0: # We didn't find an entry for that person with decks, what about without?
+    if len(people) == 0:  # We didn't find an entry for that person with decks, what about without?
         person = load_person_statless(where, season_id)
     else:
         person = guarantee.exactly_one(people)

@@ -66,7 +66,7 @@ class CachedRenderEngine(pystache.renderengine.RenderEngine):
             self.parsed_templates[template] = insert_gettext_nodes(pystache.parser.parse(template, delimiters))
         return self.parsed_templates[template].render(self, context_stack)
 
-## Localization Shim
+# Localization Shim
 # pylint: disable=protected-access
 def insert_gettext_nodes(parsed_template: pystache.parsed.ParsedTemplate) -> pystache.parsed.ParsedTemplate:
     new_template = pystache.parsed.ParsedTemplate()
@@ -95,6 +95,7 @@ class _GettextNode():
 
     def render(self, engine: pystache.renderengine.RenderEngine, context: ContextStack) -> str:
         s = gettext(self.key)  # The key is populated in messages.pot via generate_translations.py - pylint: disable=translation-of-non-string
+
         def lookup(match: Match) -> str:
             return engine.fetch_string(context, match.group(1))
         s = re.sub(r'\{([a-z_]+)\}', lookup, s)

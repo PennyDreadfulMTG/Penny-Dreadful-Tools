@@ -14,7 +14,7 @@ CARDS: Dict[str, str] = {}
 
 def parse_cardhoarder_prices(s: str) -> PriceListType:
     details = []
-    for line in s.splitlines()[2:]: # Skipping date and header line.
+    for line in s.splitlines()[2:]:  # Skipping date and header line.
         if line.count('\t') != 6:
             raise InvalidDataException('Bad line (cardhoarder): {line}'.format(line=line))
         _mtgo_id, mtgo_set, _mtgjson_set, set_number, name, p, quantity = line.split('\t')  # pylint: disable=unused-variable
@@ -28,11 +28,11 @@ def parse_mtgotraders_prices(s: str) -> PriceListType:
     for line in s.splitlines():
         if line.count('|') != 7:
             raise InvalidDataException('Bad line (mtgotraders): {line}'.format(line=line))
-        mtgo_set, rarity, premium, name, number, p, image_path, in_stock_str = line.split('|') # pylint: disable=unused-variable
+        mtgo_set, rarity, premium, name, number, p, image_path, in_stock_str = line.split('|')  # pylint: disable=unused-variable
         in_stock_str = in_stock_str.replace('<br>', '')
         assert in_stock_str in ('Yes', 'No')
         in_stock = in_stock_str == 'Yes'
-        if name.endswith('(a)') or name.endswith('(b)'): # Guildgates
+        if name.endswith('(a)') or name.endswith('(b)'):  # Guildgates
             name = name[:-4]
         if float(p) <= card_price.MAX_PRICE_TIX and in_stock and not is_exceptional_name(name):
             details.append((name, p, mtgo_set))
@@ -55,7 +55,7 @@ def name_lookup(name: str) -> str:
         tb = traceback.format_exc()
         print(tb)
         if not CARDS:
-            CARDS[''] = '' # Filler, so that we don't try to do this every lookup.
+            CARDS[''] = ''  # Filler, so that we don't try to do this every lookup.
 
     canonical = card.canonicalize(name)
     if canonical not in CARDS:

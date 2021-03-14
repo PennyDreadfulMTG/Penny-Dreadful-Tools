@@ -37,7 +37,7 @@ def run() -> None:
 
 def match(m: Dict[str, str]) -> None:
     if ',' not in m['games']:
-        return # Ignore byes they don't affect Elo.
+        return  # Ignore byes they don't affect Elo.
     if int(m['games'].split(',')[0]) == 2:
         winner = m['people'].split(',')[0]
         loser = m['people'].split(',')[1]
@@ -45,7 +45,7 @@ def match(m: Dict[str, str]) -> None:
         winner = m['people'].split(',')[1]
         loser = m['people'].split(',')[0]
     else:
-        return # Ignore IDs they don't affect Elo.
+        return  # Ignore IDs they don't affect Elo.
     adjust(winner, loser)
 
 def adjust(winner: str, loser: str) -> None:

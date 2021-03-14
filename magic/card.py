@@ -16,7 +16,7 @@ ColumnDescription = TypedDict('ColumnDescription', {
     'default': Optional[str],
     'unique': bool,
     'unique_with': Optional[List[str]],
-    })
+})
 TableDescription = Dict[str, ColumnDescription]
 
 MAX_LEN_TEXT = 21845

@@ -116,9 +116,11 @@ class Player:
 
 @pydantic.dataclasses.dataclass
 class Event:
+    name: str
     series: str
     season: int
     number: int
+    format: str
     host: str
     cohost: Optional[str]
     active: Bool
@@ -142,10 +144,14 @@ APIResponse = Dict[str, Event]
 
 ALIASES: Dict[str, str] = {}
 
-def scrape() -> None:
-    data = fetch_tools.fetch_json(gatherling_url('/api.php?action=recent_events'))
-    response = make_api_response(data)
-    process(response)
+def scrape(name: Optional[str]) -> None:
+    if name:
+        data = fetch_tools.fetch_json(gatherling_url(f'/api.php?action=eventinfo&event={name}'))
+        process_tournament(data['name'], Event(**data))
+    else:
+        data = fetch_tools.fetch_json(gatherling_url('/api.php?action=recent_events'))
+        response = make_api_response(data)
+        process(response)
 
 def make_api_response(data: Dict[str, Dict[Any, Any]]) -> APIResponse:
     response = {}

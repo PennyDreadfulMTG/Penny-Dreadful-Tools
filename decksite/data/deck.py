@@ -18,7 +18,7 @@ from shared.database import sqlescape
 from shared.pd_exception import InvalidDataException
 
 
-def latest_decks(season_id: Optional[Union[str, int]] = None,) -> List[Deck]:
+def latest_decks(season_id: Optional[Union[str, int]] = None) -> List[Deck]:
     return load_decks(where='d.created_date > UNIX_TIMESTAMP(NOW() - INTERVAL 30 DAY)', limit='LIMIT 500', season_id=season_id)
 
 def load_deck(deck_id: int) -> Deck:
@@ -35,7 +35,7 @@ def load_decks(where: str = 'TRUE',
                having: str = 'TRUE',
                order_by: Optional[str] = None,
                limit: str = '',
-               season_id: Optional[Union[str, int]] = None
+               season_id: Optional[Union[str, int]] = None,
                ) -> List[Deck]:
     if not redis.enabled():
         return load_decks_heavy(where, having, order_by, limit, season_id)
@@ -149,7 +149,7 @@ def load_decks_heavy(where: str = 'TRUE',
                      having: str = 'TRUE',
                      order_by: Optional[str] = None,
                      limit: str = '',
-                     season_id: Optional[Union[str, int]] = None
+                     season_id: Optional[Union[str, int]] = None,
                      ) -> List[Deck]:
     if order_by is None:
         order_by = 'active_date DESC, d.finish IS NULL, d.finish'
@@ -378,7 +378,7 @@ def add_deck(params: RawDeckDescription) -> Deck:
         params.get('thumbnail_url'),
         params.get('small_thumbnail_url'),
         params.get('finish'),
-        get_deckhash(cards)
+        get_deckhash(cards),
     ]
     db().begin('add_deck')
     deck_id = db().insert(sql, values)

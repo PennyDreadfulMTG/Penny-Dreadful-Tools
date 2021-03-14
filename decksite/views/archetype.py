@@ -17,7 +17,7 @@ class Archetype(View):
                  archetypes: List[archs.Archetype],
                  matchups: List[Container],
                  season_id: int,
-                 tournament_only: bool = False
+                 tournament_only: bool = False,
                  ) -> None:
         super().__init__()
         if not archetype:

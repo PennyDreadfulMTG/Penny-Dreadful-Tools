@@ -17,13 +17,13 @@ WHITELIST = [
     'happy b day adriana',
     'basically rakdos version of burn',
     's15 is a meme',
-    'i will make combo work in season 15'
+    'i will make combo work in season 15',
 ]
 
 PROFANITY_WHITELIST = [
     'weenie',
     'kill',
-    'god'
+    'god',
 ]
 
 ABBREVIATIONS = {
@@ -35,7 +35,7 @@ ABBREVIATIONS = {
     'glint-eye': 'ubrg',
     'dune-brood': 'brgw',
     'ink-treader': 'rgwu',
-    'witch-maw': 'gwub'
+    'witch-maw': 'gwub',
 }
 
 COLOR_COMBINATIONS = {
@@ -69,7 +69,7 @@ COLOR_COMBINATIONS = {
     'BRGW': ['B', 'R', 'G', 'W'],
     'RGWU': ['R', 'G', 'W', 'U'],
     'GWUB': ['G', 'W', 'U', 'B'],
-    'Five Color': ['W', 'U', 'B', 'R', 'G']
+    'Five Color': ['W', 'U', 'B', 'R', 'G'],
 }
 
 MAX_NAME_LEN = 100

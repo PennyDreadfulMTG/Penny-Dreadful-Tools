@@ -12,17 +12,17 @@ from shared_web import template
 
 def ad_hoc() -> int:
     dist = Distribution(dict(
-        name='Penny-Dreadful-Tools'
+        name='Penny-Dreadful-Tools',
     ))
     dist.message_extractors = {  # type: ignore
         'decksite': [
             ('**.py', 'python', {}),
-            ('**.mustache', extract_mustache, {})
+            ('**.mustache', extract_mustache, {}),
         ],
         'logsite': [
             ('**.py', 'python', {}),
-            ('**.mustache', extract_mustache, {})
-        ]
+            ('**.mustache', extract_mustache, {}),
+        ],
     }
     compiler = frontend.extract_messages(dist)
     compiler.initialize_options()

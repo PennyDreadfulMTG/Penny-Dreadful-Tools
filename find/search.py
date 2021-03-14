@@ -354,7 +354,7 @@ def is_subquery(subquery_name: str) -> str:
         'slowland': """t:land o:"~ doesn't untap during your next untap step." """,
         'storageland': 'o:"storage counter"',
         'hybrid': 'mana:/2 OR mana:/W OR mana:/U OR mana:/B OR mana:/R OR mana:/G',
-        'creatureland': 't:land o:"becomes a"'
+        'creatureland': 't:land o:"becomes a"',
     }
     subqueries['fetch'] = subqueries['fetchland']
     subqueries['refuge'] = subqueries['gainland']

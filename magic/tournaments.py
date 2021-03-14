@@ -44,7 +44,7 @@ def tournament_info(time_direction: TimeDirection, units: int = 2) -> Dict[str, 
         'next_tournament_name': name,
         'next_tournament_time': next_tournament_time,
         'next_tournament_time_precise': next_tournament_time_precise,
-        'near': near
+        'near': near,
     }
     info.update(series_info(tournament_id))
     return info
@@ -136,7 +136,7 @@ def all_series_info() -> List[Container]:
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
             'time': info[0][2],
-            'sponsor_name': 'Cardhoarder'
+            'sponsor_name': 'Cardhoarder',
 
         }),
         Container({
@@ -145,7 +145,7 @@ def all_series_info() -> List[Container]:
             'hosts': ['j_meka', 'crazybaloth'],
             'display_time': '1:30pm Eastern',
             'time': info[1][2],
-            'sponsor_name': 'Cardhoarder'
+            'sponsor_name': 'Cardhoarder',
         }),
         Container({
             'tournament_id': info[2][0],
@@ -153,7 +153,7 @@ def all_series_info() -> List[Container]:
             'hosts': ['jgabrielygalan', 'silasary'],
             'display_time': '4pm Japan Standard Time',
             'time': info[2][2],
-            'sponsor_name': 'Cardhoarder'
+            'sponsor_name': 'Cardhoarder',
         }),
         Container({
             'tournament_id': info[3][0],
@@ -161,7 +161,7 @@ def all_series_info() -> List[Container]:
             'hosts': ['cody_', 'bakert99'],
             'display_time': '1:30pm Eastern',
             'time': info[3][2],
-            'sponsor_name': 'Cardhoarder'
+            'sponsor_name': 'Cardhoarder',
         }),
         Container({
             'tournament_id': info[4][0],
@@ -169,7 +169,7 @@ def all_series_info() -> List[Container]:
             'hosts': ['briar_moss', 'j_meka'],
             'display_time': '7pm Eastern',
             'time': info[4][2],
-            'sponsor_name': 'Cardhoarder'
+            'sponsor_name': 'Cardhoarder',
         }),
         Container({
             'tournament_id': info[5][0],
@@ -177,7 +177,7 @@ def all_series_info() -> List[Container]:
             'hosts': ['swiftwarkite2', 'bakert99'],
             'display_time': '7pm Eastern',
             'time': info[5][2],
-            'sponsor_name': 'Player-supported'
+            'sponsor_name': 'Player-supported',
         }),
         Container({
             'tournament_id': info[6][0],
@@ -185,8 +185,8 @@ def all_series_info() -> List[Container]:
             'hosts': ['flac0', 'j_meka'],
             'display_time': '7pm Eastern',
             'time': info[6][2],
-            'sponsor_name': 'Cardhoarder'
-        })
+            'sponsor_name': 'Cardhoarder',
+        }),
     ]
 
 def rounds_info() -> List[Dict[Union[str, StageType], int]]:
@@ -195,38 +195,38 @@ def rounds_info() -> List[Dict[Union[str, StageType], int]]:
             'min_players': 2,
             'max_players': 2,
             StageType.SWISS_ROUNDS: 0,
-            StageType.ELIMINATION_ROUNDS: 1
+            StageType.ELIMINATION_ROUNDS: 1,
         },
         {
             'min_players': 3,
             'max_players': 7,
             StageType.SWISS_ROUNDS: 3,
-            StageType.ELIMINATION_ROUNDS: 0
+            StageType.ELIMINATION_ROUNDS: 0,
         },
         {
             'min_players': 8,
             'max_players': 8,
             StageType.SWISS_ROUNDS: 3,
-            StageType.ELIMINATION_ROUNDS: 2
+            StageType.ELIMINATION_ROUNDS: 2,
         },
         {
             'min_players': 9,
             'max_players': 15,
             StageType.SWISS_ROUNDS: 4,
-            StageType.ELIMINATION_ROUNDS: 2
+            StageType.ELIMINATION_ROUNDS: 2,
         },
         {
             'min_players': 16,
             'max_players': 31,
             StageType.SWISS_ROUNDS: 4,
-            StageType.ELIMINATION_ROUNDS: 3
+            StageType.ELIMINATION_ROUNDS: 3,
         },
         {
             'min_players': 32,
             'max_players': sys.maxsize,
             StageType.SWISS_ROUNDS: 5,
-            StageType.ELIMINATION_ROUNDS: 3
-        }
+            StageType.ELIMINATION_ROUNDS: 3,
+        },
     ]
 
 def num_rounds_info(num_players: int, k: StageType) -> int:

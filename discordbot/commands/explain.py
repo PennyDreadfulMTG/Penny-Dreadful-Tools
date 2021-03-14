@@ -23,15 +23,15 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             Prior to that a deck will have either its assigned archetype on Gatherling (tournament decks), nothing, or a best-guess based on the most similar reviewed deck (league decks).
             If you want to help out let us know.
             """,
-            {}
+            {},
         ),
         'bugs': (
             'We keep track of cards that are bugged on Magic Online. We allow the playing of cards with known bugs in Penny Dreadful under certain conditions. See the full rules on the website.',
             {
                 'Known Bugs List': fetcher.decksite_url('/bugs/'),
                 'Tournament Rules': fetcher.decksite_url('/tournaments/#bugs'),
-                'Bugged Cards Database': 'https://github.com/PennyDreadfulMTG/modo-bugs/issues/'
-            }
+                'Bugged Cards Database': 'https://github.com/PennyDreadfulMTG/modo-bugs/issues/',
+            },
 
         ),
         'deckbuilding': (
@@ -42,28 +42,28 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             {
                 'Scryfall': 'https://scryfall.com/',
                 'Latest Decks': fetcher.decksite_url('/'),
-                'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt'
-            }
+                'Legal Cards List': 'http://pdmtgo.com/legal_cards.txt',
+            },
         ),
         'decklists': (
             """
             You can find Penny Dreadful decklists from tournaments, leagues and elsewhere at pennydreadfulmagic.com
             """,
             {
-                'Latest Decks': fetcher.decksite_url('/')
-            }
+                'Latest Decks': fetcher.decksite_url('/'),
+            },
         ),
         'doorprize': (
             "The door prize is 1 tik credit with Cardhoarder, awarded to one randomly-selected player that completes the Swiss rounds but doesn't make top 8.",
-            {}
+            {},
         ),
         'language': (
             """
             To change the language you see the site in use the language switcher in the top-left hand corner (desktop only) or follow the link below for English.
             """,
             {
-                'PDM in English': fetcher.decksite_url('/?locale=en')
-            }
+                'PDM in English': fetcher.decksite_url('/?locale=en'),
+            },
         ),
         'league': (
             """
@@ -76,8 +76,8 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             {
                 'More Info': fetcher.decksite_url('/league/'),
                 'Sign Up': fetcher.decksite_url('/signup/'),
-                'Current League': fetcher.decksite_url('/league/current/')
-            }
+                'Current League': fetcher.decksite_url('/league/current/'),
+            },
         ),
         'netdecking': (
             """
@@ -87,7 +87,7 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             {
                 'Archetypes': fetcher.decksite_url('/archetypes/'),
                 'All Decklists': fetcher.decksite_url('/decks/'),
-            }
+            },
         ),
         'noshow': (
             """
@@ -95,7 +95,7 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             If you haven't heard from them by 10 minutes after the start of the round let the Tournament Organizer know.
             You will receive a 2-0 win and your opponent will be dropped from the competition.
             """,
-            {}
+            {},
         ),
         'onegame': (
             """
@@ -103,14 +103,14 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             If you feel enough of a match was played you may manually report 2-x where x is the number of games your opponent won.
             """,
             {
-                'Report': fetcher.decksite_url('/report/')
-            }
+                'Report': fetcher.decksite_url('/report/'),
+            },
         ),
         'playing': (
             """
             To get a match go to Constructed, Specialty, Freeform Tournament Practice on MTGO and create a match with "Penny Dreadful" in the comments.
             """,
-            {}
+            {},
         ),
         'prices': (
             f"""
@@ -118,7 +118,7 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             If the price is low enough it will show season-low and season-high also.
             If the card has been {card_price.MAX_PRICE_TEXT} or less at any point this season it will also include the amount of time (as a percentage) the card has spent at {card_price.MAX_PRICE_TEXT} or below this week, month and season.
             """,
-            {}
+            {},
         ),
         'prizes': (
             """
@@ -129,32 +129,32 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             Note: Penny Dreadful Tuesdays are player-supported, get your tix from a trade with swiftwarkite2 on MTGO.
             """,
             {
-                'More Info': fetcher.decksite_url('/tournaments/')
-            }
+                'More Info': fetcher.decksite_url('/tournaments/'),
+            },
         ),
         'promos': (
             """
             """,
-            {}
+            {},
 
         ),
         'replay': (
             """
             You can play the same person a second time on your league run as long as they have started a new run. The same two runs cannot play each other twice.
             """,
-            {}
+            {},
         ),
         'reporting': (
             """
             """,
             {
-            }
+            },
         ),
         'retire': (
             'To retire from a league run message PDBot on MTGO with `!retire`. If you have authenticated with Discord on pennydreadfulmagic.com you can say `!retire` on Discord or retire on the website.',
             {
-                'Retire': fetcher.decksite_url('/retire/')
-            }
+                'Retire': fetcher.decksite_url('/retire/'),
+            },
         ),
         'rotation': (
             f"""
@@ -162,14 +162,14 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             Prices are checked every hour for a week from the set release. Anything {card_price.MAX_PRICE_TEXT} or less for half or more of all checks is legal for the season.
             Any version of a card on the legal cards list is legal.
             """,
-            {}
+            {},
         ),
         'spectating': (
             """
             Spectating tournament and league matches is allowed and encouraged.
             Please do not write anything in chat except to call PDBot's `!record` command to find out the current score in games.
             """,
-            {}
+            {},
         ),
         'tournament': (
             """
@@ -179,7 +179,7 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             {
                 'More Info': fetcher.decksite_url('/tournaments/'),
                 'Sign Up': 'https://gatherling.com/',
-            }
+            },
         ),
         'username': (
             """
@@ -187,14 +187,14 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             To change, right-click your username.
             This will not affect any other Discord channel.
             """,
-            {}
+            {},
         ),
         'verification': (
             """
             Gatherling verification is currently broken.
             It no longer does anything except put a green tick by your name anyway.
             """,
-            {}
+            {},
         ),
     }
     reporting_explanations: Dict[str, Tuple[str, Dict[str, str]]] = {
@@ -204,16 +204,16 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
             """,
             {
                 'Gatherling': 'https://gatherling.com/player.php',
-            }
+            },
         ),
         'league': (
             """
             If PDBot reports your league match in #league in Discord you don't need to do anything. If not, either player can report.
             """,
             {
-                'League Report': fetcher.decksite_url('/report/')
-            }
-        )
+                'League Report': fetcher.decksite_url('/report/'),
+            },
+        ),
     }
     keys = sorted(explanations.keys())
     explanations['drop'] = explanations['retire']

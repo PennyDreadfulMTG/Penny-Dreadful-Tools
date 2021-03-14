@@ -25,7 +25,7 @@ if sentry_token:
         sentry_sdk.init(
             dsn=sentry_token,
             integrations=[FlaskIntegration()],
-            traces_sample_rate=0.01
+            traces_sample_rate=0.001,
         )
     except Exception as c:  # pylint: disable=broad-except
         print(c)

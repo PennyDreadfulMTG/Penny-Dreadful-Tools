@@ -65,7 +65,7 @@ def layouts() -> Dict[str, bool]:
         'split': True,
         'token': False,
         'transform': True,
-        'vanguard': False
+        'vanguard': False,
     }
 
 def playable_layouts() -> List[str]:
@@ -153,7 +153,7 @@ def base_query_lite() -> str:
     """.format(
         base_query_props=', '.join(prop['query'].format(table='u', column=name) for name, prop in card.base_query_lite_properties().items()),
         card_props=', '.join('c.{name}'.format(name=name) for name in card.card_properties()),
-        face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']),)
+        face_props=', '.join('f.{name}'.format(name=name) for name in card.face_properties() if name not in ['id', 'name']))
 
 
 async def update_database_async(new_date: datetime.datetime) -> None:
@@ -278,7 +278,7 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
         'card_color_identity': card_color_identity_values,
         'face': face_values,
         'printing': printing_values,
-        'card_legality': card_legality_values
+        'card_legality': card_legality_values,
     }
 
 def valid_layout(p: CardDescription) -> bool:

@@ -62,8 +62,8 @@ class Home(View):
                     'link_text': gettext('Current League…'),
                     'decks': league_decks,
                     'show_omw': True,
-                    'hide_top8': True
-                }
+                    'hide_top8': True,
+                },
             )
         if tournament_decks:
             self.deck_tables.append(
@@ -71,8 +71,8 @@ class Home(View):
                     'title': gettext('Latest Tournament Top 8'),
                     'url': url_for('competition', competition_id=tournament_id),
                     'link_text': gettext('View Tournament…'),
-                    'decks': tournament_decks
-                }
+                    'decks': tournament_decks,
+                },
             )
         if latest_decks:
             self.deck_tables.append(
@@ -80,8 +80,8 @@ class Home(View):
                     'title': gettext('Latest Decks'),
                     'url': self.decks_url(),
                     'link_text': gettext('More Decks…'),
-                    'decks': latest_decks
-                }
+                    'decks': latest_decks,
+                },
             )
         self.decks = league_decks + tournament_decks + latest_decks
 
@@ -111,20 +111,20 @@ class Home(View):
                 'header': 'League and Tournament Matches Played',
                 'stats': [
                     {
-                        'text': f"{matches_stats_display['num_matches_today']} matches played today"
+                        'text': f"{matches_stats_display['num_matches_today']} matches played today",
                     },
                     {
-                        'text': f"{matches_stats_display['num_matches_this_week']} matches played this week"
+                        'text': f"{matches_stats_display['num_matches_this_week']} matches played this week",
                     },
                     {
-                        'text': f"{matches_stats_display['num_matches_this_month']} matches played this month"
+                        'text': f"{matches_stats_display['num_matches_this_month']} matches played this month",
                     },
                     {
-                        'text': f"{matches_stats_display['num_matches_this_season']} matches played this season"
+                        'text': f"{matches_stats_display['num_matches_this_season']} matches played this season",
                     },
                     {
-                        'text': f"{matches_stats_display['num_matches_all_time']} matches played all time"
-                    }
-                ]
-            }
+                        'text': f"{matches_stats_display['num_matches_all_time']} matches played all time",
+                    },
+                ],
+            },
         ]

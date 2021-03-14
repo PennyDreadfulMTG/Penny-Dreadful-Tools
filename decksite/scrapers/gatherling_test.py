@@ -49,9 +49,9 @@ def test_process() -> None:
 def test_find_mtgo_username() -> None:
     data = json.loads(PLAYERS)
     ps = [gatherling.Player(**p) for k, p in data.items()]
-    assert gatherling.find_mtgo_username("NotGood", ps) == "NotGood"  # mtgo is set and the same
-    assert gatherling.find_mtgo_username("AlvaroCarvalho", ps) == "AlvaroCarvalho"  # mtgo is not set
-    assert gatherling.find_mtgo_username("-IceBR-", ps) == "-iceb-"  # mtgo is set and different
+    assert gatherling.find_mtgo_username('NotGood', ps) == 'NotGood'  # mtgo is set and the same
+    assert gatherling.find_mtgo_username('AlvaroCarvalho', ps) == 'AlvaroCarvalho'  # mtgo is not set
+    assert gatherling.find_mtgo_username('-IceBR-', ps) == '-iceb-'  # mtgo is set and different
 
 def test_gatherling_url() -> None:
     assert gatherling.gatherling_url('/') == 'https://gatherling.com/'
@@ -66,7 +66,7 @@ def test_vivify_date() -> None:
     assert d.second == 12
     try:
         gatherling.vivify_date('gibberish')
-        assert False
+        raise AssertionError()
     except ValueError:
         assert True
 

@@ -23,13 +23,13 @@ def remove_smartquotes(text: str) -> str:
     return text.replace('’', "'").replace('“', '"').replace('”', '"')
 
 def strip_squarebrackets(title: str) -> str:
-    def get_name(match: Match) -> str:
+    def get_name(match: Match[str]) -> str:
         return match.group(1).strip()
     title = re.sub(REGEX_CARDREF, get_name, title)
     return title
 
 def grouper(n: int, iterable: Iterable, fillvalue: Any = None) -> Iterable:
-    "grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx"
+    """grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx"""
     args = [iter(iterable)] * n
     return itertools.zip_longest(*args, fillvalue=fillvalue)
 

@@ -103,7 +103,7 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str]]] = [
     ('Very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long deck name', 'Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very Very …', ['U'], 'Control'),
     ('Boros Weenie', 'Boros Weenie', ['W', 'R'], 'Aggro'),
     ('by the power of god and cheap countermagic', 'By the Power of God and Cheap Countermagic', ['U'], 'Trickbind-Dreadnought'),
-    ("Don't Kill Me T2, Teal Sucks", "Don't Kill Me T2, Teal Sucks", [], 'Combo')
+    ("Don't Kill Me T2, Teal Sucks", "Don't Kill Me T2, Teal Sucks", [], 'Combo'),
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

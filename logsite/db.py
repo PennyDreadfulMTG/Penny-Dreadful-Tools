@@ -15,12 +15,12 @@ MIGRATE = Migrate(APP, DB)
 
 MATCH_PLAYERS = DB.Table('match_players',
                          DB.Column('match_id', DB.Integer, DB.ForeignKey('match.id'), primary_key=True),
-                         DB.Column('user_id', DB.Integer, DB.ForeignKey('user.id'), primary_key=True)
+                         DB.Column('user_id', DB.Integer, DB.ForeignKey('user.id'), primary_key=True),
                          )
 
 MATCH_MODULES = DB.Table('match_modules',
                          DB.Column('match_id', DB.Integer, DB.ForeignKey('match.id'), primary_key=True),
-                         DB.Column('module_id', DB.Integer, DB.ForeignKey('module.id'), primary_key=True)
+                         DB.Column('module_id', DB.Integer, DB.ForeignKey('module.id'), primary_key=True),
                          )
 
 class User(DB.Model):  # type: ignore

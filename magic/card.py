@@ -38,7 +38,7 @@ BASE: ColumnDescription = {
     'foreign_key': None,
     'default': None,
     'unique': False,
-    'unique_with': None
+    'unique_with': None,
 }
 
 def base_query_properties() -> TableDescription:

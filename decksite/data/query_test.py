@@ -20,7 +20,7 @@ def test_card_search_where() -> None:
         # 'banned:vintage cmc=6 c:g': "name IN ('Rebirth')",
         # The following tests might be flakey because database order matters
         'f:modern c:r "of the" moon': "name IN ('Call of the Full Moon', 'Magus of the Moon')",
-        'f:modern c:r cmc=3 o:"nonbasic lands are mountains"': "name IN ('Blood Moon', 'Magus of the Moon')"
+        'f:modern c:r cmc=3 o:"nonbasic lands are mountains"': "name IN ('Blood Moon', 'Magus of the Moon')",
     }
     for q, expected in tests.items():
         assert expected == query.card_search_where(q)

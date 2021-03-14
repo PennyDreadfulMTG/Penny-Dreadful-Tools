@@ -124,7 +124,7 @@ def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_l
         'percent': percent,
         'percent_needed': percent_needed,
         'status': status,
-        'hit_in_last_run': hit_in_last_run
+        'hit_in_last_run': hit_in_last_run,
     })
     return c
 

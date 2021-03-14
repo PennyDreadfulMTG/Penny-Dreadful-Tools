@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7db1b204fba5621d3b31bf25e284d135aeb243c1f66b75fef8050e3ced442a83"
+            "sha256": "cd62fe8f82e8c374865717c752cf4e2bbb9e35de19cd719b5ccf16b85b13b66e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -321,6 +321,14 @@
             ],
             "index": "pypi",
             "version": "==21.3.2"
+        },
+        "flake8-commas": {
+            "hashes": [
+                "sha256:d3005899466f51380387df7151fb59afec666a0f4f4a2c6a8995b975de0f44b7",
+                "sha256:ee2141a3495ef9789a3894ed8802d03eff1eaaf98ce6d8653a7c573ef101935e"
+            ],
+            "index": "pypi",
+            "version": "==2.0.0"
         },
         "flake8-quotes": {
             "hashes": [
@@ -1530,7 +1538,7 @@
                 "sha256:8d7eaa5a82a1cac232164990f04874c594c9453ec55eef02eab885aa02fc17a2",
                 "sha256:f5321fbe4bf3fefa0efd0bfe7fb14e90909eb62a48ccda331726b4319897dd5e"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
             "version": "==1.25.11"
         },
         "vcrpy": {

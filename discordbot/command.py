@@ -136,7 +136,7 @@ async def post_cards(
         cards: List[Card],
         channel: Messageable,
         replying_to: Optional[Member] = None,
-        additional_text: str = ''
+        additional_text: str = '',
 ) -> None:
     if len(cards) == 0:
         await post_no_cards(channel, replying_to)

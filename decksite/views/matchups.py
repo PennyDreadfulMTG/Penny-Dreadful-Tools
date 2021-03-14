@@ -16,7 +16,7 @@ class Matchups(View):
             self.results['win_percent'] = str(round((results['wins'] / (results['wins'] + results['losses'])) * 100, 1)) if results.get('wins') else ''  # type: ignore
         self.criteria = [
             {'name': 'Decks Matching…', 'prefix': 'hero_', 'choices': hero},
-            {'name': '… versus …', 'prefix': 'enemy_', 'choices': enemy}
+            {'name': '… versus …', 'prefix': 'enemy_', 'choices': enemy},
         ]
         # Set up options for dropdowns, marking the right ones as selected.
         for c in self.criteria:

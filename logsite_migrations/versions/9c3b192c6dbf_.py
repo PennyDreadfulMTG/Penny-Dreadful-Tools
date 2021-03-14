@@ -21,8 +21,8 @@ def upgrade() -> None:
                     sa.Column('id', sa.Integer(), nullable=False),
                     sa.Column('game_id', sa.Integer(), nullable=False),
                     sa.Column('clearance', sa.Integer(), nullable=True),
-                    sa.ForeignKeyConstraint(['game_id'], ['game.id'], ),
-                    sa.PrimaryKeyConstraint('id')
+                    sa.ForeignKeyConstraint(['game_id'], ['game.id']),
+                    sa.PrimaryKeyConstraint('id'),
                     )
     # ### end Alembic commands ###
 

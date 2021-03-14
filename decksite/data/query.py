@@ -104,7 +104,7 @@ def decks_order_by(sort_by: Optional[str], sort_order: Optional[str], competitio
         'omw': 'cache.omw IS NOT NULL DESC, cache.omw',
         'top8': 'd.finish IS NOT NULL DESC, d.finish',
         'date': 'cache.active_date',
-        'season': 'cache.active_date'
+        'season': 'cache.active_date',
     }
     return sort_options[sort_by] + f' {sort_order}, d.finish ASC, cache.active_date DESC'
 
@@ -123,7 +123,7 @@ def cards_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
         'winPercent': 'ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1)',
         'tournamentWins': 'tournament_wins',
         'tournamentTop8s': 'tournament_top8s',
-        'perfectRuns': 'perfect_runs'
+        'perfectRuns': 'perfect_runs',
     }
     return sort_options[sort_by] + f' {sort_order}, num_decks DESC, record, name'
 
@@ -143,7 +143,7 @@ def people_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
         'winPercent': 'ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1)',
         'tournamentWins': 'tournament_wins',
         'tournamentTop8s': 'tournament_top8s',
-        'perfectRuns': 'perfect_runs'
+        'perfectRuns': 'perfect_runs',
     }
     return sort_options[sort_by] + f' {sort_order}, num_decks DESC, record, name'
 
@@ -159,7 +159,7 @@ def head_to_head_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> 
         'name': 'opp_mtgo_username',
         'numMatches': 'num_matches',
         'record': f'(SUM(wins) - SUM(losses)) {sort_order}, SUM(wins)',
-        'winPercent': 'ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1)'
+        'winPercent': 'ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1)',
     }
     return sort_options[sort_by] + f' {sort_order}, num_matches DESC, record, name'
 
@@ -175,7 +175,7 @@ def leaderboard_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> s
         'name': 'person',
         'numDecks': 'num_decks',
         'wins': 'wins',
-        'points': 'points'
+        'points': 'points',
     }
     return sort_options[sort_by] + f' {sort_order}, points DESC, wins DESC, person'
 
@@ -193,7 +193,7 @@ def matches_order_by(sort_by: Optional[str], sort_order: Optional[str]) -> str:
         'deckName': 'deck_name',
         'mtgoId': 'mtgo_id',
         'opponent': 'opponent',
-        'opponentDeckName': 'opponent_deck_name'
+        'opponentDeckName': 'opponent_deck_name',
     }
     return sort_options[sort_by] + f' {sort_order}, person'
 

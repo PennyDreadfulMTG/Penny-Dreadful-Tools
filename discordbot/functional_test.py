@@ -80,7 +80,7 @@ def get_params() -> List[Tuple]:
             ('whois', {'args': 'silasary'}, None),
             ('whois', {'args': 'kaet'}, None),
             ('whois', {'args': '<@154363842451734528>'}, None),
-            ('whois', {'args': '<@!224755717767299072>'}, None)
+            ('whois', {'args': '<@!224755717767299072>'}, None),
         ]
     loop = asyncio.new_event_loop()
     return loop.run_until_complete(params())

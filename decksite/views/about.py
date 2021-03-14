@@ -63,5 +63,5 @@ def fancy_cards() -> List[Card]:
         'Demonic Consultation',
         'Living Death',
         'Edric, Spymaster of Trest',
-        'Invigorate'
+        'Invigorate',
     ]), 'Penny Dreadful')

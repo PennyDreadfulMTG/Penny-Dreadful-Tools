@@ -16,7 +16,7 @@ class SearchResult():
             exact: Optional[str],
             prefix_whole_word: List[str],
             other_prefixed: List[Any],
-            fuzzy: List[Tuple[str, float]]
+            fuzzy: List[Tuple[str, float]],
     ) -> None:
         self.exact = [exact] if exact else []
         self.prefix_whole_word = prefix_whole_word if prefix_whole_word else []

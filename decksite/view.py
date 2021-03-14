@@ -36,7 +36,7 @@ SeasonInfoDescription = TypedDict('SeasonInfoDescription', {
     'rotation_changes_url': str,
     'tournament_leaderboards_url': str,
     'legality_name': Optional[str],
-    'legal_cards_url': Optional[str]
+    'legal_cards_url': Optional[str],
 }, total=False)
 
 # pylint: disable=no-self-use, too-many-instance-attributes, too-many-public-methods
@@ -93,7 +93,7 @@ class View(BaseView):
             'rotation_changes_url': url_for('seasons.rotation_changes', season_id='all'),
             'tournament_leaderboards_url': url_for('seasons.tournament_leaderboards', season_id='all'),
             'legality_name': None,
-            'legal_cards_url': None
+            'legal_cards_url': None,
         }]
         num = 1
         current_code = seasons.current_season_code()
@@ -116,7 +116,7 @@ class View(BaseView):
                 'rotation_changes_url': url_for('seasons.rotation_changes', season_id=num),
                 'tournament_leaderboards_url': url_for('seasons.tournament_leaderboards', season_id=num),
                 'legality_name': 'Penny Dreadful' + ('' if code == current_code else f' {code}'),
-                'legal_cards_url': 'https://pdmtgo.com/legal_cards.txt' if code == current_code else f'https://pdmtgo.com/{code}_legal_cards.txt'
+                'legal_cards_url': 'https://pdmtgo.com/legal_cards.txt' if code == current_code else f'https://pdmtgo.com/{code}_legal_cards.txt',
             })
             num += 1
         seasonlist.reverse()
@@ -317,7 +317,7 @@ class View(BaseView):
                 'num_players': num_players,
                 'swiss_rounds': entry[tournaments.StageType.SWISS_ROUNDS],
                 'elimination_rounds': entry[tournaments.StageType.ELIMINATION_ROUNDS],
-                'note': note
+                'note': note,
             })
 
 

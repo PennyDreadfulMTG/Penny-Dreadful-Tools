@@ -44,7 +44,7 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
         {'name': gettext('Discord Chat'), 'url': 'https://discord.gg/H6EHdHu'},
         {'name': gettext('External Links'), 'endpoint': 'resources'},
         {'name': gettext('Link Accounts'), 'endpoint': 'link'},
-        {'name': gettext('Bugs'), 'endpoint': 'bugs'}
+        {'name': gettext('Bugs'), 'endpoint': 'bugs'},
     ]
     menu = [
         {'name': gettext('Metagame'), 'endpoint': 'home', 'badge': archetypes_badge, 'submenu': [
@@ -68,16 +68,16 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
             {'name': gettext('Leaderboards'), 'endpoint': 'tournament_leaderboards'},
             {'name': gettext('Gatherling'), 'url': 'https://gatherling.com/'},
             {'name': gettext('Achievements'), 'endpoint': 'achievements'},
-            {'name': gettext('Hosting'), 'endpoint': 'hosting'}
+            {'name': gettext('Hosting'), 'endpoint': 'hosting'},
         ]},
         {'name': gettext('Resources'), 'endpoint': 'resources', 'submenu': resources_submenu},
         {'name': gettext('About'), 'endpoint': 'about', 'submenu': [
             {'name': gettext('What is Penny Dreadful?'), 'endpoint': 'about'},
             {'name': gettext('About pennydreadfulmagic.com'), 'endpoint': 'about_pdm'},
             {'name': gettext('FAQs'), 'endpoint': 'faqs'},
-            {'name': gettext('Community Guidelines'), 'endpoint': 'community_guidelines'}
+            {'name': gettext('Community Guidelines'), 'endpoint': 'community_guidelines'},
         ]},
-        {'name': gettext('Admin'), 'admin_only': True, 'endpoint': 'admin_home', 'submenu': admin.admin_menu()}
+        {'name': gettext('Admin'), 'admin_only': True, 'endpoint': 'admin_home', 'submenu': admin.admin_menu()},
     ]
     setup_links(menu)
     for item in menu:

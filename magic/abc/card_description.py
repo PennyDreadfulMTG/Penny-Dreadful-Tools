@@ -78,5 +78,5 @@ CardDescription = TypedDict('CardDescription', {
     'textless': bool,
     'uri': str,
     'variation': bool,
-    'variation_of': str
+    'variation_of': str,
 }, total=False)

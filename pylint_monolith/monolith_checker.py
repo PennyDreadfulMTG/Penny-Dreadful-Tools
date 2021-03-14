@@ -37,8 +37,8 @@ class MonolithChecker(BaseChecker):
             'Module %s should not be importing %s',
             'invalid-monolith-import',
             'Used when code is breaking the monolith structure'
-            ' in dangerous ways.'
-        )
+            ' in dangerous ways.',
+        ),
     }
 
     options = ()
@@ -78,7 +78,7 @@ class MonolithChecker(BaseChecker):
                 'invalid-monolith-import',
                 line=node.lineno,
                 node=node,
-                args=(parent_basename, imported_module.name)
+                args=(parent_basename, imported_module.name),
             )
 
 def get_basename(modname: str) -> str:

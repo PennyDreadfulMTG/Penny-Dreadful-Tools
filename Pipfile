@@ -72,6 +72,7 @@ flake8 = "*"
 # flake8-comprehensions = "*"
 flake8-quotes = "*"
 flake8-bugbear = "*"
+flake8-commas = "*"
 
 [requires]
 python_version = "3.8"

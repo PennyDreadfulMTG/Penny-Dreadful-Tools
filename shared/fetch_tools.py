@@ -68,7 +68,7 @@ async def fetch_json_async(url: str) -> Any:
 
 def post(url: str,
          data: Optional[Dict[str, str]] = None,
-         json_data: Any = None
+         json_data: Any = None,
          ) -> str:
     print('POSTing to {url} with {data} / {json_data}'.format(url=url, data=data, json_data=json_data))
     try:
@@ -131,7 +131,7 @@ def post_discord_webhook(webhook_id: str,
                          message: Optional[str] = None,
                          username: str = None,
                          avatar_url: str = None,
-                         embeds: List[Dict[str, Any]] = None
+                         embeds: List[Dict[str, Any]] = None,
                          ) -> bool:
     if webhook_id is None or webhook_token is None:
         return False

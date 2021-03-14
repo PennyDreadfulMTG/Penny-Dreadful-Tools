@@ -278,7 +278,7 @@ def report(form: ReportForm) -> bool:
                 fetch_tools.post_discord_webhook(
                     configuration.get_str('league_webhook_id'),
                     configuration.get_str('league_webhook_token'),
-                    '{entry} reported {f.entry_games}-{f.opponent_games} vs {opponent}'.format(f=form, entry=entry_deck.person, opponent=opponent_deck.person)
+                    '{entry} reported {f.entry_games}-{f.opponent_games} vs {opponent}'.format(f=form, entry=entry_deck.person, opponent=opponent_deck.person),
                 )
             else:
                 logger.warning('Not posting manual report to discord because not configured.')

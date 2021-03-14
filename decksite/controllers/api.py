@@ -36,7 +36,7 @@ SEARCH_CACHE: List[SearchItem] = []
 
 DECK_ENTRY = APP.api.model('DecklistEntry', {
     'n': fields.Integer(),
-    'name': fields.String()
+    'name': fields.String(),
 })
 
 DECK = APP.api.model('Deck', {
@@ -75,7 +75,7 @@ COMPETITION = APP.api.model('Competition', {
     'series_name': fields.String(),
     'type': fields.String(),
     'season_id': fields.Integer(),
-    'decks': fields.List(fields.Nested(DECK))
+    'decks': fields.List(fields.Nested(DECK)),
 })
 
 @APP.route('/api/decks/')
@@ -434,7 +434,7 @@ def rotation_api() -> Response:
         'last': seasons.last_rotation_ex(),
         'next': seasons.next_rotation_ex(),
         'diff': diff.total_seconds(),
-        'friendly_diff': dtutil.display_time(int(diff.total_seconds()))
+        'friendly_diff': dtutil.display_time(int(diff.total_seconds())),
     }
     return return_json(result)
 
@@ -552,7 +552,7 @@ def deck_embed(deck_id: int) -> Response:
         'title': view.page_title(),
         'width': width,
         'height': height,
-        'html': template.render(view)
+        'html': template.render(view),
     }
     return return_json(embed)
 

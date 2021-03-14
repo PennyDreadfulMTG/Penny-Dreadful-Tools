@@ -248,7 +248,7 @@ def load_cards(
         limit: str = '',
         person_id: Optional[int] = None,
         season_id: Optional[int] = None,
-        tournament_only: bool = False
+        tournament_only: bool = False,
 ) -> List[Card]:
     if person_id:
         table = '_card_person_stats'

@@ -13,7 +13,7 @@ class Card(Container):
             else:
                 setattr(self, k, determine_value(k, params))
         if not hasattr(self, 'names'):
-            setattr(self, 'names', [self.name])
+            self.names = [self.name]
 
     def is_double_sided(self) -> bool:
         return self.layout in ['transform', 'meld', 'modal_dfc']

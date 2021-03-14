@@ -69,6 +69,11 @@ def scraper(source: str) -> None:
     task(['scraper', source])
 
 @cli.command()
+@click.argument('eventname')
+def scrape_event(eventname: str) -> None:
+    task(['scraper', 'gatherling', eventname])
+
+@cli.command()
 @click.argument('script')
 def maintenance(script: str) -> None:
     task(['maintenance', script])
@@ -118,7 +123,7 @@ def task(args: List[str]) -> None:
                 app_context = APP.app_context()  # type: ignore
                 app_context.__enter__()  # type: ignore
             if getattr(s, 'scrape', None) is not None:
-                exitcode = s.scrape()  # type: ignore
+                exitcode = s.scrape(*args[2:])  # type: ignore
             elif getattr(s, 'run', None) is not None:
                 exitcode = s.run()  # type: ignore
             # Only when called directly, not in 'all'

@@ -145,6 +145,7 @@ class Event:
     standings: List[Standing]
     players: Dict[GatherlingUsername, Player]
 
+
 APIResponse = Dict[str, Event]
 
 ALIASES: Dict[str, str] = {}

@@ -126,7 +126,7 @@ class Event:
     series: str
     season: int
     number: int
-    format: str
+    format: Format
     host: str
     cohost: Optional[str]
     active: Bool
@@ -144,8 +144,6 @@ class Event:
     finalists: List[Finalist]
     standings: List[Standing]
     players: Dict[GatherlingUsername, Player]
-    format: Format
-
 
 APIResponse = Dict[str, Event]
 

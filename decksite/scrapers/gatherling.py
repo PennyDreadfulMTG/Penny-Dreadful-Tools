@@ -62,10 +62,10 @@ class Archetype(Enum):
     UNCLASSIFIED = 'Unclassified'
 
 class Format(Enum):
-    PENNY_DREADFUL = "Penny Dreadful"
-    LEGACY_LEAGUE = "Legacy League"
-    STANDARD_TRIBAL_WARS = "Standard Tribal Wars"
-    CLASSIC_PAUPER = "Classic Pauper"
+    PENNY_DREADFUL = 'Penny Dreadful'
+    LEGACY_LEAGUE = 'Legacy League'
+    STANDARD_TRIBAL_WARS = 'Standard Tribal Wars'
+    CLASSIC_PAUPER = 'Classic Pauper'
 
 @pydantic.dataclasses.dataclass
 class GatherlingMatch:

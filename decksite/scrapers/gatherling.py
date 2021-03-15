@@ -150,7 +150,7 @@ APIResponse = Dict[str, Event]
 
 ALIASES: Dict[str, str] = {}
 
-def scrape(name: Optional[str]) -> None:
+def scrape(name: Optional[str] = None) -> None:
     if name:
         data = fetch_tools.fetch_json(gatherling_url(f'/api.php?action=eventinfo&event={name}'))
         process_tournament(data['name'], Event(**data))

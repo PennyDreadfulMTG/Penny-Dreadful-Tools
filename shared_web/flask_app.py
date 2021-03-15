@@ -19,6 +19,14 @@ from . import api, localization, oauth
 from .api import generate_error, return_json
 from .views import InternalServerError, NotFound, Unauthorized
 
+def sentry_filter(event, hint):  # type: ignore
+    if 'exc_info' in hint:
+        exc_type, exc_value, tb = hint['exc_info']
+        if isinstance(exc_value, OSError):
+            return None
+    return event
+
+
 sentry_token = configuration.get_optional_str('sentry_token')
 if sentry_token:
     try:
@@ -26,9 +34,11 @@ if sentry_token:
             dsn=sentry_token,
             integrations=[FlaskIntegration()],
             traces_sample_rate=0.001,
+            before_send=sentry_filter,
         )
     except Exception as c:  # pylint: disable=broad-except
         print(c)
+
 
 # pylint: disable=no-self-use, too-many-public-methods
 class PDFlask(Flask):

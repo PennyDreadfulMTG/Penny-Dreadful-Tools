@@ -560,7 +560,7 @@ def deck_embed(deck_id: int) -> Response:
 def test_500() -> Response:
     if configuration.get_bool('production'):
         return return_json(generate_error('ON_PROD', 'This only works on test environments'), status=404)
-    raise TooManyItemsException()
+    raise TooManyItemsException
 
 @APP.route('/api/achievements')
 def all_achievements() -> Response:

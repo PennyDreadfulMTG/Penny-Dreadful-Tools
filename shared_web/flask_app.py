@@ -19,6 +19,7 @@ from . import api, localization, oauth
 from .api import generate_error, return_json
 from .views import InternalServerError, NotFound, Unauthorized
 
+
 def sentry_filter(event, hint):  # type: ignore
     if 'exc_info' in hint:
         exc_type, exc_value, tb = hint['exc_info']

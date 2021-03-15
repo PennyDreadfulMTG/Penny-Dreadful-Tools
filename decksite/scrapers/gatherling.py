@@ -61,6 +61,12 @@ class Archetype(Enum):
     MIDRANGE = 'Midrange'
     UNCLASSIFIED = 'Unclassified'
 
+class Format(Enum):
+    PENNY_DREADFUL = 'Penny Dreadful'
+    LEGACY_LEAGUE = 'Legacy League'
+    STANDARD_TRIBAL_WARS = 'Standard Tribal Wars'
+    CLASSIC_PAUPER = 'Classic Pauper'
+
 @pydantic.dataclasses.dataclass
 class GatherlingMatch:
     id: int
@@ -120,7 +126,7 @@ class Event:
     series: str
     season: int
     number: int
-    format: str
+    format: Format
     host: str
     cohost: Optional[str]
     active: Bool
@@ -156,13 +162,10 @@ def scrape(name: Optional[str]) -> None:
 def make_api_response(data: Dict[str, Dict[Any, Any]]) -> APIResponse:
     response = {}
     for k, v in data.items():
-        # First check it's a series we are interested in.
-        if is_interesting_series(v['series']):
+        # First check it's an event we are interested in.
+        if v.get('format') == Format.PENNY_DREADFUL.value:
             response[k] = Event(**v)
     return response
-
-def is_interesting_series(name: str) -> bool:
-    return len(db().select('SELECT id FROM competition_series WHERE name = %s', [name])) > 0
 
 def process(response: APIResponse) -> None:
     for name, event in response.items():

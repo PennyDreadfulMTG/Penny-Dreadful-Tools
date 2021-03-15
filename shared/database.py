@@ -82,7 +82,7 @@ class Database():
                     self.connect()
                 else:
                     # raise any other exception
-                    raise e
+                    raise
         else:
             # all attempts failed
             raise DatabaseException('Failed to execute `{sql}` with `{args}`. MySQL has gone away and it was not possible to reconnect in 3 attemps'.format(sql=sql, args=args))

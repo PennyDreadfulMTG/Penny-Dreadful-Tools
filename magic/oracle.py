@@ -114,7 +114,7 @@ def deck_sort(c: Card) -> str:
 async def scryfall_import_async(name: str) -> bool:
     sfcard = await fetch_tools.fetch_json_async('https://api.scryfall.com/cards/named?fuzzy={name}'.format(name=name))
     if sfcard['object'] == 'error':
-        raise Exception()
+        raise Exception
     try:
         valid_name(sfcard['name'])
         print(f"Not adding {sfcard['name']} to the database as we already have it.")

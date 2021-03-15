@@ -31,6 +31,6 @@ async def google(ctx: MtgContext, *, args: str) -> None:
         if e.resp['status'] == '403':
             s = 'We have reached the allowed limits of Google API'
         else:
-            raise e
+            raise
 
     await ctx.send(s)

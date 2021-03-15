@@ -260,11 +260,11 @@ class CountedAchievement(Achievement):
         return ''
 
     def leaderboard_heading(self) -> str:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def localised_display(self, n: int) -> str:
         """Calls and returns ngettext."""
-        raise NotImplementedError()
+        raise NotImplementedError
 
 class BooleanAchievement(Achievement):
     season_text = ''

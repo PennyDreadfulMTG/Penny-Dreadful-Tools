@@ -240,7 +240,7 @@ def insert_deck(competition_id: int, date: datetime.datetime, d: GatherlingDeck,
         'created_date': dtutil.dt2ts(date),
         'mtgo_username': mtgo_username,
         'finish': finish,
-        'url': gatherling_url(f'deck.php?mode=view&id={d.id}'),
+        'url': gatherling_url(f'/deck.php?mode=view&id={d.id}'),
         'archetype': d.archetype.value,
         'identifier': str(d.id),
         'cards': {'maindeck': d.maindeck, 'sideboard': d.sideboard},
@@ -262,18 +262,20 @@ def insert_match(date: datetime.datetime, decks_by_gatherling_username: Dict[Gat
         raise InvalidDataException(f"I don't have a deck for `{m.playera}`")
     if is_bye(m):
         d2_id = None
+        player1_wins = 2
         player2_wins = 0
     else:
         d2 = fuzzy_get(decks_by_gatherling_username, m.playerb)
         if not d2:
             raise InvalidDataException(f"I don't have a deck for `{m.playerb}`")
         d2_id = d2.id
+        player1_wins = m.playera_wins.value
         player2_wins = m.playerb_wins.value
-    match.insert_match(date, d1.id, m.playera_wins.value, d2_id, player2_wins, m.round, elimination(m, total_rounds))
+    match.insert_match(date, d1.id, player1_wins, d2_id, player2_wins, m.round, elimination(m, total_rounds))
 
 # Account for the Gatherling API's slightly eccentric representation of byes.
 def is_bye(m: GatherlingMatch) -> bool:
-    return m.playera == m.playerb and m.playera_wins == Wins.ZERO and m.playerb_wins == Wins.ZERO
+    return m.playera == m.playerb
 
 # 'elimination' is an optional int with meaning: NULL = nontournament, 0 = Swiss, 8 = QF, 4 = SF, 2 = F
 def elimination(m: GatherlingMatch, total_rounds: int) -> int:

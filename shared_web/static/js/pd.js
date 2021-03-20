@@ -152,7 +152,7 @@ PD.initTooltips = function() {
     $("body").on("touchstart", function() {
         $("body").off();
     });
-    $("body").on("pointerover", function() {
+    $("body").on("mouseover", function() {
         if (typeof Deckbox !== "undefined") {
             Deckbox._.enable();
         }

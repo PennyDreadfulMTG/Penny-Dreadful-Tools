@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "ddca47f27f29e10e5012df7164a27573af1215d9f36de34c7be268467e6f1b7a"
+            "sha256": "424d94717ec38fb566d1b462a3a783dd0e8b2ae07ecb0d2b5b006c8254f9bd5d"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -375,11 +375,11 @@
         },
         "flask-sqlalchemy": {
             "hashes": [
-                "sha256:0d5153bf451c42880540eea7650300cf0dfec0c16c554f0de5541e78c7cc0443",
-                "sha256:27448f04f46cfb7588ff30a4b7efb08b91d99f80dbee3d884c3cf76fab01cca2"
+                "sha256:2bda44b43e7cacb15d4e05ff3cc1f8bc97936cc464623424102bfc2c35e95912",
+                "sha256:f12c3d4cc5cc7fdcc148b9527ea05671718c3ea45d50c7e732cceb33f574b390"
             ],
             "index": "pypi",
-            "version": "==2.5.0"
+            "version": "==2.5.1"
         },
         "ftfy": {
             "hashes": [
@@ -436,7 +436,6 @@
                 "sha256:0ebeb71e0b8f5d1cbb2f8b19cc0f5f6e6abfcdb8e3d152424b20effbab68ace5",
                 "sha256:8bf7abd672b867f38b8b04593829b85b9b6199a61ef6586bf3629cc06458ff35"
             ],
-            "index": "pypi",
             "version": "==3.3.0"
         },
         "idna": {

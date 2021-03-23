@@ -34,9 +34,10 @@ async def swiss(ctx: MtgContext, num_players: Optional[int], num_rounds: Optiona
 
     if record_required and top_n:
         if abs(players_who_dont_miss - int(players_who_dont_miss)) < 0.000001:  # if it's an integer number of players
-            s += f'\nIt is likely that {int(players_who_dont_miss)} people with a record of {record_required} will make the Top {top_n}'
+            people_person = "people" if round(players_who_dont_miss) != 1 else "person"
+            s += f'\nIt is likely that {round(players_who_dont_miss)} {people_person} with a record of {record_required} will make the Top {top_n}'
         else:
-            s += f'\nIt is likely that {int(players_who_dont_miss)}-{int(players_who_dont_miss) + 1} ({round(players_who_dont_miss, 1)}) people with a record of {record_required} will make the Top {top_n}'
+            s += f'\nIt is likely that {int(players_who_dont_miss)} or {int(players_who_dont_miss) + 1} ({round(players_who_dont_miss, 1)}) people with a record of {record_required} will make the Top {top_n}'
     await ctx.send(s)
 
 def swisscalc(num_players: int, num_rounds: int, num_elimination_rounds: int) -> Tuple[List[int], Optional[str]]:

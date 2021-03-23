@@ -21,10 +21,22 @@ async def swiss(ctx: MtgContext, num_players: Optional[int], num_rounds: Optiona
         top_n = 2 ** num_elimination_rounds
     s = ''
     num_players_by_losses, record_required = swisscalc(num_players, num_rounds, num_elimination_rounds)
+    players_in_top_n = 0
+    players_who_dont_miss = None  # number of players with the worst record that still makes top 8 who make top 8
     for i, n in enumerate(num_players_by_losses):
         s += f'{round(n, 1)} players at {num_rounds - i}-{i}\n'
+        players_in_top_n += n
+        if players_in_top_n > top_n and players_who_dont_miss is None:
+            players_who_dont_miss = n + top_n - players_in_top_n
+    if players_who_dont_miss is None: players_who_dont_miss = num_players
+
     if record_required and top_n:
-        s += f'\nIt is likely that a record of {record_required} is needed to make the Top {top_n}'
+        if players_who_dont_miss - int(players_who_dont_miss) < 0.000001:  # if it's an integer number of players
+            s += f'\nIt is likely that {int(players_who_dont_miss)} ' \
+             f'people with a record of {record_required} will make the Top {top_n}'
+        else:
+            s += f'\nIt is likely that {int(players_who_dont_miss)}-{int(players_who_dont_miss) + 1} ' \
+             f'({round(players_who_dont_miss, 1)}) people with a record of {record_required} will make the Top {top_n}'
     await ctx.send(s)
 
 def swisscalc(num_players: int, num_rounds: int, num_elimination_rounds: int) -> Tuple[List[int], Optional[str]]:

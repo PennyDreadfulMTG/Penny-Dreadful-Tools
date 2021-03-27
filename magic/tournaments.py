@@ -85,7 +85,7 @@ def pd500_date() -> datetime.datetime:
         return datetime.datetime(1970, 1, 1)
 
     end_of_season = seasons.next_rotation()
-    return end_of_season - datetime.timedelta(days=12, hours=13, minutes=30)  # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
+    return end_of_season - datetime.timedelta(days=5, hours=13, minutes=30)  # This effectively hardcodes a 10:30 PD Sat start time AND a Thu/Fri midnight rotation time.
 
 def is_pd500_week(start: datetime.datetime) -> bool:
     date_of_pd500 = pd500_date()

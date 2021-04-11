@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "34dad37b980a86b32783cc96fdcfd55f7b37d1e32e06fd761e4c4fafc7c58a0e"
+            "sha256": "37c9db7ce9ee3b3a26e039d869cd3c0ac3790d9a9560dfd39604e991236745c4"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -60,11 +60,11 @@
         },
         "astroid": {
             "hashes": [
-                "sha256:6b0ed1af831570e500e2437625979eaa3b36011f66ddfc4ce930128610258ca9",
-                "sha256:cd80bf957c49765dce6d92c43163ff9d2abc43132ce64d4b1b47717c6d2522df"
+                "sha256:ad63b8552c70939568966811a088ef0bc880f99a24a00834abd0e3681b514f91",
+                "sha256:bea3f32799fbb8581f58431c12591bc20ce11cbc90ad82e2ea5717d94f2080d5"
             ],
             "index": "pypi",
-            "version": "==2.5.2"
+            "version": "==2.5.3"
         },
         "astunparse": {
             "hashes": [
@@ -437,7 +437,6 @@
                 "sha256:096b9ae6d1d56321d3d81f17117c2068179d7b4f7f73ba4baf302726923b48ec",
                 "sha256:d292736d81da462b84b78eee0c9bba26bdbfa10112e302c4fcddb6621d2a08dd"
             ],
-            "index": "pypi",
             "version": "==3.4.0"
         },
         "idna": {

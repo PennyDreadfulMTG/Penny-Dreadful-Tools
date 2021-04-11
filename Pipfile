@@ -8,7 +8,7 @@ verify_ssl = true
 [packages]
 aiohttp = "==3.6.3"
 anytree = "==2.8.0"
-astroid = "==2.5.2"
+astroid = "==2.5.3"
 attrs = "==20.3.0"
 beautifulsoup4 = "==4.9.3"
 better-profanity = "==0.7.0"

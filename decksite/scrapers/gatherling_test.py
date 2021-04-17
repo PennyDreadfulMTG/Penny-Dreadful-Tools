@@ -41,7 +41,6 @@ def test_process() -> None:
     for i in range(9, len(c.decks)):
         assert finishes[i] == 1
     ms = match.load_matches('c.id = ' + str(c.id))
-    print(ms)
     assert len(ms) == len(event.matches)
     for m in ms:
         assert (m.opponent is None) or (2 <= m.game_wins + m.game_losses <= 3)

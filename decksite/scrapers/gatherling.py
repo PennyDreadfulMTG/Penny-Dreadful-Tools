@@ -143,7 +143,7 @@ class Event:
     decks: List[GatherlingDeck]
     finalists: List[Finalist]
     standings: List[Standing]
-    players: Dict[GatherlingUsername, Player]
+    players: List[Player]
 
 
 APIResponse = Dict[str, Event]
@@ -183,7 +183,7 @@ def process_tournament(name: str, event: Event) -> None:
         raise InvalidDataException(f'Could not parse tournament date `{event.start}`') from e
     fs = determine_finishes(event.standings, event.finalists)
     competition_id = insert_competition(name, date, event)
-    decks_by_gatherling_username = insert_decks(competition_id, date, event.decks, fs, list(event.players.values()))
+    decks_by_gatherling_username = insert_decks(competition_id, date, event.decks, fs, event.players)
     insert_matches(date, decks_by_gatherling_username, event.matches, event.mainrounds + event.finalrounds)
     guess_archetypes(list(decks_by_gatherling_username.values()))
     db().commit('tournament')

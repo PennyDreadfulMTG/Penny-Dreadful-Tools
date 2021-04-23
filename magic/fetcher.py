@@ -22,7 +22,7 @@ from shared import configuration, dtutil, fetch_tools
 from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.fetch_tools import FetchException
-from shared.pd_exception import InvalidDataException, NotConfiguredException, TooFewItemsException
+from shared.pd_exception import InvalidArgumentException, InvalidDataException, NotConfiguredException, TooFewItemsException
 
 
 async def achievement_cache_async() -> Dict[str, Dict[str, str]]:
@@ -99,7 +99,15 @@ def gatherling_deck_comments(d: Deck) -> List[str]:
         return result.group(1).replace('<br />', '\n').split('\n')
     return []
 
-
+async def gatherling_whois(name: Optional[str] = None, discord_id: Optional[str] = None) -> Container:
+    if discord_id:
+        url = f'https://gatherling.com/api.php?action=whois&discordid={discord_id}'
+    elif name:
+        url = f'https://gatherling.com/api.php?action=whois&name={name}'
+    else:
+        raise InvalidArgumentException('No identifier provided')
+    data = await fetch_tools.fetch_json_async(url)
+    return Container(data)
 async def legal_cards_async(season: str = None) -> List[str]:
     if season is None:
         url = 'legal_cards.txt'

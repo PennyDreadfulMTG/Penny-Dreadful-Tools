@@ -22,7 +22,8 @@ from shared import configuration, dtutil, fetch_tools
 from shared import redis_wrapper as redis
 from shared.container import Container
 from shared.fetch_tools import FetchException
-from shared.pd_exception import InvalidArgumentException, InvalidDataException, NotConfiguredException, TooFewItemsException
+from shared.pd_exception import (InvalidArgumentException, InvalidDataException,
+                                 NotConfiguredException, TooFewItemsException)
 
 
 async def achievement_cache_async() -> Dict[str, Dict[str, str]]:

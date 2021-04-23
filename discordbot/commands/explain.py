@@ -174,7 +174,7 @@ async def explain(ctx: MtgContext, *, thing: Optional[str]) -> None:
         'speculation': (
             """
             Please don't buy unconfirmed cards (marked ❓ during rotation), you may prevent them from becoming legal..
-            Conversely, please don't buy cards you don't like. The format rotates frequently enough, and even cards as broken as Necropotence deserve to get played once in a while""",
+            """,
             {},
         ),
         'tournament': (

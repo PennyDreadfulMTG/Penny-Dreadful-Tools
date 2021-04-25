@@ -1,6 +1,6 @@
 import datetime
 import json
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Callable, Dict, List, Optional, Tuple, cast
 
 from flask import Response, request, session, url_for
 from flask_restx import Resource, fields
@@ -19,7 +19,7 @@ from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard,
 from decksite.views import DeckEmbed
 from magic import oracle, rotation, seasons, tournaments
 from magic.decklist import parse_line
-from magic.models import Deck
+from magic.models import Card, Deck
 from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
 from shared.pd_exception import DoesNotExistException, InvalidDataException, TooManyItemsException
@@ -614,3 +614,18 @@ def menu_item_to_search_item(menu_item: Dict[str, Any], parent_name: Optional[st
     else:
         url = url_for(menu_item.get('endpoint', ''))
     return {'name': name, 'type': 'Page', 'url': url}
+
+def rotation_sort_func(sort_by: Optional[str], sort_order: Optional[str]) -> Callable[[Card], Tuple[int, str]]:
+    if not sort_by:
+        sort_by = 'hits' # BAKERT we actually want to do something more sophisticated to make the most interesting cards appear on home ("closest to 84 and just hit")
+        sort_order = 'DESC'
+    else:
+        sort_by = str(sort_by)
+        sort_order = str(sort_order)
+    ascending = sort_order == 'ASC'
+    sort_funcs = {
+        'hitInLastRun': lambda c: c.hit_in_last_run if ascending else not c.hit_in_last_run,
+        'hits': lambda c: c.hits if ascending else -c.hits
+        # BAKERT add more of the columns here once we figure out what those are
+    }
+    return lambda c: (sort_funcs[sort_by](c), c.name) # Secondary sort by name alphabetically to keep the ordering stable between queries.

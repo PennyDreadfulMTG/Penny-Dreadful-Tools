@@ -1,5 +1,5 @@
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Sequence, Union
 
 from flask import g, url_for
 
@@ -87,7 +87,6 @@ def load_matches_count(where: str = 'TRUE', season_id: Union[int, str, None] = N
     """
     return int(db().value(sql))
 
-# pylint: disable=too-many-locals
 def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', limit: str = '', season_id: Union[int, str, None] = None, should_load_decks: bool = False, show_active_deck_names: bool = False) -> List[Container]:
     person_query = query.person_query()
     opponent_person_query = query.person_query(table='o')
@@ -147,13 +146,16 @@ def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', lim
         {limit}
     """
     matches = [Container(r) for r in db().select(sql)]
+    decks = []
     if should_load_decks:
         opponents = [m.opponent_deck_id for m in matches if m.opponent_deck_id is not None]
         if len(opponents) > 0:
             decks = deck.load_decks('d.id IN ({ids})'.format(ids=', '.join([sqlescape(str(deck_id)) for deck_id in opponents])))
-        else:
-            decks = []
-        decks_by_id = {d.id: d for d in decks}
+    decks_by_id = {d.id: d for d in decks}
+    setup_matches(should_load_decks, show_active_deck_names, decks_by_id, matches)
+    return matches
+
+def setup_matches(should_load_decks: bool, show_active_deck_names: bool, decks_by_id: Dict[int, Deck], matches: Sequence[Container]) -> None:
     for m in matches:
         m.date = dtutil.ts2dt(m.date)
         m.competition_end_date = dtutil.ts2dt(m.competition_end_date)
@@ -165,7 +167,6 @@ def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', lim
             m.opponent_deck = decks_by_id[m.opponent_deck_id]
         elif should_load_decks:
             m.opponent_deck = None
-    return matches
 
 def stats() -> Dict[str, int]:
     sql = """

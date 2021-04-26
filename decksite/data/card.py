@@ -151,7 +151,7 @@ def preaggregate_playability() -> None:
     table = '_playability'
     sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
-            name VARCHAR(190) NOT NULL,\
+            name VARCHAR(190) NOT NULL,
             playability DECIMAL(3,2),
             PRIMARY KEY (name)
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS

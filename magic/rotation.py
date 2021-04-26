@@ -23,13 +23,11 @@ def interesting(playability: Dict[str, float], c: Card, speculation: bool = True
         return 'moderately-played'
     return None
 
-
 def in_rotation() -> bool:
     if configuration.get_bool('always_show_rotation'):
         return True
     until_rotation = seasons.next_rotation() - dtutil.now()
     return until_rotation < datetime.timedelta(7)
-
 
 def files() -> List[str]:
     return sorted(glob.glob(os.path.expanduser(os.path.join(configuration.get_str('legality_dir'), 'Run_*.txt'))))

@@ -1,6 +1,6 @@
 import datetime
 import json
-from typing import Any, Callable, Dict, List, Optional, Tuple, cast
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, cast
 
 from flask import Response, request, session, url_for
 from flask_restx import Resource, fields
@@ -17,6 +17,7 @@ from decksite.data.achievements import Achievement
 from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches,
                               prepare_people)
 from decksite.views import DeckEmbed
+from find import search as card_search
 from magic import oracle, rotation, seasons, tournaments
 from magic.decklist import parse_line
 from magic.models import Card, Deck
@@ -326,6 +327,49 @@ def matches_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.route('/api/rotation/cards/')
+def rotation_cards_api() -> Response:
+    """
+    Grab a slice of results from a 0-indexed resultset of cards that are potentially rotating in.
+    Input:
+        {
+            'page': <int>,
+            'pageSize': <int>,
+            'q': <str>,
+            'sortBy': <str>,
+            'sortOrder': <'ASC'|'DESC'>
+        }
+    Output:
+        {
+            'page': <int>,
+            'objects': [<entry>],
+            'total': <int>
+        }
+    """
+    _, _, cs = rotation.read_rotation_files()
+    q = request.args.get('q', '').lower()
+    search_results = None
+    try:
+        search_results = [c.name for c in card_search.search(q)] if q else None
+    except card_search.InvalidSearchException:
+        pass
+    if search_results is not None:
+        cs = [c for c in cs if c.name in search_results]
+    if not session.get('admin', False):
+        cs = [c for c in cs if c.status != 'Undecided']
+    total = len(cs)
+    rotation.rotation_sort(cs, request.args.get('sortBy'), request.args.get('sortOrder'))
+    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
+    page = int(request.args.get('page', 0))
+    start = page * page_size
+    end = start + page_size
+    cs = cs[start:end]
+    prepare_cards(cs)
+    r = {'page': page, 'total': total, 'objects': cs}
+    resp = return_json(r, camelize=True)
+    resp.set_cookie('page_size', str(page_size))
+    return resp
+
 @APP.api.route('/decks/<int:deck_id>')
 class LoadDeck(Resource):
     @APP.api.marshal_with(DECK)
@@ -614,18 +658,3 @@ def menu_item_to_search_item(menu_item: Dict[str, Any], parent_name: Optional[st
     else:
         url = url_for(menu_item.get('endpoint', ''))
     return {'name': name, 'type': 'Page', 'url': url}
-
-def rotation_sort_func(sort_by: Optional[str], sort_order: Optional[str]) -> Callable[[Card], Tuple[int, str]]:
-    if not sort_by:
-        sort_by = 'hits' # BAKERT we actually want to do something more sophisticated to make the most interesting cards appear on home ("closest to 84 and just hit")
-        sort_order = 'DESC'
-    else:
-        sort_by = str(sort_by)
-        sort_order = str(sort_order)
-    ascending = sort_order == 'ASC'
-    sort_funcs = {
-        'hitInLastRun': lambda c: c.hit_in_last_run if ascending else not c.hit_in_last_run,
-        'hits': lambda c: c.hits if ascending else -c.hits
-        # BAKERT add more of the columns here once we figure out what those are
-    }
-    return lambda c: (sort_funcs[sort_by](c), c.name) # Secondary sort by name alphabetically to keep the ordering stable between queries.

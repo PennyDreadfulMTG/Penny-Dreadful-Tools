@@ -782,7 +782,7 @@ th.legend {
 }
 
 div.live {
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
 }
 
 .live .table-header {
@@ -899,6 +899,26 @@ Although it displays a similar thing that maxes out around 7-1-1 for a long tour
 .live .num-matches {
     min-width: 5em;
     max-width: 5em;
+}
+
+.live .hits, .live .hits-needed {
+    min-width: 6em;
+    max-width: 6em;
+}
+
+.live .hit-in-last-run {
+    min-width: 1em;
+    max-width: 1em;
+}
+
+/* Some visual indicators of legal status on /rotation/. */
+
+.legality-undecided {
+    color: #999;
+}
+
+.legality-not-legal {
+    text-decoration: line-through;
 }
 
 /* Angled headers */

@@ -8,6 +8,7 @@ const config = {
         __dirname + "/../shared_web/static/js/leaderboardtable.jsx",
         __dirname + "/../shared_web/static/js/matchtable.jsx",
         __dirname + "/../shared_web/static/js/persontable.jsx",
+        __dirname + "/../shared_web/static/js/rotationtable.jsx",
     ],
     output: {
         path: __dirname + "/../shared_web/static/dist",

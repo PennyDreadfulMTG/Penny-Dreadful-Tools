@@ -14,10 +14,7 @@ from magic import card, oracle
 @APP.route('/rotation/')
 @APP.route('/rotation/<interestingness>/')
 def rotation(interestingness: Optional[str] = None) -> str:
-    query = request.args.get('fq')
-    if query is None:
-        query = ''
-    view = Rotation(interestingness, query)
+    view = Rotation()
     return view.page()
 
 

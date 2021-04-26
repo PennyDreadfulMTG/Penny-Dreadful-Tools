@@ -1,6 +1,6 @@
 import datetime
 import json
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, cast
 
 from flask import Response, request, session, url_for
 from flask_restx import Resource, fields
@@ -17,9 +17,10 @@ from decksite.data.achievements import Achievement
 from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches,
                               prepare_people)
 from decksite.views import DeckEmbed
+from find import search as card_search
 from magic import oracle, rotation, seasons, tournaments
 from magic.decklist import parse_line
-from magic.models import Deck
+from magic.models import Card, Deck
 from shared import configuration, dtutil, guarantee
 from shared import redis_wrapper as redis
 from shared.pd_exception import DoesNotExistException, InvalidDataException, TooManyItemsException
@@ -322,6 +323,49 @@ def matches_api() -> Response:
     prepare_matches(entries)
     total = match.load_matches_count(where=where, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': entries}
+    resp = return_json(r, camelize=True)
+    resp.set_cookie('page_size', str(page_size))
+    return resp
+
+@APP.route('/api/rotation/cards/')
+def rotation_cards_api() -> Response:
+    """
+    Grab a slice of results from a 0-indexed resultset of cards that are potentially rotating in.
+    Input:
+        {
+            'page': <int>,
+            'pageSize': <int>,
+            'q': <str>,
+            'sortBy': <str>,
+            'sortOrder': <'ASC'|'DESC'>
+        }
+    Output:
+        {
+            'page': <int>,
+            'objects': [<entry>],
+            'total': <int>
+        }
+    """
+    _, _, cs = rotation.read_rotation_files()
+    q = request.args.get('q', '').lower()
+    search_results = None
+    try:
+        search_results = [c.name for c in card_search.search(q)] if q else None
+    except card_search.InvalidSearchException:
+        pass
+    if search_results is not None:
+        cs = [c for c in cs if c.name in search_results]
+    if not session.get('admin', False):
+        cs = [c for c in cs if c.status != 'Undecided']
+    total = len(cs)
+    rotation.rotation_sort(cs, request.args.get('sortBy'), request.args.get('sortOrder'))
+    page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
+    page = int(request.args.get('page', 0))
+    start = page * page_size
+    end = start + page_size
+    cs = cs[start:end]
+    prepare_cards(cs)
+    r = {'page': page, 'total': total, 'objects': cs}
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))
     return resp

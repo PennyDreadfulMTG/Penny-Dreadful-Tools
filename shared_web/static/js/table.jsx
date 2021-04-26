@@ -196,6 +196,16 @@ export const renderWinPercent = (object) => {
     }
 };
 
+export const renderCard = (card) => (
+    <React.Fragment>
+        <a href={card.url} className="card">{card.name}</a>
+        { card.pdLegal
+            ? ""
+            : <span className="illegal"></span>
+        }
+    </React.Fragment>
+);
+
 // Most of these are PropTypes.string because they come (originally) from data-* on the HTML element so this isn't very good typechecking.
 // It would be nice to check what they "really" are.
 Table.propTypes = {
@@ -216,7 +226,7 @@ Table.propTypes = {
     "renderHeaderRow": PropTypes.func.isRequired,
     "renderRow": PropTypes.func.isRequired,
     "searchPrompt": PropTypes.string,
-    "seasonId": PropTypes.string.isRequired,
+    "seasonId": PropTypes.string,
     "showArchetype": PropTypes.string,
     "showLegalSeasons": PropTypes.string,
     "showOmw": PropTypes.string,

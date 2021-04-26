@@ -9,7 +9,7 @@ from magic.models import Card
 from shared import configuration, dtutil
 from shared import redis_wrapper as redis
 from shared import text
-from shared.pd_exception import DoesNotExistException
+from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 TOTAL_RUNS = 168
 
@@ -132,3 +132,34 @@ def classify_by_status(c: Card, card_names_by_status: Dict[str, List[str]]) -> N
     if not c.status in card_names_by_status:
         card_names_by_status[c.status] = []
     card_names_by_status[c.status].append(c.name)
+
+# Sort a list of cards with rotation information annotated by the specified field and sort order. Sorts in-place for speed.
+def rotation_sort(cs: List[Card], sort_by: Optional[str], sort_order: Optional[str]) -> None:
+    if not sort_by:
+        sort_by = 'hitsNeeded'
+        sort_order = 'ASC'
+    else:
+        sort_by = str(sort_by)
+        sort_order = str(sort_order)
+    rev = sort_order == 'DESC'
+    cs.sort(key=lambda c: c.name)  # Let's have the cards in alphabetical order, everything else being equal.
+    sort_funcs = {
+        'hitInLastRun': lambda c: (c.hit_in_last_run, -hits_needed_score(c) if rev else hits_needed_score(c)),
+        'hits': lambda c: c.hits,
+        'name': lambda c: c.name,
+        'hitsNeeded': hits_needed_score,
+    }
+    cs.sort(key=sort_funcs[sort_by], reverse=rev)
+
+# As both primary and secondary sort we want to be able to sort cards by:
+#     1. Can still be legal but are not yet confirmed, most hits first (to show the cards most likely to make it at the top).
+#     2. Confirmed legal, least hits first (to show the cards most likely to have made it in recently at the top).
+#     3. Confirmed not legal, most hits first (to show the cards that came closest to making it at the top).
+def hits_needed_score(c: Card) -> int:
+    if c.status == 'Undecided':
+        return TOTAL_RUNS - c.hits
+    if c.status == 'Legal':
+        return TOTAL_RUNS + c.hits
+    if c.status == 'Not Legal':
+        return TOTAL_RUNS * 3 - c.hits
+    raise InvalidDataException(f'Card status of `{c.status}` not recognized, did you pass a Card with rotation information?')

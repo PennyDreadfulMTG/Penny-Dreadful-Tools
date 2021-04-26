@@ -2,30 +2,14 @@
     <p>{{rotation_msg}}</p>
     {{#runs}}
         <p>{{runs}} ({{runs_percent}}%) of 168 runs completed. {{num_cards}} cards have hits.</p>
-        {{#in_rotation}}
-            {{> scryfallfilter}}
-        {{/in_rotation}}
-        <table>
-            <thead>
-                <tr>
-                    <th>⇅</th>
-                    <th>Card</th>
-                    <th class="n">Hits</th>
-                    <th class="n">Needed</th>
-                    <th>Status</th>
-            </thead>
-            <tbody>
-                {{#cards}}
-                    <tr class="cardrow" data-cardname="{{name}}">
-                        <td>{{#hit_in_last_run}}↑{{/hit_in_last_run}}{{^hit_in_last_run}}↓{{/hit_in_last_run}}</td>
-                        <td>{{> singlecard}}</td>
-                        <td class="n">{{hits}} ({{percent}}%)</td>
-                        <td class="n">{{hits_needed}} ({{percent_needed}}%)</td>
-                        <td>{{status}}</td>
-                    </tr>
-                {{/cards}}
-            </tbody>
-        </table>
-        {{> rotationkey}}
     {{/runs}}
 </section>
+{{#runs}}
+    <section>
+        <div
+            class="rotationtable"
+            data-page-size="{{page_size}}">
+        </div>
+        {{> rotationkey}}
+    </section>
+{{/runs}}

@@ -1,16 +1,6 @@
-import { Table, renderRecord, renderWinPercent } from "./table";
+import { Table, renderCard, renderRecord, renderWinPercent } from "./table";
 import React from "react";
 import { render } from "react-dom";
-
-const renderCard = (card) => (
-    <React.Fragment>
-        <a href={card.url} className="card">{card.name}</a>
-        { card.pdLegal
-            ? ""
-            : <span className="illegal"></span>
-        }
-    </React.Fragment>
-);
 
 const renderHeaderRow = (table) => (
     <tr>
@@ -32,7 +22,7 @@ const renderHeaderRow = (table) => (
 );
 
 const renderRow = (table, card) => (
-    <tr key={card.name} className="cardrow" data-cardname={card.name}>
+    <tr key={card.name}>
         <td className="name">{renderCard(card)}</td>
         <td className="n">{card.numDecks}</td>
         <td className="n">{renderRecord(card)}</td>

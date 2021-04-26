@@ -69,7 +69,11 @@ export class Table extends React.Component {
         };
         Axios.get(this.props.endpoint, { params })
             .then(
-                (response) => { this.setState({"objects": response.data.objects, "total": response.data.total}); PD.initTables(); },
+                (response) => {
+                    if (params.q === this.state.q) { // Don't update the table if this isn't the latest query.
+                        this.setState({"objects": response.data.objects, "total": response.data.total}); PD.initTables();
+                    }
+                },
                 (error) => { this.setState({ error }); }
             );
     }

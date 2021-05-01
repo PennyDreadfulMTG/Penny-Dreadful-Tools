@@ -25,7 +25,7 @@ class Seasons(View):
             season.update(season_stats)
             if season.get('start_date') is None:
                 continue
-            season['num_legal_cards'] = cards_count[str(season_info['legality_name'])]
+            season['num_legal_cards'] = cards_count.get(str(season_info['legality_name']), 0)
             for k, v in season.items():
                 if isinstance(v, int):
                     season[k] = '{:,}'.format(v)  # Human-friendly number formatting like "29,000".

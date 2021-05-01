@@ -1,8 +1,9 @@
 import datetime
 
+import pytest
+
 from magic import tournaments
 from shared import dtutil
-import pytest
 
 
 # pylint: disable=invalid-name

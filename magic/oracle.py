@@ -23,9 +23,17 @@ def init(force: bool = False) -> None:
 def valid_name(name: str) -> str:
     if name in CARDS_BY_NAME:
         return name
-    canonicalized = card.canonicalize(name)
+    try:
+        front = name[0:name.index('/')].strip()
+    except ValueError:
+        front = name
+    if front in CARDS_BY_NAME:
+        return front
+    canonicalized_name = card.canonicalize(name)
+    canonicalized_front = card.canonicalize(front)
     for k in CARDS_BY_NAME:
-        if canonicalized == card.canonicalize(k):
+        canonicalized = card.canonicalize(k)
+        if canonicalized_name == canonicalized or canonicalized_front == canonicalized:
             return k
     raise InvalidDataException('Did not find any cards looking for `{name}`'.format(name=name))
 

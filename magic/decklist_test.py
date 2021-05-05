@@ -676,3 +676,20 @@ def test_sideboard_with_sb() -> None:
     d = decklist.parse(s)
     assert sum(d['maindeck'].values()) == 60
     assert sum(d['sideboard'].values()) == 15
+
+def test_dfcs() -> None:
+    s = """
+        4 Bala Ged Recovery
+        4 Bala Ged Recovery/Bala Ged Sanctuary
+        4 Bala Ged Recovery // Bala Ged Sanctuary
+        4 Delver of Secrets
+        4 Delver of Secrets/Insectile Aberration
+        4 Delver of Secrets // Insectile Aberration
+        4 Torrent Sculptor
+        4 Torrent Sculptor/Flamethrower Sonata
+        4 Torrent Sculptor // Flamethrower Sonata
+    """
+    s = textwrap.dedent(s)
+    d = decklist.parse(s)
+    assert sum(d['maindeck'].values()) == 36
+    assert sum(d['sideboard'].values()) == 0

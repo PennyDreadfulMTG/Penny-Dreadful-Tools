@@ -9,7 +9,7 @@ verify_ssl = true
 aiohttp = "==3.6.3"
 anytree = "==2.8.0"
 astroid = "==2.5.6"
-attrs = "==21.1.0"
+attrs = "==21.2.0"
 beautifulsoup4 = "==4.9.3"
 better-profanity = "==0.7.0"
 cachelib = "==0.1.1"

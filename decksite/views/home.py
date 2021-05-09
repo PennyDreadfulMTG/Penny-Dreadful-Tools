@@ -86,7 +86,7 @@ class Home(View):
         self.decks = league_decks + tournament_decks + latest_decks
 
     def setup_cards(self, cards: List[Card]) -> None:
-        cards = [c for c in cards if 'Basic Land' not in c.type_line]
+        cards = [c for c in cards if 'Basic' not in c.type_line]
         self.top_cards = cards[0:8]
         self.has_top_cards = len(cards) > 0
         self.cards = self.top_cards  # To get prepare_card treatment

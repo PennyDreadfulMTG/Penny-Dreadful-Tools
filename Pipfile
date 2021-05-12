@@ -63,7 +63,7 @@ PyGithub = "==1.54"
 PyJWT = "==2.1.0"
 SQLAlchemy = "==1.4.15"
 SQLAlchemy-Utils = "==0.37.2"
-Werkzeug = "==1.0.1"
+Werkzeug = "==2.0.0"
 Whoosh = "==2.7.4"
 sentry-sdk = {extras = ["flask"], version = "*"}
 jishaku = "*"

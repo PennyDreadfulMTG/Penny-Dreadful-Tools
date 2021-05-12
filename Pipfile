@@ -17,7 +17,7 @@ click = "==8.0.0"
 coverage = "==5.5"
 "discord.py" = {extras = ["voice"], version = "==1.5.1"}
 feedparser = "==6.0.2"
-flask-restx = "==0.3.0"
+flask-restx = "==0.4.0"
 ftfy = "==6.0.1"
 pip-check-reqs = "==2.2.0"
 google-api-python-client = "==2.4.0"

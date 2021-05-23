@@ -97,10 +97,7 @@ class View(BaseView):
         }]
         num = 1
         current_code = seasons.current_season_code()
-        next_rotation_set_code = seasons.next_rotation_ex().code
         for code in seasons.SEASONS:
-            if code == next_rotation_set_code:
-                break
             seasonlist.append({
                 'name': seasons.season_name(num),
                 'code': code,
@@ -119,6 +116,8 @@ class View(BaseView):
                 'legal_cards_url': 'https://pdmtgo.com/legal_cards.txt' if code == current_code else f'https://pdmtgo.com/{code}_legal_cards.txt',
             })
             num += 1
+            if code == current_code:
+                break
         seasonlist.reverse()
         return seasonlist
 

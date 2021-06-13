@@ -1709,10 +1709,10 @@
         },
         "types-python-dateutil": {
             "hashes": [
-                "sha256:498492e71dfb983ecc47924fb4f0987d205901ebd1d59f9a1c6603f3f970a62b"
+                "sha256:79461202522477cab4a9f4d47462452d14d058f675b51ce0138665aa9b40e554"
             ],
             "index": "pypi",
-            "version": "==0.1.2"
+            "version": "==0.1.3"
         },
         "types-pytz": {
             "hashes": [

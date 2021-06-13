@@ -1473,7 +1473,7 @@
                 "sha256:8d7eaa5a82a1cac232164990f04874c594c9453ec55eef02eab885aa02fc17a2",
                 "sha256:f5321fbe4bf3fefa0efd0bfe7fb14e90909eb62a48ccda331726b4319897dd5e"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
             "version": "==1.25.11"
         },
         "vcrpy": {
@@ -1689,16 +1689,15 @@
         },
         "types-markdown": {
             "hashes": [
-                "sha256:982ee564e0bd90c1b7d67b351725c2d2f665eecbe04999556da845c9ba532395"
+                "sha256:1900f5d49ef40e86f5a462b485fb4b8a3a1776562ff5431c33b69957c6a7a572"
             ],
             "index": "pypi",
-            "version": "==0.1.3"
+            "version": "==0.1.4"
         },
         "types-markupsafe": {
             "hashes": [
                 "sha256:a2c32269a26b4a7205f6f1581bd37cfbcd390297352b828a9643978392239516"
             ],
-            "index": "pypi",
             "version": "==1.1.1"
         },
         "types-pkg-resources": {

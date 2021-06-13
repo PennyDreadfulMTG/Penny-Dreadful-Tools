@@ -477,11 +477,11 @@
         },
         "humanize": {
             "hashes": [
-                "sha256:a0dca9eb010dd1fab61819acaea54be344a4c22c77261f72ac4dbee183dd9a59",
-                "sha256:b8e7878f3063174b212bb82b9e5bee3b24bc47931e44df0bd34bcb1d8e0acf2f"
+                "sha256:37711ee4f10525fa94e0133353d3c20888dd3b78570ec6e53005ba04f75fc3b8",
+                "sha256:bd6e8aa313ca07ed882695f89e4bf09e05049d2d489d4e2bf34b74c0da8d1613"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==3.7.1"
+            "version": "==3.8.0"
         },
         "idna": {
             "hashes": [
@@ -1670,9 +1670,10 @@
         },
         "types-click": {
             "hashes": [
-                "sha256:1b37e9e63ec1f4e67bb8016afac882ec94bcb98a09b92bebde8f1e0f0484e6ed"
+                "sha256:b1db0fb31a6d4a31c4282c231827cbdab628b0d504b016937822d943cd5e40a5"
             ],
-            "version": "==7.1.0"
+            "index": "pypi",
+            "version": "==7.1.1"
         },
         "types-flask": {
             "hashes": [
@@ -1683,9 +1684,9 @@
         },
         "types-jinja2": {
             "hashes": [
-                "sha256:f9d182ec241bdbeb8759c65693c5f95b638a0dfd9e3d91606b3d48e58b0b5caf"
+                "sha256:84f66a2612376ff3c1656198b10a04c7711b6d917d4f5f7f2c2f7ecec0afa040"
             ],
-            "version": "==2.11.0"
+            "version": "==2.11.1"
         },
         "types-markdown": {
             "hashes": [
@@ -1696,9 +1697,9 @@
         },
         "types-markupsafe": {
             "hashes": [
-                "sha256:9b7a9142ff5e97af10235fe504b823a4462b71cbd8189d6dde585aacf4cc9331"
+                "sha256:a2c32269a26b4a7205f6f1581bd37cfbcd390297352b828a9643978392239516"
             ],
-            "version": "==1.1.0"
+            "version": "==1.1.1"
         },
         "types-pkg-resources": {
             "hashes": [

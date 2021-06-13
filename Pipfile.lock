@@ -1723,10 +1723,10 @@
         },
         "types-redis": {
             "hashes": [
-                "sha256:cf29f55ccc3b44c78259cc22e4c0030f77b7a47ec5656211402be0fcf1a98536"
+                "sha256:b27d7f4b8e8858b1549cba14527d3c4d953089ea1538f37698d0da8eb968fab9"
             ],
             "index": "pypi",
-            "version": "==3.5.0"
+            "version": "==3.5.1"
         },
         "types-requests": {
             "hashes": [

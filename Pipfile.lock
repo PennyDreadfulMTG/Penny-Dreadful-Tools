@@ -1663,10 +1663,10 @@
         },
         "types-chardet": {
             "hashes": [
-                "sha256:e3b72c26584bee1a560af9d6c9e66ace5e380cba6cc931f48ea109ea0a189a19"
+                "sha256:39ab6a92b6093d909df60427dc78342dccd6cfa1d7a301bb6664cd87d6451169"
             ],
             "index": "pypi",
-            "version": "==0.1.1"
+            "version": "==0.1.2"
         },
         "types-click": {
             "hashes": [

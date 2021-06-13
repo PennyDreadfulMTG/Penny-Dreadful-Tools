@@ -1716,10 +1716,10 @@
         },
         "types-pytz": {
             "hashes": [
-                "sha256:82b3b8cfeb1496cb856cbb7fd514ad21f70e1b2dc765cba42f55bb2927375c8e"
+                "sha256:1f444521f32c02ec18f17b3ae2b0dffcfb10c0e92f9d93ace14daf6b646edac4"
             ],
             "index": "pypi",
-            "version": "==0.1.0"
+            "version": "==0.1.1"
         },
         "types-redis": {
             "hashes": [

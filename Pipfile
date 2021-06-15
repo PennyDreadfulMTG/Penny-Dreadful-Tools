@@ -36,7 +36,7 @@ cachelib = "==0.1.1"
 click = "==8.0.1"
 coverage = "==5.5"
 "discord.py" = {extras = ["voice"], version = "==1.5.1"}
-feedparser = "==6.0.2"
+feedparser = "==6.0.6"
 flask-restx = "==0.4.0"
 ftfy = "==6.0.3"
 pip-check-reqs = "==2.2.2"

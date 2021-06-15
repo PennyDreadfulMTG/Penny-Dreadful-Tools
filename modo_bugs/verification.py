@@ -23,3 +23,9 @@ def main() -> None:
     if not current:
         print(f'Creating column for {version}')
         project.create_column(version)
+    for col in project.get_columns():
+        if col.name in ['Needs Testing', version]:
+            continue
+        if not col.get_cards():
+            print(f'Deleting empty column {col.name}')
+            col.delete()

@@ -1,5 +1,5 @@
 import re
-from typing import List, Match, Optional
+from typing import Iterable, List, Match, Optional
 
 import requests
 from bs4 import BeautifulSoup, Comment
@@ -173,7 +173,7 @@ def find_issue_by_code(code: str) -> Optional[Issue]:
     if code is None:
         return None
 
-    def scan(issue_list: List[Issue]) -> Optional[Issue]:
+    def scan(issue_list: Iterable[Issue]) -> Optional[Issue]:
         for issue in issue_list:
             if not repo.is_issue_from_bug_blog(issue):
                 # Only bug blog issues have bug blog data

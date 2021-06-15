@@ -1,3 +1,4 @@
+from shared.pd_exception import OperationalException
 from typing import Dict, Optional
 
 from github import Github
@@ -20,14 +21,17 @@ def get_github() -> Optional[Github]:
     return Github(configuration.get_str('github_user'), configuration.get_str('github_password'))
 
 @decorators.memoize
-def get_repo() -> Optional[Repository]:
+def get_repo() -> Repository:
     gh = get_github()
     if gh is not None:
         return gh.get_repo('PennyDreadfulMTG/modo-bugs')
-    return None
+    raise OperationalException
 
 def get_verification_project() -> Project:
-    return get_repo().get_projects()[0]
+    repo = get_repo()
+    if repo:
+        return repo.get_projects()[0]
+    raise OperationalException
 
 def create_comment(issue: Issue, body: str) -> IssueComment:
     set_issue_bbt(issue.number, None)

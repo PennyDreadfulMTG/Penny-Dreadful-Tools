@@ -97,7 +97,7 @@ async def test_command(discordbot: Bot, cmd: str, kwargs: Dict[str, Any], expect
     ctx.message.channel.send = ctx.send
     ctx.author = Container()
     ctx.author.mention = '<@111111111111>'
-    await command.callback(ctx, **kwargs)
+    await command(ctx, **kwargs)
     assert ctx.sent
     if expected_content is not None and ctx.content is not None:
         assert expected_content in ctx.content

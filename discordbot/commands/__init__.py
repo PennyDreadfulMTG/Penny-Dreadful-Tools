@@ -6,6 +6,7 @@ from os import path
 from typing import List, Optional
 
 from discord.ext.commands import Bot, Command, Context
+from discord.ext.commands.cog import Cog, CogMeta
 from discord.ext.commands.errors import BadArgument
 
 from discordbot import command
@@ -18,7 +19,7 @@ def setup(bot: Bot) -> None:
     modules = glob.glob(path.join(path.dirname(__file__), '*.py'))
     files = [path.basename(f)[:-3] for f in modules if path.isfile(f) and not f.endswith('__init__.py')]
 
-    commands, names = [], []
+    commands, cogs, names = [], [], []
     for mod in files:
         n = 0
         m = importlib.import_module(f'.{mod}', package=__name__)
@@ -28,8 +29,12 @@ def setup(bot: Bot) -> None:
                 names += obj.aliases
                 commands.append(obj)
                 n += 1
+            if isinstance(obj, CogMeta):
+                cogs.append(obj(bot))
+                n += 1
         if n == 0:
             print(f'No command found in {m.__name__}')
+            # print(repr(inspect.getmembers(m)))
 
     aliases = text.unambiguous_prefixes(names)
     for cmd in commands:
@@ -42,6 +47,8 @@ def setup(bot: Bot) -> None:
                     to_add.append(prefix)
         cmd.aliases += to_add
         bot.add_command(cmd)
+    for cog in cogs:
+        bot.add_cog(cog)
 
 class CardConverter:
     @classmethod

@@ -2,43 +2,71 @@ import math
 from typing import List, Optional, Tuple
 
 from discord.ext import commands
+from discord_slash import cog_ext
+from discord_slash.utils.manage_commands import create_option
 
 from discordbot.command import MtgContext
 from magic import tournaments
 
+class SwissCog(commands.Cog):
+    def __init__(self, bot: commands.Bot) -> None:
+        self.bot = bot
+        super().__init__()
+        self.slash_swiss = cog_ext.cog_slash(
+            name='swiss',
+            description='Display the record need to reach the elimination rounds',
+            options=[
+                create_option(
+                    name='players',
+                    description='number of players in the event',
+                    option_type=4,
+                    required=True),
+                create_option(
+                    name='rounds',
+                    description='number of rounds of Swiss',
+                    option_type=4,
+                    required=False),
+                create_option(
+                    name='elimination',
+                    description='number of players who make it to the elimination round (ie: Top N)',
+                    option_type=4,
+                    required=False),
+            ],
+        )(self.swiss.callback)
 
-@commands.command()
-async def swiss(ctx: MtgContext, num_players: Optional[int], num_rounds: Optional[int], top_n: Optional[int]) -> None:
-    """Display the record need to reach the elimination rounds for X players with (optionally) Y rounds of Swiss and (optionally) Top Z. 'swiss 33', 'swiss 128 7', 'swiss 12 4 4'"""
-    if not num_players:
-        return await ctx.send(f'{ctx.author.mention}: Please provide the number of players.')
-    if not num_rounds:
-        num_rounds = tournaments.num_rounds_info(num_players, tournaments.StageType.SWISS_ROUNDS)
-    if top_n:
-        num_elimination_rounds = math.ceil(math.log2(top_n))
-    if not top_n:
-        num_elimination_rounds = tournaments.num_rounds_info(num_players, tournaments.StageType.ELIMINATION_ROUNDS)
-        top_n = 2 ** num_elimination_rounds
-    s = ''
-    num_players_by_losses, record_required = swisscalc(num_players, num_rounds, num_elimination_rounds)
-    players_in_top_n = 0
-    players_who_dont_miss = None  # number of players with the worst record that still makes top 8 who make top 8
-    for i, n in enumerate(num_players_by_losses):
-        s += f'{round(n, 1)} players at {num_rounds - i}-{i}\n'
-        players_in_top_n += n
-        if top_n is not None:
-            if players_in_top_n > top_n and players_who_dont_miss is None:
-                players_who_dont_miss = n + top_n - players_in_top_n
-    if players_who_dont_miss is None:
-        players_who_dont_miss = num_players
-
-    if record_required and top_n:
-        if abs(players_who_dont_miss - int(players_who_dont_miss)) < 0.000001:  # if it's an integer number of players
-            people_person = 'people' if round(players_who_dont_miss) != 1 else 'person'
-            s += f'\nIt is likely that {round(players_who_dont_miss)} {people_person} with a record of {record_required} will make the Top {top_n}'
+    @commands.command()
+    async def swiss(self, ctx: MtgContext, num_players: Optional[int], num_rounds: Optional[int] = None, top_n: Optional[int] = None) -> None:
+        """Display the record need to reach the elimination rounds for X players with (optionally) Y rounds of Swiss and (optionally) Top Z. 'swiss 33', 'swiss 128 7', 'swiss 12 4 4'"""
+        if not num_players:
+            await ctx.send(f'{ctx.author.mention}: Please provide the number of players.')
+            return
+        if not num_rounds:
+            num_rounds = tournaments.num_rounds_info(num_players, tournaments.StageType.SWISS_ROUNDS)
+        if top_n:
+            num_elimination_rounds = math.ceil(math.log2(top_n))
         else:
-            s += f'\nIt is likely that {int(players_who_dont_miss)} or {int(players_who_dont_miss) + 1} ({round(players_who_dont_miss, 1)}) people with a record of {record_required} will make the Top {top_n}'
-    await ctx.send(s)
+            num_elimination_rounds = tournaments.num_rounds_info(num_players, tournaments.StageType.ELIMINATION_ROUNDS)
+            top_n = 2 ** num_elimination_rounds
+        s = f'For {num_players} players and {num_rounds} rounds of swiss:\n'
+        num_players_by_losses, record_required = swisscalc(num_players, num_rounds, num_elimination_rounds)
+        players_in_top_n = 0
+        players_who_dont_miss = None  # number of players with the worst record that still makes top 8 who make top 8
+        for i, n in enumerate(num_players_by_losses):
+            s += f'{round(n, 1)} players at {num_rounds - i}-{i}\n'
+            players_in_top_n += n
+            if top_n is not None:
+                if players_in_top_n > top_n and players_who_dont_miss is None:
+                    players_who_dont_miss = n + top_n - players_in_top_n
+        if players_who_dont_miss is None:
+            players_who_dont_miss = num_players
+
+        if record_required and top_n:
+            if abs(players_who_dont_miss - int(players_who_dont_miss)) < 0.000001:  # if it's an integer number of players
+                people_person = 'people' if round(players_who_dont_miss) != 1 else 'person'
+                s += f'\nIt is likely that {round(players_who_dont_miss)} {people_person} with a record of {record_required} will make the Top {top_n}'
+            else:
+                s += f'\nIt is likely that {int(players_who_dont_miss)} or {int(players_who_dont_miss) + 1} ({round(players_who_dont_miss, 1)}) people with a record of {record_required} will make the Top {top_n}'
+        await ctx.send(s)
 
 def swisscalc(num_players: int, num_rounds: int, num_elimination_rounds: int) -> Tuple[List[int], Optional[str]]:
     players_in_elimination_rounds = 2 ** num_elimination_rounds

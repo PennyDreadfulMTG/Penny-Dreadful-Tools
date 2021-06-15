@@ -1,4 +1,3 @@
-from shared.pd_exception import OperationalException
 from typing import Dict, Optional
 
 from github import Github
@@ -9,6 +8,7 @@ from github.Repository import Repository
 
 from shared import configuration, decorators
 from shared import redis_wrapper as redis
+from shared.pd_exception import OperationalException
 
 from . import strings
 

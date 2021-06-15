@@ -1,14 +1,16 @@
 import textwrap
 from typing import Dict, Optional, Tuple, Union
-from discord_slash.utils.manage_commands import create_option
+
 import inflect
-from discord import TextChannel, DMChannel, GroupChannel
+from discord import DMChannel, GroupChannel, TextChannel
 from discord.ext import commands
 from discord_slash import cog_ext
+from discord_slash.utils.manage_commands import create_option
 
 from discordbot.command import MtgContext
 from magic import card_price, fetcher, oracle, tournaments
 from shared import configuration
+
 
 class ExplainCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:

@@ -1,6 +1,8 @@
 from typing import Any
+
 from discord.ext.commands import DefaultHelpCommand
 from discord.ext.commands.core import Command
+
 
 class PennyHelpCommand(DefaultHelpCommand):
     async def send_bot_help(self, mapping: Any) -> None:

@@ -1,7 +1,9 @@
+from typing import Any
 from discord.ext.commands import DefaultHelpCommand
+from discord.ext.commands.core import Command
 
 class PennyHelpCommand(DefaultHelpCommand):
-    async def send_bot_help(self, mapping):
+    async def send_bot_help(self, mapping: Any) -> None:
         ctx = self.context
         bot = ctx.bot
 
@@ -10,7 +12,8 @@ class PennyHelpCommand(DefaultHelpCommand):
             self.paginator.add_line(bot.description, empty=True)
 
         no_category = '\u200b{0.no_category}:'.format(self)
-        def get_category(command, *, no_category=no_category):
+
+        def get_category(command: Command, *, no_category: str = no_category) -> str:
             cog = command.cog
             return cog.qualified_name + ':' if cog is not None else no_category
 

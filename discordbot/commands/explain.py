@@ -1,9 +1,8 @@
 import textwrap
 from typing import Dict, Optional, Tuple, Union
-from discord.channel import DMChannel, GroupChannel
 from discord_slash.utils.manage_commands import create_option
 import inflect
-from discord import TextChannel
+from discord import TextChannel, DMChannel, GroupChannel
 from discord.ext import commands
 from discord_slash import cog_ext
 

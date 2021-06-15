@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+from discordbot.help import PennyHelpCommand
 import logging
 import re
 import subprocess
@@ -14,6 +15,7 @@ from discord.errors import Forbidden, NotFound
 from discord.ext import commands
 from discord.message import Message
 from discord.reaction import Reaction
+from discord_slash import SlashCommand
 from github.GithubException import GithubException
 
 import discordbot.commands
@@ -44,7 +46,7 @@ class Bot(commands.Bot):
         commit_id = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode()
         redis.store('discordbot:commit_id', commit_id)
 
-        help_command = commands.DefaultHelpCommand(dm_help=None, no_category='Commands')
+        help_command = PennyHelpCommand()
         intents = discord.Intents.default()
         intents.members = True
         intents.presences = True
@@ -52,6 +54,7 @@ class Bot(commands.Bot):
 
         super().__init__(command_prefix=commands.when_mentioned_or('!'), help_command=help_command, case_insensitive=True, intents=intents, **kwargs)
         super().load_extension('jishaku')
+        self.slash = SlashCommand(self, sync_commands=True, sync_on_cog_reload=True)
         self.voice = None
         self.achievement_cache: Dict[str, Dict[str, str]] = {}
         for task in TASKS:

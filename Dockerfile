@@ -20,6 +20,9 @@ COPY --from=js /restore/node_modules /pdm/node_modules
 
 WORKDIR /pdm
 
+COPY Pipfile Pipfile.lock ./
+RUN pipenv sync
+
 COPY dev.py run.py analysis/ decksite/ find/ logsite/ magic/ maintenance/ shared*/ card_aliases.tsv ./
 COPY ./.git/ ./
 

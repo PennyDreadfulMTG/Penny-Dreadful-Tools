@@ -40,7 +40,12 @@ def main() -> None:
 
     verification_numbers()
 
-    issues = repo.get_repo().get_issues()
+    repository = repo.get_repo()
+    if repository is None:
+        print('Invalid Config')
+        sys.exit(1)
+
+    issues = repository.get_issues()
     for issue in issues:
         print(issue.title)
         if issue.state == 'open':

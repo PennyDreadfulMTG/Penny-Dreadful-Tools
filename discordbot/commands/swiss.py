@@ -8,6 +8,7 @@ from discord_slash.utils.manage_commands import create_option
 from discordbot.command import MtgContext
 from magic import tournaments
 
+
 class SwissCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot

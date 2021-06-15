@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a3c099a40444bf5211afe838b76dfbd4075355bb1b1ae1c7174bebe84f3a5a86"
+            "sha256": "97f7c2454a63f13f4be2e38e102917c70b287bdbf9a4a55b4e8c42d8b10ba646"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1431,11 +1431,11 @@
         },
         "sqlalchemy-utils": {
             "hashes": [
-                "sha256:5b48d8c57d5bedab8633cd94cf0e97b49895270adadfbb9e66e2fa4c4058a6ad",
-                "sha256:be857f494b29a74f048f1f6ab23ed179cb869300acac79bfbe42f5b5fe087c38"
+                "sha256:716d9d9592258db9651a511d03e6b2553242c2a440855ee3f7d5812bbb55d9eb",
+                "sha256:afd204ed051f53302cd8789cc29c9b15bf458f8baef14a9052bf2823f855d2cb"
             ],
             "index": "pypi",
-            "version": "==0.37.6"
+            "version": "==0.37.7"
         },
         "titlecase": {
             "hashes": [
@@ -1481,7 +1481,7 @@
                 "sha256:8d7eaa5a82a1cac232164990f04874c594c9453ec55eef02eab885aa02fc17a2",
                 "sha256:f5321fbe4bf3fefa0efd0bfe7fb14e90909eb62a48ccda331726b4319897dd5e"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
             "version": "==1.25.11"
         },
         "vcrpy": {

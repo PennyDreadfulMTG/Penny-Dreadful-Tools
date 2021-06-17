@@ -63,6 +63,4 @@ def get_future_legality(c: Card, legal: bool) -> str:
             return symbol
     if rotation.read_rotation_files()[0] <= (rotation.TOTAL_RUNS / 2):
         return ':question:'
-    if legal:
-        return out_emoji
-    return ''
+    return out_emoji

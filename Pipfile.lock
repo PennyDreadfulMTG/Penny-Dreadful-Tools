@@ -1640,10 +1640,11 @@
         },
         "types-flask": {
             "hashes": [
-                "sha256:0d16fbd554b274d003761b10bb06e86aa535b122cd98b0a8e45082750c54e35b"
+                "sha256:4885fd9c64756b0901d3de0a197d0ede60df114d0fbab500aa1bd73bb2c1651c",
+                "sha256:90afe8bd050cf8830cdc620bb9aa4471836b86af88e4d33fccc8789242a661e2"
             ],
             "index": "pypi",
-            "version": "==1.1.0"
+            "version": "==1.1.1"
         },
         "types-jinja2": {
             "hashes": [

@@ -1632,9 +1632,11 @@
         },
         "types-click": {
             "hashes": [
-                "sha256:b1db0fb31a6d4a31c4282c231827cbdab628b0d504b016937822d943cd5e40a5"
+                "sha256:040897284e4f9466825c3865f708a985a8e7ba4d8e22cb9198ffb7b522160850",
+                "sha256:4722746f1ec9fd3fc8b1d7fb8c840604dc22f9e32bcc7a31a36d6d85cc2bce24"
             ],
-            "version": "==7.1.1"
+            "index": "pypi",
+            "version": "==7.1.2"
         },
         "types-flask": {
             "hashes": [
@@ -1645,9 +1647,10 @@
         },
         "types-jinja2": {
             "hashes": [
-                "sha256:84f66a2612376ff3c1656198b10a04c7711b6d917d4f5f7f2c2f7ecec0afa040"
+                "sha256:5b53d2b8bc6dd6dfbc0ae3e33e346fbe343cbeba1ed528858749e2a2ffe0e143",
+                "sha256:d27e112a8add449407de235f4533239149056327c8bddc6b0d6bf80cd7280c16"
             ],
-            "version": "==2.11.1"
+            "version": "==2.11.2"
         },
         "types-markdown": {
             "hashes": [
@@ -1658,9 +1661,10 @@
         },
         "types-markupsafe": {
             "hashes": [
-                "sha256:b5e311cb6aad7f6da0bb1455494305e2bb7941b04c3c8cf9ed7bbd33cf8ba374"
+                "sha256:b1893d090c72204110c232d9b964d2612e15deff738bb75360030473a45cbc0e",
+                "sha256:be8975ba91bd7e672f6f57753ca7ba2979ad9b6687a0e93dd2055926f8c71b0b"
             ],
-            "version": "==1.1.2"
+            "version": "==1.1.3"
         },
         "types-pkg-resources": {
             "hashes": [

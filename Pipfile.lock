@@ -1682,10 +1682,11 @@
         },
         "types-pytz": {
             "hashes": [
-                "sha256:1f444521f32c02ec18f17b3ae2b0dffcfb10c0e92f9d93ace14daf6b646edac4"
+                "sha256:923976ea4b55c00a5b51daad8f497519780315f7b298a49550e22176f5a8f6d5",
+                "sha256:e2fb8cc82d8dc1d2f20b2776645cf74a65a8dfc9bd26a33adb9ebd2c03e0f8f8"
             ],
             "index": "pypi",
-            "version": "==0.1.1"
+            "version": "==0.1.2"
         },
         "types-redis": {
             "hashes": [

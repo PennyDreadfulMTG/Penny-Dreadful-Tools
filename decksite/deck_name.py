@@ -18,6 +18,7 @@ WHITELIST = [
     'basically rakdos version of burn',
     's15 is a meme',
     'i will make combo work in season 15',
+    'b u r n',
 ]
 
 PROFANITY_WHITELIST = [
@@ -122,14 +123,14 @@ def remove_extra_spaces(name: str) -> str:
     return re.sub(r'\s+', ' ', name)
 
 def remove_pd(name: str) -> str:
-    name = re.sub(r'(^| )[\[\(]?pd ?-? ?S?[0-9]+[\]\)]?', '', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(]?pd[hmstf]?[\]\)]?([ -]|$)', '', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(]?penny ?dreadful (sunday|monday|thursday)[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(]?penny ?dreadful[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(]?penny[\[\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(\{}]?pd ?-? ?S?[0-9]+[\]\)\}]?', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(\{]?pd[hmstf]?[\]\)\}]?([ -]|$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(\{]?penny ?dreadful (sunday|monday|thursday)[\[\(]?( |$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(\{]?penny ?dreadful[\]\)\}]?( |$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(\{]?penny[\[\)\}]?( |$)', '', name, flags=re.IGNORECASE).strip()
     name = re.sub(r'penny-', '', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(]?season ?[0-9]+[\]\)]?( |$)', '', name, flags=re.IGNORECASE).strip()
-    name = re.sub(r'(^| )[\[\(]?S[0-9]+[\]\)]?', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(\{]?season ?[0-9]+[\]\)\}]?( |$)', '', name, flags=re.IGNORECASE).strip()
+    name = re.sub(r'(^| )[\[\(\{]?S[0-9]+[\]\)\}]?', '', name, flags=re.IGNORECASE).strip()
     return name
 
 def remove_hashtags(name: str) -> str:

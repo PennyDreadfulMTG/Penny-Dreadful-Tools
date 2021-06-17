@@ -45,6 +45,8 @@ def test_multicolored_exclusive() -> None:
 
 def test_color_identity() -> None:
     do_test('ci:u', '((c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 2)) AND (c.id NOT IN (SELECT card_id FROM card_color_identity WHERE color_id <> 2)))')
+    do_test('cid:u', '((c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 2)) AND (c.id NOT IN (SELECT card_id FROM card_color_identity WHERE color_id <> 2)))')
+    do_test('id:u', '((c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 2)) AND (c.id NOT IN (SELECT card_id FROM card_color_identity WHERE color_id <> 2)))')
 
 def test_color_identity_colorless() -> None:
     do_test('ci:c', '(c.id NOT IN (SELECT card_id FROM card_color_identity))')

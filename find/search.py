@@ -146,7 +146,7 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return text_where('name', term.value())
     if key.value() == 'color' or key.value() == 'c':
         return color_where('color', operator.value(), term.value())
-    if key.value() == 'coloridentity' or key.value() == 'identity' or key.value() == 'ci' or key.value() == 'id':
+    if key.value() in ['coloridentity', 'identity', 'ci', 'id', 'cid']:
         return color_where('color_identity', operator.value(), term.value())
     if key.value() == 'text' or key.value() == 'o':
         return text_where('text', term.value())

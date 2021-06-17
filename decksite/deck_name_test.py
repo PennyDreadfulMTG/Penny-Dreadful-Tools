@@ -104,6 +104,7 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str]]] = [
     ('Boros Weenie', 'Boros Weenie', ['W', 'R'], 'Aggro'),
     ('by the power of god and cheap countermagic', 'By the Power of God and Cheap Countermagic', ['U'], 'Trickbind-Dreadnought'),
     ("Don't Kill Me T2, Teal Sucks", "Don't Kill Me T2, Teal Sucks", [], 'Combo'),
+    ('B U R N', 'B U R N', ['R', 'B'], 'Burn'),
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

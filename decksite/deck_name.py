@@ -18,6 +18,7 @@ WHITELIST = [
     'basically rakdos version of burn',
     's15 is a meme',
     'i will make combo work in season 15',
+    'b u r n',
 ]
 
 PROFANITY_WHITELIST = [

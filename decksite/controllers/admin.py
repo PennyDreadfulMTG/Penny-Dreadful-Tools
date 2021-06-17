@@ -90,7 +90,7 @@ def post_archetypes() -> wrappers.Response:
     elif request.form.getlist('archetype_id') is not None and len(request.form.getlist('archetype_id')) == 2:
         archs.move(request.form.getlist('archetype_id')[0], request.form.getlist('archetype_id')[1])
     elif request.form.get('parent') is not None:
-        if len(request.form.get('name')) > 0:
+        if len(request.form.get('name', '')) > 0:
             archs.add(cast(str, request.form.get('name')), cast_int(request.form.get('parent')))
     else:
         raise InvalidArgumentException('Did not find any of the expected keys in POST to /admin/archetypes: {f}'.format(f=request.form))

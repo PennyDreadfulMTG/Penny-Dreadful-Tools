@@ -177,6 +177,8 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return is_subquery(term.value())
     if key.value() == 'playable' or key.value() == 'p':
         return playable_where(term.value())
+    if key.value() == 'commander':
+        return commander_where(operator.value(), term.value())
     raise InvalidCriterionException
 
 def text_where(column: str, term: str) -> str:
@@ -296,6 +298,9 @@ def playable_where(term: str) -> str:
     for symbol in symbols_without_curlies:
         where = "REPLACE({where}, '{{{symbol}}}', '')".format(where=where, symbol=symbol)
     return "{where} = ''".format(where=where)
+
+def commander_where(operator: str, term: str) -> str:
+    return f"{text_where('type_line', 'Legendary')} AND ({text_where('type_line', 'Creature')} OR {text_where('text', 'can be your Commander')}) AND {color_where('color_identity', operator, term)}"
 
 # Look up the id of a value if we have a lookup table for it.
 # Raise if not found in that table.

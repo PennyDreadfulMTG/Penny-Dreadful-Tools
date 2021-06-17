@@ -169,6 +169,9 @@ def test_complex() -> None:
 def test_is_hybrid() -> None:
     do_test('is:hybrid', "((mana_cost LIKE '%%/2%%') OR (mana_cost LIKE '%%/W%%') OR (mana_cost LIKE '%%/U%%') OR (mana_cost LIKE '%%/B%%') OR (mana_cost LIKE '%%/R%%') OR (mana_cost LIKE '%%/G%%'))")
 
+def test_commander() -> None:
+    do_test('commander:u', "(type_line LIKE '%%Legendary%%') AND ((type_line LIKE '%%Creature%%') OR (oracle_text LIKE '%%can be your Commander%%')) AND ((c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 2)) AND (c.id NOT IN (SELECT card_id FROM card_color_identity WHERE color_id <> 2)))")
+
 def do_test(query: str, expected: str) -> None:
     where = search.parse(search.tokenize(query))
     if where != expected:

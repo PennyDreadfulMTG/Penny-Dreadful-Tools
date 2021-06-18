@@ -6,12 +6,14 @@ from typing import Any, Dict, List, Tuple, Union
 import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
 
+from decksite.data.competition import Competition
 from magic import seasons
 from magic.models import Deck
 from shared import dtutil, guarantee
 from shared.container import Container
 
 TournamentDateType = Tuple[int, str, datetime.datetime]
+Prizes = List[Dict[str, Union[int, str]]]
 
 FNM = 1
 SAT = 2
@@ -28,6 +30,7 @@ class TimeDirection(Enum):
 class StageType(Enum):
     SWISS_ROUNDS = 'swiss_rounds'
     ELIMINATION_ROUNDS = 'elimination_rounds'
+
 
 def next_tournament_info() -> Dict[str, Any]:
     return tournament_info(TimeDirection.AFTER)
@@ -100,10 +103,73 @@ def is_kick_off_week(start: datetime.datetime) -> bool:
     date_of_kick_off = kick_off_date()
     return start <= date_of_kick_off <= start + datetime.timedelta(days=7)
 
-def prize(d: Deck) -> int:
-    return prize_by_finish(d.get('finish') or sys.maxsize)
+def is_pd500(c: Competition) -> bool:
+    return 'Penny Dreadful 500' in c.name
 
-def prize_by_finish(f: int) -> int:
+def is_kick_off(c: Competition) -> bool:
+    return 'Kick Off' in c.name
+
+def pd500_prizes() -> Prizes:
+    return prizes_by_finish(Competition({'name': 'Penny Dreadful 500'}))
+
+def kick_off_prizes() -> Prizes:
+    return prizes_by_finish(Competition({'name': 'Kick Off'}))
+
+def normal_prizes() -> Prizes:
+    return prizes_by_finish(Competition({'name': ''}))
+
+def prizes_by_finish(c: Competition) -> Prizes:
+    prizes, finish, p = [], 1, inflect.engine()
+    while True:
+        pz = prize_by_finish(c, finish)
+        if not pz:
+            break
+        prizes.append({'finish': p.ordinal(finish), 'prize': pz})
+        finish += 1
+    return prizes
+
+def prize(c: Competition, d: Deck) -> int:
+    finish = d.get('finish') or sys.maxsize
+    return prize_by_finish(c, finish)
+
+def prize_by_finish(c: Competition, finish: int) -> int:
+    if is_pd500(c):
+        return pd500_prize(finish)
+    if is_kick_off(c):
+        return kick_off_prize(finish)
+    return normal_prize(finish)
+
+def pd500_prize(f: int) -> int:
+    if f == 1:
+        return 130
+    if f == 2:
+        return 90
+    if f <= 4:
+        return 60
+    if f <= 8:
+        return 30
+    if f <= 16:
+        return 10
+    return 0
+
+def kick_off_prize(f: int) -> int:
+    if f == 1:
+        return 25
+    if f == 2:
+        return 20
+    if f <= 4:
+        return 15
+    if f <= 8:
+        return 10
+    if f <= 16:
+        return 5
+    if f <= 24:
+        return 2
+    if f <= 32:
+        return 1
+    return 0
+
+def normal_prize(f: int) -> int:
     if f == 1:
         return 4
     if f == 2:
@@ -113,16 +179,6 @@ def prize_by_finish(f: int) -> int:
     if f <= 8:
         return 1
     return 0
-
-def prizes_by_finish(multiplier: int = 1) -> List[Dict[str, Any]]:
-    prizes, finish, p = [], 1, inflect.engine()
-    while True:
-        pz = prize_by_finish(finish)
-        if not pz:
-            break
-        prizes.append({'finish': p.ordinal(finish), 'prize': pz * multiplier})
-        finish += 1
-    return prizes
 
 def series_info(tournament_id: int) -> Container:
     return guarantee.exactly_one([s for s in all_series_info() if s.tournament_id == tournament_id])

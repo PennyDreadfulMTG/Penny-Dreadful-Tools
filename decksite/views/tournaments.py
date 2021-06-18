@@ -12,7 +12,7 @@ class Tournaments(View):
         self.setup_tournament_rounds()
         self.leaderboards_url = url_for('.tournament_leaderboards')
         self.bugs_url = url_for('bugs')
-        self.prizes = tournaments.prizes_by_finish()
+        self.prizes = tournaments.normal_prizes()
         self.pd500_url = url_for('pd500')
 
     def page_title(self) -> str:

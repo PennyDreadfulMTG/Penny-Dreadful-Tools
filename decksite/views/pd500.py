@@ -2,6 +2,7 @@ from typing import List
 
 from flask import url_for
 
+from decksite.data.competition import Competition
 from decksite.view import View
 from magic import tournaments
 from magic.models import Deck
@@ -24,6 +25,7 @@ class PD500(View):
         self.cardhoarder_loan_url = 'https://www.cardhoarder.com/free-loan-program-faq'
         self.tournaments_url = url_for('tournaments')
         self.discord_url = url_for('discord')
+        self.prizes = tournaments.pd500_prizes()
 
     def page_title(self) -> str:
         return 'The Penny Dreadful 500'

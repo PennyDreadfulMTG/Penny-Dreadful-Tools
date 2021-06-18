@@ -18,6 +18,7 @@ class KickOff(View):
         self.cardhoarder_loan_url = 'https://www.cardhoarder.com/free-loan-program-faq'
         self.tournaments_url = url_for('tournaments')
         self.discord_url = url_for('discord')
+        self.prizes = tournaments.kick_off_prizes()
 
     def page_title(self) -> str:
         return 'The Season Kick Off'

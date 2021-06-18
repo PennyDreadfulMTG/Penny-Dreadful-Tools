@@ -157,7 +157,7 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return math_where('power', operator.value(), term.value())
     if key.value() == 'toughness' or key.value() == 'tou':
         return math_where('toughness', operator.value(), term.value())
-    if key.value() == 'cmc':
+    if key.value() == 'cmc' or key.value() == 'mv':
         return math_where('cmc', operator.value(), term.value())
     if key.value() == 'loyalty':
         return math_where('loyalty', operator.value(), term.value())
@@ -212,7 +212,7 @@ def math_where(column: str, operator: str, term: str) -> str:
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(1 <> 1)'
-    return "({column} IS NOT NULL AND {column} <> '' AND {column} {operator} {term})".format(column=column, operator=operator, term=sqlescape(term))
+    return "({column} IS NOT NULL AND {column} {operator} {term})".format(column=column, operator=operator, term=sqlescape(term))
 
 def color_where(subtable: str, operator: str, term: str) -> str:
     if operator == ':' and subtable == 'color_identity':

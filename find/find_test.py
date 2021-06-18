@@ -98,10 +98,11 @@ def test_not() -> None:
     do_test('t:creature -t:artifact t:legendary', "(type_line LIKE '%%creature%%') AND NOT (type_line LIKE '%%artifact%%') AND (type_line LIKE '%%legendary%%')")
 
 def test_not_cmc() -> None:
-    do_test('-cmc=2', "NOT (cmc IS NOT NULL AND cmc <> '' AND cmc = 2)")
+    do_test('-cmc=2', "NOT (cmc IS NOT NULL AND cmc = 2)")
 
 def test_cmc() -> None:
-    do_test('cmc>2', "(cmc IS NOT NULL AND cmc <> '' AND cmc > 2)")
+    do_test('cmc>2', "(cmc IS NOT NULL AND cmc > 2)")
+    do_test('cmc=0', "(cmc IS NOT NULL AND cmc = 0)")
 
 def test_not_text() -> None:
     do_test('o:haste NOT o:deathtouch o:trample NOT o:"first strike" o:lifelink', "(oracle_text LIKE '%%haste%%') AND NOT (oracle_text LIKE '%%deathtouch%%') AND (oracle_text LIKE '%%trample%%') AND NOT (oracle_text LIKE '%%first strike%%') AND (oracle_text LIKE '%%lifelink%%')")
@@ -143,13 +144,13 @@ def test_parentheses() -> None:
     do_test('x OR (a OR (b AND c))', "(name LIKE '%%x%%') OR ((name LIKE '%%a%%') OR ((name LIKE '%%b%%') AND (name LIKE '%%c%%')))")
 
 def test_toughness() -> None:
-    do_test('c:r tou>2', "(c.id IN (SELECT card_id FROM card_color WHERE color_id = 4)) AND (toughness IS NOT NULL AND toughness <> '' AND toughness > 2)")
+    do_test('c:r tou>2', "(c.id IN (SELECT card_id FROM card_color WHERE color_id = 4)) AND (toughness IS NOT NULL AND toughness > 2)")
 
 def test_type() -> None:
     do_test('t:"human wizard"', "(type_line LIKE '%%human wizard%%')")
 
 def test_power() -> None:
-    do_test('t:wizard pow<2', "(type_line LIKE '%%wizard%%') AND (power IS NOT NULL AND power <> '' AND power < 2)")
+    do_test('t:wizard pow<2', "(type_line LIKE '%%wizard%%') AND (power IS NOT NULL AND power < 2)")
 
 def test_mana_with_other() -> None:
     do_test('t:creature mana=WW o:lifelink', "(type_line LIKE '%%creature%%') AND (mana_cost = '{W}{W}') AND (oracle_text LIKE '%%lifelink%%')")
@@ -158,13 +159,13 @@ def test_mana_alone() -> None:
     do_test('mana=2uu', "(mana_cost = '{2}{U}{U}')")
 
 def test_or_and_parentheses() -> None:
-    do_test('o:"target attacking" OR (mana=2uu AND (tou>2 OR pow>2))', "(oracle_text LIKE '%%target attacking%%') OR ((mana_cost = '{2}{U}{U}') AND ((toughness IS NOT NULL AND toughness <> '' AND toughness > 2) OR (power IS NOT NULL AND power <> '' AND power > 2)))")
+    do_test('o:"target attacking" OR (mana=2uu AND (tou>2 OR pow>2))', "(oracle_text LIKE '%%target attacking%%') OR ((mana_cost = '{2}{U}{U}') AND ((toughness IS NOT NULL AND toughness > 2) OR (power IS NOT NULL AND power > 2)))")
 
 def test_not_color() -> None:
     do_test('c:r NOT c:u', '(c.id IN (SELECT card_id FROM card_color WHERE color_id = 4)) AND NOT (c.id IN (SELECT card_id FROM card_color WHERE color_id = 2))')
 
 def test_complex() -> None:
-    do_test('c:u OR (c:g AND NOT tou>3)', "(c.id IN (SELECT card_id FROM card_color WHERE color_id = 2)) OR ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 5)) AND NOT (toughness IS NOT NULL AND toughness <> '' AND toughness > 3))")
+    do_test('c:u OR (c:g AND NOT tou>3)', "(c.id IN (SELECT card_id FROM card_color WHERE color_id = 2)) OR ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 5)) AND NOT (toughness IS NOT NULL AND toughness > 3))")
 
 def test_is_hybrid() -> None:
     do_test('is:hybrid', "((mana_cost LIKE '%%/2%%') OR (mana_cost LIKE '%%/W%%') OR (mana_cost LIKE '%%/U%%') OR (mana_cost LIKE '%%/B%%') OR (mana_cost LIKE '%%/R%%') OR (mana_cost LIKE '%%/G%%'))")

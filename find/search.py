@@ -353,15 +353,17 @@ def is_subquery(subquery_name: str) -> str:
     if subquery_name in multiverse.layouts().keys():
         return '(c.layout = {layout})'.format(layout=sqlescape(subquery_name))
     subqueries = {
-        'gainland': 't:land o:"When ~ enters the battlefield, you gain 1 life"',
-        'painland': 't:land o:"~ deals 1 damage to you."',
+        'creatureland': 't:land o:"becomes a"',
         'fetchland': 't:land o:"Search your library for a " (o:"land card" or o:"plains card" or o:"island card" or o:"swamp card" or o:"mountain card" or o:"forest card" or o:"gate card")',
+        'gainland': 't:land o:"When ~ enters the battlefield, you gain 1 life"',
+        'hybrid': 'mana:/2 OR mana:/W OR mana:/U OR mana:/B OR mana:/R OR mana:/G',
+        'painland': 't:land o:"~ deals 1 damage to you."',
         'slowland': """t:land o:"~ doesn't untap during your next untap step." """,
         'storageland': 'o:"storage counter"',
-        'hybrid': 'mana:/2 OR mana:/W OR mana:/U OR mana:/B OR mana:/R OR mana:/G',
-        'creatureland': 't:land o:"becomes a"',
     }
-    subqueries['fetch'] = subqueries['fetchland']
+    for k in list(subqueries.keys()):
+        if k.endswith('land'):
+            subqueries[k.replace('land', '')] = subqueries[k]
     subqueries['refuge'] = subqueries['gainland']
     subqueries['manland'] = subqueries['creatureland']
     query = subqueries.get(subquery_name, '')

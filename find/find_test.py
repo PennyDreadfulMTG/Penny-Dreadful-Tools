@@ -174,6 +174,9 @@ def test_is_hybrid() -> None:
 def test_commander() -> None:
     do_test('commander:u', "(type_line LIKE '%%Legendary%%') AND ((type_line LIKE '%%Creature%%') OR (oracle_text LIKE '%%can be your Commander%%')) AND ((c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 2)) AND (c.id NOT IN (SELECT card_id FROM card_color_identity WHERE color_id <> 2)))")
 
+def test_is_commander() -> None:
+    do_test('is:commander', "((type_line LIKE '%%legendary%%') AND ((type_line LIKE '%%creature%%') OR (oracle_text LIKE CONCAT('%%', name, ' can be your commander%%'))))")
+
 def do_test(query: str, expected: str) -> None:
     where = search.parse(search.tokenize(query))
     if where != expected:

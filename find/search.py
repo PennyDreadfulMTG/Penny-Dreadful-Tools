@@ -148,7 +148,7 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return color_where('color', operator.value(), term.value())
     if key.value() in ['coloridentity', 'identity', 'ci', 'id', 'cid']:
         return color_where('color_identity', operator.value(), term.value())
-    if key.value() == 'text' or key.value() == 'o':
+    if key.value() in ['text', 'oracle', 'o', 'fulloracle', 'fo']:
         return text_where('text', term.value())
     if key.value() == 'type' or key.value() == 't':
         v = 'planeswalker' if term.value() == 'pw' else term.value()

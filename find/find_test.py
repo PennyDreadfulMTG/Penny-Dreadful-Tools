@@ -136,6 +136,7 @@ def test_or_with_args() -> None:
 
 def test_text() -> None:
     do_test('o:"target attacking"', "(oracle_text LIKE '%%target attacking%%')")
+    do_test('fulloracle:"target attacking"', "(oracle_text LIKE '%%target attacking%%')")
 
 def test_name() -> None:
     do_test('tension turtle', "(name LIKE '%%tension%%') AND (name LIKE '%%turtle%%')")

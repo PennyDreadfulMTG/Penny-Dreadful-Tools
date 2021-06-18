@@ -19,26 +19,12 @@
                 </tr>
             </thead>
             <tbody>
-                    <tr>
-                        <td class="n">1st</td>
-                        <td class="n">130 tix</td>
-                    </tr>
-                    <tr>
-                        <td class="n">2nd</td>
-                        <td class="n">90 tix</td>
-                    </tr>
-                    <tr>
-                        <td class="n">3rd-4th</td>
-                        <td class="n">60 tix</td>
-                    </tr>
-                    <tr>
-                        <td class="n">5th-8th</td>
-                        <td class="n">30 tix</td>
-                    </tr>
-                    <tr>
-                        <td class="n">9th-16th</td>
-                        <td class="n">10 tix</td>
-                    </tr>
+                    {{#prizes}}
+                        <tr>
+                            <td class="n">{{finish}}</td>
+                            <td class="n">{{prize}}</td>
+                        </tr>
+                    {{/prizes}}
             </tbody>
         </table>
         <p>Prizes from our sponsor <a class="external" href="https://www.cardhoarder.com/">Cardhoarder</a> in credit.</p>

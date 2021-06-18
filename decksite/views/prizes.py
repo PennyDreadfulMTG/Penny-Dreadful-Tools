@@ -23,7 +23,7 @@ class Prizes(View):
                 pass
             for c in week.get('competitions', []):
                 for d in c.decks:
-                    prizes[d.person] = prizes.get(d.person, 0) + tournaments.prize(d)
+                    prizes[d.person] = prizes.get(d.person, 0) + tournaments.prize(c, d)
             subject = 'Penny Dreadful Prizes for Week Ending {date:%b} {date.day}'.format(date=week.end_date)
             body = '\n'.join([c.name for c in week.get('competitions', [])]) + '\n\n'
             body += '\n'.join(['{username} {prize}'.format(username=k, prize=prizes[k]) for k in sorted(prizes) if prizes[k] > 0])

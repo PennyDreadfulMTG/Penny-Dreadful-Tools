@@ -212,7 +212,7 @@ def math_where(column: str, operator: str, term: str) -> str:
         operator = '='
     if operator not in ['>', '<', '=', '<=', '>=']:
         return '(1 <> 1)'
-    return "({column} IS NOT NULL AND {column} {operator} {term})".format(column=column, operator=operator, term=sqlescape(term))
+    return '({column} IS NOT NULL AND {column} {operator} {term})'.format(column=column, operator=operator, term=sqlescape(term))
 
 def color_where(subtable: str, operator: str, term: str) -> str:
     if operator == ':' and subtable == 'color_identity':

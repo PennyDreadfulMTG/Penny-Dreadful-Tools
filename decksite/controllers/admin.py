@@ -209,7 +209,7 @@ def post_player_note() -> wrappers.Response:
 @APP.route('/admin/unlink/')
 @auth.admin_required
 def unlink(num_affected_people: Optional[int] = None, errors: List[str] = None) -> str:
-    all_people = ps.load_people(order_by='p.name')
+    all_people = ps.load_people(order_by='ISNULL(p.mtgo_username), p.mtgo_username, p.name')
     view = Unlink(all_people, num_affected_people, errors)
     return view.page()
 

@@ -2,9 +2,8 @@ import datetime
 
 import pytest
 
-from decksite.data.competition import Competition
 from magic import tournaments
-from magic.models import Deck
+from magic.models import Competition, Deck
 from shared import dtutil
 
 COMPETITIONS = {

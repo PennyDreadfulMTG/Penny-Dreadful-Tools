@@ -1,7 +1,7 @@
 from typing import List
 
-from decksite.data.competition import Competition
 from decksite.view import View
+from magic.models import Competition
 
 
 # pylint: disable=no-self-use

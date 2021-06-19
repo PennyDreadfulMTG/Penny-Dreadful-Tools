@@ -6,6 +6,7 @@ from anytree import NodeMixin
 from anytree.iterators import PreOrderIter
 
 from decksite.data import deck, preaggregation, query
+from decksite.data.competition import Competition
 from decksite.database import db
 from shared import guarantee
 from shared.container import Container
@@ -127,6 +128,17 @@ def base_archetype_by_id() -> Dict[Archetype, Archetype]:
     if len(BASE_ARCHETYPES) == 0:
         rebuild_archetypes()
     return BASE_ARCHETYPES
+
+def base_archetypes_data(c: Competition) -> Dict[str, int]:
+    base_archs_by_id = base_archetype_by_id()
+    if not c.base_archetype_data:
+        c.base_archetype_data = {a.name: 0 for a in base_archetypes()}
+        for d in c.decks:
+            if not d.archetype_id:
+                continue
+            base_archetype_name = base_archs_by_id[d.archetype_id].name
+            c.base_archetype_data[base_archetype_name] += 1
+    return c.base_archetype_data
 
 def rebuild_archetypes() -> None:
     archetypes_by_id = {a.id: a for a in load_archetypes_deckless()}

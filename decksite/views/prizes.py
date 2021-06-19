@@ -3,10 +3,10 @@ from typing import Any, Dict, List
 
 from dateutil.relativedelta import FR, relativedelta
 
-from decksite.data.competition import Competition
 from decksite.data.person import Person
 from decksite.view import View
 from magic import tournaments
+from magic.models import Competition
 from shared import dtutil
 from shared.container import Container
 

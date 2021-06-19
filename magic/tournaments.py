@@ -7,9 +7,8 @@ from typing import Any, Dict, List, Tuple, Union
 import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
 
-from decksite.data.competition import Competition
 from magic import seasons
-from magic.models import Deck
+from magic.models import Competition, Deck
 from shared import dtutil, guarantee
 from shared.container import Container
 

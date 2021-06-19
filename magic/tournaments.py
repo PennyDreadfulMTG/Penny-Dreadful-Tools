@@ -133,7 +133,7 @@ def display_prizes(prizes: Prizes) -> Prizes:
     grouped = groupby(prizes, key=lambda x: x.get('prize', 0))
     for p, i in grouped:
         items = list(i)
-        finish = items[0].get('finish') if len(items) == 1 else items[0].get('finish') + '–' + items[-1].get('finish')
+        finish = str(items[0].get('finish', '')) if len(items) == 1 else str(items[0].get('finish', '')) + '–' + str(items[-1].get('finish', ''))
         r.append({'finish': finish, 'prize': p})
     return r
 

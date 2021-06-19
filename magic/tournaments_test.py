@@ -98,7 +98,7 @@ def test_normal_prize() -> None:
     assert 0 == tournaments.normal_prize(15)
 
 def test_display_prizes() -> None:
-    ps = [
+    ps: tournaments.Prizes = [
         {'finish': '1st', 'prize': 4},
         {'finish': '2nd', 'prize': 3},
         {'finish': '3rd', 'prize': 2},

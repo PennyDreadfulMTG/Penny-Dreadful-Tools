@@ -181,7 +181,6 @@ def stats() -> Dict[str, int]:
     """
     return db().select(sql, [dtutil.dt2ts(seasons.last_rotation())])[0]
 
-
 def update_match(match_id: int, left_id: int, left_games: int, right_id: int, right_games: int) -> None:
     db().begin('update_match')
     m = load_match(match_id, left_id)

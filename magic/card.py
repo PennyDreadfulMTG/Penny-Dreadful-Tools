@@ -54,7 +54,7 @@ def base_query_lite_properties() -> TableDescription:
     props.update(card_properties())
     props['names'] = copy.deepcopy(BASE)
     props['names']['type'] = TEXT
-    props['names']['query'] = "GROUP_CONCAT(face_name SEPARATOR '|') AS names"
+    props['names']['query'] = "GROUP_CONCAT(face_name ORDER BY position SEPARATOR '|') AS names"
     return props
 
 def base_query_specific_properties() -> TableDescription:
@@ -62,7 +62,7 @@ def base_query_specific_properties() -> TableDescription:
     for k in ['legalities', 'names', 'pd_legal', 'bugs']:
         props[k] = copy.deepcopy(BASE)
     props['names']['type'] = TEXT
-    props['names']['query'] = "GROUP_CONCAT(face_name SEPARATOR '|') AS names"
+    props['names']['query'] = "GROUP_CONCAT(face_name ORDER BY position SEPARATOR '|') AS names"
     props['legalities']['type'] = TEXT
     props['legalities']['query'] = 'legalities'
     props['pd_legal']['type'] = BOOLEAN
@@ -237,7 +237,7 @@ def name_query(column: str = 'face_name') -> str:
         WHEN layout = 'transform' OR layout = 'flip' OR layout = 'meld' OR layout = 'adventure' OR layout = 'modal_dfc' THEN
             GROUP_CONCAT(CASE WHEN `{table}`.position = 1 THEN {column} ELSE '' END SEPARATOR '')
         ELSE
-            GROUP_CONCAT({column} SEPARATOR ' // ' )
+            GROUP_CONCAT({column} ORDER BY position SEPARATOR ' // ' )
         END
     """.format(column=column, table='{table}')
 

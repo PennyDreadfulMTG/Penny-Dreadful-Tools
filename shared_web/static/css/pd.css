@@ -554,7 +554,7 @@ a {
     cursor: pointer; /* For pagination links in React tables, they don't have an href attribute. */
 }
 
-a, main table.calendar a, main .intro .details a, .details a {
+a, main table.calendar a, main .intro .details a, .details a, main li a.force-link-style {
     color: inherit;
     font-family: heading-caps, symbols, Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-variant-numeric: oldstyle-nums;
@@ -562,14 +562,14 @@ a, main table.calendar a, main .intro .details a, .details a {
     text-transform: lowercase;
 }
 
-main a:hover, main table.calendar a:hover, .details a:hover {
+main a:hover, main table.calendar a:hover, .details a:hover, main li a.force-link-style:hover {
     background-color: #eee;
     border-radius: 0.317em;
     transition-duration: 1s;
     transition-property: background;
 }
 
-/* There are a lot of places we plain links not heading-caps, even in the main content area. */
+/* There are a lot of places we want plain links not heading-caps, even in the main content area. */
 main td a, main h1 a, main h2 a, main h3 a, main li a, .decklist a, .rotation a {
     font-family: inherit;
     font-variant-numeric: normal;

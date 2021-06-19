@@ -106,6 +106,7 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str]]] = [
     ("Don't Kill Me T2, Teal Sucks", "Don't Kill Me T2, Teal Sucks", [], 'Combo'),
     ('B U R N', 'B U R N', ['R', 'B'], 'Burn'),
     ('Elves {PD}', 'Elves', ['G'], 'Elves'),
+    ('Metalworks pd bond and post', 'Metalworks Bond and Post', ['G'], 'Greenpost'),
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)
@@ -120,6 +121,7 @@ def test_remove_pd() -> None:
     assert deck_name.remove_pd('biovisionary pd') == 'biovisionary'
     assert deck_name.remove_pd('[PD] Mono Black Control') == 'Mono Black Control'
     assert deck_name.remove_pd('(Penny) Boros Soliders') == 'Boros Soliders'
+    assert deck_name.remove_pd('Metalworks pd bond and post') == 'Metalworks  bond and post'  # The double space is handled elsewhere.
 
 def test_invalid_color() -> None:
     d = Container({'original_name': 'PD',

@@ -157,6 +157,12 @@ def base_query_lite() -> str:
 
 
 async def update_database_async(new_date: datetime.datetime) -> None:
+    sets, all_cards = [], []
+    try:
+        sets = await fetcher.all_sets_async()
+        all_cards = await fetcher.all_cards_async()
+    except Exception as e:
+        print(f'Aborting database update because fetching from Scryfall failed: {e}')
     db().begin('update_database')
     db().execute('DELETE FROM scryfall_version')
     db().execute('SET FOREIGN_KEY_CHECKS=0')  # Avoid needing to drop _cache_card (which has an FK relationship with card) so that the database continues to function while we perform the update.
@@ -170,9 +176,9 @@ async def update_database_async(new_date: datetime.datetime) -> None:
         DELETE FROM card;
         DELETE FROM `set`;
     """)
-    for s in await fetcher.all_sets_async():
+    for s in sets:
         insert_set(s)
-    every_card_printing = await fetcher.all_cards_async()
+    every_card_printing = all_cards
     await insert_cards_async(every_card_printing)
     await update_pd_legality_async()
     db().execute('INSERT INTO scryfall_version (last_updated) VALUES (%s)', [dtutil.dt2ts(new_date)])

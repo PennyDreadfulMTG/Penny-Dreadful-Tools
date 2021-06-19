@@ -19,6 +19,7 @@ WHITELIST = [
     's15 is a meme',
     'i will make combo work in season 15',
     'b u r n',
+    'r e a n i m a t o r',
 ]
 
 PROFANITY_WHITELIST = [

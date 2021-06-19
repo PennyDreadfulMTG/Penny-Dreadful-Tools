@@ -86,6 +86,9 @@ export class Table extends React.Component {
     }
 
     render() {
+        if (this.state.objects.length === 0) {
+            return <div className="loading"><span className="spinner"></span> <span className="text">Loading…</span></div>;
+        }
         if (this.state.error) {
             return this.renderError(JSON.stringify(this.state.error));
         }

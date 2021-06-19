@@ -238,7 +238,7 @@ def reset_db() -> None:
 
 def safe_push(args: List[str]) -> None:
     label = stash_if_any()
-    print('>>>> Rebasing branch on Master')
+    print('>>>> Rebasing branch on master')
     subprocess.check_call(['git', 'pull', 'origin', 'master', '--rebase'])
     unit(args)
     push()

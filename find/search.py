@@ -34,69 +34,72 @@ def tokenize(s: str) -> Expression:
     depth = 0
     i = 0
     mode = EXPECT_EXPRESSION
-    while i < len(chars):
-        c = chars[i]
-        rest = s[i:]
-        if mode == EXPECT_EXPRESSION:
-            if c == '(':
-                depth += 1
-                tokens[depth] = []
-            elif c == ')':
-                expression = Expression(tokens[depth])
-                del tokens[depth]
-                depth -= 1
-                tokens[depth].append(expression)
-            elif Criterion.match(rest):
-                tokens[depth].append(Key(rest))
-                mode = EXPECT_OPERATOR
-                i += Key.length(rest) - 1
-            elif BooleanOperator.match(rest):
-                tokens[depth].append(BooleanOperator(rest))
-                mode = EXPECT_EXPRESSION
-                i += BooleanOperator.length(rest) - 1
-            elif c == '"':
-                string = []
-                mode = QUOTED_STRING
-            elif c == ' ':
-                pass  # noop
-            elif String.match(c):
-                string = [c]
-                mode = UNQUOTED_STRING
+    try:
+        while i < len(chars):
+            c = chars[i]
+            rest = s[i:]
+            if mode == EXPECT_EXPRESSION:
+                if c == '(':
+                    depth += 1
+                    tokens[depth] = []
+                elif c == ')':
+                    expression = Expression(tokens[depth])
+                    del tokens[depth]
+                    depth -= 1
+                    tokens[depth].append(expression)
+                elif Criterion.match(rest):
+                    tokens[depth].append(Key(rest))
+                    mode = EXPECT_OPERATOR
+                    i += Key.length(rest) - 1
+                elif BooleanOperator.match(rest):
+                    tokens[depth].append(BooleanOperator(rest))
+                    mode = EXPECT_EXPRESSION
+                    i += BooleanOperator.length(rest) - 1
+                elif c == '"':
+                    string = []
+                    mode = QUOTED_STRING
+                elif c == ' ':
+                    pass  # noop
+                elif String.match(c):
+                    string = [c]
+                    mode = UNQUOTED_STRING
+                else:
+                    raise InvalidTokenException("Expected expression, got '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
+            elif mode == EXPECT_OPERATOR:
+                if Operator.match(rest):
+                    tokens[depth].append(Operator(rest))
+                    mode = EXPECT_TERM
+                    i += Operator.length(rest) - 1
+                else:
+                    raise InvalidTokenException("Expected operator, got '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
+            elif mode == EXPECT_TERM:
+                if c == '"':
+                    string = []
+                    mode = QUOTED_STRING
+                else:
+                    string = [c]
+                    mode = UNQUOTED_STRING
+            elif mode == QUOTED_STRING:
+                if c == '"':
+                    tokens[depth].append(String(''.join(string)))
+                    mode = EXPECT_EXPRESSION
+                else:
+                    string.append(c)
+            elif mode == UNQUOTED_STRING:
+                if c == ' ':
+                    tokens[depth].append(String(''.join(string)))
+                    mode = EXPECT_EXPRESSION
+                elif c == ')':
+                    tokens[depth].append(String(''.join(string)))
+                    mode = EXPECT_EXPRESSION
+                    i -= 1
+                else:
+                    string.append(c)
             else:
-                raise InvalidTokenException("Expected expression, got '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
-        elif mode == EXPECT_OPERATOR:
-            if Operator.match(rest):
-                tokens[depth].append(Operator(rest))
-                mode = EXPECT_TERM
-                i += Operator.length(rest) - 1
-            else:
-                raise InvalidTokenException("Expected operator, got '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
-        elif mode == EXPECT_TERM:
-            if c == '"':
-                string = []
-                mode = QUOTED_STRING
-            else:
-                string = [c]
-                mode = UNQUOTED_STRING
-        elif mode == QUOTED_STRING:
-            if c == '"':
-                tokens[depth].append(String(''.join(string)))
-                mode = EXPECT_EXPRESSION
-            else:
-                string.append(c)
-        elif mode == UNQUOTED_STRING:
-            if c == ' ':
-                tokens[depth].append(String(''.join(string)))
-                mode = EXPECT_EXPRESSION
-            elif c == ')':
-                tokens[depth].append(String(''.join(string)))
-                mode = EXPECT_EXPRESSION
-                i -= 1
-            else:
-                string.append(c)
-        else:
-            raise InvalidModeException("Bad mode '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
-        i += 1
+                raise InvalidModeException("Bad mode '{c}' at character {i} in {s}".format(c=c, i=i, s=s))
+            i += 1
+    except KeyError:
+        raise InvalidSearchException(f'Invalid nesting in {s}')
     if mode == QUOTED_STRING:
         raise InvalidSearchException('Reached end of expression without finding the end of a quoted string in {s}'.format(s=s))
     if depth != 0:

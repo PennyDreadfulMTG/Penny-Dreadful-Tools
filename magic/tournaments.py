@@ -130,7 +130,7 @@ def prizes_by_finish(c: Competition) -> Prizes:
 
 def display_prizes(prizes: Prizes) -> Prizes:
     r = []
-    grouped = groupby(prizes, key=lambda p: p.get('prize', 0))
+    grouped = groupby(prizes, key=lambda x: x.get('prize', 0))
     for p, i in grouped:
         items = list(i)
         finish = items[0].get('finish') if len(items) == 1 else items[0].get('finish') + '–' + items[-1].get('finish')

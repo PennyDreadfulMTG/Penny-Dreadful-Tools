@@ -25,6 +25,8 @@ class Seasons(View):
             season.update(season_stats)
             if season.get('start_date') is None:
                 continue
+            season['matches_per_day'] = round(season['num_matches'] / season['length_in_days'])
+            season['decks_per_day'] = round(season['num_decks'] / season['length_in_days'])
             season['num_legal_cards'] = cards_count.get(str(season_info['legality_name']), 0)
             for k, v in season.items():
                 if isinstance(v, int):

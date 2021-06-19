@@ -6,26 +6,11 @@ from flask import url_for
 from decksite.data import archetype, deck, query
 from decksite.data.top import Top
 from decksite.database import db
+from magic.models import Competition
 from shared import dtutil, guarantee
 from shared.container import Container
 from shared.database import sqlescape
 
-
-class Competition(Container):
-    def __init__(self, params: Dict[str, Any]) -> None:
-        super().__init__(params)
-        self.base_archetype_data: Dict[str, int] = {}
-
-    def base_archetypes_data(self) -> Dict[str, int]:
-        base_archetype_by_id = archetype.base_archetype_by_id()
-        if not self.base_archetype_data:
-            self.base_archetype_data = {a.name: 0 for a in archetype.base_archetypes()}
-            for d in self.decks:
-                if not d.archetype_id:
-                    continue
-                base_archetype_name = base_archetype_by_id[d.archetype_id].name
-                self.base_archetype_data[base_archetype_name] += 1
-        return self.base_archetype_data
 
 # pylint: disable=too-many-arguments
 def get_or_insert_competition(start_date: datetime.datetime,
@@ -105,7 +90,7 @@ def load_competitions(where: str = 'TRUE', having: str = 'TRUE', limit: str = ''
     return competitions
 
 def load_decks(competitions: List[Competition]) -> None:
-    if competitions == []:
+    if not competitions:
         return
     competitions_by_id = {c.id: c for c in competitions}
     where = 'd.competition_id IN ({ids})'.format(ids=', '.join(str(k) for k in competitions_by_id.keys()))

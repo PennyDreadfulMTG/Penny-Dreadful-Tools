@@ -1,14 +1,14 @@
 import datetime
 import sys
 from enum import Enum
+from itertools import groupby
 from typing import Any, Dict, List, Tuple, Union
 
 import inflect
 from dateutil import rrule  # type: ignore # dateutil stubs are incomplete
 
-from decksite.data.competition import Competition
 from magic import seasons
-from magic.models import Deck
+from magic.models import Competition, Deck
 from shared import dtutil, guarantee
 from shared.container import Container
 
@@ -110,13 +110,13 @@ def is_kick_off(c: Competition) -> bool:
     return 'Kick Off' in c.name
 
 def pd500_prizes() -> Prizes:
-    return prizes_by_finish(Competition({'name': 'Penny Dreadful 500'}))
+    return display_prizes(prizes_by_finish(Competition({'name': 'Penny Dreadful 500'})))
 
 def kick_off_prizes() -> Prizes:
-    return prizes_by_finish(Competition({'name': 'Kick Off'}))
+    return display_prizes(prizes_by_finish(Competition({'name': 'Kick Off'})))
 
 def normal_prizes() -> Prizes:
-    return prizes_by_finish(Competition({'name': ''}))
+    return display_prizes(prizes_by_finish(Competition({'name': ''})))
 
 def prizes_by_finish(c: Competition) -> Prizes:
     prizes, finish, p = [], 1, inflect.engine()
@@ -127,6 +127,15 @@ def prizes_by_finish(c: Competition) -> Prizes:
         prizes.append({'finish': p.ordinal(finish), 'prize': pz})
         finish += 1
     return prizes
+
+def display_prizes(prizes: Prizes) -> Prizes:
+    r = []
+    grouped = groupby(prizes, key=lambda x: x.get('prize', 0))
+    for p, i in grouped:
+        items = list(i)
+        finish = str(items[0].get('finish', '')) if len(items) == 1 else str(items[0].get('finish', '')) + '–' + str(items[-1].get('finish', ''))
+        r.append({'finish': finish, 'prize': p})
+    return r
 
 def prize(c: Competition, d: Deck) -> int:
     finish = d.get('finish') or sys.maxsize

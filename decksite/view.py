@@ -205,7 +205,7 @@ class View(BaseView):
             c.league = c.type == 'League'
             title_safe = ''
             try:
-                for k, v in c.base_archetypes_data().items():
+                for k, v in archetype.base_archetypes_data(c).items():
                     if v > 0:
                         title_safe += '{v} {k}<br>'.format(v=v, k=html.escape(k))
             except KeyError:

@@ -2,7 +2,6 @@ from typing import List
 
 from flask import url_for
 
-from decksite.data.competition import Competition
 from decksite.view import View
 from magic import tournaments
 from magic.models import Deck

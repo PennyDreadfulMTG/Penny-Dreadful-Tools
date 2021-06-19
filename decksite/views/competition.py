@@ -1,7 +1,7 @@
 from typing import Any
 
-from decksite.data.competition import Competition as Comp
 from decksite.view import View
+from magic.models import Competition as Comp
 from shared import dtutil
 
 

@@ -50,6 +50,7 @@ class Person(View):
         self.unique_cards = oracle.load_cards(your_cards['unique'])
         self.has_unique_cards = len(self.unique_cards) > 0
         self.cards += self.trailblazer_cards + self.unique_cards
+        self.seasons_active = []
         self.setup_active_seasons(seasons_active)
 
     def __getattr__(self, attr: str) -> Any:
@@ -59,10 +60,11 @@ class Person(View):
         return self.person.name
 
     def setup_active_seasons(self, seasons_active: Sequence[int]) -> None:
-        total_seasons = len(seasons.SEASONS)
-        cube_side_length = round(math.sqrt(total_seasons))
-        self.seasons_active = []
-        for i, setcode in enumerate(reversed(seasons.SEASONS)):
+        all_seasons = self.all_seasons()
+        all_seasons.pop() # remove "all time" which is not shown here
+        total_seasons = len(all_seasons)
+        cube_side_length = math.ceil(math.sqrt(total_seasons))
+        for i, setcode in enumerate(reversed([s.get('code') for s in all_seasons])):
             season_id = total_seasons - i
             if season_id > seasons.current_season_num():
                 continue

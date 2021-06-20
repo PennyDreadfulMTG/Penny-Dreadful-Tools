@@ -1655,10 +1655,11 @@
         },
         "types-markdown": {
             "hashes": [
-                "sha256:1900f5d49ef40e86f5a462b485fb4b8a3a1776562ff5431c33b69957c6a7a572"
+                "sha256:3b5f279067f17630efe55c49be1f9795ce02c25b836e15c47095297d85153a0c",
+                "sha256:ef9285b7a5d321e8495f32be99a80d931c0414beae1c3c71a54ca955a3b7f492"
             ],
             "index": "pypi",
-            "version": "==0.1.4"
+            "version": "==0.1.5"
         },
         "types-markupsafe": {
             "hashes": [

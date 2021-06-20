@@ -159,6 +159,12 @@ def set_stars_and_top8(d: Deck) -> None:
     elif d.finish == 5 and d.competition_top_n >= 5:
         d.top8_safe = '<span title="Losing Quarterfinalist">⑧</span>'
         d.stars_safe = '★'
+    elif d.finish and d.finish <= 16 and ('Penny Dreadful 500' in d.competition_name or 'Kick Off' in d.competition_name):
+        d.top8_safe = '<span title="Top 16">⑯</span>'
+        d.stars_safe = '★'
+    elif d.finish and d.finish <= 32 and 'Kick Off' in d.competition_name:
+        d.top8_safe = '<span title="Top 32">Ⓣ</span>'
+        d.stars_safe = '★'
     else:
         d.top8_safe = ''
         if d.get('wins') is not None and d.get('losses') is not None:

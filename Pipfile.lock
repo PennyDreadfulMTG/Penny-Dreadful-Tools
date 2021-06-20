@@ -1734,10 +1734,11 @@
         },
         "types-werkzeug": {
             "hashes": [
-                "sha256:51dca6aa5be250e5b2e3150c8ab40e531408e4684db7054d02b5b8dcd2a193cd"
+                "sha256:1a4e551955e6fc608cf6b93a2749963b9cce5ff56cddfc90404af1c919afa937",
+                "sha256:7f6d4c8771a67d44e83134d56e59b482bf81ebd28e6557015fdfcc81e3d11b53"
             ],
             "index": "pypi",
-            "version": "==1.0.1"
+            "version": "==1.0.2"
         },
         "typing-extensions": {
             "hashes": [

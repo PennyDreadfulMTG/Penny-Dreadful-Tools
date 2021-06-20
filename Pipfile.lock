@@ -1727,10 +1727,11 @@
         },
         "types-typed-ast": {
             "hashes": [
-                "sha256:2aa19ed32e0fa6c2d6f6988f93bb20dd18896de980174c254b59868b28998675"
+                "sha256:014ab2742015d3eaab86ea061c27809c7e76beeb9e134102f2e2ddb34ab05c62",
+                "sha256:6a47165760321835d160da20a6ac5b9065f23d6dc246162508cad1ef1238afc3"
             ],
             "index": "pypi",
-            "version": "==1.4.1"
+            "version": "==1.4.2"
         },
         "types-werkzeug": {
             "hashes": [

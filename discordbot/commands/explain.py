@@ -202,6 +202,13 @@ class ExplainCog(commands.Cog):
                 """,
                 {},
             ),
+            'wrongdeck': (
+                """
+                If a player realizes they have the wrong deck before the match begins they should take a screenshot of their opening hand as proof. Fix the deck and recreate the match. The player who had the wrong deck must give the choice of play or draw to their opponent.
+                If a player realizes they have the wrong deck mid-game they receive a game loss for that game. The match should be recreated with the right deck and games conceded to get the match into the right state.
+                """,
+                {},
+            ),
         }
         self.keys = sorted(self.explanations.keys())
         self.explanations['drop'] = self.explanations['retire']

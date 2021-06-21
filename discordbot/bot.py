@@ -123,7 +123,7 @@ class Bot(commands.Bot):
                 await after.add_roles(streaming_role)
         # Achievements
         role = await get_role(before.guild, 'Linked Magic Online')
-        if role and before.status == Status.offline and after.status == Status.online:
+        if role and before.status == Status.offline and after.status in [Status.online, Status.dnd]:
             data = None
             # Linked to PDM
             if role is not None and not role in before.roles:

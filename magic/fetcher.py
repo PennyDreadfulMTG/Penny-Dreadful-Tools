@@ -294,7 +294,7 @@ def whatsinstandard() -> WISSchemaType:
     #     if cached is not None:
     #         return cached
     #     raise
-    info = json.loads('''{
+    info = json.loads("""{
   "deprecated": false,
   "sets": [
     {
@@ -793,7 +793,7 @@ def whatsinstandard() -> WISSchemaType:
       "announcementUrl": "https://magic.wizards.com/en/articles/archive/news/october-12-2020-banned-and-restricted-announcement?adf"
     }
   ]
-}''')
+}""")
     redis.store('magic:fetcher:whatisinstandard_6', info, ex=86400)
     redis.store('magic:fetcher:whatisinstandard_noex', info)
     return info

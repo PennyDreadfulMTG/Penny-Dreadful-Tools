@@ -61,7 +61,7 @@ class Person(View):
 
     def setup_active_seasons(self, seasons_active: Sequence[int]) -> None:
         all_seasons = self.all_seasons()
-        all_seasons.pop() # remove "all time" which is not shown here
+        all_seasons.pop()  # remove "all time" which is not shown here
         total_seasons = len(all_seasons)
         cube_side_length = math.ceil(math.sqrt(total_seasons))
         for i, setcode in enumerate(reversed([s.get('code') for s in all_seasons])):

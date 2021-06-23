@@ -1692,11 +1692,11 @@
         },
         "types-pytz": {
             "hashes": [
-                "sha256:923976ea4b55c00a5b51daad8f497519780315f7b298a49550e22176f5a8f6d5",
-                "sha256:e2fb8cc82d8dc1d2f20b2776645cf74a65a8dfc9bd26a33adb9ebd2c03e0f8f8"
+                "sha256:addfa2a1a27b324b6beb422faa4737962532bbab3793481d5bdebbffb8f9f243",
+                "sha256:ec9555397f91518b2cf028ed837a69e388763c6a5e58abffaf37732f9c581a46"
             ],
             "index": "pypi",
-            "version": "==0.1.2"
+            "version": "==2021.1.0"
         },
         "types-redis": {
             "hashes": [

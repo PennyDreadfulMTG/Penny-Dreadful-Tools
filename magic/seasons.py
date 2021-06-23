@@ -4,7 +4,7 @@ from typing import List, Optional, Union
 import attr
 
 from magic import fetcher
-from shared import dtutil
+from shared import dtutil, recursive_update
 from shared.pd_exception import DoesNotExistException, InvalidDataException
 
 WIS_DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
@@ -34,19 +34,20 @@ OVERRIDES = {
         'code': 'AFR',
         'enterDate': {
             'exact': '2021-07-16T00:00:00.000',
-        }
+        },
     },
     'Innistrad: Midnight Hunt': {
         'enterDate': {
             'exact': '2021-09-17T00:00:00.000',
-        }
+        },
     },
     'Innistrad: Crimson Vow': {
         'enterDate': {
             'exact': '2021-11-19T00:00:00.000',
-        }
+        },
     },
 }
+
 
 @attr.s(auto_attribs=True, slots=True)
 class DateType():
@@ -66,7 +67,7 @@ class SetInfo():
     @classmethod
     def parse(cls, json: 'fetcher.WISSetInfoType') -> 'SetInfo':
         json['mtgoCode'] = json['code']
-        json.update(OVERRIDES.get(json['name'], {}))  # type: ignore
+        recursive_update.rupdate(json, OVERRIDES.get(json['name'], {}))  # type: ignore
 
         return cls(name=json['name'],
                    code=json['code'],

@@ -56,7 +56,7 @@ class SwissCog(commands.Cog):
             s += f'{round(n, 1)} players at {num_rounds - i}-{i}\n'
             players_in_top_n += n
             if top_n is not None:
-                if players_in_top_n > top_n and players_who_dont_miss is None:
+                if players_in_top_n >= top_n and players_who_dont_miss is None:
                     players_who_dont_miss = n + top_n - players_in_top_n
         if players_who_dont_miss is None:
             players_who_dont_miss = num_players

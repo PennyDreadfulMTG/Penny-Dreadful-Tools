@@ -50,6 +50,7 @@ class Person(View):
         self.unique_cards = oracle.load_cards(your_cards['unique'])
         self.has_unique_cards = len(self.unique_cards) > 0
         self.cards += self.trailblazer_cards + self.unique_cards
+        self.seasons_active: List[Dict[str, object]] = []
         self.setup_active_seasons(seasons_active)
 
     def __getattr__(self, attr: str) -> Any:
@@ -59,17 +60,23 @@ class Person(View):
         return self.person.name
 
     def setup_active_seasons(self, seasons_active: Sequence[int]) -> None:
-        total_seasons = len(seasons.SEASONS)
-        cube_side_length = round(math.sqrt(total_seasons))
-        self.seasons_active = []
-        for i, setcode in enumerate(reversed(seasons.SEASONS)):
+        all_seasons = self.all_seasons()
+        all_seasons.pop()  # remove "all time" which is not shown here
+        total_seasons = len(all_seasons)
+        cube_side_length = math.ceil(math.sqrt(total_seasons))
+        for i, setcode in enumerate(reversed([s.get('code') for s in all_seasons])):
             season_id = total_seasons - i
             if season_id > seasons.current_season_num():
                 continue
             active = season_id in seasons_active
-            self.seasons_active.append({
+            if setcode:
+                class_name = f'ss-{setcode.lower()} ' + ('ss-common' if active else 'inactive')
+            else:
+                class_name = ''
+            season = {
                 'season_id': season_id,
-                'className': f'ss-{setcode.lower()} ' + ('ss-common' if active else 'inactive'),
+                'className': class_name,
                 'url': url_for('seasons.person', person_id=self.person.id, season_id=season_id) if active else '',
                 'edge': (i + 1) % cube_side_length == 0,
-            })
+            }
+            self.seasons_active.append(season)

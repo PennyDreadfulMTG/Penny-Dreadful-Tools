@@ -283,6 +283,7 @@ WISSchemaType = TypedDict('WISSchemaType', {
 })
 
 def whatsinstandard() -> WISSchemaType:
+    # if you're here to hack data because WIS isn't correct, use magic.seasons.OVERRIDES instead
     cached = redis.get_container('magic:fetcher:whatisinstandard_6')
     if cached is not None:
         return cached
@@ -294,6 +295,7 @@ def whatsinstandard() -> WISSchemaType:
         if cached is not None:
             return cached
         raise
+
     redis.store('magic:fetcher:whatisinstandard_6', info, ex=86400)
     redis.store('magic:fetcher:whatisinstandard_noex', info)
     return info

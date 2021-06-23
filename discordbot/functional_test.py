@@ -61,7 +61,7 @@ def get_params() -> List[Tuple]:
             ('flavor', {'c': await card('Dwarven Pony')}, 'likes to eat meat'),  # Meaty flavor
             ('flavor', {'c': await card('Gruesome Menagerie|grn')}, 'Variety is also the spice of death.'),  # Spicy flavor
             ('flavor', {'c': await card('capital offense|UST')}, 'part basket case, all lowercase.'),  # Capital flavor
-            ('flavor', {'c': await card('Reliquary Tower|plgs')}, 'Archmage Vintra'),  # Long set code
+            ('flavor', {'c': await card('Reliquary Tower|plg20')}, 'Archmage Vintra'),  # Long set code
             ('history', {'c': await card('Necropotence')}, None),
             ('legal', {'c': await card('Island')}, None),
             ('legal', {'c': await card('Black Lotus')}, None),

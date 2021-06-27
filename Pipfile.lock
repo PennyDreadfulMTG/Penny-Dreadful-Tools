@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a81936766f980975fb73be701cba585601f2dad44736c0774f23b5bfb02a4bd4"
+            "sha256": "0f61fce7bc14f03c7d7f02763e523443df76e0a6c2967fcca92b9cd6b4538718"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -130,11 +130,11 @@
         },
         "cachelib": {
             "hashes": [
-                "sha256:47e95a67d68c729cbad63285a790a06f0e0d27d71624c6e44c1ec3456bb4476f",
-                "sha256:7df6e05b8dfccdeb869e171575580e5606cf1e82a166633b3cb406bc4f113fd0"
+                "sha256:dcb5fafe6b6b544aaa8d0cacb12d70bbf9bbf72c041f17fcad1618db7bedeada",
+                "sha256:ee28ffec3d5470314184030a475725b4e5b1b90775c55d34530e16bf7e3e1e11"
             ],
             "index": "pypi",
-            "version": "==0.1.1"
+            "version": "==0.2.0"
         },
         "cachetools": {
             "hashes": [
@@ -1441,7 +1441,7 @@
                 "sha256:8d7eaa5a82a1cac232164990f04874c594c9453ec55eef02eab885aa02fc17a2",
                 "sha256:f5321fbe4bf3fefa0efd0bfe7fb14e90909eb62a48ccda331726b4319897dd5e"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
             "version": "==1.25.11"
         },
         "vcrpy": {
@@ -1670,10 +1670,10 @@
         },
         "types-markupsafe": {
             "hashes": [
-                "sha256:b1893d090c72204110c232d9b964d2612e15deff738bb75360030473a45cbc0e",
-                "sha256:be8975ba91bd7e672f6f57753ca7ba2979ad9b6687a0e93dd2055926f8c71b0b"
+                "sha256:2539a9e9b1b5a1bf1c10fdf2cb1dcb89e6f360759196883f4d5d103c53624375",
+                "sha256:4fd2cc858fb4aea38555850f4ac2ecafae3543c88abb056669a3346c5c1b202c"
             ],
-            "version": "==1.1.3"
+            "version": "==1.1.4"
         },
         "types-pkg-resources": {
             "hashes": [

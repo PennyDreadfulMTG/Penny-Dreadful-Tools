@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d7174820d1b7cacd170fcf56671601b695f0469b26563d0f0818d1518e71795c"
+            "sha256": "c66382a0ab6bb657698727daa2a48465e1a81ff9fbff1910ea1193930f46d4fe"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1423,10 +1423,11 @@
         },
         "titlecase": {
             "hashes": [
-                "sha256:5d97ee51da37fb57c8753b79efa8edfdf3f10c0060de926efee970081e28d52f"
+                "sha256:037be1a542634d5582735c949f3b247bfc878a4f21c76957ae42167a398c9dce",
+                "sha256:9a1595ed9b88f3ce4362a7602ee63cf074e10ac80d1256b32ea1ec5ffa265fa0"
             ],
             "index": "pypi",
-            "version": "==2.2.0"
+            "version": "==2.3"
         },
         "toml": {
             "hashes": [
@@ -1465,7 +1466,7 @@
                 "sha256:8d7eaa5a82a1cac232164990f04874c594c9453ec55eef02eab885aa02fc17a2",
                 "sha256:f5321fbe4bf3fefa0efd0bfe7fb14e90909eb62a48ccda331726b4319897dd5e"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
             "version": "==1.25.11"
         },
         "vcrpy": {

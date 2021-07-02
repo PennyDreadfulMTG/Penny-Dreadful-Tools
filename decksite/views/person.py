@@ -64,7 +64,7 @@ class Person(View):
         all_seasons.pop()  # remove "all time" which is not shown here
         total_seasons = len(all_seasons)
         cube_side_length = math.ceil(math.sqrt(total_seasons))
-        for i, setcode in enumerate(reversed([s.get('code') for s in all_seasons])):
+        for i, setcode in enumerate([s.get('code') for s in all_seasons]):
             season_id = total_seasons - i
             if season_id > seasons.current_season_num():
                 continue

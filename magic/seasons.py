@@ -29,23 +29,6 @@ OVERRIDES = {
             'rough': 'April 2020',
         },
     },
-    # The following are because WIS is currently out of date.
-    'Dungeons & Dragons: Adventures in the Forgotten Realms': {
-        'code': 'AFR',
-        'enterDate': {
-            'exact': '2021-07-16T00:00:00.000',
-        },
-    },
-    'Innistrad: Midnight Hunt': {
-        'enterDate': {
-            'exact': '2021-09-17T00:00:00.000',
-        },
-    },
-    'Innistrad: Crimson Vow': {
-        'enterDate': {
-            'exact': '2021-11-19T00:00:00.000',
-        },
-    },
 }
 
 

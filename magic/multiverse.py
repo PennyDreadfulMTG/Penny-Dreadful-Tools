@@ -51,6 +51,7 @@ def layouts() -> Dict[str, bool]:
         'adventure': True,
         'art_series': False,
         'augment': False,
+        'class': True,
         'double_faced_token': False,
         'emblem': False,
         'flip': True,

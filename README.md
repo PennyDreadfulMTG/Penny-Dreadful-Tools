@@ -92,12 +92,12 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 - Some very minor parts of the bot (the "modofail" command) use libopus and ffmpeg which are not in pip and must be installed in a your-OS-specific way separately. Very optional.
 
 
-## Running Decksite
+## Running Decksite (pennydreadfulmagic.com)
 
 - pipenv run python run.py decksite
 - Visit <http://localhost:5000/>
 
-## Running Logsite
+## Running Logsite (logs.pennydreadfulmagic.com)
 
 - pipenv run python run.py logsite
 - Visit <http://localhost:5001/>
@@ -106,6 +106,14 @@ If you plan on running things outside of the containers (eg: dev.py or logsite):
 
 - pipenv run python run.py discordbot
 - Visit your Discord server.
+
+## Running the tests
+
+There are various levels of granularity but in general use you want:
+
+- pipenv run python dev.py test # Runs the unit tests, type checking, lint.
+
+Check the dev.py source code for the full set of options including `unit`, `types`, `lint` (covered by `test` above) as well as `functional` (integration tests), `perf` (performance tests). `release` will take you all the way from your committed change to a PR via the tests (needs GitHub's commandline `gh`/`hub` installed).
 
 ## Working on React components
 

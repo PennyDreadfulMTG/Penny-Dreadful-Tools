@@ -11,6 +11,7 @@ from .cards import Cards
 from .community_guidelines import CommunityGuidelines
 from .competition import Competition
 from .competitions import Competitions
+from .contact_us import ContactUs
 from .deck import Deck, DeckEmbed
 from .deck_check import DeckCheck
 from .decks import Decks

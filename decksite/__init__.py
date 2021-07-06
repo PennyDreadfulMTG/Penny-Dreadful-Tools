@@ -76,6 +76,7 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
             {'name': gettext('About pennydreadfulmagic.com'), 'endpoint': 'about_pdm'},
             {'name': gettext('FAQs'), 'endpoint': 'faqs'},
             {'name': gettext('Community Guidelines'), 'endpoint': 'community_guidelines'},
+            {'name': gettext('Contact Us'), 'endpoint': 'contact_us'},
         ]},
         {'name': gettext('Admin'), 'admin_only': True, 'endpoint': 'admin_home', 'submenu': admin.admin_menu()},
     ]

@@ -3,7 +3,7 @@ from flask import Response, make_response, redirect, request, url_for
 from decksite import APP, get_season_id
 from decksite.cache import cached
 from decksite.data import deck
-from decksite.views import About, AboutPdm, CommunityGuidelines, Faqs
+from decksite.views import About, AboutPdm, CommunityGuidelines, ContactUs, Faqs
 
 
 @APP.route('/about/')
@@ -35,4 +35,10 @@ def faqs() -> str:
 @cached()
 def community_guidelines() -> str:
     view = CommunityGuidelines()
+    return view.page()
+
+@APP.route('/contact/')
+@cached()
+def contact_us() -> str:
+    view = ContactUs()
     return view.page()

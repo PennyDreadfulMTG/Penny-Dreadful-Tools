@@ -82,7 +82,7 @@ PyGithub = "==1.54"
 PyJWT = "==2.1.0"
 SQLAlchemy = "==1.4.21"
 SQLAlchemy-Utils = "==0.37.8"
-Werkzeug = "==1.0.1"
+Werkzeug = "==2.0.1"
 Whoosh = "==2.7.4"
 sentry-sdk = {extras = ["flask"], version = "*"}
 jishaku = "==1.20.0.220"

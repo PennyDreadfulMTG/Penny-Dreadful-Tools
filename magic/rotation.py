@@ -99,7 +99,10 @@ def clear_redis(clear_files: bool = False) -> None:
 def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_list: List[str]) -> Optional[Card]:
     remaining_runs = TOTAL_RUNS - runs
     hits_needed = max(round(TOTAL_RUNS / 2 - hits), 0)
-    c = cs[name]
+    c = cs.get(name)
+    if c is None:
+        # raise DoesNotExistException("Legality list contains unknown card '{name}'".format(name=name))
+        return None
     if not multiverse.is_playable_layout(c.layout):
         return None
     percent = round(round(hits / runs, 2) * 100)
@@ -107,8 +110,6 @@ def process_score(name: str, hits: int, cs: Dict[str, Card], runs: int, latest_l
         percent_needed = '0'
     else:
         percent_needed = str(round(round(hits_needed / remaining_runs, 2) * 100))
-    if c is None:
-        raise DoesNotExistException("Legality list contains unknown card '{name}'".format(name=name))
     if remaining_runs + hits < TOTAL_RUNS / 2:
         status = 'Not Legal'
     elif hits >= TOTAL_RUNS / 2:

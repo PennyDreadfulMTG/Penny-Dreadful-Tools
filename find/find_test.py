@@ -177,6 +177,12 @@ def test_commander() -> None:
 def test_is_commander() -> None:
     do_test('is:commander', "((type_line LIKE '%%legendary%%') AND ((type_line LIKE '%%creature%%') OR (oracle_text LIKE CONCAT('%%', name, ' can be your commander%%'))))")
 
+def test_is_spikey() -> None:
+    where = search.parse(search.tokenize('is:spikey'))
+    assert 'Attune with Aether' in where
+    assert 'Balance' in where
+    assert "name = 'Yawgmoth''s Will'" in where
+
 def do_test(query: str, expected: str) -> None:
     where = search.parse(search.tokenize(query))
     if where != expected:

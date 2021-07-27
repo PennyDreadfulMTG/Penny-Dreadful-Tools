@@ -20,6 +20,7 @@ export class Table extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            loadedOnce: false,
             objects: [],
             page: 0,
             pageSize: parseInt(props.pageSize, 10),
@@ -71,7 +72,7 @@ export class Table extends React.Component {
             .then(
                 (response) => {
                     if (params.q === this.state.q) { // Don't update the table if this isn't the latest query.
-                        this.setState({"objects": response.data.objects, "total": response.data.total}); PD.initTables();
+                        this.setState({"objects": response.data.objects, "total": response.data.total, "loadedOnce": true}); PD.initTables();
                     }
                 },
                 (error) => { this.setState({ error }); }
@@ -86,7 +87,7 @@ export class Table extends React.Component {
     }
 
     render() {
-        if (this.state.objects.length === 0) {
+        if (this.state.objects.length === 0 && !this.state.loadedOnce) {
             return <div className="loading"><span className="spinner"></span> <span className="text">Loading…</span></div>;
         }
         if (this.state.error) {

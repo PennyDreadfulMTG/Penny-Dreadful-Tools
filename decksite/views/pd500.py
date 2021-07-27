@@ -17,7 +17,7 @@ class PD500(View):
         self.people_with_byes = sorted(self.people_with_byes, key=lambda k: k['person'])
         pd500_date = tournaments.pd500_date()
         if dtutil.now() > pd500_date:
-            self.date_info_safe = 'The Penny Dreadful 500 is on the second-last Saturday of the season'
+            self.date_info_safe = 'The Penny Dreadful 500 is on the last Saturday of the season'
         else:
             display_time = dtutil.display_date_with_date_and_year(pd500_date)
             self.date_info_safe = f'The next Penny Dreadful 500 is on <time datetime="{pd500_date}" data-format="dddd MMMM Do LT z">{display_time}</time>'

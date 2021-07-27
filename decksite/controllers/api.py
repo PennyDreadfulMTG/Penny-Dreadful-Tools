@@ -227,7 +227,7 @@ def h2h_api() -> Response:
     where = query.text_match_where('opp.mtgo_username', q) if q else 'TRUE'
     entries = ps.load_head_to_head(person_id, where=where, order_by=order_by, limit=limit, season_id=season_id)
     for entry in entries:
-        entry.opp_url = url_for('seasons.person', mtgo_username=entry.opp_mtgo_username, season_id=None if season_id == seasons.current_season_num() else season_id)
+        entry.opp_url = url_for('seasons.person', mtgo_username=entry.opp_mtgo_username, season_id=season_id)
     total = ps.load_head_to_head_count(person_id=person_id, where=where, season_id=season_id)
     r = {'page': page, 'total': total, 'objects': entries}
     resp = return_json(r, camelize=True)

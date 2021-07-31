@@ -8,7 +8,7 @@ from magic.models import Card, Deck
 
 # pylint: disable=no-self-use,too-many-arguments,too-many-instance-attributes
 class Matchups(View):
-    def __init__(self, hero: Dict[str, Union[str, int]], enemy: Dict[str, Union[str, int]], season_id: Optional[int], archetypes: List[Archetype], people: List[Person], cards: List[Card], results: Mapping[str, Union[str, int, List[int], List[Deck]]]) -> None:
+    def __init__(self, hero: Mapping[str, Union[str, int]], enemy: Mapping[str, Union[str, int]], season_id: Optional[int], archetypes: List[Archetype], people: List[Person], cards: List[Card], results: Mapping[str, Union[str, int, List[int], List[Deck]]]) -> None:
         super().__init__()
         self.results = results
         if results:
@@ -41,7 +41,7 @@ class Matchups(View):
         return 'Matchups Calculator'
 
 
-def summary_text(choices: Dict[str, Union[str, int]], archetypes: List[Archetype], people: List[Person]) -> str:
+def summary_text(choices: Mapping[str, Union[str, int]], archetypes: List[Archetype], people: List[Person]) -> str:
     s = ''
     if choices.get('archetype_id'):
         s += next(a.name for a in archetypes if a.id == int(choices['archetype_id'])) + ', '

@@ -2,6 +2,7 @@ import os
 import subprocess
 import urllib
 from typing import Any, Dict, Optional, Tuple, Union
+from flask.helpers import make_response
 
 import sentry_sdk
 from flask import (Blueprint, Flask, Request, Response, redirect, request, send_from_directory,
@@ -139,6 +140,8 @@ class PDFlask(Flask):
         """
         Serves the robots.txt
         """
+        if self.static_folder is None:
+            return make_response('')
         if configuration.get_bool('is_test_site'):
             return send_from_directory(self.static_folder, 'deny-all-robots.txt')
         return send_from_directory(self.static_folder, 'robots.txt')

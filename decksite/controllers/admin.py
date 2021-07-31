@@ -28,7 +28,7 @@ from shared_web.decorators import fill_form
 
 def admin_menu() -> List[Dict[str, str]]:
     m = []
-    endpoints = sorted([rule.endpoint for rule in APP.url_map.iter_rules() if 'GET' in rule.methods and rule.rule.startswith('/admin')])
+    endpoints = sorted([rule.endpoint for rule in APP.url_map.iter_rules() if rule.methods and 'GET' in rule.methods and rule.rule.startswith('/admin')])
     for endpoint in endpoints:
         name = titlecase.titlecase(endpoint.replace('_', ' ')) if endpoint else 'Admin Home'
         m.append({'name': name, 'endpoint': endpoint, 'url': url_for(endpoint)})
@@ -77,7 +77,7 @@ def post_archetypes() -> wrappers.Response:
         for deck_id in request.form.getlist('deck_id'):
             archetype_id = archetype_ids.pop(0)
             if archetype_id:
-                archs.assign(deck_id, archetype_id, auth.person_id())
+                archs.assign(int(deck_id), int(archetype_id), auth.person_id())
                 redis.clear(f'decksite:deck:{deck_id}')
     elif request.form.get('q') is not None and request.form.get('notq') is not None:
         search_results = ds.load_decks_by_cards(cast(str, request.form.get('q')).splitlines(), cast(str, request.form.get('notq')).splitlines())
@@ -88,7 +88,7 @@ def post_archetypes() -> wrappers.Response:
     elif request.form.get('new_description') is not None:
         archs.update_description(cast_int(request.form.get('archetype_id')), cast(str, request.form.get('new_description')))
     elif request.form.getlist('archetype_id') is not None and len(request.form.getlist('archetype_id')) == 2:
-        archs.move(request.form.getlist('archetype_id')[0], request.form.getlist('archetype_id')[1])
+        archs.move(int(request.form.getlist('archetype_id')[0]), int(request.form.getlist('archetype_id')[1]))
     elif request.form.get('parent') is not None:
         if len(request.form.get('name', '')) > 0:
             archs.add(cast(str, request.form.get('name')), cast_int(request.form.get('parent')))
@@ -203,7 +203,7 @@ def post_player_note() -> wrappers.Response:
     if not request.form.get('person_id') or not request.form.get('note'):
         raise InvalidArgumentException(f'Did not find any of the expected keys in POST to /admin/people/notes: {request.form}')
     creator = ps.load_person_by_discord_id(session['id'])
-    ps.add_note(creator.id, request.form['person_id'], request.form['note'])
+    ps.add_note(creator.id, int(request.form['person_id']), request.form['note'])
     return redirect(url_for('player_notes'))
 
 @APP.route('/admin/unlink/')
@@ -219,12 +219,11 @@ def post_unlink() -> str:
     n, errors = 0, []
     person_id = request.form.get('person_id')
     if person_id:
-        n += ps.unlink_discord(person_id)
+        n += ps.unlink_discord(int(person_id))
     discord_id = request.form.get('discord_id')
     if discord_id:
         try:
-            discord_id = int(discord_id)
-            n += ps.remove_discord_link(discord_id)
+            n += ps.remove_discord_link(int(discord_id))
         except ValueError:
             errors.append('Discord ID must be an integer.')
     return unlink(n, errors)

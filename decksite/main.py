@@ -127,7 +127,7 @@ def after_request(response: Response) -> Response:
     return response
 
 @APP.teardown_request
-def teardown_request(_: Optional[Exception]) -> None:
+def teardown_request(_: Optional[BaseException]) -> None:
     if g.get('p') is not None:
         perf.check(g.p, 'slow_page', request.path, 'decksite')
     db().close()

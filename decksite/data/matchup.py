@@ -1,11 +1,11 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from decksite.data import deck, match, query
 from decksite.database import db
 from shared import guarantee
 
 
-def matchup(hero: Dict[str, str], enemy: Dict[str, str], season_id: int = None) -> Dict[str, Union[str, int, List[int]]]:
+def matchup(hero: Dict[str, str], enemy: Dict[str, str], season_id: Optional[int] = None) -> Dict[str, Union[str, int, List[int]]]:
     where = 'TRUE'
     prefix = None
     args: List[Union[str, int]] = []

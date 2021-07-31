@@ -1,5 +1,5 @@
 import urllib.parse
-from typing import List, Optional
+from typing import Dict, List, Optional, Union
 
 from flask import redirect, request, url_for
 from werkzeug import wrappers
@@ -105,7 +105,8 @@ def archetype(archetype_id: str, deck_type: Optional[str] = None) -> str:
 
 @APP.route('/matchups/')
 def matchups() -> str:
-    hero, enemy = {}, {}
+    hero: Dict[str, str] = {}
+    enemy: Dict[str, str] = {}
     for k, v in request.args.items():
         if k.startswith('hero_'):
             k = k.replace('hero_', '')
@@ -113,7 +114,8 @@ def matchups() -> str:
         else:
             k = k.replace('enemy_', '')
             enemy[k] = v
-    season_id = request.args.get('season_id')
+    season_str = request.args.get('season_id')
+    season_id = int(season_str) if season_str is not None else None
     results = mus.matchup(hero, enemy, season_id=season_id) if 'hero_person_id' in request.args else {}
     matchup_archetypes = archs.load_archetypes_deckless()
     matchup_archetypes.sort(key=lambda a: a.name)

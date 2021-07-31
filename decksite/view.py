@@ -321,7 +321,10 @@ class View(BaseView):
 
 
 def seasonized_url(season_id: Union[int, str]) -> str:
-    args = request.view_args.copy()
+    if request.view_args is not None:
+        args = request.view_args.copy()
+    else:
+        args = {}
     if season_id == seasons.current_season_num():
         args.pop('season_id', None)
         endpoint = cast(str, request.endpoint).replace('seasons.', '')

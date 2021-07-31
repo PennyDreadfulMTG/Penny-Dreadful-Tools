@@ -1,4 +1,5 @@
 import os
+from typing import Any
 
 from flask import g, has_request_context, request
 
@@ -9,12 +10,11 @@ from shared.database import Database, get_database
 TEST_CONTEXT = Container()
 
 def db() -> Database:
+    ctx: Any = TEST_CONTEXT  # Fallback context for testing.
     if has_request_context():  # type: ignore
         ctx = request
     elif g:
         ctx = g
-    else:
-        ctx = TEST_CONTEXT  # Fallback context for testing.
     if not hasattr(ctx, 'database'):
         ctx.database = get_database(configuration.get_str('decksite_database'))  # type: ignore
     return ctx.database  # type: ignore

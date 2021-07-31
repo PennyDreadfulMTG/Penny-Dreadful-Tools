@@ -25,7 +25,9 @@ def add_season_id(_endpoint: str, values: Dict[str, Any]) -> None:
     values.setdefault('season_id', get_season_id())
 
 @SEASONS.url_value_preprocessor
-def pull_season_id(_endpoint: str, values: Dict[str, Any]) -> None:
+def pull_season_id(_endpoint: Optional[str], values: Optional[Dict[Any, Any]]) -> None:
+    if values is None:
+        return
     v = values.pop('season_id')
     g.season_id = seasons.season_id(v)
 

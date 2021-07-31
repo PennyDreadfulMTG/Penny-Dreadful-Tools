@@ -117,6 +117,7 @@ def task(args: List[str]) -> None:
         else:
             s = importlib.import_module('{module}.{name}'.format(name=name, module=module))
             use_app_context = getattr(s, 'REQUIRES_APP_CONTEXT', True)
+            exitcode = None
             if use_app_context:
                 from decksite.main import APP
                 APP.config['SERVER_NAME'] = configuration.server_name()
@@ -130,7 +131,7 @@ def task(args: List[str]) -> None:
             elif getattr(s, 'ad_hoc', None) is not None:
                 exitcode = s.ad_hoc()  # type: ignore
             if use_app_context:
-                app_context.__exit__(None, None, None)
+                app_context.__exit__(None, None, None)  # type: ignore
             if exitcode is not None:
                 sys.exit(exitcode)
     except Exception as c:
@@ -172,7 +173,7 @@ def run_all_tasks(module: Any, with_flag: Optional[str] = None) -> None:
             error = c
 
     if app_context is not None:
-        app_context.__exit__(None, None, None)
+        app_context.__exit__(None, None, None)  # type: ignore
     if error:
         raise error
 

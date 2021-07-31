@@ -1,8 +1,8 @@
-from shared import configuration
 from discord.ext import commands
 
 from discordbot.command import MtgContext
 from magic import multiverse, oracle, whoosh_write
+from shared import configuration
 
 
 @commands.command(hidden=True)

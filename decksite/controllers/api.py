@@ -79,6 +79,26 @@ COMPETITION = APP.api.model('Competition', {
     'decks': fields.List(fields.Nested(DECK)),
 })
 
+RELEASE_DATE = APP.api.model('ReleaseDate', {
+    'exact': fields.DateTime(),
+    'rough': fields.String(),
+})
+
+SET = APP.api.model('Set', {
+    'code': fields.String(),
+    'name': fields.String(),
+    'enter_date': fields.Nested(RELEASE_DATE),
+    'exit_date': fields.Nested(RELEASE_DATE),
+    'enter_date_dt': fields.String(),
+})
+
+ROTATION_DETAILS = APP.api.model('RotationDetails', {
+    'last': fields.Nested(SET),
+    'next': fields.Nested(SET),
+    'diff': fields.Float(),
+    'friendly_diff': fields.String(),
+})
+
 @APP.route('/api/decks/')
 def decks_api() -> Response:
     """
@@ -391,6 +411,20 @@ class LoadRandomDeck(Resource):
         blob['url'] = url_for('deck', deck_id=blob['id'], _external=True)
         return blob
 
+@APP.api.route('/rotation')
+class Rotation(Resource):
+    @APP.api.marshal_with(ROTATION_DETAILS)
+    def get(self) -> Dict[str, Any]:
+        now = dtutil.now()
+        diff = seasons.next_rotation() - now
+        result = {
+            'last': seasons.last_rotation_ex(),
+            'next': seasons.next_rotation_ex(),
+            'diff': diff.total_seconds(),
+            'friendly_diff': dtutil.display_time(int(diff.total_seconds())),
+        }
+        return result
+
 @APP.route('/api/competitions')
 def competitions_api() -> Response:
     # Don't send competitions with any decks that do not have their correct archetype to third parties otherwise they
@@ -419,6 +453,11 @@ class League(Resource):
         if not pdbot:
             lg.decks = [d for d in lg.decks if not d.is_in_current_run()]
         return lg
+
+@APP.api.route('/seasoncodes')
+class SeasonCodes(Resource):
+    def get(self) -> List[str]:
+        return seasons.SEASONS[:seasons.current_season_num()]
 
 @APP.route('/api/person/<person>')
 @fill_args('season_id')
@@ -472,18 +511,6 @@ def drop(person: str) -> Response:
 
     league.retire_deck(run)
     result = {'success': True}
-    return return_json(result)
-
-@APP.route('/api/rotation')
-def rotation_api() -> Response:
-    now = dtutil.now()
-    diff = seasons.next_rotation() - now
-    result = {
-        'last': seasons.last_rotation_ex(),
-        'next': seasons.next_rotation_ex(),
-        'diff': diff.total_seconds(),
-        'friendly_diff': dtutil.display_time(int(diff.total_seconds())),
-    }
     return return_json(result)
 
 @APP.route('/api/rotation/clear_cache')

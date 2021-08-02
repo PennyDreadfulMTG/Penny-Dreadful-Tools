@@ -16,7 +16,8 @@ SEASONS = [
     'RIX', 'DOM', 'M19', 'GRN',  # 2018
     'RNA', 'WAR', 'M20', 'ELD',  # 2019
     'THB', 'IKO', 'M21', 'ZNR',  # 2020
-    'KHM', 'STX', 'AFR',         # 2121
+    'KHM', 'STX', 'AFR', 'IMH',  # 2121
+    'ICV',                       # 2022
 ]
 
 OVERRIDES = {
@@ -26,7 +27,11 @@ OVERRIDES = {
     'Ikoria: Lair of Behemoths': {  # Ikoria was delayed in NA because of Covid-19
         'enterDate': {
             'exact': '2020-04-17T00:00:00.000',
-            'rough': 'April 2020',
+        },
+    },
+    'Innistrad: Midnight Hunt': {
+        'enterDate': {
+            'exact': '2021-09-24T00:00:00.000',
         },
     },
 }

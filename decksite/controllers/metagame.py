@@ -115,7 +115,7 @@ def matchups() -> str:
             k = k.replace('enemy_', '')
             enemy[k] = v
     season_str = request.args.get('season_id')
-    season_id = int(season_str) if season_str is not None else None
+    season_id = int(season_str) if season_str else None
     results = mus.matchup(hero, enemy, season_id=season_id) if 'hero_person_id' in request.args else {}
     matchup_archetypes = archs.load_archetypes_deckless()
     matchup_archetypes.sort(key=lambda a: a.name)

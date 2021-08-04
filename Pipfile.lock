@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "4f628d4cb2b4d2760c7554f27c84335a40322f297f03f9b284076566398a91d0"
+            "sha256": "3997786414e46865aeea831c9d767487549bf27d158e953e71f53549696c182a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -291,11 +291,11 @@
         },
         "discord-py-slash-command": {
             "hashes": [
-                "sha256:3347442b70484b02eba40490f946cdfd58e080c4f698f9e2960f134d28faa41d",
-                "sha256:ab3e73d683bb0ed098902c33de3c87c8a05c1e5dbe50682752dcc3fc0db4ce6a"
+                "sha256:5593bb5e965e74802ff38967846712efe85fd82546436edaa073c013db126f8c",
+                "sha256:6b1e6293056aabdaa9b143f5beed258838a83e24b387060a22ee651c25f1c606"
             ],
             "index": "pypi",
-            "version": "==2.3.2"
+            "version": "==2.4.0"
         },
         "discord.py": {
             "extras": [
@@ -1468,7 +1468,7 @@
                 "sha256:8d7eaa5a82a1cac232164990f04874c594c9453ec55eef02eab885aa02fc17a2",
                 "sha256:f5321fbe4bf3fefa0efd0bfe7fb14e90909eb62a48ccda331726b4319897dd5e"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
             "version": "==1.25.11"
         },
         "vcrpy": {

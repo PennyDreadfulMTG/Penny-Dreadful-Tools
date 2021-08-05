@@ -21,7 +21,7 @@ def test_match() -> None:
 # START Tests from https://scryfall.com/docs/syntax
 
 @pytest.mark.functional
-def test_colors() -> None:
+def test_colors_and_color_identity() -> None:
     s = 'c:rg'
     do_functional_test(s, ['Animar, Soul of Elements', 'Boggart Ram-Gang', 'Progenitus'], ['About Face', 'Cinder Glade', 'Lupine Prototype', 'Sylvan Library'])
     s = 'color>=uw -c:red'
@@ -34,6 +34,14 @@ def test_colors() -> None:
     do_functional_test(s, ['Bant Charm', 'Murderous Redcap'], ['Izzet Signet', 'Lightning Bolt', 'Spectral Procession'])
     s = 'c=br'
     do_functional_test(s, ['Murderous Redcap', 'Terminate'], ['Cruel Ultimatum', 'Fires of Undeath', 'Hymn to Tourach', 'Lightning Bolt', 'Rakdos Signet'])
+    s = 'id:c t:land'
+    do_functional_test(s, ['Ancient Tomb', 'Wastes'], ['Academy Ruins', 'Island'])
+
+def test_types() -> None:
+    s = 't:merfolk t:legend'
+    do_functional_test(s, ['Emry, Lurker of the Loch', 'Sygg, River Cutthroat'], ['Hullbreacher', 'Ragavan, Nimble Pilferer'])
+    s = 't:goblin -t:creature'
+    do_functional_test(s, ['Tarfire', 'Warren Weirding'], ['Goblin Bombardment', 'Lightning Bolt', 'Skirk Prospector'])
 
 # END Tests from https://scryfall.com/docs/syntax
 

@@ -37,11 +37,55 @@ def test_colors_and_color_identity() -> None:
     s = 'id:c t:land'
     do_functional_test(s, ['Ancient Tomb', 'Wastes'], ['Academy Ruins', 'Island'])
 
+@pytest.mark.functional
 def test_types() -> None:
     s = 't:merfolk t:legend'
     do_functional_test(s, ['Emry, Lurker of the Loch', 'Sygg, River Cutthroat'], ['Hullbreacher', 'Ragavan, Nimble Pilferer'])
     s = 't:goblin -t:creature'
     do_functional_test(s, ['Tarfire', 'Warren Weirding'], ['Goblin Bombardment', 'Lightning Bolt', 'Skirk Prospector'])
+
+@pytest.mark.functional
+def test_card_text() -> None:
+    s = 'o:draw o:creature'
+    do_functional_test(s, ['Edric, Spymaster of Trest', 'Grim Backwoods', 'Mystic Remora'], ['Ancestral Recall', 'Honor of the Pure'])
+    s = 'o:"~ enters the battlefield tapped"'
+    do_functional_test(s, ['Arcane Sanctum', 'Diregraf Ghoul', 'Golgari Guildgate'], ['Tarmogoyf'])
+
+@pytest.mark.functional
+def test_mana_costs() -> None:
+    s = 'mana:{G}{U}'
+    do_functional_test(s, ['Omnath, Locus of Creation', 'Ice-Fang Coatl'], ['Breeding Pool', 'Slippery Bogle'])
+
+    # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8969
+    # s = 'm:2WW'
+    # do_functional_test(s, ["Emeria's Call", 'Solitude'], ['Karoo', 'Spectral Procession'])
+    # s = 'm>3WU'
+    # do_functional_test(s, ['Drogskol Reaver', 'Sphinx of the Steel Wind'], ['Angel of the Dire Hour', 'Fractured Identity'])
+
+    s = 'm:{R/P}'
+    do_functional_test(s, ['Gut Shot', 'Slash Panther'], ['Dismember', 'Lightning Bolt'])
+    s = 'c:u cmc=5'
+    do_functional_test(s, ['Force of Will', 'Fractured Identity'], ['Goldspan Dragon', 'Omnath, Locus of Creation'])
+
+    # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8968
+    # s = 'devotion:{u/b}{u/b}{u/b}'
+    # do_functional_test(s, ['Ashemnoor Gouger', 'Niv-Mizzet Parun', 'Omniscience', 'Phrexian Obliterator', 'Progenitus'], ['Cunning Nightbonger', 'Watery Grave'])
+
+    # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8618
+    # s = 'produces=wu'
+    # do_functional_test(s, ['Azorius Signet', 'Celestial Colonnade'], ['Birds of Paradise', 'Teferi, Time Raveler'])
+
+@pytest.mark.functional
+def test_power_toughness_and_loyalty() -> None:
+    s = 'pow>=8'
+    do_functional_test(s, ["Death's Shadow", 'Dragonlord Atarka', 'Emrakul, the Aeons Torn'], ['Mortivore', 'Swamp', 'Tarmogoyf', 'Wild Nacatl'])
+
+    # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8970
+    # s = 'pow>tou c:w t:creature'
+    # do_functional_test(s, ["Kataki, War's Wage", 'Knight of Autumn'], ['Bonecrusher Giant', 'Hullbreacher', 'Swamp'])
+
+    s = 't:planeswalker loy=3'
+    do_functional_test(s, ['Jace, the Mind Sculptor', 'Liliana of the Veil'], ['Karn, the Great Creator', 'Mountain', 'Progenitus'])
 
 # END Tests from https://scryfall.com/docs/syntax
 

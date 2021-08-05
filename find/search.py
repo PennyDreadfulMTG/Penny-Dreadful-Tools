@@ -1,9 +1,10 @@
 import collections
-from typing import Dict, Generator, Iterable, List, Optional, Union
+from typing import Dict, Generator, Iterable, List, Optional, Set, Union
 
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String, Token
 from magic import card, mana, multiverse
+from magic.colors import COLOR_COMBINATIONS_LOWER
 from magic.database import db
 from magic.models import Card
 from shared.database import concat, sqlescape, sqllikeescape
@@ -149,7 +150,7 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return text_where('name', term.value())
     if key.value() == 'color' or key.value() == 'c':
         return color_where('color', operator.value(), term.value())
-    if key.value() in ['coloridentity', 'identity', 'ci', 'id', 'cid']:
+    if key.value() in ['coloridentity', 'commander', 'identity', 'ci', 'id', 'cid']:
         return color_where('color_identity', operator.value(), term.value())
     if key.value() in ['text', 'oracle', 'o', 'fulloracle', 'fo']:
         return text_where('text', term.value())
@@ -180,8 +181,6 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return is_subquery(term.value())
     if key.value() == 'playable' or key.value() == 'p':
         return playable_where(term.value())
-    if key.value() == 'commander':
-        return commander_where(operator.value(), term.value())
     raise InvalidCriterionException
 
 def text_where(column: str, term: str) -> str:
@@ -218,30 +217,51 @@ def math_where(column: str, operator: str, term: str) -> str:
     return '({column} IS NOT NULL AND {column} {operator} {term})'.format(column=column, operator=operator, term=sqlescape(term))
 
 def color_where(subtable: str, operator: str, term: str) -> str:
+    all_colors = {'w', 'u', 'b', 'r', 'g'}
+    if term in COLOR_COMBINATIONS_LOWER.keys():
+        colors = set(COLOR_COMBINATIONS_LOWER[term])
+    else:
+        colors = set(term)
+    if 'c' in colors and len(colors) > 1:
+        raise InvalidValueException('A card cannot be colorless and colored')
+    if 'm' in colors and len(colors) > 1:
+        raise InvalidValueException(f"Using 'm' with other colors is not supported, use '{subtable}>{term}' instead")
     if operator == ':' and subtable == 'color_identity':
-        operator = '!'  # "includes color x" doesn't really make sense in a color identity query and this matches magidex/magiccards behavior.
-    colors = list(term)
-    try:
+        operator = '='
+    required: Set[str] = set()
+    excluded: Set[str] = set()
+    min_colors, max_colors = None, None
+    if 'm' in colors:
+        min_colors = 2
         colors.remove('m')
-        multicolored = True
-    except ValueError:
-        multicolored = False
-    clause = ' OR '.join(subtable_where(subtable, color) for color in colors)
-    if len(colors) > 1:
-        clause = '({clause})'.format(clause=clause)
-    try:
+    if 'c' in colors:
+        max_colors = 0
         colors.remove('c')
-    except ValueError:
-        pass
-    if operator == '!':
-        if colors:
-            color_ids_clause = ' AND '.join('color_id <> {color_id}'.format(color_id=value_lookup('color', color)) for color in colors)
-            clause = '({clause} AND (c.id NOT IN (SELECT card_id FROM card_{subtable} WHERE {color_ids_clause})))'.format(clause=clause, subtable=subtable, color_ids_clause=color_ids_clause)
-    if not clause:
-        clause = '(1 = 1)'
-    if multicolored:
-        clause = '({clause} AND (c.id IN (SELECT card_id FROM card_{subtable} GROUP BY card_id HAVING COUNT(card_id) > 1)))'.format(clause=clause, subtable=subtable)
-    return clause
+    if operator in ['=', '!']:
+        required = colors
+        max_colors = len(colors)
+    elif operator == '<=':
+        excluded = all_colors - colors
+    elif operator in [':', '>=']:
+        required = colors
+    elif operator == '<':
+        excluded = all_colors - colors
+        max_colors = len(colors) - 1
+    elif operator == '>':
+        required = colors
+        min_colors = len(colors) + 1
+    clauses = []
+    for color in sorted(required):
+        clauses.append(subtable_where(subtable, color))
+    for color in sorted(excluded):
+        clauses.append('NOT ' + subtable_where(subtable, color))
+    if min_colors:
+        clauses.append(f'c.id IN (SELECT card_id FROM card_{subtable} GROUP BY card_id HAVING COUNT(card_id) >= {min_colors})')
+    if max_colors:
+        clauses.append(f'c.id IN (SELECT card_id FROM card_{subtable} GROUP BY card_id HAVING COUNT(card_id) <= {max_colors})')
+    if max_colors == 0:
+        clauses.append(f'c.id NOT IN (SELECT card_id FROM card_{subtable})')
+    return '(' + ') AND ('.join(clauses) + ')'
 
 def set_where(name: str) -> str:
     return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name})))'.format(name_fuzzy=sqllikeescape(name), name=sqlescape(name))
@@ -302,9 +322,6 @@ def playable_where(term: str) -> str:
         where = "REPLACE({where}, '{{{symbol}}}', '')".format(where=where, symbol=symbol)
     return "{where} = ''".format(where=where)
 
-def commander_where(operator: str, term: str) -> str:
-    return f"{text_where('type_line', 'Legendary')} AND ({text_where('type_line', 'Creature')} OR {text_where('text', 'can be your Commander')}) AND {color_where('color_identity', operator, term)}"
-
 # Look up the id of a value if we have a lookup table for it.
 # Raise if not found in that table.
 # Return 'value' back if we don't have a a lookup table for this thing ('subtype', for example).
@@ -314,7 +331,7 @@ def value_lookup(table: str, value: str) -> Union[int, str]:
     if table in VALUE_LOOKUP and value in VALUE_LOOKUP[table]:
         return VALUE_LOOKUP[table][value]
     if table in VALUE_LOOKUP:
-        raise InvalidValueException("Invalid value '{value}' for {table}".format(value=value, table=table))
+        raise InvalidValueException(f"Invalid value '{value}' for {table} {VALUE_LOOKUP}")
     return value
 
 def init_value_lookup() -> None:
@@ -359,7 +376,7 @@ def is_subquery(subquery_name: str) -> str:
         # This is a pretty egregious hardcoding of 426 card names but I really don't want to call Scryfall from here.
         return "(name = 'Adun Oakenshield' OR name = 'Arcades Sabboth' OR name = 'Arcbound Ravager' OR name = 'Arcum Dagsson' OR name = 'Arcum''s Astrolabe' OR name = 'Autumn Willow' OR name = 'Axelrod Gunnarson' OR name = 'Balustrade Spy' OR name = 'Barktooth Warbeard' OR name = 'Baron Sengir' OR name = 'Bartel Runeaxe' OR name = 'Biorhythm' OR name = 'Blazing Shoal' OR name = 'Boris Devilboon' OR name = 'Braids, Cabal Minion' OR name = 'Braingeyser' OR name = 'Chromium' OR name = 'Circle of Flame' OR name = 'Cloudpost' OR name = 'Coalition Victory' OR name = 'Cranial Plating' OR name = 'Cursed Scroll' OR name = 'Dakkon Blackblade' OR name = 'Darksteel Citadel' OR name = 'Dingus Egg' OR name = 'Disciple of the Vault' OR name = 'Dread Return' OR name = 'Edric, Spymaster of Trest' OR name = 'Empty the Warrens' OR name = 'Erayo, Soratami Ascendant' OR name = 'Eron the Relentless' OR name = 'Fact or Fiction' OR name = 'Frantic Search' OR name = 'Gabriel Angelfire' OR name = 'Golden Wish' OR name = 'Grandmother Sengir' OR name = 'Grapeshot' OR name = 'Hada Freeblade' OR name = 'Halfdane' OR name = 'Hazezon Tamar' OR name = 'Heartless Hidetsugu' OR name = 'Hypergenesis' OR name = 'Hypnotic Specter' OR name = 'Icy Manipulator' OR name = 'Ihsan''s Shade' OR name = 'Intangible Virtue' OR name = 'Invigorate' OR name = 'Ivory Tower' OR name = 'Jacques le Vert' OR name = 'Jasmine Boreal' OR name = 'Juggernaut' OR name = 'Kird Ape' OR name = 'Kokusho, the Evening Star' OR name = 'Lady Caleria' OR name = 'Lady Evangela' OR name = 'Lady Orca' OR name = 'Limited Resources' OR name = 'Lodestone Golem' OR name = 'Lucky Clover' OR name = 'Lutri, the Spellchaser' OR name = 'Marhault Elsdragon' OR name = 'Márton Stromgald' OR name = 'Merieke Ri Berit' OR name = 'Nicol Bolas' OR name = 'Niv-Mizzet, the Firemind' OR name = 'Orcish Oriflamme' OR name = 'Palladia-Mors' OR name = 'Panoptic Mirror' OR name = 'Pavel Maliki' OR name = 'Ponder' OR name = 'Prophet of Kruphix' OR name = 'Protean Hulk' OR name = 'Punishing Fire' OR name = 'Ramses Overdark' OR name = 'Reflector Mage' OR name = 'Regrowth' OR name = 'Riftsweeper' OR name = 'Riven Turnbull' OR name = 'Rofellos, Llanowar Emissary' OR name = 'Rohgahh of Kher Keep' OR name = 'Rubinia Soulsinger' OR name = 'Rukh Egg' OR name = 'Runed Halo' OR name = 'Second Sunrise' OR name = 'Seething Song' OR name = 'Serendib Efreet' OR name = 'Simian Spirit Guide' OR name = 'Skeleton Ship' OR name = 'Sol''kanar the Swamp King' OR name = 'Sorcerous Spyglass' OR name = 'Spatial Contortion' OR name = 'Stangg' OR name = 'Summer Bloom' OR name = 'Sunastian Falconer' OR name = 'Sway of the Stars' OR name = 'Sword of the Ages' OR name = 'Sylvan Library' OR name = 'Sylvan Primordial' OR name = 'Temporal Fissure' OR name = 'Tetsuo Umezawa' OR name = 'Thawing Glaciers' OR name = 'Thirst for Knowledge' OR name = 'Tobias Andrion' OR name = 'Tor Wauki' OR name = 'Trade Secrets' OR name = 'Treasure Cruise' OR name = 'Undercity Informer' OR name = 'Underworld Dreams' OR name = 'Vaevictis Asmadi' OR name = 'Voltaic Key' OR name = 'Wild Nacatl' OR name = 'Worldfire' OR name = 'Worldgorger Dragon' OR name = 'Xira Arien' OR name = 'Yisan, the Wanderer Bard' OR name = 'Zirda, the Dawnwaker' OR name = 'Zur the Enchanter' OR name = 'Adriana''s Valor' OR name = 'Advantageous Proclamation' OR name = 'Aether Vial' OR name = 'Aetherworks Marvel' OR name = 'Agent of Treachery' OR name = 'Ali from Cairo' OR name = 'Amulet of Quoz' OR name = 'Ancestral Recall' OR name = 'Ancestral Vision' OR name = 'Ancient Den' OR name = 'Ancient Tomb' OR name = 'Angus Mackenzie' OR name = 'Ashnod''s Coupon' OR name = 'Assemble the Rank and Vile' OR name = 'Attune with Aether' OR name = 'Ayesha Tanaka' OR name = 'Back to Basics' OR name = 'Backup Plan' OR name = 'Balance' OR name = 'Baral, Chief of Compliance' OR name = 'Bazaar of Baghdad' OR name = 'Berserk' OR name = 'Birthing Pod' OR name = 'Bitterblossom' OR name = 'Black Lotus' OR name = 'Black Vise' OR name = 'Bloodbraid Elf' OR name = 'Bloodstained Mire' OR name = 'Brago''s Favor' OR name = 'Brainstorm' OR name = 'Bridge from Below' OR name = 'Bronze Tablet' OR name = 'Burning-Tree Emissary' OR name = 'Burning Wish' OR name = 'Candelabra of Tawnos' OR name = 'Cauldron Familiar' OR name = 'Chalice of the Void' OR name = 'Chandler' OR name = 'Channel' OR name = 'Chaos Orb' OR name = 'Chrome Mox' OR name = 'Cloud of Faeries' OR name = 'Contract from Below' OR name = 'Copy Artifact' OR name = 'Counterspell' OR name = 'Crop Rotation' OR name = 'Crucible of Worlds' OR name = 'Cunning Wish' OR name = 'Dark Depths' OR name = 'Darkpact' OR name = 'Dark Ritual' OR name = 'Daughter of Autumn' OR name = 'Daze' OR name = 'Deathrite Shaman' OR name = 'Death Wish' OR name = 'Demonic Attorney' OR name = 'Demonic Consultation' OR name = 'Demonic Tutor' OR name = 'Derevi, Empyrial Tactician' OR name = 'Dig Through Time' OR name = 'Divine Intervention' OR name = 'Doomsday' OR name = 'Double Cross' OR name = 'Double Deal' OR name = 'Double Dip' OR name = 'Double Play' OR name = 'Double Stroke' OR name = 'Double Take' OR name = 'Drannith Magistrate' OR name = 'Dreadhorde Arcanist' OR name = 'Dream Halls' OR name = 'Earthcraft' OR name = 'Echoing Boon' OR name = 'Edgar Markov' OR name = 'Emissary''s Ploy' OR name = 'Emrakul, the Aeons Torn' OR name = 'Emrakul, the Promised End' OR name = 'Enlightened Tutor' OR name = 'Enter the Dungeon' OR name = 'Entomb' OR name = 'Escape to the Wilds' OR name = 'Expedition Map' OR name = 'Eye of Ugin' OR name = 'Faithless Looting' OR name = 'Fall from Favor' OR name = 'Falling Star' OR name = 'Fastbond' OR name = 'Feldon''s Cane' OR name = 'Felidar Guardian' OR name = 'Field of the Dead' OR name = 'Fires of Invention' OR name = 'Flash' OR name = 'Flooded Strand' OR name = 'Fluctuator' OR name = 'Food Chain' OR name = 'Fork' OR name = 'Gaea''s Cradle' OR name = 'Gauntlet of Might' OR name = 'General Jarkeld' OR name = 'Gifts Ungiven' OR name = 'Gitaxian Probe' OR name = 'Glimpse of Nature' OR name = 'Goblin Lackey' OR name = 'Goblin Recruiter' OR name = 'Golgari Grave-Troll' OR name = 'Golos, Tireless Pilgrim' OR name = 'Gosta Dirk' OR name = 'Great Furnace' OR name = 'Green Sun''s Zenith' OR name = 'Grim Monolith' OR name = 'Grindstone' OR name = 'Griselbrand' OR name = 'Growth Spiral' OR name = 'Gush' OR name = 'Gwendlyn Di Corci' OR name = 'Hammerheim' OR name = 'Hazduhr the Abbot' OR name = 'Hermit Druid' OR name = 'High Tide' OR name = 'Hired Heist' OR name = 'Hogaak, Arisen Necropolis' OR name = 'Hold the Perimeter' OR name = 'Hullbreacher' OR name = 'Humility' OR name = 'Hunding Gjornersen' OR name = 'Hurkyl''s Recall' OR name = 'Hymn of the Wilds' OR name = 'Hymn to Tourach' OR name = 'Illusionary Mask' OR name = 'Immediate Action' OR name = 'Imperial Seal' OR name = 'Incendiary Dissent' OR name = 'Inverter of Truth' OR name = 'Iona, Shield of Emeria' OR name = 'Irini Sengir' OR name = 'Iterative Analysis' OR name = 'Jace, the Mind Sculptor' OR name = 'Jedit Ojanen' OR name = 'Jerrard of the Closed Fist' OR name = 'Jeweled Bird' OR name = 'Johan' OR name = 'Joven' OR name = 'Karakas' OR name = 'Karn, the Great Creator' OR name = 'Kasimir the Lone Wolf' OR name = 'Kei Takahashi' OR name = 'Kethis, the Hidden Hand' OR name = 'Krark-Clan Ironworks' OR name = 'Land Tax' OR name = 'Leovold, Emissary of Trest' OR name = 'Leyline of Abundance' OR name = 'Library of Alexandria' OR name = 'Lightning Bolt' OR name = 'Lingering Souls' OR name = 'Lin Sivvi, Defiant Hero' OR name = 'Lion''s Eye Diamond' OR name = 'Living Wish' OR name = 'Livonya Silone' OR name = 'Lord Magnus' OR name = 'Lotus Petal' OR name = 'Lurrus of the Dream-Den' OR name = 'Magical Hacker' OR name = 'Mana Crypt' OR name = 'Mana Drain' OR name = 'Mana Vault' OR name = 'Maze of Ith' OR name = 'Memory Jar' OR name = 'Mental Misstep' OR name = 'Merchant Scroll' OR name = 'Metalworker' OR name = 'Mind Over Matter' OR name = 'Mind''s Desire' OR name = 'Mind Twist' OR name = 'Mirror Universe' OR name = 'Mishra''s Workshop' OR name = 'Moat' OR name = 'Monastery Mentor' OR name = 'Mox Diamond' OR name = 'Mox Emerald' OR name = 'Mox Jet' OR name = 'Mox Lotus' OR name = 'Mox Opal' OR name = 'Mox Pearl' OR name = 'Mox Ruby' OR name = 'Mox Sapphire' OR name = 'Muzzio''s Preparations' OR name = 'Mycosynth Lattice' OR name = 'Mystical Tutor' OR name = 'Mystic Forge' OR name = 'Mystic Sanctuary' OR name = 'Narset, Parter of Veils' OR name = 'Natural Order' OR name = 'Natural Unity' OR name = 'Nebuchadnezzar' OR name = 'Necropotence' OR name = 'Nexus of Fate' OR name = 'Oath of Druids' OR name = 'Oath of Nissa' OR name = 'Oko, Thief of Crowns' OR name = 'Omnath, Locus of Creation' OR name = 'Once More with Feeling' OR name = 'Once Upon a Time' OR name = 'Painter''s Servant' OR name = 'Paradox Engine' OR name = 'Pendelhaven' OR name = 'Peregrine Drake' OR name = 'Personal Tutor' OR name = 'Polluted Delta' OR name = 'Power Play' OR name = 'Preordain' OR name = 'Primeval Titan' OR name = 'Princess Lucrezia' OR name = 'Ragnar' OR name = 'Ramirez DePietro' OR name = 'Rampaging Ferocidon' OR name = 'Ramunap Ruins' OR name = 'Rashka the Slayer' OR name = 'Rasputin Dreamweaver' OR name = 'R&D''s Secret Lair' OR name = 'Rebirth' OR name = 'Recall' OR name = 'Recurring Nightmare' OR name = 'Replenish' OR name = 'Reveka, Wizard Savant' OR name = 'Richard Garfield, Ph.D.' OR name = 'Rishadan Port' OR name = 'Rite of Flame' OR name = 'Rogue Refiner' OR name = 'Seat of the Synod' OR name = 'Secrets of Paradise' OR name = 'Secret Summoning' OR name = 'Sensei''s Divining Top' OR name = 'Sentinel Dispatch' OR name = 'Serra Ascendant' OR name = 'Serra''s Sanctum' OR name = 'Shahrazad' OR name = 'Sinkhole' OR name = 'Sir Shandlar of Eberyn' OR name = 'Sivitri Scarzam' OR name = 'Skullclamp' OR name = 'Smuggler''s Copter' OR name = 'Sol Ring' OR name = 'Soraya the Falconer' OR name = 'Sovereign''s Realm' OR name = 'Splinter Twin' OR name = 'Squandered Resources' OR name = 'Staff of Domination' OR name = 'Staying Power' OR name = 'Stoneforge Mystic' OR name = 'Strip Mine' OR name = 'Stroke of Genius' OR name = 'Summoner''s Bond' OR name = 'Sundering Titan' OR name = 'Survival of the Fittest' OR name = 'Sword of the Meek' OR name = 'Swords to Plowshares' OR name = 'Sylvan Tutor' OR name = 'Tainted Pact' OR name = 'Teferi, Time Raveler' OR name = 'Tempest Efreet' OR name = 'Test of Endurance' OR name = 'Thassa''s Oracle' OR name = 'The Lady of the Mountain' OR name = 'The Tabernacle at Pendrell Vale' OR name = 'Thorn of Amethyst' OR name = 'Tibalt''s Trickery' OR name = 'Time Machine' OR name = 'Time Spiral' OR name = 'Timetwister' OR name = 'Time Vault' OR name = 'Time Walk' OR name = 'Time Warp' OR name = 'Timmerian Fiends' OR name = 'Tinker' OR name = 'Tolaria' OR name = 'Tolarian Academy' OR name = 'Torsten Von Ursus' OR name = 'Treachery' OR name = 'Tree of Tales' OR name = 'Trinisphere' OR name = 'Tuknir Deathlock' OR name = 'Umezawa''s Jitte' OR name = 'Underworld Breach' OR name = 'Unexpected Potential' OR name = 'Upheaval' OR name = 'Urborg' OR name = 'Ur-Drago' OR name = 'Uro, Titan of Nature''s Wrath' OR name = 'Valakut, the Molten Pinnacle' OR name = 'Vampiric Tutor' OR name = 'Vault of Whispers' OR name = 'Veil of Summer' OR name = 'Veldrane of Sengir' OR name = 'Vial Smasher the Fierce' OR name = 'Walking Ballista' OR name = 'Weight Advantage' OR name = 'Wheel of Fortune' OR name = 'Wilderness Reclamation' OR name = 'Windfall' OR name = 'Windswept Heath' OR name = 'Winota, Joiner of Forces' OR name = 'Winter Orb' OR name = 'Wooded Foothills' OR name = 'Worldknit' OR name = 'Worldly Tutor' OR name = 'Wrenn and Six' OR name = 'Yawgmoth''s Bargain' OR name = 'Yawgmoth''s Will' OR name = 'Zuran Orb')"
     subqueries = {
-        'commander': 't:legendary (t:creature OR o:"~ can be your commander")',
+        'commander': 't:legendary (t:creature OR o:"~ can be your commander") f:commander',
         'creatureland': 't:land o:"becomes a"',
         'fetchland': 't:land o:"Search your library for a " (o:"land card" or o:"plains card" or o:"island card" or o:"swamp card" or o:"mountain card" or o:"forest card" or o:"gate card")',
         'gainland': 't:land o:"When ~ enters the battlefield, you gain 1 life"',

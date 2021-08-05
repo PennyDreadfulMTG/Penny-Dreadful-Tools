@@ -87,6 +87,12 @@ def test_power_toughness_and_loyalty() -> None:
     s = 't:planeswalker loy=3'
     do_functional_test(s, ['Jace, the Mind Sculptor', 'Liliana of the Veil'], ['Karn, the Great Creator', 'Mountain', 'Progenitus'])
 
+def test_multi_faced_cards() -> None:
+    s = 'is:meld'
+    do_functional_test(s, ['Hanweir Battlements', 'Hanweir Garrison'], ['Hanweir, the Writhing Township'])
+    s = 'is:split'
+    do_functional_test(s, ['Driven // Despair', 'Fire // Ice', 'Wear // Tear'], ['Budoka Gardener', 'Hanweir Garrison'])
+
 # END Tests from https://scryfall.com/docs/syntax
 
 @pytest.mark.functional

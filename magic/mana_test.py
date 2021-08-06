@@ -1,5 +1,7 @@
 from typing import List
 
+import pytest
+
 from magic import database, mana
 
 
@@ -45,6 +47,7 @@ def test_slitherhead() -> None:
 def test_little_girl() -> None:
     do_test('{HW}', ['HW'])
 
+@pytest.mark.functional
 def test_everything() -> None:
     rs = database.db().select('SELECT name, mana_cost FROM face')
     for row in rs:

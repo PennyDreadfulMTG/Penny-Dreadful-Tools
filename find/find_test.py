@@ -21,7 +21,7 @@ def test_match() -> None:
 # START Tests from https://scryfall.com/docs/syntax
 
 @pytest.mark.functional
-def test_colors() -> None:
+def test_colors_and_color_identity() -> None:
     s = 'c:rg'
     do_functional_test(s, ['Animar, Soul of Elements', 'Boggart Ram-Gang', 'Progenitus'], ['About Face', 'Cinder Glade', 'Lupine Prototype', 'Sylvan Library'])
     s = 'color>=uw -c:red'
@@ -34,6 +34,74 @@ def test_colors() -> None:
     do_functional_test(s, ['Bant Charm', 'Murderous Redcap'], ['Izzet Signet', 'Lightning Bolt', 'Spectral Procession'])
     s = 'c=br'
     do_functional_test(s, ['Murderous Redcap', 'Terminate'], ['Cruel Ultimatum', 'Fires of Undeath', 'Hymn to Tourach', 'Lightning Bolt', 'Rakdos Signet'])
+    s = 'id:c t:land'
+    do_functional_test(s, ['Ancient Tomb', 'Wastes'], ['Academy Ruins', 'Island'])
+
+@pytest.mark.functional
+def test_types() -> None:
+    s = 't:merfolk t:legend'
+    do_functional_test(s, ['Emry, Lurker of the Loch', 'Sygg, River Cutthroat'], ['Hullbreacher', 'Ragavan, Nimble Pilferer'])
+    s = 't:goblin -t:creature'
+    do_functional_test(s, ['Tarfire', 'Warren Weirding'], ['Goblin Bombardment', 'Lightning Bolt', 'Skirk Prospector'])
+
+@pytest.mark.functional
+def test_card_text() -> None:
+    s = 'o:draw o:creature'
+    do_functional_test(s, ['Edric, Spymaster of Trest', 'Grim Backwoods', 'Mystic Remora'], ['Ancestral Recall', 'Honor of the Pure'])
+    s = 'o:"~ enters the battlefield tapped"'
+    do_functional_test(s, ['Arcane Sanctum', 'Diregraf Ghoul', 'Golgari Guildgate'], ['Tarmogoyf'])
+
+@pytest.mark.functional
+def test_mana_costs() -> None:
+    s = 'mana:{G}{U}'
+    do_functional_test(s, ['Omnath, Locus of Creation', 'Ice-Fang Coatl'], ['Breeding Pool', 'Slippery Bogle'])
+
+    # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8969
+    # s = 'm:2WW'
+    # do_functional_test(s, ["Emeria's Call", 'Solitude'], ['Karoo', 'Spectral Procession'])
+    # s = 'm>3WU'
+    # do_functional_test(s, ['Drogskol Reaver', 'Sphinx of the Steel Wind'], ['Angel of the Dire Hour', 'Fractured Identity'])
+
+    s = 'm:{R/P}'
+    do_functional_test(s, ['Gut Shot', 'Slash Panther'], ['Dismember', 'Lightning Bolt'])
+    s = 'c:u cmc=5'
+    do_functional_test(s, ['Force of Will', 'Fractured Identity'], ['Goldspan Dragon', 'Omnath, Locus of Creation'])
+
+    # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8968
+    # s = 'devotion:{u/b}{u/b}{u/b}'
+    # do_functional_test(s, ['Ashemnoor Gouger', 'Niv-Mizzet Parun', 'Omniscience', 'Phrexian Obliterator', 'Progenitus'], ['Cunning Nightbonger', 'Watery Grave'])
+
+    # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8618
+    # s = 'produces=wu'
+    # do_functional_test(s, ['Azorius Signet', 'Celestial Colonnade'], ['Birds of Paradise', 'Teferi, Time Raveler'])
+
+@pytest.mark.functional
+def test_power_toughness_and_loyalty() -> None:
+    s = 'pow>=8'
+    do_functional_test(s, ["Death's Shadow", 'Dragonlord Atarka', 'Emrakul, the Aeons Torn'], ['Mortivore', 'Swamp', 'Tarmogoyf', 'Wild Nacatl'])
+
+    # https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8970
+    # s = 'pow>tou c:w t:creature'
+    # do_functional_test(s, ["Kataki, War's Wage", 'Knight of Autumn'], ['Bonecrusher Giant', 'Hullbreacher', 'Swamp'])
+
+    s = 't:planeswalker loy=3'
+    do_functional_test(s, ['Jace, the Mind Sculptor', 'Liliana of the Veil'], ['Karn, the Great Creator', 'Mountain', 'Progenitus'])
+
+@pytest.mark.functional
+def test_multi_faced_cards() -> None:
+    s = 'is:meld'
+    do_functional_test(s, ['Hanweir Battlements', 'Hanweir Garrison'], ['Hanweir, the Writhing Township'])
+    s = 'is:split'
+    do_functional_test(s, ['Driven // Despair', 'Fire // Ice', 'Wear // Tear'], ['Budoka Gardener', 'Hanweir Garrison'])
+
+@pytest.mark.functional
+def test_spells_permanents_and_effects() -> None:
+    s = 'c>=br is:spell f:duel'
+    do_functional_test(s, ["Kolaghan's Command", 'Sliver Queen'], ['Cat Dragon', 'Badlands'])
+    s = 'is:permanent t:rebel'
+    do_functional_test(s, ['Aven Riftwatcher', 'Bound in Silence'], ['Brutal Suppression', 'Mirror Entity'])
+    s = 'is:vanilla'
+    do_functional_test(s, ['Grizzly Bears', 'Isamaru, Hound of Konda'], ['Giant Spider', 'Lightning Bolt', 'Tarmogoyf'])
 
 # END Tests from https://scryfall.com/docs/syntax
 
@@ -182,6 +250,10 @@ def test_mana6() -> None:
 
 def test_mana7() -> None:
     do_test('mana:uu', "(mana_cost LIKE '%%{U}{U}%%')")
+
+# https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8975
+# def test_mana8() -> None:
+#     assert search.parse(search.tokenize('mana=2ww')) == search.parse(search.tokenize('mana=ww2'))
 
 def test_uppercase() -> None:
     pd_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term='Penny Dreadful')])

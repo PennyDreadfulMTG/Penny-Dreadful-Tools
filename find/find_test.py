@@ -87,11 +87,21 @@ def test_power_toughness_and_loyalty() -> None:
     s = 't:planeswalker loy=3'
     do_functional_test(s, ['Jace, the Mind Sculptor', 'Liliana of the Veil'], ['Karn, the Great Creator', 'Mountain', 'Progenitus'])
 
+@pytest.mark.functional
 def test_multi_faced_cards() -> None:
     s = 'is:meld'
     do_functional_test(s, ['Hanweir Battlements', 'Hanweir Garrison'], ['Hanweir, the Writhing Township'])
     s = 'is:split'
     do_functional_test(s, ['Driven // Despair', 'Fire // Ice', 'Wear // Tear'], ['Budoka Gardener', 'Hanweir Garrison'])
+
+@pytest.mark.functional
+def test_spells_permanents_and_effects() -> None:
+    s = 'c>=br is:spell f:duel'
+    do_functional_test(s, ["Kolaghan's Command", 'Sliver Queen'], ['Cat Dragon', 'Badlands'])
+    s = 'is:permanent t:rebel'
+    do_functional_test(s, ['Aven Riftwatcher', 'Bound in Silence'], ['Brutal Suppression', 'Mirror Entity'])
+    s = 'is:vanilla'
+    do_functional_test(s, ['Grizzly Bears', 'Isamaru, Hound of Konda'], ['Giant Spider', 'Lightning Bolt', 'Tarmogoyf'])
 
 # END Tests from https://scryfall.com/docs/syntax
 
@@ -240,6 +250,10 @@ def test_mana6() -> None:
 
 def test_mana7() -> None:
     do_test('mana:uu', "(mana_cost LIKE '%%{U}{U}%%')")
+
+# https://github.com/PennyDreadfulMTG/Penny-Dreadful-Tools/issues/8975
+# def test_mana8() -> None:
+#     assert search.parse(search.tokenize('mana=2ww')) == search.parse(search.tokenize('mana=ww2'))
 
 def test_uppercase() -> None:
     pd_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term='Penny Dreadful')])

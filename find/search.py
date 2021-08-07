@@ -169,7 +169,7 @@ def parse_criterion(key: Token, operator: Token, term: Token) -> str:
         return subtable_where('supertype', term.value())
     if key.value() == 'subtype' or key.value() == 'sub':
         return subtable_where('subtype', term.value())
-    if key.value() == 'edition' or key.value() == 'set' or key.value() == 'e' or key.value() == 's':
+    if key.value() in ['edition', 'e', 'set', 's']:
         return set_where(term.value())
     if key.value() == 'format' or key.value() == 'f':
         return format_where(term.value())
@@ -264,7 +264,7 @@ def color_where(subtable: str, operator: str, term: str) -> str:
     return '(' + ') AND ('.join(clauses) + ')'
 
 def set_where(name: str) -> str:
-    return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name})))'.format(name_fuzzy=sqllikeescape(name), name=sqlescape(name))
+    return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name = {name} OR code = {name})))'.format(name=sqlescape(name))
 
 def format_where(term: str) -> str:
     if term == 'pd':

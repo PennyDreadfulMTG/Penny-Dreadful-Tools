@@ -35,7 +35,10 @@ def test_colors_and_color_identity() -> None:
     s = 'c=br'
     do_functional_test(s, ['Murderous Redcap', 'Terminate'], ['Cruel Ultimatum', 'Fires of Undeath', 'Hymn to Tourach', 'Lightning Bolt', 'Rakdos Signet'])
     s = 'id:c t:land'
-    do_functional_test(s, ['Ancient Tomb', 'Wastes'], ['Academy Ruins', 'Island'])
+    do_functional_test(s, ['Ancient Tomb', 'Wastes'], ['Academy Ruins', 'Island', 'Nihil Spellbomb'])
+    s = 'c:colorless'
+    do_functional_test(s, ['Plains', "Tormod's Crypt"], ['Master of Etherium'])
+    # "the four-color nicknames chaos, aggression, altruism, growth, artifice are supported"
 
 @pytest.mark.functional
 def test_types() -> None:
@@ -103,6 +106,86 @@ def test_spells_permanents_and_effects() -> None:
     s = 'is:vanilla'
     do_functional_test(s, ['Grizzly Bears', 'Isamaru, Hound of Konda'], ['Giant Spider', 'Lightning Bolt', 'Tarmogoyf'])
 
+# … Extra Cards and Funny Cards …
+
+@pytest.mark.functional
+def test_rarity() -> None:
+    s = 'r:common t:artifact'
+    do_functional_test(s, ['Court Homunculus', 'Prophetic Prism', "Tormod's Crypt"], ['Lightning Bolt', 'Master of Etherium'])
+    s = 'r>=r'
+    do_functional_test(s, ['Black Lotus', "Elspeth, Sun's Champion", 'Lotus Cobra'], ['Abbey Griffin', 'Tattermunge Maniac'])
+
+    # We don't currently support `new:rarity`
+    # s = 'rarity:common e:ima new:rarity'
+    # do_functional_test(s, ['Darksteel Axe', 'Seeker of the Way'], ['Balustrade Spy', 'Bladewing the Risen'])
+
+@pytest.mark.functional
+def test_sets_and_blocks() -> None:
+    s = 'e:war'
+    do_functional_test(s, ['Blast Zone', 'Finale of Devastation', 'Tezzeret, Master of the Bridge'], ['Lightning Helix', 'Wastes'])
+    # s = 'e:war is:booster'
+    # do_functional_test(s, ['Blast Zone', 'Finale of Devastation'], ['Lightning Helix', 'Tezzeret, Master of the Bridge', 'Wastes'])
+    # s = 'b:wwk'
+    # do_functional_test(s, ['Inquisition of Kozilek', 'Jace, the Mind Sculptor', 'Misty Rainforest', 'Stoneforge Mystic'], [])
+    # s = 'in:lea in:m15'
+    # do_functional_test(s, ['Plains', 'Shivan Dragon'], ['Ancestral Recall', 'Chord of Calling', 'Lightning Bolt'])
+    # s = 't:legendary -in:booster'
+    # do_functional_test(s, ['Animatou, the Fateshifter', 'Korvold, Fae-Cursed King'], ['Retrofitter Foundry', 'Swamp', 'Wrenn and Six'])
+    # s = 'is:datestamped is:prerelease'
+    # do_functional_test(s, ['Mox Amber', 'Ulamog, the Ceaseless Hunger'], ['Mayor of Avabruck', 'Valakut, the Molten Pinnacle'])
+
+# … Cubes …
+
+@pytest.mark.functional
+def test_format_legality() -> None:
+    s = 'c:g t:creature f:pauper'
+    do_functional_test(s, ['Nettle Sentinel', 'Rhox Brute', 'Slippery Bogle'], ['Ninja of the Deep Hours', 'Noble Hierarch', 'Utopia Sprawl'])
+    # s = 'banned:legacy'
+    # do_functional_test(s, ['Flash', 'Frantic Search', 'Mox Jet', 'Necropotence'], ['Delver of Secrets', 'Force of Will'])
+    s = 'is:commander'
+    do_functional_test(s, ['Progenitus', 'Teferi, Temporal Archmage'], ['Forest', 'Nettle Sentinel', 'Rofellos, Llanowar Emissary'])
+    # s = 'is:reserved'
+    # do_functional_test(s, [], [])
+
+# USD/EUR/TIX prices
+# Artist, Flavor Text and Watermark
+# Border, Frame, Foil and Resolution
+# Games, Promos and Spotlights
+# Year
+# Tagger tags
+# Reprints
+# Languages
+# Shortcuts and Nicknames
+
+@pytest.mark.functional
+def test_negating_conditions() -> None:
+    s = '-fire c:r t:instant'
+    do_functional_test(s, [], [])
+    s = 'o:changeling -t:creature'
+    do_functional_test(s, [], [])
+    s = 'not:reprint e:c16'
+    do_functional_test(s, [], [])
+
+# Regular Expressions
+# Exact Names
+
+@pytest.mark.functional
+def test_using_or() -> None:
+    s = 't:fish or t:bird'
+    do_functional_test(s, [], [])
+    s = 't:land (a:titus or a:avon)'
+    do_functional_test(s, [], [])
+
+@pytest.mark.functional
+def test_nesting_conditions() -> None:
+    s = 't:legenday (t:goblin or t:elf)'
+    do_functional_test(s, [], [])
+    s = 'through (depths or sands or mists)'
+    do_functional_test(s, ['Peer Through Depths', 'Reach Through Mists', 'Sift Through Sands'], ['Dig Through Time', 'Through the Breach'])
+
+# Display Keywords
+
+
 # END Tests from https://scryfall.com/docs/syntax
 
 @pytest.mark.functional
@@ -110,7 +193,7 @@ def test_edition_functional() -> None:
     do_functional_test('e:ktk', ['Flooded Strand', 'Treasure Cruise', 'Zurgo Helmsmasher'], ['Life from the Loam', 'Scalding Tarn', 'Zurgo Bellstriker'])
 
 def test_edition() -> None:
-    do_test('e:ktk', "(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE '%%ktk%%' OR code = 'ktk')))")
+    do_test('e:ktk', "(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name = 'ktk' OR code = 'ktk')))")
 
 def test_special_chars() -> None:
     do_test('o:a_c%', "(oracle_text LIKE '%%a\\_c\\%%%%')")

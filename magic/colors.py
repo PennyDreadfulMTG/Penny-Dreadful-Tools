@@ -1,6 +1,7 @@
 COLOR_COMBINATIONS_LOWER = {}
 
 COLOR_COMBINATIONS = {
+    'Colorless': ['C'],
     'White': ['W'],
     'Blue': ['U'],
     'Black': ['B'],

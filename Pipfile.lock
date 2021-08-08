@@ -1721,11 +1721,11 @@
         },
         "types-pytz": {
             "hashes": [
-                "sha256:addfa2a1a27b324b6beb422faa4737962532bbab3793481d5bdebbffb8f9f243",
-                "sha256:ec9555397f91518b2cf028ed837a69e388763c6a5e58abffaf37732f9c581a46"
+                "sha256:28fb1c0f77f59aebe9b792d073ebfbbbf7b329f9d4af6a6079713a618a1c0f31",
+                "sha256:448828a06f2aaa840e57364d866c661645a045e532f817e4f10c8c3ab2b66651"
             ],
             "index": "pypi",
-            "version": "==2021.1.0"
+            "version": "==2021.1.2"
         },
         "types-redis": {
             "hashes": [

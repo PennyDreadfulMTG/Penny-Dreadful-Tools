@@ -1683,10 +1683,10 @@
         },
         "types-jinja2": {
             "hashes": [
-                "sha256:e735af2161dd4c3ca45f7d3f7bf536d89814b9b22094292de5eb780e73001d96",
-                "sha256:f4257ebedb62f5c5b012796b8fa5c9a73f832fe91f4bc91271d8addacbb4a990"
+                "sha256:4e1f31d0e31a564a44b0b0f9b8392f890806ad974f41490c1279b72aff9c5be4",
+                "sha256:93450ccfaea23c3c7f5a80f65d744f26d317c1a8608c15d49af63d40eafc6fd1"
             ],
-            "version": "==2.11.5"
+            "version": "==2.11.6"
         },
         "types-markdown": {
             "hashes": [
@@ -1745,11 +1745,11 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:254484e024fbef5aafd6eee80642d713e3c240e12103dbd0f41e1f602402ff35",
-                "sha256:ec2b7b1bcc521b3741f9317eca8fb3bfd0e39efe427231d57b37ad40af418a5e"
+                "sha256:659efd70c88c750d33f83857bbe83c4686e437dcdd542816825ba64f01a999f3",
+                "sha256:860d4ce7e24d14e7441a1118428964ccd2d100c654ef69e7ee1d137f9aaa82d6"
             ],
             "index": "pypi",
-            "version": "==0.1.7"
+            "version": "==0.1.9"
         },
         "types-toml": {
             "hashes": [

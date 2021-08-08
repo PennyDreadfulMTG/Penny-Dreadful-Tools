@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3997786414e46865aeea831c9d767487549bf27d158e953e71f53549696c182a"
+            "sha256": "8332f5bccfcfdaa67a39a835a2bd776f3c2bd78baec4a1db7cb51bc1c7044dce"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -291,11 +291,11 @@
         },
         "discord-py-slash-command": {
             "hashes": [
-                "sha256:5593bb5e965e74802ff38967846712efe85fd82546436edaa073c013db126f8c",
-                "sha256:6b1e6293056aabdaa9b143f5beed258838a83e24b387060a22ee651c25f1c606"
+                "sha256:68811d8230ae741941b37ded29b3054c8dc204838c5322c8632aebbc173085a3",
+                "sha256:cc454093b28ca61c1427fbbb432baf6ea57777781afb45cf3a2cdf8d73bfd745"
             ],
             "index": "pypi",
-            "version": "==2.4.0"
+            "version": "==2.4.1"
         },
         "discord.py": {
             "extras": [
@@ -1469,7 +1469,7 @@
                 "sha256:8d7eaa5a82a1cac232164990f04874c594c9453ec55eef02eab885aa02fc17a2",
                 "sha256:f5321fbe4bf3fefa0efd0bfe7fb14e90909eb62a48ccda331726b4319897dd5e"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4.0'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
             "version": "==1.25.11"
         },
         "vcrpy": {
@@ -1737,11 +1737,11 @@
         },
         "types-requests": {
             "hashes": [
-                "sha256:03122b582f5300ec35ac6692f2634207c467e602dc9ba46b5811a9f6ce0b0bc2",
-                "sha256:a4c03c654527957a70002079ca48669b53d82eac4811abf140ea93847b65529b"
+                "sha256:a5a305b43ea57bf64d6731f89816946a405b591eff6de28d4c0fd58422cee779",
+                "sha256:e21541c0f55c066c491a639309159556dd8c5833e49fcde929c4c47bdb0002ee"
             ],
             "index": "pypi",
-            "version": "==2.25.2"
+            "version": "==2.25.6"
         },
         "types-six": {
             "hashes": [

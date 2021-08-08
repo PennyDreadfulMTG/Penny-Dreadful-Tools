@@ -88,7 +88,7 @@ Whoosh = "==2.7.4"
 sentry-sdk = {extras = ["flask"], version = "*"}
 jishaku = "==1.20.0.220"
 pydantic = "*"
-discord-py-slash-command = "2.4.0"
+discord-py-slash-command = "2.4.1"
 
 [requires]
 python_version = "3.8"

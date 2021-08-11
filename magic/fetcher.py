@@ -109,6 +109,7 @@ async def gatherling_whois(name: Optional[str] = None, discord_id: Optional[str]
         raise InvalidArgumentException('No identifier provided')
     data = await fetch_tools.fetch_json_async(url)
     return Container(data)
+
 async def legal_cards_async(season: str = None) -> List[str]:
     if season is None:
         url = 'legal_cards.txt'
@@ -124,6 +125,8 @@ async def legal_cards_async(season: str = None) -> List[str]:
 
     url = 'https://pennydreadfulmtg.github.io/' + url
     legal_txt = await fetch_tools.fetch_async(url)
+    if legal_txt.startswith('<!DOCTYPE html>'):
+        return []
     if season is not None and configuration.get_bool('save_historic_legal_lists'):
         with open(os.path.join(cached_path, f'{season}_legal_cards.txt'), 'w', encoding=encoding) as h:
             h.write(legal_txt)

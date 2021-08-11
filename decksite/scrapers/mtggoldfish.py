@@ -4,7 +4,7 @@ import time
 from bs4 import BeautifulSoup
 
 from decksite.data import deck
-from magic import decklist, legality
+from magic import decklist, legality, seasons
 from shared import dtutil, fetch_tools, logger
 from shared.container import Container
 from shared.pd_exception import InvalidDataException
@@ -71,7 +71,7 @@ def vivify_or_error(d: Container) -> str:
     # MTGG doesn't do any validation of cards so some decks with fail here with card names like 'Stroke of Genuineness'.
     except InvalidDataException as e:
         return 'Rejecting decklist of deck with identifier {identifier} because of {e}'.format(identifier=d.identifier, e=e)
-    if len([f for f in legality.legal_formats(vivified) if 'Penny Dreadful' in f]) == 0:
+    if len([f for f in legality.legal_formats(vivified) if seasons.current_season_name() in f]) == 0:
         return 'Rejecting deck with identifier {identifier} because it is not legal in any PD formats.'.format(identifier=d.identifier)
     if len(d.cards) == 0:
         return 'Rejecting deck with identifier {identifier} because it has no cards.'.format(identifier=d.identifier)

@@ -100,9 +100,10 @@ class SignUpForm(Form):
 
     def check_deck_legality(self) -> None:
         errors: Dict[str, Dict[str, Set[str]]] = {}
-        if 'Penny Dreadful' not in legality.legal_formats(self.deck, None, errors):
-            self.errors['decklist'] = ' '.join(errors.get('Penny Dreadful', {}).pop('Legality_General', ['Not a legal deck']))
-            self.card_errors = errors.get('Penny Dreadful', {})
+        season_name = seasons.current_season_name()
+        if season_name not in legality.legal_formats(self.deck, None, errors):
+            self.errors['decklist'] = ' '.join(errors.get(season_name, {}).pop('Legality_General', ['Not a legal deck']))
+            self.card_errors = errors.get(season_name, {})
         banned_for_bugs = {c.name for c in self.deck.all_cards() if any(b.get('bannable', False) for b in c.bugs or [])}
         playable_bugs = {c.name for c in self.deck.all_cards() if c.pd_legal and any(not b.get('bannable', False) for b in c.bugs or [])}
         if len(banned_for_bugs) > 0:

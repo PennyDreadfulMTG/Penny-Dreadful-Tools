@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 from decksite import translation
 from decksite.data import deck
-from magic import decklist, legality
+from magic import decklist, legality, seasons
 from shared import configuration, fetch_tools, logger
 from shared.pd_exception import InvalidDataException
 
@@ -96,8 +96,9 @@ def scrape_url(url: str) -> deck.Deck:
     raw_deck = set_values(raw_deck)
     vivified = decklist.vivify(raw_deck['cards'])
     errors: Dict[str, Dict[str, Set[str]]] = {}
-    if 'Penny Dreadful' not in legality.legal_formats(vivified, None, errors):
-        raise InvalidDataException('Deck is not legal in Penny Dreadful - {error}'.format(error=errors.get('Penny Dreadful')))
+    season_name = seasons.current_season_name()
+    if season_name not in legality.legal_formats(vivified, None, errors):
+        raise InvalidDataException('Deck is not legal in Penny Dreadful - {error}'.format(error=errors.get(season_name)))
     return deck.add_deck(raw_deck)
 
 def parse_printable(raw_deck: RawDeckType) -> RawDeckType:

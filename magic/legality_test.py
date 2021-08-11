@@ -1,8 +1,10 @@
-from magic import legality
+from magic import legality, seasons
 from magic.models import CardRef, Deck
 
 
 def test_legal_formats() -> None:
+    season_name = seasons.current_season_name()
+
     d = Deck({'id': 0})
     d.maindeck = [CardRef('Swamp', 59)]
     d.sideboard = []
@@ -12,13 +14,13 @@ def test_legal_formats() -> None:
 
     d.maindeck = [CardRef('Swamp', 60)]
     formats = legality.legal_formats(d)
-    assert 'Penny Dreadful' in formats
+    assert season_name in formats
     assert 'Legacy' in formats
     assert 'Penny Dreadful EMN' in formats
 
-    formats = legality.legal_formats(d, {'Penny Dreadful'})
+    formats = legality.legal_formats(d, {season_name})
     assert len(formats) == 1
-    assert 'Penny Dreadful' in formats
+    assert season_name in formats
     assert 'Legacy' not in formats
 
     d.maindeck = [CardRef('Swamp', 55), CardRef('Think Twice', 5)]
@@ -48,5 +50,5 @@ def test_legal_formats() -> None:
     assert 'Modern' in formats
     assert 'Legacy' in formats
     assert 'Vintage' in formats
-    assert 'Penny Dreadful' in formats
+    assert season_name in formats
     assert 'Penny Dreadful EMN' in formats

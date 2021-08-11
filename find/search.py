@@ -3,7 +3,7 @@ from typing import Dict, Generator, Iterable, List, Optional, Union
 
 from find.expression import Expression
 from find.tokens import BooleanOperator, Criterion, Key, Operator, String, Token
-from magic import card, mana, multiverse
+from magic import card, mana, multiverse, seasons
 from magic.database import db
 from magic.models import Card
 from shared.database import concat, sqlescape, sqllikeescape
@@ -247,8 +247,8 @@ def set_where(name: str) -> str:
     return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name LIKE {name_fuzzy} OR code = {name})))'.format(name_fuzzy=sqllikeescape(name), name=sqlescape(name))
 
 def format_where(term: str) -> str:
-    if term == 'pd':
-        term = 'Penny Dreadful'
+    if term == 'pd' or term == 'Penny Dreadful':
+        term = seasons.current_season_name()
     format_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term=card.unaccent(term))])
     if format_id is None:
         raise InvalidValueException("Invalid format '{term}'".format(term=term))

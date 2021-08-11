@@ -322,9 +322,9 @@ async def update_bugged_cards_async() -> None:
 
 async def update_pd_legality_async() -> None:
     for s in seasons.SEASONS:
+        await set_legal_cards_async(season=s)
         if s == seasons.current_season_code():
             break
-        await set_legal_cards_async(season=s)
 
 def single_face_value(p: CardDescription, card_id: int, position: int = 1) -> Dict[str, Any]:
     if not card_id:
@@ -417,18 +417,22 @@ async def set_legal_cards_async(season: Optional[str] = None) -> None:
     try:
         new_list = set(await fetcher.legal_cards_async(season=season))
     except fetcher.FetchException:
-        pass
-    if season is None:
-        season = seasons.current_season_code()
-    format_id = get_format_id(f'Penny Dreadful {season}', True)
-
+        return
     if new_list == set() or new_list is None:
         return
+
+    if season is None:
+        season = seasons.current_season_code()
+
+    format_id = get_format_id(f'Penny Dreadful {season}', True)
+
     if season is not None:
         # Older formats don't change
         populated = db().select('SELECT id from card_legality WHERE format_id = %s LIMIT 1', [format_id])
         if populated:
             return
+
+    print(f'Setting Legal Cards for {season} ({format_id}) - {len(new_list)} cards')
 
     # In case we get windows line endings.
     new_list = set(c.rstrip() for c in new_list)

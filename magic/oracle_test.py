@@ -1,24 +1,25 @@
 import pytest
 
-from magic import oracle
+from magic import oracle, seasons
 from shared.pd_exception import InvalidDataException
 
 
 def test_legality() -> None:
+    season_name = seasons.current_season_name()
     card = oracle.load_card('Swamp')
     assert card is not None
     assert card.legalities['Standard'] == 'Legal'
     assert card.legalities['Modern'] == 'Legal'
     assert card.legalities['Legacy'] == 'Legal'
     assert card.legalities['Vintage'] == 'Legal'
-    assert card.legalities['Penny Dreadful'] == 'Legal'
+    assert card.legalities[season_name] == 'Legal'
     card = oracle.load_card('Black Lotus')
     assert card is not None
     assert 'Standard' not in card.legalities.keys()
     assert 'Modern' not in card.legalities.keys()
     assert card.legalities['Legacy'] == 'Banned'
     assert card.legalities['Vintage'] == 'Restricted'
-    assert 'Penny Dreadful' not in card.legalities.keys()
+    assert season_name not in card.legalities.keys()
 
 def test_valid_name() -> None:
     assert oracle.valid_name('Dark Ritual') == 'Dark Ritual'

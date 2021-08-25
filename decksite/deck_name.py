@@ -27,6 +27,7 @@ PROFANITY_WHITELIST = [
     'weenie',
     'kill',
     'god',
+    'rape',
 ]
 
 ABBREVIATIONS = {

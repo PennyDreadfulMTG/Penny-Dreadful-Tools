@@ -14,8 +14,8 @@ MAX_DECKS_SHOWN_WITH_CONTINUATION = 3
 def format_deck(x: Dict) -> Dict:
     """Formats a deck object. Returns a dictionary with name and value."""
     return {
-        'name': '{name} [{src} {wins}-{losses}]'.format(name=x['name'],
-            wins=x['record']['wins'], losses=x['record']['losses'], src=x['source']),
+        'name': '{name} [{src} {wins}-{losses}]'.format(
+            name=x['name'], wins=x['record']['wins'], losses=x['record']['losses'], src=x['source']),
         'value': '[A {arch} deck by {author} ({format})]({domain}/decks/single/{id})'.format(
             arch=x['archetype'], author=x['author'], format=x['printed_format'], id=x['id'], domain=link_domain),
     }
@@ -65,7 +65,7 @@ async def decks(ctx: MtgContext, *, args: str) -> None:
 @commands.command(aliases=['mu', 'mus'])
 async def matchups(ctx: MtgContext, *, args: str) -> None:
     """Matchup calculation using Dreadrise. Accepts two queries separated by exclamation mark !."""
-    q1, q2 = map(fetch_tools.escape, args.split("!"))
+    q1, q2 = map(fetch_tools.escape, args.split('!'))
     url = f'{domain}/matches/find?q1={q1}&q2={q2}&api=1'
     try:
         output = fetch_tools.fetch_json(url)
@@ -78,7 +78,7 @@ async def matchups(ctx: MtgContext, *, args: str) -> None:
         return
 
     ans = '{length} matches found. Winrate: {wr}%\n{domain}/minimize/{url}'.format(
-            domain=link_domain, length=output['length'], wr=output['winrate'], url=output['compress'])
+        domain=link_domain, length=output['length'], wr=output['winrate'], url=output['compress'])
     await ctx.send(ans)
 
 def search_dreadrise(query: str) -> Tuple[int, List[str]]:

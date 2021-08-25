@@ -257,3 +257,6 @@ class MtgContext(commands.Context):
     async def post_cards(self, cards: List[Card], replying_to: Optional[Member] = None, additional_text: str = '') -> None:
         # this feels awkward, but shrug
         await post_cards(self.bot, cards, self.channel, replying_to, additional_text)
+
+    async def post_no_matches(self) -> None:
+        await post_no_cards(self.channel)

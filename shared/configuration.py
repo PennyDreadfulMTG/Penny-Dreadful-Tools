@@ -102,6 +102,10 @@ DEFAULTS: Dict[str, Any] = {
     'use_24h': False,
     'web_cache': '.web_cache',
     'whoosh_index_dir': 'whoosh_index',
+    # Dreadrise top-level URL. used for dreadrise-based searches.
+    # the first variable is used for requests, the second variable is used for links displayed to user
+    'dreadrise_url': 'https://dreadrise.wizzerinus.tk',
+    'dreadrise_public_url': 'https://dreadrise.wizzerinus.tk',
 }
 
 CONFIG: Dict[str, Any] = {}

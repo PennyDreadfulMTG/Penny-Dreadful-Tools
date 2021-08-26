@@ -2,7 +2,7 @@ from discord.ext import commands
 from discord import Embed
 
 from discordbot.command import MAX_CARDS_SHOWN, MtgContext
-from magic import fetcher, oracle
+from magic import oracle
 from shared import fetch_tools, configuration
 from typing import List, Tuple, Dict
 
@@ -41,7 +41,7 @@ async def decks(ctx: MtgContext, *, args: str) -> None:
         return
 
     if output['length'] == 0:
-        await ctx.post_no_matches()
+        await ctx.post_nothing()
         return
 
     embed = Embed(title='Deck search', description='Winrate: {w}%'.format(w=output['winrate']))
@@ -74,7 +74,7 @@ async def matchups(ctx: MtgContext, *, args: str) -> None:
         return
 
     if output['length'] == 0:
-        await ctx.post_no_matches()
+        await ctx.post_nothing()
         return
 
     ans = '{length} matches found. Winrate: {wr}%\n{domain}/minimize/{url}'.format(

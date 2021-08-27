@@ -139,7 +139,7 @@ async def post_cards(
         additional_text: str = '',
 ) -> None:
     if len(cards) == 0:
-        await post_no_cards(channel, replying_to)
+        await post_nothing(channel, replying_to)
         return
     not_pd = configuration.get_list('not_pd')
     disable_emoji = str(channel.id) in not_pd or (getattr(channel, 'guild', None) is not None and str(channel.guild.id) in not_pd)
@@ -167,7 +167,7 @@ async def post_cards(
     else:
         await send_image_with_retry(channel, image_file, text)
 
-async def post_no_cards(channel: Messageable, replying_to: Optional[Member] = None) -> None:
+async def post_nothing(channel: Messageable, replying_to: Optional[Member] = None) -> None:
     if replying_to is not None:
         text = '{author}: No matches.'.format(author=replying_to.mention)
     else:
@@ -257,3 +257,6 @@ class MtgContext(commands.Context):
     async def post_cards(self, cards: List[Card], replying_to: Optional[Member] = None, additional_text: str = '') -> None:
         # this feels awkward, but shrug
         await post_cards(self.bot, cards, self.channel, replying_to, additional_text)
+
+    async def post_nothing(self) -> None:
+        await post_nothing(self.channel)

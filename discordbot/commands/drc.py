@@ -1,10 +1,11 @@
-from discord.ext import commands
+from typing import Dict, List, Tuple
+
 from discord import Embed
+from discord.ext import commands
 
 from discordbot.command import MAX_CARDS_SHOWN, MtgContext
 from magic import oracle
-from shared import fetch_tools, configuration
-from typing import List, Tuple, Dict
+from shared import configuration, fetch_tools
 
 domain = configuration.get_str('dreadrise_url')
 link_domain = configuration.get_str('dreadrise_public_url')

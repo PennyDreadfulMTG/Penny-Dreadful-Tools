@@ -69,12 +69,17 @@ def cards(deck_type: Optional[str] = None) -> str:
 def card(name: str, deck_type: Optional[str] = None) -> str:
     tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
     try:
-        c = cs.load_card(oracle.valid_name(urllib.parse.unquote_plus(name)), tournament_only=tournament_only, season_id=get_season_id())
+        c = cs.load_card(parse_card_name(name), tournament_only=tournament_only, season_id=get_season_id())
         view = Card(c, tournament_only)
         return view.page()
     except InvalidDataException as e:
         raise DoesNotExistException(e) from e
 
+def parse_card_name(name: str) -> str:
+    name = urllib.parse.unquote_plus(name)
+    if name.startswith(' '): # Handle "+2 Mace".
+        name = '+' + name.lstrip()
+    return oracle.valid_name(name)
 
 @APP.route('/archetypes/')
 @APP.route('/archetypes/<any(tournament,league):deck_type>/')

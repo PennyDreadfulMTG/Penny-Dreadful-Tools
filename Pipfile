@@ -86,7 +86,7 @@ SQLAlchemy-Utils = "==0.37.8"
 Werkzeug = "==2.0.1"
 Whoosh = "==2.7.4"
 sentry-sdk = {extras = ["flask"], version = "*"}
-jishaku = "==1.20.0.220"
+jishaku = "==2.3.0"
 pydantic = "*"
 discord-py-slash-command = "3.0.1"
 

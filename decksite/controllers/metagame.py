@@ -77,7 +77,7 @@ def card(name: str, deck_type: Optional[str] = None) -> str:
 
 def parse_card_name(name: str) -> str:
     name = urllib.parse.unquote_plus(name)
-    if name.startswith(' '): # Handle "+2 Mace".
+    if name.startswith(' '):  # Handle "+2 Mace".
         name = '+' + name.lstrip()
     return oracle.valid_name(name)
 

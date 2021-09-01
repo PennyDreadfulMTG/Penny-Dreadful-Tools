@@ -297,7 +297,7 @@ def valid_layout(p: CardDescription) -> bool:
     # Exclude token because named tokens like "Ajani's Pridemate" and "Storm Crow" conflict with the cards with the same name. See #6156.
     return p['layout'] not in ['art_series', 'token']
 
-def face_colors(p: CardDescription) -> Set[int]:
+def face_colors(p: CardDescription) -> Set[str]:
     colors = set()
     for f in p.get('card_faces', []):
         for color in f.get('colors', []):

@@ -266,6 +266,10 @@ async def determine_values_async(printings: List[CardDescription], next_card_id:
         for color in p.get('color_identity', []):
             color_id = colors[color]
             card_color_identity_values.append({'card_id': card_id, 'color_id': color_id})
+        # DFCs store their colors in their faces, not at the top level. See #9022.
+        for color in face_colors(p):
+            color_id = colors[color]
+            card_color_values.append({'card_id': card_id, 'color_id': color_id})
         for format_, status in p.get('legalities', {}).items():
             if status == 'not_legal' or format_.capitalize() == 'Penny':  # Skip 'Penny' from Scryfall as we'll create our own 'Penny Dreadful' format and set legality for it from legal_cards.txt.
                 continue
@@ -292,6 +296,13 @@ def valid_layout(p: CardDescription) -> bool:
     # Exclude art_series because they have the same name as real cards and that breaks things.
     # Exclude token because named tokens like "Ajani's Pridemate" and "Storm Crow" conflict with the cards with the same name. See #6156.
     return p['layout'] not in ['art_series', 'token']
+
+def face_colors(p: CardDescription) -> Set[int]:
+    colors = set()
+    for f in p.get('card_faces', []):
+        for color in f.get('colors', []):
+            colors.add(color)
+    return colors
 
 def insert_many(table: str, properties: TableDescription, values: List[Dict[str, Any]], additional_columns: Optional[List[str]] = None) -> None:
     columns = additional_columns or []

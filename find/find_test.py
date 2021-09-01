@@ -373,7 +373,7 @@ def test_color_not_text() -> None:
 def test_color_functional() -> None:
     do_functional_test('c:g', ['Destructive Revelry', 'Rofellos, Llanowar Emissary', 'Tattermunge Maniac'], ['Ancient Grudge', 'Forest', 'Lightning Bolt'])
 
-def test_color() -> None:
+def test_color_green() -> None:
     do_test('c:g', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 5)))')
 
 def test_or() -> None:

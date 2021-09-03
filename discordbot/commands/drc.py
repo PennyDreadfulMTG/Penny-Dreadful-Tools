@@ -1,11 +1,12 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Union
 
 from discord import Embed
 from discord.ext import commands
 
-from discordbot.command import MAX_CARDS_SHOWN, MtgContext
+from discordbot.command import MAX_CARDS_SHOWN, DEFAULT_CARDS_SHOWN, MtgContext
 from magic import oracle
 from shared import configuration, fetch_tools
+from json import JSONDecodeError
 
 domain = configuration.get_str('dreadrise_url')
 link_domain = configuration.get_str('dreadrise_public_url')
@@ -24,9 +25,14 @@ def format_deck(x: Dict) -> Dict:
 @commands.command(aliases=['dreadrise', 'ds'])
 async def drc(ctx: MtgContext, *, args: str) -> None:
     """Card search using Dreadrise."""
-    how_many, cardnames = search_dreadrise(args)
+    how_many, cardnames = await search_dreadrise(args)
+    if not cardnames:  # search errored
+        await ctx.send(f'Search error: `{how_many}`')
+        return
     cbn = oracle.cards_by_name()
     cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]
+    if how_many > DEFAULT_CARDS_SHOWN:
+        cards = cards[:MAX_CARDS_SHOWN]
     await ctx.post_cards(cards, ctx.author, more_results_link(args, how_many))
 
 @commands.command(aliases=['dd', 'deck'])
@@ -36,9 +42,13 @@ async def decks(ctx: MtgContext, *, args: str) -> None:
     url = f'{domain}/decks/find?q={q}+output:json_api&page_size={MAX_DECKS_SHOWN}'
 
     try:
-        output = fetch_tools.fetch_json(url)
-    except fetch_tools.FetchException:
+        output = await fetch_tools.fetch_json_async(url)
+    except (fetch_tools.FetchException, JSONDecodeError):
         print(f'Unable to parse json at {url}')
+        return
+
+    if output['error']:
+        await ctx.send('Search error: `{err}`'.format(err=output['error']))
         return
 
     if output['length'] == 0:
@@ -69,9 +79,13 @@ async def matchups(ctx: MtgContext, *, args: str) -> None:
     q1, q2 = map(fetch_tools.escape, args.split('!'))
     url = f'{domain}/matches/find?q1={q1}&q2={q2}&api=1'
     try:
-        output = fetch_tools.fetch_json(url)
-    except fetch_tools.FetchException:
+        output = await fetch_tools.fetch_json_async(url)
+    except (fetch_tools.FetchException, JSONDecodeError):
         print(f'Unable to parse json at {url}')
+        return
+
+    if output['error']:
+        await ctx.send('Search error: `{err}`'.format(err=output['error']))
         return
 
     if output['length'] == 0:
@@ -82,7 +96,7 @@ async def matchups(ctx: MtgContext, *, args: str) -> None:
         domain=link_domain, length=output['length'], wr=output['winrate'], url=output['compress'])
     await ctx.send(ans)
 
-def search_dreadrise(query: str) -> Tuple[int, List[str]]:
+async def search_dreadrise(query: str) -> Union[Tuple[str, None], Tuple[int, List[str]]]:
     """Returns a tuple. First member is an integer indicating how many cards match the query total,
        second member is a list of card names up to the maximum that could be fetched in a timely fashion."""
     if not query:
@@ -90,21 +104,24 @@ def search_dreadrise(query: str) -> Tuple[int, List[str]]:
 
     query = fetch_tools.escape(query)
     url1 = f'{domain}/cards/find?q={query}+output:resultcount'
+    count_txt = await fetch_tools.fetch_async(url1)
     try:
-        count = int(fetch_tools.fetch(url1))
+        count = int(count_txt)
     except ValueError:
-        return 0, []
+        return count_txt, None  # this sucks but i need 2 values to unpack
+
+    cards_fetching = DEFAULT_CARDS_SHOWN if count > MAX_CARDS_SHOWN else MAX_CARDS_SHOWN
 
     # if we are here, the query is valid, so no need to check for ValueErrors
-    url2 = f'{domain}/cards/find?q=f:pd+({query})+output:pagetext&page_size={MAX_CARDS_SHOWN}'
-    pd_legals = str(fetch_tools.fetch(url2)).split('\n')
-    if len(pd_legals) == MAX_CARDS_SHOWN:
+    url2 = f'{domain}/cards/find?q=f:pd+({query})+output:pagetext&page_size={cards_fetching}'
+    pd_legals = str(await fetch_tools.fetch_async(url2)).split('\n')
+    if len(pd_legals) == cards_fetching:
         return count, pd_legals
 
-    url3 = f'{domain}/cards/find?q=f:pd+({query})+output:pagetext&page_size={MAX_CARDS_SHOWN - len(pd_legals)}'
-    pd_illegals = str(fetch_tools.fetch(url3)).split('\n')
+    url3 = f'{domain}/cards/find?q=f:pd+({query})+output:pagetext&page_size={cards_fetching - len(pd_legals)}'
+    pd_illegals = str(await fetch_tools.fetch_async(url3)).split('\n')
     return count, pd_legals + pd_illegals
 
 def more_results_link(args: str, total: int) -> str:
     return 'and {n} more.\n<{d}/cards/find?q={q}>'.format(
-        n=total - 4, q=fetch_tools.escape(args), d=link_domain) if total > MAX_CARDS_SHOWN else ''
+        n=total - DEFAULT_CARDS_SHOWN, q=fetch_tools.escape(args), d=link_domain) if total > MAX_CARDS_SHOWN else ''

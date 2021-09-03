@@ -1,10 +1,10 @@
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple, Optional
 
 from discord import Embed
 from discord.ext import commands
 
 from discordbot.command import MAX_CARDS_SHOWN, DEFAULT_CARDS_SHOWN, MtgContext
-from magic import oracle
+from magic import oracle, fetcher
 from shared import configuration, fetch_tools
 from json import JSONDecodeError
 
@@ -25,15 +25,21 @@ def format_deck(x: Dict) -> Dict:
 @commands.command(aliases=['dreadrise', 'ds'])
 async def drc(ctx: MtgContext, *, args: str) -> None:
     """Card search using Dreadrise."""
-    how_many, cardnames = await search_dreadrise(args)
-    if not cardnames:  # search errored
-        await ctx.send(f'Search error: `{how_many}`')
+    count, error = await fetcher.dreadrise_count_cards(args)
+    if error:
+        await ctx.send(f'Search error: `{error}`')
         return
+
+    cards_shown = DEFAULT_CARDS_SHOWN if count > MAX_CARDS_SHOWN else count
+    cardnames = await fetcher.dreadrise_search_cards(args, cards_shown, 1)
+    if len(cardnames) < cards_shown:
+        cardnames += await fetcher.dreadrise_search_cards(args, cards_shown - len(cardnames), -1)
+
     cbn = oracle.cards_by_name()
     cards = [cbn[name] for name in cardnames if cbn.get(name) is not None]
-    if how_many > DEFAULT_CARDS_SHOWN:
+    if count > DEFAULT_CARDS_SHOWN:
         cards = cards[:MAX_CARDS_SHOWN]
-    await ctx.post_cards(cards, ctx.author, more_results_link(args, how_many))
+    await ctx.post_cards(cards, ctx.author, more_results_link(args, count))
 
 @commands.command(aliases=['dd', 'deck'])
 async def decks(ctx: MtgContext, *, args: str) -> None:
@@ -95,32 +101,6 @@ async def matchups(ctx: MtgContext, *, args: str) -> None:
     ans = '{length} matches found. Winrate: {wr}%\n{domain}/minimize/{url}'.format(
         domain=link_domain, length=output['length'], wr=output['winrate'], url=output['compress'])
     await ctx.send(ans)
-
-async def search_dreadrise(query: str) -> Union[Tuple[str, None], Tuple[int, List[str]]]:
-    """Returns a tuple. First member is an integer indicating how many cards match the query total,
-       second member is a list of card names up to the maximum that could be fetched in a timely fashion."""
-    if not query:
-        return 0, []
-
-    query = fetch_tools.escape(query)
-    url1 = f'{domain}/cards/find?q={query}+output:resultcount'
-    count_txt = await fetch_tools.fetch_async(url1)
-    try:
-        count = int(count_txt)
-    except ValueError:
-        return count_txt, None  # this sucks but i need 2 values to unpack
-
-    cards_fetching = DEFAULT_CARDS_SHOWN if count > MAX_CARDS_SHOWN else MAX_CARDS_SHOWN
-
-    # if we are here, the query is valid, so no need to check for ValueErrors
-    url2 = f'{domain}/cards/find?q=f:pd+({query})+output:pagetext&page_size={cards_fetching}'
-    pd_legals = str(await fetch_tools.fetch_async(url2)).split('\n')
-    if len(pd_legals) == cards_fetching:
-        return count, pd_legals
-
-    url3 = f'{domain}/cards/find?q=f:pd+({query})+output:pagetext&page_size={cards_fetching - len(pd_legals)}'
-    pd_illegals = str(await fetch_tools.fetch_async(url3)).split('\n')
-    return count, pd_legals + pd_illegals
 
 def more_results_link(args: str, total: int) -> str:
     return 'and {n} more.\n<{d}/cards/find?q={q}>'.format(

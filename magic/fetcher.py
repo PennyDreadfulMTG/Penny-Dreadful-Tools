@@ -9,7 +9,7 @@ import os
 import re
 from collections import OrderedDict
 from time import sleep
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, List, Optional, Tuple, Union, Literal, cast
 from urllib import parse
 
 import feedparser
@@ -211,6 +211,33 @@ def search_scryfall(query: str, exhaustive: bool = False) -> Tuple[int, List[str
         return scr_card['name']
     result_cardnames = [get_frontside(obj) for obj in result_data]
     return total_cards, result_cardnames
+
+async def dreadrise_count_cards(query: str) -> Tuple[int, Optional[str]]:
+    """
+        If the search succeeds, returns the number of results.
+        If it doesn't, returns -1 and the error given by the engine.
+    """
+    domain = configuration.get_str('dreadrise_url')
+    query = fetch_tools.escape(query)
+    url = f'{domain}/cards/find?q={query}+output:resultcount'
+    count_txt = await fetch_tools.fetch_async(url)
+    try:
+        return int(count_txt), None  # if this fails, the query errored
+    except ValueError:
+        return -1, count_txt
+
+async def dreadrise_search_cards(query: str, page_size: int = 60, pd_mode: Literal[1, 0, -1] = 0) -> List[str]:
+    """
+        pd_mode can be -1 (illegal in pd), 0 (doesn't matter if is legal in pd), and 1 (must be legal in pd).
+        returns the list of found cards.
+    """
+    domain = configuration.get_str('dreadrise_url')
+    query = fetch_tools.escape(query)
+    if pd_mode != 0:
+        minus = "-" if pd_mode < 0 else ""
+        query = f"{minus}f:pd+({query})"
+    url = f'{domain}/cards/find?q={query}+output:text' # output:text doesn't support page_size, I wonder why
+    return str(await fetch_tools.fetch_async(url)).split('\n')[:page_size]
 
 def rulings(cardname: str) -> List[Dict[str, str]]:
     card = fetch_tools.fetch_json('https://api.scryfall.com/cards/named?exact={name}'.format(name=cardname))

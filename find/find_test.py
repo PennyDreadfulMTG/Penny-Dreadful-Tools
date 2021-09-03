@@ -215,6 +215,10 @@ def test_double_tilde() -> None:
     do_test('o:"sacrifice ~: ~ deals 2 damage to any target"', expected)
 
 @pytest.mark.functional
+def test_color() -> None:
+    do_functional_test('c<=w t:creature', ['Icehide Golem', 'Thalia, Guardian of Thraben'], ['Delver of Secrets', 'Duskwatch Recruiter', 'Enlightened Tutor', 'Mantis Rider'])
+
+@pytest.mark.functional
 def test_only_multicolored_functional() -> None:
     do_functional_test('c:m', ['Bant Charm', 'Murderous Redcap'], ['Door to Nothingness', 'Fires of Undeath', 'Lightning Bolt'])
 
@@ -369,7 +373,7 @@ def test_color_not_text() -> None:
 def test_color_functional() -> None:
     do_functional_test('c:g', ['Destructive Revelry', 'Rofellos, Llanowar Emissary', 'Tattermunge Maniac'], ['Ancient Grudge', 'Forest', 'Lightning Bolt'])
 
-def test_color() -> None:
+def test_color_green() -> None:
     do_test('c:g', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 5)))')
 
 def test_or() -> None:

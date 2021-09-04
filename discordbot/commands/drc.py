@@ -44,32 +44,24 @@ async def drc(ctx: MtgContext, *, args: str) -> None:
 @commands.command(aliases=['dd', 'deck'])
 async def decks(ctx: MtgContext, *, args: str) -> None:
     """Deck search using Dreadrise."""
-    q = fetch_tools.escape(args)
-    url = f'{domain}/decks/find?q={q}+output:json_api&page_size={MAX_DECKS_SHOWN}'
 
-    try:
-        output = await fetch_tools.fetch_json_async(url)
-    except (fetch_tools.FetchException, JSONDecodeError):
-        print(f'Unable to parse json at {url}')
+    count, output, error = await fetcher.dreadrise_search_decks(args, MAX_DECKS_SHOWN)
+    if error:
+        await ctx.send(f'Search error: `{error}`')
         return
-
-    if output['error']:
-        await ctx.send('Search error: `{err}`'.format(err=output['error']))
-        return
-
-    if output['length'] == 0:
+    if count == 0:
         await ctx.post_nothing()
         return
 
     embed = Embed(title='Deck search', description='Winrate: {w}%'.format(w=output['winrate']))
-    if output['length'] <= MAX_DECKS_SHOWN:
+    if count <= MAX_DECKS_SHOWN:
         arr = [format_deck(x) for x in output['data']]
     else:
         data = output['data'][:MAX_DECKS_SHOWN_WITH_CONTINUATION]
         arr = [format_deck(x) for x in data]
         arr.append({'name': 'Other results', 'value': '[{n} more results found]({domain}/minimize/{url})'.format(
             domain=link_domain,
-            n=output['length'] - MAX_DECKS_SHOWN_WITH_CONTINUATION,
+            n=count - MAX_DECKS_SHOWN_WITH_CONTINUATION,
             url=output['compress'],
         )})
 
@@ -82,24 +74,17 @@ async def decks(ctx: MtgContext, *, args: str) -> None:
 @commands.command(aliases=['mu', 'mus'])
 async def matchups(ctx: MtgContext, *, args: str) -> None:
     """Matchup calculation using Dreadrise. Accepts two queries separated by exclamation mark !."""
-    q1, q2 = map(fetch_tools.escape, args.split('!'))
-    url = f'{domain}/matches/find?q1={q1}&q2={q2}&api=1'
-    try:
-        output = await fetch_tools.fetch_json_async(url)
-    except (fetch_tools.FetchException, JSONDecodeError):
-        print(f'Unable to parse json at {url}')
+    q1, q2 = args.split('!')
+    count, output, error = await fetcher.dreadrise_search_matchups(q1, q2)
+    if error:
+        await ctx.send(f'Search error: `{error}`')
         return
-
-    if output['error']:
-        await ctx.send('Search error: `{err}`'.format(err=output['error']))
-        return
-
-    if output['length'] == 0:
+    if count == 0:
         await ctx.post_nothing()
         return
 
     ans = '{length} matches found. Winrate: {wr}%\n{domain}/minimize/{url}'.format(
-        domain=link_domain, length=output['length'], wr=output['winrate'], url=output['compress'])
+        domain=link_domain, length=count, wr=output['winrate'], url=output['compress'])
     await ctx.send(ans)
 
 def more_results_link(args: str, total: int) -> str:

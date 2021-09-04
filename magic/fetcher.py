@@ -234,10 +234,38 @@ async def dreadrise_search_cards(query: str, page_size: int = 60, pd_mode: Liter
     domain = configuration.get_str('dreadrise_url')
     query = fetch_tools.escape(query)
     if pd_mode != 0:
-        minus = "-" if pd_mode < 0 else ""
-        query = f"{minus}f:pd+({query})"
-    url = f'{domain}/cards/find?q={query}+output:text' # output:text doesn't support page_size, I wonder why
-    return str(await fetch_tools.fetch_async(url)).split('\n')[:page_size]
+        minus = '-' if pd_mode < 0 else ''
+        query = f'{minus}f:pd+({query})'
+    url = f'{domain}/cards/find?q={query}+output:pagetext&page_size={page_size}'
+    return str(await fetch_tools.fetch_async(url)).split('\n')
+
+async def dreadrise_search_json(url: str) -> Tuple[int, Any, Optional[str]]:
+    try:
+        output = await fetch_tools.fetch_json_async(url)
+    except (fetch_tools.FetchException, json.JSONDecodeError):
+        print(f'Unable to parse json!!! {url}')
+        return 0, None, 'The request failed.'
+
+    if 'error' not in output or 'length' not in output:
+        print(f'Wrong json signature!!! {url}')
+        return 0, None, 'The request failed.'
+    if output['error']:
+        return 0, None, output['error']
+    if output['length'] == 0:
+        return 0, None, None
+
+    return output['length'], output, None
+
+async def dreadrise_search_decks(q: str, max_decks: int) -> Tuple[int, Any, Optional[str]]:
+    domain = configuration.get_str('dreadrise_url')
+    q = fetch_tools.escape(q)
+    return await dreadrise_search_json(f'{domain}/decks/find?q={q}+output:json_api&page_size={max_decks}')
+
+async def dreadrise_search_matchups(q1: str, q2: str) -> Tuple[int, Any, Optional[str]]:
+    domain = configuration.get_str('dreadrise_url')
+    q1 = fetch_tools.escape(q1)
+    q2 = fetch_tools.escape(q2)
+    return await dreadrise_search_json(f'{domain}/matches/find?q1={q1}&q2={q2}&api=1')
 
 def rulings(cardname: str) -> List[Dict[str, str]]:
     card = fetch_tools.fetch_json('https://api.scryfall.com/cards/named?exact={name}'.format(name=cardname))

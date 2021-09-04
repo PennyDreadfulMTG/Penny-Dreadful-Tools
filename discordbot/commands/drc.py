@@ -3,8 +3,8 @@ from typing import Dict
 from discord import Embed
 from discord.ext import commands
 
-from discordbot.command import MAX_CARDS_SHOWN, DEFAULT_CARDS_SHOWN, MtgContext
-from magic import oracle, fetcher
+from discordbot.command import DEFAULT_CARDS_SHOWN, MAX_CARDS_SHOWN, MtgContext
+from magic import fetcher, oracle
 from shared import configuration, fetch_tools
 
 domain = configuration.get_str('dreadrise_url')

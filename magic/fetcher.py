@@ -9,7 +9,7 @@ import os
 import re
 from collections import OrderedDict
 from time import sleep
-from typing import Any, Dict, List, Optional, Tuple, Union, Literal, cast
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union, cast
 from urllib import parse
 
 import feedparser

@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple, Optional
+from typing import Dict
 
 from discord import Embed
 from discord.ext import commands
@@ -6,7 +6,6 @@ from discord.ext import commands
 from discordbot.command import MAX_CARDS_SHOWN, DEFAULT_CARDS_SHOWN, MtgContext
 from magic import oracle, fetcher
 from shared import configuration, fetch_tools
-from json import JSONDecodeError
 
 domain = configuration.get_str('dreadrise_url')
 link_domain = configuration.get_str('dreadrise_public_url')
@@ -74,7 +73,9 @@ async def decks(ctx: MtgContext, *, args: str) -> None:
 @commands.command(aliases=['mu', 'mus'])
 async def matchups(ctx: MtgContext, *, args: str) -> None:
     """Matchup calculation using Dreadrise. Accepts two queries separated by exclamation mark !."""
-    q1, q2 = args.split('!')
+    q_list = args.split('!')
+    q1 = q_list[0]
+    q2 = q_list[1] if len(q_list) >= 2 else ''
     count, output, error = await fetcher.dreadrise_search_matchups(q1, q2)
     if error:
         await ctx.send(f'Search error: `{error}`')

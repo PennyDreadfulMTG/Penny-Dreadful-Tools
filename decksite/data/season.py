@@ -1,12 +1,28 @@
 import datetime
-from typing import Dict, Union
+from typing import Dict, List, Union
 
 from decksite.data import preaggregation, query
 from decksite.database import db
 from shared import dtutil
+from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import retry_after_calling
 
+
+SEASONS: List[Container] = []
+
+def load_season_id(dt: datetime.datetime) -> int:
+    if len(SEASONS) == 0:
+        load_seasons()
+    for s in SEASONS:
+        if s.start_date > dt:
+            return s.id - 1
+    return SEASONS[-1].id
+
+def load_seasons() -> None:
+    sql = 'SELECT id, start_date FROM season ORDER BY start_date'
+    for r in db().select(sql):
+        SEASONS.append(Container({'id': r['id'], 'start_date': dtutil.ts2dt(r['start_date'])}))
 
 def preaggregate() -> None:
     preaggregate_season_stats()
@@ -15,7 +31,7 @@ def preaggregate() -> None:
 def preaggregate_season_stats() -> None:
     sql = """
         SELECT
-            season.id AS season_id,
+            season.season_id,
             season.start_date,
             season.end_date,
             COUNT(DISTINCT d.id) AS num_decks,
@@ -30,13 +46,13 @@ def preaggregate_season_stats() -> None:
         {competition_join}
         {season_join}
         GROUP BY
-            season.id;
+            season.seson_id;
     """.format(competition_join=query.competition_join(), season_join=query.season_join())
     rs = db().select(sql)
     stats = {r['season_id']: r for r in rs}
     sql = """
         SELECT
-            season.id AS season_id,
+            season.season_id,
             COUNT(DISTINCT dm.match_id) AS num_matches
         FROM
             deck_match AS dm
@@ -44,14 +60,14 @@ def preaggregate_season_stats() -> None:
             deck AS d ON dm.deck_id = d.id
         {season_join}
         GROUP BY
-            season.id
+            season.season_id
     """.format(season_join=query.season_join())
     rs = db().select(sql)
     for r in rs:
         stats.get(r['season_id'], {}).update(r)
     sql = """
         SELECT
-            season.id AS season_id,
+            season.season_id,
             COUNT(DISTINCT dc.card) AS num_cards
         FROM
             deck_card AS dc
@@ -59,7 +75,7 @@ def preaggregate_season_stats() -> None:
             deck AS d ON dc.deck_id = d.id
         {season_join}
         GROUP BY
-            season.id
+            season.season_id
     """.format(season_join=query.season_join())
     rs = db().select(sql)
     for r in rs:

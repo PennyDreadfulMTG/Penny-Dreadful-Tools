@@ -1,5 +1,5 @@
 from flask import url_for
-from sqlalchemy import text
+from sqlalchemy import column, text
 
 from logsite.view import View
 from shared import redis_wrapper as redis
@@ -44,7 +44,7 @@ class People(View):
                     WHERE mp.user_id = :pid
                     GROUP BY f.id;
                 """)
-                p.formats = db.DB.session.query('name', 'num_matches').from_statement(stmt).params(pid=p.id).all()
+                p.formats = db.DB.session.query(column('name'), column('num_matches')).from_statement(stmt).params(pid=p.id).all()
                 if p.formats:
                     p.fav_format = '{0} ({1} matches)'.format(p.formats[0][0], p.formats[0][1])
                 else:

@@ -29,6 +29,18 @@ def decks(deck_type: Optional[str] = None) -> str:
     view = Decks(league_only)
     return view.page()
 
+@APP.route('/metagame/')
+@APP.route('/metagame/<any(tournament,league):deck_type>/')
+@SEASONS.route('/metagame/')
+@SEASONS.route('/metagame/<any(tournament,league):deck_type>/')
+@cached()
+def metagame(deck_type: Optional[str] = None) -> str:
+    tournament_only = validate_deck_type(deck_type, [DeckType.ALL, DeckType.TOURNAMENT]) == DeckType.TOURNAMENT
+    disjoint_archetypes = archs.load_disjoint_archetypes(season_id=get_season_id(), tournament_only=tournament_only)
+    key_cards = playability.key_cards(get_season_id())
+    view = Metagame(disjoint_archetypes, tournament_only=tournament_only, key_cards=key_cards)
+    return view.page()
+
 @APP.route('/decks/<int:deck_id>/')
 @auth.load_person
 def deck(deck_id: int) -> str:

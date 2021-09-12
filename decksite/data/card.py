@@ -1,5 +1,5 @@
 import sys
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from decksite.data import deck, preaggregation, query
 from decksite.database import db
@@ -36,7 +36,6 @@ def load_card(name: str, tournament_only: bool = False, season_id: Optional[int]
 def preaggregate() -> None:
     preaggregate_card()
     preaggregate_card_person()
-    preaggregate_playability()
     preaggregate_unique()
     preaggregate_trailblazer()
 
@@ -134,35 +133,6 @@ def preaggregate_card_person() -> None:
                competition_join=query.competition_join(),
                season_join=query.season_join(),
                nwdl_join=deck.nwdl_join())
-    preaggregation.preaggregate(table, sql)
-
-def preaggregate_playability() -> None:
-    sql = """
-        SELECT
-            card AS name,
-            COUNT(*) AS played
-        FROM
-            deck_card
-        GROUP BY
-            card
-    """
-    rs = db().select(sql)
-    high = max([r['played'] for r in rs] + [0])
-    table = '_playability'
-    sql = f"""
-        CREATE TABLE IF NOT EXISTS _new{table} (
-            name VARCHAR(190) NOT NULL,
-            playability DECIMAL(3,2),
-            PRIMARY KEY (name)
-        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
-        SELECT
-            card AS name,
-            ROUND(COUNT(*) / {high}, 2) AS playability
-        FROM
-            deck_card
-        GROUP BY
-            card
-    """.format(table=table, high=high)
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_unique() -> None:
@@ -287,17 +257,6 @@ def load_cards(
     for c in cs:
         c.update(cards[c.name])
     return cs
-
-@retry_after_calling(preaggregate_playability)
-def playability() -> Dict[str, float]:
-    sql = """
-        SELECT
-            name,
-            playability
-        FROM
-            _playability
-    """
-    return {r['name']: r['playability'] for r in db().select(sql)}
 
 @retry_after_calling(preaggregate_unique)
 def unique_cards_played(person_id: int) -> List[str]:

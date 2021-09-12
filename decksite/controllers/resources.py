@@ -4,7 +4,7 @@ from flask import Response, make_response, request
 
 from decksite import APP, SEASONS, auth, get_season_id
 from decksite.cache import cached
-from decksite.data import card as cs
+from decksite.data import card as cs, playability
 from decksite.league import DeckCheckForm
 from decksite.views import Bugs, DeckCheck, LinkAccounts, Resources, Rotation, RotationChanges
 from magic import card, oracle
@@ -57,7 +57,7 @@ def rotation_changes() -> str:
     if query is None:
         query = ''
     view = RotationChanges(
-        *oracle.pd_rotation_changes(get_season_id()), cs.playability(), query=query)
+        *oracle.pd_rotation_changes(get_season_id()), playability=playability.playability(), query=query)
     return view.page()
 
 @APP.route('/rotation/changes/files/<any(new,out):changes_type>/')
@@ -74,7 +74,7 @@ def rotation_speculation() -> str:
     if query is None:
         query = ''
     view = RotationChanges(oracle.if_todays_prices(out=False), oracle.if_todays_prices(
-        out=True), cs.playability(), speculation=True, query=query)
+        out=True), playability.playability(), speculation=True, query=query)
     return view.page()
 
 @APP.route('/rotation/speculation/files/<any(new,out):changes_type>/')

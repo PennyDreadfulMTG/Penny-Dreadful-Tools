@@ -1,7 +1,6 @@
 from typing import Dict
 
-from decksite.data import preaggregation
-from decksite.data import query
+from decksite.data import preaggregation, query
 from decksite.database import db
 from shared.decorators import retry_after_calling
 

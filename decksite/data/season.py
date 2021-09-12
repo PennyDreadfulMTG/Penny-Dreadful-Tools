@@ -8,7 +8,6 @@ from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import retry_after_calling
 
-
 SEASONS: List[Container] = []
 
 def load_season_id(dt: datetime.datetime) -> int:

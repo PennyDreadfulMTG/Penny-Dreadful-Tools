@@ -11,8 +11,7 @@ from decksite.data import card
 from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps
-from decksite.data import playability
-from decksite.data import query
+from decksite.data import playability, query
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
 from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches,

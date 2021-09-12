@@ -1,4 +1,4 @@
-from decksite.data import archetype, card, deck, person, season, playability
+from decksite.data import archetype, card, deck, person, playability, season
 from magic import multiverse, oracle
 
 

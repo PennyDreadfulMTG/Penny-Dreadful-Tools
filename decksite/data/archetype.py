@@ -151,6 +151,8 @@ def rebuild_archetypes() -> None:
 def preaggregate() -> None:
     preaggregate_archetypes()
     preaggregate_archetype_person()
+    preaggregate_disjoint_archetypes()
+    preaggregate_disjoint_archetype_person()
     preaggregate_matchups()
     preaggregate_matchups_person()
 
@@ -254,10 +256,110 @@ def preaggregate_archetype_person() -> None:
         GROUP BY
             a.id,
             d.person_id,
-            season.id,
+            season.season_id,
             ct.name
         HAVING
-            season.id IS NOT NULL
+            season.season_id IS NOT NULL
+    """.format(table=table,
+               competition_join=query.competition_join(),
+               season_join=query.season_join(),
+               nwdl_join=deck.nwdl_join())
+    preaggregation.preaggregate(table, sql)
+
+def preaggregate_disjoint_archetypes() -> None:
+    table = '_arch_disjoint_stats'
+    sql = """
+        CREATE TABLE IF NOT EXISTS _new{table} (
+            archetype_id INT NOT NULL,
+            season_id INT NOT NULL,
+            num_decks INT NOT NULL,
+            wins INT NOT NULL,
+            losses INT NOT NULL,
+            draws INT NOT NULL,
+            perfect_runs INT NOT NULL,
+            tournament_wins INT NOT NULL,
+            tournament_top8s INT NOT NULL,
+            deck_type ENUM('league', 'tournament', 'other') NOT NULL,
+            PRIMARY KEY (season_id, archetype_id, deck_type),
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+        SELECT
+            a.id AS archetype_id,
+            season.season_id,
+            SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
+            IFNULL(SUM(wins), 0) AS wins,
+            IFNULL(SUM(losses), 0) AS losses,
+            IFNULL(SUM(draws), 0) AS draws,
+            SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
+            SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
+            SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
+            (CASE WHEN ct.name = 'League' THEN 'league' WHEN ct.name = 'Gatherling' THEN 'tournament' ELSE 'other' END) AS deck_type
+        FROM
+            archetype AS a
+        LEFT JOIN
+            deck AS d ON a.id = d.archetype_id
+        {competition_join}
+        {season_join}
+        {nwdl_join}
+        GROUP BY
+            a.id,
+            season.season_id,
+            ct.name
+        HAVING
+            season.season_id IS NOT NULL
+    """.format(table=table,
+               competition_join=query.competition_join(),
+               season_join=query.season_join(),
+               nwdl_join=deck.nwdl_join())
+    preaggregation.preaggregate(table, sql)
+
+def preaggregate_disjoint_archetype_person() -> None:
+    table = '_arch_disjoint_person_stats'
+    sql = """
+        CREATE TABLE IF NOT EXISTS _new{table} (
+            archetype_id INT NOT NULL,
+            person_id INT NOT NULL,
+            season_id INT NOT NULL,
+            num_decks INT NOT NULL,
+            wins INT NOT NULL,
+            losses INT NOT NULL,
+            draws INT NOT NULL,
+            perfect_runs INT NOT NULL,
+            tournament_wins INT NOT NULL,
+            tournament_top8s INT NOT NULL,
+            deck_type ENUM('league', 'tournament', 'other') NOT NULL,
+            PRIMARY KEY (person_id, season_id, archetype_id, deck_type),
+            FOREIGN KEY (person_id) REFERENCES person (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE,
+            FOREIGN KEY (archetype_id) REFERENCES archetype (id) ON UPDATE CASCADE ON DELETE CASCADE
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+        SELECT
+            a.id AS archetype_id,
+            d.person_id,
+            season.season_id,
+            SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
+            IFNULL(SUM(wins), 0) AS wins,
+            IFNULL(SUM(losses), 0) AS losses,
+            IFNULL(SUM(draws), 0) AS draws,
+            SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
+            SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
+            SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
+            (CASE WHEN ct.name = 'League' THEN 'league' WHEN ct.name = 'Gatherling' THEN 'tournament' ELSE 'other' END) AS deck_type
+        FROM
+            archetype AS a
+        LEFT JOIN
+            deck AS d ON a.id = d.archetype_id
+        {competition_join}
+        {season_join}
+        {nwdl_join}
+        GROUP BY
+            a.id,
+            d.person_id,
+            season.season_id,
+            ct.name
+        HAVING
+            season.season_id IS NOT NULL
     """.format(table=table,
                competition_join=query.competition_join(),
                season_join=query.season_join(),
@@ -440,13 +542,64 @@ def load_archetypes_deckless(order_by: Optional[str] = None, person_id: Optional
         ORDER BY
             {order_by}
     """.format(table=table, where=where, group_by=group_by, season_query=query.season_query(season_id), order_by=order_by or 'TRUE')
+    return archetype_list_from(sql, order_by is None)
+
+# Load a list of all archetypes where archetypes categories do NOT include the stats of their children. Thus Aggro is only decks assigned directly to Aggro and does not include Red Deck Wins. See also load_archetypes that does it the other way.
+@retry_after_calling(preaggregate)
+def load_disjoint_archetypes(order_by: Optional[str] = None, person_id: Optional[int] = None, season_id: Optional[int] = None, tournament_only: bool = False) -> List[Archetype]:
+    if person_id:
+        table = '_arch_disjoint_person_stats'
+        where = 'person_id = {person_id}'.format(person_id=sqlescape(person_id))
+        group_by = 'ars.person_id, a.id'
+    else:
+        table = '_arch_disjoint_stats'
+        where = 'TRUE'
+        group_by = 'a.id'
+    if tournament_only:
+        where = f"({where}) AND deck_type = 'tournament'"
+    sql = """
+        SELECT
+            a.id,
+            a.name,
+            a.description,
+            aca.ancestor AS parent_id,
+            SUM(num_decks) AS num_decks,
+            SUM(wins) AS wins,
+            SUM(losses) AS losses,
+            SUM(draws) AS draws,
+            SUM(wins - losses) AS record,
+            SUM(perfect_runs) AS perfect_runs,
+            SUM(tournament_wins) AS tournament_wins,
+            SUM(tournament_top8s) AS tournament_top8s,
+            IFNULL(ROUND((SUM(wins) / NULLIF(SUM(wins + losses), 0)) * 100, 1), '') AS win_percent
+        FROM
+            archetype AS a
+        LEFT JOIN
+            {table} AS ars ON a.id = ars.archetype_id
+        LEFT JOIN
+             archetype_closure AS aca ON a.id = aca.descendant AND aca.depth = 1
+        WHERE
+            ({where}) AND ({season_query})
+        GROUP BY
+            {group_by},
+            aca.ancestor -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
+        ORDER BY
+            {order_by}
+    """.format(table=table,
+               where=where,
+               season_query=query.season_query(season_id),
+               group_by=group_by,
+               order_by=order_by or 'TRUE')
+    return archetype_list_from(sql, order_by is None)
+
+def archetype_list_from(sql: str, should_preorder: bool) -> List[Archetype]:
     archetypes = [Archetype(a) for a in db().select(sql)]
     archetypes_by_id = {a.id: a for a in archetypes}
     for a in archetypes:
         a.decks = []
         a.decks_tournament = []
         a.parent = archetypes_by_id.get(a.parent_id, None)
-    if order_by is None:
+    if should_preorder:
         archetypes = preorder(archetypes)
     return archetypes
 

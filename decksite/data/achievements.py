@@ -71,7 +71,7 @@ def preaggregate_query() -> str:
         {with_clauses}
         SELECT
             p.id AS person_id,
-            season.id AS season_id,
+            season.season_id,
             {sc}
         FROM
             person AS p
@@ -84,9 +84,9 @@ def preaggregate_query() -> str:
         {join_clauses}
         GROUP BY
             p.id,
-            season.id
+            season.season_id
         HAVING
-            season.id IS NOT NULL
+            season.season_id IS NOT NULL
     """.format(cc=create_columns, sc=select_columns, with_clauses=with_clauses, join_clauses=join_clauses, season_join=query.season_join(), competition_join=query.competition_join())
 
 # Abstract achievement classes
@@ -513,7 +513,7 @@ class AncientGrudge(CountedAchievement):
                     dm2.deck_id AS loser_deck_id,
                     p1.id AS winner_id,
                     p2.id AS loser_id,
-                    season.id AS season_id,
+                    season.season_id,
                     `match`.date
                 FROM
                     deck AS d
@@ -682,7 +682,7 @@ class VarietyPlayer(BooleanAchievement):
                         SELECT
                             MIN(d.id) as deck_id,
                             d.person_id AS person_id,
-                            season.id AS season_id,
+                            season.season_id,
                             d.archetype_id AS archetype_id
                         FROM
                             deck AS d
@@ -710,16 +710,16 @@ class Specialist(BooleanAchievement):
     title = 'Specialist'
     season_text = 'Reached the elimination rounds of a tournament playing the same archetype three or more times this season'
     description_safe = 'Reach the elimination rounds of a tournament playing the same archetype three or more times in a single season.'
-    sql = 'CASE WHEN EXISTS (SELECT * FROM arch_top_n_count1 AS atnc WHERE p.id = atnc.person_id AND season.id = atnc.season_id AND n >= 3) THEN TRUE ELSE FALSE END'
-    detail_sql = "GROUP_CONCAT(CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' AND d.archetype_id IN (SELECT archetype_id FROM arch_top_n_count2 AS atnc WHERE p.id = atnc.person_id AND season.id = atnc.season_id AND n >= 3) THEN d.id ELSE NULL END)"
+    sql = 'CASE WHEN EXISTS (SELECT * FROM arch_top_n_count1 AS atnc WHERE p.id = atnc.person_id AND season.season_id = atnc.season_id AND n >= 3) THEN TRUE ELSE FALSE END'
+    detail_sql = "GROUP_CONCAT(CASE WHEN d.finish <= c.top_n AND ct.name = 'Gatherling' AND d.archetype_id IN (SELECT archetype_id FROM arch_top_n_count2 AS atnc WHERE p.id = atnc.person_id AND season.season_id = atnc.season_id AND n >= 3) THEN d.id ELSE NULL END)"
     with_sql = """
                 top_ns AS
                     (
                         SELECT
                             d.id as deck_id,
                             p.id AS person_id,
-                            season.id AS season_id,
-                            d.archetype_id AS archetype_id
+                            season.season_id,
+                            d.archetype_id
                         FROM
                             person AS p
                         LEFT JOIN

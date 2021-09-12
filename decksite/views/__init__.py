@@ -28,6 +28,7 @@ from .league_form import LeagueForm
 from .league_info import LeagueInfo
 from .link_accounts import LinkAccounts
 from .matchups import Matchups
+from .metagame import Metagame
 from .pd500 import PD500
 from .people import People
 from .person import Person

@@ -32,7 +32,7 @@ def preaggregate_played_person() -> None:
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             name,
-            season_id AS season_id,
+            season_id,
             person_id,
             COUNT(*) AS num_decks,
             SUM(CASE WHEN my_games > your_games THEN 1 ELSE 0 END) AS wins,
@@ -42,7 +42,7 @@ def preaggregate_played_person() -> None:
             (
                 SELECT
                     gcp.name,
-                    season.id AS season_id,
+                    season.season_id,
                     p.id AS person_id,
                     MAX(CASE WHEN p.id = d.person_id THEN dm.games ELSE 0 END) AS my_games,
                     MAX(CASE WHEN p.id <> d.person_id THEN dm.games ELSE 0 END) AS your_games

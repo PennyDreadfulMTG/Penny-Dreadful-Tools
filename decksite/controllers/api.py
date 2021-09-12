@@ -11,7 +11,7 @@ from decksite.data import card
 from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps
-from decksite.data import query
+from decksite.data import playability, query
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
 from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches,
@@ -379,9 +379,9 @@ def rotation_cards_api() -> Response:
         cs = [c for c in cs if c.status != 'Undecided']
     total = len(cs)
     # Now add interestingness to the cards, which only decksite knows not magic.rotation.
-    playability = card.playability()
+    p = playability.playability()
     for c in cs:
-        c.interestingness = rotation.interesting(playability, c)
+        c.interestingness = rotation.interesting(p, c)
     rotation.rotation_sort(cs, request.args.get('sortBy'), request.args.get('sortOrder'))
     page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
     page = int(request.args.get('page', 0))

@@ -57,20 +57,7 @@ def season_query(season_id: Optional[Union[str, int]], column_name: str = 'seaso
         raise InvalidArgumentException('No season with id `{season_id}`'.format(season_id=season_id)) from c
 
 def season_join() -> str:
-    return """
-        LEFT JOIN
-            (
-                SELECT
-                    `start`.id,
-                    `start`.code,
-                    `start`.start_date AS start_date,
-                    `end`.start_date AS end_date
-                FROM
-                    season AS `start`
-                LEFT JOIN
-                    season AS `end` ON `end`.id = `start`.id + 1
-            ) AS season ON season.start_date <= d.created_date AND (season.end_date IS NULL OR season.end_date > d.created_date)
-    """
+    return 'LEFT JOIN deck_cache AS season ON d.id = season.deck_id'
 
 def decks_order_by(sort_by: Optional[str], sort_order: Optional[str], competition_id: Optional[str]) -> str:
     if not sort_by and competition_id:

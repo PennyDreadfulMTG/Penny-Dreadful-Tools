@@ -1,0 +1,23 @@
+<section>
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th># Decks</th>
+                <th>Avg</th>
+                <th>Last</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#people}}
+                <tr>
+                    <td class="person">{{name}}</td>
+                    <td class="n">{{num_decks_sorted}}</td>
+                    <td class="n">{{sorted_per_day}}</td>
+                    <td data-text="{{date_sort}}">{{display_last_sorted}}</td>
+                </tr>
+            {{/people}}
+        </tbody>
+    </table>
+</section>

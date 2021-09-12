@@ -17,7 +17,7 @@ from decksite.data import rule as rs
 from decksite.league import RetireForm
 from decksite.views import (Admin, AdminRetire, EditAliases, EditArchetypes, EditLeague,
                             EditMatches, EditNews, EditRules, PlayerNotes, Prizes,
-                            RotationChecklist, Unlink)
+                            RotationChecklist, Sorters, Unlink)
 from magic.models import Deck
 from shared import dtutil
 from shared import redis_wrapper as redis
@@ -240,6 +240,12 @@ def post_league() -> str:
     status = lg.Status.CLOSED if request.form.get('action') == 'close' else lg.Status.OPEN
     lg.set_status(status)
     return edit_league()
+
+@APP.route('/admin/sorters/')
+@auth.admin_required
+def sorters() -> str:
+    view = Sorters(ps.load_sorters())
+    return view.page()
 
 def cast_int(param: Optional[Any]) -> int:
     return int(cast(str, param))

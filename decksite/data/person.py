@@ -373,3 +373,37 @@ def squash(p1id: int, p2id: int, col1: str, col2: str) -> None:
 
 def set_locale(person_id: int, locale: str) -> None:
     db().execute('UPDATE person SET locale = %s WHERE id = %s', [locale, person_id])
+
+def load_sorters():
+    sql = f"""
+        SELECT
+            p.id,
+            {query.person_query()} AS name,
+            COUNT(DISTINCT deck_id) AS num_decks_sorted,
+            MAX(changed_date) AS last_sorted,
+            CASE
+                WHEN
+                    COUNT(*) > 1
+                THEN
+                    ROUND(COUNT(DISTINCT deck_id) / ((MAX(changed_date) - MIN(changed_date)) / 60 / 60 / 24))
+                ELSE
+                    0
+            END AS sorted_per_day
+        FROM
+            person AS p
+        INNER JOIN
+            deck_archetype_change AS dac ON p.id = dac.person_id
+        INNER JOIN
+            deck AS d ON d.id = dac.deck_id
+        GROUP BY
+            p.id
+        ORDER BY
+            COUNT(*) DESC,
+            p.mtgo_username
+    """
+    sorters = []
+    for r in db().select(sql):
+        sorter = Person(r)
+        sorter.last_sorted = dtutil.ts2dt(sorter['last_sorted'])
+        sorters.append(sorter)
+    return sorters

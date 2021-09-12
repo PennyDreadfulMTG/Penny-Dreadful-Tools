@@ -59,7 +59,7 @@ def preaggregate_card() -> None:
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             card AS name,
-            season.id AS season_id,
+            season.season_id,
             SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
             IFNULL(SUM(wins), 0) AS wins,
             IFNULL(SUM(losses), 0) AS losses,
@@ -78,7 +78,7 @@ def preaggregate_card() -> None:
         {nwdl_join}
         GROUP BY
             card,
-            season.id,
+            season.season_id,
             ct.name
     """.format(table=table,
                competition_join=query.competition_join(),
@@ -107,7 +107,7 @@ def preaggregate_card_person() -> None:
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             card AS name,
-            season.id AS season_id,
+            season.season_id,
             d.person_id,
             SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
             IFNULL(SUM(wins), 0) AS wins,
@@ -128,7 +128,7 @@ def preaggregate_card_person() -> None:
         GROUP BY
             card,
             d.person_id,
-            season.id,
+            season.season_id,
             ct.name
     """.format(table=table,
                competition_join=query.competition_join(),

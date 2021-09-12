@@ -6,7 +6,7 @@ from typing import Dict, List, Optional, Set, Union
 from mypy_extensions import TypedDict
 
 from decksite import deck_name
-from decksite.data import query
+from decksite.data import query, season
 from decksite.data.top import Top
 from decksite.database import db
 from magic import legality, mana, oracle
@@ -53,7 +53,7 @@ def load_decks(where: str = 'TRUE',
     group_by = """
             d.id,
             d.competition_id, -- Every deck has only one competition_id but if we want to use competition_id in the HAVING clause we need this.
-            season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
+            season.season_id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
     """
     sql = load_decks_query(columns, where=where, group_by=group_by, having=having, order_by=order_by, limit=limit, season_id=season_id)
     db().execute('SET group_concat_max_len=100000')
@@ -126,7 +126,7 @@ def load_decks_query(columns: str,
             {order_by}
         {limit}
     """
-    sql = sql.format(columns=columns, person_query=query.person_query(), competition_join=query.competition_join(), season_query=query.season_query(season_id, 'season.id'), season_join=query.season_join(), where=where, group_by=group_by, having=having, order_by=order_by, limit=limit)
+    sql = sql.format(columns=columns, person_query=query.person_query(), competition_join=query.competition_join(), season_query=query.season_query(season_id, 'season.season_id'), season_join=query.season_join(), where=where, group_by=group_by, having=having, order_by=order_by, limit=limit)
     return sql
 
 def deserialize_deck(sdeck: Container) -> Deck:
@@ -186,7 +186,7 @@ def load_decks_heavy(where: str = 'TRUE',
             cache.color_sort,
             cache.legal_formats,
             ROUND(cache.omw * 100, 2) AS omw,
-            season.id AS season_id,
+            season.season_id,
             IFNULL(MAX(m.date), d.created_date) AS active_date
         FROM
             deck AS d
@@ -211,13 +211,13 @@ def load_decks_heavy(where: str = 'TRUE',
         GROUP BY
             d.id,
             d.competition_id, -- Every deck has only one competition_id but if we want to use competition_id in the HAVING clause we need this.
-            season.id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
+            season.season_id -- In theory this is not necessary as all decks are in a single season and we join on the date but MySQL cannot work that out so give it the hint it needs.
         HAVING
             {having}
         ORDER BY
             {order_by}
         {limit}
-    """.format(person_query=query.person_query(), competition_join=query.competition_join(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id, 'season.id'), having=having, order_by=order_by, limit=limit)
+    """.format(person_query=query.person_query(), competition_join=query.competition_join(), season_join=query.season_join(), where=where, season_query=query.season_query(season_id, 'season.season_id'), having=having, order_by=order_by, limit=limit)
     db().execute('SET group_concat_max_len=100000')
     rows = db().select(sql)
     decks = []
@@ -394,17 +394,18 @@ def prime_cache(d: Deck) -> None:
     colored_symbols_s = json.dumps(d.colored_symbols)
     color_sort = mana.sort_score(d.colors)
     set_legality(d)
+    season_id = season.load_season_id(d.created_date)
     legal_formats_s = json.dumps(list(d.legal_formats))
     normalized_name = deck_name.normalize(d)
     # If this is a new deck we're going to make a new record. If it's an existing deck we might as well update a few things that might have changed implementation but should otherwise be static. But leave wins/draws/losses/active date alone.
     sql = """
         INSERT INTO
-            deck_cache (deck_id, normalized_name, colors, colored_symbols, color_sort, legal_formats, wins, draws, losses, active_date)
+            deck_cache (deck_id, normalized_name, colors, colored_symbols, color_sort, legal_formats, wins, draws, losses, active_date, season_id)
         VALUES
-            (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ON DUPLICATE KEY UPDATE normalized_name = %s, colors = %s, colored_symbols = %s, color_sort = %s, legal_formats = %s
     """
-    db().execute(sql, [d.id, normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s, 0, 0, 0, dtutil.dt2ts(d.created_date), normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s])
+    db().execute(sql, [d.id, normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s, 0, 0, 0, dtutil.dt2ts(d.created_date), season_id, normalized_name, colors_s, colored_symbols_s, color_sort, legal_formats_s])
     # If it was worth priming the in-db cache it's worth busting the in-memory cache to pick up the changes.
     redis.clear(f'decksite:deck:{d.id}')
 

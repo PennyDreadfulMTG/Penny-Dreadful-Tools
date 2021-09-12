@@ -174,7 +174,7 @@ def preaggregate_archetypes() -> None:
         ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
         SELECT
             a.id AS archetype_id,
-            season.id AS season_id,
+            season.season_id,
             SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
             IFNULL(SUM(wins), 0) AS wins,
             IFNULL(SUM(losses), 0) AS losses,
@@ -197,10 +197,10 @@ def preaggregate_archetypes() -> None:
         GROUP BY
             a.id,
             aca.ancestor, -- aca.ancestor will be unique per a.id because of integrity constraints enforced elsewhere (each archetype has one ancestor) but we let the database know here.
-            season.id,
+            season.season_id,
             ct.name
         HAVING
-            season.id IS NOT NULL
+            season.season_id IS NOT NULL
     """.format(table=table,
                competition_join=query.competition_join(),
                season_join=query.season_join(),
@@ -231,7 +231,7 @@ def preaggregate_archetype_person() -> None:
         SELECT
             a.id AS archetype_id,
             d.person_id,
-            season.id AS season_id,
+            season.season_id,
             SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
             IFNULL(SUM(wins), 0) AS wins,
             IFNULL(SUM(losses), 0) AS losses,
@@ -283,7 +283,7 @@ def preaggregate_matchups() -> None:
         SELECT
             a.id AS archetype_id,
             oa.id AS opponent_archetype_id,
-            season.id AS season_id,
+            season.season_id,
             SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins, -- IFNULL so we still count byes as wins.
             SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
             SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws,
@@ -305,7 +305,7 @@ def preaggregate_matchups() -> None:
         GROUP BY
             a.id,
             oa.id,
-            season.id,
+            season.season_id,
             ct.name
     """.format(table=table, competition_join=query.competition_join(), season_join=query.season_join())
     preaggregation.preaggregate(table, sql)
@@ -333,7 +333,7 @@ def preaggregate_matchups_person() -> None:
             a.id AS archetype_id,
             oa.id AS opponent_archetype_id,
             d.person_id,
-            season.id AS season_id,
+            season.season_id,
             SUM(CASE WHEN dm.games > IFNULL(odm.games, 0) THEN 1 ELSE 0 END) AS wins, -- IFNULL so we still count byes as wins.
             SUM(CASE WHEN dm.games < odm.games THEN 1 ELSE 0 END) AS losses,
             SUM(CASE WHEN dm.games = odm.games THEN 1 ELSE 0 END) AS draws,
@@ -356,7 +356,7 @@ def preaggregate_matchups_person() -> None:
             a.id,
             oa.id,
             d.person_id,
-            season.id,
+            season.season_id,
             ct.name
     """.format(table=table, competition_join=query.competition_join(), season_join=query.season_join())
     preaggregation.preaggregate(table, sql)

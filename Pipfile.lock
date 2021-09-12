@@ -927,7 +927,7 @@
                 "sha256:ed2f29b4da6f6ae7c68f4b3708d9d9e59fa89b2f9e87c2b64ce055cbd39f729e",
                 "sha256:f7d84f321674c2f0f31887ee6d5755c54ca1ea5e144d6d54b3bbf566dd9ea0cc"
             ],
-            "index": "pypi",
+            "markers": "python_full_version >= '3.7.1'",
             "version": "==1.3.3"
         },
         "pillow": {
@@ -1779,11 +1779,11 @@
         },
         "types-redis": {
             "hashes": [
-                "sha256:40b0b4b6ddb107a5c5fcf1d7bdfc7ebd6832b9ea644f8e32c1ab007575377951",
-                "sha256:da4d966e9fd6b1d80af82fadfbf1f7843119742dc24039663b896c0c574e4b34"
+                "sha256:85814769071721044857c34841e46064b867ccdd58fc81221c43462bd07e4892",
+                "sha256:be26f50259d1a7e74cbc1e83b377dbf6b534fdb037ff55ae31501e87ac2b5b5a"
             ],
             "index": "pypi",
-            "version": "==3.5.7"
+            "version": "==3.5.8"
         },
         "types-requests": {
             "hashes": [

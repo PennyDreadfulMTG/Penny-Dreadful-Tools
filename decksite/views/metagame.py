@@ -24,13 +24,13 @@ class Metagame(View):
         self.toggle_results_url = url_for('.metagame', deck_type=None if tournament_only else DeckType.TOURNAMENT.value)
 
         self.archetypes = []
-        total_matches_log = sum([math.log2(((a.wins or 0) + (a.losses or 0) + (a.draws or 0) or 1)) for a in archetypes])
+        total_matches_log = sum([math.log2(((a.wins or 0) + (a.losses or 0) + (a.draws or 0) + 1)) for a in archetypes])
         for a in archetypes:
             card = key_cards.get(a.id)
             a.num_matches = (a.wins or 0) + (a.losses or 0) + (a.draws or 0)
             if a.num_matches > 0:
                 a.display_width = max(float(a.win_percent) - LEFT_PADDING if a.win_percent else 0, 0)
-                a.display_height = math.log2(a.num_matches) / total_matches_log * TOTAL_HEIGHT
+                a.display_height = math.log2(a.num_matches + 1) / total_matches_log * TOTAL_HEIGHT
                 a.font_size = min(a.display_height / 2, 20)
                 if card:
                     url = image_fetcher.scryfall_image(oracle.load_card(card), 'art_crop')

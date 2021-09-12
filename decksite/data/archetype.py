@@ -413,7 +413,6 @@ def preaggregate_matchups() -> None:
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_matchups_person() -> None:
-    # Obvious name `_matchup_person_stats` fails with (1005, 'Can\'t create table `decksite`.`_new_matchup_person_stats` (errno: 121 "Duplicate key on write or update")'). Odd.
     table = '_matchup_ps_stats'
     sql = """
         CREATE TABLE IF NOT EXISTS _new{table} (

@@ -374,7 +374,7 @@ def squash(p1id: int, p2id: int, col1: str, col2: str) -> None:
 def set_locale(person_id: int, locale: str) -> None:
     db().execute('UPDATE person SET locale = %s WHERE id = %s', [locale, person_id])
 
-def load_sorters():
+def load_sorters() -> List[Person]:
     sql = f"""
         SELECT
             p.id,

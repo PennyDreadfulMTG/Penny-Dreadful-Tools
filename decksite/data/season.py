@@ -7,18 +7,22 @@ from shared import dtutil
 from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import retry_after_calling
+from shared.pd_exception import InvalidDataException
 
 SEASONS: List[Container] = []
 
-def load_season_id(dt: datetime.datetime) -> int:
+def get_season_id(dt: datetime.datetime) -> int:
     if len(SEASONS) == 0:
-        load_seasons()
+        init_seasons()
+    print(SEASONS)
+    if dt < SEASONS[0].start_date:
+        raise InvalidDataException("Can't get a season from {dt} because it is before PD began")
     for s in SEASONS:
         if s.start_date > dt:
             return s.id - 1
     return SEASONS[-1].id
 
-def load_seasons() -> None:
+def init_seasons() -> None:
     sql = 'SELECT id, start_date FROM season ORDER BY start_date'
     for r in db().select(sql):
         SEASONS.append(Container({'id': r['id'], 'start_date': dtutil.ts2dt(r['start_date'])}))
@@ -31,8 +35,8 @@ def preaggregate_season_stats() -> None:
     sql = """
         SELECT
             season.season_id,
-            season.start_date,
-            season.end_date,
+            season_info.start_date,
+            season_info.end_date,
             COUNT(DISTINCT d.id) AS num_decks,
             COUNT(DISTINCT (CASE WHEN ct.name = 'League' THEN d.id ELSE NULL END)) AS num_league_decks,
             COUNT(DISTINCT d.person_id) AS num_people,
@@ -44,8 +48,20 @@ def preaggregate_season_stats() -> None:
             deck_match AS dm ON d.id = dm.deck_id
         {competition_join}
         {season_join}
+        LEFT JOIN
+        (
+            SELECT
+                `start`.id,
+                `start`.code,
+                `start`.start_date AS start_date,
+                `end`.start_date AS end_date
+            FROM
+                season AS `start`
+            LEFT JOIN
+                season AS `end` ON `end`.id = `start`.id + 1
+        ) AS season_info ON season_info.id = season.season_id
         GROUP BY
-            season.seson_id;
+            season.season_id;
     """.format(competition_join=query.competition_join(), season_join=query.season_join())
     rs = db().select(sql)
     stats = {r['season_id']: r for r in rs}

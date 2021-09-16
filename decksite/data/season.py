@@ -14,6 +14,7 @@ SEASONS: List[Container] = []
 def get_season_id(dt: datetime.datetime) -> int:
     if len(SEASONS) == 0:
         init_seasons()
+    print(SEASONS)
     if dt < SEASONS[0].start_date:
         raise InvalidDataException("Can't get a season from {dt} because it is before PD began")
     for s in SEASONS:

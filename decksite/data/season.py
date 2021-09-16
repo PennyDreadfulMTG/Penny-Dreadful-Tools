@@ -8,6 +8,20 @@ from shared.container import Container
 from shared.database import sqlescape
 from shared.decorators import retry_after_calling
 
+SEASONS: List[Container] = []
+
+def load_season_id(dt: datetime.datetime) -> int:
+    if len(SEASONS) == 0:
+        load_seasons()
+    for s in SEASONS:
+        if s.start_date > dt:
+            return s.id - 1
+    return SEASONS[-1].id
+
+def load_seasons() -> None:
+    sql = 'SELECT id, start_date FROM season ORDER BY start_date'
+    for r in db().select(sql):
+        SEASONS.append(Container({'id': r['id'], 'start_date': dtutil.ts2dt(r['start_date'])}))
 
 SEASONS: List[Container] = []
 

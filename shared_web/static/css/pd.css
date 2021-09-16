@@ -2404,6 +2404,33 @@ p.detail .text {
 
 /*
 
+Charts
+
+*/
+
+.content-metagame section {
+    max-width: 100%;
+}
+
+.variable-height-bar-chart {
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.variable-height-bar-chart a {
+    border: 0.05rem solid #999;
+    color: #f9f9f9;
+    display: block;
+    font-family: main-text;
+    font-variant-numeric: normal;
+    padding-left: 1%; /* This var should be kept in lockstep with decksite.views.metgame.LEFT_PADDING. */
+    text-shadow: 0 0 0.1rem #000, 0 0 0.1rem #000, 0 0 0.1rem #000, 0 0 0.1rem #000;
+    text-transform: none;
+    white-space: nowrap;
+}
+
+/*
+
 Toggles
 
 From https://codepen.io/mallendeo/pen/eLIiG

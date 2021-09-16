@@ -1,5 +1,5 @@
 import sys
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from decksite.data import deck, preaggregation, query
 from decksite.database import db
@@ -36,7 +36,6 @@ def load_card(name: str, tournament_only: bool = False, season_id: Optional[int]
 def preaggregate() -> None:
     preaggregate_card()
     preaggregate_card_person()
-    preaggregate_playability()
     preaggregate_unique()
     preaggregate_trailblazer()
 
@@ -61,10 +60,10 @@ def preaggregate_card() -> None:
             card AS name,
             season.season_id,
             SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
-            IFNULL(SUM(wins), 0) AS wins,
-            IFNULL(SUM(losses), 0) AS losses,
-            IFNULL(SUM(draws), 0) AS draws,
-            SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
+            IFNULL(SUM(dsum.wins), 0) AS wins,
+            IFNULL(SUM(dsum.losses), 0) AS losses,
+            IFNULL(SUM(dsum.draws), 0) AS draws,
+            SUM(CASE WHEN dsum.wins >= 5 AND dsum.losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
             SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
             SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
             (CASE WHEN ct.name = 'League' THEN 'league' WHEN ct.name = 'Gatherling' THEN 'tournament' ELSE 'other' END) AS deck_type
@@ -110,17 +109,17 @@ def preaggregate_card_person() -> None:
             season.season_id,
             d.person_id,
             SUM(CASE WHEN d.id IS NOT NULL THEN 1 ELSE 0 END) AS num_decks,
-            IFNULL(SUM(wins), 0) AS wins,
-            IFNULL(SUM(losses), 0) AS losses,
-            IFNULL(SUM(draws), 0) AS draws,
-            SUM(CASE WHEN wins >= 5 AND losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
+            IFNULL(SUM(dsum.wins), 0) AS wins,
+            IFNULL(SUM(dsum.losses), 0) AS losses,
+            IFNULL(SUM(dsum.draws), 0) AS draws,
+            SUM(CASE WHEN dsum.wins >= 5 AND dsum.losses = 0 AND d.source_id IN (SELECT id FROM source WHERE name = 'League') THEN 1 ELSE 0 END) AS perfect_runs,
             SUM(CASE WHEN dsum.finish = 1 THEN 1 ELSE 0 END) AS tournament_wins,
             SUM(CASE WHEN dsum.finish <= 8 THEN 1 ELSE 0 END) AS tournament_top8s,
             (CASE WHEN ct.name = 'League' THEN 'league' WHEN ct.name = 'Gatherling' THEN 'tournament' ELSE 'other' END) AS deck_type
         FROM
             deck AS d
         INNER JOIN
-            -- Eiliminate maindeck/sideboard double-counting with DISTINCT. See #5493.
+            -- Eliminate maindeck/sideboard double-counting with DISTINCT. See #5493.
             (SELECT DISTINCT card, deck_id FROM deck_card) AS dc ON d.id = dc.deck_id
         {competition_join}
         {season_join}
@@ -134,35 +133,6 @@ def preaggregate_card_person() -> None:
                competition_join=query.competition_join(),
                season_join=query.season_join(),
                nwdl_join=deck.nwdl_join())
-    preaggregation.preaggregate(table, sql)
-
-def preaggregate_playability() -> None:
-    sql = """
-        SELECT
-            card AS name,
-            COUNT(*) AS played
-        FROM
-            deck_card
-        GROUP BY
-            card
-    """
-    rs = db().select(sql)
-    high = max([r['played'] for r in rs] + [0])
-    table = '_playability'
-    sql = f"""
-        CREATE TABLE IF NOT EXISTS _new{table} (
-            name VARCHAR(190) NOT NULL,
-            playability DECIMAL(3,2),
-            PRIMARY KEY (name)
-        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
-        SELECT
-            card AS name,
-            ROUND(COUNT(*) / {high}, 2) AS playability
-        FROM
-            deck_card
-        GROUP BY
-            card
-    """.format(table=table, high=high)
     preaggregation.preaggregate(table, sql)
 
 def preaggregate_unique() -> None:
@@ -287,17 +257,6 @@ def load_cards(
     for c in cs:
         c.update(cards[c.name])
     return cs
-
-@retry_after_calling(preaggregate_playability)
-def playability() -> Dict[str, float]:
-    sql = """
-        SELECT
-            name,
-            playability
-        FROM
-            _playability
-    """
-    return {r['name']: r['playability'] for r in db().select(sql)}
 
 @retry_after_calling(preaggregate_unique)
 def unique_cards_played(person_id: int) -> List[str]:

@@ -237,7 +237,7 @@ async def dreadrise_search_cards(query: str, page_size: int = 60, pd_mode: Liter
         minus = '-' if pd_mode < 0 else ''
         query = f'{minus}f:pd+({query})'
     url = f'{domain}/cards/find?q={query}+output:pagetext&page_size={page_size}'
-    return str(await fetch_tools.fetch_async(url)).split('\n')
+    return [x for x in str(await fetch_tools.fetch_async(url)).split('\n') if x]
 
 async def dreadrise_search_json(url: str) -> Tuple[int, Any, Optional[str]]:
     try:

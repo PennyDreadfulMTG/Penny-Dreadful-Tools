@@ -41,7 +41,7 @@ class Metagame(View):
                     a.name = f'Other {a.name}'
                 a.num_matches_plural = 'es' if a.num_matches != 1 else ''
                 self.archetypes.append(a)
-        self.archetypes.sort(key=lambda o: o.display_width, reverse=True)
+        self.archetypes.sort(key=lambda o: (o.display_width, o.num_matches), reverse=True)
 
     def page_title(self) -> str:
         return 'Metagame'

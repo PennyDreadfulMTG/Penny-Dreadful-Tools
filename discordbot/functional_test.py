@@ -85,6 +85,7 @@ def get_params() -> List[Tuple]:
     loop = asyncio.new_event_loop()
     return loop.run_until_complete(params())
 
+@pytest.mark.functional
 @pytest.mark.asyncio
 @pytest.mark.parametrize('cmd, kwargs, expected_content', get_params())
 async def test_command(discordbot: Bot, cmd: str, kwargs: Dict[str, Any], expected_content: str) -> None:  # pylint: disable=redefined-outer-name

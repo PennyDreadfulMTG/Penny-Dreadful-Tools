@@ -359,6 +359,7 @@ main {
 .content {
     display: flex;
     flex-wrap: wrap;
+    overflow: scroll;
 }
 
 footer {
@@ -653,7 +654,7 @@ ul.decklist {
 
 Tables
 
-Our tables are constrained to a single line, allow no column to become very large and will clip overflow with an elipsis.
+Our tables are constrained to a single line, allow no column to become very large and will clip overflow with an ellipsis.
 We make occasional use of space in the margin to the left. This is called 'marginalia'.
 
 Sizes in the table are in ems because they should relate to the size of table text not the page base.

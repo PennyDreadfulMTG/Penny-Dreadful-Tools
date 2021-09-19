@@ -1,5 +1,7 @@
 import os
 
+import pytest
+
 from discordbot import command, emoji
 from magic import image_fetcher, oracle
 from magic.models import Card
@@ -7,6 +9,7 @@ from shared import configuration, fetch_tools
 
 
 # Check that we can fetch card images.
+@pytest.mark.functional
 def test_imagedownload() -> None:
     filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='island.jpg')
     if fetch_tools.acceptable_file(filepath):
@@ -16,6 +19,7 @@ def test_imagedownload() -> None:
 
 # Check that we can fall back to the Gatherer images if all else fails.
 # Note: bluebones doesn't have Nalathni Dragon, while Gatherer does, which makes it useful here.
+@pytest.mark.functional
 def test_fallbackimagedownload() -> None:
     filepath = '{dir}/{filename}'.format(dir=configuration.get('image_dir'), filename='nalathni-dragon.jpg')
     if fetch_tools.acceptable_file(filepath):
@@ -24,6 +28,7 @@ def test_fallbackimagedownload() -> None:
     assert image_fetcher.download_image(c) is not None
 
 # Check that we can succesfully fail at getting an image.
+@pytest.mark.functional
 def test_noimageavailable() -> None:
     c = Card({'name': 'Made Up Card Name', 'id': 0, 'multiverseid': 0, 'names': 'Made Up Card Name', 'layout': 'normal'})
     assert image_fetcher.download_image([c]) is None

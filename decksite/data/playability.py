@@ -43,6 +43,8 @@ def key_cards(season_id: int) -> Dict[int, str]:
         ) AS pm ON p.archetype_id = pm.archetype_id AND p.playability = pm.playability
         WHERE
             {where}
+        ORDER BY
+            p.name
     """
     return {r['archetype_id']: r['name'] for r in db().select(sql)}
 

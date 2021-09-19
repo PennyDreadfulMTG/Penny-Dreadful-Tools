@@ -216,9 +216,9 @@ class View(BaseView):
 
     def prepare_archetypes(self) -> None:
         for a in getattr(self, 'archetypes', []):
-            self.prepare_archetype(a, getattr(self, 'archetypes', []))
+            self.prepare_archetype(a, getattr(self, 'archetypes', []), self.tournament_only)
 
-    def prepare_archetype(self, a: archetype.Archetype, archetypes: List[archetype.Archetype]) -> None:
+    def prepare_archetype(self, a: archetype.Archetype, archetypes: List[archetype.Archetype], tournament_only: bool = False) -> None:
         a.current = a.id == getattr(self, 'archetype', {}).get('id', None)
         a.show_record = a.get('num_decks') is not None and (a.get('wins') or a.get('draws') or a.get('losses'))
         counter = Counter()  # type: ignore
@@ -237,7 +237,7 @@ class View(BaseView):
             a.most_common_cards.append(cs[v[0]])
         a.has_most_common_cards = len(a.most_common_cards) > 0
         for b in [b for b in PreOrderIter(a) if b.id in [a.id for a in archetypes]]:
-            b['url'] = url_for('.archetype', archetype_id=b['id'])
+            b['url'] = url_for('.archetype', archetype_id=b['id'], deck_type=DeckType.TOURNAMENT.value if tournament_only else None)
             # It perplexes me that this is necessary. It's something to do with the way NodeMixin magic works. Mustache doesn't like it.
             b['depth'] = b.depth
 

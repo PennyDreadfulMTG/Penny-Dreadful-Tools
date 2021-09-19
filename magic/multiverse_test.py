@@ -1,7 +1,10 @@
+import pytest
+
 from magic import multiverse
 from magic.database import db
 
 
+@pytest.mark.functional
 def test_base_query_legalities() -> None:
     sql = multiverse.base_query("f.name = 'Mother of Runes'")
     db().execute('SET group_concat_max_len=100000')

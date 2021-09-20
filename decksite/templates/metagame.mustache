@@ -1,0 +1,23 @@
+<div class="variable-height-bar-chart">
+    {{#archetypes}}
+        <a
+                href="{{url}}"
+                style="
+                    width: {{display_width}}%;
+                    height: {{display_height}}px;
+                    line-height: {{display_height}}px;
+                    font-size: {{font_size}}px;
+                    background: {{background}};
+                    "
+                title="{{name}}
+                    {{wins}}–{{losses}}{{#draws}}–{{draws}}{{/draws}}
+                    {{win_percent}}%
+                    {{tournament_wins}} ①
+                    {{tournament_top8s}} ⑧
+                    {{^hide_perfect_runs}}{{perfect_runs}} 5–0
+                    {{/hide_perfect_runs}}"
+        >
+            {{name}} &bull; {{num_matches}} match{{num_matches_plural}} &bull; {{win_percent}}%
+        </a>
+    {{/archetypes}}
+</div>

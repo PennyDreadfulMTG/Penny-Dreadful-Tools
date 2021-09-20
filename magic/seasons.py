@@ -16,7 +16,7 @@ SEASONS = [
     'RIX', 'DOM', 'M19', 'GRN',  # 2018
     'RNA', 'WAR', 'M20', 'ELD',  # 2019
     'THB', 'IKO', 'M21', 'ZNR',  # 2020
-    'KHM', 'STX', 'AFR', 'IMH',  # 2121
+    'KHM', 'STX', 'AFR', 'MID',  # 2121
     'ICV',                       # 2022
 ]
 

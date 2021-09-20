@@ -50,6 +50,7 @@ def build_menu() -> List[Dict[str, Union[str, Dict[str, str]]]]:
     ]
     menu = [
         {'name': gettext('Metagame'), 'endpoint': 'home', 'badge': archetypes_badge, 'submenu': [
+            {'name': gettext('Meta'), 'endpoint': '.metagame'},
             {'name': gettext('Decks'), 'endpoint': '.decks'},
             {'name': gettext('Archetypes'), 'endpoint': 'archetypes', 'badge': archetypes_badge},
             {'name': gettext('People'), 'endpoint': 'people'},

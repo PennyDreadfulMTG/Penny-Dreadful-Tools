@@ -10,7 +10,7 @@ def matchup(hero: Dict[str, str], enemy: Dict[str, str], season_id: Optional[int
     prefix = None
     args: List[Union[str, int]] = []
     if season_id:
-        where += ' AND (season.id = %s)'
+        where += ' AND (season.season_id = %s)'
         args.append(season_id)
     for criteria in [hero, enemy]:
         prefix = '' if prefix is None else 'o'

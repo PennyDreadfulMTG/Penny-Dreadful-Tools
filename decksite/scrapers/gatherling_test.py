@@ -1,6 +1,8 @@
 import json
 from typing import Dict
 
+import pytest
+
 from decksite.data import competition, match
 from decksite.scrapers import gatherling
 from decksite.testutil import setup_test_db
@@ -11,6 +13,7 @@ def test_medal2finish() -> None:
     for m in gatherling.Medal:
         assert gatherling.medal2finish(m) > 0
 
+@pytest.mark.functional
 def test_process() -> None:
     setup_test_db()
     name = 'Penny Dreadful Thursdays 19.04'

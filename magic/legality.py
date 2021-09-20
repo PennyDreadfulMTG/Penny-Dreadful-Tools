@@ -88,6 +88,8 @@ def cards_legal_in_format(cardlist: List[Card], f: str) -> List[Card]:
 def order_score(fmt: str) -> int:
     if fmt == seasons.current_season_name():
         return 1
+    if fmt == 'Penny Dreadful':  # This *should* be impossible, but cached values
+        return 1
     if 'Penny Dreadful' in fmt:
         return 1000 - seasons.SEASONS.index(fmt.replace('Penny Dreadful ', ''))
     if fmt == 'Vintage':

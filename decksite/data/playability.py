@@ -1,8 +1,9 @@
-from typing import Dict
+from typing import Dict, List
 
 from decksite.data import preaggregation, query
 from decksite.database import db
 from shared.decorators import retry_after_calling
+from shared.container import Container
 
 
 def preaggregate() -> None:
@@ -58,6 +59,24 @@ def playability() -> Dict[str, float]:
             _playability
     """
     return {r['name']: r['playability'] for r in db().select(sql)}
+
+@retry_after_calling(preaggregate)
+def season_playability(season_id: int) -> List[Container]:
+    # This is a temporary thing used to generate banners.
+    # Feel free to replace it with something better.
+    sql = f"""
+        SELECT
+            name,
+            playability,
+            archetype_id
+        FROM
+            _season_playability
+        WHERE
+            season_id = {season_id}
+        LIMIT 100
+    """
+    return [Container(r) for r in db().select(sql)]
+
 
 def preaggregate_season_count() -> None:
     table = '_season_count'

@@ -1218,7 +1218,7 @@ header.season-all:before {
     background-image: url("/banner/0.png");
 }
 
-header.season-1:before {
+/* header.season-1:before {
     background-image: url("/banner/1.png");
 }
 
@@ -1261,7 +1261,6 @@ header.season-10:before {
 header.season-11:before {
     background-image: url("/banner/11.png");
 }
-
 header.season-12:before {
     background-image: url("/banner/12.png");
 }
@@ -1271,7 +1270,7 @@ header.season-13:before {
 header.season-14:before {
     background-image: url("/banner/14.png");
 }
-/* header.season-15:before {
+header.season-15:before {
     background-image: url("/banner/15.png");
 }
 header.season-16:before {
@@ -1288,6 +1287,12 @@ header.season-19:before {
 }
 header.season-20:before {
     background-image: url("/banner/20.png");
+}
+header.season-21:before {
+    background-image: url("/banner/21.png");
+}
+header.season-22:before {
+    background-image: url("/banner/22.png");
 } */
 /*
 

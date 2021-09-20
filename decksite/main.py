@@ -2,7 +2,8 @@ import asyncio
 import logging
 import os
 import re
-from typing import Optional
+from typing import Optional, Set, Tuple, List
+import functools
 
 from flask import Response, abort, g, make_response, redirect, request, send_file, session
 from werkzeug import wrappers
@@ -15,6 +16,7 @@ from decksite.data import card as cs
 from decksite.data import deck as ds
 from decksite.data import match as ms
 from decksite.data import news as ns
+from decksite.data import playability
 from decksite.database import db
 from decksite.views import Home
 from magic import card as mc
@@ -62,49 +64,74 @@ def image(c: str = '') -> wrappers.Response:
             return redirect(f'https://api.scryfall.com/cards/named?exact={c}&format=image', code=303)
         return make_response('', 400)
 
-@APP.route('/banner/<seasonnum>.png')
-def banner(seasonnum: str) -> Response:
+@APP.route('/banner/banner.css')
+@functools.lru_cache
+def bannercss() -> Response:
+    css = ''
+    for i, _ in enumerate(seasons.SEASONS):
+        i = i + 1
+        css += f'header.season-{i}:before' + '{ background-image:' + f'url("/banner/{i}.png");' + '}\n'
+    r = make_response(css)
+    r.headers['Content-Type'] = 'text/css; charset=utf-8'
+    return r
+
+@APP.route('/banner/<int:seasonnum>.png')
+def banner(seasonnum: int) -> Response:
     nice_path = os.path.join(str(APP.static_folder), 'images', 'banners', f'{seasonnum}.png')
     if os.path.exists(nice_path):
         return send_file(os.path.abspath(nice_path))
-    cardnames = ['Enter the Unknown', 'Unknown Shores', 'Peer through Depths']
-    background = 'Enter the Infinite'
-    if seasonnum == '0':
+    if seasonnum == 0:
         cardnames = ['Parallax Wave', 'Treasure Cruise', 'Duress', 'Chain Lightning', 'Rofellos, Llanowar Emissary ', 'Thawing Glaciers', 'Temur Ascendancy']
         background = 'Lake of the Dead'
-    elif seasonnum == '1':
+    elif seasonnum == 1:
         cardnames = ['Mother of Runes', 'Treasure Cruise', 'Duress', 'Lightning Strike', 'Elvish Mystic', 'Fleecemane Lion', 'Vivid Marsh']
         background = 'Dark Ritual'
-    elif seasonnum == '2':
+    elif seasonnum == 2:
         cardnames = ['Frantic Search', 'Hymn to Tourach', "Nevinyrral's Disk", 'Winds of Rath', 'Slagstorm', 'Rise from the Tides', 'Cloudpost']
         background = 'Fact or Fiction'
-    elif seasonnum == '3':
+    elif seasonnum == 3:
         cardnames = ['Shrine of Burning Rage', 'Terramorphic Expanse', 'Parallax Wave', 'Kambal, Consul of Allocation', 'Memory Lapse', 'Magister of Worth', 'Tendrils of Agony']
         background = 'Tidehollow Sculler'
-    elif seasonnum == '4':
+    elif seasonnum == 4:
         cardnames = ['Hymn to Tourach', 'Emerge Unscathed', 'Ordeal of Heliod', 'Lightning Strike', 'Cruel Edict', 'Lagonna-Band Trailblazer', 'Vivid Creek']
         background = 'Vivid Creek'
-    elif seasonnum == '5':
+    elif seasonnum == 5:
         cardnames = ['Dark Ritual', 'Cabal Ritual', 'Pyroclasm', 'Cursed Scroll', 'Necropotence', 'Harmonize', 'Precursor Golem']
         background = 'Boompile'
-    elif seasonnum == '6':
+    elif seasonnum == 6:
         cardnames = ['Chain Lightning', 'Compulsive Research', 'Bogardan Hellkite', 'Grand Coliseum', 'Cartouche of Solidarity', 'Lagonna-Band Trailblazer', 'Felidar Guardian']
         background = 'Parallax Wave'
-    elif seasonnum == '11':
+    elif seasonnum == 11:
         cardnames = ['Rampaging Ferocidon', 'Frantic Search', 'Whip of Erebos', "Gaea's Revenge", 'Doomed Traveler', 'Muraganda Petroglyphs', 'Pyroclasm']
         background = 'Temple of Mystery'
-    elif seasonnum == '12':
+    elif seasonnum == 12:
         cardnames = ['Aether Hub', 'Siege Rhino', 'Greater Good', "Mind's Desire", "God-Pharaoh's Gift", 'Kiln Fiend', 'Akroma, Angel of Wrath', 'Reanimate']
         background = 'Rofellos, Llanowar Emissary'
-    elif seasonnum == '13':
+    elif seasonnum == 13:
         cardnames = ['Day of Judgment', 'Mana Leak', 'Duress', 'Rampaging Ferocidon', 'Evolutionary Leap', 'Gavony Township', 'Ephemerate', 'Dig Through Time', 'Lake of the Dead', 'Soulherder']
         background = 'Fact or Fiction'
-    elif seasonnum == '14':
+    elif seasonnum == 14:
         cardnames = ['Gitaxian Probe', "Orim's Chant", 'Dark Ritual', 'Chain Lightning', 'Channel', 'Gush', 'Rofellos, Llanowar Emissary', 'Laboratory Maniac']
         background = "God-Pharaoh's Statue"
+    else:
+        cardnames, background = guess_banner(seasonnum)
     loop = asyncio.new_event_loop()
     path = loop.run_until_complete(image_fetcher.generate_banner(cardnames, background))
     return send_file(os.path.abspath(path))
+
+@functools.lru_cache
+def guess_banner(season_num: int) -> Tuple[List[str], str]:
+    cardnames: List[str] = []
+    used_archetypes: Set[int] = set()
+    cards = playability.season_playability(season_num)
+    for row in cards:
+        if row['name'] in cardnames or row['archetype_id'] in used_archetypes:
+            continue
+        if len(cardnames) == 7:
+            return cardnames, row['name']
+        cardnames.append(row['name'])
+
+    return ['Enter the Unknown', 'Unknown Shores', 'Peer through Depths'], 'Enter the Infinite'
 
 @APP.before_request
 def before_request() -> Optional[wrappers.Response]:

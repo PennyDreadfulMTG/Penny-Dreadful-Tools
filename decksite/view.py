@@ -112,7 +112,7 @@ class View(BaseView):
                 'cards_url': url_for('seasons.cards', season_id=num),
                 'rotation_changes_url': url_for('seasons.rotation_changes', season_id=num),
                 'tournament_leaderboards_url': url_for('seasons.tournament_leaderboards', season_id=num),
-                'legality_name': 'Penny Dreadful' + ('' if code == current_code else f' {code}'),
+                'legality_name': f'Penny Dreadful {code}',
                 'legal_cards_url': 'https://pdmtgo.com/legal_cards.txt' if code == current_code else f'https://pdmtgo.com/{code}_legal_cards.txt',
             })
             num += 1

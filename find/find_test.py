@@ -5,6 +5,7 @@ import pytest
 from find import search
 from find.search import InvalidValueException
 from magic.database import db
+from magic import seasons
 
 # Some of these tests only work hooked up to a cards db, and are thus marked functional. They are fast, though, and you should run them if editing card search.
 # $ python3 dev.py test find
@@ -345,7 +346,7 @@ def test_mana7() -> None:
 #     assert search.parse(search.tokenize('mana=2ww')) == search.parse(search.tokenize('mana=ww2'))
 
 def test_uppercase() -> None:
-    pd_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term='Penny Dreadful')])
+    pd_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term=seasons.current_season_name())])
     do_test('F:pd', "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {pd_id} AND legality <> 'Banned'))".format(pd_id=pd_id))
 
 def test_subtype() -> None:

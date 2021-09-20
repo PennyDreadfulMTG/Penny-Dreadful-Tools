@@ -197,12 +197,9 @@ def colors_html(colors: List[str], colored_symbols: List[str]) -> str:
 def set_legal_icons(o: Union[Card, Deck]) -> None:
     o.legal_icons = ''
     sets = seasons.SEASONS
-    if seasons.current_season_name() in o.legal_formats:
-        icon = seasons.current_season_code().lower()
-        n = sets.index(icon.upper()) + 1
-        o.legal_icons += '<a href="{url}"><i class="ss ss-{code} ss-rare ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), code=icon, n=n)
-    past_pd_formats = [fmt.replace('Penny Dreadful ', '') for fmt in o.legal_formats if 'Penny Dreadful ' in fmt]
-    past_pd_formats.sort(key=lambda code: -sets.index(code))
-    for code in past_pd_formats:
+    pd_formats = [fmt.replace('Penny Dreadful ', '') for fmt in o.legal_formats if 'Penny Dreadful ' in fmt]
+    pd_formats.sort(key=lambda code: -sets.index(code))
+    for code in pd_formats:
+        color = 'rare' if code in seasons.current_season_name() else 'common'
         n = sets.index(code.upper()) + 1
-        o.legal_icons += '<a href="{url}"><i class="ss ss-{set} ss-common ss-grad">S{n}</i></a>'.format(url='/seasons/{id}/'.format(id=n), set=code.lower(), n=n)
+        o.legal_icons += f'<a href="/seasons/{n}/"><i class="ss ss-{code.lower()} ss-{color} ss-grad">S{n}</i></a>'

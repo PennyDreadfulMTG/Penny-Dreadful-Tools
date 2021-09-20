@@ -4,8 +4,8 @@ import pytest
 
 from find import search
 from find.search import InvalidValueException
-from magic.database import db
 from magic import seasons
+from magic.database import db
 
 # Some of these tests only work hooked up to a cards db, and are thus marked functional. They are fast, though, and you should run them if editing card search.
 # $ python3 dev.py test find

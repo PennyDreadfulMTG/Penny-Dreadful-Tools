@@ -2,8 +2,8 @@ from typing import Dict, List
 
 from decksite.data import preaggregation, query
 from decksite.database import db
-from shared.decorators import retry_after_calling
 from shared.container import Container
+from shared.decorators import retry_after_calling
 
 
 def preaggregate() -> None:

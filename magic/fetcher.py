@@ -32,7 +32,7 @@ async def achievement_cache_async() -> Dict[str, Dict[str, str]]:
 
 async def all_cards_async() -> List[CardDescription]:
     try:
-        f = open('scryfall-default-cards.json')
+        f = open('scryfall-default-cards.json', encoding='utf-8')
         return json.load(f)
     except FileNotFoundError as c:
         endpoints = await fetch_tools.fetch_json_async('https://api.scryfall.com/bulk-data')
@@ -124,10 +124,6 @@ async def legal_cards_async(season: str = None) -> List[str]:
 
     url = 'https://pennydreadfulmtg.github.io/' + url
     legal_txt = await fetch_tools.fetch_async(url)
-    if season is not None and configuration.get_bool('save_historic_legal_lists'):
-        with open(os.path.join(cached_path, f'{season}_legal_cards.txt'), 'w', encoding=encoding) as h:
-            h.write(legal_txt)
-
     return legal_txt.strip().split('\n')
 
 async def mtgo_status() -> str:

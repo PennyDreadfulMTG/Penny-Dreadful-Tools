@@ -1,0 +1,8 @@
+{
+  "checkpoints": {
+    "BOT": {
+      "overdue": "1H",
+      "url": "https://bot.pennydreadfulmagic.com/"
+    }
+  }
+}

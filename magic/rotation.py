@@ -24,7 +24,7 @@ def interesting(playability: Dict[str, float], c: Card, speculation: bool = True
     return None
 
 def in_rotation() -> bool:
-    if configuration.get_bool('always_show_rotation'):
+    if configuration.always_show_rotation.value:
         return True
     until_rotation = seasons.next_rotation() - dtutil.now()
     return until_rotation < datetime.timedelta(7)

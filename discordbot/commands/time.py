@@ -1,5 +1,6 @@
 import logging
 import re
+from shared.settings import with_config_file
 
 from discord.ext import commands
 
@@ -16,7 +17,9 @@ async def time(ctx: MtgContext, *, args: str) -> None:
         await ctx.send('{author}: No location provided. Please type !time followed by the location you want the time for.'.format(author=ctx.author.mention))
         return
     try:
-        twentyfour = configuration.get_bool(f'{guild_or_channel_id(ctx.channel)}.use_24h') or configuration.get_bool(f'{ctx.channel.id}.use_24h')
+        with with_config_file(guild_or_channel_id(ctx.channel)):
+            with with_config_file(ctx.channel.id):
+                twentyfour = configuration.use_24h.get()
         ts = fetcher.time(args, twentyfour)
         times_s = ''
         for t, zones in ts.items():

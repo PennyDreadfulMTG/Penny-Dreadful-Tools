@@ -72,7 +72,7 @@ def bannercss() -> Response:
         i = i + 1
         css += f'header.season-{i}:before' + '{ background-image:' + f'url("/banner/{i}.png");' + '}\n'
     r = make_response(css)
-    r.headers["Content-Type"] = 'text/css; charset=utf-8'
+    r.headers['Content-Type'] = 'text/css; charset=utf-8'
     return r
 
 @APP.route('/banner/<int:seasonnum>.png')

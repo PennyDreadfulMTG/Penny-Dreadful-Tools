@@ -378,10 +378,16 @@ def rotation_cards_api() -> Response:
     if not session.get('admin', False):
         cs = [c for c in cs if c.status != 'Undecided']
     total = len(cs)
-    # Now add interestingness to the cards, which only decksite knows not magic.rotation.
-    p = playability.playability()
+    # Now add rank to the cards, which only decksite knows not magic.rotation.
+    ranks = playability.rank()
     for c in cs:
-        c.interestingness = rotation.interesting(p, c)
+        c.rank = ranks.get(c.name, 0 if c.never_legal() else total)
+        if c.rank == 0:
+            c.display_rank = 'NEW'
+        elif c.rank == total:
+            c.display_rank = '-'
+        else:
+            c.display_rank = str(c.rank)
     rotation.rotation_sort(cs, request.args.get('sortBy'), request.args.get('sortOrder'))
     page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
     page = int(request.args.get('page', 0))

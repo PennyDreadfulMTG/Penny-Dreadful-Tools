@@ -11,20 +11,22 @@ def preaggregate() -> None:
     preaggregate_season_archetype_count()
     preaggregate_season_card_count()
     preaggregate_season_archetype_card_count()
-    preaggregate_season_playability()
+    preaggregate_season_archetype_playability()
     preaggregate_archetype_count()
     preaggregate_card_count()
     preaggregate_archetype_card_count()
+    preaggregate_archetype_playability()
+    preaggregate_season_playability()
     preaggregate_playability()
 
 # Map of archetype_id => cardname where cardname is the key card for that archetype for the supplied season, or all time if 0 supplied as season_id.
 @retry_after_calling(preaggregate)
 def key_cards(season_id: int) -> Dict[int, str]:
     if season_id:
-        table = '_season_playability'
+        table = '_season_archetype_playability'
         where = f'p.season_id = {season_id}'
     else:
-        table = '_playability'
+        table = '_archetype_playability'
         where = 'TRUE'
     sql = f"""
         SELECT
@@ -77,6 +79,16 @@ def season_playability(season_id: int) -> List[Container]:
     """
     return [Container(r) for r in db().select(sql)]
 
+@retry_after_calling(preaggregate)
+def rank() -> Dict[str, int]:
+    sql = """
+        SELECT
+            name,
+            ROW_NUMBER() OVER (ORDER BY playability DESC) as rank
+        FROM
+            _playability
+    """
+    return {r['name']: r['rank'] for r in db().select(sql)}
 
 def preaggregate_season_count() -> None:
     table = '_season_count'
@@ -192,8 +204,8 @@ def preaggregate_season_archetype_card_count() -> None:
     """
     preaggregation.preaggregate(table, sql)
 
-def preaggregate_season_playability() -> None:
-    table = '_season_playability'
+def preaggregate_season_archetype_playability() -> None:
+    table = '_season_archetype_playability'
     sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             name VARCHAR(190) NOT NULL,
@@ -311,8 +323,8 @@ def preaggregate_archetype_card_count() -> None:
     """
     preaggregation.preaggregate(table, sql)
 
-def preaggregate_playability() -> None:
-    table = '_playability'
+def preaggregate_archetype_playability() -> None:
+    table = '_archetype_playability'
     sql = f"""
         CREATE TABLE IF NOT EXISTS _new{table} (
             name VARCHAR(190) NOT NULL,
@@ -349,5 +361,48 @@ def preaggregate_playability() -> None:
             _archetype_count AS ac ON ac.archetype_id = acc.archetype_id
         INNER JOIN
             _card_count AS cc ON cc.name = acc.name
+    """
+    preaggregation.preaggregate(table, sql)
+
+def preaggregate_season_playability() -> None:
+    table = '_season_playability'
+    sql = f"""
+        CREATE TABLE IF NOT EXISTS _new{table} (
+            name VARCHAR(190) NOT NULL,
+            season_id INT NOT NULL,
+            playability DECIMAL(6,5) NOT NULL,
+            PRIMARY KEY (name, season_id),
+            FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+        SELECT
+            scc.name,
+            scc.season_id,
+            (
+                scc.num_decks
+                    /
+                (SELECT COUNT(*) FROM deck_cache WHERE season_id = scc.season_id)
+            ) AS playability
+        FROM
+            _season_card_count AS scc
+    """
+    preaggregation.preaggregate(table, sql)
+
+def preaggregate_playability() -> None:
+    table = '_playability'
+    sql = f"""
+        CREATE TABLE IF NOT EXISTS _new{table} (
+            name VARCHAR(190) NOT NULL,
+            playability DECIMAL(6,5) NOT NULL,
+            PRIMARY KEY (name)
+        ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AS
+        SELECT
+            scc.name,
+            SUM(scc.num_decks) / SUM(sc.num_decks) AS playability
+        FROM
+            _season_card_count AS scc
+        INNER JOIN
+            _season_count AS sc ON scc.season_id = sc.season_id
+        GROUP BY
+            scc.name
     """
     preaggregation.preaggregate(table, sql)

@@ -147,6 +147,7 @@ def rotation_sort(cs: List[Card], sort_by: Optional[str], sort_order: Optional[s
         'hits': lambda c: c.hits,
         'name': lambda c: c.name,
         'hitsNeeded': hits_needed_score,
+        'rank': lambda c: c.rank,
     }
     cs.sort(key=sort_funcs[sort_by], reverse=rev)
 

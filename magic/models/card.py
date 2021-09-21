@@ -30,6 +30,12 @@ class Card(Container):
     def is_split(self) -> bool:
         return self.name.find('//') >= 0
 
+    def never_legal(self) -> bool:
+        for f in self.legalities:
+            if 'Penny Dreadful' in f:
+                return False
+        return True
+
     def __hash__(self) -> int:
         return hash(self.name)
 

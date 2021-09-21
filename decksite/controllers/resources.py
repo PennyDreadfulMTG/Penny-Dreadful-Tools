@@ -13,8 +13,7 @@ from magic import card, oracle
 
 @cached()
 @APP.route('/rotation/')
-@APP.route('/rotation/<interestingness>/')
-def rotation(interestingness: Optional[str] = None) -> str:
+def rotation() -> str:
     view = Rotation()
     return view.page()
 

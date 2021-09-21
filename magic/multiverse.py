@@ -167,16 +167,14 @@ async def update_database_async(new_date: datetime.datetime) -> None:
     db().begin('update_database')
     db().execute('DELETE FROM scryfall_version')
     db().execute('SET FOREIGN_KEY_CHECKS=0')  # Avoid needing to drop _cache_card (which has an FK relationship with card) so that the database continues to function while we perform the update.
-    db().execute("""
-        DELETE FROM card_color;
-        DELETE FROM card_color_identity;
-        DELETE FROM card_legality;
-        DELETE FROM card_bug;
-        DELETE FROM face;
-        DELETE FROM printing;
-        DELETE FROM card;
-        DELETE FROM `set`;
-    """)
+    db().execute('DELETE FROM card_color')
+    db().execute('DELETE FROM card_color_identity')
+    db().execute('DELETE FROM card_legality')
+    db().execute('DELETE FROM card_bug')
+    db().execute('DELETE FROM face')
+    db().execute('DELETE FROM printing')
+    db().execute('DELETE FROM card')
+    db().execute('DELETE FROM `set`')
     for s in sets:
         insert_set(s)
     every_card_printing = all_cards

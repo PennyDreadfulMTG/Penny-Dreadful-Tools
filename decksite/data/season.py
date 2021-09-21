@@ -114,9 +114,10 @@ def preaggregate_season_stats() -> None:
             PRIMARY KEY (season_id),
             FOREIGN KEY (season_id) REFERENCES season (id) ON UPDATE CASCADE ON DELETE CASCADE
         );
-        INSERT INTO _new{table} VALUES {values};
-    """.format(table=table, values=', '.join(values))
+    """.format(table=table)
     preaggregation.preaggregate(table, sql)
+    values_s = ', '.join(values)
+    db().execute(f'INSERT INTO {table} VALUES {values_s}')
 
 @retry_after_calling(preaggregate_season_stats)
 def season_stats() -> Dict[int, Dict[str, Union[int, datetime.datetime]]]:

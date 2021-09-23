@@ -17,6 +17,7 @@ class DecksiteSmokeTest(unittest.TestCase):
         for path in ['/', '/people/', '/cards/', '/cards/Unsummon/', '/competitions/', '/competitions/', '/tournaments/', '/resources/', '/bugs/', '/signup/', '/report/']:
             self.tester.response_test(path, 200)
 
+    @pytest.mark.functional
     @pytest.mark.xfail(reason='We need to fix this')
     def test_trailing_slashes(self) -> None:
         with APP.app_context():
@@ -26,6 +27,7 @@ class DecksiteSmokeTest(unittest.TestCase):
                     if not url.startswith('/api/') and rule.endpoint not in ['favicon', 'robots_txt']:
                         assert url.endswith('/')
 
+    @pytest.mark.functional
     @pytest.mark.xfail(reason='We need to fix this')
     def test_api_no_trailing_slashes(self) -> None:
         with APP.app_context():

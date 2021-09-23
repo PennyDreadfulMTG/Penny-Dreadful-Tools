@@ -56,7 +56,7 @@ def load_matches_by_person(person_id: int, season_id: Optional[int] = None) -> L
 def load_matches_count(where: str = 'TRUE', season_id: Union[int, str, None] = None) -> int:
     competition_join = query.competition_join()
     season_join = query.season_join()
-    season_query = query.season_query(season_id, 'season.id')
+    season_query = query.season_query(season_id, 'season.season_id')
     sql = f"""
         SELECT
             COUNT(DISTINCT m.id)
@@ -92,7 +92,7 @@ def load_matches(where: str = 'TRUE', order_by: str = 'm.`date`, m.`round`', lim
     opponent_person_query = query.person_query(table='o')
     competition_join = query.competition_join()
     season_join = query.season_join()
-    season_query = query.season_query(season_id, 'season.id')
+    season_query = query.season_query(season_id, 'season.season_id')
     sql = f"""
         SELECT
             m.`date`,

@@ -29,11 +29,6 @@ OVERRIDES = {
             'exact': '2020-04-17T00:00:00.000',
         },
     },
-    'Innistrad: Midnight Hunt': {
-        'enterDate': {
-            'exact': '2021-09-24T00:00:00.000',
-        },
-    },
 }
 
 
@@ -78,6 +73,9 @@ def current_season_code() -> str:
 
 def current_season_num() -> int:
     return season_num(current_season_code())
+
+def current_season_name() -> str:
+    return f'Penny Dreadful {current_season_code()}'
 
 def season_num(code_to_look_for: str) -> int:
     try:

@@ -4,6 +4,7 @@ import pytest
 
 from find import search
 from find.search import InvalidValueException
+from magic import seasons
 from magic.database import db
 
 # Some of these tests only work hooked up to a cards db, and are thus marked functional. They are fast, though, and you should run them if editing card search.
@@ -250,12 +251,14 @@ def test_exclusivemulitcolored_same() -> None:
 def test_mulitcolored_multiple() -> None:
     do_test('c=br', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 3))) AND ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) <= 2))')
 
+@pytest.mark.functional
 def test_multicolored_exclusive_functional() -> None:
     do_functional_test('c!br', ["Kroxa, Titan of Death's Hunger", 'Fulminator Mage', 'Murderous Redcap'], ['Bosh, Iron Golem', 'Dark Ritual', 'Fires of Undeath'])
 
 def test_multicolored_exclusive() -> None:
     do_test('c!br', '((c.id IN (SELECT card_id FROM card_color WHERE color_id = 3))) AND ((c.id IN (SELECT card_id FROM card_color WHERE color_id = 4))) AND (c.id IN (SELECT card_id FROM card_color GROUP BY card_id HAVING COUNT(card_id) <= 2))')
 
+@pytest.mark.functional
 def test_color_identity_functional() -> None:
     yes = ['Brainstorm', 'Force of Will', 'Mystic Sanctuary', 'Venser, Shaper Savant']
     no = ['Electrolyze', 'Swamp', 'Underground Sea']
@@ -343,7 +346,7 @@ def test_mana7() -> None:
 #     assert search.parse(search.tokenize('mana=2ww')) == search.parse(search.tokenize('mana=ww2'))
 
 def test_uppercase() -> None:
-    pd_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term='Penny Dreadful')])
+    pd_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term=seasons.current_season_name())])
     do_test('F:pd', "(c.id IN (SELECT card_id FROM card_legality WHERE format_id = {pd_id} AND legality <> 'Banned'))".format(pd_id=pd_id))
 
 def test_subtype() -> None:
@@ -407,6 +410,7 @@ def test_name() -> None:
 def test_parentheses() -> None:
     do_test('x OR (a OR (b AND c))', "(name LIKE '%%x%%') OR ((name LIKE '%%a%%') OR ((name LIKE '%%b%%') AND (name LIKE '%%c%%')))")
 
+@pytest.mark.functional
 def test_toughness_functional() -> None:
     do_functional_test('c:r tou>2', ['Bonecrusher Giant', "Kroxa, Titan of Death's Hunger"], ['Endurance', 'Ragavan, Nimble Pilferer', 'Wurmcoil Engine'])
 

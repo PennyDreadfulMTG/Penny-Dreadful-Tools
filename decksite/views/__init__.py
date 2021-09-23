@@ -28,6 +28,7 @@ from .league_form import LeagueForm
 from .league_info import LeagueInfo
 from .link_accounts import LinkAccounts
 from .matchups import Matchups
+from .metagame import Metagame
 from .pd500 import PD500
 from .people import People
 from .person import Person
@@ -43,6 +44,7 @@ from .rotation_changes import RotationChanges
 from .rotation_checklist import RotationChecklist
 from .seasons import Seasons
 from .signup import SignUp
+from .sorters import Sorters
 from .tournament_hosting import TournamentHosting
 from .tournament_leaderboards import TournamentLeaderboards
 from .tournaments import Tournaments

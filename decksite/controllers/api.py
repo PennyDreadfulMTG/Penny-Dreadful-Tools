@@ -11,7 +11,7 @@ from decksite.data import card
 from decksite.data import competition as comp
 from decksite.data import deck, match
 from decksite.data import person as ps
-from decksite.data import query
+from decksite.data import playability, query
 from decksite.data import rule as rs
 from decksite.data.achievements import Achievement
 from decksite.prepare import (prepare_cards, prepare_decks, prepare_leaderboard, prepare_matches,
@@ -395,10 +395,16 @@ def rotation_cards_api() -> Response:
     if not session.get('admin', False):
         cs = [c for c in cs if c.status != 'Undecided']
     total = len(cs)
-    # Now add interestingness to the cards, which only decksite knows not magic.rotation.
-    playability = card.playability()
+    # Now add rank to the cards, which only decksite knows not magic.rotation.
+    ranks = playability.rank()
     for c in cs:
-        c.interestingness = rotation.interesting(playability, c)
+        c.rank = ranks.get(c.name, 0 if c.never_legal() else total)
+        if c.rank == 0:
+            c.display_rank = 'NEW'
+        elif c.rank == total:
+            c.display_rank = '-'
+        else:
+            c.display_rank = str(c.rank)
     rotation.rotation_sort(cs, request.args.get('sortBy'), request.args.get('sortOrder'))
     page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
     page = int(request.args.get('page', 0))
@@ -625,6 +631,12 @@ def guarantee_at_most_one_or_retire(decks: List[Deck]) -> Optional[Deck]:
         league.retire_deck(decks[0])
         run = decks[1]
     return run
+
+@APP.route('/api/key_cards/<int:season_num>')
+def key_cards(season_num: int) -> Response:
+    data = playability.key_cards(season_num)
+    return return_json({'data': data})
+
 
 @APP.route('/api/admin/people/<int:person_id>/notes/')
 @auth.admin_required_no_redirect

@@ -1,0 +1,14 @@
+INSERT IGNORE INTO season (id, `number`, code, start_date) VALUES (8, 8, 'DOM', 1524812400);
+INSERT IGNORE INTO season (id, `number`, code, start_date) VALUES (9, 9, 'M19', 1531465200);
+INSERT IGNORE INTO season (id, `number`, code, start_date) VALUES (10, 10, 'GRN', 1538722800);
+INSERT IGNORE INTO season (id, `number`, code, start_date) VALUES (11, 11, 'RNA', 1548403200);
+INSERT IGNORE INTO season (id, `number`, code, start_date) VALUES (12, 12, 'WAR', 1556866800);
+INSERT IGNORE INTO season (id, `number`, code, start_date) VALUES (13, 13, 'M20', 1562914800);
+INSERT IGNORE INTO season (id, `number`, code, start_date) VALUES (14, 14, 'ELD', 1570172400);
+INSERT IGNORE INTO season (id, `number`, code, start_date) VALUES (15, 15, 'THB', 1579852800);
+INSERT IGNORE INTO season (id, `number`, code, start_date) VALUES (16, 16, 'IKO', 1587711600);
+INSERT IGNORE INTO season (id, `number`, code, start_date) VALUES (17, 17, 'M21', 1594364400);
+INSERT IGNORE INTO season (id, `number`, code, start_date) VALUES (18, 18, 'ZNR', 1601622000);
+INSERT IGNORE INTO season (id, `number`, code, start_date) VALUES (19, 19, 'KHM', 1613116800);
+INSERT IGNORE INTO season (id, `number`, code, start_date) VALUES (20, 20, 'STX', 1619766000);
+INSERT IGNORE INTO season (id, `number`, code, start_date) VALUES (21, 21, 'AFR', 1627628400);

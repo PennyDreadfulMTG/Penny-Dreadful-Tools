@@ -390,13 +390,13 @@ PD.initPersonNotes = function() {
 };
 
 PD.renderCharts = function() {
-    Chart.defaults.global.defaultFontFamily = $("body").css("font-family");
+    Chart.defaults.font.family = $("body").css("font-family");
     if ($("td").length > 0) {
-        Chart.defaults.global.defaultFontSize = parseInt($("td").css("font-size"), 10);
+        Chart.defaults.font.size = parseInt($("td").css("font-size"), 10);
     }
-    Chart.defaults.global.legend.display = false;
-    Chart.defaults.global.title.display = false;
-    Chart.defaults.global.tooltips.displayColors = false;
+    Chart.defaults.plugins.legend.display = false;
+    Chart.defaults.plugins.title.display = false;
+    Chart.defaults.plugins.tooltip.displayColors = false;
     Chart.defaults.scale.ticks.beginAtZero = true;
     $(".chart").each(function() {
         var type = $(this).data("type"),

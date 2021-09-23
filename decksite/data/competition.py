@@ -57,7 +57,7 @@ def load_competitions(where: str = 'TRUE', having: str = 'TRUE', limit: str = ''
             sp.name AS sponsor_name,
             cs.name AS series_name,
             ct.name AS type,
-            season.id AS season_id
+            season.season_id
         FROM
             competition AS c
         LEFT JOIN
@@ -79,7 +79,7 @@ def load_competitions(where: str = 'TRUE', having: str = 'TRUE', limit: str = ''
             c.start_date DESC,
             c.name
         {limit}
-    """.format(season_join=query.season_join(), where=where, season_query=query.season_query(season_id, 'season.id'), having=having, limit=limit)
+    """.format(season_join=query.season_join(), where=where, season_query=query.season_query(season_id, 'season.season_id'), having=having, limit=limit)
     competitions = [Competition(r) for r in db().select(sql)]
     for c in competitions:
         c.start_date = dtutil.ts2dt(c.start_date)
@@ -115,7 +115,7 @@ def tournaments_with_prizes() -> List[Competition]:
 def series(season_id: Optional[int] = None) -> List[Dict[str, Any]]:
     competition_join = query.competition_join()
     season_join = query.season_join()
-    season_query = query.season_query(season_id, 'season.id')
+    season_query = query.season_query(season_id, 'season.season_id')
     sql = f"""
         SELECT
             cs.id AS competition_series_id,
@@ -136,7 +136,7 @@ def series(season_id: Optional[int] = None) -> List[Dict[str, Any]]:
 
 def load_leaderboard_count(where: str, season_id: Optional[Union[str, int]] = None) -> int:
     season_join = query.season_join()
-    season_query = query.season_query(season_id, 'season.id')
+    season_query = query.season_query(season_id, 'season.season_id')
     sql = f"""
         SELECT
             COUNT(DISTINCT p.id)
@@ -165,7 +165,7 @@ def load_leaderboard_count(where: str, season_id: Optional[Union[str, int]] = No
 def load_leaderboard(where: str = "ct.name = 'Gatherling'", group_by: str = 'cs.id, p.id', order_by: str = 'cs.id', limit: str = '', season_id: Optional[Union[str, int]] = None) -> Sequence[Container]:
     person_query = query.person_query()
     season_join = query.season_join()
-    season_query = query.season_query(season_id, 'season.id')
+    season_query = query.season_query(season_id, 'season.season_id')
     sql = f"""
         SELECT
             p.id AS person_id,

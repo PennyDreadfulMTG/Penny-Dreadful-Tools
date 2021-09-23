@@ -457,3 +457,14 @@ def preorder(archetypes: List[Archetype]) -> List[Archetype]:
         for a in PreOrderIter(r):
             archs.append(a)
     return archs
+
+def load_archetype_tree() -> List[Dict]:
+    sql = """
+        SELECT a.name AS name, b.name AS ancestor
+        FROM decksite.archetype AS a
+        LEFT JOIN decksite.archetype_closure AS cl
+        ON cl.descendant = a.id AND cl.depth = 1
+        LEFT JOIN decksite.archetype AS b
+        ON cl.ancestor = b.id
+    """
+    return db().select(sql)

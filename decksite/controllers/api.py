@@ -347,6 +347,23 @@ def matches_api() -> Response:
     resp.set_cookie('page_size', str(page_size))
     return resp
 
+@APP.route('/api/archetypes/')
+def archetypes_api() -> Response:
+    """
+    Grabs the archetype tree.
+    Input: nothing
+    Output:
+        {
+            total: int,
+            objects: [
+                { name: str, parent: str }
+            ]
+        }
+    """
+    data = archs.load_archetype_tree()
+    r = {'total': len(data), 'objects': data}
+    return return_json(r, camelize=True)
+
 @APP.route('/api/rotation/cards/')
 def rotation_cards_api() -> Response:
     """

@@ -359,7 +359,6 @@ main {
 .content {
     display: flex;
     flex-wrap: wrap;
-    overflow: scroll;
 }
 
 footer {
@@ -541,6 +540,12 @@ main h2 {
 /* Don't show a top border on the first subheading if there is no h1 to avoid a double border. */
 .content-home section:first-of-type h2 {
     border: 0;
+}
+
+/* Prevent metagame text from overflowing the content area, scroll instead.
+   Not applicable to .content because that hides marginalia on deck tables. */
+.content-metagame {
+    overflow: scroll;
 }
 
 main h1 a:visited, main h2 a:visited {

@@ -21,6 +21,7 @@ WHITELIST = [
     'i will make combo work in season 15',
     'b u r n',
     'r e a n i m a t o r',
+    'meme deck for #general',
 ]
 
 PROFANITY_WHITELIST = [

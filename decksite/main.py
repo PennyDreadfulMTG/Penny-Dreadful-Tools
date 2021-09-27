@@ -22,7 +22,7 @@ from decksite.views import Home
 from magic import card as mc
 from magic import image_fetcher, oracle, seasons
 from shared import dtutil, logger, perf
-from shared.pd_exception import TooFewItemsException
+from shared.pd_exception import DatabaseException, TooFewItemsException
 
 
 @APP.route('/')
@@ -122,14 +122,16 @@ def banner(seasonnum: int) -> Response:
 def guess_banner(season_num: int) -> Tuple[List[str], str]:
     cardnames: List[str] = []
     used_archetypes: Set[int] = set()
-    cards = playability.season_playability(season_num)
-    for row in cards:
-        if row['name'] in cardnames or row['archetype_id'] in used_archetypes:
-            continue
-        if len(cardnames) == 7:
-            return cardnames, row['name']
-        cardnames.append(row['name'])
-
+    try:
+        cards = playability.season_playability(season_num)
+        for row in cards:
+            if row['name'] in cardnames or row['archetype_id'] in used_archetypes:
+                continue
+            if len(cardnames) == 7:
+                return cardnames, row['name']
+            cardnames.append(row['name'])
+    except DatabaseException as e:
+        logger.error(e)
     return ['Enter the Unknown', 'Unknown Shores', 'Peer through Depths'], 'Enter the Infinite'
 
 @APP.before_request

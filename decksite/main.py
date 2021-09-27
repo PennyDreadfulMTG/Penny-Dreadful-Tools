@@ -65,7 +65,6 @@ def image(c: str = '') -> wrappers.Response:
         return make_response('', 400)
 
 @APP.route('/banner/banner.css')
-@functools.lru_cache
 def bannercss() -> Response:
     css = ''
     for i, _ in enumerate(seasons.SEASONS):

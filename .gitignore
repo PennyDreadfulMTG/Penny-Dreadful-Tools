@@ -48,3 +48,4 @@ test_results.xml
 whoosh_index/
 /scryfall-default-cards.json
 /.env
+/src/pystache/

@@ -74,6 +74,7 @@ def season_playability(season_id: int) -> List[Container]:
             _season_playability
         WHERE
             season_id = {season_id}
+        ORDER BY `playability` DESC
         LIMIT 100
     """
     return [Container(r) for r in db().select(sql)]

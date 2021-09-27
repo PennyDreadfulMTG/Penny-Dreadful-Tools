@@ -80,6 +80,9 @@ class Deck(View):
     def logout_url(self) -> str:
         return url_for('logout', target=self.og_url())
 
+    def season_id(self) -> int:
+        return self.deck.season_id
+
     def __getattr__(self, attr: str) -> Any:
         return getattr(self.deck, attr)
 

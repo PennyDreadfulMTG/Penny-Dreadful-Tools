@@ -69,8 +69,7 @@ def season_playability(season_id: int) -> List[Container]:
     sql = f"""
         SELECT
             name,
-            playability,
-            archetype_id
+            playability
         FROM
             _season_playability
         WHERE

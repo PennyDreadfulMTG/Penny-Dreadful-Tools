@@ -121,11 +121,10 @@ def banner(seasonnum: int) -> Response:
 @functools.lru_cache
 def guess_banner(season_num: int) -> Tuple[List[str], str]:
     cardnames: List[str] = []
-    used_archetypes: Set[int] = set()
     try:
         cards = playability.season_playability(season_num)
         for row in cards:
-            if row['name'] in cardnames or row['archetype_id'] in used_archetypes:
+            if row['name'] in cardnames:
                 continue
             if len(cardnames) == 7:
                 return cardnames, row['name']

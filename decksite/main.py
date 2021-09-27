@@ -126,6 +126,9 @@ def guess_banner(season_num: int) -> Tuple[List[str], str]:
         for row in cards:
             if row['name'] in cardnames:
                 continue
+            c = oracle.load_card(row['name'])
+            if 'Basic' in c.type_line:
+                continue
             if len(cardnames) == 7:
                 return cardnames, row['name']
             cardnames.append(row['name'])

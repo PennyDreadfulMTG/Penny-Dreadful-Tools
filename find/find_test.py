@@ -453,6 +453,15 @@ def test_is_commander() -> None:
     do_test('is:commander', "((type_line LIKE '%%legendary%%') AND ((type_line LIKE '%%creature%%') OR (oracle_text LIKE CONCAT('%%', name, ' can be your commander%%'))) AND (c.id IN (SELECT card_id FROM card_legality WHERE format_id = 4 AND legality <> 'Banned')))")
 
 @pytest.mark.functional
+def test_format_functional() -> None:
+    legal = ['Plains']
+    not_legal = ['Black Lotus']
+    do_functional_test('f:penny', legal, not_legal)
+    do_functional_test('f:pd', legal, not_legal)
+    do_functional_test('-f:penny', not_legal, legal)
+    do_functional_test('-f:pd', not_legal, legal)
+
+@pytest.mark.functional
 def test_is_commander_illegal_commander_functional() -> None:
     do_functional_test('c:g cmc=2 is:commander', ['Ayula, Queen Among Bears', 'Gaddock Teeg'], ['Fblthp, the Lost', 'Rofellos, Llanowar Emissary'])
 

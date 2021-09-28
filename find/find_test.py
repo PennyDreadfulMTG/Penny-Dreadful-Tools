@@ -274,6 +274,10 @@ def test_color_identity() -> None:
     do_test('commander:u', where)
 
 @pytest.mark.functional
+def test_color_identity_two_colors() -> None:
+    do_functional_test('id:uw', ['Brainstorm', 'Dream Trawler', 'Island', 'Wastes'], ['Forbidden Alchemy', 'Lightning Bolt', 'Watery Grave'])
+
+@pytest.mark.functional
 def test_color_identity_colorless_functional() -> None:
     do_functional_test('ci:c', ['Lodestone Golem', 'Wastes'], ['Academy Ruins', 'Bosh, Iron Golem', 'Lightning Bolt', 'Plains'])
 

@@ -227,7 +227,7 @@ def color_where(subtable: str, operator: str, term: str) -> str:
     if 'm' in colors and len(colors) > 1:
         raise InvalidValueException(f"Using 'm' with other colors is not supported, use '{subtable}>{term}' instead")
     if operator == ':' and subtable == 'color_identity':
-        operator = '='
+        operator = '<='
     required: Set[str] = set()
     excluded: Set[str] = set()
     min_colors, max_colors = None, None

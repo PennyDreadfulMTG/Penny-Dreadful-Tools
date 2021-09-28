@@ -406,13 +406,14 @@ def rotation_cards_api() -> Response:
         else:
             c.display_rank = str(c.rank)
     rotation.rotation_sort(cs, request.args.get('sortBy'), request.args.get('sortOrder'))
+    total = len(cs)
     page_size = int(request.args.get('pageSize', DEFAULT_LIVE_TABLE_PAGE_SIZE))
     page = int(request.args.get('page', 0))
     start = page * page_size
     end = start + page_size
     cs = cs[start:end]
     prepare_cards(cs)
-    r = {'page': page, 'total': len(cs), 'objects': cs}
+    r = {'page': page, 'total': total, 'objects': cs}
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))
     return resp

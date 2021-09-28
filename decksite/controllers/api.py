@@ -1,5 +1,6 @@
 import datetime
 import json
+import sys
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, cast
 
 from flask import Response, request, session, url_for
@@ -394,14 +395,13 @@ def rotation_cards_api() -> Response:
         cs = [c for c in cs if c.name in search_results]
     if not session.get('admin', False):
         cs = [c for c in cs if c.status != 'Undecided']
-    total = len(cs)
     # Now add rank to the cards, which only decksite knows not magic.rotation.
     ranks = playability.rank()
     for c in cs:
-        c.rank = ranks.get(c.name, 0 if c.never_legal() else total)
+        c.rank = ranks.get(c.name, 0 if c.never_legal() else sys.maxsize)
         if c.rank == 0:
             c.display_rank = 'NEW'
-        elif c.rank == total:
+        elif c.rank == sys.maxsize:
             c.display_rank = '-'
         else:
             c.display_rank = str(c.rank)
@@ -412,7 +412,7 @@ def rotation_cards_api() -> Response:
     end = start + page_size
     cs = cs[start:end]
     prepare_cards(cs)
-    r = {'page': page, 'total': total, 'objects': cs}
+    r = {'page': page, 'total': len(cs), 'objects': cs}
     resp = return_json(r, camelize=True)
     resp.set_cookie('page_size', str(page_size))
     return resp

@@ -262,23 +262,27 @@ def test_multicolored_exclusive() -> None:
 def test_color_identity_functional() -> None:
     yes = ['Brainstorm', 'Force of Will', 'Mystic Sanctuary', 'Venser, Shaper Savant']
     no = ['Electrolyze', 'Swamp', 'Underground Sea']
-    do_functional_test('ci:u', yes, no)
-    do_functional_test('cid:u', yes, no)
-    do_functional_test('id:u', yes, no)
+    do_functional_test('ci=u', yes, no)
+    do_functional_test('cid=u', yes, no)
+    do_functional_test('id=u', yes, no)
 
 def test_color_identity() -> None:
     where = '((c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 2))) AND (c.id IN (SELECT card_id FROM card_color_identity GROUP BY card_id HAVING COUNT(card_id) <= 1))'
-    do_test('ci:u', where)
-    do_test('cid:u', where)
-    do_test('id:u', where)
-    do_test('commander:u', where)
+    do_test('ci=u', where)
+    do_test('cid=u', where)
+    do_test('id=u', where)
+    do_test('commander=u', where)
+
+@pytest.mark.functional
+def test_color_identity_two_colors() -> None:
+    do_functional_test('id:uw', ['Brainstorm', 'Dream Trawler', 'Island', 'Wastes'], ['Forbidden Alchemy', 'Lightning Bolt', 'Watery Grave'])
 
 @pytest.mark.functional
 def test_color_identity_colorless_functional() -> None:
     do_functional_test('ci:c', ['Lodestone Golem', 'Wastes'], ['Academy Ruins', 'Bosh, Iron Golem', 'Lightning Bolt', 'Plains'])
 
 def test_color_identity_colorless() -> None:
-    do_test('ci:c', '(c.id NOT IN (SELECT card_id FROM card_color_identity))')
+    do_test('ci:c', '(NOT (c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 3))) AND (NOT (c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 5))) AND (NOT (c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 4))) AND (NOT (c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 2))) AND (NOT (c.id IN (SELECT card_id FROM card_color_identity WHERE color_id = 1))) AND (c.id NOT IN (SELECT card_id FROM card_color_identity))')
 
 @pytest.mark.functional
 def test_color_exclusively_functional() -> None:

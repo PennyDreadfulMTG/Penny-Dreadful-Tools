@@ -267,7 +267,7 @@ def set_where(name: str) -> str:
     return '(c.id IN (SELECT card_id FROM printing WHERE set_id IN (SELECT id FROM `set` WHERE name = {name} OR code = {name})))'.format(name=sqlescape(name))
 
 def format_where(term: str) -> str:
-    if term == 'pd' or term == 'Penny Dreadful':
+    if term == 'pd' or term.startswith('penny'):
         term = seasons.current_season_name()
     format_id = db().value('SELECT id FROM format WHERE name LIKE %s', ['{term}%%'.format(term=card.unaccent(term))])
     if format_id is None:

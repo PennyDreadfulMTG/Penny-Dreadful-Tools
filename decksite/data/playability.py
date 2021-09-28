@@ -63,19 +63,25 @@ def playability() -> Dict[str, float]:
     return {r['name']: r['playability'] for r in db().select(sql)}
 
 @retry_after_calling(preaggregate)
-def season_playability(season_id: int) -> List[Container]:
-    # This is a temporary thing used to generate banners.
-    # Feel free to replace it with something better.
+def banner_cards(season_id: int) -> List[Container]:
     sql = f"""
         SELECT
-            name,
-            playability
+            sp.name,
+            sp.playability,
+            IFNULL(SUM(osp.playability), 0) AS sum_playability,
+            COUNT(DISTINCT osp.season_id) + 1 AS num_seasons,
+            (IFNULL(SUM(osp.playability), 0)) / (COUNT(DISTINCT osp.season_id) + 1) AS other_seasons,
+            sp.playability - (IFNULL(SUM(osp.playability), 0)) / (COUNT(DISTINCT osp.season_id) + 1) AS x
         FROM
-            _season_playability
+            _season_playability AS sp
+        LEFT JOIN
+            _season_playability AS osp ON sp.name = osp.name AND osp.season_id != {season_id}
         WHERE
-            season_id = {season_id}
-        ORDER BY `playability` DESC
-        LIMIT 100
+            sp.season_id = {season_id}
+        GROUP BY
+            sp.name
+        ORDER BY
+            x DESC
     """
     return [Container(r) for r in db().select(sql)]
 

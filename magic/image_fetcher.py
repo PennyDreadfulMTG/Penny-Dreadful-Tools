@@ -104,12 +104,12 @@ async def download_scryfall_card_image(c: Card, filepath: str, version: str = ''
         print('Error: {e}'.format(e=e))
     return fetch_tools.acceptable_file(filepath)
 
-def determine_filepath(cards: List[Card], prefix: str = '') -> str:
+def determine_filepath(cards: List[Card], prefix: str = '', extension: str = '.jpg') -> str:
     imagename = basename(cards)
     # Hash the filename if it's otherwise going to be too large to use.
     if len(imagename) > 240:
         imagename = hashlib.md5(imagename.encode('utf-8')).hexdigest()
-    filename = imagename + '.jpg'
+    filename = imagename + extension
     directory = configuration.get('image_dir')
     return f'{directory}/{prefix}{filename}'
 
@@ -150,7 +150,7 @@ def save_composite_image(in_filepaths: List[str], out_filepath: str) -> None:
 
 async def generate_banner(names: List[str], background: str, v_crop: int = 33) -> str:
     cards = [oracle.load_card(name) for name in names]
-    out_filepath = determine_filepath(cards, f'banner-{background}{v_crop}-')
+    out_filepath = determine_filepath(cards, f'banner-{background}{v_crop}-', '.png')
 
     if fetch_tools.acceptable_file(out_filepath):
         return out_filepath

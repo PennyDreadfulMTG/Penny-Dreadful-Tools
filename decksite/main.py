@@ -122,7 +122,7 @@ def banner(seasonnum: int) -> Response:
 def guess_banner(season_num: int) -> Tuple[List[str], str]:
     cardnames: List[str] = []
     try:
-        cards = playability.season_playability(season_num)
+        cards = playability.banner_cards(season_num)
         for row in cards:
             if row['name'] in cardnames:
                 continue

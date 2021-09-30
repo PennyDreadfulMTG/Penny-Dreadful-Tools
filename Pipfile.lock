@@ -137,11 +137,11 @@
         },
         "cachetools": {
             "hashes": [
-                "sha256:0a3d3556c2c3befdbba2f93b78792c199c66201c999e97947ea0b7437758246b",
-                "sha256:6a6fa6802188ab7e77bab2db001d676e854499552b0037d999d5b9f211db5250"
+                "sha256:89ea6f1b638d5a73a4f9226be57ac5e4f399d22770b92355f92dcb0f7f001693",
+                "sha256:92971d3cb7d2a97efff7c7bb1657f21a8f5fb309a37530537c71b1774189f2d1"
             ],
             "markers": "python_version ~= '3.5'",
-            "version": "==4.2.3"
+            "version": "==4.2.4"
         },
         "certifi": {
             "hashes": [
@@ -560,10 +560,11 @@
         },
         "jsonschema": {
             "hashes": [
-                "sha256:4e5b3cf8216f577bee9ce139cbe72eca3ea4f292ec60928ff24758ce626cd163",
-                "sha256:c8a85b28d377cc7737e46e2d9f2b4f44ee3c0e1deac6bf46ddefc7187d30797a"
+                "sha256:48f4e74f8bec0c2f75e9fcfffa264e78342873e1b57e2cfeae54864cc5e9e4dd",
+                "sha256:9938802041347f2c62cad2aef59e9a0826cd34584f3609db950efacb4dbf6518"
             ],
-            "version": "==3.2.0"
+            "markers": "python_version >= '3.7'",
+            "version": "==4.0.1"
         },
         "kiwisolver": {
             "hashes": [
@@ -1388,11 +1389,11 @@
                 "flask"
             ],
             "hashes": [
-                "sha256:683e2f677d518b6a203785f5a6c27d3a6b48cca8293d43cc7efc7815ea4dada5",
-                "sha256:ffb7b1f7c9a2ca771066aa4b502756e1ef08aff246de23ffecaa5d2af1533a62"
+                "sha256:b9844751e40710e84a457c5bc29b21c383ccb2b63d76eeaad72f7f1c808c8828",
+                "sha256:c091cc7115ff25fe3a0e410dbecd7a996f81a3f6137d2272daef32d6c3cfa6dc"
             ],
             "index": "pypi",
-            "version": "==1.4.2"
+            "version": "==1.4.3"
         },
         "sgmllib3k": {
             "hashes": [
@@ -1582,7 +1583,7 @@
                 "sha256:71c644c5369f4a6e07636f0aa966270449561fcea2e3d6747b8d23efaa9d7832",
                 "sha256:9fe5ea21568a0a70e50f273397638d39b03353731e6cbbb3fd8502a33fec40bc"
             ],
-            "index": "pypi",
+            "markers": "python_version < '3.10'",
             "version": "==3.6.0"
         }
     },

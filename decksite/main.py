@@ -112,6 +112,12 @@ def banner(seasonnum: int) -> Response:
     elif seasonnum == 14:
         cardnames = ['Gitaxian Probe', "Orim's Chant", 'Dark Ritual', 'Chain Lightning', 'Channel', 'Gush', 'Rofellos, Llanowar Emissary', 'Laboratory Maniac']
         background = "God-Pharaoh's Statue"
+    elif seasonnum == 21:
+        cardnames = ["Council's Judgment", 'Ponder', 'Hymn to Tourach', 'Faithless Looting', 'Birds of Paradise', 'Dream Trawler', "Arcum's Astrolabe"]
+        background = 'Drowned Catacomb'
+    elif seasonnum == 22:
+        cardnames = ['Daybreak Coronet', 'Brainstorm', 'Ichorid', 'Hazoret the Fervent', 'Lovestruck Beast', 'Quillspike', 'Phyrexian Revoker']
+        background = 'Shivan Reef'
     else:
         cardnames, background = guess_banner(seasonnum)
     loop = asyncio.new_event_loop()

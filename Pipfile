@@ -35,7 +35,7 @@ beautifulsoup4 = "==4.10.0"
 better-profanity = "==0.7.0"
 cachelib = "==0.3.0"
 click = "==8.0.1"
-coverage = "==5.5"
+coverage = "==6.0"
 "discord.py" = {extras = ["voice"], version = "==1.5.1"}
 feedparser = "==6.0.8"
 flask-restx = "==0.5.1"

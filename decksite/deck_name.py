@@ -143,7 +143,7 @@ def normalize_colors(name: str, colors: List[str]) -> str:
     name = re.sub(pattern, ' ' + true_color + ' ', name).strip()
     for color_word in color_words[1:]:
         name = name.replace(color_word, '')
-    if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color) and not [True for abbrev in ABBREVIATIONS.values() if name.lower().startswith(abbrev)]:
+    if len(canonical_colors) == 1 and len(colors) == 1 and name.startswith(true_color) and not [True for abbrev in ABBREVIATIONS.values() if name.lower().startswith(abbrev)] and word != 'colorless':
         name = 'mono {name}'.format(name=name)
     return name.strip()
 

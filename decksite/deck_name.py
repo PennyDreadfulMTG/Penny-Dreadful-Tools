@@ -216,7 +216,7 @@ def ucase_trailing_roman_numerals(name: str) -> str:
     return name
 
 def strip_leading_punctuation(name: str) -> str:
-    return re.sub('^[^a-z0-9"\']*', '', name, flags=re.IGNORECASE)
+    return re.sub(r'^[^\w"\']*', '', name, flags=re.IGNORECASE)
 
 # See #6041.
 def remove_leading_deck(name: str) -> str:

@@ -64,7 +64,7 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str]]] = [
     ('RBUW Control', 'WUBR Control', ['W', 'U', 'B', 'R'], 'Control'),
     ('White Jund', 'White Jund', ['B', 'R', 'G', 'W'], 'White Jund'),
     ('White Jund', 'BRGW', ['B', 'R', 'G', 'W'], None),
-    ('ゼウスサイクリング', 'Sultai New Perspectives', ['U', 'G', 'B'], 'New Perspectives'),
+    ('ゼウスサイクリング', 'ゼウスサイクリング', ['U', 'G', 'B'], 'New Perspectives'),
     ('$', 'UBRG Necrotic Ooze Combo', ['U', 'B', 'R', 'G'], 'Necrotic Ooze Combo'),
     ('White Green', 'Selesnya Aggro', ['W', 'G'], 'Aggro'),
     ('White Green', 'Selesnya', ['W', 'G'], None),
@@ -107,6 +107,7 @@ TESTDATA: List[Tuple[str, str, Optional[List[str]], Optional[str]]] = [
     ('B U R N', 'B U R N', ['R', 'B'], 'Burn'),
     ('Elves {PD}', 'Elves', ['G'], 'Elves'),
     ('Metalworks pd bond and post', 'Metalworks Bond and Post', ['G'], 'Greenpost'),
+    ('让我告诉你0.75的故事', '让我告诉你0.75的故事', ['U', 'B'], 'Dimir Control'),
 ]
 
 @pytest.mark.parametrize('original_name,expected,colors,archetype_name', TESTDATA)

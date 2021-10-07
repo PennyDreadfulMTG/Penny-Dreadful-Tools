@@ -33,7 +33,7 @@ astroid = "==2.8.0"
 attrs = "==21.2.0"
 beautifulsoup4 = "==4.10.0"
 better-profanity = "==0.7.0"
-cachelib = "==0.3.0"
+cachelib = "==0.4.1"
 click = "==8.0.1"
 coverage = "==6.0"
 "discord.py" = {extras = ["voice"], version = "==1.5.1"}

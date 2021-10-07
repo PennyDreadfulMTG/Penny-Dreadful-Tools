@@ -81,7 +81,7 @@ Pillow = "==8.3.2"
 PyGithub = "==1.54"
 SQLAlchemy = "==1.4.25"
 SQLAlchemy-Utils = "==0.37.8"
-Werkzeug = "==2.0.1"
+Werkzeug = "==2.0.2"
 Whoosh = "==2.7.4"
 sentry-sdk = {extras = ["flask"], version = "*"}
 jishaku = "==2.3.0"

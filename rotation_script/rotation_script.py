@@ -143,7 +143,6 @@ https://pennydreadfulmagic.com/admin/rotation/
 - [ ] upload {setcode}_legal_cards.txt to S3
 - [ ] ping scryfall
 - [ ] email mtggoldfish
-- [ ] ping tappedout
 """
     print('Rebooting Discord bot...', flush=True)
     if redis.get_str('discordbot:commit_id'):

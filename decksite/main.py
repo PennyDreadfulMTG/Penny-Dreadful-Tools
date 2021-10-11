@@ -18,12 +18,12 @@ from decksite.data import match as ms
 from decksite.data import news as ns
 from decksite.data import playability
 from decksite.database import db
-from decksite.views import Home, Banners
+from decksite.views import Banners, Home
 from magic import card as mc
 from magic import image_fetcher, oracle, seasons
 from shared import dtutil, logger, perf
-from shared.pd_exception import DatabaseException, TooFewItemsException
 from shared.container import Container
+from shared.pd_exception import DatabaseException, TooFewItemsException
 
 
 @APP.route('/')

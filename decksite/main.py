@@ -72,7 +72,7 @@ def banner_stats() -> str:
         nice_path = os.path.join(str(APP.static_folder), 'images', 'banners', f'{i}.png')
         if not os.path.exists(nice_path):
             cards, bg = banner_cards(i)
-            data = {'num':i, 'cards': cards, 'background': bg}
+            data = {'num': i, 'cards': cards, 'background': bg}
             banners.append(Container(data))
     view = Banners(banners)
     return view.page()

@@ -29,7 +29,7 @@ types-typed-ast = "*"
 [packages]
 aiohttp = "==3.6.3"
 anytree = "==2.8.0"
-astroid = "==2.8.0"
+astroid = "==2.8.2"
 attrs = "==21.2.0"
 beautifulsoup4 = "==4.10.0"
 better-profanity = "==0.7.0"

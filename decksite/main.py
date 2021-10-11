@@ -3,7 +3,7 @@ import functools
 import logging
 import os
 import re
-from typing import List, Optional, Set, Tuple
+from typing import List, Optional, Tuple
 
 from flask import Response, abort, g, make_response, redirect, request, send_file, session
 from werkzeug import wrappers
@@ -18,11 +18,12 @@ from decksite.data import match as ms
 from decksite.data import news as ns
 from decksite.data import playability
 from decksite.database import db
-from decksite.views import Home
+from decksite.views import Home, Banners
 from magic import card as mc
 from magic import image_fetcher, oracle, seasons
 from shared import dtutil, logger, perf
 from shared.pd_exception import DatabaseException, TooFewItemsException
+from shared.container import Container
 
 
 @APP.route('/')
@@ -64,9 +65,21 @@ def image(c: str = '') -> wrappers.Response:
             return redirect(f'https://api.scryfall.com/cards/named?exact={c}&format=image', code=303)
         return make_response('', 400)
 
+@APP.route('/admin/banners/')
+def banner_stats() -> str:
+    banners = []
+    for i in range(seasons.current_season_num() + 1):
+        nice_path = os.path.join(str(APP.static_folder), 'images', 'banners', f'{i}.png')
+        if not os.path.exists(nice_path):
+            cards, bg = banner_cards(i)
+            data = {'num':i, 'cards': cards, 'background': bg}
+            banners.append(Container(data))
+    view = Banners(banners)
+    return view.page()
+
 @APP.route('/banner/banner.css')
 def bannercss() -> Response:
-    css = ''
+    css = 'header.season-0:before{ background-image:url("/banner/0.png");}\n'
     for i, _ in enumerate(seasons.SEASONS):
         i = i + 1
         css += f'header.season-{i}:before' + '{ background-image:' + f'url("/banner/{i}.png");' + '}\n'
@@ -75,10 +88,17 @@ def bannercss() -> Response:
     return r
 
 @APP.route('/banner/<int:seasonnum>.png')
-def banner(seasonnum: int) -> Response:
+@APP.route('/banner/<int:seasonnum>_<int:crop>.png')
+def banner(seasonnum: int, crop: int = 33) -> Response:
     nice_path = os.path.join(str(APP.static_folder), 'images', 'banners', f'{seasonnum}.png')
     if os.path.exists(nice_path):
         return send_file(os.path.abspath(nice_path))
+    cardnames, background = banner_cards(seasonnum)
+    loop = asyncio.new_event_loop()
+    path = loop.run_until_complete(image_fetcher.generate_banner(cardnames, background, crop))
+    return send_file(os.path.abspath(path))
+
+def banner_cards(seasonnum: int) -> Tuple[List[str], str]:
     if seasonnum == 0:
         cardnames = ['Parallax Wave', 'Treasure Cruise', 'Duress', 'Chain Lightning', 'Rofellos, Llanowar Emissary ', 'Thawing Glaciers', 'Temur Ascendancy']
         background = 'Lake of the Dead'
@@ -120,9 +140,7 @@ def banner(seasonnum: int) -> Response:
         background = 'Shivan Reef'
     else:
         cardnames, background = guess_banner(seasonnum)
-    loop = asyncio.new_event_loop()
-    path = loop.run_until_complete(image_fetcher.generate_banner(cardnames, background))
-    return send_file(os.path.abspath(path))
+    return cardnames, background
 
 @functools.lru_cache
 def guess_banner(season_num: int) -> Tuple[List[str], str]:

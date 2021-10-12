@@ -1791,11 +1791,11 @@
         },
         "types-six": {
             "hashes": [
-                "sha256:a9e6769cb0808f920958ac95f75c5191f49e21e041eac127fa62e286e1005616",
-                "sha256:b14f5abe26c0997bd41a1a32d6816af25932f7bfbc54246dfdc8f6f6404fd1d4"
+                "sha256:606dd8c7edff3100fae8277c270e65285e5cdb6a7819c0b1ea6a8973690e68da",
+                "sha256:b96bd911f87d15258c38e10ee3f0921c32887a5d22e41c39d15707b4d0e4d0f1"
             ],
             "index": "pypi",
-            "version": "==1.16.1"
+            "version": "==1.16.2"
         },
         "types-toml": {
             "hashes": [

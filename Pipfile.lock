@@ -1715,11 +1715,11 @@
         },
         "types-chardet": {
             "hashes": [
-                "sha256:a88c1a3b10a4e2c4186f6102d5b6e8e7c5815175d123550aae28c340a9507392",
-                "sha256:d82de6d33b8a1ce11381538765e4c0aaefed5df5fd93ce7ab476d83018d85d8f"
+                "sha256:6d2a73711c98f875ab73b87956e8bc1e7ac74f4bd9464631a1ce68f21bc3c1d1",
+                "sha256:a503019a8c4b945adc2c460857a0cc6958101e410a7ed8aa1a669a88b6179be1"
             ],
             "index": "pypi",
-            "version": "==4.0.0"
+            "version": "==4.0.1"
         },
         "types-click": {
             "hashes": [

@@ -1730,11 +1730,11 @@
         },
         "types-flask": {
             "hashes": [
-                "sha256:07558b77d418004e011561abacd5d1f1e1419ae77c8866d57ce08806ef8cffee",
-                "sha256:c9e476d9e584d804b5ddd5a35ac8b7f46dba13560a43fd0e1b1215419fd992aa"
+                "sha256:09306465574a1b42c48fa4a83458fbb0cd9a46df20f6901e4bf148550126cc85",
+                "sha256:ed06c39b5838eed4e099c5fc0117714097975d86177b1663c4fb547a5f7ff298"
             ],
             "index": "pypi",
-            "version": "==1.1.3"
+            "version": "==1.1.4"
         },
         "types-jinja2": {
             "hashes": [

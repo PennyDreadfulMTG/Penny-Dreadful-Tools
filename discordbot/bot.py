@@ -377,7 +377,7 @@ async def rotation_hype_message(hype_command: bool) -> Optional[str]:
     s = f'Rotation run number {runs} completed.'
     if hype_command:
         s = '{runs} rotation checks have completed.'
-    s = f' Rotation is {runs_percent}% complete. {num_legal_cards} cards confirmed.'
+    s += f' Rotation is {runs_percent}% complete. {num_legal_cards} cards confirmed.'
     if len(newly_hit) > 0 and runs_remaining > runs:
         newly_hit_s = list_of_most_interesting(newly_hit)
         s += f'\nFirst hit for: {newly_hit_s}.'

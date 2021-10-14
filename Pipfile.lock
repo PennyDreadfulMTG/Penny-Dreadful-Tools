@@ -1824,11 +1824,11 @@
         },
         "types-werkzeug": {
             "hashes": [
-                "sha256:428a07d828a2c3dc6979b2ef2a79345ab33c54e070d5af319c038e6ccdfd3387",
-                "sha256:f6216ab0e0211fe73ebdb4ae0e414113d4d8a2f783a15c2d8550e06d0fd8e7f9"
+                "sha256:446f437eb98b1ed4aabfcdfc38ea2df18ad45c5797fb82f6ca690dca9dc5b9b1",
+                "sha256:50cddb3a8094f475d1728c24d82920eeaa8657f3980fbd7224ef940232cacb77"
             ],
             "index": "pypi",
-            "version": "==1.0.5"
+            "version": "==1.0.6"
         },
         "typing-extensions": {
             "hashes": [

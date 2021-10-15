@@ -2,6 +2,7 @@ from discord.ext import commands
 
 from discordbot.command import MtgContext
 
+
 async def poll(ctx: MtgContext) -> None:
     msg = ctx.message.reference
     if msg is None:

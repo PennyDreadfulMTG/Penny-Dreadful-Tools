@@ -422,6 +422,9 @@ def printing_value(p: CardDescription, card_id: int, set_id: int, rarity_id: int
     return result
 
 async def set_legal_cards_async(season: Optional[str] = None) -> None:
+    if season is None:
+        season = seasons.current_season_code()
+
     new_list: Set[str] = set()
     try:
         new_list = set(await fetcher.legal_cards_async(season=season))
@@ -429,9 +432,6 @@ async def set_legal_cards_async(season: Optional[str] = None) -> None:
         return
     if new_list == set() or new_list is None:
         return
-
-    if season is None:
-        season = seasons.current_season_code()
 
     format_id = get_format_id(f'Penny Dreadful {season}', True)
 

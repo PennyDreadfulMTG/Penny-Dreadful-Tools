@@ -25,7 +25,7 @@ def ad_hoc() -> None:
         redis.REDIS.flushdb()
     league_end = league.active_league().end_date
     diff = league_end - dtutil.now()
-    if diff.days > 0:
+    if diff.days > 0:  # If this is happening after midnight, we should open the new league.
         league.set_status(league.Status.OPEN)
     print('Open the gates here')
     if redis.REDIS:  # Clear the redis cache

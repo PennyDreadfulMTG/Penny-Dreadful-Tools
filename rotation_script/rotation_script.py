@@ -1,5 +1,6 @@
 import datetime
 import fileinput
+import glob
 import os
 import pathlib
 import shutil
@@ -16,6 +17,7 @@ from shared import redis_wrapper as redis
 from shared import repo, text
 
 TIME_UNTIL_ROTATION = seasons.next_rotation() - dtutil.now()
+TIME_SINCE_ROTATION = dtutil.now() - seasons.last_rotation()
 BANNED_CARDS = ['Cleanse', 'Crusade']  # These cards are banned, even in Freeform
 
 def run() -> None:
@@ -24,6 +26,13 @@ def run() -> None:
     time_until = TIME_UNTIL_ROTATION - datetime.timedelta(weeks=1)
     if n >= rotation.TOTAL_RUNS:
         print('It is the moment of discovery, the triumph of the mind, and the end of this rotation.')
+        if TIME_SINCE_ROTATION > datetime.timedelta(7):
+            dirname = os.path.join(configuration.get_str('legality_dir'), 'arc_' + seasons.last_rotation_ex().code.lower())
+            if not os.path.exists(dirname):
+                os.mkdir(dirname)
+            all_files = glob.glob(os.path.expanduser(os.path.join(configuration.get_str('legality_dir'), '*.txt')))
+            for f in all_files:
+                os.rename(f, os.path.join(dirname, os.path.basename(f)))
         return
 
     if n == 0 and TIME_UNTIL_ROTATION > datetime.timedelta(7):
@@ -33,8 +42,6 @@ def run() -> None:
 
     if n == 0:
         rotation.clear_redis(clear_files=True)
-    # else:
-    #    rotation.clear_redis()
 
     all_prices = {}
     for url in configuration.get_list('cardhoarder_urls'):
@@ -78,7 +85,10 @@ def process(all_prices: Dict[str, PriceListType]) -> int:
 def process_sets(seen_sets: Set[str], used_sets: Set[str], hits: Set[str], ignored: Set[str]) -> int:
     files = rotation.files()
     n = len(files) + 1
-    path = os.path.join(configuration.get_str('legality_dir'), 'Run_{n}.txt').format(n=str(n).zfill(3))
+    legality_dir = configuration.get_str('legality_dir')
+    path = os.path.join(legality_dir, 'Run_{n}.txt').format(n=str(n).zfill(3))
+    if not os.path.exists(legality_dir):
+        os.makedirs(legality_dir)
     path = os.path.expanduser(path)
     h = open(path, mode='w', encoding='utf-8')
     for card in hits:

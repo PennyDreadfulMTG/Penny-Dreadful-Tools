@@ -64,6 +64,8 @@ def process(all_prices: Dict[str, PriceListType]) -> int:
     for code in all_prices:
         prices = all_prices[code]
         for name, p, mtgo_set in prices:
+            if name in BANNED_CARDS:
+                continue
             cents = int(float(p) * 100)
             seen_sets.add(mtgo_set)
             if cents <= card_price.MAX_PRICE_CENTS:
